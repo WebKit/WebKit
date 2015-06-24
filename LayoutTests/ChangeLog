@@ -1,5 +1,17 @@
 2015-06-24  Daniel Bates  <dabates@apple.com>
 
+        Content Security Policy error message when frame load is blocked does not read well
+        https://bugs.webkit.org/show_bug.cgi?id=146279
+
+        Reviewed by Csaba Osztrogonác.
+
+        Update expected results.
+
+        * http/tests/security/contentSecurityPolicy/frame-src-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/frame-src-redirect-blocked-expected.txt:
+
+2015-06-24  Daniel Bates  <dabates@apple.com>
+
         LayoutTests/http/tests/security/contentSecurityPolicy/media-src-track-block.html always passes
         https://bugs.webkit.org/show_bug.cgi?id=146272
 

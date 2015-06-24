@@ -971,7 +971,7 @@ bool CSPDirectiveList::checkSourceAndReportViolation(SourceListDirective* direct
     else if (formAction == effectiveDirective)
         prefix = "Refused to send form data to '";
     else if (frameSrc == effectiveDirective)
-        prefix = "Refused to frame '";
+        prefix = "Refused to load frame '";
     else if (imgSrc == effectiveDirective)
         prefix = "Refused to load the image '";
     else if (mediaSrc == effectiveDirective)
