@@ -309,6 +309,9 @@
     <ClCompile Include="..\..\win\Plugins\PluginDebug.cpp">
       <Filter>Sources\Plugins</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\win\Plugins\PluginMainThreadScheduler.cpp">
+      <Filter>Sources\Plugins</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\win\Plugins\PluginMessageThrottlerWin.cpp">
       <Filter>Sources\Plugins</Filter>
     </ClCompile>
@@ -610,6 +613,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\win\Plugins\PluginView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\win\Plugins\PluginMainThreadScheduler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\win\Plugins\PluginMessageThrottlerWin.h">

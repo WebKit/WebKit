@@ -17898,7 +17898,6 @@
     <ClCompile Include="..\plugins\DOMPlugin.cpp" />
     <ClCompile Include="..\plugins\DOMPluginArray.cpp" />
     <ClCompile Include="..\plugins\PluginData.cpp" />
-    <ClCompile Include="..\plugins\PluginMainThreadScheduler.cpp" />
     <ClCompile Include="..\svg\SVGAllInOne.cpp" />
     <ClCompile Include="..\svg\SVGFontFaceElement.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -21401,7 +21400,6 @@
     <ClInclude Include="..\plugins\npfunctions.h" />
     <ClInclude Include="..\plugins\npruntime.h" />
     <ClInclude Include="..\plugins\PluginData.h" />
-    <ClInclude Include="..\plugins\PluginMainThreadScheduler.h" />
     <ClInclude Include="..\svg\ColorDistance.h" />
     <ClInclude Include="..\svg\SVGAElement.h" />
     <ClInclude Include="..\svg\SVGAltGlyphDefElement.h" />

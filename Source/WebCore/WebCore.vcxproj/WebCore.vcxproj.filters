@@ -4533,9 +4533,6 @@
     <ClCompile Include="..\plugins\PluginData.cpp">
       <Filter>plugins</Filter>
     </ClCompile>
-    <ClCompile Include="..\plugins\PluginMainThreadScheduler.cpp">
-      <Filter>plugins</Filter>
-    </ClCompile>
     <ClCompile Include="..\svg\animation\SMILTime.cpp">
       <Filter>svg\animation</Filter>
     </ClCompile>
@@ -11569,9 +11566,6 @@
       <Filter>plugins</Filter>
     </ClInclude>
     <ClInclude Include="..\plugins\PluginData.h">
-      <Filter>plugins</Filter>
-    </ClInclude>
-    <ClInclude Include="..\plugins\PluginMainThreadScheduler.h">
       <Filter>plugins</Filter>
     </ClInclude>
     <ClInclude Include="..\svg\animation\SMILTime.h">

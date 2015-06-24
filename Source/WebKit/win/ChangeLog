@@ -1,3 +1,24 @@
+2015-06-24  Anders Carlsson  <andersca@apple.com>
+
+        Move PluginMainThreadScheduler to WebKit/win
+        https://bugs.webkit.org/show_bug.cgi?id=146289
+
+        Reviewed by Tim Horton.
+
+        * Plugins/PluginMainThreadScheduler.cpp: Renamed from Source/WebCore/plugins/PluginMainThreadScheduler.cpp.
+        (WebCore::PluginMainThreadScheduler::scheduler):
+        (WebCore::PluginMainThreadScheduler::PluginMainThreadScheduler):
+        (WebCore::PluginMainThreadScheduler::scheduleCall):
+        (WebCore::PluginMainThreadScheduler::registerPlugin):
+        (WebCore::PluginMainThreadScheduler::unregisterPlugin):
+        (WebCore::PluginMainThreadScheduler::dispatchCallsForPlugin):
+        (WebCore::PluginMainThreadScheduler::dispatchCalls):
+        (WebCore::PluginMainThreadScheduler::mainThreadCallback):
+        * Plugins/PluginMainThreadScheduler.h: Renamed from Source/WebCore/plugins/PluginMainThreadScheduler.h.
+        (WebCore::PluginMainThreadScheduler::Call::Call):
+        (WebCore::PluginMainThreadScheduler::Call::performCall):
+        * Plugins/PluginView.cpp:
+
 2015-06-23  Anders Carlsson  <andersca@apple.com>
 
         Remove windowResizerRect code, nobody is using it anymore

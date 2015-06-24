@@ -57,7 +57,6 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformMouseEvent.h>
-#include <WebCore/PluginMainThreadScheduler.h>
 #include <WebCore/ProxyServer.h>
 #include <WebCore/RenderBox.h>
 #include <WebCore/RenderObject.h>
@@ -76,6 +75,7 @@
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
+#include "PluginMainThreadScheduler.h"
 #include "PluginMessageThrottlerWin.h"
 #endif
 

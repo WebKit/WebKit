@@ -304,6 +304,7 @@
     <ClCompile Include="..\..\win\Plugins\PluginStream.cpp" />
     <ClCompile Include="..\..\win\Plugins\PluginView.cpp" />
     <ClCompile Include="..\..\win\Plugins\PluginDatabaseWin.cpp" />
+    <ClCompile Include="..\..\win\Plugins\PluginMainThreadScheduler.cpp" />
     <ClCompile Include="..\..\win\Plugins\PluginMessageThrottlerWin.cpp" />
     <ClCompile Include="..\..\win\Plugins\PluginPackageWin.cpp" />
     <ClCompile Include="..\..\win\Plugins\PluginViewWin.cpp" />
@@ -457,6 +458,7 @@
     <ClInclude Include="..\..\win\Plugins\PluginStrategy.h" />
     <ClInclude Include="..\..\win\Plugins\PluginStream.h" />
     <ClInclude Include="..\..\win\Plugins\PluginView.h" />
+    <ClInclude Include="..\..\win\Plugins\PluginMainThreadScheduler.h" />
     <ClInclude Include="..\..\win\Plugins\PluginMessageThrottlerWin.h" />
     <ClInclude Include="..\..\win\AccessibleBase.h" />
     <ClInclude Include="..\..\win\AccessibleDocument.h" />
