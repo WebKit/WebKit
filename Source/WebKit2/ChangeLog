@@ -1,3 +1,17 @@
+2015-06-23  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Crash performing drag-and-drop
+        https://bugs.webkit.org/show_bug.cgi?id=146267
+
+        Reviewed by Darin Adler.
+
+        Return early if gtk_get_current_event() returns null to avoid a crash. Note that this does
+        not fix drag-and-drop. Note also this prevents the web process from forcing the UI process
+        to crash by sending fake startDrag messages.
+
+        * UIProcess/gtk/DragAndDropHandler.cpp:
+        (WebKit::DragAndDropHandler::startDrag):
+
 2015-06-23  Anders Carlsson  <andersca@apple.com>
 
         Add a class that tracks whether we're a background or foreground application
