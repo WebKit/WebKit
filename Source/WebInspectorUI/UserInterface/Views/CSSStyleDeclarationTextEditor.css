@@ -78,6 +78,22 @@
     -webkit-text-stroke-color: rgba(255, 0, 0, 0.6);
 }
 
+.css-style-text-editor > .CodeMirror .CodeMirror-lines .invalid-warning-marker {
+    position: relative;
+    top: 1px; 
+    width: 9px;
+    height: 9px;
+    margin: 0 2px 0 0;
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    background-image: url(../Images/Warning.svg);
+}
+
+.css-style-text-editor > .CodeMirror .CodeMirror-lines .invalid-warning-marker.clickable:hover {
+    -webkit-filter: brightness(0.9);
+}
+
 .computed .css-style-text-editor > .CodeMirror .CodeMirror-lines .css-style-declaration-property.implicit,
 .css-style-text-editor > .CodeMirror .CodeMirror-lines .css-style-declaration-property.not-inherited {
     opacity: 0.5;

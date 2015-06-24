@@ -1,5 +1,25 @@
 2015-06-24  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Show warning icon for invalid CSS properties and/or values
+        https://bugs.webkit.org/show_bug.cgi?id=145657
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/CSSCompletions.js:
+        (WebInspector.CSSCompletions.prototype.getClosestPropertyName): Calculates the levenshtein distance between a given property and every existing property name.  Returns the property name with the smallest distance or, in the case of multiple properties having the same distance, the first property in alphabetical order.
+        (WebInspector.CSSCompletions.prototype.propertyRequiresWebkitPrefix): Retruns if the property name exists only with a '-webkit-' prefix.
+        (WebInspector.CSSCompletions):
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.css:
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .invalid-warning-marker):
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .invalid-warning-marker.clickable:hover):
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createTextMarkerForPropertyIfNeeded.duplicatePropertyExistsBelow): Determines if there exists a property below (visually) the given property that has the same name.
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createTextMarkerForPropertyIfNeeded.generateInvalidMarker): Creates a warning icon marker at the given position with the given title.
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createTextMarkerForPropertyIfNeeded.instancesOfProperty): Returns the number of properties in the rule that have the same name.
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._createTextMarkerForPropertyIfNeeded): A button with a warning icon is now added to the beginning of an invalid property.  If this button is clicked, the property is replaced with the closest matching property and the autocomplete menu is opened.
+
+2015-06-24  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Background of Computed Styles is missing
         https://bugs.webkit.org/show_bug.cgi?id=146209
 

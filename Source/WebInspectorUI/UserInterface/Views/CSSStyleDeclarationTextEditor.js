@@ -610,6 +610,20 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             this._codeMirror.setUniqueBookmark(to, arrowElement);
         }
 
+        function duplicatePropertyExistsBelow(cssProperty)
+        {
+            var propertyFound = false;
+
+            for (var property of this._style.properties) {
+                if (property === cssProperty)
+                    propertyFound = true;
+                else if (property.name === cssProperty.name && propertyFound)
+                    return true;
+            }
+
+            return false;
+        }
+
         var propertyNameIsValid = false;
         if (WebInspector.CSSCompletions.cssNameCompletions)
             propertyNameIsValid = WebInspector.CSSCompletions.cssNameCompletions.isValidPropertyName(property.name);
@@ -627,7 +641,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
         if (!property.valid && property.hasOtherVendorNameOrKeyword())
             classNames.push("other-vendor");
-        else if (!property.valid && !propertyNameIsValid)
+        else if (!property.valid && (!propertyNameIsValid || duplicatePropertyExistsBelow.call(this, property)))
             classNames.push("invalid");
 
         if (!property.enabled)
@@ -658,16 +672,6 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
         this._removeCheckboxPlaceholder(from.line);
 
-        if (!property.valid && propertyNameIsValid && !property.text.trim().endsWith(":")) {
-            // The property.text.trim().endsWith(":") is for the situation when a property only has a name and colon and the user leaves the value blank (it looks weird to have an invalid marker through just the colon).
-            // Creating the synthesizedText is necessary for if the user adds multiple spaces before the value, causing the markText to mark one of the spaces instead.
-            var synthesizedText = property.name + ": " + property.value + ";";
-            var start = {line: from.line, ch: from.ch + synthesizedText.indexOf(property.value)};
-            var end = {line: to.line, ch: start.ch + property.value.length};
-
-            this._codeMirror.markText(start, end, {className: "invalid"});
-        }
-
         if (property.__filterResultClassName && property.__filterResultNeedlePosition) {
             for (var needlePosition of property.__filterResultNeedlePosition.start) {
                 var start = {line: from.line, ch: needlePosition};
@@ -676,6 +680,133 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
                 this._codeMirror.markText(start, end, {className: property.__filterResultClassName});
             }
         }
+
+        if (property.hasOtherVendorNameOrKeyword() || property.text.trim().endsWith(":"))
+            return;
+
+        var propertyHasUnnecessaryPrefix = property.name.startsWith("-webkit-") && WebInspector.CSSCompletions.cssNameCompletions.isValidPropertyName(property.canonicalName);
+
+        function generateInvalidMarker(options)
+        {
+            var invalidMarker = document.createElement("button");
+            invalidMarker.className = "invalid-warning-marker";
+            invalidMarker.title = options.title;
+
+            if (typeof options.correction === "string") {
+                // Allow for blank strings
+                invalidMarker.classList.add("clickable");
+                invalidMarker.addEventListener("click", function() {
+                    this._codeMirror.replaceRange(options.correction, from, to);
+
+                    if (options.autocomplete) {
+                        this._codeMirror.setCursor(to);
+                        this.focus();
+                        this._completionController._completeAtCurrentPosition(true);
+                    }
+                }.bind(this));
+            }
+
+            this._codeMirror.setBookmark(options.position, invalidMarker);
+        }
+
+        function instancesOfProperty(propertyName)
+        {
+            var count = 0;
+
+            for (var property of this._style.properties) {
+                if (property.name === propertyName)
+                    ++count;
+            }
+
+            return count;
+        }
+
+        // Number of times this property name is listed in the rule.
+        var instances = instancesOfProperty.call(this, property.name);
+        var invalidMarkerInfo;
+
+        if (propertyHasUnnecessaryPrefix && !instancesOfProperty.call(this, property.canonicalName)) {
+            // This property has a prefix and is valid without the prefix and the rule containing this property does not have the unprefixed version of the property.
+            generateInvalidMarker.call(this, {
+                position: from,
+                title: WebInspector.UIString("The 'webkit' prefix is not necessary.\nClick to insert a duplicate without the prefix."),
+                correction: property.text + "\n" + property.text.replace("-webkit-", ""),
+                autocomplete: false
+            });
+        } else if (instances > 1) {
+            invalidMarkerInfo = {
+                position: from,
+                title: WebInspector.UIString("Duplicate property '%s'.\nClick to delete this property.").format(property.name),
+                correction: "",
+                autocomplete: false
+            };
+        }
+
+        if (property.valid) {
+            if (invalidMarkerInfo)
+                generateInvalidMarker.call(this, invalidMarkerInfo);
+
+            return;
+        }
+
+        if (propertyNameIsValid) {
+            // The property's name is valid but its value is not (either it is not supported for this property or there is no value).
+            var start = {line: from.line, ch: from.ch + property.name.length + 2};
+            var end = {line: to.line, ch: start.ch + property.value.length};
+
+            this._codeMirror.markText(start, end, {className: "invalid"});
+
+            var valueReplacement = property.value.length ? WebInspector.UIString("The value '%s' is not supported for this property.\nClick to delete and open autocomplete.").format(property.value) : WebInspector.UIString("This property needs a value.\nClick to open autocomplete.");
+
+            invalidMarkerInfo = {
+                position: start,
+                title: valueReplacement,
+                correction: property.name + ": ",
+                autocomplete: true
+            };
+        } else if (!instancesOfProperty.call(this, "-webkit-" + property.name) && WebInspector.CSSCompletions.cssNameCompletions.propertyRequiresWebkitPrefix(property.name)) {
+            // The property is valid and exists in the rule while its prefixed version does not.
+            invalidMarkerInfo = {
+                position: from,
+                title: WebInspector.UIString("The 'webkit' prefix is needed for this property.\nClick to insert a duplicate with the prefix."),
+                correction: "-webkit-" + property.text + "\n" + property.text,
+                autocomplete: false
+            };
+        } else if (!propertyHasUnnecessaryPrefix && !WebInspector.CSSCompletions.cssNameCompletions.isValidPropertyName("-webkit-" + property.name)) {
+            // The property either has no prefix and is invalid with a prefix or is invalid without a prefix.
+            var closestPropertyName = WebInspector.CSSCompletions.cssNameCompletions.getClosestPropertyName(property.name);
+
+            if (closestPropertyName) {
+                // The property name has less than 3 other properties that have the same Levenshtein distance.
+                invalidMarkerInfo = {
+                    position: from,
+                    title: WebInspector.UIString("Did you mean '%s'?\nClick to replace.").format(closestPropertyName),
+                    correction: property.text.replace(property.name, closestPropertyName),
+                    autocomplete: true
+                };
+            } else if (property.name.startsWith("-webkit-") && (closestPropertyName = WebInspector.CSSCompletions.cssNameCompletions.getClosestPropertyName(property.canonicalName))) {
+                // The unprefixed property name has less than 3 other properties that have the same Levenshtein distance.
+                invalidMarkerInfo = {
+                    position: from,
+                    title: WebInspector.UIString("Did you mean '%s'?\nClick to replace.").format("-webkit-" + closestPropertyName),
+                    correction: property.text.replace(property.canonicalName, closestPropertyName),
+                    autocomplete: true
+                };
+            } else {
+                // The property name is so vague or nonsensical that there are more than 3 other properties that have the same Levenshtein value.
+                invalidMarkerInfo = {
+                    position: from,
+                    title: WebInspector.UIString("The property '%s' is not supported.").format(property.name),
+                    correction: false,
+                    autocomplete: false
+                };
+            }
+        }
+
+        if (!invalidMarkerInfo)
+            return;
+
+        generateInvalidMarker.call(this, invalidMarkerInfo);
     }
 
     _clearTextMarkers(nonatomic, all)
