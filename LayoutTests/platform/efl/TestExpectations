@@ -289,6 +289,7 @@ webkit.org/b/87661 fast/history/page-cache-indexed-opened-db.html [ Skip ]
 #////////////////////////////////////////////////////////////////////////////////////////
 
 # These tests reference specific fonts on Mac port.
+Bug(EFL) fast/text/font-weights.html [ WontFix ]
 Bug(EFL) fast/text/font-weights-zh.html [ WontFix ]
 
 # These tests require DASHBOARD_SUPPORT but this feature is specific to Mac port.

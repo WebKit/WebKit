@@ -13,7 +13,7 @@ function generateElements(fontNames) {
                 d.style.fontFamily = fontName;
                 d.style.fontWeight = fontWeight;
                 d.style.fontStyle = fontStyle;
-                d.innerText = "Font: " + fontName + " Weight: " + fontWeight + " Style: " + fontStyle;
+                d.textContent = "Font: " + fontName + " Weight: " + fontWeight + " Style: " + fontStyle;
                 document.body.appendChild(d);
             }
         });

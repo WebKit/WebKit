@@ -1,3 +1,25 @@
+2015-06-23  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [OS X] Rebaseline fast/text/font-weight{,-zh}.html for El Capitan
+        https://bugs.webkit.org/show_bug.cgi?id=146266
+        <rdar://problem/21391628>
+        <rdar://problem/21391673>
+
+        Unreviewed.
+
+        * fast/text/font-weights.html: Renamed from LayoutTests/platform/mac/fast/text/font-weights.html.
+        * platform/mac/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/mac/fast/text/font-weights-expected.png: Added.
+        * platform/mac/fast/text/font-weights-expected.txt:
+        * platform/mac/fast/text/font-weights-zh-expected.png: Added.
+        * platform/mac/fast/text/font-weights-zh-expected.txt:
+        * platform/mac-mavericks/fast/text/font-weights-expected.txt: Moved from platform/mac/fast/text/font-weights-expected.txt
+        * platform/mac-yosemite/fast/text/font-weights-expected.txt: Ditto.
+        * platform/mac-yosemite/fast/text/font-weights-zh-expected.txt: Moved from platform/mac/fast/text/font-weights-zh-expected.txt
+
 2015-06-23  Matthew Mirman  <mmirman@apple.com>
 
         Completes native binding descriptors with native getters and potentially setters.

@@ -1278,12 +1278,6 @@ webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 # <rdar://problem/20622665> WebKit media doesn't get a canplay event when load stalls
 [ ElCapitan+ ] http/tests/media/video-play-stall.html [ Failure ]
 
-# rdar://problem/21391628
-[ ElCapitan+ ] platform/mac/fast/text/font-weights.html [ Failure ]
-
-# rdar://problem/21391673
-[ ElCapitan+ ] fast/text/font-weights-zh.html [ Failure ]
-
 # <rdar://problem/21263363>
 [ ElCapitan+ ] http/tests/media/remove-while-loading.html [ Skip ]
 [ ElCapitan+ ] http/tests/media/video-accept-encoding.html [ Failure ]
