@@ -544,6 +544,8 @@ public:
 
     void didChangeScrollOffset();
 
+    void show() override;
+
 protected:
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) override;
     virtual void scrollContentsSlowPath(const IntRect& updateRect) override;
