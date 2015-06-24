@@ -100,7 +100,7 @@ static bool areAllLoadersPageCacheAcceptable(const ResourceLoaderMap& loaders)
     Vector<RefPtr<ResourceLoader>> loadersCopy;
     copyValuesToVector(loaders, loadersCopy);
     for (auto& loader : loadersCopy) {
-        if (!loader->frameLoader())
+        if (!loader->frameLoader() || !loader->frameLoader()->frame().page())
             return false;
 
         CachedResource* cachedResource = MemoryCache::singleton().resourceForRequest(loader->request(), loader->frameLoader()->frame().page()->sessionID());
