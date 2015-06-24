@@ -30,14 +30,14 @@ def load_subclasses(dirname, base_class_name, loader):
                 loader(item)
 
 
-def getPathFromProjectRoot(relativePathToProjectRoot):
+def get_path_from_project_root(relative_path_to_project_root):
     # Choose the directory containing current file as start point,
     # compute relative path base on the parameter,
     # and return an absolute path
-    return os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), relativePathToProjectRoot))
+    return os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), relative_path_to_project_root))
 
 
-def forceRemove(path):
+def force_remove(path):
     try:
         shutil.rmtree(path)
     except Exception as error:

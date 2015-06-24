@@ -1,3 +1,112 @@
+2015-06-23  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Refactoring benchmark runner script to follow pep8 code style.
+        https://bugs.webkit.org/show_bug.cgi?id=146264
+
+        Reviewed by Ryosuke Niwa.
+
+        Refactor benchmark runner script to follow pep8 code style.
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_builder/generic_benchmark_builder.py:
+        (GenericBenchmarkBuilder.prepare):
+        (GenericBenchmarkBuilder._run_create_script):
+        (GenericBenchmarkBuilder._copy_benchmark_to_temp_dir):
+        (GenericBenchmarkBuilder._fetch_remote_archive):
+        (GenericBenchmarkBuilder):
+        (GenericBenchmarkBuilder._checkout_with_subversion):
+        (GenericBenchmarkBuilder._apply_patch):
+        (GenericBenchmarkBuilder.clean):
+        (GenericBenchmarkBuilder._runCreateScript): Deleted.
+        (GenericBenchmarkBuilder._copyBenchmarkToTempDir): Deleted.
+        (GenericBenchmarkBuilder._fetchRemoteArchive): Deleted.
+        (GenericBenchmarkBuilder._checkoutWithSubverion): Deleted.
+        (GenericBenchmarkBuilder._applyPatch): Deleted.
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py:
+        (BenchmarkRunner.__init__):
+        (BenchmarkRunner._find_plan_file):
+        (BenchmarkRunner.execute):
+        (BenchmarkRunner._cleanup):
+        (BenchmarkRunner._dump):
+        (BenchmarkRunner._wrap):
+        (BenchmarkRunner._merge):
+        (BenchmarkRunner._show_results):
+        (BenchmarkRunner._findPlanFile): Deleted.
+        (BenchmarkRunner.cleanup): Deleted.
+        (BenchmarkRunner.dump): Deleted.
+        (BenchmarkRunner.wrap): Deleted.
+        (BenchmarkRunner.merge): Deleted.
+        (BenchmarkRunner.show_results): Deleted.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/browser_driver.py:
+        (BrowserDriver.prepare_env):
+        (BrowserDriver.launch_url):
+        (BrowserDriver.close_browsers):
+        (BrowserDriver.prepareEnv): Deleted.
+        (BrowserDriver.launchUrl): Deleted.
+        (BrowserDriver.closeBrowser): Deleted.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_browser_driver.py:
+        (OSXBrowserDriver):
+        (OSXBrowserDriver.prepare_env):
+        (OSXBrowserDriver.close_browsers):
+        (OSXBrowserDriver._launch_process):
+        (OSXBrowserDriver._terminiate_processes):
+        (OSXBrowserDriver._launch_process_with_caffinate):
+        (OSXBrowserDriver._screen_size):
+        (OSXBrowserDriver.prepareEnv): Deleted.
+        (OSXBrowserDriver.closeBrowsers): Deleted.
+        (OSXBrowserDriver.launchProcess): Deleted.
+        (OSXBrowserDriver.terminateProcesses): Deleted.
+        (OSXBrowserDriver.launchProcessWithCaffinate): Deleted.
+        (OSXBrowserDriver.screenSize): Deleted.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_chrome_driver.py:
+        (OSXChromeDriver):
+        (OSXChromeDriver.launch_url):
+        (OSXChromeCanaryDriver):
+        (OSXChromeCanaryDriver.launch_url):
+        (OSXChromeDriver.launchUrl): Deleted.
+        (OSXChromeCanaryDriver.launchUrl): Deleted.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_firefox_driver.py:
+        (OSXFirefoxDriver):
+        (OSXFirefoxDriver.launch_url):
+        (OSXFirefoxNightlyDriver):
+        (OSXFirefoxNightlyDriver.launch_url):
+        (OSXFirefoxDriver.launchUrl): Deleted.
+        (OSXFirefoxNightlyDriver.launchUrl): Deleted.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py:
+        (OSXSafariDriver):
+        (OSXSafariDriver.prepare_env):
+        (OSXSafariDriver.launch_url):
+        (OSXSafariDriver.close_browsers):
+        (OSXSafariDriver._maximize_window):
+        (OSXSafariDriver.prepareEnv): Deleted.
+        (OSXSafariDriver.launchUrl): Deleted.
+        (OSXSafariDriver.closeBrowsers): Deleted.
+        (OSXSafariDriver.maximizeWindow): Deleted.
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/http_server_driver.py:
+        (HTTPServerDriver.fetch_result):
+        (HTTPServerDriver.kill_server):
+        (HTTPServerDriver.get_return_code):
+        (HTTPServerDriver.set_device_id):
+        (HTTPServerDriver.fetchResult): Deleted.
+        (HTTPServerDriver.killServer): Deleted.
+        (HTTPServerDriver.getReturnCode): Deleted.
+        (HTTPServerDriver.setDeviceID): Deleted.
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/simple_http_server_driver.py:
+        (SimpleHTTPServerDriver.serve):
+        (SimpleHTTPServerDriver.base_url):
+        (SimpleHTTPServerDriver.fetch_result):
+        (SimpleHTTPServerDriver.kill_server):
+        (SimpleHTTPServerDriver.get_return_code):
+        (SimpleHTTPServerDriver): Deleted.
+        (SimpleHTTPServerDriver.baseUrl): Deleted.
+        (SimpleHTTPServerDriver.fetchResult): Deleted.
+        (SimpleHTTPServerDriver.killServer): Deleted.
+        (SimpleHTTPServerDriver.getReturnCode): Deleted.
+        * Scripts/webkitpy/benchmark_runner/utils.py:
+        (get_path_from_project_root):
+        (force_remove):
+        (getPathFromProjectRoot): Deleted.
+        (forceRemove): Deleted.
+
 2015-06-23  Anders Carlsson  <andersca@apple.com>
 
         Add operator! and copy/move constructors to WeakObjCPtr

@@ -12,16 +12,16 @@ _log = logging.getLogger(__name__)
 
 
 class OSXChromeDriver(OSXBrowserDriver):
-    bundleIdentifier = 'com.google.Chrome'
+    bundle_identifier = 'com.google.Chrome'
     browser_name = 'chrome'
 
-    def launchUrl(self, url, browserBuildPath):
-        self.launchProcess(buildDir=browserBuildPath, appName='Google Chrome.app', url=url, args=['--args', '--homepage', url, '--window-size={width},{height}'.format(width=int(self.screenSize().width), height=int(self.screenSize().height))])
+    def launch_url(self, url, browser_build_path):
+        self._launch_process(build_dir=browser_build_path, app_name='Google Chrome.app', url=url, args=['--args', '--homepage', url, '--window-size={width},{height}'.format(width=int(self._screen_size().width), height=int(self._screen_size().height))])
 
 
 class OSXChromeCanaryDriver(OSXBrowserDriver):
-    bundleIdentifier = 'com.google.Chrome.canary'
+    bundle_identifier = 'com.google.Chrome.canary'
     browser_name = 'chrome-canary'
 
-    def launchUrl(self, url, browserBuildPath):
-        self.launchProcess(buildDir=browserBuildPath, appName='Google Chrome Canary.app', url=url, args=['--args', '--homepage', url, '--window-size={width},{height}'.format(width=int(self.screenSize().width), height=int(self.screenSize().height))])
+    def launch_url(self, url, browser_build_path):
+        self._launch_process(build_dir=browser_build_path, app_name='Google Chrome Canary.app', url=url, args=['--args', '--homepage', url, '--window-size={width},{height}'.format(width=int(self._screen_size().width), height=int(self._screen_size().height))])
