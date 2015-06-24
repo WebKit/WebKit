@@ -263,11 +263,6 @@ void Download::platformInvalidate()
     m_downloadClient = nullptr;
 }
 
-void Download::didDecideDestination(const String& /*destination*/, bool /*allowOverwrite*/)
-{
-    notImplemented();
-}
-
 void Download::platformDidFinish()
 {
     m_resourceHandle = 0;

@@ -131,10 +131,6 @@ void Download::platformInvalidate()
     m_nsURLDownload = nullptr;
 }
 
-void Download::didDecideDestination(const String& destination, bool allowOverwrite)
-{
-}
-
 void Download::platformDidFinish()
 {
 }

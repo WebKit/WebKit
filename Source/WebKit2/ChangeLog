@@ -1,3 +1,26 @@
+2015-06-24  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        Remove some dead code from Download
+        https://bugs.webkit.org/show_bug.cgi?id=146268
+
+        Reviewed by Darin Adler.
+
+        retrieveDestinationWithSuggestedFilename() was introduced for DownloadCFNetWin.cpp since r77585.
+        didDecideDestination and others are also introduced for WebKit2 Windows port since r77055.
+        Since WebKit2 Windows port is dropped, no one uses them now.
+
+        * Shared/Downloads/Download.cpp:
+        (WebKit::Download::decideDestinationWithSuggestedFilename):
+        (WebKit::Download::retrieveDestinationWithSuggestedFilename): Deleted.
+        * Shared/Downloads/Download.h:
+        (WebKit::Download::destination): Deleted.
+        * Shared/Downloads/ios/DownloadIOS.mm:
+        (WebKit::Download::didDecideDestination): Deleted.
+        * Shared/Downloads/mac/DownloadMac.mm:
+        (WebKit::Download::didDecideDestination): Deleted.
+        * Shared/Downloads/soup/DownloadSoup.cpp:
+        (WebKit::Download::didDecideDestination): Deleted.
+
 2015-06-23  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

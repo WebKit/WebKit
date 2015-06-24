@@ -43,9 +43,6 @@ Download::Download(DownloadManager& downloadManager, uint64_t downloadID, const 
     : m_downloadManager(downloadManager)
     , m_downloadID(downloadID)
     , m_request(request)
-#if USE(CFNETWORK)
-    , m_allowOverwrite(false)
-#endif
 {
     ASSERT(m_downloadID);
 
@@ -88,7 +85,7 @@ bool Download::shouldDecodeSourceDataOfMIMEType(const String& mimeType)
     return result;
 }
 
-String Download::retrieveDestinationWithSuggestedFilename(const String& filename, bool& allowOverwrite)
+String Download::decideDestinationWithSuggestedFilename(const String& filename, bool& allowOverwrite)
 {
     String destination;
     SandboxExtension::Handle sandboxExtensionHandle;
@@ -98,15 +95,6 @@ String Download::retrieveDestinationWithSuggestedFilename(const String& filename
     m_sandboxExtension = SandboxExtension::create(sandboxExtensionHandle);
     if (m_sandboxExtension)
         m_sandboxExtension->consume();
-
-    return destination;
-}
-
-String Download::decideDestinationWithSuggestedFilename(const String& filename, bool& allowOverwrite)
-{
-    String destination = retrieveDestinationWithSuggestedFilename(filename, allowOverwrite);
-
-    didDecideDestination(destination, allowOverwrite);
 
     return destination;
 }

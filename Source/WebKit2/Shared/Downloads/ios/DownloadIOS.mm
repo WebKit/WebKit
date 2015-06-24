@@ -161,11 +161,6 @@ void Download::platformInvalidate()
     notImplemented();
 }
 
-void Download::didDecideDestination(const String&, bool)
-{
-    notImplemented();
-}
-
 void Download::platformDidFinish()
 {
     notImplemented();
