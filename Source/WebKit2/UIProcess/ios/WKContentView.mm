@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS)
 
+#import "ApplicationStateTracker.h"
 #import "PageClientImplIOS.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteScrollingCoordinatorProxy.h"
@@ -188,8 +189,6 @@ private:
     _page->setUseFixedLayout(true);
     _page->setDelegatesScrolling(true);
 
-    _isBackground = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground;
-
     WebProcessPool::statistics().wkViewCount++;
 
     _rootContentView = adoptNS([[UIView alloc] init]);
@@ -211,8 +210,8 @@ private:
 
     self.layer.hitTestsAsOpaque = YES;
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication]];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
+    ApplicationStateTracker::singleton().addListener(self, @selector(_applicationDidEnterBackground), @selector(_applicationWillEnterForeground));
+
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:[UIApplication sharedApplication]];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationDidBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:[UIApplication sharedApplication]];
 
@@ -306,7 +305,7 @@ private:
 
 - (BOOL)isBackground
 {
-    return _isBackground;
+    return ApplicationStateTracker::singleton().isInBackground();
 }
 
 - (void)_showInspectorHighlight:(const WebCore::Highlight&)highlight
@@ -541,16 +540,14 @@ private:
     _page->applicationWillResignActive();
 }
 
-- (void)_applicationDidEnterBackground:(NSNotification*)notification
+- (void)_applicationDidEnterBackground
 {
-    _isBackground = YES;
     _page->applicationDidEnterBackground();
     _page->viewStateDidChange(ViewState::AllFlags & ~ViewState::IsInWindow);
 }
 
-- (void)_applicationWillEnterForeground:(NSNotification*)notification
+- (void)_applicationWillEnterForeground
 {
-    _isBackground = NO;
     _page->applicationWillEnterForeground();
     if (auto drawingArea = _page->drawingArea())
         drawingArea->hideContentUntilNextUpdate();

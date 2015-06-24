@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS)
 
+#import "ApplicationStateTracker.h"
 #import "BKSProcessAssertionSPI.h"
 #import <UIKit/UIApplication.h>
 #import <wtf/HashSet.h>
@@ -52,7 +53,6 @@ using WebKit::ProcessAssertionClient;
 @implementation WKProcessAssertionBackgroundTaskManager
 {
     unsigned _needsToRunInBackgroundCount;
-    BOOL _appIsBackground;
     UIBackgroundTaskIdentifier _backgroundTask;
     HashSet<ProcessAssertionClient*> _clients;
 }
@@ -69,22 +69,15 @@ using WebKit::ProcessAssertionClient;
     if (!self)
         return nil;
 
-    _appIsBackground = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground;
     _backgroundTask = UIBackgroundTaskInvalid;
 
-    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(_applicationWillEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:nil];
-    [center addObserver:self selector:@selector(_applicationDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
+    WebKit::ApplicationStateTracker::singleton().addListener(self, _applicationWillEnterForeground, _applicationDidEnterBackground);
 
     return self;
 }
 
 - (void)dealloc
 {
-    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    [center removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
-    [center removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
-
     if (_backgroundTask != UIBackgroundTaskInvalid)
         [[UIApplication sharedApplication] endBackgroundTask:_backgroundTask];
 
@@ -103,7 +96,7 @@ using WebKit::ProcessAssertionClient;
 
 - (void)_updateBackgroundTask
 {
-    bool shouldHoldTask = _needsToRunInBackgroundCount && _appIsBackground;
+    bool shouldHoldTask = _needsToRunInBackgroundCount && WebKit::ApplicationStateTracker::singleton().isInBackground();
 
     if (shouldHoldTask && _backgroundTask == UIBackgroundTaskInvalid) {
         _backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithName:@"com.apple.WebKit.ProcessAssertion" expirationHandler:^{
@@ -123,15 +116,13 @@ using WebKit::ProcessAssertionClient;
     }
 }
 
-- (void)_applicationWillEnterForeground:(NSNotification *)notification
+- (void)_applicationWillEnterForeground
 {
-    _appIsBackground = NO;
     [self _updateBackgroundTask];
 }
 
-- (void)_applicationDidEnterBackground:(NSNotification *)notification
+- (void)_applicationDidEnterBackground
 {
-    _appIsBackground = YES;
     [self _updateBackgroundTask];
 }
 

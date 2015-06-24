@@ -52,7 +52,6 @@ struct WebPageConfiguration;
 @package
     RefPtr<WebKit::WebPageProxy> _page;
     WKWebView *_webView;
-    BOOL _isBackground;
 }
 
 @property (nonatomic, readonly) WKBrowsingContextController *browsingContextController;

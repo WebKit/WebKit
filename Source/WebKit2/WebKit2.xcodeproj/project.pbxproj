@@ -444,6 +444,8 @@
 		1AD25E96167AB08100EA9BCD /* DownloadProxyMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD25E94167AB08100EA9BCD /* DownloadProxyMap.h */; };
 		1AD3306E16B1D991004F60E7 /* StorageAreaImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AD3306C16B1D991004F60E7 /* StorageAreaImpl.cpp */; };
 		1AD3306F16B1D991004F60E7 /* StorageAreaImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD3306D16B1D991004F60E7 /* StorageAreaImpl.h */; };
+		1AD4C1921B39F33200ABC28E /* ApplicationStateTracker.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AD4C1901B39F33200ABC28E /* ApplicationStateTracker.mm */; };
+		1AD4C1931B39F33200ABC28E /* ApplicationStateTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD4C1911B39F33200ABC28E /* ApplicationStateTracker.h */; };
 		1AD60F5D18E20F4C0020C034 /* WKWindowFeatures.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AD60F5B18E20F4C0020C034 /* WKWindowFeatures.mm */; };
 		1AD60F5E18E20F4C0020C034 /* WKWindowFeatures.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD60F5C18E20F4C0020C034 /* WKWindowFeatures.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1AD60F6018E20F740020C034 /* WKWindowFeaturesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD60F5F18E20F740020C034 /* WKWindowFeaturesInternal.h */; };
@@ -2560,6 +2562,8 @@
 		1AD25E94167AB08100EA9BCD /* DownloadProxyMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadProxyMap.h; sourceTree = "<group>"; };
 		1AD3306C16B1D991004F60E7 /* StorageAreaImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageAreaImpl.cpp; sourceTree = "<group>"; };
 		1AD3306D16B1D991004F60E7 /* StorageAreaImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageAreaImpl.h; sourceTree = "<group>"; };
+		1AD4C1901B39F33200ABC28E /* ApplicationStateTracker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ApplicationStateTracker.mm; sourceTree = "<group>"; };
+		1AD4C1911B39F33200ABC28E /* ApplicationStateTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationStateTracker.h; sourceTree = "<group>"; };
 		1AD60F5B18E20F4C0020C034 /* WKWindowFeatures.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWindowFeatures.mm; sourceTree = "<group>"; };
 		1AD60F5C18E20F4C0020C034 /* WKWindowFeatures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWindowFeatures.h; sourceTree = "<group>"; };
 		1AD60F5F18E20F740020C034 /* WKWindowFeaturesInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWindowFeaturesInternal.h; sourceTree = "<group>"; };
@@ -5103,6 +5107,8 @@
 			isa = PBXGroup;
 			children = (
 				C54256AE18BEC16100DE4179 /* forms */,
+				1AD4C1911B39F33200ABC28E /* ApplicationStateTracker.h */,
+				1AD4C1901B39F33200ABC28E /* ApplicationStateTracker.mm */,
 				A115DC6E191D82AB00DA8072 /* _WKWebViewPrintFormatter.h */,
 				A115DC6D191D82AB00DA8072 /* _WKWebViewPrintFormatter.mm */,
 				0F0C365D18C110A500F607D7 /* LayerRepresentation.mm */,
@@ -8349,6 +8355,7 @@
 				1A66BF8F18A052ED002071B4 /* WKWebViewInternal.h in Headers */,
 				26F9A83B18A3468100AEB88A /* WKWebViewPrivate.h in Headers */,
 				1AD60F5E18E20F4C0020C034 /* WKWindowFeatures.h in Headers */,
+				1AD4C1931B39F33200ABC28E /* ApplicationStateTracker.h in Headers */,
 				1AD60F6018E20F740020C034 /* WKWindowFeaturesInternal.h in Headers */,
 				BCBECDE816B6416800047A1A /* XPCServiceEntryPoint.h in Headers */,
 			);
@@ -9579,6 +9586,7 @@
 				1AEFCC1311D01F96008219D3 /* PluginInfoStore.cpp in Sources */,
 				1AEFCCBD11D02C5E008219D3 /* PluginInfoStoreMac.mm in Sources */,
 				1A043977124D034800FFBFB5 /* PluginProcess.cpp in Sources */,
+				1AD4C1921B39F33200ABC28E /* ApplicationStateTracker.mm in Sources */,
 				1A0EC907124C0AB8007EF4A5 /* PluginProcessConnection.cpp in Sources */,
 				1A0EC910124C0AF5007EF4A5 /* PluginProcessConnectionManager.cpp in Sources */,
 				1A7865B916CAC71500ACE83A /* PluginProcessConnectionManagerMessageReceiver.cpp in Sources */,

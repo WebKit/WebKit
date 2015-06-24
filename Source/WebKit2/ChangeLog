@@ -1,5 +1,43 @@
 2015-06-23  Anders Carlsson  <andersca@apple.com>
 
+        Add a class that tracks whether we're a background or foreground application
+        https://bugs.webkit.org/show_bug.cgi?id=146259
+        rdar://problem/19833808
+
+        Reviewed by Darin Adler.
+
+        First step towards being able to send out these notifications for view services.
+
+        * UIProcess/ApplicationStateTracker.h: Added.
+        (WebKit::ApplicationStateTracker::isInBackground):
+        * UIProcess/ApplicationStateTracker.mm: Added.
+        (WebKit::ApplicationStateTracker::singleton):
+        (WebKit::ApplicationStateTracker::ApplicationStateTracker):
+        (WebKit::ApplicationStateTracker::addListener):
+        (WebKit::ApplicationStateTracker::applicationDidEnterBackground):
+        (WebKit::ApplicationStateTracker::applicationWillEnterForeground):
+        (WebKit::ApplicationStateTracker::invokeListeners):
+        (WebKit::ApplicationStateTracker::pruneListeners):
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (-[WKProcessAssertionBackgroundTaskManager init]):
+        (-[WKProcessAssertionBackgroundTaskManager _updateBackgroundTask]):
+        (-[WKProcessAssertionBackgroundTaskManager _applicationWillEnterForeground]):
+        (-[WKProcessAssertionBackgroundTaskManager _applicationDidEnterBackground]):
+        (-[WKProcessAssertionBackgroundTaskManager dealloc]): Deleted.
+        (-[WKProcessAssertionBackgroundTaskManager _applicationWillEnterForeground:]): Deleted.
+        (-[WKProcessAssertionBackgroundTaskManager _applicationDidEnterBackground:]): Deleted.
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _commonInitializationWithProcessPool:configuration:]):
+        (-[WKContentView isBackground]):
+        (-[WKContentView _applicationDidEnterBackground]):
+        (-[WKContentView _applicationWillEnterForeground]):
+        (-[WKContentView _applicationDidEnterBackground:]): Deleted.
+        (-[WKContentView _applicationWillEnterForeground:]): Deleted.
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2015-06-23  Anders Carlsson  <andersca@apple.com>
+
         Remove windowResizerRect code, nobody is using it anymore
         https://bugs.webkit.org/show_bug.cgi?id=146265
 
