@@ -105,7 +105,8 @@ RefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range, TextInd
 
     frame->selection().setSelection(oldSelection);
 
-    indicator->setWantsMargin(!areRangesEqual(&range, oldSelection.toNormalizedRange().get()));
+    if (indicator)
+        indicator->setWantsMargin(!areRangesEqual(&range, oldSelection.toNormalizedRange().get()));
     
     return indicator.release();
 }
