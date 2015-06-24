@@ -1,5 +1,16 @@
 2015-06-23  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Reduce QuickConsole DidResize events if it did not change
+        https://bugs.webkit.org/show_bug.cgi?id=146258
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/QuickConsole.js:
+        (WebInspector.QuickConsole.prototype.consoleLogVisibilityChanged):
+        Do not trigger the event unless there was a change in visibility.
+
+2015-06-23  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: TextEditor scroll position not correctly restored when switching tabs
         https://bugs.webkit.org/show_bug.cgi?id=146254
 

@@ -105,10 +105,10 @@ WebInspector.QuickConsole = class QuickConsole extends WebInspector.Object
 
     consoleLogVisibilityChanged(visible)
     {
-        if (visible)
-            this.element.classList.add(WebInspector.QuickConsole.ShowingLogClassName);
-        else
-            this.element.classList.remove(WebInspector.QuickConsole.ShowingLogClassName);
+        if (visible === this.element.classList.contains(WebInspector.QuickConsole.ShowingLogClassName))
+            return;
+
+        this.element.classList.toggle(WebInspector.QuickConsole.ShowingLogClassName, visible);
 
         this.dispatchEventToListeners(WebInspector.QuickConsole.Event.DidResize);
     }
