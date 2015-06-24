@@ -3915,6 +3915,36 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
         return false;
     }
 
+    if (node->isBinaryUseKind(ObjectUse, UntypedUse)) {
+        unsigned branchIndexInBlock = detectPeepHoleBranch();
+        if (branchIndexInBlock != UINT_MAX) {
+            Node* branchNode = m_block->at(branchIndexInBlock);
+            compilePeepHoleObjectStrictEquality(node->child1(), node->child2(), branchNode);
+            use(node->child1());
+            use(node->child2());
+            m_indexInBlock = branchIndexInBlock;
+            m_currentNode = branchNode;
+            return true;
+        }
+        compileObjectStrictEquality(node->child1(), node->child2());
+        return false;
+    }
+    
+    if (node->isBinaryUseKind(UntypedUse, ObjectUse)) {
+        unsigned branchIndexInBlock = detectPeepHoleBranch();
+        if (branchIndexInBlock != UINT_MAX) {
+            Node* branchNode = m_block->at(branchIndexInBlock);
+            compilePeepHoleObjectStrictEquality(node->child2(), node->child1(), branchNode);
+            use(node->child1());
+            use(node->child2());
+            m_indexInBlock = branchIndexInBlock;
+            m_currentNode = branchNode;
+            return true;
+        }
+        compileObjectStrictEquality(node->child2(), node->child1());
+        return false;
+    }
+
     if (node->isBinaryUseKind(ObjectUse)) {
         unsigned branchIndexInBlock = detectPeepHoleBranch();
         if (branchIndexInBlock != UINT_MAX) {

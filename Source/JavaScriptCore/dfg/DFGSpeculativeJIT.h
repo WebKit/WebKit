@@ -2088,8 +2088,10 @@ public:
     void compilePeepHoleBooleanBranch(Node*, Node* branchNode, JITCompiler::RelationalCondition);
     void compilePeepHoleDoubleBranch(Node*, Node* branchNode, JITCompiler::DoubleCondition);
     void compilePeepHoleObjectEquality(Node*, Node* branchNode);
+    void compilePeepHoleObjectStrictEquality(Edge objectChild, Edge otherChild, Node* branchNode);
     void compilePeepHoleObjectToObjectOrOtherEquality(Edge leftChild, Edge rightChild, Node* branchNode);
     void compileObjectEquality(Node*);
+    void compileObjectStrictEquality(Edge objectChild, Edge otherChild);
     void compileObjectToObjectOrOtherEquality(Edge leftChild, Edge rightChild);
     void compileObjectOrOtherLogicalNot(Edge value);
     void compileLogicalNot(Node*);

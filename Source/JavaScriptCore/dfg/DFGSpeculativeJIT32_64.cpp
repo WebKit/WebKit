@@ -1184,6 +1184,57 @@ void SpeculativeJIT::compileObjectEquality(Node* node)
     booleanResult(resultPayloadGPR, node);
 }
 
+void SpeculativeJIT::compileObjectStrictEquality(Edge objectChild, Edge otherChild)
+{
+    SpeculateCellOperand op1(this, objectChild);
+    JSValueOperand op2(this, otherChild);
+
+    GPRReg op1GPR = op1.gpr();
+    GPRReg op2GPR = op2.payloadGPR();
+
+    DFG_TYPE_CHECK(JSValueSource::unboxedCell(op1GPR), objectChild, SpecObject, m_jit.branchIfNotObject(op1GPR));
+
+    GPRTemporary resultPayload(this, Reuse, op1);
+    GPRReg resultPayloadGPR = resultPayload.gpr();
+    
+    MacroAssembler::Jump op2CellJump = m_jit.branchIfCell(op2.jsValueRegs());
+    
+    m_jit.move(TrustedImm32(0), resultPayloadGPR);
+    MacroAssembler::Jump op2NotCellJump = m_jit.jump();
+    
+    // At this point we know that we can perform a straight-forward equality comparison on pointer
+    // values because we are doing strict equality.
+    op2CellJump.link(&m_jit);
+    m_jit.compare32(MacroAssembler::Equal, op1GPR, op2GPR, resultPayloadGPR);
+    
+    op2NotCellJump.link(&m_jit);
+    booleanResult(resultPayloadGPR, m_currentNode);
+}
+    
+void SpeculativeJIT::compilePeepHoleObjectStrictEquality(Edge objectChild, Edge otherChild, Node* branchNode)
+{
+    BasicBlock* taken = branchNode->branchData()->taken.block;
+    BasicBlock* notTaken = branchNode->branchData()->notTaken.block;
+
+    SpeculateCellOperand op1(this, objectChild);
+    JSValueOperand op2(this, otherChild);
+    
+    GPRReg op1GPR = op1.gpr();
+    GPRReg op2GPR = op2.payloadGPR();
+
+    DFG_TYPE_CHECK(JSValueSource::unboxedCell(op1GPR), objectChild, SpecObject, m_jit.branchIfNotObject(op1GPR));
+
+    branch32(MacroAssembler::NotEqual, op2.tagGPR(), TrustedImm32(JSValue::CellTag), notTaken);
+    
+    if (taken == nextBlock()) {
+        branch32(MacroAssembler::NotEqual, op1GPR, op2GPR, notTaken);
+        jump(taken);
+    } else {
+        branch32(MacroAssembler::Equal, op1GPR, op2GPR, taken);
+        jump(notTaken);
+    }
+}
+
 void SpeculativeJIT::compileObjectToObjectOrOtherEquality(Edge leftChild, Edge rightChild)
 {
     SpeculateCellOperand op1(this, leftChild);

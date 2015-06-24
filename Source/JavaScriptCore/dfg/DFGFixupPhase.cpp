@@ -471,7 +471,21 @@ private:
                 fixEdge<StringUse>(node->child2());
                 break;
             }
-            if (node->child1()->shouldSpeculateObject() && node->child2()->shouldSpeculateObject()) {
+            WatchpointSet* masqueradesAsUndefinedWatchpoint = m_graph.globalObjectFor(node->origin.semantic)->masqueradesAsUndefinedWatchpoint();
+            if (masqueradesAsUndefinedWatchpoint->isStillValid()) {
+                
+                if (node->child1()->shouldSpeculateObject()) {
+                    m_graph.watchpoints().addLazily(masqueradesAsUndefinedWatchpoint);
+                    fixEdge<ObjectUse>(node->child1());
+                    break;
+                }
+                if (node->child2()->shouldSpeculateObject()) {
+                    m_graph.watchpoints().addLazily(masqueradesAsUndefinedWatchpoint);
+                    fixEdge<ObjectUse>(node->child2());
+                    break;
+                }
+                
+            } else if (node->child1()->shouldSpeculateObject() && node->child2()->shouldSpeculateObject()) {
                 fixEdge<ObjectUse>(node->child1());
                 fixEdge<ObjectUse>(node->child2());
                 break;

@@ -1,3 +1,18 @@
+2015-06-24  Keith Miller  <keith_miller@apple.com>
+
+        Strict Equality on objects should only check that one of the two sides is an object.
+        https://bugs.webkit.org/show_bug.cgi?id=145992
+
+        Reviewed by Mark Lam.
+
+        Adds a test that checks if strict equality checks with objects properly exit out of DFG code when
+        dealing with document.all, which is an object that masquerades as undefined.
+
+        * js/dom/document-all-strict-eq-expected.txt: Added.
+        * js/dom/document-all-strict-eq.html: Added.
+        * js/dom/script-tests/document-all-strict-eq.js: Added.
+        (f):
+
 2015-06-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Win] Test gardening for fast/text/font-weight{,-zh}.html

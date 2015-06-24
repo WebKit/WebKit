@@ -4157,7 +4157,23 @@ private:
                 m_out.equal(lowStringIdent(m_node->child1()), lowStringIdent(m_node->child2())));
             return;
         }
+
+        if (m_node->isBinaryUseKind(ObjectUse, UntypedUse)) {
+            setBoolean(
+                m_out.equal(
+                    lowNonNullObject(m_node->child1()),
+                    lowJSValue(m_node->child2())));
+            return;
+        }
         
+        if (m_node->isBinaryUseKind(UntypedUse, ObjectUse)) {
+            setBoolean(
+                m_out.equal(
+                    lowNonNullObject(m_node->child2()),
+                    lowJSValue(m_node->child1())));
+            return;
+        }
+
         if (m_node->isBinaryUseKind(ObjectUse)) {
             setBoolean(
                 m_out.equal(

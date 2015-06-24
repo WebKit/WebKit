@@ -1296,6 +1296,47 @@ void SpeculativeJIT::compileObjectEquality(Node* node)
     jsValueResult(resultGPR, m_currentNode, DataFormatJSBoolean);
 }
 
+void SpeculativeJIT::compileObjectStrictEquality(Edge objectChild, Edge otherChild)
+{
+    SpeculateCellOperand op1(this, objectChild);
+    JSValueOperand op2(this, otherChild);
+    GPRTemporary result(this);
+
+    GPRReg op1GPR = op1.gpr();
+    GPRReg op2GPR = op2.gpr();
+    GPRReg resultGPR = result.gpr();
+
+    DFG_TYPE_CHECK(JSValueSource::unboxedCell(op1GPR), objectChild, SpecObject, m_jit.branchIfNotObject(op1GPR));
+
+    // At this point we know that we can perform a straight-forward equality comparison on pointer
+    // values because we are doing strict equality.
+    m_jit.compare64(MacroAssembler::Equal, op1GPR, op2GPR, resultGPR);
+    m_jit.or32(TrustedImm32(ValueFalse), resultGPR);
+    jsValueResult(resultGPR, m_currentNode, DataFormatJSBoolean);
+}
+    
+void SpeculativeJIT::compilePeepHoleObjectStrictEquality(Edge objectChild, Edge otherChild, Node* branchNode)
+{
+    BasicBlock* taken = branchNode->branchData()->taken.block;
+    BasicBlock* notTaken = branchNode->branchData()->notTaken.block;
+    
+    SpeculateCellOperand op1(this, objectChild);
+    JSValueOperand op2(this, otherChild);
+    
+    GPRReg op1GPR = op1.gpr();
+    GPRReg op2GPR = op2.gpr();
+    
+    DFG_TYPE_CHECK(JSValueSource::unboxedCell(op1GPR), objectChild, SpecObject, m_jit.branchIfNotObject(op1GPR));
+
+    if (taken == nextBlock()) {
+        branchPtr(MacroAssembler::NotEqual, op1GPR, op2GPR, notTaken);
+        jump(taken);
+    } else {
+        branchPtr(MacroAssembler::Equal, op1GPR, op2GPR, taken);
+        jump(notTaken);
+    }
+}
+
 void SpeculativeJIT::compileObjectToObjectOrOtherEquality(Edge leftChild, Edge rightChild)
 {
     SpeculateCellOperand op1(this, leftChild);
