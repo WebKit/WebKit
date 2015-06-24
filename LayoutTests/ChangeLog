@@ -1,3 +1,17 @@
+2015-06-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Win] Test gardening for fast/text/font-weight{,-zh}.html
+        https://bugs.webkit.org/show_bug.cgi?id=146266
+        <rdar://problem/21391628>
+        <rdar://problem/21391673>
+
+        Unreviewed.
+
+        * platform/win/fast/text/font-weights-expected.png: Added.
+        * platform/win/fast/text/font-weights-expected.txt: Added.
+        * platform/win/fast/text/font-weights-zh-expected.png: Added.
+        * platform/win/fast/text/font-weights-zh-expected.txt: Added.
+
 2015-06-24  Daniel Bates  <dabates@apple.com>
 
         Content Security Policy error message when frame load is blocked does not read well
