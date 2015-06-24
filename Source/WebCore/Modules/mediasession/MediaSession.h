@@ -29,9 +29,12 @@
 #if ENABLE(MEDIA_SESSION)
 
 #include "MediaRemoteControls.h"
+#include "MediaSessionMetadata.h"
 
 namespace WebCore {
 
+class Dictionary;
+class Document;
 class HTMLMediaElement;
 
 class MediaSession final : public RefCounted<MediaSession> {
@@ -41,7 +44,7 @@ public:
         Active,
         Interrupted
     };
-    
+
     static Ref<MediaSession> create(ScriptExecutionContext& context, const String& kind)
     {
         return adoptRef(*new MediaSession(context, kind));
@@ -54,6 +57,8 @@ public:
     MediaRemoteControls* controls(bool& isNull);
     
     State currentState() const { return m_currentState; }
+
+    void setMetadata(const Dictionary&);
 
     void releaseSession();
     
@@ -79,8 +84,10 @@ private:
     HashSet<HTMLMediaElement*> m_activeParticipatingElements;
     HashSet<HTMLMediaElement*>* m_iteratedActiveParticipatingElements { nullptr };
 
+    Document& m_document;
     const String m_kind;
     RefPtr<MediaRemoteControls> m_controls;
+    MediaSessionMetadata m_metadata;
 };
 
 } // namespace WebCore

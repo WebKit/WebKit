@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_SESSION)
 
+#include "Dictionary.h"
 #include "Event.h"
 #include "HTMLMediaElement.h"
 #include "MediaSessionManager.h"
@@ -35,7 +36,8 @@
 namespace WebCore {
 
 MediaSession::MediaSession(ScriptExecutionContext& context, const String& kind)
-    : m_kind(kind)
+    : m_document(downcast<Document>(context))
+    , m_kind(kind)
 {
     if (m_kind == "content")
         m_controls = adoptRef(*new MediaRemoteControls(context));
@@ -70,6 +72,33 @@ void MediaSession::removeMediaElement(HTMLMediaElement& element)
 void MediaSession::addActiveMediaElement(HTMLMediaElement& element)
 {
     m_activeParticipatingElements.add(&element);
+}
+
+void MediaSession::setMetadata(const Dictionary& metadata)
+{
+    // 5.1.3
+    // 1. Let media session be the current media session.
+    // 2. Let baseURL be the API base URL specified by the entry settings object.
+    // 3. Set media session's title to metadata's title.
+    String title;
+    metadata.get("title", title);
+
+    // 4. Set media session's artist name to metadata's artist.
+    String artist;
+    metadata.get("artist", artist);
+
+    // 5. Set media session's album name to metadata's album.
+    String album;
+    metadata.get("album", album);
+
+    // 6. If metadata's artwork is present, parse it using baseURL, and if that does not return failure, set media
+    //    session's artwork URL to the return value.
+    URL artworkURL;
+    String artworkPath;
+    if (metadata.get("artwork", artworkPath))
+        artworkURL = m_document.completeURL(artworkPath);
+
+    m_metadata = MediaSessionMetadata(title, artist, album, artworkURL);
 }
 
 void MediaSession::releaseSession()

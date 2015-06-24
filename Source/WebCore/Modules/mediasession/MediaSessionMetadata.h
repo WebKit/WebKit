@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=MEDIA_SESSION,
-    Constructor(MediaSessionKind kind),
-    ConstructorCallWith=ScriptExecutionContext,
-    ImplementationLacksVTable,
-] interface MediaSession {
-    readonly attribute MediaSessionKind kind;
-    readonly attribute MediaRemoteControls? controls;
+#ifndef MediaSessionMetadata_h
+#define MediaSessionMetadata_h
 
-    void setMetadata(Dictionary metadata);
+#if ENABLE(MEDIA_SESSION)
 
-    void releaseSession();
+#include "URL.h"
+
+namespace WebCore {
+
+struct MediaSessionMetadata {
+    MediaSessionMetadata() = default;
+
+    MediaSessionMetadata(const String& title, const String& artist, const String& album, const URL& artworkURL)
+        : m_title(title)
+        , m_artist(artist)
+        , m_album(album)
+        , m_artworkURL(artworkURL) { }
+
+    String title() const { return m_title; }
+    String artist() const { return m_artist; }
+    String album() const { return m_album; }
+    URL artworkURL() const { return m_artworkURL; }
+
+private:
+    String m_title;
+    String m_artist;
+    String m_album;
+    URL m_artworkURL;
 };
 
-enum MediaSessionKind {
-    "content",
-    "transient",
-    "transient-solo",
-    "ambient"
-};
+} // namespace WebCore
+
+#endif /* ENABLE(MEDIA_SESSION) */
+
+#endif /* MediaSessionMetadata_h */
