@@ -1,3 +1,47 @@
+2015-06-11  Sergio Villar Senin  <svillar@igalia.com>
+
+        intrinsic size keywords don't work for heights
+        https://bugs.webkit.org/show_bug.cgi?id=113610
+
+        Reviewed by Darin Adler.
+
+        Based on Blink's r148314 by <cbiesinger@chromium.org>.
+
+        * fast/css-intrinsic-dimensions/height-css-tables-collapsed-expected.html: Added.
+        * fast/css-intrinsic-dimensions/height-css-tables-collapsed.html: Added.
+        * fast/css-intrinsic-dimensions/height-css-tables-expected.html: Added.
+        * fast/css-intrinsic-dimensions/height-css-tables.html: Added.
+        * fast/css-intrinsic-dimensions/height-expected.html: Added.
+        * fast/css-intrinsic-dimensions/height-flexbox-expected.html: Added.
+        * fast/css-intrinsic-dimensions/height-flexbox.html: Added.
+        * fast/css-intrinsic-dimensions/height-positioned-expected.html: Added.
+        * fast/css-intrinsic-dimensions/height-positioned-replaced-expected.html: Added.
+        * fast/css-intrinsic-dimensions/height-positioned-replaced.html: Added.
+        * fast/css-intrinsic-dimensions/height-positioned.html: Added.
+        * fast/css-intrinsic-dimensions/height-property-value-expected.txt:
+        * fast/css-intrinsic-dimensions/height-property-value.html:
+        * fast/css-intrinsic-dimensions/height-property-value.html.orig: Copied from LayoutTests/fast/css-intrinsic-dimensions/height-property-value.html.
+        * fast/css-intrinsic-dimensions/height-replaced-expected.html: Added.
+        * fast/css-intrinsic-dimensions/height-replaced.html: Added.
+        * fast/css-intrinsic-dimensions/height-tables-collapsed-expected.html: Added.
+        * fast/css-intrinsic-dimensions/height-tables-collapsed.html: Added.
+        * fast/css-intrinsic-dimensions/height-tables-expected.html: Added.
+        * fast/css-intrinsic-dimensions/height-tables.html: Added.
+        * fast/css-intrinsic-dimensions/height.html: Added.
+        * fast/css-intrinsic-dimensions/resources/height-keyword-classes.css: Added.
+        (.min-content):
+        (.max-content):
+        (.fill-available):
+        (.fit-content):
+        (.max-height-min-content):
+        (.max-height-max-content):
+        (.max-height-fill-available):
+        (.max-height-fit-content):
+        (.min-height-min-content):
+        (.min-height-max-content):
+        (.min-height-fill-available):
+        (.min-height-fit-content):
+
 2015-06-23  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [OS X] Rebaseline fast/text/font-weight{,-zh}.html for El Capitan

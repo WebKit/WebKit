@@ -87,6 +87,8 @@ public:
     bool isPercent() const;
     bool isRelative() const;
     bool isUndefined() const;
+    bool isFillAvailable() const;
+    bool isFitContent() const;
 
     bool hasQuirk() const;
 
@@ -398,6 +400,16 @@ inline bool Length::isSpecified() const
 inline bool Length::isSpecifiedOrIntrinsic() const
 {
     return isSpecified() || isIntrinsic();
+}
+
+inline bool Length::isFillAvailable() const
+{
+    return type() == FillAvailable;
+}
+
+inline bool Length::isFitContent() const
+{
+    return type() == FitContent;
 }
 
 // FIXME: Does this need to be in the header? Is it valuable to inline? Does it get inlined?

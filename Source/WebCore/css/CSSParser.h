@@ -550,8 +550,7 @@ private:
     void setupParser(const char* prefix, unsigned prefixLength, StringView, const char* suffix, unsigned suffixLength);
     bool inShorthand() const { return m_inParseShorthand; }
 
-    bool validateWidth(ValueWithCalculation&);
-    bool validateHeight(ValueWithCalculation&);
+    bool isValidSize(ValueWithCalculation&);
 
     void deleteFontFaceOnlyValues();
 
