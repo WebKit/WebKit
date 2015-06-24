@@ -1318,6 +1318,9 @@ Color RenderThemeIOS::systemColor(CSSValueID cssValueID) const
 
     Color color;
     switch (cssValueID) {
+    case CSSValueAppleWirelessPlaybackTargetActive:
+        color = [getUIColorClass() systemBlueColor].CGColor;
+        break;
     case CSSValueAppleSystemBlue:
         color = [getUIColorClass() systemBlueColor].CGColor;
         break;

@@ -576,6 +576,9 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID) const
         color = convertNSColorToColor([NSColor windowFrameTextColor]);
         break;
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+    case CSSValueAppleWirelessPlaybackTargetActive:
+        color = convertNSColorToColor([NSColor systemBlueColor]);
+        break;
     case CSSValueAppleSystemBlue:
         color = convertNSColorToColor([NSColor systemBlueColor]);
         break;

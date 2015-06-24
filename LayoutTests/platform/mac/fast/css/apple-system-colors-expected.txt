@@ -7,4 +7,5 @@
 -apple-system-purple : rgb(204, 115, 225)
 -apple-system-red : rgb(255, 59, 48)
 -apple-system-yellow : rgb(255, 204, 0)
+-apple-wireless-playback-target-active : rgb(27, 173, 248)
 current-color with inherited -apple-system-blue : rgb(27, 173, 248)

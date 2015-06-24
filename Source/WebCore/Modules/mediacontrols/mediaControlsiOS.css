@@ -317,7 +317,7 @@ audio::-webkit-media-controls-wireless-playback-picker-button.playing,
 video::-webkit-media-controls-wireless-playback-picker-button.playing {
     opacity: 1;
     mix-blend-mode: normal;
-    background-color: -apple-system-blue;
+    background-color: -apple-wireless-playback-target-active;
 }
 
 /* ================== PICTURE IN PICTURE BUTTON ====================== */

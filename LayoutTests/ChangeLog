@@ -1,3 +1,19 @@
+2015-06-24  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Add a new color -apple-wireless-playback-target-active
+        https://bugs.webkit.org/show_bug.cgi?id=146269
+        <rdar://problem/21465189>
+
+        Reviewed by Dean Jackson.
+
+        Modify existing tests to include the new color value.
+
+        * fast/css/apple-system-colors-expected.txt:
+        * fast/css/apple-system-colors.html:
+        * platform/ios-simulator/fast/css/apple-system-colors-expected.txt:
+        * platform/mac-mavericks/fast/css/apple-system-colors-expected.txt:
+        * platform/mac/fast/css/apple-system-colors-expected.txt:
+
 2015-06-24  Doug Russell  <d_russell@apple.com>
 
         Bug 146177 - AX: AXObjectCache should try to use an unignored accessibilityObject
