@@ -1,3 +1,41 @@
+2015-06-24  Brady Eidson  <beidson@apple.com>
+
+        Update JavaScript dialog delegates to include a WKSecurityOriginRef argument.
+        <rdar://problem/21269187> and https://bugs.webkit.org/show_bug.cgi?id=146249
+
+        Reviewed by Alex Christensen.
+
+        - Update WKTR to the new client structure.
+        - Update existing TestWebKitAPI tests to either use the new client structure or
+          assign the old function signature to the updated variable name.
+        - Include a new test.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+
+        * TestWebKitAPI/Tests/WebKit2/CloseFromWithinCreatePage.cpp:
+        (TestWebKitAPI::runJavaScriptAlert):
+
+        * TestWebKitAPI/Tests/WebKit2/DocumentStartUserScriptAlertCrash.cpp:
+        (TestWebKitAPI::TEST):
+
+        * TestWebKitAPI/Tests/WebKit2/ModalAlertsSPI.cpp:
+        (TestWebKitAPI::analyzeDialogArguments):
+        (TestWebKitAPI::runJavaScriptAlert):
+        (TestWebKitAPI::runJavaScriptConfirm):
+        (TestWebKitAPI::runJavaScriptPrompt):
+        (TestWebKitAPI::createNewPage):
+        (TestWebKitAPI::TEST):
+
+        * TestWebKitAPI/Tests/mac/FullscreenZoomInitialFrame.mm:
+        (TestWebKitAPI::FullscreenZoomInitialFrame::initializeView):
+
+        * TestWebKitAPI/Tests/mac/PageVisibilityStateWithWindowChanges.mm:
+        (TestWebKitAPI::PageVisibilityStateWithWindowChanges::initializeView):
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::createWebViewWithOptions):
+
 2015-06-23  Dewei Zhu  <dewei_zhu@apple.com>
 
         Refactoring benchmark runner script to follow pep8 code style.

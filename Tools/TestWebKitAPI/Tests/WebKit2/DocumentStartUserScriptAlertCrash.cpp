@@ -36,7 +36,7 @@ namespace TestWebKitAPI {
 
 static bool done;
 
-static void runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void* clientInfo)
+static void runJavaScriptAlert_deprecatedForUseWithV0(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void* clientInfo)
 {
     ASSERT_NOT_NULL(frame);
 
@@ -57,7 +57,7 @@ TEST(WebKit2, DocumentStartUserScriptAlertCrashTest)
     memset(&uiClient, 0, sizeof(uiClient));
 
     uiClient.base.version = 0;
-    uiClient.runJavaScriptAlert = runJavaScriptAlert;
+    uiClient.runJavaScriptAlert_deprecatedForUseWithV0 = runJavaScriptAlert_deprecatedForUseWithV0;
 
     WKPageSetPageUIClient(webView.page(), &uiClient.base);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,17 +29,55 @@
 
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
+#include "Test.h"
+#include <WebKit/WKFrame.h>
+#include <WebKit/WKRetainPtr.h>
+#include <WebKit/WKSecurityOriginRef.h>
 
 namespace TestWebKitAPI {
 
-static bool testDone;
-static std::unique_ptr<PlatformWebView> openedWebView;
+static bool done;
+static unsigned dialogsSeen;
+static const unsigned dialogsExpected = 3;
 
-static void runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, WKSecurityOriginRef, const void* clientInfo)
+static void analyzeDialogArguments(WKPageRef page, WKFrameRef frame, WKSecurityOriginRef securityOrigin)
 {
-    // FIXME: Check that the alert text matches the storage.
-    testDone = true;
+    EXPECT_EQ(page, WKFrameGetPage(frame));
+
+    WKRetainPtr<WKURLRef> url = adoptWK(WKFrameCopyURL(frame));
+    WKRetainPtr<WKStringRef> urlString = adoptWK(WKURLCopyString(url.get()));
+    EXPECT_WK_STREQ("about:blank", urlString.get());
+
+    WKRetainPtr<WKStringRef> protocol = adoptWK(WKSecurityOriginCopyProtocol(securityOrigin));
+    EXPECT_WK_STREQ("file", protocol.get());
+
+    WKRetainPtr<WKStringRef> host = adoptWK(WKSecurityOriginCopyHost(securityOrigin));
+    EXPECT_WK_STREQ("", host.get());
+
+    EXPECT_EQ(WKSecurityOriginGetPort(securityOrigin), 0);
+
+    if (++dialogsSeen == dialogsExpected)
+        done = true;
 }
+
+static void runJavaScriptAlert(WKPageRef page, WKStringRef, WKFrameRef frame, WKSecurityOriginRef securityOrigin, const void*)
+{
+    analyzeDialogArguments(page, frame, securityOrigin);
+}
+
+static bool runJavaScriptConfirm(WKPageRef page, WKStringRef, WKFrameRef frame, WKSecurityOriginRef securityOrigin, const void*)
+{
+    analyzeDialogArguments(page, frame, securityOrigin);
+    return false;
+}
+
+static WKStringRef runJavaScriptPrompt(WKPageRef page, WKStringRef, WKStringRef, WKFrameRef frame, WKSecurityOriginRef securityOrigin, const void*)
+{
+    analyzeDialogArguments(page, frame, securityOrigin);
+    return nullptr;
+}
+
+static std::unique_ptr<PlatformWebView> openedWebView;
 
 static WKPageRef createNewPage(WKPageRef page, WKURLRequestRef urlRequest, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton mouseButton, const void *clientInfo)
 {
@@ -52,18 +90,18 @@ static WKPageRef createNewPage(WKPageRef page, WKURLRequestRef urlRequest, WKDic
 
     uiClient.base.version = 5;
     uiClient.runJavaScriptAlert = runJavaScriptAlert;
-    WKPageSetPageUIClient(openedWebView->page(), &uiClient.base);
+    uiClient.runJavaScriptConfirm = runJavaScriptConfirm;
+    uiClient.runJavaScriptPrompt = runJavaScriptPrompt;
 
-    WKPageClose(page);
+    WKPageSetPageUIClient(openedWebView->page(), &uiClient.base);
 
     WKRetain(openedWebView->page());
     return openedWebView->page();
 }
 
-TEST(WebKit2, CloseFromWithinCreatePage)
+TEST(WebKit2, ModalAlertsSPI)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
-
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
     PlatformWebView webView(context.get());
 
     WKPageUIClientV5 uiClient;
@@ -71,17 +109,15 @@ TEST(WebKit2, CloseFromWithinCreatePage)
 
     uiClient.base.version = 5;
     uiClient.createNewPage = createNewPage;
-    uiClient.runJavaScriptAlert = runJavaScriptAlert;
+
     WKPageSetPageUIClient(webView.page(), &uiClient.base);
 
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("close-from-within-create-page", "html"));
+    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("modal-alerts-in-new-about-blank-window", "html"));
     WKPageLoadURL(webView.page(), url.get());
 
-    Util::run(&testDone);
-
-    openedWebView = nullptr;
+    Util::run(&done);
 }
 
-}
+} // namespace TestWebKitAPI
 
 #endif

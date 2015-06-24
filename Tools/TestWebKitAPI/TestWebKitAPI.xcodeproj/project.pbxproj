@@ -51,6 +51,7 @@
 		51393E221523952D005F39C5 /* DOMWindowExtensionBasic_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51393E1D1523944A005F39C5 /* DOMWindowExtensionBasic_Bundle.cpp */; };
 		5142B2731517C8C800C32B19 /* ContextMenuCanCopyURL.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5142B2721517C89100C32B19 /* ContextMenuCanCopyURL.html */; };
 		517E7E04151119C100D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 517E7E031511187500D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.html */; };
+		51CB4AD81B3A079C00C1B1C6 /* ModalAlertsSPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51CB4AD71B3A079C00C1B1C6 /* ModalAlertsSPI.cpp */; };
 		51CD1C6C1B38CE4300142CA5 /* ModalAlerts.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51CD1C6A1B38CE3600142CA5 /* ModalAlerts.mm */; };
 		51CD1C721B38D48400142CA5 /* modal-alerts-in-new-about-blank-window.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51CD1C711B38D48400142CA5 /* modal-alerts-in-new-about-blank-window.html */; };
 		51E5C7021919C3B200D8B3E1 /* simple2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51E780361919AFF8001829A2 /* simple2.html */; };
@@ -519,6 +520,7 @@
 		5142B2721517C89100C32B19 /* ContextMenuCanCopyURL.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = ContextMenuCanCopyURL.html; sourceTree = "<group>"; };
 		517E7DFB15110EA600D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MemoryCachePruneWithinResourceLoadDelegate.mm; sourceTree = "<group>"; };
 		517E7E031511187500D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = MemoryCachePruneWithinResourceLoadDelegate.html; sourceTree = "<group>"; };
+		51CB4AD71B3A079C00C1B1C6 /* ModalAlertsSPI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModalAlertsSPI.cpp; sourceTree = "<group>"; };
 		51CD1C6A1B38CE3600142CA5 /* ModalAlerts.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModalAlerts.mm; sourceTree = "<group>"; };
 		51CD1C711B38D48400142CA5 /* modal-alerts-in-new-about-blank-window.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "modal-alerts-in-new-about-blank-window.html"; sourceTree = "<group>"; };
 		51E5C7041919EA5F00D8B3E1 /* ShouldKeepCurrentBackForwardListItemInList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShouldKeepCurrentBackForwardListItemInList.cpp; sourceTree = "<group>"; };
@@ -1005,6 +1007,7 @@
 				33DC8910141953A300747EF7 /* LoadCanceledNoServerRedirectCallback.cpp */,
 				33DC89131419579F00747EF7 /* LoadCanceledNoServerRedirectCallback_Bundle.cpp */,
 				8AA28C1916D2FA7B002FF4DB /* LoadPageOnCrash.cpp */,
+				51CB4AD71B3A079C00C1B1C6 /* ModalAlertsSPI.cpp */,
 				33BE5AF4137B5A6C00705813 /* MouseMoveAfterCrash.cpp */,
 				33BE5AF8137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp */,
 				93F1DB3014DA20760024C362 /* NewFirstVisuallyNonEmptyLayout.cpp */,
@@ -1626,6 +1629,7 @@
 				2E7765CF16C4D81100BA2BB1 /* mainMac.mm in Sources */,
 				41973B5B1AF2286A006C7B36 /* FileSystem.cpp in Sources */,
 				7A5623111AD5AF3E0096B920 /* MenuTypesForMouseEvents.cpp in Sources */,
+				51CB4AD81B3A079C00C1B1C6 /* ModalAlertsSPI.cpp in Sources */,
 				26F6E1F01ADC749B00DE696B /* DFAMinimizer.cpp in Sources */,
 				260BA5791B1D2E7B004FA07C /* DFACombiner.cpp in Sources */,
 				7A99D9941AD4A29D00373141 /* MenuTypesForMouseEvents.mm in Sources */,

@@ -213,9 +213,9 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WK
         0, // takeFocus
         focus,
         unfocus,
-        0, // runJavaScriptAlert
-        0, // runJavaScriptConfirm
-        0, // runJavaScriptPrompt
+        0, // runJavaScriptAlert_deprecatedForUseWithV0
+        0, // runJavaScriptAlert_deprecatedForUseWithV0
+        0, // runJavaScriptAlert_deprecatedForUseWithV0
         0, // setStatusText
         0, // mouseDidMoveOverElement_deprecatedForUseWithV0
         0, // missingPluginButtonClicked
@@ -260,6 +260,9 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WK
         0, // isPlayingAudioDidChange
         decidePolicyForUserMediaPermissionRequest,
         0, // didClickAutofillButton
+        0, // runJavaScriptAlert
+        0, // runJavaScriptConfirm
+        0, // runJavaScriptPrompt
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient.base);
     
@@ -458,9 +461,9 @@ void TestController::createWebViewWithOptions(WKDictionaryRef options)
         0, // takeFocus
         focus,
         unfocus,
-        0, // runJavaScriptAlert
-        0, // runJavaScriptConfirm
-        0, // runJavaScriptPrompt
+        0, // runJavaScriptAlert_deprecatedForUseWithV0
+        0, // runJavaScriptAlert_deprecatedForUseWithV0
+        0, // runJavaScriptAlert_deprecatedForUseWithV0
         0, // setStatusText
         0, // mouseDidMoveOverElement_deprecatedForUseWithV0
         0, // missingPluginButtonClicked
@@ -505,6 +508,9 @@ void TestController::createWebViewWithOptions(WKDictionaryRef options)
         0, // isPlayingAudioDidChange
         decidePolicyForUserMediaPermissionRequest,
         0, // didClickAutofillButton
+        0, // runJavaScriptAlert
+        0, // runJavaScriptConfirm
+        0, // runJavaScriptPrompt
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient.base);
 

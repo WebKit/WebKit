@@ -1,3 +1,16 @@
+2015-06-24  Brady Eidson  <beidson@apple.com>
+
+        Update JavaScript dialog delegates to include a WKSecurityOriginRef argument.
+        <rdar://problem/21269187> and https://bugs.webkit.org/show_bug.cgi?id=146249
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient): Call the new signature if the client has it set.
+          Otherwise fall back to the old signature.
+        * UIProcess/API/C/WKPageUIClient.h: Deprecate the old method signature, and add the new
+          one to the newest V5 client structure.
+
 2015-06-24  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         Remove some dead code from Download
