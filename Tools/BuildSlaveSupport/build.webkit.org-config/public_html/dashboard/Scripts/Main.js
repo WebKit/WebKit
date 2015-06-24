@@ -38,6 +38,7 @@ for (var i = 0; i < buildbots.length; ++i) {
                 branch: info.branch,
                 platform: info.platform.name,
                 heading: info.heading,
+                builder: info.builder,
                 combinedQueues: Object.keys(info.combinedQueues).map(function(combinedQueueID) { return buildbot.queues[combinedQueueID]; }),
             };
         } else
@@ -51,7 +52,12 @@ for (var i = 0; i < buildbots.length; ++i) {
             platform.builders = [];
 
         var categoryName;
-        if (queue.builder)
+        if ("combinedQueues" in queue)
+            if (queue.builder)
+                categoryName = "builderCombinedQueues";
+            else
+                categoryName = "otherCombinedQueues"
+        else if (queue.builder)
             categoryName = "builders";
         else if (queue.tester)
             categoryName = queue.testCategory;
@@ -61,8 +67,6 @@ for (var i = 0; i < buildbots.length; ++i) {
             categoryName = "leaks";
         else if (queue.staticAnalyzer)
             categoryName = "staticAnalyzer";
-        else if ("combinedQueues" in queue)
-            categoryName = "combinedQueues";
         else {
             console.assert("Unknown queue type.");
             continue;
@@ -233,6 +237,13 @@ function documentReady()
         cell.appendChild(view.element);
         row.appendChild(cell);
 
+        if ("builderCombinedQueues" in platformQueues) {
+            for (var i = 0; i < platformQueues.builderCombinedQueues.length; ++i) {
+                var view = new BuildbotCombinedQueueView(platformQueues.builderCombinedQueues[i]);
+                cell.appendChild(view.element);
+            }
+        }
+
         for (var testerKey in Buildbot.TestCategory) {
             var cell = document.createElement("td");
 
@@ -266,10 +277,9 @@ function documentReady()
             cell.appendChild(view.element);
         }
 
-        // Currently, all combined queues are in Other column.
-        if (platformQueues.combinedQueues) {
-            for (var i = 0; i < platformQueues.combinedQueues.length; ++i) {
-                var view = new BuildbotCombinedQueueView(platformQueues.combinedQueues[i]);
+        if ("otherCombinedQueues" in platformQueues) {
+            for (var i = 0; i < platformQueues.otherCombinedQueues.length; ++i) {
+                var view = new BuildbotCombinedQueueView(platformQueues.otherCombinedQueues[i]);
                 cell.appendChild(view.element);
             }
         }
