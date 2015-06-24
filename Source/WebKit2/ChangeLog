@@ -1,3 +1,20 @@
+2015-06-24  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [Mac] A checkmark is briefly visible next to the webpage context menu items when they're clicked
+        https://bugs.webkit.org/show_bug.cgi?id=146284
+        <rdar://problem/20297182>
+
+        Reviewed by Darin Adler.
+        
+        The default value of [NSPopUpButtonCell altersStateOfSelectedItem] is YES.
+        This makes the popup menu items checkable by default. We need to change the
+        value of this attribute to NO when creating the popup menu, so the items
+        are uncheckable. The value of this property needs to change back to YES
+        if context menu is about selecting an option and not executing a command.
+        
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::populate):
+
 2015-06-24  Brady Eidson  <beidson@apple.com>
 
         Update JavaScript dialog delegates to include a WKSecurityOriginRef argument.

@@ -339,6 +339,7 @@ void WebContextMenuProxyMac::populate(const Vector<RefPtr<WebContextMenuItem>>& 
         m_popup = adoptNS([[NSPopUpButtonCell alloc] initTextCell:@"" pullsDown:NO]);
         [m_popup setUsesItemFromMenu:NO];
         [m_popup setAutoenablesItems:NO];
+        [m_popup setAltersStateOfSelectedItem:NO];
     }
 
     NSMenu* menu = [m_popup menu];
