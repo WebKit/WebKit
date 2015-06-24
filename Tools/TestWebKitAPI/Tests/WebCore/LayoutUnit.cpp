@@ -231,5 +231,19 @@ TEST(WebCoreLayoutUnit, LayoutUnitFloor)
     ASSERT_EQ((LayoutUnit(intMinForLayoutUnit) + LayoutUnit(1)).floor(), intMinForLayoutUnit + 1);
 }
 
+TEST(WebCoreLayoutUnit, LayoutUnitPixelSnapping)
+{
+    for (int i = -100000; i <= 100000; ++i) {
+        ASSERT_EQ(roundToDevicePixel(LayoutUnit(i), 1), i);
+        ASSERT_EQ(roundToDevicePixel(LayoutUnit(i), 2), i);
+        ASSERT_EQ(roundToDevicePixel(LayoutUnit(i), 3), i);
+    }
+
+    for (float i = -10000; i < 0; i = i + 0.5)
+        ASSERT_FLOAT_EQ(roundToDevicePixel(LayoutUnit(i), 2), i);
+
+    for (float i = -10000.25; i < 0; i = i + 0.5)
+        ASSERT_FLOAT_EQ(roundToDevicePixel(LayoutUnit(i), 2), i + 0.25);
+}
 
 } // namespace TestWebKitAPI
