@@ -1,3 +1,10 @@
+2015-06-23  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (-[WKProcessAssertionBackgroundTaskManager init]):
+
 2015-06-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Crash performing drag-and-drop

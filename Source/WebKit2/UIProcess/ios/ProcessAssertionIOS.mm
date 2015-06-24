@@ -71,7 +71,7 @@ using WebKit::ProcessAssertionClient;
 
     _backgroundTask = UIBackgroundTaskInvalid;
 
-    WebKit::ApplicationStateTracker::singleton().addListener(self, _applicationWillEnterForeground, _applicationDidEnterBackground);
+    WebKit::ApplicationStateTracker::singleton().addListener(self, @selector(_applicationWillEnterForeground), @selector(_applicationDidEnterBackground));
 
     return self;
 }
