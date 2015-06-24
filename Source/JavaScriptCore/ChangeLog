@@ -1,3 +1,9 @@
+2015-06-23  Dan Bernstein  <mitz@apple.com>
+
+        Fixed iOS production builds.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2015-06-22  Darin Adler  <darin@apple.com>
 
         Make Array.join work directly on substrings without reifying them
