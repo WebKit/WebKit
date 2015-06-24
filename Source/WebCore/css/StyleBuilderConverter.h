@@ -104,9 +104,6 @@ public:
     static Optional<float> convertPerspective(StyleResolver&, CSSValue&);
     static Optional<Length> convertMarqueeIncrement(StyleResolver&, CSSValue&);
     static Optional<FilterOperations> convertFilterOperations(StyleResolver&, CSSValue&);
-#if ENABLE(FILTERS_LEVEL_2)
-    static Optional<FilterOperations> convertBackdropFilterOperations(StyleResolver&, CSSValue&);
-#endif
     static Vector<RefPtr<MaskImageOperation>> convertMaskImageOperations(StyleResolver&, CSSValue&);
 #if PLATFORM(IOS)
     static bool convertTouchCallout(StyleResolver&, CSSValue&);
@@ -1007,18 +1004,6 @@ inline Optional<FilterOperations> StyleBuilderConverter::convertFilterOperations
         return operations;
     return Nullopt;
 }
-
-#if ENABLE(FILTERS_LEVEL_2)
-inline Optional<FilterOperations> StyleBuilderConverter::convertBackdropFilterOperations(StyleResolver& styleResolver, CSSValue& value)
-{
-    FilterOperations operations;
-    if (styleResolver.createFilterOperations(value, operations)) {
-        operations.setUsedForBackdropFilters(true);
-        return operations;
-    }
-    return Nullopt;
-}
-#endif
 
 static inline WebKitCSSResourceValue* maskImageValueFromIterator(CSSValueList& maskImagesList, CSSValueList::iterator it)
 {

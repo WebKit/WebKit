@@ -192,10 +192,6 @@ static inline FilterOperations blendFilterOperations(const AnimationBase* anim, 
                 result.operations().append(fromOp ? fromOp : identityOp);
         }
     }
-#if ENABLE(FILTERS_LEVEL_2)
-    result.setUsedForBackdropFilters(from.isUsedForBackdropFilters() || to.isUsedForBackdropFilters());
-#endif
-
     return result;
 }
 

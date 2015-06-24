@@ -476,7 +476,7 @@ flex-wrap
 justify-content [Initial=initialContentAlignment, Converter=ContentAlignmentData]
 -webkit-justify-content = justify-content
 #if defined(ENABLE_FILTERS_LEVEL_2) && ENABLE_FILTERS_LEVEL_2
--webkit-backdrop-filter [ConditionalConverter=BackdropFilterOperations]
+-webkit-backdrop-filter [ConditionalConverter=FilterOperations]
 #endif
 justify-self [Initial=initialSelfAlignment, Converter=SelfOrDefaultAlignmentData]
 -webkit-font-size-delta [SkipBuilder]

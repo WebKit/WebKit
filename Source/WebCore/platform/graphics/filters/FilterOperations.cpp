@@ -51,9 +51,6 @@ FilterOperations::FilterOperations()
 FilterOperations& FilterOperations::operator=(const FilterOperations& other)
 {
     m_operations = other.m_operations;
-#if ENABLE(FILTERS_LEVEL_2)
-    m_usedForBackdropFilters = other.m_usedForBackdropFilters;
-#endif
     return *this;
 }
 
@@ -62,17 +59,12 @@ bool FilterOperations::operator==(const FilterOperations& o) const
     if (m_operations.size() != o.m_operations.size())
         return false;
 
-#if ENABLE(FILTERS_LEVEL_2)
-    if (m_usedForBackdropFilters != o.m_usedForBackdropFilters)
-        return false;
-#endif
-
     unsigned s = m_operations.size();
     for (unsigned i = 0; i < s; i++) {
         if (*m_operations[i] != *o.m_operations[i])
             return false;
     }
-    
+
     return true;
 }
 
@@ -82,7 +74,7 @@ bool FilterOperations::operationsMatch(const FilterOperations& other) const
     // If the sizes of the function lists don't match, the lists don't match
     if (numOperations != other.operations().size())
         return false;
-    
+
     // If the types of each function are not the same, the lists don't match
     for (size_t i = 0; i < numOperations; ++i) {
         if (!operations()[i]->isSameType(*other.operations()[i]))

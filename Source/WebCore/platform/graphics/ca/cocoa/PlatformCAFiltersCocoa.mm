@@ -33,6 +33,11 @@
 #import "QuartzCoreSPI.h"
 #import <QuartzCore/QuartzCore.h>
 
+#if ENABLE(FILTERS_LEVEL_2)
+@interface CABackdropLayer : CALayer
+@end
+#endif
+
 using namespace WebCore;
 
 // FIXME: Should share these values with FilterEffectRenderer::build() (https://bugs.webkit.org/show_bug.cgi?id=76008).
@@ -162,7 +167,7 @@ void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOper
             CAFilter *filter = [CAFilter filterWithType:kCAFilterGaussianBlur];
             [filter setValue:[NSNumber numberWithFloat:floatValueForLength(blurOperation.stdDeviation(), 0)] forKey:@"inputRadius"];
 #if ENABLE(FILTERS_LEVEL_2)
-            if (filters.isUsedForBackdropFilters())
+            if ([layer isKindOfClass:[CABackdropLayer class]])
                 [filter setValue:[NSNumber numberWithBool:YES] forKey:@"inputNormalizeEdges"];
 #endif
             [filter setName:filterName];
