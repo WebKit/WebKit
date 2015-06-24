@@ -1,3 +1,29 @@
+2015-06-24  Doug Russell  <d_russell@apple.com>
+
+        Bug 146177 - AX: AXObjectCache should try to use an unignored accessibilityObject 
+        when posting a selection notification when on the border between two accessibilityObjects
+        https://bugs.webkit.org/show_bug.cgi?id=146177
+
+        Reviewed by Darin Adler.
+
+        Add support for mapping WebCore Accessibility types into JSValueRef types
+        so they can be used in tests.
+
+        * DumpRenderTree/mac/AccessibilityNotificationHandler.mm:
+        (webAccessibilityObjectWrapperClass):
+        (-[AccessibilityNotificationHandler startObserving]):
+        (makeValueRefForValue):
+        (makeArrayRefForArray):
+        (makeObjectRefForDictionary):
+        (-[AccessibilityNotificationHandler _notificationReceived:]):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityNotificationHandler.mm:
+        (webAccessibilityObjectWrapperClass):
+        (-[AccessibilityNotificationHandler startObserving]):
+        (makeValueRefForValue):
+        (makeArrayRefForArray):
+        (makeObjectRefForDictionary):
+        (-[AccessibilityNotificationHandler _notificationReceived:]):
+
 2015-06-24  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: roundToDevicePixel() snaps to wrong value.

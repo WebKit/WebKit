@@ -37,6 +37,7 @@
 #import <JavaScriptCore/JSStringRef.h>
 #import <JavaScriptCore/JSStringRefCF.h>
 #import <WebKit/WebFrame.h>
+#import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
 
 @interface NSObject (WebAccessibilityObjectWrapperAdditions)
@@ -93,20 +94,67 @@
     JSValueProtect([mainFrame globalContext], m_notificationFunctionCallback);
 }
 
+static Class webAccessibilityObjectWrapperClass()
+{
+    static Class cls = objc_getClass("WebAccessibilityObjectWrapper");
+    ASSERT(cls);
+    return cls;
+}
+
 - (void)startObserving
 {
     // Once we start requesting notifications, it's on for the duration of the program.
     // This is to avoid any race conditions between tests turning this flag on and off. Instead
     // AccessibilityNotificationHandler can ignore events it doesn't care about.
-    id webAccessibilityObjectWrapperClass = NSClassFromString(@"WebAccessibilityObjectWrapper");
-    ASSERT(webAccessibilityObjectWrapperClass);
-    [webAccessibilityObjectWrapperClass accessibilitySetShouldRepostNotifications:YES];
+    [webAccessibilityObjectWrapperClass() accessibilitySetShouldRepostNotifications:YES];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_notificationReceived:) name:@"AXDRTNotification" object:nil];
 }
 
 - (void)stopObserving
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+static JSValueRef makeValueRefForValue(JSContextRef context, id value)
+{
+    if ([value isKindOfClass:[NSString class]])
+        return JSValueMakeString(context, adopt([value createJSStringRef]).get());
+    if ([value isKindOfClass:[NSNumber class]]) {
+        if (!strcmp([value objCType], @encode(BOOL)))
+            return JSValueMakeBoolean(context, [value boolValue]);
+        return JSValueMakeNumber(context, [value doubleValue]);
+    }
+    if ([value isKindOfClass:webAccessibilityObjectWrapperClass()])
+        return AccessibilityUIElement::makeJSAccessibilityUIElement(context, value);
+    if ([value isKindOfClass:[NSDictionary class]])
+        return makeObjectRefForDictionary(context, value);
+    if ([value isKindOfClass:[NSArray class]])
+        return makeArrayRefForArray(context, value);
+    return nullptr;
+}
+
+static JSValueRef makeArrayRefForArray(JSContextRef context, NSArray *array)
+{
+    NSUInteger count = array.count;
+    JSValueRef arguments[count];
+
+    for (NSUInteger i = 0; i < count; i++)
+        arguments[i] = makeValueRefForValue(context, [array objectAtIndex:i]);
+
+    return JSObjectMakeArray(context, count, arguments, nullptr);
+}
+
+static JSValueRef makeObjectRefForDictionary(JSContextRef context, NSDictionary *dictionary)
+{
+    JSObjectRef object = JSObjectMake(context, nullptr, nullptr);
+
+    [dictionary enumerateKeysAndObjectsUsingBlock:^(NSString *key, id obj, BOOL *stop)
+    {
+        if (JSValueRef propertyValue = makeValueRefForValue(context, obj))
+            JSObjectSetProperty(context, object, adopt([key createJSStringRef]).get(), propertyValue, kJSPropertyAttributeNone, nullptr);
+    }];
+
+    return object;
 }
 
 - (void)_notificationReceived:(NSNotification *)notification
@@ -117,27 +165,22 @@
     if (m_platformElement && m_platformElement != [notification object])
         return;
 
-    NSString *userInfoJSONValue = [[notification userInfo] objectForKey:@"userInfo"];
+    NSDictionary *userInfo = [[notification userInfo] objectForKey:@"userInfo"];
 
-    JSRetainPtr<JSStringRef> jsNotification(Adopt, [notificationName createJSStringRef]);
-    JSValueRef notificationNameArgument = JSValueMakeString([mainFrame globalContext], jsNotification.get());
-    JSValueRef userInfoJSONValueArgument = nil;
-    if ([userInfoJSONValue length]) {
-        JSRetainPtr<JSStringRef> jsUserInfoJSONValue(Adopt, [userInfoJSONValue createJSStringRef]);
-        userInfoJSONValueArgument = JSValueMakeFromJSONString([mainFrame globalContext], jsUserInfoJSONValue.get());
-    }
+    JSValueRef notificationNameArgument = JSValueMakeString([mainFrame globalContext], adopt([notificationName createJSStringRef]).get());
+    JSValueRef userInfoArgument = makeObjectRefForDictionary([mainFrame globalContext], userInfo);
     if (m_platformElement) {
         // Listener for one element gets the notification name and userInfo.
         JSValueRef arguments[2];
         arguments[0] = notificationNameArgument;
-        arguments[1] = userInfoJSONValueArgument;
+        arguments[1] = userInfoArgument;
         JSObjectCallAsFunction([mainFrame globalContext], m_notificationFunctionCallback, 0, 2, arguments, 0);
     } else {
         // A global listener gets the element, notification name and userInfo.
         JSValueRef arguments[3];
         arguments[0] = AccessibilityUIElement::makeJSAccessibilityUIElement([mainFrame globalContext], AccessibilityUIElement([notification object]));
         arguments[1] = notificationNameArgument;
-        arguments[2] = userInfoJSONValueArgument;
+        arguments[2] = userInfoArgument;
         JSObjectCallAsFunction([mainFrame globalContext], m_notificationFunctionCallback, 0, 2, arguments, 0);
     }
 }

@@ -1,3 +1,16 @@
+2015-06-24  Doug Russell  <d_russell@apple.com>
+
+        Bug 146177 - AX: AXObjectCache should try to use an unignored accessibilityObject 
+        when posting a selection notification when on the border between two accessibilityObjects
+        https://bugs.webkit.org/show_bug.cgi?id=146177
+
+        Add an adopt() function to simplify JSRetainPtr<JSStringRef> { Adopt, string } to adopt(string).
+
+        Reviewed by Darin Adler.
+
+        * API/JSRetainPtr.h:
+        (adopt):
+
 2015-06-24  Keith Miller  <keith_miller@apple.com>
 
         Strict Equality on objects should only check that one of the two sides is an object.

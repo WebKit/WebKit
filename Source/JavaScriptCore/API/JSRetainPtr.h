@@ -75,6 +75,16 @@ private:
     T m_ptr;
 };
 
+inline JSRetainPtr<JSStringRef> adopt(JSStringRef o)
+{
+    return JSRetainPtr<JSStringRef>(Adopt, o);
+}
+
+inline JSRetainPtr<JSGlobalContextRef> adopt(JSGlobalContextRef o)
+{
+    return JSRetainPtr<JSGlobalContextRef>(Adopt, o);
+}
+
 template<typename T> inline JSRetainPtr<T>::JSRetainPtr(const JSRetainPtr& o)
     : m_ptr(o.m_ptr)
 {

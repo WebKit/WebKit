@@ -457,6 +457,30 @@ AccessibilityObject* AccessibilityObject::parentObjectUnignored() const
     return parent;
 }
 
+AccessibilityObject* AccessibilityObject::previousSiblingUnignored(int limit) const
+{
+    AccessibilityObject* previous;
+    ASSERT(limit >= 0);
+    for (previous = previousSibling(); previous && previous->accessibilityIsIgnored(); previous = previous->previousSibling()) {
+        limit--;
+        if (limit <= 0)
+            break;
+    }
+    return previous;
+}
+
+AccessibilityObject* AccessibilityObject::nextSiblingUnignored(int limit) const
+{
+    AccessibilityObject* next;
+    ASSERT(limit >= 0);
+    for (next = nextSibling(); next && next->accessibilityIsIgnored(); next = next->nextSibling()) {
+        limit--;
+        if (limit <= 0)
+            break;
+    }
+    return next;
+}
+
 AccessibilityObject* AccessibilityObject::firstAccessibleObjectFromNode(const Node* node)
 {
     if (!node)

@@ -394,17 +394,22 @@ static BOOL accessibilityShouldRepostNotifications;
         [self accessibilityPostedNotification:notificationName userInfo:nil];
 }
 
-static NSArray *arrayRemovingNonJSONTypes(NSArray *array)
+static bool isValueTypeSupported(id value)
+{
+    return [value isKindOfClass:[NSString class]] || [value isKindOfClass:[NSNumber class]] || [value isKindOfClass:[WebAccessibilityObjectWrapperBase class]];
+}
+
+static NSArray *arrayRemovingNonSupportedTypes(NSArray *array)
 {
     ASSERT([array isKindOfClass:[NSArray class]]);
     NSMutableArray *mutableArray = [array mutableCopy];
     for (NSUInteger i = 0; i < [mutableArray count];) {
         id value = [mutableArray objectAtIndex:i];
         if ([value isKindOfClass:[NSDictionary class]])
-            [mutableArray replaceObjectAtIndex:i withObject:dictionaryRemovingNonJSONTypes(value)];
+            [mutableArray replaceObjectAtIndex:i withObject:dictionaryRemovingNonSupportedTypes(value)];
         else if ([value isKindOfClass:[NSArray class]])
-            [mutableArray replaceObjectAtIndex:i withObject:arrayRemovingNonJSONTypes(value)];
-        else if (!([value isKindOfClass:[NSString class]] || [value isKindOfClass:[NSNumber class]])) {
+            [mutableArray replaceObjectAtIndex:i withObject:arrayRemovingNonSupportedTypes(value)];
+        else if (!isValueTypeSupported(value)) {
             [mutableArray removeObjectAtIndex:i];
             continue;
         }
@@ -413,17 +418,19 @@ static NSArray *arrayRemovingNonJSONTypes(NSArray *array)
     return [mutableArray autorelease];
 }
 
-static NSDictionary *dictionaryRemovingNonJSONTypes(NSDictionary *dictionary)
+static NSDictionary *dictionaryRemovingNonSupportedTypes(NSDictionary *dictionary)
 {
+    if (!dictionary)
+        return nil;
     ASSERT([dictionary isKindOfClass:[NSDictionary class]]);
     NSMutableDictionary *mutableDictionary = [dictionary mutableCopy];
     for (NSString *key in dictionary) {
         id value = [dictionary objectForKey:key];
         if ([value isKindOfClass:[NSDictionary class]])
-            [mutableDictionary setObject:dictionaryRemovingNonJSONTypes(value) forKey:key];
+            [mutableDictionary setObject:dictionaryRemovingNonSupportedTypes(value) forKey:key];
         else if ([value isKindOfClass:[NSArray class]])
-            [mutableDictionary setObject:arrayRemovingNonJSONTypes(value) forKey:key];
-        else if (!([value isKindOfClass:[NSString class]] || [value isKindOfClass:[NSNumber class]]))
+            [mutableDictionary setObject:arrayRemovingNonSupportedTypes(value) forKey:key];
+        else if (!isValueTypeSupported(value))
             [mutableDictionary removeObjectForKey:key];
     }
     return [mutableDictionary autorelease];
@@ -433,18 +440,8 @@ static NSDictionary *dictionaryRemovingNonJSONTypes(NSDictionary *dictionary)
 {
     if (accessibilityShouldRepostNotifications) {
         ASSERT(notificationName);
-        NSDictionary *info = nil;
-        if (userInfo) {
-            NSData *userInfoData = [NSJSONSerialization dataWithJSONObject:dictionaryRemovingNonJSONTypes(userInfo) options:(NSJSONWritingOptions)0 error:nil];
-            if (userInfoData) {
-                NSString *userInfoString = [[NSString alloc] initWithData:userInfoData encoding:NSUTF8StringEncoding];
-                if (userInfoString)
-                    info = [NSDictionary dictionaryWithObjectsAndKeys:notificationName, @"notificationName", userInfoString, @"userInfo", nil];
-                [userInfoString release];
-            }
-        }
-        if (!info)
-            info = [NSDictionary dictionaryWithObjectsAndKeys:notificationName, @"notificationName", nil];
+        userInfo = dictionaryRemovingNonSupportedTypes(userInfo);
+        NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:notificationName, @"notificationName", userInfo, @"userInfo", nil];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"AXDRTNotification" object:self userInfo:info];
     }
 }

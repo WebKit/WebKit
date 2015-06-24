@@ -53,7 +53,7 @@ void FrameSelection::notifyAccessibilityForSelectionChange(const AXTextStateChan
 
     if (m_selection.start().isNotNull() && m_selection.end().isNotNull()) {
         if (AXObjectCache* cache = document->existingAXObjectCache())
-            cache->postTextStateChangeNotification(m_selection.start().deprecatedNode(), intent, m_selection);
+            cache->postTextStateChangeNotification(m_selection.start(), intent, m_selection);
     }
 
 #if !PLATFORM(IOS)

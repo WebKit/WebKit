@@ -1006,16 +1006,56 @@ void AXObjectCache::postTextStateChangeNotification(Node* node, const AXTextStat
 #if PLATFORM(COCOA)
     stopCachingComputedObjectAttributes();
 
+    postTextStateChangeNotification(getOrCreate(node), intent, selection);
+#else
+    postNotification(node->renderer(), AXObjectCache::AXSelectedTextChanged, TargetObservableParent);
+    UNUSED_PARAM(intent);
+    UNUSED_PARAM(selection);
+#endif
+}
+
+void AXObjectCache::postTextStateChangeNotification(const Position& position, const AXTextStateChangeIntent& intent, const VisibleSelection& selection)
+{
+    Node* node = position.deprecatedNode();
+    if (!node)
+        return;
+
+    stopCachingComputedObjectAttributes();
+
+#if PLATFORM(COCOA)
     AccessibilityObject* object = getOrCreate(node);
+    if (object && object->accessibilityIsIgnored()) {
+        if (position.atLastEditingPositionForNode()) {
+            if (AccessibilityObject* nextSibling = object->nextSiblingUnignored(1))
+                object = nextSibling;
+        } else if (position.atFirstEditingPositionForNode()) {
+            if (AccessibilityObject* previousSibling = object->previousSiblingUnignored(1))
+                object = previousSibling;
+        }
+    }
+
+    postTextStateChangeNotification(object, intent, selection);
+#else
+    postTextStateChangeNotification(node, intent, selection);
+#endif
+}
+
+void AXObjectCache::postTextStateChangeNotification(AccessibilityObject* object, const AXTextStateChangeIntent& intent, const VisibleSelection& selection)
+{
+    stopCachingComputedObjectAttributes();
+
+#if PLATFORM(COCOA)
     if (object) {
         if (isPasswordFieldOrContainedByPasswordField(object))
             return;
-        object = object->observableObject();
+
+        if (auto observableObject = object->observableObject())
+            object = observableObject;
     }
 
     postTextStateChangePlatformNotification(object, (intent.type == AXTextStateChangeTypeUnknown || m_isSynchronizingSelection) ? m_textSelectionIntent : intent, selection);
 #else
-    postNotification(node->renderer(), AXObjectCache::AXSelectedTextChanged, TargetObservableParent);
+    UNUSED_PARAM(object);
     UNUSED_PARAM(intent);
     UNUSED_PARAM(selection);
 #endif
