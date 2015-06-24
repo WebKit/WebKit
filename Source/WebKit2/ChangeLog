@@ -1,3 +1,21 @@
+2015-06-23  Dan Bernstein  <mitz@apple.com>
+
+        Restore binary compatibility with iOS 8 Safari after r185877
+        https://bugs.webkit.org/show_bug.cgi?id=146263
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/spi/Cocoa: Added.
+        * Platform/spi/Cocoa/NSInvocationSPI.h: Added.
+
+        * UIProcess/API/Cocoa/WKSecurityOrigin.mm:
+        (-[WKSecurityOrigin methodSignatureForSelector:]): Override to check _WKSecurityOrigin for
+        possible category methods with the specified selector.
+        (-[WKSecurityOrigin forwardInvocation:]): Invoke using the implementation of the
+        _WKSecurityOrigin category method.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-06-23  Anders Carlsson  <andersca@apple.com>
 
         Add operator! and copy/move constructors to WeakObjCPtr

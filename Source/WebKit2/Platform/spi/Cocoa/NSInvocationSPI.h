@@ -23,69 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKSecurityOriginInternal.h"
+#if USE(APPLE_INTERNAL_SDK)
 
-#if WK_API_ENABLED
+#import <Foundation/NSPrivateDecls.h>
 
-#import "NSInvocationSPI.h"
-#import "_WKSecurityOrigin.h"
-#import <WebCore/ResourceRequest.h>
-#import <WebCore/SecurityOrigin.h>
-#import <wtf/RefPtr.h>
+#else
 
-@implementation WKSecurityOrigin
-
-- (void)dealloc
-{
-    _securityOrigin->~SecurityOrigin();
-
-    [super dealloc];
-}
-
-- (NSString *)description
-{
-    return [NSString stringWithFormat:@"<%@: %p; protocol = %@; host = %@; port = %li>", NSStringFromClass(self.class), self, self.protocol, self.host, (long)self.port];
-}
-
-- (NSString *)protocol
-{
-    return _securityOrigin->securityOrigin().protocol();
-}
-
-- (NSString *)host
-{
-    return _securityOrigin->securityOrigin().host();
-}
-
-- (NSInteger)port
-{
-    return _securityOrigin->securityOrigin().port();
-}
-
-#pragma mark WKObject protocol implementation
-
-- (API::Object&)_apiObject
-{
-    return *_securityOrigin;
-}
-
-#pragma mark iOS 8 Safari binary compatibility
-
-#if PLATFORM(IOS)
-
-- (NSMethodSignature *)methodSignatureForSelector:(SEL)selector
-{
-    return [_WKSecurityOrigin instanceMethodSignatureForSelector:selector];
-}
-
-- (void)forwardInvocation:(NSInvocation *)invocation
-{
-    [invocation invokeUsingIMP:[_WKSecurityOrigin instanceMethodForSelector:invocation.selector]];
-}
-
-#endif
-
+@interface NSInvocation ()
+- (void)invokeUsingIMP:(IMP)imp;
 @end
 
-#endif // WK_API_ENABLED
+#endif // USE(APPLE_INTERNAL_SDK)

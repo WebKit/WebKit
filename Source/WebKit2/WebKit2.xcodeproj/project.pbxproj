@@ -758,6 +758,7 @@
 		373D122D18A4B6EB0066D9CC /* WKWebProcessPlugInFramePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 373D122C18A4B6A80066D9CC /* WKWebProcessPlugInFramePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3743925818BC4C60001C8675 /* WKUIDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3743925718BC4C60001C8675 /* WKUIDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		374436881820E7240049579F /* WKObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 374436871820E7240049579F /* WKObject.mm */; };
+		3754D5451B3A29FD003A4C7F /* NSInvocationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 3754D5441B3A29FD003A4C7F /* NSInvocationSPI.h */; };
 		3760881E150413E900FC82C7 /* WebRenderObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3760881C150413E900FC82C7 /* WebRenderObject.cpp */; };
 		3760881F150413E900FC82C7 /* WebRenderObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 3760881D150413E900FC82C7 /* WebRenderObject.h */; };
 		37608822150414F700FC82C7 /* WKRenderObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37608820150414F700FC82C7 /* WKRenderObject.cpp */; };
@@ -2904,6 +2905,7 @@
 		373D122C18A4B6A80066D9CC /* WKWebProcessPlugInFramePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebProcessPlugInFramePrivate.h; sourceTree = "<group>"; };
 		3743925718BC4C60001C8675 /* WKUIDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUIDelegatePrivate.h; sourceTree = "<group>"; };
 		374436871820E7240049579F /* WKObject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKObject.mm; sourceTree = "<group>"; };
+		3754D5441B3A29FD003A4C7F /* NSInvocationSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSInvocationSPI.h; path = Cocoa/NSInvocationSPI.h; sourceTree = "<group>"; };
 		375FB4731883415600BE34D4 /* Info-iOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-iOS.plist"; sourceTree = "<group>"; };
 		3760881C150413E900FC82C7 /* WebRenderObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebRenderObject.cpp; sourceTree = "<group>"; };
 		3760881D150413E900FC82C7 /* WebRenderObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebRenderObject.h; sourceTree = "<group>"; };
@@ -5256,6 +5258,14 @@
 			path = posix;
 			sourceTree = "<group>";
 		};
+		3754D5411B3A2998003A4C7F /* Cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				3754D5441B3A29FD003A4C7F /* NSInvocationSPI.h */,
+			);
+			name = Cocoa;
+			sourceTree = "<group>";
+		};
 		37C4C08318149C2A003688B9 /* Cocoa */ = {
 			isa = PBXGroup;
 			children = (
@@ -7314,6 +7324,7 @@
 		CE1A0BCA1A48E6C60054EF74 /* spi */ = {
 			isa = PBXGroup;
 			children = (
+				3754D5411B3A2998003A4C7F /* Cocoa */,
 				CE1A0BCB1A48E6C60054EF74 /* ios */,
 			);
 			path = spi;
@@ -7536,6 +7547,7 @@
 				7C89D2981A6753B2003A5FDE /* APIPageConfiguration.h in Headers */,
 				E4E864931B16750700C82F40 /* VersionChecks.h in Headers */,
 				1AC1336C18565C7A00F3EC05 /* APIPageHandle.h in Headers */,
+				3754D5451B3A29FD003A4C7F /* NSInvocationSPI.h in Headers */,
 				1AFDD3151891B54000153970 /* APIPolicyClient.h in Headers */,
 				7CE4D2201A4914CA00C7F152 /* APIProcessPoolConfiguration.h in Headers */,
 				F634445612A885C8000612D8 /* APISecurityOrigin.h in Headers */,
