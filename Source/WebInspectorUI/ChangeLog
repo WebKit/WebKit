@@ -1,5 +1,17 @@
 2015-06-23  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: TextEditor scroll position not correctly restored when switching tabs
+        https://bugs.webkit.org/show_bug.cgi?id=146254
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor.prototype.updateLayout):
+        Workaround a larger issue with ContentView restoration so that
+        TextEditors restore their scroll position as expected.
+
+2015-06-23  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Some brief previews are incorrectly treated as lossless
         https://bugs.webkit.org/show_bug.cgi?id=146247
 

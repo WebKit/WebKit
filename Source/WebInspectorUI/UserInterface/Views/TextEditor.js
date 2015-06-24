@@ -506,7 +506,11 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.Object
 
     updateLayout(force)
     {
-        this._codeMirror.refresh();
+        // FIXME: <https://webkit.org/b/146256> Web Inspector: Nested ContentBrowsers / ContentViewContainers cause too many ContentView updates
+        // Ideally we would not get an updateLayout call if we are not visible. We should restructure ContentView
+        // show/hide restoration to reduce duplicated work and solve this in the process.
+        if (this._visible)
+            this._codeMirror.refresh();
     }
 
     shown()
