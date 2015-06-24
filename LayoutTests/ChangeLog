@@ -1,3 +1,22 @@
+2015-06-24  Daniel Bates  <dabates@apple.com>
+
+        LayoutTests/http/tests/security/contentSecurityPolicy/media-src-track-block.html always passes
+        https://bugs.webkit.org/show_bug.cgi?id=146272
+
+        Reviewed by Darin Adler.
+
+        Fixes an issue where the test LayoutTests/http/tests/security/contentSecurityPolicy/media-src-track-block.html
+        will always pass regardless of whether the Content Security Policy <meta> tag is present because
+        the external text track file is not valid WebVTT-formatted file.
+
+        The test verifies that the external text track file LayoutTests/http/tests/security/contentSecurityPolicy/resources/track.vtt
+        fails to load when the Content Security Policy of the page disallows loading of all media (media-src: "none")
+        by listening for a DOM error event to be dispatched to the <track>. And the text track file is not a valid
+        WebVTT-formatted file. So, it will always fail to load; => a DOM error event is always dispatched to the
+        <track>; => the test always passes.
+
+        * http/tests/security/contentSecurityPolicy/resources/track.vtt:
+
 2015-06-11  Sergio Villar Senin  <svillar@igalia.com>
 
         intrinsic size keywords don't work for heights
