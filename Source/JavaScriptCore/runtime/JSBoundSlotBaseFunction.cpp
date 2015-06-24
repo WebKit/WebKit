@@ -85,8 +85,8 @@ void JSBoundSlotBaseFunction::finishCreation(VM& vm, NativeExecutable* executabl
 {
     Base::finishCreation(vm, executable, isSetter(), name);
     ASSERT(inherits(info()));
-    ASSERT(!boundSlotBase);
-    ASSERT(!getterSetter);
+    ASSERT(boundSlotBase);
+    ASSERT(getterSetter);
     m_boundSlotBase.set(vm, this, boundSlotBase);
     m_getterSetter.set(vm, this, getterSetter);
 }
