@@ -315,15 +315,6 @@ public:
     // The purpose of this function is to answer whether or not the scroll view is currently visible. Animations and painting updates can be suspended if
     // we know that we are either not in a window right now or if that window is not visible.
     bool isOffscreen() const;
-    
-    // These functions are used to enable scrollbars to avoid window resizer controls that overlap the scroll view. This happens on Mac
-    // for example.
-    virtual IntRect windowResizerRect() const { return IntRect(); }
-    bool containsScrollbarsAvoidingResizer() const;
-    void adjustScrollbarsAvoidingResizerCount(int overlapDelta);
-    WEBCORE_EXPORT void windowResizerRectChanged();
-
-    virtual void setParent(ScrollView*) override; // Overridden to update the overlapping scrollbar count.
 
     // Called when our frame rect changes (or the rect/scroll position of an ancestor changes).
     virtual void frameRectsChanged() override;
@@ -468,8 +459,6 @@ private:
     std::unique_ptr<IntSize> m_deferredScrollDelta; // Needed for WebKit scrolling
     std::unique_ptr<std::pair<IntPoint, IntPoint>> m_deferredScrollPositions; // Needed for platform widget scrolling
 
-
-    int m_scrollbarsAvoidingResizer;
     bool m_scrollbarsSuppressed;
 
     bool m_inUpdateScrollbars;

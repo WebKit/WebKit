@@ -1,3 +1,14 @@
+2015-06-23  Anders Carlsson  <andersca@apple.com>
+
+        Remove windowResizerRect code, nobody is using it anymore
+        https://bugs.webkit.org/show_bug.cgi?id=146265
+
+        Reviewed by Beth Dakin.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::windowResizerRect): Deleted.
+
 2015-06-22  Chris Dumez  <cdumez@apple.com>
 
         [WK1] WebAllowDenyPolicyListener.denyOnlyThisRequest() should not start a new permission request

@@ -148,8 +148,6 @@ public:
     virtual void setStatusbarText(const String&) = 0;
     virtual KeyboardUIMode keyboardUIMode() = 0;
 
-    virtual IntRect windowResizerRect() const = 0;
-
     // Methods used by HostWindow.
     virtual bool supportsImmediateInvalidation() { return false; }
     virtual void invalidateRootView(const IntRect&) = 0;

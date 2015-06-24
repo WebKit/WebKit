@@ -134,12 +134,6 @@ NSString *WebConsoleMessageErrorMessageLevel = @"ErrorMessageLevel";
 - (void)setIsSelected:(BOOL)isSelected;
 @end
 
-#if !PLATFORM(IOS)
-@interface NSWindow (AppKitSecretsIKnowAbout)
-- (NSRect)_growBoxRect;
-@end
-#endif
-
 using namespace WebCore;
 using namespace HTMLNames;
 
@@ -555,15 +549,6 @@ void WebChromeClient::setStatusbarText(const String& status)
     NSAutoreleasePool* localPool = [[NSAutoreleasePool alloc] init];
     CallUIDelegate(m_webView, @selector(webView:setStatusText:), (NSString *)status);
     [localPool drain];
-}
-
-IntRect WebChromeClient::windowResizerRect() const
-{
-#if !PLATFORM(IOS)
-    return enclosingIntRect([[m_webView window] _growBoxRect]);
-#else
-    return IntRect();
-#endif
 }
 
 bool WebChromeClient::supportsImmediateInvalidation()

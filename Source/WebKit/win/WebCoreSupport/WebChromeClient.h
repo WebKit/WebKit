@@ -90,7 +90,6 @@ public:
     virtual void setStatusbarText(const WTF::String&);
 
     virtual WebCore::KeyboardUIMode keyboardUIMode();
-    virtual WebCore::IntRect windowResizerRect() const;
 
     virtual void invalidateRootView(const WebCore::IntRect&);
     virtual void invalidateContentsAndRootView(const WebCore::IntRect&);

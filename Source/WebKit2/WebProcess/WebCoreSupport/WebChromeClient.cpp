@@ -436,11 +436,6 @@ KeyboardUIMode WebChromeClient::keyboardUIMode()
     return m_page->keyboardUIMode();
 }
 
-IntRect WebChromeClient::windowResizerRect() const
-{
-    return m_page->windowResizerRect();
-}
-
 void WebChromeClient::invalidateRootView(const IntRect&)
 {
     // Do nothing here, there's no concept of invalidating the window in the web process.

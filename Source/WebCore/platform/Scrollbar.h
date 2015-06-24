@@ -61,7 +61,7 @@ public:
     virtual ScrollView* parent() const override { return Widget::parent(); }
     virtual ScrollView* root() const override;
 
-    virtual void setFrameRect(const IntRect&) override;
+    virtual void setFrameRect(const IntRect& rect) override { Widget::setFrameRect(rect); }
     virtual IntRect frameRect() const override { return Widget::frameRect(); }
 
     virtual void invalidate() override { Widget::invalidate(); }
@@ -140,8 +140,6 @@ public:
 
     ScrollbarTheme* theme() const { return m_theme; }
 
-    virtual void setParent(ScrollView*) override;
-
     bool suppressInvalidation() const { return m_suppressInvalidation; }
     void setSuppressInvalidation(bool s) { m_suppressInvalidation = s; }
 
@@ -197,7 +195,6 @@ protected:
     bool m_enabled;
 
     Timer m_scrollTimer;
-    bool m_overlapsResizer;
 
     bool m_suppressInvalidation;
 

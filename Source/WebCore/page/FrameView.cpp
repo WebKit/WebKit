@@ -3401,13 +3401,6 @@ void FrameView::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& rec
     invalidateRect(dirtyRect);
 }
 
-IntRect FrameView::windowResizerRect() const
-{
-    if (Page* page = frame().page())
-        return page->chrome().windowResizerRect();
-    return IntRect();
-}
-
 float FrameView::visibleContentScaleFactor() const
 {
     if (!frame().isMainFrame() || !frame().settings().delegatesPageScaling())

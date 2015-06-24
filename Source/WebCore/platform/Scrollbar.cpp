@@ -77,7 +77,6 @@ Scrollbar::Scrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orient
     , m_documentDragPos(0)
     , m_enabled(true)
     , m_scrollTimer(*this, &Scrollbar::autoscrollTimerFired)
-    , m_overlapsResizer(false)
     , m_suppressInvalidation(false)
     , m_isAlphaLocked(false)
     , m_isCustomScrollbar(isCustomScrollbar)
@@ -426,47 +425,6 @@ bool Scrollbar::mouseDown(const PlatformMouseEvent& evt)
 
     autoscrollPressedPart(theme()->initialAutoscrollTimerDelay());
     return true;
-}
-
-void Scrollbar::setFrameRect(const IntRect& rect)
-{
-    // Get our window resizer rect and see if we overlap. Adjust to avoid the overlap
-    // if necessary.
-    IntRect adjustedRect(rect);
-    bool overlapsResizer = false;
-    ScrollView* view = parent();
-    if (view && !rect.isEmpty() && !view->windowResizerRect().isEmpty()) {
-        IntRect resizerRect = view->convertFromContainingWindow(view->windowResizerRect());
-        if (rect.intersects(resizerRect)) {
-            if (orientation() == HorizontalScrollbar) {
-                int overlap = rect.maxX() - resizerRect.x();
-                if (overlap > 0 && resizerRect.maxX() >= rect.maxX()) {
-                    adjustedRect.setWidth(rect.width() - overlap);
-                    overlapsResizer = true;
-                }
-            } else {
-                int overlap = rect.maxY() - resizerRect.y();
-                if (overlap > 0 && resizerRect.maxY() >= rect.maxY()) {
-                    adjustedRect.setHeight(rect.height() - overlap);
-                    overlapsResizer = true;
-                }
-            }
-        }
-    }
-    if (overlapsResizer != m_overlapsResizer) {
-        m_overlapsResizer = overlapsResizer;
-        if (view)
-            view->adjustScrollbarsAvoidingResizerCount(m_overlapsResizer ? 1 : -1);
-    }
-
-    Widget::setFrameRect(adjustedRect);
-}
-
-void Scrollbar::setParent(ScrollView* parentView)
-{
-    if (!parentView && m_overlapsResizer && parent())
-        parent()->adjustScrollbarsAvoidingResizerCount(-1);
-    Widget::setParent(parentView);
 }
 
 void Scrollbar::setEnabled(bool e)

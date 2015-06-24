@@ -441,11 +441,6 @@ KeyboardUIMode WebChromeClient::keyboardUIMode()
     return enabled ? KeyboardAccessTabsToLinks : KeyboardAccessDefault;
 }
 
-IntRect WebChromeClient::windowResizerRect() const
-{
-    return IntRect();
-}
-
 void WebChromeClient::invalidateRootView(const IntRect& windowRect)
 {
     ASSERT(core(m_webView->topLevelFrame()));

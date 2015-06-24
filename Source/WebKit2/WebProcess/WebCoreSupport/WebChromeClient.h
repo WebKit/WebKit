@@ -104,8 +104,6 @@ private:
 
     virtual WebCore::KeyboardUIMode keyboardUIMode() override;
 
-    virtual WebCore::IntRect windowResizerRect() const override;
-    
     // HostWindow member function overrides.
     virtual void invalidateRootView(const WebCore::IntRect&) override;
     virtual void invalidateContentsAndRootView(const WebCore::IntRect&) override;

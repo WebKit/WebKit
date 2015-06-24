@@ -347,11 +347,6 @@ void Chrome::setStatusbarText(Frame* frame, const String& status)
     m_client.setStatusbarText(frame->displayStringModifiedByEncoding(status));
 }
 
-IntRect Chrome::windowResizerRect() const
-{
-    return m_client.windowResizerRect();
-}
-
 void Chrome::mouseDidMoveOverElement(const HitTestResult& result, unsigned modifierFlags)
 {
     if (result.innerNode() && result.innerNode()->document().isDNSPrefetchEnabled())

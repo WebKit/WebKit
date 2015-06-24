@@ -125,8 +125,6 @@ public:
 
     virtual KeyboardUIMode keyboardUIMode() override { return KeyboardAccessDefault; }
 
-    virtual IntRect windowResizerRect() const override { return IntRect(); }
-
     virtual void invalidateRootView(const IntRect&) override { }
     virtual void invalidateContentsAndRootView(const IntRect&) override { }
     virtual void invalidateContentsForSlowScroll(const IntRect&) override { }

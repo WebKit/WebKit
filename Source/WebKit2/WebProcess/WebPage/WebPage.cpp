@@ -2493,11 +2493,6 @@ IntRect WebPage::rootViewToAccessibilityScreen(const IntRect& rect)
 }
 #endif
 
-IntRect WebPage::windowResizerRect() const
-{
-    return IntRect();
-}
-
 KeyboardUIMode WebPage::keyboardUIMode()
 {
     bool fullKeyboardAccessEnabled = WebProcess::singleton().fullKeyboardAccessEnabled();

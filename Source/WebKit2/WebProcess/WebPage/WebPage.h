@@ -259,7 +259,6 @@ public:
     String userAgent(const WebCore::URL&) const;
     String userAgent(WebFrame*, const WebCore::URL&) const;
     String platformUserAgent(const WebCore::URL&) const;
-    WebCore::IntRect windowResizerRect() const;
     WebCore::KeyboardUIMode keyboardUIMode();
 
     WebUndoStep* webUndoStep(uint64_t);

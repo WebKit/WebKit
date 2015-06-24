@@ -1,3 +1,17 @@
+2015-06-23  Anders Carlsson  <andersca@apple.com>
+
+        Remove windowResizerRect code, nobody is using it anymore
+        https://bugs.webkit.org/show_bug.cgi?id=146265
+
+        Reviewed by Beth Dakin.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::windowResizerRect): Deleted.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::windowResizerRect): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+
 2015-06-23  Dan Bernstein  <mitz@apple.com>
 
         Restore binary compatibility with iOS 8 Safari after r185877

@@ -146,8 +146,6 @@ public:
     bool runJavaScriptPrompt(Frame*, const String& message, const String& defaultValue, String& result);
     WEBCORE_EXPORT void setStatusbarText(Frame*, const String&);
 
-    IntRect windowResizerRect() const;
-
     void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
 
     void setToolTip(const HitTestResult&);

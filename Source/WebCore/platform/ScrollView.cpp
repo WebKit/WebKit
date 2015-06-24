@@ -45,7 +45,6 @@ ScrollView::ScrollView()
     , m_verticalScrollbarLock(false)
     , m_prohibitsScrolling(false)
     , m_canBlitOnScroll(true)
-    , m_scrollbarsAvoidingResizer(0)
     , m_scrollbarsSuppressed(false)
     , m_inUpdateScrollbars(false)
     , m_updateScrollbarsPass(0)
@@ -589,14 +588,6 @@ IntSize ScrollView::overhangAmount() const
     return stretch;
 }
 
-void ScrollView::windowResizerRectChanged()
-{
-    if (platformWidget())
-        return;
-
-    updateScrollbars(scrollOffset());
-}
-
 void ScrollView::updateScrollbars(const IntSize& desiredOffset)
 {
     if (m_inUpdateScrollbars || prohibitsScrolling() || platformWidget() || delegatesScrolling())
@@ -978,41 +969,6 @@ IntPoint ScrollView::screenToContents(const IntPoint& point) const
     if (!window)
         return IntPoint();
     return rootViewToContents(window->screenToRootView(point));
-}
-
-bool ScrollView::containsScrollbarsAvoidingResizer() const
-{
-    return !m_scrollbarsAvoidingResizer;
-}
-
-void ScrollView::adjustScrollbarsAvoidingResizerCount(int overlapDelta)
-{
-    int oldCount = m_scrollbarsAvoidingResizer;
-    m_scrollbarsAvoidingResizer += overlapDelta;
-    if (parent())
-        parent()->adjustScrollbarsAvoidingResizerCount(overlapDelta);
-    else if (!scrollbarsSuppressed()) {
-        // If we went from n to 0 or from 0 to n and we're the outermost view,
-        // we need to invalidate the windowResizerRect(), since it will now need to paint
-        // differently.
-        if ((oldCount > 0 && m_scrollbarsAvoidingResizer == 0) ||
-            (oldCount == 0 && m_scrollbarsAvoidingResizer > 0))
-            invalidateRect(windowResizerRect());
-    }
-}
-
-void ScrollView::setParent(ScrollView* parentView)
-{
-    if (parentView == parent())
-        return;
-
-    if (m_scrollbarsAvoidingResizer && parent())
-        parent()->adjustScrollbarsAvoidingResizerCount(-m_scrollbarsAvoidingResizer);
-
-    Widget::setParent(parentView);
-
-    if (m_scrollbarsAvoidingResizer && parent())
-        parent()->adjustScrollbarsAvoidingResizerCount(m_scrollbarsAvoidingResizer);
 }
 
 void ScrollView::setScrollbarsSuppressed(bool suppressed, bool repaintOnUnsuppress)

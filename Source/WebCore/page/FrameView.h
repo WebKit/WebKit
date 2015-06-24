@@ -228,8 +228,6 @@ public:
     virtual IntRect windowClipRect() const override;
     WEBCORE_EXPORT IntRect windowClipRectForFrameOwner(const HTMLFrameOwnerElement*, bool clipToLayerContents) const;
 
-    virtual IntRect windowResizerRect() const override;
-
     virtual float visibleContentScaleFactor() const override;
 
 #if USE(COORDINATED_GRAPHICS)
