@@ -1,3 +1,32 @@
+2015-06-24  Anders Carlsson  <andersca@apple.com>
+
+        WebContent process is unreponsive/idle when WKWebView is inside a view service.
+        https://bugs.webkit.org/show_bug.cgi?id=146296
+
+        Reviewed by Tim Horton.
+
+        * Platform/spi/ios/AssertionServicesSPI.h: Renamed from Source/WebKit2/Platform/spi/ios/BKSProcessAssertionSPI.h.
+        Rename this and add SPI for BKSApplicationStateMonitor.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        Add _UIApplicationIsExtension SPI.
+
+        * UIProcess/ApplicationStateTracker.mm:
+        (WebKit::isViewService):
+        Return whether we're an extension or the safari view controller service.
+
+        (WebKit::isBackgroundState):
+        Helper function that returns whether a given BKSApplicationState is a background state.
+
+        (WebKit::ApplicationStateTracker::ApplicationStateTracker):
+        If we're a view service, create a BKSApplicationStateMonitor and listen for state changes for our pid.
+
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        Update #import.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Update for rename.
+
 2015-06-24  Matt Rajca  <mrajca@apple.com>
 
         MediaSession: propagate MediaSessionMetadata to WebPageProxy

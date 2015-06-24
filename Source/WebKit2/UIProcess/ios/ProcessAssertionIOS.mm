@@ -29,7 +29,7 @@
 #if PLATFORM(IOS)
 
 #import "ApplicationStateTracker.h"
-#import "BKSProcessAssertionSPI.h"
+#import "AssertionServicesSPI.h"
 #import <UIKit/UIApplication.h>
 #import <wtf/HashSet.h>
 #import <wtf/Vector.h>

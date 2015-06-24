@@ -28,6 +28,8 @@
 
 #if PLATFORM(IOS)
 
+#import "AssertionServicesSPI.h"
+#import "UIKitSPI.h"
 #import <UIKit/UIApplication.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/ObjcRuntimeExtras.h>
@@ -41,20 +43,65 @@ ApplicationStateTracker& ApplicationStateTracker::singleton()
     return applicationStateTracker;
 }
 
+static bool isViewService()
+{
+    if (_UIApplicationIsExtension())
+        return true;
+
+    if ([[NSBundle mainBundle].bundleIdentifier isEqualToString:@"com.apple.SafariViewService"])
+        return true;
+
+    return false;
+}
+
+static bool isBackgroundState(BKSApplicationState state)
+{
+    switch (state) {
+    case BKSApplicationStateBackgroundRunning:
+    case BKSApplicationStateBackgroundTaskSuspended:
+        return true;
+
+    default:
+        return false;
+    }
+}
+
 ApplicationStateTracker::ApplicationStateTracker()
 {
-    UIApplication *application = [UIApplication sharedApplication];
-    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    if (isViewService()) {
+        BKSApplicationStateMonitor *applicationStateMonitor = [[BKSApplicationStateMonitor alloc] init];
 
-    m_isInBackground = application.applicationState == UIApplicationStateBackground;
+        m_isInBackground = isBackgroundState([applicationStateMonitor mostElevatedApplicationStateForPID:getpid()]);
 
-    [notificationCenter addObserverForName:UIApplicationDidEnterBackgroundNotification object:application queue:nil usingBlock:[this](NSNotification *) {
-        applicationDidEnterBackground();
-    }];
+        applicationStateMonitor.handler = [this](NSDictionary *userInfo) {
+            pid_t pid = [userInfo[BKSApplicationStateProcessIDKey] integerValue];
+            if (pid != getpid())
+                return;
 
-    [notificationCenter addObserverForName:UIApplicationWillEnterForegroundNotification object:application queue:nil usingBlock:[this](NSNotification *) {
-        applicationWillEnterForeground();
-    }];
+            BKSApplicationState newState = (BKSApplicationState)[userInfo[BKSApplicationStateMostElevatedStateForProcessIDKey] unsignedIntValue];
+            bool newInBackground = isBackgroundState(newState);
+
+            dispatch_async(dispatch_get_main_queue(), [this, newInBackground] {
+                if (!m_isInBackground && newInBackground)
+                    applicationDidEnterBackground();
+                else if (m_isInBackground && !newInBackground)
+                    applicationWillEnterForeground();
+            });
+        };
+    } else {
+        UIApplication *application = [UIApplication sharedApplication];
+        NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+
+        m_isInBackground = application.applicationState == UIApplicationStateBackground;
+
+        [notificationCenter addObserverForName:UIApplicationDidEnterBackgroundNotification object:application queue:nil usingBlock:[this](NSNotification *) {
+            applicationDidEnterBackground();
+        }];
+
+        [notificationCenter addObserverForName:UIApplicationWillEnterForegroundNotification object:application queue:nil usingBlock:[this](NSNotification *) {
+            applicationWillEnterForeground();
+        }];
+    }
 }
 
 void ApplicationStateTracker::addListener(id object, SEL willEnterForegroundSelector, SEL didEnterBackgroundSelector)

@@ -27,9 +27,34 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+#import <AssertionServices/BKSApplicationStateMonitor.h>
 #import <AssertionServices/BKSProcessAssertion.h>
 
 #else
+
+enum {
+    BKSApplicationStateUnknown                      = 0,
+    BKSApplicationStateTerminated                   = (1 << 0),
+    BKSApplicationStateBackgroundTaskSuspended      = (1 << 1),
+    BKSApplicationStateBackgroundRunning            = (1 << 2),
+    BKSApplicationStateForegroundRunning            = (1 << 3),
+    BKSApplicationStateProcessServer                = (1 << 4),
+    BKSApplicationStateForegroundRunningObscured    = (1 << 5),
+};
+typedef uint32_t BKSApplicationState;
+
+extern NSString * const BKSApplicationStateMostElevatedStateForProcessIDKey;
+extern NSString * const BKSApplicationStateProcessIDKey;
+
+typedef void(^BKSApplicationStateChangedHandler)(NSDictionary *userInfo);
+
+@interface BKSApplicationStateMonitor : NSObject
+
+@property (nonatomic, copy) BKSApplicationStateChangedHandler handler;
+
+- (BKSApplicationState)mostElevatedApplicationStateForPID:(pid_t)pid;
+
+@end
 
 enum {
     BKSProcessAssertionNone = 0,
@@ -46,7 +71,7 @@ enum {
 };
 typedef uint32_t BKSProcessAssertionReason;
 
-typedef void(^BKSProcessAssertionAcquisitionHandler)(BOOL acquired);
+typedef void (^BKSProcessAssertionAcquisitionHandler)(BOOL acquired);
 
 @interface BKSProcessAssertion : NSObject
 @end

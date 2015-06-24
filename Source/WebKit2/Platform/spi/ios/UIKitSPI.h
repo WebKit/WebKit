@@ -730,6 +730,7 @@ extern NSString * const UIWindowWillRotateNotification;
 extern NSString * const UIKeyboardIsLocalUserInfoKey;
 
 extern UIApplication *UIApp;
+BOOL _UIApplicationIsExtension(void);
 void _UIApplicationLoadWebKit(void);
 BOOL _UIApplicationUsesLegacyUI(void);
 
