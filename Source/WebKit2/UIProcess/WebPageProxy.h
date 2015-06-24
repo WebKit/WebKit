@@ -119,6 +119,12 @@
 #include <WebCore/WebMediaSessionManagerClient.h>
 #endif
 
+#if ENABLE(MEDIA_SESSION)
+namespace WebCore {
+struct MediaSessionMetadata;
+}
+#endif
+
 namespace API {
 class ContextMenuClient;
 class FindClient;
@@ -1012,6 +1018,10 @@ public:
 
     bool isPlayingAudio() const { return !!(m_mediaState & WebCore::MediaProducer::IsPlayingAudio); }
     void isPlayingMediaDidChange(WebCore::MediaProducer::MediaStateFlags);
+
+#if ENABLE(MEDIA_SESSION)
+    void mediaSessionMetadataDidChange(const WebCore::MediaSessionMetadata&);
+#endif
 
 #if PLATFORM(MAC)
     void removeNavigationGestureSnapshot();

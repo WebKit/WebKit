@@ -1,3 +1,23 @@
+2015-06-24  Matt Rajca  <mrajca@apple.com>
+
+        MediaSession: propagate MediaSessionMetadata to WebPageProxy
+        https://bugs.webkit.org/show_bug.cgi?id=146282
+
+        Reviewed by Darin Adler and Tim Horton.
+
+        * Shared/WebCoreArgumentCoders.cpp: Added ArgumentEncoder support for MediaSessionMetadata so we can send it
+          through the web page proxy.
+        (IPC::ArgumentCoder<MediaSessionMetadata>::encode):
+        (IPC::ArgumentCoder<MediaSessionMetadata>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::mediaSessionMetadataDidChange):
+        * UIProcess/WebPageProxy.h: Receive mediaSessionMetadataDidChange in the web page proxy.
+        * UIProcess/WebPageProxy.messages.in: Added a new MediaSessionMetadataDidChange message.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::mediaSessionMetadataDidChange): Push a mediaSessionMetadataDidChange message through the web page proxy.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2015-06-24  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [Mac] A checkmark is briefly visible next to the webpage context menu items when they're clicked

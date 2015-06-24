@@ -423,6 +423,10 @@ messages -> WebPageProxy {
 
     IsPlayingMediaDidChange(unsigned state)
 
+#if ENABLE(MEDIA_SESSION)
+    MediaSessionMetadataDidChange(WebCore::MediaSessionMetadata metadata);
+#endif
+
 #if PLATFORM(MAC)
     DidPerformImmediateActionHitTest(struct WebKit::WebHitTestResult::Data result, bool contentPreventsDefault, WebKit::UserData userData)
 #endif

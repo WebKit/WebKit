@@ -121,6 +121,12 @@ struct MediaPlaybackTargetContext;
 }
 #endif
 
+#if ENABLE(MEDIA_SESSION)
+namespace WebCore {
+struct MediaSessionMetadata;
+}
+#endif
+
 namespace IPC {
 
 template<> struct ArgumentCoder<WebCore::AffineTransform> {
@@ -452,6 +458,13 @@ template<> struct ArgumentCoder<WebCore::BlobPart> {
 template<> struct ArgumentCoder<WebCore::ContentFilterUnblockHandler> {
     static void encode(ArgumentEncoder&, const WebCore::ContentFilterUnblockHandler&);
     static bool decode(ArgumentDecoder&, WebCore::ContentFilterUnblockHandler&);
+};
+#endif
+
+#if ENABLE(MEDIA_SESSION)
+template<> struct ArgumentCoder<WebCore::MediaSessionMetadata> {
+    static void encode(ArgumentEncoder&, const WebCore::MediaSessionMetadata&);
+    static bool decode(ArgumentDecoder&, WebCore::MediaSessionMetadata&);
 };
 #endif
 

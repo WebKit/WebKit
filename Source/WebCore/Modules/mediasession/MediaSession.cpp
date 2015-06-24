@@ -28,6 +28,8 @@
 
 #if ENABLE(MEDIA_SESSION)
 
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "Dictionary.h"
 #include "Event.h"
 #include "HTMLMediaElement.h"
@@ -99,6 +101,9 @@ void MediaSession::setMetadata(const Dictionary& metadata)
         artworkURL = m_document.completeURL(artworkPath);
 
     m_metadata = MediaSessionMetadata(title, artist, album, artworkURL);
+
+    if (Page *page = m_document.page())
+        page->chrome().client().mediaSessionMetadataDidChange(m_metadata);
 }
 
 void MediaSession::releaseSession()

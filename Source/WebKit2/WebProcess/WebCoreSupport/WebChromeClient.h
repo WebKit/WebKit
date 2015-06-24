@@ -294,6 +294,10 @@ private:
     virtual void isPlayingMediaDidChange(WebCore::MediaProducer::MediaStateFlags) override;
     virtual void setPageActivityState(WebCore::PageActivityState::Flags) override;
 
+#if ENABLE(MEDIA_SESSION)
+    virtual void mediaSessionMetadataDidChange(const WebCore::MediaSessionMetadata&) override;
+#endif
+
 #if ENABLE(SUBTLE_CRYPTO)
     virtual bool wrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) const override;
     virtual bool unwrapCryptoKey(const Vector<uint8_t>&, Vector<uint8_t>&) const override;

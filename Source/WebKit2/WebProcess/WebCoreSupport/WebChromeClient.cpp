@@ -1061,6 +1061,13 @@ void WebChromeClient::isPlayingMediaDidChange(WebCore::MediaProducer::MediaState
     m_page->send(Messages::WebPageProxy::IsPlayingMediaDidChange(state));
 }
 
+#if ENABLE(MEDIA_SESSION)
+void WebChromeClient::mediaSessionMetadataDidChange(const WebCore::MediaSessionMetadata& metadata)
+{
+    m_page->send(Messages::WebPageProxy::MediaSessionMetadataDidChange(metadata));
+}
+#endif
+
 void WebChromeClient::setPageActivityState(PageActivityState::Flags activityState)
 {
     m_page->setPageActivityState(activityState);

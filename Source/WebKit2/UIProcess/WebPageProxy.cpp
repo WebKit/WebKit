@@ -5770,6 +5770,12 @@ void WebPageProxy::isPlayingMediaDidChange(MediaProducer::MediaStateFlags state)
     m_uiClient->isPlayingAudioDidChange(*this);
 }
 
+#if ENABLE(MEDIA_SESSION)
+void WebPageProxy::mediaSessionMetadataDidChange(const WebCore::MediaSessionMetadata& metadata)
+{
+}
+#endif
+
 #if PLATFORM(MAC)
 void WebPageProxy::removeNavigationGestureSnapshot()
 {

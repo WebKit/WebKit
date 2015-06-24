@@ -45,6 +45,12 @@
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
+#if ENABLE(MEDIA_SESSION)
+namespace WebCore {
+struct MediaSessionMetadata;
+}
+#endif
+
 #if PLATFORM(IOS)
 #include "PlatformLayer.h"
 #define NSResponder WAKResponder
@@ -411,6 +417,10 @@ public:
     virtual bool shouldUseTiledBackingForFrameView(const FrameView*) const { return false; }
 
     virtual void isPlayingMediaDidChange(MediaProducer::MediaStateFlags) { }
+
+#if ENABLE(MEDIA_SESSION)
+    virtual void mediaSessionMetadataDidChange(const WebCore::MediaSessionMetadata&) { }
+#endif
 
     virtual void setPageActivityState(PageActivityState::Flags) { }
 
