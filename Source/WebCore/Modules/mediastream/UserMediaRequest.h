@@ -58,7 +58,7 @@ typedef int ExceptionCode;
 
 class UserMediaRequest : public MediaStreamCreationClient, public ContextDestructionObserver {
 public:
-    static RefPtr<UserMediaRequest> create(ScriptExecutionContext*, UserMediaController*, const Dictionary& options, MediaDevices::Promise&&, ExceptionCode&);
+    static void start(Document*, const Dictionary&, MediaDevices::Promise&&, ExceptionCode&);
     ~UserMediaRequest();
 
     WEBCORE_EXPORT SecurityOrigin* securityOrigin() const;

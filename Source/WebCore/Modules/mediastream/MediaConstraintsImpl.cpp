@@ -41,13 +41,11 @@
 
 namespace WebCore {
 
-RefPtr<MediaConstraintsImpl> MediaConstraintsImpl::create(const Dictionary& constraints, ExceptionCode& ec)
+RefPtr<MediaConstraintsImpl> MediaConstraintsImpl::create(const Dictionary& constraints)
 {
     RefPtr<MediaConstraintsImpl> object = adoptRef(*new MediaConstraintsImpl());
-    if (!object->initialize(constraints)) {
-        ec = TYPE_MISMATCH_ERR;
+    if (!object->initialize(constraints))
         return nullptr;
-    }
     return object;
 }
 

@@ -62,25 +62,7 @@ Document* MediaDevices::document() const
 
 void MediaDevices::getUserMedia(const Dictionary& options, Promise&& promise, ExceptionCode& ec) const
 {
-    if (!options.isObject()) {
-        ec = TypeError;
-        return;
-    }
-
-    UserMediaController* userMedia = UserMediaController::from(document() ? document()->page() : nullptr);
-    if (!userMedia) {
-        // FIXME: We probably want to return a MediaStreamError here using the rejectCallback, and get rid off the ExceptionCode parameter.
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
-
-    RefPtr<UserMediaRequest> request = UserMediaRequest::create(document(), userMedia, options, WTF::move(promise), ec);
-    if (!request) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
-
-    request->start();
+    UserMediaRequest::start(document(), options, WTF::move(promise), ec);
 }
 
 } // namespace WebCore

@@ -44,7 +44,7 @@ class Dictionary;
 class MediaConstraintsImpl : public MediaConstraints {
 public:
     static Ref<MediaConstraintsImpl> create();
-    static RefPtr<MediaConstraintsImpl> create(const Dictionary&, ExceptionCode&);
+    static RefPtr<MediaConstraintsImpl> create(const Dictionary&);
 
     virtual ~MediaConstraintsImpl();
     bool initialize(const Dictionary&);

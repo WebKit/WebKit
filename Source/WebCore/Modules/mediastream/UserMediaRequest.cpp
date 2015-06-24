@@ -55,38 +55,42 @@
 
 namespace WebCore {
 
-static PassRefPtr<MediaConstraints> parseOptions(const Dictionary& options, const String& mediaType, ExceptionCode& ec)
+static RefPtr<MediaConstraints> parseOptions(const Dictionary& options, const String& mediaType)
 {
-    RefPtr<MediaConstraints> constraints;
-
     Dictionary constraintsDictionary;
-    bool ok = options.get(mediaType, constraintsDictionary);
-    if (ok && !constraintsDictionary.isUndefinedOrNull())
-        constraints = MediaConstraintsImpl::create(constraintsDictionary, ec);
-    else {
-        bool mediaRequested = false;
-        options.get(mediaType, mediaRequested);
-        if (mediaRequested)
-            constraints = MediaConstraintsImpl::create();
-    }
+    if (options.get(mediaType, constraintsDictionary) && !constraintsDictionary.isUndefinedOrNull())
+        return MediaConstraintsImpl::create(constraintsDictionary);
 
-    return constraints.release();
+    bool mediaRequested = false;
+    if (!options.get(mediaType, mediaRequested) || !mediaRequested)
+        return nullptr;
+
+    return MediaConstraintsImpl::create();
 }
 
-RefPtr<UserMediaRequest> UserMediaRequest::create(ScriptExecutionContext* context, UserMediaController* controller, const Dictionary& options, MediaDevices::Promise&& promise, ExceptionCode& ec)
+void UserMediaRequest::start(Document* document, const Dictionary& options, MediaDevices::Promise&& promise, ExceptionCode& ec)
 {
-    RefPtr<MediaConstraints> audioConstraints = parseOptions(options, AtomicString("audio", AtomicString::ConstructFromLiteral), ec);
-    if (ec)
-        return nullptr;
+    if (!options.isObject()) {
+        ec = TypeError;
+        return;
+    }
 
-    RefPtr<MediaConstraints> videoConstraints = parseOptions(options, AtomicString("video", AtomicString::ConstructFromLiteral), ec);
-    if (ec)
-        return nullptr;
+    UserMediaController* userMedia = UserMediaController::from(document ? document->page() : nullptr);
+    if (!userMedia) {
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    }
 
-    if (!audioConstraints && !videoConstraints)
-        return nullptr;
+    RefPtr<MediaConstraints> audioConstraints = parseOptions(options, AtomicString("audio", AtomicString::ConstructFromLiteral));
+    RefPtr<MediaConstraints> videoConstraints = parseOptions(options, AtomicString("video", AtomicString::ConstructFromLiteral));
 
-    return adoptRef(*new UserMediaRequest(context, controller, audioConstraints.release(), videoConstraints.release(), WTF::move(promise)));
+    if (!audioConstraints && !videoConstraints) {
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    }
+
+    Ref<UserMediaRequest> request = adoptRef(*new UserMediaRequest(document, userMedia, audioConstraints.release(), videoConstraints.release(), WTF::move(promise)));
+    request->start();
 }
 
 UserMediaRequest::UserMediaRequest(ScriptExecutionContext* context, UserMediaController* controller, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints, MediaDevices::Promise&& promise)

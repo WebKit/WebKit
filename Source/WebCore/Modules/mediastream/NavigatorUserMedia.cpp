@@ -56,12 +56,6 @@ void NavigatorUserMedia::webkitGetUserMedia(Navigator* navigator, const Dictiona
         return;
     }
 
-    UserMediaController* userMedia = UserMediaController::from(navigator->frame() ? navigator->frame()->page() : 0);
-    if (!userMedia) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
-
     // We do not need to protect the context (i.e. document) here as UserMediaRequest is observing context destruction and will check validity before resolving/rejecting promise.
     Document* document = navigator->frame()->document();
 
@@ -80,13 +74,7 @@ void NavigatorUserMedia::webkitGetUserMedia(Navigator* navigator, const Dictiona
         });
     };
 
-    auto request = UserMediaRequest::create(navigator->frame()->document(), userMedia, options, MediaDevices::Promise(WTF::move(resolveCallback), WTF::move(rejectCallback)), ec);
-    if (!request) {
-        ec = NOT_SUPPORTED_ERR;
-        return;
-    }
-
-    request->start();
+    UserMediaRequest::start(navigator->frame()->document(), options, MediaDevices::Promise(WTF::move(resolveCallback), WTF::move(rejectCallback)), ec);
 }
 
 } // namespace WebCore
