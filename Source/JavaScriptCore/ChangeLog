@@ -1,3 +1,16 @@
+2015-06-24  Mark Lam  <mark.lam@apple.com>
+
+        Fixed assertion in JSStringJoiner::join() (regression from r185899).
+
+        Not reviewed.
+
+        JSStringJoiner did not account for the case where the array being joined can
+        have null or undefined elements.  As a result, its size may be less than
+        its initially reserved capacity (which was estimated based on the array length).
+
+        * runtime/JSStringJoiner.cpp:
+        (JSC::JSStringJoiner::join):
+
 2015-06-24  Darin Adler  <darin@apple.com>
 
         Fix Array.concat with RuntimeArray (regression from my last patch)

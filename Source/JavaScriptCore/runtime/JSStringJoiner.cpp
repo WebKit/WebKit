@@ -95,7 +95,7 @@ inline unsigned JSStringJoiner::joinedLength(ExecState& state) const
 
 JSValue JSStringJoiner::join(ExecState& state)
 {
-    ASSERT(m_strings.size() == m_strings.capacity());
+    ASSERT(m_strings.size() <= m_strings.capacity());
 
     unsigned length = joinedLength(state);
     if (state.hadException())
