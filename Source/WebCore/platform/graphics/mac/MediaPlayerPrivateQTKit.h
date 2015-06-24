@@ -73,69 +73,69 @@ private:
     static void clearMediaCacheForSite(const String&);
     static bool isAvailable();
 
-    PlatformMedia platformMedia() const;
-    PlatformLayer* platformLayer() const;
+    PlatformMedia platformMedia() const override;
+    PlatformLayer* platformLayer() const override;
 
     FloatSize naturalSize() const override;
-    bool hasVideo() const;
-    bool hasAudio() const;
-    bool supportsFullscreen() const;
-    virtual bool supportsScanning() const { return true; }
+    bool hasVideo() const override;
+    bool hasAudio() const override;
+    bool supportsFullscreen() const override;
+    virtual bool supportsScanning() const override { return true; }
     
-    void load(const String& url);
+    void load(const String& url) override;
 #if ENABLE(MEDIA_SOURCE)
-    virtual void load(const String&, MediaSourcePrivateClient*);
+    virtual void load(const String&, MediaSourcePrivateClient*) override;
 #endif
 #if ENABLE(MEDIA_STREAM)
     virtual void load(MediaStreamPrivate*) { }
 #endif
-    void cancelLoad();
+    void cancelLoad() override;
     void loadInternal(const String& url);
     void resumeLoad();
     
-    void play();
-    void pause();    
-    void prepareToPlay();
+    void play() override;
+    void pause() override;
+    void prepareToPlay() override;
     
-    bool paused() const;
-    bool seeking() const;
+    bool paused() const override;
+    bool seeking() const override;
     
     virtual MediaTime durationMediaTime() const override;
     virtual MediaTime currentMediaTime() const override;
     virtual void seek(const MediaTime&) override;
     
-    void setRate(float);
+    void setRate(float) override;
     virtual double rate() const override;
-    void setVolume(float);
-    void setPreservesPitch(bool);
+    void setVolume(float) override;
+    void setPreservesPitch(bool) override;
 
-    bool hasClosedCaptions() const;
-    void setClosedCaptionsVisible(bool);
+    bool hasClosedCaptions() const override;
+    void setClosedCaptionsVisible(bool) override;
 
-    void setPreload(MediaPlayer::Preload);
+    void setPreload(MediaPlayer::Preload) override;
 
-    MediaPlayer::NetworkState networkState() const { return m_networkState; }
-    MediaPlayer::ReadyState readyState() const { return m_readyState; }
+    MediaPlayer::NetworkState networkState() const override { return m_networkState; }
+    MediaPlayer::ReadyState readyState() const override { return m_readyState; }
     
-    std::unique_ptr<PlatformTimeRanges> buffered() const;
-    MediaTime maxMediaTimeSeekable() const;
-    bool didLoadingProgress() const;
-    unsigned long long totalBytes() const;
+    std::unique_ptr<PlatformTimeRanges> buffered() const override;
+    MediaTime maxMediaTimeSeekable() const override;
+    bool didLoadingProgress() const override;
+    unsigned long long totalBytes() const override;
     
-    void setVisible(bool);
-    void setSize(const IntSize&);
+    void setVisible(bool) override;
+    void setSize(const IntSize&) override;
     
-    virtual bool hasAvailableVideoFrame() const;
+    virtual bool hasAvailableVideoFrame() const override;
 
-    void paint(GraphicsContext*, const FloatRect&);
-    void paintCurrentFrameInContext(GraphicsContext*, const FloatRect&);
-    virtual void prepareForRendering();
+    void paint(GraphicsContext*, const FloatRect&) override;
+    void paintCurrentFrameInContext(GraphicsContext*, const FloatRect&) override;
+    virtual void prepareForRendering() override;
 
-    bool supportsAcceleratedRendering() const;
-    void acceleratedRenderingStateChanged();
+    bool supportsAcceleratedRendering() const override;
+    void acceleratedRenderingStateChanged() override;
 
-    bool hasSingleSecurityOrigin() const;
-    MediaPlayer::MovieLoadType movieLoadType() const;
+    bool hasSingleSecurityOrigin() const override;
+    MediaPlayer::MovieLoadType movieLoadType() const override;
 
     virtual bool canSaveMediaData() const override;
 
@@ -170,18 +170,18 @@ private:
 
     bool isReadyForVideoSetup() const;
 
-    virtual double maximumDurationToCacheMediaTime() const { return 5; }
+    virtual double maximumDurationToCacheMediaTime() const override { return 5; }
 
-    virtual void setPrivateBrowsingMode(bool);
+    virtual void setPrivateBrowsingMode(bool) override;
     
     NSMutableDictionary* commonMovieAttributes();
 
-    virtual String engineDescription() const { return "QTKit"; }
-    virtual long platformErrorCode() const;
+    virtual String engineDescription() const override { return "QTKit"; }
+    virtual long platformErrorCode() const override;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     virtual bool isCurrentPlaybackTargetWireless() const override;
-    virtual void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&);
+    virtual void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) override;
     virtual void setShouldPlayToPlaybackTarget(bool) override;
     bool wirelessVideoPlaybackDisabled() const override { return false; }
 #endif

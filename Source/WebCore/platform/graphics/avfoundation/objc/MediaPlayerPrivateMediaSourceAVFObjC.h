@@ -104,7 +104,7 @@ private:
     virtual PlatformMedia platformMedia() const override;
     virtual PlatformLayer* platformLayer() const override;
 
-    virtual bool supportsFullscreen() const { return true; }
+    virtual bool supportsFullscreen() const override { return true; }
 
     virtual void play() override;
     void playInternal();
@@ -173,7 +173,7 @@ private:
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     virtual bool isCurrentPlaybackTargetWireless() const override;
-    virtual void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&);
+    virtual void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) override;
     virtual void setShouldPlayToPlaybackTarget(bool) override;
     bool wirelessVideoPlaybackDisabled() const override { return false; }
 #endif

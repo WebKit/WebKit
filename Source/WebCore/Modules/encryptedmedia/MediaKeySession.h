@@ -85,9 +85,9 @@ protected:
     void addKeyTimerFired();
 
     // CDMSessionClient
-    virtual void sendMessage(Uint8Array*, String destinationURL);
-    virtual void sendError(MediaKeyErrorCode, unsigned long systemCode);
-    virtual String mediaKeysStorageDirectory() const;
+    virtual void sendMessage(Uint8Array*, String destinationURL) override;
+    virtual void sendError(MediaKeyErrorCode, unsigned long systemCode) override;
+    virtual String mediaKeysStorageDirectory() const override;
 
     MediaKeys* m_keys;
     String m_keySystem;

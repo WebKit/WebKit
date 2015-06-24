@@ -43,7 +43,7 @@ public:
     explicit ScrollingCoordinatorIOS(Page*);
     virtual ~ScrollingCoordinatorIOS();
 
-    virtual void pageDestroyed();
+    virtual void pageDestroyed() override;
 
     virtual void commitTreeStateIfNeeded() override;
 

@@ -46,7 +46,7 @@ public:
 
     virtual bool isEqual(const SerializedPlatformRepresentation&) const override;
 
-    virtual PlatformType platformType() const { return SerializedPlatformRepresentation::ObjC; }
+    virtual PlatformType platformType() const override { return SerializedPlatformRepresentation::ObjC; }
 
     id nativeValue() const { return m_nativeValue.get(); }
 

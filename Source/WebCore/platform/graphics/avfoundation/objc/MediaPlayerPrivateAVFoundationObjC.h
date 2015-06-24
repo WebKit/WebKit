@@ -117,7 +117,7 @@ public:
     void canPlayFastReverseDidChange(bool);
     void canPlayFastForwardDidChange(bool);
 
-    virtual void setShouldBufferData(bool);
+    virtual void setShouldBufferData(bool) override;
 
 #if HAVE(AVFOUNDATION_VIDEO_OUTPUT)
     void outputMediaDataWillChange(AVPlayerItemVideoOutput*);
@@ -142,70 +142,70 @@ private:
 
     static bool isAvailable();
 
-    virtual void cancelLoad();
+    virtual void cancelLoad() override;
 
-    virtual PlatformMedia platformMedia() const;
+    virtual PlatformMedia platformMedia() const override;
 
-    virtual void platformSetVisible(bool);
-    virtual void platformPlay();
-    virtual void platformPause();
+    virtual void platformSetVisible(bool) override;
+    virtual void platformPlay() override;
+    virtual void platformPause() override;
     virtual MediaTime currentMediaTime() const override;
-    virtual void setVolume(float);
-    virtual void setClosedCaptionsVisible(bool);
-    virtual void paint(GraphicsContext*, const FloatRect&);
-    virtual void paintCurrentFrameInContext(GraphicsContext*, const FloatRect&);
-    virtual PlatformLayer* platformLayer() const;
+    virtual void setVolume(float) override;
+    virtual void setClosedCaptionsVisible(bool) override;
+    virtual void paint(GraphicsContext*, const FloatRect&) override;
+    virtual void paintCurrentFrameInContext(GraphicsContext*, const FloatRect&) override;
+    virtual PlatformLayer* platformLayer() const override;
 #if PLATFORM(IOS)
-    virtual void setVideoFullscreenLayer(PlatformLayer*);
-    virtual void setVideoFullscreenFrame(FloatRect);
-    virtual void setVideoFullscreenGravity(MediaPlayer::VideoGravity);
+    virtual void setVideoFullscreenLayer(PlatformLayer*) override;
+    virtual void setVideoFullscreenFrame(FloatRect) override;
+    virtual void setVideoFullscreenGravity(MediaPlayer::VideoGravity) override;
     virtual void setVideoFullscreenMode(MediaPlayer::VideoFullscreenMode) override;
 
     virtual NSArray *timedMetadata() const override;
-    virtual String accessLog() const;
-    virtual String errorLog() const;
+    virtual String accessLog() const override;
+    virtual String errorLog() const override;
 #endif
 
-    virtual bool supportsAcceleratedRendering() const { return true; }
-    virtual MediaTime mediaTimeForTimeValue(const MediaTime&) const;
-    virtual double maximumDurationToCacheMediaTime() const;
+    virtual bool supportsAcceleratedRendering() const override { return true; }
+    virtual MediaTime mediaTimeForTimeValue(const MediaTime&) const override;
+    virtual double maximumDurationToCacheMediaTime() const override;
 
-    virtual void createAVPlayer();
-    virtual void createAVPlayerItem();
+    virtual void createAVPlayer() override;
+    virtual void createAVPlayerItem() override;
     virtual void createAVPlayerLayer();
-    virtual void createAVAssetForURL(const String& url);
-    virtual MediaPlayerPrivateAVFoundation::ItemStatus playerItemStatus() const;
-    virtual MediaPlayerPrivateAVFoundation::AssetStatus assetStatus() const;
-    virtual long assetErrorCode() const;
+    virtual void createAVAssetForURL(const String& url) override;
+    virtual MediaPlayerPrivateAVFoundation::ItemStatus playerItemStatus() const override;
+    virtual MediaPlayerPrivateAVFoundation::AssetStatus assetStatus() const override;
+    virtual long assetErrorCode() const override;
 
-    virtual void checkPlayability();
+    virtual void checkPlayability() override;
     virtual void setRateDouble(double) override;
-    virtual double rate() const;
+    virtual double rate() const override;
     void setPreservesPitch(bool) override;
-    virtual void seekToTime(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance);
-    virtual unsigned long long totalBytes() const;
-    virtual std::unique_ptr<PlatformTimeRanges> platformBufferedTimeRanges() const;
-    virtual MediaTime platformMinTimeSeekable() const;
-    virtual MediaTime platformMaxTimeSeekable() const;
-    virtual MediaTime platformDuration() const;
-    virtual MediaTime platformMaxTimeLoaded() const;
-    virtual void beginLoadingMetadata();
-    virtual void sizeChanged();
+    virtual void seekToTime(const MediaTime&, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance) override;
+    virtual unsigned long long totalBytes() const override;
+    virtual std::unique_ptr<PlatformTimeRanges> platformBufferedTimeRanges() const override;
+    virtual MediaTime platformMinTimeSeekable() const override;
+    virtual MediaTime platformMaxTimeSeekable() const override;
+    virtual MediaTime platformDuration() const override;
+    virtual MediaTime platformMaxTimeLoaded() const override;
+    virtual void beginLoadingMetadata() override;
+    virtual void sizeChanged() override;
 
-    virtual bool hasAvailableVideoFrame() const;
+    virtual bool hasAvailableVideoFrame() const override;
 
-    virtual void createContextVideoRenderer();
-    virtual void destroyContextVideoRenderer();
+    virtual void createContextVideoRenderer() override;
+    virtual void destroyContextVideoRenderer() override;
 
-    virtual void createVideoLayer();
-    virtual void destroyVideoLayer();
+    virtual void createVideoLayer() override;
+    virtual void destroyVideoLayer() override;
 
-    virtual bool hasContextRenderer() const;
-    virtual bool hasLayerRenderer() const;
+    virtual bool hasContextRenderer() const override;
+    virtual bool hasLayerRenderer() const override;
 
     virtual void updateVideoLayerGravity() override;
 
-    virtual bool hasSingleSecurityOrigin() const;
+    virtual bool hasSingleSecurityOrigin() const override;
 
 #if ENABLE(VIDEO_TRACK)
     virtual bool requiresTextTrackRepresentation() const override;
@@ -216,7 +216,7 @@ private:
     void setAVPlayerItem(AVPlayerItem *);
 
 #if ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
-    virtual AudioSourceProvider* audioSourceProvider();
+    virtual AudioSourceProvider* audioSourceProvider() override;
 #endif
 
     void createImageGenerator();
@@ -236,13 +236,13 @@ private:
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    virtual MediaPlayer::MediaKeyException addKey(const String&, const unsigned char*, unsigned, const unsigned char*, unsigned, const String&);
-    virtual MediaPlayer::MediaKeyException generateKeyRequest(const String&, const unsigned char*, unsigned);
-    virtual MediaPlayer::MediaKeyException cancelKeyRequest(const String&, const String&);
+    virtual MediaPlayer::MediaKeyException addKey(const String&, const unsigned char*, unsigned, const unsigned char*, unsigned, const String&) override;
+    virtual MediaPlayer::MediaKeyException generateKeyRequest(const String&, const unsigned char*, unsigned) override;
+    virtual MediaPlayer::MediaKeyException cancelKeyRequest(const String&, const String&) override;
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
-    std::unique_ptr<CDMSession> createSession(const String& keySystem);
+    std::unique_ptr<CDMSession> createSession(const String& keySystem) override;
 #endif
 
     virtual String languageOfPrimaryAudioTrack() const override;
@@ -280,7 +280,7 @@ private:
     virtual MediaPlayer::WirelessPlaybackTargetType wirelessPlaybackTargetType() const override;
     virtual bool wirelessVideoPlaybackDisabled() const override;
     virtual void setWirelessVideoPlaybackDisabled(bool) override;
-    virtual bool canPlayToWirelessPlaybackTarget() const { return true; }
+    virtual bool canPlayToWirelessPlaybackTarget() const override { return true; }
     void updateDisableExternalPlayback();
 #endif
 

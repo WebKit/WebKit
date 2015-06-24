@@ -42,7 +42,7 @@ public:
     MockCDMSession();
     virtual ~MockCDMSession() { }
 
-    virtual void setClient(CDMSessionClient* client) { m_client = client; }
+    virtual void setClient(CDMSessionClient* client) override { m_client = client; }
     virtual const String& sessionId() const override { return m_sessionId; }
     virtual PassRefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, unsigned long& systemCode) override;
     virtual void releaseKeys() override;

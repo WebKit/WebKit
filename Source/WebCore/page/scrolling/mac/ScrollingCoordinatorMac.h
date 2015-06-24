@@ -43,7 +43,7 @@ public:
     explicit ScrollingCoordinatorMac(Page*);
     virtual ~ScrollingCoordinatorMac();
 
-    virtual void pageDestroyed();
+    virtual void pageDestroyed() override;
 
     virtual void commitTreeStateIfNeeded() override;
 

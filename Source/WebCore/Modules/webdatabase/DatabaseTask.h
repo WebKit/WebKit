@@ -107,9 +107,9 @@ public:
 #endif
 
 private:
-    virtual void doPerformTask();
+    virtual void doPerformTask() override;
 #if !LOG_DISABLED
-    virtual const char* debugTaskName() const;
+    virtual const char* debugTaskName() const override;
 #endif
 
     bool m_setVersionInNewDatabase;
@@ -127,9 +127,9 @@ public:
 #endif
 
 private:
-    virtual void doPerformTask();
+    virtual void doPerformTask() override;
 #if !LOG_DISABLED
-    virtual const char* debugTaskName() const;
+    virtual const char* debugTaskName() const override;
 #endif
 };
 
@@ -145,9 +145,9 @@ public:
     SQLTransactionBackend* transaction() const { return m_transaction.get(); }
 
 private:
-    virtual void doPerformTask();
+    virtual void doPerformTask() override;
 #if !LOG_DISABLED
-    virtual const char* debugTaskName() const;
+    virtual const char* debugTaskName() const override;
 #endif
 
     RefPtr<SQLTransactionBackend> m_transaction;
@@ -163,9 +163,9 @@ public:
 #endif
 
 private:
-    virtual void doPerformTask();
+    virtual void doPerformTask() override;
 #if !LOG_DISABLED
-    virtual const char* debugTaskName() const;
+    virtual const char* debugTaskName() const override;
 #endif
 
     Vector<String>& m_tableNames;

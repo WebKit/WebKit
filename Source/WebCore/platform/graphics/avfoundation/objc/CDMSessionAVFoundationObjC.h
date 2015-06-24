@@ -42,7 +42,7 @@ public:
     CDMSessionAVFoundationObjC(MediaPlayerPrivateAVFoundationObjC* parent);
     virtual ~CDMSessionAVFoundationObjC() { }
 
-    virtual CDMSessionType type() { return CDMSessionTypeAVFoundationObjC; }
+    virtual CDMSessionType type() override { return CDMSessionTypeAVFoundationObjC; }
     virtual void setClient(CDMSessionClient* client) override { m_client = client; }
     virtual const String& sessionId() const override { return m_sessionId; }
     virtual PassRefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, unsigned long& systemCode) override;
