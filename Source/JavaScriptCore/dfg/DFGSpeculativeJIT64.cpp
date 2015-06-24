@@ -792,10 +792,7 @@ void SpeculativeJIT::emitCall(Node* node)
     
     jsValueResult(resultGPR, m_currentNode, DataFormatJS, UseChildrenCalledExplicitly);
     
-    callLinkInfo->callType = callType;
-    callLinkInfo->codeOrigin = m_currentNode->origin.semantic;
-    callLinkInfo->calleeGPR = calleeGPR;
-    
+    callLinkInfo->setUpCall(callType, m_currentNode->origin.semantic,  calleeGPR);    
     m_jit.addJSCall(fastCall, slowCall, targetToCheck, callLinkInfo);
     
     // If we were varargs, then after the calls are done, we need to reestablish our stack pointer.

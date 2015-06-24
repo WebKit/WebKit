@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-struct CallLinkInfo;
+class CallLinkInfo;
 
 // JIT stub routine for use by JavaScript accessors. These will be making a JS
 // call that requires inline caching. 

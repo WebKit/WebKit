@@ -248,9 +248,9 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
             info.specializationKind(),
             RegisterPreservationNotRequired);
         linkBuffer.link(record.m_slowCall, FunctionPtr(m_vm->getCTIStub(generator).code().executableAddress()));
-        info.callReturnLocation = linkBuffer.locationOfNearCall(record.m_slowCall);
-        info.hotPathBegin = linkBuffer.locationOf(record.m_targetToCheck);
-        info.hotPathOther = linkBuffer.locationOfNearCall(record.m_fastCall);
+        info.setCallLocations(linkBuffer.locationOfNearCall(record.m_slowCall),
+            linkBuffer.locationOf(record.m_targetToCheck),
+            linkBuffer.locationOfNearCall(record.m_fastCall));
     }
     
     MacroAssemblerCodeRef osrExitThunk = vm()->getCTIStub(osrExitGenerationThunkGenerator);

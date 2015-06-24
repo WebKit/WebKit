@@ -132,12 +132,12 @@ void JIT::compileSetupVarargsFrame(Instruction* instruction, CallLinkInfo* info)
 
     // Profile the argument count.
     load32(Address(regT1, JSStack::ArgumentCount * static_cast<int>(sizeof(Register)) + PayloadOffset), regT2);
-    load8(&info->maxNumArguments, regT0);
+    load8(info->addressOfMaxNumArguments(), regT0);
     Jump notBiggest = branch32(Above, regT0, regT2);
     Jump notSaturated = branch32(BelowOrEqual, regT2, TrustedImm32(255));
     move(TrustedImm32(255), regT2);
     notSaturated.link(this);
-    store8(regT2, &info->maxNumArguments);
+    store8(regT2, info->addressOfMaxNumArguments());
     notBiggest.link(this);
     
     // Initialize 'this'.
@@ -243,9 +243,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
     addSlowCase(slowCase);
 
     ASSERT(m_callCompilationInfo.size() == callLinkInfoIndex);
-    info->callType = CallLinkInfo::callTypeFor(opcodeID);
-    info->codeOrigin = CodeOrigin(m_bytecodeOffset);
-    info->calleeGPR = regT0;
+    info->setUpCall(CallLinkInfo::callTypeFor(opcodeID), CodeOrigin(m_bytecodeOffset), regT0);
     m_callCompilationInfo.append(CallCompilationInfo());
     m_callCompilationInfo[callLinkInfoIndex].hotPathBegin = addressOfLinkedFunctionCheck;
     m_callCompilationInfo[callLinkInfoIndex].callLinkInfo = info;

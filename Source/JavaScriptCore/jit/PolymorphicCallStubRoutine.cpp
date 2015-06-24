@@ -45,7 +45,7 @@ void PolymorphicCallNode::unlink(RepatchBuffer& repatchBuffer)
 {
     if (m_callLinkInfo) {
         if (Options::showDisassembly())
-            dataLog("Unlinking polymorphic call at ", m_callLinkInfo->callReturnLocation, ", ", m_callLinkInfo->codeOrigin, "\n");
+            dataLog("Unlinking polymorphic call at ", m_callLinkInfo->callReturnLocation(), ", ", m_callLinkInfo->codeOrigin(), "\n");
 
         m_callLinkInfo->unlink(repatchBuffer);
     }
@@ -57,7 +57,7 @@ void PolymorphicCallNode::unlink(RepatchBuffer& repatchBuffer)
 void PolymorphicCallNode::clearCallLinkInfo()
 {
     if (Options::showDisassembly())
-        dataLog("Clearing call link info for polymorphic call at ", m_callLinkInfo->callReturnLocation, ", ", m_callLinkInfo->codeOrigin, "\n");
+        dataLog("Clearing call link info for polymorphic call at ", m_callLinkInfo->callReturnLocation(), ", ", m_callLinkInfo->codeOrigin(), "\n");
 
     m_callLinkInfo = nullptr;
 }

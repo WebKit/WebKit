@@ -128,14 +128,14 @@ CallLinkStatus CallLinkStatus::computeFor(
     UNUSED_PARAM(profiledBlock);
     
     CallLinkStatus result = computeFromCallLinkInfo(locker, callLinkInfo);
-    result.m_maxNumArguments = callLinkInfo.maxNumArguments;
+    result.m_maxNumArguments = callLinkInfo.maxNumArguments();
     return result;
 }
 
 CallLinkStatus CallLinkStatus::computeFromCallLinkInfo(
     const ConcurrentJITLocker&, CallLinkInfo& callLinkInfo)
 {
-    if (callLinkInfo.clearedByGC)
+    if (callLinkInfo.clearedByGC())
         return takesSlowPath();
     
     // Note that despite requiring that the locker is held, this code is racy with respect
@@ -155,7 +155,7 @@ CallLinkStatus CallLinkStatus::computeFromCallLinkInfo(
     // until next GC even if the CallLinkInfo is concurrently cleared. Also, the variants list is
     // never mutated after the PolymorphicCallStubRoutine is instantiated. We have some conservative
     // fencing in place to make sure that we see the variants list after construction.
-    if (PolymorphicCallStubRoutine* stub = callLinkInfo.stub.get()) {
+    if (PolymorphicCallStubRoutine* stub = callLinkInfo.stub()) {
         WTF::loadLoadFence();
         
         CallEdgeList edges = stub->edges();
@@ -174,7 +174,7 @@ CallLinkStatus CallLinkStatus::computeFromCallLinkInfo(
         RELEASE_ASSERT(edges.first().count() >= edges.last().count());
         
         double totalCallsToKnown = 0;
-        double totalCallsToUnknown = callLinkInfo.slowPathCount;
+        double totalCallsToUnknown = callLinkInfo.slowPathCount();
         CallVariantList variants;
         for (size_t i = 0; i < edges.size(); ++i) {
             CallEdge edge = edges[i];
@@ -212,14 +212,14 @@ CallLinkStatus CallLinkStatus::computeFromCallLinkInfo(
     
     CallLinkStatus result;
     
-    if (JSFunction* target = callLinkInfo.lastSeenCallee.get()) {
+    if (JSFunction* target = callLinkInfo.lastSeenCallee()) {
         CallVariant variant(target);
-        if (callLinkInfo.hasSeenClosure)
+        if (callLinkInfo.hasSeenClosure())
             variant = variant.despecifiedClosure();
         result.m_variants.append(variant);
     }
     
-    result.m_couldTakeSlowPath = !!callLinkInfo.slowPathCount;
+    result.m_couldTakeSlowPath = !!callLinkInfo.slowPathCount();
 
     return result;
 }
@@ -246,7 +246,7 @@ void CallLinkStatus::computeDFGStatuses(
     CodeBlock* baselineCodeBlock = dfgCodeBlock->alternative();
     for (auto iter = dfgCodeBlock->callLinkInfosBegin(); !!iter; ++iter) {
         CallLinkInfo& info = **iter;
-        CodeOrigin codeOrigin = info.codeOrigin;
+        CodeOrigin codeOrigin = info.codeOrigin();
         
         // Check if we had already previously made a terrible mistake in the FTL for this
         // code origin. Note that this is approximate because we could have a monovariant
@@ -266,7 +266,7 @@ void CallLinkStatus::computeDFGStatuses(
         
         {
             ConcurrentJITLocker locker(dfgCodeBlock->m_lock);
-            map.add(info.codeOrigin, computeFor(locker, dfgCodeBlock, info, exitSiteData));
+            map.add(info.codeOrigin(), computeFor(locker, dfgCodeBlock, info, exitSiteData));
         }
     }
 #else

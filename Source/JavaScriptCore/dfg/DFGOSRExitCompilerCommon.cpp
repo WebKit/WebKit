@@ -158,7 +158,7 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
                 baselineCodeBlockForCaller->getCallLinkInfoForBytecodeIndex(callBytecodeIndex);
             RELEASE_ASSERT(callLinkInfo);
             
-            jumpTarget = callLinkInfo->callReturnLocation.executableAddress();
+            jumpTarget = callLinkInfo->callReturnLocation().executableAddress();
             break;
         }
             

@@ -52,6 +52,7 @@
 namespace JSC {
 
     class ArrayAllocationProfile;
+    class CallLinkInfo;
     class CodeBlock;
     class FunctionExecutable;
     class JIT;
@@ -63,7 +64,6 @@ namespace JSC {
     class Register;
     class StructureChain;
 
-    struct CallLinkInfo;
     struct Instruction;
     struct OperandTypes;
     struct PolymorphicAccessStructureList;

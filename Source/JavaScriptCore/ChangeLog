@@ -1,3 +1,101 @@
+2015-06-24  Michael Saboff  <msaboff@apple.com>
+
+        Refactor CallLinkInfo from a struct to a class
+        https://bugs.webkit.org/show_bug.cgi?id=146292
+
+        Rubber stamped by Filip Pizlo.
+
+        Refactored CallLinkInfo from a struct to a class with proper accessors and made all the
+        data elements private.
+
+        Done in preparation for fixing https://bugs.webkit.org/show_bug.cgi?id=146285.
+
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::clearStub):
+        (JSC::CallLinkInfo::unlink):
+        (JSC::CallLinkInfo::visitWeak):
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::callTypeFor):
+        (JSC::CallLinkInfo::CallLinkInfo):
+        (JSC::CallLinkInfo::~CallLinkInfo):
+        (JSC::CallLinkInfo::specializationKindFor):
+        (JSC::CallLinkInfo::specializationKind):
+        (JSC::CallLinkInfo::isLinked):
+        (JSC::CallLinkInfo::setUpCall):
+        (JSC::CallLinkInfo::setCallLocations):
+        (JSC::CallLinkInfo::setUpCallFromFTL):
+        (JSC::CallLinkInfo::callReturnLocation):
+        (JSC::CallLinkInfo::hotPathBegin):
+        (JSC::CallLinkInfo::hotPathOther):
+        (JSC::CallLinkInfo::setCallee):
+        (JSC::CallLinkInfo::clearCallee):
+        (JSC::CallLinkInfo::callee):
+        (JSC::CallLinkInfo::setLastSeenCallee):
+        (JSC::CallLinkInfo::clearLastSeenCallee):
+        (JSC::CallLinkInfo::lastSeenCallee):
+        (JSC::CallLinkInfo::haveLastSeenCallee):
+        (JSC::CallLinkInfo::setStub):
+        (JSC::CallLinkInfo::stub):
+        (JSC::CallLinkInfo::seenOnce):
+        (JSC::CallLinkInfo::clearSeen):
+        (JSC::CallLinkInfo::setSeen):
+        (JSC::CallLinkInfo::hasSeenClosure):
+        (JSC::CallLinkInfo::setHasSeenClosure):
+        (JSC::CallLinkInfo::clearedByGC):
+        (JSC::CallLinkInfo::setCallType):
+        (JSC::CallLinkInfo::callType):
+        (JSC::CallLinkInfo::addressOfMaxNumArguments):
+        (JSC::CallLinkInfo::maxNumArguments):
+        (JSC::CallLinkInfo::offsetOfSlowPathCount):
+        (JSC::CallLinkInfo::setCalleeGPR):
+        (JSC::CallLinkInfo::calleeGPR):
+        (JSC::CallLinkInfo::slowPathCount):
+        (JSC::CallLinkInfo::setCodeOrigin):
+        (JSC::CallLinkInfo::codeOrigin):
+        (JSC::getCallLinkInfoCodeOrigin):
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFor):
+        (JSC::CallLinkStatus::computeFromCallLinkInfo):
+        (JSC::CallLinkStatus::computeDFGStatuses):
+        * bytecode/CallLinkStatus.h:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::printCallOp):
+        (JSC::CodeBlock::getCallLinkInfoForBytecodeIndex):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * ftl/FTLJSCallBase.cpp:
+        (JSC::FTL::JSCallBase::link):
+        * jit/AccessorCallJITStubRoutine.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileSetupVarargsFrame):
+        (JSC::JIT::compileOpCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileSetupVarargsFrame):
+        (JSC::JIT::compileOpCall):
+        * jit/JITOperations.cpp:
+        * jit/PolymorphicCallStubRoutine.cpp:
+        (JSC::PolymorphicCallNode::unlink):
+        (JSC::PolymorphicCallNode::clearCallLinkInfo):
+        * jit/PolymorphicCallStubRoutine.h:
+        * jit/Repatch.cpp:
+        (JSC::generateByIdStub):
+        (JSC::linkSlowFor):
+        (JSC::linkFor):
+        (JSC::revertCall):
+        (JSC::unlinkFor):
+        (JSC::linkPolymorphicCall):
+        * jit/ThunkGenerators.cpp:
+        (JSC::virtualForThunkGenerator):
+
 2015-06-24  Doug Russell  <d_russell@apple.com>
 
         Bug 146177 - AX: AXObjectCache should try to use an unignored accessibilityObject 

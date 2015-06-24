@@ -528,7 +528,7 @@ void CodeBlock::printCallOp(PrintStream& out, ExecState* exec, int location, con
         }
 #if ENABLE(JIT)
         if (CallLinkInfo* info = map.get(CodeOrigin(location))) {
-            JSFunction* target = info->lastSeenCallee.get();
+            JSFunction* target = info->lastSeenCallee();
             if (target)
                 out.printf(" jit(%p, exec %p)", target, target->executable());
         }
@@ -2776,7 +2776,7 @@ void CodeBlock::resetStubDuringGCInternal(RepatchBuffer& repatchBuffer, Structur
 CallLinkInfo* CodeBlock::getCallLinkInfoForBytecodeIndex(unsigned index)
 {
     for (auto iter = m_callLinkInfos.begin(); !!iter; ++iter) {
-        if ((*iter)->codeOrigin == CodeOrigin(index))
+        if ((*iter)->codeOrigin() == CodeOrigin(index))
             return *iter;
     }
     return nullptr;

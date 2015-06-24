@@ -38,7 +38,7 @@
 
 namespace JSC {
 
-struct CallLinkInfo;
+class CallLinkInfo;
 
 class PolymorphicCallNode : public BasicRawSentinelNode<PolymorphicCallNode> {
     WTF_MAKE_NONCOPYABLE(PolymorphicCallNode);

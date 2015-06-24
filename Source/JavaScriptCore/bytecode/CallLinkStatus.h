@@ -42,7 +42,7 @@ class ExecutableBase;
 class InternalFunction;
 class JSFunction;
 class Structure;
-struct CallLinkInfo;
+class CallLinkInfo;
 
 class CallLinkStatus {
 public:

@@ -177,7 +177,7 @@ static MacroAssemblerCodeRef virtualForThunkGenerator(
     // slow path execution for the profiler.
     jit.add32(
         CCallHelpers::TrustedImm32(1),
-        CCallHelpers::Address(GPRInfo::regT2, OBJECT_OFFSETOF(CallLinkInfo, slowPathCount)));
+        CCallHelpers::Address(GPRInfo::regT2, CallLinkInfo::offsetOfSlowPathCount()));
 
     // FIXME: we should have a story for eliminating these checks. In many cases,
     // the DFG knows that the value is definitely a cell, or definitely a function.
