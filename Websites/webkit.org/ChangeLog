@@ -1,3 +1,19 @@
+2015-06-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Add some images for a blog post.
+
+        * blog-files/console-improvements/array-api.png: Added.
+        * blog-files/console-improvements/collections.png: Added.
+        * blog-files/console-improvements/console-messages.png: Added.
+        * blog-files/console-improvements/interactivity.m4v: Added.
+        * blog-files/console-improvements/iterators.png: Added.
+        * blog-files/console-improvements/localStorage-api.png: Added.
+        * blog-files/console-improvements/object-preview.png: Added.
+        * blog-files/console-improvements/object-tree.png: Added.
+        * blog-files/console-improvements/promises.png: Added.
+        * blog-files/console-improvements/tooltip-1.png: Added.
+        * blog-files/console-improvements/tooltip-2.png: Added.
+
 2015-06-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove unnecessary svn:executable flags
