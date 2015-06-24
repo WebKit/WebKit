@@ -1,3 +1,37 @@
+2015-06-24  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Pressing tab in the styles sidebar shouldn't insert a tab character
+        https://bugs.webkit.org/show_bug.cgi?id=146189
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/CodeMirrorCompletionController.js: Added variable to control whether semicolons are added to the end of autocompleted css values.
+        (WebInspector.CodeMirrorCompletionController):
+        (WebInspector.CodeMirrorCompletionController.prototype.set noEndingSemicolon):
+        (WebInspector.CodeMirrorCompletionController.prototype._generateCSSCompletions):
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection):
+        (WebInspector.CSSStyleDeclarationSection.prototype.cssStyleDeclarationTextEditorSwitchRule):
+        (WebInspector.CSSStyleDeclarationSection.prototype.focusRuleSelector):
+        (WebInspector.CSSStyleDeclarationSection.prototype.selectLastProperty):
+        (WebInspector.CSSStyleDeclarationSection.prototype.get selectorLocked):
+        (WebInspector.CSSStyleDeclarationSection.prototype.get locked):
+        (WebInspector.CSSStyleDeclarationSection.prototype._handleKeyDown):
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor): Added functions for "Tab", "Shift-Tab", and "Shift-Enter" keypresses to improve usability.
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.selectFirstProperty): Highlights the first property.
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.selectLastProperty): Highlights the last property.
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._insertNewlineAfterCurrentLine): Inserts a newline after the currently selected line.
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._handleShiftTabKey.switchRule):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._handleShiftTabKey): Pressing shift-tab will move the cursor to the previous non-word character that is immediately after a word character.
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._handleTabKey.switchRule):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._handleTabKey.highlightNextNameOrValue):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._handleTabKey): Pressing tab will move the cursor to each space character until the end of the line is reached, at
+        which point the cursor will move to the beginning of the next line.  Once the cursor is at the last line, pressing tab again will insert a newline.
+        * UserInterface/Views/RulesStyleDetailsPanel.js:
+        (WebInspector.RulesStyleDetailsPanel.prototype.cssStyleDeclarationSectionEditorNextRule): Switches the focused rule to the next section.
+        (WebInspector.RulesStyleDetailsPanel.prototype.cssStyleDeclarationSectionEditorPrevRule): Switches the focused rule to the previous section.
+
 2015-06-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: console.group looks poor in console

@@ -50,6 +50,7 @@ WebInspector.CSSStyleDeclarationSection = function(delegate, style)
     this._selectorElement.setAttribute("spellcheck", "false");
     this._selectorElement.addEventListener("mouseover", this._highlightNodesWithSelector.bind(this));
     this._selectorElement.addEventListener("mouseout", this._hideHighlightOnNodesWithSelector.bind(this));
+    this._selectorElement.addEventListener("keydown", this._handleKeyDown.bind(this));
     this._headerElement.appendChild(this._selectorElement);
 
     this._originElement = document.createElement("span");
@@ -333,6 +334,54 @@ WebInspector.CSSStyleDeclarationSection.prototype = {
             this._delegate.cssStyleDeclarationSectionEditorFocused(this);
     },
 
+    cssStyleDeclarationTextEditorSwitchRule: function(reverse)
+    {
+        if (!this._delegate)
+            return;
+
+        if (reverse && typeof this._delegate.cssStyleDeclarationSectionEditorPreviousRule === "function")
+            this._delegate.cssStyleDeclarationSectionEditorPreviousRule(this);
+        else if (!reverse && typeof this._delegate.cssStyleDeclarationSectionEditorNextRule === "function")
+            this._delegate.cssStyleDeclarationSectionEditorNextRule(this);
+    },
+
+    focusRuleSelector: function(reverse)
+    {
+        if (this.selectorLocked) {
+            this.focus();
+            return;
+        }
+
+        if (this.locked) {
+            this.cssStyleDeclarationTextEditorSwitchRule(reverse);
+            return;
+        }
+
+        var selection = window.getSelection();
+        selection.removeAllRanges();
+
+        this._element.scrollIntoViewIfNeeded();
+
+        var range = document.createRange();
+        range.selectNodeContents(this._selectorElement);
+        selection.addRange(range);
+    },
+
+    selectLastProperty: function()
+    {
+        this._propertiesTextEditor.selectLastProperty();
+    },
+
+    get selectorLocked()
+    {
+        return !this.locked && !this._style.ownerRule;
+    },
+
+    get locked()
+    {
+        return !this._style.editable;
+    },
+
     // Private
 
     _handleContextMenuEvent: function(event)
@@ -416,6 +465,25 @@ WebInspector.CSSStyleDeclarationSection.prototype = {
     _hideHighlightOnNodesWithSelector: function()
     {
         DOMAgent.hideHighlight();
+    },
+
+    _handleKeyDown: function(event)
+    {
+        if (event.keyCode !== 9)
+            return;
+
+        if (event.shiftKey && this._delegate && typeof this._delegate.cssStyleDeclarationSectionEditorPreviousRule === "function") {
+            event.preventDefault();
+            this._delegate.cssStyleDeclarationSectionEditorPreviousRule(this, true);
+            return;
+        }
+
+        if (!event.metaKey) {
+            event.preventDefault();
+            this.focus();
+            this._propertiesTextEditor.selectFirstProperty();
+            return;
+        }
     },
 
     _commitSelector: function(mutations)

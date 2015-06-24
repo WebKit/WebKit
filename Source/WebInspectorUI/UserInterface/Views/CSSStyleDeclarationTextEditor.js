@@ -57,8 +57,16 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             autoCloseBrackets: true
         });
 
+        this._codeMirror.addKeyMap({
+            "Shift-Enter": this._insertNewlineAfterCurrentLine.bind(this),
+            "Shift-Tab": this._handleShiftTabKey.bind(this),
+            "Tab": this._handleTabKey.bind(this)
+        });
+
         this._completionController = new WebInspector.CodeMirrorCompletionController(this._codeMirror, this);
         this._tokenTrackingController = new WebInspector.CodeMirrorTokenTrackingController(this._codeMirror, this);
+
+        this._completionController.noEndingSemicolon = true;
 
         this._jumpToSymbolTrackingModeEnabled = false;
         this._tokenTrackingController.classNameForHighlightedRange = WebInspector.CodeMirrorTokenTrackingController.JumpToSymbolHighlightStyleClassName;
@@ -335,6 +343,28 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         return true;
     }
 
+    selectFirstProperty()
+    {
+        var line = this._codeMirror.getLine(0);
+        var trimmedLine = line.trimRight();
+
+        if (!line || !trimmedLine.trimLeft().length)
+            this.clearSelection();
+
+        var index = line.indexOf(":");
+        this._codeMirror.setSelection({line: 0, ch: 0}, {line: 0, ch: index < 0 ? trimmedLine.length : index});
+    }
+
+    selectLastProperty()
+    {
+        var line = this._codeMirror.lineCount() - 1;
+        var lineText = this._codeMirror.getLine(line);
+        var trimmedLine = lineText.trimRight();
+
+        var colon = /(?::\s*)/.exec(lineText);
+        this._codeMirror.setSelection({line, ch: colon ? colon.index + colon[0].length : 0}, {line, ch: trimmedLine.length - trimmedLine.endsWith(";")});
+    }
+
     // Protected
 
     didDismissPopover(popover)
@@ -358,6 +388,146 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
     }
 
     // Private
+
+    _insertNewlineAfterCurrentLine(codeMirror)
+    {
+        var cursor = codeMirror.getCursor();
+        var line = codeMirror.getLine(cursor.line);
+        var trimmedLine = line.trimRight();
+
+        cursor.ch = trimmedLine.length;
+
+        if (cursor.ch) {
+            codeMirror.replaceRange(trimmedLine.endsWith(";") ? "\n" : ";\n", cursor);
+            return;
+        }
+
+        return CodeMirror.Pass;
+    }
+
+    _handleShiftTabKey(codeMirror)
+    {
+        function switchRule()
+        {
+            if (this._delegate && typeof this._delegate.cssStyleDeclarationTextEditorSwitchRule === "function") {
+                this._delegate.cssStyleDeclarationTextEditorSwitchRule(true);
+                return;
+            }
+
+            return CodeMirror.Pass;
+        }
+
+        var cursor = codeMirror.getCursor();
+        var line = codeMirror.getLine(cursor.line);
+        var previousLine = codeMirror.getLine(cursor.line - 1);
+        var trimmedPreviousLine = previousLine ? previousLine.trimRight() : "";
+
+        if (!line && !previousLine && !cursor.line)
+            return switchRule.call(this);
+
+        if (cursor.ch === line.indexOf(":") || line.indexOf(":") < 0) {
+            if (previousLine) {
+                var colon = /(?::\s*)/.exec(previousLine);
+                codeMirror.setSelection({line: cursor.line - 1, ch: colon ? colon.index + colon[0].length : 0}, {line: cursor.line - 1, ch: trimmedPreviousLine.length - trimmedPreviousLine.endsWith(";")});
+                return;
+            }
+
+            if (cursor.line) {
+                codeMirror.setCursor(cursor.line - 1, 0);
+                return;
+            }
+
+            return switchRule.call(this);
+        }
+
+        var match = line.match(/(?:[^:;\s]\s*)+/g);
+        var lastMatch = line.indexOf(match.lastValue) + match.lastValue.length;
+        var prevHead = cursor.ch > lastMatch ? line.indexOf(match.lastValue) : line.indexOf(match[0]);
+        var prevAnchor = cursor.ch > lastMatch ? lastMatch : line.indexOf(match[0]) + match[0].length;
+
+        codeMirror.setSelection({line: cursor.line, ch: prevHead}, {line: cursor.line, ch: prevAnchor});
+    }
+
+    _handleTabKey(codeMirror)
+    {
+        function switchRule() {
+            if (this._delegate && typeof this._delegate.cssStyleDeclarationTextEditorSwitchRule === "function") {
+                this._delegate.cssStyleDeclarationTextEditorSwitchRule();
+                return;
+            }
+
+            return CodeMirror.Pass;
+        }
+
+        function highlightNextNameOrValue(text)
+        {
+            var match = text.match(/(?:[^:;\s]\s*)+/g);
+            var firstMatch = text.indexOf(match[0]) + match[0].length;
+            var nextHead = cursor.ch < firstMatch ? text.indexOf(match[0]) : text.indexOf(match[1]);
+            var nextAnchor = cursor.ch < firstMatch ? firstMatch : text.indexOf(match[1]) + match[1].length;
+
+            codeMirror.setSelection({line: cursor.line, ch: nextHead}, {line: cursor.line, ch: nextAnchor});
+        }
+
+        var cursor = codeMirror.getCursor();
+        var line = codeMirror.getLine(cursor.line);
+        var trimmedLine = line.trimRight();
+        var lastLine = cursor.line === codeMirror.lineCount() - 1;
+        var nextLine = codeMirror.getLine(cursor.line + 1);
+        var trimmedNextLine = nextLine ? nextLine.trimRight() : "";
+
+        if (!trimmedLine.trimLeft().length) {
+            if (lastLine)
+                return switchRule.call(this);
+
+            if (!trimmedNextLine.trimLeft().length) {
+                codeMirror.setCursor(cursor.line + 1, 0);
+                return;
+            }
+
+            ++cursor.line;
+            highlightNextNameOrValue(nextLine);
+            return;
+        }
+
+        if (trimmedLine.endsWith(":")) {
+            codeMirror.setCursor(cursor.line, line.length);
+            this._completionController._completeAtCurrentPosition(true);
+            return;
+        }
+
+        var hasEndingSemicolon = trimmedLine.endsWith(";");
+
+        if (cursor.ch >= line.trimRight().length - hasEndingSemicolon) {
+            if (!line.includes(":")) {
+                codeMirror.setCursor(cursor.line, line.length);
+                codeMirror.replaceRange(": ", cursor);
+                return;
+            }
+
+            var replacement = "";
+
+            if (!hasEndingSemicolon)
+                replacement += ";";
+
+            if (lastLine)
+                replacement += "\n";
+
+            if (replacement.length)
+                codeMirror.replaceRange(replacement, {line: cursor.line, ch: trimmedLine.length});
+
+            if (!nextLine) {
+                codeMirror.setCursor(cursor.line + 1, 0);
+                return;
+            }
+
+            var colon = nextLine.indexOf(":");
+            codeMirror.setSelection({line: cursor.line + 1, ch: 0}, {line: cursor.line + 1, ch: colon < 0 ? trimmedNextLine.length : colon});
+            return;
+        }
+
+        highlightNextNameOrValue(line);
+    }
 
     _clearRemoveEditingLineClassesTimeout()
     {

@@ -302,6 +302,35 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
         }
     }
 
+    cssStyleDeclarationSectionEditorNextRule(currentSection)
+    {
+        currentSection.clearSelection();
+
+        var index = this._sections.indexOf(currentSection);
+        this._sections[index < this._sections.length - 1 ? index + 1 : 0].focusRuleSelector();
+    }
+
+    cssStyleDeclarationSectionEditorPreviousRule(currentSection, selectLastProperty) {
+        currentSection.clearSelection();
+
+        if (selectLastProperty || currentSection.selectorLocked) {
+            var index = this._sections.indexOf(currentSection);
+            index = index > 0 ? index - 1 : this._sections.length - 1;
+
+            var section = this._sections[index];
+            while (section.locked) {
+                index = index > 0 ? index - 1 : this._sections.length - 1;
+                section = this._sections[index];
+            }
+
+            section.focus();
+            section.selectLastProperty();
+            return;
+        }
+
+        currentSection.focusRuleSelector(true);
+    }
+
     filterDidChange(filterBar)
     {
         for (var labels of this._ruleMediaAndInherticanceList) {

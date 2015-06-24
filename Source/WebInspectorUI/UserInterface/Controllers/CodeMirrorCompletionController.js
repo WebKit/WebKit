@@ -39,6 +39,7 @@ WebInspector.CodeMirrorCompletionController = class CodeMirrorCompletionControll
         this._endOffset = NaN;
         this._lineNumber = NaN;
         this._prefix = "";
+        this._noEndingSemicolon = false;
         this._completions = [];
         this._extendedCompletionProviders = {};
 
@@ -183,6 +184,11 @@ WebInspector.CodeMirrorCompletionController = class CodeMirrorCompletionControll
 
         this._applyCompletionHint(completionText);
         this._commitCompletionHint();
+    }
+
+    set noEndingSemicolon(noEndingSemicolon)
+    {
+        this._noEndingSemicolon = noEndingSemicolon;
     }
 
     // Private
@@ -524,7 +530,7 @@ WebInspector.CodeMirrorCompletionController = class CodeMirrorCompletionControll
 
             // If there is a suffix and it isn't a semicolon, then we should use a space since
             // the user is editing in the middle.
-            this._implicitSuffix = suffix && suffix !== ";" ? " " : ";";
+            this._implicitSuffix = suffix && suffix !== ";" ? " " : (this._noEndingSemicolon ? "" : ";");
 
             // Don't use an implicit suffix if it would be the same as the existing suffix.
             if (this._implicitSuffix === suffix)
