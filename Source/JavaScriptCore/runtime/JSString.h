@@ -62,6 +62,11 @@ JSString* jsOwnedString(ExecState*, const String&);
 
 JSRopeString* jsStringBuilder(VM*);
 
+struct StringViewWithUnderlyingString {
+    StringView view;
+    String underlyingString;
+};
+
 class JSString : public JSCell {
 public:
     friend class JIT;
@@ -144,6 +149,7 @@ public:
     AtomicString toAtomicString(ExecState*) const;
     RefPtr<AtomicStringImpl> toExistingAtomicString(ExecState*) const;
     StringView view(ExecState*) const;
+    StringViewWithUnderlyingString viewWithUnderlyingString(ExecState&) const;
     const String& value(ExecState*) const;
     const String& tryGetValue() const;
     const StringImpl* tryGetValueImpl() const;
@@ -384,6 +390,7 @@ private:
     void resolveRopeInternal16NoSubstring(UChar*) const;
     void clearFibers() const;
     StringView view(ExecState*) const;
+    StringViewWithUnderlyingString viewWithUnderlyingString(ExecState&) const;
 
     WriteBarrierBase<JSString>& fiber(unsigned i) const
     {
@@ -673,32 +680,6 @@ inline String JSValue::toWTFString(ExecState* exec) const
     return toWTFStringSlowCase(exec);
 }
 
-ALWAYS_INLINE String inlineJSValueNotStringtoString(const JSValue& value, ExecState* exec)
-{
-    VM& vm = exec->vm();
-    if (value.isInt32())
-        return vm.numericStrings.add(value.asInt32());
-    if (value.isDouble())
-        return vm.numericStrings.add(value.asDouble());
-    if (value.isTrue())
-        return vm.propertyNames->trueKeyword.string();
-    if (value.isFalse())
-        return vm.propertyNames->falseKeyword.string();
-    if (value.isNull())
-        return vm.propertyNames->nullKeyword.string();
-    if (value.isUndefined())
-        return vm.propertyNames->undefinedKeyword.string();
-    return value.toString(exec)->value(exec);
-}
-
-ALWAYS_INLINE String JSValue::toWTFStringInline(ExecState* exec) const
-{
-    if (isString())
-        return static_cast<JSString*>(asCell())->value(exec);
-
-    return inlineJSValueNotStringtoString(*this, exec);
-}
-
 ALWAYS_INLINE StringView JSRopeString::view(ExecState* exec) const
 {
     if (isSubstring()) {
@@ -710,11 +691,30 @@ ALWAYS_INLINE StringView JSRopeString::view(ExecState* exec) const
     return StringView(m_value);
 }
 
+ALWAYS_INLINE StringViewWithUnderlyingString JSRopeString::viewWithUnderlyingString(ExecState& state) const
+{
+    if (isSubstring()) {
+        auto& base = substringBase()->m_value;
+        if (is8Bit())
+            return { { base.characters8() + substringOffset(), m_length }, base };
+        return { { base.characters16() + substringOffset(), m_length }, base };
+    }
+    resolveRope(&state);
+    return { m_value, m_value };
+}
+
 ALWAYS_INLINE StringView JSString::view(ExecState* exec) const
 {
     if (isRope())
         return static_cast<const JSRopeString*>(this)->view(exec);
     return StringView(m_value);
+}
+
+ALWAYS_INLINE StringViewWithUnderlyingString JSString::viewWithUnderlyingString(ExecState& state) const
+{
+    if (isRope())
+        return static_cast<const JSRopeString&>(*this).viewWithUnderlyingString(state);
+    return { m_value, m_value };
 }
 
 inline bool JSString::isSubstring() const

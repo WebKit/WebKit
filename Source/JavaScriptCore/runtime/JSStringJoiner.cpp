@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,105 +26,94 @@
 #include "config.h"
 #include "JSStringJoiner.h"
 
-#include "ExceptionHelpers.h"
-#include "JSScope.h"
-#include "JSString.h"
 #include "JSCInlines.h"
-#include <wtf/text/StringImpl.h>
 
 namespace JSC {
 
-// The destination is 16bits, at least one string is 16 bits.
-static inline void appendStringToData(UChar*& data, const String& string)
+template<typename CharacterType>
+static inline void appendStringToData(CharacterType*& data, StringView string)
 {
-    if (string.isNull())
-        return;
-
-    unsigned length = string.length();
-    const StringImpl* stringImpl = string.impl();
-
-    if (stringImpl->is8Bit()) {
-        for (unsigned i = 0; i < length; ++i) {
-            *data = stringImpl->characters8()[i];
-            ++data;
-        }
-    } else {
-        for (unsigned i = 0; i < length; ++i) {
-            *data = stringImpl->characters16()[i];
-            ++data;
-        }
-    }
-}
-
-// If the destination is 8bits, we know every string has to be 8bit.
-static inline void appendStringToData(LChar*& data, const String& string)
-{
-    if (string.isNull())
-        return;
-    ASSERT(string.is8Bit());
-
-    unsigned length = string.length();
-    const StringImpl* stringImpl = string.impl();
-
-    for (unsigned i = 0; i < length; ++i) {
-        *data = stringImpl->characters8()[i];
-        ++data;
-    }
+    string.getCharactersWithUpconvert(data);
+    data += string.length();
 }
 
 template<typename CharacterType>
-static inline PassRefPtr<StringImpl> joinStrings(const Vector<String>& strings, const String& separator, unsigned outputLength)
+static inline String joinStrings(const Vector<StringViewWithUnderlyingString>& strings, StringView separator, unsigned joinedLength)
 {
-    ASSERT(outputLength);
+    ASSERT(joinedLength);
 
     CharacterType* data;
-    RefPtr<StringImpl> outputStringImpl = StringImpl::tryCreateUninitialized(outputLength, data);
-    if (!outputStringImpl)
-        return nullptr;
+    String result = StringImpl::tryCreateUninitialized(joinedLength, data);
+    if (result.isNull())
+        return result;
 
-    const String firstString = strings.first();
-    appendStringToData(data, firstString);
+    appendStringToData(data, strings[0].view);
 
-    for (size_t i = 1; i < strings.size(); ++i) {
-        appendStringToData(data, separator);
-        appendStringToData(data, strings[i]);
+    unsigned size = strings.size();
+
+    switch (separator.length()) {
+    case 0:
+        for (unsigned i = 1; i < size; ++i)
+            appendStringToData(data, strings[i].view);
+        break;
+    case 1: {
+        CharacterType separatorCharacter = separator[0];
+        for (unsigned i = 1; i < size; ++i) {
+            *data++ = separatorCharacter;
+            appendStringToData(data, strings[i].view);
+        }
+        break;
     }
+    default:
+        for (unsigned i = 1; i < size; ++i) {
+            appendStringToData(data, separator);
+            appendStringToData(data, strings[i].view);
+        }
+    }
+    ASSERT(data == result.characters<CharacterType>() + joinedLength);
 
-    ASSERT(data == (outputStringImpl->characters<CharacterType>() + outputStringImpl->length()));
-    return outputStringImpl.release();
+    return result;
 }
 
-JSValue JSStringJoiner::join(ExecState* exec)
+inline unsigned JSStringJoiner::joinedLength(ExecState& state) const
 {
-    if (!m_isValid)
-        return throwOutOfMemoryError(exec);
-
-    if (!m_strings.size())
-        return jsEmptyString(exec);
+    unsigned numberOfStrings = m_strings.size();
+    if (!numberOfStrings)
+        return 0;
 
     Checked<unsigned, RecordOverflow> separatorLength = m_separator.length();
-    // FIXME: add special cases of joinStrings() for (separatorLength == 0) and (separatorLength == 1).
-    ASSERT(m_strings.size() > 0);
-    Checked<unsigned, RecordOverflow> totalSeparactorsLength = separatorLength * (m_strings.size() - 1);
-    Checked<unsigned, RecordOverflow> outputStringSize = totalSeparactorsLength + m_accumulatedStringsLength;
+    Checked<unsigned, RecordOverflow> totalSeparatorsLength = separatorLength * (numberOfStrings - 1);
+    Checked<unsigned, RecordOverflow> totalLength = totalSeparatorsLength + m_accumulatedStringsLength;
 
-    unsigned finalSize;
-    if (outputStringSize.safeGet(finalSize) == CheckedState::DidOverflow)
-        return throwOutOfMemoryError(exec);
-        
-    if (!outputStringSize)
-        return jsEmptyString(exec);
+    unsigned result;
+    if (totalLength.safeGet(result) == CheckedState::DidOverflow) {
+        throwOutOfMemoryError(&state);
+        return 0;
+    }
+    return result;
+}
 
-    RefPtr<StringImpl> outputStringImpl;
-    if (m_is8Bits)
-        outputStringImpl = joinStrings<LChar>(m_strings, m_separator, finalSize);
+JSValue JSStringJoiner::join(ExecState& state)
+{
+    ASSERT(m_strings.size() == m_strings.capacity());
+
+    unsigned length = joinedLength(state);
+    if (state.hadException())
+        return jsUndefined();
+
+    if (!length)
+        return jsEmptyString(&state);
+
+    String result;
+    if (m_isAll8Bit)
+        result = joinStrings<LChar>(m_strings, m_separator, length);
     else
-        outputStringImpl = joinStrings<UChar>(m_strings, m_separator, finalSize);
+        result = joinStrings<UChar>(m_strings, m_separator, length);
 
-    if (!outputStringImpl)
-        return throwOutOfMemoryError(exec);
+    if (result.isNull())
+        return throwOutOfMemoryError(&state);
 
-    return JSString::create(exec->vm(), outputStringImpl.release());
+    return jsString(&state, WTF::move(result));
 }
 
 }

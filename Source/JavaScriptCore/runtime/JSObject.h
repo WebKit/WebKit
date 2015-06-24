@@ -145,7 +145,7 @@ public:
     JS_EXPORT_PRIVATE static void put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
     JS_EXPORT_PRIVATE static void putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
         
-    void putByIndexInline(ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
+    ALWAYS_INLINE void putByIndexInline(ExecState* exec, unsigned propertyName, JSValue value, bool shouldThrow)
     {
         if (canSetIndexQuickly(propertyName)) {
             setIndexQuickly(exec->vm(), propertyName, value);
@@ -837,103 +837,6 @@ protected:
     // This is relevant to undecided, int32, double, and contiguous.
     unsigned countElements();
         
-    // This strange method returns a pointer to the start of the indexed data
-    // as if it contained JSValues. But it won't always contain JSValues.
-    // Make sure you cast this to the appropriate type before using.
-    template<IndexingType indexingType>
-    ContiguousJSValues indexingData()
-    {
-        switch (indexingType) {
-        case ALL_INT32_INDEXING_TYPES:
-        case ALL_DOUBLE_INDEXING_TYPES:
-        case ALL_CONTIGUOUS_INDEXING_TYPES:
-            return m_butterfly->contiguous();
-                
-        case ALL_ARRAY_STORAGE_INDEXING_TYPES:
-            return m_butterfly->arrayStorage()->vector();
-
-        default:
-            CRASH();
-            return ContiguousJSValues();
-        }
-    }
-
-    ContiguousJSValues currentIndexingData()
-    {
-        switch (indexingType()) {
-        case ALL_INT32_INDEXING_TYPES:
-        case ALL_CONTIGUOUS_INDEXING_TYPES:
-            return m_butterfly->contiguous();
-
-        case ALL_ARRAY_STORAGE_INDEXING_TYPES:
-            return m_butterfly->arrayStorage()->vector();
-
-        default:
-            CRASH();
-            return ContiguousJSValues();
-        }
-    }
-        
-    JSValue getHolyIndexQuickly(unsigned i)
-    {
-        ASSERT(i < m_butterfly->vectorLength());
-        switch (indexingType()) {
-        case ALL_INT32_INDEXING_TYPES:
-        case ALL_CONTIGUOUS_INDEXING_TYPES:
-            return m_butterfly->contiguous()[i].get();
-        case ALL_DOUBLE_INDEXING_TYPES: {
-            double value = m_butterfly->contiguousDouble()[i];
-            if (value == value)
-                return JSValue(JSValue::EncodeAsDouble, value);
-            return JSValue();
-        }
-        case ALL_ARRAY_STORAGE_INDEXING_TYPES:
-            return m_butterfly->arrayStorage()->m_vector[i].get();
-        default:
-            CRASH();
-            return JSValue();
-        }
-    }
-        
-    template<IndexingType indexingType>
-    unsigned relevantLength()
-    {
-        switch (indexingType) {
-        case ALL_INT32_INDEXING_TYPES:
-        case ALL_DOUBLE_INDEXING_TYPES:
-        case ALL_CONTIGUOUS_INDEXING_TYPES:
-            return m_butterfly->publicLength();
-                
-        case ALL_ARRAY_STORAGE_INDEXING_TYPES:
-            return std::min(
-                m_butterfly->arrayStorage()->length(),
-                m_butterfly->arrayStorage()->vectorLength());
-                
-        default:
-            CRASH();
-            return 0;
-        }
-    }
-
-    unsigned currentRelevantLength()
-    {
-        switch (indexingType()) {
-        case ALL_INT32_INDEXING_TYPES:
-        case ALL_DOUBLE_INDEXING_TYPES:
-        case ALL_CONTIGUOUS_INDEXING_TYPES:
-            return m_butterfly->publicLength();
-
-        case ALL_ARRAY_STORAGE_INDEXING_TYPES:
-            return std::min(
-                m_butterfly->arrayStorage()->length(),
-                m_butterfly->arrayStorage()->vectorLength());
-
-        default:
-            CRASH();
-            return 0;
-        }
-    }
-
 private:
     friend class LLIntOffsetsExtractor;
         

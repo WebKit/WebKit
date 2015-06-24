@@ -1,3 +1,27 @@
+2015-06-22  Darin Adler  <darin@apple.com>
+
+        Make Array.join work directly on substrings without reifying them
+        https://bugs.webkit.org/show_bug.cgi?id=146191
+
+        Reviewed by Andreas Kling.
+
+        * wtf/Vector.h: Added an overload of uncheckedAppend like the one we added
+        a while back, a non-template function that forwards through to the function
+        template. This lets us call uncheckedAppend on an argument list and have it
+        properly convert it to the Vector's element type.
+
+        * wtf/text/StringView.h:
+        (WTF::StringView::getCharactersWithUpconvert): Changed to not use memcpy;
+        saw some indication the hand-written loop was faster when profiling. Also
+        use m_length directly when we know we are dealing with an 8-bit string,
+        since the masking that the index function does is not needed in that case.
+        (WTF::StringView::UpconvertedCharacters::UpconvertedCharacters): Ditto.
+        (WTF::StringView::toString): Ditto.
+        (WTF::StringView::toFloat): Ditto.
+        (WTF::StringView::toInt): Ditto.
+        (WTF::StringView::toStringWithoutCopying): Ditto.
+        (WTF::StringView::find): Ditto.
+
 2015-06-22  YunQiang Su  <wzssyqa@gmail.com>
 
         [WTF] Platform.h: use _ABI64 instead of _MIPS_SIM_ABI64 to determine MIPS N64

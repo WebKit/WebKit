@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,50 +26,112 @@
 #ifndef JSStringJoiner_h
 #define JSStringJoiner_h
 
+#include "ExceptionHelpers.h"
 #include "JSCJSValue.h"
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
 
 namespace JSC {
 
-class ExecState;
-
-
 class JSStringJoiner {
 public:
-    JSStringJoiner(const String& separator, size_t stringCount);
+    JSStringJoiner(ExecState&, LChar separator, unsigned stringCount);
+    JSStringJoiner(ExecState&, StringView separator, unsigned stringCount);
 
-    void append(const String&);
-    JSValue join(ExecState*);
+    void append(ExecState&, JSValue);
+
+    JSValue join(ExecState&);
 
 private:
-    String m_separator;
-    Vector<String> m_strings;
+    void append(StringViewWithUnderlyingString&&);
+    void append8Bit(const String&);
+    void appendLiteral(const Identifier&);
+    void appendEmptyString();
+    unsigned joinedLength(ExecState&) const;
 
+    LChar m_singleCharacterSeparator;
+    StringView m_separator;
+    Vector<StringViewWithUnderlyingString> m_strings;
     Checked<unsigned, RecordOverflow> m_accumulatedStringsLength;
-    bool m_isValid;
-    bool m_is8Bits;
+    bool m_isAll8Bit { true };
 };
 
-inline JSStringJoiner::JSStringJoiner(const String& separator, size_t stringCount)
+inline JSStringJoiner::JSStringJoiner(ExecState& state, StringView separator, unsigned stringCount)
     : m_separator(separator)
-    , m_isValid(true)
-    , m_is8Bits(m_separator.is8Bit())
+    , m_isAll8Bit(m_separator.is8Bit())
 {
-    ASSERT(!m_separator.isNull());
-    m_isValid = m_strings.tryReserveCapacity(stringCount);
+    if (!m_strings.tryReserveCapacity(stringCount))
+        throwOutOfMemoryError(&state);
 }
 
-inline void JSStringJoiner::append(const String& str)
+inline JSStringJoiner::JSStringJoiner(ExecState& state, LChar separator, unsigned stringCount)
+    : m_singleCharacterSeparator(separator)
+    , m_separator { &m_singleCharacterSeparator, 1 }
 {
-    if (!m_isValid)
-        return;
+    if (!m_strings.tryReserveCapacity(stringCount))
+        throwOutOfMemoryError(&state);
+}
 
-    m_strings.append(str);
-    if (!str.isNull()) {
-        m_accumulatedStringsLength += str.length();
-        m_is8Bits = m_is8Bits && str.is8Bit();
+ALWAYS_INLINE void JSStringJoiner::append(StringViewWithUnderlyingString&& string)
+{
+    m_accumulatedStringsLength += string.view.length();
+    m_isAll8Bit = m_isAll8Bit && string.view.is8Bit();
+    m_strings.uncheckedAppend(WTF::move(string));
+}
+
+ALWAYS_INLINE void JSStringJoiner::append8Bit(const String& string)
+{
+    ASSERT(string.is8Bit());
+    m_accumulatedStringsLength += string.length();
+    m_strings.uncheckedAppend({ string, string });
+}
+
+ALWAYS_INLINE void JSStringJoiner::appendLiteral(const Identifier& literal)
+{
+    m_accumulatedStringsLength += literal.length();
+    ASSERT(literal.string().is8Bit());
+    m_strings.uncheckedAppend({ literal.string(), { } });
+}
+
+ALWAYS_INLINE void JSStringJoiner::appendEmptyString()
+{
+    m_strings.uncheckedAppend({ { }, { } });
+}
+
+ALWAYS_INLINE void JSStringJoiner::append(ExecState& state, JSValue value)
+{
+    // The following code differs from using the result of JSValue::toString in the following ways:
+    // 1) It's inlined more than JSValue::toString is.
+    // 2) It includes conversion to WTF::String in a way that avoids allocating copies of substrings.
+    // 3) It doesn't create a JSString for numbers, true, or false.
+    // 4) It turns undefined and null into the empty string instead of "undefined" and "null".
+    // 5) It uses optimized code paths for all the cases known to be 8-bit and for the empty string.
+
+    if (value.isCell()) {
+        if (value.asCell()->isString()) {
+            append(asString(value)->viewWithUnderlyingString(state));
+            return;
+        }
+        append(value.toString(&state)->viewWithUnderlyingString(state));
+        return;
     }
+
+    if (value.isInt32()) {
+        append8Bit(state.vm().numericStrings.add(value.asInt32()));
+        return;
+    }
+    if (value.isDouble()) {
+        append8Bit(state.vm().numericStrings.add(value.asDouble()));
+        return;
+    }
+    if (value.isTrue()) {
+        append8Bit(state.vm().propertyNames->trueKeyword.string());
+        return;
+    }
+    if (value.isFalse()) {
+        append8Bit(state.vm().propertyNames->falseKeyword.string());
+        return;
+    }
+    ASSERT(value.isUndefinedOrNull());
+    appendEmptyString();
 }
 
 }

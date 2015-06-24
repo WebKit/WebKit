@@ -724,9 +724,12 @@ public:
     void clear() { shrinkCapacity(0); }
 
     void append(ValueType&& value) { append<ValueType>(std::forward<ValueType>(value)); }
-    template<typename U> void append(const U*, size_t);
     template<typename U> void append(U&&);
-    template<typename U> void uncheckedAppend(U&& val);
+
+    void uncheckedAppend(ValueType&& value) { uncheckedAppend<ValueType>(std::forward<ValueType>(value)); }
+    template<typename U> void uncheckedAppend(U&&);
+
+    template<typename U> void append(const U*, size_t);
     template<typename U, size_t otherCapacity> void appendVector(const Vector<U, otherCapacity>&);
     template<typename U> bool tryAppend(const U*, size_t);
 

@@ -1,3 +1,91 @@
+2015-06-22  Darin Adler  <darin@apple.com>
+
+        Make Array.join work directly on substrings without reifying them
+        https://bugs.webkit.org/show_bug.cgi?id=146191
+
+        Reviewed by Andreas Kling.
+
+        Besides the Array.join change, this has other optimizations based on
+        profiling the Peacekeeper array benchmark.
+
+        I measured a 14% speed improvement in the Peacekeeper array benchmark.
+
+        Still a lot of low hanging fruit in that test because so many of functions
+        on the array prototype are not optimizing for simple cases. For example,
+        the reverse function does individual get and put calls even when the array
+        is entirely made up of integers in contiguous storage.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::getProperty): Use tryGetIndexQuickly first before getPropertySlot.
+        (JSC::argumentClampedIndexFromStartOrEnd): Marked inline.
+        (JSC::shift): Use the getProperty helper in this file instead of using
+        getPropertySlot. Use putByIndexInline instead of calling putByIndex directly.
+        In both cases this can yield a faster code path.
+        (JSC::unshift): Ditto.
+        (JSC::arrayProtoFuncToString): Updated to use the new JSStringJoiner
+        interface. Changed local variable name to thisArray since it's not a
+        JSObject*. Changed loop index to i instead of k.
+        (JSC::arrayProtoFuncToLocaleString): Updated to use the new JSStringJoiner
+        interface. Renamed thisObj to thisObject. Added a missing exception check
+        after the toLocaleString function is called, but before toString is called
+        the result of that function.
+        (JSC::arrayProtoFuncJoin): Updated to use the new JSStringJointer interface.
+        Added a missing exception check after calling toString on the separator
+        but before calling get to get the first element in the array-like object
+        being joined. Changed loop index to i instead of k. Added missing exception
+        check after calling toString on each string from the array before calling
+        get for the next element.
+        (JSC::arrayProtoFuncConcat): Use JSArray::length instead of using the
+        getLength function.
+        (JSC::arrayProtoFuncReverse): Ditto. Also use putByIndexInline.
+        (JSC::arrayProtoFuncShift): Ditto.
+        (JSC::arrayProtoFuncSplice): Use getIndex instead of get, which includes some
+        additional optimizations.
+        (JSC::getOrHole): Deleted. Unused function.
+        (JSC::arrayProtoFuncUnShift): Use putByIndexInline.
+
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::errorDescriptionForValue): Removed the duplicate copy of the the logic
+        from JSValue::toString.
+
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::toStringSlowCase): Improved the performance when converting a
+        small integer to a single character string.
+        (JSC::JSValue::toWTFStringSlowCase): Moved the contents of the
+        inlineJSValueNotStringtoString function here.
+        * runtime/JSCJSValue.h: Removed no longer used toWTFStringInline and fixed
+        a comment with a typo.
+
+        * runtime/JSObject.h:
+        (JSC::JSObject::putByIndexInline): Marked ALWAYS_INLINE because this was not
+        getting inlined at some call sites.
+        (JSC::JSObject::indexingData): Deleted. Unused function.
+        (JSC::JSObject::currentIndexingData): Deleted. Unused function.
+        (JSC::JSObject::getHolyIndexQuickly): Deleted. Unused function.
+        (JSC::JSObject::relevantLength): Deleted. Unused function.
+        (JSC::JSObject::currentRelevantLength): Deleted. Unused function.
+
+        * runtime/JSString.h: Added the StringViewWithUnderlyingString struct and
+        the viewWithUnderlyingString function. Removed the inlineJSValueNotStringtoString
+        and toWTFStringInline functions.
+
+        * runtime/JSStringJoiner.cpp:
+        (JSC::appendStringToData): Changed this to be a template instead of writing
+        it out, since StringView::getCharactersWithUpconvert does almsot exactly what
+        this function was trying to do.
+        (JSC::joinStrings): Rewrote this to use StringView.
+        (JSC::JSStringJoiner::joinedLength): Added. Factored out from the join function.
+        (JSC::JSStringJoiner::join): Rewrote to make it a bit simpler. Added an assertion
+        that we entirely filled capacity, since we are now reserving capacity and using
+        uncheckedAppend. Use String instead of RefPtr<StringImpl> because there was no
+        particular value to using the impl directly.
+
+        * runtime/JSStringJoiner.h: Changed the interface to the class to use StringView.
+        Also changed this class so it now has the responsibility to convert each JSValue
+        into a string. This let us share more code between toString and join, and also
+        lets us use the new viewWithUnderlyingString function, which could be confusing at
+        all the call sites, but is easier to understand here.
+
 2015-06-23  Matthew Mirman  <mmirman@apple.com>
 
         Completes native binding descriptors with native getters and potentially setters.
