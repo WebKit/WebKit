@@ -107,12 +107,13 @@
 }
 
 .console-group-title::before {
+    content: "";
     background-image: -webkit-canvas(disclosure-triangle-small-open-normal);
     background-size: 13px 13px;
-    top: 6px;
+    top: 4px;
+    left: 4px;
     width: 13px;
     height: 13px;
-    left: 3px;
 }
 
 .console-group.collapsed .console-group-title::before {

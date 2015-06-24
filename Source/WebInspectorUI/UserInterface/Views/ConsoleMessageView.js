@@ -47,6 +47,12 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
         this._element.__message = this._message;
         this._element.__messageView = this;
 
+        if (this._message.type === WebInspector.ConsoleMessage.MessageType.Result) {
+            this._element.classList.add("console-user-command-result");
+            this._element.setAttribute("data-labelprefix", WebInspector.UIString("Output: "));
+        } else if (this._message.type === WebInspector.ConsoleMessage.MessageType.StartGroup || this._message.type === WebInspector.ConsoleMessage.MessageType.StartGroupCollapsed)
+            this._element.classList.add("console-group-title");
+
         switch (this._message.level) {
         case WebInspector.ConsoleMessage.MessageLevel.Log:
             this._element.classList.add("console-log-level");
@@ -69,15 +75,6 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
             this._element.setAttribute("data-labelprefix", WebInspector.UIString("Error: "));
             break;
         }
-
-        if (this._message.type === WebInspector.ConsoleMessage.MessageType.Result) {
-            this._element.classList.add("console-user-command-result");
-            if (!this._element.getAttribute("data-labelprefix"))
-                this._element.setAttribute("data-labelprefix", WebInspector.UIString("Output: "));
-        }
-
-        if (this._message.type === WebInspector.ConsoleMessage.MessageType.StartGroup || this._message.type === WebInspector.ConsoleMessage.MessageType.StartGroupCollapsed)
-            this._element.classList.add("console-group-title");
 
         // These are the parameters unused by the messages's optional format string.
         // Any extra parameters will be displayed as children of this message.
@@ -249,6 +246,13 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
             case WebInspector.ConsoleMessage.MessageType.Table:
                 var args = this._message.parameters;
                 element.appendChild(this._formatParameterAsTable(args));
+                this._extraParameters = null;
+                break;
+
+            case WebInspector.ConsoleMessage.MessageType.StartGroup:
+            case WebInspector.ConsoleMessage.MessageType.StartGroupCollapsed:
+                var groupName = this._message.messageText || WebInspector.UIString("Group");
+                element.appendChild(document.createTextNode(groupName));
                 this._extraParameters = null;
                 break;
 
