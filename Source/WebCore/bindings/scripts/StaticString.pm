@@ -26,7 +26,7 @@ package StaticString;
 use strict;
 use Hasher;
 
-sub GenerateStringData($)
+sub GenerateStrings($)
 {
     my $stringsRef = shift;
     my %strings = %$stringsRef;
@@ -37,34 +37,20 @@ sub GenerateStringData($)
         push(@result, "static const LChar ${name}String8[] = \"$strings{$name}\";\n");
     }
 
-    return join "", @result;
-}
-
-sub GenerateASCIILiteral($$)
-{
-    my $name = shift;
-    my $value = shift;
-
-    my $length = length($value);
-    my $hash = Hasher::GenerateHashValue($value);
-    return "{ StaticASCIILiteral::s_initialRefCount, $length, ${name}String8, StaticASCIILiteral::s_initialFlags | (${hash} << StaticASCIILiteral::s_hashShift) }";
-}
-
-sub GenerateStrings($)
-{
-    my $stringsRef = shift;
-    my %strings = %$stringsRef;
-
-    my @result = ();
-
-    push(@result, GenerateStringData($stringsRef));
     push(@result, "\n");
 
     for my $name (sort keys %strings) {
         my $value = $strings{$name};
-        push(@result, "static StaticASCIILiteral ${name}Data = ");
-        push(@result, GenerateASCIILiteral($name, $strings{$name}));
-        push(@result, ";\n");
+        my $length = length($value);
+        my $hash = Hasher::GenerateHashValue($value);
+        push(@result, <<END);
+static StringImpl::StaticASCIILiteral ${name}Data = {
+    StringImpl::StaticASCIILiteral::s_initialRefCount,
+    $length,
+    ${name}String8,
+    StringImpl::StaticASCIILiteral::s_initialFlags | (${hash} << StringImpl::StaticASCIILiteral::s_hashShift)
+};
+END
     }
 
     push(@result, "\n");

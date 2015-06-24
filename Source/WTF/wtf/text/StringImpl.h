@@ -901,7 +901,7 @@ public:
     };
 
 #ifndef NDEBUG
-    void assertHashIsCorrect() const
+    void assertHashIsCorrect()
     {
         ASSERT(hasHash());
         ASSERT(existingHash() == StringHasher::computeHashAndMaskTop8Bits(characters8(), length()));

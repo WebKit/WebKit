@@ -573,13 +573,11 @@ sub printCppHead
     print F "#endif\n\n";
 
     print F "#include \"${namespace}Names.h\"\n\n";
-    print F "#include <array>\n";
-    print F "#include <wtf/StaticConstructors.h>\n\n";
+    print F "#include <wtf/StaticConstructors.h>\n";
 
     print F "namespace WebCore {\n\n";
     print F "namespace ${namespace}Names {\n\n";
-    print F "using namespace $usedNamespace;\n";
-    print F "using StaticASCIILiteral = StringImpl::StaticASCIILiteral;\n\n";
+    print F "using namespace $usedNamespace;\n\n";
 }
 
 sub printInit
@@ -599,6 +597,8 @@ print F "\nvoid init()
     if (initialized)
         return;
     initialized = true;
+
+    // Use placement new to initialize the globals.
 
     AtomicString::init();
 ";
@@ -762,15 +762,37 @@ sub printNamesCppFile
 
     print F "WEBCORE_EXPORT DEFINE_GLOBAL(AtomicString, ${lowercaseNamespacePrefix}NamespaceURI)\n\n";
 
-    print F StaticString::GenerateStringData(\%allStrings);
-    print F "\n";
+    print F StaticString::GenerateStrings(\%allStrings);
 
     if (keys %allTags) {
-        printStaticData($F, \%allTags, "Tag", $parameters{namespace}, "$parameters{namespace}QualifiedName");
+        print F "// Tags\n";
+        for my $name (sort keys %allTags) {
+            print F "WEBCORE_EXPORT DEFINE_GLOBAL($parameters{namespace}QualifiedName, ", $name, "Tag)\n";
+        }
+        
+        print F "\n\nconst WebCore::$parameters{namespace}QualifiedName* const* get$parameters{namespace}Tags()\n";
+        print F "{\n    static const WebCore::$parameters{namespace}QualifiedName* const $parameters{namespace}Tags[] = {\n";
+        for my $name (sort keys %allTags) {
+            print F "        reinterpret_cast<const WebCore::$parameters{namespace}QualifiedName*>(&${name}Tag),\n";
+        }
+        print F "    };\n";
+        print F "    return $parameters{namespace}Tags;\n";
+        print F "}\n";
     }
 
     if (keys %allAttrs) {
-        printStaticData($F, \%allAttrs, "Attr", $parameters{namespace}, "QualifiedName");
+        print F "\n// Attributes\n";
+        for my $name (sort keys %allAttrs) {
+            print F "WEBCORE_EXPORT DEFINE_GLOBAL(QualifiedName, ", $name, "Attr)\n";
+        }
+        print F "\n\nconst WebCore::QualifiedName* const* get$parameters{namespace}Attrs()\n";
+        print F "{\n    static const WebCore::QualifiedName* const $parameters{namespace}Attrs[] = {\n";
+        for my $name (sort keys %allAttrs) {
+            print F "        reinterpret_cast<const WebCore::QualifiedName*>(&${name}Attr),\n";
+        }
+        print F "    };\n";
+        print F "    return $parameters{namespace}Attrs;\n";
+        print F "}\n";
     }
 
     printInit($F, 0);
@@ -779,15 +801,16 @@ sub printNamesCppFile
 
     print(F "    // Namespace\n");
     print(F "    new (NotNull, (void*)&${lowercaseNamespacePrefix}NamespaceURI) AtomicString(${lowercaseNamespacePrefix}NS);\n");
+    print(F "\n");
+    print F StaticString::GenerateStringAsserts(\%allStrings);
 
     if (keys %allTags) {
         my $tagsNamespace = $parameters{tagsNullNamespace} ? "nullAtom" : "${lowercaseNamespacePrefix}NS";
-        printQualifiedNameCreation($F, "Tags", $parameters{namespace}, "$parameters{namespace}QualifiedName", $tagsNamespace);
+        printDefinitions($F, \%allTags, "tags", $tagsNamespace);
     }
-
     if (keys %allAttrs) {
         my $attrsNamespace = $parameters{attrsNullNamespace} ? "nullAtom" : "${lowercaseNamespacePrefix}NS";
-        printQualifiedNameCreation($F, "Attrs", $parameters{namespace}, "QualifiedName", $attrsNamespace);
+        printDefinitions($F, \%allAttrs, "attributes", $attrsNamespace);
     }
 
     print F "}\n\n} }\n\n";
@@ -870,56 +893,38 @@ sub printConditionalElementIncludes
     }
 }
 
-sub printStaticData
+sub printDefinitions
 {
-    my ($F, $namesRef, $type, $namespace, $qualifiedNameType) = @_;
+    my ($F, $namesRef, $type, $namespaceURI) = @_;
 
-    my $nameCount = scalar(keys %$namesRef);
+    my $shortCamelType = ucfirst(substr(substr($type, 0, -1), 0, 4));
+    my $capitalizedType = ucfirst($type);
+    
+print F <<END
 
-    print F "// $type\n";
+    struct ${capitalizedType}TableEntry {
+        void* targetAddress;
+        StringImpl& name;
+    };
+
+    static const ${capitalizedType}TableEntry ${type}Table[] = {
+END
+;
     for my $name (sort keys %$namesRef) {
-        print F "WEBCORE_EXPORT DEFINE_GLOBAL($qualifiedNameType, ${name}${type})\n";
+        print F "        { (void*)&$name$shortCamelType, *reinterpret_cast<StringImpl*>(&${name}Data) },\n";
     }
 
-    print F "\n";
-    print F "static const std::array<const $qualifiedNameType*, $nameCount> ${namespace}${type}s = { {\n";
-    for my $name (sort keys %$namesRef) {
-        print F "    reinterpret_cast<const $qualifiedNameType*>(&${name}${type}),\n";
-    }
-    print F "} };\n\n";
+print F <<END
+    };
 
-    print F "static const std::array<StaticASCIILiteral, $nameCount> ${namespace}${type}sLiterals = { {\n";
-    for my $name (sort keys %$namesRef) {
-        print F "    ", StaticString::GenerateASCIILiteral($name, valueForName($name)), ",\n";
-    }
-    print F "} };\n\n";
-
-    print F "const $qualifiedNameType* const* get${namespace}${type}s()\n";
-    print F "{\n";
-    print F "    return ${namespace}${type}s.data();\n";
-    print F "}\n";
-}
-
-sub printQualifiedNameCreation
-{
-    my ($F, $type, $namespace, $qualifiedNameType, $namespaceURI) = @_;
-
-    print F "\n";
-    print F "    static_assert(${namespace}${type}.size() == ${namespace}${type}Literals.size(), \"Arrays match in size\");\n";
-    print F "    for (size_t i = 0; i < ${namespace}${type}.size(); ++i) {\n";
-    print F "#ifndef NDEBUG\n";
-    print F "        reinterpret_cast<const StringImpl&>(${namespace}${type}Literals[i]).assertHashIsCorrect();\n";
-    print F "#endif\n";
-
+    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(${type}Table); ++i)
+END
+;
     if ($namespaceURI eq "nullAtom") {
-        print F "        createQualifiedName(reinterpret_cast<void*>(const_cast<$qualifiedNameType*>(${namespace}${type}\[i\])),\n";
-        print F "            reinterpret_cast<StringImpl*>(const_cast<StaticASCIILiteral*>(&${namespace}${type}Literals\[i\])));\n";
+        print F "        createQualifiedName(${type}Table[i].targetAddress, &${type}Table[i].name);\n";
     } else {
-        print F "        createQualifiedName(reinterpret_cast<void*>(const_cast<$qualifiedNameType*>(${namespace}${type}\[i\])),\n";
-        print F "            reinterpret_cast<StringImpl*>(const_cast<StaticASCIILiteral*>(&${namespace}${type}Literals\[i\])), $namespaceURI);\n";
+        print F "        createQualifiedName(${type}Table[i].targetAddress, &${type}Table[i].name, $namespaceURI);\n";
     }
-
-    print F "    }\n";
 }
 
 ## ElementFactory routines
