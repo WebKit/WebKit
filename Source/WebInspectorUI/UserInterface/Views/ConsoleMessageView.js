@@ -38,6 +38,8 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
 
         this._message = message;
 
+        this._expandable = false;
+
         this._element = document.createElement("div");
         this._element.classList.add("console-message");
 
@@ -141,37 +143,39 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
 
     get expandable()
     {
-        return this._element.classList.contains("expandable");
-    }
+        // There are extra arguments or a call stack that can be shown.
+        if (this._expandable)
+            return true;
 
-    set expandable(x)
-    {
-        if (x === this.expandable)
-            return;
+        // There is an object tree that could be expanded.
+        if (this._objectTree)
+            return true;
 
-        if (!this._boundClickHandler)
-            this._boundClickHandler = this.toggle.bind(this);
-
-        var becameExpandable = this._element.classList.toggle("expandable", x);
-
-        if (becameExpandable)
-            this._messageTextElement.addEventListener("click", this._boundClickHandler);
-        else
-            this._messageTextElement.removeEventListener("click", this._boundClickHandler);
+        return false;
     }
 
     expand()
     {
-        this._element.classList.add("expanded");
+        if (this._expandable)
+            this._element.classList.add("expanded");
 
         // Auto-expand an inner object tree if there is a single object.
-        if (this._objectTree && this._extraParameters.length === 1)
-            this._objectTree.expand();
+        if (this._objectTree) {
+            if (!this._extraParameters || this._extraParameters.length <= 1)
+                this._objectTree.expand();
+        }
     }
 
     collapse()
     {
-        this._element.classList.remove("expanded");
+        if (this._expandable)
+            this._element.classList.remove("expanded");
+
+        // Collapse the object tree just in cases where it was autoexpanded.
+        if (this._objectTree) {
+            if (!this._extraParameters || this._extraParameters.length <= 1)
+                this._objectTree.collapse();
+        }
     }
 
     toggle()
@@ -314,7 +318,7 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
         if (!this._extraParameters || !this._extraParameters.length)
             return;
 
-        this.expandable = true;
+        this._makeExpandable();
 
         // Auto-expand if there are multiple objects.
         if (this._extraParameters.length > 1)
@@ -336,7 +340,7 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
         if (!this._shouldShowStackTrace())
             return;
 
-        this.expandable = true;
+        this._makeExpandable();
 
         // Auto-expand for console.trace.
         if (this._message.type === WebInspector.ConsoleMessage.MessageType.Trace)
@@ -484,7 +488,6 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
     _formatParameterAsObject(object, element, forceExpansion)
     {
         // FIXME: Should have a better ObjectTreeView mode for classes (static methods and methods).
-        // FIXME: Only need to assign to objectTree if this is a ConsoleMessageResult. We should assert that.
         this._objectTree = new WebInspector.ObjectTreeView(object, null, this._rootPropertyPathForObject(object), forceExpansion);
         element.appendChild(this._objectTree.element);
     }
@@ -775,5 +778,18 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
             return "< ";
 
         return "[" + this._levelString() + "] ";
+    }
+
+    _makeExpandable()
+    {
+        if (this._expandable)
+            return;
+
+        this._expandable = true;
+
+        this._element.classList.add("expandable");
+
+        this._boundClickHandler = this.toggle.bind(this);
+        this._messageTextElement.addEventListener("click", this._boundClickHandler);
     }
 };

@@ -1,3 +1,35 @@
+2015-06-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Right/Left arrow no longer works in console to expand/collapse ObjectTrees
+        https://bugs.webkit.org/show_bug.cgi?id=141949
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView):
+        (WebInspector.ConsoleMessageView.prototype.get expandable):
+        (WebInspector.ConsoleMessageView.prototype.set expandable): Deleted.
+        (WebInspector.ConsoleMessageView.prototype._appendExtraParameters):
+        (WebInspector.ConsoleMessageView.prototype._appendStackTrace):
+        (WebInspector.ConsoleMessageView.prototype._makeExpandable):
+        Clarify what makes a ConsoleMessageView expandable or not.
+
+        (WebInspector.ConsoleMessageView.prototype.expand):
+        (WebInspector.ConsoleMessageView.prototype.collapse):
+        Handle the expand/collapse cases which could apply to the
+        ConsoleMessageView itself or an inner ObjectTreeView if that is all we contain.
+
+        (WebInspector.ConsoleMessageView.prototype._formatParameterAsObject):
+        Delete out of date comment. A console.log("message", obj) will want the
+        object tree member variable to handle auto expanding/collapsing of the
+        single object in the message.
+
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype._leftArrowWasPressed):
+        (WebInspector.LogContentView.prototype._rightArrowWasPressed):
+        Use the higher level ConsoleMessageView objects accessible from the element
+        to call through to expand/collapse.
+
 2015-06-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Reduce QuickConsole DidResize events if it did not change

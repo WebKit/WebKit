@@ -786,11 +786,12 @@ WebInspector.LogContentView.prototype = {
             return;
 
         var currentMessage = this._selectedMessages[0];
-        if (currentMessage.classList.contains("console-group-title"))
+        if (currentMessage.classList.contains("console-group-title")) {
             currentMessage.parentNode.classList.add("collapsed");
-        else {
-            // FIXME: Web Inspector: Right/Left arrow no longer works in console to expand/collapse ConsoleMessages
-            // FIXME: <https://webkit.org/b/141949> Web Inspector: Right/Left arrow no longer works in console to expand/collapse ObjectTrees
+            event.preventDefault();
+        } else if (currentMessage.__messageView && currentMessage.__messageView.expandable) {
+            currentMessage.__messageView.collapse();
+            event.preventDefault();
         }
     },
 
@@ -800,11 +801,12 @@ WebInspector.LogContentView.prototype = {
             return;
 
         var currentMessage = this._selectedMessages[0];
-        if (currentMessage.classList.contains("console-group-title"))
+        if (currentMessage.classList.contains("console-group-title")) {
             currentMessage.parentNode.classList.remove("collapsed");
-        else {
-            // FIXME: Web Inspector: Right/Left arrow no longer works in console to expand/collapse ConsoleMessages
-            // FIXME: <https://webkit.org/b/141949> Web Inspector: Right/Left arrow no longer works in console to expand/collapse ObjectTrees
+            event.preventDefault();
+        } else if (currentMessage.__messageView && currentMessage.__messageView.expandable) {
+            currentMessage.__messageView.expand();
+            event.preventDefault();
         }
     },
 
