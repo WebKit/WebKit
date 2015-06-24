@@ -69,9 +69,6 @@ public:
         
     ~CallLinkInfo()
     {
-        if (stub())
-            m_stub->clearCallNodesFor(this);
-
         clearStub();
 
         if (isOnList())
@@ -170,6 +167,7 @@ public:
 
     void setStub(PassRefPtr<PolymorphicCallStubRoutine> newStub)
     {
+        clearStub();
         m_stub = newStub;
     }
 

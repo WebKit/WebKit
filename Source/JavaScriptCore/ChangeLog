@@ -1,5 +1,38 @@
 2015-06-24  Michael Saboff  <msaboff@apple.com>
 
+        Crash on gog.com due to PolymorphicCallNode's having stale references to CallLinkInfo
+        https://bugs.webkit.org/show_bug.cgi?id=146285
+
+        Reviewed by Filip Pizlo.
+
+        CallLinkInfo's contain a RefPtr to a PolymorphicCallStubRoutine, named stub, which contains
+        a collection of PolymorphicCallNode.  Those PolymorphicCallNodes have a reference back to the
+        CallLinkInfo.  When a CallLinkInfo replaces or clears "stub", the ref count of the
+        PolymorphicCallStubRoutine is decremented as expected, but since it inherits from
+        GCAwareJITStubRoutine, it isn't actually deleted until GC.  In the mean time, the original
+        CallLinkInfo can go away.  If PolymorphicCallNode::unlink() is called at that point,
+        it will try to unlink a now deleted CallLinkInfo and crash as a result.
+
+        The fix is to clear the CallLinkInfo references from any PolymorphicCallNode objects when
+        when we set a new stub or clear an existing stub for a CallLinkInfo.  This is done by
+        calling PolymorphicCallNode::clearCallNodesFor() on the old stub.
+
+        The prior code would only call clearCallNodesFor() from the CallLinkInfo destructor.
+        This only took care of the last PolymorphicCallStubRoutine held in the CallLinkInfo.
+        Any prior PolymorphicCallStubRoutine would still have a, now bad, reference to the CallLinkInfo.
+
+        In the process I refactored CallLinkInfo from a struct to a class with proper accessors and
+        made all the data elements private.
+
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::clearStub): Updated to call PolymorphicCallStubRoutine::clearCallNodesFor()
+        to clear the back references to this CallLinkInfo.
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::~CallLinkInfo): Moved clearCallNodesFor() call to clearStub().
+        (JSC::CallLinkInfo::setStub): Clear any prior stub before changing to the new stub.
+
+2015-06-24  Michael Saboff  <msaboff@apple.com>
+
         Refactor CallLinkInfo from a struct to a class
         https://bugs.webkit.org/show_bug.cgi?id=146292
 
