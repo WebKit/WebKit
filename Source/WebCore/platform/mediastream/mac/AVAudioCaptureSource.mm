@@ -37,6 +37,10 @@
 #import <AVFoundation/AVFoundation.h>
 #import <objc/runtime.h>
 
+#pragma mark - Soft Linking
+
+#import "CoreMediaSoftLink.h"
+
 typedef AVCaptureConnection AVCaptureConnectionType;
 typedef AVCaptureDevice AVCaptureDeviceType;
 typedef AVCaptureDeviceInput AVCaptureDeviceInputType;
