@@ -1,3 +1,14 @@
+2015-06-25  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Cleanup ENABLE_CSS3_CONDITIONAL_RULES codes.
+        https://bugs.webkit.org/show_bug.cgi?id=146308
+
+        Reviewed by Csaba Osztrogonác.
+
+        ENABLE_CSS3_CONDITIONAL_RULES guard was removed from r174536.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2015-06-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add initial WebKitWebsiteDataManager API for process configuration options
