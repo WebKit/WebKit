@@ -1,3 +1,23 @@
+2015-06-24  Darin Adler  <darin@apple.com>
+
+        Optimize Array.join and Array.reverse for high speed array types
+        https://bugs.webkit.org/show_bug.cgi?id=146275
+
+        Reviewed by Mark Lam.
+
+        This seems to yield another 17% speed improvement in the array
+        test from the Peacekeeper benchmark.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::isHole): Added. Helper to check for holes.
+        (JSC::containsHole): Ditto.
+        (JSC::arrayProtoFuncJoin): Added special cases for the various types
+        of arrays that could be in a butterfly.
+        (JSC::arrayProtoFuncReverse): Ditto.
+
+        * runtime/JSStringJoiner.h: Made appendEmptyString public so we can
+        call it from the new parts of Array.join.
+
 2015-06-24  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::SpeculativeJIT shouldn't use filter==Contradiction when it meant isClear

@@ -360,50 +360,137 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
     return JSValue::encode(stringJoiner.join(*exec));
 }
 
+static inline bool isHole(double value)
+{
+    return std::isnan(value);
+}
+
+static inline bool isHole(const WriteBarrier<Unknown>& value)
+{
+    return !value;
+}
+
+template<typename T> static inline bool containsHole(T* data, unsigned length)
+{
+    for (unsigned i = 0; i < length; ++i) {
+        if (isHole(data[i]))
+            return true;
+    }
+    return false;
+}
+
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
 {
-    JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    unsigned length = getLength(exec, thisObj);
+    JSObject* thisObject = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
+
+    unsigned length = getLength(exec, thisObject);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    StringRecursionChecker checker(exec, thisObj);
+    StringRecursionChecker checker(exec, thisObject);
     if (JSValue earlyReturnValue = checker.earlyReturnValue())
         return JSValue::encode(earlyReturnValue);
 
-    JSString* separator = nullptr;
-    if (!exec->argument(0).isUndefined()) {
-        separator = exec->argument(0).toString(exec);
+    auto& vm = exec->vm();
+
+    Strong<JSString> separatorOnHeap;
+    StringView separator;
+    if (exec->argument(0).isUndefined()) {
+        static const LChar comma = ',';
+        separator = { &comma, 1 };
+    } else {
+        separatorOnHeap.set(vm, exec->argument(0).toString(exec));
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
+        separator = separatorOnHeap->view(exec);
     }
 
-    const LChar comma = ',';
-    JSStringJoiner stringJoiner(*exec, separator ? separator->view(exec) : StringView{ &comma, 1 }, length);
+    switch (thisObject->indexingType()) {
+    case ALL_CONTIGUOUS_INDEXING_TYPES:
+    case ALL_INT32_INDEXING_TYPES: {
+        auto& butterfly = *thisObject->butterfly();
+        if (length > butterfly.publicLength())
+            break;
+        JSStringJoiner joiner(*exec, separator, length);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
+        auto data = butterfly.contiguous().data();
+        bool holesKnownToBeOK = false;
+        for (unsigned i = 0; i < length; ++i) {
+            if (JSValue value = data[i].get()) {
+                joiner.append(*exec, value);
+                if (exec->hadException())
+                    return JSValue::encode(jsUndefined());
+            } else {
+                if (!holesKnownToBeOK) {
+                    if (thisObject->structure(vm)->holesMustForwardToPrototype(vm))
+                        goto generalCase;
+                    holesKnownToBeOK = true;
+                }
+                joiner.appendEmptyString();
+            }
+        }
+        return JSValue::encode(joiner.join(*exec));
+    }
+    case ALL_DOUBLE_INDEXING_TYPES: {
+        auto& butterfly = *thisObject->butterfly();
+        if (length > butterfly.publicLength())
+            break;
+        JSStringJoiner joiner(*exec, separator, length);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
+        auto data = butterfly.contiguousDouble().data();
+        bool holesKnownToBeOK = false;
+        for (unsigned i = 0; i < length; ++i) {
+            double value = data[i];
+            if (!isHole(value))
+                joiner.append(*exec, jsDoubleNumber(value));
+            else {
+                if (!holesKnownToBeOK) {
+                    if (thisObject->structure(vm)->holesMustForwardToPrototype(vm))
+                        goto generalCase;
+                    holesKnownToBeOK = true;
+                }
+                joiner.appendEmptyString();
+            }
+        }
+        return JSValue::encode(joiner.join(*exec));
+    }
+    case ALL_ARRAY_STORAGE_INDEXING_TYPES: {
+        auto& storage = *thisObject->butterfly()->arrayStorage();
+        if (length > storage.vectorLength())
+            break;
+        if (storage.hasHoles() && thisObject->structure(vm)->holesMustForwardToPrototype(vm))
+            break;
+        JSStringJoiner joiner(*exec, separator, length);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
+        auto data = storage.vector().data();
+        for (unsigned i = 0; i < length; ++i) {
+            if (JSValue value = data[i].get()) {
+                joiner.append(*exec, value);
+                if (exec->hadException())
+                    return JSValue::encode(jsUndefined());
+            } else
+                joiner.appendEmptyString();
+        }
+        return JSValue::encode(joiner.join(*exec));
+    }
+    }
+
+generalCase:
+    JSStringJoiner joiner(*exec, separator, length);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-
-    unsigned i = 0;
-
-    if (isJSArray(thisObj)) {
-        JSArray* array = asArray(thisObj);
-        for (; i < length && array->canGetIndexQuickly(i); ++i) {
-            stringJoiner.append(*exec, array->getIndexQuickly(i));
-            if (exec->hadException())
-                return JSValue::encode(jsUndefined());
-        }
-    }
-
-    for (; i < length; ++i) {
-        JSValue element = thisObj->get(exec, i);
+    for (unsigned i = 0; i < length; ++i) {
+        JSValue element = thisObject->getIndex(exec, i);
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
-        stringJoiner.append(*exec, element);
+        joiner.append(*exec, element);
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
     }
-
-    return JSValue::encode(stringJoiner.join(*exec));
+    return JSValue::encode(joiner.join(*exec));
 }
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState* exec)
@@ -525,40 +612,77 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPush(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
 {
-    JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    unsigned length = getLength(exec, thisObj);
+    JSObject* thisObject = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
+
+    unsigned length = getLength(exec, thisObject);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
+
+    auto& vm = exec->vm();
+
+    switch (thisObject->indexingType()) {
+    case ALL_CONTIGUOUS_INDEXING_TYPES:
+    case ALL_INT32_INDEXING_TYPES: {
+        auto& butterfly = *thisObject->butterfly();
+        if (length > butterfly.publicLength())
+            break;
+        auto data = butterfly.contiguous().data();
+        if (containsHole(data, length) && thisObject->structure(vm)->holesMustForwardToPrototype(vm))
+            break;
+        std::reverse(data, data + length);
+        return JSValue::encode(thisObject);
+    }
+    case ALL_DOUBLE_INDEXING_TYPES: {
+        auto& butterfly = *thisObject->butterfly();
+        if (length > butterfly.publicLength())
+            break;
+        auto data = butterfly.contiguousDouble().data();
+        if (containsHole(data, length) && thisObject->structure(vm)->holesMustForwardToPrototype(vm))
+            break;
+        std::reverse(data, data + length);
+        return JSValue::encode(thisObject);
+    }
+    case ALL_ARRAY_STORAGE_INDEXING_TYPES: {
+        auto& storage = *thisObject->butterfly()->arrayStorage();
+        if (length > storage.vectorLength())
+            break;
+        if (storage.hasHoles() && thisObject->structure(vm)->holesMustForwardToPrototype(vm))
+            break;
+        auto data = storage.vector().data();
+        std::reverse(data, data + length);
+        return JSValue::encode(thisObject);
+    }
+    }
 
     unsigned middle = length / 2;
     for (unsigned k = 0; k < middle; k++) {
         unsigned lk1 = length - k - 1;
-        JSValue obj2 = getProperty(exec, thisObj, lk1);
+        JSValue obj2 = getProperty(exec, thisObject, lk1);
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
-        JSValue obj = getProperty(exec, thisObj, k);
+        JSValue obj = getProperty(exec, thisObject, k);
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
 
         if (obj2) {
-            thisObj->putByIndexInline(exec, k, obj2, true);
+            thisObject->putByIndexInline(exec, k, obj2, true);
             if (exec->hadException())
                 return JSValue::encode(jsUndefined());
-        } else if (!thisObj->methodTable(exec->vm())->deletePropertyByIndex(thisObj, exec, k)) {
+        } else if (!thisObject->methodTable(exec->vm())->deletePropertyByIndex(thisObject, exec, k)) {
             throwTypeError(exec, ASCIILiteral("Unable to delete property."));
             return JSValue::encode(jsUndefined());
         }
 
         if (obj) {
-            thisObj->putByIndexInline(exec, lk1, obj, true);
+            thisObject->putByIndexInline(exec, lk1, obj, true);
             if (exec->hadException())
                 return JSValue::encode(jsUndefined());
-        } else if (!thisObj->methodTable(exec->vm())->deletePropertyByIndex(thisObj, exec, lk1)) {
+        } else if (!thisObject->methodTable(exec->vm())->deletePropertyByIndex(thisObject, exec, lk1)) {
             throwTypeError(exec, ASCIILiteral("Unable to delete property."));
             return JSValue::encode(jsUndefined());
         }
     }
-    return JSValue::encode(thisObj);
+    return JSValue::encode(thisObject);
 }
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncShift(ExecState* exec)

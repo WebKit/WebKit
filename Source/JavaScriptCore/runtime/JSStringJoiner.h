@@ -37,6 +37,7 @@ public:
     JSStringJoiner(ExecState&, StringView separator, unsigned stringCount);
 
     void append(ExecState&, JSValue);
+    void appendEmptyString();
 
     JSValue join(ExecState&);
 
@@ -44,7 +45,6 @@ private:
     void append(StringViewWithUnderlyingString&&);
     void append8Bit(const String&);
     void appendLiteral(const Identifier&);
-    void appendEmptyString();
     unsigned joinedLength(ExecState&) const;
 
     LChar m_singleCharacterSeparator;
