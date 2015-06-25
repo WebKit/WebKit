@@ -1344,7 +1344,7 @@
 		339B5B63131DAA3200F48D02 /* CookiesStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 339B5B62131DAA3200F48D02 /* CookiesStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		33D0212D131DB37B004091A8 /* CookieStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = E13F01EA1270E10D00DFBA71 /* CookieStorage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3571883EEF618793751E4089 /* RenderMathMLMenclose.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3662F984047CEDBE5DDDAFAA /* RenderMathMLMenclose.cpp */; };
-		3717833A1AACDCF7000910E3 /* SecuritySPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 371783391AACDCF7000910E3 /* SecuritySPI.h */; };
+		3717833A1AACDCF7000910E3 /* SecuritySPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 371783391AACDCF7000910E3 /* SecuritySPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3717D7E817ECC591003C276D /* extract-localizable-strings.pl in Copy Scripts */ = {isa = PBXBuildFile; fileRef = 3717D7E517ECC3A6003C276D /* extract-localizable-strings.pl */; };
 		371A67CB11C6C7DB00047B8B /* HyphenationCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 371A67CA11C6C7DB00047B8B /* HyphenationCF.cpp */; };
 		371E65CC13661EDC00BEEDB0 /* PageSerializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 371E65CB13661EDC00BEEDB0 /* PageSerializer.h */; };

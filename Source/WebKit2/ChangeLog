@@ -1,5 +1,16 @@
 2015-06-24  Anders Carlsson  <andersca@apple.com>
 
+        Detect view services by using the "com.apple.UIKit.vends-view-services" entitlement
+        https://bugs.webkit.org/show_bug.cgi?id=146301
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ApplicationStateTracker.mm:
+        (WebKit::hasEntitlement):
+        (WebKit::isViewService):
+
+2015-06-24  Anders Carlsson  <andersca@apple.com>
+
         WebContent process is unreponsive/idle when WKWebView is inside a view service.
         https://bugs.webkit.org/show_bug.cgi?id=146296
 

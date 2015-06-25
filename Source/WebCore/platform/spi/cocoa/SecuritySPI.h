@@ -28,8 +28,19 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <Security/SecCertificatePriv.h>
+
+#if PLATFORM(IOS)
+#include <Security/SecTask.h>
+#endif
+
 #else
 
+#if PLATFORM(IOS)
+EXTERN_C SecTaskRef SecTaskCreateFromSelf(CFAllocatorRef);
+EXTERN_C CFTypeRef SecTaskCopyValueForEntitlement(SecTaskRef, CFStringRef entitlement, CFErrorRef *);
+#endif
+
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000)
 typedef uint32_t SecSignatureHashAlgorithm;
 enum {
     kSecSignatureHashAlgorithmUnknown = 0,
@@ -43,10 +54,10 @@ enum {
     kSecSignatureHashAlgorithmSHA512 = 8
 };
 
+EXTERN_C SecSignatureHashAlgorithm SecCertificateGetSignatureHashAlgorithm(SecCertificateRef);
+
 #endif
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000)
-EXTERN_C SecSignatureHashAlgorithm SecCertificateGetSignatureHashAlgorithm(SecCertificateRef certificate);
 #endif
 
 #endif // SecuritySPI_h

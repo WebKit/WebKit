@@ -31,6 +31,7 @@
 #import "AssertionServicesSPI.h"
 #import "UIKitSPI.h"
 #import <UIKit/UIApplication.h>
+#import <WebCore/SecuritySPI.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/ObjcRuntimeExtras.h>
 
@@ -43,12 +44,33 @@ ApplicationStateTracker& ApplicationStateTracker::singleton()
     return applicationStateTracker;
 }
 
+static bool hasEntitlement(NSString *entitlement)
+{
+#if PLATFORM(IOS_SIMULATOR)
+    // The simulator doesn't support entitlements.
+    return true;
+#else
+    auto task = adoptCF(SecTaskCreateFromSelf(CFAllocatorGetDefault()));
+    if (!task)
+        return false;
+
+    auto value = adoptCF(SecTaskCopyValueForEntitlement(task.get(), (__bridge CFStringRef)entitlement, nullptr));
+    if (!value)
+        return false;
+
+    if (CFGetTypeID(value.get()) != CFBooleanGetTypeID())
+        return false;
+
+    return CFBooleanGetValue(static_cast<CFBooleanRef>(value.get()));
+#endif
+}
+
 static bool isViewService()
 {
     if (_UIApplicationIsExtension())
         return true;
 
-    if ([[NSBundle mainBundle].bundleIdentifier isEqualToString:@"com.apple.SafariViewService"])
+    if (hasEntitlement(@"com.apple.UIKit.vends-view-services"))
         return true;
 
     return false;
