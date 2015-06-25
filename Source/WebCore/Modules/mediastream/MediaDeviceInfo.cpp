@@ -31,6 +31,8 @@
 #include "ContextDestructionObserver.h"
 #include "ScriptWrappable.h"
 
+namespace WebCore {
+
 Ref<MediaDeviceInfo> MediaDeviceInfo::create(ScriptExecutionContext* context, const String& label, const String& deviceId, const String& groupId, const String& kind)
 {
     return adoptRef(*new MediaDeviceInfo(context, label, deviceId, groupId, kind));
@@ -44,5 +46,7 @@ MediaDeviceInfo::MediaDeviceInfo(ScriptExecutionContext* context, const String& 
     , m_groupId(groupId)
 {
 }
+
+} // namespace WebCore
 
 #endif
