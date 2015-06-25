@@ -82,7 +82,6 @@ static NSString * const WebKit2HTTPSProxyDefaultsKey = @"WebKit2HTTPSProxy";
 
 #if ENABLE(NETWORK_CACHE)
 static NSString * const WebKitNetworkCacheEnabledDefaultsKey = @"WebKitNetworkCacheEnabled";
-static NSString * const WebKitNetworkCacheTemporarilyDisabledForTestingKey = @"WebKitNetworkCacheTemporarilyDisabledForTesting"; // Temporary setting for <rdar://problem/20315669>.
 static NSString * const WebKitNetworkCacheEfficacyLoggingEnabledDefaultsKey = @"WebKitNetworkCacheEfficacyLoggingEnabled";
 #endif
 
@@ -408,7 +407,7 @@ bool WebProcessPool::isNetworkCacheEnabled()
 
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
-    bool networkCacheEnabledByDefaults = [defaults boolForKey:WebKitNetworkCacheEnabledDefaultsKey] && ![defaults boolForKey:WebKitNetworkCacheTemporarilyDisabledForTestingKey];
+    bool networkCacheEnabledByDefaults = [defaults boolForKey:WebKitNetworkCacheEnabledDefaultsKey];
 
     return networkCacheEnabledByDefaults && linkedOnOrAfter(LibraryVersion::FirstWithNetworkCache);
 #else

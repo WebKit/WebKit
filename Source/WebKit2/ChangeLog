@@ -1,3 +1,14 @@
+2015-06-25  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][iOS] Drop WebKitNetworkCacheTemporarilyDisabledForTesting NSUserDefaults
+        https://bugs.webkit.org/show_bug.cgi?id=146323
+        <rdar://problem/21552370>
+
+        Reviewed by Antti Koivisto.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::isNetworkCacheEnabled):
+
 2015-06-25  Tim Horton  <timothy_horton@apple.com>
 
         Crash in ViewGestureController::didRestoreScrollPosition() running WKWebView.LoadAlternateHTMLStringFromProvisionalLoadError test
