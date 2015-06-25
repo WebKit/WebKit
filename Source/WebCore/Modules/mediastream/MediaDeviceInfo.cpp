@@ -41,9 +41,9 @@ Ref<MediaDeviceInfo> MediaDeviceInfo::create(ScriptExecutionContext* context, co
 MediaDeviceInfo::MediaDeviceInfo(ScriptExecutionContext* context, const String& label, const String& deviceId, const String& groupId, const String& kind)
     : ContextDestructionObserver(context)
     , m_label(label)
-    , m_kind(kind)
     , m_deviceId(deviceId)
     , m_groupId(groupId)
+    , m_kind(kind)
 {
 }
 
