@@ -1,3 +1,9 @@
+2015-06-24  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed gardening, test rebaseline on Windows after r185934.
+
+        * platform/win/fast/css/apple-system-colors-expected.txt:
+
 2015-06-24  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Add a new color -apple-wireless-playback-target-active
