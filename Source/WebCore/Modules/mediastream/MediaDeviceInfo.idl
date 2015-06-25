@@ -1,0 +1,17 @@
+[
+NoInterfaceObject,
+Conditional=MEDIA_STREAM,
+Constructor(DOMString deviceId, DOMString label, DOMString groupId, MediaDeviceKind kind),
+JSGenerateToJSObject,
+] interface MediaDeviceInfo {
+    readonly    attribute DOMString deviceId;
+    readonly    attribute DOMString groupId;
+    readonly    attribute DOMString kind;
+    readonly    attribute DOMString label;
+};
+
+enum MediaDeviceKind {
+    "audioinput",
+    "audiooutput",
+    "videoinput"
+};
