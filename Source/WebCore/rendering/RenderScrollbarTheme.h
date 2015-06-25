@@ -46,39 +46,39 @@ public:
 
     virtual void paintScrollCorner(ScrollView*, GraphicsContext*, const IntRect& cornerRect) override;
 
-    virtual bool shouldCenterOnThumb(ScrollbarThemeClient* scrollbar, const PlatformMouseEvent& event) override { return ScrollbarTheme::theme()->shouldCenterOnThumb(scrollbar, event); }
+    virtual bool shouldCenterOnThumb(Scrollbar& scrollbar, const PlatformMouseEvent& event) override { return ScrollbarTheme::theme()->shouldCenterOnThumb(scrollbar, event); }
     
     virtual double initialAutoscrollTimerDelay() override { return ScrollbarTheme::theme()->initialAutoscrollTimerDelay(); }
     virtual double autoscrollTimerDelay() override { return ScrollbarTheme::theme()->autoscrollTimerDelay(); }
 
-    virtual void registerScrollbar(ScrollbarThemeClient* scrollbar) override { return ScrollbarTheme::theme()->registerScrollbar(scrollbar); }
-    virtual void unregisterScrollbar(ScrollbarThemeClient* scrollbar) override { return ScrollbarTheme::theme()->unregisterScrollbar(scrollbar); }
+    virtual void registerScrollbar(Scrollbar& scrollbar) override { return ScrollbarTheme::theme()->registerScrollbar(scrollbar); }
+    virtual void unregisterScrollbar(Scrollbar& scrollbar) override { return ScrollbarTheme::theme()->unregisterScrollbar(scrollbar); }
 
-    virtual int minimumThumbLength(ScrollbarThemeClient*) override;
+    virtual int minimumThumbLength(Scrollbar&) override;
 
-    void buttonSizesAlongTrackAxis(ScrollbarThemeClient*, int& beforeSize, int& afterSize);
+    void buttonSizesAlongTrackAxis(Scrollbar&, int& beforeSize, int& afterSize);
     
     static RenderScrollbarTheme* renderScrollbarTheme();
 
 protected:
-    virtual bool hasButtons(ScrollbarThemeClient*) override;
-    virtual bool hasThumb(ScrollbarThemeClient*) override;
+    virtual bool hasButtons(Scrollbar&) override;
+    virtual bool hasThumb(Scrollbar&) override;
 
-    virtual IntRect backButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool painting = false) override;
-    virtual IntRect forwardButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool painting = false) override;
-    virtual IntRect trackRect(ScrollbarThemeClient*, bool painting = false) override;
+    virtual IntRect backButtonRect(Scrollbar&, ScrollbarPart, bool painting = false) override;
+    virtual IntRect forwardButtonRect(Scrollbar&, ScrollbarPart, bool painting = false) override;
+    virtual IntRect trackRect(Scrollbar&, bool painting = false) override;
 
-    virtual void willPaintScrollbar(GraphicsContext*, ScrollbarThemeClient*) override;
-    virtual void didPaintScrollbar(GraphicsContext*, ScrollbarThemeClient*) override;
+    virtual void willPaintScrollbar(GraphicsContext&, Scrollbar&) override;
+    virtual void didPaintScrollbar(GraphicsContext&, Scrollbar&) override;
     
-    virtual void paintScrollbarBackground(GraphicsContext*, ScrollbarThemeClient*) override;
-    virtual void paintTrackBackground(GraphicsContext*, ScrollbarThemeClient*, const IntRect&) override;
-    virtual void paintTrackPiece(GraphicsContext*, ScrollbarThemeClient*, const IntRect&, ScrollbarPart) override;
-    virtual void paintButton(GraphicsContext*, ScrollbarThemeClient*, const IntRect&, ScrollbarPart) override;
-    virtual void paintThumb(GraphicsContext*, ScrollbarThemeClient*, const IntRect&) override;
-    virtual void paintTickmarks(GraphicsContext*, ScrollbarThemeClient*, const IntRect&) override;
+    virtual void paintScrollbarBackground(GraphicsContext&, Scrollbar&) override;
+    virtual void paintTrackBackground(GraphicsContext&, Scrollbar&, const IntRect&) override;
+    virtual void paintTrackPiece(GraphicsContext&, Scrollbar&, const IntRect&, ScrollbarPart) override;
+    virtual void paintButton(GraphicsContext&, Scrollbar&, const IntRect&, ScrollbarPart) override;
+    virtual void paintThumb(GraphicsContext&, Scrollbar&, const IntRect&) override;
+    virtual void paintTickmarks(GraphicsContext&, Scrollbar&, const IntRect&) override;
 
-    virtual IntRect constrainTrackRectToTrackPieces(ScrollbarThemeClient*, const IntRect&) override;
+    virtual IntRect constrainTrackRectToTrackPieces(Scrollbar&, const IntRect&) override;
 };
 
 } // namespace WebCore

@@ -37,29 +37,29 @@ public:
 
     void preferencesChanged();
 
-    virtual void updateEnabledState(ScrollbarThemeClient*) override;
+    virtual void updateEnabledState(Scrollbar&) override;
 
-    virtual bool paint(ScrollbarThemeClient*, GraphicsContext*, const IntRect& damageRect) override;
+    virtual bool paint(Scrollbar&, GraphicsContext&, const IntRect& damageRect) override;
 
     virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar) override;
     
     virtual bool supportsControlTints() const override { return true; }
     virtual bool usesOverlayScrollbars() const  override;
     virtual void usesOverlayScrollbarsChanged() override;
-    virtual void updateScrollbarOverlayStyle(ScrollbarThemeClient*)  override;
+    virtual void updateScrollbarOverlayStyle(Scrollbar&)  override;
 
     virtual double initialAutoscrollTimerDelay() override;
     virtual double autoscrollTimerDelay() override;
 
     virtual ScrollbarButtonsPlacement buttonsPlacement() const override;
 
-    virtual void registerScrollbar(ScrollbarThemeClient*) override;
-    virtual void unregisterScrollbar(ScrollbarThemeClient*) override;
+    virtual void registerScrollbar(Scrollbar&) override;
+    virtual void unregisterScrollbar(Scrollbar&) override;
 
-    void setNewPainterForScrollbar(ScrollbarThemeClient*, ScrollbarPainter);
-    ScrollbarPainter painterForScrollbar(ScrollbarThemeClient*);
+    void setNewPainterForScrollbar(Scrollbar&, ScrollbarPainter);
+    ScrollbarPainter painterForScrollbar(Scrollbar&);
 
-    void setPaintCharacteristicsForScrollbar(ScrollbarThemeClient*);
+    void setPaintCharacteristicsForScrollbar(Scrollbar&);
 
     static bool isCurrentlyDrawingIntoLayer();
     static void setIsCurrentlyDrawingIntoLayer(bool);
@@ -73,19 +73,19 @@ public:
 #endif
 
 protected:
-    virtual bool hasButtons(ScrollbarThemeClient*) override;
-    virtual bool hasThumb(ScrollbarThemeClient*) override;
+    virtual bool hasButtons(Scrollbar&) override;
+    virtual bool hasThumb(Scrollbar&) override;
 
-    virtual IntRect backButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool painting = false) override;
-    virtual IntRect forwardButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool painting = false) override;
-    virtual IntRect trackRect(ScrollbarThemeClient*, bool painting = false) override;
+    virtual IntRect backButtonRect(Scrollbar&, ScrollbarPart, bool painting = false) override;
+    virtual IntRect forwardButtonRect(Scrollbar&, ScrollbarPart, bool painting = false) override;
+    virtual IntRect trackRect(Scrollbar&, bool painting = false) override;
 
     virtual int maxOverlapBetweenPages() override { return 40; }
 
-    virtual int minimumThumbLength(ScrollbarThemeClient*) override;
+    virtual int minimumThumbLength(Scrollbar&) override;
     
-    virtual bool shouldCenterOnThumb(ScrollbarThemeClient*, const PlatformMouseEvent&) override;
-    virtual bool shouldDragDocumentInsteadOfThumb(ScrollbarThemeClient*, const PlatformMouseEvent&) override;
+    virtual bool shouldCenterOnThumb(Scrollbar&, const PlatformMouseEvent&) override;
+    virtual bool shouldDragDocumentInsteadOfThumb(Scrollbar&, const PlatformMouseEvent&) override;
     int scrollbarPartToHIPressedState(ScrollbarPart);
 
 #if ENABLE(RUBBER_BANDING)

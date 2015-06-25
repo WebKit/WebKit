@@ -138,13 +138,13 @@ void RenderScrollbarPart::styleDidChange(StyleDifference diff, const RenderStyle
     setFloating(false);
     setHasOverflowClip(false);
     if (oldStyle && m_scrollbar && m_part != NoPart && diff >= StyleDifferenceRepaint)
-        m_scrollbar->theme()->invalidatePart(m_scrollbar, m_part);
+        m_scrollbar->theme()->invalidatePart(*m_scrollbar, m_part);
 }
 
 void RenderScrollbarPart::imageChanged(WrappedImagePtr image, const IntRect* rect)
 {
     if (m_scrollbar && m_part != NoPart)
-        m_scrollbar->theme()->invalidatePart(m_scrollbar, m_part);
+        m_scrollbar->theme()->invalidatePart(*m_scrollbar, m_part);
     else {
         if (view().frameView().isFrameViewScrollCorner(this)) {
             view().frameView().invalidateScrollCorner(view().frameView().scrollCornerRect());

@@ -27,11 +27,11 @@
 #include "ScrollbarThemeComposite.h"
 
 #include "GraphicsContext.h"
-#include "ScrollbarThemeClient.h"
+#include "Scrollbar.h"
 
 namespace WebCore {
 
-bool ScrollbarThemeComposite::paint(ScrollbarThemeClient* scrollbar, GraphicsContext* graphicsContext, const IntRect& damageRect)
+bool ScrollbarThemeComposite::paint(Scrollbar& scrollbar, GraphicsContext& graphicsContext, const IntRect& damageRect)
 {
     // Create the ScrollbarControlPartMask based on the damageRect
     ScrollbarControlPartMask scrollMask = NoPart;
@@ -109,16 +109,16 @@ bool ScrollbarThemeComposite::paint(ScrollbarThemeClient* scrollbar, GraphicsCon
     return true;
 }
 
-ScrollbarPart ScrollbarThemeComposite::hitTest(ScrollbarThemeClient* scrollbar, const IntPoint& position)
+ScrollbarPart ScrollbarThemeComposite::hitTest(Scrollbar& scrollbar, const IntPoint& position)
 {
     ScrollbarPart result = NoPart;
-    if (!scrollbar->enabled())
+    if (!scrollbar.enabled())
         return result;
 
-    IntPoint testPosition = scrollbar->convertFromContainingWindow(position);
-    testPosition.move(scrollbar->x(), scrollbar->y());
+    IntPoint testPosition = scrollbar.convertFromContainingWindow(position);
+    testPosition.move(scrollbar.x(), scrollbar.y());
     
-    if (!scrollbar->frameRect().contains(testPosition))
+    if (!scrollbar.frameRect().contains(testPosition))
         return NoPart;
 
     result = ScrollbarBGPart;
@@ -148,7 +148,7 @@ ScrollbarPart ScrollbarThemeComposite::hitTest(ScrollbarThemeClient* scrollbar, 
     return result;
 }
 
-void ScrollbarThemeComposite::invalidatePart(ScrollbarThemeClient* scrollbar, ScrollbarPart part)
+void ScrollbarThemeComposite::invalidatePart(Scrollbar& scrollbar, ScrollbarPart part)
 {
     if (part == NoPart)
         return;
@@ -171,7 +171,7 @@ void ScrollbarThemeComposite::invalidatePart(ScrollbarThemeClient* scrollbar, Sc
             result = trackRect(scrollbar, true);
             break;
         case ScrollbarBGPart:
-            result = scrollbar->frameRect();
+            result = scrollbar.frameRect();
             break;
         default: {
             IntRect beforeThumbRect, thumbRect, afterThumbRect;
@@ -184,19 +184,19 @@ void ScrollbarThemeComposite::invalidatePart(ScrollbarThemeClient* scrollbar, Sc
                 result = thumbRect;
         }
     }
-    result.moveBy(-scrollbar->location());
-    scrollbar->invalidateRect(result);
+    result.moveBy(-scrollbar.location());
+    scrollbar.invalidateRect(result);
 }
 
-void ScrollbarThemeComposite::splitTrack(ScrollbarThemeClient* scrollbar, const IntRect& unconstrainedTrackRect, IntRect& beforeThumbRect, IntRect& thumbRect, IntRect& afterThumbRect)
+void ScrollbarThemeComposite::splitTrack(Scrollbar& scrollbar, const IntRect& unconstrainedTrackRect, IntRect& beforeThumbRect, IntRect& thumbRect, IntRect& afterThumbRect)
 {
     // This function won't even get called unless we're big enough to have some combination of these three rects where at least
     // one of them is non-empty.
     IntRect trackRect = constrainTrackRectToTrackPieces(scrollbar, unconstrainedTrackRect);
-    int thickness = scrollbar->orientation() == HorizontalScrollbar ? scrollbar->height() : scrollbar->width();
+    int thickness = scrollbar.orientation() == HorizontalScrollbar ? scrollbar.height() : scrollbar.width();
     int thumbPos = thumbPosition(scrollbar);
-    if (scrollbar->orientation() == HorizontalScrollbar) {
-        thumbRect = IntRect(trackRect.x() + thumbPos, trackRect.y() + (trackRect.height() - thickness) / 2, thumbLength(scrollbar), thickness); 
+    if (scrollbar.orientation() == HorizontalScrollbar) {
+        thumbRect = IntRect(trackRect.x() + thumbPos, trackRect.y() + (trackRect.height() - thickness) / 2, thumbLength(scrollbar), thickness);
         beforeThumbRect = IntRect(trackRect.x(), trackRect.y(), thumbPos + thumbRect.width() / 2, trackRect.height()); 
         afterThumbRect = IntRect(trackRect.x() + beforeThumbRect.width(), trackRect.y(), trackRect.maxX() - beforeThumbRect.maxX(), trackRect.height());
     } else {
@@ -208,33 +208,33 @@ void ScrollbarThemeComposite::splitTrack(ScrollbarThemeClient* scrollbar, const 
 
 // Returns the size represented by track taking into account scrolling past
 // the end of the document.
-static float usedTotalSize(ScrollbarThemeClient* scrollbar)
+static float usedTotalSize(Scrollbar& scrollbar)
 {
-    float overhangAtStart = -scrollbar->currentPos();
-    float overhangAtEnd = scrollbar->currentPos() + scrollbar->visibleSize() - scrollbar->totalSize();
+    float overhangAtStart = -scrollbar.currentPos();
+    float overhangAtEnd = scrollbar.currentPos() + scrollbar.visibleSize() - scrollbar.totalSize();
     float overhang = std::max(0.0f, std::max(overhangAtStart, overhangAtEnd));
-    return scrollbar->totalSize() + overhang;
+    return scrollbar.totalSize() + overhang;
 }
 
-int ScrollbarThemeComposite::thumbPosition(ScrollbarThemeClient* scrollbar)
+int ScrollbarThemeComposite::thumbPosition(Scrollbar& scrollbar)
 {
-    if (scrollbar->enabled()) {
-        float size = usedTotalSize(scrollbar) - scrollbar->visibleSize();
+    if (scrollbar.enabled()) {
+        float size = usedTotalSize(scrollbar) - scrollbar.visibleSize();
         // Avoid doing a floating point divide by zero and return 1 when usedTotalSize == visibleSize.
         if (!size)
             return 1;
-        float pos = std::max(0.0f, scrollbar->currentPos()) * (trackLength(scrollbar) - thumbLength(scrollbar)) / size;
+        float pos = std::max(0.0f, scrollbar.currentPos()) * (trackLength(scrollbar) - thumbLength(scrollbar)) / size;
         return (pos < 1 && pos > 0) ? 1 : pos;
     }
     return 0;
 }
 
-int ScrollbarThemeComposite::thumbLength(ScrollbarThemeClient* scrollbar)
+int ScrollbarThemeComposite::thumbLength(Scrollbar& scrollbar)
 {
-    if (!scrollbar->enabled())
+    if (!scrollbar.enabled())
         return 0;
 
-    float proportion = scrollbar->visibleSize() / usedTotalSize(scrollbar);
+    float proportion = scrollbar.visibleSize() / usedTotalSize(scrollbar);
     int trackLen = trackLength(scrollbar);
     int length = round(proportion * trackLen);
     length = std::max(length, minimumThumbLength(scrollbar));
@@ -243,21 +243,21 @@ int ScrollbarThemeComposite::thumbLength(ScrollbarThemeClient* scrollbar)
     return length;
 }
 
-int ScrollbarThemeComposite::minimumThumbLength(ScrollbarThemeClient* scrollbar)
+int ScrollbarThemeComposite::minimumThumbLength(Scrollbar& scrollbar)
 {
-    return scrollbarThickness(scrollbar->controlSize());
+    return scrollbarThickness(scrollbar.controlSize());
 }
 
-int ScrollbarThemeComposite::trackPosition(ScrollbarThemeClient* scrollbar)
+int ScrollbarThemeComposite::trackPosition(Scrollbar& scrollbar)
 {
     IntRect constrainedTrackRect = constrainTrackRectToTrackPieces(scrollbar, trackRect(scrollbar));
-    return (scrollbar->orientation() == HorizontalScrollbar) ? constrainedTrackRect.x() - scrollbar->x() : constrainedTrackRect.y() - scrollbar->y();
+    return (scrollbar.orientation() == HorizontalScrollbar) ? constrainedTrackRect.x() - scrollbar.x() : constrainedTrackRect.y() - scrollbar.y();
 }
 
-int ScrollbarThemeComposite::trackLength(ScrollbarThemeClient* scrollbar)
+int ScrollbarThemeComposite::trackLength(Scrollbar& scrollbar)
 {
     IntRect constrainedTrackRect = constrainTrackRectToTrackPieces(scrollbar, trackRect(scrollbar));
-    return (scrollbar->orientation() == HorizontalScrollbar) ? constrainedTrackRect.width() : constrainedTrackRect.height();
+    return (scrollbar.orientation() == HorizontalScrollbar) ? constrainedTrackRect.width() : constrainedTrackRect.height();
 }
 
 void ScrollbarThemeComposite::paintScrollCorner(ScrollView*, GraphicsContext* context, const IntRect& cornerRect)
@@ -265,7 +265,7 @@ void ScrollbarThemeComposite::paintScrollCorner(ScrollView*, GraphicsContext* co
     context->fillRect(cornerRect, Color::white, ColorSpaceDeviceRGB);
 }
 
-IntRect ScrollbarThemeComposite::thumbRect(ScrollbarThemeClient* scrollbar)
+IntRect ScrollbarThemeComposite::thumbRect(Scrollbar& scrollbar)
 {
     if (!hasThumb(scrollbar))
         return IntRect();

@@ -39,8 +39,8 @@ public:
     void setScrollbarThickness(int thickness) { m_scrollbarThickness = thickness; }
     virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar) override { return m_scrollbarThickness; }
 
-    virtual void registerScrollbar(ScrollbarThemeClient*) override { }
-    virtual void unregisterScrollbar(ScrollbarThemeClient*) override { }
+    virtual void registerScrollbar(Scrollbar&) override { }
+    virtual void unregisterScrollbar(Scrollbar&) override { }
 private:
     int m_scrollbarThickness;
 };

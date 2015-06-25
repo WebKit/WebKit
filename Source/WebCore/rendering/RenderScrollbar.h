@@ -91,7 +91,7 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::RenderScrollbar)
-    static bool isType(const WebCore::ScrollbarThemeClient& scrollbar) { return scrollbar.isCustomScrollbar(); }
+    static bool isType(const WebCore::Scrollbar& scrollbar) { return scrollbar.isCustomScrollbar(); }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // RenderScrollbar_h

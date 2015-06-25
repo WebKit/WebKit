@@ -43,9 +43,9 @@ void ScrollingStateFrameScrollingNode::setScrollbarPaintersFromScrollbars(Scroll
     ScrollbarThemeMac* macTheme = static_cast<ScrollbarThemeMac*>(scrollbarTheme);
 
     ScrollbarPainter verticalPainter = verticalScrollbar && verticalScrollbar->supportsUpdateOnSecondaryThread()
-        ? macTheme->painterForScrollbar(verticalScrollbar) : 0;
+        ? macTheme->painterForScrollbar(*verticalScrollbar) : nullptr;
     ScrollbarPainter horizontalPainter = horizontalScrollbar && horizontalScrollbar->supportsUpdateOnSecondaryThread()
-        ? macTheme->painterForScrollbar(horizontalScrollbar) : 0;
+        ? macTheme->painterForScrollbar(*horizontalScrollbar) : nullptr;
 
     if (m_verticalScrollbarPainter == verticalPainter && m_horizontalScrollbarPainter == horizontalPainter)
         return;

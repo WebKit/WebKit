@@ -41,11 +41,11 @@ ScrollbarTheme* ScrollbarTheme::nativeTheme()
     return &theme.get();
 }
 
-void ScrollbarThemeIOS::registerScrollbar(ScrollbarThemeClient*)
+void ScrollbarThemeIOS::registerScrollbar(Scrollbar&)
 {
 }
 
-void ScrollbarThemeIOS::unregisterScrollbar(ScrollbarThemeClient*)
+void ScrollbarThemeIOS::unregisterScrollbar(Scrollbar&)
 {
 }
 
@@ -81,42 +81,42 @@ ScrollbarButtonsPlacement ScrollbarThemeIOS::buttonsPlacement() const
     return ScrollbarButtonsNone;
 }
 
-bool ScrollbarThemeIOS::hasButtons(ScrollbarThemeClient*)
+bool ScrollbarThemeIOS::hasButtons(Scrollbar&)
 {
     return false;
 }
 
-bool ScrollbarThemeIOS::hasThumb(ScrollbarThemeClient*)
+bool ScrollbarThemeIOS::hasThumb(Scrollbar&)
 {
     return false;
 }
 
-IntRect ScrollbarThemeIOS::backButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool /*painting*/)
+IntRect ScrollbarThemeIOS::backButtonRect(Scrollbar&, ScrollbarPart, bool /*painting*/)
 {
     return IntRect();
 }
 
-IntRect ScrollbarThemeIOS::forwardButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool /*painting*/)
+IntRect ScrollbarThemeIOS::forwardButtonRect(Scrollbar&, ScrollbarPart, bool /*painting*/)
 {
     return IntRect();
 }
 
-IntRect ScrollbarThemeIOS::trackRect(ScrollbarThemeClient*, bool /*painting*/)
+IntRect ScrollbarThemeIOS::trackRect(Scrollbar&, bool /*painting*/)
 {
     return IntRect();
 }
 
-int ScrollbarThemeIOS::minimumThumbLength(ScrollbarThemeClient*)
+int ScrollbarThemeIOS::minimumThumbLength(Scrollbar&)
 {
     return 0;
 }
 
-bool ScrollbarThemeIOS::shouldCenterOnThumb(ScrollbarThemeClient*, const PlatformMouseEvent&)
+bool ScrollbarThemeIOS::shouldCenterOnThumb(Scrollbar&, const PlatformMouseEvent&)
 {
     return false;
 }
 
-bool ScrollbarThemeIOS::paint(ScrollbarThemeClient*, GraphicsContext*, const IntRect& /*damageRect*/)
+bool ScrollbarThemeIOS::paint(Scrollbar&, GraphicsContext&, const IntRect& /*damageRect*/)
 {
     return true;
 }

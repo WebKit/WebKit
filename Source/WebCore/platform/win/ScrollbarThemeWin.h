@@ -41,21 +41,21 @@ public:
     
     bool invalidateOnMouseEnterExit() override;
 
-    IntRect backButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool painting = false) override;
-    IntRect forwardButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool painting = false) override;
-    IntRect trackRect(ScrollbarThemeClient*, bool painting = false) override;
+    IntRect backButtonRect(Scrollbar&, ScrollbarPart, bool painting = false) override;
+    IntRect forwardButtonRect(Scrollbar&, ScrollbarPart, bool painting = false) override;
+    IntRect trackRect(Scrollbar&, bool painting = false) override;
 
 protected:
-    bool hasButtons(ScrollbarThemeClient*) override { return true; }
-    bool hasThumb(ScrollbarThemeClient*) override;
+    bool hasButtons(Scrollbar&) override { return true; }
+    bool hasThumb(Scrollbar&) override;
 
-    bool shouldCenterOnThumb(ScrollbarThemeClient*, const PlatformMouseEvent&) override;
-    bool shouldSnapBackToDragOrigin(ScrollbarThemeClient*, const PlatformMouseEvent&) override;
+    bool shouldCenterOnThumb(Scrollbar&, const PlatformMouseEvent&) override;
+    bool shouldSnapBackToDragOrigin(Scrollbar&, const PlatformMouseEvent&) override;
 
-    void paintTrackBackground(GraphicsContext*, ScrollbarThemeClient*, const IntRect&) override;
-    void paintTrackPiece(GraphicsContext*, ScrollbarThemeClient*, const IntRect&, ScrollbarPart) override;
-    void paintButton(GraphicsContext*, ScrollbarThemeClient*, const IntRect&, ScrollbarPart) override;
-    void paintThumb(GraphicsContext*, ScrollbarThemeClient*, const IntRect&) override;
+    void paintTrackBackground(GraphicsContext&, Scrollbar&, const IntRect&) override;
+    void paintTrackPiece(GraphicsContext&, Scrollbar&, const IntRect&, ScrollbarPart) override;
+    void paintButton(GraphicsContext&, Scrollbar&, const IntRect&, ScrollbarPart) override;
+    void paintThumb(GraphicsContext&, Scrollbar&, const IntRect&) override;
 };
 
 }
