@@ -2620,7 +2620,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 - (void)_hideContentUntilNextUpdate
 {
     if (auto* area = _page->drawingArea())
-        area->hideContentUntilNextUpdate();
+        area->hideContentUntilAnyUpdate();
 }
 
 - (void)_beginAnimatedResizeWithUpdates:(void (^)(void))updateBlock

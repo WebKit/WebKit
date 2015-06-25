@@ -550,7 +550,7 @@ private:
 {
     _page->applicationWillEnterForeground();
     if (auto drawingArea = _page->drawingArea())
-        drawingArea->hideContentUntilNextUpdate();
+        drawingArea->hideContentUntilAnyUpdate();
     _page->viewStateDidChange(ViewState::AllFlags & ~ViewState::IsInWindow, true, WebPageProxy::ViewStateChangeDispatchMode::Immediate);
 }
 

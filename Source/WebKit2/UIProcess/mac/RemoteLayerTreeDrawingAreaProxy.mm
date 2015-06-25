@@ -101,10 +101,6 @@ namespace WebKit {
 RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy& webPageProxy)
     : DrawingAreaProxy(DrawingAreaTypeRemoteLayerTree, webPageProxy)
     , m_remoteLayerTreeHost(*this)
-    , m_isWaitingForDidUpdateGeometry(false)
-    , m_pendingLayerTreeTransactionID(0)
-    , m_lastVisibleTransactionID(0)
-    , m_transactionIDForPendingCACommit(0)
 #if PLATFORM(IOS)
     , m_displayLinkHandler(adoptNS([[OneShotDisplayLinkHandler alloc] initWithDrawingAreaProxy:this]))
 #endif
@@ -196,8 +192,12 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
             callback->performCallback();
     }
 
-    if (m_remoteLayerTreeHost.updateLayerTree(layerTreeTransaction))
-        m_webPageProxy.setAcceleratedCompositingRootLayer(m_remoteLayerTreeHost.rootLayer());
+    if (m_remoteLayerTreeHost.updateLayerTree(layerTreeTransaction)) {
+        if (layerTreeTransaction.transactionID() >= m_transactionIDForUnhidingContent)
+            m_webPageProxy.setAcceleratedCompositingRootLayer(m_remoteLayerTreeHost.rootLayer());
+        else
+            m_remoteLayerTreeHost.detachRootLayer();
+    }
 
 #if ENABLE(ASYNC_SCROLLING)
     RemoteScrollingCoordinatorProxy::RequestedScrollInfo requestedScrollInfo;
@@ -416,7 +416,13 @@ void RemoteLayerTreeDrawingAreaProxy::dispatchAfterEnsuringDrawing(std::function
     m_webPageProxy.process().send(Messages::DrawingArea::AddTransactionCallbackID(m_callbacks.put(WTF::move(callbackFunction), nullptr)), m_webPageProxy.pageID());
 }
 
-void RemoteLayerTreeDrawingAreaProxy::hideContentUntilNextUpdate()
+void RemoteLayerTreeDrawingAreaProxy::hideContentUntilPendingUpdate()
+{
+    m_transactionIDForUnhidingContent = nextLayerTreeTransactionID();
+    m_remoteLayerTreeHost.detachRootLayer();
+}
+
+void RemoteLayerTreeDrawingAreaProxy::hideContentUntilAnyUpdate()
 {
     m_remoteLayerTreeHost.detachRootLayer();
 }

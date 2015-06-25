@@ -303,7 +303,7 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
             if (gestureControllerIter != viewGestureControllersForAllPages().end() && gestureControllerIter->value->m_gesturePendingSnapshotRemoval == gesturePendingSnapshotRemoval)
                 gestureControllerIter->value->willCommitPostSwipeTransitionLayerTree(error == CallbackBase::Error::None);
         });
-        drawingArea->hideContentUntilNextUpdate();
+        drawingArea->hideContentUntilPendingUpdate();
     } else {
         removeSwipeSnapshot();
         return;

@@ -1,5 +1,41 @@
 2015-06-25  Tim Horton  <timothy_horton@apple.com>
 
+        [iOS] When using the back swipe gesture in Safari, the previous webpage will flash for a second
+        https://bugs.webkit.org/show_bug.cgi?id=146326
+        <rdar://problem/17811304>
+
+        Reviewed by Dean Jackson.
+
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::hideContentUntilPendingUpdate):
+        (WebKit::DrawingAreaProxy::hideContentUntilAnyUpdate):
+        (WebKit::DrawingAreaProxy::hideContentUntilNextUpdate): Deleted.
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::hideContentUntilPendingUpdate):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::hideContentUntilAnyUpdate):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy): Deleted.
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::hideContentUntilNextUpdate): Deleted.
+        Make it possible to distinguish between hiding the content until *any* commit
+        comes in (for example, when we're coming back from being suspended and don't want
+        to show anything until we are sure all the layers are valid) and hiding the content
+        until the currently pending commit corresponding to the current state in the UI process
+        has arrived (which is what we want when e.g. hiding content after a gesture navigation
+        and not showing it until the commit including the navigation lands).
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _hideContentUntilNextUpdate]):
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _applicationWillEnterForeground]):
+        Make use of "hideContentUntilAnyUpdate".
+
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::endSwipeGesture):
+        Make use of "hideContentUntilPendingUpdate".
+
+2015-06-25  Tim Horton  <timothy_horton@apple.com>
+
         Viewport units are wrong when scaled in 2-up mode, cause content to hop around on apple.com/music
         https://bugs.webkit.org/show_bug.cgi?id=146322
         <rdar://problem/21413884>
