@@ -6317,7 +6317,7 @@ MediaProducer::MediaStateFlags HTMLMediaElement::mediaState() const
     if (m_player && m_player->isCurrentPlaybackTargetWireless())
         state |= IsPlayingToExternalDevice;
 
-    if (!m_mediaSession->wirelessVideoPlaybackDisabled(*this) && m_hasPlaybackTargetAvailabilityListeners && m_player->canPlayToWirelessPlaybackTarget())
+    if (m_player && m_hasPlaybackTargetAvailabilityListeners && !m_mediaSession->wirelessVideoPlaybackDisabled(*this) && m_player->canPlayToWirelessPlaybackTarget())
         state |= RequiresPlaybackTargetMonitoring;
 
     bool requireUserGesture = m_mediaSession->hasBehaviorRestriction(MediaElementSession::RequireUserGestureToAutoplayToExternalDevice);
