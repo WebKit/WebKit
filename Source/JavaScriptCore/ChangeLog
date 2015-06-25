@@ -1,3 +1,14 @@
+2015-06-25  Michael Saboff  <msaboff@apple.com>
+
+        Minor fix to idx bounds check after 185954
+
+        Rubber Stamped by Ryosuke Niwa.
+
+        Changed "idx > 1" to "idx > 0" in two places.
+
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::functionCallBase):
+
 2015-06-25  Keith Miller  <keith_miller@apple.com>
 
         Address Sanitizer does not play well with memcpy in JSC::MachineThreads::tryCopyOtherThreadStack.

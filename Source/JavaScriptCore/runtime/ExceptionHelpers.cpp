@@ -134,7 +134,7 @@ static String functionCallBase(const String& sourceText)
     while (parenStack > 0) {
         UChar curChar = sourceText[idx];
         if (isInMultiLineComment)  {
-            if (idx > 1 && curChar == '*' && sourceText[idx - 1] == '/') {
+            if (idx > 0 && curChar == '*' && sourceText[idx - 1] == '/') {
                 isInMultiLineComment = false;
                 idx -= 1;
             }
@@ -142,7 +142,7 @@ static String functionCallBase(const String& sourceText)
             parenStack -= 1;
         else if (curChar == ')')
             parenStack += 1;
-        else if (idx > 1 && curChar == '/' && sourceText[idx - 1] == '*') {
+        else if (idx > 0 && curChar == '/' && sourceText[idx - 1] == '*') {
             isInMultiLineComment = true;
             idx -= 1;
         }
