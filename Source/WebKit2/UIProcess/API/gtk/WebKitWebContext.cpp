@@ -173,6 +173,8 @@ struct _WebKitWebContextPrivate {
 #if ENABLE(NOTIFICATIONS)
     RefPtr<WebKitNotificationProvider> notificationProvider;
 #endif
+    RefPtr<WebsiteDataStore> websiteDataStore;
+
     CString faviconDatabaseDirectory;
     WebKitTLSErrorsPolicy tlsErrorsPolicy;
 
@@ -260,26 +262,39 @@ static void webkitWebContextSetProperty(GObject* object, guint propID, const GVa
     }
 }
 
+static inline WebsiteDataStore::Configuration websiteDataStoreConfigurationForWebProcessPoolConfiguration(const API::ProcessPoolConfiguration& processPoolconfigurarion)
+{
+    WebsiteDataStore::Configuration configuration;
+    configuration.applicationCacheDirectory = processPoolconfigurarion.applicationCacheDirectory();
+    configuration.networkCacheDirectory = processPoolconfigurarion.diskCacheDirectory();
+    configuration.webSQLDatabaseDirectory = processPoolconfigurarion.webSQLDatabaseDirectory();
+    configuration.localStorageDirectory = processPoolconfigurarion.localStorageDirectory();
+    configuration.mediaKeysStorageDirectory = processPoolconfigurarion.mediaKeysStorageDirectory();
+    return configuration;
+}
+
 static void webkitWebContextConstructed(GObject* object)
 {
     G_OBJECT_CLASS(webkit_web_context_parent_class)->constructed(object);
 
     GUniquePtr<char> bundleFilename(g_build_filename(injectedBundleDirectory(), "libwebkit2gtkinjectedbundle.so", nullptr));
 
-    auto configuration = API::ProcessPoolConfiguration::createWithLegacyOptions();
-    configuration->setInjectedBundlePath(WebCore::filenameToString(bundleFilename.get()));
+    API::ProcessPoolConfiguration configuration;
+    configuration.setInjectedBundlePath(WebCore::filenameToString(bundleFilename.get()));
+    configuration.setProcessModel(ProcessModelSharedSecondaryProcess);
+    configuration.setUseNetworkProcess(false);
 
     WebKitWebContext* webContext = WEBKIT_WEB_CONTEXT(object);
     WebKitWebContextPrivate* priv = webContext->priv;
     if (!priv->localStorageDirectory.isNull())
-        configuration->setLocalStorageDirectory(WebCore::filenameToString(priv->localStorageDirectory.data()));
+        configuration.setLocalStorageDirectory(WebCore::filenameToString(priv->localStorageDirectory.data()));
     if (!priv->indexedDBDirectory.isNull())
-        configuration->setIndexedDBDatabaseDirectory(WebCore::filenameToString(priv->indexedDBDirectory.data()));
+        configuration.setIndexedDBDatabaseDirectory(WebCore::filenameToString(priv->indexedDBDirectory.data()));
 
-    priv->context = WebProcessPool::create(configuration.get());
+    priv->context = WebProcessPool::create(configuration);
 
+    priv->websiteDataStore = WebsiteDataStore::create(websiteDataStoreConfigurationForWebProcessPoolConfiguration(configuration));
     priv->requestManager = priv->context->supplement<WebSoupCustomProtocolRequestManager>();
-    priv->context->setCacheModel(CacheModelPrimaryWebBrowser);
 
     priv->tlsErrorsPolicy = WEBKIT_TLS_ERRORS_POLICY_FAIL;
     priv->context->setIgnoreTLSErrors(false);
@@ -1213,10 +1228,13 @@ void webkitWebContextDidFinishLoadingCustomProtocol(WebKitWebContext* context, u
 void webkitWebContextCreatePageForWebView(WebKitWebContext* context, WebKitWebView* webView, WebKitUserContentManager* userContentManager, WebKitWebView* relatedView)
 {
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(webView);
-    WebPageProxy* relatedPage = relatedView ? webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(relatedView)) : nullptr;
-    WebPreferences* preferences = webkitSettingsGetPreferences(webkit_web_view_get_settings(webView));
-    WebUserContentControllerProxy* userContentControllerProxy = userContentManager ? webkitUserContentManagerGetUserContentControllerProxy(userContentManager) : nullptr;
-    webkitWebViewBaseCreateWebPage(webViewBase, context->priv->context.get(), preferences, nullptr, userContentControllerProxy, relatedPage);
+    WebPageConfiguration webPageConfiguration;
+    webPageConfiguration.preferences = webkitSettingsGetPreferences(webkit_web_view_get_settings(webView));
+    webPageConfiguration.relatedPage = relatedView ? webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(relatedView)) : nullptr;
+    webPageConfiguration.userContentController = userContentManager ? webkitUserContentManagerGetUserContentControllerProxy(userContentManager) : nullptr;
+    webPageConfiguration.websiteDataStore = context->priv->websiteDataStore.get();
+    webPageConfiguration.sessionID = context->priv->websiteDataStore->sessionID();
+    webkitWebViewBaseCreateWebPage(webViewBase, context->priv->context.get(), WTF::move(webPageConfiguration));
 
     WebPageProxy* page = webkitWebViewBaseGetPage(webViewBase);
     context->priv->webViews.set(page->pageID(), webView);

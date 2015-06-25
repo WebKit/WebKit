@@ -86,8 +86,7 @@ static void initInspectorServer()
 
 WTF::String WebProcessPool::legacyPlatformDefaultApplicationCacheDirectory()
 {
-    GUniquePtr<gchar> cacheDirectory(g_build_filename(g_get_user_cache_dir(), "webkitgtk", "applications", nullptr));
-    return WebCore::filenameToString(cacheDirectory.get());
+    return API::WebsiteDataStore::defaultApplicationCacheDirectory();
 }
 
 void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
@@ -118,14 +117,12 @@ void WebProcessPool::platformInvalidateContext()
 
 String WebProcessPool::legacyPlatformDefaultWebSQLDatabaseDirectory()
 {
-    GUniquePtr<gchar> databaseDirectory(g_build_filename(g_get_user_data_dir(), "webkitgtk", "databases", nullptr));
-    return WebCore::filenameToString(databaseDirectory.get());
+    return API::WebsiteDataStore::defaultWebSQLDatabaseDirectory();
 }
 
 String WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory()
 {
-    GUniquePtr<gchar> indexedDBDatabaseDirectory(g_build_filename(g_get_user_data_dir(), "webkitgtk", "databases", "indexeddb", nullptr));
-    return WebCore::filenameToString(indexedDBDatabaseDirectory.get());
+    return API::WebsiteDataStore::defaultIndexedDBDatabaseDirectory();
 }
 
 String WebProcessPool::platformDefaultIconDatabasePath() const
@@ -136,25 +133,17 @@ String WebProcessPool::platformDefaultIconDatabasePath() const
 
 String WebProcessPool::legacyPlatformDefaultLocalStorageDirectory()
 {
-    GUniquePtr<gchar> storageDirectory(g_build_filename(g_get_user_data_dir(), "webkitgtk", "localstorage", nullptr));
-    return WebCore::filenameToString(storageDirectory.get());
+    return API::WebsiteDataStore::defaultLocalStorageDirectory();
 }
 
 String WebProcessPool::legacyPlatformDefaultMediaKeysStorageDirectory()
 {
-    GUniquePtr<gchar> mediaKeysStorageDirectory(g_build_filename(g_get_user_data_dir(), "webkitgtk", "mediakeys", nullptr));
-    return WebCore::filenameToString(mediaKeysStorageDirectory.get());
+    return API::WebsiteDataStore::defaultMediaKeysStorageDirectory();
 }
 
 String WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory()
 {
-#if ENABLE(NETWORK_CACHE)
-    static const char networkCacheSubdirectory[] = "WebKitCache";
-#else
-    static const char networkCacheSubdirectory[] = "webkit";
-#endif
-    GUniquePtr<char> diskCacheDirectory(g_build_filename(g_get_user_cache_dir(), g_get_prgname(), networkCacheSubdirectory, nullptr));
-    return WebCore::filenameToString(diskCacheDirectory.get());
+    return API::WebsiteDataStore::defaultNetworkCacheDirectory();
 }
 
 void WebProcessPool::setIgnoreTLSErrors(bool ignoreTLSErrors)

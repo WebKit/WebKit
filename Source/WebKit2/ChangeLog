@@ -1,3 +1,48 @@
+2015-06-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Do not use legacy data store options in WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=146145
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Use a custom WebsiteDataStore in WebKitWebContext, configured with
+        the context options, and passed to every page created. This is in
+        preparation for exposing WebsiteDataStore in the public API.
+
+        * PlatformGTK.cmake: Add APIWebsiteDataStore.cpp to compilation.
+        * UIProcess/API/APIWebsiteDataStore.cpp:
+        * UIProcess/API/gtk/APIWebsiteDataStoreGtk.cpp:
+        (API::WebsiteDataStore::defaultApplicationCacheDirectory):
+        (API::WebsiteDataStore::defaultNetworkCacheDirectory):
+        (API::WebsiteDataStore::defaultIndexedDBDatabaseDirectory):
+        (API::WebsiteDataStore::defaultLocalStorageDirectory):
+        (API::WebsiteDataStore::defaultMediaKeysStorageDirectory):
+        (API::WebsiteDataStore::defaultWebSQLDatabaseDirectory):
+        (API::WebsiteDataStore::cacheDirectoryFileSystemRepresentation):
+        (API::WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation):
+        (API::WebsiteDataStore::defaultDataStoreConfiguration):
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (websiteDataStoreConfigurationForWebProcessPoolConfiguration):
+        Helper function to create the WebsiteDataStore configuration with
+        the WebProcessPool configuration options.
+        (webkitWebContextConstructed): Do not create a
+        WebProcessPoolConfiguration with legacy options and create a WebsiteDataStore.
+        (webkitWebContextCreatePageForWebView): Set the WebsiteDataStore
+        and session ID in web page configuration.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseCreate): Create a WebPageConfiguration for the
+        given options and pass it to webkitWebViewBaseCreateWebPage.
+        (webkitWebViewBaseCreateWebPage): It receives now a
+        WebPageConfiguration, instead of creating it based on the given parameters.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/gtk/WebProcessPoolGtk.cpp: Use WebsiteDataStore default configuration.
+        (WebKit::WebProcessPool::legacyPlatformDefaultApplicationCacheDirectory):
+        (WebKit::WebProcessPool::legacyPlatformDefaultWebSQLDatabaseDirectory):
+        (WebKit::WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory):
+        (WebKit::WebProcessPool::legacyPlatformDefaultLocalStorageDirectory):
+        (WebKit::WebProcessPool::legacyPlatformDefaultMediaKeysStorageDirectory):
+        (WebKit::WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory):
+
 2015-06-24  Anders Carlsson  <andersca@apple.com>
 
         Detect view services by using the "com.apple.UIKit.vends-view-services" entitlement

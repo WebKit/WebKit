@@ -1065,8 +1065,13 @@ static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebVie
 
 WebKitWebViewBase* webkitWebViewBaseCreate(WebProcessPool* context, WebPreferences* preferences, WebPageGroup* pageGroup, WebUserContentControllerProxy* userContentController, WebPageProxy* relatedPage)
 {
-    WebKitWebViewBase* webkitWebViewBase = WEBKIT_WEB_VIEW_BASE(g_object_new(WEBKIT_TYPE_WEB_VIEW_BASE, NULL));
-    webkitWebViewBaseCreateWebPage(webkitWebViewBase, context, preferences, pageGroup, userContentController, relatedPage);
+    WebKitWebViewBase* webkitWebViewBase = WEBKIT_WEB_VIEW_BASE(g_object_new(WEBKIT_TYPE_WEB_VIEW_BASE, nullptr));
+    WebPageConfiguration webPageConfiguration;
+    webPageConfiguration.preferences = preferences;
+    webPageConfiguration.pageGroup = pageGroup;
+    webPageConfiguration.relatedPage = relatedPage;
+    webPageConfiguration.userContentController = userContentController;
+    webkitWebViewBaseCreateWebPage(webkitWebViewBase, context, WTF::move(webPageConfiguration));
     return webkitWebViewBase;
 }
 
@@ -1087,7 +1092,7 @@ static void deviceScaleFactorChanged(WebKitWebViewBase* webkitWebViewBase)
 }
 #endif // HAVE(GTK_SCALE_FACTOR)
 
-void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WebProcessPool* context, WebPreferences* preferences, WebPageGroup* pageGroup, WebUserContentControllerProxy* userContentController, WebPageProxy* relatedPage)
+void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WebProcessPool* context, WebPageConfiguration&& configuration)
 {
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
 
@@ -1098,12 +1103,7 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WebPro
         preferences->setAcceleratedCompositingEnabled(false);
 #endif
 
-    WebPageConfiguration webPageConfiguration;
-    webPageConfiguration.preferences = preferences;
-    webPageConfiguration.pageGroup = pageGroup;
-    webPageConfiguration.relatedPage = relatedPage;
-    webPageConfiguration.userContentController = userContentController;
-    priv->pageProxy = context->createWebPage(*priv->pageClient, WTF::move(webPageConfiguration));
+    priv->pageProxy = context->createWebPage(*priv->pageClient, WTF::move(configuration));
     priv->pageProxy->initializeWebPage();
 
     priv->inputMethodFilter.setPage(priv->pageProxy.get());
