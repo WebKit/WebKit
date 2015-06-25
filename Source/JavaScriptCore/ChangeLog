@@ -1,3 +1,27 @@
+2015-06-24  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::SpeculativeJIT shouldn't use filter==Contradiction when it meant isClear
+        https://bugs.webkit.org/show_bug.cgi?id=146291
+        rdar://problem/21435366
+
+        Reviewed by Michael Saboff.
+        
+        The filter() method returns Contradiction only when a value *becomes* clear. This is
+        necessary for supporting the convention that non-JSValue nodes have a bottom proved
+        type. (We should fix that convention eventually, but for now let's just be consistent
+        about it.)
+        
+        * dfg/DFGFiltrationResult.h: Document the issue.
+        * dfg/DFGSpeculativeJIT32_64.cpp: Work around the issue.
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Internal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        * dfg/DFGSpeculativeJIT64.cpp: Work around the issue.
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Internal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt52):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+
 2015-06-24  Michael Saboff  <msaboff@apple.com>
 
         Crash on gog.com due to PolymorphicCallNode's having stale references to CallLinkInfo

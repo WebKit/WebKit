@@ -815,7 +815,8 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
     SpeculatedType type = value.m_type;
     ASSERT(edge.useKind() != KnownInt32Use || !(value.m_type & ~SpecInt32));
 
-    if (m_interpreter.filter(value, SpecInt32) == Contradiction) {
+    m_interpreter.filter(value, SpecInt32);
+    if (value.isClear()) {
         terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
         returnFormat = DataFormatInt32;
         return allocate();
@@ -956,7 +957,8 @@ GPRReg SpeculativeJIT::fillSpeculateInt52(Edge edge, DataFormat desiredFormat)
     ASSERT(desiredFormat == DataFormatInt52 || desiredFormat == DataFormatStrictInt52);
     AbstractValue& value = m_state.forNode(edge);
 
-    if (m_interpreter.filter(value, SpecMachineInt) == Contradiction) {
+    m_interpreter.filter(value, SpecMachineInt);
+    if (value.isClear()) {
         terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
         return allocate();
     }
@@ -1091,7 +1093,8 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
     SpeculatedType type = value.m_type;
     ASSERT((edge.useKind() != KnownCellUse && edge.useKind() != KnownStringUse) || !(value.m_type & ~SpecCell));
 
-    if (m_interpreter.filter(value, SpecCell) == Contradiction) {
+    m_interpreter.filter(value, SpecCell);
+    if (value.isClear()) {
         terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
         return allocate();
     }
@@ -1164,7 +1167,8 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(Edge edge)
     AbstractValue& value = m_state.forNode(edge);
     SpeculatedType type = value.m_type;
 
-    if (m_interpreter.filter(value, SpecBoolean) == Contradiction) {
+    m_interpreter.filter(value, SpecBoolean);
+    if (value.isClear()) {
         terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
         return allocate();
     }

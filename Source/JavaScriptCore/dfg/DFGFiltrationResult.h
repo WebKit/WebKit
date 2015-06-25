@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,8 +30,20 @@
 
 namespace JSC { namespace DFG {
 
+// Tells you if an operation that filters type (i.e. does a type check/speculation) will always
+// exit. Formally, this means that the proven type of a value prior to the filter was not
+// bottom (i.e. not "clear" or "SpecEmpty") but becomes bottom as a result of executing the
+// filter.
+//
+// Note that per this definition, a filter will not return Contradiction if the node's proven
+// type was already bottom. This is necessary because we have this yucky convention of using
+// a proven type of bottom for nodes that don't hold JS values, like Phi nodes in ThreadedCPS
+// and storage nodes.
 enum FiltrationResult {
+    // Means that this operation may not always exit.
     FiltrationOK,
+    
+    // Means taht this operation will always exit.
     Contradiction
 };
 
