@@ -1,3 +1,16 @@
+2015-06-25  Zalan Bujtas  <zalan@apple.com>
+
+        Do not send touch events to the slider's thumb when it does not have a renderer.
+        https://bugs.webkit.org/show_bug.cgi?id=146307
+        rdar://problem/21539399
+
+        Reviewed by Simon Fraser.
+
+        Bail out early if either the touch target or the renderer() is null.
+
+        * fast/events/touch/input-range-with-thumb-display-none-crash-expected.txt: Added.
+        * fast/events/touch/input-range-with-thumb-display-none-crash.html: Added.
+
 2015-06-25  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION (r181889): basspro.com hangs on load under JSC::ErrorInstance::finishCreation(JSC::ExecState*, JSC::VM&, WTF::String const&, bool) + 2801 (JavaScriptCore + 3560689)

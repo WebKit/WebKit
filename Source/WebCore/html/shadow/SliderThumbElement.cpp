@@ -418,11 +418,11 @@ void SliderThumbElement::clearExclusiveTouchIdentifier()
     m_exclusiveTouchIdentifier = NoIdentifier;
 }
 
-static Touch* findTouchWithIdentifier(TouchList* list, unsigned identifier)
+static Touch* findTouchWithIdentifier(TouchList& list, unsigned identifier)
 {
-    unsigned length = list->length();
+    unsigned length = list.length();
     for (unsigned i = 0; i < length; ++i) {
-        Touch* touch = list->item(i);
+        Touch* touch = list.item(i);
         if (touch->identifier() == identifier)
             return touch;
     }
@@ -432,12 +432,17 @@ static Touch* findTouchWithIdentifier(TouchList* list, unsigned identifier)
 void SliderThumbElement::handleTouchStart(TouchEvent* touchEvent)
 {
     TouchList* targetTouches = touchEvent->targetTouches();
+    if (!targetTouches)
+        return;
+
     if (targetTouches->length() != 1)
         return;
 
-    // Ignore the touch if it is not really inside the thumb.
     Touch* touch = targetTouches->item(0);
+    if (!renderer())
+        return;
     IntRect boundingBox = renderer()->absoluteBoundingBoxRect();
+    // Ignore the touch if it is not really inside the thumb.
     if (!boundingBox.contains(touch->pageX(), touch->pageY()))
         return;
 
@@ -453,7 +458,11 @@ void SliderThumbElement::handleTouchMove(TouchEvent* touchEvent)
     if (identifier == NoIdentifier)
         return;
 
-    Touch* touch = findTouchWithIdentifier(touchEvent->targetTouches(), identifier);
+    TouchList* targetTouches = touchEvent->targetTouches();
+    if (!targetTouches)
+        return;
+
+    Touch* touch = findTouchWithIdentifier(*targetTouches, identifier);
     if (!touch)
         return;
 
@@ -468,9 +477,12 @@ void SliderThumbElement::handleTouchEndAndCancel(TouchEvent* touchEvent)
     if (identifier == NoIdentifier)
         return;
 
+    TouchList* targetTouches = touchEvent->targetTouches();
+    if (!targetTouches)
+        return;
     // If our exclusive touch still exists, it was not the touch
     // that ended, so we should not stop dragging.
-    Touch* exclusiveTouch = findTouchWithIdentifier(touchEvent->targetTouches(), identifier);
+    Touch* exclusiveTouch = findTouchWithIdentifier(*targetTouches, identifier);
     if (exclusiveTouch)
         return;
 
