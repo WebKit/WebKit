@@ -287,9 +287,10 @@ ControllerIOS.prototype = {
     handlePlayButtonTouchEnd: function(event) {
         this.controls.playButton.classList.remove('active');
 
-        if (this.canPlay())
+        if (this.canPlay()) {
             this.video.play();
-        else
+            this.showControls();
+        } else
             this.video.pause();
 
         return true;
@@ -346,11 +347,9 @@ ControllerIOS.prototype = {
 
         this.mostRecentNumberOfTargettedTouches = event.targetTouches.length;
 
-        if (this.controlsAreHidden()) {
+        if (this.controlsAreHidden() || !this.controls.panel.classList.contains(this.ClassNames.show)) {
             this.showControls();
-            if (this.hideTimer)
-                clearTimeout(this.hideTimer);
-            this.hideTimer = setTimeout(this.hideControls.bind(this), this.HideControlsDelay);
+            this.resetHideControlsTimer();
         } else if (!this.canPlay())
             this.hideControls();
     },

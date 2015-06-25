@@ -1404,6 +1404,7 @@ Controller.prototype = {
         if (this.controlsAlwaysVisible())
             return;
 
+        this.clearHideControlsTimer();
         this.updateShouldListenForPlaybackTargetAvailabilityEvent();
         this.controls.panel.classList.remove(this.ClassNames.show);
         if (this.controls.panelBackground)
@@ -1878,8 +1879,10 @@ Controller.prototype = {
 
     resetHideControlsTimer: function()
     {
-        if (this.hideTimer)
+        if (this.hideTimer) {
             clearTimeout(this.hideTimer);
+            this.hideTimer = null;
+        }
 
         if (this.isPlaying)
             this.hideTimer = setTimeout(this.hideControls.bind(this), this.HideControlsDelay);
