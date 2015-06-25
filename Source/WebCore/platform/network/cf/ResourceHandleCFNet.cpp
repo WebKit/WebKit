@@ -252,7 +252,7 @@ bool ResourceHandle::start()
 
     bool shouldUseCredentialStorage = !client() || client()->shouldUseCredentialStorage(this);
 
-#if ENABLE(WEB_TIMING)
+#if ENABLE(WEB_TIMING) && PLATFORM(COCOA)
     setCollectsTimingData();
 #endif
 

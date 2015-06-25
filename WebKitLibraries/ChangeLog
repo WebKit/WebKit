@@ -1,3 +1,17 @@
+2015-06-25  Brent Fulgham  <bfulgham@apple.com>
+
+        [WIN] Enable WEB_TIMING API
+        https://bugs.webkit.org/show_bug.cgi?id=146330
+        <rdar://problem/21530765>
+
+        Reviewed by Dean Jackson.
+
+        Enable WEB_TIMING features on Windows by activating the feature flag,
+        and correcting some build errors.
+
+        * win/tools/vsprops/FeatureDefines.props: Enable feature flag.
+        * win/tools/vsprops/FeatureDefinesCairo.props: Ditto.
+
 2015-05-27  Dean Jackson  <dino@apple.com>
 
         img.currentSrc problem in strict mode with old picturefill
