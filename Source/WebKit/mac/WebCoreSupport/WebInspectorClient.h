@@ -112,6 +112,8 @@ public:
 
     virtual void frontendLoaded() override;
 
+    virtual void startWindowDrag() override;
+
     virtual String localizedStringsURL() override;
 
     virtual void bringToFront() override;

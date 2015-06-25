@@ -196,6 +196,13 @@ void WebInspectorFrontendClient::frontendLoaded()
     setAttachedWindow(attached ? DockSide::Bottom : DockSide::Undocked);
 }
 
+void WebInspectorFrontendClient::startWindowDrag()
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+    [[m_windowController window] performWindowDragWithEvent:[NSApp currentEvent]];
+#endif
+}
+
 String WebInspectorFrontendClient::localizedStringsURL()
 {
     // Call the soft link framework function to dlopen it, then [NSBundle bundleWithIdentifier:] will work.

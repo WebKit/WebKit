@@ -78,6 +78,7 @@ public:
     void windowObjectCleared() override;
     void frontendLoaded() override;
 
+    void startWindowDrag() override;
     void moveWindowBy(float x, float y) override;
 
     String localizedStringsURL() override;

@@ -819,6 +819,13 @@ void WebInspectorProxy::platformSetToolbarHeight(unsigned height)
 #endif
 }
 
+void WebInspectorProxy::platformStartWindowDrag()
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+    [m_inspectorView->_page->wkView() _startWindowDrag];
+#endif
+}
+
 String WebInspectorProxy::inspectorPageURL() const
 {
     // Call the soft link framework function to dlopen it, then [NSBundle bundleWithIdentifier:] will work.

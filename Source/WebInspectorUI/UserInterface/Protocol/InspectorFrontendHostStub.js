@@ -88,6 +88,10 @@ if (!window.InspectorFrontendHost) {
         {
         },
 
+        startWindowDrag: function()
+        {
+        },
+
         moveWindowBy: function(x, y)
         {
         },

@@ -283,6 +283,11 @@ void WebInspectorProxy::setAttachedWindowWidth(unsigned width)
     platformSetAttachedWindowWidth(width);
 }
 
+void WebInspectorProxy::startWindowDrag()
+{
+    platformStartWindowDrag();
+}
+
 void WebInspectorProxy::togglePageProfiling()
 {
     if (!m_inspectedPage)
@@ -692,6 +697,11 @@ void WebInspectorProxy::platformSetAttachedWindowHeight(unsigned)
 }
 
 void WebInspectorProxy::platformSetToolbarHeight(unsigned)
+{
+    notImplemented();
+}
+
+void WebInspectorProxy::platformStartWindowDrag()
 {
     notImplemented();
 }

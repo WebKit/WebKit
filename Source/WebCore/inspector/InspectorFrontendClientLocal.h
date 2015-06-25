@@ -61,6 +61,7 @@ public:
     WEBCORE_EXPORT virtual void windowObjectCleared() override final;
     WEBCORE_EXPORT virtual void frontendLoaded() override;
 
+    virtual void startWindowDrag() override { }
     WEBCORE_EXPORT virtual void moveWindowBy(float x, float y) override final;
 
     WEBCORE_EXPORT virtual void requestSetDockSide(DockSide) override final;

@@ -203,6 +203,12 @@ void InspectorFrontendHost::setToolbarHeight(unsigned height)
         m_client->setToolbarHeight(height);
 }
 
+void InspectorFrontendHost::startWindowDrag()
+{
+    if (m_client)
+        m_client->startWindowDrag();
+}
+
 void InspectorFrontendHost::moveWindowBy(float x, float y) const
 {
     if (m_client)

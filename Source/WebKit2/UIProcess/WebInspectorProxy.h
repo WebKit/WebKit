@@ -132,6 +132,8 @@ public:
     void setAttachedWindowWidth(unsigned);
     void setToolbarHeight(unsigned height) { platformSetToolbarHeight(height); }
 
+    void startWindowDrag();
+
     bool isProfilingPage() const { return m_isProfilingPage; }
     void togglePageProfiling();
 
@@ -177,6 +179,7 @@ private:
     void platformSetAttachedWindowHeight(unsigned);
     void platformSetAttachedWindowWidth(unsigned);
     void platformSetToolbarHeight(unsigned);
+    void platformStartWindowDrag();
     void platformSave(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs);
     void platformAppend(const String& filename, const String& content);
 

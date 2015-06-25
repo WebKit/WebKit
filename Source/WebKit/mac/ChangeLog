@@ -1,3 +1,15 @@
+2015-06-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Mac] Web Inspector: Window dragging on toolbar should behave more like native window dragging
+        https://bugs.webkit.org/show_bug.cgi?id=146324
+
+        Reviewed by Timothy Hatcher.
+
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorFrontendClient::startWindowDrag):
+        Start performing a window drag.
+
 2015-06-23  Anders Carlsson  <andersca@apple.com>
 
         Remove windowResizerRect code, nobody is using it anymore

@@ -3953,6 +3953,13 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+- (void)_startWindowDrag
+{
+    [[self window] performWindowDragWithEvent:_data->_mouseDownEvent];
+}
+#endif
+
 @end
 
 @implementation WKView (Private)

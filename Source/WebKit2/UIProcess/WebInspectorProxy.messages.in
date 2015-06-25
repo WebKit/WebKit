@@ -41,6 +41,8 @@ messages -> WebInspectorProxy {
     SetAttachedWindowWidth(unsigned width)
     SetToolbarHeight(unsigned height)
 
+    StartWindowDrag()
+
 #if ENABLE(INSPECTOR_SERVER)
     SendMessageToRemoteFrontend(String message)
 #endif

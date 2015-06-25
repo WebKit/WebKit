@@ -1,3 +1,34 @@
+2015-06-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Mac] Web Inspector: Window dragging on toolbar should behave more like native window dragging
+        https://bugs.webkit.org/show_bug.cgi?id=146324
+
+        Reviewed by Timothy Hatcher.
+
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _startWindowDrag]):
+        Add a way to start a window drag from a WKView using the most
+        recent mouse down event.
+
+        * WebProcess/WebPage/WebInspectorUI.h:
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::startWindowDrag):
+        Send a message that we should start a window drag.
+
+        * UIProcess/WebInspectorProxy.messages.in:
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::startWindowDrag):
+        (WebKit::WebInspectorProxy::platformStartWindowDrag):
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::WebInspectorProxy::platformStartWindowDrag):
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformStartWindowDrag):
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformStartWindowDrag):
+        Let the platform start a window drag. Only implemented by Mac.
+
 2015-06-25  Tim Horton  <timothy_horton@apple.com>
 
         [iOS] When using the back swipe gesture in Safari, the previous webpage will flash for a second
