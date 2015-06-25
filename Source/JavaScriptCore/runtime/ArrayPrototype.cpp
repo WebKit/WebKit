@@ -40,6 +40,7 @@
 #include "ObjectConstructor.h"
 #include "ObjectPrototype.h"
 #include "StringRecursionChecker.h"
+#include "StrongInlines.h"
 #include <algorithm>
 #include <wtf/Assertions.h>
 #include <wtf/HashSet.h>

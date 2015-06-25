@@ -1,3 +1,11 @@
+2015-06-24  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, speculative build fix after r185942.
+
+        Add missing include for StrongInlines.h.
+
+        * runtime/ArrayPrototype.cpp:
+
 2015-06-24  Darin Adler  <darin@apple.com>
 
         Optimize Array.join and Array.reverse for high speed array types
