@@ -1,3 +1,17 @@
+2015-06-25  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (r181889): basspro.com hangs on load under JSC::ErrorInstance::finishCreation(JSC::ExecState*, JSC::VM&, WTF::String const&, bool) + 2801 (JavaScriptCore + 3560689)
+        https://bugs.webkit.org/show_bug.cgi?id=146298
+
+        Reviewed by Mark Lam.
+
+        We were underflowing in ExceptionHelpers.cpp::functionCallBase() with a right to left
+        string index.  Added checks that idx stays within the string.  Also added a termination
+        condition when idx is 0.
+
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::functionCallBase):
+
 2015-06-24  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, speculative build fix after r185942.
