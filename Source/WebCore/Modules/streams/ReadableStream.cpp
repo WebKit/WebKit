@@ -124,8 +124,8 @@ void ReadableStream::pull()
 {
     if (!m_isStarted || m_state == State::Closed || m_state == State::Errored || m_closeRequested)
         return;
-    // FIXME: Implement queueSize check.
-    if (m_readRequests.isEmpty() && hasValue())
+
+    if (m_readRequests.isEmpty() && hasEnoughValues())
         return;
 
     if (m_isPulling) {

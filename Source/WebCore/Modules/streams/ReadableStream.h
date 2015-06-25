@@ -114,6 +114,7 @@ private:
     void clearCallbacks();
     void close();
 
+    virtual bool hasEnoughValues() const = 0;
     virtual bool hasValue() const = 0;
     virtual JSC::JSValue read() = 0;
     virtual bool doPull() = 0;
