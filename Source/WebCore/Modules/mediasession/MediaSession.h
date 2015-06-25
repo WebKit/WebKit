@@ -53,7 +53,7 @@ public:
     MediaSession(ScriptExecutionContext&, const String&);
     ~MediaSession();
 
-    String kind() const { return m_kind; }
+    String kind() const;
     MediaRemoteControls* controls(bool& isNull);
     
     State currentState() const { return m_currentState; }
@@ -72,6 +72,15 @@ public:
 private:
     friend class HTMLMediaElement;
 
+    enum class Kind {
+        Content,
+        Transient,
+        TransientSolo,
+        Ambient
+    };
+
+    static Kind parseKind(const String&);
+
     void addMediaElement(HTMLMediaElement&);
     void removeMediaElement(HTMLMediaElement&);
 
@@ -85,7 +94,7 @@ private:
     HashSet<HTMLMediaElement*>* m_iteratedActiveParticipatingElements { nullptr };
 
     Document& m_document;
-    const String m_kind;
+    const Kind m_kind;
     RefPtr<MediaRemoteControls> m_controls;
     MediaSessionMetadata m_metadata;
 };

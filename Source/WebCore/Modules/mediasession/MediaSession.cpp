@@ -37,11 +37,33 @@
 
 namespace WebCore {
 
+static const char* ambientKind = "ambient";
+static const char* transientKind = "transient";
+static const char* transientSoloKind = "transient-solo";
+static const char* contentKind = "content";
+
+MediaSession::Kind MediaSession::parseKind(const String& kind)
+{
+    // 4. Media Session
+    // 2. If no corresponding media session type can be found for the provided media session category or media session
+    //    category is empty, then set media session's current media session type to "content".
+    if (kind == ambientKind)
+        return MediaSession::Kind::Ambient;
+    if (kind == transientKind)
+        return MediaSession::Kind::Transient;
+    if (kind == transientSoloKind)
+        return MediaSession::Kind::TransientSolo;
+    return MediaSession::Kind::Content;
+}
+
 MediaSession::MediaSession(ScriptExecutionContext& context, const String& kind)
     : m_document(downcast<Document>(context))
-    , m_kind(kind)
+    , m_kind(parseKind(kind))
 {
-    if (m_kind == "content")
+    // 4. Media Sessions
+    // 3. If media session's current media session type is "content", then create a new media remote controller for media
+    //    session. (Otherwise media session has no media remote controller.)
+    if (m_kind == Kind::Content)
         m_controls = adoptRef(*new MediaRemoteControls(context));
 
     MediaSessionManager::singleton().addMediaSession(*this);
@@ -50,6 +72,20 @@ MediaSession::MediaSession(ScriptExecutionContext& context, const String& kind)
 MediaSession::~MediaSession()
 {
     MediaSessionManager::singleton().removeMediaSession(*this);
+}
+
+String MediaSession::kind() const
+{
+    switch (m_kind) {
+    case MediaSession::Kind::Ambient:
+        return ambientKind;
+    case MediaSession::Kind::Transient:
+        return transientKind;
+    case MediaSession::Kind::TransientSolo:
+        return transientSoloKind;
+    case MediaSession::Kind::Content:
+        return contentKind;
+    }
 }
 
 MediaRemoteControls* MediaSession::controls(bool& isNull)
