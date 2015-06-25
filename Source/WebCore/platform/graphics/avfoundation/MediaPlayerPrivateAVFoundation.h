@@ -154,7 +154,7 @@ protected:
     virtual void load(const String&, MediaSourcePrivateClient*) override;
 #endif
 #if ENABLE(MEDIA_STREAM)
-    void load(MediaStreamPrivate*) override { }
+    virtual void load(MediaStreamPrivate*) { }
 #endif
     virtual void cancelLoad() override = 0;
 
