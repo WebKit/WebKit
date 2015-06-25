@@ -1,3 +1,15 @@
+2015-06-25  Tim Horton  <timothy_horton@apple.com>
+
+        Crash in ViewGestureController::didRestoreScrollPosition() running WKWebView.LoadAlternateHTMLStringFromProvisionalLoadError test
+        https://bugs.webkit.org/show_bug.cgi?id=146309
+        <rdar://problem/21476651>
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLayerTree:]):
+        Null-check. _gestureController can be null if allowsBackForwardNavigationGestures is NO.
+
 2015-06-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add initial WebKitWebsiteDataManager API for process configuration options

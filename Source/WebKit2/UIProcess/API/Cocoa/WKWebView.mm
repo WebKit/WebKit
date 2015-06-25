@@ -980,7 +980,8 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
             exposedPosition.scale(_scaleToRestore, _scaleToRestore);
 
             changeContentOffsetBoundedInValidRange(_scrollView.get(), exposedPosition);
-            _gestureController->didRestoreScrollPosition();
+            if (_gestureController)
+                _gestureController->didRestoreScrollPosition();
         }
         [self _updateVisibleContentRects];
     }
@@ -997,7 +998,8 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
             topLeftInDocumentCoordinate.moveBy(WebCore::FloatPoint(-_obscuredInsets.left, -_obscuredInsets.top));
 
             changeContentOffsetBoundedInValidRange(_scrollView.get(), topLeftInDocumentCoordinate);
-            _gestureController->didRestoreScrollPosition();
+            if (_gestureController)
+                _gestureController->didRestoreScrollPosition();
         }
         [self _updateVisibleContentRects];
     }
