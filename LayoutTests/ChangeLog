@@ -1,3 +1,14 @@
+2015-06-25  Tim Horton  <timothy_horton@apple.com>
+
+        Viewport units are wrong when scaled in 2-up mode, cause content to hop around on apple.com/music
+        https://bugs.webkit.org/show_bug.cgi?id=146322
+        <rdar://problem/21413884>
+
+        Reviewed by Simon Fraser.
+
+        * fast/fixed-layout/fixed-layout-expected.txt:
+        Rebaseline now that viewport units behave correctly.
+
 2015-06-25  Zalan Bujtas  <zalan@apple.com>
 
         Do not send touch events to the slider's thumb when it does not have a renderer.

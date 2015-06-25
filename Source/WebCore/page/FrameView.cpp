@@ -4770,6 +4770,9 @@ IntSize FrameView::viewportSizeForCSSViewportUnits() const
 {
     if (m_hasOverrideViewportSize)
         return m_overrideViewportSize;
+
+    if (useFixedLayout())
+        return fixedLayoutSize();
     
     // FIXME: the value returned should take into account the value of the overflow
     // property on the root element.

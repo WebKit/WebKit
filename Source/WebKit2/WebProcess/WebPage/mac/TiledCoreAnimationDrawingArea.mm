@@ -296,6 +296,9 @@ void TiledCoreAnimationDrawingArea::scaleViewToFitDocumentIfNeeded()
         m_lastViewSizeForScaleToFit = m_webPage.size();
         viewScale = std::max(viewScale, minimumViewScale);
         m_webPage.scaleView(viewScale);
+
+        IntSize fixedLayoutSize(std::ceil(m_webPage.size().width() / viewScale), std::ceil(m_webPage.size().height() / viewScale));
+        m_webPage.setFixedLayoutSize(fixedLayoutSize);
         return;
     }
 
@@ -319,7 +322,8 @@ void TiledCoreAnimationDrawingArea::scaleViewToFitDocumentIfNeeded()
         m_webPage.setUseFixedLayout(true);
         viewScale = (float)viewWidth / (float)documentWidth;
         viewScale = std::max(viewScale, minimumViewScale);
-        m_webPage.setFixedLayoutSize(IntSize(ceilf(m_webPage.size().width() / viewScale), m_webPage.size().height()));
+        IntSize fixedLayoutSize(std::ceil(m_webPage.size().width() / viewScale), std::ceil(m_webPage.size().height() / viewScale));
+        m_webPage.setFixedLayoutSize(fixedLayoutSize);
     }
 
     m_webPage.scaleView(viewScale);
