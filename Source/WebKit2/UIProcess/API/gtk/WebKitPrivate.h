@@ -127,4 +127,10 @@ enum SnapshotRegion {
     SnapshotRegionFullDocument
 };
 
+#if ENABLE(NETWORK_CACHE)
+static const char networkCacheSubdirectory[] = "WebKitCache";
+#else
+static const char networkCacheSubdirectory[] = "webkit";
+#endif
+
 #endif // WebKitPrivate_h

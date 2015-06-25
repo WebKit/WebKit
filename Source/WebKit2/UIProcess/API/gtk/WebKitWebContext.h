@@ -31,6 +31,7 @@
 #include <webkit2/WebKitFaviconDatabase.h>
 #include <webkit2/WebKitSecurityManager.h>
 #include <webkit2/WebKitURISchemeRequest.h>
+#include <webkit2/WebKitWebsiteDataManager.h>
 
 G_BEGIN_DECLS
 
@@ -148,6 +149,12 @@ webkit_web_context_get_default                      (void);
 WEBKIT_API WebKitWebContext *
 webkit_web_context_new                              (void);
 
+WEBKIT_API WebKitWebContext *
+webkit_web_context_new_with_website_data_manager    (WebKitWebsiteDataManager      *manager);
+
+WEBKIT_API WebKitWebsiteDataManager *
+webkit_web_context_get_website_data_manager         (WebKitWebContext              *context);
+
 WEBKIT_API void
 webkit_web_context_set_cache_model                  (WebKitWebContext              *context,
                                                      WebKitCacheModel               cache_model);
@@ -234,7 +241,7 @@ WEBKIT_API void
 webkit_web_context_prefetch_dns                     (WebKitWebContext              *context,
                                                      const gchar                   *hostname);
 
-WEBKIT_API void
+WEBKIT_DEPRECATED_FOR(webkit_web_context_new_with_website_data_manager) void
 webkit_web_context_set_disk_cache_directory         (WebKitWebContext              *context,
                                                      const gchar                   *directory);
 

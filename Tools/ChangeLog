@@ -1,3 +1,26 @@
+2015-06-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add initial WebKitWebsiteDataManager API for process configuration options
+        https://bugs.webkit.org/show_bug.cgi?id=146149
+
+        Reviewed by Sergio Villar Senin.
+
+        Update unit tests to use WebKitWebsiteDataManager.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebContext.cpp:
+        (testWebContextConfiguration):
+        (serverCallback):
+        * TestWebKitAPI/gtk/WebKit2Gtk/TestMain.h:
+        (Test::Test): Use WebKitWebsiteDataManager and set all possible
+        values to ensure unit tests don't write outside the temporary directory.
+        (Test::~Test): Explicitly reset the web context to ensure its
+        objects are released before the leaks check.
+        * TestWebKitAPI/gtk/WebKit2Gtk/WebViewTest.cpp:
+        (WebViewTest::wait): Fix the GSource used, since we are receiving
+        a double in seconds, but using g_timeout_add_seconds() that
+        expects an unsigned in seconds. Use GMainLoopSource to correctly
+        handle the value and simplify the code.
+
 2015-06-24  Jason Marcell  <jmarcell@apple.com>
 
         Work towards: Add status of Safari projects on iOS Dashboard on build-safari

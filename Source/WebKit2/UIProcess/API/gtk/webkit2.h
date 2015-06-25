@@ -72,6 +72,7 @@
 #include <webkit2/WebKitWebResource.h>
 #include <webkit2/WebKitWebView.h>
 #include <webkit2/WebKitWebViewBase.h>
+#include <webkit2/WebKitWebsiteDataManager.h>
 #include <webkit2/WebKitWindowProperties.h>
 
 #undef __WEBKIT2_H_INSIDE__

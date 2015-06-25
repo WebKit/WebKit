@@ -47,6 +47,7 @@
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
+#include "WebKitWebsiteDataManagerPrivate.h"
 #include "WebNotificationManagerProxy.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/IconDatabase.h>
@@ -102,7 +103,7 @@ enum {
     PROP_0,
 
     PROP_LOCAL_STORAGE_DIRECTORY,
-    PROP_INDEXED_DB_DIRECTORY
+    PROP_WEBSITE_DATA_MANAGER
 };
 
 enum {
@@ -173,7 +174,7 @@ struct _WebKitWebContextPrivate {
 #if ENABLE(NOTIFICATIONS)
     RefPtr<WebKitNotificationProvider> notificationProvider;
 #endif
-    RefPtr<WebsiteDataStore> websiteDataStore;
+    GRefPtr<WebKitWebsiteDataManager> websiteDataManager;
 
     CString faviconDatabaseDirectory;
     WebKitTLSErrorsPolicy tlsErrorsPolicy;
@@ -238,8 +239,8 @@ static void webkitWebContextGetProperty(GObject* object, guint propID, GValue* v
     case PROP_LOCAL_STORAGE_DIRECTORY:
         g_value_set_string(value, context->priv->localStorageDirectory.data());
         break;
-    case PROP_INDEXED_DB_DIRECTORY:
-        g_value_set_string(value, context->priv->indexedDBDirectory.data());
+    case PROP_WEBSITE_DATA_MANAGER:
+        g_value_set_object(value, webkit_web_context_get_website_data_manager(context));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, paramSpec);
@@ -254,9 +255,11 @@ static void webkitWebContextSetProperty(GObject* object, guint propID, const GVa
     case PROP_LOCAL_STORAGE_DIRECTORY:
         context->priv->localStorageDirectory = g_value_get_string(value);
         break;
-    case PROP_INDEXED_DB_DIRECTORY:
-        context->priv->indexedDBDirectory = g_value_get_string(value);
+    case PROP_WEBSITE_DATA_MANAGER: {
+        gpointer manager = g_value_get_object(value);
+        context->priv->websiteDataManager = manager ? WEBKIT_WEBSITE_DATA_MANAGER(manager) : nullptr;
         break;
+    }
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, paramSpec);
     }
@@ -286,14 +289,20 @@ static void webkitWebContextConstructed(GObject* object)
 
     WebKitWebContext* webContext = WEBKIT_WEB_CONTEXT(object);
     WebKitWebContextPrivate* priv = webContext->priv;
-    if (!priv->localStorageDirectory.isNull())
+    if (priv->websiteDataManager) {
+        configuration.setLocalStorageDirectory(WebCore::filenameToString(webkit_website_data_manager_get_local_storage_directory(priv->websiteDataManager.get())));
+        configuration.setDiskCacheDirectory(WebCore::pathByAppendingComponent(WebCore::filenameToString(webkit_website_data_manager_get_disk_cache_directory(priv->websiteDataManager.get())), networkCacheSubdirectory));
+        configuration.setApplicationCacheDirectory(WebCore::filenameToString(webkit_website_data_manager_get_offline_application_cache_directory(priv->websiteDataManager.get())));
+        configuration.setIndexedDBDatabaseDirectory(WebCore::filenameToString(webkit_website_data_manager_get_indexeddb_directory(priv->websiteDataManager.get())));
+        configuration.setWebSQLDatabaseDirectory(WebCore::filenameToString(webkit_website_data_manager_get_websql_directory(priv->websiteDataManager.get())));
+    } else if (!priv->localStorageDirectory.isNull())
         configuration.setLocalStorageDirectory(WebCore::filenameToString(priv->localStorageDirectory.data()));
-    if (!priv->indexedDBDirectory.isNull())
-        configuration.setIndexedDBDatabaseDirectory(WebCore::filenameToString(priv->indexedDBDirectory.data()));
 
     priv->context = WebProcessPool::create(configuration);
 
-    priv->websiteDataStore = WebsiteDataStore::create(websiteDataStoreConfigurationForWebProcessPoolConfiguration(configuration));
+    if (!priv->websiteDataManager)
+        priv->websiteDataManager = webkitWebsiteDataManagerCreate(websiteDataStoreConfigurationForWebProcessPoolConfiguration(configuration));
+
     priv->requestManager = priv->context->supplement<WebSoupCustomProtocolRequestManager>();
 
     priv->tlsErrorsPolicy = WEBKIT_TLS_ERRORS_POLICY_FAIL;
@@ -344,6 +353,8 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
      * The directory where local storage data will be saved.
      *
      * Since: 2.8
+     *
+     * Deprecated: 2.10. Use #WebKitWebsiteDataManager:local-storage-directory instead.
      */
     g_object_class_install_property(
         gObjectClass,
@@ -356,20 +367,20 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 
     /**
-     * WebKitWebContext:indexed-db-directory:
+     * WebKitWebContext:website-data-manager:
      *
-     * The directory where IndexedDB databases will be saved.
+     * The #WebKitWebsiteDataManager associated with this context.
      *
      * Since: 2.10
      */
     g_object_class_install_property(
         gObjectClass,
-        PROP_INDEXED_DB_DIRECTORY,
-        g_param_spec_string(
-            "indexed-db-directory",
-            _("IndexedDB Directory"),
-            _("The directory where IndexedDB databases will be saved"),
-            nullptr,
+        PROP_WEBSITE_DATA_MANAGER,
+        g_param_spec_object(
+            "website-data-manager",
+            _("Website Data Manager"),
+            _("The WebKitWebsiteDataManager associated with this context"),
+            WEBKIT_TYPE_WEBSITE_DATA_MANAGER,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 
     /**
@@ -441,6 +452,40 @@ WebKitWebContext* webkit_web_context_get_default(void)
 WebKitWebContext* webkit_web_context_new(void)
 {
     return WEBKIT_WEB_CONTEXT(g_object_new(WEBKIT_TYPE_WEB_CONTEXT, nullptr));
+}
+
+/**
+ * webkit_web_context_new_with_website_data_manager:
+ * @manager: a #WebKitWebsiteDataManager
+ *
+ * Create a new #WebKitWebContext with a #WebKitWebsiteDataManager.
+ *
+ * Returns: (transfer full): a newly created #WebKitWebContext
+ *
+ * Since: 2.10
+ */
+WebKitWebContext* webkit_web_context_new_with_website_data_manager(WebKitWebsiteDataManager* manager)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager), nullptr);
+
+    return WEBKIT_WEB_CONTEXT(g_object_new(WEBKIT_TYPE_WEB_CONTEXT, "website-data-manager", manager, nullptr));
+}
+
+/**
+ * webkit_web_context_get_website_data_manager:
+ * @context: the #WebKitWebContext
+ *
+ * Get the #WebKitWebsiteDataManager of @context.
+ *
+ * Returns: (transfer none): a #WebKitWebsiteDataManager
+ *
+ * Since: 2.10
+ */
+WebKitWebsiteDataManager* webkit_web_context_get_website_data_manager(WebKitWebContext* context)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), nullptr);
+
+    return context->priv->websiteDataManager.get();
 }
 
 /**
@@ -1039,17 +1084,18 @@ void webkit_web_context_set_web_extensions_initialization_user_data(WebKitWebCon
  * Set the directory where disk cache files will be stored
  * This method must be called before loading anything in this context, otherwise
  * it will not have any effect.
+ *
+ * Note that this method overrides the directory set in the #WebKitWebsiteDataManager,
+ * but it doesn't change the value returned by webkit_website_data_manager_get_disk_cache_directory()
+ * since the #WebKitWebsiteDataManager is immutable.
+ *
+ * Deprecated: 2.10. Use webkit_web_context_new_with_website_data_manager() instead.
  */
 void webkit_web_context_set_disk_cache_directory(WebKitWebContext* context, const char* directory)
 {
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
     g_return_if_fail(directory);
 
-#if ENABLE(NETWORK_CACHE)
-    static const char networkCacheSubdirectory[] = "WebKitCache";
-#else
-    static const char networkCacheSubdirectory[] = "webkit";
-#endif
     context->priv->context->configuration().setDiskCacheDirectory(WebCore::pathByAppendingComponent(WebCore::filenameToString(directory), networkCacheSubdirectory));
 }
 
@@ -1232,8 +1278,8 @@ void webkitWebContextCreatePageForWebView(WebKitWebContext* context, WebKitWebVi
     webPageConfiguration.preferences = webkitSettingsGetPreferences(webkit_web_view_get_settings(webView));
     webPageConfiguration.relatedPage = relatedView ? webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(relatedView)) : nullptr;
     webPageConfiguration.userContentController = userContentManager ? webkitUserContentManagerGetUserContentControllerProxy(userContentManager) : nullptr;
-    webPageConfiguration.websiteDataStore = context->priv->websiteDataStore.get();
-    webPageConfiguration.sessionID = context->priv->websiteDataStore->sessionID();
+    webPageConfiguration.websiteDataStore = &webkitWebsiteDataManagerGetDataStore(context->priv->websiteDataManager.get());
+    webPageConfiguration.sessionID = webPageConfiguration.websiteDataStore->sessionID();
     webkitWebViewBaseCreateWebPage(webViewBase, context->priv->context.get(), WTF::move(webPageConfiguration));
 
     WebPageProxy* page = webkitWebViewBaseGetPage(webViewBase);

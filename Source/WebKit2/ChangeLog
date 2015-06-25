@@ -1,5 +1,56 @@
 2015-06-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Add initial WebKitWebsiteDataManager API for process configuration options
+        https://bugs.webkit.org/show_bug.cgi?id=146149
+
+        Reviewed by Sergio Villar Senin.
+
+        Add WebKitWebsiteDataManager to replace the different ways we have
+        to configure data store
+        directories. WebKitWebContext:indexed-db-directory property has
+        been removed, since it was added only in trunk, and
+        WebKitWebContext:local-storage-directory has been deprecated. The
+        method webkit_web_context_set_disk_cache_directory() has been
+        deprecated too in favor of WebKitWebsiteDataManager.
+
+        * PlatformGTK.cmake: Add new files to compilation.
+        * UIProcess/API/gtk/WebKitPrivate.h: Move networkCacheSubdirectory
+        definition here.
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextGetProperty): Replace indexed-db-directory getter
+        with website-data-manager one.
+        (webkitWebContextSetProperty): Replace indexed-db-directory setter
+        with website-data-manager one.
+        (webkitWebContextConstructed): Use the user provided
+        WebKitWebsiteDataManager to configure the context or create a
+        default WebKitWebsiteDataManager if not provided.
+        (webkit_web_context_class_init): Replace indexed-db-directory
+        property with website-data-manager.
+        (webkit_web_context_new_with_website_data_manager):
+        (webkit_web_context_get_website_data_manager):
+        (webkitWebContextCreatePageForWebView): Get the WebsiteDataStore
+        from the WebKitWebsiteDataManager.
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        * UIProcess/API/gtk/WebKitWebsiteDataManager.cpp: Added.
+        (webkitWebsiteDataManagerGetProperty):
+        (webkitWebsiteDataManagerSetProperty):
+        (webkit_website_data_manager_class_init):
+        (webkitWebsiteDataManagerCreate):
+        (webkitWebsiteDataManagerGetDataStore):
+        (webkit_website_data_manager_new):
+        (webkit_website_data_manager_get_local_storage_directory):
+        (webkit_website_data_manager_get_disk_cache_directory):
+        (webkit_website_data_manager_get_offline_application_cache_directory):
+        (webkit_website_data_manager_get_indexeddb_directory):
+        (webkit_website_data_manager_get_websql_directory):
+        * UIProcess/API/gtk/WebKitWebsiteDataManager.h: Added.
+        * UIProcess/API/gtk/WebKitWebsiteDataManagerPrivate.h: Added.
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0.types: Add webkit_website_data_manager_get_type.
+        * UIProcess/API/gtk/webkit2.h: Include WebKitWebsiteDataManager.h.
+
+2015-06-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Do not use legacy data store options in WebKit2 GTK+ API
         https://bugs.webkit.org/show_bug.cgi?id=146145
 
