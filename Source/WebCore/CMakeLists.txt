@@ -898,6 +898,7 @@ set(WebCore_SOURCES
     Modules/mediastream/DOMURLMediaStream.cpp
     Modules/mediastream/HTMLMediaElementMediaStream.cpp
     Modules/mediastream/MediaConstraintsImpl.cpp
+    Modules/mediastream/MediaDeviceInfo.cpp
     Modules/mediastream/MediaDevices.cpp
     Modules/mediastream/MediaSourceStates.cpp
     Modules/mediastream/MediaStream.cpp
