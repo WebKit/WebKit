@@ -36,6 +36,7 @@
 #else
 
 #if PLATFORM(IOS)
+typedef struct __SecTask *SecTaskRef;
 EXTERN_C SecTaskRef SecTaskCreateFromSelf(CFAllocatorRef);
 EXTERN_C CFTypeRef SecTaskCopyValueForEntitlement(SecTaskRef, CFStringRef entitlement, CFErrorRef *);
 #endif
