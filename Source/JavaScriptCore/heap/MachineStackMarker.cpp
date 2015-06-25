@@ -519,9 +519,7 @@ std::pair<void*, size_t> MachineThreads::Thread::captureStack(void* stackTop)
     return std::make_pair(begin, static_cast<char*>(end) - static_cast<char*>(begin));
 }
 
-#if ASAN_ENABLED
-void asanUnsafeMemcpy(void* dst, const void* src, size_t);
-void asanUnsafeMemcpy(void* dst, const void* src, size_t size)
+static void copyMemory(void* dst, const void* src, size_t size)
 {
     size_t dstAsSize = reinterpret_cast<size_t>(dst);
     size_t srcAsSize = reinterpret_cast<size_t>(src);
@@ -536,12 +534,17 @@ void asanUnsafeMemcpy(void* dst, const void* src, size_t size)
         *dstPtr++ = *srcPtr++;
 }
     
-#define memcpy asanUnsafeMemcpy
-#endif
+
 
 // This function must not call malloc(), free(), or any other function that might
 // acquire a lock. Since 'thread' is suspended, trying to acquire a lock
 // will deadlock if 'thread' holds that lock.
+// This function, specifically the memory copying, was causing problems with Address Sanitizer in
+// apps. Since we cannot blacklist the system memcpy we must use our own naive implementation,
+// copyMemory, for ASan to work on either instrumented or non-instrumented builds. This is not a
+// significant performance loss as tryCopyOtherThreadStack is only called as part of an O(heapsize)
+// operation. As the heap is generally much larger than the stack the performance hit is minimal.
+// See: https://bugs.webkit.org/show_bug.cgi?id=146297
 void MachineThreads::tryCopyOtherThreadStack(Thread* thread, void* buffer, size_t capacity, size_t* size)
 {
     Thread::Registers registers;
@@ -551,11 +554,11 @@ void MachineThreads::tryCopyOtherThreadStack(Thread* thread, void* buffer, size_
     bool canCopy = *size + registersSize + stack.second <= capacity;
 
     if (canCopy)
-        memcpy(static_cast<char*>(buffer) + *size, &registers, registersSize);
+        copyMemory(static_cast<char*>(buffer) + *size, &registers, registersSize);
     *size += registersSize;
 
     if (canCopy)
-        memcpy(static_cast<char*>(buffer) + *size, stack.first, stack.second);
+        copyMemory(static_cast<char*>(buffer) + *size, stack.first, stack.second);
     *size += stack.second;
 
     thread->freeRegisters(registers);
