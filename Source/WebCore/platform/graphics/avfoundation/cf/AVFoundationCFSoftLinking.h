@@ -305,6 +305,8 @@ SOFT_LINK_DLL_IMPORT(AVFoundationCF, AVCFAssetResourceLoadingRequestGetURLReques
 SOFT_LINK_DLL_IMPORT(AVFoundationCF, AVCFAssetResourceLoadingRequestFinishLoadingWithResponse, void, __cdecl, (AVCFAssetResourceLoadingRequestRef loadingRequest, CFURLResponseRef response, CFDataRef data, CFURLRequestRef redirect), (loadingRequest, response, data, redirect))
 #define AVCFAssetResourceLoadingRequestFinishLoadingWithResponse  softLink_AVCFAssetResourceLoadingRequestFinishLoadingWithResponse 
 
+SOFT_LINK_DLL_IMPORT(AVFoundationCF, AVCFURLAssetIsPlayableExtendedMIMEType, Boolean, __cdecl, (CFStringRef extendedMIMEType), (extendedMIMEType))
+#define AVCFURLAssetIsPlayableExtendedMIMEType  softLink_AVCFURLAssetIsPlayableExtendedMIMEType 
 #endif
 
 // Variables

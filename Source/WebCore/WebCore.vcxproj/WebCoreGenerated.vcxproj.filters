@@ -8,5 +8,6 @@
     <None Include="..\DerivedSources.make" />
     <None Include="build-generated-files.pl" />
     <None Include="migrate-scripts.pl" />
+    <None Include="..\AVFoundationSupport.py" />
   </ItemGroup>
 </Project>

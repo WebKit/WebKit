@@ -51,6 +51,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\AVFoundationSupport.py" />
     <None Include="..\DerivedSources.make" />
     <None Include="build-generated-files.pl" />
     <None Include="copyForwardingHeaders.cmd" />

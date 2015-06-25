@@ -26,12 +26,21 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import re
 import sys
 import os
 
-
 def lookFor(relativePath):
     return os.path.isfile(os.environ['WEBKIT_LIBRARIES'] + relativePath)
+
+
+def fileContains(relativePath, regexp):
+    with open(os.environ['WEBKIT_LIBRARIES'] + relativePath) as file:
+        for line in file:
+            if regexp.search(line):
+                return True
+    return False
+
 
 print "/* Identifying AVFoundation Support */"
 if lookFor("/include/AVFoundationCF/AVCFBase.h"):
@@ -40,3 +49,7 @@ if lookFor("/include/AVFoundationCF/AVCFPlayerItemLegibleOutput.h"):
     print "#define HAVE_AVCF_LEGIBLE_OUTPUT 1"
 if lookFor("/include/AVFoundationCF/AVCFAssetResourceLoader.h"):
     print "#define HAVE_AVFOUNDATION_LOADER_DELEGATE 1"
+if lookFor("/include/AVFoundationCF/AVCFAsset.h"):
+    regexp = re.compile("AVCFURLAssetIsPlayableExtendedMIMEType")
+    if fileContains("/include/AVFoundationCF/AVCFAsset.h", regexp):
+        print "#define HAVE_AVCFURL_PLAYABLE_MIMETYPE 1"

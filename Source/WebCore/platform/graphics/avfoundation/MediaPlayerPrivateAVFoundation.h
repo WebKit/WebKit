@@ -33,6 +33,7 @@
 #include "MediaPlayerPrivate.h"
 #include "Timer.h"
 #include <functional>
+#include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
 
@@ -255,6 +256,9 @@ protected:
     virtual bool hasLayerRenderer() const = 0;
 
     virtual void updateVideoLayerGravity() = 0;
+
+    static bool isUnsupportedMIMEType(const String&);
+    static const HashSet<String>& staticMIMETypeList();
 
 protected:
     void updateStates();

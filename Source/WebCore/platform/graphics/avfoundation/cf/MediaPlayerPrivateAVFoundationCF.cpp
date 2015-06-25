@@ -65,6 +65,7 @@
 #include <runtime/Uint16Array.h>
 #endif
 #include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Threading.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringView.h>
@@ -906,14 +907,45 @@ static bool keySystemIsSupported(const String& keySystem)
 }
 #endif
 
+static const HashSet<String>& avfMIMETypes()
+{
+    static NeverDestroyed<HashSet<String>> cache = []() {
+        HashSet<String> types;
+        RetainPtr<CFArrayRef> avTypes = AVCFURLAssetCopyAudiovisualMIMETypes();
+
+        CFIndex typeCount = CFArrayGetCount(avTypes.get());
+        for (CFIndex i = 0; i < typeCount; ++i) {
+            String mimeType = (CFStringRef)(CFArrayGetValueAtIndex(avTypes.get(), i));
+            types.add(mimeType.lower());
+        }
+
+        return types;
+    }();
+
+    return cache;
+}
+
 MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationCF::supportsType(const MediaEngineSupportParameters& parameters)
 {
-    // Only return "IsSupported" if there is no codecs parameter for now as there is no way to ask if it supports an
-    // extended MIME type until rdar://8721715 is fixed.
+    if (isUnsupportedMIMEType(parameters.type))
+        return MediaPlayer::IsNotSupported;
+
+    if (!staticMIMETypeList().contains(parameters.type) && !avfMIMETypes().contains(parameters.type))
+        return MediaPlayer::IsNotSupported;
+
+#if HAVE(AVCFURL_PLAYABLE_MIMETYPE)
+    // The spec says:
+    // "Implementors are encouraged to return "maybe" unless the type can be confidently established as being supported or not."
+    if (parameters.codecs.isEmpty())
+        return MediaPlayer::MayBeSupported;
+
+    String typeString = parameters.type + "; codecs=\"" + parameters.codecs + "\"";
+    return AVCFURLAssetIsPlayableExtendedMIMEType(typeString.createCFString().get()) ? MediaPlayer::IsSupported : MediaPlayer::MayBeSupported;
+#else
     if (mimeTypeCache().contains(parameters.type))
         return parameters.codecs.isEmpty() ? MediaPlayer::MayBeSupported : MediaPlayer::IsSupported;
-
     return MediaPlayer::IsNotSupported;
+#endif
 }
 
 bool MediaPlayerPrivateAVFoundationCF::supportsKeySystem(const String& keySystem, const String& mimeType)
@@ -1273,7 +1305,11 @@ String MediaPlayerPrivateAVFoundationCF::languageOfPrimaryAudioTrack() const
     AVCFMediaSelectionOptionRef currentlySelectedAudibleOption = AVCFPlayerItemGetSelectedMediaOptionInMediaSelectionGroup(avPlayerItem(m_avfWrapper), audibleGroup);
     if (currentlySelectedAudibleOption) {
         RetainPtr<CFLocaleRef> audibleOptionLocale = adoptCF(AVCFMediaSelectionOptionCopyLocale(currentlySelectedAudibleOption));
-        m_languageOfPrimaryAudioTrack = CFLocaleGetIdentifier(audibleOptionLocale.get());
+        if (audibleOptionLocale)
+            m_languageOfPrimaryAudioTrack = CFLocaleGetIdentifier(audibleOptionLocale.get());
+        else
+            m_languageOfPrimaryAudioTrack = emptyString();
+
         LOG(Media, "MediaPlayerPrivateAVFoundationCF::languageOfPrimaryAudioTrack(%p) - returning language of selected audible option: %s", this, m_languageOfPrimaryAudioTrack.utf8().data());
 
         return m_languageOfPrimaryAudioTrack;
