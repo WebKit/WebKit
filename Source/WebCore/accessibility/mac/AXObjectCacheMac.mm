@@ -333,6 +333,9 @@ void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* a
 void AXObjectCache::platformHandleFocusedUIElementChanged(Node*, Node*)
 {
     wkAccessibilityHandleFocusChanged();
+    // AXFocusChanged is a test specific notification name and not something a real AT will be listening for
+    if (UNLIKELY(axShouldRepostNotificationsForTests))
+        [rootWebArea()->wrapper() accessibilityPostedNotification:@"AXFocusChanged" userInfo:nil];
 }
 
 void AXObjectCache::handleScrolledToAnchor(const Node*)

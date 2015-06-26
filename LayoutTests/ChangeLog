@@ -1,3 +1,19 @@
+2015-06-25  Doug Russell  <d_russell@apple.com>
+
+        Bug 146300 AX: AccessibilityObject focus events that don't cause a selection 
+        change can leave m_isSynchronizingSelection set to true
+        https://bugs.webkit.org/show_bug.cgi?id=146300
+
+        Reviewed by Chris Fleizach.
+
+        Added a clearTextSelectionIntent() convenience function to be used after any
+        event that can, but isn't guaranteed to result in a selection change. Matches
+        calls to setTextSelectionIntent() convenience function.
+        Added support for tests listening for focus change notifications.
+
+        * platform/mac/accessibility/focus-setting-selection-syncronizing-not-clearing-expected.txt: Added.
+        * platform/mac/accessibility/focus-setting-selection-syncronizing-not-clearing.html: Added.
+
 2015-06-25  Tim Horton  <timothy_horton@apple.com>
 
         Viewport units are wrong when scaled in 2-up mode, cause content to hop around on apple.com/music
