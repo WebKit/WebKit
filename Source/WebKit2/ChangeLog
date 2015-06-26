@@ -1,3 +1,12 @@
+2015-06-26  Matt Rajca  <mrajca@apple.com>
+
+        Wireless Playback Target-related #import should be a #include
+        https://bugs.webkit.org/show_bug.cgi?id=146283
+
+        Reviewed by Eric Carlson.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+
 2015-06-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add Support for OS X Full Screen Mode

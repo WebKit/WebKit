@@ -84,7 +84,7 @@
 #endif // PLATFORM(IOS)
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-#import <WebCore/MediaPlaybackTargetContext.h>
+#include <WebCore/MediaPlaybackTargetContext.h>
 #endif
 
 #if ENABLE(MEDIA_SESSION)
