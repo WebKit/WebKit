@@ -1,3 +1,10 @@
+2015-06-26  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r185971): js/dom/global-constructors-attributes.html fails on Windows
+
+        * platform/win/js/dom/global-constructors-attributes-expected.txt:
+        Update results after enabling WEB_TIMING API for Windows.
+
 2015-06-26 Aleksandr Skachkov  <gskachkov@gmail.com>
 
          [ES6] Implement ES6 arrow function syntax. Parser of arrow function with execution as common function 
