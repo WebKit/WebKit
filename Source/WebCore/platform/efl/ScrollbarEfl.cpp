@@ -45,24 +45,4 @@ ScrollbarEfl::~ScrollbarEfl()
 {
 }
 
-void ScrollbarEfl::setParent(ScrollView* view)
-{
-    Widget::setParent(view);
-}
-
-void ScrollbarEfl::setFrameRect(const IntRect& rect)
-{
-    Widget::setFrameRect(rect);
-    frameRectsChanged();
-}
-
-void ScrollbarEfl::frameRectsChanged()
-{
-}
-
-void ScrollbarEfl::invalidate()
-{
-    Widget::invalidate();
-}
-
 }

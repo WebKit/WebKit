@@ -37,17 +37,11 @@ namespace WebCore {
 class ScrollbarEfl final : public Scrollbar {
 public:
     friend class Scrollbar;
-
     virtual ~ScrollbarEfl();
-
-    virtual void setFrameRect(const IntRect&) override;
-    virtual void frameRectsChanged() override;
-    virtual void invalidate() override;
 
 protected:
     ScrollbarEfl(ScrollableArea&, ScrollbarOrientation, ScrollbarControlSize);
 
-    virtual void setParent(ScrollView*) override;
 };
 
 }
