@@ -1,5 +1,16 @@
 2015-06-26  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Remove ARMv7Assembler.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=146340
+
+        Reviewed by Filip Pizlo.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/ARMv7Assembler.cpp: Removed.
+
+2015-06-26  Csaba Osztrogonác  <ossy@webkit.org>
+
         Fix the !ENABLE(ES6_ARROWFUNCTION_SYNTAX) build after r185989
         https://bugs.webkit.org/show_bug.cgi?id=146344
 
