@@ -40,6 +40,7 @@
 #import "_WKUserContentFilterInternal.h"
 #import <JavaScriptCore/JSContext.h>
 #import <JavaScriptCore/JSValue.h>
+#import <WTF/MainThread.h>
 #import <WebCore/SerializedScriptValue.h>
 
 @implementation WKUserContentController
@@ -87,16 +88,20 @@ public:
     
     virtual void didPostMessage(WebKit::WebPageProxy& page, WebKit::WebFrameProxy& frame, const WebKit::SecurityOriginData& securityOriginData, WebCore::SerializedScriptValue& serializedScriptValue)
     {
-        RetainPtr<WKFrameInfo> frameInfo = wrapper(API::FrameInfo::create(frame, securityOriginData.securityOrigin()));
+        @autoreleasepool {
+            RetainPtr<WKFrameInfo> frameInfo = wrapper(API::FrameInfo::create(frame, securityOriginData.securityOrigin()));
 
-        RetainPtr<JSContext> context = adoptNS([[JSContext alloc] init]);
-        JSValueRef valueRef = serializedScriptValue.deserialize([context JSGlobalContextRef], 0);
-        JSValue *value = [JSValue valueWithJSValueRef:valueRef inContext:context.get()];
-        id body = [value toObject];
+            ASSERT(isUIThread());
+            static JSContext* context = [[JSContext alloc] init];
 
-        RetainPtr<WKScriptMessage> message = adoptNS([[WKScriptMessage alloc] _initWithBody:body webView:fromWebPageProxy(page) frameInfo:frameInfo.get() name:m_name.get()]);
-    
-        [m_handler userContentController:m_controller.get() didReceiveScriptMessage:message.get()];
+            JSValueRef valueRef = serializedScriptValue.deserialize([context JSGlobalContextRef], 0);
+            JSValue *value = [JSValue valueWithJSValueRef:valueRef inContext:context];
+            id body = value.toObject;
+
+            auto message = adoptNS([[WKScriptMessage alloc] _initWithBody:body webView:fromWebPageProxy(page) frameInfo:frameInfo.get() name:m_name.get()]);
+        
+            [m_handler userContentController:m_controller.get() didReceiveScriptMessage:message.get()];
+        }
     }
 
 private:

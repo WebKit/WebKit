@@ -1,3 +1,20 @@
+2015-06-26  Mark Lam  <mark.lam@apple.com>
+
+        ScriptMessageHandlerDelegate::didPostMessage() should reuse its JSContext instance.
+        https://bugs.webkit.org/show_bug.cgi?id=146358
+
+        Reviewed by Anders Carlsson.
+
+        Currently, ScriptMessageHandlerDelegate::didPostMessage() creates a new JSContext each
+        time it is called.  This JSContext is used only once to deserialized a JSON object
+        and then destroyed.  We will change ScriptMessageHandlerDelegate to cache the JSContext
+        and reuse it in all subsequent calls to didPostMessage().
+
+        Also added a @autoreleasepool scope in didPostMessage() so that transient ObjC objects
+        will be release sooner.
+
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+
 2015-06-26  Beth Dakin  <bdakin@apple.com>
 
         Add support for image previews
