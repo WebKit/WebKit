@@ -272,7 +272,8 @@ public:
     
     void started();
 
-    Page::DismissalType pageDismissalEventBeingDispatched() const { return m_pageDismissalEventBeingDispatched; }
+    enum class PageDismissalType { None, BeforeUnload, PageHide, Unload };
+    PageDismissalType pageDismissalEventBeingDispatched() const { return m_pageDismissalEventBeingDispatched; }
 
     WEBCORE_EXPORT NetworkingContext* networkingContext() const;
 
@@ -413,21 +414,7 @@ private:
     bool m_didCallImplicitClose;
     bool m_wasUnloadEventEmitted;
 
-    class PageDismissalEventType {
-    public:
-        PageDismissalEventType(Frame& frame)
-            : m_frame(frame)
-        { }
-
-        PageDismissalEventType& operator=(Page::DismissalType);
-        operator Page::DismissalType() const { return m_dismissalEventBeingDispatched; }
-
-    private:
-        Frame& m_frame;
-        Page::DismissalType m_dismissalEventBeingDispatched { Page::DismissalType::None };
-    };
-
-    PageDismissalEventType m_pageDismissalEventBeingDispatched;
+    PageDismissalType m_pageDismissalEventBeingDispatched { PageDismissalType::None };
     bool m_isComplete;
 
     RefPtr<SerializedScriptValue> m_pendingStateObject;

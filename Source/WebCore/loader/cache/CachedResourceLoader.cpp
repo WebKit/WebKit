@@ -176,7 +176,7 @@ SessionID CachedResourceLoader::sessionID() const
 CachedResourceHandle<CachedImage> CachedResourceLoader::requestImage(CachedResourceRequest& request)
 {
     if (Frame* frame = this->frame()) {
-        if (frame->loader().pageDismissalEventBeingDispatched() != Page::DismissalType::None) {
+        if (frame->loader().pageDismissalEventBeingDispatched() != FrameLoader::PageDismissalType::None) {
             URL requestURL = request.resourceRequest().url();
             if (requestURL.isValid() && canRequest(CachedResource::ImageResource, requestURL, request.options(), request.forPreload()))
                 PingLoader::loadImage(*frame, requestURL);
