@@ -60,6 +60,7 @@
 #import <WebCore/FocusController.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
+#import <WebCore/GeometryUtilities.h>
 #import <WebCore/HTMLElementTypeHelpers.h>
 #import <WebCore/HTMLFormElement.h>
 #import <WebCore/HTMLInputElement.h>
@@ -2139,9 +2140,13 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
                     auto& renderImage = downcast<RenderImage>(*(element->renderer()));
                     if (renderImage.cachedImage() && !renderImage.cachedImage()->errorOccurred()) {
                         if (Image* image = renderImage.cachedImage()->imageForRenderer(&renderImage)) {
-                            if (RefPtr<ShareableBitmap> sharedBitmap = ShareableBitmap::createShareable(IntSize(image->size()), ShareableBitmap::SupportsAlpha)) {
+                            FloatSize screenSizeInPixels = screenSize();
+                            screenSizeInPixels.scale(corePage()->deviceScaleFactor());
+                            FloatSize scaledSize = largestRectWithAspectRatioInsideRect(image->size().width() / image->size().height(), FloatRect(0, 0, screenSizeInPixels.width(), screenSizeInPixels.height())).size();
+                            FloatSize bitmapSize = scaledSize.width() < image->size().width() ? scaledSize : image->size();
+                            if (RefPtr<ShareableBitmap> sharedBitmap = ShareableBitmap::createShareable(IntSize(bitmapSize), ShareableBitmap::SupportsAlpha)) {
                                 auto graphicsContext = sharedBitmap->createGraphicsContext();
-                                graphicsContext->drawImage(image, ColorSpaceDeviceRGB, FloatPoint(0, 0));
+                                graphicsContext->drawImage(image, ColorSpaceDeviceRGB, FloatRect(0, 0, bitmapSize.width(), bitmapSize.height()));
                                 info.image = sharedBitmap;
                             }
                         }
