@@ -42,6 +42,7 @@ typedef _com_ptr_t<_com_IIID<IWebInspector, &__uuidof(IWebInspector)>> IWebInspe
 typedef _com_ptr_t<_com_IIID<IWebCoreStatistics, &__uuidof(IWebCoreStatistics)>> IWebCoreStatisticsPtr;
 typedef _com_ptr_t<_com_IIID<IWebCache, &__uuidof(IWebCache)>> IWebCachePtr;
 typedef _com_ptr_t<_com_IIID<IWebResourceLoadDelegate, &__uuidof(IWebResourceLoadDelegate)>> IWebResourceLoadDelegatePtr;
+typedef _com_ptr_t<_com_IIID<IWebDownloadDelegate, &__uuidof(IWebDownloadDelegate)>> IWebDownloadDelegatePtr;
 
 class WinLauncher {
 public:
@@ -65,6 +66,7 @@ public:
     HRESULT setUIDelegate(IWebUIDelegate*);
     HRESULT setAccessibilityDelegate(IAccessibilityDelegate*);
     HRESULT setResourceLoadDelegate(IWebResourceLoadDelegate*);
+    HRESULT setDownloadDelegate(IWebDownloadDelegatePtr);
 
     IWebPreferencesPtr standardPreferences() { return m_standardPreferences;  }
     IWebPreferencesPrivatePtr privatePreferences() { return m_prefsPrivate; }
@@ -105,6 +107,7 @@ private:
     IWebUIDelegatePtr m_uiDelegate;
     IAccessibilityDelegatePtr m_accessibilityDelegate;
     IWebResourceLoadDelegatePtr m_resourceLoadDelegate;
+    IWebDownloadDelegatePtr m_downloadDelegate;
 
     IWebCoreStatisticsPtr m_statistics;
     IWebCachePtr m_webCache;

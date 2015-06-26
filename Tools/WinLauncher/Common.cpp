@@ -30,6 +30,7 @@
 #include "DOMDefaultImpl.h"
 #include "PrintWebUIDelegate.h"
 #include "ResourceLoadDelegate.h"
+#include "WebDownloadDelegate.h"
 #include "WinLauncher.h"
 #include "WinLauncherReplace.h"
 #include <WebKit/WebKitCOMAPI.h>

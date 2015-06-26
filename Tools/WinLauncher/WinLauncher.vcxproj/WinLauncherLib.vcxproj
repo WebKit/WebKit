@@ -235,6 +235,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\WebDownloadDelegate.cpp" />
     <ClCompile Include="..\WinLauncher.cpp" />
     <ClCompile Include="..\WinLauncherWebHost.cpp" />
     <ClCompile Include="..\WinMain.cpp" />
@@ -246,6 +247,7 @@
     <ClInclude Include="..\PrintWebUIDelegate.h" />
     <ClInclude Include="..\ResourceLoadDelegate.h" />
     <ClInclude Include="..\stdafx.h" />
+    <ClInclude Include="..\WebDownloadDelegate.h" />
     <ClInclude Include="..\WinLauncher.h" />
     <ClInclude Include="..\WinLauncherReplace.h" />
     <ClInclude Include="..\WinLauncherWebHost.h" />

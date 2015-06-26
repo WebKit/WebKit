@@ -6543,6 +6543,9 @@ HRESULT WebView::addVisitedLinks(BSTR* visitedURLs, unsigned visitedURLCount)
 
 void WebView::downloadURL(const URL& url)
 {
+    if (!m_downloadDelegate)
+        return;
+
     // It's the delegate's job to ref the WebDownload to keep it alive - otherwise it will be
     // destroyed when this function returns.
 #if USE(CURL)

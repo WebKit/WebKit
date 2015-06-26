@@ -97,6 +97,9 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int nCmdShow)
 
     WinLauncherWebHost* webHost = nullptr;
 
+    IWebDownloadDelegatePtr downloadDelegate;
+    downloadDelegate.Attach(new WebDownloadDelegate());
+
     gWinLauncher = new WinLauncher(hMainWnd, hURLBarWnd, usesLayeredWebView, pageLoadTesting);
     if (!gWinLauncher)
         goto exit;
@@ -133,6 +136,10 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int nCmdShow)
         goto exit;
 
     hr = gWinLauncher->setResourceLoadDelegate(new ResourceLoadDelegate(gWinLauncher));
+    if (FAILED(hr))
+        goto exit;
+
+    hr = gWinLauncher->setDownloadDelegate(downloadDelegate);
     if (FAILED(hr))
         goto exit;
 

@@ -140,11 +140,16 @@ HRESULT WinLauncher::setAccessibilityDelegate(IAccessibilityDelegate* accessibil
     return m_webView->setAccessibilityDelegate(accessibilityDelegate);
 }
 
-
 HRESULT WinLauncher::setResourceLoadDelegate(IWebResourceLoadDelegate* resourceLoadDelegate)
 {
     m_resourceLoadDelegate = resourceLoadDelegate;
     return m_webView->setResourceLoadDelegate(resourceLoadDelegate);
+}
+
+HRESULT WinLauncher::setDownloadDelegate(IWebDownloadDelegatePtr downloadDelegate)
+{
+    m_downloadDelegate = downloadDelegate;
+    return m_webView->setDownloadDelegate(downloadDelegate);
 }
 
 IWebFramePtr WinLauncher::mainFrame()

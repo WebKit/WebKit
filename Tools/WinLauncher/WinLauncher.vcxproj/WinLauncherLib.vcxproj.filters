@@ -55,6 +55,9 @@
     <ClCompile Include="..\PageLoadTestClient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\WebDownloadDelegate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\DOMDefaultImpl.h">
@@ -85,6 +88,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\PageLoadTestClient.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\WebDownloadDelegate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
