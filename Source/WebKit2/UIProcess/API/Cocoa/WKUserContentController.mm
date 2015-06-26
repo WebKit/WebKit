@@ -41,6 +41,7 @@
 #import <JavaScriptCore/JSContext.h>
 #import <JavaScriptCore/JSValue.h>
 #import <WebCore/SerializedScriptValue.h>
+#import <wtf/MainThread.h>
 
 @implementation WKUserContentController
 
@@ -90,6 +91,7 @@ public:
         @autoreleasepool {
             RetainPtr<WKFrameInfo> frameInfo = wrapper(API::FrameInfo::create(frame, securityOriginData.securityOrigin()));
 
+            ASSERT(isUIThread());
             static JSContext* context = [[JSContext alloc] init];
 
             JSValueRef valueRef = serializedScriptValue.deserialize([context JSGlobalContextRef], 0);

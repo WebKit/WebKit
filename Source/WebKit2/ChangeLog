@@ -1,6 +1,16 @@
 2015-06-26  Mark Lam  <mark.lam@apple.com>
 
-        Gardeining: remove an assertion and a #import to green the bot.
+        Re-instating the #import and assertion removed in r186014.
+        https://bugs.webkit.org/show_bug.cgi?id=146358
+
+        Not reviewed.
+
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+        - Speculative fix: should have used <wtf/MainThread.h> instead of <WTF/MainThread.h>.
+
+2015-06-26  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: remove an assertion and a #import to green the bot.
         https://bugs.webkit.org/show_bug.cgi?id=146358
 
         Not reviewed.
