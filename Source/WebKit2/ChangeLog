@@ -1,5 +1,17 @@
 2015-06-26  Mark Lam  <mark.lam@apple.com>
 
+        Gardeining: remove an assertion and a #import to green the bot.
+        https://bugs.webkit.org/show_bug.cgi?id=146358
+
+        Not reviewed.
+
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+        - Not sure why the <WTF/MainThread.h> cannot be found on some bots, but I'm
+          removing it (and the assertion that needed it) for now while I investigate
+          further.
+
+2015-06-26  Mark Lam  <mark.lam@apple.com>
+
         ScriptMessageHandlerDelegate::didPostMessage() should reuse its JSContext instance.
         https://bugs.webkit.org/show_bug.cgi?id=146358
 
