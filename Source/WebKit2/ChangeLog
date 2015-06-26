@@ -1,5 +1,15 @@
 2015-06-26  Beth Dakin  <bdakin@apple.com>
 
+        Rubber-stamped by Tim Horton.
+
+        As Dan pointed out in https://bugs.webkit.org/show_bug.cgi?id=146350 , this way of  
+        getting the screen size was problematic on multiple counts. Fixed here by using 
+        UIScreen. 
+        * UIProcess/WKImagePreviewViewController.mm:
+        (-[WKImagePreviewViewController initWithCGImage:]):
+
+2015-06-26  Beth Dakin  <bdakin@apple.com>
+
         WebPage::getPositionInformation() should not copy an image that is larger than the  
         screen
         https://bugs.webkit.org/show_bug.cgi?id=146367

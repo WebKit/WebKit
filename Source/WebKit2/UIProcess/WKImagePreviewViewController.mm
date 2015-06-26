@@ -54,7 +54,7 @@
     RetainPtr<UIImage> uiImage = adoptNS([[UIImage alloc] initWithCGImage:_image.get()]);
     [_imageView setImage:uiImage.get()];
 
-    CGSize screenSize = UIApplication.sharedApplication.delegate.window.bounds.size;
+    CGSize screenSize = [UIScreen mainScreen].bounds.size;
     CGSize imageSize = _scaleSizeWithinSize(CGSizeMake(CGImageGetWidth(_image.get()), CGImageGetHeight(_image.get())), screenSize);
     [_imageView setFrame:CGRectMake([_imageView frame].origin.x, [_imageView frame].origin.y, imageSize.width, imageSize.height)];
     [self setPreferredContentSize:imageSize];
