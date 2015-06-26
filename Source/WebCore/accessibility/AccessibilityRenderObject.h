@@ -242,7 +242,6 @@ private:
     void addRadioButtonGroupMembers(AccessibilityChildrenVector& linkedUIElements) const;
     AccessibilityObject* internalLinkElement() const;
     AccessibilityObject* accessibilityImageMapHitTest(HTMLAreaElement*, const IntPoint&) const;
-    AccessibilityObject* accessibilityTextFieldDecorationHitTest(const HTMLInputElement&, const Node&) const;
     AccessibilityObject* accessibilityParentForImageMap(HTMLMapElement*) const;
     virtual AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const override;
 

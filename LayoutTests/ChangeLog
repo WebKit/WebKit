@@ -1,3 +1,23 @@
+2015-06-26  Daniel Bates  <dabates@apple.com>
+
+        Rolling out r185881
+        https://bugs.webkit.org/show_bug.cgi?id=146243
+        And
+        r185828
+        https://bugs.webkit.org/show_bug.cgi?id=145241
+
+        Reverting r185881 and r185828 because the latter caused a regression.
+
+        * accessibility/hit-test-input-auto-fill-button-expected.txt: Removed.
+        * accessibility/hit-test-input-auto-fill-button.html: Removed.
+        * accessibility/hit-test-input-search-cancel-button-expected.txt: Removed.
+        * accessibility/hit-test-input-search-cancel-button.html: Removed.
+        * accessibility/input-search-cancel-button-expected.txt: Removed.
+        * accessibility/input-search-cancel-button.html: Removed.
+        * accessibility/resources/shouldBeAccessibleByCursor.js: Removed.
+        * platform/win/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2015-06-26  Dean Jackson  <dino@apple.com>
 
         No audio on animated page with the attached fixed layout epub
