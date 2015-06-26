@@ -392,7 +392,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     }
 #endif // !PLATFORM(IOS)
 
-    if (settings && settings->audioPlaybackRequiresUserGesture())
+    if (settings && settings->audioPlaybackRequiresUserGesture() && settings->requiresUserGestureForMediaPlayback())
         m_mediaSession->addBehaviorRestriction(MediaElementSession::RequireUserGestureForAudioRateChange);
 
 #if ENABLE(VIDEO_TRACK)

@@ -1,3 +1,16 @@
+2015-06-26  Dean Jackson  <dino@apple.com>
+
+        No audio on animated page with the attached fixed layout epub
+        https://bugs.webkit.org/show_bug.cgi?id=146365
+        <rdar://problem/21360354>
+
+        Reviewed by Eric Carlson.
+
+        The test to ensure audio needs a user gesture now needs to also
+        restrict the general case.
+
+        * media/audio-playback-restriction-play.html:
+
 2015-06-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Sans-serif generic font family should map to PingFang
