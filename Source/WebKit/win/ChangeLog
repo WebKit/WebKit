@@ -1,3 +1,32 @@
+2015-06-26  Hyungwook Lee  <hyungwook.lee@navercorp.com>
+
+        [Win] Implement WebViewGroup to support WebView::addxxxToGroup().
+        https://bugs.webkit.org/show_bug.cgi?id=145908
+
+        Reviewed by Brent Fulgham.
+
+        Make WebViewGroup class sharing on Mac and Win port.
+
+        * WebCoreSupport/WebVisitedLinkStore.cpp:
+        (visitedLinkStores):
+        (WebVisitedLinkStore::create):
+        (WebVisitedLinkStore::WebVisitedLinkStore):
+        (WebVisitedLinkStore::~WebVisitedLinkStore):
+        (WebVisitedLinkStore::setShouldTrackVisitedLinks):
+        (WebVisitedLinkStore::removeAllVisitedLinks):
+        (WebVisitedLinkStore::singleton): Deleted.
+        * WebCoreSupport/WebVisitedLinkStore.h:
+        * WebView.cpp:
+        (toURL):
+        (localStorageDatabasePath):
+        (WebView::WebView):
+        (WebView::~WebView):
+        (WebView::shouldInitializeTrackPointHack):
+        (WebView::initWithFrame):
+        (WebView::setGroupName):
+        (WebView::addVisitedLinks):
+        * WebView.h:
+
 2015-06-25  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Need implementation of layoutTestController.setBackingScaleFactor

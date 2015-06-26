@@ -70,6 +70,7 @@ class WebInspectorClient;
 #if USE(TEXTURE_MAPPER_GL)
 class AcceleratedCompositingContext;
 #endif
+class WebViewGroup;
 
 WebView* kit(WebCore::Page*);
 WebCore::Page* core(IWebView*);
@@ -1166,6 +1167,8 @@ protected:
     std::unique_ptr<WebCore::FullScreenController> m_fullscreenController;
     WebCore::IntPoint m_scrollPosition;
 #endif
+
+    RefPtr<WebViewGroup> m_webViewGroup;
 };
 
 #endif

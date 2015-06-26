@@ -34,7 +34,7 @@ class UserContentController;
 
 class WebVisitedLinkStore;
 
-@class WebView;
+OBJC_CLASS WebView;
 
 class WebViewGroup : public RefCounted<WebViewGroup> {
 public:

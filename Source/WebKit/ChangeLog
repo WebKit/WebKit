@@ -1,3 +1,30 @@
+2015-06-26  Hyungwook Lee  <hyungwook.lee@navercorp.com>
+
+        [Win] Implement WebViewGroup to support WebView::addxxxToGroup().
+        https://bugs.webkit.org/show_bug.cgi?id=145908
+
+        Reviewed by Brent Fulgham.
+
+        Make WebViewGroup class sharing on Mac and Win port.
+
+        * WebCoreSupport: Added.
+        * WebCoreSupport/WebViewGroup.cpp: Added.
+        (webViewGroups):
+        (WebViewGroup::getOrCreate):
+        (WebViewGroup::get):
+        (WebViewGroup::WebViewGroup):
+        (WebViewGroup::~WebViewGroup):
+        (WebViewGroup::addWebView):
+        (WebViewGroup::removeWebView):
+        (WebViewGroup::storageNamespaceProvider):
+        * WebCoreSupport/WebViewGroup.h: Added.
+        (WebViewGroup::userContentController):
+        (WebViewGroup::visitedLinkStore):
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj:
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj.filters:
+        * WebKit.vcxproj/WebKit/WebKitCommon.props:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2015-06-24  Anders Carlsson  <andersca@apple.com>
 
         Move PluginMainThreadScheduler to WebKit/win
