@@ -5746,6 +5746,11 @@ void WebPageProxy::navigationGestureDidEnd(bool willNavigate, WebBackForwardList
     m_loaderClient->navigationGestureDidEnd(*this, willNavigate, item);
 }
 
+void WebPageProxy::navigationGestureDidEnd()
+{
+    m_pageClient.navigationGestureDidEnd();
+}
+
 void WebPageProxy::willRecordNavigationSnapshot(WebBackForwardListItem& item)
 {
     m_pageClient.willRecordNavigationSnapshot(item);

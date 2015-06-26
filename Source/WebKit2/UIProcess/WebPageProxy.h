@@ -1011,6 +1011,7 @@ public:
     void navigationGestureDidBegin();
     void navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem&);
     void navigationGestureDidEnd(bool willNavigate, WebBackForwardListItem&);
+    void navigationGestureDidEnd();
     void navigationGestureSnapshotWasRemoved();
     void willRecordNavigationSnapshot(WebBackForwardListItem&);
 

@@ -203,6 +203,7 @@ protected:
     virtual void navigationGestureDidBegin() override { };
     virtual void navigationGestureWillEnd(bool, WebBackForwardListItem&) override { };
     virtual void navigationGestureDidEnd(bool, WebBackForwardListItem&) override { };
+    virtual void navigationGestureDidEnd() override { };
     virtual void willRecordNavigationSnapshot(WebBackForwardListItem&) override { };
 
     virtual void didChangeBackgroundColor() override { }

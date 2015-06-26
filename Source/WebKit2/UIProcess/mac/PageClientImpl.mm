@@ -765,6 +765,10 @@ void PageClientImpl::navigationGestureDidEnd(bool willNavigate, WebBackForwardLi
 #endif
 }
 
+void PageClientImpl::navigationGestureDidEnd()
+{
+}
+
 void PageClientImpl::willRecordNavigationSnapshot(WebBackForwardListItem& item)
 {
 #if WK_API_ENABLED

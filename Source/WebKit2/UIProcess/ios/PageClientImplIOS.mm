@@ -685,6 +685,7 @@ Vector<String> PageClientImpl::mimeTypesWithCustomContentProviders()
 
 void PageClientImpl::navigationGestureDidBegin()
 {
+    [m_webView _navigationGestureDidBegin];
     NavigationState::fromWebPage(*m_webView->_page).navigationGestureDidBegin();
 }
 
@@ -696,6 +697,12 @@ void PageClientImpl::navigationGestureWillEnd(bool willNavigate, WebBackForwardL
 void PageClientImpl::navigationGestureDidEnd(bool willNavigate, WebBackForwardListItem& item)
 {
     NavigationState::fromWebPage(*m_webView->_page).navigationGestureDidEnd(willNavigate, item);
+    [m_webView _navigationGestureDidEnd];
+}
+
+void PageClientImpl::navigationGestureDidEnd()
+{
+    [m_webView _navigationGestureDidEnd];
 }
 
 void PageClientImpl::willRecordNavigationSnapshot(WebBackForwardListItem& item)

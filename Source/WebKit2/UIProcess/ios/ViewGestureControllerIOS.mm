@@ -184,6 +184,8 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
 
     m_webPageProxyForBackForwardListForCurrentSwipe = m_alternateBackForwardListSourceView.get() ? m_alternateBackForwardListSourceView.get()->_page : &m_webPageProxy;
     m_webPageProxyForBackForwardListForCurrentSwipe->navigationGestureDidBegin();
+    if (&m_webPageProxy != m_webPageProxyForBackForwardListForCurrentSwipe)
+        m_webPageProxy.navigationGestureDidBegin();
 
     auto& backForwardList = m_webPageProxyForBackForwardListForCurrentSwipe->backForwardList();
 
@@ -285,6 +287,8 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
         RefPtr<WebPageProxy> webPageProxyForBackForwardListForCurrentSwipe = m_webPageProxyForBackForwardListForCurrentSwipe;
         removeSwipeSnapshot();
         webPageProxyForBackForwardListForCurrentSwipe->navigationGestureDidEnd(false, *targetItem);
+        if (&m_webPageProxy != webPageProxyForBackForwardListForCurrentSwipe)
+            m_webPageProxy.navigationGestureDidEnd();
         return;
     }
 
@@ -293,6 +297,9 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
         m_snapshotRemovalTargetRenderTreeSize = snapshot->renderTreeSize() * swipeSnapshotRemovalRenderTreeSizeTargetFraction;
 
     m_webPageProxyForBackForwardListForCurrentSwipe->navigationGestureDidEnd(true, *targetItem);
+    if (&m_webPageProxy != m_webPageProxyForBackForwardListForCurrentSwipe)
+        m_webPageProxy.navigationGestureDidEnd();
+
     m_webPageProxyForBackForwardListForCurrentSwipe->goToBackForwardItem(targetItem);
 
     if (auto drawingArea = m_webPageProxy.drawingArea()) {

@@ -83,6 +83,7 @@
 #import <wtf/HashMap.h>
 #import <wtf/MathExtras.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/Optional.h>
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)
@@ -189,6 +190,8 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     uint64_t _resizeAnimationTransformTransactionID;
     RetainPtr<UIView> _resizeAnimationView;
     CGFloat _lastAdjustmentForScroller;
+    Optional<CGRect> _frozenVisibleContentRect;
+    Optional<CGRect> _frozenUnobscuredContentRect;
 
     BOOL _needsToRestoreExposedRect;
     WebCore::FloatRect _exposedRectToRestore;
@@ -1559,10 +1562,10 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         return;
 
     CGRect fullViewRect = self.bounds;
-    CGRect visibleRectInContentCoordinates = [self convertRect:fullViewRect toView:_contentView.get()];
+    CGRect visibleRectInContentCoordinates = _frozenVisibleContentRect ? _frozenVisibleContentRect.value() : [self convertRect:fullViewRect toView:_contentView.get()];
 
     CGRect unobscuredRect = UIEdgeInsetsInsetRect(fullViewRect, [self _computedContentInset]);
-    CGRect unobscuredRectInContentCoordinates = [self convertRect:unobscuredRect toView:_contentView.get()];
+    CGRect unobscuredRectInContentCoordinates = _frozenUnobscuredContentRect ? _frozenUnobscuredContentRect.value() : [self convertRect:unobscuredRect toView:_contentView.get()];
 
     CGFloat scaleFactor = contentZoomScale(self);
 
@@ -1710,7 +1713,25 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     return _allowsBackForwardNavigationGestures;
 }
 
-#endif
+- (void)_navigationGestureDidBegin
+{
+    // During a back/forward swipe, there's a view interposed between this view and the content view that has
+    // an offset and animation on it, which results in computing incorrect rectangles. Work around by using
+    // frozen rects during swipes.
+    CGRect fullViewRect = self.bounds;
+    CGRect unobscuredRect = UIEdgeInsetsInsetRect(fullViewRect, [self _computedContentInset]);
+
+    _frozenVisibleContentRect = [self convertRect:fullViewRect toView:_contentView.get()];
+    _frozenUnobscuredContentRect = [self convertRect:unobscuredRect toView:_contentView.get()];
+}
+
+- (void)_navigationGestureDidEnd
+{
+    _frozenVisibleContentRect = Nullopt;
+    _frozenUnobscuredContentRect = Nullopt;
+}
+
+#endif // PLATFORM(IOS)
 
 #pragma mark OS X-specific methods
 
@@ -1800,7 +1821,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 {
     return [_wkView performDragOperation:sender];
 }
-#endif
+#endif // PLATFORM(MAC)
 
 @end
 

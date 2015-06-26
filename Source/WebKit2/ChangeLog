@@ -1,3 +1,45 @@
+2015-06-25  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Swiping back just after scrolling can cause some tiles to disappear
+        https://bugs.webkit.org/show_bug.cgi?id=146329
+        rdar://problem/21233010
+
+        Reviewed by Tim Horton.
+        
+        When doing a back swipe, views interposed between the WKWebView and the WKContentView
+        get positions and animations for the swipe. This -_updateVisibleContentRects to
+        compute bad visible and unobscured rects, so we lose tiles.
+        
+        Fix by "freezing" the visible and unobscured content rects in the view being
+        swiped for the duration of the navigation gesture. When swiping the main view,
+        we just plumb through navigationGestureDidEnd(). When Reader is showing and the
+        swiped view is different from the navigating view, use the new navigationGestureDidEnd()
+        override which takes no arguments.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _updateVisibleContentRects]):
+        (-[WKWebView _navigationGestureDidBegin]):
+        (-[WKWebView _navigationGestureDidEnd]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::navigationGestureDidEnd):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/CoordinatedGraphics/WebView.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::navigationGestureDidEnd):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::navigationGestureDidBegin):
+        (WebKit::PageClientImpl::navigationGestureDidEnd):
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::endSwipeGesture):
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::navigationGestureDidEnd):
+
 2015-06-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         [Mac] Web Inspector: Window dragging on toolbar should behave more like native window dragging

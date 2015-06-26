@@ -410,6 +410,10 @@ void PageClientImpl::navigationGestureDidEnd(bool, WebBackForwardListItem&)
 {
 }
 
+void PageClientImpl::navigationGestureDidEnd()
+{
+}
+
 void PageClientImpl::willRecordNavigationSnapshot(WebBackForwardListItem&)
 {
 }

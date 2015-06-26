@@ -103,6 +103,9 @@ struct PrintInfo;
 
 - (void)_updateScrollViewBackground;
 
+- (void)_navigationGestureDidBegin;
+- (void)_navigationGestureDidEnd;
+
 @property (nonatomic, readonly) UIEdgeInsets _computedContentInset;
 #else
 @property (nonatomic, setter=_setIgnoresNonWheelEvents:) BOOL _ignoresNonWheelEvents;
