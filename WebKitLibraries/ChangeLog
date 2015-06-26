@@ -1,3 +1,12 @@
+2015-06-26  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo] Enable WEB_TIMING.
+        https://bugs.webkit.org/show_bug.cgi?id=146357
+
+        Reviewed by Brent Fulgham.
+
+        * win/tools/vsprops/FeatureDefinesCairo.props:
+
 2015-06-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed buildfix after r185971, disable WEB_TIMING.
