@@ -37,6 +37,3 @@ if not 'ACCESSIBILITY_EAIL_LIBRARY_PATH' in os.environ:
         os.environ['ACCESSIBILITY_EAIL_LIBRARY_PATH'] = _libeail_path
 
 partial_build = False
-
-if platform.processor() == 'aarch64':
-    skip = "libseccomp"

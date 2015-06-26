@@ -1,3 +1,14 @@
+2015-06-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] Bump libseccomp version to 2.2.1
+        https://bugs.webkit.org/show_bug.cgi?id=146341
+
+        Reviewed by Gyuyoung Kim.
+
+        * efl/jhbuild.modules:
+        * efl/jhbuildrc: Enabled libseccomp build on AArch64.
+        * efl/patches/libseccomp-pick-up-CC.patch: Removed, we don't need it anymore.
+
 2015-06-25  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Add a way to match a domain but not subdomains
