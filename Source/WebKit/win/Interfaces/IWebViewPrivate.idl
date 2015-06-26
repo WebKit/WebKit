@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -297,4 +297,7 @@ interface IWebViewPrivate : IUnknown
     HRESULT scaleWebView([in] double scale, [in] POINT origin);
 
     HRESULT dispatchPendingLoadRequests();
+
+    HRESULT setCustomBackingScaleFactor([in] double);
+    HRESULT backingScaleFactor([out] double*);
 }

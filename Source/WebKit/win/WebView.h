@@ -840,6 +840,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setUsesLayeredWindow(BOOL);
     virtual HRESULT STDMETHODCALLTYPE usesLayeredWindow(BOOL*);
 
+    virtual HRESULT STDMETHODCALLTYPE setCustomBackingScaleFactor(double);
+    virtual HRESULT STDMETHODCALLTYPE backingScaleFactor(double*);
+
     // WebView
     bool shouldUseEmbeddedView(const WTF::String& mimeType) const;
 
@@ -1023,6 +1026,8 @@ private:
     HRESULT STDMETHODCALLTYPE scaleWebView(double scale, POINT origin);
     HRESULT STDMETHODCALLTYPE dispatchPendingLoadRequests();
 
+    float deviceScaleFactor() const;
+
 protected:
     static bool registerWebViewWindowClass();
     static LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -1096,6 +1101,7 @@ protected:
     WTF::String m_userAgentCustom;
     WTF::String m_userAgentStandard;
     float m_zoomMultiplier;
+    float m_customDeviceScaleFactor { 0 };
     bool m_zoomsTextOnly;
     WTF::String m_overrideEncoding;
     WTF::String m_applicationName;

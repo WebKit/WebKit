@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2014 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2006-2015 Apple, Inc.  All rights reserved.
  * Copyright (C) 2009, 2010, 2011 Appcelerator, Inc. All rights reserved.
  * Copyright (C) 2011 Brent Fulgham. All rights reserved.
  *
@@ -2249,7 +2249,7 @@ LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam,
     ASSERT(webView);
 
     // Windows Media Player has a modal message loop that will deliver messages
-    // to us at inappropriate times and we will crash if we handle them when
+    // to us at inappropriate times and we will crash if we handle them when:
     // they are delivered. We repost paint messages so that we eventually get
     // a chance to paint once the modal loop has exited, but other messages
     // aren't safe to repost, so we just drop them.
@@ -2865,6 +2865,8 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();
     notifyCenter->addObserver(this, WebPreferences::webPreferencesChangedNotification(), static_cast<IWebPreferences*>(m_preferences.get()));
     m_preferences->postPreferencesChangesNotification();
+
+    m_page->setDeviceScaleFactor(deviceScaleFactor());
 
     setSmartInsertDeleteEnabled(TRUE);
     return hr;
@@ -3527,6 +3529,9 @@ HRESULT WebView::setHostWindow(/* [in] */ HWND window)
     m_hostWindow = window;
 
     windowAncestryDidChange();
+
+    if (m_page)
+        m_page->setDeviceScaleFactor(deviceScaleFactor());
 
     return S_OK;
 }
@@ -6005,6 +6010,9 @@ HRESULT STDMETHODCALLTYPE WebView::windowAncestryDidChange()
     if (m_topLevelParent)
         WindowMessageBroadcaster::addListener(m_topLevelParent, this);
 
+    if (m_page)
+        m_page->setDeviceScaleFactor(deviceScaleFactor());
+
     updateActiveState();
 
     return S_OK;
@@ -7130,5 +7138,49 @@ HRESULT WebView::scaleWebView(double scale, POINT origin)
 HRESULT WebView::dispatchPendingLoadRequests()
 {
     resourceLoadScheduler()->servePendingRequests();
+    return S_OK;
+}
+
+static float scaleFactorFromWindow(HWND window)
+{
+    HWndDC dc(window);
+    return ::GetDeviceCaps(dc, LOGPIXELSX) / 96.0f;
+}
+
+float WebView::deviceScaleFactor() const
+{
+    if (m_customDeviceScaleFactor)
+        return m_customDeviceScaleFactor;
+
+    // FIXME(146335): Should check for Windows 8.1 High DPI Features here first.
+
+    if (m_viewWindow)
+        return scaleFactorFromWindow(m_viewWindow);
+
+    if (m_hostWindow)
+        return scaleFactorFromWindow(m_hostWindow);
+
+    return scaleFactorFromWindow(0);
+}
+
+HRESULT WebView::setCustomBackingScaleFactor(double customScaleFactor)
+{
+    double oldScaleFactor = deviceScaleFactor();
+
+    m_customDeviceScaleFactor = customScaleFactor;
+
+    if (oldScaleFactor != deviceScaleFactor())
+        m_page->setDeviceScaleFactor(deviceScaleFactor());
+
+    return S_OK;
+}
+
+HRESULT WebView::backingScaleFactor(double* factor)
+{
+    if (!factor)
+        return E_POINTER;
+
+    *factor = deviceScaleFactor();
+
     return S_OK;
 }
