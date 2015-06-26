@@ -326,6 +326,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_autoplaying(true)
     , m_muted(false)
     , m_explicitlyMuted(false)
+    , m_initiallyMuted(false)
     , m_paused(true)
     , m_seeking(false)
     , m_sentStalledEvent(false)
@@ -758,6 +759,9 @@ void HTMLMediaElement::scheduleDelayedAction(DelayedActionType actionType)
         setFlags(m_pendingActionFlags, CheckPlaybackTargetCompatablity);
 #endif
 
+    if (actionType & CheckMediaState)
+        setFlags(m_pendingActionFlags, CheckMediaState);
+
     m_pendingActionTimer.startOneShot(0);
 }
 
@@ -807,6 +811,9 @@ void HTMLMediaElement::pendingActionTimerFired()
         LOG(Media, "HTMLMediaElement::pendingActionTimerFired(%p) - calling setShouldPlayToPlaybackTarget(false)", this);
         m_player->setShouldPlayToPlaybackTarget(false);
     }
+
+    if (m_pendingActionFlags & CheckMediaState)
+        updateMediaState();
 #endif
 
     m_pendingActionFlags = 0;
@@ -2068,7 +2075,8 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
         if (hasEventListeners(eventNames().webkitplaybacktargetavailabilitychangedEvent))
             enqueuePlaybackTargetAvailabilityChangedEvent();
 #endif
-        
+        m_initiallyMuted = m_volume < 0.05 || muted();
+
         if (hasMediaControls())
             mediaControls()->loadedMetadata();
         if (renderer())
@@ -3087,7 +3095,7 @@ void HTMLMediaElement::setMuted(bool muted)
         document().updateIsPlayingMedia();
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-        updateMediaState();
+        updateMediaState(UpdateMediaState::Asynchronously);
 #endif
     }
 #endif
@@ -4402,7 +4410,7 @@ void HTMLMediaElement::mediaPlayerEngineUpdated(MediaPlayer*)
     m_player->setVideoFullscreenLayer(m_videoFullscreenLayer.get());
 #endif
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    updateMediaState();
+    updateMediaState(UpdateMediaState::Asynchronously);
 #endif
 }
 
@@ -4700,7 +4708,7 @@ void HTMLMediaElement::setPlaying(bool playing)
     document().updateIsPlayingMedia();
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    updateMediaState();
+    updateMediaState(UpdateMediaState::Asynchronously);
 #endif
 }
 
@@ -4963,7 +4971,7 @@ void HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged(MediaPl
 
     configureMediaControls();
     scheduleEvent(eventNames().webkitcurrentplaybacktargetiswirelesschangedEvent);
-    updateMediaState();
+    updateMediaState(UpdateMediaState::Asynchronously);
 }
 
 bool HTMLMediaElement::dispatchEvent(PassRefPtr<Event> prpEvent)
@@ -5007,7 +5015,7 @@ bool HTMLMediaElement::removeEventListener(const AtomicString& eventType, EventL
     if (didRemoveLastAvailabilityChangedListener) {
         m_hasPlaybackTargetAvailabilityListeners = false;
         m_mediaSession->setHasPlaybackTargetAvailabilityListeners(*this, false);
-        updateMediaState();
+        updateMediaState(UpdateMediaState::Asynchronously);
     }
 
     return true;
@@ -5020,7 +5028,7 @@ void HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent()
     RefPtr<Event> event = WebKitPlaybackTargetAvailabilityEvent::create(eventNames().webkitplaybacktargetavailabilitychangedEvent, hasTargets);
     event->setTarget(this);
     m_asyncEventQueue.enqueueEvent(event.release());
-    updateMediaState();
+    updateMediaState(UpdateMediaState::Asynchronously);
 }
 
 void HTMLMediaElement::setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&& device)
@@ -6295,8 +6303,13 @@ bool HTMLMediaElement::overrideBackgroundPlaybackRestriction() const
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-void HTMLMediaElement::updateMediaState()
+void HTMLMediaElement::updateMediaState(UpdateMediaState updateState)
 {
+    if (updateState == UpdateMediaState::Asynchronously) {
+        scheduleDelayedAction(CheckMediaState);
+        return;
+    }
+
     MediaProducer::MediaStateFlags state = mediaState();
     if (m_mediaState == state)
         return;
@@ -6321,7 +6334,7 @@ MediaProducer::MediaStateFlags HTMLMediaElement::mediaState() const
         state |= RequiresPlaybackTargetMonitoring;
 
     bool requireUserGesture = m_mediaSession->hasBehaviorRestriction(MediaElementSession::RequireUserGestureToAutoplayToExternalDevice);
-    if (hasActiveVideo && (!requireUserGesture || (hasAudio && !loop())))
+    if (hasActiveVideo && (!requireUserGesture || (hasAudio && !m_initiallyMuted && !loop())))
         state |= ExternalDeviceAutoPlayCandidate;
 #endif
 

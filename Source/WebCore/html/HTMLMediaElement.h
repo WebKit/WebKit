@@ -725,7 +725,12 @@ private:
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     virtual void documentWillSuspendForPageCache() override final;
     virtual void documentDidResumeFromPageCache() override final;
-    void updateMediaState();
+
+    enum class UpdateMediaState {
+        Asynchronously,
+        Synchronously,
+    };
+    void updateMediaState(UpdateMediaState updateState = UpdateMediaState::Synchronously);
 #endif
 
     Timer m_pendingActionTimer;
@@ -837,6 +842,7 @@ private:
     bool m_autoplaying : 1;
     bool m_muted : 1;
     bool m_explicitlyMuted : 1;
+    bool m_initiallyMuted : 1;
     bool m_paused : 1;
     bool m_seeking : 1;
 

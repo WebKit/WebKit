@@ -40,8 +40,9 @@ public:
         TextTrackChangesNotification = 1 << 2,
         ConfigureTextTrackDisplay = 1 << 3,
         CheckPlaybackTargetCompatablity = 1 << 4,
+        CheckMediaState = 1 << 5,
 
-        EveryDelayedAction = LoadMediaResource | ConfigureTextTracks | TextTrackChangesNotification | ConfigureTextTrackDisplay | CheckPlaybackTargetCompatablity,
+        EveryDelayedAction = LoadMediaResource | ConfigureTextTracks | TextTrackChangesNotification | ConfigureTextTrackDisplay | CheckPlaybackTargetCompatablity | CheckMediaState,
     };
 
     enum ReadyState { HAVE_NOTHING, HAVE_METADATA, HAVE_CURRENT_DATA, HAVE_FUTURE_DATA, HAVE_ENOUGH_DATA };
