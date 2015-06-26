@@ -73,7 +73,7 @@ static const int cMaxPixelDimension = 1280;
 static const int cMaxPixelDimensionLowMemory = 1024;
 static const int cMemoryLevelToUseSmallerPixelDimension = 35;
 #else
-static const int cMaxPixelDimension = 2000;
+static const int cMaxPixelDimension = 2048;
 #endif
 
 // Derived empirically: <rdar://problem/13401861>
