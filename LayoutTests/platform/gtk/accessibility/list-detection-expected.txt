@@ -35,8 +35,8 @@ Default styled Unordered list is a list, because it shows markers.
 PASS axElement.role == 'AXRole: AXList' is true
 
 
-Unordered list with more than 1 item and no style is a list.
-PASS axElement.role == 'AXRole: AXList' is true
+Unordered list with more than 1 item and no style is not a list.
+PASS axElement.role == 'AXRole: AXList' is false
 
 
 Unordered list with 1 item and no style is not list.

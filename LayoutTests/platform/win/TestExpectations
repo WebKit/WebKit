@@ -1327,8 +1327,10 @@ webkit.org/b/140798 [ Release ] accessibility/legend-children-are-visible.html [
 webkit.org/b/140798 [ Debug ] accessibility/legend-children-are-visible.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Release ] accessibility/link-inside-button-accessible-text.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/link-inside-button-accessible-text.html [ Skip ] # Debug assertion
-webkit.org/b/140798 [ Release ] accessibility/list-detection.html [ Failure ]
-webkit.org/b/140798 [ Debug ] accessibility/list-detection.html [ Skip ] # Debug assertion
+webkit.org/b/145271 [ Release ] accessibility/list-detection.html [ Failure ]
+webkit.org/b/145271 [ Debug ] accessibility/list-detection.html [ Skip ] # Debug assertion
+webkit.org/b/145271 [ Release ] accessibility/list-detection2.html [ Failure ]
+webkit.org/b/145271 [ Debug ] accessibility/list-detection2.html [ Failure ]
 webkit.org/b/140798 [ Release ] accessibility/listitem-title.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/listitem-title.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Release ] accessibility/math-multiscript-attributes.html [ Failure ]

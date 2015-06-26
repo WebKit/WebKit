@@ -1,3 +1,17 @@
+2015-06-25  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: improve list heuristics (presentational use versus actual lists)
+        https://bugs.webkit.org/show_bug.cgi?id=134187
+
+        Rolling this change back in now that clients have had time to update their expectations.
+
+        * accessibility/list-detection-expected.txt:
+        * accessibility/list-detection.html:
+        * accessibility/list-detection2-expected.txt: Added.
+        * accessibility/list-detection2.html: Added.
+        * platform/gtk/accessibility/list-detection-expected.txt:
+        * platform/win/TestExpectations:
+
 2015-06-25  Doug Russell  <d_russell@apple.com>
 
         Bug 146300 AX: AccessibilityObject focus events that don't cause a selection 
