@@ -34,7 +34,6 @@ namespace WebCore {
 
 class PlatformMouseEvent;
 class Scrollbar;
-class ScrollbarThemeClient;
 class ScrollView;
 
 #if ENABLE(RUBBER_BANDING)

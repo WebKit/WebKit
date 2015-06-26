@@ -103,21 +103,6 @@ Scrollbar::~Scrollbar()
     m_theme->unregisterScrollbar(*this);
 }
 
-ScrollbarOverlayStyle Scrollbar::scrollbarOverlayStyle() const
-{
-    return m_scrollableArea.scrollbarOverlayStyle();
-}
-
-bool Scrollbar::isScrollableAreaActive() const
-{
-    return m_scrollableArea.isActive();
-}
-
-bool Scrollbar::isScrollViewScrollbar() const
-{
-    return parent() && parent()->isScrollViewScrollbar(this);
-}
-
 void Scrollbar::offsetDidChange()
 {
     float position = static_cast<float>(m_scrollableArea.scrollPosition(this));
@@ -493,11 +478,6 @@ bool Scrollbar::supportsUpdateOnSecondaryThread() const
 #else
     return false;
 #endif
-}
-
-ScrollView* Scrollbar::root() const
-{
-    return Widget::root();
 }
 
 } // namespace WebCore

@@ -19908,7 +19908,6 @@
     <ClInclude Include="..\platform\ScrollAnimatorNone.h" />
     <ClInclude Include="..\platform\Scrollbar.h" />
     <ClInclude Include="..\platform\ScrollbarTheme.h" />
-    <ClInclude Include="..\platform\ScrollbarThemeClient.h" />
     <ClInclude Include="..\platform\ScrollbarThemeComposite.h" />
     <ClInclude Include="..\platform\ScrollTypes.h" />
     <ClInclude Include="..\platform\ScrollView.h" />

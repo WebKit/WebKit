@@ -26,7 +26,6 @@
 #include "config.h"
 #include "RenderScrollbarTheme.h"
 #include "RenderScrollbar.h"
-#include "ScrollbarThemeClient.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {

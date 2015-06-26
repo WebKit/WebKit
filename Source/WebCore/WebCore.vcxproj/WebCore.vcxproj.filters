@@ -8280,9 +8280,6 @@
     <ClInclude Include="..\platform\ScrollbarTheme.h">
       <Filter>platform</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\ScrollbarThemeClient.h">
-      <Filter>platform</Filter>
-    </ClInclude>
     <ClInclude Include="..\platform\ScrollbarThemeComposite.h">
       <Filter>platform</Filter>
     </ClInclude>

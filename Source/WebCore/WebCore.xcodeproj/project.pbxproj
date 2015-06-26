@@ -5685,7 +5685,6 @@
 		C5EBDD84105EDDEC0056816F /* StorageEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = C5EBDD81105EDDEC0056816F /* StorageEventDispatcher.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C65046A9167BFB5500CC2A4D /* TemplateContentDocumentFragment.h in Headers */ = {isa = PBXBuildFile; fileRef = C65046A8167BFB5500CC2A4D /* TemplateContentDocumentFragment.h */; };
 		C6A703325C9D0B6CDCBC4D77 /* JSEventTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6A703325C9D0B6CDCBC4D78 /* JSEventTarget.cpp */; };
-		C6B31B2E14F841FB0089F23F /* ScrollbarThemeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C691614714F6EBA70046375C /* ScrollbarThemeClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C6D74AD509AA282E000B0A52 /* ModifySelectionListLevel.h in Headers */ = {isa = PBXBuildFile; fileRef = C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */; };
 		C6D74AE409AA290A000B0A52 /* ModifySelectionListLevel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */; };
 		C6F08FBC1430FE8F00685849 /* MutationRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F08FB91430FE8F00685849 /* MutationRecord.cpp */; };
@@ -13262,7 +13261,6 @@
 		C5F765B414E1D414006C899B /* PasteboardStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PasteboardStrategy.h; sourceTree = "<group>"; };
 		C5F765BA14E1ECF4006C899B /* PlatformPasteboardMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformPasteboardMac.mm; sourceTree = "<group>"; };
 		C65046A8167BFB5500CC2A4D /* TemplateContentDocumentFragment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplateContentDocumentFragment.h; sourceTree = "<group>"; };
-		C691614714F6EBA70046375C /* ScrollbarThemeClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollbarThemeClient.h; sourceTree = "<group>"; };
 		C6A703325C9D0B6CDCBC4D78 /* JSEventTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSEventTarget.cpp; sourceTree = "<group>"; };
 		C6D74AD309AA282E000B0A52 /* ModifySelectionListLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModifySelectionListLevel.h; sourceTree = "<group>"; };
 		C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModifySelectionListLevel.cpp; sourceTree = "<group>"; };
@@ -21908,7 +21906,6 @@
 				BC7B2AF80450824100A8000F /* Scrollbar.h */,
 				0FE71415142189FC00DB33BA /* ScrollbarTheme.cpp */,
 				BC8B854A0E7C7F5600AB6984 /* ScrollbarTheme.h */,
-				C691614714F6EBA70046375C /* ScrollbarThemeClient.h */,
 				BC1402880E83680800319717 /* ScrollbarThemeComposite.cpp */,
 				BC1402890E83680800319717 /* ScrollbarThemeComposite.h */,
 				93C09C850B0657AA005ABD4D /* ScrollTypes.h */,
@@ -26484,7 +26481,6 @@
 				BCAE1FA712939DB7004CB026 /* ScrollAnimatorMac.h in Headers */,
 				93F199B808245E59001E9ABC /* Scrollbar.h in Headers */,
 				BC8B854B0E7C7F5600AB6984 /* ScrollbarTheme.h in Headers */,
-				C6B31B2E14F841FB0089F23F /* ScrollbarThemeClient.h in Headers */,
 				BC14028B0E83680800319717 /* ScrollbarThemeComposite.h in Headers */,
 				44C991860F3D1EBE00586670 /* ScrollbarThemeIOS.h in Headers */,
 				BC8B853E0E7C7F1100AB6984 /* ScrollbarThemeMac.h in Headers */,

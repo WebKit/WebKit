@@ -244,7 +244,7 @@ void ScrollbarThemeMac::updateScrollbarOverlayStyle(Scrollbar& scrollbar)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     ScrollbarPainter painter = painterForScrollbar(scrollbar);
-    switch (scrollbar.scrollbarOverlayStyle()) {
+    switch (scrollbar.scrollableArea().scrollbarOverlayStyle()) {
     case ScrollbarOverlayStyleDefault:
         [painter setKnobStyle:NSScrollerKnobStyleDefault];
         break;
