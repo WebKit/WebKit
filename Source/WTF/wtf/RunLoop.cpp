@@ -88,22 +88,24 @@ void RunLoop::performWork()
     // By only handling up to the number of functions that were in the queue when performWork() is called
     // we guarantee to occasionally return from the run loop so other event sources will be allowed to spin.
 
-    std::function<void()> function;
     size_t functionsToHandle = 0;
-
     {
-        MutexLocker locker(m_functionQueueLock);
-        functionsToHandle = m_functionQueue.size();
+        std::function<void()> function;
+        {
+            MutexLocker locker(m_functionQueueLock);
+            functionsToHandle = m_functionQueue.size();
 
-        if (m_functionQueue.isEmpty())
-            return;
+            if (m_functionQueue.isEmpty())
+                return;
 
-        function = m_functionQueue.takeFirst();
+            function = m_functionQueue.takeFirst();
+        }
+
+        function();
     }
 
-    function();
-
     for (size_t functionsHandled = 1; functionsHandled < functionsToHandle; ++functionsHandled) {
+        std::function<void()> function;
         {
             MutexLocker locker(m_functionQueueLock);
 
