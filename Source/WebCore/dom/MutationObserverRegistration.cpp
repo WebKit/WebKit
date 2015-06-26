@@ -83,8 +83,8 @@ void MutationObserverRegistration::clearTransientRegistrations()
         return;
     }
 
-    for (NodeHashSet::iterator iter = m_transientRegistrationNodes->begin(); iter != m_transientRegistrationNodes->end(); ++iter)
-        (*iter)->unregisterTransientMutationObserver(this);
+    for (auto& node : *m_transientRegistrationNodes)
+        node->unregisterTransientMutationObserver(this);
 
     m_transientRegistrationNodes = nullptr;
 
@@ -122,8 +122,8 @@ void MutationObserverRegistration::addRegistrationNodesToSet(HashSet<Node*>& nod
     nodes.add(m_registrationNode);
     if (!m_transientRegistrationNodes)
         return;
-    for (NodeHashSet::const_iterator iter = m_transientRegistrationNodes->begin(); iter != m_transientRegistrationNodes->end(); ++iter)
-        nodes.add(iter->get());
+    for (auto& node : *m_transientRegistrationNodes)
+        nodes.add(node.get());
 }
 
 } // namespace WebCore

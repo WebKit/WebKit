@@ -130,9 +130,7 @@ void Node::dumpStatistics()
     size_t elementsWithRareData = 0;
     size_t elementsWithNamedNodeMap = 0;
 
-    for (HashSet<Node*>::iterator it = liveNodeSet.begin(); it != liveNodeSet.end(); ++it) {
-        Node* node = *it;
-
+    for (auto* node : liveNodeSet) {
         if (node->hasRareData()) {
             ++nodesWithRareData;
             if (is<Element>(*node)) {
@@ -233,8 +231,8 @@ void Node::dumpStatistics()
     printf("  Number of ShadowRoot nodes: %zu\n", shadowRootNodes);
 
     printf("Element tag name distibution:\n");
-    for (HashMap<String, size_t>::iterator it = perTagCount.begin(); it != perTagCount.end(); ++it)
-        printf("  Number of <%s> tags: %zu\n", it->key.utf8().data(), it->value);
+    for (auto& stringSizePair : perTagCount)
+        printf("  Number of <%s> tags: %zu\n", stringSizePair.key.utf8().data(), stringSizePair.value);
 
     printf("Attributes:\n");
     printf("  Number of Attributes (non-Node and Node): %zu [%zu]\n", attributes, sizeof(Attribute));
@@ -1897,11 +1895,11 @@ static inline void collectMatchingObserversForMutation(HashMap<MutationObserver*
 {
     if (!registry)
         return;
-    for (typename Registry::iterator iter = registry->begin(); iter != registry->end(); ++iter) {
-        const MutationObserverRegistration& registration = **iter;
-        if (registration.shouldReceiveMutationFrom(target, type, attributeName)) {
-            MutationRecordDeliveryOptions deliveryOptions = registration.deliveryOptions();
-            HashMap<MutationObserver*, MutationRecordDeliveryOptions>::AddResult result = observers.add(registration.observer(), deliveryOptions);
+
+    for (auto& registration : *registry) {
+        if (registration->shouldReceiveMutationFrom(target, type, attributeName)) {
+            MutationRecordDeliveryOptions deliveryOptions = registration->deliveryOptions();
+            auto result = observers.add(registration->observer(), deliveryOptions);
             if (!result.isNewEntry)
                 result.iterator->value |= deliveryOptions;
         }
@@ -1979,9 +1977,9 @@ void Node::notifyMutationObserversNodeWillDetach()
                 registry->at(i)->observedSubtreeNodeWillDetach(this);
         }
 
-        if (HashSet<MutationObserverRegistration*>* transientRegistry = node->transientMutationObserverRegistry()) {
-            for (HashSet<MutationObserverRegistration*>::iterator iter = transientRegistry->begin(); iter != transientRegistry->end(); ++iter)
-                (*iter)->observedSubtreeNodeWillDetach(this);
+        if (auto* transientRegistry = node->transientMutationObserverRegistry()) {
+            for (auto* registration : *transientRegistry)
+                registration->observedSubtreeNodeWillDetach(this);
         }
     }
 }
