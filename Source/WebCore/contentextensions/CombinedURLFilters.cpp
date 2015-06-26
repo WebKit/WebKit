@@ -122,31 +122,44 @@ bool CombinedURLFilters::isEmpty() const
 
 void CombinedURLFilters::addDomain(uint64_t actionId, const String& domain)
 {
-    // This is like adding (.|^)domain$ by adding two Vector<Term>'s,
-    // but interpreting domain as a series of characters, not a regular expression.
-    // This way a domain of "webkit.org" will match "bugs.webkit.org" and "webkit.org".
-    // FIXME: Add support for matching only subdomains or no subdomains.
-    Vector<Term> prependDot;
-    Vector<Term> prependBeginningOfLine;
-    prependDot.reserveInitialCapacity(domain.length() + 3);
-    prependBeginningOfLine.reserveInitialCapacity(domain.length() + 1); // This is just no .* at the beginning.
-    
-    Term canonicalDotStar(Term::UniversalTransition);
-    canonicalDotStar.quantify(AtomQuantifier::ZeroOrMore);
-    prependDot.uncheckedAppend(canonicalDotStar);
-    prependDot.uncheckedAppend(Term('.', true));
-    
-    for (unsigned i = 0; i < domain.length(); i++) {
-        ASSERT(isASCII(domain[i]));
-        ASSERT(!isASCIIUpper(domain[i]));
-        prependDot.uncheckedAppend(Term(domain[i], true));
-        prependBeginningOfLine.uncheckedAppend(Term(domain[i], true));
+    unsigned domainLength = domain.length();
+    if (domainLength && domain[0] == '*') {
+        // If domain starts with a '*' then it means match domain and its subdomains, like (^|.)domain$
+        // This way a domain of "*webkit.org" will match "bugs.webkit.org" and "webkit.org".
+        Vector<Term> prependDot;
+        Vector<Term> prependBeginningOfLine;
+        prependDot.reserveInitialCapacity(domainLength + 2);
+        prependBeginningOfLine.reserveInitialCapacity(domainLength); // This is just no .* at the beginning.
+        
+        Term canonicalDotStar(Term::UniversalTransition);
+        canonicalDotStar.quantify(AtomQuantifier::ZeroOrMore);
+        prependDot.uncheckedAppend(canonicalDotStar);
+        prependDot.uncheckedAppend(Term('.', true));
+        
+        for (unsigned i = 1; i < domainLength; i++) {
+            ASSERT(isASCII(domain[i]));
+            ASSERT(!isASCIIUpper(domain[i]));
+            prependDot.uncheckedAppend(Term(domain[i], true));
+            prependBeginningOfLine.uncheckedAppend(Term(domain[i], true));
+        }
+        prependDot.uncheckedAppend(Term::EndOfLineAssertionTerm);
+        prependBeginningOfLine.uncheckedAppend(Term::EndOfLineAssertionTerm);
+        
+        addPattern(actionId, prependDot);
+        addPattern(actionId, prependBeginningOfLine);
+    } else {
+        // This is like adding ^domain$, but interpreting domain as a series of characters, not a regular expression.
+        // "webkit.org" will match "webkit.org" but not "bugs.webkit.org".
+        Vector<Term> prependBeginningOfLine;
+        prependBeginningOfLine.reserveInitialCapacity(domainLength + 1); // This is just no .* at the beginning.
+        for (unsigned i = 0; i < domainLength; i++) {
+            ASSERT(isASCII(domain[i]));
+            ASSERT(!isASCIIUpper(domain[i]));
+            prependBeginningOfLine.uncheckedAppend(Term(domain[i], true));
+        }
+        prependBeginningOfLine.uncheckedAppend(Term::EndOfLineAssertionTerm);
+        addPattern(actionId, prependBeginningOfLine);
     }
-    prependDot.uncheckedAppend(Term::EndOfLineAssertionTerm);
-    prependBeginningOfLine.uncheckedAppend(Term::EndOfLineAssertionTerm);
-    
-    addPattern(actionId, prependDot);
-    addPattern(actionId, prependBeginningOfLine);
 }
 
 void CombinedURLFilters::addPattern(uint64_t actionId, const Vector<Term>& pattern)

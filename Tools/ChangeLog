@@ -1,3 +1,15 @@
+2015-06-25  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Add a way to match a domain but not subdomains
+        https://bugs.webkit.org/show_bug.cgi?id=146241
+        rdar://problem/21557754
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::TEST_F):
+        Update subdomain test because of changed behavior and add test for new '*' functionality.
+
 2015-06-25  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Cleanup ENABLE_CSS3_CONDITIONAL_RULES codes.

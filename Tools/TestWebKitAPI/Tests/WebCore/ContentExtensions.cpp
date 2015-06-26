@@ -408,7 +408,8 @@ TEST_F(ContentExtensionTest, DomainTriggers)
     testRequest(ifDomainBackend, mainDocumentRequest("http://webkit.org/test.htm"), { });
     testRequest(ifDomainBackend, mainDocumentRequest("http://bugs.webkit.org/test.htm"), { });
     testRequest(ifDomainBackend, mainDocumentRequest("http://webkit.org/test.html"), { ContentExtensions::ActionType::BlockLoad });
-    testRequest(ifDomainBackend, mainDocumentRequest("http://bugs.webkit.org/test.html"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(ifDomainBackend, mainDocumentRequest("http://bugs.webkit.org/test.html"), { });
+    testRequest(ifDomainBackend, mainDocumentRequest("http://sub2.sub1.webkit.org/test.html"), { });
     testRequest(ifDomainBackend, mainDocumentRequest("http://not_webkit.org/test.htm"), { });
     testRequest(ifDomainBackend, mainDocumentRequest("http://webkit.organization/test.htm"), { });
     testRequest(ifDomainBackend, mainDocumentRequest("http://not_webkit.org/test.html"), { });
@@ -418,11 +419,58 @@ TEST_F(ContentExtensionTest, DomainTriggers)
     testRequest(unlessDomainBackend, mainDocumentRequest("http://webkit.org/test.htm"), { });
     testRequest(unlessDomainBackend, mainDocumentRequest("http://bugs.webkit.org/test.htm"), { });
     testRequest(unlessDomainBackend, mainDocumentRequest("http://webkit.org/test.html"), { });
-    testRequest(unlessDomainBackend, mainDocumentRequest("http://bugs.webkit.org/test.html"), { });
+    testRequest(unlessDomainBackend, mainDocumentRequest("http://bugs.webkit.org/test.html"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(unlessDomainBackend, mainDocumentRequest("http://sub2.sub1.webkit.org/test.html"), { ContentExtensions::ActionType::BlockLoad });
     testRequest(unlessDomainBackend, mainDocumentRequest("http://not_webkit.org/test.htm"), { });
     testRequest(unlessDomainBackend, mainDocumentRequest("http://webkit.organization/test.htm"), { });
     testRequest(unlessDomainBackend, mainDocumentRequest("http://not_webkit.org/test.html"), { ContentExtensions::ActionType::BlockLoad });
     testRequest(unlessDomainBackend, mainDocumentRequest("http://webkit.organization/test.html"), { ContentExtensions::ActionType::BlockLoad });
+    
+    auto ifDomainStarBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-domain\":[\"*webkit.org\"]}}]");
+    testRequest(ifDomainStarBackend, mainDocumentRequest("http://webkit.org/test.htm"), { });
+    testRequest(ifDomainStarBackend, mainDocumentRequest("http://bugs.webkit.org/test.htm"), { });
+    testRequest(ifDomainStarBackend, mainDocumentRequest("http://webkit.org/test.html"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(ifDomainStarBackend, mainDocumentRequest("http://bugs.webkit.org/test.html"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(ifDomainStarBackend, mainDocumentRequest("http://sub2.sub1.webkit.org/test.html"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(ifDomainStarBackend, mainDocumentRequest("http://not_webkit.org/test.htm"), { });
+    testRequest(ifDomainStarBackend, mainDocumentRequest("http://webkit.organization/test.htm"), { });
+    testRequest(ifDomainStarBackend, mainDocumentRequest("http://not_webkit.org/test.html"), { });
+    testRequest(ifDomainStarBackend, mainDocumentRequest("http://webkit.organization/test.html"), { });
+    
+    auto unlessDomainStarBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"unless-domain\":[\"*webkit.org\"]}}]");
+    testRequest(unlessDomainStarBackend, mainDocumentRequest("http://webkit.org/test.htm"), { });
+    testRequest(unlessDomainStarBackend, mainDocumentRequest("http://bugs.webkit.org/test.htm"), { });
+    testRequest(unlessDomainStarBackend, mainDocumentRequest("http://webkit.org/test.html"), { });
+    testRequest(unlessDomainStarBackend, mainDocumentRequest("http://bugs.webkit.org/test.html"), { });
+    testRequest(unlessDomainStarBackend, mainDocumentRequest("http://sub2.sub1.webkit.org/test.html"), { });
+    testRequest(unlessDomainStarBackend, mainDocumentRequest("http://not_webkit.org/test.htm"), { });
+    testRequest(unlessDomainStarBackend, mainDocumentRequest("http://webkit.organization/test.htm"), { });
+    testRequest(unlessDomainStarBackend, mainDocumentRequest("http://not_webkit.org/test.html"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(unlessDomainStarBackend, mainDocumentRequest("http://webkit.organization/test.html"), { ContentExtensions::ActionType::BlockLoad });
+
+    auto ifSubDomainBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-domain\":[\"sub1.webkit.org\"]}}]");
+    testRequest(ifSubDomainBackend, mainDocumentRequest("http://webkit.org/test.html"), { });
+    testRequest(ifSubDomainBackend, mainDocumentRequest("http://bugs.webkit.org/test.html"), { });
+    testRequest(ifSubDomainBackend, mainDocumentRequest("http://sub1.webkit.org/test.html"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(ifSubDomainBackend, mainDocumentRequest("http://sub2.sub1.webkit.org/test.html"), { });
+
+    auto ifSubDomainStarBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-domain\":[\"*sub1.webkit.org\"]}}]");
+    testRequest(ifSubDomainStarBackend, mainDocumentRequest("http://webkit.org/test.html"), { });
+    testRequest(ifSubDomainStarBackend, mainDocumentRequest("http://bugs.webkit.org/test.html"), { });
+    testRequest(ifSubDomainStarBackend, mainDocumentRequest("http://sub1.webkit.org/test.html"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(ifSubDomainStarBackend, mainDocumentRequest("http://sub2.sub1.webkit.org/test.html"), { ContentExtensions::ActionType::BlockLoad });
+
+    auto unlessSubDomainBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"unless-domain\":[\"sub1.webkit.org\"]}}]");
+    testRequest(unlessSubDomainBackend, mainDocumentRequest("http://webkit.org/test.html"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(unlessSubDomainBackend, mainDocumentRequest("http://bugs.webkit.org/test.html"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(unlessSubDomainBackend, mainDocumentRequest("http://sub1.webkit.org/test.html"), { });
+    testRequest(unlessSubDomainBackend, mainDocumentRequest("http://sub2.sub1.webkit.org/test.html"), { ContentExtensions::ActionType::BlockLoad });
+    
+    auto unlessSubDomainStarBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"unless-domain\":[\"*sub1.webkit.org\"]}}]");
+    testRequest(unlessSubDomainStarBackend, mainDocumentRequest("http://webkit.org/test.html"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(unlessSubDomainStarBackend, mainDocumentRequest("http://bugs.webkit.org/test.html"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(unlessSubDomainStarBackend, mainDocumentRequest("http://sub1.webkit.org/test.html"), { });
+    testRequest(unlessSubDomainStarBackend, mainDocumentRequest("http://sub2.sub1.webkit.org/test.html"), { });
 
     auto combinedBackend1 = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test_block_load\", \"if-domain\":[\"webkit.org\"]}},"
         "{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"url-filter\":\"test_block_cookies\", \"unless-domain\":[\"webkit.org\"]}}]");
