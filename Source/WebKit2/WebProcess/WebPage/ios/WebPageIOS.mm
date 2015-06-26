@@ -2131,9 +2131,22 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
             }
 
             if (elementIsLinkOrImage) {
-                // Ensure that the image contains at most 600K pixels, so that it is not too big.
-                if (RefPtr<WebImage> snapshot = snapshotNode(*element, SnapshotOptionsShareable, 600 * 1024))
-                    info.image = snapshot->bitmap();
+                if (linkElement) {
+                    // Ensure that the image contains at most 600K pixels, so that it is not too big.
+                    if (RefPtr<WebImage> snapshot = snapshotNode(*element, SnapshotOptionsShareable, 600 * 1024))
+                        info.image = snapshot->bitmap();
+                } else if (element->renderer() && element->renderer()->isRenderImage()) {
+                    auto& renderImage = downcast<RenderImage>(*(element->renderer()));
+                    if (renderImage.cachedImage() && !renderImage.cachedImage()->errorOccurred()) {
+                        if (Image* image = renderImage.cachedImage()->imageForRenderer(&renderImage)) {
+                            if (RefPtr<ShareableBitmap> sharedBitmap = ShareableBitmap::createShareable(IntSize(image->size()), ShareableBitmap::SupportsAlpha)) {
+                                auto graphicsContext = sharedBitmap->createGraphicsContext();
+                                graphicsContext->drawImage(image, ColorSpaceDeviceRGB, FloatPoint(0, 0));
+                                info.image = sharedBitmap;
+                            }
+                        }
+                    }
+                }
             }
             if (linkElement)
                 info.url = [(NSURL *)linkElement->document().completeURL(stripLeadingAndTrailingHTMLSpaces(linkElement->getAttribute(HTMLNames::hrefAttr))) absoluteString];

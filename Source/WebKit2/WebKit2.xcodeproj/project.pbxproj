@@ -1186,6 +1186,8 @@
 		9321D5881A38EE74008052BE /* WKImmediateActionController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9321D5871A38EE74008052BE /* WKImmediateActionController.mm */; };
 		9321D58A1A38F196008052BE /* WKImmediateActionTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 9321D5891A38F196008052BE /* WKImmediateActionTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9323611E1B015DA800FA9232 /* _WKOverlayScrollbarStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 9323611D1B015DA800FA9232 /* _WKOverlayScrollbarStyle.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		933DF82E1B3BC09000AEA9E3 /* WKImagePreviewViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 933DF82D1B3BC09000AEA9E3 /* WKImagePreviewViewController.h */; };
+		933DF8301B3BC0B400AEA9E3 /* WKImagePreviewViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 933DF82F1B3BC0B400AEA9E3 /* WKImagePreviewViewController.mm */; };
 		934B724419F5B9BE00AE96D6 /* WKActionMenuItemTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 934B724319F5B9BE00AE96D6 /* WKActionMenuItemTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		935EEB9B1277617C003322B8 /* WKBundleBackForwardListItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 935EEB981277616D003322B8 /* WKBundleBackForwardListItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		935EEB9E127761AC003322B8 /* WKBundleBackForwardList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 935EEB951277616D003322B8 /* WKBundleBackForwardList.cpp */; };
@@ -3374,6 +3376,8 @@
 		9321D5871A38EE74008052BE /* WKImmediateActionController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKImmediateActionController.mm; sourceTree = "<group>"; };
 		9321D5891A38F196008052BE /* WKImmediateActionTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKImmediateActionTypes.h; sourceTree = "<group>"; };
 		9323611D1B015DA800FA9232 /* _WKOverlayScrollbarStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKOverlayScrollbarStyle.h; sourceTree = "<group>"; };
+		933DF82D1B3BC09000AEA9E3 /* WKImagePreviewViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKImagePreviewViewController.h; sourceTree = "<group>"; };
+		933DF82F1B3BC0B400AEA9E3 /* WKImagePreviewViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKImagePreviewViewController.mm; sourceTree = "<group>"; };
 		934B724319F5B9BE00AE96D6 /* WKActionMenuItemTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKActionMenuItemTypes.h; sourceTree = "<group>"; };
 		935EEB8F1277615D003322B8 /* InjectedBundleBackForwardList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleBackForwardList.cpp; sourceTree = "<group>"; };
 		935EEB901277615D003322B8 /* InjectedBundleBackForwardList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleBackForwardList.h; sourceTree = "<group>"; };
@@ -5140,6 +5144,8 @@
 				0FCB4E3F18BBE044000FCFC9 /* WKGeolocationProviderIOS.h */,
 				0FCB4E4018BBE044000FCFC9 /* WKGeolocationProviderIOS.mm */,
 				0FCB4E4118BBE044000FCFC9 /* WKGeolocationProviderIOSObjCSecurityOrigin.mm */,
+				933DF82D1B3BC09000AEA9E3 /* WKImagePreviewViewController.h */,
+				933DF82F1B3BC0B400AEA9E3 /* WKImagePreviewViewController.mm */,
 				0F3C7259196F5F6800AEDD0C /* WKInspectorHighlightView.h */,
 				0F3C7257196F5F5000AEDD0C /* WKInspectorHighlightView.mm */,
 				A54293A2195A43C6002782C7 /* WKInspectorNodeSearchGestureRecognizer.h */,
@@ -8022,6 +8028,7 @@
 				1A043F6A12514D8B00FFBFB5 /* WebProcessConnectionMessages.h in Headers */,
 				BC306824125A6B9400E71278 /* WebProcessCreationParameters.h in Headers */,
 				2DB9C4AC1B3251BD0070F27F /* SafariServicesSPI.h in Headers */,
+				933DF82E1B3BC09000AEA9E3 /* WKImagePreviewViewController.h in Headers */,
 				1AFA4B901A65A9E2006C4AB4 /* WebProcessLifetimeObserver.h in Headers */,
 				1AFA4B8C1A65A1D0006C4AB4 /* WebProcessLifetimeTracker.h in Headers */,
 				BC3066BF125A442100E71278 /* WebProcessMessages.h in Headers */,
@@ -9563,6 +9570,7 @@
 				0FCB4E4718BBE044000FCFC9 /* PageClientImplIOS.mm in Sources */,
 				1AC7537B183A9FDB0072CB15 /* PageLoadState.cpp in Sources */,
 				C574A58212E66681002DFE98 /* PasteboardTypes.mm in Sources */,
+				933DF8301B3BC0B400AEA9E3 /* WKImagePreviewViewController.mm in Sources */,
 				E19582D6153CC05400B60875 /* PDFKitImports.mm in Sources */,
 				2D870D1016234FFE000A3F20 /* PDFPlugin.mm in Sources */,
 				2D2ADF0B16362DDB00197E47 /* PDFPluginAnnotation.mm in Sources */,

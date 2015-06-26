@@ -41,7 +41,9 @@
 #import "WKActionSheetAssistant.h"
 #import "WKFormInputControl.h"
 #import "WKFormSelectControl.h"
+#import "WKImagePreviewViewController.h"
 #import "WKInspectorNodeSearchGestureRecognizer.h"
+#import "WKNSURLExtras.h"
 #import "WKUIDelegatePrivate.h"
 #import "WKWebViewConfiguration.h"
 #import "WKWebViewInternal.h"
@@ -958,7 +960,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
             return NO;
 
         String absoluteLinkURL = _positionInformation.url;
-        if (absoluteLinkURL.isEmpty() || !WebCore::protocolIsInHTTPFamily(absoluteLinkURL))
+        if (_positionInformation.clickableElementName == "A" && (absoluteLinkURL.isEmpty() || !WebCore::protocolIsInHTTPFamily(absoluteLinkURL)))
             return NO;
     }
 
@@ -3118,32 +3120,52 @@ static bool isAssistableInputType(InputType type)
 {
     ASSERT(self == sourceView);
 
-    if (_positionInformation.clickableElementName != "A" && _positionInformation.clickableElementName != "IMG")
+    _previewType = PreviewElementType::None;
+
+    BOOL canShowImagePreview = _positionInformation.clickableElementName == "IMG";
+    BOOL canShowLinkPreview = _positionInformation.clickableElementName == "A" || canShowImagePreview;
+
+    if (!canShowLinkPreview && !canShowImagePreview)
         return nil;
 
     String absoluteLinkURL = _positionInformation.url;
-    if (absoluteLinkURL.isEmpty() || !WebCore::protocolIsInHTTPFamily(absoluteLinkURL))
-        return nil;
-
-    NSURL *targetURL = [NSURL URLWithString:_positionInformation.url];
-    id<WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
-    if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForURL:)]) {
-        _highlightLongPressCanClick = NO;
-        return [uiDelegate _webView:_webView previewViewControllerForURL:targetURL];
+    if (absoluteLinkURL.isEmpty() || !WebCore::protocolIsInHTTPFamily(absoluteLinkURL)) {
+        if (canShowLinkPreview && !canShowImagePreview)
+            return nil;
+        canShowLinkPreview = NO;
     }
 
+    if (canShowLinkPreview) {
+        _previewType = PreviewElementType::Link;
+        NSURL *targetURL = [NSURL _web_URLWithWTFString:_positionInformation.url];
+        id<WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
+        if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForURL:)]) {
+            _highlightLongPressCanClick = NO;
+            return [uiDelegate _webView:_webView previewViewControllerForURL:targetURL];
+        }
 #if HAVE(SAFARI_SERVICES_FRAMEWORK)
-    SFSafariViewController *previewViewController = [allocSFSafariViewControllerInstance() initWithURL:targetURL];
-    previewViewController._showingLinkPreview = YES;
-    _highlightLongPressCanClick = NO;
-    return previewViewController;
+        SFSafariViewController *previewViewController = [allocSFSafariViewControllerInstance() initWithURL:targetURL];
+        previewViewController._showingLinkPreview = YES;
+        _highlightLongPressCanClick = NO;
+        return [previewViewController autorelease];
 #else
-    return nil;
+        return nil;
 #endif
+    }
+
+    if (canShowImagePreview) {
+        _previewType = PreviewElementType::Image;
+        return [[[WKImagePreviewViewController alloc] initWithCGImage:_positionInformation.image->makeCGImageCopy()] autorelease];
+    }
+
+    return nil;
 }
 
 - (void)commitPreviewViewController:(UIViewController *)viewController
 {
+    if (_previewType != PreviewElementType::Link)
+        return;
+
     id<WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
     if ([uiDelegate respondsToSelector:@selector(_webView:commitPreviewedViewController:)]) {
         [uiDelegate _webView:_webView commitPreviewedViewController:viewController];

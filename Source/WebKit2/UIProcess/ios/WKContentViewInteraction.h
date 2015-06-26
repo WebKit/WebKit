@@ -93,6 +93,13 @@ struct WKAutoCorrectionData {
     UIWKAutocorrectionCompletionHandler autocorrectionHandler;
     UIWKAutocorrectionContextHandler autocorrectionContextHandler;
 };
+
+enum class PreviewElementType {
+    None = 0,
+    Link,
+    Image
+};
+
 }
 
 @interface WKContentView () {
@@ -120,6 +127,7 @@ struct WKAutoCorrectionData {
     RetainPtr<WKFormInputSession> _formInputSession;
     RetainPtr<WKFileUploadPanel> _fileUploadPanel;
     RetainPtr<UIGestureRecognizer> _previewGestureRecognizer;
+    WebKit::PreviewElementType _previewType;
 
     std::unique_ptr<WebKit::SmartMagnificationController> _smartMagnificationController;
 
