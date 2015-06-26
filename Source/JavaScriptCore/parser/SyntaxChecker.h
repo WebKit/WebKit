@@ -311,6 +311,9 @@ public:
     void appendArrayPatternEntry(ArrayPattern, const JSTokenLocation&, DeconstructionPattern, int)
     {
     }
+    void appendArrayPatternRestEntry(ArrayPattern, const JSTokenLocation&, DeconstructionPattern)
+    {
+    }
     void finishArrayPattern(ArrayPattern, const JSTextPosition&, const JSTextPosition&, const JSTextPosition&)
     {
     }

@@ -1,3 +1,36 @@
+2015-06-25  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Support rest element in destructuring assignments
+        https://bugs.webkit.org/show_bug.cgi?id=146206
+
+        Reviewed by Oliver Hunt.
+
+        This patch enables rest element (...rest) in array binding patterns.
+        It generates array from the iterables.
+        In variable declarations and parameters, `[...identifier]` form is only allowed,
+        while expressions can take `[...[...rest]]` pattern.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitEnumeration):
+        (JSC::BytecodeGenerator::emitIteratorNext):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ArrayPatternNode::bindValue):
+        (JSC::ArrayPatternNode::toString):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::appendArrayPatternSkipEntry):
+        (JSC::ASTBuilder::appendArrayPatternEntry):
+        (JSC::ASTBuilder::appendArrayPatternRestEntry):
+        * parser/Nodes.h:
+        (JSC::ArrayPatternNode::appendIndex):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseDeconstructionPattern):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::operatorStackPop):
+        * tests/stress/rest-elements.js: Added.
+        (shouldBe):
+        (shouldThrow):
+
 2015-06-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r185956.

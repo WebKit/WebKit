@@ -601,6 +601,8 @@ template <class TreeBuilder> TreeDeconstructionPattern Parser<LexerType>::parseD
         auto arrayPattern = context.createArrayPattern(m_token.m_location);
         next();
 
+        bool restElementWasFound = false;
+
         do {
             while (match(COMMA)) {
                 context.appendArrayPatternSkipEntry(arrayPattern, m_token.m_location);
@@ -610,6 +612,21 @@ template <class TreeBuilder> TreeDeconstructionPattern Parser<LexerType>::parseD
 
             if (match(CLOSEBRACKET))
                 break;
+
+            if (UNLIKELY(match(DOTDOTDOT))) {
+                JSTokenLocation location = m_token.m_location;
+                next();
+                auto innerPattern = parseDeconstructionPattern(context, kind, depth + 1);
+                if (kind == DeconstructToExpressions && !innerPattern)
+                    return 0;
+                failIfFalse(innerPattern, "Cannot parse this deconstruction pattern");
+
+                failIfTrue(kind != DeconstructToExpressions && !context.isBindingNode(innerPattern),  "Expected identifier for a rest element deconstruction pattern");
+
+                context.appendArrayPatternRestEntry(arrayPattern, location, innerPattern);
+                restElementWasFound = true;
+                break;
+            }
 
             JSTokenLocation location = m_token.m_location;
             auto innerPattern = parseDeconstructionPattern(context, kind, depth + 1);
@@ -623,7 +640,7 @@ template <class TreeBuilder> TreeDeconstructionPattern Parser<LexerType>::parseD
 
         if (kind == DeconstructToExpressions && !match(CLOSEBRACKET))
             return 0;
-        consumeOrFail(CLOSEBRACKET, "Expected either a closing ']' or a ',' following an element deconstruction pattern");
+        consumeOrFail(CLOSEBRACKET, restElementWasFound ? "Expected a closing ']' following a rest element deconstruction pattern" : "Expected either a closing ']' or a ',' following an element deconstruction pattern");
         context.finishArrayPattern(arrayPattern, divotStart, divotStart, lastTokenEndPosition());
         pattern = arrayPattern;
         break;

@@ -737,12 +737,17 @@ public:
     
     void appendArrayPatternSkipEntry(ArrayPattern node, const JSTokenLocation& location)
     {
-        node->appendIndex(location, 0, nullptr);
+        node->appendIndex(ArrayPatternNode::BindingType::Elision, location, 0, nullptr);
     }
 
     void appendArrayPatternEntry(ArrayPattern node, const JSTokenLocation& location, DeconstructionPattern pattern, ExpressionNode* defaultValue)
     {
-        node->appendIndex(location, pattern.get(), defaultValue);
+        node->appendIndex(ArrayPatternNode::BindingType::Element, location, pattern.get(), defaultValue);
+    }
+
+    void appendArrayPatternRestEntry(ArrayPattern node, const JSTokenLocation& location, DeconstructionPattern pattern)
+    {
+        node->appendIndex(ArrayPatternNode::BindingType::RestElement, location, pattern.get(), nullptr);
     }
 
     void finishArrayPattern(ArrayPattern node, const JSTextPosition& divotStart, const JSTextPosition& divot, const JSTextPosition& divotEnd)

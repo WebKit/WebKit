@@ -1782,14 +1782,21 @@ namespace JSC {
 
     class ArrayPatternNode : public DeconstructionPatternNode, public ThrowableExpressionData {
     public:
+        enum class BindingType {
+            Elision,
+            Element,
+            RestElement
+        };
+
         static Ref<ArrayPatternNode> create();
-        void appendIndex(const JSTokenLocation&, DeconstructionPatternNode* node, ExpressionNode* defaultValue)
+        void appendIndex(BindingType bindingType, const JSTokenLocation&, DeconstructionPatternNode* node, ExpressionNode* defaultValue)
         {
-            m_targetPatterns.append(Entry{ node, defaultValue });
+            m_targetPatterns.append({ bindingType, node, defaultValue });
         }
 
     private:
         struct Entry {
+            BindingType bindingType;
             RefPtr<DeconstructionPatternNode> pattern;
             ExpressionNode* defaultValue;
         };
