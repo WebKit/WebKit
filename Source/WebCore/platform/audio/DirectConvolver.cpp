@@ -75,7 +75,10 @@ void DirectConvolver::process(AudioFloatArray* convolutionKernel, const float* s
 
 #if OS(DARWIN)
 #if defined(__ppc__) || defined(__i386__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     conv(inputP - kernelSize + 1, 1, kernelP + kernelSize - 1, -1, destP, 1, framesToProcess, kernelSize);
+#pragma clang diagnostic pop
 #else
     vDSP_conv(inputP - kernelSize + 1, 1, kernelP + kernelSize - 1, -1, destP, 1, framesToProcess, kernelSize);
 #endif // defined(__ppc__) || defined(__i386__)
