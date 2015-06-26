@@ -46,7 +46,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         this._displayedRecording = null;
         this._displayedContentView = null;
         this._viewMode = null;
-        this._previousTimelineSelection = null;
+        this._previousSelectedTimelineType = null;
 
         // Maintain an invisible tree outline containing tree elements for all recordings.
         // The visible recording's tree element is selected when the content view changes.
@@ -742,8 +742,7 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
         if (selectedByUser) {
             var timelineType = this._previousSelectedTimelineType;
             if (this._viewMode === WebInspector.TimelineSidebarPanel.ViewMode.RenderingFrames) {
-                if (this._timelinesTreeOutline.selectedTreeElement)
-                    this._previousSelectedTimelineType = this._timelinesTreeOutline.selectedTreeElement.representedObject.type;
+                this._previousSelectedTimelineType = this._timelinesTreeOutline.selectedTreeElement ? this._timelinesTreeOutline.selectedTreeElement.representedObject.type : null;
                 timelineType = WebInspector.TimelineRecord.Type.RenderingFrame;
             }
 
