@@ -28,54 +28,46 @@
 
 namespace WebCore {
 
+static inline const char* sansSerifTraditionalHanFontFamily()
+{
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 80000)
+    return "PingFang TC";
+#else
+    return "Heiti TC";
+#endif
+}
+
+static inline const char* sansSerifSimplifiedHanFontFamily()
+{
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 80000)
+    return "PingFang SC";
+#else
+    return "Heiti SC";
+#endif
+}
+
+#if PLATFORM(MAC)
 void Settings::initializeDefaultFontFamilies()
 {
-#if !PLATFORM(IOS)
     setStandardFontFamily("Songti TC", USCRIPT_TRADITIONAL_HAN);
     setSerifFontFamily("Songti TC", USCRIPT_TRADITIONAL_HAN);
-#else
-    // There is no serif Chinese font in default iOS installation.
-    setStandardFontFamily("Heiti TC", USCRIPT_TRADITIONAL_HAN);
-    setSerifFontFamily("Heiti TC", USCRIPT_TRADITIONAL_HAN);
-#endif
-    setFixedFontFamily("Heiti TC", USCRIPT_TRADITIONAL_HAN);
-    setSansSerifFontFamily("Heiti TC", USCRIPT_TRADITIONAL_HAN);
+    setFixedFontFamily(sansSerifTraditionalHanFontFamily(), USCRIPT_TRADITIONAL_HAN);
+    setSansSerifFontFamily(sansSerifTraditionalHanFontFamily(), USCRIPT_TRADITIONAL_HAN);
 
-#if !PLATFORM(IOS)
     setStandardFontFamily("Songti SC", USCRIPT_SIMPLIFIED_HAN);
     setSerifFontFamily("Songti SC", USCRIPT_SIMPLIFIED_HAN);
-#else
-    // There is no serif Chinese font in default iOS installation.
-    setStandardFontFamily("Heiti SC", USCRIPT_SIMPLIFIED_HAN);
-    setSerifFontFamily("Heiti SC", USCRIPT_SIMPLIFIED_HAN);
-#endif
-    setFixedFontFamily("Heiti SC", USCRIPT_SIMPLIFIED_HAN);
-    setSansSerifFontFamily("Heiti SC", USCRIPT_SIMPLIFIED_HAN);
+    setFixedFontFamily(sansSerifSimplifiedHanFontFamily(), USCRIPT_SIMPLIFIED_HAN);
+    setSansSerifFontFamily(sansSerifSimplifiedHanFontFamily(), USCRIPT_SIMPLIFIED_HAN);
 
     setStandardFontFamily("Hiragino Mincho ProN", USCRIPT_KATAKANA_OR_HIRAGANA);
-#if !PLATFORM(IOS)
     setFixedFontFamily("Osaka-Mono", USCRIPT_KATAKANA_OR_HIRAGANA);
-#else
-    setFixedFontFamily("Hiragino Kaku Gothic ProN", USCRIPT_KATAKANA_OR_HIRAGANA);
-#endif
     setSerifFontFamily("Hiragino Mincho ProN", USCRIPT_KATAKANA_OR_HIRAGANA);
     setSansSerifFontFamily("Hiragino Kaku Gothic ProN", USCRIPT_KATAKANA_OR_HIRAGANA);
 
-#if !PLATFORM(IOS)
     setStandardFontFamily("AppleMyungjo", USCRIPT_HANGUL);
     setSerifFontFamily("AppleMyungjo", USCRIPT_HANGUL);
-#else
-    // There is no serif Korean font in default iOS installation.
-    setStandardFontFamily("Apple SD Gothic Neo", USCRIPT_HANGUL);
-    setSerifFontFamily("Apple SD Gothic Neo", USCRIPT_HANGUL);
-#endif
-#if PLATFORM(COCOA)
     setFixedFontFamily("Apple SD Gothic Neo", USCRIPT_HANGUL);
     setSansSerifFontFamily("Apple SD Gothic Neo", USCRIPT_HANGUL);
-#else
-    setFixedFontFamily("AppleGothic", USCRIPT_HANGUL);
-    setSansSerifFontFamily("AppleGothic", USCRIPT_HANGUL);
-#endif
 
     setStandardFontFamily("Times", USCRIPT_COMMON);
     setFixedFontFamily("Courier", USCRIPT_COMMON);
@@ -83,5 +75,38 @@ void Settings::initializeDefaultFontFamilies()
     setSansSerifFontFamily("Helvetica", USCRIPT_COMMON);
 }
 
+#else
+
+void Settings::initializeDefaultFontFamilies()
+{
+    // There is no serif Chinese font in default iOS installation.
+    setStandardFontFamily(sansSerifTraditionalHanFontFamily(), USCRIPT_TRADITIONAL_HAN);
+    setSerifFontFamily(sansSerifTraditionalHanFontFamily(), USCRIPT_TRADITIONAL_HAN);
+    setFixedFontFamily(sansSerifTraditionalHanFontFamily(), USCRIPT_TRADITIONAL_HAN);
+    setSansSerifFontFamily(sansSerifTraditionalHanFontFamily(), USCRIPT_TRADITIONAL_HAN);
+
+    // There is no serif Chinese font in default iOS installation.
+    setStandardFontFamily(sansSerifSimplifiedHanFontFamily(), USCRIPT_SIMPLIFIED_HAN);
+    setSerifFontFamily(sansSerifSimplifiedHanFontFamily(), USCRIPT_SIMPLIFIED_HAN);
+    setFixedFontFamily(sansSerifSimplifiedHanFontFamily(), USCRIPT_SIMPLIFIED_HAN);
+    setSansSerifFontFamily(sansSerifSimplifiedHanFontFamily(), USCRIPT_SIMPLIFIED_HAN);
+
+    setStandardFontFamily("Hiragino Mincho ProN", USCRIPT_KATAKANA_OR_HIRAGANA);
+    setFixedFontFamily("Hiragino Kaku Gothic ProN", USCRIPT_KATAKANA_OR_HIRAGANA);
+    setSerifFontFamily("Hiragino Mincho ProN", USCRIPT_KATAKANA_OR_HIRAGANA);
+    setSansSerifFontFamily("Hiragino Kaku Gothic ProN", USCRIPT_KATAKANA_OR_HIRAGANA);
+
+    // There is no serif Korean font in default iOS installation.
+    setStandardFontFamily("Apple SD Gothic Neo", USCRIPT_HANGUL);
+    setSerifFontFamily("Apple SD Gothic Neo", USCRIPT_HANGUL);
+    setFixedFontFamily("AppleGothic", USCRIPT_HANGUL);
+    setSansSerifFontFamily("AppleGothic", USCRIPT_HANGUL);
+
+    setStandardFontFamily("Times", USCRIPT_COMMON);
+    setFixedFontFamily("Courier", USCRIPT_COMMON);
+    setSerifFontFamily("Times", USCRIPT_COMMON);
+    setSansSerifFontFamily("Helvetica", USCRIPT_COMMON);
+}
+#endif
 
 } // namespace WebCore

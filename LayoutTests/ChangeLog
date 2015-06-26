@@ -1,3 +1,20 @@
+2015-06-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Sans-serif generic font family should map to PingFang
+        https://bugs.webkit.org/show_bug.cgi?id=146333
+        <rdar://problem/21521217>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/text/han-generic-font-families.html: Added.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator/fast/text/han-generic-font-families-expected.html: Added.
+        * platform/mac-mavericks/fast/text/han-generic-font-families-expected.html: Added.
+        * platform/mac-yosemite/fast/text/han-generic-font-families-expected.html: Added.
+        * platform/mac/fast/text/han-generic-font-families-expected.html: Added.
+        * platform/win/TestExpectations:
+
 2015-06-26  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r185971): js/dom/global-constructors-attributes.html fails on Windows

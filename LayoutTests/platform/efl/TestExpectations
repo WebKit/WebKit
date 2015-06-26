@@ -2276,3 +2276,6 @@ accessibility/transformed-element.html [ Failure ]
 webkit.org/b/146139 fast/css/named-images.html [ Missing ]
 
 webkit.org/b/146233 fast/forms/listbox-visible-size.html [ Failure ]
+
+# Test requires hardcoded font names, which I do not have for this port.
+fast/text/han-generic-font-families.html [ WontFix ]
