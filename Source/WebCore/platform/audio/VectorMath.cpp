@@ -55,7 +55,10 @@ namespace VectorMath {
 void vsmul(const float* sourceP, int sourceStride, const float* scale, float* destP, int destStride, size_t framesToProcess)
 {
 #if defined(__ppc__) || defined(__i386__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     ::vsmul(sourceP, sourceStride, scale, destP, destStride, framesToProcess);
+#pragma clang diagnostic pop
 #else
     vDSP_vsmul(sourceP, sourceStride, scale, destP, destStride, framesToProcess);
 #endif
@@ -64,7 +67,10 @@ void vsmul(const float* sourceP, int sourceStride, const float* scale, float* de
 void vadd(const float* source1P, int sourceStride1, const float* source2P, int sourceStride2, float* destP, int destStride, size_t framesToProcess)
 {
 #if defined(__ppc__) || defined(__i386__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     ::vadd(source1P, sourceStride1, source2P, sourceStride2, destP, destStride, framesToProcess);
+#pragma clang diagnostic pop
 #else
     vDSP_vadd(source1P, sourceStride1, source2P, sourceStride2, destP, destStride, framesToProcess);
 #endif
@@ -73,7 +79,10 @@ void vadd(const float* source1P, int sourceStride1, const float* source2P, int s
 void vmul(const float* source1P, int sourceStride1, const float* source2P, int sourceStride2, float* destP, int destStride, size_t framesToProcess)
 {
 #if defined(__ppc__) || defined(__i386__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     ::vmul(source1P, sourceStride1, source2P, sourceStride2, destP, destStride, framesToProcess);
+#pragma clang diagnostic pop
 #else
     vDSP_vmul(source1P, sourceStride1, source2P, sourceStride2, destP, destStride, framesToProcess);
 #endif
@@ -91,7 +100,10 @@ void zvmul(const float* real1P, const float* imag1P, const float* real2P, const 
     dest.realp = realDestP;
     dest.imagp = imagDestP;
 #if defined(__ppc__) || defined(__i386__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     ::zvmul(&sc1, 1, &sc2, 1, &dest, 1, framesToProcess, 1);
+#pragma clang diagnostic pop
 #else
     vDSP_zvmul(&sc1, 1, &sc2, 1, &dest, 1, framesToProcess, 1);
 #endif
