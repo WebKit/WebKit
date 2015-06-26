@@ -1,5 +1,28 @@
 2015-06-25  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Add Support for OS X Full Screen Mode
+        https://bugs.webkit.org/show_bug.cgi?id=123510
+
+        Reviewed by Timothy Hatcher.
+
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorClient::didResizeMainFrame):
+        (WebInspectorClient::windowFullScreenDidChange):
+        (WebInspectorClient::canAttach):
+        (WebInspectorFrontendClient::canAttach):
+        (-[WebInspectorWindowController showWindow:]):
+        Consolidate canAttach logic into canAttach functions.
+
+        (-[WebInspectorWindowController window:]):
+        Share the same full screen behavior as WebKit2.
+
+        (-[WebInspectorWindowController windowDidEnterFullScreen:]):
+        (-[WebInspectorWindowController windowDidExitFullScreen:]):
+        Attach availability may have changed.
+
+2015-06-25  Joseph Pecoraro  <pecoraro@apple.com>
+
         [Mac] Web Inspector: Window dragging on toolbar should behave more like native window dragging
         https://bugs.webkit.org/show_bug.cgi?id=146324
 

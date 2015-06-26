@@ -1,3 +1,14 @@
+2015-06-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add Support for OS X Full Screen Mode
+        https://bugs.webkit.org/show_bug.cgi?id=123510
+
+        Reviewed by Timothy Hatcher.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::createInspectorWindow):
+        Allow full screen.
+
 2015-06-25  Hyungwook Lee  <hyungwook.lee@navercorp.com>
 
         [EFL] Make send / receive messages to communicate the Web and UI Processes using Injected Bundle.

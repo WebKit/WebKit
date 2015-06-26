@@ -92,6 +92,10 @@ public:
     bool inspectorAttachDisabled();
     void setInspectorAttachDisabled(bool);
 
+    void windowFullScreenDidChange();
+
+    bool canAttach();
+
     void releaseFrontend();
 
 private:
@@ -109,6 +113,7 @@ public:
     WebInspectorFrontendClient(WebView*, WebInspectorWindowController*, WebCore::InspectorController*, WebCore::Page*, std::unique_ptr<Settings>);
 
     void attachAvailabilityChanged(bool);
+    bool canAttach();
 
     virtual void frontendLoaded() override;
 

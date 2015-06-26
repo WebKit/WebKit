@@ -59,6 +59,11 @@ SOFT_LINK_STAGED_FRAMEWORK(WebInspectorUI, PrivateFrameworks, A)
 
 using namespace WebCore;
 
+static const CGFloat minimumWindowWidth = 750;
+static const CGFloat minimumWindowHeight = 400;
+static const CGFloat initialWindowWidth = 1000;
+static const CGFloat initialWindowHeight = 650;
+
 @interface WebInspectorWindowController : NSWindowController <NSWindowDelegate, WebPolicyDelegate, WebUIDelegate> {
 @private
     RetainPtr<WebView> _inspectedWebView;
@@ -131,7 +136,18 @@ void WebInspectorClient::bringFrontendToFront()
 void WebInspectorClient::didResizeMainFrame(Frame*)
 {
     if (m_frontendClient)
-        m_frontendClient->attachAvailabilityChanged(m_frontendClient->canAttachWindow() && !inspectorAttachDisabled());
+        m_frontendClient->attachAvailabilityChanged(canAttach());
+}
+
+void WebInspectorClient::windowFullScreenDidChange()
+{
+    if (m_frontendClient)
+        m_frontendClient->attachAvailabilityChanged(canAttach());
+}
+
+bool WebInspectorClient::canAttach()
+{
+    return m_frontendClient->canAttach() && !inspectorAttachDisabled();
 }
 
 void WebInspectorClient::highlight()
@@ -175,6 +191,14 @@ void WebInspectorFrontendClient::attachAvailabilityChanged(bool available)
 {
     setDockingUnavailable(!available);
     [m_windowController.get() setDockingUnavailable:!available];
+}
+
+bool WebInspectorFrontendClient::canAttach()
+{
+    if ([[m_windowController window] styleMask] & NSFullScreenWindowMask)
+        return false;
+
+    return canAttachWindow();
 }
 
 void WebInspectorFrontendClient::frontendLoaded()
@@ -455,9 +479,17 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
     NSUInteger styleMask = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask | NSTexturedBackgroundWindowMask;
 #endif
 
-    window = [[NSWindow alloc] initWithContentRect:NSMakeRect(60.0, 200.0, 750.0, 650.0) styleMask:styleMask backing:NSBackingStoreBuffered defer:NO];
+    window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, initialWindowWidth, initialWindowHeight) styleMask:styleMask backing:NSBackingStoreBuffered defer:NO];
     [window setDelegate:self];
-    [window setMinSize:NSMakeSize(400.0, 400.0)];
+    [window setMinSize:NSMakeSize(minimumWindowWidth, minimumWindowHeight)];
+    [window setCollectionBehavior:([window collectionBehavior] | NSWindowCollectionBehaviorFullScreenPrimary)];
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+    CGFloat approximatelyHalfScreenSize = (window.screen.frame.size.width / 2) - 4;
+    CGFloat minimumFullScreenWidth = std::max<CGFloat>(636, approximatelyHalfScreenSize);
+    [window setMinFullScreenContentSize:NSMakeSize(minimumFullScreenWidth, minimumWindowHeight)];
+    [window setCollectionBehavior:([window collectionBehavior] | NSWindowCollectionBehaviorFullScreenAllowsTiling)];
+#endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     window.titlebarAppearsTransparent = YES;
@@ -487,6 +519,16 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
     [self destroyInspectorView:true];
 
     return YES;
+}
+
+- (void)windowDidEnterFullScreen:(NSNotification *)notification
+{
+    _inspectorClient->windowFullScreenDidChange();
+}
+
+- (void)windowDidExitFullScreen:(NSNotification *)notification
+{
+    _inspectorClient->windowFullScreenDidChange();
 }
 
 - (void)close
@@ -533,7 +575,7 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
 
     _visible = YES;
 
-    _shouldAttach = _inspectorClient->inspectorStartsAttached() && _frontendClient->canAttachWindow() && !_inspectorClient->inspectorAttachDisabled();
+    _shouldAttach = _inspectorClient->inspectorStartsAttached() && _frontendClient->canAttach();
 
     if (_shouldAttach) {
         WebFrameView *frameView = [[_inspectedWebView.get() mainFrame] frameView];
