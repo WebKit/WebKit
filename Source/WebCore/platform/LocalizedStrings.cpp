@@ -653,11 +653,6 @@ String AXListItemActionVerb()
 }
 #endif // !PLATFORM(IOS)
 
-String AXAutoFillButtonText()
-{
-    return WEB_UI_STRING("autofill", "accessibility description for a password field AutoFill button");
-}
-
 #if PLATFORM(COCOA)
 String AXARIAContentGroupText(const String& ariaType)
 {

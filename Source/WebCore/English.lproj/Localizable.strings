@@ -763,9 +763,6 @@
 /* accessibility description for a search field cancel button */
 "cancel" = "cancel";
 
-/* accessibility description for a password field AutoFill button */
-"autofill" = "autofill";
-
 /* Verb stating the action that will occur when an unchecked checkbox is clicked, as used by accessibility */
 "check" = "check";
 

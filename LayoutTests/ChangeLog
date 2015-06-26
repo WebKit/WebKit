@@ -1,5 +1,16 @@
 2015-06-26  Daniel Bates  <dabates@apple.com>
 
+        Rolling out r184660
+        https://bugs.webkit.org/show_bug.cgi?id=145200
+
+        Reverting r184660 because it caused a regression.
+
+        * accessibility/input-auto-fill-button-expected.txt: Removed.
+        * accessibility/input-auto-fill-button.html: Removed.
+        * platform/win/TestExpectations:
+
+2015-06-26  Daniel Bates  <dabates@apple.com>
+
         Rolling out r185881
         https://bugs.webkit.org/show_bug.cgi?id=146243
         And

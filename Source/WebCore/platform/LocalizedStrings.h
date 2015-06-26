@@ -162,7 +162,7 @@ namespace WebCore {
     String AXFooterRoleDescriptionText();
     String AXFileUploadButtonText();
     String AXSearchFieldCancelButtonText();
-
+    
     String AXButtonActionVerb();
     String AXRadioButtonActionVerb();
     String AXTextFieldActionVerb();
@@ -173,8 +173,6 @@ namespace WebCore {
     String AXLinkActionVerb();
     String AXListItemActionVerb();
 #endif
-
-    String AXAutoFillButtonText();
 
 #if ENABLE(INPUT_TYPE_WEEK)
     // weekFormatInLDML() returns week and year format in LDML, Unicode
