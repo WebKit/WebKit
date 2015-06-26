@@ -1,3 +1,13 @@
+2015-06-26  Dean Jackson  <dino@apple.com>
+
+        No audio on animated page with the attached fixed layout epub
+        https://bugs.webkit.org/show_bug.cgi?id=146365
+        <rdar://problem/21360354>
+
+        Updated results.
+
+        * media/audio-playback-restriction-play-expected.txt:
+
 2015-06-26  Daniel Bates  <dabates@apple.com>
 
         Rolling out r184660
