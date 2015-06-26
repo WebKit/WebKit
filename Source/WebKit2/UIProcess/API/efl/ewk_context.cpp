@@ -99,7 +99,7 @@ EwkContext::EwkContext(WKContextRef context, const String& extensionsPath)
     m_callbackForMessageFromExtension.callback = nullptr;
     m_callbackForMessageFromExtension.userData = nullptr;
 
-    if (!extensionsPath.isEmpty()) {
+    if (!extensionsPath.isEmpty() || isDefaultBundle()) {
         WKContextInjectedBundleClientV1 client;
         memset(&client, 0, sizeof(client));
 
@@ -130,11 +130,6 @@ PassRefPtr<EwkContext> EwkContext::findOrCreateWrapper(WKContextRef context)
     return adoptRef(new EwkContext(context));
 }
 
-PassRefPtr<EwkContext> EwkContext::create()
-{
-    return adoptRef(new EwkContext(adoptWK(WKContextCreate()).get()));
-}
-
 static String bundlePathForExtension()
 {
     String bundlePathForExtension = WebCore::pathByAppendingComponent(String::fromUTF8(TEST_LIB_DIR), EXTENSIONMANAGERNAME);
@@ -148,20 +143,20 @@ static String bundlePathForExtension()
     return emptyString();
 }
 
-PassRefPtr<EwkContext> EwkContext::create(const String& extensionsPath)
+Ref<EwkContext> EwkContext::create(const String& extensionsPath)
 {   
     String bundlePath = bundlePathForExtension();
     if (bundlePath.isEmpty())
-        return 0;
+        return adoptRef(*new EwkContext(adoptWK(WKContextCreate()).get()));
 
     WKRetainPtr<WKStringRef> path = adoptWK(toCopiedAPI(bundlePath));
 
-    return adoptRef(new EwkContext(adoptWK(WKContextCreateWithInjectedBundlePath(path.get())).get(), extensionsPath));
+    return adoptRef(*new EwkContext(adoptWK(WKContextCreateWithInjectedBundlePath(path.get())).get(), extensionsPath));
 }
 
 EwkContext* EwkContext::defaultContext()
 {
-    static EwkContext* defaultInstance = create().leakRef();
+    static EwkContext* defaultInstance = &create().leakRef();
 
     return defaultInstance;
 }
@@ -453,6 +448,11 @@ void EwkContext::allowSpecificHTTPSCertificateForHost(const String& pem, const S
     toImpl(m_context.get())->allowSpecificHTTPSCertificateForHost(webCertificateInfo.get(), host);
 }
 
+bool EwkContext::isDefaultBundle() const
+{
+    return bundlePathForExtension() == toImpl(m_context.get())->injectedBundlePath();
+}
+
 Ewk_Context* ewk_context_default_get()
 {
     return EwkContext::defaultContext();
@@ -460,14 +460,14 @@ Ewk_Context* ewk_context_default_get()
 
 Ewk_Context* ewk_context_new()
 {
-    return EwkContext::create().leakRef();
+    return &EwkContext::create().leakRef();
 }
 
 Ewk_Context* ewk_context_new_with_extensions_path(const char* path)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(path, nullptr);
 
-    return EwkContext::create(String::fromUTF8(path)).leakRef();
+    return &EwkContext::create(String::fromUTF8(path)).leakRef();
 }
 
 Eina_Bool ewk_context_url_scheme_register(Ewk_Context* ewkContext, const char* scheme, Ewk_Url_Scheme_Request_Cb callback, void* userData)

@@ -1,3 +1,25 @@
+2015-06-25  Hyungwook Lee  <hyungwook.lee@navercorp.com>
+
+        [EFL] Make send / receive messages to communicate the Web and UI Processes using Injected Bundle.
+        https://bugs.webkit.org/show_bug.cgi?id=145685
+
+        Reviewed by Gyuyoung Kim.
+
+        To have extensible port specific API facility using Injected Bundle,
+        we need to load libewebkit_extension_manager.so in default that is same as what gtk port does.
+
+        * UIProcess/API/efl/ewk_context.cpp:
+        (EwkContext::EwkContext):
+        (EwkContext::findOrCreateWrapper):
+        (bundlePathForExtension):
+        (EwkContext::create):
+        (EwkContext::allowSpecificHTTPSCertificateForHost):
+        (EwkContext::isDefaultBundle):
+        (ewk_context_default_get):
+        * UIProcess/API/efl/ewk_context_private.h:
+        * WebProcess/efl/ExtensionManagerEfl.cpp:
+        (WebKit::ExtensionManagerEfl::initialize):
+
 2015-06-25  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Swiping back just after scrolling can cause some tiles to disappear

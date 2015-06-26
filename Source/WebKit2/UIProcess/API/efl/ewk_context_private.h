@@ -48,8 +48,7 @@ public:
     EWK_OBJECT_DECLARE(EwkContext)
 
     static PassRefPtr<EwkContext> findOrCreateWrapper(WKContextRef context);
-    static PassRefPtr<EwkContext> create();
-    static PassRefPtr<EwkContext> create(const String& injectedBundlePath);
+    static Ref<EwkContext> create(const String& extensionsPath = String());
 
     static EwkContext* defaultContext();
 
@@ -107,6 +106,7 @@ private:
     explicit EwkContext(WKContextRef, const String& extensionsPath = String());
 
     void ensureFaviconDatabase();
+    bool isDefaultBundle() const;
 
     WKRetainPtr<WKContextRef> m_context;
 
