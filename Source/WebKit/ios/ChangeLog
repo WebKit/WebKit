@@ -1,3 +1,10 @@
+2015-06-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed, attempt to fix the iOS build after r185968.
+
+        * WebCoreSupport/WebInspectorClientIOS.mm:
+        (WebInspectorFrontendClient::startWindowDrag):
+
 2015-06-02  Brady Eidson  <beidson@apple.com>
 
         WebKit policy delegate should suggest if a navigation should be allowed to open URLs externally.
