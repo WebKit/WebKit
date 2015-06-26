@@ -1,0 +1,46 @@
+Tests for ES6 arrow function calling
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS af0(10) is 11
+PASS af1(10) is 20
+PASS af2(1212) is 1000
+PASS af2_1(121) is a
+PASS af3(11,12) is 23
+PASS afwrapper(x => 1234) is 1234
+PASS afwrapper(x => 1234, 2345) is 1234
+PASS afwrapper(x => 121 + 232) is 353
+PASS afwrapper(x => 123 + 321, 9999) is 444
+PASS afwrapper(x => x + 12, 21) is 33
+PASS afwrapper((x) => x + 21, 32) is 53
+PASS afwrapper(() => 100) is 100
+PASS afwrapper(() => ext_value) is 121
+PASS afwrapper(() => ext_value * 10) is 1210
+PASS afwrapper((x) => ext_value * x, 30) is ext_value * 30
+PASS afwrapper(() => 100, 11) is 100
+PASS afwrapper(() => 100 + 10) is 110
+PASS afwrapper(() => 100 + 11, 12) is 111
+PASS arrowFunction4(1011) is 1012
+PASS xyz1 is 10101
+PASS afwrapper2((x, y) => x + y, 12 ,43) is 55
+PASS afArr0[0](10) is 100
+PASS afArr1[0](10) is 11
+PASS afArr1[1](11) is 13
+PASS afArr2[0](11) is 12
+PASS afArr2[1](11) is 13
+PASS afArr3[0](11) is 101
+PASS afArr3[1](11) is 12323
+PASS afObj.func(11) is 23
+PASS afBlock0(11) is 1000
+PASS afBlock1(11) is 1100
+PASS afBlock2(11) is 2200
+PASS afBlock3(11, 12222) is 134442
+PASS (function funcSelfExecAE1(value) { var f = x => x+1; return f(value);})(123); is 124
+PASS (function funcSelfExecAE2(value) { var f = x => { x++; return x + 1; }; return f(value);})(123); is 125
+PASS (function funcSelfExecAE3(value) { var f = (x) => { x++; return x + 1; }; return f(value);})(123); is 125
+PASS (function funcSelfExecAE4(value) { var f = (x, y) => { x++; return x + y; }; return f(value, value * 2);})(123); is 370
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

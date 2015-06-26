@@ -1,3 +1,40 @@
+2015-06-26 Aleksandr Skachkov  <gskachkov@gmail.com>
+
+         [ES6] Implement ES6 arrow function syntax. Parser of arrow function with execution as common function 
+         https://bugs.webkit.org/show_bug.cgi?id=144955
+
+         Reviewed by Yusuke Suzuki.
+
+         Added arrow function tests     
+
+        * js/arrowfunction-asparamter-1-expected.txt: Added.
+        * js/arrowfunction-asparamter-1.html: Added.
+        * js/arrowfunction-asparamter-2-expected.txt: Added.
+        * js/arrowfunction-asparamter-2.html: Added.
+        * js/arrowfunction-associativity-1-expected.txt: Added.
+        * js/arrowfunction-associativity-1.html: Added.
+        * js/arrowfunction-associativity-2-expected.txt: Added.
+        * js/arrowfunction-associativity-2.html: Added.
+        * js/arrowfunction-block-1-expected.txt: Added.
+        * js/arrowfunction-block-1.html: Added.
+        * js/arrowfunction-block-2-expected.txt: Added.
+        * js/arrowfunction-block-2.html: Added.
+        * js/arrowfunction-syntax-endings-expected.txt: Added.
+        * js/arrowfunction-syntax-endings.html: Added.
+        * js/arrowfunction-syntax-errors-expected.txt: Added.
+        * js/arrowfunction-syntax-errors.html: Added.
+        * js/arrowfunction-syntax-expected.txt: Added.
+        * js/arrowfunction-syntax.html: Added.
+        * js/script-tests/arrowfunction-asparamter-1.js: Added.
+        * js/script-tests/arrowfunction-asparamter-2.js: Added.
+        * js/script-tests/arrowfunction-associativity-1.js: Added.
+        * js/script-tests/arrowfunction-associativity-2.js: Added.
+        * js/script-tests/arrowfunction-block-1.js: Added.
+        * js/script-tests/arrowfunction-block-2.js: Added.
+        * js/script-tests/arrowfunction-syntax-endings.js: Added.
+        * js/script-tests/arrowfunction-syntax-errors.js: Added.
+        * js/script-tests/arrowfunction-syntax.js: Added.
+
 2015-06-25  Chris Fleizach  <cfleizach@apple.com>
 
         AX: improve list heuristics (presentational use versus actual lists)

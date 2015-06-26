@@ -35,14 +35,20 @@ namespace JSC {
 
 struct SourceProviderCacheItemCreationParameters {
     unsigned functionNameStart;
-    unsigned closeBraceLine;
-    unsigned closeBraceOffset;
-    unsigned closeBraceLineStartOffset;
+    unsigned lastTockenLine;
+    unsigned lastTockenStartOffset;
+    unsigned lastTockenEndOffset;
+    unsigned lastTockenLineStartOffset;
+    unsigned endFunctionOffset;
     bool needsFullActivation;
     bool usesEval;
     bool strictMode;
     Vector<RefPtr<UniquedStringImpl>> usedVariables;
     Vector<RefPtr<UniquedStringImpl>> writtenVariables;
+#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
+    bool isBodyArrowExpression { false };
+    JSTokenType tokenType { CLOSEBRACE };
+#endif
 };
 
 #if COMPILER(MSVC)
@@ -56,15 +62,19 @@ public:
     static std::unique_ptr<SourceProviderCacheItem> create(const SourceProviderCacheItemCreationParameters&);
     ~SourceProviderCacheItem();
 
-    JSToken closeBraceToken() const 
+    JSToken endFunctionToken() const 
     {
         JSToken token;
+#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
+        token.m_type = isBodyArrowExpression ? tokenType : CLOSEBRACE;
+#else
         token.m_type = CLOSEBRACE;
-        token.m_data.offset = closeBraceOffset;
-        token.m_location.startOffset = closeBraceOffset;
-        token.m_location.endOffset = closeBraceOffset + 1;
-        token.m_location.line = closeBraceLine;
-        token.m_location.lineStartOffset = closeBraceLineStartOffset;
+#endif
+        token.m_data.offset = lastTockenStartOffset;
+        token.m_location.startOffset = lastTockenStartOffset;
+        token.m_location.endOffset = lastTockenEndOffset;
+        token.m_location.line = lastTockenLine;
+        token.m_location.lineStartOffset = lastTockenLineStartOffset;
         // token.m_location.sourceOffset is initialized once by the client. So,
         // we do not need to set it here.
         return token;
@@ -72,19 +82,26 @@ public:
 
     unsigned functionNameStart : 31;
     bool needsFullActivation : 1;
+
+    unsigned endFunctionOffset : 31;
+    unsigned lastTockenLine : 31;
+    unsigned lastTockenStartOffset : 31;
+    unsigned lastTockenEndOffset: 31;
     
-    unsigned closeBraceLine : 31;
     bool usesEval : 1;
 
-    unsigned closeBraceOffset : 31;
     bool strictMode : 1;
 
-    unsigned closeBraceLineStartOffset;
+    unsigned lastTockenLineStartOffset;
     unsigned usedVariablesCount;
     unsigned writtenVariablesCount;
 
     UniquedStringImpl** usedVariables() const { return const_cast<UniquedStringImpl**>(m_variables); }
     UniquedStringImpl** writtenVariables() const { return const_cast<UniquedStringImpl**>(&m_variables[usedVariablesCount]); }
+#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
+    bool isBodyArrowExpression;
+    JSTokenType tokenType;
+#endif
 
 private:
     SourceProviderCacheItem(const SourceProviderCacheItemCreationParameters&);
@@ -109,13 +126,19 @@ inline std::unique_ptr<SourceProviderCacheItem> SourceProviderCacheItem::create(
 inline SourceProviderCacheItem::SourceProviderCacheItem(const SourceProviderCacheItemCreationParameters& parameters)
     : functionNameStart(parameters.functionNameStart)
     , needsFullActivation(parameters.needsFullActivation)
-    , closeBraceLine(parameters.closeBraceLine)
+    , endFunctionOffset(parameters.endFunctionOffset)
+    , lastTockenLine(parameters.lastTockenLine)
+    , lastTockenStartOffset(parameters.lastTockenStartOffset)
+    , lastTockenEndOffset(parameters.lastTockenEndOffset)
     , usesEval(parameters.usesEval)
-    , closeBraceOffset(parameters.closeBraceOffset)
     , strictMode(parameters.strictMode)
-    , closeBraceLineStartOffset(parameters.closeBraceLineStartOffset)
+    , lastTockenLineStartOffset(parameters.lastTockenLineStartOffset)
     , usedVariablesCount(parameters.usedVariables.size())
     , writtenVariablesCount(parameters.writtenVariables.size())
+#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
+    , isBodyArrowExpression(parameters.isBodyArrowExpression)
+    , tokenType(parameters.tokenType)
+#endif
 {
     unsigned j = 0;
     for (unsigned i = 0; i < usedVariablesCount; ++i, ++j) {

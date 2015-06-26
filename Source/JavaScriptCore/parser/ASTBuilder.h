@@ -347,7 +347,7 @@ public:
     ExpressionNode* createFunctionExpr(const JSTokenLocation& location, const ParserFunctionInfo<ASTBuilder>& info)
     {
         FuncExprNode* result = new (m_parserArena) FuncExprNode(location, *info.name, info.body,
-            m_sourceCode->subExpression(info.openBraceOffset, info.closeBraceOffset, info.bodyStartLine, info.bodyStartColumn), info.parameters);
+            m_sourceCode->subExpression(info.startFunctionOffset, info.endFunctionOffset, info.bodyStartLine, info.bodyStartColumn), info.parameters);
         info.body->setLoc(info.bodyStartLine, info.bodyEndLine, location.startOffset, location.lineStartOffset);
         return result;
     }
@@ -364,13 +364,26 @@ public:
             inStrictContext, constructorKind);
     }
 
+#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
+    ExpressionNode* createArrowFunctionExpr(const JSTokenLocation& location, const ParserFunctionInfo<ASTBuilder>& info)
+    {
+        SourceCode source = info.functionBodyType == ArrowFunctionBodyExpression
+            ? m_sourceCode->subArrowExpression(info.arrowFunctionOffset, info.endFunctionOffset, info.bodyStartLine, info.bodyStartColumn)
+            : m_sourceCode->subExpression(info.startFunctionOffset, info.endFunctionOffset, info.bodyStartLine, info.bodyStartColumn);
+
+        FuncExprNode* result = new (m_parserArena) FuncExprNode(location, *info.name, info.body, source, info.parameters);
+        info.body->setLoc(info.bodyStartLine, info.bodyEndLine, location.startOffset, location.lineStartOffset);
+        return result;
+    }
+#endif
+
     NEVER_INLINE PropertyNode* createGetterOrSetterProperty(const JSTokenLocation& location, PropertyNode::Type type, bool,
         const Identifier* name, const ParserFunctionInfo<ASTBuilder>& info, SuperBinding superBinding)
     {
         ASSERT(name);
         info.body->setLoc(info.bodyStartLine, info.bodyEndLine, location.startOffset, location.lineStartOffset);
         info.body->setInferredName(*name);
-        SourceCode source = m_sourceCode->subExpression(info.openBraceOffset, info.closeBraceOffset, info.bodyStartLine, info.bodyStartColumn);
+        SourceCode source = m_sourceCode->subExpression(info.startFunctionOffset, info.endFunctionOffset, info.bodyStartLine, info.bodyStartColumn);
         FuncExprNode* funcExpr = new (m_parserArena) FuncExprNode(location, m_vm->propertyNames->nullIdentifier, info.body, source, info.parameters);
         return new (m_parserArena) PropertyNode(*name, funcExpr, type, PropertyNode::Unknown, superBinding);
     }
@@ -380,7 +393,7 @@ public:
     {
         info.body->setLoc(info.bodyStartLine, info.bodyEndLine, location.startOffset, location.lineStartOffset);
         const Identifier& ident = parserArena.identifierArena().makeNumericIdentifier(vm, name);
-        SourceCode source = m_sourceCode->subExpression(info.openBraceOffset, info.closeBraceOffset, info.bodyStartLine, info.bodyStartColumn);
+        SourceCode source = m_sourceCode->subExpression(info.startFunctionOffset, info.endFunctionOffset, info.bodyStartLine, info.bodyStartColumn);
         FuncExprNode* funcExpr = new (m_parserArena) FuncExprNode(location, vm->propertyNames->nullIdentifier, info.body, source, info.parameters);
         return new (m_parserArena) PropertyNode(ident, funcExpr, type, PropertyNode::Unknown, superBinding);
     }
@@ -417,7 +430,7 @@ public:
     StatementNode* createFuncDeclStatement(const JSTokenLocation& location, const ParserFunctionInfo<ASTBuilder>& info)
     {
         FuncDeclNode* decl = new (m_parserArena) FuncDeclNode(location, *info.name, info.body,
-            m_sourceCode->subExpression(info.openBraceOffset, info.closeBraceOffset, info.bodyStartLine, info.bodyStartColumn), info.parameters);
+            m_sourceCode->subExpression(info.startFunctionOffset, info.endFunctionOffset, info.bodyStartLine, info.bodyStartColumn), info.parameters);
         if (*info.name == m_vm->propertyNames->arguments)
             usesArguments();
         m_scope.m_funcDeclarations.append(decl->body());

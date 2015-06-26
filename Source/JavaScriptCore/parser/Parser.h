@@ -80,12 +80,20 @@ class SourceCode;
 COMPILE_ASSERT(LastUntaggedToken < 64, LessThan64UntaggedTokens);
 
 enum SourceElementsMode { CheckForStrictMode, DontCheckForStrictMode };
+#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
+enum FunctionParseType { StandardFunctionParseType, ArrowFunctionParseType };
+#else
+enum FunctionParseType { StandardFunctionParseType};
+#endif
 enum FunctionRequirements { FunctionNoRequirements, FunctionNeedsName };
 enum FunctionParseMode {
     FunctionMode,
     GetterMode,
     SetterMode,
     MethodMode,
+#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
+    ArrowFunctionMode
+#endif
 };
 enum DeconstructionKind {
     DeconstructToVariables,
@@ -430,6 +438,7 @@ public:
     std::unique_ptr<ParsedNode> parse(ParserError&);
 
     JSTextPosition positionBeforeLastNewline() const { return m_lexer->positionBeforeLastNewline(); }
+    JSTokenLocation locationBeforeLastToken() const { return m_lexer->lastTokenLocation(); }
     Vector<RefPtr<UniquedStringImpl>>&& closedVariables() { return WTF::move(m_closedVariables); }
 
 private:
@@ -612,6 +621,47 @@ private:
         return m_token.m_type == IDENT && *m_token.m_data.ident == m_vm->propertyNames->of;
     }
     
+#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
+    ALWAYS_INLINE bool isEndOfArrowFunction()
+    {
+        return match(SEMICOLON) || match(COMMA) || match(CLOSEPAREN) || match(CLOSEBRACE) || match(CLOSEBRACKET) || match(EOFTOK) || m_lexer->prevTerminator();
+    }
+    
+    ALWAYS_INLINE bool isArrowFunctionParamters()
+    {
+        bool isArrowFunction = false;
+        
+        if (match(EOFTOK))
+            return isArrowFunction;
+        
+        SavePoint saveArrowFunctionPoint = createSavePoint();
+        
+        if (consume(OPENPAREN)) {
+            bool isArrowFunctionParamters = true;
+            
+            while (consume(IDENT)) {
+                if (consume(COMMA)) {
+                    if (!match(IDENT)) {
+                        isArrowFunctionParamters = false;
+                        break;
+                    }
+                } else
+                    break;
+            }
+            
+            if (isArrowFunctionParamters) {
+                if (consume(CLOSEPAREN) && match(ARROWFUNCTION))
+                    isArrowFunction = true;
+            }
+        } else if (consume(IDENT) && match(ARROWFUNCTION))
+            isArrowFunction = true;
+
+        restoreSavePoint(saveArrowFunctionPoint);
+        
+        return isArrowFunction;
+    }
+#endif
+    
     ALWAYS_INLINE unsigned tokenStart()
     {
         return m_token.m_location.startOffset;
@@ -715,8 +765,8 @@ private:
         }
         return result;
     }
-    
-    template <class TreeBuilder> TreeSourceElements parseSourceElements(TreeBuilder&, SourceElementsMode);
+
+    template <class TreeBuilder> TreeSourceElements parseSourceElements(TreeBuilder&, SourceElementsMode, FunctionParseType);
     template <class TreeBuilder> TreeStatement parseStatement(TreeBuilder&, const Identifier*& directive, unsigned* directiveLiteralLength = 0);
 #if ENABLE(ES6_CLASS_SYNTAX)
     template <class TreeBuilder> TreeStatement parseClassDeclaration(TreeBuilder&);
@@ -756,24 +806,30 @@ private:
     template <class TreeBuilder> TreeProperty parseProperty(TreeBuilder&, bool strict);
     template <class TreeBuilder> TreeExpression parsePropertyMethod(TreeBuilder& context, const Identifier* methodName);
     template <class TreeBuilder> TreeProperty parseGetterSetter(TreeBuilder&, bool strict, PropertyNode::Type, unsigned getterOrSetterStartOffset, ConstructorKind = ConstructorKind::None, SuperBinding = SuperBinding::NotNeeded);
-    template <class TreeBuilder> ALWAYS_INLINE TreeFunctionBody parseFunctionBody(TreeBuilder&, int functionKeywordStart, int functionNameStart, int parametersStart, ConstructorKind);
+    template <class TreeBuilder> ALWAYS_INLINE TreeFunctionBody parseFunctionBody(TreeBuilder&, int functionKeywordStart, int functionNameStart, int parametersStart, ConstructorKind, FunctionParseType);
     template <class TreeBuilder> ALWAYS_INLINE TreeFormalParameterList parseFormalParameters(TreeBuilder&);
     enum VarDeclarationListContext { ForLoopContext, VarDeclarationContext };
     template <class TreeBuilder> TreeExpression parseVarDeclarationList(TreeBuilder&, int& declarations, TreeDeconstructionPattern& lastPattern, TreeExpression& lastInitializer, JSTextPosition& identStart, JSTextPosition& initStart, JSTextPosition& initEnd, VarDeclarationListContext);
     template <class TreeBuilder> NEVER_INLINE TreeConstDeclList parseConstDeclarationList(TreeBuilder&);
+
+#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
+    template <class TreeBuilder> TreeStatement parseArrowFunctionSingleExpressionBody(TreeBuilder&, FunctionParseType);
+    template <class TreeBuilder> TreeExpression parseArrowFunctionExpression(TreeBuilder&);
+#endif
 
     template <class TreeBuilder> NEVER_INLINE TreeDeconstructionPattern createBindingPattern(TreeBuilder&, DeconstructionKind, const Identifier&, int depth, JSToken);
     template <class TreeBuilder> NEVER_INLINE TreeDeconstructionPattern parseDeconstructionPattern(TreeBuilder&, DeconstructionKind, int depth = 0);
     template <class TreeBuilder> NEVER_INLINE TreeDeconstructionPattern tryParseDeconstructionPatternExpression(TreeBuilder&);
     template <class TreeBuilder> NEVER_INLINE TreeExpression parseDefaultValueForDeconstructionPattern(TreeBuilder&);
 
-    template <class TreeBuilder> NEVER_INLINE bool parseFunctionInfo(TreeBuilder&, FunctionRequirements, FunctionParseMode, bool nameIsInContainingScope, ConstructorKind, SuperBinding, int functionKeywordStart, ParserFunctionInfo<TreeBuilder>&);
+    template <class TreeBuilder> NEVER_INLINE bool parseFunctionInfo(TreeBuilder&, FunctionRequirements, FunctionParseMode, bool nameIsInContainingScope, ConstructorKind, SuperBinding, int functionKeywordStart, ParserFunctionInfo<TreeBuilder>&, FunctionParseType);
     
-    template <class TreeBuilder> NEVER_INLINE int parseFunctionParameters(TreeBuilder&, FunctionRequirements, FunctionParseMode, bool, AutoPopScopeRef&, ParserFunctionInfo<TreeBuilder>&);
+    template <class TreeBuilder> NEVER_INLINE int parseFunctionParameters(TreeBuilder&, FunctionParseMode, ParserFunctionInfo<TreeBuilder>&);
 
 #if ENABLE(ES6_CLASS_SYNTAX)
     template <class TreeBuilder> NEVER_INLINE TreeClassExpression parseClass(TreeBuilder&, FunctionRequirements, ParserClassInfo<TreeBuilder>&);
 #endif
+
 #if ENABLE(ES6_TEMPLATE_LITERAL_SYNTAX)
     template <class TreeBuilder> NEVER_INLINE typename TreeBuilder::TemplateString parseTemplateString(TreeBuilder& context, bool isTemplateHead, typename LexerType::RawStringsBuildMode, bool& elementIsTail);
     template <class TreeBuilder> NEVER_INLINE typename TreeBuilder::TemplateLiteral parseTemplateLiteral(TreeBuilder&, typename LexerType::RawStringsBuildMode);
@@ -793,6 +849,14 @@ private:
         return allowAutomaticSemicolon();
     }
     
+
+#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
+    void setEndOfStatement()
+    {
+        m_lexer->setTokenPosition(&m_token);
+    }
+#endif
+
     bool canRecurse()
     {
         return m_vm->isSafeToRecurse();

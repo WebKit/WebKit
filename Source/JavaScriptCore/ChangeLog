@@ -1,3 +1,65 @@
+2015-06-26 Aleksandr Skachkov  <gskachkov@gmail.com>
+
+         [ES6] Implement ES6 arrow function syntax. Parser of arrow function with execution as common function. 
+         https://bugs.webkit.org/show_bug.cgi?id=144955
+
+         Reviewed by Yusuke Suzuki.
+
+         Added support of ES6 arrow function. Changes were made according to following spec http://wiki.ecmascript.org/doku.php?id=harmony:arrow_function_syntax. Patch does not include any arrow function specific behavior e.g. lexical bind this, arguments and etc.     
+        This patch implements the simplest cases of arrow function declaration:
+           parameters             () => 10 + 20
+           parameter               x => x + 20
+           parameters         (x, y) => x + y
+           function with block     x => { return x*10; }
+
+        Not implemented:
+           bind of the this, arguments, super and etc.
+           exception in case of trying to use 'new' with arrow function
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createFunctionExpr):
+        (JSC::ASTBuilder::createArrowFunctionExpr):
+        (JSC::ASTBuilder::createGetterOrSetterProperty):
+        (JSC::ASTBuilder::createFuncDeclStatement):
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::setTokenPosition):
+        (JSC::Lexer<T>::lex):
+        * parser/Lexer.h:
+        (JSC::Lexer::lastTokenLocation):
+        (JSC::Lexer::setTerminator):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::parseSourceElements):
+        (JSC::Parser<LexerType>::parseArrowFunctionSingleExpressionBody):
+        (JSC::Parser<LexerType>::parseSwitchClauses):
+        (JSC::Parser<LexerType>::parseSwitchDefaultClause):
+        (JSC::Parser<LexerType>::parseBlockStatement):
+        (JSC::Parser<LexerType>::parseFunctionBody):
+        (JSC::stringForFunctionMode):
+        (JSC::Parser<LexerType>::parseFunctionParameters):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::Parser<LexerType>::parseFunctionDeclaration):
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+        (JSC::Parser<LexerType>::parsePropertyMethod):
+        (JSC::Parser<LexerType>::parseGetterSetter):
+        (JSC::Parser<LexerType>::parseArrowFunctionExpression):
+        * parser/Parser.h:
+        (JSC::Parser::locationBeforeLastToken):
+        (JSC::Parser::isEndOfArrowFunction):
+        (JSC::Parser::isArrowFunctionParamters):
+        (JSC::Parser::setEndOfStatement):
+        * parser/ParserFunctionInfo.h:
+        * parser/ParserTokens.h:
+        * parser/SourceCode.h:
+        (JSC::SourceCode::subArrowExpression):
+        * parser/SourceProviderCacheItem.h:
+        (JSC::SourceProviderCacheItem::endFunctionToken):
+        (JSC::SourceProviderCacheItem::SourceProviderCacheItem):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createArrowFunctionExpr):
+        (JSC::SyntaxChecker::setFunctionNameStart):
+
 2015-06-25  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Support rest element in destructuring assignments

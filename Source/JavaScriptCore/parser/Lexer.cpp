@@ -1715,11 +1715,25 @@ bool Lexer<T>::nextTokenIsColon()
     return code < m_codeEnd && *code == ':';
 }
 
+#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
+template <typename T>
+void Lexer<T>::setTokenPosition(JSToken* tokenRecord)
+{
+    JSTokenData* tokenData = &tokenRecord->m_data;
+    tokenData->line = lineNumber();
+    tokenData->offset = currentOffset();
+    tokenData->lineStartOffset = currentLineStartOffset();
+    ASSERT(tokenData->offset >= tokenData->lineStartOffset);
+}
+#endif
+
 template <typename T>
 JSTokenType Lexer<T>::lex(JSToken* tokenRecord, unsigned lexerFlags, bool strictMode)
 {
     JSTokenData* tokenData = &tokenRecord->m_data;
     JSTokenLocation* tokenLocation = &tokenRecord->m_location;
+    m_lastTockenLocation = JSTokenLocation(tokenRecord->m_location);
+    
     ASSERT(!m_error);
     ASSERT(m_buffer8.isEmpty());
     ASSERT(m_buffer16.isEmpty());
@@ -1778,7 +1792,19 @@ start:
         }
         token = GT;
         break;
-    case CharacterEqual:
+    case CharacterEqual: {
+#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
+        if (peek(1) == '>') {
+            token = ARROWFUNCTION;
+            tokenData->line = lineNumber();
+            tokenData->offset = currentOffset();
+            tokenData->lineStartOffset = currentLineStartOffset();
+            ASSERT(tokenData->offset >= tokenData->lineStartOffset);
+            shift();
+            shift();
+            break;
+        }
+#endif
         shift();
         if (m_current == '=') {
             shift();
@@ -1792,6 +1818,7 @@ start:
         }
         token = EQUAL;
         break;
+    }
     case CharacterLess:
         shift();
         if (m_current == '!' && peek(1) == '-' && peek(2) == '-') {
