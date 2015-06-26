@@ -365,6 +365,8 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseSourceEl
         propagateError();
         return sourceElements;
     }
+#else
+    UNUSED_PARAM(functionParseType);
 #endif
     
     while (TreeStatement statement = parseStatement(context, directive, &directiveLiteralLength)) {
