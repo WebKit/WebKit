@@ -1290,3 +1290,5 @@ webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 [ ElCapitan+ Debug ] fast/text/justify-ideograph-complex.html [ Pass Failure ]
 [ ElCapitan+ Debug ] fast/text/justify-ideograph-simple.html [ Pass Failure ]
 [ ElCapitan+ Debug ] fast/text/justify-ideograph-vertical.html [ Pass Failure ]
+
+webkit.org/b/146385 [ Yosemite ] fast/text/han-generic-font-families.html [ ImageOnlyFailure ]
