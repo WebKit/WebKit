@@ -809,6 +809,7 @@ void HTMLMediaElement::pendingActionTimerFired()
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     if (m_pendingActionFlags & CheckPlaybackTargetCompatablity && m_player && m_player->isCurrentPlaybackTargetWireless() && !m_player->canPlayToWirelessPlaybackTarget()) {
         LOG(Media, "HTMLMediaElement::pendingActionTimerFired(%p) - calling setShouldPlayToPlaybackTarget(false)", this);
+        m_failedToPlayToWirelessTarget = true;
         m_player->setShouldPlayToPlaybackTarget(false);
     }
 
@@ -919,6 +920,10 @@ void HTMLMediaElement::prepareForLoad()
     m_havePreparedToPlay = false;
     m_displayMode = Unknown;
     m_currentSrc = URL();
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+    m_failedToPlayToWirelessTarget = false;
+#endif
 
     // 1 - Abort any already-running instance of the resource selection algorithm for this element.
     m_loadState = WaitingForSource;
@@ -6339,7 +6344,7 @@ MediaProducer::MediaStateFlags HTMLMediaElement::mediaState() const
         state |= RequiresPlaybackTargetMonitoring;
 
     bool requireUserGesture = m_mediaSession->hasBehaviorRestriction(MediaElementSession::RequireUserGestureToAutoplayToExternalDevice);
-    if (hasActiveVideo && (!requireUserGesture || (hasAudio && !m_initiallyMuted && !loop())))
+    if (hasActiveVideo && (!requireUserGesture || (hasAudio && !m_initiallyMuted && !loop())) && !m_failedToPlayToWirelessTarget)
         state |= ExternalDeviceAutoPlayCandidate;
 #endif
 

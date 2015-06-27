@@ -126,6 +126,9 @@ void WebMediaSessionManager::removePlaybackTargetPickerClient(WebMediaSessionMan
 
 void WebMediaSessionManager::removeAllPlaybackTargetPickerClients(WebMediaSessionManagerClient& client)
 {
+    if (m_clientState.isEmpty())
+        return;
+
     LOG(Media, "WebMediaSessionManager::removeAllPlaybackTargetPickerClients(%p)", &client);
 
     for (size_t i = m_clientState.size(); i > 0; --i) {
