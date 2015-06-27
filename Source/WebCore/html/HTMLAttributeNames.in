@@ -42,6 +42,7 @@ aria-pressed
 aria-readonly
 aria-relevant
 aria-required
+aria-roledescription
 aria-selected
 aria-setsize
 aria-sort

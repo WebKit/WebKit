@@ -853,6 +853,11 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     return m_object->maxValueForRange();
 }
 
+- (NSString *)accessibilityRoleDescription
+{
+    return m_object->roleDescription();
+}
+
 - (NSString *)accessibilityLabel
 {
     if (![self _prepareAccessibilityCall])

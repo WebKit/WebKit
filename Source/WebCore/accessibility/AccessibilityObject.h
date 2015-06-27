@@ -621,6 +621,7 @@ public:
     bool supportsRangeValue() const;
     String identifierAttribute() const;
     void classList(Vector<String>&) const;
+    const AtomicString& roleDescription() const;
     
     bool supportsARIASetSize() const;
     bool supportsARIAPosInSet() const;

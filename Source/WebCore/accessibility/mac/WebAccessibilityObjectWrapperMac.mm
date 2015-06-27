@@ -2206,6 +2206,10 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityRoleDescriptionAttribute];
 #pragma clang diagnostic pop
 
+    const AtomicString& overrideRoleDescription = m_object->roleDescription();
+    if (!overrideRoleDescription.isNull())
+        return overrideRoleDescription;
+    
     NSString* axRole = [self role];
     
     if ([axRole isEqualToString:NSAccessibilityGroupRole]) {

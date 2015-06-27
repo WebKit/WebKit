@@ -1,3 +1,13 @@
+2015-06-27  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: implement @aria-roledescription
+        https://bugs.webkit.org/show_bug.cgi?id=146274
+
+        Reviewed by Darin Adler.
+
+        * accessibility/aria-roledescription-expected.txt: Added.
+        * accessibility/aria-roledescription.html: Added.
+
 2015-06-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION (r186001): fast/text/han-generic-font-families.html always fails on Yosemite

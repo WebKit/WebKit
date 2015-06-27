@@ -2027,6 +2027,11 @@ bool AccessibilityObject::hasHighlighting() const
     return false;
 }
 
+const AtomicString& AccessibilityObject::roleDescription() const
+{
+    return getAttribute(aria_roledescriptionAttr);
+}
+    
 static bool nodeHasPresentationRole(Node* node)
 {
     return nodeHasRole(node, "presentation") || nodeHasRole(node, "none");
