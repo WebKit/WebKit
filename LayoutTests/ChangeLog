@@ -1,5 +1,17 @@
 2015-06-27  David Kilzer  <ddkilzer@apple.com>
 
+        REGRESSION (r186029): fast/text/justify-ideograph-{complex,simple,vertical}.html fail on Yosemite
+
+        The results replaced in r186029 were the Yosemite results, so
+        Yosemite started failing when they were rebaselined for
+        El Capitan.
+
+        * platform/mac-yosemite/fast/text/justify-ideograph-complex-expected.txt: Copied from platform/mac/fast/text/justify-ideograph-complex-expected.txt in r186028.
+        * platform/mac-yosemite/fast/text/justify-ideograph-simple-expected.txt: Copied from platform/mac/fast/text/justify-ideograph-simple-expected.txt in r186028.
+        * platform/mac-yosemite/fast/text/justify-ideograph-vertical-expected.txt: Copied from platform/mac/fast/text/justify-ideograph-vertical-expected.txt in r186028.
+
+2015-06-27  David Kilzer  <ddkilzer@apple.com>
+
         Add missing image results for platform/mac/platform/mac/fast/text/vertical-surrogate-pair.html
 
         * platform/mac/platform/mac/fast/text/vertical-surrogate-pair-expected.png: Added.
