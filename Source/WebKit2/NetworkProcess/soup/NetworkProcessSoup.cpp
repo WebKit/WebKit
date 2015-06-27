@@ -153,12 +153,13 @@ void NetworkProcess::clearCacheForAllOrigins(uint32_t cachesToClear)
     clearDiskCache(std::chrono::system_clock::time_point::min(), [] { });
 }
 
-void NetworkProcess::clearDiskCache(std::chrono::system_clock::time_point /* modifiedSince */, std::function<void ()> /* completionHandler */)
+void NetworkProcess::clearDiskCache(std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler)
 {
-    // FIXME: Find a way to only clear a part of the cache based on the date.
 #if ENABLE(NETWORK_CACHE)
-    NetworkCache::singleton().clear();
+    NetworkCache::singleton().clear(modifiedSince, WTF::move(completionHandler));
 #else
+    UNUSED_PARAM(modifiedSince);
+    UNUSED_PARAM(completionHandler);
     soup_cache_clear(SoupNetworkSession::defaultSession().cache());
 #endif
 }
