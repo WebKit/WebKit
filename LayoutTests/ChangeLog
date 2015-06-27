@@ -1,3 +1,13 @@
+2015-06-27  David Kilzer  <ddkilzer@apple.com>
+
+        editing/undo/remove-css-property-and-remove-style.html is flaky on Debug WK2
+
+        As seen on Flakiness Dashboard:
+        <http://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html#showAllRuns=true&tests=editing%2Fundo%2Fremove-css-property-and-remove-style.html>
+
+        * platform/mac-wk2/TestExpectations: Add:
+        - editing/undo/remove-css-property-and-remove-style.html
+
 2015-06-27  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Streams API] Implement ReadableStreamController.desiredSize property

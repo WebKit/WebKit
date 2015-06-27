@@ -338,6 +338,8 @@ webkit.org/b/142726 [ Yosemite ] fast/images/animated-png.html [ Skip ]
 
 webkit.org/b/144155 [ Yosemite ] fast/frames/flattening/iframe-flattening-resize-event-count.html [ Pass Failure ]
 
+[ Debug ] editing/undo/remove-css-property-and-remove-style.html [ Pass Failure ]
+
 ### END OF (3) Unclassified failures
 ########################################
 
