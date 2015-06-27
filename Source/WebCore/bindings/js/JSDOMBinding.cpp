@@ -113,6 +113,13 @@ String valueToStringWithUndefinedOrNullCheck(ExecState* exec, JSValue value)
     return value.toString(exec)->value(exec);
 }
 
+JSValue jsDateOrNaN(ExecState* exec, double value)
+{
+    if (std::isnan(value))
+        return jsDoubleNumber(value);
+    return jsDateOrNull(exec, value);
+}
+
 JSValue jsDateOrNull(ExecState* exec, double value)
 {
     if (!std::isfinite(value))

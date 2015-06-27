@@ -111,6 +111,7 @@ SkipVTableValidation
 StrictTypeChecking
 SuppressToJSObject
 TreatNullAs=NullString
+TreatReturnedNaNDateAs=Null|NaN
 TreatReturnedNullStringAs=Null|Undefined
 TreatUndefinedAs=NullString
 TypedArray=*

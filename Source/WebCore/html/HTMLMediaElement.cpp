@@ -882,6 +882,11 @@ String HTMLMediaElement::canPlayType(const String& mimeType, const String& keySy
     return canPlay;
 }
 
+double HTMLMediaElement::getStartDate() const
+{
+    return m_player->getStartDate().toDouble();
+}
+
 void HTMLMediaElement::load()
 {
     Ref<HTMLMediaElement> protect(*this); // loadInternal may result in a 'beforeload' event, which can make arbitrary DOM mutations.

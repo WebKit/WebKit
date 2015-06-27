@@ -534,6 +534,11 @@ MediaTime MediaPlayer::currentTime() const
     return m_private->currentMediaTime();
 }
 
+MediaTime MediaPlayer::getStartDate() const
+{
+    return m_private->getStartDate();
+}
+
 void MediaPlayer::seekWithTolerance(const MediaTime& time, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance)
 {
     m_private->seekWithTolerance(time, negativeTolerance, positiveTolerance);

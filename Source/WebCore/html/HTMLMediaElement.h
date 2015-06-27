@@ -178,6 +178,7 @@ public:
     WEBCORE_EXPORT virtual double currentTime() const override;
     virtual void setCurrentTime(double) override;
     virtual void setCurrentTime(double, ExceptionCode&);
+    virtual double getStartDate() const;
     WEBCORE_EXPORT virtual double duration() const override;
     WEBCORE_EXPORT virtual bool paused() const override;
     virtual double defaultPlaybackRate() const override;

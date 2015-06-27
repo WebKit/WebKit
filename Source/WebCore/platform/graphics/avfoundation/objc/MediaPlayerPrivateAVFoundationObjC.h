@@ -207,6 +207,8 @@ private:
 
     virtual bool hasSingleSecurityOrigin() const override;
 
+    MediaTime getStartDate() const override;
+
 #if ENABLE(VIDEO_TRACK)
     virtual bool requiresTextTrackRepresentation() const override;
     virtual void setTextTrackRepresentation(TextTrackRepresentation*) override;

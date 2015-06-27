@@ -94,6 +94,8 @@ public:
     virtual double currentTimeDouble() const { return currentTime(); }
     virtual MediaTime currentMediaTime() const { return MediaTime::createWithDouble(currentTimeDouble()); }
 
+    virtual MediaTime getStartDate() const { return MediaTime::createWithDouble(std::numeric_limits<double>::quiet_NaN()); }
+
     virtual void seek(float) { }
     virtual void seekDouble(double time) { seek(time); }
     virtual void seek(const MediaTime& time) { seekDouble(time.toDouble()); }

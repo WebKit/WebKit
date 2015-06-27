@@ -1,3 +1,15 @@
+2015-06-26  Matt Daiter  <mdaiter@apple.com>
+
+        Supporting getStartDate and added tests
+        https://bugs.webkit.org/show_bug.cgi?id=145676
+        <rdar://problem/20876076>
+
+        Reviewed by Brent Fulgham.
+
+        * http/tests/media/hls/video-controller-getStartDate-expected.txt: Added.
+        * http/tests/media/hls/video-controller-getStartDate.html: Added.
+        * http/tests/media/resources/hls/test-vod-date-time.m3u8: Added.
+
 2015-06-26  Dean Jackson  <dino@apple.com>
 
         No audio on animated page with the attached fixed layout epub

@@ -380,6 +380,8 @@ public:
     MediaTime startTime() const;
     MediaTime initialTime() const;
 
+    MediaTime getStartDate() const;
+
     double rate() const;
     void setRate(double);
     double requestedRate() const;
