@@ -66,9 +66,9 @@ public:
     void clear(std::chrono::system_clock::time_point modifiedSinceTime, std::function<void ()>&& completionHandler);
 
     struct RecordInfo {
-        size_t bodySize { 0 };
-        double worth { -1 }; // 0-1 where 1 is the most valuable.
-        unsigned bodyShareCount { 0 };
+        size_t bodySize;
+        double worth; // 0-1 where 1 is the most valuable.
+        unsigned bodyShareCount;
         String bodyHash;
     };
     enum TraverseFlag {
@@ -154,6 +154,9 @@ private:
     Deque<std::unique_ptr<WriteOperation>> m_pendingWriteOperations;
     HashSet<std::unique_ptr<WriteOperation>> m_activeWriteOperations;
     WebCore::Timer m_writeOperationDispatchTimer;
+
+    struct TraverseOperation;
+    HashSet<std::unique_ptr<TraverseOperation>> m_activeTraverseOperations;
 
     Ref<WorkQueue> m_ioQueue;
     Ref<WorkQueue> m_backgroundIOQueue;

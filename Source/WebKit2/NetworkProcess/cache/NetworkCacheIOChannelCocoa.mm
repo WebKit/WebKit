@@ -104,17 +104,6 @@ void IOChannel::read(size_t offset, size_t size, WorkQueue* queue, std::function
     });
 }
 
-// FIXME: It would be better to do without this.
-void IOChannel::readSync(size_t offset, size_t size, WorkQueue* queue, std::function<void (Data&, int error)> completionHandler)
-{
-    auto semaphore = adoptDispatch(dispatch_semaphore_create(0));
-    read(offset, size, queue, [semaphore, &completionHandler](Data& data, int error) {
-        completionHandler(data, error);
-        dispatch_semaphore_signal(semaphore.get());
-    });
-    dispatch_semaphore_wait(semaphore.get(), DISPATCH_TIME_FOREVER);
-}
-
 void IOChannel::write(size_t offset, const Data& data, WorkQueue* queue, std::function<void (int error)> completionHandler)
 {
     RefPtr<IOChannel> channel(this);

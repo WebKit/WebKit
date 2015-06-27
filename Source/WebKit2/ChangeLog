@@ -1,3 +1,35 @@
+2015-06-26  Antti Koivisto  <antti@apple.com>
+
+        Make NetworkCache::traverse faster
+        https://bugs.webkit.org/show_bug.cgi?id=146354
+
+        Reviewed by Anders Carlsson.
+
+        * NetworkProcess/cache/NetworkCacheIOChannel.h:
+        (WebKit::NetworkCache::IOChannel::path):
+        (WebKit::NetworkCache::IOChannel::type):
+        * NetworkProcess/cache/NetworkCacheIOChannelCocoa.mm:
+        (WebKit::NetworkCache::IOChannel::open):
+        (WebKit::NetworkCache::IOChannel::read):
+        (WebKit::NetworkCache::IOChannel::write):
+        (WebKit::NetworkCache::IOChannel::readSync): Deleted.
+
+            Not needed anymore.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::WriteOperation::WriteOperation):
+        (WebKit::NetworkCache::Storage::TraverseOperation::TraverseOperation):
+
+            Add TraverseOperation, similar to Read/Write.
+
+        (WebKit::NetworkCache::Storage::open):
+        (WebKit::NetworkCache::Storage::traverse):
+
+            Use async I/O.
+            Use condition variable to allow maximum 5 parallel file reads.
+
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+
 2015-06-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] NetworkCache: Make NetworkProcess::clearDiskCache actually clear the the resources depending on the date

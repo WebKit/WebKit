@@ -49,7 +49,6 @@ public:
     // Using nullptr as queue submits the result to the main queue.
     // FIXME: We should add WorkQueue::main() instead.
     void read(size_t offset, size_t, WorkQueue*, std::function<void (Data&, int error)>);
-    void readSync(size_t offset, size_t, WorkQueue*, std::function<void (Data&, int error)>);
     void write(size_t offset, const Data&, WorkQueue*, std::function<void (int error)>);
 
     const String& path() const { return m_path; }

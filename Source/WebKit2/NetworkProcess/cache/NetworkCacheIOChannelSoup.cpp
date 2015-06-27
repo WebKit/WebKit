@@ -175,57 +175,6 @@ void IOChannel::read(size_t offset, size_t size, WorkQueue* queue, std::function
         reinterpret_cast<GAsyncReadyCallback>(inputStreamReadReadyCallback), asyncData);
 }
 
-// FIXME: It would be better to do without this.
-void IOChannel::readSync(size_t offset, size_t size, WorkQueue* queue, std::function<void (Data&, int error)> completionHandler)
-{
-    ASSERT(!isMainThread());
-
-    static GMutex mutex;
-    static GCond condition;
-    WTF::GMutexLocker<GMutex> lock(mutex);
-    RefPtr<IOChannel> channel(this);
-
-    if (!m_inputStream) {
-        runTaskInQueue([channel, completionHandler] {
-            Data data;
-            completionHandler(data, -1);
-            g_cond_signal(&condition);
-        }, queue);
-        g_cond_wait(&condition, &mutex);
-        return;
-    }
-
-    size_t bufferSize = std::min(size, gDefaultReadBufferSize);
-    uint8_t* bufferData = static_cast<uint8_t*>(fastMalloc(bufferSize));
-    GRefPtr<SoupBuffer> readBuffer = adoptGRef(soup_buffer_new_with_owner(bufferData, bufferSize, bufferData, fastFree));
-    Data data;
-    size_t pendingBytesToRead = size;
-    size_t bytesToRead = bufferSize;
-    do {
-        // FIXME: implement offset.
-        gssize bytesRead = g_input_stream_read(m_inputStream.get(), const_cast<char*>(readBuffer->data), bytesToRead, nullptr, nullptr);
-        if (bytesRead == -1) {
-            completionHandler(data, -1);
-            return;
-        }
-
-        if (!bytesRead)
-            break;
-
-        ASSERT(bytesRead > 0);
-        fillDataFromReadBuffer(readBuffer.get(), static_cast<size_t>(bytesRead), data);
-
-        pendingBytesToRead = size - data.size();
-        bytesToRead = std::min(pendingBytesToRead, readBuffer->length);
-    } while (pendingBytesToRead);
-
-    runTaskInQueue([channel, &data, completionHandler] {
-        completionHandler(data, 0);
-        g_cond_signal(&condition);
-    }, queue);
-    g_cond_wait(&condition, &mutex);
-}
-
 struct WriteAsyncData {
     RefPtr<IOChannel> channel;
     GRefPtr<SoupBuffer> buffer;
