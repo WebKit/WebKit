@@ -34,3 +34,20 @@ def text_content(element):
         else:
             text += text_content(child)
     return text
+
+
+HTTP_AUTH_HANDLERS = {
+    'basic': urllib2.HTTPBasicAuthHandler,
+    'digest': urllib2.HTTPDigestAuthHandler,
+}
+
+
+def setup_auth(server):
+    auth = server.get('auth')
+    if not auth:
+        return
+
+    password_manager = urllib2.HTTPPasswordMgr()
+    password_manager.add_password(realm=auth['realm'], uri=server['url'], user=auth['username'], passwd=auth['password'])
+    auth_handler = HTTP_AUTH_HANDLERS[auth['type']](password_manager)
+    urllib2.install_opener(urllib2.build_opener(auth_handler))

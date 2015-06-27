@@ -1,3 +1,50 @@
+2015-06-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        build-requests should use conform to JSON API format
+        https://bugs.webkit.org/show_bug.cgi?id=146375
+
+        Reviewed by Stephanie Lewis.
+
+        Instead of returning single dictionary that maps root set id to a dictionary of repository names
+        to revisions, timestamps, simply return root sets and roots "rows" or "objects" as defined in
+        JSON API (http://jsonapi.org/). This API change makes it easier to resolve the bug 146374 and
+        matches what we do in /api/test-groups.
+
+        Also add the support for /api/build-requests/?id=<id> to fetch the build request with <id>.
+        This is useful for debugging purposes.
+
+        * public/api/build-requests.php:
+        (main): Added the support for $_GET['id']. Also return "rootSets" and "roots".
+        (update_builds): Extracted from main.
+
+        * public/include/build-requests-fetcher.php:
+        (BuildRequestFetcher::fetch_request): Added. Used for /api/build-requests/?id=<id>.
+        (BuildRequestFetcher::results_internal): Always call fetch_roots_for_set_if_needed.
+        (BuildRequestFetcher::fetch_roots_for_set_if_needed): Renamed from fetch_roots_for_set.
+        Moved the logic to exit early when the root set had already been fetched here.
+
+        * public/v2/analysis.js:
+        (App.TestGroup._fetchTestResults): Fixed the bug that test groups without any successful results
+        won't be shown.
+
+        * tools/pull-os-versions.py:
+        (main):
+        (setup_auth): Moved to util.py
+
+        * tools/sync-with-buildbot.py:
+        (main): Replaced a bunch of perf dashboard related options by --server-config-json.
+        (update_and_fetch_build_requests): No longer takes build_request_auth since that's now taken care
+        of by setup_auth.
+        (organize_root_sets_by_id_and_repository_names): Added. Builds the old rootsSets directory based
+        on "roots" and "rootSets" dictionaries returned by /api/build-requests.
+        (config_for_request): Fixed a bug that the script blows up when the build request is missing
+        the repository specified in the configuration. This tolerance is necessary when a new repository
+        dependency is added but we want to run A/B tests for old builds without the dependency.
+        (fetch_json): No longer takes auth.
+
+        * tools/util.py:
+        (setup_auth): Moved from pull-os-versions.py to be shared with sync-with-buildbot.py.
+
 2015-06-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix. A/B testing is broken when continuous builders report revisions out of order.

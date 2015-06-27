@@ -133,7 +133,7 @@ App.TestGroup = App.NameLabelModel.extend({
     _fetchTestResults: function ()
     {
         var task = this.get('task');
-        var platform = this.get('platform');
+        var platform = this.get('platform') || (task ? task.get('platform') : null)
         if (!task || !platform)
             return null;
         var self = this;

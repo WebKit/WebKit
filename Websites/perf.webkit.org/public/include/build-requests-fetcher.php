@@ -30,6 +30,10 @@ class BuildRequestsFetcher {
             ORDER BY request_created_at, request_group, request_order', array($triggerable_id));
     }
 
+    function fetch_request($request_id) {
+        $this->rows = $this->db->select_rows('build_requests', 'request', array('id' => $request_id));
+    }
+
     function has_results() { return is_array($this->rows); }
     function results() { return $this->results_internal(false); }
     function results_with_resolved_ids() { return $this->results_internal(true); }
@@ -51,8 +55,7 @@ class BuildRequestsFetcher {
             $platform_id = $row['request_platform'];
             $root_set_id = $row['request_root_set'];
 
-            if (!array_key_exists($root_set_id, $this->root_sets_by_id))
-                $this->root_sets_by_id[$root_set_id] = $this->fetch_roots_for_set($root_set_id, $resolve_ids);
+            $this->fetch_roots_for_set_if_needed($root_set_id, $resolve_ids);
 
             array_push($requests, array(
                 'id' => $row['request_id'],
@@ -71,10 +74,6 @@ class BuildRequestsFetcher {
         return $requests;
     }
 
-    function root_sets_by_id() {
-        return $this->root_sets_by_id;
-    }
-
     function root_sets() {
         return $this->root_sets;
     }
@@ -83,12 +82,14 @@ class BuildRequestsFetcher {
         return $this->roots;
     }
 
-    private function fetch_roots_for_set($root_set_id, $resolve_ids) {
+    private function fetch_roots_for_set_if_needed($root_set_id, $resolve_ids) {
+        if (array_key_exists($root_set_id, $this->root_sets_by_id))
+            return;
+
         $root_rows = $this->db->query_and_fetch_all('SELECT *
             FROM roots, commits LEFT OUTER JOIN repositories ON commit_repository = repository_id
             WHERE root_commit = commit_id AND root_set = $1', array($root_set_id));
 
-        $roots = array();
         $root_ids = array();
         foreach ($root_rows as $row) {
             $repository = $row['repository_id'];
@@ -96,13 +97,17 @@ class BuildRequestsFetcher {
             $commit_time = $row['commit_time'];
             $root_id = $root_set_id . '-' . $repository;
             array_push($root_ids, $root_id);
-            array_push($this->roots, array('id' => $root_id, 'repository' => $repository, 'revision' => $revision));
-            $roots[$resolve_ids ? $row['repository_name'] : $row['repository_id']] = array(
-                'revision' => $revision, 'time' => Database::to_js_time($commit_time));
+            $repository_id = $resolve_ids ? $row['repository_name'] : $row['repository_id'];
+            array_push($this->roots, array(
+                'id' => $root_id,
+                'repository' => $repository_id,
+                'revision' => $revision,
+                'time' => Database::to_js_time($commit_time)));
         }
-        array_push($this->root_sets, array('id' => $root_set_id, 'roots' => $root_ids));
 
-        return $roots;
+        $this->root_sets_by_id[$root_set_id] = TRUE;
+
+        array_push($this->root_sets, array('id' => $root_set_id, 'roots' => $root_ids));
     }
 }
 

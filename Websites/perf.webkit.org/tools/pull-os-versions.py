@@ -12,12 +12,7 @@ import urllib2
 from xml.dom.minidom import parseString as parseXmlString
 from util import submit_commits
 from util import text_content
-
-
-HTTP_AUTH_HANDLERS = {
-    'basic': urllib2.HTTPBasicAuthHandler,
-    'digest': urllib2.HTTPDigestAuthHandler,
-}
+from util import setup_auth
 
 
 def main(argv):
@@ -61,17 +56,6 @@ def main(argv):
 
         print "Sleeping for %d seconds" % config['fetchInterval']
         time.sleep(config['fetchInterval'])
-
-
-def setup_auth(server):
-    auth = server.get('auth')
-    if not auth:
-        return
-
-    password_manager = urllib2.HTTPPasswordMgr()
-    password_manager.add_password(realm=auth['realm'], uri=server['url'], user=auth['username'], passwd=auth['password'])
-    auth_handler = HTTP_AUTH_HANDLERS[auth['type']](password_manager)
-    urllib2.install_opener(urllib2.build_opener(auth_handler))
 
 
 def available_builds_from_command(repository_name, command, lines_to_ignore):

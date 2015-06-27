@@ -9,24 +9,30 @@ import time
 import urllib
 import urllib2
 
+from util import setup_auth
+
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--build-requests-url', required=True, help='URL for the build requests JSON API; e.g. https://perf.webkit.org/api/build-requests/build.webkit.org/')
-    parser.add_argument('--build-requests-user', help='The username for Basic Authentication to access the build requests JSON API')
-    parser.add_argument('--build-requests-password', help='The password for Basic Authentication to access the build requests JSON API')
-    parser.add_argument('--slave-name', required=True, help='The slave name used to update the build requets status')
-    parser.add_argument('--slave-password', required=True, help='The slave password used to update the build requets status')
+    parser.add_argument('--triggerable', required=True, help='The name of the triggerable to process. e.g. build-webkit')
     parser.add_argument('--buildbot-url', required=True, help='URL for a buildbot builder; e.g. "https://build.webkit.org/"')
     parser.add_argument('--builder-config-json', required=True, help='The path to a JSON file that specifies which test and platform will be posted to which builder. '
         'The JSON should contain an array of dictionaries with keys "platform", "test", and "builder" '
         'with the platform name (e.g. mountainlion), the test path (e.g. ["Parser", "html5-full-render"]), and the builder name (e.g. Apple MountainLion Release (Perf)) as values.')
+    parser.add_argument('--server-config-json', required=True, help='The path to a JSON file that specifies the perf dashboard.')
+
     parser.add_argument('--lookback-count', type=int, default=10, help='The number of builds to look back when finding in-progress builds on the buildbot')
     parser.add_argument('--seconds-to-sleep', type=float, default=120, help='The seconds to sleep between iterations')
     args = parser.parse_args()
 
     configurations = load_config(args.builder_config_json, args.buildbot_url.strip('/'))
-    build_request_auth = {'user': args.build_requests_user, 'password': args.build_requests_password or ''} if args.build_requests_user else None
+
+    with open(args.server_config_json) as server_config_json:
+        server_config = json.load(server_config_json)
+        setup_auth(server_config['server'])
+
+    build_requests_url = server_config['server']['url'] + '/api/build-requests/' + args.triggerable
+
     request_updates = {}
     while True:
         request_updates.update(find_request_updates(configurations, args.lookback_count))
@@ -35,14 +41,21 @@ def main():
         else:
             print 'No updates...'
 
-        payload = {'buildRequestUpdates': request_updates, 'slaveName': args.slave_name, 'slavePassword': args.slave_password}
-        response = update_and_fetch_build_requests(args.build_requests_url, build_request_auth, payload)
-        root_sets = response.get('rootSets', {})
+        payload = {
+            'buildRequestUpdates': request_updates,
+            'slaveName': server_config['slave']['name'],
+            'slavePassword': server_config['slave']['password']}
+        response = update_and_fetch_build_requests(build_requests_url, payload)
         open_requests = response.get('buildRequests', [])
+
+        root_sets = organize_root_sets_by_id_and_repository_names(response.get('rootSets', {}), response.get('roots', []))
 
         for request in filter(lambda request: request['status'] == 'pending', open_requests):
             config = config_for_request(configurations, request)
-            if len(config['scheduledRequests']) < 1:
+            if not config:
+                print >> sys.stderr, "Failed to find the configuration for request %s: %s" % (str(request['id']), json.dumps(request))
+                continue
+            if config and len(config['scheduledRequests']) < 1:
                 print "Scheduling the build request %s..." % str(request['id'])
                 schedule_request(config, request, root_sets)
 
@@ -109,9 +122,9 @@ def find_request_updates(configurations, lookback_count):
     return request_updates
 
 
-def update_and_fetch_build_requests(build_requests_url, build_request_auth, payload):
+def update_and_fetch_build_requests(build_requests_url, payload):
     try:
-        response = fetch_json(build_requests_url, payload=json.dumps(payload), auth=build_request_auth)
+        response = fetch_json(build_requests_url, payload=json.dumps(payload))
         if response['status'] != 'OK':
             raise ValueError(response['status'])
         return response
@@ -132,15 +145,32 @@ def find_stale_request_updates(configurations, open_requests, requests_on_buildb
     return request_updates
 
 
-def schedule_request(config, request, root_sets):
-    roots = root_sets.get(request['rootSet'], {})
+def organize_root_sets_by_id_and_repository_names(root_sets, roots):
+    result = {}
+    root_by_id = {}
+    for root in roots:
+        root_by_id[root['id']] = root
 
+    for root_set in root_sets:
+        roots_by_repository = {}
+        for root_id in root_set['roots']:
+            root = root_by_id[root_id]
+            roots_by_repository[root['repository']] = root
+        result[root_set['id']] = roots_by_repository
+
+    return result
+
+
+def schedule_request(config, request, root_sets):
+    roots = root_sets[request['rootSet']]
     payload = {}
     for property_name, property_value in config['arguments'].iteritems():
         if not isinstance(property_value, dict):
             payload[property_name] = property_value
         elif 'root' in property_value:
-            payload[property_name] = roots[property_value['root']]['revision']
+            repository_name = property_value['root']
+            if repository_name in roots:
+                payload[property_name] = roots[repository_name]['revision']
         elif 'rootsExcluding' in property_value:
             excluded_roots = property_value['rootsExcluding']
             filtered_roots = {}
@@ -150,6 +180,7 @@ def schedule_request(config, request, root_sets):
             payload[property_name] = json.dumps(filtered_roots)
         else:
             print >> sys.stderr, "Failed to process an argument %s: %s" % (property_name, property_value)
+            return
     payload[config['buildRequestArgument']] = request['id']
 
     try:
@@ -166,10 +197,8 @@ def config_for_request(configurations, request):
     return None
 
 
-def fetch_json(url, auth={}, payload=None):
+def fetch_json(url, payload=None):
     request = urllib2.Request(url)
-    if auth:
-        request.add_header('Authorization', "Basic %s" % base64.encodestring('%s:%s' % (auth['user'], auth['password'])).rstrip('\n'))
     response = urllib2.urlopen(request, payload).read()
     try:
         return json.loads(response)
