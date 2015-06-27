@@ -1,3 +1,45 @@
+2015-06-27  Darin Adler  <darin@apple.com>
+
+        Make converting JSString to StringView idiomatically safe
+        https://bugs.webkit.org/show_bug.cgi?id=146387
+
+        Reviewed by Anders Carlsson.
+
+        * jsc.cpp:
+        (functionPrint): Add explicit call to SafeView::get, needed since there
+        is no StringView temporary.
+        (functionDebug): Ditto.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::holesMustForwardToPrototype): Refactored into helper function.
+        (JSC::join): Refactored so that StringView is a function argument, making
+        the lifetime simpler.
+        (JSC::arrayProtoFuncJoin): Ditto.
+        (JSC::arrayProtoFuncReverse): Use new holesMustForwardToPrototype helper.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::encode): Add explicit call to SafeView::get.
+
+        * runtime/JSString.h: Moved declarations of functions to the top of the
+        file instead of mixing them in with the function definitions. Changed
+        return type of the view function to return a JSString::SafeView so that
+        the JSString's lifetime will last as long as the StringView does in
+        typical coding idioms.
+        (JSC::JSString::getIndex): Use unsafeView so we can index into the
+        view; could also have used view.get but here in this class this seems fine.
+        (JSC::JSRopeString::unsafeView): Renamed existing view function to this.
+        (JSC::JSString::unsafeView): Ditto.
+        (JSC::JSString::SafeView::SafeView): Contains reference to an ExecState
+        and a JSString. The ExecState is needed to create the StringView, and the
+        JSString needs to be kept alive as long as the StringView is.
+        (JSC::JSString::SafeView::operator StringView): Call unsafeView.
+        (JSC::JSString::SafeView::get): Convenience for when we want to call
+        StringView member functions.
+        (JSC::JSString::view): Added. Returns a SafeView.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncIndexOf): Add explicit call to SafeView::get.
+
 2015-06-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove ARMv7Assembler.cpp

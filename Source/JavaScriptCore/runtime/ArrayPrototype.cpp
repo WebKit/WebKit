@@ -40,7 +40,6 @@
 #include "ObjectConstructor.h"
 #include "ObjectPrototype.h"
 #include "StringRecursionChecker.h"
-#include "StrongInlines.h"
 #include <algorithm>
 #include <wtf/Assertions.h>
 #include <wtf/HashSet.h>
@@ -380,31 +379,17 @@ template<typename T> static inline bool containsHole(T* data, unsigned length)
     return false;
 }
 
-EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
+static inline bool holesMustForwardToPrototype(ExecState& state, JSObject* object)
 {
-    JSObject* thisObject = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
+    auto& vm = state.vm();
+    return object->structure(vm)->holesMustForwardToPrototype(vm);
+}
 
-    unsigned length = getLength(exec, thisObject);
-    if (exec->hadException())
-        return JSValue::encode(jsUndefined());
-
-    StringRecursionChecker checker(exec, thisObject);
-    if (JSValue earlyReturnValue = checker.earlyReturnValue())
-        return JSValue::encode(earlyReturnValue);
-
-    auto& vm = exec->vm();
-
-    Strong<JSString> separatorOnHeap;
-    StringView separator;
-    if (exec->argument(0).isUndefined()) {
-        static const LChar comma = ',';
-        separator = { &comma, 1 };
-    } else {
-        separatorOnHeap.set(vm, exec->argument(0).toString(exec));
-        if (exec->hadException())
-            return JSValue::encode(jsUndefined());
-        separator = separatorOnHeap->view(exec);
-    }
+static inline JSValue join(ExecState& state, JSObject* thisObject, StringView separator)
+{
+    unsigned length = getLength(&state, thisObject);
+    if (state.hadException())
+        return jsUndefined();
 
     switch (thisObject->indexingType()) {
     case ALL_CONTIGUOUS_INDEXING_TYPES:
@@ -412,86 +397,106 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
         auto& butterfly = *thisObject->butterfly();
         if (length > butterfly.publicLength())
             break;
-        JSStringJoiner joiner(*exec, separator, length);
-        if (exec->hadException())
-            return JSValue::encode(jsUndefined());
+        JSStringJoiner joiner(state, separator, length);
+        if (state.hadException())
+            return jsUndefined();
         auto data = butterfly.contiguous().data();
         bool holesKnownToBeOK = false;
         for (unsigned i = 0; i < length; ++i) {
             if (JSValue value = data[i].get()) {
-                joiner.append(*exec, value);
-                if (exec->hadException())
-                    return JSValue::encode(jsUndefined());
+                joiner.append(state, value);
+                if (state.hadException())
+                    return jsUndefined();
             } else {
                 if (!holesKnownToBeOK) {
-                    if (thisObject->structure(vm)->holesMustForwardToPrototype(vm))
+                    if (holesMustForwardToPrototype(state, thisObject))
                         goto generalCase;
                     holesKnownToBeOK = true;
                 }
                 joiner.appendEmptyString();
             }
         }
-        return JSValue::encode(joiner.join(*exec));
+        return joiner.join(state);
     }
     case ALL_DOUBLE_INDEXING_TYPES: {
         auto& butterfly = *thisObject->butterfly();
         if (length > butterfly.publicLength())
             break;
-        JSStringJoiner joiner(*exec, separator, length);
-        if (exec->hadException())
-            return JSValue::encode(jsUndefined());
+        JSStringJoiner joiner(state, separator, length);
+        if (state.hadException())
+            return jsUndefined();
         auto data = butterfly.contiguousDouble().data();
         bool holesKnownToBeOK = false;
         for (unsigned i = 0; i < length; ++i) {
             double value = data[i];
             if (!isHole(value))
-                joiner.append(*exec, jsDoubleNumber(value));
+                joiner.append(state, jsDoubleNumber(value));
             else {
                 if (!holesKnownToBeOK) {
-                    if (thisObject->structure(vm)->holesMustForwardToPrototype(vm))
+                    if (thisObject->structure(state.vm())->holesMustForwardToPrototype(state.vm()))
                         goto generalCase;
                     holesKnownToBeOK = true;
                 }
                 joiner.appendEmptyString();
             }
         }
-        return JSValue::encode(joiner.join(*exec));
+        return joiner.join(state);
     }
     case ALL_ARRAY_STORAGE_INDEXING_TYPES: {
         auto& storage = *thisObject->butterfly()->arrayStorage();
         if (length > storage.vectorLength())
             break;
-        if (storage.hasHoles() && thisObject->structure(vm)->holesMustForwardToPrototype(vm))
+        if (storage.hasHoles() && thisObject->structure(state.vm())->holesMustForwardToPrototype(state.vm()))
             break;
-        JSStringJoiner joiner(*exec, separator, length);
-        if (exec->hadException())
-            return JSValue::encode(jsUndefined());
+        JSStringJoiner joiner(state, separator, length);
+        if (state.hadException())
+            return jsUndefined();
         auto data = storage.vector().data();
         for (unsigned i = 0; i < length; ++i) {
             if (JSValue value = data[i].get()) {
-                joiner.append(*exec, value);
-                if (exec->hadException())
-                    return JSValue::encode(jsUndefined());
+                joiner.append(state, value);
+                if (state.hadException())
+                    return jsUndefined();
             } else
                 joiner.appendEmptyString();
         }
-        return JSValue::encode(joiner.join(*exec));
+        return joiner.join(state);
     }
     }
 
 generalCase:
-    JSStringJoiner joiner(*exec, separator, length);
+    JSStringJoiner joiner(state, separator, length);
+    if (state.hadException())
+        return jsUndefined();
+    for (unsigned i = 0; i < length; ++i) {
+        JSValue element = thisObject->getIndex(&state, i);
+        if (state.hadException())
+            return jsUndefined();
+        joiner.append(state, element);
+        if (state.hadException())
+            return jsUndefined();
+    }
+    return joiner.join(state);
+}
+
+EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
+{
+    JSObject* thisObject = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
+
+    StringRecursionChecker checker(exec, thisObject);
+    if (JSValue earlyReturnValue = checker.earlyReturnValue())
+        return JSValue::encode(earlyReturnValue);
+
+    JSValue separatorValue = exec->argument(0);
+    if (separatorValue.isUndefined()) {
+        const LChar comma = ',';
+        return JSValue::encode(join(*exec, thisObject, { &comma, 1 }));
+    }
+
+    JSString* separator = separatorValue.toString(exec);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    for (unsigned i = 0; i < length; ++i) {
-        JSValue element = thisObject->getIndex(exec, i);
-        if (exec->hadException())
-            return JSValue::encode(jsUndefined());
-        joiner.append(*exec, element);
-        if (exec->hadException())
-            return JSValue::encode(jsUndefined());
-    }
-    return JSValue::encode(joiner.join(*exec));
+    return JSValue::encode(join(*exec, thisObject, separator->view(exec)));
 }
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState* exec)
@@ -619,8 +624,6 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    auto& vm = exec->vm();
-
     switch (thisObject->indexingType()) {
     case ALL_CONTIGUOUS_INDEXING_TYPES:
     case ALL_INT32_INDEXING_TYPES: {
@@ -628,7 +631,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
         if (length > butterfly.publicLength())
             break;
         auto data = butterfly.contiguous().data();
-        if (containsHole(data, length) && thisObject->structure(vm)->holesMustForwardToPrototype(vm))
+        if (containsHole(data, length) && holesMustForwardToPrototype(*exec, thisObject))
             break;
         std::reverse(data, data + length);
         return JSValue::encode(thisObject);
@@ -638,7 +641,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
         if (length > butterfly.publicLength())
             break;
         auto data = butterfly.contiguousDouble().data();
-        if (containsHole(data, length) && thisObject->structure(vm)->holesMustForwardToPrototype(vm))
+        if (containsHole(data, length) && holesMustForwardToPrototype(*exec, thisObject))
             break;
         std::reverse(data, data + length);
         return JSValue::encode(thisObject);
@@ -647,7 +650,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
         auto& storage = *thisObject->butterfly()->arrayStorage();
         if (length > storage.vectorLength())
             break;
-        if (storage.hasHoles() && thisObject->structure(vm)->holesMustForwardToPrototype(vm))
+        if (storage.hasHoles() && holesMustForwardToPrototype(*exec, thisObject))
             break;
         auto data = storage.vector().data();
         std::reverse(data, data + length);

@@ -896,7 +896,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncIndexOf(ExecState* exec)
     if (thisJSString->length() < otherJSString->length() + pos)
         return JSValue::encode(jsNumber(-1));
 
-    size_t result = thisJSString->view(exec).find(otherJSString->view(exec), pos);
+    size_t result = thisJSString->view(exec).get().find(otherJSString->view(exec), pos);
     if (result == notFound)
         return JSValue::encode(jsNumber(-1));
     return JSValue::encode(jsNumber(result));

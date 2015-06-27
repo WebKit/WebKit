@@ -701,7 +701,7 @@ EncodedJSValue JSC_HOST_CALL functionPrint(ExecState* exec)
         if (i)
             putchar(' ');
 
-        printf("%s", exec->uncheckedArgument(i).toString(exec)->view(exec).utf8().data());
+        printf("%s", exec->uncheckedArgument(i).toString(exec)->view(exec).get().utf8().data());
     }
 
     putchar('\n');
@@ -722,7 +722,7 @@ EncodedJSValue JSC_HOST_CALL functionDumpCallFrame(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL functionDebug(ExecState* exec)
 {
-    fprintf(stderr, "--> %s\n", exec->argument(0).toString(exec)->view(exec).utf8().data());
+    fprintf(stderr, "--> %s\n", exec->argument(0).toString(exec)->view(exec).get().utf8().data());
     return JSValue::encode(jsUndefined());
 }
 
