@@ -1,3 +1,14 @@
+2015-06-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][SOUP] Implement WebCore::PublicSuffix for soup and enable PUBLIC_SUFFIX_LIST for GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=146318
+
+        Reviewed by Sergio Villar Senin.
+
+        Enable PUBLIC_SUFFIX_LIST for GTK+.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2015-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.9.3 release.
