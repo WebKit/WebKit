@@ -1,3 +1,18 @@
+2015-06-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] AppleGothic has been superseded by Apple SD Gothic Neo
+        https://bugs.webkit.org/show_bug.cgi?id=146372
+        <rdar://problem/21574004>
+
+        Reviewed by Dean Jackson.
+
+        * fast/text/hangul-generic-font-families.html: Added.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator/fast/text/hangul-generic-font-families-expected.html: Added.
+        * platform/mac/fast/text/hangul-generic-font-families-expected.html: Added.
+        * platform/win/TestExpectations:
+
 2015-06-26  Matt Daiter  <mdaiter@apple.com>
 
         Supporting getStartDate and added tests

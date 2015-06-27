@@ -2279,3 +2279,4 @@ webkit.org/b/146233 fast/forms/listbox-visible-size.html [ Failure ]
 
 # Test requires hardcoded font names, which I do not have for this port.
 fast/text/han-generic-font-families.html [ WontFix ]
+fast/text/hangul-generic-font-families.html [ WontFix ]

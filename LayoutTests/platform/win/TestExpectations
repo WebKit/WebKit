@@ -3108,3 +3108,4 @@ fast/text/decorations-vertical-underline.html [ Skip ]
 
 # Test requires hardcoded font names, which I do not have for this port.
 fast/text/han-generic-font-families.html [ WontFix ]
+fast/text/hangul-generic-font-families.html [ WontFix ]

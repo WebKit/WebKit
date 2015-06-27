@@ -99,8 +99,8 @@ void Settings::initializeDefaultFontFamilies()
     // There is no serif Korean font in default iOS installation.
     setStandardFontFamily("Apple SD Gothic Neo", USCRIPT_HANGUL);
     setSerifFontFamily("Apple SD Gothic Neo", USCRIPT_HANGUL);
-    setFixedFontFamily("AppleGothic", USCRIPT_HANGUL);
-    setSansSerifFontFamily("AppleGothic", USCRIPT_HANGUL);
+    setFixedFontFamily("Apple SD Gothic Neo", USCRIPT_HANGUL);
+    setSansSerifFontFamily("Apple SD Gothic Neo", USCRIPT_HANGUL);
 
     setStandardFontFamily("Times", USCRIPT_COMMON);
     setFixedFontFamily("Courier", USCRIPT_COMMON);
