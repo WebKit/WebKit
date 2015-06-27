@@ -154,11 +154,11 @@ CFErrorRef ResourceError::cfError() const
         if (!m_failingURL.isEmpty()) {
             RetainPtr<CFStringRef> failingURLString = m_failingURL.createCFString();
             CFDictionarySetValue(userInfo.get(), failingURLStringKey, failingURLString.get());
+            // FIXEME: We normally create a CFURL from a string by using URL::createCFURL, which handles
+            // cases correctly that CFURLCreateWithString handles incorrectly.
             RetainPtr<CFURLRef> url = adoptCF(CFURLCreateWithString(0, failingURLString.get(), 0));
             if (url)
                 CFDictionarySetValue(userInfo.get(), failingURLKey, url.get());
-            else
-                LOG(Network, "CFNet - CFURLCreateWithString(0, \"%s\", 0) returned NULL", m_failingURL.utf8().data());
         }
 
 #if PLATFORM(WIN)
