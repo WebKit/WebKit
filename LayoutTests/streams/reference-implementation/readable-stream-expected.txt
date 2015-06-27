@@ -5,8 +5,8 @@ FAIL ReadableStream instances should have the correct list of properties assert_
 PASS ReadableStream constructor should throw for non-function start arguments 
 PASS ReadableStream constructor can get initial garbage as cancel argument 
 PASS ReadableStream constructor can get initial garbage as pull argument 
-FAIL ReadableStream start should be called with the proper parameters assert_array_equals: the controller should have the right properties lengths differ, expected 5 got 4
-FAIL ReadableStream start controller parameter should be extensible assert_array_equals: prototype should have the right properties lengths differ, expected 5 got 4
+FAIL ReadableStream start should be called with the proper parameters assert_false: close should be non-enumerable expected false got true
+PASS ReadableStream start controller parameter should be extensible 
 PASS ReadableStream should be able to call start method within prototype chain of its source 
 PASS ReadableStream start should be able to return a promise 
 PASS ReadableStream start should be able to return a promise and reject it 
@@ -26,8 +26,8 @@ PASS ReadableStream: enqueue should throw when the stream is readable but draini
 PASS ReadableStream: enqueue should throw when the stream is closed 
 PASS ReadableStream: enqueue should throw the stored error when the stream is errored 
 PASS ReadableStream: should call underlying source methods as methods 
-FAIL ReadableStream strategies: the default strategy should give desiredSize of 1 to start, decreasing by 1 per enqueue assert_equals: expected (number) 1 but got (undefined) undefined
-FAIL ReadableStream strategies: the default strategy should continue giving desiredSize of 1 if the chunks are read immediately assert_equals: desiredSize should start at 1 expected (number) 1 but got (undefined) undefined
+PASS ReadableStream strategies: the default strategy should give desiredSize of 1 to start, decreasing by 1 per enqueue 
+PASS ReadableStream strategies: the default strategy should continue giving desiredSize of 1 if the chunks are read immediately 
 PASS ReadableStream integration test: adapting a random push source 
 PASS ReadableStream integration test: adapting a sync pull source 
 

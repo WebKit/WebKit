@@ -49,6 +49,8 @@ public:
     void ref() { m_stream.ref(); }
     void deref() { m_stream.deref(); }
 
+    double desiredSize() const { return m_stream.desiredSize(); }
+
 private:
     ReadableJSStream& m_stream;
 };
