@@ -1286,9 +1286,4 @@ webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 [ ElCapitan+ ] http/tests/media/video-throttled-load-metadata.html [ Failure ]
 [ ElCapitan+ ] http/tests/security/contentSecurityPolicy/media-src-allowed.html [ Skip ]
 
-# <rdar://problem/21486062>
-[ ElCapitan+ Debug ] fast/text/justify-ideograph-complex.html [ Pass Failure ]
-[ ElCapitan+ Debug ] fast/text/justify-ideograph-simple.html [ Pass Failure ]
-[ ElCapitan+ Debug ] fast/text/justify-ideograph-vertical.html [ Pass Failure ]
-
 webkit.org/b/146385 [ Yosemite ] fast/text/han-generic-font-families.html [ ImageOnlyFailure ]

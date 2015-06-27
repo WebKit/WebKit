@@ -1,5 +1,17 @@
 2015-06-27  David Kilzer  <ddkilzer@apple.com>
 
+        Rebaseline El Capitan results for fast/text/justify-ideograph-{complex,simple,vertical}.html
+
+        * platform/mac/TestExpectations: Removed expectations.
+        * platform/mac/fast/text/justify-ideograph-complex-expected.png: Updated.
+        * platform/mac/fast/text/justify-ideograph-complex-expected.txt: Updated.
+        * platform/mac/fast/text/justify-ideograph-simple-expected.png: Updated.
+        * platform/mac/fast/text/justify-ideograph-simple-expected.txt: Updated.
+        * platform/mac/fast/text/justify-ideograph-vertical-expected.png: Added.
+        * platform/mac/fast/text/justify-ideograph-vertical-expected.txt: Updated.
+
+2015-06-27  David Kilzer  <ddkilzer@apple.com>
+
         Document more slow fast/canvas/webgl tests on Mavericks Debug WK1
 
         See Flakiness Dashboard:
