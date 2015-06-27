@@ -184,7 +184,10 @@ static RetainPtr<NSError> createNSErrorFromResourceErrorBase(const ResourceError
     if (!resourceError.failingURL().isEmpty()) {
         RetainPtr<NSURL> cocoaURL = adoptNS([[NSURL alloc] initWithString:resourceError.failingURL()]);
         [userInfo.get() setValue:resourceError.failingURL() forKey:@"NSErrorFailingURLStringKey"];
-        [userInfo.get() setValue:cocoaURL.get() forKey:@"NSErrorFailingURLKey"];
+        if (cocoaURL)
+            [userInfo.get() setValue:cocoaURL.get() forKey:@"NSErrorFailingURLKey"];
+        else
+            LOG(Network, "[NSURL initWithString:@\"%s\"] returned nil", resourceError.failingURL().utf8().data());
     }
 
     return adoptNS([[NSError alloc] initWithDomain:resourceError.domain() code:resourceError.errorCode() userInfo:userInfo.get()]);

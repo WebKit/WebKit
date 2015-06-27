@@ -155,7 +155,10 @@ CFErrorRef ResourceError::cfError() const
             RetainPtr<CFStringRef> failingURLString = m_failingURL.createCFString();
             CFDictionarySetValue(userInfo.get(), failingURLStringKey, failingURLString.get());
             RetainPtr<CFURLRef> url = adoptCF(CFURLCreateWithString(0, failingURLString.get(), 0));
-            CFDictionarySetValue(userInfo.get(), failingURLKey, url.get());
+            if (url)
+                CFDictionarySetValue(userInfo.get(), failingURLKey, url.get());
+            else
+                LOG(Network, "CFNet - CFURLCreateWithString(0, \"%s\", 0) returned NULL", m_failingURL.utf8().data());
         }
 
 #if PLATFORM(WIN)
