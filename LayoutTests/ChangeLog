@@ -1,5 +1,17 @@
 2015-06-27  David Kilzer  <ddkilzer@apple.com>
 
+        Document more slow fast/canvas/webgl tests on Mavericks Debug WK1
+
+        See Flakiness Dashboard:
+        <http://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html#showAllRuns=true&tests=fast%2Fcanvas%2Fwebgl%2Ftex-image-and-sub-image-2d-with-video-rgba4444.html>
+        <http://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html#showAllRuns=true&tests=fast%2Fcanvas%2Fwebgl%2Ftex-image-and-sub-image-2d-with-video-rgba5551.html>
+
+        * platform/mac-wk1/TestExpectations: Add slow expectations for:
+        - fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.html
+        - fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html
+
+2015-06-27  David Kilzer  <ddkilzer@apple.com>
+
         REGRESSION (r186001): fast/text/han-generic-font-families.html always fails on Yosemite
 
         Fix tracked by:  <http://webkit.org/b/146385>

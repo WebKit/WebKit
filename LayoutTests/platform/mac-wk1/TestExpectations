@@ -118,6 +118,8 @@ fast/events/mouse-force-up.html [ Skip ]
 # ShouldOpenExternalURLs not yet supported in WK1
 loader/navigation-policy [ Skip ]
 
+[ Mavericks Debug ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Slow ]
+[ Mavericks Debug ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Slow ]
 [ Mavericks Debug ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Slow ]
 [ Mavericks Debug ] fast/canvas/webgl/tex-image-and-uniform-binding-bugs.html [ Slow ]
 
