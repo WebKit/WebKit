@@ -1,5 +1,16 @@
 2015-06-28  Dan Bernstein  <mitz@apple.com>
 
+        [Xcode] Use the same environment for command-line and IDE builds
+        https://bugs.webkit.org/show_bug.cgi?id=146401
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/webkitdirs.pm:
+        (XcodeOptions): Set the UseSanitizedBuildSystemEnvironment user default to YES, which makes
+        xcodebuild use the same environment Xcode uses.
+
+2015-06-28  Dan Bernstein  <mitz@apple.com>
+
         REGRESSION (r185915): Source-incompatible change in WKPageUIClient
         https://bugs.webkit.org/show_bug.cgi?id=146396
 

@@ -674,7 +674,7 @@ sub XcodeOptions
     my @architectureOption = ($architecture ? "ARCHS=$architecture" : ());
     my @asanOption = ($asanIsEnabled ? ("-xcconfig", sourceDir() . "/Tools/asan/asan.xcconfig", "ASAN_IGNORE=" . sourceDir() . "/Tools/asan/webkit-asan-ignore.txt") : ());
 
-    return (@baseProductDirOption, "-configuration", $configuration, @architectureOption, @sdkOption, @asanOption, argumentsForXcode());
+    return ("-UseSanitizedBuildSystemEnvironment=YES", @baseProductDirOption, "-configuration", $configuration, @architectureOption, @sdkOption, @asanOption, argumentsForXcode());
 }
 
 sub XcodeOptionString
