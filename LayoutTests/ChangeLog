@@ -1,5 +1,16 @@
 2015-06-27  David Kilzer  <ddkilzer@apple.com>
 
+        fast/canvas/webgl/tex-*.html flakily timeout on Mavericks Debug WK1
+
+        * platform/mac-wk1/TestExpectations: Change "Slow" to
+        "Pass Timeout" since the tests flakily time out and fail:
+        - fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.html
+        - fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html
+        - fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html
+        - fast/canvas/webgl/tex-image-and-uniform-binding-bugs.html
+
+2015-06-27  David Kilzer  <ddkilzer@apple.com>
+
         REGRESSION (r186038): accessibility/aria-roledescription.html fails on Windows
 
         * platform/win/TestExpectations: Mark as failing on Windows:
