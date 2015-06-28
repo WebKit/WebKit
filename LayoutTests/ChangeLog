@@ -1,3 +1,10 @@
+2015-06-28  David Kilzer  <ddkilzer@apple.com>
+
+        Mark http/tests/contentextensions/character-set-basic-support.html as flaky on mac-wk2
+
+        * platform/mac-wk2/TestExpectations: Mark ask flaky:
+        - http/tests/contentextensions/character-set-basic-support.html
+
 2015-06-28  Chris Dumez  <cdumez@apple.com>
 
         Crash: com.apple.WebKit.WebContent at com.apple.WebCore: WebCore::CachedFrameBase::restore + 333
