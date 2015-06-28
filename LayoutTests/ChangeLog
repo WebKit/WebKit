@@ -1,3 +1,10 @@
+2015-06-27  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r186038): accessibility/aria-roledescription.html fails on Windows
+
+        * platform/win/TestExpectations: Mark as failing on Windows:
+        - accessibility/aria-roledescription.html
+
 2015-06-27  Chris Fleizach  <cfleizach@apple.com>
 
         AX: implement @aria-roledescription
