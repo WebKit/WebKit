@@ -1,3 +1,12 @@
+2015-06-28  Xabier Rodriguez Calvar  <calvaris@igalia.com> and Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Streams API] Add support for chunks with customized sizes
+        https://bugs.webkit.org/show_bug.cgi?id=146312
+
+        Reviewed by Darin Adler.
+
+        * streams/reference-implementation/bad-strategies-expected.txt:
+
 2015-06-27  David Kilzer  <ddkilzer@apple.com>
 
         fast/canvas/webgl/tex-*.html flakily timeout on Mavericks Debug WK1

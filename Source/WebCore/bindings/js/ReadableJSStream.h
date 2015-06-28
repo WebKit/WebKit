@@ -64,7 +64,7 @@ public:
 
     void enqueue(JSC::ExecState&);
 
-    double desiredSize() const { return m_highWaterMark - m_chunkQueue.size(); }
+    double desiredSize() const { return m_highWaterMark - m_totalQueueSize; }
 
 private:
     ReadableJSStream(ScriptExecutionContext&, JSC::ExecState&, JSC::JSObject*, double, JSC::JSFunction*);
@@ -82,12 +82,21 @@ private:
 
     JSDOMGlobalObject* globalObject();
 
+    double retrieveChunkSize(JSC::ExecState&, JSC::JSValue);
+
     std::unique_ptr<ReadableStreamController> m_controller;
     // FIXME: we should consider not using JSC::Strong, see https://bugs.webkit.org/show_bug.cgi?id=146278
     JSC::Strong<JSC::Unknown> m_error;
     JSC::Strong<JSC::JSFunction> m_errorFunction;
     JSC::Strong<JSC::JSObject> m_source;
-    Deque<JSC::Strong<JSC::Unknown>> m_chunkQueue;
+
+    struct Chunk {
+        JSC::Strong<JSC::Unknown> value;
+        double size;
+    };
+    Deque<Chunk> m_chunkQueue;
+
+    double m_totalQueueSize { 0 };
     double m_highWaterMark;
     JSC::Strong<JSC::JSFunction> m_sizeFunction;
 };

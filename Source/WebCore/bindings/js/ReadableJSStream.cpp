@@ -323,25 +323,59 @@ JSValue ReadableJSStream::read()
 {
     ASSERT(hasValue());
 
-    return m_chunkQueue.takeFirst().get();
+    Chunk chunk = m_chunkQueue.takeFirst();
+    m_totalQueueSize -= chunk.size;
+
+    return chunk.value.get();
 }
 
-void ReadableJSStream::enqueue(ExecState& exec)
+void ReadableJSStream::enqueue(ExecState& state)
 {
     ASSERT(!isCloseRequested());
 
     if (!isReadable())
         return;
 
-    JSValue chunk = exec.argumentCount() ? exec.argument(0) : jsUndefined();
+    JSValue chunk = state.argument(0);
     if (resolveReadCallback(chunk)) {
         pull();
         return;
     }
 
-    m_chunkQueue.append(JSC::Strong<JSC::Unknown>(exec.vm(), chunk));
-    // FIXME: Compute chunk size.
+    double size = retrieveChunkSize(state, chunk);
+    if (state.hadException()) {
+        storeError(state, state.exception()->value());
+        return;
+    }
+
+    m_chunkQueue.append({ JSC::Strong<JSC::Unknown>(state.vm(), chunk), size });
+    m_totalQueueSize += size;
+
     pull();
+}
+
+double ReadableJSStream::retrieveChunkSize(ExecState& state, JSValue chunk)
+{
+    if (!m_sizeFunction)
+        return 1;
+
+    MarkedArgumentBuffer arguments;
+    arguments.append(chunk);
+
+    JSValue sizeValue = callFunction(state, m_sizeFunction.get(), jsUndefined(), arguments);
+    if (state.hadException())
+        return 0;
+
+    double size = sizeValue.toNumber(&state);
+    if (state.hadException())
+        return 0;
+
+    if (!std::isfinite(size)) {
+        throwVMError(&state, createRangeError(&state, ASCIILiteral("Incorrect double value")));
+        return 0;
+    }
+
+    return size;
 }
 
 } // namespace WebCore

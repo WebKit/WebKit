@@ -1,22 +1,10 @@
 
 PASS Readable stream: throwing strategy.size getter 
-FAIL Readable stream: throwing strategy.size method assert_throws: enqueue should throw the error function "function () { c.enqueue('a'); }" did not throw
+PASS Readable stream: throwing strategy.size method 
 PASS Readable stream: throwing strategy.highWaterMark getter 
 PASS Readable stream: invalid strategy.highWaterMark 
 PASS Readable stream: negative strategy.highWaterMark 
-FAIL Readable stream: strategy.size returning NaN assert_equals: enqueue should throw a RangeError expected function "function RangeError() {
-    [native code]
-}" but got function "function AssertionError(message)
-    {
-        this.messa..."
-FAIL Readable stream: strategy.size returning -Infinity assert_equals: enqueue should throw a RangeError expected function "function RangeError() {
-    [native code]
-}" but got function "function AssertionError(message)
-    {
-        this.messa..."
-FAIL Readable stream: strategy.size returning +Infinity assert_equals: enqueue should throw a RangeError expected function "function RangeError() {
-    [native code]
-}" but got function "function AssertionError(message)
-    {
-        this.messa..."
+PASS Readable stream: strategy.size returning NaN 
+PASS Readable stream: strategy.size returning -Infinity 
+PASS Readable stream: strategy.size returning +Infinity 
 
