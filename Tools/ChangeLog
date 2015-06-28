@@ -1,3 +1,20 @@
+2015-06-28  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION (r185915): Source-incompatible change in WKPageUIClient
+        https://bugs.webkit.org/show_bug.cgi?id=146396
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/Tests/WebKit2/DocumentStartUserScriptAlertCrash.cpp:
+        (TestWebKitAPI::runJavaScriptAlert): Removed _deprecatedForUseWithV0 suffix from the name.
+        (TestWebKitAPI::TEST): Updated for renames.
+        * TestWebKitAPI/Tests/mac/FullscreenZoomInitialFrame.mm:
+        (runJavaScriptAlert): Removed suffix.
+        (TestWebKitAPI::FullscreenZoomInitialFrame::initializeView): Updated.
+        * TestWebKitAPI/Tests/mac/PageVisibilityStateWithWindowChanges.mm:
+        (runJavaScriptAlert): Removed suffix.
+        (TestWebKitAPI::PageVisibilityStateWithWindowChanges::initializeView): Updated.
+
 2015-06-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][SOUP] Implement WebCore::PublicSuffix for soup and enable PUBLIC_SUFFIX_LIST for GTK+

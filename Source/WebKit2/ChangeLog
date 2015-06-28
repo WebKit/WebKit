@@ -1,3 +1,14 @@
+2015-06-28  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION (r185915): Source-incompatible change in WKPageUIClient
+        https://bugs.webkit.org/show_bug.cgi?id=146396
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/C/WKPageUIClient.h: Renamed
+        runJavaScript{Alert,Confirm,Prompt}_deprecatedForUseWithV0 back to runJavaScript{Alert,Confirm,Prompt}
+        in client versions prior to V5.
+
 2015-06-28  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION: Page footers are displayed above the bottom of the WebView due to tiled scaling
