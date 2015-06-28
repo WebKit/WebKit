@@ -1514,6 +1514,10 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
         propagateError();
         
         matchOrFail(ARROWFUNCTION, "Expected a '=>' after arrow function parameter declaration");
+        
+        if (m_lexer->prevTerminator())
+            failDueToUnexpectedToken();
+
         ASSERT(constructorKind == ConstructorKind::None);
         
         info.arrowFunctionOffset = m_token.m_data.offset;

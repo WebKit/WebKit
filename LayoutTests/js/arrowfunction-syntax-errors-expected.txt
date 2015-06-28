@@ -117,6 +117,12 @@ PASS var f=>x+1; threw exception SyntaxError: Unexpected keyword '=>'. Expected 
 PASS var x, y=>y+1; threw exception SyntaxError: Unexpected keyword '=>'. Expected ';' after var declaration..
 PASS debug(=>x+1) threw exception SyntaxError: Unexpected keyword '=>'.
 PASS debug("xyz", =>x+1) threw exception SyntaxError: Unexpected keyword '=>'.
+PASS var af1=y
+=>y+1 threw exception SyntaxError: Unexpected keyword '=>'.
+PASS var af2=(y)
+=>y+1 threw exception SyntaxError: Unexpected keyword '=>'.
+PASS var af3=(x, y)
+=>y+1 threw exception SyntaxError: Unexpected keyword '=>'.
 PASS successfullyParsed is true
 
 TEST COMPLETE

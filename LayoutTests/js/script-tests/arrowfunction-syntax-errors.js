@@ -34,4 +34,8 @@ shouldThrow('var x, y=>y+1;');
 shouldThrow('debug(=>x+1)');
 shouldThrow('debug("xyz", =>x+1)');
 
+shouldThrow("var af1=y\n=>y+1");
+shouldThrow("var af2=(y)\n=>y+1");
+shouldThrow("var af3=(x, y)\n=>y+1");
+
 var successfullyParsed = true;

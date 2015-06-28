@@ -1,3 +1,13 @@
+2015-06-28 Aleksandr Skachkov   <gskachkov@gmail.com>
+
+        [ES6] Implement ES6 arrow function syntax. No Line terminator between function parameters and =>
+        https://bugs.webkit.org/show_bug.cgi?id=146394
+
+        Reviewed by Yusuke Suzuki.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+
 2015-06-27  Darin Adler  <darin@apple.com>
 
         Make converting JSString to StringView idiomatically safe
