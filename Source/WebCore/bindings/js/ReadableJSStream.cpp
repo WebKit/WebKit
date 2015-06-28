@@ -33,6 +33,7 @@
 #if ENABLE(STREAMS_API)
 
 #include "DOMWrapperWorld.h"
+#include "ExceptionCode.h"
 #include "JSDOMPromise.h"
 #include "JSReadableStream.h"
 #include "JSReadableStreamController.h"
@@ -286,6 +287,15 @@ JSValue ReadableJSStream::jsController(ExecState& exec, JSDOMGlobalObject* globa
     if (!m_controller)
         m_controller = std::make_unique<ReadableStreamController>(*this);
     return toJS(&exec, globalObject, m_controller.get());
+}
+
+void ReadableJSStream::close(ExceptionCode& ec)
+{
+    if (isCloseRequested() || isErrored()) {
+        ec = TypeError;
+        return;
+    }
+    changeStateToClosed();
 }
 
 void ReadableJSStream::storeException(JSC::ExecState& state)

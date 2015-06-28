@@ -50,11 +50,14 @@ namespace WebCore {
 class JSDOMGlobalObject;
 class ReadableStreamController;
 
+typedef int ExceptionCode;
+
 class ReadableJSStream: public ReadableStream {
 public:
     static RefPtr<ReadableJSStream> create(JSC::ExecState&, ScriptExecutionContext&);
 
     JSC::JSValue jsController(JSC::ExecState&, JSDOMGlobalObject*);
+    void close(ExceptionCode&);
 
     void storeError(JSC::ExecState&, JSC::JSValue);
     JSC::JSValue error() override { return m_error.get(); }

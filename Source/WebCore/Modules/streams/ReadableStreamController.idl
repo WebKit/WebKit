@@ -34,7 +34,7 @@
     NoInterfaceObject
 ] interface ReadableStreamController {
     [Custom, RaisesException] boolean enqueue(any chunk);
-    [Custom, RaisesException] void close();
+    [RaisesException] void close();
     [Custom, RaisesException] void error(any error);
 
     readonly attribute double desiredSize;
