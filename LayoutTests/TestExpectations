@@ -516,11 +516,11 @@ webkit.org/b/142937 ietestcenter/Javascript/15.2.3.14-1-1.html [ Failure ]
 webkit.org/b/142937 ietestcenter/Javascript/15.2.3.14-1-2.html [ Failure ]
 webkit.org/b/142937 ietestcenter/Javascript/15.2.3.14-1-3.html [ Failure ]
 
-[ Debug ] js/regress-141098.html [ Slow ]
+# Crashes with ASan enabled; previously was slow on Debug builds.
+# [ Debug ] js/regress-141098.html [ Slow ]
+webkit.org/b/145007 js/regress-141098.html [ Skip ]
 
 webkit.org/b/144258 [ Debug ] js/class-syntax-semicolon.html [ Skip ]
-
-webkit.org/b/145007 js/regress-141098.html [ Skip ]
 
 webkit.org/b/145390 storage/indexeddb/deleteIndex-bug110792.html [ Pass Failure ]
 

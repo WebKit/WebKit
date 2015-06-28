@@ -1,5 +1,16 @@
 2015-06-28  David Kilzer  <ddkilzer@apple.com>
 
+        Fix warning about duplicate test expectation: js/regress-141098.html
+
+        Fixes the following warning when running layout tests:
+
+            LayoutTests/TestExpectations:523 More specific entry for js/regress-141098.html on line LayoutTests/TestExpectations:523 overrides line LayoutTests/TestExpectations:519. js/regress-141098.html
+
+        * TestExpectations: Comment out duplicate:
+        - js/regress-141098.html
+
+2015-06-28  David Kilzer  <ddkilzer@apple.com>
+
         Mark http/tests/contentextensions/character-set-basic-support.html as flaky on mac-wk2
 
         * platform/mac-wk2/TestExpectations: Mark ask flaky:
