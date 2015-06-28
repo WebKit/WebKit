@@ -1,6 +1,13 @@
 2015-06-28  Dan Bernstein  <mitz@apple.com>
 
-        REGRESSION (r185915): Source-incompatible change in WKPageUIClient
+        Tried to fix the EFL buid after r186046.
+
+        * UIProcess/efl/PageUIClientEfl.cpp:
+        (WebKit::PageUIClientEfl::PageUIClientEfl):
+
+2015-06-28  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/21581792> REGRESSION (r185915): Source-incompatible change in WKPageUIClient
         https://bugs.webkit.org/show_bug.cgi?id=146396
 
         Reviewed by Anders Carlsson.
