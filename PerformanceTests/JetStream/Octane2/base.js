@@ -334,7 +334,7 @@ BenchmarkSuite.prototype.RunSingleBenchmark = function(benchmark, data) {
     if (data.runs < benchmark.minIterations) return data;
     var usec = (data.elapsed * 1000) / data.runs;
     var latencySamples = (benchmark.latencyResult != null) ? benchmark.latencyResult() : [0];
-    var percentile = 95;
+    var percentile = 99.5;
     var latency = BenchmarkSuite.AverageAbovePercentile(latencySamples, percentile) * 1000;
     this.NotifyStep(new BenchmarkResult(benchmark, usec, latency));
     return null;

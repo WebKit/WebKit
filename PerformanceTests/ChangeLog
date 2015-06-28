@@ -1,3 +1,37 @@
+2015-06-26  Filip Pizlo  <fpizlo@apple.com>
+
+        [JetStream] Raise the percentile of mandreel-latency and splay-latency
+        https://bugs.webkit.org/show_bug.cgi?id=146378
+
+        Reviewed by Mark Lam.
+        
+        The current percentile is 95%.  When I looked at the sample lists in our GC, it was
+        clear that the worst 5% samples completely amortize our GC pauses.  Our GC pauses can
+        be quite bad.  Clearly, splay-latency is meant to test whether we have an incremental
+        GC that ensures that you don't have bad worst-case pauses.  But 95% is too small,
+        because it doesn't really capture those pauses.  Raising the percentile to above 99%
+        appears to do the trick.  99.5% or more seems like a good bet.  The trade-off there is
+        just that if we set it too high, then we won't have enough statistics.  Doing this very
+        clearly rewards GCs that are incremental, and punishes GCs that aren't (like ours).
+        That's what we want, since in the future we want to use this test to guide any
+        improvements to the worst-case performance of our GC.
+
+        The way that the percentile is selected will also affect mandreel-latency.  That's a
+        good thing, because 95% is probably too low for that test as well.  That test ends up
+        with >10k samples.  The goal of using 95% in the first place was to get enough samples
+        to have a stable average.  But if we have >10k samples, we can push that percentile up
+        much higher and still get good statistics while achieving the effect we want - i.e.
+        getting the worst case.
+
+        I don't think that we need to do the same thing for cdjs.  That test only takes 200
+        samples, so 95% means we report the average of the worst 10 samples.  That's probably
+        good enough.
+
+        * JetStream/Octane2/base.js: Raise the percentile as described above.
+        (BenchmarkSuite.prototype.RunSingleBenchmark):
+        * JetStream/Reference.js: Tweak the reference times to bring the latency tests closer to 100ish on my machine.
+        * JetStream/create.rb: Bump the version.
+
 2015-06-19  Filip Pizlo  <fpizlo@apple.com>
 
         Run CDjs as part of JSC stress testing
