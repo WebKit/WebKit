@@ -92,6 +92,7 @@ enum ReasonFrameCannotBeInPageCache {
     DocumentLoaderUsesApplicationCache,
     ClientDeniesCaching,
     NumberOfReasonsFramesCannotBeInPageCache,
+    IsInProvisionalLoadStage,
 };
 COMPILE_ASSERT(NumberOfReasonsFramesCannotBeInPageCache <= sizeof(unsigned)*8, ReasonFrameCannotBeInPageCacheDoesNotFitInBitmap);
 
@@ -111,6 +112,11 @@ static inline void logPageCacheFailureDiagnosticMessage(Page* page, const String
 static unsigned logCanCacheFrameDecision(Frame& frame, DiagnosticLoggingClient& diagnosticLoggingClient, unsigned indentLevel)
 {
     PCLOG("+---");
+    if (!frame.isMainFrame() && frame.loader().state() == FrameStateProvisional) {
+        PCLOG("   -Frame is in provisional load stage");
+        logPageCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::provisionalLoadKey());
+        return 1 << IsInProvisionalLoadStage;
+    }
     if (!frame.loader().documentLoader()) {
         PCLOG("   -There is no DocumentLoader object");
         logPageCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::noDocumentLoaderKey());
@@ -297,6 +303,12 @@ bool PageCache::canCachePageContainingThisFrame(Frame& frame)
     }
     
     FrameLoader& frameLoader = frame.loader();
+
+    // Prevent page caching if a subframe is still in provisional load stage.
+    // We only do this check for subframes because the main frame is reused when navigating to a new page.
+    if (!frame.isMainFrame() && frameLoader.state() == FrameStateProvisional)
+        return false;
+
     DocumentLoader* documentLoader = frameLoader.documentLoader();
     Document* document = frame.document();
     

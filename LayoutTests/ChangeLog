@@ -1,3 +1,21 @@
+2015-06-28  Chris Dumez  <cdumez@apple.com>
+
+        Crash: com.apple.WebKit.WebContent at com.apple.WebCore: WebCore::CachedFrameBase::restore + 333
+        https://bugs.webkit.org/show_bug.cgi?id=146388
+        <rdar://problem/21567343>
+
+        Reviewed by Darin Adler.
+
+        Add layout test to cover the case where a subframe is currently in
+        provisional load stage when checking if the page if page-cacheable.
+
+        The test also removes the iframe once loaded in order to cause a crash
+        if the frame were to finish loading while in the page cache.
+
+        * http/tests/navigation/page-cache-iframe-provisional-load-expected.txt: Added.
+        * http/tests/navigation/page-cache-iframe-provisional-load.html: Added.
+        * http/tests/navigation/resources/page-cache-helper-slow.html: Added.
+
 2015-06-28  Skachkov Oleksandr  <gskachkov@gmail.com>
 
         [ES6] Implement ES6 arrow function syntax. No Line terminator between function parameters and =>
