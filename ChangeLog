@@ -1,3 +1,14 @@
+2015-06-28  Philip Chimento  <philip.chimento@gmail.com>
+
+        CairoGL should be checked unconditionally
+        https://bugs.webkit.org/show_bug.cgi?id=146390
+
+        Reviewed by Darin Adler.
+
+        * Source/cmake/OptionsGTK.cmake: Move check for CairoGL so that
+        it is run unconditionally; this is necessary because its result
+        is used later on, outside of any conditions.
+
 2015-06-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][SOUP] Implement WebCore::PublicSuffix for soup and enable PUBLIC_SUFFIX_LIST for GTK+

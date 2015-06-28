@@ -116,8 +116,8 @@ if (OPENGL_FOUND)
     if (EGL_FOUND)
         list(APPEND CAIROGL_COMPONENTS cairo-egl)
     endif ()
-    find_package(CairoGL 1.10.2 COMPONENTS ${CAIROGL_COMPONENTS})
 endif ()
+find_package(CairoGL 1.10.2 COMPONENTS ${CAIROGL_COMPONENTS})
 
 # Normally we do not set the value of options automatically. However, CairoGL is special. Currently
 # most major distros compile Cario with --enable-gl, but Debian and derivitives are a major
