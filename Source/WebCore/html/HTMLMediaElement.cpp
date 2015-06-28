@@ -276,6 +276,12 @@ struct HTMLMediaElement::TrackGroup {
     bool hasSrcLang;
 };
 
+HashSet<HTMLMediaElement*>& HTMLMediaElement::allMediaElements()
+{
+    static NeverDestroyed<HashSet<HTMLMediaElement*>> elements;
+    return elements;
+}
+
 HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& document, bool createdByParser)
     : HTMLElement(tagName, document)
     , ActiveDOMObject(&document)
@@ -362,6 +368,8 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_mediaStreamSrcObject(nullptr)
 #endif
 {
+    allMediaElements().add(this);
+
     LOG(Media, "HTMLMediaElement::HTMLMediaElement(%p)", this);
     setHasCustomStyleResolveCallbacks();
 
@@ -407,6 +415,8 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
 HTMLMediaElement::~HTMLMediaElement()
 {
     LOG(Media, "HTMLMediaElement::~HTMLMediaElement(%p)", this);
+
+    allMediaElements().remove(this);
 
     m_asyncEventQueue.close();
 
@@ -6393,6 +6403,17 @@ void HTMLMediaElement::setShouldBufferData(bool shouldBuffer)
 {
     if (m_player)
         m_player->setShouldBufferData(shouldBuffer);
+}
+
+void HTMLMediaElement::purgeBufferedDataIfPossible()
+{
+#if PLATFORM(IOS)
+    // This is called to relieve memory pressure. Turning off buffering causes the media playback
+    // daemon to release memory associated with queued-up video frames.
+    // We turn it back on right away, but new frames won't get loaded unless playback is resumed.
+    setShouldBufferData(false);
+    setShouldBufferData(true);
+#endif
 }
 
 bool HTMLMediaElement::canSaveMediaData() const

@@ -31,6 +31,7 @@
 #include "FontCache.h"
 #include "FontCascade.h"
 #include "GCController.h"
+#include "HTMLMediaElement.h"
 #include "JSDOMWindow.h"
 #include "MemoryCache.h"
 #include "Page.h"
@@ -140,6 +141,14 @@ void MemoryPressureHandler::releaseCriticalMemory(Synchronous synchronous)
     {
         ReliefLogger log("Invalidate font cache");
         FontCache::singleton().invalidate();
+    }
+
+    {
+        ReliefLogger log("Dropping buffered data from paused media elements");
+        for (auto* mediaElement: HTMLMediaElement::allMediaElements()) {
+            if (mediaElement->paused())
+                mediaElement->purgeBufferedDataIfPossible();
+        }
     }
 
     if (synchronous == Synchronous::Yes) {

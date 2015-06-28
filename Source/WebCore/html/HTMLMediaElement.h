@@ -117,6 +117,8 @@ public:
     virtual bool hasVideo() const override { return false; }
     virtual bool hasAudio() const override;
 
+    static HashSet<HTMLMediaElement*>& allMediaElements();
+
     void rewind(double timeDelta);
     WEBCORE_EXPORT virtual void returnToRealtime() override;
 
@@ -207,6 +209,8 @@ public:
     void fastSeek(double);
     double minFastReverseRate() const;
     double maxFastForwardRate() const;
+
+    void purgeBufferedDataIfPossible();
 
 // captions
     bool webkitHasClosedCaptions() const;
