@@ -107,13 +107,13 @@ MediaRemoteControls* MediaSession::controls(bool& isNull)
 void MediaSession::addMediaElement(HTMLMediaElement& element)
 {
     ASSERT(!m_participatingElements.contains(&element));
-    m_participatingElements.append(&element);
+    m_participatingElements.add(&element);
 }
 
 void MediaSession::removeMediaElement(HTMLMediaElement& element)
 {
     ASSERT(m_participatingElements.contains(&element));
-    m_participatingElements.remove(m_participatingElements.find(&element));
+    m_participatingElements.remove(&element);
 }
 
 void MediaSession::addActiveMediaElement(HTMLMediaElement& element)
