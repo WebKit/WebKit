@@ -1,3 +1,12 @@
+2015-06-29  Hyungwook Lee  <hyungwook.lee@navercorp.com>
+
+        [Win] Activate SSE support for 32-bit builds.
+        https://bugs.webkit.org/show_bug.cgi?id=144923
+
+        Reviewed by Brent Fulgham.
+
+        * win/tools/vsprops/common.props:
+
 2015-06-26  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo] Enable WEB_TIMING.
