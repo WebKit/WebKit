@@ -209,6 +209,7 @@ WK_EXTERN NSString * const _WKShouldOpenExternalURLsKey WK_AVAILABLE(WK_MAC_TBA,
 
 - (WKNavigation *)_loadRequest:(NSURLRequest *)request withOptions:(WK_DICTIONARY(NSString *, id) *)loadOptions WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
+- (void)_saveBackForwardSnapshotForItem:(WKBackForwardListItem *)item WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 @end
 
 #endif

@@ -2352,6 +2352,11 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     _page->hideFindUI();
 }
 
+- (void)_saveBackForwardSnapshotForItem:(WKBackForwardListItem *)item
+{
+    _page->recordNavigationSnapshot(item._item);
+}
+
 - (id <_WKFormDelegate>)_formDelegate
 {
     return _formDelegate.getAutoreleased();
