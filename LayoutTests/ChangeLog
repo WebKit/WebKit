@@ -1,3 +1,14 @@
+2015-06-29  Hunseop Jeong  <hs85.jeong@samsung.com>
+
+        Unreviewed EFL gardening on 29th Jun.
+        https://bugs.webkit.org/show_bug.cgi?id=146409
+
+        Remove the duplicated results and rebaseline the missing tests.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/editing/execCommand/paste-1-expected.txt: Added.
+        * platform/efl/printing/single-line-must-not-be-split-into-two-pages-expected.txt: Added.
+
 2015-06-28  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Unreviewed add new baseline for missing tests

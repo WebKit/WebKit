@@ -384,9 +384,6 @@ webkit.org/b/86623 http/tests/security/dataTransfer-set-data-file-url.html
 webkit.org/b/86623 http/tests/security/drag-drop-different-origin.html
 webkit.org/b/86623 http/tests/security/drag-over-remote-content-iframe.html
 
-# Needs baselines
-editing/selection/designmode-no-caret.html [ Timeout ]
-
 # Test is failing due to a scrolling problem on second iteration.
 webkit.org/b/106240 fast/events/mouse-cursor-image-set.html [ Failure ]
 
@@ -2169,7 +2166,6 @@ webkit.org/b/142561 svg/animations/smil-leak-element-instances.svg [ Failure ]
 webkit.org/b/142561 svg/animations/smil-leak-elements.svg [ Failure ]
 
 webkit.org/b/142763 fast/images/animated-gif-window-resizing.html [ Timeout ]
-webkit.org/b/142764 accessibility/content-editable-as-textarea.html [ Timeout ]
 
 # [EFL] r182307 broke 87 layouttests
 webkit.org/b/143364 fast/fixed-layout [ Skip ]
