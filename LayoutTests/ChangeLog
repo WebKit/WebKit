@@ -1,5 +1,14 @@
 2015-06-28  David Kilzer  <ddkilzer@apple.com>
 
+        ASAN crashes in js/regress-141098.html
+        <http://webkit.org/b/145007>
+
+        * TestExpectations: Remove test from skip list as it no longer
+        crashes with ASan enabled:
+        - js/regress-141098.html
+
+2015-06-28  David Kilzer  <ddkilzer@apple.com>
+
         Fix warning about duplicate test expectation: js/regress-141098.html
 
         Fixes the following warning when running layout tests:
