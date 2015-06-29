@@ -50,9 +50,9 @@ const char* WebNotificationManagerProxy::supplementName()
     return "WebNotificationManagerProxy";
 }
 
-PassRefPtr<WebNotificationManagerProxy> WebNotificationManagerProxy::create(WebProcessPool* processPool)
+Ref<WebNotificationManagerProxy> WebNotificationManagerProxy::create(WebProcessPool* processPool)
 {
-    return adoptRef(new WebNotificationManagerProxy(processPool));
+    return adoptRef(*new WebNotificationManagerProxy(processPool));
 }
 
 WebNotificationManagerProxy::WebNotificationManagerProxy(WebProcessPool* processPool)

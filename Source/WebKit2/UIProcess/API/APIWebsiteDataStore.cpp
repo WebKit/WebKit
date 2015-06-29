@@ -37,14 +37,14 @@ RefPtr<WebsiteDataStore> WebsiteDataStore::defaultDataStore()
     return defaultDataStore;
 }
 
-RefPtr<WebsiteDataStore> WebsiteDataStore::createNonPersistentDataStore()
+Ref<WebsiteDataStore> WebsiteDataStore::createNonPersistentDataStore()
 {
-    return adoptRef(new WebsiteDataStore);
+    return adoptRef(*new WebsiteDataStore);
 }
 
-RefPtr<WebsiteDataStore> WebsiteDataStore::create(WebKit::WebsiteDataStore::Configuration configuration)
+Ref<WebsiteDataStore> WebsiteDataStore::create(WebKit::WebsiteDataStore::Configuration configuration)
 {
-    return adoptRef(new WebsiteDataStore(WTF::move(configuration)));
+    return adoptRef(*new WebsiteDataStore(WTF::move(configuration)));
 }
 
 WebsiteDataStore::WebsiteDataStore()

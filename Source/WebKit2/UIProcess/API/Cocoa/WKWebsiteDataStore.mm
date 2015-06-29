@@ -40,7 +40,7 @@
 
 + (WKWebsiteDataStore *)nonPersistentDataStore
 {
-    return [WebKit::wrapper(*API::WebsiteDataStore::createNonPersistentDataStore().release().leakRef()) autorelease];
+    return [WebKit::wrapper(API::WebsiteDataStore::createNonPersistentDataStore().leakRef()) autorelease];
 }
 
 - (void)dealloc

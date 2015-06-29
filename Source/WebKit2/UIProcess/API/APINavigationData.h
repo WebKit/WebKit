@@ -34,9 +34,9 @@ namespace API {
 
 class NavigationData : public ObjectImpl<Object::Type::NavigationData> {
 public:
-    static PassRefPtr<NavigationData> create(const WebKit::WebNavigationDataStore& store)
+    static Ref<NavigationData> create(const WebKit::WebNavigationDataStore& store)
     {
-        return adoptRef(new NavigationData(store));
+        return adoptRef(*new NavigationData(store));
     }
 
     virtual ~NavigationData();

@@ -35,14 +35,14 @@ class EwkSecurityOrigin : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkSecurityOrigin)
 
-    static PassRefPtr<EwkSecurityOrigin> create(WKSecurityOriginRef originRef)
+    static Ref<EwkSecurityOrigin> create(WKSecurityOriginRef originRef)
     {
-        return adoptRef(new EwkSecurityOrigin(originRef));
+        return adoptRef(*new EwkSecurityOrigin(originRef));
     }
 
-    static PassRefPtr<EwkSecurityOrigin> create(const char* url)
+    static Ref<EwkSecurityOrigin> create(const char* url)
     {
-        return adoptRef(new EwkSecurityOrigin(url));
+        return adoptRef(*new EwkSecurityOrigin(url));
     }
 
     const char* host() const;

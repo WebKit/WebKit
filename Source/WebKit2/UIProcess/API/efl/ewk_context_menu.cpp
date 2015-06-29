@@ -109,12 +109,12 @@ bool EwkContextMenu::contextMenuItemSelected(WKContextMenuItemRef item)
 
 Ewk_Context_Menu* ewk_context_menu_new()
 {
-    return EwkContextMenu::create().leakRef();
+    return &EwkContextMenu::create().leakRef();
 }
 
 Ewk_Context_Menu* ewk_context_menu_new_with_items(Eina_List* items)
 {
-    return EwkContextMenu::create(items).leakRef();
+    return &EwkContextMenu::create(items).leakRef();
 }
 
 Eina_Bool ewk_context_menu_item_append(Ewk_Context_Menu* menu, Ewk_Context_Menu_Item* item)

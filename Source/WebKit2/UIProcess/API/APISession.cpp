@@ -57,10 +57,10 @@ Session::Session(WebCore::SessionID sessionID)
 {
 }
 
-PassRefPtr<Session> Session::createEphemeral()
+Ref<Session> Session::createEphemeral()
 {
     // FIXME: support creation of non-default, non-ephemeral sessions
-    return adoptRef(new Session());
+    return adoptRef(*new Session());
 }
 
 bool Session::isEphemeral() const

@@ -1,3 +1,123 @@
+2015-06-28  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Use Ref/RefPtr instead of PassRefPtr in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=146190
+
+        Reviewed by Darin Adler.
+
+        As a step to remove PassRefPtr, this patch reduces use of PassRefPtr in WebKit2.
+
+        * Shared/API/c/WKContextMenuItem.cpp:
+        (WKContextMenuItemCreateAsAction):
+        (WKContextMenuItemCreateAsCheckableAction):
+        * Shared/CoordinatedGraphics/WebCoordinatedSurface.cpp:
+        (WebKit::WebCoordinatedSurface::create):
+        * Shared/CoordinatedGraphics/WebCoordinatedSurface.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadSafeCoordinatedSurface.cpp:
+        (WebKit::ThreadSafeCoordinatedSurface::create):
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadSafeCoordinatedSurface.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::create):
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+        * Shared/Plugins/NPRemoteObjectMap.cpp:
+        (WebKit::NPRemoteObjectMap::create):
+        * Shared/Plugins/NPRemoteObjectMap.h:
+        * Shared/WebBatteryStatus.h:
+        (WebKit::WebBatteryStatus::create):
+        * Shared/WebCertificateInfo.h:
+        (WebKit::WebCertificateInfo::create):
+        * Shared/WebContextMenuItem.h:
+        (WebKit::WebContextMenuItem::create):
+        * Shared/WebRenderObject.cpp:
+        (WebKit::WebRenderObject::create):
+        * Shared/WebRenderObject.h:
+        (WebKit::WebRenderObject::create):
+        * UIProcess/API/APINavigationData.h:
+        (API::NavigationData::create):
+        * UIProcess/API/APISession.cpp:
+        (API::Session::createEphemeral):
+        * UIProcess/API/APISession.h:
+        * UIProcess/API/APISessionState.cpp:
+        (API::SessionState::create):
+        * UIProcess/API/APISessionState.h:
+        * UIProcess/API/APIUserScript.h:
+        * UIProcess/API/APIWebsiteDataStore.cpp:
+        (API::WebsiteDataStore::createNonPersistentDataStore):
+        (API::WebsiteDataStore::create):
+        * UIProcess/API/APIWebsiteDataStore.h:
+        * UIProcess/API/C/WKCredential.cpp:
+        (WKCredentialCreate):
+        (WKCredentialCreateWithCertificateInfo):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageCopySessionState):
+        (WKPageSetPageContextMenuClient):
+        * UIProcess/API/C/WKSessionStateRef.cpp:
+        (WKSessionStateCreateFromData):
+        * UIProcess/API/C/WKUserScriptRef.cpp:
+        (WKUserScriptCreateWithSource):
+        * UIProcess/API/Cocoa/WKNSURLAuthenticationChallenge.mm:
+        (-[WKNSURLAuthenticationChallengeSender useCredential:forAuthenticationChallenge:]):
+        * UIProcess/API/Cocoa/WKProcessGroup.mm:
+        (-[WKProcessGroup _setAllowsSpecificHTTPSCertificate:forHost:]):
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _setAllowsSpecificHTTPSCertificate:forHost:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (+[WKWebsiteDataStore nonPersistentDataStore]):
+        * UIProcess/API/efl/ewk_auth_request_private.h:
+        (EwkAuthRequest::create):
+        * UIProcess/API/efl/ewk_back_forward_list_item_private.h:
+        (EwkBackForwardListItem::create):
+        * UIProcess/API/efl/ewk_context.cpp:
+        (EwkContext::create):
+        * UIProcess/API/efl/ewk_context_menu_private.h:
+        (EwkContextMenu::create):
+        * UIProcess/API/efl/ewk_download_job_private.h:
+        (EwkDownloadJob::create):
+        * UIProcess/API/efl/ewk_file_chooser_request_private.h:
+        (EwkFileChooserRequest::create):
+        * UIProcess/API/efl/ewk_form_submission_request_private.h:
+        (EwkFormSubmissionRequest::create):
+        * UIProcess/API/efl/ewk_navigation_data_private.h:
+        (EwkNavigationData::create):
+        * UIProcess/API/efl/ewk_security_origin_private.h:
+        (EwkSecurityOrigin::create):
+        * UIProcess/Authentication/AuthenticationChallengeProxy.h:
+        (WebKit::AuthenticationChallengeProxy::create):
+        * UIProcess/Authentication/AuthenticationDecisionListener.h:
+        (WebKit::AuthenticationDecisionListener::create):
+        * UIProcess/Authentication/WebCredential.h:
+        (WebKit::WebCredential::create):
+        * UIProcess/Authentication/WebProtectionSpace.h:
+        (WebKit::WebProtectionSpace::create):
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::HistoryClient::didNavigateWithNavigationData):
+        * UIProcess/Databases/DatabaseProcessProxy.cpp:
+        (WebKit::DatabaseProcessProxy::create):
+        * UIProcess/Databases/DatabaseProcessProxy.h:
+        * UIProcess/Launcher/ProcessLauncher.h:
+        (WebKit::ProcessLauncher::create):
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        (WebKit::WebNotificationManagerProxy::create):
+        * UIProcess/Notifications/WebNotificationManagerProxy.h:
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::create):
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/Scrolling/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::create):
+        * UIProcess/Scrolling/RemoteScrollingTree.h:
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::create):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::WebProcessPool):
+        * UIProcess/efl/WebPopupMenuListenerEfl.h:
+        (WebKit::WebPopupMenuListenerEfl::create):
+        * UIProcess/efl/WebViewEfl.cpp:
+        (WebKit::WebView::create):
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.h:
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::create):
+
 2015-06-28  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Remove _WKSecurityOrigin.{h,mm}

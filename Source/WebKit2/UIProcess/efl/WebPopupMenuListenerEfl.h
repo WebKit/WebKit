@@ -32,9 +32,9 @@ namespace WebKit {
 
 class WebPopupMenuListenerEfl : public WebPopupMenuProxy {
 public:
-    static PassRefPtr<WebPopupMenuListenerEfl> create(WebPopupMenuProxy::Client* client)
+    static Ref<WebPopupMenuListenerEfl> create(WebPopupMenuProxy::Client* client)
     {
-        return adoptRef(new WebPopupMenuListenerEfl(client));
+        return adoptRef(*new WebPopupMenuListenerEfl(client));
     }
 
     void valueChanged(int newSelectedIndex);

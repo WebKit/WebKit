@@ -37,19 +37,19 @@ class EwkContextMenu : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkContextMenu)
 
-    static PassRefPtr<EwkContextMenu> create(EwkView* viewImpl, WKArrayRef items)
+    static Ref<EwkContextMenu> create(EwkView* viewImpl, WKArrayRef items)
     {
-        return adoptRef(new EwkContextMenu(viewImpl, items));
+        return adoptRef(*new EwkContextMenu(viewImpl, items));
     }
 
-    static PassRefPtr<EwkContextMenu> create()
+    static Ref<EwkContextMenu> create()
     {
-        return adoptRef(new EwkContextMenu());
+        return adoptRef(*new EwkContextMenu());
     }
 
-    static PassRefPtr<EwkContextMenu> create(Eina_List* items)
+    static Ref<EwkContextMenu> create(Eina_List* items)
     {
-        return adoptRef(new EwkContextMenu(items));
+        return adoptRef(*new EwkContextMenu(items));
     }
 
     ~EwkContextMenu();

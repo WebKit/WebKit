@@ -39,9 +39,9 @@ class EwkBackForwardListItem : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkBackForwardListItem)
 
-    static PassRefPtr<EwkBackForwardListItem> create(WKBackForwardListItemRef itemRef)
+    static Ref<EwkBackForwardListItem> create(WKBackForwardListItemRef itemRef)
     {
-        return adoptRef(new EwkBackForwardListItem(itemRef));
+        return adoptRef(*new EwkBackForwardListItem(itemRef));
     }
 
     const char* url() const;

@@ -81,7 +81,7 @@ private:
     WebCoordinatedSurface(const WebCore::IntSize&, Flags, PassRefPtr<ShareableBitmap>);
 
     // Create a WebCoordinatedSurface referencing an existing ShareableBitmap.
-    static PassRefPtr<WebCoordinatedSurface> create(const WebCore::IntSize&, Flags, PassRefPtr<ShareableBitmap>);
+    static Ref<WebCoordinatedSurface> create(const WebCore::IntSize&, Flags, PassRefPtr<ShareableBitmap>);
 
     std::unique_ptr<WebCore::GraphicsContext> createGraphicsContext(const WebCore::IntRect&);
 #if USE(GRAPHICS_SURFACE)
@@ -89,7 +89,7 @@ private:
     // Create a shareable bitmap backed by a graphics surface.
     static PassRefPtr<WebCoordinatedSurface> createWithSurface(const WebCore::IntSize&, Flags);
     // Create a WebCoordinatedSurface referencing an existing GraphicsSurface.
-    static PassRefPtr<WebCoordinatedSurface> create(const WebCore::IntSize&, Flags, PassRefPtr<WebCore::GraphicsSurface>);
+    static Ref<WebCoordinatedSurface> create(const WebCore::IntSize&, Flags, PassRefPtr<WebCore::GraphicsSurface>);
 
     bool isBackedByGraphicsSurface() const { return !!m_graphicsSurface; }
 #endif

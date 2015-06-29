@@ -39,14 +39,14 @@ class WebCredential : public API::ObjectImpl<API::Object::Type::Credential> {
 public:
     ~WebCredential();
 
-    static PassRefPtr<WebCredential> create(const WebCore::Credential& credential)
+    static Ref<WebCredential> create(const WebCore::Credential& credential)
     {
-        return adoptRef(new WebCredential(credential));
+        return adoptRef(*new WebCredential(credential));
     }
     
-    static PassRefPtr<WebCredential> create(WebCertificateInfo* certificateInfo)
+    static Ref<WebCredential> create(WebCertificateInfo* certificateInfo)
     {
-        return adoptRef(new WebCredential(certificateInfo));
+        return adoptRef(*new WebCredential(certificateInfo));
     }
     
     WebCertificateInfo* certificateInfo();

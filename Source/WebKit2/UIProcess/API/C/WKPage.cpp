@@ -410,7 +410,7 @@ WKTypeRef WKPageCopySessionState(WKPageRef pageRef, void* context, WKPageSession
     if (shouldReturnData)
         return toAPI(encodeLegacySessionState(sessionState).release().leakRef());
 
-    return toAPI(API::SessionState::create(WTF::move(sessionState)).leakRef());
+    return toAPI(&API::SessionState::create(WTF::move(sessionState)).leakRef());
 }
 
 void WKPageRestoreFromSessionState(WKPageRef pageRef, WKTypeRef sessionStateRef)
@@ -804,7 +804,7 @@ void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuCl
             if (!m_client.customContextMenuItemSelected)
                 return;
 
-            m_client.customContextMenuItemSelected(toAPI(&page), toAPI(WebContextMenuItem::create(itemData).get()), m_client.base.clientInfo);
+            m_client.customContextMenuItemSelected(toAPI(&page), toAPI(WebContextMenuItem::create(itemData).ptr()), m_client.base.clientInfo);
         }
 
         virtual void contextMenuDismissed(WebPageProxy& page) override

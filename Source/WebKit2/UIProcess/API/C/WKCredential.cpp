@@ -40,12 +40,12 @@ WKTypeID WKCredentialGetTypeID()
 
 WKCredentialRef WKCredentialCreate(WKStringRef username, WKStringRef password, WKCredentialPersistence persistence)
 {
-    return toAPI(WebCredential::create(WebCore::Credential(toImpl(username)->string(), toImpl(password)->string(), toCredentialPersistence(persistence))).leakRef());
+    return toAPI(&WebCredential::create(WebCore::Credential(toImpl(username)->string(), toImpl(password)->string(), toCredentialPersistence(persistence))).leakRef());
 }
 
 WKCredentialRef WKCredentialCreateWithCertificateInfo(WKCertificateInfoRef certificateInfo)
 {
-    return toAPI(WebCredential::create(toImpl(certificateInfo)).leakRef());
+    return toAPI(&WebCredential::create(toImpl(certificateInfo)).leakRef());
 }
 
 WKStringRef WKCredentialCopyUser(WKCredentialRef credentialRef)

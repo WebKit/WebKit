@@ -42,9 +42,9 @@ class EwkDownloadJob : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkDownloadJob)
 
-    static PassRefPtr<EwkDownloadJob> create(WKDownloadRef download)
+    static Ref<EwkDownloadJob> create(WKDownloadRef download)
     {
-        return adoptRef(new EwkDownloadJob(download));
+        return adoptRef(*new EwkDownloadJob(download));
     }
 
     uint64_t id() const;

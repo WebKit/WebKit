@@ -45,9 +45,9 @@ static uint64_t generateCallbackID()
     return ++callbackID;
 }
 
-PassRefPtr<DatabaseProcessProxy> DatabaseProcessProxy::create(WebProcessPool* processPool)
+Ref<DatabaseProcessProxy> DatabaseProcessProxy::create(WebProcessPool* processPool)
 {
-    return adoptRef(new DatabaseProcessProxy(processPool));
+    return adoptRef(*new DatabaseProcessProxy(processPool));
 }
 
 DatabaseProcessProxy::DatabaseProcessProxy(WebProcessPool* processPool)

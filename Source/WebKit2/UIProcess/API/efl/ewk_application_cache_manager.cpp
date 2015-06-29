@@ -60,7 +60,7 @@ static void getApplicationCacheOriginsCallback(WKArrayRef wkOrigins, WKErrorRef,
     const size_t originsCount = WKArrayGetSize(wkOrigins);
     for (size_t i = 0; i < originsCount; ++i) {
         WKSecurityOriginRef securityOriginRef = static_cast<WKSecurityOriginRef>(WKArrayGetItemAtIndex(wkOrigins, i));
-        origins = eina_list_append(origins, EwkSecurityOrigin::create(securityOriginRef).leakRef());
+        origins = eina_list_append(origins, &EwkSecurityOrigin::create(securityOriginRef).leakRef());
     }
 
     callbackData->callback(origins, callbackData->userData);

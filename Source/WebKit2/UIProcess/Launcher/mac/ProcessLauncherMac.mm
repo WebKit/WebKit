@@ -51,9 +51,9 @@ namespace WebKit {
 namespace {
 
 struct UUIDHolder : public RefCounted<UUIDHolder> {
-    static PassRefPtr<UUIDHolder> create()
+    static Ref<UUIDHolder> create()
     {
-        return adoptRef(new UUIDHolder);
+        return adoptRef(*new UUIDHolder);
     }
 
     UUIDHolder()

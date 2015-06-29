@@ -51,7 +51,7 @@ class WebView : public API::ObjectImpl<API::Object::Type::View>, public PageClie
 public:
     virtual ~WebView();
 
-    static PassRefPtr<WebView> create(WebProcessPool*, WebPageGroup*);
+    static Ref<WebView> create(WebProcessPool*, WebPageGroup*);
 
     void initialize();
 

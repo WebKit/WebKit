@@ -312,8 +312,11 @@ void webkit_authentication_request_authenticate(WebKitAuthenticationRequest* req
 {
     g_return_if_fail(WEBKIT_IS_AUTHENTICATION_REQUEST(request));
 
-    RefPtr<WebCredential> webCredential = credential ? WebCredential::create(webkitCredentialGetCredential(credential)) : 0;
-    request->priv->authenticationChallenge->listener()->useCredential(webCredential.get());
+    if (credential)
+        request->priv->authenticationChallenge->listener()->useCredential(WebCredential::create(webkitCredentialGetCredential(credential)).ptr());
+    else
+        request->priv->authenticationChallenge->listener()->useCredential(nullptr);
+
     request->priv->handledRequest = true;
 }
 

@@ -38,9 +38,9 @@ public:
 
     ~EwkFormSubmissionRequest();
 
-    static PassRefPtr<EwkFormSubmissionRequest> create(WKDictionaryRef values, WKFormSubmissionListenerRef listener)
+    static Ref<EwkFormSubmissionRequest> create(WKDictionaryRef values, WKFormSubmissionListenerRef listener)
     {
-        return adoptRef(new EwkFormSubmissionRequest(values, listener));
+        return adoptRef(*new EwkFormSubmissionRequest(values, listener));
     }
 
     WKRetainPtr<WKArrayRef> fieldNames() const;

@@ -42,7 +42,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<WebRenderObject> WebRenderObject::create(WebPage* page)
+RefPtr<WebRenderObject> WebRenderObject::create(WebPage* page)
 {
     Frame* mainFrame = page->mainFrame();
     if (!mainFrame)

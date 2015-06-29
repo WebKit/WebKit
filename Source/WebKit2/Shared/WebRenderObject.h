@@ -45,10 +45,10 @@ class WebPage;
 
 class WebRenderObject : public API::ObjectImpl<API::Object::Type::RenderObject> {
 public:
-    static PassRefPtr<WebRenderObject> create(WebPage*);
-    static PassRefPtr<WebRenderObject> create(WebCore::RenderObject* renderer)
+    static RefPtr<WebRenderObject> create(WebPage*);
+    static Ref<WebRenderObject> create(WebCore::RenderObject* renderer)
     {
-        return adoptRef(new WebRenderObject(renderer, false));
+        return adoptRef(*new WebRenderObject(renderer, false));
     }
 
     static PassRefPtr<WebRenderObject> create(const String& name, const String& elementTagName, const String& elementID, PassRefPtr<API::Array> elementClassNames, WebCore::IntPoint absolutePosition, WebCore::IntRect frameRect, const String& textSnippet, unsigned textLength, PassRefPtr<API::Array> children);

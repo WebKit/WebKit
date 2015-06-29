@@ -28,9 +28,9 @@
 
 namespace API {
 
-PassRefPtr<SessionState> SessionState::create(WebKit::SessionState sessionState)
+Ref<SessionState> SessionState::create(WebKit::SessionState sessionState)
 {
-    return adoptRef(new SessionState(WTF::move(sessionState)));
+    return adoptRef(*new SessionState(WTF::move(sessionState)));
 }
 
 SessionState::SessionState(WebKit::SessionState sessionState)

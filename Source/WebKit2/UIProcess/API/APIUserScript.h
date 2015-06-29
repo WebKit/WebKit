@@ -35,9 +35,9 @@ class UserScript final : public ObjectImpl<Object::Type::UserScript> {
 public:
     static WebCore::URL generateUniqueURL();
 
-    static RefPtr<UserScript> create(WebCore::UserScript userScript)
+    static Ref<UserScript> create(WebCore::UserScript userScript)
     {
-        return adoptRef(new UserScript(userScript));
+        return adoptRef(*new UserScript(userScript));
     }
 
     UserScript(WebCore::UserScript userScript)

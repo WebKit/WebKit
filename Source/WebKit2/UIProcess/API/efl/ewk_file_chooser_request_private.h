@@ -36,9 +36,9 @@ class EwkFileChooserRequest : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkFileChooserRequest)
 
-    static PassRefPtr<EwkFileChooserRequest> create(WKOpenPanelParametersRef parameters, WKOpenPanelResultListenerRef listener)
+    static Ref<EwkFileChooserRequest> create(WKOpenPanelParametersRef parameters, WKOpenPanelResultListenerRef listener)
     {
-        return adoptRef(new EwkFileChooserRequest(parameters, listener));
+        return adoptRef(*new EwkFileChooserRequest(parameters, listener));
     }
 
     ~EwkFileChooserRequest();

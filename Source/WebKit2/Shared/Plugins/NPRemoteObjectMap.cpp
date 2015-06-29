@@ -41,9 +41,9 @@ static uint64_t generateNPObjectID()
     return ++generateNPObjectID;
 }
 
-PassRefPtr<NPRemoteObjectMap> NPRemoteObjectMap::create(IPC::Connection* connection)
+Ref<NPRemoteObjectMap> NPRemoteObjectMap::create(IPC::Connection* connection)
 {
-    return adoptRef(new NPRemoteObjectMap(connection));
+    return adoptRef(*new NPRemoteObjectMap(connection));
 }
 
 NPRemoteObjectMap::NPRemoteObjectMap(IPC::Connection* connection)

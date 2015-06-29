@@ -715,7 +715,7 @@ void NavigationState::HistoryClient::didNavigateWithNavigationData(WebKit::WebPa
     if (!historyDelegate)
         return;
 
-    [historyDelegate _webView:m_navigationState.m_webView didNavigateWithNavigationData:wrapper(*API::NavigationData::create(navigationDataStore))];
+    [historyDelegate _webView:m_navigationState.m_webView didNavigateWithNavigationData:wrapper(API::NavigationData::create(navigationDataStore))];
 }
 
 void NavigationState::HistoryClient::didPerformClientRedirect(WebKit::WebPageProxy&, const WTF::String& sourceURL, const WTF::String& destinationURL)

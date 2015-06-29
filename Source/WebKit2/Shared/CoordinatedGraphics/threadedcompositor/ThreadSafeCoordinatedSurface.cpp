@@ -35,14 +35,14 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<ThreadSafeCoordinatedSurface> ThreadSafeCoordinatedSurface::create(const IntSize& size, CoordinatedSurface::Flags flags)
+Ref<ThreadSafeCoordinatedSurface> ThreadSafeCoordinatedSurface::create(const IntSize& size, CoordinatedSurface::Flags flags)
 {
-    return adoptRef(new ThreadSafeCoordinatedSurface(size, flags, ImageBuffer::create(size)));
+    return adoptRef(*new ThreadSafeCoordinatedSurface(size, flags, ImageBuffer::create(size)));
 }
 
-PassRefPtr<ThreadSafeCoordinatedSurface> ThreadSafeCoordinatedSurface::create(const IntSize& size, CoordinatedSurface::Flags flags, std::unique_ptr<ImageBuffer> buffer)
+Ref<ThreadSafeCoordinatedSurface> ThreadSafeCoordinatedSurface::create(const IntSize& size, CoordinatedSurface::Flags flags, std::unique_ptr<ImageBuffer> buffer)
 {
-    return adoptRef(new ThreadSafeCoordinatedSurface(size, flags, WTF::move(buffer)));
+    return adoptRef(*new ThreadSafeCoordinatedSurface(size, flags, WTF::move(buffer)));
 }
 
 ThreadSafeCoordinatedSurface::ThreadSafeCoordinatedSurface(const IntSize& size, CoordinatedSurface::Flags flags, std::unique_ptr<ImageBuffer> buffer)

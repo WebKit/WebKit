@@ -47,7 +47,7 @@ WKTypeID WKContextMenuItemGetTypeID()
 WKContextMenuItemRef WKContextMenuItemCreateAsAction(WKContextMenuItemTag tag, WKStringRef title, bool enabled)
 {
 #if ENABLE(CONTEXT_MENUS)
-    return toAPI(WebContextMenuItem::create(WebContextMenuItemData(ActionType, toImpl(tag), toImpl(title)->string(), enabled, false)).leakRef());
+    return toAPI(&WebContextMenuItem::create(WebContextMenuItemData(ActionType, toImpl(tag), toImpl(title)->string(), enabled, false)).leakRef());
 #else
     UNUSED_PARAM(tag);
     UNUSED_PARAM(title);
@@ -59,7 +59,7 @@ WKContextMenuItemRef WKContextMenuItemCreateAsAction(WKContextMenuItemTag tag, W
 WKContextMenuItemRef WKContextMenuItemCreateAsCheckableAction(WKContextMenuItemTag tag, WKStringRef title, bool enabled, bool checked)
 {
 #if ENABLE(CONTEXT_MENUS)
-    return toAPI(WebContextMenuItem::create(WebContextMenuItemData(CheckableActionType, toImpl(tag), toImpl(title)->string(), enabled, checked)).leakRef());
+    return toAPI(&WebContextMenuItem::create(WebContextMenuItemData(CheckableActionType, toImpl(tag), toImpl(title)->string(), enabled, checked)).leakRef());
 #else
     UNUSED_PARAM(tag);
     UNUSED_PARAM(title);

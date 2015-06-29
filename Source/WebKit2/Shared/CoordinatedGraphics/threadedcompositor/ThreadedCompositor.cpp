@@ -109,9 +109,9 @@ private:
     double m_lastUpdateTime;
 };
 
-PassRefPtr<ThreadedCompositor> ThreadedCompositor::create(Client* client)
+Ref<ThreadedCompositor> ThreadedCompositor::create(Client* client)
 {
-    return adoptRef(new ThreadedCompositor(client));
+    return adoptRef(*new ThreadedCompositor(client));
 }
 
 ThreadedCompositor::ThreadedCompositor(Client* client)

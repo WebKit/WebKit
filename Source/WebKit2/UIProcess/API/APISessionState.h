@@ -33,7 +33,7 @@ namespace API {
 
 class SessionState final : public ObjectImpl<Object::Type::SessionState> {
 public:
-    static PassRefPtr<SessionState> create(WebKit::SessionState);
+    static Ref<SessionState> create(WebKit::SessionState);
     virtual ~SessionState();
 
     const WebKit::SessionState& sessionState() const { return m_sessionState; }

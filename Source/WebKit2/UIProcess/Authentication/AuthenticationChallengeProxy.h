@@ -43,9 +43,9 @@ class WebProtectionSpace;
 
 class AuthenticationChallengeProxy : public API::ObjectImpl<API::Object::Type::AuthenticationChallenge> {
 public:
-    static PassRefPtr<AuthenticationChallengeProxy> create(const WebCore::AuthenticationChallenge& authenticationChallenge, uint64_t challengeID, IPC::Connection* connection)
+    static Ref<AuthenticationChallengeProxy> create(const WebCore::AuthenticationChallenge& authenticationChallenge, uint64_t challengeID, IPC::Connection* connection)
     {
-        return adoptRef(new AuthenticationChallengeProxy(authenticationChallenge, challengeID, connection));
+        return adoptRef(*new AuthenticationChallengeProxy(authenticationChallenge, challengeID, connection));
     }
     
     ~AuthenticationChallengeProxy();

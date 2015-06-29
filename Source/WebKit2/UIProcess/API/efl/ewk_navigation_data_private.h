@@ -41,9 +41,9 @@ class EwkNavigationData : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkNavigationData)
 
-    static PassRefPtr<EwkNavigationData> create(WKNavigationDataRef dataRef)
+    static Ref<EwkNavigationData> create(WKNavigationDataRef dataRef)
     {
-        return adoptRef(new EwkNavigationData(dataRef));
+        return adoptRef(*new EwkNavigationData(dataRef));
     }
 
     EwkUrlRequest* originalRequest() const;

@@ -47,9 +47,9 @@ public:
         double level;
     };
 
-    static PassRefPtr<WebBatteryStatus> create(bool isCharging, double chargingTime, double dischargingTime, double level)
+    static Ref<WebBatteryStatus> create(bool isCharging, double chargingTime, double dischargingTime, double level)
     {
-        return adoptRef(new WebBatteryStatus(isCharging, chargingTime, dischargingTime, level));
+        return adoptRef(*new WebBatteryStatus(isCharging, chargingTime, dischargingTime, level));
     }
 
     virtual ~WebBatteryStatus();

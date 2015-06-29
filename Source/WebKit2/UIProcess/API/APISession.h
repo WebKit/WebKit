@@ -34,7 +34,7 @@ namespace API {
 
 class Session : public API::ObjectImpl<API::Object::Type::Session> {
 public:
-    static PassRefPtr<Session> createEphemeral();
+    static Ref<Session> createEphemeral();
     virtual ~Session();
 
     static Session& defaultSession();

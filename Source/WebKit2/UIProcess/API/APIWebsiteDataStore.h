@@ -36,8 +36,8 @@ namespace API {
 class WebsiteDataStore final : public ObjectImpl<Object::Type::WebsiteDataStore> {
 public:
     static RefPtr<WebsiteDataStore> defaultDataStore();
-    static RefPtr<WebsiteDataStore> createNonPersistentDataStore();
-    static RefPtr<WebsiteDataStore> create(WebKit::WebsiteDataStore::Configuration);
+    static Ref<WebsiteDataStore> createNonPersistentDataStore();
+    static Ref<WebsiteDataStore> create(WebKit::WebsiteDataStore::Configuration);
     virtual ~WebsiteDataStore();
 
     bool isPersistent();

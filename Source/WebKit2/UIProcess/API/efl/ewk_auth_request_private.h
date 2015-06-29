@@ -37,9 +37,9 @@ class EwkAuthRequest : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkAuthRequest)
 
-    static PassRefPtr<EwkAuthRequest> create(WKAuthenticationChallengeRef authenticationChallenge)
+    static Ref<EwkAuthRequest> create(WKAuthenticationChallengeRef authenticationChallenge)
     {
-        return adoptRef(new EwkAuthRequest(authenticationChallenge));
+        return adoptRef(*new EwkAuthRequest(authenticationChallenge));
     }
     ~EwkAuthRequest();
 

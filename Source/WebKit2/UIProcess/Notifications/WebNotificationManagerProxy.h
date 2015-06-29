@@ -50,7 +50,7 @@ public:
 
     static const char* supplementName();
 
-    static PassRefPtr<WebNotificationManagerProxy> create(WebProcessPool*);
+    static Ref<WebNotificationManagerProxy> create(WebProcessPool*);
 
     void initializeProvider(const WKNotificationProviderBase*);
     void populateCopyOfNotificationPermissions(HashMap<String, bool>&);

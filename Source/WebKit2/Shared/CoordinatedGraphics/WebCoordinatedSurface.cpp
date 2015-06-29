@@ -118,9 +118,9 @@ std::unique_ptr<GraphicsContext> WebCoordinatedSurface::createGraphicsContext(co
     return graphicsContext;
 }
 
-PassRefPtr<WebCoordinatedSurface> WebCoordinatedSurface::create(const IntSize& size, CoordinatedSurface::Flags flags, PassRefPtr<ShareableBitmap> bitmap)
+Ref<WebCoordinatedSurface> WebCoordinatedSurface::create(const IntSize& size, CoordinatedSurface::Flags flags, PassRefPtr<ShareableBitmap> bitmap)
 {
-    return adoptRef(new WebCoordinatedSurface(size, flags, bitmap));
+    return adoptRef(*new WebCoordinatedSurface(size, flags, bitmap));
 }
 
 WebCoordinatedSurface::WebCoordinatedSurface(const IntSize& size, CoordinatedSurface::Flags flags, PassRefPtr<ShareableBitmap> bitmap)
@@ -136,9 +136,9 @@ WebCoordinatedSurface::WebCoordinatedSurface(const WebCore::IntSize& size, Coord
 {
 }
 
-PassRefPtr<WebCoordinatedSurface> WebCoordinatedSurface::create(const IntSize& size, CoordinatedSurface::Flags flags, PassRefPtr<GraphicsSurface> surface)
+Ref<WebCoordinatedSurface> WebCoordinatedSurface::create(const IntSize& size, CoordinatedSurface::Flags flags, PassRefPtr<GraphicsSurface> surface)
 {
-    return adoptRef(new WebCoordinatedSurface(size, flags, surface));
+    return adoptRef(*new WebCoordinatedSurface(size, flags, surface));
 }
 #endif
 

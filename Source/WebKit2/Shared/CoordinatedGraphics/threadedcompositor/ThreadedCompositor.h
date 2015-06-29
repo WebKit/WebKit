@@ -60,7 +60,7 @@ public:
         virtual void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset) = 0;
     };
 
-    static PassRefPtr<ThreadedCompositor> create(Client*);
+    static Ref<ThreadedCompositor> create(Client*);
     virtual ~ThreadedCompositor();
 
     void setNeedsDisplay();

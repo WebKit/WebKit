@@ -45,7 +45,7 @@ class WebProcessPool;
 
 class DatabaseProcessProxy : public ChildProcessProxy {
 public:
-    static PassRefPtr<DatabaseProcessProxy> create(WebProcessPool*);
+    static Ref<DatabaseProcessProxy> create(WebProcessPool*);
     ~DatabaseProcessProxy();
 
     void fetchWebsiteData(WebCore::SessionID, WebsiteDataTypes, std::function<void (WebsiteData)> completionHandler);

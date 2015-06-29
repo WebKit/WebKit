@@ -38,7 +38,7 @@ class RemoteScrollingCoordinatorProxy;
 
 class RemoteScrollingTree : public WebCore::ScrollingTree {
 public:
-    static RefPtr<RemoteScrollingTree> create(RemoteScrollingCoordinatorProxy&);
+    static Ref<RemoteScrollingTree> create(RemoteScrollingCoordinatorProxy&);
     virtual ~RemoteScrollingTree();
 
     virtual bool isRemoteScrollingTree() const override { return true; }

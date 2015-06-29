@@ -55,9 +55,9 @@ static uint64_t generateCallbackID()
     return ++callbackID;
 }
 
-PassRefPtr<PluginProcessProxy> PluginProcessProxy::create(PluginProcessManager* PluginProcessManager, const PluginProcessAttributes& pluginProcessAttributes, uint64_t pluginProcessToken)
+Ref<PluginProcessProxy> PluginProcessProxy::create(PluginProcessManager* PluginProcessManager, const PluginProcessAttributes& pluginProcessAttributes, uint64_t pluginProcessToken)
 {
-    return adoptRef(new PluginProcessProxy(PluginProcessManager, pluginProcessAttributes, pluginProcessToken));
+    return adoptRef(*new PluginProcessProxy(PluginProcessManager, pluginProcessAttributes, pluginProcessToken));
 }
 
 PluginProcessProxy::PluginProcessProxy(PluginProcessManager* PluginProcessManager, const PluginProcessAttributes& pluginProcessAttributes, uint64_t pluginProcessToken)

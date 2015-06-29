@@ -44,7 +44,7 @@ namespace WebKit {
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED < 90000 || !HAVE(AVKIT)
 
-PassRefPtr<WebVideoFullscreenManagerProxy> WebVideoFullscreenManagerProxy::create(WebPageProxy&)
+RefPtr<WebVideoFullscreenManagerProxy> WebVideoFullscreenManagerProxy::create(WebPageProxy&)
 {
     return nullptr;
 }
@@ -211,9 +211,9 @@ void WebVideoFullscreenModelContext::fullscreenMayReturnToInline()
 
 #pragma mark - WebVideoFullscreenManagerProxy
 
-PassRefPtr<WebVideoFullscreenManagerProxy> WebVideoFullscreenManagerProxy::create(WebPageProxy& page)
+Ref<WebVideoFullscreenManagerProxy> WebVideoFullscreenManagerProxy::create(WebPageProxy& page)
 {
-    return adoptRef(new WebVideoFullscreenManagerProxy(page));
+    return adoptRef(*new WebVideoFullscreenManagerProxy(page));
 }
 
 WebVideoFullscreenManagerProxy::WebVideoFullscreenManagerProxy(WebPageProxy& page)

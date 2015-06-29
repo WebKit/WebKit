@@ -44,14 +44,14 @@ namespace WebKit {
 
 class WebContextMenuItem : public API::ObjectImpl<API::Object::Type::ContextMenuItem> {
 public:
-    static PassRefPtr<WebContextMenuItem> create(const WebContextMenuItemData& data)
+    static Ref<WebContextMenuItem> create(const WebContextMenuItemData& data)
     {
-        return adoptRef(new WebContextMenuItem(data));
+        return adoptRef(*new WebContextMenuItem(data));
     }
 
     static PassRefPtr<WebContextMenuItem> create(const WebCore::ContextMenuItem& item)
     {
-        return adoptRef(new WebContextMenuItem(item));
+        return adoptRef(*new WebContextMenuItem(item));
     }
 
     static PassRefPtr<WebContextMenuItem> create(const String& title, bool enabled, API::Array* submenuItems);

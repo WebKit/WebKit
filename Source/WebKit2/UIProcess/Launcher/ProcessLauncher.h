@@ -74,9 +74,9 @@ public:
 #endif
     };
 
-    static PassRefPtr<ProcessLauncher> create(Client* client, const LaunchOptions& launchOptions)
+    static Ref<ProcessLauncher> create(Client* client, const LaunchOptions& launchOptions)
     {
-        return adoptRef(new ProcessLauncher(client, launchOptions));
+        return adoptRef(*new ProcessLauncher(client, launchOptions));
     }
 
     bool isLaunching() const { return m_isLaunching; }

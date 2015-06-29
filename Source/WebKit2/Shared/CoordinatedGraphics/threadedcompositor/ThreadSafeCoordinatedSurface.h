@@ -37,7 +37,7 @@ public:
     virtual ~ThreadSafeCoordinatedSurface();
 
     // Create a new ThreadSafeCoordinatedSurface and allocate either a GraphicsSurface or a ImageBuffer as backing.
-    static PassRefPtr<ThreadSafeCoordinatedSurface> create(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags);
+    static Ref<ThreadSafeCoordinatedSurface> create(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags);
 
     virtual void paintToSurface(const WebCore::IntRect&, WebCore::CoordinatedSurface::Client*) override;
     virtual void copyToTexture(PassRefPtr<WebCore::BitmapTexture>, const WebCore::IntRect& target, const WebCore::IntPoint& sourceOffset) override;
@@ -49,7 +49,7 @@ private:
     void endPaint();
 
     // Create a ThreadSafeCoordinatedSurface referencing an exisiting ImageBuffer
-    static PassRefPtr<ThreadSafeCoordinatedSurface> create(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags, std::unique_ptr<WebCore::ImageBuffer>);
+    static Ref<ThreadSafeCoordinatedSurface> create(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags, std::unique_ptr<WebCore::ImageBuffer>);
 
     std::unique_ptr<WebCore::ImageBuffer> m_imageBuffer;
 };

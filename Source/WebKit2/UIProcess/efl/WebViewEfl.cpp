@@ -55,9 +55,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<WebView> WebView::create(WebProcessPool* processPool, WebPageGroup* pageGroup)
+Ref<WebView> WebView::create(WebProcessPool* processPool, WebPageGroup* pageGroup)
 {
-    return adoptRef(new WebViewEfl(processPool, pageGroup));
+    return adoptRef(*new WebViewEfl(processPool, pageGroup));
 }
 
 WebViewEfl::WebViewEfl(WebProcessPool* processPool, WebPageGroup* pageGroup)

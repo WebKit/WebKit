@@ -87,7 +87,7 @@ static void checkChallenge(NSURLAuthenticationChallenge *challenge)
 {
     checkChallenge(challenge);
     AuthenticationChallengeProxy& webChallenge = ((WKNSURLAuthenticationChallenge *)challenge)._web_authenticationChallengeProxy;
-    webChallenge.listener()->useCredential(WebCredential::create(Credential(credential)).get());
+    webChallenge.listener()->useCredential(WebCredential::create(Credential(credential)).ptr());
 }
 
 - (void)performDefaultHandlingForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge

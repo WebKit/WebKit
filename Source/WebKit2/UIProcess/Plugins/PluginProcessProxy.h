@@ -68,7 +68,7 @@ int pluginProcessThroughputQOS();
 
 class PluginProcessProxy : public ChildProcessProxy {
 public:
-    static PassRefPtr<PluginProcessProxy> create(PluginProcessManager*, const PluginProcessAttributes&, uint64_t pluginProcessToken);
+    static Ref<PluginProcessProxy> create(PluginProcessManager*, const PluginProcessAttributes&, uint64_t pluginProcessToken);
     ~PluginProcessProxy();
 
     const PluginProcessAttributes& pluginProcessAttributes() const { return m_pluginProcessAttributes; }
