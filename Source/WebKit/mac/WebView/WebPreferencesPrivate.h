@@ -250,6 +250,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setMediaPlaybackAllowsInline:(BOOL)flag;
 - (BOOL)mediaPlaybackAllowsInline;
 
+- (void)setMediaControlsScaleWithPageZoom:(BOOL)flag;
+- (BOOL)mediaControlsScaleWithPageZoom;
+
 - (void)setAllowsAlternateFullscreen:(BOOL)flag;
 - (BOOL)allowsAlternateFullscreen;
 
