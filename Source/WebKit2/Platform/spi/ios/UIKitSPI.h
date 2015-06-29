@@ -48,6 +48,7 @@
 #import <UIKit/UIPickerContentView_Private.h>
 #import <UIKit/UIPickerView_Private.h>
 #import <UIKit/UIPresentationController_Private.h>
+#import <UIKit/UIResponder_Private.h>
 #import <UIKit/UIScrollView_Private.h>
 #import <UIKit/UIStringDrawing_Private.h>
 #import <UIKit/UITableViewCell_Private.h>
@@ -110,6 +111,26 @@ typedef NS_ENUM(NSInteger, UIDatePickerPrivateMode)  {
 @end
 
 typedef enum {
+    kUIKeyboardInputRepeat                 = 1 << 0,
+    kUIKeyboardInputPopupVariant           = 1 << 1,
+    kUIKeyboardInputMultitap               = 1 << 2,
+    kUIKeyboardInputSkipCandidateSelection = 1 << 3,
+    kUIKeyboardInputDeadKey                = 1 << 4,
+    kUIKeyboardInputModifierFlagsChanged   = 1 << 5,
+    kUIKeyboardInputFlick                  = 1 << 6,
+    kUIKeyboardInputPreProcessed           = 1 << 7,
+} UIKeyboardInputFlags;
+
+@interface UIEvent (Details)
+@property (nonatomic, readonly) UIKeyboardInputFlags _inputFlags;
+- (void *)_hidEvent;
+- (NSString *)_unmodifiedInput;
+- (NSString *)_modifiedInput;
+- (NSInteger)_modifierFlags;
+- (BOOL)_isKeyDown;
+@end
+
+typedef enum {
     UIFontTraitPlain = 0x00000000,
 } UIFontTrait;
 
@@ -127,6 +148,10 @@ typedef enum {
 
 @interface UIImage (Details)
 - (id)initWithCGImage:(CGImageRef)CGImage imageOrientation:(UIImageOrientation)imageOrientation;
+@end
+
+@interface UIKeyCommand (Details)
+@property (nonatomic, readonly) UIEvent *_triggeringEvent;
 @end
 
 @protocol UIKeyboardImplGeometryDelegate
@@ -216,12 +241,17 @@ typedef enum {
 @property (nonatomic, setter=_setMagnifierEnabled:) BOOL _magnifierEnabled;
 @end
 
+@interface UIResponder (Details)
+- (void)_handleKeyUIEvent:(UIEvent *)event;
+@end
+
 @interface UIScrollView (Details)
 - (void)_stopScrollingAndZoomingAnimations;
 - (void)_zoomToCenter:(CGPoint)center scale:(CGFloat)scale duration:(CFTimeInterval)duration force:(BOOL)force;
 - (void)_zoomToCenter:(CGPoint)center scale:(CGFloat)scale duration:(CFTimeInterval)duration;
 @property (nonatomic, getter=isZoomEnabled) BOOL zoomEnabled;
 @property (nonatomic, readonly, getter=_isAnimatingZoom) BOOL isAnimatingZoom;
+@property (nonatomic, readonly, getter=_isAnimatingScroll) BOOL isAnimatingScroll;
 @property (nonatomic) CGFloat horizontalScrollDecelerationFactor;
 @property (nonatomic) CGFloat verticalScrollDecelerationFactor;
 @end
@@ -742,5 +772,8 @@ UIImage* _UIImageGetWebKitTakePhotoOrVideoIcon(void);
 extern const float UIWebViewGrowsAndShrinksToFitHeight;
 extern const float UIWebViewScalesToFitScale;
 extern const float UIWebViewStandardViewportWidth;
+
+extern NSString *const UIKeyInputPageUp;
+extern NSString *const UIKeyInputPageDown;
 
 WTF_EXTERN_C_END

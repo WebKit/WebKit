@@ -110,6 +110,7 @@
 - (void)_adjustForAutomaticKeyboardInfo:(NSDictionary*)info animated:(BOOL)animated lastAdjustment:(CGFloat*)lastAdjustment;
 - (BOOL)_isScrollingToTop;
 - (BOOL)_isInterruptingDeceleration;
+- (CGPoint)_animatedTargetOffset;
 @end
 
 @interface UIPeripheralHost(UIKitInternal)
@@ -1195,6 +1196,18 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     [_scrollView setContentOffset:([_scrollView contentOffset] + scrollViewOffsetDelta) animated:YES];
     return true;
+}
+
+- (void)_scrollByOffset:(WebCore::FloatPoint)offset
+{
+    CGPoint currentOffset = ([_scrollView _isAnimatingScroll]) ? [_scrollView _animatedTargetOffset] : [_scrollView contentOffset];
+
+    CGPoint boundedOffset = contentOffsetBoundedInValidRange(_scrollView.get(), currentOffset + offset);
+    
+    if (CGPointEqualToPoint(boundedOffset, currentOffset))
+        return;
+    [_contentView willStartZoomOrScroll];
+    [_scrollView setContentOffset:boundedOffset animated:YES];
 }
 
 - (void)_zoomOutWithOrigin:(WebCore::FloatPoint)origin animated:(BOOL)animated

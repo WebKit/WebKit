@@ -1,3 +1,34 @@
+2015-06-29  Enrica Casucci  <enrica@apple.com>
+
+        [iOS] Hardware Keyboard: All combinations of arrow keys and space key do not scroll the view.
+        https://bugs.webkit.org/show_bug.cgi?id=146290
+        rdar://problem/18466015
+
+        We don't normally get called by the keyboard to handle the event if we are not
+        interacting with editable content. In order to receive all the hardware keyboard events
+        we need to implement _handleKeyUIEvent which is called for every key event
+        when the view is first responder. This gives us the opportunity to send each keystroke
+        to the WebProcess to let any Javascript handler intercept it and then perform the default
+        action for the key combination.
+        Unfortunately this mechanism does not provide key repeat, which is implemented in the
+        keyboard layer. In order to have it at least for the arrow keys, we use the keyCommands
+        mechanism only for those.
+
+        Reviewed by Darin Adler.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _scrollByOffset:]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView canPerformAction:withSender:]):
+        (-[WKContentView keyCommands]):
+        (-[WKContentView _arrowKey:]):
+        (-[WKContentView _handleKeyUIEvent:]):
+        (-[WKContentView handleKeyEvent:]):
+        (-[WKContentView handleKeyWebEvent:]):
+        (-[WKContentView _interpretKeyEvent:isCharEvent:]):
+
 2015-06-28  Dan Bernstein  <mitz@apple.com>
 
         Fixed the iOS 8.x build after r186066.

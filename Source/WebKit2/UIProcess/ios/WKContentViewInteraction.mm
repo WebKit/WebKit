@@ -61,11 +61,16 @@
 #import <WebCore/CoreGraphicsSPI.h>
 #import <WebCore/FloatQuad.h>
 #import <WebCore/Pasteboard.h>
+#import <WebCore/Scrollbar.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/WebEvent.h>
 #import <WebKit/WebSelectionRect.h> // FIXME: WK2 should not include WebKit headers!
 #import <WebKitSystemInterfaceIOS.h>
 #import <wtf/RetainPtr.h>
+
+@interface UIEvent(UIEventInternal)
+@property (nonatomic, assign) UIKeyboardInputFlags _inputFlags;
+@end
 
 using namespace WebCore;
 using namespace WebKit;
@@ -1423,6 +1428,9 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 {
     BOOL hasWebSelection = _webSelectionAssistant && !CGRectIsEmpty(_webSelectionAssistant.get().selectionFrame);
 
+    if (action == @selector(_arrowKey:))
+        return [self isFirstResponder];
+        
     if (action == @selector(_showTextStyleOptions:))
         return _page->editorState().isContentRichlyEditable && _page->editorState().selectionIsRange && !_showingTextStyleOptions;
     if (_showingTextStyleOptions)
@@ -2144,8 +2152,44 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (NSArray *)keyCommands
 {
-    return @[[UIKeyCommand keyCommandWithInput:@"\t" modifierFlags:0 action:@selector(_nextAccessoryTab:)],
-             [UIKeyCommand keyCommandWithInput:@"\t" modifierFlags:UIKeyModifierShift action:@selector(_prevAccessoryTab:)]];
+    static NSArray* nonEditableKeyCommands = [@[
+       [UIKeyCommand keyCommandWithInput:UIKeyInputUpArrow modifierFlags:0 action:@selector(_arrowKey:)],
+       [UIKeyCommand keyCommandWithInput:UIKeyInputDownArrow modifierFlags:0 action:@selector(_arrowKey:)],
+       [UIKeyCommand keyCommandWithInput:UIKeyInputLeftArrow modifierFlags:0 action:@selector(_arrowKey:)],
+       [UIKeyCommand keyCommandWithInput:UIKeyInputRightArrow modifierFlags:0 action:@selector(_arrowKey:)],
+       
+       [UIKeyCommand keyCommandWithInput:UIKeyInputUpArrow modifierFlags:UIKeyModifierCommand action:@selector(_arrowKey:)],
+       [UIKeyCommand keyCommandWithInput:UIKeyInputDownArrow modifierFlags:UIKeyModifierCommand action:@selector(_arrowKey:)],
+       
+       [UIKeyCommand keyCommandWithInput:UIKeyInputUpArrow modifierFlags:UIKeyModifierShift action:@selector(_arrowKey:)],
+       [UIKeyCommand keyCommandWithInput:UIKeyInputDownArrow modifierFlags:UIKeyModifierShift action:@selector(_arrowKey:)],
+       [UIKeyCommand keyCommandWithInput:UIKeyInputLeftArrow modifierFlags:UIKeyModifierShift action:@selector(_arrowKey:)],
+       [UIKeyCommand keyCommandWithInput:UIKeyInputRightArrow modifierFlags:UIKeyModifierShift action:@selector(_arrowKey:)],
+       
+       [UIKeyCommand keyCommandWithInput:UIKeyInputUpArrow modifierFlags:UIKeyModifierAlternate action:@selector(_arrowKey:)],
+       [UIKeyCommand keyCommandWithInput:UIKeyInputDownArrow modifierFlags:UIKeyModifierAlternate action:@selector(_arrowKey:)],
+       [UIKeyCommand keyCommandWithInput:UIKeyInputLeftArrow modifierFlags:UIKeyModifierAlternate action:@selector(_arrowKey:)],
+       [UIKeyCommand keyCommandWithInput:UIKeyInputRightArrow modifierFlags:UIKeyModifierAlternate action:@selector(_arrowKey:)],
+       
+       [UIKeyCommand keyCommandWithInput:@" " modifierFlags:0 action:@selector(_arrowKey:)],
+       [UIKeyCommand keyCommandWithInput:@" " modifierFlags:UIKeyModifierShift action:@selector(_arrowKey:)],
+       
+       [UIKeyCommand keyCommandWithInput:UIKeyInputPageDown modifierFlags:0 action:@selector(_arrowKey:)],
+       [UIKeyCommand keyCommandWithInput:UIKeyInputPageDown modifierFlags:0 action:@selector(_arrowKey:)],
+    ] retain];
+
+    static NSArray* editableKeyCommands = [@[
+       [UIKeyCommand keyCommandWithInput:@"\t" modifierFlags:0 action:@selector(_nextAccessoryTab:)],
+       [UIKeyCommand keyCommandWithInput:@"\t" modifierFlags:UIKeyModifierShift action:@selector(_prevAccessoryTab:)]
+    ] retain];
+    
+    return (_page->editorState().isContentEditable) ? editableKeyCommands : nonEditableKeyCommands;
+}
+
+- (void)_arrowKey:(id)sender
+{
+    UIKeyCommand* command = sender;
+    [self handleKeyEvent:command._triggeringEvent];
 }
 
 - (void)_nextAccessoryTab:(id)sender
@@ -2543,6 +2587,32 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     return YES;
 }
 
+- (void)_handleKeyUIEvent:(::UIEvent *)event
+{
+    // We only want to handle key event from the hardware keyboard when we are
+    // first responder and we are not interacting with editable content.
+    if ([self isFirstResponder] && event._hidEvent && !_page->editorState().isContentEditable)
+        [self handleKeyEvent:event];
+
+    [super _handleKeyUIEvent:event];
+}
+
+- (void)handleKeyEvent:(::UIEvent *)event
+{
+    ::WebEvent *webEvent = [[[::WebEvent alloc] initWithKeyEventType:(event._isKeyDown) ? WebEventKeyDown : WebEventKeyUp
+                                                           timeStamp:event.timestamp
+                                                          characters:event._modifiedInput
+                                         charactersIgnoringModifiers:event._unmodifiedInput
+                                                           modifiers:event._modifierFlags
+                                                         isRepeating:(event._inputFlags & kUIKeyboardInputRepeat)
+                                                           withFlags:event._inputFlags
+                                                             keyCode:0
+                                                            isTabKey:[event._modifiedInput isEqualToString:@"\t"]
+                                                        characterSet:WebEventCharacterSetUnicode] autorelease];
+    
+    [self handleKeyWebEvent:webEvent];    
+}
+
 - (void)handleKeyWebEvent:(WebIOSEvent *)theEvent
 {
     _page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent));
@@ -2565,87 +2635,95 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     static const unsigned kWebBackspaceKey = 0x0008;
     static const unsigned kWebReturnKey = 0x000D;
     static const unsigned kWebDeleteKey = 0x007F;
-    static const unsigned kWebLeftArrowKey = 0x00AC;
-    static const unsigned kWebUpArrowKey = 0x00AD;
-    static const unsigned kWebRightArrowKey = 0x00AE;
-    static const unsigned kWebDownArrowKey = 0x00AF;
     static const unsigned kWebDeleteForwardKey = 0xF728;
+    static const unsigned kWebSpaceKey = 0x20;
 
     if (!_page->editorState().isContentEditable && event.isTabKey)
         return NO;
 
     BOOL shift = event.modifierFlags & WebEventFlagMaskShift;
+    BOOL command = event.modifierFlags & WebEventFlagMaskCommand;
+    BOOL option = event.modifierFlags & WebEventFlagMaskAlternate;
+    NSString *charactersIgnoringModifiers = [event charactersIgnoringModifiers];
+    BOOL shouldScroll = YES;
+    FloatPoint scrollOffset;
 
-    switch (event.characterSet) {
-    case WebEventCharacterSetSymbol: {
-        String command;
-        NSString *characters = [event charactersIgnoringModifiers];
-        if ([characters length] == 0)
-            break;
-        switch ([characters characterAtIndex:0]) {
-        case kWebLeftArrowKey:
-            command = shift ? ASCIILiteral("moveLeftAndModifySelection") :  ASCIILiteral("moveLeft");
-            break;
+    if ([charactersIgnoringModifiers isEqualToString:UIKeyInputLeftArrow])
+        scrollOffset.setX(-Scrollbar::pixelsPerLineStep());
+    else if ([charactersIgnoringModifiers isEqualToString:UIKeyInputUpArrow]) {
+        if (option)
+            scrollOffset.setY(-_page->unobscuredContentRect().height());
+        else if (command)
+            scrollOffset.setY(-[self bounds].size.height);
+        else
+            scrollOffset.setY(-Scrollbar::pixelsPerLineStep());
+    } else if ([charactersIgnoringModifiers isEqualToString:UIKeyInputRightArrow])
+            scrollOffset.setX(Scrollbar::pixelsPerLineStep());
+    else if ([charactersIgnoringModifiers isEqualToString:UIKeyInputDownArrow]) {
+        if (option)
+            scrollOffset.setY(_page->unobscuredContentRect().height());
+        else if (command)
+            scrollOffset.setY([self bounds].size.height);
+        else
+            scrollOffset.setY(Scrollbar::pixelsPerLineStep());
+    } else if ([charactersIgnoringModifiers isEqualToString:UIKeyInputPageDown])
+        scrollOffset.setY(_page->unobscuredContentRect().height());
+    else if ([charactersIgnoringModifiers isEqualToString:UIKeyInputPageUp])
+        scrollOffset.setY(-_page->unobscuredContentRect().height());
+    else
+        shouldScroll = NO;
 
-        case kWebUpArrowKey:
-            command = shift ? ASCIILiteral("moveUpAndModifySelection") :  ASCIILiteral("moveUp");
-            break;
-
-        case kWebRightArrowKey:
-            command = shift ? ASCIILiteral("moveRightAndModifySelection") :  ASCIILiteral("moveRight");
-            break;
-
-        case kWebDownArrowKey:
-            command = shift ? ASCIILiteral("moveDownAndModifySelection") :  ASCIILiteral("moveDown");
-            break;
-        }
-        if (!command.isEmpty()) {
-            _page->executeEditCommand(command);
-            return YES;
-        }
-        break;
+    if (shouldScroll) {
+        [_webView _scrollByOffset:scrollOffset];
+        return YES;
     }
-    case WebEventCharacterSetASCII:
-    case WebEventCharacterSetUnicode: {
-        NSString *characters = [event characters];
-        if ([characters length] == 0)
-            break;
-        UIKeyboardImpl *keyboard = [UIKeyboardImpl sharedInstance];
-        switch ([characters characterAtIndex:0]) {
-        case kWebBackspaceKey:
-        case kWebDeleteKey:
-            // FIXME: remove deleteFromInput once UIKit adopts deleteFromInputWithFlags
-            if ([keyboard respondsToSelector:@selector(deleteFromInputWithFlags:)])
-                [keyboard deleteFromInputWithFlags:event.keyboardFlags];
-            else
-                [keyboard deleteFromInput];
-            return YES;
 
-        case kWebEnterKey:
-        case kWebReturnKey:
-            if (isCharEvent) {
-                // Map \r from HW keyboard to \n to match the behavior of the soft keyboard.
-                [keyboard addInputString:@"\n" withFlags:0];
-                return YES;
-            }
-            return NO;
-
-        case kWebDeleteForwardKey:
-            _page->executeEditCommand(ASCIILiteral("deleteForward"));
-            return YES;
-
-        default: {
-            if (isCharEvent) {
-                [keyboard addInputString:event.characters withFlags:event.keyboardFlags];
-                return YES;
-            }
-            return NO;
-        }
-    }
-        break;
-    }
-    default:
+    UIKeyboardImpl *keyboard = [UIKeyboardImpl sharedInstance];
+    NSString *characters = [event characters];
+    
+    if (![characters length])
         return NO;
+
+    switch ([characters characterAtIndex:0]) {
+    case kWebBackspaceKey:
+    case kWebDeleteKey:
+        // FIXME: remove deleteFromInput once UIKit adopts deleteFromInputWithFlags
+        if ([keyboard respondsToSelector:@selector(deleteFromInputWithFlags:)])
+            [keyboard deleteFromInputWithFlags:event.keyboardFlags];
+        else
+            [keyboard deleteFromInput];
+        return YES;
+
+    case kWebSpaceKey:
+        if (!_page->editorState().isContentEditable) {
+            [_webView _scrollByOffset:FloatPoint(0, shift ? -_page->unobscuredContentRect().height() : _page->unobscuredContentRect().height())];
+            return YES;
+        }
+        if (isCharEvent) {
+            [keyboard addInputString:event.characters withFlags:event.keyboardFlags];
+            return YES;
+        }
+        break;
+
+    case kWebEnterKey:
+    case kWebReturnKey:
+        if (isCharEvent) {
+            // Map \r from HW keyboard to \n to match the behavior of the soft keyboard.
+            [keyboard addInputString:@"\n" withFlags:0];
+            return YES;
+        }
+        break;
+
+    case kWebDeleteForwardKey:
+        _page->executeEditCommand(ASCIILiteral("deleteForward"));
+        return YES;
+
+    default:
+        if (isCharEvent) {
+            [keyboard addInputString:event.characters withFlags:event.keyboardFlags];
+            return YES;
+        }
+        break;
     }
 
     return NO;
