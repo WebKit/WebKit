@@ -29,7 +29,6 @@
 #if PLATFORM(IOS)
 
 #import "ViewSnapshotStore.h"
-#import <WebCore/DispatchSPI.h>
 
 namespace WebKit {
 
@@ -45,7 +44,7 @@ WebMemoryPressureHandler::WebMemoryPressureHandler()
     // Right now it cannot because WebKit1 and WebKit2 need to be able to coexist in the UI process,
     // and you can only have one WebCore::MemoryPressureHandler.
 
-    _source = dispatch_source_create(DISPATCH_SOURCE_TYPE_MEMORYSTATUS, 0, DISPATCH_MEMORYSTATUS_PRESSURE_WARN, dispatch_get_main_queue());
+    _source = dispatch_source_create(DISPATCH_SOURCE_TYPE_MEMORYPRESSURE, 0, DISPATCH_MEMORYPRESSURE_WARN, dispatch_get_main_queue());
     dispatch_set_context(_source, this);
     dispatch_source_set_event_handler(_source, ^{
         ViewSnapshotStore::singleton().discardSnapshotImages();

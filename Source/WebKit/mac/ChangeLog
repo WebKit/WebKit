@@ -1,3 +1,17 @@
+2015-06-29  Anders Carlsson  <andersca@apple.com>
+
+        Use DISPATCH_SOURCE_TYPE_MEMORYPRESSURE instead of DISPATCH_SOURCE_TYPE_MEMORYSTATUS
+        https://bugs.webkit.org/show_bug.cgi?id=146413
+
+        Reviewed by Andreas Kling.
+
+        Replace SPI with API.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Deleted.
+        * WebView/WebView.mm:
+        (+[WebView registerForMemoryNotifications]):
+
 2015-06-28  Darin Adler  <darin@apple.com>
 
         [Mac] Remove redundant call to colorUsingColorSpaceName:

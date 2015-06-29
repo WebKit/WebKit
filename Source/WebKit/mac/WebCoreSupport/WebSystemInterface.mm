@@ -178,8 +178,6 @@ void InitWebCoreSystemInterface(void)
     INIT(DestroyRenderingResources);
 
 #if !PLATFORM(IOS)
-    INIT(CreateVMPressureDispatchOnMainQueue);
-    INIT(CreateMemoryStatusPressureCriticalDispatchOnMainQueue);
     INIT(ExecutableWasLinkedOnOrBeforeLion);
 #endif
 

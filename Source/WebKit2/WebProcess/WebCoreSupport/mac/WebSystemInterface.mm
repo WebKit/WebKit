@@ -156,15 +156,10 @@ void InitWebCoreSystemInterface(void)
         INIT(CopyCFURLResponseSuggestedFilename);
         INIT(SetCFURLResponseMIMEType);
 
-#if !PLATFORM(IOS)
-        INIT(CreateVMPressureDispatchOnMainQueue);
-#endif
-
         INIT(DestroyRenderingResources);
 
 #if PLATFORM(MAC)
         INIT(ExecutableWasLinkedOnOrBeforeLion);
-        INIT(CreateMemoryStatusPressureCriticalDispatchOnMainQueue);
 #endif
 
         INIT(CGPathAddRoundedRect);

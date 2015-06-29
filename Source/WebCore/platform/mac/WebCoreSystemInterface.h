@@ -287,16 +287,6 @@ extern void (*wkSetMetadataURL)(NSString *urlString, NSString *referrer, NSStrin
 #endif
 
 #if !PLATFORM(IOS)
-#import <dispatch/dispatch.h>
-
-extern dispatch_source_t (*wkCreateVMPressureDispatchOnMainQueue)(void);
-#endif
-
-#if PLATFORM(MAC)
-extern dispatch_source_t (*wkCreateMemoryStatusPressureCriticalDispatchOnMainQueue)(void);
-#endif
-    
-#if !PLATFORM(IOS)
 extern bool (*wkExecutableWasLinkedOnOrBeforeLion)(void);
 #endif
 
