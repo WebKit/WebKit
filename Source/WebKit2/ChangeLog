@@ -1,3 +1,14 @@
+2015-06-29  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didFailLoadForMainFrame]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didFailLoadForMainFrame):
+
 2015-06-29  Dean Jackson  <dino@apple.com>
 
         Temporarily disable PICTURE_SIZES

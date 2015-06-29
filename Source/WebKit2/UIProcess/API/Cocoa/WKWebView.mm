@@ -1631,6 +1631,12 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         _gestureController->didFinishLoadForMainFrame();
 }
 
+- (void)_didFailLoadForMainFrame
+{
+    if (_gestureController)
+        _gestureController->didFailLoadForMainFrame();
+}
+
 - (void)_didSameDocumentNavigationForMainFrame:(WebKit::SameDocumentNavigationType)navigationType
 {
     [_customContentView web_didSameDocumentNavigation:toAPI(navigationType)];

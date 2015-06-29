@@ -724,6 +724,11 @@ void PageClientImpl::didFinishLoadForMainFrame()
     [m_webView _didFinishLoadForMainFrame];
 }
 
+void PageClientImpl::didFailLoadForMainFrame()
+{
+    [m_webView _didFailLoadForMainFrame];
+}
+
 void PageClientImpl::didSameDocumentNavigationForMainFrame(SameDocumentNavigationType navigationType)
 {
     [m_webView _didSameDocumentNavigationForMainFrame:navigationType];
