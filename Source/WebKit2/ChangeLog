@@ -1,3 +1,9 @@
+2015-06-28  Dan Bernstein  <mitz@apple.com>
+
+        Fixed the iOS build after r186059.
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.h:
+
 2015-06-28  Chris Fleizach  <cfleizach@apple.com>
 
         AX: iOS: Crash at accessibilityObjectForMainFramePlugin()
