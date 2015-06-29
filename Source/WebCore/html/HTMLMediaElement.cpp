@@ -6432,7 +6432,10 @@ bool HTMLMediaElement::canSaveMediaData() const
 
 MediaSession* HTMLMediaElement::session() const
 {
-    return m_session.get();
+    MediaSession* session = m_session.get();
+    if (session && session->kindEnum() == MediaSession::Kind::Default)
+        return nullptr;
+    return session;
 }
 
 void HTMLMediaElement::setSession(MediaSession* session)

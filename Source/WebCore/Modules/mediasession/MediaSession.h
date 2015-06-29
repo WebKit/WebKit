@@ -56,7 +56,7 @@ public:
 
     String kind() const;
     MediaRemoteControls* controls(bool& isNull);
-    
+
     State currentState() const { return m_currentState; }
 
     void setMetadata(const Dictionary&);
@@ -82,6 +82,7 @@ private:
     };
 
     static Kind parseKind(const String&);
+    Kind kindEnum() const { return m_kind; }
 
     void addMediaElement(HTMLMediaElement&);
     void removeMediaElement(HTMLMediaElement&);
