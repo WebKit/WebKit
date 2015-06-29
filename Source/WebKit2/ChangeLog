@@ -1,3 +1,17 @@
+2015-06-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Font panel doesn't get updated when bolding text via cmd+b in Mail on OS X
+        https://bugs.webkit.org/show_bug.cgi?id=146379
+
+        Reviewed by Darin Adler.
+
+        Since font panel doesn't open in WebKit2 at the moment, just add an empty implementation of didApplyStyle
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::didApplyStyle):
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebPage/WebPage.h:
+
 2015-06-29  Dean Jackson  <dino@apple.com>
 
         Setting to enable/disable media controls sizing on page zoom

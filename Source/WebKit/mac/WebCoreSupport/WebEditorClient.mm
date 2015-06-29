@@ -258,6 +258,22 @@ bool WebEditorClient::shouldApplyStyle(StyleProperties* style, Range* range)
         shouldApplyStyle:kit(mutableStyle->ensureCSSStyleDeclaration()) toElementsInDOMRange:kit(range)];
 }
 
+static void updateFontPanel(WebView *webView)
+{
+#if !PLATFORM(IOS)
+    NSView <WebDocumentView> *view = [[[webView selectedFrame] frameView] documentView];
+    if ([view isKindOfClass:[WebHTMLView class]])
+        [(WebHTMLView *)view _updateFontPanel];
+#else
+    UNUSED_PARAM(webView);
+#endif
+}
+
+void WebEditorClient::didApplyStyle()
+{
+    updateFontPanel(m_webView);
+}
+
 bool WebEditorClient::shouldMoveRangeAfterDelete(Range* range, Range* rangeToBeReplaced)
 {
     return [[m_webView _editingDelegateForwarder] webView:m_webView
@@ -317,10 +333,8 @@ void WebEditorClient::stopDelayingAndCoalescingContentChangeNotifications()
 
 void WebEditorClient::respondToChangedContents()
 {
+    updateFontPanel(m_webView);
 #if !PLATFORM(IOS)
-    NSView <WebDocumentView> *view = [[[m_webView selectedFrame] frameView] documentView];
-    if ([view isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView *)view _updateFontPanel];
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeNotification object:m_webView];    
 #else
     if (m_delayingContentChangeNotifications) {

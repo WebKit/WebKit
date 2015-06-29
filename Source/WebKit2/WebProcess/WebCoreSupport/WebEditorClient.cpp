@@ -155,6 +155,11 @@ bool WebEditorClient::shouldApplyStyle(StyleProperties* style, Range* range)
     return result;
 }
 
+void WebEditorClient::didApplyStyle()
+{
+    notImplemented();
+}
+
 bool WebEditorClient::shouldMoveRangeAfterDelete(Range*, Range*)
 {
     notImplemented();

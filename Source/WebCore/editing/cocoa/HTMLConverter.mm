@@ -53,6 +53,7 @@
 #import "HTMLTableCellElement.h"
 #import "HTMLTextAreaElement.h"
 #import "LoaderNSURLExtras.h"
+#import "NSAttributedStringSPI.h"
 #import "RGBColor.h"
 #import "RenderImage.h"
 #import "SoftLinking.h"
@@ -193,21 +194,6 @@ typedef enum {
     UIFontTraitLight       = (1 << 3),
     UIFontTraitUltraLight  = (1 << 4)
 } UIFontTrait;
-
-typedef NS_ENUM(NSInteger, NSUnderlineStyle) {
-    NSUnderlineStyleNone                                = 0x00,
-    NSUnderlineStyleSingle                              = 0x01,
-    NSUnderlineStyleThick NS_ENUM_AVAILABLE_IOS(7_0)    = 0x02,
-    NSUnderlineStyleDouble NS_ENUM_AVAILABLE_IOS(7_0)   = 0x09,
-
-    NSUnderlinePatternSolid NS_ENUM_AVAILABLE_IOS(7_0)      = 0x0000,
-    NSUnderlinePatternDot NS_ENUM_AVAILABLE_IOS(7_0)        = 0x0100,
-    NSUnderlinePatternDash NS_ENUM_AVAILABLE_IOS(7_0)       = 0x0200,
-    NSUnderlinePatternDashDot NS_ENUM_AVAILABLE_IOS(7_0)    = 0x0300,
-    NSUnderlinePatternDashDotDot NS_ENUM_AVAILABLE_IOS(7_0) = 0x0400,
-
-    NSUnderlineByWord NS_ENUM_AVAILABLE_IOS(7_0) = 0x8000
-};
 
 enum {
     NSTextBlockAbsoluteValueType    = 0,    // Absolute value in points

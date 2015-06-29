@@ -88,6 +88,7 @@ public:
     virtual bool shouldChangeSelectedRange(Range* fromRange, Range* toRange, EAffinity, bool stillSelecting) = 0;
     
     virtual bool shouldApplyStyle(StyleProperties*, Range*) = 0;
+    virtual void didApplyStyle() = 0;
     virtual bool shouldMoveRangeAfterDelete(Range*, Range*) = 0;
 
     virtual void didBeginEditing() = 0;

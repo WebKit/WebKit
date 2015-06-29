@@ -179,10 +179,6 @@ NSDictionary* Editor::fontAttributesForSelectionStart() const
         [result setObject:s.get() forKey:NSShadowAttributeName];
     }
 
-    int decoration = style->textDecorationsInEffect();
-    if (decoration & TextDecorationLineThrough)
-        [result setObject:[NSNumber numberWithInt:NSUnderlineStyleSingle] forKey:NSStrikethroughStyleAttributeName];
-
     int superscriptInt = 0;
     switch (style->verticalAlign()) {
         case BASELINE:
@@ -204,8 +200,7 @@ NSDictionary* Editor::fontAttributesForSelectionStart() const
     if (superscriptInt)
         [result setObject:[NSNumber numberWithInt:superscriptInt] forKey:NSSuperscriptAttributeName];
 
-    if (decoration & TextDecorationUnderline)
-        [result setObject:[NSNumber numberWithInt:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
+    getTextDecorationAttributesRespectingTypingStyle(*style, result);
 
     if (nodeToRemove)
         nodeToRemove->remove(ASSERT_NO_EXCEPTION);

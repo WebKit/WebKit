@@ -615,6 +615,7 @@ public:
     void getCenterForZoomGesture(const WebCore::IntPoint& centerInViewCoordinates, WebCore::IntPoint& result);
 #endif
 
+    void didApplyStyle();
     void didChangeSelection();
     void discardedComposition();
 

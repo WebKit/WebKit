@@ -339,14 +339,28 @@ bool WebEditorClient::shouldChangeSelectedRange(WebCore::Range* currentRange, We
     return shouldChange;
 }
 
-bool WebEditorClient::shouldApplyStyle(StyleProperties* /*style*/, Range* /*toElementsInDOMRange*/)
-{ notImplemented(); return true; }
+bool WebEditorClient::shouldApplyStyle(StyleProperties*, Range*)
+{
+    notImplemented();
+    return true;
+}
 
-bool WebEditorClient::shouldMoveRangeAfterDelete(Range* /*range*/, Range* /*rangeToBeReplaced*/)
-{ notImplemented(); return true; }
+void WebEditorClient::didApplyStyle(StyleProperties*, Range*)
+{
+    notImplemented();
+}
 
-bool WebEditorClient::shouldChangeTypingStyle(StyleProperties* /*currentStyle*/, StyleProperties* /*toProposedStyle*/)
-{ notImplemented(); return false; }
+bool WebEditorClient::shouldMoveRangeAfterDelete(Range*, Range*)
+{
+    notImplemented();
+    return true;
+}
+
+bool WebEditorClient::shouldChangeTypingStyle(StyleProperties*, StyleProperties*)
+{
+    notImplemented();
+    return false;
+}
 
 void WebEditorClient::webViewDidChangeTypingStyle(WebNotification* /*notification*/)
 {

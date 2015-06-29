@@ -442,6 +442,7 @@ public:
     virtual bool shouldChangeSelectedRange(Range*, Range*, EAffinity, bool) override { return false; }
 
     virtual bool shouldApplyStyle(StyleProperties*, Range*) override { return false; }
+    virtual void didApplyStyle() override { }
     virtual bool shouldMoveRangeAfterDelete(Range*, Range*) override { return false; }
 
     virtual void didBeginEditing() override { }

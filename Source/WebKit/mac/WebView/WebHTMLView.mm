@@ -5482,9 +5482,11 @@ static BOOL writingDirectionKeyBindingsEnabled()
 
     bool multipleFonts = false;
     NSFont *font = nil;
+    NSDictionary *attributes = nil;
     if (Frame* coreFrame = core([self _frame])) {
         if (const Font* fd = coreFrame->editor().fontForSelection(multipleFonts))
             font = fd->getNSFont();
+        attributes = coreFrame->editor().fontAttributesForSelectionStart();
     }
 
     // FIXME: for now, return a bogus font that distinguishes the empty selection from the non-empty
@@ -5493,7 +5495,9 @@ static BOOL writingDirectionKeyBindingsEnabled()
         font = [self _hasSelection] ? [NSFont menuFontOfSize:23] : [NSFont toolTipsFontOfSize:17];
     ASSERT(font != nil);
 
-    [[NSFontManager sharedFontManager] setSelectedFont:font isMultiple:multipleFonts];
+    NSFontManager *fontManager = [NSFontManager sharedFontManager];
+    [fontManager setSelectedFont:font isMultiple:multipleFonts];
+    [fontManager setSelectedAttributes:(attributes ? attributes : @{ }) isMultiple:multipleFonts];
 }
 #endif
 
