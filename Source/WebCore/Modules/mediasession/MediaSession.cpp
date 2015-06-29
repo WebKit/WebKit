@@ -114,6 +114,10 @@ void MediaSession::removeMediaElement(HTMLMediaElement& element)
 {
     ASSERT(m_participatingElements.contains(&element));
     m_participatingElements.remove(&element);
+
+    m_activeParticipatingElements.remove(&element);
+    if (m_iteratedActiveParticipatingElements)
+        m_iteratedActiveParticipatingElements->remove(&element);
 }
 
 void MediaSession::addActiveMediaElement(HTMLMediaElement& element)
