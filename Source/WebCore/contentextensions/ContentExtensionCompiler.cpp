@@ -309,9 +309,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
         // Our bytecode interpreter expects to have at least one DFA, so if we haven't seen any
         // create a dummy one and add any universal actions.
 
-        NFA dummyNFA;
-        DFA dummyDFA = NFAToDFA::convert(dummyNFA);
-
+        DFA dummyDFA = DFA::empty();
         addUniversalActionsToDFA(dummyDFA, universalActionsWithoutDomains);
 
         Vector<DFABytecode> bytecode;
@@ -376,10 +374,8 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
     if (!firstNFAWithDomainsSeen) {
         // Our bytecode interpreter expects to have at least one DFA, so if we haven't seen any
         // create a dummy one and add any universal actions.
-        
-        NFA dummyNFA;
-        DFA dummyDFA = NFAToDFA::convert(dummyNFA);
-        
+
+        DFA dummyDFA = DFA::empty();
         addUniversalActionsToDFA(dummyDFA, universalActionsWithDomains);
         
         Vector<DFABytecode> bytecode;

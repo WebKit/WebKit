@@ -28,6 +28,7 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
+#include <wtf/ASCIICType.h>
 #include <wtf/DataLog.h>
 #include <wtf/HashSet.h>
 
@@ -35,184 +36,85 @@ namespace WebCore {
 
 namespace ContentExtensions {
 
-NFA::NFA()
-    : m_root(createNode())
-{
-}
-
-unsigned NFA::createNode()
-{
-    unsigned nextId = m_nodes.size();
-    m_nodes.append(NFANode());
-    return nextId;
-}
-
-#if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
-size_t NFA::memoryUsed() const
-{
-    size_t size = sizeof(NFA);
-    for (const NFANode& node : m_nodes) {
-        for (const auto& transition : node.transitions)
-            size += transition.value.capacity() * sizeof(unsigned);
-        size += sizeof(node)
-            + node.transitions.capacity() * sizeof(std::pair<uint16_t, NFANodeIndexSet>)
-            + node.transitionsOnAnyCharacter.capacity() * sizeof(unsigned)
-            + node.finalRuleIds.capacity() * sizeof(uint64_t);
-    }
-    return size;
-}
-#endif
-
-void NFA::addTransition(unsigned from, unsigned to, char character)
-{
-    ASSERT(from < m_nodes.size());
-    ASSERT(to < m_nodes.size());
-
-    NFANode& fromNode = m_nodes[from];
-    if (fromNode.transitionsOnAnyCharacter.contains(to))
-        return;
-
-    auto addResult = m_nodes[from].transitions.add(character, NFANodeIndexSet());
-    addResult.iterator->value.add(to);
-}
-
-void NFA::addEpsilonTransition(unsigned from, unsigned to)
-{
-    ASSERT(from < m_nodes.size());
-    ASSERT(to < m_nodes.size());
-
-    auto addResult = m_nodes[from].transitions.add(epsilonTransitionCharacter, NFANodeIndexSet());
-    addResult.iterator->value.add(to);
-}
-
-void NFA::addTransitionsOnAnyCharacter(unsigned from, unsigned to)
-{
-    ASSERT(from < m_nodes.size());
-    ASSERT(to < m_nodes.size());
-
-    NFANode& fromNode = m_nodes[from];
-    fromNode.transitionsOnAnyCharacter.add(to);
-
-    for (auto transitionSlot : fromNode.transitions)
-        transitionSlot.value.remove(to);
-}
-
-void NFA::setActions(unsigned node, const ActionList& actions)
-{
-    ASSERT_WITH_MESSAGE(m_nodes[node].finalRuleIds.isEmpty(), "The final state should only be defined once.");
-    copyToVector(actions, m_nodes[node].finalRuleIds);
-}
-
-unsigned NFA::graphSize() const
-{
-    return m_nodes.size();
-}
-
-void NFA::restoreToGraphSize(unsigned size)
-{
-    ASSERT(size >= 1);
-    ASSERT(size <= graphSize());
-
-    m_nodes.shrink(size);
-}
-
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
-static void printRange(bool firstRange, uint16_t rangeStart, uint16_t rangeEnd, uint16_t epsilonTransitionCharacter)
-{
-    if (!firstRange)
-        dataLogF(", ");
-    if (rangeStart == rangeEnd) {
-        if (rangeStart == epsilonTransitionCharacter)
-            dataLogF("ɛ");
-        else if (rangeStart == '"' || rangeStart == '\\')
-            dataLogF("\\%c", rangeStart);
-        else if (rangeStart >= '!' && rangeStart <= '~')
-            dataLogF("%c", rangeStart);
-        else
-            dataLogF("\\\\%d", rangeStart);
-    } else {
-        if (rangeStart == 1 && rangeEnd == 127)
-            dataLogF("[any input]");
-        else
-            dataLogF("\\\\%d-\\\\%d", rangeStart, rangeEnd);
-    }
-}
-
-static void printTransitions(const Vector<NFANode>& graph, unsigned sourceNode, uint16_t epsilonTransitionCharacter)
-{
-    const NFANode& node = graph[sourceNode];
-    const HashMap<uint16_t, NFANodeIndexSet, DefaultHash<uint16_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint16_t>>& transitions = node.transitions;
-
-    HashMap<unsigned, HashSet<uint16_t, DefaultHash<uint16_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint16_t>>, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> transitionsPerTarget;
-
-    for (const auto& transition : transitions) {
-        for (unsigned targetNode : transition.value) {
-            transitionsPerTarget.add(targetNode, HashSet<uint16_t, DefaultHash<uint16_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint16_t>>());
-            transitionsPerTarget.find(targetNode)->value.add(transition.key);
-        }
-    }
-
-    for (const auto& transitionPerTarget : transitionsPerTarget) {
-        dataLogF("        %d -> %d [label=\"", sourceNode, transitionPerTarget.key);
-
-        Vector<uint16_t> incommingCharacters;
-        copyToVector(transitionPerTarget.value, incommingCharacters);
-        std::sort(incommingCharacters.begin(), incommingCharacters.end());
-
-        uint16_t rangeStart = incommingCharacters.first();
-        uint16_t rangeEnd = rangeStart;
-        bool first = true;
-        for (unsigned sortedTransitionIndex = 1; sortedTransitionIndex < incommingCharacters.size(); ++sortedTransitionIndex) {
-            uint16_t nextChar = incommingCharacters[sortedTransitionIndex];
-            if (nextChar == rangeEnd+1) {
-                rangeEnd = nextChar;
-                continue;
-            }
-            printRange(first, rangeStart, rangeEnd, epsilonTransitionCharacter);
-            rangeStart = rangeEnd = nextChar;
-            first = false;
-        }
-        printRange(first, rangeStart, rangeEnd, epsilonTransitionCharacter);
-
-        dataLogF("\"];\n");
-    }
-
-    for (unsigned targetOnAnyCharacter : node.transitionsOnAnyCharacter)
-        dataLogF("        %d -> %d [label=\"[any input]\"];\n", sourceNode, targetOnAnyCharacter);
-}
-
 void NFA::debugPrintDot() const
 {
     dataLogF("digraph NFA_Transitions {\n");
     dataLogF("    rankdir=LR;\n");
     dataLogF("    node [shape=circle];\n");
     dataLogF("    {\n");
-    for (unsigned i = 0; i < m_nodes.size(); ++i) {
+
+    for (unsigned i = 0; i < nodes.size(); ++i) {
         dataLogF("         %d [label=<Node %d", i, i);
 
-        const ActionList& finalRules = m_nodes[i].finalRuleIds;
-        if (!finalRules.isEmpty()) {
+        const auto& node = nodes[i];
+
+        if (node.actionStart != node.actionEnd) {
             dataLogF("<BR/>(Final: ");
-            for (unsigned ruleIndex = 0; ruleIndex < finalRules.size(); ++ruleIndex) {
-                if (ruleIndex)
+            bool isFirst = true;
+            for (unsigned actionIndex = node.actionStart; actionIndex < node.actionEnd; ++actionIndex) {
+                if (!isFirst)
                     dataLogF(", ");
-                dataLogF("%llu", finalRules[ruleIndex]);
+                dataLogF("%llu", actions[actionIndex]);
+                isFirst = false;
             }
             dataLogF(")");
         }
-
         dataLogF(">]");
 
-        if (!finalRules.isEmpty())
+        if (node.actionStart != node.actionEnd)
             dataLogF(" [shape=doublecircle]");
-
         dataLogF(";\n");
     }
     dataLogF("    }\n");
 
     dataLogF("    {\n");
-    for (unsigned i = 0; i < m_nodes.size(); ++i)
-        printTransitions(m_nodes, i, epsilonTransitionCharacter);
+    for (unsigned i = 0; i < nodes.size(); ++i) {
+        const auto& node = nodes[i];
+
+        HashMap<uint32_t, Vector<uint32_t>, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> transitionsPerTarget;
+
+        for (uint32_t transitionIndex = node.rangesStart; transitionIndex < node.rangesEnd; ++transitionIndex) {
+            const ImmutableCharRange& range = transitions[transitionIndex];
+            for (uint32_t targetIndex = range.targetStart; targetIndex < range.targetEnd; ++targetIndex) {
+                uint32_t target = targets[targetIndex];
+                auto addResult = transitionsPerTarget.add(target, Vector<uint32_t>());
+                addResult.iterator->value.append(transitionIndex);
+            }
+        }
+
+        for (const auto& slot : transitionsPerTarget) {
+            dataLogF("        %d -> %d [label=\"", i, slot.key);
+
+            bool isFirst = true;
+            for (uint32_t rangeIndex : slot.value) {
+                if (!isFirst)
+                    dataLogF(", ");
+                else
+                    isFirst = false;
+
+                const ImmutableCharRange& range = transitions[rangeIndex];
+                if (range.first == range.last) {
+                    if (isASCIIPrintable(range.first))
+                    dataLogF("%c", range.first);
+                    else
+                    dataLogF("%d", range.first);
+                } else {
+                    if (isASCIIPrintable(range.first) && isASCIIPrintable(range.last))
+                    dataLogF("%c-%c", range.first, range.last);
+                    else
+                    dataLogF("%d-%d", range.first, range.last);
+                }
+            }
+            dataLogF("\"]\n");
+        }
+
+        for (uint32_t epsilonTargetIndex = node.epsilonTransitionTargetsStart; epsilonTargetIndex < node.epsilonTransitionTargetsEnd; ++epsilonTargetIndex) {
+            uint32_t target = epsilonTransitionsTargets[epsilonTargetIndex];
+            dataLogF("        %d -> %d [label=\"ɛ\"]\n", i, target);
+        }
+    }
+
     dataLogF("    }\n");
     dataLogF("}\n");
 }

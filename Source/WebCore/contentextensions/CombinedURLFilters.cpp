@@ -193,25 +193,25 @@ void CombinedURLFilters::addPattern(uint64_t actionId, const Vector<Term>& patte
         actions.append(actionId);
 }
 
-static void generateNFAForSubtree(NFA& nfa, unsigned nfaRootId, PrefixTreeVertex& root, size_t maxNFASize)
+static void generateNFAForSubtree(NFA& nfa, ImmutableCharNFANodeBuilder&& subtreeRoot, PrefixTreeVertex& root, size_t maxNFASize)
 {
     // This recurses the subtree of the prefix tree.
     // For each edge that has fixed length (no quantifiers like ?, *, or +) it generates the nfa graph,
     // recurses into children, and deletes any processed leaf nodes.
     struct ActiveSubtree {
-        ActiveSubtree(PrefixTreeVertex& vertex, unsigned nfaNodeId, unsigned edgeIndex)
+        ActiveSubtree(PrefixTreeVertex& vertex, ImmutableCharNFANodeBuilder&& nfaNode, unsigned edgeIndex)
             : vertex(vertex)
-            , nfaNodeId(nfaNodeId)
+            , nfaNode(WTF::move(nfaNode))
             , edgeIndex(edgeIndex)
         {
         }
         PrefixTreeVertex& vertex;
-        unsigned nfaNodeId;
+        ImmutableCharNFANodeBuilder nfaNode;
         unsigned edgeIndex;
     };
     Vector<ActiveSubtree> stack;
     if (!root.edges.isEmpty())
-        stack.append(ActiveSubtree(root, nfaRootId, 0));
+        stack.append(ActiveSubtree(root, WTF::move(subtreeRoot), 0));
     bool nfaTooBig = false;
     
     // Generate graphs for each subtree that does not contain any quantifiers.
@@ -220,7 +220,7 @@ static void generateNFAForSubtree(NFA& nfa, unsigned nfaRootId, PrefixTreeVertex
         const unsigned edgeIndex = stack.last().edgeIndex;
         
         // Only stop generating an NFA at a leaf to ensure we have a correct NFA. We could go slightly over the maxNFASize.
-        if (vertex.edges.isEmpty() && nfa.graphSize() > maxNFASize)
+        if (vertex.edges.isEmpty() && nfa.nodes.size() > maxNFASize)
             nfaTooBig = true;
         
         if (edgeIndex < vertex.edges.size()) {
@@ -237,10 +237,10 @@ static void generateNFAForSubtree(NFA& nfa, unsigned nfaRootId, PrefixTreeVertex
                 stack.last().edgeIndex++;
                 continue;
             }
-            
-            unsigned subtreeRootId = edge.term.generateGraph(nfa, stack.last().nfaNodeId, edge.child->finalActions);
+
+            ImmutableCharNFANodeBuilder newNode = edge.term.generateGraph(nfa, stack.last().nfaNode, edge.child->finalActions);
             ASSERT(edge.child.get());
-            stack.append(ActiveSubtree(*edge.child.get(), subtreeRootId, 0));
+            stack.append(ActiveSubtree(*edge.child.get(), WTF::move(newNode), 0));
         } else {
             ASSERT(edgeIndex == vertex.edges.size());
             vertex.edges.removeAllMatching([](PrefixTreeEdge& edge)
@@ -286,22 +286,26 @@ void CombinedURLFilters::processNFAs(size_t maxNFASize, std::function<void(NFA&&
             stack.removeLast();
         }
         ASSERT_WITH_MESSAGE(!stack.isEmpty(), "At least the root should be in the stack");
-        
+
         // Make an NFA with the subtrees for whom this is also the last quantifier (or who also have no quantifier).
         NFA nfa;
-        // Put the prefix into the NFA.
-        unsigned prefixEnd = nfa.root();
-        for (unsigned i = 0; i < stack.size() - 1; ++i) {
-            ASSERT(!stack[i]->edges.isEmpty());
-            const PrefixTreeEdge& edge = stack[i]->edges.last();
-            prefixEnd = edge.term.generateGraph(nfa, prefixEnd, edge.child->finalActions);
+        {
+            // Put the prefix into the NFA.
+            ImmutableCharNFANodeBuilder lastNode(nfa);
+            for (unsigned i = 0; i < stack.size() - 1; ++i) {
+                const PrefixTreeEdge& edge = stack[i]->edges.last();
+                ImmutableCharNFANodeBuilder newNode = edge.term.generateGraph(nfa, lastNode, edge.child->finalActions);
+                lastNode = WTF::move(newNode);
+            }
+
+            // Put the non-quantified vertices in the subtree into the NFA and delete them.
+            ASSERT(stack.last());
+            generateNFAForSubtree(nfa, WTF::move(lastNode), *stack.last(), maxNFASize);
         }
-        // Put the non-quantified vertices in the subtree into the NFA and delete them.
-        ASSERT(stack.last());
-        generateNFAForSubtree(nfa, prefixEnd, *stack.last(), maxNFASize);
-        
+        nfa.finalize();
+
         handler(WTF::move(nfa));
-        
+
         // Clean up any processed leaf nodes.
         while (true) {
             if (stack.size() > 1) {

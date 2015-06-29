@@ -1040,6 +1040,10 @@
 		26F0C89F1A2EC3BE002794F8 /* ContentExtensionsBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26F0C89D1A2EC3BE002794F8 /* ContentExtensionsBackend.cpp */; };
 		26F0C8A01A2EC3BE002794F8 /* ContentExtensionsBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 26F0C89E1A2EC3BE002794F8 /* ContentExtensionsBackend.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		26F40D4A14904A6300CA67C4 /* EventLoopIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 26F40D4914904A6300CA67C4 /* EventLoopIOS.mm */; };
+		26F756B01B3B65AC0005DD79 /* MutableRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 26F756AE1B3B65AC0005DD79 /* MutableRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		26F756B11B3B65AC0005DD79 /* MutableRangeList.h in Headers */ = {isa = PBXBuildFile; fileRef = 26F756AF1B3B65AC0005DD79 /* MutableRangeList.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		26F756B31B3B66F70005DD79 /* ImmutableNFA.h in Headers */ = {isa = PBXBuildFile; fileRef = 26F756B21B3B66F70005DD79 /* ImmutableNFA.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		26F756B51B3B68F20005DD79 /* ImmutableNFANodeBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 26F756B41B3B68F20005DD79 /* ImmutableNFANodeBuilder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		26F9A83818A046AC00AEB88A /* ViewportConfiguration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26F9A83618A046AC00AEB88A /* ViewportConfiguration.cpp */; };
 		26F9A83918A046AC00AEB88A /* ViewportConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 26F9A83718A046AC00AEB88A /* ViewportConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		26FAE4CC1852E3A5004C8C46 /* ResourceHandleCFURLConnectionDelegate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26FAE4C81852E3A5004C8C46 /* ResourceHandleCFURLConnectionDelegate.cpp */; };
@@ -8181,6 +8185,10 @@
 		26F0C89D1A2EC3BE002794F8 /* ContentExtensionsBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentExtensionsBackend.cpp; sourceTree = "<group>"; };
 		26F0C89E1A2EC3BE002794F8 /* ContentExtensionsBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentExtensionsBackend.h; sourceTree = "<group>"; };
 		26F40D4914904A6300CA67C4 /* EventLoopIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EventLoopIOS.mm; sourceTree = "<group>"; };
+		26F756AE1B3B65AC0005DD79 /* MutableRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MutableRange.h; sourceTree = "<group>"; };
+		26F756AF1B3B65AC0005DD79 /* MutableRangeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MutableRangeList.h; sourceTree = "<group>"; };
+		26F756B21B3B66F70005DD79 /* ImmutableNFA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImmutableNFA.h; sourceTree = "<group>"; };
+		26F756B41B3B68F20005DD79 /* ImmutableNFANodeBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImmutableNFANodeBuilder.h; sourceTree = "<group>"; };
 		26F9A83618A046AC00AEB88A /* ViewportConfiguration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewportConfiguration.cpp; sourceTree = "<group>"; };
 		26F9A83718A046AC00AEB88A /* ViewportConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewportConfiguration.h; sourceTree = "<group>"; };
 		26FAE4C81852E3A5004C8C46 /* ResourceHandleCFURLConnectionDelegate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceHandleCFURLConnectionDelegate.cpp; sourceTree = "<group>"; };
@@ -15688,6 +15696,10 @@
 				26A517FB1AB92238006335DF /* DFAMinimizer.cpp */,
 				26A517FC1AB92238006335DF /* DFAMinimizer.h */,
 				267725F91A5B3AD9003C24DD /* DFANode.h */,
+				26F756B21B3B66F70005DD79 /* ImmutableNFA.h */,
+				26F756B41B3B68F20005DD79 /* ImmutableNFANodeBuilder.h */,
+				26F756AE1B3B65AC0005DD79 /* MutableRange.h */,
+				26F756AF1B3B65AC0005DD79 /* MutableRangeList.h */,
 				269397251A4A5FBD00E8349D /* NFA.cpp */,
 				269397231A4A5B6400E8349D /* NFA.h */,
 				269397201A4A412F00E8349D /* NFANode.h */,
@@ -24240,6 +24252,7 @@
 				62CD325A1157E57C0063B0A7 /* CustomEvent.h in Headers */,
 				A8CB413E0E8633FD0032C4F0 /* DashArray.h in Headers */,
 				A80E6D0B0A1989CA007FB8C5 /* DashboardRegion.h in Headers */,
+				26F756B01B3B65AC0005DD79 /* MutableRange.h in Headers */,
 				97BC6A211505F081001B74AC /* Database.h in Headers */,
 				97BC6A241505F081001B74AC /* DatabaseAuthorizer.h in Headers */,
 				FE16CFD4169D1DED00D3A0C7 /* DatabaseBackend.h in Headers */,
@@ -24400,6 +24413,7 @@
 				85909CE40ACC7A7E00DF01F1 /* DOMCSSUnknownRuleInternal.h in Headers */,
 				858C381C0AA8E29600B187A4 /* DOMCSSValue.h in Headers */,
 				85B498F30ADB336A00925CBB /* DOMCSSValueInternal.h in Headers */,
+				26F756B31B3B66F70005DD79 /* ImmutableNFA.h in Headers */,
 				858C383C0AA8ED8200B187A4 /* DOMCSSValueList.h in Headers */,
 				85909D2B0ACC7D5500DF01F1 /* DOMCSSValueListInternal.h in Headers */,
 				E10B9CCC0B747A44003ED890 /* DOMCustomXPathNSResolver.h in Headers */,
@@ -26234,6 +26248,7 @@
 				BCEA486E097D93020094C9E4 /* RenderDeprecatedFlexibleBox.h in Headers */,
 				D302754A12A5FE84004BD828 /* RenderDetailsMarker.h in Headers */,
 				A76E5F7F135E0DCF00A69837 /* RenderedDocumentMarker.h in Headers */,
+				26F756B51B3B68F20005DD79 /* ImmutableNFANodeBuilder.h in Headers */,
 				9B32CDA913DF7FA900F34D13 /* RenderedPosition.h in Headers */,
 				E43A023B17EB370A004CDD25 /* RenderElement.h in Headers */,
 				0F5B7A5510F65D7A00376302 /* RenderEmbeddedObject.h in Headers */,
@@ -26858,6 +26873,7 @@
 				B2227A810D00BF220071B782 /* SVGPathSegList.h in Headers */,
 				8476C9E611DF6A0B00555B02 /* SVGPathSegListBuilder.h in Headers */,
 				084A0829128D7867002DB1F1 /* SVGPathSegListPropertyTearOff.h in Headers */,
+				26F756B11B3B65AC0005DD79 /* MutableRangeList.h in Headers */,
 				84B6B978120F13E500B8EFAF /* SVGPathSegListSource.h in Headers */,
 				83C1D435178D5AB500141E68 /* SVGPathSegMovetoAbs.h in Headers */,
 				83C1D436178D5AB500141E68 /* SVGPathSegMovetoRel.h in Headers */,

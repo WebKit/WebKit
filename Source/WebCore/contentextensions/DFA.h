@@ -38,6 +38,8 @@ namespace ContentExtensions {
 
 // The DFA abstract a partial DFA graph in a compact form.
 struct WEBCORE_EXPORT DFA {
+    static DFA empty();
+
     void minimize();
     unsigned graphSize() const;
     size_t memoryUsed() const;

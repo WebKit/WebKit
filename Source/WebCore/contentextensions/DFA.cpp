@@ -35,6 +35,13 @@ namespace WebCore {
 
 namespace ContentExtensions {
 
+DFA DFA::empty()
+{
+    DFA newDFA;
+    newDFA.nodes.append(DFANode());
+    return newDFA;
+}
+
 size_t DFA::memoryUsed() const
 {
     return sizeof(DFA)

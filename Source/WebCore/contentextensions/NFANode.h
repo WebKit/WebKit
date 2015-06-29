@@ -45,7 +45,7 @@ typedef HashMap<uint16_t, NFANodeIndexSet, DefaultHash<uint16_t>::Hash, WTF::Uns
 
 class NFANode {
 public:
-    HashMap<uint16_t, NFANodeIndexSet, DefaultHash<uint16_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint16_t>> transitions;
+    NFANodeTransitions transitions;
     NFANodeIndexSet transitionsOnAnyCharacter;
 
     ActionList finalRuleIds;
