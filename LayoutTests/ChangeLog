@@ -1,3 +1,14 @@
+2015-06-26  Matt Rajca  <mrajca@apple.com>
+
+        Test existence of controls on MediaSession
+        https://bugs.webkit.org/show_bug.cgi?id=146356
+
+        Reviewed by Eric Carlson.
+
+        * media/session/controls-existence-expected.txt: Added.
+        * media/session/controls-existence.html: Added.
+        * platform/mac/TestExpectations: Media Session support is disabled by default.
+
 2015-06-29  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         Unreviewed EFL gardening on 29th Jun.
