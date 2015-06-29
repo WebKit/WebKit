@@ -2,28 +2,15 @@
 <html>
     <head>
         <script src="../../resources/js-test-pre.js"></script>
+        <script src="./resources/getUserMedia-helper.js"></script>
         <script>
 
             var stream1;
             var stream2;
             var audioTrack;
             var videoTrack;
-
-            function error()
-            {
-                testFailed('Stream generation failed.');
-                finishJSTest();
-            }
-
-            function getUserMedia(dictionary, callback)
-            {
-                try {
-                    navigator.webkitGetUserMedia(dictionary, callback, error);
-                } catch (e) {
-                    testFailed('webkitGetUserMedia threw exception :' + e);
-                    finishJSTest();
-                }
-            }
+            var allTracks;
+            var id;
 
             function tryAddTrack(stream, track)
             {
@@ -39,6 +26,12 @@
             function createStreamAndAddTracks()
             {
                 shouldBe('stream2.getTracks().length', '2');
+
+                debug('getAudioTracks(), getVideoTracks() and getTracks() must return a new sequence at every invocation');
+                shouldBeTrue('stream2.getAudioTracks() != stream2.getAudioTracks()');
+                shouldBeTrue('stream2.getVideoTracks() != stream2.getVideoTracks()');
+                shouldBeTrue('stream2.getTracks() != stream2.getTracks()');
+
                 audioTrack = stream1.getAudioTracks()[0];
                 tryAddTrack(stream2, audioTrack);
                 shouldBe('stream2.getAudioTracks().length', '2');
@@ -48,7 +41,13 @@
                 tryAddTrack(stream2, videoTrack);
                 shouldBe('stream2.getAudioTracks().length', '2');
                 shouldBe('stream2.getVideoTracks().length', '2');
-                shouldBe('stream2.getTracks().length', '4');
+                allTracks = stream2.getTracks();
+                shouldBe('allTracks.length', '4');
+                allTracks.forEach(function (track) {
+                    id = track.id;
+                    shouldBeNonNull('stream2.getTrackById(id)');
+                })
+                shouldBeNull('stream2.getTrackById("foo-id")');
 
                 finishJSTest();
             }
@@ -63,13 +62,13 @@
             {
                 stream1 = s;
                 shouldBe('stream1.getTracks().length', '2');
-                getUserMedia({audio:true, video:true}, gotStream2);
+                getUserMedia("allow", {audio:true, video:true}, gotStream2);
             }
 
             function startMedia()
             {
-                description("Test adding tracks to inactive MediaStream.");
-                getUserMedia({audio:true, video:true}, gotStream1); 
+                description("Test the different methods to get tracks from a MediaStream.");
+                getUserMedia("allow", {audio:true, video:true}, gotStream1);
             }
             window.jsTestIsAsync = true;
             window.successfullyParsed = true;

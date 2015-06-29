@@ -2,6 +2,7 @@
 <html>
     <head>
         <script src="../../resources/js-test-pre.js"></script>
+        <script src="./resources/getUserMedia-helper.js"></script>
     </head>
     <body>
         <p id="description"></p>
@@ -13,20 +14,6 @@
             var stream2;
             var audioTrack;
             var videoTrack;
-
-            function error() {
-                testFailed('Stream generation failed.');
-                finishJSTest();
-            }
-
-            function getUserMedia(dictionary, callback) {
-                try {
-                    navigator.webkitGetUserMedia(dictionary, callback, error);
-                } catch (e) {
-                    testFailed('webkitGetUserMedia threw exception :' + e);
-                    finishJSTest();
-                }
-            }
 
             function tryAddTrack(stream, track) {
                 try {
@@ -51,13 +38,21 @@
             }
 
             function shouldFireActive() {
-                debug("Stream2 is active.");
+                debug("<br>Stream2 is active.");
+                shouldBe('stream2.active', 'true');
                 finishJSTest();
             }
 
             function shouldFireInActive() {
-                debug("Stream2 is inactive.");
-                finishJSTest();
+                debug("<br>Stream2 is inactive.");
+                shouldBe('stream2.active', 'false');
+
+                debug("<br>*** add non-ended track");
+                shouldNotBe('audioTrack.readyState', '"ended"');
+                tryAddTrack(stream2, audioTrack);
+
+                debug("<br>*** active attribute is still false (until event is fired)");
+                shouldBe('stream2.active', 'false');
             }
 
             function gotStream2(s) {
@@ -124,22 +119,22 @@
                 shouldBe('stream1.getAudioTracks().length', '2');
                 shouldBe('stream1.getVideoTracks().length', '2');
 
-                debug("<br>*** remove all tracks, stream.ended should return true");
+                debug("<br>*** remove all tracks, stream will become inactive");
                 tryRemoveTrack(stream2, stream2.getAudioTracks()[0]);
                 tryRemoveTrack(stream2, stream2.getVideoTracks()[0]);
                 shouldBe('stream2.getAudioTracks().length', '0');
                 shouldBe('stream2.getVideoTracks().length', '0');
 
-                debug("<br>*** it should be impossible to remove a track after the stream has ended");
-                shouldThrow('stream2.removeTrack(audioTrack)', '"Error: InvalidStateError: DOM Exception 11"');
+                debug("<br>*** active attribute is still true (until event is fired)");
+                shouldBe('stream2.active', 'true');
             }
 
             function gotStream1(s) {
                 stream1 = s;
-                getUserMedia({audio:true, video:true}, gotStream2);
+                getUserMedia("allow", {audio:true, video:true}, gotStream2);
             }
 
-            getUserMedia({audio:true, video:true}, gotStream1);
+            getUserMedia("allow", {audio:true, video:true}, gotStream1);
 
             window.jsTestIsAsync = true;
             window.successfullyParsed = true;

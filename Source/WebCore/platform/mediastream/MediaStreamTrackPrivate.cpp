@@ -1,5 +1,6 @@
 /*
  *  Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
+ *  Copyright (C) 2015 Ericsson AB. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,178 +37,76 @@
 
 namespace WebCore {
 
-PassRefPtr<MediaStreamTrackPrivate> MediaStreamTrackPrivate::create(PassRefPtr<RealtimeMediaSource> source)
+RefPtr<MediaStreamTrackPrivate> MediaStreamTrackPrivate::create(RefPtr<RealtimeMediaSource>&& source)
 {
-    return adoptRef(new MediaStreamTrackPrivate(source));
+    return adoptRef(new MediaStreamTrackPrivate(WTF::move(source), createCanonicalUUIDString()));
+}
+
+RefPtr<MediaStreamTrackPrivate> MediaStreamTrackPrivate::create(RefPtr<RealtimeMediaSource>&& source, const String& id)
+{
+    return adoptRef(new MediaStreamTrackPrivate(WTF::move(source), id));
 }
 
 MediaStreamTrackPrivate::MediaStreamTrackPrivate(const MediaStreamTrackPrivate& other)
     : RefCounted()
+    , m_source(other.source())
     , m_client(nullptr)
+    , m_id(createCanonicalUUIDString())
+    , m_isEnabled(other.enabled())
+    , m_isEnded(other.ended())
 {
-    m_ignoreMutations = true;
-    m_id = createCanonicalUUIDString();
-    setSource(other.source());
-    m_readyState = other.readyState();
-    m_muted = other.muted();
-    m_enabled = other.enabled();
-    m_stopped = other.stopped();
-    m_ignoreMutations = false;
+    m_source->addObserver(this);
 }
 
-MediaStreamTrackPrivate::MediaStreamTrackPrivate(PassRefPtr<RealtimeMediaSource> source)
-    : m_source(nullptr)
+MediaStreamTrackPrivate::MediaStreamTrackPrivate(RefPtr<RealtimeMediaSource>&& source, const String& id)
+    : RefCounted()
+    , m_source(source)
     , m_client(nullptr)
-    , m_readyState(RealtimeMediaSource::New)
-    , m_muted(false)
-    , m_enabled(true)
-    , m_stopped(false)
+    , m_id(id)
+    , m_isEnabled(true)
+    , m_isEnded(false)
 {
-    m_ignoreMutations = true;
-    setSource(source);
-    m_ignoreMutations = false;
+    m_source->addObserver(this);
 }
 
 MediaStreamTrackPrivate::~MediaStreamTrackPrivate()
 {
-    if (m_source)
-        m_source->removeObserver(this);
-}
-
-void MediaStreamTrackPrivate::setSource(PassRefPtr<RealtimeMediaSource> source)
-{
-    if (m_source)
-        m_source->removeObserver(this);
-
-    m_source = source;
-
-    if (!m_source)
-        return;
-
-    setMuted(m_source->muted());
-    setReadyState(m_source->readyState());
-    if (m_source)
-        m_source->addObserver(this);
-}
-
-const String& MediaStreamTrackPrivate::id() const
-{
-    if (!m_id.isEmpty())
-        return m_id;
-
-    // The spec says:
-    //   Unless a MediaStreamTrack object is created as a part a of special purpose algorithm that
-    //   specifies how the track id must be initialized, the user agent must generate a globally
-    //   unique identifier string and initialize the object's id attribute to that string.
-    if (m_source && m_source->useIDForTrackID())
-        return m_source->id();
-
-    m_id = createCanonicalUUIDString();
-    return m_id;
+    m_source->removeObserver(this);
 }
 
 const String& MediaStreamTrackPrivate::label() const
 {
-    if (m_source)
-        return m_source->name();
-
-    return emptyString();
-}
-
-bool MediaStreamTrackPrivate::ended() const
-{
-    return m_stopped || (m_source && m_source->readyState() == RealtimeMediaSource::Ended);
+    return m_source->name();
 }
 
 bool MediaStreamTrackPrivate::muted() const
 {
-    if (m_stopped || !m_source)
-        return false;
-
     return m_source->muted();
-}
-
-void MediaStreamTrackPrivate::setMuted(bool muted)
-{
-    if (m_muted == muted)
-        return;
-
-    m_muted = muted;
-
-    if (!m_client || m_ignoreMutations)
-        return;
-
-    m_client->trackMutedChanged();
 }
 
 bool MediaStreamTrackPrivate::readonly() const
 {
-    if (m_stopped || !m_source)
-        return true;
-
     return m_source->readonly();
 }
 
 bool MediaStreamTrackPrivate::remote() const
 {
-    if (!m_source)
-        return false;
-
     return m_source->remote();
 }
 
 void MediaStreamTrackPrivate::setEnabled(bool enabled)
 {
-    if (m_stopped || m_enabled == enabled)
-        return;
-
-    // 4.3.3.1
-    // ... after a MediaStreamTrack is disassociated from its track, its enabled attribute still
-    // changes value when set; it just doesn't do anything with that new value.
-    m_enabled = enabled;
-
-    if (m_source)
-        m_source->setEnabled(enabled);
-
-    if (!m_client || m_ignoreMutations)
-        return;
-
-    m_client->trackEnabledChanged();
+    // Always update the enabled state regardless of the track being ended.
+    m_isEnabled = enabled;
 }
 
-void MediaStreamTrackPrivate::stop(StopBehavior stopSource)
+void MediaStreamTrackPrivate::endTrack()
 {
-    if (m_stopped)
+    if (ended())
         return;
 
-    if (stopSource == StopTrackAndStopSource && m_source)
-        m_source->stop();
-
-    setReadyState(RealtimeMediaSource::Ended);
-    m_stopped = true;
-}
-
-RealtimeMediaSource::ReadyState MediaStreamTrackPrivate::readyState() const
-{
-    if (m_stopped)
-        return RealtimeMediaSource::Ended;
-
-    return m_readyState;
-}
-
-void MediaStreamTrackPrivate::setReadyState(RealtimeMediaSource::ReadyState state)
-{
-    if (m_readyState == RealtimeMediaSource::Ended || m_readyState == state)
-        return;
-
-    RealtimeMediaSource::ReadyState oldState = m_readyState;
-    m_readyState = state;
-
-    if (!m_client || m_ignoreMutations)
-        return;
-
-    if ((m_readyState == RealtimeMediaSource::Live && oldState == RealtimeMediaSource::New) || m_readyState == RealtimeMediaSource::Ended)
-        m_client->trackReadyStateChanged();
+    m_isEnded = true;
+    m_source->requestStop(this);
 }
 
 RefPtr<MediaStreamTrackPrivate> MediaStreamTrackPrivate::clone()
@@ -215,7 +114,11 @@ RefPtr<MediaStreamTrackPrivate> MediaStreamTrackPrivate::clone()
     return adoptRef(new MediaStreamTrackPrivate(*this));
 }
 
-    
+RealtimeMediaSource::Type MediaStreamTrackPrivate::type() const
+{
+    return m_source->type();
+}
+
 RefPtr<MediaConstraints> MediaStreamTrackPrivate::constraints() const
 {
     return m_constraints;
@@ -223,63 +126,40 @@ RefPtr<MediaConstraints> MediaStreamTrackPrivate::constraints() const
 
 const RealtimeMediaSourceStates& MediaStreamTrackPrivate::states() const
 {
-    if (!m_source) {
-        DEPRECATED_DEFINE_STATIC_LOCAL(const RealtimeMediaSourceStates, noState, ());
-        return noState;
-    }
-    
     return m_source->states();
-}
-
-RealtimeMediaSource::Type MediaStreamTrackPrivate::type() const
-{
-    if (!m_source)
-        return RealtimeMediaSource::None;
-
-    return m_source->type();
 }
 
 RefPtr<RealtimeMediaSourceCapabilities> MediaStreamTrackPrivate::capabilities() const
 {
-    if (!m_source)
-        return 0;
-
     return m_source->capabilities();
 }
 
-void MediaStreamTrackPrivate::applyConstraints(PassRefPtr<MediaConstraints>)
+void MediaStreamTrackPrivate::applyConstraints(const MediaConstraints&)
 {
     // FIXME: apply the new constraints to the track
     // https://bugs.webkit.org/show_bug.cgi?id=122428
 }
 
-void MediaStreamTrackPrivate::sourceReadyStateChanged()
+void MediaStreamTrackPrivate::sourceStopped()
 {
-    if (stopped())
+    if (ended())
         return;
-    
-    setReadyState(m_source->readyState());
+
+    m_isEnded = true;
+
+    if (m_client)
+        m_client->trackEnded();
 }
 
 void MediaStreamTrackPrivate::sourceMutedChanged()
 {
-    if (stopped())
-        return;
-    
-    setMuted(m_source->muted());
+    if (m_client)
+        m_client->trackMutedChanged();
 }
 
-void MediaStreamTrackPrivate::sourceEnabledChanged()
+bool MediaStreamTrackPrivate::preventSourceFromStopping()
 {
-    if (stopped())
-        return;
-    
-    setEnabled(m_source->enabled());
-}
-
-bool MediaStreamTrackPrivate::observerIsEnabled()
-{
-    return enabled();
+    return !m_isEnded;
 }
 
 } // namespace WebCore

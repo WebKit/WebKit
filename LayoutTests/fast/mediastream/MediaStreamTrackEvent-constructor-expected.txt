@@ -3,7 +3,6 @@ This tests the constructor for the MediaStreamTrackEvent DOM class.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS getUserMedia({audio:true, video:true}, gotStream) did not throw exception.
 
 *** getUserMedia() succeeded, test stream ***
 PASS mediaStream is non-null.

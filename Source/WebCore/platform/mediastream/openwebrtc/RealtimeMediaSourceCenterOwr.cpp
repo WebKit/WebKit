@@ -115,7 +115,6 @@ void RealtimeMediaSourceCenterOwr::createMediaStream(PassRefPtr<MediaStreamCreat
         RefPtr<RealtimeMediaSource> audioSource = firstSource(RealtimeMediaSource::Audio);
         if (audioSource) {
             audioSource->reset();
-            audioSource->setReadyState(RealtimeMediaSource::Live);
             audioSources.append(audioSource.release());
         }
     }
@@ -126,7 +125,6 @@ void RealtimeMediaSourceCenterOwr::createMediaStream(PassRefPtr<MediaStreamCreat
         RefPtr<RealtimeMediaSource> videoSource = firstSource(RealtimeMediaSource::Video);
         if (videoSource) {
             videoSource->reset();
-            videoSource->setReadyState(RealtimeMediaSource::Live);
             videoSources.append(videoSource.release());
         }
     }

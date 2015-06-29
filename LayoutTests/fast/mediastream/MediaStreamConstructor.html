@@ -2,6 +2,7 @@
 <html>
     <head>
         <script src="../../resources/js-test-pre.js"></script>
+        <script src="./resources/getUserMedia-helper.js"></script>
     </head>
     <body>
         <p id="description"></p>
@@ -38,20 +39,6 @@
                 idArray.push(id);
 
                 return true;
-            }
-
-            function error() {
-                testFailed('Stream generation failed.');
-                finishJSTest();
-            }
-
-            function getUserMedia(dictionary, callback) {
-                try {
-                    navigator.webkitGetUserMedia(dictionary, callback, error);
-                } catch (e) {
-                    testFailed('webkitGetUserMedia threw exception :' + e);
-                    finishJSTest();
-                }
             }
 
             function gotStream(s) {
@@ -104,7 +91,7 @@
                 shouldBeTrue('checkIdAttribute(newStream.id)');
             }
 
-            getUserMedia({video:true, audio:true}, gotStream);
+            getUserMedia("allow", {video:true, audio:true}, gotStream);
 
             window.jsTestIsAsync = true;
             window.successfullyParsed = true;

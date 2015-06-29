@@ -1,0 +1,26 @@
+Tests MediaStreamTrack.clone()
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getUserMedia succeeded.
+
+videoTrack = mediaStream.getVideoTracks()[0]
+Initialize event handler attributes on videoTrack
+
+videoTrack2 = videoTrack.clone()
+PASS videoTrack.id is not videoTrack2.id
+PASS videoTrack.kind is videoTrack2.kind
+PASS videoTrack.label is videoTrack2.label
+PASS videoTrack.muted is videoTrack2.muted
+PASS videoTrack.enabled is videoTrack2.enabled
+PASS videoTrack.readyState is videoTrack2.readyState
+PASS videoTrack.onmute is not videoTrack2.onmute
+PASS videoTrack.onunmute is not videoTrack2.onunmute
+PASS videoTrack.onended is not videoTrack2.onended
+PASS videoTrack.onoverconstrained is not videoTrack2.onoverconstrained
+PASS videoTrack.readyState is not videoTrack2.readyState
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

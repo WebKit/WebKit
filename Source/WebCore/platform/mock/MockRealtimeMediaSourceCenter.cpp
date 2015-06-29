@@ -174,7 +174,6 @@ void MockRealtimeMediaSourceCenter::createMediaStream(PassRefPtr<MediaStreamCrea
 
         RefPtr<RealtimeMediaSource> audioSource = it->value;
         audioSource->reset();
-        audioSource->setReadyState(RealtimeMediaSource::Live);
         audioSources.append(audioSource.release());
     }
 
@@ -190,7 +189,6 @@ void MockRealtimeMediaSourceCenter::createMediaStream(PassRefPtr<MediaStreamCrea
 
         RefPtr<RealtimeMediaSource> videoSource = it->value;
         videoSource->reset();
-        videoSource->setReadyState(RealtimeMediaSource::Live);
         videoSources.append(videoSource.release());
     }
     

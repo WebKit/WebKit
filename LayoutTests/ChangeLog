@@ -1,3 +1,41 @@
+2015-06-29  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        WebRTC: Update the MediaStream API
+        https://bugs.webkit.org/show_bug.cgi?id=146313
+
+        Reviewed by Eric Carlson.
+
+        Test status: 3 added, 8 existing enabled (some updated) and 1 removed.
+
+        * TestExpectations:
+        * fast/mediastream/MediaStream-add-ended-tracks-expected.txt:
+        * fast/mediastream/MediaStream-add-ended-tracks.html:
+        * fast/mediastream/MediaStream-add-remove-tracks-expected.txt:
+        * fast/mediastream/MediaStream-add-remove-tracks.html:
+        * fast/mediastream/MediaStream-add-tracks-to-inactive-stream.html:
+        * fast/mediastream/MediaStream-clone-expected.txt: Added.
+        * fast/mediastream/MediaStream-clone.html:
+        * fast/mediastream/MediaStream-construct-with-ended-tracks-expected.txt: Added.
+        * fast/mediastream/MediaStream-construct-with-ended-tracks.html:
+        * fast/mediastream/MediaStream-getTracks-expected.txt:
+        * fast/mediastream/MediaStream-getTracks.html:
+        * fast/mediastream/MediaStreamConstructor.html:
+        * fast/mediastream/MediaStreamTrack-clone-expected.txt: Added.
+        * fast/mediastream/MediaStreamTrack-clone.html: Added.
+        * fast/mediastream/MediaStreamTrack-getSources-expected.txt: Removed.
+        * fast/mediastream/MediaStreamTrack-getSources.html: Removed. Tested method removed from spec.
+        * fast/mediastream/MediaStreamTrack-kind-expected.txt: Added.
+        * fast/mediastream/MediaStreamTrack-kind.html: Added.
+        * fast/mediastream/MediaStreamTrack-stop-expected.txt: Added.
+        * fast/mediastream/MediaStreamTrack-stop.html: Added.
+        * fast/mediastream/MediaStreamTrackEvent-constructor-expected.txt:
+        * fast/mediastream/MediaStreamTrackEvent-constructor.html:
+        * fast/mediastream/resources/getUserMedia-helper.js: Added.
+        (.reject):
+        (getUserMedia):
+        (defaultRejectOrCatch):
+        * platform/gtk/TestExpectations:
+
 2015-06-29  Matt Rajca  <mrajca@apple.com>
 
         Media Session: test session attribute of newly-created media elements

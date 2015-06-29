@@ -2,16 +2,18 @@
 <html>
     <head>
         <script src="../../resources/js-test-pre.js"></script>
+        <script src="./resources/getUserMedia-helper.js"></script>
         <script>
             var mediaStream;
             var videoTrack;
             var audioTrack;
             var newMediaStream;
+            var mediaStreamCopy;
 
             function gotStream(stream) {
                 mediaStream = stream;
                 debug("");
-                shouldEvaluateTo('mediaStream.ended', false);
+                shouldEvaluateTo('mediaStream.active', true);
 
                 evalAndLog("videoTrack = mediaStream.getVideoTracks()[0]");
                 evalAndLog("audioTrack = mediaStream.getAudioTracks()[0]");
@@ -29,26 +31,18 @@
                 tracksArray.push(audioTrack);
                 newMediaStream = new webkitMediaStream(tracksArray);
 
-                shouldEvaluateTo('newMediaStream.ended', true);
-                shouldNotBeEqualToString(mediaStream.id, newMediaStream.id);
+                shouldEvaluateTo('newMediaStream.active', false);
+                shouldNotBe('mediaStream.id', 'newMediaStream.id');
 
-                var mediaStreamCopy = new webkitMediaStream(newMediaStream);
-                shouldEvaluateTo('mediaStreamCopy.ended', true);
+                mediaStreamCopy = new webkitMediaStream(newMediaStream);
+                shouldEvaluateTo('mediaStreamCopy.active', false);
                 shouldNotBe('mediaStreamCopy.id', 'newMediaStream.id');
-            }
 
-            function getUserMediaError() {
-                testFailed('Could not get MediaStream');
                 finishJSTest();
             }
 
             function start() {
-                try {
-                    navigator.webkitGetUserMedia({audio:true, video:true}, gotStream, getUserMediaError);
-                } catch (e) {
-                    testFailed('webkitGetUserMedia threw exception :' + e);
-                    finishJSTest();
-                }
+                getUserMedia("allow", {audio:true, video:true}, gotStream);
             }
 
             window.jsTestIsAsync = true;

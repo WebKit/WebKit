@@ -2,51 +2,47 @@
 <html>
     <head>
         <script src="../../resources/js-test-pre.js"></script>
+        <script src="./resources/getUserMedia-helper.js"></script>
         <script>
             var mediaStream;
             var newMediaStream;
-            var audioTracks;
-            var videoTracks;
-            var newAudioTracks;
-            var newVideoTracks;
+            var track;
+            var newTrack;
 
-            function checkTracks(trackSet1, trackSet2) {
-                for (var i = 0; i < trackSet1.length; i++) {
-                    shouldBe('trackSet1[i].readyState', 'trackSet2[i].readyState');
-                    shouldBe('trackSet1[i].enabled', 'trackSet2[i].enabled');
-                    shouldBe('trackSet1[i].muted', 'trackSet2[i].muted');
-                }
+            function checkTracks(track1, track2) {
+                track = track1;
+                newTrack = track2;
+                debug("check tracks");
+                shouldNotBe('track.id', 'newTrack.id');
+                shouldBe('track.kind', 'newTrack.kind');
+                shouldBe('track.label', 'newTrack.label');
+                shouldBe('track.readyState', 'newTrack.readyState');
+                shouldBe('track.enabled', 'newTrack.enabled');
+                shouldBe('track.muted', 'newTrack.muted');
+                debug("done");
             }
 
             function gotStream(stream) {
                 mediaStream = stream;
                 debug("");
 
+                // Since we don't have any guarantees on the order from getAudio/VideoTracks(), we
+                // can't have a stream with more than one track of each kind.
+                shouldBe('mediaStream.getAudioTracks().length', '1');
+                shouldBe('mediaStream.getVideoTracks().length', '1');
+
                 evalAndLog("newMediaStream = mediaStream.clone()");
 
                 shouldNotBe('mediaStream.id', 'newMediaStream.id');
 
-                evalAndLog("audioTracks = mediaStream.getAudioTracks()");
-                evalAndLog("videoTracks = mediaStream.getVideoTracks()");
-                evalAndLog("newAudioTracks = newMediaStream.getAudioTracks()");
-                evalAndLog("newVideoTracks = newMediaStream.getVideoTracks()");
+                checkTracks(mediaStream.getAudioTracks()[0], newMediaStream.getAudioTracks()[0]);
+                checkTracks(mediaStream.getVideoTracks()[0], newMediaStream.getVideoTracks()[0]);
 
-                checkTracks(audioTracks, newAudioTracks);
-                checkTracks(videoTracks, newVideoTracks);
-            }
-
-            function getUserMediaError() {
-                testFailed('Could not get MediaStream');
                 finishJSTest();
             }
 
             function start() {
-                try {
-                    navigator.webkitGetUserMedia({audio:true, video:true}, gotStream, getUserMediaError);
-                } catch (e) {
-                    testFailed('webkitGetUserMedia threw exception :' + e);
-                    finishJSTest();
-                }
+                getUserMedia("allow", {audio:true, video:true}, gotStream);
             }
 
             window.jsTestIsAsync = true;

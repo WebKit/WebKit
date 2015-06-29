@@ -56,18 +56,16 @@ public:
         virtual ~Observer() { }
         
         // Source state changes.
-        virtual void sourceReadyStateChanged() = 0;
+        virtual void sourceStopped() = 0;
         virtual void sourceMutedChanged() = 0;
-        virtual void sourceEnabledChanged() = 0;
 
         // Observer state queries.
-        virtual bool observerIsEnabled() = 0;
+        virtual bool preventSourceFromStopping() = 0;
     };
 
     virtual ~RealtimeMediaSource() { }
 
     bool isAudioStreamSource() const { return type() == Audio; }
-    virtual bool useIDForTrackID() const { return false; }
 
     const String& id() const { return m_id; }
 
@@ -80,12 +78,7 @@ public:
     virtual RefPtr<RealtimeMediaSourceCapabilities> capabilities() const = 0;
     virtual const RealtimeMediaSourceStates& states() = 0;
     
-    enum ReadyState { New = 0, Live = 1, Ended = 2 };
-    virtual ReadyState readyState() const { return m_readyState; }
-    virtual void setReadyState(ReadyState);
-
-    virtual bool enabled() const { return m_enabled; }
-    virtual void setEnabled(bool);
+    bool stopped() const { return m_stopped; }
 
     virtual bool muted() const { return m_muted; }
     virtual void setMuted(bool);
@@ -102,7 +95,8 @@ public:
     virtual void startProducingData() { }
     virtual void stopProducingData() { }
 
-    void stop();
+    void stop(Observer* callingObserver = nullptr);
+    void requestStop(Observer* callingObserver = nullptr);
 
     void reset();
 
@@ -113,10 +107,9 @@ private:
     String m_id;
     Type m_type;
     String m_name;
-    ReadyState m_readyState;
+    bool m_stopped;
     Vector<Observer*> m_observers;
 
-    bool m_enabled;
     bool m_muted;
     bool m_readonly;
     bool m_remote;

@@ -44,10 +44,6 @@ webkit.org/b/72698 media/audio-garbage-collect.html [ Skip ]
 
 webkit.org/b/53990 fast/forms/search-event-delay.html [ Pass Failure ]
 
-# No port in WebKit already support getMediaStream, so we are skipping those for now.
-fast/mediastream/MediaStream-construct-with-ended-tracks.html [ Skip ]
-fast/mediastream/MediaStream-clone.html [ Skip ]
-
 webkit.org/b/126142 css3/calc/transitions-dependent.html [ Pass Failure ]
 
 webkit.org/b/124932 media/video-size.html [ Pass Failure ]

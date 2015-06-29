@@ -2,27 +2,12 @@
 <html>
     <head>
         <script src="../../resources/js-test-pre.js"></script>
+        <script src="./resources/getUserMedia-helper.js"></script>
         <script>
 
 
             var stream1;
             var audioTrack;
-
-            function error()
-            {
-                testFailed('Stream generation failed.');
-                finishJSTest();
-            }
-
-            function getUserMedia(dictionary, callback)
-            {
-                try {
-                    navigator.webkitGetUserMedia(dictionary, callback, error);
-                } catch (e) {
-                    testFailed('webkitGetUserMedia threw exception :' + e);
-                    finishJSTest();
-                }
-            }
 
             function tryAddTrack(stream, track)
             {
@@ -55,7 +40,7 @@
             function startMedia()
             {
                 description("Test adding tracks to inactive MediaStream.");
-                getUserMedia({audio:true, video:true}, gotStream1); 
+                getUserMedia("allow", {audio:true, video:true}, gotStream1);
             }
             window.jsTestIsAsync = true;
             window.successfullyParsed = true;

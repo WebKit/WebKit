@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script src="./resources/getUserMedia-helper.js"></script>
+        <script>
+            var mediaStream;
+
+            function gotStream(stream) {
+                mediaStream = stream;
+
+                shouldBe('mediaStream.getVideoTracks().length', '1');
+                shouldBe('mediaStream.getAudioTracks().length', '1');
+
+                shouldBeEqualToString('mediaStream.getAudioTracks()[0].kind', 'audio');
+                shouldBeEqualToString('mediaStream.getVideoTracks()[0].kind', 'video');
+
+                finishJSTest();
+            }
+
+            function start() {
+                description("Test MediaStreamTrack kind");
+                getUserMedia("allow", {audio:true, video:true}, gotStream);
+            }
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+    </head>
+    <body onload="start()">
+        <p id="description"></p>
+        <div id="console"></div>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

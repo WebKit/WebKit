@@ -41,22 +41,17 @@ enum MediaStreamTrackState { "new", "live", "ended" };
     readonly attribute boolean _readonly;
     readonly attribute boolean remote;
     readonly attribute MediaStreamTrackState readyState;
-    attribute EventHandler onstarted;
     attribute EventHandler onended;
 
-    [CallWith=ScriptExecutionContext, RaisesException] static void getSources(MediaStreamTrackSourcesCallback callback);
+    MediaStreamTrack clone();
+    [ImplementedAs=stopProducingData] void stop();
 
     MediaTrackConstraints getConstraints();
-
     MediaSourceStates states();
-
     MediaStreamCapabilities getCapabilities(); // returns either AllVideoCapabilities or AllAudioCapabilities
-
     void applyConstraints(Dictionary constraints);
 
     attribute EventHandler onoverconstrained;
-    MediaStreamTrack clone();
-    [ImplementedAs=stopProducingData] void stop();
 
     // EventTarget interface
     void addEventListener(DOMString type, EventListener listener, optional boolean useCapture);

@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script src="./resources/getUserMedia-helper.js"></script>
+        <script>
+            var track;
+            var kind;
+            var id;
+            var label;
+            var enabled;
+            var readonly;
+            var remote;
+            var muted;
+
+            function gotStream(stream) {
+                debug("*** extract track");
+                track = stream.getAudioTracks()[0];
+                shouldBe('track.readyState', '"live"');
+
+                debug("*** store track attributes that should be preserved");
+                evalAndLog('kind = track.kind');
+                evalAndLog('id = track.id');
+                evalAndLog('label = track.label');
+                evalAndLog('enabled = track.enabled');
+                evalAndLog('readonly = track.readonly');
+                evalAndLog('remote = track.remote');
+                evalAndLog('muted = track.muted');
+
+                debug("*** stop track");
+                track.stop();
+                shouldBe('track.readyState', '"ended"');
+
+                debug("*** compare against stored attribute values");
+                shouldBe('track.kind', 'kind');
+                shouldBe('track.id', 'id');
+                shouldBe('track.label', 'label');
+                shouldBe('track.enabled', 'enabled');
+                shouldBe('track.readonly', 'readonly');
+                shouldBe('track.remote', 'remote');
+                shouldBe('track.muted', 'muted');
+
+                debug("*** toggle enable (should now throw)");
+                shouldNotThrow('track.enabled = !track.enabled');
+                shouldNotBe('track.enabled', 'enabled');
+
+                finishJSTest();
+            }
+
+            function start() {
+                description("Test MediaStreamTrack stop()");
+                getUserMedia("allow", {audio:true}, gotStream);
+            }
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+    </head>
+    <body onload="start()">
+        <p id="description"></p>
+        <div id="console"></div>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

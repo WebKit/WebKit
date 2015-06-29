@@ -315,16 +315,7 @@ webkit.org/b/85211 ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm [ Ima
 webkit.org/b/85212 ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyFailure ]
 
 # Mediastream implementation is not complete yet.
-webkit.org/b/79203 fast/mediastream/MediaStream-add-ended-tracks.html [ Skip ]
-webkit.org/b/79203 fast/mediastream/MediaStream-add-remove-tracks.html [ Skip ]
-webkit.org/b/79203 fast/mediastream/MediaStream-add-tracks-to-inactive-stream.html [ Skip ]
-webkit.org/b/79203 fast/mediastream/MediaStream-clone.html [ Skip ]
-webkit.org/b/79203 fast/mediastream/MediaStreamConstructor.html [ Skip ]
-webkit.org/b/79203 fast/mediastream/MediaStream-construct-with-ended-tracks.html [ Skip ]
-webkit.org/b/79203 fast/mediastream/MediaStream-getTracks.html [ Skip ]
 webkit.org/b/79203 fast/mediastream/MediaStream-MediaElement-srcObject.html [ Skip ]
-webkit.org/b/79203 fast/mediastream/MediaStreamTrackEvent-constructor.html [ Skip ]
-webkit.org/b/79203 fast/mediastream/MediaStreamTrack-getSources.html [ Skip ]
 webkit.org/b/79203 fast/mediastream/MediaStreamTrack.html [ Skip ]
 webkit.org/b/79203 fast/mediastream/MediaStreamTrack-onended.html [ Skip ]
 webkit.org/b/79203 fast/mediastream/RTCIceCandidate.html [ Skip ]

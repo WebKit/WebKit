@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script src="./resources/getUserMedia-helper.js"></script>
+        <script>
+            var mediaStream;
+            var videoTrack;
+            var videoTrack2;
+            var audioTrack;
+
+            function gotStream(stream) {
+                mediaStream = stream;
+                testPassed('getUserMedia succeeded.');
+
+                debug("");
+                evalAndLog("videoTrack = mediaStream.getVideoTracks()[0]");
+
+                debug("Initialize event handler attributes on videoTrack");
+                videoTrack.onmute = function () {};
+                videoTrack.onunmute = function () {};
+                videoTrack.onended = function () {};
+                videoTrack.onoverconstrained = function () {};
+
+                debug("");
+                evalAndLog("videoTrack2 = videoTrack.clone()");
+
+                shouldNotBe('videoTrack.id', 'videoTrack2.id');
+                shouldBe('videoTrack.kind', 'videoTrack2.kind');
+                shouldBe('videoTrack.label', 'videoTrack2.label');
+                shouldBe('videoTrack.muted', 'videoTrack2.muted');
+                shouldBe('videoTrack.enabled', 'videoTrack2.enabled');
+                shouldBe('videoTrack.readyState', 'videoTrack2.readyState');
+
+                shouldNotBe('videoTrack.onmute', 'videoTrack2.onmute');
+                shouldNotBe('videoTrack.onunmute', 'videoTrack2.onunmute');
+                shouldNotBe('videoTrack.onended', 'videoTrack2.onended');
+                shouldNotBe('videoTrack.onoverconstrained', 'videoTrack2.onoverconstrained');
+
+                videoTrack.stop();
+                shouldNotBe('videoTrack.readyState', 'videoTrack2.readyState');
+
+                finishJSTest();
+            }
+
+            function start() {
+                description("Tests MediaStreamTrack.clone()");
+                getUserMedia("allow", {video:true}, gotStream);
+            }
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+    </head>
+    <body onload="start()">
+        <p id="description"></p>
+        <div id="console"></div>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

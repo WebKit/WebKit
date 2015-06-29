@@ -158,9 +158,9 @@ void UserMediaRequest::didCreateStream(PassRefPtr<MediaStreamPrivate> privateStr
     // 4 - Create the MediaStream and pass it to the success callback.
     RefPtr<MediaStream> stream = MediaStream::create(*m_scriptExecutionContext, privateStream);
     for (auto& track : stream->getAudioTracks())
-        track->applyConstraints(m_audioConstraints);
+        track->applyConstraints(*m_audioConstraints);
     for (auto& track : stream->getVideoTracks())
-        track->applyConstraints(m_videoConstraints);
+        track->applyConstraints(*m_videoConstraints);
 
     m_promise.resolve(stream);
 }

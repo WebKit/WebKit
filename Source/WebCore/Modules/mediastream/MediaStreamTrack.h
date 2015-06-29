@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2011 Ericsson AB. All rights reserved.
+ * Copyright (C) 2011, 2015 Ericsson AB. All rights reserved.
  * Copyright (C) 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
@@ -45,7 +45,6 @@ namespace WebCore {
 class Dictionary;
 class MediaConstraintsImpl;
 class MediaSourceStates;
-class MediaStreamTrackSourcesCallback;
 class MediaStreamCapabilities;
 class MediaTrackConstraints;
 
@@ -58,7 +57,6 @@ public:
     };
 
     static Ref<MediaStreamTrack> create(ScriptExecutionContext&, MediaStreamTrackPrivate&);
-    static Ref<MediaStreamTrack> create(MediaStreamTrack&);
     virtual ~MediaStreamTrack();
 
     const AtomicString& kind() const;
@@ -71,25 +69,22 @@ public:
     bool muted() const;
     bool readonly() const;
     bool remote() const;
-    bool stopped() const;
 
     const AtomicString& readyState() const;
 
-    static void getSources(ScriptExecutionContext*, PassRefPtr<MediaStreamTrackSourcesCallback>, ExceptionCode&);
+    bool ended() const;
+
+    RefPtr<MediaStreamTrack> clone();
+    void stopProducingData();
 
     RefPtr<MediaTrackConstraints> getConstraints() const;
     RefPtr<MediaSourceStates> states() const;
     RefPtr<MediaStreamCapabilities> getCapabilities() const;
     void applyConstraints(const Dictionary&);
-    void applyConstraints(PassRefPtr<MediaConstraints>);
+    void applyConstraints(const MediaConstraints&);
 
-    RefPtr<MediaStreamTrack> clone();
-    void stopProducingData();
-
-    RealtimeMediaSource* source() const { return m_privateTrack->source(); }
-    MediaStreamTrackPrivate& privateTrack() { return m_privateTrack.get(); }
-
-    bool ended() const;
+    RealtimeMediaSource* source() const { return m_private->source(); }
+    MediaStreamTrackPrivate& privateTrack() { return m_private.get(); }
 
     void addObserver(Observer*);
     void removeObserver(Observer*);
@@ -105,11 +100,7 @@ private:
     MediaStreamTrack(ScriptExecutionContext&, MediaStreamTrackPrivate&);
     explicit MediaStreamTrack(MediaStreamTrack&);
 
-    void setSource(PassRefPtr<RealtimeMediaSource>);
-
     void configureTrackRendering();
-    void trackDidEnd();
-    void scheduleEventDispatch(PassRefPtr<Event>);
 
     // ActiveDOMObject API.
     void stop() override final;
@@ -121,21 +112,13 @@ private:
     virtual void derefEventTarget() override final { deref(); }
 
     // MediaStreamTrackPrivateClient
-    void trackReadyStateChanged() override;
-    void trackMutedChanged() override;
-    void trackEnabledChanged() override;
-
-    Vector<RefPtr<Event>> m_scheduledEvents;
-
-    RefPtr<MediaConstraintsImpl> m_constraints;
-    Mutex m_mutex;
+    void trackEnded();
+    void trackMutedChanged();
 
     Vector<Observer*> m_observers;
+    Ref<MediaStreamTrackPrivate> m_private;
 
-    Ref<MediaStreamTrackPrivate> m_privateTrack;
-    bool m_eventDispatchScheduled;
-
-    bool m_stoppingTrack;
+    RefPtr<MediaConstraintsImpl> m_constraints;
 };
 
 } // namespace WebCore

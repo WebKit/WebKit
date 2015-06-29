@@ -44,13 +44,24 @@ PASS stream1.getVideoTracks().length is 1
 PASS stream1.getAudioTracks().length is 2
 PASS stream1.getVideoTracks().length is 2
 
-*** remove all tracks, stream.ended should return true
+*** remove all tracks, stream will become inactive
 PASS stream2.getAudioTracks().length is 0
 PASS stream2.getVideoTracks().length is 0
 
-*** it should be impossible to remove a track after the stream has ended
-PASS stream2.removeTrack(audioTrack) threw exception Error: InvalidStateError: DOM Exception 11.
+*** active attribute is still true (until event is fired)
+PASS stream2.active is true
+
 Stream2 is inactive.
+PASS stream2.active is false
+
+*** add non-ended track
+PASS audioTrack.readyState is not "ended"
+
+*** active attribute is still false (until event is fired)
+PASS stream2.active is false
+
+Stream2 is active.
+PASS stream2.active is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
