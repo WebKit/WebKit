@@ -2280,3 +2280,9 @@ webkit.org/b/146233 fast/forms/listbox-visible-size.html [ Failure ]
 # Test requires hardcoded font names, which I do not have for this port.
 fast/text/han-generic-font-families.html [ WontFix ]
 fast/text/hangul-generic-font-families.html [ WontFix ]
+
+# Below tests need to have own expectataion files.
+accessibility/aria-hidden-false-works-in-subtrees.html [ Missing ]
+accessibility/radio-button-group-members.html [ Missing ]
+editing/selection/designmode-no-caret.html [ Missing ]
+accessibility/content-editable-as-textarea.html [ Missing ]

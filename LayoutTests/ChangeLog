@@ -1,3 +1,37 @@
+2015-06-28  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Unreviewed add new baseline for missing tests
+
+        Some tests need to have own test expectations for EFL port.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/accessibility/auto-filled-value-expected.txt: Added.
+        * platform/efl/accessibility/img-fallsback-to-title-expected.txt: Added.
+        * platform/efl/accessibility/internal-link-anchors2-expected.txt: Added.
+        * platform/efl/accessibility/math-multiscript-attributes-expected.txt: Added.
+        * platform/efl/accessibility/meter-element-expected.txt: Added.
+        * platform/efl/compositing/iframes/invisible-nested-iframe-show-expected.txt: Added.
+        * platform/efl/compositing/iframes/resizer-expected.txt: Added.
+        * platform/efl/compositing/layer-creation/fixed-position-scroll-expected.txt: Added.
+        * platform/efl/compositing/overflow/composited-scrolling-creates-a-stacking-container-expected.txt: Added.
+        * platform/efl/compositing/tiling/huge-layer-add-remove-child-expected.txt: Added.
+        * platform/efl/compositing/tiling/rotated-tiled-preserve3d-clamped-expected.txt: Added.
+        * platform/efl/css2.1/t1604-c542-letter-sp-00-b-a-expected.txt: Added.
+        * platform/efl/css3/flexbox/flexbox-baseline-margins-expected.txt: Added.
+        * platform/efl/editing/selection/contains-boundaries-expected.txt: Added.
+        * platform/efl/editing/selection/mixed-editability-10-expected.txt: Added.
+        * platform/efl/editing/selection/replaced-boundaries-3-expected.txt: Added.
+        * platform/efl/editing/style/5065910-expected.txt: Added.
+        * platform/efl/editing/style/font-family-with-space-expected.txt: Added.
+        * platform/efl/fast/css/named-images-expected.txt: Added.
+        * platform/efl/ietestcenter/css3/bordersbackgrounds/background-repeat-space-padding-box-expected.txt: Added.
+        * platform/efl/ietestcenter/css3/text/textshadow-005-expected.txt: Added.
+        * platform/efl/printing/media-queries-print-expected.txt: Added.
+        * platform/efl/printing/setPrinting-expected.txt: Added.
+        * platform/efl/printing/simultaneous-position-float-change-expected.txt: Added.
+        * platform/efl/printing/width-overflow-expected.txt: Added.
+        * platform/efl/transforms/3d/point-mapping/3d-point-mapping-origins-expected.txt: Added.
+
 2015-06-28  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL] Unreviewed, gardening.

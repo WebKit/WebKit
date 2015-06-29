@@ -1,0 +1,65 @@
+This tests that the meter element is accessible.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Meter1
+AXRole: AXProgressIndicator
+AXTitle: 
+AXDescription: 
+
+AXValueSettable: false
+
+
+Meter2
+AXRole: AXProgressIndicator
+AXTitle: 
+AXDescription: 
+
+AXValueSettable: false
+
+
+Meter3
+AXRole: AXProgressIndicator
+AXTitle: 
+AXDescription: 
+
+AXValueSettable: false
+
+
+Meter4
+AXRole: AXProgressIndicator
+AXTitle: 
+AXDescription: 
+
+AXValueSettable: false
+
+
+Meter5
+AXRole: AXProgressIndicator
+AXTitle: 
+AXDescription: 
+
+AXValueSettable: false
+
+
+Meter6
+AXRole: AXGroup
+AXTitle: centimeters
+AXDescription: centimeters
+
+AXValueSettable: false
+
+
+Meter7
+AXRole: AXGroup
+AXTitle: centimeters
+AXDescription: centimeters
+
+AXValueSettable: false
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
