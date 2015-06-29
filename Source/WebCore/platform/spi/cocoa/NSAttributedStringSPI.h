@@ -47,6 +47,8 @@ typedef NS_ENUM(NSInteger, NSUnderlineStyle) {
 
 SOFT_LINK_PRIVATE_FRAMEWORK(UIFoundation)
 
+SOFT_LINK_CONSTANT(UIFoundation, NSFontAttributeName, NSString *)
+#define NSFontAttributeName getNSFontAttributeName()
 SOFT_LINK_CONSTANT(UIFoundation, NSUnderlineStyleAttributeName, NSString *)
 #define NSUnderlineStyleAttributeName getNSUnderlineStyleAttributeName()
 SOFT_LINK_CONSTANT(UIFoundation, NSStrikethroughStyleAttributeName, NSString *)
