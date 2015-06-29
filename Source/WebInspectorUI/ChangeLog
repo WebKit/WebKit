@@ -1,3 +1,14 @@
+2015-06-29  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION: Web Inspector: Jump to Definition is broken
+        https://bugs.webkit.org/show_bug.cgi?id=146376
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ObjectTreeBaseTreeElement.js:
+        (WebInspector.ObjectTreeBaseTreeElement.prototype._appendMenusItemsForObject):
+        Allow changing tabs when jumping to function definition.
+
 2015-06-28  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Wrong border color of console messages when filters are enabled
