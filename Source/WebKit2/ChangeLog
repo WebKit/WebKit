@@ -1,5 +1,38 @@
 2015-06-29  Chris Dumez  <cdumez@apple.com>
 
+        [WK2][iOS] Swipe gesture snapshot stays up for 3 seconds when swiping back after top-hit navigation
+        https://bugs.webkit.org/show_bug.cgi?id=146415
+        <rdar://problem/21595801>
+
+        Reviewed by Tim Horton.
+
+        Swipe gesture snapshot previously stayed up for 3 seconds when swiping
+        back after a top-hit navigation. This is because we do not restore the
+        scroll position in this case and the ViewGestureController was waiting
+        for the scroll position to be restored before taking down the snapshot.
+
+        This patch adds a fail-safe mechanism so that the WebProcess can let
+        the UIProcess know (via a CouldNotRestorePageState IPC) that the page
+        state (including scroll position) could not be restored so that it can
+        let the ViewGestureController it should not wait for the scroll
+        position to be restored.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _couldNotRestorePageState]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::couldNotRestorePageState):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::couldNotRestorePageState):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::restorePageState):
+
+2015-06-29  Chris Dumez  <cdumez@apple.com>
+
         [WK2][iOS] Add WKWebView private API to save a back/forward snapshot
         https://bugs.webkit.org/show_bug.cgi?id=146398
         <rdar://problem/21584231>

@@ -1029,6 +1029,16 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
     }
 }
 
+- (void)_couldNotRestorePageState
+{
+    // The gestureController may be waiting for the scroll position to be restored
+    // in order to remove the swipe snapshot. Since the scroll position could not be
+    // restored, tell the gestureController it was restored so that it no longer waits
+    // for it.
+    if (_gestureController)
+        _gestureController->didRestoreScrollPosition();
+}
+
 - (void)_restorePageStateToExposedRect:(WebCore::FloatRect)exposedRect scale:(double)scale
 {
     if (_dynamicViewportUpdateMode != DynamicViewportUpdateMode::NotResizing)

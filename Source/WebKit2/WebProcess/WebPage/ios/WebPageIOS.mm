@@ -297,8 +297,10 @@ void WebPage::restorePageState(const HistoryItem& historyItem)
 {
     // When a HistoryItem is cleared, its scale factor and scroll point are set to zero. We should not try to restore the other
     // parameters in those conditions.
-    if (!historyItem.pageScaleFactor())
+    if (!historyItem.pageScaleFactor()) {
+        send(Messages::WebPageProxy::CouldNotRestorePageState());
         return;
+    }
 
     // We can restore the exposed rect and scale, but we cannot touch the scroll position since the obscured insets
     // may be changing in the UIProcess. The UIProcess can update the position from the information we send and will then

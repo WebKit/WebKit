@@ -519,6 +519,11 @@ void PageClientImpl::dynamicViewportUpdateChangedTarget(double newScale, const W
     [m_webView _dynamicViewportUpdateChangedTargetToScale:newScale position:newScrollPosition nextValidLayerTreeTransactionID:nextValidLayerTreeTransactionID];
 }
 
+void PageClientImpl::couldNotRestorePageState()
+{
+    [m_webView _couldNotRestorePageState];
+}
+
 void PageClientImpl::restorePageState(const WebCore::FloatRect& exposedRect, double scale)
 {
     [m_webView _restorePageStateToExposedRect:exposedRect scale:scale];

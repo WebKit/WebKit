@@ -118,6 +118,7 @@ private:
 
     virtual void didCommitLayerTree(const RemoteLayerTreeTransaction&) override;
     virtual void dynamicViewportUpdateChangedTarget(double newScale, const WebCore::FloatPoint& newScrollPosition, uint64_t transactionID) override;
+    virtual void couldNotRestorePageState() override;
     virtual void restorePageState(const WebCore::FloatRect&, double) override;
     virtual void restorePageCenterAndScale(const WebCore::FloatPoint&, double) override;
 

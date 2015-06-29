@@ -1396,6 +1396,7 @@ private:
     float textAutosizingWidth();
 
     void dynamicViewportUpdateChangedTarget(double newTargetScale, const WebCore::FloatPoint& newScrollPosition, uint64_t dynamicViewportSizeUpdateID);
+    void couldNotRestorePageState();
     void restorePageState(const WebCore::FloatRect&, double scale);
     void restorePageCenterAndScale(const WebCore::FloatPoint&, double scale);
 

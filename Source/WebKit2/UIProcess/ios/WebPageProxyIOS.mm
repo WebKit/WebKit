@@ -768,6 +768,11 @@ void WebPageProxy::dynamicViewportUpdateChangedTarget(double newScale, const Web
     }
 }
 
+void WebPageProxy::couldNotRestorePageState()
+{
+    m_pageClient.couldNotRestorePageState();
+}
+
 void WebPageProxy::restorePageState(const WebCore::FloatRect& exposedRect, double scale)
 {
     m_pageClient.restorePageState(exposedRect, scale);
