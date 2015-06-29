@@ -298,6 +298,15 @@ void ReadableJSStream::close(ExceptionCode& ec)
     changeStateToClosed();
 }
 
+void ReadableJSStream::error(JSC::ExecState& state, ExceptionCode& ec)
+{
+    if (!isReadable()) {
+        ec = TypeError;
+        return;
+    }
+    storeError(state, state.argument(0));
+}
+
 void ReadableJSStream::storeException(JSC::ExecState& state)
 {
     JSValue exception = state.exception()->value();

@@ -48,6 +48,9 @@ public:
 
     ReadableJSStream& stream() { return m_stream; }
 
+    void error(JSC::ExecState* state, ExceptionCode& ec) { m_stream.error(*state, ec); }
+    void error(JSC::ExecState* state, JSC::JSValue, ExceptionCode& ec) { m_stream.error(*state, ec); }
+
     void ref() { m_stream.ref(); }
     void deref() { m_stream.deref(); }
 

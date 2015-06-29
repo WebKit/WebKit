@@ -52,6 +52,7 @@
 #include "TestObj.h"
 #include "URL.h"
 #include "bool.h"
+#include <bindings/ScriptValue.h>
 #include <inspector/ScriptArguments.h>
 #include <inspector/ScriptCallStackFactory.h>
 #include <runtime/Error.h>

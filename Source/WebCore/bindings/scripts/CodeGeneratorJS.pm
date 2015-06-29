@@ -3868,6 +3868,7 @@ sub JSValueToNative
     }
 
     if ($type eq "any") {
+        AddToImplIncludes("<bindings/ScriptValue.h>");
         return "{ exec->vm(), $value }";
     }
 

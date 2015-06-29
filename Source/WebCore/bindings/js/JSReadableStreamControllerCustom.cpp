@@ -51,15 +51,6 @@ JSValue JSReadableStreamController::enqueue(ExecState* exec)
     return jsUndefined();
 }
 
-JSValue JSReadableStreamController::error(ExecState* state)
-{
-    ReadableJSStream& stream = impl().stream();
-    if (!stream.isReadable())
-        return state->vm().throwException(state, createTypeError(state, ASCIILiteral("Calling error on a stream which is not readable")));
-    stream.storeError(*state, state->argument(0));
-    return jsUndefined();
-}
-
 EncodedJSValue JSC_HOST_CALL constructJSReadableStreamController(ExecState* exec)
 {
     return throwVMError(exec, createTypeError(exec, ASCIILiteral("ReadableStreamController constructor should not be called directly")));

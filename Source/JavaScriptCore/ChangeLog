@@ -1,3 +1,12 @@
+2015-06-29  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Binding generator should allow using JSC::Value for "any" parameter in lieu of ScriptValue
+        https://bugs.webkit.org/show_bug.cgi?id=146403
+
+        Reviewed by Darin Adler.
+
+        * bindings/ScriptValue.h: Added implicit conversion to JSC::JSValue.
+
 2015-06-28 Aleksandr Skachkov   <gskachkov@gmail.com>
 
         [ES6] Implement ES6 arrow function syntax. No Line terminator between function parameters and =>

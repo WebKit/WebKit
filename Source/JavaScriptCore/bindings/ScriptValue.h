@@ -51,6 +51,7 @@ public:
     ScriptValue(JSC::VM& vm, JSC::JSValue value) : m_value(vm, value) { }
     virtual ~ScriptValue();
 
+    operator JSC::JSValue() const { return jsValue(); }
     JSC::JSValue jsValue() const { return m_value.get(); }
     bool getString(JSC::ExecState*, String& result) const;
     String toString(JSC::ExecState*) const;

@@ -63,6 +63,7 @@ public:
     JSC::JSValue error() override { return m_error.get(); }
 
     void enqueue(JSC::ExecState&);
+    void error(JSC::ExecState&, ExceptionCode&);
 
     double desiredSize() const { return m_highWaterMark - m_totalQueueSize; }
 
