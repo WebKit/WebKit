@@ -54,6 +54,9 @@ using namespace WebKit;
     if (!WebCore::AXObjectCache::accessibilityEnabled())
         WebCore::AXObjectCache::enableAccessibility();
 
+    if (!m_page)
+        return nil;
+    
     NSObject* mainFramePluginAccessibilityObjectWrapper = m_page->accessibilityObjectForMainFramePlugin();
     if (mainFramePluginAccessibilityObjectWrapper)
         return mainFramePluginAccessibilityObjectWrapper;
