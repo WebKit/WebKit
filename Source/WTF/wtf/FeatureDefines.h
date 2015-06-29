@@ -778,7 +778,7 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #endif
 
 #if !defined(ENABLE_PICTURE_SIZES)
-#define ENABLE_PICTURE_SIZES 1
+#define ENABLE_PICTURE_SIZES 0
 #endif
 
 #if !defined(ENABLE_WEB_TIMING)

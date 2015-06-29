@@ -1,3 +1,15 @@
+2015-06-29  Dean Jackson  <dino@apple.com>
+
+        Temporarily disable PICTURE_SIZES
+        https://bugs.webkit.org/show_bug.cgi?id=146435
+        <rdar://problem/21087013>
+
+        Reviewed by Tim Horton.
+
+        Skip HTMLImageElement.sizes tests.
+
+        * TestExpectations:
+
 2015-06-29  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         WebRTC: Update the MediaStream API

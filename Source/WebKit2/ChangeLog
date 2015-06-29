@@ -1,3 +1,16 @@
+2015-06-29  Dean Jackson  <dino@apple.com>
+
+        Temporarily disable PICTURE_SIZES
+        https://bugs.webkit.org/show_bug.cgi?id=146435
+        <rdar://problem/21087013>
+
+        Temporarily disable PICTURE_SIZES because it causes problems with out
+        of date <picture> polyfills.
+
+        Temporarily disable PICTURE_SIZES until Safari branches.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2015-06-29  Anders Carlsson  <andersca@apple.com>
 
         Don't try to access a possibly deallocated WebFrameProxy object
@@ -8,7 +21,7 @@
 
         Make sure to call isMainFrame before calling out to the client inside
         WebPageProxy::didFailLoadForFrame, matching what we do for WebPageProxy::didFinishLoadForFrame.
-        
+
         Also, add a ViewGestureController::didFailLoadForMainFrame function and call that instead of
         calling didFinishLoadForMainFrame in the failure case.
 

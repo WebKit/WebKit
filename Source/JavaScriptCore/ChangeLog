@@ -1,3 +1,16 @@
+2015-06-29  Dean Jackson  <dino@apple.com>
+
+        Temporarily disable PICTURE_SIZES
+        https://bugs.webkit.org/show_bug.cgi?id=146435
+        <rdar://problem/21087013>
+
+        Reviewed by Tim Horton.
+
+        Temporarily disable PICTURE_SIZES because it causes problems with out
+        of date <picture> polyfills.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2015-06-29  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Binding generator should allow using JSC::Value for "any" parameter in lieu of ScriptValue
