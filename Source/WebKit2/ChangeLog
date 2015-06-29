@@ -1,5 +1,20 @@
 2015-06-28  Dan Bernstein  <mitz@apple.com>
 
+        [Cocoa] Remove _WKSecurityOrigin.{h,mm}
+        https://bugs.webkit.org/show_bug.cgi?id=146402
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/Cocoa/WKSecurityOrigin.mm: Declare and define _WKSecurityOrigin here.
+        (-[WKSecurityOrigin methodSignatureForSelector:]): Moved into a WKBinaryCompatibility
+        category.
+        (-[WKSecurityOrigin forwardInvocation:]): Ditto.
+        * UIProcess/API/Cocoa/_WKSecurityOrigin.h: Removed.
+        * UIProcess/API/Cocoa/_WKSecurityOrigin.mm: Removed.
+        * WebKit2.xcodeproj/project.pbxproj: Removed references to _WKSecurityOrigin.{h,mm}.
+
+2015-06-28  Dan Bernstein  <mitz@apple.com>
+
         Tried to fix the EFL buid after r186046.
 
         * UIProcess/efl/PageUIClientEfl.cpp:
