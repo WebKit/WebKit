@@ -1,3 +1,19 @@
+2015-06-29  Jake Nielsen  <jacob_nielsen@apple.com>
+
+        Add timeout in run-webkit-tests for launching the simulator
+        https://bugs.webkit.org/show_bug.cgi?id=146371
+
+        Reviewed by Darin Adler.
+
+        Adds a default 5-minute timeout using the timeout class in webkitpy.benchmark_runner.utils
+        for the otherwise infinitely patient wait_until_device_is_in_state method.
+
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Simulator.DeviceState):
+        (Simulator):
+        (Simulator.wait_until_device_is_in_state):
+        (Simulator.device_state):
+
 2015-06-29  Benjamin Poulain  <benjamin@webkit.org>
 
         Make the NFA transitions range-based

@@ -28,6 +28,7 @@ import re
 import subprocess
 import time
 
+from webkitpy.benchmark_runner.utils import timeout
 from webkitpy.common.host import Host
 
 _log = logging.getLogger(__name__)
@@ -261,10 +262,10 @@ class Simulator(object):
         SHUTTING_DOWN = 4
 
     @staticmethod
-    def wait_until_device_is_in_state(udid, wait_until_state):
-        # FIXME: Implement support for a timed wait.
-        while (Simulator.device_state(udid) != wait_until_state):
-            time.sleep(0.5)
+    def wait_until_device_is_in_state(udid, wait_until_state, timeout_seconds=60 * 5):
+        with timeout(seconds=timeout_seconds):
+            while (Simulator.device_state(udid) != wait_until_state):
+                time.sleep(0.5)
 
     @staticmethod
     def device_state(udid):
