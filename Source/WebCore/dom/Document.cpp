@@ -233,6 +233,10 @@
 #include "MediaPlaybackTargetClient.h"
 #endif
 
+#if ENABLE(MEDIA_SESSION)
+#include "MediaSession.h"
+#endif
+
 using namespace WTF;
 using namespace Unicode;
 
@@ -6649,6 +6653,16 @@ void Document::setShouldPlayToPlaybackTarget(uint64_t clientId, bool shouldPlay)
     it->value->setShouldPlayToPlaybackTarget(shouldPlay);
 }
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
+
+#if ENABLE(MEDIA_SESSION)
+MediaSession& Document::defaultMediaSession()
+{
+    if (!m_defaultMediaSession)
+        m_defaultMediaSession = adoptRef(*new MediaSession(*this));
+
+    return *m_defaultMediaSession;
+}
+#endif
 
 ShouldOpenExternalURLsPolicy Document::shouldOpenExternalURLsPolicyToPropagate() const
 {

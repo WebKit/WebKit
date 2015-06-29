@@ -50,6 +50,7 @@ public:
         return adoptRef(*new MediaSession(context, kind));
     }
 
+    explicit MediaSession(Document&);
     MediaSession(ScriptExecutionContext&, const String&);
     ~MediaSession();
 
@@ -73,6 +74,7 @@ private:
     friend class HTMLMediaElement;
 
     enum class Kind {
+        Default,
         Content,
         Transient,
         TransientSolo,
@@ -94,7 +96,7 @@ private:
     HashSet<HTMLMediaElement*>* m_iteratedActiveParticipatingElements { nullptr };
 
     Document& m_document;
-    const Kind m_kind;
+    const Kind m_kind { Kind::Default };
     RefPtr<MediaRemoteControls> m_controls;
     MediaSessionMetadata m_metadata;
 };

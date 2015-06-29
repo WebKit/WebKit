@@ -409,6 +409,10 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
         m_captionDisplayMode = document.page()->group().captionPreferences()->captionDisplayMode();
 #endif
 
+#if ENABLE(MEDIA_SESSION)
+    m_session = &document.defaultMediaSession();
+#endif
+
     registerWithDocument(document);
 }
 

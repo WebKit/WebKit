@@ -37,6 +37,7 @@
 
 namespace WebCore {
 
+static const char* defaultKind = "";
 static const char* ambientKind = "ambient";
 static const char* transientKind = "transient";
 static const char* transientSoloKind = "transient-solo";
@@ -54,6 +55,12 @@ MediaSession::Kind MediaSession::parseKind(const String& kind)
     if (kind == transientSoloKind)
         return MediaSession::Kind::TransientSolo;
     return MediaSession::Kind::Content;
+}
+
+MediaSession::MediaSession(Document& document)
+    : m_document(document)
+{
+    MediaSessionManager::singleton().addMediaSession(*this);
 }
 
 MediaSession::MediaSession(ScriptExecutionContext& context, const String& kind)
@@ -77,6 +84,8 @@ MediaSession::~MediaSession()
 String MediaSession::kind() const
 {
     switch (m_kind) {
+    case MediaSession::Kind::Default:
+        return defaultKind;
     case MediaSession::Kind::Ambient:
         return ambientKind;
     case MediaSession::Kind::Transient:

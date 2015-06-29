@@ -222,6 +222,10 @@ struct TextAutoSizingTraits : WTF::GenericHashTraits<TextAutoSizingKey> {
 };
 #endif
 
+#if ENABLE(MEDIA_SESSION)
+class MediaSession;
+#endif
+
 enum PageshowEventPersistence {
     PageshowEventNotPersisted = 0,
     PageshowEventPersisted = 1
@@ -980,6 +984,10 @@ public:
     void unregisterForMediaVolumeCallbacks(Element*);
     void mediaVolumeDidChange();
 
+#if ENABLE(MEDIA_SESSION)
+    MediaSession& defaultMediaSession();
+#endif
+
     void registerForPrivateBrowsingStateChangedCallbacks(Element*);
     void unregisterForPrivateBrowsingStateChangedCallbacks(Element*);
     void storageBlockingStateDidChange();
@@ -1705,6 +1713,10 @@ private:
     TargetIdToClientMap m_idToClientMap;
     typedef HashMap<WebCore::MediaPlaybackTargetClient*, uint64_t> TargetClientToIdMap;
     TargetClientToIdMap m_clientToIDMap;
+#endif
+
+#if ENABLE(MEDIA_SESSION)
+    RefPtr<MediaSession> m_defaultMediaSession;
 #endif
 };
 
