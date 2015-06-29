@@ -6262,7 +6262,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         if (NSNumber *style = [attrs objectForKey:NSUnderlineStyleAttributeName]) {
             Color color = Color::black;
             if (NSColor *colorAttr = [attrs objectForKey:NSUnderlineColorAttributeName])
-                color = colorFromNSColor([colorAttr colorUsingColorSpaceName:NSDeviceRGBColorSpace]);
+                color = colorFromNSColor(colorAttr);
             result.append(CompositionUnderline(range.location, NSMaxRange(range), color, [style intValue] > 1));
         }
 
