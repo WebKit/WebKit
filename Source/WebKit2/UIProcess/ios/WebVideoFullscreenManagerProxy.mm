@@ -211,9 +211,9 @@ void WebVideoFullscreenModelContext::fullscreenMayReturnToInline()
 
 #pragma mark - WebVideoFullscreenManagerProxy
 
-Ref<WebVideoFullscreenManagerProxy> WebVideoFullscreenManagerProxy::create(WebPageProxy& page)
+RefPtr<WebVideoFullscreenManagerProxy> WebVideoFullscreenManagerProxy::create(WebPageProxy& page)
 {
-    return adoptRef(*new WebVideoFullscreenManagerProxy(page));
+    return adoptRef(new WebVideoFullscreenManagerProxy(page));
 }
 
 WebVideoFullscreenManagerProxy::WebVideoFullscreenManagerProxy(WebPageProxy& page)

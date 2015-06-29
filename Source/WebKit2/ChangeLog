@@ -1,5 +1,13 @@
 2015-06-28  Dan Bernstein  <mitz@apple.com>
 
+        Fixed the iOS 8.x build after r186066.
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.h:
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::create):
+
+2015-06-28  Dan Bernstein  <mitz@apple.com>
+
         Fixed the iOS build after r186059.
 
         * UIProcess/ios/WebVideoFullscreenManagerProxy.h:
