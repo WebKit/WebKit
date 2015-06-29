@@ -1,3 +1,25 @@
+2015-06-29  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of ConnectionStack
+        https://bugs.webkit.org/show_bug.cgi?id=146437
+
+        Reviewed by Andreas Kling.
+
+        Just use a TemporaryChange and a static variable instead.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::setGlobalException):
+        (WebKit::WebProcessConnection::didReceiveMessage):
+        (WebKit::WebProcessConnection::didReceiveSyncMessage):
+        * Shared/ConnectionStack.cpp: Removed.
+        (WebKit::ConnectionStack::singleton): Deleted.
+        * Shared/ConnectionStack.h: Removed.
+        (WebKit::ConnectionStack::current): Deleted.
+        (WebKit::ConnectionStack::CurrentConnectionPusher::CurrentConnectionPusher): Deleted.
+        (WebKit::ConnectionStack::CurrentConnectionPusher::~CurrentConnectionPusher): Deleted.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-06-29  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build.
