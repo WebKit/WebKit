@@ -1,3 +1,18 @@
+2015-06-29  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Disable default gesture recognizers on preview.
+        https://bugs.webkit.org/show_bug.cgi?id=146424
+        rdar://problem/21572828
+
+        We should disable default gesture recognizers on preview, to avoid activating links or
+        triggering touch events accidentally. We can enable them after preview finishes.
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView willPresentPreviewViewController:forPosition:inSourceView:]):
+        (-[WKContentView didDismissPreviewViewController:committing:]):
+
 2015-06-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Font panel doesn't get updated when bolding text via cmd+b in Mail on OS X
