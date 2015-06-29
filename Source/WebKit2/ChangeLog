@@ -1,3 +1,36 @@
+2015-06-29  Anders Carlsson  <andersca@apple.com>
+
+        Don't try to access a possibly deallocated WebFrameProxy object
+        https://bugs.webkit.org/show_bug.cgi?id=146428
+        rdar://problem/21446364
+
+        Reviewed by Tim Horton.
+
+        Make sure to call isMainFrame before calling out to the client inside
+        WebPageProxy::didFailLoadForFrame, matching what we do for WebPageProxy::didFinishLoadForFrame.
+        
+        Also, add a ViewGestureController::didFailLoadForMainFrame function and call that instead of
+        calling didFinishLoadForMainFrame in the failure case.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _didFailLoadForMainFrame]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFailLoadForFrame):
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::mainFrameLoadDidReachTerminalState):
+        (WebKit::ViewGestureController::didFinishLoadForMainFrame): Deleted.
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::didFailLoadForMainFrame):
+        * UIProcess/mac/ViewGestureController.h:
+        (WebKit::ViewGestureController::didFinishLoadForMainFrame):
+        (WebKit::ViewGestureController::didFailLoadForMainFrame):
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::mainFrameLoadDidReachTerminalState):
+        (WebKit::ViewGestureController::didFinishLoadForMainFrame): Deleted.
+
 2015-06-29  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Disable default gesture recognizers on preview.

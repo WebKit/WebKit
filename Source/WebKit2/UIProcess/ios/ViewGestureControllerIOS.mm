@@ -318,7 +318,7 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
 
     m_swipeWaitingForRenderTreeSizeThreshold = true;
     m_swipeWaitingForRepaint = true;
-    m_swipeWaitingForDidFinishLoad = true;
+    m_swipeWaitingForTerminalLoadingState = true;
     m_swipeWaitingForSubresourceLoads = true;
     m_swipeWaitingForScrollPositionRestoration = true;
 
@@ -373,15 +373,15 @@ void ViewGestureController::didRestoreScrollPosition()
     removeSwipeSnapshotIfReady();
 }
 
-void ViewGestureController::didFinishLoadForMainFrame()
+void ViewGestureController::mainFrameLoadDidReachTerminalState()
 {
     if (m_activeGestureType != ViewGestureType::Swipe)
         return;
 
-    if (!m_swipeWaitingForDidFinishLoad)
+    if (!m_swipeWaitingForTerminalLoadingState)
         return;
 
-    m_swipeWaitingForDidFinishLoad = false;
+    m_swipeWaitingForTerminalLoadingState = false;
 
     if (m_webPageProxy.pageLoadState().isLoading()) {
         m_swipeActiveLoadMonitoringTimer.startRepeating(swipeSnapshotRemovalActiveLoadMonitoringInterval);
@@ -398,10 +398,10 @@ void ViewGestureController::didSameDocumentNavigationForMainFrame(SameDocumentNa
         return;
 
     // This is nearly equivalent to didFinishLoad in the same document navigation case.
-    if (!m_swipeWaitingForDidFinishLoad)
+    if (!m_swipeWaitingForTerminalLoadingState)
         return;
 
-    m_swipeWaitingForDidFinishLoad = false;
+    m_swipeWaitingForTerminalLoadingState = false;
 
     if (type != SameDocumentNavigationSessionStateReplace && type != SameDocumentNavigationSessionStatePop)
         return;
@@ -428,7 +428,7 @@ void ViewGestureController::swipeSnapshotWatchdogTimerFired()
 
 void ViewGestureController::removeSwipeSnapshotIfReady()
 {
-    if (m_swipeWaitingForRenderTreeSizeThreshold || m_swipeWaitingForRepaint || m_swipeWaitingForDidFinishLoad || m_swipeWaitingForSubresourceLoads || m_swipeWaitingForScrollPositionRestoration)
+    if (m_swipeWaitingForRenderTreeSizeThreshold || m_swipeWaitingForRepaint || m_swipeWaitingForTerminalLoadingState || m_swipeWaitingForSubresourceLoads || m_swipeWaitingForScrollPositionRestoration)
         return;
 
     removeSwipeSnapshot();
@@ -438,7 +438,7 @@ void ViewGestureController::removeSwipeSnapshot()
 {
     m_swipeWaitingForRenderTreeSizeThreshold = false;
     m_swipeWaitingForRepaint = false;
-    m_swipeWaitingForDidFinishLoad = false;
+    m_swipeWaitingForTerminalLoadingState = false;
     m_swipeWaitingForSubresourceLoads = false;
     m_swipeWaitingForScrollPositionRestoration = false;
 

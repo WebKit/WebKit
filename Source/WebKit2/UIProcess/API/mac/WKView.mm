@@ -3932,6 +3932,12 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         _data->_gestureController->didFinishLoadForMainFrame();
 }
 
+- (void)_didFailLoadForMainFrame
+{
+    if (_data->_gestureController)
+        _data->_gestureController->didFailLoadForMainFrame();
+}
+
 - (void)_didSameDocumentNavigationForMainFrame:(SameDocumentNavigationType)type
 {
     if (_data->_gestureController)

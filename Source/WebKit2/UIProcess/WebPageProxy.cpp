@@ -3045,7 +3045,9 @@ void WebPageProxy::didFailLoadForFrame(uint64_t frameID, uint64_t navigationID, 
 
     auto transaction = m_pageLoadState.transaction();
 
-    if (frame->isMainFrame())
+    bool isMainFrame = frame->isMainFrame();
+
+    if (isMainFrame)
         m_pageLoadState.didFailLoad(transaction);
 
     frame->didFailLoad();
@@ -3057,10 +3059,8 @@ void WebPageProxy::didFailLoadForFrame(uint64_t frameID, uint64_t navigationID, 
     } else
         m_loaderClient->didFailLoadWithErrorForFrame(*this, *frame, navigation.get(), error, m_process->transformHandlesToObjects(userData.object()).get());
 
-    // Notify the PageClient that the main frame finished loading. The WebView / GestureController need to know the load has
-    // finished (e.g. to clear the back swipe snapshot).
-    if (frame->isMainFrame())
-        m_pageClient.didFinishLoadForMainFrame();
+    if (isMainFrame)
+        m_pageClient.didFailLoadForMainFrame();
 }
 
 void WebPageProxy::didSameDocumentNavigationForFrame(uint64_t frameID, uint64_t navigationID, uint32_t opaqueSameDocumentNavigationType, const String& url, const UserData& userData)

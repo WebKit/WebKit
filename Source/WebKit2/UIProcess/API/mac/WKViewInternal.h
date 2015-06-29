@@ -122,6 +122,7 @@ struct WebPageConfiguration;
 
 - (void)_didFirstVisuallyNonEmptyLayoutForMainFrame;
 - (void)_didFinishLoadForMainFrame;
+- (void)_didFailLoadForMainFrame;
 - (void)_didSameDocumentNavigationForMainFrame:(WebKit::SameDocumentNavigationType)type;
 - (void)_removeNavigationGestureSnapshot;
 

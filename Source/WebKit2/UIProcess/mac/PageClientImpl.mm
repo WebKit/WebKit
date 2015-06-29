@@ -789,6 +789,11 @@ void PageClientImpl::didFinishLoadForMainFrame()
     [m_wkView _didFinishLoadForMainFrame];
 }
 
+void PageClientImpl::didFailLoadForMainFrame()
+{
+    [m_wkView _didFailLoadForMainFrame];
+}
+
 void PageClientImpl::didSameDocumentNavigationForMainFrame(SameDocumentNavigationType type)
 {
     [m_wkView _didSameDocumentNavigationForMainFrame:type];

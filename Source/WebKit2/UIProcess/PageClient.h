@@ -313,6 +313,7 @@ public:
 
     virtual void didFirstVisuallyNonEmptyLayoutForMainFrame() = 0;
     virtual void didFinishLoadForMainFrame() = 0;
+    virtual void didFailLoadForMainFrame() = 0;
     virtual void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) = 0;
 
     virtual void didChangeBackgroundColor() = 0;

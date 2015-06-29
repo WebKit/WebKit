@@ -815,7 +815,7 @@ void ViewGestureController::didFirstVisuallyNonEmptyLayoutForMainFrame()
     }
 }
 
-void ViewGestureController::didFinishLoadForMainFrame()
+void ViewGestureController::mainFrameLoadDidReachTerminalState()
 {
     if (m_activeGestureType != ViewGestureType::Swipe || m_swipeInProgress)
         return;

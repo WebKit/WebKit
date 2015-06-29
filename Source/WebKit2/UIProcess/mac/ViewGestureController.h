@@ -122,7 +122,9 @@ public:
     void didRestoreScrollPosition();
 #endif
 
-    void didFinishLoadForMainFrame();
+    void didFinishLoadForMainFrame() { mainFrameLoadDidReachTerminalState(); }
+    void didFailLoadForMainFrame() { mainFrameLoadDidReachTerminalState(); }
+    void mainFrameLoadDidReachTerminalState();
     void removeSwipeSnapshot();
     void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType);
 
@@ -223,7 +225,7 @@ private:
     bool m_swipeWaitingForVisuallyNonEmptyLayout { false };
     bool m_swipeWaitingForRenderTreeSizeThreshold { false };
     bool m_swipeWaitingForRepaint { false };
-    bool m_swipeWaitingForDidFinishLoad { false };
+    bool m_swipeWaitingForTerminalLoadingState { false };
     bool m_swipeWaitingForSubresourceLoads { false };
     bool m_swipeWaitingForScrollPositionRestoration { false };
 };
