@@ -379,7 +379,7 @@ double ReadableJSStream::retrieveChunkSize(ExecState& state, JSValue chunk)
     if (state.hadException())
         return 0;
 
-    if (!std::isfinite(size)) {
+    if (!std::isfinite(size) || size < 0) {
         throwVMError(&state, createRangeError(&state, ASCIILiteral("Incorrect double value")));
         return 0;
     }

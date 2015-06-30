@@ -88,99 +88,38 @@ test(function() {
     }, 'construction should throw a RangeError');
 }, 'Readable stream: negative strategy.highWaterMark');
 
-var test2 = async_test('Readable stream: strategy.size returning NaN');
+var test2 = async_test('Readable stream: invalid strategy.size return value');
 test2.step(function() {
-    var theError;
-    var startCalled = false;
-    var rs = new ReadableStream(
-        {
+    var numberOfCalls = 0;
+    var elements = [NaN, -Infinity, +Infinity, -1];
+    var theError = [];
+    for (var i = 0; i < elements.length; i++) {
+        var rs = new ReadableStream({
             start: function(c) {
                 try {
                     c.enqueue('hi');
                     assert_unreached('enqueue didn\'t throw');
                 } catch (error) {
-                    startCalled = true;
-                    assert_equals(error.constructor, RangeError, 'enqueue should throw a RangeError');
-                    theError = error;
+                    assert_throws(new RangeError(), function() { throw error; }, 'enqueue should throw a RangeError for ' + elements[i]);
+                    theError[i] = error;
                 }
             }
         },
         {
             size: function() {
-                return NaN;
+                return elements[i];
             },
             highWaterMark: 5
-        }
-    );
+        });
 
-    rs.getReader().closed.catch(test2.step_func(function(e) {
-        assert_equals(e, theError, 'closed should reject with the error');
-        assert_true(startCalled);
-        test2.done();
-    }));
-});
-
-var test3 = async_test('Readable stream: strategy.size returning -Infinity');
-test3.step(function() {
-    var theError;
-    var startCalled = false;
-    var rs = new ReadableStream(
-        {
-            start: function(c) {
-                try {
-                    c.enqueue('hi');
-                    assert_unreached('enqueue didn\'t throw');
-                } catch (error) {
-                    startCalled = true;
-                    assert_equals(error.constructor, RangeError, 'enqueue should throw a RangeError');
-                    theError = error;
-                }
+        var catchFunction = function(i, e) {
+            assert_equals(e, theError[i], 'closed should reject with the error for ' + elements[i]);
+            if (++numberOfCalls, elements.length) {
+                test2.done();
             }
-        },
-        {
-            size: function() {
-                return -Infinity;
-            },
-            highWaterMark: 5
-        }
-    );
+        };
 
-    rs.getReader().closed.catch(test3.step_func(function(e) {
-        assert_equals(e, theError, 'closed should reject with the error');
-        assert_true(startCalled);
-        test3.done();
-    }));
-});
-
-var test4 = async_test('Readable stream: strategy.size returning +Infinity');
-test4.step(function() {
-    var theError;
-    var startCalled = false;
-    var rs = new ReadableStream(
-        {
-            start: function(c) {
-                try {
-                    c.enqueue('hi');
-                    assert_unreached('enqueue didn\'t throw');
-                } catch (error) {
-                    startCalled = true;
-                    assert_equals(error.constructor, RangeError, 'enqueue should throw a RangeError');
-                    theError = error;
-                }
-            }
-        },
-        {
-            size: function() {
-                return +Infinity;
-            },
-            highWaterMark: 5
-        }
-    );
-
-    rs.getReader().closed.catch(test4.step_func(function(e) {
-        assert_equals(e, theError, 'closed should reject with the error');
-        assert_true(startCalled);
-        test4.done();
-    }));
+        rs.getReader().closed.catch(test2.step_func(catchFunction.bind(this, i)));
+    }
 });
 </script>

@@ -1,3 +1,14 @@
+2015-06-30  Youenn Fablet  <youenn.fablet@crf.canon.fr> and Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [Streams API] Synced bad strategy test with reference implementation
+        https://bugs.webkit.org/show_bug.cgi?id=146411
+
+        Reviewed by Darin Adler.
+
+        * streams/reference-implementation/bad-strategies-expected.txt:
+        * streams/reference-implementation/bad-strategies.html: There are three tests that are merged into one and a
+        fourth check is added. Updated expectations accordingly.
+
 2015-06-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another rebaseline after r186086.
