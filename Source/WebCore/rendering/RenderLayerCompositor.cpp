@@ -3198,11 +3198,11 @@ void RenderLayerCompositor::rootBackgroundTransparencyChanged()
     if (!inCompositingMode())
         return;
 
-    Color documentBackgroundColor = m_renderView.frameView().documentBackgroundColor();
-    Color lastDocumentBackgroundColor = m_lastDocumentBackgroundColor;
-    m_lastDocumentBackgroundColor = documentBackgroundColor;
-    if (lastDocumentBackgroundColor.isValid() && lastDocumentBackgroundColor.hasAlpha() == documentBackgroundColor.hasAlpha())
+    bool isTransparent = viewHasTransparentBackground();
+    if (m_viewBackgroundIsTransparent == isTransparent)
         return;
+
+    m_viewBackgroundIsTransparent = isTransparent;
 
     // FIXME: We should do something less expensive than a full layer rebuild.
     setCompositingLayersNeedRebuild();

@@ -545,6 +545,7 @@ private:
     bool m_layerFlushThrottlingTemporarilyDisabledForInteraction;
     bool m_hasPendingLayerFlush;
     bool m_layerNeedsCompositingUpdate { false };
+    bool m_viewBackgroundIsTransparent { false };
 
     Timer m_paintRelatedMilestonesTimer;
 
@@ -557,7 +558,6 @@ private:
 #endif
 
     Color m_rootExtendedBackgroundColor;
-    Color m_lastDocumentBackgroundColor;
 
     HashMap<ScrollingNodeID, RenderLayer*> m_scrollingNodeToLayerMap;
 };
