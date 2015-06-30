@@ -64,7 +64,22 @@ void promoteHeapAccess(Node* node, const WriteFunctor& write, const ReadFunctor&
         if (node->child1()->isPhantomActivationAllocation())
             read(PromotedHeapLocation(ClosureVarPLoc, node->child1(), node->scopeOffset().offset()));
         break;
-        
+
+    case SkipScope:
+        if (node->child1()->isPhantomActivationAllocation())
+            read(PromotedHeapLocation(ActivationScopePLoc, node->child1()));
+        break;
+
+    case GetScope:
+        if (node->child1()->isPhantomFunctionAllocation())
+            read(PromotedHeapLocation(FunctionActivationPLoc, node->child1()));
+        break;
+
+    case GetExecutable:
+        if (node->child1()->isPhantomFunctionAllocation())
+            read(PromotedHeapLocation(FunctionExecutablePLoc, node->child1()));
+        break;
+
     case PutHint: {
         ASSERT(node->child1()->isPhantomAllocation());
         write(

@@ -1489,6 +1489,26 @@ struct Node {
         }
     }
 
+    bool isFunctionAllocation()
+    {
+        switch (op()) {
+        case NewFunction:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    bool isPhantomFunctionAllocation()
+    {
+        switch (op()) {
+        case PhantomNewFunction:
+            return true;
+        default:
+            return false;
+        }
+    }
+
     bool isPhantomAllocation()
     {
         switch (op()) {

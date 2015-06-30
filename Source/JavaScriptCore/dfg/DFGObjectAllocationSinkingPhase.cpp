@@ -914,6 +914,27 @@ private:
             escape(node->child2().node());
             break;
         }
+
+        case GetScope: {
+            Node* target = node->child1().node();
+            if (!target->isFunctionAllocation())
+                escape(target);
+            break;
+        }
+
+        case GetExecutable: {
+            Node* target = node->child1().node();
+            if (!target->isFunctionAllocation())
+                escape(target);
+            break;
+        }
+
+        case SkipScope: {
+            Node* target = node->child1().node();
+            if (!target->isActivationAllocation())
+                escape(target);
+            break;
+        }
             
         case MultiPutByOffset:
             // FIXME: In the future we should be able to handle this. It's just a matter of

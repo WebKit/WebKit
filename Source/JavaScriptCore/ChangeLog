@@ -1,3 +1,18 @@
+2015-06-30  Basile Clement  <basile_clement@apple.com>
+
+        Allow object allocation sinking through GetScope, GetExecutable and SkipScope nodes
+        https://bugs.webkit.org/show_bug.cgi?id=146431
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::isFunctionAllocation):
+        (JSC::DFG::Node::isPhantomFunctionAllocation):
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        (JSC::DFG::ObjectAllocationSinkingPhase::handleNode):
+        * dfg/DFGPromoteHeapAccess.h:
+        (JSC::DFG::promoteHeapAccess):
+
 2015-06-30  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Reduce rendering frames "Other" time by instrumenting compositing
