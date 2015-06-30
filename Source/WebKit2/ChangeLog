@@ -1,3 +1,10 @@
+2015-06-29  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Unreviewed EFL build fix since r186088 and r186095.
+
+        * CMakeLists.txt: Remove ConnectionStack.cpp.
+        * UIProcess/CoordinatedGraphics/WebView.h: Override virtual didFailLoadForMainFrame().
+
 2015-06-29  Brady Eidson  <beidson@apple.com>
 
         Flag sync XHRs from the network process so they can be handled appropriately.

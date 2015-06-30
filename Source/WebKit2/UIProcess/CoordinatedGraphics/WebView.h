@@ -207,6 +207,7 @@ protected:
     virtual void willRecordNavigationSnapshot(WebBackForwardListItem&) override { };
 
     virtual void didChangeBackgroundColor() override { }
+    virtual void didFailLoadForMainFrame() override { }
 
     WebViewClient m_client;
     RefPtr<WebPageProxy> m_page;
