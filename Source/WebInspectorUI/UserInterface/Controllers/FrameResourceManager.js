@@ -177,6 +177,13 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
         if (this._waitingForMainFrameResourceTreePayload)
             return;
 
+        // COMPATIBILITY (iOS 8): Timeline timestamps for legacy backends are computed
+        // dynamically from the first backend timestamp received. For navigations we
+        // need to reset that base timestamp, and an appropriate timestamp to use is
+        // the new main resource's will be sent timestamp. So save this value on the
+        // resource in case it becomes a main resource.
+        var originalRequestWillBeSentTimestamp = timestamp;
+
         var elapsedTime = WebInspector.timelineManager.computeElapsedTime(timestamp);
         var resource = this._resourceRequestIdentifierMap[requestIdentifier];
         if (resource) {
@@ -189,7 +196,7 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
         var initiatorSourceCodeLocation = this._initiatorSourceCodeLocationFromPayload(initiator);
 
         // This is a new request, make a new resource and add it to the right frame.
-        resource = this._addNewResourceToFrame(requestIdentifier, frameIdentifier, loaderIdentifier, request.url, type, request.method, request.headers, request.postData, elapsedTime, null, null, initiatorSourceCodeLocation);
+        resource = this._addNewResourceToFrame(requestIdentifier, frameIdentifier, loaderIdentifier, request.url, type, request.method, request.headers, request.postData, elapsedTime, null, null, initiatorSourceCodeLocation, originalRequestWillBeSentTimestamp);
 
         // Associate the resource with the requestIdentifier so it can be found in future loading events.
         this._resourceRequestIdentifierMap[requestIdentifier] = resource;
@@ -380,7 +387,7 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
 
     // Private
 
-    _addNewResourceToFrame(requestIdentifier, frameIdentifier, loaderIdentifier, url, type, requestMethod, requestHeaders, requestData, elapsedTime, frameName, frameSecurityOrigin, initiatorSourceCodeLocation)
+    _addNewResourceToFrame(requestIdentifier, frameIdentifier, loaderIdentifier, url, type, requestMethod, requestHeaders, requestData, elapsedTime, frameName, frameSecurityOrigin, initiatorSourceCodeLocation, originalRequestWillBeSentTimestamp)
     {
         console.assert(!this._waitingForMainFrameResourceTreePayload);
 
@@ -394,12 +401,12 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
             else if (frame.provisionalMainResource && frame.provisionalMainResource.url === url && frame.provisionalLoaderIdentifier === loaderIdentifier)
                 resource = frame.provisionalMainResource;
             else {
-                resource = new WebInspector.Resource(url, null, type, loaderIdentifier, requestIdentifier, requestMethod, requestHeaders, requestData, elapsedTime, initiatorSourceCodeLocation);
+                resource = new WebInspector.Resource(url, null, type, loaderIdentifier, requestIdentifier, requestMethod, requestHeaders, requestData, elapsedTime, initiatorSourceCodeLocation, originalRequestWillBeSentTimestamp);
                 this._addResourceToFrame(frame, resource);
             }
         } else {
             // This is a new request for a new frame, which is always the main resource.
-            resource = new WebInspector.Resource(url, null, type, loaderIdentifier, requestIdentifier, requestMethod, requestHeaders, requestData, elapsedTime, initiatorSourceCodeLocation);
+            resource = new WebInspector.Resource(url, null, type, loaderIdentifier, requestIdentifier, requestMethod, requestHeaders, requestData, elapsedTime, initiatorSourceCodeLocation, originalRequestWillBeSentTimestamp);
             frame = new WebInspector.Frame(frameIdentifier, frameName, frameSecurityOrigin, loaderIdentifier, resource);
             this._frameIdentifierMap[frame.id] = frame;
 

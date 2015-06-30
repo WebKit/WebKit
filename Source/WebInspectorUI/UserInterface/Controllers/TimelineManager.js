@@ -455,6 +455,18 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
             oldRecording.unloaded();
 
         this._activeRecording = newRecording;
+
+        // COMPATIBILITY (iOS 8): When using Legacy timestamps, a navigation will have computed
+        // the main resource's will send request timestamp in terms of the last page's base timestamp.
+        // Now that we have navigated, we should reset the legacy base timestamp and the
+        // will send request timestamp for the new main resource. This way, all new timeline
+        // records will be computed relative to the new navigation.
+        if (this._autoCapturingMainResource && WebInspector.TimelineRecording.isLegacy) {
+            console.assert(this._autoCapturingMainResource.originalRequestWillBeSentTimestamp);
+            this._activeRecording.setLegacyBaseTimestamp(this._autoCapturingMainResource.originalRequestWillBeSentTimestamp);
+            this._autoCapturingMainResource._requestSentTimestamp = 0;
+        }
+
         this.dispatchEventToListeners(WebInspector.TimelineManager.Event.RecordingLoaded, {oldRecording});
     }
 

@@ -1,5 +1,44 @@
 2015-06-29  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: iOS 8: Resources Timeline Data does not show up
+        https://bugs.webkit.org/show_bug.cgi?id=146433
+
+        Reviewed by Timothy Hatcher.
+
+        There were a couple issues with initializing the legacy base timestamp
+        for attempting to dynamically compute monotonically increasing timestamps
+        for timeline events for legacy backends.
+
+            * Sometimes legacy timestamps were in seconds since epochs,
+              sometimes milliseconds. The frontend did not handle both.
+
+            * On navigations, even while resetting the base timestamp for
+              the first new record received, the main resource still had
+              a will send request time computed from the previous page's
+              time system. This patch re-uses the original timestamp for
+              this main resource as the new base and all future records
+              are computed relative to this.
+
+        * UserInterface/Controllers/FrameResourceManager.js:
+        (WebInspector.FrameResourceManager.prototype.resourceRequestWillBeSent):
+        (WebInspector.FrameResourceManager.prototype._addNewResourceToFrame):
+        * UserInterface/Models/Resource.js:
+        (WebInspector.Resource):
+        (WebInspector.Resource.prototype.get originalRequestWillBeSentTimestamp):
+        For legacy timestamp calculations, save the original request will be sent
+        timestamp on the Resource in case it is needed.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype._loadNewRecording):
+        When auto-starting a new recording for a navigation / reload, use the
+        main resource's request will be sent timestamp as the new base.
+
+        * UserInterface/Models/TimelineRecording.js:
+        Address legacy timeline timestamps by handling both legacy timestamps
+        that may be seconds / milliseconds.
+
+2015-06-29  Joseph Pecoraro  <pecoraro@apple.com>
+
         REGRESSION: Web Inspector: Jump to Definition is broken
         https://bugs.webkit.org/show_bug.cgi?id=146376
 

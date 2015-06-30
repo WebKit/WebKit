@@ -197,17 +197,35 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
         if (!timestamp || isNaN(timestamp))
             return NaN;
 
-        // COMPATIBILITY (iOS8): old backends send timestamps (milliseconds since the epoch), rather
-        // than seconds elapsed since timeline capturing started. We approximate the latter by
+        // COMPATIBILITY (iOS8): old backends send timestamps (seconds or milliseconds since the epoch),
+        // rather than seconds elapsed since timeline capturing started. We approximate the latter by
         // subtracting the start timestamp, as old versions did not use monotonic times.
+        if (WebInspector.TimelineRecording.isLegacy === undefined)
+            WebInspector.TimelineRecording.isLegacy = timestamp > WebInspector.TimelineRecording.TimestampThresholdForLegacyRecordConversion;
+
+        if (!WebInspector.TimelineRecording.isLegacy)
+            return timestamp;
+
+        // If the record's start time is large, but not really large, then it is seconds since epoch
+        // not millseconds since epoch, so convert it to milliseconds.
+        if (timestamp < WebInspector.TimelineRecording.TimestampThresholdForLegacyAssumedMilliseconds)
+            timestamp *= 1000;
+
         if (isNaN(this._legacyFirstRecordedTimestamp))
             this._legacyFirstRecordedTimestamp = timestamp;
 
-        // If the record's start time sems unreasonably large, treat it as a legacy timestamp.
-        if (timestamp > WebInspector.TimelineRecording.TimestampThresholdForLegacyRecordConversion)
-            return (timestamp - this._legacyFirstRecordedTimestamp) / 1000.0;
+        // Return seconds since the first recorded value.
+        return (timestamp - this._legacyFirstRecordedTimestamp) / 1000.0;
+    }
 
-        return timestamp;
+    setLegacyBaseTimestamp(timestamp)
+    {
+        console.assert(isNaN(this._legacyFirstRecordedTimestamp));
+
+        if (timestamp < WebInspector.TimelineRecording.TimestampThresholdForLegacyAssumedMilliseconds)
+            timestamp *= 1000;
+
+        this._legacyFirstRecordedTimestamp = timestamp;
     }
 
     // Private
@@ -253,4 +271,6 @@ WebInspector.TimelineRecording.Event = {
     TimesUpdated: "timeline-recording-times-updated"
 };
 
-WebInspector.TimelineRecording.TimestampThresholdForLegacyRecordConversion = 28800000; // Date.parse("Jan 1, 1970")
+WebInspector.TimelineRecording.isLegacy = undefined;
+WebInspector.TimelineRecording.TimestampThresholdForLegacyRecordConversion = 10000000; // Some value not near zero.
+WebInspector.TimelineRecording.TimestampThresholdForLegacyAssumedMilliseconds = 1420099200000; // Date.parse("Jan 1, 2015"). Milliseconds since epoch.

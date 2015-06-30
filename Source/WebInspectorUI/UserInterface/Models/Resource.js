@@ -25,7 +25,7 @@
 
 WebInspector.Resource = class Resource extends WebInspector.SourceCode
 {
-    constructor(url, mimeType, type, loaderIdentifier, requestIdentifier, requestMethod, requestHeaders, requestData, requestSentTimestamp, initiatorSourceCodeLocation)
+    constructor(url, mimeType, type, loaderIdentifier, requestIdentifier, requestMethod, requestHeaders, requestData, requestSentTimestamp, initiatorSourceCodeLocation, originalRequestWillBeSentTimestamp)
     {
         super();
 
@@ -45,6 +45,7 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
         this._responseHeaders = {};
         this._parentFrame = null;
         this._initiatorSourceCodeLocation = initiatorSourceCodeLocation || null;
+        this._originalRequestWillBeSentTimestamp = originalRequestWillBeSentTimestamp || null;
         this._requestSentTimestamp = requestSentTimestamp || NaN;
         this._responseReceivedTimestamp = NaN;
         this._lastRedirectReceivedTimestamp = NaN;
@@ -137,6 +138,11 @@ WebInspector.Resource = class Resource extends WebInspector.SourceCode
     get initiatorSourceCodeLocation()
     {
         return this._initiatorSourceCodeLocation;
+    }
+
+    get originalRequestWillBeSentTimestamp()
+    {
+        return this._originalRequestWillBeSentTimestamp;
     }
 
     get type()
