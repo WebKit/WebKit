@@ -1,3 +1,10 @@
+2015-06-30  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed build fix.
+
+        * Scripts/update-webkit-dependency: Try to build even if we cannot connect
+        to developer.apple.com to get update libraries.
+
 2015-06-29  Jake Nielsen  <jacob_nielsen@apple.com>
 
         Add timeout in run-webkit-tests for launching the simulator

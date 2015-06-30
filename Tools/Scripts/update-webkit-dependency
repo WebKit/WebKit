@@ -81,7 +81,11 @@ print "Checking Last-Modified date of $zipFile...\n";
 
 my $response = $ua->get($libsURL);
 
-die "Could not access $libsURL:\n" . $response->headers_as_string . "\n" unless ($response->is_success);
+unless ($response->is_success) {
+    print "Could not access $libsURL:\n" . $response->headers_as_string . "\n";
+    print "You may not be connected to the internet. Attempting to build without updating.\n";
+    exit 0;
+}
 
 my $content_type = $response->header('Content-Type');
 my $document_length = $response->header('Content-Length');
