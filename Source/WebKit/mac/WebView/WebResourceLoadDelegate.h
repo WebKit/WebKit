@@ -47,12 +47,6 @@
 
 @optional
 
-#ifndef WK_ENABLE_FORMAL_DELEGATE_PROTOCOLS
-@end
-
-@interface NSObject (WebResourceLoadDelegate)
-#endif
-
 /*!
     @method webView:identifierForInitialRequest:fromDataSource:
     @param webView The WebView sending the message.

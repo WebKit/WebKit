@@ -1,3 +1,18 @@
+2015-06-30  Anders Carlsson  <andersca@apple.com>
+
+        Remove the WK_ENABLE_FORMAL_DELEGATE_PROTOCOLS ifdefs now that this is always true
+        https://bugs.webkit.org/show_bug.cgi?id=146462
+
+        Reviewed by Dan Bernstein.
+
+        * Misc/WebDownload.h:
+        * WebView/WebFrameLoadDelegate.h:
+        * WebView/WebPolicyDelegate.h:
+        * WebView/WebResourceLoadDelegate.h:
+        * WebView/WebUIDelegate.h:
+        * WebView/WebView.h:
+        * postprocess-headers.sh:
+
 2015-06-29  Anders Carlsson  <andersca@apple.com>
 
         Get rid of unused WKSI functions

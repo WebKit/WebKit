@@ -54,12 +54,6 @@
 
 @optional
 
-#ifndef WK_ENABLE_FORMAL_DELEGATE_PROTOCOLS
-@end
-
-@interface NSObject (WebFrameLoadDelegate)
-#endif
-
 /*!
     @method webView:didStartProvisionalLoadForFrame:
     @abstract Notifies the delegate that the provisional load of a frame has started

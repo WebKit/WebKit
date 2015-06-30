@@ -141,12 +141,6 @@ extern NSString *WebActionOriginalURLKey; // NSURL
 
 @optional
 
-#ifndef WK_ENABLE_FORMAL_DELEGATE_PROTOCOLS
-@end
-
-@interface NSObject (WebPolicyDelegate)
-#endif
-
 /*!
    @method webView:decidePolicyForNavigationAction:request:frame:decisionListener:
    @abstract This method is called to decide what to do with a proposed navigation.

@@ -164,12 +164,6 @@ typedef NS_OPTIONS(NSUInteger, WebDragSourceAction) {
 
 @optional
 
-#ifndef WK_ENABLE_FORMAL_DELEGATE_PROTOCOLS
-@end
-
-@interface NSObject (WebUIDelegate)
-#endif
-
 /*!
     @method webView:createWebViewWithRequest:
     @abstract Create a new window and begin to load the specified request.
