@@ -411,7 +411,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
 #endif
 
 #if ENABLE(MEDIA_SESSION)
-    m_session = &document.defaultMediaSession();
+    setSessionInternal(document.defaultMediaSession());
 #endif
 
     registerWithDocument(document);
