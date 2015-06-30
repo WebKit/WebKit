@@ -1,5 +1,13 @@
 2015-06-29  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
+        [GTK] Unreviewed GTK build fix since r186088 and r186095.
+        https://bugs.webkit.org/show_bug.cgi?id=146449
+
+        * PlatformGTK.cmake:
+        * UIProcess/API/gtk/PageClientImpl.h:
+
+2015-06-29  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
         Unreviewed EFL build fix since r186088 and r186095.
 
         * CMakeLists.txt: Remove ConnectionStack.cpp.

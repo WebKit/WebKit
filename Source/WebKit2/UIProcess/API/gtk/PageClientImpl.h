@@ -101,6 +101,7 @@ private:
     virtual void handleDownloadRequest(DownloadProxy*) override;
     virtual void didChangeContentSize(const WebCore::IntSize&) override { }
     virtual void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) override;
+    virtual void didFailLoadForMainFrame() override { }
 
     // Auxiliary Client Creation
 #if ENABLE(FULLSCREEN_API)

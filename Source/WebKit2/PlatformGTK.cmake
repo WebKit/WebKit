@@ -686,7 +686,6 @@ if (ENABLE_PLUGIN_PROCESS_GTK2)
         Shared/BlobDataFileReferenceWithSandboxExtension.cpp
         Shared/ChildProcess.cpp
         Shared/ChildProcessProxy.cpp
-        Shared/ConnectionStack.cpp
         Shared/ShareableBitmap.cpp
         Shared/WebCoreArgumentCoders.cpp
         Shared/WebEvent.cpp
