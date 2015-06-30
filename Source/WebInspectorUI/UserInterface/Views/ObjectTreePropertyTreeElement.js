@@ -373,6 +373,11 @@ WebInspector.ObjectTreePropertyTreeElement = class ObjectTreePropertyTreeElement
             if (isAPI && propertyDescriptor.nativeGetter)
                 continue;
 
+            // COMPATIBILITY (iOS 8): Sometimes __proto__ is not a value, but a get/set property.
+            // In those cases it is actually not useful to show.
+            if (propertyDescriptor.name === "__proto__" && !propertyDescriptor.hasValue())
+                continue;
+
             if (isArray && isPropertyMode) {
                 if (propertyDescriptor.isIndexProperty())
                     this.appendChild(new WebInspector.ObjectTreeArrayIndexTreeElement(propertyDescriptor, propertyPath));
