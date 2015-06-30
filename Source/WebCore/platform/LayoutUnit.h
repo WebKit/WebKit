@@ -872,7 +872,7 @@ inline int floorToInt(LayoutUnit value)
     return value.floor();
 }
 
-inline float roundToDevicePixel(LayoutUnit value, const float pixelSnappingFactor, bool needsDirectionalRounding = false)
+inline float roundToDevicePixel(LayoutUnit value, float pixelSnappingFactor, bool needsDirectionalRounding = false)
 {
     double valueToRound = value.toDouble();
     if (needsDirectionalRounding)
