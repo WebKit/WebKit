@@ -4636,7 +4636,6 @@
 				1AAF0C4712B16328008E49E2 /* cf */,
 				C01A25FF12662F2100C9ED55 /* cg */,
 				37C4C0901814B37B003688B9 /* Cocoa */,
-				BC111B5F112F635E00337BAB /* CoreIPCSupport */,
 				51E351C2180F2C8500E53BE9 /* Databases */,
 				518E8EF216B208F800E91429 /* Downloads */,
 				BC82836816B3587900A278FE /* EntryPointUtilities */,
@@ -6486,13 +6485,6 @@
 				905620E512BC2476000799B6 /* WebMemorySampler.mac.mm */,
 			);
 			path = mac;
-			sourceTree = "<group>";
-		};
-		BC111B5F112F635E00337BAB /* CoreIPCSupport */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = CoreIPCSupport;
 			sourceTree = "<group>";
 		};
 		BC204EDF11C83E72008F3375 /* InjectedBundle */ = {
