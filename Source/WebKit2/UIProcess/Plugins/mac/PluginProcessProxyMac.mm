@@ -391,8 +391,15 @@ static bool isJavaUpdaterURL(const PluginProcessAttributes& pluginProcessAttribu
     if (![url isFileURL])
         return false;
 
-    NSString *javaUpdaterPath = [NSString pathWithComponents:[NSArray arrayWithObjects:(NSString *)pluginProcessAttributes.moduleInfo.path, @"Contents/Resources/Java Updater.app", nil]];
-    return [url.path isEqualToString:javaUpdaterPath];
+    NSArray *javaUpdaterAppNames = [NSArray arrayWithObjects:@"Java Updater.app", @"JavaUpdater.app", nil];
+
+    for (NSString *javaUpdaterAppName in javaUpdaterAppNames) {
+        NSString *javaUpdaterPath = [NSString pathWithComponents:[NSArray arrayWithObjects:(NSString *)pluginProcessAttributes.moduleInfo.path, @"Contents/Resources", javaUpdaterAppName, nil]];
+        if ([url.path isEqualToString:javaUpdaterPath])
+            return YES;
+    }
+
+    return NO;
 }
 
 static bool shouldLaunchApplicationAtURL(const PluginProcessAttributes& pluginProcessAttributes, const String& urlString)
