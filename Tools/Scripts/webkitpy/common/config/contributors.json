@@ -1426,6 +1426,16 @@
             "jonlee"
          ]
       },
+      "Jonathan Davis" : {
+         "emails" : [
+            "jond@apple.com",
+            "web-evangelist@apple.com"
+         ],
+         "expertise" : "webkit.org, Developer Tools, Web Inspector",
+         "nicks" : [
+            "JonDavis"
+         ]
+      },
       "Jonathan Dong" : {
          "emails" : [
             "jonathan.dong.webkit@gmail.com",
