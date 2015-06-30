@@ -80,3 +80,7 @@
     line-height: 13px;
     text-align: right;
 }
+
+.CodeMirror-linewidget {
+    -webkit-user-select: text;
+}

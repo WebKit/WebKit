@@ -593,7 +593,7 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.Object
             return null;
 
         var widgetElement = document.createElement("div");
-        var lineWidget = this._codeMirror.addLineWidget(lineHandle, widgetElement, {coverGutter: false, noHScroll: true, handleMouseEvents: true});
+        var lineWidget = this._codeMirror.addLineWidget(lineHandle, widgetElement, {coverGutter: false, noHScroll: true});
         return new WebInspector.LineWidget(lineWidget, widgetElement);
     }
 

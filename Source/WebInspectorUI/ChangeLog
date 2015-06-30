@@ -1,3 +1,15 @@
+2015-06-29  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Unable to select the text of an inline error message
+        https://bugs.webkit.org/show_bug.cgi?id=145813
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CodeMirrorOverrides.css:
+        (.CodeMirror-linewidget):
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor.prototype.createWidgetForLine):
+
 2015-06-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove harmless error for not getting named flows
