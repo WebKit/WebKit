@@ -214,6 +214,11 @@ static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
 
 - (void)_layoutForNodeHighlight:(const Highlight&)highlight
 {
+    if (!highlight.quads.size()) {
+        [self _removeAllLayers];
+        return;
+    }
+
     [self _createLayers:4];
 
     CAShapeLayer *marginLayer = [_layers objectAtIndex:0];
@@ -239,7 +244,7 @@ static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
 
 - (void)_layoutForRectsHighlight:(const Highlight&)highlight
 {
-    NSUInteger numLayers = (NSUInteger)highlight.quads.size();
+    NSUInteger numLayers = highlight.quads.size();
     if (!numLayers) {
         [self _removeAllLayers];
         return;

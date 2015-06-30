@@ -261,8 +261,13 @@ static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
     CGPathRelease(path);
 }
 
-- (void)_layoutForNodeHighlight:(Highlight*)h parent:(CALayer *)parentLayer
+- (void)_layoutForNodeHighlight:(Highlight*)highlight parent:(CALayer *)parentLayer
 {
+    if (!highlight->quads.size()) {
+        [self _removeAllLayers];
+        return;
+    }
+
     [self _attach:parentLayer numLayers:4];
 
     CAShapeLayer *marginLayer = [_layers objectAtIndex:0];
@@ -270,15 +275,15 @@ static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
     CAShapeLayer *paddingLayer = [_layers objectAtIndex:2];
     CAShapeLayer *contentLayer = [_layers objectAtIndex:3];
 
-    FloatQuad marginQuad = h->quads[0];
-    FloatQuad borderQuad = h->quads[1];
-    FloatQuad paddingQuad = h->quads[2];
-    FloatQuad contentQuad = h->quads[3];
+    FloatQuad marginQuad = highlight->quads[0];
+    FloatQuad borderQuad = highlight->quads[1];
+    FloatQuad paddingQuad = highlight->quads[2];
+    FloatQuad contentQuad = highlight->quads[3];
 
-    marginLayer.fillColor = cachedCGColor(h->marginColor, ColorSpaceDeviceRGB);
-    borderLayer.fillColor = cachedCGColor(h->borderColor, ColorSpaceDeviceRGB);
-    paddingLayer.fillColor = cachedCGColor(h->paddingColor, ColorSpaceDeviceRGB);
-    contentLayer.fillColor = cachedCGColor(h->contentColor, ColorSpaceDeviceRGB);
+    marginLayer.fillColor = cachedCGColor(highlight->marginColor, ColorSpaceDeviceRGB);
+    borderLayer.fillColor = cachedCGColor(highlight->borderColor, ColorSpaceDeviceRGB);
+    paddingLayer.fillColor = cachedCGColor(highlight->paddingColor, ColorSpaceDeviceRGB);
+    contentLayer.fillColor = cachedCGColor(highlight->contentColor, ColorSpaceDeviceRGB);
 
     layerPathWithHole(marginLayer, marginQuad, borderQuad);
     layerPathWithHole(borderLayer, borderQuad, paddingQuad);
@@ -286,9 +291,9 @@ static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
     layerPath(contentLayer, contentQuad);
 }
 
-- (void)_layoutForRectsHighlight:(Highlight*)h parent:(CALayer *)parentLayer
+- (void)_layoutForRectsHighlight:(Highlight*)highlight parent:(CALayer *)parentLayer
 {
-    NSUInteger numLayers = (NSUInteger)h->quads.size();
+    NSUInteger numLayers = highlight->quads.size();
     if (!numLayers) {
         [self _removeAllLayers];
         return;
@@ -296,11 +301,11 @@ static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
 
     [self _attach:parentLayer numLayers:numLayers];
 
-    CGColorRef contentColor = cachedCGColor(h->contentColor, ColorSpaceDeviceRGB);
+    CGColorRef contentColor = cachedCGColor(highlight->contentColor, ColorSpaceDeviceRGB);
     for (NSUInteger i = 0; i < numLayers; ++i) {
         CAShapeLayer *layer = [_layers objectAtIndex:i];
         layer.fillColor = contentColor;
-        layerPath(layer, h->quads[i]);
+        layerPath(layer, highlight->quads[i]);
     }
 }
 
