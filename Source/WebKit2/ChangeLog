@@ -1,3 +1,17 @@
+2015-06-30  Beth Dakin  <bdakin@apple.com>
+
+        The bounds on InteractionInformationAtPosition should be more precise
+        https://bugs.webkit.org/show_bug.cgi?id=146468
+        -and corresponding-
+        rdar://problem/20739834
+
+        Reviewed by Enrica Casucci and Simon Fraser.
+
+        For links, get the TextQuads from the Range, and for images, look at the 
+        absoluteContentQuad(). All other items can continue to use absoluteBoundingBox.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+
 2015-06-30  Anders Carlsson  <andersca@apple.com>
 
         Disable Spintracer when getting the list of plug-ins

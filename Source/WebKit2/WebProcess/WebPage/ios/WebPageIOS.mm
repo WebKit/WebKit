@@ -2160,9 +2160,23 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
             info.title = element->fastGetAttribute(HTMLNames::titleAttr).string();
             if (linkElement && info.title.isEmpty())
                 info.title = element->innerText();
-            if (element->renderer()) {
-                info.bounds = element->renderer()->absoluteBoundingBoxRect(true);
+            if (element->renderer())
                 info.touchCalloutEnabled = element->renderer()->style().touchCalloutEnabled();
+
+            if (element == linkElement) {
+                RefPtr<Range> linkRange = rangeOfContents(*linkElement);
+                Vector<FloatQuad> quads;
+                linkRange->textQuads(quads);
+                FloatRect linkBoundingBox;
+                for (const auto& quad : quads)
+                    linkBoundingBox.unite(quad.enclosingBoundingBox());
+                info.bounds = IntRect(linkBoundingBox);
+            } else if (RenderElement* renderer = element->renderer()) {
+                if (renderer->isRenderImage()) {
+                    auto& renderImage = downcast<RenderImage>(*renderer);
+                    info.bounds = renderImage.absoluteContentQuad().enclosingBoundingBox();
+                } else
+                    info.bounds = renderer->absoluteBoundingBoxRect();
             }
         }
     }
