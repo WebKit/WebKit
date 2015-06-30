@@ -1,3 +1,13 @@
+2015-06-30  Philippe Normand  <pnormand@igalia.com>
+
+        [CMake] Error when gst-plugins-base is missing is too confusing
+        https://bugs.webkit.org/show_bug.cgi?id=145682
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/OptionsGTK.cmake: Error out if the required
+        GStreamer libraries are not found on the host.
+
 2015-06-28  Philip Chimento  <philip.chimento@gmail.com>
 
         CairoGL should be checked unconditionally
