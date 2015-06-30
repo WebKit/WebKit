@@ -1,5 +1,13 @@
 2015-06-29  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Another rebaseline after r186086.
+        WebKit2 needs the original expected result.
+
+        * platform/mac-wk2/editing/style: Copied from LayoutTests/platform/mac/editing/style/unbold-in-bold-expected.txt.
+        * platform/mac/editing/style/unbold-in-bold-expected.txt:
+
+2015-06-29  Ryosuke Niwa  <rniwa@webkit.org>
+
         Rebaseline after r186086.
 
         * platform/mac/editing/style/unbold-in-bold-expected.txt:
