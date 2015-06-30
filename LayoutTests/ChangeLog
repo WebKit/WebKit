@@ -1,5 +1,14 @@
 2015-06-30  Youenn Fablet  <youenn.fablet@crf.canon.fr> and Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
+        [Streams API] Finish pulling must always be done asynchronously as it is the expected promise behavior (according to the spec)
+        https://bugs.webkit.org/show_bug.cgi?id=146408
+
+        Reviewed by Darin Adler.
+
+        * streams/reference-implementation/readable-stream-expected.txt: Updated expectation to PASS
+
+2015-06-30  Youenn Fablet  <youenn.fablet@crf.canon.fr> and Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
         [Streams API] Synced bad strategy test with reference implementation
         https://bugs.webkit.org/show_bug.cgi?id=146411
 

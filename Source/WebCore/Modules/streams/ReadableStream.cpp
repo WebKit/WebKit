@@ -34,6 +34,7 @@
 
 #include "ExceptionCode.h"
 #include "ReadableStreamReader.h"
+#include "ScriptExecutionContext.h"
 #include <runtime/JSCJSValueInlines.h>
 #include <wtf/RefCountedLeakCounter.h>
 
@@ -132,8 +133,12 @@ void ReadableStream::pull()
     }
 
     m_isPulling = true;
-    if (doPull())
-        finishPulling();
+    if (doPull()) {
+        RefPtr<ReadableStream> protectedStream(this);
+        scriptExecutionContext()->postTask([protectedStream](ScriptExecutionContext&) {
+            protectedStream->finishPulling();
+        });
+    }
 }
 
 void ReadableStream::finishPulling()
