@@ -222,8 +222,6 @@ extern void* wkGetHyphenationLocationBeforeIndex;
 #endif
 
 #if !PLATFORM(IOS)
-extern int (*wkRecommendedScrollerStyle)(void);
-
 extern bool (*wkExecutableWasLinkedOnOrBeforeSnowLeopard)(void);
 
 extern CFStringRef (*wkCopyDefaultSearchProviderDisplayName)(void);
@@ -274,8 +272,6 @@ extern CFHTTPMessageRef (*wkGetCFURLResponseHTTPResponse)(CFURLResponseRef);
 extern CFStringRef (*wkCopyCFURLResponseSuggestedFilename)(CFURLResponseRef);
 extern void (*wkSetCFURLResponseMIMEType)(CFURLResponseRef, CFStringRef mimeType);
 
-extern void(*wkDestroyRenderingResources)(void);
-
 #if USE(CFNETWORK)
 extern CFHTTPCookieStorageRef (*wkGetDefaultHTTPCookieStorage)();
 extern WKCFURLCredentialRef (*wkCopyCredentialFromCFPersistentStorage)(CFURLProtectionSpaceRef protectionSpace);
@@ -285,12 +281,6 @@ extern void (*wkSetRequestStorageSession)(CFURLStorageSessionRef, CFMutableURLRe
 #if !PLATFORM(IOS)
 extern void (*wkSetMetadataURL)(NSString *urlString, NSString *referrer, NSString *path);
 #endif
-
-#if !PLATFORM(IOS)
-extern bool (*wkExecutableWasLinkedOnOrBeforeLion)(void);
-#endif
-
-extern void (*wkCGPathAddRoundedRect)(CGMutablePathRef path, const CGAffineTransform* matrix, CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight);
 
 extern void (*wkCFURLRequestAllowAllPostCaching)(CFURLRequestRef);
 

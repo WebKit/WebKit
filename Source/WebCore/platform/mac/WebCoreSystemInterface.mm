@@ -102,8 +102,6 @@ void (*wkSetRequestStorageSession)(CFURLStorageSessionRef, CFMutableURLRequestRe
 
 void* wkGetHyphenationLocationBeforeIndex;
 
-int (*wkRecommendedScrollerStyle)(void);
-
 bool (*wkExecutableWasLinkedOnOrBeforeSnowLeopard)(void);
 
 CFStringRef (*wkCopyDefaultSearchProviderDisplayName)(void);
@@ -141,18 +139,6 @@ CFHTTPMessageRef (*wkGetCFURLResponseHTTPResponse)(CFURLResponseRef);
 CFStringRef (*wkCopyCFURLResponseSuggestedFilename)(CFURLResponseRef);
 void (*wkSetCFURLResponseMIMEType)(CFURLResponseRef, CFStringRef mimeType);
 void (*wkSetMetadataURL)(NSString *urlString, NSString *referrer, NSString *path);
-
-void(*wkDestroyRenderingResources)(void);
-
-dispatch_source_t (*wkCreateVMPressureDispatchOnMainQueue)(void);
-
-#if PLATFORM(MAC)
-dispatch_source_t (*wkCreateMemoryStatusPressureCriticalDispatchOnMainQueue)(void);
-#endif
-
-bool (*wkExecutableWasLinkedOnOrBeforeLion)(void);
-
-void (*wkCGPathAddRoundedRect)(CGMutablePathRef path, const CGAffineTransform* matrix, CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight);
 
 void (*wkCFURLRequestAllowAllPostCaching)(CFURLRequestRef);
 

@@ -120,7 +120,6 @@ void InitWebCoreSystemInterface(void)
 #endif // !PLATFORM(IOS)
 
 #if !PLATFORM(IOS)
-        INIT(RecommendedScrollerStyle);
         INIT(ExecutableWasLinkedOnOrBeforeSnowLeopard);
         INIT(CopyDefaultSearchProviderDisplayName);
         INIT(Cursor);
@@ -156,13 +155,6 @@ void InitWebCoreSystemInterface(void)
         INIT(CopyCFURLResponseSuggestedFilename);
         INIT(SetCFURLResponseMIMEType);
 
-        INIT(DestroyRenderingResources);
-
-#if PLATFORM(MAC)
-        INIT(ExecutableWasLinkedOnOrBeforeLion);
-#endif
-
-        INIT(CGPathAddRoundedRect);
         INIT(CFURLRequestAllowAllPostCaching);
 
 #if PLATFORM(IOS)

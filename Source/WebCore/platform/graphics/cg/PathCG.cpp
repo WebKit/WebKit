@@ -275,7 +275,7 @@ void Path::platformAddPathForRoundedRect(const FloatRect& rect, const FloatSize&
             radiusWidth = rectWidth / 2 - std::numeric_limits<CGFloat>::epsilon();
         if (rectHeight < 2 * radiusHeight)
             radiusHeight = rectHeight / 2 - std::numeric_limits<CGFloat>::epsilon();
-        wkCGPathAddRoundedRect(ensurePlatformPath(), 0, rectToDraw, radiusWidth, radiusHeight);
+        CGPathAddRoundedRect(ensurePlatformPath(), nullptr, rectToDraw, radiusWidth, radiusHeight);
         return;
     }
 #endif

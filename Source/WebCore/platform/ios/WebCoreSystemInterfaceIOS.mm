@@ -58,7 +58,6 @@ WEBCORE_EXPORT CGSize (*wkGetAvailableScreenSize)(void);
 WEBCORE_EXPORT void (*wkSetLayerContentsScale)(CALayer *);
 WEBCORE_EXPORT float (*wkGetScreenScaleFactor)(void);
 WEBCORE_EXPORT bool (*wkIsGB18030ComplianceRequired)(void);
-WEBCORE_EXPORT void (*wkCGPathAddRoundedRect)(CGMutablePathRef path, const CGAffineTransform* matrix, CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight);
 WEBCORE_EXPORT void (*wkCFURLRequestAllowAllPostCaching)(CFURLRequestRef);
 WEBCORE_EXPORT CFArrayRef (*wkCopyNSURLResponseCertificateChain)(NSURLResponse*);
 WEBCORE_EXPORT CFStringEncoding (*wkGetWebDefaultCFStringEncoding)(void);

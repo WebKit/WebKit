@@ -335,4 +335,9 @@ RefPtr<ObjCObjectGraph> WebProcess::transformObjectsToHandles(ObjCObjectGraph& o
     return ObjCObjectGraph::create(ObjCObjectGraph::transform(objectGraph.rootObject(), Transformer()).get());
 }
 
+void WebProcess::destroyRenderingResources()
+{
+    WKDestroyRenderingResources();
+}
+
 } // namespace WebKit
