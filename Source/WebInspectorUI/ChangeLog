@@ -1,5 +1,14 @@
 2015-06-29  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Remove harmless error for not getting named flows
+        https://bugs.webkit.org/show_bug.cgi?id=146417
+
+        Reviewed by Darin Adler.
+
+        * UserInterface/Controllers/DOMTreeManager.js:
+
+2015-06-29  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Network errors (404) are missing location link in console messages
         https://bugs.webkit.org/show_bug.cgi?id=146442
 

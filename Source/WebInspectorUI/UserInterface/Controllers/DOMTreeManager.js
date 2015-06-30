@@ -445,10 +445,8 @@ WebInspector.DOMTreeManager = class DOMTreeManager extends WebInspector.Object
     {
         function onNamedFlowCollectionAvailable(error, flows)
         {
-            if (error) {
-                console.error("Error while getting the named flows for document " + documentNodeIdentifier + ": " + error);
+            if (error)
                 return;
-            }
             this._contentNodesToFlowsMap.clear();
             var contentFlows = [];
             for (var i = 0; i < flows.length; ++i) {
