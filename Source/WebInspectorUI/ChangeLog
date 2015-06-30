@@ -1,3 +1,14 @@
+2015-06-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: iOS 8: Profile Nodes not showing in JavaScript Timeline
+        https://bugs.webkit.org/show_bug.cgi?id=146471
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        (WebInspector.ScriptTimelineRecord.prototype._initializeProfileFromPayload.profileNodeCallFromPayload):
+        For legacy backends, convert the startTime to the proper timestamp type.
+
 2015-06-30  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Reduce rendering frames "Other" time by instrumenting compositing

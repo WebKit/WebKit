@@ -109,7 +109,9 @@ WebInspector.ScriptTimelineRecord = class ScriptTimelineRecord extends WebInspec
             console.assert("startTime" in nodeCallPayload);
             console.assert("totalTime" in nodeCallPayload);
 
-            return new WebInspector.ProfileNodeCall(nodeCallPayload.startTime, nodeCallPayload.totalTime);
+            var startTime = WebInspector.timelineManager.computeElapsedTime(nodeCallPayload.startTime);
+
+            return new WebInspector.ProfileNodeCall(startTime, nodeCallPayload.totalTime);
         }
 
         var rootNodes = payload.rootNodes;
