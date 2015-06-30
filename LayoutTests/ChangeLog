@@ -1,3 +1,9 @@
+2015-06-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rebaseline after r186086.
+
+        * platform/mac/editing/style/unbold-in-bold-expected.txt:
+
 2015-06-29  Dean Jackson  <dino@apple.com>
 
         Temporarily disable PICTURE_SIZES
