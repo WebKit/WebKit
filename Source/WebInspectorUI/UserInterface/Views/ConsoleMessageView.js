@@ -264,7 +264,7 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
             return;
         }
 
-        // FIXME: Better handle WebInspector.ConsoleMessage.MessageSource.Network.
+        // FIXME: Better handle WebInspector.ConsoleMessage.MessageSource.Network once it has request info.
 
         var args = this._message.parameters || [this._message.messageText];
         this._appendFormattedArguments(element, args);
@@ -290,9 +290,14 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
 
     _appendLocationLink()
     {
-        // FIXME: Better handle WebInspector.ConsoleMessage.MessageSource.Network.
-        if (this._message.source === WebInspector.ConsoleMessage.MessageSource.Network || this._message.request)
+        if (this._message.source === WebInspector.ConsoleMessage.MessageSource.Network) {
+            if (this._message.url) {
+                var anchor = WebInspector.linkifyURLAsNode(this._message.url, this._message.url, "console-message-url");
+                anchor.classList.add("console-message-location");
+                this._element.appendChild(anchor);                
+            }
             return;
+        }
 
         var firstNonNativeCallFrame = this._message.stackTrace.firstNonNativeCallFrame;
 

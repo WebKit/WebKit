@@ -1,5 +1,16 @@
 2015-06-29  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Network errors (404) are missing location link in console messages
+        https://bugs.webkit.org/show_bug.cgi?id=146442
+
+        Reviewed by Darin Adler.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype._appendLocationLink):
+        Restore behavior of adding a location link for network messages with urls.
+
+2015-06-29  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: iOS 8: Resources Timeline Data does not show up
         https://bugs.webkit.org/show_bug.cgi?id=146433
 
