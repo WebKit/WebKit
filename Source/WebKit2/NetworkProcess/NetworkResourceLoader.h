@@ -132,6 +132,8 @@ private:
     virtual void didCancelAuthenticationChallenge(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&) override;
     virtual void receivedCancellation(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&) override;
     virtual bool usesAsyncCallbacks() override { return true; }
+    virtual bool loadingSynchronousXHR() override { return isSynchronous(); }
+
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     virtual void canAuthenticateAgainstProtectionSpaceAsync(WebCore::ResourceHandle*, const WebCore::ProtectionSpace&) override;
 #endif

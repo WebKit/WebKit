@@ -246,18 +246,20 @@ bool ResourceHandle::start()
     // FIXME: Do not use the sync version of shouldUseCredentialStorage when the client returns true from usesAsyncCallbacks.
     bool shouldUseCredentialStorage = !client() || client()->shouldUseCredentialStorage(this);
 
+    SchedulingBehavior schedulingBehavior = client() && client()->loadingSynchronousXHR() ? SchedulingBehavior::Synchronous : SchedulingBehavior::Asynchronous;
+
 #if !PLATFORM(IOS)
     createNSURLConnection(
         ResourceHandle::makeDelegate(shouldUseCredentialStorage),
         shouldUseCredentialStorage,
         d->m_shouldContentSniff || d->m_context->localFileContentSniffingEnabled(),
-        SchedulingBehavior::Asynchronous);
+        schedulingBehavior);
 #else
     createNSURLConnection(
         ResourceHandle::makeDelegate(shouldUseCredentialStorage),
         shouldUseCredentialStorage,
         d->m_shouldContentSniff || d->m_context->localFileContentSniffingEnabled(),
-        SchedulingBehavior::Asynchronous,
+        schedulingBehavior,
         (NSDictionary *)client()->connectionProperties(this).get());
 #endif
 

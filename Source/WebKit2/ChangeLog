@@ -1,3 +1,13 @@
+2015-06-29  Brady Eidson  <beidson@apple.com>
+
+        Flag sync XHRs from the network process so they can be handled appropriately.
+        <rdar://problem/21579162> and https://bugs.webkit.org/show_bug.cgi?id=146441
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/NetworkResourceLoader.h:
+        (WebKit::NetworkResourceLoader::loadingSynchronousXHR): Return isSynchronous().
+
 2015-06-29  Anders Carlsson  <andersca@apple.com>
 
         Remove an empty group from the Xcode project.
