@@ -1,3 +1,9 @@
+2015-06-30  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, revert bad WK1 rebaseline done in r186106.
+
+        * platform/mac/editing/style/unbold-in-bold-expected.txt:
+
 2015-06-30  Youenn Fablet  <youenn.fablet@crf.canon.fr> and Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [Streams API] Finish pulling must always be done asynchronously as it is the expected promise behavior (according to the spec)
