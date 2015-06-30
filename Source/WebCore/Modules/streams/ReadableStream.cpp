@@ -59,9 +59,7 @@ ReadableStream::~ReadableStream()
 
 void ReadableStream::clearCallbacks()
 {
-    m_closedSuccessCallback = nullptr;
-    m_closedFailureCallback = nullptr;
-
+    m_closedPromise = Nullopt;
     m_readRequests.clear();
 }
 
@@ -85,8 +83,8 @@ void ReadableStream::close()
 
 void ReadableStream::releaseReader()
 {
-    if (m_closedSuccessCallback)
-        m_closedSuccessCallback();
+    if (m_closedPromise)
+        m_closedPromise.value().resolve(nullptr);
 
     for (auto& request : m_readRequests)
         request.endCallback();
@@ -103,8 +101,8 @@ void ReadableStream::changeStateToErrored()
     m_state = State::Errored;
 
     JSC::JSValue error = this->error();
-    if (m_closedFailureCallback)
-        m_closedFailureCallback(error);
+    if (m_closedPromise)
+        m_closedPromise.value().reject(error);
 
     for (auto& request : m_readRequests)
         request.failureCallback(error);
@@ -210,18 +208,17 @@ void ReadableStream::notifyCancelFailed()
     m_cancelPromise = Nullopt;
 }
 
-void ReadableStream::closed(ClosedSuccessCallback&& successCallback, FailureCallback&& failureCallback)
+void ReadableStream::closed(ClosedPromise&& promise)
 {
     if (m_state == State::Closed) {
-        successCallback();
+        promise.resolve(nullptr);
         return;
     }
     if (m_state == State::Errored) {
-        failureCallback(error());
+        promise.reject(error());
         return;
     }
-    m_closedSuccessCallback = WTF::move(successCallback);
-    m_closedFailureCallback = WTF::move(failureCallback);
+    m_closedPromise = WTF::move(promise);
 }
 
 void ReadableStream::read(ReadSuccessCallback&& successCallback, ReadEndCallback&& endCallback, FailureCallback&& failureCallback)

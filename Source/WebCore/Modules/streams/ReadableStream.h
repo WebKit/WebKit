@@ -93,8 +93,8 @@ public:
     void cancel(JSC::JSValue, CancelPromise&&, ExceptionCode&);
     void cancelNoCheck(JSC::JSValue, CancelPromise&&);
 
-    typedef std::function<void()> ClosedSuccessCallback;
-    void closed(ClosedSuccessCallback&&, FailureCallback&&);
+    typedef DOMPromise<std::nullptr_t, JSC::JSValue> ClosedPromise;
+    void closed(ClosedPromise&&);
 
     typedef std::function<void(JSC::JSValue)> ReadSuccessCallback;
     typedef std::function<void()> ReadEndCallback;
@@ -124,9 +124,7 @@ private:
     Vector<std::unique_ptr<ReadableStreamReader>> m_releasedReaders;
 
     Optional<CancelPromise> m_cancelPromise;
-
-    ClosedSuccessCallback m_closedSuccessCallback;
-    FailureCallback m_closedFailureCallback;
+    Optional<ClosedPromise> m_closedPromise;
 
     struct ReadCallbacks {
         ReadSuccessCallback successCallback;
