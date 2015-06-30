@@ -1,3 +1,33 @@
+2015-06-30  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Avoid taking a useless / blank navigation snapshot when navigating after restoring sessionState
+        https://bugs.webkit.org/show_bug.cgi?id=146446
+        <rdar://problem/21584231>
+
+        Reviewed by Darin Adler.
+
+        We currently take a useless / blank navigation snapshot when navigating
+        after restoring the back / forward list from a sessionState object.
+        This is because we get a current HistoryItem from the sessionState
+        which we have never really navigated to. We then take a navigation
+        snapshot for the current HistoryItem when navigating away as we usually
+        do. However, in this case, the HistoryItem was imported and there is
+        nothing to snapshot.
+
+        Taking this snapshot is not only wasteful, it can also potentially
+        overwrite the snapshot that was set by the client using
+        WKWebView._saveBackForwardSnapshotForItem() SPI.
+
+        To address the problem, this patch suppresses navigation snapshotting
+        after restoring the back / forward list from a session state and until
+        the next load is committed.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::recordNavigationSnapshot):
+        (WebKit::WebPageProxy::restoreFromSessionState):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        * UIProcess/WebPageProxy.h:
+
 2015-06-29  Anders Carlsson  <andersca@apple.com>
 
         Get rid of unused WKSI functions

@@ -1049,7 +1049,7 @@ void WebPageProxy::recordNavigationSnapshot()
 
 void WebPageProxy::recordNavigationSnapshot(WebBackForwardListItem& item)
 {
-    if (!m_shouldRecordNavigationSnapshots)
+    if (!m_shouldRecordNavigationSnapshots || m_suppressNavigationSnapshotting)
         return;
 
 #if PLATFORM(COCOA)
@@ -2143,6 +2143,10 @@ RefPtr<API::Navigation> WebPageProxy::restoreFromSessionState(SessionState sessi
             process().registerNewWebBackForwardListItem(entry.get());
 
         process().send(Messages::WebPage::RestoreSession(m_backForwardList->itemStates()), m_pageID);
+
+        // The back / forward list was restored from a sessionState so we don't want to snapshot the current
+        // page when navigating away. Suppress navigation snapshotting until the next load has committed.
+        m_suppressNavigationSnapshotting = true;
     }
 
     // FIXME: Navigating should be separate from state restoration.
@@ -2936,9 +2940,10 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
     auto transaction = m_pageLoadState.transaction();
     bool markPageInsecure = m_treatsSHA1CertificatesAsInsecure && certificateInfo.containsNonRootSHA1SignedCertificate();
     Ref<WebCertificateInfo> webCertificateInfo = WebCertificateInfo::create(certificateInfo);
-    if (frame->isMainFrame())
+    if (frame->isMainFrame()) {
         m_pageLoadState.didCommitLoad(transaction, webCertificateInfo, markPageInsecure);
-    else if (markPageInsecure)
+        m_suppressNavigationSnapshotting = false;
+    } else if (markPageInsecure)
         m_pageLoadState.didDisplayOrRunInsecureContent(transaction);
 
 #if USE(APPKIT)
