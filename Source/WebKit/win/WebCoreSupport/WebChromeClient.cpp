@@ -334,6 +334,11 @@ void WebChromeClient::setResizable(bool resizable)
     }
 }
 
+static BOOL messageIsError(MessageLevel level)
+{
+    return level == MessageLevel::Error;
+}
+
 void WebChromeClient::addMessageToConsole(MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, unsigned columnNumber, const String& url)
 {
     UNUSED_PARAM(columnNumber);
@@ -342,7 +347,7 @@ void WebChromeClient::addMessageToConsole(MessageSource source, MessageLevel lev
     if (SUCCEEDED(m_webView->uiDelegate(&uiDelegate))) {
         COMPtr<IWebUIDelegatePrivate> uiPrivate;
         if (SUCCEEDED(uiDelegate->QueryInterface(IID_IWebUIDelegatePrivate, (void**)&uiPrivate)))
-            uiPrivate->webViewAddMessageToConsole(m_webView, BString(message), lineNumber, BString(url), true);
+            uiPrivate->webViewAddMessageToConsole(m_webView, BString(message), lineNumber, BString(url), messageIsError(level));
     }
 }
 

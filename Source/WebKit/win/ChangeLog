@@ -1,3 +1,16 @@
+2015-06-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] webViewAddMessageToConsole always gets 1 for isError
+        https://bugs.webkit.org/show_bug.cgi?id=146457
+        <rdar://problem/21606395>
+
+        Reviewed by Zalan Bujtas.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (messageIsError): Added.
+        (WebChromeClient::addMessageToConsole): Only pass true for
+        isError if the message is an error message.
+
 2015-06-30  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo] Compile error, WebEditorClient::didApplyStyle() should not have any parameters.
