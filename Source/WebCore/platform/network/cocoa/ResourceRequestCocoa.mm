@@ -118,17 +118,6 @@ void ResourceRequest::doUpdateResourceHTTPBody()
     }
 }
 
-inline NSMutableURLRequest *ResourceRequest::ensureMutableNSURLRequest()
-{
-    if (m_nsRequest) {
-        if (![m_nsRequest.get() isKindOfClass:[NSMutableURLRequest class]])
-            m_nsRequest = adoptNS([m_nsRequest.get() mutableCopy]);
-        [(NSMutableURLRequest *)m_nsRequest.get() setURL:url()];
-    } else
-        m_nsRequest = adoptNS([[NSMutableURLRequest alloc] initWithURL:url()]);
-    return (NSMutableURLRequest *)m_nsRequest.get();
-}
-
 void ResourceRequest::doUpdatePlatformRequest()
 {
     if (isNull()) {
@@ -136,7 +125,12 @@ void ResourceRequest::doUpdatePlatformRequest()
         return;
     }
 
-    NSMutableURLRequest *nsRequest = ensureMutableNSURLRequest();
+    NSMutableURLRequest *nsRequest = [m_nsRequest.get() mutableCopy];
+
+    if (nsRequest)
+        [nsRequest setURL:url()];
+    else
+        nsRequest = [[NSMutableURLRequest alloc] initWithURL:url()];
 
     if (ResourceRequest::httpPipeliningEnabled())
         wkHTTPRequestEnablePipelining([nsRequest _CFURLRequest]);
@@ -178,6 +172,8 @@ void ResourceRequest::doUpdatePlatformRequest()
         [NSURLProtocol setProperty:partitionValue forKey:(NSString *)wkCachePartitionKey() inRequest:nsRequest];
     }
 #endif
+
+    m_nsRequest = adoptNS(nsRequest);
 }
 
 void ResourceRequest::doUpdatePlatformHTTPBody()
@@ -187,7 +183,12 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
         return;
     }
 
-    NSMutableURLRequest *nsRequest = ensureMutableNSURLRequest();
+    NSMutableURLRequest *nsRequest = [m_nsRequest.get() mutableCopy];
+
+    if (nsRequest)
+        [nsRequest setURL:url()];
+    else
+        nsRequest = [[NSMutableURLRequest alloc] initWithURL:url()];
 
     RefPtr<FormData> formData = httpBody();
     if (formData && !formData->isEmpty())
@@ -203,6 +204,8 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
             m_httpHeaderFields.set(HTTPHeaderName::ContentLength, lengthString);
         }
     }
+
+    m_nsRequest = adoptNS(nsRequest);
 }
 
 #if !PLATFORM(IOS)
