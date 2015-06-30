@@ -1,5 +1,16 @@
 2015-06-30  Anders Carlsson  <andersca@apple.com>
 
+        Disable Spintracer when getting the list of plug-ins
+        https://bugs.webkit.org/show_bug.cgi?id=146467
+        rdar://problem/21616640
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::populatePluginCache):
+
+2015-06-30  Anders Carlsson  <andersca@apple.com>
+
         Java Plugin cannot launch JavaUpdater.app after renaming
         https://bugs.webkit.org/show_bug.cgi?id=146464
         rdar://problem/19747153

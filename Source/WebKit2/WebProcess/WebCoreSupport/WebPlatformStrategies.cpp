@@ -365,6 +365,8 @@ bool WebPlatformStrategies::pluginLoadClientPolicyForHost(const String& host, co
 void WebPlatformStrategies::populatePluginCache(const WebCore::Page& page)
 {
     if (!m_pluginCacheIsPopulated) {
+        HangDetectionDisabler hangDetectionDisabler;
+
         if (!WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebProcessProxy::GetPlugins(m_shouldRefreshPlugins), Messages::WebProcessProxy::GetPlugins::Reply(m_cachedPlugins, m_cachedApplicationPlugins), 0))
             return;
 
