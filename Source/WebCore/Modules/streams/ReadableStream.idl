@@ -33,7 +33,7 @@
     SkipVTableValidation
 ] interface ReadableStream {
     [Custom] Promise cancel(any reason);
-    [Custom] ReadableStreamReader getReader();
+    [RaisesException] ReadableStreamReader getReader();
     [Custom] Promise pipeTo(any streams, any options);
     [Custom] Object pipeThrough(any dest, any options);
 

@@ -66,7 +66,7 @@ public:
 
     virtual ~ReadableStream();
 
-    ReadableStreamReader& getReader();
+    ReadableStreamReader* getReader(ExceptionCode&);
     const ReadableStreamReader* reader() const { return m_reader.get(); }
 
     bool locked() const { return !!m_reader; }

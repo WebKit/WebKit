@@ -145,8 +145,12 @@ void ReadableStream::finishPulling()
     }
 }
 
-ReadableStreamReader& ReadableStream::getReader()
+ReadableStreamReader* ReadableStream::getReader(ExceptionCode& ec)
 {
+    if (locked()) {
+        ec = TypeError;
+        return nullptr;
+    }
     ASSERT(!m_reader);
 
     std::unique_ptr<ReadableStreamReader> newReader = std::make_unique<ReadableStreamReader>(*this);
@@ -154,11 +158,11 @@ ReadableStreamReader& ReadableStream::getReader()
 
     if (m_state == State::Readable) {
         m_reader = WTF::move(newReader);
-        return reader;
+        return &reader;
     }
 
     m_releasedReaders.append(WTF::move(newReader));
-    return reader;
+    return &reader;
 }
 
 void ReadableStream::cancel(JSC::JSValue reason, CancelPromise&& promise, ExceptionCode& ec)

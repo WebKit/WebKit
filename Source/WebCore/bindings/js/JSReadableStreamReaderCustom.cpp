@@ -97,7 +97,10 @@ EncodedJSValue JSC_HOST_CALL constructJSReadableStreamReader(ExecState* exec)
     if (stream->impl().locked())
         return throwVMError(exec, createTypeError(exec, ASCIILiteral("ReadableStreamReader constructor parameter is a locked ReadableStream")));
 
-    return JSValue::encode(toJS(exec, stream->globalObject(), stream->impl().getReader()));
+    ExceptionCode ec = 0;
+    EncodedJSValue value = JSValue::encode(toJS(exec, stream->globalObject(), stream->impl().getReader(ec)));
+    ASSERT(!ec);
+    return value;
 }
 
 } // namespace WebCore

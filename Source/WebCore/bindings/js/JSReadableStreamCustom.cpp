@@ -60,13 +60,6 @@ JSValue JSReadableStream::cancel(ExecState* exec)
     return promiseDeferred.promise();
 }
 
-JSValue JSReadableStream::getReader(ExecState* exec)
-{
-    if (impl().locked())
-        return exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("ReadableStream is locked")));
-    return toJS(exec, globalObject(), impl().getReader());
-}
-
 JSValue JSReadableStream::pipeTo(ExecState* exec)
 {
     JSValue error = createError(exec, ASCIILiteral("pipeTo is not implemented"));
