@@ -1,5 +1,5 @@
 <!--
- Copyright (C) 2014 Apple Inc. All rights reserved.
+ Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions
@@ -55,8 +55,9 @@
     JetStream includes benchmarks from the SunSpider 1.0.2 and Octane 2 JavaScript
     benchmark suites. It also includes benchmarks from the LLVM compiler open source
     project, compiled to JavaScript using Emscripten 1.13. It also includes a
-    benchmark based on the Apache Harmony open source project's HashMap, hand-translated
-    to JavaScript.
+    benchmark based on the Apache Harmony open source project's HashMap and a port of
+    the <a href="https://www.cs.purdue.edu/sss/projects/cdx/">CDx</a> benchmark,
+    hand-translated to JavaScript.
     </p>
     
     <p>
@@ -66,6 +67,11 @@
     the Mozilla open source project's PDF renderer (pdfjs), the Box2D JavaScript
     physics engine (box2d), and the jQuery and Closure JavaScript libraries (code-
     first-load, code-multi-load).
+    </p>
+    
+    <p>
+    Note that scores from JetStream @VERSION@ are not comparable to scores from other versions
+    of JetStream.
     </p>
     
     <dl>
@@ -91,6 +97,25 @@
     <dd>Base64 encoder/decoder written in JavaScript, originally from the Mozilla XML-RPC client component. Tests string manipulation. This benchmark was previously published as part of SunSpider.
       Source code: <a href="sources/base64.js">base64.js</a></dd>
     
+    <a name="cdjs">
+    <dt>cdjs</dt>
+    <dd>JavaScript implementation of the
+      <a href="https://www.cs.purdue.edu/sss/projects/cdx/">CDx collision detection
+        benchmark</a>. Measures the browser's worst-case performance over 200 collision
+      detection runs.
+      Source code: <a href="sources/cdjs-benchmark.js">benchmark.js</a>,
+      <a href="sources/cdjs-call_sign.js">call_sign.js</a>,
+      <a href="sources/cdjs-collision.js">collision.js</a>,
+      <a href="sources/cdjs-collision_detector.js">collision_detector.js</a>,
+      <a href="sources/cdjs-constants.js">constants.js</a>,
+      <a href="sources/cdjs-motion.js">motion.js</a>,
+      <a href="sources/cdjs-red_black_tree.js">red_black_tree.js</a>,
+      <a href="sources/cdjs-reduce_collision_set.js">reduce_collision_set.js</a>,
+      <a href="sources/cdjs-simulator.js">simulator.js</a>,
+      <a href="sources/cdjs-util.js">util.js</a>,
+      <a href="sources/cdjs-vector_2d.js">vector_2d.js</a>,
+      <a href="sources/cdjs-vector_3d.js">vector_3d.js</a></dd>
+    
     <a name="code-first-load">
     <dt>code-first-load</dt>
     <dd>Test of code load speed of the jQuery and Closure libraries. This test attempts to defeat
@@ -104,14 +129,6 @@
       caching, this is representative of revisiting the same website.
       This test was previously published in Octane version 1.
       Source code: <a href="sources/code-multi-load-code-load.js">code-load.js</a></dd>
-    
-    <a name="cordic">
-    <dt>cordic</dt>
-    <dd>JavaScript implementation of the
-      <a href="http://en.wikipedia.org/wiki/CORDIC">CORDIC algorithm</a> by Rich Moore. Tests
-      floating point math in short-running code.
-      This benchmark was previously published as part of SunSpider.
-      Source code: <a href="sources/cordic.js">cordic.js</a></dd>
     
     <a name="crypto-aes">
     <dt>crypto-aes</dt>
@@ -149,12 +166,14 @@
     
     <a name="mandreel-latency">
     <dt>mandreel-latency</dt>
-    <dd>Tests the <a href="http://bulletphysics.org/">Bullet</a> physics engine's performance
-      variability from iteration to iteration. This rewards JavaScript engines that have uniform
-      performance over time. The physics engine is compiled to JavaScript with
+    <dd>Tests the <a href="http://bulletphysics.org/">Bullet</a> physics engine's worst case
+      performance over many iterations. The physics engine is compiled to JavaScript with
       <a href="http://www.mandreel.com">Mandreel</a>. JetStream also reports the throughput score
       for this test as <a href="#mandreel">mandreel</a>.
-      This benchmark was previously published in Octane version 2.
+      This benchmark was previously published in Octane version 2, but JetStream uses a
+      <a href="http://trac.webkit.org/changeset/185425">different latency metric</a>
+      based on the average of the <a href="http://trac.webkit.org/changeset/186041">worst 0.5%</a>
+      samples.
       Source code: <a href="sources/mandreel.js">mandreel.js</a></dd>
     
     <a name="n-body">
@@ -175,10 +194,13 @@
     
     <a name="splay-latency">
     <dt>splay-latency</dt>
-    <dd>Tests the performance variability of manipulating a
+    <dd>Tests the worst-case performane of manipulating a
       <a href="http://en.wikipedia.org/wiki/Splay_tree">splay tree</a> represented using plain
       JavaScript objects. JetStream also reports the throughput score for this test
-      as <a href="#splay">splay</a>. This benchmark was previously published in Octane version 2.
+      as <a href="#splay">splay</a>. This benchmark was previously published in Octane version 2, but JetStream uses a
+      <a href="http://trac.webkit.org/changeset/185425">different latency metric</a>
+      based on the average of the <a href="http://trac.webkit.org/changeset/186041">worst 0.5%</a>
+      samples.
       Source code: <a href="sources/splay.js">splay.js</a></dd>
     
     <a name="tagcloud">
@@ -280,8 +302,8 @@
     <dt>mandreel</dt>
     <dd>Tests the <a href="http://bulletphysics.org/">Bullet</a> physics engine's throughput.
       The physics engine is compiled to JavaScript with
-      <a href="http://www.mandreel.com">Mandreel</a>. JetStream also reports the performance
-      variability score
+      <a href="http://www.mandreel.com">Mandreel</a>. JetStream also reports the worst-case
+      performance score
       for this test as <a href="#mandreel-latency">mandreel-latency</a>.
       This benchmark was previously published in Octane version 2.
       Source code: <a href="sources/mandreel.js">mandreel.js</a></dd>
@@ -336,7 +358,7 @@
     <dt>splay</dt>
     <dd>Tests the throughput of manipulating a
       <a href="http://en.wikipedia.org/wiki/Splay_tree">splay tree</a> represented using plain
-      JavaScript objects. JetStream also reports the variability score for this test
+      JavaScript objects. JetStream also reports the worst-case performance score for this test
       as <a href="#splay-latency">splay-latency</a>.
       This benchmark was previously published in Octane version 2.
       Source code: <a href="sources/splay.js">splay.js</a></dd>

@@ -1,3 +1,13 @@
+2015-06-30  Filip Pizlo  <fpizlo@apple.com>
+
+        Update the JetStream documentation to reflect the recent changes
+        https://bugs.webkit.org/show_bug.cgi?id=146474
+
+        Reviewed by Geoffrey Garen.
+
+        * JetStream/create.rb: Bump the version.
+        * JetStream/in-depth-TEMPLATE.html: Add cdjs documentation. Remove cordic documentation. Change documentation for splay and mandreel.
+
 2015-06-26  Filip Pizlo  <fpizlo@apple.com>
 
         [JetStream] Raise the percentile of mandreel-latency and splay-latency
