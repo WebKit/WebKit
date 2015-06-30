@@ -155,13 +155,13 @@ WebInspector.TimelineRecording = class TimelineRecording extends WebInspector.Ob
 
     addRecord(record)
     {
-        var hasCorrespondingTimeline = this._timelines.has(record.type);
-        console.assert(hasCorrespondingTimeline, record, this._timelines);
-        if (!hasCorrespondingTimeline)
+        var timeline = this._timelines.get(record.type);
+        console.assert(timeline, record, this._timelines);
+        if (!timeline)
             return;
 
         // Add the record to the global timeline by type.
-        this._timelines.get(record.type).addRecord(record);
+        timeline.addRecord(record);
 
         // Network and RenderingFrame records don't have source code timelines.
         if (record.type === WebInspector.TimelineRecord.Type.Network || record.type === WebInspector.TimelineRecord.Type.RenderingFrame)

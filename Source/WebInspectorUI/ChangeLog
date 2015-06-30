@@ -1,3 +1,24 @@
+2015-06-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Misc. Timeline cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=146430
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/Timeline.js:
+        (WebInspector.Timeline.prototype.reset):
+        Nobody listens for this event. Just remove it.
+
+        * UserInterface/Models/TimelineRecording.js:
+        Avoiding doing multiple lookups.
+
+        * UserInterface/Views/TimelineDataGridNode.js:
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype._updateTimes):
+        * UserInterface/Views/TimelineView.js:
+        (WebInspector.TimelineView.prototype.updateLayout):
+        Eliminate some unnecessary deletes.
+
 2015-06-29  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Unable to select the text of an inline error message

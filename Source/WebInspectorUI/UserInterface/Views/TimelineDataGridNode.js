@@ -228,7 +228,7 @@ WebInspector.TimelineDataGridNode.prototype = {
 
         if (this._scheduledGraphRefreshIdentifier) {
             cancelAnimationFrame(this._scheduledGraphRefreshIdentifier);
-            delete this._scheduledGraphRefreshIdentifier;
+            this._scheduledGraphRefreshIdentifier = undefined;
         }
 
         // We are not visible, but an ancestor will draw our graph.

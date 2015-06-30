@@ -106,10 +106,8 @@ WebInspector.Timeline = class Timeline extends WebInspector.Object
         this._startTime = NaN;
         this._endTime = NaN;
 
-        if (!suppressEvents) {
-            this.dispatchEventToListeners(WebInspector.Timeline.Event.Reset);
+        if (!suppressEvents)
             this.dispatchEventToListeners(WebInspector.Timeline.Event.TimesUpdated);
-        }
     }
 
     addRecord(record)
@@ -156,7 +154,6 @@ WebInspector.Timeline = class Timeline extends WebInspector.Object
 };
 
 WebInspector.Timeline.Event = {
-    Reset: "timeline-reset",
     RecordAdded: "timeline-record-added",
     TimesUpdated: "timeline-times-updated"
 };

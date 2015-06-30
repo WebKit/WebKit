@@ -172,7 +172,7 @@ WebInspector.TimelineView.prototype = {
     {
         if (this._scheduledLayoutUpdateIdentifier) {
             cancelAnimationFrame(this._scheduledLayoutUpdateIdentifier);
-            delete this._scheduledLayoutUpdateIdentifier;
+            this._scheduledLayoutUpdateIdentifier = undefined;
         }
 
         // Implemented by sub-classes if needed.

@@ -417,7 +417,7 @@ WebInspector.TimelineRecordingContentView.prototype = {
             for (var timelineView of this._timelineViewMap.values())
                 timelineView.zeroTime = startTime;
 
-            delete this._startTimeNeedsReset;
+            this._startTimeNeedsReset = false;
         }
 
         this._linearTimelineOverview.endTime = Math.max(endTime, currentTime);
