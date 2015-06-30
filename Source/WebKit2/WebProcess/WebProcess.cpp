@@ -1311,7 +1311,9 @@ void WebProcess::nonVisibleProcessCleanupTimerFired()
     if (!m_pagesInWindows.isEmpty())
         return;
 
+#if PLATFORM(COCOA)
     destroyRenderingResources();
+#endif
 }
 
 RefPtr<API::Object> WebProcess::transformHandlesToObjects(API::Object* object)

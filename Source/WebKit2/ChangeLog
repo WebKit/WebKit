@@ -1,3 +1,13 @@
+2015-06-30  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] [EFL] Unreviewed build fix after r186118.
+
+        Add if PLATFORM(COCOA) back.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::nonVisibleProcessCleanupTimerFired):
+        * WebProcess/WebProcess.h:
+
 2015-06-30  Simon Fraser  <simon.fraser@apple.com>
 
         Crash under _layoutForNodeHighlight: when inspecting espn.com

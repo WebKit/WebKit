@@ -177,7 +177,10 @@ public:
     void pageWillLeaveWindow(uint64_t pageID);
 
     void nonVisibleProcessCleanupTimerFired();
+
+#if PLATFORM(COCOA)
     void destroyRenderingResources();
+#endif
 
     void updateActivePages();
 
