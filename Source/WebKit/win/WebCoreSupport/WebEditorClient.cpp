@@ -345,7 +345,7 @@ bool WebEditorClient::shouldApplyStyle(StyleProperties*, Range*)
     return true;
 }
 
-void WebEditorClient::didApplyStyle(StyleProperties*, Range*)
+void WebEditorClient::didApplyStyle()
 {
     notImplemented();
 }
