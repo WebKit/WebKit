@@ -125,6 +125,16 @@ void MediaSession::addActiveMediaElement(HTMLMediaElement& element)
     m_activeParticipatingElements.add(&element);
 }
 
+bool MediaSession::isMediaElementActive(HTMLMediaElement& element)
+{
+    return m_activeParticipatingElements.contains(&element);
+}
+
+bool MediaSession::hasActiveMediaElements()
+{
+    return !m_activeParticipatingElements.isEmpty();
+}
+
 void MediaSession::setMetadata(const Dictionary& metadata)
 {
     // 5.1.3

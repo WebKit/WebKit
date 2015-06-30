@@ -556,6 +556,10 @@ private:
     virtual bool dispatchEvent(PassRefPtr<Event>) override;
 #endif
 
+#if ENABLE(MEDIA_SESSION)
+    void setSessionInternal(MediaSession&);
+#endif
+
     virtual String mediaPlayerReferrer() const override;
     virtual String mediaPlayerUserAgent() const override;
 

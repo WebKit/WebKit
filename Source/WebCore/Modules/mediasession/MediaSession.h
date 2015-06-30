@@ -88,6 +88,8 @@ private:
     void removeMediaElement(HTMLMediaElement&);
 
     void addActiveMediaElement(HTMLMediaElement&);
+    bool isMediaElementActive(HTMLMediaElement&);
+    bool hasActiveMediaElements();
 
     void releaseInternal();
 
