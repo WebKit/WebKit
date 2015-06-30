@@ -25,7 +25,7 @@
 
 WebInspector.LayoutTimelineRecord = class LayoutTimelineRecord extends WebInspector.TimelineRecord
 {
-    constructor(eventType, startTime, endTime, callFrames, sourceCodeLocation, x, y, width, height, quad)
+    constructor(eventType, startTime, endTime, callFrames, sourceCodeLocation, x, y, width, height, quad, duringComposite)
     {
         super(WebInspector.TimelineRecord.Type.Layout, startTime, endTime, callFrames, sourceCodeLocation);
 
@@ -40,6 +40,7 @@ WebInspector.LayoutTimelineRecord = class LayoutTimelineRecord extends WebInspec
         this._width = typeof width === "number" ? width : NaN;
         this._height = typeof height === "number" ? height : NaN;
         this._quad = quad instanceof WebInspector.Quad ? quad : null;
+        this._duringComposite = duringComposite || false;
     }
 
     // Static
@@ -59,6 +60,8 @@ WebInspector.LayoutTimelineRecord = class LayoutTimelineRecord extends WebInspec
             return WebInspector.UIString("Layout");
         case WebInspector.LayoutTimelineRecord.EventType.Paint:
             return WebInspector.UIString("Paint");
+        case WebInspector.LayoutTimelineRecord.EventType.Composite:
+            return WebInspector.UIString("Composite");
         }
     }
 
@@ -106,6 +109,11 @@ WebInspector.LayoutTimelineRecord = class LayoutTimelineRecord extends WebInspec
         return this._quad;
     }
 
+    get duringComposite()
+    {
+        return this._duringComposite;
+    }
+
     saveIdentityToCookie(cookie)
     {
         super.saveIdentityToCookie(cookie);
@@ -120,7 +128,8 @@ WebInspector.LayoutTimelineRecord.EventType = {
     InvalidateLayout: "layout-timeline-record-invalidate-layout",
     ForcedLayout: "layout-timeline-record-forced-layout",
     Layout: "layout-timeline-record-layout",
-    Paint: "layout-timeline-record-paint"
+    Paint: "layout-timeline-record-paint",
+    Composite: "layout-timeline-record-composite"
 };
 
 WebInspector.LayoutTimelineRecord.TypeIdentifier = "layout-timeline-record";

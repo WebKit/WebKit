@@ -170,8 +170,13 @@ void InspectorTimelineAgent::internalStart(const int* maxCallStackDepth)
 
         ASSERT(m_runLoopNestingLevel > 0);
         m_runLoopNestingLevel--;
-        if (!m_runLoopNestingLevel)
-            didCompleteCurrentRecord(TimelineRecordType::RenderingFrame);
+        if (m_runLoopNestingLevel)
+            return;
+
+        if (m_startedComposite)
+            didComposite();
+
+        didCompleteCurrentRecord(TimelineRecordType::RenderingFrame);
     });
 
     m_frameStartObserver->schedule(currentRunLoop(), kCFRunLoopEntry | kCFRunLoopAfterWaiting);
@@ -216,6 +221,7 @@ void InspectorTimelineAgent::internalStop()
     clearRecordStack();
 
     m_enabled = false;
+    m_startedComposite = false;
 
     if (m_frontendDispatcher)
         m_frontendDispatcher->recordingStopped();
@@ -397,6 +403,20 @@ void InspectorTimelineAgent::willRecalculateStyle(Frame* frame)
 void InspectorTimelineAgent::didRecalculateStyle()
 {
     didCompleteCurrentRecord(TimelineRecordType::RecalculateStyles);
+}
+
+void InspectorTimelineAgent::willComposite(Frame& frame)
+{
+    ASSERT(!m_startedComposite);
+    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::Composite, true, &frame);
+    m_startedComposite = true;
+}
+
+void InspectorTimelineAgent::didComposite()
+{
+    ASSERT(m_startedComposite);
+    didCompleteCurrentRecord(TimelineRecordType::Composite);
+    m_startedComposite = false;
 }
 
 void InspectorTimelineAgent::willPaint(Frame& frame)
@@ -607,6 +627,8 @@ static Inspector::Protocol::Timeline::EventType toProtocol(TimelineRecordType ty
         return Inspector::Protocol::Timeline::EventType::Layout;
     case TimelineRecordType::Paint:
         return Inspector::Protocol::Timeline::EventType::Paint;
+    case TimelineRecordType::Composite:
+        return Inspector::Protocol::Timeline::EventType::Composite;
     case TimelineRecordType::RenderingFrame:
         return Inspector::Protocol::Timeline::EventType::RenderingFrame;
     case TimelineRecordType::ScrollLayer:
@@ -720,15 +742,8 @@ void InspectorTimelineAgent::didCompleteCurrentRecord(TimelineRecordType type)
 InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorType type, InspectorClient* client)
     : InspectorAgentBase(ASCIILiteral("Timeline"), instrumentingAgents)
     , m_pageAgent(pageAgent)
-    , m_scriptDebugServer(nullptr)
-    , m_id(1)
-    , m_callStackDepth(0)
-    , m_maxCallStackDepth(5)
     , m_inspectorType(type)
     , m_client(client)
-    , m_enabled(false)
-    , m_enabledFromFrontend(false)
-    , m_runLoopNestingLevel(0)
 {
 }
 

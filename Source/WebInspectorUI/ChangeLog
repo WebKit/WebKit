@@ -1,3 +1,46 @@
+2015-06-30  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Reduce rendering frames "Other" time by instrumenting compositing
+        https://bugs.webkit.org/show_bug.cgi?id=146168
+
+        Reviewed by Brian Burg.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype._processRecord):
+        Added handling for new Composite record type. Paint records with a parent Composite record
+        are flagged to simplify processing after the event hierarchy is unpacked.
+
+        * UserInterface/Images/TimelineRecordComposite.svg: Added.
+        New composite record icon.
+
+        * UserInterface/Models/LayoutTimelineRecord.js:
+        (WebInspector.LayoutTimelineRecord):
+        (WebInspector.LayoutTimelineRecord.displayNameForEventType):
+        (WebInspector.LayoutTimelineRecord.prototype.get duringComposite): Added
+        Composite record support.
+
+        * UserInterface/Models/RenderingFrameTimelineRecord.js:
+        (WebInspector.RenderingFrameTimelineRecord.prototype.durationForTask.get validRecordForTaskType):
+        Add compositing time when bucketing runloop tasks, ignoring Paint events that are
+        contained within a Composite event.
+
+        * UserInterface/Views/LayoutTimelineOverviewGraph.js:
+        (WebInspector.LayoutTimelineOverviewGraph.prototype._layoutTimelineRecordAdded):
+        Add Composite records to paint timeline row.
+
+        * UserInterface/Views/RenderingFrameTimelineView.js:
+        (WebInspector.RenderingFrameTimelineView.prototype._processPendingRecords):
+        Small unrelated fix.
+
+        * UserInterface/Views/TimelineIcons.css:
+        (.composite-record .icon):
+        * UserInterface/Views/TimelineRecordBar.css:
+        (.timeline-record-bar.timeline-record-type-layout.layout-timeline-record-composite > .segment):
+        * UserInterface/Views/TimelineRecordTreeElement.js:
+        (WebInspector.TimelineRecordTreeElement):
+        New styles and tree element icon.
+
 2015-06-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: iOS 8: Uncaught Exception expanding Object Prototype

@@ -475,6 +475,18 @@ void InspectorInstrumentation::didDispatchXHRLoadEventImpl(const InspectorInstru
         timelineAgent->didDispatchXHRLoadEvent();
 }
 
+void InspectorInstrumentation::willCompositeImpl(InstrumentingAgents& instrumentingAgents, Frame& frame)
+{
+    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.inspectorTimelineAgent())
+        timelineAgent->willComposite(frame);
+}
+
+void InspectorInstrumentation::didCompositeImpl(InstrumentingAgents& instrumentingAgents)
+{
+    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.inspectorTimelineAgent())
+        timelineAgent->didComposite();
+}
+
 void InspectorInstrumentation::willPaintImpl(InstrumentingAgents& instrumentingAgents, RenderObject* renderer)
 {
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.inspectorTimelineAgent())

@@ -453,4 +453,9 @@ Ref<Stopwatch> InspectorController::executionStopwatch()
     return m_executionStopwatch.copyRef();
 }
 
+void InspectorController::didComposite(Frame& frame)
+{
+    InspectorInstrumentation::didComposite(frame);
+}
+
 } // namespace WebCore

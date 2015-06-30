@@ -62,6 +62,9 @@ WebInspector.TimelineRecordTreeElement = class TimelineRecordTreeElement extends
             case WebInspector.LayoutTimelineRecord.EventType.Paint:
                 iconStyleClass = WebInspector.TimelineRecordTreeElement.PaintRecordIconStyleClass;
                 break;
+            case WebInspector.LayoutTimelineRecord.EventType.Composite:
+                iconStyleClass = WebInspector.TimelineRecordTreeElement.CompositeRecordIconStyleClass;
+                break;
             default:
                 console.error("Unknown LayoutTimelineRecord eventType: " + timelineRecord.eventType, timelineRecord);
             }
@@ -157,6 +160,7 @@ WebInspector.TimelineRecordTreeElement = class TimelineRecordTreeElement extends
 WebInspector.TimelineRecordTreeElement.StyleRecordIconStyleClass = "style-record";
 WebInspector.TimelineRecordTreeElement.LayoutRecordIconStyleClass = "layout-record";
 WebInspector.TimelineRecordTreeElement.PaintRecordIconStyleClass = "paint-record";
+WebInspector.TimelineRecordTreeElement.CompositeRecordIconStyleClass = "composite-record";
 WebInspector.TimelineRecordTreeElement.RenderingFrameRecordIconStyleClass = "rendering-frame-record";
 WebInspector.TimelineRecordTreeElement.EvaluatedRecordIconStyleClass = "evaluated-record";
 WebInspector.TimelineRecordTreeElement.EventRecordIconStyleClass = "event-record";

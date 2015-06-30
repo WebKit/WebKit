@@ -137,6 +137,8 @@ public:
     virtual void frontendInitialized() override;
     virtual Ref<WTF::Stopwatch> executionStopwatch() override;
 
+    WEBCORE_EXPORT void didComposite(Frame&);
+
 private:
     friend class InspectorInstrumentation;
 

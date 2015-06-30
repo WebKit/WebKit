@@ -43,10 +43,12 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/GraphicsLayerCA.h>
+#import <WebCore/InspectorController.h>
 #import <WebCore/MachSendRight.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformCAAnimationCocoa.h>
+#import <WebCore/QuartzCoreSPI.h>
 #import <WebCore/RenderLayerBacking.h>
 #import <WebCore/RenderLayerCompositor.h>
 #import <WebCore/RenderView.h>
@@ -387,6 +389,12 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
         // Because our view-relative overlay root layer is not attached to the main GraphicsLayer tree, we need to flush it manually.
         if (m_viewOverlayRootLayer)
             m_viewOverlayRootLayer->flushCompositingState(visibleRect);
+
+#if (TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
+        [CATransaction addCommitHandler:^{
+            m_webPage.corePage()->inspectorController().didComposite(m_webPage.mainFrameView()->frame());
+        } forPhase:kCATransactionPhasePostCommit];
+#endif
 
         bool returnValue = m_webPage.mainFrameView()->flushCompositingStateIncludingSubframes();
 #if ENABLE(ASYNC_SCROLLING)

@@ -262,10 +262,18 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         case TimelineAgent.EventType.Paint:
             // COMPATIBILITY (iOS 6): Paint records data contained x, y, width, height properties. This became a quad "clip".
             var quad = recordPayload.data.clip ? new WebInspector.Quad(recordPayload.data.clip) : null;
+            var duringComposite = recordPayload.__duringComposite || false;
             if (quad)
-                return new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.Paint, startTime, endTime, callFrames, sourceCodeLocation, null, null, quad.width, quad.height, quad);
+                return new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.Paint, startTime, endTime, callFrames, sourceCodeLocation, null, null, quad.width, quad.height, quad, duringComposite);
             else
-                return new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.Paint, startTime, endTime, callFrames, sourceCodeLocation, recordPayload.data.x, recordPayload.data.y, recordPayload.data.width, recordPayload.data.height);
+                return new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.Paint, startTime, endTime, callFrames, sourceCodeLocation, recordPayload.data.x, recordPayload.data.y, recordPayload.data.width, recordPayload.data.height, null, duringComposite);
+
+        case TimelineAgent.EventType.Composite:
+            recordPayload.children.forEach(function(childRecordPayload) {
+                console.assert(childRecordPayload.type === TimelineAgent.EventType.Paint, childRecordPayload.type);
+                childRecordPayload.__duringComposite = true;
+            });
+            return new WebInspector.LayoutTimelineRecord(WebInspector.LayoutTimelineRecord.EventType.Composite, startTime, endTime, callFrames, sourceCodeLocation);
 
         case TimelineAgent.EventType.RenderingFrame:
             if (!recordPayload.children)

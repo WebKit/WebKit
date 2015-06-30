@@ -105,7 +105,7 @@ WebInspector.LayoutTimelineOverviewGraph.prototype = {
         var layoutTimelineRecord = event.data.record;
         console.assert(layoutTimelineRecord instanceof WebInspector.LayoutTimelineRecord);
 
-        if (layoutTimelineRecord.eventType === WebInspector.LayoutTimelineRecord.EventType.Paint)
+        if (layoutTimelineRecord.eventType === WebInspector.LayoutTimelineRecord.EventType.Paint || layoutTimelineRecord.eventType === WebInspector.LayoutTimelineRecord.EventType.Composite)
             this._timelinePaintRecordRow.records.push(layoutTimelineRecord);
         else
             this._timelineLayoutRecordRow.records.push(layoutTimelineRecord);

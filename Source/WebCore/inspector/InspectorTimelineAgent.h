@@ -72,6 +72,7 @@ enum class TimelineRecordType {
     InvalidateLayout,
     Layout,
     Paint,
+    Composite,
     RenderingFrame,
     ScrollLayer,
 
@@ -155,6 +156,8 @@ public:
     void didScroll();
     void willDispatchXHRLoadEvent(const String&, Frame*);
     void didDispatchXHRLoadEvent();
+    void willComposite(Frame&);
+    void didComposite();
     void willPaint(Frame&);
     void didPaint(RenderObject*, const LayoutRect&);
     void willRecalculateStyle(Frame*);
@@ -229,29 +232,30 @@ private:
     Page* page();
 
     InspectorPageAgent* m_pageAgent;
-    PageScriptDebugServer* m_scriptDebugServer;
+    PageScriptDebugServer* m_scriptDebugServer { nullptr };
 
     std::unique_ptr<Inspector::TimelineFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::TimelineBackendDispatcher> m_backendDispatcher;
 
     Vector<TimelineRecordEntry> m_recordStack;
 
-    int m_id;
-    int m_callStackDepth;
-    int m_maxCallStackDepth;
+    int m_id { 1 };
+    int m_callStackDepth { 0 };
+    int m_maxCallStackDepth { 5 };
     InspectorType m_inspectorType;
     InspectorClient* m_client;
 
     Vector<TimelineRecordEntry> m_pendingConsoleProfileRecords;
 
-    bool m_enabled;
-    bool m_enabledFromFrontend;
+    bool m_enabled { false };
+    bool m_enabledFromFrontend { false };
 
 #if PLATFORM(COCOA)
     std::unique_ptr<WebCore::RunLoopObserver> m_frameStartObserver;
     std::unique_ptr<WebCore::RunLoopObserver> m_frameStopObserver;
 #endif
-    int m_runLoopNestingLevel;
+    int m_runLoopNestingLevel { 0 };
+    bool m_startedComposite { false };
 };
 
 } // namespace WebCore

@@ -225,6 +225,7 @@ WebInspector.RenderingFrameTimelineView.prototype = {
 
                     this._dataGrid.addRowInSortOrder(layoutTreeElement, layoutDataGridNode, treeElement);
                 } else if (childRecord.type === WebInspector.TimelineRecord.Type.Script) {
+                    var rootNodes = [];
                     if (childRecord.profile) {
                         // FIXME: Support using the bottom-up tree once it is implemented.
                         rootNodes = childRecord.profile.topDownRootNodes;

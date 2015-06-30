@@ -75,6 +75,10 @@
     content: url(../Images/TimelineRecordPaint.svg);
 }
 
+.composite-record .icon {
+    content: url(../Images/TimelineRecordComposite.svg);
+}
+
 .rendering-frame-record .icon {
     content: url(../Images/TimelineRecordRenderingFrame.svg);
 }

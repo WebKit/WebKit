@@ -83,9 +83,9 @@ WebInspector.RenderingFrameTimelineRecord = class RenderingFrameTimelineRecord e
             case WebInspector.RenderingFrameTimelineRecord.TaskType.Script:
                 return record.type === WebInspector.TimelineRecord.Type.Script;
             case WebInspector.RenderingFrameTimelineRecord.TaskType.Layout:
-                return record.type === WebInspector.TimelineRecord.Type.Layout && record.eventType !== WebInspector.LayoutTimelineRecord.EventType.Paint;
+                return record.type === WebInspector.TimelineRecord.Type.Layout && record.eventType !== WebInspector.LayoutTimelineRecord.EventType.Paint && record.eventType !== WebInspector.LayoutTimelineRecord.EventType.Composite;
             case WebInspector.RenderingFrameTimelineRecord.TaskType.Paint:
-                return record.type === WebInspector.TimelineRecord.Type.Layout && record.eventType === WebInspector.LayoutTimelineRecord.EventType.Paint;
+                return record.eventType === WebInspector.LayoutTimelineRecord.EventType.Paint || record.eventType === WebInspector.LayoutTimelineRecord.EventType.Composite;
             default:
                 console.error("Unsupported task type: " + taskType);
                 return false;
@@ -106,13 +106,20 @@ WebInspector.RenderingFrameTimelineRecord = class RenderingFrameTimelineRecord e
                 return previousValue + currentDuration;
             }, 0);
 
-            // Time spent in layout events which were synchronously triggered from JavaScript must be deducted from the
-            // rendering frame's script duration, to prevent the time from being counted twice.
             if (taskType === WebInspector.RenderingFrameTimelineRecord.TaskType.Script) {
+                // Layout events synchronously triggered from JavaScript must be subtracted from the total
+                // script time, to prevent the time from being counted twice.
                 duration -= this._children.reduce(function(previousValue, currentValue) {
                     if (currentValue.type === WebInspector.TimelineRecord.Type.Layout && (currentValue.sourceCodeLocation || currentValue.callFrames))
                         return previousValue + currentValue.duration;
                     return previousValue;
+                }, 0);
+            } else if (taskType === WebInspector.RenderingFrameTimelineRecord.TaskType.Paint) {
+                // Paint events triggered during a Composite event must be subtracted from the total painting time,
+                // since the compositing time already includes time spent in these Paint events.
+                var paintRecords = this._children.filter(function(record) { return record.eventType === WebInspector.LayoutTimelineRecord.EventType.Paint; });
+                duration -= paintRecords.reduce(function(previousValue, currentValue) {
+                    return currentValue.duringComposite ? previousValue + currentValue.duration : previousValue;
                 }, 0);
             }
         }

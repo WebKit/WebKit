@@ -1082,6 +1082,8 @@ bool FrameView::isEnclosedInCompositingLayer() const
 
 bool FrameView::flushCompositingStateIncludingSubframes()
 {
+    InspectorInstrumentation::willComposite(frame());
+
     bool allFramesFlushed = flushCompositingStateForThisFrame(&frame());
 
     for (Frame* child = frame().tree().firstRenderedChild(); child; child = child->tree().traverseNextRendered(m_frame.ptr())) {

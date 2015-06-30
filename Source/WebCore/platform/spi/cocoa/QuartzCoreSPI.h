@@ -45,6 +45,7 @@ extern "C" {
 #import <QuartzCore/CAContext.h>
 #import <QuartzCore/CAFilter.h>
 #import <QuartzCore/CATiledLayerPrivate.h>
+#import <QuartzCore/CATransactionPrivate.h>
 
 #ifdef __cplusplus
 }
@@ -112,6 +113,18 @@ typedef struct CAColorMatrix CAColorMatrix;
 + (CAFilter *)filterWithType:(NSString *)type;
 @property (copy) NSString *name;
 @end
+
+#if (TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
+typedef enum {
+    kCATransactionPhasePreLayout,
+    kCATransactionPhasePreCommit,
+    kCATransactionPhasePostCommit,
+} CATransactionPhase;
+
+@interface CATransaction (Details)
++ (void)addCommitHandler:(void(^)(void))block forPhase:(CATransactionPhase)phase;
+@end
+#endif
 #endif // __OBJC__
 
 #endif

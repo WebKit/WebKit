@@ -13,6 +13,7 @@
                 "InvalidateLayout",
                 "Layout",
                 "Paint",
+                "Composite",
                 "RenderingFrame",
                 "ScrollLayer",
                 "ParseHTML",

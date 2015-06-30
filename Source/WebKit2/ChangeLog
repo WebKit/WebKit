@@ -1,3 +1,16 @@
+2015-06-30  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Reduce rendering frames "Other" time by instrumenting compositing
+        https://bugs.webkit.org/show_bug.cgi?id=146168
+
+        Reviewed by Brian Burg.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+        Added CA transaction post-commit handlers to instrument end of composite.
+
 2015-06-30  Beth Dakin  <bdakin@apple.com>
 
         The bounds on InteractionInformationAtPosition should be more precise

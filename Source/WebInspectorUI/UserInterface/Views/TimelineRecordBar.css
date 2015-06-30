@@ -87,7 +87,9 @@
     border-color: rgb(212, 108, 108);
 }
 
-.timeline-record-bar.timeline-record-type-layout.layout-timeline-record-paint > .segment {
+
+.timeline-record-bar.timeline-record-type-layout.layout-timeline-record-paint > .segment,
+.timeline-record-bar.timeline-record-type-layout.layout-timeline-record-composite > .segment {
     background-color: rgb(176, 204, 105);
     border-color: rgb(152, 188, 77);
 }
