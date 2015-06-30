@@ -63,6 +63,7 @@
 
 #if ENABLE(FILTERS_LEVEL_2)
 @interface CABackdropLayer : CALayer
+@property BOOL windowServerAware;
 @end
 #endif
 
@@ -268,6 +269,11 @@ PlatformCALayerCocoa::PlatformCALayerCocoa(LayerType layerType, PlatformCALayerC
 
     if (layerClass)
         m_layer = adoptNS([(CALayer *)[layerClass alloc] init]);
+
+#if ENABLE(FILTERS_LEVEL_2) && PLATFORM(MAC)
+    if (layerType == LayerTypeBackdropLayer)
+        [(CABackdropLayer*)m_layer.get() setWindowServerAware:NO];
+#endif
 
     commonInit();
 }
