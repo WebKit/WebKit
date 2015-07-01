@@ -1,5 +1,12 @@
 2015-06-30  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix CoordinatedGraphics.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::didFlushRootLayer):
+
+2015-06-30  Simon Fraser  <simon.fraser@apple.com>
+
         More Gtk/EFL fixing.
 
         * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
