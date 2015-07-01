@@ -96,7 +96,20 @@ Vector<WebPlatformTouchPoint> NativeWebTouchEvent::extractWebTouchPoint(const _U
 #endif
 
 NativeWebTouchEvent::NativeWebTouchEvent(const _UIWebTouchEvent* event)
-    : WebTouchEvent(webEventTypeForUIWebTouchEventType(event->type), static_cast<Modifiers>(0), event->timestamp, extractWebTouchPoint(event), positionForCGPoint(event->locationInDocumentCoordinates), event->inJavaScriptGesture, event->scale, event->rotation)
+    : WebTouchEvent(
+        webEventTypeForUIWebTouchEventType(event->type),
+        static_cast<Modifiers>(0),
+        event->timestamp,
+        extractWebTouchPoint(event),
+        positionForCGPoint(event->locationInDocumentCoordinates),
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
+        event->isPotentialTap,
+#else
+        true,
+#endif
+        event->inJavaScriptGesture,
+        event->scale,
+        event->rotation)
 {
 }
 

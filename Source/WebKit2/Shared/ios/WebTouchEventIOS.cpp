@@ -41,6 +41,7 @@ void WebTouchEvent::encode(IPC::ArgumentEncoder& encoder) const
     encoder << m_touchPoints;
     encoder << m_position;
     encoder << m_canPreventNativeGestures;
+    encoder << m_isPotentialTap;
     encoder << m_isGesture;
     encoder << m_gestureScale;
     encoder << m_gestureRotation;
@@ -56,6 +57,8 @@ bool WebTouchEvent::decode(IPC::ArgumentDecoder& decoder, WebTouchEvent& result)
     if (!decoder.decode(result.m_position))
         return false;
     if (!decoder.decode(result.m_canPreventNativeGestures))
+        return false;
+    if (!decoder.decode(result.m_isPotentialTap))
         return false;
     if (!decoder.decode(result.m_isGesture))
         return false;

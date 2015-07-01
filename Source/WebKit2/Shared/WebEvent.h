@@ -325,11 +325,12 @@ private:
 class WebTouchEvent : public WebEvent {
 public:
     WebTouchEvent() { }
-    WebTouchEvent(WebEvent::Type type, Modifiers modifiers, double timestamp, const Vector<WebPlatformTouchPoint>& touchPoints, WebCore::IntPoint position, bool isGesture, float gestureScale, float gestureRotation)
+    WebTouchEvent(WebEvent::Type type, Modifiers modifiers, double timestamp, const Vector<WebPlatformTouchPoint>& touchPoints, WebCore::IntPoint position, bool isPotentialTap, bool isGesture, float gestureScale, float gestureRotation)
         : WebEvent(type, modifiers, timestamp)
         , m_touchPoints(touchPoints)
         , m_position(position)
         , m_canPreventNativeGestures(true)
+        , m_isPotentialTap(isPotentialTap)
         , m_isGesture(isGesture)
         , m_gestureScale(gestureScale)
         , m_gestureRotation(gestureRotation)
@@ -340,6 +341,8 @@ public:
     const Vector<WebPlatformTouchPoint>& touchPoints() const { return m_touchPoints; }
 
     WebCore::IntPoint position() const { return m_position; }
+
+    bool isPotentialTap() const { return m_isPotentialTap; }
 
     bool isGesture() const { return m_isGesture; }
     float gestureScale() const { return m_gestureScale; }
@@ -358,6 +361,7 @@ private:
     
     WebCore::IntPoint m_position;
     bool m_canPreventNativeGestures;
+    bool m_isPotentialTap;
     bool m_isGesture;
     float m_gestureScale;
     float m_gestureRotation;

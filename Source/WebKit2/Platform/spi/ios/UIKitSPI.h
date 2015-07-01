@@ -586,6 +586,10 @@ struct _UIWebTouchEvent {
 
     struct _UIWebTouchPoint* touchPoints;
     unsigned touchPointCount;
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
+    bool isPotentialTap;
+#endif
 };
 
 @protocol UIWebTouchEventsGestureRecognizerDelegate

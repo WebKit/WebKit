@@ -1,3 +1,26 @@
+2015-06-30  Enrica Casucci  <enrica@apple.com>
+
+        <rdar://problem/20655729> WebKit should heuristically exclude scrolling touch events from the user gesture category
+
+        Reviewed by Benjamin Poulain.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * Shared/WebEvent.h:
+        (WebKit::WebTouchEvent::WebTouchEvent):
+        (WebKit::WebTouchEvent::position):
+        (WebKit::WebTouchEvent::isPotentialTap):
+        (WebKit::WebTouchEvent::isGesture):
+        (WebKit::WebTouchEvent::gestureScale):
+        (WebKit::WebTouchEvent::gestureRotation):
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformTouchEvent::WebKit2PlatformTouchEvent):
+        * Shared/ios/NativeWebTouchEventIOS.mm:
+        (WebKit::NativeWebTouchEvent::NativeWebTouchEvent):
+        * Shared/ios/WebTouchEventIOS.cpp:
+        (WebKit::WebTouchEvent::encode):
+        (WebKit::WebTouchEvent::decode):
+        Pipe isPotentialTap through.
+
 2015-06-30  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] [EFL] Unreviewed build fix after r186118.
