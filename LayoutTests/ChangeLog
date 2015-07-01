@@ -1,3 +1,17 @@
+2015-06-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r179168): Characters overlap after resizing the font on the copy-pasted Japanese text
+        https://bugs.webkit.org/show_bug.cgi?id=146492
+
+        Reviewed by Darin Adler.
+
+        Added a regression test. Also reverted the bad rebaseline in r179168:
+        http://trac.webkit.org/changeset/179168/trunk/LayoutTests/editing/pasteboard/simplfiying-markup-should-not-strip-content-expected.txt
+
+        * editing/pasteboard/cjk-line-height-expected.txt: Added.
+        * editing/pasteboard/cjk-line-height.html: Added.
+        * editing/pasteboard/simplfiying-markup-should-not-strip-content-expected.txt:
+
 2015-07-01  Matthew Daiter  <mdaiter@apple.com>
 
         Enable MEDIA_STREAM flag

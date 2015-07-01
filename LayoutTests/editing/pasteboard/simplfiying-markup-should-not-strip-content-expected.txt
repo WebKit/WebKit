@@ -33,7 +33,7 @@ Pasted content:
 |   face="Verdana"
 |   "hello "
 | <br>
-|   style="font-family: Helvetica; line-height: 18px;"
+|   style="font-family: Helvetica;"
 | <font>
 |   face="Verdana"
 |   "worldWebKit<#selection-caret>"
