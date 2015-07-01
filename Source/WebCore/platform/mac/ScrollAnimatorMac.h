@@ -85,6 +85,7 @@ private:
     virtual void scrollToOffsetWithoutAnimation(const FloatPoint&) override;
 
 #if ENABLE(RUBBER_BANDING)
+    bool shouldForwardWheelEventsToParent(const PlatformWheelEvent&);
     virtual bool handleWheelEvent(const PlatformWheelEvent&) override;
 #endif
 

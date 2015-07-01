@@ -1106,6 +1106,15 @@ void ScrollAnimatorMac::handleWheelEventPhase(PlatformWheelEventPhase phase)
 }
 
 #if ENABLE(RUBBER_BANDING)
+
+bool ScrollAnimatorMac::shouldForwardWheelEventsToParent(const PlatformWheelEvent& wheelEvent)
+{
+    if (std::abs(wheelEvent.deltaY()) >= std::abs(wheelEvent.deltaX()))
+        return !allowsVerticalStretching(wheelEvent);
+
+    return !allowsHorizontalStretching(wheelEvent);
+}
+    
 bool ScrollAnimatorMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     m_haveScrolledSincePageLoad = true;
@@ -1113,18 +1122,15 @@ bool ScrollAnimatorMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
     if (!wheelEvent.hasPreciseScrollingDeltas() || !rubberBandingEnabledForSystem())
         return ScrollAnimator::handleWheelEvent(wheelEvent);
 
-    if (wheelEvent.deltaX() || wheelEvent.deltaY()) {
-        // FIXME: This is somewhat roundabout hack to allow forwarding wheel events
-        // up to the parent scrollable area. It takes advantage of the fact that
-        // the base class implementation of handleWheelEvent will not accept the
-        // wheel event if there is nowhere to scroll.
-        if (fabsf(wheelEvent.deltaY()) >= fabsf(wheelEvent.deltaX())) {
-            if (!allowsVerticalStretching(wheelEvent))
-                return ScrollAnimator::handleWheelEvent(wheelEvent);
-        } else {
-            if (!allowsHorizontalStretching(wheelEvent))
-                return ScrollAnimator::handleWheelEvent(wheelEvent);
-        }
+    // FIXME: This is somewhat roundabout hack to allow forwarding wheel events
+    // up to the parent scrollable area. It takes advantage of the fact that
+    // the base class implementation of handleWheelEvent will not accept the
+    // wheel event if there is nowhere to scroll.
+    if (shouldForwardWheelEventsToParent(wheelEvent)) {
+        bool didHandleEvent = ScrollAnimator::handleWheelEvent(wheelEvent);
+        if (didHandleEvent || (!wheelEvent.deltaX() && !wheelEvent.deltaY()))
+            handleWheelEventPhase(wheelEvent.phase());
+        return didHandleEvent;
     }
 
     bool didHandleEvent = m_scrollController.handleWheelEvent(wheelEvent);
