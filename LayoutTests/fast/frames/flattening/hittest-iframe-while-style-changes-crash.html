@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that hittesting an iframe when frame flattening is on does not crash.</title>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+if (window.internals)
+    internals.settings.setFrameFlatteningEnabled(true);
+
+function runTest() {
+    setTimeout(function() {
+        document.getElementById('clickonthis').contentDocument.getElementById('foo').style.display = "none";
+        if (window.internals)
+            internals.nodesFromRect(document, 100, 100, 0, 0, 0, 0, false, false, true);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+}
+</script>
+<body>
+Pass if no crash or assert in debug.
+<iframe onload="runTest()" id=clickonthis src="data:text/html,<div id=foo>foobar</div>">
+</body>

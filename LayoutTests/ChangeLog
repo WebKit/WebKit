@@ -1,3 +1,36 @@
+2015-06-30  Zalan Bujtas  <zalan@apple.com>
+
+        Frame flattening: Hit-testing an iframe could end up destroying the associated inline tree context.
+        https://bugs.webkit.org/show_bug.cgi?id=146447
+        rdar://problem/20613501
+
+        Reviewed by Simon Fraser.
+
+        This patch ensures that the render tree associated with the document on which
+        the hit-test is initiated does not get laid out, unless it was directly mutated prior to the hittest.
+
+        Hit-test requirements:
+        1. A clean the render tree before hit-testing gets propagated to the renderers.
+        Document::updateLayout() ensures it by calling both updateStyleIfNeeded() and layout() not only on the current tree, but also
+        on the ancestors if needed.
+
+        2. No render tree mutation while hit-testing the renderers.
+
+        When an iframe is being hit-tested, this hit-test could bubble down to the child frame's render view.
+        In order to ensure #1, we call Document::updateLayout() on the current (subframe) document.
+        If updateStyleIfNeeded() mutates the render tree, we mark it dirty for layout(). However frame flattening also
+        marks the parent renderer (RenderIFrame) dirty.
+        While calling layout() to clean the current render tree, we end up laying out the parent tree too.
+        Laying out the parent tree could end up destroying the inline tree context from where the
+        hittest just bubbled down. (InlineFlowBox -> RenderWidget -> RenderView).
+
+        This patch protects the render tree from such unintentional inline tree mutation during hittesting.
+        After the initial layout we set a layout disallow flag on the frame view to defer subsequent layouts.
+        This patch only changes behavior when frame flattening is enabled, but in future we may always want to enable this.
+
+        * fast/frames/flattening/hittest-iframe-while-style-changes-crash-expected.txt: Added.
+        * fast/frames/flattening/hittest-iframe-while-style-changes-crash.html: Added.
+
 2015-06-30  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         Implement ECMAScript Internationalization API

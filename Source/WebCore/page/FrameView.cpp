@@ -1140,6 +1140,9 @@ void FrameView::layout(bool allowSubtree)
     if (isInLayout())
         return;
 
+    if (layoutDisallowed())
+        return;
+
     // Protect the view from being deleted during layout (in recalcStyle).
     Ref<FrameView> protect(*this);
 
@@ -3763,9 +3766,6 @@ void FrameView::startLayoutAtMainFrameViewIfNeeded(bool allowSubtree)
         parentView = parentView->parentFrameView();
 
     parentView->layout(allowSubtree);
-
-    RenderElement* root = m_layoutRoot ? m_layoutRoot : frame().document()->renderView();
-    ASSERT_UNUSED(root, !root->needsLayout());
 }
 
 void FrameView::updateControlTints()
