@@ -30,6 +30,9 @@
     <Filter Include="Source Files\common">
       <UniqueIdentifier>{69095c0a-dd27-4295-b89c-fe324ffa36ad}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\systeminfo">
+      <UniqueIdentifier>{87360cb1-93d4-46d1-9533-ab71e9c99855}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\compiler\translator\glslang_lex.cpp">
@@ -68,12 +71,6 @@
     <ClCompile Include="..\src\compiler\translator\Compiler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\translator\compilerdebug.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\compiler\translator\DetectCallDepth.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\compiler\translator\Diagnostics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -110,9 +107,6 @@
     <ClCompile Include="..\src\compiler\translator\LoopInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\translator\ossource_win.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\compiler\translator\parseConst.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -120,9 +114,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\compiler\translator\QualifierAlive.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\compiler\translator\RemoveTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\compiler\translator\ShaderLang.cpp">
@@ -155,9 +146,6 @@
     <ClCompile Include="..\src\compiler\translator\RewriteElseBlocks.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\common\blocklayout.cpp">
-      <Filter>Source Files\common</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\common\debug.cpp">
       <Filter>Source Files\common</Filter>
     </ClCompile>
@@ -165,12 +153,6 @@
       <Filter>Source Files\common</Filter>
     </ClCompile>
     <ClCompile Include="..\src\common\mathutil.cpp">
-      <Filter>Source Files\common</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\common\RefCountObject.cpp">
-      <Filter>Source Files\common</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\common\shadervars.cpp">
       <Filter>Source Files\common</Filter>
     </ClCompile>
     <ClCompile Include="..\src\common\utilities.cpp">
@@ -181,6 +163,72 @@
     </ClCompile>
     <ClCompile Include="..\src\compiler\translator\ValidateOutputs.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\common\angleutils.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\common\MemoryBuffer.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\common\tls.cpp">
+      <Filter>Source Files\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\compiler\translator\ArrayReturnValueToOutParameter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\compiler\translator\blocklayout.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\compiler\translator\CallDAG.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\compiler\translator\EmulatePrecision.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\compiler\translator\IntermNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\compiler\translator\Operator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\compiler\translator\PruneEmptyDeclarations.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\compiler\translator\RegenerateStructNames.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\compiler\translator\RemoveSwitchFallThrough.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\compiler\translator\ScalarizeVecAndMatConstructorArgs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\compiler\translator\SearchSymbol.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\compiler\translator\SeparateArrayInitialization.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\compiler\translator\SeparateDeclarations.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\compiler\translator\ShaderVars.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\compiler\translator\SimplifyArrayAssignment.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\compiler\translator\Types.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\compiler\translator\UnfoldShortCircuit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\compiler\translator\ValidateSwitch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\third_party\systeminfo\SystemInfo.cpp">
+      <Filter>Source Files\systeminfo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -319,9 +367,6 @@
     <ClInclude Include="..\src\common\angleutils.h">
       <Filter>Source Files\common</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\common\blocklayout.h">
-      <Filter>Source Files\common</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\common\debug.h">
       <Filter>Source Files\common</Filter>
     </ClInclude>
@@ -329,12 +374,6 @@
       <Filter>Source Files\common</Filter>
     </ClInclude>
     <ClInclude Include="..\src\common\mathutil.h">
-      <Filter>Source Files\common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\common\RefCountObject.h">
-      <Filter>Source Files\common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\common\shadervars.h">
       <Filter>Source Files\common</Filter>
     </ClInclude>
     <ClInclude Include="..\src\common\utilities.h">
@@ -348,6 +387,87 @@
     </ClInclude>
     <ClInclude Include="..\src\compiler\translator\ValidateOutputs.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\common\MemoryBuffer.h">
+      <Filter>Source Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\common\Optional.h">
+      <Filter>Source Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\common\platform.h">
+      <Filter>Source Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\common\tls.h">
+      <Filter>Source Files\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\compiler\translator\ArrayReturnValueToOutParameter.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\compiler\translator\blocklayout.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\compiler\translator\CallDAG.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\compiler\translator\Compiler.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\compiler\translator\EmulatePrecision.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\compiler\translator\ExtensionBehavior.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\compiler\translator\glslang.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\compiler\translator\IntermNode.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\compiler\translator\length_limits.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\compiler\translator\NodeSearch.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\compiler\translator\Operator.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\compiler\translator\Pragma.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\compiler\translator\PruneEmptyDeclarations.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\compiler\translator\RegenerateStructNames.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\compiler\translator\RemoveSwitchFallThrough.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\compiler\translator\ScalarizeVecAndMatConstructorArgs.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\compiler\translator\SearchSymbol.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\compiler\translator\SeparateArrayInitialization.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\compiler\translator\SeparateDeclarations.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\compiler\translator\SimplifyArrayAssignment.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\compiler\translator\UnfoldShortCircuit.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\compiler\translator\ValidateSwitch.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\third_party\systeminfo\SystemInfo.h">
+      <Filter>Source Files\systeminfo</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

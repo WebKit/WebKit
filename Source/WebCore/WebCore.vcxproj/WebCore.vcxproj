@@ -7584,8 +7584,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\platform\graphics\MaskImageOperation.cpp" />
-    <ClCompile Include="..\platform\graphics\OpenGLShims.cpp" />
-    <ClCompile Include="..\platform\graphics\opengl\Extensions3DOpenGL.cpp" />
     <ClCompile Include="..\platform\graphics\opengl\Extensions3DOpenGLCommon.cpp" />
     <ClCompile Include="..\platform\graphics\opengl\Extensions3DOpenGLES.cpp" />
     <ClCompile Include="..\platform\graphics\opengl\GLPlatformContext.cpp" />
@@ -19817,8 +19815,6 @@
     <ClInclude Include="..\platform\graphics\gstreamer\WebKitWebSourceGStreamer.h" />
     <ClInclude Include="..\platform\graphics\MaskImageOperation.h" />
     <ClInclude Include="..\platform\graphics\MediaPlayerPrivate.h" />
-    <ClInclude Include="..\platform\graphics\OpenGLShims.h" />
-    <ClInclude Include="..\platform\graphics\opengl\Extensions3DOpenGL.h" />
     <ClInclude Include="..\platform\graphics\opengl\Extensions3DOpenGLCommon.h" />
     <ClInclude Include="..\platform\graphics\opengl\Extensions3DOpenGLES.h" />
     <ClInclude Include="..\platform\graphics\opengl\GLDefs.h" />

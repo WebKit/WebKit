@@ -14,9 +14,6 @@
     <ClCompile Include="..\src\compiler\translator\VersionGLSL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\compiler\translator\DetectDiscontinuity.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\compiler\translator\OutputESSL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -36,6 +33,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\compiler\translator\UnfoldShortCircuit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\compiler\translator\BuiltInFunctionEmulatorGLSL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

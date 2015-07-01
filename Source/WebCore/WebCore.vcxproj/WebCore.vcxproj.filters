@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="DerivedSources">
@@ -6532,17 +6532,11 @@
     <ClCompile Include="..\platform\graphics\GraphicsContext3D.cpp">
       <Filter>platform\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\graphics\OpenGLShims.cpp">
-      <Filter>platform\graphics</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\graphics\gpu\Texture.cpp">
       <Filter>platform\graphics\gpu</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\graphics\gpu\TilingData.cpp">
       <Filter>platform\graphics\gpu</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\graphics\opengl\Extensions3DOpenGL.cpp">
-      <Filter>platform\graphics\opengl</Filter>
     </ClCompile>
     <ClCompile Include="..\platform\graphics\opengl\Extensions3DOpenGLCommon.cpp">
       <Filter>platform\graphics\opengl</Filter>
@@ -7666,7 +7660,7 @@
       <Filter>accessibility</Filter>
     </ClInclude>
     <ClInclude Include="..\accessibility\AXTextStateChangeIntent.h">
-        <Filter>accessibility</Filter>
+      <Filter>accessibility</Filter>
     </ClInclude>
     <ClInclude Include="..\accessibility\win\AccessibilityObjectWrapperWin.h">
       <Filter>accessibility\win</Filter>
@@ -13925,17 +13919,11 @@
     <ClInclude Include="..\platform\graphics\GraphicsContext3D.h">
       <Filter>platform\graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\graphics\OpenGLShims.h">
-      <Filter>platform\graphics</Filter>
-    </ClInclude>
     <ClInclude Include="..\platform\graphics\gpu\Texture.h">
       <Filter>platform\graphics\gpu</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\gpu\TilingData.h">
       <Filter>platform\graphics\gpu</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\opengl\Extensions3DOpenGL.h">
-      <Filter>platform\graphics\opengl</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\graphics\opengl\Extensions3DOpenGLCommon.h">
       <Filter>platform\graphics\opengl</Filter>
@@ -14304,9 +14292,6 @@
       <Filter>platform\network\soup</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\network\soup\GUniquePtrSoup.h">
-      <Filter>platform\network\soup</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\network\soup\ProxyResolverSoup.h">
       <Filter>platform\network\soup</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\network\soup\ResourceError.h">
@@ -15266,6 +15251,7 @@
     <ClInclude Include="..\platform\graphics\win\PlatformDisplayWin.h">
       <Filter>platform\graphics\win</Filter>
     </ClInclude>
+    <ClInclude Include="..\platform\VNodeTracker.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\css\CSSGrammar.y.in">

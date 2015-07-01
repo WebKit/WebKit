@@ -33,7 +33,9 @@
 #import <OpenGLES/ES2/glext.h>
 #elif PLATFORM(MAC)
 #include <OpenGL/gl.h>
-#elif PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(WIN)
+#elif PLATFORM(WIN)
+#include "OpenGLESShims.h"
+#elif PLATFORM(GTK) || PLATFORM(EFL)
 #include "OpenGLShims.h"
 #endif
 

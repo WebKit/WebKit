@@ -1,3 +1,23 @@
+2015-07-01  Alex Christensen  <achristensen@webkit.org>
+
+        Fix ANGLE Windows build after r186169.
+        https://bugs.webkit.org/show_bug.cgi?id=146532
+
+        Reviewed by Brent Fulgham.
+
+        * ANGLE.vcxproj/libEGL.vcxproj:
+        * ANGLE.vcxproj/libEGL.vcxproj.filters:
+        * ANGLE.vcxproj/libGLESv2.vcxproj:
+        * ANGLE.vcxproj/libGLESv2.vcxproj.filters:
+        * ANGLE.vcxproj/libGLESv2Common.props:
+        * ANGLE.vcxproj/translator_common.vcxproj:
+        * ANGLE.vcxproj/translator_common.vcxproj.filters:
+        * ANGLE.vcxproj/translator_glsl.vcxproj:
+        * ANGLE.vcxproj/translator_glsl.vcxproj.filters:
+        * ANGLE.vcxproj/translator_hlsl.vcxproj:
+        * ANGLE.vcxproj/translator_hlsl.vcxproj.filters:
+        Update Windows build to build new files.
+
 2015-06-30  Alex Christensen  <achristensen@webkit.org>
 
         Update ANGLE to b11e2483742db884bd0af41f78f528240577356b.

@@ -165,7 +165,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
-    <ClCompile Include="..\src\compiler\translator\DetectDiscontinuity.cpp" />
+    <ClCompile Include="..\src\compiler\translator\blocklayoutHLSL.cpp" />
     <ClCompile Include="..\src\compiler\translator\OutputHLSL.cpp" />
     <ClCompile Include="..\src\compiler\translator\SearchSymbol.cpp" />
     <ClCompile Include="..\src\compiler\translator\TranslatorHLSL.cpp" />

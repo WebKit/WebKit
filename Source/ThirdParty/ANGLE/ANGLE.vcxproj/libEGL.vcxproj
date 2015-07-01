@@ -214,12 +214,7 @@
     <ClInclude Include="..\src\libEGL\Surface.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\common\debug.cpp" />
-    <ClCompile Include="..\src\libEGL\Config.cpp" />
-    <ClCompile Include="..\src\libEGL\Display.cpp" />
     <ClCompile Include="..\src\libEGL\libEGL.cpp" />
-    <ClCompile Include="..\src\libEGL\main.cpp" />
-    <ClCompile Include="..\src\libEGL\Surface.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
