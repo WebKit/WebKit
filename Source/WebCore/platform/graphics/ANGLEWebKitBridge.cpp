@@ -33,113 +33,89 @@
 
 namespace WebCore {
 
-// Temporary typedef to support an incompatible change in the ANGLE API.
-#if !defined(ANGLE_SH_VERSION) || ANGLE_SH_VERSION < 108
-typedef int ANGLEGetInfoType;
-#else
-typedef size_t ANGLEGetInfoType;
-#endif
+// FIXME: This is awful. Get rid of ANGLEWebKitBridge completely and call the libANGLE API directly to validate shaders.
 
-inline static ANGLEGetInfoType getValidationResultValue(const ShHandle compiler, ShShaderInfo shaderInfo)
+static void appendSymbol(const sh::ShaderVariable& variable, ANGLEShaderSymbolType symbolType, Vector<ANGLEShaderSymbol>& symbols, const std::string& name, const std::string& mappedName)
 {
-    ANGLEGetInfoType value = 0;
-    ShGetInfo(compiler, shaderInfo, &value);
-    return value;
+    LOG(WebGL, "Map shader symbol %s -> %s\n", name.c_str(), mappedName.c_str());
+    
+    symbols.append(ANGLEShaderSymbol({symbolType, name.c_str(), mappedName.c_str(), variable.type, variable.arraySize, variable.precision, variable.staticUse}));
+    
+    if (variable.isArray()) {
+        for (unsigned i = 0; i < variable.elementCount(); i++) {
+            std::string arrayBrackets = "[" + std::to_string(i) + "]";
+            std::string arrayName = name + arrayBrackets;
+            std::string arrayMappedName = mappedName + arrayBrackets;
+            LOG(WebGL, "Map shader symbol %s -> %s\n", arrayName.c_str(), arrayMappedName.c_str());
+            
+            symbols.append({symbolType, arrayName.c_str(), arrayMappedName.c_str(), variable.type, variable.arraySize, variable.precision, variable.staticUse});
+        }
+    }
 }
 
-static bool getSymbolInfo(ShHandle compiler, ShShaderInfo symbolType, Vector<ANGLEShaderSymbol>& symbols)
+static void getStructInfo(const sh::ShaderVariable& field, ANGLEShaderSymbolType symbolType, Vector<ANGLEShaderSymbol>& symbols, const std::string& namePrefix, const std::string& mappedNamePrefix)
 {
-    ShShaderInfo symbolMaxNameLengthType;
+    std::string name = namePrefix + '.' + field.name;
+    std::string mappedName = mappedNamePrefix + '.' + field.mappedName;
+    
+    if (field.isStruct()) {
+        for (const auto& subfield : field.fields) {
+            // ANGLE restricts the depth of structs, which prevents stack overflow errors in this recursion.
+            getStructInfo(subfield, symbolType, symbols, name, mappedName);
+        }
+    } else
+        appendSymbol(field, symbolType, symbols, name, mappedName);
+}
 
+static void getSymbolInfo(const sh::ShaderVariable& variable, ANGLEShaderSymbolType symbolType, Vector<ANGLEShaderSymbol>& symbols)
+{
+    if (variable.isStruct()) {
+        if (variable.isArray()) {
+            for (unsigned i = 0; i < variable.elementCount(); i++) {
+                std::string arrayBrackets = "[" + std::to_string(i) + "]";
+                std::string arrayName = variable.name + arrayBrackets;
+                std::string arrayMappedName = variable.mappedName + arrayBrackets;
+                for (const auto& field : variable.fields)
+                    getStructInfo(field, symbolType, symbols, arrayName, arrayMappedName);
+            }
+        } else {
+            for (const auto& field : variable.fields)
+                getStructInfo(field, symbolType, symbols, variable.name, variable.mappedName);
+        }
+    } else
+        appendSymbol(variable, symbolType, symbols, variable.name, variable.mappedName);
+}
+
+static bool getSymbolInfo(ShHandle compiler, ANGLEShaderSymbolType symbolType, Vector<ANGLEShaderSymbol>& symbols)
+{
     switch (symbolType) {
-    case SH_ACTIVE_ATTRIBUTES:
-        symbolMaxNameLengthType = SH_ACTIVE_ATTRIBUTE_MAX_LENGTH;
+    case SHADER_SYMBOL_TYPE_UNIFORM: {
+        auto uniforms = ShGetUniforms(compiler);
+        if (!uniforms)
+            return false;
+        for (const auto& uniform : *uniforms)
+            getSymbolInfo(uniform, symbolType, symbols);
         break;
-    case SH_ACTIVE_UNIFORMS:
-        symbolMaxNameLengthType = SH_ACTIVE_UNIFORM_MAX_LENGTH;
+    }
+    case SHADER_SYMBOL_TYPE_VARYING: {
+        auto varyings = ShGetVaryings(compiler);
+        if (!varyings)
+            return false;
+        for (const auto& varying : *varyings)
+            getSymbolInfo(varying, symbolType, symbols);
         break;
-    case SH_VARYINGS:
-        symbolMaxNameLengthType = SH_VARYING_MAX_LENGTH;
+    }
+    case SHADER_SYMBOL_TYPE_ATTRIBUTE: {
+        auto attributes = ShGetAttributes(compiler);
+        if (!attributes)
+            return false;
+        for (const auto& attribute : *attributes)
+            getSymbolInfo(attribute, symbolType, symbols);
         break;
+    }
     default:
         ASSERT_NOT_REACHED();
         return false;
-    }
-
-    ANGLEGetInfoType numSymbols = getValidationResultValue(compiler, symbolType);
-
-    ANGLEGetInfoType maxNameLength = getValidationResultValue(compiler, symbolMaxNameLengthType);
-    if (maxNameLength <= 1)
-        return false;
-
-    ANGLEGetInfoType maxMappedNameLength = getValidationResultValue(compiler, SH_MAPPED_NAME_MAX_LENGTH);
-    if (maxMappedNameLength <= 1)
-        return false;
-
-    // The maximum allowed symbol name length is 256 characters.
-    Vector<char, 256> nameBuffer(maxNameLength);
-    Vector<char, 256> mappedNameBuffer(maxMappedNameLength);
-    
-    for (ANGLEGetInfoType i = 0; i < numSymbols; ++i) {
-        ANGLEShaderSymbol symbol;
-        ANGLEGetInfoType nameLength = 0;
-        ShPrecisionType precision;
-        int staticUse;
-        switch (symbolType) {
-        case SH_ACTIVE_ATTRIBUTES:
-            symbol.symbolType = SHADER_SYMBOL_TYPE_ATTRIBUTE;
-            ShGetVariableInfo(compiler, symbolType, i, &nameLength, &symbol.size, &symbol.dataType, &precision, &staticUse, nameBuffer.data(), mappedNameBuffer.data());
-            break;
-        case SH_ACTIVE_UNIFORMS:
-            symbol.symbolType = SHADER_SYMBOL_TYPE_UNIFORM;
-            ShGetVariableInfo(compiler, symbolType, i, &nameLength, &symbol.size, &symbol.dataType, &precision, &staticUse, nameBuffer.data(), mappedNameBuffer.data());
-            break;
-        case SH_VARYINGS:
-            symbol.symbolType = SHADER_SYMBOL_TYPE_VARYING;
-            ShGetVariableInfo(compiler, symbolType, i, &nameLength, &symbol.size, &symbol.dataType, &precision, &staticUse, nameBuffer.data(), mappedNameBuffer.data());
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            return false;
-        }
-        if (!nameLength)
-            return false;
-        
-        // The ShGetActive* calls above are guaranteed to produce null-terminated strings for
-        // nameBuffer and mappedNameBuffer. Also, the character set for symbol names
-        // is a subset of Latin-1 as specified by the OpenGL ES Shading Language, Section 3.1 and
-        // WebGL, Section "Characters Outside the GLSL Source Character Set".
-
-        String name = String(nameBuffer.data());
-        String mappedName = String(mappedNameBuffer.data());
-        LOG(WebGL, "Map shader symbol %s -> %s\n", name.utf8().data(), mappedName.utf8().data());
-        
-        // ANGLE returns array names in the format "array[0]".
-        // The only way to know if a symbol is an array is to check if it ends with "[0]".
-        // We can't check the size because regular symbols and arrays of length 1 both have a size of 1.
-        symbol.isArray = name.endsWith("[0]") && mappedName.endsWith("[0]");
-        if (symbol.isArray) {
-            // Add a symbol for the array name without the "[0]" suffix.
-            name.truncate(name.length() - 3);
-            mappedName.truncate(mappedName.length() - 3);
-        }
-
-        symbol.name = name;
-        symbol.mappedName = mappedName;
-        symbol.precision = precision;
-        symbol.staticUse = staticUse;
-        symbols.append(symbol);
-    
-        if (symbol.isArray) {
-            // Add symbols for each array element.
-            symbol.isArray = false;
-            for (int i = 0; i < symbol.size; i++) {
-                String arrayBrackets = "[" + String::number(i) + "]";
-                symbol.name = name + arrayBrackets;
-                symbol.mappedName = mappedName + arrayBrackets;
-                symbols.append(symbol);
-            }
-        }
     }
     return true;
 }
@@ -164,10 +140,10 @@ void ANGLEWebKitBridge::cleanupCompilers()
 {
     if (m_fragmentCompiler)
         ShDestruct(m_fragmentCompiler);
-    m_fragmentCompiler = 0;
+    m_fragmentCompiler = nullptr;
     if (m_vertexCompiler)
         ShDestruct(m_vertexCompiler);
-    m_vertexCompiler = 0;
+    m_vertexCompiler = nullptr;
 
     builtCompilers = false;
 }
@@ -183,8 +159,8 @@ void ANGLEWebKitBridge::setResources(ShBuiltInResources resources)
 bool ANGLEWebKitBridge::compileShaderSource(const char* shaderSource, ANGLEShaderType shaderType, String& translatedShaderSource, String& shaderValidationLog, Vector<ANGLEShaderSymbol>& symbols, int extraCompileOptions)
 {
     if (!builtCompilers) {
-        m_fragmentCompiler = ShConstructCompiler(SH_FRAGMENT_SHADER, m_shaderSpec, m_shaderOutput, &m_resources);
-        m_vertexCompiler = ShConstructCompiler(SH_VERTEX_SHADER, m_shaderSpec, m_shaderOutput, &m_resources);
+        m_fragmentCompiler = ShConstructCompiler(GL_FRAGMENT_SHADER, m_shaderSpec, m_shaderOutput, &m_resources);
+        m_vertexCompiler = ShConstructCompiler(GL_VERTEX_SHADER, m_shaderSpec, m_shaderOutput, &m_resources);
         if (!m_fragmentCompiler || !m_vertexCompiler) {
             cleanupCompilers();
             return false;
@@ -204,31 +180,21 @@ bool ANGLEWebKitBridge::compileShaderSource(const char* shaderSource, ANGLEShade
 
     bool validateSuccess = ShCompile(compiler, shaderSourceStrings, 1, SH_OBJECT_CODE | SH_VARIABLES | extraCompileOptions);
     if (!validateSuccess) {
-        int logSize = getValidationResultValue(compiler, SH_INFO_LOG_LENGTH);
-        if (logSize > 1) {
-            auto logBuffer = std::make_unique<char[]>(logSize);
-            if (logBuffer) {
-                ShGetInfoLog(compiler, logBuffer.get());
-                shaderValidationLog = logBuffer.get();
-            }
-        }
+        const std::string& log = ShGetInfoLog(compiler);
+        if (log.length())
+            shaderValidationLog = log.c_str();
         return false;
     }
 
-    int translationLength = getValidationResultValue(compiler, SH_OBJECT_CODE_LENGTH);
-    if (translationLength > 1) {
-        auto translationBuffer = std::make_unique<char[]>(translationLength);
-        if (!translationBuffer)
-            return false;
-        ShGetObjectCode(compiler, translationBuffer.get());
-        translatedShaderSource = translationBuffer.get();
-    }
+    const std::string& objectCode = ShGetObjectCode(compiler);
+    if (objectCode.length())
+        translatedShaderSource = objectCode.c_str();
     
-    if (!getSymbolInfo(compiler, SH_ACTIVE_ATTRIBUTES, symbols))
+    if (!getSymbolInfo(compiler, SHADER_SYMBOL_TYPE_ATTRIBUTE, symbols))
         return false;
-    if (!getSymbolInfo(compiler, SH_ACTIVE_UNIFORMS, symbols))
+    if (!getSymbolInfo(compiler, SHADER_SYMBOL_TYPE_UNIFORM, symbols))
         return false;
-    if (!getSymbolInfo(compiler, SH_VARYINGS, symbols))
+    if (!getSymbolInfo(compiler, SHADER_SYMBOL_TYPE_VARYING, symbols))
         return false;
 
     return true;

@@ -4,10 +4,10 @@
 // found in the LICENSE file.
 //
 
-#ifndef COMPILER_RENAME_FUNCTION
-#define COMPILER_RENAME_FUNCTION
+#ifndef COMPILER_TRANSLATOR_RENAMEFUNCTION_H_
+#define COMPILER_TRANSLATOR_RENAMEFUNCTION_H_
 
-#include "compiler/translator/intermediate.h"
+#include "compiler/translator/IntermNode.h"
 
 //
 // Renames a function, including its declaration and any calls to it.
@@ -33,4 +33,4 @@ private:
     const TString mNewFunctionName;
 };
 
-#endif  // COMPILER_RENAME_FUNCTION
+#endif  // COMPILER_TRANSLATOR_RENAMEFUNCTION_H_

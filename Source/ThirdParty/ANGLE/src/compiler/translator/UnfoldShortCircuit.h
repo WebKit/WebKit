@@ -6,10 +6,10 @@
 // UnfoldShortCircuit is an AST traverser to output short-circuiting operators as if-else statements
 //
 
-#ifndef COMPILER_UNFOLDSHORTCIRCUIT_H_
-#define COMPILER_UNFOLDSHORTCIRCUIT_H_
+#ifndef COMPILER_TRANSLATOR_UNFOLDSHORTCIRCUIT_H_
+#define COMPILER_TRANSLATOR_UNFOLDSHORTCIRCUIT_H_
 
-#include "compiler/translator/intermediate.h"
+#include "compiler/translator/IntermNode.h"
 #include "compiler/translator/ParseContext.h"
 
 namespace sh
@@ -19,7 +19,7 @@ class OutputHLSL;
 class UnfoldShortCircuit : public TIntermTraverser
 {
   public:
-    UnfoldShortCircuit(TParseContext &context, OutputHLSL *outputHLSL);
+    UnfoldShortCircuit(OutputHLSL *outputHLSL);
 
     void traverse(TIntermNode *node);
     bool visitBinary(Visit visit, TIntermBinary*);
@@ -29,11 +29,10 @@ class UnfoldShortCircuit : public TIntermTraverser
     int getNextTemporaryIndex();
 
   protected:
-    TParseContext &mContext;
     OutputHLSL *const mOutputHLSL;
 
     int mTemporaryIndex;
 };
 }
 
-#endif   // COMPILER_UNFOLDSHORTCIRCUIT_H_
+#endif   // COMPILER_TRANSLATOR_UNFOLDSHORTCIRCUIT_H_

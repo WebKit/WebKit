@@ -4,8 +4,15 @@
 // found in the LICENSE file.
 //
 
-#ifndef COMPILER_UTIL_H
-#define COMPILER_UTIL_H
+#ifndef COMPILER_TRANSLATOR_UTIL_H_
+#define COMPILER_TRANSLATOR_UTIL_H_
+
+#include <stack>
+
+#include "angle_gl.h"
+#include <GLSLANG/ShaderLang.h>
+
+#include "compiler/translator/Types.h"
 
 // atof_clamp is like atof but
 //   1. it forces C locale, i.e. forcing '.' as decimal point.
@@ -17,4 +24,41 @@ extern bool atof_clamp(const char *str, float *value);
 // Return false if overflow happens.
 extern bool atoi_clamp(const char *str, int *value);
 
-#endif // COMPILER_UTIL_H
+class TSymbolTable;
+
+namespace sh
+{
+
+GLenum GLVariableType(const TType &type);
+GLenum GLVariablePrecision(const TType &type);
+bool IsVaryingIn(TQualifier qualifier);
+bool IsVaryingOut(TQualifier qualifier);
+bool IsVarying(TQualifier qualifier);
+InterpolationType GetInterpolationType(TQualifier qualifier);
+TString ArrayString(const TType &type);
+
+class GetVariableTraverser : angle::NonCopyable
+{
+  public:
+    GetVariableTraverser(const TSymbolTable &symbolTable);
+
+    template <typename VarT>
+    void traverse(const TType &type, const TString &name, std::vector<VarT> *output);
+
+  protected:
+    // May be overloaded
+    virtual void visitVariable(ShaderVariable *newVar) {}
+
+  private:
+    // Helper function called by traverse() to fill specific fields
+    // for attributes/varyings/uniforms.
+    template <typename VarT>
+    void setTypeSpecificInfo(
+        const TType &type, const TString &name, VarT *variable) {}
+
+    const TSymbolTable &mSymbolTable;
+};
+
+}
+
+#endif // COMPILER_TRANSLATOR_UTIL_H_

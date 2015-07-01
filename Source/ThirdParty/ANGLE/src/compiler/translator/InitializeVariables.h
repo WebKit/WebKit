@@ -4,10 +4,10 @@
 // found in the LICENSE file.
 //
 
-#ifndef COMPILER_INITIALIZE_VARIABLES_H_
-#define COMPILER_INITIALIZE_VARIABLES_H_
+#ifndef COMPILER_TRANSLATOR_INITIALIZEVARIABLES_H_
+#define COMPILER_TRANSLATOR_INITIALIZEVARIABLES_H_
 
-#include "compiler/translator/intermediate.h"
+#include "compiler/translator/IntermNode.h"
 
 class InitializeVariables : public TIntermTraverser
 {
@@ -17,7 +17,7 @@ class InitializeVariables : public TIntermTraverser
         TString name;
         TType type;
 
-        InitVariableInfo(const TString& _name, const TType& _type)
+        InitVariableInfo(const TString &_name, const TType &_type)
             : name(_name),
               type(_type)
         {
@@ -25,26 +25,26 @@ class InitializeVariables : public TIntermTraverser
     };
     typedef TVector<InitVariableInfo> InitVariableInfoList;
 
-    InitializeVariables(const InitVariableInfoList& vars)
+    InitializeVariables(const InitVariableInfoList &vars)
         : mCodeInserted(false),
           mVariables(vars)
     {
     }
 
   protected:
-    virtual bool visitBinary(Visit visit, TIntermBinary* node) { return false; }
-    virtual bool visitUnary(Visit visit, TIntermUnary* node) { return false; }
-    virtual bool visitSelection(Visit visit, TIntermSelection* node) { return false; }
-    virtual bool visitLoop(Visit visit, TIntermLoop* node) { return false; }
-    virtual bool visitBranch(Visit visit, TIntermBranch* node) { return false; }
+    virtual bool visitBinary(Visit, TIntermBinary *node) { return false; }
+    virtual bool visitUnary(Visit, TIntermUnary *node) { return false; }
+    virtual bool visitSelection(Visit, TIntermSelection *node) { return false; }
+    virtual bool visitLoop(Visit, TIntermLoop *node) { return false; }
+    virtual bool visitBranch(Visit, TIntermBranch *node) { return false; }
 
     virtual bool visitAggregate(Visit visit, TIntermAggregate* node);
 
   private:
-    void insertInitCode(TIntermSequence& sequence);
+    void insertInitCode(TIntermSequence *sequence);
 
     InitVariableInfoList mVariables;
     bool mCodeInserted;
 };
 
-#endif  // COMPILER_INITIALIZE_VARIABLES_H_
+#endif  // COMPILER_TRANSLATOR_INITIALIZEVARIABLES_H_

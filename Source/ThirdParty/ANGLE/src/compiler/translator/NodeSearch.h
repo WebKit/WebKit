@@ -6,10 +6,10 @@
 // NodeSearch.h: Utilities for searching translator node graphs
 //
 
-#ifndef TRANSLATOR_NODESEARCH_H_
-#define TRANSLATOR_NODESEARCH_H_
+#ifndef COMPILER_TRANSLATOR_NODESEARCH_H_
+#define COMPILER_TRANSLATOR_NODESEARCH_H_
 
-#include "compiler/translator/intermediate.h"
+#include "compiler/translator/IntermNode.h"
 
 namespace sh
 {
@@ -77,4 +77,4 @@ class FindSideEffectRewriting : public NodeSearchTraverser<FindSideEffectRewriti
 
 }
 
-#endif // TRANSLATOR_NODESEARCH_H_
+#endif // COMPILER_TRANSLATOR_NODESEARCH_H_

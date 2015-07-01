@@ -1314,12 +1314,12 @@ private:
         SymbolInfo()
             : type(0)
             , size(0)
-            , precision(SH_PRECISION_UNDEFINED)
+            , precision(GL_NONE) // Invalid precision.
             , staticUse(0)
         {
         }
 
-        SymbolInfo(GC3Denum type, int size, const String& mappedName, ShPrecisionType precision, int staticUse)
+        SymbolInfo(GC3Denum type, int size, const String& mappedName, sh::GLenum precision, int staticUse)
             : type(type)
             , size(size)
             , mappedName(mappedName)
@@ -1336,7 +1336,7 @@ private:
         GC3Denum type;
         int size;
         String mappedName;
-        ShPrecisionType precision;
+        sh::GLenum precision;
         int staticUse;
     };
 

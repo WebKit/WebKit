@@ -4,7 +4,7 @@
 // found in the LICENSE file.
 //
 
-#include "compiler/translator/intermediate.h"
+#include "compiler/translator/IntermNode.h"
 
 //
 // Traverse the intermediate representation tree, and
@@ -55,25 +55,25 @@ void TIntermBinary::traverse(TIntermTraverser *it)
 
         if (it->rightToLeft)
         {
-            if (right)
-                right->traverse(it);
+            if (mRight)
+                mRight->traverse(it);
 
             if (it->inVisit)
                 visit = it->visitBinary(InVisit, this);
 
-            if (visit && left)
-                left->traverse(it);
+            if (visit && mLeft)
+                mLeft->traverse(it);
         }
         else
         {
-            if (left)
-                left->traverse(it);
+            if (mLeft)
+                mLeft->traverse(it);
 
             if (it->inVisit)
                 visit = it->visitBinary(InVisit, this);
 
-            if (visit && right)
-                right->traverse(it);
+            if (visit && mRight)
+                mRight->traverse(it);
         }
 
         it->decrementDepth();
@@ -99,7 +99,7 @@ void TIntermUnary::traverse(TIntermTraverser *it)
 
     if (visit) {
         it->incrementDepth(this);
-        operand->traverse(it);
+        mOperand->traverse(it);
         it->decrementDepth();
     }
 
@@ -123,26 +123,28 @@ void TIntermAggregate::traverse(TIntermTraverser *it)
 
         if (it->rightToLeft)
         {
-            for (TIntermSequence::reverse_iterator sit = sequence.rbegin(); sit != sequence.rend(); sit++)
+            for (TIntermSequence::reverse_iterator sit = mSequence.rbegin();
+                 sit != mSequence.rend(); sit++)
             {
                 (*sit)->traverse(it);
 
                 if (visit && it->inVisit)
                 {
-                    if (*sit != sequence.front())
+                    if (*sit != mSequence.front())
                         visit = it->visitAggregate(InVisit, this);
                 }
             }
         }
         else
         {
-            for (TIntermSequence::iterator sit = sequence.begin(); sit != sequence.end(); sit++)
+            for (TIntermSequence::iterator sit = mSequence.begin();
+                 sit != mSequence.end(); sit++)
             {
                 (*sit)->traverse(it);
 
                 if (visit && it->inVisit)
                 {
-                    if (*sit != sequence.back())
+                    if (*sit != mSequence.back())
                         visit = it->visitAggregate(InVisit, this);
                 }
             }
@@ -165,26 +167,84 @@ void TIntermSelection::traverse(TIntermTraverser *it)
     if (it->preVisit)
         visit = it->visitSelection(PreVisit, this);
 
-    if (visit) {
+    if (visit)
+    {
         it->incrementDepth(this);
-        if (it->rightToLeft) {
-            if (falseBlock)
-                falseBlock->traverse(it);
-            if (trueBlock)
-                trueBlock->traverse(it);
-            condition->traverse(it);
-        } else {
-            condition->traverse(it);
-            if (trueBlock)
-                trueBlock->traverse(it);
-            if (falseBlock)
-                falseBlock->traverse(it);
+        if (it->rightToLeft)
+        {
+            if (mFalseBlock)
+                mFalseBlock->traverse(it);
+            if (mTrueBlock)
+                mTrueBlock->traverse(it);
+            mCondition->traverse(it);
+        }
+        else
+        {
+            mCondition->traverse(it);
+            if (mTrueBlock)
+                mTrueBlock->traverse(it);
+            if (mFalseBlock)
+                mFalseBlock->traverse(it);
         }
         it->decrementDepth();
     }
 
     if (visit && it->postVisit)
         it->visitSelection(PostVisit, this);
+}
+
+//
+// Traverse a switch node.  Same comments in binary node apply here.
+//
+void TIntermSwitch::traverse(TIntermTraverser *it)
+{
+    bool visit = true;
+
+    if (it->preVisit)
+        visit = it->visitSwitch(PreVisit, this);
+
+    if (visit)
+    {
+        it->incrementDepth(this);
+        if (it->rightToLeft)
+        {
+            if (mStatementList)
+                mStatementList->traverse(it);
+            if (it->inVisit)
+                visit = it->visitSwitch(InVisit, this);
+            if (visit)
+                mInit->traverse(it);
+        }
+        else
+        {
+            mInit->traverse(it);
+            if (it->inVisit)
+                visit = it->visitSwitch(InVisit, this);
+            if (visit && mStatementList)
+                mStatementList->traverse(it);
+        }
+        it->decrementDepth();
+    }
+
+    if (visit && it->postVisit)
+        it->visitSwitch(PostVisit, this);
+}
+
+//
+// Traverse a switch node.  Same comments in binary node apply here.
+//
+void TIntermCase::traverse(TIntermTraverser *it)
+{
+    bool visit = true;
+
+    if (it->preVisit)
+        visit = it->visitCase(PreVisit, this);
+
+    if (visit && mCondition)
+        mCondition->traverse(it);
+
+    if (visit && it->postVisit)
+        it->visitCase(PostVisit, this);
 }
 
 //
@@ -203,31 +263,31 @@ void TIntermLoop::traverse(TIntermTraverser *it)
 
         if (it->rightToLeft)
         {
-            if (expr)
-                expr->traverse(it);
+            if (mExpr)
+                mExpr->traverse(it);
 
-            if (body)
-                body->traverse(it);
+            if (mBody)
+                mBody->traverse(it);
 
-            if (cond)
-                cond->traverse(it);
+            if (mCond)
+                mCond->traverse(it);
 
-            if (init)
-                init->traverse(it);
+            if (mInit)
+                mInit->traverse(it);
         }
         else
         {
-            if (init)
-                init->traverse(it);
+            if (mInit)
+                mInit->traverse(it);
 
-            if (cond)
-                cond->traverse(it);
+            if (mCond)
+                mCond->traverse(it);
 
-            if (body)
-                body->traverse(it);
+            if (mBody)
+                mBody->traverse(it);
 
-            if (expr)
-                expr->traverse(it);
+            if (mExpr)
+                mExpr->traverse(it);
         }
 
         it->decrementDepth();
@@ -247,9 +307,9 @@ void TIntermBranch::traverse(TIntermTraverser *it)
     if (it->preVisit)
         visit = it->visitBranch(PreVisit, this);
 
-    if (visit && expression) {
+    if (visit && mExpression) {
         it->incrementDepth(this);
-        expression->traverse(it);
+        mExpression->traverse(it);
         it->decrementDepth();
     }
 
@@ -257,3 +317,7 @@ void TIntermBranch::traverse(TIntermTraverser *it)
         it->visitBranch(PostVisit, this);
 }
 
+void TIntermRaw::traverse(TIntermTraverser *it)
+{
+    it->visitRaw(this);
+}

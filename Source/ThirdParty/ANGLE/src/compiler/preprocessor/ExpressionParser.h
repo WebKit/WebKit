@@ -4,8 +4,8 @@
 // found in the LICENSE file.
 //
 
-#ifndef COMPILER_PREPROCESSOR_EXPRESSION_PARSER_H_
-#define COMPILER_PREPROCESSOR_EXPRESSION_PARSER_H_
+#ifndef COMPILER_PREPROCESSOR_EXPRESSIONPARSER_H_
+#define COMPILER_PREPROCESSOR_EXPRESSIONPARSER_H_
 
 #include "pp_utils.h"
 
@@ -19,16 +19,17 @@ struct Token;
 class ExpressionParser
 {
   public:
-    ExpressionParser(Lexer* lexer, Diagnostics* diagnostics);
+    ExpressionParser(Lexer *lexer, Diagnostics *diagnostics);
 
-    bool parse(Token* token, int* result);
+    bool parse(Token *token, int *result);
 
   private:
     PP_DISALLOW_COPY_AND_ASSIGN(ExpressionParser);
 
-    Lexer* mLexer;
-    Diagnostics* mDiagnostics;
+    Lexer *mLexer;
+    Diagnostics *mDiagnostics;
 };
 
 }  // namespace pp
-#endif  // COMPILER_PREPROCESSOR_EXPRESSION_PARSER_H_
+
+#endif  // COMPILER_PREPROCESSOR_EXPRESSIONPARSER_H_

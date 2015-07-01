@@ -6,10 +6,10 @@
 // SearchSymbol is an AST traverser to detect the use of a given symbol name
 //
 
-#ifndef COMPILER_SEARCHSYMBOL_H_
-#define COMPILER_SEARCHSYMBOL_H_
+#ifndef COMPILER_TRANSLATOR_SEARCHSYMBOL_H_
+#define COMPILER_TRANSLATOR_SEARCHSYMBOL_H_
 
-#include "compiler/translator/intermediate.h"
+#include "compiler/translator/IntermNode.h"
 #include "compiler/translator/ParseContext.h"
 
 namespace sh
@@ -30,4 +30,4 @@ class SearchSymbol : public TIntermTraverser
 };
 }
 
-#endif   // COMPILER_SEARCHSYMBOL_H_
+#endif   // COMPILER_TRANSLATOR_SEARCHSYMBOL_H_

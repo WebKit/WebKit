@@ -4,4 +4,9 @@
 // found in the LICENSE file.
 //
 
+#ifndef COMPILER_TRANSLATOR_QUALIFIERALIVE_H_
+#define COMPILER_TRANSLATOR_QUALIFIERALIVE_H_
+
 bool QualifierWritten(TIntermNode* root, TQualifier);
+
+#endif // COMPILER_TRANSLATOR_QUALIFIERALIVE_H_

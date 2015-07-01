@@ -29,6 +29,14 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
+#if PLATFORM(IOS)
+#import <OpenGLES/ES2/glext.h>
+#elif PLATFORM(MAC)
+#include <OpenGL/gl.h>
+#elif PLATFORM(GTK) || PLATFORM(EFL) || PLATFORM(WIN)
+#include "OpenGLShims.h"
+#endif
+
 #if !PLATFORM(GTK) && !PLATFORM(EFL) && !PLATFORM(WIN) && !defined(BUILDING_WITH_CMAKE)
 #include "ANGLE/ShaderLang.h"
 #elif PLATFORM(WIN) && !defined(BUILDING_WITH_CMAKE)
@@ -40,8 +48,8 @@
 namespace WebCore {
 
 enum ANGLEShaderType {
-    SHADER_TYPE_VERTEX = SH_VERTEX_SHADER,
-    SHADER_TYPE_FRAGMENT = SH_FRAGMENT_SHADER,
+    SHADER_TYPE_VERTEX = GL_VERTEX_SHADER,
+    SHADER_TYPE_FRAGMENT = GL_FRAGMENT_SHADER,
 };
 
 enum ANGLEShaderSymbolType {
@@ -54,19 +62,20 @@ struct ANGLEShaderSymbol {
     ANGLEShaderSymbolType symbolType;
     String name;
     String mappedName;
-    ShDataType dataType;
-    int size;
-    bool isArray;
-    ShPrecisionType precision;
+    sh::GLenum dataType;
+    unsigned size;
+    sh::GLenum precision;
     int staticUse;
 
     bool isSampler() const
     {
         return symbolType == SHADER_SYMBOL_TYPE_UNIFORM
-            && (dataType == SH_SAMPLER_2D
-            || dataType == SH_SAMPLER_CUBE
-            || dataType == SH_SAMPLER_2D_RECT_ARB
-            || dataType == SH_SAMPLER_EXTERNAL_OES);
+            && (dataType == GL_SAMPLER_2D
+            || dataType == GL_SAMPLER_CUBE
+#if !PLATFORM(IOS)
+            || dataType == GL_SAMPLER_2D_RECT_ARB
+#endif
+            );
     }
 };
 

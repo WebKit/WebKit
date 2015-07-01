@@ -4,7 +4,10 @@
 // found in the LICENSE file.
 //
 
-#include "compiler/translator/intermediate.h"
+#ifndef COMPILER_TRANSLATOR_VALIDATELIMITATIONS_H_
+#define COMPILER_TRANSLATOR_VALIDATELIMITATIONS_H_
+
+#include "compiler/translator/IntermNode.h"
 #include "compiler/translator/LoopInfo.h"
 
 class TInfoSinkBase;
@@ -14,7 +17,7 @@ class TInfoSinkBase;
 class ValidateLimitations : public TIntermTraverser
 {
   public:
-    ValidateLimitations(ShShaderType shaderType, TInfoSinkBase &sink);
+    ValidateLimitations(sh::GLenum shaderType, TInfoSinkBase &sink);
 
     int numErrors() const { return mNumErrors; }
 
@@ -47,9 +50,10 @@ class ValidateLimitations : public TIntermTraverser
     bool isConstIndexExpr(TIntermNode *node);
     bool validateIndexing(TIntermBinary *node);
 
-    ShShaderType mShaderType;
+    sh::GLenum mShaderType;
     TInfoSinkBase &mSink;
     int mNumErrors;
     TLoopStack mLoopStack;
 };
 
+#endif // COMPILER_TRANSLATOR_VALIDATELIMITATIONS_H_

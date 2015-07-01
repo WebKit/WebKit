@@ -4,8 +4,8 @@
 // found in the LICENSE file.
 //
 
-#ifndef COMPILER_PREPROCESSOR_DIAGNOSTICS_H_
-#define COMPILER_PREPROCESSOR_DIAGNOSTICS_H_
+#ifndef COMPILER_PREPROCESSOR_DIAGNOSTICSBASE_H_
+#define COMPILER_PREPROCESSOR_DIAGNOSTICSBASE_H_
 
 #include <string>
 
@@ -46,12 +46,14 @@ class Diagnostics
         PP_MACRO_UNTERMINATED_INVOCATION,
         PP_MACRO_TOO_FEW_ARGS,
         PP_MACRO_TOO_MANY_ARGS,
+        PP_MACRO_DUPLICATE_PARAMETER_NAMES,
         PP_CONDITIONAL_ENDIF_WITHOUT_IF,
         PP_CONDITIONAL_ELSE_WITHOUT_IF,
         PP_CONDITIONAL_ELSE_AFTER_ELSE,
         PP_CONDITIONAL_ELIF_WITHOUT_IF,
         PP_CONDITIONAL_ELIF_AFTER_ELSE,
         PP_CONDITIONAL_UNTERMINATED,
+        PP_CONDITIONAL_UNEXPECTED_TOKEN,
         PP_INVALID_EXTENSION_NAME,
         PP_INVALID_EXTENSION_BEHAVIOR,
         PP_INVALID_EXTENSION_DIRECTIVE,
@@ -61,27 +63,29 @@ class Diagnostics
         PP_INVALID_LINE_NUMBER,
         PP_INVALID_FILE_NUMBER,
         PP_INVALID_LINE_DIRECTIVE,
+        PP_INVALID_PRAGMA,
+        PP_INVALID_PRAGMA_VALUE,
         PP_ERROR_END,
 
         PP_WARNING_BEGIN,
         PP_EOF_IN_DIRECTIVE,
-        PP_CONDITIONAL_UNEXPECTED_TOKEN,
         PP_UNRECOGNIZED_PRAGMA,
         PP_WARNING_END
     };
 
     virtual ~Diagnostics();
 
-    void report(ID id, const SourceLocation& loc, const std::string& text);
+    void report(ID id, const SourceLocation &loc, const std::string &text);
 
   protected:
     Severity severity(ID id);
     std::string message(ID id);
 
     virtual void print(ID id,
-                       const SourceLocation& loc,
-                       const std::string& text) = 0;
+                       const SourceLocation &loc,
+                       const std::string &text) = 0;
 };
 
 }  // namespace pp
-#endif  // COMPILER_PREPROCESSOR_DIAGNOSTICS_H_
+
+#endif  // COMPILER_PREPROCESSOR_DIAGNOSTICSBASE_H_

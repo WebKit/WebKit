@@ -4,197 +4,13 @@
 // found in the LICENSE file.
 //
 
+#include "angle_gl.h"
 #include "compiler/translator/BuiltInFunctionEmulator.h"
-
 #include "compiler/translator/SymbolTable.h"
 
-namespace {
-
-// we use macros here instead of function definitions to work around more GLSL
-// compiler bugs, in particular on NVIDIA hardware on Mac OSX. Macros are
-// problematic because if the argument has side-effects they will be repeatedly
-// evaluated. This is unlikely to show up in real shaders, but is something to
-// consider.
-const char* kFunctionEmulationVertexSource[] = {
-    "#error no emulation for cos(float)",
-    "#error no emulation for cos(vec2)",
-    "#error no emulation for cos(vec3)",
-    "#error no emulation for cos(vec4)",
-
-    "#define webgl_distance_emu(x, y) ((x) >= (y) ? (x) - (y) : (y) - (x))",
-    "#error no emulation for distance(vec2, vec2)",
-    "#error no emulation for distance(vec3, vec3)",
-    "#error no emulation for distance(vec4, vec4)",
-
-    "#define webgl_dot_emu(x, y) ((x) * (y))",
-    "#error no emulation for dot(vec2, vec2)",
-    "#error no emulation for dot(vec3, vec3)",
-    "#error no emulation for dot(vec4, vec4)",
-
-    "#define webgl_length_emu(x) ((x) >= 0.0 ? (x) : -(x))",
-    "#error no emulation for length(vec2)",
-    "#error no emulation for length(vec3)",
-    "#error no emulation for length(vec4)",
-
-    "#define webgl_normalize_emu(x) ((x) == 0.0 ? 0.0 : ((x) > 0.0 ? 1.0 : -1.0))",
-    "#error no emulation for normalize(vec2)",
-    "#error no emulation for normalize(vec3)",
-    "#error no emulation for normalize(vec4)",
-
-    "#define webgl_reflect_emu(I, N) ((I) - 2.0 * (N) * (I) * (N))",
-    "#error no emulation for reflect(vec2, vec2)",
-    "#error no emulation for reflect(vec3, vec3)",
-    "#error no emulation for reflect(vec4, vec4)"
-};
-
-const char* kFunctionEmulationFragmentSource[] = {
-    "webgl_emu_precision float webgl_cos_emu(webgl_emu_precision float a) { return cos(a); }",
-    "webgl_emu_precision vec2 webgl_cos_emu(webgl_emu_precision vec2 a) { return cos(a); }",
-    "webgl_emu_precision vec3 webgl_cos_emu(webgl_emu_precision vec3 a) { return cos(a); }",
-    "webgl_emu_precision vec4 webgl_cos_emu(webgl_emu_precision vec4 a) { return cos(a); }",
-
-    "#define webgl_distance_emu(x, y) ((x) >= (y) ? (x) - (y) : (y) - (x))",
-    "#error no emulation for distance(vec2, vec2)",
-    "#error no emulation for distance(vec3, vec3)",
-    "#error no emulation for distance(vec4, vec4)",
-
-    "#define webgl_dot_emu(x, y) ((x) * (y))",
-    "#error no emulation for dot(vec2, vec2)",
-    "#error no emulation for dot(vec3, vec3)",
-    "#error no emulation for dot(vec4, vec4)",
-
-    "#define webgl_length_emu(x) ((x) >= 0.0 ? (x) : -(x))",
-    "#error no emulation for length(vec2)",
-    "#error no emulation for length(vec3)",
-    "#error no emulation for length(vec4)",
-
-    "#define webgl_normalize_emu(x) ((x) == 0.0 ? 0.0 : ((x) > 0.0 ? 1.0 : -1.0))",
-    "#error no emulation for normalize(vec2)",
-    "#error no emulation for normalize(vec3)",
-    "#error no emulation for normalize(vec4)",
-
-    "#define webgl_reflect_emu(I, N) ((I) - 2.0 * (N) * (I) * (N))",
-    "#error no emulation for reflect(vec2, vec2)",
-    "#error no emulation for reflect(vec3, vec3)",
-    "#error no emulation for reflect(vec4, vec4)"
-};
-
-const bool kFunctionEmulationVertexMask[] = {
-#if defined(__APPLE__)
-    // Work around ATI driver bugs in Mac.
-    false, // TFunctionCos1
-    false, // TFunctionCos2
-    false, // TFunctionCos3
-    false, // TFunctionCos4
-    true,  // TFunctionDistance1_1
-    false, // TFunctionDistance2_2
-    false, // TFunctionDistance3_3
-    false, // TFunctionDistance4_4
-    true,  // TFunctionDot1_1
-    false, // TFunctionDot2_2
-    false, // TFunctionDot3_3
-    false, // TFunctionDot4_4
-    true,  // TFunctionLength1
-    false, // TFunctionLength2
-    false, // TFunctionLength3
-    false, // TFunctionLength4
-    true,  // TFunctionNormalize1
-    false, // TFunctionNormalize2
-    false, // TFunctionNormalize3
-    false, // TFunctionNormalize4
-    true,  // TFunctionReflect1_1
-    false, // TFunctionReflect2_2
-    false, // TFunctionReflect3_3
-    false, // TFunctionReflect4_4
-#else
-    // Work around D3D driver bug in Win.
-    false, // TFunctionCos1
-    false, // TFunctionCos2
-    false, // TFunctionCos3
-    false, // TFunctionCos4
-    false, // TFunctionDistance1_1
-    false, // TFunctionDistance2_2
-    false, // TFunctionDistance3_3
-    false, // TFunctionDistance4_4
-    false, // TFunctionDot1_1
-    false, // TFunctionDot2_2
-    false, // TFunctionDot3_3
-    false, // TFunctionDot4_4
-    false, // TFunctionLength1
-    false, // TFunctionLength2
-    false, // TFunctionLength3
-    false, // TFunctionLength4
-    false, // TFunctionNormalize1
-    false, // TFunctionNormalize2
-    false, // TFunctionNormalize3
-    false, // TFunctionNormalize4
-    false, // TFunctionReflect1_1
-    false, // TFunctionReflect2_2
-    false, // TFunctionReflect3_3
-    false, // TFunctionReflect4_4
-#endif
-    false  // TFunctionUnknown
-};
-
-const bool kFunctionEmulationFragmentMask[] = {
-#if defined(__APPLE__)
-    // Work around ATI driver bugs in Mac.
-    true,  // TFunctionCos1
-    true,  // TFunctionCos2
-    true,  // TFunctionCos3
-    true,  // TFunctionCos4
-    true,  // TFunctionDistance1_1
-    false, // TFunctionDistance2_2
-    false, // TFunctionDistance3_3
-    false, // TFunctionDistance4_4
-    true,  // TFunctionDot1_1
-    false, // TFunctionDot2_2
-    false, // TFunctionDot3_3
-    false, // TFunctionDot4_4
-    true,  // TFunctionLength1
-    false, // TFunctionLength2
-    false, // TFunctionLength3
-    false, // TFunctionLength4
-    true,  // TFunctionNormalize1
-    false, // TFunctionNormalize2
-    false, // TFunctionNormalize3
-    false, // TFunctionNormalize4
-    true,  // TFunctionReflect1_1
-    false, // TFunctionReflect2_2
-    false, // TFunctionReflect3_3
-    false, // TFunctionReflect4_4
-#else
-    // Work around D3D driver bug in Win.
-    false, // TFunctionCos1
-    false, // TFunctionCos2
-    false, // TFunctionCos3
-    false, // TFunctionCos4
-    false, // TFunctionDistance1_1
-    false, // TFunctionDistance2_2
-    false, // TFunctionDistance3_3
-    false, // TFunctionDistance4_4
-    false, // TFunctionDot1_1
-    false, // TFunctionDot2_2
-    false, // TFunctionDot3_3
-    false, // TFunctionDot4_4
-    false, // TFunctionLength1
-    false, // TFunctionLength2
-    false, // TFunctionLength3
-    false, // TFunctionLength4
-    false, // TFunctionNormalize1
-    false, // TFunctionNormalize2
-    false, // TFunctionNormalize3
-    false, // TFunctionNormalize4
-    false, // TFunctionReflect1_1
-    false, // TFunctionReflect2_2
-    false, // TFunctionReflect3_3
-    false, // TFunctionReflect4_4
-#endif
-    false  // TFunctionUnknown
-};
-
-class BuiltInFunctionEmulationMarker : public TIntermTraverser {
-public:
+class BuiltInFunctionEmulator::BuiltInFunctionEmulationMarker : public TIntermTraverser
+{
+  public:
     BuiltInFunctionEmulationMarker(BuiltInFunctionEmulator& emulator)
         : mEmulator(emulator)
     {
@@ -238,154 +54,128 @@ public:
                 case EOpFaceForward:
                 case EOpReflect:
                 case EOpRefract:
+                case EOpOuterProduct:
                 case EOpMul:
                     break;
                 default:
                     return true;
             };
-            const TIntermSequence& sequence = node->getSequence();
-            // Right now we only handle built-in functions with two parameters.
-            if (sequence.size() != 2)
+            const TIntermSequence& sequence = *(node->getSequence());
+            bool needToEmulate = false;
+            // Right now we only handle built-in functions with two or three parameters.
+            if (sequence.size() == 2)
+            {
+                TIntermTyped* param1 = sequence[0]->getAsTyped();
+                TIntermTyped* param2 = sequence[1]->getAsTyped();
+                if (!param1 || !param2)
+                    return true;
+                needToEmulate = mEmulator.SetFunctionCalled(
+                    node->getOp(), param1->getType(), param2->getType());
+            }
+            else if (sequence.size() == 3)
+            {
+                TIntermTyped* param1 = sequence[0]->getAsTyped();
+                TIntermTyped* param2 = sequence[1]->getAsTyped();
+                TIntermTyped* param3 = sequence[2]->getAsTyped();
+                if (!param1 || !param2 || !param3)
+                    return true;
+                needToEmulate = mEmulator.SetFunctionCalled(
+                    node->getOp(), param1->getType(), param2->getType(), param3->getType());
+            }
+            else
+            {
                 return true;
-            TIntermTyped* param1 = sequence[0]->getAsTyped();
-            TIntermTyped* param2 = sequence[1]->getAsTyped();
-            if (!param1 || !param2)
-                return true;
-            bool needToEmulate = mEmulator.SetFunctionCalled(
-                node->getOp(), param1->getType(), param2->getType());
+            }
+
             if (needToEmulate)
                 node->setUseEmulatedFunction();
         }
         return true;
     }
 
-private:
+  private:
     BuiltInFunctionEmulator& mEmulator;
 };
 
-}  // anonymous namepsace
+BuiltInFunctionEmulator::BuiltInFunctionEmulator()
+{}
 
-BuiltInFunctionEmulator::BuiltInFunctionEmulator(ShShaderType shaderType)
+void BuiltInFunctionEmulator::addEmulatedFunction(
+    TOperator op, const TType& param,
+    const char* emulatedFunctionDefinition)
 {
-    if (shaderType == SH_FRAGMENT_SHADER) {
-        mFunctionMask = kFunctionEmulationFragmentMask;
-        mFunctionSource = kFunctionEmulationFragmentSource;
-    } else {
-        mFunctionMask = kFunctionEmulationVertexMask;
-        mFunctionSource = kFunctionEmulationVertexSource;
+    mEmulatedFunctions[FunctionId(op, param)] =
+        std::string(emulatedFunctionDefinition);
+}
+
+void BuiltInFunctionEmulator::addEmulatedFunction(
+    TOperator op, const TType& param1, const TType& param2,
+    const char* emulatedFunctionDefinition)
+{
+    mEmulatedFunctions[FunctionId(op, param1, param2)] =
+        std::string(emulatedFunctionDefinition);
+}
+
+void BuiltInFunctionEmulator::addEmulatedFunction(
+    TOperator op, const TType& param1, const TType& param2, const TType& param3,
+    const char* emulatedFunctionDefinition)
+{
+    mEmulatedFunctions[FunctionId(op, param1, param2, param3)] =
+        std::string(emulatedFunctionDefinition);
+}
+
+bool BuiltInFunctionEmulator::IsOutputEmpty() const
+{
+    return (mFunctions.size() == 0);
+}
+
+void BuiltInFunctionEmulator::OutputEmulatedFunctions(
+    TInfoSinkBase& out) const
+{
+    for (size_t i = 0; i < mFunctions.size(); ++i) {
+        out << mEmulatedFunctions.find(mFunctions[i])->second << "\n\n";
     }
 }
 
 bool BuiltInFunctionEmulator::SetFunctionCalled(
     TOperator op, const TType& param)
 {
-    TBuiltInFunction function = IdentifyFunction(op, param);
-    return SetFunctionCalled(function);
+    return SetFunctionCalled(FunctionId(op, param));
 }
 
 bool BuiltInFunctionEmulator::SetFunctionCalled(
     TOperator op, const TType& param1, const TType& param2)
 {
-    TBuiltInFunction function = IdentifyFunction(op, param1, param2);
-    return SetFunctionCalled(function);
+    return SetFunctionCalled(FunctionId(op, param1, param2));
 }
 
 bool BuiltInFunctionEmulator::SetFunctionCalled(
-    BuiltInFunctionEmulator::TBuiltInFunction function) {
-    if (function == TFunctionUnknown || mFunctionMask[function] == false)
-        return false;
-    for (size_t i = 0; i < mFunctions.size(); ++i) {
-        if (mFunctions[i] == function)
-            return true;
-    }
-    mFunctions.push_back(function);
-    return true;
+    TOperator op, const TType& param1, const TType& param2, const TType& param3)
+{
+    return SetFunctionCalled(FunctionId(op, param1, param2, param3));
 }
 
-void BuiltInFunctionEmulator::OutputEmulatedFunctionDefinition(
-    TInfoSinkBase& out, bool withPrecision) const
-{
-    if (mFunctions.size() == 0)
-        return;
-    out << "// BEGIN: Generated code for built-in function emulation\n\n";
-    if (withPrecision) {
-        out << "#if defined(GL_FRAGMENT_PRECISION_HIGH)\n"
-            << "#define webgl_emu_precision highp\n"
-            << "#else\n"
-            << "#define webgl_emu_precision mediump\n"
-            << "#endif\n\n";
-    } else {
-        out << "#define webgl_emu_precision\n\n";
+bool BuiltInFunctionEmulator::SetFunctionCalled(
+    const FunctionId& functionId) {
+    if (mEmulatedFunctions.find(functionId) != mEmulatedFunctions.end())
+    {
+        for (size_t i = 0; i < mFunctions.size(); ++i) {
+            if (mFunctions[i] == functionId)
+                return true;
+        }
+        mFunctions.push_back(functionId);
+        return true;
     }
-    for (size_t i = 0; i < mFunctions.size(); ++i) {
-        out << mFunctionSource[mFunctions[i]] << "\n\n";
-    }
-    out << "// END: Generated code for built-in function emulation\n\n";
-}
-
-BuiltInFunctionEmulator::TBuiltInFunction
-BuiltInFunctionEmulator::IdentifyFunction(
-    TOperator op, const TType& param)
-{
-    if (param.getNominalSize() > 4 || param.getSecondarySize() > 4)
-        return TFunctionUnknown;
-    unsigned int function = TFunctionUnknown;
-    switch (op) {
-        case EOpCos:
-            function = TFunctionCos1;
-            break;
-        case EOpLength:
-            function = TFunctionLength1;
-            break;
-        case EOpNormalize:
-            function = TFunctionNormalize1;
-            break;
-        default:
-            break;
-    }
-    if (function == TFunctionUnknown)
-        return TFunctionUnknown;
-    if (param.isVector())
-        function += param.getNominalSize() - 1;
-    return static_cast<TBuiltInFunction>(function);
-}
-
-BuiltInFunctionEmulator::TBuiltInFunction
-BuiltInFunctionEmulator::IdentifyFunction(
-    TOperator op, const TType& param1, const TType& param2)
-{
-    // Right now for all the emulated functions with two parameters, the two
-    // parameters have the same type.
-    if (param1.getNominalSize()     != param2.getNominalSize()   ||
-        param1.getSecondarySize()   != param2.getSecondarySize() ||
-        param1.getNominalSize() > 4 || param1.getSecondarySize() > 4)
-        return TFunctionUnknown;
-
-    unsigned int function = TFunctionUnknown;
-    switch (op) {
-        case EOpDistance:
-            function = TFunctionDistance1_1;
-            break;
-        case EOpDot:
-            function = TFunctionDot1_1;
-            break;
-        case EOpReflect:
-            function = TFunctionReflect1_1;
-            break;
-        default:
-            break;
-    }
-    if (function == TFunctionUnknown)
-        return TFunctionUnknown;
-    if (param1.isVector())
-        function += param1.getNominalSize() - 1;
-    return static_cast<TBuiltInFunction>(function);
+    return false;
 }
 
 void BuiltInFunctionEmulator::MarkBuiltInFunctionsForEmulation(
     TIntermNode* root)
 {
     ASSERT(root);
+
+    if (mEmulatedFunctions.empty())
+        return;
 
     BuiltInFunctionEmulationMarker marker(*this);
     root->traverse(&marker);
@@ -404,3 +194,52 @@ TString BuiltInFunctionEmulator::GetEmulatedFunctionName(
     return "webgl_" + name.substr(0, name.length() - 1) + "_emu(";
 }
 
+BuiltInFunctionEmulator::FunctionId::FunctionId
+    (TOperator op, const TType& param)
+    : mOp(op),
+      mParam1(param),
+      mParam2(EbtVoid),
+      mParam3(EbtVoid)
+{
+}
+
+BuiltInFunctionEmulator::FunctionId::FunctionId
+    (TOperator op, const TType& param1, const TType& param2)
+    : mOp(op),
+      mParam1(param1),
+      mParam2(param2),
+      mParam3(EbtVoid)
+{
+}
+
+BuiltInFunctionEmulator::FunctionId::FunctionId
+    (TOperator op, const TType& param1, const TType& param2, const TType& param3)
+    : mOp(op),
+      mParam1(param1),
+      mParam2(param2),
+      mParam3(param3)
+{
+}
+
+bool BuiltInFunctionEmulator::FunctionId::operator==
+    (const BuiltInFunctionEmulator::FunctionId& other) const
+{
+    return (mOp == other.mOp &&
+        mParam1 == other.mParam1 &&
+        mParam2 == other.mParam2 &&
+        mParam3 == other.mParam3);
+}
+
+bool BuiltInFunctionEmulator::FunctionId::operator<
+    (const BuiltInFunctionEmulator::FunctionId& other) const
+{
+    if (mOp != other.mOp)
+        return mOp < other.mOp;
+    if (mParam1 != other.mParam1)
+        return mParam1 < other.mParam1;
+    if (mParam2 != other.mParam2)
+        return mParam2 < other.mParam2;
+    if (mParam3 != other.mParam3)
+       return mParam3 < other.mParam3;
+    return false; // all fields are equal
+}

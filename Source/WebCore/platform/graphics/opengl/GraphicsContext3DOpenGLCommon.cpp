@@ -359,7 +359,7 @@ bool GraphicsContext3D::checkVaryingsPacking(Platform3DObject vertexShader, Plat
         const auto& fragmentSymbol = fragmentEntry.varyingMap.find(symbolName);
         if (fragmentSymbol != fragmentEntry.varyingMap.end()) {
             ShVariableInfo symbolInfo;
-            symbolInfo.type = static_cast<ShDataType>((fragmentSymbol->value).type);
+            symbolInfo.type = (fragmentSymbol->value).type;
             // The arrays are already split up.
             symbolInfo.size = (fragmentSymbol->value).size;
             combinedVaryings.add(symbolName, symbolInfo);
@@ -397,7 +397,7 @@ bool GraphicsContext3D::precisionsMatch(Platform3DObject vertexShader, Platform3
     const auto& vertexEntry = m_shaderSourceMap.find(vertexShader)->value;
     const auto& fragmentEntry = m_shaderSourceMap.find(fragmentShader)->value;
 
-    HashMap<String, ShPrecisionType> vertexSymbolPrecisionMap;
+    HashMap<String, sh::GLenum> vertexSymbolPrecisionMap;
 
     for (const auto& entry : vertexEntry.uniformMap)
         vertexSymbolPrecisionMap.add(entry.value.mappedName, entry.value.precision);

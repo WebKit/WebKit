@@ -4,8 +4,8 @@
 // found in the LICENSE file.
 //
 
-#ifndef COMPILER_FORLOOPUNROLL_H_
-#define COMPILER_FORLOOPUNROLL_H_
+#ifndef COMPILER_TRANSLATOR_FORLOOPUNROLL_H_
+#define COMPILER_TRANSLATOR_FORLOOPUNROLL_H_
 
 #include "compiler/translator/LoopInfo.h"
 
@@ -47,4 +47,4 @@ class ForLoopUnrollMarker : public TIntermTraverser
     bool mVisitSamplerArrayIndexNodeInsideLoop;
 };
 
-#endif
+#endif // COMPILER_TRANSLATOR_FORLOOPUNROLL_H_

@@ -4,10 +4,10 @@
 // found in the LICENSE file.
 //
 
-#ifndef COMPILER_DEPGRAPH_DEPENDENCY_GRAPH_H
-#define COMPILER_DEPGRAPH_DEPENDENCY_GRAPH_H
+#ifndef COMPILER_TRANSLATOR_DEPGRAPH_DEPENDENCYGRAPH_H_
+#define COMPILER_TRANSLATOR_DEPGRAPH_DEPENDENCYGRAPH_H_
 
-#include "compiler/translator/intermediate.h"
+#include "compiler/translator/IntermNode.h"
 
 #include <set>
 #include <stack>
@@ -186,7 +186,7 @@ private:
 //
 // When using this, just fill in the methods for nodes you want visited.
 //
-class TDependencyGraphTraverser {
+class TDependencyGraphTraverser : angle::NonCopyable {
 public:
     TDependencyGraphTraverser() : mDepth(0) {}
 
@@ -209,4 +209,4 @@ private:
     TGraphNodeSet mVisited;
 };
 
-#endif
+#endif // COMPILER_TRANSLATOR_DEPGRAPH_DEPENDENCYGRAPH_H_

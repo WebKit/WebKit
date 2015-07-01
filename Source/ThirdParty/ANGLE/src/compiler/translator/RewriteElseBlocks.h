@@ -7,33 +7,16 @@
 //   all if-else blocks to if-if blocks.
 //
 
-#ifndef COMPILER_REWRITE_ELSE_BLOCKS_H_
-#define COMPILER_REWRITE_ELSE_BLOCKS_H_
+#ifndef COMPILER_TRANSLATOR_REWRITEELSEBLOCKS_H_
+#define COMPILER_TRANSLATOR_REWRITEELSEBLOCKS_H_
 
-#include "compiler/translator/intermediate.h"
+#include "compiler/translator/IntermNode.h"
 
 namespace sh
 {
-
-class ElseBlockRewriter : public TIntermTraverser
-{
-  public:
-      ElseBlockRewriter()
-          : TIntermTraverser(false, false, true, false)
-          , mTemporaryIndex(0)
-      {}
-
-  protected:
-    bool visitAggregate(Visit visit, TIntermAggregate *aggregate);
-
-  private:
-    int mTemporaryIndex;
-
-    TIntermNode *rewriteSelection(TIntermSelection *selection);
-};
 
 void RewriteElseBlocks(TIntermNode *node);
 
 }
 
-#endif // COMPILER_REWRITE_ELSE_BLOCKS_H_
+#endif // COMPILER_TRANSLATOR_REWRITEELSEBLOCKS_H_

@@ -4,8 +4,8 @@
 // found in the LICENSE file.
 //
 
-#ifndef _POOLALLOC_INCLUDED_
-#define _POOLALLOC_INCLUDED_
+#ifndef COMPILER_TRANSLATOR_POOLALLOC_H_
+#define COMPILER_TRANSLATOR_POOLALLOC_H_
 
 #ifdef _DEBUG
 #define GUARD_BLOCKS  // define to enable guard block sanity checking
@@ -297,4 +297,4 @@ protected:
     TPoolAllocator* allocator;
 };
 
-#endif // _POOLALLOC_INCLUDED_
+#endif // COMPILER_TRANSLATOR_POOLALLOC_H_

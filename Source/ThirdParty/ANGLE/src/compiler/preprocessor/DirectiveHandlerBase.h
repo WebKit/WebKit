@@ -4,8 +4,8 @@
 // found in the LICENSE file.
 //
 
-#ifndef COMPILER_PREPROCESSOR_DIRECTIVE_HANDLER_H_
-#define COMPILER_PREPROCESSOR_DIRECTIVE_HANDLER_H_
+#ifndef COMPILER_PREPROCESSOR_DIRECTIVEHANDLERBASE_H_
+#define COMPILER_PREPROCESSOR_DIRECTIVEHANDLERBASE_H_
 
 #include <string>
 
@@ -23,21 +23,23 @@ class DirectiveHandler
   public:
     virtual ~DirectiveHandler();
 
-    virtual void handleError(const SourceLocation& loc,
-                             const std::string& msg) = 0;
+    virtual void handleError(const SourceLocation &loc,
+                             const std::string &msg) = 0;
 
     // Handle pragma of form: #pragma name[(value)]
-    virtual void handlePragma(const SourceLocation& loc,
-                              const std::string& name,
-                              const std::string& value) = 0;
+    virtual void handlePragma(const SourceLocation &loc,
+                              const std::string &name,
+                              const std::string &value,
+                              bool stdgl) = 0;
 
-    virtual void handleExtension(const SourceLocation& loc,
-                                 const std::string& name,
-                                 const std::string& behavior) = 0;
+    virtual void handleExtension(const SourceLocation &loc,
+                                 const std::string &name,
+                                 const std::string &behavior) = 0;
 
-    virtual void handleVersion(const SourceLocation& loc,
+    virtual void handleVersion(const SourceLocation &loc,
                                int version) = 0;
 };
 
 }  // namespace pp
-#endif  // COMPILER_PREPROCESSOR_DIRECTIVE_HANDLER_H_
+
+#endif  // COMPILER_PREPROCESSOR_DIRECTIVEHANDLERBASE_H_

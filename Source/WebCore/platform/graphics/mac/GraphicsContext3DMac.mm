@@ -34,7 +34,6 @@
 
 #import "BlockExceptions.h"
 
-#include <ANGLE/ShaderLang.h>
 #include "CanvasRenderingContext.h"
 #include <CoreGraphics/CGBitmapContext.h>
 #include "Extensions3DOpenGL.h"

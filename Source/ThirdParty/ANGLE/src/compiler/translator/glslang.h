@@ -4,6 +4,9 @@
 // found in the LICENSE file.
 //
 
+#ifndef COMPILER_TRANSLATOR_GLSLANG_H_
+#define COMPILER_TRANSLATOR_GLSLANG_H_
+
 struct TParseContext;
 extern int glslang_initialize(TParseContext* context);
 extern int glslang_finalize(TParseContext* context);
@@ -14,3 +17,4 @@ extern int glslang_scan(size_t count,
                         TParseContext* context);
 extern int glslang_parse(TParseContext* context);
 
+#endif // COMPILER_TRANSLATOR_GLSLANG_H_

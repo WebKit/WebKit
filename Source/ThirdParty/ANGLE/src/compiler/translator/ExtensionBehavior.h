@@ -4,8 +4,8 @@
 // found in the LICENSE file.
 //
 
-#ifndef _EXTENSION_BEHAVIOR_INCLUDED_
-#define _EXTENSION_BEHAVIOR_INCLUDED_
+#ifndef COMPILER_TRANSLATOR_EXTENSIONBEHAVIOR_H_
+#define COMPILER_TRANSLATOR_EXTENSIONBEHAVIOR_H_
 
 #include <map>
 #include <string>
@@ -34,4 +34,4 @@ inline const char* getBehaviorString(TBehavior b)
 // Mapping between extension name and behavior.
 typedef std::map<std::string, TBehavior> TExtensionBehavior;
 
-#endif // _EXTENSION_TABLE_INCLUDED_
+#endif // COMPILER_TRANSLATOR_EXTENSIONBEHAVIOR_H_

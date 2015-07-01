@@ -1,4 +1,4 @@
-# This is the official list of people who can contribute
+﻿# This is the official list of people who can contribute
 # (and who have contributed) code to the ANGLE project
 # repository.
 # The AUTHORS file lists the copyright holders; this file
@@ -40,6 +40,7 @@ Google Inc.
  thestig@chromium.org
  Justin Schuh
  Scott Graham
+ Corentin Wallez
 
 Adobe Systems Inc.
  Alexandru Chiculita
@@ -52,10 +53,17 @@ Autodesk, Inc.
 Cloud Party, Inc.
  Conor Dickinson
 
+The Qt Company Ltd.
+ Andrew Knight
+
+Imagination Technologies Ltd.
+ Gregoire Payen de La Garanderie
+
 Intel Corporation
  Jin Yang
  Andy Chen
  Josh Triplett
+ Sudarsana Nagineni
 
 Klarälvdalens Datakonsult AB
  Milian Wolff
@@ -74,4 +82,23 @@ Turbulenz
 Ulrik Persson (ddefrostt)
 Mark Banner (standard8mbp)
 David Kilzer
+Jacek Caban
+Tibor den Ouden
+Régis Fénéon
 
+Microsoft Corporation
+ Cooper Partin
+ Austin Kinross
+ Minmin Gong
+
+Microsoft Open Technologies, Inc.
+ Cooper Partin
+ Austin Kinross
+
+NVIDIA Corporation
+ Olli Etuaho
+ Arun Patole
+ Qingqing Deng
+
+Opera Software ASA
+ Daniel Bratell

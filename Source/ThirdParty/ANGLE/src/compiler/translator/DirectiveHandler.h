@@ -4,21 +4,23 @@
 // found in the LICENSE file.
 //
 
-#ifndef COMPILER_DIRECTIVE_HANDLER_H_
-#define COMPILER_DIRECTIVE_HANDLER_H_
+#ifndef COMPILER_TRANSLATOR_DIRECTIVEHANDLER_H_
+#define COMPILER_TRANSLATOR_DIRECTIVEHANDLER_H_
 
+#include "common/angleutils.h"
 #include "compiler/translator/ExtensionBehavior.h"
 #include "compiler/translator/Pragma.h"
 #include "compiler/preprocessor/DirectiveHandlerBase.h"
 
 class TDiagnostics;
 
-class TDirectiveHandler : public pp::DirectiveHandler
+class TDirectiveHandler : public pp::DirectiveHandler, angle::NonCopyable
 {
   public:
     TDirectiveHandler(TExtensionBehavior& extBehavior,
                       TDiagnostics& diagnostics,
-                      int& shaderVersion);
+                      int& shaderVersion,
+                      bool debugShaderPrecisionSupported);
     virtual ~TDirectiveHandler();
 
     const TPragma& pragma() const { return mPragma; }
@@ -29,7 +31,8 @@ class TDirectiveHandler : public pp::DirectiveHandler
 
     virtual void handlePragma(const pp::SourceLocation& loc,
                               const std::string& name,
-                              const std::string& value);
+                              const std::string& value,
+                              bool stdgl);
 
     virtual void handleExtension(const pp::SourceLocation& loc,
                                  const std::string& name,
@@ -43,6 +46,7 @@ class TDirectiveHandler : public pp::DirectiveHandler
     TExtensionBehavior& mExtensionBehavior;
     TDiagnostics& mDiagnostics;
     int& mShaderVersion;
+    bool mDebugShaderPrecisionSupported;
 };
 
-#endif  // COMPILER_DIRECTIVE_HANDLER_H_
+#endif  // COMPILER_TRANSLATOR_DIRECTIVEHANDLER_H_

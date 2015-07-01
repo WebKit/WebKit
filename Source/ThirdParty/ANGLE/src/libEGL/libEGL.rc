@@ -73,7 +73,7 @@ BEGIN
             VALUE "FileDescription", "ANGLE libEGL Dynamic Link Library"
             VALUE "FileVersion", ANGLE_VERSION_STRING
             VALUE "InternalName", "libEGL"
-            VALUE "LegalCopyright", "Copyright (C) 2011 Google Inc."
+            VALUE "LegalCopyright", "Copyright (C) 2015 Google Inc."
             VALUE "OriginalFilename", "libEGL.dll"
             VALUE "PrivateBuild", ANGLE_VERSION_STRING
             VALUE "ProductName", "ANGLE libEGL Dynamic Link Library"

@@ -93,9 +93,9 @@ void TLoopIndexInfo::fillInfo(TIntermLoop *node)
 
     // Here we assume all the operations are valid, because the loop node is
     // already validated in ValidateLimitations.
-    TIntermSequence &declSeq =
+    TIntermSequence *declSeq =
         node->getInit()->getAsAggregate()->getSequence();
-    TIntermBinary *declInit = declSeq[0]->getAsBinaryNode();
+    TIntermBinary *declInit = (*declSeq)[0]->getAsBinaryNode();
     TIntermSymbol *symbol = declInit->getLeft()->getAsSymbolNode();
 
     mId = symbol->getId();

@@ -3,11 +3,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-#ifndef __INITIALIZEDLL_H
-#define __INITIALIZEDLL_H
+#ifndef COMPILER_TRANSLATOR_INITIALIZEDLL_H_
+#define COMPILER_TRANSLATOR_INITIALIZEDLL_H_
 
 bool InitProcess();
 void DetachProcess();
 
-#endif // __INITIALIZEDLL_H
+#endif // COMPILER_TRANSLATOR_INITIALIZEDLL_H_
 

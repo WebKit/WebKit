@@ -4,7 +4,7 @@
 // found in the LICENSE file.
 //
 
-#include "compiler/translator/intermediate.h"
+#include "compiler/translator/IntermNode.h"
 
 class TAliveTraverser : public TIntermTraverser {
 public:
@@ -49,7 +49,7 @@ void TAliveTraverser::visitSymbol(TIntermSymbol* node)
         found = true;
 }
 
-bool TAliveTraverser::visitSelection(Visit preVisit, TIntermSelection* node)
+bool TAliveTraverser::visitSelection(Visit, TIntermSelection*)
 {
     if (wasFound())
         return false;

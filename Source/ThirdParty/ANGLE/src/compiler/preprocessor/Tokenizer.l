@@ -23,6 +23,10 @@ IF YOU MODIFY THIS FILE YOU ALSO NEED TO RUN generate_parser.sh.
 }
 
 %{
+#if defined(_MSC_VER)
+#pragma warning(disable: 4005)
+#endif
+
 #include "Tokenizer.h"
 
 #include "DiagnosticsBase.h"
@@ -31,12 +35,15 @@ IF YOU MODIFY THIS FILE YOU ALSO NEED TO RUN generate_parser.sh.
 #if defined(__GNUC__)
 // Triggered by the auto-generated yy_fatal_error function.
 #pragma GCC diagnostic ignored "-Wmissing-noreturn"
+#elif defined(_MSC_VER)
+#pragma warning(disable: 4244)
 #endif
 
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunknown-pragmas"
-#pragma clang diagnostic ignored "-Wdeprecated-register"
+// Workaround for flex using the register keyword, deprecated in C++11.
+#ifdef __cplusplus
+#if __cplusplus > 199711L
+#define register
+#endif
 #endif
 
 typedef std::string YYSTYPE;
@@ -99,7 +106,7 @@ FRACTIONAL_CONSTANT  ({DIGIT}*"."{DIGIT}+)|({DIGIT}+".")
 
     /* Block comment */
     /* Line breaks are just counted - not returned. */
-    /* The comment is replaced by a single space. */ 
+    /* The comment is replaced by a single space. */
 "/*" { BEGIN(COMMENT); }
 <COMMENT>[^*\r\n]+
 <COMMENT>"*"
@@ -271,13 +278,11 @@ FRACTIONAL_CONSTANT  ({DIGIT}*"."{DIGIT}+)|({DIGIT}+".")
 
 %%
 
-#if defined(__clang__)
-#pragma clang diagnostic pop
-#endif
-
 namespace pp {
 
-Tokenizer::Tokenizer(Diagnostics* diagnostics) : mHandle(0)
+Tokenizer::Tokenizer(Diagnostics *diagnostics)
+    : mHandle(0),
+      mMaxTokenSize(256)
 {
     mContext.diagnostics = diagnostics;
 }
@@ -287,9 +292,10 @@ Tokenizer::~Tokenizer()
     destroyScanner();
 }
 
-bool Tokenizer::init(size_t count, const char* const string[], const int length[])
+bool Tokenizer::init(size_t count, const char * const string[], const int length[])
 {
-    if ((count > 0) && (string == 0)) return false;
+    if ((count > 0) && (string == 0))
+        return false;
 
     mContext.input = Input(count, string, length);
     return initScanner();
@@ -312,7 +318,7 @@ void Tokenizer::setMaxTokenSize(size_t maxTokenSize)
     mMaxTokenSize = maxTokenSize;
 }
 
-void Tokenizer::lex(Token* token)
+void Tokenizer::lex(Token *token)
 {
     token->type = yylex(&token->text, &token->location, mHandle);
     if (token->text.size() > mMaxTokenSize)

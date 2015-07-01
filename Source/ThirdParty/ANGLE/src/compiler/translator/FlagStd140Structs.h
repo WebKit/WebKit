@@ -4,10 +4,10 @@
 // found in the LICENSE file.
 //
 
-#ifndef COMPILER_FLAGSTD140STRUCTS_H_
-#define COMPILER_FLAGSTD140STRUCTS_H_
+#ifndef COMPILER_TRANSLATOR_FLAGSTD140STRUCTS_H_
+#define COMPILER_TRANSLATOR_FLAGSTD140STRUCTS_H_
 
-#include "compiler/translator/intermediate.h"
+#include "compiler/translator/IntermNode.h"
 
 namespace sh
 {
@@ -34,4 +34,4 @@ std::vector<TIntermTyped *> FlagStd140ValueStructs(TIntermNode *node);
 
 }
 
-#endif // COMPILER_FLAGSTD140STRUCTS_H_
+#endif // COMPILER_TRANSLATOR_FLAGSTD140STRUCTS_H_

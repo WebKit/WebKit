@@ -6,7 +6,7 @@
 
 #include "compiler/translator/Diagnostics.h"
 
-#include "compiler/translator/compilerdebug.h"
+#include "common/debug.h"
 #include "compiler/translator/InfoSink.h"
 #include "compiler/preprocessor/SourceLocation.h"
 
@@ -48,11 +48,6 @@ void TDiagnostics::writeInfo(Severity severity,
     sink.prefix(prefix);
     sink.location(loc.file, loc.line);
     sink << "'" << token <<  "' : " << reason << " " << extra << "\n";
-}
-
-void TDiagnostics::writeDebug(const std::string& str)
-{
-    mInfoSink.debug << str;
 }
 
 void TDiagnostics::print(ID id,

@@ -9,7 +9,6 @@
 #include "compiler/translator/SearchSymbol.h"
 
 #include "compiler/translator/InfoSink.h"
-#include "compiler/translator/OutputHLSL.h"
 
 namespace sh
 {

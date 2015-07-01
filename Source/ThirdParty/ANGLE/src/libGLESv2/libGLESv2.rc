@@ -73,7 +73,7 @@ BEGIN
             VALUE "FileDescription", "ANGLE libGLESv2 Dynamic Link Library"
             VALUE "FileVersion", ANGLE_VERSION_STRING
             VALUE "InternalName", "libGLESv2"
-            VALUE "LegalCopyright", "Copyright (C) 2011 Google Inc."
+            VALUE "LegalCopyright", "Copyright (C) 2015 Google Inc."
             VALUE "OriginalFilename", "libGLESv2.dll"
             VALUE "PrivateBuild", ANGLE_VERSION_STRING
             VALUE "ProductName", "ANGLE libGLESv2 Dynamic Link Library"
