@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(WEBGL)
+#if ENABLE(WEBGL) && ENABLE(WEBGL2)
 #include "WebGL2RenderingContext.h"
 
 #include "CachedImage.h"

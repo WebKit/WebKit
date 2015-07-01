@@ -152,8 +152,10 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebG
         return toJS(exec, globalObject, info.getWebGLUnsignedByteArray());
     case WebGLGetInfo::kTypeWebGLUnsignedIntArray:
         return toJS(exec, globalObject, info.getWebGLUnsignedIntArray());
+#if ENABLE(WEBGL2)
     case WebGLGetInfo::kTypeWebGLVertexArrayObject:
         return toJS(exec, globalObject, info.getWebGLVertexArrayObject());
+#endif
     case WebGLGetInfo::kTypeWebGLVertexArrayObjectOES:
         return toJS(exec, globalObject, info.getWebGLVertexArrayObjectOES());
     default:

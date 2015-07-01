@@ -607,8 +607,10 @@ void WebGLFramebuffer::drawBuffers(const Vector<GC3Denum>& bufs)
 
 void WebGLFramebuffer::drawBuffersIfNecessary(bool force)
 {
+#if ENABLE(WEBGL2)
     if (!context()->m_webglDrawBuffers && !context()->isWebGL2())
         return;
+#endif
     bool reset = force;
     // This filtering works around graphics driver bugs on Mac OS X.
     for (size_t i = 0; i < m_drawBuffers.size(); ++i) {

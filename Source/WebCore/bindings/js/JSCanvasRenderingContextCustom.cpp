@@ -55,8 +55,10 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject* globalObject, CanvasRender
 #if ENABLE(WEBGL)
     if (object->isWebGL1())
         return wrap<JSWebGLRenderingContext>(globalObject, static_cast<WebGLRenderingContext*>(object));
+#if ENABLE(WEBGL2)
     if (object->isWebGL2())
         return wrap<JSWebGL2RenderingContext>(globalObject, static_cast<WebGL2RenderingContext*>(object));
+#endif
 #endif
     ASSERT_WITH_SECURITY_IMPLICATION(object->is2d());
     return wrap<JSCanvasRenderingContext2D>(globalObject, static_cast<CanvasRenderingContext2D*>(object));

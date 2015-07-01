@@ -26,6 +26,8 @@
 #ifndef WebGL2RenderingContext_h
 #define WebGL2RenderingContext_h
 
+#if ENABLE(WEBGL2)
+
 #include "WebGLRenderingContextBase.h"
 
 namespace WebCore {
@@ -217,5 +219,7 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // WEBGL2
 
 #endif

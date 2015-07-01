@@ -41,7 +41,7 @@ typedef unrestricted float GLfloat;
 typedef unrestricted float GLclampf;
 
 [
-    Conditional=WEBGL,
+    Conditional=WEBGL2,
     JSCustomMarkFunction,
     DoNotCheckConstants,
 ] interface WebGL2RenderingContext : WebGLRenderingContextBase {

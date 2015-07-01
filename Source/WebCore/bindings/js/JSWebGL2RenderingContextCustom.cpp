@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(WEBGL)
+#if ENABLE(WEBGL) && ENABLE(WEBGL2)
 #include "JSWebGL2RenderingContext.h"
 
 #include "NotImplemented.h"

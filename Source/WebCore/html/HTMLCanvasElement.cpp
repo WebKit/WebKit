@@ -256,7 +256,11 @@ bool HTMLCanvasElement::is2dType(const String& type)
 bool HTMLCanvasElement::is3dType(const String& type)
 {
     // Retain support for the legacy "webkit-3d" name.
-    return type == "webgl" || type == "experimental-webgl" || type == "webkit-3d" || type == "experimental-webgl2";
+    return type == "webgl" || type == "experimental-webgl"
+#if ENABLE(WEBGL2)
+        || type == "experimental-webgl2"
+#endif
+        || type == "webkit-3d";
 }
 #endif
 

@@ -32,7 +32,9 @@
 #include "WebGLProgram.h"
 #include "WebGLRenderbuffer.h"
 #include "WebGLTexture.h"
+#if ENABLE(WEBGL2)
 #include "WebGLVertexArrayObject.h"
+#endif
 #include "WebGLVertexArrayObjectOES.h"
 #include <runtime/Float32Array.h>
 #include <runtime/Int32Array.h>
@@ -95,7 +97,9 @@ public:
     explicit WebGLGetInfo(PassRefPtr<Uint8Array> value);
     explicit WebGLGetInfo(PassRefPtr<Uint32Array> value);
     explicit WebGLGetInfo(PassRefPtr<WebGLVertexArrayObjectOES> value);
+#if ENABLE(WEBGL2)
     explicit WebGLGetInfo(PassRefPtr<WebGLVertexArrayObject> value);
+#endif
 
     ~WebGLGetInfo();
 
@@ -120,7 +124,9 @@ public:
     PassRefPtr<Uint8Array> getWebGLUnsignedByteArray() const;
     PassRefPtr<Uint32Array> getWebGLUnsignedIntArray() const;
     PassRefPtr<WebGLVertexArrayObjectOES> getWebGLVertexArrayObjectOES() const;
+#if ENABLE(WEBGL2)
     PassRefPtr<WebGLVertexArrayObject> getWebGLVertexArrayObject() const;
+#endif
 
 private:
     Type m_type;
@@ -143,7 +149,9 @@ private:
     RefPtr<Uint8Array> m_webglUnsignedByteArray;
     RefPtr<Uint32Array> m_webglUnsignedIntArray;
     RefPtr<WebGLVertexArrayObjectOES> m_webglVertexArrayObjectOES;
+#if ENABLE(WEBGL2)
     RefPtr<WebGLVertexArrayObject> m_webglVertexArrayObject;
+#endif
 };
 
 } // namespace WebCore

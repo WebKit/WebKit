@@ -26,6 +26,8 @@
 #ifndef WebGLVertexArrayObject_h
 #define WebGLVertexArrayObject_h
 
+#if ENABLE(WEBGL2)
+
 #include "WebGLBuffer.h"
 #include "WebGLContextObject.h"
 #include "WebGLVertexArrayObjectBase.h"
@@ -48,5 +50,7 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // WEBGL2
 
 #endif // WebGLVertexArrayObject_h

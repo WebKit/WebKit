@@ -234,6 +234,7 @@ WebGLGetInfo::WebGLGetInfo(PassRefPtr<WebGLVertexArrayObjectOES> value)
 {
 }
 
+#if ENABLE(WEBGL2)
 WebGLGetInfo::WebGLGetInfo(PassRefPtr<WebGLVertexArrayObject> value)
     : m_type(kTypeWebGLVertexArrayObject)
     , m_bool(false)
@@ -244,6 +245,7 @@ WebGLGetInfo::WebGLGetInfo(PassRefPtr<WebGLVertexArrayObject> value)
     , m_webglVertexArrayObject(value)
 {
 }
+#endif
 
 WebGLGetInfo::~WebGLGetInfo()
 {
@@ -356,11 +358,13 @@ PassRefPtr<WebGLVertexArrayObjectOES> WebGLGetInfo::getWebGLVertexArrayObjectOES
     return m_webglVertexArrayObjectOES;
 }
 
+#if ENABLE(WEBGL2)
 PassRefPtr<WebGLVertexArrayObject> WebGLGetInfo::getWebGLVertexArrayObject() const
 {
     ASSERT(getType() == kTypeWebGLVertexArrayObject);
     return m_webglVertexArrayObject;
 }
+#endif
 
 } // namespace WebCore
 
