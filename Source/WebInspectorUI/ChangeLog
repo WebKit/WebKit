@@ -1,3 +1,14 @@
+2015-06-30  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add " = $0" hint after selected element in main DOMTreeOutline
+        https://bugs.webkit.org/show_bug.cgi?id=145739
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DOMTreeOutline.css: Adds a semi-opaque " = $0" to the selected element in the DOM tree.
+        (.dom-tree-outline li.selected > span::after):
+        (.dom-tree-outline:focus li.selected > span::after):
+
 2015-06-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ProfileNode cleanup

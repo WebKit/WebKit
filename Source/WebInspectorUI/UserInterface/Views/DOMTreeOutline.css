@@ -72,6 +72,15 @@
     background-color: rgb(0, 128, 252);
 }
 
+.dom-tree-outline li.selected > span::after {
+    content: " = $0";
+    opacity: 0.33;
+}
+
+.dom-tree-outline:focus li.selected > span::after {
+    opacity: 0.9;
+}
+
 .dom-tree-outline ol {
     list-style-type: none;
     padding-left: 1.2em;
