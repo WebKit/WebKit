@@ -472,6 +472,7 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/InitializeThreading.cpp
     runtime/IntendedStructureChain.cpp
     runtime/InternalFunction.cpp
+    runtime/IntlObject.cpp
     runtime/IteratorOperations.cpp
     runtime/IteratorPrototype.cpp
     runtime/JSAPIValueWrapper.cpp

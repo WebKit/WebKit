@@ -1,3 +1,25 @@
+2015-06-30  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        Implement ECMAScript Internationalization API
+        https://bugs.webkit.org/show_bug.cgi?id=90906
+
+        Reviewed by Benjamin Poulain.
+
+        * CMakeLists.txt: add IntlObject.cpp
+        * Configurations/FeatureDefines.xcconfig: add ENABLE_INTL flag
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj: add IntlObject
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters: add IntlObject
+        * JavaScriptCore.xcodeproj/project.pbxproj: add IntlObject
+        * runtime/CommonIdentifiers.h: add "Intl" name
+        * runtime/IntlObject.cpp: Added.
+        (JSC::IntlObject::IntlObject):
+        (JSC::IntlObject::create):
+        (JSC::IntlObject::finishCreation):
+        (JSC::IntlObject::createStructure):
+        * runtime/IntlObject.h: Added.
+        * runtime/JSGlobalObject.cpp: Add global Intl
+        (JSC::JSGlobalObject::init):
+
 2015-06-30  Basile Clement  <basile_clement@apple.com>
 
         Allow object allocation sinking through GetScope, GetExecutable and SkipScope nodes

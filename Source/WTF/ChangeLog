@@ -1,3 +1,12 @@
+2015-06-30  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        Implement ECMAScript Internationalization API
+        https://bugs.webkit.org/show_bug.cgi?id=90906
+
+        Reviewed by Benjamin Poulain.
+
+        * wtf/FeatureDefines.h: add ENABLE_INTL flag
+
 2015-06-30  Keith Miller  <keith_miller@apple.com>
 
         Errors in read() are not handled in WTF::cryptographicallyRandomValuesFromOS.

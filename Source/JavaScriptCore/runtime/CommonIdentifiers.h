@@ -38,6 +38,7 @@
     macro(EvalError) \
     macro(Function) \
     macro(Infinity) \
+    macro(Intl) \
     macro(JSON) \
     macro(Map)\
     macro(MapIterator)\

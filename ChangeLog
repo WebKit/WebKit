@@ -1,3 +1,15 @@
+2015-06-30  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        Implement ECMAScript Internationalization API
+        https://bugs.webkit.org/show_bug.cgi?id=90906
+
+        Reviewed by Benjamin Poulain.
+
+        Begin implementing the Intl apis behind ENABLE_INTL flag.
+        Create the base Intl namespace object.
+
+        * Source/cmake/WebKitFeatures.cmake: add ENABLE_INTL flag
+
 2015-06-30  Philippe Normand  <pnormand@igalia.com>
 
         [CMake] Error when gst-plugins-base is missing is too confusing

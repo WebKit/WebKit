@@ -131,6 +131,10 @@
 #include "WeakSetConstructor.h"
 #include "WeakSetPrototype.h"
 
+#if ENABLE(INTL)
+#include "IntlObject.h"
+#endif // ENABLE(INTL)
+
 #if ENABLE(PROMISES)
 #include "JSPromise.h"
 #include "JSPromiseConstructor.h"
@@ -424,6 +428,9 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
     m_evalFunction.set(vm, this, JSFunction::create(vm, this, 1, vm.propertyNames->eval.string(), globalFuncEval));
     putDirectWithoutTransition(vm, vm.propertyNames->eval, m_evalFunction.get(), DontEnum);
     
+#if ENABLE(INTL)
+    putDirectWithoutTransition(vm, vm.propertyNames->Intl, IntlObject::create(vm, IntlObject::createStructure(vm, this, m_objectPrototype.get())), DontEnum);
+#endif // ENABLE(INTL)
     putDirectWithoutTransition(vm, vm.propertyNames->JSON, JSONObject::create(vm, JSONObject::createStructure(vm, this, m_objectPrototype.get())), DontEnum);
     putDirectWithoutTransition(vm, vm.propertyNames->Math, MathObject::create(vm, this, MathObject::createStructure(vm, this, m_objectPrototype.get())), DontEnum);
     

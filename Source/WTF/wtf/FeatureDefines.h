@@ -543,6 +543,10 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_INSPECTOR_ALTERNATE_DISPATCHERS 0
 #endif
 
+#if !defined(ENABLE_INTL)
+#define ENABLE_INTL 0
+#endif
+
 #if !defined(ENABLE_JAVASCRIPT_I18N_API)
 #define ENABLE_JAVASCRIPT_I18N_API 0
 #endif

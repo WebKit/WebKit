@@ -1,3 +1,13 @@
+2015-06-30  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        Implement ECMAScript Internationalization API
+        https://bugs.webkit.org/show_bug.cgi?id=90906
+
+        Reviewed by Benjamin Poulain.
+
+        * win/tools/vsprops/FeatureDefines.props: add ENABLE_INTL flag
+        * win/tools/vsprops/FeatureDefinesCairo.props: add ENABLE_INTL flag
+
 2015-06-29  Hyungwook Lee  <hyungwook.lee@navercorp.com>
 
         [Win] Activate SSE support for 32-bit builds.
