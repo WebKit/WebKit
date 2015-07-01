@@ -1,3 +1,6 @@
+// This feature isn't enabled yet.
+//@ skip
+
 description("This test checks the behavior of the Intl object as described in 8 of the ECMAScript Internationalization API Specification.");
 
 // The Intl object is a standard built-in object that is the initial value of the Intl property of the global object.
