@@ -1074,6 +1074,11 @@ http/tests/misc/iframe-reparenting-id-collision.html [ Crash Pass ]
 http/tests/loading/text-content-type-with-binary-extension.html [ Failure Pass ]
 perf/rel-list-remove.html [ Failure Pass ]
 
+webkit.org/b/146495 fast/history/multiple-classes-visited.html [ Timeout Pass ]
+webkit.org/b/146495 http/tests/security/contentSecurityPolicy/directive-parsing-multiple-headers.html [ Timeout Pass ]
+webkit.org/b/146495 js/dom/create-lots-of-workers.html [ Crash Timeout Pass Failure ]
+webkit.org/b/146495 svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg [ Timeout Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # PASSING TESTS WITH INCORRECT EXPECTATIONS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2272,6 +2277,10 @@ accessibility/transformed-element.html [ Failure ]
 webkit.org/b/146139 fast/css/named-images.html [ Missing ]
 
 webkit.org/b/146233 fast/forms/listbox-visible-size.html [ Failure ]
+
+webkit.org/b/146495 accessibility/content-editable-as-textarea.html [ Timeout ]
+webkit.org/b/146495 editing/selection/designmode-no-caret.html [ Timeout ]
+webkit.org/b/146495 media/session/controls-existence.html [ Timeout ]
 
 # Test requires hardcoded font names, which I do not have for this port.
 fast/text/han-generic-font-families.html [ WontFix ]

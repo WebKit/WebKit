@@ -1,3 +1,13 @@
+2015-06-30  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Unreviewed gardening.
+
+        Some tests are flaky or timeout after bumping Ubuntu version from 14.04 to 15.04.
+        Mark the tests to flaky or timeout.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/compositing/tiling/rotated-tiled-clamped-expected.txt: Added.
+
 2015-06-30  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, skip this test for now. We can unskip it when this feature is enabled.
