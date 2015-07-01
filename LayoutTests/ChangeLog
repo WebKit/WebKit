@@ -1,3 +1,24 @@
+2015-07-01  Chris Dumez  <cdumez@apple.com>
+
+        Regression(183998): Disqus comments take a very long time to load
+        https://bugs.webkit.org/show_bug.cgi?id=146522
+        <rdar://problem/21590601>
+
+        Reviewed by Simon Fraser.
+
+        * fast/animation/request-animation-frame-throttle-subframe-display-none-expected.txt:
+        * fast/animation/request-animation-frame-throttle-subframe-display-none.html:
+        Update layout test as we changed behavior here. We no longer throttle display:none
+        iframes.
+
+        * fast/animation/request-animation-frame-throttle-subframe-zero-size-expected.txt: Added.
+        * fast/animation/request-animation-frame-throttle-subframe-zero-size.html: Added.
+        Add layout test to check that we don't throttle RaF in iframes that are zero-sized.
+
+        * fast/animation/resources/requestAnimationFrame-frame-2.html:
+        * fast/animation/resources/requestAnimationFrame-frame.html:
+        Update use of requestAnimationFrame() to be more representative of real world usage.
+
 2015-07-01  Simon Fraser  <simon.fraser@apple.com>
 
         Mark compositing/masks/compositing-clip-path-origin.html as being image-flakey.

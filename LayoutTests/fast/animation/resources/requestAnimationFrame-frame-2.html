@@ -3,9 +3,13 @@
 <body>
 <script>
 var i = 0;
-requestAnimationFrame(function() {
+function step()
+{
   i++;
-});
+  requestAnimationFrame(step);
+}
+
+requestAnimationFrame(step);
 </script>
 </body>
 </html>

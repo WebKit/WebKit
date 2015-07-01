@@ -2171,9 +2171,8 @@ void FrameView::updateScriptedAnimationsAndTimersThrottlingState(const IntRect& 
     if (!document)
         return;
 
-    // FIXME: This doesn't work for subframes of a "display: none" frame because
-    // they have a non-null ownerRenderer.
-    bool shouldThrottle = !frame().ownerRenderer() || visibleRect.isEmpty();
+    // We don't throttle zero-size or display:none frames because those are usually utility frames.
+    bool shouldThrottle = visibleRect.isEmpty() && !m_size.isEmpty() && frame().ownerRenderer();
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     if (auto* scriptedAnimationController = document->scriptedAnimationController())

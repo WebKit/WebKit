@@ -3,42 +3,21 @@
 <body>
 <script src="../../resources/js-test-pre.js"></script>
 <script>
-description("Tests that requestAnimationFrame is throttled in subframes that are display:none");
+description("Tests that requestAnimationFrame is not throttled in subframes that are display:none");
 window.jsTestIsAsync = true;
-
-function checkSubframeThrottled()
-{
-    shouldBeTrue("testFrame.contentWindow.internals.isRequestAnimationFrameThrottled()");
-
-    debug("Show subframe again");
-    evalAndLog("testFrame.style.display = 'block';");
-
-    shouldBecomeEqual("testFrame.contentWindow.internals.isRequestAnimationFrameThrottled()", "false", finishJSTest);
-}
-
-function hideFrame()
-{
-    shouldBeFalse("testFrame.contentWindow.internals.isRequestAnimationFrameThrottled()");
-
-    debug("Hiding subframe.");
-    evalAndLog("testFrame.style.display = 'none';");
-
-    shouldBecomeEqual("testFrame.contentWindow.internals.isRequestAnimationFrameThrottled()", "true", checkSubframeThrottled);
-}
 
 function runTest()
 {
     testFrame = document.getElementById("testFrame");
-    debug("Frame is initially visibile so requestAnimationFrame should not be throttled");
-    shouldBecomeEqual("testFrame.contentWindow.internals.isRequestAnimationFrameThrottled()", "false", hideFrame);
-}
 
-var i = 0;
-requestAnimationFrame(function() {
-    i++;
-});
+    // Force layout.
+    document.body.offsetTop;
+
+    shouldBeFalse("testFrame.contentWindow.internals.isRequestAnimationFrameThrottled()");
+    finishJSTest();
+}
 </script>
-<iframe id="testFrame" src="resources/requestAnimationFrame-frame.html" onload="runTest()"></iframe>
+<iframe id="testFrame" style="position: absolute; top: 800px; display: none;" src="resources/requestAnimationFrame-frame.html" onload="runTest()"></iframe>
 <script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
