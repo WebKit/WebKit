@@ -1,3 +1,9 @@
+2015-07-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Mark compositing/masks/compositing-clip-path-origin.html as being image-flakey.
+
+        * platform/mac/TestExpectations:
+
 2015-06-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r179168): Characters overlap after resizing the font on the copy-pasted Japanese text

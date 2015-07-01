@@ -405,17 +405,12 @@ svg/stroke/zero-length-arc-linecaps-rendering.svg [ Failure ]
 svg/stroke/zero-length-path-linecap-rendering.svg [ Failure ]
 svg/stroke/zero-length-subpaths-linecap-rendering.svg [ Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=110871
-compositing/overlap-blending/reflection-opacity-huge.html [ ImageOnlyFailure ]
+webkit.org/b/110871 compositing/overlap-blending/reflection-opacity-huge.html [ ImageOnlyFailure ]
+webkit.org/b/114340 compositing/overlap-blending/nested-overlap.html [ ImageOnlyFailure ]
+webkit.org/b/114338 compositing/overlap-blending/nested-overlap-overflow.html [ ImageOnlyFailure ]
+webkit.org/b/146523 compositing/masks/compositing-clip-path-origin.html [ Pass ImageOnlyFailure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=114340
-compositing/overlap-blending/nested-overlap.html [ ImageOnlyFailure ]
-
-# https://bugs.webkit.org/show_bug.cgi?id=114338
-compositing/overlap-blending/nested-overlap-overflow.html [ ImageOnlyFailure ]
-
-# https://bugs.webkit.org/show_bug.cgi?id=95027
-fast/block/float/016.html [ Failure ]
+webkit.org/b/95027fast/block/float/016.html [ Failure ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=93878
 # Due to JSC::Bindings::Instance::createRuntimeObject(JSC::ExecState*) crashes:
