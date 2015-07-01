@@ -112,8 +112,8 @@ private:
     virtual void derefEventTarget() override final { deref(); }
 
     // MediaStreamTrackPrivateClient
-    void trackEnded();
-    void trackMutedChanged();
+    void trackEnded() override;
+    void trackMutedChanged() override;
 
     Vector<Observer*> m_observers;
     Ref<MediaStreamTrackPrivate> m_private;

@@ -1,3 +1,20 @@
+2015-07-01  Matthew Daiter  <mdaiter@apple.com>
+
+        Enable MEDIA_STREAM flag
+        https://bugs.webkit.org/show_bug.cgi?id=145947
+        <rdar://problem/21365829>
+
+        Reviewed by Eric Carlson.
+
+        *
+        platform/mac-mavericks/js/dom/global-constructors-attributes-expected.txt:
+        Added attributes to tests
+        *
+        platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt:
+        Ditto
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        Ditto
+
 2015-07-01  Antti Koivisto  <antti@apple.com>
 
         PNG mask images are loaded with Accept:image/svg+xml

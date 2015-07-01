@@ -1,3 +1,13 @@
+2015-07-01  Matthew Daiter  <mdaiter@apple.com>
+
+        Enable MEDIA_STREAM flag
+        https://bugs.webkit.org/show_bug.cgi?id=145947
+        <rdar://problem/21365829>
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/FeatureDefines.xcconfig: Added MEDIA_STREAM flag
+
 2015-06-30  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         Implement ECMAScript Internationalization API

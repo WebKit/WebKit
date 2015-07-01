@@ -1,3 +1,19 @@
+2015-07-01  Matthew Daiter  <mdaiter@apple.com>
+
+        Enable MEDIA_STREAM flag
+        https://bugs.webkit.org/show_bug.cgi?id=145947
+        <rdar://problem/21365829>
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/FeatureDefines.xcconfig: Added MEDIA_STREAM flag
+        * WebCoreSupport/WebUserMediaClient.h: Changed signatures
+        * WebCoreSupport/WebUserMediaClient.mm: Changed signatures
+        (WebUserMediaClient::requestPermission):
+        (WebUserMediaClient::cancelRequest):
+        (-[WebUserMediaPolicyListener denyOnlyThisRequest]):
+        (-[WebUserMediaPolicyListener shouldClearCache]):
+
 2015-07-01  Brady Eidson  <beidson@apple.com>
 
         REGRESSION (185319): Reproducible crash in WebHistoryItem launching FluidApp.

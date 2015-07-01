@@ -21,9 +21,8 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "UserMediaController.h"
-#include "UserMediaRequest.h"
 #include "WebPage.h"
+#include <WebCore/UserMediaController.h>
 #include <WebCore/UserMediaRequest.h>
 
 using namespace WebCore;

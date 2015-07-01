@@ -91,7 +91,7 @@ public:
 
     void addObserver(Observer*);
     void removeObserver(Observer*);
-    
+
     virtual void startProducingData() { }
     virtual void stopProducingData() { }
 

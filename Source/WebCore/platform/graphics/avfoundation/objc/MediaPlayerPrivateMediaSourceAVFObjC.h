@@ -96,7 +96,7 @@ private:
     virtual void load(const String& url) override;
     virtual void load(const String& url, MediaSourcePrivateClient*) override;
 #if ENABLE(MEDIA_STREAM)
-    virtual void load(MediaStreamPrivate*) { }
+    void load(MediaStreamPrivate*) override { }
 #endif
     virtual void cancelLoad() override;
 

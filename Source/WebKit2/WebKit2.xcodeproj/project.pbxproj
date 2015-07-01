@@ -115,6 +115,9 @@
 		0FF24A2E1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF24A2C1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessages.h */; };
 		0FF2649F1A1FF9C6001FE759 /* RemoteLayerTreeScrollingPerformanceData.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F707C771A1FEE8300DA7A45 /* RemoteLayerTreeScrollingPerformanceData.mm */; };
 		0FF264A01A1FF9CC001FE759 /* RemoteLayerTreeScrollingPerformanceData.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F707C791A1FEEA300DA7A45 /* RemoteLayerTreeScrollingPerformanceData.h */; };
+		15739BBC1B42040300D258C1 /* UserMediaPermissionRequestManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A410F4219AF7B27002EBAB5 /* UserMediaPermissionRequestManager.cpp */; };
+		15739BBD1B42042D00D258C1 /* WebUserMediaClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A410F4919AF7B80002EBAB5 /* WebUserMediaClient.h */; };
+		15739BBE1B42046600D258C1 /* WebUserMediaClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A410F4819AF7B80002EBAB5 /* WebUserMediaClient.cpp */; };
 		1A002D43196B337000B9AD44 /* _WKSessionStateInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A002D42196B337000B9AD44 /* _WKSessionStateInternal.h */; };
 		1A002D44196B338900B9AD44 /* _WKSessionState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A002D3F196B329400B9AD44 /* _WKSessionState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A002D45196B338E00B9AD44 /* _WKSessionState.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A002D3E196B329400B9AD44 /* _WKSessionState.mm */; };
@@ -834,8 +837,6 @@
 		4A3CC18D19B0641900D14AEF /* UserMediaPermissionRequestProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A410F3C19AF7B04002EBAB5 /* UserMediaPermissionRequestProxy.h */; };
 		4A3CC18E19B07B8500D14AEF /* WKUserMediaPermissionRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A410F3519AF7AC3002EBAB5 /* WKUserMediaPermissionRequest.cpp */; };
 		4A3CC18F19B07B8A00D14AEF /* WKUserMediaPermissionRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A410F3619AF7AC3002EBAB5 /* WKUserMediaPermissionRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		4A410F4419AF7B27002EBAB5 /* UserMediaPermissionRequestManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A410F4219AF7B27002EBAB5 /* UserMediaPermissionRequestManager.cpp */; };
-		4A410F4A19AF7B80002EBAB5 /* WebUserMediaClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A410F4819AF7B80002EBAB5 /* WebUserMediaClient.cpp */; };
 		4F601432155C5AA2001FBDE0 /* BlockingResponseMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F601430155C5A32001FBDE0 /* BlockingResponseMap.h */; };
 		51021E9C12B16788005C033C /* WebContextMenuClientMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51021E9B12B16788005C033C /* WebContextMenuClientMac.mm */; };
 		510274321981AF8E008165ED /* WKOriginDataManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 755422BA18062B9C0046F6A8 /* WKOriginDataManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7608,6 +7609,7 @@
 				83891B6C1A68C30B0030F386 /* DiagnosticLoggingClient.h in Headers */,
 				BCE81D99131AE02100241910 /* DictionaryPopupInfo.h in Headers */,
 				518E8F0816B2093700E91429 /* Download.h in Headers */,
+				15739BBD1B42042D00D258C1 /* WebUserMediaClient.h in Headers */,
 				518E8F0A16B2093700E91429 /* DownloadAuthenticationClient.h in Headers */,
 				A1DF631318E0B7C8003A3E2A /* DownloadClient.h in Headers */,
 				518E8F0C16B2093700E91429 /* DownloadManager.h in Headers */,
@@ -9237,8 +9239,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				BC5D24A116CC3B9E007D5461 /* ChildProcessMain.mm in Sources */,
-				4A410F4419AF7B27002EBAB5 /* UserMediaPermissionRequestManager.cpp in Sources */,
-				4A410F4A19AF7B80002EBAB5 /* WebUserMediaClient.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9739,6 +9739,7 @@
 				BC111AE0112F5BC200337BAB /* WebErrorsMac.mm in Sources */,
 				C0337DAE127A24FE008FF4F4 /* WebEvent.cpp in Sources */,
 				BC032DBA10F4380F0058C15A /* WebEventConversion.cpp in Sources */,
+				15739BBC1B42040300D258C1 /* UserMediaPermissionRequestManager.cpp in Sources */,
 				BC111B5E112F629800337BAB /* WebEventFactory.mm in Sources */,
 				1A3DD1FD125E59F3004515E6 /* WebFindClient.cpp in Sources */,
 				BCE469531214E6CB000B98EB /* WebFormClient.cpp in Sources */,
@@ -9983,6 +9984,7 @@
 				1A5B1C501898606F004FCF9B /* WKNavigation.mm in Sources */,
 				1A256E3718A1A788006FB922 /* WKNavigationAction.mm in Sources */,
 				2D3A65DA1A7C3A1F00CAC637 /* WKNavigationActionRef.cpp in Sources */,
+				15739BBE1B42046600D258C1 /* WebUserMediaClient.cpp in Sources */,
 				370F34A21829BE1E009027C8 /* WKNavigationData.mm in Sources */,
 				BCF69FAA1176D1CB00471A52 /* WKNavigationDataRef.cpp in Sources */,
 				2D3A65E21A7C3A9300CAC637 /* WKNavigationRef.cpp in Sources */,

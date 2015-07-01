@@ -29,6 +29,7 @@
 
 #import "AVAudioCaptureSource.h"
 
+#import "CoreMediaSoftLink.h"
 #import "Logging.h"
 #import "MediaConstraints.h"
 #import "NotImplemented.h"

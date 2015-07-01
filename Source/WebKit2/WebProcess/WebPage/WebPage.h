@@ -465,7 +465,7 @@ public:
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-    UserMediaPermissionRequestManager& userMediaPermissionRequestManager() { return m_userMediaPermissionRequestManager; }
+    WK_EXPORT UserMediaPermissionRequestManager& userMediaPermissionRequestManager() { return m_userMediaPermissionRequestManager; }
 #endif
 
 #if PLATFORM(IOS)
@@ -1082,7 +1082,7 @@ private:
     void didReceiveNotificationPermissionDecision(uint64_t notificationID, bool allowed);
 
 #if ENABLE(MEDIA_STREAM)
-    void didReceiveUserMediaPermissionDecision(uint64_t userMediaID, bool allowed);
+    WK_EXPORT void didReceiveUserMediaPermissionDecision(uint64_t userMediaID, bool allowed);
 #endif
 
     void advanceToNextMisspelling(bool startBeforeSelection);

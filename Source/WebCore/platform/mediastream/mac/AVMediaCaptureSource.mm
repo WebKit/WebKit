@@ -137,8 +137,6 @@ AVMediaCaptureSource::~AVMediaCaptureSource()
     [[NSNotificationCenter defaultCenter] removeObserver:m_objcObserver.get()];
     [m_objcObserver disconnect];
     [m_session.get() stopRunning];
-
-    setReadyState(Ended);
 }
 
 void AVMediaCaptureSource::startProducingData()
@@ -150,7 +148,7 @@ void AVMediaCaptureSource::startProducingData()
         return;
     
     [m_session.get() startRunning];
-    setEnabled(true);
+
     m_isRunning = true;
 }
 
@@ -160,7 +158,7 @@ void AVMediaCaptureSource::stopProducingData()
         return;
 
     [m_session.get() stopRunning];
-    setEnabled(false);
+
     m_isRunning = true;
 }
 
@@ -180,7 +178,6 @@ void AVMediaCaptureSource::setupSession()
     [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get() selector:@selector(captureSessionStoppedRunning:) name:AVCaptureSessionDidStopRunningNotification object:nil];
     
     setupCaptureSession();
-    setReadyState(Live);
 }
  
 void AVMediaCaptureSource::captureSessionStoppedRunning()
