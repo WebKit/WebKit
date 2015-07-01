@@ -83,8 +83,8 @@ public:
     virtual void setDebugBorder(const Color&, float width) override;
     virtual void setShowRepaintCounter(bool) override;
 
-    virtual void flushCompositingState(const FloatRect&) override;
-    virtual void flushCompositingStateForThisLayerOnly() override;
+    virtual void flushCompositingState(const FloatRect&, bool) override;
+    virtual void flushCompositingStateForThisLayerOnly(bool) override;
 
     void updateBackingStoreIncludingSubLayers();
 

@@ -577,21 +577,21 @@ void CoordinatedGraphicsLayer::setFixedToViewport(bool isFixed)
     didChangeLayerState();
 }
 
-void CoordinatedGraphicsLayer::flushCompositingState(const FloatRect& rect)
+void CoordinatedGraphicsLayer::flushCompositingState(const FloatRect& rect, bool viewportIsStable)
 {
     if (notifyFlushRequired())
         return;
 
     if (CoordinatedGraphicsLayer* mask = toCoordinatedGraphicsLayer(maskLayer()))
-        mask->flushCompositingStateForThisLayerOnly();
+        mask->flushCompositingStateForThisLayerOnly(viewportIsStable);
 
     if (CoordinatedGraphicsLayer* replica = toCoordinatedGraphicsLayer(replicaLayer()))
-        replica->flushCompositingStateForThisLayerOnly();
+        replica->flushCompositingStateForThisLayerOnly(viewportIsStable);
 
-    flushCompositingStateForThisLayerOnly();
+    flushCompositingStateForThisLayerOnly(viewportIsStable);
 
     for (auto& child : children())
-        child->flushCompositingState(rect);
+        child->flushCompositingState(rect, viewportIsStable);
 }
 
 CoordinatedGraphicsLayer* toCoordinatedGraphicsLayer(GraphicsLayer* layer)
@@ -757,7 +757,7 @@ void CoordinatedGraphicsLayer::createPlatformLayerIfNeeded()
 }
 #endif
 
-void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
+void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly(bool)
 {
     ASSERT(m_coordinator->isFlushingLayerChanges());
 

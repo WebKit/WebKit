@@ -363,7 +363,7 @@ void GraphicsLayerTextureMapper::setIsScrollable(bool isScrollable)
     notifyChange(IsScrollableChange);
 }
 
-void GraphicsLayerTextureMapper::flushCompositingStateForThisLayerOnly()
+void GraphicsLayerTextureMapper::flushCompositingStateForThisLayerOnly(bool)
 {
     prepareBackingStoreIfNeeded();
     commitLayerChanges();
@@ -496,19 +496,19 @@ void GraphicsLayerTextureMapper::commitLayerChanges()
     m_changeMask = NoChanges;
 }
 
-void GraphicsLayerTextureMapper::flushCompositingState(const FloatRect& rect)
+void GraphicsLayerTextureMapper::flushCompositingState(const FloatRect& rect, bool viewportIsStable)
 {
     if (!m_layer.textureMapper())
         return;
 
-    flushCompositingStateForThisLayerOnly();
+    flushCompositingStateForThisLayerOnly(viewportIsStable);
 
     if (maskLayer())
-        maskLayer()->flushCompositingState(rect);
+        maskLayer()->flushCompositingState(rect, viewportIsStable);
     if (replicaLayer())
-        replicaLayer()->flushCompositingState(rect);
+        replicaLayer()->flushCompositingState(rect, viewportIsStable);
     for (auto* child : children())
-        child->flushCompositingState(rect);
+        child->flushCompositingState(rect, viewportIsStable);
 }
 
 void GraphicsLayerTextureMapper::updateBackingStoreIncludingSubLayers()

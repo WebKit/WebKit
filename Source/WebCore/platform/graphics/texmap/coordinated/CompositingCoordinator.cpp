@@ -92,7 +92,7 @@ bool CompositingCoordinator::flushPendingLayerChanges()
 
     initializeRootCompositingLayerIfNeeded();
 
-    m_rootLayer->flushCompositingStateForThisLayerOnly();
+    m_rootLayer->flushCompositingStateForThisLayerOnly(m_page->mainFrame().view()->viewportIsStable());
     m_client->didFlushRootLayer(m_visibleContentsRect);
 
     bool didSync = m_page->mainFrame().view()->flushCompositingStateIncludingSubframes();
