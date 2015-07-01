@@ -504,8 +504,8 @@ public:
     // Some compositing systems may do internal batching to synchronize compositing updates
     // with updates drawn into the window. These methods flush internal batched state on this layer
     // and descendant layers, and this layer only.
-    virtual void flushCompositingState(const FloatRect& /* clipRect */) { }
-    virtual void flushCompositingStateForThisLayerOnly() { }
+    virtual void flushCompositingState(const FloatRect& /* clipRect */, bool /* viewportIsStable */) { }
+    virtual void flushCompositingStateForThisLayerOnly(bool /* viewportIsStable */) { }
 
     // If the exposed rect of this layer changes, returns true if this or descendant layers need a flush,
     // for example to allocate new tiles.

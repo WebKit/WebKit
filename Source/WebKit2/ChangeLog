@@ -1,3 +1,25 @@
+2015-06-30  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS] Missing tiles inside position:fixed on scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=146485
+        rdar://problem/21226861
+
+        Reviewed by Tim Horton.
+
+        Layer flushing adjusts the coverage rect for tiled layers, but does so at times
+        when position:fixed layers are moved around by the scrolling tree. The computed
+        coverage rect then doesn't reflect the layer's on-screen position, causing missing
+        tiles.
+
+        Fix by pushing the notion of being in a "stable state" onto FrameView, and passing
+        that state into the layer flush. When not in a stable state, flushing doesn't change
+        the visible and coverage rects for layers that are viewport-constrained.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateVisibleContentRects):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+
 2015-06-30  Hyungwook Lee  <hyungwook.lee@navercorp.com>
 
         [EFL] Implement ewk_favicon_database_clear() API.

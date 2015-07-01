@@ -188,10 +188,6 @@ FrameView::FrameView(Frame& frame)
 #if PLATFORM(IOS)
     , m_useCustomFixedPositionLayoutRect(false)
     , m_useCustomSizeForResizeEvent(false)
-    , m_horizontalVelocity(0)
-    , m_verticalVelocity(0)
-    , m_scaleChangeRate(0)
-    , m_lastVelocityUpdateTime(0)
 #endif
     , m_hasOverrideViewportSize(false)
     , m_shouldAutoSize(false)
@@ -290,6 +286,7 @@ void FrameView::reset()
     m_visuallyNonEmptyPixelCount = 0;
     m_isVisuallyNonEmpty = false;
     m_firstVisuallyNonEmptyLayoutCallbackPending = true;
+    m_viewportIsStable = true;
     m_maintainScrollPositionAnchor = nullptr;
 }
 

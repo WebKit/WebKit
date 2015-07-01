@@ -129,6 +129,9 @@ public:
 
     WEBCORE_EXPORT bool renderedCharactersExceed(unsigned threshold);
 
+    WEBCORE_EXPORT void setViewportIsStable(bool stable) { m_viewportIsStable = stable; }
+    bool viewportIsStable() const { return m_viewportIsStable; }
+
 #if PLATFORM(IOS)
     bool useCustomFixedPositionLayoutRect() const { return m_useCustomFixedPositionLayoutRect; }
     IntRect customFixedPositionLayoutRect() const { return m_customFixedPositionLayoutRect; }
@@ -743,6 +746,8 @@ private:
     bool m_isVisuallyNonEmpty;
     bool m_firstVisuallyNonEmptyLayoutCallbackPending;
 
+    bool m_viewportIsStable { true };
+
     RefPtr<ContainerNode> m_maintainScrollPositionAnchor;
 
     // Renderer to hold our custom scroll corner.
@@ -757,11 +762,6 @@ private:
 
     bool m_useCustomSizeForResizeEvent;
     IntSize m_customSizeForResizeEvent;
-
-    double m_horizontalVelocity;
-    double m_verticalVelocity;
-    double m_scaleChangeRate;
-    double m_lastVelocityUpdateTime;
 #endif
 
     IntSize m_overrideViewportSize;

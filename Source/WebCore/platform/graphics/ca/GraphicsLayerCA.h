@@ -152,11 +152,17 @@ public:
         int treeDepth { 0 };
         bool ancestorHasTransformAnimation { false };
         bool ancestorIsViewportConstrained { false };
+        bool viewportIsStable { true };
+        
+        CommitState(bool stableViewport)
+            : viewportIsStable(stableViewport)
+        {
+        }
     };
     void recursiveCommitChanges(const CommitState&, const TransformState&, float pageScaleFactor = 1, const FloatPoint& positionRelativeToBase = FloatPoint(), bool affectedByPageScale = false);
 
-    WEBCORE_EXPORT virtual void flushCompositingState(const FloatRect&) override;
-    WEBCORE_EXPORT virtual void flushCompositingStateForThisLayerOnly() override;
+    WEBCORE_EXPORT virtual void flushCompositingState(const FloatRect&, bool viewportIsStable) override;
+    WEBCORE_EXPORT virtual void flushCompositingStateForThisLayerOnly(bool viewportIsStable) override;
 
     WEBCORE_EXPORT virtual bool visibleRectChangeRequiresFlush(const FloatRect& visibleRect) const override;
 
@@ -294,7 +300,7 @@ private:
     const FloatRect& visibleRect() const { return m_visibleRect; }
     const FloatRect& coverageRect() const { return m_coverageRect; }
 
-    void setVisibleAndCoverageRects(const VisibleAndCoverageRects&, bool isViewportConstrained);
+    void setVisibleAndCoverageRects(const VisibleAndCoverageRects&, bool isViewportConstrained, bool viewportIsStable);
     
     static FloatRect adjustTiledLayerVisibleRect(TiledBacking*, const FloatRect& oldVisibleRect, const FloatRect& newVisibleRect, const FloatSize& oldSize, const FloatSize& newSize);
 

@@ -371,9 +371,9 @@ void RemoteLayerTreeDrawingArea::flushLayers()
 
     // Because our view-relative overlay root layer is not attached to the FrameView's GraphicsLayer tree, we need to flush it manually.
     if (m_viewOverlayRootLayer)
-        m_viewOverlayRootLayer->flushCompositingState(visibleRect);
+        m_viewOverlayRootLayer->flushCompositingState(visibleRect, m_webPage.mainFrameView()->viewportIsStable());
 
-    m_rootLayer->flushCompositingStateForThisLayerOnly();
+    m_rootLayer->flushCompositingStateForThisLayerOnly(m_webPage.mainFrameView()->viewportIsStable());
 
     // FIXME: Minimize these transactions if nothing changed.
     RemoteLayerTreeTransaction layerTransaction;
