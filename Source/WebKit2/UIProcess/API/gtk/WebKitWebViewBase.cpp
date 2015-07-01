@@ -1100,7 +1100,7 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WebPro
     // FIXME: Accelerated compositing under Wayland is not yet supported.
     // https://bugs.webkit.org/show_bug.cgi?id=115803
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland)
-        preferences->setAcceleratedCompositingEnabled(false);
+        configuration.preferences->setAcceleratedCompositingEnabled(false);
 #endif
 
     priv->pageProxy = context->createWebPage(*priv->pageClient, WTF::move(configuration));

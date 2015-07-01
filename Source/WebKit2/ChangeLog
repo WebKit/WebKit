@@ -1,3 +1,13 @@
+2015-07-01  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] [Wayland] Build broken with ENABLE_WAYLAND_TARGET=ON
+        https://bugs.webkit.org/show_bug.cgi?id=146512
+
+        Unreviewed, fix build with ENABLE_WAYLAND_TARGET=ON after r185949.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseCreateWebPage):
+
 2015-06-30  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] REGRESSION(r183936): Test /webkit2/WebKitWebContext/spell-checker fails since r183936
