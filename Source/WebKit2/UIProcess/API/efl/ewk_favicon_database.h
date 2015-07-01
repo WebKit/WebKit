@@ -94,6 +94,13 @@ EAPI void ewk_favicon_database_icon_change_callback_add(Ewk_Favicon_Database *da
  */
 EAPI void ewk_favicon_database_icon_change_callback_del(Ewk_Favicon_Database *database, Ewk_Favicon_Database_Icon_Change_Cb callback);
 
+/**
+ * Deletes all favicon data.
+ *
+ * @param database database object to clear all favicon data
+ */
+EAPI void ewk_favicon_database_clear(Ewk_Favicon_Database *database);
+
 #ifdef __cplusplus
 }
 #endif

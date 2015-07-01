@@ -1,3 +1,23 @@
+2015-06-30  Hyungwook Lee  <hyungwook.lee@navercorp.com>
+
+        [EFL] Implement ewk_favicon_database_clear() API.
+        https://bugs.webkit.org/show_bug.cgi?id=146337
+
+        Reviewed by Gyuyoung Kim.
+
+        We need to provide way to clear favicon data.
+
+        * UIProcess/API/efl/ewk_favicon_database.cpp:
+        (EwkFaviconDatabase::getIconSurfaceSynchronously):
+        (EwkFaviconDatabase::clearFaviconDatabase):
+        (EwkFaviconDatabase::iconDataReadyForPageURL):
+        (ewk_favicon_database_icon_change_callback_del):
+        (ewk_favicon_database_clear):
+        * UIProcess/API/efl/ewk_favicon_database.h:
+        * UIProcess/API/efl/ewk_favicon_database_private.h:
+        * UIProcess/API/efl/tests/test_ewk2_favicon_database.cpp:
+        (TEST_F):
+
 2015-06-30  Andreas Kling  <akling@apple.com>
 
         [iOS] Ignore viewport rect changes during zoom bouncing.

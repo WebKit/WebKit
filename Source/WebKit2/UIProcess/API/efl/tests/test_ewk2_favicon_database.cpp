@@ -120,3 +120,53 @@ TEST_F(EWK2FaviconDatabaseTest, ewk_favicon_database_async_icon_get)
 
     ewk_favicon_database_icon_change_callback_del(database, requestFaviconData);
 }
+
+TEST_F(EWK2FaviconDatabaseTest, ewk_favicon_database_clear)
+{
+    std::unique_ptr<EWK2UnitTestServer> httpServer1 = std::make_unique<EWK2UnitTestServer>();
+    httpServer1->run(serverCallback);
+
+    // Set favicon database path and enable functionality.
+    Ewk_Context* context = ewk_view_context_get(webView());
+    ewk_context_favicon_database_directory_set(context, 0);
+    Ewk_Favicon_Database* database = ewk_context_favicon_database_get(context);
+
+    IconRequestData data1 = { webView(), 0 };
+    ewk_favicon_database_icon_change_callback_add(database, requestFaviconData, &data1);
+
+    ASSERT_TRUE(loadUrlSync(httpServer1->getURLForPath("/").data()));
+
+    while (!data1.icon)
+        ecore_main_loop_iterate();
+
+    ASSERT_TRUE(data1.icon);
+    evas_object_unref(data1.icon);
+
+    ewk_favicon_database_icon_change_callback_del(database, requestFaviconData);
+
+    // Runs another httpServer for loading another favicon.
+    // EWK2UnitTestServer runs on random port that automatically makes different url of the favicon.
+    std::unique_ptr<EWK2UnitTestServer> httpServer2 = std::make_unique<EWK2UnitTestServer>();
+    httpServer2->run(serverCallback);
+
+    IconRequestData data2 = { webView(), 0 };
+    ewk_favicon_database_icon_change_callback_add(database, requestFaviconData, &data2);
+
+    ASSERT_TRUE(loadUrlSync(httpServer2->getURLForPath("/").data()));
+
+    while (!data2.icon)
+        ecore_main_loop_iterate();
+    
+    ASSERT_TRUE(data2.icon);
+    evas_object_unref(data2.icon);
+
+    ewk_favicon_database_icon_change_callback_del(database, requestFaviconData);
+
+    ewk_favicon_database_clear(database);
+
+    data1.icon = ewk_favicon_database_icon_get(database, httpServer1->getURLForPath("/").data(), evas_object_evas_get(webView()));
+    ASSERT_FALSE(data1.icon);
+
+    data2.icon = ewk_favicon_database_icon_get(database, httpServer2->getURLForPath("/").data(), evas_object_evas_get(webView()));
+    ASSERT_FALSE(data2.icon);
+}

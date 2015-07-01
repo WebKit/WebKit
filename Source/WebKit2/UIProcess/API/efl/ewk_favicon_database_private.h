@@ -56,6 +56,7 @@ public:
     PassRefPtr<cairo_surface_t> getIconSurfaceSynchronously(const char* pageURL) const;
     void watchChanges(const IconChangeCallbackData& callbackData);
     void unwatchChanges(Ewk_Favicon_Database_Icon_Change_Cb callback);
+    void clearFaviconDatabase();
 
 private:
     static void iconDataReadyForPageURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL, const void* clientInfo);

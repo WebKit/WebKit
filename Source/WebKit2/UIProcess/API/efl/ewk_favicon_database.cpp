@@ -82,6 +82,11 @@ PassRefPtr<cairo_surface_t> EwkFaviconDatabase::getIconSurfaceSynchronously(cons
     return surface.release();
 }
 
+void EwkFaviconDatabase::clearFaviconDatabase()
+{
+    WKIconDatabaseRemoveAllIcons(m_iconDatabase.get());
+}
+
 void EwkFaviconDatabase::iconDataReadyForPageURL(WKIconDatabaseRef, WKURLRef pageURL, const void* clientInfo)
 {
     EwkFaviconDatabase* ewkIconDatabase = const_cast<EwkFaviconDatabase*>(static_cast<const EwkFaviconDatabase*>(clientInfo));
@@ -120,4 +125,11 @@ void ewk_favicon_database_icon_change_callback_del(Ewk_Favicon_Database* ewkIcon
     EINA_SAFETY_ON_NULL_RETURN(callback);
 
     ewkIconDatabase->unwatchChanges(callback);
+}
+
+void ewk_favicon_database_clear(Ewk_Favicon_Database* ewkIconDatabase)
+{
+    EINA_SAFETY_ON_NULL_RETURN(ewkIconDatabase);
+
+    ewkIconDatabase->clearFaviconDatabase();
 }
