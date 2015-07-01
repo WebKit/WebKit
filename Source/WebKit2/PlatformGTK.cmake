@@ -91,6 +91,7 @@ list(APPEND WebKit2_SOURCES
 
     UIProcess/API/C/gtk/WKFullScreenClientGtk.cpp
     UIProcess/API/C/gtk/WKInspectorClientGtk.cpp
+    UIProcess/API/C/gtk/WKTextCheckerGtk.cpp
     UIProcess/API/C/gtk/WKView.cpp
 
     UIProcess/API/C/soup/WKCookieManagerSoup.cpp

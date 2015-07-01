@@ -43,18 +43,6 @@ namespace WebKit {
 static WebCore::TextCheckerEnchant& enchantTextChecker()
 {
     static NeverDestroyed<WebCore::TextCheckerEnchant> checker;
-
-#if ENABLE(DEVELOPER_MODE)
-    // This is a bit of a hack, but ensures that for testing purposes,
-    // spell checking is properly initialized in WebKitTestRunner while
-    // running layout tests. We should consider replacing this with some
-    // more accessible C API at some point.
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        checker.get().updateSpellCheckingLanguages(Vector<String> { "en_US" });
-    });
-#endif
-
     return checker;
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2015 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef WKTextCheckerGtk_h
+#define WKTextCheckerGtk_h
 
-#include "TestController.h"
-#include <WebKit/WKTextCheckerGtk.h>
-#include <gtk/gtk.h>
-#include <wtf/glib/GRefPtr.h>
+#include <WebKit/WKBase.h>
 
-int main(int argc, char** argv)
-{
-    gtk_init(&argc, &argv);
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-    GRefPtr<GPtrArray> languages = adoptGRef(g_ptr_array_new());
-    g_ptr_array_add(languages.get(), const_cast<gpointer>(static_cast<const void*>("en_US")));
-    g_ptr_array_add(languages.get(), nullptr);
-    WKTextCheckerSetSpellCheckingLanguages(reinterpret_cast<const char* const*>(languages->pdata));
+WK_EXPORT void WKTextCheckerSetSpellCheckingLanguages(const char* const* languages);
 
-    // Prefer the not installed web and plugin processes.
-    WTR::TestController controller(argc, const_cast<const char**>(argv));
-
-    return 0;
+#ifdef __cplusplus
 }
+#endif
+
+#endif /* WKTextCheckerGtk_h */

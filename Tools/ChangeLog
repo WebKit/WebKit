@@ -1,3 +1,14 @@
+2015-06-30  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] REGRESSION(r183936): Test /webkit2/WebKitWebContext/spell-checker fails since r183936
+        https://bugs.webkit.org/show_bug.cgi?id=144828
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebKitTestRunner/gtk/main.cpp:
+        (main): Use the new WKTextChecker API to set the spell checking languages
+        when the process is starting up.
+
 2015-06-30  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         Implement ECMAScript Internationalization API

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2015 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,23 +24,16 @@
  */
 
 #include "config.h"
+#include "WKTextCheckerGtk.h"
 
-#include "TestController.h"
-#include <WebKit/WKTextCheckerGtk.h>
-#include <gtk/gtk.h>
-#include <wtf/glib/GRefPtr.h>
+#include "TextChecker.h"
 
-int main(int argc, char** argv)
+void WKTextCheckerSetSpellCheckingLanguages(const char* const* languages)
 {
-    gtk_init(&argc, &argv);
-
-    GRefPtr<GPtrArray> languages = adoptGRef(g_ptr_array_new());
-    g_ptr_array_add(languages.get(), const_cast<gpointer>(static_cast<const void*>("en_US")));
-    g_ptr_array_add(languages.get(), nullptr);
-    WKTextCheckerSetSpellCheckingLanguages(reinterpret_cast<const char* const*>(languages->pdata));
-
-    // Prefer the not installed web and plugin processes.
-    WTR::TestController controller(argc, const_cast<const char**>(argv));
-
-    return 0;
+#if ENABLE(SPELLCHECK)
+    Vector<String> spellCheckingLanguages;
+    for (size_t i = 0; languages[i]; ++i)
+        spellCheckingLanguages.append(String::fromUTF8(languages[i]));
+    WebKit::TextChecker::setSpellCheckingLanguages(spellCheckingLanguages);
+#endif
 }
