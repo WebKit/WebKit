@@ -360,15 +360,14 @@ WebHistoryItem *kit(HistoryItem* item)
         core(_private)->setLastVisitWasFailure(true);
     
     if (NSArray *redirectURLs = [dict _webkit_arrayForKey:redirectURLsKey]) {
-        NSUInteger size = [redirectURLs count];
         auto redirectURLsVector = std::make_unique<Vector<String>>();
+        redirectURLsVector->reserveInitialCapacity([redirectURLs count]);
 
-        for (NSUInteger i = 0; i < size; ++i) {
-            id redirectURL = [redirectURLs objectAtIndex:i];
+        for (id redirectURL in redirectURLs) {
             if (![redirectURL isKindOfClass:[NSString class]])
                 continue;
 
-            (*redirectURLsVector)[i] = (NSString *)redirectURL;
+            redirectURLsVector->uncheckedAppend((NSString *)redirectURL);
         }
 
         core(_private)->setRedirectURLs(WTF::move(redirectURLsVector));
