@@ -1,3 +1,14 @@
+2015-07-01  Brady Eidson  <beidson@apple.com>
+
+        Never try to pass URLs to LaunchServices when they're the same domain as the current URL.
+        <rdar://problem/20731429> and https://bugs.webkit.org/show_bug.cgi?id=146521
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::tryAppLink): Compare the proposed URL to the current URL to see if they’re in the same domain.
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+
 2015-07-01  Tim Horton  <timothy_horton@apple.com>
 
         WKWebView snapshots have the wrong scale after rotation
