@@ -1,3 +1,33 @@
+2015-07-01  Matthew Mirman  <mmirman@apple.com>
+
+        Unreviewed, rolling out r185889
+        https://bugs.webkit.org/show_bug.cgi?id=146528
+        rdar://problem/21573959
+
+        Patch breaks chromeexperiments.com
+        
+        Reverted changeset:
+        
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * inspector/InjectedScriptSource.js:
+        (.):
+        * runtime/JSBoundSlotBaseFunction.cpp: Removed.
+        * runtime/JSBoundSlotBaseFunction.h: Removed.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init): Deleted.
+        (JSC::JSGlobalObject::visitChildren): Deleted.
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::boundSlotBaseFunctionStructure): Deleted.
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertyDescriptor):
+        (JSC::getBoundSlotBaseFunctionForGetterSetter): Deleted.
+        * runtime/VM.cpp:
+        (JSC::VM::VM): Deleted.
+        * runtime/VM.h:
+
 2015-07-01  Dean Jackson  <dino@apple.com>
 
         Disable the experimental WebGL2 implementation

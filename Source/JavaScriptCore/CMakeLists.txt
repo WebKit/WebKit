@@ -476,7 +476,6 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/IteratorOperations.cpp
     runtime/IteratorPrototype.cpp
     runtime/JSAPIValueWrapper.cpp
-    runtime/JSBoundSlotBaseFunction.cpp
     runtime/JSArray.cpp
     runtime/JSArrayBuffer.cpp
     runtime/JSArrayBufferConstructor.cpp

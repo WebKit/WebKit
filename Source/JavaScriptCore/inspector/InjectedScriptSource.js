@@ -54,14 +54,6 @@ function isUInt32(obj)
     return "" + (obj >>> 0) === obj;
 }
 
-function endsWith(str, suffix)
-{
-    var position = str.length - suffix.length;
-    if (position < 0)
-        return false;
-    return str.indexOf(suffix, position) === position;
-}
-
 function isSymbol(obj)
 {
     return typeof obj === "symbol";
@@ -688,10 +680,8 @@ InjectedScript.prototype = {
                     continue;
                 }
 
-                if (endsWith(String(descriptor.get), "[native code]\n}") || 
-                     (!descriptor.get && descriptor.hasOwnProperty("get") && !descriptor.set && descriptor.hasOwnProperty("set"))) {
-                    // FIXME: Some Native Bindings Descriptors are Incomplete
-                    // <https://webkit.org/b/141585> Some IDL attributes appear on the instances instead of on prototypes
+                if (descriptor.hasOwnProperty("get") && descriptor.hasOwnProperty("set") && !descriptor.get && !descriptor.set) {
+                    // FIXME: <https://webkit.org/b/140575> Web Inspector: Native Bindings Descriptors are Incomplete
                     // Developers may create such a descriptors, so we should be resilient:
                     // var x = {}; Object.defineProperty(x, "p", {get:undefined}); Object.getOwnPropertyDescriptor(x, "p")
                     var fakeDescriptor = createFakeValueDescriptor(name, symbol, descriptor, isOwnProperty, true);

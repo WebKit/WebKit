@@ -11,8 +11,8 @@ Properties of Bound function
   __proto__ function function () {
     [native code]
 }
-  arguments object TypeError: Type error
-  caller object TypeError: Type error
+  arguments
+  caller
   length number 0
   name string Number
 Internal properties
