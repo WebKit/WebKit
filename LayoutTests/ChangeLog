@@ -1,3 +1,25 @@
+2015-07-01  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Failures on W3C media-source tests regarding MIME types
+        https://bugs.webkit.org/show_bug.cgi?id=146499
+
+        Reviewed by Eric Carlson.
+
+        Import four new tests from the w3c test suite <https://github.com/w3c/web-platform-tests.git>.
+
+        * http/tests/media/media-source/SourceBuffer-abort-readyState.html: Added.
+        * http/tests/media/media-source/SourceBuffer-abort-removed.html: Added.
+        * http/tests/media/media-source/SourceBuffer-abort-updating.html: Added.
+        * http/tests/media/media-source/SourceBuffer-abort.html: Added.
+        * http/tests/media/white.mp4: Added.
+        * http/tests/media/white.webm: Added.
+        * platform/mac/TestExpectations:
+        * platform/mac/http/tests/media/media-source/SourceBuffer-abort-expected.txt: Added.
+        * platform/mac/http/tests/media/media-source/SourceBuffer-abort-readyState-expected.txt: Added.
+        * platform/mac/http/tests/media/media-source/SourceBuffer-abort-removed-expected.txt: Added.
+        * platform/mac/http/tests/media/media-source/SourceBuffer-abort-updating-expected.txt: Added.
+        * platform/mac/http/tests/media/media-source/mediasource-is-type-supported-expected.txt: Added.
+
 2015-06-30  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Unreviewed gardening.

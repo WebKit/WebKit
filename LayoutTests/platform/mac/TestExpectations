@@ -1115,12 +1115,17 @@ webkit.org/b/137505 media/track/track-forced-subtitles-in-band.html [ Failure Pa
 
 # Passing Media Source tests
 [ Yosemite+ ] http/tests/media/media-source/ [ Skip ]
+[ Yosemite+ ] http/tests/media/media-source/SourceBuffer-abort-readyState.html [ Pass ]
+[ Yosemite+ ] http/tests/media/media-source/SourceBuffer-abort-removed.html [ Pass ]
+[ Yosemite+ ] http/tests/media/media-source/SourceBuffer-abort-updating.html [ Pass ]
+[ Yosemite+ ] http/tests/media/media-source/SourceBuffer-abort.html [ Pass ]
 [ Yosemite+ ] http/tests/media/media-source/mediasource-addsourcebuffer.html [ Pass ]
 [ Yosemite+ ] http/tests/media/media-source/mediasource-append-buffer.html [ Pass ]
 [ Yosemite+ ] http/tests/media/media-source/mediasource-closed.html [ Pass ]
 [ Yosemite+ ] http/tests/media/media-source/mediasource-config-change-mp4-v-bitrate.html [ Pass ]
 [ Yosemite+ ] http/tests/media/media-source/mediasource-config-change-mp4-v-framerate.html [ Pass ]
 [ Yosemite+ ] http/tests/media/media-source/mediasource-endofstream-invaliderror.html [ Pass ]
+[ Yosemite+ ] http/tests/media/media-source/mediasource-is-type-supported.html [ Pass ]
 [ Yosemite+ ] http/tests/media/media-source/mediasource-multiple-attach.html [ Pass ]
 [ Yosemite+ ] http/tests/media/media-source/mediasource-play.html [ Pass ]
 [ Yosemite+ ] http/tests/media/media-source/mediasource-remove.html [ Pass ]
