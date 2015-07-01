@@ -2172,10 +2172,9 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
                     linkBoundingBox.unite(quad.enclosingBoundingBox());
                 info.bounds = IntRect(linkBoundingBox);
             } else if (RenderElement* renderer = element->renderer()) {
-                if (renderer->isRenderImage()) {
-                    auto& renderImage = downcast<RenderImage>(*renderer);
-                    info.bounds = renderImage.absoluteContentQuad().enclosingBoundingBox();
-                } else
+                if (renderer->isRenderImage())
+                    info.bounds = downcast<RenderImage>(*renderer).absoluteContentQuad().enclosingBoundingBox();
+                else
                     info.bounds = renderer->absoluteBoundingBoxRect();
             }
         }

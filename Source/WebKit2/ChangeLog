@@ -1,3 +1,13 @@
+2015-07-01  Beth Dakin  <bdakin@apple.com>
+
+        This is a quick follow-on to http://trac.webkit.org/changeset/186132
+
+        Rubber-stamped by Darin Adler.
+
+        Make this a one-liner.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+
 2015-07-01  Matthew Daiter  <mdaiter@apple.com>
 
         Enable MEDIA_STREAM flag
