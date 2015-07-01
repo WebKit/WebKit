@@ -357,7 +357,7 @@ GraphicsLayerCA::GraphicsLayerCA(Type layerType, GraphicsLayerClient& client)
     : GraphicsLayer(layerType, client)
     , m_needsFullRepaint(false)
     , m_usingBackdropLayerType(false)
-    , m_allowsBackingStoreDetachment(true)
+    , m_isViewportConstrained(false)
     , m_intersectsCoverageRect(false)
 {
 }
@@ -1272,7 +1272,7 @@ bool GraphicsLayerCA::adjustCoverageRect(VisibleAndCoverageRects& rects, const F
     return true;
 }
 
-void GraphicsLayerCA::setVisibleAndCoverageRects(const VisibleAndCoverageRects& rects, bool allowBackingStoreDetachment)
+void GraphicsLayerCA::setVisibleAndCoverageRects(const VisibleAndCoverageRects& rects, bool isViewportConstrained)
 {
     bool visibleRectChanged = rects.visibleRect != m_visibleRect;
     bool coverageRectChanged = rects.coverageRect != m_coverageRect;
@@ -1280,7 +1280,7 @@ void GraphicsLayerCA::setVisibleAndCoverageRects(const VisibleAndCoverageRects& 
         return;
 
     // FIXME: we need to take reflections into account when determining whether this layer intersects the coverage rect.
-    bool intersectsCoverageRect = !allowBackingStoreDetachment || rects.coverageRect.intersects(FloatRect(m_boundsOrigin, size()));
+    bool intersectsCoverageRect = isViewportConstrained || rects.coverageRect.intersects(FloatRect(m_boundsOrigin, size()));
     if (intersectsCoverageRect != m_intersectsCoverageRect) {
         m_uncommittedChanges |= CoverageRectChanged;
         m_intersectsCoverageRect = intersectsCoverageRect;
@@ -1329,7 +1329,7 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
             localState.setLastPlanarSecondaryQuad(&secondaryQuad);
         }
     }
-    setVisibleAndCoverageRects(rects, m_allowsBackingStoreDetachment && commitState.ancestorsAllowBackingStoreDetachment);
+    setVisibleAndCoverageRects(rects, m_isViewportConstrained || commitState.ancestorIsViewportConstrained);
 
 #ifdef VISIBLE_TILE_WASH
     // Use having a transform as a key to making the tile wash layer. If every layer gets a wash,
@@ -1373,7 +1373,7 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
         affectedByTransformAnimation = true;
     }
     
-    childCommitState.ancestorsAllowBackingStoreDetachment &= m_allowsBackingStoreDetachment;
+    childCommitState.ancestorIsViewportConstrained |= m_isViewportConstrained;
 
     if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer))
         maskLayer->commitLayerChangesBeforeSublayers(childCommitState, pageScaleFactor, baseRelativePosition);
@@ -3673,12 +3673,12 @@ void GraphicsLayerCA::updateOpacityOnLayer()
     }
 }
 
-void GraphicsLayerCA::setAllowsBackingStoreDetachment(bool allowDetachment)
+void GraphicsLayerCA::setIsViewportConstrained(bool isViewportConstrained)
 {
-    if (allowDetachment == m_allowsBackingStoreDetachment)
+    if (isViewportConstrained == m_isViewportConstrained)
         return;
 
-    m_allowsBackingStoreDetachment = allowDetachment;
+    m_isViewportConstrained = isViewportConstrained;
     noteLayerPropertyChanged(CoverageRectChanged);
 }
 

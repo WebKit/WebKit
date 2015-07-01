@@ -151,7 +151,7 @@ public:
     struct CommitState {
         int treeDepth { 0 };
         bool ancestorHasTransformAnimation { false };
-        bool ancestorsAllowBackingStoreDetachment { true };
+        bool ancestorIsViewportConstrained { false };
     };
     void recursiveCommitChanges(const CommitState&, const TransformState&, float pageScaleFactor = 1, const FloatPoint& positionRelativeToBase = FloatPoint(), bool affectedByPageScale = false);
 
@@ -195,8 +195,8 @@ private:
 
     virtual bool isCommittingChanges() const override { return m_isCommittingChanges; }
 
-    WEBCORE_EXPORT virtual void setAllowsBackingStoreDetachment(bool) override;
-    virtual bool allowsBackingStoreDetachment() const override { return m_allowsBackingStoreDetachment; }
+    WEBCORE_EXPORT virtual void setIsViewportConstrained(bool) override;
+    virtual bool isViewportConstrained() const override { return m_isViewportConstrained; }
 
     WEBCORE_EXPORT virtual double backingStoreMemoryEstimate() const override;
 
@@ -294,7 +294,7 @@ private:
     const FloatRect& visibleRect() const { return m_visibleRect; }
     const FloatRect& coverageRect() const { return m_coverageRect; }
 
-    void setVisibleAndCoverageRects(const VisibleAndCoverageRects&, bool allowBackingStoreDetachment);
+    void setVisibleAndCoverageRects(const VisibleAndCoverageRects&, bool isViewportConstrained);
     
     static FloatRect adjustTiledLayerVisibleRect(TiledBacking*, const FloatRect& oldVisibleRect, const FloatRect& newVisibleRect, const FloatSize& oldSize, const FloatSize& newSize);
 
@@ -513,7 +513,7 @@ private:
     ContentsLayerPurpose m_contentsLayerPurpose { NoContentsLayer };
     bool m_needsFullRepaint : 1;
     bool m_usingBackdropLayerType : 1;
-    bool m_allowsBackingStoreDetachment : 1;
+    bool m_isViewportConstrained : 1;
     bool m_intersectsCoverageRect : 1;
 
     Color m_contentsSolidColor;

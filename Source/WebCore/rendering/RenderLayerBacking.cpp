@@ -1608,7 +1608,7 @@ void RenderLayerBacking::detachFromScrollingCoordinator(LayerScrollCoordinationR
 
 void RenderLayerBacking::setIsScrollCoordinatedWithViewportConstrainedRole(bool viewportCoordinated)
 {
-    m_graphicsLayer->setAllowsBackingStoreDetachment(!viewportCoordinated);
+    m_graphicsLayer->setIsViewportConstrained(viewportCoordinated);
 }
 
 GraphicsLayerPaintingPhase RenderLayerBacking::paintingPhaseForPrimaryLayer() const
