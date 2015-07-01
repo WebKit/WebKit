@@ -329,9 +329,10 @@ void AcceleratedCompositingContext::scheduleLayerFlush()
 
 bool AcceleratedCompositingContext::flushPendingLayerChanges()
 {
-    m_rootLayer->flushCompositingStateForThisLayerOnly();
-    m_nonCompositedContentLayer->flushCompositingStateForThisLayerOnly();
-    if (!core(&m_webView)->mainFrame().view()->flushCompositingStateIncludingSubframes())
+    FrameView* frameView = core(&m_webView)->mainFrame().view();
+    m_rootLayer->flushCompositingStateForThisLayerOnly(frameView->viewportIsStable());
+    m_nonCompositedContentLayer->flushCompositingStateForThisLayerOnly(frameView->viewportIsStable());
+    if (!frameView->flushCompositingStateIncludingSubframes())
         return false;
 
     downcast<GraphicsLayerTextureMapper>(*m_rootLayer).updateBackingStoreIncludingSubLayers();

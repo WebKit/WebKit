@@ -1,5 +1,12 @@
 2015-06-30  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix Mac and Windows builds.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+
+2015-06-30  Simon Fraser  <simon.fraser@apple.com>
+
         [iOS] Missing tiles inside position:fixed on scrolling
         https://bugs.webkit.org/show_bug.cgi?id=146485
         rdar://problem/21226861
