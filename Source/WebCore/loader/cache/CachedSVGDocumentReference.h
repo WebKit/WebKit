@@ -43,6 +43,7 @@ public:
 
     void load(CachedResourceLoader&);
     bool loadRequested() const { return m_loadRequested; }
+    void setAcceptsAnyImageType() { m_acceptsAnyImageType = true; }
 
     CachedSVGDocument* document() { return m_document.get(); }
 
@@ -52,6 +53,7 @@ private:
     bool m_loadRequested;
     CachedSVGDocumentClient* m_additionalDocumentClient;
     bool m_canReuseResource;
+    bool m_acceptsAnyImageType { false };
 };
 
 };

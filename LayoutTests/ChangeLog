@@ -1,3 +1,13 @@
+2015-07-01  Antti Koivisto  <antti@apple.com>
+
+        PNG mask images are loaded with Accept:image/svg+xml
+        https://bugs.webkit.org/show_bug.cgi?id=146509
+
+        Reviewed by Simon Fraser.
+
+        * http/tests/misc/mask-image-accept-expected.html: Added.
+        * http/tests/misc/mask-image-accept.html: Added.
+
 2015-07-01  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Failures on W3C media-source tests regarding MIME types
