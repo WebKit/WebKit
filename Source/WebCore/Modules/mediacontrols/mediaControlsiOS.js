@@ -539,7 +539,7 @@ ControllerIOS.prototype = {
         this.updateShouldListenForPlaybackTargetAvailabilityEvent();
         if (!this.video.controls)
             return;
-        
+
         this.updateForShowingControls();
         if (this.shouldHaveControls() && !this.controls.panelContainer.parentElement) {
             this.base.appendChild(this.controls.inlinePlaybackPlaceholder);
@@ -561,6 +561,7 @@ ControllerIOS.prototype = {
 
         switch (presentationMode) {
             case 'inline':
+                this.controls.panelContainer.classList.remove(this.ClassNames.pictureInPicture);
                 this.controls.inlinePlaybackPlaceholder.classList.add(this.ClassNames.hidden);
                 this.controls.inlinePlaybackPlaceholder.classList.remove(this.ClassNames.pictureInPicture);
                 this.controls.inlinePlaybackPlaceholderTextTop.classList.remove(this.ClassNames.pictureInPicture);
@@ -569,6 +570,7 @@ ControllerIOS.prototype = {
                 this.controls.pictureInPictureButton.classList.remove(this.ClassNames.returnFromPictureInPicture);
                 break;
             case 'picture-in-picture':
+                this.controls.panelContainer.classList.add(this.ClassNames.pictureInPicture);
                 this.controls.inlinePlaybackPlaceholder.classList.add(this.ClassNames.pictureInPicture);
                 this.controls.inlinePlaybackPlaceholder.classList.remove(this.ClassNames.hidden);
 
@@ -580,6 +582,7 @@ ControllerIOS.prototype = {
                 this.controls.pictureInPictureButton.classList.add(this.ClassNames.returnFromPictureInPicture);
                 break;
             default:
+                this.controls.panelContainer.classList.remove(this.ClassNames.pictureInPicture);
                 this.controls.inlinePlaybackPlaceholder.classList.remove(this.ClassNames.pictureInPicture);
                 this.controls.inlinePlaybackPlaceholderTextTop.classList.remove(this.ClassNames.pictureInPicture);
                 this.controls.inlinePlaybackPlaceholderTextBottom.classList.remove(this.ClassNames.pictureInPicture);
@@ -590,6 +593,7 @@ ControllerIOS.prototype = {
 
         this.updateControls();
         this.updateCaptionContainer();
+        this.resetHideControlsTimer();
         if (presentationMode != 'fullscreen' && this.video.paused && this.controlsAreHidden())
             this.showControls();
     },

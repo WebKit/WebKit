@@ -671,3 +671,9 @@ audio::-webkit-media-controls-wireless-playback-status.hidden {
     display: none;
 }
 
+/* When PiP is active, we don't want the controls container showing. */
+video::-webkit-media-controls-panel-container.picture-in-picture {
+    opacity: 0;
+    pointer-events: none;
+}
+
