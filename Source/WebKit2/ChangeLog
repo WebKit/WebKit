@@ -1,3 +1,35 @@
+2015-07-01  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Web page doesn't update its loading state when web process becomes suspended if there are pending network requests (XHR).
+        https://bugs.webkit.org/show_bug.cgi?id=146439
+
+        When web page is loading, we hold a background activity token in NavigationState and we release the token when the page done
+        loading. A web page can start loading subresources (like XHR) after the page is loaded, and WebPageProxy will update its
+        _networkRequestsInProgress state which will notify the client there is network actvity on-going. Since we don't hold
+        the background activity token after page is loaded, the WebContent process could become suspended without notifying the client
+        and the client will lose track of the loading state.
+
+        The first thought was to hold another background activity when _networkRequestsInProgress flag is set in NavigationState.
+        However, this could result in side-effect that a WebContent process can stay active for too long if there is a long lasting
+        XHR resquest.
+        
+        This patch fix this by notifying the client that network activity is stopped when WebContent process is going to be suspended.
+        We also cache the networkRequestsInProgress state for suspended process, so that when it becomes foreground, we can tell
+        the client the correct state of network activity.
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy): Initialize m_hasNetworkRequestsOnSuspended.
+        (WebKit::WebPageProxy::processWillBecomeSuspended): If there is pending requests on suspend, cache the network activity state
+            and notify the client.
+        (WebKit::WebPageProxy::processWillBecomeForground): Restore the network activity state when the process becomes foreground. 
+        (WebKit::WebPageProxy::resetState):
+        * UIProcess/WebPageProxy.h: Add a data member m_hasNetworkRequestsOnSuspended to cache the network activity state on process
+            suspend.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didSetAssertionState):
+
 2015-07-01  Dean Jackson  <dino@apple.com>
 
         Disable the experimental WebGL2 implementation

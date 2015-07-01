@@ -921,6 +921,8 @@ void WebProcessProxy::didSetAssertionState(AssertionState state)
     case AssertionState::Suspended:
         m_foregroundTokenForNetworkProcess = nullptr;
         m_backgroundTokenForNetworkProcess = nullptr;
+        for (auto& page : m_pageMap.values())
+            page->processWillBecomeSuspended();
         break;
 
     case AssertionState::Background:
@@ -933,6 +935,8 @@ void WebProcessProxy::didSetAssertionState(AssertionState state)
         if (processPool().usesNetworkProcess())
             m_foregroundTokenForNetworkProcess = processPool().ensureNetworkProcess().throttler().foregroundActivityToken();
         m_backgroundTokenForNetworkProcess = nullptr;
+        for (auto& page : m_pageMap.values())
+            page->processWillBecomeForeground();
         break;
     }
 #else

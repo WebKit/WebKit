@@ -303,6 +303,7 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
     , m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit(false)
     , m_dynamicViewportSizeUpdateLayerTreeTransactionID(0)
     , m_layerTreeTransactionIdAtLastTouchStart(0)
+    , m_hasNetworkRequestsOnSuspended(false)
 #endif
     , m_geolocationPermissionRequestManager(*this)
     , m_notificationPermissionRequestManager(*this)
@@ -4834,6 +4835,27 @@ void WebPageProxy::processDidCrash()
         m_loaderClient->processDidCrash(*this);
 }
 
+#if PLATFORM(IOS)
+void WebPageProxy::processWillBecomeSuspended()
+{
+    ASSERT(m_isValid);
+
+    m_hasNetworkRequestsOnSuspended = m_pageLoadState.networkRequestsInProgress();
+    if (m_hasNetworkRequestsOnSuspended)
+        setNetworkRequestsInProgress(false);
+}
+
+void WebPageProxy::processWillBecomeForeground()
+{
+    ASSERT(m_isValid);
+
+    if (m_hasNetworkRequestsOnSuspended) {
+        setNetworkRequestsInProgress(true);
+        m_hasNetworkRequestsOnSuspended = false;
+    }
+}
+#endif
+
 void WebPageProxy::resetState(ResetStateReason resetStateReason)
 {
     m_mainFrame = nullptr;
@@ -4903,6 +4925,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     m_dynamicViewportSizeUpdateWaitingForLayerTreeCommit = false;
     m_dynamicViewportSizeUpdateLayerTreeTransactionID = 0;
     m_layerTreeTransactionIdAtLastTouchStart = 0;
+    m_hasNetworkRequestsOnSuspended = false;
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
