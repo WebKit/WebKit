@@ -213,6 +213,7 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
 
     BOOL _pageIsPrintingToPDF;
     RetainPtr<CGPDFDocumentRef> _printedDocument;
+    Vector<std::function<void ()>> _snapshotsDeferredDuringResize;
 #endif
 #if PLATFORM(MAC)
     RetainPtr<WKView> _wkView;
@@ -995,12 +996,12 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
         if (areEssentiallyEqualAsFloat(contentZoomScale(self), _scaleToRestore)) {
             CGRect unobscuredRect = UIEdgeInsetsInsetRect(self.bounds, _obscuredInsets);
             WebCore::FloatSize unobscuredContentSizeAtNewScale(unobscuredRect.size.width / _scaleToRestore, unobscuredRect.size.height / _scaleToRestore);
-            WebCore::FloatPoint topLeftInDocumentCoordinate(_unobscuredCenterToRestore.x() - unobscuredContentSizeAtNewScale.width() / 2, _unobscuredCenterToRestore.y() - unobscuredContentSizeAtNewScale.height() / 2);
+            WebCore::FloatPoint topLeftInDocumentCoordinates(_unobscuredCenterToRestore.x() - unobscuredContentSizeAtNewScale.width() / 2, _unobscuredCenterToRestore.y() - unobscuredContentSizeAtNewScale.height() / 2);
 
-            topLeftInDocumentCoordinate.scale(_scaleToRestore, _scaleToRestore);
-            topLeftInDocumentCoordinate.moveBy(WebCore::FloatPoint(-_obscuredInsets.left, -_obscuredInsets.top));
+            topLeftInDocumentCoordinates.scale(_scaleToRestore, _scaleToRestore);
+            topLeftInDocumentCoordinates.moveBy(WebCore::FloatPoint(-_obscuredInsets.left, -_obscuredInsets.top));
 
-            changeContentOffsetBoundedInValidRange(_scrollView.get(), topLeftInDocumentCoordinate);
+            changeContentOffsetBoundedInValidRange(_scrollView.get(), topLeftInDocumentCoordinates);
             if (_gestureController)
                 _gestureController->didRestoreScrollPosition();
         }
@@ -2831,6 +2832,9 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     _dynamicViewportUpdateMode = DynamicViewportUpdateMode::NotResizing;
     [_contentView setHidden:NO];
     [self _updateVisibleContentRects];
+
+    while (!_snapshotsDeferredDuringResize.isEmpty())
+        _snapshotsDeferredDuringResize.takeLast()();
 }
 
 - (void)_resizeWhileHidingContentWithUpdates:(void (^)(void))updateBlock
@@ -2849,6 +2853,17 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 
 - (void)_snapshotRect:(CGRect)rectInViewCoordinates intoImageOfWidth:(CGFloat)imageWidth completionHandler:(void(^)(CGImageRef))completionHandler
 {
+    if (_dynamicViewportUpdateMode != DynamicViewportUpdateMode::NotResizing) {
+        // Defer snapshotting until after the current resize completes.
+        void (^copiedCompletionHandler)(CGImageRef) = [completionHandler copy];
+        RetainPtr<WKWebView> retainedSelf = self;
+        _snapshotsDeferredDuringResize.append([retainedSelf, rectInViewCoordinates, imageWidth, copiedCompletionHandler] {
+            [retainedSelf _snapshotRect:rectInViewCoordinates intoImageOfWidth:imageWidth completionHandler:copiedCompletionHandler];
+            [copiedCompletionHandler release];
+        });
+        return;
+    }
+
     CGRect snapshotRectInContentCoordinates = [self convertRect:rectInViewCoordinates toView:self._currentContentView];
     CGFloat imageScale = imageWidth / snapshotRectInContentCoordinates.size.width;
     CGFloat imageHeight = imageScale * snapshotRectInContentCoordinates.size.height;
@@ -2885,7 +2900,6 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
         UIGraphicsEndImageContext();
         return;
     }
-
 
     void(^copiedCompletionHandler)(CGImageRef) = [completionHandler copy];
     _page->takeSnapshot(WebCore::enclosingIntRect(snapshotRectInContentCoordinates), WebCore::expandedIntSize(WebCore::FloatSize(imageSize)), WebKit::SnapshotOptionsExcludeDeviceScaleFactor, [=](const WebKit::ShareableBitmap::Handle& imageHandle, WebKit::CallbackBase::Error) {

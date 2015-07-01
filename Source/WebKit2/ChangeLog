@@ -1,3 +1,26 @@
+2015-07-01  Tim Horton  <timothy_horton@apple.com>
+
+        WKWebView snapshots have the wrong scale after rotation
+        https://bugs.webkit.org/show_bug.cgi?id=146476
+        <rdar://problem/18345247>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLayerTree:]):
+        "Coordinate" -> "Coordinates".
+
+        (-[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:]):
+        Defer any snapshotting that happens during a resize until after
+        the resize completes. This will ensure that (in the case of an IOSurface
+        snapshot) the tiles are up to date, and (in the case of a software snapshot)
+        that our understanding of the scale and scroll offset of the WKContentView
+        are up to date, so that we can correctly convert from view to content coordinates
+        in the UI process.
+
+        (-[WKWebView _endAnimatedResize]):
+        Perform the deferred snapshotting after the resize completes.
+
 2015-07-01  Beth Dakin  <bdakin@apple.com>
 
         This is a quick follow-on to http://trac.webkit.org/changeset/186132
