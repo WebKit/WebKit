@@ -234,8 +234,8 @@ static void tryAppLink(RefPtr<API::NavigationAction> navigationAction, std::func
 {
 #if HAVE(APP_LINKS)
     bool mainFrameNavigation = !navigationAction->targetFrame() || navigationAction->targetFrame()->isMainFrame();
-    bool isProcessingUserGesture = navigationAction->isProcessingUserGesture();
-    if (mainFrameNavigation && isProcessingUserGesture) {
+    bool shouldOpenExternalURLs = navigationAction->shouldOpenExternalURLs();
+    if (mainFrameNavigation && shouldOpenExternalURLs) {
         auto* localCompletionHandler = new std::function<void (bool)>(WTF::move(completionHandler));
         [LSAppLink openWithURL:navigationAction->request().url() completionHandler:[localCompletionHandler](BOOL success, NSError *) {
             dispatch_async(dispatch_get_main_queue(), [localCompletionHandler, success] {
