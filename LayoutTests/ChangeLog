@@ -1,3 +1,14 @@
+2015-06-30  Wenson Hsieh  <whsieh@berkeley.edu>
+
+        scroll-snap-points do not work very well with mechanical scroll wheel events
+        https://bugs.webkit.org/show_bug.cgi?id=142501
+        <rdar://problem/20093511>
+
+        Reviewed by Brent Fulgham.
+
+        * platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-overflow-stateless-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-overflow-stateless.html: Added.
+
 2015-06-30  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline editing/style/unbold-in-bold.html on WK2.

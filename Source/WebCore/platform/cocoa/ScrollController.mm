@@ -86,6 +86,8 @@ static const float glideBoostMultiplier = 3.5;
 
 static const float maxTargetWheelDelta = 7;
 static const float minTargetWheelDelta = 3.5;
+
+static const double statelessScrollSnapDelay = 0.5;
 #endif
 
 #if PLATFORM(MAC)
@@ -583,6 +585,11 @@ void ScrollController::processWheelEventForScrollSnapOnAxis(ScrollEventAxis axis
         endScrollSnapAnimation(axis, ScrollSnapState::UserInteraction);
         snapState.clearInitialWheelDeltaWindow();
         snapState.m_shouldOverrideWheelEvent = false;
+        m_expectingStatelessScrollSnap = true;
+        if (axis == ScrollEventAxis::Vertical)
+            m_verticalScrollSnapTimer.startOneShot(statelessScrollSnapDelay);
+        else
+            m_horizontalScrollSnapTimer.startOneShot(statelessScrollSnapDelay);
         break;
 
     case WheelEventStatus::Unknown:
@@ -668,12 +675,18 @@ void ScrollController::stopScrollSnapTimer(ScrollEventAxis axis)
 
 void ScrollController::horizontalScrollSnapTimerFired()
 {
-    scrollSnapAnimationUpdate(ScrollEventAxis::Horizontal);
+    if (m_expectingStatelessScrollSnap)
+        beginScrollSnapAnimation(ScrollEventAxis::Horizontal, ScrollSnapState::Snapping);
+    else
+        scrollSnapAnimationUpdate(ScrollEventAxis::Horizontal);
 }
 
 void ScrollController::verticalScrollSnapTimerFired()
 {
-    scrollSnapAnimationUpdate(ScrollEventAxis::Vertical);
+    if (m_expectingStatelessScrollSnap)
+        beginScrollSnapAnimation(ScrollEventAxis::Vertical, ScrollSnapState::Snapping);
+    else
+        scrollSnapAnimationUpdate(ScrollEventAxis::Vertical);
 }
 
 void ScrollController::scrollSnapAnimationUpdate(ScrollEventAxis axis)
@@ -768,7 +781,10 @@ void ScrollController::setActiveScrollSnapIndicesForOffset(int x, int y)
 void ScrollController::beginScrollSnapAnimation(ScrollEventAxis axis, ScrollSnapState newState)
 {
     ASSERT(newState == ScrollSnapState::Gliding || newState == ScrollSnapState::Snapping);
-    
+    if (m_expectingStatelessScrollSnap) {
+        m_expectingStatelessScrollSnap = false;
+        stopScrollSnapTimer(axis);
+    }
     ScrollSnapAnimatorState& snapState = scrollSnapPointState(axis);
 
     LayoutUnit offset = m_client.scrollOffsetOnAxis(axis);

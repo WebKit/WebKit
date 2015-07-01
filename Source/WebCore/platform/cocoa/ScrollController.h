@@ -188,6 +188,7 @@ private:
 #endif
 
 #if ENABLE(CSS_SCROLL_SNAP)
+    bool m_expectingStatelessScrollSnap { false };
     std::unique_ptr<ScrollSnapAnimatorState> m_horizontalScrollSnapState;
     std::unique_ptr<ScrollSnapAnimatorState> m_verticalScrollSnapState;
 #if PLATFORM(MAC)
