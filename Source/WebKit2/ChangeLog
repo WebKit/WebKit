@@ -1,3 +1,21 @@
+2015-06-30  Andreas Kling  <akling@apple.com>
+
+        [iOS] Ignore viewport rect changes during zoom bouncing.
+        <https://webkit.org/b/146480>
+
+        Reviewed by Benjamin Poulain.
+
+        When the user has pinch-zoomed past the maximum zoom scale and lets go of the screen,
+        we animate a bounce back to the maximum scale.
+
+        Suppress viewport rect updates during this bounce animation since we don't need them
+        anyway. This fixes an issue where we'd sometimes get a weird rect during the animation
+        and if could send that to the web process, causing it to generate tiles for a part of
+        the page that's not actually exposed.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _updateVisibleContentRects]):
+
 2015-06-30  Enrica Casucci  <enrica@apple.com>
 
         <rdar://problem/20655729> WebKit should heuristically exclude scrolling touch events from the user gesture category

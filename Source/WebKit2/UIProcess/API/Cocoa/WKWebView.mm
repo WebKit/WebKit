@@ -1583,6 +1583,9 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (_needsResetViewStateAfterCommitLoadForMainFrame)
         return;
 
+    if ([_scrollView isZoomBouncing])
+        return;
+
     CGRect fullViewRect = self.bounds;
     CGRect visibleRectInContentCoordinates = _frozenVisibleContentRect ? _frozenVisibleContentRect.value() : [self convertRect:fullViewRect toView:_contentView.get()];
 
@@ -1591,7 +1594,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     CGFloat scaleFactor = contentZoomScale(self);
 
-    BOOL isStableState = !(_isChangingObscuredInsetsInteractively || [_scrollView isDragging] || [_scrollView isDecelerating] || [_scrollView isZooming] || [_scrollView isZoomBouncing] || [_scrollView _isAnimatingZoom] || [_scrollView _isScrollingToTop] || [self _scrollViewIsRubberBanding]);
+    BOOL isStableState = !(_isChangingObscuredInsetsInteractively || [_scrollView isDragging] || [_scrollView isDecelerating] || [_scrollView isZooming] || [_scrollView _isAnimatingZoom] || [_scrollView _isScrollingToTop] || [self _scrollViewIsRubberBanding]);
 
     // FIXME: this can be made static after we stop supporting iOS 8.x.
     if (isStableState && [_scrollView respondsToSelector:@selector(_isInterruptingDeceleration)])
