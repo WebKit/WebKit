@@ -1,3 +1,10 @@
+2015-06-30  Alex Christensen  <achristensen@webkit.org>
+
+        [Win] Unreviewed build fix after r186169.
+
+        * WebKit.vcxproj/WebKit.sln:
+        Temporarily don't build ANGLE projects on Windows.
+
 2015-06-26  Hyungwook Lee  <hyungwook.lee@navercorp.com>
 
         [Win] Implement WebViewGroup to support WebView::addxxxToGroup().
