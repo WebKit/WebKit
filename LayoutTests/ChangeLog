@@ -1,5 +1,11 @@
 2015-06-30  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rebaseline editing/style/unbold-in-bold.html on WK2.
+
+        * platform/mac-wk2/editing/style/unbold-in-bold-expected.txt: Added.
+
+2015-06-30  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, revert bad wk2 baseline done in r186106.
 
         * platform/mac-wk2/editing/style: Removed.
