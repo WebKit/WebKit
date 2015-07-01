@@ -172,8 +172,8 @@ void WebUserMediaClient::cancelRequest(UserMediaRequest& request)
 #if PLATFORM(IOS)
 - (void)denyOnlyThisRequest
 {
-    ASSERT_NOT_REACHED();
 }
+
 - (BOOL)shouldClearCache
 {
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=146245
