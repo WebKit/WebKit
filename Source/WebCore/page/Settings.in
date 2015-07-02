@@ -242,4 +242,4 @@ attachmentElementEnabled initial=true, conditional=ATTACHMENT_ELEMENT
 
 newBlockInsideInlineModelEnabled initial=false, setNeedsStyleRecalcInAllFrames=1
 
-metaRefreshEnabled initial=true
+httpEquivEnabled initial=true

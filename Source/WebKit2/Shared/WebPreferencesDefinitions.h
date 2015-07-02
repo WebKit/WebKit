@@ -199,7 +199,7 @@
     macro(LongMousePressEnabled, longMousePressEnabled, Bool, bool, false) \
     macro(NewBlockInsideInlineModelEnabled, newBlockInsideInlineModelEnabled, Bool, bool, false) \
     macro(AntialiasedFontDilationEnabled, antialiasedFontDilationEnabled, Bool, bool, false) \
-    macro(MetaRefreshEnabled, metaRefreshEnabled, Bool, bool, true) \
+    macro(HTTPEquivEnabled, httpEquivEnabled, Bool, bool, true) \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \
     macro(IncrementalRenderingSuppressionTimeout, incrementalRenderingSuppressionTimeout, Double, double, 5) \

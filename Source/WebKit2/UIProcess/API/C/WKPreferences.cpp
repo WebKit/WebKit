@@ -1359,12 +1359,22 @@ bool WKPreferencesGetIgnoreViewportScalingConstraints(WKPreferencesRef preferenc
 
 void WKPreferencesSetMetaRefreshEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
-    toImpl(preferencesRef)->setMetaRefreshEnabled(enabled);
+    toImpl(preferencesRef)->setHTTPEquivEnabled(enabled);
 }
 
 bool WKPreferencesGetMetaRefreshEnabled(WKPreferencesRef preferencesRef)
 {
-    return toImpl(preferencesRef)->metaRefreshEnabled();
+    return toImpl(preferencesRef)->httpEquivEnabled();
+}
+
+void WKPreferencesSetHTTPEquivEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setHTTPEquivEnabled(enabled);
+}
+
+bool WKPreferencesGetHTTPEquivEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->httpEquivEnabled();
 }
 
 void WKPreferencesSetAllowsAirPlayForMediaPlayback(WKPreferencesRef preferencesRef, bool enabled)

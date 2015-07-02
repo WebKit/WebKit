@@ -448,6 +448,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setMetaRefreshEnabled:(BOOL)flag;
 - (BOOL)metaRefreshEnabled;
 
+- (void)setHTTPEquivEnabled:(BOOL)flag;
+- (BOOL)httpEquivEnabled;
+
 @property (nonatomic) BOOL javaScriptMarkupEnabled;
 
 #if TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED < 80000

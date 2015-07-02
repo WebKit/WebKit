@@ -1,3 +1,26 @@
+2015-07-02  Brady Eidson  <beidson@apple.com>
+
+        Add preference to disable all http-equiv.
+        <rdar://problem/9091261> and https://bugs.webkit.org/show_bug.cgi?id=146553
+
+        Reviewed by Sam Weinig.
+
+        * Shared/WebPreferencesDefinitions.h:
+        
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetMetaRefreshEnabled): Still expose this SPI, but have it affect
+          the "httpEquivEnabled" setting.
+        (WKPreferencesGetMetaRefreshEnabled): Ditto
+        (WKPreferencesSetHTTPEquivEnabled):
+        (WKPreferencesGetHTTPEquivEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+        
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2015-07-02  Mark Lam  <mark.lam@apple.com>
 
         WKWebView evaluateJavaScript:completionHandler: should reuse its JSContext instance.
