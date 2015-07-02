@@ -58,10 +58,14 @@ public:
     {
         return m_serializedScriptValue->deserialize(context, exception);
     }
+    
+#if PLATFORM(COCOA) && defined(__OBJC__)
+    static id deserialize(WebCore::SerializedScriptValue&, JSValueRef* exception);
+#endif
 
     IPC::DataReference dataReference() const { return m_serializedScriptValue->data(); }
 
-    void* internalRepresentation() { return m_serializedScriptValue.get(); }
+    WebCore::SerializedScriptValue* internalRepresentation() { return m_serializedScriptValue.get(); }
 
 private:
     explicit SerializedScriptValue(PassRefPtr<WebCore::SerializedScriptValue> serializedScriptValue)

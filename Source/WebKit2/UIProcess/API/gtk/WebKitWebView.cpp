@@ -2986,7 +2986,7 @@ static void webkitWebViewRunJavaScriptCallback(API::SerializedScriptValue* wkSer
 
     WebKitWebView* webView = WEBKIT_WEB_VIEW(g_task_get_source_object(task));
     g_task_return_pointer(task, webkitJavascriptResultCreate(webView,
-        *static_cast<WebCore::SerializedScriptValue*>(wkSerializedScriptValue->internalRepresentation())),
+        *wkSerializedScriptValue->internalRepresentation()),
         reinterpret_cast<GDestroyNotify>(webkit_javascript_result_unref));
 }
 

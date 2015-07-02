@@ -1,3 +1,38 @@
+2015-07-02  Mark Lam  <mark.lam@apple.com>
+
+        WKWebView evaluateJavaScript:completionHandler: should reuse its JSContext instance.
+        https://bugs.webkit.org/show_bug.cgi?id=146416
+
+        Reviewed by Anders Carlsson.
+
+        The core issue here is that we need to be able to deserialized an
+        API::SerializedScriptValue instance into an ObjC object graph.  We'll solve this
+        by introducing a API::SerializedScriptValue::deserialize() functions that does
+        the job.  The deserialize() function will will use a SharedJSContext to provide
+        the needed JSContext for doing this work.
+
+        Also updated ScriptMessageHandlerDelegate::didPostMessage() to use this new
+        deserialize() function.
+
+        * Shared/API/APISerializedScriptValue.h:
+        (API::SerializedScriptValue::deserialize):
+        (API::SerializedScriptValue::internalRepresentation):
+        - Changed to return a WebCore::SerializedScriptValue*.  This makes it friendlier
+          to use in the 2 places that need it.
+
+        * UIProcess/API/Cocoa/APISerializedScriptValueCocoa.mm: Added.
+        (API::SharedJSContext::SharedJSContext):
+        (API::SharedJSContext::ensureContext):
+        (API::SharedJSContext::releaseContext):
+        (API::SerializedScriptValue::deserialize):
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView evaluateJavaScript:completionHandler:]):
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewRunJavaScriptCallback):
+        - Removed a now unnecessary cast.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2015-07-02  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/21429613> [iOS] Stop making symlinks from PrivateFrameworks to Frameworks

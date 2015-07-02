@@ -1790,6 +1790,7 @@
 		F6A25FDD12ADC6CC00DC40CC /* WebDatabaseManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A25FDB12ADC6CC00DC40CC /* WebDatabaseManager.h */; };
 		F6A90813133C20510082C3F4 /* WebCookieManagerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = F6A90811133C1F3D0082C3F4 /* WebCookieManagerMac.mm */; };
 		F6D632BC133D198200743D77 /* WebCookieManagerProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = F6D632BA133D181B00743D77 /* WebCookieManagerProxyMac.mm */; };
+		FED3C1DC1B447EAC00E0EB7F /* APISerializedScriptValueCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = FED3C1DA1B447AE800E0EB7F /* APISerializedScriptValueCocoa.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -4023,6 +4024,7 @@
 		F6A25FDB12ADC6CC00DC40CC /* WebDatabaseManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDatabaseManager.h; sourceTree = "<group>"; };
 		F6A90811133C1F3D0082C3F4 /* WebCookieManagerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCookieManagerMac.mm; sourceTree = "<group>"; };
 		F6D632BA133D181B00743D77 /* WebCookieManagerProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCookieManagerProxyMac.mm; sourceTree = "<group>"; };
+		FED3C1DA1B447AE800E0EB7F /* APISerializedScriptValueCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = APISerializedScriptValueCocoa.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -5309,6 +5311,7 @@
 				1A81B37F18BD66AD0007FDAC /* _WKVisitedLinkProvider.h */,
 				1A81B37E18BD66AD0007FDAC /* _WKVisitedLinkProvider.mm */,
 				1A81B38418BD673A0007FDAC /* _WKVisitedLinkProviderInternal.h */,
+				FED3C1DA1B447AE800E0EB7F /* APISerializedScriptValueCocoa.mm */,
 				7CEFA9601AC0999300B910FD /* APIUserContentExtensionStoreCocoa.mm */,
 				1A3635AB1A3145E500ED6197 /* APIWebsiteDataStoreCocoa.mm */,
 				1AFDE64319510B5500C48FFA /* LegacyBundleForClass.mm */,
@@ -9641,6 +9644,7 @@
 				296BD85E15019BC30071F424 /* StringUtilities.mm in Sources */,
 				1ZZ417EF12C00D87002BE67B /* TextCheckerCompletion.cpp in Sources */,
 				2DA944AD1884E9BA00ED86DB /* TextCheckerIOS.mm in Sources */,
+				FED3C1DC1B447EAC00E0EB7F /* APISerializedScriptValueCocoa.mm in Sources */,
 				1AA417EF12C00D87002BE67B /* TextCheckerMac.mm in Sources */,
 				1AAF263814687C39004A1E8A /* TiledCoreAnimationDrawingArea.mm in Sources */,
 				1AF05D8614688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.mm in Sources */,

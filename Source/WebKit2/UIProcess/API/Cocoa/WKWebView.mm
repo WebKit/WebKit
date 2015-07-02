@@ -76,8 +76,6 @@
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKSessionStateInternal.h"
 #import "_WKVisitedLinkProviderInternal.h"
-#import <JavaScriptCore/JSContext.h>
-#import <JavaScriptCore/JSValue.h>
 #import <WebCore/IOSurface.h>
 #import <wtf/HashMap.h>
 #import <wtf/MathExtras.h>
@@ -637,11 +635,8 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
             return;
         }
 
-        auto context = adoptNS([[JSContext alloc] init]);
-        JSValueRef valueRef = serializedScriptValue->deserialize([context JSGlobalContextRef], 0);
-        JSValue *value = [JSValue valueWithJSValueRef:valueRef inContext:context.get()];
-
-        rawHandler([value toObject], nil);
+        id body = API::SerializedScriptValue::deserialize(*serializedScriptValue->internalRepresentation(), 0);
+        rawHandler(body, nil);
     });
 }
 
