@@ -57,9 +57,10 @@ void JSDollarVMPrototype::addFunction(VM& vm, JSGlobalObject* globalObject, cons
     putDirect(vm, identifier, JSFunction::create(vm, globalObject, arguments, identifier.string(), function));
 }
 
-static NO_RETURN EncodedJSValue JSC_HOST_CALL functionCrash(ExecState*)
+static EncodedJSValue JSC_HOST_CALL functionCrash(ExecState*)
 {
     CRASH();
+    return JSValue::encode(jsUndefined());
 }
 
 static EncodedJSValue JSC_HOST_CALL functionDFGTrue(ExecState*)
