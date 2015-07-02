@@ -556,30 +556,30 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         var hasEndingSemicolon = trimmedLine.endsWith(";");
 
         if (cursor.ch >= line.trimRight().length - hasEndingSemicolon) {
-            if (!line.includes(":")) {
-                codeMirror.setCursor(cursor.line, line.length);
-                codeMirror.replaceRange(": ", cursor);
-                return;
-            }
+            this._completionController.completeAtCurrentPositionIfNeeded().then(function(result) {
+                if (result !== WebInspector.CodeMirrorCompletionController.UpdatePromise.NoCompletionsFound)
+                    return;
 
-            var replacement = "";
+                var replacement = "";
 
-            if (!hasEndingSemicolon)
-                replacement += ";";
+                if (!hasEndingSemicolon)
+                    replacement += ";";
 
-            if (lastLine)
-                replacement += "\n";
+                if (lastLine)
+                    replacement += "\n";
 
-            if (replacement.length)
-                codeMirror.replaceRange(replacement, {line: cursor.line, ch: trimmedLine.length});
+                if (replacement.length)
+                    codeMirror.replaceRange(replacement, {line: cursor.line, ch: trimmedLine.length});
 
-            if (!nextLine) {
-                codeMirror.setCursor(cursor.line + 1, 0);
-                return;
-            }
+                if (!nextLine) {
+                    codeMirror.setCursor(cursor.line + 1, 0);
+                    return;
+                }
 
-            var colon = nextLine.indexOf(":");
-            codeMirror.setSelection({line: cursor.line + 1, ch: 0}, {line: cursor.line + 1, ch: colon < 0 ? trimmedNextLine.length : colon});
+                var colon = nextLine.indexOf(":");
+                codeMirror.setSelection({line: cursor.line + 1, ch: 0}, {line: cursor.line + 1, ch: colon < 0 ? trimmedNextLine.length : colon});
+            }.bind(this));
+
             return;
         }
 

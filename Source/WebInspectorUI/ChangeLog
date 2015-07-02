@@ -1,3 +1,14 @@
+2015-07-02  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Show suggest popover on Tab press even if it wasn't showing before
+        https://bugs.webkit.org/show_bug.cgi?id=146496
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._handleTabKey): Pressing tab will try to autocomplete before trying
+        to add an ending colon/semicolon or highlight the next section of text.
+
 2015-07-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Aggregate profile call information on the backend to drastically reduce profile sizes
