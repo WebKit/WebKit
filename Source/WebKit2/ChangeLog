@@ -1,3 +1,23 @@
+2015-07-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebSQL doesn't work because openDatabase always fails with DOM Exception 18
+        https://bugs.webkit.org/show_bug.cgi?id=146234
+
+        Reviewed by Sergio Villar Senin.
+
+        This is because we don't provide any quota, and 0 is used by
+        default, so there's never enough quota and openDatabase fails. We
+        should expose this in the API, but for now, we could use a default
+        quota of 5MB like WTR does.
+
+        * UIProcess/API/gtk/WebKitUIClient.cpp: Override
+        exceededDatabaseQuota and return always the default quota.
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::exceededDatabaseQuota): Return the quota based on the
+        expected usage and current database usabe like mac does.
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage): Add
+        custom UI client to implement exceededDatabaseQuota.
+
 2015-07-02  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r185704.

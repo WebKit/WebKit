@@ -71,10 +71,8 @@ static void testWebContextConfiguration(WebViewTest* test, gconstpointer)
 
     GUniquePtr<char> webSQLDirectory(g_build_filename(Test::dataDirectory(), "websql", nullptr));
     g_assert_cmpstr(webSQLDirectory.get(), ==, webkit_website_data_manager_get_websql_directory(manager));
-#if 0 // FIXME: We need API to set the database quota for an origin to be able to test this.
-    test->runJavaScriptAndWaitUntilFinished("db = openDatabase(\"TestDatabase\", \"1.0\", \"TestDatabase\", 1);", &error);
+    test->runJavaScriptAndWaitUntilFinished("db = openDatabase(\"TestDatabase\", \"1.0\", \"TestDatabase\", 1);", nullptr);
     g_assert(g_file_test(webSQLDirectory.get(), G_FILE_TEST_IS_DIR));
-#endif
 
     GUniquePtr<char> diskCacheDirectory(g_build_filename(Test::dataDirectory(), "disk-cache", nullptr));
     g_assert_cmpstr(diskCacheDirectory.get(), ==, webkit_website_data_manager_get_disk_cache_directory(manager));

@@ -1,3 +1,15 @@
+2015-07-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebSQL doesn't work because openDatabase always fails with DOM Exception 18
+        https://bugs.webkit.org/show_bug.cgi?id=146234
+
+        Reviewed by Sergio Villar Senin.
+
+        Enable the WebSQL directory test that was disabled because of this bug.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebContext.cpp:
+        (testWebContextConfiguration):
+
 2015-07-01  Matthew Daiter  <mdaiter@apple.com>
 
         Enabled MEDIA_STREAM flag
