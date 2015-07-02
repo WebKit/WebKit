@@ -1,5 +1,17 @@
 2015-07-01  Alex Christensen  <achristensen@webkit.org>
 
+        Re-enable WebGL on WinCairo
+        https://bugs.webkit.org/show_bug.cgi?id=146537
+
+        Reviewed by Csaba Osztrogonác.
+
+        * ANGLE.vcxproj/DirectX32.props:
+        * ANGLE.vcxproj/DirectX64.props:
+        * ANGLE.vcxproj/libGLESv2Common.props:
+        Update DirectX directories to use the Windows SDK instead of the June 2010 DirectX SDK.
+
+2015-07-01  Alex Christensen  <achristensen@webkit.org>
+
         Fix ANGLE Windows build after r186169.
         https://bugs.webkit.org/show_bug.cgi?id=146532
 
