@@ -21,6 +21,7 @@ _WebViewportInitialScaleKey
 _WebViewportMaximumScaleKey
 _WebViewportMinimumScaleKey
 _WebViewportUserScalableKey
+_WebViewportShrinkToFitKey
 _WebViewportWidthKey
 
 # So that we can use the MemoryMeasure class in MobileSafari

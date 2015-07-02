@@ -33,6 +33,7 @@ extern NSString *WebViewportInitialScaleKey;
 extern NSString *WebViewportMinimumScaleKey;
 extern NSString *WebViewportMaximumScaleKey;
 extern NSString *WebViewportUserScalableKey;
+extern NSString *WebViewportShrinkToFitKey;
 extern NSString *WebViewportWidthKey;
 extern NSString *WebViewportHeightKey;
 #endif
