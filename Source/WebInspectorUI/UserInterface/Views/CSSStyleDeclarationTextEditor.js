@@ -33,6 +33,10 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         this._element = element || document.createElement("div");
         this._element.classList.add(WebInspector.CSSStyleDeclarationTextEditor.StyleClassName);
         this._element.classList.add(WebInspector.SyntaxHighlightedStyleClassName);
+        this._element.addEventListener("mousedown", this._handleMouseDown.bind(this));
+        this._element.addEventListener("mouseup", this._handleMouseUp.bind(this));
+
+        this._mouseDownCursorPosition = null;
 
         this._showsImplicitProperties = true;
         this._alwaysShowPropertyNames = {};
@@ -58,6 +62,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         });
 
         this._codeMirror.addKeyMap({
+            "Enter": this._handleEnterKey.bind(this),
             "Shift-Enter": this._insertNewlineAfterCurrentLine.bind(this),
             "Shift-Tab": this._handleShiftTabKey.bind(this),
             "Tab": this._handleTabKey.bind(this)
@@ -389,6 +394,68 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
     // Private
 
+    _highlightNextNameOrValue(codeMirror, cursor, text)
+    {
+        var match = text.match(/(?:[^:;\s]\s*)+/g);
+        var firstMatch = text.indexOf(match[0]) + match[0].length;
+        var nextHead = cursor.ch < firstMatch ? text.indexOf(match[0]) : text.indexOf(match[1]);
+        var nextAnchor = cursor.ch < firstMatch ? firstMatch : text.indexOf(match[1]) + match[1].length;
+
+        codeMirror.setSelection({line: cursor.line, ch: nextHead}, {line: cursor.line, ch: nextAnchor});
+    }
+
+    _handleMouseDown(event)
+    {
+        if (this._codeMirror.options.readOnly || this._codeMirror.state.focused)
+            return;
+
+        var cursor = this._codeMirror.coordsChar({left: event.x, top: event.y});
+        var line = this._codeMirror.getLine(cursor.line);
+        var trimmedLine = line.trimRight();
+
+        if (!trimmedLine.trimLeft().length)
+            return;
+
+        if (cursor.ch !== trimmedLine.length) {
+            this._highlightNextNameOrValue(this._codeMirror, cursor, line);
+            return;
+        }
+
+        this._mouseDownCursorPosition = cursor;
+    }
+
+    _handleMouseUp(event)
+    {
+        if (this._codeMirror.options.readOnly || !this._mouseDownCursorPosition)
+            return;
+
+        var cursor = this._codeMirror.coordsChar({left: event.x, top: event.y});
+        var line = this._codeMirror.getLine(cursor.line);
+
+        if (this._mouseDownCursorPosition.line === cursor.line && this._mouseDownCursorPosition.ch === cursor.ch)
+            this._codeMirror.replaceRange(line.trimRight().endsWith(";") ? "\n" : ";\n", cursor);
+
+        this._mouseDownCursorPosition = null;
+    }
+
+    _handleEnterKey(codeMirror)
+    {
+        var cursor = codeMirror.getCursor();
+        var line = codeMirror.getLine(cursor.line);
+        var trimmedLine = line.trimRight();
+        var hasEndingSemicolon = trimmedLine.endsWith(";");
+
+        if (hasEndingSemicolon && cursor.ch === trimmedLine.length - 1)
+            ++cursor.ch;
+
+        if (cursor.ch === trimmedLine.length) {
+            codeMirror.replaceRange(hasEndingSemicolon ? "\n" : ";\n", cursor);
+            return;
+        }
+
+        return CodeMirror.Pass;
+    }
+
     _insertNewlineAfterCurrentLine(codeMirror)
     {
         var cursor = codeMirror.getCursor();
@@ -459,16 +526,6 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             return CodeMirror.Pass;
         }
 
-        function highlightNextNameOrValue(text)
-        {
-            var match = text.match(/(?:[^:;\s]\s*)+/g);
-            var firstMatch = text.indexOf(match[0]) + match[0].length;
-            var nextHead = cursor.ch < firstMatch ? text.indexOf(match[0]) : text.indexOf(match[1]);
-            var nextAnchor = cursor.ch < firstMatch ? firstMatch : text.indexOf(match[1]) + match[1].length;
-
-            codeMirror.setSelection({line: cursor.line, ch: nextHead}, {line: cursor.line, ch: nextAnchor});
-        }
-
         var cursor = codeMirror.getCursor();
         var line = codeMirror.getLine(cursor.line);
         var trimmedLine = line.trimRight();
@@ -486,7 +543,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             }
 
             ++cursor.line;
-            highlightNextNameOrValue(nextLine);
+            this._highlightNextNameOrValue(codeMirror, cursor, nextLine);
             return;
         }
 
@@ -526,7 +583,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             return;
         }
 
-        highlightNextNameOrValue(line);
+        this._highlightNextNameOrValue(codeMirror, cursor, line);
     }
 
     _clearRemoveEditingLineClassesTimeout()

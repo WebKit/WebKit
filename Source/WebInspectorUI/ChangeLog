@@ -1,3 +1,22 @@
+2015-07-01  Devin Rousso  <drousso@apple.com>
+
+        Make the first click on a rule section create a newline for easy property addition
+        https://bugs.webkit.org/show_bug.cgi?id=146490
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._highlightNextNameOrValue):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._handleEnterKey): Inserts a semicolon if the line is missing one.
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._handleMouseDown): If the user clicks on a property with the editor being
+        unfocused, the name/value containing the cursor will be highlighted.  If instead the user clicks at the end of a line, the
+        cursor's position is saved for mouseUp.
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._handleMouseUp): If the mouseDown cursor position was saved and is equal
+        to the current cursor's position (the user did not drag), add a newline after the current line and place the cursor on that line.
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._handleTabKey):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._handleTabKey.highlightNextNameOrValue): Deleted.
+
 2015-06-30  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: add " = $0" hint after selected element in main DOMTreeOutline
