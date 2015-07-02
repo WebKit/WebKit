@@ -156,7 +156,7 @@ namespace JSC {
         virtual bool isResolveNode() const { return false; }
         virtual bool isBracketAccessorNode() const { return false; }
         virtual bool isDotAccessorNode() const { return false; }
-        virtual bool isDeconstructionNode() const { return false; }
+        virtual bool isDestructuringNode() const { return false; }
         virtual bool isFuncExprNode() const { return false; }
         virtual bool isCommaNode() const { return false; }
         virtual bool isSimpleArray() const { return false; }
@@ -1399,7 +1399,7 @@ namespace JSC {
         StatementNode* m_statement;
     };
     
-    class DeconstructionPatternNode;
+    class DestructuringPatternNode;
     
     class EnumerationNode : public StatementNode, public ThrowableExpressionData {
     public:
@@ -1518,14 +1518,14 @@ namespace JSC {
 
     class ParameterNode : public ParserArenaDeletable {
     public:
-        ParameterNode(PassRefPtr<DeconstructionPatternNode>);
-        ParameterNode(ParameterNode*, PassRefPtr<DeconstructionPatternNode>);
+        ParameterNode(PassRefPtr<DestructuringPatternNode>);
+        ParameterNode(ParameterNode*, PassRefPtr<DestructuringPatternNode>);
 
-        DeconstructionPatternNode* pattern() const { return m_pattern.get(); }
+        DestructuringPatternNode* pattern() const { return m_pattern.get(); }
         ParameterNode* nextParam() const { return m_next; }
 
     private:
-        RefPtr<DeconstructionPatternNode> m_pattern;
+        RefPtr<DestructuringPatternNode> m_pattern;
         ParameterNode* m_next;
     };
 
@@ -1638,15 +1638,15 @@ namespace JSC {
         ~FunctionParameters();
 
         unsigned size() const { return m_size; }
-        DeconstructionPatternNode* at(unsigned index) { ASSERT(index < m_size); return patterns()[index]; }
+        DestructuringPatternNode* at(unsigned index) { ASSERT(index < m_size); return patterns()[index]; }
 
     private:
         FunctionParameters(ParameterNode*, unsigned size);
 
-        DeconstructionPatternNode** patterns() { return &m_storage; }
+        DestructuringPatternNode** patterns() { return &m_storage; }
 
         unsigned m_size;
-        DeconstructionPatternNode* m_storage;
+        DestructuringPatternNode* m_storage;
     };
 
     class FunctionBodyNode final : public StatementNode, public ParserArenaDeletable {
@@ -1762,8 +1762,8 @@ namespace JSC {
     };
 #endif
 
-    class DeconstructionPatternNode : public RefCounted<DeconstructionPatternNode> {
-        WTF_MAKE_NONCOPYABLE(DeconstructionPatternNode);
+    class DestructuringPatternNode : public RefCounted<DestructuringPatternNode> {
+        WTF_MAKE_NONCOPYABLE(DestructuringPatternNode);
         WTF_MAKE_FAST_ALLOCATED;
 
     public:
@@ -1774,13 +1774,13 @@ namespace JSC {
         virtual bool isBindingNode() const { return false; }
         virtual RegisterID* emitDirectBinding(BytecodeGenerator&, RegisterID*, ExpressionNode*) { return 0; }
         
-        virtual ~DeconstructionPatternNode() = 0;
+        virtual ~DestructuringPatternNode() = 0;
         
     protected:
-        DeconstructionPatternNode();
+        DestructuringPatternNode();
     };
 
-    class ArrayPatternNode : public DeconstructionPatternNode, public ThrowableExpressionData {
+    class ArrayPatternNode : public DestructuringPatternNode, public ThrowableExpressionData {
     public:
         enum class BindingType {
             Elision,
@@ -1789,7 +1789,7 @@ namespace JSC {
         };
 
         static Ref<ArrayPatternNode> create();
-        void appendIndex(BindingType bindingType, const JSTokenLocation&, DeconstructionPatternNode* node, ExpressionNode* defaultValue)
+        void appendIndex(BindingType bindingType, const JSTokenLocation&, DestructuringPatternNode* node, ExpressionNode* defaultValue)
         {
             m_targetPatterns.append({ bindingType, node, defaultValue });
         }
@@ -1797,7 +1797,7 @@ namespace JSC {
     private:
         struct Entry {
             BindingType bindingType;
-            RefPtr<DeconstructionPatternNode> pattern;
+            RefPtr<DestructuringPatternNode> pattern;
             ExpressionNode* defaultValue;
         };
         ArrayPatternNode();
@@ -1809,10 +1809,10 @@ namespace JSC {
         Vector<Entry> m_targetPatterns;
     };
     
-    class ObjectPatternNode : public DeconstructionPatternNode {
+    class ObjectPatternNode : public DestructuringPatternNode {
     public:
         static Ref<ObjectPatternNode> create();
-        void appendEntry(const JSTokenLocation&, const Identifier& identifier, bool wasString, DeconstructionPatternNode* pattern, ExpressionNode* defaultValue)
+        void appendEntry(const JSTokenLocation&, const Identifier& identifier, bool wasString, DestructuringPatternNode* pattern, ExpressionNode* defaultValue)
         {
             m_targetPatterns.append(Entry{ identifier, wasString, pattern, defaultValue });
         }
@@ -1825,13 +1825,13 @@ namespace JSC {
         struct Entry {
             Identifier propertyName;
             bool wasString;
-            RefPtr<DeconstructionPatternNode> pattern;
+            RefPtr<DestructuringPatternNode> pattern;
             ExpressionNode* defaultValue;
         };
         Vector<Entry> m_targetPatterns;
     };
 
-    class BindingNode : public DeconstructionPatternNode {
+    class BindingNode : public DestructuringPatternNode {
     public:
         static Ref<BindingNode> create(const Identifier& boundProperty, const JSTextPosition& start, const JSTextPosition& end);
         const Identifier& boundProperty() const { return m_boundProperty; }
@@ -1853,19 +1853,19 @@ namespace JSC {
         Identifier m_boundProperty;
     };
 
-    class DeconstructingAssignmentNode : public ExpressionNode, public ParserArenaDeletable {
+    class DestructuringAssignmentNode : public ExpressionNode, public ParserArenaDeletable {
     public:
-        DeconstructingAssignmentNode(const JSTokenLocation&, PassRefPtr<DeconstructionPatternNode>, ExpressionNode*);
-        DeconstructionPatternNode* bindings() { return m_bindings.get(); }
+        DestructuringAssignmentNode(const JSTokenLocation&, PassRefPtr<DestructuringPatternNode>, ExpressionNode*);
+        DestructuringPatternNode* bindings() { return m_bindings.get(); }
         
         using ParserArenaDeletable::operator new;
 
     private:
         virtual bool isAssignmentLocation() const override { return true; }
-        virtual bool isDeconstructionNode() const override { return true; }
+        virtual bool isDestructuringNode() const override { return true; }
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
 
-        RefPtr<DeconstructionPatternNode> m_bindings;
+        RefPtr<DestructuringPatternNode> m_bindings;
         ExpressionNode* m_initializer;
     };
 

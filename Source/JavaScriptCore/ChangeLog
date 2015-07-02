@@ -1,3 +1,115 @@
+2015-07-02  Saam barati  <saambarati1@gmail.com>
+
+        Rename "Deconstruction" to "Destructuring" throughout JSC
+        https://bugs.webkit.org/show_bug.cgi?id=146100
+
+        Reviewed by Mark Lam.
+
+        It is good to use the same naming conventions as the ES6 
+        spec because it is the de facto way of speaking about these 
+        language features. This also has the benefit of improving JSC's
+        hackability because it improves code readability for newcomers 
+        to JSC or newcomers to this part of the code base.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::initializeNextParameter):
+        (JSC::BytecodeGenerator::visibleNameForParameter):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::registerFor):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ForInNode::tryGetBoundLocal):
+        (JSC::ForInNode::emitLoopHeader):
+        (JSC::ForOfNode::emitBytecode):
+        (JSC::ClassExprNode::emitBytecode):
+        (JSC::DestructuringAssignmentNode::emitBytecode):
+        (JSC::DestructuringPatternNode::~DestructuringPatternNode):
+        (JSC::ArrayPatternNode::collectBoundIdentifiers):
+        (JSC::DeconstructingAssignmentNode::emitBytecode): Deleted.
+        (JSC::DeconstructionPatternNode::~DeconstructionPatternNode): Deleted.
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createElementList):
+        (JSC::ASTBuilder::createFormalParameterList):
+        (JSC::ASTBuilder::createClause):
+        (JSC::ASTBuilder::createClauseList):
+        (JSC::ASTBuilder::createForInLoop):
+        (JSC::ASTBuilder::createForOfLoop):
+        (JSC::ASTBuilder::isBindingNode):
+        (JSC::ASTBuilder::isResolve):
+        (JSC::ASTBuilder::createDestructuringAssignment):
+        (JSC::ASTBuilder::createArrayPattern):
+        (JSC::ASTBuilder::appendArrayPatternSkipEntry):
+        (JSC::ASTBuilder::appendArrayPatternEntry):
+        (JSC::ASTBuilder::appendArrayPatternRestEntry):
+        (JSC::ASTBuilder::createObjectPattern):
+        (JSC::ASTBuilder::appendObjectPatternEntry):
+        (JSC::ASTBuilder::createDeconstructingAssignment): Deleted.
+        * parser/NodeConstructors.h:
+        (JSC::TryNode::TryNode):
+        (JSC::ParameterNode::ParameterNode):
+        (JSC::ForOfNode::ForOfNode):
+        (JSC::DestructuringPatternNode::DestructuringPatternNode):
+        (JSC::ArrayPatternNode::ArrayPatternNode):
+        (JSC::ArrayPatternNode::create):
+        (JSC::ObjectPatternNode::ObjectPatternNode):
+        (JSC::BindingNode::create):
+        (JSC::BindingNode::BindingNode):
+        (JSC::DestructuringAssignmentNode::DestructuringAssignmentNode):
+        (JSC::DeconstructionPatternNode::DeconstructionPatternNode): Deleted.
+        (JSC::DeconstructingAssignmentNode::DeconstructingAssignmentNode): Deleted.
+        * parser/Nodes.cpp:
+        (JSC::FunctionParameters::create):
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::isResolveNode):
+        (JSC::ExpressionNode::isBracketAccessorNode):
+        (JSC::ExpressionNode::isDotAccessorNode):
+        (JSC::ExpressionNode::isDestructuringNode):
+        (JSC::ExpressionNode::isFuncExprNode):
+        (JSC::ExpressionNode::isCommaNode):
+        (JSC::ExpressionNode::isSimpleArray):
+        (JSC::ParameterNode::pattern):
+        (JSC::ParameterNode::nextParam):
+        (JSC::FunctionParameters::size):
+        (JSC::FunctionParameters::at):
+        (JSC::FunctionParameters::patterns):
+        (JSC::DestructuringPatternNode::isBindingNode):
+        (JSC::DestructuringPatternNode::emitDirectBinding):
+        (JSC::ArrayPatternNode::appendIndex):
+        (JSC::ObjectPatternNode::appendEntry):
+        (JSC::BindingNode::boundProperty):
+        (JSC::DestructuringAssignmentNode::bindings):
+        (JSC::ExpressionNode::isDeconstructionNode): Deleted.
+        (JSC::DeconstructionPatternNode::isBindingNode): Deleted.
+        (JSC::DeconstructionPatternNode::emitDirectBinding): Deleted.
+        (JSC::DeconstructingAssignmentNode::bindings): Deleted.
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseVarDeclaration):
+        (JSC::Parser<LexerType>::parseWhileStatement):
+        (JSC::Parser<LexerType>::parseVarDeclarationList):
+        (JSC::Parser<LexerType>::createBindingPattern):
+        (JSC::Parser<LexerType>::tryParseDestructuringPatternExpression):
+        (JSC::Parser<LexerType>::parseDestructuringPattern):
+        (JSC::Parser<LexerType>::parseDefaultValueForDestructuringPattern):
+        (JSC::Parser<LexerType>::parseForStatement):
+        (JSC::Parser<LexerType>::parseFormalParameters):
+        (JSC::Parser<LexerType>::parseFunctionParameters):
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+        (JSC::Parser<LexerType>::tryParseDeconstructionPatternExpression): Deleted.
+        (JSC::Parser<LexerType>::parseDeconstructionPattern): Deleted.
+        (JSC::Parser<LexerType>::parseDefaultValueForDeconstructionPattern): Deleted.
+        * parser/Parser.h:
+        (JSC::isEvalNode):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createPropertyList):
+        (JSC::SyntaxChecker::createElementList):
+        (JSC::SyntaxChecker::createFormalParameterList):
+        (JSC::SyntaxChecker::createClause):
+        (JSC::SyntaxChecker::createClauseList):
+        (JSC::SyntaxChecker::operatorStackPop):
+        * tests/stress/reserved-word-with-escape.js:
+        * tests/stress/rest-elements.js:
+
 2015-07-02  Mark Lam  <mark.lam@apple.com>
 
         Build fix for Win EWS bot.

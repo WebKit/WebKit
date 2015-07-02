@@ -95,19 +95,19 @@ function testSyntaxError(script, message) {
     shouldBe(JSON.stringify(c), String.raw`[]`);
 }("C"));
 
-testSyntaxError(String.raw`var [a, ...b, c] = 20`, String.raw`SyntaxError: Unexpected token ','. Expected a closing ']' following a rest element deconstruction pattern.`);
-testSyntaxError(String.raw`var [a, ...b,] = 20`, String.raw`SyntaxError: Unexpected token ','. Expected a closing ']' following a rest element deconstruction pattern.`);
-testSyntaxError(String.raw`var [a, ...b,,] = 20`, String.raw`SyntaxError: Unexpected token ','. Expected a closing ']' following a rest element deconstruction pattern.`);
-testSyntaxError(String.raw`var [a, ...b = 20] = 20`, String.raw`SyntaxError: Unexpected token '='. Expected a closing ']' following a rest element deconstruction pattern.`);
-testSyntaxError(String.raw`var [a, ...[b, c]] = 20`, String.raw`SyntaxError: Unexpected token ']'. Expected identifier for a rest element deconstruction pattern.`);
-testSyntaxError(String.raw`var [a, ...{ b, c }] = 20`, String.raw`SyntaxError: Unexpected token ']'. Expected identifier for a rest element deconstruction pattern.`);
+testSyntaxError(String.raw`var [a, ...b, c] = 20`, String.raw`SyntaxError: Unexpected token ','. Expected a closing ']' following a rest element destructuring pattern.`);
+testSyntaxError(String.raw`var [a, ...b,] = 20`, String.raw`SyntaxError: Unexpected token ','. Expected a closing ']' following a rest element destructuring pattern.`);
+testSyntaxError(String.raw`var [a, ...b,,] = 20`, String.raw`SyntaxError: Unexpected token ','. Expected a closing ']' following a rest element destructuring pattern.`);
+testSyntaxError(String.raw`var [a, ...b = 20] = 20`, String.raw`SyntaxError: Unexpected token '='. Expected a closing ']' following a rest element destructuring pattern.`);
+testSyntaxError(String.raw`var [a, ...[b, c]] = 20`, String.raw`SyntaxError: Unexpected token ']'. Expected identifier for a rest element destructuring pattern.`);
+testSyntaxError(String.raw`var [a, ...{ b, c }] = 20`, String.raw`SyntaxError: Unexpected token ']'. Expected identifier for a rest element destructuring pattern.`);
 
-testSyntaxError(String.raw`(function ([a, ...b, c]) { })`, String.raw`SyntaxError: Unexpected token ','. Expected a closing ']' following a rest element deconstruction pattern.`);
-testSyntaxError(String.raw`(function ([a, ...b,]) { })`, String.raw`SyntaxError: Unexpected token ','. Expected a closing ']' following a rest element deconstruction pattern.`);
-testSyntaxError(String.raw`(function ([a, ...b,,]) { })`, String.raw`SyntaxError: Unexpected token ','. Expected a closing ']' following a rest element deconstruction pattern.`);
-testSyntaxError(String.raw`(function ([a, ...b = 20,,]) { })`, String.raw`SyntaxError: Unexpected token '='. Expected a closing ']' following a rest element deconstruction pattern.`);
-testSyntaxError(String.raw`(function ([a, ...[b, c]]) { })`, String.raw`SyntaxError: Unexpected token ']'. Expected identifier for a rest element deconstruction pattern.`);
-testSyntaxError(String.raw`(function ([a, ...{ b, c }]) { })`, String.raw`SyntaxError: Unexpected token ']'. Expected identifier for a rest element deconstruction pattern.`);
+testSyntaxError(String.raw`(function ([a, ...b, c]) { })`, String.raw`SyntaxError: Unexpected token ','. Expected a closing ']' following a rest element destructuring pattern.`);
+testSyntaxError(String.raw`(function ([a, ...b,]) { })`, String.raw`SyntaxError: Unexpected token ','. Expected a closing ']' following a rest element destructuring pattern.`);
+testSyntaxError(String.raw`(function ([a, ...b,,]) { })`, String.raw`SyntaxError: Unexpected token ','. Expected a closing ']' following a rest element destructuring pattern.`);
+testSyntaxError(String.raw`(function ([a, ...b = 20,,]) { })`, String.raw`SyntaxError: Unexpected token '='. Expected a closing ']' following a rest element destructuring pattern.`);
+testSyntaxError(String.raw`(function ([a, ...[b, c]]) { })`, String.raw`SyntaxError: Unexpected token ']'. Expected identifier for a rest element destructuring pattern.`);
+testSyntaxError(String.raw`(function ([a, ...{ b, c }]) { })`, String.raw`SyntaxError: Unexpected token ']'. Expected identifier for a rest element destructuring pattern.`);
 
 shouldThrow(function () {
     [a, ...b, c] = 20;

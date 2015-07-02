@@ -76,12 +76,12 @@ public:
         FunctionExpr, ClassExpr, SuperExpr, BracketExpr, DotExpr, CallExpr,
         NewExpr, PreExpr, PostExpr, UnaryExpr, BinaryExpr,
         ConditionalExpr, AssignmentExpr, TypeofExpr,
-        DeleteExpr, ArrayLiteralExpr, BindingDeconstruction,
-        ArrayDeconstruction, ObjectDeconstruction, SourceElementsResult,
+        DeleteExpr, ArrayLiteralExpr, BindingDestructuring,
+        ArrayDestructuring, ObjectDestructuring, SourceElementsResult,
         FunctionBodyResult, SpreadExpr, ArgumentsResult,
         PropertyListResult, ArgumentsListResult, ElementsListResult,
         StatementResult, FormalParameterListResult, ClauseResult,
-        ClauseListResult, CommaExpr, DeconstructingAssignment,
+        ClauseListResult, CommaExpr, DestructuringAssignment,
         TemplateStringResult, TemplateStringListResult,
         TemplateExpressionListResult, TemplateExpr,
         TaggedTemplateExpr
@@ -130,9 +130,9 @@ public:
     typedef int Clause;
     typedef int ConstDeclList;
     typedef int BinaryOperand;
-    typedef int DeconstructionPattern;
-    typedef DeconstructionPattern ArrayPattern;
-    typedef DeconstructionPattern ObjectPattern;
+    typedef int DestructuringPattern;
+    typedef DestructuringPattern ArrayPattern;
+    typedef DestructuringPattern ObjectPattern;
 
     static const bool CreatesAST = false;
     static const bool NeedsFreeVariableInfo = false;
@@ -220,8 +220,8 @@ public:
     int createPropertyList(const JSTokenLocation&, Property, int) { return PropertyListResult; }
     int createElementList(int, int) { return ElementsListResult; }
     int createElementList(int, int, int) { return ElementsListResult; }
-    int createFormalParameterList(DeconstructionPattern) { return FormalParameterListResult; }
-    int createFormalParameterList(int, DeconstructionPattern) { return FormalParameterListResult; }
+    int createFormalParameterList(DestructuringPattern) { return FormalParameterListResult; }
+    int createFormalParameterList(int, DestructuringPattern) { return FormalParameterListResult; }
     int createClause(int, int) { return ClauseResult; }
     int createClauseList(int) { return ClauseListResult; }
     int createClauseList(int, int) { return ClauseListResult; }
@@ -300,22 +300,22 @@ public:
     const Identifier* getName(const Property& property) const { return property.name; }
     PropertyNode::Type getType(const Property& property) const { return property.type; }
     bool isResolve(ExpressionType expr) const { return expr == ResolveExpr || expr == ResolveEvalExpr; }
-    ExpressionType createDeconstructingAssignment(const JSTokenLocation&, int, ExpressionType)
+    ExpressionType createDestructuringAssignment(const JSTokenLocation&, int, ExpressionType)
     {
-        return DeconstructingAssignment;
+        return DestructuringAssignment;
     }
     
     ArrayPattern createArrayPattern(const JSTokenLocation&)
     {
-        return ArrayDeconstruction;
+        return ArrayDestructuring;
     }
     void appendArrayPatternSkipEntry(ArrayPattern, const JSTokenLocation&)
     {
     }
-    void appendArrayPatternEntry(ArrayPattern, const JSTokenLocation&, DeconstructionPattern, int)
+    void appendArrayPatternEntry(ArrayPattern, const JSTokenLocation&, DestructuringPattern, int)
     {
     }
-    void appendArrayPatternRestEntry(ArrayPattern, const JSTokenLocation&, DeconstructionPattern)
+    void appendArrayPatternRestEntry(ArrayPattern, const JSTokenLocation&, DestructuringPattern)
     {
     }
     void finishArrayPattern(ArrayPattern, const JSTextPosition&, const JSTextPosition&, const JSTextPosition&)
@@ -323,19 +323,19 @@ public:
     }
     ObjectPattern createObjectPattern(const JSTokenLocation&)
     {
-        return ObjectDeconstruction;
+        return ObjectDestructuring;
     }
-    void appendObjectPatternEntry(ArrayPattern, const JSTokenLocation&, bool, const Identifier&, DeconstructionPattern, int)
+    void appendObjectPatternEntry(ArrayPattern, const JSTokenLocation&, bool, const Identifier&, DestructuringPattern, int)
     {
     }
-    DeconstructionPattern createBindingLocation(const JSTokenLocation&, const Identifier&, const JSTextPosition&, const JSTextPosition&)
+    DestructuringPattern createBindingLocation(const JSTokenLocation&, const Identifier&, const JSTextPosition&, const JSTextPosition&)
     {
-        return BindingDeconstruction;
+        return BindingDestructuring;
     }
 
-    bool isBindingNode(DeconstructionPattern pattern)
+    bool isBindingNode(DestructuringPattern pattern)
     {
-        return pattern == BindingDeconstruction;
+        return pattern == BindingDestructuring;
     }
 
     void setEndOffset(int, int) { }

@@ -2256,8 +2256,8 @@ RegisterID* ForInNode::tryGetBoundLocal(BytecodeGenerator& generator)
         return generator.variable(ident).local();
     }
 
-    if (m_lexpr->isDeconstructionNode()) {
-        DeconstructingAssignmentNode* assignNode = static_cast<DeconstructingAssignmentNode*>(m_lexpr);
+    if (m_lexpr->isDestructuringNode()) {
+        DestructuringAssignmentNode* assignNode = static_cast<DestructuringAssignmentNode*>(m_lexpr);
         auto binding = assignNode->bindings();
         if (!binding->isBindingNode())
             return nullptr;
@@ -2318,8 +2318,8 @@ void ForInNode::emitLoopHeader(BytecodeGenerator& generator, RegisterID* propert
         return;
     }
 
-    if (m_lexpr->isDeconstructionNode()) {
-        DeconstructingAssignmentNode* assignNode = static_cast<DeconstructingAssignmentNode*>(m_lexpr);
+    if (m_lexpr->isDestructuringNode()) {
+        DestructuringAssignmentNode* assignNode = static_cast<DestructuringAssignmentNode*>(m_lexpr);
         auto binding = assignNode->bindings();
         if (!binding->isBindingNode()) {
             assignNode->bindings()->bindValue(generator, propertyName);
@@ -2536,8 +2536,8 @@ void ForOfNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
                 generator.emitTypeProfilerExpressionInfo(assignNode->divotStart(), assignNode->divotEnd());
             }
         } else {
-            ASSERT(m_lexpr->isDeconstructionNode());
-            DeconstructingAssignmentNode* assignNode = static_cast<DeconstructingAssignmentNode*>(m_lexpr);
+            ASSERT(m_lexpr->isDestructuringNode());
+            DestructuringAssignmentNode* assignNode = static_cast<DestructuringAssignmentNode*>(m_lexpr);
             assignNode->bindings()->bindValue(generator, value);
         }
         generator.emitProfileControlFlow(m_statement->startOffset());
@@ -3105,8 +3105,8 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
 }
 #endif
     
-// ------------------------------ DeconstructingAssignmentNode -----------------
-RegisterID* DeconstructingAssignmentNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+// ------------------------------ DestructuringAssignmentNode -----------------
+RegisterID* DestructuringAssignmentNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     if (RegisterID* result = m_bindings->emitDirectBinding(generator, dst, m_initializer))
         return result;
@@ -3116,7 +3116,7 @@ RegisterID* DeconstructingAssignmentNode::emitBytecode(BytecodeGenerator& genera
     return generator.moveToDestinationIfNeeded(dst, initializer.get());
 }
 
-DeconstructionPatternNode::~DeconstructionPatternNode()
+DestructuringPatternNode::~DestructuringPatternNode()
 {
 }
 
@@ -3277,7 +3277,7 @@ void ArrayPatternNode::toString(StringBuilder& builder) const
 void ArrayPatternNode::collectBoundIdentifiers(Vector<Identifier>& identifiers) const
 {
     for (size_t i = 0; i < m_targetPatterns.size(); i++) {
-        if (DeconstructionPatternNode* node = m_targetPatterns[i].pattern.get())
+        if (DestructuringPatternNode* node = m_targetPatterns[i].pattern.get())
             node->collectBoundIdentifiers(identifiers);
     }
 }

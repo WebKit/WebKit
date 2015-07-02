@@ -35,20 +35,20 @@ var [a,b] = ['11','22']
 shouldBe("a+b", "'1122'")
 var [b,a] = [a,b];
 shouldBe("a+b", "'2211'")
-function testDeconstructArgs() {
+function testDestructuredArgs() {
     var [a,b] = arguments;
     return a+b;
 }
 
-function testDeconstructArgLength() {
+function testDestructuredArgLength() {
     var {length} = arguments;
     return length;
 }
-shouldBe("testDeconstructArgs('1', '2')", "'12'");
-shouldBe("testDeconstructArgLength('1', '2')", "2");
+shouldBe("testDestructuredArgs('1', '2')", "'12'");
+shouldBe("testDestructuredArgLength('1', '2')", "2");
 var text = '3';
 Object.prototype.__defineGetter__(1, function(){ var r = text; text = "fail"; return r; })
-shouldBe("testDeconstructArgs('2')", "'2undefined'");
+shouldBe("testDestructuredArgs('2')", "'2undefined'");
 
 var [a,b] = [1,2], [c,d] = [3,4]
 

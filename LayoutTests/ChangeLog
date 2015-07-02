@@ -1,3 +1,37 @@
+2015-07-02  Saam barati  <saambarati1@gmail.com>
+
+        Rename "Deconstruction" to "Destructuring" throughout JSC
+        https://bugs.webkit.org/show_bug.cgi?id=146100
+
+        Reviewed by Mark Lam.
+
+        * js/deconstructing-parameters-should-be-locals-expected.txt: Removed.
+        * js/deconstructing-parameters-should-be-locals.html: Removed.
+        * js/destructuring-assignment-expected.txt:
+        * js/destructuring-parameters-should-be-locals-expected.txt: Copied from LayoutTests/js/deconstructing-parameters-should-be-locals-expected.txt.
+        * js/destructuring-parameters-should-be-locals.html: Copied from LayoutTests/js/deconstructing-parameters-should-be-locals.html.
+        * js/regress/deconstructing-parameters-overridden-by-function-expected.txt: Removed.
+        * js/regress/deconstructing-parameters-overridden-by-function.html: Removed.
+        * js/regress/destructuring-parameters-overridden-by-function-expected.txt: Copied from LayoutTests/js/regress/deconstructing-parameters-overridden-by-function-expected.txt.
+        * js/regress/destructuring-parameters-overridden-by-function.html: Copied from LayoutTests/js/regress/deconstructing-parameters-overridden-by-function.html.
+        * js/regress/script-tests/deconstructing-parameters-overridden-by-function.js: Removed.
+        * js/regress/script-tests/destructuring-parameters-overridden-by-function.js: Copied from LayoutTests/js/regress/script-tests/deconstructing-parameters-overridden-by-function.js.
+        * js/script-tests/deconstructing-parameters-should-be-locals.js: Removed.
+        * js/script-tests/destructuring-assignment.js:
+        (testDestructuredArgs):
+        (testDestructuredArgLength):
+        (testDeconstructArgs): Deleted.
+        (testDeconstructArgLength): Deleted.
+        * js/script-tests/destructuring-parameters-should-be-locals.js: Copied from LayoutTests/js/script-tests/deconstructing-parameters-should-be-locals.js.
+        (description.value.string_appeared_here.readDestructuredParameter):
+        (overwriteDestructuredParameter):
+        (readCapturedDestructuredParameter):
+        (overwriteCapturedDestructuredParameter):
+        (description.value.string_appeared_here.readDeconstructedParameter): Deleted.
+        (overwriteDeconstructedParameter): Deleted.
+        (readCapturedDeconstructedParameter): Deleted.
+        (overwriteCapturedDeconstructedParameter): Deleted.
+
 2015-07-02  Brady Eidson  <beidson@apple.com>
 
         Add preference to disable all http-equiv.

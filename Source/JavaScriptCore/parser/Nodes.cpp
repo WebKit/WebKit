@@ -145,7 +145,7 @@ Ref<FunctionParameters> FunctionParameters::create(ParameterNode* firstParameter
     for (ParameterNode* parameter = firstParameter; parameter; parameter = parameter->nextParam())
         ++parameterCount;
 
-    size_t objectSize = sizeof(FunctionParameters) - sizeof(void*) + sizeof(DeconstructionPatternNode*) * parameterCount;
+    size_t objectSize = sizeof(FunctionParameters) - sizeof(void*) + sizeof(DestructuringPatternNode*) * parameterCount;
     void* slot = fastMalloc(objectSize);
     return adoptRef(*new (slot) FunctionParameters(firstParameter, parameterCount));
 }

@@ -119,7 +119,7 @@ public:
     typedef CaseClauseNode* Clause;
     typedef ConstDeclNode* ConstDeclList;
     typedef std::pair<ExpressionNode*, BinaryOpInfo> BinaryOperand;
-    typedef RefPtr<DeconstructionPatternNode> DeconstructionPattern;
+    typedef RefPtr<DestructuringPatternNode> DestructuringPattern;
     typedef RefPtr<ArrayPatternNode> ArrayPattern;
     typedef RefPtr<ObjectPatternNode> ObjectPattern;
     typedef RefPtr<BindingNode> BindingPattern;
@@ -420,8 +420,8 @@ public:
     ElementNode* createElementList(int elisions, ExpressionNode* expr) { return new (m_parserArena) ElementNode(elisions, expr); }
     ElementNode* createElementList(ElementNode* elems, int elisions, ExpressionNode* expr) { return new (m_parserArena) ElementNode(elems, elisions, expr); }
 
-    ParameterNode* createFormalParameterList(DeconstructionPattern pattern) { return new (m_parserArena) ParameterNode(pattern); }
-    ParameterNode* createFormalParameterList(ParameterNode* list, DeconstructionPattern pattern) { return new (m_parserArena) ParameterNode(list, pattern); }
+    ParameterNode* createFormalParameterList(DestructuringPattern pattern) { return new (m_parserArena) ParameterNode(pattern); }
+    ParameterNode* createFormalParameterList(ParameterNode* list, DestructuringPattern pattern) { return new (m_parserArena) ParameterNode(list, pattern); }
 
     CaseClauseNode* createClause(ExpressionNode* expr, JSC::SourceElements* statements) { return new (m_parserArena) CaseClauseNode(expr, statements); }
     ClauseListNode* createClauseList(CaseClauseNode* clause) { return new (m_parserArena) ClauseListNode(clause); }
@@ -486,9 +486,9 @@ public:
         return result;
     }
     
-    StatementNode* createForInLoop(const JSTokenLocation& location, PassRefPtr<DeconstructionPatternNode> pattern, ExpressionNode* iter, StatementNode* statements, const JSTextPosition& eStart, const JSTextPosition& eDivot, const JSTextPosition& eEnd, int start, int end)
+    StatementNode* createForInLoop(const JSTokenLocation& location, PassRefPtr<DestructuringPatternNode> pattern, ExpressionNode* iter, StatementNode* statements, const JSTextPosition& eStart, const JSTextPosition& eDivot, const JSTextPosition& eEnd, int start, int end)
     {
-        auto lexpr = new (m_parserArena) DeconstructingAssignmentNode(location, pattern.get(), 0);
+        auto lexpr = new (m_parserArena) DestructuringAssignmentNode(location, pattern.get(), 0);
         return createForInLoop(location, lexpr, iter, statements, eStart, eDivot, eEnd, start, end);
     }
     
@@ -500,13 +500,13 @@ public:
         return result;
     }
     
-    StatementNode* createForOfLoop(const JSTokenLocation& location, PassRefPtr<DeconstructionPatternNode> pattern, ExpressionNode* iter, StatementNode* statements, const JSTextPosition& eStart, const JSTextPosition& eDivot, const JSTextPosition& eEnd, int start, int end)
+    StatementNode* createForOfLoop(const JSTokenLocation& location, PassRefPtr<DestructuringPatternNode> pattern, ExpressionNode* iter, StatementNode* statements, const JSTextPosition& eStart, const JSTextPosition& eDivot, const JSTextPosition& eEnd, int start, int end)
     {
-        auto lexpr = new (m_parserArena) DeconstructingAssignmentNode(location, pattern.get(), 0);
+        auto lexpr = new (m_parserArena) DestructuringAssignmentNode(location, pattern.get(), 0);
         return createForOfLoop(location, lexpr, iter, statements, eStart, eDivot, eEnd, start, end);
     }
 
-    bool isBindingNode(const DeconstructionPattern& pattern)
+    bool isBindingNode(const DestructuringPattern& pattern)
     {
         return pattern->isBindingNode();
     }
@@ -738,9 +738,9 @@ public:
 
     bool isResolve(ExpressionNode* expr) const { return expr->isResolveNode(); }
 
-    ExpressionNode* createDeconstructingAssignment(const JSTokenLocation& location, PassRefPtr<DeconstructionPatternNode> pattern, ExpressionNode* initializer)
+    ExpressionNode* createDestructuringAssignment(const JSTokenLocation& location, PassRefPtr<DestructuringPatternNode> pattern, ExpressionNode* initializer)
     {
-        return new (m_parserArena) DeconstructingAssignmentNode(location, pattern.get(), initializer);
+        return new (m_parserArena) DestructuringAssignmentNode(location, pattern.get(), initializer);
     }
     
     ArrayPattern createArrayPattern(const JSTokenLocation&)
@@ -753,12 +753,12 @@ public:
         node->appendIndex(ArrayPatternNode::BindingType::Elision, location, 0, nullptr);
     }
 
-    void appendArrayPatternEntry(ArrayPattern node, const JSTokenLocation& location, DeconstructionPattern pattern, ExpressionNode* defaultValue)
+    void appendArrayPatternEntry(ArrayPattern node, const JSTokenLocation& location, DestructuringPattern pattern, ExpressionNode* defaultValue)
     {
         node->appendIndex(ArrayPatternNode::BindingType::Element, location, pattern.get(), defaultValue);
     }
 
-    void appendArrayPatternRestEntry(ArrayPattern node, const JSTokenLocation& location, DeconstructionPattern pattern)
+    void appendArrayPatternRestEntry(ArrayPattern node, const JSTokenLocation& location, DestructuringPattern pattern)
     {
         node->appendIndex(ArrayPatternNode::BindingType::RestElement, location, pattern.get(), nullptr);
     }
@@ -773,7 +773,7 @@ public:
         return ObjectPatternNode::create();
     }
     
-    void appendObjectPatternEntry(ObjectPattern node, const JSTokenLocation& location, bool wasString, const Identifier& identifier, DeconstructionPattern pattern, ExpressionNode* defaultValue)
+    void appendObjectPatternEntry(ObjectPattern node, const JSTokenLocation& location, bool wasString, const Identifier& identifier, DestructuringPattern pattern, ExpressionNode* defaultValue)
     {
         node->appendEntry(location, identifier, wasString, pattern.get(), defaultValue);
     }

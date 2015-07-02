@@ -71,8 +71,8 @@ ParserError BytecodeGenerator::generate()
     if (m_needToInitializeArguments)
         initializeVariable(variable(propertyNames().arguments), m_argumentsRegister);
 
-    for (size_t i = 0; i < m_deconstructedParameters.size(); i++) {
-        auto& entry = m_deconstructedParameters[i];
+    for (size_t i = 0; i < m_destructuringParameters.size(); i++) {
+        auto& entry = m_destructuringParameters[i];
         entry.second->bindValue(*this, entry.first.get());
     }
 
@@ -257,14 +257,14 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     }
     
     // Make sure the code block knows about all of our parameters, and make sure that parameters
-    // needing deconstruction are noted.
+    // needing destructuring are noted.
     m_parameters.grow(parameters.size() + 1); // reserve space for "this"
     m_thisRegister.setIndex(initializeNextParameter()->index()); // this
     for (unsigned i = 0; i < parameters.size(); ++i) {
         auto pattern = parameters.at(i);
         RegisterID* reg = initializeNextParameter();
         if (!pattern->isBindingNode())
-            m_deconstructedParameters.append(std::make_pair(reg, pattern));
+            m_destructuringParameters.append(std::make_pair(reg, pattern));
     }
     
     // Figure out some interesting facts about our arguments.
@@ -419,7 +419,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     // But some arguments are already initialized by default, since if they aren't captured and we
     // don't have "arguments" then we just point the symbol table at the stack slot of those
     // arguments. We end up initializing the rest of the arguments that have an uncomplicated
-    // binding (i.e. don't involve deconstruction) above when figuring out how to lay them out,
+    // binding (i.e. don't involve destructuring) above when figuring out how to lay them out,
     // because that's just the simplest thing. This means that when we initialize them, we have to
     // watch out for the things that override arguments (namely, functions).
     //
@@ -455,10 +455,10 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     // This is our final act of weirdness. "arguments" is overridden by everything except the
     // callee. We add it to the symbol table if it's not already there and it's not an argument.
     if (needsArguments) {
-        // If "arguments" is overridden by a function or deconstructed parameter name, then it's
+        // If "arguments" is overridden by a function or destructuring parameter name, then it's
         // OK for us to call createVariable() because it won't change anything. It's also OK for
         // us to them tell BytecodeGenerator::generate() to write to it because it will do so
-        // before it initializes functions and deconstructed parameters. But if "arguments" is
+        // before it initializes functions and destructuring parameters. But if "arguments" is
         // overridden by a "simple" function parameter, then we have to bail: createVariable()
         // would assert and BytecodeGenerator::generate() would write the "arguments" after the
         // argument value had already been properly initialized.
@@ -545,7 +545,7 @@ RegisterID* BytecodeGenerator::initializeNextParameter()
     return &parameter;
 }
 
-UniquedStringImpl* BytecodeGenerator::visibleNameForParameter(DeconstructionPatternNode* pattern)
+UniquedStringImpl* BytecodeGenerator::visibleNameForParameter(DestructuringPatternNode* pattern)
 {
     if (pattern->isBindingNode()) {
         const Identifier& ident = static_cast<const BindingNode*>(pattern)->boundProperty();

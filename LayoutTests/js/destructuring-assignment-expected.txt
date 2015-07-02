@@ -78,9 +78,9 @@ PASS (function ({'a':a,'b':b}) { return a+b;})(anObject) is '12'
 PASS ({'a':a,'b':b}=anObject); var r=a+b; r is '12'
 PASS a+b is '1122'
 PASS a+b is '2211'
-PASS testDeconstructArgs('1', '2') is '12'
-PASS testDeconstructArgLength('1', '2') is 2
-PASS testDeconstructArgs('2') is '2undefined'
+PASS testDestructuredArgs('1', '2') is '12'
+PASS testDestructuredArgLength('1', '2') is 2
+PASS testDestructuredArgs('2') is '2undefined'
 PASS a is 1
 PASS b is 2
 PASS c is 3

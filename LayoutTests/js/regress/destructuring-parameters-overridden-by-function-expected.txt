@@ -1,4 +1,4 @@
-JSRegress/deconstructing-parameters-overridden-by-function
+JSRegress/destructuring-parameters-overridden-by-function
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

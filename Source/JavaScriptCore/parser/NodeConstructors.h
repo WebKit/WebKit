@@ -820,20 +820,20 @@ namespace JSC {
     {
     }
 
-    inline ParameterNode::ParameterNode(PassRefPtr<DeconstructionPatternNode> pattern)
+    inline ParameterNode::ParameterNode(PassRefPtr<DestructuringPatternNode> pattern)
         : m_pattern(pattern)
         , m_next(0)
     {
         ASSERT(m_pattern);
     }
 
-    inline ParameterNode::ParameterNode(ParameterNode* l, PassRefPtr<DeconstructionPatternNode> pattern)
+    inline ParameterNode::ParameterNode(ParameterNode* previous, PassRefPtr<DestructuringPatternNode> pattern)
         : m_pattern(pattern)
         , m_next(0)
     {
-        l->m_next = this;
+        previous->m_next = this;
         ASSERT(m_pattern);
-        ASSERT(l->m_pattern);
+        ASSERT(previous->m_pattern);
     }
 
     inline FuncExprNode::FuncExprNode(const JSTokenLocation& location, const Identifier& ident, FunctionBodyNode* body, const SourceCode& source, ParameterNode* parameter)
@@ -934,12 +934,12 @@ namespace JSC {
     {
     }
     
-    inline DeconstructionPatternNode::DeconstructionPatternNode()
+    inline DestructuringPatternNode::DestructuringPatternNode()
     {
     }
 
     inline ArrayPatternNode::ArrayPatternNode()
-        : DeconstructionPatternNode()
+        : DestructuringPatternNode()
     {
     }
     
@@ -949,7 +949,7 @@ namespace JSC {
     }
     
     inline ObjectPatternNode::ObjectPatternNode()
-        : DeconstructionPatternNode()
+        : DestructuringPatternNode()
     {
     }
     
@@ -964,14 +964,14 @@ namespace JSC {
     }
     
     inline BindingNode::BindingNode(const Identifier& boundProperty, const JSTextPosition& start, const JSTextPosition& end)
-        : DeconstructionPatternNode()
+        : DestructuringPatternNode()
         , m_divotStart(start)
         , m_divotEnd(end)
         , m_boundProperty(boundProperty)
     {
     }
     
-    inline DeconstructingAssignmentNode::DeconstructingAssignmentNode(const JSTokenLocation& location, PassRefPtr<DeconstructionPatternNode> bindings, ExpressionNode* initializer)
+    inline DestructuringAssignmentNode::DestructuringAssignmentNode(const JSTokenLocation& location, PassRefPtr<DestructuringPatternNode> bindings, ExpressionNode* initializer)
         : ExpressionNode(location)
         , m_bindings(bindings)
         , m_initializer(initializer)
