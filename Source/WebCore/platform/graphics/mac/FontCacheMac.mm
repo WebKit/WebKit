@@ -228,16 +228,19 @@ static CGFloat toNSFontWeight(FontWeight fontWeight)
 }
 #endif
 
-static Optional<NSFont*> fontWithFamilySpecialCase(const AtomicString& family, FontWeight weight, float size)
+static Optional<NSFont*> fontWithFamilySpecialCase(const AtomicString& family, FontWeight weight, NSFontTraitMask desiredTraits, float size)
 {
     if (equalIgnoringASCIICase(family, "-webkit-system-font")
         || equalIgnoringASCIICase(family, "-apple-system")
         || equalIgnoringASCIICase(family, "-apple-system-font")) {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-        return [NSFont systemFontOfSize:size weight:toNSFontWeight(weight)];
+        NSFont *result = [NSFont systemFontOfSize:size weight:toNSFontWeight(weight)];
 #else
-        return (weight >= FontWeight600) ? [NSFont boldSystemFontOfSize:size] : [NSFont systemFontOfSize:size];
+        NSFont *result = (weight >= FontWeight600) ? [NSFont boldSystemFontOfSize:size] : [NSFont systemFontOfSize:size];
 #endif
+        if (desiredTraits & NSFontItalicTrait)
+            result = [[NSFontManager sharedFontManager] convertFont:result toHaveTrait:desiredTraits];
+        return result;
     }
 
     if (equalIgnoringASCIICase(family, "-apple-system-monospaced-numbers")) {
@@ -263,7 +266,7 @@ static Optional<NSFont*> fontWithFamilySpecialCase(const AtomicString& family, F
 // we then do a search based on the family names of the installed fonts.
 static NSFont *fontWithFamily(const AtomicString& family, NSFontTraitMask desiredTraits, FontWeight weight, float size)
 {
-    if (const auto& specialCase = fontWithFamilySpecialCase(family, weight, size))
+    if (const auto& specialCase = fontWithFamilySpecialCase(family, weight, desiredTraits, size))
         return specialCase.value();
 
     NSFontManager *fontManager = [NSFontManager sharedFontManager];

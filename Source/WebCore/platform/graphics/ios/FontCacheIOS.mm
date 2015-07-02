@@ -615,11 +615,8 @@ static CTFontRef createCTFontWithFamilyNameAndWeight(const String& familyName, C
         if (weight > 300) {
             // The comment below has been copied from CoreText/UIFoundation. However, in WebKit we synthesize the oblique,
             // so we should investigate the result <rdar://problem/14449340>:
-            // We don't do bold-italic for system fonts. If you ask for it, we'll assume that you're just kidding and that you really want bold. This is a feature.
             if (traits & kCTFontTraitBold)
                 fontType = kCTFontUIFontEmphasizedSystem;
-            else if (traits & kCTFontTraitItalic)
-                fontType = static_cast<CTFontUIFontType>(kCTFontUIFontSystemItalic);
         } else if (weight > 250)
             fontType = static_cast<CTFontUIFontType>(kCTFontUIFontSystemLight);
         else if (weight > 150)
@@ -627,6 +624,8 @@ static CTFontRef createCTFontWithFamilyNameAndWeight(const String& familyName, C
         else
             fontType = static_cast<CTFontUIFontType>(kCTFontUIFontSystemUltraLight);
         RetainPtr<CTFontDescriptorRef> fontDescriptor = adoptCF(CTFontDescriptorCreateForUIType(fontType, size, nullptr));
+        if (traits & kCTFontTraitItalic)
+            fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithSymbolicTraits(fontDescriptor.get(), kCTFontItalicTrait, kCTFontItalicTrait));
         return CTFontCreateWithFontDescriptor(fontDescriptor.get(), size, nullptr);
     }
 

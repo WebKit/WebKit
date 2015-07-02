@@ -1,3 +1,14 @@
+2015-07-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] Support bold and thin italicized system fonts
+        https://bugs.webkit.org/show_bug.cgi?id=146463
+        <rdar://problem/20948885>
+
+        Reviewed by Darin Adler.
+
+        * fast/text/weighted-italicized-system-font-expected.html: Added.
+        * fast/text/weighted-italicized-system-font.html: Added.
+
 2015-07-01  Matthew Mirman  <mmirman@apple.com>
 
         Unreviewed, rolling out r185889
