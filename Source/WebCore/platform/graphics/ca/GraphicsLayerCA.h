@@ -443,7 +443,7 @@ private:
     bool appendToUncommittedAnimations(const KeyframeValueList&, const TransformOperations*, const Animation*, const String& animationName, const FloatSize& boxSize, int animationIndex, double timeOffset, bool isMatrixAnimation);
     bool appendToUncommittedAnimations(const KeyframeValueList&, const FilterOperation*, const Animation*, const String& animationName, int animationIndex, double timeOffset);
 
-    enum LayerChange {
+    enum LayerChange : uint64_t {
         NoChange =                      0,
         NameChanged =                   1LLU << 1,
         ChildrenChanged =               1LLU << 2, // also used for content layer, and preserves-3d, and size if tiling changes?
