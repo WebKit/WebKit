@@ -465,7 +465,7 @@ public:
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-    WK_EXPORT UserMediaPermissionRequestManager& userMediaPermissionRequestManager() { return m_userMediaPermissionRequestManager; }
+    UserMediaPermissionRequestManager& userMediaPermissionRequestManager() { return m_userMediaPermissionRequestManager; }
 #endif
 
 #if PLATFORM(IOS)

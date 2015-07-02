@@ -1,3 +1,11 @@
+2015-07-02  Alex Christensen  <achristensen@webkit.org>
+
+        Fix EWS build after r186182.
+
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::userMediaPermissionRequestManager):
+        Don't export a function defined in a header, or it will generate a weak external symbol.
+
 2015-07-02  Brady Eidson  <beidson@apple.com>
 
         Add preference to disable all http-equiv.
