@@ -14,7 +14,6 @@
 				1A50DB70110A3D67000D3FE5 /* Copy Files */,
 				BCFFCA8A160D6DEA003DF315 /* Add current version symlinks */,
 				BCFFCA8B160D6E7B003DF315 /* Copy XPC services for engineering builds */,
-				1A1A18301B17919B00B06F12 /* Add Symlinks in /System/Library/PrivateFrameworks/WebKit.framework */,
 			);
 			dependencies = (
 				1A6280F619199865006AD9F9 /* PBXTargetDependency */,
@@ -8906,20 +8905,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [[ ${PLATFORM_NAME} != \"macosx\" ]]; then\nexit 0\nfi\n\nln -sf Versions/Current/Frameworks \"$TARGET_BUILD_DIR/WebKit.framework/Frameworks\"\n";
-		};
-		1A1A18301B17919B00B06F12 /* Add Symlinks in /System/Library/PrivateFrameworks/WebKit.framework */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 8;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Add Symlinks in /System/Library/PrivateFrameworks/WebKit.framework";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/sh;
-			shellScript = "if [[ ${PLATFORM_NAME} != \"iphoneos\" ]]; then\nexit 0;\nfi\n\nif [[ ! -d \"${INSTALL_ROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/WebKit.framework\" ]]; then\nmkdir -p \"${INSTALL_ROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/WebKit.framework\"\nfi\n\ncd ${INSTALL_ROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/WebKit.framework\nln -s -h -f ../../Frameworks/WebKit.framework/* .";
 		};
 		1A1D2115191D96380001619F /* Postprocess Framework Headers */ = {
 			isa = PBXShellScriptBuildPhase;

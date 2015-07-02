@@ -1,3 +1,12 @@
+2015-07-02  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/21429613> [iOS] Stop making symlinks from PrivateFrameworks to Frameworks
+        https://bugs.webkit.org/show_bug.cgi?id=146542
+
+        Reviewed by Sam Weinig.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Removed the build phase that makes the symlink.
+
 2015-07-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Aggregate profile call information on the backend to drastically reduce profile sizes
