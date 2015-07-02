@@ -3,5 +3,5 @@ Verifies the minimum resolution is 5 microseconds.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS Math.abs(1 - (t1 - t0) / 0.005) < 1e-10 is true
+PASS shouldBeNearZeroOrOne < 1e-10 || Math.abs(shouldBeNearZeroOrOne - 1) < 1e-10 is true
 

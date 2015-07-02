@@ -14,7 +14,10 @@ while (t0 == t1) {
     t1 = performance.now();
 }
 
-shouldBe("Math.abs(1 - (t1 - t0) / 0.005) < 1e-10", "true");
+var expectedResolutionMilliseconds = 0.005;
+var integerMultipleOfResolution = (t1 - t0) / expectedResolutionMilliseconds;
+var shouldBeNearZeroOrOne = integerMultipleOfResolution % 1;
+shouldBe("shouldBeNearZeroOrOne < 1e-10 || Math.abs(shouldBeNearZeroOrOne - 1) < 1e-10", "true");
 
 </script>
 </body>

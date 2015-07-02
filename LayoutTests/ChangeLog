@@ -1,3 +1,11 @@
+2015-07-01  Alex Christensen  <achristensen@webkit.org>
+
+        Fix test from r186208 and r186216.
+
+        * http/tests/misc/webtiming-resolution-expected.txt:
+        * http/tests/misc/webtiming-resolution.html:
+        Properly and explicitly test if the time delta is close to a multiple of the expected resolution.
+
 2015-07-01  Chris Dumez  <cdumez@apple.com>
 
         Reduce resolution of performance.now
