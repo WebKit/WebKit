@@ -1,3 +1,13 @@
+2015-07-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: [Mac] InspectorFrontendHost.beep() doesn't play a sound, sandbox warnings
+        https://bugs.webkit.org/show_bug.cgi?id=146525
+
+        Reviewed by Timothy Hatcher.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+        Get NSBeep working without any sandbox warnings.
+
 2015-07-01  Anders Carlsson  <andersca@apple.com>
 
         Remove code to recompute rounded window corners
