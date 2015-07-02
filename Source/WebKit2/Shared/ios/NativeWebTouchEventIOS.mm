@@ -102,7 +102,7 @@ NativeWebTouchEvent::NativeWebTouchEvent(const _UIWebTouchEvent* event)
         event->timestamp,
         extractWebTouchPoint(event),
         positionForCGPoint(event->locationInDocumentCoordinates),
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000 && defined UI_WEB_TOUCH_EVENT_HAS_IS_POTENTIAL_TAP && UI_WEB_TOUCH_EVENT_HAS_IS_POTENTIAL_TAP
         event->isPotentialTap,
 #else
         true,

@@ -1,3 +1,13 @@
+2015-07-02  Anders Carlsson  <andersca@apple.com>
+
+        Instead of requiring ToT UIKIt, check that UI_WEB_TOUCH_EVENT_HAS_IS_POTENTIAL_TAP is defined to 1
+        https://bugs.webkit.org/show_bug.cgi?id=146558
+
+        Reviewed by Beth Dakin.
+
+        * Shared/ios/NativeWebTouchEventIOS.mm:
+        (WebKit::NativeWebTouchEvent::NativeWebTouchEvent):
+
 2015-07-02  Brady Eidson  <beidson@apple.com>
 
         Remove change I accidentally committed in r186232
