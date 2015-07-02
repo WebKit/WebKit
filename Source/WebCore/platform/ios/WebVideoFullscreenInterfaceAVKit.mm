@@ -732,13 +732,13 @@ static WebVideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullS
     return _videoLayerGravity;
 }
 
-- (void)enterOptimizedFullScreenModeRedirectingVideoToLayer:(CALayer *)layer
+- (void)enterPIPModeRedirectingVideoToLayer:(CALayer *)layer
 {
     [_videoSublayer removeFromSuperlayer];
     [layer addSublayer:_videoSublayer.get()];
 }
 
-- (void)leaveOptimizedFullScreenMode
+- (void)leavePIPMode
 {
     [_videoSublayer removeFromSuperlayer];
     [self addSublayer:_videoSublayer.get()];
