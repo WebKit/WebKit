@@ -1468,7 +1468,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         if ([uiDelegatePrivate respondsToSelector:@selector(_webView:finalObscuredInsetsForScrollView:withVelocity:targetContentOffset:)])
             contentInset = [uiDelegatePrivate _webView:self finalObscuredInsetsForScrollView:scrollView withVelocity:velocity targetContentOffset:targetContentOffset];
         else
-            UIEdgeInsets contentInset = [self _computedContentInset];
+            contentInset = [self _computedContentInset];
 
         CGRect unobscuredRect = UIEdgeInsetsInsetRect(fullViewRect, contentInset);
         

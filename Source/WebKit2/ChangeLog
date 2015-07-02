@@ -1,5 +1,12 @@
 2015-07-02  Brent Fulgham  <bfulgham@apple.com>
 
+        Correct typo in r186238.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView scrollViewWillEndDragging:withVelocity:targetContentOffset:]):
+
+2015-07-02  Brent Fulgham  <bfulgham@apple.com>
+
         Provide delegate SPI for clients to notify WebKit about content inset changes
         https://bugs.webkit.org/show_bug.cgi?id=146482
         <rdar://problem/21602741>
