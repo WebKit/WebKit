@@ -1,5 +1,11 @@
 2015-07-02  Brent Fulgham  <bfulgham@apple.com>
 
+        Correct *another* typo in r186238.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h: Fix parameter name scrolView -> scrollView.
+
+2015-07-02  Brent Fulgham  <bfulgham@apple.com>
+
         Correct typo in r186238.
 
         * UIProcess/API/Cocoa/WKWebView.mm:
