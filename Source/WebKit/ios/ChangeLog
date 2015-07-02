@@ -1,6 +1,17 @@
 2015-07-02  Timothy Horton  <timothy_horton@apple.com>
 
         iOS WebKitLegacy should match WebKit2's viewport behavior
+        https://bugs.webkit.org/show_bug.cgi?id=146564
+        <rdar://problem/20574017>
+
+        Reviewed by Brent Fulgham.
+
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        (dictionaryForViewportArguments):
+
+2015-07-02  Timothy Horton  <timothy_horton@apple.com>
+
+        iOS WebKitLegacy should match WebKit2's viewport behavior
         https://bugs.webkit.org/show_bug.cgi?id=146540
         <rdar://problem/20574017>
 
