@@ -62,8 +62,8 @@ public:
     void storeError(JSC::ExecState&, JSC::JSValue);
     JSC::JSValue error() override { return m_error.get(); }
 
-    void enqueue(JSC::ExecState&);
-    void error(JSC::ExecState&, ExceptionCode&);
+    void enqueue(JSC::ExecState&, JSC::JSValue);
+    void error(JSC::ExecState&, JSC::JSValue, ExceptionCode&);
 
     double desiredSize() const { return m_highWaterMark - m_totalQueueSize; }
 

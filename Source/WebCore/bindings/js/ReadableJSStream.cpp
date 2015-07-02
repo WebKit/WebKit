@@ -298,13 +298,13 @@ void ReadableJSStream::close(ExceptionCode& ec)
     changeStateToClosed();
 }
 
-void ReadableJSStream::error(JSC::ExecState& state, ExceptionCode& ec)
+void ReadableJSStream::error(JSC::ExecState& state, JSC::JSValue value, ExceptionCode& ec)
 {
     if (!isReadable()) {
         ec = TypeError;
         return;
     }
-    storeError(state, state.argument(0));
+    storeError(state, value);
 }
 
 void ReadableJSStream::storeException(JSC::ExecState& state)
@@ -338,24 +338,27 @@ JSValue ReadableJSStream::read()
     return chunk.value.get();
 }
 
-void ReadableJSStream::enqueue(ExecState& state)
+void ReadableJSStream::enqueue(JSC::ExecState& state, JSC::JSValue chunk)
 {
-    ASSERT(!isCloseRequested());
-
+    if (isErrored()) {
+        throwVMError(&state, error());
+        return;
+    }
+    if (isCloseRequested()) {
+        throwVMError(&state, createDOMException(&state, TypeError));
+        return;
+    }
     if (!isReadable())
         return;
 
-    JSValue chunk = state.argument(0);
     if (resolveReadCallback(chunk)) {
         pull();
         return;
     }
 
     double size = retrieveChunkSize(state, chunk);
-    if (state.hadException()) {
-        storeError(state, state.exception()->value());
+    if (state.hadException())
         return;
-    }
 
     m_chunkQueue.append({ JSC::Strong<JSC::Unknown>(state.vm(), chunk), size });
     m_totalQueueSize += size;
@@ -372,15 +375,20 @@ double ReadableJSStream::retrieveChunkSize(ExecState& state, JSValue chunk)
     arguments.append(chunk);
 
     JSValue sizeValue = callFunction(state, m_sizeFunction.get(), jsUndefined(), arguments);
-    if (state.hadException())
+    if (state.hadException()) {
+        storeError(state, state.exception()->value());
         return 0;
+    }
 
     double size = sizeValue.toNumber(&state);
-    if (state.hadException())
+    if (state.hadException()) {
+        storeError(state, state.exception()->value());
         return 0;
+    }
 
     if (!std::isfinite(size) || size < 0) {
-        throwVMError(&state, createRangeError(&state, ASCIILiteral("Incorrect double value")));
+        storeError(state, createDOMException(&state, RangeError));
+        throwVMError(&state, error());
         return 0;
     }
 

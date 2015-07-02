@@ -40,17 +40,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSReadableStreamController::enqueue(ExecState* exec)
-{
-    ReadableJSStream& stream = impl().stream();
-    if (stream.isErrored())
-        return exec->vm().throwException(exec, stream.error());
-    if (stream.isCloseRequested())
-        return exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Calling enqueue on a stream which is closing")));
-    stream.enqueue(*exec);
-    return jsUndefined();
-}
-
 EncodedJSValue JSC_HOST_CALL constructJSReadableStreamController(ExecState* exec)
 {
     return throwVMError(exec, createTypeError(exec, ASCIILiteral("ReadableStreamController constructor should not be called directly")));
