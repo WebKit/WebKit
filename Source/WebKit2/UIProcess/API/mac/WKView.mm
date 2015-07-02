@@ -126,8 +126,6 @@
 @end
 
 @interface NSWindow (WKNSWindowDetails)
-- (NSRect)_intersectBottomCornersWithRect:(NSRect)viewRect;
-- (void)_maskRoundedBottomCorners:(NSRect)clipRect;
 - (id)_newFirstResponderAfterResigning;
 @end
 
@@ -236,8 +234,6 @@ struct WKViewInterpretKeyEventsParameters {
 
     BOOL _inSecureInputState;
 
-    NSRect _windowBottomCornerIntersectionRect;
-    
     BOOL _shouldDeferViewInWindowChanges;
     NSWindow *_targetWindowForMovePreparation;
 
@@ -1199,25 +1195,6 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
 - (void)capitalizeWord:(id)sender
 {
     _data->_page->capitalizeWord();
-}
-
-- (void)displayIfNeeded
-{
-    // FIXME: We should remove this code when <rdar://problem/9362085> is resolved. In the meantime,
-    // it is necessary to disable scren updates so we get a chance to redraw the corners before this 
-    // display is visible.
-    NSWindow *window = [self window];
-    BOOL shouldMaskWindow = window && !NSIsEmptyRect(_data->_windowBottomCornerIntersectionRect);
-    if (shouldMaskWindow)
-        NSDisableScreenUpdates();
-
-    [super displayIfNeeded];
-
-    if (shouldMaskWindow) {
-        [window _maskRoundedBottomCorners:_data->_windowBottomCornerIntersectionRect];
-        NSEnableScreenUpdates();
-        _data->_windowBottomCornerIntersectionRect = NSZeroRect;
-    }
 }
 
 // Events
@@ -3726,18 +3703,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
     _data->_intrinsicContentSize = intrinsicContentSizeAcknowledgingFlexibleWidth;
     [self invalidateIntrinsicContentSize];
-}
-
-- (void)_cacheWindowBottomCornerRect
-{
-    // FIXME: We should remove this code when <rdar://problem/9362085> is resolved.
-    NSWindow *window = [self window];
-    if (!window)
-        return;
-
-    _data->_windowBottomCornerIntersectionRect = [window _intersectBottomCornersWithRect:[self convertRect:[self visibleRect] toView:nil]];
-    if (!NSIsEmptyRect(_data->_windowBottomCornerIntersectionRect))
-        [self setNeedsDisplayInRect:[self convertRect:_data->_windowBottomCornerIntersectionRect fromView:nil]];
 }
 
 - (NSInteger)spellCheckerDocumentTag

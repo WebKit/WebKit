@@ -1,3 +1,17 @@
+2015-07-01  Anders Carlsson  <andersca@apple.com>
+
+        Remove code to recompute rounded window corners
+        https://bugs.webkit.org/show_bug.cgi?id=146534
+
+        Reviewed by Simon Fraser.
+
+        This code is no longer needed since we're always layer-backed now.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView displayIfNeeded]): Deleted.
+        (-[WKView _cacheWindowBottomCornerRect]): Deleted.
+        * UIProcess/API/mac/WKViewInternal.h:
+
 2015-07-01  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Web page doesn't update its loading state when web process becomes suspended if there are pending network requests (XHR).

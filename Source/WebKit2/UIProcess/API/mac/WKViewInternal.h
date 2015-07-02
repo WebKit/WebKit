@@ -112,8 +112,6 @@ struct WebPageConfiguration;
 
 - (WebKit::ColorSpaceData)_colorSpace;
 
-- (void)_cacheWindowBottomCornerRect;
-
 - (NSInteger)spellCheckerDocumentTag;
 - (void)handleAcceptedAlternativeText:(NSString*)text;
 
