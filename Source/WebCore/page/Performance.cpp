@@ -231,7 +231,9 @@ void Performance::webkitClearMeasures(const String& measureName)
 
 double Performance::now() const
 {
-    return 1000.0 * (WTF::monotonicallyIncreasingTime() - m_referenceTime);
+    double nowSeconds = WTF::monotonicallyIncreasingTime() - m_referenceTime;
+    const double resolutionSeconds = 0.000005;
+    return 1000.0 * floor(nowSeconds / resolutionSeconds) * resolutionSeconds;
 }
 
 } // namespace WebCore

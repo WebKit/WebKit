@@ -1,3 +1,14 @@
+2015-07-01  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce resolution of performance.now.
+        https://bugs.webkit.org/show_bug.cgi?id=146531
+        rdar://problem/20116796
+
+        Reviewed by Simon Fraser.
+
+        * http/tests/misc/webtiming-resolution-expected.txt: Added.
+        * http/tests/misc/webtiming-resolution.html: Added.
+
 2015-07-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Support bold and thin italicized system fonts
