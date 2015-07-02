@@ -25,16 +25,16 @@
 
 WebInspector.ProfileNode = class ProfileNode extends WebInspector.Object
 {
-    constructor(id, type, functionName, sourceCodeLocation, calls, childNodes)
+    constructor(id, type, functionName, sourceCodeLocation, callInfo, calls, childNodes)
     {
         super();
 
         childNodes = childNodes || [];
 
         console.assert(id);
-        console.assert(calls instanceof Array);
-        console.assert(calls.length >= 1);
-        console.assert(calls.every(function(call) { return call instanceof WebInspector.ProfileNodeCall; }));
+        console.assert(!calls || calls instanceof Array);
+        console.assert(!calls || calls.length >= 1);
+        console.assert(!calls || calls.every(function(call) { return call instanceof WebInspector.ProfileNodeCall; }));
         console.assert(childNodes instanceof Array);
         console.assert(childNodes.every(function(node) { return node instanceof WebInspector.ProfileNode; }));
 
@@ -42,18 +42,28 @@ WebInspector.ProfileNode = class ProfileNode extends WebInspector.Object
         this._type = type || WebInspector.ProfileNode.Type.Function;
         this._functionName = functionName || null;
         this._sourceCodeLocation = sourceCodeLocation || null;
-        this._calls = calls;
+        this._calls = calls || null;
+        this._callInfo = callInfo || null;
         this._childNodes = childNodes;
         this._parentNode = null;
         this._previousSibling = null;
         this._nextSibling = null;
         this._computedTotalTimes = false;
 
+        if (this._callInfo) {            
+            this._startTime = this._callInfo.startTime;
+            this._endTime = this._callInfo.endTime;
+            this._totalTime = this._callInfo.totalTime;
+            this._callCount = this._callInfo.callCount;
+        }
+
         for (var i = 0; i < this._childNodes.length; ++i)
             this._childNodes[i].establishRelationships(this, this._childNodes[i - 1], this._childNodes[i + 1]);
 
-        for (var i = 0; i < this._calls.length; ++i)
-            this._calls[i].establishRelationships(this, this._calls[i - 1], this._calls[i + 1]);
+        if (this._calls) {
+            for (var i = 0; i < this._calls.length; ++i)
+                this._calls[i].establishRelationships(this, this._calls[i - 1], this._calls[i + 1]);
+        }
     }
 
     // Public
@@ -104,6 +114,11 @@ WebInspector.ProfileNode = class ProfileNode extends WebInspector.Object
         return this._totalTime;
     }
 
+    get callInfo()
+    {
+        return this._callInfo;
+    }
+
     get calls()
     {
         return this._calls;
@@ -133,6 +148,30 @@ WebInspector.ProfileNode = class ProfileNode extends WebInspector.Object
     {
         console.assert(typeof rangeStartTime === "number");
         console.assert(typeof rangeEndTime === "number");
+
+        // With aggregate call info we can't accurately partition self/total/average time
+        // in partial ranges because we don't know exactly when each call started. So we
+        // always return the entire range.
+        if (this._callInfo) {
+            if (this._selfTime === undefined) {
+                var childNodesTotalTime = 0;
+                for (var childNode of this._childNodes)
+                    childNodesTotalTime += childNode.totalTime;
+                this._selfTime = this._totalTime - childNodesTotalTime;
+            }
+
+            return {
+                callCount: this._callCount,
+                startTime: this._startTime,
+                endTime: this._endTime,
+                selfTime: this._selfTime,
+                totalTime: this._totalTime,
+                averageTime: (this._selfTime / this._callCount),
+            };
+        }
+
+        // COMPATIBILITY (iOS8): Profiles included per-call information and can be finely partitioned.
+        // Compute that below by iterating over all the calls / children for the time range.
 
         var recordCallCount = true;
         var callCount = 0;

@@ -308,10 +308,8 @@ WebInspector.TimelineRecordingContentView.prototype = {
 
         if (treeElement instanceof WebInspector.ProfileNodeTreeElement) {
             var profileNode = treeElement.profileNode;
-            for (var call of profileNode.calls) {
-                if (checkTimeBounds(call.startTime, call.endTime))
-                    return true;
-            }
+            if (checkTimeBounds(profileNode.startTime, profileNode.endTime))
+                return true;
 
             return false;
         }

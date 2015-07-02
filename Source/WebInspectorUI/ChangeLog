@@ -1,3 +1,37 @@
+2015-07-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Aggregate profile call information on the backend to drastically reduce profile sizes
+        https://bugs.webkit.org/show_bug.cgi?id=146536
+
+        Reviewed by Timothy Hatcher.
+
+        Since we still support legacy backends, the frontend documents where
+        it is handling legacy backends with compatibility comments.
+
+        * UserInterface/Models/ProfileNode.js:
+        (WebInspector.ProfileNode):
+        (WebInspector.ProfileNode.prototype.get callInfo):
+        Handle a ProfileNode created with callInfo or calls. They are mutually exclusive.
+
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        (WebInspector.ScriptTimelineRecord.prototype._initializeProfileFromPayload.profileNodeFromPayload):
+        If the profile has per-call information, construct ProfileNodeCall objects, otherwise
+        just construct the ProfileNode with the aggregate callInfo value.
+
+        * UserInterface/Views/ScriptTimelineDataGridNode.js:
+        (WebInspector.ScriptTimelineDataGridNode.prototype.get data):
+        When we have aggregate call information we cannot easily partition a script,
+        so we instead treat the entire script as one large atomic unit in the timeline.
+        If the timeline range has any portion of the script, show the entire script.
+        Users used to be able to select a portion of a script and view the relevant
+        functions called in just that sliver, but this doesn't appear to be a well
+        known feature or commonly used. In fact, given the small ranges of time it
+        could be confusing for users.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype.matchTreeElementAgainstCustomFilters):
+        Treat as a discrete unit.
+
 2015-07-01  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: When autocompleting, pressing tab twice shouldn't insert a tab character

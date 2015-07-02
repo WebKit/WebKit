@@ -53,12 +53,14 @@
             "description": "Timeline record contains information about the recorded activity."
         },
         {
-            "id": "CPUProfileNodeCall",
+            "id": "CPUProfileNodeAggregateCallInfo",
             "type": "object",
-            "description": "CPU Profile call info. Holds time information for a specific call that happened on a node.",
+            "description": "Aggregate CPU Profile call info. Holds time information for all the calls that happened on a node.",
             "properties": [
-                { "name": "startTime", "type": "number", "description": "Start time for the call." },
-                { "name": "totalTime", "type": "number", "description": "Total execution time for the call." }
+                { "name": "callCount", "type": "number", "description": "Total number of calls." },
+                { "name": "startTime", "type": "number", "description": "Start time for the first call." },
+                { "name": "endTime", "type": "number", "description": "End time for the last call." },
+                { "name": "totalTime", "type": "number", "description": "Total execution time for all calls combined." }
             ]
         },
         {
@@ -67,7 +69,7 @@
             "description": "CPU Profile node. Holds callsite information, execution statistics and child nodes.",
             "properties": [
                 { "name": "id", "type": "integer", "description": "Unique identifier for this call site." },
-                { "name": "calls", "type": "array", "items": { "$ref": "CPUProfileNodeCall" }, "description": "Calls making up this node." },
+                { "name": "callInfo", "$ref": "CPUProfileNodeAggregateCallInfo", "description": "Aggregate info about all the calls that making up this node." },
                 { "name": "functionName", "type": "string", "optional": true, "description": "Function name." },
                 { "name": "url", "type": "string", "optional": true, "description": "URL." },
                 { "name": "lineNumber", "type": "integer", "optional": true, "description": "Line number." },

@@ -209,23 +209,28 @@ void TimelineRecordFactory::appendLayoutRoot(InspectorObject* data, const FloatQ
     data->setArray("root", createQuad(quad));
 }
 
-static Ref<Protocol::Timeline::CPUProfileNodeCall> buildInspectorObject(const JSC::ProfileNode::Call& call)
+static Ref<Protocol::Timeline::CPUProfileNodeAggregateCallInfo> buildAggregateCallInfoInspectorObject(const JSC::ProfileNode* node)
 {
-    return Protocol::Timeline::CPUProfileNodeCall::create()
-        .setStartTime(call.startTime())
-        .setTotalTime(call.elapsedTime())
+    double startTime = node->calls()[0].startTime();
+    double endTime = node->calls().last().startTime() + node->calls().last().elapsedTime();
+
+    double totalTime = 0;
+    for (const JSC::ProfileNode::Call& call : node->calls())
+        totalTime += call.elapsedTime();
+
+    return Protocol::Timeline::CPUProfileNodeAggregateCallInfo::create()
+        .setCallCount(node->calls().size())
+        .setStartTime(startTime)
+        .setEndTime(endTime)
+        .setTotalTime(totalTime)
         .release();
 }
 
 static Ref<Protocol::Timeline::CPUProfileNode> buildInspectorObject(const JSC::ProfileNode* node)
 {
-    auto calls = Protocol::Array<Protocol::Timeline::CPUProfileNodeCall>::create();
-    for (const JSC::ProfileNode::Call& call : node->calls())
-        calls->addItem(buildInspectorObject(call));
-
     auto result = Protocol::Timeline::CPUProfileNode::create()
         .setId(node->id())
-        .setCalls(WTF::move(calls))
+        .setCallInfo(buildAggregateCallInfoInspectorObject(node))
         .release();
 
     if (!node->functionName().isEmpty())

@@ -1,3 +1,14 @@
+2015-07-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Aggregate profile call information on the backend to drastically reduce profile sizes
+        https://bugs.webkit.org/show_bug.cgi?id=146536
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/protocol/Timeline.json:
+        Change a CPUProfile from sending a required "calls" param to sending a required
+        "callInfo" param which includes aggregated information about the calls.
+
 2015-06-30  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::freezeFragile should register the frozen value's structure
