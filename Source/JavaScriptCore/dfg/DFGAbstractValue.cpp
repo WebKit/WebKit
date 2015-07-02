@@ -51,7 +51,6 @@ void AbstractValue::setOSREntryValue(Graph& graph, const FrozenValue& value)
 {
     if (!!value && value.value().isCell()) {
         Structure* structure = value.structure();
-        graph.registerStructure(structure);
         m_structure = structure;
         m_arrayModes = asArrayModes(structure->indexingType());
     } else {
@@ -70,9 +69,6 @@ void AbstractValue::set(Graph& graph, const FrozenValue& value, StructureClobber
 {
     if (!!value && value.value().isCell()) {
         Structure* structure = value.structure();
-        // FIXME: This check may not be necessary since any frozen value should have its structure
-        // watched already.
-        // https://bugs.webkit.org/show_bug.cgi?id=136055
         if (graph.registerStructure(structure) == StructureRegisteredAndWatched) {
             m_structure = structure;
             if (clobberState == StructuresAreClobbered) {

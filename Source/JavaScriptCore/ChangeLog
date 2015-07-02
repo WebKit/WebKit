@@ -1,3 +1,29 @@
+2015-06-30  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::freezeFragile should register the frozen value's structure
+        https://bugs.webkit.org/show_bug.cgi?id=136055
+        rdar://problem/21042120
+
+        Reviewed by Mark Lam and Geoffrey Garen.
+        
+        This fixes weird concurrency bugs where the constant folding phase tries to convert
+        something to a constant but then crashes because the constant's structure wasn't
+        registered. The AI was registering the structure of any value it saw, but constant folding
+        wasn't - and that's fine so long as there ain't no concurrency.
+        
+        The best fix is to just make it impossible to introduce a constant into the IR without
+        registering its structure. That's what this change does. This is not only a great
+        concurrency fix - it also makes the compiler somewhat easier to hack on because it's one
+        less case of structure registering that you have to remember about.
+        
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::setOSREntryValue): No need to register.
+        (JSC::DFG::AbstractValue::set): We still call register, but just to get the watchpoint state.
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::freezeFragile): Register the structure.
+        * dfg/DFGStructureRegistrationPhase.cpp:
+        (JSC::DFG::StructureRegistrationPhase::run): Assert that these are all registered.
+
 2015-07-01  Matthew Mirman  <mmirman@apple.com>
 
         Unreviewed, rolling out r185889

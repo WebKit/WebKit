@@ -1214,7 +1214,11 @@ FrozenValue* Graph::freezeFragile(JSValue value)
     if (value.isUInt32())
         m_uint32ValuesInUse.append(value.asUInt32());
     
-    return result.iterator->value = m_frozenValues.add(FrozenValue::freeze(value));
+    FrozenValue frozenValue = FrozenValue::freeze(value);
+    if (Structure* structure = frozenValue.structure())
+        registerStructure(structure);
+    
+    return result.iterator->value = m_frozenValues.add(frozenValue);
 }
 
 FrozenValue* Graph::freeze(JSValue value)
@@ -1258,6 +1262,10 @@ StructureRegistrationResult Graph::registerStructure(Structure* structure)
 
 void Graph::assertIsRegistered(Structure* structure)
 {
+    // It's convenient to be able to call this with a maybe-null structure.
+    if (!structure)
+        return;
+    
     if (m_structureRegistrationState == HaveNotStartedRegistering)
         return;
     
