@@ -51,6 +51,7 @@ WebInspector.ConsolePrompt = function(delegate, mimeType, element)
         "Ctrl-N": this._handleNextKey.bind(this),
         "Enter": this._handleEnterKey.bind(this),
         "Cmd-Enter": this._handleCommandEnterKey.bind(this),
+        "Tab": this._handleTabKey.bind(this),
         "Esc": this._handleEscapeKey.bind(this)
     };
 
@@ -163,6 +164,14 @@ WebInspector.ConsolePrompt.prototype = {
     },
 
     // Private
+
+    _handleTabKey: function(codeMirror)
+    {
+        this._completionController.completeAtCurrentPositionIfNeeded().then(function(result) {
+            if (result === WebInspector.CodeMirrorCompletionController.UpdatePromise.NoCompletionsFound)
+                InspectorFrontendHost.beep();
+        });
+    },
 
     _handleEscapeKey: function(codeMirror)
     {

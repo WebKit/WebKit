@@ -1,5 +1,24 @@
 2015-07-01  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: When autocompleting, pressing tab twice shouldn't insert a tab character
+        https://bugs.webkit.org/show_bug.cgi?id=145885
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/CodeMirrorCompletionController.js:
+        (WebInspector.CodeMirrorCompletionController):
+        (WebInspector.CodeMirrorCompletionController.prototype.updateCompletions): Resolves the promise as having completions.
+        (WebInspector.CodeMirrorCompletionController.prototype.hideCompletions): Resolves the promise as not having completions.
+        (WebInspector.CodeMirrorCompletionController.prototype.completeAtCurrentPositionIfNeeded): Returns a WrappedPromise that allows
+        callers of this function to determine if the autocomplete had any values or was instead not shown.
+        (WebInspector.CodeMirrorCompletionController.prototype._resolveUpdatePromise):
+        * UserInterface/Main.html: Added WrappedPromise class.
+        * UserInterface/Models/WrappedPromise.js: Added WrappedPromise object to expose resolve and reject functions.
+        * UserInterface/Views/ConsolePrompt.js:
+        (WebInspector.ConsolePrompt.prototype._handleTabKey): Attempts to find completions for current text.  If there are none, beep.
+
+2015-07-01  Devin Rousso  <drousso@apple.com>
+
         Make the first click on a rule section create a newline for easy property addition
         https://bugs.webkit.org/show_bug.cgi?id=146490
 
