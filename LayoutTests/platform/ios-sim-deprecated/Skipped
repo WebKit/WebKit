@@ -650,6 +650,7 @@ fast/dom/webtiming-document-open.html
 fast/dom/webtiming-navigate-within-document.html
 http/tests/misc/webtiming-origins.html
 http/tests/misc/webtiming-one-redirect.php
+http/tests/misc/webtiming-resolution.html
 http/tests/misc/webtiming-slow-load.php
 http/tests/misc/webtiming-ssl.php
 http/tests/misc/webtiming-two-redirects.php

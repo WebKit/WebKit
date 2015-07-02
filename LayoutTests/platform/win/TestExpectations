@@ -345,6 +345,7 @@ webkit.org/b/42435 http/tests/misc/webtiming-cross-origin-and-back1.html [ Skip 
 webkit.org/b/42435 http/tests/misc/webtiming-cross-origin-redirect.php [ Skip ]
 webkit.org/b/42435 http/tests/misc/webtiming-no-origin.html [ Skip ]
 webkit.org/b/42435 http/tests/misc/webtiming-one-redirect.php [ Skip ]
+webkit.org/b/42435 http/tests/misc/webtiming-resolution.html [ Skip ]
 webkit.org/b/42435 http/tests/misc/webtiming-slow-load.php [ Skip ]
 webkit.org/b/42435 http/tests/misc/webtiming-ssl.php [ Skip ]
 webkit.org/b/42435 http/tests/misc/webtiming-two-redirects.php [ Skip ]

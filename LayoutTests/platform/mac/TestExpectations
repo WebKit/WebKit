@@ -848,6 +848,7 @@ webkit.org/b/132385 compositing/repaint/repaint-on-layer-grouping-change.html [ 
 [ Mavericks ] http/tests/misc/webtiming-cross-origin-redirect.php [ WontFix ]
 [ Mavericks ] http/tests/misc/webtiming-no-origin.html [ WontFix ]
 [ Mavericks ] http/tests/misc/webtiming-one-redirect.php [ WontFix ]
+[ Mavericks ] http/tests/misc/webtiming-resolution.html [ WontFix ]
 [ Mavericks ] http/tests/misc/webtiming-slow-load.php [ WontFix ]
 [ Mavericks ] http/tests/misc/webtiming-ssl.php [ WontFix ]
 [ Mavericks ] http/tests/misc/webtiming-two-redirects.php [ WontFix ]

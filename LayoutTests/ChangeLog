@@ -1,3 +1,11 @@
+2015-07-02  Alex Christensen  <achristensen@webkit.org>
+
+        Skip new web timing test on platforms without web timing.
+
+        * platform/ios-sim-deprecated/Skipped:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
 2015-07-01  Alex Christensen  <achristensen@webkit.org>
 
         Fix test from r186208 and r186216.
