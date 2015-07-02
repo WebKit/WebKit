@@ -1387,3 +1387,19 @@ void webkitWebViewBaseExitAcceleratedCompositingMode(WebKitWebViewBase* webkitWe
     UNUSED_PARAM(webkitWebViewBase);
 #endif
 }
+
+void webkitWebViewBaseDidRelaunchWebProcess(WebKitWebViewBase* webkitWebViewBase)
+{
+    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
+    DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(priv->pageProxy->drawingArea());
+    ASSERT(drawingArea);
+#if USE(REDIRECTED_XCOMPOSITE_WINDOW)
+    if (!priv->redirectedWindow)
+        return;
+    drawingArea->setNativeSurfaceHandleForCompositing(priv->redirectedWindow->windowID());
+#else
+    if (!gtk_widget_get_realized(GTK_WIDGET(webkitWebViewBase)))
+        return;
+    drawingArea->setNativeSurfaceHandleForCompositing(GDK_WINDOW_XID(gtk_widget_get_window(GTK_WIDGET(webkitWebViewBase))));
+#endif
+}

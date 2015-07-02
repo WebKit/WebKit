@@ -71,6 +71,7 @@ void webkitWebViewBaseAddWebInspector(WebKitWebViewBase*, GtkWidget* inspector, 
 void webkitWebViewBaseResetClickCounter(WebKitWebViewBase*);
 void webkitWebViewBaseEnterAcceleratedCompositingMode(WebKitWebViewBase*);
 void webkitWebViewBaseExitAcceleratedCompositingMode(WebKitWebViewBase*);
+void webkitWebViewBaseDidRelaunchWebProcess(WebKitWebViewBase*);
 
 #if ENABLE(DRAG_SUPPORT)
 WebKit::DragAndDropHandler& webkitWebViewBaseDragAndDropHandler(WebKitWebViewBase*);
