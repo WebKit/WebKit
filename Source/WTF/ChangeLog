@@ -1,3 +1,14 @@
+2015-07-01  Alex Christensen  <achristensen@webkit.org>
+
+        Ignore Visual Studio warning in SegmentedVector
+        https://bugs.webkit.org/show_bug.cgi?id=146514
+
+        Reviewed by Andreas Kling.
+
+        * wtf/SegmentedVector.h:
+        (WTF::SegmentedVector::deleteAllSegments):
+        Use pragmas to ignore the 0 element array warning.
+
 2015-07-01  Dean Jackson  <dino@apple.com>
 
         Disable the experimental WebGL2 implementation

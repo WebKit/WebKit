@@ -186,7 +186,14 @@ namespace WTF {
 
     private:
         struct Segment {
+#if COMPILER(MSVC)
+#pragma warning(push)
+#pragma warning(disable: 4200)
+#endif
             T entries[0];
+#if COMPILER(MSVC)
+#pragma warning(pop)
+#endif
         };
 
         void deleteAllSegments()
