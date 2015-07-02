@@ -74,7 +74,7 @@ public:
     static void cloneSessionData(WebPageProxy& sourcePage, WebPageProxy& newPage);
 
     void fetchData(WebsiteDataTypes, std::function<void (Vector<WebsiteDataRecord>)> completionHandler);
-//    void removeData(WebsiteDataTypes, std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler);
+    void removeData(WebsiteDataTypes, std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler);
     void removeData(WebsiteDataTypes, const Vector<WebsiteDataRecord>&, std::function<void ()> completionHandler);
 
     StorageManager* storageManager() { return m_storageManager.get(); }

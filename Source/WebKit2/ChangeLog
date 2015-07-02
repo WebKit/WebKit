@@ -1,3 +1,9 @@
+2015-07-02  Brady Eidson  <beidson@apple.com>
+
+        Remove change I accidentally committed in r186232
+
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2015-07-02  Alex Christensen  <achristensen@webkit.org>
 
         Fix EWS build after r186182.
