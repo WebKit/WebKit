@@ -1,3 +1,10 @@
+2015-07-01  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline js/dom/global-constructors-attributes.html after r186198.
+
+        * platform/mac-mavericks/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt:
+
 2015-07-01  Alex Christensen  <achristensen@webkit.org>
 
         Reduce resolution of performance.now.
