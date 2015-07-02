@@ -1233,7 +1233,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     _private->page->settings().setMinimumFontSize([_private->preferences minimumFontSize]);
 
     // This is a workaround for <rdar://problem/21309911>.
-    _private->page->settings().setHTTPEquivEnabled([_private->preferences httpEquivEnabled]);
+    _private->page->settings().setHttpEquivEnabled([_private->preferences httpEquivEnabled]);
 
     _private->page->setGroupName(groupName);
 
