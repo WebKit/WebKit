@@ -1461,7 +1461,16 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         CGSize maxScrollOffsets = CGSizeMake(scrollView.contentSize.width - scrollView.bounds.size.width, scrollView.contentSize.height - scrollView.bounds.size.height);
         
         CGRect fullViewRect = self.bounds;
-        CGRect unobscuredRect = UIEdgeInsetsInsetRect(fullViewRect, [self _computedContentInset]);
+
+        UIEdgeInsets contentInset;
+
+        id<WKUIDelegatePrivate> uiDelegatePrivate = static_cast<id <WKUIDelegatePrivate>>([self UIDelegate]);
+        if ([uiDelegatePrivate respondsToSelector:@selector(_webView:finalObscuredInsetsForScrollView:withVelocity:targetContentOffset:)])
+            contentInset = [uiDelegatePrivate _webView:self finalObscuredInsetsForScrollView:scrollView withVelocity:velocity targetContentOffset:targetContentOffset];
+        else
+            UIEdgeInsets contentInset = [self _computedContentInset];
+
+        CGRect unobscuredRect = UIEdgeInsetsInsetRect(fullViewRect, contentInset);
         
         coordinator->adjustTargetContentOffsetForSnapping(maxScrollOffsets, velocity, unobscuredRect.origin.y, targetContentOffset);
     }

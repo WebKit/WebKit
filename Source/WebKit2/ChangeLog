@@ -1,3 +1,19 @@
+2015-07-02  Brent Fulgham  <bfulgham@apple.com>
+
+        Provide delegate SPI for clients to notify WebKit about content inset changes
+        https://bugs.webkit.org/show_bug.cgi?id=146482
+        <rdar://problem/21602741>
+
+        Reviewed by Darin Adler.
+
+        Provide a new SPI for WebKit client applications to use to inform WebKit of planned
+        adjustments to the edge insets of the view.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h: Add new optional delegate method.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView scrollViewWillEndDragging:withVelocity:targetContentOffset:]): If the new delegate
+        method exists, use the specified content insets, rather than the current state of the view.
+
 2015-07-02  Beth Dakin  <bdakin@apple.com>
 
         Allow the UIDelegate to customize an image preview
