@@ -176,10 +176,6 @@ AuthenticationManager& NetworkProcess::downloadsAuthenticationManager()
 void NetworkProcess::lowMemoryHandler(Critical critical)
 {
     platformLowMemoryHandler(critical);
-#if ENABLE(NETWORK_CACHE)
-    if (NetworkCache::singleton().isEnabled())
-        NetworkCache::singleton().handleMemoryPressureNotification(critical);
-#endif
     WTF::releaseFastMallocFreeMemory();
 }
 

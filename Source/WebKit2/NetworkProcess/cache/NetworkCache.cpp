@@ -563,16 +563,6 @@ void Cache::clear()
     clear(std::chrono::system_clock::time_point::min(), nullptr);
 }
 
-void Cache::handleMemoryPressureNotification(WebCore::Critical critical)
-{
-    if (critical != WebCore::Critical::Yes)
-        return;
-    // There can be substantial amount of memory in the write queue and we don't know how long it will take to write it out.
-    // We may also be about to suspend the process.
-    if (m_storage)
-        m_storage->clearWriteQueue();
-}
-
 String Cache::recordsPath() const
 {
     return m_storage ? m_storage->recordsPath() : String();

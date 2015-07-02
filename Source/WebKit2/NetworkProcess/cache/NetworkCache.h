@@ -31,7 +31,6 @@
 #include "NetworkCacheEntry.h"
 #include "NetworkCacheStorage.h"
 #include "ShareableResource.h"
-#include <WebCore/MemoryPressureHandler.h>
 #include <WebCore/ResourceResponse.h>
 #include <wtf/text/WTFString.h>
 
@@ -103,8 +102,6 @@ public:
 
     void clear();
     void clear(std::chrono::system_clock::time_point modifiedSince, std::function<void ()>&& completionHandler);
-
-    void handleMemoryPressureNotification(WebCore::Critical);
 
     void dumpContentsToFile();
 

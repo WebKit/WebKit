@@ -80,8 +80,6 @@ public:
     // Null record signals end.
     void traverse(TraverseFlags, TraverseHandler&&);
 
-    void clearWriteQueue();
-
     void setCapacity(size_t);
     size_t capacity() const { return m_capacity; }
     size_t approximateSize() const;
