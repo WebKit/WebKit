@@ -1,5 +1,17 @@
 2015-07-01  Chris Dumez  <cdumez@apple.com>
 
+        Reduce resolution of performance.now
+        https://bugs.webkit.org/show_bug.cgi?id=146531
+
+        Reviewed by Simon Fraser.
+
+        Make layout test introduced in r186208.
+
+        * http/tests/misc/webtiming-resolution-expected.txt:
+        * http/tests/misc/webtiming-resolution.html:
+
+2015-07-01  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rebaseline js/dom/global-constructors-attributes.html after r186198.
 
         * platform/mac-mavericks/js/dom/global-constructors-attributes-expected.txt:

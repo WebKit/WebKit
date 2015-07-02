@@ -13,7 +13,8 @@ var t1 = performance.now();
 while (t0 == t1) {
     t1 = performance.now();
 }
-shouldBe("((t1 - t0) / 0.005) % 1 < 1e-10", "true");
+
+shouldBe("Math.abs(1 - (t1 - t0) / 0.005) < 1e-10", "true");
 
 </script>
 </body>
