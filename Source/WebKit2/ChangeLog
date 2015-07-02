@@ -1,3 +1,30 @@
+2015-07-02  Beth Dakin  <bdakin@apple.com>
+
+        Allow the UIDelegate to customize an image preview
+        https://bugs.webkit.org/show_bug.cgi?id=146557
+        -and corresponding-
+        rdar://problem/21657424
+
+        Reviewed by Tim Horton.
+
+        Add imageURL to InteractionInformationAtPosition.
+        * Shared/InteractionInformationAtPosition.cpp:
+        (WebKit::InteractionInformationAtPosition::encode):
+        (WebKit::InteractionInformationAtPosition::decode):
+        * Shared/InteractionInformationAtPosition.h:
+
+        Two new delegate methods.
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+
+        Call the delegate methods at the appropriate time.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView previewViewControllerForPosition:inSourceView:]):
+        (-[WKContentView commitPreviewViewController:]):
+
+        Include the imageURL in InteractionInformationAtPosition.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+
 2015-07-02  Anders Carlsson  <andersca@apple.com>
 
         Instead of requiring ToT UIKIt, check that UI_WEB_TOUCH_EVENT_HAS_IS_POTENTIAL_TAP is defined to 1

@@ -56,6 +56,8 @@
 - (BOOL)_webView:(WKWebView *)webView shouldRequestGeolocationAuthorizationForURL:(NSURL *)url isMainFrame:(BOOL)isMainFrame mainFrameURL:(NSURL *)mainFrameURL;
 - (UIViewController *)_webView:(WKWebView *)webView previewViewControllerForURL:(NSURL *)url;
 - (void)_webView:(WKWebView *)webView commitPreviewedViewController:(UIViewController *)previewedViewController;
+- (void)_webView:(WKWebView *)webView willPreviewImageWithURL:(NSURL *)imageURL WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+- (void)_webView:(WKWebView *)webView commitPreviewedImageWithURL:(NSURL *)imageURL WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 - (void)_webView:(WKWebView *)webView didDismissPreviewViewController:(UIViewController *)previewedViewController;
 #endif
 

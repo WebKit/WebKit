@@ -3213,10 +3213,11 @@ static bool isAssistableInputType(InputType type)
         canShowLinkPreview = NO;
     }
 
+    id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
+
     if (canShowLinkPreview) {
         _previewType = PreviewElementType::Link;
         NSURL *targetURL = [NSURL _web_URLWithWTFString:_positionInformation.url];
-        id<WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
         if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForURL:)]) {
             _highlightLongPressCanClick = NO;
             return [uiDelegate _webView:_webView previewViewControllerForURL:targetURL];
@@ -3232,7 +3233,12 @@ static bool isAssistableInputType(InputType type)
     }
 
     if (canShowImagePreview) {
+        String absoluteImageURL = _positionInformation.imageURL;
+        if (absoluteImageURL.isEmpty() || !(WebCore::protocolIsInHTTPFamily(absoluteImageURL) || WebCore::protocolIs(absoluteImageURL, "data")))
+            return nil;
         _previewType = PreviewElementType::Image;
+        if ([uiDelegate respondsToSelector:@selector(_webView:willPreviewImageWithURL:)])
+            [uiDelegate _webView:_webView willPreviewImageWithURL:[NSURL _web_URLWithWTFString:_positionInformation.imageURL]];
         return [[[WKImagePreviewViewController alloc] initWithCGImage:_positionInformation.image->makeCGImageCopy()] autorelease];
     }
 
@@ -3241,10 +3247,18 @@ static bool isAssistableInputType(InputType type)
 
 - (void)commitPreviewViewController:(UIViewController *)viewController
 {
-    if (_previewType != PreviewElementType::Link)
+    id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
+    if (_previewType == PreviewElementType::Image) {
+        if ([uiDelegate respondsToSelector:@selector(_webView:commitPreviewedImageWithURL:)]) {
+            String absoluteImageURL = _positionInformation.imageURL;
+            if (absoluteImageURL.isEmpty() || !(WebCore::protocolIsInHTTPFamily(absoluteImageURL) || WebCore::protocolIs(absoluteImageURL, "data")))
+                return;
+            [uiDelegate _webView:_webView commitPreviewedImageWithURL:[NSURL _web_URLWithWTFString:absoluteImageURL]];
+            return;
+        }
         return;
+    }
 
-    id<WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
     if ([uiDelegate respondsToSelector:@selector(_webView:commitPreviewedViewController:)]) {
         [uiDelegate _webView:_webView commitPreviewedViewController:viewController];
         return;

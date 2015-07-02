@@ -2141,6 +2141,7 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
                 } else if (element->renderer() && element->renderer()->isRenderImage()) {
                     auto& renderImage = downcast<RenderImage>(*(element->renderer()));
                     if (renderImage.cachedImage() && !renderImage.cachedImage()->errorOccurred()) {
+                        info.imageURL = [(NSURL *)element->document().completeURL(renderImage.cachedImage()->url()) absoluteString];
                         if (Image* image = renderImage.cachedImage()->imageForRenderer(&renderImage)) {
                             FloatSize screenSizeInPixels = screenSize();
                             screenSizeInPixels.scale(corePage()->deviceScaleFactor());

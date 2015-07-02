@@ -41,6 +41,7 @@ void InteractionInformationAtPosition::encode(IPC::ArgumentEncoder& encoder) con
     encoder << touchCalloutEnabled;
     encoder << clickableElementName;
     encoder << url;
+    encoder << imageURL;
     encoder << title;
     encoder << bounds;
 
@@ -71,6 +72,9 @@ bool InteractionInformationAtPosition::decode(IPC::ArgumentDecoder& decoder, Int
         return false;
 
     if (!decoder.decode(result.url))
+        return false;
+
+    if (!decoder.decode(result.imageURL))
         return false;
 
     if (!decoder.decode(result.title))

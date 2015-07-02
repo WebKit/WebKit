@@ -54,6 +54,7 @@ struct InteractionInformationAtPosition {
     bool touchCalloutEnabled;
     String clickableElementName;
     String url;
+    String imageURL;
     String title;
     WebCore::IntRect bounds;
     RefPtr<ShareableBitmap> image;
