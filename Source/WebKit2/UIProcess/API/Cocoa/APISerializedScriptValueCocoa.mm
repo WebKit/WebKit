@@ -31,6 +31,8 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RunLoop.h>
 
+#if WK_API_ENABLED
+
 namespace API {
 
 class SharedJSContext {
@@ -74,3 +76,5 @@ id SerializedScriptValue::deserialize(WebCore::SerializedScriptValue& serialized
 }
 
 } // API
+
+#endif // WK_API_ENABLED
