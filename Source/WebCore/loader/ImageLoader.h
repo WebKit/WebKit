@@ -96,6 +96,7 @@ private:
     Element& m_element;
     CachedResourceHandle<CachedImage> m_image;
     Timer m_derefElementTimer;
+    RefPtr<Element> m_protectedElement;
     AtomicString m_failedLoadURL;
     bool m_hasPendingBeforeLoadEvent : 1;
     bool m_hasPendingLoadEvent : 1;
