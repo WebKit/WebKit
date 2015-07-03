@@ -1,3 +1,10 @@
+2015-07-03  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, tentative fix for flaky layout test introduced in r186256.
+
+        * platform/mac/accessibility/selection-notification-focus-change-expected.txt:
+        * platform/mac/accessibility/selection-notification-focus-change.html:
+
 2015-07-02  Doug Russell  <d_russell@apple.com>
 
         AX: Selection change as a result of focusing an element should include that 

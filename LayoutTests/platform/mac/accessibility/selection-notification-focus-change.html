@@ -1,9 +1,9 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<!DOCTYPE html>
 <html>
     <head>
         <script src="../../../resources/js-test-pre.js"></script>
     </head>
-    <body id="body">
+    <body id="body" onload="runTest()">
         <fieldset>
             <div>
                 <input id="1">
@@ -14,11 +14,9 @@
                     <label for="2">2</label>
                     </div>
         </fieldset>
-        <p id="description"></p>
-        <div id="console"></div>
-        <div id="notifications"></div>
         <script>
             description("This tests that selection changes as a result of advancing focus include AXTextSelectionChangedFocus flag.");
+            jsTestIsAsync = true;
 
             var webArea = 0;
             var axTextFocusChangeOne = 0;
@@ -37,44 +35,44 @@
                     selectCount++;
                     if (selectCount == 1) {
                         axTextFocusChangeOne = userInfo["AXTextSelectionChangedFocus"];
-                        shouldBe("axTextFocusChangeOne", "true");
+                        shouldBeTrue("axTextFocusChangeOne");
                     } else if (selectCount == 2) {
                         axTextFocusChangeTwo = userInfo["AXTextSelectionChangedFocus"];
-                        shouldBe("axTextFocusChangeTwo", "true");
+                        shouldBeTrue("axTextFocusChangeTwo");
 
-                        shouldBe("accessibilityController.accessibleElementById(\"1\").isFocusable", "true");
+                        shouldBeTrue("accessibilityController.accessibleElementById(\"1\").isFocusable");
                         accessibilityController.accessibleElementById("1").takeFocus();
                     } else if (selectCount == 3) {
                         axTextFocusChangeThree = userInfo["AXTextSelectionChangedFocus"];
-                        shouldBe("axTextFocusChangeThree", "true");
+                        shouldBeTrue("axTextFocusChangeThree");
                     } else if (selectCount == 4) {
                         axTextFocusChangeFour = userInfo["AXTextSelectionChangedFocus"];
-                        shouldBe("axTextFocusChangeFour", "true");
+                        shouldBeTrue("axTextFocusChangeFour");
                     }
                 } else if (notification == "AXFocusChanged") {
                     focusCount++;
-                    if (focusCount == 2) {
+                    if (focusCount == 2)
                         eventSender.scheduleAsynchronousKeyDown("\t");
-                    }
                 }
                 if (selectCount == 4 && focusCount == 3) {
                     webArea.removeNotificationListener();
-                    testRunner.notifyDone();
+                    finishJSTest();
                 }
             }
 
-            if (window.accessibilityController) {
-                testRunner.waitUntilDone();
-                testRunner.overridePreference("WebKitTabToLinksPreferenceKey", 1);
+            function runTest() {
+                if (window.accessibilityController) {
+                    testRunner.overridePreference("WebKitTabToLinksPreferenceKey", 1);
 
-                accessibilityController.enableEnhancedAccessibility(true);
-                webArea = accessibilityController.rootElement.childAtIndex(0);
-                webArea.setBoolAttributeValue("AXCaretBrowsingEnabled", true)
+                    accessibilityController.enableEnhancedAccessibility(true);
+                    webArea = accessibilityController.rootElement.childAtIndex(0);
+                    webArea.setBoolAttributeValue("AXCaretBrowsingEnabled", true)
 
-                var addedNotification = webArea.addNotificationListener(notificationCallback);
-                shouldBe("addedNotification", "true");
+                    addedNotification = webArea.addNotificationListener(notificationCallback);
+                    shouldBeTrue("addedNotification");
 
-                eventSender.keyDown("\t");
+                    eventSender.keyDown("\t");
+                }
             }
             </script>
         <script src="../../../resources/js-test-post.js"></script>
