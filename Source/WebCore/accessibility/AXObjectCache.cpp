@@ -1053,7 +1053,8 @@ void AXObjectCache::postTextStateChangeNotification(AccessibilityObject* object,
             object = observableObject;
     }
 
-    postTextStateChangePlatformNotification(object, (intent.type == AXTextStateChangeTypeUnknown || m_isSynchronizingSelection) ? m_textSelectionIntent : intent, selection);
+    const AXTextStateChangeIntent& newIntent = (intent.type == AXTextStateChangeTypeUnknown || (m_isSynchronizingSelection && m_textSelectionIntent.type != AXTextStateChangeTypeUnknown)) ? m_textSelectionIntent : intent;
+    postTextStateChangePlatformNotification(object, newIntent, selection);
 #else
     UNUSED_PARAM(object);
     UNUSED_PARAM(intent);

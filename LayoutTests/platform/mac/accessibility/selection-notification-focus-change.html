@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../../resources/js-test-pre.js"></script>
+    </head>
+    <body id="body">
+        <fieldset>
+            <div>
+                <input id="1">
+                    <label for="1">1</label>
+                    </div>
+            <div>
+                <input id="2">
+                    <label for="2">2</label>
+                    </div>
+        </fieldset>
+        <p id="description"></p>
+        <div id="console"></div>
+        <div id="notifications"></div>
+        <script>
+            description("This tests that selection changes as a result of advancing focus include AXTextSelectionChangedFocus flag.");
+
+            var webArea = 0;
+            var axTextFocusChangeOne = 0;
+            var axTextFocusChangeTwo = 0;
+            var axTextFocusChangeThree = 0;
+            var axTextFocusChangeFour = 0;
+            var selectCount = 0;
+            var focusCount = 0;
+            // Notification ordering:
+            // The first tab will result in 2 selection change notifications and a focus notification          selectCount=2, focusCount=1
+            // takeFocus() will result in a focus notification                                                 selectCount=2, focusCount=2
+            // The second tab will result in another 2 selection change notifications and a focus notification selectCount=1, focusCount=3
+            // (The 2 selection change notifications per tab is caused by caret browsing being enabled)
+            function notificationCallback(notification, userInfo) {
+                if (notification == "AXSelectedTextChanged") {
+                    selectCount++;
+                    if (selectCount == 1) {
+                        axTextFocusChangeOne = userInfo["AXTextSelectionChangedFocus"];
+                        shouldBe("axTextFocusChangeOne", "true");
+                    } else if (selectCount == 2) {
+                        axTextFocusChangeTwo = userInfo["AXTextSelectionChangedFocus"];
+                        shouldBe("axTextFocusChangeTwo", "true");
+
+                        shouldBe("accessibilityController.accessibleElementById(\"1\").isFocusable", "true");
+                        accessibilityController.accessibleElementById("1").takeFocus();
+                    } else if (selectCount == 3) {
+                        axTextFocusChangeThree = userInfo["AXTextSelectionChangedFocus"];
+                        shouldBe("axTextFocusChangeThree", "true");
+                    } else if (selectCount == 4) {
+                        axTextFocusChangeFour = userInfo["AXTextSelectionChangedFocus"];
+                        shouldBe("axTextFocusChangeFour", "true");
+                    }
+                } else if (notification == "AXFocusChanged") {
+                    focusCount++;
+                    if (focusCount == 2) {
+                        eventSender.scheduleAsynchronousKeyDown("\t");
+                    }
+                }
+                if (selectCount == 4 && focusCount == 3) {
+                    webArea.removeNotificationListener();
+                    testRunner.notifyDone();
+                }
+            }
+
+            if (window.accessibilityController) {
+                testRunner.waitUntilDone();
+                testRunner.overridePreference("WebKitTabToLinksPreferenceKey", 1);
+
+                accessibilityController.enableEnhancedAccessibility(true);
+                webArea = accessibilityController.rootElement.childAtIndex(0);
+                webArea.setBoolAttributeValue("AXCaretBrowsingEnabled", true)
+
+                var addedNotification = webArea.addNotificationListener(notificationCallback);
+                shouldBe("addedNotification", "true");
+
+                eventSender.keyDown("\t");
+            }
+            </script>
+        <script src="../../../resources/js-test-post.js"></script>
+    </body>
+</html>

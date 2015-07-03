@@ -2199,7 +2199,7 @@ void Element::updateFocusAppearance(bool /*restorePreviousSelection*/)
         VisibleSelection newSelection = VisibleSelection(firstPositionInOrBeforeNode(this), DOWNSTREAM);
         
         if (frame->selection().shouldChangeSelection(newSelection)) {
-            frame->selection().setSelection(newSelection);
+            frame->selection().setSelection(newSelection, FrameSelection::defaultSetSelectionOptions(), Element::defaultFocusTextStateChangeIntent());
             frame->selection().revealSelection();
         }
     } else if (renderer() && !renderer()->isWidget())

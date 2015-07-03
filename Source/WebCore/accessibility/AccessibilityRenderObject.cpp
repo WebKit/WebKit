@@ -1502,7 +1502,7 @@ static void setTextSelectionIntent(AXObjectCache* cache, AXTextStateChangeType t
 {
     if (!cache)
         return;
-    AXTextStateChangeIntent intent(type, AXTextSelection { AXTextSelectionDirectionDiscontiguous, AXTextSelectionGranularityUnknown });
+    AXTextStateChangeIntent intent(type, AXTextSelection { AXTextSelectionDirectionDiscontiguous, AXTextSelectionGranularityUnknown, false });
     cache->setTextSelectionIntent(intent);
     cache->setIsSynchronizingSelection(true);
 }
@@ -1683,9 +1683,9 @@ void AccessibilityRenderObject::setFocused(bool on)
     if (document->focusedElement() == node)
         document->setFocusedElement(nullptr);
 
-    setTextSelectionIntent(axObjectCache(), AXTextStateChangeTypeSelectionMove);
+    axObjectCache()->setIsSynchronizingSelection(true);
     downcast<Element>(*node).focus();
-    clearTextSelectionIntent(axObjectCache());
+    axObjectCache()->setIsSynchronizingSelection(false);
 }
 
 void AccessibilityRenderObject::setSelectedRows(AccessibilityChildrenVector& selectedRows)

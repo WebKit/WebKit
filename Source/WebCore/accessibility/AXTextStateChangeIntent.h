@@ -70,6 +70,7 @@ enum AXTextSelectionGranularity {
 struct AXTextSelection {
     AXTextSelectionDirection direction;
     AXTextSelectionGranularity granularity;
+    bool focusChange;
 };
 
 struct AXTextStateChangeIntent {

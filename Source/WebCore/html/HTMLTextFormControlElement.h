@@ -64,11 +64,11 @@ public:
     void setSelectionStart(int);
     void setSelectionEnd(int);
     void setSelectionDirection(const String&);
-    void select();
+    void select(const AXTextStateChangeIntent& = AXTextStateChangeIntent());
     virtual void setRangeText(const String& replacement, ExceptionCode&);
     virtual void setRangeText(const String& replacement, unsigned start, unsigned end, const String& selectionMode, ExceptionCode&);
-    void setSelectionRange(int start, int end, const String& direction);
-    void setSelectionRange(int start, int end, TextFieldSelectionDirection = SelectionHasNoDirection);
+    void setSelectionRange(int start, int end, const String& direction, const AXTextStateChangeIntent& = AXTextStateChangeIntent());
+    void setSelectionRange(int start, int end, TextFieldSelectionDirection = SelectionHasNoDirection, const AXTextStateChangeIntent& = AXTextStateChangeIntent());
     PassRefPtr<Range> selection() const;
     String selectedText() const;
 
@@ -110,7 +110,7 @@ protected:
         m_cachedSelectionDirection = direction;
     }
 
-    void restoreCachedSelection();
+    void restoreCachedSelection(const AXTextStateChangeIntent& = AXTextStateChangeIntent());
     bool hasCachedSelection() const { return m_cachedSelectionStart >= 0; }
 
     virtual void subtreeHasChanged() = 0;

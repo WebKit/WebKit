@@ -257,9 +257,9 @@ void HTMLTextAreaElement::updateFocusAppearance(bool restorePreviousSelection)
         // If this is the first focus, set a caret at the beginning of the text.  
         // This matches some browsers' behavior; see bug 11746 Comment #15.
         // http://bugs.webkit.org/show_bug.cgi?id=11746#c15
-        setSelectionRange(0, 0);
+        setSelectionRange(0, 0, SelectionHasNoDirection, Element::defaultFocusTextStateChangeIntent());
     } else
-        restoreCachedSelection();
+        restoreCachedSelection(Element::defaultFocusTextStateChangeIntent());
 
     if (document().frame())
         document().frame()->selection().revealSelection();

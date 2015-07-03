@@ -25,6 +25,7 @@
 #ifndef Element_h
 #define Element_h
 
+#include "AXTextStateChangeIntent.h"
 #include "Document.h"
 #include "ElementData.h"
 #include "HTMLNames.h"
@@ -321,6 +322,7 @@ public:
     virtual const AtomicString& imageSourceURL() const;
     virtual String target() const { return String(); }
 
+    static AXTextStateChangeIntent defaultFocusTextStateChangeIntent() { return AXTextStateChangeIntent(AXTextStateChangeTypeSelectionMove, AXTextSelection { AXTextSelectionDirectionDiscontiguous, AXTextSelectionGranularityUnknown, true }); }
     void updateFocusAppearanceAfterAttachIfNeeded();
     virtual void focus(bool restorePreviousSelection = true, FocusDirection = FocusDirectionNone);
     virtual void updateFocusAppearance(bool restorePreviousSelection);

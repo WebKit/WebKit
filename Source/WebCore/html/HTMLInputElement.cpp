@@ -407,7 +407,7 @@ void HTMLInputElement::updateFocusAppearance(bool restorePreviousSelection)
 {
     if (isTextField()) {
         if (!restorePreviousSelection || !hasCachedSelection())
-            select();
+            select(Element::defaultFocusTextStateChangeIntent());
         else
             restoreCachedSelection();
         if (document().frame())

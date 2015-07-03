@@ -60,6 +60,10 @@
 #define NSAccessibilityTextSelectionGranularity @"AXTextSelectionGranularity"
 #endif
 
+#ifndef NSAccessibilityTextSelectionChangedFocus
+#define NSAccessibilityTextSelectionChangedFocus @"AXTextSelectionChangedFocus"
+#endif
+
 #ifndef NSAccessibilityTextEditType
 #define NSAccessibilityTextEditType @"AXTextEditType"
 #endif
@@ -249,6 +253,8 @@ void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*
         case AXTextStateChangeTypeEdit:
             break;
         }
+        if (intent.selection.focusChange)
+            [userInfo setObject:[NSNumber numberWithBool:intent.selection.focusChange] forKey:NSAccessibilityTextSelectionChangedFocus];
     }
     if (!selection.isNone()) {
         if (id textMarkerRange = [object->wrapper() textMarkerRangeFromVisiblePositions:selection.visibleStart() endPosition:selection.visibleEnd()])
