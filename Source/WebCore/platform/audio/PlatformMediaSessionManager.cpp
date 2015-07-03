@@ -29,7 +29,6 @@
 #if ENABLE(VIDEO)
 
 #include "AudioSession.h"
-#include "Document.h"
 #include "Logging.h"
 #include "NotImplemented.h"
 #include "PlatformMediaSession.h"
@@ -328,14 +327,6 @@ void PlatformMediaSessionManager::systemDidWake()
 void PlatformMediaSessionManager::audioOutputDeviceChanged()
 {
     updateSessionState();
-}
-
-void PlatformMediaSessionManager::stopAllMediaPlaybackForDocument(const Document& document)
-{
-    for (auto session : m_sessions) {
-        if (session->client().hostingDocument() == &document)
-            session->pauseSession();
-    }
 }
 
 }
