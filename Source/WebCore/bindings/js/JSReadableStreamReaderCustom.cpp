@@ -77,14 +77,6 @@ JSValue JSReadableStreamReader::closed(ExecState* exec) const
     return m_closedPromiseDeferred->promise();
 }
 
-JSValue JSReadableStreamReader::cancel(ExecState* exec)
-{
-    // FIXME: We should be able to remove this custom binding, once we can pass a JSValue or a ScriptValue.
-    JSPromiseDeferred& promiseDeferred = *JSPromiseDeferred::create(exec, globalObject());
-    impl().cancel(exec->argument(0), DeferredWrapper(exec, globalObject(), &promiseDeferred));
-    return promiseDeferred.promise();
-}
-
 EncodedJSValue JSC_HOST_CALL constructJSReadableStreamReader(ExecState* exec)
 {
     if (!exec->argumentCount())

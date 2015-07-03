@@ -3243,7 +3243,7 @@ sub GenerateParametersCheck
             push(@$outputArray, "    if (argsCount <= $argsIndex) {\n");
 
             my @optionalCallbackArguments = @arguments;
-            push(@optionalCallbackArguments, "ec") if $raisesException;
+            push @optionalCallbackArguments, GenerateReturnParameters($function);
             my $functionString = "$functionName(" . join(", ", @optionalCallbackArguments) . ")";
             GenerateImplementationFunctionCall($function, $functionString, "    " x 2, $svgPropertyType, $interfaceName);
             push(@$outputArray, "    }\n\n");
@@ -3411,11 +3411,19 @@ sub GenerateParametersCheck
         $argsIndex++;
     }
 
-    push(@arguments, "DeferredWrapper(exec, castedThis->globalObject(), promiseDeferred)") if IsReturningPromise($function);
-
-    push(@arguments, "ec") if $raisesException;
+    push @arguments, GenerateReturnParameters($function);
 
     return ("$functionName(" . join(", ", @arguments) . ")", scalar @arguments);
+}
+
+sub GenerateReturnParameters
+{
+    my $function = shift;
+    my @arguments;
+
+    push(@arguments, "DeferredWrapper(exec, castedThis->globalObject(), promiseDeferred)") if IsReturningPromise($function);
+    push(@arguments, "ec") if $function->signature->extendedAttributes->{"RaisesException"};
+    return @arguments;
 }
 
 sub GenerateCallbackHeader

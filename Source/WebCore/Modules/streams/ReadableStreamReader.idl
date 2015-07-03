@@ -34,7 +34,7 @@
     SkipVTableValidation
 ] interface ReadableStreamReader {
     [Custom] Object read();
-    [Custom] Promise cancel(any reason);
+    Promise cancel([Default=Undefined] optional any reason);
     [RaisesException] void releaseLock();
 
     [CustomGetter] readonly attribute Promise closed;

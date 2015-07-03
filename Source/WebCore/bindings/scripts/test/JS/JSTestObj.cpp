@@ -159,6 +159,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAny(JSC::ExecState*)
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunction(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgument(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunctionWithException(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgument(JSC::ExecState*);
 
 // Attributes
 
@@ -656,6 +657,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "testPromiseFunction", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionTestPromiseFunction), (intptr_t) (0) },
     { "testPromiseFunctionWithFloatArgument", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgument), (intptr_t) (1) },
     { "testPromiseFunctionWithException", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionTestPromiseFunctionWithException), (intptr_t) (0) },
+    { "testPromiseFunctionWithOptionalIntArgument", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgument), (intptr_t) (0) },
 };
 
 const ClassInfo JSTestObjPrototype::s_info = { "TestObjectPrototype", &Base::s_info, 0, CREATE_METHOD_TABLE(JSTestObjPrototype) };
@@ -4493,6 +4495,34 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithEx
     ExceptionCode ec = 0;
     impl.testPromiseFunctionWithException(DeferredWrapper(exec, castedThis->globalObject(), promiseDeferred), ec);
     setDOMException(exec, ec);
+    return JSValue::encode(jsUndefined());
+}
+
+static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgumentPromise(ExecState*, JSTestObj*, JSPromiseDeferred*);
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgument(ExecState* exec)
+{
+    JSValue thisValue = exec->thisValue();
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*exec, "TestObj", "testPromiseFunctionWithOptionalIntArgument");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+    return JSValue::encode(callPromiseFunction(*exec, *castedThis, jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgumentPromise));
+}
+
+static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgumentPromise(ExecState* exec, JSTestObj* castedThis, JSPromiseDeferred* promiseDeferred)
+{
+    auto& impl = castedThis->impl();
+
+    size_t argsCount = exec->argumentCount();
+    if (argsCount <= 0) {
+        impl.testPromiseFunctionWithOptionalIntArgument(DeferredWrapper(exec, castedThis->globalObject(), promiseDeferred));
+        return JSValue::encode(jsUndefined());
+    }
+
+    int a = toInt32(exec, exec->argument(0), NormalConversion);
+    if (UNLIKELY(exec->hadException()))
+        return JSValue::encode(jsUndefined());
+    impl.testPromiseFunctionWithOptionalIntArgument(a, DeferredWrapper(exec, castedThis->globalObject(), promiseDeferred));
     return JSValue::encode(jsUndefined());
 }
 
