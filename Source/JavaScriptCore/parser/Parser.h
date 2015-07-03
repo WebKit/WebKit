@@ -311,7 +311,7 @@ struct Scope {
     {
         if (m_needsFullActivation || m_usesEval) {
             modifiedParameter = true;
-            capturedVariables.swap(m_declaredVariables);
+            capturedVariables = m_declaredVariables;
             return;
         }
         for (IdentifierSet::iterator ptr = m_closedVariables.begin(); ptr != m_closedVariables.end(); ++ptr) {

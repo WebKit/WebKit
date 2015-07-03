@@ -1,3 +1,27 @@
+2015-07-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Relax builtin JS restriction about try-catch
+        https://bugs.webkit.org/show_bug.cgi?id=146555
+
+        Reviewed by Sam Weinig.
+
+        When retrieving the captured variables from the full activated scope,
+        it swapped the given vector with the stored declared variables vector.
+        This is because retrieving the captured variables are executed in the
+        last sequence of the parser, so declared variables are no longer used.
+        However, in builtins functions case, after retrieving the captured
+        variables, we check the variables by using declared variables vector.
+        So at that time, the declared variables vector becomes empty and it
+        raises assertion failures when the builtins function contains the full
+        activated scope. try-catch's catch scope requires the upper scope full
+        activated, so JS code in the builtins cannot use the try-catch.
+
+        This patch relaxes this restriction. When retrieving the captured
+        variables from the scope, just copy to the given vector.
+
+        * parser/Parser.h:
+        (JSC::Scope::getCapturedVariables):
+
 2015-07-02  Filip Pizlo  <fpizlo@apple.com>
 
         DFG and FTL should have an OSR exit fuzzer
