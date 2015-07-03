@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef TestRunnerUtils_h
-#define TestRunnerUtils_h
+#include "config.h"
+#include "DFGOSRExitFuzz.h"
 
-#include "JSCJSValue.h"
+#include "TestRunnerUtils.h"
 
-namespace JSC {
+namespace JSC { namespace DFG {
 
-class CodeBlock;
-class FunctionExecutable;
+unsigned g_numberOfOSRExitFuzzChecks;
 
-JS_EXPORT_PRIVATE FunctionExecutable* getExecutableForFunction(JSValue theFunctionValue);
-JS_EXPORT_PRIVATE CodeBlock* getSomeBaselineCodeBlockForFunction(JSValue theFunctionValue);
+} // namespace DFG
 
-JS_EXPORT_PRIVATE JSValue numberOfDFGCompiles(JSValue function);
-JS_EXPORT_PRIVATE JSValue setNeverInline(JSValue function);
-JS_EXPORT_PRIVATE JSValue optimizeNextInvocation(JSValue function);
-
-JS_EXPORT_PRIVATE JSValue numberOfDFGCompiles(ExecState*);
-JS_EXPORT_PRIVATE JSValue setNeverInline(ExecState*);
-JS_EXPORT_PRIVATE JSValue optimizeNextInvocation(ExecState*);
-
-JS_EXPORT_PRIVATE unsigned numberOfExceptionFuzzChecks();
-JS_EXPORT_PRIVATE unsigned numberOfExecutableAllocationFuzzChecks();
-JS_EXPORT_PRIVATE unsigned numberOfOSRExitFuzzChecks();
+unsigned numberOfOSRExitFuzzChecks()
+{
+    return DFG::g_numberOfOSRExitFuzzChecks;
+}
 
 } // namespace JSC
 
-#endif // TestRunnerUtils_h
+

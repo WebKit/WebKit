@@ -309,6 +309,10 @@ typedef const char* optionString;
     v(unsigned, fireExecutableAllocationFuzzAtOrAfter, 0, nullptr) \
     v(bool, verboseExecutableAllocationFuzz, false, nullptr) \
     \
+    v(bool, enableOSRExitFuzz, false, nullptr) \
+    v(unsigned, fireOSRExitFuzzAt, 0, nullptr) \
+    v(unsigned, fireOSRExitFuzzAtOrAfter, 0, nullptr) \
+    \
     v(bool, enableDollarVM, false, "installs the $vm debugging tool in global objects") \
     v(optionString, functionOverrides, nullptr, "file with debugging overrides for function bodies") \
 

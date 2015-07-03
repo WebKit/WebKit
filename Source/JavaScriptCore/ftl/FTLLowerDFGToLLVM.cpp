@@ -32,6 +32,7 @@
 #include "DFGAbstractInterpreterInlines.h"
 #include "DFGInPlaceAbstractState.h"
 #include "DFGOSRAvailabilityAnalysisPhase.h"
+#include "DFGOSRExitFuzz.h"
 #include "DirectArguments.h"
 #include "FTLAbstractHeapRepository.h"
 #include "FTLAvailableRecovery.h"
@@ -8164,6 +8165,25 @@ private:
             dataLog("    OSR exit #", m_ftlState.jitCode->osrExit.size(), " with availability: ", availabilityMap(), "\n");
             if (!m_availableRecoveries.isEmpty())
                 dataLog("        Available recoveries: ", listDump(m_availableRecoveries), "\n");
+        }
+        
+        if (Options::enableOSRExitFuzz()) {
+            LValue numberOfFuzzChecks = m_out.add(
+                m_out.load32(m_out.absolute(&g_numberOfOSRExitFuzzChecks)),
+                m_out.int32One);
+            
+            m_out.store32(numberOfFuzzChecks, m_out.absolute(&g_numberOfOSRExitFuzzChecks));
+            
+            if (unsigned atOrAfter = Options::fireOSRExitFuzzAtOrAfter()) {
+                failCondition = m_out.bitOr(
+                    failCondition,
+                    m_out.aboveOrEqual(numberOfFuzzChecks, m_out.constInt32(atOrAfter)));
+            }
+            if (unsigned at = Options::fireOSRExitFuzzAt()) {
+                failCondition = m_out.bitOr(
+                    failCondition,
+                    m_out.equal(numberOfFuzzChecks, m_out.constInt32(at)));
+            }
         }
 
         ASSERT(m_ftlState.jitCode->osrExit.size() == m_ftlState.finalizer->osrExit.size());

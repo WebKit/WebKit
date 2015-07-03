@@ -1,3 +1,34 @@
+2015-07-02  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG and FTL should have an OSR exit fuzzer
+        https://bugs.webkit.org/show_bug.cgi?id=146562
+
+        Reviewed by Benjamin Poulain.
+        
+        Adds a basic OSR exit fuzzer to JSC. This isn't hooked into any test harnesses yet, but I
+        spot-checked it on v8-earley-boyer.js and so far found no bugs. I'd like to figure out how
+        to harness this after I land it.
+        
+        Since it's turned off by default, it should have no effect on behavior.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGOSRExitFuzz.cpp: Added.
+        (JSC::numberOfOSRExitFuzzChecks):
+        * dfg/DFGOSRExitFuzz.h: Added.
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitGetArgumentStart):
+        (JSC::DFG::SpeculativeJIT::emitOSRExitFuzzCheck):
+        (JSC::DFG::SpeculativeJIT::speculationCheck):
+        * dfg/DFGSpeculativeJIT.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExit):
+        * jsc.cpp:
+        (jscmain):
+        * runtime/Options.h:
+        * runtime/TestRunnerUtils.h:
+
 2015-07-02  Saam barati  <saambarati1@gmail.com>
 
         Rename "Deconstruction" to "Destructuring" throughout JSC
