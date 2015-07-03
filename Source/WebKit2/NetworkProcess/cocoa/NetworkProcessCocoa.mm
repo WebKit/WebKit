@@ -34,7 +34,6 @@
 #import "SandboxExtension.h"
 #import "SecurityOriginData.h"
 #import <WebCore/CFNetworkSPI.h>
-#import <WebCore/NetworkStorageSession.h>
 #import <WebCore/PublicSuffix.h>
 #import <WebCore/ResourceRequestCFNet.h>
 #import <WebCore/SecurityOrigin.h>
@@ -211,14 +210,6 @@ void NetworkProcess::clearCFURLCacheForOrigins(const Vector<SecurityOriginData>&
         RetainPtr<CFArrayRef> partitionHostNames = adoptCF(WKCFURLCacheCopyAllHostNamesInPersistentStoreForPartition(partition.get()));
         WKCFURLCacheDeleteHostNamesInPersistentStoreForPartition(partitionHostNames.get(), partition.get());
     }
-}
-
-void NetworkProcess::clearHSTSCache(WebCore::NetworkStorageSession& session, std::chrono::system_clock::time_point modifiedSince)
-{
-    NSTimeInterval timeInterval = std::chrono::duration_cast<std::chrono::duration<double>>(modifiedSince.time_since_epoch()).count();
-    NSDate *date = [NSDate dateWithTimeIntervalSince1970:timeInterval];
-
-    _CFNetworkResetHSTSHostsSinceDate(session.platformSession(), (__bridge CFDateRef)date);
 }
 
 static void clearNSURLCache(dispatch_group_t group, std::chrono::system_clock::time_point modifiedSince, const std::function<void ()>& completionHandler)

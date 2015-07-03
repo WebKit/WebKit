@@ -45,7 +45,6 @@
 
 namespace WebCore {
 class CertificateInfo;
-class NetworkStorageSession;
 class SecurityOrigin;
 }
 
@@ -96,9 +95,6 @@ public:
     static void clearCFURLCacheForOrigins(const Vector<SecurityOriginData>&);
 #endif
 
-#if PLATFORM(COCOA)
-    void clearHSTSCache(WebCore::NetworkStorageSession&, std::chrono::system_clock::time_point modifiedSince);
-#endif
 
 private:
     NetworkProcess();

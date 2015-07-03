@@ -38,9 +38,8 @@ enum WebsiteDataTypes {
     WebsiteDataTypeWebSQLDatabases = 1 << 6,
     WebsiteDataTypeIndexedDBDatabases = 1 << 7,
     WebsiteDataTypeMediaKeys = 1 << 8,
-    WebsiteDataTypeHSTSCache = 1 << 9,
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    WebsiteDataTypePlugInData = 1 << 10,
+    WebsiteDataTypePlugInData = 1 << 9,
 #endif
 };
 

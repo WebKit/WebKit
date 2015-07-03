@@ -40,7 +40,6 @@ NSString * const WKWebsiteDataTypeWebSQLDatabases = @"WKWebsiteDataTypeWebSQLDat
 NSString * const WKWebsiteDataTypeIndexedDBDatabases = @"WKWebsiteDataTypeIndexedDBDatabases";
 
 NSString * const _WKWebsiteDataTypeMediaKeys = @"_WKWebsiteDataTypeMediaKeys";
-NSString * const _WKWebsiteDataTypeHSTSCache = @"_WKWebsiteDataTypeHSTSCache";
 
 #if PLATFORM(MAC)
 NSString * const _WKWebsiteDataTypePlugInData = @"_WKWebsiteDataTypePlugInData";
@@ -75,8 +74,6 @@ static NSString *dataTypesToString(NSSet *dataTypes)
         [array addObject:@"Web SQL"];
     if ([dataTypes containsObject:WKWebsiteDataTypeIndexedDBDatabases])
         [array addObject:@"IndexedDB"];
-    if ([dataTypes containsObject:_WKWebsiteDataTypeHSTSCache])
-        [array addObject:@"HSTS Cache"];
     if ([dataTypes containsObject:_WKWebsiteDataTypeMediaKeys])
         [array addObject:@"Media Keys"];
 #if PLATFORM(MAC)

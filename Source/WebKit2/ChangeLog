@@ -1,3 +1,20 @@
+2015-07-02  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r186247 and r186250.
+        https://bugs.webkit.org/show_bug.cgi?id=146572
+
+        Broke the build on Mavericks bots (Requested by cdumez on
+        #webkit).
+
+        Reverted changesets:
+
+        "Provide API to clear the HSTS cache"
+        https://bugs.webkit.org/show_bug.cgi?id=146565
+        http://trac.webkit.org/changeset/186247
+
+        "Unreviewed build fix for non-COCOA ports after r186247."
+        http://trac.webkit.org/changeset/186250
+
 2015-07-02  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         Unreviewed build fix for non-COCOA ports after r186247.
