@@ -59,6 +59,10 @@ public:
 private:
     IOChannel(const String& filePath, IOChannel::Type);
 
+#if USE(SOUP)
+    void readSyncInThread(size_t offset, size_t, WorkQueue*, std::function<void (Data&, int error)>);
+#endif
+
     String m_path;
     Type m_type;
 

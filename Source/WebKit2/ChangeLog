@@ -1,3 +1,29 @@
+2015-07-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r186025): [SOUP] NetworkCache gets blocked in traverse since r186025
+        https://bugs.webkit.org/show_bug.cgi?id=146545
+
+        Reviewed by Sergio Villar Senin.
+
+        In r186025 the readSync method used when traversing the cache
+        files was removed in favor of using parallel async reads to speed
+        up the traverse. The approach used doesn't work for soup, because
+        the IO operations are async, but run their callbacks in the
+        current thread. The network cache now runs up to 5 async reads in
+        the io work queue thread, and waits for them to finish, and those
+        asycn reads never finish for the soup backend because the thread
+        is blocked waiting for them. We need to use a different thread to
+        run those reads.
+
+        * NetworkProcess/cache/NetworkCacheIOChannel.h: Add
+        readSyncInThread private method.
+        * NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp:
+        (WebKit::NetworkCache::IOChannel::read): When not called in the
+        main thread, call readSyncInThread() instead.
+        (WebKit::NetworkCache::IOChannel::readSyncInThread): Run the read
+        operation synchronously in a different thread, since the current
+        thread might be blocked waiting for us.
+
 2015-07-02  Przemek Piorkowski  <piorkowskiprzemyslaw@gmail.com>
 
         [EFL] test_ewk2_application_cache_manager has been failed since r185527
