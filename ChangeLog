@@ -1,3 +1,16 @@
+2015-07-02  Przemek Piorkowski  <piorkowskiprzemyslaw@gmail.com>
+
+        [EFL] test_ewk2_application_cache_manager has been failed since r185527
+        https://bugs.webkit.org/show_bug.cgi?id=146016
+
+        Reviewed by Gyuyoung Kim.
+
+        In order to handle properly WebApplicationCacheManagerProxy implementation which use
+        WebsiteDataRecord it is necessary to enable PUBLIC_SUFFIX_LIST for EFL.
+        Implementation of PUBLIC_SUFFIX_LIST already exists for soup so EFL can use it as well.
+
+        * Source/cmake/OptionsEfl.cmake: set ENABLE_PUBLIC_SUFFIX_LIST to ON for EFL.
+
 2015-06-30  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         Implement ECMAScript Internationalization API

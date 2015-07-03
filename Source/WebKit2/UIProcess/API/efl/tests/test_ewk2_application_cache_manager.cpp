@@ -95,7 +95,7 @@ static Eina_Bool timerCallback(void* userData)
     return ECORE_CALLBACK_CANCEL;
 }
 
-TEST_F(EWK2UnitTestBase, DISABLED_ewk_application_cache_manager)
+TEST_F(EWK2UnitTestBase, ewk_application_cache_manager)
 {
     std::unique_ptr<EWK2UnitTestServer> httpServer = std::make_unique<EWK2UnitTestServer>();
     httpServer->run(serverCallback);
