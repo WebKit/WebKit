@@ -10,7 +10,7 @@ PASS ctx.setFillColor(0, 0) is undefined
 PASS ctx.setFillColor(0, 0, 0) threw exception TypeError: Type error.
 PASS ctx.setFillColor(0, 0, 0, 0) is undefined
 PASS ctx.setFillColor(0, 0, 0, 0, 0) is undefined
-PASS ctx.setFillColor(0, 0, 0, 0, 0, 0) threw exception TypeError: Type error.
+PASS ctx.setFillColor(0, 0, 0, 0, 0, 0) is undefined
 PASS successfullyParsed is true
 
 TEST COMPLETE

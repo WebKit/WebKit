@@ -16,7 +16,7 @@
  *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
- * EXPRESS OR IMPLIED WARRANTIEstrArg, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
  * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
@@ -187,6 +187,9 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
     void    overloadedMethod(DOMString[] arrayArg);
     void    overloadedMethod(sequence<unsigned long> arrayArg);
     void    overloadedMethod(DOMString strArg);
+
+    // FIXME: Implement support for overloaded functions with variadic arguments.
+    void    overloadedMethod(Blob... blobArgs);
 #endif
 
     // Class methods within JavaScript (like what's used for IDBKeyRange).

@@ -16,7 +16,7 @@ PASS ctx.setShadow(0, 0, 0, 0, 'red', 0, 0) is undefined
 PASS ctx.setShadow(0, 0, 0, 0, 0, 0) threw exception TypeError: Type error.
 PASS ctx.setShadow(0, 0, 0, 0, 0, 0, 0) is undefined
 PASS ctx.setShadow(0, 0, 0, 0, 0, 0, 0, 0) is undefined
-PASS ctx.setShadow(0, 0, 0, 0, 0, 0, 0, 0, 0) threw exception TypeError: Type error.
+PASS ctx.setShadow(0, 0, 0, 0, 0, 0, 0, 0, 0) is undefined
 PASS successfullyParsed is true
 
 TEST COMPLETE

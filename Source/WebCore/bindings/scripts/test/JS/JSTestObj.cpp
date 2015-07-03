@@ -3918,9 +3918,27 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod11
     return JSValue::encode(jsUndefined());
 }
 
+static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod12(ExecState* exec)
+{
+    JSValue thisValue = exec->thisValue();
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*exec, "TestObj", "overloadedMethod");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+    auto& impl = castedThis->impl();
+    Vector<Blob*> blobArgs;
+    for (unsigned i = 0, count = exec->argumentCount(); i < count; ++i) {
+        if (!exec->uncheckedArgument(i).inherits(JSBlob::info()))
+            return throwArgumentTypeError(*exec, i, "blobArgs", "TestObj", "overloadedMethod", "Blob");
+        blobArgs.append(JSBlob::toWrapped(exec->uncheckedArgument(i)));
+    }
+    impl.overloadedMethod(blobArgs);
+    return JSValue::encode(jsUndefined());
+}
+
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(ExecState* exec)
 {
-    size_t argsCount = exec->argumentCount();
+    size_t argsCount = std::min<size_t>(2, exec->argumentCount());
     JSValue arg0(exec->argument(0));
     JSValue arg1(exec->argument(1));
     if ((argsCount == 2 && (arg0.isNull() || (arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info()))) && (arg1.isUndefinedOrNull() || arg1.isString() || arg1.isObject())))
@@ -3945,6 +3963,8 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(ExecStat
         return jsTestObjPrototypeFunctionOverloadedMethod10(exec);
     if (argsCount == 1)
         return jsTestObjPrototypeFunctionOverloadedMethod11(exec);
+    if ()
+        return jsTestObjPrototypeFunctionOverloadedMethod12(exec);
     if (argsCount < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     return throwVMTypeError(exec);
@@ -4009,7 +4029,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionOverloadedMethod
 
 EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionOverloadedMethod1(ExecState* exec)
 {
-    size_t argsCount = exec->argumentCount();
+    size_t argsCount = std::min<size_t>(1, exec->argumentCount());
 #if ENABLE(Condition1)
     if (argsCount == 1)
         return jsTestObjConstructorFunctionOverloadedMethod11(exec);

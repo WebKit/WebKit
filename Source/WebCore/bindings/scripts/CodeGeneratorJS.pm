@@ -1453,6 +1453,17 @@ sub GenerateFunctionParametersCheck
     return ($numMandatoryParams, join(" || ", @orExpression), @neededArguments);
 }
 
+sub LengthOfLongestFunctionParameterList
+{
+    my ($overloads) = @_;
+    my $result = 0;
+    foreach my $overload (@{$overloads}) {
+        my @parameters = @{$overload->parameters};
+        $result = @parameters if $result < @parameters;
+    }
+    return $result;
+}
+
 sub GenerateOverloadedFunction
 {
     my $function = shift;
@@ -1468,10 +1479,13 @@ sub GenerateOverloadedFunction
     my $kind = $function->isStatic ? "Constructor" : "Prototype";
     my $functionName = "js${interfaceName}${kind}Function" . $codeGenerator->WK_ucfirst($function->signature->name);
 
+    # FIXME: Implement support for overloaded functions with variadic arguments.
+    my $lengthOfLongestOverloadedFunctionParameterList = LengthOfLongestFunctionParameterList($function->{overloads});
+
     push(@implContent, "EncodedJSValue JSC_HOST_CALL ${functionName}(ExecState* exec)\n");
     push(@implContent, <<END);
 {
-    size_t argsCount = exec->argumentCount();
+    size_t argsCount = std::min<size_t>($lengthOfLongestOverloadedFunctionParameterList, exec->argumentCount());
 END
 
     my %fetchedArguments = ();
@@ -4500,10 +4514,14 @@ sub GenerateOverloadedConstructorDefinition
     my $interface = shift;
 
     my $functionName = "${className}Constructor::construct${className}";
+
+    # FIXME: Implement support for overloaded constructors with variadic arguments.
+    my $lengthOfLongestOverloadedConstructorParameterList = LengthOfLongestFunctionParameterList($interface->constructors);
+
     push(@$outputArray, <<END);
 EncodedJSValue JSC_HOST_CALL ${functionName}(ExecState* exec)
 {
-    size_t argsCount = exec->argumentCount();
+    size_t argsCount = std::min<size_t>($lengthOfLongestOverloadedConstructorParameterList, exec->argumentCount());
 END
 
     my %fetchedArguments = ();
