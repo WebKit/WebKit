@@ -1,3 +1,11 @@
+2015-07-03  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, skip http/tests/xmlhttprequest/cross-origin-cookie-storage.html on Windows.
+
+        Windows' DumpRenderTree does not implement testRunner.setAlwaysAcceptCookies().
+
+        * platform/win/TestExpectations:
+
 2015-07-03  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r178097): JavaScript TypeError after clicking on compose button in Yahoo Mail

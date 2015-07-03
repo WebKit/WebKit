@@ -85,6 +85,9 @@ webkit.org/b/74716 css3/filters/backdrop [ Skip ]
 # TODO Should be moved to platform/mac <rdar://5621425>
 http/tests/misc/willCacheResponse-delegate-callback.html [ Skip ]
 
+# testRunner.setAlwaysAcceptCookies() is not implemented on Windows.
+http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Skip ]
+
 # TODO No Dashboard compatibility mode on Windows
 http/tests/xmlhttprequest/default-content-type-dashboard.html [ Skip ]
 http/tests/xmlhttprequest/svg-created-by-xhr-allowed-in-dashboard.html [ Skip ]
