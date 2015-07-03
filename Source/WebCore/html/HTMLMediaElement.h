@@ -147,7 +147,9 @@ public:
     MediaPlayerEnums::MovieLoadType movieLoadType() const;
     
     bool inActiveDocument() const { return m_inActiveDocument; }
-    
+
+    Document* hostingDocument() const override final { return &document(); }
+
 // DOM API
 // error state
     PassRefPtr<MediaError> error() const;

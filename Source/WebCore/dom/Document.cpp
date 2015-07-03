@@ -112,6 +112,7 @@
 #include "PageGroup.h"
 #include "PageTransitionEvent.h"
 #include "PlatformLocale.h"
+#include "PlatformMediaSessionManager.h"
 #include "PlatformStrategies.h"
 #include "PlugInsResources.h"
 #include "PluginDocument.h"
@@ -699,6 +700,8 @@ void Document::commonTeardown()
 {
     if (svgExtensions())
         accessSVGExtensions().pauseAnimations();
+
+    PlatformMediaSessionManager::sharedManager().stopAllMediaPlaybackForDocument(*this);
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     clearScriptedAnimationController();
