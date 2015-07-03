@@ -7,6 +7,7 @@
 
 #ifdef __OBJC__
 @class UIScreen;
+@class UIViewController;
 #else
 class UIScreen;
 #endif
@@ -48,11 +49,6 @@ void WKAXRegisterRemoteApp(void);
 #endif
 
 bool WKIsOptimizedFullscreenSupported(void);
-typedef enum {
-    WKMediaUIPartOptimizedFullscreenButton = 0,
-    WKMediaUIPartOptimizedFullscreenPlaceholder
-} WKMediaUIPart;
-CFStringRef WKGetMediaUIImageData(int);
 
 #ifdef __cplusplus
 }

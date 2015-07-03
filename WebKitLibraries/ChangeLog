@@ -1,3 +1,14 @@
+2015-07-02  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Add WebKitSystemInterface for iOS 8.4
+        https://bugs.webkit.org/show_bug.cgi?id=146548
+
+        Rubber-stamped by Zalan Bujtas.
+
+        * WebKitSystemInterfaceIOS.h:
+        * libWebKitSystemInterfaceIOSDevice8.4.a: Added.
+        * libWebKitSystemInterfaceIOSSimulator8.4.a: Added.
+
 2015-06-30  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         Implement ECMAScript Internationalization API
