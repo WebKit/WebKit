@@ -348,6 +348,11 @@ void NetworkProcess::fetchWebsiteData(SessionID sessionID, uint64_t websiteDataT
 
 void NetworkProcess::deleteWebsiteData(SessionID sessionID, uint64_t websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
 {
+    if (websiteDataTypes & WebsiteDataTypeHSTSCache) {
+        if (auto* networkStorageSession = SessionTracker::session(sessionID))
+            clearHSTSCache(*networkStorageSession, modifiedSince);
+    }
+
     if (websiteDataTypes & WebsiteDataTypeCookies) {
         if (auto* networkStorageSession = SessionTracker::session(sessionID))
             deleteAllCookiesModifiedSince(*networkStorageSession, modifiedSince);

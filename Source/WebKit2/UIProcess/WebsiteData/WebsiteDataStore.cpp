@@ -451,6 +451,9 @@ static ProcessAccessType computeNetworkProcessAccessTypeForDataRemoval(WebsiteDa
     if (dataTypes & WebsiteDataTypeDiskCache && !isNonPersistentStore)
         processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
 
+    if (dataTypes & WebsiteDataTypeHSTSCache)
+        processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
+
     return processAccessType;
 }
 

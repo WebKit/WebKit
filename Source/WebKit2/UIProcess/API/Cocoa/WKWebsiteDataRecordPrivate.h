@@ -27,6 +27,7 @@
 
 #if WK_API_ENABLED
 
+WK_EXTERN NSString * const _WKWebsiteDataTypeHSTSCache WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 WK_EXTERN NSString * const _WKWebsiteDataTypeMediaKeys WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
 #if !TARGET_OS_IPHONE
