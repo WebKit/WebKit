@@ -1,3 +1,10 @@
+2015-07-02  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Unreviewed build fix for non-COCOA ports after r186247.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::deleteWebsiteData): Add PLATFORM(COCOA) guard.
+
 2015-07-02  Anders Carlsson  <andersca@apple.com>
 
         Provide API to clear the HSTS cache
