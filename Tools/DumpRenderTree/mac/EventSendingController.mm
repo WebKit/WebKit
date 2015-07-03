@@ -260,8 +260,6 @@ BOOL replayingSavedEvents;
         return @"mouseUp";
     if (aSelector == @selector(mouseMoveToX:Y:))
         return @"mouseMoveTo";
-    if (aSelector == @selector(setDragMode:))
-        return @"setDragMode";
     if (aSelector == @selector(mouseScrollByX:andY:))
         return @"mouseScrollBy";
     if (aSelector == @selector(mouseScrollByX:andY:withWheel:andMomentumPhases:))

@@ -28,6 +28,7 @@
 
 #include "objc_instance.h"
 #include "WebScriptObject.h"
+#include "WebScriptObjectProtocol.h"
 
 namespace JSC {
 namespace Bindings {

@@ -30,6 +30,7 @@
 #import "NSPointerFunctionsSPI.h"
 #import "ObjCRuntimeObject.h"
 #import "WebScriptObject.h"
+#import "WebScriptObjectProtocol.h"
 #import "runtime/FunctionPrototype.h"
 #import "runtime_method.h"
 #import <objc/objc-auto.h>
@@ -194,7 +195,7 @@ public:
         return runtimeMethod;
     }
 
-    static Structure* createStructure(VM& vm, JSC::JSGlobalObject* globalObject, JSValue prototype)
+    static Structure* createStructure(VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)
     {
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
     }
@@ -218,13 +219,13 @@ private:
 
 const ClassInfo ObjCRuntimeMethod::s_info = { "ObjCRuntimeMethod", &RuntimeMethod::s_info, 0, CREATE_METHOD_TABLE(ObjCRuntimeMethod) };
 
-JSValue ObjcInstance::getMethod(ExecState* exec, PropertyName propertyName)
+JSC::JSValue ObjcInstance::getMethod(ExecState* exec, PropertyName propertyName)
 {
     Method* method = getClass()->methodNamed(propertyName, this);
     return ObjCRuntimeMethod::create(exec, exec->lexicalGlobalObject(), propertyName.publicName(), method);
 }
 
-JSValue ObjcInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod)
+JSC::JSValue ObjcInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod)
 {
     if (!asObject(runtimeMethod)->inherits(ObjCRuntimeMethod::info()))
         return exec->vm().throwException(exec, createTypeError(exec, "Attempt to invoke non-plug-in method on plug-in object."));
@@ -235,7 +236,7 @@ JSValue ObjcInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod
     return invokeObjcMethod(exec, method);
 }
 
-JSValue ObjcInstance::invokeObjcMethod(ExecState* exec, ObjcMethod* method)
+JSC::JSValue ObjcInstance::invokeObjcMethod(ExecState* exec, ObjcMethod* method)
 {
     JSValue result = jsUndefined();
     
@@ -353,7 +354,7 @@ JSValue ObjcInstance::invokeObjcMethod(ExecState* exec, ObjcMethod* method)
     return const_cast<JSValue&>(result);
 }
 
-JSValue ObjcInstance::invokeDefaultMethod(ExecState* exec)
+JSC::JSValue ObjcInstance::invokeDefaultMethod(ExecState* exec)
 {
     JSValue result = jsUndefined();
 
@@ -436,7 +437,7 @@ bool ObjcInstance::setValueOfUndefinedField(ExecState* exec, PropertyName proper
     return true;
 }
 
-JSValue ObjcInstance::getValueOfUndefinedField(ExecState* exec, PropertyName propertyName) const
+JSC::JSValue ObjcInstance::getValueOfUndefinedField(ExecState* exec, PropertyName propertyName) const
 {
     String name(propertyName.publicName());
     if (name.isNull())
@@ -469,7 +470,7 @@ JSValue ObjcInstance::getValueOfUndefinedField(ExecState* exec, PropertyName pro
     return const_cast<JSValue&>(result);
 }
 
-JSValue ObjcInstance::defaultValue(ExecState* exec, PreferredPrimitiveType hint) const
+JSC::JSValue ObjcInstance::defaultValue(ExecState* exec, PreferredPrimitiveType hint) const
 {
     if (hint == PreferString)
         return stringValue(exec);
@@ -482,24 +483,24 @@ JSValue ObjcInstance::defaultValue(ExecState* exec, PreferredPrimitiveType hint)
     return valueOf(exec);
 }
 
-JSValue ObjcInstance::stringValue(ExecState* exec) const
+JSC::JSValue ObjcInstance::stringValue(ExecState* exec) const
 {
     return convertNSStringToString(exec, [getObject() description]);
 }
 
-JSValue ObjcInstance::numberValue(ExecState*) const
+JSC::JSValue ObjcInstance::numberValue(ExecState*) const
 {
     // FIXME:  Implement something sensible
     return jsNumber(0);
 }
 
-JSValue ObjcInstance::booleanValue() const
+JSC::JSValue ObjcInstance::booleanValue() const
 {
     // FIXME:  Implement something sensible
     return jsBoolean(false);
 }
 
-JSValue ObjcInstance::valueOf(ExecState* exec) const 
+JSC::JSValue ObjcInstance::valueOf(ExecState* exec) const 
 {
     return stringValue(exec);
 }

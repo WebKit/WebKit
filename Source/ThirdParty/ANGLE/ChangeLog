@@ -1,3 +1,16 @@
+2015-07-03  Dan Bernstein  <mitz@apple.com>
+
+        [Xcode] Update some build settings as recommended by Xcode 7
+        https://bugs.webkit.org/show_bug.cgi?id=146597
+
+        Reviewed by Sam Weinig.
+
+        * ANGLE.xcodeproj/project.pbxproj: Enabled CLANG_WARN_BOOL_CONVERSION,
+        CLANG_WARN_ENUM_CONVERSION, CLANG_WARN_INT_CONVERSION, ENABLE_STRICT_OBJC_MSGSEND and
+        GCC_NO_COMMON_BLOCKS.
+
+        * Configurations/Base.xcconfig: Updated LastUpgradeCheck.
+
 2015-07-03  Per Arne Vollan  <peavo@outlook.com>
 
         [WinCairo][WebGL] Enable HLSL.

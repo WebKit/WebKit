@@ -29,6 +29,7 @@
 #include "JSDOMBinding.h"
 #include "ObjCRuntimeObject.h"
 #include "WebScriptObject.h"
+#include "WebScriptObjectProtocol.h"
 #include "objc_instance.h"
 #include "runtime_array.h"
 #include "runtime_object.h"
@@ -70,6 +71,11 @@ int ObjcMethod::numParameters() const
 NSMethodSignature* ObjcMethod::getMethodSignature() const
 {
     return [_objcClass instanceMethodSignatureForSelector:_selector];
+}
+
+bool ObjcMethod::isFallbackMethod() const
+{
+    return _selector == @selector(invokeUndefinedMethodFromWebScript:withArguments:);
 }
 
 // ---------------------- ObjcField ----------------------

@@ -95,9 +95,10 @@ namespace DFG {
             (node), __FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion); \
     } while (false)
 
-#define DFG_CRASH(graph, node, reason)                                  \
-    (graph).handleAssertionFailure(                                     \
-        (node), __FILE__, __LINE__, WTF_PRETTY_FUNCTION, (reason));
+#define DFG_CRASH(graph, node, reason) do {                             \
+        (graph).handleAssertionFailure(                                 \
+            (node), __FILE__, __LINE__, WTF_PRETTY_FUNCTION, (reason)); \
+    } while (false)
 
 struct InlineVariableData {
     InlineCallFrame* inlineCallFrame;

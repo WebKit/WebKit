@@ -723,7 +723,7 @@
 		1A569D180D7E2B82007C3983 /* objc_runtime.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A569CE90D7E2B82007C3983 /* objc_runtime.mm */; };
 		1A569D190D7E2B82007C3983 /* objc_utility.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A569CEA0D7E2B82007C3983 /* objc_utility.h */; };
 		1A569D1A0D7E2B82007C3983 /* objc_utility.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A569CEB0D7E2B82007C3983 /* objc_utility.mm */; };
-		1A569D1B0D7E2B82007C3983 /* WebScriptObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A569CEC0D7E2B82007C3983 /* WebScriptObject.h */; };
+		1A569D1B0D7E2B82007C3983 /* WebScriptObjectProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A569CEC0D7E2B82007C3983 /* WebScriptObjectProtocol.h */; };
 		1A569D1E0D7E2B82007C3983 /* runtime_array.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A569CEF0D7E2B82007C3983 /* runtime_array.cpp */; };
 		1A569D1F0D7E2B82007C3983 /* runtime_array.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A569CF00D7E2B82007C3983 /* runtime_array.h */; };
 		1A569D200D7E2B82007C3983 /* runtime_method.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A569CF10D7E2B82007C3983 /* runtime_method.cpp */; };
@@ -739,7 +739,7 @@
 		1A750D8D0A90E521000FF215 /* JSNodeIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A750D8B0A90E521000FF215 /* JSNodeIterator.cpp */; };
 		1A750D8E0A90E521000FF215 /* JSNodeIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A750D8C0A90E521000FF215 /* JSNodeIterator.h */; };
 		1A750DD40A90E729000FF215 /* JSNodeIteratorCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A750DD30A90E729000FF215 /* JSNodeIteratorCustom.cpp */; };
-		1A7629D50A07425100989F5B /* XPathGrammar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7629D30A07425100989F5B /* XPathGrammar.cpp */; };
+		1A7629D50A07425100989F5B /* XPathGrammar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A7629D30A07425100989F5B /* XPathGrammar.cpp */; settings = {COMPILER_FLAGS = "-Wno-unreachable-code"; }; };
 		1A7629D60A07425100989F5B /* XPathGrammar.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7629D40A07425100989F5B /* XPathGrammar.h */; };
 		1A762C730A074F2600989F5B /* JSXPathEvaluator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A762C6B0A074F2600989F5B /* JSXPathEvaluator.cpp */; };
 		1A762C740A074F2600989F5B /* JSXPathEvaluator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A762C6C0A074F2600989F5B /* JSXPathEvaluator.h */; };
@@ -2233,7 +2233,7 @@
 		63D7B32D0E78CD3F00F7617C /* NodeRenderStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 63D7B32C0E78CD3F00F7617C /* NodeRenderStyle.h */; };
 		63F5D4F70E8C4B7100C0BD04 /* ElementRareData.h in Headers */ = {isa = PBXBuildFile; fileRef = 637B7ADE0E8767B800E32194 /* ElementRareData.h */; };
 		650F53DC09D15DDA00C9B0C8 /* CSSGrammar.h in Headers */ = {isa = PBXBuildFile; fileRef = 650F53DB09D15DDA00C9B0C8 /* CSSGrammar.h */; };
-		650F53DD09D15DDF00C9B0C8 /* CSSGrammar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6565814409D13043000E61D7 /* CSSGrammar.cpp */; };
+		650F53DD09D15DDF00C9B0C8 /* CSSGrammar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6565814409D13043000E61D7 /* CSSGrammar.cpp */; settings = {COMPILER_FLAGS = "-Wno-unreachable-code"; }; };
 		650FBF2A0D9AF047008FC292 /* SVGHKernElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 650FBF270D9AF046008FC292 /* SVGHKernElement.cpp */; };
 		650FBF2B0D9AF047008FC292 /* SVGHKernElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 650FBF280D9AF047008FC292 /* SVGHKernElement.h */; };
 		6515EC910D9723FF0063D49A /* JSSVGAltGlyphElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6515EC8F0D9723FF0063D49A /* JSSVGAltGlyphElement.cpp */; };
@@ -7845,7 +7845,7 @@
 		1A569CE90D7E2B82007C3983 /* objc_runtime.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = objc_runtime.mm; sourceTree = "<group>"; };
 		1A569CEA0D7E2B82007C3983 /* objc_utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = objc_utility.h; sourceTree = "<group>"; };
 		1A569CEB0D7E2B82007C3983 /* objc_utility.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = objc_utility.mm; sourceTree = "<group>"; };
-		1A569CEC0D7E2B82007C3983 /* WebScriptObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptObject.h; sourceTree = "<group>"; };
+		1A569CEC0D7E2B82007C3983 /* WebScriptObjectProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptObjectProtocol.h; sourceTree = "<group>"; };
 		1A569CEF0D7E2B82007C3983 /* runtime_array.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = runtime_array.cpp; sourceTree = "<group>"; };
 		1A569CF00D7E2B82007C3983 /* runtime_array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = runtime_array.h; sourceTree = "<group>"; };
 		1A569CF10D7E2B82007C3983 /* runtime_method.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = runtime_method.cpp; sourceTree = "<group>"; };
@@ -15356,7 +15356,7 @@
 				1A569CEB0D7E2B82007C3983 /* objc_utility.mm */,
 				E16982541134629D00894115 /* ObjCRuntimeObject.h */,
 				E169825F1134636A00894115 /* ObjCRuntimeObject.mm */,
-				1A569CEC0D7E2B82007C3983 /* WebScriptObject.h */,
+				1A569CEC0D7E2B82007C3983 /* WebScriptObjectProtocol.h */,
 			);
 			path = objc;
 			sourceTree = "<group>";
@@ -27256,7 +27256,7 @@
 				A502C5DF13049B3500FC7D53 /* WebSafeGCActivityCallbackIOS.h in Headers */,
 				CE95208A1811B475007A5392 /* WebSafeIncrementalSweeperIOS.h in Headers */,
 				1CAF34810A6C405200ABE06E /* WebScriptObject.h in Headers */,
-				1A569D1B0D7E2B82007C3983 /* WebScriptObject.h in Headers */,
+				1A569D1B0D7E2B82007C3983 /* WebScriptObjectProtocol.h in Headers */,
 				1CAF34830A6C405200ABE06E /* WebScriptObjectPrivate.h in Headers */,
 				97AABD1B14FA09D5007457AE /* WebSocket.h in Headers */,
 				97AABD1E14FA09D5007457AE /* WebSocketChannel.h in Headers */,
@@ -27451,7 +27451,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0600;
+				LastUpgradeCheck = 0700;
 			};
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
 			compatibilityVersion = "Xcode 3.2";

@@ -1,3 +1,13 @@
+2015-07-03  Dan Bernstein  <mitz@apple.com>
+
+        [Xcode] Update some build settings as recommended by Xcode 7
+        https://bugs.webkit.org/show_bug.cgi?id=146597
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/Base.xcconfig: Enabled CLANG_WARN_UNREACHABLE_CODE,
+        GCC_WARN_UNDECLARED_SELECTOR and GCC_NO_COMMON_BLOCKS. Removed GCC_MODEL_TUNING.
+
 2015-07-02  Timothy Horton  <timothy_horton@apple.com>
 
         Fix the build.

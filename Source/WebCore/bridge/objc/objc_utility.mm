@@ -26,10 +26,10 @@
 #include "config.h"
 #include "objc_utility.h"
 
+#include "WebScriptObjectProtocol.h"
 #include "objc_instance.h"
 #include "runtime_array.h"
 #include "runtime_object.h"
-#include "WebScriptObject.h"
 #include <runtime/JSGlobalObject.h>
 #include <runtime/JSLock.h>
 #include <wtf/Assertions.h>

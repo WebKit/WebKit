@@ -433,49 +433,12 @@ FunctionType SelectorFragment::appendUnoptimizedPseudoClassWithContext(bool (*ma
     return FunctionType::SelectorCheckerWithCheckingContext;
 }
 
-static inline FunctionType addScrollbarPseudoClassType(const CSSSelector& selector, SelectorFragment& fragment)
+static inline FunctionType addScrollbarPseudoClassType(const CSSSelector&, SelectorFragment&)
 {
     // FIXME: scrollbar pseudoclass interaction with :not doesn't behave correctly.
     // Compile them when they are fixed and tested.
     // https://bugs.webkit.org/show_bug.cgi?id=146221
     return FunctionType::CannotCompile;
-    
-    switch (selector.pseudoClassType()) {
-    case CSSSelector::PseudoClassWindowInactive:
-        fragment.unoptimizedPseudoClasses.append(JSC::FunctionPtr(isWindowInactive));
-        return FunctionType::SimpleSelectorChecker;
-    case CSSSelector::PseudoClassDisabled:
-        return fragment.appendUnoptimizedPseudoClassWithContext(scrollbarMatchesDisabledPseudoClass);
-    case CSSSelector::PseudoClassEnabled:
-        return fragment.appendUnoptimizedPseudoClassWithContext(scrollbarMatchesEnabledPseudoClass);
-    case CSSSelector::PseudoClassHorizontal:
-        return fragment.appendUnoptimizedPseudoClassWithContext(scrollbarMatchesHorizontalPseudoClass);
-    case CSSSelector::PseudoClassVertical:
-        return fragment.appendUnoptimizedPseudoClassWithContext(scrollbarMatchesVerticalPseudoClass);
-    case CSSSelector::PseudoClassDecrement:
-        return fragment.appendUnoptimizedPseudoClassWithContext(scrollbarMatchesDecrementPseudoClass);
-    case CSSSelector::PseudoClassIncrement:
-        return fragment.appendUnoptimizedPseudoClassWithContext(scrollbarMatchesIncrementPseudoClass);
-    case CSSSelector::PseudoClassStart:
-        return fragment.appendUnoptimizedPseudoClassWithContext(scrollbarMatchesStartPseudoClass);
-    case CSSSelector::PseudoClassEnd:
-        return fragment.appendUnoptimizedPseudoClassWithContext(scrollbarMatchesEndPseudoClass);
-    case CSSSelector::PseudoClassDoubleButton:
-        return fragment.appendUnoptimizedPseudoClassWithContext(scrollbarMatchesDoubleButtonPseudoClass);
-    case CSSSelector::PseudoClassSingleButton:
-        return fragment.appendUnoptimizedPseudoClassWithContext(scrollbarMatchesSingleButtonPseudoClass);
-    case CSSSelector::PseudoClassNoButton:
-        return fragment.appendUnoptimizedPseudoClassWithContext(scrollbarMatchesNoButtonPseudoClass);
-    case CSSSelector::PseudoClassCornerPresent:
-        return fragment.appendUnoptimizedPseudoClassWithContext(scrollbarMatchesCornerPresentPseudoClass);
-    case CSSSelector::PseudoClassActive:
-        return fragment.appendUnoptimizedPseudoClassWithContext(scrollbarMatchesActivePseudoClass);
-    case CSSSelector::PseudoClassHover:
-        return fragment.appendUnoptimizedPseudoClassWithContext(scrollbarMatchesHoverPseudoClass);
-    default:
-        return FunctionType::CannotMatchAnything;
-    }
-    return FunctionType::CannotMatchAnything;
 }
 
 // Handle the forward :nth-child() and backward :nth-last-child().

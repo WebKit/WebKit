@@ -1463,8 +1463,8 @@ RegisterID* BytecodeGenerator::initializeVariable(const Variable& variable, Regi
         break;
         
     default:
-        RELEASE_ASSERT_NOT_REACHED();
         scope = nullptr;
+        RELEASE_ASSERT_NOT_REACHED();
         break;
     }
 

@@ -61,8 +61,8 @@ public:
     virtual int numParameters() const;
 
     NSMethodSignature *getMethodSignature() const;
-    
-    bool isFallbackMethod() const { return _selector == @selector(invokeUndefinedMethodFromWebScript:withArguments:); }
+
+    bool isFallbackMethod() const;
     void setJavaScriptName(CFStringRef n) { _javaScriptName = n; }
     CFStringRef javaScriptName() const { return _javaScriptName.get(); }
     
