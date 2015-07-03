@@ -165,18 +165,28 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
+    <ClCompile Include="..\src\compiler\translator\ASTMetadataHLSL.cpp" />
     <ClCompile Include="..\src\compiler\translator\blocklayoutHLSL.cpp" />
+    <ClCompile Include="..\src\compiler\translator\BuiltInFunctionEmulatorHLSL.cpp" />
     <ClCompile Include="..\src\compiler\translator\OutputHLSL.cpp" />
     <ClCompile Include="..\src\compiler\translator\SearchSymbol.cpp" />
+    <ClCompile Include="..\src\compiler\translator\StructureHLSL.cpp" />
     <ClCompile Include="..\src\compiler\translator\TranslatorHLSL.cpp" />
     <ClCompile Include="..\src\compiler\translator\UnfoldShortCircuit.cpp" />
+    <ClCompile Include="..\src\compiler\translator\UniformHLSL.cpp" />
+    <ClCompile Include="..\src\compiler\translator\UtilsHLSL.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\compiler\translator\ASTMetadataHLSL.h" />
+    <ClInclude Include="..\src\compiler\translator\BuiltInFunctionEmulatorHLSL.h" />
     <ClInclude Include="..\src\compiler\translator\DetectDiscontinuity.h" />
     <ClInclude Include="..\src\compiler\translator\OutputHLSL.h" />
     <ClInclude Include="..\src\compiler\translator\SearchSymbol.h" />
+    <ClInclude Include="..\src\compiler\translator\StructureHLSL.h" />
     <ClInclude Include="..\src\compiler\translator\TranslatorHLSL.h" />
     <ClInclude Include="..\src\compiler\translator\UnfoldShortCircuit.h" />
+    <ClInclude Include="..\src\compiler\translator\UniformHLSL.h" />
+    <ClInclude Include="..\src\compiler\translator\UtilsHLSL.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

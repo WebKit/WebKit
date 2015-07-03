@@ -1,3 +1,16 @@
+2015-07-03  Per Arne Vollan  <peavo@outlook.com>
+
+        [WinCairo][WebGL] Enable HLSL.
+        https://bugs.webkit.org/show_bug.cgi?id=146559
+
+        Reviewed by Alex Christensen.
+
+        High Level Shader Language needs to be enabled for WebGL to work on Windows.
+
+        * ANGLE.vcxproj/translatorCommon.props:
+        * ANGLE.vcxproj/translator_hlsl.vcxproj:
+        * ANGLE.vcxproj/translator_hlsl.vcxproj.filters:
+
 2015-07-01  Alex Christensen  <achristensen@webkit.org>
 
         Re-enable WebGL on WinCairo
