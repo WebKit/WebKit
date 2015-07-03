@@ -106,6 +106,9 @@ hr {
 
 video {
     object-fit: contain;
+#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
+    -webkit-tap-highlight-color: transparent;
+#endif
 }
 
 /* heading elements */
