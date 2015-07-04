@@ -434,7 +434,15 @@ CodeMirror.extendMode("css", {
 CodeMirror.extendMode("css-rule", {
     shouldHaveSpaceBeforeToken: function(lastToken, lastContent, token, state, content, isComment)
     {
-        return lastContent === ":" && !lastToken;
+        // Add whitespace before ":_value"
+        if (lastContent === ":" && !lastToken)
+            return true;
+
+        // Add whitespace between "1px_solid_green"
+        if (lastToken && /\b(?:keyword|atom|number)\b/.test(token))
+            return true;
+
+        return false;
     },
 
     shouldHaveSpaceAfterLastToken: function(lastToken, lastContent, token, state, content, isComment)
@@ -471,7 +479,8 @@ CodeMirror.extendMode("css-rule", {
 
     removeLastNewline: function(lastToken, lastContent, token, state, content, isComment, firstTokenOnLine)
     {
-        return false;
+        // Each property should be formatted to one line each with no extra newlines.
+        return true;
     },
 
     indentAfterToken: function(lastToken, lastContent, token, state, content, isComment)

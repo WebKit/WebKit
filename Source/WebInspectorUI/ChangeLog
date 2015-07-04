@@ -1,3 +1,23 @@
+2015-07-04  Devin Rousso  <drousso@apple.com>
+
+        REGRESSION(r184000): Web Inspector: Multiline CSS in Styles Sidebar is marked as invalid
+        https://bugs.webkit.org/show_bug.cgi?id=146178
+
+        Reviewed by Timothy Hatcher.
+
+        First changes made by Tobias Reiss  <tobi+webkit@basecode.de>
+
+        * Tools/PrettyPrinting/css-rule-tests/add-whitespace-between-values-expected.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/add-whitespace-between-values.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/add-whitespace-between-rules-expected.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/add-whitespace-between-rules.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/remove-newline-between-values-expected.css: Added.
+        * Tools/PrettyPrinting/css-rule-tests/remove-newline-between-values.css: Added.
+        * Tools/PrettyPrinting/index.html:
+        Add regression tests.
+        * UserInterface/Views/CodeMirrorFormatters.js:
+        Remove newlines before values that belong in one line and add whitespace between values. 
+
 2015-07-04  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: The arrow that appears for Web Inspector Layout & Rendering records overlaps the category switcher
