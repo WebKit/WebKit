@@ -1,5 +1,20 @@
 2015-07-04  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Pseudo Styles Ordering and Media Queries
+        https://bugs.webkit.org/show_bug.cgi?id=145979
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/RulesStyleDetailsPanel.css:
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress .label:not(.filter-section-non-matching) + .label.filter-matching-label:not(.filter-section-non-matching)):
+        Fix filter label styling with pseudo selectors.
+        * UserInterface/Views/RulesStyleDetailsPanel.js:
+        (WebInspector.RulesStyleDetailsPanel.prototype.refresh): Pseudo-selector rules will now order directly after the last style that
+        matches the pseudo-selector without the pseudo-element.  If no rules match, place the pseudo-selector rules above the first
+        inherited or UserAgent rule (whichever comes first).
+
+2015-07-04  Devin Rousso  <drousso@apple.com>
+
         REGRESSION(r184000): Web Inspector: Multiline CSS in Styles Sidebar is marked as invalid
         https://bugs.webkit.org/show_bug.cgi?id=146178
 

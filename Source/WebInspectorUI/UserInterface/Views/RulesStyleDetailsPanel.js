@@ -170,15 +170,19 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
         }
 
         var pseudoElements = this.nodeStyles.pseudoElements;
+        var pseudoElementSelectors = [];
+
         for (var pseudoIdentifier in pseudoElements) {
             var pseudoElement = pseudoElements[pseudoIdentifier];
             var orderedStyles = uniqueOrderedStyles(pseudoElement.orderedStyles);
-            for (var style of orderedStyles)
-                appendStyleSection.call(this, style);
 
-            if (previousSection)
-                previousSection.lastInGroup = true;
+            for (var style of orderedStyles)
+                pseudoElementSelectors.push({ style, selectorText: style.ownerRule.selectorText.replace(/:{1,2}[\w-]+\s*/, " ").trimRight() });
         }
+
+        // Reverse the array to allow ensure that splicing the array will not mess with the order.
+        if (pseudoElementSelectors.length)
+            pseudoElementSelectors.reverse();
 
         var addedNewRuleButton = false;
         this._ruleMediaAndInherticanceList = [];
@@ -258,7 +262,31 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
 
             this._ruleMediaAndInherticanceList.push(hasMediaOrInherited);
 
+            if (pseudoElementSelectors.length && style.ownerRule) {
+                for (var j = pseudoElementSelectors.length - 1; j >= 0; --j) {
+                    var pseudoElement = pseudoElementSelectors[j];
+
+                    if (style.ownerRule.type === WebInspector.CSSRule.Type.UserAgent || style.inerhited
+                    || (pseudoElement.lastMatchingSelector && pseudoElement.lastMatchingSelector !== style.ownerRule.selectorText)) {
+                        appendStyleSection.call(this, pseudoElement.style);
+                        pseudoElementSelectors.splice(j, 1);
+                        this._ruleMediaAndInherticanceList.push(hasMediaOrInherited);
+
+                        continue;
+                    }
+
+                    if (style.ownerRule.selectorText.includes(pseudoElement.selectorText))
+                        pseudoElement.lastMatchingSelector = style.ownerRule.selectorText;
+                }
+            }
+
             appendStyleSection.call(this, style);
+        }
+
+        // Just in case there are any pseudo-selectors left that haven't been added.
+        if (pseudoElementSelectors.length) {
+            for (var i = pseudoElementSelectors.length - 1; i >= 0; --i)
+                appendStyleSection.call(this, pseudoElementSelectors[i].style);
         }
 
         if (!addedNewRuleButton)

@@ -65,6 +65,10 @@
     border-bottom: 1px solid rgb(179, 179, 179);
 }
 
+.sidebar > .panel.details.css-style > .content.filter-in-progress .label:not(.filter-section-non-matching) + .label.filter-matching-label:not(.filter-section-non-matching) {
+    padding-top: 0;
+}
+
 .sidebar > .panel.details.css-style > .content.filter-in-progress .new-rule {
     display: none;
 }
