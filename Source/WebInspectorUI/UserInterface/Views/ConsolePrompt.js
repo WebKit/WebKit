@@ -167,6 +167,17 @@ WebInspector.ConsolePrompt.prototype = {
 
     _handleTabKey: function(codeMirror)
     {
+        var cursor = codeMirror.getCursor();
+        var line = codeMirror.getLine(cursor.line);
+
+        if (!line.trim().length)
+            return CodeMirror.Pass;
+
+        var firstNonSpace = line.search(/[^\s]/);
+
+        if (cursor.ch <= firstNonSpace)
+            return CodeMirror.Pass;
+
         this._completionController.completeAtCurrentPositionIfNeeded().then(function(result) {
             if (result === WebInspector.CodeMirrorCompletionController.UpdatePromise.NoCompletionsFound)
                 InspectorFrontendHost.beep();
