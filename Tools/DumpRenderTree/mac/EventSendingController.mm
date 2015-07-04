@@ -191,8 +191,7 @@ BOOL replayingSavedEvents;
 
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
 {
-    if (aSelector == @selector(beginDragWithFiles:)
-            || aSelector == @selector(clearKillRing)
+    if (aSelector == @selector(clearKillRing)
             || aSelector == @selector(contextClick)
             || aSelector == @selector(enableDOMUIEventLogging:)
             || aSelector == @selector(fireKeyboardEventsToElement:)
@@ -213,6 +212,9 @@ BOOL replayingSavedEvents;
             || aSelector == @selector(continuousMouseScrollByX:andY:)
             || aSelector == @selector(monitorWheelEvents)
             || aSelector == @selector(callAfterScrollingCompletes:)
+#if PLATFORM(MAC)
+            || aSelector == @selector(beginDragWithFiles:)
+#endif
 #if PLATFORM(IOS)
             || aSelector == @selector(addTouchAtX:y:)
             || aSelector == @selector(updateTouchAtIndex:x:y:)
@@ -240,8 +242,10 @@ BOOL replayingSavedEvents;
 
 + (NSString *)webScriptNameForSelector:(SEL)aSelector
 {
+#if PLATFORM(MAC)
     if (aSelector == @selector(beginDragWithFiles:))
         return @"beginDragWithFiles";
+#endif
     if (aSelector == @selector(contextClick))
         return @"contextClick";
     if (aSelector == @selector(enableDOMUIEventLogging:))
