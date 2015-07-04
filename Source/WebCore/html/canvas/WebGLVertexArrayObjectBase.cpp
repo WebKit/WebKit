@@ -76,7 +76,7 @@ void WebGLVertexArrayObjectBase::unbindBuffer(PassRefPtr<WebGLBuffer> buffer)
 {
     if (m_boundElementArrayBuffer == buffer) {
         m_boundElementArrayBuffer->onDetached(context()->graphicsContext3D());
-        m_boundElementArrayBuffer = 0;
+        m_boundElementArrayBuffer = nullptr;
     }
     
     for (size_t i = 0; i < m_vertexAttribState.size(); ++i) {
@@ -95,7 +95,7 @@ void WebGLVertexArrayObjectBase::unbindBuffer(PassRefPtr<WebGLBuffer> buffer)
                 state.originalStride = 0;
                 state.offset = 0;
             } else
-                state.bufferBinding = 0;
+                state.bufferBinding = nullptr;
         }
     }
 }

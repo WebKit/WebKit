@@ -264,7 +264,7 @@ void WorkerMessagingProxy::workerGlobalScopeDestroyedInternal()
     // WorkerGlobalScopeDestroyedTask is always the last to be performed, so the proxy is not needed for communication
     // in either side any more. However, the Worker object may still exist, and it assumes that the proxy exists, too.
     m_askedToTerminate = true;
-    m_workerThread = 0;
+    m_workerThread = nullptr;
 
     InspectorInstrumentation::workerGlobalScopeTerminated(m_scriptExecutionContext.get(), this);
 

@@ -187,7 +187,7 @@ void PluginView::init()
     LOG(Plugins, "PluginView::init(): Initializing plug-in '%s'", m_plugin->name().utf8().data());
 
     if (!m_plugin->load()) {
-        m_plugin = 0;
+        m_plugin = nullptr;
         m_status = PluginStatusCanNotLoadPlugin;
         return;
     }

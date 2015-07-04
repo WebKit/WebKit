@@ -53,7 +53,7 @@ public:
     void clearOverflow()
     {
         if (m_overflow)
-            m_overflow.clear();
+            m_overflow = nullptr;
     }
 
 private:

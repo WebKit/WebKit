@@ -457,7 +457,7 @@ HTMLMediaElement::~HTMLMediaElement()
 
     if (m_mediaController) {
         m_mediaController->removeMediaElement(this);
-        m_mediaController = 0;
+        m_mediaController = nullptr;
     }
 
 #if ENABLE(MEDIA_SOURCE)
@@ -942,7 +942,7 @@ void HTMLMediaElement::prepareForLoad()
 
     // 1 - Abort any already-running instance of the resource selection algorithm for this element.
     m_loadState = WaitingForSource;
-    m_currentSourceNode = 0;
+    m_currentSourceNode = nullptr;
 
     // 2 - If there are any tasks from the media element's media element event task source in 
     // one of the task queues, then remove those tasks.
@@ -1006,7 +1006,7 @@ void HTMLMediaElement::prepareForLoad()
     setPlaybackRate(defaultPlaybackRate());
 
     // 6 - Set the error attribute to null and the autoplaying flag to true.
-    m_error = 0;
+    m_error = nullptr;
     m_autoplaying = true;
 
     // 7 - Invoke the media element's resource selection algorithm.
@@ -1101,7 +1101,7 @@ void HTMLMediaElement::selectMediaResource()
         if (auto firstSource = childrenOfType<HTMLSourceElement>(*this).first()) {
             mode = children;
             m_nextChildNodeToConsider = firstSource;
-            m_currentSourceNode = 0;
+            m_currentSourceNode = nullptr;
         } else {
             // Otherwise the media element has neither a src attribute nor a source element 
             // child: set the networkState to NETWORK_EMPTY, and abort these steps; the 
@@ -1277,7 +1277,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
         else {
             // Forget our reference to the MediaSource, so we leave it alone
             // while processing remainder of load failure.
-            m_mediaSource = 0;
+            m_mediaSource = nullptr;
             mediaLoadingFailed(MediaPlayer::FormatError);
         }
     } else
@@ -1800,7 +1800,7 @@ void HTMLMediaElement::noneSupported()
 
     stopPeriodicTimers();
     m_loadState = WaitingForSource;
-    m_currentSourceNode = 0;
+    m_currentSourceNode = nullptr;
 
     // 4.8.10.5 
     // 6 - Reaching this step indicates that the media resource failed to load or that the given 
@@ -2939,7 +2939,7 @@ void HTMLMediaElement::closeMediaSource()
         return;
 
     m_mediaSource->close();
-    m_mediaSource = 0;
+    m_mediaSource = nullptr;
 }
 #endif
 
@@ -4112,8 +4112,8 @@ check_again:
         m_currentSourceNode = source;
         m_nextChildNodeToConsider = source->nextSibling();
     } else {
-        m_currentSourceNode = 0;
-        m_nextChildNodeToConsider = 0;
+        m_currentSourceNode = nullptr;
+        m_nextChildNodeToConsider = nullptr;
     }
 
 #if !LOG_DISABLED
@@ -4193,7 +4193,7 @@ void HTMLMediaElement::sourceWasRemoved(HTMLSourceElement* source)
         // Clear the current source node pointer, but don't change the movie as the spec says:
         // 4.8.8 - Dynamically modifying a source element and its attribute when the element is already 
         // inserted in a video or audio element will have no effect.
-        m_currentSourceNode = 0;
+        m_currentSourceNode = nullptr;
         LOG(Media, "HTMLMediaElement::sourceRemoved(%p) - m_currentSourceNode set to 0", this);
     }
 }
@@ -4795,7 +4795,7 @@ void HTMLMediaElement::userCancelledLoad()
     setShouldDelayLoadEvent(false);
 
     // 6 - Abort the overall resource selection algorithm.
-    m_currentSourceNode = 0;
+    m_currentSourceNode = nullptr;
 
     // Reset m_readyState since m_player is gone.
     m_readyState = HAVE_NOTHING;
@@ -4812,8 +4812,8 @@ void HTMLMediaElement::clearMediaPlayer(int flags)
 
 #if USE(PLATFORM_TEXT_TRACK_MENU)
     if (platformTextTrackMenu()) {
-        m_platformMenu->setClient(0);
-        m_platformMenu = 0;
+        m_platformMenu->setClient(nullptr);
+        m_platformMenu = nullptr;
     }
 #endif
 

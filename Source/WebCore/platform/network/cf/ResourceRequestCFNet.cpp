@@ -295,7 +295,7 @@ void ResourceRequest::doUpdateResourceRequest()
 void ResourceRequest::doUpdateResourceHTTPBody()
 {
     if (!m_cfRequest) {
-        m_httpBody = 0;
+        m_httpBody = nullptr;
         return;
     }
 

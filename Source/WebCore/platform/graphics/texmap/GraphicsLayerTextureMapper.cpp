@@ -301,8 +301,8 @@ void GraphicsLayerTextureMapper::setContentsToImage(Image* image)
             m_compositedImage = TextureMapperTiledBackingStore::create();
         m_compositedImage->setContentsToImage(image);
     } else {
-        m_compositedNativeImagePtr = 0;
-        m_compositedImage = 0;
+        m_compositedNativeImagePtr = nullptr;
+        m_compositedImage = nullptr;
     }
 
     setContentsToPlatformLayer(m_compositedImage.get(), ContentsLayerForImage);

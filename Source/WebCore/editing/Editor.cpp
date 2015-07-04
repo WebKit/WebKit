@@ -828,7 +828,7 @@ void Editor::removeFormattingAndStyle()
 
 void Editor::clearLastEditCommand() 
 {
-    m_lastEditCommand.clear();
+    m_lastEditCommand = nullptr;
 }
 #if PLATFORM(IOS)
 // If the selection is adjusted from UIKit without closing the typing, the typing command may
@@ -1066,7 +1066,7 @@ void Editor::unappliedEditing(PassRefPtr<EditCommandComposition> cmd)
 
     m_alternativeTextController->respondToUnappliedEditing(cmd.get());
 
-    m_lastEditCommand = 0;
+    m_lastEditCommand = nullptr;
     if (client())
         client()->registerRedoStep(cmd);
     respondToChangedContents(newSelection);
@@ -1084,7 +1084,7 @@ void Editor::reappliedEditing(PassRefPtr<EditCommandComposition> cmd)
     
     updateEditorUINowIfScheduled();
 
-    m_lastEditCommand = 0;
+    m_lastEditCommand = nullptr;
     if (client())
         client()->registerUndoStep(cmd);
     respondToChangedContents(newSelection);
@@ -1727,7 +1727,7 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
     if (text.isEmpty() && mode != CancelComposition)
         TypingCommand::deleteSelection(document(), 0);
 
-    m_compositionNode = 0;
+    m_compositionNode = nullptr;
     m_customCompositionUnderlines.clear();
 
     insertTextForConfirmedComposition(text);
@@ -1802,7 +1802,7 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
     if (text.isEmpty())
         TypingCommand::deleteSelection(document(), TypingCommand::PreventSpellChecking);
 
-    m_compositionNode = 0;
+    m_compositionNode = nullptr;
     m_customCompositionUnderlines.clear();
 
     if (!text.isEmpty()) {

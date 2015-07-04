@@ -142,7 +142,7 @@ bool IDBOpenDBRequest::dispatchEvent(PassRefPtr<Event> event)
     // If the connection closed between onUpgradeNeeded and the delivery of the "success" event,
     // an "error" event should be fired instead.
     if (event->type() == eventNames().successEvent && m_result->type() == IDBAny::IDBDatabaseType && m_result->idbDatabase()->isClosePending()) {
-        m_result.clear();
+        m_result = nullptr;
         onError(IDBDatabaseError::create(IDBDatabaseException::AbortError, "The connection was closed."));
         return false;
     }

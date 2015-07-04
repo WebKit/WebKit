@@ -408,7 +408,7 @@ void TextureMapperLayer::paintWithIntermediateSurface(const TextureMapperPaintOp
 
     if (replicaSurface && options.opacity == 1) {
         commitSurface(options, replicaSurface, rect, 1);
-        replicaSurface.clear();
+        replicaSurface = nullptr;
     }
 
     mainSurface = paintIntoSurface(paintOptions, rect.size());

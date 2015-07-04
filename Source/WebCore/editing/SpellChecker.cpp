@@ -214,7 +214,7 @@ void SpellChecker::didCheck(int sequence, const Vector<TextCheckingResult>& resu
     if (m_lastProcessedSequence < sequence)
         m_lastProcessedSequence = sequence;
 
-    m_processingRequest.clear();
+    m_processingRequest = nullptr;
     if (!m_requestQueue.isEmpty())
         m_timerToProcessQueuedRequest.startOneShot(0);
 }

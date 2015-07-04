@@ -1034,7 +1034,7 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
     ASSERT(m_networkProcessConnection);
     ASSERT_UNUSED(connection, m_networkProcessConnection == connection);
 
-    m_networkProcessConnection = 0;
+    m_networkProcessConnection = nullptr;
     
     m_webResourceLoadScheduler->networkProcessCrashed();
 }
@@ -1051,7 +1051,7 @@ void WebProcess::webToDatabaseProcessConnectionClosed(WebToDatabaseProcessConnec
     ASSERT(m_webToDatabaseProcessConnection);
     ASSERT(m_webToDatabaseProcessConnection == connection);
 
-    m_webToDatabaseProcessConnection = 0;
+    m_webToDatabaseProcessConnection = nullptr;
 }
 
 WebToDatabaseProcessConnection* WebProcess::webToDatabaseProcessConnection()

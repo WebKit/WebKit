@@ -45,7 +45,7 @@ NodeIterator::NodePointer::NodePointer(PassRefPtr<Node> n, bool b)
 
 void NodeIterator::NodePointer::clear()
 {
-    node.clear();
+    node = nullptr;
 }
 
 bool NodeIterator::NodePointer::moveToNext(Node* root)
@@ -151,7 +151,7 @@ void NodeIterator::detach()
 {
     root()->document().detachNodeIterator(this);
     m_detached = true;
-    m_referenceNode.node.clear();
+    m_referenceNode.node = nullptr;
 }
 
 void NodeIterator::nodeWillBeRemoved(Node& removedNode)

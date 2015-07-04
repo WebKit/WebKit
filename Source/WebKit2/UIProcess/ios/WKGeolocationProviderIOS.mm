@@ -118,7 +118,7 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
 {
     _isWebCoreGeolocationActive = NO;
     [_coreLocationProvider stop];
-    _lastActivePosition.clear();
+    _lastActivePosition = nullptr;
 }
 
 -(void)_setEnableHighAccuracy:(BOOL)enableHighAccuracy

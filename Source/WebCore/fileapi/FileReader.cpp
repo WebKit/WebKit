@@ -140,7 +140,7 @@ void FileReader::readInternal(Blob* blob, FileReaderLoader::ReadType type, Excep
     m_blob = blob;
     m_readType = type;
     m_state = LOADING;
-    m_error = 0;
+    m_error = nullptr;
 
     m_loader = std::make_unique<FileReaderLoader>(m_readType, this);
     m_loader->setEncoding(m_encoding);

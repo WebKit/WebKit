@@ -112,9 +112,9 @@ inline int RangeBoundaryPoint::offset() const
 
 inline void RangeBoundaryPoint::clear()
 {
-    m_containerNode.clear();
+    m_containerNode = nullptr;
     m_offsetInContainer = 0;
-    m_childBeforeBoundary = 0;
+    m_childBeforeBoundary = nullptr;
 }
 
 inline void RangeBoundaryPoint::set(PassRefPtr<Node> container, int offset, Node* childBefore)
@@ -149,7 +149,7 @@ inline void RangeBoundaryPoint::setToStartOfNode(PassRefPtr<Node> container)
     ASSERT(container);
     m_containerNode = container;
     m_offsetInContainer = 0;
-    m_childBeforeBoundary = 0;
+    m_childBeforeBoundary = nullptr;
 }
 
 inline void RangeBoundaryPoint::setToEndOfNode(PassRefPtr<Node> container)
@@ -158,7 +158,7 @@ inline void RangeBoundaryPoint::setToEndOfNode(PassRefPtr<Node> container)
     m_containerNode = container;
     if (m_containerNode->offsetInCharacters()) {
         m_offsetInContainer = m_containerNode->maxCharacterOffset();
-        m_childBeforeBoundary = 0;
+        m_childBeforeBoundary = nullptr;
     } else {
         m_childBeforeBoundary = m_containerNode->lastChild();
         m_offsetInContainer = m_childBeforeBoundary ? invalidOffset : 0;

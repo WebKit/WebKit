@@ -699,7 +699,7 @@ void WebPrintOperationGtk::printPagesDone()
 {
     m_printPagesIdleId = 0;
     endPrint();
-    m_cairoContext = 0;
+    m_cairoContext = nullptr;
 }
 
 void WebPrintOperationGtk::printDone(const WebCore::ResourceError& error)

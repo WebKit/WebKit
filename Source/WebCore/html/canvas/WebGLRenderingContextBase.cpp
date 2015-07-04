@@ -494,10 +494,10 @@ void WebGLRenderingContextBase::initializeNewContext()
     m_unpackFlipY = false;
     m_unpackPremultiplyAlpha = false;
     m_unpackColorspaceConversion = GraphicsContext3D::BROWSER_DEFAULT_WEBGL;
-    m_boundArrayBuffer = 0;
-    m_currentProgram = 0;
-    m_framebufferBinding = 0;
-    m_renderbufferBinding = 0;
+    m_boundArrayBuffer = nullptr;
+    m_currentProgram = nullptr;
+    m_framebufferBinding = nullptr;
+    m_renderbufferBinding = nullptr;
     m_depthMask = true;
     m_stencilEnabled = false;
     m_stencilMask = 0xFFFFFFFF;
@@ -623,7 +623,7 @@ void WebGLRenderingContextBase::destroyGraphicsContext3D()
     if (m_context) {
         m_context->setContextLostCallback(nullptr);
         m_context->setErrorMessageCallback(nullptr);
-        m_context.clear();
+        m_context = nullptr;
     }
 }
 
@@ -1479,7 +1479,7 @@ void WebGLRenderingContextBase::deleteBuffer(WebGLBuffer* buffer)
     if (!deleteObject(buffer))
         return;
     if (m_boundArrayBuffer == buffer)
-        m_boundArrayBuffer = 0;
+        m_boundArrayBuffer = nullptr;
 
     m_boundVertexArrayObject->unbindBuffer(buffer);
 }
@@ -1489,7 +1489,7 @@ void WebGLRenderingContextBase::deleteFramebuffer(WebGLFramebuffer* framebuffer)
     if (!deleteObject(framebuffer))
         return;
     if (framebuffer == m_framebufferBinding) {
-        m_framebufferBinding = 0;
+        m_framebufferBinding = nullptr;
         m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0);
     }
 }
@@ -1506,7 +1506,7 @@ void WebGLRenderingContextBase::deleteRenderbuffer(WebGLRenderbuffer* renderbuff
     if (!deleteObject(renderbuffer))
         return;
     if (renderbuffer == m_renderbufferBinding)
-        m_renderbufferBinding = 0;
+        m_renderbufferBinding = nullptr;
     if (m_framebufferBinding)
         m_framebufferBinding->removeAttachmentFromBoundFramebuffer(renderbuffer);
 }

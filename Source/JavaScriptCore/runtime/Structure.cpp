@@ -737,7 +737,7 @@ void Structure::pin()
     ASSERT(propertyTable());
     setIsPinnedPropertyTable(true);
     clearPreviousID();
-    m_nameInPrevious.clear();
+    m_nameInPrevious = nullptr;
 }
 
 void Structure::allocateRareData(VM& vm)

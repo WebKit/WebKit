@@ -462,7 +462,7 @@ void TextFieldInputType::updatePlaceholderText()
     if (placeholderText.isEmpty()) {
         if (m_placeholder) {
             m_placeholder->parentNode()->removeChild(m_placeholder.get(), ASSERT_NO_EXCEPTION);
-            m_placeholder.clear();
+            m_placeholder = nullptr;
         }
         return;
     }

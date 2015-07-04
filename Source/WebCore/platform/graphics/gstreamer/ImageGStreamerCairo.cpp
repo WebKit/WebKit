@@ -71,9 +71,7 @@ ImageGStreamer::ImageGStreamer(GstSample* sample)
 ImageGStreamer::~ImageGStreamer()
 {
     if (m_image)
-        m_image.clear();
-
-    m_image = 0;
+        m_image = nullptr;
 
     // We keep the buffer memory mapped until the image is destroyed because the internal
     // cairo_surface_t was created using cairo_image_surface_create_for_data().

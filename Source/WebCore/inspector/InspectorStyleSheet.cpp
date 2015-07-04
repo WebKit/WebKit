@@ -1261,7 +1261,7 @@ void InspectorStyleSheetForInlineStyle::didModifyElementAttribute()
     m_isStyleTextValid = false;
     if (m_element->isStyledElement() && m_element->style() != m_inspectorStyle->cssStyle())
         m_inspectorStyle = InspectorStyle::create(InspectorCSSId(id(), 0), inlineStyle(), this);
-    m_ruleSourceData.clear();
+    m_ruleSourceData = nullptr;
 }
 
 bool InspectorStyleSheetForInlineStyle::getText(String* result) const
@@ -1285,7 +1285,7 @@ bool InspectorStyleSheetForInlineStyle::setStyleText(CSSStyleDeclaration* style,
 
     m_styleText = text;
     m_isStyleTextValid = true;
-    m_ruleSourceData.clear();
+    m_ruleSourceData = nullptr;
     return !ec;
 }
 
@@ -1304,7 +1304,7 @@ bool InspectorStyleSheetForInlineStyle::ensureParsedDataReady()
     // The "style" property value can get changed indirectly, e.g. via element.style.borderWidth = "2px".
     const String& currentStyleText = elementStyleText();
     if (m_styleText != currentStyleText) {
-        m_ruleSourceData.clear();
+        m_ruleSourceData = nullptr;
         m_styleText = currentStyleText;
         m_isStyleTextValid = true;
     }

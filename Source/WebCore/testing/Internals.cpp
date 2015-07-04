@@ -1723,7 +1723,7 @@ void Internals::closeDummyInspectorFrontend()
     m_frontendChannel = nullptr;
 
     m_frontendWindow->close(m_frontendWindow->scriptExecutionContext());
-    m_frontendWindow.clear();
+    m_frontendWindow = nullptr;
 }
 
 void Internals::setJavaScriptProfilingEnabled(bool enabled, ExceptionCode& ec)

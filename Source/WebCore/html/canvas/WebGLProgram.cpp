@@ -58,11 +58,11 @@ void WebGLProgram::deleteObjectImpl(GraphicsContext3D* context3d, Platform3DObje
     context3d->deleteProgram(obj);
     if (m_vertexShader) {
         m_vertexShader->onDetached(context3d);
-        m_vertexShader = 0;
+        m_vertexShader = nullptr;
     }
     if (m_fragmentShader) {
         m_fragmentShader->onDetached(context3d);
-        m_fragmentShader = 0;
+        m_fragmentShader = nullptr;
     }
 }
 
@@ -148,12 +148,12 @@ bool WebGLProgram::detachShader(WebGLShader* shader)
     case GraphicsContext3D::VERTEX_SHADER:
         if (m_vertexShader != shader)
             return false;
-        m_vertexShader = 0;
+        m_vertexShader = nullptr;
         return true;
     case GraphicsContext3D::FRAGMENT_SHADER:
         if (m_fragmentShader != shader)
             return false;
-        m_fragmentShader = 0;
+        m_fragmentShader = nullptr;
         return true;
     default:
         return false;

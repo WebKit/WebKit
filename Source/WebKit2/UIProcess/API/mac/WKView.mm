@@ -3520,7 +3520,7 @@ static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension
 
 - (void)pasteboardChangedOwner:(NSPasteboard *)pasteboard
 {
-    _data->_promisedImage = 0;
+    _data->_promisedImage = nullptr;
     _data->_promisedFilename = "";
     _data->_promisedURL = "";
 }
@@ -3531,7 +3531,7 @@ static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension
 
     if ([type isEqual:NSTIFFPboardType] && _data->_promisedImage) {
         [pasteboard setData:(NSData *)_data->_promisedImage->getTIFFRepresentation() forType:NSTIFFPboardType];
-        _data->_promisedImage = 0;
+        _data->_promisedImage = nullptr;
     }
 }
 

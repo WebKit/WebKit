@@ -179,7 +179,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
     
     // Clear the m_utterance variable in case finish speaking kicks off a new speaking job immediately.
     RefPtr<WebCore::PlatformSpeechSynthesisUtterance> platformUtterance = m_utterance;
-    m_utterance = 0;
+    m_utterance = nullptr;
     
     m_synthesizerObject->client()->didFinishSpeaking(platformUtterance);
 }
@@ -213,7 +213,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
     
     // Clear the m_utterance variable in case finish speaking kicks off a new speaking job immediately.
     RefPtr<WebCore::PlatformSpeechSynthesisUtterance> platformUtterance = m_utterance;
-    m_utterance = 0;
+    m_utterance = nullptr;
     
     m_synthesizerObject->client()->didFinishSpeaking(platformUtterance);
 }

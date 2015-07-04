@@ -57,7 +57,7 @@ void InspectorAgent::didCreateFrontendAndBackend(FrontendChannel* frontendChanne
 void InspectorAgent::willDestroyFrontendAndBackend(DisconnectReason)
 {
     m_frontendDispatcher = nullptr;
-    m_backendDispatcher.clear();
+    m_backendDispatcher = nullptr;
 
     m_pendingEvaluateTestCommands.clear();
 

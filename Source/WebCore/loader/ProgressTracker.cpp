@@ -113,7 +113,7 @@ void ProgressTracker::reset()
     m_lastNotifiedProgressTime = std::chrono::steady_clock::time_point();
     m_finalProgressChangedSent = false;
     m_numProgressTrackedFrames = 0;
-    m_originatingProgressFrame = 0;
+    m_originatingProgressFrame = nullptr;
 
     m_heartbeatsWithNoProgress = 0;
     m_totalBytesReceivedBeforePreviousHeartbeat = 0;

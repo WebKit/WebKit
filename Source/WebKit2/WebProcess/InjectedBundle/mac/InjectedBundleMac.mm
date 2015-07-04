@@ -55,7 +55,7 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
             return false;
         }
 
-        m_sandboxExtension = 0;
+        m_sandboxExtension = nullptr;
     }
     
     RetainPtr<CFStringRef> injectedBundlePathStr = m_path.createCFString();

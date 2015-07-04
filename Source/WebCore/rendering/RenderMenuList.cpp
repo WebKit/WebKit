@@ -88,7 +88,7 @@ RenderMenuList::~RenderMenuList()
 #if !PLATFORM(IOS)
     if (m_popup)
         m_popup->disconnectClient();
-    m_popup = 0;
+    m_popup = nullptr;
 #endif
 }
 

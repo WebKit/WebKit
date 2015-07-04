@@ -1359,7 +1359,7 @@ void FrameSelection::prepareForDestruction()
         view->clearSelection();
 
     setSelectionWithoutUpdatingAppearance(VisibleSelection(), defaultSetSelectionOptions(), AlignCursorOnScrollIfNeeded, CharacterGranularity);
-    m_previousCaretNode.clear();
+    m_previousCaretNode = nullptr;
 }
 
 void FrameSelection::setStart(const VisiblePosition &pos, EUserTriggered trigger)

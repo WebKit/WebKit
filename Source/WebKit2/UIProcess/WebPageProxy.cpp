@@ -3706,7 +3706,7 @@ void WebPageProxy::runOpenPanel(uint64_t frameID, const FileChooserSettings& set
 {
     if (m_openPanelResultListener) {
         m_openPanelResultListener->invalidate();
-        m_openPanelResultListener = 0;
+        m_openPanelResultListener = nullptr;
     }
 
     WebFrameProxy* frame = m_process->webFrame(frameID);
@@ -3808,7 +3808,7 @@ void WebPageProxy::showColorPicker(const WebCore::Color& initialColor, const Int
 #if ENABLE(INPUT_TYPE_COLOR_POPOVER)
     // A new popover color well needs to be created (and the previous one destroyed) for
     // each activation of a color element.
-    m_colorPicker = 0;
+    m_colorPicker = nullptr;
 #endif
     if (!m_colorPicker)
         m_colorPicker = m_pageClient.createColorPicker(this, initialColor, elementRect);
@@ -4300,7 +4300,7 @@ void WebPageProxy::didChooseFilesForOpenPanel(const Vector<String>& fileURLs)
     m_process->send(Messages::WebPage::DidChooseFilesForOpenPanel(fileURLs), m_pageID);
 
     m_openPanelResultListener->invalidate();
-    m_openPanelResultListener = 0;
+    m_openPanelResultListener = nullptr;
 }
 
 void WebPageProxy::didCancelForOpenPanel()
@@ -4311,7 +4311,7 @@ void WebPageProxy::didCancelForOpenPanel()
     m_process->send(Messages::WebPage::DidCancelForOpenPanel(), m_pageID);
     
     m_openPanelResultListener->invalidate();
-    m_openPanelResultListener = 0;
+    m_openPanelResultListener = nullptr;
 }
 
 void WebPageProxy::advanceToNextMisspelling(bool startBeforeSelection)
@@ -4767,7 +4767,7 @@ void WebPageProxy::printFinishedCallback(const ResourceError& printError, uint64
 void WebPageProxy::focusedFrameChanged(uint64_t frameID)
 {
     if (!frameID) {
-        m_focusedFrame = 0;
+        m_focusedFrame = nullptr;
         return;
     }
 
@@ -4780,7 +4780,7 @@ void WebPageProxy::focusedFrameChanged(uint64_t frameID)
 void WebPageProxy::frameSetLargestFrameChanged(uint64_t frameID)
 {
     if (!frameID) {
-        m_frameSetLargestFrame = 0;
+        m_frameSetLargestFrame = nullptr;
         return;
     }
 

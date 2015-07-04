@@ -68,13 +68,13 @@ public:
             return;
         m_eventQueue.m_eventDispatcherMap.remove(m_event.get());
         m_event->target()->dispatchEvent(m_event);
-        m_event.clear();
+        m_event = nullptr;
     }
 
     void cancel()
     {
         m_isCancelled = true;
-        m_event.clear();
+        m_event = nullptr;
     }
 
 private:

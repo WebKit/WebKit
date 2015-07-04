@@ -104,7 +104,7 @@ CSSStyleSheet* DocumentStyleSheetCollection::pageUserSheet()
 void DocumentStyleSheetCollection::clearPageUserSheet()
 {
     if (m_pageUserSheet) {
-        m_pageUserSheet = 0;
+        m_pageUserSheet = nullptr;
         m_document.styleResolverChanged(DeferRecalcStyle);
     }
 }

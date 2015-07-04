@@ -159,7 +159,7 @@ bool FrameData::clear(bool clearMetadata)
         m_haveMetadata = false;
 
     if (m_frame) {
-        m_frame.clear();
+        m_frame = nullptr;
         return true;
     }
     return false;

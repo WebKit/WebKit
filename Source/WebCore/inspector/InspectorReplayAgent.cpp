@@ -193,7 +193,7 @@ void InspectorReplayAgent::didCreateFrontendAndBackend(Inspector::FrontendChanne
 void InspectorReplayAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
     m_frontendDispatcher = nullptr;
-    m_backendDispatcher.clear();
+    m_backendDispatcher = nullptr;
 
     m_instrumentingAgents->setInspectorReplayAgent(nullptr);
 

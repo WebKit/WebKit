@@ -89,7 +89,7 @@ void WebOpenPanelResultListenerProxy::cancel()
 
 void WebOpenPanelResultListenerProxy::invalidate()
 {
-    m_page = 0;
+    m_page = nullptr;
 }
 
 } // namespace WebKit

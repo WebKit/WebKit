@@ -263,7 +263,7 @@ void InspectorController::disconnectFrontend(DisconnectReason reason)
     m_agents.willDestroyFrontendAndBackend(reason);
 
     m_backendDispatcher->clearFrontend();
-    m_backendDispatcher.clear();
+    m_backendDispatcher = nullptr;
     m_frontendChannel = nullptr;
 
     m_isAutomaticInspection = false;

@@ -171,7 +171,7 @@ void WorkerThread::workerThread()
 
     // The below assignment will destroy the context, which will in turn notify messaging proxy.
     // We cannot let any objects survive past thread exit, because no other thread will run GC or otherwise destroy them.
-    m_workerGlobalScope = 0;
+    m_workerGlobalScope = nullptr;
 
     // Clean up WebCore::ThreadGlobalData before WTF::WTFThreadData goes away!
     threadGlobalData().destroy();

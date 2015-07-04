@@ -126,6 +126,6 @@ void WebFramePolicyListener::receivedPolicyDecision(PolicyAction action)
 
 void WebFramePolicyListener::invalidate()
 {
-    m_frame = 0;
+    m_frame = nullptr;
 }
 

@@ -104,7 +104,7 @@ bool HTMLPlugInElement::willRespondToMouseClickEvents()
 
 void HTMLPlugInElement::willDetachRenderers()
 {
-    m_instance.clear();
+    m_instance = nullptr;
 
     if (m_isCapturingMouseEvents) {
         if (Frame* frame = document().frame())
@@ -122,7 +122,7 @@ void HTMLPlugInElement::willDetachRenderers()
 
 void HTMLPlugInElement::resetInstance()
 {
-    m_instance.clear();
+    m_instance = nullptr;
 }
 
 PassRefPtr<JSC::Bindings::Instance> HTMLPlugInElement::getInstance()

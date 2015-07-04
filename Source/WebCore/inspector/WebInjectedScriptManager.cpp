@@ -44,7 +44,7 @@ void WebInjectedScriptManager::disconnect()
     InjectedScriptManager::disconnect();
 
     m_commandLineAPIHost->disconnect();
-    m_commandLineAPIHost.clear();
+    m_commandLineAPIHost = nullptr;
 }
 
 void WebInjectedScriptManager::didCreateInjectedScript(InjectedScript injectedScript)

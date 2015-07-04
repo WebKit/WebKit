@@ -98,7 +98,7 @@ void BaseChooserOnlyDateAndTimeInputType::didChooseValue(const String& value)
 
 void BaseChooserOnlyDateAndTimeInputType::didEndChooser()
 {
-    m_dateTimeChooser.clear();
+    m_dateTimeChooser = nullptr;
 }
 
 void BaseChooserOnlyDateAndTimeInputType::closeDateTimeChooser()

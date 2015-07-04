@@ -238,7 +238,7 @@ void InspectorDOMAgent::didCreateFrontendAndBackend(Inspector::FrontendChannel* 
 void InspectorDOMAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
     m_frontendDispatcher = nullptr;
-    m_backendDispatcher.clear();
+    m_backendDispatcher = nullptr;
 
     m_history.reset();
     m_domEditor.reset();
@@ -272,7 +272,7 @@ void InspectorDOMAgent::reset()
     discardBindings();
     if (m_revalidateStyleAttrTask)
         m_revalidateStyleAttrTask->reset();
-    m_document = 0;
+    m_document = nullptr;
 }
 
 void InspectorDOMAgent::setDOMListener(DOMListener* listener)

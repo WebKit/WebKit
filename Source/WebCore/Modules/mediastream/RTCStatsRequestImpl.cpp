@@ -104,7 +104,7 @@ bool RTCStatsRequestImpl::canSuspendForPageCache() const
 
 void RTCStatsRequestImpl::clear()
 {
-    m_successCallback.clear();
+    m_successCallback = nullptr;
 }
 
 

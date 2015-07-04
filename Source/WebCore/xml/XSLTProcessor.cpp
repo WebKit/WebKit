@@ -162,8 +162,8 @@ void XSLTProcessor::removeParameter(const String& /*namespaceURI*/, const String
 
 void XSLTProcessor::reset()
 {
-    m_stylesheet.clear();
-    m_stylesheetRootNode.clear();
+    m_stylesheet = nullptr;
+    m_stylesheetRootNode = nullptr;
     m_parameters.clear();
 }
 

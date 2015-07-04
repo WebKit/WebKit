@@ -153,12 +153,12 @@ void CSSValuePool::drain()
     m_fontFamilyValueCache.clear();
 
     for (int i = 0; i < numCSSValueKeywords; ++i)
-        m_identifierValueCache[i] = 0;
+        m_identifierValueCache[i] = nullptr;
 
     for (int i = 0; i < maximumCacheableIntegerValue; ++i) {
-        m_pixelValueCache[i] = 0;
-        m_percentValueCache[i] = 0;
-        m_numberValueCache[i] = 0;
+        m_pixelValueCache[i] = nullptr;
+        m_percentValueCache[i] = nullptr;
+        m_numberValueCache[i] = nullptr;
     }
 }
 

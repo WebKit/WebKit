@@ -49,7 +49,7 @@ void JSGlobalObjectRuntimeAgent::didCreateFrontendAndBackend(FrontendChannel* fr
 void JSGlobalObjectRuntimeAgent::willDestroyFrontendAndBackend(DisconnectReason reason)
 {
     m_frontendDispatcher = nullptr;
-    m_backendDispatcher.clear();
+    m_backendDispatcher = nullptr;
 
     InspectorRuntimeAgent::willDestroyFrontendAndBackend(reason);
 }

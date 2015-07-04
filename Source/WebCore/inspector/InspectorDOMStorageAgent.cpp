@@ -76,7 +76,7 @@ void InspectorDOMStorageAgent::didCreateFrontendAndBackend(Inspector::FrontendCh
 void InspectorDOMStorageAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
     m_frontendDispatcher = nullptr;
-    m_backendDispatcher.clear();
+    m_backendDispatcher = nullptr;
 
     ErrorString unused;
     disable(unused);

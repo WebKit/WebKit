@@ -1143,7 +1143,7 @@ void WebEditorClient::didCheckSucceed(int sequence, NSArray* results)
 {
     ASSERT_UNUSED(sequence, sequence == m_textCheckingRequest->data().sequence());
     m_textCheckingRequest->didSucceed(core(results, m_textCheckingRequest->data().mask()));
-    m_textCheckingRequest.clear();
+    m_textCheckingRequest = nullptr;
 }
 #endif
 

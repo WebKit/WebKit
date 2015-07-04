@@ -92,7 +92,7 @@ public:
 
     AnchorType anchorType() const { return static_cast<AnchorType>(m_anchorType); }
 
-    void clear() { m_anchorNode.clear(); m_offset = 0; m_anchorType = PositionIsOffsetInAnchor; m_isLegacyEditingPosition = false; }
+    void clear() { m_anchorNode = nullptr; m_offset = 0; m_anchorType = PositionIsOffsetInAnchor; m_isLegacyEditingPosition = false; }
 
     // These are always DOM compliant values.  Editing positions like [img, 0] (aka [img, before])
     // will return img->parentNode() and img->computeNodeIndex() from these functions.

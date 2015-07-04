@@ -77,7 +77,7 @@ void InspectorDebuggerAgent::didCreateFrontendAndBackend(FrontendChannel* fronte
 void InspectorDebuggerAgent::willDestroyFrontendAndBackend(DisconnectReason reason)
 {
     m_frontendDispatcher = nullptr;
-    m_backendDispatcher.clear();
+    m_backendDispatcher = nullptr;
 
     bool skipRecompile = reason == DisconnectReason::InspectedTargetDestroyed;
     disable(skipRecompile);

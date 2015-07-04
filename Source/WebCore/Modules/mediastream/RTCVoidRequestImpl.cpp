@@ -94,8 +94,8 @@ bool RTCVoidRequestImpl::canSuspendForPageCache() const
 
 void RTCVoidRequestImpl::clear()
 {
-    m_successCallback.clear();
-    m_errorCallback.clear();
+    m_successCallback = nullptr;
+    m_errorCallback = nullptr;
 }
 
 } // namespace WebCore

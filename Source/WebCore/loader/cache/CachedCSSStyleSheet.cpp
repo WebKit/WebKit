@@ -138,7 +138,7 @@ void CachedCSSStyleSheet::destroyDecodedData()
         return;
 
     m_parsedStyleSheetCache->removedFromMemoryCache();
-    m_parsedStyleSheetCache.clear();
+    m_parsedStyleSheetCache = nullptr;
 
     setDecodedSize(0);
 }
@@ -146,11 +146,11 @@ void CachedCSSStyleSheet::destroyDecodedData()
 PassRefPtr<StyleSheetContents> CachedCSSStyleSheet::restoreParsedStyleSheet(const CSSParserContext& context, CachePolicy cachePolicy)
 {
     if (!m_parsedStyleSheetCache)
-        return 0;
+        return nullptr;
     if (!m_parsedStyleSheetCache->subresourcesAllowReuse(cachePolicy)) {
         m_parsedStyleSheetCache->removedFromMemoryCache();
-        m_parsedStyleSheetCache.clear();
-        return 0;
+        m_parsedStyleSheetCache = nullptr;
+        return nullptr;
     }
 
     ASSERT(m_parsedStyleSheetCache->isCacheable());
@@ -158,7 +158,7 @@ PassRefPtr<StyleSheetContents> CachedCSSStyleSheet::restoreParsedStyleSheet(cons
 
     // Contexts must be identical so we know we would get the same exact result if we parsed again.
     if (m_parsedStyleSheetCache->parserContext() != context)
-        return 0;
+        return nullptr;
 
     didAccessDecodedData(monotonicallyIncreasingTime());
 

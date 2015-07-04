@@ -76,7 +76,7 @@ void WebResourceLoader::cancelResourceLoader()
 
 void WebResourceLoader::detachFromCoreLoader()
 {
-    m_coreLoader = 0;
+    m_coreLoader = nullptr;
 }
 
 void WebResourceLoader::willSendRequest(const ResourceRequest& proposedRequest, const ResourceResponse& redirectResponse)

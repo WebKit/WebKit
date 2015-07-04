@@ -930,23 +930,23 @@ void WebPage::close()
     }
 
 #if ENABLE(FULLSCREEN_API)
-    m_fullScreenManager = 0;
+    m_fullScreenManager = nullptr;
 #endif
 
     if (m_activePopupMenu) {
         m_activePopupMenu->disconnectFromPage();
-        m_activePopupMenu = 0;
+        m_activePopupMenu = nullptr;
     }
 
     if (m_activeOpenPanelResultListener) {
         m_activeOpenPanelResultListener->disconnectFromPage();
-        m_activeOpenPanelResultListener = 0;
+        m_activeOpenPanelResultListener = nullptr;
     }
 
 #if ENABLE(INPUT_TYPE_COLOR)
     if (m_activeColorChooser) {
         m_activeColorChooser->disconnectFromPage();
-        m_activeColorChooser = 0;
+        m_activeColorChooser = nullptr;
     }
 #endif
 
@@ -3270,7 +3270,7 @@ void WebPage::countStringMatches(const String& string, uint32_t options, uint32_
 void WebPage::didChangeSelectedIndexForActivePopupMenu(int32_t newIndex)
 {
     changeSelectedIndex(newIndex);
-    m_activePopupMenu = 0;
+    m_activePopupMenu = nullptr;
 }
 
 void WebPage::changeSelectedIndex(int32_t index)
@@ -3306,12 +3306,12 @@ void WebPage::didChooseFilesForOpenPanel(const Vector<String>& files)
         return;
 
     m_activeOpenPanelResultListener->didChooseFiles(files);
-    m_activeOpenPanelResultListener = 0;
+    m_activeOpenPanelResultListener = nullptr;
 }
 
 void WebPage::didCancelForOpenPanel()
 {
-    m_activeOpenPanelResultListener = 0;
+    m_activeOpenPanelResultListener = nullptr;
 }
 
 #if ENABLE(SANDBOX_EXTENSIONS)
@@ -3415,7 +3415,7 @@ void WebPage::didSelectItemFromActiveContextMenu(const WebContextMenuItemData& i
         return;
 
     m_contextMenu->itemSelected(item);
-    m_contextMenu = 0;
+    m_contextMenu = nullptr;
 }
 #endif
 

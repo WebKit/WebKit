@@ -181,7 +181,7 @@ void InspectorResourceAgent::didCreateFrontendAndBackend(Inspector::FrontendChan
 void InspectorResourceAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
     m_frontendDispatcher = nullptr;
-    m_backendDispatcher.clear();
+    m_backendDispatcher = nullptr;
 
     ErrorString unused;
     disable(unused);

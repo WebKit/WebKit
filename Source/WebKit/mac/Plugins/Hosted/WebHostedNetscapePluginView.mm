@@ -281,7 +281,7 @@ extern "C" {
         }
         
         _proxy->destroy();
-        _proxy = 0;
+        _proxy = nullptr;
     }
     
     _pluginLayer = 0;
@@ -432,7 +432,7 @@ extern "C" {
         downcast<RenderEmbeddedObject>(*_element->renderer()).setPluginUnavailabilityReason(RenderEmbeddedObject::PluginCrashed);
 
     _pluginLayer = nil;
-    _proxy = 0;
+    _proxy = nullptr;
     
     // No need for us to be layer backed anymore
     self.wantsLayer = NO;

@@ -337,7 +337,7 @@ private:
             // Now that we are done indexing, tell the backend to go
             // back to processing tasks of type NormalTask.
             m_databaseBackend->setIndexesReady(m_transactionId, m_objectStoreId, indexIds);
-            m_databaseBackend.clear();
+            m_databaseBackend = nullptr;
         }
 
     }

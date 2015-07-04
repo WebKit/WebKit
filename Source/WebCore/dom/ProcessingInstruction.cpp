@@ -281,7 +281,7 @@ void ProcessingInstruction::removedFrom(ContainerNode& insertionPoint)
     if (m_sheet) {
         ASSERT(m_sheet->ownerNode() == this);
         m_sheet->clearOwnerNode();
-        m_sheet = 0;
+        m_sheet = nullptr;
     }
 
     // If we're in document teardown, then we don't need to do any notification of our sheet's removal.

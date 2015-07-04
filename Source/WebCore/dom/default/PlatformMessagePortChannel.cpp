@@ -183,9 +183,9 @@ void PlatformMessagePortChannel::closeInternal()
 {
     MutexLocker lock(m_mutex);
     // Disentangle ourselves from the other end. We still maintain a reference to our incoming queue, since previously-existing messages should still be delivered.
-    m_remotePort = 0;
-    m_entangledChannel = 0;
-    m_outgoingQueue = 0;
+    m_remotePort = nullptr;
+    m_entangledChannel = nullptr;
+    m_outgoingQueue = nullptr;
 }
 
 } // namespace WebCore

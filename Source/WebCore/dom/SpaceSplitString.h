@@ -105,7 +105,7 @@ public:
     bool operator!=(const SpaceSplitString& other) const { return m_data != other.m_data; }
 
     void set(const AtomicString&, bool shouldFoldCase);
-    void clear() { m_data.clear(); }
+    void clear() { m_data = nullptr; }
 
     bool contains(const AtomicString& string) const { return m_data && m_data->contains(string); }
     bool containsAll(const SpaceSplitString& names) const { return !names.m_data || (m_data && m_data->containsAll(*names.m_data)); }

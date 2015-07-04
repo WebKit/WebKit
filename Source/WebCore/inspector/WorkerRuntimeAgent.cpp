@@ -60,7 +60,7 @@ void WorkerRuntimeAgent::didCreateFrontendAndBackend(Inspector::FrontendChannel*
 
 void WorkerRuntimeAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason reason)
 {
-    m_backendDispatcher.clear();
+    m_backendDispatcher = nullptr;
 
     InspectorRuntimeAgent::willDestroyFrontendAndBackend(reason);
 }

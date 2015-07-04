@@ -470,8 +470,8 @@ void CoordinatedGraphicsLayer::setContentsToImage(Image* image)
         m_compositedImage = image;
         m_compositedNativeImagePtr = newNativeImagePtr;
     } else {
-        m_compositedImage = 0;
-        m_compositedNativeImagePtr = 0;
+        m_compositedImage = nullptr;
+        m_compositedNativeImagePtr = nullptr;
     }
 
     GraphicsLayer::setContentsToImage(image);
@@ -820,7 +820,7 @@ void CoordinatedGraphicsLayer::releaseImageBackingIfNeeded()
 
     ASSERT(m_coordinator);
     m_coordinatedImageBacking->removeHost(this);
-    m_coordinatedImageBacking.clear();
+    m_coordinatedImageBacking = nullptr;
     m_layerState.imageID = InvalidCoordinatedImageBackingID;
     m_layerState.imageChanged = true;
 }

@@ -142,7 +142,7 @@ void WebUserMediaClient::cancelRequest(UserMediaRequest& request)
     if (!_request)
         return;
 
-    _request = 0;
+    _request = nullptr;
 #endif
     
 }

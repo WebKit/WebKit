@@ -71,7 +71,7 @@ void ViewportStyleResolver::addViewportRule(StyleRuleViewport* viewportRule)
 
 void ViewportStyleResolver::clearDocument()
 {
-    m_document = 0;
+    m_document = nullptr;
 }
 
 void ViewportStyleResolver::resolve()
@@ -94,7 +94,7 @@ void ViewportStyleResolver::resolve()
     m_document->setViewportArguments(arguments);
     m_document->updateViewportArguments();
 
-    m_propertySet = 0;
+    m_propertySet = nullptr;
 }
 
 float ViewportStyleResolver::getViewportArgumentValue(CSSPropertyID id) const

@@ -1447,7 +1447,7 @@ char* JIT_OPERATION triggerOSREntryNow(
         
         // OSR entry failed. Oh no! This implies that we need to retry. We retry
         // without exponential backoff and we only do this for the entry code block.
-        jitCode->osrEntryBlock.clear();
+        jitCode->osrEntryBlock = nullptr;
         jitCode->osrEntryRetry = 0;
         return 0;
     }

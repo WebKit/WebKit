@@ -243,9 +243,9 @@ void InspectorOverlay::setPausedInDebuggerMessage(const String* message)
 
 void InspectorOverlay::hideHighlight()
 {
-    m_highlightNode.clear();
-    m_highlightNodeList.clear();
-    m_highlightQuad.reset();
+    m_highlightNode = nullptr;
+    m_highlightNodeList = nullptr;
+    m_highlightQuad = nullptr;
     update();
 }
 
@@ -253,7 +253,7 @@ void InspectorOverlay::highlightNodeList(PassRefPtr<NodeList> nodes, const Highl
 {
     m_nodeHighlightConfig = highlightConfig;
     m_highlightNodeList = nodes;
-    m_highlightNode.clear();
+    m_highlightNode = nullptr;
     update();
 }
 
@@ -261,7 +261,7 @@ void InspectorOverlay::highlightNode(Node* node, const HighlightConfig& highligh
 {
     m_nodeHighlightConfig = highlightConfig;
     m_highlightNode = node;
-    m_highlightNodeList.clear();
+    m_highlightNodeList = nullptr;
     update();
 }
 

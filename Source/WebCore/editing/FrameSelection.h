@@ -359,7 +359,7 @@ inline EditingStyle* FrameSelection::typingStyle() const
 
 inline void FrameSelection::clearTypingStyle()
 {
-    m_typingStyle.clear();
+    m_typingStyle = nullptr;
 }
 
 inline void FrameSelection::setTypingStyle(PassRefPtr<EditingStyle> style)

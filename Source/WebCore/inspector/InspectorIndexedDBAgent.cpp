@@ -582,7 +582,7 @@ void InspectorIndexedDBAgent::didCreateFrontendAndBackend(Inspector::FrontendCha
 
 void InspectorIndexedDBAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
-    m_backendDispatcher.clear();
+    m_backendDispatcher = nullptr;
 
     ErrorString unused;
     disable(unused);

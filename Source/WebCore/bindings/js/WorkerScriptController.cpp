@@ -62,7 +62,7 @@ WorkerScriptController::~WorkerScriptController()
 {
     JSLockHolder lock(vm());
     m_workerGlobalScopeWrapper.clear();
-    m_vm.clear();
+    m_vm = nullptr;
 }
 
 void WorkerScriptController::initScript()

@@ -950,7 +950,7 @@ void RenderStyle::setQuotes(PassRefPtr<QuotesData> q)
 void RenderStyle::clearCursorList()
 {
     if (rareInheritedData->cursorData)
-        rareInheritedData.access()->cursorData = 0;
+        rareInheritedData.access()->cursorData = nullptr;
 }
 
 void RenderStyle::clearContent()

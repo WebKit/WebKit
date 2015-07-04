@@ -245,7 +245,7 @@ Blob* XMLHttpRequest::responseBlob()
             data.append(m_binaryResponseBuilder->data(), m_binaryResponseBuilder->size());
             String normalizedContentType = Blob::normalizedContentType(responseMIMEType()); // responseMIMEType defaults to text/xml which may be incorrect.
             m_responseBlob = Blob::create(WTF::move(data), normalizedContentType);
-            m_binaryResponseBuilder.clear();
+            m_binaryResponseBuilder = nullptr;
         } else {
             // If we errored out or got no data, we still return a blob, just an empty one.
             m_responseBlob = Blob::create();
@@ -265,7 +265,7 @@ ArrayBuffer* XMLHttpRequest::responseArrayBuffer()
             m_responseArrayBuffer = m_binaryResponseBuilder->createArrayBuffer();
         else
             m_responseArrayBuffer = ArrayBuffer::create(nullptr, 0);
-        m_binaryResponseBuilder.clear();
+        m_binaryResponseBuilder = nullptr;
     }
 
     return m_responseArrayBuffer.get();
@@ -868,8 +868,8 @@ void XMLHttpRequest::clearResponseBuffers()
     m_createdDocument = false;
     m_responseDocument = nullptr;
     m_responseBlob = nullptr;
-    m_binaryResponseBuilder.clear();
-    m_responseArrayBuffer.clear();
+    m_binaryResponseBuilder = nullptr;
+    m_responseArrayBuffer = nullptr;
     m_responseCacheIsValid = false;
 }
 

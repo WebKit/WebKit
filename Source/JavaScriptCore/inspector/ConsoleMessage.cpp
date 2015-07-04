@@ -273,7 +273,7 @@ void ConsoleMessage::clear()
         m_message = ASCIILiteral("<message collected>");
 
     if (m_arguments)
-        m_arguments.clear();
+        m_arguments = nullptr;
 }
 
 JSC::ExecState* ConsoleMessage::scriptState() const

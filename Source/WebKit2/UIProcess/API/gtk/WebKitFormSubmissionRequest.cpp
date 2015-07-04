@@ -96,7 +96,7 @@ GHashTable* webkit_form_submission_request_get_text_fields(WebKitFormSubmissionR
         return request->priv->values.get();
 
     if (!request->priv->webValues->size())
-        return 0;
+        return nullptr;
 
     request->priv->values = adoptGRef(g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free));
 
@@ -107,7 +107,7 @@ GHashTable* webkit_form_submission_request_get_text_fields(WebKitFormSubmissionR
         g_hash_table_insert(request->priv->values.get(), g_strdup(it->key.utf8().data()), g_strdup(value->string().utf8().data()));
     }
 
-    request->priv->webValues = 0;
+    request->priv->webValues = nullptr;
 
     return request->priv->values.get();
 }

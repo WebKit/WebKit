@@ -147,7 +147,7 @@ void AlternativeTextController::startAlternativeTextUITimer(AlternativeTextType 
 
     // If type is PanelTypeReversion, then the new range has been set. So we shouldn't clear it.
     if (type == AlternativeTextTypeCorrection)
-        m_alternativeTextInfo.rangeWithAlternative.clear();
+        m_alternativeTextInfo.rangeWithAlternative = nullptr;
     m_alternativeTextInfo.type = type;
     m_timer.startOneShot(correctionPanelTimerInterval);
 }
@@ -155,7 +155,7 @@ void AlternativeTextController::startAlternativeTextUITimer(AlternativeTextType 
 void AlternativeTextController::stopAlternativeTextUITimer()
 {
     m_timer.stop();
-    m_alternativeTextInfo.rangeWithAlternative.clear();
+    m_alternativeTextInfo.rangeWithAlternative = nullptr;
 }
 
 void AlternativeTextController::stopPendingCorrection(const VisibleSelection& oldSelection)
@@ -183,7 +183,7 @@ void AlternativeTextController::applyPendingCorrection(const VisibleSelection& s
     if (doApplyCorrection)
         handleAlternativeTextUIResult(dismissSoon(ReasonForDismissingAlternativeTextAccepted)); 
     else
-        m_alternativeTextInfo.rangeWithAlternative.clear();
+        m_alternativeTextInfo.rangeWithAlternative = nullptr;
 }
 
 bool AlternativeTextController::hasPendingCorrection() const
@@ -359,7 +359,7 @@ void AlternativeTextController::timerFired()
         Vector<String> suggestions;
         textChecker()->getGuessesForWord(m_alternativeTextInfo.originalText, paragraphText, suggestions);
         if (suggestions.isEmpty()) {
-            m_alternativeTextInfo.rangeWithAlternative.clear();
+            m_alternativeTextInfo.rangeWithAlternative = nullptr;
             break;
         }
         String topSuggestion = suggestions.first();
@@ -422,7 +422,7 @@ void AlternativeTextController::handleAlternativeTextUIResult(const String& resu
         break;
     }
 
-    m_alternativeTextInfo.rangeWithAlternative.clear();
+    m_alternativeTextInfo.rangeWithAlternative = nullptr;
 }
 
 bool AlternativeTextController::isAutomaticSpellingCorrectionEnabled()

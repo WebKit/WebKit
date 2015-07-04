@@ -62,7 +62,7 @@ RenderSearchField::~RenderSearchField()
 {
     if (m_searchPopup) {
         m_searchPopup->popupMenu()->disconnectClient();
-        m_searchPopup = 0;
+        m_searchPopup = nullptr;
     }
 }
 

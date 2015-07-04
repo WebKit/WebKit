@@ -90,8 +90,8 @@ void ResourceLoader::releaseResources()
     // has been deallocated and also to avoid reentering this method.
     Ref<ResourceLoader> protect(*this);
 
-    m_frame = 0;
-    m_documentLoader = 0;
+    m_frame = nullptr;
+    m_documentLoader = nullptr;
     
     // We need to set reachedTerminalState to true before we release
     // the resources to prevent a double dealloc of WebView <rdar://problem/4372628>
@@ -104,11 +104,11 @@ void ResourceLoader::releaseResources()
         // Clear out the ResourceHandle's client so that it doesn't try to call
         // us back after we release it, unless it has been replaced by someone else.
         if (m_handle->client() == this)
-            m_handle->setClient(0);
-        m_handle = 0;
+            m_handle->setClient(nullptr);
+        m_handle = nullptr;
     }
 
-    m_resourceData = 0;
+    m_resourceData = nullptr;
     m_deferredRequest = ResourceRequest();
 }
 
@@ -225,7 +225,7 @@ void ResourceLoader::setDefersLoading(bool defers)
 FrameLoader* ResourceLoader::frameLoader() const
 {
     if (!m_frame)
-        return 0;
+        return nullptr;
     return &m_frame->loader();
 }
 
@@ -244,7 +244,7 @@ void ResourceLoader::setDataBufferingPolicy(DataBufferingPolicy dataBufferingPol
 
     // Reset any already buffered data
     if (dataBufferingPolicy == DoNotBufferData)
-        m_resourceData = 0;
+        m_resourceData = nullptr;
 }
     
 void ResourceLoader::willSwitchToSubstituteResource()
@@ -530,7 +530,7 @@ void ResourceLoader::cancel(const ResourceError& error)
         m_documentLoader->cancelPendingSubstituteLoad(this);
         if (m_handle) {
             m_handle->cancel();
-            m_handle = 0;
+            m_handle = nullptr;
         }
         cleanupForError(nonNullError);
     }

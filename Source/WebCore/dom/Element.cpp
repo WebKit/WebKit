@@ -3207,7 +3207,7 @@ void Element::cloneAttributesFromElement(const Element& other)
 
     other.synchronizeAllAttributes();
     if (!other.m_elementData) {
-        m_elementData.clear();
+        m_elementData = nullptr;
         return;
     }
 

@@ -155,7 +155,7 @@ void GamepadsGtk::unregisterDevice(String deviceFile)
     size_t index = m_slots.find(gamepadDevice);
     ASSERT(index != notFound);
 
-    m_slots[index].clear();
+    m_slots[index] = nullptr;
 }
 
 void GamepadsGtk::updateGamepadList(GamepadList* into)

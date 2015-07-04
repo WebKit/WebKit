@@ -52,8 +52,8 @@ void ExecutableBase::destroy(JSCell* cell)
 void ExecutableBase::clearCode()
 {
 #if ENABLE(JIT)
-    m_jitCodeForCall.clear();
-    m_jitCodeForConstruct.clear();
+    m_jitCodeForCall = nullptr;
+    m_jitCodeForConstruct = nullptr;
     m_jitCodeForCallWithArityCheck = MacroAssemblerCodePtr();
     m_jitCodeForConstructWithArityCheck = MacroAssemblerCodePtr();
     m_jitCodeForCallWithArityCheckAndPreserveRegs = MacroAssemblerCodePtr();
@@ -464,7 +464,7 @@ void EvalExecutable::unlinkCalls()
 
 void EvalExecutable::clearCode()
 {
-    m_evalCodeBlock.clear();
+    m_evalCodeBlock = nullptr;
     m_unlinkedEvalCodeBlock.clear();
     Base::clearCode();
 }
@@ -543,7 +543,7 @@ void ProgramExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 void ProgramExecutable::clearCode()
 {
-    m_programCodeBlock.clear();
+    m_programCodeBlock = nullptr;
     m_unlinkedProgramCodeBlock.clear();
     Base::clearCode();
 }
@@ -587,8 +587,8 @@ void FunctionExecutable::clearUnlinkedCodeForRecompilation()
 
 void FunctionExecutable::clearCode()
 {
-    m_codeBlockForCall.clear();
-    m_codeBlockForConstruct.clear();
+    m_codeBlockForCall = nullptr;
+    m_codeBlockForConstruct = nullptr;
     Base::clearCode();
 }
 

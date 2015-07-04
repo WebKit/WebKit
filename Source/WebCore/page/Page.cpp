@@ -516,7 +516,7 @@ void Page::refreshPlugins(bool reload)
     Vector<Ref<Frame>> framesNeedingReload;
 
     for (auto& page : *allPages) {
-        page->m_pluginData.clear();
+        page->m_pluginData = nullptr;
 
         if (!reload)
             continue;

@@ -149,8 +149,8 @@ struct StructureStubInfo {
     {
         deref();
         accessType = access_unset;
-        stubRoutine.clear();
-        watchpoints.clear();
+        stubRoutine = nullptr;
+        watchpoints = nullptr;
     }
 
     void deref();

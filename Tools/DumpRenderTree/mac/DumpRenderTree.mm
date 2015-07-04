@@ -2064,7 +2064,7 @@ static void runTest(const string& inputLine)
     ASSERT(CFArrayGetCount(openWindowsRef) == 1);
     ASSERT(CFArrayGetValueAtIndex(openWindowsRef, 0) == [[mainFrame webView] window]);
 
-    gTestRunner.clear();
+    gTestRunner = nullptr;
 
     if (ignoreWebCoreNodeLeaks)
         [WebCoreStatistics stopIgnoringWebCoreNodeLeaks];

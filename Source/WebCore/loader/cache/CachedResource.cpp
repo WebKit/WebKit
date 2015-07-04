@@ -317,7 +317,7 @@ void CachedResource::error(CachedResource::Status status)
 {
     setStatus(status);
     ASSERT(errorOccurred());
-    m_data.clear();
+    m_data = nullptr;
 
     setLoading(false);
     checkNotify();

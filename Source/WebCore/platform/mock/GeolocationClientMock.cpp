@@ -126,7 +126,7 @@ void GeolocationClientMock::permissionTimerFired()
 
 void GeolocationClientMock::reset()
 {
-    m_lastPosition = 0;
+    m_lastPosition = nullptr;
     clearError();
     m_permissionState = PermissionStateUnset;
 }

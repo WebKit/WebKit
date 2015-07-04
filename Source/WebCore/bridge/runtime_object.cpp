@@ -59,7 +59,7 @@ void RuntimeObject::invalidate()
     ASSERT(m_instance);
     if (m_instance)
         m_instance->willInvalidateRuntimeObject();
-    m_instance = 0;
+    m_instance = nullptr;
 }
 
 EncodedJSValue RuntimeObject::fallbackObjectGetter(ExecState* exec, JSObject* slotBase, EncodedJSValue, PropertyName propertyName)

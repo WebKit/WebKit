@@ -1169,8 +1169,7 @@ ResourceHandleStreamingClient::~ResourceHandleStreamingClient()
 {
     if (m_resource) {
         m_resource->cancel();
-        m_resource.release();
-        m_resource = 0;
+        m_resource = nullptr;
     }
 }
 

@@ -1978,7 +1978,7 @@ void WebPage::syncApplyAutocorrection(const String& correction, const String& or
         while (textForRange.length() && textForRange.length() > originalText.length() && loopCount < maxPositionsAttempts) {
             position = position.next();
             if (position.isNotNull() && position >= frame.selection().selection().start())
-                range = NULL;
+                range = nullptr;
             else
                 range = Range::create(*frame.document(), position, frame.selection().selection().start());
             textForRange = (range) ? plainTextReplacingNoBreakSpace(range.get()) : emptyString();
@@ -2458,7 +2458,7 @@ void WebPage::elementDidBlur(WebCore::Node* node)
                 send(Messages::WebPageProxy::StopAssistingNode());
             m_hasPendingBlurNotification = false;
         });
-        m_assistedNode = 0;
+        m_assistedNode = nullptr;
     }
 }
 

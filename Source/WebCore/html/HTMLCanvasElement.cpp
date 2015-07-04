@@ -423,7 +423,7 @@ void HTMLCanvasElement::makePresentationCopy()
 
 void HTMLCanvasElement::clearPresentationCopy()
 {
-    m_presentedImage.clear();
+    m_presentedImage = nullptr;
 }
 
 void HTMLCanvasElement::setSurfaceSize(const IntSize& size)
@@ -644,7 +644,7 @@ void HTMLCanvasElement::clearImageBuffer() const
 
 void HTMLCanvasElement::clearCopiedImage()
 {
-    m_copiedImage.clear();
+    m_copiedImage = nullptr;
     m_didClearImageBuffer = false;
 }
 

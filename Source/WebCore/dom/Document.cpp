@@ -2424,7 +2424,7 @@ void Document::detachParser()
     if (!m_parser)
         return;
     m_parser->detach();
-    m_parser.clear();
+    m_parser = nullptr;
 }
 
 void Document::cancelParsing()
@@ -5882,7 +5882,7 @@ void Document::clearScriptedAnimationController()
     // FIXME: consider using ActiveDOMObject.
     if (m_scriptedAnimationController)
         m_scriptedAnimationController->clearDocumentPointer();
-    m_scriptedAnimationController.clear();
+    m_scriptedAnimationController = nullptr;
 }
 #endif
     
@@ -6300,7 +6300,7 @@ void Document::updateHoverActiveState(const HitTestRequest& request, Element* in
             curr->setActive(false);
             m_userActionElements.setInActiveChain(curr, false);
         }
-        m_activeElement.clear();
+        m_activeElement = nullptr;
     } else {
         Element* newActiveElement = innerElementInDocument;
         if (!oldActiveElement && newActiveElement && request.active() && !request.touchMove()) {

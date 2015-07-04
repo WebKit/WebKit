@@ -411,7 +411,7 @@ void FTPDirectoryDocumentParser::finish()
         m_carryOver = String();
     }
 
-    m_tableElement = 0;
+    m_tableElement = nullptr;
     fastFree(m_buffer);
 
     HTMLDocumentParser::finish();

@@ -4497,7 +4497,7 @@ void RenderBox::addVisualOverflow(const LayoutRect& rect)
 
 void RenderBox::clearOverflow()
 {
-    m_overflow.clear();
+    m_overflow = nullptr;
     RenderFlowThread* flowThread = flowThreadContainingBlock();
     if (flowThread)
         flowThread->clearRegionsOverflow(this);

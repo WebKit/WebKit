@@ -43,7 +43,7 @@ void CallLinkInfo::clearStub()
         return;
 
     m_stub->clearCallNodesFor(this);
-    m_stub.clear();
+    m_stub = nullptr;
 }
 
 void CallLinkInfo::unlink(RepatchBuffer& repatchBuffer)

@@ -58,7 +58,7 @@ void InspectorApplicationCacheAgent::didCreateFrontendAndBackend(FrontendChannel
 void InspectorApplicationCacheAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
     m_frontendDispatcher = nullptr;
-    m_backendDispatcher.clear();
+    m_backendDispatcher = nullptr;
 
     m_instrumentingAgents->setInspectorApplicationCacheAgent(nullptr);
 }

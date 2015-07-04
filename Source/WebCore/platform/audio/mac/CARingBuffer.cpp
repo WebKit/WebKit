@@ -86,7 +86,7 @@ void CARingBuffer::allocate(uint32_t channelCount, size_t bytesPerFrame, size_t 
 void CARingBuffer::deallocate()
 {
     if (m_buffers)
-        m_buffers.clear();
+        m_buffers = nullptr;
 
     m_channelCount = 0;
     m_capacityBytes = 0;

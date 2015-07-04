@@ -42,7 +42,7 @@ ChildProcessProxy::~ChildProcessProxy()
 
     if (m_processLauncher) {
         m_processLauncher->invalidate();
-        m_processLauncher = 0;
+        m_processLauncher = nullptr;
     }
 }
 

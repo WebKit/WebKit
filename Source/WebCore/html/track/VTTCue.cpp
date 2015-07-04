@@ -482,7 +482,7 @@ void VTTCue::setText(const String& text)
     willChange();
     // Clear the document fragment but don't bother to create it again just yet as we can do that
     // when it is requested.
-    m_webVTTNodeTree = 0;
+    m_webVTTNodeTree = nullptr;
     m_content = text;
     didChange();
 }

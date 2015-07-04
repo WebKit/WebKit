@@ -44,7 +44,7 @@ public:
         ASSERT(m_worldSet.contains(m_normalWorld.get()));
         ASSERT(m_worldSet.size() == 1);
         ASSERT(m_normalWorld->hasOneRef());
-        m_normalWorld.clear();
+        m_normalWorld = nullptr;
         ASSERT(m_worldSet.isEmpty());
     }
 

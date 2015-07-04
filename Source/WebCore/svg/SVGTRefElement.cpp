@@ -104,7 +104,7 @@ void SVGTRefTargetEventListener::detach()
 
     m_target->removeEventListener(eventNames().DOMSubtreeModifiedEvent, this, false);
     m_target->removeEventListener(eventNames().DOMNodeRemovedFromDocumentEvent, this, false);
-    m_target.clear();
+    m_target = nullptr;
 }
 
 bool SVGTRefTargetEventListener::operator==(const EventListener& listener)

@@ -127,7 +127,7 @@ void InspectorWorkerAgent::willDestroyFrontendAndBackend(Inspector::DisconnectRe
     disable(unused);
 
     m_frontendDispatcher = nullptr;
-    m_backendDispatcher.clear();
+    m_backendDispatcher = nullptr;
 }
 
 void InspectorWorkerAgent::enable(ErrorString&)

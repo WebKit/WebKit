@@ -73,7 +73,7 @@ void JSLockHolder::init()
 JSLockHolder::~JSLockHolder()
 {
     RefPtr<JSLock> apiLock(&m_vm->apiLock());
-    m_vm.clear();
+    m_vm = nullptr;
     apiLock->unlock();
 }
 

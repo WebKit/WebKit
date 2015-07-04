@@ -277,7 +277,7 @@ void NetscapePlugin::cancelStreamLoad(NetscapePluginStream* pluginStream)
 void NetscapePlugin::removePluginStream(NetscapePluginStream* pluginStream)
 {
     if (pluginStream == m_manualStream) {
-        m_manualStream = 0;
+        m_manualStream = nullptr;
         return;
     }
 

@@ -126,7 +126,7 @@ void WorkerThreadableWebSocketChannel::fail(const String& reason)
 void WorkerThreadableWebSocketChannel::disconnect()
 {
     m_bridge->disconnect();
-    m_bridge.clear();
+    m_bridge = nullptr;
 }
 
 void WorkerThreadableWebSocketChannel::suspend()

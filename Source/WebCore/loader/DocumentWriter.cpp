@@ -90,7 +90,7 @@ void DocumentWriter::replaceDocument(const String& source, Document* ownerDocume
 
 void DocumentWriter::clear()
 {
-    m_decoder = 0;
+    m_decoder = nullptr;
     m_hasReceivedSomeData = false;
     if (!m_encodingWasChosenByUser)
         m_encoding = String();
@@ -245,7 +245,7 @@ void DocumentWriter::end()
     if (!m_parser)
         return;
     m_parser->finish();
-    m_parser = 0;
+    m_parser = nullptr;
 }
 
 void DocumentWriter::setEncoding(const String& name, bool userChosen)

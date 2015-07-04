@@ -394,7 +394,7 @@ void MediaSource::setReadyState(const AtomicString& state)
     LOG(MediaSource, "MediaSource::setReadyState(%p) : %s -> %s", this, oldState.string().ascii().data(), state.string().ascii().data());
 
     if (state == closedKeyword()) {
-        m_private.clear();
+        m_private = nullptr;
         m_mediaElement = nullptr;
         m_duration = MediaTime::invalidTime();
     }
@@ -811,7 +811,7 @@ void MediaSource::stop()
     m_asyncEventQueue.close();
     if (!isClosed())
         setReadyState(closedKeyword());
-    m_private.clear();
+    m_private = nullptr;
 }
 
 bool MediaSource::canSuspendForPageCache() const

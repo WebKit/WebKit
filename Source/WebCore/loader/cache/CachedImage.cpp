@@ -365,8 +365,8 @@ inline void CachedImage::clearImage()
     // If our Image has an observer, it's always us so we need to clear the back pointer
     // before dropping our reference.
     if (m_image)
-        m_image->setImageObserver(0);
-    m_image.clear();
+        m_image->setImageObserver(nullptr);
+    m_image = nullptr;
 }
 
 void CachedImage::addIncrementalDataBuffer(SharedBuffer& data)
@@ -458,7 +458,7 @@ void CachedImage::destroyDecodedData()
 {
     bool canDeleteImage = !m_image || (m_image->hasOneRef() && m_image->isBitmapImage());
     if (canDeleteImage && !isLoading() && !hasClients()) {
-        m_image = 0;
+        m_image = nullptr;
         setDecodedSize(0);
     } else if (m_image && !errorOccurred())
         m_image->destroyDecodedData();

@@ -940,7 +940,7 @@ void EwkView::hideContextMenu()
     if (sd->api->context_menu_hide)
         sd->api->context_menu_hide(sd);
 
-    m_contextMenu.clear();
+    m_contextMenu = nullptr;
 }
 
 void EwkView::requestPopupMenu(WKPopupMenuListenerRef popupMenuListener, const WKRect& rect, WKPopupItemTextDirection textDirection, double pageScaleFactor, WKArrayRef items, int32_t selectedIndex)

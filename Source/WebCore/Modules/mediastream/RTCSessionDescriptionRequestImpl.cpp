@@ -97,8 +97,8 @@ bool RTCSessionDescriptionRequestImpl::canSuspendForPageCache() const
 
 void RTCSessionDescriptionRequestImpl::clear()
 {
-    m_successCallback.clear();
-    m_errorCallback.clear();
+    m_successCallback = nullptr;
+    m_errorCallback = nullptr;
 }
 
 } // namespace WebCore

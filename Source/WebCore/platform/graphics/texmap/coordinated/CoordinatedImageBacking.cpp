@@ -141,7 +141,7 @@ void CoordinatedImageBacking::releaseSurfaceIfNeeded()
 {
     // We must keep m_surface until UI Process reads m_surface.
     // If m_surface exists, it was created in the previous update.
-    m_surface.clear();
+    m_surface = nullptr;
 }
 
 static const double clearContentsTimerInterval = 3;

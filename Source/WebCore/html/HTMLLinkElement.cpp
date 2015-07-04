@@ -264,7 +264,7 @@ void HTMLLinkElement::clearSheet()
     ASSERT(m_sheet);
     ASSERT(m_sheet->ownerNode() == this);
     m_sheet->clearOwnerNode();
-    m_sheet = 0;
+    m_sheet = nullptr;
 }
 
 Node::InsertionNotificationRequest HTMLLinkElement::insertedInto(ContainerNode& insertionPoint)

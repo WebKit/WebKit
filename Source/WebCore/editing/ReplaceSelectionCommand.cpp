@@ -354,8 +354,8 @@ inline void ReplaceSelectionCommand::InsertedNodes::willRemoveNodePreservingChil
 inline void ReplaceSelectionCommand::InsertedNodes::willRemoveNode(Node* node)
 {
     if (m_firstNodeInserted == node && m_lastNodeInserted == node) {
-        m_firstNodeInserted = 0;
-        m_lastNodeInserted = 0;
+        m_firstNodeInserted = nullptr;
+        m_lastNodeInserted = nullptr;
     } else if (m_firstNodeInserted == node)
         m_firstNodeInserted = NodeTraversal::nextSkippingChildren(*m_firstNodeInserted);
     else if (m_lastNodeInserted == node)

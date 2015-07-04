@@ -126,7 +126,7 @@ void WebSocketServerConnection::sendRawData(const char* data, size_t length)
 void WebSocketServerConnection::didCloseSocketStream(SocketStreamHandle*)
 {
     // Destroy the SocketStreamHandle now to prevent closing an already closed socket later.
-    m_socket.clear();
+    m_socket = nullptr;
 
     // Web Socket Mode.
     if (m_mode == WebSocket)

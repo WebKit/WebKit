@@ -363,7 +363,7 @@ const OpenTypeMathData* Font::mathData() const
     if (!m_mathData) {
         m_mathData = OpenTypeMathData::create(m_platformData);
         if (!m_mathData->hasMathData())
-            m_mathData.clear();
+            m_mathData = nullptr;
     }
     return m_mathData.get();
 }

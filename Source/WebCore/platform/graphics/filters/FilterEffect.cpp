@@ -245,12 +245,12 @@ void FilterEffect::clearResult()
     if (m_imageBufferResult)
         m_imageBufferResult.reset();
     if (m_unmultipliedImageResult)
-        m_unmultipliedImageResult.clear();
+        m_unmultipliedImageResult = nullptr;
     if (m_premultipliedImageResult)
-        m_premultipliedImageResult.clear();
+        m_premultipliedImageResult = nullptr;
 #if ENABLE(OPENCL)
     if (m_openCLImageResult)
-        m_openCLImageResult.clear();
+        m_openCLImageResult = nullptr;
 #endif
 }
 
@@ -540,7 +540,7 @@ void FilterEffect::transformResultColorSpace(ColorSpace dstColorSpace)
 #if ENABLE(OPENCL)
     if (openCLImage()) {
         if (m_imageBufferResult)
-            m_imageBufferResult.clear();
+            m_imageBufferResult = nullptr;
         FilterContextOpenCL* context = FilterContextOpenCL::context();
         ASSERT(context);
         context->openCLTransformColorSpace(m_openCLImageResult, absolutePaintRect(), m_resultColorSpace, dstColorSpace);
@@ -558,9 +558,9 @@ void FilterEffect::transformResultColorSpace(ColorSpace dstColorSpace)
     m_resultColorSpace = dstColorSpace;
 
     if (m_unmultipliedImageResult)
-        m_unmultipliedImageResult.clear();
+        m_unmultipliedImageResult = nullptr;
     if (m_premultipliedImageResult)
-        m_premultipliedImageResult.clear();
+        m_premultipliedImageResult = nullptr;
 #endif
 }
 

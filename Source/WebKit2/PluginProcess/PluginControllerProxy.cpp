@@ -126,7 +126,7 @@ bool PluginControllerProxy::initialize(const PluginCreationParameters& creationP
         // used as an identifier so it's OK to just get a weak reference.
         Plugin* plugin = m_plugin.get();
         
-        m_plugin = 0;
+        m_plugin = nullptr;
 
         // This will delete the plug-in controller proxy object.
         m_connection->removePluginControllerProxy(this, plugin);
@@ -156,7 +156,7 @@ void PluginControllerProxy::destroy()
     Plugin* plugin = m_plugin.get();
 
     m_plugin->destroyPlugin();
-    m_plugin = 0;
+    m_plugin = nullptr;
 
     platformDestroy();
 

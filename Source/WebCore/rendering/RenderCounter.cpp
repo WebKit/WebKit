@@ -186,8 +186,8 @@ static bool findPlaceForCounter(RenderElement& counterOwner, const AtomicString&
     // towards the begining of the document for counters with the same identifier as the one
     // we are trying to find a place for. This is the next renderer to be checked.
     RenderElement* currentRenderer = previousInPreOrder(counterOwner);
-    previousSibling = 0;
-    RefPtr<CounterNode> previousSiblingProtector = 0;
+    previousSibling = nullptr;
+    RefPtr<CounterNode> previousSiblingProtector;
 
     while (currentRenderer) {
         CounterNode* currentCounter = makeCounterNode(*currentRenderer, identifier, false);
@@ -203,7 +203,7 @@ static bool findPlaceForCounter(RenderElement& counterOwner, const AtomicString&
                             // hence we are the next sibling of that counter if that reset is not a root or
                             // we are a root node if that reset is a root.
                             parent = currentCounter->parent();
-                            previousSibling = parent ? currentCounter : 0;
+                            previousSibling = parent ? currentCounter : nullptr;
                             return parent;
                         }
                         // We are not a reset node or the previous reset must be on an ancestor of our owner renderer
@@ -213,7 +213,7 @@ static bool findPlaceForCounter(RenderElement& counterOwner, const AtomicString&
                         // In these cases the identified previousSibling will be invalid as its parent is different from
                         // our identified parent.
                         if (previousSiblingProtector->parent() != currentCounter)
-                            previousSiblingProtector = 0;
+                            previousSiblingProtector = nullptr;
 
                         previousSibling = previousSiblingProtector.get();
                         return true;

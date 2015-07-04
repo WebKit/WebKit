@@ -235,10 +235,10 @@ void ValidationMessage::deleteBubbleTree()
 {
     ASSERT(!validationMessageClient());
     if (m_bubble) {
-        m_messageHeading = 0;
-        m_messageBody = 0;
+        m_messageHeading = nullptr;
+        m_messageBody = nullptr;
         m_element->userAgentShadowRoot()->removeChild(m_bubble.get(), ASSERT_NO_EXCEPTION);
-        m_bubble = 0;
+        m_bubble = nullptr;
     }
     m_message = String();
 }

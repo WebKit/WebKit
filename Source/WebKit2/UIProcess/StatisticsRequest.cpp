@@ -95,7 +95,7 @@ void StatisticsRequest::completedRequest(uint64_t requestID, const StatisticsDat
 
     if (m_outstandingRequests.isEmpty()) {
         m_callback->performCallbackWithReturnValue(m_responseDictionary.get());
-        m_callback = 0;
+        m_callback = nullptr;
     }
 }
 

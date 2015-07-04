@@ -638,7 +638,7 @@ void EditingStyle::overrideTypingStyleAt(const EditingStyle& style, const Positi
 
 void EditingStyle::clear()
 {
-    m_mutableStyle.clear();
+    m_mutableStyle = nullptr;
     m_shouldUseFixedDefaultFontSize = false;
     m_fontSizeDelta = NoFontDelta;
     setUnderlineChange(TextDecorationChange::None);

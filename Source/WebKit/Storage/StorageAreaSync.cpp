@@ -88,7 +88,7 @@ void StorageAreaSync::scheduleFinalSync()
     ASSERT(isMainThread());
     // FIXME: We do this to avoid races, but it'd be better to make things safe without blocking.
     blockUntilImportComplete();
-    m_storageArea = 0;  // This is done in blockUntilImportComplete() but this is here as a form of documentation that we must be absolutely sure the ref count cycle is broken.
+    m_storageArea = nullptr; // This is done in blockUntilImportComplete() but this is here as a form of documentation that we must be absolutely sure the ref count cycle is broken.
 
     if (m_syncTimer.isActive())
         m_syncTimer.stop();
@@ -375,7 +375,7 @@ void StorageAreaSync::blockUntilImportComplete()
     MutexLocker locker(m_importLock);
     while (!m_importComplete)
         m_importCondition.wait(m_importLock);
-    m_storageArea = 0;
+    m_storageArea = nullptr;
 }
 
 void StorageAreaSync::sync(bool clearItems, const HashMap<String, String>& items)

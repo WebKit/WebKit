@@ -76,7 +76,7 @@ using namespace WebKit;
 
 - (void)dealloc
 {
-    _connection.clear();
+    _connection = nullptr;
     [_urlConnection cancel];
     [_urlConnection release];
     [super dealloc];

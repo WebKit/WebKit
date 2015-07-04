@@ -166,7 +166,7 @@ void PluginView::Stream::cancel()
 
     m_streamWasCancelled = true;
     m_loader->cancel(m_loader->cancelledError());
-    m_loader = 0;
+    m_loader = nullptr;
 }
 
 static String buildHTTPHeaders(const ResourceResponse& response, long long& expectedContentLength)
@@ -604,7 +604,7 @@ void PluginView::initializePlugin()
 
 void PluginView::didFailToInitializePlugin()
 {
-    m_plugin = 0;
+    m_plugin = nullptr;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     String frameURLString = frame()->loader().documentLoader()->responseURL().string();

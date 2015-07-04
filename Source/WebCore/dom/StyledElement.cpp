@@ -185,7 +185,7 @@ inline void StyledElement::setInlineStyleFromString(const AtomicString& newStyle
     // We reconstruct the property set instead of mutating if there is no CSSOM wrapper.
     // This makes wrapperless property sets immutable and so cacheable.
     if (inlineStyle && !is<MutableStyleProperties>(*inlineStyle))
-        inlineStyle.clear();
+        inlineStyle = nullptr;
 
     if (!inlineStyle)
         inlineStyle = CSSParser::parseInlineStyleDeclaration(newStyleString, this);
@@ -202,7 +202,7 @@ void StyledElement::styleAttributeChanged(const AtomicString& newStyleString, At
     if (newStyleString.isNull()) {
         if (PropertySetCSSStyleDeclaration* cssomWrapper = inlineStyleCSSOMWrapper())
             cssomWrapper->clearParentElement();
-        ensureUniqueElementData().m_inlineStyle.clear();
+        ensureUniqueElementData().m_inlineStyle = nullptr;
     } else if (reason == ModifiedByCloning || document().contentSecurityPolicy()->allowInlineStyle(document().url(), startLineNumber))
         setInlineStyleFromString(newStyleString);
 

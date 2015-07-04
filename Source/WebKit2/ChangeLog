@@ -1,3 +1,12 @@
+2015-07-04  Chris Dumez  <cdumez@apple.com>
+
+        Drop RefPtr::clear() method
+        https://bugs.webkit.org/show_bug.cgi?id=146556
+
+        Reviewed by Brady Eidson.
+
+        Drop RefPtr::clear() method in favor of "= nullptr;" pattern.        
+
 2015-07-03  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] Update some build settings as recommended by Xcode 7

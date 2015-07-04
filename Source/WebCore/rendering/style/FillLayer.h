@@ -121,8 +121,8 @@ public:
     void setSize(FillSize f) { m_sizeType = f.type; m_sizeLength = f.size; }
     void setMaskSourceType(EMaskSourceType m) { m_maskSourceType = m; m_maskSourceTypeSet = true; }
 
-    void clearMaskImage() { m_maskImageOperation.clear(); }
-    void clearImage() { m_image.clear(); m_imageSet = false; }
+    void clearMaskImage() { m_maskImageOperation = nullptr; }
+    void clearImage() { m_image = nullptr; m_imageSet = false; }
     void clearXPosition() { m_xPosSet = false; m_backgroundOriginSet = false; }
     void clearYPosition() { m_yPosSet = false; m_backgroundOriginSet = false; }
 

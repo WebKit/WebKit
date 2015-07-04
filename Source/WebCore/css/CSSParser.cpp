@@ -4502,15 +4502,15 @@ void CSSParser::parseFillPosition(CSSParserValueList& valueList, RefPtr<CSSValue
     if (value2)
         valueList.next();
     else {
-        value1.clear();
+        value1 = nullptr;
         return;
     }
 
     RefPtr<CSSPrimitiveValue> parsedValue1 = downcast<CSSPrimitiveValue>(value1.get());
     RefPtr<CSSPrimitiveValue> parsedValue2 = downcast<CSSPrimitiveValue>(value2.get());
 
-    value1.clear();
-    value2.clear();
+    value1 = nullptr;
+    value2 = nullptr;
 
     // Per CSS3 syntax, <position> can't have 'center' as its second keyword as we have more arguments to follow.
     if (parsedValue2->getValueID() == CSSValueCenter)
@@ -4549,7 +4549,7 @@ void CSSParser::parse2ValuesFillPosition(CSSParserValueList& valueList, RefPtr<C
             valueList.next();
         else {
             if (!inShorthand()) {
-                value1.clear();
+                value1 = nullptr;
                 return;
             }
         }
@@ -7587,8 +7587,8 @@ struct ShadowParseContext {
         }
 
         // Now reset for the next shadow value.
-        x = 0;
-        y = 0;
+        x = nullptr;
+        y = nullptr;
         blur = nullptr;
         spread = nullptr;
         style = nullptr;
@@ -12184,7 +12184,7 @@ PassRefPtr<CSSRuleSourceData> CSSParser::popRuleData()
         return nullptr;
 
     ASSERT(!m_currentRuleDataStack->isEmpty());
-    m_currentRuleData.clear();
+    m_currentRuleData = nullptr;
     RefPtr<CSSRuleSourceData> data = m_currentRuleDataStack->last();
     m_currentRuleDataStack->removeLast();
     return data.release();
@@ -12605,7 +12605,7 @@ void CSSParser::markRuleBodyStart()
 {
     if (!isExtractingSourceData())
         return;
-    m_currentRuleData.clear();
+    m_currentRuleData = nullptr;
     unsigned offset = tokenStartOffset();
     if (tokenStartChar() == '{')
         ++offset; // Skip the rule body opening brace.

@@ -143,7 +143,7 @@ void ApplyBlockElementCommand::formatSelection(const VisiblePosition& startOfSel
         // Don't put the next paragraph in the blockquote we just created for this paragraph unless 
         // the next paragraph is in the same cell.
         if (enclosingCell && enclosingCell != enclosingNodeOfType(endOfNextParagraph.deepEquivalent(), &isTableCell))
-            blockquoteForNextIndent = 0;
+            blockquoteForNextIndent = nullptr;
 
         // indentIntoBlockquote could move more than one paragraph if the paragraph
         // is in a list item or a table. As a result, endAfterSelection could refer to a position

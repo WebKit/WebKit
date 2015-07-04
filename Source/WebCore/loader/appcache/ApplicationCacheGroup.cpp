@@ -327,7 +327,7 @@ void ApplicationCacheGroup::stopLoading()
         m_manifestHandle->setClient(0);
 
         m_manifestHandle->cancel();
-        m_manifestHandle = 0;
+        m_manifestHandle = nullptr;
     }
     
     if (m_currentHandle) {
@@ -338,11 +338,11 @@ void ApplicationCacheGroup::stopLoading()
         m_currentHandle->setClient(0);
 
         m_currentHandle->cancel();
-        m_currentHandle = 0;
+        m_currentHandle = nullptr;
     }    
 
     // FIXME: Resetting just a tiny part of the state in this function is confusing. Callers have to take care of a lot more.
-    m_cacheBeingUpdated = 0;
+    m_cacheBeingUpdated = nullptr;
     m_pendingEntries.clear();
 }    
 
@@ -521,7 +521,7 @@ void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, const Res
             m_cacheBeingUpdated->addResource(ApplicationCacheResource::create(url, newestCachedResource->response(), type, newestCachedResource->data(), newestCachedResource->path()));
             m_pendingEntries.remove(m_currentHandle->firstRequest().url());
             m_currentHandle->cancel();
-            m_currentHandle = 0;
+            m_currentHandle = nullptr;
             // Load the next resource, if any.
             startLoadingEntry();
             return;
@@ -538,7 +538,7 @@ void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, const Res
         } else if (response.httpStatusCode() == 404 || response.httpStatusCode() == 410) {
             // Skip this resource. It is dropped from the cache.
             m_currentHandle->cancel();
-            m_currentHandle = 0;
+            m_currentHandle = nullptr;
             m_pendingEntries.remove(url);
             // Load the next resource, if any.
             startLoadingEntry();
@@ -551,7 +551,7 @@ void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, const Res
             m_cacheBeingUpdated->addResource(ApplicationCacheResource::create(url, newestCachedResource->response(), type, newestCachedResource->data(), newestCachedResource->path()));
             m_pendingEntries.remove(m_currentHandle->firstRequest().url());
             m_currentHandle->cancel();
-            m_currentHandle = 0;
+            m_currentHandle = nullptr;
             // Load the next resource, if any.
             startLoadingEntry();
         }
@@ -595,7 +595,7 @@ void ApplicationCacheGroup::didFinishLoading(ResourceHandle* handle, double fini
     ASSERT(m_cacheBeingUpdated);
 
     m_cacheBeingUpdated->addResource(m_currentResource.release());
-    m_currentHandle = 0;
+    m_currentHandle = nullptr;
 
     // While downloading check to see if we have exceeded the available quota.
     // We can stop immediately if we have already previously failed
@@ -603,7 +603,7 @@ void ApplicationCacheGroup::didFinishLoading(ResourceHandle* handle, double fini
     // of the quota being reached and decided not to increase it then.
     // FIXME: Should we break earlier and prevent redownloading on later page loads?
     if (m_originQuotaExceededPreviously && m_availableSpaceInQuota < m_cacheBeingUpdated->estimatedSizeInStorage()) {
-        m_currentResource = 0;
+        m_currentResource = nullptr;
         m_frame->document()->addConsoleMessage(MessageSource::AppCache, MessageLevel::Error, ASCIILiteral("Application Cache update failed, because size quota was exceeded."));
         cacheUpdateFailed();
         return;
@@ -631,7 +631,7 @@ void ApplicationCacheGroup::didFail(ResourceHandle* handle, const ResourceError&
         url.removeFragmentIdentifier();
 
     ASSERT(!m_currentResource || !m_pendingEntries.contains(url));
-    m_currentResource = 0;
+    m_currentResource = nullptr;
     m_pendingEntries.remove(url);
 
     if ((type & ApplicationCacheResource::Explicit) || (type & ApplicationCacheResource::Fallback)) {
@@ -695,7 +695,7 @@ void ApplicationCacheGroup::didFinishLoadingManifest()
         return;
     }
 
-    m_manifestHandle = 0;
+    m_manifestHandle = nullptr;
 
     // Check if the manifest was not modified.
     if (isUpgradeAttempt) {
@@ -706,7 +706,7 @@ void ApplicationCacheGroup::didFinishLoadingManifest()
             (newestManifest->data()->size() == m_manifestResource->data()->size() && !memcmp(newestManifest->data()->data(), m_manifestResource->data()->data(), newestManifest->data()->size()))) {
 
             m_completionType = NoUpdate;
-            m_manifestResource = 0;
+            m_manifestResource = nullptr;
             deliverDelayedMainResources();
 
             return;
@@ -782,7 +782,7 @@ void ApplicationCacheGroup::didReachOriginQuota(int64_t totalSpaceNeeded)
 void ApplicationCacheGroup::cacheUpdateFailed()
 {
     stopLoading();
-    m_manifestResource = 0;
+    m_manifestResource = nullptr;
 
     // Wait for master resource loads to finish.
     m_completionType = Failure;
@@ -807,7 +807,7 @@ void ApplicationCacheGroup::manifestNotFound()
     stopLoading();
 
     ASSERT(m_pendingEntries.isEmpty());
-    m_manifestResource = 0;
+    m_manifestResource = nullptr;
 
     while (!m_pendingMasterResourceLoaders.isEmpty()) {
         HashSet<DocumentLoader*>::iterator it = m_pendingMasterResourceLoaders.begin();

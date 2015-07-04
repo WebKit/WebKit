@@ -360,7 +360,7 @@ void InspectorCSSAgent::didCreateFrontendAndBackend(Inspector::FrontendChannel* 
 void InspectorCSSAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
     m_frontendDispatcher = nullptr;
-    m_backendDispatcher.clear();
+    m_backendDispatcher = nullptr;
 
     resetNonPersistentData();
 }

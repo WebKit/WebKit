@@ -268,7 +268,7 @@ bool CachedRawResource::canReuse(const ResourceRequest& newRequest) const
 
 void CachedRawResource::clear()
 {
-    m_data.clear();
+    m_data = nullptr;
     setEncodedSize(0);
     if (m_loader)
         m_loader->clearResourceData();

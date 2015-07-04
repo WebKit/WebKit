@@ -117,7 +117,7 @@ public:
     {
         if (m_debugger.m_currentDebuggerCallFrame) {
             m_debugger.m_currentDebuggerCallFrame->invalidate();
-            m_debugger.m_currentDebuggerCallFrame = 0;
+            m_debugger.m_currentDebuggerCallFrame = nullptr;
         }
     }
 

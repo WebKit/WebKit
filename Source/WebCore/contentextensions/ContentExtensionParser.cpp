@@ -277,7 +277,7 @@ std::error_code parseRuleList(const String& rules, Vector<ContentExtensionRule>&
     ExecState* exec = globalObject->globalExec();
     auto error = loadEncodedRules(*exec, rules, ruleList);
 
-    vm.clear();
+    vm = nullptr;
 
     if (error)
         return error;

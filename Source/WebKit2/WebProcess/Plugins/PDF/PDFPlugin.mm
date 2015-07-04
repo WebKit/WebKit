@@ -1103,8 +1103,8 @@ void PDFPlugin::destroy()
             frameView->removeScrollableArea(this);
     }
 
-    m_activeAnnotation = 0;
-    m_annotationContainer = 0;
+    m_activeAnnotation = nullptr;
+    m_annotationContainer = nullptr;
 
     destroyScrollbar(HorizontalScrollbar);
     destroyScrollbar(VerticalScrollbar);
@@ -1604,14 +1604,14 @@ void PDFPlugin::setActiveAnnotation(PDFAnnotation *annotation)
 
     if (annotation) {
         if ([annotation isKindOfClass:pdfAnnotationTextWidgetClass()] && static_cast<PDFAnnotationTextWidget *>(annotation).isReadOnly) {
-            m_activeAnnotation = 0;
+            m_activeAnnotation = nullptr;
             return;
         }
 
         m_activeAnnotation = PDFPluginAnnotation::create(annotation, m_pdfLayerController.get(), this);
         m_activeAnnotation->attach(m_annotationContainer.get());
     } else
-        m_activeAnnotation = 0;
+        m_activeAnnotation = nullptr;
 }
 
 bool PDFPlugin::supportsForms()

@@ -64,7 +64,7 @@ void InspectorConsoleAgent::didCreateFrontendAndBackend(FrontendChannel* fronten
 void InspectorConsoleAgent::willDestroyFrontendAndBackend(DisconnectReason)
 {
     m_frontendDispatcher = nullptr;
-    m_backendDispatcher.clear();
+    m_backendDispatcher = nullptr;
 
     String errorString;
     disable(errorString);

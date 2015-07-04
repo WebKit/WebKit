@@ -444,7 +444,7 @@ public:
     
     void killBlock(BlockIndex blockIndex)
     {
-        m_blocks[blockIndex].clear();
+        m_blocks[blockIndex] = nullptr;
     }
     
     void killBlock(BasicBlock* basicBlock)

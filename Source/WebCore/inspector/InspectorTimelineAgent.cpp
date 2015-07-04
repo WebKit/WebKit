@@ -103,7 +103,7 @@ void InspectorTimelineAgent::didCreateFrontendAndBackend(Inspector::FrontendChan
 void InspectorTimelineAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason reason)
 {
     m_frontendDispatcher = nullptr;
-    m_backendDispatcher.clear();
+    m_backendDispatcher = nullptr;
 
     m_instrumentingAgents->setPersistentInspectorTimelineAgent(nullptr);
 

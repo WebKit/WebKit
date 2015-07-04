@@ -2208,7 +2208,7 @@ void GraphicsLayerCA::updateContentsImage()
     } else {
         // No image.
         // m_contentsLayer will be removed via updateSublayerList.
-        m_contentsLayer = 0;
+        m_contentsLayer = nullptr;
     }
 }
 

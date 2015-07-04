@@ -333,7 +333,7 @@ void IDBDatabaseBackend::transactionFinished(IDBTransactionBackend* rawTransacti
     m_transactions.remove(transaction->id());
     if (transaction->mode() == IndexedDB::TransactionMode::VersionChange) {
         ASSERT(transaction.get() == m_runningVersionChangeTransaction.get());
-        m_runningVersionChangeTransaction.clear();
+        m_runningVersionChangeTransaction = nullptr;
     }
 }
 

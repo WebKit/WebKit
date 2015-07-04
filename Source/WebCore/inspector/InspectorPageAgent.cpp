@@ -348,7 +348,7 @@ void InspectorPageAgent::didCreateFrontendAndBackend(Inspector::FrontendChannel*
 void InspectorPageAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
     m_frontendDispatcher = nullptr;
-    m_backendDispatcher.clear();
+    m_backendDispatcher = nullptr;
 
     ErrorString unused;
     disable(unused);
@@ -374,7 +374,7 @@ void InspectorPageAgent::enable(ErrorString&)
 void InspectorPageAgent::disable(ErrorString&)
 {
     m_enabled = false;
-    m_scriptsToEvaluateOnLoad.clear();
+    m_scriptsToEvaluateOnLoad = nullptr;
     m_instrumentingAgents->setInspectorPageAgent(nullptr);
 
     ErrorString unused;

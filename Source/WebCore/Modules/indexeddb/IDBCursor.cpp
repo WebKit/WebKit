@@ -259,7 +259,7 @@ void IDBCursor::close()
     m_transactionNotifier.cursorFinished();
     if (m_request) {
         m_request->finishCursor();
-        m_request.clear();
+        m_request = nullptr;
     }
 }
 

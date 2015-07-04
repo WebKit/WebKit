@@ -43,7 +43,7 @@ BackingStoreBackendCairoX11::BackingStoreBackendCairoX11(unsigned long rootWindo
 BackingStoreBackendCairoX11::~BackingStoreBackendCairoX11()
 {
     // The pixmap needs to exist when the surface is destroyed, so begin by clearing it.
-    m_surface.clear();
+    m_surface = nullptr;
 }
 
 void BackingStoreBackendCairoX11::scroll(const IntRect& scrollRect, const IntSize& scrollOffset)

@@ -422,7 +422,7 @@ JSStringRef JSValueToStringCopy(JSContextRef ctx, JSValueRef value, JSValueRef* 
     
     RefPtr<OpaqueJSString> stringRef(OpaqueJSString::create(jsValue.toString(exec)->value(exec)));
     if (handleExceptionIfNeeded(exec, exception) == ExceptionStatus::DidThrow)
-        stringRef.clear();
+        stringRef = nullptr;
     return stringRef.release().leakRef();
 }
 

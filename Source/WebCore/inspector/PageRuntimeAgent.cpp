@@ -69,7 +69,7 @@ void PageRuntimeAgent::didCreateFrontendAndBackend(Inspector::FrontendChannel* f
 void PageRuntimeAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason reason)
 {
     m_frontendDispatcher = nullptr;
-    m_backendDispatcher.clear();
+    m_backendDispatcher = nullptr;
 
     String unused;
     disable(unused);

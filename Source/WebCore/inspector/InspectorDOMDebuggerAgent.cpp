@@ -109,7 +109,7 @@ void InspectorDOMDebuggerAgent::didCreateFrontendAndBackend(Inspector::FrontendC
 
 void InspectorDOMDebuggerAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
-    m_backendDispatcher.clear();
+    m_backendDispatcher = nullptr;
 
     disable();
 }

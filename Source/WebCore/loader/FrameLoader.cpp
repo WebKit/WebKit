@@ -692,7 +692,7 @@ void FrameLoader::didBeginDocument(bool dispatch)
 
     if (m_pendingStateObject) {
         m_frame.document()->statePopped(m_pendingStateObject.get());
-        m_pendingStateObject.clear();
+        m_pendingStateObject = nullptr;
     }
 
     if (dispatch)
@@ -818,7 +818,7 @@ void FrameLoader::checkCompleted()
 
     // OK, completed.
     m_isComplete = true;
-    m_requestedHistoryItem = 0;
+    m_requestedHistoryItem = nullptr;
     m_frame.document()->setReadyState(Document::Complete);
 
 #if PLATFORM(IOS)
@@ -1137,7 +1137,7 @@ void FrameLoader::setupForReplace()
     m_client.revertToProvisionalState(m_documentLoader.get());
     setState(FrameStateProvisional);
     m_provisionalDocumentLoader = m_documentLoader;
-    m_documentLoader = 0;
+    m_documentLoader = nullptr;
     detachChildren();
 }
 

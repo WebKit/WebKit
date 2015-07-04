@@ -170,9 +170,9 @@ void IDBRequest::abort()
     m_enqueuedEvents.clear();
 
     m_errorCode = 0;
-    m_error.clear();
+    m_error = nullptr;
     m_errorMessage = String();
-    m_result.clear();
+    m_result = nullptr;
     onError(IDBDatabaseError::create(IDBDatabaseException::AbortError));
     m_requestAborted = true;
 }
@@ -194,10 +194,10 @@ void IDBRequest::setPendingCursor(PassRefPtr<IDBCursor> cursor)
     ASSERT(cursor == getResultCursor());
 
     m_pendingCursor = cursor;
-    m_result.clear();
+    m_result = nullptr;
     m_readyState = PENDING;
     m_errorCode = 0;
-    m_error.clear();
+    m_error = nullptr;
     m_errorMessage = String();
     m_transaction->registerRequest(this);
 }
@@ -256,7 +256,7 @@ void IDBRequest::onError(PassRefPtr<IDBDatabaseError> error)
     m_errorCode = error->code();
     m_errorMessage = error->message();
     m_error = DOMError::create(IDBDatabaseException::getErrorName(error->idbCode()));
-    m_pendingCursor.clear();
+    m_pendingCursor = nullptr;
     enqueueEvent(Event::create(eventNames().errorEvent, true, true));
 }
 
@@ -404,7 +404,7 @@ void IDBRequest::onSuccessInternal(const Deprecated::ScriptValue& value)
     m_result = IDBAny::create(value);
     if (m_pendingCursor) {
         m_pendingCursor->close();
-        m_pendingCursor.clear();
+        m_pendingCursor = nullptr;
     }
     enqueueEvent(createSuccessEvent());
 }
@@ -553,7 +553,7 @@ void IDBRequest::transactionDidFinishAndDispatch()
     ASSERT(m_transaction->isVersionChange());
     ASSERT(m_readyState == DONE);
     ASSERT(scriptExecutionContext());
-    m_transaction.clear();
+    m_transaction = nullptr;
     m_readyState = PENDING;
 }
 

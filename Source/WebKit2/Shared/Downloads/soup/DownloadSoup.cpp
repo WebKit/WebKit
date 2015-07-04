@@ -257,7 +257,7 @@ void Download::platformInvalidate()
     if (m_resourceHandle) {
         m_resourceHandle->setClient(0);
         m_resourceHandle->cancel();
-        m_resourceHandle = 0;
+        m_resourceHandle = nullptr;
     }
 
     m_downloadClient = nullptr;
@@ -265,7 +265,7 @@ void Download::platformInvalidate()
 
 void Download::platformDidFinish()
 {
-    m_resourceHandle = 0;
+    m_resourceHandle = nullptr;
 }
 
 void Download::receivedCredential(const AuthenticationChallenge&, const Credential&)

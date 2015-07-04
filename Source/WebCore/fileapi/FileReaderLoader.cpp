@@ -121,11 +121,11 @@ void FileReaderLoader::terminate()
 
 void FileReaderLoader::cleanup()
 {
-    m_loader = 0;
+    m_loader = nullptr;
 
     // If we get any error, we do not need to keep a buffer around.
     if (m_errorCode) {
-        m_rawData = 0;
+        m_rawData = nullptr;
         m_stringResult = "";
     }
 }

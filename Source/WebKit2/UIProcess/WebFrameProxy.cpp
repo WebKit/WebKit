@@ -57,11 +57,11 @@ WebFrameProxy::~WebFrameProxy()
 
 void WebFrameProxy::webProcessWillShutDown()
 {
-    m_page = 0;
+    m_page = nullptr;
 
     if (m_activeListener) {
         m_activeListener->invalidate();
-        m_activeListener = 0;
+        m_activeListener = nullptr;
     }
 }
 

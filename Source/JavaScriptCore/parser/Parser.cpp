@@ -491,7 +491,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseVarDeclarati
     JSToken lastIdentToken; 
     do {
         lastIdent = 0;
-        lastPattern = 0;
+        lastPattern = TreeDestructuringPattern(0);
         JSTokenLocation location(tokenLocation());
         next();
         TreeExpression node = 0;
@@ -894,7 +894,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseForStatement(
             declsEnd = lastTokenEndPosition();
             if (pattern && (match(INTOKEN) || (match(IDENT) && *m_token.m_data.ident == m_vm->propertyNames->of)))
                 goto enumerationLoop;
-            pattern = 0;
+            pattern = TreeDestructuringPattern(0);
             restoreSavePoint(savePoint);
         }
         m_allowsIn = false;

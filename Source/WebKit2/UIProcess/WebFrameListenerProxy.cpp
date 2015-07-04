@@ -42,7 +42,7 @@ WebFrameListenerProxy::~WebFrameListenerProxy()
 
 void WebFrameListenerProxy::invalidate()
 {
-    m_frame = 0;
+    m_frame = nullptr;
 }
 
 void WebFrameListenerProxy::receivedPolicyDecision(WebCore::PolicyAction action)
@@ -51,7 +51,7 @@ void WebFrameListenerProxy::receivedPolicyDecision(WebCore::PolicyAction action)
         return;
 
     m_frame->receivedPolicyDecision(action, m_listenerID, m_navigation.get());
-    m_frame = 0;
+    m_frame = nullptr;
 }
 
 } // namespace WebKit

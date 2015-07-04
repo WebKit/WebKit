@@ -845,7 +845,7 @@ void SQLTransactionBackend::releaseOriginLockIfNeeded()
 {
     if (m_originLock) {
         m_originLock->unlock();
-        m_originLock.clear();
+        m_originLock = nullptr;
     }
 }
 

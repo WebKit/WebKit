@@ -60,7 +60,6 @@ public:
 
     T* get() const { return m_ptr; }
     
-    void clear();
     PassRefPtr<T> release() { PassRefPtr<T> tmp = adoptRef(m_ptr); m_ptr = nullptr; return tmp; }
     Ref<T> releaseNonNull() { ASSERT(m_ptr); Ref<T> tmp(adoptRef(*m_ptr)); m_ptr = nullptr; return tmp; }
 
@@ -77,6 +76,7 @@ public:
     
     RefPtr& operator=(const RefPtr&);
     RefPtr& operator=(T*);
+    RefPtr& operator=(std::nullptr_t);
     RefPtr& operator=(const PassRefPtr<T>&);
     template<typename U> RefPtr& operator=(const RefPtr<U>&);
     template<typename U> RefPtr& operator=(const PassRefPtr<U>&);
@@ -109,11 +109,6 @@ template<typename T> template<typename U> inline RefPtr<T>::RefPtr(Ref<U>&& refe
 {
 }
 
-template<typename T> inline void RefPtr<T>::clear()
-{
-    derefIfNotNull(std::exchange(m_ptr, nullptr));
-}
-
 template<typename T>
 inline T* RefPtr<T>::leakRef()
 {
@@ -138,6 +133,12 @@ template<typename T> inline RefPtr<T>& RefPtr<T>::operator=(T* optr)
 {
     RefPtr ptr = optr;
     swap(ptr);
+    return *this;
+}
+
+template<typename T> inline RefPtr<T>& RefPtr<T>::operator=(std::nullptr_t)
+{
+    derefIfNotNull(std::exchange(m_ptr, nullptr));
     return *this;
 }
 
