@@ -1,3 +1,13 @@
+2015-07-04  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: The arrow that appears for Web Inspector Layout & Rendering records overlaps the category switcher
+        https://bugs.webkit.org/show_bug.cgi?id=146605
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineDataGrid.css:
+        (.data-grid.timeline > .navigation-bar-container):
+
 2015-07-03  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] Update some build settings as recommended by Xcode 7
