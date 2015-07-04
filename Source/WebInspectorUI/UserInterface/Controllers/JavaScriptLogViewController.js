@@ -147,14 +147,14 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
     {
         console.assert(this._previousMessageView);
         if (!this._previousMessageView)
-            return;
+            return false;
 
         var previousIgnoredCount = this._previousMessageView[WebInspector.JavaScriptLogViewController.IgnoredRepeatCount] || 0;
         var previousVisibleCount = this._previousMessageView.repeatCount;
 
         if (!this._repeatCountWasInterrupted) {
             this._previousMessageView.repeatCount = count - previousIgnoredCount;
-            return;
+            return true;
         }
 
         var consoleMessage = this._previousMessageView.message;
@@ -162,6 +162,8 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
         duplicatedConsoleMessageView[WebInspector.JavaScriptLogViewController.IgnoredRepeatCount] = previousIgnoredCount + previousVisibleCount;
         duplicatedConsoleMessageView.repeatCount = 1;
         this._appendConsoleMessageView(duplicatedConsoleMessageView);
+
+        return true;
     }
 
     isScrolledToBottom()

@@ -45,6 +45,11 @@ WebInspector.ScopeBar = class ScopeBar extends WebInspector.NavigationItem
         return this._defaultItem;
     }
 
+    get items()
+    {
+        return this._items;
+    }
+
     item(id)
     {
         return this._itemsById.get(id);

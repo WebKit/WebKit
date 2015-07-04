@@ -23,6 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+.log-scope-bar > li.unread {
+    animation: unread-border-pulse 1.5s infinite alternate;
+}
+
+.log-scope-bar > li.unread.errors {
+    border-color: red;
+}
+
+.log-scope-bar > li.unread.warnings {
+    border-color: gold;
+}
+
+.log-scope-bar > li.unread.logs {
+    border-color: grey;
+}
+
+@keyframes unread-border-pulse {
+    from { border-color: transparent; }
+}
+
 .content-view.log {
     overflow-y: overlay;
     overflow-x: hidden;

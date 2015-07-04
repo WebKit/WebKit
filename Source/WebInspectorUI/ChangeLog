@@ -1,5 +1,35 @@
 2015-07-04  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Console should indicate if you have unseen messages in console due to filters
+        https://bugs.webkit.org/show_bug.cgi?id=143166
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/JavaScriptLogViewController.js:
+        (WebInspector.JavaScriptLogViewController.prototype.updatePreviousMessageRepeatCount): Now returns true/false depending on if
+        the message count was actually updated.
+        * UserInterface/Views/LogContentView.css:
+        (.log-scope-bar > li.unread): Applies the unread-border-pulse keyframe animation.
+        (.log-scope-bar > li.unread.errors): The pulsing border is colored red.
+        (.log-scope-bar > li.unread.warnings): The pulsing border is colored yellow(ish).
+        (.log-scope-bar > li.unread.logs): The pulsing border is colored grey.
+        (@keyframes unread-border-pulse): Changes the color of the border from transparent to whatever is specificed.
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView):
+        (WebInspector.LogContentView.prototype._determineMessageLevel):
+        (WebInspector.LogContentView.prototype._pulseScopeBarItemBorder): Adds the class "unread" to the scope bar item whose panel
+        the newest message belongs to, but only if that panel or the All panel is not visible.
+        (WebInspector.LogContentView.prototype._messageAdded):
+        (WebInspector.LogContentView.prototype._previousMessageRepeatCountUpdated):
+        (WebInspector.LogContentView.prototype._scopeBarSelectionDidChange): Clears the "unread" class on the selected scope bar item.
+        (WebInspector.LogContentView.prototype._filterMessageElements):
+        * UserInterface/Views/ScopeBar.js:
+        (WebInspector.ScopeBar.prototype.get items): Returns a list of all the items in the scope bar.
+        * UserInterface/Views/ScopeBarItem.js:
+        (WebInspector.ScopeBarItem): Added another parameter to allow for a custom class name.
+
+2015-07-04  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Pseudo Styles Ordering and Media Queries
         https://bugs.webkit.org/show_bug.cgi?id=145979
 
