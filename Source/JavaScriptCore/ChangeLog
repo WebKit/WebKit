@@ -1,5 +1,13 @@
 2015-07-03  Dan Bernstein  <mitz@apple.com>
 
+        Just give up on -Wunreachable-code in JavaScriptCore.
+
+        * Configurations/Base.xcconfig:
+        * llint/LowLevelInterpreter.cpp:
+        (JSC::CLoop::execute):
+
+2015-07-03  Dan Bernstein  <mitz@apple.com>
+
         Fixed the LLINT CLoop build.
 
         * llint/LowLevelInterpreter.cpp:

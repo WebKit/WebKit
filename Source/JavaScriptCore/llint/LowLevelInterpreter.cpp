@@ -422,10 +422,7 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
         // bytecode handlers for the interpreter, as compiled from
         // LowLevelInterpreter.asm and its peers.
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunreachable-code"
         #include "LLIntAssembly.h"
-#pragma clang diagnostic pop
 
         OFFLINE_ASM_GLUE_LABEL(llint_return_to_host)
         {
