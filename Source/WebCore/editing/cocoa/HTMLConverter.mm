@@ -290,7 +290,7 @@ typedef NSUInteger NSTextTabType;
 - (id)initWithFileWrapper:(NSFileWrapper *)fileWrapper;
 #if PLATFORM(IOS)
 - (void)setBounds:(CGRect)bounds;
-@property(nullable, strong, nonatomic) NSFileWrapper *fileWrapper;
+@property(retain, nonatomic) NSFileWrapper *fileWrapper;
 #endif
 - (void)release;
 @end
