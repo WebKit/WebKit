@@ -445,6 +445,9 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         var trimmedLine = line.trimRight();
         var hasEndingSemicolon = trimmedLine.endsWith(";");
 
+        if (!trimmedLine.trimLeft().length)
+            return CodeMirror.Pass;
+
         if (hasEndingSemicolon && cursor.ch === trimmedLine.length - 1)
             ++cursor.ch;
 

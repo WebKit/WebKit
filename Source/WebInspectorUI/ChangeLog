@@ -1,5 +1,15 @@
 2015-07-04  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Pressing enter on a newline in the styles sidebar inserts a semicolon
+        https://bugs.webkit.org/show_bug.cgi?id=146611
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._handleEnterKey): Now returns if the line is empty.
+
+2015-07-04  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Console should indicate if you have unseen messages in console due to filters
         https://bugs.webkit.org/show_bug.cgi?id=143166
 
