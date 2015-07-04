@@ -83,6 +83,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         // Otherwise we end up in race conditions during complete or delete-complete phases.
         this._codeMirror.on("change", this._contentChanged.bind(this));
         this._codeMirror.on("blur", this._editorBlured.bind(this));
+        this._codeMirror.on("beforeChange", this._handleBeforeChange.bind(this));
 
         if (typeof this._delegate.cssStyleDeclarationTextEditorFocused === "function")
             this._codeMirror.on("focus", this._editorFocused.bind(this));
@@ -436,6 +437,20 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             this._codeMirror.replaceRange(line.trimRight().endsWith(";") ? "\n" : ";\n", cursor);
 
         this._mouseDownCursorPosition = null;
+    }
+
+    _handleBeforeChange(codeMirror, change)
+    {
+        if (change.origin !== "+delete" || change.to.ch)
+            return CodeMirror.Pass;
+
+        var marks = codeMirror.findMarksAt(change.to);
+
+        if (!marks.length)
+            return CodeMirror.Pass;
+
+        for (var mark of marks)
+            mark.clear();
     }
 
     _handleEnterKey(codeMirror)
