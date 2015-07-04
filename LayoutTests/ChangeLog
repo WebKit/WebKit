@@ -1,5 +1,28 @@
 2015-07-03  Chris Dumez  <cdumez@apple.com>
 
+        REGRESSION (r178097): HTMLSelectElement.add(option, undefined) prepends option to the list of options; should append to the end of the list of options
+        https://bugs.webkit.org/show_bug.cgi?id=146566
+        <rdar://problem/21663919>
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/HTMLSelectElement/add-expected.txt:
+        * fast/dom/HTMLSelectElement/add.html:
+        * fast/dom/HTMLSelectElement/options-collection-add-expected.txt:
+        * fast/dom/HTMLSelectElement/options-collection-add.html:
+        Update tests so that calling add(X, undefined) is expected to append X,
+        not prepend it.
+
+        * http/tests/websocket/tests/hybi/undefined-protocol-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/undefined-protocol.html: Added.
+        Add test coverage for "new WebSocket(url, undefined)" as WebSocket is
+        using constructor overloads with optional parameters. Previously, calling
+        new WebSocket(url, undefined) was equivalent to calling
+        new WebSocket(url, "undefined") even though it is supposed to be
+        equivalent to calling new WebSocket(url).
+
+2015-07-03  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, skip http/tests/xmlhttprequest/cross-origin-cookie-storage.html on Windows.
 
         Windows' DumpRenderTree does not implement testRunner.setAlwaysAcceptCookies().

@@ -1383,20 +1383,22 @@ sub GenerateParametersCheckExpression
             # For Callbacks only checks if the value is null or object.
             push(@andExpression, "(${value}.isNull() || ${value}.isFunction())");
             $usedArguments{$parameterIndex} = 1;
-        } elsif ($codeGenerator->GetArrayType($type) || $codeGenerator->GetSequenceType($type)) {
-            # FIXME: Add proper support for T[], T[]?, sequence<T>
-            if ($parameter->isNullable) {
-                push(@andExpression, "(${value}.isNull() || (${value}.isObject() && isJSArray(${value})))");
-            } else {
-                push(@andExpression, "(${value}.isObject() && isJSArray(${value}))");
-            }
-            $usedArguments{$parameterIndex} = 1;
         } elsif (!IsNativeType($type)) {
-            if ($parameter->isNullable) {
-                push(@andExpression, "(${value}.isNull() || (${value}.isObject() && asObject(${value})->inherits(JS${type}::info())))");
+            my $condition = "";
+            $condition .= "${value}.isUndefined() || " if $parameter->isOptional;
+
+            # FIXME: WebIDL says that undefined is also acceptable for nullable parameters and
+            # should be converted to null:
+            # http://heycam.github.io/webidl/#es-nullable-type
+            $condition .= "${value}.isNull() || " if $parameter->isNullable;
+
+            if ($codeGenerator->GetArrayType($type) || $codeGenerator->GetSequenceType($type)) {
+                # FIXME: Add proper support for T[], T[]?, sequence<T>.
+                $condition .= "(${value}.isObject() && isJSArray(${value}))";
             } else {
-                push(@andExpression, "(${value}.isObject() && asObject(${value})->inherits(JS${type}::info()))");
+                $condition .= "(${value}.isObject() && asObject(${value})->inherits(JS${type}::info()))";
             }
+            push(@andExpression, "(" . $condition . ")");
             $usedArguments{$parameterIndex} = 1;
         }
         $parameterIndex++;

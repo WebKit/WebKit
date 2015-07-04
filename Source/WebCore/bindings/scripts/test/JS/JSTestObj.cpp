@@ -129,6 +129,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod2(J
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionConditionalMethod3(JSC::ExecState*);
 #endif
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethod(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethodWithOptional(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionClassMethod2(JSC::ExecState*);
@@ -633,6 +634,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { 0, 0, NoIntrinsic, 0, 0 },
 #endif
     { "overloadedMethod", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionOverloadedMethod), (intptr_t) (2) },
+    { "overloadedMethodWithOptionalParameter", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter), (intptr_t) (1) },
     { "classMethodWithClamp", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionClassMethodWithClamp), (intptr_t) (2) },
     { "methodWithUnsignedLongSequence", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithUnsignedLongSequence), (intptr_t) (1) },
     { "stringArrayFunction", JSC::Function, NoIntrinsic, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionStringArrayFunction), (intptr_t) (1) },
@@ -3955,16 +3957,84 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(ExecStat
         return jsTestObjPrototypeFunctionOverloadedMethod6(exec);
     if ((argsCount == 1 && (arg0.isNull() || (arg0.isObject() && isJSArray(arg0)))))
         return jsTestObjPrototypeFunctionOverloadedMethod7(exec);
-    if ((argsCount == 1 && (arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info()))))
+    if ((argsCount == 1 && ((arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info())))))
         return jsTestObjPrototypeFunctionOverloadedMethod8(exec);
-    if ((argsCount == 1 && (arg0.isObject() && isJSArray(arg0))))
+    if ((argsCount == 1 && ((arg0.isObject() && isJSArray(arg0)))))
         return jsTestObjPrototypeFunctionOverloadedMethod9(exec);
-    if ((argsCount == 1 && (arg0.isObject() && isJSArray(arg0))))
+    if ((argsCount == 1 && ((arg0.isObject() && isJSArray(arg0)))))
         return jsTestObjPrototypeFunctionOverloadedMethod10(exec);
     if (argsCount == 1)
         return jsTestObjPrototypeFunctionOverloadedMethod11(exec);
     if ()
         return jsTestObjPrototypeFunctionOverloadedMethod12(exec);
+    if (argsCount < 1)
+        return throwVMError(exec, createNotEnoughArgumentsError(exec));
+    return throwVMTypeError(exec);
+}
+
+static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter1(ExecState* exec)
+{
+    JSValue thisValue = exec->thisValue();
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*exec, "TestObj", "overloadedMethodWithOptionalParameter");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+    auto& impl = castedThis->impl();
+    if (UNLIKELY(exec->argumentCount() < 1))
+        return throwVMError(exec, createNotEnoughArgumentsError(exec));
+    TestObj* objArg1 = JSTestObj::toWrapped(exec->argument(0));
+    if (UNLIKELY(exec->hadException()))
+        return JSValue::encode(jsUndefined());
+
+    size_t argsCount = exec->argumentCount();
+    if (argsCount <= 1) {
+        impl.overloadedMethodWithOptionalParameter(objArg1);
+        return JSValue::encode(jsUndefined());
+    }
+
+    TestObj* objArg2 = JSTestObj::toWrapped(exec->argument(1));
+    if (UNLIKELY(exec->hadException()))
+        return JSValue::encode(jsUndefined());
+    impl.overloadedMethodWithOptionalParameter(objArg1, objArg2);
+    return JSValue::encode(jsUndefined());
+}
+
+static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2(ExecState* exec)
+{
+    JSValue thisValue = exec->thisValue();
+    JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
+    if (UNLIKELY(!castedThis))
+        return throwThisTypeError(*exec, "TestObj", "overloadedMethodWithOptionalParameter");
+    ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
+    auto& impl = castedThis->impl();
+    if (UNLIKELY(exec->argumentCount() < 1))
+        return throwVMError(exec, createNotEnoughArgumentsError(exec));
+    TestObj* objArg = JSTestObj::toWrapped(exec->argument(0));
+    if (UNLIKELY(exec->hadException()))
+        return JSValue::encode(jsUndefined());
+
+    size_t argsCount = exec->argumentCount();
+    if (argsCount <= 1) {
+        impl.overloadedMethodWithOptionalParameter(objArg);
+        return JSValue::encode(jsUndefined());
+    }
+
+    int longArg = toInt32(exec, exec->argument(1), NormalConversion);
+    if (UNLIKELY(exec->hadException()))
+        return JSValue::encode(jsUndefined());
+    impl.overloadedMethodWithOptionalParameter(objArg, longArg);
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter(ExecState* exec)
+{
+    size_t argsCount = std::min<size_t>(2, exec->argumentCount());
+    JSValue arg0(exec->argument(0));
+    JSValue arg1(exec->argument(1));
+    if ((argsCount == 1 && (arg0.isNull() || (arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info())))) || (argsCount == 2 && (arg0.isNull() || (arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info()))) && (arg1.isUndefined() || arg1.isNull() || (arg1.isObject() && asObject(arg1)->inherits(JSTestObj::info())))))
+        return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter1(exec);
+    if ((argsCount == 1 && (arg0.isNull() || (arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info())))) || (argsCount == 2 && (arg0.isNull() || (arg0.isObject() && asObject(arg0)->inherits(JSTestObj::info())))))
+        return jsTestObjPrototypeFunctionOverloadedMethodWithOptionalParameter2(exec);
     if (argsCount < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     return throwVMTypeError(exec);

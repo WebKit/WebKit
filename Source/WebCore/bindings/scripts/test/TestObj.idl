@@ -190,6 +190,9 @@ enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };
 
     // FIXME: Implement support for overloaded functions with variadic arguments.
     void    overloadedMethod(Blob... blobArgs);
+
+    void overloadedMethodWithOptionalParameter(TestObj? objArg1, optional TestObj? objArg2);
+    void overloadedMethodWithOptionalParameter(TestObj? objArg, optional long longArg);
 #endif
 
     // Class methods within JavaScript (like what's used for IDBKeyRange).

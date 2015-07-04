@@ -152,11 +152,11 @@ EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::constructJ
 {
     size_t argsCount = std::min<size_t>(1, exec->argumentCount());
     JSValue arg0(exec->argument(0));
-    if ((argsCount == 1 && (arg0.isObject() && asObject(arg0)->inherits(JSArrayBuffer::info()))))
+    if ((argsCount == 1 && ((arg0.isObject() && asObject(arg0)->inherits(JSArrayBuffer::info())))))
         return JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors1(exec);
-    if ((argsCount == 1 && (arg0.isObject() && asObject(arg0)->inherits(JSArrayBufferView::info()))))
+    if ((argsCount == 1 && ((arg0.isObject() && asObject(arg0)->inherits(JSArrayBufferView::info())))))
         return JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors2(exec);
-    if ((argsCount == 1 && (arg0.isObject() && asObject(arg0)->inherits(JSBlob::info()))))
+    if ((argsCount == 1 && ((arg0.isObject() && asObject(arg0)->inherits(JSBlob::info())))))
         return JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors3(exec);
     if (argsCount == 1)
         return JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors4(exec);
