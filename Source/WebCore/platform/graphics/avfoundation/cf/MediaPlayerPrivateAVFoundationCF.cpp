@@ -1989,13 +1989,13 @@ void AVFWrapper::destroyVideoLayer()
     ASSERT(dispatch_get_main_queue() == dispatch_get_current_queue());
     LOG(Media, "AVFWrapper::destroyVideoLayer(%p)", this);
     m_layerClient = nullptr;
-    m_caVideoLayer = 0;
-    m_videoLayerWrapper = 0;
+    m_caVideoLayer = nullptr;
+    m_videoLayerWrapper = nullptr;
     if (!m_avCFVideoLayer.get())
         return;
 
-    AVCFPlayerLayerSetPlayer((AVCFPlayerLayerRef)m_avCFVideoLayer.get(), 0);
-    m_avCFVideoLayer = 0;
+    AVCFPlayerLayerSetPlayer((AVCFPlayerLayerRef)m_avCFVideoLayer.get(), nullptr);
+    m_avCFVideoLayer = nullptr;
 }
 
 void AVFWrapper::setVideoLayerNeedsCommit()

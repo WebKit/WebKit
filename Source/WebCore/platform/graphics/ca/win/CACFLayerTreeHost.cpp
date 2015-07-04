@@ -225,8 +225,8 @@ void CACFLayerTreeHost::layerTreeDidChange()
 
 void CACFLayerTreeHost::destroyRenderer()
 {
-    m_rootLayer = 0;
-    m_rootChildLayer = 0;
+    m_rootLayer = nullptr;
+    m_rootChildLayer = nullptr;
     LayerChangesFlusher::singleton().cancelPendingFlush(this);
 }
 
