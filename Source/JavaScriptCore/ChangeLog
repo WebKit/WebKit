@@ -1,5 +1,12 @@
 2015-07-03  Dan Bernstein  <mitz@apple.com>
 
+        Fixed the LLINT CLoop build.
+
+        * llint/LowLevelInterpreter.cpp:
+        (JSC::CLoop::execute):
+
+2015-07-03  Dan Bernstein  <mitz@apple.com>
+
         [Xcode] Update some build settings as recommended by Xcode 7
         https://bugs.webkit.org/show_bug.cgi?id=146597
 
