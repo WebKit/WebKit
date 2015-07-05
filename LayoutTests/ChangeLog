@@ -1,5 +1,16 @@
 2015-07-05  David Kilzer  <ddkilzer@apple.com>
 
+        REGRESSION (El Capitan): Slider thumb of range input is rotated on reference tests
+
+        Fix tracked by <rdar://problem/21677831>.
+
+        * platform/mac/TestExpectations: Mark tests as image-only failures:
+        - css3/flexbox/flexitem-stretch-range.html
+        - fast/forms/range/input-appearance-range-rtl.html
+        - fast/forms/range/range-change-min-max.html
+
+2015-07-05  David Kilzer  <ddkilzer@apple.com>
+
         REGRESSION (r186198): js/dom/global-constructors-attributes.html fails on El Capitan
 
         * platform/mac/js/dom/global-constructors-attributes-expected.txt:
