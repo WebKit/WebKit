@@ -170,15 +170,16 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
         }
 
         var pseudoElements = this.nodeStyles.pseudoElements;
+        var pseudoElementsStyle = [];
+
+        for (var pseudoIdentifier in pseudoElements)
+            pseudoElementsStyle = pseudoElementsStyle.concat(pseudoElements[pseudoIdentifier].orderedStyles);
+
+        var orderedPseudoStyles = uniqueOrderedStyles(pseudoElementsStyle);
         var pseudoElementSelectors = [];
 
-        for (var pseudoIdentifier in pseudoElements) {
-            var pseudoElement = pseudoElements[pseudoIdentifier];
-            var orderedStyles = uniqueOrderedStyles(pseudoElement.orderedStyles);
-
-            for (var style of orderedStyles)
-                pseudoElementSelectors.push({ style, selectorText: style.ownerRule.selectorText.replace(/:{1,2}[\w-]+\s*/, " ").trimRight() });
-        }
+        for (var style of orderedPseudoStyles)
+            pseudoElementSelectors.push({ style, selectorText: style.ownerRule.selectorText.replace(/:{1,2}[\w-]+\s*/, " ").trimRight() });
 
         // Reverse the array to allow ensure that splicing the array will not mess with the order.
         if (pseudoElementSelectors.length)
