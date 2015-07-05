@@ -1,5 +1,14 @@
 2015-07-05  David Kilzer  <ddkilzer@apple.com>
 
+        http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-allow.html crashes on Windows Debug
+
+        <https://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html#showAllRuns=true&tests=http%2Ftests%2Fsecurity%2FXFrameOptions%2Fx-frame-options-parent-same-origin-allow.html>
+
+        * platform/win/TestExpectations: Mark as crashing:
+        - http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-allow.html
+
+2015-07-05  David Kilzer  <ddkilzer@apple.com>
+
         webgl/1.0.2/conformance/more/functions/copyTexImage2DBadArgs.html fails due to truncated expected results on Yosemite Debug WK1
 
         <http://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html#showAllRuns=true&tests=webgl%2F1.0.2%2Fconformance%2Fmore%2Ffunctions%2FcopyTexImage2DBadArgs.html>

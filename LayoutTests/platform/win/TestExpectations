@@ -2129,7 +2129,7 @@ webkit.org/b/140703 http/tests/security/XFrameOptions/x-frame-options-invalid.ht
 webkit.org/b/140703 http/tests/security/XFrameOptions/x-frame-options-multiple-headers-conflict.html [ Failure ]
 webkit.org/b/140703 http/tests/security/XFrameOptions/x-frame-options-multiple-headers-sameorigin-allow.html [ Failure ]
 webkit.org/b/140703 http/tests/security/XFrameOptions/x-frame-options-multiple-headers-sameorigin-deny.html [ Failure ]
-webkit.org/b/140703 http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-allow.html [ Failure ]
+webkit.org/b/140703 http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-allow.html [ Crash Failure ]
 webkit.org/b/140703 http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html [ Failure ]
 webkit.org/b/140703 http/tests/xmlhttprequest/remember-bad-password.html [ Failure ]
 webkit.org/b/140703 http/tests/xmlhttprequest/failed-auth.html [ Failure ]
