@@ -1290,3 +1290,5 @@ http/tests/media/video-cancel-load.html [ Skip ]
 http/tests/media/video-served-as-text.html [ Failure ]
 http/tests/media/video-throttled-load-metadata.html [ Failure ]
 http/tests/security/contentSecurityPolicy/media-src-allowed.html [ Skip ]
+
+[ Yosemite ] fast/canvas/webgl/oes-texture-half-float-linear.html [ Pass Failure ]

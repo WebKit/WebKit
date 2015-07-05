@@ -1,5 +1,14 @@
 2015-07-05  David Kilzer  <ddkilzer@apple.com>
 
+        fast/canvas/webgl/oes-texture-half-float-linear.html is flakey on Yosemite Release/Debug WK1/WK2
+
+        <http://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html#showAllRuns=true&tests=fast%2Fcanvas%2Fwebgl%2Foes-texture-half-float-linear.html>
+
+        * platform/mac/TestExpectations: Mark test as flaky:
+        - fast/canvas/webgl/oes-texture-half-float-linear.html
+
+2015-07-05  David Kilzer  <ddkilzer@apple.com>
+
         fast/forms/textarea/textarea-state-restore.html is flaky on WK2
 
         <http://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html#showAllRuns=true&tests=fast%2Fforms%2Ftextarea%2Ftextarea-state-restore.html>
