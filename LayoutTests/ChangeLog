@@ -1,5 +1,18 @@
 2015-07-05  David Kilzer  <ddkilzer@apple.com>
 
+        fast/forms/textarea/textarea-state-restore.html is flaky on WK2
+
+        <http://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html#showAllRuns=true&tests=fast%2Fforms%2Ftextarea%2Ftextarea-state-restore.html>
+
+        Fix tracked by <http://webkit.org/b/90980>.
+
+        * platform/efl/TestExpectations: Move expectation from here...
+        * platform/gtk/TestExpectations: ...and here...
+        * platform/wk2/TestExpectations: ...to here:
+        - fast/forms/textarea/textarea-state-restore.html
+
+2015-07-05  David Kilzer  <ddkilzer@apple.com>
+
         http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-allow.html crashes on Windows Debug
 
         <https://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html#showAllRuns=true&tests=http%2Ftests%2Fsecurity%2FXFrameOptions%2Fx-frame-options-parent-same-origin-allow.html>

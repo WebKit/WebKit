@@ -1052,8 +1052,6 @@ webkit.org/b/134998 plugins/change-widget-and-click-crash.html [ Timeout Pass Cr
 webkit.org/b/135003 jquery/attributes.html [ Timeout Pass ]
 webkit.org/b/135003 jquery/core.html [ Timeout Pass ]
 
-webkit.org/b/135004 fast/forms/textarea/textarea-state-restore.html [ Timeout Pass ]
-
 
 webkit.org/b/135087 fast/frames/frame-programmatic-noresize.html [ Failure Pass ]
 webkit.org/b/135087 fast/frames/frame-with-noresize-can-be-resized-after-removal-of-noresize.html [ Failure Pass ]
