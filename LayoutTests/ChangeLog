@@ -1,5 +1,12 @@
 2015-07-05  David Kilzer  <ddkilzer@apple.com>
 
+        REGRESSION (r186198): js/dom/global-constructors-attributes.html fails on El Capitan
+
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        Update results after r186198.
+
+2015-07-05  David Kilzer  <ddkilzer@apple.com>
+
         fast/canvas/webgl/oes-texture-half-float-linear.html is flakey on Yosemite Release/Debug WK1/WK2
 
         <http://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html#showAllRuns=true&tests=fast%2Fcanvas%2Fwebgl%2Foes-texture-half-float-linear.html>
