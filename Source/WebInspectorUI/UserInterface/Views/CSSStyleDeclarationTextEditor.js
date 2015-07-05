@@ -441,7 +441,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
     _handleBeforeChange(codeMirror, change)
     {
-        if (change.origin !== "+delete" || change.to.ch)
+        if (change.origin !== "+delete")
             return CodeMirror.Pass;
 
         var marks = codeMirror.findMarksAt(change.to);
@@ -996,7 +996,8 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
         if (propertyNameIsValid) {
             // The property's name is valid but its value is not (either it is not supported for this property or there is no value).
-            var start = {line: from.line, ch: from.ch + property.name.length + 2};
+            var semicolon = /:\s*/.exec(property.text);
+            var start = {line: from.line, ch: semicolon.index + semicolon[0].length};
             var end = {line: to.line, ch: start.ch + property.value.length};
 
             this._codeMirror.markText(start, end, {className: "invalid"});
