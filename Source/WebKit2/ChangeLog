@@ -1,3 +1,14 @@
+2015-07-05  Timothy Hatcher  <timothy@apple.com>
+
+        Crash when closing the web inspector
+        https://bugs.webkit.org/show_bug.cgi?id=146620
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::closeWindow): Null check the connection, like it is
+        in other places where it is used.
+
 2015-07-04  Chris Dumez  <cdumez@apple.com>
 
         Drop RefPtr::clear() method
