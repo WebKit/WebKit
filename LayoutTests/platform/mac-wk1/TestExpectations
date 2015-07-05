@@ -41,6 +41,8 @@ webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 [ ElCapitan+ ] http/tests/loading/pdf-commit-load-callbacks.html
 [ ElCapitan+ ] platform/mac/fast/loader/non-html-load-event.html
 
+webkit.org/b/146622 [ Yosemite Debug ] webgl/1.0.2/conformance/more/functions/copyTexImage2DBadArgs.html [ Pass Failure ]
+
 ### END OF (1) Failures with bug reports
 ########################################
 
