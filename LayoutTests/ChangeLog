@@ -1,3 +1,19 @@
+2015-07-05  David Kilzer  <ddkilzer@apple.com>
+
+        fast/preloader/document-write-2.html is flaky on WK2
+
+        <http://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html#showAllRuns=true&tests=fast%2Fpreloader%2Fdocument-write-2.html>
+
+        When the test fails, the first two lines are reversed:
+
+        @@ -1,2 +1,2 @@
+        +script1.js has MIME type text/javascript
+         document-write-plaintext.js has MIME type text/javascript
+        -script1.js has MIME type text/javascript
+
+        * platform/wk2/TestExpectations: Mark test as flaky:
+        - fast/preloader/document-write-2.html
+
 2015-07-03  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r178097): HTMLSelectElement.add(option, undefined) prepends option to the list of options; should append to the end of the list of options
