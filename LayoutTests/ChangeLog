@@ -1,5 +1,14 @@
 2015-07-06  David Kilzer  <ddkilzer@apple.com>
 
+        http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag.html crashes on Windows sometimes
+
+        <http://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html#showAllRuns=true&tests=http%2Ftests%2Fsecurity%2FXFrameOptions%2Fx-frame-options-deny-meta-tag.html>
+
+        * platform/win/TestExpectations: Mark test as crashing, too:
+        - http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag.html
+
+2015-07-06  David Kilzer  <ddkilzer@apple.com>
+
         http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html crashes on Windows sometimes
 
         <http://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html#showAllRuns=true&tests=http%2Ftests%2Fsecurity%2FXFrameOptions%2Fx-frame-options-parent-same-origin-deny.html>
