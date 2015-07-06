@@ -1,3 +1,13 @@
+2015-05-29  Brady Eidson  <beidson@apple.com>
+
+        Review feedback followup for r185003.
+        https://bugs.webkit.org/show_bug.cgi?id=145463
+
+        Reviewed by Darin Adler.
+
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::overrideUnauthorizedFunctions): `static const` one thing, c++-style cast another.
+
 2015-06-26  Chris Dumez  <cdumez@apple.com>
 
         Prevent new loads while in PageCache (or being added to PageCache)
