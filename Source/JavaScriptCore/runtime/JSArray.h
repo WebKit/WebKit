@@ -78,6 +78,20 @@ public:
 
     JSArray* fastSlice(ExecState&, unsigned startIndex, unsigned count);
 
+    static IndexingType fastConcatType(VM& vm, JSArray& firstArray, JSArray& secondArray)
+    {
+        IndexingType type = firstArray.indexingType();
+        if (type != secondArray.indexingType())
+            return NonArray;
+        if (type != ArrayWithDouble && type != ArrayWithInt32 && type != ArrayWithContiguous)
+            return NonArray;
+        if (firstArray.structure(vm)->holesMustForwardToPrototype(vm)
+            || secondArray.structure(vm)->holesMustForwardToPrototype(vm))
+            return NonArray;
+        return type;
+    }
+    EncodedJSValue fastConcatWith(ExecState&, JSArray&);
+
     enum ShiftCountMode {
         // This form of shift hints that we're doing queueing. With this assumption in hand,
         // we convert to ArrayStorage, which has queue optimizations.

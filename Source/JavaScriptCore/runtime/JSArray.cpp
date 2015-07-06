@@ -707,6 +707,37 @@ JSArray* JSArray::fastSlice(ExecState& exec, unsigned startIndex, unsigned count
     }
 }
 
+EncodedJSValue JSArray::fastConcatWith(ExecState& exec, JSArray& otherArray)
+{
+    auto newArrayType = indexingType();
+    ASSERT(newArrayType == fastConcatType(*this, otherArray));
+
+    VM& vm = exec.vm();
+    unsigned thisArraySize = m_butterfly->publicLength();
+    unsigned otherArraySize = otherArray.m_butterfly->publicLength();
+    ASSERT(thisArraySize + otherArraySize < MIN_SPARSE_ARRAY_INDEX);
+
+    Structure* resultStructure = exec.lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(newArrayType);
+    JSArray* resultArray = JSArray::tryCreateUninitialized(vm, resultStructure, thisArraySize + otherArraySize);
+    if (!resultArray)
+        return JSValue::encode(throwOutOfMemoryError(&exec));
+
+    auto& resultButterfly = *resultArray->butterfly();
+    auto& otherButterfly = *otherArray.butterfly();
+    if (newArrayType == ArrayWithDouble) {
+        auto buffer = resultButterfly.contiguousDouble().data();
+        memcpy(buffer, m_butterfly->contiguousDouble().data(), sizeof(JSValue) * thisArraySize);
+        memcpy(buffer + thisArraySize, otherButterfly.contiguousDouble().data(), sizeof(JSValue) * otherArraySize);
+    } else {
+        auto buffer = resultButterfly.contiguous().data();
+        memcpy(buffer, m_butterfly->contiguous().data(), sizeof(JSValue) * thisArraySize);
+        memcpy(buffer + thisArraySize, otherButterfly.contiguous().data(), sizeof(JSValue) * otherArraySize);
+    }
+
+    resultButterfly.setPublicLength(thisArraySize + otherArraySize);
+    return JSValue::encode(resultArray);
+}
+
 bool JSArray::shiftCountWithArrayStorage(VM& vm, unsigned startIndex, unsigned count, ArrayStorage* storage)
 {
     unsigned oldLength = storage->length();

@@ -1,3 +1,23 @@
+2015-07-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Array.concat should be fast for integer or double arrays
+        https://bugs.webkit.org/show_bug.cgi?id=146260
+
+        Reviewed by Darin Adler.
+
+        Added a fast path to Array.prototype.concat. When concatenating two Int32, Double, or Contiguous
+        arrays, simply memcopy the arrays into a new uninitialized buffer.
+
+        This improves huffman encoding in CompressionBench by 3.7x on a Mid 2014 MacBookPro.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncConcat):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::fastConcatWith): Added.
+        * runtime/JSArray.h:
+        (JSC::JSArray::fastConcatType): Added. Returns the resultant array's indexing type if we can use
+        the fact path. Returns NonArray otherwise.
+
 2015-07-06  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         [Streams API] Remove ReadableStream custom constructor
