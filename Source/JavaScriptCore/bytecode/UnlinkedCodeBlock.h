@@ -39,7 +39,6 @@
 #include "SymbolTable.h"
 #include "VirtualRegister.h"
 
-#include <wtf/Compression.h>
 #include <wtf/RefCountedArray.h>
 #include <wtf/Vector.h>
 
