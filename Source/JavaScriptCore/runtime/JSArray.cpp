@@ -710,9 +710,10 @@ JSArray* JSArray::fastSlice(ExecState& exec, unsigned startIndex, unsigned count
 EncodedJSValue JSArray::fastConcatWith(ExecState& exec, JSArray& otherArray)
 {
     auto newArrayType = indexingType();
-    ASSERT(newArrayType == fastConcatType(*this, otherArray));
 
     VM& vm = exec.vm();
+    ASSERT(newArrayType == fastConcatType(vm, *this, otherArray));
+
     unsigned thisArraySize = m_butterfly->publicLength();
     unsigned otherArraySize = otherArray.m_butterfly->publicLength();
     ASSERT(thisArraySize + otherArraySize < MIN_SPARSE_ARRAY_INDEX);

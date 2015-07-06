@@ -1,3 +1,11 @@
+2015-07-06  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed debug build fix after r186358.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::fastConcatWith):
+        Pass vm parameter to fastConcatType.
+
 2015-07-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Array.concat should be fast for integer or double arrays
