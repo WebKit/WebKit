@@ -225,7 +225,6 @@ FrameLoader::FrameLoader(Frame& frame, FrameLoaderClient& client)
     , m_isExecutingJavaScriptFormAction(false)
     , m_didCallImplicitClose(true)
     , m_wasUnloadEventEmitted(false)
-    , m_pageDismissalEventBeingDispatched(frame)
     , m_isComplete(false)
     , m_needsClear(false)
     , m_checkTimer(*this, &FrameLoader::checkTimerFired)
@@ -428,9 +427,9 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
                 Element* currentFocusedElement = m_frame.document()->focusedElement();
                 if (currentFocusedElement && currentFocusedElement->toInputElement())
                     currentFocusedElement->toInputElement()->endEditing();
-                if (m_pageDismissalEventBeingDispatched == Page::DismissalType::None) {
+                if (m_pageDismissalEventBeingDispatched == PageDismissalType::None) {
                     if (unloadEventPolicy == UnloadEventPolicyUnloadAndPageHide) {
-                        m_pageDismissalEventBeingDispatched = Page::DismissalType::PageHide;
+                        m_pageDismissalEventBeingDispatched = PageDismissalType::PageHide;
                         m_frame.document()->domWindow()->dispatchEvent(PageTransitionEvent::create(eventNames().pagehideEvent, m_frame.document()->inPageCache()), m_frame.document());
                     }
 
@@ -443,7 +442,7 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
                         // while dispatching the event, so protect it to prevent writing the end
                         // time into freed memory.
                         RefPtr<DocumentLoader> documentLoader = m_provisionalDocumentLoader;
-                        m_pageDismissalEventBeingDispatched = Page::DismissalType::Unload;
+                        m_pageDismissalEventBeingDispatched = PageDismissalType::Unload;
                         if (documentLoader && !documentLoader->timing().unloadEventStart() && !documentLoader->timing().unloadEventEnd()) {
                             DocumentLoadTiming& timing = documentLoader->timing();
                             ASSERT(timing.navigationStart());
@@ -454,7 +453,7 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
                             m_frame.document()->domWindow()->dispatchEvent(unloadEvent, m_frame.document());
                     }
                 }
-                m_pageDismissalEventBeingDispatched = Page::DismissalType::None;
+                m_pageDismissalEventBeingDispatched = PageDismissalType::None;
                 if (m_frame.document())
                     m_frame.document()->updateStyleIfNeeded();
                 m_wasUnloadEventEmitted = true;
@@ -1224,7 +1223,7 @@ void FrameLoader::loadURL(const URL& newURL, const String& referrer, const Strin
         return;
     }
 
-    if (m_pageDismissalEventBeingDispatched != Page::DismissalType::None)
+    if (m_pageDismissalEventBeingDispatched != PageDismissalType::None)
         return;
 
     NavigationAction action(request, newLoadType, isFormSubmission, event);
@@ -1410,7 +1409,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
 
     ASSERT(m_frame.view());
 
-    if (m_pageDismissalEventBeingDispatched != Page::DismissalType::None)
+    if (m_pageDismissalEventBeingDispatched != PageDismissalType::None)
         return;
 
     if (m_frame.document())
@@ -1581,7 +1580,7 @@ void FrameLoader::reload(bool endToEndReload)
 void FrameLoader::stopAllLoaders(ClearProvisionalItemPolicy clearProvisionalItemPolicy)
 {
     ASSERT(!m_frame.document() || !m_frame.document()->inPageCache());
-    if (m_pageDismissalEventBeingDispatched != Page::DismissalType::None)
+    if (m_pageDismissalEventBeingDispatched != PageDismissalType::None)
         return;
 
     // If this method is called from within this method, infinite recursion can occur (3442218). Avoid this.
@@ -2826,7 +2825,7 @@ bool FrameLoader::handleBeforeUnloadEvent(Chrome& chrome, FrameLoader* frameLoad
         return true;
     
     RefPtr<BeforeUnloadEvent> beforeUnloadEvent = BeforeUnloadEvent::create();
-    m_pageDismissalEventBeingDispatched = Page::DismissalType::BeforeUnload;
+    m_pageDismissalEventBeingDispatched = PageDismissalType::BeforeUnload;
 
     // We store the frame's page in a local variable because the frame might get detached inside dispatchEvent.
     Page* page = m_frame.page();
@@ -2834,7 +2833,7 @@ bool FrameLoader::handleBeforeUnloadEvent(Chrome& chrome, FrameLoader* frameLoad
     domWindow->dispatchEvent(beforeUnloadEvent.get(), domWindow->document());
     page->decrementFrameHandlingBeforeUnloadEventCount();
 
-    m_pageDismissalEventBeingDispatched = Page::DismissalType::None;
+    m_pageDismissalEventBeingDispatched = PageDismissalType::None;
 
     if (!beforeUnloadEvent->defaultPrevented())
         document->defaultEventHandler(beforeUnloadEvent.get());
@@ -3521,16 +3520,6 @@ PassRefPtr<Frame> createWindow(Frame& openerFrame, Frame* lookupFrame, const Fra
 
     created = true;
     return frame.release();
-}
-
-auto FrameLoader::PageDismissalEventType::operator=(Page::DismissalType dismissalType) -> PageDismissalEventType&
-{
-    m_dismissalEventBeingDispatched = dismissalType;
-
-    if (auto* page = m_frame.page())
-        page->setDismissalEventBeingDispatched(dismissalType);
-
-    return *this;
 }
 
 } // namespace WebCore

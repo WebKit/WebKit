@@ -1,3 +1,47 @@
+2015-06-26  Chris Dumez  <cdumez@apple.com>
+
+        Prevent new loads while in PageCache (or being added to PageCache)
+        https://bugs.webkit.org/show_bug.cgi?id=146299
+        <rdar://problem/21523788>
+
+        Reviewed by Darin Adler.
+
+        Generalize the change in r185337 to prevent new loads while in the
+        PageCache (or being added to the PageCache), instead of merely
+        preventing new loads in pagehide event handlers. We should never
+        have any pages that are still loading inside the PageCache.
+
+        The fix in r185337 was apparently insufficient to address the
+        problem so generalizing the check / policy will hopefully catch
+        more cases where content is able to start loads while being added
+        to the PageCache. This patch also removes some of the complexity
+        added in r185337 as it is no longer needed.
+
+        No new tests, already covered by:
+        http/tests/navigation/image-load-in-pagehide-handler.html
+        http/tests/navigation/subframe-pagehide-handler-starts-load.html
+        http/tests/navigation/subframe-pagehide-handler-starts-load2.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::FrameLoader::stopAllLoaders):
+        (WebCore::FrameLoader::handleBeforeUnloadEvent):
+        (WebCore::FrameLoader::FrameLoader): Deleted.
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::pageDismissalEventBeingDispatched):
+        * loader/ImageLoader.cpp:
+        (WebCore::pageIsBeingDismissed):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::load):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestImage):
+        * page/Page.cpp:
+        (WebCore::Page::inPageCache):
+        * page/Page.h:
+        (WebCore::Page::group): Deleted.
+
 2015-06-08  Chris Dumez  <cdumez@apple.com>
 
         WebContent crash in WebCore::Page::sessionID() const + 0 (Page.cpp:1660)

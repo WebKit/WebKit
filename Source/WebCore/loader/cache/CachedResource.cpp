@@ -214,8 +214,8 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader, const Reso
         return;
     }
 
-    // Prevent 'pagehide' event handlers from starting new loads as we are in the PageCache.
-    if (cachedResourceLoader.frame()->page() && cachedResourceLoader.frame()->page()->dismissalEventBeingDispatched() == Page::DismissalType::PageHide) {
+    // Prevent new loads if we are in the PageCache or being added to the PageCache.
+    if (cachedResourceLoader.frame()->page() && cachedResourceLoader.frame()->page()->inPageCache()) {
         failBeforeStarting();
         return;
     }
