@@ -58,15 +58,15 @@ private:
 
 void rejectPromiseWithExceptionIfAny(JSC::ExecState&, JSDOMGlobalObject&, JSC::JSPromiseDeferred&);
 
-template<typename JSClassName>
-inline JSC::JSValue callPromiseFunction(JSC::ExecState& state, JSClassName& wrapper, JSC::EncodedJSValue promiseFunction(JSC::ExecState*, JSClassName*, JSC::JSPromiseDeferred*))
+inline JSC::JSValue callPromiseFunction(JSC::ExecState& state, JSC::EncodedJSValue promiseFunction(JSC::ExecState*, JSC::JSPromiseDeferred*))
 {
-    JSC::JSPromiseDeferred* promiseDeferred = JSC::JSPromiseDeferred::create(&state, wrapper.globalObject());
-    promiseFunction(&state, &wrapper, promiseDeferred);
+    JSDOMGlobalObject& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject());
+    JSC::JSPromiseDeferred& promiseDeferred = *JSC::JSPromiseDeferred::create(&state, &globalObject);
+    promiseFunction(&state, &promiseDeferred);
 
-    rejectPromiseWithExceptionIfAny(state, *wrapper.globalObject(), *promiseDeferred);
+    rejectPromiseWithExceptionIfAny(state, globalObject, promiseDeferred);
     ASSERT(!state.hadException());
-    return promiseDeferred->promise();
+    return promiseDeferred.promise();
 }
 
 template <typename Value, typename Error>

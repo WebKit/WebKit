@@ -4523,37 +4523,37 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionAny(ExecState* exec)
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionPromise(ExecState*, JSTestObj*, JSPromiseDeferred*);
+static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionPromise(ExecState*, JSPromiseDeferred*);
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunction(ExecState* exec)
+{
+    return JSValue::encode(callPromiseFunction(*exec, jsTestObjPrototypeFunctionTestPromiseFunctionPromise));
+}
+
+static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionPromise(ExecState* exec, JSPromiseDeferred* promiseDeferred)
 {
     JSValue thisValue = exec->thisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*exec, "TestObj", "testPromiseFunction");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
-    return JSValue::encode(callPromiseFunction(*exec, *castedThis, jsTestObjPrototypeFunctionTestPromiseFunctionPromise));
-}
-
-static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionPromise(ExecState* exec, JSTestObj* castedThis, JSPromiseDeferred* promiseDeferred)
-{
     auto& impl = castedThis->impl();
     impl.testPromiseFunction(DeferredWrapper(exec, castedThis->globalObject(), promiseDeferred));
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgumentPromise(ExecState*, JSTestObj*, JSPromiseDeferred*);
+static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgumentPromise(ExecState*, JSPromiseDeferred*);
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgument(ExecState* exec)
+{
+    return JSValue::encode(callPromiseFunction(*exec, jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgumentPromise));
+}
+
+static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgumentPromise(ExecState* exec, JSPromiseDeferred* promiseDeferred)
 {
     JSValue thisValue = exec->thisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*exec, "TestObj", "testPromiseFunctionWithFloatArgument");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
-    return JSValue::encode(callPromiseFunction(*exec, *castedThis, jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgumentPromise));
-}
-
-static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithFloatArgumentPromise(ExecState* exec, JSTestObj* castedThis, JSPromiseDeferred* promiseDeferred)
-{
     auto& impl = castedThis->impl();
     if (UNLIKELY(exec->argumentCount() < 1))
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
@@ -4568,19 +4568,19 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithFl
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithExceptionPromise(ExecState*, JSTestObj*, JSPromiseDeferred*);
+static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithExceptionPromise(ExecState*, JSPromiseDeferred*);
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunctionWithException(ExecState* exec)
+{
+    return JSValue::encode(callPromiseFunction(*exec, jsTestObjPrototypeFunctionTestPromiseFunctionWithExceptionPromise));
+}
+
+static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithExceptionPromise(ExecState* exec, JSPromiseDeferred* promiseDeferred)
 {
     JSValue thisValue = exec->thisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*exec, "TestObj", "testPromiseFunctionWithException");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
-    return JSValue::encode(callPromiseFunction(*exec, *castedThis, jsTestObjPrototypeFunctionTestPromiseFunctionWithExceptionPromise));
-}
-
-static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithExceptionPromise(ExecState* exec, JSTestObj* castedThis, JSPromiseDeferred* promiseDeferred)
-{
     auto& impl = castedThis->impl();
     ExceptionCode ec = 0;
     impl.testPromiseFunctionWithException(DeferredWrapper(exec, castedThis->globalObject(), promiseDeferred), ec);
@@ -4588,19 +4588,19 @@ static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithEx
     return JSValue::encode(jsUndefined());
 }
 
-static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgumentPromise(ExecState*, JSTestObj*, JSPromiseDeferred*);
+static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgumentPromise(ExecState*, JSPromiseDeferred*);
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgument(ExecState* exec)
+{
+    return JSValue::encode(callPromiseFunction(*exec, jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgumentPromise));
+}
+
+static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgumentPromise(ExecState* exec, JSPromiseDeferred* promiseDeferred)
 {
     JSValue thisValue = exec->thisValue();
     JSTestObj* castedThis = jsDynamicCast<JSTestObj*>(thisValue);
     if (UNLIKELY(!castedThis))
         return throwThisTypeError(*exec, "TestObj", "testPromiseFunctionWithOptionalIntArgument");
     ASSERT_GC_OBJECT_INHERITS(castedThis, JSTestObj::info());
-    return JSValue::encode(callPromiseFunction(*exec, *castedThis, jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgumentPromise));
-}
-
-static inline EncodedJSValue jsTestObjPrototypeFunctionTestPromiseFunctionWithOptionalIntArgumentPromise(ExecState* exec, JSTestObj* castedThis, JSPromiseDeferred* promiseDeferred)
-{
     auto& impl = castedThis->impl();
 
     size_t argsCount = exec->argumentCount();

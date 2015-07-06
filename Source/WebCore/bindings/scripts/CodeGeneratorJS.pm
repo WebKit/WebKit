@@ -2799,15 +2799,14 @@ sub GenerateImplementation
             if (IsReturningPromise($function) && !$isCustom) {
                 AddToImplIncludes("JSDOMPromise.h");
 
-                push(@implContent, "static inline EncodedJSValue ${functionName}Promise(ExecState*, " . $className . "*, JSPromiseDeferred*);\n");
+                push(@implContent, "static inline EncodedJSValue ${functionName}Promise(ExecState*, JSPromiseDeferred*);\n");
                 push(@implContent, "EncodedJSValue JSC_HOST_CALL ${functionName}(ExecState* exec)\n");
                 push(@implContent, "{\n");
 
-                GenerateFunctionCastedThis($interface, $interfaceName, $className, $function);
-                push(@implContent, "    return JSValue::encode(callPromiseFunction(*exec, *castedThis, ${functionName}Promise));\n");
+                push(@implContent, "    return JSValue::encode(callPromiseFunction(*exec, ${functionName}Promise));\n");
 
                 push(@implContent, "}\n");
-                push(@implContent, "\nstatic inline EncodedJSValue ${functionName}Promise(ExecState* exec, " . $className . "* castedThis, JSPromiseDeferred* promiseDeferred)\n");
+                push(@implContent, "\nstatic inline EncodedJSValue ${functionName}Promise(ExecState* exec, JSPromiseDeferred* promiseDeferred)\n");
             }
             else {
                 push(@implContent, "EncodedJSValue JSC_HOST_CALL ${functionName}(ExecState* exec)\n");
@@ -2831,7 +2830,7 @@ sub GenerateImplementation
                     GenerateImplementationFunctionCall($function, $functionString, "    ", $svgPropertyType, $interfaceName);
                 }
             } else {
-                GenerateFunctionCastedThis($interface, $interfaceName, $className, $function) if not (IsReturningPromise($function) && !$isCustom);
+                GenerateFunctionCastedThis($interface, $interfaceName, $className, $function);
 
                 if ($interface->extendedAttributes->{"CheckSecurity"} and
                     !$function->signature->extendedAttributes->{"DoNotCheckSecurity"}) {

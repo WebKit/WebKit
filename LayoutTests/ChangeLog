@@ -1,3 +1,12 @@
+2015-07-06  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        Promise-returning functions should reject promises if the callee is not of the expected type
+        https://bugs.webkit.org/show_bug.cgi?id=146585
+
+        Reviewed by Darin Adler.
+
+        * streams/reference-implementation/brand-checks-expected.txt:
+
 2015-07-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Update toLength / toInteger names in control profiler test results
