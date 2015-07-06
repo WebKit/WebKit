@@ -388,14 +388,6 @@ public:
     virtual void notifyScrollerThumbIsVisibleInRect(const IntRect&) { }
     virtual void recommendedScrollbarStyleDidChange(int /*newStyle*/) { }
 
-    enum DialogType {
-        AlertDialog = 0,
-        ConfirmDialog = 1,
-        PromptDialog = 2,
-        HTMLDialog = 3
-    };
-    virtual bool shouldRunModalDialogDuringPageDismissal(const DialogType&, const String& dialogMessage, FrameLoader::PageDismissalType) const { UNUSED_PARAM(dialogMessage); return true; }
-
     virtual void numWheelEventHandlersChanged(unsigned) = 0;
         
     virtual bool isSVGImageChromeClient() const { return false; }

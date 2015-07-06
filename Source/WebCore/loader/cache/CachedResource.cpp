@@ -214,6 +214,12 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader, const Reso
         return;
     }
 
+    // Prevent 'pagehide' event handlers from starting new loads as we are in the PageCache.
+    if (cachedResourceLoader.frame()->page() && cachedResourceLoader.frame()->page()->dismissalEventBeingDispatched() == Page::DismissalType::PageHide) {
+        failBeforeStarting();
+        return;
+    }
+
     FrameLoader& frameLoader = cachedResourceLoader.frame()->loader();
     if (options.securityCheck() == DoSecurityCheck && (frameLoader.state() == FrameStateProvisional || !frameLoader.activeDocumentLoader() || frameLoader.activeDocumentLoader()->isStopping())) {
         failBeforeStarting();

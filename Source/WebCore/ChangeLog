@@ -1,3 +1,91 @@
+2015-06-08  Chris Dumez  <cdumez@apple.com>
+
+        WebContent crash in WebCore::Page::sessionID() const + 0 (Page.cpp:1660)
+        https://bugs.webkit.org/show_bug.cgi?id=145748
+        <rdar://problem/21226577>
+
+        Reviewed by Brady Eidson.
+
+        We would sometimes crash when pruning the PageCache because it was
+        possible for frames to still be loading while in the PageCache and
+        we would try to stop the load when the CachedFrame is destroyed. This
+        code path was not supposed to be exercised as we were not supposed to
+        have pages still loading inside the PageCache.
+
+        r185017 made sure we don't insert into the PageCache pages that are
+        still loading. However, nothing was preventing content from starting
+        new loads in their 'pagehide' event handlers, *after* the decision
+        to put the page in the PageCache was made.
+
+        This patch prevents content from starting loads from a 'pagehide'
+        event handler so that we can no longer have content that is loading
+        inside the PageCache. 'ping' image loads still go through though as
+        these are specially handled and use PingLoaders.
+
+        Tests: http/tests/navigation/image-load-in-pagehide-handler.html
+               http/tests/navigation/subframe-pagehide-handler-starts-load.html
+               http/tests/navigation/subframe-pagehide-handler-starts-load2.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::stopLoading):
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::FrameLoader::stopAllLoaders):
+        (WebCore::FrameLoader::handleBeforeUnloadEvent):
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::pageDismissalEventBeingDispatched):
+        (WebCore::FrameLoader::PageDismissalEventType::PageDismissalEventType):
+        (WebCore::FrameLoader::PageDismissalEventType::operator Page::DismissalType):
+
+        Add wrapper class for m_pageDismissalEventBeingDispatched member type.
+        The wrapper takes care of updating the m_dismissalEventBeingDispatched
+        member on the Page every time the member on FrameLoader is updated. We
+        now cache this information on the Page so that clients can cheaply
+        query if a dismissal event is being dispatched in any of the Page's
+        frame, without having to traverse the frame tree.
+
+        * loader/ImageLoader.cpp:
+        (WebCore::pageIsBeingDismissed):
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::load):
+
+        Abort the load early if we are currently dispatching a 'pagehide'
+        event. We don't allow new loads at such point because we've already
+        made the decision to add the Page to the PageCache.
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestImage):
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::runModal): Deleted.
+        (WebCore::Chrome::setToolbarsVisible): Deleted.
+        (WebCore::Chrome::toolbarsVisible): Deleted.
+        (WebCore::Chrome::runJavaScriptConfirm): Deleted.
+        (WebCore::Chrome::runJavaScriptPrompt): Deleted.
+        (WebCore::Chrome::shouldInterruptJavaScript): Deleted.
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::canShowModalDialogNow):
+
+        Drop ChromeClient::shouldRunModalDialogDuringPageDismissal() and code
+        using it as it is unused and I did not think it was worth updating
+        this code.
+
+        * page/Page.h:
+        (WebCore::Page::dismissalEventBeingDispatched):
+        (WebCore::Page::setDismissalEventBeingDispatched):
+
+        Add a m_dismissalEventBeingDispatched member to the Page so that we can
+        easily query if a dismissal event is being dispatched in any of the
+        frames, without having to traverse the frame tree. I suspect more call
+        sites of FrameLoader::pageDismissalEventBeingDispatched() may actually
+        want this but I did not make such change in this patch. It is important
+        to check all the frames and not simply the current one because a frame's
+        pagehide event handler may trigger a load in another frame.
+
 2015-05-29  Chris Dumez  <cdumez@apple.com>
 
         WebContent crash in WebCore::Page::sessionID() const + 0 (Page.cpp:1660)

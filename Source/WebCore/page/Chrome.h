@@ -120,7 +120,6 @@ public:
     WEBCORE_EXPORT void show() const;
 
     bool canRunModal() const;
-    bool canRunModalNow() const;
     void runModal() const;
 
     void setToolbarsVisible(bool) const;

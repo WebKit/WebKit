@@ -147,6 +147,15 @@ public:
     MainFrame& mainFrame() { ASSERT(m_mainFrame); return *m_mainFrame; }
     const MainFrame& mainFrame() const { ASSERT(m_mainFrame); return *m_mainFrame; }
 
+    enum class DismissalType {
+        None,
+        BeforeUnload,
+        PageHide,
+        Unload
+    };
+    DismissalType dismissalEventBeingDispatched() const { return m_dismissalEventBeingDispatched; }
+    void setDismissalEventBeingDispatched(DismissalType dismissalType) { m_dismissalEventBeingDispatched = dismissalType; }
+
     bool openedByDOM() const;
     void setOpenedByDOM();
 
@@ -584,6 +593,7 @@ private:
     bool m_isClosing;
 
     bool m_isPlayingAudio;
+    DismissalType m_dismissalEventBeingDispatched { DismissalType::None };
 };
 
 inline PageGroup& Page::group()

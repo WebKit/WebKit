@@ -1,0 +1,30 @@
+<html><head>
+<title>Image load in pagehide handler</title>
+<script>
+
+var testCalled = false;
+
+function test() {
+    if (!testCalled) {
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+            testRunner.waitUntilDone();
+        }
+        testCalled = true;
+        return;
+    }
+    location.assign("resources/image-load-in-pagehide-handler-2.html");
+}
+
+function ping() {
+    var img = new Image(1, 1);
+    img.src = "resources/save-Ping.php";
+}
+
+</script>
+</head>
+<body onload="test();" onpagehide="ping();">
+<img src="resources/delete-ping.php" onload="test();" onerror="test();"></img>
+<p>Tests that ping loads in 'pagehide' handlers go through.</p>
+</body></html>
