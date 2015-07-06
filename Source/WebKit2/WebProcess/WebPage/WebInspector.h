@@ -91,6 +91,7 @@ private:
     friend class WebInspectorClient;
 
     explicit WebInspector(WebPage*);
+    virtual ~WebInspector();
 
     bool canAttachWindow();
 
