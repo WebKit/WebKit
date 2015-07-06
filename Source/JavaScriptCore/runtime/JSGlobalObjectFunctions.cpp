@@ -53,7 +53,16 @@ using namespace Unicode;
 
 namespace JSC {
 
-static JSValue encode(ExecState* exec, const char* doNotEscape)
+template<unsigned charactersCount>
+static Bitmap<256> makeCharacterBitmap(const char (&characters)[charactersCount])
+{
+    Bitmap<256> bitmap;
+    for (unsigned i = 0; i < charactersCount; ++i)
+        bitmap.set(characters[i]);
+    return bitmap;
+}
+
+static JSValue encode(ExecState* exec, const Bitmap<256>& doNotEscape)
 {
     CString cstr = exec->argument(0).toString(exec)->value(exec).utf8(StrictConversion);
     if (!cstr.data())
@@ -63,7 +72,7 @@ static JSValue encode(ExecState* exec, const char* doNotEscape)
     const char* p = cstr.data();
     for (size_t k = 0; k < cstr.length(); k++, p++) {
         char c = *p;
-        if (c && strchr(doNotEscape, c))
+        if (c && doNotEscape.get(static_cast<LChar>(c)))
             builder.append(static_cast<LChar>(c));
         else {
             builder.append(static_cast<LChar>('%'));
@@ -75,7 +84,7 @@ static JSValue encode(ExecState* exec, const char* doNotEscape)
 
 template <typename CharType>
 ALWAYS_INLINE
-static JSValue decode(ExecState* exec, const CharType* characters, int length, const char* doNotUnescape, bool strict)
+static JSValue decode(ExecState* exec, const CharType* characters, int length, const Bitmap<256>& doNotUnescape, bool strict)
 {
     JSStringBuilder builder;
     int k = 0;
@@ -127,7 +136,7 @@ static JSValue decode(ExecState* exec, const CharType* characters, int length, c
                     u = Lexer<UChar>::convertUnicode(p[2], p[3], p[4], p[5]);
                 }
             }
-            if (charLen && (u == 0 || u >= 128 || !strchr(doNotUnescape, u))) {
+            if (charLen && (u == 0 || u >= 128 || !doNotUnescape.get(static_cast<LChar>(u)))) {
                 builder.append(u);
                 k += charLen;
                 continue;
@@ -139,7 +148,7 @@ static JSValue decode(ExecState* exec, const CharType* characters, int length, c
     return builder.build(exec);
 }
 
-static JSValue decode(ExecState* exec, const char* doNotUnescape, bool strict)
+static JSValue decode(ExecState* exec, const Bitmap<256>& doNotUnescape, bool strict)
 {
     String str = exec->argument(0).toString(exec)->value(exec);
     
@@ -575,46 +584,51 @@ EncodedJSValue JSC_HOST_CALL globalFuncIsFinite(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL globalFuncDecodeURI(ExecState* exec)
 {
-    static const char do_not_unescape_when_decoding_URI[] =
-        "#$&+,/:;=?@";
+    static Bitmap<256> doNotUnescapeWhenDecodingURI = makeCharacterBitmap(
+        "#$&+,/:;=?@"
+    );
 
-    return JSValue::encode(decode(exec, do_not_unescape_when_decoding_URI, true));
+    return JSValue::encode(decode(exec, doNotUnescapeWhenDecodingURI, true));
 }
 
 EncodedJSValue JSC_HOST_CALL globalFuncDecodeURIComponent(ExecState* exec)
 {
-    return JSValue::encode(decode(exec, "", true));
+    static Bitmap<256> emptyBitmap;
+    return JSValue::encode(decode(exec, emptyBitmap, true));
 }
 
 EncodedJSValue JSC_HOST_CALL globalFuncEncodeURI(ExecState* exec)
 {
-    static const char do_not_escape_when_encoding_URI[] =
+    static Bitmap<256> doNotEscapeWhenEncodingURI = makeCharacterBitmap(
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         "abcdefghijklmnopqrstuvwxyz"
         "0123456789"
-        "!#$&'()*+,-./:;=?@_~";
+        "!#$&'()*+,-./:;=?@_~"
+    );
 
-    return JSValue::encode(encode(exec, do_not_escape_when_encoding_URI));
+    return JSValue::encode(encode(exec, doNotEscapeWhenEncodingURI));
 }
 
 EncodedJSValue JSC_HOST_CALL globalFuncEncodeURIComponent(ExecState* exec)
 {
-    static const char do_not_escape_when_encoding_URI_component[] =
+    static Bitmap<256> doNotEscapeWhenEncodingURIComponent = makeCharacterBitmap(
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         "abcdefghijklmnopqrstuvwxyz"
         "0123456789"
-        "!'()*-._~";
+        "!'()*-._~"
+    );
 
-    return JSValue::encode(encode(exec, do_not_escape_when_encoding_URI_component));
+    return JSValue::encode(encode(exec, doNotEscapeWhenEncodingURIComponent));
 }
 
 EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState* exec)
 {
-    static const char do_not_escape[] =
+    static Bitmap<256> doNotEscape = makeCharacterBitmap(
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         "abcdefghijklmnopqrstuvwxyz"
         "0123456789"
-        "*+-./@_";
+        "*+-./@_"
+    );
 
     JSStringBuilder builder;
     String str = exec->argument(0).toString(exec)->value(exec);
@@ -622,7 +636,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState* exec)
         const LChar* c = str.characters8();
         for (unsigned k = 0; k < str.length(); k++, c++) {
             int u = c[0];
-            if (u && strchr(do_not_escape, static_cast<char>(u)))
+            if (u && doNotEscape.get(static_cast<LChar>(u)))
                 builder.append(*c);
             else {
                 builder.append(static_cast<LChar>('%'));
@@ -641,7 +655,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState* exec)
             builder.append(static_cast<LChar>('u'));
             appendByteAsHex(u >> 8, builder);
             appendByteAsHex(u & 0xFF, builder);
-        } else if (u != 0 && strchr(do_not_escape, static_cast<char>(u)))
+        } else if (u != 0 && doNotEscape.get(static_cast<LChar>(u)))
             builder.append(*c);
         else {
             builder.append(static_cast<LChar>('%'));
