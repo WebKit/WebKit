@@ -293,7 +293,7 @@ void NetworkResourceLoader::didReceiveBuffer(ResourceHandle* handle, PassRefPtr<
 
     if (m_bufferedDataForCache) {
         // Prevent memory growth in case of streaming data.
-        const size_t maximumCacheBufferSize = 10 * 1014 * 1024;
+        const size_t maximumCacheBufferSize = 10 * 1024 * 1024;
         if (m_bufferedDataForCache->size() + buffer->size() <= maximumCacheBufferSize)
             m_bufferedDataForCache->append(buffer.get());
         else
