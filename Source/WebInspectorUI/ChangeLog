@@ -1,3 +1,18 @@
+2015-07-06  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Mark console filters that have unseen messages by colored dots
+        https://bugs.webkit.org/show_bug.cgi?id=146616
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/LogContentView.css:
+        (.log-scope-bar > li.unread::before):
+        (.log-scope-bar > li.unread:hover::before):
+        (.log-scope-bar > li.unread.errors::before):
+        (.log-scope-bar > li.unread.warnings::before):
+        (.log-scope-bar > li.unread.logs::before):
+        (@keyframes unread-background-pulse):
+
 2015-07-06  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Exceptions in Network timeline when resource updates and filters are applied

@@ -23,24 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.log-scope-bar > li.unread {
-    animation: unread-border-pulse 1.5s infinite alternate;
+.log-scope-bar > li.unread::before {
+    content: '';
+    display: inline-block;
+    vertical-align: baseline;
+
+    margin-left: -10px;
+    margin-right: 2px;
+    width: 8px;
+    height: 8px;
+
+    -webkit-clip-path: circle(50% at 50% 50%);
+    animation: unread-background-pulse 1.5s ease-in-out infinite alternate-reverse;
 }
 
-.log-scope-bar > li.unread.errors {
-    border-color: red;
+.log-scope-bar > li.unread:hover::before {
+    visibility: hidden;
 }
 
-.log-scope-bar > li.unread.warnings {
-    border-color: gold;
+.log-scope-bar > li.unread.errors::before {
+    background-color: hsl(0, 95%, 72%);
 }
 
-.log-scope-bar > li.unread.logs {
-    border-color: grey;
+.log-scope-bar > li.unread.warnings::before {
+    background-color: hsl(48, 98%, 51%);
 }
 
-@keyframes unread-border-pulse {
-    from { border-color: transparent; }
+.log-scope-bar > li.unread.logs::before {
+    background-color: hsl(213, 92%, 77%);
+}
+
+@keyframes unread-background-pulse {
+    from { background-color: transparent; }
 }
 
 .content-view.log {
