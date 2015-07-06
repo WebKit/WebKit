@@ -32,6 +32,7 @@
 
 @class UIScrollView;
 @class UIViewController;
+@class _WKActivatedElementInfo;
 @class _WKFrameHandle;
 
 @protocol WKUIDelegatePrivate <WKUIDelegate>
@@ -63,6 +64,7 @@ struct UIEdgeInsets;
 - (void)_webView:(WKWebView *)webView commitPreviewedImageWithURL:(NSURL *)imageURL WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 - (void)_webView:(WKWebView *)webView didDismissPreviewViewController:(UIViewController *)previewedViewController;
 - (UIEdgeInsets)_webView:(WKWebView *)webView finalObscuredInsetsForScrollView:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset;
+- (UIViewController *)_webView:(WKWebView *)webView previewViewControllerForURL:(NSURL *)url defaultActions:(NSArray *)actions elementInfo:(_WKActivatedElementInfo *)elementInfo WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 #endif
 
 @end

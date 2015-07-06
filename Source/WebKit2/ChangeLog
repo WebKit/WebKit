@@ -1,3 +1,35 @@
+2015-07-06  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Allow UIDelegate to customize link actions in preview.
+        https://bugs.webkit.org/show_bug.cgi?id=146567
+
+        Add a new UIDelegate method to pass the defaultActions and elementInfo to client to allow
+        the client customize the actions based on the element. Also add a new SPI runActionWithElementInfo:
+        to _WKElementAction and make it aware of the WKActionSheetAssistant that creates it, so that
+        the client can run the action without knowing WKActionSheetAssistant.
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h: Add delegate method _webView:previewViewControllerForURL:defaultActions:elementInfo:.
+        * UIProcess/API/Cocoa/_WKElementAction.h: Add a SPI runActionWithElementInfo:.
+        * UIProcess/API/Cocoa/_WKElementAction.mm:
+        (-[_WKElementAction _initWithTitle:actionHandler:type:assistant:]): Modified initializer, also initialize _defaultActionSheetAssistant
+            iVar if the caller provides that.
+        (+[_WKElementAction elementActionWithTitle:actionHandler:]): Use the new initializer.
+        (+[_WKElementAction _elementActionWithType:customTitle:assistant:]): A new helper method to create _WKElementAction with assistant.
+        (+[_WKElementAction _elementActionWithType:assistant:]):
+        (+[_WKElementAction elementActionWithType:customTitle:]):
+        (-[_WKElementAction runActionWithElementInfo:]):
+        * UIProcess/API/Cocoa/_WKElementActionInternal.h:
+        * UIProcess/ios/WKActionSheetAssistant.h: Add a method defaultActionsForLinkSheet.
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant defaultActionsForLinkSheet]): Get default actions for current link that is activated.
+        (-[WKActionSheetAssistant showLinkSheet]): Use defaultActionsForLinkSheet.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView previewViewControllerForPosition:inSourceView:]): Pass defaultActions and elementInfo to UIDelegate when querying
+            for preview view controller.
+        (-[WKContentView didDismissPreviewViewController:committing:]):
+
 2015-07-06  Brady Eidson  <beidson@apple.com>
 
         ShouldOpenExternalURLsPolicy should default to "Allow" for WK2 API loads.

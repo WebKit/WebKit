@@ -52,6 +52,8 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 
 + (instancetype)elementActionWithTitle:(NSString *)title actionHandler:(WKElementActionHandler)handler;
 
+- (void)runActionWithElementInfo:(_WKActivatedElementInfo *)info WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
 @property (nonatomic, readonly) _WKElementActionType type;
 @property (nonatomic, readonly) NSString* title;
 @property (nonatomic, copy) WKElementActionDismissalHandler dismissalHandler;

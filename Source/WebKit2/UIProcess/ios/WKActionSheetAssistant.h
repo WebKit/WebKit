@@ -62,6 +62,7 @@ struct InteractionInformationAtPosition;
 - (void)showDataDetectorsSheet;
 - (void)cleanupSheet;
 - (void)updateSheetPosition;
+- (RetainPtr<NSArray>)defaultActionsForLinkSheet;
 @end
 
 #endif // PLATFORM(IOS)

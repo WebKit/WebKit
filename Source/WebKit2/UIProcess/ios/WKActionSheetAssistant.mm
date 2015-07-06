@@ -35,6 +35,7 @@
 #import "WKContentViewInteraction.h"
 #import "WeakObjCPtr.h"
 #import "WebPageProxy.h"
+#import "WKNSURLExtras.h"
 #import "_WKActivatedElementInfoInternal.h"
 #import "_WKElementActionInternal.h"
 #import <UIKit/UIView.h>
@@ -275,6 +276,30 @@ using namespace WebKit;
         [self cleanupSheet];
 }
 
+- (RetainPtr<NSArray>)defaultActionsForLinkSheet
+{
+    auto delegate = _delegate.get();
+    if (!delegate)
+        return nil;
+
+    const auto& positionInformation = [delegate positionInformationForActionSheetAssistant:self];
+
+    NSURL *targetURL = [NSURL URLWithString:positionInformation.url];
+    if (!targetURL)
+        return nil;
+
+    auto defaultActions = adoptNS([[NSMutableArray alloc] init]);
+    [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeOpen assistant:self]];
+#if HAVE(SAFARI_SERVICES_FRAMEWORK)
+    if ([getSSReadingListClass() supportsURL:targetURL])
+        [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeAddToReadingList assistant:self]];
+#endif
+    if (![[targetURL scheme] length] || [[targetURL scheme] caseInsensitiveCompare:@"javascript"] != NSOrderedSame)
+        [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeCopy assistant:self]];
+
+    return defaultActions;
+}
+
 - (void)showLinkSheet
 {
     ASSERT(!_interactionSheet);
@@ -286,19 +311,11 @@ using namespace WebKit;
 
     const auto& positionInformation = [delegate positionInformationForActionSheetAssistant:self];
 
-    NSURL *targetURL = [NSURL URLWithString:positionInformation.url];
+    NSURL *targetURL = [NSURL _web_URLWithWTFString:positionInformation.url];
     if (!targetURL)
         return;
 
-    auto defaultActions = adoptNS([[NSMutableArray alloc] init]);
-    [defaultActions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeOpen]];
-#if HAVE(SAFARI_SERVICES_FRAMEWORK)
-    if ([getSSReadingListClass() supportsURL:targetURL])
-        [defaultActions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeAddToReadingList]];
-#endif
-    if (![[targetURL scheme] length] || [[targetURL scheme] caseInsensitiveCompare:@"javascript"] != NSOrderedSame)
-        [defaultActions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeCopy]];
-
+    auto defaultActions = [self defaultActionsForLinkSheet];
     RetainPtr<_WKActivatedElementInfo> elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeLink
         URL:targetURL location:positionInformation.point title:positionInformation.title rect:positionInformation.bounds image:positionInformation.image.get()]);
 

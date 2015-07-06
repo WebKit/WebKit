@@ -52,6 +52,7 @@
 #import "WebIOSEventFactory.h"
 #import "WebPageMessages.h"
 #import "WebProcessProxy.h"
+#import "_WKActivatedElementInfoInternal.h"
 #import "_WKFormDelegate.h"
 #import "_WKFormInputSession.h"
 #import <CoreText/CTFont.h>
@@ -3218,6 +3219,13 @@ static bool isAssistableInputType(InputType type)
     if (canShowLinkPreview) {
         _previewType = PreviewElementType::Link;
         NSURL *targetURL = [NSURL _web_URLWithWTFString:_positionInformation.url];
+        if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForURL:defaultActions:elementInfo:)]) {
+            _highlightLongPressCanClick = NO;
+            RetainPtr<_WKActivatedElementInfo> elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeLink URL:targetURL location:_positionInformation.point title:_positionInformation.title rect:_positionInformation.bounds image:_positionInformation.image.get()]);
+            _page->startInteractionWithElementAtPosition(_positionInformation.point);
+            return [uiDelegate _webView:_webView previewViewControllerForURL:targetURL defaultActions:[_actionSheetAssistant defaultActionsForLinkSheet].get() elementInfo:elementInfo.get()];
+        }
+
         if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForURL:)]) {
             _highlightLongPressCanClick = NO;
             return [uiDelegate _webView:_webView previewViewControllerForURL:targetURL];
@@ -3290,6 +3298,7 @@ static bool isAssistableInputType(InputType type)
 - (void)didDismissPreviewViewController:(UIViewController *)viewController committing:(BOOL)committing
 {
     [self _addDefaultGestureRecognizers];
+    _page->stopInteraction();
 
     id<WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
     if ([uiDelegate respondsToSelector:@selector(_webView:didDismissPreviewViewController:)])
