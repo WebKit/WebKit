@@ -71,9 +71,6 @@ public:
     enum EmptyValueTag { EmptyValue };
     Term(EmptyValueTag);
 
-    enum DeletedValueTag { DeletedValue };
-    Term(DeletedValueTag);
-
     ~Term();
 
     bool isValid() const;
@@ -107,10 +104,13 @@ public:
     unsigned hash() const;
 
     bool isEmptyValue() const;
-    bool isDeletedValue() const;
 
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
     String toString() const;
+#endif
+
+#if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
+    size_t memoryUsed() const;
 #endif
     
 private:
@@ -124,7 +124,6 @@ private:
 
     enum class TermType : uint8_t {
         Empty,
-        Deleted,
         CharacterSet,
         Group
     };
@@ -230,8 +229,6 @@ inline String Term::toString() const
     switch (m_termType) {
     case TermType::Empty:
         return "(Empty)";
-    case TermType::Deleted:
-        return "(Deleted)";
     case TermType::CharacterSet: {
         StringBuilder builder;
         builder.append('[');
@@ -262,14 +259,6 @@ inline String Term::toString() const
     }
 }
 #endif
-    
-struct TermHash {
-    static unsigned hash(const Term& term) { return term.hash(); }
-    static bool equal(const Term& a, const Term& b) { return a == b; }
-    static const bool safeToCompareToEmptyOrDeleted = true;
-};
-
-struct TermHashTraits : public WTF::CustomHashTraits<Term> { };
 
 inline Term::Term()
 {
@@ -316,7 +305,6 @@ inline Term::Term(const Term& other)
 {
     switch (m_termType) {
     case TermType::Empty:
-    case TermType::Deleted:
         break;
     case TermType::CharacterSet:
         new (NotNull, &m_atomData.characterSet) CharacterSet(other.m_atomData.characterSet);
@@ -333,7 +321,6 @@ inline Term::Term(Term&& other)
 {
     switch (m_termType) {
     case TermType::Empty:
-    case TermType::Deleted:
         break;
     case TermType::CharacterSet:
         new (NotNull, &m_atomData.characterSet) CharacterSet(WTF::move(other.m_atomData.characterSet));
@@ -350,11 +337,6 @@ inline Term::Term(EmptyValueTag)
 {
 }
 
-inline Term::Term(DeletedValueTag)
-    : m_termType(TermType::Deleted)
-{
-}
-
 inline Term::~Term()
 {
     destroy();
@@ -362,7 +344,7 @@ inline Term::~Term()
 
 inline bool Term::isValid() const
 {
-    return m_termType != TermType::Empty && m_termType != TermType::Deleted;
+    return m_termType != TermType::Empty;
 }
 
 inline void Term::addCharacter(UChar character, bool isCaseSensitive)
@@ -471,7 +453,6 @@ inline bool Term::isKnownToMatchAnyString() const
 
     switch (m_termType) {
     case TermType::Empty:
-    case TermType::Deleted:
         ASSERT_NOT_REACHED();
         break;
     case TermType::CharacterSet:
@@ -513,7 +494,6 @@ inline bool Term::hasFixedLength() const
 
     switch (m_termType) {
     case TermType::Empty:
-    case TermType::Deleted:
         ASSERT_NOT_REACHED();
         break;
     case TermType::CharacterSet:
@@ -552,7 +532,6 @@ inline bool Term::operator==(const Term& other) const
 
     switch (m_termType) {
     case TermType::Empty:
-    case TermType::Deleted:
         return true;
     case TermType::CharacterSet:
         return m_atomData.characterSet == other.m_atomData.characterSet;
@@ -571,9 +550,6 @@ inline unsigned Term::hash() const
     case TermType::Empty:
         secondary = 52184393;
         break;
-    case TermType::Deleted:
-        secondary = 40342988;
-        break;
     case TermType::CharacterSet:
         secondary = m_atomData.characterSet.hash();
         break;
@@ -589,18 +565,12 @@ inline bool Term::isEmptyValue() const
     return m_termType == TermType::Empty;
 }
 
-inline bool Term::isDeletedValue() const
-{
-    return m_termType == TermType::Deleted;
-}
-
 inline bool Term::isUniversalTransition() const
 {
     ASSERT(isValid());
 
     switch (m_termType) {
     case TermType::Empty:
-    case TermType::Deleted:
         ASSERT_NOT_REACHED();
         break;
     case TermType::CharacterSet:
@@ -616,7 +586,6 @@ inline ImmutableCharNFANodeBuilder Term::generateSubgraphForAtom(NFA& nfa, Immut
 {
     switch (m_termType) {
     case TermType::Empty:
-    case TermType::Deleted:
         ASSERT_NOT_REACHED();
         return ImmutableCharNFANodeBuilder();
     case TermType::CharacterSet: {
@@ -676,7 +645,6 @@ inline void Term::destroy()
 {
     switch (m_termType) {
     case TermType::Empty:
-    case TermType::Deleted:
         break;
     case TermType::CharacterSet:
         m_atomData.characterSet.~CharacterSet();
@@ -685,8 +653,20 @@ inline void Term::destroy()
         m_atomData.group.~Group();
         break;
     }
-    m_termType = TermType::Deleted;
+    m_termType = TermType::Empty;
 }
+
+#if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
+inline size_t Term::memoryUsed() const
+{
+    size_t extraMemory = 0;
+    if (m_termType == TermType::Group) {
+        for (const Term& term : m_atomData.group.terms)
+            extraMemory += term.memoryUsed();
+    }
+    return sizeof(Term) + extraMemory;
+}
+#endif
 
 } // namespace ContentExtensions
 } // namespace WebCore

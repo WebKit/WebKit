@@ -23,45 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CombinedURLFilters_h
-#define CombinedURLFilters_h
+#ifndef CombinedFiltersAlphabet_h
+#define CombinedFiltersAlphabet_h
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "CombinedFiltersAlphabet.h"
 #include "ContentExtensionsDebugging.h"
-#include "NFA.h"
-#include <wtf/Forward.h>
+#include "Term.h"
+#include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 namespace ContentExtensions {
 
-struct PrefixTreeVertex;
-
-class WEBCORE_EXPORT CombinedURLFilters {
+class CombinedFiltersAlphabet {
 public:
-    CombinedURLFilters();
-    ~CombinedURLFilters();
-
-    void addPattern(uint64_t actionId, const Vector<Term>& pattern);
-    void addDomain(uint64_t actionId, const String& domain);
-
-    void processNFAs(size_t maxNFASize, std::function<void(NFA&&)> handler);
-    bool isEmpty() const;
-
+    const Term* interned(const Term&);
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     size_t memoryUsed() const;
 #endif
-#if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
-    void print() const;
-#endif
-    
+
 private:
-    CombinedFiltersAlphabet m_alphabet;
-    std::unique_ptr<PrefixTreeVertex> m_prefixTreeRoot;
-    HashMap<const PrefixTreeVertex*, ActionList> m_actions;
+    struct TermPointerHash {
+        static unsigned hash(const Term* key) { return key->hash(); }
+        static inline bool equal(const Term* a, const Term* b)
+        {
+            return *a == *b;
+        }
+        static const bool safeToCompareToEmptyOrDeleted = false;
+    };
+
+    HashSet<const Term*, TermPointerHash> m_uniqueTerms;
+    Vector<std::unique_ptr<Term>> m_internedTermsStorage;
 };
 
 } // namespace ContentExtensions
@@ -69,4 +63,4 @@ private:
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
 
-#endif // CombinedURLFilters_h
+#endif // CombinedFiltersAlphabet_h

@@ -23,50 +23,60 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CombinedURLFilters_h
-#define CombinedURLFilters_h
+#include "config.h"
+#include "CombinedFiltersAlphabet.h"
 
 #if ENABLE(CONTENT_EXTENSIONS)
-
-#include "CombinedFiltersAlphabet.h"
-#include "ContentExtensionsDebugging.h"
-#include "NFA.h"
-#include <wtf/Forward.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
 namespace ContentExtensions {
 
-struct PrefixTreeVertex;
+struct TermCreatorInput {
+    const Term& term;
+    Vector<std::unique_ptr<Term>>& internedTermsStorage;
+};
 
-class WEBCORE_EXPORT CombinedURLFilters {
-public:
-    CombinedURLFilters();
-    ~CombinedURLFilters();
+struct TermCreatorTranslator {
+    static unsigned hash(const TermCreatorInput& input)
+    {
+        return input.term.hash();
+    }
 
-    void addPattern(uint64_t actionId, const Vector<Term>& pattern);
-    void addDomain(uint64_t actionId, const String& domain);
+    static inline bool equal(const Term* term, const TermCreatorInput& input)
+    {
+        return *term == input.term;
+    }
 
-    void processNFAs(size_t maxNFASize, std::function<void(NFA&&)> handler);
-    bool isEmpty() const;
+    static void translate(const Term*& location, const TermCreatorInput& input, unsigned)
+    {
+        std::unique_ptr<Term> newUniqueTerm(new Term(input.term));
+        location = newUniqueTerm.get();
+        input.internedTermsStorage.append(WTF::move(newUniqueTerm));
+    }
+};
+
+const Term* CombinedFiltersAlphabet::interned(const Term& term)
+{
+    TermCreatorInput input { term, m_internedTermsStorage };
+    auto addResult = m_uniqueTerms.add<TermCreatorTranslator>(input);
+    return *addResult.iterator;
+}
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
-    size_t memoryUsed() const;
+size_t CombinedFiltersAlphabet::memoryUsed() const
+{
+    size_t termsSize = 0;
+    for (const auto& termPointer : m_internedTermsStorage)
+        termsSize += termPointer->memoryUsed();
+    return sizeof(CombinedFiltersAlphabet)
+        + termsSize
+        + m_uniqueTerms.capacity() * sizeof(Term*)
+        + m_internedTermsStorage.capacity() * sizeof(std::unique_ptr<Term>);
+}
 #endif
-#if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
-    void print() const;
-#endif
-    
-private:
-    CombinedFiltersAlphabet m_alphabet;
-    std::unique_ptr<PrefixTreeVertex> m_prefixTreeRoot;
-    HashMap<const PrefixTreeVertex*, ActionList> m_actions;
-};
 
 } // namespace ContentExtensions
 } // namespace WebCore
 
 #endif // ENABLE(CONTENT_EXTENSIONS)
-
-#endif // CombinedURLFilters_h
