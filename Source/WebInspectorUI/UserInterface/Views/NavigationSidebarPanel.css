@@ -156,7 +156,7 @@
     display: block;
 }
 
-.navigation-sidebar-panel-content-tree-outline:focus .item.selected .disclosure-button {
+.navigation-sidebar-panel-content-tree-outline:matches(:focus, .force-focus) .item.selected .disclosure-button {
     background-image: -webkit-canvas(navigation-sidebar-panel-disclosure-triangle-closed-selected) !important;
 }
 
@@ -164,7 +164,7 @@
     background-image: -webkit-canvas(navigation-sidebar-panel-disclosure-triangle-open-normal);
 }
 
-.navigation-sidebar-panel-content-tree-outline:focus .item.selected.expanded .disclosure-button {
+.navigation-sidebar-panel-content-tree-outline:matches(:focus, .force-focus) .item.selected.expanded .disclosure-button {
     background-image: -webkit-canvas(navigation-sidebar-panel-disclosure-triangle-open-selected) !important;
 }
 
@@ -198,7 +198,7 @@
     background-color: rgb(212, 212, 212);
 }
 
-.navigation-sidebar-panel-content-tree-outline:focus .item.selected {
+.navigation-sidebar-panel-content-tree-outline:matches(:focus, .force-focus) .item.selected {
     color: white;
     background-color: rgb(0, 128, 252);
 }
@@ -239,7 +239,7 @@ body.window-inactive .navigation-sidebar-panel-content-tree-outline .item.select
     color: rgba(0, 0, 0, 0.7);
 }
 
-.navigation-sidebar-panel-content-tree-outline:focus .item.selected .subtitle {
+.navigation-sidebar-panel-content-tree-outline:matches(:focus, .force-focus) .item.selected .subtitle {
     color: rgba(255, 255, 255, 0.9);
 }
 

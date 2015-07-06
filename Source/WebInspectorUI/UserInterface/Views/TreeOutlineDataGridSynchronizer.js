@@ -43,6 +43,12 @@ WebInspector.TreeOutlineDataGridSynchronizer = class TreeOutlineDataGridSynchron
         this._dataGrid.addEventListener(WebInspector.DataGrid.Event.CollapsedNode, this._dataGridNodeCollapsed, this);
         this._dataGrid.addEventListener(WebInspector.DataGrid.Event.SelectedNodeChanged, this._dataGridNodeSelected, this);
 
+        this._dataGrid.element.addEventListener("focus", this._dataGridGainedFocus.bind(this));
+        this._dataGrid.element.addEventListener("blur", this._dataGridLostFocus.bind(this));
+
+        this._treeOutline.element.addEventListener("focus", this._treeOutlineGainedFocus.bind(this));
+        this._treeOutline.element.addEventListener("blur", this._treeOutlineLostFocus.bind(this));
+
         // FIXME: This is a hack. TreeOutline should just dispatch events via WebInspector.Object.
         var existingOnAdd = treeOutline.onadd;
         var existingOnRemove = treeOutline.onremove;
@@ -169,6 +175,16 @@ WebInspector.TreeOutlineDataGridSynchronizer = class TreeOutlineDataGridSynchron
         this._dataGrid.scrollContainer.scrollTop = this._treeOutline.element.parentNode.scrollTop;
     }
 
+    _dataGridGainedFocus(event)
+    {
+        this._treeOutline.element.classList.add("force-focus");
+    }
+
+    _dataGridLostFocus(event)
+    {
+        this._treeOutline.element.classList.remove("force-focus");
+    }
+
     _dataGridScrolled(event)
     {
         if (!this._enabled)
@@ -215,6 +231,16 @@ WebInspector.TreeOutlineDataGridSynchronizer = class TreeOutlineDataGridSynchron
 
         if (dataGridNode.__treeElement.expanded)
             dataGridNode.__treeElement.collapse();
+    }
+
+    _treeOutlineGainedFocus(event)
+    {
+        this._dataGrid.element.classList.add("force-focus");
+    }
+
+    _treeOutlineLostFocus(event)
+    {
+        this._dataGrid.element.classList.remove("force-focus");
     }
 
     _treeElementSelected(treeElement, selectedByUser)

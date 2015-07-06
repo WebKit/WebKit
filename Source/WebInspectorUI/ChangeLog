@@ -1,3 +1,41 @@
+2015-07-05  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Timeline row selection should have same background color in sidebar and data grid
+        https://bugs.webkit.org/show_bug.cgi?id=146606
+
+        Support a force-focus class name that TreeOutlineDataGridSynchronizer applies when one of the
+        elements is focused, so the other can look focused too.
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid:matches(:focus, .force-focus) tr.selected td:not(:last-child)):
+        (.data-grid:matches(:focus, .force-focus) tr.parent.selected td.disclosure::before):
+        (.data-grid:matches(:focus, .force-focus) tr.parent.expanded.selected td.disclosure::before):
+        (.data-grid:matches(:focus, .force-focus) tr.selected):
+        (.data-grid:matches(:focus, .force-focus) tr.selected td .subtitle):
+
+        * UserInterface/Views/Main.css:
+        (:matches(:focus, .force-focus) .selected .go-to-arrow):
+        (:matches(:focus, .force-focus) .selected .go-to-arrow:active):
+
+        * UserInterface/Views/NavigationSidebarPanel.css:
+        (.navigation-sidebar-panel-content-tree-outline:matches(:focus, .force-focus) .item.selected .disclosure-button):
+        (.navigation-sidebar-panel-content-tree-outline:matches(:focus, .force-focus) .item.selected.expanded .disclosure-button):
+        (.navigation-sidebar-panel-content-tree-outline:matches(:focus, .force-focus) .item.selected):
+        (.navigation-sidebar-panel-content-tree-outline:matches(:focus, .force-focus) .item.selected .subtitle):
+
+        * UserInterface/Views/TreeElementStatusButton.css:
+        (:matches(:focus, .force-focus) .item.selected > .status > .status-button > svg .filled):
+        (:matches(:focus, .force-focus) .item.selected > .status > .status-button > svg .stroked):
+
+        * UserInterface/Views/TreeOutlineDataGridSynchronizer.js:
+        (WebInspector.TreeOutlineDataGridSynchronizer):
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._dataGridGainedFocus): Added.
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._dataGridLostFocus): Added.
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._treeOutlineGainedFocus): Added.
+        (WebInspector.TreeOutlineDataGridSynchronizer.prototype._treeOutlineLostFocus): Added.
+
 2015-07-05  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Deleting in the CSS sidebar causes the warning icon to appear mid-word

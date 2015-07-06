@@ -261,11 +261,11 @@ body.window-inactive #split-content-browser {
     background-image: -webkit-canvas(go-to-arrow-normal-active);
 }
 
-:focus .selected .go-to-arrow {
+:matches(:focus, .force-focus) .selected .go-to-arrow {
     background-image: -webkit-canvas(go-to-arrow-selected);
 }
 
-:focus .selected .go-to-arrow:active {
+:matches(:focus, .force-focus) .selected .go-to-arrow:active {
     background-image: -webkit-canvas(go-to-arrow-selected-active);
 }
 

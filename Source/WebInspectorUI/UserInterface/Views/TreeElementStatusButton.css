@@ -34,7 +34,7 @@
     fill: rgb(128, 128, 128);
 }
 
-:focus .item.selected > .status > .status-button > svg .filled {
+:matches(:focus, .force-focus) .item.selected > .status > .status-button > svg .filled {
     fill: white !important;
 }
 
@@ -42,7 +42,7 @@
     stroke: rgb(128, 128, 128);
 }
 
-:focus .item.selected > .status > .status-button > svg .stroked {
+:matches(:focus, .force-focus) .item.selected > .status > .status-button > svg .stroked {
     stroke: white !important;
 }
 
