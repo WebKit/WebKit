@@ -87,7 +87,7 @@ enum ReasonFrameCannotBeInPageCache {
     HasSharedWorkers, // FIXME: Remove.
     NoHistoryItem,
     QuickRedirectComing,
-    IsLoadingInAPISense,
+    IsLoading,
     IsStopping,
     CannotSuspendActiveDOMObjects,
     DocumentLoaderUsesApplicationCache,
@@ -168,10 +168,10 @@ static unsigned logCanCacheFrameDecision(Frame& frame, DiagnosticLoggingClient& 
         logPageCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::quirkRedirectComingKey());
         rejectReasons |= 1 << QuickRedirectComing;
     }
-    if (frame.loader().documentLoader()->isLoadingInAPISense()) {
-        PCLOG("   -DocumentLoader is still loading in API sense");
-        logPageCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::loadingAPISenseKey());
-        rejectReasons |= 1 << IsLoadingInAPISense;
+    if (frame.loader().documentLoader()->isLoading()) {
+        PCLOG("   -DocumentLoader is still loading");
+        logPageCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::isLoadingKey());
+        rejectReasons |= 1 << IsLoading;
     }
     if (frame.loader().documentLoader()->isStopping()) {
         PCLOG("   -DocumentLoader is in the middle of stopping");
@@ -321,7 +321,7 @@ bool PageCache::canCachePageContainingThisFrame(Frame& frame)
         && !DatabaseManager::manager().hasOpenDatabases(document)
         && frameLoader.history().currentItem()
         && !frameLoader.quickRedirectComing()
-        && !documentLoader->isLoadingInAPISense()
+        && !documentLoader->isLoading()
         && !documentLoader->isStopping()
         && document->canSuspendActiveDOMObjects()
         // FIXME: We should investigating caching frames that have an associated

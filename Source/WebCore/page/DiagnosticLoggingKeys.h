@@ -55,7 +55,7 @@ public:
     static String isExpiredKey();
     static String loadedKey();
     static String loadingKey();
-    static String loadingAPISenseKey();
+    static String isLoadingKey();
     static String mainDocumentErrorKey();
     static String mainResourceKey();
     static String mediaKey();

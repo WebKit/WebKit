@@ -1,3 +1,43 @@
+2015-05-29  Chris Dumez  <cdumez@apple.com>
+
+        WebContent crash in WebCore::Page::sessionID() const + 0 (Page.cpp:1660)
+        https://bugs.webkit.org/show_bug.cgi?id=145422
+        <rdar://problem/20613631>
+
+        Reviewed by Brady Eidson.
+
+        We sometimes crash when destroying a PageCache CachedFrame because its
+        DocumentLoader is still loading. This should never happen as we are not
+        supposed to let pages are still have pending loads into the PageCache.
+
+        However, we were using DocumentLoader::isLoadingInAPISense() as check
+        in PageCache::canCachePageContainingThisFrame() which is not exactly
+        what we want. isLoadingInAPISense() no longer considers subresource
+        loads once the frame as loaded. This means if the JS triggers a new
+        load in a subframe after it has been loaded, then isLoadingInAPISense()
+        will return false, despite the pending load.
+
+        This patch replaces the isLoadingInAPISense() check with isLoading()
+        as this will consider all pending loads, even after the frame is
+        loaded.
+
+        In most cases, using isLoadingInAPISense() was not an issue because
+        we call DocumentLoader::stopLoading() in all subframes before starting
+        a provisional load. However, nothing seems to prevent JS from
+        triggering a new load after that and before the new load gets committed
+        (which is when we save the page into PageCache).
+
+        No new test as we don't have a reliable reproduction case and the
+        issue is timing related.
+
+        * history/PageCache.cpp:
+        (WebCore::logCanCacheFrameDecision):
+        (WebCore::PageCache::canCachePageContainingThisFrame):
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::isLoading):
+        (WebCore::DiagnosticLoggingKeys::loadingAPISenseKey): Deleted.
+        * page/DiagnosticLoggingKeys.h:
+
 2015-05-29  Brady Eidson  <beidson@apple.com>
 
         WebSQL default functions can bypass authorizer.
