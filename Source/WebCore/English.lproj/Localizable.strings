@@ -91,17 +91,8 @@
 /* WKErrorJavaScriptExceptionOccurred description */
 "A JavaScript exception occurred" = "A JavaScript exception occurred";
 
-/* WKErrorJavaScriptResultTypeIsUnsupported */
-"JavaScript execution returned a result of an unsupported type" = "JavaScript execution returned a result of an unsupported type";
-
-/* action menu item */
-"Add to Photos (action menu item)" = "Add to Photos";
-
 /* Title for Add to Reading List action button */
 "Add to Reading List" = "Add to Reading List";
-
-/* action menu item */
-"Add to Reading List (action menu item)" = "Add to Reading List";
 
 /* Undo action name */
 "Align Left (Undo action name)" = "Align Left";
@@ -189,15 +180,6 @@
 
 /* Copy context menu item */
 "Copy" = "Copy";
-
-/* image action menu item */
-"Copy (image action menu item)" = "Copy";
-
-/* text action menu item */
-"Copy (text action menu item)" = "Copy";
-
-/* video action menu item */
-"Copy (video action menu item)" = "Copy";
 
 /* Title for Copy Link or Image action button */
 "Copy ActionSheet Link" = "Copy";
@@ -316,6 +298,9 @@
 /* Title for action sheet for JavaScript link */
 "JavaScript Action Sheet Title" = "JavaScript";
 
+/* WKErrorJavaScriptResultTypeIsUnsupported description */
+"JavaScript execution returned a result of an unsupported type" = "JavaScript execution returned a result of an unsupported type";
+
 /* Undo action name */
 "Justify (Undo action name)" = "Justify";
 
@@ -385,9 +370,6 @@
 /* Menu item label for the track that represents disabling closed captions */
 "Off" = "Off";
 
-/* action menu item */
-"Open (action menu item)" = "Open";
-
 /* Title for Open Link action button */
 "Open ActionSheet Link" = "Open";
 
@@ -429,9 +411,6 @@
 
 /* Undo action name */
 "Paste (Undo action name)" = "Paste";
-
-/* action menu item */
-"Paste (action menu item)" = "Paste";
 
 /* Undo action name */
 "Paste Font (Undo action name)" = "Paste Font";
@@ -483,12 +462,6 @@
 
 /* Title for Save Image action button */
 "Save Image" = "Save Image";
-
-/* image action menu item */
-"Save to Downloads (image action menu item)" = "Save to Downloads";
-
-/* video action menu item */
-"Save to Downloads (video action menu item)" = "Save to Downloads";
 
 /* Search in Spotlight context menu item */
 "Search in Spotlight" = "Search in Spotlight";
@@ -594,9 +567,6 @@
 
 /* Menu section heading for subtitles */
 "Subtitles" = "Subtitles";
-
-/* action menu item */
-"Suggestions (action menu item)" = "Suggestions";
 
 /* Undo action name */
 "Superscript (Undo action name)" = "Superscript";
