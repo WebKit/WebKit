@@ -367,7 +367,9 @@ void InspectorPageAgent::enable(ErrorString&)
     m_enabled = true;
     m_instrumentingAgents->setInspectorPageAgent(this);
 
-    m_instrumentingAgents->inspectorEnvironment().executionStopwatch()->start();
+    auto stopwatch = m_instrumentingAgents->inspectorEnvironment().executionStopwatch();
+    stopwatch->reset();
+    stopwatch->start();
 
     if (Frame* frame = mainFrame())
         m_originalScriptExecutionDisabled = !frame->settings().isScriptEnabled();
