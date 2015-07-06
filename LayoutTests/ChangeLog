@@ -1,3 +1,12 @@
+2015-07-06  David Kilzer  <ddkilzer@apple.com>
+
+        http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html crashes on Windows sometimes
+
+        <http://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html#showAllRuns=true&tests=http%2Ftests%2Fsecurity%2FXFrameOptions%2Fx-frame-options-parent-same-origin-deny.html>
+
+        * platform/win/TestExpectations: Mark test as crashing, too:
+        - http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html
+
 2015-07-06  Youenn Fablet  <youenn.fablet@crf.canon.fr>
 
         Promise-returning functions should reject promises if the callee is not of the expected type
