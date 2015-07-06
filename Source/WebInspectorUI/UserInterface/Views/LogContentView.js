@@ -686,6 +686,9 @@ WebInspector.LogContentView.prototype = {
 
     _clearLog: function()
     {
+        for (var item of this._scopeBar.items)
+            item.element.classList.remove("unread");
+
         WebInspector.logManager.requestClearMessages();
     },
 
