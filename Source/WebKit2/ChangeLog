@@ -1,3 +1,15 @@
+2015-07-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Guard X11-specific code in webkitWebViewBaseDidRelaunchWebProcess()
+        https://bugs.webkit.org/show_bug.cgi?id=146627
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseDidRelaunchWebProcess):
+        Guard calls to DrawingAreaImpl::setNativeSurfaceHandleForCompositing()
+        that pass in an X11 Window ID with the PLATFORM(X11) build guards.
+
 2015-07-05  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Current page's scroll position is lost when transferring sessionState from one view to another
