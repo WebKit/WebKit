@@ -244,6 +244,9 @@ void NetworkResourceLoader::didReceiveResponseAsync(ResourceHandle* handle, cons
 
     bool shouldSendDidReceiveResponse = true;
 #if ENABLE(NETWORK_CACHE)
+    if (m_response.isMultipart())
+        m_bufferedDataForCache = nullptr;
+
     if (m_cacheEntryForValidation) {
         bool validationSucceeded = m_response.httpStatusCode() == 304; // 304 Not Modified
         if (validationSucceeded)
@@ -288,8 +291,14 @@ void NetworkResourceLoader::didReceiveBuffer(ResourceHandle* handle, PassRefPtr<
 #if ENABLE(NETWORK_CACHE)
     ASSERT(!m_cacheEntryForValidation);
 
-    if (m_bufferedDataForCache)
-        m_bufferedDataForCache->append(buffer.get());
+    if (m_bufferedDataForCache) {
+        // Prevent memory growth in case of streaming data.
+        const size_t maximumCacheBufferSize = 10 * 1014 * 1024;
+        if (m_bufferedDataForCache->size() + buffer->size() <= maximumCacheBufferSize)
+            m_bufferedDataForCache->append(buffer.get());
+        else
+            m_bufferedDataForCache = nullptr;
+    }
 #endif
     // FIXME: At least on OS X Yosemite we always get -1 from the resource handle.
     unsigned encodedDataLength = reportedEncodedDataLength >= 0 ? reportedEncodedDataLength : buffer->size();
@@ -327,7 +336,7 @@ void NetworkResourceLoader::didFinishLoading(ResourceHandle* handle, double fini
         }
 
         bool isPrivate = sessionID().isEphemeral();
-        if (hasCacheableRedirect && !isPrivate) {
+        if (m_bufferedDataForCache && hasCacheableRedirect && !isPrivate) {
             // Keep the connection alive.
             RefPtr<NetworkConnectionToWebProcess> connection(connectionToWebProcess());
             RefPtr<NetworkResourceLoader> loader(this);

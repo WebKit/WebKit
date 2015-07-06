@@ -1,3 +1,23 @@
+2015-07-06  Antti Koivisto  <antti@apple.com>
+
+        With multipart/replaced (e.g. motion JPEG), m_bufferedDataForCache grows unbounded in Networking process
+        https://bugs.webkit.org/show_bug.cgi?id=146630
+        <rdar://problem/21677340>
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didReceiveResponseAsync):
+
+            Don't buffer multipart/x-mixed-replace. We never want to cache these.
+
+        (WebKit::NetworkResourceLoader::didReceiveBuffer):
+
+            Limit the maximum size of the cache buffer to 10MB. This prevents unbounded memory growth if the resource
+            keeps streaming. It also prevents giant entries from pushing other data out of the cache.
+
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+
 2015-07-06  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Guard X11-specific code in webkitWebViewBaseDidRelaunchWebProcess()
