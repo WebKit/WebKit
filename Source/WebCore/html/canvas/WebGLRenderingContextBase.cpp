@@ -4684,7 +4684,9 @@ bool WebGLRenderingContextBase::simulateVertexAttrib0(GC3Dsizei numVertex)
         return false;
     m_vertexAttrib0UsedBefore = true;
     m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, m_vertexAttrib0Buffer->object());
-    Checked<GC3Dsizeiptr, RecordOverflow> bufferDataSize = (numVertex + 1) * 4 * sizeof(GC3Dfloat);
+    Checked<GC3Dsizeiptr, RecordOverflow> bufferDataSize(numVertex);
+    bufferDataSize += 1;
+    bufferDataSize *= Checked<GC3Dsizeiptr, RecordOverflow>(4 * sizeof(GC3Dfloat));
     if (bufferDataSize.hasOverflowed())
         return false;
     if (bufferDataSize.unsafeGet() > m_vertexAttrib0BufferSize) {
