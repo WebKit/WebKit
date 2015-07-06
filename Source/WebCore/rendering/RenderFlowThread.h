@@ -353,7 +353,7 @@ protected:
     RenderBoxToRegionMap m_breakBeforeToRegionMap;
     RenderBoxToRegionMap m_breakAfterToRegionMap;
 
-    typedef ListHashSet<const RenderObject*> RenderObjectStack;
+    typedef Vector<const RenderObject*> RenderObjectStack;
     RenderObjectStack m_activeObjectsStack;
 
     typedef HashMap<const RenderBox*, LayoutUnit> RenderBoxToOffsetMap;

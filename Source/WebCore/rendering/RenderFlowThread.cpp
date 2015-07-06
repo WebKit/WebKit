@@ -1192,7 +1192,7 @@ const RenderBox* RenderFlowThread::currentActiveRenderBox() const
 
 void RenderFlowThread::pushFlowThreadLayoutState(const RenderObject& object)
 {
-    m_activeObjectsStack.add(&object);
+    m_activeObjectsStack.append(&object);
 
     if (const RenderBox* currentBoxDescendant = currentActiveRenderBox()) {
         LayoutState* layoutState = currentBoxDescendant->view().layoutState();
