@@ -104,14 +104,15 @@ void LayoutRect::uniteIfNonZero(const LayoutRect& other)
     m_size = newMaxPoint - newLocation;
 }
 
-void LayoutRect::scale(float s)
+void LayoutRect::scale(float scaleValue)
 {
-    m_location.scale(s, s);
-    m_size.scale(s);
+    scale(scaleValue, scaleValue);
 }
 
 void LayoutRect::scale(float xScale, float yScale)
 {
+    if (isInfinite())
+        return;
     m_location.scale(xScale, yScale);
     m_size.scale(xScale, yScale);
 }
