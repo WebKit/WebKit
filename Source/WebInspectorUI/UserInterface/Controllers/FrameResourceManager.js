@@ -234,9 +234,11 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
         var elapsedTime = WebInspector.timelineManager.computeElapsedTime(timestamp);
         var initiatorSourceCodeLocation = this._initiatorSourceCodeLocationFromPayload(initiator);
         var response = cachedResourcePayload.response;
-        var resource = this._addNewResourceToFrame(requestIdentifier, frameIdentifier, loaderIdentifier, cachedResourcePayload.url, cachedResourcePayload.type, null, null, elapsedTime, null, null, initiatorSourceCodeLocation);
+        var resource = this._addNewResourceToFrame(requestIdentifier, frameIdentifier, loaderIdentifier, cachedResourcePayload.url, cachedResourcePayload.type, "GET", null, null, elapsedTime, null, null, initiatorSourceCodeLocation);
         resource.markAsCached();
         resource.updateForResponse(cachedResourcePayload.url, response.mimeType, cachedResourcePayload.type, response.headers, response.status, response.statusText, elapsedTime);
+        resource.increaseSize(cachedResourcePayload.bodySize, elapsedTime);
+        resource.increaseTransferSize(cachedResourcePayload.bodySize);
         resource.markAsFinished(elapsedTime);
 
         if (cachedResourcePayload.sourceMapURL)
@@ -277,7 +279,7 @@ WebInspector.FrameResourceManager = class FrameResourceManager extends WebInspec
         // If we haven't found an existing Resource by now, then it is a resource that was loading when the inspector
         // opened and we just missed the resourceRequestWillBeSent for it. So make a new resource and add it.
         if (!resource) {
-            resource = this._addNewResourceToFrame(requestIdentifier, frameIdentifier, loaderIdentifier, response.url, type, null, response.requestHeaders, elapsedTime, null, null);
+            resource = this._addNewResourceToFrame(requestIdentifier, frameIdentifier, loaderIdentifier, response.url, type, null, response.requestHeaders, null, elapsedTime, null, null, null);
 
             // Associate the resource with the requestIdentifier so it can be found in future loading events.
             this._resourceRequestIdentifierMap[requestIdentifier] = resource;
