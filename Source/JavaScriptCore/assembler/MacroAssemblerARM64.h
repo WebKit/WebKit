@@ -1193,9 +1193,14 @@ public:
         m_assembler.scvtf<64, 32>(fpTempRegister, dest);
         failureCases.append(branchDouble(DoubleNotEqualOrUnordered, src, fpTempRegister));
 
-        // If the result is zero, it might have been -0.0, and the double comparison won't catch this!
-        if (negZeroCheck)
-            failureCases.append(branchTest32(Zero, dest));
+        // Test for negative zero.
+        if (negZeroCheck) {
+            Jump valueIsNonZero = branchTest32(NonZero, dest);
+            RegisterID scratch = getCachedMemoryTempRegisterIDAndInvalidate();
+            m_assembler.fmov<64>(scratch, src);
+            failureCases.append(makeTestBitAndBranch(scratch, 63, IsNonZero));
+            valueIsNonZero.link(this);
+        }
     }
 
     Jump branchDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right)
