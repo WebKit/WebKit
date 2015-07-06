@@ -1314,6 +1314,10 @@ void WebPageProxy::dispatchViewStateChange()
     if (m_viewWasEverInWindow && (changed & ViewState::IsInWindow) && isInWindow())
         m_viewStateChangeWantsSynchronousReply = true;
 
+    // Don't wait synchronously if the view state is not visible. (This matters in particular on iOS, where a hidden page may be suspended.)
+    if (!(m_viewState & ViewState::IsVisible))
+        m_viewStateChangeWantsSynchronousReply = false;
+
     if (changed || m_viewStateChangeWantsSynchronousReply || !m_nextViewStateChangeCallbacks.isEmpty())
         m_process->send(Messages::WebPage::SetViewState(m_viewState, m_viewStateChangeWantsSynchronousReply, m_nextViewStateChangeCallbacks), m_pageID);
 
@@ -1391,6 +1395,15 @@ void WebPageProxy::waitForDidUpdateViewState()
     // If we have previously timed out with no response from the WebProcess, don't block the UIProcess again until it starts responding.
     if (m_waitingForDidUpdateViewState)
         return;
+
+#if PLATFORM(IOS)
+    // Hail Mary check. Should not be possible (dispatchViewStateChange should force async if not visible,
+    // and if visible we should be holding an assertion) - but we should never block on a suspended process.
+    if (!m_activityToken) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+#endif
 
     m_waitingForDidUpdateViewState = true;
 
