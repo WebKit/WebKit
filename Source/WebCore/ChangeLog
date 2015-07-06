@@ -1,3 +1,17 @@
+2015-06-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        Shrink the ArabicCharShapingMode enum in SVGGlyph.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=145564
+
+        Reviewed by Darin Adler.
+
+        Shrink the ArabicCharShapingMode enum to just one byte.
+        This drops the size of the static s_arabicCharShapingMode
+        array of  ArabicCharShapingMode values from 888 bytes to 222.
+
+        * platform/graphics/SVGGlyph.cpp:
+        (WebCore::processArabicFormDetection):
+
 2015-06-03  Zalan Bujtas  <zalan@apple.com>
 
         Subpixel rendering: Composited layer with subpixel gap does not get painted properly when its position changes.
