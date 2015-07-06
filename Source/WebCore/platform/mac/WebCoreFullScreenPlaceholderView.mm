@@ -48,7 +48,7 @@ using namespace WebCore;
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     self.wantsLayer = YES;
     self.autoresizesSubviews = YES;
-    self.layerContentsPlacement = NSViewLayerContentsPlacementTopLeft;
+    self.layerContentsPlacement = NSViewLayerContentsPlacementScaleProportionallyToFit;
     self.layerContentsRedrawPolicy = NSViewLayerContentsRedrawNever;
 
     _effectView = adoptNS([[NSVisualEffectView alloc] initWithFrame:frameRect]);
