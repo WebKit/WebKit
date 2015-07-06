@@ -99,6 +99,17 @@ bool AnimationControllerPrivate::clear(RenderElement& renderer)
 {
     ASSERT(renderer.isCSSAnimating());
     ASSERT(m_compositeAnimations.contains(&renderer));
+
+    Element* element = renderer.element();
+
+    m_eventsToDispatch.removeAllMatching([element] (const EventToDispatch& info) {
+        return info.element == element;
+    });
+
+    m_elementChangesToDispatch.removeAllMatching([element] (const Ref<Element>& currElement) {
+        return &currElement.get() == element;
+    });
+    
     // Return false if we didn't do anything OR we are suspended (so we don't try to
     // do a setNeedsStyleRecalc() when suspended).
     RefPtr<CompositeAnimation> animation = m_compositeAnimations.take(&renderer);

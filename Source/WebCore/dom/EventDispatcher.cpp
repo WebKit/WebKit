@@ -202,26 +202,24 @@ private:
 #endif
 };
 
-inline EventTarget& eventTargetRespectingTargetRules(Node& referenceNode)
+inline EventTarget* eventTargetRespectingTargetRules(Node& referenceNode)
 {
-    if (is<PseudoElement>(referenceNode)) {
-        ASSERT(downcast<PseudoElement>(referenceNode).hostElement());
-        return *downcast<PseudoElement>(referenceNode).hostElement();
-    }
+    if (is<PseudoElement>(referenceNode))
+        return downcast<PseudoElement>(referenceNode).hostElement();
 
     // Events sent to elements inside an SVG use element's shadow tree go to the use element.
     if (is<SVGElement>(referenceNode)) {
         if (auto* useElement = downcast<SVGElement>(referenceNode).correspondingUseElement())
-            return *useElement;
+            return useElement;
     }
 
-    return referenceNode;
+    return &referenceNode;
 }
 
 void EventDispatcher::dispatchScopedEvent(Node& node, PassRefPtr<Event> event)
 {
     // We need to set the target here because it can go away by the time we actually fire the event.
-    event->setTarget(&eventTargetRespectingTargetRules(node));
+    event->setTarget(eventTargetRespectingTargetRules(node));
     ScopedEventQueue::instance().enqueueEvent(event);
 }
 
@@ -340,9 +338,13 @@ bool EventDispatcher::dispatchEvent(Node* origin, PassRefPtr<Event> prpEvent)
 
     ChildNodesLazySnapshot::takeChildNodesLazySnapshot();
 
-    event->setTarget(&eventTargetRespectingTargetRules(*node));
+    EventTarget* target = eventTargetRespectingTargetRules(*node);
+    event->setTarget(target);
+    if (!event->target())
+        return true;
+
     ASSERT_WITH_SECURITY_IMPLICATION(!NoEventDispatchAssertion::isEventDispatchForbidden());
-    ASSERT(event->target());
+
     WindowEventContext windowEventContext(node.get(), eventPath.lastContextIfExists());
 
     InputElementClickState clickHandlingState;
@@ -352,7 +354,7 @@ bool EventDispatcher::dispatchEvent(Node* origin, PassRefPtr<Event> prpEvent)
     if (!event->propagationStopped() && !eventPath.isEmpty())
         dispatchEventInDOM(*event, eventPath, windowEventContext);
 
-    event->setTarget(&eventTargetRespectingTargetRules(*node));
+    event->setTarget(eventTargetRespectingTargetRules(*node));
     event->setCurrentTarget(nullptr);
     event->setEventPhase(0);
 
@@ -419,22 +421,22 @@ EventPath::EventPath(Node& targetNode, Event& event)
 #if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
     bool isTouchEvent = event.isTouchEvent();
 #endif
-    EventTarget* target = 0;
+    EventTarget* target = nullptr;
 
     Node* node = nodeOrHostIfPseudoElement(&targetNode);
     while (node) {
         if (!target || !isSVGElement) // FIXME: This code doesn't make sense once we've climbed out of the SVG subtree in a HTML document.
-            target = &eventTargetRespectingTargetRules(*node);
+            target = eventTargetRespectingTargetRules(*node);
         for (; node; node = node->parentNode()) {
-            EventTarget& currentTarget = eventTargetRespectingTargetRules(*node);
+            EventTarget* currentTarget = eventTargetRespectingTargetRules(*node);
             if (isMouseOrFocusEvent)
-                m_path.append(std::make_unique<MouseOrFocusEventContext>(node, &currentTarget, target));
+                m_path.append(std::make_unique<MouseOrFocusEventContext>(node, currentTarget, target));
 #if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
             else if (isTouchEvent)
-                m_path.append(std::make_unique<TouchEventContext>(node, &currentTarget, target));
+                m_path.append(std::make_unique<TouchEventContext>(node, currentTarget, target));
 #endif
             else
-                m_path.append(std::make_unique<EventContext>(node, &currentTarget, target));
+                m_path.append(std::make_unique<EventContext>(node, currentTarget, target));
             if (!inDocument)
                 return;
             if (is<ShadowRoot>(*node))

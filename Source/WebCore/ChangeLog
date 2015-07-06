@@ -1,3 +1,35 @@
+2015-06-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Crash in EventDispatcher::dispatchEvent entering a location on Google Maps
+        https://bugs.webkit.org/show_bug.cgi?id=145677
+        rdar://problem/20698280
+
+        Reviewed by Dean Jackson.
+
+        If a transition is running on a pseudo-element, and the host element is removed
+        from the DOM just as the transition ends, and there is a transition event listener,
+        then we'd crash with a null dereference in event dispatch code.
+        
+        AnimationController tries to clean up running animations when renderers are destroyed,
+        but omitted to remove the element from two vectors that store element references.
+        Elements are only added to these vectors briefly on animation end, before firing
+        events, but failure to remove the vector entries could result in attempting
+        to fire an event on a pseudo-element with no host element.
+        
+        Also convert EventDispatcher code to be more robust to potentially null event
+        targets, since it's not clear that eventTargetRespectingTargetRules() can always
+        manage to return a non-null node.
+        
+        Hard to make a test because this is timing sensitive.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::eventTargetRespectingTargetRules):
+        (WebCore::EventDispatcher::dispatchScopedEvent):
+        (WebCore::EventDispatcher::dispatchEvent):
+        (WebCore::EventPath::EventPath):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::clear):
+
 2015-06-04  Zan Dobersek  <zdobersek@igalia.com>
 
         Shrink the ArabicCharShapingMode enum in SVGGlyph.cpp
