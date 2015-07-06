@@ -48,6 +48,10 @@ public:
         const TypedMutableRange& operator*() const { return rangeList.m_ranges[index]; }
         const TypedMutableRange* operator->() const { return &rangeList.m_ranges[index]; }
 
+        CharacterType first() const { return rangeList.m_ranges[index].first; }
+        CharacterType last() const { return rangeList.m_ranges[index].last; }
+        CharacterType data() const { return rangeList.m_ranges[index].data; }
+
         bool operator==(const ConstIterator& other) const
         {
             ASSERT(&rangeList == &other.rangeList);
@@ -99,21 +103,21 @@ public:
         uint32_t lastSelfRangeIndex = 0;
         uint32_t selfRangeIndex = 0;
 
-        auto otherRangeOffset = otherIterator->first; // To get the right type :)
+        auto otherRangeOffset = otherIterator.first(); // To get the right type :)
         otherRangeOffset = 0;
 
         do {
             TypedMutableRange* activeSelfRange = &m_ranges[selfRangeIndex];
 
             // First, we move forward until we find something interesting.
-            if (activeSelfRange->last < otherIterator->first + otherRangeOffset) {
+            if (activeSelfRange->last < otherIterator.first() + otherRangeOffset) {
                 lastSelfRangeIndex = selfRangeIndex;
                 selfRangeIndex = activeSelfRange->nextRangeIndex;
                 reachedSelfEnd = !selfRangeIndex;
                 continue;
             }
-            if (otherIterator->last < activeSelfRange->first) {
-                insertBetween(lastSelfRangeIndex, selfRangeIndex, otherIterator->first + otherRangeOffset, otherIterator->last, dataConverter.convert(otherIterator.data()));
+            if (otherIterator.last() < activeSelfRange->first) {
+                insertBetween(lastSelfRangeIndex, selfRangeIndex, otherIterator.first() + otherRangeOffset, otherIterator.last(), dataConverter.convert(otherIterator.data()));
 
                 ++otherIterator;
                 otherRangeOffset = 0;
@@ -126,24 +130,24 @@ public:
             // But we don't know how they collide.
 
             // Do we have a part on the left? Create a new range for it.
-            if (activeSelfRange->first < otherIterator->first + otherRangeOffset) {
+            if (activeSelfRange->first < otherIterator.first() + otherRangeOffset) {
                 DataType copiedData = activeSelfRange->data;
                 CharacterType newRangeFirstCharacter = activeSelfRange->first;
-                activeSelfRange->first = otherIterator->first + otherRangeOffset;
-                insertBetween(lastSelfRangeIndex, selfRangeIndex, newRangeFirstCharacter, otherIterator->first + otherRangeOffset - 1, WTF::move(copiedData));
+                activeSelfRange->first = otherIterator.first() + otherRangeOffset;
+                insertBetween(lastSelfRangeIndex, selfRangeIndex, newRangeFirstCharacter, otherIterator.first() + otherRangeOffset - 1, WTF::move(copiedData));
                 activeSelfRange = &m_ranges[selfRangeIndex];
-            } else if (otherIterator->first + otherRangeOffset < activeSelfRange->first) {
-                insertBetween(lastSelfRangeIndex, selfRangeIndex, otherIterator->first + otherRangeOffset, activeSelfRange->first - 1, dataConverter.convert(otherIterator.data()));
+            } else if (otherIterator.first() + otherRangeOffset < activeSelfRange->first) {
+                insertBetween(lastSelfRangeIndex, selfRangeIndex, otherIterator.first() + otherRangeOffset, activeSelfRange->first - 1, dataConverter.convert(otherIterator.data()));
 
                 activeSelfRange = &m_ranges[selfRangeIndex];
-                ASSERT_WITH_MESSAGE(otherRangeOffset < activeSelfRange->first - otherIterator->first, "The offset must move forward or we could get stuck on this operation.");
-                otherRangeOffset = activeSelfRange->first - otherIterator->first;
+                ASSERT_WITH_MESSAGE(otherRangeOffset < activeSelfRange->first - otherIterator.first(), "The offset must move forward or we could get stuck on this operation.");
+                otherRangeOffset = activeSelfRange->first - otherIterator.first();
             }
 
             // Here, we know both ranges start at the same point, we need to create the part that intersect
             // and merge the data.
 
-            if (activeSelfRange->last == otherIterator->last) {
+            if (activeSelfRange->last == otherIterator.last()) {
                 // If they finish together, things are really easy: we just add B to A.
                 dataConverter.extend(activeSelfRange->data, otherIterator.data());
 
@@ -156,15 +160,15 @@ public:
                 continue;
             }
 
-            if (activeSelfRange->last > otherIterator->last) {
+            if (activeSelfRange->last > otherIterator.last()) {
                 // If A is bigger than B, we add a merged version and move A to the right.
 
                 CharacterType combinedPartStart = activeSelfRange->first;
-                activeSelfRange->first = otherIterator->last + 1;
+                activeSelfRange->first = otherIterator.last() + 1;
 
                 DataType combinedData = activeSelfRange->data;
                 dataConverter.extend(combinedData, otherIterator.data());
-                insertBetween(lastSelfRangeIndex, selfRangeIndex, combinedPartStart, otherIterator->last, WTF::move(combinedData));
+                insertBetween(lastSelfRangeIndex, selfRangeIndex, combinedPartStart, otherIterator.last(), WTF::move(combinedData));
 
                 ++otherIterator;
                 otherRangeOffset = 0;
@@ -172,20 +176,25 @@ public:
             }
 
             // If we reached here, B ends after A. We merge the intersection and move on.
-            ASSERT(otherIterator->last > activeSelfRange->last);
+            ASSERT(otherIterator.last() > activeSelfRange->last);
             dataConverter.extend(activeSelfRange->data, otherIterator.data());
 
-            otherRangeOffset = activeSelfRange->last - otherIterator->first + 1;
+            otherRangeOffset = activeSelfRange->last - otherIterator.first() + 1;
             lastSelfRangeIndex = selfRangeIndex;
             selfRangeIndex = activeSelfRange->nextRangeIndex;
             reachedSelfEnd = !selfRangeIndex;
         } while (!reachedSelfEnd && otherIterator != otherEnd);
 
         while (otherIterator != otherEnd) {
-            lastSelfRangeIndex = appendRange(lastSelfRangeIndex, otherIterator->first + otherRangeOffset, otherIterator->last, dataConverter.convert(otherIterator.data()));
+            lastSelfRangeIndex = appendRange(lastSelfRangeIndex, otherIterator.first() + otherRangeOffset, otherIterator.last(), dataConverter.convert(otherIterator.data()));
             otherRangeOffset = 0;
             ++otherIterator;
         }
+    }
+
+    unsigned size() const
+    {
+        return m_ranges.size();
     }
 
     bool isEmpty() const
@@ -241,8 +250,8 @@ private:
         do {
             m_ranges.append(TypedMutableRange(dataConverter.convert(otherIterator.data()),
                 loopCounter + 1,
-                otherIterator->first,
-                otherIterator->last));
+                otherIterator.first(),
+                otherIterator.last()));
             ++loopCounter;
             ++otherIterator;
         } while (otherIterator != otherEnd);

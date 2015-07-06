@@ -47,13 +47,38 @@ struct WEBCORE_EXPORT DFA {
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
     void debugPrintDot() const;
 #endif
-    
-    Vector<uint64_t> actions;
-    Vector<uint8_t> transitionCharacters;
-    Vector<uint32_t> transitionDestinations;
+
     Vector<DFANode> nodes;
+    Vector<uint64_t> actions;
+    Vector<CharRange> transitionRanges;
+    Vector<uint32_t> transitionDestinations;
     unsigned root { 0 };
 };
+
+inline const CharRange& DFANode::ConstRangeIterator::range() const
+{
+    return dfa.transitionRanges[position];
+}
+
+inline uint32_t DFANode::ConstRangeIterator::target() const
+{
+    return dfa.transitionDestinations[position];
+}
+
+inline const CharRange& DFANode::RangeIterator::range() const
+{
+    return dfa.transitionRanges[position];
+}
+
+inline uint32_t DFANode::RangeIterator::target() const
+{
+    return dfa.transitionDestinations[position];
+}
+
+inline void DFANode::RangeIterator::resetTarget(uint32_t newTarget)
+{
+    dfa.transitionDestinations[position] = newTarget;
+}
 
 }
 

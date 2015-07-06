@@ -89,8 +89,6 @@ public:
     uint32_t nextRangeIndex;
     CharacterType first;
     CharacterType last;
-
-    CharacterType size() const { return last - first; }
 };
 
 }

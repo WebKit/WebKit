@@ -204,10 +204,18 @@ Vector<DFABytecodeCompiler::Range> DFABytecodeCompiler::ranges(const DFANode& no
     memset(destinations, 0xff, sizeof(destinations));
     const uint32_t noDestination = std::numeric_limits<uint32_t>::max();
 
-    for (const auto& pair : node.transitions(m_dfa)) {
-        RELEASE_ASSERT(pair.first < WTF_ARRAY_LENGTH(destinations));
-        ASSERT_WITH_MESSAGE(destinations[pair.first] == noDestination, "Transitions should be unique");
-        destinations[pair.first] = pair.second;
+    bool canUseFallbackTransition = node.canUseFallbackTransition(m_dfa);
+    uint32_t fallbackTransitionTarget = std::numeric_limits<uint32_t>::max();
+    if (canUseFallbackTransition)
+        fallbackTransitionTarget = node.bestFallbackTarget(m_dfa);
+
+    for (const auto& transition : node.transitions(m_dfa)) {
+        uint32_t targetNodeIndex = transition.target();
+        if (canUseFallbackTransition && fallbackTransitionTarget == targetNodeIndex)
+            continue;
+
+        for (uint16_t i = transition.range().first; i <= transition.range().last; ++i)
+            destinations[i] = targetNodeIndex;
     }
 
     Vector<Range> ranges;
@@ -215,7 +223,6 @@ Vector<DFABytecodeCompiler::Range> DFABytecodeCompiler::ranges(const DFANode& no
     bool hasRangeMin = false;
     for (uint8_t i = 0; i < 128; i++) {
         if (hasRangeMin) {
-            ASSERT_WITH_MESSAGE(!(node.hasFallbackTransition() && node.fallbackTransitionDestination(m_dfa) == destinations[rangeMin]), "Individual transitions to the fallback transitions should have been eliminated by the optimizer.");
             if (destinations[i] != destinations[rangeMin]) {
 
                 // This is the end of a range. Check if it can be case insensitive.
@@ -260,6 +267,7 @@ Vector<DFABytecodeCompiler::Range> DFABytecodeCompiler::ranges(const DFANode& no
         // If a range goes to 127, there will never be values higher than it, so checking for case-insensitive ranges would always fail.
         ranges.append(Range(rangeMin, 127, destinations[rangeMin], true));
     }
+
     return ranges;
 }
     
@@ -289,7 +297,7 @@ unsigned DFABytecodeCompiler::nodeTransitionsMaxBytecodeSize(const DFANode& node
     unsigned size = 0;
     for (const auto& range : ranges(node))
         size += checkForRangeMaxBytecodeSize(range);
-    if (node.hasFallbackTransition())
+    if (node.canUseFallbackTransition(m_dfa))
         size += sizeof(DFABytecodeInstruction::Jump) + sizeof(uint32_t);
     else
         size += instructionSizeWithArguments(DFABytecodeInstruction::Terminate);
@@ -303,8 +311,8 @@ void DFABytecodeCompiler::compileNodeTransitions(uint32_t nodeIndex)
     
     for (const auto& range : ranges(node))
         compileCheckForRange(nodeIndex, range);
-    if (node.hasFallbackTransition())
-        emitJump(nodeIndex, node.fallbackTransitionDestination(m_dfa));
+    if (node.canUseFallbackTransition(m_dfa))
+        emitJump(nodeIndex, node.bestFallbackTarget(m_dfa));
     else
         emitTerminate();
 

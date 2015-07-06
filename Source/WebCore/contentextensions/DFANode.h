@@ -38,27 +38,112 @@ namespace ContentExtensions {
 
 struct DFA;
 
+struct CharRange {
+    char first;
+    char last;
+    unsigned size() const { return last - first + 1; }
+};
+
 // A DFANode abstract the transition table out of a DFA state. If a state is accepting, the DFANode also have
 // the actions for that state.
 class DFANode {
 public:
+    struct ConstRangeIterator {
+        const DFA& dfa;
+        uint32_t position;
+
+        const ConstRangeIterator& operator*() const { return *this; }
+
+        bool operator==(const ConstRangeIterator& other) const
+        {
+            ASSERT(&dfa  == &other.dfa);
+            return position == other.position;
+        }
+        bool operator!=(const ConstRangeIterator& other) const { return !(*this == other); }
+
+        ConstRangeIterator& operator++()
+        {
+            ++position;
+            return *this;
+        }
+
+        const CharRange& range() const;
+        uint32_t target() const;
+
+        char first() const { return range().first; }
+        char last() const { return range().last; }
+        uint32_t data() const { return target(); }
+    };
+
+    struct IterableConstRange {
+        const DFA& dfa;
+        uint32_t rangesStart;
+        uint32_t rangesEnd;
+
+        ConstRangeIterator begin() const { return { dfa, rangesStart }; }
+        ConstRangeIterator end() const { return { dfa, rangesEnd }; }
+    };
+
+    IterableConstRange transitions(const DFA& dfa) const
+    {
+        return IterableConstRange { dfa, m_transitionsStart, m_transitionsStart + m_transitionsLength };
+    }
+
+    struct RangeIterator {
+        DFA& dfa;
+        uint32_t position;
+
+        RangeIterator& operator*() { return *this; }
+
+        bool operator==(const RangeIterator& other) const
+        {
+            ASSERT(&dfa  == &other.dfa);
+            return position == other.position;
+        }
+        bool operator!=(const RangeIterator& other) const { return !(*this == other); }
+
+        RangeIterator& operator++()
+        {
+            ++position;
+            return *this;
+        }
+
+        const CharRange& range() const;
+        uint32_t target() const;
+        void resetTarget(uint32_t);
+
+        char first() const { return range().first; }
+        char last() const { return range().last; }
+        uint32_t data() const { return target(); }
+    };
+
+    struct IterableRange {
+        DFA& dfa;
+        uint32_t rangesStart;
+        uint32_t rangesEnd;
+
+        RangeIterator begin() const { return { dfa, rangesStart }; }
+        RangeIterator end() const { return { dfa, rangesEnd }; }
+    };
+
+    IterableRange transitions(DFA& dfa)
+    {
+        return IterableRange { dfa, m_transitionsStart, m_transitionsStart + m_transitionsLength };
+    }
+
     // FIXME: Stop minimizing killed nodes and add ASSERT(!isKilled()) in many functions here.
     void kill(DFA&);
     Vector<uint64_t> actions(const DFA&) const;
-    Vector<std::pair<uint8_t, uint32_t>> transitions(const DFA&) const;
-    uint32_t fallbackTransitionDestination(const DFA&) const;
-    void addFallbackTransition(DFA&, uint32_t destination);
-    bool containsTransition(uint8_t, DFA&);
-    void changeFallbackTransition(DFA&, uint32_t newDestination);
+    bool containsTransition(char, const DFA&) const;
     
     bool isKilled() const { return m_flags & IsKilled; }
-    bool hasFallbackTransition() const { return m_flags & HasFallbackTransition; }
     bool hasActions() const { return !!m_actionsLength; }
-    uint8_t transitionsLength() const { return m_transitionsLength; }
     uint16_t actionsLength() const { return m_actionsLength; }
     uint32_t actionsStart() const { return m_actionsStart; }
-    uint32_t transitionsStart() const { return m_transitionsStart; }
-    
+
+    bool canUseFallbackTransition(const DFA&) const;
+    uint32_t bestFallbackTarget(const DFA&) const;
+
     void setActions(uint32_t start, uint16_t length)
     {
         ASSERT(!m_actionsStart);
@@ -73,22 +158,7 @@ public:
         m_transitionsStart = start;
         m_transitionsLength = length;
     }
-    void resetTransitions(uint32_t start, uint16_t length)
-    {
-        m_transitionsStart = start;
-        m_transitionsLength = length;
-    }
-    void setHasFallbackTransitionWithoutChangingDFA(bool shouldHaveFallbackTransition)
-    {
-        if (shouldHaveFallbackTransition)
-            m_flags |= HasFallbackTransition;
-        else
-            m_flags &= ~HasFallbackTransition;
-    }
-    
-#if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
-    Vector<unsigned> correspondingNFANodes;
-#endif
+
 private:
     uint32_t m_actionsStart { 0 };
     uint32_t m_transitionsStart { 0 };
@@ -96,17 +166,10 @@ private:
     uint8_t m_transitionsLength { 0 };
     
     uint8_t m_flags { 0 };
-    const uint8_t HasFallbackTransition = 0x01;
-    const uint8_t IsKilled = 0x02;
+    const uint8_t IsKilled = 0x01;
 };
 
-// FIXME: Pack this down to 12.
-// It's probably already 12 on ARMv7.
-#if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
-COMPILE_ASSERT(sizeof(DFANode) <= 16 + sizeof(Vector<unsigned>), Keep the DFANodes small);
-#else
 COMPILE_ASSERT(sizeof(DFANode) <= 16, Keep the DFANodes small);
-#endif
 
 }
 

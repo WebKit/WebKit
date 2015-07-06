@@ -89,8 +89,8 @@ public:
     };
     
     struct FakeRangeIterator {
-        const TrivialRange& operator*() const { return range; }
-        const TrivialRange* operator->() const { return &range; }
+        CharacterType first() const { return range.first; }
+        CharacterType last() const { return range.last; }
         uint32_t data() const { return targetId; }
         bool operator==(const FakeRangeIterator& other)
         {

@@ -336,73 +336,6 @@ static inline void createCombinedTransition(PreallocatedNFANodeRangeList& combin
     }
 }
 
-static inline bool canUseFallbackTransition(const PreallocatedNFANodeRangeList& rangeList)
-{
-    // Transitions can contains "0" if the expression has a end-of-line marker.
-    // Fallback transitions cover 1-127. We have to be careful with the first.
-
-    auto iterator = rangeList.begin();
-    auto end = rangeList.end();
-    if (iterator == end)
-        return false;
-
-    char lastSeenCharacter = 0;
-    if (!iterator->first) {
-        lastSeenCharacter = iterator->last;
-        if (lastSeenCharacter == 127)
-            return true;
-        ++iterator;
-    }
-
-    for (;iterator != end; ++iterator) {
-        ASSERT(iterator->first > lastSeenCharacter);
-        if (iterator->first != lastSeenCharacter + 1)
-            return false;
-
-        if (iterator->last == 127)
-            return true;
-        lastSeenCharacter = iterator->last;
-    }
-    return false;
-}
-
-static inline uint32_t findBestFallbackTarget(const PreallocatedNFANodeRangeList& rangeList, const Vector<unsigned, 128>& rangeToTarget)
-{
-    ASSERT(canUseFallbackTransition(rangeList));
-
-    HashMap<uint32_t, unsigned, DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> histogram;
-
-    unsigned rangeToTargetIndex = 0;
-    auto iterator = rangeList.begin();
-    auto end = rangeList.end();
-    ASSERT_WITH_MESSAGE(iterator != end, "An empty range list cannot use a fallback transition.");
-
-    if (!iterator->first && !iterator->last) {
-        ++iterator;
-        ++rangeToTargetIndex;
-    }
-    ASSERT_WITH_MESSAGE(iterator != end, "An empty range list matching only zero cannot use a fallback transition.");
-
-    uint32_t bestTarget = rangeToTarget[rangeToTargetIndex];
-    unsigned bestTargetScore = !iterator->first ? iterator->size() - 1 : iterator->size();
-    histogram.add(bestTarget, bestTargetScore);
-    ++iterator;
-    ++rangeToTargetIndex;
-
-    for (;iterator != end; ++iterator, ++rangeToTargetIndex) {
-        unsigned rangeSize = iterator->size();
-        uint32_t target = rangeToTarget[rangeToTargetIndex];
-        auto addResult = histogram.add(target, rangeSize);
-        if (!addResult.isNewEntry)
-            addResult.iterator->value += rangeSize;
-        if (addResult.iterator->value > bestTargetScore) {
-            bestTargetScore = addResult.iterator->value;
-            bestTarget = target;
-        }
-    }
-    return bestTarget;
-}
-
 static ALWAYS_INLINE unsigned getOrCreateDFANode(const NodeIdSet& nfaNodeSet, const NFA& nfa, DFA& dfa, UniqueNodeIdSetTable& uniqueNodeIdSetTable, Vector<UniqueNodeIdSetImpl*>& unprocessedNodes)
 {
     NodeIdSetToUniqueNodeIdSetSource nodeIdSetToUniqueNodeIdSetSource(dfa, nfa, nfaNodeSet);
@@ -432,46 +365,24 @@ DFA NFAToDFA::convert(NFA& nfa)
     unprocessedNodes.append(addResult.iterator->impl());
 
     PreallocatedNFANodeRangeList combinedRangeList;
-    Vector<unsigned, 128> rangeToTarget;
     do {
         UniqueNodeIdSetImpl* uniqueNodeIdSetImpl = unprocessedNodes.takeLast();
         createCombinedTransition(combinedRangeList, *uniqueNodeIdSetImpl, nfa, nfaNodeClosures);
 
-        rangeToTarget.clear();
+        unsigned transitionsStart = dfa.transitionRanges.size();
         for (const NFANodeRange& range : combinedRangeList) {
             unsigned targetNodeId = getOrCreateDFANode(range.data, nfa, dfa, uniqueNodeIdSetTable, unprocessedNodes);
-            rangeToTarget.append(targetNodeId);
+            dfa.transitionRanges.append({ range.first, range.last });
+            dfa.transitionDestinations.append(targetNodeId);
         }
-
-        bool useFallbackTransition = canUseFallbackTransition(combinedRangeList);
-        uint32_t preferedFallbackTarget = 0;
-        if (useFallbackTransition)
-            preferedFallbackTarget = findBestFallbackTarget(combinedRangeList, rangeToTarget);
-
-        unsigned transitionsStart = dfa.transitionCharacters.size();
-        unsigned rangeToTargetIndex = 0;
-
-        for (const NFANodeRange& range : combinedRangeList) {
-            unsigned targetNodeId = rangeToTarget[rangeToTargetIndex];
-
-            if (!(useFallbackTransition && targetNodeId == preferedFallbackTarget)) {
-                for (unsigned i = range.first; i <= static_cast<unsigned>(range.last); ++i) {
-                    dfa.transitionCharacters.append(static_cast<uint8_t>(i));
-                    dfa.transitionDestinations.append(targetNodeId);
-                }
-            }
-            ++rangeToTargetIndex;
-        }
-        unsigned transitionsEnd = dfa.transitionCharacters.size();
+        unsigned transitionsEnd = dfa.transitionRanges.size();
         unsigned transitionsLength = transitionsEnd - transitionsStart;
+
         unsigned dfaNodeId = uniqueNodeIdSetImpl->m_dfaNodeId;
         DFANode& dfaSourceNode = dfa.nodes[dfaNodeId];
-        ASSERT_WITH_MESSAGE(transitionsLength < 127, "Transitions covering the entire alphabet should use a fallback transition");
         dfaSourceNode.setTransitions(transitionsStart, static_cast<uint8_t>(transitionsLength));
-
-        if (useFallbackTransition)
-            dfaSourceNode.addFallbackTransition(dfa, preferedFallbackTarget);
     } while (!unprocessedNodes.isEmpty());
+
     return dfa;
 }
 

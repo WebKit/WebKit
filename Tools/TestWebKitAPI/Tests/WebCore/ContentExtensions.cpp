@@ -1930,4 +1930,470 @@ TEST_F(ContentExtensionTest, QuantifiedOneOrMoreRangesCase11And13InGroups)
     testRequest(searchBackend, mainDocumentRequest("zzz://www.ddjjyyy.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
 }
 
+TEST_F(ContentExtensionTest, CombinedRangeOverlapCase1)
+{
+    auto matchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^(foo)*[a-m]\"}},"
+        "{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\"^(bar)*[c-e]\"}}]");
+
+    testRequest(matchBackend, mainDocumentRequest("a://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("b://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("c://www.webkit.org/"), { }, true);
+    testRequest(matchBackend, mainDocumentRequest("d://www.webkit.org/"), { }, true);
+    testRequest(matchBackend, mainDocumentRequest("e://www.webkit.org/"), { }, true);
+    testRequest(matchBackend, mainDocumentRequest("f://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("m://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("n://www.webkit.org/"), { });
+
+    auto searchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"(foo)*[a-m]\"}},"
+        "{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\"(bar)*[c-e]\"}}]");
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.a.xxx/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.b.xxx/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.c.xxx/"), { }, true);
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.d.xxx/"), { }, true);
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.e.xxx/"), { }, true);
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.f.xxx/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.m.xxx/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.n.xxx/"), { });
+}
+
+
+TEST_F(ContentExtensionTest, CombinedRangeOverlapCase2)
+{
+    auto matchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^(foo)*[a-m]\"}},"
+        "{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\"^(bar)*b\"}}]");
+
+    testRequest(matchBackend, mainDocumentRequest("a://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("b://www.webkit.org/"), { }, true);
+    testRequest(matchBackend, mainDocumentRequest("c://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("m://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("n://www.webkit.org/"), { });
+
+    auto searchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"(foo)*[a-m]\"}},"
+        "{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\"(bar)*l\"}}]");
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.a.xxx/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.k.xxx/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.l.xxx/"), { }, true);
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.m.xxx/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.n.xxx/"), { });
+}
+
+TEST_F(ContentExtensionTest, CombinedRangeOverlapCase3)
+{
+    auto matchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^(foo)*[b-d]\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"^(bar)*[a-m]\"}}]");
+
+    testRequest(matchBackend, mainDocumentRequest("a://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(matchBackend, mainDocumentRequest("b://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("d://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("e://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(matchBackend, mainDocumentRequest("m://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(matchBackend, mainDocumentRequest("n://www.webkit.org/"), { });
+
+    auto searchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"(foo)*[b-d]\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"(bar)*[a-m]\"}}]");
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.a.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.b.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.d.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.e.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.m.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.n.xxx/"), { });
+}
+
+TEST_F(ContentExtensionTest, CombinedRangeOverlapCase4)
+{
+    auto matchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^(foo)*l\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"^(bar)*[a-m]\"}}]");
+
+    testRequest(matchBackend, mainDocumentRequest("a://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(matchBackend, mainDocumentRequest("k://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(matchBackend, mainDocumentRequest("l://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("m://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(matchBackend, mainDocumentRequest("n://www.webkit.org/"), { });
+
+    auto searchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"(foo)*l\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"(bar)*[a-m]\"}}]");
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.a.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.k.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.l.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.m.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.n.xxx/"), { });
+}
+
+TEST_F(ContentExtensionTest, CombinedRangeOverlapCase5)
+{
+    auto matchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^(foo)*[a-e]\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"^(bar)*[e-h]\"}}]");
+
+    testRequest(matchBackend, mainDocumentRequest("a://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("d://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("e://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("f://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(matchBackend, mainDocumentRequest("h://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(matchBackend, mainDocumentRequest("i://www.webkit.org/"), { });
+
+    auto searchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"(foo)*[a-e]\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"(bar)*[e-h]\"}}]");
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.a.xxx/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.d.xxx/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.e.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.f.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.h.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.i.xxx/"), { });
+}
+
+TEST_F(ContentExtensionTest, CombinedRangeOverlapCase6)
+{
+    auto matchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^(foo)*e\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"^(bar)*[e-h]\"}}]");
+
+    testRequest(matchBackend, mainDocumentRequest("a://www.webkit.org/"), { });
+    testRequest(matchBackend, mainDocumentRequest("d://www.webkit.org/"), { });
+    testRequest(matchBackend, mainDocumentRequest("e://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("f://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(matchBackend, mainDocumentRequest("h://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(matchBackend, mainDocumentRequest("i://www.webkit.org/"), { });
+
+    auto searchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"(foo)*e\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"(bar)*[e-h]\"}}]");
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.a.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.d.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.e.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.f.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.h.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.i.xxx/"), { });
+}
+
+TEST_F(ContentExtensionTest, CombinedRangeOverlapCase7)
+{
+    auto matchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^(foo)*[a-e]\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"^(bar)*e\"}}]");
+
+    testRequest(matchBackend, mainDocumentRequest("a://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("d://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("e://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("f://www.webkit.org/"), { });
+
+    auto searchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"(foo)*[a-e]\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"(bar)*e\"}}]");
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.a.xxx/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.d.xxx/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.e.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.f.xxx/"), { });
+}
+
+TEST_F(ContentExtensionTest, CombinedRangeOverlapCase8)
+{
+    auto matchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^(foo)*[e-h]\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"^(bar)*[a-e]\"}}]");
+
+    testRequest(matchBackend, mainDocumentRequest("a://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(matchBackend, mainDocumentRequest("d://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(matchBackend, mainDocumentRequest("e://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("f://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("h://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("i://www.webkit.org/"), { });
+
+    auto searchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"(foo)*[e-h]\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"(bar)*[a-e]\"}}]");
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.a.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.d.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.e.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.f.xxx/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.h.xxx/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.i.xxx/"), { });
+}
+
+TEST_F(ContentExtensionTest, CombinedRangeOverlapCase9)
+{
+    auto matchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^(foo)*e\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"^(bar)*[a-e]\"}}]");
+
+    testRequest(matchBackend, mainDocumentRequest("a://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(matchBackend, mainDocumentRequest("d://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(matchBackend, mainDocumentRequest("e://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("f://www.webkit.org/"), { });
+
+    auto searchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"(foo)*e\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"(bar)*[a-e]\"}}]");
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.a.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.d.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.e.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.f.xxx/"), { });
+}
+
+TEST_F(ContentExtensionTest, CombinedRangeOverlapCase10)
+{
+    auto matchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^(foo)*[e-h]\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"^(bar)*e\"}}]");
+
+    testRequest(matchBackend, mainDocumentRequest("a://www.webkit.org/"), { });
+    testRequest(matchBackend, mainDocumentRequest("d://www.webkit.org/"), { });
+    testRequest(matchBackend, mainDocumentRequest("e://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("f://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("h://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("i://www.webkit.org/"), { });
+
+    auto searchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"(foo)*[e-h]\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"(bar)*e\"}}]");
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.a.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.d.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.e.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.f.xxx/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.h.xxx/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.i.xxx/"), { });
+}
+
+TEST_F(ContentExtensionTest, CombinedRangeOverlapCase11)
+{
+    auto matchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^(foo)*[e-g]\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"^(bar)*[d-f]\"}}]");
+
+    testRequest(matchBackend, mainDocumentRequest("c://www.webkit.org/"), { });
+    testRequest(matchBackend, mainDocumentRequest("d://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(matchBackend, mainDocumentRequest("e://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("f://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("g://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("h://www.webkit.org/"), { });
+
+    auto searchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"(foo)*[e-g]\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"(bar)*[d-f]\"}}]");
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.c.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.d.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.e.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.f.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.g.xxx/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.h.xxx/"), { });
+}
+
+
+TEST_F(ContentExtensionTest, CombinedRangeOverlapCase12)
+{
+    auto matchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^(foo)*[e-g]\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"^(bar)*[d-g]\"}}]");
+
+    testRequest(matchBackend, mainDocumentRequest("c://www.webkit.org/"), { });
+    testRequest(matchBackend, mainDocumentRequest("d://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(matchBackend, mainDocumentRequest("e://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("f://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("g://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("h://www.webkit.org/"), { });
+
+    auto searchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"(foo)*[e-g]\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"(bar)*[d-g]\"}}]");
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.c.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.d.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.e.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.f.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.g.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.h.xxx/"), { });
+}
+
+TEST_F(ContentExtensionTest, CombinedRangeOverlapCase13)
+{
+    auto matchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^(foo)*[b-d]\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"^(bar)*[c-e]\"}}]");
+
+    testRequest(matchBackend, mainDocumentRequest("a://www.webkit.org/"), { });
+    testRequest(matchBackend, mainDocumentRequest("b://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("c://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("d://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("e://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(matchBackend, mainDocumentRequest("h://www.webkit.org/"), { });
+
+    auto searchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"(foo)*[b-d]\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"(bar)*[c-e]\"}}]");
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.a.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.b.xxx/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.c.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.d.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.e.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.h.xxx/"), { });
+}
+
+TEST_F(ContentExtensionTest, CombinedRangeOverlapCase14)
+{
+    auto matchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^(foo)*[b-e]\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"^(bar)*[c-e]\"}}]");
+
+    testRequest(matchBackend, mainDocumentRequest("a://www.webkit.org/"), { });
+    testRequest(matchBackend, mainDocumentRequest("b://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("c://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("d://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("e://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("h://www.webkit.org/"), { });
+
+    auto searchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"(foo)*[b-e]\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"(bar)*[c-e]\"}}]");
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.a.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.b.xxx/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.c.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.d.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.e.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.h.xxx/"), { });
+}
+
+TEST_F(ContentExtensionTest, CombinedRangeOverlapCase15)
+{
+    auto matchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^(foo)*[c-f]\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"^(bar)*[c-f]\"}}]");
+
+    testRequest(matchBackend, mainDocumentRequest("a://www.webkit.org/"), { });
+    testRequest(matchBackend, mainDocumentRequest("b://www.webkit.org/"), { });
+    testRequest(matchBackend, mainDocumentRequest("c://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("d://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("e://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("f://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("g://www.webkit.org/"), { });
+
+    auto searchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"(foo)*[c-f]\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"(bar)*[c-f]\"}}]");
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.a.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.b.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.c.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.d.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.e.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.f.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.g.xxx/"), { });
+}
+
+TEST_F(ContentExtensionTest, CombinedRangeOverlapCase16)
+{
+    auto matchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"^(foo)*c\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"^(bar)*c\"}}]");
+
+    testRequest(matchBackend, mainDocumentRequest("a://www.webkit.org/"), { });
+    testRequest(matchBackend, mainDocumentRequest("b://www.webkit.org/"), { });
+    testRequest(matchBackend, mainDocumentRequest("c://www.webkit.org/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(matchBackend, mainDocumentRequest("d://www.webkit.org/"), { });
+    testRequest(matchBackend, mainDocumentRequest("e://www.webkit.org/"), { });
+
+    auto searchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"(foo)*c\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"(bar)*c\"}}]");
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.a.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.b.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.c.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.d.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.e.xxx/"), { });
+}
+
+TEST_F(ContentExtensionTest, CombinedQuantifiedOneOrMoreRangesCase11And13)
+{
+    auto searchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"(foo)*[c-e]+[g-i]+YYY\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"(bar)*[b-d]+[h-j]+YYY\"}}]");
+
+    // The interesting ranges only match between 'b' and 'k', plus a gap in 'f'.
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.aayyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.abyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.acyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.adyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.aeyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.afyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.agyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.ahyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.aiyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.ajyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.akyyy.xxx/"), { });
+
+    // 'b' is the first character of the second rule.
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.byyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.bayyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.bbyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.bcyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.bdyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.beyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.bfyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.bgyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.bhyyy.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.biyyy.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.bjyyy.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.bkyyy.xxx/"), { });
+
+    // 'c' is the first character of the first rule, and it overlaps the first character of the second rule.
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.cyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.cayyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.cbyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.ccyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.cdyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.ceyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.cfyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.cgyyy.xxx/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.chyyy.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.ciyyy.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.cjyyy.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.ckyyy.xxx/"), { });
+
+    // 'd' is in the first range of both rule. This series cover overlaps between the two rules.
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.dgyyy.xxx/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.ddgyyy.xxx/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.ddhyyy.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.ddhhyyy.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.degyyy.xxx/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.dehyyy.xxx/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.dfgyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.dfhyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.djyyy.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.ddjyyy.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.ddjjyyy.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+}
+
+TEST_F(ContentExtensionTest, CombinedQuantifiedOneOrMoreRangesCase11And13InGroups)
+{
+    auto searchBackend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"(foo)*([c-e])+([g-i]+YYY)\"}},"
+        "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\"(bar)*[b-d]+[h-j]+YYY\"}}]");
+
+    // The interesting ranges only match between 'b' and 'k', plus a gap in 'f'.
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.aayyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.abyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.acyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.adyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.aeyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.afyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.agyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.ahyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.aiyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.ajyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.akyyy.xxx/"), { });
+
+    // 'b' is the first character of the second rule.
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.byyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.bayyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.bbyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.bcyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.bdyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.beyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.bfyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.bgyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.bhyyy.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.biyyy.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.bjyyy.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.bkyyy.xxx/"), { });
+
+    // 'c' is the first character of the first rule, and it overlaps the first character of the second rule.
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.cyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.cayyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.cbyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.ccyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.cdyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.ceyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.cfyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.cgyyy.xxx/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.chyyy.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.ciyyy.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.cjyyy.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.ckyyy.xxx/"), { });
+
+    // 'd' is in the first range of both rule. This series cover overlaps between the two rules.
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.dgyyy.xxx/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.ddgyyy.xxx/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.ddhyyy.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.ddhhyyy.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.degyyy.xxx/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.dehyyy.xxx/"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.dfgyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.dfhyyy.xxx/"), { });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.djyyy.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.ddjyyy.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.ddjjyyy.xxx/"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+}
+
 } // namespace TestWebKitAPI

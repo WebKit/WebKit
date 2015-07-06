@@ -83,7 +83,7 @@ TEST_F(DFAMinimizerTest, FallbackTransitionsToOtherNodeInSameGroupDoesNotDiffere
     ContentExtensions::DFA dfa = buildDFAFromPatterns({ "^aac", "^a.c", "^b.c"});
     EXPECT_EQ(static_cast<size_t>(9), countLiveNodes(dfa));
     dfa.minimize();
-    EXPECT_EQ(static_cast<size_t>(5), countLiveNodes(dfa));
+    EXPECT_EQ(static_cast<size_t>(4), countLiveNodes(dfa));
 }
 
 TEST_F(DFAMinimizerTest, SimpleFallBackTransitionDifferentiator1)

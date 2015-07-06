@@ -93,9 +93,6 @@ struct ImmutableNFA {
         const ImmutableNFA& immutableNFA;
         uint32_t position;
 
-        const ImmutableRange<CharacterType>& operator*() const { return immutableNFA.transitions[position]; }
-        const ImmutableRange<CharacterType>* operator->() const { return &immutableNFA.transitions[position]; }
-
         bool operator==(const ConstRangeIterator& other) const
         {
             ASSERT(&immutableNFA == &other.immutableNFA);
@@ -109,11 +106,27 @@ struct ImmutableNFA {
             return *this;
         }
 
+        CharacterType first() const
+        {
+            return range().first;
+        }
+
+        CharacterType last() const
+        {
+            return range().last;
+        }
+
         IterableConstTargets data() const
         {
-            const ImmutableRange<CharacterType>& range = immutableNFA.transitions[position];
+            const ImmutableRange<CharacterType>& range = this->range();
             return { immutableNFA, range.targetStart, range.targetEnd };
         };
+
+    private:
+        const ImmutableRange<CharacterType>& range() const
+        {
+            return immutableNFA.transitions[position];
+        }
     };
 
     struct IterableConstRange {

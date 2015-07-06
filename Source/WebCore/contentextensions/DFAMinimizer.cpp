@@ -30,6 +30,7 @@
 
 #include "DFA.h"
 #include "DFANode.h"
+#include "MutableRangeList.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/StringHasher.h>
@@ -40,79 +41,32 @@ namespace ContentExtensions {
 
 namespace {
 
-// simplifyTransitions() tries to collapse individual transitions into fallback transitions.
-// After simplifyTransitions(), you can also make the assumption that a fallback transition target will never be
-// also the target of an individual transition.
-static void simplifyTransitions(DFA& dfa)
+template<typename VectorType, typename Iterable, typename Function>
+static inline void iterateIntersections(const VectorType& singularTransitionsFirsts, const Iterable& iterableTransitionList, const Function& intersectionHandler)
 {
-    for (DFANode& dfaNode : dfa.nodes) {
-        bool addingFallback = false;
-        uint32_t newFallbackDestination = std::numeric_limits<uint32_t>::max();
-        if (!dfaNode.hasFallbackTransition()
-            && ((dfaNode.transitionsLength() == 126 && !dfaNode.containsTransition(0, dfa))
-                || (dfaNode.transitionsLength() == 127 && dfaNode.containsTransition(0, dfa)))) {
-            unsigned bestTarget = std::numeric_limits<unsigned>::max();
-            unsigned bestTargetScore = 0;
-            HashMap<unsigned, unsigned, DefaultHash<unsigned>::Hash, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> targetHistogram;
-            for (const auto& transition : dfaNode.transitions(dfa)) {
-                if (!transition.first)
-                    continue;
+    ASSERT(!singularTransitionsFirsts.isEmpty());
+    auto otherIterator = iterableTransitionList.begin();
+    auto otherEnd = iterableTransitionList.end();
 
-                unsigned transitionTarget = transition.second;
-                auto addResult = targetHistogram.add(transitionTarget, 1);
-                if (!addResult.isNewEntry)
-                    addResult.iterator->value++;
+    if (otherIterator == otherEnd)
+        return;
 
-                if (addResult.iterator->value > bestTargetScore) {
-                    bestTargetScore = addResult.iterator->value;
-                    bestTarget = transitionTarget;
-                }
-            }
-            ASSERT_WITH_MESSAGE(bestTargetScore, "There should be at least one valid target since having transitions is a precondition to enter this path.");
+    unsigned singularTransitionsLength = singularTransitionsFirsts.size();
+    unsigned singularTransitionsFirstsIndex = 0;
+    for (; otherIterator != otherEnd; ++otherIterator) {
+        auto firstCharacter = otherIterator.first();
+        while (singularTransitionsFirstsIndex < singularTransitionsLength
+            && singularTransitionsFirsts[singularTransitionsFirstsIndex] != firstCharacter)
+            ++singularTransitionsFirstsIndex;
 
-            newFallbackDestination = bestTarget;
-            addingFallback = true;
-        }
-        
-        // Use the same location to write new transitions possibly followed by unused memory.
-        // We can do this because we are always decreasing the amount of memory used.
-        // We will probably need something like setHasFallbackTransitionWithoutChangingDFA to do that.
+        intersectionHandler(singularTransitionsFirstsIndex, otherIterator);
+        ++singularTransitionsFirstsIndex;
 
-        unsigned oldFallbackTransition = std::numeric_limits<uint32_t>::max();
-        bool hadFallbackTransition = dfaNode.hasFallbackTransition();
-        if (hadFallbackTransition)
-            oldFallbackTransition = dfaNode.fallbackTransitionDestination(dfa);
-        
-        newFallbackDestination = (newFallbackDestination == std::numeric_limits<uint32_t>::max() ? oldFallbackTransition : newFallbackDestination);
-        ASSERT(!addingFallback || (newFallbackDestination != std::numeric_limits<uint32_t>::max() && oldFallbackTransition == std::numeric_limits<uint32_t>::max()));
-        bool willHaveFallback = newFallbackDestination != std::numeric_limits<uint32_t>::max();
-        dfaNode.setHasFallbackTransitionWithoutChangingDFA(willHaveFallback);
-        
-        if (willHaveFallback) {
-            Vector<std::pair<uint8_t, uint32_t>> transitions = dfaNode.transitions(dfa);
-            unsigned availableSlotCount = transitions.size() + hadFallbackTransition;
-            for (unsigned i = 0; i < transitions.size(); ++i) {
-                if (transitions[i].second == newFallbackDestination)
-                    transitions.remove(i--);
-            }
-        
-            RELEASE_ASSERT(transitions.size() + willHaveFallback <= availableSlotCount);
-        
-            unsigned firstSlot = dfaNode.transitionsStart();
-            dfaNode.resetTransitions(firstSlot, transitions.size());
-            for (unsigned i = 0; i < transitions.size(); ++i) {
-                dfa.transitionCharacters[firstSlot + i] = transitions[i].first;
-                dfa.transitionDestinations[firstSlot + i] = transitions[i].second;
-            }
-            for (unsigned i = transitions.size(); i < availableSlotCount; ++i) {
-                // Invalidate now-unused memory to make finding bugs easier.
-                dfa.transitionCharacters[firstSlot + i] = std::numeric_limits<uint8_t>::max();
-                dfa.transitionDestinations[firstSlot + i] = std::numeric_limits<uint32_t>::max();
-            }
-            if (willHaveFallback) {
-                dfa.transitionCharacters[firstSlot + transitions.size()] = std::numeric_limits<uint8_t>::max();
-                dfa.transitionDestinations[firstSlot + transitions.size()] = newFallbackDestination;
-            }
+        auto lastCharacter = otherIterator.last();
+        while (singularTransitionsFirstsIndex < singularTransitionsLength
+            && singularTransitionsFirsts[singularTransitionsFirstsIndex] <= lastCharacter) {
+            intersectionHandler(singularTransitionsFirstsIndex, otherIterator);
+            ++singularTransitionsFirstsIndex;
         }
     }
 }
@@ -137,7 +91,32 @@ public:
         m_sets.append(SetDescriptor({ 0, size, 0 }));
     }
 
-    void markElementInCurrentGeneration(unsigned elementIndex)
+    void reserveUninitializedCapacity(unsigned elementCount)
+    {
+        m_partitionedElements.resize(elementCount);
+        m_elementPositionInPartitionedNodes.resize(elementCount);
+        m_elementToSetMap.resize(elementCount);
+    }
+
+    void addSetUnchecked(unsigned start, unsigned size)
+    {
+        m_sets.append(SetDescriptor { start, size, 0 });
+    }
+
+    void setElementUnchecked(unsigned elementIndex, unsigned positionInPartition, unsigned setIndex)
+    {
+        ASSERT(setIndex < m_sets.size());
+        m_partitionedElements[positionInPartition] = elementIndex;
+        m_elementPositionInPartitionedNodes[elementIndex] = positionInPartition;
+        m_elementToSetMap[elementIndex] = setIndex;
+    }
+
+    unsigned startOffsetOfSet(unsigned setIndex) const
+    {
+        return m_sets[setIndex].start;
+    }
+
+    ALWAYS_INLINE void markElementInCurrentGeneration(unsigned elementIndex)
     {
         // Swap the node with the first unmarked node.
         unsigned setIndex = m_elementToSetMap[elementIndex];
@@ -238,45 +217,66 @@ private:
     };
 
     // List of sets.
-    Vector<SetDescriptor> m_sets;
+    Vector<SetDescriptor, 0, UnsafeVectorOverflow> m_sets;
 
     // All the element indices such that two elements of the same set never have a element of a different set between them.
-    Vector<unsigned> m_partitionedElements;
+    Vector<unsigned, 0, UnsafeVectorOverflow> m_partitionedElements;
 
     // Map elementIndex->position in the partitionedElements.
-    Vector<unsigned> m_elementPositionInPartitionedNodes;
+    Vector<unsigned, 0, UnsafeVectorOverflow> m_elementPositionInPartitionedNodes;
 
     // Map elementIndex->SetIndex.
-    Vector<unsigned> m_elementToSetMap;
+    Vector<unsigned, 0, UnsafeVectorOverflow> m_elementToSetMap;
 
     // List of sets with any marked node. Each set can appear at most once.
     // FIXME: find a good inline size for this.
-    Vector<unsigned, 128> m_setsMarkedInCurrentGeneration;
+    Vector<unsigned, 128, UnsafeVectorOverflow> m_setsMarkedInCurrentGeneration;
 };
 
 class FullGraphPartition {
+    typedef MutableRangeList<char, uint32_t, 128> SingularTransitionsMutableRangeList;
 public:
     FullGraphPartition(const DFA& dfa)
     {
         m_nodePartition.initialize(dfa.nodes.size());
 
-        m_flattenedTransitionsStartOffsetPerNode.resize(dfa.nodes.size());
-        for (unsigned& counter : m_flattenedTransitionsStartOffsetPerNode)
-            counter = 0;
-
-        m_flattenedFallbackTransitionsStartOffsetPerNode.resize(dfa.nodes.size());
-        for (unsigned& counter : m_flattenedFallbackTransitionsStartOffsetPerNode)
-            counter = 0;
-
-        // Count the number of incoming transitions per node.
-        for (const DFANode& dfaNode : dfa.nodes) {
-            for (const auto& transition : dfaNode.transitions(dfa))
-                ++m_flattenedTransitionsStartOffsetPerNode[transition.second];
-            if (dfaNode.hasFallbackTransition())
-                ++m_flattenedFallbackTransitionsStartOffsetPerNode[dfaNode.fallbackTransitionDestination(dfa)];
+        SingularTransitionsMutableRangeList singularTransitions;
+        CounterConverter counterConverter;
+        for (const DFANode& node : dfa.nodes) {
+            if (node.isKilled())
+                continue;
+            auto transitions = node.transitions(dfa);
+            singularTransitions.extend(transitions.begin(), transitions.end(), counterConverter);
         }
 
-        // Accumulate the offsets.
+        // Count the number of transition for each singular range. This will give us the bucket size
+        // for the transition partition, where transitions are partitioned by "symbol".
+        unsigned rangeIndexAccumulator = 0;
+        for (const auto& transition : singularTransitions) {
+            m_transitionPartition.addSetUnchecked(rangeIndexAccumulator, transition.data);
+            rangeIndexAccumulator += transition.data;
+        }
+
+        // Count the number of incoming transitions per node.
+        m_flattenedTransitionsStartOffsetPerNode.resize(dfa.nodes.size());
+        memset(m_flattenedTransitionsStartOffsetPerNode.data(), 0, m_flattenedTransitionsStartOffsetPerNode.size() * sizeof(unsigned));
+
+        Vector<char, 0, UnsafeVectorOverflow> singularTransitionsFirsts;
+        singularTransitionsFirsts.reserveInitialCapacity(singularTransitions.m_ranges.size());
+        for (const auto& transition : singularTransitions)
+            singularTransitionsFirsts.uncheckedAppend(transition.first);
+
+        for (const DFANode& node : dfa.nodes) {
+            if (node.isKilled())
+                continue;
+            auto transitions = node.transitions(dfa);
+            iterateIntersections(singularTransitionsFirsts, transitions, [&](unsigned, const DFANode::ConstRangeIterator& origin) {
+                uint32_t targetNodeIndex = origin.target();
+                ++m_flattenedTransitionsStartOffsetPerNode[targetNodeIndex];
+            });
+        }
+
+        // Accumulate the offsets. This gives us the start position of each bucket.
         unsigned transitionAccumulator = 0;
         for (unsigned i = 0; i < m_flattenedTransitionsStartOffsetPerNode.size(); ++i) {
             unsigned transitionsCountForNode = m_flattenedTransitionsStartOffsetPerNode[i];
@@ -284,65 +284,42 @@ public:
             transitionAccumulator += transitionsCountForNode;
         }
         unsigned flattenedTransitionsSize = transitionAccumulator;
+        ASSERT_WITH_MESSAGE(flattenedTransitionsSize == rangeIndexAccumulator, "The number of transitions should be the same, regardless of how they are arranged in buckets.");
 
-        unsigned fallbackTransitionAccumulator = 0;
-        for (unsigned i = 0; i < m_flattenedFallbackTransitionsStartOffsetPerNode.size(); ++i) {
-            unsigned fallbackTransitionsCountForNode = m_flattenedFallbackTransitionsStartOffsetPerNode[i];
-            m_flattenedFallbackTransitionsStartOffsetPerNode[i] = fallbackTransitionAccumulator;
-            fallbackTransitionAccumulator += fallbackTransitionsCountForNode;
-        }
-        unsigned flattenedFallbackTransitionsSize = fallbackTransitionAccumulator;
+        m_transitionPartition.reserveUninitializedCapacity(flattenedTransitionsSize);
 
         // Next, let's fill the transition table and set up the size of each group at the same time.
         m_flattenedTransitionsSizePerNode.resize(dfa.nodes.size());
         for (unsigned& counter : m_flattenedTransitionsSizePerNode)
             counter = 0;
-
-        m_flattenedFallbackTransitionsSizePerNode.resize(dfa.nodes.size());
-        for (unsigned& counter : m_flattenedFallbackTransitionsSizePerNode)
-            counter = 0;
-
         m_flattenedTransitions.resize(flattenedTransitionsSize);
 
-        m_flattenedFallbackTransitions.resize(flattenedFallbackTransitionsSize);
+        Vector<uint32_t> transitionPerRangeOffset(m_transitionPartition.size());
+        memset(transitionPerRangeOffset.data(), 0, transitionPerRangeOffset.size() * sizeof(uint32_t));
 
         for (unsigned i = 0; i < dfa.nodes.size(); ++i) {
-            const DFANode& dfaNode = dfa.nodes[i];
-            for (const auto& transition : dfaNode.transitions(dfa)) {
-                unsigned targetNodeIndex = transition.second;
+            const DFANode& node = dfa.nodes[i];
+            if (node.isKilled())
+                continue;
+
+            auto transitions = node.transitions(dfa);
+            iterateIntersections(singularTransitionsFirsts, transitions, [&](unsigned singularTransitonIndex, const DFANode::ConstRangeIterator& origin) {
+                uint32_t targetNodeIndex = origin.target();
 
                 unsigned start = m_flattenedTransitionsStartOffsetPerNode[targetNodeIndex];
                 unsigned offset = m_flattenedTransitionsSizePerNode[targetNodeIndex];
+                unsigned positionInFlattenedTransitions = start + offset;
+                m_flattenedTransitions[positionInFlattenedTransitions] = Transition({ i });
 
-                m_flattenedTransitions[start + offset] = Transition({ i, targetNodeIndex, transition.first });
+                uint32_t& inRangeOffset = transitionPerRangeOffset[singularTransitonIndex];
+                unsigned positionInTransitionPartition = m_transitionPartition.startOffsetOfSet(singularTransitonIndex) + inRangeOffset;
+                ++inRangeOffset;
+
+                m_transitionPartition.setElementUnchecked(positionInFlattenedTransitions, positionInTransitionPartition, singularTransitonIndex);
 
                 ++m_flattenedTransitionsSizePerNode[targetNodeIndex];
-            }
-            if (dfaNode.hasFallbackTransition()) {
-                unsigned targetNodeIndex = dfaNode.fallbackTransitionDestination(dfa);
-
-                unsigned start = m_flattenedFallbackTransitionsStartOffsetPerNode[targetNodeIndex];
-                unsigned offset = m_flattenedFallbackTransitionsSizePerNode[targetNodeIndex];
-
-                m_flattenedFallbackTransitions[start + offset] = i;
-                ++m_flattenedFallbackTransitionsSizePerNode[targetNodeIndex];
-            }
+            });
         }
-
-        // Create the initial partition of transition. Each character differentiating a transiton
-        // from an other gets its own set in the partition.
-        m_transitionPartition.initialize(m_flattenedTransitions.size());
-        for (uint16_t i = 0; i < 128; ++i) {
-            for (unsigned transitionIndex = 0; transitionIndex < m_flattenedTransitions.size(); ++transitionIndex) {
-                const Transition& transition = m_flattenedTransitions[transitionIndex];
-                if (transition.character == i)
-                    m_transitionPartition.markElementInCurrentGeneration(transitionIndex);
-            }
-            m_transitionPartition.refineGeneration([](unsigned) { });
-        }
-
-        // Fallback partitions are considered as a special type of differentiator, we don't split them initially.
-        m_fallbackTransitionPartition.initialize(m_flattenedFallbackTransitions.size());
     }
 
     void markNode(unsigned nodeIndex)
@@ -359,17 +336,10 @@ public:
 
                 for (unsigned i = 0; i < incomingTransitionsSizeForNode; ++i)
                     m_transitionPartition.markElementInCurrentGeneration(incomingTransitionsStartForNode + i);
-
-                unsigned incomingFallbackTransitionsStartForNode = m_flattenedFallbackTransitionsStartOffsetPerNode[nodeIndex];
-                unsigned incomingFallbackTransitionsSizeForNode = m_flattenedFallbackTransitionsSizePerNode[nodeIndex];
-
-                for (unsigned i = 0; i < incomingFallbackTransitionsSizeForNode; ++i)
-                    m_fallbackTransitionPartition.markElementInCurrentGeneration(incomingFallbackTransitionsStartForNode + i);
             });
 
             // We only need to split the transitions, we handle the new sets through the main loop.
             m_transitionPartition.refineGeneration([](unsigned) { });
-            m_fallbackTransitionPartition.refineGeneration([](unsigned) { });
         });
     }
 
@@ -386,23 +356,6 @@ public:
         }
     }
 
-    void splitByFallbackTransitions()
-    {
-        ASSERT_WITH_MESSAGE(m_nextTransitionSetToProcess || !m_transitionPartition.size(), "We can only distinguish nodes by fallback transition *after* all other transitions are covered. Doing otherwise would be incorrect since the unique transitions from 2 nodes could cover all possible transitions.");
-
-        for (unsigned fallbackTransitionSetIndex = 0; fallbackTransitionSetIndex < m_fallbackTransitionPartition.size(); ++fallbackTransitionSetIndex) {
-
-            m_fallbackTransitionPartition.iterateSet(fallbackTransitionSetIndex, [&](unsigned transitionIndex) {
-                unsigned sourceNodeIndex = m_flattenedFallbackTransitions[transitionIndex];
-                m_nodePartition.markElementInCurrentGeneration(sourceNodeIndex);
-            });
-            refinePartitions();
-
-            // Any new split need to spread to all the unique transition that can reach the two new sets.
-            splitByUniqueTransitions();
-        }
-    }
-
     unsigned nodeReplacement(unsigned nodeIndex)
     {
         unsigned setIndex = m_nodePartition.setIndex(nodeIndex);
@@ -412,21 +365,26 @@ public:
 private:
     struct Transition {
         unsigned source;
-        unsigned target;
-        uint16_t character;
     };
 
-    Vector<unsigned> m_flattenedTransitionsStartOffsetPerNode;
-    Vector<unsigned> m_flattenedTransitionsSizePerNode;
-    Vector<unsigned> m_flattenedFallbackTransitionsStartOffsetPerNode;
-    Vector<unsigned> m_flattenedFallbackTransitionsSizePerNode;
+    struct CounterConverter {
+        uint32_t convert(uint32_t)
+        {
+            return 1;
+        }
 
-    Vector<Transition> m_flattenedTransitions;
-    Vector<unsigned> m_flattenedFallbackTransitions;
+        void extend(uint32_t& destination, uint32_t)
+        {
+            ++destination;
+        }
+    };
+
+    Vector<unsigned, 0, UnsafeVectorOverflow> m_flattenedTransitionsStartOffsetPerNode;
+    Vector<unsigned, 0, UnsafeVectorOverflow> m_flattenedTransitionsSizePerNode;
+    Vector<Transition, 0, UnsafeVectorOverflow> m_flattenedTransitions;
 
     Partition m_nodePartition;
     Partition m_transitionPartition;
-    Partition m_fallbackTransitionPartition;
 
     unsigned m_nextTransitionSetToProcess { 0 };
 };
@@ -494,8 +452,6 @@ struct ActionKeyHashTraits : public WTF::CustomHashTraits<ActionKey> {
 
 void DFAMinimizer::minimize(DFA& dfa)
 {
-    simplifyTransitions(dfa);
-
     FullGraphPartition fullGraphPartition(dfa);
 
     // Unlike traditional minimization final states can be differentiated by their action.
@@ -520,21 +476,12 @@ void DFAMinimizer::minimize(DFA& dfa)
     // Use every splitter to refine the node partitions.
     fullGraphPartition.splitByUniqueTransitions();
 
-    // At this stage, we know that no pair of state can be distinguished by the individual transitions. They can still
-    // be distinguished by their fallback transitions.
-    //
-    // For example, two states [1, 2] can both have a transition on 'x' to a state [3], but each have fallback transition
-    // to different states [4] and [5].
-    //
-    // Here, we distinguish such cases and at each stage refine the new discovered sets by their individual transitions.
-    fullGraphPartition.splitByFallbackTransitions();
-
     Vector<unsigned> relocationVector;
     relocationVector.reserveInitialCapacity(dfa.nodes.size());
     for (unsigned i = 0; i < dfa.nodes.size(); ++i)
         relocationVector.uncheckedAppend(i);
 
-    // Kill the useless nodes and keep track of the new node transitions should point to.
+    // Update all the transitions.
     for (unsigned i = 0; i < dfa.nodes.size(); ++i) {
         unsigned replacement = fullGraphPartition.nodeReplacement(i);
         if (i != replacement) {
@@ -543,19 +490,18 @@ void DFAMinimizer::minimize(DFA& dfa)
         }
     }
 
-    for (DFANode& node : dfa.nodes) {
-        auto nodeTransitions = node.transitions(dfa);
-        for (unsigned i = 0; i < node.transitionsLength(); ++i)
-            dfa.transitionDestinations[node.transitionsStart() + i] = relocationVector[nodeTransitions[i].second];
-        if (node.hasFallbackTransition())
-            node.changeFallbackTransition(dfa, relocationVector[node.fallbackTransitionDestination(dfa)]);
-    }
-
-    // After minimizing, there is no guarantee individual transition are still poiting to different states.
-    // The state pointed by one individual transition and the fallback states may have been merged.
-    simplifyTransitions(dfa);
-
     dfa.root = relocationVector[dfa.root];
+    for (DFANode& node : dfa.nodes) {
+        if (node.isKilled())
+            continue;
+
+        for (auto& transition : node.transitions(dfa)) {
+            uint32_t target = transition.target();
+            uint32_t relocatedTarget = relocationVector[target];
+            if (target != relocatedTarget)
+                transition.resetTarget(relocatedTarget);
+        }
+    }
 }
 
 } // namespace ContentExtensions

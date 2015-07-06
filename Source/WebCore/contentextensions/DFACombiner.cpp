@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DFACombiner.h"
 
+#include "MutableRangeList.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 
@@ -34,6 +35,35 @@ namespace WebCore {
 namespace ContentExtensions {
 
 class DFAMerger {
+    typedef MutableRangeList<char, uint64_t, 128> CombinedTransitionsMutableRangeList;
+
+    enum class WhichDFA {
+        A,
+        B
+    };
+
+    template<WhichDFA whichDFA>
+    struct TargetConverter {
+        uint64_t convert(uint32_t target)
+        {
+            uint64_t value = 0xffffffffffffffff;
+            extend(value, target);
+            return value;
+        }
+
+        void extend(uint64_t& destination, uint32_t target)
+        {
+            setHalfSignature(destination, target);
+        }
+    private:
+        void setHalfSignature(uint64_t& signature, uint32_t value)
+        {
+            unsigned shiftAmount = (whichDFA == WhichDFA::A) ? 32 : 0;
+            uint64_t mask = static_cast<uint64_t>(0xffffffff) << (32 - shiftAmount);
+            signature = (signature & mask) | static_cast<uint64_t>(value) << shiftAmount;
+        }
+    };
+
 public:
     DFAMerger(const DFA& a, const DFA& b)
         : m_dfaA(a)
@@ -49,43 +79,46 @@ public:
         uint64_t rootSignature = signatureForIndices(m_dfaA.root, m_dfaB.root);
         getOrCreateCombinedNode(rootSignature);
 
+        CombinedTransitionsMutableRangeList combinedTransitions;
         while (!m_unprocessedNodes.isEmpty()) {
-            memset(m_transitionTargets, 0xff, sizeof(m_transitionTargets));
+            combinedTransitions.clear();
 
             uint64_t unprocessedNode = m_unprocessedNodes.takeLast();
 
-            // We cannot cache the source node itself since we modify the machine. We only manipulate the IDs.
-            uint32_t sourceNodeId = m_nodeMapping.get(unprocessedNode);
-
-            // Populate the unique transitions.
             uint32_t indexA = extractIndexA(unprocessedNode);
-            if (indexA != invalidNodeIndex)
-                populateTransitions<WhichDFA::A>(indexA);
+            if (indexA != invalidNodeIndex) {
+                const DFANode& nodeA = m_dfaA.nodes[indexA];
+                auto transitionsA = nodeA.transitions(m_dfaA);
+                TargetConverter<WhichDFA::A> converterA;
+                combinedTransitions.extend(transitionsA.begin(), transitionsA.end(), converterA);
+            }
 
             uint32_t indexB = extractIndexB(unprocessedNode);
-            if (indexB != invalidNodeIndex)
-                populateTransitions<WhichDFA::B>(indexB);
+            if (indexB != invalidNodeIndex) {
+                const DFANode& nodeB = m_dfaB.nodes[indexB];
+                auto transitionsB = nodeB.transitions(m_dfaB);
+                TargetConverter<WhichDFA::B> converterB;
+                combinedTransitions.extend(transitionsB.begin(), transitionsB.end(), converterB);
+            }
 
-            // Spread the fallback transitions over the unique transitions and keep a reference to the fallback transition.
-            uint64_t fallbackTransitionSignature = signatureForIndices(invalidNodeIndex, invalidNodeIndex);
-            if (indexA != invalidNodeIndex)
-                populateFromFallbackTransitions<WhichDFA::A>(indexA, fallbackTransitionSignature);
-            if (indexB != invalidNodeIndex)
-                populateFromFallbackTransitions<WhichDFA::B>(indexB, fallbackTransitionSignature);
+            unsigned transitionsStart = m_output.transitionRanges.size();
+            for (const auto& range : combinedTransitions) {
+                unsigned targetNodeId = getOrCreateCombinedNode(range.data);
+                m_output.transitionRanges.append({ range.first, range.last });
+                m_output.transitionDestinations.append(targetNodeId);
+            }
+            unsigned transitionsEnd = m_output.transitionRanges.size();
+            unsigned transitionsLength = transitionsEnd - transitionsStart;
 
-            createTransitions(sourceNodeId);
-            createFallbackTransitionIfNeeded(sourceNodeId, fallbackTransitionSignature);
+            uint32_t sourceNodeId = m_nodeMapping.get(unprocessedNode);
+            DFANode& dfaSourceNode = m_output.nodes[sourceNodeId];
+            dfaSourceNode.setTransitions(transitionsStart, static_cast<uint8_t>(transitionsLength));
         }
         return m_output;
     }
 
 private:
     uint32_t invalidNodeIndex = 0xffffffff;
-
-    enum class WhichDFA {
-        A,
-        B
-    };
 
     static uint64_t signatureForIndices(uint32_t aIndex, uint32_t bIndex)
     {
@@ -122,14 +155,14 @@ private:
             uint32_t actionsStart = node.actionsStart();
             uint32_t actionsEnd = actionsStart + node.actionsLength();
             for (uint32_t i = actionsStart; i < actionsEnd; ++i)
-            actions.add(m_dfaA.actions[i]);
+                actions.add(m_dfaA.actions[i]);
         }
         if (indexB != invalidNodeIndex) {
             const DFANode& node = m_dfaB.nodes[indexB];
             uint32_t actionsStart = node.actionsStart();
             uint32_t actionsEnd = actionsStart + node.actionsLength();
             for (uint32_t i = actionsStart; i < actionsEnd; ++i)
-            actions.add(m_dfaB.actions[i]);
+                actions.add(m_dfaB.actions[i]);
         }
 
         uint32_t actionsStart = m_output.actions.size();
@@ -142,87 +175,11 @@ private:
         return newNodeIndex;
     }
 
-    template<WhichDFA whichDFA>
-    void setHalfSignature(uint64_t& signature, uint32_t value)
-    {
-        unsigned shiftAmount = (whichDFA == WhichDFA::A) ? 32 : 0;
-        uint64_t mask = static_cast<uint64_t>(0xffffffff) << (32 - shiftAmount);
-        signature = (signature & mask) | static_cast<uint64_t>(value) << shiftAmount;
-    }
-
-    template<WhichDFA whichDFA>
-    void populateTransitions(uint32_t nodeIndex)
-    {
-        const DFA& dfa = (whichDFA == WhichDFA::A) ? m_dfaA : m_dfaB;
-        const DFANode& node = dfa.nodes[nodeIndex];
-        uint32_t transitionsStart = node.transitionsStart();
-        uint32_t transitionsEnd = transitionsStart + node.transitionsLength();
-
-        // Extract transitions.
-        for (uint32_t transitionIndex = transitionsStart; transitionIndex < transitionsEnd; ++transitionIndex) {
-            uint8_t transitionCharacter = dfa.transitionCharacters[transitionIndex];
-            RELEASE_ASSERT(transitionCharacter < WTF_ARRAY_LENGTH(m_transitionTargets));
-
-            uint32_t transitionDestination = dfa.transitionDestinations[transitionIndex];
-            setHalfSignature<whichDFA>(m_transitionTargets[transitionCharacter], transitionDestination);
-        }
-    }
-
-    template<WhichDFA whichDFA>
-    void populateFromFallbackTransitions(uint32_t nodeIndex, uint64_t& fallbackTransitionSignature)
-    {
-        const DFA& dfa = (whichDFA == WhichDFA::A) ? m_dfaA : m_dfaB;
-        const DFANode& node = dfa.nodes[nodeIndex];
-        if (!node.hasFallbackTransition())
-            return;
-
-        uint32_t fallbackTarget = node.fallbackTransitionDestination(dfa);
-        setHalfSignature<whichDFA>(fallbackTransitionSignature, fallbackTarget);
-
-        // Spread the fallback over transitions where the other has something and we don't.
-        for (unsigned i = 0; i < WTF_ARRAY_LENGTH(m_transitionTargets); ++i) {
-            uint64_t& targetSignature = m_transitionTargets[i];
-
-            uint32_t otherTarget = (whichDFA == WhichDFA::A) ? extractIndexB(targetSignature) : extractIndexA(targetSignature);
-            uint32_t selfTarget = (whichDFA == WhichDFA::A) ? extractIndexA(targetSignature) : extractIndexB(targetSignature);
-
-            if (otherTarget != invalidNodeIndex && selfTarget == invalidNodeIndex)
-                setHalfSignature<whichDFA>(targetSignature, fallbackTarget);
-        }
-    }
-
-    void createTransitions(uint32_t sourceNodeId)
-    {
-        // Create transitions out of the source node, creating new nodes as needed.
-        uint32_t transitionsStart = m_output.transitionCharacters.size();
-        for (uint8_t i = 0; i < WTF_ARRAY_LENGTH(m_transitionTargets); ++i) {
-            uint64_t signature = m_transitionTargets[i];
-            if (signature == signatureForIndices(invalidNodeIndex, invalidNodeIndex))
-                continue;
-            uint32_t nodeId = getOrCreateCombinedNode(signature);
-            m_output.transitionCharacters.append(i);
-            m_output.transitionDestinations.append(nodeId);
-        }
-        uint32_t transitionsEnd = m_output.transitionCharacters.size();
-        uint8_t transitionsLength = static_cast<uint8_t>(transitionsEnd - transitionsStart);
-
-        m_output.nodes[sourceNodeId].setTransitions(transitionsStart, transitionsLength);
-    }
-
-    void createFallbackTransitionIfNeeded(uint32_t sourceNodeId, uint64_t fallbackTransitionSignature)
-    {
-        if (fallbackTransitionSignature != signatureForIndices(invalidNodeIndex, invalidNodeIndex)) {
-            uint32_t nodeId = getOrCreateCombinedNode(fallbackTransitionSignature);
-            m_output.nodes[sourceNodeId].addFallbackTransition(m_output, nodeId);
-        }
-    }
-
     const DFA& m_dfaA;
     const DFA& m_dfaB;
     DFA m_output;
     HashMap<uint64_t, uint32_t, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_nodeMapping;
     Vector<uint64_t> m_unprocessedNodes;
-    uint64_t m_transitionTargets[128];
 };
 
 void DFACombiner::combineDFAs(unsigned minimumSize, std::function<void(DFA&&)> handler)
