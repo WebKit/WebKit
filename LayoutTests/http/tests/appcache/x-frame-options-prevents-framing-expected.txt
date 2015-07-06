@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: Refused to display 'http://127.0.0.1:8000/appcache/x-frame-options-prevents-framing.php' in a frame because it set 'X-Frame-Options' to 'deny'.
+The following iframe is a document that was cached in the application cache.
+It also had "x-frame-options: deny" set, so it should not actually show up in the iframe
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+

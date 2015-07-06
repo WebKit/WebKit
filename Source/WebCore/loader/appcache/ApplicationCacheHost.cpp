@@ -83,12 +83,20 @@ void ApplicationCacheHost::maybeLoadMainResource(ResourceRequest& request, Subst
         if (m_mainResourceApplicationCache) {
             // Get the resource from the application cache. By definition, cacheForMainRequest() returns a cache that contains the resource.
             ApplicationCacheResource* resource = m_mainResourceApplicationCache->resourceForRequest(request);
+
+            // ApplicationCache resources have fragment identifiers stripped off of their URLs,
+            // but we'll need to restore that for the SubstituteData.
+            ResourceResponse responseToUse = resource->response();
+            if (request.url().hasFragmentIdentifier()) {
+                URL url = responseToUse.url();
+                url.setFragmentIdentifier(request.url().fragmentIdentifier());
+                responseToUse.setURL(url);
+            }
+
             substituteData = SubstituteData(resource->data(),
-                                            resource->response().mimeType(),
-                                            resource->response().textEncodingName(),
                                             URL(),
-                                            URL(),
-                                            SubstituteData::ShouldRevealToSessionHistory);
+                                            responseToUse,
+                                            SubstituteData::SessionHistoryVisibility::Visible);
         }
     }
 }

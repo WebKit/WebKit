@@ -135,7 +135,7 @@ protected:
     };
 
     WEBCORE_EXPORT ResourceResponseBase();
-    ResourceResponseBase(const URL&, const String& mimeType, long long expectedLength, const String& textEncodingName);
+    WEBCORE_EXPORT ResourceResponseBase(const URL&, const String& mimeType, long long expectedLength, const String& textEncodingName);
 
     WEBCORE_EXPORT void lazyInit(InitLevel) const;
 
