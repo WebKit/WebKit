@@ -40,7 +40,6 @@ namespace WebCore {
 
 NetworkStorageSession::NetworkStorageSession(RetainPtr<CFURLStorageSessionRef> platformSession)
     : m_platformSession(platformSession)
-    , m_isPrivate(false)
 {
 }
 
@@ -78,7 +77,6 @@ std::unique_ptr<NetworkStorageSession> NetworkStorageSession::createPrivateBrows
 #else
     auto session = std::make_unique<NetworkStorageSession>(adoptCF(wkCreatePrivateStorageSession(cfIdentifier.get(), defaultNetworkStorageSession()->platformSession())));
 #endif
-    session->m_isPrivate = true;
 
     return session;
 }

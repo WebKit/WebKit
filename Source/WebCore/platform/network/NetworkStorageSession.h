@@ -47,10 +47,6 @@ public:
 
     WEBCORE_EXPORT static void switchToNewTestingSession();
 
-#if PLATFORM(COCOA) || USE(CFNETWORK) || USE(SOUP)
-    bool isPrivateBrowsingSession() const { return m_isPrivate; }
-#endif
-
 #if PLATFORM(COCOA) || USE(CFNETWORK)
     NetworkStorageSession(RetainPtr<CFURLStorageSessionRef>);
     // May be null, in which case a Foundation default should be used.
@@ -75,10 +71,6 @@ private:
     std::unique_ptr<SoupNetworkSession> m_session;
 #else
     RefPtr<NetworkingContext> m_context;
-#endif
-
-#if PLATFORM(COCOA) || USE(CFNETWORK) || USE(SOUP)
-    bool m_isPrivate;
 #endif
 };
 

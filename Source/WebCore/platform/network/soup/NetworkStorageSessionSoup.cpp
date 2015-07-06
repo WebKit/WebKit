@@ -38,7 +38,6 @@ namespace WebCore {
 
 NetworkStorageSession::NetworkStorageSession(std::unique_ptr<SoupNetworkSession> session)
     : m_session(WTF::move(session))
-    , m_isPrivate(false)
 {
 }
 
@@ -63,7 +62,6 @@ NetworkStorageSession& NetworkStorageSession::defaultStorageSession()
 std::unique_ptr<NetworkStorageSession> NetworkStorageSession::createPrivateBrowsingSession(const String&)
 {
     auto session = std::make_unique<NetworkStorageSession>(SoupNetworkSession::createPrivateBrowsingSession());
-    session->m_isPrivate = true;
     return session;
 }
 
