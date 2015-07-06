@@ -1,3 +1,10 @@
+2015-07-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        URTBF after r186357 to fix non Cocoa platforms.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::deleteWebsiteData):
+
 2015-07-06  Antti Koivisto  <antti@apple.com>
 
         With multipart/replaced (e.g. motion JPEG), m_bufferedDataForCache grows unbounded in Networking process
