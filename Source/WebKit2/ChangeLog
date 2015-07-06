@@ -1,3 +1,15 @@
+2015-07-06  Brady Eidson  <beidson@apple.com>
+
+        ShouldOpenExternalURLsPolicy should default to "Allow" for WK2 API loads.
+        <rdar://problem/21640050> and https://bugs.webkit.org/show_bug.cgi?id=146563
+
+        Reviewed by Geoff Garen.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView loadRequest:]): Move _loadRequest:withOptions: logic back here, just without options.
+        (-[WKWebView _loadRequest:withOptions:]): This SPI is now unneeded, but must remain inactive.
+        * UIProcess/WebPageProxy.h:
+
 2015-07-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         URTBF after r186357 to fix non Cocoa platforms.

@@ -363,7 +363,7 @@ public:
     bool tryClose();
     bool isClosed() const { return m_isClosed; }
 
-    RefPtr<API::Navigation> loadRequest(const WebCore::ResourceRequest&, WebCore::ShouldOpenExternalURLsPolicy = WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow, API::Object* userData = nullptr);
+    RefPtr<API::Navigation> loadRequest(const WebCore::ResourceRequest&, WebCore::ShouldOpenExternalURLsPolicy = WebCore::ShouldOpenExternalURLsPolicy::ShouldAllow, API::Object* userData = nullptr);
     RefPtr<API::Navigation> loadFile(const String& fileURL, const String& resourceDirectoryURL, API::Object* userData = nullptr);
     RefPtr<API::Navigation> loadData(API::Data*, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData = nullptr);
     RefPtr<API::Navigation> loadHTMLString(const String& htmlString, const String& baseURL, API::Object* userData = nullptr);

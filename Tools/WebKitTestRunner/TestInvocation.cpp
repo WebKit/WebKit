@@ -177,6 +177,8 @@ void TestInvocation::invoke()
 
     WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), beginTestMessageBody.get());
 
+    bool shouldOpenExternalURLs = false;
+
     TestController::singleton().runUntil(m_gotInitialResponse, TestController::shortTimeout);
     if (!m_gotInitialResponse) {
         m_errorMessage = "Timed out waiting for initial response from web process\n";
@@ -186,7 +188,7 @@ void TestInvocation::invoke()
     if (m_error)
         goto end;
 
-    WKPageLoadURL(TestController::singleton().mainWebView()->page(), m_url.get());
+    WKPageLoadURLWithShouldOpenExternalURLsPolicy(TestController::singleton().mainWebView()->page(), m_url.get(), shouldOpenExternalURLs);
 
     TestController::singleton().runUntil(m_gotFinalMessage, TestController::noTimeout);
     if (m_error)

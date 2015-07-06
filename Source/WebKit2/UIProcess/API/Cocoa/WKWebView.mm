@@ -451,7 +451,11 @@ static bool shouldAllowPictureInPictureMediaPlayback()
 
 - (WKNavigation *)loadRequest:(NSURLRequest *)request
 {
-    return [self _loadRequest:request withOptions:nil];
+    auto navigation = _page->loadRequest(request);
+    if (!navigation)
+        return nil;
+
+    return [wrapper(*navigation.release().leakRef()) autorelease];
 }
 
 - (WKNavigation *)loadFileURL:(NSURL *)URL allowingReadAccessToURL:(NSURL *)readAccessURL
@@ -1865,14 +1869,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (WKNavigation *)_loadRequest:(NSURLRequest *)request withOptions:(NSDictionary *)loadOptions
 {
-    bool shouldOpenExternalURLs = [loadOptions[_WKShouldOpenExternalURLsKey] boolValue];
-    WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy = shouldOpenExternalURLs ? WebCore::ShouldOpenExternalURLsPolicy::ShouldAllow : WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow;
-
-    auto navigation = _page->loadRequest(request, shouldOpenExternalURLsPolicy);
-    if (!navigation)
-        return nil;
-
-    return [wrapper(*navigation.release().leakRef()) autorelease];
+    return [self loadRequest:request];
 }
 
 - (BOOL)_isEditable
