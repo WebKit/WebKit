@@ -1,3 +1,32 @@
+2015-05-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Crash under ICU with ASAN during editing/selection/move-by-word-visually-crash-test-5.html
+        https://bugs.webkit.org/show_bug.cgi?id=145429
+        <rdar://problem/20992218>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebKit uses some strings which contain the lower 8-bits of UTF-16 (thereby saving space). However,
+        ICU doesn't understand this encoding. When we want to use ICU functions with strings in this encoding,
+        we create a UTextProvider which converts our encoded strings to UTF-16 for ICU, one chunk at a time.
+        This object contains a vtable which we populate to perform the conversion.
+
+        The WebKit function which actually returns the UTF-16 chunks has two relevant arguments: an index into
+        the encoded string which ICU is requesting, and a direction from that index which ICU is interested
+        in. This function populates a "chunk" which is characterized by a pointer to a buffer, the length of
+        the populated data in the buffer, and an offset into the chunk which represents the index that the
+        requested character was put into.
+
+        When ICU requests data going backward, we fill in the chunk accordingly, with the requested character
+        all the way at the end. We then set the offset equal to the length of the buffer. However, this length
+        value is stale from the previous time the function ran. Therefore, ICU was reading the wrong index in
+        the chunk when expecting the requested character.
+
+        Covered by editing/selection/move-by-word-visually-crash-test-5.html.
+
+        * platform/text/icu/UTextProviderLatin1.cpp:
+        (WebCore::uTextLatin1Access):
+
 2015-05-26  Zalan Bujtas  <zalan@apple.com>
 
         Overhanging float sets are not cleaned up properly when floating renderer is destroyed.
