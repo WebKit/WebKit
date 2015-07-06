@@ -1,3 +1,33 @@
+2015-05-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        SVG as image uses very tiny default font-size
+        https://bugs.webkit.org/show_bug.cgi?id=68090
+
+        Reviewed by Darin Adler.
+
+        When loading a document, WebKit creates a Page object and then changes its setting
+        from the browser's preferences. This is true for interactive resources also, such as a
+        stand-alone SVG or an SVG embedded in an <object> tag for example. For non-interactive
+        resources, like an SVG embedded in an <img> tag for example, this function is called
+        after loading the resource is finished. This function creates an artificial page and
+        fabricates a scoped settings for it. This turns out to be problematic for cases like
+        the default font size because its initial value is zero. We cannot go from WebCore to
+        WebKit to ask for the global settings. But we can inherit the global settings from the
+        the master page. This is not the best solution because of two reasons. (1) Once the
+        resource is cached and the styles for the text elements are calculated, nothing can
+        change the values of styles except removing the resource itself from the cache if the
+        browser's preferences change. Also there is no mechanism to notify this artificial
+        page if the browser's preferences change. (2) An image like a non-interactive SVG,
+        should be displayed the same way regardless of the browser's preferences. A user may
+        be able to change the default font size for other text. But this should not affect
+        images even if they are vector images like SVG. An easy and more agreeable solution
+        is to hard-code the default font size for this case and do not depend on the global
+        settings at all.
+
+        Test: svg/text/text-default-font-size.html
+
+        * page/Settings.in: Set the initial value of the setting defaultFontSize to be 16.
+        
 2015-05-20  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r172591): Can no longer style <optgroup> with colors (LayoutTests/fast/forms/select/optgroup-rendering.html)
