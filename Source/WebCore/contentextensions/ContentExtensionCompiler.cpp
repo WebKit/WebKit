@@ -247,7 +247,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
 
     // Smaller maxNFASizes risk high compiling and interpreting times from having too many DFAs,
     // larger maxNFASizes use too much memory when compiling.
-    const unsigned maxNFASize = 30000;
+    const unsigned maxNFASize = 75000;
     
     bool firstNFAWithoutDomainsSeen = false;
 
