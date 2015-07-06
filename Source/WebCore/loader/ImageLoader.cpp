@@ -287,10 +287,7 @@ void ImageLoader::notifyFinished(CachedResource* resource)
     if (!m_hasPendingLoadEvent)
         return;
 
-    if (element().fastHasAttribute(HTMLNames::crossoriginAttr)
-        && !element().document().securityOrigin()->canRequest(image()->response().url())
-        && !resource->passesAccessControlCheck(element().document().securityOrigin())) {
-
+    if (element().fastHasAttribute(HTMLNames::crossoriginAttr) && !resource->passesSameOriginPolicyCheck(*element().document().securityOrigin())) {
         setImageWithoutConsideringPendingLoadEvent(0);
 
         m_hasPendingErrorEvent = true;

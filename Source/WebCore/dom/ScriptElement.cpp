@@ -336,10 +336,7 @@ void ScriptElement::notifyFinished(CachedResource* resource)
     if (!m_cachedScript)
         return;
 
-    if (m_requestUsesAccessControl
-        && !m_element.document().securityOrigin()->canRequest(m_cachedScript->response().url())
-        && !m_cachedScript->passesAccessControlCheck(m_element.document().securityOrigin())) {
-
+    if (m_requestUsesAccessControl && !m_cachedScript->passesSameOriginPolicyCheck(*m_element.document().securityOrigin())) {
         dispatchErrorEvent();
         DEPRECATED_DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Cross-origin script load denied by Cross-Origin Resource Sharing policy.")));
         m_element.document().addConsoleMessage(MessageSource::JS, MessageLevel::Error, consoleMessage);
