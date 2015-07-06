@@ -26,10 +26,14 @@
 #ifndef BAssert_h
 #define BAssert_h
 
+#define BCRASH() do { \
+    *(int*)0xbbadbeef = 0; \
+} while (0);
+
 #define BASSERT_IMPL(x) do { \
     if (!(x)) \
-        *(int*)0xbbadbeef = 0; \
-} while(0);
+        BCRASH(); \
+} while (0);
 
 #define RELEASE_BASSERT(x) BASSERT_IMPL(x)
 
