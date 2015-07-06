@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-static struct SQLExceptionNameDescription {
+static const struct SQLExceptionNameDescription {
     const char* const name;
     const char* const description;
 } sqlExceptions[] = {

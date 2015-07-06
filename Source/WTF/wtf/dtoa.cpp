@@ -367,7 +367,7 @@ static int p5sCount;
 
 static ALWAYS_INLINE void pow5mult(BigInt& b, int k)
 {
-    static int p05[3] = { 5, 25, 125 };
+    static const int p05[3] = { 5, 25, 125 };
 
     if (int i = k & 3)
         multadd(b, p05[i - 1], 0);

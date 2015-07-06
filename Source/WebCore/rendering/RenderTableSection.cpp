@@ -45,8 +45,8 @@ namespace WebCore {
 using namespace HTMLNames;
 
 // Those 2 variables are used to balance the memory consumption vs the repaint time on big tables.
-static unsigned gMinTableSizeToUseFastPaintPathWithOverflowingCell = 75 * 75;
-static float gMaxAllowedOverflowingCellRatioForFastPaintPath = 0.1f;
+static const unsigned gMinTableSizeToUseFastPaintPathWithOverflowingCell = 75 * 75;
+static const float gMaxAllowedOverflowingCellRatioForFastPaintPath = 0.1f;
 
 static inline void setRowLogicalHeightToRowStyleLogicalHeightIfNotRelative(RenderTableSection::RowStruct& row)
 {

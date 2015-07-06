@@ -44,7 +44,7 @@ inline bool shouldExpandFrame(LayoutUnit width, LayoutUnit height, bool hasFixed
     if (!width || !height)
         return false;
     // Really small fixed size frames can't be meant to be scrolled and are there probably by mistake. Avoid expanding.
-    static unsigned smallestUsefullyScrollableDimension = 8;
+    static const unsigned smallestUsefullyScrollableDimension = 8;
     if (hasFixedWidth && width < LayoutUnit(smallestUsefullyScrollableDimension))
         return false;
     if (hasFixedHeight && height < LayoutUnit(smallestUsefullyScrollableDimension))

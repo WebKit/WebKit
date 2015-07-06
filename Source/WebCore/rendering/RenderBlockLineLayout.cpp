@@ -1811,7 +1811,7 @@ bool RenderBlockFlow::matchedEndLine(LineLayoutState& layoutState, const InlineB
 
     // The first clean line doesn't match, but we can check a handful of following lines to try
     // to match back up.
-    static int numLines = 8; // The # of lines we're willing to match against.
+    static const int numLines = 8; // The # of lines we're willing to match against.
     RootInlineBox* originalEndLine = layoutState.endLine();
     RootInlineBox* line = originalEndLine;
     for (int i = 0; i < numLines && line; i++, line = line->nextRootBox()) {

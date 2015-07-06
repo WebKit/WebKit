@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-static int cScrollbarThickness[] = { 15, 11 };
+static const int cScrollbarThickness[] = { 15, 11 };
 
 IntRect ScrollbarThemeMock::trackRect(ScrollbarThemeClient* scrollbar, bool)
 {

@@ -119,13 +119,13 @@ ScrollbarTheme* ScrollbarTheme::nativeTheme()
 }
 
 // FIXME: Get these numbers from CoreUI.
-static int cRealButtonLength[] = { 28, 21 };
-static int cButtonHitInset[] = { 3, 2 };
+static const int cRealButtonLength[] = { 28, 21 };
+static const int cButtonHitInset[] = { 3, 2 };
 // cRealButtonLength - cButtonInset
-static int cButtonLength[] = { 14, 10 };
+static const int cButtonLength[] = { 14, 10 };
 
-static int cOuterButtonLength[] = { 16, 14 }; // The outer button in a double button pair is a bit bigger.
-static int cOuterButtonOverlap = 2;
+static const int cOuterButtonLength[] = { 16, 14 }; // The outer button in a double button pair is a bit bigger.
+static const int cOuterButtonOverlap = 2;
 
 static float gInitialButtonDelay = 0.5f;
 static float gAutoscrollButtonDelay = 0.05f;

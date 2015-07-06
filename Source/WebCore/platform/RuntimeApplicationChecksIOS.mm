@@ -33,19 +33,19 @@ namespace WebCore {
 
 bool applicationIsAdSheet()
 {
-    static bool isAdSheet = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.AdSheetPhone"];
+    static const bool isAdSheet = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.AdSheetPhone"];
     return isAdSheet;
 }
 
 bool applicationIsMobileMail()
 {
-    static bool isMobileMail = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.mobilemail"];
+    static const bool isMobileMail = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.mobilemail"];
     return isMobileMail;
 }
 
 bool applicationIsMobileSafari()
 {
-    static bool isMobileSafari = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.mobilesafari"];
+    static const bool isMobileSafari = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.mobilesafari"];
     return isMobileSafari;
 }
 
@@ -53,7 +53,7 @@ bool applicationIsDumpRenderTree()
 {
     // We use a prefix match instead of strict equality since LayoutTestRelay may launch multiple instances of
     // DumpRenderTree where the bundle identifier of each instance has a unique suffix.
-    static bool isDumpRenderTree = [[[NSBundle mainBundle] bundleIdentifier] hasPrefix:@"org.webkit.DumpRenderTree"]; // e.g. org.webkit.DumpRenderTree0
+    static const bool isDumpRenderTree = [[[NSBundle mainBundle] bundleIdentifier] hasPrefix:@"org.webkit.DumpRenderTree"]; // e.g. org.webkit.DumpRenderTree0
     return isDumpRenderTree;
 }
 
@@ -65,43 +65,43 @@ bool applicationIsMobileStore()
 
 bool applicationIsWebApp()
 {
-    static bool isWebApp = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.webapp"];
+    static const bool isWebApp = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.webapp"];
     return isWebApp;
 }
 
 bool applicationIsOkCupid()
 {
-    static bool isOkCupid = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.okcupid.app"];
+    static const bool isOkCupid = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.okcupid.app"];
     return isOkCupid;
 }
 
 bool applicationIsFacebook()
 {
-    static bool isFacebook = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.facebook.Facebook"];
+    static const bool isFacebook = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.facebook.Facebook"];
     return isFacebook;
 }
 
 bool applicationIsEpicurious()
 {
-    static bool isEpicurious = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.condenet.Epicurious"];
+    static const bool isEpicurious = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.condenet.Epicurious"];
     return isEpicurious;
 }
 
 bool applicationIsDaijisenDictionary()
 {
-    static bool isDaijisenDictionary = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"jp.co.shogakukan.daijisen2009i"];
+    static const bool isDaijisenDictionary = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"jp.co.shogakukan.daijisen2009i"];
     return isDaijisenDictionary;
 }
 
 bool applicationIsNASAHD()
 {
-    static bool isNASAHD = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"gov.nasa.NASAHD"];
+    static const bool isNASAHD = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"gov.nasa.NASAHD"];
     return isNASAHD;
 }
 
 bool applicationIsMASH()
 {
-    static bool isMASH = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.magnateinteractive.mashgame"]
+    static const bool isMASH = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.magnateinteractive.mashgame"]
         || [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.magnateinteractive.mashlitegame"]
         || [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.magnateinteractive.mashchristmas"]
         || [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.magnateinteractive.mashhalloween"]
@@ -111,20 +111,20 @@ bool applicationIsMASH()
 
 bool applicationIsTheEconomistOnIPhone()
 {
-    static bool isTheEconomistOnIPhone = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.economist.iphone"];
+    static const bool isTheEconomistOnIPhone = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.economist.iphone"];
     return isTheEconomistOnIPhone;
 }
 
 // FIXME: this needs to be changed when the WebProcess is changed to an XPC service.
 bool applicationIsWebProcess()
 {
-    static bool isWebProcess = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.WebKit.WebContent.Development"] || [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.WebKit.WebContent"] || [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.WebProcess"];
+    static const bool isWebProcess = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.WebKit.WebContent.Development"] || [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.WebKit.WebContent"] || [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.WebProcess"];
     return isWebProcess;
 }
 
 bool applicationIsIBooksOnIOS()
 {
-    static bool isIBooksOnIOS = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.iBooks"];
+    static const bool isIBooksOnIOS = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.iBooks"];
     return isIBooksOnIOS;
 }
 

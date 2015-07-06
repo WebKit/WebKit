@@ -37,10 +37,10 @@
 
 namespace {
 // 100MB
-static size_t maximumResourcesContentSize = 100 * 1000 * 1000;
+static const size_t maximumResourcesContentSize = 100 * 1000 * 1000;
 
 // 10MB
-static size_t maximumSingleResourceContentSize = 10 * 1000 * 1000;
+static const size_t maximumSingleResourceContentSize = 10 * 1000 * 1000;
 }
 
 using namespace Inspector;
