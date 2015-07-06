@@ -369,7 +369,7 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseSourceEl
     UNUSED_PARAM(functionParseType);
 #endif
     
-    while (TreeStatement statement = parseStatement(context, directive, &directiveLiteralLength)) {
+    while (TreeStatement statement = parseStatementListItem(context, directive, &directiveLiteralLength)) {
         if (mode == CheckForStrictMode && !seenNonDirective) {
             if (directive) {
                 // "use strict" must be the exact literal without escape sequences or line continuation.
@@ -401,6 +401,30 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseSourceEl
 
     propagateError();
     return sourceElements;
+}
+template <typename LexerType>
+template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatementListItem(TreeBuilder& context, const Identifier*& directive, unsigned* directiveLiteralLength)
+{
+    // The grammar is documented here:
+    // http://www.ecma-international.org/ecma-262/6.0/index.html#sec-statements
+    TreeStatement result = 0;
+    switch (m_token.m_type) {
+    case CONSTTOKEN:
+        result = parseConstDeclaration(context);
+        break;
+#if ENABLE(ES6_CLASS_SYNTAX)
+    case CLASSTOKEN:
+        result = parseClassDeclaration(context);
+        break;
+#endif
+    default:
+        // FIXME: This needs to consider 'let' in bug:
+        // https://bugs.webkit.org/show_bug.cgi?id=142944
+        result = parseStatement(context, directive, directiveLiteralLength);
+        break;
+    }
+
+    return result;
 }
 
 template <typename LexerType>
@@ -1263,15 +1287,6 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatement(Tre
     case VAR:
         result = parseVarDeclaration(context);
         break;
-    case CONSTTOKEN:
-        result = parseConstDeclaration(context);
-        break;
-#if ENABLE(ES6_CLASS_SYNTAX)
-    case CLASSTOKEN:
-        failIfFalse(m_statementDepth == 1, "Class declaration is not allowed in a lexically nested statement");
-        result = parseClassDeclaration(context);
-        break;
-#endif
     case FUNCTION:
         failIfFalseIfStrict(m_statementDepth == 1, "Strict mode does not allow function declarations in a lexically nested statement");
         result = parseFunctionDeclaration(context);
@@ -1938,6 +1953,19 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExpressionOrL
 template <typename LexerType>
 template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExpressionStatement(TreeBuilder& context)
 {
+    switch (m_token.m_type) {
+    // Consult: http://www.ecma-international.org/ecma-262/6.0/index.html#sec-expression-statement
+    // The ES6 spec mandates that we should fail from FUNCTION token here. We handle this case 
+    // in parseStatement() which is the only caller of parseExpressionStatement().
+    // We actually allow FUNCTION in situations where it should not be allowed unless we're in strict mode.
+    case CLASSTOKEN:
+        failWithMessage("'class' declaration is not directly within a block statement");
+        break;
+    default:
+        // FIXME: when implementing 'let' we should fail when we see the token sequence "let [".
+        // https://bugs.webkit.org/show_bug.cgi?id=142944
+        break;
+    }
     JSTextPosition start = tokenStartPosition();
     JSTokenLocation location(tokenLocation());
     TreeExpression expression = parseExpression(context);

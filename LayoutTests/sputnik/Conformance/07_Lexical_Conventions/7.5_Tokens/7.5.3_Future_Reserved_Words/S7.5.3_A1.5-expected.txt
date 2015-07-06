@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Unexpected keyword 'class'. Class declaration is not allowed in a lexically nested statement.
+CONSOLE MESSAGE: line 76: SyntaxError: Unexpected token '='
 S7.5.3_A1.5
 
 PASS Expected parsing failure

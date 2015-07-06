@@ -767,6 +767,7 @@ private:
     }
 
     template <class TreeBuilder> TreeSourceElements parseSourceElements(TreeBuilder&, SourceElementsMode, FunctionParseType);
+    template <class TreeBuilder> TreeStatement parseStatementListItem(TreeBuilder&, const Identifier*& directive, unsigned* directiveLiteralLength);
     template <class TreeBuilder> TreeStatement parseStatement(TreeBuilder&, const Identifier*& directive, unsigned* directiveLiteralLength = 0);
 #if ENABLE(ES6_CLASS_SYNTAX)
     template <class TreeBuilder> TreeStatement parseClassDeclaration(TreeBuilder&);

@@ -1,3 +1,43 @@
+2015-07-06  Saam barati  <saambarati1@gmail.com>
+
+        JSC's parser should follow the ES6 spec with respect to parsing Declarations
+        https://bugs.webkit.org/show_bug.cgi?id=146621
+
+        Reviewed by Mark Lam.
+
+        There were a few locations where JSC would allow declaration statements
+        in incorrect ways. JSC didn't distinguish between 'Statement' and
+        'StatementListItem' grammar productions. The relevant grammar is here:
+        http://www.ecma-international.org/ecma-262/6.0/index.html#sec-statements
+
+        From the ECMA Script 6.0 spec:
+        1. Section 13.6 The if Statement (http://www.ecma-international.org/ecma-262/6.0/index.html#sec-if-statement) 
+         says that IfStatements only takes Statements for the "then-else" clauses, not StatementListItems.
+         (Same with 'while/for/do-while' loop bodies).
+        2. Section 13 ECMAScript Language: Statements and Declarations 
+         (http://www.ecma-international.org/ecma-262/6.0/index.html#sec-ecmascript-language-statements-and-declarations)
+         defines the syntax of Statements, and they do not include ClassDeclarations and LexicalDeclarations 
+         (const, let, see 13.3.1 Let and Const Declarations).
+         Declarations can only be in the “then-else” clauses when embedded in a StatementListItem in a BlockStatement (see 13.2).
+
+        Hence, the following style of declarations are no longer allowed:
+            'if/for/while (condition) const x = 40;'
+            'if/for/while (condition) class C { }'
+
+        Instead, we mandate such declaration constructs are within a StatementList 
+       (which is the production that JSC's Parser::parseSourceElements function parses):
+           'if/for/while (condition) { const x = 40; }'
+           'if/for/while (condition) { class C { } }'
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseSourceElements):
+        (JSC::Parser<LexerType>::parseStatementListItem):
+        (JSC::Parser<LexerType>::parseVarDeclaration):
+        (JSC::Parser<LexerType>::parseStatement):
+        (JSC::Parser<LexerType>::parseExpressionStatement):
+        * parser/Parser.h:
+        (JSC::Parser::getLabel):
+
 2015-07-06  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed debug build fix after r186358.

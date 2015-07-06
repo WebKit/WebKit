@@ -140,13 +140,13 @@ shouldBe("tryCatch2Result", "5");
 
 function with1() {
     var bar;
-    eval("with({foo:42}) const bar = 5;");
+    eval("with({foo:42}) { const bar = 5; }");
     return bar;
 }
 
 function with2() {
     var bar;
-    with({foo:42}) const bar = 5;
+    with({foo:42}) { const bar = 5; }
     return bar;
 }
 

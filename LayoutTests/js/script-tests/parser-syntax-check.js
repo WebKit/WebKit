@@ -236,7 +236,7 @@ valid  ("const a = 5, b, c");
 invalid("var");
 invalid("var = 7");
 invalid("var c (6)");
-valid  ("if (a) var a,b; else const b, c");
+valid  ("if (a) var a,b; else { const b, c }");
 invalid("var 5 = 6");
 valid  ("while (0) var a, b, c=6, d, e, f=5*6, g=f*h, h");
 invalid("var a = if (b) { c }");
