@@ -594,6 +594,8 @@ void RenderElement::insertChildInternal(RenderObject* newChild, RenderObject* be
 
     if (AXObjectCache* cache = document().axObjectCache())
         cache->childrenChanged(this, newChild);
+    if (is<RenderBlockFlow>(*this))
+        downcast<RenderBlockFlow>(*this).invalidateLineLayoutPath();
 }
 
 void RenderElement::removeChildInternal(RenderObject& oldChild, NotifyChildrenType notifyChildren)

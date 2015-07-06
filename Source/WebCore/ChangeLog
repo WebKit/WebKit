@@ -1,3 +1,20 @@
+2015-05-19  Zalan Bujtas  <zalan@apple.com>
+
+        Merged anonymous blocks should invalidate simple line layout path.
+        https://bugs.webkit.org/show_bug.cgi?id=145104
+        rdar://problem/20980930
+
+        Reviewed by Antti Koivisto.
+
+        When anonymous blocks are merged together, it's not guaranteed that the final block can use simple line layout.
+        This patch ensures that the flow block, where the other block's content gets moved to, is no longer on simple line layout path.
+        Whether the final flow block ends up using inline boxes or simple line layout will be determined during the next layout.
+
+        Test: fast/block/crash-when-anonymous-blocks-are-merged-with-simple-line-layout.html
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::insertChildInternal):
+
 2015-05-19  Beth Dakin  <bdakin@apple.com>
 
         Crash in WebCore::RenderLayer::updateScrollbarsAfterLayout
