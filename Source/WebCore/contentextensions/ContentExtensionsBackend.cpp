@@ -89,16 +89,15 @@ Vector<Action> ContentExtensionsBackend::actionsForResourceLoad(const ResourceLo
         RELEASE_ASSERT(contentExtension);
         const CompiledContentExtension& compiledExtension = contentExtension->compiledExtension();
         
-        // FIXME: These should use a different Vector<bool> to keep track of which memory pages are used when doing memory reporting. Or just remove the memory reporting completely.
-        DFABytecodeInterpreter withoutDomainsInterpreter(compiledExtension.filtersWithoutDomainsBytecode(), compiledExtension.filtersWithoutDomainsBytecodeLength(), contentExtension->m_pagesUsed);
+        DFABytecodeInterpreter withoutDomainsInterpreter(compiledExtension.filtersWithoutDomainsBytecode(), compiledExtension.filtersWithoutDomainsBytecodeLength());
         DFABytecodeInterpreter::Actions triggeredActions = withoutDomainsInterpreter.interpret(urlCString, flags);
         
         // Check to see if there are any actions triggered with if- or unless-domain and check the domain if there are.
-        DFABytecodeInterpreter withDomainsInterpreter(compiledExtension.filtersWithDomainsBytecode(), compiledExtension.filtersWithDomainsBytecodeLength(), contentExtension->m_pagesUsed);
+        DFABytecodeInterpreter withDomainsInterpreter(compiledExtension.filtersWithDomainsBytecode(), compiledExtension.filtersWithDomainsBytecodeLength());
         
         DFABytecodeInterpreter::Actions withDomainsPossibleActions = withDomainsInterpreter.interpret(urlCString, flags);
         if (!withDomainsPossibleActions.isEmpty()) {
-            DFABytecodeInterpreter domainsInterpreter(compiledExtension.domainFiltersBytecode(), compiledExtension.domainFiltersBytecodeLength(), contentExtension->m_pagesUsed);
+            DFABytecodeInterpreter domainsInterpreter(compiledExtension.domainFiltersBytecode(), compiledExtension.domainFiltersBytecodeLength());
             DFABytecodeInterpreter::Actions domainsActions = domainsInterpreter.interpret(resourceLoadInfo.mainDocumentURL.host().utf8(), flags);
             
             DFABytecodeInterpreter::Actions ifDomainActions;

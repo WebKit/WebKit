@@ -36,24 +36,15 @@ namespace WebCore {
 namespace ContentExtensions {
 
 template <typename IntType>
-static inline IntType getBits(const DFABytecode* bytecode, uint32_t bytecodeLength, uint32_t index, Vector<bool>& pagesUsed)
+static inline IntType getBits(const DFABytecode* bytecode, uint32_t bytecodeLength, uint32_t index)
 {
-#if CONTENT_EXTENSIONS_MEMORY_REPORTING
-    uint32_t page = index / CONTENT_EXTENSIONS_PAGE_SIZE;
-    while (pagesUsed.size() < (bytecodeLength + CONTENT_EXTENSIONS_PAGE_SIZE - 1) / CONTENT_EXTENSIONS_PAGE_SIZE)
-        pagesUsed.append(false);
-    pagesUsed[page] = true;
-#else
-    UNUSED_PARAM(pagesUsed);
-#endif
     ASSERT_UNUSED(bytecodeLength, index + sizeof(IntType) <= bytecodeLength);
     return *reinterpret_cast<const IntType*>(&bytecode[index]);
 }
 
-// FIXME: Get rid of pagesUsed. We don't need to keep track of the pages used.
-static inline DFABytecodeInstruction getInstruction(const DFABytecode* bytecode, uint32_t bytecodeLength, uint32_t index, Vector<bool>& pagesUsed)
+static inline DFABytecodeInstruction getInstruction(const DFABytecode* bytecode, uint32_t bytecodeLength, uint32_t index)
 {
-    return static_cast<DFABytecodeInstruction>(getBits<uint8_t>(bytecode, bytecodeLength, index, pagesUsed) & DFABytecodeInstructionMask);
+    return static_cast<DFABytecodeInstruction>(getBits<uint8_t>(bytecode, bytecodeLength, index) & DFABytecodeInstructionMask);
 }
 
 static inline size_t jumpSizeInBytes(DFABytecodeJumpSize jumpSize)
@@ -70,22 +61,22 @@ static inline size_t jumpSizeInBytes(DFABytecodeJumpSize jumpSize)
     }
 }
 
-static inline DFABytecodeJumpSize getJumpSize(const DFABytecode* bytecode, uint32_t bytecodeLength, uint32_t index, Vector<bool>& pagesUsed)
+static inline DFABytecodeJumpSize getJumpSize(const DFABytecode* bytecode, uint32_t bytecodeLength, uint32_t index)
 {
-    DFABytecodeJumpSize jumpSize = static_cast<DFABytecodeJumpSize>(getBits<uint8_t>(bytecode, bytecodeLength, index, pagesUsed) & DFABytecodeJumpSizeMask);
+    DFABytecodeJumpSize jumpSize = static_cast<DFABytecodeJumpSize>(getBits<uint8_t>(bytecode, bytecodeLength, index) & DFABytecodeJumpSizeMask);
     ASSERT(jumpSize == DFABytecodeJumpSize::Int32 || jumpSize == DFABytecodeJumpSize::Int16 || jumpSize == DFABytecodeJumpSize::Int8);
     return jumpSize;
 }
 
-static inline int32_t getJumpDistance(const DFABytecode* bytecode, uint32_t bytecodeLength, uint32_t index, Vector<bool>& pagesUsed, DFABytecodeJumpSize jumpSize)
+static inline int32_t getJumpDistance(const DFABytecode* bytecode, uint32_t bytecodeLength, uint32_t index, DFABytecodeJumpSize jumpSize)
 {
     switch (jumpSize) {
     case Int8:
-        return getBits<int8_t>(bytecode, bytecodeLength, index, pagesUsed);
+        return getBits<int8_t>(bytecode, bytecodeLength, index);
     case Int16:
-        return getBits<int16_t>(bytecode, bytecodeLength, index, pagesUsed);
+        return getBits<int16_t>(bytecode, bytecodeLength, index);
     case Int32:
-        return getBits<int32_t>(bytecode, bytecodeLength, index, pagesUsed);
+        return getBits<int32_t>(bytecode, bytecodeLength, index);
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -93,10 +84,10 @@ static inline int32_t getJumpDistance(const DFABytecode* bytecode, uint32_t byte
 
 void DFABytecodeInterpreter::interpretAppendAction(uint32_t& programCounter, Actions& actions, bool ifDomain)
 {
-    ASSERT(getInstruction(m_bytecode, m_bytecodeLength, programCounter, m_pagesUsed) == DFABytecodeInstruction::AppendAction
-        || getInstruction(m_bytecode, m_bytecodeLength, programCounter, m_pagesUsed) == DFABytecodeInstruction::AppendActionWithIfDomain
-        || getInstruction(m_bytecode, m_bytecodeLength, programCounter, m_pagesUsed) == DFABytecodeInstruction::AppendActionDefaultStylesheet);
-    actions.add((ifDomain ? IfDomainFlag : 0) | static_cast<uint64_t>(getBits<uint32_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecodeInstruction), m_pagesUsed)));
+    ASSERT(getInstruction(m_bytecode, m_bytecodeLength, programCounter) == DFABytecodeInstruction::AppendAction
+        || getInstruction(m_bytecode, m_bytecodeLength, programCounter) == DFABytecodeInstruction::AppendActionWithIfDomain
+        || getInstruction(m_bytecode, m_bytecodeLength, programCounter) == DFABytecodeInstruction::AppendActionDefaultStylesheet);
+    actions.add((ifDomain ? IfDomainFlag : 0) | static_cast<uint64_t>(getBits<uint32_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecodeInstruction))));
     programCounter += instructionSizeWithArguments(DFABytecodeInstruction::AppendAction);
     ASSERT(instructionSizeWithArguments(DFABytecodeInstruction::AppendAction) == instructionSizeWithArguments(DFABytecodeInstruction::AppendActionWithIfDomain));
     ASSERT(instructionSizeWithArguments(DFABytecodeInstruction::AppendAction) == instructionSizeWithArguments(DFABytecodeInstruction::AppendActionDefaultStylesheet));
@@ -104,9 +95,9 @@ void DFABytecodeInterpreter::interpretAppendAction(uint32_t& programCounter, Act
 
 void DFABytecodeInterpreter::interpretTestFlagsAndAppendAction(uint32_t& programCounter, uint16_t flags, Actions& actions, bool ifDomain)
 {
-    ASSERT(getInstruction(m_bytecode, m_bytecodeLength, programCounter, m_pagesUsed) == DFABytecodeInstruction::TestFlagsAndAppendAction
-        || getInstruction(m_bytecode, m_bytecodeLength, programCounter, m_pagesUsed) == DFABytecodeInstruction::TestFlagsAndAppendActionWithIfDomain);
-    uint16_t flagsToCheck = getBits<uint16_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecodeInstruction), m_pagesUsed);
+    ASSERT(getInstruction(m_bytecode, m_bytecodeLength, programCounter) == DFABytecodeInstruction::TestFlagsAndAppendAction
+        || getInstruction(m_bytecode, m_bytecodeLength, programCounter) == DFABytecodeInstruction::TestFlagsAndAppendActionWithIfDomain);
+    uint16_t flagsToCheck = getBits<uint16_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecodeInstruction));
 
     uint16_t loadTypeFlags = flagsToCheck & LoadTypeMask;
     uint16_t ressourceTypeFlags = flagsToCheck & ResourceTypeMask;
@@ -115,7 +106,7 @@ void DFABytecodeInterpreter::interpretTestFlagsAndAppendAction(uint32_t& program
     bool ressourceTypeMatches = ressourceTypeFlags ? (ressourceTypeFlags & flags) : true;
     
     if (loadTypeMatches && ressourceTypeMatches)
-        actions.add((ifDomain ? IfDomainFlag : 0) | static_cast<uint64_t>(getBits<uint32_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecodeInstruction) + sizeof(uint16_t), m_pagesUsed)));
+        actions.add((ifDomain ? IfDomainFlag : 0) | static_cast<uint64_t>(getBits<uint32_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecodeInstruction) + sizeof(uint16_t))));
     programCounter += instructionSizeWithArguments(DFABytecodeInstruction::TestFlagsAndAppendAction);
     ASSERT(instructionSizeWithArguments(DFABytecodeInstruction::TestFlagsAndAppendAction) == instructionSizeWithArguments(DFABytecodeInstruction::TestFlagsAndAppendActionWithIfDomain));
 }
@@ -125,11 +116,11 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::actionsForDefaultStylesh
     Actions actions;
 
     // DFA header.
-    uint32_t dfaBytecodeLength = getBits<uint32_t>(m_bytecode, m_bytecodeLength, 0, m_pagesUsed);
+    uint32_t dfaBytecodeLength = getBits<uint32_t>(m_bytecode, m_bytecodeLength, 0);
     uint32_t programCounter = sizeof(uint32_t);
 
     while (programCounter < dfaBytecodeLength) {
-        DFABytecodeInstruction instruction = getInstruction(m_bytecode, m_bytecodeLength, programCounter, m_pagesUsed);
+        DFABytecodeInstruction instruction = getInstruction(m_bytecode, m_bytecodeLength, programCounter);
         if (instruction == DFABytecodeInstruction::AppendActionDefaultStylesheet)
             interpretAppendAction(programCounter, actions, false);
         else if (instruction == DFABytecodeInstruction::AppendAction)
@@ -159,13 +150,13 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString&
 
         // DFA header.
         uint32_t dfaStart = programCounter;
-        uint32_t dfaBytecodeLength = getBits<uint32_t>(m_bytecode, m_bytecodeLength, programCounter, m_pagesUsed);
+        uint32_t dfaBytecodeLength = getBits<uint32_t>(m_bytecode, m_bytecodeLength, programCounter);
         programCounter += sizeof(uint32_t);
 
         // Skip the default stylesheet actions on the DFA root. These are accessed via actionsForDefaultStylesheetFromDFARoot.
         if (!dfaStart) {
             while (programCounter < dfaBytecodeLength) {
-                DFABytecodeInstruction instruction = getInstruction(m_bytecode, m_bytecodeLength, programCounter, m_pagesUsed);
+                DFABytecodeInstruction instruction = getInstruction(m_bytecode, m_bytecodeLength, programCounter);
                 if (instruction == DFABytecodeInstruction::AppendActionDefaultStylesheet)
                     programCounter += instructionSizeWithArguments(DFABytecodeInstruction::AppendActionDefaultStylesheet);
                 else if (instruction == DFABytecodeInstruction::AppendAction)
@@ -178,8 +169,8 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString&
             if (programCounter >= m_bytecodeLength)
                 return actions;
         } else {
-            ASSERT_WITH_MESSAGE(getInstruction(m_bytecode, m_bytecodeLength, programCounter, m_pagesUsed) != DFABytecodeInstruction::AppendAction
-                && getInstruction(m_bytecode, m_bytecodeLength, programCounter, m_pagesUsed) != DFABytecodeInstruction::TestFlagsAndAppendAction,
+            ASSERT_WITH_MESSAGE(getInstruction(m_bytecode, m_bytecodeLength, programCounter) != DFABytecodeInstruction::AppendAction
+                && getInstruction(m_bytecode, m_bytecodeLength, programCounter) != DFABytecodeInstruction::TestFlagsAndAppendAction,
                 "Triggers that match everything should only be in the first DFA.");
         }
         
@@ -189,7 +180,7 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString&
         bool urlIndexIsAfterEndOfString = false;
         while (true) {
             ASSERT(programCounter <= m_bytecodeLength);
-            switch (getInstruction(m_bytecode, m_bytecodeLength, programCounter, m_pagesUsed)) {
+            switch (getInstruction(m_bytecode, m_bytecodeLength, programCounter)) {
 
             case DFABytecodeInstruction::Terminate:
                 goto nextDFA;
@@ -200,10 +191,10 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString&
 
                 // Check to see if the next character in the url is the value stored with the bytecode.
                 char character = url[urlIndex];
-                DFABytecodeJumpSize jumpSize = getJumpSize(m_bytecode, m_bytecodeLength, programCounter, m_pagesUsed);
-                if (character == getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecodeInstruction), m_pagesUsed)) {
+                DFABytecodeJumpSize jumpSize = getJumpSize(m_bytecode, m_bytecodeLength, programCounter);
+                if (character == getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecodeInstruction))) {
                     uint32_t jumpLocation = programCounter + sizeof(DFABytecodeInstruction) + sizeof(uint8_t);
-                    programCounter += getJumpDistance(m_bytecode, m_bytecodeLength, jumpLocation, m_pagesUsed, jumpSize);
+                    programCounter += getJumpDistance(m_bytecode, m_bytecodeLength, jumpLocation, jumpSize);
                     if (!character)
                         urlIndexIsAfterEndOfString = true;
                     urlIndex++; // This represents an edge in the DFA.
@@ -218,10 +209,10 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString&
 
                 // Check to see if the next character in the url is the value stored with the bytecode.
                 char character = toASCIILower(url[urlIndex]);
-                DFABytecodeJumpSize jumpSize = getJumpSize(m_bytecode, m_bytecodeLength, programCounter, m_pagesUsed);
-                if (character == getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecodeInstruction), m_pagesUsed)) {
+                DFABytecodeJumpSize jumpSize = getJumpSize(m_bytecode, m_bytecodeLength, programCounter);
+                if (character == getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecodeInstruction))) {
                     uint32_t jumpLocation = programCounter + sizeof(DFABytecodeInstruction) + sizeof(uint8_t);
-                    programCounter += getJumpDistance(m_bytecode, m_bytecodeLength, jumpLocation, m_pagesUsed, jumpSize);
+                    programCounter += getJumpDistance(m_bytecode, m_bytecodeLength, jumpLocation, jumpSize);
                     if (!character)
                         urlIndexIsAfterEndOfString = true;
                     urlIndex++; // This represents an edge in the DFA.
@@ -235,11 +226,11 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString&
                     goto nextDFA;
                 
                 char character = url[urlIndex];
-                DFABytecodeJumpSize jumpSize = getJumpSize(m_bytecode, m_bytecodeLength, programCounter, m_pagesUsed);
-                if (character >= getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecodeInstruction), m_pagesUsed)
-                    && character <= getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecodeInstruction) + sizeof(uint8_t), m_pagesUsed)) {
+                DFABytecodeJumpSize jumpSize = getJumpSize(m_bytecode, m_bytecodeLength, programCounter);
+                if (character >= getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecodeInstruction))
+                    && character <= getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecodeInstruction) + sizeof(uint8_t))) {
                     uint32_t jumpLocation = programCounter + sizeof(DFABytecodeInstruction) + 2 * sizeof(uint8_t);
-                    programCounter += getJumpDistance(m_bytecode, m_bytecodeLength, jumpLocation, m_pagesUsed, jumpSize);
+                    programCounter += getJumpDistance(m_bytecode, m_bytecodeLength, jumpLocation, jumpSize);
                     if (!character)
                         urlIndexIsAfterEndOfString = true;
                     urlIndex++; // This represents an edge in the DFA.
@@ -253,11 +244,11 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString&
                     goto nextDFA;
                 
                 char character = toASCIILower(url[urlIndex]);
-                DFABytecodeJumpSize jumpSize = getJumpSize(m_bytecode, m_bytecodeLength, programCounter, m_pagesUsed);
-                if (character >= getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecodeInstruction), m_pagesUsed)
-                    && character <= getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecodeInstruction) + sizeof(uint8_t), m_pagesUsed)) {
+                DFABytecodeJumpSize jumpSize = getJumpSize(m_bytecode, m_bytecodeLength, programCounter);
+                if (character >= getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecodeInstruction))
+                    && character <= getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecodeInstruction) + sizeof(uint8_t))) {
                     uint32_t jumpLocation = programCounter + sizeof(DFABytecodeInstruction) + 2 * sizeof(uint8_t);
-                    programCounter += getJumpDistance(m_bytecode, m_bytecodeLength, jumpLocation, m_pagesUsed, jumpSize);
+                    programCounter += getJumpDistance(m_bytecode, m_bytecodeLength, jumpLocation, jumpSize);
                     if (!character)
                         urlIndexIsAfterEndOfString = true;
                     urlIndex++; // This represents an edge in the DFA.
@@ -271,8 +262,8 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString&
                     goto nextDFA;
                 
                 uint32_t jumpLocation = programCounter + sizeof(DFABytecodeInstruction);
-                DFABytecodeJumpSize jumpSize = getJumpSize(m_bytecode, m_bytecodeLength, programCounter, m_pagesUsed);
-                programCounter += getJumpDistance(m_bytecode, m_bytecodeLength, jumpLocation, m_pagesUsed, jumpSize);
+                DFABytecodeJumpSize jumpSize = getJumpSize(m_bytecode, m_bytecodeLength, programCounter);
+                programCounter += getJumpDistance(m_bytecode, m_bytecodeLength, jumpLocation, jumpSize);
                 urlIndex++; // This represents an edge in the DFA.
                 break;
             }

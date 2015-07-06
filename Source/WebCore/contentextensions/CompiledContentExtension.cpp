@@ -36,9 +36,9 @@ CompiledContentExtension::~CompiledContentExtension()
 {
 }
 
-Vector<String> CompiledContentExtension::globalDisplayNoneSelectors(Vector<bool>& pagesUsed)
+Vector<String> CompiledContentExtension::globalDisplayNoneSelectors()
 {
-    DFABytecodeInterpreter interpreter(filtersWithoutDomainsBytecode(), filtersWithoutDomainsBytecodeLength(), pagesUsed);
+    DFABytecodeInterpreter interpreter(filtersWithoutDomainsBytecode(), filtersWithoutDomainsBytecodeLength());
     DFABytecodeInterpreter::Actions actionLocations = interpreter.actionsForDefaultStylesheetFromDFARoot();
     
     Vector<Action> globalActions;

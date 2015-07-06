@@ -48,7 +48,6 @@ public:
     const CompiledContentExtension& compiledExtension() const { return m_compiledExtension.get(); }
     StyleSheetContents* globalDisplayNoneStyleSheet();
 
-    mutable Vector<bool> m_pagesUsed;
 private:
     ContentExtension(const String& identifier, Ref<CompiledContentExtension>&&);
 

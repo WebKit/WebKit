@@ -1100,8 +1100,7 @@ TEST_F(ContentExtensionTest, SplittingLargeNFAs)
             combinedBytecode.appendVector(bytecode);
         }
         
-        Vector<bool> pagesUsed;
-        ContentExtensions::DFABytecodeInterpreter interpreter(&combinedBytecode[0], combinedBytecode.size(), pagesUsed);
+        ContentExtensions::DFABytecodeInterpreter interpreter(&combinedBytecode[0], combinedBytecode.size());
         
         EXPECT_EQ(interpreter.interpret("ABBBX", 0).size(), 1ull);
         EXPECT_EQ(interpreter.interpret("ACCCX", 0).size(), 1ull);

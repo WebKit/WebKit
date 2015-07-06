@@ -1,3 +1,13 @@
+2015-07-06  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Remove memory page reporting
+        https://bugs.webkit.org/show_bug.cgi?id=146659
+
+        Reviewed by Benjamin Poulain.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2015-07-06  Benjamin Poulain  <benjamin@webkit.org>
 
         [Content Extensions] Make the DFA transitions ranges instead of characters

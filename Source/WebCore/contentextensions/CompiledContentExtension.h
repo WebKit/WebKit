@@ -48,7 +48,7 @@ public:
     virtual unsigned domainFiltersBytecodeLength() const = 0;
     virtual const SerializedActionByte* actions() const = 0;
     virtual unsigned actionsLength() const = 0;
-    Vector<String> globalDisplayNoneSelectors(Vector<bool>& pagesUsed);
+    Vector<String> globalDisplayNoneSelectors();
 };
 
 } // namespace ContentExtensions
