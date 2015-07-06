@@ -1,3 +1,25 @@
+2015-05-22  Mark Lam  <mark.lam@apple.com>
+
+        Document::ensurePlugInsInjectedScript() should evaluate the injected script on its own frame.
+        https://bugs.webkit.org/show_bug.cgi?id=145328
+
+        Reviewed by Jon Lee.
+
+        trac.webkit.org/r184329 fixed HTMLPlugInImageElement::didAddUserAgentShadowRoot()
+        to use the document's frame instead of the page's main frame.  However,
+        Document::ensurePlugInsInjectedScript() is still evaluating the injected script on
+        the main frame.
+
+        As a result, HTMLPlugInImageElement::didAddUserAgentShadowRoot()'s attempt to get
+        the injected createOverlay function from the document frame's global object will
+        fail.  Fixing Document::ensurePlugInsInjectedScript() to evaluating the injected
+        script on the document's frame fixes the issue.
+
+        No new tests.
+
+        * dom/Document.cpp:
+        (WebCore::Document::ensurePlugInsInjectedScript):
+
 2015-05-22  Chris Dumez  <cdumez@apple.com>
 
         [CG] Regression(r78652): Partially decoded images are not properly removed from MemoryCache when pruning
