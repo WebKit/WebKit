@@ -83,34 +83,31 @@ MediaPlaybackTargetPickerMac::MediaPlaybackTargetPickerMac(MediaPlaybackTargetPi
 
 MediaPlaybackTargetPickerMac::~MediaPlaybackTargetPickerMac()
 {
+    m_client = nullptr;
     m_pendingActionTimer.stop();
     [m_outputDeviceMenuControllerDelegate clearCallback];
 
-    if (m_outputDeviceMenuController) {
-        [m_outputDeviceMenuController removeObserver:m_outputDeviceMenuControllerDelegate.get() forKeyPath:externalOutputDeviceAvailableKeyName];
-        [m_outputDeviceMenuController removeObserver:m_outputDeviceMenuControllerDelegate.get() forKeyPath:externalOutputDevicePickedKeyName];
-        m_outputDeviceMenuController = nullptr;
-    }
+    stopMonitoringPlaybackTargets();
 }
 
 void MediaPlaybackTargetPickerMac::pendingActionTimerFired()
 {
     LOG(Media, "MediaPlaybackTargetPickerMac::pendingActionTimerFired - flags = 0x%x", m_pendingActionFlags);
 
-    if (!m_outputDeviceMenuController || !m_client)
+    if (!m_client)
         return;
 
     PendingActionFlags pendingActions = m_pendingActionFlags;
     m_pendingActionFlags = 0;
 
+    if (pendingActions & CurrentDeviceDidChange) {
+        AVOutputContext* context = m_outputDeviceMenuController ? [m_outputDeviceMenuController.get() outputContext] : nullptr;
+        m_client->setPlaybackTarget(WebCore::MediaPlaybackTargetMac::create(context));
+    }
+
     if (pendingActions & OutputDeviceAvailabilityChanged)
         m_client->externalOutputDeviceAvailableDidChange(devicePicker().externalOutputDeviceAvailable);
 
-    if (pendingActions & CurrentDeviceDidChange) {
-        AVOutputDeviceMenuControllerType* devicePicker = this->devicePicker();
-        if (devicePicker)
-            m_client->setPlaybackTarget(WebCore::MediaPlaybackTargetMac::create([devicePicker outputContext]));
-    }
 }
 
 void MediaPlaybackTargetPickerMac::availableDevicesDidChange()
@@ -129,6 +126,8 @@ AVOutputDeviceMenuControllerType *MediaPlaybackTargetPickerMac::devicePicker()
         return nullptr;
 
     if (!m_outputDeviceMenuController) {
+        LOG(Media, "MediaPlaybackTargetPickerMac::devicePicker - allocating picker");
+
         RetainPtr<AVOutputContextType> context = adoptNS([[getAVOutputContextClass() alloc] init]);
         m_outputDeviceMenuController = adoptNS([[getAVOutputDeviceMenuControllerClass() alloc] initWithOutputContext:context.get()]);
 
@@ -190,7 +189,12 @@ void MediaPlaybackTargetPickerMac::stopMonitoringPlaybackTargets()
 {
     LOG(Media, "MediaPlaybackTargetPickerMac::stopMonitoringPlaybackTargets");
 
-    // FIXME: update once rdar://21062536 has been fixed.
+    if (m_outputDeviceMenuController) {
+        [m_outputDeviceMenuController removeObserver:m_outputDeviceMenuControllerDelegate.get() forKeyPath:externalOutputDeviceAvailableKeyName];
+        [m_outputDeviceMenuController removeObserver:m_outputDeviceMenuControllerDelegate.get() forKeyPath:externalOutputDevicePickedKeyName];
+        m_outputDeviceMenuController = nullptr;
+    }
+    currentDeviceDidChange();
 }
 
 } // namespace WebCore

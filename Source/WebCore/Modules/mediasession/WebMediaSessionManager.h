@@ -67,23 +67,30 @@ private:
     void configurePlaybackTargetClients();
     void configureNewClients();
     void configurePlaybackTargetMonitoring();
+    void configureWatchdogTimer();
 
     enum ConfigurationTaskFlags {
         NoTask = 0,
         InitialConfigurationTask = 1 << 0,
         TargetClientsConfigurationTask = 1 << 1,
         TargetMonitoringConfigurationTask = 1 << 2,
+        WatchdogTimerConfigurationTask = 1 << 3,
     };
     typedef unsigned ConfigurationTasks;
     String toString(ConfigurationTasks);
 
     void scheduleDelayedTask(ConfigurationTasks);
     void taskTimerFired();
+
+    void watchdogTimerFired();
+
     RunLoop::Timer<WebMediaSessionManager> m_taskTimer;
+    RunLoop::Timer<WebMediaSessionManager> m_watchdogTimer;
 
     Vector<std::unique_ptr<ClientState>> m_clientState;
     RefPtr<MediaPlaybackTarget> m_playbackTarget;
     ConfigurationTasks m_taskFlags { NoTask };
+    double m_currentWatchdogInterval { 0 };
     bool m_externalOutputDeviceAvailable { false };
 };
 
