@@ -36,12 +36,20 @@ int computeUnderlineOffset(TextUnderlinePosition underlinePosition, const FontMe
 {
     // This represents the gap between the baseline and the closest edge of the underline.
     int gap = std::max<int>(1, ceilf(textDecorationThickness / 2.0));
-
-    // According to the specification TextUnderlinePositionAuto should default to 'alphabetic' for horizontal text
-    // and to 'under Left' for vertical text (e.g. japanese). We support only horizontal text for now.
-    switch (underlinePosition) {
+    
+    // FIXME: The code for visual overflow detection passes in a null inline text box. This means it is now
+    // broken for the case where auto needs to behave like "under".
+    
+    // According to the specification TextUnderlinePositionAuto should avoid drawing through glyphs in
+    // scripts where it would not be appropriate (e.g., ideographs).
+    // Strictly speaking this can occur whenever the line contains ideographs
+    // even if it is horizontal, but detecting this has performance implications. For now we only work with
+    // vertical text, since we already determined the baseline type to be ideographic in that
+    // case.
+    TextUnderlinePosition resolvedUnderlinePosition = underlinePosition == TextUnderlinePositionAuto && inlineTextBox && inlineTextBox->root().baselineType() == IdeographicBaseline ? TextUnderlinePositionUnder : TextUnderlinePositionAlphabetic;
+    
+    switch (resolvedUnderlinePosition) {
     case TextUnderlinePositionAlphabetic:
-    case TextUnderlinePositionAuto:
         return fontMetrics.ascent() + gap;
     case TextUnderlinePositionUnder: {
         ASSERT(inlineTextBox);
@@ -61,6 +69,8 @@ int computeUnderlineOffset(TextUnderlinePosition underlinePosition, const FontMe
         }
         return inlineTextBox->logicalHeight() + gap + std::max<float>(offset, 0);
     }
+    case TextUnderlinePositionAuto:
+        ASSERT_NOT_REACHED();
     }
 
     ASSERT_NOT_REACHED();
