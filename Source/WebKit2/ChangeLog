@@ -1,3 +1,15 @@
+2015-07-06  Brent Fulgham  <bfulgham@apple.com>
+
+        Ensure media playback is stopped during page close
+        https://bugs.webkit.org/show_bug.cgi?id=146554
+        <rdar://problem/18033944>
+
+        Reviewed by Brady Eidson.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didClose): Make sure to clean up any running media sessions when
+        the process is being shut down.
+
 2015-07-06  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Allow UIDelegate to customize link actions in preview.

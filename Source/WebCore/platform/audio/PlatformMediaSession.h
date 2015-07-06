@@ -37,6 +37,7 @@
 
 namespace WebCore {
 
+class Document;
 class MediaPlaybackTarget;
 class PlatformMediaSessionClient;
 
@@ -145,6 +146,8 @@ private:
     State m_stateToRestore;
     int m_interruptionCount { 0 };
     bool m_notifyingClient;
+
+    friend class PlatformMediaSessionManager;
 };
 
 class PlatformMediaSessionClient {
@@ -176,6 +179,8 @@ public:
     virtual bool canPlayToWirelessPlaybackTarget() const { return false; }
     virtual bool isPlayingToWirelessPlaybackTarget() const { return false; }
     virtual void setShouldPlayToPlaybackTarget(bool) { }
+
+    virtual const Document* hostingDocument() const = 0;
 
 protected:
     virtual ~PlatformMediaSessionClient() { }

@@ -82,6 +82,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/PageCache.h>
 #include <WebCore/PageGroup.h>
+#include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/SchemeRegistry.h>
@@ -657,6 +658,9 @@ void WebProcess::didClose(IPC::Connection&)
     FontCache::singleton().invalidate();
     MemoryCache::singleton().setDisabled(true);
 #endif    
+
+    // FIXME(146657): This explicit media stop command should not be necessary
+    PlatformMediaSessionManager::sharedManager().stopAllMediaPlaybackForProcess();
 
     // The UI process closed this connection, shut down.
     stopRunLoop();
