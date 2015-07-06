@@ -35,8 +35,7 @@
 namespace WebCore {
 
 LayoutState::LayoutState(std::unique_ptr<LayoutState> next, RenderBox* renderer, const LayoutSize& offset, LayoutUnit pageLogicalHeight, bool pageLogicalHeightChanged)
-    : m_lineGrid(0)
-    , m_next(WTF::move(next))
+    : m_next(WTF::move(next))
 #ifndef NDEBUG
     , m_renderer(renderer)
 #endif
@@ -130,23 +129,23 @@ LayoutState::LayoutState(RenderObject& root)
     , m_layoutDeltaXSaturated(false)
     , m_layoutDeltaYSaturated(false)
 #endif    
-    , m_lineGrid(0)
-    , m_pageLogicalHeight(0)
 #ifndef NDEBUG
     , m_renderer(&root)
 #endif
 {
-    RenderElement* container = root.container();
-    FloatPoint absContentPoint = container->localToAbsolute(FloatPoint(), UseTransforms);
-    m_paintOffset = LayoutSize(absContentPoint.x(), absContentPoint.y());
+    if (RenderElement* container = root.container()) {
+        FloatPoint absContentPoint = container->localToAbsolute(FloatPoint(), UseTransforms);
+        m_paintOffset = LayoutSize(absContentPoint.x(), absContentPoint.y());
 
-    if (container->hasOverflowClip()) {
-        m_clipped = true;
-        auto& containerBox = downcast<RenderBox>(*container);
-        m_clipRect = LayoutRect(toLayoutPoint(m_paintOffset), containerBox.cachedSizeForOverflowClip());
-        m_paintOffset -= containerBox.scrolledContentOffset();
+        if (container->hasOverflowClip()) {
+            m_clipped = true;
+            auto& containerBox = downcast<RenderBox>(*container);
+            m_clipRect = LayoutRect(toLayoutPoint(m_paintOffset), containerBox.cachedSizeForOverflowClip());
+            m_paintOffset -= containerBox.scrolledContentOffset();
+        }
     }
 }
+
 void LayoutState::clearPaginationInformation()
 {
     m_pageLogicalHeight = m_next->m_pageLogicalHeight;
