@@ -27,6 +27,10 @@
     border-top: 1px solid rgb(179, 179, 179);
 }
 
+body.window-inactive .data-grid.timeline th {
+    border-top-color: rgb(219, 219, 219);
+}
+
 .data-grid.timeline > .navigation-bar-container {
     position: absolute;
     bottom: 0;
@@ -60,6 +64,10 @@
     box-shadow: none;
 
     background-color: white;
+}
+
+body.window-inactive .data-grid.timeline > .navigation-bar-container > .navigation-bar {
+    border-top-color: rgb(219, 219, 219);
 }
 
 .timeline-data-grid-tree-outline {

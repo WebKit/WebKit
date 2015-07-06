@@ -47,6 +47,10 @@
     height: 29px;
 }
 
+body.window-inactive .timeline-ruler > .header {
+    border-bottom-color: rgb(219, 219, 219);
+}
+
 .timeline-ruler > .header > .divider {
     position: absolute;
     width: 1px;
@@ -54,6 +58,10 @@
     bottom: 0;
     -webkit-transform: translateX(-1px);
     background-image: linear-gradient(to bottom, rgba(179, 179, 179, 0), rgba(179, 179, 179, 1) 85%);
+}
+
+body.window-inactive .timeline-ruler > .header > .divider {
+    background-image: linear-gradient(to bottom, rgba(219, 219, 219, 0), rgba(219, 219, 219, 1) 85%);
 }
 
 .timeline-ruler > .header > .divider > .label {

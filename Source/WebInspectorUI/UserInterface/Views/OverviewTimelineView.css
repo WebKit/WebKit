@@ -36,6 +36,10 @@
     height: 23px;
 }
 
+body.window-inactive .timeline-view.overview > .timeline-ruler > .header {
+    border-top-color: rgb(219, 219, 219);
+}
+
 .timeline-view.overview > .timeline-ruler > .event-markers {
     top: 23px;
 }

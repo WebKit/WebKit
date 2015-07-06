@@ -53,6 +53,10 @@
     bottom: initial;
 }
 
+body.window-inactive .sidebar > .panel.navigation > .overflow-shadow {
+    border-bottom-color: rgb(219, 219, 219);
+}
+
 .sidebar > .panel.navigation > .empty-content-placeholder {
     position: absolute;
     top: 0;

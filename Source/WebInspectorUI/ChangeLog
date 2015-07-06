@@ -1,5 +1,30 @@
 2015-07-05  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: Dim more borders when the window is inactive
+        https://bugs.webkit.org/show_bug.cgi?id=146608
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/DataGrid.css:
+        (body.window-inactive .data-grid th):
+        (body.window-inactive .data-grid :matches(th, td):not(:last-child)):
+        * UserInterface/Views/NavigationSidebarPanel.css:
+        (body.window-inactive .sidebar > .panel.navigation > .overflow-shadow):
+        * UserInterface/Views/OverviewTimelineView.css:
+        (body.window-inactive .timeline-view.overview > .timeline-ruler > .header):
+        * UserInterface/Views/TimelineDataGrid.css:
+        (body.window-inactive .data-grid.timeline th):
+        (body.window-inactive .data-grid.timeline > .navigation-bar-container > .navigation-bar):
+        * UserInterface/Views/TimelineRuler.css:
+        (body.window-inactive .timeline-ruler > .header):
+        (body.window-inactive .timeline-ruler > .header > .divider):
+        * UserInterface/Views/TimelineSidebarPanel.css:
+        (body.window-inactive .sidebar > .panel.navigation.timeline > .status-bar):
+        (body.window-inactive .sidebar > .panel.navigation.timeline > .title-bar):
+        (body.window-inactive .sidebar > .panel.navigation.timeline > .title-bar.timeline-events):
+
+2015-07-05  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Timeline row selection should have same background color in sidebar and data grid
         https://bugs.webkit.org/show_bug.cgi?id=146606
 

@@ -86,8 +86,16 @@
     overflow: hidden;
 }
 
+body.window-inactive .data-grid th {
+    border-bottom-color: rgb(219, 219, 219);
+}
+
 .data-grid :matches(th, td):not(:last-child) {
     border-right: 1px solid rgb(179, 179, 179);
+}
+
+body.window-inactive .data-grid :matches(th, td):not(:last-child) {
+    border-right-color: rgb(219, 219, 219);
 }
 
 .data-grid th.sortable:active {
