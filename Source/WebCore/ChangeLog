@@ -1,3 +1,20 @@
+2015-06-01  Benjamin Poulain  <bpoulain@apple.com>
+
+        [CSS JIT] Fail to compile when we are out of executable memory
+        https://bugs.webkit.org/show_bug.cgi?id=145483
+        rdar://problem/21166612
+
+        Reviewed by Andreas Kling.
+
+        We should use a soft failure when the Linker fails to allocate
+        executable memory for the CSS JIT. We will just fallback to slow
+        code when that happen, better slow CSS than crashing.
+
+        Credit to Chris for finding this problem.
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::compile):
+
 2015-05-29  Zalan Bujtas  <zalan@apple.com>
 
         Text disappears shortly after page load on Nexus 7 site.
