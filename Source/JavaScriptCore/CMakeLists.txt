@@ -498,6 +498,7 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/JSGlobalObject.cpp
     runtime/JSGlobalObjectDebuggable.cpp
     runtime/JSGlobalObjectFunctions.cpp
+    runtime/JSJob.cpp
     runtime/JSLexicalEnvironment.cpp
     runtime/JSLock.cpp
     runtime/JSMap.cpp
@@ -509,9 +510,7 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/JSPromise.cpp
     runtime/JSPromiseConstructor.cpp
     runtime/JSPromiseDeferred.cpp
-    runtime/JSPromiseFunctions.cpp
     runtime/JSPromisePrototype.cpp
-    runtime/JSPromiseReaction.cpp
     runtime/JSPropertyNameEnumerator.cpp
     runtime/JSProxy.cpp
     runtime/JSScope.cpp

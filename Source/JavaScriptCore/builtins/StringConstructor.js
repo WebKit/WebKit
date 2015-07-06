@@ -37,7 +37,7 @@ function raw(template) {
 
     var numberOfSubstitutions = arguments.length - 1;
 
-    var segmentCount = @ToLength(rawSegments.length);
+    var segmentCount = @toLength(rawSegments.length);
 
     if (segmentCount <= 0)
         return '';

@@ -64,7 +64,6 @@
 #include "JSNameScope.h"
 #include "JSNotAnObject.h"
 #include "JSPromiseDeferred.h"
-#include "JSPromiseReaction.h"
 #include "JSPropertyNameEnumerator.h"
 #include "JSTemplateRegistryKey.h"
 #include "JSWithScope.h"
@@ -239,7 +238,6 @@ VM::VM(VMType vmType, HeapType heapType)
     exceptionStructure.set(*this, Exception::createStructure(*this, 0, jsNull()));
 #if ENABLE(PROMISES)
     promiseDeferredStructure.set(*this, JSPromiseDeferred::createStructure(*this, 0, jsNull()));
-    promiseReactionStructure.set(*this, JSPromiseReaction::createStructure(*this, 0, jsNull()));
 #endif
     iterationTerminator.set(*this, JSFinalObject::create(*this, JSFinalObject::createStructure(*this, 0, jsNull(), 1)));
     smallStrings.initializeCommonStrings(*this);

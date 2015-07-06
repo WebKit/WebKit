@@ -28,61 +28,31 @@
 
 #if ENABLE(PROMISES)
 
-#include "JSDestructibleObject.h"
+#include "JSObject.h"
 
 namespace JSC {
 
-class JSPromiseReaction;
-class JSPromiseConstructor;
-
-class JSPromise : public JSDestructibleObject {
+class JSPromise : public JSNonFinalObject {
 public:
-    typedef JSDestructibleObject Base;
+    typedef JSNonFinalObject Base;
 
-    static JSPromise* create(VM&, JSGlobalObject*, JSPromiseConstructor*);
+    static JSPromise* create(VM&, JSGlobalObject*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_EXPORT_INFO;
 
-    enum class Status {
-        Unresolved,
-        HasResolution,
-        HasRejection
+    enum class Status : unsigned {
+        Pending = 1,
+        Fulfilled,
+        Rejected
     };
 
-    Status status() const
-    {
-        return m_status;
-    }
-
-    JSValue result() const
-    {
-        ASSERT(m_status != Status::Unresolved);
-        return m_result.get();
-    }
-
-    JSPromiseConstructor* constructor() const
-    {
-        return m_constructor.get();
-    }
-
-    void reject(VM&, JSValue);
-    void resolve(VM&, JSValue);
-
-    void appendResolveReaction(VM&, JSPromiseReaction*);
-    void appendRejectReaction(VM&, JSPromiseReaction*);
+    Status status(VM&) const;
+    JSValue result(VM&) const;
 
 private:
     JSPromise(VM&, Structure*);
-    void finishCreation(VM&, JSPromiseConstructor*);
-    static void destroy(JSCell*);
-    static void visitChildren(JSCell*, SlotVisitor&);
-
-    Status m_status;
-    WriteBarrier<Unknown> m_result;
-    WriteBarrier<JSPromiseConstructor> m_constructor;
-    Vector<WriteBarrier<JSPromiseReaction>> m_resolveReactions;
-    Vector<WriteBarrier<JSPromiseReaction>> m_rejectReactions;
+    void finishCreation(VM&);
 };
 
 } // namespace JSC

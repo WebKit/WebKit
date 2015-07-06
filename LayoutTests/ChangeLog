@@ -1,3 +1,15 @@
+2015-07-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement the latest Promise spec in JS
+        https://bugs.webkit.org/show_bug.cgi?id=146229
+
+        Reviewed by Sam Weinig.
+
+        Add a test to guarantee that `Promise.resolve` looks up `then` field synchronously.
+
+        * js/dom/Promise-resolve-lookup-then-expected.txt: Added.
+        * js/dom/Promise-resolve-lookup-then.html: Added.
+
 2015-07-05  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (El Capitan): Slider thumb of range input is rotated on reference tests

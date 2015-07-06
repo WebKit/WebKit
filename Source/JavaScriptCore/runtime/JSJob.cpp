@@ -23,25 +23,54 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSPromiseFunctions_h
-#define JSPromiseFunctions_h
+#include "config.h"
+#include "JSJob.h"
 
-#if ENABLE(PROMISES)
-
-#include "JSFunction.h"
+#include "Error.h"
+#include "Exception.h"
+#include "JSCJSValueInlines.h"
+#include "JSCellInlines.h"
+#include "JSGlobalObject.h"
+#include "Microtask.h"
+#include "SlotVisitorInlines.h"
+#include "StrongInlines.h"
 
 namespace JSC {
 
-JSFunction* createDeferredConstructionFunction(VM&, JSGlobalObject*);
-JSFunction* createIdentifyFunction(VM&, JSGlobalObject*);
-JSFunction* createPromiseAllCountdownFunction(VM&, JSGlobalObject*);
-JSFunction* createPromiseResolutionHandlerFunction(VM&, JSGlobalObject*);
-JSFunction* createRejectPromiseFunction(VM&, JSGlobalObject*);
-JSFunction* createResolvePromiseFunction(VM&, JSGlobalObject*);
-JSFunction* createThrowerFunction(VM&, JSGlobalObject*);
+class JSJobMicrotask final : public Microtask {
+public:
+    JSJobMicrotask(VM& vm, JSValue job, JSArray* arguments)
+    {
+        m_job.set(vm, job);
+        m_arguments.set(vm, arguments);
+    }
+
+    virtual ~JSJobMicrotask()
+    {
+    }
+
+private:
+    virtual void run(ExecState*) override;
+
+    Strong<Unknown> m_job;
+    Strong<JSArray> m_arguments;
+};
+
+Ref<Microtask> createJSJob(VM& vm, JSValue job, JSArray* arguments)
+{
+    return adoptRef(*new JSJobMicrotask(vm, job, arguments));
+}
+
+void JSJobMicrotask::run(ExecState* exec)
+{
+    CallData handlerCallData;
+    CallType handlerCallType = getCallData(m_job.get(), handlerCallData);
+    ASSERT(handlerCallType != CallTypeNone);
+
+    MarkedArgumentBuffer handlerArguments;
+    for (unsigned index = 0, length = m_arguments->length(); index < length; ++index)
+        handlerArguments.append(m_arguments->JSArray::get(exec, index));
+    call(exec, m_job.get(), handlerCallType, handlerCallData, jsUndefined(), handlerArguments);
+}
 
 } // namespace JSC
-
-#endif // ENABLE(PROMISES)
-
-#endif // JSPromiseFunctions_h

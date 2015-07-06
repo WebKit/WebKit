@@ -277,7 +277,6 @@ public:
     Strong<Structure> exceptionStructure;
 #if ENABLE(PROMISES)
     Strong<Structure> promiseDeferredStructure;
-    Strong<Structure> promiseReactionStructure;
 #endif
     Strong<JSCell> iterationTerminator;
     Strong<JSCell> emptyPropertyNameEnumerator;

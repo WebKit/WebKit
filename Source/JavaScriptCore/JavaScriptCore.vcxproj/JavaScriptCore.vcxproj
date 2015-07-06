@@ -754,6 +754,7 @@
     <ClCompile Include="..\runtime\JSFunctionNameScope.cpp" />
     <ClCompile Include="..\runtime\JSGlobalObject.cpp" />
     <ClCompile Include="..\runtime\JSGlobalObjectFunctions.cpp" />
+    <ClCompile Include="..\runtime\JSJob.cpp" />
     <ClCompile Include="..\runtime\JSLock.cpp" />
     <ClCompile Include="..\runtime\JSMap.cpp" />
     <ClCompile Include="..\runtime\JSMapIterator.cpp" />
@@ -764,8 +765,6 @@
     <ClCompile Include="..\runtime\JSPromise.cpp" />
     <ClCompile Include="..\runtime\JSPromiseConstructor.cpp" />
     <ClCompile Include="..\runtime\JSPromiseDeferred.cpp" />
-    <ClCompile Include="..\runtime\JSPromiseFunctions.cpp" />
-    <ClCompile Include="..\runtime\JSPromiseReaction.cpp" />
     <ClCompile Include="..\runtime\JSPromisePrototype.cpp" />
     <ClCompile Include="..\runtime\JSPropertyNameEnumerator.cpp" />
     <ClCompile Include="..\runtime\JSProxy.cpp" />
@@ -1573,6 +1572,7 @@
     <ClInclude Include="..\runtime\JSGenericTypedArrayViewPrototypeInlines.h" />
     <ClInclude Include="..\runtime\JSGlobalObject.h" />
     <ClInclude Include="..\runtime\JSGlobalObjectFunctions.h" />
+    <ClInclude Include="..\runtime\JSJob.h" />
     <ClInclude Include="..\runtime\JSInt16Array.h" />
     <ClInclude Include="..\runtime\JSInt32Array.h" />
     <ClInclude Include="..\runtime\JSInt8Array.h" />
@@ -1586,8 +1586,6 @@
     <ClInclude Include="..\runtime\JSPromise.h" />
     <ClInclude Include="..\runtime\JSPromiseConstructor.h" />
     <ClInclude Include="..\runtime\JSPromiseDeferred.h" />
-    <ClInclude Include="..\runtime\JSPromiseFunctions.h" />
-    <ClInclude Include="..\runtime\JSPromiseReaction.h" />
     <ClInclude Include="..\runtime\JSPromisePrototype.h" />
     <ClInclude Include="..\runtime\JSPropertyNameEnumerator.h" />
     <ClInclude Include="..\runtime\JSProxy.h" />

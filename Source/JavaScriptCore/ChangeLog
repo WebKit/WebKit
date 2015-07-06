@@ -1,3 +1,153 @@
+2015-07-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement the latest Promise spec in JS
+        https://bugs.webkit.org/show_bug.cgi?id=146229
+
+        Reviewed by Sam Weinig.
+
+        Updated the Promise implementation to meet to the ES6 spec.
+        This patch
+        1. Implement ES6 Promise and related abstract operations in builtins JS
+        2. Expose @enqueueJob private function to JS world to post the microtask
+
+        Updated implementation has one-on-one correspondence to the ES6 spec description.
+        And keep the JSPromiseDeferred because it is the interface used from the WebCore.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/Array.prototype.js:
+        (reduce):
+        (reduceRight):
+        (every):
+        (forEach):
+        (filter):
+        (map):
+        (some):
+        (fill):
+        (find):
+        (findIndex):
+        (includes):
+        (copyWithin):
+        ToInteger / ToLength are renamed to toInteger and toLength.
+        * builtins/ArrayConstructor.js:
+        (from):
+        ToInteger / ToLength are renamed to toInteger and toLength.
+        * builtins/GlobalObject.js:
+        (toInteger):
+        (toLength):
+        (isObject):
+        (ToInteger): Deleted.
+        (ToLength): Deleted.
+        ToInteger / ToLength are renamed to toInteger and toLength.
+        Add new abstract operation, isObject.
+        * builtins/Operations.Promise.js: Added.
+        (isPromise):
+        (newPromiseReaction):
+        (newPromiseDeferred):
+        (newPromiseCapability.executor):
+        (newPromiseCapability):
+        (triggerPromiseReactions):
+        (rejectPromise):
+        (fulfillPromise):
+        (createResolvingFunctions.resolve):
+        (createResolvingFunctions.reject):
+        (createResolvingFunctions):
+        (promiseReactionJob):
+        (promiseResolveThenableJob):
+        (initializePromise):
+        Added Promise related abstract operations.
+        * builtins/Promise.prototype.js:
+        (catch):
+        (.onFulfilled):
+        (.onRejected):
+        (then):
+        Promise#then implementation in JS.
+        * builtins/PromiseConstructor.js: Added.
+        (all.newResolveElement):
+        (all):
+        (race):
+        (reject):
+        (resolve):
+        Promise static functions implementations in JS.
+        * builtins/StringConstructor.js:
+        (raw):
+        ToInteger / ToLength are renamed to toInteger and toLength.
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::getInternalProperties):
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::enqueueJob):
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::initializePromiseFunction):
+        (JSC::JSGlobalObject::newPromiseDeferredFunction):
+        * runtime/JSJob.cpp: Renamed from Source/JavaScriptCore/runtime/JSPromiseReaction.h.
+        (JSC::createJSJob):
+        (JSC::JSJobMicrotask::run):
+        * runtime/JSJob.h: Renamed from Source/JavaScriptCore/runtime/JSPromiseFunctions.h.
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::create):
+        (JSC::JSPromise::JSPromise):
+        (JSC::JSPromise::finishCreation):
+        (JSC::JSPromise::result):
+        (JSC::JSPromise::destroy): Deleted.
+        (JSC::JSPromise::visitChildren): Deleted.
+        (JSC::JSPromise::reject): Deleted.
+        (JSC::JSPromise::resolve): Deleted.
+        (JSC::JSPromise::appendResolveReaction): Deleted.
+        (JSC::JSPromise::appendRejectReaction): Deleted.
+        (JSC::triggerPromiseReactions): Deleted.
+        * runtime/JSPromise.h:
+        (JSC::JSPromise::status): Deleted.
+        (JSC::JSPromise::result): Deleted.
+        (JSC::JSPromise::constructor): Deleted.
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::constructPromise):
+        (JSC::JSPromiseConstructorFuncResolve): Deleted.
+        (JSC::JSPromiseConstructorFuncReject): Deleted.
+        (JSC::performPromiseRaceLoop): Deleted.
+        (JSC::JSPromiseConstructorFuncRace): Deleted.
+        (JSC::performPromiseAll): Deleted.
+        (JSC::JSPromiseConstructorFuncAll): Deleted.
+        * runtime/JSPromiseDeferred.cpp:
+        (JSC::JSPromiseDeferred::create):
+        (JSC::createJSPromiseDeferredFromConstructor): Deleted.
+        (JSC::updateDeferredFromPotentialThenable): Deleted.
+        (JSC::performDeferredResolve): Deleted.
+        (JSC::performDeferredReject): Deleted.
+        (JSC::abruptRejection): Deleted.
+        * runtime/JSPromiseDeferred.h:
+        * runtime/JSPromiseFunctions.cpp: Removed.
+        (JSC::deferredConstructionFunction): Deleted.
+        (JSC::createDeferredConstructionFunction): Deleted.
+        (JSC::identifyFunction): Deleted.
+        (JSC::createIdentifyFunction): Deleted.
+        (JSC::promiseAllCountdownFunction): Deleted.
+        (JSC::createPromiseAllCountdownFunction): Deleted.
+        (JSC::promiseResolutionHandlerFunction): Deleted.
+        (JSC::createPromiseResolutionHandlerFunction): Deleted.
+        (JSC::rejectPromiseFunction): Deleted.
+        (JSC::createRejectPromiseFunction): Deleted.
+        (JSC::resolvePromiseFunction): Deleted.
+        (JSC::createResolvePromiseFunction): Deleted.
+        (JSC::throwerFunction): Deleted.
+        (JSC::createThrowerFunction): Deleted.
+        * runtime/JSPromisePrototype.cpp:
+        (JSC::JSPromisePrototypeFuncThen): Deleted.
+        * runtime/JSPromiseReaction.cpp: Removed.
+        (JSC::createExecutePromiseReactionMicrotask): Deleted.
+        (JSC::ExecutePromiseReactionMicrotask::run): Deleted.
+        (JSC::JSPromiseReaction::create): Deleted.
+        (JSC::JSPromiseReaction::JSPromiseReaction): Deleted.
+        (JSC::JSPromiseReaction::finishCreation): Deleted.
+        (JSC::JSPromiseReaction::visitChildren): Deleted.
+        * runtime/VM.cpp:
+        (JSC::VM::VM): Deleted.
+        * runtime/VM.h:
+
 2015-07-04  Chris Dumez  <cdumez@apple.com>
 
         Drop RefPtr::clear() method

@@ -23,48 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSPromiseReaction_h
-#define JSPromiseReaction_h
-
-#if ENABLE(PROMISES)
+#ifndef JSJob_h
+#define JSJob_h
 
 #include "JSCell.h"
 #include "Structure.h"
 
 namespace JSC {
 
-class JSPromiseDeferred;
 class Microtask;
+class JSArray;
 
-class JSPromiseReaction final : public JSCell {
-public:
-    typedef JSCell Base;
-    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
-
-    static JSPromiseReaction* create(VM&, JSPromiseDeferred*, JSValue);
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-    {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
-    }
-
-    DECLARE_INFO;
-
-    JSPromiseDeferred* deferred() const { return m_deferred.get(); }
-    JSValue handler() const { return m_handler.get(); }
-
-private:
-    JSPromiseReaction(VM&);
-    void finishCreation(VM&, JSPromiseDeferred*, JSValue);
-    static void visitChildren(JSCell*, SlotVisitor&);
-
-    WriteBarrier<JSPromiseDeferred> m_deferred;
-    WriteBarrier<Unknown> m_handler;
-};
-
-Ref<Microtask> createExecutePromiseReactionMicrotask(VM&, JSPromiseReaction*, JSValue);
+Ref<Microtask> createJSJob(VM&, JSValue job, JSArray* arguments);
 
 } // namespace JSC
 
-#endif // ENABLE(PROMISES)
-
-#endif // JSPromiseReaction_h
+#endif // JSJob_h

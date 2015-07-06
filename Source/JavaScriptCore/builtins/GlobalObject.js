@@ -23,7 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function ToInteger(target) {
+function toInteger(target)
+{
     "use strict";
 
     var numberValue = @Number(target);
@@ -38,11 +39,19 @@ function ToInteger(target) {
     return (numberValue > 0 ? 1 : -1) * @floor(@abs(numberValue));
 }
 
-function ToLength(target) {
+function toLength(target)
+{
     "use strict";
 
     var maxSafeInteger = 0x1FFFFFFFFFFFFF;
-    var length = @ToInteger(target);
+    var length = @toInteger(target);
     // originally Math.min(Math.max(length, 0), maxSafeInteger));
     return length > 0 ? (length < maxSafeInteger ? length : maxSafeInteger) : 0;
+}
+
+function isObject(object)
+{
+    "use strict";
+
+    return (object !== null && typeof object === "object") || typeof object === "function";
 }

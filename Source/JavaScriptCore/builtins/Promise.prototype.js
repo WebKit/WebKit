@@ -23,8 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function catch(onRejected) {
+function catch(onRejected)
+{
     "use strict";
 
     return this.then(undefined, onRejected);
+}
+
+function then(onFulfilled, onRejected)
+{
+    "use strict";
+
+    if (!@isPromise(this))
+        throw new @TypeError("|this| is not a object");
+
+    // FIXME: Fix this code when @@species well-known symbol is landed.
+    // https://bugs.webkit.org/show_bug.cgi?id=146624
+    var constructor = this.constructor;
+
+    var resultCapability = @newPromiseCapability(constructor);
+
+    if (typeof onFulfilled !== "function")
+        onFulfilled = function (argument) { return argument; };
+
+    if (typeof onRejected !== "function")
+        onRejected = function (argument) { throw argument; };
+
+    var fulfillReaction = @newPromiseReaction(resultCapability, onFulfilled);
+    var rejectReaction = @newPromiseReaction(resultCapability, onRejected);
+
+    var state = this.@promiseState;
+
+    if (state === @promisePending) {
+        @putByValDirect(this.@promiseFulfillReactions, this.@promiseFulfillReactions.length, fulfillReaction)
+        @putByValDirect(this.@promiseRejectReactions, this.@promiseRejectReactions.length, rejectReaction)
+    } else if (state === @promiseFulfilled)
+        @enqueueJob(@promiseReactionJob, [fulfillReaction, this.@promiseResult]);
+    else if (state === @promiseRejected)
+        @enqueueJob(@promiseReactionJob, [rejectReaction, this.@promiseResult]);
+
+    return resultCapability.@promise;
 }
