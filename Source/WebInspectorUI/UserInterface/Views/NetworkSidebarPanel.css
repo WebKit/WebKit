@@ -1,0 +1,96 @@
+/*
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.sidebar > .panel.navigation.network > :matches(.content, .empty-content-placeholder) {
+    top: 52px;
+}
+
+.sidebar > .panel.navigation.network > .navigation-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.sidebar > .panel.navigation.network > .title-bar {
+    position: absolute;
+    top: 29px;
+    left: 0;
+    right: 0;
+
+    height: 23px;
+
+    border-bottom: 1px solid rgb(179, 179, 179);
+    background-color: rgb(242, 242, 242);
+    color: rgb(57, 57, 57);
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    font-weight: bold;
+
+    padding: 4px 9px;
+
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+body.window-inactive .sidebar > .panel.navigation.network > .title-bar {
+    border-bottom-color: rgb(219, 219, 219);
+}
+
+.sidebar > .panel.navigation.network.network-grid-content-view-showing > .content {
+ /* This hides the scrollbar. The view shows a scrollbar, we don't need two. */
+    padding-right: 16px;
+    right: -16px;
+}
+
+.sidebar > .panel.navigation.network .item:not(:hover, .selected) .status .status-button,
+.sidebar > .panel.navigation.network .item:hover:not(.selected) .status .close.status-button {
+    display: none;
+}
+
+.sidebar > .panel.navigation.network:not(.network-grid-content-view-showing) .status .go-to-arrow.status-button {
+    display: none;
+}
+
+.sidebar > .panel.navigation.network.network-grid-content-view-showing .status .close.status-button {
+    display: none;
+}
+
+.sidebar > .panel.navigation.network.network-grid-content-view-showing .navigation-sidebar-panel-content-tree-outline.network-grid .item .subtitle {
+    display: none;
+}
+
+.sidebar > .panel.navigation.network > .content > .navigation-sidebar-panel-content-tree-outline {
+    min-height: 100%;
+    background-image: none;
+}
+
+.sidebar > .panel.navigation.network.network-grid-content-view-showing > .content > .navigation-sidebar-panel-content-tree-outline {
+    background-image: linear-gradient(to bottom, transparent, transparent 50%, rgba(0, 0, 0, 0.03) 50%, rgba(0, 0, 0, 0.03));
+    background-size: 100% 40px;
+}

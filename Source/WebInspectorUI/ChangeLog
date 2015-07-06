@@ -1,3 +1,104 @@
+2015-07-02  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Add a dedicated Network tab that is always live
+        https://bugs.webkit.org/show_bug.cgi?id=146568
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js: Updated.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        (WebInspector.isTabTypeAllowed):
+        (WebInspector._tabContentViewForType):
+        (WebInspector._updateNewTabButtonState):
+        Add NetworkTabContentView to the right places.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager):
+        (WebInspector.TimelineManager.prototype.get persistentNetworkTimeline):
+        (WebInspector.TimelineManager.prototype._mainResourceDidChange):
+        (WebInspector.TimelineManager.prototype._resourceWasAdded):
+        Add a persistent network timeline that always has all resources.
+
+        * UserInterface/Images/Network.svg: Added.
+
+        * UserInterface/Main.html: Added new files.
+
+        * UserInterface/Views/NavigationSidebarPanel.css:
+        (.sidebar > .panel.navigation > .content):
+        Drive-by fix. The bottom was off by one. This caused misalignment between sidebar and content view when
+        scrolled all the way to the bottom of the content view.
+
+        * UserInterface/Views/NetworkGridContentView.css: Added.
+        (.content-view.network-grid > .data-grid):
+        (.content-view.network-grid > .data-grid th):
+        (.content-view.network-grid > .data-grid td):
+        (.content-view.network-grid > .data-grid table.data):
+        Mostly copied from TimelineView.css and NetworkTimelineView.css.
+
+        * UserInterface/Views/NetworkGridContentView.js: Added.
+        (WebInspector.NetworkGridContentView):
+        (WebInspector.NetworkGridContentView.prototype.get navigationSidebarTreeOutline):
+        (WebInspector.NetworkGridContentView.prototype.get selectionPathComponents):
+        (WebInspector.NetworkGridContentView.prototype.get zeroTime):
+        (WebInspector.NetworkGridContentView.prototype.shown):
+        (WebInspector.NetworkGridContentView.prototype.hidden):
+        (WebInspector.NetworkGridContentView.prototype.closed):
+        (WebInspector.NetworkGridContentView.prototype.updateLayout):
+        (WebInspector.NetworkGridContentView.prototype.needsLayout):
+        (WebInspector.NetworkGridContentView.prototype.reset):
+        (WebInspector.NetworkGridContentView.prototype._processPendingRecords):
+        (WebInspector.NetworkGridContentView.prototype._networkTimelineReset):
+        (WebInspector.NetworkGridContentView.prototype._networkTimelineRecordAdded):
+        (WebInspector.NetworkGridContentView.prototype._treeElementPathComponentSelected):
+        (WebInspector.NetworkGridContentView.prototype._dataGridNodeSelected):
+        Mostly copied from NetworkTimelineView.
+
+        * UserInterface/Views/NetworkSidebarPanel.css: Added.
+        (.sidebar > .panel.navigation.network > :matches(.content, .empty-content-placeholder)):
+        (.sidebar > .panel.navigation.network > .navigation-bar):
+        (.sidebar > .panel.navigation.network > .title-bar):
+        (.sidebar > .panel.navigation.network.network-grid-content-view-showing > .content):
+        (.sidebar > .panel.navigation.network .item:hover:not(.selected) .status .close.status-button):
+        (.sidebar > .panel.navigation.network:not(.network-grid-content-view-showing) .status .go-to-arrow.status-button):
+        (.sidebar > .panel.navigation.network.network-grid-content-view-showing .status .close.status-button):
+        (.sidebar > .panel.navigation.network.network-grid-content-view-showing .navigation-sidebar-panel-content-tree-outline.network-grid .item .subtitle):
+        (.sidebar > .panel.navigation.network > .content > .navigation-sidebar-panel-content-tree-outline):
+        (.sidebar > .panel.navigation.network.network-grid-content-view-showing > .content > .navigation-sidebar-panel-content-tree-outline):
+        Mostly copied from TimelineSidebarPanel.css and NetworkTimelineView.css.
+
+        * UserInterface/Views/NetworkSidebarPanel.js: Added.
+        (WebInspector.NetworkSidebarPanel):
+        (WebInspector.NetworkSidebarPanel.prototype.closed):
+        (WebInspector.NetworkSidebarPanel.prototype.showDefaultContentView):
+        (WebInspector.NetworkSidebarPanel.prototype.saveStateToCookie):
+        (WebInspector.NetworkSidebarPanel.prototype.restoreStateFromCookie):
+        (WebInspector.NetworkSidebarPanel.prototype.hasCustomFilters):
+        (WebInspector.NetworkSidebarPanel.prototype.matchTreeElementAgainstCustomFilters.match):
+        (WebInspector.NetworkSidebarPanel.prototype.matchTreeElementAgainstCustomFilters):
+        (WebInspector.NetworkSidebarPanel.prototype.treeElementAddedOrChanged):
+        (WebInspector.NetworkSidebarPanel.prototype._networkTimelineReset):
+        (WebInspector.NetworkSidebarPanel.prototype._contentBrowserCurrentContentViewDidChange):
+        (WebInspector.NetworkSidebarPanel.prototype._treeElementGoToArrowWasClicked):
+        (WebInspector.NetworkSidebarPanel.prototype._treeElementCloseButtonClicked):
+        (WebInspector.NetworkSidebarPanel.prototype._canShowDifferentContentView):
+        (WebInspector.NetworkSidebarPanel.prototype._treeElementSelected):
+        (WebInspector.NetworkSidebarPanel.prototype._scopeBarSelectionDidChange):
+        A hybrid of ResourceSidebarPanel and TimelineSidebarPanel.
+
+        * UserInterface/Views/NetworkTabContentView.js: Added.
+        (WebInspector.NetworkTabContentView):
+        (WebInspector.NetworkTabContentView.prototype.get type):
+        (WebInspector.NetworkTabContentView.prototype.canShowRepresentedObject):
+
+        * UserInterface/Views/NewTabContentView.js:
+        (WebInspector.NewTabContentView): Add Network tab and sort the tabs by their localized name.
+
+        * UserInterface/Views/TabBar.js:
+        (WebInspector.TabBar.prototype._handleNewTabClick):
+        Drive-by fix. Don't fire the click event if the new tab button is disabled.
+
 2015-07-06  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Mark console filters that have unseen messages by colored dots

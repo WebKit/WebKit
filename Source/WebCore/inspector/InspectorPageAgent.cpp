@@ -367,6 +367,8 @@ void InspectorPageAgent::enable(ErrorString&)
     m_enabled = true;
     m_instrumentingAgents->setInspectorPageAgent(this);
 
+    m_instrumentingAgents->inspectorEnvironment().executionStopwatch()->start();
+
     if (Frame* frame = mainFrame())
         m_originalScriptExecutionDisabled = !frame->settings().isScriptEnabled();
 }
@@ -819,6 +821,12 @@ void InspectorPageAgent::loaderDetachedFromFrame(DocumentLoader& loader)
 
 void InspectorPageAgent::frameStartedLoading(Frame& frame)
 {
+    if (frame.isMainFrame()) {
+        auto stopwatch = m_instrumentingAgents->inspectorEnvironment().executionStopwatch();
+        stopwatch->reset();
+        stopwatch->start();
+    }
+
     m_frontendDispatcher->frameStartedLoading(frameId(&frame));
 }
 

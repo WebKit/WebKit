@@ -146,7 +146,7 @@ WebInspector.loaded = function()
     this._showingSplitConsoleSetting = new WebInspector.Setting("showing-split-console", false);
     this._splitConsoleHeightSetting = new WebInspector.Setting("split-console-height", 150);
 
-    this._openTabsSetting = new WebInspector.Setting("open-tabs", ["elements", "resources", "timeline", "debugger", "storage", "console"]);
+    this._openTabsSetting = new WebInspector.Setting("open-tab-types", ["elements", "network", "resources", "timeline", "debugger", "storage", "console"]);
     this._selectedTabIndexSetting = new WebInspector.Setting("selected-tab-index", 0);
 
     this.showShadowDOMSetting = new WebInspector.Setting("show-shadow-dom", false);
@@ -383,6 +383,8 @@ WebInspector.isTabTypeAllowed = function(tabType)
     switch (tabType) {
     case WebInspector.ElementsTabContentView.Type:
         return !!window.DOMAgent;
+    case WebInspector.NetworkTabContentView.Type:
+        return !!window.NetworkAgent && !!window.PageAgent;
     case WebInspector.StorageTabContentView.Type:
         return !!window.DOMStorageAgent || !!window.DatabaseAgent || !!window.IndexedDBAgent;
     case WebInspector.TimelineTabContentView.Type:
@@ -401,6 +403,8 @@ WebInspector._tabContentViewForType = function(tabType)
         return new WebInspector.DebuggerTabContentView;
     case WebInspector.ElementsTabContentView.Type:
         return new WebInspector.ElementsTabContentView;
+    case WebInspector.NetworkTabContentView.Type:
+        return new WebInspector.NetworkTabContentView;
     case WebInspector.NewTabContentView.Type:
         return new WebInspector.NewTabContentView;
     case WebInspector.ResourcesTabContentView.Type:
@@ -439,7 +443,8 @@ WebInspector._updateNewTabButtonState = function(event)
 {
     var newTabAllowed = this.isNewTabWithTypeAllowed(WebInspector.ConsoleTabContentView.Type) || this.isNewTabWithTypeAllowed(WebInspector.ElementsTabContentView.Type)
         || this.isNewTabWithTypeAllowed(WebInspector.ResourcesTabContentView.Type) || this.isNewTabWithTypeAllowed(WebInspector.StorageTabContentView.Type)
-        || this.isNewTabWithTypeAllowed(WebInspector.TimelineTabContentView.Type) || this.isNewTabWithTypeAllowed(WebInspector.DebuggerTabContentView.Type);
+        || this.isNewTabWithTypeAllowed(WebInspector.TimelineTabContentView.Type) || this.isNewTabWithTypeAllowed(WebInspector.DebuggerTabContentView.Type)
+        || this.isNewTabWithTypeAllowed(WebInspector.NetworkTabContentView.Type);
     this.tabBar.newTabItem.disabled = !newTabAllowed;
 };
 
