@@ -46,13 +46,6 @@ UserMessageHandlersNamespace::~UserMessageHandlersNamespace()
 
 UserMessageHandler* UserMessageHandlersNamespace::handler(const AtomicString& name, DOMWrapperWorld& world)
 {
-    // First, check if we have a handler instance already.
-    for (auto& handler : m_messageHandlers) {
-        if (handler->name() == name && &handler->world() == &world)
-            return &handler.get();
-    }
-
-    // Second, attempt to create a handler instance from a descriptor.
     if (!frame())
         return nullptr;
 
@@ -69,8 +62,17 @@ UserMessageHandler* UserMessageHandlersNamespace::handler(const AtomicString& na
         return nullptr;
 
     RefPtr<UserMessageHandlerDescriptor> descriptor = userMessageHandlerDescriptors->get(std::make_pair(name, &world));
-    if (!descriptor)
+    if (!descriptor) {
+        m_messageHandlers.removeFirstMatching([&name, &world](Ref<UserMessageHandler>& handler) {
+            return handler->name() == name && &handler->world() == &world;
+        });
         return nullptr;
+    }
+
+    for (auto& handler : m_messageHandlers) {
+        if (handler->name() == name && &handler->world() == &world)
+            return &handler.get();
+    }
 
     m_messageHandlers.append(UserMessageHandler::create(*frame(), *descriptor));
     return &m_messageHandlers.last().get();

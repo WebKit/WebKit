@@ -1,3 +1,14 @@
+2015-05-24  Sam Weinig  <sam@webkit.org>
+
+        Crash when using a removed ScriptMessageHandler
+        <rdar://problem/20888499>
+        https://bugs.webkit.org/show_bug.cgi?id=145359
+
+        Reviewed by Dan Bernstein.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/UserContentController.mm:
+        Add tests for removing script message handlers.
+
 2015-05-07  Ada Chan  <adachan@apple.com>
 
         Add a test for WKPageCopySessionState() with filtering.

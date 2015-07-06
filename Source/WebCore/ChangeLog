@@ -1,3 +1,34 @@
+2015-05-24  Sam Weinig  <sam@webkit.org>
+
+        Crash when using a removed ScriptMessageHandler
+        <rdar://problem/20888499>
+        https://bugs.webkit.org/show_bug.cgi?id=145359
+
+        Reviewed by Dan Bernstein.
+
+        Added tests:
+            WKUserContentController.ScriptMessageHandlerBasicRemove
+            WKUserContentController.ScriptMessageHandlerCallRemovedHandler
+
+        * page/UserMessageHandler.cpp:
+        (WebCore::UserMessageHandler::~UserMessageHandler):
+        (WebCore::UserMessageHandler::postMessage):
+        (WebCore::UserMessageHandler::name):
+        * page/UserMessageHandler.h:
+        (WebCore::UserMessageHandler::create):
+        * page/UserMessageHandler.idl:
+        * page/UserMessageHandlerDescriptor.cpp:
+        (WebCore::UserMessageHandlerDescriptor::UserMessageHandlerDescriptor):
+        * page/UserMessageHandlerDescriptor.h:
+        (WebCore::UserMessageHandlerDescriptor::client):
+        (WebCore::UserMessageHandlerDescriptor::invalidateClient):
+        Add support for invalidating the descriptor and throw an exception if someone tries
+        to post a message using an invalidated descriptor.
+
+        * page/UserMessageHandlersNamespace.cpp:
+        (WebCore::UserMessageHandlersNamespace::handler):
+        Add logic to remove message handlers if their descriptor has been invalidated.
+
 2015-05-22  Mark Lam  <mark.lam@apple.com>
 
         Document::ensurePlugInsInjectedScript() should evaluate the injected script on its own frame.

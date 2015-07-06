@@ -62,7 +62,7 @@ static RetainPtr<WKScriptMessage> lastScriptMessage;
 
 @end
 
-TEST(WKUserContentController, ScriptMessageHandlerSimple)
+TEST(WKUserContentController, ScriptMessageHandlerBasicPost)
 {
     RetainPtr<ScriptMessageHandler> handler = adoptNS([[ScriptMessageHandler alloc] init]);
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -85,6 +85,91 @@ TEST(WKUserContentController, ScriptMessageHandlerSimple)
     receivedScriptMessage = false;
 
     EXPECT_WK_STREQ(@"Hello", (NSString *)[lastScriptMessage body]);
+}
+
+TEST(WKUserContentController, ScriptMessageHandlerBasicRemove)
+{
+    RetainPtr<ScriptMessageHandler> handler = adoptNS([[ScriptMessageHandler alloc] init]);
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr<WKUserContentController> userContentController = [configuration userContentController];
+    [userContentController addScriptMessageHandler:handler.get() name:@"handlerToRemove"];
+    [userContentController addScriptMessageHandler:handler.get() name:@"handlerToPost"];
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    RetainPtr<SimpleNavigationDelegate> delegate = adoptNS([[SimpleNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&isDoneWithNavigation);
+
+    // Test that handlerToRemove was succesfully added.
+    [webView evaluateJavaScript:
+        @"if (window.webkit.messageHandlers.handlerToRemove) {"
+         "    window.webkit.messageHandlers.handlerToPost.postMessage('PASS');"
+         "} else {"
+         "    window.webkit.messageHandlers.handlerToPost.postMessage('FAIL');"
+         "}" completionHandler:nil];
+
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    receivedScriptMessage = false;
+
+    EXPECT_WK_STREQ(@"PASS", (NSString *)[lastScriptMessage body]);
+
+    [userContentController removeScriptMessageHandlerForName:@"handlerToRemove"];
+
+    // Test that handlerToRemove has been removed.
+    [webView evaluateJavaScript:
+        @"if (window.webkit.messageHandlers.handlerToRemove) {"
+         "    window.webkit.messageHandlers.handlerToPost.postMessage('FAIL');"
+         "} else {"
+         "    window.webkit.messageHandlers.handlerToPost.postMessage('PASS');"
+         "}" completionHandler:nil];
+
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    receivedScriptMessage = false;
+
+    EXPECT_WK_STREQ(@"PASS", (NSString *)[lastScriptMessage body]);
+}
+
+TEST(WKUserContentController, ScriptMessageHandlerCallRemovedHandler)
+{
+    RetainPtr<ScriptMessageHandler> handler = adoptNS([[ScriptMessageHandler alloc] init]);
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr<WKUserContentController> userContentController = [configuration userContentController];
+    [userContentController addScriptMessageHandler:handler.get() name:@"handlerToRemove"];
+    [userContentController addScriptMessageHandler:handler.get() name:@"handlerToPost"];
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    RetainPtr<SimpleNavigationDelegate> delegate = adoptNS([[SimpleNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&isDoneWithNavigation);
+
+    [webView evaluateJavaScript:@"var handlerToRemove = window.webkit.messageHandlers.handlerToRemove;" completionHandler:nil];
+
+    [userContentController removeScriptMessageHandlerForName:@"handlerToRemove"];
+
+    // Test that we throw an exception if you try to use a message handler that has been removed.
+    [webView evaluateJavaScript:
+        @"try {"
+         "    handlerToRemove.postMessage('FAIL');"
+         "} catch (e) {"
+         "    window.webkit.messageHandlers.handlerToPost.postMessage('PASS');"
+         "}" completionHandler:nil];
+
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    receivedScriptMessage = false;
+
+    EXPECT_WK_STREQ(@"PASS", (NSString *)[lastScriptMessage body]);
 }
 
 #if !PLATFORM(IOS) // FIXME: hangs in the iOS simulator

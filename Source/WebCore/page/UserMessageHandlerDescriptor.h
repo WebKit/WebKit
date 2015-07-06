@@ -56,15 +56,16 @@ public:
 
     const AtomicString& name();
     DOMWrapperWorld& world();
-    
-    Client& client() const { return m_client; }
+
+    Client* client() const { return m_client; }
+    void invalidateClient() { m_client = nullptr; }
 
 private:
     WEBCORE_EXPORT explicit UserMessageHandlerDescriptor(const AtomicString&, DOMWrapperWorld&, Client&);
-    
+
     AtomicString m_name;
     Ref<DOMWrapperWorld> m_world;
-    Client& m_client;
+    Client* m_client;
 };
 
 } // namespace WebCore

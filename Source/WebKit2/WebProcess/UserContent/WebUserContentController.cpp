@@ -116,6 +116,7 @@ public:
 
     virtual ~WebUserMessageHandlerDescriptorProxy()
     {
+        m_descriptor->invalidateClient();
     }
 
     // WebCore::UserMessageHandlerDescriptor::Client
