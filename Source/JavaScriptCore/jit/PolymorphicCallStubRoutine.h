@@ -51,6 +51,9 @@ public:
     ~PolymorphicCallNode();
     
     void unlink(RepatchBuffer&);
+
+    bool hasCallLinkInfo(CallLinkInfo* info) { return m_callLinkInfo == info; }
+    void clearCallLinkInfo();
     
 private:
     CallLinkInfo* m_callLinkInfo;
@@ -90,6 +93,8 @@ public:
     
     CallVariantList variants() const;
     CallEdgeList edges() const;
+
+    void clearCallNodesFor(CallLinkInfo*);
     
     bool visitWeak(RepatchBuffer&) override;
 

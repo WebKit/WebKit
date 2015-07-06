@@ -67,6 +67,9 @@ struct CallLinkInfo : public BasicRawSentinelNode<CallLinkInfo> {
         
     ~CallLinkInfo()
     {
+        if (stub)
+            stub->clearCallNodesFor(this);
+
         if (isOnList())
             remove();
     }
