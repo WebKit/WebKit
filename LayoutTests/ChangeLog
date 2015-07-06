@@ -1,3 +1,15 @@
+2015-07-05  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r180582): background-attachment: local; does not scroll the background image when scrolling the the element's contents
+        https://bugs.webkit.org/show_bug.cgi?id=146623
+
+        Reviewed by Zalan Bujtas.
+        
+        Ref test for background-attachment: local.
+
+        * fast/backgrounds/background-attachment-local-expected.html: Added.
+        * fast/backgrounds/background-attachment-local.html: Added.
+
 2015-07-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement the latest Promise spec in JS

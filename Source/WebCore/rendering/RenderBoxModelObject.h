@@ -69,6 +69,7 @@ class BackgroundImageGeometry {
 public:
     BackgroundImageGeometry(const LayoutRect& destinationRect, const LayoutSize& tile, const LayoutSize& phase, const LayoutSize& space, bool fixedAttachment)
         : m_destRect(destinationRect)
+        , m_destOrigin(m_destRect.location())
         , m_tileSize(tile)
         , m_phase(phase)
         , m_space(space)
@@ -82,10 +83,18 @@ public:
     LayoutSize spaceSize() const { return m_space; }
     bool hasNonLocalGeometry() const { return m_hasNonLocalGeometry; }
 
+    LayoutSize relativePhase() const
+    {
+        LayoutSize phase = m_phase;
+        phase += m_destRect.location() - m_destOrigin;
+        return phase;
+    }
+
     void clip(const LayoutRect& clipRect) { m_destRect.intersect(clipRect); }
 
 private:
     LayoutRect m_destRect;
+    LayoutPoint m_destOrigin;
     LayoutSize m_tileSize;
     LayoutSize m_phase;
     LayoutSize m_space;

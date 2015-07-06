@@ -861,7 +861,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
                 bool useLowQualityScaling = shouldPaintAtLowQuality(context, image.get(), bgLayer, geometry.tileSize());
                 if (image.get())
                     image->setSpaceSize(geometry.spaceSize());
-                context->drawTiledImage(image.get(), style().colorSpace(), geometry.destRect(), toLayoutPoint(geometry.phase()), geometry.tileSize(), ImagePaintingOptions(compositeOp, bgLayer->blendMode(), ImageOrientationDescription(), useLowQualityScaling));
+                context->drawTiledImage(image.get(), style().colorSpace(), geometry.destRect(), toLayoutPoint(geometry.relativePhase()), geometry.tileSize(), ImagePaintingOptions(compositeOp, bgLayer->blendMode(), ImageOrientationDescription(), useLowQualityScaling));
             }
         }
     }
@@ -1227,10 +1227,12 @@ BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(c
         destinationRect.setHeight(tileSize.height() + yOffset);
         spaceSize.setHeight(0);
     }
+
     if (fixedAttachment) {
         LayoutPoint attachmentPoint = borderBoxRect.location();
         phase.expand(std::max<LayoutUnit>(attachmentPoint.x() - destinationRect.x(), 0), std::max<LayoutUnit>(attachmentPoint.y() - destinationRect.y(), 0));
     }
+
     destinationRect.intersect(borderBoxRect);
     pixelSnapBackgroundImageGeometryForPainting(destinationRect, tileSize, phase, spaceSize, deviceScaleFactor);
     return BackgroundImageGeometry(destinationRect, tileSize, phase, spaceSize, fixedAttachment);
