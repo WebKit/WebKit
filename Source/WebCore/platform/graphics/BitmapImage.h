@@ -243,7 +243,8 @@ protected:
     // Generally called by destroyDecodedData(), destroys whole-image metadata
     // and notifies observers that the memory footprint has (hopefully)
     // decreased by |frameBytesCleared|.
-    void destroyMetadataAndNotify(unsigned frameBytesCleared);
+    enum class ClearedSource { No, Yes };
+    void destroyMetadataAndNotify(unsigned frameBytesCleared, ClearedSource);
 
     // Whether or not size is available yet.
     bool isSizeAvailable();
