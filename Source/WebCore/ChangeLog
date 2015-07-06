@@ -1,3 +1,12 @@
+2015-05-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [ARM] Build SVGPathElement.cpp with -O2 due to a GCC bug
+        https://bugs.webkit.org/show_bug.cgi?id=145377
+
+        Reviewed by Carlos Garcia Campos.
+
+        * CMakeLists.txt:
+
 2015-05-24  Sam Weinig  <sam@webkit.org>
 
         Crash when using a removed ScriptMessageHandler
