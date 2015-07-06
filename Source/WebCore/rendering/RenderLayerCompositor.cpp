@@ -144,19 +144,14 @@ public:
         pushCompositingContainer();
     }
 
-    void add(const RenderLayer* layer, const LayoutRect& bounds)
+    void add(const LayoutRect& bounds)
     {
         // Layers do not contribute to overlap immediately--instead, they will
         // contribute to overlap as soon as their composited ancestor has been
         // recursively processed and popped off the stack.
         ASSERT(m_overlapStack.size() >= 2);
         m_overlapStack[m_overlapStack.size() - 2].add(bounds);
-        m_layers.add(layer);
-    }
-
-    bool contains(const RenderLayer* layer)
-    {
-        return m_layers.contains(layer);
+        m_isEmpty = false;
     }
 
     bool overlapsLayers(const LayoutRect& bounds) const
@@ -164,9 +159,9 @@ public:
         return m_overlapStack.last().overlapsLayers(bounds);
     }
 
-    bool isEmpty()
+    bool isEmpty() const
     {
-        return m_layers.isEmpty();
+        return m_isEmpty;
     }
 
     void pushCompositingContainer()
@@ -213,8 +208,8 @@ private:
     };
 
     Vector<OverlapMapContainer> m_overlapStack;
-    HashSet<const RenderLayer*> m_layers;
     RenderGeometryMap m_geometryMap;
+    bool m_isEmpty { true };
 };
 
 struct CompositingState {
@@ -1131,12 +1126,12 @@ void RenderLayerCompositor::addToOverlapMap(OverlapMap& overlapMap, RenderLayer&
         clipRect.scale(pageScaleFactor());
 #endif
     clipRect.intersect(layerBounds);
-    overlapMap.add(&layer, clipRect);
+    overlapMap.add(clipRect);
 }
 
 void RenderLayerCompositor::addToOverlapMapRecursive(OverlapMap& overlapMap, RenderLayer& layer, RenderLayer* ancestorLayer)
 {
-    if (!canBeComposited(layer) || overlapMap.contains(&layer))
+    if (!canBeComposited(layer))
         return;
 
     // A null ancestorLayer is an indication that 'layer' has already been pushed.
