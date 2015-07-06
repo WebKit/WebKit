@@ -59,7 +59,7 @@ std::unique_ptr<ThreadableLoaderOptions> ThreadableLoaderOptions::isolatedCopy()
     if (securityOrigin)
         copy->securityOrigin = securityOrigin->isolatedCopy();
 #if ENABLE(RESOURCE_TIMING)
-    copy->initiator = initiator.string().isolatedCopy();
+    copy->initiator = initiator.isolatedCopy();
 #endif
     return copy;
 }

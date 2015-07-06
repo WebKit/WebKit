@@ -72,7 +72,7 @@ namespace WebCore {
         CrossOriginRequestPolicy crossOriginRequestPolicy;
         RefPtr<SecurityOrigin> securityOrigin;
 #if ENABLE(RESOURCE_TIMING)
-        AtomicString initiator;
+        String initiator; // This cannot be an AtomicString, as isolatedCopy() wouldn't create an object that's safe for passing to another thread.
 #endif
     };
 
