@@ -249,6 +249,9 @@ void SVGImage::draw(GraphicsContext* context, const FloatRect& dstRect, const Fl
 
     view->resize(containerSize());
 
+    if (!m_url.isEmpty())
+        view->scrollToFragment(m_url);
+    
     if (view->needsLayout())
         view->layout();
 
@@ -258,9 +261,6 @@ void SVGImage::draw(GraphicsContext* context, const FloatRect& dstRect, const Fl
         context->endTransparencyLayer();
 
     stateSaver.restore();
-
-    if (!m_url.isEmpty())
-        view->scrollToFragment(m_url);
 
     if (imageObserver())
         imageObserver()->didDraw(this);
