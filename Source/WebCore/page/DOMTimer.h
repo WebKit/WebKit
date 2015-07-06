@@ -29,9 +29,7 @@
 
 #include "SuspendableTimer.h"
 #include <memory>
-#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -56,10 +54,8 @@ namespace WebCore {
         // Notify that the interval may need updating (e.g. because the minimum interval
         // setting for the context has changed).
         void updateTimerIntervalIfNecessary();
-        void updateThrottlingStateAfterViewportChange(const IntRect& visibleRect);
 
         static void scriptDidInteractWithPlugin(HTMLPlugInElement&);
-        static void scriptDidCauseElementRepaint(Element&, bool mayRepaintNonDescendants = false);
 
     private:
         DOMTimer(ScriptExecutionContext&, std::unique_ptr<ScheduledAction>, int interval, bool singleShot);
@@ -68,10 +64,6 @@ namespace WebCore {
         double intervalClampedToMinimum() const;
 
         bool isDOMTimersThrottlingEnabled(Document&) const;
-        bool isIntervalDependentOnViewport() const { return m_throttleState == ShouldThrottle && !m_elementsCausingThrottling.isEmpty(); }
-        void registerForViewportChanges();
-        void unregisterForViewportChanges();
-
         void updateThrottlingStateIfNecessary(const DOMTimerFireState&);
 
         // SuspendableTimer
@@ -92,10 +84,6 @@ namespace WebCore {
         TimerThrottleState m_throttleState;
         double m_currentTimerInterval;
         bool m_shouldForwardUserGesture;
-        // Use WeakPtrs because we don't want to keep the elements alive but we
-        // still need to handle cases where the elements get destroyed after
-        // the timer has fired.
-        Vector<WeakPtr<Element>> m_elementsCausingThrottling;
     };
 
 } // namespace WebCore

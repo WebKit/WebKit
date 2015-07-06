@@ -320,23 +320,6 @@ bool JSCSSStyleDeclaration::getOwnPropertySlotDelegate(ExecState* exec, Property
     return true;
 }
 
-// We only throttle DOM timers if they animate CSS properties that will only
-// cause the current element (or its descendants) to be repainted.
-static inline bool propertyChangeMayRepaintNonDescendants(CSSPropertyID propertyID)
-{
-    switch (propertyID) {
-    case CSSPropertyBottom:
-    case CSSPropertyLeft:
-    case CSSPropertyOpacity:
-    case CSSPropertyRight:
-    case CSSPropertyTop:
-    case CSSPropertyWebkitTransform:
-        return false;
-    default:
-        return true;
-    }
-}
-
 bool JSCSSStyleDeclaration::putDelegate(ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot&)
 {
     CSSPropertyInfo propertyInfo = cssPropertyIDForJSCSSPropertyName(propertyName);
@@ -360,10 +343,6 @@ bool JSCSSStyleDeclaration::putDelegate(ExecState* exec, PropertyName propertyNa
     CSSPropertyID propertyID = static_cast<CSSPropertyID>(propertyInfo.propertyID);
     impl().setPropertyInternal(propertyID, propValue, important, ec);
     setDOMException(exec, ec);
-
-    // Choke point for interaction with style of element; notify DOMTimer of the event.
-    if (auto* element = impl().parentElement())
-        DOMTimer::scriptDidCauseElementRepaint(*element, propertyChangeMayRepaintNonDescendants(propertyID));
 
     return true;
 }

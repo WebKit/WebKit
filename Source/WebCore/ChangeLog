@@ -1,3 +1,42 @@
+2015-06-05  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r176212): Broke app switching on iCloud.com
+        https://bugs.webkit.org/show_bug.cgi?id=145708
+        <rdar://problem/21235277>
+
+        Reviewed by Simon Fraser.
+
+        Roll out r176212 and follow-up fixes for now, to fix iCloud.com.
+        We can reconsider later how to do this in a safer way.
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::putDelegate): Deleted.
+        (WebCore::JSCSSStyleDeclaration::getOwnPropertyNames): Deleted.
+        * dom/Element.cpp:
+        * dom/Element.h:
+        * dom/ElementRareData.cpp:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::ElementRareData):
+        (WebCore::ElementRareData::~ElementRareData): Deleted.
+        * dom/Node.cpp:
+        (WebCore::Node::materializeRareData):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::notifyObserversCanvasChanged): Deleted.
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimerFireState::scriptMadeNonUserObservableChanges): Deleted.
+        (WebCore::DOMTimerFireState::scriptMadeUserObservableChanges): Deleted.
+        (WebCore::NestedTimersMap::instanceForContext): Deleted.
+        (WebCore::DOMTimer::install): Deleted.
+        (WebCore::DOMTimer::fired): Deleted.
+        (WebCore::DOMTimer::alignedFireTime): Deleted.
+        (WebCore::DOMTimer::activeDOMObjectName): Deleted.
+        * page/DOMTimer.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::reset): Deleted.
+        (WebCore::FrameView::viewportContentsChanged): Deleted.
+        (WebCore::FrameView::autoSizeIfEnabled): Deleted.
+        * page/FrameView.h:
+
 2015-06-04  David Hyatt  <hyatt@apple.com>
 
         Underlines too close in vertical Chinese text.
