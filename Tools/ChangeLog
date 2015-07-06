@@ -1,3 +1,19 @@
+2015-07-06  Daniel Bates  <dabates@apple.com>
+
+        Unreviewed, rolling out r170639.
+
+        Broke using webkit-patch apply-attachment to apply an
+        attachment from a security bug. The patch incorrectly assumed
+        that Bugzilla returns a non-HTTP 200 status code in its HTTP
+        response when authentication is required.
+
+        Reverted changeset:
+
+        "webkit-patch apply-from-bug / apply-attachment should not ask
+        for credentials if none are required"
+        https://bugs.webkit.org/show_bug.cgi?id=40095
+        http://trac.webkit.org/changeset/170639
+
 2015-07-04  Chris Dumez  <cdumez@apple.com>
 
         Drop RefPtr::clear() method
