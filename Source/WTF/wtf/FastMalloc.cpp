@@ -300,7 +300,6 @@ size_t fastMallocSize(const void*)
 
 size_t fastMallocGoodSize(size_t size)
 {
-    // FIXME: This is non-helpful; fastMallocGoodSize will be removed soon.
     return size;
 }
 
