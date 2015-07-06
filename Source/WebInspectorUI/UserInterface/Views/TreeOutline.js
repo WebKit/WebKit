@@ -55,8 +55,9 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
 
     appendChild(child)
     {
+        console.assert(child);
         if (!child)
-            throw "child can't be undefined or null";
+            return;
 
         var lastChild = this.children[this.children.length - 1];
         if (lastChild) {
@@ -97,8 +98,9 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
 
     insertChild(child, index)
     {
+        console.assert(child);
         if (!child)
-            throw "child can't be undefined or null";
+            return;
 
         var previousChild = (index > 0 ? this.children[index - 1] : null);
         if (previousChild) {
@@ -146,8 +148,9 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
 
     removeChildAtIndex(childIndex, suppressOnDeselect, suppressSelectSibling)
     {
+        console.assert(childIndex >= 0 && childIndex < this.children.length);
         if (childIndex < 0 || childIndex >= this.children.length)
-            throw "childIndex out of range";
+            return;
 
         var child = this.children[childIndex];
         this.children.splice(childIndex, 1);
@@ -184,12 +187,14 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
 
     removeChild(child, suppressOnDeselect, suppressSelectSibling)
     {
+        console.assert(child);
         if (!child)
-            throw "child can't be undefined or null";
+            return;
 
         var childIndex = this.children.indexOf(child);
+        console.assert(childIndex !== -1);
         if (childIndex === -1)
-            throw "child not found in this node's children";
+            return;
 
         this.removeChildAtIndex(childIndex, suppressOnDeselect, suppressSelectSibling);
 

@@ -1,3 +1,26 @@
+2015-07-06  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Exceptions in Network timeline when resource updates and filters are applied
+        https://bugs.webkit.org/show_bug.cgi?id=146609
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGrid.prototype.insertChild):
+        (WebInspector.DataGrid.prototype.removeChild):
+        (WebInspector.DataGridNode.prototype.savePosition):
+        Convert exceptions to asserts and early returns.
+
+        * UserInterface/Views/TimelineDataGrid.js:
+        (WebInspector.TimelineDataGrid.prototype._refreshDirtyDataGridNodes): Add some asserts and checks.
+
+        * UserInterface/Views/TreeOutline.js:
+        (WebInspector.TreeOutline.prototype.appendChild):
+        (WebInspector.TreeOutline.prototype.insertChild):
+        (WebInspector.TreeOutline.prototype.removeChildAtIndex):
+        (WebInspector.TreeOutline.prototype.removeChild):
+        Convert exceptions to asserts and early returns.
+
 2015-07-05  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Cached resources are missing startTime and size in Network timeline

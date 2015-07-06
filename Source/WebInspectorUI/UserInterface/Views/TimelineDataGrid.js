@@ -244,8 +244,13 @@ WebInspector.TimelineDataGrid.prototype = {
             var treeElement = this._treeOutlineDataGridSynchronizer.treeElementForDataGridNode(dataGridNode);
             console.assert(treeElement);
 
-            treeOutline.removeChild(treeElement);
-            this.removeChild(dataGridNode);
+            console.assert(!treeElement.parent || treeElement.parent === treeOutline);
+            if (treeElement.parent === treeOutline)
+                treeOutline.removeChild(treeElement);
+
+            console.assert(!dataGridNode.parent || dataGridNode.parent === this);
+            if (dataGridNode.parent === this)
+                this.removeChild(dataGridNode);
 
             var insertionIndex = insertionIndexForObjectInListSortedByFunction(dataGridNode, this.children, sortComparator);
             treeOutline.insertChild(treeElement, insertionIndex);
