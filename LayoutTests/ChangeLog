@@ -1,3 +1,16 @@
+2015-07-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Update toLength / toInteger names in control profiler test results
+        https://bugs.webkit.org/show_bug.cgi?id=146229
+
+        Reviewed by Simon Fraser.
+
+        ToLength / ToInteger are renamed to toLength / toInteger.
+        Update the names in the test results for control profiler.
+
+        * fast/profiler/built-in-function-calls-anonymous-expected.txt:
+        * fast/profiler/built-in-function-calls-user-defined-function-expected.txt:
+
 2015-07-05  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r180582): background-attachment: local; does not scroll the background image when scrolling the the element's contents
