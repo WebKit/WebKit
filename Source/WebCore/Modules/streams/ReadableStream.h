@@ -47,6 +47,7 @@ class JSValue;
 
 namespace WebCore {
 
+class Dictionary;
 class ReadableStreamReader;
 class ScriptExecutionContext;
 
@@ -64,6 +65,7 @@ public:
         Errored
     };
 
+    static RefPtr<ReadableStream> create(JSC::ExecState&, JSC::JSValue, const Dictionary&);
     virtual ~ReadableStream();
 
     ReadableStreamReader* getReader(ExceptionCode&);

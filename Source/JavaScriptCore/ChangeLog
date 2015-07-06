@@ -1,3 +1,16 @@
+2015-07-06  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Streams API] Remove ReadableStream custom constructor
+        https://bugs.webkit.org/show_bug.cgi?id=146547
+
+        Reviewed by Darin Adler.
+
+        Adding helper function to throw range errors.
+
+        * runtime/Error.h:
+        (JSC::throwRangeError):
+        (JSC::throwVMRangeError):
+
 2015-07-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement the latest Promise spec in JS

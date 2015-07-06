@@ -29,7 +29,7 @@ CheckSecurityForNode
 Clamp
 Conditional=*
 Constructor
-ConstructorCallWith=Document|ScriptExecutionContext
+ConstructorCallWith=Document|ScriptExecutionContext|ScriptState
 ConstructorConditional=*
 ConstructorRaisesException
 ConstructorTemplate=Event|TypedArray

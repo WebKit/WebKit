@@ -265,6 +265,11 @@ void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<Game
 }
 #endif
 
+void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, JSC::JSFunction*& result)
+{
+    result = jsDynamicCast<JSC::JSFunction*>(value);
+}
+
 bool JSDictionary::getWithUndefinedOrNullCheck(const char* propertyName, String& result) const
 {
     ASSERT(isValid());

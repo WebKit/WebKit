@@ -28,7 +28,8 @@
  */
 
 [
-    CustomConstructor(any properties),
+    ConstructorCallWith=ScriptState,
+    Constructor([Default=Undefined] optional any source, [Default=Undefined] optional Dictionary strategy),
     Conditional=STREAMS_API,
     SkipVTableValidation
 ] interface ReadableStream {

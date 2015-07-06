@@ -137,6 +137,7 @@ private:
 #if ENABLE(GAMEPAD)
     static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<Gamepad>&);
 #endif
+    static void convertValue(JSC::ExecState*, JSC::JSValue, JSC::JSFunction*&);
 
     JSC::ExecState* m_exec;
     JSC::Strong<JSC::JSObject> m_initializerObject;

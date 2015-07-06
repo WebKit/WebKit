@@ -33,6 +33,7 @@
 #if ENABLE(STREAMS_API)
 
 #include "ExceptionCode.h"
+#include "ReadableJSStream.h"
 #include "ReadableStreamReader.h"
 #include "ScriptExecutionContext.h"
 #include <runtime/JSCJSValueInlines.h>
@@ -41,6 +42,11 @@
 namespace WebCore {
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, readableStreamCounter, ("ReadableStream"));
+
+RefPtr<ReadableStream> ReadableStream::create(JSC::ExecState& state, JSC::JSValue value, const Dictionary& strategy)
+{
+    return RefPtr<ReadableStream>(ReadableJSStream::create(state, value, strategy));
+}
 
 ReadableStream::ReadableStream(ScriptExecutionContext& scriptExecutionContext)
     : ActiveDOMObject(&scriptExecutionContext)

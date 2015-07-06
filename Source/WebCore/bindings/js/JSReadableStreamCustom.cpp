@@ -59,20 +59,6 @@ JSValue JSReadableStream::pipeThrough(ExecState* exec)
     return exec->vm().throwException(exec, error);
 }
 
-EncodedJSValue JSC_HOST_CALL constructJSReadableStream(ExecState* exec)
-{
-    DOMConstructorObject* jsConstructor = jsCast<DOMConstructorObject*>(exec->callee());
-    ASSERT(jsConstructor);
-
-    RefPtr<ReadableJSStream> readableStream = ReadableJSStream::create(*exec, *jsConstructor->scriptExecutionContext());
-
-    if (!readableStream) {
-        ASSERT(exec->hadException());
-        return JSValue::encode(jsUndefined());
-    }
-    return JSValue::encode(toJS(exec, jsCast<JSDOMGlobalObject*>(exec->callee()->globalObject()), WTF::move(readableStream)));
-}
-
 } // namespace WebCore
 
 #endif
