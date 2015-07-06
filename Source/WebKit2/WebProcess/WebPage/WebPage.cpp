@@ -221,6 +221,8 @@ using namespace WebCore;
 
 namespace WebKit {
 
+static const double pageScrollHysteresisSeconds = 0.3;
+
 class SendStopResponsivenessTimer {
 public:
     SendStopResponsivenessTimer(WebPage* page)
@@ -295,6 +297,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #if ENABLE(MEDIA_STREAM)
     , m_userMediaPermissionRequestManager(*this)
 #endif
+    , m_pageScrolledHysteresis([this](HysteresisState state) { if (state == HysteresisState::Stopped) pageStoppedScrolling(); }, pageScrollHysteresisSeconds)
     , m_canRunBeforeUnloadConfirmPanel(parameters.canRunBeforeUnloadConfirmPanel)
     , m_canRunModal(parameters.canRunModal)
     , m_isRunningModal(false)
@@ -1817,7 +1820,16 @@ void WebPage::pageDidScroll()
 #endif
     m_uiClient->pageDidScroll(this);
 
+    m_pageScrolledHysteresis.impulse();
+
     send(Messages::WebPageProxy::PageDidScroll());
+}
+
+void WebPage::pageStoppedScrolling()
+{
+    // Maintain the current history item's scroll position up-to-date.
+    if (Frame* frame = m_mainFrame->coreFrame())
+        frame->loader().history().saveScrollPositionAndViewStateToItem(frame->loader().history().currentItem());
 }
 
 #if USE(COORDINATED_GRAPHICS)

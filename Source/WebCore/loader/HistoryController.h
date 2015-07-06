@@ -52,7 +52,7 @@ public:
     explicit HistoryController(Frame&);
     ~HistoryController();
 
-    void saveScrollPositionAndViewStateToItem(HistoryItem*);
+    WEBCORE_EXPORT void saveScrollPositionAndViewStateToItem(HistoryItem*);
     void clearScrollPositionAndViewState();
     WEBCORE_EXPORT void restoreScrollPositionAndViewState();
 

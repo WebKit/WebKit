@@ -53,6 +53,7 @@
 #include <WebCore/Editor.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/HitTestResult.h>
+#include <WebCore/HysteresisActivity.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/IntSizeHash.h>
 #include <WebCore/Page.h>
@@ -1137,6 +1138,8 @@ private:
     void setShouldScaleViewToFitDocument(bool);
     void setUserContentExtensionsEnabled(bool);
 
+    void pageStoppedScrolling();
+
     uint64_t m_pageID;
 
     std::unique_ptr<WebCore::Page> m_page;
@@ -1281,6 +1284,8 @@ private:
 
     RefPtr<SandboxExtension> m_pendingDropSandboxExtension;
     Vector<RefPtr<SandboxExtension>> m_pendingDropExtensionsForFileUpload;
+
+    WebCore::HysteresisActivity m_pageScrolledHysteresis;
 
     bool m_canRunBeforeUnloadConfirmPanel;
 

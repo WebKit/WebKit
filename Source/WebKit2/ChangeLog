@@ -1,3 +1,41 @@
+2015-07-05  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Current page's scroll position is lost when transferring sessionState from one view to another
+        https://bugs.webkit.org/show_bug.cgi?id=146625
+        <rdar://problem/21585268>
+
+        Reviewed by Gavin Barraclough.
+
+        The current page's scroll position was lost when transferring the
+        sessionState from one view to another. This is because we only update
+        the current WebBackForwardListItem after navigating away.
+        However, when the client swaps WebViews for navigating, we don't detect
+        this as navigating away and the current WebBackForwardListItem is not
+        updated with the current page's state (including the scroll position).
+        This means that the information is not transferred via the sessionState
+        and the scroll position (among other things) ends up being lost when
+        navigating back in the new WebView.
+
+        Retrieving the session state is a synchronous API and we want to avoid
+        doing a synchronous IPC between the UIProcess and the WebProcess to
+        retrieve the current page's state. Therefore, the approach chosen in
+        this patch is to detect when the user is done scrolling the main frame
+        (using a HystererisActivity) and then update the scroll position on the
+        current HistoryItem. This way, the current WebBackForwardListItem
+        normally has an up-to-date scroll position for the main frame when the
+        sessionState is queried by the client.
+
+        The solution is not perfect as we don't keep the whole page state
+        up-to-date for the current WebBackForwardListItem, only the main frame
+        state. However, the proposed solution is cheap, avoid synchronous IPC
+        and provides a much better user experience in most cases.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::pageDidScroll):
+        (WebKit::WebPage::pageStoppedScrolling):
+        * WebProcess/WebPage/WebPage.h:
+
 2015-07-05  Timothy Hatcher  <timothy@apple.com>
 
         Crash when closing the web inspector
