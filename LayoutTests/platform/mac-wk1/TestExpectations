@@ -125,5 +125,7 @@ loader/navigation-policy [ Skip ]
 [ Mavericks Debug ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Pass Timeout ]
 [ Mavericks Debug ] fast/canvas/webgl/tex-image-and-uniform-binding-bugs.html [ Pass Timeout ]
 
+[ ElCapitan+ ] css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
+
 ### END OF (2) Failures without bug reports
 ########################################
