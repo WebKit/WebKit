@@ -1,3 +1,20 @@
+2015-07-03  Kyounga Ra  <kyounga@alticast.com>
+
+        Memory leak for a protected Element having pending events in ImageLoader. 
+        https://bugs.webkit.org/show_bug.cgi?id=146538
+
+        Reviewed by Brady Eidson.
+
+        If ImageLoader is destroyed before an active derefElementTimer is fired, protected element's refCount never be zero..
+
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::~ImageLoader):
+        (WebCore::ImageLoader::updateFromElement):
+        (WebCore::ImageLoader::updateRenderer):
+        (WebCore::ImageLoader::updatedHasPendingEvent):
+        (WebCore::ImageLoader::timerFired):
+        * loader/ImageLoader.h:
+
 2015-07-03  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r178097): JavaScript TypeError after clicking on compose button in Yahoo Mail

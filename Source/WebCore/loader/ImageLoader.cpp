@@ -116,11 +116,6 @@ ImageLoader::~ImageLoader()
     ASSERT(m_hasPendingErrorEvent || !errorEventSender().hasPendingEvents(*this));
     if (m_hasPendingErrorEvent)
         errorEventSender().cancelEvent(*this);
-
-    // If the ImageLoader is being destroyed but it is still protecting its image-loading Element,
-    // remove that protection here.
-    if (m_elementIsProtected)
-        element().deref();
 }
 
 void ImageLoader::setImage(CachedImage* newImage)
@@ -163,7 +158,7 @@ void ImageLoader::setImageWithoutConsideringPendingLoadEvent(CachedImage* newIma
 
 void ImageLoader::updateFromElement()
 {
-    // If we're not making renderers for the page, then don't load images.  We don't want to slow
+    // If we're not making renderers for the page, then don't load images. We don't want to slow
     // down the raw HTML parsing case by loading images we don't intend to display.
     Document& document = element().document();
     if (!document.hasLivingRenderTree())
@@ -345,7 +340,7 @@ void ImageLoader::updateRenderer()
         return;
 
     // Only update the renderer if it doesn't have an image or if what we have
-    // is a complete image.  This prevents flickering in the case where a dynamic
+    // is a complete image. This prevents flickering in the case where a dynamic
     // change is happening between two images.
     CachedImage* cachedImage = imageResource->cachedImage();
     if (m_image != cachedImage && (m_imageComplete || !cachedImage))
@@ -367,7 +362,7 @@ void ImageLoader::updatedHasPendingEvent()
         if (m_derefElementTimer.isActive())
             m_derefElementTimer.stop();
         else
-            element().ref();
+            m_protectedElement = &element();
     } else {
         ASSERT(!m_derefElementTimer.isActive());
         m_derefElementTimer.startOneShot(0);
@@ -376,7 +371,7 @@ void ImageLoader::updatedHasPendingEvent()
 
 void ImageLoader::timerFired()
 {
-    element().deref();
+    m_protectedElement = nullptr;
 }
 
 void ImageLoader::dispatchPendingEvent(ImageEventSender* eventSender)
