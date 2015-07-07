@@ -106,6 +106,8 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
 
         parameters.ignoreTLSErrors = m_ignoreTLSErrors;
     }
+
+    parameters.memoryCacheDisabled = m_memoryCacheDisabled || m_cacheModel == CacheModelDocumentViewer;
 }
 
 void WebProcessPool::platformInvalidateContext()
