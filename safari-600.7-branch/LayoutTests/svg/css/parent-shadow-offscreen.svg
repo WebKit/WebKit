@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg">
-<title>Test passes if the shadow is drawn.</title>
-<g style="-webkit-svg-shadow: #000 200px 200px 5px">
-<rect id="rect" x="-100" y="-100" width="75" height="75"></rect>
-</g>
-</svg>

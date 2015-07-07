@@ -1,5 +1,0 @@
-PASS test did not crash
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

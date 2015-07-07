@@ -1,8 +1,0 @@
-This iframe should not have private browsing enabled:
-
-
-
---------
-Frame: '<!--framePath //<!--frame0-->-->'
---------
-false

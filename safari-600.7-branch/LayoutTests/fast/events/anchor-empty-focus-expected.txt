@@ -1,3 +1,0 @@
-This tests that focus() works on an empty anchor.
-
-TEST PASSED

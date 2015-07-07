@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 78: SyntaxError: Unexpected keyword 'var'. Expected 'while' to end a do-while loop.
-S12.6.1_A12
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

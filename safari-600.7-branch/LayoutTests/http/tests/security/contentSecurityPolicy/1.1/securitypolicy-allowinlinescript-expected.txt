@@ -1,3 +1,0 @@
-PASS inline script is allowed when no policy exists.
-PASS inline script is not allowed when policy exists.
-

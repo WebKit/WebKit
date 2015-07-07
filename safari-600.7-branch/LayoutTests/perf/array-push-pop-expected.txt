@@ -1,3 +1,0 @@
-Tests that pushing and popping from an array is constant time.
-PASS
-

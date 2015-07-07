@@ -1,9 +1,0 @@
-Tests what happens when CFG simplification leads to the elimination of a set local that had a type check, and then we branch on the variable not being null while decrementing the variable in the same basic block.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-Passed some tests silently.
-
-TEST COMPLETE
-

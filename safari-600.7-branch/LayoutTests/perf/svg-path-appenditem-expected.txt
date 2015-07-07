@@ -1,3 +1,0 @@
-Tests that SVG path.appendItem() is constant with respect to the length of the path.
-PASS
-

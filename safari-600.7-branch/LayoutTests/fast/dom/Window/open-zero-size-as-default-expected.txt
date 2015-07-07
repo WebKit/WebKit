@@ -1,3 +1,0 @@
-Test that passing "height=0,width=0" to window.open() results in default window size.
-
-PASS

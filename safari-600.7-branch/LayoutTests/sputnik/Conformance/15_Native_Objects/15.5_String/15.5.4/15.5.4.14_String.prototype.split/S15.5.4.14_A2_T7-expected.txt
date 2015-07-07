@@ -1,6 +1,0 @@
-S15.5.4.14_A2_T7
-
-FAIL SputnikError: #2: var __string = "thisundefinedisundefinedaundefinedstringundefinedobject"; var __expected = ["this", "is", "a", "string", "object"]; __split = __string.split(void 0); __split.length === __expected.length. Actual: 1
-
-TEST COMPLETE
-

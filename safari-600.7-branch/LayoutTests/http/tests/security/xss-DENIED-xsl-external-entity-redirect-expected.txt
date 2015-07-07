@@ -1,2 +1,0 @@
-This test includes a cross-origin external entity. It passes if the load fails and thus there is no text below this line.
-

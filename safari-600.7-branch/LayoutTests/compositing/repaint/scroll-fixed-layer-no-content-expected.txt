@@ -1,2 +1,0 @@
-There should be no repaints here:
-

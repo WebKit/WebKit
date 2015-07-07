@@ -1,3 +1,0 @@
-gl-fragcoord.html
-gl-frontfacing.html
-gl-pointcoord.html

@@ -1,6 +1,0 @@
-S11.7.2_A1
-
-PASS 
-
-TEST COMPLETE
-

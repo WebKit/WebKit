@@ -1,3 +1,0 @@
-
-PASS CSS Test: @viewport syntax - unknown descriptor 
-

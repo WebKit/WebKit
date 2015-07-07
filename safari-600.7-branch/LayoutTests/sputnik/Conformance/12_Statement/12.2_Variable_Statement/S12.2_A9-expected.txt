@@ -1,6 +1,0 @@
-S12.2_A9
-
-PASS 
-
-TEST COMPLETE
-

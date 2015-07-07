@@ -1,6 +1,0 @@
-S7.4_A6
-
-PASS 
-
-TEST COMPLETE
-

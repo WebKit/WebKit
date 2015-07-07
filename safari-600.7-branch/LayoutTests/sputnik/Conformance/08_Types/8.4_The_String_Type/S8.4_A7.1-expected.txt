@@ -1,6 +1,0 @@
-S8.4_A7.1
-
-PASS ReferenceError: Can't find variable: asdf
-
-TEST COMPLETE
-

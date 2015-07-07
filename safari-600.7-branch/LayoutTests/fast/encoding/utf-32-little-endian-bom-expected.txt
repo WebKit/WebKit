@@ -1,5 +1,0 @@
-When dumped into a text file by the test controller, this needs to be viewed as UTF-8:
-
-This is an em dash, —, this is is a delta symbol, ∆, this is an uppercase pi, ∏, and this is a lowercase pi, π.
-
-Success : UTF-32LE

@@ -1,2 +1,0 @@
-This tests that a manifest can contain itself as a resource.
-SUCCESS

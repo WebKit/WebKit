@@ -1,1 +1,0 @@
-Test passes if a DOMCharacterModified event on the textarea does not crash.

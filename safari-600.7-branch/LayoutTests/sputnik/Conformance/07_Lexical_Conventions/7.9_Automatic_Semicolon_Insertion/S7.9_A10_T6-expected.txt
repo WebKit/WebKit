@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 78: SyntaxError: Unexpected token '*'
-S7.9_A10_T6
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

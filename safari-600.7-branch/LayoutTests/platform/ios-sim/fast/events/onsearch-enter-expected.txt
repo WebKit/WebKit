@@ -1,3 +1,0 @@
-This tests that onSearch fires correctly.
-
-

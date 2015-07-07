@@ -1,2 +1,0 @@
-CONSOLE MESSAGE: line 13: TransactionCallbackError
-If WebKit doesn't crash, this test has passed

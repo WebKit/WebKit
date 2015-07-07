@@ -1,6 +1,0 @@
-PASS details.open is false
-PASS details.open is false
-PASS details.open is false
-PASS details.open is false
-PASS details.open is true
-

@@ -1,1 +1,0 @@
-../resources/adoption01.dat: PASS

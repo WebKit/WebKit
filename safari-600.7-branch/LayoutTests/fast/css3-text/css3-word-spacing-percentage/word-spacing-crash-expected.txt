@@ -1,1 +1,0 @@
- This test makes sure that if "inherit" is specified on the word-spacing element when there is no parent element, there is no crash

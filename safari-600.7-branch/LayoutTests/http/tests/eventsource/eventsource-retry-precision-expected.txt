@@ -1,5 +1,0 @@
-Test EventSource retry time precision. Should print PASS followed by DONE.
-
-PASS: did not immediately reconnect
-DONE
-

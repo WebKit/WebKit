@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 80: SyntaxError: Unexpected token ')'. Expected a ';' after the for loop condition expression.
-S7.9_A6.2_T9
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

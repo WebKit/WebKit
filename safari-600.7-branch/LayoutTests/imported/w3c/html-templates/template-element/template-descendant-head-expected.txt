@@ -1,3 +1,0 @@
-
-PASS Template element as a descendant of the head element. Test loading from a file 
-

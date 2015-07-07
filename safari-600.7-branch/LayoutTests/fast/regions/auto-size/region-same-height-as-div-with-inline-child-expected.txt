@@ -1,4 +1,0 @@
-
-
-The test passes if the height of the region/flowthread is the same as the height of the div containing the same inline content.
-PASS

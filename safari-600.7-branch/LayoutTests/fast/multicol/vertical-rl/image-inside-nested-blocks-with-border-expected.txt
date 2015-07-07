@@ -1,2 +1,0 @@
-ALERT: 210 300
-FAIL: 1 cases failed

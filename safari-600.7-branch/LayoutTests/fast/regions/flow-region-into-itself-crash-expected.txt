@@ -1,5 +1,0 @@
-Test for WebKit Bug 90289 Crash when flowing a region into itself.
-
-The test passes if it does not crash or assert.
-
-PASS

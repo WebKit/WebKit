@@ -1,1 +1,0 @@
-PASSED - this test case didn't ASSERT, bug 19066

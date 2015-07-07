@@ -1,2 +1,0 @@
-123
-PASS, the three blocks are all on the same line

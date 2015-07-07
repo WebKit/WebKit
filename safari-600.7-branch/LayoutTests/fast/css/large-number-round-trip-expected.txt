@@ -1,3 +1,0 @@
-PASS: read 90010000px back as 33554428px, read again as 33554428px
-PASS: read -33554430px back as -33554430px, read again as -33554430px
-PASS: read -90010000px back as -33554430px, read again as -33554430px

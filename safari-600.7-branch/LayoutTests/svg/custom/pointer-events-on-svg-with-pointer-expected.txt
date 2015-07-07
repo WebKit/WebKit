@@ -1,3 +1,0 @@
-PASSED: SVGSVGElement had pointer
-
-

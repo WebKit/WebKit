@@ -1,2 +1,0 @@
-ALERT: viewport size 700x770 scale 0.5 with limits [0.457143, 5] and userScalable true
-

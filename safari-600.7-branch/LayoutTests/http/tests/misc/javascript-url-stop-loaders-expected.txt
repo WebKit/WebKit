@@ -1,3 +1,0 @@
-This test checks whether loading a JavaScript URL cancels loaders. If it fails, it will give an assertion failure in Debug builds.
-
-

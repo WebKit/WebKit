@@ -1,8 +1,0 @@
-Bug 111000: Selection gaps don't repaint correctly with transforms
-This tests that fixed elements that get transformed are invalidated correctly. The box will be competely green if the selected area was invalidated correctly.
-
-
-(repaint rects
-  (rect 50 50 100 100)
-)
-

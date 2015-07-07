@@ -1,1 +1,0 @@
-Testing that the backend is not crashing when highlighting a node that has no associated region.

@@ -1,3 +1,0 @@
-
-PASS CSS Test: @viewport constrained - min-zoom greater than max-zoom 
-

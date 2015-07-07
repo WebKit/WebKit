@@ -1,2 +1,0 @@
-CONSOLE MESSAGE: line 3: SyntaxError: Unexpected token ')'
-This tests that a line number and error message is printed for a parse error in a separate source file.

@@ -1,1 +1,0 @@
-This tests an assertion failure when undoing a paste operation when the caret is outside of the range to be undone. This test should not crash with debug build.

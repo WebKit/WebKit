@@ -1,4 +1,0 @@
-PASS document.securityPolicy.reportURIs has length 0 when no policy exists.
-PASS document.securityPolicy.reportURIs has length 1 when policy exists.
-PASS document.securityPolicy.reportURIs[0] is correct.
-

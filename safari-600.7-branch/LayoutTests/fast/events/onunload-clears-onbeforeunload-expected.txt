@@ -1,4 +1,0 @@
-main frame - has 1 onunload handler(s)
-CONSOLE MESSAGE: line 16: before unload
-CONSOLE MESSAGE: line 21: unload
-If you didn't hit an assert you PASS.

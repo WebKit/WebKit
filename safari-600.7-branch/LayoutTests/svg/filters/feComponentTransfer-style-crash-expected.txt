@@ -1,2 +1,0 @@
-ALERT: Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1
-PASS

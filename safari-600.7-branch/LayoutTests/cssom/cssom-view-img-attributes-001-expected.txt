@@ -1,6 +1,0 @@
-
-PASS test x with display false 
-PASS test y with display false 
-PASS test x with display true 
-PASS test y with display true 
-

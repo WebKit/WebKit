@@ -1,6 +1,0 @@
-S7.8.3_A4.1_T1
-
-PASS ReferenceError: Can't find variable: e1
-
-TEST COMPLETE
-

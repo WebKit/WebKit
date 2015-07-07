@@ -1,1 +1,0 @@
-This test passes if there isn't a console message saying the plugin was blocked. 

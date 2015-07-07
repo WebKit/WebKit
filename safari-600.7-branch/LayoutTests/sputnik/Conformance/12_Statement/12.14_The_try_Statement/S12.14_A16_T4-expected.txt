@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 78: SyntaxError: Unexpected token '{'. Expected '(' to start a 'catch' target.
-S12.14_A16_T4
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

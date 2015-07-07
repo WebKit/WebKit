@@ -1,9 +1,0 @@
-Checks that if a DFG AllocationProfileWatchpoint fires and the callee is otherwise dead, we still preserve the callee for the bytecode and don't crash.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-Passed some tests silently.
-
-TEST COMPLETE
-

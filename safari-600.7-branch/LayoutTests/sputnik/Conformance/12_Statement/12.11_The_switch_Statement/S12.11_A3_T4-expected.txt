@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 80: SyntaxError: Unexpected token ':'
-S12.11_A3_T4
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

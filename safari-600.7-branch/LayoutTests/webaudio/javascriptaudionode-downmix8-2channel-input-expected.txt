@@ -1,9 +1,0 @@
-Tests downmixing an 8-channel source connected to a JavaScriptAudioNode with 2-channel input.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-PASS onaudioprocess was called with correct input data.
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

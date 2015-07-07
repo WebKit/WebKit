@@ -1,3 +1,0 @@
-
-EXPECTED (video.currentTime == '1') OK
-

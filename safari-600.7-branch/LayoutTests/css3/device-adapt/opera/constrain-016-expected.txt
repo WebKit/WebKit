@@ -1,3 +1,0 @@
-
-PASS CSS Test: @viewport constrained - height deduced from width and aspect ratio. 
-

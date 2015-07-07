@@ -1,3 +1,0 @@
-Test that appcache works with authentication. Should say SUCCESS:
-
-SUCCESS

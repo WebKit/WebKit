@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 80: SyntaxError: Unexpected identifier 'result'. Expected '}' to end a body of a 'switch'.
-S12.11_A3_T5
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

@@ -1,3 +1,0 @@
-Tests that hiding/showing of table rows is linear.
-PASS
-

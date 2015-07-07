@@ -1,2 +1,0 @@
-This test ensures that changing the context does not crash. 
-

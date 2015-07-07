@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Unexpected token '='. Expected '(' to start a while loop condition.
-S7.5.2_A1.24
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

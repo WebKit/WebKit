@@ -1,6 +1,0 @@
-PASS mouseEvent.movementX is defined.
-PASS mouseEvent.movementY is defined.
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

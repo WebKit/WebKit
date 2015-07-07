@@ -1,3 +1,0 @@
-Test that executing multiple transactions on different handles to the same database doesn't cause deadlocks.
-PASS
-

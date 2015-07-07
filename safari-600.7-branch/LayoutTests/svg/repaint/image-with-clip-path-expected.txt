@@ -1,2 +1,0 @@
-Bug 76559: All red should disappear
-

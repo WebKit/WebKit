@@ -1,4 +1,0 @@
-The inner element of validation should not be modifiable.
-
-  
-

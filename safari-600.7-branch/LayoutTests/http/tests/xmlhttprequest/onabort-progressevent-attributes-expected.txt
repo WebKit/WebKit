@@ -1,6 +1,0 @@
-Test case for bug 120828: Correctly set XHR loadend attributes (loaded and total).
-
-Verify that abort and loadend events have their ProgressEvent attributes (loaded, total and lengthComputable) correctly set.
-
-PASS
-

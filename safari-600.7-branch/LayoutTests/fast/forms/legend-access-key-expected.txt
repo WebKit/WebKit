@@ -1,7 +1,0 @@
-This test checks to see if accesskey attributes work on legend elements.
-
-If the test passes, you should see one line saying "focused" and the text field should have focus.
-
-Information:
-
-focused

@@ -1,5 +1,0 @@
-The form elements should render at 2x their normal size:
-OMG Checkbox
-
-Killed by the video star :-(
-

@@ -1,6 +1,0 @@
-S7.9_A7_T7
-
-PASS ReferenceError: Can't find variable: y
-
-TEST COMPLETE
-

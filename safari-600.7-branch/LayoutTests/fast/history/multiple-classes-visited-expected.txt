@@ -1,8 +1,0 @@
-These two links should be the same color (orange):
-
-One Two
-PASS firstStyle.color became secondStyle.color
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

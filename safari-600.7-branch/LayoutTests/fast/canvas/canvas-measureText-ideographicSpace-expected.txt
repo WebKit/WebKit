@@ -1,5 +1,0 @@
-PASS spanWidth is canvasWidth
-PASS successfullyParsed is true
-
-TEST COMPLETE
- 

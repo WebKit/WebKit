@@ -1,9 +1,0 @@
-Tests audio channel merging of two mono streams into a single stereo stream.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-PASS Correctly merged from two mono streams to stereo.
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

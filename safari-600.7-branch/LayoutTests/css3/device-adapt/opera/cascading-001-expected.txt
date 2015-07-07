@@ -1,3 +1,0 @@
-
-PASS CSS Test: @viewport cascading - last declaration wins 
-

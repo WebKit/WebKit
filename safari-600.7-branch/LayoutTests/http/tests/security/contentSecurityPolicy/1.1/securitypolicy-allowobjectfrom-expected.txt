@@ -1,3 +1,0 @@
-PASS object is allowed when no policy exists.
-PASS object is not allowed when policy exists.
-

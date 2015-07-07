@@ -1,6 +1,0 @@
-S8.6.2_A5_T2
-
-PASS 
-
-TEST COMPLETE
-

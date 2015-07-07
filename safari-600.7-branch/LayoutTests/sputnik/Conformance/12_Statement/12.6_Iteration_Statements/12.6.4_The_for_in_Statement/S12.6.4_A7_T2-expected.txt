@@ -1,6 +1,0 @@
-S12.6.4_A7_T2
-
-PASS 
-
-TEST COMPLETE
-

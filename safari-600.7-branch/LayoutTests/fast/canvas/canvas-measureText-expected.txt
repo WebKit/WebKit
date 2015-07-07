@@ -1,5 +1,0 @@
-Regression test for bug 106244
-
-Test passes by not crashing.
-
-

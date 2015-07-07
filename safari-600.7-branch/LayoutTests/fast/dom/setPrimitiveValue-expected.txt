@@ -1,2 +1,0 @@
-Test CSSPrimitiveValue setters.
-setFloatValue NoModificationAllowedError: DOM Exception 7

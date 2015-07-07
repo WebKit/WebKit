@@ -1,8 +1,0 @@
-CONSOLE MESSAGE: line 13: First XHR loaded.
-CONSOLE MESSAGE: line 28: Done.
-Tests clearing browser cache from inspector.
-
-http://127.0.0.1:8000/inspector/network/resources/random-cached.php
-http://127.0.0.1:8000/inspector/network/resources/random-cached.php
-http://127.0.0.1:8000/inspector/network/resources/random-cached.php
-

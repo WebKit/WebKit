@@ -1,5 +1,0 @@
-PASS: First PUT request.
-PASS: First request complete
-PASS: Second PUT request.  Preflight worked
-PASS: Second request complete
-

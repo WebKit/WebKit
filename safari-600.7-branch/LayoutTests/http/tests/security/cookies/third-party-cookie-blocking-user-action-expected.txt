@@ -1,7 +1,0 @@
-
-
-
---------
-Frame: 'iframe'
---------
-Cookie is NOT set

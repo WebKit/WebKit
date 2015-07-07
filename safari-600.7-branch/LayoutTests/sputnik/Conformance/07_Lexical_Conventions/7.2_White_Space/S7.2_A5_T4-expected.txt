@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Invalid unicode escape in identifier: '\u0020'
-S7.2_A5_T4
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

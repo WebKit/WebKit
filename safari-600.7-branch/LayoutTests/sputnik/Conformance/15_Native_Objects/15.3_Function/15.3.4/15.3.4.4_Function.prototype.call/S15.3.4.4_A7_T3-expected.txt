@@ -1,6 +1,0 @@
-S15.3.4.4_A7_T3
-
-PASS 
-
-TEST COMPLETE
-

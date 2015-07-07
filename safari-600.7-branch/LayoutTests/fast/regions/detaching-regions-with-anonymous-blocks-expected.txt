@@ -1,3 +1,0 @@
-Bug 104517: [CSSRegions] Assertion failure in Node::detach (!renderer || renderer->inRenderFlowThread())
-
-This test PASSES if it does not CRASH or ASSERT.

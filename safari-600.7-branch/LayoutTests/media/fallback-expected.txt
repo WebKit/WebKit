@@ -1,3 +1,0 @@
-Test that fallback content is not rendered
-
-

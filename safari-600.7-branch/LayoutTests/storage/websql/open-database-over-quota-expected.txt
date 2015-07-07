@@ -1,2 +1,0 @@
-This tests that calling openDatabase with a size greater or equal to the test max quota limit of 5MB doesn't assert on debug builds.
-PASS

@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Invalid unicode escape in identifier: '\u000A'
-S7.3_A6_T1
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

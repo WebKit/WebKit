@@ -1,7 +1,0 @@
-This tests that, if the ancestor of the current full-screen element is removed, full screen mode will exit, and the document will render normally. At the completion of the test, a green box should be visible. Click go full screen to run the test.
-EVENT(webkitfullscreenchange)
-EXPECTED (document.webkitCurrentFullScreenElement == '[object HTMLDivElement]') OK
-EVENT(webkitfullscreenchange)
-EXPECTED (document.webkitCurrentFullScreenElement == 'null') OK
-END OF TEST
-

@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 80: SyntaxError: Unexpected identifier 'index'. Expected a ':' following the property name 'var'.
-S12.6.3_A8.1_T3
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

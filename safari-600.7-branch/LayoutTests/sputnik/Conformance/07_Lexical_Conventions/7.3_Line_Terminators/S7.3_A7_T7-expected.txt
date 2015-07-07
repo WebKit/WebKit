@@ -1,6 +1,0 @@
-S7.3_A7_T7
-
-PASS 
-
-TEST COMPLETE
-

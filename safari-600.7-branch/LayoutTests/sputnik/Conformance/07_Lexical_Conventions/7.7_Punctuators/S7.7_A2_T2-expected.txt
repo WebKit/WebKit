@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Invalid unicode escape in identifier: '\u0028'
-S7.7_A2_T2
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

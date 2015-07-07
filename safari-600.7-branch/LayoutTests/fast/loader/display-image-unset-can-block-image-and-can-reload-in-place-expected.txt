@@ -1,3 +1,0 @@
-Test that DisplayImages disabled can block http image and can be reloaded in-place when toggled.
-SUCCESS
-

@@ -1,5 +1,0 @@
-This test verifies that smart insert and delete can be disabled at test time.
-If viewing in a browser, you should see the words "foo bar baz".
-If using a version of testRunner with this functionality, you should see "foo baz". (two spaces between the words)
-If using a version of testRunner without this functionality, you should see "foo baz". (one space between the words)
-foo  baz

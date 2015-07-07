@@ -1,6 +1,0 @@
-This test that progress events are fired for XMLHttpRequestUpload objects in the correct order, loadstart, progress, load.
-
-PASS: loadstart event fired on XMLHttpRequestUpload: [object XMLHttpRequestProgressEvent]
-PASS: onprogress event fired on XMLHttpRequestUpload: [object XMLHttpRequestProgressEvent] [Loaded: 4 Total: 4]
-PASS: load event fired on XMLHttpRequestUpload: [object XMLHttpRequestProgressEvent]
-

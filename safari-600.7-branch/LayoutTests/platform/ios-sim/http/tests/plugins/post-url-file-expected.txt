@@ -1,8 +1,0 @@
-FAIL: Timed out waiting for notifyDone to be called
- 
-
-
---------
-Frame: 'result'
---------
-FAIL

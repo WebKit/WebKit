@@ -1,4 +1,0 @@
-# This file is used by gcl to get repository specific information.
-GERRIT_HOST: chromium-review.googlesource.com
-GERRIT_PORT: 29418
-CODE_REVIEW_SERVER: chromium-review.googlesource.com

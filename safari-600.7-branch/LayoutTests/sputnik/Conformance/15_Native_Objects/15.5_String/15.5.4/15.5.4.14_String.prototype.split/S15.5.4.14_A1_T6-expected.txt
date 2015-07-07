@@ -1,6 +1,0 @@
-S15.5.4.14_A1_T6
-
-FAIL SputnikError: #3: var x; __split = new String("1undefined").split(x); __split.length === 2. Actual: 1
-
-TEST COMPLETE
-

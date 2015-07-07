@@ -1,6 +1,0 @@
-Test for [CSS Regions] Crash while painting block selection gaps in regions
-
-The test passes if it does not crash or assert.
-
-
-

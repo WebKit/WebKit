@@ -1,3 +1,0 @@
-This tests that we don’t crash when forcing a style recalc when inside RenderIFrame::updateWidget.
-
-SUCCESS - Did not crash!

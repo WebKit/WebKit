@@ -1,6 +1,0 @@
-S7.3_A3.1_T2
-
-PASS SyntaxError: Unexpected identifier 'line'
-
-TEST COMPLETE
-

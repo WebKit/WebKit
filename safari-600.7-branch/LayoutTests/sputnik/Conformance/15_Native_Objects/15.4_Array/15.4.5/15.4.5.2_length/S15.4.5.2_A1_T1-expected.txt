@@ -1,6 +1,0 @@
-S15.4.5.2_A1_T1
-
-PASS 
-
-TEST COMPLETE
-

@@ -1,8 +1,0 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x49
-  RenderBlock {HTML} at (0,0) size 800x49
-    RenderBody {BODY} at (8,16) size 784x17
-      RenderBlock {P} at (0,0) size 784x17
-        RenderText {#text} at (0,0) size 503x17
-          text run at (0,0) width 503: "Try selecting some text in this document. It should be have a green background."

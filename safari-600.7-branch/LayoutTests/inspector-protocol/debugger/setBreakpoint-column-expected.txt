@@ -1,8 +1,0 @@
-Debugger.setBreakpoint on line:column in <script>
-
-Found <script>
-Running testFunction
-Hit Breakpoint!
-Evaluted value of `a` (expecting number 1) was: {"type":"number","value":1,"description":"1"}
-Evaluted value of `b` (expecting undefined) was: {"type":"undefined"}
-

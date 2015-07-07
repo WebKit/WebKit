@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Unexpected token '='. Expected a parameter pattern or a ')' in parameter list.
-S7.5.2_A1.22
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

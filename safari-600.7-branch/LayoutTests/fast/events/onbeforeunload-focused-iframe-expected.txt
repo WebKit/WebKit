@@ -1,9 +1,0 @@
-CONSOLE MESSAGE: line 16: beforeUnload
-New window with beforeUnload handler.
-You should see "beforeUnload" in the console log if you try to close the window.
-
-
---------
-Frame: 'focusedFrame'
---------
-This frame should get the focus. 

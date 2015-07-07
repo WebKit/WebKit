@@ -1,9 +1,0 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (50,50) size 50x484
-        RenderInline {SPAN} at (0,0) size 50x200 [textStrokeColor=#008000] [textStrokeWidth=50.00]
-          RenderText {#text} at (0,0) size 50x200
-            text run at (0,0) width 200: "A  B"

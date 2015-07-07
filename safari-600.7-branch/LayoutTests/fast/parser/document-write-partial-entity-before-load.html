@@ -1,9 +1,0 @@
-<script>
-if (window.testRunner)
-	testRunner.dumpAsText();
-</script>
-<div id="test"><script onbeforeload="document.write('&')" src="data:text/javascript,document.write('g');"></script>t;</div>
-<script>
-var testDiv = document.getElementById("test");
-testDiv.textContent = (testDiv.textContent == '>') ? "PASS" : ("FAIL : " + testDiv.textContent);
-</script>

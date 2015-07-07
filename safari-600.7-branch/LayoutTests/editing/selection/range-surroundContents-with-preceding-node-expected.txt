@@ -1,9 +1,0 @@
-PASS successfullyParsed is true
-
-TEST COMPLETE
-PASS root is root
-PASS 3 is 3
-PASS root is root
-PASS 3 is 3
-Test that there is no crash when surroundContents is called with a node preceding the current selection.
-

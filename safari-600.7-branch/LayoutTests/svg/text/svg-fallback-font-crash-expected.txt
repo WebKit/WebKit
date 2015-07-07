@@ -1,2 +1,0 @@
-This test makes sure that there is no crash if a character is rendered with a SVG fallback font. The test is successful if there is no crash.
-This is a foreign character. 𠀁 That was a foreign character.

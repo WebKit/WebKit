@@ -1,4 +1,0 @@
-#ifndef WebCore_FWD_InspectorJSTypeBuilders_h
-#define WebCore_FWD_InspectorJSTypeBuilders_h
-#include <JavaScriptCore/InspectorJSTypeBuilders.h>
-#endif

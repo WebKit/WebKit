@@ -1,6 +1,0 @@
-Test that non-HTML main resources work with application cache correctly.
-
-Should say SUCCESS:
-
-SUCCESS
-

@@ -1,3 +1,0 @@
-
-This test requires DumpRenderTree. Click the orange border, a focus ring should not appear. 
-EMBED Event: focus PASS

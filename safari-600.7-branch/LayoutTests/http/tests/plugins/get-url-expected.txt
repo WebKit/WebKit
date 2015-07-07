@@ -1,1 +1,0 @@
-This tests that NPN_GetURLNotify works as expected and does not ASSERT intermittently in debug builds. 

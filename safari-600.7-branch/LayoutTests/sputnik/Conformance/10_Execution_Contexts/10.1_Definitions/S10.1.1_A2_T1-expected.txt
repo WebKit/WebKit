@@ -1,6 +1,0 @@
-S10.1.1_A2_T1
-
-PASS 
-
-TEST COMPLETE
-

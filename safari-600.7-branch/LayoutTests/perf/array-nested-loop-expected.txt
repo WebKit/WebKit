@@ -1,3 +1,0 @@
-Tests that doing a nested loop over an array is quadratic.
-PASS
-

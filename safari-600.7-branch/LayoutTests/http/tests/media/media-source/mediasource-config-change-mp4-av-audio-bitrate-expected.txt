@@ -1,3 +1,0 @@
- 
-PASS Tests mp4 audio bitrate changes in multiplexed content. 
-

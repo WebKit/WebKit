@@ -1,6 +1,0 @@
-Test that having a non-editable style and link elements does not cause a crash
-| <span>
-|   id="end"
-|   "<#selection-caret>end"
-| "
-"

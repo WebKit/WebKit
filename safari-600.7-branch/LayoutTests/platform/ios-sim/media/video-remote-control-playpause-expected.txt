@@ -1,3 +1,0 @@
-FAIL: Timed out waiting for notifyDone to be called
-  
-Test play and pause with "remote control" interface.

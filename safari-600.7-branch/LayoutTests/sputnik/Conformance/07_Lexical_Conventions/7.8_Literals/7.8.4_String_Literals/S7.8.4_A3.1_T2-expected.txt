@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 77: SyntaxError: Unexpected EOF
-S7.8.4_A3.1_T2
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

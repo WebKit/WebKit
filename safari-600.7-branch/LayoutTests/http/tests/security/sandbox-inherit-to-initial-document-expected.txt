@@ -1,4 +1,0 @@
-Test how sandbox flags get inherited to initial document in subframe.
-
-PASS
-

@@ -1,5 +1,0 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,0) size 203x203
-    RenderSVGEllipse {circle} at (0,0) size 203x203 [stroke={[type=SOLID] [color=#008000] [stroke width=5.00]}] [cx=100.00] [cy=100.00] [r=100.00]

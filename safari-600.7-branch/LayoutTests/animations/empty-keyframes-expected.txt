@@ -1,3 +1,0 @@
-Test for empty keyframes rule. Should not crash
-
-

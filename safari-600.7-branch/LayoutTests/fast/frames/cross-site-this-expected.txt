@@ -1,3 +1,0 @@
-This test checks whether cross-site calling uses the proper object as the global "this" value. The text below should say PASS:
-PASS
-

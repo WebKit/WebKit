@@ -1,6 +1,0 @@
-S15.1.1.1_R4
-
-FAIL SputnikError: #1: NaN = true; NaN++; NaN === 2
-
-TEST COMPLETE
-

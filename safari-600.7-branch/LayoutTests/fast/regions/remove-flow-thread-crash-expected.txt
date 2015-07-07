@@ -1,2 +1,0 @@
-Tests that removing a region that is sibling to the flow doesn't crash.
-PASS

@@ -1,9 +1,0 @@
-Tests that a dummy use of Math.min(a) at least speculates that its argument is indeed a number.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-Passed some tests silently.
-
-TEST COMPLETE
-

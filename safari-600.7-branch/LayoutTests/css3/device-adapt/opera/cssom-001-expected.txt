@@ -1,3 +1,0 @@
-
-PASS CSS Test: @viewport CSSOM - CSSRule.WEBKIT_VIEWPORT_RULE 
-

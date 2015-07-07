@@ -1,1 +1,0 @@
-  This test exercises a webkit specific canvas routine drawImageFromRect. This test should pass and never crash. PASSED

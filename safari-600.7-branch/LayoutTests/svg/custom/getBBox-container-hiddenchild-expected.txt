@@ -1,8 +1,0 @@
-CONSOLE MESSAGE: line 56: Error: Invalid negative value for <rect> attribute width="-1"
-Bug 134184: Bounding box of hidden child is unioned with other elements of group
-
-For this test to pass, you should see 'Passed' below.
-
-Passed;
-
-

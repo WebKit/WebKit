@@ -1,7 +1,0 @@
-
-EVENT(loadstart)
-Waiting for the duration of the first cue to elapse.
-The duration of the first cue has elapsed.
-
-END OF TEST
-

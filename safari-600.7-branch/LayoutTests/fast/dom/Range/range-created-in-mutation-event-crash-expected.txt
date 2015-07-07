@@ -1,5 +1,0 @@
-ALERT: This test calls getBoundingClientRect on a range obtained inside a mutation event listener.
-The test passes if WebKit doesn't crash.
-
-PASS.
-

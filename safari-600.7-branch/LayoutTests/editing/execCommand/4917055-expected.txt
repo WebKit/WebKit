@@ -1,8 +1,0 @@
-This tests for a hang when performing Insert{Un}OrderedList.
-
-foo
-bar
-
-
-
-

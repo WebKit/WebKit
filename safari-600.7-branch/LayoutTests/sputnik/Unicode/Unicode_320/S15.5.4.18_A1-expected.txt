@@ -1,6 +1,0 @@
-S15.5.4.18_A1
-
-FAIL SputnikError: #03F2->03A3 
-
-TEST COMPLETE
-

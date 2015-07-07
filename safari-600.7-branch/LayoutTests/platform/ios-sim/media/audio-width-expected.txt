@@ -1,7 +1,0 @@
-Test that audio elements have a minimum width.
-
-  
-
-EXPECTED (width1 == '260') OK
-EXPECTED (width2 == '400') OK
-END OF TEST

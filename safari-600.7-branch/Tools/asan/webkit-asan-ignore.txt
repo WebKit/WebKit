@@ -1,3 +1,0 @@
-fun:*genericAddSpan*
-fun:*gatherFromCurrentThread*ConservativeRoots*
-fun:*DFG*prepareOSREntry*

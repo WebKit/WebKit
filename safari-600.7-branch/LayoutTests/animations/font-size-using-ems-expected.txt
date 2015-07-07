@@ -1,2 +1,0 @@
-This test performs an animation of the font-size property using 'em' units. It tests whether or not we are properly getting the default font-size. Here is some text. Here is some text. Here is some text. Here is some text. Here is some text. Here is some text. Here is some text. Here is some text. Here is some text. Here is some text. Here is some text. Here is some text.
-PASS

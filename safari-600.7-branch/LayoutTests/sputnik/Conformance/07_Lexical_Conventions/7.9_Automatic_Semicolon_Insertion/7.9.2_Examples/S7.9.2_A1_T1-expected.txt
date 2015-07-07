@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 77: SyntaxError: Unexpected number '2'. Parse error.
-S7.9.2_A1_T1
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

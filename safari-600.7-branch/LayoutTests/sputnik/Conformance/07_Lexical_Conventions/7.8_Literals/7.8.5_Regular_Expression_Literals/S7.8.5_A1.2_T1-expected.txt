@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 84: SyntaxError: Multiline comment was not closed properly
-S7.8.5_A1.2_T1
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

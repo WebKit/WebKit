@@ -1,2 +1,0 @@
-This test passes if the page has no other text.
-

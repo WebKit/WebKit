@@ -1,6 +1,0 @@
-S7.9_A5.7_T1
-
-PASS ReferenceError: Prefix ++ operator applied to value that is not a reference.
-
-TEST COMPLETE
-

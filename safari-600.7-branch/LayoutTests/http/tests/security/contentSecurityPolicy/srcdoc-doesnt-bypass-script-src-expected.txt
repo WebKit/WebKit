@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: line 1: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self'".
-
-This test passes if it doesn't alert fail. 

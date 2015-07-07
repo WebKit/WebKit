@@ -1,3 +1,0 @@
-PASS document.getElementById("foo").clientWidth==25 is true
-This test passes if the image below is displayed.
-

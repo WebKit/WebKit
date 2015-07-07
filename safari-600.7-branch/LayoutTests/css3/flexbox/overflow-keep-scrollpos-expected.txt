@@ -1,2 +1,0 @@
-PASS document.querySelector('.overflow-auto').scrollTop is 50
-

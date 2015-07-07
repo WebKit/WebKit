@@ -1,4 +1,0 @@
-There an input element with the pattern attribute set.
-
-
-SUCCESS

@@ -1,8 +1,0 @@
-This test checks that changing the grid-row on a grid item properly repaint. The final grid item should be 100px * 100px. There should be no trace of the grid item at the old position.
-(repaint rects
-  (rect 8 38 100 50)
-  (rect 8 38 100 100)
-  (rect 8 38 100 50)
-  (rect 8 88 100 100)
-)
-

@@ -1,6 +1,0 @@
-Test for WebKit Bug 91307 Crash when reattaching a region to a named flow.
-
-The test passes if it does not crash or assert.
-
-PASS
-

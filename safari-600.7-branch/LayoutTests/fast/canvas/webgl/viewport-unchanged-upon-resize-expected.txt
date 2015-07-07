@@ -1,9 +1,0 @@
-Verifies that GL viewport does not change when canvas is resized
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-PASS Viewport correctly did not change size during canvas resize
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

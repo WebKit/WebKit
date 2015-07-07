@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 77: SyntaxError: Invalid unicode escape in identifier: '\u002E'
-S7.7_A2_T5
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

@@ -1,3 +1,0 @@
-PASS document.securityPolicy.active is false when no policy exists.
-PASS document.securityPolicy.active is true when policy exists.
-

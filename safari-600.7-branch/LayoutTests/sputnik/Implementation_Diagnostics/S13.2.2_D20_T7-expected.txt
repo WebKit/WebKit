@@ -1,6 +1,0 @@
-S13.2.2_D20_T7
-
-PASS 
-
-TEST COMPLETE
-

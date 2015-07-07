@@ -1,2 +1,0 @@
-CONSOLE MESSAGE: line 18: TypeError: HTMLParagraphElement is not a function (evaluating 'description("Tests that touch events are dispatched to the DOMWindow even if no other elements have touch event listeners.")')
-

@@ -1,3 +1,0 @@
-On success, there should only be a green rectangle.
-
-TEST PASSED

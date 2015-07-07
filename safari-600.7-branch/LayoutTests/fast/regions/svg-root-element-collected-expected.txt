@@ -1,8 +1,0 @@
-Bug 73735: Collect SVG nodes in render flow thread
-
-It should be possible to collect a root "svg" node into a render flow thread.
-
-On success, you should see PASS below.
-
-SVG text
-PASS

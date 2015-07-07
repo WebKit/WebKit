@@ -1,7 +1,0 @@
-Tests the error event on HTMLTrackElement and ERROR readyState on TextTrack.
-
-
-EVENT(error)
-EXPECTED (track.readyState == '3') OK
-END OF TEST
-

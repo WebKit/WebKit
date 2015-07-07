@@ -1,6 +1,0 @@
-S8.4_D2.7
-
-FAIL SputnikError: #1: If index of element must is equal to -1 an length of string returns
-
-TEST COMPLETE
-

@@ -1,4 +1,0 @@
-Sending notifications without permission...
-
-PASS: error event fired.
-

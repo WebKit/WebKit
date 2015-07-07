@@ -1,3 +1,0 @@
-This tests that animations continue when restored from the page cache.
-
-PASS: Saw iteration after navigation

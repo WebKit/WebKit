@@ -1,4 +1,0 @@
-Test online whitelist functionality. Should say PASS:
-
-PASS
-

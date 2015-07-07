@@ -1,6 +1,0 @@
-S8.3_A2.1
-
-PASS ReferenceError: Left side of assignment is not a reference.
-
-TEST COMPLETE
-

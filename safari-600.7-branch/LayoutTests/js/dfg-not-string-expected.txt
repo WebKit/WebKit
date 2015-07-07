@@ -1,5 +1,0 @@
-PASS test() is 9 on all iterations including after DFG tier-up.
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

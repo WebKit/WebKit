@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: Application Cache download process was aborted.
-This tests that download process was aborted after checking event and before update failed.
-SUCCESS

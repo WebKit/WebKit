@@ -1,7 +1,0 @@
-Test for WebKit Bug 88133 Collecting a fixed positioned element in a named flow causes WebKit to crash.
-
-This test collects a fixed positioned object into a named flow but without flowing it into a region. The fixed positioned element is the child of another element that has a transform, so that it requires a layer.
-
-The test passes if it does not crash or assert.
-
-PASS

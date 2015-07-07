@@ -1,2 +1,0 @@
-SUCCESS, no assertion failure
-applicationCache.status == 1

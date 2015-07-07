@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Unexpected token '='. Expected an identifier as the target for a break statement.
-S7.5.2_A1.1
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

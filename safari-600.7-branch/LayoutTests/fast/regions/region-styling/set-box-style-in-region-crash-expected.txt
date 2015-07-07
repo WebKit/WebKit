@@ -1,5 +1,0 @@
-Bug 78298: Crash in RenderFlowThread::setRegionBoxesRegionStyle
-
-This test PASSES if it does not CRASH or ASSERT.
-
-

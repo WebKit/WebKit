@@ -1,6 +1,0 @@
-S11.3.2_A2.1_T1
-
-PASS 
-
-TEST COMPLETE
-

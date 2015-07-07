@@ -1,9 +1,0 @@
-Verify that reassigning typed array constructor does not crash.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-PASS reassigning typed array constructor did not crash
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

@@ -1,3 +1,0 @@
-Test whether window.history.back() is supported in application cache.
-
-PASS: Returning to the original page.

@@ -1,4 +1,0 @@
-Test that putImageData(getImageData) pair leaves canvas ImageData the same.
-
- 
-Result: PASS

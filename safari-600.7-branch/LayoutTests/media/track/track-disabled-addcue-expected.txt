@@ -1,8 +1,0 @@
-Test adding cues to a disabled text track.
-
-
-Waiting for 2 cue durations to elapse.
-2 cue durations have elapsed.
-
-END OF TEST
-

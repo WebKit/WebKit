@@ -1,3 +1,0 @@
-
-PASS XMLHttpRequest: ensure loadstart event progress members are correctly initialized 
-

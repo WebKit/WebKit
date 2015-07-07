@@ -1,6 +1,0 @@
-CONSOLE MESSAGE: line 26: TypeError: HTMLParagraphElement is not a function (evaluating 'description("This test thats disabled and aria-disabled change the traits returned.")')
-button 1
-button 2
-button 3
- 
-

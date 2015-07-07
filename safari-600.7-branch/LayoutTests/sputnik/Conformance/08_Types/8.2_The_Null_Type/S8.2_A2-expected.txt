@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Cannot use the keyword 'null' as a variable name.
-S8.2_A2
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

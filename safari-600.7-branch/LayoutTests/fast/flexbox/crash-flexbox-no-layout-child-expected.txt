@@ -1,3 +1,0 @@
- 
-Bug 64842: RenderDeprecatedFlexibleBox does not call its children's layout method
-This test passes if it does not CRASH.

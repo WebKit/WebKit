@@ -1,5 +1,0 @@
-Tests that evaluating 'throw undefined' in the console won't crash the browser. Bug 59611.
-
-throw undefined
-undefined
-

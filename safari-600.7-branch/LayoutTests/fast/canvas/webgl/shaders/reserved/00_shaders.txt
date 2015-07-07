@@ -1,8 +1,0 @@
-_webgl_field.vert
-_webgl_function.vert
-_webgl_struct.vert
-_webgl_variable.vert
-webgl_field.vert
-webgl_function.vert
-webgl_struct.vert
-webgl_variable.vert

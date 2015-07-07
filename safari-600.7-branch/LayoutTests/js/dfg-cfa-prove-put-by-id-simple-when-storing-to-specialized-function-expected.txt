@@ -1,9 +1,0 @@
-Checks that the DFG CFA does the right things if it proves that a put_by_id is a simple replace when storing to a specialized function property.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-Passed some tests silently.
-
-TEST COMPLETE
-

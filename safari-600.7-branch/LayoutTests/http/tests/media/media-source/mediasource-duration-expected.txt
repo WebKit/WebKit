@@ -1,6 +1,0 @@
- 
-PASS Test seek starts on duration truncation below currentTime 
-PASS Test appendBuffer completes previous seek to truncated duration 
-PASS Test endOfStream completes previous seek to truncated duration 
-PASS Test setting same duration multiple times does not fire duplicate durationchange 
-

@@ -1,6 +1,0 @@
-S7.1_A1_T1
-
-FAIL SputnikError: #200C 
-
-TEST COMPLETE
-

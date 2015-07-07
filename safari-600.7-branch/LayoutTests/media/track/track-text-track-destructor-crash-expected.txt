@@ -1,9 +1,0 @@
-Tests that we don't crash when a media element that has text tracks is destructed.
-
-Create video and add text tracks.
-EXPECTED (tracks.length == '1000') OK
-
-Destroy the video and force a garbage collection.
-SUCCESS: Did not crash
-END OF TEST
-

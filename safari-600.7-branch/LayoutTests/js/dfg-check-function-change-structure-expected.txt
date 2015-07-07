@@ -1,4 +1,0 @@
-Passed some tests silently.
-
-TEST COMPLETE
-

@@ -1,6 +1,0 @@
-S15.10.6.3_D1_T1
-
-FAIL SputnikError: #1: RegeExp.prototype.test calling does not change lastIndex property
-
-TEST COMPLETE
-

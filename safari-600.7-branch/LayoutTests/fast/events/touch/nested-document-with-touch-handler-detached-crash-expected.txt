@@ -1,2 +1,0 @@
-
-Test passes if DRT doesn't crash.

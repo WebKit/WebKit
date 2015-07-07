@@ -1,8 +1,0 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (20,26) size 480x294
-    RenderSVGText {text} at (20,26) size 217x17 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 217x17
-        chunk 1 text run 1 at (20.00,40.00) startOffset 0 endOffset 34 width 217.00: "This text should appear only twice"
-    RenderSVGRect {rect} at (100,100) size 250x70 [fill={[type=SOLID] [color=#0000FF]}] [x=100.00] [y=100.00] [width=200.00] [height=20.00]

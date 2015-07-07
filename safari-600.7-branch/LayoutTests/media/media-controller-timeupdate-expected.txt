@@ -1,6 +1,0 @@
-
-EVENT(canplay)
-RUN(video.play)
-EVENT(timeupdate)
-END OF TEST
-

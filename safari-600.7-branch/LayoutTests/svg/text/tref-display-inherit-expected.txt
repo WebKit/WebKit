@@ -1,4 +1,0 @@
-Tests that a <tref> with display inherit doesn't cause an assertion failure.
-
-PASS
-

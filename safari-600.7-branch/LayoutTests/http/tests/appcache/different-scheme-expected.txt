@@ -1,3 +1,0 @@
-Test that application cache doesn't block loading resources with different schemes.
-
-SUCCESS

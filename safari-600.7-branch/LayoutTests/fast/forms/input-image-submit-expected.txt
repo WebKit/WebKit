@@ -1,3 +1,0 @@
-
-PASS All tests passed.
-

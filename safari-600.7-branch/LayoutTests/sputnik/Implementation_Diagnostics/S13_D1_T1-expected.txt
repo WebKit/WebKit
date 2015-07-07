@@ -1,6 +1,0 @@
-S13_D1_T1
-
-FAIL SputnikError: #0: Function declaration inside of "with" statement interprets as function expression
-
-TEST COMPLETE
-

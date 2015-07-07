@@ -1,6 +1,0 @@
-S12.6.3_A14
-
-PASS 
-
-TEST COMPLETE
-

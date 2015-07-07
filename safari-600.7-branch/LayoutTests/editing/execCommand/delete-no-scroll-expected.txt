@@ -1,4 +1,0 @@
-Matching IE, execCommand("Delete") should not scroll the page to make selection visible.
-
-a
-

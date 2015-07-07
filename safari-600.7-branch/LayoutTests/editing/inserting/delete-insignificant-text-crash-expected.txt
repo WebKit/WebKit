@@ -1,3 +1,0 @@
-This tests deleting a node in DOMCharacterDataModified doesn't result in a crash.
-
-PASS

@@ -1,4 +1,0 @@
-PASS svg.getCurrentTime() is 0
-PASS svg.getCurrentTime() is 0.05
-PASS svg.getCurrentTime() is 0.05
-

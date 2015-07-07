@@ -1,6 +1,0 @@
-S15.4.4.2_A1_T4
-
-PASS 
-
-TEST COMPLETE
-

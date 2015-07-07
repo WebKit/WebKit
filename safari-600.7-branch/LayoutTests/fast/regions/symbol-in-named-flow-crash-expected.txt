@@ -1,2 +1,0 @@
-Test for WebKitBug 84493: crash when collecting svg symbol element in named flow.
-This test PASSES if it does not CRASH or ASSERT.

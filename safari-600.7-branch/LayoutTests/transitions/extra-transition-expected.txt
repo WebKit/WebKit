@@ -1,3 +1,0 @@
-Spaces lets you group your application windows and banish clutter completely. Leopard gives you a space for everything and makes it easy to switch between your spaces. Start by simply clicking the Spaces icon in the Dock.
-transform="matrix(1, 0, 0, 1, 100, 0)" as expected: PASS
-

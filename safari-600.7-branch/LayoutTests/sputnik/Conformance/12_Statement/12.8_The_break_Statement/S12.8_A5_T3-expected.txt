@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 82: SyntaxError: Cannot use the undeclared label 'LABEL_IN'.
-S12.8_A5_T3
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

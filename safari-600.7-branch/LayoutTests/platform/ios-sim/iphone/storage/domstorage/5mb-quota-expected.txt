@@ -1,8 +1,0 @@
-CONSOLE MESSAGE: line 11: TypeError: HTMLParagraphElement is not a function (evaluating 'description("Test a 5MB DOM Storage quota for localStorage and sessionStorage.")')
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x0
-      RenderBlock {DIV} at (0,0) size 784x0

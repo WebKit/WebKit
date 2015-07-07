@@ -1,8 +1,0 @@
-
-Test that TextTrack's cues are rendered correctly when the snap to lines flag is not set.
-EVENT(canplaythrough)
-EVENT(seeked)
-Active cues: 7
-No cue elements overlap. OK
-END OF TEST
-

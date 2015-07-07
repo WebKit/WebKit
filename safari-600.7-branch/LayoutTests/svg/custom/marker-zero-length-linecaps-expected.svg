@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg">
-    <path d="m 50 50 l 0 0" stroke="red" stroke-width="25" stroke-linecap="round"/>
-    <rect x="50" y="50" width="75" height="75" fill="green" opacity="0.5"/>
-
-    <path d="m 150 50 l 0 0" stroke="red" stroke-width="25" stroke-linecap="square"/>
-    <rect x="150" y="50" width="75" height="75" fill="green" opacity="0.5"/>
-</svg>

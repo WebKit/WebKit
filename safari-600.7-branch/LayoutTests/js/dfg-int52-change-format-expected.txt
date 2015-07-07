@@ -1,5 +1,0 @@
-PASS foo(1000000000) is [4000000000,8000000000,-147483648,12000000000] on all iterations including after DFG tier-up.
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

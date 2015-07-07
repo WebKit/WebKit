@@ -1,3 +1,0 @@
-Tests for a crash due to modifying the DOM during mutation events due to an adoptNode call. If this page doesn't crash and DOMSubtreeModified is fire, this test succeeds.
-DOMSubtreeModified fired
-

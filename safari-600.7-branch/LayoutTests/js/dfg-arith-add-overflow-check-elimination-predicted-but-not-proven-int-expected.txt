@@ -1,9 +1,0 @@
-Tests that when values predicted but not proven int are used in a tower of additions, we don't eliminate the overflow check unsoundly.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-Passed some tests silently.
-
-TEST COMPLETE
-

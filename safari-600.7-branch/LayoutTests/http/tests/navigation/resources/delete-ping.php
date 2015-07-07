@@ -1,3 +1,0 @@
-<?php
-unlink("ping.txt");
-?>

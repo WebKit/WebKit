@@ -1,9 +1,0 @@
-Testing that the ContentFlows events are correctly dispatched when content nodes are detached from the DOM.
-
-PASS: ContentFlow was added.
-PASS: ContentFlow.contentNodes has a length of 2.
-PASS: ContentFlow.contentNodes[0].id is "#contentStatic".
-PASS: ContentFlow.contentNodes[1].id is "#contentRemoved".
-PASS: "#contentRemoved" was removed.
-PASS: "#contentRemoved" cannot be found in the contentNodes list.
-

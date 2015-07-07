@@ -1,7 +1,0 @@
-
-Test that video requests contain no "Accept-Encoding" header.
-
-EVENT(loadedmetadata)
-loaded metadata of media file OK
-END OF TEST
-

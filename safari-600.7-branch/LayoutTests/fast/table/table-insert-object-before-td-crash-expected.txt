@@ -1,3 +1,0 @@
-Test that node insertion of an object before a <td> works properly. This test passes if it does not crash.
-X
-PASS: Did not crash.

@@ -1,6 +1,0 @@
-S15.10.4.1_A3_T4
-
-FAIL SputnikError: #1: __re = new RegExp(undefined); __re.source === "". Actual: (?:)
-
-TEST COMPLETE
-

@@ -1,7 +1,0 @@
-S12.2_A5
-
-Can't find variable: x
-PASS 
-
-TEST COMPLETE
-

@@ -1,7 +1,0 @@
-CONSOLE MESSAGE: line 87: SyntaxError: 'continue' is only valid inside a loop statement.
-S12.7_A8_T2
-
-PASS Expected parsing failure
-
-TEST COMPLETE
-

@@ -1,3 +1,0 @@
-This tests inserting a text node while calling deleteContents. WebKit should not hit an assertion.
-
-PASS.

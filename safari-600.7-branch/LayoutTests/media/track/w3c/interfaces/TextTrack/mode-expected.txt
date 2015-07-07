@@ -1,4 +1,0 @@
-
-PASS TextTrack.mode, wrong value 
-PASS TextTrack.mode, correct value 
-

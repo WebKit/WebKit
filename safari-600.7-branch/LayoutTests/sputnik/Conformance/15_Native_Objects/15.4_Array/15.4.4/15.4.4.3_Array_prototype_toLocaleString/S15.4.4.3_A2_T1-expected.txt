@@ -1,6 +1,0 @@
-S15.4.4.3_A2_T1
-
-FAIL SputnikError: #1.2: var obj = {}; obj.toLocaleString = Array.prototype.toLocaleString; obj.toLocaleString() throw TypeError. Actual: SputnikError: #1.1: var obj = {}; obj.toLocaleString = Array.prototype.toLocaleString; obj.toLocaleString() throw TypeError. Actual: 
-
-TEST COMPLETE
-
