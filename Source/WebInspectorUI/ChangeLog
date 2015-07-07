@@ -1,3 +1,13 @@
+2015-07-07  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Properly align checkboxes in the styles sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=146673
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.css:
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines input[type=checkbox]):
+
 2015-07-06  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Rendering Frame bars appear misaligned and contain gaps when displaying small task segments

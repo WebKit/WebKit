@@ -111,7 +111,7 @@
 .css-style-text-editor > .CodeMirror .CodeMirror-lines input[type=checkbox] {
     width: 10px;
     height: 10px;
-    vertical-align: middle;
+    vertical-align: top;
     margin: 0 8px 0 3px;
     visibility: hidden;
 }
