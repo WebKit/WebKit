@@ -1582,7 +1582,7 @@ bool RenderThemeMac::paintSliderThumb(const RenderObject& o, const PaintInfo& pa
         paintInfo.context->translate(-unzoomedRect.x(), -unzoomedRect.y());
     }
 
-    [sliderThumbCell drawInteriorWithFrame:unzoomedRect inView:view];
+    [sliderThumbCell drawKnob:unzoomedRect];
     [sliderThumbCell setControlView:nil];
 
     return false;

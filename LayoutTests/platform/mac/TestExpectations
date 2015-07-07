@@ -1293,7 +1293,3 @@ http/tests/security/contentSecurityPolicy/media-src-allowed.html [ Skip ]
 
 [ Yosemite ] fast/canvas/webgl/oes-texture-half-float-linear.html [ Pass Failure ]
 
-# <rdar://problem/21677831> Slider thumb of range input is rotated on reference tests
-[ ElCapitan+ ] css3/flexbox/flexitem-stretch-range.html [ ImageOnlyFailure ]
-[ ElCapitan+ ] fast/forms/range/input-appearance-range-rtl.html [ ImageOnlyFailure ]
-[ ElCapitan+ ] fast/forms/range/range-change-min-max.html [ ImageOnlyFailure ]
