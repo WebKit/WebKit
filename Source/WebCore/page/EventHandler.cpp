@@ -633,8 +633,14 @@ void EventHandler::selectClosestContextualWordFromMouseEvent(const MouseEventWit
 void EventHandler::selectClosestContextualWordOrLinkFromMouseEvent(const MouseEventWithHitTestResults& result)
 {
     Element* urlElement = result.hitTestResult().URLElement();
-    if (!urlElement || !isDraggableLink(*urlElement))
+    if (!urlElement || !isDraggableLink(*urlElement)) {
+        if (Node* targetNode = result.targetNode()) {
+            if (isEditableNode(*targetNode))
+                return selectClosestWordFromMouseEvent(result);
+        }
+
         return selectClosestContextualWordFromMouseEvent(result);
+    }
 
     Node* targetNode = result.targetNode();
 
