@@ -114,6 +114,9 @@ void DragAndDropHandler::startDrag(const DragData& dragData, PassRefPtr<Shareabl
     GRefPtr<GtkTargetList> targetList = adoptGRef(PasteboardHelper::defaultPasteboardHelper()->targetListForDataObject(dataObject.get()));
     GUniquePtr<GdkEvent> currentEvent(gtk_get_current_event());
 
+    if (!currentEvent)
+        return;
+
     GdkDragContext* context = gtk_drag_begin(m_page.viewWidget(), targetList.get(), dragOperationToGdkDragActions(dragData.draggingSourceOperationMask()),
         GDK_BUTTON_PRIMARY, currentEvent.get());
     m_draggingDataObjects.set(context, dataObject.get());
