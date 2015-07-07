@@ -29,6 +29,8 @@
 #if ENABLE(CSS_SCROLL_SNAP)
 
 #include "AxisScrollSnapOffsets.h"
+#include "FloatPoint.h"
+#include "FloatSize.h"
 #include "LayoutUnit.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollTypes.h"
@@ -48,7 +50,10 @@ struct ScrollSnapAnimatorState {
     void pushInitialWheelDelta(float);
     float averageInitialWheelDelta() const;
     void clearInitialWheelDeltaWindow();
-
+    bool isSnapping() const;
+    bool canReachTargetWithCurrentInitialScrollDelta() const;
+    float interpolatedOffsetAtProgress(float) const;
+    
     static const int wheelDeltaWindowSize = 3;
 
     Vector<LayoutUnit> m_snapOffsets;
@@ -62,11 +67,31 @@ struct ScrollSnapAnimatorState {
     int m_numWheelDeltasTracked { 0 };
     unsigned m_activeSnapIndex { 0 };
     float m_wheelDeltaWindow[wheelDeltaWindowSize];
-    float m_glideMagnitude { 0 };
-    float m_glidePhaseShift { 0 };
-    float m_glideInitialWheelDelta { 0 };
+    float m_initialScrollDelta { 0 };
     bool m_shouldOverrideWheelEvent { false };
 };
+    
+/**
+ * Stores state variables necessary to coordinate snapping animations between
+ * horizontal and vertical axes.
+ */
+struct ScrollSnapAnimationCurveState {
+    
+    void initializeSnapProgressCurve(const FloatSize&, const FloatSize&, const FloatSize&);
+    void initializeInterpolationCoefficientsIfNecessary(const FloatSize&, const FloatSize&, const FloatSize&);
+    FloatPoint interpolatedPositionAtProgress(float) const;
+    bool shouldCompleteSnapAnimationImmediatelyAtTime(double) const;
+    float animationProgressAtTime(double) const;
+
+    bool shouldAnimateDirectlyToSnapPoint { false };
+    
+private:
+    double m_startTime { 0 };
+    float m_snapAnimationCurveMagnitude { 0 };
+    float m_snapAnimationDecayFactor { 0 };
+    FloatSize m_snapAnimationCurveCoefficients[4] { };
+};
+
 
 } // namespace WebCore
 

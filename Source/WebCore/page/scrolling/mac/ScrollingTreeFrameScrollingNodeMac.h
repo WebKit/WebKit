@@ -86,8 +86,8 @@ private:
     LayoutUnit scrollOffsetOnAxis(ScrollEventAxis) const override;
     void immediateScrollOnAxis(ScrollEventAxis, float delta) override;
     float pageScaleFactor() const override;
-    void startScrollSnapTimer(ScrollEventAxis) override;
-    void stopScrollSnapTimer(ScrollEventAxis) override;
+    void startScrollSnapTimer() override;
+    void stopScrollSnapTimer() override;
     LayoutSize scrollExtent() const override;
 #endif
 

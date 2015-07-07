@@ -583,16 +583,14 @@ float ScrollingTreeFrameScrollingNodeMac::pageScaleFactor() const
     return frameScaleFactor();
 }
 
-void ScrollingTreeFrameScrollingNodeMac::startScrollSnapTimer(ScrollEventAxis)
+void ScrollingTreeFrameScrollingNodeMac::startScrollSnapTimer()
 {
     scrollingTree().setMainFrameIsScrollSnapping(true);
 }
 
-void ScrollingTreeFrameScrollingNodeMac::stopScrollSnapTimer(ScrollEventAxis axis)
+void ScrollingTreeFrameScrollingNodeMac::stopScrollSnapTimer()
 {
-    ScrollEventAxis otherAxis = (axis == ScrollEventAxis::Horizontal) ? ScrollEventAxis::Vertical : ScrollEventAxis::Horizontal;
-    if (!m_scrollController.hasActiveScrollSnapTimerForAxis(otherAxis))
-        scrollingTree().setMainFrameIsScrollSnapping(false);
+    scrollingTree().setMainFrameIsScrollSnapping(false);
 }
     
 LayoutSize ScrollingTreeFrameScrollingNodeMac::scrollExtent() const

@@ -86,12 +86,12 @@ public:
 #if ENABLE(CSS_SCROLL_SNAP)
     virtual LayoutUnit scrollOffsetOnAxis(ScrollEventAxis) const = 0;
     virtual void immediateScrollOnAxis(ScrollEventAxis, float delta) = 0;
-    virtual void startScrollSnapTimer(ScrollEventAxis)
+    virtual void startScrollSnapTimer()
     {
         // Override to perform client-specific scroll snap point start logic
     }
 
-    virtual void stopScrollSnapTimer(ScrollEventAxis)
+    virtual void stopScrollSnapTimer()
     {
         // Override to perform client-specific scroll snap point end logic
     }
@@ -133,7 +133,6 @@ public:
     void updateScrollSnapState(const ScrollableArea&);
 #if PLATFORM(MAC)
     bool processWheelEventForScrollSnap(const PlatformWheelEvent&);
-    bool hasActiveScrollSnapTimerForAxis(ScrollEventAxis) const;
 #endif
 #endif
 
@@ -153,21 +152,19 @@ private:
     ScrollSnapAnimatorState& scrollSnapPointState(ScrollEventAxis);
     const ScrollSnapAnimatorState& scrollSnapPointState(ScrollEventAxis) const;
 #if PLATFORM(MAC)
-    void horizontalScrollSnapTimerFired();
-    void verticalScrollSnapTimerFired();
-    void startScrollSnapTimer(ScrollEventAxis);
-    void stopScrollSnapTimer(ScrollEventAxis);
+    void scrollSnapTimerFired();
+    void startScrollSnapTimer();
+    void stopScrollSnapTimer();
 
     void processWheelEventForScrollSnapOnAxis(ScrollEventAxis, const PlatformWheelEvent&);
     bool shouldOverrideWheelEvent(ScrollEventAxis, const PlatformWheelEvent&) const;
 
     void beginScrollSnapAnimation(ScrollEventAxis, ScrollSnapState);
-    void scrollSnapAnimationUpdate(ScrollEventAxis);
-    void endScrollSnapAnimation(ScrollEventAxis, ScrollSnapState);
-
-    void initializeGlideParameters(ScrollEventAxis, bool);
-    float computeSnapDelta(ScrollEventAxis) const;
-    float computeGlideDelta(ScrollEventAxis) const;
+    
+    void endScrollSnapAnimation(ScrollSnapState);
+    void initializeScrollSnapAnimationParameters();
+    bool isSnappingOnAxis(ScrollEventAxis) const;
+    
 #endif
 #endif
 
@@ -188,13 +185,13 @@ private:
 #endif
 
 #if ENABLE(CSS_SCROLL_SNAP)
-    bool m_expectingStatelessScrollSnap { false };
+    bool m_expectingHorizontalStatelessScrollSnap { false };
+    bool m_expectingVerticalStatelessScrollSnap { false };
     std::unique_ptr<ScrollSnapAnimatorState> m_horizontalScrollSnapState;
     std::unique_ptr<ScrollSnapAnimatorState> m_verticalScrollSnapState;
+    std::unique_ptr<ScrollSnapAnimationCurveState> m_scrollSnapCurveState;
 #if PLATFORM(MAC)
-    // FIXME: Find a way to consolidate both timers into one variable.
-    RunLoop::Timer<ScrollController> m_horizontalScrollSnapTimer;
-    RunLoop::Timer<ScrollController> m_verticalScrollSnapTimer;
+    RunLoop::Timer<ScrollController> m_scrollSnapTimer;
 #endif
 #endif
 
