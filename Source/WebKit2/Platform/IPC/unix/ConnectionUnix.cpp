@@ -95,6 +95,7 @@ private:
 };
 
 class AttachmentInfo {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     AttachmentInfo()
         : m_type(Attachment::Uninitialized)
@@ -294,8 +295,8 @@ static ssize_t readBytesFromSocket(int socketDescriptor, uint8_t* buffer, int co
     memset(&iov, 0, sizeof(iov));
 
     message.msg_controllen = CMSG_SPACE(sizeof(int) * attachmentMaxAmount);
-    auto attachmentDescriptorBuffer = std::make_unique<char[]>(message.msg_controllen);
-    memset(attachmentDescriptorBuffer.get(), 0, message.msg_controllen);
+    MallocPtr<char> attachmentDescriptorBuffer = MallocPtr<char>::malloc(sizeof(char) * message.msg_controllen);
+    memset(attachmentDescriptorBuffer.get(), 0, sizeof(char) * message.msg_controllen);
     message.msg_control = attachmentDescriptorBuffer.get();
 
     iov[0].iov_base = buffer;
@@ -460,21 +461,20 @@ bool Connection::sendOutgoingMessage(std::unique_ptr<MessageEncoder> encoder)
     iov[0].iov_base = reinterpret_cast<void*>(&messageInfo);
     iov[0].iov_len = sizeof(messageInfo);
 
-    auto attachmentInfo = std::make_unique<AttachmentInfo[]>(attachments.size());
-
-    size_t attachmentFDBufferLength = 0;
-    if (!attachments.isEmpty()) {
-        for (size_t i = 0; i < attachments.size(); ++i) {
-            if (attachments[i].fileDescriptor() != -1)
-                attachmentFDBufferLength++;
-        }
-    }
-    auto attachmentFDBuffer = std::make_unique<char[]>(CMSG_SPACE(sizeof(int) * attachmentFDBufferLength));
+    std::unique_ptr<AttachmentInfo[]> attachmentInfo;
+    MallocPtr<char> attachmentFDBuffer;
 
     if (!attachments.isEmpty()) {
         int* fdPtr = 0;
 
+        size_t attachmentFDBufferLength = std::count_if(attachments.begin(), attachments.end(),
+            [](const Attachment& attachment) {
+                return attachment.fileDescriptor() != -1;
+            });
+
         if (attachmentFDBufferLength) {
+            attachmentFDBuffer = MallocPtr<char>::malloc(sizeof(char) * CMSG_SPACE(sizeof(int) * attachmentFDBufferLength));
+
             message.msg_control = attachmentFDBuffer.get();
             message.msg_controllen = CMSG_SPACE(sizeof(int) * attachmentFDBufferLength);
             memset(message.msg_control, 0, message.msg_controllen);
@@ -487,6 +487,7 @@ bool Connection::sendOutgoingMessage(std::unique_ptr<MessageEncoder> encoder)
             fdPtr = reinterpret_cast<int*>(CMSG_DATA(cmsg));
         }
 
+        attachmentInfo = std::make_unique<AttachmentInfo[]>(attachments.size());
         int fdIndex = 0;
         for (size_t i = 0; i < attachments.size(); ++i) {
             attachmentInfo[i].setType(attachments[i].type());
