@@ -1,3 +1,15 @@
+2015-06-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Empty gtk-font-name setting causes WebProcess crash rendering pages
+        https://bugs.webkit.org/show_bug.cgi?id=146246
+
+        Reviewed by Sergio Villar Senin.
+
+        Return early if system font is empty.
+
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::updateCachedSystemFontDescription):
+
 2015-06-24  Chris Dumez  <cdumez@apple.com>
 
         Null dereference in DocumentLoader::areAllLoadersPageCacheAcceptable()

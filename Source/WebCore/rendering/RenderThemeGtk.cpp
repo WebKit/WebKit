@@ -93,6 +93,8 @@ void RenderThemeGtk::updateCachedSystemFontDescription(CSSValueID, FontDescripti
     // This will be a font selection string like "Sans 10" so we cannot use it as the family name.
     GUniqueOutPtr<gchar> fontName;
     g_object_get(settings, "gtk-font-name", &fontName.outPtr(), nullptr);
+    if (!fontName || !fontName.get()[0])
+        return;
 
     PangoFontDescription* pangoDescription = pango_font_description_from_string(fontName.get());
     if (!pangoDescription)
