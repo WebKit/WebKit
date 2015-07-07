@@ -1,3 +1,37 @@
+2015-06-17  Andreas Kling  <akling@apple.com>
+
+        SegmentedVector should waste less memory.
+        <https://webkit.org/b/146069>
+
+        Reviewed by Anders Carlsson.
+
+        We were wasting sizeof(Vector) on every segment in SegmentVector.
+        The segments were using inline capacity, and would never go beyond it,
+        so all the size/capacity/out-of-line-buffer metadata was useless.
+
+        Change the internal representation to Vector<T[SegmentSize]> instead.
+        This saves 16 bytes per segment, so lower SegmentSize -> bigger savings!
+
+        * wtf/SegmentedVector.h:
+        (WTF::SegmentedVectorIterator::operator*):
+        (WTF::SegmentedVectorIterator::operator->):
+        (WTF::SegmentedVectorIterator::operator++):
+        (WTF::SegmentedVectorIterator::operator==):
+        (WTF::SegmentedVectorIterator::operator!=):
+        (WTF::SegmentedVectorIterator::SegmentedVectorIterator):
+        (WTF::SegmentedVector::at):
+        (WTF::SegmentedVector::append):
+        (WTF::SegmentedVector::removeLast):
+        (WTF::SegmentedVector::grow):
+        (WTF::SegmentedVector::begin):
+        (WTF::SegmentedVector::end):
+        (WTF::SegmentedVector::deleteAllSegments):
+        (WTF::SegmentedVector::ensureSegmentsFor):
+        (WTF::SegmentedVector::ensureSegment):
+        (WTF::SegmentedVector::allocateSegment):
+        (WTF::SegmentedVectorIterator::operator=): Deleted.
+        (WTF::SegmentedVector::SegmentedVector): Deleted.
+
 2015-06-16  Andreas Kling  <akling@apple.com>
 
         Remove unused template parameter InlineCapacity from SegmentedVector.
