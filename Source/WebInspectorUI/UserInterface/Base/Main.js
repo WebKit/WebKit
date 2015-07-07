@@ -761,7 +761,7 @@ WebInspector.showConsoleTab = function(requestedScope)
     if (requestedScope || !this.consoleContentView.scopeBar.selectedItems.length)
         this.consoleContentView.scopeBar.item(scope).selected = true;
 
-    this.showRepresentedObject(this._consoleRepresentedObject);
+    this.showRepresentedObject(this._consoleRepresentedObject, null, true);
 
     console.assert(this.isShowingConsoleTab());
 };
