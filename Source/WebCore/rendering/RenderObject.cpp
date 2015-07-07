@@ -54,6 +54,7 @@
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
+#include "RenderMultiColumnFlowThread.h"
 #include "RenderNamedFlowFragment.h"
 #include "RenderNamedFlowThread.h" 
 #include "RenderSVGResourceContainer.h"
@@ -1570,9 +1571,17 @@ void RenderObject::showRenderSubTreeAndMark(const RenderObject* markedObject, in
 SelectionSubtreeRoot& RenderObject::selectionRoot() const
 {
     RenderFlowThread* flowThread = flowThreadContainingBlock();
-    if (is<RenderNamedFlowThread>(flowThread))
-        return downcast<RenderNamedFlowThread>(*flowThread);
+    if (!flowThread)
+        return view();
 
+    if (is<RenderNamedFlowThread>(*flowThread))
+        return downcast<RenderNamedFlowThread>(*flowThread);
+    if (is<RenderMultiColumnFlowThread>(*flowThread)) {
+        if (!flowThread->containingBlock())
+            return view();
+        return flowThread->containingBlock()->selectionRoot();
+    }
+    ASSERT_NOT_REACHED();
     return view();
 }
 

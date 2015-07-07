@@ -1,3 +1,23 @@
+2015-07-07  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION(169105): CSS Regions: renderer returns wrong selection root when it is inside a column flow.
+        https://bugs.webkit.org/show_bug.cgi?id=146529
+        rdar://problem/21613670
+
+        Reviewed by Mihnea Ovidenie and David Kilzer.
+
+        This patch ensures that RenderObject::selectionRoot() handles column flows properly while searching for the associated
+        selection root.
+        When the renderer is inside a column flow and the column flow is part of a named flow, we stop
+        traversing the ancestor chain, searching for the selection root, when we reach the column flow.
+        Since the column flow is not a selection root, we mistakenly fall back to the RenderView as selection root.
+        Instead, we should check if the column is inside a named flow and return the selection root accordingly.
+        Returning the wrong selection root confuses RenderView::splitSelectionBetweenSubtrees() logic and this particular
+        RenderObject could end up in multiple selection trees.
+
+        * fast/regions/selection/crash-when-element-is-inside-column-and-the-containing-block-is-inside-flow-expected.txt: Added.
+        * fast/regions/selection/crash-when-element-is-inside-column-and-the-containing-block-is-inside-flow.html: Added.
+
 2015-07-07  Wenson Hsieh  <whsieh@berkeley.edu>
 
         Snap point regions containing X and Y snap points should do a better job animating

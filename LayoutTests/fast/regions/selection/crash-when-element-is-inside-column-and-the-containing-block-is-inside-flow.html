@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that elements inside columns get their proper selection root.</title>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function test() {
+    document.designMode = "on";
+    document.execCommand("SelectAll");
+    document.getElementById('changeme').style.display = 'inline';
+}
+</script>
+<style>
+.flow {
+    -webkit-flow-into: thread;
+}
+
+.column {
+    -webkit-columns: 2;
+}
+
+.spanner {
+    -webkit-column-span: all;
+}
+</style>
+</head>
+<body onload="test()">
+<div class=flow>
+  <div>Pass if no assert or crash in debug.</div>
+  <div class=column>
+    <div id="changeme">foobar</div>
+    <div class=spanner>foobar</div>
+  </div>
+</div>
+</body>
+</html>
