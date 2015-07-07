@@ -1,5 +1,48 @@
 2015-06-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
+        SVG Fragment is not rendered if it is the css background image of an HTML element
+        https://bugs.webkit.org/show_bug.cgi?id=91790
+
+        Reviewed by Darin Adler.
+
+        To show an SVG fragment, the SVGImage has to scrollToFragment() using
+        the resource url. The changes http://trac.webkit.org/changeset/164804
+        and http://trac.webkit.org/changeset/164983 set the url of SVGImage to
+        to be used later in SVGImage::draw(). The problem is the SVGImage url
+        is only set when it is the src of an <img> tag. We did not do the same
+        thing when the SVGImage is the css background image of an HTML element.
+        
+        The fix is to set the url of the SVGImage always when it's created by 
+        the CachedImage. The CachedImage must have a valid url when the SVGImage
+        is created.
+
+        Test: svg/css/svg-resource-fragment-identifier-background.html
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::load):
+        (WebCore::CachedImage::checkShouldPaintBrokenImage):
+        Replace the calls resourceRequest().url() and m_resourceRequest.url() by
+        calling url() since they are all the same.
+        
+        (WebCore::CachedImage::createImage): Pass the resource url to SVGImage
+        and change ImageObserver& by ImageObserver*, since null is not legal.
+        
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::SVGImage):
+        * svg/graphics/SVGImage.h: Add a url parameter to SVGImage constructor.
+        
+        * svg/graphics/SVGImageCache.cpp:
+        (WebCore::SVGImageCache::findImageForRenderer): Add a new helper function.
+        
+        (WebCore::SVGImageCache::imageSizeForRenderer):
+        (WebCore::SVGImageCache::imageForRenderer): Code clean up.
+        
+        * svg/graphics/SVGImageCache.h: Make imageForRenderer() const.
+
+        * svg/graphics/SVGImageForContainer.cpp: Remove unneeded header file.
+
+2015-06-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
         feComposite filter does not clip the paint rect to its effect rect when the operator is 'in' or 'atop'
         https://bugs.webkit.org/show_bug.cgi?id=137856
 

@@ -23,7 +23,6 @@
 #include "AffineTransform.h"
 #include "FloatRect.h"
 #include "FloatSize.h"
-#include "FrameView.h"
 #include "Image.h"
 
 namespace WebCore {

@@ -23,7 +23,6 @@
 
 #include "FrameView.h"
 #include "GraphicsContext.h"
-#include "HTMLImageElement.h"
 #include "ImageBuffer.h"
 #include "LayoutSize.h"
 #include "Page.h"
@@ -63,43 +62,26 @@ void SVGImageCache::setContainerSizeForRenderer(const CachedImageClient* client,
     m_imageForContainerMap.set(client, SVGImageForContainer::create(m_svgImage, containerSizeWithoutZoom, containerZoom));
 }
 
+Image* SVGImageCache::findImageForRenderer(const RenderObject* renderer) const
+{
+    return renderer ? m_imageForContainerMap.get(renderer) : nullptr;
+}
+
 FloatSize SVGImageCache::imageSizeForRenderer(const RenderObject* renderer) const
 {
-    FloatSize imageSize = m_svgImage->size();
-    if (!renderer)
-        return imageSize;
-
-    ImageForContainerMap::const_iterator it = m_imageForContainerMap.find(renderer);
-    if (it == m_imageForContainerMap.end())
-        return imageSize;
-
-    RefPtr<SVGImageForContainer> imageForContainer = it->value;
-    ASSERT(!imageForContainer->size().isEmpty());
-    return imageForContainer->size();
+    auto* image = findImageForRenderer(renderer);
+    return image ? image->size() : m_svgImage->size();
 }
 
 // FIXME: This doesn't take into account the animation timeline so animations will not
 // restart on page load, nor will two animations in different pages have different timelines.
-Image* SVGImageCache::imageForRenderer(const RenderObject* renderer)
+Image* SVGImageCache::imageForRenderer(const RenderObject* renderer) const
 {
-    if (!renderer)
+    auto* image = findImageForRenderer(renderer);
+    if (!image)
         return Image::nullImage();
-
-    ImageForContainerMap::iterator it = m_imageForContainerMap.find(renderer);
-    if (it == m_imageForContainerMap.end())
-        return Image::nullImage();
-
-    RefPtr<SVGImageForContainer> imageForContainer = it->value;
-    
-    Node* node = renderer->node();
-    if (is<HTMLImageElement>(node)) {
-        const AtomicString& urlString = downcast<HTMLImageElement>(*node).imageSourceURL();
-        URL url = node->document().completeURL(urlString);
-        imageForContainer->setURL(url);
-    }
-        
-    ASSERT(!imageForContainer->size().isEmpty());
-    return imageForContainer.get();
+    ASSERT(!image->size().isEmpty());
+    return image;
 }
 
 } // namespace WebCore

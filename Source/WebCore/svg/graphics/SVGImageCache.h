@@ -47,9 +47,11 @@ public:
     void setContainerSizeForRenderer(const CachedImageClient*, const LayoutSize&, float);
     FloatSize imageSizeForRenderer(const RenderObject*) const;
 
-    Image* imageForRenderer(const RenderObject*);
+    Image* imageForRenderer(const RenderObject*) const;
 
 private:
+    Image* findImageForRenderer(const RenderObject*) const;
+
     typedef HashMap<const CachedImageClient*, RefPtr<SVGImageForContainer>> ImageForContainerMap;
 
     SVGImage* m_svgImage;

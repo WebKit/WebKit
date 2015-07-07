@@ -45,9 +45,9 @@ class SVGImageForContainer;
 
 class SVGImage final : public Image {
 public:
-    static PassRefPtr<SVGImage> create(ImageObserver* observer)
+    static PassRefPtr<SVGImage> create(ImageObserver& observer, const URL& url)
     {
-        return adoptRef(new SVGImage(observer));
+        return adoptRef(new SVGImage(observer, url));
     }
 
     RenderBox* embeddedContentBox() const;
@@ -93,7 +93,7 @@ private:
     // FIXME: Implement this to be less conservative.
     virtual bool currentFrameKnownToBeOpaque() override { return false; }
 
-    SVGImage(ImageObserver*);
+    SVGImage(ImageObserver&, const URL&);
     virtual void draw(GraphicsContext*, const FloatRect& fromRect, const FloatRect& toRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode, ImageOrientationDescription) override;
     void drawForContainer(GraphicsContext*, const FloatSize, float, const FloatRect&, const FloatRect&, ColorSpace, CompositeOperator, BlendMode);
     void drawPatternForContainer(GraphicsContext*, const FloatSize, float, const FloatRect&, const AffineTransform&, const FloatPoint&, ColorSpace,
