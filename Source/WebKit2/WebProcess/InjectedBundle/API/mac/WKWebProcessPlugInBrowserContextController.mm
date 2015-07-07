@@ -352,7 +352,10 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
 
 - (void)dealloc
 {
-    [_remoteObjectRegistry _invalidate];
+    if (_remoteObjectRegistry) {
+        WebProcess::singleton().removeMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->pageID());
+        [_remoteObjectRegistry _invalidate];
+    }
 
     _page->~WebPage();
 

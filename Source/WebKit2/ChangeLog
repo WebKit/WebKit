@@ -1,3 +1,42 @@
+2015-07-06  Anders Carlsson  <andersca@apple.com>
+
+        Make sure to remove message receivers before they are deallocated
+        https://bugs.webkit.org/show_bug.cgi?id=146666
+        rdar://problem/21331118
+
+        Reviewed by Tim Horton.
+
+        Add code so we can assert that there are no message receiver maps pointing to a message receiver
+        when it's being destroyed. Fix all the assertions by calling removeMessageReceiver in the right places.
+
+        * Platform/IPC/MessageReceiver.h:
+        (IPC::MessageReceiver::~MessageReceiver):
+        (IPC::MessageReceiver::willBeAddedToMessageReceiverMap):
+        (IPC::MessageReceiver::willBeRemovedFromMessageReceiverMap):
+        * Platform/IPC/MessageReceiverMap.cpp:
+        (IPC::MessageReceiverMap::addMessageReceiver):
+        (IPC::MessageReceiverMap::removeMessageReceiver):
+        (IPC::MessageReceiverMap::invalidate):
+        * Shared/ChildProcess.cpp:
+        (WebKit::ChildProcess::removeMessageReceiver):
+        * Shared/ChildProcess.h:
+        * Shared/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::removeMessageReceiver):
+        * Shared/ChildProcessProxy.h:
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController dealloc]):
+        * UIProcess/Network/CustomProtocols/CustomProtocolManagerProxy.h:
+        * UIProcess/Network/CustomProtocols/mac/CustomProtocolManagerProxyMac.mm:
+        (WebKit::CustomProtocolManagerProxy::~CustomProtocolManagerProxy):
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::~WebUserContentControllerProxy):
+        * UIProcess/WebConnectionToWebProcess.cpp:
+        (WebKit::WebConnectionToWebProcess::invalidate):
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController dealloc]):
+        * WebProcess/WebConnectionToUIProcess.cpp:
+        (WebKit::WebConnectionToUIProcess::invalidate):
+
 2015-07-06  Brent Fulgham  <bfulgham@apple.com>
 
         Ensure media playback is stopped during page close

@@ -36,13 +36,38 @@ class Connection;
 
 class MessageReceiver {
 public:
-    virtual ~MessageReceiver() { }
+    virtual ~MessageReceiver()
+    {
+        ASSERT(!m_messageReceiverMapCount);
+    }
 
     virtual void didReceiveMessage(Connection&, MessageDecoder&) = 0;
     virtual void didReceiveSyncMessage(Connection&, MessageDecoder&, std::unique_ptr<MessageEncoder>&)
     {
         ASSERT_NOT_REACHED();
     }
+
+private:
+    friend class MessageReceiverMap;
+
+    void willBeAddedToMessageReceiverMap()
+    {
+#if !ASSERT_DISABLED
+        m_messageReceiverMapCount++;
+#endif
+    }
+
+    void willBeRemovedFromMessageReceiverMap()
+    {
+        ASSERT(m_messageReceiverMapCount);
+#if !ASSERT_DISABLED
+        m_messageReceiverMapCount--;
+#endif
+    }
+
+#if !ASSERT_DISABLED
+    unsigned m_messageReceiverMapCount { 0 };
+#endif
 };
 
 } // namespace IPC

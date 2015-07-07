@@ -131,6 +131,11 @@ CustomProtocolManagerProxy::CustomProtocolManagerProxy(ChildProcessProxy* childP
     m_childProcessProxy->addMessageReceiver(Messages::CustomProtocolManagerProxy::messageReceiverName(), *this);
 }
 
+CustomProtocolManagerProxy::~CustomProtocolManagerProxy()
+{
+    m_childProcessProxy->removeMessageReceiver(Messages::CustomProtocolManagerProxy::messageReceiverName());
+}
+
 void CustomProtocolManagerProxy::startLoading(uint64_t customProtocolID, const ResourceRequest& coreRequest)
 {
     NSURLRequest *request = coreRequest.nsURLRequest(DoNotUpdateHTTPBody);

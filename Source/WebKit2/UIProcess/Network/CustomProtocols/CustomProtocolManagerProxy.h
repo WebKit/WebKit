@@ -45,7 +45,8 @@ class WebProcessPool;
 
 class CustomProtocolManagerProxy : public IPC::MessageReceiver {
 public:
-    explicit CustomProtocolManagerProxy(ChildProcessProxy*, WebProcessPool&);
+    CustomProtocolManagerProxy(ChildProcessProxy*, WebProcessPool&);
+    ~CustomProtocolManagerProxy();
 
     void startLoading(uint64_t customProtocolID, const WebCore::ResourceRequest&);
     void stopLoading(uint64_t customProtocolID);

@@ -165,7 +165,10 @@ static HashMap<WebPageProxy*, WKBrowsingContextController *>& browsingContextCon
 
     _page->pageLoadState().removeObserver(*_pageLoadStateObserver);
 
-    [_remoteObjectRegistry _invalidate];
+    if (_remoteObjectRegistry) {
+        _page->process().processPool().removeMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), _page->pageID());
+        [_remoteObjectRegistry _invalidate];
+    }
 
     [super dealloc];
 }

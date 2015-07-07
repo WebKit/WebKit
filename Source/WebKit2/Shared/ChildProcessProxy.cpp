@@ -120,6 +120,11 @@ void ChildProcessProxy::removeMessageReceiver(IPC::StringReference messageReceiv
     m_messageReceiverMap.removeMessageReceiver(messageReceiverName, destinationID);
 }
 
+void ChildProcessProxy::removeMessageReceiver(IPC::StringReference messageReceiverName)
+{
+    m_messageReceiverMap.removeMessageReceiver(messageReceiverName);
+}
+
 bool ChildProcessProxy::dispatchMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder)
 {
     return m_messageReceiverMap.dispatchMessage(connection, decoder);

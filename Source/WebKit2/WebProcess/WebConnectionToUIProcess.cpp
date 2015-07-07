@@ -46,6 +46,7 @@ WebConnectionToUIProcess::WebConnectionToUIProcess(WebProcess* process)
 
 void WebConnectionToUIProcess::invalidate()
 {
+    m_process->removeMessageReceiver(Messages::WebConnection::messageReceiverName());
     m_process = nullptr;
 }
 

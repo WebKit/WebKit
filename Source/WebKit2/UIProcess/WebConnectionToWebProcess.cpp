@@ -44,6 +44,8 @@ WebConnectionToWebProcess::WebConnectionToWebProcess(WebProcessProxy* process)
 
 void WebConnectionToWebProcess::invalidate()
 {
+    m_process->removeMessageReceiver(Messages::WebConnection::messageReceiverName());
+
     m_process = 0;
 }
 

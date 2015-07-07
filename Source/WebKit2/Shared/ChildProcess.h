@@ -61,6 +61,7 @@ public:
     void addMessageReceiver(IPC::StringReference messageReceiverName, IPC::MessageReceiver&);
     void addMessageReceiver(IPC::StringReference messageReceiverName, uint64_t destinationID, IPC::MessageReceiver&);
     void removeMessageReceiver(IPC::StringReference messageReceiverName, uint64_t destinationID);
+    void removeMessageReceiver(IPC::StringReference messageReceiverName);
 
     void setProcessSuppressionEnabled(bool);
 

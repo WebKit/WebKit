@@ -57,8 +57,10 @@ WebUserContentControllerProxy::WebUserContentControllerProxy()
 
 WebUserContentControllerProxy::~WebUserContentControllerProxy()
 {
-    for (WebProcessProxy* process : m_processes)
+    for (WebProcessProxy* process : m_processes) {
+        process->removeMessageReceiver(Messages::WebUserContentControllerProxy::messageReceiverName(), m_identifier);
         process->didDestroyWebUserContentControllerProxy(*this);
+    }
 }
 
 void WebUserContentControllerProxy::addProcess(WebProcessProxy& webProcessProxy)
