@@ -52,6 +52,11 @@ static void inspectorViewDestroyed(GtkWidget*, gpointer userData)
     inspectorProxy->close();
 }
 
+static unsigned long long exceededDatabaseQuota(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKStringRef, WKStringRef, unsigned long long, unsigned long long, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage, const void*)
+{
+    return std::max<unsigned long long>(expectedUsage, currentDatabaseUsage * 1.25);
+}
+
 void WebInspectorProxy::initializeInspectorClientGtk(const WKInspectorClientGtkBase* inspectorClient)
 {
     m_client.initialize(inspectorClient);
@@ -76,7 +81,61 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     m_inspectorView = GTK_WIDGET(webkitWebViewBaseCreate(&inspectorProcessPool(), preferences.get(), pageGroup.get(), nullptr, nullptr));
     g_object_add_weak_pointer(G_OBJECT(m_inspectorView), reinterpret_cast<void**>(&m_inspectorView));
 
-    return webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_inspectorView));
+    WKPageUIClientV2 uiClient = {
+        { 2, this },
+        nullptr, // createNewPage_deprecatedForUseWithV0
+        nullptr, // showPage
+        nullptr, // closePage
+        nullptr, // takeFocus
+        nullptr, // focus
+        nullptr, // unfocus
+        nullptr, // runJavaScriptAlert
+        nullptr, // runJavaScriptConfirm
+        nullptr, // runJavaScriptPrompt
+        nullptr, // setStatusText
+        nullptr, // mouseDidMoveOverElement_deprecatedForUseWithV0
+        nullptr, // missingPluginButtonClicked_deprecatedForUseWithV0
+        nullptr, // didNotHandleKeyEvent
+        nullptr, // didNotHandleWheelEvent
+        nullptr, // areToolbarsVisible
+        nullptr, // setToolbarsVisible
+        nullptr, // isMenuBarVisible
+        nullptr, // setMenuBarVisible
+        nullptr, // isStatusBarVisible
+        nullptr, // setStatusBarVisible
+        nullptr, // isResizable
+        nullptr, // setResizable
+        nullptr, // getWindowFrame,
+        nullptr, // setWindowFrame,
+        nullptr, // runBeforeUnloadConfirmPanel
+        nullptr, // didDraw
+        nullptr, // pageDidScroll
+        exceededDatabaseQuota,
+        nullptr, // runOpenPanel,
+        nullptr, // decidePolicyForGeolocationPermissionRequest
+        nullptr, // headerHeight
+        nullptr, // footerHeight
+        nullptr, // drawHeader
+        nullptr, // drawFooter
+        nullptr, // printFrame
+        nullptr, // runModal
+        nullptr, // unused
+        nullptr, // saveDataToFileInDownloadsFolder
+        nullptr, // shouldInterruptJavaScript
+        nullptr, // createPage
+        nullptr, // mouseDidMoveOverElement
+        nullptr, // decidePolicyForNotificationPermissionRequest
+        nullptr, // unavailablePluginButtonClicked_deprecatedForUseWithV1
+        nullptr, // showColorPicker
+        nullptr, // hideColorPicker
+        nullptr, // unavailablePluginButtonClicked
+    };
+
+    WebPageProxy* inspectorPage = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_inspectorView));
+    ASSERT(inspectorPage);
+    WKPageSetPageUIClient(toAPI(inspectorPage), &uiClient.base);
+
+    return inspectorPage;
 }
 
 void WebInspectorProxy::dockButtonClicked(GtkWidget* button, WebInspectorProxy* inspector)

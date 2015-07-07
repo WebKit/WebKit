@@ -146,6 +146,13 @@ private:
         return WebCore::FloatRect(geometry);
     }
 
+    virtual void exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, API::SecurityOrigin*, const String&, const String&, unsigned long long /*currentQuota*/, unsigned long long /*currentOriginUsage*/, unsigned long long /*currentDatabaseUsage*/, unsigned long long /*expectedUsage*/, std::function<void (unsigned long long)> completionHandler) override
+    {
+        static const unsigned long long defaultQuota = 5 * 1024 * 1204; // 5 MB
+        // FIXME: Provide API for this.
+        completionHandler(defaultQuota);
+    }
+
     virtual bool runOpenPanel(WebPageProxy*, WebFrameProxy*, WebOpenPanelParameters* parameters, WebOpenPanelResultListenerProxy* listener) override
     {
         GRefPtr<WebKitFileChooserRequest> request = adoptGRef(webkitFileChooserRequestCreate(parameters, listener));
