@@ -1,3 +1,20 @@
+2015-05-28  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [CMake] Improve detection and usage of GL/GLES/EGL libraries.
+        https://bugs.webkit.org/show_bug.cgi?id=145408
+
+        Reviewed by Carlos Garcia Campos.
+
+        No new tests, no behavior changes.
+
+        * CMakeLists.txt: Ensure that we include the libraries and includes
+        for the GL/GLESv2/EGL libraries before including the ANGLE directories.
+        Define also any CFLAG that the system GL/GLESv2/EGL libraries may need.
+        * PlatformEfl.cmake: Remove some includes that are now unneeded,
+        because we are including now the EGL libraries on CMakeLists.txt
+        * PlatformGTK.cmake: Remove unneeded include (We are including the EGL
+        libraries now on CMakeLists.txt)
+
 2015-05-07  Philip Chimento  <philip.chimento@gmail.com>
 
         [GTK] DrawingBuffer.h used outside of include guard

@@ -2954,18 +2954,30 @@ if (WTF_USE_3D_GRAPHICS)
     # these include directories need to be added before the ANGLE directories.
     if (OPENGL_FOUND)
         list(APPEND WebCore_INCLUDE_DIRECTORIES
-            ${OPENGL_INCLUDE_DIR}
+            ${OPENGL_INCLUDE_DIRS}
         )
         list(APPEND WebCore_LIBRARIES
-            ${OPENGL_gl_LIBRARY}
+            ${OPENGL_LIBRARIES}
         )
+        add_definitions(${OPENGL_DEFINITIONS})
     elseif (OPENGLES2_FOUND)
         list(APPEND WebCore_INCLUDE_DIRECTORIES
-            ${OPENGLES2_INCLUDE_DIR}
+            ${OPENGLES2_INCLUDE_DIRS}
         )
         list(APPEND WebCore_LIBRARIES
             ${OPENGLES2_LIBRARIES}
         )
+        add_definitions(${OPENGLES2_DEFINITIONS})
+    endif ()
+
+    if (EGL_FOUND)
+        list(APPEND WebCore_INCLUDE_DIRECTORIES
+            ${EGL_INCLUDE_DIRS}
+        )
+        list(APPEND WebCore_LIBRARIES
+            ${EGL_LIBRARIES}
+        )
+        add_definitions(${EGL_DEFINITIONS})
     endif ()
 
     list(APPEND WebCore_INCLUDE_DIRECTORIES
