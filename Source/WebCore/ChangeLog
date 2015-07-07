@@ -1,3 +1,27 @@
+2015-07-05  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] WebBackForwardListItems' pageState is not kept up-to-date
+        https://bugs.webkit.org/show_bug.cgi?id=146614
+        <rdar://problem/21585268>
+
+        Reviewed by Gavin Barraclough.
+
+        WebBackForwardListItems' pageState on UIProcess-side were not kept
+        up-to-date when it was updated on WebContent process side. This meant
+        that we were losing the scroll position (among other things) when
+        transferring the session state over from one view to another.
+
+        We now call notifyHistoryItemChanged(item) after saving the scroll
+        position and the view state on the HistoryItem. As a result, the
+        WebBackForwardListProxy will send the updated pageState to the
+        UIProcess.
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::notifyChanged):
+        * history/HistoryItem.h:
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::saveScrollPositionAndViewStateToItem):
+
 2015-07-03  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r178097): HTMLSelectElement.add(option, undefined) prepends option to the list of options; should append to the end of the list of options

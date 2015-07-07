@@ -571,6 +571,11 @@ void HistoryItem::setRedirectURLs(std::unique_ptr<Vector<String>> redirectURLs)
     m_redirectURLs = WTF::move(redirectURLs);
 }
 
+void HistoryItem::notifyChanged()
+{
+    notifyHistoryItemChanged(this);
+}
+
 #ifndef NDEBUG
 
 int HistoryItem::showTree() const
