@@ -26,7 +26,7 @@
 #ifndef HandleBlock_h
 #define HandleBlock_h
 
-#include "HeapBlock.h"
+#include <wtf/DoublyLinkedList.h>
 
 namespace JSC {
 

@@ -2169,9 +2169,6 @@
     <ClInclude Include="..\heap\Heap.h">
       <Filter>heap</Filter>
     </ClInclude>
-    <ClInclude Include="..\heap\HeapBlock.h">
-      <Filter>heap</Filter>
-    </ClInclude>
     <ClInclude Include="..\heap\HeapInlines.h">
       <Filter>heap</Filter>
     </ClInclude>

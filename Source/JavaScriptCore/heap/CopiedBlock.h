@@ -27,7 +27,6 @@
 #define CopiedBlock_h
 
 #include "CopyWorkList.h"
-#include "HeapBlock.h"
 #include "JSCJSValue.h"
 #include "Options.h"
 #include <wtf/Atomics.h>

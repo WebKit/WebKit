@@ -1624,7 +1624,6 @@
 		C2C0F7CE17BBFC5B00464FE4 /* DFGDesiredTransitions.h in Headers */ = {isa = PBXBuildFile; fileRef = C2C0F7CC17BBFC5B00464FE4 /* DFGDesiredTransitions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2C8D02D14A3C6E000578E65 /* CopiedSpaceInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = C2C8D02B14A3C6B200578E65 /* CopiedSpaceInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2C8D03014A3CEFC00578E65 /* CopiedBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = C2C8D02E14A3CEFC00578E65 /* CopiedBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		C2C8D03114A3CEFC00578E65 /* HeapBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = C2C8D02F14A3CEFC00578E65 /* HeapBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2CF39C116E15A8100DD69BE /* JSAPIWrapperObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = C2CF39BF16E15A8100DD69BE /* JSAPIWrapperObject.mm */; };
 		C2CF39C216E15A8100DD69BE /* JSAPIWrapperObject.h in Headers */ = {isa = PBXBuildFile; fileRef = C2CF39C016E15A8100DD69BE /* JSAPIWrapperObject.h */; };
 		C2DA778318E259990066FCB6 /* HeapInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = C2DA778218E259990066FCB6 /* HeapInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3383,7 +3382,6 @@
 		C2C0F7CC17BBFC5B00464FE4 /* DFGDesiredTransitions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDesiredTransitions.h; path = dfg/DFGDesiredTransitions.h; sourceTree = "<group>"; };
 		C2C8D02B14A3C6B200578E65 /* CopiedSpaceInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CopiedSpaceInlines.h; sourceTree = "<group>"; };
 		C2C8D02E14A3CEFC00578E65 /* CopiedBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CopiedBlock.h; sourceTree = "<group>"; };
-		C2C8D02F14A3CEFC00578E65 /* HeapBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapBlock.h; sourceTree = "<group>"; };
 		C2CF39BF16E15A8100DD69BE /* JSAPIWrapperObject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JSAPIWrapperObject.mm; sourceTree = "<group>"; };
 		C2CF39C016E15A8100DD69BE /* JSAPIWrapperObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAPIWrapperObject.h; sourceTree = "<group>"; };
 		C2DA778218E259990066FCB6 /* HeapInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapInlines.h; sourceTree = "<group>"; };
@@ -4036,7 +4034,6 @@
 				146FA5A81378F6B0003627A3 /* HandleTypes.h */,
 				14BA7A9513AADFF8005B7C2C /* Heap.cpp */,
 				14BA7A9613AADFF8005B7C2C /* Heap.h */,
-				C2C8D02F14A3CEFC00578E65 /* HeapBlock.h */,
 				2AD8932917E3868F00668276 /* HeapIterationScope.h */,
 				2A6F462517E959CE00C45C98 /* HeapOperation.h */,
 				14F97446138C853E00DA1C67 /* HeapRootVisitor.h */,
@@ -6036,7 +6033,6 @@
 				142E3138134FF0A600AFADB5 /* HandleStack.h in Headers */,
 				1478297B1379E8A800A7C2A3 /* HandleTypes.h in Headers */,
 				14BA7A9813AADFF8005B7C2C /* Heap.h in Headers */,
-				C2C8D03114A3CEFC00578E65 /* HeapBlock.h in Headers */,
 				2AD8932B17E3868F00668276 /* HeapIterationScope.h in Headers */,
 				2A6F462617E959CE00C45C98 /* HeapOperation.h in Headers */,
 				0FE050141AA9091100D33B33 /* ArgumentsMode.h in Headers */,

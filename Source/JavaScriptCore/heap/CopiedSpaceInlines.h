@@ -29,7 +29,6 @@
 #include "CopiedBlock.h"
 #include "CopiedSpace.h"
 #include "Heap.h"
-#include "HeapBlock.h"
 #include "VM.h"
 #include <wtf/CheckedBoolean.h>
 

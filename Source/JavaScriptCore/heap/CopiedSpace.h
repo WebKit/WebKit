@@ -27,7 +27,6 @@
 #define CopiedSpace_h
 
 #include "CopiedAllocator.h"
-#include "HeapBlock.h"
 #include "HeapOperation.h"
 #include "TinyBloomFilter.h"
 #include <wtf/Assertions.h>

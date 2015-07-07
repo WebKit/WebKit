@@ -22,8 +22,6 @@
 #ifndef MarkedBlock_h
 #define MarkedBlock_h
 
-#include "HeapBlock.h"
-
 #include "HeapOperation.h"
 #include "IterationStatus.h"
 #include "WeakSet.h"

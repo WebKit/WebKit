@@ -1291,7 +1291,6 @@
     <ClInclude Include="..\heap\HandleStack.h" />
     <ClInclude Include="..\heap\HandleTypes.h" />
     <ClInclude Include="..\heap\Heap.h" />
-    <ClInclude Include="..\heap\HeapBlock.h" />
     <ClInclude Include="..\heap\HeapInlines.h" />
     <ClInclude Include="..\heap\HeapOperation.h" />
     <ClInclude Include="..\heap\HeapRootVisitor.h" />
