@@ -1,3 +1,23 @@
+2015-06-09  Andreas Kling  <akling@apple.com>
+
+        GraphicsContext state stack wasting lots of memory when empty.
+        <https://webkit.org/b/145817>
+
+        Reviewed by Geoffrey Garen.
+
+        Give the GraphicsContextState stack an inline capacity of 1, and make sure
+        to free any heap-allocated backing store when the stack goes empty.
+
+        The 1 is because HTMLCanvasElement keeps one "save" on the underlying
+        GraphicsContext at all times, and this prevents those canvases from always
+        sitting on an empty stack with 16 capacity.
+
+        This saves ~520 kB on cnet.com video pages.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::restore):
+        * platform/graphics/GraphicsContext.h:
+
 2015-06-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         SVG Fragment is not rendered if it is the css background image of an HTML element

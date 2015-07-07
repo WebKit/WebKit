@@ -555,7 +555,7 @@ namespace WebCore {
         GraphicsContextPlatformPrivate* m_data;
 
         GraphicsContextState m_state;
-        Vector<GraphicsContextState> m_stack;
+        Vector<GraphicsContextState, 1> m_stack;
         bool m_updatingControlTints;
         unsigned m_transparencyCount;
     };
