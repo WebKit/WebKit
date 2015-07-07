@@ -1,3 +1,13 @@
+2015-07-07  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Regression: CSS autocompletion suggestion applies on pressing delete
+        https://bugs.webkit.org/show_bug.cgi?id=146672
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._handleBeforeChange): Now returns if completions are showing.
+
 2015-07-07  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Properly align checkboxes in the styles sidebar
