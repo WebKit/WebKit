@@ -49,7 +49,7 @@ shouldBeEqualToString('testAdd(createOption("Y19"), Infinity)', "Y19,0,1,2");
 shouldBeEqualToString('testAdd(createOption("Y20"), -Infinity)', "Y20,0,1,2");
 shouldBeEqualToString('testAdd(createOption("Y21"), "foo")', "Y21,0,1,2");
 shouldBeEqualToString('testAdd(createOption("Y22"), NaN)', "Y22,0,1,2");
-shouldBeEqualToString('testAdd(createOption("Y23"), undefined)', "Y23,0,1,2");
+shouldBeEqualToString('testAdd(createOption("Y23"), undefined)', "0,1,2,Y23");
 shouldBeEqualToString('testAdd(createOption("Y24"), -2)', "0,1,2,Y24");
 shouldBeEqualToString('testAdd(createOption("X"), mySelect.options[0])', "X,0,1,2");
 shouldBeEqualToString('testAdd(createOption("X"), mySelect.options[1])', "0,X,1,2");
