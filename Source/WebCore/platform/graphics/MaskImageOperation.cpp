@@ -171,8 +171,12 @@ CachedSVGDocumentReference* MaskImageOperation::ensureCachedSVGDocumentReference
     if (image())
         return nullptr;
 
-    if (!m_cachedSVGDocumentReference.get())
+    if (!m_cachedSVGDocumentReference.get()) {
         m_cachedSVGDocumentReference = std::make_unique<CachedSVGDocumentReference>(m_url, this, false);
+        // FIXME: For some strange reason we load all mask resources using CachedSVGDocument.
+        //        This requires overriding SVG mime type in Accept header or server may reject the request.
+        m_cachedSVGDocumentReference->setAcceptsAnyImageType();
+    }
     return m_cachedSVGDocumentReference.get();
 }
 
@@ -197,9 +201,10 @@ void MaskImageOperation::notifyFinished(CachedResource* resource)
             }
         }
     }
-    
+
     // If no valid mask was found, this is not a valid SVG document or it specified an invalid fragment identifier.
     // Fallback to the normal way of loading the document in an Image object.
+    // FIXME: This is silly.
     if (!validMaskFound) {
         // Get the resource loader, acquire the resource buffer and load it into an image.
         ASSERT(cachedSVGDocument->loader());
