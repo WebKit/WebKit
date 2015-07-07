@@ -1,3 +1,22 @@
+2015-07-06  Zalan Bujtas  <zalan@apple.com>
+
+        Crash: LayoutState root's container is nullptr when the layout root is detached.
+        https://bugs.webkit.org/show_bug.cgi?id=146646
+        rdar://problem/21371544
+
+        Reviewed by Simon Fraser.
+
+        This is a speculative fix to ensure that when the root of the LayoutState is detached
+        we don't try to access its container (nullptr).
+        This is related to trac.webkit.org/r185484.
+
+        Not reproducible.
+
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/LayoutState.h:
+        (WebCore::LayoutState::LayoutState): Deleted.
+
 2015-07-05  Chris Dumez  <cdumez@apple.com>
 
         [WK2] WebBackForwardListItems' pageState is not kept up-to-date

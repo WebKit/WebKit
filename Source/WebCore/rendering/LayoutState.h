@@ -52,11 +52,6 @@ public:
         , m_layoutDeltaXSaturated(false)
         , m_layoutDeltaYSaturated(false)
 #endif
-        , m_lineGrid(nullptr)
-        , m_pageLogicalHeight(0)
-#ifndef NDEBUG
-        , m_renderer(nullptr)
-#endif
     {
     }
 
@@ -103,7 +98,7 @@ public:
 #endif
 
     // The current line grid that we're snapping to and the offset of the start of the grid.
-    RenderBlockFlow* m_lineGrid;
+    RenderBlockFlow* m_lineGrid { nullptr };
     std::unique_ptr<LayoutState> m_next;
 
     // FIXME: Distinguish between the layout clip rect and the paint clip rect which may be larger,
@@ -129,7 +124,7 @@ public:
     RenderFlowThread* m_currentRenderFlowThread { nullptr };
 
 #ifndef NDEBUG
-    RenderObject* m_renderer;
+    RenderObject* m_renderer { nullptr };
 #endif
 };
 
