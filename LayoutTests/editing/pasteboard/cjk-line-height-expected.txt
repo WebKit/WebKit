@@ -1,0 +1,6 @@
+This tests copying and pasting text with a font that influences the used line-height value.
+To manually test, copy and paste the selected content below. WebKit should not generate line-height property in the pasted content.
+| <span>
+|   style="font-family: 'Hiragino Kaku Gothic ProN';"
+|   "hello<#selection-caret>"
+| <br>

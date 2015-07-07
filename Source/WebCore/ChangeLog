@@ -1,3 +1,23 @@
+2015-06-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r179168): Characters overlap after resizing the font on the copy-pasted Japanese text
+        https://bugs.webkit.org/show_bug.cgi?id=146492
+
+        Reviewed by Darin Adler.
+
+        The bug was caused by WebKit serializing the used line-height size (e.g. 18px) in the copied content
+        instead of string "normal" and removeStyleFromRulesAndContext failing to strip it down when text with
+        a font that influences the line height got pasted. This is because the used value of line-height
+        property of the context and the pasted content doesn't match when the context doesn't use the same font.
+
+        Fixed the bug by not considering line-height as a list of editing properties we try to preserve. This is
+        fine because we don't provide editing operations to directly manipulate line-height.
+
+        Test: editing/pasteboard/cjk-line-height.html
+
+        * editing/EditingStyle.cpp:
+        (WebCore::editingProperties): Removed CSSPropertyLineHeight.
+
 2015-07-01  Antti Koivisto  <antti@apple.com>
 
         PNG mask images are loaded with Accept:image/svg+xml
