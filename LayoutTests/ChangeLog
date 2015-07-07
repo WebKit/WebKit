@@ -1,3 +1,17 @@
+2015-07-07  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r183706): HTMLImageElement sometimes fails to register as document named item.
+        <https://webkit.org/b/146679>
+        <rdar://problem/21613839>
+
+        Reviewed by Antti Koivisto.
+
+        Add a test that would assert when removing a named HTMLImageElement from the DOM
+        after having failed to register it as a document named item.
+
+        * fast/dom/HTMLImageElement/remove-img-with-name-from-document-crash-expected.txt: Added.
+        * fast/dom/HTMLImageElement/remove-img-with-name-from-document-crash.html: Added.
+
 2015-07-07  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r186388): http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html always fails on Windows
