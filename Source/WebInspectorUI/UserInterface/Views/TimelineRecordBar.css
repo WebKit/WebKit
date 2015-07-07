@@ -59,16 +59,16 @@
     border-bottom-left-radius: 0 !important;
 }
 
-:focus .selected .timeline-record-bar > .segment {
+:matches(:focus, .force-focus) .selected .timeline-record-bar > .segment {
     background-color: white !important;
     border: none !important;
 }
 
-:focus .selected .timeline-record-bar > .segment.inactive {
+:matches(:focus, .force-focus) .selected .timeline-record-bar > .segment.inactive {
     background-color: rgb(196, 215, 242) !important;
 }
 
-:focus .selected .timeline-record-bar.has-inactive-segment > .segment:not(.inactive) {
+:matches(:focus, .force-focus) .selected .timeline-record-bar.has-inactive-segment > .segment:not(.inactive) {
     border-left: 1px solid rgba(56, 121, 217, 0.7) !important;
 }
 
