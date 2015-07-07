@@ -95,7 +95,7 @@ Node::InsertionNotificationRequest SVGMPathElement::insertedInto(ContainerNode& 
     return InsertionDone;
 }
 
-void SVGMPathElement::didNotifySubtreeInsertions(ContainerNode*)
+void SVGMPathElement::didNotifySubtreeInsertions()
 {
     buildPendingResource();
 }

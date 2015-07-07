@@ -227,7 +227,7 @@ inline void ChildNodeInsertionNotifier::notify(Node& node)
         notifyNodeInsertedIntoTree(downcast<ContainerNode>(node));
 
     for (size_t i = 0; i < m_postInsertionNotificationTargets.size(); ++i)
-        m_postInsertionNotificationTargets[i]->didNotifySubtreeInsertions(&m_insertionPoint);
+        m_postInsertionNotificationTargets[i]->didNotifySubtreeInsertions();
 }
 
 

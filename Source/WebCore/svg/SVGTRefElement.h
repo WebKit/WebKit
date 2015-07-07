@@ -34,7 +34,7 @@ public:
     static Ref<SVGTRefElement> create(const QualifiedName&, Document&);
 
 protected:
-    virtual void didNotifySubtreeInsertions(ContainerNode*) override;
+    virtual void didNotifySubtreeInsertions() override;
 
 private:
     friend class SVGTRefTargetEventListener;

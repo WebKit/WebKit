@@ -43,7 +43,7 @@ public:
     virtual ~SVGFEImageElement();
 
 protected:
-    virtual void didNotifySubtreeInsertions(ContainerNode*) override;
+    virtual void didNotifySubtreeInsertions() override;
 
 private:
     SVGFEImageElement(const QualifiedName&, Document&);

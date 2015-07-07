@@ -285,7 +285,7 @@ Node::InsertionNotificationRequest SVGTRefElement::insertedInto(ContainerNode& r
     return InsertionDone;
 }
 
-void SVGTRefElement::didNotifySubtreeInsertions(ContainerNode*)
+void SVGTRefElement::didNotifySubtreeInsertions()
 {
     buildPendingResource();
 }

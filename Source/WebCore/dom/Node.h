@@ -491,7 +491,7 @@ public:
     };
 
     virtual InsertionNotificationRequest insertedInto(ContainerNode& insertionPoint);
-    virtual void didNotifySubtreeInsertions(ContainerNode*) { }
+    virtual void didNotifySubtreeInsertions() { }
 
     // Notifies the node that it is no longer part of the tree.
     //

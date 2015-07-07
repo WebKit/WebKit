@@ -178,7 +178,7 @@ Node::InsertionNotificationRequest SVGFEImageElement::insertedInto(ContainerNode
     return InsertionShouldCallDidNotifySubtreeInsertions;
 }
 
-void SVGFEImageElement::didNotifySubtreeInsertions(ContainerNode*)
+void SVGFEImageElement::didNotifySubtreeInsertions()
 {
     buildPendingResource();
 }

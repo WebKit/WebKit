@@ -112,7 +112,7 @@ public:
     static Ref<SVGTextPathElement> create(const QualifiedName&, Document&);
 
 protected:
-    virtual void didNotifySubtreeInsertions(ContainerNode*) override;
+    virtual void didNotifySubtreeInsertions() override;
 
 private:
     SVGTextPathElement(const QualifiedName&, Document&);

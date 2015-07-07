@@ -120,7 +120,7 @@ protected:
     virtual void setTargetElement(SVGElement*);
     virtual void setAttributeName(const QualifiedName&);
 
-    virtual void didNotifySubtreeInsertions(ContainerNode*) override;
+    virtual void didNotifySubtreeInsertions() override;
 
 private:
     void buildPendingResource() override;

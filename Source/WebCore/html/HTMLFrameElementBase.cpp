@@ -143,7 +143,7 @@ Node::InsertionNotificationRequest HTMLFrameElementBase::insertedInto(ContainerN
     return InsertionDone;
 }
 
-void HTMLFrameElementBase::didNotifySubtreeInsertions(ContainerNode*)
+void HTMLFrameElementBase::didNotifySubtreeInsertions()
 {
     if (!inDocument())
         return;

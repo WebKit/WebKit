@@ -1,3 +1,33 @@
+2015-06-10  Chris Dumez  <cdumez@apple.com>
+
+        Drop unused argument for Node::didNotifySubtreeInsertions()
+        https://bugs.webkit.org/show_bug.cgi?id=145845
+
+        Reviewed by Andreas Kling.
+
+        * dom/ContainerNodeAlgorithms.h:
+        (WebCore::ChildNodeInsertionNotifier::notify):
+        * dom/Node.h:
+        (WebCore::Node::didNotifySubtreeInsertions):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::didNotifySubtreeInsertions):
+        * html/HTMLFrameElementBase.h:
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::didNotifySubtreeInsertions):
+        * svg/SVGFEImageElement.h:
+        * svg/SVGMPathElement.cpp:
+        (WebCore::SVGMPathElement::didNotifySubtreeInsertions):
+        * svg/SVGMPathElement.h:
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::didNotifySubtreeInsertions):
+        * svg/SVGTRefElement.h:
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::didNotifySubtreeInsertions):
+        * svg/SVGTextPathElement.h:
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::didNotifySubtreeInsertions):
+        * svg/animation/SVGSMILElement.h:
+
 2015-06-10  Alex Christensen  <achristensen@webkit.org>
 
         [Web Timing] Fix flaky test.

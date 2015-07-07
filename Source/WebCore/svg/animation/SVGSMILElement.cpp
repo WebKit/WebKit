@@ -264,7 +264,7 @@ Node::InsertionNotificationRequest SVGSMILElement::insertedInto(ContainerNode& r
     return InsertionShouldCallDidNotifySubtreeInsertions;
 }
 
-void SVGSMILElement::didNotifySubtreeInsertions(ContainerNode*)
+void SVGSMILElement::didNotifySubtreeInsertions()
 {
     buildPendingResource();
 }
