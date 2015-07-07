@@ -93,7 +93,7 @@ InspectorFrontendAPI = {
 
     showMainResourceForFrame: function(frameIdentifier)
     {
-        WebInspector.showSourceCodeForFrame(frameIdentifier, true);
+        WebInspector.showSourceCodeForFrame(frameIdentifier);
     },
 
     contextMenuItemSelected: function(id)

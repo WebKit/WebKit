@@ -224,7 +224,7 @@ WebInspector.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends
 
     _goToContentFlowArrowWasClicked()
     {
-        WebInspector.showContentFlowDOMTree(this._contentFlow, this.nodeStyles.node, true);
+        WebInspector.showContentFlowDOMTree(this._contentFlow, this.nodeStyles.node);
     }
 };
 

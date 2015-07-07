@@ -223,7 +223,7 @@ WebInspector.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends
                             return;
 
                         var sourceCodeLocation = sourceCode.createSourceCodeLocation(location.lineNumber, location.columnNumber || 0);
-                        WebInspector.showSourceCodeLocation(sourceCodeLocation, true);
+                        WebInspector.showSourceCodeLocation(sourceCodeLocation);
                     });
                 });
             }

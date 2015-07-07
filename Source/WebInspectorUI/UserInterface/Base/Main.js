@@ -761,7 +761,7 @@ WebInspector.showConsoleTab = function(requestedScope)
     if (requestedScope || !this.consoleContentView.scopeBar.selectedItems.length)
         this.consoleContentView.scopeBar.item(scope).selected = true;
 
-    this.showRepresentedObject(this._consoleRepresentedObject, null, true);
+    this.showRepresentedObject(this._consoleRepresentedObject);
 
     console.assert(this.isShowingConsoleTab());
 };
@@ -923,33 +923,31 @@ WebInspector.tabContentViewForRepresentedObject = function(representedObject)
     return tabContentView;
 };
 
-WebInspector.showRepresentedObject = function(representedObject, cookie, forceShowTab)
+WebInspector.showRepresentedObject = function(representedObject, cookie)
 {
     var tabContentView = this.tabContentViewForRepresentedObject(representedObject);
     console.assert(tabContentView);
     if (!tabContentView)
         return;
 
-    if (window.event || forceShowTab)
-        this.tabBrowser.showTabForContentView(tabContentView);
-
+    this.tabBrowser.showTabForContentView(tabContentView);
     tabContentView.showRepresentedObject(representedObject, cookie);
 };
 
-WebInspector.showMainFrameDOMTree = function(nodeToSelect, forceShowTab)
+WebInspector.showMainFrameDOMTree = function(nodeToSelect)
 {
     console.assert(WebInspector.frameResourceManager.mainFrame);
     if (!WebInspector.frameResourceManager.mainFrame)
         return;
-    this.showRepresentedObject(WebInspector.frameResourceManager.mainFrame.domTree, {nodeToSelect}, forceShowTab);
+    this.showRepresentedObject(WebInspector.frameResourceManager.mainFrame.domTree, {nodeToSelect});
 };
 
-WebInspector.showContentFlowDOMTree = function(contentFlow, nodeToSelect, forceShowTab)
+WebInspector.showContentFlowDOMTree = function(contentFlow, nodeToSelect)
 {
-    this.showRepresentedObject(contentFlow, {nodeToSelect}, forceShowTab);
+    this.showRepresentedObject(contentFlow, {nodeToSelect});
 };
 
-WebInspector.showSourceCodeForFrame = function(frameIdentifier, forceShowTab)
+WebInspector.showSourceCodeForFrame = function(frameIdentifier)
 {
     var frame = WebInspector.frameResourceManager.frameForIdentifier(frameIdentifier);
     if (!frame) {
@@ -959,10 +957,10 @@ WebInspector.showSourceCodeForFrame = function(frameIdentifier, forceShowTab)
 
     this._frameIdentifierToShowSourceCodeWhenAvailable = undefined;
 
-    this.showRepresentedObject(frame, null, forceShowTab);
+    this.showRepresentedObject(frame);
 };
 
-WebInspector.showSourceCode = function(sourceCode, positionToReveal, textRangeToSelect, forceUnformatted, forceShowTab)
+WebInspector.showSourceCode = function(sourceCode, positionToReveal, textRangeToSelect, forceUnformatted)
 {
     console.assert(!positionToReveal || positionToReveal instanceof WebInspector.SourceCodePosition, positionToReveal);
     var representedObject = sourceCode;
@@ -973,33 +971,33 @@ WebInspector.showSourceCode = function(sourceCode, positionToReveal, textRangeTo
     }
 
     var cookie = positionToReveal ? {lineNumber: positionToReveal.lineNumber, columnNumber: positionToReveal.columnNumber} : {};
-    this.showRepresentedObject(representedObject, cookie, forceShowTab);
+    this.showRepresentedObject(representedObject, cookie);
 };
 
-WebInspector.showSourceCodeLocation = function(sourceCodeLocation, forceShowTab)
+WebInspector.showSourceCodeLocation = function(sourceCodeLocation)
 {
-    this.showSourceCode(sourceCodeLocation.displaySourceCode, sourceCodeLocation.displayPosition(), null, false, forceShowTab);
+    this.showSourceCode(sourceCodeLocation.displaySourceCode, sourceCodeLocation.displayPosition());
 };
 
-WebInspector.showOriginalUnformattedSourceCodeLocation = function(sourceCodeLocation, forceShowTab)
+WebInspector.showOriginalUnformattedSourceCodeLocation = function(sourceCodeLocation)
 {
     this.showSourceCode(sourceCodeLocation.sourceCode, sourceCodeLocation.position(), null, true);
 };
 
-WebInspector.showOriginalOrFormattedSourceCodeLocation = function(sourceCodeLocation, forceShowTab)
+WebInspector.showOriginalOrFormattedSourceCodeLocation = function(sourceCodeLocation)
 {
-    this.showSourceCode(sourceCodeLocation.sourceCode, sourceCodeLocation.formattedPosition(), null, false, forceShowTab);
+    this.showSourceCode(sourceCodeLocation.sourceCode, sourceCodeLocation.formattedPosition());
 };
 
-WebInspector.showOriginalOrFormattedSourceCodeTextRange = function(sourceCodeTextRange, forceShowTab)
+WebInspector.showOriginalOrFormattedSourceCodeTextRange = function(sourceCodeTextRange)
 {
     var textRangeToSelect = sourceCodeTextRange.formattedTextRange;
-    this.showSourceCode(sourceCodeTextRange.sourceCode, textRangeToSelect.startPosition(), textRangeToSelect, false, forceShowTab);
+    this.showSourceCode(sourceCodeTextRange.sourceCode, textRangeToSelect.startPosition(), textRangeToSelect);
 };
 
-WebInspector.showResourceRequest = function(resource, forceShowTab)
+WebInspector.showResourceRequest = function(resource)
 {
-    this.showRepresentedObject(resource, {[WebInspector.ResourceClusterContentView.ContentViewIdentifierCookieKey]: WebInspector.ResourceClusterContentView.RequestIdentifier}, forceShowTab);
+    this.showRepresentedObject(resource, {[WebInspector.ResourceClusterContentView.ContentViewIdentifierCookieKey]: WebInspector.ResourceClusterContentView.RequestIdentifier});
 };
 
 WebInspector.debuggerToggleBreakpoints = function(event)
@@ -1135,7 +1133,7 @@ WebInspector._frameWasAdded = function(event)
 
     function delayedWork()
     {
-        this.showSourceCodeForFrame(frame.id, true);
+        this.showSourceCodeForFrame(frame.id);
     }
 
     // Delay showing the frame since FrameWasAdded is called before MainFrameChanged.
@@ -1532,7 +1530,7 @@ WebInspector._domNodeWasInspected = function(event)
     InspectorFrontendHost.bringToFront();
 
     this.showElementsTab();
-    this.showMainFrameDOMTree(event.data.node, true);
+    this.showMainFrameDOMTree(event.data.node);
 };
 
 WebInspector._inspectModeStateChanged = function(event)

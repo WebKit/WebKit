@@ -351,10 +351,9 @@ WebInspector.CodeMirrorTokenTrackingController = class CodeMirrorTokenTrackingCo
             var marks = this._codeMirror.findMarksAt(position);
             for (var i = 0; i < marks.length; ++i) {
                 if (marks[i] === this._codeMirrorMarkedText) {
-                    if (this._delegate && typeof this._delegate.tokenTrackingControllerHighlightedRangeWasClicked === "function") {
-                        // Trigger the clicked delegate asynchronously, letting the editor complete handling of the click.
-                        setTimeout(function() { this._delegate.tokenTrackingControllerHighlightedRangeWasClicked(this); }.bind(this), 0);
-                    }
+                    if (this._delegate && typeof this._delegate.tokenTrackingControllerHighlightedRangeWasClicked === "function")
+                        this._delegate.tokenTrackingControllerHighlightedRangeWasClicked(this);
+
                     break;
                 }
             }
