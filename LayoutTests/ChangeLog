@@ -1,3 +1,9 @@
+2015-07-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Unreviewed test skip after r186476.
+
+        * platform/win/TestExpectations:
+
 2015-07-07  Brady Eidson  <beidson@apple.com>
 
         HTTP Auth cached after disabling private browsing/reset.
