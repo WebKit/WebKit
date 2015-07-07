@@ -1,3 +1,33 @@
+2015-07-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Guard X11-specific code in webkitWebViewBaseDidRelaunchWebProcess()
+        https://bugs.webkit.org/show_bug.cgi?id=146627
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseDidRelaunchWebProcess):
+        Guard calls to DrawingAreaImpl::setNativeSurfaceHandleForCompositing()
+        that pass in an X11 Window ID with the PLATFORM(X11) build guards.
+
+2015-07-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Accelerated Compositing stops working after a web process crash
+        https://bugs.webkit.org/show_bug.cgi?id=146508
+
+        Reviewed by Martin Robinson.
+
+        The problem is that we don't send the window ID again to the new
+        web process.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::didRelaunchProcess): Call
+        webkitWebViewBaseDidRelaunchWebProcess().
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseDidRelaunchWebProcess): Set the window ID to
+        the new drawing area.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+
 2015-06-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Crash performing drag-and-drop
