@@ -1214,8 +1214,7 @@ void WebPage::goForward(uint64_t navigationID, uint64_t backForwardItemID)
         return;
 
     ASSERT(!m_pendingNavigationID);
-    if (!item->isInPageCache())
-        m_pendingNavigationID = navigationID;
+    m_pendingNavigationID = navigationID;
 
     m_page->goToItem(*item, FrameLoadType::Forward);
 }
@@ -1230,8 +1229,7 @@ void WebPage::goBack(uint64_t navigationID, uint64_t backForwardItemID)
         return;
 
     ASSERT(!m_pendingNavigationID);
-    if (!item->isInPageCache())
-        m_pendingNavigationID = navigationID;
+    m_pendingNavigationID = navigationID;
 
     m_page->goToItem(*item, FrameLoadType::Back);
 }
@@ -1246,8 +1244,7 @@ void WebPage::goToBackForwardItem(uint64_t navigationID, uint64_t backForwardIte
         return;
 
     ASSERT(!m_pendingNavigationID);
-    if (!item->isInPageCache())
-        m_pendingNavigationID = navigationID;
+    m_pendingNavigationID = navigationID;
 
     m_page->goToItem(*item, FrameLoadType::IndexedBackForward);
 }
@@ -4823,6 +4820,14 @@ PassRefPtr<DocumentLoader> WebPage::createDocumentLoader(Frame& frame, const Res
     }
 
     return documentLoader.release();
+}
+
+void WebPage::updateCachedDocumentLoader(WebDocumentLoader& documentLoader, Frame& frame)
+{
+    if (m_pendingNavigationID && frame.isMainFrame()) {
+        documentLoader.setNavigationID(m_pendingNavigationID);
+        m_pendingNavigationID = 0;
+    }
 }
 
 void WebPage::getBytecodeProfile(uint64_t callbackID)

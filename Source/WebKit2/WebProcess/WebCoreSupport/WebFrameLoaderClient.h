@@ -160,6 +160,8 @@ private:
     virtual void prepareForDataSourceReplacement() override;
     
     virtual PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&) override;
+    virtual void updateCachedDocumentLoader(WebCore::DocumentLoader&) override;
+
     virtual void setTitle(const WebCore::StringWithDirection&, const WebCore::URL&) override;
     
     virtual String userAgent(const WebCore::URL&) override;

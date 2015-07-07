@@ -1221,6 +1221,11 @@ PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const Reso
     return m_frame->page()->createDocumentLoader(*m_frame->coreFrame(), request, substituteData);
 }
 
+void WebFrameLoaderClient::updateCachedDocumentLoader(WebCore::DocumentLoader& loader)
+{
+    m_frame->page()->updateCachedDocumentLoader(static_cast<WebDocumentLoader&>(loader), *m_frame->coreFrame());
+}
+
 void WebFrameLoaderClient::setTitle(const StringWithDirection& title, const URL& url)
 {
     WebPage* webPage = m_frame->page();

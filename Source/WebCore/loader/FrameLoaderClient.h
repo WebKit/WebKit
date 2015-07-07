@@ -246,6 +246,7 @@ namespace WebCore {
         virtual void prepareForDataSourceReplacement() = 0;
 
         virtual PassRefPtr<DocumentLoader> createDocumentLoader(const ResourceRequest&, const SubstituteData&) = 0;
+        virtual void updateCachedDocumentLoader(DocumentLoader&) = 0;
         virtual void setTitle(const StringWithDirection&, const URL&) = 0;
 
         virtual String userAgent(const URL&) = 0;
