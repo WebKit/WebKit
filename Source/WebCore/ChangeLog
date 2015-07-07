@@ -1,3 +1,19 @@
+2015-06-17  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r173283-r173296): Amazon.com front page has no caret in the search field
+        https://bugs.webkit.org/show_bug.cgi?id=146073
+        rdar://problem/21022203
+
+        Reviewed by Tim Horton.
+
+        Text controls (text inputs and textareas) need backing store even when empty, because
+        they need to be able to paint a caret.
+
+        Test: compositing/backing/form-controls-backing.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::isSimpleContainerCompositingLayer):
+
 2015-06-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebProcess crashes after too many redirect error when there's an active NPAPI plugin
