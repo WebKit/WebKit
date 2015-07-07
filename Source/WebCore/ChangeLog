@@ -1,3 +1,45 @@
+2015-06-19  Brent Fulgham  <bfulgham@apple.com>
+
+        Follow-up fix to r185766.
+        https://bugs.webkit.org/show_bug.cgi?id=22132
+
+        Reviewed by Zalan Bujtas.
+
+        Suggested by Darin Adler in the bug.
+
+        * platform/graphics/filters/FETile.cpp:
+        (WebCore::FETile::platformApplySoftware): Use WTF::move when passing
+        the new tileImageCopy RefPtr.
+
+2015-06-19  Brent Fulgham  <bfulgham@apple.com>
+
+        All calls of ImageBuffer::create should null check the return value
+        https://bugs.webkit.org/show_bug.cgi?id=22132
+
+        Reviewed by Zalan Bujtas.
+
+        ImageBuffer::create returns nullptr for a number of reasons, and should be
+        expected to do so. We missed this check in a few places, resulting in
+        crashes on some systems. Likewise, ImageBuffer::copyImage may return nullptr
+        in normal use and should be checked.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::drawPattern): Add nullptr check for create and copyImage. Remove
+        extra call to 'setImageObserver'.
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::drawPattern): Add nullptr check for copyImage.
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::drawPattern): Add nullptr checks for copyImage.
+        * platform/graphics/filters/FETile.cpp:
+        (WebCore::FETile::platformApplySoftware): Add nullptr check for copyImage.
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::asImageBuffer): Add nullptr check for create.
+        (WebCore::FilterEffect::openCLImageToImageBuffer): Ditto.
+        * platform/graphics/texmap/BitmapTexture.cpp:
+        (WebCore::BitmapTexture::updateContents): Add nullptr checks for create and copyImage.
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::drawPatternForContainer): Add nullptr check for copyImage.
+
 2015-06-18  Benjamin Poulain  <bpoulain@apple.com>
 
         [CSS JIT][ARMv7] The pseudo element early exit trashes r6
