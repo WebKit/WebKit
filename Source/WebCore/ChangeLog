@@ -1,3 +1,42 @@
+2015-06-19  Andy Estes  <aestes@apple.com>
+
+        Various assertion failures occur when executing script in the midst of DOM insertion
+        https://bugs.webkit.org/show_bug.cgi?id=132482
+
+        Reviewed by Darin Adler.
+
+        Prior to this change, when an element containing a <script> child was inserted into a document, the script was
+        executed in ScriptElement::insertedInto(). That script can access nodes that follow it in the newly-inserted
+        hierarchy but are not yet fully inserted, leading to at least the following problems:
+
+            - The script could remove a node that is not yet marked as in the document.
+            - The script could remove a named <map> that has yet to be added to TreeScope::m_imageMapsByName.
+            - The script could remove a form control that has yet to be added to FormController::m_formElementsWithState.
+
+        These scenarios all result in assertion failures. This change ensures that each node in the newly-inserted
+        hierarchy is fully inserted before executing any scripts.
+
+        Tests: fast/dom/element-removed-while-inserting-parent-crash.html
+               fast/dom/named-map-removed-while-inserting-parent-crash.html
+               fast/forms/form-control-removed-while-inserting-parent-crash.html
+               svg/dom/element-removed-while-inserting-parent-crash.html
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::shouldNotifySubtreeInsertions): Renamed from insertedInto().
+        Returned true in the case where insertedInto() would've called prepareScript().
+        (WebCore::ScriptElement::didNotifySubtreeInsertions): Called prepareScript().
+        (WebCore::ScriptElement::insertedInto): Renamed to shouldNotifySubtreeInsertions().
+        * dom/ScriptElement.h:
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::insertedInto): If shouldNotifySubtreeInsertions() is true, returned InsertionShouldCallDidNotifySubtreeInsertions.
+        Otherwise, returned InsertionDone.
+        (WebCore::HTMLScriptElement::didNotifySubtreeInsertions): Called ScriptElement::didNotifySubtreeInsertions().
+        * html/HTMLScriptElement.h:
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::insertedInto): Did the same as HTMLScriptElement::insertedInto().
+        (WebCore::SVGScriptElement::didNotifySubtreeInsertions): Called ScriptElement::didNotifySubtreeInsertions().
+        * svg/SVGScriptElement.h:
+
 2015-06-19  Brent Fulgham  <bfulgham@apple.com>
 
         Follow-up fix to r185766.
