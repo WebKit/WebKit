@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+class Document;
 class HTMLMediaElement;
 class PlatformMediaSession;
 class RemoteCommandListener;
@@ -55,6 +56,9 @@ public:
 
     WEBCORE_EXPORT void applicationWillEnterForeground() const;
     WEBCORE_EXPORT void applicationWillEnterBackground() const;
+
+    void stopAllMediaPlaybackForDocument(const Document*);
+    WEBCORE_EXPORT void stopAllMediaPlaybackForProcess();
 
     enum SessionRestrictionFlags {
         NoRestrictions = 0,
