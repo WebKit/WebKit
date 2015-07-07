@@ -699,7 +699,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         case DoubleRepUse:
             if (child && child.isNumber()) {
-                setConstant(node, jsDoubleNumber(child.asNumber()));
+                setConstant(node, jsDoubleNumber(fabs(child.asNumber())));
                 break;
             }
             forNode(node).setType(typeOfDoubleAbs(forNode(node->child1()).m_type));
