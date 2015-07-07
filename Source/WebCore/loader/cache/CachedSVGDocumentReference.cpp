@@ -60,8 +60,6 @@ void CachedSVGDocumentReference::load(CachedResourceLoader& loader, const Resour
 
     CachedResourceRequest request(ResourceRequest(loader.document()->completeURL(m_url)), options);
     request.setInitiator(cachedResourceRequestInitiators().css);
-    if (m_acceptsAnyImageType)
-        request.setAcceptOverride("image/*");
     m_document = loader.requestSVGDocument(request);
     if (m_document) {
         m_document->setCanReuse(m_canReuseResource);

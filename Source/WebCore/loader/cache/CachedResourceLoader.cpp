@@ -564,9 +564,6 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
         resource->setLoadPriority(request.priority());
 
     if ((policy != Use || resource->stillNeedsLoad()) && CachedResourceRequest::NoDefer == request.defer()) {
-        if (request.acceptOverride())
-            resource->setAccept(request.acceptOverride().value());
-
         resource->load(*this, request.options());
 
         // We don't support immediate loads, but we do support immediate failure.
