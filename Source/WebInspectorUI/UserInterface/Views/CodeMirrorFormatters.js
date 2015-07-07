@@ -439,7 +439,8 @@ CodeMirror.extendMode("css-rule", {
             return true;
 
         // Add whitespace between "1px_solid_green"
-        if (lastToken && /\b(?:keyword|atom|number)\b/.test(token))
+        var tokenRegExp = /\b(?:keyword|atom|number)\b/;
+        if (tokenRegExp.test(lastToken) && tokenRegExp.test(token))
             return true;
 
         return false;

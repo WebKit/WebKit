@@ -50,6 +50,11 @@
         lineNumbers: true,
     });
 
+    // In the frontend, keywords are added to the css mode to force the parser to recognize them as values.
+    // Here, the "calc" keyword is added to allow the css-rule tests to perform as they would in the frontend.
+    var modeSpec = CodeMirror.resolveMode("text/css");
+    modeSpec.valueKeywords["calc"] = true;
+
     // Initial values from URL.
     var queryParams = {};
     if (window.location.search.length > 0) {
@@ -273,6 +278,7 @@
             "css-rule-tests/add-whitespace-after-colon.css",
             "css-rule-tests/add-whitespace-after-comma.css",
             "css-rule-tests/do-not-append-semicolon.css",
+            "css-rule-tests/do-not-add-whitespace-before-prefixed-property-value.css",
             "css-rule-tests/keep-prefixed-value.css",
         ]);
     }
