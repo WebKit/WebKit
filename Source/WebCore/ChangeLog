@@ -1,3 +1,32 @@
+2015-06-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebProcess crashes after too many redirect error when there's an active NPAPI plugin
+        https://bugs.webkit.org/show_bug.cgi?id=146019
+
+        Reviewed by Darin Adler.
+
+        This happens with the GTK+ port after a navigation action ends up
+        in an infinite redirection and the ResourceHandle fails with too
+        many redirections error. I should actually happen after any error
+        is reported by the ResourceHnalder before the load is
+        committed. But tt only happens if there's an active NPAPI
+        plugin. The problem is that FrameLoader::receivedMainResourceError()
+        is called recursively because DocumentLoader::stopLoading() ends up
+        calling mainReceivedError() that calls FrameLoader::receivedMainResourceError()
+        again. DocumentLoader::stopLoading() checks if the document is
+        still loading, which can happen if the main resource is loading,
+        if there's any subresource loading or if there's a plugin
+        loading. So, in case of being loading, those cases are handled
+        individually to cancel the main resource, or set an error in the
+        document loader and cancel subresources and plugins, except for
+        this case of plugins, that mainReceivedError is called instead of
+        setting cancelled error on the document loader.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::stopLoading): If the document is still
+        loading because there are active plugins, set the cancelled error
+        on the document instead of calling mainReceivedError again.
+
 2015-06-15  Zalan Bujtas  <zalan@apple.com>
 
         RootInlineBox::m_lineBreakObj becomes invalid when a child renderer is removed and the line does not get marked dirty.
