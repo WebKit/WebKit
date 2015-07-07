@@ -1,3 +1,34 @@
+2015-07-06  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Rendering Frame bars appear misaligned and contain gaps when displaying small task segments
+        https://bugs.webkit.org/show_bug.cgi?id=146475
+
+        Reviewed by Timothy Hatcher.
+
+        Displaying all task segments within a frame in the Rendering Frames graph is impossible, as very short tasks
+        would result in a bar with a height of less than 1 pixel. Consecutive small tasks, each less than a visible
+        pixel, appear as gaps in the frame bar. This patch addresses these shortcomings by introducing a minimum
+        displayable frame height (3 pixels), and setting the height of every frame to a multiple of the minimum height.
+
+        * UserInterface/Base/Utilities.js:
+        (.value):
+        Added Math.roundTo to simplify rounding to arbitrary intervals.
+
+        * UserInterface/Views/TimelineRecordFrame.css:
+        (.timeline-record-frame):
+        (.timeline-record-frame > .frame > .duration):
+        Enforce 3px min height for frames & segments. TimelineRenderingFrame's segment height calculator
+        creates segments that are always at least 3px, this is just a precaution.
+
+        * UserInterface/Views/TimelineRecordFrame.js:
+        (WebInspector.TimelineRecordFrame.prototype._calculateFrameDisplayData.updateDurationRemainder):
+        (WebInspector.TimelineRecordFrame.prototype._calculateFrameDisplayData.pushCurrentSegment):
+        (WebInspector.TimelineRecordFrame.prototype._calculateFrameDisplayData.invisibleSegments.forEach):
+        (WebInspector.TimelineRecordFrame.prototype._updateChildElements.createDurationElement): Deleted.
+        Added algorithm for calculating frame segment heights, rather than simply dividing each task's
+        duration by the frame duration. Results are cached so the segment heights aren't needlessly
+        recalculated on every scroll/zoom.
+
 2015-07-06  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Force show Console tab when supportsSplitContentBrowser is false

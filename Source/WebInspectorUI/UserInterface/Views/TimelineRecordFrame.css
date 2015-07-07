@@ -26,6 +26,7 @@
 .timeline-record-frame {
     position: absolute;
     height: 108px;
+    min-height: 3px;
     min-width: 4px;
     width: 4px;
 
@@ -49,6 +50,7 @@
 .timeline-record-frame > .frame > .duration {
     box-sizing: border-box;
 
+    min-height: 3px;
     background-color: rgb(221, 221, 221);
     border-bottom: solid 1px rgb(245, 245, 245);
 }

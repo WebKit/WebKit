@@ -38,6 +38,7 @@ WebInspector.TimelineRecordFrame = function(graphDataSource, record)
 // FIXME: Move to a WebInspector.Object subclass and we can remove this.
 WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.TimelineRecordFrame);
 
+WebInspector.TimelineRecordFrame.MinimumHeightPixels = 3;
 WebInspector.TimelineRecordFrame.MaximumWidthPixels = 14;
 WebInspector.TimelineRecordFrame.MinimumWidthPixels = 4;
 
@@ -87,6 +88,129 @@ WebInspector.TimelineRecordFrame.prototype = {
 
     // Private
 
+    _calculateFrameDisplayData(graphDataSource)
+    {
+        var secondsPerBlock = (graphDataSource.graphHeightSeconds / graphDataSource.element.offsetHeight) * WebInspector.TimelineRecordFrame.MinimumHeightPixels;
+        var segments = [];
+        var invisibleSegments = [];
+        var currentSegment = null;
+
+        function updateDurationRemainder(segment)
+        {
+            if (segment.duration <= secondsPerBlock) {
+                segment.remainder = 0;
+                return;
+            }
+
+            var roundedDuration = Math.roundTo(segment.duration, secondsPerBlock);
+            segment.remainder = Math.max(segment.duration - roundedDuration, 0);
+        }
+
+        function pushCurrentSegment()
+        {
+            updateDurationRemainder(currentSegment);
+            segments.push(currentSegment);
+            if (currentSegment.duration < secondsPerBlock)
+                invisibleSegments.push({segment: currentSegment, index: segments.length - 1});
+
+            currentSegment = null;
+        }
+
+        // Frame segments aren't shown at arbitrary pixel heights, but are divided into blocks of pixels. One block
+        // represents the minimum displayable duration of a rendering frame, in seconds. Contiguous tasks less than a
+        // block high are grouped until the minimum is met, or a task meeting the minimum is found. The group is then
+        // added to the list of segment candidates. Large tasks (one block or more) are not grouped with other tasks
+        // and are simply added to the candidate list.
+        for (var key in WebInspector.RenderingFrameTimelineRecord.TaskType) {
+            var taskType = WebInspector.RenderingFrameTimelineRecord.TaskType[key];
+            var duration = this._record.durationForTask(taskType);
+            if (duration === 0)
+                continue;
+
+            if (currentSegment && duration >= secondsPerBlock)
+                pushCurrentSegment();
+
+            if (!currentSegment)
+                currentSegment = {taskType: null, longestTaskDuration: 0, duration: 0, remainder: 0};
+
+            currentSegment.duration += duration;
+            if (duration > currentSegment.longestTaskDuration) {
+                currentSegment.taskType = taskType;
+                currentSegment.longestTaskDuration = duration;
+            }
+
+            if (currentSegment.duration >= secondsPerBlock)
+                pushCurrentSegment();
+        }
+
+        if (currentSegment)
+            pushCurrentSegment();
+
+        // A frame consisting of a single segment is always visible.
+        if (segments.length === 1) {
+            segments[0].duration = Math.max(segments[0].duration, secondsPerBlock);
+            invisibleSegments = [];
+        }
+
+        // After grouping sub-block tasks, a second pass is needed to handle those groups that are still beneath the
+        // minimum displayable duration. Each sub-block task has one or two adjacent display segments greater than one
+        // block. The rounded-off time from these tasks is added to the sub-block, if it's sufficient to create a full
+        // block. Failing that, the task is merged with an adjacent segment.
+        invisibleSegments.sort(function(a, b) { return a.segment.duration - b.segment.duration; });
+
+        for (var item of invisibleSegments) {
+            var segment = item.segment;
+            var previousSegment = item.index > 0 ? segments[item.index - 1] : null;
+            var nextSegment = item.index < segments.length - 1 ? segments[item.index + 1] : null;
+            console.assert(previousSegment || nextSegment, "Invisible segment should have at least one adjacent visible segment.");
+
+            // Try to increase the segment's size to exactly one block, by taking subblock time from neighboring segments.
+            // If there are two neighbors, the one with greater subblock duration is borrowed from first.
+            var adjacentSegments;
+            var availableDuration;
+            if (previousSegment && nextSegment) {
+                adjacentSegments = previousSegment.remainder > nextSegment.remainder ? [previousSegment, nextSegment] : [nextSegment, previousSegment];
+                availableDuration = previousSegment.remainder + nextSegment.remainder;
+            } else {
+                adjacentSegments = [previousSegment || nextSegment];
+                availableDuration = adjacentSegments[0].remainder;
+            }
+
+            if (availableDuration < (secondsPerBlock - segment.duration)) {
+                // Merge with largest adjacent segment.
+                var targetSegment;
+                if (previousSegment && nextSegment)
+                    targetSegment = previousSegment.duration > nextSegment.duration ? previousSegment : nextSegment;
+                else
+                    targetSegment = previousSegment || nextSegment;
+
+                targetSegment.duration += segment.duration;
+                updateDurationRemainder(targetSegment);
+                continue;
+            }
+
+            adjacentSegments.forEach(function(adjacentSegment) {
+                if (segment.duration >= secondsPerBlock)
+                    return;
+                var remainder = Math.min(secondsPerBlock - segment.duration, adjacentSegment.remainder);
+                segment.duration += remainder;
+                adjacentSegment.remainder -= remainder;
+            });
+        }
+
+        // Round visible segments to the nearest block, and compute the rounded frame duration.
+        var frameDuration = 0;
+        segments = segments.filter(function(segment) {
+            if (segment.duration < secondsPerBlock)
+                return false;
+            segment.duration = Math.roundTo(segment.duration, secondsPerBlock);
+            frameDuration += segment.duration;
+            return true;
+        });
+
+        return {frameDuration, segments};
+    },
+
     _updateChildElements(graphDataSource)
     {
         this._element.removeChildren();
@@ -102,24 +226,23 @@ WebInspector.TimelineRecordFrame.prototype = {
         frameElement.classList.add("frame");
         this._element.appendChild(frameElement);
 
-        var frameHeight = this._record.duration / graphDataSource.graphHeightSeconds;
-        this._updateElementPosition(frameElement, frameHeight, "height");
+        // Display data must be recalculated when the overview graph's vertical axis changes.
+        if (this._record.__displayData && this._record.__displayData.graphHeightSeconds !== graphDataSource.graphHeightSeconds)
+            this._record.__displayData = null;
 
-        function createDurationElement(duration, taskType)
-        {
-            var element = document.createElement("div");
-            this._updateElementPosition(element, duration / this._record.duration, "height");
-            element.classList.add("duration", taskType);
-            return element;
+        if (!this._record.__displayData) {
+            this._record.__displayData = this._calculateFrameDisplayData(graphDataSource);
+            this._record.__displayData.graphHeightSeconds = graphDataSource.graphHeightSeconds;
         }
 
-        Object.keys(WebInspector.RenderingFrameTimelineRecord.TaskType).forEach(function(key) {
-            var taskType = WebInspector.RenderingFrameTimelineRecord.TaskType[key];
-            var duration = this._record.durationForTask(taskType);
-            if (duration === 0)
-                return;
-            frameElement.insertBefore(createDurationElement.call(this, duration, taskType), frameElement.firstChild);
-        }, this);
+        this._updateElementPosition(frameElement, this._record.__displayData.frameDuration / graphDataSource.graphHeightSeconds, "height");
+
+        for (var segment of this._record.__displayData.segments) {
+            var element = document.createElement("div");
+            this._updateElementPosition(element, segment.duration / this._record.__displayData.frameDuration, "height");
+            element.classList.add("duration", segment.taskType);
+            frameElement.insertBefore(element, frameElement.firstChild);
+        }
     },
 
     _updateElementPosition(element, newPosition, property)

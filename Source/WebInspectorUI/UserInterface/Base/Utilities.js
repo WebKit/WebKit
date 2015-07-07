@@ -797,6 +797,14 @@ Object.defineProperty(String.prototype, "levenshteinDistance",
     }
 });
 
+Object.defineProperty(Math, "roundTo",
+{
+    value: function(num, step)
+    {
+        return Math.round(num / step) * step;
+    }
+});
+
 Object.defineProperty(Number, "constrain",
 {
     value: function(num, min, max)
