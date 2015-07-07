@@ -4,6 +4,17 @@
         https://bugs.webkit.org/show_bug.cgi?id=146652
         <rdar://problem/21567767>
 
+        Follow-up fix.
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::simulateVertexAttrib0):
+
+2015-07-06  Dean Jackson  <dino@apple.com>
+
+        Memory corruption in WebGLRenderingContext::simulateVertexAttrib0
+        https://bugs.webkit.org/show_bug.cgi?id=146652
+        <rdar://problem/21567767>
+
         Reviewed by Brent Fulgham.
 
         The expression "(numVertex + 1) * 4 * sizeof(GC3Dfloat)" could potentially
