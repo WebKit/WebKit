@@ -1493,7 +1493,11 @@ void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
     shadowRoot.setParentTreeScope(&treeScope());
     shadowRoot.distributor().didShadowBoundaryChange(this);
 
-    ChildNodeInsertionNotifier(*this).notify(shadowRoot);
+    NodeVector postInsertionNotificationTargets;
+    ChildNodeInsertionNotifier(*this).notify(shadowRoot, postInsertionNotificationTargets);
+
+    for (auto& target : postInsertionNotificationTargets)
+        target->didNotifySubtreeInsertions();
 
     resetNeedsNodeRenderingTraversalSlowPath();
 
