@@ -45,6 +45,7 @@ namespace WebCore {
 
     class AuthenticationChallenge;
     class Credential;
+    class NetworkingContext;
     class SocketStreamHandleClient;
 
     class SocketStreamHandle : public RefCounted<SocketStreamHandle>, public SocketStreamHandleBase {
