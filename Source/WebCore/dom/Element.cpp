@@ -92,11 +92,6 @@ namespace WebCore {
 using namespace HTMLNames;
 using namespace XMLNames;
 
-static inline bool shouldIgnoreAttributeCase(const Element& element)
-{
-    return element.isHTMLElement() && element.document().isHTMLDocument();
-}
-
 static HashMap<Element*, Vector<RefPtr<Attr>>>& attrNodeListMap()
 {
     static NeverDestroyed<HashMap<Element*, Vector<RefPtr<Attr>>>> map;

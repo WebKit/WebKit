@@ -33,11 +33,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static inline bool shouldIgnoreAttributeCase(const Element& element)
-{
-    return element.isHTMLElement() && element.document().isHTMLDocument();
-}
-
 void NamedNodeMap::ref()
 {
     m_element.ref();
