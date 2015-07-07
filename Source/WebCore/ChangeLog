@@ -1,3 +1,21 @@
+2015-06-22  Simon Fraser  <simon.fraser@apple.com>
+
+        ASSERT(!m_zOrderListsDirty) when mousing over web view with incremental rendering suppressed
+        https://bugs.webkit.org/show_bug.cgi?id=146225
+
+        Reviewed by Zalan Bujtas.
+
+        Update RenderLayer's z-order lists when hit testing. There's no guarantee that they've
+        been updated; this happens to work most of the time because painting updates them,
+        but if incremental rendering is suppressed, we may not have painted yet.
+        
+        Easy to hit on webkit.org in MiniBrowser, but I wasn't able to make a reduced testcase.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTest):
+        (WebCore::RenderLayer::updateLayerListsIfNeeded): Flip the order of the tests, since checking
+        dirty bits is cheaper than calling isStackingContext().
+
 2015-06-22  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION(r169105) Dangling renderer pointer in SelectionSubtreeRoot::SelectionSubtreeData.
