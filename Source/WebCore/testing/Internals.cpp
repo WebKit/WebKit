@@ -2006,6 +2006,14 @@ void Internals::updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(Node* 
     document->updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks::Synchronously);
 }
 
+unsigned Internals::layoutCount() const
+{
+    Document* document = contextDocument();
+    if (!document || !document->view())
+        return 0;
+    return document->view()->layoutCount();
+}
+
 #if !PLATFORM(IOS)
 static const char* cursorTypeToString(Cursor::Type cursorType)
 {

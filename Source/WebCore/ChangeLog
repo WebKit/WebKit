@@ -1,3 +1,24 @@
+2015-06-07  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r181720): Unnecessary layout triggered any time animated GIF advances to a new frame
+        https://bugs.webkit.org/show_bug.cgi?id=145733
+
+        Reviewed by Andreas Kling.
+
+        Test: fast/images/animated-gif-no-layout.html
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::styleDidChange): Correctly pass ImageSizeChangeNone in cases
+        where we don't need to report a change in intrinsic size that happened outside the
+        repaintOrMarkForLayout function.
+        (WebCore::RenderImage::repaintOrMarkForLayout): Move work that should only be done
+        when size changed inside the if statement.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::layoutCount): Added.
+        * testing/Internals.h: Added layoutCount.
+        * testing/Internals.idl: Ditto.
+
 2015-06-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Typing is slow in Gmail on iPads

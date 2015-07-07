@@ -258,6 +258,8 @@ enum PageOverlayType {
     // specified without security checks. Unspecified means this document.
     [RaisesException] void updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks(optional Node node);
 
+    readonly attribute unsigned long layoutCount;
+
     // Returns a string with information about the mouse cursor used at the specified client location.
     [RaisesException] DOMString getCurrentCursorInfo();
 

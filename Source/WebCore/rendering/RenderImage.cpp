@@ -214,7 +214,7 @@ void RenderImage::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
     }
 #if ENABLE(CSS_IMAGE_ORIENTATION)
     if (diff == StyleDifferenceLayout && oldStyle->imageOrientation() != style().imageOrientation())
-        return repaintOrMarkForLayout(ImageSizeChangeForAltText);
+        return repaintOrMarkForLayout(ImageSizeChangeNone);
 #endif
 
 #if ENABLE(CSS_IMAGE_RESOLUTION)
@@ -222,7 +222,7 @@ void RenderImage::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
         && (oldStyle->imageResolution() != style().imageResolution()
             || oldStyle->imageResolutionSnap() != style().imageResolutionSnap()
             || oldStyle->imageResolutionSource() != style().imageResolutionSource()))
-        repaintOrMarkForLayout(ImageSizeChangeForAltText);
+        repaintOrMarkForLayout(ImageSizeChangeNone);
 #endif
 }
 
@@ -304,26 +304,28 @@ void RenderImage::repaintOrMarkForLayout(ImageSizeChangeType imageSizeChange, co
 
     bool imageSourceHasChangedSize = oldIntrinsicSize != newIntrinsicSize || imageSizeChange != ImageSizeChangeNone;
 
-    if (imageSourceHasChangedSize)
+    if (imageSourceHasChangedSize) {
         setPreferredLogicalWidthsDirty(true);
 
-    // If the actual area occupied by the image has changed and it is not constrained by style then a layout is required.
-    bool imageSizeIsConstrained = style().logicalWidth().isSpecified() && style().logicalHeight().isSpecified();
-    bool needsLayout = !imageSizeIsConstrained && imageSourceHasChangedSize;
+        // If the actual area occupied by the image has changed and it is not constrained by style then a layout is required.
+        bool imageSizeIsConstrained = style().logicalWidth().isSpecified() && style().logicalHeight().isSpecified();
 
-    // FIXME: We only need to recompute the containing block's preferred size
-    // if the containing block's size depends on the image's size (i.e., the container uses shrink-to-fit sizing).
-    // There's no easy way to detect that shrink-to-fit is needed, always force a layout.
-    bool containingBlockNeedsToRecomputePreferredSize =
-        style().logicalWidth().isPercent()
-        || style().logicalMaxWidth().isPercent()
-        || style().logicalMinWidth().isPercent();
+        // FIXME: We only need to recompute the containing block's preferred size
+        // if the containing block's size depends on the image's size (i.e., the container uses shrink-to-fit sizing).
+        // There's no easy way to detect that shrink-to-fit is needed, always force a layout.
+        bool containingBlockNeedsToRecomputePreferredSize =
+            style().logicalWidth().isPercent()
+            || style().logicalMaxWidth().isPercent()
+            || style().logicalMinWidth().isPercent();
 
-    bool layoutSizeDependsOnIntrinsicSize = style().aspectRatioType() == AspectRatioFromIntrinsic;
+        bool layoutSizeDependsOnIntrinsicSize = style().aspectRatioType() == AspectRatioFromIntrinsic;
 
-    if (needsLayout || containingBlockNeedsToRecomputePreferredSize || layoutSizeDependsOnIntrinsicSize) {
-        setNeedsLayout();
-        return;
+        if (!imageSizeIsConstrained || containingBlockNeedsToRecomputePreferredSize || layoutSizeDependsOnIntrinsicSize) {
+            // FIXME: It's not clear that triggering a layout guarantees a repaint in all cases.
+            // But many callers do depend on this code causing a layout.
+            setNeedsLayout();
+            return;
+        }
     }
 
     if (everHadLayout() && !selfNeedsLayout()) {
