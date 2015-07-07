@@ -26,6 +26,8 @@
 #ifndef NetworkStorageSession_h
 #define NetworkStorageSession_h
 
+#include "CredentialStorage.h"
+
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -46,6 +48,8 @@ public:
     WEBCORE_EXPORT static std::unique_ptr<NetworkStorageSession> createPrivateBrowsingSession(const String& identifierBase = String());
 
     WEBCORE_EXPORT static void switchToNewTestingSession();
+
+    CredentialStorage& credentialStorage() { return m_credentialStorage; }
 
 #if PLATFORM(COCOA) || USE(CFNETWORK)
     NetworkStorageSession(RetainPtr<CFURLStorageSessionRef>);
@@ -72,6 +76,8 @@ private:
 #else
     RefPtr<NetworkingContext> m_context;
 #endif
+
+    CredentialStorage m_credentialStorage;
 };
 
 }

@@ -1,0 +1,39 @@
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.setHandlesAuthenticationChallenges(true);
+    testRunner.setAuthenticationUsername("webkit");
+    testRunner.setAuthenticationPassword("rocks");
+    testRunner.setPrivateBrowsingEnabled(true);
+    testRunner.waitUntilDone();
+}
+
+function firstFrameLoaded() {
+    if (window.testRunner) {
+        testRunner.setHandlesAuthenticationChallenges(false);
+    	testRunner.setPrivateBrowsingEnabled(false);
+    }
+
+    // If the username and password were in the WebCore CredentialStorage, WebKit would automatically send them out for this resource.
+    // The credentials would be wrong, but it would send them out.
+    // Since the credentails that were cached from the first iframe load should have been forgotten after private browsing was disabled,
+    // no credentials should be sent out automatically this time.
+    
+    var frame = document.createElement("iframe");
+    frame.setAttribute("src", "resources/auth-echo.php");
+    frame.setAttribute("onload", "secondFrameLoaded()");
+    document.body.appendChild(frame);
+}
+
+function secondFrameLoaded() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+</script>
+<body>
+This test makes sure that auth credentials cached during a private browsing session do not leak out after private browsing is disabled.
+<iframe src="resources/basic-auth.php?username=webkit&password=rocks" onload="firstFrameLoaded();"></iframe>
+</body>

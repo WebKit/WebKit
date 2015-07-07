@@ -1,3 +1,13 @@
+2015-07-07  Brady Eidson  <beidson@apple.com>
+
+        HTTP Auth cached after disabling private browsing/reset.
+        <rdar://problem/8293055> and https://bugs.webkit.org/show_bug.cgi?id=146654
+
+        Reviewed by Tim Horton.
+
+        * WebDownloadCFNet.cpp:
+        (WebDownload::didReceiveAuthenticationChallenge):
+
 2015-07-04  Chris Dumez  <cdumez@apple.com>
 
         Drop RefPtr::clear() method

@@ -421,6 +421,9 @@ fast/dynamic/window-resize-scrollbars-test.html [ Failure ]
 # This test is not the cause of the problem, just the one that happens to currently be the victim.
 svg/filters/filter-hidden-content.svg [ Pass Failure ]
 
+# No good way to test private browsing in WKTR right now
+http/tests/security/private-browsing-http-auth.html
+
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################
 

@@ -1,3 +1,16 @@
+2015-07-07  Brady Eidson  <beidson@apple.com>
+
+        HTTP Auth cached after disabling private browsing/reset.
+        <rdar://problem/8293055> and https://bugs.webkit.org/show_bug.cgi?id=146654
+
+        Reviewed by Tim Horton.
+
+        * http/tests/security/private-browsing-http-auth-expected.txt: Added.
+        * http/tests/security/private-browsing-http-auth.html: Added.
+        * http/tests/security/resources/auth-echo.php: Added.
+        * http/tests/security/resources/basic-auth.php: Added.
+        * platform/wk2/TestExpectations:
+
 2015-07-07  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION(169105): CSS Regions: renderer returns wrong selection root when it is inside a column flow.

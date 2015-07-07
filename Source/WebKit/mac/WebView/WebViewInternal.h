@@ -103,6 +103,8 @@ OBJC_CLASS NSTextAlternatives;
 - (WebCore::Frame*)_mainCoreFrame;
 - (WebFrame *)_selectedOrMainFrame;
 
+- (void)_clearCredentials;
+
 - (WebCore::KeyboardUIMode)_keyboardUIMode;
 
 - (BOOL)_becomingFirstResponderFromOutside;
