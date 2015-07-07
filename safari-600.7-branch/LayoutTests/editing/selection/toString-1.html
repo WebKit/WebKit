@@ -1,0 +1,42 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<script>
+function log(str) {
+    var li = document.createElement("li");
+    li.appendChild(document.createTextNode(str));
+    var console = document.getElementById("console");
+    console.appendChild(li);
+}
+
+function runTest() {
+    try {
+        if (window.testRunner)
+            window.testRunner.dumpAsText();
+           
+        var selection = window.getSelection();
+        var bodyElement = document.getElementById("test");
+        var htmlElement = bodyElement.parentNode;
+        
+        if (selection.setBaseAndExtent)
+            selection.setBaseAndExtent(bodyElement, 1, htmlElement, 3);
+        else
+            throw("Couldn't set a selection.");
+        
+        if (selection.toString) {
+            var string = selection.toString();
+            if (string != "\nbbbb")
+                throw("toString returned unexpected result");
+            log("success");
+        } else
+            throw("Selection::toString() not supported");
+    } catch(e) {
+        log("Test Failed.  Error was: " + e);
+    }
+}
+</script>
+<body id="test" contenteditable>aaaa<object></object><div>bbbb</div>
+<ul id="console"></ul>
+<script>runTest();</script>
+</body>

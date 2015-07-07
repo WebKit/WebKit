@@ -1,0 +1,46 @@
+<html>
+<head>
+<style>
+    pre { margin: 0.1em; tab-size: 4; }
+</style>
+<script>
+
+function setupBlock(description, style)
+{
+    var descriptionBlock = document.createElement("b");
+    descriptionBlock.innerHTML = description;
+    document.body.appendChild(descriptionBlock);
+
+    var block = document.createElement("div");
+    if (style)
+        block.setAttribute("style", style);
+    block.innerHTML = document.getElementById("template").innerHTML;
+    document.body.appendChild(block);
+    return block;
+}
+
+function test()
+{
+    setupBlock("Apple system font.", "font: 12.000000px -apple-system-font;");
+    setupBlock("Noteworthy.", "font: 18.000000px Noteworthy-Light;");
+    setupBlock("Helvetica.", "font: 24.000000px Helvetica;");
+}
+</script>
+</head>
+<body onload="test();">
+<div id="template" style="display:none;">
+<span style="white-space: pre">&Tab;x</span>
+<br>
+<span style="white-space: pre">&Tab;&Tab;x</span>
+<br>
+<span style="white-space: pre">&Tab;&Tab;&Tab;x</span>
+<br>
+<span style="white-space: pre">&Tab;&Tab;&Tab;&Tab;x</span>
+<br>
+<span style="white-space: pre">&Tab;&Tab;&Tab;&Tab;&Tab;x</span>
+<br>
+<span style="white-space: pre">&Tab;&Tab;&Tab;&Tab;&Tab;&Tab;x</span>
+</div>
+
+</body>
+</html>

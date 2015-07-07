@@ -1,0 +1,30 @@
+
+<!DOCTYPE html>
+<html>
+<body onload="runRepaintTest()" style="margin: 0px">
+<script src="resources/repaint.js"></script>
+<style>
+td {
+  height: 150px;
+  width: 150px;
+  background-color: blue;
+}
+</style>
+<!-- This test adds 3 tables do the document.  Adding the 3rd table should not cause the first table to repaint. -->
+<div id="container"></div>
+<script>
+function addTable() {
+	var div = document.createElement('div');
+	document.getElementById('container').appendChild(div);
+  div.innerHTML = '<table><td></td></table>';
+}
+addTable();
+addTable();
+if (window.testRunner)
+    testRunner.dumpAsText(true); // We don't care about the rendering tree dump, just the pixel dump.
+function repaintTest() {
+  addTable();
+}
+</script>
+</body>
+</html>

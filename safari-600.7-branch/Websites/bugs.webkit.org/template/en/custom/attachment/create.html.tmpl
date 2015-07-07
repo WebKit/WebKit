@@ -1,0 +1,147 @@
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla Bug Tracking System.
+  #
+  # The Initial Developer of the Original Code is Netscape Communications
+  # Corporation. Portions created by Netscape are
+  # Copyright (C) 1998 Netscape Communications Corporation. All
+  # Rights Reserved.
+  #
+  # Contributor(s): Myk Melez <myk@mozilla.org>
+  #                 Joel Peshkin <bugreport@peshkin.net>
+  #                 Erik Stambaugh <erik@dasbistro.com>
+  #                 Marc Schumann <wurblzap@gmail.com>
+  #%]
+
+[% PROCESS "global/field-descs.none.tmpl" %]
+
+[%# Define strings that will serve as the title and header of this page %]
+[% title = BLOCK %]Create New Attachment for [% terms.Bug %] #[% bug.bug_id %][% END %]
+[% header = BLOCK %]Create New Attachment for
+  [%+ "$terms.Bug $bug.bug_id" FILTER bug_link(bug.bug_id) FILTER none %][% END %]
+[% subheader = BLOCK %][% bug.short_desc FILTER html %][% END %]
+
+[% PROCESS global/header.html.tmpl
+  title = title
+  header = header
+  subheader = subheader
+  onload="setContentTypeDisabledState(document.entryform);"
+  style_urls = [ 'skins/standard/create_attachment.css' ]
+  javascript_urls = [ "js/attachment.js" ]
+  doc_section = "attachments.html"
+%]
+
+<form name="entryform" method="post" action="attachment.cgi" enctype="multipart/form-data">
+  <input type="hidden" name="bugid" value="[% bug.bug_id %]">
+  <input type="hidden" name="action" value="insert">
+  <input type="hidden" name="token" value="[% token FILTER html %]">
+
+  <table class="attachment_entry">
+    [% PROCESS attachment/createformcontents.html.tmpl %]
+
+    [%# Additional fields for attachments on existing bugs: %]
+    <tr>
+      <th>Obsoletes:</th>
+      <td>
+        <em>(optional) Check each existing attachment made obsolete by your new attachment.</em><br>
+        [% IF attachments.size %]
+          [% FOREACH attachment = attachments %]
+            [% IF ((attachment.isprivate == 0) || (Param("insidergroup")
+              && user.in_group(Param("insidergroup")))) %]
+              <input type="checkbox" id="[% attachment.id %]"
+                   name="obsolete" value="[% attachment.id %]">
+              <a href="attachment.cgi?id=[% attachment.id %]&amp;action=edit">[% attachment.id %]: [% attachment.description FILTER html %]</a><br>
+            [% END %]
+          [% END %]
+        [% ELSE %]
+            [no attachments can be made obsolete]
+        [% END %]
+      </td>
+    </tr>
+
+    [% IF (user.id != bug.assigned_to.id) AND user.in_group("editbugs", bug.product_id) %]
+      <tr>
+        <th>Reassignment:</th>
+        <td>
+          <em>If you want to assign this [% terms.bug %] to yourself,
+              check the box below.</em><br>
+          <input type="checkbox" id="takebug" name="takebug" value="1">
+          <label for="takebug">take [% terms.bug %]</label>
+          [% bug_statuses = [] %]
+          [% FOREACH bug_status = bug.status.can_change_to %]
+            [% NEXT IF bug_status.name == "UNCONFIRMED" && !bug.product_obj.votes_to_confirm %]
+            [% bug_statuses.push(bug_status) IF bug_status.is_open %]
+          [% END %]
+          [% IF bug_statuses.size %]
+            <label for="takebug">and set the [% terms.bug %] status to</label>
+            <select id="bug_status" name="bug_status">
+              <option value="[% bug.status.name FILTER html %]">[% get_status(bug.status.name) FILTER html %] (current)</option>
+              [% FOREACH bug_status = bug_statuses %]
+                [% NEXT IF bug_status.id == bug.status.id %]
+                <option value="[% bug_status.name FILTER html %]">[% get_status(bug_status.name) FILTER html %]</option>
+              [% END %]
+            </select>
+          [% END %]
+        </td>
+      </tr>
+    [% END %]
+    <tr>
+      <th><label for="comment">Comment:</label></th>
+      <td>
+        <em>(optional) Add a comment about this attachment to the [% terms.bug %].</em><br>
+        [% INCLUDE global/textarea.html.tmpl
+          name    = 'comment'
+          id      = 'comment'
+          minrows = 6
+          maxrows = 15
+          cols    = constants.COMMENT_COLS
+          wrap    = 'soft'
+        %]
+      </td>
+    </tr>
+    [% IF (Param("insidergroup") && user.in_group(Param("insidergroup"))) %]
+      <tr>
+        <th>Privacy:</th>
+        <td>
+          <em>If the attachment is private, check the box below.</em><br>
+          <input type="checkbox" name="isprivate" id="isprivate"
+          value="1" onClick="updateCommentPrivacy(this)">
+        <label for="isprivate">Private</label>
+        </td>
+      </tr>
+    [% END %]
+[%# if WEBKIT_CHANGES %]
+[% IF (bug.product == "WebKit" || bug.product == "Security") %] 
+    <tr id="legal" style="visibility: collapse;">
+      <th>Legal:</th>
+      <td>
+        <b>WebKit Contribution Terms:</b><br/>
+        <br/>
+        Hello and thank you for contributing a patch.  Here is our licensing policy and terms for contributing code to the WebKit project.<br/>
+        <br/>
+        <ol>
+          <li>If you are sending in a patch to existing WebKit code, you agree by clicking below that your changes are licensed under the existing license terms of the file you are modifying (i.e., BSD license or GNU Lesser General Public License v.2.1, LGPL v. 2.1).  Please also add your copyright (name and year) to the relevant files for changes that are more than 10 lines of code.</li>
+          <li>If you are sending in a new file for inclusion in WebKit (no code copied from another source), the preferred license is BSD, but LGPL 2.1 is an option as well.  Please include your copyright (name and year) and license preference (BSD or LGPL 2.1).  By clicking below you agree that your file is licensed under either the BSD license or LGPL 2.1, as indicated in your file.</li>
+          <li>If you aren't the author of the patch, you agree to include the original copyright notices and licensing terms with it, to the extent that they exist.  If there wasn't a copyright notice or license, please make a note of it.  Generally we can only take in patches that are BSD- or LGPL-licensed in order to maintain license compatibility within the project.</li>
+        </ol>
+      </td>
+    </tr>
+[% END %]
+[%# endif // WEBKIT_CHANGES %]
+    <tr>
+      <th>&nbsp;</th>
+      <td><input type="submit" id="create" value="Submit"></td>
+    </tr>
+  </table>
+
+</form>
+
+[% PROCESS global/footer.html.tmpl %]

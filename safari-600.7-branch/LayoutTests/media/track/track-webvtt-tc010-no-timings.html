@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>            
+ 
+            function trackLoaded()
+            {
+                findMediaElement();
+                var expected = 
+                {
+                    length : 0,
+                    tests:
+                    [],
+                };
+                testCues(0, expected);
+                
+                endTest();
+            }
+
+            setCaptionDisplayMode('Automatic');
+        </script>
+    </head>
+    <body>
+    <p>Tests cue without timings are ignored.</p>
+        <video>
+            <track src="captions-webvtt/tc010-no-timings.vtt" onload="trackLoaded()" default>
+        </video>
+    </body>
+</html>

@@ -1,0 +1,12 @@
+<p>This tests moving forward by sentence boundaries.  The caret should be at the start of the third sentence.</p>
+
+<div id="div" contenteditable="true">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc a augue. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris ut pede. Integer lacus. Ut ipsum. Phasellus tristique leo eu velit. Vestibulum arcu lacus, blandit ac, condimentum sed, commodo in, arcu. Curabitur suscipit pede eu sem.</div>
+
+<script>
+var sel = window.getSelection();
+var div = document.getElementById("div");
+var text = div.firstChild;
+sel.setPosition(text, 5);
+sel.modify("move", "forward", "sentenceBoundary");
+sel.modify("move", "forward", "sentenceBoundary");
+</script>

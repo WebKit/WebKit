@@ -1,0 +1,123 @@
+<?php 
+    $title="A guide to Assertion macros in WebKit";
+    include("../header.inc"); 
+?>
+
+<style type="text/css">
+    .code {
+        background-color: #eee;
+        padding: 1em;
+        margin-left: 2em;
+        margin-right: 2em;
+        overflow-x: auto;
+    }
+    .comment .function, .class, .variable {
+        font-style: italic;
+    }
+</style>
+
+<h1>
+  A guide to Assertion macros in WebKit
+</h1>
+<div>
+  Version 1, 2010-5-24
+</div>
+<h2>
+  Background
+</h2>
+<p>
+  WebKit provides a number of macros to assert that conditions in the code are met. They are defined in <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/wtf/Assertions.h">Source/JavaScriptCore/wtf/Assertions.h</a>. This document provides an overview of the various macros, including guidelines and best practices for their use.
+</p>
+<h2>
+  Types of ASSERT macros
+</h2>
+<p>
+  The ASSERT() macro and its variants are compiled out of release builds. They are meant for use during the development process to catch programming mistakes. For those macros that accept an expression as an argument, the expression is also compiled out of release builds and thus incurs no overhead in shipping code.
+</p>
+<ul>
+  <li>ASSERT(expression) - for use during development to ensure that unexpected conditions do not occur. If the expression evaluates to false then abort execution and break into the debugger.
+  </li>
+  <li>ASSERT_NOT_REACHED() - for use when a certain branch of code should never be executed.
+    <pre class="code">
+if (condition) {
+  ...
+} else {
+    <span class="comment">// This should never happen.</span>
+    ASSERT_NOT_REACHED();
+}
+</pre>
+  </li>
+  <li>ASSERT_UNUSED(variable, expression) - for assertions that check the value of otherwise unused variable. The need for this becomes apparent if you consider the case where you want to assert an expression that uses a variable that wouldn't otherwise be used in the enclosing function. ASSERT() can't be used in this case because in a release build the compiler would warn about the unused variable. ASSERT_UNUSED() avoids this warning. <br>
+Example from <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/jit/ExecutableAllocatorPosix.cpp">Source/JavaScriptCore/jit/ExecutableAllocatorPosix.cpp</a> :
+    <pre class="code">
+void ExecutablePool::systemRelease(const ExecutablePool::Allocation&amp; alloc)
+{ 
+    int result = munmap(alloc.pages, alloc.size);
+    <span class="comment">// result not used outside the ASSERT().</span>
+    ASSERT_UNUSED(result, !result);
+}
+</pre>
+  </li>
+</ul>
+<h2>
+  The CRASH() macro
+</h2>
+<p>
+  CRASH() raises a fatal error resulting in program termination and triggering either the debugger or the crash reporter. It is active in both debug &amp; release mode. CRASH() directly affects users in that it will disrupt or end their browsing session. If a browser vendor traces crashes, it can be extremely helpful in diagnosing hard to find issues that may only occur on users' machines.
+</p>
+<h2>
+  Considerations when using ASSERT() and CRASH() macros.
+</h2>
+<h3>
+  Hazards of using the ASSERT() family of macros
+</h3>
+<p>
+  The expression inside the ASSERT and ASSERT_UNUSED macro is compiled out of release builds together with the macro itself. If the expression that's used has side effects, its omission in release build can lead to programming errors that don't manifest in debug builds.
+</p>
+<h3>
+  The benefits of using CRASH:
+</h3>
+<ul>
+  <li>If a browser vendor traces crashes in their software, CRASH() can provide vital information from end users to allow an issue to be resolved.
+  </li>
+  <li>Code after CRASH() is guaranteed unreachable, which can help prevent some bugs from being security liabilities.
+  </li>
+</ul>
+<h3>
+  The cost of using CRASH:
+</h3>
+<ul>
+  <li>Use of the CRASH macro turns a programming error into a crash, blowing away a webpage or an entire web browser in cases that otherwise might be harmless.
+  </li>
+  <li>Checking for the error condition in release builds may slow the program down.
+  </li>
+</ul>
+<h2>
+  Guidelines for using ASSERT() and CRASH() macros.
+</h2>
+<ul>
+  <li>Use ASSERT() for things that should never happen, but if they do will cause incorrect results rather than a crash or memory corruption.
+  </li>
+  <li>Assertions are claims that a programmer knows to be true, and they fire only when that programmer turns out to be wrong because there is some kind of programming mistake. There should be no "wishful thinking" involved. For example, ASSERT() should not be used to verify that a file system call has succeeded, because there is no way for a programmer to guarantee that.
+  </li>
+  <li>Use CRASH() for cases that shouldn't happen, but if they do would be unrecoverable. e.g. out of memory errors.
+  </li>
+</ul>
+<h3>
+  Examples of using CRASH() vs ASSERT()
+</h3>
+<pre class="code">
+<span class="comment">// Not having any children indicates a programming error.</span>
+ASSERT(object-&gt;numChildren() &gt; 0);
+
+Allocation bitmapStorage = systemAlloc(allocSize);
+if (!bitmapStorage.pages)
+    CRASH(); <span class="comment">// Not possible to recover from an out of memory error.</span>
+</pre>
+<p>
+  If you have any comments on the above or other ideas about improving the clarity, scope, or presentation, please send mail to the <a href="/contact.html">WebKit mailing list</a>.
+</p>
+
+<?php
+    include("../footer.inc");
+?>

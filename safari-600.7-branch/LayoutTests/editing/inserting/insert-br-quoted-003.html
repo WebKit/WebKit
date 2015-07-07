@@ -1,0 +1,54 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+.scenario:first-line { font-weight: bold; font-size: 24px; }
+.expected:first-line { font-weight: bold; font-size: 24px; }
+.citation { margin-bottom: 0px; border: 2px solid blue; font-size: 24px; }
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    moveSelectionForwardByCharacterCommand();
+    moveSelectionForwardByCharacterCommand();
+    moveSelectionForwardByCharacterCommand();
+    moveSelectionForwardByCharacterCommand();
+    insertNewlineInQuotedContentCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body id="root">
+<div class="explanation">
+<div class="scenario">
+Splitting Mail blockquotes.
+</div>
+<div class="expected">
+Expected Results:
+<br>
+Two blockquotes, with an unquoted blank line in between.<br>
+The first blockquote contains two lines, the second one is blank.<br>
+The second blockquote contains two non-blank lines.
+</div>
+</div>
+<div contenteditable class="editing">My citation:
+<div id="test">
+<blockquote class="citation" type="cite"><div>one</div><div style="min-height: 24px;"><div style="min-height: 24px;"><div style="min-height: 24px;"><br>one and a half</div></div></div><div>two</div></blockquote>
+</div>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

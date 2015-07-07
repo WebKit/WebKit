@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+
+  <style type="text/css">
+    #transform {
+      -webkit-transform: rotateZ(0deg) rotateX(0deg) rotateY(0deg);
+    }
+  </style>
+
+  <script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    var paintCount = 0;
+
+    function onLoad()
+    {
+      testRunner.display();
+      paintCount = 0;
+      document.getElementById('testPlugin').invalidateRect(0, 0, 200, 200);
+      testRunner.displayInvalidatedRegion();
+      if (paintCount > 0)
+          document.getElementById('result').innerHTML = "SUCCESS";
+    }
+
+    function didPaint()
+    {
+      paintCount++;
+    }
+  </script>
+</head>
+<body onload="onLoad();">
+  This tests that NPN_InvalidateRect works correctly.
+
+  <div id="result">FAILURE</div>
+
+  <!-- force this page to be composited -->
+  <div id="transform">
+  </div>
+
+  <!-- Move the plugin to the middle of the page. This ensures that invalidate() will invalidate the correct region. -->
+  <div style="position: absolute; left: 300px; top: 300px; height: 400px; width: 400px; padding: 1em;">
+
+    <embed id="testPlugin" type="application/x-webkit-test-netscape" width="200" height="200" onpaintevent="didPaint()" windowedPlugin="false"></embed>
+
+  </div>
+</body>
+</html>

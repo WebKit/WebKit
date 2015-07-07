@@ -1,0 +1,17 @@
+<script>
+function test()
+{
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    var ta = document.getElementById("ta");
+    ta.focus();
+    document.execCommand("InsertLineBreak");
+    var result = ta.value;
+    if (result == "\n")
+        document.write("<p>Hooray, the test was successful!</p>");
+    else
+        document.write("<p>The test failed, result was '" + result.replace("\n", "\\n") + "'.</p>");
+}
+</script>
+<body onload="test()">
+<p><textarea id="ta"></textarea></p>

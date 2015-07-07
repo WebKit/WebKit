@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 256x56
+    RenderSVGText {text}
+      RenderSVGInline {tref} at (0,0) size 0x0
+      RenderSVGInlineText {#text} at (0,0) size 0x0
+    RenderSVGText {text} at (200,24) size 56x32 contains 1 chunk(s)
+      RenderSVGInline {tref} at (0,0) size 56x32
+        RenderSVGInlineText {#text} at (0,0) size 56x32
+          chunk 1 text run 1 at (200.00,50.00) startOffset 0 endOffset 3 width 55.10: "QUX"
+      RenderSVGInlineText {#text} at (0,0) size 0x0
+    RenderSVGText {text} at (0,-15) size 35x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 35x19
+        chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 3 width 34.66: "QUX"

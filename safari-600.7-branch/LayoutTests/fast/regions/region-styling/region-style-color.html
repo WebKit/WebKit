@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+    <!--
+    Test for https://bugs.webkit.org/show_bug.cgi?id=85633 ([CSSRegions]Add region styling support for color property).
+    You should not see any red text below.
+    -->
+    <head>
+        <style>
+            body { font-family: monospace; }
+            .regionBox { width: 350px; height: 25px; }
+            .regionBox2 { width: 350px; height: 50px; }
+
+            #article1 { -webkit-flow-into: flow1; }
+            #region1 { -webkit-flow-from: flow1; position: absolute; top: 10px; }
+            #p1 { color: #ff0000; }
+            @-webkit-region #region1 {
+                #p1 { color: #008000; }
+            }
+
+            #article2 { -webkit-flow-into: flow2; }
+            #region2 { -webkit-flow-from: flow2; position: absolute; top: 50px; }
+            #span2 { color: #ff0000; }
+            @-webkit-region #region2 {
+                #span2 { color: #008000; }
+            }
+
+            #article3 { -webkit-flow-into: flow3; }
+            #region3 { -webkit-flow-from: flow3; position: absolute; top: 90px; }
+            #article3 { color: #ff0000; }
+            @-webkit-region #region3 {
+                #article3 { color: #0000ff; }
+                #div3 { color: #008000; }
+            }
+
+            #article4 { -webkit-flow-into: flow4; }
+            #region41 { -webkit-flow-from: flow4; position: absolute; top: 150px; }
+            #region42 { -webkit-flow-from: flow4; position: absolute; top: 190px; }
+            #article4 { color: #ff0000; }
+            @-webkit-region #region41 {
+                #span4 { color: #008000; }
+            }
+            @-webkit-region #region42 {
+                #span4 { color: #00ff00; }
+            }
+
+            #article5 { -webkit-flow-into: flow5; }
+            #region51 { -webkit-flow-from: flow5; position: absolute; top: 230px; }
+            #region52 { -webkit-flow-from: flow5; position: absolute; top: 290px; }
+            #article5 { color: #ff0000; }
+            @-webkit-region #region51, #region52 {
+                #article5 { color: #00ff00; }
+                em { color: #008000; }
+            }
+        </style>
+    </head>
+    <body>
+        <div id="article1">
+            <p id="p1">P color styled in region: #008000.</p>
+        </div>
+        <div id="region1" class="regionBox"></div>
+
+        <div id="article2">
+            <span id="span2">Span color styled in region: #008000.</span>
+        </div>
+        <div id="region2" class="regionBox"></div>
+
+        <div id="article3">
+            Text color styled in region: #0000ff.
+            <div id="div3">Div color styled in region: #008000.</div>
+            Text color styled in region: #0000ff.
+        </div>
+        <div id="region3" class="regionBox2"></div>
+
+        <div id="article4">
+            <span id="span4">Span text color styled in region: #008000. Span text color styled in region: #00ff00.</span>
+        </div>
+        <div id="region41" class="regionBox"></div>
+        <div id="region42" class="regionBox"></div>
+
+        <div id="article5">
+            <div id="div5">
+                Text color styled in region: #00ff00.
+                <em style="display: block; -webkit-region-break-after: always">Em color styled in region: #008000.</em>
+                Text color styled in region: #00ff00.
+                <em>Em color styled in region: #008000.</em>
+                Text color styled in region: #00ff00.
+            </div>
+        </div>
+        <div id="region51" class="regionBox2"></div>
+        <div id="region52" class="regionBox2"></div>
+    </body>
+</html>

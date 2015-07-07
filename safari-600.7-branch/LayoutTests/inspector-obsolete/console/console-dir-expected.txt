@@ -1,0 +1,30 @@
+CONSOLE MESSAGE: line 9: test1,test2
+CONSOLE MESSAGE: line 10: [object NodeList]
+CONSOLE MESSAGE: line 11: [object XPathResult]
+Tests that console logging dumps proper messages.
+
+
+
+Array[2]
+    0: "test1"
+    1: "test2"
+    length: 2
+    __proto__: Array[0] console-dir.html:9
+
+NodeList[1]
+    0: html
+    constructor: NodeListConstructor
+    length: 1
+    __proto__: NodeListPrototype console-dir.html:10
+
+XPathResult
+    booleanValue: [Exception: XPathException]
+    constructor: XPathResultConstructor
+    invalidIteratorState: false
+    numberValue: [Exception: XPathException]
+    resultType: 4
+    singleNodeValue: [Exception: XPathException]
+    snapshotLength: [Exception: XPathException]
+    stringValue: [Exception: XPathException]
+    __proto__: XPathResultPrototype console-dir.html:11
+

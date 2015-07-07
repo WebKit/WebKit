@@ -1,0 +1,127 @@
+Test texImage2D conversions.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+
+check pixels are NOT pre-multiplied
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS pixel 0, 15 should be 0, 0, 0, 255 was 0, 0, 0, 255
+FAIL pixel 128, 15 should be 255, 0, 255, 255 was 0, 0, 0, 255
+FAIL pixel 255, 15 should be 0, 0, 255, 255 was 0, 0, 0, 255
+FAIL pixel 0, 8 should be 128, 128, 128, 255 was 0, 0, 0, 255
+FAIL pixel 128, 8 should be 255, 255, 255, 255 was 0, 0, 0, 255
+FAIL pixel 255, 8 should be 0, 255, 255, 255 was 0, 0, 0, 255
+FAIL pixel 0, 0 should be 255, 0, 0, 255 was 0, 0, 0, 255
+FAIL pixel 128, 0 should be 255, 255, 0, 255 was 0, 0, 0, 255
+FAIL pixel 255, 0 should be 0, 255, 0, 255 was 0, 0, 0, 255
+
+check quantization
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+FAIL There should be 256 unique values in channel 0. Found 200
+FAIL There should be 256 unique values in channel 1. Found 200
+FAIL There should be 256 unique values in channel 2. Found 200
+PASS There should be 256 unique values in channel 3. Found 256
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+PASS There should be 16 unique values in channel 0. Found 16
+PASS There should be 16 unique values in channel 1. Found 16
+PASS There should be 16 unique values in channel 2. Found 16
+PASS There should be 16 unique values in channel 3. Found 16
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+PASS There should be 32 unique values in channel 0. Found 32
+FAIL There should be 64 unique values in channel 1. Found 62
+PASS There should be 32 unique values in channel 2. Found 32
+PASS There should be 1 unique values in channel 3. Found 1
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+PASS There should be 32 unique values in channel 0. Found 32
+PASS There should be 32 unique values in channel 1. Found 32
+PASS There should be 32 unique values in channel 2. Found 32
+PASS There should be 2 unique values in channel 3. Found 2
+
+Check that gamma settings don't effect 8bit pngs
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+PASS pixels should be same regardless of gamma settings.
+PASS pixels should be same regardless of gamma settings.
+PASS pixels should be same regardless of gamma settings.
+PASS pixels should be same regardless of gamma settings.
+PASS pixels should be same regardless of gamma settings.
+
+check pixels are UN pre-multiplied
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+PASS Half the pixels in channel 0 should be >= 128,128,128. found 50%
+PASS Half the pixels in channel 0 should be < 128,128,128. found 50%
+PASS Half the pixels in channel 1 should be >= 128,128,128. found 50%
+PASS Half the pixels in channel 1 should be < 128,128,128. found 50%
+PASS Half the pixels in channel 2 should be >= 128,128,128. found 50%
+PASS Half the pixels in channel 2 should be < 128,128,128. found 50%
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+PASS Half the pixels in channel 0 should be >= 128,128,128. found 50%
+PASS Half the pixels in channel 0 should be < 128,128,128. found 50%
+PASS Half the pixels in channel 1 should be >= 128,128,128. found 50%
+PASS Half the pixels in channel 1 should be < 128,128,128. found 50%
+PASS Half the pixels in channel 2 should be >= 128,128,128. found 50%
+PASS Half the pixels in channel 2 should be < 128,128,128. found 50%
+
+check canvas pixels are UN pre-multiplied
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+PASS pixel 0, 0 should be within 4 units of 255, 255, 255, 127
+
+check canvas pixels are pre-multiplied
+PASS getError was expected value: NO_ERROR : Should be no errors from setup.
+PASS pixel 0, 0 should be within 4 units of 127, 127, 127, 127
+
+check pixels are pre-multiplied
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS pixels should all be 0.
+
+check pixels are flipped
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS pixel 0, 15 should be 255, 0, 0, 255 was 255, 0, 0, 255
+PASS pixel 128, 15 should be 255, 255, 0, 255 was 255, 255, 0, 255
+PASS pixel 255, 15 should be 255, 0, 0, 255 was 255, 0, 0, 255
+PASS pixel 0, 8 should be 255, 0, 255, 255 was 255, 0, 255, 255
+PASS pixel 128, 8 should be 255, 0, 0, 255 was 255, 0, 0, 255
+PASS pixel 255, 8 should be 0, 255, 0, 255 was 0, 255, 0, 255
+PASS pixel 0, 0 should be 0, 0, 0, 255 was 0, 0, 0, 255
+PASS pixel 128, 0 should be 0, 0, 255, 255 was 0, 0, 255, 255
+PASS pixel 255, 0 should be 255, 0, 0, 255 was 255, 0, 0, 255
+
+check uploading of images with no alpha channel works
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS pixel 128, 8 should be within 10 units of 0, 0, 255, 255
+PASS getError was expected value: NO_ERROR : Should be no errors
+
+check uploading of 16-bit images
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS pixel 128, 8 should be within 10 units of 15, 121, 0, 255
+PASS getError was expected value: NO_ERROR : Should be no errors
+
+check uploading of images with ICC profiles
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS pixel 128, 8 should be within 10 units of 0, 0, 255, 255
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS pixel 128, 8 should be within 10 units of 0, 0, 255, 255
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS getError was expected value: NO_ERROR : Should be no errors
+PASS uploading PNGs with same data but various ICC profiles should generate the same results
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS getError was expected value: NO_ERROR : Should be no errors
+PASS uploading PNGs with same data but various ICC profiles should generate the same results
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS getError was expected value: NO_ERROR : Should be no errors
+PASS uploading PNGs with same data but various ICC profiles should generate the same results
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS getError was expected value: NO_ERROR : Should be no errors
+PASS uploading PNGs with same data but various ICC profiles should generate the same results
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS getError was expected value: NO_ERROR : Should be no errors
+PASS uploading PNGs with same data but various ICC profiles should generate the same results
+
+check uploading of indexed PNG images
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS pixel 128, 8 should be within 10 units of 255, 0, 0, 255
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

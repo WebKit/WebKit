@@ -1,0 +1,5 @@
+This tests for a bug where underlined content would lose its underliningwhen deleting the line break before the paragraph that contained it.
+| "This shouldn't be underlined.<#selection-caret>"
+| <span>
+|   style="text-decoration: underline;"
+|   "This should be underlined."

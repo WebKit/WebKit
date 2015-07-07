@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<body>
+<div id="container" style="display: none;"></div>
+<script src="../resources/magnitude-perf.js"></script>
+<script>
+
+var container = document.getElementById('container');
+
+function setupFunction(magnitude)
+{
+    container.innerHTML = '';
+    for (var i = 0; i < magnitude; i++)
+        container.appendChild(document.createElement('div'));
+}
+
+function test(magnitude)
+{
+    var children = container.children;
+    for (var i = children.length; i > 0;i--)
+        children[i - 1].class = 'hi';
+}
+
+Magnitude.description("Tests that iterating over HTMLCollection backwards is linear.");
+Magnitude.run(setupFunction, test, Magnitude.LINEAR);
+
+</script>
+</body>
+</html>

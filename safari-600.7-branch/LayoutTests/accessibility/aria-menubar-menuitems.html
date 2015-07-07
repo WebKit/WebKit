@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<ul id="menubar" role="menubar" aria-owns="menuitem1 menuitem2">
+  <li id="menuitem1" role="menuitem" tabindex="0" aria-owns="submenu1">
+    Menu 1
+    <ul id="submenu1" role="menu">
+      <li id="menuitem11" role="menuitemradio" tabindex="-1">
+        Menu item 1.1
+      </li>
+    </ul>
+  </li>
+  <li id="menuitem2" role="menuitem" tabindex="0" aria-owns="submenu2">
+    Menu 2
+    <ul id="submenu2" role="menu">
+      <li id="menuitem21" role="menuitemradio" tabindex="-1">
+        Menu item 2.1
+      </li>
+      <li id="menuitem22" role="menuitemradio" tabindex="-1">
+        Menu item 2.2
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("This tests that ARIA menu items are properly exposed as children for menu bars");
+
+if (window.layoutController) {
+    testRunner.dumpAsText();
+}
+
+if (window.accessibilityController) {
+    document.getElementById("body").focus();
+    var webArea = accessibilityController.focusedElement;
+
+    var menuBar = webArea.childAtIndex(0);
+    debug(menuBar.role);
+    shouldBe("menuBar.childrenCount", "2");
+
+    var menuItem = menuBar.childAtIndex(0);
+    debug(menuItem.role);
+    shouldBe("menuItem.childrenCount", "2");
+
+    var menuSubItem1 = menuItem.childAtIndex(0);
+    debug(menuSubItem1.role);
+    shouldBe("menuSubItem1.childrenCount", "0");
+
+    var menuSubItem2 = menuItem.childAtIndex(1);
+    debug(menuSubItem2.role);
+    shouldBe("menuSubItem2.childrenCount", "1");
+
+    var subMenuSubItem = menuSubItem2.childAtIndex(0);
+    debug(subMenuSubItem.role);
+    shouldBe("subMenuSubItem.childrenCount", "0");
+}
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

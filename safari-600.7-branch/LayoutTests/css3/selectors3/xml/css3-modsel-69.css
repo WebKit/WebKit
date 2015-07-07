@@ -1,0 +1,4 @@
+button { background-color : red }
+input { background-color : red }
+button:not(:disabled) { background-color : lime }
+input:not(:disabled) { background-color : lime }

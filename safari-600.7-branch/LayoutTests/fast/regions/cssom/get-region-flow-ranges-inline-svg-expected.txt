@@ -1,0 +1,7 @@
+Test that getting the region ranges when the flowing content has inline svg does not crash.
+
+On success you should see PASS below.
+
+PASS
+
+

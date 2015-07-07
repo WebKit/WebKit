@@ -1,0 +1,251 @@
+<!--
+Copyright (c) 2011 The Chromium Authors. All rights reserved.
+Use of this source code is governed by a BSD-style license that can be
+found in the LICENSE file.
+ -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL Texture Format Conformance Tests</title>
+<link rel="stylesheet" href="../../resources/js-test-style.css"/>
+<script src="../../resources/desktop-gl-constants.js" type="text/javascript"></script>
+<script src="../../debug/webgl-debug.js" type="text/javascript"></script>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/webgl-test.js"></script>
+<script src="../resources/webgl-test-utils.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<canvas id="canvas2d" width="2" height="2" style="width: 50px; height: 50px; border: 1px solid black;"></canvas>
+<canvas id="canvas" width="2" height="2" style="width: 100px; height:100px; border: 1px solid black;"> </canvas>
+<script>
+description("This test ensures WebGL implementations allow the OpenGL ES 2.0 texture formats and do not allow DesktopGL texture formats.");
+
+debug("");
+debug("Canvas.getContext");
+
+var wtu = WebGLTestUtils;
+var gl = wtu.create3DContext(document.getElementById("canvas"));
+if (!gl) {
+  testFailed("context does not exist");
+} else {
+  testPassed("context exists");
+  if ("WebGLDebugUtils" in window)
+    WebGLDebugUtils.init(gl);
+  else
+    WebGLDebugUtils = false;
+
+  debug("");
+  debug("Checking texture formats.");
+
+  function createTexture(internalFormat, format, opt_border) {
+      var border = (opt_border === undefined) ? 0 : opt_border;
+      var tex = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.texImage2D(gl.TEXTURE_2D,
+                    0,                 // level
+                    internalFormat,    // internalFormat
+                    16,                // width
+                    16,                // height
+                    border,            // border
+                    format,            // format
+                    gl.UNSIGNED_BYTE,  // type
+                    null);             // data
+  }
+
+  function testValidFormat(internalFormat, formatName) {
+      createTexture(internalFormat, internalFormat);
+      glErrorShouldBe(gl, gl.NO_ERROR,
+                "was able to create texture of " + formatName);
+  }
+
+  function testInvalidFormat(internalFormat, formatName) {
+      createTexture(internalFormat, internalFormat);
+      var err = gl.getError();
+      if (err == gl.NO_ERROR) {
+          testFailed("should NOT be able to create texture of type " + formatName);
+      } else if (err == gl.INVALID_OPERATION) {
+          testFailed("should return gl.INVALID_ENUM for type " + formatName);
+      } else if (err == gl.INVALID_ENUM) {
+          testPassed("not able to create invalid format: " + formatName);
+      }
+  }
+
+  var invalidEnums = [
+    '1',
+    '2',
+    '3',
+    '4',
+    'RGB4',
+    'RGB5',
+    'RGB8',
+    'RGB10',
+    'RGB12',
+    'RGB16',
+    'RGBA2',
+    'RGBA4',
+    'RGB5_A1',
+    'RGBA8',
+    'RGB10_A2',
+    'RGBA12',
+    'RGBA16',
+    'BGR',
+    'BGRA',
+    'ALPHA4_EXT',
+    'ALPHA8_EXT',
+    'ALPHA12_EXT',
+    'ALPHA16_EXT',
+    'COMPRESSED_ALPHA',
+    'COMPRESSED_LUMINANCE',
+    'COMPRESSED_LUMINANCE_ALPHA',
+    'COMPRESSED_INTENSITY',
+    'COMPRESSED_RGB',
+    'COMPRESSED_RGBA',
+    'DEPTH_COMPONENT16',
+    'DEPTH_COMPONENT24',
+    'DEPTH_COMPONENT32',
+    'LUMINANCE4_EXT',
+    'LUMINANCE8_EXT',
+    'LUMINANCE12_EXT',
+    'LUMINANCE16_EXT',
+    'LUMINANCE4_ALPHA4_EXT',
+    'LUMINANCE6_ALPHA2_EXT',
+    'LUMINANCE8_ALPHA8_EXT',
+    'LUMINANCE12_ALPHA4_EXT',
+    'LUMINANCE12_ALPHA12_EXT',
+    'LUMINANCE16_ALPHA16_EXT',
+    'INTENSITY_EXT',
+    'INTENSITY4_EXT',
+    'INTENSITY8_EXT',
+    'INTENSITY12_EXT',
+    'INTENSITY16_EXT',
+    'RGB4_EXT',
+    'RGB5_EXT',
+    'RGB8_EXT',
+    'RGB10_EXT',
+    'RGB12_EXT',
+    'RGB16_EXT',
+    'RGBA2_EXT',
+    'RGBA4_EXT',
+    'RGB5_A1_EXT',
+    'RGBA8_EXT',
+    'RGB10_A2_EXT',
+    'RGBA12_EXT',
+    'RGBA16_EXT',
+    'SLUMINANCE_EXT',
+    'SLUMINANCE8_EXT',
+    'SLUMINANCE_ALPHA_EXT',
+    'SLUMINANCE8_ALPHA8_EXT',
+    'SRGB_EXT',
+    'SRGB8_EXT',
+    'SRGB_ALPHA_EXT',
+    'SRGB8_ALPHA8'
+  ];
+
+  for (var ii = 0; ii < invalidEnums.length; ++ii) {
+    var formatName = invalidEnums[ii]
+    if (desktopGL[formatName] === undefined) {
+      debug("bad format" + formatName)
+    } else {
+      testInvalidFormat(desktopGL[formatName], "GL_" + formatName);
+    }
+  }
+
+  var validEnums = [
+    'ALPHA',
+    'RGB',
+    'RGBA',
+    'LUMINANCE',
+    'LUMINANCE_ALPHA'
+  ];
+
+  for (var ii = 0; ii < validEnums.length; ++ii) {
+    var formatName = validEnums[ii]
+    testValidFormat(gl[formatName], "gl." + formatName);
+  }
+
+  debug("");
+  debug("checking non 0 border parameter to gl.TexImage2D");
+  createTexture(gl['RGBA'], gl['RGBA'], 1);
+  glErrorShouldBe(gl, gl.INVALID_VALUE,
+            "non 0 border to gl.TexImage2D should return INVALID_VALUE");
+
+
+  function checkTypes() {
+    var canvas = document.getElementById("canvas");
+    gl = wtu.create3DContext(canvas);
+    var program = wtu.setupTexturedQuad(gl);
+
+    gl.disable(gl.DEPTH_TEST);
+    gl.disable(gl.BLEND);
+
+    var tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+    var loc = gl.getUniformLocation(program, "tex");
+    gl.uniform1i(loc, 0);
+
+    function checkType(r, g, b, a, type, format, buf) {
+      var typeName = WebGLDebugUtils ? WebGLDebugUtils.glEnumToString(type) : type;
+      debug("");
+      debug("checking gl.texImage2D with type: " + typeName);
+      gl.texImage2D(gl.TEXTURE_2D,
+                    0,                 // level
+                    format,            // internalFormat
+                    2,                 // width
+                    2,                 // height
+                    0,                 // border
+                    format,            // format
+                    type,              // type
+                    buf);              // data
+
+      glErrorShouldBe(gl, gl.NO_ERROR,
+                "gl.texImage2D with " + typeName + " should generate NO_ERROR");
+
+      wtu.drawQuad(gl, [255, 0, 0, 255]);
+      wtu.checkCanvas(gl, [r,g,b,a],
+                      "texture type " + typeName + " should draw with " +
+                      r + ", " + g + ", " + b + ", " + a);
+
+   }
+   checkType(0, 255, 0, 255, gl.UNSIGNED_BYTE, gl.RGBA,
+                    new Uint8Array([
+           0, 255, 0, 255,
+           0, 255, 0, 255,
+           0, 255, 0, 255,
+           0, 255, 0, 255]));
+   checkType(0, 0, 255, 255, gl.UNSIGNED_SHORT_4_4_4_4, gl.RGBA,
+                    new Uint16Array([
+           255, 255,
+           255, 255,
+           255, 255,
+           255, 255]));
+   checkType(0, 255, 0, 255, gl.UNSIGNED_SHORT_5_6_5, gl.RGB,
+                    new Uint16Array([
+           2016, 2016,
+           2016, 2016,
+           2016, 2016,
+           2016, 2016]));
+   checkType(0, 0, 255, 255, gl.UNSIGNED_SHORT_5_5_5_1, gl.RGBA,
+                    new Uint16Array([
+           63, 63,
+           63, 63,
+           63, 63,
+           63, 63]));
+  }
+  checkTypes();
+}
+
+debug("");
+successfullyParsed = true;
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+
+</body>
+</html>

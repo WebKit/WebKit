@@ -1,0 +1,33 @@
+WebGL instanceof test.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Tests that instanceof works on WebGL objects.
+
+PASS gl instanceof WebGLRenderingContext is true
+PASS gl.createBuffer() instanceof WebGLBuffer is true
+PASS gl.createFramebuffer() instanceof WebGLFramebuffer is true
+PASS gl.createProgram() instanceof WebGLProgram is true
+PASS gl.createRenderbuffer() instanceof WebGLRenderbuffer is true
+PASS gl.createShader(gl.VERTEX_SHADER) instanceof WebGLShader is true
+PASS gl.createTexture() instanceof WebGLTexture is true
+PASS gl.getUniformLocation(program, "color") instanceof WebGLUniformLocation is true
+PASS gl.getActiveAttrib(program, 0) instanceof WebGLActiveInfo is true
+PASS gl.getActiveUniform(program, 0) instanceof WebGLActiveInfo is true
+
+Tests that those WebGL objects can not be constructed through new operator
+
+PASS new WebGLRenderingContext threw an error
+PASS new WebGLActiveInfo threw an error
+PASS new WebGLBuffer threw an error
+PASS new WebGLFramebuffer threw an error
+PASS new WebGLProgram threw an error
+PASS new WebGLRenderbuffer threw an error
+PASS new WebGLShader threw an error
+PASS new WebGLTexture threw an error
+PASS new WebGLUniformLocation threw an error
+PASS new WebGLShaderPrecisionFormat threw an error
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

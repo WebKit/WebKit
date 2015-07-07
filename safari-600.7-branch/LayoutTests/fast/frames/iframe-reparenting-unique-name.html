@@ -1,0 +1,24 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+}
+
+function runTest()
+{
+    var frames = document.getElementsByTagName("iframe");
+    var dummy = frames[0];
+    var testFrame = frames[1];
+    testFrame.contentDocument.adoptNode(dummy);
+    testFrame.contentDocument.body.appendChild(dummy);
+}
+window.onload = runTest;
+</script>
+</head>
+<body>
+<iframe src="data:text/plain,Frame 1"></iframe>
+<iframe src="data:text/html,<p>This test PASSED if DRT outputs two %26lt%3Biframe%26gt%3Bs with unique names.</p><iframe src='data:text/plain,Frame 0'></iframe>"></iframe>
+</body>
+</html>

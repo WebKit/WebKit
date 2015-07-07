@@ -1,0 +1,160 @@
+2013-12-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Import the XHTML parsing and serialization tests for template elements
+        https://bugs.webkit.org/show_bug.cgi?id=125131
+
+        Reviewed by Antti Koivisto.
+
+        Import the tests for parsing XHTML documents and fragments at f744661dbd0c29bb6a54c1530f9843838eec1300
+        after self-closing link elements in template-child-nodes-div.xhtml and template-child-nodes-nested.xhtml
+        as these two files would encounter parser errors otherwise (I'll be merging these changes back into
+        the web-platform-tests repository later).
+
+        This completes the importation of W3C tests for the HTML template element.
+
+        * html-templates/additions-to-parsing-xhtml-documents: Added.
+        * html-templates/additions-to-parsing-xhtml-documents/node-document-expected.txt: Added.
+        * html-templates/additions-to-parsing-xhtml-documents/node-document.html: Added.
+        * html-templates/additions-to-parsing-xhtml-documents/template-child-nodes-expected.txt: Added.
+        * html-templates/additions-to-parsing-xhtml-documents/template-child-nodes.html: Added.
+        * html-templates/additions-to-serializing-xhtml-documents: Added.
+        * html-templates/additions-to-serializing-xhtml-documents/outerhtml-expected.txt: Added.
+        * html-templates/additions-to-serializing-xhtml-documents/outerhtml.html: Added.
+        * html-templates/resources/template-child-nodes-div.xhtml:
+        * html-templates/resources/template-child-nodes-nested.xhtml:
+
+2013-11-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Import W3C tests for cloning template elements and default stylesheet for template element
+        https://bugs.webkit.org/show_bug.cgi?id=124882
+
+        Reviewed by Andreas Kling.
+
+        Imported tests under html-templates/additions-to-the-steps-to-clone-a-node and
+        html-templates/additions-to-the-css-user-agent-style-sheet at d38dbd5b492808811bc0fe04a8cc49f28863c5cc.
+
+        Renamed and replicated css-user-agent-style-sheet-test-001-ref.html as -00*-expected.html for ref testing.
+
+        * html-templates/additions-to-the-css-user-agent-style-sheet/css-user-agent-style-sheet-test-001-expected.html: Added.
+        * html-templates/additions-to-the-css-user-agent-style-sheet/css-user-agent-style-sheet-test-001.html: Added.
+        * html-templates/additions-to-the-css-user-agent-style-sheet/css-user-agent-style-sheet-test-002-expected.html: Added.
+        * html-templates/additions-to-the-css-user-agent-style-sheet/css-user-agent-style-sheet-test-002.html: Added.
+        * html-templates/additions-to-the-css-user-agent-style-sheet/css-user-agent-style-sheet-test-003-expected.html: Added.
+        * html-templates/additions-to-the-css-user-agent-style-sheet/css-user-agent-style-sheet-test-003.html: Added.
+        * html-templates/additions-to-the-steps-to-clone-a-node/template-clone-children-expected.txt: Added.
+        * html-templates/additions-to-the-steps-to-clone-a-node/template-clone-children.html: Added.
+        * html-templates/additions-to-the-steps-to-clone-a-node/templates-copy-document-owner-expected.txt: Added.
+        * html-templates/additions-to-the-steps-to-clone-a-node/templates-copy-document-owner.html: Added.
+
+2013-11-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Import more W3C tests for parsing template elements
+        https://bugs.webkit.org/show_bug.cgi?id=124763
+
+        Reviewed by Antti Koivisto.
+
+        Imported more W3c tests for HTML template element at 12a1164ae919f29f6ba2d0c8a63f0eafb6b599aa
+        after applying fixes proposed at https://github.com/w3c/web-platform-tests/pull/442.
+
+        * html-templates/definitions/template-contents-expected.txt: Added.
+        * html-templates/definitions/template-contents-owner-document-type-expected.txt: Added.
+        * html-templates/definitions/template-contents-owner-document-type.html: Added.
+        * html-templates/definitions/template-contents-owner-test-001-expected.txt: Added.
+        * html-templates/definitions/template-contents-owner-test-001.html: Added.
+        * html-templates/definitions/template-contents-owner-test-002-expected.txt: Added.
+        * html-templates/definitions/template-contents-owner-test-002.html: Added.
+        * html-templates/definitions/template-contents.html: Added.
+        * html-templates/innerhtml-on-templates/innerhtml-expected.txt: Added.
+        * html-templates/innerhtml-on-templates/innerhtml.html: Added.
+        * html-templates/parsing-html-templates/additions-to-foster-parenting/template-is-a-foster-parent-element-expected.txt: Added.
+        * html-templates/parsing-html-templates/additions-to-foster-parenting/template-is-a-foster-parent-element.html: Added.
+        * html-templates/parsing-html-templates/additions-to-foster-parenting/template-is-not-a-foster-parent-element-expected.txt: Added.
+        * html-templates/parsing-html-templates/additions-to-foster-parenting/template-is-not-a-foster-parent-element.html: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/generating-of-implied-end-tags-expected.txt: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/generating-of-implied-end-tags.html: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/ignore-body-token-expected.txt: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/ignore-body-token.html: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/ignore-frameset-token-expected.txt: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/ignore-frameset-token.html: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/ignore-head-token-expected.txt: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/ignore-head-token.html: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/ignore-html-token-expected.txt: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/ignore-html-token.html: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/start-tag-body-expected.txt: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/start-tag-body.html: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/start-tag-html-expected.txt: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/start-tag-html.html: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/template-end-tag-without-start-one-expected.txt: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-body-insertion-mode/template-end-tag-without-start-one.html: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-frameset-insertion-mode/end-tag-frameset-expected.txt: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-frameset-insertion-mode/end-tag-frameset.html: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-head-insertion-mode/generating-of-implied-end-tags-expected.txt: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-head-insertion-mode/generating-of-implied-end-tags.html: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-head-insertion-mode/template-end-tag-without-start-one-expected.txt: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-head-insertion-mode/template-end-tag-without-start-one.html: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-table-insertion-mode/end-tag-table-expected.txt: Added.
+        * html-templates/parsing-html-templates/additions-to-the-in-table-insertion-mode/end-tag-table.html: Added.
+        * html-templates/parsing-html-templates/appending-to-a-template/template-child-nodes-expected.txt: Added.
+        * html-templates/parsing-html-templates/appending-to-a-template/template-child-nodes.html: Added.
+        * html-templates/parsing-html-templates/clearing-the-stack-back-to-a-given-context/clearing-stack-back-to-a-table-body-context-expected.txt: Added.
+        * html-templates/parsing-html-templates/clearing-the-stack-back-to-a-given-context/clearing-stack-back-to-a-table-body-context.html: Added.
+        * html-templates/parsing-html-templates/clearing-the-stack-back-to-a-given-context/clearing-stack-back-to-a-table-context-expected.txt: Added.
+        * html-templates/parsing-html-templates/clearing-the-stack-back-to-a-given-context/clearing-stack-back-to-a-table-context.html: Added.
+        * html-templates/parsing-html-templates/clearing-the-stack-back-to-a-given-context/clearing-stack-back-to-a-table-row-context-expected.txt: Added.
+        * html-templates/parsing-html-templates/clearing-the-stack-back-to-a-given-context/clearing-stack-back-to-a-table-row-context.html: Added.
+        * html-templates/parsing-html-templates/creating-an-element-for-the-token/template-owner-document-expected.txt: Added.
+        * html-templates/parsing-html-templates/creating-an-element-for-the-token/template-owner-document.html: Added.
+
+2013-11-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Import some W3C tests for HTML template element
+        https://bugs.webkit.org/show_bug.cgi?id=124699
+
+        Reviewed by Antti Koivisto.
+
+        Imported the shared resources for web-platform-tests/html-templates as well as tests under
+        serializing-html-templates and template-element at a274ad93ef5dc02ac042e0a5d58327d4135178ac.
+
+        * ChangeLog: Added.
+        * html-templates/resources/end-template-tag-in-body.html: Added.
+        * html-templates/resources/end-template-tag-in-head.html: Added.
+        * html-templates/resources/frameset-end-tag.html: Added.
+        * html-templates/resources/head-template-contents-div-no-end-tag.html: Added.
+        * html-templates/resources/head-template-contents-table-no-end-tag.html: Added.
+        * html-templates/resources/html-start-tag.html: Added.
+        * html-templates/resources/template-child-nodes-div.xhtml: Added.
+        * html-templates/resources/template-child-nodes-nested.xhtml: Added.
+        * html-templates/resources/template-contents-attribute.html: Added.
+        * html-templates/resources/template-contents-body.html: Added.
+        * html-templates/resources/template-contents-div-no-end-tag.html: Added.
+        * html-templates/resources/template-contents-empty.html: Added.
+        * html-templates/resources/template-contents-frameset.html: Added.
+        * html-templates/resources/template-contents-head.html: Added.
+        * html-templates/resources/template-contents-html.html: Added.
+        * html-templates/resources/template-contents-nested.html: Added.
+        * html-templates/resources/template-contents-table-no-end-tag.html: Added.
+        * html-templates/resources/template-contents-text.html: Added.
+        * html-templates/resources/template-contents.html: Added.
+        * html-templates/resources/template-descendant-body.html: Added.
+        * html-templates/resources/template-descendant-frameset.html: Added.
+        * html-templates/resources/template-descendant-head.html: Added.
+        * html-templates/resources/two-templates.html: Added.
+        * html-templates/serializing-html-templates/outerhtml-expected.txt: Added.
+        * html-templates/serializing-html-templates/outerhtml.html: Added.
+        * html-templates/template-element/content-attribute-expected.txt: Added.
+        * html-templates/template-element/content-attribute.html: Added.
+        * html-templates/template-element/node-document-changes-expected.txt: Added.
+        * html-templates/template-element/node-document-changes.html: Added.
+        * html-templates/template-element/template-as-a-descendant-expected.txt: Added.
+        * html-templates/template-element/template-as-a-descendant.html: Added.
+        * html-templates/template-element/template-content-expected.txt: Added.
+        * html-templates/template-element/template-content-node-document-expected.txt: Added.
+        * html-templates/template-element/template-content-node-document.html: Added.
+        * html-templates/template-element/template-content.html: Added.
+        * html-templates/template-element/template-descendant-body-expected.txt: Added.
+        * html-templates/template-element/template-descendant-body.html: Added.
+        * html-templates/template-element/template-descendant-frameset-expected.txt: Added.
+        * html-templates/template-element/template-descendant-frameset.html: Added.
+        * html-templates/template-element/template-descendant-head-expected.txt: Added.
+        * html-templates/template-element/template-descendant-head.html: Added.
+        * html-templates/testcommon.js: Added.

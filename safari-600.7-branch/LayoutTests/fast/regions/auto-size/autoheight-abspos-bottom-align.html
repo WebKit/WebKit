@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+    <head>
+        <style>		
+            #content { -webkit-flow-into: flow; }
+            #region { -webkit-flow-from: flow; position: absolute; bottom: 0px; right: 0px; width: 100px; background-color: white;}
+            #reference { position: absolute; bottom: 0px; right: 0px; width: 100px; background-color: red;}
+        </style>
+    </head>
+    <script src="../../../resources/check-layout.js"></script>
+    <body onload="checkLayout('#region')">
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=111092"> [CSS Regions] Regions auto-height and absolute positioning bug</a>.</p>
+        <p>On success you should see PASS below.</p>
+        <div id="content">this is some body copy.</div>
+        <div id="reference">this is some body copy.</div>        
+        <div id="region" data-total-y=0></div>
+        <script>
+            document.body.offsetTop; // force layout
+            document.getElementById("region").setAttribute("data-total-y", document.getElementById('reference').offsetTop);
+        </script>
+    </body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<style>
+			#region1, #region2 {
+			    position: absolute;
+			    width: 500px;
+			    height: 150px;
+			    border: 1px solid red;
+			    padding: 5px;
+			    background-color: lightgray;
+			}
+
+			#region2 {
+			    left: 60px;
+			    top: 250px;
+			}
+		</style>
+	</head>
+	<body style="-webkit-font-smoothing: none;">
+		<p>On success, no text should be clipped and you should see <span style="color:red">LAST LINE</span> at the bottom of the text</p>
+
+		<div id="region1">
+		  	<p>Above all, avoid lies, all lies, especially the lie to yourself. Keep watch on your own lie and examine it every hour, every minute. And avoid contempt, both of others and of yourself: what seems bad to you in yourself is purified by the very fact that you have noticed it in yourself. And avoid fear, though fear is simply the consequence of every lie. Never be frightened at your own faintheartedness in attaining love, and meanwhile do not even be very frightened by your own bad acts.</p>
+		</div>
+
+		<div id="region2">
+			<p style="margin-top: 0px;">Above all, avoid lies, all lies, especially the lie to yourself. Keep watch on your own lie and examine it every hour, every minute. And avoid contempt, both of others and of yourself: what seems bad to you in yourself is purified by the very fact that you have noticed it in yourself. And avoid fear, though fear is simply the consequence of every lie. Never be frightened at your own faintheartedness in attaining love, and meanwhile do not even be very frightened by your own bad acts.</p>
+		  	<p>Above all, avoid lies, all lies, especially the lie to yourself. Keep watch on your own lie and examine it every hour, every minute. And avoid contempt, both of others and of yourself: what seems bad to you in yourself is purified by the very fact that you have noticed it in yourself. And avoid fear, though fear is simply the consequence of every lie. Never be frightened at your own faintheartedness in attaining love, and meanwhile do not even be very frightened by your own bad acts.</p>
+		  	<p style="color:red">LAST LINE</p>
+		</div>
+	</body>
+</html>

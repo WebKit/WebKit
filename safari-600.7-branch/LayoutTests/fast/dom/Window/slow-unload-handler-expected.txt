@@ -1,0 +1,5 @@
+frame "theiframe" - has 3 onunload handler(s)
+CONSOLE MESSAGE: line 1: Uncaught Error: Too much time spent in unload handler.
+This is a test for bug 29193: Need to prevent Javascript sleeps in unload handlers. If successful, PASS should be printed below.
+
+PASS

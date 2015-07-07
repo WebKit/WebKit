@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup>
+    <Link>
+      <AdditionalDependencies>CFLite.lib;JavaScriptCore$(DebugSuffix).lib;WTF$(DebugSuffix).lib;libicuin.lib;libicuuc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ClCompile>
+      <PreprocessorDefinitions>NOMINMAX;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\API;$(ConfigurationBuildDir)\include\JavaScriptCore;$(ConfigurationBuildDir)\include\private\JavaScriptCore;$(ConfigurationBuildDir)\include;$(ConfigurationBuildDir)\include\private;$(WebKit_Libraries)\include;$(WebKit_Libraries)\include\private;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+</Project>

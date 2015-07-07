@@ -1,0 +1,31 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../console-test.js"></script>
+<script>
+function loadScript()
+{
+    var s = document.createElement("script");
+    s.src = "resources/script-as-text.php?this-is-a-weird=querystring-with^carats^like^these^because^who^doesnt^love^strange^characters^in^urls";
+    document.body.appendChild(s);
+}
+
+function test()
+{
+    InspectorTest.addConsoleSniffer(step1);
+    InspectorTest.evaluateInPage("loadScript()");
+
+    function step1()
+    {
+        InspectorTest.dumpConsoleMessages();
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests console message when script is loaded with incorrect text/html mime
+type and the URL contains the '^' character.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=103248">Bug 103248</a>
+</body>
+</html>

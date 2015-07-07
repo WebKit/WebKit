@@ -1,0 +1,28 @@
+This tests for caller property in functions. Only functions that are called from inside of other functions and have a parent should have this property set. Tests return true when caller is found and false when the caller is null.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS childHasCallerWhenExecutingGlobalCode is false
+PASS childHasCallerWhenCalledWithoutParent is false
+PASS childHasCallerWhenCalledFromWithinParent is true
+PASS nonStrictCaller(nonStrictCallee) is nonStrictCaller
+PASS nonStrictCaller(strictCallee) threw exception TypeError: Type error.
+PASS strictCaller(nonStrictCallee) threw exception TypeError: Function.caller used to retrieve strict caller.
+PASS strictCaller(strictCallee) threw exception TypeError: Type error.
+PASS nonStrictCaller(boundNonStrictCallee) is nonStrictCaller
+PASS nonStrictCaller(boundStrictCallee) threw exception TypeError: Type error.
+PASS strictCaller(boundNonStrictCallee) threw exception TypeError: Function.caller used to retrieve strict caller.
+PASS strictCaller(boundStrictCallee) threw exception TypeError: Type error.
+PASS nonStrictGetter(nonStrictAccessor) is nonStrictGetter
+PASS nonStrictSetter(nonStrictAccessor) is true
+PASS nonStrictGetter(strictAccessor) threw exception TypeError: Type error.
+PASS nonStrictSetter(strictAccessor) threw exception TypeError: Type error.
+PASS strictGetter(nonStrictAccessor) threw exception TypeError: Function.caller used to retrieve strict caller.
+PASS strictSetter(nonStrictAccessor) threw exception TypeError: Function.caller used to retrieve strict caller.
+PASS strictGetter(strictAccessor) threw exception TypeError: Type error.
+PASS strictSetter(strictAccessor) threw exception TypeError: Type error.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

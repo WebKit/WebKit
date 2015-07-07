@@ -1,0 +1,61 @@
+This test checks the use of SVGAnimatedEnumeration within SVGPatternElement
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Check initial 'patternUnits' value
+PASS patternElement.patternUnits.toString() is "[object SVGAnimatedEnumeration]"
+PASS typeof(patternElement.patternUnits.baseVal) is "number"
+PASS patternElement.patternUnits.baseVal is SVGUnitTypes.SVG_UNIT_TYPE_USERSPACEONUSE
+
+Switch to 'objectBoundingBox'
+PASS patternElement.patternUnits.baseVal = SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX is SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX
+PASS patternElement.patternUnits.baseVal is SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX
+PASS patternElement.getAttribute('patternUnits') is "objectBoundingBox"
+
+Try setting invalid values
+PASS patternElement.patternUnits.baseVal = 3 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS patternElement.patternUnits.baseVal is SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX
+PASS patternElement.getAttribute('patternUnits') is "objectBoundingBox"
+PASS patternElement.patternUnits.baseVal = -1 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS patternElement.patternUnits.baseVal is SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX
+PASS patternElement.getAttribute('patternUnits') is "objectBoundingBox"
+PASS patternElement.patternUnits.baseVal = 0 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS patternElement.patternUnits.baseVal is SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX
+PASS patternElement.getAttribute('patternUnits') is "objectBoundingBox"
+
+Switch to 'userSpaceOnUse'
+PASS patternElement.patternUnits.baseVal = SVGUnitTypes.SVG_UNIT_TYPE_USERSPACEONUSE is SVGUnitTypes.SVG_UNIT_TYPE_USERSPACEONUSE
+PASS patternElement.patternUnits.baseVal is SVGUnitTypes.SVG_UNIT_TYPE_USERSPACEONUSE
+PASS patternElement.getAttribute('patternUnits') is "userSpaceOnUse"
+
+Check initial 'patternContentUnits' value
+PASS patternElement.patternContentUnits.toString() is "[object SVGAnimatedEnumeration]"
+PASS typeof(patternElement.patternContentUnits.baseVal) is "number"
+PASS patternElement.patternContentUnits.baseVal is SVGUnitTypes.SVG_UNIT_TYPE_USERSPACEONUSE
+
+Switch to 'objectBoundingBox'
+PASS patternElement.patternContentUnits.baseVal = SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX is SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX
+PASS patternElement.patternContentUnits.baseVal is SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX
+PASS patternElement.getAttribute('patternContentUnits') is "objectBoundingBox"
+
+Try setting invalid values
+PASS patternElement.patternContentUnits.baseVal = 3 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS patternElement.patternContentUnits.baseVal is SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX
+PASS patternElement.getAttribute('patternContentUnits') is "objectBoundingBox"
+PASS patternElement.patternContentUnits.baseVal = -1 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS patternElement.patternContentUnits.baseVal is SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX
+PASS patternElement.getAttribute('patternContentUnits') is "objectBoundingBox"
+PASS patternElement.patternContentUnits.baseVal = 0 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS patternElement.patternContentUnits.baseVal is SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX
+PASS patternElement.getAttribute('patternContentUnits') is "objectBoundingBox"
+
+Switch to 'userSpaceOnUse'
+PASS patternElement.patternContentUnits.baseVal = SVGUnitTypes.SVG_UNIT_TYPE_USERSPACEONUSE is SVGUnitTypes.SVG_UNIT_TYPE_USERSPACEONUSE
+PASS patternElement.patternContentUnits.baseVal is SVGUnitTypes.SVG_UNIT_TYPE_USERSPACEONUSE
+PASS patternElement.getAttribute('patternContentUnits') is "userSpaceOnUse"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

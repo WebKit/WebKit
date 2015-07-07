@@ -1,0 +1,36 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGForeignObject {foreignObject} at (0,0) size 800x600
+      RenderBlock {html} at (0,0) size 800x200
+        RenderBlock {div} at (0,0) size 800x200
+          RenderBlock (anonymous) at (0,0) size 800x20
+            RenderText {#text} at (0,0) size 541x19
+              text run at (0,0) width 541: "This tests assures dynamic SVGDocument creation via DOMParser interface works."
+          RenderBlock {div} at (0,20) size 800x20
+            RenderText {#text} at (0,0) size 634x19
+              text run at (0,0) width 634: "DOMParser.parseFromString returned: [object SVGDocument] should be: [object SVGDocument]"
+          RenderBlock {div} at (0,40) size 800x20
+            RenderText {#text} at (0,0) size 616x19
+              text run at (0,0) width 616: "SVGDocument's rootElement: [object SVGSVGElement] should be: [object SVGSVGElement]"
+          RenderBlock {div} at (0,60) size 800x20
+            RenderText {#text} at (0,0) size 362x19
+              text run at (0,0) width 362: "SVGDocument's rootElement width: 400 should be: 400"
+          RenderBlock {div} at (0,80) size 800x20
+            RenderText {#text} at (0,0) size 366x19
+              text run at (0,0) width 366: "SVGDocument's rootElement height: 400 should be: 400"
+          RenderBlock {div} at (0,100) size 800x20
+            RenderText {#text} at (0,0) size 641x19
+              text run at (0,0) width 641: "SVGDocument's rootElement first child: [object SVGGElement] should be: [object SVGGElement]"
+          RenderBlock {div} at (0,120) size 800x60
+            RenderText {#text} at (0,0) size 777x59
+              text run at (0,0) width 761: "XMLSerializer.serializeToString returned: <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"400\" height=\"400\"><g"
+              text run at (0,20) width 777: "transform=\"translate(-50, -50)\"><path id=\"path\" onclick=\"mouseHandler(evt)\" fill=\"#FF0000\" stroke=\"#00C000\" d=\"M"
+              text run at (0,40) width 730: "250 130 C 185 130 150 80 150 80 S 115 25 50 25 m 0 105 c 65 0 100 -50 100 -50 s 35 -55 100 -55\"/></g></svg>"
+          RenderBlock {div} at (0,180) size 800x20
+            RenderText {#text} at (0,0) size 689x19
+              text run at (0,0) width 689: "Imported the SVGGElement into our document: [object SVGGElement] should be: [object SVGGElement]"
+    RenderSVGContainer {g} at (193,231) size 217x218 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(250.00,250.00)}]
+      RenderSVGContainer {g} at (193,231) size 217x218 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-50.00,-50.00)}]
+        RenderSVGPath {path} at (193,231) size 217x218 [stroke={[type=SOLID] [color=#00C000]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M 250 130 C 185 130 150 80 150 80 C 150 80 115 25 50 25 M 50 130 C 115 130 150 80 150 80 C 150 80 185 25 250 25"]

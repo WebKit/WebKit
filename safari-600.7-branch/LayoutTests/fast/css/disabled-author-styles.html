@@ -1,0 +1,43 @@
+<html>
+<head>
+    <script>
+        function loaded()
+        {
+            if (!window.testRunner) {
+               alert("This test must be run in the DumpRenderTree to work.");
+               return;
+            }
+            testRunner.waitUntilDone();
+            testRunner.setAuthorAndUserStylesEnabled(false);
+
+            // Check the matched rules after a timeout to give time for WebPreferences to update WebCore::Settings.
+            setTimeout(checkMatchedRules, 0);
+        }
+
+        function checkMatchedRules()
+        {
+            var matchedRules = getMatchedCSSRules(document.getElementById("test"), "");
+            if (matchedRules && matchedRules.length)
+                alert(matchedRules.length + " rule(s) were returned from getMatchedCSSRules, expected zero.");
+
+            if (window.testRunner) {
+                testRunner.notifyDone();
+            }
+        }
+    </script>
+    <style>
+        #test {
+            color: red;
+        }
+
+        #test2::before {
+            color: red;
+            content: "This pseudo-element text should not show up.";
+        }
+    </style>
+</head>
+<body onload="loaded();">
+    <div id="test">This text should be black, not red.</div>
+    <div id="test2"></div>
+</body>
+</html>

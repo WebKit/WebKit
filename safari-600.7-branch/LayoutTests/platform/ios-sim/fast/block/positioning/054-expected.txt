@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600 layerType: background only
+layer at (8,8) size 36x20
+  RenderBlock (positioned) zI: -1 {DIV} at (8,8) size 36x20
+    RenderText zI: -1 {#text} at (0,0) size 36x19
+      text run at (0,0) width 36: "Hello"
+layer at (0,0) size 800x600 layerType: foreground only
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584

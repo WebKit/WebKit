@@ -1,0 +1,45 @@
+This test checks that the value of -webkit-text-align-last is properly inherited to the child.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Value of ancestor is 'start':
+FAIL window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-align-last').cssText should be start. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-align-last').cssText')
+FAIL window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-align-last').cssText should be start. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-align-last').cssText')
+
+Value of ancestor is 'end':
+FAIL window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-align-last').cssText should be end. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-align-last').cssText')
+FAIL window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-align-last').cssText should be end. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-align-last').cssText')
+
+Value of ancestor is 'left':
+FAIL window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-align-last').cssText should be left. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-align-last').cssText')
+FAIL window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-align-last').cssText should be left. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-align-last').cssText')
+
+Value of ancestor is 'right':
+FAIL window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-align-last').cssText should be right. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-align-last').cssText')
+FAIL window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-align-last').cssText should be right. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-align-last').cssText')
+
+Value of ancestor is 'center':
+FAIL window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-align-last').cssText should be center. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-align-last').cssText')
+FAIL window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-align-last').cssText should be center. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-align-last').cssText')
+
+Value of ancestor is 'justify':
+FAIL window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-align-last').cssText should be justify. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-align-last').cssText')
+FAIL window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-align-last').cssText should be justify. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-align-last').cssText')
+
+Value of ancestor is 'auto':
+FAIL window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-align-last').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-align-last').cssText')
+FAIL window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-align-last').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-align-last').cssText')
+
+Value of ancestor is 'start, while child is 'end':
+FAIL window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-align-last').cssText should be start. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-align-last').cssText')
+FAIL window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-align-last').cssText should be end. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-align-last').cssText')
+
+Value of ancestor is 'left, while child is 'right':
+FAIL window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-align-last').cssText should be left. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(ancestor).getPropertyCSSValue('-webkit-text-align-last').cssText')
+FAIL window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-align-last').cssText should be right. Threw exception TypeError: null is not an object (evaluating 'window.getComputedStyle(child).getPropertyCSSValue('-webkit-text-align-last').cssText')
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+hello world

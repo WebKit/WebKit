@@ -1,0 +1,49 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <script src="../editing.js" language="javascript" type="text/javascript" ></script>
+        <script language="javascript" type="text/javascript">
+        function log(str) {
+            var li = document.createElement("li");
+            li.appendChild(document.createTextNode(str));
+            var console = document.getElementById("console");
+            console.appendChild(li);
+        }
+        function sendBackwardDeleteKey() {
+            if (window.eventSender)
+                eventSender.keyDown(String.fromCharCode(0x0008), null);
+        }
+        function runTestOn(platform) {
+            var testarea = document.getElementById("test");
+            if (window.internals)
+                internals.settings.setEditingBehavior(platform);
+
+            testarea.focus();
+            moveSelectionForwardByCharacterCommand();
+            moveSelectionForwardByCharacterCommand();
+            sendBackwardDeleteKey();
+            execUndoCommand();
+            if (testarea.textContent == "\u0E27\u0E31")
+                log("Succeeded for " + platform);
+            else
+                log("Failed. Actual: \"" + testarea.value + "\", Expected: \"\u0E27\u0E31\"");
+        }
+        function editingTest() {
+            if (window.testRunner)
+                testRunner.dumpAsText();
+            runTestOn("mac");
+            runTestOn("win");
+            runTestOn("unix");
+        }
+        </script>
+        <title>Editing Test (Undo deleting a ligature)</title> 
+    </head> 
+    <body>
+        <p>This test tests whether the undo command works when the BackSpace key deletes the last character of a ligature "&#x0E27;&#x0E31;".</p>
+        <p>If this test succeeds, you can see "&#x0E27;&#x0E31;" (U+0E27,U+0E31) and a string "succeeded" for each platform below.</p>
+        <div id="test" contenteditable>&#x0E27;&#x0E31;</div>
+        <ul id="console"></ul>
+        <script language="javascript" type="text/javascript">
+        runEditingTest();
+        </script>
+    </body>
+</html>

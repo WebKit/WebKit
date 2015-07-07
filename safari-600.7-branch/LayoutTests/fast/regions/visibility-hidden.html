@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Test - Bug 128814: [CSS Regions] visibility: hidden on a region should hide its content</title>
+    <style>
+      #region1 {
+        -webkit-flow-from: article;
+        width: 300px;
+        height: 300px;
+        visibility: hidden;
+      }
+      
+      article {
+        color: red;
+      }
+      
+      #content {
+        -webkit-flow-into: article;
+      }
+    </style>
+  </head>
+  <body>
+    <p>There should be no red on the page.</p>
+    <div id="region1"></div>
+    <article id="content">
+      <p>
+        Should be hidden.
+      </p>
+    </article>
+  </body>
+</html>

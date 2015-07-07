@@ -1,0 +1,21 @@
+Tests the script formatting functionality.
+
+Debugger was enabled.
+
+Running: testScriptFormatterWorker
+
+Running: testSourceMapping
+
+Running: testFormatInlinedScripts
+<html><body><script>
+function f() {
+}
+</script><script>
+function g() {
+**var a;
+**if (a)
+****return;
+}
+</script></body></html>
+Debugger was disabled.
+

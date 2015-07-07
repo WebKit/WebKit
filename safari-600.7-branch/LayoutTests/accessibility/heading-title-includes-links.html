@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body" onload="setTimeout('runTest()', 0);">
+
+<h1 id="heading">
+    <a href="Apple.com">
+    Apple
+    </a>
+</h1>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+if (window.testRunner && window.accessibilityController) {
+    window.testRunner.waitUntilDone();
+}
+
+function runTest() {
+    description("This tests that the title of a heading will include links if available.");
+
+    if (window.accessibilityController) {
+
+        debug("Heading title: " + accessibilityController.accessibleElementById("heading").title);
+    }
+    window.testRunner.notifyDone();
+}
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

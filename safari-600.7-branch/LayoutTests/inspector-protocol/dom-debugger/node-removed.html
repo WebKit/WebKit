@@ -1,0 +1,143 @@
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script>
+window.onload = runTest;
+
+function removeNode()
+{
+    document.getElementById("target_element").remove();
+}
+
+function moveNode()
+{
+    var targetElement = document.getElementById("target_element");
+    document.getElementById("final_container").appendChild(targetElement);
+}
+
+function test()
+{
+    var nodesById = {};
+
+    InspectorTest.eventHandler["DOM.setChildNodes"] = onSetChildNodes;
+    InspectorTest.eventHandler["DOM.childNodeRemoved"] = onChildNodeRemoved;
+    InspectorTest.eventHandler["DOM.childNodeInserted"] = onChildNodeInserted;
+    InspectorTest.eventHandler["Debugger.paused"] = onDebuggerPaused;
+    InspectorTest.eventHandler["Debugger.scriptParsed"] = onScriptParsed;
+    
+    function createNodeAttributesMap(attributes)
+    {
+        var attributesMap = {};
+        for (var i = 0; i < attributes.length; i += 2)
+            attributesMap[attributes[i]] = attributes[i + 1];
+        return attributesMap;
+    }
+
+    function collectNode(node)
+    {
+        if (node.nodeType === 1)
+            node.attributes = createNodeAttributesMap(node.attributes);
+        if (node.children)
+            node.children.forEach(collectNode);
+        nodesById[node.nodeId] = node;
+    }
+
+    function nodeToString(node)
+    {
+        switch (node.nodeType) {
+        case 1:
+            return node.localName + "#" + node.attributes.id;
+        case 3:
+            return "<text node " + JSON.stringify(node.nodeValue) + ">";
+        default:
+            return "<nodeType " + node.nodeType + ">";
+        }
+    }
+
+    function getNodeIdentifier(nodeId)
+    {
+        if (!nodeId)
+            return "<invalid node id>";
+        var node = nodesById[nodeId];
+        return node ? nodeToString(node) : "<unknown node>";
+    }
+
+    function onSetChildNodes(response)
+    {
+        response.params.nodes.forEach(collectNode);
+    }
+
+    function onChildNodeRemoved(response)
+    {
+        var nodeId = response.params.nodeId;
+        InspectorTest.assert(getNodeIdentifier(nodeId) === "div#target_element", "onChildNodeRemoved called for #target_element");
+        delete nodesById[nodeId];
+    }
+
+    function onChildNodeInserted(response)
+    {
+        collectNode(response.params.node);
+        InspectorTest.assert(getNodeIdentifier(response.params.parentNodeId) === "div#final_container", "onChildNodeInserted called for parent node #final_container");
+        InspectorTest.assert(getNodeIdentifier(response.params.node.nodeId) === "div#target_element", "onChildNodeInserted called for child node #target_element");
+    }
+
+    function onDebuggerPaused(response)
+    {   
+        InspectorTest.log("Stopped on DOM breakpoint");
+        InspectorTest.sendCommand("Runtime.evaluate", {"expression": "moveNode()"}, function() {
+            InspectorTest.sendCommand("Debugger.resume");
+            InspectorTest.completeTest();
+        });
+    }
+
+    function onScriptParsed(messageObject)
+    {
+        // FIXME: The DOM breakpoints are not working unless there's a JS brakpoint set. Setting a fake breakpoint to workaround that.
+        // https://bugs.webkit.org/show_bug.cgi?id=123770 
+        if (/node-removed\.html$/.test(messageObject.params.url) && messageObject.params.startLine > 20) {
+            InspectorTest.eventHandler["Debugger.scriptParsed"] = null;
+            InspectorTest.log("Found <script>");
+            var location = {scriptId: messageObject.params.scriptId, lineNumber: messageObject.params.startLine + 2, columnNumber: 0};
+            InspectorTest.sendCommand("Debugger.setBreakpoint", {location: location}, function() {
+                InspectorTest.sendCommand("DOM.getDocument", {}, onGotDocument);
+            });
+        }
+    }
+
+    function onGotDocument(response)
+    {
+        InspectorTest.checkForError(response);
+        InspectorTest.sendCommand("DOM.querySelectorAll", {"nodeId": response.result.root.nodeId, "selector": "#target_element,#final_container"}, onQuerySelectorAll);
+    }
+
+    function onQuerySelectorAll(response)
+    {
+        var targetElementId = response.result.nodeIds[0];
+        var finalContainerId = response.result.nodeIds[1];
+
+        InspectorTest.sendCommand("DOMDebugger.setDOMBreakpoint", {nodeId: targetElementId, type: "node-removed"});
+        InspectorTest.sendCommand("DOM.requestChildNodes", {nodeId: finalContainerId});
+
+        InspectorTest.sendCommand("Runtime.evaluate", {"expression": "removeNode()"});
+    }
+
+    InspectorTest.sendCommand("Debugger.enable", {});
+}
+</script>
+</head>
+<body>
+
+<p>Testing that DOM.childNodeRemoved is correctly triggered even when the element is moved while paused in the debugger on a DOMDebugger "node-removed" breakpoint.</p>
+
+<div id="target_element"></div>
+<div id="final_container"></div>
+
+<!-- Script tag required to workaround bug 123770. See onScriptParsed for details. -->
+<script>// Line 0
+function testFunction() { // Line 1
+    console.log("FAIL: Workaround JS code should not run.");
+}
+</script>
+
+</body>
+</html>

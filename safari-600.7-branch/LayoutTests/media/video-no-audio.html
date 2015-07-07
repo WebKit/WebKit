@@ -1,0 +1,24 @@
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script>
+            if (window.testRunner)
+                testRunner.waitUntilDone();
+    
+            function start()
+            {
+                setSrcByTagName("video", findMediaFile("video", "content/counting"));
+            }
+
+            function finish()
+            {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }
+        </script>
+    </head>
+    <body onload="start()">
+        <p>Movie with no audio track. The volume button should not render.</p>
+        <video controls oncanplaythrough="finish()"></video>
+    </body>
+</html>

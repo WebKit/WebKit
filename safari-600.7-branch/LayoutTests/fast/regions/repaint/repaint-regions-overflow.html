@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="../../repaint/resources/text-based-repaint.js" type="text/javascript"></script>
+		
+		<style>
+			#content {
+				-webkit-flow-into: flow;
+			}
+
+			#region1, #region2 {
+			    position: absolute;
+			    width: 300px;
+			    height: 100px;
+			    -webkit-flow-from: flow;
+			    border: 1px solid red;
+			    padding: 5px;
+			    background-color: lightgray;
+			}
+
+			#region2 {
+			    left: 60px;
+			    top: 150px;
+			}
+		</style>
+	</head>
+	<body onload="runRepaintTest();">
+		<p>On success, no text should be clipped and you should see <span style="color:red">LAST LINE</span> at the bottom of the text</p>
+
+		<div id="content">
+	  		<p>Above all, avoid lies, all lies, especially the lie to yourself. Keep watch on your own lie and examine it every hour, every minute. And avoid contempt, both of others and of yourself: what seems bad to you in yourself is purified by the very fact that you have noticed it in yourself. And avoid fear, though fear is simply the consequence of every lie. Never be frightened at your own faintheartedness in attaining love, and meanwhile do not even be very frightened by your own bad acts.</p>
+	  		<p style="color:red">LAST LINE</p>
+		</div>
+
+		<div id="region1"></div>
+		<div id="region2"></div>
+		
+		<script type="text/javascript">
+			function repaintTest() 
+			{
+				var region2 = document.getElementById("region2");
+				region2.style.left = "100px";
+				region2.style.top = "200px";
+			}
+		</script>
+	</body>
+</html>

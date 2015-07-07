@@ -1,0 +1,2 @@
+Caught exception: Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0
+PASSED -- WebKit did not crash!

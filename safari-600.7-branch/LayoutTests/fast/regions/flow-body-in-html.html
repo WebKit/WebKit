@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <title>74144 - [CSS Regions] Elements in a region should be assignable to a named flow</title>
+    <style type="text/css">
+      body {
+        -webkit-flow-into: foo;
+      }
+      html {
+        -webkit-flow-from: foo;
+      }
+    </style>
+    <script type="text/javascript">
+        if (window.testRunner)
+            testRunner.dumpAsText()
+    </script>
+  </head>
+  <body>
+      PASS: the body tag has flow-into while the html has flow-from.
+
+      <p><a href="https://bugs.webkit.org/show_bug.cgi?id=74144">Bug 74144</a> - [CSS Regions] Elements in a region should be assignable to a named flow</p>
+  </body>
+</html>

@@ -1,0 +1,23 @@
+<html>
+<head>
+    <style type="text/css">
+        #target { background: url(data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==); }
+    </style>
+</head>
+<body>
+    <p>
+        This tests that the graphics context is restored after painting solid color
+        images. The highlight color should be light blue.
+    </p>
+    <hr>
+    <div id="target">
+        foo
+    </div>
+    <script type="text/javascript">
+        if (window.testRunner)
+            testRunner.display();
+        target = document.getElementById('target');
+        window.getSelection().setBaseAndExtent(target, 0, target, 1);
+    </script>
+</body>
+</html>

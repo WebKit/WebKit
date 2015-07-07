@@ -1,0 +1,37 @@
+CONSOLE MESSAGE: line 26: TypeError: undefined is not an object (evaluating 'request.onsuccess = openCallback')
+Test IndexedDB's basics.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.open('basics')
+FAIL indexedDB.open('basics') threw exception TypeError: null is not an object (evaluating 'indexedDB.open')
+FAIL 'result' in request should be true. Threw exception TypeError: undefined is not a valid argument for 'in' (evaluating ''result' in request')
+Expecting exception from request.result
+PASS Exception was thrown.
+FAIL code should be 11 (of type number). Was undefined (of type undefined).
+FAIL ename should be InvalidStateError. Was TypeError.
+Exception message: undefined is not an object (evaluating 'request.result')
+FAIL 'error' in request should be true. Threw exception TypeError: undefined is not a valid argument for 'in' (evaluating ''error' in request')
+Expecting exception from request.error
+PASS Exception was thrown.
+FAIL code should be 11 (of type number). Was undefined (of type undefined).
+FAIL ename should be InvalidStateError. Was TypeError.
+Exception message: undefined is not an object (evaluating 'request.error')
+FAIL 'source' in request should be true. Threw exception TypeError: undefined is not a valid argument for 'in' (evaluating ''source' in request')
+FAIL request.source should be null. Threw exception TypeError: undefined is not an object (evaluating 'request.source')
+FAIL 'transaction' in request should be true. Threw exception TypeError: undefined is not a valid argument for 'in' (evaluating ''transaction' in request')
+FAIL request.transaction should be null. Threw exception TypeError: undefined is not an object (evaluating 'request.transaction')
+FAIL 'readyState' in request should be true. Threw exception TypeError: undefined is not a valid argument for 'in' (evaluating ''readyState' in request')
+FAIL request.readyState should be pending. Threw exception TypeError: undefined is not an object (evaluating 'request.readyState')
+FAIL 'onsuccess' in request should be true. Threw exception TypeError: undefined is not a valid argument for 'in' (evaluating ''onsuccess' in request')
+FAIL request.onsuccess should be null. Threw exception TypeError: undefined is not an object (evaluating 'request.onsuccess')
+FAIL 'onerror' in request should be true. Threw exception TypeError: undefined is not a valid argument for 'in' (evaluating ''onerror' in request')
+FAIL request.onerror should be null. Threw exception TypeError: undefined is not an object (evaluating 'request.onerror')
+FAIL Unexpected error: TypeError: undefined is not an object (evaluating 'request.onsuccess = openCallback')
+FAIL successfullyParsed should be true. Was false.
+
+TEST COMPLETE
+

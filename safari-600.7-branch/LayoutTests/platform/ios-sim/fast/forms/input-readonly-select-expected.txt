@@ -1,0 +1,22 @@
+double clicking on normal input
+FAIL selectEventFiredOnInput should be true. Was false.
+
+double clicking on readonly input
+FAIL selectEventFiredOnReadonlyInput should be true. Was false.
+
+double clicking on disabled input
+FAIL selectEventFiredOnDisabledInput should be true. Was false.
+
+double clicking on normal textarea
+FAIL selectEventFiredOnTextarea should be true. Was false.
+
+double clicking on readonly textarea
+FAIL selectEventFiredOnReadonlyTextarea should be true. Was false.
+
+double clicking on disabled textarea
+FAIL selectEventFiredOnDisabledTextarea should be true. Was false.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

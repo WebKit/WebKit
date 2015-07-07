@@ -1,0 +1,15 @@
+Test that HMAC operations only work when hash functions match between invocation and key.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Importing a raw HMAC SHA-1 key from string literal...
+Done
+PASS crypto.subtle.sign({name: 'hmac', hash: {name: 'sha-1'}}, key, asciiToUint8Array('foo')) did not throw exception.
+PASS crypto.subtle.sign({name: 'hmac', hash: {name: 'sha-256'}}, key, asciiToUint8Array('foo')) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS crypto.subtle.verify({name: 'hmac', hash: {name: 'sha-1'}}, key, asciiToUint8Array('fake signature'), asciiToUint8Array('foo')) did not throw exception.
+PASS crypto.subtle.verify({name: 'hmac', hash: {name: 'sha-256'}}, key, asciiToUint8Array('fake signature'), asciiToUint8Array('foo')) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

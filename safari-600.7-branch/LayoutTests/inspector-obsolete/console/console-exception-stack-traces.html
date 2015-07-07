@@ -1,0 +1,134 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script>
+function wrapper(f) { wrapper2(f); }
+function wrapper2(f) { wrapper3(f); }
+function wrapper3(f) { wrapper4(f); }
+function wrapper4(f) { finalWrapper(f); }
+function finalWrapper(f) { produceError(f); }
+function produceError(f) {
+    f();
+}
+
+function uriError() {
+    console.trace();
+    decodeURI("%");
+}
+
+function typeError() {
+    console.trace();
+    1();
+}
+
+function rangeError() {
+    console.trace();
+    Array(-1).length;
+}
+
+function syntaxError() {
+    console.trace();
+    eval("{");
+}
+
+function referenceError() {
+    console.trace();
+    doesNotExist;
+}
+
+function domException() {
+    console.trace();
+    document.body.appendChild("should not be a string");
+}
+
+function throwErrorObject() {
+    console.trace();
+    throw new Error("Custom Error");
+}
+
+function throwObject() {
+    console.trace();
+    throw {name: "CustomErrorObjectName", message: "CustomErrorObjectMessage"};
+}
+
+function throwString() {
+    console.trace();
+    throw "error string";
+}
+
+function test()
+{
+    InspectorTest.addSniffer(WebInspector.ConsoleDispatcher.prototype, "messageAdded", messageAdded, true);
+
+    var hadError = false;
+    var traceStackTrace = null;
+    var errorStackTrace = null;
+
+    function messageAdded(payload)
+    {
+        if (payload.text === "DONE") {
+            InspectorTest.addResult(hadError ? "FAILURE" : "SUCCESS");
+            InspectorTest.completeTest();
+            return;
+        }
+
+        if (!traceStackTrace) {
+            if (payload.source === "console-api" && payload.type === "trace" && payload.stackTrace)
+                traceStackTrace = payload.stackTrace;
+            else {
+                InspectorTest.addResult("Expected console.trace() message with a stackTrace, but got: " + JSON.stringify(payload));
+                traceStackTrace = errorStackTrace = null;
+                hadError = true;
+                return;
+            }
+        } else if (!errorStackTrace) {
+            if (payload.source === "javascript" && payload.level === "error" && payload.stackTrace)
+                errorStackTrace = payload.stackTrace;
+            else {
+                InspectorTest.addResult("Expected JavaScript Error message with stackTrace but got: " + JSON.stringify(payload));
+                traceStackTrace = errorStackTrace = null;
+                hadError = true;
+                return;
+            }
+        }
+
+        if (traceStackTrace && errorStackTrace) {
+            var hadStackTraceDifference = false;
+             if (traceStackTrace.length != errorStackTrace.length) {
+                if (errorStackTrace.length - traceStackTrace.length != 1 || (errorStackTrace[0].functionName != "decodeURI" && errorStackTrace[0].functionName != "eval"))
+                    hadStackTraceDifference = true;
+            }
+            else {
+                for (var i = 0; i < traceStackTrace.length; ++i) {
+                    if (traceStackTrace[i].functionName !== errorStackTrace[i].functionName)
+                        hadStackTraceDifference = true;
+                }
+            }
+
+            if (hadStackTraceDifference) {
+                InspectorTest.addResult("Unexpected stack trace for JavaScript Error: " + payload.text);
+                hadError = true;
+            }
+
+            traceStackTrace = errorStackTrace = null;
+        }
+    }
+
+    InspectorTest.evaluateInPageWithTimeout("wrapper(uriError)");
+    InspectorTest.evaluateInPageWithTimeout("wrapper(typeError)");
+    InspectorTest.evaluateInPageWithTimeout("wrapper(rangeError)");
+    InspectorTest.evaluateInPageWithTimeout("wrapper(syntaxError)");
+    InspectorTest.evaluateInPageWithTimeout("wrapper(referenceError)");
+    InspectorTest.evaluateInPageWithTimeout("wrapper(throwErrorObject)");
+    InspectorTest.evaluateInPageWithTimeout("wrapper(throwObject)");
+    InspectorTest.evaluateInPageWithTimeout("wrapper(throwString)");
+    InspectorTest.evaluateInPageWithTimeout("console.log('DONE')");
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<p>Tests that JavaScript exception's contain stack traces and that the functions match console.trace() stack traces.</p>
+
+</body>
+</html>

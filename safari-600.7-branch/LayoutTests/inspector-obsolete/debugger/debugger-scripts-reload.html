@@ -1,0 +1,51 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+
+<script>
+
+function test()
+{
+    InspectorTest.evaluateInPage("function foo() {} //@ sourceURL=dummyScript.js", step1);
+
+    function step1()
+    {
+        InspectorTest.startDebuggerTest(step2);
+    }
+
+    function step2()
+    {
+        InspectorTest.queryScripts(function(script) { step3({ data: script }) });
+        WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, step3);
+    }
+
+    function step3(event)
+    {
+        var script = event.data;
+        if (script.sourceURL.indexOf("dummyScript.js") !== -1) {
+            InspectorTest.addResult("Dummy script found: " + script.sourceURL);
+            // Let scripts dispatch and reload.
+            setTimeout(InspectorTest.reloadPage.bind(InspectorTest, afterReload), 0);
+        }
+    }
+
+    function afterReload()
+    {
+        var scripts = InspectorTest.queryScripts();
+        for (var i = 0; i < scripts.length; ++i) {
+            if (scripts[i].sourceURL.indexOf("dummyScript.js") !== -1)
+                InspectorTest.addResult("FAILED: dummy script found after navigation");
+        }
+        InspectorTest.completeDebuggerTest();
+    }
+
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>
+Tests that scripts list is cleared upon page reload.
+</p>
+</body>
+</html>

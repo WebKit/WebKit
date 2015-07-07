@@ -1,0 +1,34 @@
+<html>
+<head>
+    <script src="../resources/cross-frame-access.js"></script>
+    <script>
+        var openedWindow;
+        window.onload = function()
+        {
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+                testRunner.setCanOpenWindows();
+            }
+
+            openedWindow = window.open("http://localhost:8000/security/dataURL/resources/foreign-domain-data-url-accessor-opened-frame.html");
+
+            if (window.testRunner)
+                setTimeout(pollUntilDone, 1);
+        }
+
+        pollUntilDone = function()
+        {
+            if (!testRunner.globalFlag) {
+                setTimeout(pollUntilDone, 1);
+                return;
+            }
+            closeWindowAndNotifyDone(openedWindow);
+        }
+    </script>
+</head>
+<body>
+    <p>Opener Frame</p>
+    <p id='accessMe'>Pass: Cross frame access from a data: URL on a different domain was denied.</p>
+</body>
+</html>

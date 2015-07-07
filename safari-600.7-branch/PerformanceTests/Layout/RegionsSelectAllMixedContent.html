@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="resources/regions.css" type="text/css"></link>
+        <script src="../resources/runner.js"></script>
+        <script src="resources/regions.js"></script>
+        <style type="text/css">
+        #log {
+            position: fixed;
+        }
+        </style>
+    </head>
+    <body>
+        <pre id="log"></pre>
+        <script>
+            function createRegionsSelectAllMixedContentTest(regionCount) {
+                var article = createArticle(regionCount, 1);
+                article.className = "articleInFlow";
+                var container = createMixedContent(regionCount);
+                document.body.appendChild(article);
+                document.body.appendChild(container);
+                return {
+                    description: "Testing selection with mixed content (" + regionCount + " regular paragraphs and " + regionCount + " regions). Select text using select all command.",
+                    run: function() {
+                        document.execCommand('SelectAll');
+                    },
+                    setup: function() {
+                        window.getSelection().removeAllRanges();
+                    },
+                    done: function() {
+                        document.body.removeChild(article);
+                        document.body.removeChild(container);
+                        templateParagraph = null;
+                        templateRegion = null;
+                    }
+                };
+            }
+
+            PerfTestRunner.measureTime(createRegionsSelectAllMixedContentTest(1000));
+        </script>
+    </body>
+</html>

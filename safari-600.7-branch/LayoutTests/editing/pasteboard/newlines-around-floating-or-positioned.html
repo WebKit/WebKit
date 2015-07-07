@@ -1,0 +1,29 @@
+<pre id="console"></pre>
+<div id="test1">Lorem<span style="float: left;">-</span>ipsum</div>
+<div id="test2">Lorem<span style="float: left;"></span>ipsum</div>
+<div id="test3">Lorem<div style="position: absolute;">-</div>ipsum</div>
+<div id="test4">Lorem<div style="position: absolute;"></div>ipsum</div>
+<script>
+    function log(message)
+    {
+        var console = document.getElementById("console");
+        console.appendChild(document.createTextNode(message + "\n"));
+    }
+
+    function test(id, expected)
+    {
+        var actual = document.getElementById(id).innerText;
+        if (actual == expected)
+            log(id + " PASS: innerText is " + actual + " as expected");
+        else
+            log(id + " FAIL: innerText is " + actual + " instead of " + expected);
+    }
+
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    test("test1", "Lorem-ipsum");
+    test("test2", "Loremipsum");
+    test("test3", "Lorem-ipsum");
+    test("test4", "Loremipsum");
+</script>

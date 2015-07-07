@@ -1,0 +1,6 @@
+Test that controls don't increase the size of the container (i.e. are rendered overlapping with the video canvas).
+
+
+
+EXPECTED (controls.offsetTop + controls.offsetHeight <= '240') OK
+

@@ -1,0 +1,122 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>window.performance.timing attributes after a reloaded navigation</title>
+        <link rel="author" title="Microsoft" href="http://www.microsoft.com/" />
+	<link rel="help" href="http://www.w3.org/TR/navigation-timing/#sec-navigation-timing-interface"/>
+        <script src="/w3c/resources/testharness.js"></script>
+        <script src="/w3c/resources/testharnessreport.js"></script>
+        <script src="/w3c/webperf/resources/webperftestharness.js"></script>
+        <link rel="stylesheet" href="/w3c/resources/testharness.css" />
+<script id="metadata_cache">/*
+{
+  "window.performance is defined": {
+    "help": "http://www.w3.org/TR/navigation-timing/#sec-window.performance-attribute",
+    "assert": "The window.performance attribute provides a hosting area for performance related attributes. ",
+    "author": "W3C http://www.w3.org/"
+  },
+  "window.performance.navigation is defined": {
+    "help": "http://www.w3.org/TR/navigation-timing/#sec-window.performance-attribute",
+    "assert": "The window.performance attribute provides a hosting area for performance related attributes. ",
+    "author": "W3C http://www.w3.org/"
+  },
+  "window.performance.navigation.type == TYPE_RELOAD": { "help": "http://www.w3.org/TR/navigation-timing/#sec-navigation-info-interface" },
+  "connectEnd is different after the reload.": {},
+  "connectStart is different after the reload.": {},
+  "domComplete is different after the reload.": {},
+  "domContentLoadedEventEnd is different after the reload.": {},
+  "domContentLoadedEventStart is different after the reload.": {},
+  "domInteractive is different after the reload.": {},
+  "domLoading is different after the reload.": {},
+  "domainLookupEnd is different after the reload.": {},
+  "domainLookupStart is different after the reload.": {},
+  "fetchStart is different after the reload.": {},
+  "loadEventEnd is different after the reload.": {},
+  "loadEventStart is different after the reload.": {},
+  "navigationStart is different after the reload.": {},
+  "requestStart is different after the reload.": {},
+  "responseEnd is different after the reload.": {},
+  "responseStart is different after the reload.": {}
+}
+*/</script>
+        <script>
+            setup({explicit_done: true});
+
+            // explicitly test the namespace before we start testing
+            test_namespace('navigation');
+
+            var reload_frame;
+            var initial_timing;
+
+            function onload_test()
+            {
+                reload_frame = document.getElementById("frameContext");
+
+                if (reload_frame.contentWindow.performance === undefined)
+                {
+                    // avoid script errors
+                    done();
+                    return;
+                }
+
+                reload_frame.onload = do_test;
+
+                // save frame's initial timings
+                initial_timing = {};
+                var timing = reload_frame.contentWindow.performance.timing;
+
+                for (var i = 0; i < timingAttributes.length; ++i)
+                {
+                    var property = timingAttributes[i];
+                    initial_timing[property] = timing[property];
+                }
+
+                setTimeout("reload_the_frame();", 100);
+            }
+
+            function reload_the_frame()
+            {
+                reload_frame.contentWindow.location.reload(true);
+            }
+
+            function do_test()
+            {
+                reload_frame.onload = "";
+
+                // ensure the frame reloaded
+                test_equals(reload_frame.contentWindow.performance.navigation.type,
+                            performanceNamespace.navigation.TYPE_RELOAD,
+                            "window.performance.navigation.type == TYPE_RELOAD", {help:"http://www.w3.org/TR/navigation-timing/#sec-navigation-info-interface"});
+
+                // ensure reload timings changed
+                var timing = reload_frame.contentWindow.performance.timing;
+                for (var i = 0; i < timingAttributes.length; ++i)
+                {
+                    var property = timingAttributes[i];
+
+                    // ignore any timings that were zero initially
+                    if (initial_timing[property] !== 0)
+                    {
+                        test_not_equals(timing[property], initial_timing[property],
+                                property + " is different after the reload.");
+                    }
+                }
+
+                done();
+            }
+        </script>
+    </head>
+    <body onload="onload_test();">
+        <h1>Description</h1>
+        <p>This test validates that the window.performance.timing attributes change when a page is reloaded.</p>
+
+        <p>This page should be loaded with a green background frame below.  The frame will be automatically reloaded
+        and then verified that the window.performance.timing attributes have been updated to the new reloaded navigation timings.</p>
+
+        <div id="log"></div>
+        <br />
+        <iframe id="frameContext" src="/w3c/webperf/resources/blank_page_green.htm" style="width: 250px; height: 250px;"></iframe>
+
+    </body>
+</html>

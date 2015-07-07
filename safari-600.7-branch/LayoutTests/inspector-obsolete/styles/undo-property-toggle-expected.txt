@@ -1,0 +1,11 @@
+Tests that disabling style is undone properly.
+
+Before disable
+font-weight: bold;
+After disable
+/-- overloaded --/ /-- disabled --/ font-weight: bold;
+After undo
+font-weight: bold;
+After redo
+/-- overloaded --/ /-- disabled --/ font-weight: bold;
+

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Security-Policy-Report-Only" content="script-src 'self'">
+</head>
+<body>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        eval("alert('PASS: eval() executed as expected.');");
+    </script>
+</body>
+</html>

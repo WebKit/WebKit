@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style type="text/css" media="screen">
+        .box {
+            position: absolute;
+            height: 100px;
+            width: 100px;
+            left: 0px;
+            background-color: blue;
+        }
+
+        .box.animating {
+            -webkit-animation: move 0.1s linear;
+            left: 100px;
+            -webkit-transition: left 10s linear;
+        }
+        
+        /* When the animation is done, the box should be running a transition from 100px to 200px */
+        .box.animating.moved {
+            left: 200px;
+        }
+        
+        @-webkit-keyframes move {
+            from {
+                left: 500px;
+            }
+            to   {
+                left: 501px;
+            }
+        }
+        
+        #result {
+            margin-top: 130px;
+        }
+    </style>
+    <script src="resources/animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+      const expectedValues = [
+        // [animation-name, time, element-id, property, expected-value, tolerance]
+        [null, 0.2, "test", "left", 100, 10],
+      ];
+
+      function animationStarted()
+      {
+          document.getElementById('test').className = 'animating moved box';
+      }
+
+      function setupTest()
+      {
+        document.getElementById('test').className = 'animating box';
+        runAnimationTest(expectedValues, animationStarted);
+      }
+      
+      window.addEventListener('load', function() {
+          window.setTimeout(setupTest, 0);
+      }, false);
+
+    </script>
+</head>
+<body>
+    <p>Once animation has finished, box should be running left transition from 100px to 200px.</p>
+    <div id="test" class="box"></div>
+    <div id="result"></div>
+</body>
+</html>

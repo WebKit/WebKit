@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+description('Test basic interaction with the Speech JavaScript API');
+
+function run() {
+    // Check availability of constructors.
+    shouldBeTrue("'webkitSpeechRecognition' in self");
+    shouldBeFalse("webkitSpeechRecognition == null");
+
+    oneMatchTest();
+}
+
+function oneMatchTest() {
+    debug('\noneMatchTest():');
+    var r = new webkitSpeechRecognition();
+    window.count = 0;
+
+    r.onstart =         function() { debug('onstart');       shouldBe('count', '0'); ++count; }
+    r.onaudiostart =    function() { debug('onaudiostart');  shouldBe('count', '1'); ++count; }
+    r.onsoundstart =    function() { debug('onsoundstart');  shouldBe('count', '2'); ++count; }
+    r.onspeechstart =   function() { debug('onspeechstart'); shouldBe('count', '3'); ++count; }
+
+    r.onresult = function() {
+        debug('onresult');
+        shouldBe('count', '4');
+        ++count;
+        shouldBe('event.results.length', '1');
+        shouldBe('event.results[0].length', '1');
+        shouldBe('event.results[0].isFinal', 'true');
+        shouldBeEqualToString('event.results[0].item(0).transcript', 'hello, world');
+        shouldBeCloseTo('event.results[0].item(0).confidence', 0.42, 1e-3);
+    }
+
+    r.onspeechend =     function() { debug('onspeechend');   shouldBe('count', '5'); ++count; }
+    r.onsoundend =      function() { debug('onsoundend');    shouldBe('count', '6'); ++count; }
+    r.onaudioend =      function() { debug('onaudioend');    shouldBe('count', '7'); ++count; }
+
+    r.onend = function() {
+        debug('onend');
+        shouldBe('count', '8');
+        ++count;
+        noMatchTest();
+    }
+
+    if (window.testRunner) {
+        testRunner.addMockSpeechRecognitionResult('hello, world', 0.42);
+    }
+    r.start();
+}
+
+function noMatchTest() {
+    debug('\nnoMatchTest():');
+    var r = new webkitSpeechRecognition();
+    window.count = 0;
+
+    r.onstart =         function() { debug('onstart');       shouldBe('count', '0'); ++count; }
+    r.onaudiostart =    function() { debug('onaudiostart');  shouldBe('count', '1'); ++count; }
+    r.onsoundstart =    function() { debug('onsoundstart');  shouldBe('count', '2'); ++count; }
+    r.onspeechstart =   function() { debug('onspeechstart'); shouldBe('count', '3'); ++count; }
+
+    r.onnomatch = function() {
+        debug('onnomatch');
+        shouldBe('count', '4');
+        ++count;
+        shouldBe('event.results', 'null');
+    }
+
+    r.onspeechend =     function() { debug('onspeechend');   shouldBe('count', '5'); ++count; }
+    r.onsoundend =      function() { debug('onsoundend');    shouldBe('count', '6'); ++count; }
+    r.onaudioend =      function() { debug('onaudioend');    shouldBe('count', '7'); ++count; }
+
+    r.onend = function() {
+        debug('onend');
+        shouldBe('count', '8');
+        ++count;
+        finishJSTest();
+    }
+
+    r.start();
+}
+
+window.onload = run;
+window.jsTestIsAsync = true;
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

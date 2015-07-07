@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #fixed { -webkit-flow-into: flow; position: fixed; top: 50px; left: 50px; background-color: green; width: 100px; height: 100px; }
+            #red { position: absolute; top: 150px; left: 150px; width: 100px; height: 100px; background-color: red; }
+            /* We need a region otherwise the fixed positioned element is not displayed */
+            #region { -webkit-flow-from: flow; }
+        </style>
+        <script>
+            if (window.internals)
+                window.internals.settings.setAcceleratedCompositingForFixedPositionEnabled(true);
+
+            window.addEventListener("load", function() {
+                document.getElementById("fixed").style.top = "150px";
+                document.getElementById("fixed").style.left = "150px";
+            }, false);
+        </script>
+    </head>
+    <body>
+        <!-- Fixed positioned element inside a named flow, dynamically changed top/left -->
+        <p>Test that a fixed positioned element whose position is dynamically changed
+            is correctly painted in the new position.</p>
+        <p>On success you should see a green rectangle and no red.</p>
+        <div id="red"></div>
+        <div id="fixed"></div>
+        <div id="region"></div>
+    </body>
+</html>

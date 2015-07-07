@@ -1,0 +1,26 @@
+
+=== Enable the LayerTree agent ===
+
+PASS
+
+=== Get the Document ===
+
+PASS
+
+=== Get the layer tree ===
+
+PASS
+
+=== Check layers ===
+
+PASS: Expected number of reflected layers.
+PASS: First reflected layer has a node.
+
+=== Check reflected node ===
+
+PASS: Node for layer was found.
+PASS: Node has expected localName.
+PASS: Node has expected number of attributes.
+PASS: Node has CSS class.
+PASS: Node has expected CSS class.
+

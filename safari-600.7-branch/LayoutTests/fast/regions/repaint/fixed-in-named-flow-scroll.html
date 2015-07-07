@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            body { height: 2000px; }
+
+            #fixed { -webkit-flow-into: flow; width: 100px; height: 100px; top: 100px; left: 100px; background-color: green; position: fixed; }
+            /* We need the region otherwise the fixed positioned element is not displayed.*/
+            #region { -webkit-flow-from: flow; position: absolute; top: 200px; left: 200px; }
+
+            #red { position: absolute; top: 200px; left: 100px; width: 100px; height: 100px; background-color: red; }
+        </style>
+        <script src="../../repaint/resources/text-based-repaint.js"></script>
+    </head>
+    <body onload="test()">
+        <p>
+        Test that a fixed element inside a named flow is properly positioned when the view is scrolled.
+        On success you should see PASS below and a green rectangle.
+        </p>
+        <div id="result"></div>
+        <div id="region"></div>
+
+        <div id="red"></div>
+        <div id="fixed"></div>
+        <script>
+            if (window.testRunner)
+                window.testRunner.dumpAsText();
+
+            function scrollFixed() {
+                window.scrollTo(0, 100);
+                var hitElement = document.elementFromPoint(150, 150);
+                if (hitElement == document.getElementById("fixed"))
+                    document.getElementById("result").innerHTML = "PASS";
+                else
+                    document.getElementById("result").innerHTML = "FAIL";
+            }
+
+            function test() {
+                if (window.testRunner) {
+                    document.body.offsetTop;
+                    scrollFixed();
+                    document.body.offsetTop;
+                } else {
+                    setTimeout(scrollFixed, 100);
+                }
+            }
+        </script>
+    </body>
+</html>

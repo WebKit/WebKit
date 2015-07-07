@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 55x19
+          text run at (0,0) width 55: "Test for "
+        RenderInline {I} at (0,0) size 631x19
+          RenderInline {A} at (0,0) size 306x19 [color=#0000EE]
+            RenderText {#text} at (54,0) size 306x19
+              text run at (54,0) width 306: "http://bugs.webkit.org/show_bug.cgi?id=12039"
+          RenderText {#text} at (359,0) size 326x19
+            text run at (359,0) width 5: " "
+            text run at (363,0) width 322: "Assertion failure in WebCore::Font::primaryFont"
+        RenderText {#text} at (684,0) size 5x19
+          text run at (684,0) width 5: "."
+      RenderBlock (anonymous) at (0,36) size 784x20
+        RenderInline {SPAN} at (0,0) size 39x19
+          RenderText {#text} at (0,0) size 39x19
+            text run at (0,0) width 39: "PASS"
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0

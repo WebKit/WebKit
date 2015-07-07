@@ -1,0 +1,21 @@
+<html>
+  <head>
+    <title>103685 - [CSS Regions] Universal child selector on region breaks the rendering of its content</title>
+    <style type="text/css">
+      .region > * {
+        -webkit-flow-into: foo;
+      }
+      .region {
+        -webkit-flow-from: foo;
+      }
+    </style>
+    <script type="text/javascript">
+        if (window.testRunner)
+            testRunner.dumpAsText()
+    </script>
+  </head>
+  <body>
+      <div class="region"><span>PASS: this is inline</span><div><p>PASS: and block content inside a region that is flowed into the same region</p></div><button>PASS: button</button></div>
+      <p><a href="https://bugs.webkit.org/show_bug.cgi?id=74144">Bug 74144</a> - [CSS Regions] Elements in a region should be assignable to a named flow</p>
+  </body>
+</html>

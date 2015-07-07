@@ -1,0 +1,18 @@
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+
+----- tests for putting window.history and its properties -----
+
+PASS: window.location.assign should be 'function assign() {    [native code]}' and is.
+PASS: window.location.replace should be 'function replace() {    [native code]}' and is.
+PASS: window.location.reload should be 'function reload() {    [native code]}' and is.
+PASS: window.location.toString should be 'function toString() {    [native code]}' and is.
+PASS: window.location.customAttribute should be 'customAttribute' and is.
+

@@ -1,0 +1,8 @@
+Tests that invalid media src url does not result in crash.
+
+EXPECTED (audio.error.code == '4') OK
+EXPECTED (video.error.code == '4') OK
+EXPECTED (audio.networkState == '3') OK
+EXPECTED (video.networkState == '3') OK
+END OF TEST
+

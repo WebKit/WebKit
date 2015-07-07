@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+	<head>
+		<style>
+            .greenBox { position: absolute; width: 250px; height: 50px; background-color: green; }
+            #green { top: 125px; }
+            #green1 { top: 225px; }
+            #green2 { top: 325px; }
+		</style>
+	</head>
+	<body>
+		<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=91097"> Auto height is not working for regions</a>.</p>
+		<p>The auto height region is the single region in the flow thread region chain, having region overflow auto.</p>
+		<p>On success, you should see 3 green lines.</p>
+        <div id="green" class="greenBox"></div>
+        <div id="green1" class="greenBox"></div>
+        <div id="green2" class="greenBox"></div>
+	</body>
+</html>

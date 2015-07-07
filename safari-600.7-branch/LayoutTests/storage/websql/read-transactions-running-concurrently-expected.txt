@@ -1,0 +1,3 @@
+This test tests that two read-only transactions on different handles to the same database run concurrently.
+Read transactions running concurrently.
+

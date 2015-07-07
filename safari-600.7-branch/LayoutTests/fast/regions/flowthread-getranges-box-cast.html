@@ -1,0 +1,17 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<style>
+#region1 { -webkit-flow-from: flow1; width: 250px; height: 70px; left: 20px; top: 250px;}
+</style>
+<div>This test passes if it doesn't crash or assert.</div>
+<div><div id="article"><div <script>
+<br>
+</div></div></div>
+<div id="region1"></div>
+<script>
+var article = document.getElementById("article");
+article.style.webkitFlowInto = "flow1";
+range1 = region1.webkitGetRegionFlowRanges();
+</script>

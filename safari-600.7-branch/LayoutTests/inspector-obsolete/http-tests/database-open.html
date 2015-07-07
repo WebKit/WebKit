@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../inspector/inspector-test.js"></script>
+<script>
+
+function onload()
+{
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    var db = openDatabase("InspectorDatabaseTest", "1.0", "Test of database instrumentation", 1);
+
+    if (window.testRunner)
+        testRunner.showWebInspector();
+    runTest();
+}
+
+function test()
+{
+    function run()
+    {
+        var databases = WebInspector.databaseModel.databases();
+        for (var i = 0; i < databases.length; ++i) {
+            InspectorTest.addResult("Name: " + databases[i].name);
+            InspectorTest.addResult("Version: " + databases[i].version);
+            InspectorTest.addResult("Domain: " + databases[i].domain);
+        }
+        InspectorTest.completeTest();
+    }
+    InspectorBackend.runAfterPendingDispatches(run);
+}
+
+</script>
+
+</head>
+<body onload="onload()">
+<p>Tests that Web Inspector gets populated with databases that were opened before inspector is shown.</p>
+</body>
+</html>

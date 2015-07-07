@@ -1,0 +1,9 @@
+content with break-after: always;
+
+2nd p
+
+fit vs fit
+fit vs fit
+empty vs empty
+PASS
+Bug 92497 - [CSS Regions] Region overset property is not properly computed when there is a region break

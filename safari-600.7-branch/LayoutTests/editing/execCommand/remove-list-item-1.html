@@ -1,0 +1,16 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<body>
+<p>Outdenting a sublist should remove one level.</p>
+<div id="div" contentEditable="true"><ul><ul><li>foo</li></ul></ul></div>
+
+<script>
+var div = document.getElementById("div");
+var sel = window.getSelection();
+
+sel.setPosition(div, 0);
+document.execCommand("Outdent");
+</script>
+</body>

@@ -1,0 +1,2 @@
+ This tests that we won't crash when a plugin tries to open an URL that the resource load delegate doesn't allow.
+SUCCESS - didn't crash

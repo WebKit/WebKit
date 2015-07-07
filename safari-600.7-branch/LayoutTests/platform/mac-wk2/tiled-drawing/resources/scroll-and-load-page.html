@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body
+        {
+            width: 5000px;
+            height: 5000px;
+        }
+    </style>
+    <script>
+        function pageWasShown(e)
+        {
+            if (e.persisted) {
+                setTimeout(function () {
+                    var log = 'document.body.scrollTop = ' + document.body.scrollTop + '\n\n';
+                    if (window.internals)
+                        log += internals.layerTreeAsText(window.document, internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS | internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+                    window.opener.finishedTest(log);
+                }, 0);
+            }
+        }
+
+        function scrollAndNavigate()
+        {
+            setTimeout(function () {
+                window.scrollTo(1000, 1000);
+
+                setTimeout(function () { location.href = "go-back.html" }, 0);
+            }, 0);
+        }
+        window.addEventListener('load', scrollAndNavigate, false);
+        window.addEventListener('pageshow', pageWasShown, false);
+    </script>
+</head>
+<body>
+</body>
+</html>

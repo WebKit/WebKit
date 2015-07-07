@@ -1,0 +1,201 @@
+/*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+* {
+    box-sizing: border-box;
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+    cursor: default;
+}
+
+*:link {
+    cursor: pointer;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+div.cellButton {
+    font-family: "HelveticaNeue-Light", sans-serif;
+    font-size: 12px;
+    color: rgb(185, 175, 125);
+    cursor: pointer;
+}
+
+div.cellButton.hide {
+    display: none;
+    position: absolute;
+    bottom: 2px;
+    right: 4px;
+}
+
+div.cellButton.unhide {
+    display: none;
+}
+
+.settings-visible div.cellButton.hide, .settings-visible div.cellButton.unhide {
+    display: block;
+}
+
+.hidden {
+    display: none;
+}
+
+.settings {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 35px;
+    height: 35px;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 250"><path fill="rgb(166, 158, 130)" d="M213,144v-39h-21.055c-1.476-5-3.51-10.085-6.051-14.668l14.673-14.697l-27.578-27.589l-14.521,14.665 C153.885,60.17,149,58.13,144,56.654V36h-39v20.654c-5,1.476-10.186,3.51-14.769,6.051L75.484,48.033L47.869,75.609l14.652,14.723 C59.981,94.915,57.929,100,56.453,105H36v39h20.453c1.476,5,3.511,9.985,6.051,14.569l-14.672,14.646l27.577,27.565l14.822-14.679 c4.583,2.541,9.769,4.569,14.769,6.045V213h39v-20.854c5-1.476,9.885-3.51,14.468-6.051l14.597,14.672l27.541-27.576l-14.691-14.623 c2.54-4.583,4.556-9.568,6.031-14.568H213z M124.199,164.9c-22.367,0-40.5-18.133-40.5-40.5s18.133-40.5,40.5-40.5 s40.5,18.133,40.5,40.5S146.566,164.9,124.199,164.9z"/></svg>');
+    cursor: pointer;
+}
+
+.settings:hover {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 250"><path fill="rgb(185, 175, 125)" d="M213,144v-39h-21.055c-1.476-5-3.51-10.085-6.051-14.668l14.673-14.697l-27.578-27.589l-14.521,14.665 C153.885,60.17,149,58.13,144,56.654V36h-39v20.654c-5,1.476-10.186,3.51-14.769,6.051L75.484,48.033L47.869,75.609l14.652,14.723 C59.981,94.915,57.929,100,56.453,105H36v39h20.453c1.476,5,3.511,9.985,6.051,14.569l-14.672,14.646l27.577,27.565l14.822-14.679 c4.583,2.541,9.769,4.569,14.769,6.045V213h39v-20.854c5-1.476,9.885-3.51,14.468-6.051l14.597,14.672l27.541-27.576l-14.691-14.623 c2.54-4.583,4.556-9.568,6.031-14.568H213z M124.199,164.9c-22.367,0-40.5-18.133-40.5-40.5s18.133-40.5,40.5-40.5 s40.5,18.133,40.5,40.5S146.566,164.9,124.199,164.9z"/></svg>');
+}
+
+.settings-visible .settings {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 250"><path fill="rgb(76, 151, 61)" d="M213,144v-39h-21.055c-1.476-5-3.51-10.085-6.051-14.668l14.673-14.697l-27.578-27.589l-14.521,14.665 C153.885,60.17,149,58.13,144,56.654V36h-39v20.654c-5,1.476-10.186,3.51-14.769,6.051L75.484,48.033L47.869,75.609l14.652,14.723 C59.981,94.915,57.929,100,56.453,105H36v39h20.453c1.476,5,3.511,9.985,6.051,14.569l-14.672,14.646l27.577,27.565l14.822-14.679 c4.583,2.541,9.769,4.569,14.769,6.045V213h39v-20.854c5-1.476,9.885-3.51,14.468-6.051l14.597,14.672l27.541-27.576l-14.691-14.623 c2.54-4.583,4.556-9.568,6.031-14.568H213z M124.199,164.9c-22.367,0-40.5-18.133-40.5-40.5s18.133-40.5,40.5-40.5 s40.5,18.133,40.5,40.5S146.566,164.9,124.199,164.9z"/></svg>');
+}
+
+body {
+    background-color: rgb(233, 231, 223);
+    text-align: center;
+    margin: 50px;
+}
+
+table.queue-grid {
+    border-spacing: 0;
+    border-collapse: collapse;
+    display: inline-table;
+}
+
+table.queue-grid tr.headers th {
+    font-family: "HelveticaNeue-UltraLight", sans-serif;
+    font-size: 30px;
+    font-weight: normal;
+    text-transform: lowercase;
+    color: rgb(145, 135, 95);
+}
+
+table.queue-grid tr:nth-child(odd):not(.headers) td {
+    border-top: 1px solid rgb(211, 207, 191);
+    border-bottom: 1px solid rgb(211, 207, 191);
+}
+
+table.queue-grid tr th:not(:last-child),
+table.queue-grid tr td:not(:last-child) {
+    border-right: 1px solid rgb(211, 207, 191);
+}
+
+table.queue-grid tr:nth-child(odd):not(.headers) td {
+    background-color: rgb(229, 226, 217);
+}
+
+table.queue-grid tr:nth-child(odd):not(.headers) td:first-child {
+    background-color: transparent;
+    background: -webkit-linear-gradient(left, rgba(229, 226, 217, 0), rgb(229, 226, 217));
+}
+
+table.queue-grid tr:nth-child(odd):not(.headers) td:last-child {
+    background-color: transparent;
+    background: -webkit-linear-gradient(right, rgba(229, 226, 217, 0), rgb(229, 226, 217));
+}
+
+table.queue-grid td {
+    width: 200px;
+    vertical-align: top;
+}
+
+table.queue-grid td.logo {
+    position: relative;
+}
+
+table.queue-grid td.logo::before {
+    display: block;
+    content: "";
+    width: 200px;
+    height: 0;
+}
+
+table.queue-grid td.logo img.ring {
+    content: -webkit-image-set(url(../Images/PlatformRing@2x.png) 2x, url(../Images/PlatformRing.png) 1x);
+    width: 160px;
+    height: 163px;
+    position: absolute;
+    top: 20px;
+    left: 18px;
+    z-index: 1;
+}
+
+table.queue-grid td.logo img.logo {
+    width: 144px;
+    height: 144px;
+    position: absolute;
+    top: 29px;
+    left: 26px;
+}
+
+table.queue-grid tr.platform.mac-os-x-mavericks img.logo {
+    content: -webkit-image-set(url(../Images/Mavericks@2x.png) 2x, url(../Images/Mavericks.png) 1x);
+}
+
+table.queue-grid tr.platform.mac-os-x-mountain-lion img.logo {
+    content: -webkit-image-set(url(../Images/MountainLion@2x.png) 2x, url(../Images/MountainLion.png) 1x);
+}
+
+table.queue-grid tr.platform.mac-os-x-lion img.logo {
+    content: -webkit-image-set(url(../Images/Lion@2x.png) 2x, url(../Images/Lion.png) 1x);
+}
+
+table.queue-grid tr.platform.windows-8 img.logo {
+    content: -webkit-image-set(url(../Images/Windows8@2x.png) 2x, url(../Images/Windows8.png) 1x);
+}
+
+table.queue-grid tr.platform.windows-7 img.logo {
+    content: -webkit-image-set(url(../Images/Windows7@2x.png) 2x, url(../Images/Windows7.png) 1x);
+}
+
+table.queue-grid tr.platform.windows-xp img.logo {
+    content: -webkit-image-set(url(../Images/WindowsXP@2x.png) 2x, url(../Images/WindowsXP.png) 1x);
+}
+
+table.queue-grid tr.platform.linux-gtk img.logo {
+    content: -webkit-image-set(url(../Images/GTK@2x.png) 2x, url(../Images/GTK.png) 1x);
+}
+
+table.queue-grid tr.platform.linux-efl img.logo {
+    content: -webkit-image-set(url(../Images/EFL@2x.png) 2x, url(../Images/EFL.png) 1x);
+}
+
+.popover-tracking:hover {
+    text-shadow: 0px 0px 3px rgba(0, 0, 0, 0.2)
+}

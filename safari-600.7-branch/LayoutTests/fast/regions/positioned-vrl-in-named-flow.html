@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            #article { -webkit-flow-into: article; position: relative; }
+            #absoluteVertRL { -webkit-writing-mode: vertical-rl; position: absolute; }
+        </style>
+    </head>
+    <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=90792">WebKit Bug 90792</a> Assert failure when layout positioned objects in regions.</p>
+    <p>This test collects an absolutely positioned element in a flow thread without any regions attached. The positioned element has a different writing mode than its positioned parent.</p>
+    <p>The test passes if it does not crash or assert.</p>
+    <div id="article">
+        <div id="absoluteVertRL"></div>
+    </div>
+    <p>PASS</p>
+    <script>
+        if (window.testRunner)
+            window.testRunner.dumpAsText();
+    </script>
+</html>

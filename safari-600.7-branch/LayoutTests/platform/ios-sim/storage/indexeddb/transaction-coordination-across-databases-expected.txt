@@ -1,0 +1,20 @@
+CONSOLE MESSAGE: line 22: TypeError: undefined is not an object (evaluating 'request.onerror = unexpectedBlockedCallback')
+Check that transactions in different databases can run in parallel.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = "transaction-coordination-across-databases.html"
+dbname1 = dbname + '1'
+dbname2 = dbname + '2'
+
+deleteDatabase1():
+indexedDB.deleteDatabase(dbname1)
+FAIL indexedDB.deleteDatabase(dbname1) threw exception TypeError: null is not an object (evaluating 'indexedDB.deleteDatabase')
+FAIL Unexpected error: TypeError: undefined is not an object (evaluating 'request.onerror = unexpectedBlockedCallback')
+FAIL successfullyParsed should be true. Was false.
+
+TEST COMPLETE
+

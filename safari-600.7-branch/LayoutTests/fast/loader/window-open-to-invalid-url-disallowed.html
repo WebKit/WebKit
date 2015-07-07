@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpFrameLoadCallbacks();
+    testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows();
+}
+</script>
+</head>
+<body>
+<p>Tests that we do not open a new window to an invalid URL. This test PASSED if you see an entry in the dumped frame load callbacks of the form: &quot;willPerformClientRedirectToURL: http://A=a&amp;B=b&quot; followed by &quot;didCancelClientRedirectForFrame&quot;.</p>
+<p>Note, this test must be run in DumpRenderTree.</p>
+<script>
+window.open("http://A=a&B=b", "_top");
+window.setTimeout(function() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 0);
+</script>
+</body>
+</html>

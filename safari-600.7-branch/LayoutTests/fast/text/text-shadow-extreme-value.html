@@ -1,0 +1,21 @@
+<html>
+<head>
+    <title>Test HTML Page</title>
+<script>
+function test()
+{
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        document.body.offsetTop;
+        testRunner.display();
+    }
+}
+</script>
+    <style type="text/css">
+    p { text-shadow: purple 0px 0px 38005685px; }
+    </style>
+</head>
+<body onload="test()">
+    <p>Extreme text-shadow blur values should not crash.</p>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            video {
+                border: 3px solid red;
+                background-color: magenta;
+            }
+        </style>
+
+        <script src=video-test.js></script>
+        <script>
+        
+            var width, height;
+        
+            function testAfterLoadingPoster()
+            {
+                consoleWrite("<br><b>Test after setting poster</b>");
+
+                testExpected("video.clientWidth", 300);
+                testExpected("video.clientHeight", 150);
+
+                endTest();
+            }
+
+            function start()
+            {
+                if (window.testRunner) {
+                    testRunner.dumpAsText();
+                    testRunner.setWillSendRequestReturnsNull(true);
+                } else
+                    consoleWrite("<b>This test can only be run in DumpRenderTree!</b>");
+
+                video = document.querySelectorAll('video')[0];
+
+                consoleWrite("<br><b>Testing before setting poster</b>");
+                testExpected("video.clientWidth", 300);
+                testExpected("video.clientHeight", 150);
+
+                // FIXME: the getTime() below works around a bug (82976) in mac DRT where caches aren't cleared between tests.
+                video.poster = "content/abe.png?" + (new Date().getTime());
+
+                setTimeout(testAfterLoadingPoster, 100);
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <video id=video></video>
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=65270">https://bugs.webkit.org/show_bug.cgi?id=65270</a>. <br>
+        Resource load delegate should be able to block poster loading.</p>
+    </body>
+</html>

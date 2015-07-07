@@ -1,0 +1,52 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../network-test.js"></script>
+<script>
+var test = function()
+{
+    InspectorTest.reloadPage(step1);
+
+    function findRequestByURL(url)
+    {
+        var requests = WebInspector.networkLog.requests;
+        for (var i = 0; i < requests.length; ++i) {
+            if (url.test(requests[i].url))
+                return requests[i];
+        }
+    }
+
+    function step1()
+    {
+        WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.RequestStarted, onRequest);
+        var str = "";
+        str += "var s = document.createElement(\"script\");";
+        str += "s.src = \"resources/silent_script.js\";";
+        str += "document.head.appendChild(s);";
+        WebInspector.runtimeModel.evaluate(str, "console", true, undefined, undefined, undefined, function(){});
+    }
+
+    function onRequest(event)
+    {
+        var request = event.data;
+        if (/silent_script.js/.test(request.url))
+            step2();
+    }
+
+    function step2()
+    {
+        if (!findRequestByURL(/silent_script.js/))
+            return;
+
+        WebInspector.panel("network").show();
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that there is no javascript error when console evaluation causes resource loading.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=65466">Bug 65466</a>
+</body>
+</html>

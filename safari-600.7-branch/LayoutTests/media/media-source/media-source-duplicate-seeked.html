@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mock-media-source</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+    var samples;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function runTest() {
+        findMediaElement();
+
+        source = new MediaSource();
+        testExpected('source.readyState', 'closed');
+
+        waitForEventOn(source, 'sourceopen', sourceOpen);
+        var videoSource = document.createElement('source');
+        videoSource.type = 'video/mock; codecs=mock';
+        videoSource.src = URL.createObjectURL(source);
+        video.appendChild(videoSource);
+    }
+
+    function sourceOpen() {
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+        waitForEventOn(sourceBuffer, 'updateend', loadSamples, false, true);
+        initSegment = makeAInit(8, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+        run('sourceBuffer.appendBuffer(initSegment)');
+    }
+
+    function loadSamples() {
+        samples = concatenateSamples([
+            makeASample(0, 1, 1, 1, SAMPLE_FLAG.SYNC),
+        ]);
+        waitForEventOn(sourceBuffer, 'updateend', seek, false, true);
+        run('sourceBuffer.appendBuffer(samples)');
+    }
+
+    function seek() {
+        run('source.duration = 1');
+        run('source.endOfStream()');
+        waitForEventOnce('seeked', seeked);
+        run('video.currentTime = 1');
+    }
+
+    function seeked() {
+        waitForEventAndFail('seeked');
+        waitForEventAndEnd('ended');
+        run('video.play()');
+    }
+    
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>

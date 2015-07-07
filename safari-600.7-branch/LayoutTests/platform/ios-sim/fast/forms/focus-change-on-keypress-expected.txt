@@ -1,0 +1,18 @@
+This tests changing the focus on keypress event. The character typed by user should be inserted into input. This test only runs in DRT.
+
+input without selectionchange
+FAIL: value was "" but expected "abc"
+
+input with selectionchange
+FAIL: value was "" but expected "acb"
+
+textarea without selectionchange
+FAIL: value was "" but expected "a
+c"
+
+textarea with selectionchange
+FAIL: value was "" but expected "ac
+"
+
+DONE
+

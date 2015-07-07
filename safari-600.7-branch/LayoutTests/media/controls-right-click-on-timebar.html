@@ -1,0 +1,57 @@
+<html>
+    <head>
+        <title>right click on timebar test</title>
+        <script src=media-controls.js></script>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            if (window.testRunner)
+                testRunner.dumpAsText();
+
+            function click()
+            {
+                if (window.eventSender) {
+                    var seekCoords;
+                    try {
+                        seekCoords = mediaControlsButtonCoordinates(video, "timeline");
+                    } catch (exception) {
+                        failTest(exception.description);
+                        return;
+                    }
+                    var x = seekCoords[0];
+                    var y = seekCoords[1];
+
+                    eventSender.mouseMoveTo(x, y);
+                    eventSender.contextClick();
+                }
+                window.setTimeout("endTest()", 200);
+            }
+
+            function playing()
+            {
+                window.setTimeout("click()", 100);
+            }
+
+            function seeked()
+            {
+                failTest("Should not seek.");
+            }
+
+            function start()
+            {
+                findMediaElement();
+                waitForEvent('playing', playing);
+                waitForEvent('seeked', seeked);
+                run("video.autoplay = true");
+                disableFullTestDetailsPrinting();
+                runSilently("video.src = '" + findMediaFile("video", "content/test") + "'");
+                enableFullTestDetailsPrinting();
+            }    
+        </script>
+    </head>
+
+    <body onload="start()">
+    <p>Test that right clicking on the timebar does not cause a seek.</p>
+    <video controls></video>
+    </body>
+</html>

@@ -1,0 +1,43 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (0,0) size 459x349
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGContainer {g} at (0,0) size 135x135
+          RenderSVGPath {rect} at (0,0) size 90x90 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=90.00] [height=90.00]
+          RenderSVGPath {rect} at (45,45) size 90x90 [fill={[type=SOLID] [color=#FFFF00]}] [x=45.00] [y=45.00] [width=90.00] [height=90.00]
+        RenderSVGContainer {g} at (0,0) size 149x149
+          RenderSVGPath {rect} at (0,0) size 136x136 [stroke={[type=SOLID] [color=#0000FF] [stroke width=0.50]}] [x=0.00] [y=0.00] [width=135.00] [height=135.00]
+          RenderSVGPath {rect} at (0,0) size 149x149 [stroke={[type=SOLID] [color=#0000FF] [stroke width=0.50]}] [x=-13.50] [y=-13.50] [width=162.00] [height=162.00]
+      RenderSVGContainer {use} at (0,0) size 135x135
+        RenderSVGContainer {g} at (0,0) size 135x135
+          RenderSVGContainer {g} at (0,0) size 135x135
+            RenderSVGPath {rect} at (0,0) size 90x90 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=90.00] [height=90.00]
+            RenderSVGPath {rect} at (45,45) size 90x90 [fill={[type=SOLID] [color=#FFFF00]}] [x=45.00] [y=45.00] [width=90.00] [height=90.00]
+      RenderSVGContainer {g} at (296,1) size 163x163 [transform={m=((1.00,0.00)(0.00,1.00)) t=(310.00,15.00)}]
+        RenderSVGContainer {use} at (310,15) size 135x135
+          RenderSVGContainer {g} at (310,15) size 135x135
+            RenderSVGContainer {g} at (310,15) size 135x135
+              RenderSVGPath {rect} at (310,15) size 90x90 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=90.00] [height=90.00]
+              RenderSVGPath {rect} at (355,60) size 90x90 [fill={[type=SOLID] [color=#FFFF00]}] [x=45.00] [y=45.00] [width=90.00] [height=90.00]
+        RenderSVGContainer {use} at (296,1) size 163x163
+          RenderSVGContainer {g} at (296,1) size 163x163
+            RenderSVGContainer {g} at (296,1) size 163x163
+              RenderSVGPath {rect} at (309,14) size 137x137 [stroke={[type=SOLID] [color=#0000FF] [stroke width=0.50]}] [x=0.00] [y=0.00] [width=135.00] [height=135.00]
+              RenderSVGPath {rect} at (296,1) size 163x163 [stroke={[type=SOLID] [color=#0000FF] [stroke width=0.50]}] [x=-13.50] [y=-13.50] [width=162.00] [height=162.00]
+      RenderSVGContainer {g} at (296,186) size 163x163 [transform={m=((1.00,0.00)(0.00,1.00)) t=(310.00,200.00)}]
+        RenderSVGContainer {use} at (310,200) size 135x135
+          RenderSVGContainer {g} at (310,200) size 135x135
+            RenderSVGContainer {g} at (310,200) size 135x135
+              RenderSVGPath {rect} at (310,200) size 90x90 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=90.00] [height=90.00]
+              RenderSVGPath {rect} at (355,245) size 90x90 [fill={[type=SOLID] [color=#FFFF00]}] [x=45.00] [y=45.00] [width=90.00] [height=90.00]
+        RenderSVGContainer {use} at (296,186) size 163x163
+          RenderSVGContainer {g} at (296,186) size 163x163
+            RenderSVGContainer {g} at (296,186) size 163x163
+              RenderSVGPath {rect} at (309,199) size 137x137 [stroke={[type=SOLID] [color=#0000FF] [stroke width=0.50]}] [x=0.00] [y=0.00] [width=135.00] [height=135.00]
+              RenderSVGPath {rect} at (296,186) size 163x163 [stroke={[type=SOLID] [color=#0000FF] [stroke width=0.50]}] [x=-13.50] [y=-13.50] [width=162.00] [height=162.00]
+    RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 264x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.6 $"
+    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

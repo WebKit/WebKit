@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <script>
+
+  </script>
+  <style>
+div {
+	background-image: -webkit-filter(url(image.svg), url(#filter));
+	width: 100px;
+	height: 100px;
+}
+  </style>
+</head>
+<body>
+<div></div>
+<svg height="0">
+  <filter id="filter">
+    <feComponentTransfer>
+      <feFuncR type="linear" slope="0"/>
+      <feFuncG type="linear" slope="0"/>
+      <feFuncB type="linear" slope="0"/>
+    </feComponentTransfer>
+  </filter>
+</svg>
+</body>
+</html>

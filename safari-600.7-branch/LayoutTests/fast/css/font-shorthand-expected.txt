@@ -1,0 +1,86 @@
+Test
+Font for '12px monospace':
+font-style: normal (original property was font and property was implicitly set.)
+font-variant: normal (original property was font and property was implicitly set.)
+font-weight: normal (original property was font and property was implicitly set.)
+font-size: 12px (original property was font)
+line-height: normal (original property was font and property was implicitly set.)
+font-family: monospace (original property was font)
+
+Font for '12px/24px serif':
+font-style: normal (original property was font and property was implicitly set.)
+font-variant: normal (original property was font and property was implicitly set.)
+font-weight: normal (original property was font and property was implicitly set.)
+font-size: 12px (original property was font)
+line-height: 24px (original property was font)
+font-family: serif (original property was font)
+
+Font for 'normal 12px serif':
+font-style: normal (original property was font)
+font-variant: normal (original property was font and property was implicitly set.)
+font-weight: normal (original property was font and property was implicitly set.)
+font-size: 12px (original property was font)
+line-height: normal (original property was font and property was implicitly set.)
+font-family: serif (original property was font)
+
+Font for 'normal normal 12px serif':
+font-style: normal (original property was font)
+font-variant: normal (original property was font)
+font-weight: normal (original property was font and property was implicitly set.)
+font-size: 12px (original property was font)
+line-height: normal (original property was font and property was implicitly set.)
+font-family: serif (original property was font)
+
+Font for 'normal normal normal 12px serif':
+font-style: normal (original property was font)
+font-variant: normal (original property was font)
+font-weight: normal (original property was font)
+font-size: 12px (original property was font)
+line-height: normal (original property was font and property was implicitly set.)
+font-family: serif (original property was font)
+
+Font for 'italic small-caps 12px/24px serif':
+font-style: italic (original property was font)
+font-variant: small-caps (original property was font)
+font-weight: normal (original property was font and property was implicitly set.)
+font-size: 12px (original property was font)
+line-height: 24px (original property was font)
+font-family: serif (original property was font)
+
+Font for 'italic bold 12px/24px serif':
+font-style: italic (original property was font)
+font-weight: bold (original property was font)
+font-variant: normal (original property was font and property was implicitly set.)
+font-size: 12px (original property was font)
+line-height: 24px (original property was font)
+font-family: serif (original property was font)
+
+Font for 'small-caps bold 14px/28px Arial, sans-serif':
+font-variant: small-caps (original property was font)
+font-weight: bold (original property was font)
+font-style: normal (original property was font and property was implicitly set.)
+font-size: 14px (original property was font)
+line-height: 28px (original property was font)
+font-family: Arial, sans-serif (original property was font)
+
+Font for 'italic small-caps bold 14px/28px Arial, sans-serif':
+font-style: italic (original property was font)
+font-variant: small-caps (original property was font)
+font-weight: bold (original property was font)
+font-size: 14px (original property was font)
+line-height: 28px (original property was font)
+font-family: Arial, sans-serif (original property was font)
+
+Font for 'italic small-caps bold 12px/24px':
+
+Font for 'italic small-caps bold 12px':
+
+Font for 'italic small-caps bold /12px serif':
+
+Font for 'italic small-caps small-caps 12px serif':
+
+Font for 'italic italic small-caps bold 12px serif':
+
+Font for '12px/italic serif':
+
+

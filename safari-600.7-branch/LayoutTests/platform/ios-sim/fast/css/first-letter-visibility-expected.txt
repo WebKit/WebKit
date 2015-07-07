@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 55x19
+          text run at (0,0) width 55: "Test for "
+        RenderInline {A} at (0,0) size 308x19 [color=#0000EE]
+          RenderText {#text} at (54,0) size 308x19
+            text run at (54,0) width 308: "http://bugs.webkit.org/show_bug.cgi?id=13169 "
+        RenderText {#text} at (361,0) size 309x19
+          text run at (361,0) width 309: "css-formatted first letter won't hide dynamically"
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 429x19
+          text run at (0,0) width 429: "The next line of text should become invisible, including first letter."
+      RenderBlock {DIV} at (0,72) size 784x20
+        RenderInline (generated) at (0,0) size 11x19 [color=#0000FF]
+          RenderText {#text} at (0,0) size 11x19
+            text run at (0,0) width 11: "C"
+        RenderText {#text} at (10,0) size 73x19
+          text run at (10,0) width 73: "lick to hide"

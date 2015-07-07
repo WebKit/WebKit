@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<style>
+.flexbox {
+    position: relative;
+    display: -webkit-flex;
+    background-color: grey;
+    width: 600px;
+    height: 20px;
+}
+.title {
+    margin-top: 1em;
+}
+.ltr {
+    direction: ltr;
+}
+.rtl {
+    direction: rtl;
+}
+.horizontal-tb {
+    -webkit-writing-mode: horizontal-tb;
+}
+.horizontal-bt {
+    -webkit-writing-mode: horizontal-bt;
+}
+.column {
+    -webkit-flex-flow: column;
+}
+.column-reverse {
+    -webkit-flex-flow: column-reverse;
+}
+.wrap {
+    -webkit-flex-wrap: wrap;
+}
+.wrap-reverse {
+    -webkit-flex-wrap: wrap-reverse;
+}
+.align-content-flex-start {
+    -webkit-align-content: flex-start;
+}
+.align-content-flex-end {
+    -webkit-align-content: flex-end;
+}
+.align-content-center {
+    -webkit-align-content: center;
+}
+.align-content-space-between {
+    -webkit-align-content: space-between;
+}
+.align-content-space-around {
+    -webkit-align-content: space-around;
+}
+.align-content-stretch {
+    -webkit-align-content: stretch;
+}
+.flexbox > :nth-child(1) {
+    background-color: blue;
+}
+.flexbox > :nth-child(2) {
+    background-color: green;
+}
+</style>
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.flexbox')">
+
+<script>
+var expectations = {
+    'horizontal-tb': {
+        'column': {
+            'ltr': {
+                'wrap': {
+                    'flex-start': [0, 100],
+                    'flex-end': [400, 500],
+                    'center': [200, 300],
+                    'space-between': [0, 500],
+                    'space-around': [100, 400],
+                    'stretch': [0, 300],
+                },
+                'wrap-reverse': {
+                    'flex-start': [500, 400],
+                    'flex-end': [100, 0],
+                    'center': [300, 200],
+                    'space-between': [500, 0],
+                    'space-around': [400, 100],
+                    'stretch': [300, 0],
+                },
+            },
+            'rtl': {
+                'wrap': {
+                    'flex-start': [500, 400],
+                    'flex-end': [100, 0],
+                    'center': [300, 200],
+                    'space-between': [500, 0],
+                    'space-around': [400, 100],
+                    'stretch': [300, 0],
+                },
+                'wrap-reverse': {
+                    'flex-start': [0, 100],
+                    'flex-end': [400, 500],
+                    'center': [200, 300],
+                    'space-between': [0, 500],
+                    'space-around': [100, 400],
+                    'stretch': [0, 300],
+                },
+            },
+        },
+        // Same as column.
+        'column-reverse': {
+            'ltr': {
+                'wrap': {
+                    'flex-start': [0, 100],
+                    'flex-end': [400, 500],
+                    'center': [200, 300],
+                    'space-between': [0, 500],
+                    'space-around': [100, 400],
+                    'stretch': [0, 300],
+                },
+                'wrap-reverse': {
+                    'flex-start': [500, 400],
+                    'flex-end': [100, 0],
+                    'center': [300, 200],
+                    'space-between': [500, 0],
+                    'space-around': [400, 100],
+                    'stretch': [300, 0],
+                },
+            },
+            'rtl': {
+                'wrap': {
+                    'flex-start': [500, 400],
+                    'flex-end': [100, 0],
+                    'center': [300, 200],
+                    'space-between': [500, 0],
+                    'space-around': [400, 100],
+                    'stretch': [300, 0],
+                },
+                'wrap-reverse': {
+                    'flex-start': [0, 100],
+                    'flex-end': [400, 500],
+                    'center': [200, 300],
+                    'space-between': [0, 500],
+                    'space-around': [100, 400],
+                    'stretch': [0, 300],
+                },
+            },
+        },
+    },
+    'horizontal-bt': {
+        // Same as horizontal-tb.
+        'column': {
+            'ltr': {
+                'wrap': {
+                    'flex-start': [0, 100],
+                    'flex-end': [400, 500],
+                    'center': [200, 300],
+                    'space-between': [0, 500],
+                    'space-around': [100, 400],
+                    'stretch': [0, 300],
+                },
+                'wrap-reverse': {
+                    'flex-start': [500, 400],
+                    'flex-end': [100, 0],
+                    'center': [300, 200],
+                    'space-between': [500, 0],
+                    'space-around': [400, 100],
+                    'stretch': [300, 0],
+                },
+            },
+            'rtl': {
+                'wrap': {
+                    'flex-start': [500, 400],
+                    'flex-end': [100, 0],
+                    'center': [300, 200],
+                    'space-between': [500, 0],
+                    'space-around': [400, 100],
+                    'stretch': [300, 0],
+                },
+                'wrap-reverse': {
+                    'flex-start': [0, 100],
+                    'flex-end': [400, 500],
+                    'center': [200, 300],
+                    'space-between': [0, 500],
+                    'space-around': [100, 400],
+                    'stretch': [0, 300],
+                },
+            },
+        },
+        'column-reverse': {
+            'ltr': {
+                'wrap': {
+                    'flex-start': [0, 100],
+                    'flex-end': [400, 500],
+                    'center': [200, 300],
+                    'space-between': [0, 500],
+                    'space-around': [100, 400],
+                    'stretch': [0, 300],
+                },
+                'wrap-reverse': {
+                    'flex-start': [500, 400],
+                    'flex-end': [100, 0],
+                    'center': [300, 200],
+                    'space-between': [500, 0],
+                    'space-around': [400, 100],
+                    'stretch': [300, 0],
+                },
+            },
+            'rtl': {
+                'wrap': {
+                    'flex-start': [500, 400],
+                    'flex-end': [100, 0],
+                    'center': [300, 200],
+                    'space-between': [500, 0],
+                    'space-around': [400, 100],
+                    'stretch': [300, 0],
+                },
+                'wrap-reverse': {
+                    'flex-start': [0, 100],
+                    'flex-end': [400, 500],
+                    'center': [200, 300],
+                    'space-between': [0, 500],
+                    'space-around': [100, 400],
+                    'stretch': [0, 300],
+                },
+            },
+        },
+    },
+};
+
+function mainAxisDirection(writingMode, flexDirection)
+{
+    if ((writingMode.indexOf('horizontal') != -1 && flexDirection.indexOf('row') != -1)
+        || (writingMode.indexOf('vertical') != -1 && flexDirection.indexOf('column') != -1))
+        return 'width';
+    return 'height';
+}
+
+function addChild(flexbox, preferredSize, alignContent, expected_x_offset)
+{
+    var child = document.createElement('div');
+    child.setAttribute('style', '-webkit-flex: 1 ' + preferredSize + 'px;'
+        + 'min-width: 100px');
+
+    child.setAttribute("data-expected-width", alignContent == "stretch" ? "300" : "100");
+    child.setAttribute("data-expected-height", "20");
+    child.setAttribute("data-offset-y", "0");
+    child.setAttribute("data-offset-x", expected_x_offset);
+
+    flexbox.appendChild(child);
+}
+
+var writingModes = ['horizontal-tb', 'horizontal-bt'];
+var flexDirections = ['column', 'column-reverse'];
+var directions = ['ltr', 'rtl'];
+var wraps = ['wrap', 'wrap-reverse'];
+var alignContents = ['flex-start', 'flex-end', 'center', 'space-between', 'space-around', 'stretch'];
+
+writingModes.forEach(function(writingMode) {
+    flexDirections.forEach(function(flexDirection) {
+        directions.forEach(function(direction) {
+            wraps.forEach(function(wrap) {
+                alignContents.forEach(function(alignContent) {
+                    var flexboxClassName = writingMode + ' ' + direction + ' ' + flexDirection + ' ' + wrap + ' align-content-' + alignContent;
+                    var title = document.createElement('div');
+                    title.className = 'title';
+                    title.innerHTML = flexboxClassName;
+                    document.body.appendChild(title);
+
+                    var mainAxis = 'height';
+                    var crossAxis = 'width';
+
+                    var flexbox = document.createElement('div');
+                    flexbox.className = 'flexbox ' + flexboxClassName;
+                    flexbox.setAttribute("data-expected-width", "600");
+                    flexbox.setAttribute("data-expected-height", "20");
+
+                    var testExpectations = expectations[writingMode][flexDirection][direction][wrap][alignContent];
+                    addChild(flexbox, 20, alignContent, testExpectations[0]);
+                    addChild(flexbox, 5, alignContent, testExpectations[1]);
+
+                    document.body.appendChild(flexbox);
+                })
+            })
+        })
+    })
+})
+</script>
+</body>
+</html>

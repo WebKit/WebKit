@@ -1,0 +1,81 @@
+<html>
+<head>
+<script>
+function log(message) {
+    var console = document.getElementById("console");
+    var div = document.createElement("div");
+    var text = document.createTextNode(message);
+    
+    console.appendChild(div);
+    div.appendChild(text);
+}
+
+function runTest() {
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    } else
+        return;
+
+    selectSelection();
+    dragElementToContentEditable(document.getElementById("dragimage"));
+     
+    selectSelection();
+    dragElementToContentEditable(document.getElementById("draglink"));
+
+    selectSelection();
+    dragElementToContentEditable(document.getElementById("dragtext"));
+
+    var target = document.getElementById("target");
+    log("Dumping info about contenteditable div:");
+    log("Number of children: " + target.children.length);
+    log("Contents:");
+    log(target.children[0].tagName);
+    log(target.children[1].tagName);
+    log(target.children[2].tagName);
+    log(target.children[3].tagName);
+
+    log("Number of selected ranges: " + window.getSelection().rangeCount);
+
+    testRunner.notifyDone();
+}
+
+function selectSelection() {
+    window.getSelection().selectAllChildren(document.getElementById("selection"));
+}
+
+function dragElementToContentEditable(dragSource) 
+{
+    x = dragSource.offsetLeft + dragSource.offsetWidth / 2;
+    y = dragSource.offsetTop + dragSource.offsetHeight / 2;
+
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();    
+
+    var dropTarget = document.getElementById("target");
+    x = dropTarget.offsetLeft + dropTarget.offsetWidth / 2;
+    y = dropTarget.offsetTop + dropTarget.offsetHeight / 2;
+    
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseUp();
+}
+</script>
+</head>
+
+<body style="padding:0; margin:0" onload="runTest();">  
+
+<div id="target" style="border: 1px solid black; width: 300px; height: 200px;" contenteditable="true"></div>
+<div id="selection">
+<img id="dragimage" src="../../../../editing/resources/abe.png">
+<a href="#" id="draglink">Link</a>
+<span id="dragtext">Random text.</span></div>
+
+<p>This test checks selection drag edge cases on Mac. To run the test manually:
+<ol>
+<li>Select everything above, start the drag over the image, and with no delay, drag it to the content editable area. Only the image should be dragged.
+<li>Select everything above, start the drag over the link, and with no delay, drag it to the content editable area. The entire selection should be dragged.
+<li>Select everything above, start the drag over the text, and with no delay, drag it to the content editable area. Nothing should be dragged, but a bunch of text should be selected instead.
+</ol>
+</p>
+<div id="console"></ul>
+</body>

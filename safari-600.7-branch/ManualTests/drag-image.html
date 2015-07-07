@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<script>
+function debug(str) {
+    var c = document.getElementById('console')
+    c.appendChild(document.createTextNode(str + '\n'));
+}
+
+var i = new Image()
+i.src ="resources/webkit-background.png";
+
+function dragStartHandler() {  
+    event.dataTransfer.setDragImage(i, 10, 10);
+}
+
+</script>
+</head>
+<body onload="runTests();">
+<p>This tests that setting the drag image works. If this is successful, the drag icon when dragging the text below around should look like the image below.</p>
+<img src="resources/webkit-background.png">
+<div ondragstart="dragStartHandler()" style="-khtml-user-select:none; -khtml-user-drag:element;">Try dragging me around!</div>
+<pre id="console">
+</pre>
+</body>
+</html>

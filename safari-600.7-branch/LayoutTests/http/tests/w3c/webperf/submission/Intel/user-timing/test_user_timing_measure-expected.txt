@@ -1,0 +1,125 @@
+Description
+
+This test validates functionality of the interface window.performance.measure.
+
+
+PASS There should be 0 entries returned. 
+PASS There should be 3 entries. 
+PASS Entries in entrylist should be in order. 
+PASS Entry "aaa" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS Entry "" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS Entry "2" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS There should be 1 entries. 
+PASS Entries in entrylist should be in order. 
+PASS Entry "aaa" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS There should be 1 entries. 
+PASS Entries in entrylist should be in order. 
+PASS Entry "" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS There should be 1 entries. 
+PASS Entries in entrylist should be in order. 
+PASS Entry "2" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS There should be 6 entries. 
+PASS Entries in entrylist should be in order. 
+PASS Entry "aaa" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS Entry "aaa" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS Entry "" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS Entry "" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS Entry "2" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS Entry "2" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS There should be 2 entries. 
+PASS Entries in entrylist should be in order. 
+PASS Entry "aaa" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS Entry "aaa" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS There should be 2 entries. 
+PASS Entries in entrylist should be in order. 
+PASS Entry "aaa" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS Entry "aaa" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS There should be 2 entries. 
+PASS Entries in entrylist should be in order. 
+PASS Entry "" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS Entry "" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS There should be 2 entries. 
+PASS Entries in entrylist should be in order. 
+PASS Entry "" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS Entry "" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS There should be 2 entries. 
+PASS Entries in entrylist should be in order. 
+PASS Entry "2" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS Entry "2" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS There should be 2 entries. 
+PASS Entries in entrylist should be in order. 
+PASS Entry "2" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS Entry "2" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+

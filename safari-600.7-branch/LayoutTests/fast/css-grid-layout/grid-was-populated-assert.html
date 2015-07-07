@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+    }
+    </script>
+    <style>
+    details {
+        display: -webkit-grid;
+        -webkit-columns: 5;
+    }
+    div {
+        display: -webkit-grid;
+    }
+    input {
+        -webkit-columns: 5;
+    }
+    </style>
+</head>
+<body>
+    <p>This test passes if it does not crash in debug mode.</p>
+    <details open>
+        <button>
+            <div>
+                <input placeholder="testing" />
+            </div>
+        </button>
+    </details>
+</body>
+</html>

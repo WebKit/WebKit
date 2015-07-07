@@ -1,0 +1,57 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderMenuList {SELECT} at (2,2) size 71x27 [color=#808080] [bgcolor=#FFFFFF] [border: (1px solid #808080)]
+        RenderBlock (anonymous) at (1,1) size 69x25
+          RenderText at (4,4) size 44x17
+            text run at (4,4) width 44: "PASS"
+      RenderBR {BR} at (75,21) size 0x0
+      RenderMenuList {SELECT} at (2,33) size 71x27 [color=#808080] [bgcolor=#FFFFFF] [border: (1px solid #808080)]
+        RenderBlock (anonymous) at (1,1) size 69x25
+          RenderText at (4,4) size 44x17
+            text run at (4,4) width 44: "PASS"
+      RenderBR {BR} at (75,52) size 0x0
+      RenderMenuList {SELECT} at (2,64) size 71x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+        RenderBlock (anonymous) at (1,1) size 69x25
+          RenderText at (4,4) size 44x17
+            text run at (4,4) width 44: "PASS"
+      RenderBR {BR} at (75,83) size 0x0
+      RenderMenuList {SELECT} at (2,95) size 71x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+        RenderBlock (anonymous) at (1,1) size 69x25
+          RenderText at (4,4) size 44x17
+            text run at (4,4) width 44: "PASS"
+      RenderBR {BR} at (75,114) size 0x0
+      RenderListBox {SELECT} at (2,126) size 65x73 [color=#808080] [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+      RenderBR {BR} at (69,194) size 0x0
+      RenderListBox {SELECT} at (2,203) size 65x73 [color=#808080] [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+      RenderBR {BR} at (69,271) size 0x0
+      RenderListBox {SELECT} at (2,280) size 65x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+      RenderBR {BR} at (69,348) size 0x0
+      RenderListBox {SELECT} at (2,357) size 65x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+      RenderBR {BR} at (69,425) size 0x0
+      RenderText {#text} at (0,432) size 486x17
+        text run at (0,432) width 486: "PASS: sel1 correctly set to selectedIndex 1 by sel1.options[1].selected = true."
+      RenderBR {BR} at (486,446) size 0x0
+      RenderText {#text} at (0,449) size 438x17
+        text run at (0,449) width 438: "PASS: sel2 correctly set to selectedIndex 1 by sel2.selectedIndex = 1."
+      RenderBR {BR} at (438,463) size 0x0
+      RenderText {#text} at (0,466) size 486x17
+        text run at (0,466) width 486: "PASS: sel3 correctly set to selectedIndex 1 by sel3.options[1].selected = true."
+      RenderBR {BR} at (486,480) size 0x0
+      RenderText {#text} at (0,483) size 438x17
+        text run at (0,483) width 438: "PASS: sel4 correctly set to selectedIndex 1 by sel4.selectedIndex = 1."
+      RenderBR {BR} at (438,497) size 0x0
+      RenderText {#text} at (0,500) size 486x17
+        text run at (0,500) width 486: "PASS: sel5 correctly set to selectedIndex 1 by sel5.options[1].selected = true."
+      RenderBR {BR} at (486,514) size 0x0
+      RenderText {#text} at (0,517) size 438x17
+        text run at (0,517) width 438: "PASS: sel6 correctly set to selectedIndex 1 by sel6.selectedIndex = 1."
+      RenderBR {BR} at (438,531) size 0x0
+      RenderText {#text} at (0,534) size 486x17
+        text run at (0,534) width 486: "PASS: sel7 correctly set to selectedIndex 1 by sel7.options[1].selected = true."
+      RenderBR {BR} at (486,548) size 0x0
+      RenderText {#text} at (0,551) size 438x17
+        text run at (0,551) width 438: "PASS: sel8 correctly set to selectedIndex 1 by sel8.selectedIndex = 1."
+      RenderBR {BR} at (438,565) size 0x0

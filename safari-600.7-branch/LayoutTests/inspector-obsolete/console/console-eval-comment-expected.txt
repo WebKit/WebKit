@@ -1,0 +1,5 @@
+Tests that evaluating an expression containing a single line comment does not cause an erroneous error. Bug 116292.
+
+// test
+undefined
+

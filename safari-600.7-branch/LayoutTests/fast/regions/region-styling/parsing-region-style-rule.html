@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+    <!--
+    Tests parsing of region styling @-webkit-region rule.
+    On success, you should see a PASS message.
+    -->
+    <head>
+        <style>
+            #article { -webkit-flow: "main-thread"; }
+            .region { content: -webkit-from-flow("main-thread"); }
+
+            /* Style the content flowing into the first region */
+            @-webkit-region #region1 { div { margin-top: 10px; } }
+
+            /* Style the content flowing into the second region */
+            @-webkit-region #region2 { div { margin-left: 5px; } }
+
+            /* Mix region styling rules declarations with other rules */
+            #region1 { width: 200px; height: 50px; }
+            #region2 { width: 200px; height: 50px; }
+
+            /* Again style the content flowing into the first region */
+            @-webkit-region #region1 { p { color: red; } }
+
+            /* Incorrect region styling rule should be ignored as long as
+            braces are paired properly*/
+            @-webkit-region #region1 { color: red; }
+
+            /* Style both regions at the same time */
+            @-webkit-region #region1, #region2 { p > p { color: green; } }
+        </style>
+   </head>
+    <body>
+        <div id="console"></div>
+        <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function logConsole(msg)
+        {
+            var textNode = document.createTextNode(msg);
+            document.getElementById("console").appendChild(textNode);
+        }
+
+        var expectedRegionStyleRulesText =
+            [
+                "@-webkit-region #region1 { div { margin-top: 10px; } }",
+                "@-webkit-region #region2 { div { margin-left: 5px; } }",
+                "@-webkit-region #region1 { p { color: red; } }",
+                "@-webkit-region #region1, #region2 { p > p { color: green; } }"
+            ];
+
+        var actualRegionStyleRulesText = new Array();
+        var cssRules = document.styleSheets[0].cssRules;
+        for (var idx = 0; idx < cssRules.length; idx++) {
+            var cssRule = cssRules.item(idx);
+            if (cssRule.type == CSSRule.WEBKIT_REGION_RULE)
+                actualRegionStyleRulesText.push(cssRule.cssText);
+        }
+
+        var pass = true;
+        if (expectedRegionStyleRulesText.length != actualRegionStyleRulesText.length) {
+            logConsole("FAIL: expected " + expectedRegionStyleRulesText.length + " region style rules, actual: " + actualRegionStyleRulesText.length);
+            pass = false;
+        }
+        else {
+            for (var idx = 0; idx < actualRegionStyleRulesText.length; idx++) {
+                if (expectedRegionStyleRulesText[idx].replace(/\s/g, "") != actualRegionStyleRulesText[idx].replace(/\s/g, "")) {
+                    logConsole("FAIL: expected " + expectedRegionStyleRulesText[idx] + "found " + actualRegionStyleRulesText[idx]);
+                    pass = false;
+                }
+            }
+        }
+
+        if (pass)
+            logConsole("PASS");
+        </script>
+    </body>
+</html>

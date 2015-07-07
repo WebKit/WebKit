@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>            
+
+            numberOfTrackTests = 3;
+            
+            function trackLoaded()
+            {
+                numberOfTracksLoaded++;
+                if (numberOfTracksLoaded == numberOfTrackTests) {
+                    testTrack(0);
+                    testTrack(1);
+                    testTrackError(2);
+                }
+            }
+            
+            function testTrack(i)
+            {
+                findMediaElement();
+                var expected = 
+                {
+                    length : 4,
+                    tests:
+                    [
+                        {
+                            property : "align",
+                            values : ["start", "middle", "end", "middle"],
+                        },
+                    ],
+                };
+                testCues(i, expected);
+
+                allTestsEnded();
+            }
+
+            function testTrackError(i)
+            {
+                findMediaElement();
+                var expected = 
+                {
+                    length : 4,
+                    tests:
+                    [
+                        {
+                            property : "align",
+                            values : ["middle", "middle", "middle", "middle"],
+                        },
+                    ],
+                };
+                testCues(i, expected);
+
+                allTestsEnded();
+            }
+        </script>
+    </head>
+    <body onload="enableAllTextTracks()">
+        <p>Tests cue alignment from settings.</p>
+        <video> 
+            <track src="captions-webvtt/tc014-alignment.vtt" onload="trackLoaded()">
+            <track src="captions-webvtt/tc014-alignment-ltr.vtt" onload="trackLoaded()">
+            <track src="captions-webvtt/tc014-alignment-bad.vtt" onload="trackLoaded()">
+        </video>
+    </body>
+</html>

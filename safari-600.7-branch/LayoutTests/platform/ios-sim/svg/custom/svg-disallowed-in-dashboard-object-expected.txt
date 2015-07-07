@@ -1,0 +1,8 @@
+This test makes sure we can't open SVG documents in Dashboard compatibility mode. It can not be tested manually.
+
+    
+FAIL: Loaded SVG document in <object> tag.
+PASS: Did not load SVG document in <element> tag
+FAIL: Loaded SVG document in <iframe> tag.
+FAIL: SVG Documents were loaded
+

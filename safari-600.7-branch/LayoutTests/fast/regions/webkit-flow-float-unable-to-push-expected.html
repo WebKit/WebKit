@@ -1,0 +1,168 @@
+<!doctype html>
+
+ <style>
+    .test_paragraph {
+        margin-top: 1em;
+        margin-bottom: 1em;
+        text-align: justify;
+        font-size: 10px;
+        font-family: Ahem;
+        -webkit-font-smoothing: none;
+    }
+
+    /* Created to justify the last line of text in the div */
+    #paragraph1:after {
+        content: " ________";
+        line-height: 0;
+        visibility: hidden;
+    }
+
+    .region {
+        border: 3px solid black;
+        border-left: 10px solid black;
+    }
+
+    .content {
+        border: 2px solid red;
+        padding: 5px;
+    }
+
+    .first-box {
+        border: 3px solid blue;
+        background-color: #ffff00;
+    }
+
+    .second-box {
+        border: 6px solid green;
+        background-color: #ffffaa;
+    }
+    
+    #region1 {
+        width: 400px;
+        height: 90px;
+        margin-left: 50px;
+    }
+
+    #content1 {
+        border-bottom: none;
+        height: 78px;
+    }
+    
+    #first-box1 {
+        border-bottom: none;
+        height: 80px;
+    }
+    
+    #second-box1 {
+        margin:10px;
+        border-bottom: none;
+        height: 64px;
+    }
+
+    #first-paragraph2 {
+        margin-top: 0px;
+    }
+    
+    /* Created to justify the last line of text in the div */
+    #second-paragraph2:after {
+        content: " ________";
+        line-height: 0;
+        visibility: hidden;
+    }
+    
+    #region2 {
+        width: 300px;
+        height: 90px;
+        margin-top: 70px;
+    }
+
+    #content2 {
+        border-bottom: none;
+        border-top: none;
+        height: 85px;
+        padding-top: 0px;
+    }
+    
+    #first-box2 {
+        border-top: none;
+        border-bottom: none;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    
+    #second-box2 {
+        border-top: none;
+        border-bottom: none;
+        height: 90px;
+    }
+
+    #first-paragraph3 {
+        margin-top: 0px;
+    }
+
+    #region3 {
+        width: 400px;
+        height: 120px;
+        margin-top: 50px;
+        margin-left: 20px;
+    }
+
+    #content3 {
+        border-top: none;
+        aheight: 109px;
+        padding-top: 0px;
+    }
+    
+    #first-box3 {
+        border-top: none;
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-bottom: 10px;
+    }
+    
+    #second-box3 {
+        border-top: none;
+    }
+
+    #float1 {
+        float: right;
+        background-color:green;
+        border: 2px solid red;
+        width: 130px;
+        height: 100px;
+    }
+</style>
+
+<div>
+    <div class="region" id="region1">
+        <div class="content" id="content1">
+            <div class="first-box" id="first-box1">
+                <div class="second-box" id="second-box1">
+                    <div class="test_paragraph" id="paragraph1">This <img id="float1" src="resources/transparent.png">line of text should not get out of the region. This line of text should not get out of the</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="region" id="region2">
+        <div class="content" id="content2">
+            <div class="first-box" id="first-box2">
+                <div class="second-box" id="second-box2">
+                    <div class="test_paragraph" id="first-paragraph2">region. This line of text should not get out of the region. This line of text should not get out of the region.</div>
+                    <div class="test_paragraph" id="second-paragraph2">This line of text should not get out of the region. This line of</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="region" id="region3">
+        <div class="content" id="content3">
+            <div class="first-box" id="first-box3">
+                <div class="second-box" id="second-box3">
+                    <div class="test_paragraph" id="first-paragraph3">text should not get out of the region. This line of text should not get out of the region. This line of text should not get out of the region.</div>
+                    <div class="test_paragraph" id="second-paragraph3">This line of text should not get out of the region.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

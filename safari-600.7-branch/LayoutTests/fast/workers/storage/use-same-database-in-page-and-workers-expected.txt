@@ -1,0 +1,3 @@
+Test that we can successfully use the same database in the page and in multiple workers at the same time.
+PASS
+

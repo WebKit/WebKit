@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id=description></div>
+<input type=file id=dropTarget></div>
+<div id=console></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+description("Test that bundles are automatically zipped when accessed via FileReader. To test manually, please drag a file bundle to a \"Choose File\" input below.");
+jsTestIsAsync = true;
+
+window.onload = function()
+{
+    var dropTarget = document.getElementById("dropTarget");
+
+    dropTarget.addEventListener("drop", ondrop, true);
+    dropTarget.addEventListener("click", function() { event.preventDefault(); }, true);
+
+    if (!window.eventSender)
+        return;
+
+    var endX = dropTarget.offsetLeft + dropTarget.offsetWidth / 2;
+    var endY = dropTarget.offsetTop + dropTarget.offsetHeight / 2
+    
+    eventSender.beginDragWithFiles(["resources/document.rtfd"]);
+    eventSender.mouseMoveTo(endX, endY);
+    eventSender.mouseUp();
+}
+
+function ondrop(event)
+{
+    file = event.dataTransfer.files.item(0);
+    // We used to report 102 for the size of this file, which presumably was directory node size.
+    // Archive is 528 bytes on a system I test with.
+    shouldBeTrue("file.size > 400");
+    reader = new FileReader;
+    reader.readAsText(file.slice(0, 2));
+    reader.onloadend = function() {
+        shouldBe("reader.result", "'PK'");
+        finishJSTest();
+    }
+}
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

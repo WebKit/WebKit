@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body onload="test()">
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+description("Tests behavior of select() in case &quot;-webkit-user-select: none&quot;"
+    + " attribute is specified to the input element. The field should not be selected.");
+
+function test() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    window.input = document.querySelector('input');
+    shouldBe("input.select(); input.selectionStart", "0");
+    shouldBe("input.selectionEnd", "input.value.length");
+    shouldNotBe("input.value.length", "0");
+    finishJSTest();
+}
+
+var successfullyParsed = true;
+var jsTestIsAsync = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+<p><input type="text" value="input text" style="-webkit-user-select: none; -moz-user-select: none;"></input></p>
+</body>
+</html>

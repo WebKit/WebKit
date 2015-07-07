@@ -1,0 +1,19 @@
+
+Test play() when <video> playback requires fullscreen.
+
+RUN(internals.setMediaSessionRestrictions('video', 'InlineVideoPlaybackRestricted'))
+
+EVENT(canplaythrough)
+EXPECTED (video.webkitSupportsFullscreen == 'true') OK
+EXPECTED (video.webkitDisplayingFullscreen == 'false') OK
+
+** Clicking 'play' button...
+EVENT(playing)
+
+** Entered fullscreen
+EXPECTED (video.webkitDisplayingFullscreen == 'true') OK
+RUN(video.webkitExitFullScreen())
+
+** Exited fullscreen
+END OF TEST
+

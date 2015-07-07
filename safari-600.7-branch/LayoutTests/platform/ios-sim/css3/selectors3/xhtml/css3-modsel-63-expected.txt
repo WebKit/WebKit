@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x88
+  RenderBlock {html} at (0,0) size 800x88
+    RenderBody {body} at (8,16) size 784x56
+      RenderBlock {div} at (0,0) size 784x56
+        RenderBlock {p} at (0,0) size 784x20 [color=#00FF00]
+          RenderInline {span} at (0,0) size 501x19 [color=#000000]
+            RenderText {#text} at (0,0) size 501x19
+              text run at (0,0) width 501: "The color of this text should be green when the pointing device hovers over it."
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock {p} at (0,36) size 784x20 [color=#00FF00]
+          RenderInline {a} at (0,0) size 501x19 [color=#000000]
+            RenderText {#text} at (0,0) size 501x19
+              text run at (0,0) width 501: "The color of this text should be green when the pointing device hovers over it."
+          RenderText {#text} at (0,0) size 0x0

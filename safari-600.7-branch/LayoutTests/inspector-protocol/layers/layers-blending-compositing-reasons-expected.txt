@@ -1,0 +1,18 @@
+
+=== Enable the LayerTree agent ===
+
+PASS
+
+=== Get the Document ===
+
+PASS
+
+=== Get the layer tree ===
+
+PASS
+
+=== Check layers' reasons for compositing ===
+
+PASS: <div id="isolating"> is composition due to isolating compositing descendants having CSS blending applied.
+PASS: <div id="blending"> is composited due having CSS blending applied and composited descendants.
+

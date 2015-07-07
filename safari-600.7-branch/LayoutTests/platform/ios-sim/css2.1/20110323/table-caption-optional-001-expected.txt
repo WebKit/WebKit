@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x300
+  RenderBlock {HTML} at (0,0) size 800x300
+    RenderBody {BODY} at (8,16) size 784x276
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 649x19
+          text run at (0,0) width 649: "Test passes if the top square below has \"Filler Text\" directly above it and the bottom square does not."
+      RenderTable {DIV} at (0,36) size 100x120
+        RenderBlock {DIV} at (0,0) size 100x20
+          RenderText {#text} at (0,0) size 68x19
+            text run at (0,0) width 68: "Filler Text"
+        RenderTableSection (anonymous) at (0,20) size 100x100
+          RenderTableRow {DIV} at (0,0) size 100x50
+            RenderTableCell {DIV} at (0,0) size 50x0 [bgcolor=#000000] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {DIV} at (50,0) size 50x0 [bgcolor=#000000] [r=0 c=1 rs=1 cs=1]
+          RenderTableRow {DIV} at (0,50) size 100x50
+            RenderTableCell {DIV} at (0,50) size 50x0 [bgcolor=#000000] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {DIV} at (50,50) size 50x0 [bgcolor=#000000] [r=1 c=1 rs=1 cs=1]
+      RenderBlock {DIV} at (0,156) size 784x20
+        RenderText {#text} at (0,0) size 4x19
+          text run at (0,0) width 4: " "
+      RenderTable {DIV} at (0,176) size 100x100
+        RenderTableSection (anonymous) at (0,0) size 100x100
+          RenderTableRow {DIV} at (0,0) size 100x50
+            RenderTableCell {DIV} at (0,0) size 50x0 [bgcolor=#000000] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {DIV} at (50,0) size 50x0 [bgcolor=#000000] [r=0 c=1 rs=1 cs=1]
+          RenderTableRow {DIV} at (0,50) size 100x50
+            RenderTableCell {DIV} at (0,50) size 50x0 [bgcolor=#000000] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {DIV} at (50,50) size 50x0 [bgcolor=#000000] [r=1 c=1 rs=1 cs=1]

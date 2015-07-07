@@ -1,0 +1,12 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:g="http://www.w3.org/2000/svg">
+ <head>
+  <title>document.getElementsByClassName(): compound</title>
+  <script src="resources/common.js"></script>
+ </head>
+ <body>
+  <p id="r">FAIL (script did not run)</p>  
+  <x class="a"/>
+  <g:x class="a"/>
+  <script> t(document.getElementsByClassName("a"), document.getElementsByTagName("x")) </script>
+ </body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Detaching a Range while deleteContents() is running should not cause a crash.');
+
+window.jsTestIsAsync = true;
+
+window.addEventListener('message', function (event) {
+    if (event.data === 'done') {
+        testPassed('The browser did not crash.');
+        document.body.removeChild(iframe);
+        finishJSTest();
+    }
+}, false);
+
+var iframe = document.createElement('iframe');
+iframe.src = 'resources/detach-range-during-deletecontents-iframe.xhtml';
+document.body.appendChild(iframe);
+</script>
+</body>
+<script src="../../../resources/js-test-post.js"></script>
+</html>

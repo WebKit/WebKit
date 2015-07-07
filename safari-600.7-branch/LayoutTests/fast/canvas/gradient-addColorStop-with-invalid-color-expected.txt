@@ -1,0 +1,13 @@
+This test checks invalid colors on gradients.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS gradient.addColorStop(0, '') threw exception Error: SyntaxError: DOM Exception 12.
+PASS gradient.addColorStop(0, '#cc') threw exception Error: SyntaxError: DOM Exception 12.
+PASS gradient.addColorStop(0, 'rgb(257, 0)') threw exception Error: SyntaxError: DOM Exception 12.
+PASS gradient.addColorStop(0, 'rgb(257, 0, 5, 0)') threw exception Error: SyntaxError: DOM Exception 12.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

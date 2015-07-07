@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>window.performance.navigation attributes</title>
+        <link rel="author" title="Microsoft" href="http://www.microsoft.com/" />
+	<link rel="help" href="http://www.w3.org/TR/navigation-timing/#sec-navigation-info-interface"/>
+        <script src="/w3c/resources/testharness.js"></script>
+        <script src="/w3c/resources/testharnessreport.js"></script>
+        <script src="/w3c/webperf/resources/webperftestharness.js"></script>
+<script id="metadata_cache">/*
+{
+  "window.performance is defined": {
+    "help": "http://www.w3.org/TR/navigation-timing/#sec-window.performance-attribute",
+    "assert": "The window.performance attribute provides a hosting area for performance related attributes. ",
+    "author": "W3C http://www.w3.org/"
+  },
+  "window.performance.navigation is defined": {
+    "help": "http://www.w3.org/TR/navigation-timing/#sec-window.performance-attribute",
+    "assert": "The window.performance attribute provides a hosting area for performance related attributes. ",
+    "author": "W3C http://www.w3.org/"
+  },
+  "window.performance.navigation.type is defined.": {},
+  "window.performance.navigation.redirectCount is defined.": {}
+}
+*/</script>
+    </head>
+    <body>
+        <h1>Description</h1>
+        <p>This test validates that all of the window.performance.navigation attributes exist (but does not validate that their values are correct).</p>
+
+        <div id="log"></div>
+
+        <script>
+        test_namespace('navigation');
+
+        test_attribute_exists('navigation', 'type');
+        test_attribute_exists('navigation', 'redirectCount');
+        </script>
+    </body>
+</html>

@@ -1,0 +1,35 @@
+This page tests that the tabindex attribute is clamped to values between -32768 and 32767. Values outside of this range should be clamped to the range limits.
+
+                 
+Testing input elements in the page
+getAttribute("tabindex") = 40000; tabIndex = 32767
+getAttribute("tabindex") = 32768; tabIndex = 32767
+getAttribute("tabindex") = 32767; tabIndex = 32767
+getAttribute("tabindex") = 32766; tabIndex = 32766
+getAttribute("tabindex") = 0; tabIndex = 0
+getAttribute("tabindex") = -1; tabIndex = -1
+getAttribute("tabindex") = -32767; tabIndex = -32767
+getAttribute("tabindex") = -32768; tabIndex = -32768
+getAttribute("tabindex") = -32769; tabIndex = -32768
+getAttribute("tabindex") = -40000; tabIndex = -32768
+Testing setAttribute on an anchor element made with document.createElement
+getAttribute("tabindex") = 40000; tabIndex = 32767
+getAttribute("tabindex") = 32768; tabIndex = 32767
+getAttribute("tabindex") = 32767; tabIndex = 32767
+getAttribute("tabindex") = 32766; tabIndex = 32766
+getAttribute("tabindex") = 0; tabIndex = 0
+getAttribute("tabindex") = -1; tabIndex = -1
+getAttribute("tabindex") = -32767; tabIndex = -32767
+getAttribute("tabindex") = -32768; tabIndex = -32768
+getAttribute("tabindex") = -40000; tabIndex = -32768
+Testing tabIndex on an area element made with document.createElement
+getAttribute("tabindex") = 40000; tabIndex = 32767
+getAttribute("tabindex") = 32768; tabIndex = 32767
+getAttribute("tabindex") = 32767; tabIndex = 32767
+getAttribute("tabindex") = 32766; tabIndex = 32766
+getAttribute("tabindex") = 0; tabIndex = 0
+getAttribute("tabindex") = -1; tabIndex = -1
+getAttribute("tabindex") = -32767; tabIndex = -32767
+getAttribute("tabindex") = -32768; tabIndex = -32768
+getAttribute("tabindex") = -40000; tabIndex = -32768
+

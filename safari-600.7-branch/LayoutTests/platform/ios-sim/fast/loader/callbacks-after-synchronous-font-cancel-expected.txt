@@ -1,0 +1,1 @@
+This tests <rdar://problem/11822378> - we should get a didFinishLoading callback when client cancels a font load from style resolution. The test times out on failure.

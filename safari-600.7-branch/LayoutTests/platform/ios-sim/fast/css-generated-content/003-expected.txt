@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x20
+        RenderBlock (floating) at (0,0) size 15x53
+          RenderText {#text} at (0,1) size 15x51
+            text run at (0,1) width 15: "I"
+        RenderText {#text} at (15,0) size 461x19
+          text run at (15,0) width 461: "n an attempt to lose some weight, I have switched computing platforms."

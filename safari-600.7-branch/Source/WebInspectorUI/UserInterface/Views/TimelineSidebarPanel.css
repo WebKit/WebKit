@@ -1,0 +1,253 @@
+/*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.sidebar > .panel.navigation.timeline > .status-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 29px;
+    border-bottom: 1px solid rgb(179, 179, 179);
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar {
+    height: 22px;
+}
+
+.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph {
+    position: absolute;
+    top: 3px;
+    left: 5px;
+    width: 21px;
+    height: 21px;
+    padding: 0;
+    border: none;
+    outline: none;
+    color: transparent;
+    overflow: hidden;
+
+    -webkit-appearance: none;
+
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-image: url(../Images/Record.svg);
+    background-size: 13px 13px;
+    background-position: center;
+}
+
+.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph:hover {
+    -webkit-filter: brightness(95%);
+}
+
+.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph:active {
+    -webkit-filter: brightness(80%);
+}
+
+.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.recording {
+    background-image: url(../Images/Stop.svg);
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph {
+    top: 0;
+
+    background-image: -webkit-image-set(url(../Images/Legacy/RecordingStopped.png) 1x, url(../Images/Legacy/RecordingStopped@2x.png) 2x);
+    background-size: 21px 21px;
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.recording {
+    background-image: -webkit-image-set(url(../Images/Legacy/Recording.png) 1x, url(../Images/Legacy/Recording@2x.png) 2x);
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph:hover {
+    background-image: -webkit-image-set(url(../Images/Legacy/RecordingHovered.png) 1x, url(../Images/Legacy/RecordingHovered@2x.png) 2x);
+    -webkit-filter: none;
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.recording:hover {
+    background-image: -webkit-image-set(url(../Images/Legacy/RecordingStopped.png) 1x, url(../Images/Legacy/RecordingStopped@2x.png) 2x);
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.forced {
+    background-image: -webkit-image-set(url(../Images/Legacy/RecordingStopped.png) 1x, url(../Images/Legacy/RecordingStopped@2x.png) 2x) !important;
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .record-glyph.recording.forced {
+    background-image: -webkit-image-set(url(../Images/Legacy/Recording.png) 1x, url(../Images/Legacy/Recording@2x.png) 2x) !important;
+}
+
+.sidebar > .panel.navigation.timeline > .status-bar > .record-status {
+    position: absolute;
+    top: 3px;
+    right: 21px;
+    left: 27px;
+
+    text-align: center;
+
+    line-height: 20px;
+    font-weight: bold;
+
+    color: rgb(76, 76, 76);
+    text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .status-bar > .record-status {
+    top: 0;
+}
+
+.sidebar > .panel.navigation.timeline > .title-bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+
+    height: 22px;
+
+    border-bottom: 1px solid rgb(179, 179, 179);
+    background-color: rgb(242, 242, 242);
+    color: rgb(57, 57, 57);
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    font-weight: bold;
+
+    padding: 4px 9px;
+
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .title-bar {
+    background-color: transparent;
+    background-image: linear-gradient(to bottom, rgb(238, 240, 244), rgb(224, 226, 230));
+    text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;
+}
+
+.sidebar > .panel.navigation.timeline > .title-bar.timelines {
+    top: 29px;
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .title-bar.timelines {
+    top: 22px;
+}
+
+.sidebar > .panel.navigation.timeline > .title-bar.timeline-events {
+    height: 23px;
+    border-top: 1px solid rgb(179, 179, 179);
+    top: 159px;
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .title-bar.timeline-events {
+    top: 152px;
+}
+
+.sidebar > .panel.navigation.timeline > .timelines-content {
+    position: absolute;
+    top: 51px;
+    height: 108px;
+    left: 0;
+    right: 0;
+
+    overflow: hidden;
+}
+
+.sidebar > .panel.navigation.timeline > .timelines-content .close-button {
+    margin-top: 1px;
+    width: 14px;
+    height: 14px;
+
+    visibility: hidden;
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .timelines-content {
+    top: 44px;
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .timelines-content .close-button {
+    margin-top: 2px;
+    width: 12px;
+    height: 12px;
+}
+
+.sidebar > .panel.navigation.timeline > .timelines-content li.item .icon {
+    width: 24px;
+    height: 24px;
+    margin-top: 5px;
+}
+
+.sidebar > .panel.navigation.timeline > .timelines-content li.item.selected .close-button {
+    visibility: visible;
+}
+
+.sidebar > .panel.navigation.timeline > .timelines-content li.item:not(.selected):nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.03);
+    background-clip: padding-box;
+}
+
+.sidebar > .panel.navigation.timeline > .timelines-content li.item:not(.selected):not(:first-child) {
+    border-top: 1px solid rgba(0, 0, 0, 0.09);
+}
+
+.sidebar > .panel.navigation.timeline > .timelines-content li.item.selected + li.item {
+    border-top-color: rgb(212, 212, 212);
+}
+
+body.window-inactive .sidebar > .panel.navigation.timeline > .timelines-content li.item.selected + li.item {
+    border-top-color: rgb(212, 212, 212);
+}
+
+.sidebar > .panel.navigation.timeline > .timelines-content :focus li.item.selected + li.item {
+    border-top-color: rgb(0, 128, 252);
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .timelines-content li.item.selected + li.item {
+    border-top-color: rgb(120, 139, 168);
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .timelines-content :focus li.item.selected + li.item {
+    border-top-color: rgb(107, 130, 164);
+}
+
+.sidebar > .panel.navigation.timeline > .content,
+.sidebar > .panel.navigation.timeline > .empty-content-placeholder {
+    top: 182px;
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .content,
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .empty-content-placeholder {
+    top: 175px;
+}
+
+.sidebar > .panel.navigation.timeline.timeline-content-view-showing > .content {
+ /* This hides the scrollbar. The view shows a scrollbar, we don't need two. */
+    padding-right: 16px;
+    right: -16px;
+}
+
+body.mac-platform.legacy .sidebar > .panel.navigation.timeline > .content .item > .status > .status-button {
+    width: 12px;
+    height: 12px;
+    margin-top: 2px;
+}

@@ -1,0 +1,4 @@
+ALERT: XSS
+Tests that 'X-WebKit-CSP: reflected-xss allow;' disables the XSSAuditor. This test passes if an alert is generated, and the script is allowed.
+
+

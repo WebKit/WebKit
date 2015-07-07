@@ -1,0 +1,43 @@
+<!DOCTYPE>
+<html>
+<head>
+<title>Image layer content change</title>
+
+<style type="text/css" media="screen">
+    #image {
+        width: 200px;
+        height: 200px;
+        -webkit-transform: translateZ(0);
+    }
+</style>
+<script type="text/javascript" charset="utf-8">
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText(true);
+    }
+    function doTest()
+    {
+        var image = document.getElementById("image");
+
+        window.setTimeout(function() {
+            // Change the contents to green.
+            image.src =  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAADElEQVR4nGNg+M8AAAICAQB7CYF4AAAAAElFTkSuQmCC"
+            if (window.testRunner) {
+                window.setTimeout(function() {
+                    testRunner.notifyDone();
+                }, 0);
+            }
+        }, 0);
+    }
+
+    window.addEventListener('load', doTest, false);
+</script>
+</head>
+<body>
+<!-- When the test is done, there should only be a green square on the page -->
+
+<!-- Start with a red image -->
+<img id="image" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAADElEQVR4nGP4z8AAAAMBAQDJ/pLvAAAAAElFTkSuQmCC" />
+
+</body>
+</html>

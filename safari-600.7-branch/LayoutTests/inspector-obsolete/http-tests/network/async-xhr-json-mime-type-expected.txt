@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 6: XHR loaded: 1
+Tests XHR network resource content for asynchronous requests with application/json mime type. Bug 80684
+
+http://127.0.0.1:8000/inspector/network/resources/json.php
+resource.type: xhr
+resource.content before requesting content: undefined
+resource.content after requesting content: {"number": "42"}
+
+
+

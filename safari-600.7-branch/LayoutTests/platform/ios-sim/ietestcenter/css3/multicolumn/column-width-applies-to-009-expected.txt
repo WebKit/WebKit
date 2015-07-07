@@ -1,0 +1,45 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x180
+  RenderBlock {HTML} at (0,0) size 800x180
+    RenderBody {BODY} at (8,16) size 784x156
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 310x19
+          text run at (0,0) width 310: "Test passes if there is no red visible on the page."
+layer at (8,52) size 784x120
+  RenderBlock (relative positioned) {DIV} at (0,36) size 784x120
+layer at (8,52) size 220x120
+  RenderBlock {SPAN} at (0,0) size 220x120 [color=#FF0000]
+    RenderText {#text} at (0,-2) size 109x286
+      text run at (0,-2) width 109: "AAAAAAAAA"
+      text run at (0,18) width 109: "BBBBBBBBB"
+      text run at (0,38) width 109: "CCCCCCCCC"
+      text run at (0,58) width 109: "DDDDDDDDD"
+      text run at (0,78) width 109: "EEEEEEEEE"
+      text run at (0,120) width 109: "FFFFFFFFF"
+      text run at (0,140) width 109: "GGGGGGGGG"
+      text run at (0,160) width 109: "HHHHHHHHH"
+      text run at (0,180) width 109: "IIIIIIIII"
+      text run at (0,200) width 109: "JJJJJJJJJ"
+      text run at (0,240) width 109: "KKKKKKKKK"
+      text run at (0,260) width 109: "LLLLLLLLL"
+layer at (8,52) size 220x120
+  RenderBlock (positioned) {DIV} at (0,0) size 220x120 [color=#008000]
+layer at (8,52) size 100x120
+  RenderBlock (positioned) {DIV} at (0,0) size 100x120
+    RenderText {#text} at (0,-2) size 109x124
+      text run at (0,-2) width 109: "AAAAAAAAA"
+      text run at (0,18) width 109: "BBBBBBBBB"
+      text run at (0,38) width 109: "CCCCCCCCC"
+      text run at (0,58) width 109: "DDDDDDDDD"
+      text run at (0,78) width 109: "EEEEEEEEE"
+      text run at (0,98) width 109: "FFFFFFFFF"
+layer at (128,52) size 100x120
+  RenderBlock (positioned) {DIV} at (120,0) size 100x120
+    RenderText {#text} at (0,-2) size 109x124
+      text run at (0,-2) width 109: "GGGGGGGGG"
+      text run at (0,18) width 109: "HHHHHHHHH"
+      text run at (0,38) width 109: "IIIIIIIII"
+      text run at (0,58) width 109: "JJJJJJJJJ"
+      text run at (0,78) width 109: "KKKKKKKKK"
+      text run at (0,98) width 109: "LLLLLLLLL"

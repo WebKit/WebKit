@@ -1,0 +1,37 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 697x39
+          text run at (0,0) width 609: "This tests our ability to correctly select radio buttons when we have nested label tags. This test "
+          text run at (608,0) width 89: "only works in"
+          text run at (0,20) width 543: "DumpRenderTree. It can be tested manually outside of DRT just by clicking around."
+      RenderBlock {FORM} at (0,56) size 784x42
+        RenderBlock (anonymous) at (0,0) size 784x22
+          RenderBlock {INPUT} at (2,3) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+          RenderInline {LABEL} at (0,0) size 178x19
+            RenderText {#text} at (20,2) size 28x19
+              text run at (20,2) width 28: "one "
+            RenderBlock {INPUT} at (49,3) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+            RenderInline {LABEL} at (0,0) size 131x19
+              RenderText {#text} at (67,2) size 29x19
+                text run at (67,2) width 29: "two "
+              RenderBlock {INPUT} at (97,3) size 16x16 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+              RenderInline {LABEL} at (0,0) size 83x19
+                RenderText {#text} at (115,2) size 37x19
+                  text run at (115,2) width 37: "three "
+                RenderBlock {INPUT} at (153,3) size 16x16 [bgcolor=#000000CC] [border: (1px solid #FFFFFF00)]
+                RenderInline {LABEL} at (0,0) size 27x19
+                  RenderText {#text} at (171,2) size 27x19
+                    text run at (171,2) width 27: "four"
+        RenderBlock (anonymous) at (0,22) size 784x20
+          RenderBlock {DIV} at (0,0) size 784x20
+            RenderText {#text} at (0,0) size 106x19
+              text run at (0,0) width 106: "Test Succeeded!"
+        RenderBlock (anonymous) at (0,42) size 784x0
+          RenderInline {LABEL} at (0,0) size 0x0
+            RenderInline {LABEL} at (0,0) size 0x0
+              RenderInline {LABEL} at (0,0) size 0x0
+                RenderInline {LABEL} at (0,0) size 0x0

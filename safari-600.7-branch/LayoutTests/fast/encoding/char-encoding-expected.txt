@@ -1,0 +1,22 @@
+This tests encoding characters in various character sets.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS encode('UTF-8', 'U+00A0') is '%C2%A0'
+PASS encode('GBK', 'U+00A5') is '%A3%A4'
+PASS encode('gb2312', 'U+00A5') is '%A3%A4'
+PASS encode('GB_2312-80', 'U+00A5') is '%A3%A4'
+PASS encode('EUC-CN', 'U+00A5') is '%A3%A4'
+PASS encode('GBK', 'U+20AC') is '%80'
+PASS encode('gb2312', 'U+20AC') is '%80'
+PASS encode('GB_2312-80', 'U+20AC') is '%80'
+PASS encode('EUC-CN', 'U+20AC') is '%80'
+PASS encode('GBK', 'U+01F9') is '%A8%BF'
+PASS encode('GBK', 'U+1E3F') is '%A8%BC'
+PASS encode('GBK', 'U+22EF') is '%A1%AD'
+PASS encode('GBK', 'U+301C') is '%A1%AB'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="menu" role="menu" hidden>
+    <div role="menuitem" id="item1" tabindex="0">Menu item 1</div>
+    <div role="menuitem" id="item2" tabindex="0">Menu item 2</div>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the AXMenuOpened notification gets fired when an ARIA menu popup opens.");
+
+    function showMenu() {
+        document.getElementById("menu").removeAttribute("hidden");
+    }
+
+    var notification = 0;
+    var element = 0;
+    function ariaCallback(element, notification) {
+        if (notification == "AXMenuOpened") {
+           debug("Received menu opened notification: " + notification);
+           debug("Menu element: " + element.role);
+           accessibilityController.removeNotificationListener();
+           finishJSTest();
+        }
+    }
+
+    window.jsTestIsAsync = true;
+    if (window.accessibilityController) {
+        var addedNotification = accessibilityController.addNotificationListener(ariaCallback);
+        shouldBe("addedNotification", "true");
+
+        // Make sure AX is enabled by accessing root element.
+        accessibilityController.rootElement;
+
+        setTimeout("showMenu();", 1);
+    }
+    successfullyParsed = true;
+
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

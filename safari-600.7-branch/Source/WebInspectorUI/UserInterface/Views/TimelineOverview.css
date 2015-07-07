@@ -1,0 +1,81 @@
+/*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.timeline-overview > .scroll-container {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 16px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    opacity: 0;
+}
+
+.timeline-overview:hover > .scroll-container {
+    opacity: 0.75;
+}
+
+.timeline-overview > .scroll-container:hover {
+    opacity: 1;
+}
+
+.timeline-overview > .timeline-ruler {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+.timeline-overview > .graphs-container {
+    position: absolute;
+    top: 22px;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+.timeline-overview > .graphs-container > .timeline-overview-graph {
+    height: 36px;
+}
+
+.timeline-overview > .graphs-container > .timeline-overview-graph:nth-child(even) {
+    background-color: rgb(247, 247, 247);
+    background-clip: padding-box;
+}
+
+.timeline-overview > .graphs-container > .timeline-overview-graph:not(:first-child) {
+    border-top: 1px solid rgba(0, 0, 0, 0.09);
+}
+
+.timeline-overview > .scroll-container > .scroll-width-sizer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 1px;
+    visibility: hidden;
+    pointer-events: none;
+}

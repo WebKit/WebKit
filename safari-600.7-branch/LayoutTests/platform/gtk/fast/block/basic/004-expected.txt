@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x89
+  RenderBlock {HTML} at (0,0) size 800x89
+    RenderBody {BODY} at (8,16) size 784x65
+      RenderBlock {P} at (0,0) size 784x17
+        RenderText {#text} at (0,0) size 544x17
+          text run at (0,0) width 544: "The following two DIVs should be the same width (resulting in a single 4 by 2 block)."
+      RenderBlock {DIV} at (0,33) size 48x16 [bgcolor=#000080]
+        RenderBlock {DIV} at (0,0) size 64x16 [border: none (32px solid #000000) none (32px solid #000000)]
+      RenderBlock {DIV} at (0,49) size 64x16 [bgcolor=#000080]

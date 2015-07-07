@@ -1,0 +1,56 @@
+<html>
+<head>
+<meta name="viewport" content="width=980 initial-scale=0.5">
+<link rel="stylesheet" href="../../../../../fast/js/resources/js-test-style.css">
+
+<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+
+<script>
+function dataToArray(data) {
+    var result = new Array(data.length)
+    for (var i = 0; i < data.length; i++)
+        result[i] = data[i];
+    return result;
+}
+
+function getPixel(x, y) {
+    var canvas = document.getElementById("cc");
+    var context = canvas.getContext('2d');
+    var data = context.getImageData(x,y,1,1);
+    if (!data) // getImageData failed, which should never happen
+        return [-1,-1,-1,-1];
+    return dataToArray(data.data);
+}
+
+function pixelShouldBe(x, y, colour) {
+    shouldBe("getPixel(" + [x, y] +")", "["+colour+"]");
+}
+
+var draw = function() {
+  var ctx = document.getElementById('cc').getContext('2d');
+  var timg = new Image()
+  timg.onload = function() {
+    ctx.setFillColor(1, 1, 1, 1);
+    ctx.fillRect(0,0,256,256);
+    ctx.drawImage(timg, 0,0, 128, 128, 0, 0, 63, 63);
+    ctx.drawImage(timg, 0,0, 128, 128, 128, 0, 65,65);
+
+    pixelShouldBe(62, 62, [0, 0, 0, 255]);
+
+    // finish test
+    if (window.testRunner) {
+        testRunner.notifyDone();
+    }
+  };
+  timg.src = "./resources/image_subSampling_scale.jpg";
+ };
+</script>
+</head>
+<body>
+<canvas id="cc" width="256" height="128"></canvas>
+<div id="console"></div>
+<script>
+draw();
+</script>
+</body>
+</html>

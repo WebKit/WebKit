@@ -1,0 +1,61 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../network-test.js"></script>
+<script>
+function test()
+{
+    // Since this test could be run together with other inspector backend cache
+    // tests, we need to reset size limits to default ones.
+    InspectorTest.resetInspectorResourcesData(step1);
+
+    function dumpRequest(request, callback)
+    {
+        if (!request)
+            return callback();
+        InspectorTest.addResult(request.url);
+
+        function contentLoaded()
+        {
+            InspectorTest.addResult("resource.content: " + request.content);
+            callback();
+        }
+
+        request.requestContent(contentLoaded);
+    }
+
+    function step1()
+    {
+        InspectorTest.makeSimpleXHR("GET", "resources/cyrillic.html", false, firstXHRLoaded);
+
+        function firstXHRLoaded()
+        {
+            InspectorTest.makeSimpleXHR("GET", "resources/cyrillic.html", true, step2);
+        }
+    }
+
+    function step2()
+    {
+        var request = WebInspector.panel("network").requests[WebInspector.panel("network").requests.length - 2];
+        dumpRequest(request, step3);
+    }
+
+    function step3()
+    {
+        var request = WebInspector.panel("network").requests[WebInspector.panel("network").requests.length - 1];
+        dumpRequest(request, step4);
+    }
+
+    function step4()
+    {
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p> Tests cyrillic xhr content is correctly loaded in inspector.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=79026">Bug 79026</a>
+</body>
+</html>
+

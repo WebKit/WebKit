@@ -1,0 +1,132 @@
+123456Before:
+(GraphicsLayer
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (children 1
+        (GraphicsLayer
+          (position 108.00 108.00)
+          (childrenTransform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [-0.25 -0.25 1.00 -0.01] [0.00 0.00 0.00 1.00])
+          (children 1
+            (GraphicsLayer
+              (anchor 50.00 50.00)
+              (bounds 1.00 1.00)
+              (preserves3D 1)
+              (transform [0.35 0.25 -0.50 0.00] [0.00 0.35 0.71 0.00] [0.35 -0.25 0.50 0.00] [0.00 0.00 0.00 1.00])
+              (children 6
+                (GraphicsLayer
+                  (bounds 100.00 100.00)
+                  (drawsContent 1)
+                  (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 50.00 1.00])
+                )
+                (GraphicsLayer
+                  (bounds 100.00 100.00)
+                  (drawsContent 1)
+                  (transform [0.00 0.00 -1.00 0.00] [0.00 1.00 0.00 0.00] [1.00 0.00 0.00 0.00] [50.00 0.00 0.00 1.00])
+                )
+                (GraphicsLayer
+                  (bounds 100.00 100.00)
+                  (drawsContent 1)
+                  (transform [-1.00 0.00 -0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 -1.00 0.00] [0.00 0.00 -50.00 1.00])
+                )
+                (GraphicsLayer
+                  (bounds 100.00 100.00)
+                  (drawsContent 1)
+                  (transform [-0.00 0.00 1.00 0.00] [0.00 1.00 0.00 0.00] [-1.00 0.00 -0.00 0.00] [-50.00 0.00 -0.00 1.00])
+                )
+                (GraphicsLayer
+                  (bounds 100.00 100.00)
+                  (drawsContent 1)
+                  (transform [1.00 0.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 -1.00 0.00 0.00] [0.00 -50.00 0.00 1.00])
+                )
+                (GraphicsLayer
+                  (bounds 100.00 100.00)
+                  (drawsContent 1)
+                  (transform [1.00 0.00 0.00 0.00] [0.00 0.00 -1.00 0.00] [0.00 1.00 0.00 0.00] [0.00 50.00 0.00 1.00])
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+
+After:
+(GraphicsLayer
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (children 5
+        (GraphicsLayer
+          (position 108.00 108.00)
+          (childrenTransform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [-0.25 -0.25 1.00 -0.01] [0.00 0.00 0.00 1.00])
+          (children 1
+            (GraphicsLayer
+              (anchor 50.00 50.00)
+              (bounds 1.00 1.00)
+              (preserves3D 1)
+              (transform [0.71 0.50 -0.50 0.00] [0.00 0.71 0.71 0.00] [0.71 -0.50 0.50 0.00] [0.00 0.00 0.00 1.00])
+              (children 6
+                (GraphicsLayer
+                  (bounds 100.00 100.00)
+                  (drawsContent 1)
+                  (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 50.00 1.00])
+                )
+                (GraphicsLayer
+                  (bounds 100.00 100.00)
+                  (drawsContent 1)
+                  (transform [0.00 0.00 -1.00 0.00] [0.00 1.00 0.00 0.00] [1.00 0.00 0.00 0.00] [50.00 0.00 0.00 1.00])
+                )
+                (GraphicsLayer
+                  (bounds 100.00 100.00)
+                  (drawsContent 1)
+                  (transform [-1.00 0.00 -0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 -1.00 0.00] [0.00 0.00 -50.00 1.00])
+                )
+                (GraphicsLayer
+                  (bounds 100.00 100.00)
+                  (drawsContent 1)
+                  (transform [-0.00 0.00 1.00 0.00] [0.00 1.00 0.00 0.00] [-1.00 0.00 -0.00 0.00] [-50.00 0.00 -0.00 1.00])
+                )
+                (GraphicsLayer
+                  (bounds 100.00 100.00)
+                  (drawsContent 1)
+                  (transform [1.00 0.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 -1.00 0.00 0.00] [0.00 -50.00 0.00 1.00])
+                )
+                (GraphicsLayer
+                  (bounds 100.00 100.00)
+                  (drawsContent 1)
+                  (transform [1.00 0.00 0.00 0.00] [0.00 0.00 -1.00 0.00] [0.00 1.00 0.00 0.00] [0.00 50.00 0.00 1.00])
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 100.00 150.00)
+          (contentsOpaque 1)
+        )
+        (GraphicsLayer
+          (position 208.00 8.00)
+          (bounds 100.00 150.00)
+          (contentsOpaque 1)
+        )
+        (GraphicsLayer
+          (position 8.00 158.00)
+          (bounds 100.00 150.00)
+          (contentsOpaque 1)
+        )
+        (GraphicsLayer
+          (position 208.00 158.00)
+          (bounds 100.00 150.00)
+          (contentsOpaque 1)
+        )
+      )
+    )
+  )
+)
+

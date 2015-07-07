@@ -1,0 +1,42 @@
+CONSOLE MESSAGE: line 6: XHR loaded: 1
+Tests that application cache model keeps track of manifest urls and statuses correctly after UPDATEREADY event and swapCache() call.
+
+Bug 72123
+Dumping application cache tree:
+    (empty)
+Dumping application cache model:
+    (empty)
+
+Dumping application cache tree:
+    Manifest URL: http://127.0.0.1:8000/inspector/appcache/resources/versioned-manifest.php
+        Frame: frame1 (with-versioned-manifest.php)
+Dumping application cache model:
+    Frame: frame1
+        manifest url: http://127.0.0.1:8000/inspector/appcache/resources/versioned-manifest.php
+        status:       IDLE
+
+Dumping application cache tree:
+    Manifest URL: http://127.0.0.1:8000/inspector/appcache/resources/versioned-manifest.php
+        Frame: frame1 (with-versioned-manifest.php)
+        Frame: frame2 (with-versioned-manifest.php)
+Dumping application cache model:
+    Frame: frame1
+        manifest url: http://127.0.0.1:8000/inspector/appcache/resources/versioned-manifest.php
+        status:       UPDATEREADY
+    Frame: frame2
+        manifest url: http://127.0.0.1:8000/inspector/appcache/resources/versioned-manifest.php
+        status:       UPDATEREADY
+
+Dumping application cache tree:
+    Manifest URL: http://127.0.0.1:8000/inspector/appcache/resources/versioned-manifest.php
+        Frame: frame1 (with-versioned-manifest.php)
+        Frame: frame2 (with-versioned-manifest.php)
+Dumping application cache model:
+    Frame: frame1
+        manifest url: http://127.0.0.1:8000/inspector/appcache/resources/versioned-manifest.php
+        status:       IDLE
+    Frame: frame2
+        manifest url: http://127.0.0.1:8000/inspector/appcache/resources/versioned-manifest.php
+        status:       UPDATEREADY
+
+

@@ -1,0 +1,31 @@
+Tests conversion of Inspector's resource representation into HAR format.
+
+{
+    0 : {
+        id : <string>
+        pageTimings : {
+            onContentLoad : <number>
+            onLoad : <number>
+        }
+        startedDateTime : <plausible>
+        title : "http://127.0.0.1:8000/resources/redirect.php?url=/inspector/resources/har-pages-navigation-target.html"
+    }
+    1 : {
+        id : <string>
+        pageTimings : {
+            onContentLoad : <number>
+            onLoad : <number>
+        }
+        startedDateTime : <plausible>
+        title : "http://127.0.0.1:8000/inspector/resource-har-pages.html"
+    }
+}
+page: page_2 url: http://127.0.0.1:8000/inspector/inspector-test.js
+page: page_2 url: http://127.0.0.1:8000/inspector/resource-har-pages.html
+page: page_2 url: http://127.0.0.1:8000/inspector/resources-test.js
+page: page_1 url: http://127.0.0.1:8000/inspector/resources/har-pages-iframe.html
+page: page_1 url: http://127.0.0.1:8000/inspector/resources/har-pages-navigation-target.html
+page: page_1 url: http://127.0.0.1:8000/inspector/resources/source1.js
+page: page_1 url: http://127.0.0.1:8000/resources/redirect.php?url=/inspector/resources/har-pages-navigation-target.html
+Page reloaded.
+

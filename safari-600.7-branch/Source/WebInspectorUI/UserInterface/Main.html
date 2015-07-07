@@ -1,0 +1,508 @@
+<!--
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src *; connect-src *; media-src *; font-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
+
+    <link rel="stylesheet" href="External/CodeMirror/codemirror.css">
+
+    <link rel="stylesheet" href="Views/ApplicationCacheFrameContentView.css">
+    <link rel="stylesheet" href="Views/ApplicationCacheIcons.css">
+    <link rel="stylesheet" href="Views/BoxModelDetailsSectionRow.css">
+    <link rel="stylesheet" href="Views/Breakpoint.css">
+    <link rel="stylesheet" href="Views/BreakpointActionView.css">
+    <link rel="stylesheet" href="Views/BreakpointTreeElement.css">
+    <link rel="stylesheet" href="Views/ButtonNavigationItem.css">
+    <link rel="stylesheet" href="Views/ButtonToolbarItem.css">
+    <link rel="stylesheet" href="Views/CSSStyleDeclarationSection.css">
+    <link rel="stylesheet" href="Views/CSSStyleDeclarationTextEditor.css">
+    <link rel="stylesheet" href="Views/CSSStyleDetailsSidebarPanel.css">
+    <link rel="stylesheet" href="Views/CallFrameIcons.css">
+    <link rel="stylesheet" href="Views/ClusterContentView.css">
+    <link rel="stylesheet" href="Views/CodeMirrorOverrides.css">
+    <link rel="stylesheet" href="Views/ColorPicker.css">
+    <link rel="stylesheet" href="Views/ColorWheel.css">
+    <link rel="stylesheet" href="Views/CompletionSuggestionsView.css">
+    <link rel="stylesheet" href="Views/ComputedStyleDetailsPanel.css">
+    <link rel="stylesheet" href="Views/ConsolePrompt.css">
+    <link rel="stylesheet" href="Views/ContentBrowser.css">
+    <link rel="stylesheet" href="Views/ContentFlowIcon.css">
+    <link rel="stylesheet" href="Views/ContentView.css">
+    <link rel="stylesheet" href="Views/ContentViewContainer.css">
+    <link rel="stylesheet" href="Views/ControlToolbarItem.css">
+    <link rel="stylesheet" href="Views/CookieIcon.css">
+    <link rel="stylesheet" href="Views/CookieStorageContentView.css">
+    <link rel="stylesheet" href="Views/DOMStorageContentView.css">
+    <link rel="stylesheet" href="Views/DOMStorageIcons.css">
+    <link rel="stylesheet" href="Views/DOMTreeContentView.css">
+    <link rel="stylesheet" href="Views/DOMTreeDataGrid.css">
+    <link rel="stylesheet" href="Views/DOMTreeOutline.css">
+    <link rel="stylesheet" href="Views/DashboardContainerView.css">
+    <link rel="stylesheet" href="Views/DebuggerDashboardView.css">
+    <link rel="stylesheet" href="Views/DefaultDashboardView.css">
+    <link rel="stylesheet" href="Views/DataGrid.css">
+    <link rel="stylesheet" href="Views/DatabaseContentView.css">
+    <link rel="stylesheet" href="Views/DatabaseIcon.css">
+    <link rel="stylesheet" href="Views/DatabaseTableContentView.css">
+    <link rel="stylesheet" href="Views/DatabaseTableIcon.css">
+    <link rel="stylesheet" href="Views/DebuggerSidebarPanel.css">
+    <link rel="stylesheet" href="Views/DetailsSection.css">
+    <link rel="stylesheet" href="Views/DetailsSidebarPanel.css">
+    <link rel="stylesheet" href="Views/DividerNavigationItem.css">
+    <link rel="stylesheet" href="Views/Editing.css">
+    <link rel="stylesheet" href="Views/EventListenerSectionGroup.css">
+    <link rel="stylesheet" href="Views/FilterBar.css">
+    <link rel="stylesheet" href="Views/FindBanner.css">
+    <link rel="stylesheet" href="Views/FlexibleSpaceNavigationItem.css">
+    <link rel="stylesheet" href="Views/FolderIcon.css">
+    <link rel="stylesheet" href="Views/FontResourceContentView.css">
+    <link rel="stylesheet" href="Views/GoToLineDialog.css">
+    <link rel="stylesheet" href="Views/GradientSlider.css">
+    <link rel="stylesheet" href="Views/HierarchicalPathComponent.css">
+    <link rel="stylesheet" href="Views/HoverMenu.css">
+    <link rel="stylesheet" href="Views/ImageResourceContentView.css">
+    <link rel="stylesheet" href="Views/IndeterminateProgressSpinner.css">
+    <link rel="stylesheet" href="Views/IndexedDatabaseObjectStoreContentView.css">
+    <link rel="stylesheet" href="Views/LayerTreeSidebarPanel.css">
+    <link rel="stylesheet" href="Views/LayoutTimelineOverviewGraph.css">
+    <link rel="stylesheet" href="Views/LayoutTimelineView.css">
+    <link rel="stylesheet" href="Views/LegacyJavaScriptProfileView.css">
+    <link rel="stylesheet" href="Views/LegacyProfileView.css">
+    <link rel="stylesheet" href="Views/LogContentView.css">
+    <link rel="stylesheet" href="Views/LogIcon.css">
+    <link rel="stylesheet" href="Views/Main.css">
+    <link rel="stylesheet" href="Views/NavigationBar.css">
+    <link rel="stylesheet" href="Views/NavigationSidebarPanel.css">
+    <link rel="stylesheet" href="Views/NetworkTimelineOverviewGraph.css">
+    <link rel="stylesheet" href="Views/NetworkTimelineView.css">
+    <link rel="stylesheet" href="Views/OverviewTimelineView.css">
+    <link rel="stylesheet" href="Views/PathComponentIcons.css">
+    <link rel="stylesheet" href="Views/Popover.css">
+    <link rel="stylesheet" href="Views/ProbeDetailsSidebarPanel.css">
+    <link rel="stylesheet" href="Views/ProbeSetDataGrid.css">
+    <link rel="stylesheet" href="Views/QuickConsole.css">
+    <link rel="stylesheet" href="Views/RadioButtonNavigationItem.css">
+    <link rel="stylesheet" href="Views/ResourceIcons.css">
+    <link rel="stylesheet" href="Views/ResourceSidebarPanel.css">
+    <link rel="stylesheet" href="Views/ResourceTreeElement.css">
+    <link rel="stylesheet" href="Views/RulesStyleDetailsPanel.css">
+    <link rel="stylesheet" href="Views/ScopeBar.css">
+    <link rel="stylesheet" href="Views/ScriptContentView.css">
+    <link rel="stylesheet" href="Views/ScriptTimelineOverviewGraph.css">
+    <link rel="stylesheet" href="Views/ScriptTimelineView.css">
+    <link rel="stylesheet" href="Views/SearchBar.css">
+    <link rel="stylesheet" href="Views/SearchIcons.css">
+    <link rel="stylesheet" href="Views/Section.css">
+    <link rel="stylesheet" href="Views/Sidebar.css">
+    <link rel="stylesheet" href="Views/Slider.css">
+    <link rel="stylesheet" href="Views/SourceCodeTextEditor.css">
+    <link rel="stylesheet" href="Views/StyleRuleIcons.css">
+    <link rel="stylesheet" href="Views/SyntaxHighlightingDefaultTheme.css">
+    <link rel="stylesheet" href="Views/TextContentView.css">
+    <link rel="stylesheet" href="Views/TextEditor.css">
+    <link rel="stylesheet" href="Views/TextResourceContentView.css">
+    <link rel="stylesheet" href="Views/TimelineContentView.css">
+    <link rel="stylesheet" href="Views/TimelineDataGrid.css">
+    <link rel="stylesheet" href="Views/TimelineIcons.css">
+    <link rel="stylesheet" href="Views/TimelineOverview.css">
+    <link rel="stylesheet" href="Views/TimelineRecordBar.css">
+    <link rel="stylesheet" href="Views/TimelineRuler.css">
+    <link rel="stylesheet" href="Views/TimelineSidebarPanel.css">
+    <link rel="stylesheet" href="Views/TimelineView.css">
+    <link rel="stylesheet" href="Views/Toolbar.css">
+    <link rel="stylesheet" href="Views/TreeElementStatusButton.css">
+
+    <link rel="stylesheet" href="Controllers/CodeMirrorCompletionController.css">
+    <link rel="stylesheet" href="Controllers/CodeMirrorDragToAdjustNumberController.css">
+    <link rel="stylesheet" href="Controllers/CodeMirrorGradientEditingController.css">
+    <link rel="stylesheet" href="Controllers/CodeMirrorTokenTrackingController.css">
+
+    <script src="External/CodeMirror/codemirror.js"></script>
+
+    <script src="External/CodeMirror/clojure.js"></script>
+    <script src="External/CodeMirror/closebrackets.js"></script>
+    <script src="External/CodeMirror/coffeescript.js"></script>
+    <script src="External/CodeMirror/comment.js"></script>
+    <script src="External/CodeMirror/css.js"></script>
+    <script src="External/CodeMirror/htmlmixed.js"></script>
+    <script src="External/CodeMirror/javascript.js"></script>
+    <script src="External/CodeMirror/livescript.js"></script>
+    <script src="External/CodeMirror/matchbrackets.js"></script>
+    <script src="External/CodeMirror/overlay.js"></script>
+    <script src="External/CodeMirror/placeholder.js"></script>
+    <script src="External/CodeMirror/runmode.js"></script>
+    <script src="External/CodeMirror/sass.js"></script>
+    <script src="External/CodeMirror/searchcursor.js"></script>
+    <script src="External/CodeMirror/sql.js"></script>
+    <script src="External/CodeMirror/xml.js"></script>
+
+    <script src="Base/WebInspector.js"></script>
+    <script src="Base/Platform.js"></script>
+    <script src="Base/Object.js"></script>
+
+    <script src="Base/DOMUtilities.js"></script>
+    <script src="Base/EventListenerSet.js"></script>
+    <script src="Base/ImageUtilities.js"></script>
+    <script src="Base/LoadLocalizedStrings.js"></script>
+    <script src="Base/MIMETypeUtilities.js"></script>
+    <script src="Base/URLUtilities.js"></script>
+    <script src="Base/Utilities.js"></script>
+
+    <script src="Protocol/ApplicationCacheObserver.js"></script>
+    <script src="Protocol/CSSObserver.js"></script>
+    <script src="Protocol/ConsoleObserver.js"></script>
+    <script src="Protocol/DOMObserver.js"></script>
+    <script src="Protocol/DOMStorageObserver.js"></script>
+    <script src="Protocol/DatabaseObserver.js"></script>
+    <script src="Protocol/DebuggerObserver.js"></script>
+    <script src="Protocol/InspectorBackend.js"></script>
+    <script src="Protocol/InspectorFrontendAPI.js"></script>
+    <script src="Protocol/InspectorFrontendHostStub.js"></script>
+    <script src="Protocol/InspectorObserver.js"></script>
+    <script src="Protocol/LayerTreeObserver.js"></script>
+    <script src="Protocol/LegacyProfilerObserver.js"></script>
+    <script src="Protocol/LoadInspectorBackendCommands.js"></script>
+    <script src="Protocol/MessageDispatcher.js"></script>
+    <script src="Protocol/NetworkObserver.js"></script>
+    <script src="Protocol/PageObserver.js"></script>
+    <script src="Protocol/RemoteObject.js"></script>
+    <script src="Protocol/ReplayObserver.js"></script>
+    <script src="Protocol/RuntimeObserver.js"></script>
+    <script src="Protocol/TimelineObserver.js"></script>
+
+    <script src="Models/BreakpointAction.js"></script>
+    <script src="Models/SourceCode.js"></script>
+    <script src="Models/SourceCodeLocation.js"></script>
+    <script src="Models/Timeline.js"></script>
+    <script src="Models/TimelineRecord.js"></script>
+
+    <script src="Models/ApplicationCacheFrame.js"></script>
+    <script src="Models/ApplicationCacheManifest.js"></script>
+    <script src="Models/BackForwardEntry.js"></script>
+    <script src="Models/Branch.js"></script>
+    <script src="Models/Breakpoint.js"></script>
+    <script src="Models/CSSCompletions.js"></script>
+    <script src="Models/CSSKeywordCompletions.js"></script>
+    <script src="Models/CSSMedia.js"></script>
+    <script src="Models/CSSProperty.js"></script>
+    <script src="Models/CSSRule.js"></script>
+    <script src="Models/CSSStyleDeclaration.js"></script>
+    <script src="Models/CSSStyleSheet.js"></script>
+    <script src="Models/CallFrame.js"></script>
+    <script src="Models/Color.js"></script>
+    <script src="Models/ContentFlow.js"></script>
+    <script src="Models/CookieStorageObject.js"></script>
+    <script src="Models/DOMNode.js"></script>
+    <script src="Models/DOMNodeStyles.js"></script>
+    <script src="Models/DOMSearchMatchObject.js"></script>
+    <script src="Models/DOMStorageObject.js"></script>
+    <script src="Models/DOMTree.js"></script>
+    <script src="Models/DatabaseObject.js"></script>
+    <script src="Models/DatabaseTableObject.js"></script>
+    <script src="Models/DebuggerDashboard.js"></script>
+    <script src="Models/DefaultDashboard.js"></script>
+    <script src="Models/ExecutionContext.js"></script>
+    <script src="Models/ExecutionContextList.js"></script>
+    <script src="Models/Frame.js"></script>
+    <script src="Models/Geometry.js"></script>
+    <script src="Models/Gradient.js"></script>
+    <script src="Models/IndexedDatabase.js"></script>
+    <script src="Models/IndexedDatabaseObjectStore.js"></script>
+    <script src="Models/IndexedDatabaseObjectStoreIndex.js"></script>
+    <script src="Models/IssueMessage.js"></script>
+    <script src="Models/KeyboardShortcut.js"></script>
+    <script src="Models/LayoutTimelineRecord.js"></script>
+    <script src="Models/LazySourceCodeLocation.js"></script>
+    <script src="Models/LogObject.js"></script>
+    <script src="Models/NetworkTimeline.js"></script>
+    <script src="Models/Probe.js"></script>
+    <script src="Models/ProbeSet.js"></script>
+    <script src="Models/ProbeSetDataFrame.js"></script>
+    <script src="Models/ProbeSetDataTable.js"></script>
+    <script src="Models/Profile.js"></script>
+    <script src="Models/ProfileNode.js"></script>
+    <script src="Models/ProfileNodeCall.js"></script>
+    <script src="Models/ReplaySession.js"></script>
+    <script src="Models/ReplaySessionSegment.js"></script>
+    <script src="Models/Resource.js"></script>
+    <script src="Models/ResourceCollection.js"></script>
+    <script src="Models/ResourceSearchMatchObject.js"></script>
+    <script src="Models/ResourceTimelineRecord.js"></script>
+    <script src="Models/Revision.js"></script>
+    <script src="Models/ScopeChainNode.js"></script>
+    <script src="Models/Script.js"></script>
+    <script src="Models/ScriptTimelineRecord.js"></script>
+    <script src="Models/Setting.js"></script>
+    <script src="Models/SourceCodePosition.js"></script>
+    <script src="Models/SourceCodeRevision.js"></script>
+    <script src="Models/SourceCodeTextRange.js"></script>
+    <script src="Models/SourceCodeTimeline.js"></script>
+    <script src="Models/SourceMap.js"></script>
+    <script src="Models/SourceMapResource.js"></script>
+    <script src="Models/TextMarker.js"></script>
+    <script src="Models/TextRange.js"></script>
+    <script src="Models/TimelineMarker.js"></script>
+    <script src="Models/TimelineRecording.js"></script>
+    <script src="Models/UnitBezier.js"></script>
+
+    <script src="Views/ConsoleMessage.js"></script>
+    <script src="Views/ContentView.js"></script>
+    <script src="Views/DataGrid.js"></script>
+    <script src="Views/DetailsSectionRow.js"></script>
+    <script src="Views/HierarchicalPathComponent.js"></script>
+    <script src="Views/LegacyProfileDataGridTree.js"></script>
+    <script src="Views/LegacyProfileObject.js"></script>
+    <script src="Views/LegacyProfileType.js"></script>
+    <script src="Views/LegacyProfileView.js"></script>
+    <script src="Views/NavigationItem.js"></script>
+    <script src="Views/Section.js"></script>
+    <script src="Views/SidebarPanel.js"></script>
+    <script src="Views/StyleDetailsPanel.js"></script>
+    <script src="Views/TextEditor.js"></script>
+    <script src="Views/TimelineOverviewGraph.js"></script>
+    <script src="Views/TimelineView.js"></script>
+    <script src="Views/TreeOutline.js"></script>
+
+    <script src="Views/ButtonNavigationItem.js"></script>
+    <script src="Views/ConsoleMessageImpl.js"></script>
+    <script src="Views/DOMTreeContentView.js"></script>
+    <script src="Views/DetailsSidebarPanel.js"></script>
+    <script src="Views/GeneralTreeElement.js"></script>
+    <script src="Views/NavigationSidebarPanel.js"></script>
+    <script src="Views/PropertiesSection.js"></script>
+    <script src="Views/ResourceContentView.js"></script>
+    <script src="Views/TimelineDataGrid.js"></script>
+    <script src="Views/TimelineDataGridNode.js"></script>
+
+    <script src="Views/DOMDetailsSidebarPanel.js"></script>
+    <script src="Views/SourceCodeTreeElement.js"></script>
+    <script src="Views/StorageTreeElement.js"></script>
+    <script src="Views/TimelineRecordTreeElement.js"></script>
+
+    <script src="Views/ResourceTreeElement.js"></script>
+
+    <script src="Views/ActivateButtonNavigationItem.js"></script>
+    <script src="Views/ActivateButtonToolbarItem.js"></script>
+    <script src="Views/ApplicationCacheDetailsSidebarPanel.js"></script>
+    <script src="Views/ApplicationCacheFrameContentView.js"></script>
+    <script src="Views/ApplicationCacheFrameTreeElement.js"></script>
+    <script src="Views/ApplicationCacheManifestTreeElement.js"></script>
+    <script src="Views/BoxModelDetailsSectionRow.js"></script>
+    <script src="Views/BreakpointActionView.js"></script>
+    <script src="Views/BreakpointTreeElement.js"></script>
+    <script src="Views/ButtonToolbarItem.js"></script>
+    <script src="Views/CSSStyleDeclarationSection.js"></script>
+    <script src="Views/CSSStyleDeclarationTextEditor.js"></script>
+    <script src="Views/CSSStyleDetailsSidebarPanel.js"></script>
+    <script src="Views/CallFrameTreeElement.js"></script>
+    <script src="Views/ClusterContentView.js"></script>
+    <script src="Views/CodeMirrorAdditions.js"></script>
+    <script src="Views/CodeMirrorFormatters.js"></script>
+    <script src="Views/ColorPicker.js"></script>
+    <script src="Views/ColorWheel.js"></script>
+    <script src="Views/CompletionSuggestionsView.js"></script>
+    <script src="Views/ComputedStyleDetailsPanel.js"></script>
+    <script src="Views/ConsoleCommand.js"></script>
+    <script src="Views/ConsoleCommandResult.js"></script>
+    <script src="Views/ConsoleGroup.js"></script>
+    <script src="Views/ConsolePrompt.js"></script>
+    <script src="Views/ContentBrowser.js"></script>
+    <script src="Views/ContentFlowDOMTreeContentView.js"></script>
+    <script src="Views/ContentFlowTreeElement.js"></script>
+    <script src="Views/ContentViewContainer.js"></script>
+    <script src="Views/ContextMenu.js"></script>
+    <script src="Views/ControlToolbarItem.js"></script>
+    <script src="Views/CookieStorageContentView.js"></script>
+    <script src="Views/CookieStorageTreeElement.js"></script>
+    <script src="Views/DOMNodeDetailsSidebarPanel.js"></script>
+    <script src="Views/DOMStorageContentView.js"></script>
+    <script src="Views/DOMStorageTreeElement.js"></script>
+    <script src="Views/DOMTreeDataGrid.js"></script>
+    <script src="Views/DOMTreeDataGridNode.js"></script>
+    <script src="Views/DOMTreeElement.js"></script>
+    <script src="Views/DOMTreeElementPathComponent.js"></script>
+    <script src="Views/DOMTreeOutline.js"></script>
+    <script src="Views/DOMTreeUpdater.js"></script>
+    <script src="Views/DashboardContainerView.js"></script>
+    <script src="Views/DatabaseContentView.js"></script>
+    <script src="Views/DatabaseHostTreeElement.js"></script>
+    <script src="Views/DatabaseTableContentView.js"></script>
+    <script src="Views/DatabaseTableTreeElement.js"></script>
+    <script src="Views/DatabaseTreeElement.js"></script>
+    <script src="Views/DebuggerSidebarPanel.js"></script>
+    <script src="Views/DetailsSection.js"></script>
+    <script src="Views/DashboardView.js"></script>
+    <script src="Views/DebuggerDashboardView.js"></script>
+    <script src="Views/DefaultDashboardView.js"></script>
+    <script src="Views/DetailsSectionDataGridRow.js"></script>
+    <script src="Views/DetailsSectionGroup.js"></script>
+    <script src="Views/DetailsSectionPropertiesRow.js"></script>
+    <script src="Views/DetailsSectionSimpleRow.js"></script>
+    <script src="Views/DividerNavigationItem.js"></script>
+    <script src="Views/EditingSupport.js"></script>
+    <script src="Views/EventListenerSection.js"></script>
+    <script src="Views/EventListenerSectionGroup.js"></script>
+    <script src="Views/FilterBar.js"></script>
+    <script src="Views/FindBanner.js"></script>
+    <script src="Views/FlexibleSpaceNavigationItem.js"></script>
+    <script src="Views/FolderTreeElement.js"></script>
+    <script src="Views/FontResourceContentView.js"></script>
+    <script src="Views/FrameContentView.js"></script>
+    <script src="Views/FrameDOMTreeContentView.js"></script>
+    <script src="Views/FrameTreeElement.js"></script>
+    <script src="Views/GeneralTreeElementPathComponent.js"></script>
+    <script src="Views/GenericResourceContentView.js"></script>
+    <script src="Views/GoToLineDialog.js"></script>
+    <script src="Views/GradientSlider.js"></script>
+    <script src="Views/HierarchicalPathNavigationItem.js"></script>
+    <script src="Views/HoverMenu.js"></script>
+    <script src="Views/ImageResourceContentView.js"></script>
+    <script src="Views/IndeterminateProgressSpinner.js"></script>
+    <script src="Views/IndexedDatabaseEntryDataGridNode.js"></script>
+    <script src="Views/IndexedDatabaseHostTreeElement.js"></script>
+    <script src="Views/IndexedDatabaseObjectStoreContentView.js"></script>
+    <script src="Views/IndexedDatabaseObjectStoreIndexTreeElement.js"></script>
+    <script src="Views/IndexedDatabaseObjectStoreTreeElement.js"></script>
+    <script src="Views/IndexedDatabaseTreeElement.js"></script>
+    <script src="Views/LayerTreeDataGridNode.js"></script>
+    <script src="Views/LayerTreeSidebarPanel.js"></script>
+    <script src="Views/LayoutTimelineDataGrid.js"></script>
+    <script src="Views/LayoutTimelineDataGridNode.js"></script>
+    <script src="Views/LayoutTimelineOverviewGraph.js"></script>
+    <script src="Views/LayoutTimelineView.js"></script>
+    <script src="Views/LegacyBottomUpProfileDataGridTree.js"></script>
+    <script src="Views/LegacyJavaScriptProfileObject.js"></script>
+    <script src="Views/LegacyJavaScriptProfileType.js"></script>
+    <script src="Views/LegacyJavaScriptProfileView.js"></script>
+    <script src="Views/LegacyTopDownProfileDataGridTree.js"></script>
+    <script src="Views/LogContentView.js"></script>
+    <script src="Views/LogTreeElement.js"></script>
+    <script src="Views/MetricsStyleDetailsPanel.js"></script>
+    <script src="Views/NavigationBar.js"></script>
+    <script src="Views/NetworkTimelineOverviewGraph.js"></script>
+    <script src="Views/NetworkTimelineView.js"></script>
+    <script src="Views/ObjectPropertiesSection.js"></script>
+    <script src="Views/OverviewTimelineView.js"></script>
+    <script src="Views/Popover.js"></script>
+    <script src="Views/ProbeDetailsSidebarPanel.js"></script>
+    <script src="Views/ProbeSetDataGrid.js"></script>
+    <script src="Views/ProbeSetDataGridNode.js"></script>
+    <script src="Views/ProbeSetDetailsSection.js"></script>
+    <script src="Views/ProfileNodeDataGridNode.js"></script>
+    <script src="Views/ProfileNodeTreeElement.js"></script>
+    <script src="Views/QuickConsole.js"></script>
+    <script src="Views/QuickConsoleNavigationBar.js"></script>
+    <script src="Views/RadioButtonNavigationItem.js"></script>
+    <script src="Views/ResourceClusterContentView.js"></script>
+    <script src="Views/ResourceDetailsSidebarPanel.js"></script>
+    <script src="Views/ResourceSidebarPanel.js"></script>
+    <script src="Views/ResourceTimelineDataGridNode.js"></script>
+    <script src="Views/ResourceTimelineDataGridNodePathComponent.js"></script>
+    <script src="Views/RulesStyleDetailsPanel.js"></script>
+    <script src="Views/ScopeBar.js"></script>
+    <script src="Views/ScopeBarItem.js"></script>
+    <script src="Views/ScopeChainDetailsSidebarPanel.js"></script>
+    <script src="Views/ScopeVariableTreeElement.js"></script>
+    <script src="Views/ScriptContentView.js"></script>
+    <script src="Views/ScriptTimelineDataGrid.js"></script>
+    <script src="Views/ScriptTimelineDataGridNode.js"></script>
+    <script src="Views/ScriptTimelineOverviewGraph.js"></script>
+    <script src="Views/ScriptTimelineView.js"></script>
+    <script src="Views/ScriptTreeElement.js"></script>
+    <script src="Views/SearchBar.js"></script>
+    <script src="Views/SearchResultTreeElement.js"></script>
+    <script src="Views/Sidebar.js"></script>
+    <script src="Views/Slider.js"></script>
+    <script src="Views/SourceCodeTextEditor.js"></script>
+    <script src="Views/SourceCodeTimelineTimelineDataGridNode.js"></script>
+    <script src="Views/SourceCodeTimelineTreeElement.js"></script>
+    <script src="Views/SourceMapResourceTreeElement.js"></script>
+    <script src="Views/SyntaxHighlightingSupport.js"></script>
+    <script src="Views/TextContentView.js"></script>
+    <script src="Views/TextResourceContentView.js"></script>
+    <script src="Views/TimelineContentView.js"></script>
+    <script src="Views/TimelineOverview.js"></script>
+    <script src="Views/TimelineRecordBar.js"></script>
+    <script src="Views/TimelineRuler.js"></script>
+    <script src="Views/TimelineSidebarPanel.js"></script>
+    <script src="Views/ToggleButtonNavigationItem.js"></script>
+    <script src="Views/ToggleControlToolbarItem.js"></script>
+    <script src="Views/Toolbar.js"></script>
+    <script src="Views/TreeElementStatusButton.js"></script>
+    <script src="Views/TreeOutlineDataGridSynchronizer.js"></script>
+
+    <script src="Controllers/CodeMirrorEditingController.js"></script>
+
+    <script src="Controllers/ApplicationCacheManager.js"></script>
+    <script src="Controllers/BranchManager.js"></script>
+    <script src="Controllers/CSSStyleManager.js"></script>
+    <script src="Controllers/CodeMirrorColorEditingController.js"></script>
+    <script src="Controllers/CodeMirrorCompletionController.js"></script>
+    <script src="Controllers/CodeMirrorDragToAdjustNumberController.js"></script>
+    <script src="Controllers/CodeMirrorGradientEditingController.js"></script>
+    <script src="Controllers/CodeMirrorTokenTrackingController.js"></script>
+    <script src="Controllers/DOMTreeManager.js"></script>
+    <script src="Controllers/DashboardManager.js"></script>
+    <script src="Controllers/DebuggerManager.js"></script>
+    <script src="Controllers/DragToAdjustController.js"></script>
+    <script src="Controllers/Formatter.js"></script>
+    <script src="Controllers/FormatterContentBuilder.js"></script>
+    <script src="Controllers/FormatterSourceMap.js"></script>
+    <script src="Controllers/FrameResourceManager.js"></script>
+    <script src="Controllers/IssueManager.js"></script>
+    <script src="Controllers/JavaScriptLogViewController.js"></script>
+    <script src="Controllers/JavaScriptRuntimeCompletionProvider.js"></script>
+    <script src="Controllers/LayerTreeManager.js"></script>
+    <script src="Controllers/LegacyProfileManager.js"></script>
+    <script src="Controllers/LogManager.js"></script>
+    <script src="Controllers/ProbeManager.js"></script>
+    <script src="Controllers/ReplayManager.js"></script>
+    <script src="Controllers/RuntimeManager.js"></script>
+    <script src="Controllers/SourceMapManager.js"></script>
+    <script src="Controllers/StorageManager.js"></script>
+    <script src="Controllers/TimelineManager.js"></script>
+
+    <script src="Base/Main.js"></script>
+
+    <script>
+        WebInspector.loaded();
+    </script>
+</head>
+<body>
+<div id="docked-resizer"></div>
+<div id="toolbar"></div>
+<div id="main">
+    <div id="navigation-sidebar"></div>
+    <div id="content">
+        <div id="content-browser"></div>
+        <div id="split-content-browser" class="hidden"></div>
+        <div id="quick-console"></div>
+    </div>
+    <div id="details-sidebar"></div>
+</div>
+</body>
+</html>

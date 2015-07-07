@@ -1,0 +1,18 @@
+Tests that adding a new event listener from a callback works as expected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS deviceProximityEvent.value is firedEvent.value
+PASS deviceProximityEvent.min is firedEvent.min
+PASS deviceProximityEvent.max is firedEvent.max
+PASS deviceProximityEvent.value is firedEvent.value
+PASS deviceProximityEvent.min is firedEvent.min
+PASS deviceProximityEvent.max is firedEvent.max
+PASS deviceProximityEvent.value is firedEvent.value
+PASS deviceProximityEvent.min is firedEvent.min
+PASS deviceProximityEvent.max is firedEvent.max
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../../../resources/dump-as-markup.js"></script>
+    <script type="text/javascript">
+        if (window.testRunner) {
+            Markup.waitUntilDone();
+            testRunner.setTelephoneNumberParsingEnabled(true);
+        }
+
+        window.addEventListener('load', function() {
+            if (!window.testRunner)
+                return;
+
+            var container = document.getElementById('iframe').contentDocument.getElementById('container');
+            container.innerHTML = 'Call me (308) 555 5555 please';
+
+            Markup.description('Test that there is no phone number parsing via innerHTML');
+            Markup.dump('body', 'no phone number detection');
+            
+            Markup.notifyDone();
+            testRunner.setTelephoneNumberParsingEnabled(false);
+        }, false);
+    </script>
+</head>
+<body id="body">
+    <iframe id="iframe" src="resources/phone-dynamic.html"></iframe>
+</body>
+</html>

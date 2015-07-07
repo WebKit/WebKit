@@ -1,0 +1,15 @@
+This test verifies the functionality of the OES_vertex_array_object extension, if it is available.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS WebGL context exists
+Testing binding enum with extension disabled
+PASS getError was expected value: INVALID_ENUM : VERTEX_ARRAY_BINDING_OES should not be queryable if extension is disabled
+PASS No OES_vertex_array_object support -- this is legal
+PASS OES_vertex_array_object not listed as supported and getExtension failed -- this is legal
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

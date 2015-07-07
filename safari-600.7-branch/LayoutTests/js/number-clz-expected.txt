@@ -1,0 +1,15 @@
+PASS Number(Infinity).clz() is Infinity
+PASS Number(-Infinity).clz() is -Infinity
+PASS Number(NaN).clz() is NaN
+PASS Number(0).clz() is 32
+PASS Number(1).clz() is 31
+PASS Number(2147483648).clz() is 0
+PASS Number(2147483647).clz() is 1
+PASS Number(1073741824).clz() is 1
+PASS Number(1073741823).clz() is 2
+PASS Number(32768).clz() is 16
+PASS Number(32767).clz() is 17
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

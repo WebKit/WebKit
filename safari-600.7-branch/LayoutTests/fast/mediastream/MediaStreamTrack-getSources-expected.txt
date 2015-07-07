@@ -1,0 +1,34 @@
+Tests MediaStreamTrack::getSources.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+*** calling MediaStreamTrack.getSources() ***
+PASS MediaStreamTrack.getSources(gotSources1); did not throw exception.
+PASS callback called.
+sources1[0].sourceId = "239c24b1-2b15-11e3-8224-0800200c9a66"
+sources1[0].label = "Mock audio device"
+sources1[0].kind = "audio"
+sources1[1].sourceId = "239c24b0-2b15-11e3-8224-0800200c9a66"
+sources1[1].label = "Mock video device"
+sources1[1].kind = "video"
+
+*** calling navigator.webkitGetUserMedia() ***
+PASS navigator.webkitGetUserMedia(constraints, callback, error) did not throw exception.
+PASS callback called.
+
+*** calling MediaStreamTrack.getSources() ***
+PASS MediaStreamTrack.getSources(gotSources2); did not throw exception.
+PASS callback called.
+PASS sources2.length == sources1.length is true
+PASS sources2[0].sourceId === sources1[0].sourceId is true
+PASS sources2[0].label === sources1[0].label is true
+PASS sources2[0].kind === sources1[0].kind is true
+PASS sources2[1].sourceId === sources1[1].sourceId is true
+PASS sources2[1].label === sources1[1].label is true
+PASS sources2[1].kind === sources1[1].kind is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,17 @@
+PASS 'use strict'; var f = fn(); f.name = "g"; f.name threw exception of type TypeError.
+PASS var f = fn(); f.name = "g"; f.name is "f"
+PASS true === true
+PASS 'use strict'; var f = fn(); delete f.name threw exception of type TypeError.
+PASS var f = fn(); delete f.name is false
+PASS true === true
+PASS 'use strict'; var f = fn(); f.arity = 4; f.arity is 4
+PASS var f = fn(); f.arity = 4; f.arity is 4
+PASS true === true
+PASS 'use strict'; var f = fn(); delete f.arity is true
+PASS var f = fn(); delete f.arity is true
+PASS true === true
+ PASSED! 
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

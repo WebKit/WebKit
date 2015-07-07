@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x252
+  RenderBlock {HTML} at (0,0) size 800x252
+    RenderBody {BODY} at (8,16) size 784x228
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 766x35
+          text run at (0,0) width 766: "The following text should be rendered as 3 lines with justification. The spaces are evenly distributed over (the first line of)"
+          text run at (0,18) width 27: "text."
+      RenderBlock {DIV} at (0,52) size 100x54
+        RenderText {#text} at (0,0) size 100x53
+          text run at (0,0) width 100 RTL: "\x{648}\x{644}\x{64A} \x{627}\x{644}\x{639}\x{647}\x{62F} \x{64A}\x{648}\x{62C}\x{647}"
+          text run at (0,18) width 100 RTL: "\x{628}\x{62A}\x{643}\x{631}\x{64A}\x{645} \x{645}\x{648}\x{627}\x{637}\x{646}"
+          text run at (27,36) width 73 RTL: "\x{648}\x{645}\x{642}\x{64A}\x{645} \x{623}\x{646}\x{642}\x{630}\x{627}"
+      RenderBlock (anonymous) at (0,106) size 784x18
+        RenderBR {BR} at (0,0) size 0x17
+      RenderBlock {P} at (0,140) size 784x36
+        RenderText {#text} at (0,0) size 752x35
+          text run at (0,0) width 752: "The following text should be rendered as 2 lines with justification. The 1st line should be totally justified ( which means"
+          text run at (0,18) width 583: "aligned with the 2nd line at right side) and there should be no text overlapping in the 1st line."
+      RenderBlock {DIV} at (0,192) size 250x36
+        RenderText {#text} at (0,0) size 250x35
+          text run at (0,0) width 250 RTL: "\x{627}\x{644}\x{62E}\x{645}\x{64A}\x{633}. \x{648}\x{642}\x{627}\x{644} \x{627}\x{644}\x{645}\x{62A}\x{62D}\x{62F}\x{62B} \x{627}\x{62D}\x{645}\x{62F} \x{641}\x{648}\x{632}\x{64A}"
+          text run at (110,18) width 140 RTL: "\"\x{645}\x{627} \x{646}\x{62A}\x{648}\x{642}\x{639}\x{647} \x{641}\x{64A} \x{627}\x{644}\x{639}\x{627}\x{634}\x{631}"

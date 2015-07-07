@@ -1,0 +1,43 @@
+<html>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+state = "initial";
+
+function next() {
+    switch (state) {
+    case "initial":
+        state = "loading-plugin";
+        var frame = document.getElementsByTagName("iframe")[0]
+        frame.addEventListener("load", next, false);
+        frame.src = "data:application/x-webkit-test-netscape,alertwhenloaded";
+        break;
+    case "loading-plugin":
+        state = "moving-backward";
+        history.back();
+        break;
+    case "moving-backward":
+        state = "moving-forward";
+        history.forward();
+        break;
+    case "moving-forward":
+        state = "done";
+        testRunner.notifyDone();
+        break;
+    default:
+        alert('FAIL');
+        break;
+    }
+}
+
+window.onload = function() {
+    // We need to wait for after the load event so that we get a new history
+    // entry when navigating the frame.
+    setTimeout(next, 0);
+}
+</script>
+<iframe src="data:text/html,Waiting..."></iframe>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+This tests setting caret inside a blockquote with a large offset and running execCommand('Delete').  WebKit should not crash and you should see PASS below:
+<div id="test" contentEditable="true">
+<blockquote type="cite" id="blockquote" style="font-size: 0px; -webkit-min-logical-height: 4px;"><br></blockquote>
+</div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.getSelection().setPosition(document.getElementById('blockquote'), 2000000000);
+document.execCommand("Delete");
+
+var test = document.getElementById('test');
+if (test.innerHTML == '' || test.innerHTML == '<br>') // Allow a placeholder
+    document.writeln('PASS');
+else
+    document.writeln('FAIL: expected empty line but got ' + test.innerHTML.replace('<', '&lt;'));
+
+</script>
+</body>
+</html>

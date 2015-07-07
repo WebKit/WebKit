@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style type="text/css" media="screen">
+    embed {
+      height: 1px;
+      width: 1px;
+      border: 1px solid black;
+    }
+    
+    embed.large {
+      width: 300px;
+      height: 150px;
+    }
+    
+    .container {
+      height: 100px;
+      width: 200px;
+      overflow: hidden;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function doTest()
+    {
+        window.setTimeout(function() {
+          document.getElementById('plugin').className = 'large';
+          // Need to wait for compositing layers to be updated. FIXME remove.
+          window.setTimeout(function() {
+            if (window.testRunner) {
+                document.getElementById('layers').innerHTML = window.internals.layerTreeAsText(document);
+                testRunner.notifyDone();
+            }
+          }, 0)
+        }, 0);
+    }
+
+    window.addEventListener('load', doTest, false);
+  </script>
+</head>
+<body>
+  
+  <div class="container">
+    <embed id="plugin" type="application/x-webkit-test-netscape" width="1" height="1" drawingmodel="coreanimation">
+  </div>
+
+  <!-- we should have layers after the resize -->
+  <pre id="layers">Layer tree appears here in DRT.</pre>
+</body>
+</html>

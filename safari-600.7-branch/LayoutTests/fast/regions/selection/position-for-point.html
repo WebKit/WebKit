@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html style="font: 14px/1.25 monospace;">
+<head>
+    <link rel="stylesheet" href="../resources/region-style.css"></link>
+    <style>
+        .region {
+            margin: 50px 0px 50px 0px;
+            border: 5px solid black;
+        }
+
+        #outside {
+            height: 100px;
+            width: 300px;
+            margin: 50px 0px 50px 0px;
+            border: 5px solid black;
+        }
+
+        #debug {
+            border: 1px solid black;
+        }
+    </style>
+    <script src="../resources/helper.js"></script>
+    <script>
+        onMouseUpLogSelectionAndFocus("selected-content", "focus-node", "focus-offset");
+    </script>
+    <script>
+        function selectText() {
+            if (window.testRunner) {
+                window.testRunner.dumpAsText();
+
+                var selectedText = document.getElementById("debug");
+                selectedText.style.display = "none";
+
+                var region1 = document.getElementById("region-1");
+                var outside = document.getElementById("outside");
+                var region2 = document.getElementById("region-2");
+
+                var region1Rect = region1.getBoundingClientRect();
+                var outsideRect = outside.getBoundingClientRect();
+                var region2Rect = region2.getBoundingClientRect();
+
+                clearSelection();
+
+                selectContentFromIdToPos("word1", region1Rect.right, region1Rect.bottom - 10);
+                checkSelectionResult("result1", "word1 inside region inside region inside region inside region word2", "word2", "5");
+
+                clearSelection();
+
+                selectContentFromIdToPos("word1", region1Rect.right, region1Rect.bottom - 2);
+                checkSelectionResult("result2", "word1 inside region inside region inside region inside region word2", "word2", "5");
+
+                clearSelection();
+
+                selectContentFromIdToPos("word1", region1Rect.right, region1Rect.bottom);
+                checkSelectionResult("result3", "word1 inside region inside region inside region inside region word2 word5 inside region inside region inside region inside region word6 ", "outside", "0");
+
+                clearSelection();
+
+                selectContentFromIdToPos("word3", outsideRect.right , outsideRect.bottom + 20);
+                checkSelectionResult("result4", "word5 inside region inside region inside region inside region word6 ", "word5", "0");
+
+                clearSelection();
+
+                selectContentFromIdToPos("word5", region2Rect.right, region2Rect.bottom - 10);
+                checkSelectionResult("result5", "word5 inside region inside region inside region inside region word6", "word6", "5");
+            }
+        }
+    </script>
+</head>
+<body onload="selectText();">
+    <div id="source" class="flowArticle">
+        <span id="word1" class="token">word1</span> inside region inside region inside region inside region <span id="word2" class="token">word2</span>
+        <span class="break"></span>
+        <span id="word5" class="token">word5</span> inside region inside region inside region inside region <span id="word6" class="token">word6</span>
+    </div>
+    <div id="region-1" class="regionArticle greyBigBox region"></div>
+    <div id="outside"><span id="word3" class="token">word3</span> outside region outside region outside region outside region <span id="word4" class="token">word4</span></div>
+    <div id="region-2" class="regionArticle greyBigBox region"></div>
+    <div id="desc" class="description">
+        <h1><a href="https://bugs.webkit.org/show_bug.cgi?id=120769">Bug #120769 - [CSSRegions] Selection focusNode set to the "region" block, instead of the "source" block</a></h1>
+        <p>Top margin, padding and border points should be mapped to the beginning of the Region block, while bottom points are mapped to the block end. The Left coordinate its just
+          adjusted to fit in the Flow Thread boundaries, since its not affected by the Flow direction.
+        </p>
+        <p>Test 1) Select from "word1" to "word2" and move down without leaving the region. Focus should be at the end of "word2". Selected content should go from "word1" to "word2". <span id="result1"></span></p>
+        <p>Test 2) Select from "word1" to "word2" and move down until reaching the region border. Focus should be at the end of "word2". Selected content should go from "word1" to "word2". <span id="result2"></span></p>
+        <p>Test 3) Select from "word1" to "word2" and move down leaving the block without entering in the next element. Focus should be at at the beginning of "outside". Selected content should go from "word1" to "word2" and from "word5" to "word6". <span id="result3"></span></p>
+        <p>Test 4) Select from "word3" to "word4" and move down leaving the block without entering in the next element. Focus should be at at the beginning of "word5". Selected content should go from "word5" to "word6". <span id="result4"></span></p>
+        <p>Test 5) Select from "word5" to "word6" and move down without leaving the region. Focus should be at the end of "word6". Selected content should go from "word5" to "word6". <span id="result5"></span></p>
+    </div>
+    <div id="debug">
+        <ul>
+            <li>Focus node: <span id="focus-node"></span></li>
+            <li>Focus offset: <span id="focus-offset"></span></li>
+            <li>Selected content: <span id="selected-content"></span></li>
+        </ul>
+    </div>
+</body>
+</html>

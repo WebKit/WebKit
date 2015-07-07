@@ -1,0 +1,13 @@
+Tests that for standard mode document.documentElement.scrollLeft returns the scroll left value
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS document.documentElement.scrollLeft is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

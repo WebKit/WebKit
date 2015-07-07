@@ -1,0 +1,57 @@
+<!DOCTYPE>
+
+<html>
+<head>
+    <style>
+    .box {
+        height: 200px;
+        width: 200px;
+        margin: 10px;
+        -webkit-transition-duration: 1s;
+        -webkit-transition-timing-function: linear;
+    }
+
+    #box {
+        border-image: url('../animations/resources/blue-100.png') 5 5 5 5 /40px stretch stretch;
+        -webkit-transition-property: border-image-source;
+    }
+
+    #box.final {
+        border-image-source: url('../animations/resources/stripes-100.png');
+    }
+
+    #boxShorthand {
+        border-image: url('../animations/resources/blue-100.png') 5 5 5 5 /40px stretch stretch;
+        -webkit-transition-property: border-image;
+    }
+
+    #boxShorthand.final {
+        border-image: url('../animations/resources/stripes-100.png') 5 5 5 5 /40px stretch stretch;
+    }
+
+    </style>
+    <script src="resources/transition-test-helpers.js" type="text/javascript"></script>
+    <script>
+
+    const expectedValues = [
+        // [time, element-id, property, expected-value, tolerance]
+        [0.5, 'box', 'border-image-source', 0.5, 0.05],
+        [0.5, 'boxShorthand', 'border-image', 0.5, 0.05],
+    ];
+
+    function setupTest()
+    {
+        document.getElementById('box').className = 'box final';
+        document.getElementById('boxShorthand').className = 'box final';
+    }
+
+    runTransitionTest(expectedValues, setupTest, usePauseAPI, true);
+    </script>
+</head>
+<body>
+    <div id="box" class="box"></div>
+    <div id="boxShorthand" class="box"></div>
+
+    <div id="result"></div>
+</body>
+</html>

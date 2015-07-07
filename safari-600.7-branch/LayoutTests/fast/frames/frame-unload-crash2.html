@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<iframe srcdoc=""></iframe>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function finish() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+frames[0].onunload = function () {
+    document.open();
+    document.write("PASS. WebKit didn't crash.");
+    document.close();
+    
+    setTimeout("finish()", 0);
+};
+</script>
+</html>

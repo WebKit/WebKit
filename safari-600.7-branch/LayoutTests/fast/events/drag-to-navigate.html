@@ -1,0 +1,17 @@
+<div>FAIL</div>
+<script>
+function doTest() {
+    testRunner.dumpAsText();
+
+    eventSender.beginDragWithFiles(["resources/file-for-drag-to-navigate.html"]);
+    eventSender.mouseMoveTo(10, 10);
+    eventSender.mouseUp();
+}
+
+if (window.eventSender) {
+    testRunner.waitUntilDone();
+    // The load seems to fail if we try to kick of a
+    // new load before this one is finished.  So we wait.
+    window.onload = doTest();
+}
+</script>

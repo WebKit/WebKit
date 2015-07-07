@@ -1,0 +1,21 @@
+CONSOLE MESSAGE: line 24: ReferenceError: Can't find variable: request
+Test the basics of IndexedDB's IDBFactory.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+FAIL typeof indexedDB.open should be function. Threw exception TypeError: null is not an object (evaluating 'indexedDB.open')
+FAIL typeof indexedDB.cmp should be function. Threw exception TypeError: null is not an object (evaluating 'indexedDB.cmp')
+FAIL typeof indexedDB.deleteDatabase should be function. Threw exception TypeError: null is not an object (evaluating 'indexedDB.deleteDatabase')
+FAIL typeof indexedDB.webkitGetDatabaseNames should be function. Threw exception TypeError: null is not an object (evaluating 'indexedDB.webkitGetDatabaseNames')
+FAIL typeof indexedDB.getDatabaseNames should be undefined. Threw exception TypeError: null is not an object (evaluating 'indexedDB.getDatabaseNames')
+request = indexedDB.webkitGetDatabaseNames()
+FAIL request = indexedDB.webkitGetDatabaseNames() threw exception TypeError: null is not an object (evaluating 'indexedDB.webkitGetDatabaseNames')
+FAIL request.source should be null. Threw exception ReferenceError: Can't find variable: request
+FAIL Unexpected error: ReferenceError: Can't find variable: request
+FAIL successfullyParsed should be true. Was false.
+
+TEST COMPLETE
+

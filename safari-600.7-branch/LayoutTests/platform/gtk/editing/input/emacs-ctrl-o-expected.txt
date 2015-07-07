@@ -1,0 +1,32 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x146
+        RenderBlock {DIV} at (0,0) size 784x52
+          RenderText {#text} at (0,0) size 61x26
+            text run at (0,0) width 61: "Tests:"
+          RenderBR {BR} at (61,21) size 0x0
+          RenderText {#text} at (0,26) size 254x26
+            text run at (0,26) width 254: "Key binding for control-O"
+        RenderBlock {DIV} at (0,68) size 784x78
+          RenderText {#text} at (0,0) size 177x26
+            text run at (0,0) width 177: "Expected results:"
+          RenderBR {BR} at (177,21) size 0x0
+          RenderText {#text} at (0,26) size 90x26
+            text run at (0,26) width 90: "one five |"
+          RenderBR {BR} at (90,47) size 0x0
+          RenderText {#text} at (0,52) size 137x26
+            text run at (0,52) width 137: "two three four"
+      RenderBlock {DIV} at (0,170) size 784x26
+        RenderBlock {DIV} at (0,0) size 784x26
+          RenderText {#text} at (0,0) size 222x26
+            text run at (0,0) width 222: "one five two three four"
+caret: position 9 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

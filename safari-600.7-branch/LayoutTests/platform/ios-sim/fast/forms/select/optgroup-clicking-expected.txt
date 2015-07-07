@@ -1,0 +1,19 @@
+Test clicking with optgroup element
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Click enabled option
+FAIL $("listbox").selectedIndex should be 1. Was 2.
+
+Click disabled option - doesn't change selectedIndex
+FAIL $("listbox").selectedIndex should be 1. Was 2.
+
+Menu list with arrow key
+PASS $("menulist").selectedIndex is 8
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 
+

@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+
+  <head>
+    <title>Odd stretching of pixel-wide drawImage call</title>
+    <script type="text/javascript" charset="utf-8">
+        window.addEventListener('DOMContentLoaded', init, true);
+
+        var image, ctx;
+
+        function init () {
+          if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+          }
+
+          var canvas = document.getElementById("c");
+          canvas.width = 200;
+          canvas.height = 50;
+          ctx = canvas.getContext('2d');
+
+          image = new Image();
+          image.addEventListener('load', draw, false);
+          image.src = 'resources/orangePixels.gif';
+        };
+
+        function draw () {
+          var w = ctx.canvas.width;
+          var h = ctx.canvas.height;
+          // part between left corner and arrow
+          ctx.drawImage(image, 3, 2, 1, 1,
+                               0, 0, w, h);
+          setTimeout(checkPixels, 0);
+        };
+        
+        function checkPixels() {
+            var passed = areAllRowsUniform(ctx);
+
+            var result = document.getElementById('result');
+            if (passed)
+                result.innerHTML = "PASSED";
+            else
+                result.innerHTML = "FAILED";
+
+            if (window.testRunner) 
+                testRunner.notifyDone();
+        }
+
+        function areAllRowsUniform(ctx) {
+            for (var y = 0; y < ctx.canvas.height; y++) {
+                if (!isRowUniform(ctx,y))
+                    return false;
+            }
+
+            return true;
+        }
+
+        function isRowUniform(ctx, y) {
+            var start = getPixel(ctx, 0, y);
+
+            for (var i = 0; i < ctx.canvas.width; i++) {
+                if (!areEqual(start, getPixel(ctx, i, y)))
+                    return false;
+            }
+
+            return true;
+        };
+
+        function areEqual(a, b) {
+            return a[0] == b[0] && a[1] == b[1] && a[2] == b[2] && a[3] == b[3];
+        };
+
+        function getPixel(ctx, x, y) {
+            var idata = ctx.getImageData(x,y,1,1);
+            return idata.data;
+        };
+    </script>
+
+  </head>
+
+  <body>
+  <p>DrawImage with a source of a single pixel should draw one uniform color throughout. Neighboring pixels in the source image shouldn't affect the destination rect's output pixels</p>
+  <p>(Bugzilla: https://bugs.webkit.org/show_bug.cgi?id=58267) (Radar: rdar://problem/9148473)</p>
+
+  <p> This canvas should be uniformly one color </p>
+  <p id="result"></p>
+  <canvas id="c"</canvas>
+  </body>
+</html>

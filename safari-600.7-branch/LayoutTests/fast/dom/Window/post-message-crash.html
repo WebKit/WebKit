@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<p>This ensures that postMessage called in a callback does not crash.
+
+<pre>FAIL</pre>
+
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var n = 0;
+
+window.onerror = function() {
+    if (++n === 2) {
+        document.querySelector('pre').textContent = 'PASS';
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+    return true;
+};
+
+requestAnimationFrame(postMessage);
+setTimeout(postMessage);
+
+if (window.testRunner)
+    testRunner.display();
+
+setTimeout(function() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 50);
+
+</script>
+</body>
+</html>

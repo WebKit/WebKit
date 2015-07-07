@@ -1,0 +1,27 @@
+LiveConnect 3.0 Call static methods from an instance
+
+PASS dt.staticSetByte( 99 ); dt.PUB_STATIC_BYTE is 99
+PASS dt.staticSetByte( 99 ); dt.staticGetByte() is 99
+PASS typeof dt.staticGetByte() is "number"
+PASS dt.staticSetChar( 45678 ); dt.PUB_STATIC_CHAR is 45678
+PASS dt.staticSetChar( 45678 ); dt.staticGetChar() is 45678
+PASS typeof dt.staticGetChar() is "number"
+PASS dt.staticSetShort( 32109 ); dt.PUB_STATIC_SHORT is 32109
+PASS dt.staticSetShort( 32109 ); dt.staticGetShort() is 32109
+PASS typeof dt.staticGetShort() is "number"
+PASS dt.staticSetInteger( 2109876543 ); dt.PUB_STATIC_INT is 2109876543
+PASS dt.staticSetInteger( 2109876543 ); dt.staticGetInteger() is 2109876543
+PASS typeof dt.staticGetInteger() is "number"
+FAIL dt.staticSetLong( 9012345678901234567 ); dt.PUB_STATIC_LONG should be 9012345678901235000. Was 693107667.
+PASS dt.staticSetLong( 9012345678901234567 ); dt.staticGetLong() is 9012345678901234567
+PASS typeof dt.staticGetLong() is "number"
+FAIL java.lang.Double.MIN_VALUE: ReferenceError: Can't find variable: java
+FAIL java.lang.Double.MIN_VALUE: ReferenceError: Can't find variable: java
+PASS typeof dt.staticGetDouble() is "number"
+FAIL java.lang.Float.MIN_VALUE: ReferenceError: Can't find variable: java
+FAIL java.lang.Float.MIN_VALUE: ReferenceError: Can't find variable: java
+PASS typeof dt.staticGetFloat() is "number"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

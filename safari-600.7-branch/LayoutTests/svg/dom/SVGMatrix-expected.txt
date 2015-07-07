@@ -1,0 +1,160 @@
+This test checks the SVGMatrix API
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Check initial matrix values
+PASS matrix.a is 1
+PASS matrix.b is 0
+PASS matrix.c is 0
+PASS matrix.d is 1
+PASS matrix.e is 0
+PASS matrix.f is 0
+
+Check assigning matrices
+PASS matrix.a = 2 is 2
+PASS matrix.f = 200 is 200
+
+Check assigning invalid matrices
+PASS matrix.a = matrix is matrix
+PASS matrix.a is NaN
+PASS matrix.a = 0 is 0
+PASS matrix.a = svgElement is svgElement
+PASS matrix.a is NaN
+PASS matrix.a = 0 is 0
+PASS matrix.a = 'aString' is 'aString'
+PASS matrix.a is NaN
+PASS matrix.a = 2 is 2
+PASS matrix.b = matrix is matrix
+PASS matrix.b is NaN
+PASS matrix.b = 0 is 0
+PASS matrix.b = svgElement is svgElement
+PASS matrix.b is NaN
+PASS matrix.b = 0 is 0
+PASS matrix.b = 'aString' is 'aString'
+PASS matrix.b is NaN
+PASS matrix.b = 0 is 0
+PASS matrix.c = matrix is matrix
+PASS matrix.c is NaN
+PASS matrix.c = 0 is 0
+PASS matrix.c = svgElement is svgElement
+PASS matrix.c is NaN
+PASS matrix.c = 0 is 0
+PASS matrix.c = 'aString' is 'aString'
+PASS matrix.c is NaN
+PASS matrix.c = 0 is 0
+PASS matrix.d = matrix is matrix
+PASS matrix.d is NaN
+PASS matrix.d = 0 is 0
+PASS matrix.d = svgElement is svgElement
+PASS matrix.d is NaN
+PASS matrix.d = 0 is 0
+PASS matrix.d = 'aString' is 'aString'
+PASS matrix.d is NaN
+PASS matrix.d = 1 is 1
+PASS matrix.e = matrix is matrix
+PASS matrix.e is NaN
+PASS matrix.e = 0 is 0
+PASS matrix.e = svgElement is svgElement
+PASS matrix.e is NaN
+PASS matrix.e = 0 is 0
+PASS matrix.e = 'aString' is 'aString'
+PASS matrix.e is NaN
+PASS matrix.e = 0 is 0
+PASS matrix.f = matrix is matrix
+PASS matrix.f is NaN
+PASS matrix.f = 0 is 0
+PASS matrix.f = svgElement is svgElement
+PASS matrix.f is NaN
+PASS matrix.f = 0 is 0
+PASS matrix.f = 'aString' is 'aString'
+PASS matrix.f is NaN
+PASS matrix.f = 200 is 200
+
+Check that the matrix is still containing the correct values
+PASS matrix.a is 2
+PASS matrix.b is 0
+PASS matrix.c is 0
+PASS matrix.d is 1
+PASS matrix.e is 0
+PASS matrix.f is 200
+
+Check assigning null works as expected
+PASS matrix.f = null is null
+PASS matrix.a is 2
+PASS matrix.b is 0
+PASS matrix.c is 0
+PASS matrix.d is 1
+PASS matrix.e is 0
+PASS matrix.f is 0
+
+Check calling 'multiply' with invalid arguments
+PASS matrix.multiply() threw exception TypeError: Not enough arguments.
+PASS matrix.multiply(true) threw exception TypeError: Argument 1 ('secondMatrix') to SVGMatrix.multiply must be an instance of SVGMatrix.
+PASS matrix.multiply(2) threw exception TypeError: Argument 1 ('secondMatrix') to SVGMatrix.multiply must be an instance of SVGMatrix.
+PASS matrix.multiply('aString') threw exception TypeError: Argument 1 ('secondMatrix') to SVGMatrix.multiply must be an instance of SVGMatrix.
+PASS matrix.multiply(svgElement) threw exception TypeError: Argument 1 ('secondMatrix') to SVGMatrix.multiply must be an instance of SVGMatrix.
+
+Check calling 'translate' with invalid arguments
+PASS matrix.translate() threw exception TypeError: Not enough arguments.
+PASS matrix.translate(true) threw exception TypeError: Not enough arguments.
+PASS matrix.translate(2) threw exception TypeError: Not enough arguments.
+PASS matrix.translate('aString') threw exception TypeError: Not enough arguments.
+PASS matrix.translate(svgElement) threw exception TypeError: Not enough arguments.
+PASS matrix.translate('aString', 'aString') is non-null.
+PASS matrix.translate(svgElement, svgElement) is non-null.
+PASS matrix.translate(2, 'aString') is non-null.
+PASS matrix.translate(2, svgElement) is non-null.
+PASS matrix.translate('aString', 2) is non-null.
+PASS matrix.translate(svgElement, 2) is non-null.
+
+Check calling 'scale' with invalid arguments
+PASS matrix.scale() threw exception TypeError: Not enough arguments.
+PASS matrix.scale('aString') is non-null.
+PASS matrix.scale(svgElement) is non-null.
+
+Check calling 'scaleNonUniform' with invalid arguments
+PASS matrix.scaleNonUniform() threw exception TypeError: Not enough arguments.
+PASS matrix.scaleNonUniform(true) threw exception TypeError: Not enough arguments.
+PASS matrix.scaleNonUniform(2) threw exception TypeError: Not enough arguments.
+PASS matrix.scaleNonUniform('aString') threw exception TypeError: Not enough arguments.
+PASS matrix.scaleNonUniform(svgElement) threw exception TypeError: Not enough arguments.
+PASS matrix.scaleNonUniform('aString', 'aString') is non-null.
+PASS matrix.scaleNonUniform(svgElement, svgElement) is non-null.
+PASS matrix.scaleNonUniform(2, 'aString') is non-null.
+PASS matrix.scaleNonUniform(2, svgElement) is non-null.
+PASS matrix.scaleNonUniform('aString', 2) is non-null.
+PASS matrix.scaleNonUniform(svgElement, 2) is non-null.
+
+Check calling 'rotate' with invalid arguments
+PASS matrix.rotate() threw exception TypeError: Not enough arguments.
+PASS matrix.rotate('aString') is non-null.
+PASS matrix.rotate(svgElement) is non-null.
+
+Check calling 'rotateFromVector' with invalid arguments
+PASS matrix.rotateFromVector() threw exception TypeError: Not enough arguments.
+PASS matrix.rotateFromVector(true) threw exception TypeError: Not enough arguments.
+PASS matrix.rotateFromVector(2) threw exception TypeError: Not enough arguments.
+PASS matrix.rotateFromVector('aString') threw exception TypeError: Not enough arguments.
+PASS matrix.rotateFromVector(svgElement) threw exception TypeError: Not enough arguments.
+PASS matrix.rotateFromVector('aString', 'aString') is non-null.
+PASS matrix.rotateFromVector(svgElement, svgElement) is non-null.
+PASS matrix.rotateFromVector(2, 'aString') is non-null.
+PASS matrix.rotateFromVector(2, svgElement) is non-null.
+PASS matrix.rotateFromVector('aString', 2) is non-null.
+PASS matrix.rotateFromVector(svgElement, 2) is non-null.
+
+Check calling 'skewX' with invalid arguments
+PASS matrix.skewX() threw exception TypeError: Not enough arguments.
+PASS matrix.skewX('aString') is non-null.
+PASS matrix.skewX(svgElement) is non-null.
+
+Check calling 'skewY' with invalid arguments
+PASS matrix.skewY() threw exception TypeError: Not enough arguments.
+PASS matrix.skewY('aString') is non-null.
+PASS matrix.skewY(svgElement) is non-null.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

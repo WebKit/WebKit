@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#FF0000]
+        RenderText {#text} at (0,0) size 99x59
+          text run at (0,0) width 99: "You should not"
+          text run at (0,20) width 99: "see this. Resize"
+          text run at (0,40) width 80: "the window."
+layer at (8,8) size 100x124
+  RenderBlock (positioned) {DIV} at (0,0) size 100x124
+    RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#008000]
+    RenderBlock (anonymous) at (0,100) size 100x24
+      RenderButton {BUTTON} at (2,2) size 56x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderBlock (anonymous) at (12,3) size 32x14
+          RenderText {#text} at (0,0) size 32x14
+            text run at (0,0) width 32: "Button"
+      RenderText {#text} at (0,0) size 0x0

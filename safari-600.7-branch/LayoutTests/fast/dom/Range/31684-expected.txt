@@ -1,0 +1,10 @@
+This test checks an orphan text node cannot be surrounded by the range. (bug31684)
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS range.surroundContents(element) threw exception Error: HierarchyRequestError: DOM Exception 3.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

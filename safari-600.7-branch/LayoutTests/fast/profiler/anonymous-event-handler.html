@@ -1,0 +1,36 @@
+<html>
+<head>
+<script src="resources/profiler-test-JS-resources.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.internals)
+    internals.setJavaScriptProfilingEnabled(true);
+
+function startTest()
+{
+    console.profile("Anonymous event handler");
+
+    var buttonWithAnonymousHandler = document.getElementById("buttonWithAnAnonymousEventHandler")
+    buttonWithAnonymousHandler.onclick = function () {
+        insertNewText();
+    }
+
+    buttonWithAnonymousHandler.click();
+
+    endTest();
+}
+</script>
+</head>
+
+<body onload="startTest()">
+This page has an anonymous event handler.
+<br>
+<br>
+To run this test manually, load it in the browser then load the WebInspector and look at
+the profile.  It should show the anonymous function at the same level as the onload
+handler.
+<input type="button" id="buttonWithAnAnonymousEventHandler" value="Button with an anonymous event handler">
+<div id="output"></div>
+</body>
+</html>

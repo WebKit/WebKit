@@ -1,0 +1,54 @@
+<html>
+<head>
+<script src="inspector-test.js"></script>
+<script src="console-test.js"></script>
+<script src="network-test.js"></script>
+<script>
+function test()
+{
+    step1();
+
+    function makeRequest(callback)
+    {
+        InspectorTest.makeSimpleXHR("GET", "resources/xhr-exists.html", true, callback);
+    }
+
+    function step1()
+    {
+        function callback()
+        {
+            makeRequest(step2);
+        }
+
+        ConsoleAgent.setMonitoringXHREnabled(true, callback);
+    }
+
+    function step2()
+    {
+        function callback()
+        {
+            makeRequest(step3);
+        }
+
+        ConsoleAgent.setMonitoringXHREnabled(false, callback);
+    }
+
+    function step3()
+    {
+        function finish()
+        {
+            InspectorTest.dumpConsoleMessages();
+            InspectorTest.completeTest();
+        }
+        InspectorTest.runAfterPendingDispatches(finish);
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>Tests that XMLHttpRequest Logging works when Enabled and doesn't show logs when Disabled for asynchronous XHRs.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=79229">Bug 79229</a>
+</body>
+</html>

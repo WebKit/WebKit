@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<body>
+<input type="file" name="files" id="files" webkitdirectory>
+<pre id='output'></pre>
+
+<script>
+var testFileList1 = [
+    {'path': 'resources/dirupload/path1/file1',                   'expect-relpath': 'dirupload/path1/file1'},
+    {'path': 'resources/dirupload/path1/file2',                   'expect-relpath': 'dirupload/path1/file2' },
+    {'path': 'resources/dirupload/path1/subpath1/file1',          'expect-relpath': 'dirupload/path1/subpath1/file1'},
+    {'path': 'resources/dirupload/path2/file1',                   'expect-relpath': 'dirupload/path2/file1'},
+    {'path': 'resources/dirupload/path2/subpath1/subpath2/file1', 'expect-relpath': 'dirupload/path2/subpath1/subpath2/file1'},
+    {'path': 'resources/dirupload/path2/file2',                   'expect-relpath': 'dirupload/path2/file2'},
+    {'path': 'resources/dirupload/path3/file1',                   'expect-relpath': 'dirupload/path3/file1'},
+    {'path': 'resources/dirupload/file1',                         'expect-relpath': 'dirupload/file1'},
+];
+
+var testFileList2 = [
+    {'path': 'resources/dirupload/path1/file1',                   'expect-relpath': 'path1/file1'},
+    {'path': 'resources/dirupload/path1/file2',                   'expect-relpath': 'path1/file2' },
+];
+
+var testFileList3 = [
+    {'path': 'resources/dirupload/path1/file1',                   'expect-relpath': 'dirupload/path1/file1'},
+    {'path': 'resources/dirupload/path2/file1',                   'expect-relpath': 'dirupload/path2/file1' },
+];
+
+var testFileList4 = [
+    {'path': 'resources/dirupload/path1/file1',                   'expect-relpath': 'path1/file1'},
+    {'path': 'resources/dirupload/path1/subpath1/file1',          'expect-relpath': 'path1/subpath1/file1' },
+];
+
+var testFileList5 = [
+    {'path': '/foo/baz',                                          'expect-relpath': 'foo/baz'},
+    {'path': '/foo/bar/baz',                                      'expect-relpath': 'foo/bar/baz'},
+    {'path': '/foo2/baz',                                         'expect-relpath': 'foo2/baz'},
+];
+
+function log(message)
+{
+    document.getElementById('output').appendChild(document.createTextNode(message + "\n"));
+}
+
+function onInputFileChange(currentFileList, lastTest)
+{
+    var files = document.getElementById("files").files;
+    for (var i = 0; i < files.length; i++) {
+        if (files[i].webkitRelativePath != currentFileList[i]['expect-relpath'])
+            log("FAIL: name is " + files[i].name + "; path is " + files[i].webkitRelativePath + " but should be " + currentFileList[i]['expect-relpath']);
+        else
+            log("PASS: name is " + files[i].name + "; path is " + files[i].webkitRelativePath);
+    }
+
+   if (lastTest && testRunner)
+        testRunner.notifyDone();
+   else
+        log("");
+}
+
+function doTest(fileList, last)
+{
+    var pathsOnly = fileList.map(function(item) { return item['path'];});
+    var f = function() { onInputFileChange(fileList, last); };
+    document.getElementById("files").onchange = f;
+    eventSender.beginDragWithFiles(pathsOnly);
+    eventSender.mouseMoveTo(10, 10);
+    eventSender.mouseUp();
+}
+
+if (testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+if (window.eventSender) {
+    doTest(testFileList1);
+    doTest(testFileList2);
+    doTest(testFileList3);
+    doTest(testFileList4);
+    doTest(testFileList5, true);
+}
+</script>
+</body>
+</html>

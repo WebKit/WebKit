@@ -1,0 +1,51 @@
+Series of tests to ensure correct behaviour of the ImageData object
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS imageData.width is 2
+PASS imageData.height is 2
+PASS imageData.data.length is 16
+PASS imageData.data[0] is 0
+PASS imageData.data[1] is 0
+PASS imageData.data[2] is 0
+PASS imageData.data[3] is 0
+PASS imageData.data[4] is 0
+PASS imageData.data[5] is 0
+PASS imageData.data[6] is 0
+PASS imageData.data[7] is 0
+PASS imageData.data[8] is 0
+PASS imageData.data[9] is 0
+PASS imageData.data[10] is 0
+PASS imageData.data[11] is 0
+PASS imageData.data[12] is 0
+PASS imageData.data[13] is 0
+PASS imageData.data[14] is 0
+PASS imageData.data[15] is 0
+PASS imageData.data[0] = NaN, imageData.data[0] is 0
+PASS imageData.data[0] = true, imageData.data[0] is 1
+PASS imageData.data[0] = false, imageData.data[0] is 0
+PASS imageData.data[0] = "garbage", imageData.data[0] is 0
+PASS imageData.data[0] = -1, imageData.data[0] is 0
+PASS imageData.data[0] = "0", imageData.data[0] is 0
+PASS imageData.data[0] = "1", imageData.data[0] is 1
+PASS imageData.data[0] = "2", imageData.data[0] is 2
+PASS imageData.data[0] = Infinity, imageData.data[0] is 255
+PASS imageData.data[0] = -Infinity, imageData.data[0] is 0
+PASS imageData.data[0] = -5, imageData.data[0] is 0
+PASS imageData.data[0] = -0.5, imageData.data[0] is 0
+PASS imageData.data[0] = 0, imageData.data[0] is 0
+PASS imageData.data[0] = 0.5, imageData.data[0] is 0
+PASS imageData.data[0] = 5, imageData.data[0] is 5
+PASS imageData.data[0] = 5.4, imageData.data[0] is 5
+PASS imageData.data[0] = 255, imageData.data[0] is 255
+PASS imageData.data[0] = 256, imageData.data[0] is 255
+PASS imageData.data[0] = null, imageData.data[0] is 0
+PASS imageData.data[0] = undefined, imageData.data[0] is 0
+PASS imageData.data['foo']='garbage',imageData.data['foo'] is 'garbage'
+PASS imageData.data[-1]='garbage',imageData.data[-1] is 'garbage'
+PASS imageData.data[17]='garbage',imageData.data[17] is undefined
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Combined transform translate() scale()</title>
+  <style type="text/css" media="screen">
+    #box {
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+      -webkit-animation-duration: 1s;
+      -webkit-animation-timing-function: linear;
+      -webkit-animation-name: "anim";
+    }
+    @-webkit-keyframes "anim" {
+        from { -webkit-transform: translate(0,0) scale(1,1); }
+        to   { -webkit-transform: translate(100px, 200px) scale(2,4); }
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+    }
+    
+    result = "";
+
+    const expected =  [ [ 1.25,0,0,1.75,25,50 ],
+                        [ 1.5,0,0,2.5,50,100 ] ];
+    const tolerance = [ 0.2,0.2,0.2,0.3,8,15 ];
+    const prop = [ "a", "b", "c", "d", "e", "f" ];
+    
+    function isEqual(actual, desired, tolerance)
+    {
+        var diff = Math.abs(actual - desired);
+        return diff <= tolerance;
+    }
+    
+    var numSnapshots = 0;
+    
+    function snapshot(which)
+    {
+        var t = new WebKitCSSMatrix(window.getComputedStyle(document.getElementById('box')).webkitTransform);
+        for (i = 0; i < 6; ++i) {
+            if (!isEqual(t[prop[i]], expected[which][i], tolerance[i]))
+                result += "FAIL('"+prop[i]+"' was:"+t[prop[i]]+", expected:"+expected[which][i]+")";
+        }
+        
+        numSnapshots++;
+        if (numSnapshots == 2) {
+            document.getElementById('result').innerHTML = result || "PASS";
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+    }
+
+    function start()
+    {
+        setTimeout("snapshot(0)", 250);
+        setTimeout("snapshot(1)", 500);
+    }
+    
+    document.addEventListener('webkitAnimationStart', start, false);
+    
+  </script>
+</head>
+<body>
+This test performs an animation of the translate() and scale() operators. It animates over 1 seconds. 
+At 0.25 and 0.5 seconds it takes a snapshot and expects the result to be within range.
+<div id="box">
+</div>
+<div id="result">
+</div>
+</body>
+</html>

@@ -1,0 +1,3 @@
+Test for crash discovered with -webkit-border-image. If this text appears, the test passed.
+
+

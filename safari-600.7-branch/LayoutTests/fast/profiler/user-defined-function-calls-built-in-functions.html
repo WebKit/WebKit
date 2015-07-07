@@ -1,0 +1,34 @@
+<html>
+<head>
+<script src="resources/profiler-test-JS-resources.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.internals)
+    internals.setJavaScriptProfilingEnabled(true);
+
+function startTest()
+{
+    console.profile("User defined function calles built-in functions");
+
+    var newP = document.createElement("p");
+    var textNode =document.createTextNode("This is inserted Text");
+    newP.appendChild(textNode);
+    var output = document.getElementById("output");
+    output.appendChild(newP);
+    
+    endTest();
+}
+</script>
+</head>
+
+<body onload="startTest()">
+This page has JavaScript that calls built-in functions.
+<br>
+<br>
+To run this test manually, load it in the browser then load the WebInspector and look at
+the profile.  In the profile there should be calls to createElement() createTextNode()
+appendChild() and testEnd(), among others.
+<div id="output"></div>
+</body>
+</html>

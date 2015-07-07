@@ -1,0 +1,12 @@
+This tests the correctness of includers of forwarded children.
+Note that this test needs internals object thus cannot run outside DRT.
+PASS internals.includerFor(childOfElementWithoutShadow) is null
+PASS internals.includerFor(childOfElementWithShadow) is null
+PASS internals.includerFor(childOfElementWithShadowContent) is shadowContentOfElementWithShadowContent
+PASS internals.includerFor(movingChild) is null
+PASS internals.includerFor(movingChild) is null
+PASS internals.includerFor(movingChild) is anotherShadowContentOfElementWithShadowContent
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

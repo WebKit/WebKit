@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <p id="description"></p>
+        <div id="console"></div>
+        <script>
+            description("Tests MediaStreamTrack::getSources.");
+
+            var sources1 = null;
+            var sources2 = null;
+            var timer = null;
+
+            function finishTest()
+            {
+                clearTimeout(timer);
+                finishJSTest();
+            }
+
+            function error()
+            {
+                testFailed('Stream generation failed.');
+                finishTest();
+            }
+
+            function getUserMedia(_constraints, _callback)
+            {
+                try {
+                    primeTimeout("Timeout waiting for webkitGetUserMedia()");
+                    constraints = _constraints;
+                    callback = _callback;
+                    debug("<br>*** calling navigator.webkitGetUserMedia() ***");
+                    shouldNotThrow("navigator.webkitGetUserMedia(constraints, callback, error)");
+                } catch (e) {
+                    testFailed('webkitGetUserMedia threw exception :' + e);
+                    finishTest();
+                }
+            }
+
+            function gotSources2(sources)
+            {
+                testPassed('callback called.');
+                sources2 = sources;
+                shouldBeTrue('sources2.length == sources1.length');
+                for (i = 0; i < sources2.length; ++i) {
+                    shouldBeTrue("sources2[" + i + "].sourceId === sources1[" + i + "].sourceId");
+                    shouldBeTrue("sources2[" + i + "].label === sources1[" + i + "].label");
+                    shouldBeTrue("sources2[" + i + "].kind === sources1[" + i + "].kind");
+                }
+
+                finishTest();
+            }
+
+            function gotStream(stream)
+            {
+                testPassed('callback called.');
+                primeTimeout("Timeout waiting for MediaStreamTrack.getSources()");
+
+                debug("<br>*** calling MediaStreamTrack.getSources() ***");
+                shouldNotThrow('MediaStreamTrack.getSources(gotSources2);');
+            }
+
+            function gotSources1(sources)
+            {
+                testPassed('callback called.');
+                sources1 = sources;
+                for (i = 0; i < sources1.length; ++i) {
+                    debug("sources1[" + i + "].sourceId = \"" + sources1[i].sourceId + "\"");
+                    debug("sources1[" + i + "].label = \"" + sources1[i].label + "\"");
+                    debug("sources1[" + i + "].kind = \"" + sources1[i].kind + "\"");
+                }
+
+                getUserMedia({audio:true, video:true}, gotStream);
+            }
+
+            function primeTimeout(msg)
+            {
+                clearTimeout(timer);
+                timer = setTimeout(function() { testFailed(msg); finishJSTest() }, 4000);
+            }
+
+            primeTimeout("Timeout waiting for MediaStreamTrack.getSources()");
+            debug("<br>*** calling MediaStreamTrack.getSources() ***");
+            shouldNotThrow('MediaStreamTrack.getSources(gotSources1);');
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

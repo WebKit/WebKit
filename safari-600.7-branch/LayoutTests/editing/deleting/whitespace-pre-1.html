@@ -1,0 +1,31 @@
+<script src="../../resources/dump-as-markup.js"></script>
+<p id="description">This tests for a bug in endOfLine.</p>
+
+<div id="test" contenteditable="true" style="white-space:pre;">You should not see this paragraph unless the command has been undone.
+There should be three paragraphs in this editable region.
+The first one should be empty.</div>
+
+<script>
+function runTestsOn(platform) {
+    var e = document.getElementById("test");
+    var s = window.getSelection();
+
+    if (window.internals)
+        internals.settings.setEditingBehavior(platform);
+
+    s.setPosition(e, 0);
+    s.modify("extend", "forward", "lineBoundary");
+    document.execCommand("Delete");
+    Markup.dump("test", "on " + platform);
+    document.execCommand("undo");
+    Markup.dump("test", "after undo on " + platform);
+}
+
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
+Markup.description(description.textContent);
+Markup.dump("test", "initial state");
+runTestsOn("mac");
+runTestsOn("win");
+runTestsOn("unix");
+</script>

@@ -1,0 +1,56 @@
+<html>
+<head>
+  <style type="text/css" media="screen">
+    body {
+        overflow: hidden;
+    }
+
+    iframe {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        height: 300px;
+        width: 300px;
+    }
+
+    #overlap {
+        left: 250px;
+    }
+
+    pre {
+        position: absolute;
+        bottom: 2000px;
+        left: 0px;
+    }
+  </style>
+  <script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+
+    function doTest()
+    {
+        // For some reason this delay is required for AppKit to not short-circuit the display which is required
+        // for overlap testing to kick in.
+        window.setTimeout(function() {
+            if (window.testRunner) {
+                testRunner.display();
+                document.getElementById('layers').innerHTML = window.internals.layerTreeAsText(document);
+                testRunner.notifyDone();
+            }
+        }, 0);
+    }
+
+    window.addEventListener('load', doTest, false);
+  </script>
+</head>
+<body>
+
+    <iframe src="resources/composited-subframe.html"></iframe>
+    <!-- this iframe should become composited because it overlaps the other iframe -->
+    <iframe id="overlap" src="resources/subframe.html"></iframe>
+
+    <pre id="layers">Layer tree appears here in DRT.</pre>
+</body>
+</html>

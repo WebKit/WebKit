@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 15: Done.
+Tests content is available for failed image request.
+
+Bug 84265
+http://127.0.0.1:8000/inspector/network/resources/404.php
+resource.type: image
+resource.content before requesting content: undefined
+resource.content after requesting content: 404 - resource was not found.
+

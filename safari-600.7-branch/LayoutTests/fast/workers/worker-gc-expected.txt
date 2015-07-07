@@ -1,0 +1,4 @@
+Test worker garbage collection. Should print "SUCCESS".
+
+SUCCESS
+

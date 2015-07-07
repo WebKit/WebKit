@@ -1,0 +1,11 @@
+# We'd like to eliminate this file.
+# It would be nice to get rid of dependence on the TextEncodingConvert entirely.
+# Perhaps we can prove these are not used on the web and remove them.
+# Or perhaps we can get them added to ICU.
+
+# The items on the left are names of TEC TextEncoding values (without the leading kTextEncoding).
+# The items on the right are IANA character set names. Names listed in character-sets.txt are not
+# repeated here; mentioning any one character set from a group in there pulls in all the aliases in
+# that group.
+
+# No encodings for iOS

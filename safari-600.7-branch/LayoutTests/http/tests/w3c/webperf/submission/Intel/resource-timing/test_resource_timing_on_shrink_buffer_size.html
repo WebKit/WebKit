@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>shrink resource timing buffer size</title>
+        <link rel="author" title="Intel" href="http://www.intel.com/" />
+        <link rel="help" href="http://www.w3.org/TR/resource-timing/#performanceresourcetiming"/>
+        <script src="/w3c/resources/testharness.js"></script>
+        <script src="/w3c/resources/testharnessreport.js"></script>
+        <script src="/w3c/webperf/resources/webperftestharness.js"></script>
+        <script src="/w3c/webperf/resources/webperftestharnessextension.js"></script>
+        <script>
+            setup({ explicit_done: true });
+            var context = new PerformanceContext(performance);
+            function onload_test()
+            {
+                var entry_list_before_shrink = context.getEntriesByType('resource');
+                context.setResourceTimingBufferSize(0);
+                var entry_list_after_shrink = context.getEntriesByType('resource');
+                
+                test_greater_than(entry_list_before_shrink.length, 0, "There should be entries in resource timing buffer!");
+                test_equals(JSON.stringify(entry_list_before_shrink), JSON.stringify(entry_list_after_shrink), "Resource timing buffer should never been changed even buffer size is shrunk!");
+                
+                context.clearResourceTimings();
+                test_equals(context.getEntriesByType('resource').length, 0, "There should be no entries in resource timing buffer after clearResourceTimings");
+                done();
+            }
+        </script>
+    </head>
+    <body onload=onload_test()>
+        <h1>Description</h1>
+        <p>This test validates the behavior of shrink resource timing buffer size.</p>
+    </body>
+</html>

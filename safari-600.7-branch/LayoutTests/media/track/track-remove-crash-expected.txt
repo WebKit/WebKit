@@ -1,0 +1,7 @@
+Tests that removing a track while its parent is being deleted does not crash.
+
+
+No crash. PASS.
+
+END OF TEST
+

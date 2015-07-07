@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,25) size 551x104
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceClipper {clipPath} [id="myclip"] [clipPathUnits=userSpaceOnUse]
+        RenderSVGPath {path} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [data="M 0 0 L 100 0 L 100 100 L 0 100 Z"]
+    RenderSVGImage {image} at (0,25) size 100x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,-25.00)}]
+      [clipPath="myclip"] RenderSVGResourceClipper {clipPath} at (0,0) size 100x100
+    RenderSVGText {text} at (0,110) size 551x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 551x19
+        chunk 1 text run 1 at (0.00,125.00) startOffset 0 endOffset 84 width 550.01: "You should see a solid green block above (a blurred and clipped green checkerboard)."

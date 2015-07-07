@@ -1,0 +1,12 @@
+FAIL: Timed out waiting for notifyDone to be called
+
+This tests that popup blocking does not supress windows opened in an iframe if the event handler is a function from an enclosing frame.
+
+To run manually click the link in the iframe above with popup blocking enabled.
+
+
+
+--------
+Frame: 'otherFrame'
+--------
+Click this text to open a window.

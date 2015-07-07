@@ -1,0 +1,6 @@
+This tests that audio controls do not fade out when the audio is playing.
+
+PASS
+
+
+

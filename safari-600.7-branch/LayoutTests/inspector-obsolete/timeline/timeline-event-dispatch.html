@@ -1,0 +1,43 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/timeline-test.js"></script>
+<script>
+
+function handleMouseDown(event) 
+{
+    console.timeStamp("Handling mousedown");
+}
+
+function performActions()
+{
+    var target = document.getElementById("testTarget");
+    target.addEventListener("mousedown", handleMouseDown, true);
+    var rect = target.getBoundingClientRect();
+
+    // Simulate the mouse down over the target to trigger an EventDispatch
+    if (window.eventSender) {
+        window.eventSender.mouseMoveTo(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        window.eventSender.mouseDown();
+    }
+}
+
+function test() 
+{
+    InspectorTest.performActionsAndPrint("performActions()", "EventDispatch");
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests the Timeline API instrumentation of a DOM Dispatch (mousedown)
+</p>
+
+<div id="testTarget" style="width:400px; height:400px;">
+Test Mouse Target
+</div>
+
+</body>
+</html>

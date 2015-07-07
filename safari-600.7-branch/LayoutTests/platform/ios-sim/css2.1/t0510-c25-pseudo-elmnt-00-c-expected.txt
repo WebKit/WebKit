@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x116
+  RenderBlock {HTML} at (0,0) size 800x116
+    RenderBody {BODY} at (8,8) size 784x92
+      RenderBlock {DIV} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 258x19
+          text run at (0,0) width 258: "There should be two lines of text below."
+      RenderBlock {P} at (0,36) size 784x20 [color=#FF0000]
+        RenderText {#text} at (0,0) size 226x19
+          text run at (0,0) width 226: "This line should be white on green."
+      RenderBlock {P} at (0,72) size 784x20 [color=#FF0000]
+        RenderText {#text} at (0,0) size 226x19
+          text run at (0,0) width 226: "This line should be white on green."

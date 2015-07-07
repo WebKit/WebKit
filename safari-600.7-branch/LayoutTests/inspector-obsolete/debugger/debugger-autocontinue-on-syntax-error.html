@@ -1,0 +1,41 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+<script>
+
+function loadIframe()
+{
+    var iframe = document.createElement("iframe");
+    iframe.src = "resources/syntax-error.html";
+    document.body.appendChild(iframe);
+}
+
+function test()
+{
+    WebInspector.showPanel("scripts");
+    InspectorTest.startDebuggerTest(step1);
+
+    function step1()
+    {
+        DebuggerAgent.setPauseOnExceptions(WebInspector.DebuggerModel.PauseOnExceptionsState.PauseOnUncaughtExceptions);
+        InspectorTest.addConsoleSniffer(step2);
+        InspectorTest.evaluateInPage("loadIframe()");
+    }
+
+    function step2()
+    {
+        InspectorTest.completeDebuggerTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that debugger won't stop on syntax errors even if "pause on uncaught exceptions" is on.
+</p>
+
+</body>
+</html>

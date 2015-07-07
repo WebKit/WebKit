@@ -1,0 +1,100 @@
+<body>
+<p>Test that pages and workers can send MessagePorts to one another.
+Should print "DONE" when done.</p>
+<div id=result></div>
+<script>
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var worker = new Worker("resources/worker-messageport.js");
+var channel = new MessageChannel();
+
+// Send messages with and without ports to the worker to make sure it gets them.
+worker.postMessage("noport");
+worker.onmessage = function(evt) {
+    log(evt.data);
+    worker.postMessage("port", [channel.port1]);
+    worker.onmessage = function(evt) {
+        log(evt.data);
+    }
+};
+
+// Send a message on the new port to make sure it gets to the worker.
+channel.port2.postMessage("ping");
+
+// Wait for the response.
+channel.port2.onmessage = function(evt) {
+    if (evt.data == "pong") {
+        log("PASS: Received response from Worker via MessagePort");
+        worker.onmessage = awaitPortFromWorker;
+        worker.postMessage("getport");
+    } else {
+        log("FAIL: Received unknown event: " + evt.data);
+    }
+}
+channel.port2.start();
+
+// Invoked once the first batch of tests are done, to test sending from the worker.
+function awaitPortFromWorker(evt)
+{
+    if (evt.data == "port") {
+        if (!evt.ports) {
+            log("FAIL: Did not get port from worker");
+        } else if (evt.ports.length != 1) {
+            log("FAIL: Got the wrong number of ports from worker: " + evt.ports.length);
+        } else {
+            log("PASS: Got port from worker");
+            evt.ports[0].postMessage("ping");
+            evt.ports[0].onmessage = function(evt) {
+                if (evt.data == "pong") {
+                    log("PASS: Received final response from worker");
+                } else {
+                    log("FAIL: Got unexpected response: " + evt.data);
+                }
+                startSpamTest();
+            }
+            evt.ports[0].start();
+        }
+    } else {
+        log(evt.data);
+    }
+}
+
+function startSpamTest()
+{
+    var channel = new MessageChannel();
+    worker.onmessage = function () { gotSpam(channel.port1); }
+    worker.postMessage("spam", [channel.port2]);
+}
+
+function gotSpam(port)
+{
+    var spamCount = 0;
+    port.onmessage = function(evt) {
+        if (evt.data != spamCount)
+            log("FAIL: Got out of order message: " + spamCount);
+        spamCount++;
+        if (spamCount == 1000) {
+            log("PASS: Got 1000 messages");
+            done();
+        }
+    }
+}
+
+function done()
+{
+    log("DONE");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+
+<body>
+
+<style>
+area {
+    display: inline;
+}
+</style>
+
+<p>When an anchor tag catch 'href' attribute or release 'href' attribute, distribution should happen.</p>
+
+<div id="host1"></div>
+<div id="host2"></div>
+
+<script>
+function createArea(href, textContent)
+{
+    var area = document.createElement('area');
+    if (href)
+        area.setAttribute('href', href);
+    area.appendChild(document.createTextNode(textContent));
+
+    return area;
+}
+
+var area1 = createArea('http://www.example.com/', 'Anchor 1');
+var area4 = createArea('http://www.example.com/', 'Anchor 4');
+
+host1.appendChild(area1);
+host2.appendChild(area4);
+</script>
+</body>
+</html>
+

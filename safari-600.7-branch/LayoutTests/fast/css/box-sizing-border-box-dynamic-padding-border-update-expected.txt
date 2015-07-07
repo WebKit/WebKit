@@ -1,0 +1,8 @@
+Test if child blocks are correctly laid out when padding/border of the box-sizing:border-box parent is updated.
+
+The quick brown fox jumps over the lazy dog.
+PASS
+The quick brown fox jumps over the lazy dog.
+PASS
+The quick brown fox jumps over the lazy dog.
+PASS

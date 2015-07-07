@@ -1,0 +1,7 @@
+PASS svgText.selectSubString(-1, 0) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgText.getSubStringLength(0, -1) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgText.getSubStringLength(3, 0) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,42 @@
+<script>
+function test()
+{
+    if (!location.search.length) {
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        if (!document.getElementById("isindex")) {
+            log("Could not find isindex element");
+            if (window.testRunner)
+                testRunner.notifyDone();
+            return;
+        }
+        document.getElementById("isindex").value = "This is a test";
+        document.forms[0].submit();
+    } else {
+        var expected = "?This+is+a+test";
+        if (location.search != expected)
+            log("FAIL: Expected \"" + expected + "\" but got \"" + location.search + "\"");
+        else
+            log("PASS");
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+}
+
+function log(msg)
+{
+    document.getElementById("log").appendChild(document.createTextNode(msg + "\n"));
+}
+
+window.onload = test;
+
+</script>
+<p>This page tests that we correctly put the value of an <tt>&lt;isindex&gt;</tt> element into the form data.</p>
+<form method="GET" action="isindex-formdata.html">
+    <isindex id="isindex"></isindex>
+</form>
+<pre id="log"></pre>

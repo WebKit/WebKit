@@ -1,0 +1,11 @@
+<select> selection test for multiple but non contiguous selection with keyboard.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+1) Select multiple non-adjacent items with the keyboard
+FAIL selectionPattern("sl1") should be 01010. Was 00010.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

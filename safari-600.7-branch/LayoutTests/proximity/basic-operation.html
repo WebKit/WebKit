@@ -1,0 +1,25 @@
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Tests the basic operation of DeviceProximity using the proximity.');
+
+var firedEvent = {value: 2.2, min: 1.1, max: 3.3};
+
+var deviceProximityEvent;
+window.addEventListener('webkitdeviceproximity', function(e) {
+    deviceProximityEvent = e;
+    shouldBe('deviceProximityEvent.value', 'firedEvent.value');
+    shouldBe('deviceProximityEvent.min', 'firedEvent.min');
+    shouldBe('deviceProximityEvent.max', 'firedEvent.max');
+    finishJSTest();
+});
+
+internals.setDeviceProximity('webkitdeviceproximity', firedEvent.value, firedEvent.min, firedEvent.max);
+window.jsTestIsAsync = true;
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

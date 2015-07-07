@@ -1,0 +1,78 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function testSetNewValue()
+{
+    document.getElementById("node-set-new-value").style.setProperty("color", "blue");
+}
+
+function testSetSameValue()
+{
+    document.getElementById("node-set-same-value").style.setProperty("color", "red");
+}
+
+function test()
+{
+    // Save time on style updates.
+    WebInspector.showPanel("elements");
+    WebInspector.StylesSidebarPane.prototype.update = function() {};
+    WebInspector.MetricsSidebarPane.prototype.update = function() {};
+
+    InspectorTest.runTestSuite([
+        function testSetUp(next)
+        {
+            InspectorTest.expandElementsTree(next);
+        },
+
+        function testSetNewValue(next)
+        {
+            InspectorTest.evaluateInPage("testSetNewValue()");
+
+            WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrModified, listener);
+            function listener(event)
+            {
+                InspectorTest.addResult("WebInspector.DOMAgent.Events.AttrModified should be issued");
+                WebInspector.domAgent.removeEventListener(WebInspector.DOMAgent.Events.AttrModified, listener);
+                next();
+            }
+        },
+
+        function testSetSameValue(next)
+        {
+            InspectorTest.evaluateInPage("testSetSameValue()");
+
+            WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrModified, listener);
+            function listener(event)
+            {
+                InspectorTest.addResult("WebInspector.DOMAgent.Events.AttrModified should not be issued");
+                WebInspector.domAgent.removeEventListener(WebInspector.DOMAgent.Events.AttrModified, listener);
+            }
+
+            InspectorTest.addSniffer(WebInspector.DOMNode.prototype, "_setAttributesPayload", callback);
+            function callback()
+            {
+                InspectorTest.addResult("WebInspector.DOMNode.prototype._setAttributesPayload should be called");
+                WebInspector.domAgent.removeEventListener(WebInspector.DOMAgent.Events.AttrModified, listener);
+                next();
+            }
+        }
+    ]);
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that style modification generates attribute updated event only when attribute is actually changed.
+</p>
+
+<div id="container">
+    <div id="node-set-new-value" style="color:red"></div>
+    <div id="node-set-same-value" style="color:red"></div>
+</div>
+</body>
+</html>

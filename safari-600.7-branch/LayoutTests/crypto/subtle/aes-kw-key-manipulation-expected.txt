@@ -1,0 +1,25 @@
+Test generating, importing and exporting keys for AES-KW. Test that they can't be used with another algorithm.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Generating a key...
+PASS key.toString() is '[object Key]'
+PASS key.type is 'secret'
+PASS key.algorithm.name is 'AES-KW'
+PASS key.algorithm.length is 256
+
+Testing that the key can't be used with AES-CBC...
+PASS crypto.subtle.encrypt({name: "aes-cbc", iv: iv}, key, hexStringToUint8Array("00")) threw exception Error: NotSupportedError: DOM Exception 9.
+
+Exporting the key to raw...
+PASS exportedKey.toString() is '[object ArrayBuffer]'
+Importing it back...
+PASS importedKey.toString() is '[object Key]'
+PASS importedKey.type is 'secret'
+PASS importedKey.algorithm.name is 'AES-KW'
+PASS importedKey.algorithm.length is 256
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,150 @@
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla Bug Tracking System.
+  #
+  # The Initial Developer of the Original Code is Netscape Communications
+  # Corporation. Portions created by Netscape are
+  # Copyright (C) 1998 Netscape Communications Corporation. All
+  # Rights Reserved.
+  #
+  # Contributor(s): Gervase Markham <gerv@gerv.net>
+  #                 Vaskin Kissoyan <vkissoyan@yahoo.com>
+  #                 Frédéric Buclin <LpSolit@gmail.com>
+  #                 Guy Pyrzak <guy.pyrzak@gmail.com>
+  #%]
+
+[% PROCESS global/variables.none.tmpl %]
+<div id="status">
+  [% initial_action_shown = 0 %]
+  [% show_resolution = 0 %]
+  [% bug_status_select_displayed = 0 %]
+
+  [% closed_status_array = [] %]
+  [%# These actions are based on the current custom workflow. %]
+  [% FOREACH bug_status = bug.status.can_change_to %]
+    [% NEXT IF bug.isunconfirmed && bug_status.is_open && !bug.user.canconfirm %]
+    [% NEXT IF bug.isopened && !bug.isunconfirmed && bug_status.is_open && !bug.user.canedit %]
+    [% NEXT IF (!bug_status.is_open || !bug.isopened) && !bug.user.canedit && !bug.user.isreporter %]
+    [%# Special hack to only display UNCO or REOP when reopening, but not both;
+      # for compatibility with older versions. %]
+    [% NEXT IF !bug.isopened && (bug.everconfirmed && bug_status.name == "UNCONFIRMED"
+                                 || !bug.everconfirmed && bug_status.name == "REOPENED") %]
+    [% IF NOT bug_status_select_displayed %]
+      <select name="bug_status" id="bug_status">
+      [% bug_status_select_displayed = 1 %]
+    [% END %]
+    [% PROCESS initial_action %]
+    [% NEXT IF bug_status.name == bug.bug_status %]
+    <option value="[% bug_status.name FILTER html %]">
+      [% get_status(bug_status.name) FILTER html %]
+    </option>
+    [% IF  !bug_status.is_open  %]
+      [% show_resolution = 1 %]
+      [% filtered_status = bug_status.name FILTER js %]
+      [% closed_status_array.push( filtered_status ) %]
+    [% END %]
+  [% END %]
+
+  [%# These actions are special and are independent of the workflow. %]
+  [% IF bug.user.canedit || bug.user.isreporter %]
+    [% IF NOT bug_status_select_displayed %]
+      <select name="bug_status" id="bug_status">
+      [% bug_status_select_displayed = 1 %] 
+    [% END %]
+    [% IF bug.isopened %]
+      [% IF bug.resolution %]
+        [% PROCESS initial_action %]
+      [% END %]
+    [% ELSIF bug.resolution != "MOVED" || bug.user.canmove  %]
+        [% PROCESS initial_action %]
+        [% show_resolution = 1 %]
+    [% END %]
+  [% END %]  
+  [% IF bug_status_select_displayed %]
+    </select>
+  [% ELSE %]
+      [% get_status(bug.bug_status) FILTER html %]
+      [% IF bug.resolution %]
+        [%+ get_resolution(bug.resolution) FILTER html %]
+        [% IF bug.dup_id %]
+          <span id="duplicate_display">of 
+          [% "${terms.bug} ${bug.dup_id}" FILTER bug_link(bug.dup_id) FILTER none %]</span>
+        [% END %]
+      [% END %]
+  [% END %]
+  [% IF bug.user.canedit || bug.user.isreporter %]  
+    [% IF show_resolution %]
+      <noscript><br>resolved&nbsp;as&nbsp;</noscript>
+      <span id="resolution_settings">[% PROCESS select_resolution %]</span>
+    [% END %]
+    <noscript><br> duplicate</noscript>
+    
+    <span id="duplicate_settings">of 
+      <span id="dup_id_container" class="bz_default_hidden">
+        [% "${terms.bug} ${bug.dup_id}" FILTER bug_link(bug.dup_id) FILTER none %]
+        (<a href="#" id="dup_id_edit_action">edit</a>)
+      </span
+      ><input id="dup_id" name="dup_id" size="6"
+              value="[% bug.dup_id FILTER html %]">
+    </span>
+    <div id="dup_id_discoverable" class="bz_default_hidden">
+      <a href="#" id="dup_id_discoverable_action">Mark as Duplicate</a>
+    </div>
+  [% END %]
+</div>
+<script type="text/javascript">
+  var close_status_array = new Array("[% closed_status_array.join('", "') FILTER replace(',$', '')
+                                                                FILTER none %]");
+  YAHOO.util.Dom.setStyle('dup_id_discoverable', 'display', 'block');
+  hideEditableField( "dup_id_container", "dup_id", 'dup_id_edit_action',
+                     'dup_id', '[% bug.dup_id FILTER js %]' )
+  showHideStatusItems( "",  ['[% "is_duplicate" IF bug.dup_id %]',
+                             '[% bug.bug_status FILTER js %]']);
+  YAHOO.util.Event.addListener( 'bug_status', "change", showHideStatusItems,
+                                ['[% "is_duplicate" IF bug.dup_id %]',
+                                 '[% bug.bug_status FILTER js %]']);
+  YAHOO.util.Event.addListener( 'resolution', "change", showDuplicateItem);
+  YAHOO.util.Event.addListener( 'dup_id_discoverable_action',
+                                'click',
+                                setResolutionToDuplicate,
+                                '[% Param('duplicate_or_move_bug_status')
+                                                                FILTER js %]');
+  YAHOO.util.Event.addListener( window, 'load',  showHideStatusItems,
+                              ['[% "is_duplicate" IF bug.dup_id %]',
+                               '[% bug.bug_status FILTER js %]'] );
+</script>
+
+[%# Common actions %]
+
+[% BLOCK initial_action %]
+  [% IF !initial_action_shown %]
+    <option selected value="[% bug.bug_status FILTER html %]">
+      [% get_status(bug.bug_status) FILTER html %]
+    </option>
+    [% IF !bug.isopened  %] 
+      [% show_resolution = 1 %]
+      [% filtered_status = bug.bug_status FILTER js %]
+      [% closed_status_array.push(filtered_status) %]
+    [% END %]
+    [% initial_action_shown = 1 %]
+  [% END %]
+[% END %]
+
+[% BLOCK select_resolution %]
+  <select name="resolution" id="resolution">
+    [% FOREACH r = bug.choices.resolution %]
+      [% NEXT IF r == "MOVED" && bug.resolution != "MOVED" %]
+      <option value="[% r FILTER html %]"
+      [% "selected" IF r == bug.resolution %]>
+        [% get_resolution(r) FILTER html %]</option>
+    [% END %]
+  </select>
+[% END %]

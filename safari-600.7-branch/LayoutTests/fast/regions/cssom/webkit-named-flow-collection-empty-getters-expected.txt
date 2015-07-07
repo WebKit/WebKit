@@ -1,0 +1,13 @@
+Test for [118561] NamedFlowCollection getters should follow the same pattern as HTMLCollection
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS namedFlowCollection[0] is undefined.
+PASS namedFlowCollection['flow'] is undefined.
+PASS namedFlowCollection.item(0) is null
+PASS namedFlowCollection.namedItem('flow') is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

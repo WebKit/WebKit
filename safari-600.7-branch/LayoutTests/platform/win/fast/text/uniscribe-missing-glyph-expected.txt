@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 762x18
+          text run at (0,0) width 762: "This tests that the Uniscribe code path renders missing glyphs as squares. It assumes that a Myanmar font is not available."
+      RenderBlock (anonymous) at (0,34) size 784x72
+        RenderText {#text} at (0,0) size 22x18
+          text run at (0,0) width 22: "(\x{1000})"
+        RenderBR {BR} at (22,14) size 0x0
+        RenderText {#text} at (0,18) size 34x18
+          text run at (0,18) width 34: "(\x{1000}\x{1000})"
+        RenderBR {BR} at (34,32) size 0x0
+        RenderText {#text} at (0,36) size 46x18
+          text run at (0,36) width 46: "(\x{1000}\x{1000}\x{1000})"
+        RenderBR {BR} at (46,50) size 0x0
+        RenderText {#text} at (0,54) size 58x18
+          text run at (0,54) width 58: "(\x{1000}\x{1000}\x{1000}\x{1000})"
+        RenderBR {BR} at (58,68) size 0x0

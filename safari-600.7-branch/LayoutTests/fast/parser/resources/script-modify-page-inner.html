@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div>
+<script>
+if (parent.document.adoptNode)
+  parent.document.body.appendChild(parent.document.adoptNode(document.getElementsByTagName("div")[0]));
+else
+  parent.document.body.appendChild(document.getElementsByTagName("div")[0]);
+</script>
+<script>
+alert('should be outer: ' + document.URL.match(/parser.*/));
+</script>
+</div>
+<script>
+alert('should be inner: ' + document.URL.match(/parser.*/));
+</script>
+</body>
+</html>

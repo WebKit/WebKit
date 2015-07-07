@@ -1,0 +1,77 @@
+<html>
+<head>
+<script src="resources/profiler-test-JS-resources.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.internals)
+    internals.setJavaScriptProfilingEnabled(true);
+
+function function0()
+{
+    for (var i = 0; i < 0; ++i) ;
+}
+
+function0.displayName = "0 iterations function";
+
+function function1()
+{
+    for (var i = 0; i < 1; ++i) ;
+}
+
+function1.displayName = "1 iteration function";
+
+function function2()
+{
+    for (var i = 0; i < 2; ++i) ;
+}
+
+function2.displayName = "2 iterations function";
+
+function function20()
+{
+    for (var i = 0; i < 20; ++i) ;
+}
+
+function20.displayName = "20 iterations function";
+
+function function1000()
+{
+    for (var i = 0; i < 1000; ++i) ;
+}
+
+function1000.displayName = "1000 iterations function";
+
+
+function bogusDisplayNameFunction()
+{
+    for (var i = 0; i < 0; ++i) ;
+}
+
+bogusDisplayNameFunction.displayName = bogusDisplayNameFunction;
+
+function startTest()
+{
+    console.profile("Named functions with display names");
+
+    function0();
+    function1();
+    function2();
+    function20();
+    function1000();
+    bogusDisplayNameFunction();
+
+    endTest();
+}
+</script>
+</head>
+
+<body onload="startTest()">
+This page's JavaScript calls named functions and changes their display names.
+<br>
+<br>
+To run this test manually, load it in the browser then load the WebInspector and look at
+the profile.  You should see functions named "[x] iteration[s] function", and not "function[x]"
+<div id="output"></div>
+</body>
+</html>

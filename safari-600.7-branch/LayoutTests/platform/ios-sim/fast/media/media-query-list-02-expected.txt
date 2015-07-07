@@ -1,0 +1,9 @@
+Test the MediaQueryList interface: http://dev.w3.org/csswg/cssom-view/#the-mediaquerylist-interface.
+
+Testing addListener in different MediaQueryList objects and the callback call sequence
+
+------------- minimized -------------
+------------- maximized -------------
+------------- windowed -------------
+------------- floating -------------
+

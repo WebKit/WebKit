@@ -1,0 +1,17 @@
+This tests that the row span information for the cells in the body is not offset by the footer section, even though the footer section is above the body in the DOM. This tests tables that have a role=grid and without.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Table1 cell content at {0, 1}: AXValue: a
+Table1 cell range at {0, 1}: {1, 1}
+Table1 cell content at {0, 2}: AXValue: Name
+Table1 cell range at {0, 2}: {2, 1}
+Table2 cell content at {0, 1}: AXValue: a
+Table2 cell range at {0, 1}: {1, 1}
+Table2 cell content at {0, 2}: AXValue: Name
+Table2 cell range at {0, 2}: {2, 1}
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

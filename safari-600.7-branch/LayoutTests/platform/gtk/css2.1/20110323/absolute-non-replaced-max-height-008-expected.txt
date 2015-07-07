@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x345
+  RenderBlock {HTML} at (0,0) size 800x345
+    RenderBody {BODY} at (8,16) size 784x321
+      RenderBlock {P} at (0,0) size 784x17
+        RenderText {#text} at (0,0) size 469x17
+          text run at (0,0) width 469: "Test passes if there are two boxes below, a blue box below an orange box."
+layer at (8,49) size 96x288
+  RenderBlock (relative positioned) {DIV} at (0,33) size 96x288 [bgcolor=#0000FF]
+layer at (8,49) size 96x48
+  RenderBlock (positioned) {DIV} at (0,0) size 96x48 [bgcolor=#FFA500]

@@ -1,0 +1,85 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+
+<style>
+.container {
+  font-weight: bold
+}
+</style>
+
+<script>
+
+function test()
+{
+    InspectorTest.selectNodeAndWaitForStyles("container", testAppendProperty.bind(null, testInsertBegin));
+
+    function testAppendProperty()
+    {
+        InspectorTest.addResult("=== Last property ===");
+        testAddProperty("margin-left: 2px", undefined, testInsertBegin);
+    }
+
+    function testInsertBegin()
+    {
+        InspectorTest.addResult("=== First property ===");
+        testAddProperty("margin-top: 0px", 0, testInsertMiddle);
+    }
+
+    function testInsertMiddle()
+    {
+        InspectorTest.addResult("=== Middle property ===");
+        testAddProperty("margin-right: 1px", 1, InspectorTest.completeTest.bind(InspectorTest));
+    }
+
+    function testAddProperty(propertyText, index, callback)
+    {
+
+        InspectorTest.addResult("(Initial value)");
+        InspectorTest.dumpSelectedElementStyles(true);
+
+        var treeItem = InspectorTest.getMatchedStylePropertyTreeItem("font-weight");
+        var treeElement = treeItem.section().addNewBlankProperty(index);
+        treeElement.applyStyleText(propertyText, true, true);
+        InspectorTest.waitForStyles("container", step1);
+
+        function step1()
+        {
+            InspectorTest.addResult("(After adding property)");
+            InspectorTest.dumpSelectedElementStyles(true);
+
+            WebInspector.domAgent.undo();
+            InspectorTest.selectNodeAndWaitForStyles("other", step2);
+        }
+
+        function step2()
+        {
+            InspectorTest.addResult("(After undo)");
+            InspectorTest.dumpSelectedElementStyles(true);
+
+            WebInspector.domAgent.redo();
+            InspectorTest.selectNodeAndWaitForStyles("container", step3);
+        }
+
+        function step3()
+        {
+            InspectorTest.addResult("(After redo)");
+            InspectorTest.dumpSelectedElementStyles(true);
+            callback();
+        }
+    }
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that adding a property is undone properly.
+</p>
+
+<div id="container" class="container"></div>
+<div id="other" class="container"></div>
+
+</body>
+</html>

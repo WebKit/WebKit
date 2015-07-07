@@ -1,0 +1,99 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function test()
+{
+    WebInspector.showPanel("elements");
+    InspectorTest.selectNodeAndWaitForStyles("inspected", step1);
+
+    var treeElement;
+
+    function step1()
+    {
+        addNewRuleAndSelectNode("other", step2);
+    }
+
+    function step2()
+    {
+        addNewRuleAndSelectNode("inspected", step3);
+    }
+
+    function step3()
+    {
+        InspectorTest.addResult("After adding new rule:");
+        InspectorTest.dumpSelectedElementStyles(true, false, true);
+        printStyleSheetAndCall(step4);
+    }
+
+    function step4()
+    {
+        WebInspector.domAgent.undo();
+        InspectorTest.selectNodeAndWaitForStyles("other", step5);
+    }
+
+    function step5()
+    {
+        InspectorTest.addResult("After undo:");
+        InspectorTest.dumpSelectedElementStyles(true, false, true);
+        printStyleSheetAndCall(step6);
+    }
+
+    function step6()
+    {
+        WebInspector.domAgent.redo();
+        InspectorTest.selectNodeAndWaitForStyles("inspected", step7);
+    }
+
+    function step7()
+    {
+        InspectorTest.addResult("After redo:");
+        InspectorTest.dumpSelectedElementStyles(true, false, true);
+        printStyleSheetAndCall(step8);
+    }
+
+    function step8()
+    {
+        InspectorTest.completeTest();
+    }
+
+    function addNewRuleAndSelectNode(nodeId, next)
+    {
+        // Click "Add new rule".
+        document.getElementById("add-style-button-test-id").click();
+        var section = WebInspector.panels.elements.sidebarPanes.styles.sections[0][2];
+        section._selectorElement.textContent = "div.foo";
+        section._selectorElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
+        InspectorTest.selectNodeAndWaitForStyles(nodeId, next);
+    }
+
+    function printStyleSheetAndCall(next)
+    {
+        var section = WebInspector.panels.elements.sidebarPanes.styles.sections[0][2];
+        var id = section.styleRule.style.id.styleSheetId;
+        CSSAgent.getStyleSheetText(id, callback);
+        function callback(result, styleSheetText)
+        {
+            InspectorTest.addResult("===== Style sheet text: =====");
+            InspectorTest.addResult(styleSheetText);
+            InspectorTest.addResult("=============================");
+            next();
+        }
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that adding a new rule can be undone.
+</p>
+
+<div class="foo" id="inspected" style="font-size: 12px">Text</div>
+<div class="foo" id="other" style="color:red"></div>
+
+</body>
+</html>

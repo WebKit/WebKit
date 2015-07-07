@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 282x19
+          text run at (0,0) width 282: "The look of the controls should not change."
+      RenderBlock {DIV} at (0,36) size 784x150 [color=#0000FF]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,186) size 784x155
+        RenderText {#text} at (300,135) size 4x19
+          text run at (300,135) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (304,135) size 36x19
+          text run at (304,135) width 36: "FAIL"
+layer at (18,44) size 300x150
+  RenderEmbeddedObject {VIDEO} at (10,0) size 300x150
+layer at (8,194) size 300x150
+  RenderEmbeddedObject {VIDEO} at (0,0) size 300x150

@@ -1,0 +1,90 @@
+<!doctype html>
+<html style="font: 16px/1.25 monospace;">
+    <script type="text/javascript">
+        function onBodyLoad() {
+            if (window.testRunner) {
+                var selection = window.getSelection();
+
+                // Test selection on the overflow below the region.
+                var region = document.getElementById("region");
+                var startPositionX = region.offsetLeft + 65;
+                var startPositionY = region.offsetTop + 90;
+                var endPositionX = startPositionX + 10;
+                var endPositionY = startPositionY + 30;
+
+                eventSender.mouseMoveTo(startPositionX, startPositionY);
+                eventSender.mouseDown();
+                eventSender.mouseMoveTo(endPositionX, endPositionY);
+                eventSender.mouseUp();
+
+                var elemResult = document.getElementById("result");
+                var result = "FAIL";
+                if (selection.toString() == "low2_1\nOverflow")
+                    result = "PASS";
+
+                elemResult.className = result;
+                elemResult.innerHTML = "Automated selection test: " + result;
+
+                eventSender.mouseMoveTo(startPositionX + 200, startPositionY);
+                eventSender.mouseDown();
+                eventSender.mouseUp();
+            }
+        }
+    </script>
+    <head>
+        <style>
+            #content {
+                -webkit-flow-into: flow;
+                width: 150px;
+                margin-left: 50px;
+            }
+            .overflow {
+                color: orange;
+            }
+            #region {
+                -webkit-flow-from: flow;
+                width: 300px;
+                height: 100px;
+                border: 10px solid blue;
+                position: absolute;
+                top: 300px;
+                left: 100px;
+                padding: 5px;
+                -webkit-transform: rotate(45deg);
+            }
+            .PASS {
+                color: green;
+                font-weight: bold;
+            }
+            .FAIL {
+                color: red;
+                font-weight: bold;
+            }
+            .notrun {
+                color: red;
+                font-weight: bold;
+            }
+        </style>
+    </head>
+    <body onload="onBodyLoad();">
+        <p>Test that overflow content is correctly computed when a transform is applied to the region.</p>
+        <p>On success, the following should be true:</p>
+        <ul>
+            <li>Two <span style="color: orange;"><b>orange</b></span> overflow lines should be visible below the <span style="color: blue;"><b>blue</b></span> region.</li>
+            <li>All <span style="color: orange;"><b>orange</b></span> overflow lines should be selectable</li>
+        </ul>
+        <div id="content">
+            <div>flow1_1</div>
+            <div>flow1_2</div>
+            <div>flow1_3</div>
+            <div>flow1_4</div>
+            <div>flow1_5</div>
+            <br/>
+            <div class="overflow">Overflow2_1</div>
+            <div class="overflow">Overflow2_2</div>
+        </div>
+
+        <div id="region"></div>
+        <div id="result" class="notrun">Automated selection test: NOT RUN</div>
+    </body>
+</html>

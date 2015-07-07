@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+  <head>
+    <title>mstyle css attributes</title>
+    <meta charset="utf-8"/>
+    <script type="text/javascript">
+      function computeCSS(i, property)
+      {
+        var mstyle = document.getElementById('x'+i);
+        var text = document.createTextNode(window.getComputedStyle(mstyle)[property]);
+        mstyle.firstChild.appendChild(text);
+      }
+
+      function init()
+      {
+        computeCSS(1, 'backgroundColor');
+        computeCSS(2, 'fontSize');
+        computeCSS(3, 'color');
+        computeCSS(4, 'fontSize');
+        computeCSS(5, 'backgroundColor');
+        computeCSS(6, 'color');
+        computeCSS(7, 'fontStyle');
+        computeCSS(8, 'fontWeight');
+        computeCSS(9, 'fontFamily');
+        computeCSS(10, 'direction');
+      }
+    </script>
+  </head>
+  <body onload="init()">
+
+    <!-- These test CSS mapping of presentation attributes on the <mstyle> element. -->
+
+    <p><math><mstyle id="x1" mathbackground="red"><mtext></mtext></mstyle></math></p>
+    <p><math><mstyle id="x2" mathsize="32px"><mtext></mtext></mstyle></math></p>
+    <p><math><mstyle id="x3" mathcolor="green"><mtext></mtext></mstyle></math></p>
+    <p><math><mstyle id="x4" fontsize="64px"><mtext></mtext></mstyle></math></p>
+    <p><math><mstyle id="x5" background="blue"><mtext></mtext></mstyle></math></p>
+    <p><math><mstyle id="x6" color="magenta"><mtext></mtext></mstyle></math></p>
+    <p><math><mstyle id="x7" fontstyle="italic"><mtext></mtext></mstyle></math></p>
+    <p><math><mstyle id="x8" fontweight="bold"><mtext></mtext></mstyle></math></p>
+    <p><math><mstyle id="x9" fontfamily="courier"><mtext></mtext></mstyle></math></p>
+    <p><math><mstyle id="x10" dir="rtl"><mtext></mtext><mspace width="5em"/></mstyle></math></p>
+
+  </body>
+</html>

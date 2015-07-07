@@ -1,0 +1,31 @@
+Test of texImage2d and texSubImage2d
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS context.texImage2D(context.TEXTURE_2D) threw exception TypeError: Not enough arguments.
+PASS context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, 64, 64, 0, context.RGBA, context.UNSIGNED_BYTE, null) is undefined.
+PASS context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, context.RGBA, context.UNSIGNED_BYTE, 0) threw exception TypeError: Type error.
+PASS context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, 2, 2, 0, context.RGBA, context.UNSIGNED_BYTE, array) is undefined.
+PASS context.pixelStorei(context.UNPACK_FLIP_Y_WEBGL, true) is undefined.
+PASS context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, context.RGBA, context.UNSIGNED_BYTE, imageData) is undefined.
+PASS context.pixelStorei(context.UNPACK_FLIP_Y_WEBGL, false) is undefined.
+PASS context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, context.RGBA, context.UNSIGNED_BYTE, image) is undefined.
+PASS context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, context.RGBA, context.UNSIGNED_BYTE, canvas2d) is undefined.
+PASS context.pixelStorei(context.UNPACK_FLIP_Y_WEBGL, true) is undefined.
+PASS context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, context.RGBA, context.UNSIGNED_BYTE, video) is undefined.
+PASS context.texSubImage2D(context.TEXTURE_2D) threw exception TypeError: Not enough arguments.
+PASS context.texSubImage2D(context.TEXTURE_2D, 0, 10, 20, 0, 0, context.RGBA, context.UNSIGNED_BYTE, null) is undefined.
+PASS context.texSubImage2D(context.TEXTURE_2D, 0, 10, 20, 0, 0, context.RGBA, context.UNSIGNED_BYTE, 0) threw exception TypeError: Type error.
+PASS context.texSubImage2D(context.TEXTURE_2D, 0, 10, 20, 0, context.UNSIGNED_BYTE, 0) threw exception TypeError: Type error.
+PASS context.pixelStorei(context.UNPACK_FLIP_Y_WEBGL, false) is undefined.
+PASS context.texSubImage2D(context.TEXTURE_2D, 0, 10, 20, context.RGBA, context.UNSIGNED_BYTE, imageData) is undefined.
+PASS context.texSubImage2D(context.TEXTURE_2D, 0, 10, 20, context.RGBA, context.UNSIGNED_BYTE, image) is undefined.
+PASS context.pixelStorei(context.UNPACK_FLIP_Y_WEBGL, true) is undefined.
+PASS context.texSubImage2D(context.TEXTURE_2D, 0, 10, 20, context.RGBA, context.UNSIGNED_BYTE, canvas2d) is undefined.
+PASS context.pixelStorei(context.UNPACK_FLIP_Y_WEBGL, false) is undefined.
+PASS context.pixelStorei(context.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true) is undefined.
+PASS context.texSubImage2D(context.TEXTURE_2D, 0, 10, 20, context.RGBA, context.UNSIGNED_BYTE, video) is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

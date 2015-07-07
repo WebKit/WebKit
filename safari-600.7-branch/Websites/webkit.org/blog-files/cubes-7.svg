@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 300 200">
+
+  <title>SVG Animation - Cube Demonstration</title>
+  <defs>
+    <g id="cube">
+      <path fill="#333333" stroke="#000000" stroke-width="0.5" stroke-linejoin="bevel" d="M-25.004,6.781L0.028,19.266V5.674
+        L-25.004-6.811V6.781z" pointer-events="none" />
+      <path fill="#666666" stroke="#000000" stroke-width="0.5" stroke-linejoin="bevel" d="M0.028,19.266L25.061,6.781h-0.057V-6.782
+        L0.028,5.674V19.266z" pointer-events="none" />
+      <path fill="currentColor" stroke="#000000" stroke-width="0.5" stroke-linejoin="bevel" d="M25.004-6.782l0.057-0.028L0.028-19.267
+        L-25.004-6.811L0.028,5.674L25.004-6.782z" />
+    </g>
+  </defs>
+
+  <rect fill="#999999" width="100%" height="100%"/>
+
+  <g id="cubes" color="#CCCCCC" transform="translate(-180 19.49)">
+    <use xlink:href="#cube" width="50.508" height="38.98" transform="translate(332.502 52.9973)">
+      <animate attributeName="y" begin="mouseover"
+        restart="whenNotActive" dur="2s" calcMode="spline"
+        keySplines="0 .75 .5 1; .5 0 1 .25; 0 .25 .25 1;
+                    .5 0 1 .5; 0 0 1 1; 0 0 1 1; 0 0 1 1;
+                    0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1"
+        values="0; -45; 0; 16; 0; -7; 0; 3; 0; -2; 0; 1; 0"
+        keyTimes="0; 0.2564; 0.5128; 0.6154; 0.6923; 0.7436;
+                  0.7949; 0.8462; 0.8974; 0.9231; 0.9487;
+                  0.9744; 1" />
+      <animateColor attributeName="color" from="#FFBC00" to="#CCCCCC"
+            dur="2s" begin="mouseover" restart="whenNotActive" />
+    </use>
+    <use xlink:href="#cube" width="50.508" height="38.98" transform="translate(356.502 64.9973)">
+      <animate attributeName="y" begin="mouseover"
+        restart="whenNotActive" dur="2s" calcMode="spline"
+        keySplines="0 .75 .5 1; .5 0 1 .25; 0 .25 .25 1;
+                    .5 0 1 .5; 0 0 1 1; 0 0 1 1; 0 0 1 1;
+                    0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1"
+        values="0; -45; 0; 16; 0; -7; 0; 3; 0; -2; 0; 1; 0"
+        keyTimes="0; 0.2564; 0.5128; 0.6154; 0.6923; 0.7436;
+                  0.7949; 0.8462; 0.8974; 0.9231; 0.9487;
+                  0.9744; 1" />
+      <animateColor attributeName="color" from="#FF6C3A" to="#CCCCCC"
+            dur="2s" begin="mouseover" restart="whenNotActive" />
+    </use>
+    <use xlink:href="#cube" width="50.508" height="38.98" transform="translate(380.502 76.9973)">
+      <animate attributeName="y" begin="mouseover"
+        restart="whenNotActive" dur="2s" calcMode="spline"
+        keySplines="0 .75 .5 1; .5 0 1 .25; 0 .25 .25 1;
+                    .5 0 1 .5; 0 0 1 1; 0 0 1 1; 0 0 1 1;
+                    0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1"
+        values="0; -45; 0; 16; 0; -7; 0; 3; 0; -2; 0; 1; 0"
+        keyTimes="0; 0.2564; 0.5128; 0.6154; 0.6923; 0.7436;
+                  0.7949; 0.8462; 0.8974; 0.9231; 0.9487;
+                  0.9744; 1" />
+      <animateColor attributeName="color" from="#FF4069" to="#CCCCCC"
+            dur="2s" begin="mouseover" restart="whenNotActive" />
+    </use>
+    <use xlink:href="#cube" width="50.508" height="38.98" transform="translate(308.502 64.9973)">
+      <animate attributeName="y" begin="mouseover"
+        restart="whenNotActive" dur="2s" calcMode="spline"
+        keySplines="0 .75 .5 1; .5 0 1 .25; 0 .25 .25 1;
+                    .5 0 1 .5; 0 0 1 1; 0 0 1 1; 0 0 1 1;
+                    0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1"
+        values="0; -45; 0; 16; 0; -7; 0; 3; 0; -2; 0; 1; 0"
+        keyTimes="0; 0.2564; 0.5128; 0.6154; 0.6923; 0.7436;
+                  0.7949; 0.8462; 0.8974; 0.9231; 0.9487;
+                  0.9744; 1" />
+      <animateColor attributeName="color" from="#D8FF3F" to="#CCCCCC"
+            dur="2s" begin="mouseover" restart="whenNotActive" />
+    </use>
+    <use xlink:href="#cube" width="50.508" height="38.98" transform="translate(332.502 76.9973)">
+      <animate attributeName="y" begin="mouseover"
+        restart="whenNotActive" dur="2s" calcMode="spline"
+        keySplines="0 .75 .5 1; .5 0 1 .25; 0 .25 .25 1;
+                    .5 0 1 .5; 0 0 1 1; 0 0 1 1; 0 0 1 1;
+                    0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1"
+        values="0; -45; 0; 16; 0; -7; 0; 3; 0; -2; 0; 1; 0"
+        keyTimes="0; 0.2564; 0.5128; 0.6154; 0.6923; 0.7436;
+                  0.7949; 0.8462; 0.8974; 0.9231; 0.9487;
+                  0.9744; 1" />
+      <animateColor attributeName="color" from="#FFF7AE" to="#CCCCCC"
+            dur="2s" begin="mouseover" restart="whenNotActive" />
+    </use>
+    <use xlink:href="#cube" width="50.508" height="38.98" transform="translate(284.502 76.9973)">
+      <animate attributeName="y" begin="mouseover"
+        restart="whenNotActive" dur="2s" calcMode="spline"
+        keySplines="0 .75 .5 1; .5 0 1 .25; 0 .25 .25 1;
+                    .5 0 1 .5; 0 0 1 1; 0 0 1 1; 0 0 1 1;
+                    0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1"
+        values="0; -45; 0; 16; 0; -7; 0; 3; 0; -2; 0; 1; 0"
+        keyTimes="0; 0.2564; 0.5128; 0.6154; 0.6923; 0.7436;
+                  0.7949; 0.8462; 0.8974; 0.9231; 0.9487;
+                  0.9744; 1" />
+      <animateColor attributeName="color" from="#76FF4A" to="#CCCCCC"
+            dur="2s" begin="mouseover" restart="whenNotActive" />
+    </use>
+    <use xlink:href="#cube" width="50.508" height="38.98" transform="translate(356.502 88.9973)">
+      <animate attributeName="y" begin="mouseover"
+        restart="whenNotActive" dur="2s" calcMode="spline"
+        keySplines="0 .75 .5 1; .5 0 1 .25; 0 .25 .25 1;
+                    .5 0 1 .5; 0 0 1 1; 0 0 1 1; 0 0 1 1;
+                    0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1"
+        values="0; -45; 0; 16; 0; -7; 0; 3; 0; -2; 0; 1; 0"
+        keyTimes="0; 0.2564; 0.5128; 0.6154; 0.6923; 0.7436;
+                  0.7949; 0.8462; 0.8974; 0.9231; 0.9487;
+                  0.9744; 1" />
+      <animateColor attributeName="color" from="#FFB5F3" to="#CCCCCC"
+            dur="2s" begin="mouseover" restart="whenNotActive" />
+    </use>
+    <use xlink:href="#cube" width="50.508" height="38.98" transform="translate(308.502 88.9973)">
+      <animate attributeName="y" begin="mouseover"
+        restart="whenNotActive" dur="2s" calcMode="spline"
+        keySplines="0 .75 .5 1; .5 0 1 .25; 0 .25 .25 1;
+                    .5 0 1 .5; 0 0 1 1; 0 0 1 1; 0 0 1 1;
+                    0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1"
+        values="0; -45; 0; 16; 0; -7; 0; 3; 0; -2; 0; 1; 0"
+        keyTimes="0; 0.2564; 0.5128; 0.6154; 0.6923; 0.7436;
+                  0.7949; 0.8462; 0.8974; 0.9231; 0.9487;
+                  0.9744; 1" />
+      <animateColor attributeName="color" from="#B0FFB1" to="#CCCCCC"
+            dur="2s" begin="mouseover" restart="whenNotActive" />
+    </use>
+    <use xlink:href="#cube" width="50.508" height="38.98" transform="translate(260.502 88.9973)">
+      <animate attributeName="y" begin="mouseover"
+        restart="whenNotActive" dur="2s" calcMode="spline"
+        keySplines="0 .75 .5 1; .5 0 1 .25; 0 .25 .25 1;
+                    .5 0 1 .5; 0 0 1 1; 0 0 1 1; 0 0 1 1;
+                    0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1"
+        values="0; -45; 0; 16; 0; -7; 0; 3; 0; -2; 0; 1; 0"
+        keyTimes="0; 0.2564; 0.5128; 0.6154; 0.6923; 0.7436;
+                  0.7949; 0.8462; 0.8974; 0.9231; 0.9487;
+                  0.9744; 1" />
+      <animateColor attributeName="color" from="#06FF47" to="#CCCCCC"
+            dur="2s" begin="mouseover" restart="whenNotActive" />
+    </use>
+    <use xlink:href="#cube" width="50.508" height="38.98" transform="translate(404.502 88.9973)">
+      <animate attributeName="y" begin="mouseover"
+        restart="whenNotActive" dur="2s" calcMode="spline"
+        keySplines="0 .75 .5 1; .5 0 1 .25; 0 .25 .25 1;
+                    .5 0 1 .5; 0 0 1 1; 0 0 1 1; 0 0 1 1;
+                    0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1"
+        values="0; -45; 0; 16; 0; -7; 0; 3; 0; -2; 0; 1; 0"
+        keyTimes="0; 0.2564; 0.5128; 0.6154; 0.6923; 0.7436;
+                  0.7949; 0.8462; 0.8974; 0.9231; 0.9487;
+                  0.9744; 1" />
+      <animateColor attributeName="color" from="#FE11C6" to="#CCCCCC"
+            dur="2s" begin="mouseover" restart="whenNotActive" />
+    </use>
+    <use xlink:href="#cube" width="50.508" height="38.98" transform="translate(380.502 100.9973)">
+      <animate attributeName="y" begin="mouseover"
+        restart="whenNotActive" dur="2s" calcMode="spline"
+        keySplines="0 .75 .5 1; .5 0 1 .25; 0 .25 .25 1;
+                    .5 0 1 .5; 0 0 1 1; 0 0 1 1; 0 0 1 1;
+                    0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1"
+        values="0; -45; 0; 16; 0; -7; 0; 3; 0; -2; 0; 1; 0"
+        keyTimes="0; 0.2564; 0.5128; 0.6154; 0.6923; 0.7436;
+                  0.7949; 0.8462; 0.8974; 0.9231; 0.9487;
+                  0.9744; 1" />
+      <animateColor attributeName="color" from="#D640FF" to="#CCCCCC"
+            dur="2s" begin="mouseover" restart="whenNotActive" />
+    </use>
+    <use xlink:href="#cube" width="50.508" height="38.98" transform="translate(284.502 100.9973)">
+      <animate attributeName="y" begin="mouseover"
+        restart="whenNotActive" dur="2s" calcMode="spline"
+        keySplines="0 .75 .5 1; .5 0 1 .25; 0 .25 .25 1;
+                    .5 0 1 .5; 0 0 1 1; 0 0 1 1; 0 0 1 1;
+                    0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1"
+        values="0; -45; 0; 16; 0; -7; 0; 3; 0; -2; 0; 1; 0"
+        keyTimes="0; 0.2564; 0.5128; 0.6154; 0.6923; 0.7436;
+                  0.7949; 0.8462; 0.8974; 0.9231; 0.9487;
+                  0.9744; 1" />
+      <animateColor attributeName="color" from="#13D7A2" to="#CCCCCC"
+            dur="2s" begin="mouseover" restart="whenNotActive" />
+    </use>
+    <use xlink:href="#cube" width="50.508" height="38.98" transform="translate(332.502 100.9973)">
+      <animate attributeName="y" begin="mouseover"
+        restart="whenNotActive" dur="2s" calcMode="spline"
+        keySplines="0 .75 .5 1; .5 0 1 .25; 0 .25 .25 1;
+                    .5 0 1 .5; 0 0 1 1; 0 0 1 1; 0 0 1 1;
+                    0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1"
+        values="0; -45; 0; 16; 0; -7; 0; 3; 0; -2; 0; 1; 0"
+        keyTimes="0; 0.2564; 0.5128; 0.6154; 0.6923; 0.7436;
+                  0.7949; 0.8462; 0.8974; 0.9231; 0.9487;
+                  0.9744; 1" />
+      <animateColor attributeName="color" from="#BACDFF" to="#CCCCCC"
+            dur="2s" begin="mouseover" restart="whenNotActive" />
+    </use>
+    <use xlink:href="#cube" width="50.508" height="38.98" transform="translate(356.502 112.9973)">
+      <animate attributeName="y" begin="mouseover"
+        restart="whenNotActive" dur="2s" calcMode="spline"
+        keySplines="0 .75 .5 1; .5 0 1 .25; 0 .25 .25 1;
+                    .5 0 1 .5; 0 0 1 1; 0 0 1 1; 0 0 1 1;
+                    0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1"
+        values="0; -45; 0; 16; 0; -7; 0; 3; 0; -2; 0; 1; 0"
+        keyTimes="0; 0.2564; 0.5128; 0.6154; 0.6923; 0.7436;
+                  0.7949; 0.8462; 0.8974; 0.9231; 0.9487;
+                  0.9744; 1" />
+      <animateColor attributeName="color" from="#6B3Bff" to="#CCCCCC"
+            dur="2s" begin="mouseover" restart="whenNotActive" />
+    </use>
+    <use xlink:href="#cube" width="50.508" height="38.98" transform="translate(308.502 112.9973)">
+      <animate attributeName="y" begin="mouseover"
+        restart="whenNotActive" dur="2s" calcMode="spline"
+        keySplines="0 .75 .5 1; .5 0 1 .25; 0 .25 .25 1;
+                    .5 0 1 .5; 0 0 1 1; 0 0 1 1; 0 0 1 1;
+                    0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1"
+        values="0; -45; 0; 16; 0; -7; 0; 3; 0; -2; 0; 1; 0"
+        keyTimes="0; 0.2564; 0.5128; 0.6154; 0.6923; 0.7436;
+                  0.7949; 0.8462; 0.8974; 0.9231; 0.9487;
+                  0.9744; 1" />
+      <animateColor attributeName="color" from="#39B6FF" to="#CCCCCC"
+            dur="2s" begin="mouseover" restart="whenNotActive" />
+    </use>
+    <use xlink:href="#cube" width="50.508" height="38.98" transform="translate(332.502 124.9973)">
+      <animate attributeName="y" begin="mouseover"
+        restart="whenNotActive" dur="2s" calcMode="spline"
+        keySplines="0 .75 .5 1; .5 0 1 .25; 0 .25 .25 1;
+                    .5 0 1 .5; 0 0 1 1; 0 0 1 1; 0 0 1 1;
+                    0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1; 0 0 1 1"
+        values="0; -45; 0; 16; 0; -7; 0; 3; 0; -2; 0; 1; 0"
+        keyTimes="0; 0.2564; 0.5128; 0.6154; 0.6923; 0.7436;
+                  0.7949; 0.8462; 0.8974; 0.9231; 0.9487;
+                  0.9744; 1" />
+      <animateColor attributeName="color" from="#0040FF" to="#CCCCCC"
+            dur="2s" begin="mouseover" restart="whenNotActive" />
+    </use>
+  </g>
+
+</svg>

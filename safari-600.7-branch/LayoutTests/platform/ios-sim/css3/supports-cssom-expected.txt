@@ -1,0 +1,77 @@
+Test CSSSupportRule.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL CSSRule.SUPPORTS_RULE should be defined. Was undefined
+rules = document.styleSheets[1].cssRules
+FAIL rules.length should be 4. Was 1.
+FAIL rules[0].type should be undefined (of type undefined). Was 4 (of type number).
+FAIL rules[0].cssRules.length should be 2. Was 0.
+FAIL rules[0].cssRules[0].type should be 1. Threw exception TypeError: undefined is not an object (evaluating 'rules[0].cssRules[0].type')
+FAIL rules[0].cssRules[1].type should be undefined. Threw exception TypeError: undefined is not an object (evaluating 'rules[0].cssRules[1].type')
+FAIL rules[0].cssRules[1].cssRules.length should be 1. Threw exception TypeError: undefined is not an object (evaluating 'rules[0].cssRules[1].cssRules')
+FAIL rules[0].cssRules[1].cssRules[0].type should be 1. Threw exception TypeError: undefined is not an object (evaluating 'rules[0].cssRules[1].cssRules')
+FAIL rules[0].conditionText should be (width: 0) (of type string). Was undefined (of type undefined).
+FAIL rules[0].cssText should be @supports (width: 0) {
+  s { width: 0px; }
+  @supports (width: 1) {
+  s { color: rgb(0, 0, 0); }
+}
+}. Was @media all { 
+}.
+
+Inserting and deleting rules.
+rules[0].insertRule('@media all { #s { width: 0px; } }', 2)
+FAIL rules[0].insertRule('@media all { #s { width: 0px; } }', 2) threw exception Error: IndexSizeError: DOM Exception 1
+FAIL rules[0].cssRules.length should be 3. Was 0.
+FAIL rules[0].cssRules[2].type should be 4. Threw exception TypeError: undefined is not an object (evaluating 'rules[0].cssRules[2].type')
+rules[0].deleteRule(2)
+FAIL rules[0].deleteRule(2) threw exception Error: IndexSizeError: DOM Exception 1
+FAIL rules[0].cssRules.length should be 2. Was 0.
+rules[0].cssRules[1].insertRule('@supports (display: rainbow) {}', 1)
+FAIL rules[0].cssRules[1].insertRule('@supports (display: rainbow) {}', 1) threw exception TypeError: undefined is not an object (evaluating 'rules[0].cssRules[1].insertRule')
+FAIL rules[0].cssRules[1].cssRules.length should be 2. Threw exception TypeError: undefined is not an object (evaluating 'rules[0].cssRules[1].cssRules')
+FAIL rules[0].cssRules[1].cssRules[1].type should be undefined. Threw exception TypeError: undefined is not an object (evaluating 'rules[0].cssRules[1].cssRules')
+rules[0].cssRules[1].deleteRule(1)
+FAIL rules[0].cssRules[1].deleteRule(1) threw exception TypeError: undefined is not an object (evaluating 'rules[0].cssRules[1].deleteRule')
+FAIL rules[0].cssRules.length should be 2. Was 0.
+
+@charset, @namespace, @import rules are not allowed inside @supports.
+PASS rules[0].insertRule('@charset "UTF-8"', 2) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS rules[0].insertRule('@namespace ""', 2) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS rules[0].insertRule('@import url("../fast/cssom/resources/import.css")', 2) threw exception Error: IndexSizeError: DOM Exception 1.
+
+Whitespace and formatting should be preserved within the condition, whitespace outside the condition should be trimmed.
+FAIL rules[1].conditionText should be ((  (     padding: 0)    and (display: none)) or (display: rainbow)). Threw exception TypeError: undefined is not an object (evaluating 'rules[1].conditionText')
+
+@supports rule nested inside a media rule.
+FAIL rules[2].type should be 4. Threw exception TypeError: undefined is not an object (evaluating 'rules[2].type')
+FAIL rules[2].cssRules.length should be 1. Threw exception TypeError: undefined is not an object (evaluating 'rules[2].cssRules')
+FAIL rules[2].cssRules[0].type should be undefined. Threw exception TypeError: undefined is not an object (evaluating 'rules[2].cssRules')
+FAIL rules[2].cssRules[0].conditionText should be ( padding: 0). Threw exception TypeError: undefined is not an object (evaluating 'rules[2].cssRules')
+FAIL rules[0].cssRules[1].cssRules.length should be 1. Threw exception TypeError: undefined is not an object (evaluating 'rules[0].cssRules[1].cssRules')
+FAIL rules[2].cssRules[0].cssRules[0].type should be 6. Threw exception TypeError: undefined is not an object (evaluating 'rules[2].cssRules')
+FAIL rules[2].cssText should be @media all { 
+  @supports ( padding: 0) {
+  @page :left { top: 0px; }
+}
+}. Threw exception TypeError: undefined is not an object (evaluating 'rules[2].cssText')
+
+No extra parens should be added to the conditionText.
+FAIL rules[3].conditionText should be (border: black) and (padding: 0) and (width: 0). Threw exception TypeError: undefined is not an object (evaluating 'rules[3].conditionText')
+
+Deleting a top-level rule should work correctly.
+document.styleSheets[1].deleteRule(3)
+FAIL document.styleSheets[1].deleteRule(3) threw exception Error: IndexSizeError: DOM Exception 1
+FAIL rules.length should be 3. Was 1.
+FAIL rules[0].type should be undefined (of type undefined). Was 4 (of type number).
+FAIL rules[0].cssRules.length should be 2. Was 0.
+FAIL rules[0].cssRules[0].type should be 1. Threw exception TypeError: undefined is not an object (evaluating 'rules[0].cssRules[0].type')
+FAIL rules[0].cssRules[1].type should be undefined. Threw exception TypeError: undefined is not an object (evaluating 'rules[0].cssRules[1].type')
+FAIL rules[0].cssRules[1].cssRules.length should be 1. Threw exception TypeError: undefined is not an object (evaluating 'rules[0].cssRules[1].cssRules')
+FAIL rules[0].cssRules[1].cssRules[0].type should be 1. Threw exception TypeError: undefined is not an object (evaluating 'rules[0].cssRules[1].cssRules')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,17 @@
+<head>
+<script>
+function test()
+{
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    document.all.input.value = "PASS"
+    if (window.testRunner)
+        document.getElementById('res').innerText = document.all.input.value;
+}
+</script>
+</head>
+<body onload="test();">
+<p>This tests setting inputs using document.all. If successful, the input should show PASS.<form>
+<input name="input">
+<div id="res"></div>
+</body>

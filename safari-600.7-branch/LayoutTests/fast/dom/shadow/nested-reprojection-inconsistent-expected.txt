@@ -1,0 +1,26 @@
+When we modify host children and get distributed nodes in nested ShadowDOM, distribution should occur from the host.
+
+Adds a div to ShadowRoot.
+PASS content.getDistributedNodes().length is 2
+PASS content.getDistributedNodes().item(0) is div1
+PASS content.getDistributedNodes().item(1) is addedDiv
+
+Adds a div as fallback content
+PASS content.getDistributedNodes().length is 3
+PASS content.getDistributedNodes().item(0) is div1
+PASS content.getDistributedNodes().item(1) is anotherAddedDiv
+PASS content.getDistributedNodes().item(2) is addedDiv
+
+Removes the first added div
+PASS content.getDistributedNodes().length is 2
+PASS content.getDistributedNodes().item(0) is div1
+PASS content.getDistributedNodes().item(1) is anotherAddedDiv
+
+Removes the second added div
+PASS content.getDistributedNodes().length is 1
+PASS content.getDistributedNodes().item(0) is div1
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

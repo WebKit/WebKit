@@ -1,0 +1,8 @@
+Description
+
+This test validates that the frame initiator type is represented.
+
+
+
+PASS /w3c/webperf/resources/blank_page_green.htm is expected to have initiatorType frame 
+

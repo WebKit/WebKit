@@ -1,0 +1,33 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 212x17
+          text run at (0,0) width 212: "This tests for a regression against "
+        RenderInline {I} at (0,0) size 742x35
+          RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
+            RenderText {#text} at (212,0) size 348x17
+              text run at (212,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6397"
+          RenderText {#text} at (560,0) size 742x35
+            text run at (560,0) width 182: " ATSUI small caps use small"
+            text run at (0,18) width 75: "punctuation"
+        RenderText {#text} at (75,18) size 4x17
+          text run at (75,18) width 4: "."
+      RenderBlock {P} at (0,52) size 784x18
+        RenderText {#text} at (0,0) size 367x17
+          text run at (0,0) width 367: "All four question marks below should be \x{201C}big\x{201D}, like this: ?"
+      RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,104) size 784x18
+        RenderText {#text} at (0,0) size 56x17
+          text run at (0,0) width 56: "ATSUI: "
+        RenderInline {SPAN} at (0,0) size 40x17
+          RenderText {#text} at (56,0) size 40x17
+            text run at (56,0) width 40: "A?b?e\x{300}"
+      RenderBlock {P} at (0,138) size 784x18
+        RenderText {#text} at (0,0) size 31x17
+          text run at (0,0) width 31: "CG: "
+        RenderInline {SPAN} at (0,0) size 40x17
+          RenderText {#text} at (31,0) size 40x17
+            text run at (31,0) width 40: "A?b?e"

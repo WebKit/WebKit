@@ -1,0 +1,138 @@
+Id should be collected
+PASS internals.hasSelectorForIdInShadow(host, "foo") is true
+PASS internals.hasSelectorForIdInShadow(host, "bar") is false
+PASS internals.hasSelectorForIdInShadow(host, "host") is false
+
+Class should be collected
+PASS internals.hasSelectorForClassInShadow(host, "foo") is true
+PASS internals.hasSelectorForClassInShadow(host, "host") is false
+
+Attribute should be collected
+PASS internals.hasSelectorForAttributeInShadow(host, "foo") is true
+PASS internals.hasSelectorForAttributeInShadow(host, "host") is false
+
+Select attribute might have several selectors
+PASS internals.hasSelectorForIdInShadow(host, "foo") is true
+PASS internals.hasSelectorForIdInShadow(host, "bar") is false
+PASS internals.hasSelectorForIdInShadow(host, "baz") is false
+PASS internals.hasSelectorForClassInShadow(host, "foo") is false
+PASS internals.hasSelectorForClassInShadow(host, "bar") is true
+PASS internals.hasSelectorForClassInShadow(host, "baz") is false
+PASS internals.hasSelectorForAttributeInShadow(host, "foo") is false
+PASS internals.hasSelectorForAttributeInShadow(host, "bar") is false
+PASS internals.hasSelectorForAttributeInShadow(host, "baz") is true
+
+Don't count shadow element
+PASS internals.hasSelectorForIdInShadow(host, "foo") is false
+PASS internals.hasSelectorForIdInShadow(host, "bar") is false
+PASS internals.hasSelectorForIdInShadow(host, "baz") is false
+PASS internals.hasSelectorForClassInShadow(host, "foo") is false
+PASS internals.hasSelectorForClassInShadow(host, "bar") is false
+PASS internals.hasSelectorForClassInShadow(host, "baz") is false
+PASS internals.hasSelectorForAttributeInShadow(host, "foo") is false
+PASS internals.hasSelectorForAttributeInShadow(host, "bar") is false
+PASS internals.hasSelectorForAttributeInShadow(host, "baz") is false
+
+Complex case for single ShadowRoot
+PASS internals.hasSelectorForIdInShadow(host, "foo") is false
+PASS internals.hasSelectorForClassInShadow(host, "foo") is false
+PASS internals.hasSelectorForAttributeInShadow(host, "foo") is true
+PASS internals.hasSelectorForAttributeInShadow(host, "piyo") is false
+
+Another complex case for single ShadowRoot
+PASS internals.hasSelectorForIdInShadow(host, "foo") is true
+PASS internals.hasSelectorForClassInShadow(host, "foo") is true
+PASS internals.hasSelectorForAttributeInShadow(host, "foo") is true
+
+Multiple ShadowRoot case
+PASS internals.hasSelectorForIdInShadow(host, "foo") is true
+PASS internals.hasSelectorForIdInShadow(host, "bar") is true
+PASS internals.hasSelectorForIdInShadow(host, "baz") is false
+PASS internals.hasSelectorForClassInShadow(host, "foo") is false
+PASS internals.hasSelectorForClassInShadow(host, "bar") is true
+PASS internals.hasSelectorForClassInShadow(host, "baz") is false
+PASS internals.hasSelectorForAttributeInShadow(host, "foo") is false
+PASS internals.hasSelectorForAttributeInShadow(host, "bar") is false
+PASS internals.hasSelectorForAttributeInShadow(host, "baz") is true
+
+Dynamic select attribute update
+PASS internals.hasSelectorForIdInShadow(host, "foo") is true
+PASS internals.hasSelectorForIdInShadow(host, "bar") is false
+PASS internals.hasSelectorForIdInShadow(host, "foo") is false
+PASS internals.hasSelectorForIdInShadow(host, "bar") is true
+
+Nested ShadowDOM case
+PASS internals.hasSelectorForIdInShadow(host, "foo") is true
+PASS internals.hasSelectorForIdInShadow(host, "bar") is true
+PASS internals.hasSelectorForIdInShadow(host, "baz") is false
+PASS internals.hasSelectorForIdInShadow(host, "foo") is true
+PASS internals.hasSelectorForIdInShadow(host, "bar") is false
+PASS internals.hasSelectorForIdInShadow(host, "baz") is true
+
+PseudoClass case: :checked
+PASS internals.hasSelectorForPseudoClassInShadow(host, "checked") is true
+PASS internals.hasSelectorForPseudoClassInShadow(host, "enabled") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "disabled") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "indeterminate") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "link") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "target") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "visited") is false
+
+PseudoClass case: :enabled
+PASS internals.hasSelectorForPseudoClassInShadow(host, "checked") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "enabled") is true
+PASS internals.hasSelectorForPseudoClassInShadow(host, "disabled") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "indeterminate") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "link") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "target") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "visited") is false
+
+PseudoClass case: :disabled
+PASS internals.hasSelectorForPseudoClassInShadow(host, "checked") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "enabled") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "disabled") is true
+PASS internals.hasSelectorForPseudoClassInShadow(host, "indeterminate") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "link") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "target") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "visited") is false
+
+PseudoClass case: :indeterminate
+PASS internals.hasSelectorForPseudoClassInShadow(host, "checked") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "enabled") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "disabled") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "indeterminate") is true
+PASS internals.hasSelectorForPseudoClassInShadow(host, "link") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "target") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "visited") is false
+
+PseudoClass case: :link
+PASS internals.hasSelectorForPseudoClassInShadow(host, "checked") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "enabled") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "disabled") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "indeterminate") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "link") is true
+PASS internals.hasSelectorForPseudoClassInShadow(host, "target") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "visited") is false
+
+PseudoClass case: :target
+PASS internals.hasSelectorForPseudoClassInShadow(host, "checked") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "enabled") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "disabled") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "indeterminate") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "link") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "target") is true
+PASS internals.hasSelectorForPseudoClassInShadow(host, "visited") is false
+
+PseudoClass case: :visited
+PASS internals.hasSelectorForPseudoClassInShadow(host, "checked") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "enabled") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "disabled") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "indeterminate") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "link") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "target") is false
+PASS internals.hasSelectorForPseudoClassInShadow(host, "visited") is true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

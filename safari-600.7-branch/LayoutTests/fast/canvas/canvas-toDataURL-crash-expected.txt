@@ -1,0 +1,5 @@
+PASS
+
+Calling toDataURL() on a huge canvas shouldn't crash. If the text above is "PASS", the test passed.
+
+

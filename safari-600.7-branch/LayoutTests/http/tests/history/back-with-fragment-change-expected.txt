@@ -1,0 +1,9 @@
+main frame - has 1 onunload handler(s)
+CONSOLE MESSAGE: line 19: Visited fragment and waited.
+PASS
+
+============== Back Forward List ==============
+        http://127.0.0.1:8000/history/back-with-fragment-change.php  **nav target**
+        http://127.0.0.1:8000/history/resources/back-with-fragment-change-target.html  **nav target**
+curr->  http://127.0.0.1:8000/history/resources/back-with-fragment-change-target.html#foo  **nav target**
+===============================================

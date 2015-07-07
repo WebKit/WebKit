@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p>This test checks the object 'host.webkitCreateShadowRoot()' and internals.shadowRoot(div) are the same.</p>
+<pre id="console"></pre>
+
+<script>
+function doTest() {
+    if (!window.internals) {
+        debug('This test runs on DRT only');
+        return;
+    }
+
+    div = document.createElement('div');
+    // we should call webKitCreateShadowRoot first.
+    root1 = div.webkitCreateShadowRoot();
+    root2 = internals.shadowRoot(div);
+
+    shouldBe('root1', 'root2');
+}
+
+doTest();
+var successfullyParsed = true;
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

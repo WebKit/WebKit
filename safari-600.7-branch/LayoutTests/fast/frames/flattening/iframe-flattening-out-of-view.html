@@ -1,0 +1,33 @@
+<html>
+<head>
+    <script type="text/javascript">
+        function test()
+        {
+            if (window.internals)
+                internals.settings.setFrameFlatteningEnabled(true);
+            // Force synchronous layout.
+            document.body.offsetHeight;
+        }
+    </script>
+</head>
+<body onload="test()">
+    <div>
+        <p>Test that an iframe with negative coordinates is not flattened, but an iframe with positive coordinates is, even if it is out of view.
+    </div>
+
+    <!-- DRT size is 800x600 pixels, one needs to be flexible in order to use frame flattening -->
+    <p><iframe width="25%" height="200" style='border: 0px; position: absolute; left: 0px; top: -200px;' src="data:text/html,
+        <style>body { background-color: red; }</style>
+        <body>
+            <div style='position: absolute; width: 800px; height: 800px; left: 0; top: 0px;'>You should not see me.</div>
+        </body>
+        "></iframe>
+
+    <p><iframe width="25%" height="200" style='border: 0px; position: absolute; left: 1200px; top: 0px;' src="data:text/html,
+        <style>body { background-color: blue; }</style>
+        <body>
+            <div style='position: absolute; width: 8000px; height: 800px; left: 0; top: 0px;'>You will not see me but you will see the horizontal scrollbar streching.</div>
+        </body>
+        "></iframe>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<html>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+<body id="body" contenteditable>
+ 
+    <!-- this test should show that the iframe has a writable AXValue because it has a 
+         contenteditable attribute -->
+
+    Text
+    
+    <div id="result"></div>
+
+     
+    <script>
+        if (window.accessibilityController) {
+            var result = document.getElementById("result");
+
+            var body = document.getElementById("body");
+            body.focus();
+            body = accessibilityController.focusedElement;
+            
+            result.innerText += "Is settable: "  + body.isAttributeSettable("AXValue") + "\n\n";
+        }
+    </script>
+</body>
+</html>

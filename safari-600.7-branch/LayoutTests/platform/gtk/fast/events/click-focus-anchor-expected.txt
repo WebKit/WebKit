@@ -1,0 +1,11 @@
+This test ensures that we can click to focus an a element. Click on the element below.
+
+The expected result is platform specific. GTK, QT and EFL allows all links to be mouse focusable.
+
+Result
+
+
+a1 received focus (focusable)
+a3 received focus (focusable on GTK, QT and EFL)
+a4 received focus (focusable)
+a5 received focus (focusable)

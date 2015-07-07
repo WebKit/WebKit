@@ -1,0 +1,26 @@
+<html>
+<head>
+    <script type="text/javascript">
+        function test()
+        {
+            if (window.internals)
+                internals.settings.setFrameFlatteningEnabled(true);
+            // Force synchronous layout.
+            document.body.offsetHeight;
+        }
+    </script>
+</head>
+<body>
+    <style>body { background-color: green; }</style>
+    <p>Test for iframe flattening. The flattening only works inside the DRT.
+    <p>This inner frame should be 200px in each direction, disregarding the
+       border, and it must not be scrollable or have scrollbars.
+
+    <p><iframe onload="test()" width="200px" height="200px" scrolling=no src="data:text/html,
+        <style>body { background-color: red; }</style>
+        <body>
+            <div style='position: absolute; width: 400px; height: 400px; left: 0; top: 0px;'></div>
+        </body>
+        "></iframe>
+</body>
+</html>

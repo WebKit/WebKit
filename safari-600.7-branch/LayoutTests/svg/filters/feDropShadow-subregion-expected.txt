@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 100x100
+  RenderSVGRoot {svg} at (0,0) size 70x70
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceFilter {filter} [id="DropShadow"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feComposite operation="OVER"]
+          [feDropShadow stdDeviation="10.00, 10.00" dx="10.00" dy="10.00" flood-color="#FF0000" flood-opacity="1.00]
+            [SourceGraphic]
+          [feOffset dx="10.00" dy="10.00"]
+            [SourceGraphic]
+    RenderSVGRect {rect} at (0,0) size 70x70 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=40.00] [height=40.00]
+      [filter="DropShadow"] RenderSVGResourceFilter {filter} at (-10,-10) size 80x80

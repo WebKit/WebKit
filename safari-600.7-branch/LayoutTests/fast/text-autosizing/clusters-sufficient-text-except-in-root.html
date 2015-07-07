@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta name="viewport" content="width=800">
+<style>
+html { font-size: 16px; }
+body { margin: 0; overflow-y: hidden; }
+</style>
+
+<script>
+if (window.internals) {
+    window.internals.settings.setTextAutosizingEnabled(true);
+    window.internals.settings.setTextAutosizingWindowSizeOverride(320, 480);
+} else if (window.console && console.warn) {
+    console.warn("This test depends on the Text Autosizing setting being true, so run it in DumpRenderTree, or manually enable Text Autosizing, and either use a mobile device with 320px device-width (like Nexus S or iPhone), or define HACK_FORCE_TEXT_AUTOSIZING_ON_DESKTOP.");
+}
+</script>
+
+</head>
+<body style="width: 640px; position: relative">
+
+<div style="position: absolute">
+    This text should be autosized to 32px computed font size, but the position:absolute causes this to be a new cluster, so it shouldn't affect the footer.<br>
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+</div>
+
+<div style="margin-top: 185px; float: left">
+    This text should be autosized to 32px computed font size, but the float:left causes this to be a new cluster, so it shouldn't affect the footer.<br>
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+</div>
+
+<table>
+    <tr>
+        <td>
+            This text should be autosized to 32px computed font size, but being a table cell causes this to be a new cluster, so it shouldn't affect the footer.<br>
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+        </td>
+    </tr>
+</table>
+
+<!-- FIXME: Include vertical writing-mode example once http://webkit.org/b/96557 is fixed. -->
+
+<div>
+    This shouldn't be autosized (computed font size should remain 16px), as all text above is in other clusters, so the root cluster doesn't contain enough text.
+</div>
+
+</body>
+</html>

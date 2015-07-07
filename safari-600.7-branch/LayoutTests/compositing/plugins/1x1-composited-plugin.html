@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style type="text/css" media="screen">
+    embed {
+      height: 1px;
+      width: 1px;
+      border: 1px solid black;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function doTest()
+    {
+        window.setTimeout(function() {
+            if (window.testRunner) {
+                var layers = window.internals.layerTreeAsText(document);
+                var result;
+                if (layers == "")
+                  result = "PASS: no layers found";
+                else
+                  result = "FAIL: found layers " + layers;
+                document.getElementById('result').innerHTML = result;
+                testRunner.notifyDone();
+            }
+        }, 0);
+    }
+
+    window.addEventListener('load', doTest, false);
+  </script>
+</head>
+<body>
+    <embed type="application/x-webkit-test-netscape" width="1" height="1" drawingmodel="coreanimation">
+    <embed type="application/x-webkit-test-netscape" width="100" height="0" drawingmodel="coreanimation">
+
+    <div id="result">Test only works in DRT</div>
+</body>
+</html>

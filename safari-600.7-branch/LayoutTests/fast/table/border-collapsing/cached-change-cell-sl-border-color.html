@@ -1,0 +1,34 @@
+<!--
+Calculating collapsed borders for big tables is expensive, so we cache them and recalculate when needed.
+Here we:
+1. Remove DIV text, this requests layout for DIV, but only simplified layout for TABLE;
+2. Change cell border color, expect that cache is invalidated and paint produces expected image.
+-->
+<html>
+    <head>
+        <title></title>
+        <link rel="stylesheet" href="resources/cached.css">
+        <script type="text/javascript">
+            function test() {
+                document.body.offsetTop;
+                if (window.testRunner)
+                    testRunner.display();
+                // remove text, this requests layout for DIV,
+                // but only simplified layout for TABLE
+                document.getElementById("blockDiv").innerText = "";
+                // change color, no layout for TABLE, only repaint
+                document.getElementById("foo").style.borderColor = "lime";
+            }
+        </script>
+    </head>
+    <body onload="test()">
+        <table style="border-collapse:collapse; border:2px solid blue; position: relative;">
+            <tr>
+                <td style="border:4px solid pink" id="foo"/>
+                <td style="border:1px solid black"/>
+                <div id="blockDiv">A</div>
+            </tr>
+        </table>
+    </body>
+</html>
+        

@@ -1,0 +1,19 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
+    window.testRunner.addUserStyleSheet("#mixedCase { display: none }", true);
+}
+</script>
+</head>
+<body>
+<script>
+document.appendChild(document.implementation.createDocumentType("html", 0, 0));
+</script>
+<div>If the word fail appears below, then test has failed.</div>
+<div id="mixedCase">FAIL</div>
+</body>
+</html>
+
+

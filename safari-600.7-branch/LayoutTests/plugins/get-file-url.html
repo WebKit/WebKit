@@ -1,0 +1,41 @@
+<html>
+<body>
+<embed id="plg" type="application/x-webkit-test-netscape"></embed><P>
+
+This tests that file URLs can embed plugins which can successfully
+load other File URLs from the Plugin.  (Via the NPN_GetURL API)
+
+<div id="result">FAILED</div>
+<iframe name="output">Output Goes Here</iframe>
+
+<script>
+function CheckForFinished() {
+  if (window.subframe_done == 1) {
+    var result = document.getElementById("result");
+    result.innerHTML = "SUCCESS";
+    if (testRunner) {
+      testRunner.notifyDone();
+    }
+  } else {
+    setTimeout(CheckForFinished, 10);
+  }
+}
+
+function runtest() {
+  window.subframe_done = 0;
+  var loc = window.location.toString();
+  var subfile = loc.replace(/get-file-url.html/,"resources/get-file-url-subframe.html");
+  var plg = document.getElementById("plg");
+  plg.getURL(subfile, "output");
+  setTimeout(CheckForFinished, 10);
+}
+
+if (testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+runtest();
+</script>
+</body>
+</html>
+

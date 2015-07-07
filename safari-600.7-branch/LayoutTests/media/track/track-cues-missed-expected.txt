@@ -1,0 +1,49 @@
+Tests that events are triggered for missed (skipped) cues during normal playback.
+
+
+EVENT(canplaythrough)
+EXPECTED (testTrack.track.cues.length == '7') OK
+RUN(video.play())
+
+EVENT(enter)
+EXPECTED (testTrack.track.cues.getCueById(cueCount).text == 'I said Bear is coming now!!!!') OK
+EXPECTED (currentCue.id == '3') OK
+
+EVENT(exit)
+EXPECTED (testTrack.track.cues.getCueById(cueCount).text == 'I said Bear is coming now!!!!') OK
+EXPECTED (currentCue.id == '3') OK
+
+EVENT(enter)
+EXPECTED (testTrack.track.cues.getCueById(cueCount).text == 'This is the second missed cue in the test.') OK
+EXPECTED (currentCue.id == '4') OK
+
+EVENT(exit)
+EXPECTED (testTrack.track.cues.getCueById(cueCount).text == 'This is the second missed cue in the test.') OK
+EXPECTED (currentCue.id == '4') OK
+
+EVENT(enter)
+EXPECTED (testTrack.track.cues.getCueById(cueCount).text == 'Third missed cue - zero-length cue.') OK
+EXPECTED (currentCue.id == '5') OK
+
+EVENT(exit)
+EXPECTED (testTrack.track.cues.getCueById(cueCount).text == 'Third missed cue - zero-length cue.') OK
+EXPECTED (currentCue.id == '5') OK
+
+EVENT(enter)
+EXPECTED (testTrack.track.cues.getCueById(cueCount).text == 'Fourth missed cue.') OK
+EXPECTED (currentCue.id == '6') OK
+
+EVENT(exit)
+EXPECTED (testTrack.track.cues.getCueById(cueCount).text == 'Fourth missed cue.') OK
+EXPECTED (currentCue.id == '6') OK
+
+EVENT(enter)
+EXPECTED (testTrack.track.cues.getCueById(cueCount).text == 'Negative length cue. Should be treated correctly.') OK
+EXPECTED (currentCue.id == '7') OK
+
+EVENT(exit)
+EXPECTED (testTrack.track.cues.getCueById(cueCount).text == 'Negative length cue. Should be treated correctly.') OK
+EXPECTED (currentCue.id == '7') OK
+EVENT(ended)
+END OF TEST
+

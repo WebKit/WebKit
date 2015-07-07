@@ -1,0 +1,6 @@
+S11.5.3_A4_T6
+
+FAIL SputnikError: #3.2: -0 % 1 === - 0. Actual: +0
+
+TEST COMPLETE
+

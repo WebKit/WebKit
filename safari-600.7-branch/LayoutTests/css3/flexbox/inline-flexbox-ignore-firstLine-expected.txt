@@ -1,0 +1,7 @@
+This test inline-flexbox item should ignore flex container's firstLine pseudo element.
+
+The first item.
+
+The second item.
+
+PASS

@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <script src="../fast/js/resources/js-test-pre.js"></script>
+   </head>
+<body style="height:5000px;">
+<script>
+description("Test that changing the viewport causes a window.resize event.");
+
+window.jsTestIsAsync = true;
+
+var windowResizeCount = 0;
+
+window.onresize = function(event)
+{
+    ++windowResizeCount;
+}
+
+function finishTest() {
+    shouldBe("windowResizeCount", "0");
+    finishJSTest();
+}
+
+window.onload = function() {
+    setTimeout(function() {
+        document.body.style.height = '1000px';
+        document.body.offsetHeight;
+        document.body.style.height = '2000px';
+        document.body.offsetHeight;
+        document.body.style.height = '3000px';
+        document.body.offsetHeight;
+        document.body.style.height = '5000px';
+        document.body.offsetHeight;
+        setTimeout(finishTest, 100);
+    }, 0);
+}
+</script>
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
+

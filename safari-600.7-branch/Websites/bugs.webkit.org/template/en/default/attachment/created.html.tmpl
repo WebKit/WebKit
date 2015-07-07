@@ -1,0 +1,81 @@
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla Bug Tracking System.
+  #
+  # The Initial Developer of the Original Code is Netscape Communications
+  # Corporation. Portions created by Netscape are
+  # Copyright (C) 1998 Netscape Communications Corporation. All
+  # Rights Reserved.
+  #
+  # Contributor(s): Myk Melez <myk@mozilla.org>
+  #%]
+
+[%# INTERFACE:
+  # attachment: object of the attachment just created.
+  # contenttypemethod: string. How we got the content type of the attachment.
+  #  Possible values: autodetect, list, manual.
+  #%]
+
+[% PROCESS global/variables.none.tmpl %]
+[% bug = bugs.0 %]
+[% bodyclasses = ['bz_bug',
+                 "bz_status_$bug.bug_status",
+                 "bz_component_$bug.component",
+                 "bz_bug_$bug.bug_id"
+                 ]
+%]
+[% FOREACH group = bug.groups_in %]
+  [% bodyclasses.push("bz_group_$group.name") %]
+[% END %]
+
+[% PROCESS global/header.html.tmpl
+  title = "Attachment $attachment.id added to $terms.Bug $attachment.bug_id"
+  bodyclasses = bodyclasses
+  javascript_urls = [ "js/util.js", "js/field.js",
+                      "js/yui/yahoo-dom-event.js", "js/yui/calendar.js" ]
+  style_urls = [ "skins/standard/yui/calendar.css", "skins/standard/show_bug.css" ]
+  doc_section = "bug_page.html"
+%]
+
+<dl>
+  <dt>
+    <a title="[% attachment.description FILTER html %]"
+       href="attachment.cgi?id=[% attachment.id %]&amp;action=edit">Attachment #[% attachment.id %]</a>
+    to [% "$terms.bug $attachment.bug_id" FILTER bug_link(attachment.bug_id) FILTER none %] created
+  </dt>
+  <dd>
+    [% PROCESS "bug/process/bugmail.html.tmpl" mailing_bugid = attachment.bug_id %]
+    [% IF convertedbmp %]
+      <p>
+        <b>Note:</b> [% terms.Bugzilla %] automatically converted your BMP image file to a
+        compressed PNG format.
+      </p>
+    [% END %]
+    [% IF contenttypemethod == 'autodetect' %]
+      <p>
+        <b>Note:</b> [% terms.Bugzilla %] automatically detected the content type
+        <em>[% attachment.contenttype FILTER html %]</em> for this attachment.  If this is
+        incorrect, correct the value by editing the attachment's
+        <a href="attachment.cgi?id=[% attachment.id %]&amp;action=edit">details</a>.
+      </p>
+    [% END %]
+
+    [%# Links to more information about the changed bug. %]
+    [% Hook.process("links") %]
+  </dd>
+</dl>
+
+<p>
+<a href="attachment.cgi?bugid=[% attachment.bug_id %]&amp;action=enter">Create
+ Another Attachment to [% terms.Bug %] [%+ attachment.bug_id %]</a>
+</p>
+
+[% PROCESS bug/show.html.tmpl %]

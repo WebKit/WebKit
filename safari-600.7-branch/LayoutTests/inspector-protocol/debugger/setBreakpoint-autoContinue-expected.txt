@@ -1,0 +1,13 @@
+Debugger.setBreakpoint options.autoContinue
+
+Found breakpoint.js
+Running breakpointAutomaticallyContinue multiple times with automatically continue
+inside breakpointAutomaticallyContinue
+inside breakpointAutomaticallyContinue
+inside breakpointAutomaticallyContinue
+Removing breakpoint
+Setting new breakpoint without autoContinue that should trigger
+inside breakpointAutomaticallyContinue
+Hit Breakpoint!
+PASS: hit breakpoint when allowed.
+

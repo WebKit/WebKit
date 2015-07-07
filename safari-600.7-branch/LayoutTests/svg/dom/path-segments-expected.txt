@@ -1,0 +1,129 @@
+This tests the SVG path segment DOM by creating paths and inspecting their properties.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS SVGPathSeg.PATHSEG_UNKNOWN is 0
+PASS SVGPathSeg.PATHSEG_CLOSEPATH is 1
+PASS SVGPathSeg.PATHSEG_MOVETO_ABS is 2
+PASS SVGPathSeg.PATHSEG_MOVETO_REL is 3
+PASS SVGPathSeg.PATHSEG_LINETO_ABS is 4
+PASS SVGPathSeg.PATHSEG_LINETO_REL is 5
+PASS SVGPathSeg.PATHSEG_CURVETO_CUBIC_ABS is 6
+PASS SVGPathSeg.PATHSEG_CURVETO_CUBIC_REL is 7
+PASS SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_ABS is 8
+PASS SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_REL is 9
+PASS SVGPathSeg.PATHSEG_ARC_ABS is 10
+PASS SVGPathSeg.PATHSEG_ARC_REL is 11
+PASS SVGPathSeg.PATHSEG_LINETO_HORIZONTAL_ABS is 12
+PASS SVGPathSeg.PATHSEG_LINETO_HORIZONTAL_REL is 13
+PASS SVGPathSeg.PATHSEG_LINETO_VERTICAL_ABS is 14
+PASS SVGPathSeg.PATHSEG_LINETO_VERTICAL_REL is 15
+PASS SVGPathSeg.PATHSEG_CURVETO_CUBIC_SMOOTH_ABS is 16
+PASS SVGPathSeg.PATHSEG_CURVETO_CUBIC_SMOOTH_REL is 17
+PASS SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS is 18
+PASS SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL is 19
+PASS pathElement.createSVGPathSegClosePath().pathSegType is SVGPathSeg.PATHSEG_CLOSEPATH
+PASS pathElement.createSVGPathSegClosePath().pathSegTypeAsLetter is 'Z'
+PASS pathElement.createSVGPathSegMovetoAbs(1, 2).pathSegType is SVGPathSeg.PATHSEG_MOVETO_ABS
+PASS pathElement.createSVGPathSegMovetoAbs(1, 2).pathSegTypeAsLetter is 'M'
+PASS pathElement.createSVGPathSegMovetoAbs(1, 2).x is 1
+PASS pathElement.createSVGPathSegMovetoAbs(1, 2).y is 2
+PASS pathElement.createSVGPathSegMovetoRel(1, 2).pathSegType is SVGPathSeg.PATHSEG_MOVETO_REL
+PASS pathElement.createSVGPathSegMovetoRel(1, 2).pathSegTypeAsLetter is 'm'
+PASS pathElement.createSVGPathSegMovetoRel(1, 2).x is 1
+PASS pathElement.createSVGPathSegMovetoRel(1, 2).y is 2
+PASS pathElement.createSVGPathSegLinetoAbs(1, 2).pathSegType is SVGPathSeg.PATHSEG_LINETO_ABS
+PASS pathElement.createSVGPathSegLinetoAbs(1, 2).pathSegTypeAsLetter is 'L'
+PASS pathElement.createSVGPathSegLinetoAbs(1, 2).x is 1
+PASS pathElement.createSVGPathSegLinetoAbs(1, 2).y is 2
+PASS pathElement.createSVGPathSegLinetoRel(1, 2).pathSegType is SVGPathSeg.PATHSEG_LINETO_REL
+PASS pathElement.createSVGPathSegLinetoRel(1, 2).pathSegTypeAsLetter is 'l'
+PASS pathElement.createSVGPathSegLinetoRel(1, 2).x is 1
+PASS pathElement.createSVGPathSegLinetoRel(1, 2).y is 2
+PASS pathElement.createSVGPathSegCurvetoCubicAbs(1, 2, 3, 4, 5, 6).pathSegType is SVGPathSeg.PATHSEG_CURVETO_CUBIC_ABS
+PASS pathElement.createSVGPathSegCurvetoCubicAbs(1, 2, 3, 4, 5, 6).pathSegTypeAsLetter is 'C'
+PASS pathElement.createSVGPathSegCurvetoCubicAbs(1, 2, 3, 4, 5, 6).x is 1
+PASS pathElement.createSVGPathSegCurvetoCubicAbs(1, 2, 3, 4, 5, 6).y is 2
+PASS pathElement.createSVGPathSegCurvetoCubicAbs(1, 2, 3, 4, 5, 6).x1 is 3
+PASS pathElement.createSVGPathSegCurvetoCubicAbs(1, 2, 3, 4, 5, 6).y1 is 4
+PASS pathElement.createSVGPathSegCurvetoCubicAbs(1, 2, 3, 4, 5, 6).x2 is 5
+PASS pathElement.createSVGPathSegCurvetoCubicAbs(1, 2, 3, 4, 5, 6).y2 is 6
+PASS pathElement.createSVGPathSegCurvetoCubicRel(1, 2, 3, 4, 5, 6).pathSegType is SVGPathSeg.PATHSEG_CURVETO_CUBIC_REL
+PASS pathElement.createSVGPathSegCurvetoCubicRel(1, 2, 3, 4, 5, 6).pathSegTypeAsLetter is 'c'
+PASS pathElement.createSVGPathSegCurvetoCubicRel(1, 2, 3, 4, 5, 6).x is 1
+PASS pathElement.createSVGPathSegCurvetoCubicRel(1, 2, 3, 4, 5, 6).y is 2
+PASS pathElement.createSVGPathSegCurvetoCubicRel(1, 2, 3, 4, 5, 6).x1 is 3
+PASS pathElement.createSVGPathSegCurvetoCubicRel(1, 2, 3, 4, 5, 6).y1 is 4
+PASS pathElement.createSVGPathSegCurvetoCubicRel(1, 2, 3, 4, 5, 6).x2 is 5
+PASS pathElement.createSVGPathSegCurvetoCubicRel(1, 2, 3, 4, 5, 6).y2 is 6
+PASS pathElement.createSVGPathSegCurvetoQuadraticAbs(1, 2, 3, 4).pathSegType is SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_ABS
+PASS pathElement.createSVGPathSegCurvetoQuadraticAbs(1, 2, 3, 4).pathSegTypeAsLetter is 'Q'
+PASS pathElement.createSVGPathSegCurvetoQuadraticAbs(1, 2, 3, 4).x is 1
+PASS pathElement.createSVGPathSegCurvetoQuadraticAbs(1, 2, 3, 4).y is 2
+PASS pathElement.createSVGPathSegCurvetoQuadraticAbs(1, 2, 3, 4).x1 is 3
+PASS pathElement.createSVGPathSegCurvetoQuadraticAbs(1, 2, 3, 4).y1 is 4
+PASS pathElement.createSVGPathSegCurvetoQuadraticRel(1, 2, 3, 4).pathSegType is SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_REL
+PASS pathElement.createSVGPathSegCurvetoQuadraticRel(1, 2, 3, 4).pathSegTypeAsLetter is 'q'
+PASS pathElement.createSVGPathSegCurvetoQuadraticRel(1, 2, 3, 4).x is 1
+PASS pathElement.createSVGPathSegCurvetoQuadraticRel(1, 2, 3, 4).y is 2
+PASS pathElement.createSVGPathSegCurvetoQuadraticRel(1, 2, 3, 4).x1 is 3
+PASS pathElement.createSVGPathSegCurvetoQuadraticRel(1, 2, 3, 4).y1 is 4
+PASS pathElement.createSVGPathSegArcAbs(1, 2, 3, 4, 5, false, false).pathSegType is SVGPathSeg.PATHSEG_ARC_ABS
+PASS pathElement.createSVGPathSegArcAbs(1, 2, 3, 4, 5, false, false).pathSegTypeAsLetter is 'A'
+PASS pathElement.createSVGPathSegArcAbs(1, 2, 3, 4, 5, false, false).x is 1
+PASS pathElement.createSVGPathSegArcAbs(1, 2, 3, 4, 5, false, false).y is 2
+PASS pathElement.createSVGPathSegArcAbs(1, 2, 3, 4, 5, false, false).r1 is 3
+PASS pathElement.createSVGPathSegArcAbs(1, 2, 3, 4, 5, false, false).r2 is 4
+PASS pathElement.createSVGPathSegArcAbs(1, 2, 3, 4, 5, false, false).angle is 5
+PASS pathElement.createSVGPathSegArcAbs(1, 2, 3, 4, 5, false, false).largeArcFlag is false
+PASS pathElement.createSVGPathSegArcAbs(1, 2, 3, 4, 5, true, false).largeArcFlag is true
+PASS pathElement.createSVGPathSegArcAbs(1, 2, 3, 4, 5, false, false).sweepFlag is false
+PASS pathElement.createSVGPathSegArcAbs(1, 2, 3, 4, 5, false, true).sweepFlag is true
+PASS pathElement.createSVGPathSegArcRel(1, 2, 3, 4, 5, false, false).pathSegType is SVGPathSeg.PATHSEG_ARC_REL
+PASS pathElement.createSVGPathSegArcRel(1, 2, 3, 4, 5, false, false).pathSegTypeAsLetter is 'a'
+PASS pathElement.createSVGPathSegArcRel(1, 2, 3, 4, 5, false, false).x is 1
+PASS pathElement.createSVGPathSegArcRel(1, 2, 3, 4, 5, false, false).y is 2
+PASS pathElement.createSVGPathSegArcRel(1, 2, 3, 4, 5, false, false).r1 is 3
+PASS pathElement.createSVGPathSegArcRel(1, 2, 3, 4, 5, false, false).r2 is 4
+PASS pathElement.createSVGPathSegArcRel(1, 2, 3, 4, 5, false, false).angle is 5
+PASS pathElement.createSVGPathSegArcRel(1, 2, 3, 4, 5, false, false).largeArcFlag is false
+PASS pathElement.createSVGPathSegArcRel(1, 2, 3, 4, 5, true, false).largeArcFlag is true
+PASS pathElement.createSVGPathSegArcRel(1, 2, 3, 4, 5, false, false).sweepFlag is false
+PASS pathElement.createSVGPathSegArcRel(1, 2, 3, 4, 5, false, true).sweepFlag is true
+PASS pathElement.createSVGPathSegLinetoHorizontalAbs(1).pathSegType is SVGPathSeg.PATHSEG_LINETO_HORIZONTAL_ABS
+PASS pathElement.createSVGPathSegLinetoHorizontalAbs(1).pathSegTypeAsLetter is 'H'
+PASS pathElement.createSVGPathSegLinetoHorizontalAbs(1).x is 1
+PASS pathElement.createSVGPathSegLinetoHorizontalRel(1).pathSegType is SVGPathSeg.PATHSEG_LINETO_HORIZONTAL_REL
+PASS pathElement.createSVGPathSegLinetoHorizontalRel(1).pathSegTypeAsLetter is 'h'
+PASS pathElement.createSVGPathSegLinetoHorizontalRel(1).x is 1
+PASS pathElement.createSVGPathSegLinetoVerticalAbs(1).pathSegType is SVGPathSeg.PATHSEG_LINETO_VERTICAL_ABS
+PASS pathElement.createSVGPathSegLinetoVerticalAbs(1).pathSegTypeAsLetter is 'V'
+PASS pathElement.createSVGPathSegLinetoVerticalAbs(1).y is 1
+PASS pathElement.createSVGPathSegLinetoVerticalRel(1).pathSegType is SVGPathSeg.PATHSEG_LINETO_VERTICAL_REL
+PASS pathElement.createSVGPathSegLinetoVerticalRel(1).pathSegTypeAsLetter is 'v'
+PASS pathElement.createSVGPathSegLinetoVerticalRel(1).y is 1
+PASS pathElement.createSVGPathSegCurvetoCubicSmoothAbs(1, 2, 3, 4).pathSegType is SVGPathSeg.PATHSEG_CURVETO_CUBIC_SMOOTH_ABS
+PASS pathElement.createSVGPathSegCurvetoCubicSmoothAbs(1, 2, 3, 4).pathSegTypeAsLetter is 'S'
+PASS pathElement.createSVGPathSegCurvetoCubicSmoothAbs(1, 2, 3, 4).x is 1
+PASS pathElement.createSVGPathSegCurvetoCubicSmoothAbs(1, 2, 3, 4).y is 2
+PASS pathElement.createSVGPathSegCurvetoCubicSmoothAbs(1, 2, 3, 4).x2 is 3
+PASS pathElement.createSVGPathSegCurvetoCubicSmoothAbs(1, 2, 3, 4).y2 is 4
+PASS pathElement.createSVGPathSegCurvetoCubicSmoothRel(1, 2, 3, 4).pathSegType is SVGPathSeg.PATHSEG_CURVETO_CUBIC_SMOOTH_REL
+PASS pathElement.createSVGPathSegCurvetoCubicSmoothRel(1, 2, 3, 4).pathSegTypeAsLetter is 's'
+PASS pathElement.createSVGPathSegCurvetoCubicSmoothRel(1, 2, 3, 4).x is 1
+PASS pathElement.createSVGPathSegCurvetoCubicSmoothRel(1, 2, 3, 4).y is 2
+PASS pathElement.createSVGPathSegCurvetoCubicSmoothRel(1, 2, 3, 4).x2 is 3
+PASS pathElement.createSVGPathSegCurvetoCubicSmoothRel(1, 2, 3, 4).y2 is 4
+PASS pathElement.createSVGPathSegCurvetoQuadraticSmoothAbs(1, 2).pathSegType is SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS
+PASS pathElement.createSVGPathSegCurvetoQuadraticSmoothAbs(1, 2).pathSegTypeAsLetter is 'T'
+PASS pathElement.createSVGPathSegCurvetoQuadraticSmoothAbs(1, 2).x is 1
+PASS pathElement.createSVGPathSegCurvetoQuadraticSmoothAbs(1, 2).y is 2
+PASS pathElement.createSVGPathSegCurvetoQuadraticSmoothRel(1, 2).pathSegType is SVGPathSeg.PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL
+PASS pathElement.createSVGPathSegCurvetoQuadraticSmoothRel(1, 2).pathSegTypeAsLetter is 't'
+PASS pathElement.createSVGPathSegCurvetoQuadraticSmoothRel(1, 2).x is 1
+PASS pathElement.createSVGPathSegCurvetoQuadraticSmoothRel(1, 2).y is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

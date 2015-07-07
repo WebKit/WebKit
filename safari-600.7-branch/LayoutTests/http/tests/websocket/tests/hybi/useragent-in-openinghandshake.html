@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script type="text/javascript">
+description("Web Socket test to check if opening handshake contains User-Agent header");
+
+window.jsTestIsAsync = true;
+
+function endTest()
+{
+    clearTimeout(timeoutID);
+    finishJSTest();
+}
+
+var ws = new WebSocket("ws://localhost:8880/websocket/tests/hybi/sendback_ua");
+
+ws.onmessage = function(messageEvent)
+{
+    // The server should echo back the User-Agent header value.
+    event = messageEvent;
+    shouldBe("event.data", "navigator.userAgent");
+    finishJSTest();
+};
+
+function timeOutCallback()
+{
+    testFailed("Timed out in state: " + ws.readyState);
+    endTest();
+}
+
+var timeoutID = setTimeout(timeOutCallback, 3000);
+
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>
+</body>
+</html>

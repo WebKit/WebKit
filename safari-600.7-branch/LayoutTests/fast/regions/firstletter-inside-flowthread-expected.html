@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Test for https://bugs.webkit.org/show_bug.cgi?id=102957</title>
+        <style>
+        .region {
+            color: green;
+            font-size: 50px;
+            font-family: Ahem;
+            height: 50px;
+        }
+        </style>
+    </head>
+    <body>
+        <p>Test case for <a href="https://bugs.webkit.org/show_bug.cgi?id=102957">102957</a>.</p>
+        <p>Testing that the removal of the first-letter pseudo render object will not crash the flow thread logic.</p>
+        <p>You should see a green rectangle. There should be no red or yellow.</p>
+        <div class="region">aaaa</div>
+    </body>
+</html>

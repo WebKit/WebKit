@@ -1,0 +1,35 @@
+Test if setting blend mode creates isolation.
+
+Test if unsetting blend mode removes isolation.
+
+Test if unsetting a parent's stacking context correctly removes isolation.
+
+Test if switching a blend mode preserves isolation.
+
+Test if switching the property that causes the parent to create a stacking context preserves isolation.
+
+Test if unsetting a parent's stacking context correctly updates its parent isolation.
+
+(repaint rects
+  (rect 48 54 60 60)
+  (rect 48 54 60 60)
+  (rect 48 54 60 60)
+  (rect 48 54 60 60)
+  (rect 48 172 60 60)
+  (rect 48 172 60 60)
+  (rect 28 290 60 60)
+  (rect 48 290 60 60)
+  (rect 48 290 60 60)
+  (rect 48 408 60 60)
+  (rect 48 408 60 60)
+  (rect 28 526 60 60)
+  (rect 48 526 60 60)
+  (rect 48 644 60 60)
+  (rect 68 644 60 60)
+  (rect 68 644 60 60)
+  (rect 28 290 60 60)
+  (rect 48 644 60 60)
+  (rect 28 526 60 60)
+  (rect 88 644 20 60)
+)
+

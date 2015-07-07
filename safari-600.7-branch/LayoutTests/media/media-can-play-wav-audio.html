@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=video-test.js></script>
+        <script>
+            function start()
+            {
+                audio = document.getElementsByTagName('audio')[0];
+
+                testExpected("audio.canPlayType('audio/wav')", "maybe");
+                testExpected("audio.canPlayType('audio/x-wav')", "maybe");
+
+                // WAV codec 1 is basic PCM, refer to http://tools.ietf.org/html/rfc2361
+                testExpected("audio.canPlayType('audio/wav; codecs=1')", "probably");
+                testExpected("audio.canPlayType('audio/x-wav; codecs=1')", "probably");
+
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload="start()">
+        <audio controls></audio>
+        <p>Test HTMLMediaElement <em>canPlayType()</em> method with multiple .wav MIME types.</p>
+        <p>These tests may be expected to fail if the WebKit port does not support the format.</p>
+    </body>
+</html>

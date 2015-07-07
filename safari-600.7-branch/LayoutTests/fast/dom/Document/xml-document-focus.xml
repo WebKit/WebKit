@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Test document.activeElement and document.hasFocus()</title>
+<script type="text/javascript" src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<input id="testElement"></input>
+<script type="text/javascript">
+description("Make sure the focus management API is available to XML documents.");
+
+shouldNotBe("document.__proto__", "HTMLDocument.prototype");
+shouldBe("document.__proto__", "Document.prototype");
+shouldBeTrue("document.hasFocus()");
+shouldBe("document.activeElement", "document.body");
+var testElement = document.getElementById("testElement");
+testElement.focus();
+shouldBe("document.activeElement", "testElement");
+shouldBeTrue("document.hasFocus()");
+</script>
+<script type="text/javascript" src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test - Bug 120711: [CSS Regions] Regions don't paint correctly in new-multicol elements</title>
+    <style type="text/css">
+        html {
+            -webkit-writing-mode: vertical-lr;
+        }
+        #named-flow {
+            font-family: Ahem;
+            font-size: 25px;
+            line-height: 1em;
+            color: green;
+            -webkit-flow-into: multicol;
+        }
+        #multicol-container {
+            position: absolute;
+            left: 150px;
+            top: 20px;
+            height: 170px;
+            width: 200px;
+            -webkit-columns: 3;
+            -webkit-column-gap: 10px;
+        }
+        #region-1 , #region-2, #region-3 {
+            height: 50px;
+            width: 200px;
+            -webkit-flow-from: multicol;
+        }
+        .failure {
+            position: absolute;
+            background-color: red;
+            left: 150px;
+            height: 50px;
+            width: 200px;
+            z-index: -1;
+        }
+        #bar-1 {
+            top: 20px;
+        }
+        #bar-2 {
+            top: 80px;
+        }
+        #bar-3 {
+            top: 140px;
+        }
+    </style>
+</head>
+<body>
+    <p>This test checks that the named flow text content flows through the regions in the multicolumn layout that is applied to the regions' parent.</p>
+    <p>The test passes if there are four green vertical bars and no red.</p>
+    <div id="named-flow">
+        XX XX XX XX XX XX XX XX
+        XX XX XX XX XX XX XX XX
+        XX XX XX XX XX XX XX XX
+    </div>
+    <div id="multicol-container">
+       <div id="region-1"></div>
+       <div id="region-2"></div>
+       <div id="region-3"></div>
+    </div>
+    <div class="failure" id="bar-1"></div>
+    <div class="failure" id="bar-2"></div>
+    <div class="failure" id="bar-3"></div>
+</body>
+</html>

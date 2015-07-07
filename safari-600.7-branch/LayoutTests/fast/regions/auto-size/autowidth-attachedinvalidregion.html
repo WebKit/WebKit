@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            .flowB { -webkit-flow-into: flowB; }
+            .flowC { -webkit-flow-into: flowC; }
+
+            .regionFlowB { -webkit-flow-from: flowB; }
+            .regionFlowC { -webkit-flow-from: flowC; }
+
+            #container { width: 200px; height: 200px; position: absolute; }
+            #region { height: 50px; position: absolute; }
+        </style>
+    </head>
+    <body>
+        <script>
+            if (window.testRunner)
+                window.testRunner.dumpAsText();
+        </script>
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=74135"> Auto width is not working for regions</a>.</p>
+        <p>The region is an absolutely positioned, non replaced element, attached to a flow thread.</p>
+        <p>Due to flow thread dependencies, the region is not valid and width computation should not take the associated flow thread into account.</p>
+        <p>On success, it should not crash.</p>
+        <p>PASS</p>
+        <div class="flowB">
+            <div class="regionFlowC"></div>
+        </div>
+
+        <div class="flowC">
+            <div class="regionFlowB"></div>
+        </div>
+
+        <div id="container">
+	        <div class="regionFlowB" id="region"></div>
+        </div>
+    </body>
+</html>

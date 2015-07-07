@@ -1,0 +1,10 @@
+Tests that requestAnimationFrame callbacks aren't called too rapidly (above 1000FPS)
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS 100 is >= numCallbacks
+

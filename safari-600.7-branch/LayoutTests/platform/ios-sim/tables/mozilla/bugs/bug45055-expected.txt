@@ -1,0 +1,51 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x270
+  RenderBlock {HTML} at (0,0) size 800x270
+    RenderBody {BODY} at (8,8) size 784x254 [bgcolor=#FFFFFF]
+      RenderTable {TABLE} at (0,0) size 54x254
+        RenderTableSection {TBODY} at (0,0) size 54x254
+          RenderTableRow {TR} at (0,1) size 54x22
+            RenderTableCell {TD} at (1,1) size 52x22 [color=#0000FF] [bgcolor=#CCCCCC] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 42x19
+                text run at (1,1) width 42: "Line 1"
+          RenderTableRow {TR} at (0,24) size 54x22
+            RenderTableCell {TD} at (1,24) size 52x22 [color=#0000FF] [bgcolor=#CCCCCC] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 42x19
+                text run at (1,1) width 42: "Line 2"
+          RenderTableRow {TR} at (0,47) size 54x22
+            RenderTableCell {TD} at (1,47) size 52x22 [color=#0000FF] [bgcolor=#CCCCCC] [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 42x19
+                text run at (1,1) width 42: "Line 3"
+          RenderTableRow {TR} at (0,70) size 54x22
+            RenderTableCell {TD} at (1,70) size 52x22 [color=#0000FF] [bgcolor=#CCCCCC] [r=3 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 42x19
+                text run at (1,1) width 42: "Line 4"
+          RenderTableRow {TR} at (0,93) size 54x22
+            RenderTableCell {TD} at (1,93) size 52x22 [color=#0000FF] [bgcolor=#CCCCCC] [r=4 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 42x19
+                text run at (1,1) width 42: "Line 5"
+          RenderTableRow {TR} at (0,116) size 54x22
+            RenderTableCell {TD} at (1,116) size 52x22 [color=#0000FF] [bgcolor=#CCCCCC] [r=5 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 42x19
+                text run at (1,1) width 42: "Line 6"
+          RenderTableRow {TR} at (0,139) size 54x22
+            RenderTableCell {TD} at (1,139) size 52x22 [color=#0000FF] [bgcolor=#CCCCCC] [r=6 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 42x19
+                text run at (1,1) width 42: "Line 7"
+          RenderTableRow {TR} at (0,162) size 54x22
+            RenderTableCell {TD} at (1,162) size 52x22 [color=#0000FF] [bgcolor=#CCCCCC] [r=7 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 42x19
+                text run at (1,1) width 42: "Line 8"
+          RenderTableRow {TR} at (0,185) size 54x22
+            RenderTableCell {TD} at (1,185) size 52x22 [color=#0000FF] [bgcolor=#CCCCCC] [r=8 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 42x19
+                text run at (1,1) width 42: "Line 9"
+          RenderTableRow {TR} at (0,208) size 54x22
+            RenderTableCell {TD} at (1,208) size 52x22 [color=#0000FF] [bgcolor=#CCCCCC] [r=9 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 50x19
+                text run at (1,1) width 50: "Line 10"
+          RenderTableRow {TR} at (0,231) size 54x22
+            RenderTableCell {TD} at (1,231) size 52x22 [color=#0000FF] [bgcolor=#CCCCCC] [r=10 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 50x19
+                text run at (1,1) width 50: "Line 11"

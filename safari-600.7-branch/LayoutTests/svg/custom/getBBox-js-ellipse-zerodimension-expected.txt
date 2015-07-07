@@ -1,0 +1,7 @@
+Bug 93290: getBBox() returns (0,0) incorrectly when width or height is zero.
+
+For this test to pass, you should see 'Passed' three times below.
+
+Passed; Passed; Passed;
+
+

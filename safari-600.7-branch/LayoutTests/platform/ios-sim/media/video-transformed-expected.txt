@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x31
+        RenderText {#text} at (0,1) size 348x29
+          text run at (0,1) width 348: "Test painting of transformed video"
+      RenderBlock (anonymous) at (0,47) size 784x520
+        RenderText {#text} at (0,133) size 7x29
+          text run at (0,133) width 7: " "
+        RenderBR {BR} at (212,156) size 1x0
+        RenderText {#text} at (0,296) size 7x29
+          text run at (0,296) width 7: " "
+        RenderBR {BR} at (212,319) size 1x0
+        RenderText {#text} at (0,459) size 7x29
+          text run at (0,459) width 7: " "
+        RenderBR {BR} at (212,482) size 1x0
+        RenderText {#text} at (0,490) size 56x29
+          text run at (0,490) width 56: "FAIL"
+layer at (14,55) size 206x156
+  RenderEmbeddedObject {VIDEO} at (6,0) size 206x156 [border: (3px solid #FF0000)]
+layer at (17,58) size 200x150
+  RenderFlexibleBox {DIV} at (3,3) size 200x150
+layer at (14,218) size 206x156
+  RenderEmbeddedObject {VIDEO} at (6,163) size 206x156 [border: (3px solid #FF0000)]
+layer at (17,221) size 200x150
+  RenderFlexibleBox {DIV} at (3,3) size 200x150
+layer at (14,381) size 206x156
+  RenderEmbeddedObject {VIDEO} at (6,326) size 206x156 [border: (3px solid #FF0000)]
+layer at (17,384) size 200x150
+  RenderFlexibleBox {DIV} at (3,3) size 200x150

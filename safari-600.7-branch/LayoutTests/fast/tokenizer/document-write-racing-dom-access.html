@@ -1,0 +1,10 @@
+<body>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+document.write("<div class='parent' id='innerHTMLTextDom'>");
+document.write("First");
+document.getElementById("innerHTMLTextDom").innerHTML += "Second";
+document.write("</div>");
+</script>

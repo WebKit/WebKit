@@ -1,0 +1,46 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script>
+function onload()
+{
+    if (window.testRunner)
+        testRunner.overridePreference("WebKitHyperlinkAuditingEnabled", 1);
+    runTest();
+}
+
+function navigateLink()
+{
+    var evt = document.createEvent("MouseEvents");
+    evt.initMouseEvent("click");
+    var link = document.getElementById("pingLink");
+    link.dispatchEvent(evt);
+}
+
+function test()
+{
+    InspectorTest.addSniffer(WebInspector.NetworkDispatcher.prototype, "requestWillBeSent", step2);
+    InspectorTest.evaluateInPage("navigateLink()");
+
+    function step2()
+    {
+        // inspector-test.js appears in network panel occasionally in Safari on
+        // Mac, so checking last request.
+        var requests = WebInspector.networkLog.requests;
+        var requestsCount = requests.length;
+        var request = requests[requestsCount - 1];
+
+        InspectorTest.addResult(request.url);
+        InspectorTest.addResult("resource.isPingRequest(): " + request.isPingRequest());
+        InspectorTest.addResult("resource.requestContentType: " + request.requestContentType());
+
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="onload()">
+<a id="pingLink" href="#" ping="ping.html">ping</a>
+<p>Tests that hyperlink auditing (ping) requests appear in network panel.</p>
+</body>
+</html>

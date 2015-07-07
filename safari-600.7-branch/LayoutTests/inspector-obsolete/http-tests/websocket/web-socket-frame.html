@@ -1,0 +1,39 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../../../../../js-test-resources/js-test-pre.js"></script>
+<script>
+var ws;
+function sendMessages() {
+    ws = new WebSocket("ws://localhost:8880/websocket/tests/hybi/echo");
+    ws.onopen = function()
+    {
+        debug("Connected.");
+        ws.send("test");
+        ws.send("exit");
+    };
+}
+
+function test() {
+    function onRequest(event)
+    {
+        var request = event.data;
+        if (request._type._name === "websocket") {
+            for (var i = 0; i < request.frames().length; i++) {
+                var frame = request.frame(i);
+                var result = String.sprintf("%d-%s: %s", (i + 1), frame.sent ? " sent" : " received", frame.payloadData);
+                InspectorTest.addResult(result);
+                if (!frame.sent && frame.payloadData === "exit")
+                    InspectorTest.completeTest();
+            }
+        }
+    }
+    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.RequestUpdated, onRequest);
+    InspectorTest.evaluateInPage("sendMessages()");
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that WebSocketFrames are being sent and recieved by Web Inspector.</p>
+</body>
+</html>

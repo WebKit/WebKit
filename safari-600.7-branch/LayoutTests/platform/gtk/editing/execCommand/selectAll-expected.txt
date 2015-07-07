@@ -1,0 +1,51 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > SPAN > DIV > BODY > HTML > #document to 562 of #text > P > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x336 [border: (2px solid #FF0000)]
+        RenderBlock (anonymous) at (14,14) size 756x52
+          RenderInline {SPAN} at (0,0) size 693x52
+            RenderText {#text} at (0,0) size 693x52
+              text run at (0,0) width 687: "\"The quick brown fox jumps over the lazy dog\" uses every letter in the"
+              text run at (687,0) width 6: " "
+              text run at (0,26) width 170: "english language."
+        RenderBlock (anonymous) at (14,90) size 756x208
+          RenderBlock {P} at (0,0) size 756x208
+            RenderText {#text} at (0,0) size 756x208
+              text run at (0,0) width 462: "Here's to the crazy ones, the misfits, the rebels, "
+              text run at (462,0) width 193: "the trouble makers, "
+              text run at (655,0) width 92: "the round"
+              text run at (747,0) width 6: " "
+              text run at (0,26) width 243: "pegs in the square holes, "
+              text run at (243,26) width 350: "the ones who see things differently. "
+              text run at (593,26) width 144: "There not fond"
+              text run at (737,26) width 6: " "
+              text run at (0,52) width 510: "of rules, and they have no respect for the status quo, "
+              text run at (510,52) width 190: "you can quote then,"
+              text run at (0,78) width 197: "disagree with them, "
+              text run at (197,78) width 218: "glorify or vilify them, "
+              text run at (415,78) width 340: "about the only thing you can't do is"
+              text run at (755,78) width 1: " "
+              text run at (0,104) width 129: "ignore them. "
+              text run at (129,104) width 281: "Because they change things. "
+              text run at (410,104) width 344: "They push the human race forward."
+              text run at (754,104) width 2: "  "
+              text run at (0,130) width 481: "And while some may see them as the crazy ones, "
+              text run at (481,130) width 146: "we see genius. "
+              text run at (627,130) width 117: "Because the"
+              text run at (744,130) width 6: " "
+              text run at (0,156) width 632: "people who are crazy enough to think they can change the world "
+              text run at (632,156) width 116: "are the ones"
+              text run at (748,156) width 6: " "
+              text run at (0,182) width 77: "who do."
+        RenderBlock (anonymous) at (14,322) size 756x0
+          RenderInline {SPAN} at (0,0) size 0x0
+          RenderText {#text} at (0,0) size 0x0
+selection start: position 0 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of body
+selection end:   position 562 of child 0 {#text} of child 1 {P} of child 1 {SPAN} of child 1 {DIV} of body

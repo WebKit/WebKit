@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            .flowContent { font-size: 50px; font-family: monospace; line-height: 2; color: green; }
+
+            .regionSize { width: 200px; }
+            .regionSize2 { width: 100px; }
+
+            #region { height: 100px; border: 1px solid black;}
+            #region2 { height: 100px; border: 1px solid black;}
+        </style>
+    </head>
+    <body>
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=103993"> Blocks don't relayout children if the width of a region changes</a>.</p>
+        <p>When the width of a region decreases the lines in that region should be recomputed. This test covers the special case of having inlines flow directly in the thread.</p>
+        <p>On success, there should be no text outside the black rectangles and both regions should have text in them.</p>
+        <div id="region" class="regionSize2"><span class="flowContent">a a</span></div>
+        <div id="region2" class="regionSize"><span class="flowContent">a a a</span></div>
+    </body>
+</html>

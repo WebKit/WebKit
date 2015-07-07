@@ -1,0 +1,20 @@
+<html>
+<head>
+    <link rel="stylesheet" href="resources/default.css">
+    <script src="resources/repaint.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        if (window.testRunner)
+            testRunner.dumpAsText(true);
+        function repaintTest()
+        {
+            var absoluteDiv = document.getElementById('absoluteDiv');
+            absoluteDiv.parentNode.removeChild(absoluteDiv);
+            document.body.appendChild(absoluteDiv);
+        }
+    </script>
+</head>
+<body style="height:2000px;" onload="runRepaintTest()">
+    <!-- You should see 1 green rectangle in the output and no red. -->
+    <div style="top: 5000px;" class="fixed red"><div id="absoluteDiv" style="top:100px; left:100px;" class="absolute green"></div></div>
+</body>
+</html>

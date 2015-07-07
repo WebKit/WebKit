@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<clipPath id="clip2">
+  <rect width="150" height="150"/>
+</clipPath>
+<clipPath id="clip1">
+  <rect x="50" y="50" width="150" height="150"/>
+</clipPath>
+<g clip-path="url(#clip1)">
+  <rect width="200" height="200" fill="green" clip-path="url(#clip2)"/>
+</g>
+</svg>

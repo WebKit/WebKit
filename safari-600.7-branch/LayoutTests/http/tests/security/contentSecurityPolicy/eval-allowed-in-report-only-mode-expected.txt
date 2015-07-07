@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: The Content Security Policy 'script-src 'self'' was delivered in report-only mode, but does not specify a 'report-uri'; the policy will have no effect. Please either add a 'report-uri' directive, or deliver the policy via the 'Content-Security-Policy' header.
+CONSOLE MESSAGE: line 7: [Report Only] Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self'".
+
+ALERT: PASS: eval() executed as expected.
+

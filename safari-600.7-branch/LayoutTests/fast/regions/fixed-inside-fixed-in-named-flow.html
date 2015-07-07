@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            if (window.internals)
+                internals.settings.setAcceleratedCompositingForFixedPositionEnabled(false);
+        </script>
+        <style>
+            #redOuter { position: fixed; top: 100px; left: 50px; width: 100px; height: 100px; background-color: red; }
+            #redInner { position: fixed; top: 150px; left: 100px; width: 100px; height: 100px; background-color: red; }
+            #outerFixed { -webkit-flow-into: flow; position: fixed; top: 100px; left: 50px; width: 100px; height: 100px; background-color: green; }
+            #innerFixed { position: fixed; top: 150px; left: 100px; width: 100px; height: 100px; background-color: orange; }
+
+            #region { -webkit-flow-from: flow; position: absolute; top: 200px; left: 200px; width: 300px; height: 300px; }
+        </style>
+    </head>
+    <body>
+        <p>Test that a fixed positioned element inside another fixed positioned element collected in named flow is correctly positioned.</p>
+        <p>On success you should see 2 overlapping rectangles in the top left corner of the screen and no red.</p>
+        <div id="redOuter">
+            <div id="redInner"></div>
+        </div>
+        <div id="outerFixed">
+            <div id="innerFixed"></div>
+        </div>
+        <div id="region"></div>
+    </body>
+</html>

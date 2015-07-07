@@ -1,0 +1,3 @@
+Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/nodecomparedocumentposition27
+Status	failure
+Message	entRefChild1NotNull: assertNotNull failed

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function runTests()
+{
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
+    var div = document.createElement("div");
+    document.body.appendChild(div);
+
+    shadow1 = div.webkitCreateShadowRoot();
+    shadow1.innerHTML = "<style>div { color: red; }</style><div>HELLO</div>";
+
+    shadow2 = div.webkitCreateShadowRoot();
+    shadow2.innerHTML = "<div><shadow></shadow></div>";
+    document.body.offsetLeft;
+    document.body.innerHTML = "PASS";
+}
+</script>
+</head>
+<body onload="runTests()">
+</body>
+</html>

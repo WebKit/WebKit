@@ -1,0 +1,20 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaObject Field or method access
+
+FAIL dt["boolean"] should be true (of type boolean). Was undefined (of type undefined).
+PASS dt["getBoolean"]() is true
+FAIL dt["byte"] should be 127 (of type number). Was undefined (of type undefined).
+FAIL dt["getByte"]() should be 1. Was 127.
+FAIL dt["integer"] should be 2147483647 (of type number). Was undefined (of type undefined).
+FAIL dt["getInteger"]() should be 2. Was 2147483647.
+FAIL dt["double"] should be 1.7976931348623157e+308 (of type number). Was undefined (of type undefined).
+FAIL dt["getDouble"]() should be 3. Was 1.7976931348623157e+308.
+FAIL dt["float"] should be 3.4028234663852886e+38 (of type number). Was undefined (of type undefined).
+FAIL dt["getFloat"]() should be 4. Was 3.4028234663852886e+38.
+FAIL dt["short"] should be 32767 (of type number). Was undefined (of type undefined).
+FAIL dt["getShort"]() should be 5. Was 32767.
+FAIL dt["char"] should be 65535 (of type number). Was undefined (of type undefined).
+FAIL dt["getChar"]() should be 97. Was 65535.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

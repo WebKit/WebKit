@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript">
+        function log(message)
+        {
+            document.getElementById("result").innerHTML += message + "<br>";
+        }
+        
+        function runTests()
+        {
+            if (window.testRunner) {
+                testRunner.grantWebNotificationPermission("file://");
+                testRunner.dumpAsText();
+                if (testRunner.dumpNotifications)
+                    testRunner.dumpNotifications();
+            }
+
+            if (!window.webkitNotifications) {
+                log("FAIL: No webkitNotifications interface!");
+            }
+            
+            var M = window.webkitNotifications.createNotification("", "New E-mail", "Meet me tonight at 8!");
+            M.show();
+        }
+    </script>
+</head>
+<body>
+<p>Sending notifications with permission...</p>
+    
+    
+<script type="text/javascript">
+runTests();
+</script>
+
+<div id="result"></div>
+</body>
+</html>

@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x118
+  RenderBlock {HTML} at (0,0) size 800x118
+    RenderBody {BODY} at (8,8) size 784x102
+layer at (8,8) size 402x102
+  RenderBlock {DIV} at (0,0) size 402x102 [border: (1px solid #000000)]
+    RenderText {#text} at (1,2) size 13x56
+      text run at (1,2) width 13: " "
+    RenderBR {BR} at (13,2) size 1x56
+    RenderInline {SPAN} at (0,0) size 300x50
+      RenderText {#text} at (1,107) size 300x50
+        text run at (1,107) width 300: "XXXXXX"
+    RenderText {#text} at (0,0) size 0x0

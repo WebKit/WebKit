@@ -1,0 +1,46 @@
+Tests for the parseInt function.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS parseInt('123') is 123
+PASS parseInt('123x4') is 123
+PASS parseInt('-123') is -123
+PASS parseInt('0x123') is 0x123
+PASS parseInt('0x123x4') is 0x123
+PASS parseInt('-0x123x4') is -0x123
+PASS parseInt('-') is Number.NaN
+PASS parseInt('0x') is Number.NaN
+PASS parseInt('-0x') is Number.NaN
+PASS parseInt('123', undefined) is 123
+PASS parseInt('123', null) is 123
+PASS parseInt('123', 0) is 123
+PASS parseInt('123', 10) is 123
+PASS parseInt('123', 16) is 0x123
+PASS parseInt('0x123', undefined) is 0x123
+PASS parseInt('0x123', null) is 0x123
+PASS parseInt('0x123', 0) is 0x123
+PASS parseInt('0x123', 10) is 0
+PASS parseInt('0x123', 16) is 0x123
+PASS parseInt(Math.pow(10, 20)) is 100000000000000000000
+PASS parseInt(Math.pow(10, 21)) is 1
+PASS parseInt(Math.pow(10, -6)) is 0
+PASS parseInt(Math.pow(10, -7)) is 1
+PASS parseInt(-Math.pow(10, 20)) is -100000000000000000000
+PASS parseInt(-Math.pow(10, 21)) is -1
+PASS parseInt(-Math.pow(10, -6)) is -0
+PASS parseInt(-Math.pow(10, -7)) is -1
+PASS parseInt('0') is 0
+PASS parseInt('-0') is -0
+PASS parseInt(0) is 0
+PASS parseInt(-0) is 0
+PASS parseInt(2147483647) is 2147483647
+PASS parseInt(2147483648) is 2147483648
+PASS parseInt('2147483647') is 2147483647
+PASS parseInt('2147483648') is 2147483648
+PASS state = null; try { parseInt('123', throwingRadix); } catch (e) {} state; is "throwingRadix"
+PASS state = null; try { parseInt(throwingString, throwingRadix); } catch (e) {} state; is "throwingString"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

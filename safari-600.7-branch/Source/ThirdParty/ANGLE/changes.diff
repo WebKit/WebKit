@@ -1,0 +1,454 @@
+diff --git a/include/EGL/egl.h b/include/EGL/egl.h
+index b55e6c6..eeb16af 100644
+--- a/include/EGL/egl.h
++++ b/include/EGL/egl.h
+@@ -246,6 +246,10 @@ typedef void *EGLClientBuffer;
+ 
+ /* EGL Functions */
+ 
++#if defined(_MSC_VER) && !defined(ANGLE_WEBKIT_WIN)
++#include <EGL/eglsoftlinking.h>
++#else
++
+ EGLAPI EGLint EGLAPIENTRY eglGetError(void);
+ 
+ EGLAPI EGLDisplay EGLAPIENTRY eglGetDisplay(EGLNativeDisplayType display_id);
+@@ -322,6 +326,8 @@ typedef void (*__eglMustCastToProperFunctionPointerType)(void);
+ EGLAPI __eglMustCastToProperFunctionPointerType EGLAPIENTRY
+        eglGetProcAddress(const char *procname);
+ 
++#endif
++
+ #ifdef __cplusplus
+ }
+ #endif
+diff --git a/include/GLES2/gl2.h b/include/GLES2/gl2.h
+index c2d8357..9ab5832 100644
+--- a/include/GLES2/gl2.h
++++ b/include/GLES2/gl2.h
+@@ -470,6 +470,10 @@ typedef khronos_ssize_t  GLsizeiptr;
+  * GL core functions.
+  *-----------------------------------------------------------------------*/
+ 
++#if defined(_MSC_VER) && !defined(ANGLE_WEBKIT_WIN)
++#include <GLES2/gl2softlinking.h>
++#else
++
+ GL_APICALL void         GL_APIENTRY glActiveTexture (GLenum texture);
+ GL_APICALL void         GL_APIENTRY glAttachShader (GLuint program, GLuint shader);
+ GL_APICALL void         GL_APIENTRY glBindAttribLocation (GLuint program, GLuint index, const GLchar* name);
+@@ -613,6 +617,8 @@ GL_APICALL void         GL_APIENTRY glVertexAttrib4fv (GLuint indx, const GLfloa
+ GL_APICALL void         GL_APIENTRY glVertexAttribPointer (GLuint indx, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid* ptr);
+ GL_APICALL void         GL_APIENTRY glViewport (GLint x, GLint y, GLsizei width, GLsizei height);
+ 
++#endif
++
+ #ifdef __cplusplus
+ }
+ #endif
+diff --git a/include/GLSLANG/ShaderLang.h b/include/GLSLANG/ShaderLang.h
+index 7970bfa..b716c6f 100644
+--- a/include/GLSLANG/ShaderLang.h
++++ b/include/GLSLANG/ShaderLang.h
+@@ -23,7 +23,7 @@
+ #define COMPILER_EXPORT
+ #endif
+ 
+-#include "KHR/khrplatform.h"
++#include "khrplatform.h"
+ #include <stddef.h>
+ 
+ //
+@@ -423,8 +423,8 @@ COMPILER_EXPORT void ShGetInfoLog(const ShHandle handle, char* infoLog);
+ // Returns null-terminated object code for a compiled shader.
+ // Parameters:
+ // handle: Specifies the compiler
+-// infoLog: Specifies an array of characters that is used to return
+-//          the object code. It is assumed that infoLog has enough memory to
++// objCode: Specifies an array of characters that is used to return
++//          the object code. It is assumed that objCode has enough memory to
+ //          accomodate the object code. The size of the buffer required to
+ //          store the returned object code can be obtained by calling
+ //          ShGetInfo with SH_OBJECT_CODE_LENGTH.
+diff --git a/src/common/mathutil.h b/src/common/mathutil.h
+index 9061bbd..0b4f384 100644
+--- a/src/common/mathutil.h
++++ b/src/common/mathutil.h
+@@ -478,7 +478,7 @@ inline unsigned int average(unsigned int a, unsigned int b)
+ 
+ inline signed int average(signed int a, signed int b)
+ {
+-    return ((long long)a + (long long)b) / 2;
++    return (signed int)((long long)a + (long long)b) / 2;
+ }
+ 
+ inline float average(float a, float b)
+diff --git a/src/common/shadervars.cpp b/src/common/shadervars.cpp
+index c9843dc..bc3d1c0 100644
+--- a/src/common/shadervars.cpp
++++ b/src/common/shadervars.cpp
+@@ -59,7 +59,7 @@ void Varying::resetRegisterAssignment()
+     elementIndex = GL_INVALID_INDEX;
+ }
+ 
+-BlockMemberInfo::BlockMemberInfo(int offset, int arrayStride, int matrixStride, bool isRowMajorMatrix)
++BlockMemberInfo::BlockMemberInfo(long offset, long arrayStride, long matrixStride, bool isRowMajorMatrix)
+     : offset(offset),
+       arrayStride(arrayStride),
+       matrixStride(matrixStride),
+diff --git a/src/common/shadervars.h b/src/common/shadervars.h
+index eba0141..7466777 100644
+--- a/src/common/shadervars.h
++++ b/src/common/shadervars.h
+@@ -42,8 +42,8 @@ struct ShaderVariable
+ 
+ struct Uniform : public ShaderVariable
+ {
+-    unsigned int registerIndex;
+-    unsigned int elementIndex;     // For struct varyings
++    unsigned long registerIndex;
++    unsigned long elementIndex;     // For struct varyings
+     std::vector<Uniform> fields;
+ 
+     Uniform(GLenum typeIn, GLenum precisionIn, const char *nameIn, unsigned int arraySizeIn,
+@@ -88,11 +88,11 @@ struct Varying : public ShaderVariable
+ 
+ struct BlockMemberInfo
+ {
+-    BlockMemberInfo(int offset, int arrayStride, int matrixStride, bool isRowMajorMatrix);
++    BlockMemberInfo(long offset, long arrayStride, long matrixStride, bool isRowMajorMatrix);
+ 
+-    int offset;
+-    int arrayStride;
+-    int matrixStride;
++    long offset;
++    long arrayStride;
++    long matrixStride;
+     bool isRowMajorMatrix;
+ 
+     static const BlockMemberInfo defaultBlockInfo;
+diff --git a/src/compiler/preprocessor/ExpressionParser.cpp b/src/compiler/preprocessor/ExpressionParser.cpp
+index 7c6adc6..fe7a653 100644
+--- a/src/compiler/preprocessor/ExpressionParser.cpp
++++ b/src/compiler/preprocessor/ExpressionParser.cpp
+@@ -1,5 +1,7 @@
+ /* A Bison parser, made by GNU Bison 2.7.1.  */
+ 
++/* Apple Note: For the avoidance of doubt, Apple elects to distribute this file under the terms of the BSD license. */
++
+ /* Bison implementation for Yacc-like parsers in C
+    
+       Copyright (C) 1984, 1989-1990, 2000-2013 Free Software Foundation, Inc.
+diff --git a/src/compiler/preprocessor/Tokenizer.cpp b/src/compiler/preprocessor/Tokenizer.cpp
+index 25aefa9..de8efff 100644
+--- a/src/compiler/preprocessor/Tokenizer.cpp
++++ b/src/compiler/preprocessor/Tokenizer.cpp
+@@ -549,6 +549,12 @@ IF YOU MODIFY THIS FILE YOU ALSO NEED TO RUN generate_parser.sh.
+ #pragma GCC diagnostic ignored "-Wmissing-noreturn"
+ #endif
+ 
++#if defined(__clang__)
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wunknown-pragmas"
++#pragma clang diagnostic ignored "-Wdeprecated-register"
++#endif
++
+ typedef std::string YYSTYPE;
+ typedef pp::SourceLocation YYLTYPE;
+ 
+@@ -698,6 +704,8 @@ static void yy_flex_strncpy (char *,yyconst char *,int ,yyscan_t yyscanner);
+ static int yy_flex_strlen (yyconst char * ,yyscan_t yyscanner);
+ #endif
+ 
++#define YY_NO_INPUT
++
+ #ifndef YY_NO_INPUT
+ 
+ #ifdef __cplusplus
+@@ -2314,6 +2322,10 @@ void ppfree (void * ptr , yyscan_t yyscanner)
+ 
+ #define YYTABLES_NAME "yytables"
+ 
++#if defined(__clang__)
++#pragma clang diagnostic pop
++#endif
++
+ namespace pp {
+ 
+ Tokenizer::Tokenizer(Diagnostics* diagnostics)
+diff --git a/src/compiler/preprocessor/Tokenizer.l b/src/compiler/preprocessor/Tokenizer.l
+index ab9d99a..850c639 100644
+--- a/src/compiler/preprocessor/Tokenizer.l
++++ b/src/compiler/preprocessor/Tokenizer.l
+@@ -33,6 +33,12 @@ IF YOU MODIFY THIS FILE YOU ALSO NEED TO RUN generate_parser.sh.
+ #pragma GCC diagnostic ignored "-Wmissing-noreturn"
+ #endif
+ 
++#if defined(__clang__)
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wunknown-pragmas"
++#pragma clang diagnostic ignored "-Wdeprecated-register"
++#endif
++
+ typedef std::string YYSTYPE;
+ typedef pp::SourceLocation YYLTYPE;
+ 
+@@ -265,6 +271,10 @@ FRACTIONAL_CONSTANT  ({DIGIT}*"."{DIGIT}+)|({DIGIT}+".")
+ 
+ %%
+ 
++#if defined(__clang__)
++#pragma clang diagnostic pop
++#endif
++
+ namespace pp {
+ 
+ Tokenizer::Tokenizer(Diagnostics* diagnostics) : mHandle(0)
+diff --git a/src/compiler/translator/Compiler.cpp b/src/compiler/translator/Compiler.cpp
+index 1864cd8..c3111c1 100644
+--- a/src/compiler/translator/Compiler.cpp
++++ b/src/compiler/translator/Compiler.cpp
+@@ -96,6 +96,7 @@ TCompiler::TCompiler(ShShaderType type, ShShaderSpec spec)
+     : shaderType(type),
+       shaderSpec(spec),
+       maxUniformVectors(0),
++      maxVaryingVectors(0),
+       maxExpressionComplexity(0),
+       maxCallStackDepth(0),
+       fragmentPrecisionHigh(false),
+@@ -114,6 +115,7 @@ bool TCompiler::Init(const ShBuiltInResources& resources)
+     maxUniformVectors = (shaderType == SH_VERTEX_SHADER) ?
+         resources.MaxVertexUniformVectors :
+         resources.MaxFragmentUniformVectors;
++    maxVaryingVectors = resources.MaxVaryingVectors;
+     maxExpressionComplexity = resources.MaxExpressionComplexity;
+     maxCallStackDepth = resources.MaxCallStackDepth;
+ 
+@@ -238,14 +240,7 @@ bool TCompiler::compile(const char* const shaderStrings[],
+         {
+             collectVariables(root);
+             if (compileOptions & SH_ENFORCE_PACKING_RESTRICTIONS)
+-            {
+                 success = enforcePackingRestrictions();
+-                if (!success)
+-                {
+-                    infoSink.info.prefix(EPrefixError);
+-                    infoSink.info << "too many uniforms";
+-                }
+-            }
+             if (success && shaderType == SH_VERTEX_SHADER &&
+                 (compileOptions & SH_INIT_VARYINGS_WITHOUT_STATIC_USE))
+                 initializeVaryingsWithoutStaticUse(root);
+@@ -458,7 +453,21 @@ void TCompiler::collectVariables(TIntermNode* root)
+ bool TCompiler::enforcePackingRestrictions()
+ {
+     VariablePacker packer;
+-    return packer.CheckVariablesWithinPackingLimits(maxUniformVectors, uniforms);
++    bool success = packer.CheckVariablesWithinPackingLimits(maxUniformVectors, uniforms);
++    if (!success) {
++        infoSink.info.prefix(EPrefixError);
++        infoSink.info << "too many uniforms";
++        return false;
++    }
++
++    success = packer.CheckVariablesWithinPackingLimits(maxVaryingVectors, varyings);
++
++    if (!success) {
++        infoSink.info.prefix(EPrefixError);
++        infoSink.info << "too many varyings";
++        return false;
++    }
++    return true;
+ }
+ 
+ void TCompiler::initializeGLPosition(TIntermNode* root)
+diff --git a/src/compiler/translator/ShHandle.h b/src/compiler/translator/ShHandle.h
+index 50a8d58..687ff63 100644
+--- a/src/compiler/translator/ShHandle.h
++++ b/src/compiler/translator/ShHandle.h
+@@ -95,7 +95,7 @@ protected:
+     // Translate to object code.
+     virtual void translate(TIntermNode* root) = 0;
+     // Returns true if, after applying the packing rules in the GLSL 1.017 spec
+-    // Appendix A, section 7, the shader does not use too many uniforms.
++    // Appendix A, section 7, the shader does not use too many uniforms or varyings.
+     bool enforcePackingRestrictions();
+     // Insert statements to initialize varyings without static use in the beginning
+     // of main(). It is to work around a Mac driver where such varyings in a vertex
+@@ -130,6 +130,7 @@ private:
+     ShShaderSpec shaderSpec;
+ 
+     int maxUniformVectors;
++    int maxVaryingVectors;
+     int maxExpressionComplexity;
+     int maxCallStackDepth;
+ 
+diff --git a/src/compiler/translator/ShaderLang.cpp b/src/compiler/translator/ShaderLang.cpp
+index b98c371..dd26873 100644
+--- a/src/compiler/translator/ShaderLang.cpp
++++ b/src/compiler/translator/ShaderLang.cpp
+@@ -242,8 +242,12 @@ void ShGetInfoLog(const ShHandle handle, char* infoLog)
+     TCompiler* compiler = base->getAsCompiler();
+     if (!compiler) return;
+ 
++    size_t infoLogLength = 0;
++    ShGetInfo(compiler, SH_INFO_LOG_LENGTH, &infoLogLength);
++
+     TInfoSink& infoSink = compiler->getInfoSink();
+-    strcpy(infoLog, infoSink.info.c_str());
++    strncpy(infoLog, infoSink.info.c_str(), infoLogLength);
++    infoLog[infoLogLength - 1] = '\0';
+ }
+ 
+ //
+@@ -258,8 +262,12 @@ void ShGetObjectCode(const ShHandle handle, char* objCode)
+     TCompiler* compiler = base->getAsCompiler();
+     if (!compiler) return;
+ 
++    size_t objCodeLength = 0;
++    ShGetInfo(handle, SH_OBJECT_CODE_LENGTH, &objCodeLength);
++
+     TInfoSink& infoSink = compiler->getInfoSink();
+-    strcpy(objCode, infoSink.obj.c_str());
++    strncpy(objCode, infoSink.obj.c_str(), objCodeLength);
++    objCode[objCodeLength - 1] = '\0';
+ }
+ 
+ void ShGetVariableInfo(const ShHandle handle,
+diff --git a/src/compiler/translator/glslang.l b/src/compiler/translator/glslang.l
+index 518b78d..c8ff855 100644
+--- a/src/compiler/translator/glslang.l
++++ b/src/compiler/translator/glslang.l
+@@ -33,6 +33,11 @@ WHICH GENERATES THE GLSL ES LEXER (glslang_lex.cpp).
+ #pragma warning(disable: 4505)
+ #pragma warning(disable: 4701)
+ #endif
++#if defined(__clang__)
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wunknown-pragmas"
++#pragma clang diagnostic ignored "-Wdeprecated-register"
++#endif
+ }
+ 
+ %{
+@@ -379,6 +384,10 @@ O           [0-7]
+ 
+ %%
+ 
++#if defined(__clang__)
++#pragma clang diagnostic pop
++#endif
++
+ yy_size_t string_input(char* buf, yy_size_t max_size, yyscan_t yyscanner) {
+     pp::Token token;
+     yyget_extra(yyscanner)->preprocessor.lex(&token);
+diff --git a/src/compiler/translator/glslang_lex.cpp b/src/compiler/translator/glslang_lex.cpp
+index 5cfbba6..456491b 100644
+--- a/src/compiler/translator/glslang_lex.cpp
++++ b/src/compiler/translator/glslang_lex.cpp
+@@ -18,8 +18,11 @@
+ #pragma warning(disable: 4505)
+ #pragma warning(disable: 4701)
+ #endif
+-
+-
++#if defined(__clang__)
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wunknown-pragmas"
++#pragma clang diagnostic ignored "-Wdeprecated-register"
++#endif
+ 
+ #line 25 "./glslang_lex.cpp"
+ 
+@@ -3181,6 +3184,10 @@ void yyfree (void * ptr , yyscan_t yyscanner)
+ 
+ #define YYTABLES_NAME "yytables"
+ 
++#if defined(__clang__)
++#pragma clang diagnostic pop
++#endif
++
+ yy_size_t string_input(char* buf, yy_size_t max_size, yyscan_t yyscanner) {
+     pp::Token token;
+     yyget_extra(yyscanner)->preprocessor.lex(&token);
+diff --git a/src/compiler/translator/glslang_tab.cpp b/src/compiler/translator/glslang_tab.cpp
+index 70d46d8..cba3cc4 100644
+--- a/src/compiler/translator/glslang_tab.cpp
++++ b/src/compiler/translator/glslang_tab.cpp
+@@ -1,5 +1,7 @@
+ /* A Bison parser, made by GNU Bison 2.7.1.  */
+ 
++/* Apple Note: For the avoidance of doubt, Apple elects to distribute this file under the terms of the BSD license. */
++
+ /* Bison implementation for Yacc-like parsers in C
+    
+       Copyright (C) 1984, 1989-1990, 2000-2013 Free Software Foundation, Inc.
+diff --git a/src/compiler/translator/glslang_tab.h b/src/compiler/translator/glslang_tab.h
+index c6a61dc..09a38d4 100644
+--- a/src/compiler/translator/glslang_tab.h
++++ b/src/compiler/translator/glslang_tab.h
+@@ -1,5 +1,7 @@
+ /* A Bison parser, made by GNU Bison 2.7.1.  */
+ 
++/* Apple Note: For the avoidance of doubt, Apple elects to distribute this file under the terms of the BSD license. */
++
+ /* Bison interface for Yacc-like parsers in C
+    
+       Copyright (C) 1984, 1989-1990, 2000-2013 Free Software Foundation, Inc.
+diff --git a/src/libGLESv2/Program.cpp b/src/libGLESv2/Program.cpp
+index 8a9fb04..46db788 100644
+--- a/src/libGLESv2/Program.cpp
++++ b/src/libGLESv2/Program.cpp
+@@ -101,22 +101,27 @@ void InfoLog::append(const char *format, ...)
+     va_end(vararg);
+ 
+     char *logPointer = NULL;
++    size_t logLength = 0;
+ 
+     if (!mInfoLog)
+     {
+         mInfoLog = new char[infoLength + 2];
+         logPointer = mInfoLog;
++        logLength = infoLength + 2;
+     }
+     else
+     {
+         size_t currentlogLength = strlen(mInfoLog);
+-        char *newLog = new char[currentlogLength + infoLength + 2];
+-        strcpy(newLog, mInfoLog);
++        size_t newInfoLogLength = currentlogLength + infoLength + 2;
++        char *newLog = new char[newInfoLogLength];
++        strncpy(newLog, mInfoLog, newInfoLogLength);
++        newLog[newInfoLogLength - 1] = '\0';
+ 
+         delete[] mInfoLog;
+         mInfoLog = newLog;
+ 
+         logPointer = mInfoLog + currentlogLength;
++        logLength = newInfoLogLength - currentlogLength;
+     }
+ 
+     va_start(vararg, format);
+@@ -124,7 +129,8 @@ void InfoLog::append(const char *format, ...)
+     va_end(vararg);
+ 
+     logPointer[infoLength] = 0;
+-    strcpy(logPointer + infoLength, "\n");
++    strncpy(logPointer + infoLength, "\n", logLength - infoLength);
++    logPointer[logLength - 1] = '\0';
+ }
+ 
+ void InfoLog::reset()
+diff --git a/src/libGLESv2/renderer/VertexBuffer.cpp b/src/libGLESv2/renderer/VertexBuffer.cpp
+index 4e732e1..20050e1 100644
+--- a/src/libGLESv2/renderer/VertexBuffer.cpp
++++ b/src/libGLESv2/renderer/VertexBuffer.cpp
+@@ -166,7 +166,7 @@ bool VertexBufferInterface::directStoragePossible(const gl::VertexAttribute &att
+     //  (Undocumented, and experimentally confirmed)
+     unsigned int outputElementSize;
+     getVertexBuffer()->getSpaceRequired(attrib, 1, 0, &outputElementSize);
+-    size_t alignment = std::min(static_cast<size_t>(outputElementSize), 4u);
++    size_t alignment = std::min<size_t>(static_cast<size_t>(outputElementSize), 4);
+ 
+     bool isAligned = (static_cast<size_t>(attrib.stride()) % alignment == 0) &&
+                      (static_cast<size_t>(attrib.mOffset) % alignment == 0);

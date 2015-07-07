@@ -1,0 +1,9 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion boolean conversion
+
+FAIL dt.setChar( true ); dt.PUB_CHAR should throw an exception. Was 1.
+FAIL dt.setChar( true ); dt.getChar() should throw an exception. Was 1.
+FAIL typeof dt.getChar() should throw an exception. Was number.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

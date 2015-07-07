@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="video-test.js"></script>
+        <script>
+            function start() {
+                video = mediaElement = document.getElementsByTagName('video')[0];
+
+                testExpected("video.canPlayType('audio/webm')", "maybe");
+                testExpected("video.canPlayType('video/webm')", "maybe");
+
+                testExpected("video.canPlayType('audio/webm; codecs=vorbis')", "probably");
+                testExpected("video.canPlayType('video/webm; codecs=vp8,vorbis')", "probably");
+
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload="start()">
+        <video controls></video>
+        <p>Test HTMLMediaElement <em>canPlayType()</em> method for webm media containers.</p>
+        <p>These tests may be expected to fail if the WebKit port does not support the format.</p>
+    </body>
+</html>

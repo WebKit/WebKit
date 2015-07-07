@@ -1,0 +1,13 @@
+Test for 79685: [CSSRegions][CSSOM]Prevent creation of NamedFlow object for invalid flow name
+
+On success, you should see a series of PASS below.
+
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS

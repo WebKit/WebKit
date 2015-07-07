@@ -1,0 +1,31 @@
+<html>
+<head>
+<script src="resources/profiler-test-JS-resources.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+if (window.internals)
+    internals.setJavaScriptProfilingEnabled(true);
+
+function startTest()
+{
+    console.profile("Dead time in profile.");
+    setTimeout("endTest()", 1234);
+}
+
+</script>
+</head>
+
+<body onload="startTest()">
+This page's JavaScript Has some dead time in the profile.
+<br>
+<br>
+To run this test manually, load it in the browser then load the WebInspector and look at
+the profile.  In the profile there should be a large amount of the % spent in 
+(non-JavaScript).
+<div id="output"></div>
+</body>
+</html>
+

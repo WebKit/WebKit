@@ -1,0 +1,26 @@
+<html>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function doTest()
+{
+    if (window.testRunner) {
+        testRunner.setPagePaused(true);
+        setTimeout(function() {
+            document.getElementById('results').innerText = 'PASS';
+            testRunner.notifyDone();
+        }, 100);
+        testRunner.setPagePaused(false);
+    }
+}
+
+window.addEventListener('load', doTest, false);
+</script>
+<body>
+<p>Test for &lt;rdar://problem/12116720&gt; REGRESSION (Hoodoo): Scrolling to bottom of m.facebook.com doesn't load more posts [Millicom Colombia]</p>
+<pre id='results'>FAIL</pre>
+</body>
+</html>

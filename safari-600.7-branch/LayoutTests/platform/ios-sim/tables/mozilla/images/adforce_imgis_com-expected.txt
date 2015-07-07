@@ -1,0 +1,7 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 666x19
+        text run at (0,0) width 666: "GIF89a\x{D4}\x{1}<\x{20AC}\x{7F}!\x{FF}\x{B}NETSCAPE2.0\x{3}\x{1}!\x{F9}\x{4}\x{4}<,\x{D4}\x{1}<\x{201A}\x{7F}\x{FF}\x{FF}\x{FF}\x{FF}\x{FF}\x{DF}\x{DF}\x{DF}\x{BF}\x{BF}\x{BF}\x{7F}\x{7F}\x{7F}\x{3}\x{FF}8\x{BA}\x{DC}\x{FE}0\x{CA}I\x{AB}\x{BD}8\x{EB}\x{CD}\x{BB}\x{FF}`(\x{17D}di*\x{C6} \x{AC}l\x{EB}\x{BE}p,\x{CF}tm\x{DF}x\x{AE}\x{EF}|\x{EF}\x{FF}\x{C0} pH,"

@@ -1,0 +1,153 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+span.target {
+    background-color:rgb(0,0,0);
+}
+span.target.rabbit:not(.horse) {
+    background-color:rgb(1,2,3);
+}
+span.target:not(.rabbit):not(.horse) {
+    background-color:rgb(2,3,4);
+}
+
+span.target1 {
+    background-color:rgb(0,0,0);
+}
+c:not(.ng) > c span.target1 {
+    background-color:rgb(1,2,3);
+}
+
+span.target2 {
+    background-color:rgb(0,0,0);
+}
+/* Maximum register case */
+d > d[rel="drink"][data-cocoa][data-cappuccino]:not(.ng) > d > d span.target2 {
+    background-color:rgb(1,2,3);
+}
+
+span.target3 {
+    background-color:rgb(0,0,0);
+}
+/* Maximum register case */
+d > d:not([rel="drink"]) > d > d span.target3 {
+    background-color:rgb(1,2,3);
+}
+</style>
+</head>
+<body>
+<div style="display:none">
+    <!-- span.target.rabbit:not(.horse) -->
+    <target1>
+            <span class="target rabbit horse" id="target1"></span>
+    </target1>
+
+    <!-- span.target.rabbit:not(.horse) -->
+    <target2>
+            <span class="target rabbit house" id="target2"></span>
+    </target2>
+
+    <!-- span.target:not(.rabbit):not(.horse) -->
+    <target3>
+            <span class="target" id="target3"></span>
+    </target3>
+
+    <!-- span.target:not(.rabbit):not(.horse) -->
+    <target4>
+            <span class="target house" id="target4"></span>
+    </target4>
+
+    <!-- span.target:not(.rabbit):not(.horse) -->
+    <target5>
+            <span class="target horse" id="target5"></span>
+    </target5>
+
+    <!-- c:not(.ng) > c span.target1 -->
+    <target6>
+            <c>  <!-- Matched. -->
+                <c class="ng">  <!-- Failed. Backtracking from here. -->
+                    <c>
+                        <span class="target1" id="target6"></span>
+                    </c>
+                </c>
+            </c>
+    </target6>
+
+    <!-- c:not(.ng) > c span.target1 -->
+    <target7>
+            <c class="ng">  <!-- Failed. Backtracking from here. -->
+                <c class="ng">  <!-- Failed. Backtracking from here. -->
+                    <c class="ng">  <!-- Failed. Backtracking from here. -->
+                        <c>
+                            <span class="target1" id="target7"></span>
+                        </c>
+                    </c>
+                </c>
+            </c>
+    </target7>
+
+    <!-- d > d[data-cocoa][data-cappuccino]:not(.ng) > d > d span.target2 -->
+    <target8>
+        <d>  <!-- Matched. -->
+            <d rel="drink" data-cocoa data-cappuccino>
+                <d data-cocoa data-cappuccino class="ng">  <!-- Failed. Backtracking from the tail. -->
+                    <d>
+                        <d>
+                            <span class="target2" id="target8"></span>
+                        </d>
+                    </d>
+                </d>
+            </d>
+        </d>
+    </target8>
+
+    <!-- d > d:not([rel="drink"]) > d > d span.target3 -->
+    <target9>
+        <d>  <!-- Matched. -->
+            <d>
+                <d rel="drink">  <!-- Failed. Backtracking from the tail. -->
+                    <d>
+                        <d>
+                            <span class="target3" id="target9"></span>
+                        </d>
+                    </d>
+                </d>
+            </d>
+        </d>
+    </target9>
+</div>
+</body>
+<script>
+description('The pseudo class :not');
+
+debug(":not selector matched.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target1")).backgroundColor', 'rgb(0, 0, 0)');
+
+debug(":not selector unmatched.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target2")).backgroundColor', 'rgb(1, 2, 3)');
+
+debug("multiple :not selector matched.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target3")).backgroundColor', 'rgb(2, 3, 4)');
+
+debug("multiple :not selector matched.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target4")).backgroundColor', 'rgb(2, 3, 4)');
+
+debug("multiple :not selector unmatched.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target5")).backgroundColor', 'rgb(0, 0, 0)');
+
+debug(":not with backtracking matched.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target6")).backgroundColor', 'rgb(1, 2, 3)');
+
+debug(":not with backtracking failed.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target7")).backgroundColor', 'rgb(0, 0, 0)');
+
+debug(":not with maximum registers matched.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target8")).backgroundColor', 'rgb(1, 2, 3)');
+
+debug(":not with maximum registers matched.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target9")).backgroundColor', 'rgb(1, 2, 3)');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

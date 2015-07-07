@@ -1,0 +1,31 @@
+{
+    "types": {
+        "JavaScriptCore": [
+            {
+                "name": "InputQueue", "mode": "SCALAR",
+                "flags": ["ENUM_CLASS"],
+                "values": ["EventLoopInput", "LoaderMemoizedData", "ScriptMemoizedData"],
+                "header": "replay/NondeterministicInput.h"
+            }
+        ],
+        "WebCore": [
+            {
+                "name": "MouseButton", "mode": "SCALAR", "storage": "unsigned",
+                "flags": ["ENUM"],
+                "values": ["NoButton", "LeftButton", "MiddleButton", "RightButton"],
+                "header": "platform/PlatformMouseEvent.h"
+            }
+        ]
+    },
+
+    "inputs": [
+        {
+            "name": "SavedMouseButton",
+            "description": "Supplies a mouse button enum value.",
+            "queue": "SCRIPT_MEMOIZED",
+            "members": [
+                { "name": "button", "type": "MouseButton" }
+            ]
+        }
+    ]
+}

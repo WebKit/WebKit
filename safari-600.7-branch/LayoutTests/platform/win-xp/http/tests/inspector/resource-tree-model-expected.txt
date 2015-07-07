@@ -1,0 +1,7 @@
+Tests resource tree model.
+
+
+http://127.0.0.1:8000/inspector/inspector-test.js => http://127.0.0.1:8000/inspector/resource-tree-model.html
+http://127.0.0.1:8000/inspector/resources-test.js => http://127.0.0.1:8000/inspector/resource-tree-model.html
+http://127.0.0.1:8000/inspector/resources/dummy-iframe.php => http://127.0.0.1:8000/inspector/resources/dummy-iframe.php
+

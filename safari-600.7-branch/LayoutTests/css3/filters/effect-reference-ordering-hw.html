@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" version="1.1">
+  <defs>
+    <filter id="blurX">
+      <feGaussianBlur stdDeviation="5 0"/>
+    </filter>
+    <filter id="blurY">
+      <feGaussianBlur stdDeviation="0 5"/>
+    </filter>
+  </defs>
+</svg>
+<style>
+img {
+    margin: 10px;
+    -webkit-transform:  translateZ(0);
+}
+</style>
+<img style="-webkit-filter: url(#blurY);" src="resources/reference.png">
+<img style="-webkit-filter: contrast(500%) url(#blurY);" src="resources/reference.png">
+<img style="-webkit-filter: url(#blurY) contrast(500%);" src="resources/reference.png">
+<img style="-webkit-filter: url(#blurX) contrast(500%); url(#blurY);" src="resources/reference.png">

@@ -1,0 +1,23 @@
+heading1.2
+
+
+
+This tests ensures that aria-hidden=false will allow a node to be in the AX hierarchy even if it's not rendered or visible
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS !heading1_1 || !heading1_1.isValid is true
+PASS !heading1_2 || !heading1_3.isValid is true
+PASS !heading1_3 || !heading1_3.isValid is true
+PASS heading2.role is 'AXRole: AXHeading'
+PASS parent.childAtIndex(0).isEqual(heading2) is true
+PASS heading3.role is 'AXRole: AXHeading'
+PASS parent.childAtIndex(1).isEqual(heading3) is true
+PASS heading4.role is 'AXRole: AXHeading'
+PASS parent.childAtIndex(2).isEqual(heading4) is true
+Textfield Title: AXTitle: 
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

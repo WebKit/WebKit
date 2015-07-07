@@ -1,0 +1,25 @@
+This tests that arguments predicted to be boolean are checked.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS predictBooleanArgument(true) is "yes"
+PASS predictBooleanArgument(false) is "no"
+PASS predictBooleanArgument(true) is "yes"
+PASS predictBooleanArgument(false) is "no"
+PASS predictBooleanArgument(0) is "no"
+PASS predictBooleanArgument(1) is "yes"
+PASS predictBooleanArgument(2) is "yes"
+PASS predictBooleanArgument(3) is "yes"
+PASS predictBooleanArgument(4) is "yes"
+PASS predictBooleanArgument(true) is "yes"
+PASS predictBooleanArgument(false) is "no"
+PASS predictBooleanArgument(0) is "no"
+PASS predictBooleanArgument(1) is "yes"
+PASS predictBooleanArgument(2) is "yes"
+PASS predictBooleanArgument(3) is "yes"
+PASS predictBooleanArgument(4) is "yes"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

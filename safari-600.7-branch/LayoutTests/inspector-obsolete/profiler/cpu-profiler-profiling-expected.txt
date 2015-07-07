@@ -1,0 +1,9 @@
+Tests that CPU profiling works. Bug 52634.
+
+Profiler was enabled.
+
+Running: testProfiling
+found pageFunction
+
+Profiler was disabled.
+

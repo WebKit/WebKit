@@ -1,0 +1,38 @@
+Test for formchange events.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Change for input (type=text)
+PASS result is "Fired"
+Change for input (type=number)
+PASS result is "Fired"
+Change for input (type=radio)
+PASS result is "Fired"
+Change for input (type=checkbox)
+PASS result is "Fired"
+Change for textarea
+PASS result is "Fired"
+Change for select
+FAIL result should be Fired. Was Not fired.
+form.dispatchFormChange()
+PASS result is "Fired"
+
+Is formchange delivered for?
+PASS resultInputText is "Delivered"
+PASS resultInputNumber is "Delivered"
+PASS resultInputRadio is "Delivered"
+PASS resultInputCheckbox is "Delivered"
+PASS resultTextarea is "Delivered"
+PASS resultKeygen is "Delivered"
+PASS resultObject is "Not delivered"
+PASS resultOutput is "Delivered"
+PASS resultSelect is "Delivered"
+PASS resultP is "Not delivered"
+PASS resultRemovingInput is "Delivered"
+PASS resultRemovingForm is "Delivered"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

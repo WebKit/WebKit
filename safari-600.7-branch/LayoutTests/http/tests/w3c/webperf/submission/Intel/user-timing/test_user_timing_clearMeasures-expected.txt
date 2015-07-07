@@ -1,0 +1,63 @@
+Description
+
+This test validates functionality of the interface window.performance.clearMeasures.
+
+
+PASS There should be 2 entries. 
+PASS Entries in entrylist should be in order. 
+PASS Entry "aaa" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS Entry "2" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS Measure that we cleared should not exist anymore. 
+PASS There should be 1 entries. 
+PASS Entries in entrylist should be in order. 
+PASS Entry "aaa" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS Measure that we cleared should not exist anymore. 
+PASS There should be 0 entries. 
+PASS Entries in entrylist should be in order. 
+PASS Measure that we cleared should not exist anymore. 
+PASS No measures should exist after we clear all. 
+PASS There should be 4 entries. 
+PASS Entries in entrylist should be in order. 
+PASS Entry "aaa" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS Entry "aaa" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS Entry "2" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS Entry "2" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS Measure that we cleared shall not existed anymore. 
+PASS There should be 2 entries. 
+PASS Entries in entrylist should be in order. 
+PASS Entry "aaa" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS Entry "aaa" should be one that we have set. 
+PASS entryType should be "measure". 
+PASS startTime should be a number. 
+PASS duration should be a number. 
+PASS Measure that we cleared shall not existed anymore. 
+PASS There should be 0 entries. 
+PASS Entries in entrylist should be in order. 
+PASS Measure that we cleared shall not existed anymore. 
+PASS Nothing should happen if we clear a non-exist measure 
+PASS No measures should exist when we clear all. 
+

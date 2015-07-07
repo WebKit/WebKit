@@ -1,0 +1,49 @@
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<style>
+#flow {
+    -webkit-flow-into: flow;
+}
+</style>
+<script>
+function test()
+{
+    InspectorTest.sendCommand("DOM.getDocument", {}, onGotDocument);
+
+    function onGotDocument(msg) {
+        InspectorTest.checkForError(msg);
+        var node = msg.result.root;
+        InspectorTest.sendCommand("DOM.querySelector", { "nodeId": node.nodeId, "selector": "#inspectedElement" }, onQuerySelector);
+    }
+
+    function onQuerySelector(msg) {
+        InspectorTest.checkForError(msg);
+        var node = msg.result;
+        var highlightConfig = {
+            showInfo: true,
+            contentColor: {r: 255, g: 255, b: 255},
+            paddingColor: {r: 255, g: 255, b: 255},
+            borderColor: {r: 255, g: 255, b: 255},
+            marginColor: {r: 255, g: 255, b: 255},
+        };
+        InspectorTest.sendCommand("DOM.highlightNode", { "highlightConfig": highlightConfig, "nodeId": node.nodeId }, onHighlightComplete);
+    }
+
+    function onHighlightComplete(msg) {
+        InspectorTest.checkForError(msg);
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+
+<div id="flow">
+    <div id="inspectedElement"></div>
+</div>
+
+<p>Testing that the backend is not crashing when highlighting a node that has no associated region.</p>
+
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            div {
+                height: 9999px;
+                width:9999px;
+            }
+        </style>
+        <script src="../../../resources/js-test-pre.js"></script>
+        <script>
+            function runTest() {
+                description('Tests that for non-standard mode document.body.scrollLeft returns the scroll left value as 0');
+
+                document.body.scrollLeft = 500;
+                shouldBe("document.body.scrollLeft","500");
+                isSuccessfullyParsed();
+			}
+        </script>
+    </head>
+    <body onload="runTest()">
+        <div></div>
+        <script src="../../../resources/js-test-post.js"></script>
+    </body>
+</html>

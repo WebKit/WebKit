@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<style type="text/css">
+div:target {
+    background-color: #66CCFF;
+}
+</style>
+<script>
+function test()
+{
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    // Location changes need to happen outside the onload handler to generate history entries.
+    setTimeout(runTest, 0);
+}
+
+function runTest() {
+    window.location.hash ='#target-01';
+    document.body.offsetTop;
+    window.history.back(); // This queues up a navigation, so we need to delay the call to notifyDone.
+    if (window.testRunner)
+        setTimeout(function() { testRunner.notifyDone() }, 0);
+}
+</script>
+</head>
+<body onload="test()">
+
+<div id="target-01">
+  <p>I should be highlighted first because of the anchor, and de-highlighted when there is no fragment.</p>
+</div>
+
+</body></html>

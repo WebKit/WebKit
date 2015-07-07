@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style type="text/css" media="screen">
+    body {
+        height: 1500px;
+        margin: 0;
+    }
+    
+    #box {
+        height: 100px;
+        width: 100px;
+        background-color: blue;
+    }
+    
+    .composited {
+        -webkit-transform: translateZ(0);
+    }
+   
+    iframe {
+        display: block;
+        margin: 20px;
+        height: 200px;
+        width: 280px;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function doTest()
+    {
+        // For some reason this delay is required for AppKit to not short-circuit the display.
+        window.setTimeout(function() {
+          document.getElementById('box').className = 'composited';
+          if (window.testRunner) {
+              testRunner.display();
+              document.getElementById('layers').innerHTML = window.internals.layerTreeAsText(document);
+              testRunner.notifyDone();
+          }
+        }, 20);
+    }
+
+    window.addEventListener('load', doTest, false);
+  </script>
+</head>
+<body>
+    <div id="box"></div>
+
+    <!-- Tests that when the main document becomes composited, all iframes containing
+        any composited content become composited -->
+    <iframe src="resources/intermediate-frame.html"></iframe>
+    <iframe src="resources/intermediate-frame.html"></iframe>
+
+    <pre id="layers">Layer tree appears here in DRT.</pre>
+</body>
+</html>

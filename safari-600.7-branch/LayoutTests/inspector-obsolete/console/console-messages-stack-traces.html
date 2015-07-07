@@ -1,0 +1,81 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/console-test.js"></script>
+<script>
+
+function performConsoleMessages() {
+    // No console message.
+    console.timeStamp();
+
+    // Expected to have stack traces.
+    console.time("time"); // Nothing until timeEnd.
+    console.clear();
+    console.group("group");
+    console.profile("profile");
+    console.log("log");
+    console.info("info");
+    console.warn("warn");
+    console.error("debug");
+    console.error("error");
+    console.assert(false, "assert");
+    console.trace("trace");
+    console.dir([1,2,3]);
+    console.dirxml(document.body);
+    console.count("count");
+    console.profileEnd("profile");
+    console.timeEnd("time");
+
+    // Not expected to have stack traces.
+    console.log("MARKER: EXPECT NO STACK TRACES");
+    console.groupEnd("group");
+
+    // End the test
+    console.log("MARKER: DONE");
+}
+
+function test()
+{
+    InspectorTest.addSniffer(WebInspector.ConsoleDispatcher.prototype, "messageAdded", messageAdded, true);
+
+    var hadIssue = false;
+    var expectStackTraces = true;
+
+    function messageAdded(payload)
+    {
+        if (payload.level === "log") {
+            if (payload.text === "MARKER: DONE") {
+                InspectorTest.addResult(hadIssue ? "FAILURE" : "SUCCESS");
+                InspectorTest.completeTest();
+                return;
+            }
+            if (payload.text === "MARKER: EXPECT NO STACK TRACES") {
+                expectStackTraces = false;
+                return;
+            }
+        }
+
+        var url = payload.url;
+        var lastSlashIndex = url.lastIndexOf("/");
+        url = url.substring(lastSlashIndex + 1);
+
+        if ("stackTrace" in payload && !expectStackTraces) {
+            InspectorTest.addResult("Unexpected stack trace for: " + JSON.stringify(payload));
+            hadIssue = true;
+        } else if (!("stackTrace" in payload) && expectStackTraces) {
+            InspectorTest.addResult("Expected stack trace for: " + JSON.stringify(payload));
+            hadIssue = true;
+        }
+    }
+
+    InspectorTest.evaluateInPage("performConsoleMessages()");
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>Tests that console-api messages contain stack traces.</p>
+
+</body>
+</html>

@@ -1,0 +1,34 @@
+<p>Matching IE, execCommand("Delete") should not scroll the page to make selection visible.</p>
+<div contenteditable>ab</div>
+<div style="height:10000"></div>
+<script>
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+  }
+
+  var textDiv = document.getElementsByTagName('div')[0];
+  var text = textDiv.firstChild;
+  if (window.getSelection)
+    window.getSelection().setBaseAndExtent(text, 1, text, 2);
+  else {
+    var range = document.body.createTextRange();
+    range.moveToElementText(textDiv);
+    range.moveStart("character", 1);
+    range.select();
+  }
+  
+  setTimeout("finishTest()", 0);
+
+  function finishTest() {
+    window.scrollTo(0, 1000);
+    document.execCommand("Delete");
+
+    var result = (document.body.scrollTop == 1000) ? "SUCCESS" : "FAILURE";
+    if (window.testRunner) {
+      testRunner.notifyDone();
+      document.write(result);
+    } else
+      alert(result);
+  }
+</script>

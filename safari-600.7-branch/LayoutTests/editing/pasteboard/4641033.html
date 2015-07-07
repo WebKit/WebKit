@@ -1,0 +1,32 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<p>This tests for a bug when creating markup for a selection that contained unrendered nodes with children.  You should see a picture of abe followed by a select box.</p>
+<div id="paste" contenteditable="true"></div>
+
+<img id="start" src="../resources/abe.png">
+<select id="end"><optgroup><option>1</option><option>2</option><option>3</option></optgroup></select>
+</select>
+<script>
+function runTest() {
+    var start = document.getElementById("start");
+    var end = document.getElementById("end");
+    
+    var s = window.getSelection();
+    s.setBaseAndExtent(start, 0, end, end.childNodes.length);
+    
+    document.execCommand("Copy");
+    
+    s.setPosition(document.getElementById("paste"), 0);
+    document.execCommand("Paste");
+    
+    if (window.testRunner)
+        window.testRunner.notifyDone();    
+    
+}
+if (window.testRunner)
+    window.testRunner.waitUntilDone();
+window.setTimeout(runTest, 100);
+
+</script>

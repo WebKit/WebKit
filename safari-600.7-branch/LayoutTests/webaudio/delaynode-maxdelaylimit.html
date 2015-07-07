@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="resources/audio-testing.js"></script>
+<script src="resources/delay-testing.js"></script>
+</head>
+
+<body>
+
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Tests attribute and maximum allowed delay of DelayNode.");
+
+function runTest() {
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    
+    window.jsTestIsAsync = true;
+        
+    // Create offline audio context.
+    var context = new webkitOfflineAudioContext(1, sampleRate * renderLengthSeconds, sampleRate);
+    var toneBuffer = createToneBuffer(context, 20, 20 * toneLengthSeconds, sampleRate); // 20Hz tone
+    
+    var bufferSource = context.createBufferSource();
+    bufferSource.buffer = toneBuffer;
+
+    window.context = context;
+    shouldThrow("context.createDelay(180)");
+    shouldThrow("context.createDelay(0)");
+    shouldThrow("context.createDelay(-1)");
+
+    var delay = context.createDelay(179);
+    delay.delayTime.value = delayTimeSeconds;
+    window.delay = delay;
+    shouldBeTrue("delay.delayTime.value === 0.5");
+
+    bufferSource.connect(delay);
+    delay.connect(context.destination);
+    bufferSource.start(0);
+    
+    context.oncomplete = checkDelayedResult(toneBuffer);
+    context.startRendering();
+}
+
+runTest();
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

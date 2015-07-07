@@ -1,0 +1,61 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x356 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x104
+          RenderText {#text} at (0,0) size 67x26
+            text run at (0,0) width 67: "Tests: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,26) size 612x26
+            text run at (0,26) width 612: "A scenario I thought of based on my experiences with this bug:"
+          RenderInline {A} at (0,0) size 260x26 [color=#0000EE]
+            RenderText {#text} at (0,52) size 260x26
+              text run at (0,52) width 260: "<rdar://problem/4045521>"
+          RenderText {#text} at (260,52) size 744x52
+            text run at (260,52) width 484: " Hitting return key with full line selected does not"
+            text run at (0,78) width 254: "add blank line as it should"
+        RenderBlock {DIV} at (14,134) size 756x208
+          RenderBlock (anonymous) at (0,0) size 756x104
+            RenderText {#text} at (0,0) size 189x26
+              text run at (0,0) width 189: "Expected Results: "
+            RenderBR {BR} at (189,21) size 0x0
+            RenderText {#text} at (0,26) size 748x78
+              text run at (0,26) width 724: "Should see this content in the red box below (note that there should be two"
+              text run at (0,52) width 748: "blank lines between \"foo\" and \"baz\"; also note that the insertion point should"
+              text run at (0,78) width 429: "be at the start of the third line, a blank line):"
+          RenderBlock {DIV} at (0,104) size 756x26
+            RenderText {#text} at (0,0) size 32x26
+              text run at (0,0) width 32: "foo"
+          RenderBlock {DIV} at (0,130) size 756x26
+            RenderBR {BR} at (0,0) size 0x26
+          RenderBlock {DIV} at (0,156) size 756x26
+            RenderBR {BR} at (0,0) size 0x26
+          RenderBlock {DIV} at (0,182) size 756x26
+            RenderText {#text} at (0,0) size 34x26
+              text run at (0,0) width 34: "baz"
+      RenderBlock {DIV} at (0,380) size 784x108
+        RenderBlock {DIV} at (0,0) size 784x108 [border: (2px solid #FF0000)]
+          RenderBlock {DIV} at (2,2) size 780x26
+            RenderText {#text} at (0,0) size 32x26
+              text run at (0,0) width 32: "foo"
+          RenderBlock {DIV} at (2,28) size 780x26
+            RenderBR {BR} at (0,0) size 0x26
+          RenderBlock {DIV} at (2,54) size 780x26
+            RenderBR {BR} at (0,0) size 0x26
+          RenderBlock {DIV} at (2,80) size 780x26
+            RenderText {#text} at (0,0) size 34x26
+              text run at (0,0) width 34: "baz"
+caret: position 0 of child 0 {BR} of child 3 {DIV} of child 1 {DIV} of child 3 {DIV} of body

@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 3: Viewport argument value "400%" for key "width" was truncated to its numeric prefix.
+ALERT: viewport size 400x440 scale 0.8 with limits [0.8, 5] and userScalable true
+

@@ -1,0 +1,58 @@
+<html>
+	<head>
+		<title>Bug #</title>
+		<style>
+			html {
+				-webkit-font-smoothing: none;
+			}
+
+			.content {
+				-webkit-flow-into: theFlow;
+			}
+			.transformed {
+				-webkit-transform:rotateX(15deg) rotateZ(15deg);
+			}
+			.region {
+				-webkit-flow-from: theFlow;
+				display: inline-block;
+				float: right;
+				width: 210px;
+				height: 110px;
+				background-color: #eee;
+			}
+			.text {
+				width: 600px;
+			}
+			* {
+				border:solid 1px #888;
+				padding: 2px;
+				margin: 3px;
+			}
+		</style>
+		<script src="../resources/media-testing.js"></script>
+		<script src="../../media/media-file.js"></script>
+
+		<script type="text/javascript" charset="utf-8">
+			function testDone() {
+				if (window.testRunner)
+					testRunner.notifyDone();
+			}
+
+			window.onload = function() {
+				var video = document.getElementsByTagName('video')[0];
+				setupVideo(video, '../../media/content/counting', null, testDone);
+			};
+		</script>
+	</head>
+	<body>
+		<div class="text">
+			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Mollitia, cupiditate, porro, dignissimos fuga impedit corrupti suscipit tempora earum odit asperiores quia nam soluta repellat perspiciatis iste et voluptatem molestiae magni a voluptas maxime officiis iusto dolor ut dicta. 
+			<div class="region"></div>
+			Et, ad sit praesentium recusandae omnis reiciendis ipsa eveniet accusantium vero reprehenderit enim minus perferendis sapiente maxime fugiat iure soluta minima suscipit.
+		</div>
+		<div class="text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Mollitia, cupiditate, porro, dignissimos fuga impedit corrupti suscipit tempora earum odit asperiores quia nam soluta repellat perspiciatis iste et voluptatem molestiae magni a voluptas maxime officiis iusto dolor ut dicta. Et, ad sit praesentium recusandae omnis reiciendis ipsa eveniet accusantium vero reprehenderit enim minus perferendis sapiente maxime fugiat iure soluta minima suscipit.</div>
+		<div class="content">Long text inside the region</div>
+		<video class="content transformed" height="100" width="96" id="video" controls></video>
+		<div class="content transformed">Long text inside the region</div>
+	</body>
+</html>

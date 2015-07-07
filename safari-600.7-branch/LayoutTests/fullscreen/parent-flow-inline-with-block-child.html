@@ -1,0 +1,49 @@
+<style>
+body {
+    font-family: ahem;
+    -webkit-font-smoothing: none;
+}
+</style>
+
+<div>
+  <span>1</span>
+  <span id='c2'>2</span>
+</div>
+
+<script>
+    if ("webkitRequestFullScreen" in Element.prototype) {
+        if (window.testRunner) 
+            testRunner.waitUntilDone();
+
+        var callback;
+        var fullscreenChanged = function(event)
+        {
+            if (callback)
+                callback(event)
+        };
+        document.addEventListener('webkitfullscreenchange', fullscreenChanged);
+
+        document.body.offsetTop;
+        var span = document.getElementById('c2');
+        var div = span.parentNode;
+
+        var spanEnteredFullScreen = function(event) {
+            setTimeout(function () {
+                span.appendChild(document.createElement('div'));
+                callback = function() {
+                    if (window.testRunner)
+                        testRunner.notifyDone();
+                }
+                document.webkitCancelFullScreen();
+            }, 0);
+        };
+
+        callback = spanEnteredFullScreen;
+
+        document.addEventListener('keydown', function () {
+            span.webkitRequestFullScreen();
+        });
+        if (window.eventSender)
+            eventSender.keyDown('a');
+    }
+</script>

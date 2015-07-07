@@ -1,0 +1,6 @@
+
+margin rect is 166 x 188 at (192, 154)
+border rect is 138 x 160 at (206, 168)
+padding rect is 118 x 140 at (216, 178)
+content rect is 66 x 88 at (242, 204)
+

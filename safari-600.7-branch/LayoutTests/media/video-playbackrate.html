@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>test playbackRate and defaultPlaybackRate</title>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            var rateChangeCount = 0;
+
+            function ratechange()
+            {
+                consoleWrite("*** checking rates after event");
+                switch (++rateChangeCount)
+                {
+                    case 1:
+                        testExpected("video.playbackRate", 1);
+                        testExpected("video.defaultPlaybackRate", 2);
+
+                        consoleWrite("<br>*** setting playbackRate");
+                        run("video.playbackRate = 2");
+                        testExpected("video.playbackRate", 2);
+                        testExpected("video.defaultPlaybackRate", 2);
+                        consoleWrite("");
+                        break;
+                    case 2:
+                        testExpected("video.playbackRate", 2);
+                        testExpected("video.defaultPlaybackRate", 2);
+
+                        consoleWrite("<br>*** beginning playback");
+                        video.currentTime = video.duration - 0.2;
+                        run("video.playbackRate = 1");
+                        testExpected("video.playbackRate", 1);
+                        testExpected("video.defaultPlaybackRate", 2);
+                        run("video.play()");
+                        consoleWrite("");
+                        break;
+                    case 3:
+                        testExpected("video.playbackRate", 1);
+                        testExpected("video.defaultPlaybackRate", 2);
+                        consoleWrite("");
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            function canplaythrough()
+            {
+                consoleWrite("<br>*** checking defaults");
+                testExpected("video.playbackRate", 1);
+                testExpected("video.defaultPlaybackRate", 1);
+
+                consoleWrite("<br>*** setting defaultPlaybackRate");
+                run("video.defaultPlaybackRate = 2");
+                testExpected("video.playbackRate", 1);
+                testExpected("video.defaultPlaybackRate", 2);
+                consoleWrite("");
+            }
+
+            function ended()
+            {
+                testExpected("video.playbackRate", 1);
+                testExpected("video.defaultPlaybackRate", 2);
+                consoleWrite("");
+                endTest();
+            }
+
+            function start()
+            {
+                findMediaElement();
+                waitForEvent('canplaythrough', canplaythrough);
+                waitForEvent('ended', ended);
+                waitForEvent('ratechange', ratechange);
+
+                consoleWrite("*** setting src");
+                setSrcByTagName("video", findMediaFile("video", "content/test"));
+            }
+
+        </script>
+    </head>
+
+    <body onload="start()">
+        
+        <video controls > </video>
+        <ol>
+            <li>'playbackRate' should not change when play() is called.</li>
+            <li>'playbackRate' and 'defaultPlaybackRate' should always return the last value set.</li>
+        </ol>
+    </body>
+</html>

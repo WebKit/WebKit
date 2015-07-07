@@ -1,0 +1,30 @@
+ <html>
+<head>
+<script src="resources/profiler-test-JS-resources.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.internals)
+    internals.setJavaScriptProfilingEnabled(true);
+
+function startTest()
+{
+    console.profile("Start the profiler but don't stop it.");
+    anonymousFunction();
+    printProfilesDataWithoutTime();
+}
+</script>
+</head>
+
+<body onload="startTest()">
+This page's JavaScript calls console.profile() but not console.profileEnd().
+<br>
+<br>
+To run this test manually, load it in the browser then load the WebInspector and look at
+the profile.  You should see the profile running (when that feature is implemented 6060556).
+Then navigate to another page and check the WebInspector again. Safari should not
+have crashed and the Inspector should not show a profile (unless we allow cross-load
+profiling in the future 5951478 &amp; 5954912).
+<div id="output"></div>
+</body>
+</html>

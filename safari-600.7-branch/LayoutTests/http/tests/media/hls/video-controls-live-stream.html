@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=../../media-resources/video-test.js></script>
+        <script src=../../media-resources/media-controls.js></script>
+        <script>
+            var controls;
+
+            function start() {
+                video = document.getElementById('video');
+                waitForEvent('play', playing);
+                waitForEventAndFail('stalled');
+                video.src = "../resources/hls/test-live.php";
+            }
+
+            function playing() {
+                testExpected('video.duration', Infinity);
+
+                controls = internals.shadowRoot(video).firstChild.firstChild;
+                dumpMediaControlsTree(controls);
+
+                timeline = mediaControlsElement(controls, "-webkit-media-controls-timeline");
+                test('timeline == null || timeline.disabled', false);
+
+                endTest();
+            }
+
+        </script>
+    </head>
+    <body onload="start()">
+        <video id="video" autoplay controls></video>
+    </body>
+</html>

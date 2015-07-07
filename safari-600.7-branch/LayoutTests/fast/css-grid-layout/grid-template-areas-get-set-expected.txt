@@ -1,0 +1,33 @@
+This test checks that grid-template-areas is properly parsed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test getting grid-template-areas set through CSS.
+PASS getComputedStyle(gridWithDefaultTemplate).getPropertyValue('-webkit-grid-template-areas') is "none"
+PASS getComputedStyle(gridWithSingleStringTemplate).getPropertyValue('-webkit-grid-template-areas') is "\"area\""
+PASS getComputedStyle(gridWithTwoColumnsTemplate).getPropertyValue('-webkit-grid-template-areas') is "\"first second\""
+PASS getComputedStyle(gridWithTwoRowsTemplate).getPropertyValue('-webkit-grid-template-areas') is "\"first\" \"second\""
+PASS getComputedStyle(gridWithSpanningColumnsTemplate).getPropertyValue('-webkit-grid-template-areas') is "\"span span\""
+PASS getComputedStyle(gridWithSpanningRowsDotTemplate).getPropertyValue('-webkit-grid-template-areas') is "\"span\" \".\""
+PASS getComputedStyle(gridWithDotColumn).getPropertyValue('-webkit-grid-template-areas') is "\"header .\" \"footer .\""
+PASS getComputedStyle(gridWithHorizontalRectangle).getPropertyValue('-webkit-grid-template-areas') is "\"a a a\" \"a a a\""
+PASS getComputedStyle(gridWithVerticalRectangle).getPropertyValue('-webkit-grid-template-areas') is "\"a a\" \"a a\" \"a a\""
+Test grid-template-areas: initial
+PASS getComputedStyle(element).getPropertyValue('-webkit-grid-template-areas') is "\"foobar\""
+Test grid-template-areas: inherit
+PASS getComputedStyle(parentElement).getPropertyValue('-webkit-grid-template-areas') is "\"foo bar\""
+PASS getComputedStyle(element).getPropertyValue('-webkit-grid-template-areas') is "\"foo bar\""
+Test invalid grid-template-areas values.
+PASS getComputedStyle(element).getPropertyValue('-webkit-grid-template-areas') is "none"
+PASS getComputedStyle(element).getPropertyValue('-webkit-grid-template-areas') is "none"
+PASS getComputedStyle(element).getPropertyValue('-webkit-grid-template-areas') is "none"
+PASS getComputedStyle(element).getPropertyValue('-webkit-grid-template-areas') is "none"
+PASS getComputedStyle(element).getPropertyValue('-webkit-grid-template-areas') is "none"
+
+FIXME: We currently don't validate that the named grid areas are <indent>.
+FAIL getComputedStyle(element).getPropertyValue('-webkit-grid-template-areas') should be none. Was "nav-up".
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

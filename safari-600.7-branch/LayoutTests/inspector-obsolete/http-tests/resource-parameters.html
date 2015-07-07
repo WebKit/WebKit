@@ -1,0 +1,40 @@
+<html>
+<head>
+<script src="inspector-test.js"></script>
+<script src="resources-test.js"></script>
+
+<script>
+function submit()
+{
+    document.getElementById("submit").click();
+}
+
+function test()
+{
+    InspectorTest.evaluateInPage("submit()");
+    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.RequestFinished, onRequestFinished);
+
+    function onRequestFinished(event)
+    {
+        var request = event.data;
+        if (request.url !== "http://localhost:8000/inspector/resources/post-target.cgi?queryParam1=queryValue1&queryParam2=#fragmentParam1=fragmentValue1&fragmentParam2=")
+            return;
+        InspectorTest.addObject(new WebInspector.HAREntry(request).build(), InspectorTest.HARPropertyFormatters);
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<p>
+Tests that resources panel shows form data parameters.
+</p>
+<form target="target-iframe" method="POST" action="http://localhost:8000/inspector/resources/post-target.cgi?queryParam1=queryValue1&queryParam2=#fragmentParam1=fragmentValue1&fragmentParam2=">
+<input name="formParam1" value="formValue1">
+<input name="formParam2">
+<input id="submit" type="submit">
+</form>
+<iframe name="target-iframe"></iframe>
+</body>
+</html>

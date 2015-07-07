@@ -1,0 +1,95 @@
+This is a test of the SVGPathSegList::appendItem() API.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Check initial 'pathSegList' value of path1
+PASS path1.pathSegList.numberOfItems is 3
+PASS path1.pathSegList.getItem(0).toString() is "[object SVGPathSegMovetoAbs]"
+PASS path1.pathSegList.getItem(0).x is 100
+PASS path1.pathSegList.getItem(0).y is 100
+PASS path1.pathSegList.getItem(1).toString() is "[object SVGPathSegLinetoAbs]"
+PASS path1.pathSegList.getItem(1).x is 100
+PASS path1.pathSegList.getItem(1).y is 0
+PASS path1.pathSegList.getItem(2).toString() is "[object SVGPathSegLinetoAbs]"
+PASS path1.pathSegList.getItem(2).x is 100
+PASS path1.pathSegList.getItem(2).y is 100
+
+Check initial 'pathSegList' value of path2
+PASS path2.pathSegList.numberOfItems is 3
+PASS path2.pathSegList.getItem(0).toString() is "[object SVGPathSegMovetoAbs]"
+PASS path2.pathSegList.getItem(0).x is 50
+PASS path2.pathSegList.getItem(0).y is 50
+PASS path2.pathSegList.getItem(1).toString() is "[object SVGPathSegLinetoAbs]"
+PASS path2.pathSegList.getItem(1).x is 0
+PASS path2.pathSegList.getItem(1).y is 100
+PASS path2.pathSegList.getItem(2).toString() is "[object SVGPathSegMovetoAbs]"
+PASS path2.pathSegList.getItem(2).x is 0
+PASS path2.pathSegList.getItem(2).y is 0
+
+Cache first item of path1 in local variable 'item0'
+PASS item0.x is 100
+PASS item0.y is 100
+
+Clear path1 segment list
+PASS path1.pathSegList.clear() is undefined.
+
+Verify that item0 is still alive, and can be modified
+PASS item0.x is 100
+PASS item0.y is 100
+PASS item0.x += 50 is 150
+PASS item0.y += 50 is 150
+
+Check intermediate list state of path1
+PASS path1.pathSegList.numberOfItems is 0
+PASS path1.pathSegList.getItem(0) threw exception Error: IndexSizeError: DOM Exception 1.
+
+Check intermediate list state of path2
+PASS path2.pathSegList.numberOfItems is 3
+PASS path2.pathSegList.getItem(0).toString() is "[object SVGPathSegMovetoAbs]"
+PASS path2.pathSegList.getItem(0).x is 50
+PASS path2.pathSegList.getItem(0).y is 50
+PASS path2.pathSegList.getItem(1).toString() is "[object SVGPathSegLinetoAbs]"
+PASS path2.pathSegList.getItem(1).x is 0
+PASS path2.pathSegList.getItem(1).y is 100
+PASS path2.pathSegList.getItem(2).toString() is "[object SVGPathSegMovetoAbs]"
+PASS path2.pathSegList.getItem(2).x is 0
+PASS path2.pathSegList.getItem(2).y is 0
+
+Initialize path1 list with first item of path2
+PASS path1.pathSegList.initialize(path2.pathSegList.getItem(0)).toString() is "[object SVGPathSegMovetoAbs]"
+
+Check intermediate list state of path1
+PASS path1.pathSegList.numberOfItems is 1
+PASS path1.pathSegList.getItem(0).toString() is "[object SVGPathSegMovetoAbs]"
+PASS path1.pathSegList.getItem(0).x is 50
+PASS path1.pathSegList.getItem(0).y is 50
+
+Check intermediate list state of path2
+PASS path2.pathSegList.numberOfItems is 2
+PASS path2.pathSegList.getItem(0).toString() is "[object SVGPathSegLinetoAbs]"
+PASS path2.pathSegList.getItem(0).x is 0
+PASS path2.pathSegList.getItem(0).y is 100
+PASS path2.pathSegList.getItem(1).toString() is "[object SVGPathSegMovetoAbs]"
+PASS path2.pathSegList.getItem(1).x is 0
+PASS path2.pathSegList.getItem(1).y is 0
+
+Initialize path2 list with item0
+PASS path2.pathSegList.initialize(item0).toString() is "[object SVGPathSegMovetoAbs]"
+
+Check final list state of path1
+PASS path1.pathSegList.numberOfItems is 1
+PASS path1.pathSegList.getItem(0).toString() is "[object SVGPathSegMovetoAbs]"
+PASS path1.pathSegList.getItem(0).x is 50
+PASS path1.pathSegList.getItem(0).y is 50
+
+Check final list state of path2
+PASS path2.pathSegList.numberOfItems is 1
+PASS path2.pathSegList.getItem(0).toString() is "[object SVGPathSegMovetoAbs]"
+PASS path2.pathSegList.getItem(0).x is 150
+PASS path2.pathSegList.getItem(0).y is 150
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

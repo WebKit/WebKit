@@ -1,0 +1,3 @@
+This tests that clientWidth/clientHeight on the body element in quirks mode returns the visible size of the frame.
+FAILURE!
+

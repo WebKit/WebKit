@@ -1,0 +1,124 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+http://127.0.0.1:8000/loading/redirect-methods.html - didFinishLoading
+frame "0" - didStartProvisionalLoadForFrame
+frame "0" - didCommitLoadForFrame
+frame "0" - didFinishDocumentLoadForFrame
+frame "0" - didHandleOnloadEventsForFrame
+frame "0" - didFinishLoadForFrame
+frame "0" - willPerformClientRedirectToURL: http://127.0.0.1:8000/loading/resources/redirect-methods-form.html 
+frame "0" - didStartProvisionalLoadForFrame
+http://127.0.0.1:8000/loading/resources/redirect-methods-form.html - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/loading/resources/redirect-methods-form.html, main document URL http://127.0.0.1:8000/loading/redirect-methods.html, http method GET> redirectResponse (null)
+http://127.0.0.1:8000/loading/resources/redirect-methods-form.html - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/loading/resources/redirect-methods-form.html, http status code 200>
+frame "0" - didCancelClientRedirectForFrame
+frame "0" - didCommitLoadForFrame
+frame "0" - didFinishDocumentLoadForFrame
+frame "0" - willPerformClientRedirectToURL: http://127.0.0.1:8000/loading/resources/redirect-methods-result.php 
+frame "0" - didHandleOnloadEventsForFrame
+frame "0" - didFinishLoadForFrame
+http://127.0.0.1:8000/loading/resources/redirect-methods-form.html - didFinishLoading
+frame "0" - didStartProvisionalLoadForFrame
+http://127.0.0.1:8000/loading/resources/redirect-methods-result.php - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/loading/resources/redirect-methods-result.php, main document URL http://127.0.0.1:8000/loading/redirect-methods.html, http method POST> redirectResponse (null)
+http://127.0.0.1:8000/loading/resources/redirect-methods-result.php - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/loading/resources/redirect-methods-result.php?redirected=true, main document URL http://127.0.0.1:8000/loading/redirect-methods.html, http method GET> redirectResponse <NSURLResponse http://127.0.0.1:8000/loading/resources/redirect-methods-result.php, http status code 301>
+frame "0" - didReceiveServerRedirectForProvisionalLoadForFrame
+http://127.0.0.1:8000/loading/resources/redirect-methods-result.php - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/loading/resources/redirect-methods-result.php?redirected=true, http status code 200>
+frame "0" - didCancelClientRedirectForFrame
+frame "0" - didCommitLoadForFrame
+frame "0" - didFinishDocumentLoadForFrame
+frame "1" - didStartProvisionalLoadForFrame
+frame "1" - didCommitLoadForFrame
+frame "1" - didFinishDocumentLoadForFrame
+frame "1" - didHandleOnloadEventsForFrame
+frame "1" - didFinishLoadForFrame
+frame "1" - willPerformClientRedirectToURL: http://127.0.0.1:8000/loading/resources/redirect-methods-form.html 
+frame "0" - didHandleOnloadEventsForFrame
+frame "0" - didFinishLoadForFrame
+http://127.0.0.1:8000/loading/resources/redirect-methods-result.php - didFinishLoading
+frame "1" - didStartProvisionalLoadForFrame
+http://127.0.0.1:8000/loading/resources/redirect-methods-form.html - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/loading/resources/redirect-methods-form.html, main document URL http://127.0.0.1:8000/loading/redirect-methods.html, http method GET> redirectResponse (null)
+http://127.0.0.1:8000/loading/resources/redirect-methods-form.html - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/loading/resources/redirect-methods-form.html, http status code 200>
+frame "1" - didCancelClientRedirectForFrame
+frame "1" - didCommitLoadForFrame
+http://127.0.0.1:8000/loading/resources/redirect-methods-form.html - didFinishLoading
+frame "1" - didFinishDocumentLoadForFrame
+frame "1" - willPerformClientRedirectToURL: http://127.0.0.1:8000/loading/resources/redirect-methods-result.php 
+frame "1" - didHandleOnloadEventsForFrame
+frame "1" - didFinishLoadForFrame
+frame "1" - didStartProvisionalLoadForFrame
+http://127.0.0.1:8000/loading/resources/redirect-methods-result.php - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/loading/resources/redirect-methods-result.php, main document URL http://127.0.0.1:8000/loading/redirect-methods.html, http method POST> redirectResponse (null)
+http://127.0.0.1:8000/loading/resources/redirect-methods-result.php - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/loading/resources/redirect-methods-result.php?redirected=true, main document URL http://127.0.0.1:8000/loading/redirect-methods.html, http method GET> redirectResponse <NSURLResponse http://127.0.0.1:8000/loading/resources/redirect-methods-result.php, http status code 302>
+frame "1" - didReceiveServerRedirectForProvisionalLoadForFrame
+http://127.0.0.1:8000/loading/resources/redirect-methods-result.php - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/loading/resources/redirect-methods-result.php?redirected=true, http status code 200>
+frame "1" - didCancelClientRedirectForFrame
+frame "1" - didCommitLoadForFrame
+frame "1" - didFinishDocumentLoadForFrame
+frame "2" - didStartProvisionalLoadForFrame
+frame "2" - didCommitLoadForFrame
+frame "2" - didFinishDocumentLoadForFrame
+frame "2" - didHandleOnloadEventsForFrame
+frame "2" - didFinishLoadForFrame
+frame "2" - willPerformClientRedirectToURL: http://127.0.0.1:8000/loading/resources/redirect-methods-form.html 
+frame "1" - didHandleOnloadEventsForFrame
+frame "1" - didFinishLoadForFrame
+http://127.0.0.1:8000/loading/resources/redirect-methods-result.php - didFinishLoading
+frame "2" - didStartProvisionalLoadForFrame
+http://127.0.0.1:8000/loading/resources/redirect-methods-form.html - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/loading/resources/redirect-methods-form.html, main document URL http://127.0.0.1:8000/loading/redirect-methods.html, http method GET> redirectResponse (null)
+http://127.0.0.1:8000/loading/resources/redirect-methods-form.html - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/loading/resources/redirect-methods-form.html, http status code 200>
+frame "2" - didCancelClientRedirectForFrame
+frame "2" - didCommitLoadForFrame
+http://127.0.0.1:8000/loading/resources/redirect-methods-form.html - didFinishLoading
+frame "2" - didFinishDocumentLoadForFrame
+frame "2" - willPerformClientRedirectToURL: http://127.0.0.1:8000/loading/resources/redirect-methods-result.php 
+frame "2" - didHandleOnloadEventsForFrame
+frame "2" - didFinishLoadForFrame
+frame "2" - didStartProvisionalLoadForFrame
+http://127.0.0.1:8000/loading/resources/redirect-methods-result.php - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/loading/resources/redirect-methods-result.php, main document URL http://127.0.0.1:8000/loading/redirect-methods.html, http method POST> redirectResponse (null)
+http://127.0.0.1:8000/loading/resources/redirect-methods-result.php - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/loading/resources/redirect-methods-result.php?redirected=true, main document URL http://127.0.0.1:8000/loading/redirect-methods.html, http method GET> redirectResponse <NSURLResponse http://127.0.0.1:8000/loading/resources/redirect-methods-result.php, http status code 303>
+frame "2" - didReceiveServerRedirectForProvisionalLoadForFrame
+http://127.0.0.1:8000/loading/resources/redirect-methods-result.php - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/loading/resources/redirect-methods-result.php?redirected=true, http status code 200>
+frame "2" - didCancelClientRedirectForFrame
+frame "2" - didCommitLoadForFrame
+frame "2" - didFinishDocumentLoadForFrame
+frame "3" - didStartProvisionalLoadForFrame
+frame "3" - didCommitLoadForFrame
+frame "3" - didFinishDocumentLoadForFrame
+frame "3" - didHandleOnloadEventsForFrame
+frame "3" - didFinishLoadForFrame
+frame "3" - willPerformClientRedirectToURL: http://127.0.0.1:8000/loading/resources/redirect-methods-form.html 
+frame "2" - didHandleOnloadEventsForFrame
+frame "2" - didFinishLoadForFrame
+http://127.0.0.1:8000/loading/resources/redirect-methods-result.php - didFinishLoading
+frame "3" - didStartProvisionalLoadForFrame
+http://127.0.0.1:8000/loading/resources/redirect-methods-form.html - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/loading/resources/redirect-methods-form.html, main document URL http://127.0.0.1:8000/loading/redirect-methods.html, http method GET> redirectResponse (null)
+http://127.0.0.1:8000/loading/resources/redirect-methods-form.html - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/loading/resources/redirect-methods-form.html, http status code 200>
+frame "3" - didCancelClientRedirectForFrame
+frame "3" - didCommitLoadForFrame
+http://127.0.0.1:8000/loading/resources/redirect-methods-form.html - didFinishLoading
+frame "3" - didFinishDocumentLoadForFrame
+frame "3" - willPerformClientRedirectToURL: http://127.0.0.1:8000/loading/resources/redirect-methods-result.php 
+frame "3" - didHandleOnloadEventsForFrame
+frame "3" - didFinishLoadForFrame
+frame "3" - didStartProvisionalLoadForFrame
+http://127.0.0.1:8000/loading/resources/redirect-methods-result.php - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/loading/resources/redirect-methods-result.php, main document URL http://127.0.0.1:8000/loading/redirect-methods.html, http method POST> redirectResponse (null)
+http://127.0.0.1:8000/loading/resources/redirect-methods-result.php - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/loading/resources/redirect-methods-result.php?redirected=true, main document URL http://127.0.0.1:8000/loading/redirect-methods.html, http method POST> redirectResponse <NSURLResponse http://127.0.0.1:8000/loading/resources/redirect-methods-result.php, http status code 307>
+frame "3" - didReceiveServerRedirectForProvisionalLoadForFrame
+http://127.0.0.1:8000/loading/resources/redirect-methods-result.php - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/loading/resources/redirect-methods-result.php?redirected=true, http status code 200>
+frame "3" - didCancelClientRedirectForFrame
+frame "3" - didCommitLoadForFrame
+frame "3" - didFinishDocumentLoadForFrame
+frame "3" - didHandleOnloadEventsForFrame
+frame "3" - didFinishLoadForFrame
+This test checks to see what HTTP method is used to fetch the final resource in the case where the first request results in a redirect.
+301, 302, 303, and 307 http redirects are all tested.
+301 redirect
+
+302 redirect
+
+303 redirect
+
+307 redirect
+
+

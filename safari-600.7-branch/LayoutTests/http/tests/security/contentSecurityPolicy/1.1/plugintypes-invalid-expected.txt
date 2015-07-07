@@ -1,0 +1,75 @@
+CONSOLE MESSAGE: 'plugin-types' Content Security Policy directive is empty; all plugins will be blocked.
+
+CONSOLE MESSAGE: Refused to load 'data:application/x-webkit-test-netscape,logifloaded' (MIME type 'application/x-webkit-test-netscape') because it violates the following Content Security Policy Directive: 'plugin-types '.
+
+CONSOLE MESSAGE: 'plugin-types' Content Security Policy directive is empty; all plugins will be blocked.
+
+CONSOLE MESSAGE: Refused to load 'data:application/x-webkit-test-netscape,logifloaded' (MIME type 'application/x-webkit-test-netscape') because it violates the following Content Security Policy Directive: 'plugin-types '.
+
+CONSOLE MESSAGE: Invalid plugin type in 'plugin-types' Content Security Policy directive: 'text'.
+
+CONSOLE MESSAGE: Refused to load 'data:application/x-webkit-test-netscape,logifloaded' (MIME type 'application/x-webkit-test-netscape') because it violates the following Content Security Policy Directive: 'plugin-types text'.
+
+CONSOLE MESSAGE: Invalid plugin type in 'plugin-types' Content Security Policy directive: 'text/'.
+
+CONSOLE MESSAGE: Refused to load 'data:application/x-webkit-test-netscape,logifloaded' (MIME type 'application/x-webkit-test-netscape') because it violates the following Content Security Policy Directive: 'plugin-types text/'.
+
+CONSOLE MESSAGE: Invalid plugin type in 'plugin-types' Content Security Policy directive: '/text'.
+
+CONSOLE MESSAGE: Refused to load 'data:application/x-webkit-test-netscape,logifloaded' (MIME type 'application/x-webkit-test-netscape') because it violates the following Content Security Policy Directive: 'plugin-types /text'.
+
+CONSOLE MESSAGE: Invalid plugin type in 'plugin-types' Content Security Policy directive: 'text//plain'.
+
+CONSOLE MESSAGE: Refused to load 'data:application/x-webkit-test-netscape,logifloaded' (MIME type 'application/x-webkit-test-netscape') because it violates the following Content Security Policy Directive: 'plugin-types text//plain'.
+
+CONSOLE MESSAGE: Invalid plugin type in 'plugin-types' Content Security Policy directive: 'text/plainapplication/nospace'.
+
+CONSOLE MESSAGE: Refused to load 'data:application/x-webkit-test-netscape,logifloaded' (MIME type 'application/x-webkit-test-netscape') because it violates the following Content Security Policy Directive: 'plugin-types text/plainapplication/nospace'.
+
+CONSOLE MESSAGE: Invalid plugin type in 'plugin-types' Content Security Policy directive: 'text'.
+
+This tests our handling of invalid `plugin-types` CSP directives. Consider this test passing if each of the following frames contains either "PASS" or no text at all.
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+
+
+--------
+Frame: '<!--framePath //<!--frame1-->-->'
+--------
+
+
+--------
+Frame: '<!--framePath //<!--frame2-->-->'
+--------
+
+
+--------
+Frame: '<!--framePath //<!--frame3-->-->'
+--------
+
+
+--------
+Frame: '<!--framePath //<!--frame4-->-->'
+--------
+
+
+--------
+Frame: '<!--framePath //<!--frame5-->-->'
+--------
+
+
+--------
+Frame: '<!--framePath //<!--frame6-->-->'
+--------
+
+
+--------
+Frame: '<!--framePath //<!--frame7-->-->'
+--------
+PASS.
+
+

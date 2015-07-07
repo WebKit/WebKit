@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+<title></title>
+</head>
+<body>
+<p id=description></p>
+<div id="console"></div>
+<script>
+
+function runTest() {
+    window.observer = new MutationObserver(function(mutations) { });
+    shouldThrow('observer.observe()');
+    shouldThrow('observer.observe(null)');
+    shouldThrow('observer.observe(undefined)');
+    shouldThrow('observer.observe(document.body)');
+    shouldThrow('observer.observe(document.body, null)');
+    shouldThrow('observer.observe(document.body, undefined)');
+    shouldThrow('observer.observe(null, {attributes: true})');
+    shouldThrow('observer.observe(undefined, {attributes: true})');
+    shouldThrow('observer.observe(document.body, {subtree: true})');
+    shouldThrow('observer.observe(document.body, {childList: true, attributeOldValue: true})');
+    shouldThrow('observer.observe(document.body, {attributes: true, characterDataOldValue: true})');
+    shouldThrow('observer.observe(document.body, {characterData: true, attributeFilter: ["id"]})');
+}
+
+description('Test that WebKitMutationObserver.observe throws exceptions appropriately');
+
+runTest();
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

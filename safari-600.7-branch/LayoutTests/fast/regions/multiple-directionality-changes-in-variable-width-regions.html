@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head>
+ <style>
+    #content {
+        -webkit-flow-into: flow1;
+        text-align: justify;
+        padding: 5px;
+        direction: rtl;
+        margin:0 5%;
+    }
+    
+    #first-box {
+        border: 1px solid blue;
+        margin:10px 5%;
+        direction:ltr;
+        height:340px;
+    }
+    
+    #second-box {
+        margin:10px 10%;
+        border: 1px solid green;
+        direction:rtl
+    }
+    
+    #region1, #region2, #region3 {
+        border: 1px solid black;
+        -webkit-flow-from: flow1;
+    }
+
+    #region1 {
+        width: 400px;
+        height: 100px;
+    }
+    
+    #region2 {
+        width: 500px;
+        height: 180px;
+    }
+    
+    #region3 {
+        width: 200px;
+        height: 120px;
+    }
+    
+    p { direction: ltr }
+</style>
+</head>
+<body>
+<div id="content">
+   <div id="first-box">
+        <div id="second-box">
+            <p>This line of text should not get out of the region. This line of text should not get out of the region. This line of text should not get out of the region. This line of text should not get out of the region.</p>
+            <p>This line of text should not get out of the region. This line of text should not get out of the region. This line of text should not get out of the region. This line of text should not get out of the region.</p>
+            <p>This line of text should not get out of the region.</p>
+        </div>
+    </div>
+</div>
+
+<div id="container">
+    <div id="region1"></div>
+    <div id="region2"></div>
+    <div id="region3"></div>
+</div>

@@ -1,0 +1,29 @@
+<html>
+<body>
+<embed name="plg" type="application/x-webkit-test-netscape"></embed>
+<script>
+var NPERR_GENERIC_ERROR = 1;
+
+function callback(result) {
+    var d = document.getElementById('result');
+
+    if (result == NPERR_GENERIC_ERROR)
+        d.innerHTML = "SUCCESS"
+    else
+        d.innerHTML = "FAILED - Expected error code 1 but got error code " + result
+
+    testRunner.notifyDone();
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    
+    plg.getURLNotify("http://www.apple.com", "_blank", "callback");
+} else {
+    document.write("Cannot run interactively");
+}
+</script>This tests that we won't crash when a plugin tries to open an URL in a new window when the application does not create the window. If this test is successful, the word SUCCESS should be seen below.
+<div id="result">FAILED</div>
+</body>
+</html>

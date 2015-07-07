@@ -1,0 +1,59 @@
+<html>
+<head>
+<script src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script src="resources/breakpoint.js"></script>
+<script>
+function runBreakpointWithCondition()
+{
+    // The debugger should hit a breakpoint inside the breakpointWithCondition call.
+    breakpointWithCondition(1, 2);
+    // If we get here it means that the debugger was disconnected and the execution continued as usual.
+    log("PASS: Test did not crash after debugger disconnected.");
+    testRunner.notifyDone();
+}
+
+// This function is called by the breakpoint action.
+function disconnect()
+{
+    log("Closing the inspector.");
+    window.internals.closeDummyInspectorFrontend();
+}
+
+function test()
+{
+    InspectorTest.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    {
+        if (/resources\/breakpoint\.js$/.test(messageObject.params.url)) {
+            InspectorTest.log("Found breakpoint.js");
+            var breakpoint = {
+                location: {
+                    scriptId: messageObject.params.scriptId,
+                    lineNumber: 8,
+                    columnNumber: 0
+                },
+                options: {
+                    actions: [
+                        {type: "evaluate", data: "disconnect()"},
+                        {type: "evaluate", data: "log('FAIL: This action should not be executed.')"}
+                    ]
+                }
+            };
+            InspectorTest.sendCommand("Debugger.setBreakpoint", breakpoint, InspectorTest.checkForError);
+            InspectorTest.sendCommand("Runtime.evaluate", {expression: "runBreakpointWithCondition()"});
+        }
+    }
+
+    InspectorTest.eventHandler["Debugger.paused"] = function(messageObject)
+    {
+        InspectorTest.log("FAIL: Paused in debugger: reason = \"" + messageObject.params.reason + "\"");
+        InspectorTest.completeTest();
+    }
+
+    InspectorTest.sendCommand("Debugger.enable", {});
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Closing the inspector while executing the code for a breakpoint action should continue executing code.</p>
+</body>
+</html>

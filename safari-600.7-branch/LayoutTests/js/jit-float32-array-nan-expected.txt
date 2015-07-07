@@ -1,0 +1,211 @@
+Tests what happens in the Baseline JIT if we load from a Float32 array that contains a weirdly formatted NaN.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+-4587521
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+NaN
+PASS "" + floatView[0] is "NaN"
+I didn't crash, which is a good thing.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

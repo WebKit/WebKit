@@ -1,0 +1,12 @@
+testChangeSelect1
+PASS
+testChangeSelect2
+PASS
+testChangeSelectToEmpty
+PASS
+testChangeSelectToFallback
+PASS
+testChangeSelectFromFallback
+PASS
+TEST COMPLETED
+

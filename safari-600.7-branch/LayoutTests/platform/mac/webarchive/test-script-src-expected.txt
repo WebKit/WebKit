@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>WebMainResource</key>
+	<dict>
+		<key>WebResourceData</key>
+		<string>&lt;html&gt;&lt;head&gt;
+&lt;script src="resources/dump-webarchive.js" type="text/javascript"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+
+&lt;/body&gt;&lt;/html&gt;</string>
+		<key>WebResourceFrameName</key>
+		<string></string>
+		<key>WebResourceMIMEType</key>
+		<string>text/html</string>
+		<key>WebResourceTextEncodingName</key>
+		<string>UTF-8</string>
+		<key>WebResourceURL</key>
+		<string>file:///LayoutTests/webarchive/test-script-src.html</string>
+	</dict>
+	<key>WebSubresources</key>
+	<array>
+		<dict>
+			<key>WebResourceData</key>
+			<string>if (window.testRunner)
+    testRunner.dumpDOMAsWebArchive();
+</string>
+			<key>WebResourceMIMEType</key>
+			<string>text/javascript</string>
+			<key>WebResourceResponse</key>
+			<dict>
+				<key>MIMEType</key>
+				<string>text/javascript</string>
+				<key>URL</key>
+				<string>file:///LayoutTests/webarchive/resources/dump-webarchive.js</string>
+				<key>expectedContentLength</key>
+				<integer>61</integer>
+			</dict>
+			<key>WebResourceURL</key>
+			<string>file:///LayoutTests/webarchive/resources/dump-webarchive.js</string>
+		</dict>
+	</array>
+</dict>
+</plist>

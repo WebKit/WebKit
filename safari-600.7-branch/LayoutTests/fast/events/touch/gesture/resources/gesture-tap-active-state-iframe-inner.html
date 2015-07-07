@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<style type="text/css">
+#box {
+    position: absolute;
+    background-color: blue;
+    width: 300px;
+    height: 100px;
+    top: 100px;
+}
+
+#box:active {
+    background-color: red;
+}
+
+</style>
+<script>
+var color;
+function isBoxActive()
+{
+    // These need to match the background-color used above, after round-tripping.
+    var defaultColor = "rgb(0, 0, 255)";
+    var activeColor = "rgb(255, 0, 0)";
+
+    var b = document.getElementById('box');
+    color = getComputedStyle(b).backgroundColor;
+    if (color == activeColor)
+      return true;
+    if (color != defaultColor)
+      throw "Got unexpected backgroundColor: " + color;
+    return false;
+}
+
+</script>
+<body onload='parent.runTests(isBoxActive)'>
+<div id='box'>Gestures go here</div>
+</body>
+</html>

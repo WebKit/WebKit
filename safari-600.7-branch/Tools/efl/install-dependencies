@@ -1,0 +1,88 @@
+#!/bin/bash
+
+# This script needs to be run with root rights.
+if [ $UID -ne 0 ]; then
+    sudo $0
+    exit 0
+fi
+
+function printNotSupportedMessageAndExit() {
+    echo
+    echo "Currently this script only works for distributions supporting apt-get."
+    echo "Please add support for your distribution."
+    echo
+    exit 1
+}
+
+function checkInstaller {
+    # apt-get - Debian based distributions
+    apt-get --version &> /dev/null
+    if [ $? -eq 0 ]; then
+        installDependenciesWithApt
+        exit 0
+    fi
+
+    printNotSupportedMessageAndExit
+}
+
+function installDependenciesWithApt {
+    # These are dependencies necessary for building WebKitEFL.
+    apt-get install \
+        bison \
+        cmake \
+        doxygen \
+        flex \
+        g++ \
+        gperf \
+        gtk-doc-tools \
+        libatk1.0-dev \
+        libc++abi-dev \
+        libdbus-1-dev \
+        libenchant-dev \
+        libfaad-dev \
+        libffi-dev \
+        libfreetype6-dev \
+        libgcrypt11-dev \
+        libgeoclue-dev \
+        libgif-dev \
+        libgl1-mesa-dev \
+        libgnutls-dev \
+        libgpg-error-dev \
+        libicu-dev \
+        libjpeg-dev \
+        liblua5.1-0-dev \
+        libp11-kit-dev \
+        libpng-dev \
+        libpulse-dev \
+        libsqlite3-dev \
+        libssl-dev \
+        libtheora-dev \
+        libtiff4-dev \
+        libudev-dev \
+        libvorbis-dev \
+        libxcomposite-dev \
+        libxcursor-dev \
+        libxinerama-dev \
+        libxp-dev \
+        libxrandr-dev \
+        libxrender-dev \
+        libxslt1-dev \
+        libxss-dev \
+        libxt-dev \
+        libxtst-dev \
+        luajit \
+        ragel \
+        ruby \
+        subversion \
+        x11proto-print-dev
+
+    # These are dependencies necessary for running tests.
+    apt-get install \
+        apache2 \
+        libapache2-mod-php5 \
+        libruby \
+        xvfb
+}
+
+checkInstaller
+

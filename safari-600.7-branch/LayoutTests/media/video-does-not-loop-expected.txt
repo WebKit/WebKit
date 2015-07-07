@@ -1,0 +1,24 @@
+Test to make sure QuickTime movie saved with 'loop' user data does not loop automatically.
+
+++ Test initial state.
+EXPECTED (video.loop == 'false') OK
+EVENT(loadedmetadata)
+
+++ seek to near the end to reduce test time.
+RUN(video.currentTime = video.duration - 0.4)
+EVENT(seeked)
+
+++ seek completed, beginning playback.
+EXPECTED (video.paused == 'true') OK
+EXPECTED (video.ended == 'false') OK
+RUN(video.play())
+
+EVENT(pause)
+EVENT(ended)
+
+++ played to end and stopped.
+EXPECTED (video.ended == 'true') OK
+EXPECTED (mediaElement.currentTime == 'mediaElement.duration') OK
+
+END OF TEST
+

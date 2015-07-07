@@ -1,0 +1,4 @@
+Test for bug 18681: BOM characters should not be removed from input stream.
+
+﻿
+PASS

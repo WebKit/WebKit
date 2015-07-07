@@ -1,0 +1,5 @@
+<p id="paragraph">This test checks to see if removing a word causes the painted color of a selection to disappear. There is an extra word that is removed and the test passes if everything looks selected as it should.</p>
+<script>
+    var paragraph = document.getElementById("paragraph");
+    getSelection().setBaseAndExtent(paragraph, 0, paragraph, paragraph.childNodes.length);
+</script>

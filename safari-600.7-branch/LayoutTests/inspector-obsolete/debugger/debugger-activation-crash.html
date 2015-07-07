@@ -1,0 +1,42 @@
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+
+<script>
+var closures = [];
+function makeClosure() {
+    var v1, v2, v3, v4, v5, v6, v7, v8, v9, v10; // Make a lot of potentially captured variables.
+    return function (){ return v1; }; // But only capture one in optimizing compiles.
+}
+
+for (var i = 0; i < 100; ++i) {
+    closures.push(makeClosure());
+}
+
+function tryCrash() {
+    makeClosure(); // Force recompilation.
+    
+    // At this point, we should have 100 activations that captured 1 variable
+    // but think they captured 10. If so, GC should make them crash.
+    if (window.GCController)
+        GCController.collect();
+    else {
+        for (var i = 0; i < 10000; ++i)
+            new Object;
+    }
+}
+
+function test() {
+    InspectorTest.startDebuggerTest(function () {
+        InspectorTest.evaluateInPage("tryCrash()");
+        InspectorTest.completeDebuggerTest();
+    });
+}
+
+window.onload = runTest;
+</script>
+
+<p>
+Tests for a crash caused by inaccurate Activation records.
+&lt;rdar://problem/8525907&gt; Crash in debugger beneath MarkStack::drain @ me.com, ibm.com
+</p>
+

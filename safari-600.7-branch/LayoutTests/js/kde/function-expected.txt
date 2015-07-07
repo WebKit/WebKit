@@ -1,0 +1,46 @@
+KDE JS Test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS empty1() is undefined
+PASS empty2() is undefined
+PASS obj.func(11) is 66
+PASS c.x is 11
+PASS f('bbbbb') is 'bbbbb'
+PASS foo() is '|'
+PASS foo('bar') is '|bar|'
+PASS foo('bar', 'x') is '|bar|x|'
+PASS foo2(7) is 1
+PASS foo3(0, 99) is 2
+PASS foo3(1, 99).length is 2
+PASS nest0(2,3) is 36
+PASS (new Function('return 11;'))() is 11
+PASS (new Function('', 'return 22;'))() is 22
+PASS (new Function('a', 'b', 'return a*b;'))(11, 3) is 33
+PASS (new Function(' a ', ' b ', 'return a*b;'))(11, 4) is 44
+PASS (new Function(' a,b ', ' c ', 'return a*b;'))(11, 5) is 55
+PASS (new Function(' a,b ', ' c3 ', 'return a*b;'))(11, 6) is 66
+PASS funcp3.length is 3
+PASS (function(a, b, c, d) { }).length is 4
+PASS (new Function('a', 'b', '')).length is 2
+PASS f4(4) is 24
+PASS f5(11) is 11
+PASS f5.arguments is null
+PASS arr[0] is 99
+PASS arr[0] is 99
+PASS typeof orgFuncClone is 'function'
+PASS orgFuncClone('world') is 'Hello world'
+PASS groupClone(1, 2) is 9
+PASS String(Math.sin) is sinStr
+PASS shadow() is 2
+PASS nestedret is 'inner nest'
+PASS not_nestedret is 'global nest'
+PASS sample.prototype.prototype is undefined.
+PASS sample.prototype.constructor == sample is true
+PASS caught is true
+PASS functionWithVarOverride(1) is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,37 @@
+<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=61461">bug 61461</a>: 
+Handle entering full screen security restrictions</p>
+<p>To test manually, click the video "full screen" button - the page should enter full screen mode.</p>
+<script src="full-screen-test.js"></script>
+<script src="../media/media-file.js"></script>
+<script>
+
+function canplaythrough() {
+    var frame = document.getElementById('frame');
+
+    runWithKeyDown(function() {
+        setTimeout(function() { 
+            consoleWrite("FAIL - did not enter full screen!"); 
+            endTest(); 
+        }, 100);
+
+        var video = frame.contentDocument.getElementsByTagName('video')[0];
+        video.webkitEnterFullScreen();
+    });
+}
+
+function runTest() {
+    var frame = document.getElementById('frame');
+
+    waitForEvent(frame.contentDocument, 'webkitfullscreenchange', function() { 
+            test("document.getElementById('frame').contentDocument.width==document.width")
+            endTest();
+    });
+
+    var video = frame.contentDocument.getElementsByTagName('video')[0];
+    var mediaFile = findMediaFile("video", "../../media/content/test");
+    video.src = mediaFile;
+    video.addEventListener('canplaythrough', canplaythrough);
+}
+</script>
+<iframe id="frame" src="resources/legacy.html" onload="runTest()" width="336" height="256">
+</iframe>

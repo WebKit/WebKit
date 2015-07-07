@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x52
+  RenderBlock {HTML} at (0,0) size 800x52
+    RenderBody {BODY} at (8,16) size 784x20
+      RenderBlock {FORM} at (0,0) size 784x20 [bgcolor=#00FF00]
+        RenderBlock {P} at (0,0) size 784x20
+          RenderText {#text} at (0,0) size 360x19
+            text run at (0,0) width 207: "The content of this form should "
+            text run at (206,0) width 154: "have a lime background"

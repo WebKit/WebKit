@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript">
+        function runTests()
+        {
+            if (window.testRunner)
+                testRunner.dumpAsText();
+
+            alert(undefined);
+            alert(null);
+            confirm(undefined);
+            confirm(null);
+            prompt(undefined);
+            prompt(null);
+
+            alert();
+            confirm();
+            prompt();
+        }
+    </script>
+</head>
+<body onload="runTests()">
+    <p>The alerts that show up (or if this is running under DRT, that is dumped) should contain text; none should be empty.
+    This isn't entirely consistent with other browsers in every case, but since there's no real use case for this,
+    it's best to be explicit rather than subtle and empty.</p>
+</body>
+</html>

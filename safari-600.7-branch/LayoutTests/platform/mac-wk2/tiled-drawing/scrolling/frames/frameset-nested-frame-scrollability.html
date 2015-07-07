@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function frameDidChange()
+        {
+            window.setTimeout(function() {
+                if (window.testRunner) {
+                    var scrollingTree = window.internals.scrollingStateTreeAsText();
+                    document.open();
+                    document.write('<pre>');
+                    document.write(scrollingTree);
+                    document.write('</pre>');
+                    document.close();
+                    testRunner.notifyDone();
+                }
+            }, 0);
+        }
+    </script>
+</head>
+<frameset rows="160,*">
+<frame></frame>
+<frame src="resources/frameset-frame.html"></frame>
+</frameset>
+</html>

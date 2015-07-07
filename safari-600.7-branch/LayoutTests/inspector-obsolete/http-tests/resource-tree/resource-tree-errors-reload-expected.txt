@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 4: Console error 1.
+CONSOLE MESSAGE: line 5: Console error 2.
+CONSOLE MESSAGE: line 4: Console error 1.
+CONSOLE MESSAGE: line 5: Console error 2.
+Tests that console messages are matched to resources after page reload.
+
+Bug 60701
+Page reloaded.
+Number of errors for the main resource: 2
+

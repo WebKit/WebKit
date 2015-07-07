@@ -1,0 +1,61 @@
+This test checks the use of SVGAnimatedEnumeration within SVGTextPathElement
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Check initial 'method' value
+PASS textPathElement.method.toString() is "[object SVGAnimatedEnumeration]"
+PASS typeof(textPathElement.method.baseVal) is "number"
+PASS textPathElement.method.baseVal is SVGTextPathElement.TEXTPATH_METHODTYPE_ALIGN
+
+Switch to 'stretch'
+PASS textPathElement.method.baseVal = SVGTextPathElement.TEXTPATH_METHODTYPE_STRETCH is SVGTextPathElement.TEXTPATH_METHODTYPE_STRETCH
+PASS textPathElement.method.baseVal is SVGTextPathElement.TEXTPATH_METHODTYPE_STRETCH
+PASS textPathElement.getAttribute('method') is "stretch"
+
+Try setting invalid values
+PASS textPathElement.method.baseVal = 3 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS textPathElement.method.baseVal is SVGTextPathElement.TEXTPATH_METHODTYPE_STRETCH
+PASS textPathElement.getAttribute('method') is "stretch"
+PASS textPathElement.method.baseVal = -1 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS textPathElement.method.baseVal is SVGTextPathElement.TEXTPATH_METHODTYPE_STRETCH
+PASS textPathElement.getAttribute('method') is "stretch"
+PASS textPathElement.method.baseVal = 0 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS textPathElement.method.baseVal is SVGTextPathElement.TEXTPATH_METHODTYPE_STRETCH
+PASS textPathElement.getAttribute('method') is "stretch"
+
+Switch to 'align'
+PASS textPathElement.method.baseVal = SVGTextPathElement.TEXTPATH_METHODTYPE_ALIGN is SVGTextPathElement.TEXTPATH_METHODTYPE_ALIGN
+PASS textPathElement.method.baseVal is SVGTextPathElement.TEXTPATH_METHODTYPE_ALIGN
+PASS textPathElement.getAttribute('method') is "align"
+
+Check initial 'spacing' value
+PASS textPathElement.spacing.toString() is "[object SVGAnimatedEnumeration]"
+PASS typeof(textPathElement.spacing.baseVal) is "number"
+PASS textPathElement.spacing.baseVal is SVGTextPathElement.TEXTPATH_SPACINGTYPE_AUTO
+
+Switch to 'exact'
+PASS textPathElement.spacing.baseVal = SVGTextPathElement.TEXTPATH_SPACINGTYPE_EXACT is SVGTextPathElement.TEXTPATH_SPACINGTYPE_EXACT
+PASS textPathElement.spacing.baseVal is SVGTextPathElement.TEXTPATH_SPACINGTYPE_EXACT
+PASS textPathElement.getAttribute('spacing') is "exact"
+
+Try setting invalid values
+PASS textPathElement.spacing.baseVal = 3 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS textPathElement.spacing.baseVal is SVGTextPathElement.TEXTPATH_SPACINGTYPE_EXACT
+PASS textPathElement.getAttribute('spacing') is "exact"
+PASS textPathElement.spacing.baseVal = -1 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS textPathElement.spacing.baseVal is SVGTextPathElement.TEXTPATH_SPACINGTYPE_EXACT
+PASS textPathElement.getAttribute('spacing') is "exact"
+PASS textPathElement.spacing.baseVal = 0 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS textPathElement.spacing.baseVal is SVGTextPathElement.TEXTPATH_SPACINGTYPE_EXACT
+PASS textPathElement.getAttribute('spacing') is "exact"
+
+Switch to 'auto'
+PASS textPathElement.spacing.baseVal = SVGTextPathElement.TEXTPATH_SPACINGTYPE_AUTO is SVGTextPathElement.TEXTPATH_SPACINGTYPE_AUTO
+PASS textPathElement.spacing.baseVal is SVGTextPathElement.TEXTPATH_SPACINGTYPE_AUTO
+PASS textPathElement.getAttribute('spacing') is "auto"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

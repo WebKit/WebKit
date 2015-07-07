@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: unable to open database, version mismatch, '1.0' does not match the currentVersion of ''
+This test tests openDatabase()'s creation callback.
+

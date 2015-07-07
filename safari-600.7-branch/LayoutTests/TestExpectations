@@ -1,0 +1,159 @@
+# This file contains generic test expectations that apply to all ports of WebKit.
+#
+# See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
+
+# Incomplete implementation of eventSender causes this test to fail
+webkit.org/b/42194 fast/scrolling/scroll-select-list.html [ ImageOnlyFailure ]
+
+# pending functional patch and per-port verification
+webkit.org/b/109954 css3/line-break [ Skip ]
+
+# media/video-seek-after-end.html is flaky
+webkit.org/b/116293 media/video-seek-after-end.html [ Pass Failure ]
+
+webkit.org/b/116473 editing/selection/user-drag-element-and-user-select-none.html [ Failure ]
+
+# media/W3C/video/networkState/networkState_during_progress.html is flaky
+webkit.org/b/76280 media/W3C/video/networkState/networkState_during_progress.html [ Pass Failure ]
+
+webkit.org/b/118301 fast/dom/timer-throttling-hidden-page.html [ Skip ]
+
+webkit.org/b/119094 fast/forms/color/input-color-onchange-event.html [ Crash Pass ]
+
+# This test will run slowly in debug mode, but is plenty fast in release.
+[ Debug ] js/slow-stress/emscripten-memops.html [ Skip ]
+
+# Skip tests for the old inspector UI that will be ported or removed soon.
+inspector-obsolete [ Skip ]
+
+webkit.org/b/112521 [ Release ] webaudio/javascriptaudionode.html [ Pass Failure ]
+webkit.org/b/112521 [ Debug ] webaudio/javascriptaudionode.html [ Skip ]
+webkit.org/b/112521 [ Release ] webaudio/javascriptaudionode-upmix2-8channel-input.html [ Pass Failure ]
+webkit.org/b/112521 [ Debug ] webaudio/javascriptaudionode-upmix2-8channel-input.html [ Skip ]
+webkit.org/b/112521 [ Release ] webaudio/javascriptaudionode-downmix8-2channel-input.html [ Pass Failure ]
+webkit.org/b/112521 [ Debug ] webaudio/javascriptaudionode-downmix8-2channel-input.html [ Skip ]
+webkit.org/b/112521 [ Release ] webaudio/audioprocessingevent.html [ Pass Failure ]
+webkit.org/b/112521 [ Debug ] webaudio/audioprocessingevent.html [ Skip ]
+
+webkit.org/b/124342 fast/hidpi/image-srcset-svg-canvas.html [ ImageOnlyFailure ]
+webkit.org/b/124342 fast/hidpi/image-srcset-svg-canvas-2x.html [ ImageOnlyFailure ]
+webkit.org/b/124349 fast/hidpi/image-srcset-relative-svg-canvas-2x.html [ ImageOnlyFailure ]
+webkit.org/b/124349 fast/hidpi/image-srcset-relative-svg-canvas.html [ ImageOnlyFailure ]
+
+# The test frequently times out, and is just unsuccessful at detecting incorrect behavior when it passes.
+webkit.org/b/72698 media/audio-garbage-collect.html [ Skip ]
+
+webkit.org/b/53990 fast/forms/search-event-delay.html [ Pass Failure ]
+
+# No port in WebKit already support getMediaStream, so we are skipping those for now.
+fast/mediastream/MediaStream-construct-with-ended-tracks.html [ Skip ]
+fast/mediastream/MediaStream-clone.html [ Skip ]
+
+webkit.org/b/126142 css3/calc/transitions-dependent.html [ Pass Failure ]
+
+webkit.org/b/124932 media/video-size.html [ Pass Failure ]
+
+webkit.org/b/126166 [ Debug ] js/dfg-int32array.html [ Skip ]
+webkit.org/b/126166 [ Debug ] js/dfg-uint16array.html [ Skip ]
+webkit.org/b/126166 [ Debug ] js/dfg-float32array.html [ Skip ]
+webkit.org/b/126166 [ Debug ] js/dfg-uint8clampedarray.html [ Skip ]
+webkit.org/b/126166 [ Debug ] js/dfg-int8array.html [ Skip ]
+webkit.org/b/126166 [ Debug ] js/dfg-float64array.html [ Skip ]
+webkit.org/b/126166 [ Debug ] js/dfg-uint8array.html [ Skip ]
+webkit.org/b/126166 [ Debug ] js/dfg-int16array.html [ Skip ]
+webkit.org/b/126166 [ Debug ] js/dfg-int32array-overflow-values.html [ Skip ]
+webkit.org/b/126166 [ Debug ] js/dfg-uint32array.html [ Skip ]
+webkit.org/b/126166 [ Debug ] js/dfg-uint32array-overflow-values.html [ Skip ]
+
+webkit.org/b/127860 [ Debug ] js/function-apply-aliased.html [ Skip ]
+
+# This test verifies dynamic manipulation of the mroot and msqrt elements.
+mathml/roots-removeChild.html [ ImageOnlyFailure ]
+
+# This test verifies that a mismatch reftest will fail as intended if both results are same. (introduced in r93187)
+fast/harness/sample-fail-mismatch-reftest.html [ WontFix ImageOnlyFailure ]
+
+webkit.org/b/127697 fast/writing-mode/ruby-text-logical-left.html [ Skip ]
+
+webkit.org/b/83618 fast/dom/inline-event-attributes-release.html [ Failure ]
+
+webkit.org/b/129057 media/controls-styling-strict.html [ Pass Failure ]
+
+#subpixel failure on non-retina displays.
+webkit.org/b/129050 fast/sub-pixel/compositing-layers-on-subpixel-position.html [ ImageOnlyFailure ]
+webkit.org/b/129113 fast/multicol/newmulticol/clipping.html [ ImageOnlyFailure ]
+#subpixel rotation
+webkit.org/b/130556 compositing/hidpi-absolute-subpixel-positioned-transformed-elements.html [ ImageOnlyFailure ]
+
+webkit.org/b/133761 inspector-protocol/debugger/breakpoint-action-detach.html [ Skip ]
+webkit.org/b/129639 inspector-protocol/dom/dom-search-crash.html [ Skip ]
+webkit.org/b/129327 inspector-protocol/indexeddb/basics.html [ Pass Failure ]
+webkit.org/b/127414 inspector-protocol/page/deny-X-FrameOption.html [ Pass Failure ]
+
+webkit.org/b/129642 inspector [ Skip ]
+
+# These tests cause assertion failures in subsequent tests
+webkit.org/b/131919 inspector/dom [ Skip ]
+
+# Disabled the expectations because these tests are also skipped above.
+# webkit.org/b/129817 inspector/dom/content-flow-list.html [ Pass Failure ]
+# webkit.org/b/129817 inspector/dom/content-flow-content-removal.html [ Pass Failure ]
+inspector/model/remote-object-get-properties.html [ Skip ]
+
+# Collecting region's children in a named flow not supported yet
+webkit.org/b/74144 fast/regions/flow-body-in-html.html [ Skip ]
+webkit.org/b/74144 fast/regions/universal-selector-children-to-the-same-region.html [ Skip ]
+webkit.org/b/74144 fast/regions/region-content-flown-into-region.html [ Skip ]
+
+# Doesn't work yet, relies on network replay functionality (webkit.org/b/130728, webkit.org/b/129391)
+webkit.org/b/131318 http/tests/inspector/replay/document-last-modified-fallback-value.html [ Skip ]
+
+# Asserts in debug builds.
+[ Debug ] http/tests/inspector/replay/document-last-modified-fallback-value.html [ Skip ]
+
+# Expando properties on attribute nodes disappear
+webkit.org/b/88045 fast/dom/gc-attribute-node.html [ Failure Pass ]
+
+# Reference expectation doesn't end up in compositing code path, leading to antialiasing differences.
+webkit.org/b/132421 fast/multicol/fixed-stack.html [ ImageOnlyFailure ]
+
+
+# These tests are incorrect in the CSS test suite and should be fixed there first.
+css2.1/20110323/replaced-intrinsic-001.htm [ Failure ]
+css2.1/20110323/replaced-intrinsic-002.htm [ Failure ]
+
+webkit.org/b/132791 svg/as-object/sizing/svg-in-object-placeholder-height-fixed.html [ Skip ]
+webkit.org/b/132791 svg/as-object/sizing/svg-in-object-placeholder-height-percentage.html [ Skip ]
+webkit.org/b/132791 svg/as-object/sizing/svg-in-object-placeholder-height-auto.html [ Skip ]
+
+webkit.org/b/133057 fast/table/border-collapsing/collapsed-borders-adjoining-sections.html [ ImageOnlyFailure ]
+
+# Failing on some bots due to using resource load callbacks
+webkit.org/b/134769 fast/dom/HTMLImageElement/sizes/image-sizes-js-change.html [ Skip ]
+
+webkit.org/b/141661 fast/text/emoji.html [ Failure ]
+webkit.org/b/142548 editing/selection/extend-by-character-007.html [ Failure ]
+
+compositing/fixed-image-loading.html [ Skip ]
+fast/xsl/xslt-missing-namespace-in-xslt.xml [ Skip ]
+http/tests/cache/partitioned-cache.html [ Skip ]
+fast/events/context-no-deselect.html [ Skip ]
+fast/inline/hidpi-selection-gap-overlaps-inline-selection.html [ Skip ]
+fast/multicol/mixed-opacity-fixed-test.html [ Skip ]
+fast/inline/hidpi-selection-gap-overlaps-inline-selection.html [ Skip ]
+
+# border painting diff (Path vs. drawLine)
+webkit.org/b/136078 fast/borders/border-painting-dashed.html [ ImageOnlyFailure ]
+webkit.org/b/136078 fast/borders/border-painting-dotted.html [ ImageOnlyFailure ]
+webkit.org/b/136078 fast/borders/border-painting-double.html [ ImageOnlyFailure ]
+
+# Tests added in r178380 have image differences in safari-600.5-branch
+webkit.org/b/144043 fast/multicol/clip-in-columns.html [ ImageOnlyFailure ]
+webkit.org/b/144043 fast/multicol/filter-in-columns.html [ ImageOnlyFailure ]
+
+# Tests added in r174489 have image and text differences in safari-600.5-branch
+webkit.org/b/144044 fast/ruby/ruby-justification-hittest.html [ Failure ]
+webkit.org/b/144044 fast/ruby/ruby-justification.html [ ImageOnlyFailure ]
+
+# fast/text/ruby-justification-flush.html fails on safari-600.6-branch
+webkit.org/b/144294 fast/text/ruby-justification-flush.html [ ImageOnlyFailure ]

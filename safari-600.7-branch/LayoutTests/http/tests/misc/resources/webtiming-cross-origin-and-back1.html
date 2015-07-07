@@ -1,0 +1,15 @@
+<html>
+<head>
+<script src="../../js-test-resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+function doRedirect() {
+    window.location = "http://127.0.0.1:8000/misc/resources/webtiming-cross-origin-and-back-redirect1.php";
+}
+addEventListener("load", setTimeout(doRedirect, 0));
+</script>
+</head>
+<body>
+</body>
+</html>

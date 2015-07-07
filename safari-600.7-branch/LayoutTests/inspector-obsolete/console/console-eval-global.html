@@ -1,0 +1,37 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/console-test.js"></script>
+<script>
+
+var foo = 'fooValue';
+var bar = {
+    a: 'b'
+};
+
+function test()
+{
+    InspectorTest.evaluateInConsole("foo", step1);
+
+    function step1()
+    {
+        InspectorTest.evaluateInConsole("bar", step2);
+    }
+
+    function step2()
+    {
+        InspectorTest.dumpConsoleMessages();
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that simple evaluations may be performed in the console on global object.
+</p>
+
+</body>
+</html>

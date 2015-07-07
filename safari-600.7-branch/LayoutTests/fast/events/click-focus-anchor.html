@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+
+<p>This test ensures that we can click to focus an a element.
+Click on the element below.
+
+<p>The expected result is platform specific. GTK, QT and EFL allows all links to be
+mouse focusable.
+
+<div id=test-container>
+<p><a id=a1 tabindex=0 title="focusable">Anchor with tab index</a>
+<p><a id=a2 title="not focusable">Anchor without tab index</a>
+<p><a id=a3 href="#" title="focusable on GTK, QT and EFL">Link without tab index</a>
+<p><a id=a4 href="#" tabindex=0 title="focusable">Link with tab index</a>
+<p><a id=a5 href="#" contentEditable title="focusable">Link with contentEditable</a>
+<p contentEditable><a id=a6 href="#" focusable="not focusable">Link inside contentEditable</a>
+</div>
+
+<p>Result
+
+<pre id=out></pre>
+
+<script>
+
+function log(s)
+{
+    var el = document.getElementById('out');
+    el.textContent += '\n' + s;
+}
+
+function handleFocus(e)
+{
+    var el = e.target;
+    log(el.id + ' received focus (' + el.title + ')');
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+}
+
+window.onload = function()
+{
+    if (!window.testRunner)
+        return;
+
+    for (var i = 1; i <= 6; i++) {
+        var aElement = document.getElementById('a' + i);
+        aElement.onfocus = handleFocus;
+        eventSender.mouseMoveTo(aElement.offsetLeft + 2, aElement.offsetTop + 2);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+
+    var tc = document.getElementById('test-container');
+    tc.parentNode.removeChild(tc);
+};
+
+</script>
+</body>
+</html>

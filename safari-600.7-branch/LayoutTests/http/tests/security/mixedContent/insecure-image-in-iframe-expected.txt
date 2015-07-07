@@ -1,0 +1,11 @@
+frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
+frame "<!--framePath //<!--frame0-->-->" - didFinishDocumentLoadForFrame
+frame "<!--framePath //<!--frame0-->-->" - didHandleOnloadEventsForFrame
+main frame - didHandleOnloadEventsForFrame
+frame "<!--framePath //<!--frame0-->-->" - didFinishLoadForFrame
+main frame - didFinishLoadForFrame
+This test loads a secure iframe that loads an insecure image. We should *not* get a mixed content callback becase the main frame is HTTP and the image doesn't contaminate the child iframe's security origin with mixed content.
+
+

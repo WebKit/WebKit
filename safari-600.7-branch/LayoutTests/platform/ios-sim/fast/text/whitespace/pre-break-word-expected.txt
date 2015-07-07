@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 154x144 [border: (2px solid #FF0000)]
+        RenderText {#text} at (2,2) size 148x139
+          text run at (2,2) width 148: "Even though this div is"
+          text run at (2,22) width 148: " white-space pre, the te"
+          text run at (2,42) width 145: "xt inside should still w"
+          text run at (2,62) width 148: "rap to multiple lines be"
+          text run at (2,82) width 143: "cause of the word-wra"
+          text run at (2,102) width 144: "p:break-word CSS pro"
+          text run at (2,122) width 37: "perty."

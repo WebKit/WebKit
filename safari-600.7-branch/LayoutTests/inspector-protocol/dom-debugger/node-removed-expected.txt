@@ -1,0 +1,8 @@
+Testing that DOM.childNodeRemoved is correctly triggered even when the element is moved while paused in the debugger on a DOMDebugger "node-removed" breakpoint.
+
+Found <script>
+Stopped on DOM breakpoint
+PASS: onChildNodeRemoved called for #target_element
+PASS: onChildNodeInserted called for parent node #final_container
+PASS: onChildNodeInserted called for child node #target_element
+

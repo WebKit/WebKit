@@ -1,0 +1,60 @@
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+function main() 
+{
+    if (!window.testRunner) {
+        debug("This test can only run from within DumpRenderTree because it requires TestNetscapePlugin.\n");
+        return;
+    }
+
+    testRunner.waitUntilDone();
+}
+main();
+
+function testNPInvoke()
+{
+    argumentsLength = arguments.length;
+    
+    shouldBe("argumentsLength", "7");
+
+    undefinedArgument = arguments[0];
+    shouldBe("typeof(undefinedArgument)", "'undefined'")
+    
+    nullArgument = arguments[1];
+    shouldBe("typeof(nullArgument)", "'object'")
+    shouldBe("nullArgument", "null");
+    
+    booleanArgument = arguments[2];
+    shouldBe("typeof(booleanArgument)", "'boolean'");
+    shouldBe("booleanArgument", "true");
+    
+    intArgument = arguments[3];
+    shouldBe("typeof(intArgument)", "'number'");
+    shouldBe("intArgument", "242");
+    
+    doubleArgument = arguments[4];
+    shouldBe("typeof(doubleArgument)", "'number'");
+    shouldBe("doubleArgument", "242.242");
+    
+    stringArgument = arguments[5];
+    shouldBe("typeof(stringArgument)", "'string'");
+    shouldBe("stringArgument", "'Hello, World'");
+    
+    objectArgument = arguments[6];
+    shouldBe("typeof(objectArgument)", "'object'");
+
+    isSuccessfullyParsed();    
+    testRunner.notifyDone();
+}
+
+description("Tests that the NPRuntime implementation works as expected");
+
+</script>
+<embed id="plugin" 
+       type="application/x-webkit-test-netscape"
+       style="width:0; height:0"
+       testnpruntime="1">
+</embed>

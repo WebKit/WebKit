@@ -1,0 +1,17 @@
+Both of these frames should successfully open the database:
+
+ 
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+window.indexedDB.deleteDatabase() threw an exception: TypeError
+window.indexedDB.open() threw an exception: TypeError
+
+
+--------
+Frame: '<!--framePath //<!--frame1-->-->'
+--------
+window.indexedDB.deleteDatabase() threw an exception: TypeError
+window.indexedDB.open() threw an exception: TypeError
+

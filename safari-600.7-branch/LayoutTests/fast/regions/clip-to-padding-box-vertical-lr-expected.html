@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Hidden overflow and regions - Expected - https://webkit.org/b/119546</title>
+		<style>
+			html {
+				font: normal 20px Times;
+				-webkit-writing-mode: vertical-lr;
+				-webkit-font-smoothing: none;
+			}
+			.content {
+				margin-start: 3px;
+			}
+			.region {
+				height: 60px;
+				padding: 25px 10px 20px 15px;
+				border: double 10px Gray;
+				overflow-x: hidden;
+				overflow-y: hidden;
+				background-color: #eee;
+			}
+			.innerDivToShowPadding {
+				border-width: 0px; padding: 0px; margin: 0px;
+				background-color: DarkGray;
+			}
+		</style>
+	</head>
+	<body>
+		some text
+		<div class="region" style="width: 60px">
+			<div class="innerDivToShowPadding">
+				<div class="content" style="margin-before: 2px;">
+					<span style="position:relative;top:-30px;right:22px;">1AAAAAAAAAAAAAAAAAAAAA</span><br/> <!-- this is too wide, it will be clipped -->
+					2BBBBB<br/>
+				</div>
+			</div>
+		</div>
+
+		some text
+
+		<div class="region" style="width: 70px">
+			<div class="innerDivToShowPadding">
+				<div class="content">
+					3CCC 
+					<span style="position:relative;top:40px;">top:40px</span>  <!-- it will be clipped to the right -->
+					<span style="position:relative;top:-50px;">4CCCCC</span>  <!-- it will be clipped to the left -->
+				</div>
+			</div>
+		</div>
+
+		some text
+
+		<div class="region" style="width: auto">
+			<div class="innerDivToShowPadding">
+				<div class="content">
+					5DDD 
+					6DDDDDD  <!-- this is too wide, it will be clipped -->
+					<span style="position:relative;right:-16px;top:-50px;">7DDDDD</span>  <!-- it will be clipped down and to the left -->
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

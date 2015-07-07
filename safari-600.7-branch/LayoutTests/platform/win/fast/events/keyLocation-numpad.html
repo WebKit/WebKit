@@ -1,0 +1,41 @@
+<body>
+    <p>Test for <a href="http://bugs.webkit.org/show_bug.cgi?id=16410">bug 16410</a>:
+        Implement isKeypadEvent() on Windows
+    </p>
+    <div contenteditable id=ce onkeyup="keyEvent(event)" onkeydown="keyEvent(event)"></div>
+    <div id="log"></div>
+    <script>
+        function locationName(code) {
+          switch (code) {
+            case 0:
+                return "DOM_KEY_LOCATION_STANDARD";
+            case 1:
+                return "DOM_KEY_LOCATION_LEFT";
+            case 2:
+                return "DOM_KEY_LOCATION_RIGHT";
+            case 3:
+                return "DOM_KEY_LOCATION_NUMPAD";
+            default:
+                return code.toString();
+          }
+        }
+
+        function keyEvent(event) {
+            document.getElementById("log").innerHTML += (event.type + ": " + locationName(event.location) + "<br>");
+        }
+
+        document.getElementById("ce").focus();
+
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+
+            eventSender.dispatchMessage(eventSender.WM_KEYDOWN, 96 /* VK_NUMPAD0 */, 0x00520001);
+            eventSender.dispatchMessage(eventSender.WM_KEYUP, 96 /* VK_NUMPAD0 */, 0xc0520001);
+            eventSender.dispatchMessage(eventSender.WM_KEYDOWN, 45 /* VK_INSERT */, 0x00520001);
+            eventSender.dispatchMessage(eventSender.WM_KEYUP, 45 /* VK_INSERT */, 0xc0520001);
+            eventSender.dispatchMessage(eventSender.WM_KEYDOWN, 13 /* VK_RETURN */, 0x011c0001);
+            eventSender.dispatchMessage(eventSender.WM_KEYUP, 13 /* VK_RETURN */, 0xc11c0001);
+        } else
+            document.write("To test manually, press any key on numpad.");
+    </script>
+</body>

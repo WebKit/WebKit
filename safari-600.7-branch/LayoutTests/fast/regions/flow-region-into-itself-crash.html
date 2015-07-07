@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            #parent { -webkit-flow-into: flow; }
+            #region { -webkit-flow-from: flow; }
+        </style>
+    </head>
+    <body>
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=90289">WebKit Bug 90289</a> Crash when flowing a region into itself.</p>
+        <p>The test passes if it does not crash or assert.</p>
+        <div id="parent">
+            <div id="region"></div>
+        </div>
+        <p>PASS</p>
+        <script>
+            if (window.testRunner)
+                window.testRunner.dumpAsText();
+
+            document.getElementById("region").style.width = "100px";
+        </script>
+    </body>
+</html>

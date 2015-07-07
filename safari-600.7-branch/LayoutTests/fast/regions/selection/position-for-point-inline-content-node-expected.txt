@@ -1,0 +1,4 @@
+word1 content inside region word2
+Test that the selection inside inline content node is processed correctly.
+
+To manually test, select from "word1" to "word2" and move to the right edge of the region without leaving the region. Focus node should be at the end of "word2". Selected content should go from "word1" to "word2". No assertion should fire in debug mode: PASS

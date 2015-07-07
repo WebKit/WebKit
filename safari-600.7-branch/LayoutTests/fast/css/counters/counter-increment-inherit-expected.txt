@@ -1,0 +1,7 @@
+PASS window.internals.counterValue(document.getElementById('wrapper90')) is '5'
+PASS window.internals.counterValue(document.getElementById('test90')) is '10'
+PASS window.internals.counterValue(document.getElementById('test90a')) is '15'
+PASS window.internals.counterValue(document.getElementById('wrapper91')) is '10'
+PASS window.internals.counterValue(document.getElementById('test91')) is '20'
+PASS window.internals.counterValue(document.getElementById('test91a')) is '30'
+

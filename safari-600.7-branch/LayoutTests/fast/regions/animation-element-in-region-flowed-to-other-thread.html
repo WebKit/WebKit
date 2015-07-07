@@ -1,0 +1,19 @@
+<style>
+    div {
+        -webkit-animation-name: n;
+        -webkit-animation-duration: 1s;
+    }
+
+    @-webkit-keyframes n {
+        to { font-weight: bold; }
+    }
+</style>
+
+<p>This test passes if it doesn't crash or assert</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=128218">Bug 128218 - [CSS Regions] Null dereference applying animation with CSS regions</a>
+<div id="div1" style="-webkit-flow-from: a;">
+    <div id="div2">
+        <div id="div3" style="-webkit-flow-into: b;">test</div>
+    </div>
+</div>
+

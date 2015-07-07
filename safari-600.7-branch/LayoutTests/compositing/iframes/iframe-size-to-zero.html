@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style type="text/css" media="screen">
+    iframe {
+        border: 10px solid black;
+        padding: 5px;
+        margin: 20px;
+        height: 150px;
+        width: 300px;
+    }
+    
+    .collapsed {
+      width: 0;
+    }
+    
+    .overlay {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      top: 5px;
+      left: 5px;
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+    
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function doTest()
+    {
+        // For some reason this delay is required for AppKit to not short-circuit the display.
+        window.setTimeout(function() {
+            if (window.testRunner)
+                testRunner.display();
+
+            var hadLayers = false;
+            if (window.testRunner) {
+                var layers = window.internals.layerTreeAsText(document);
+                hadLayers = layers != "";
+            }
+
+            document.getElementById('iframe').className = 'collapsed';
+
+            if (window.testRunner) {
+
+                testRunner.display();
+                var haveLayers = window.internals.layerTreeAsText(document) != "";
+                var result;
+                if (hadLayers && !haveLayers)
+                  result = "PASS: had layers, and now do not";
+                else
+                  result = "FAIL: layers should have gone. hadLayers = " + hadLayers + ", haveLayers = " + haveLayers;
+                document.getElementById('result').innerHTML = result;
+                testRunner.notifyDone();
+            }
+        }, 0);
+    }
+
+    window.addEventListener('load', doTest, false);
+  </script>
+</head>
+<body>
+
+    <!-- The parent document may into compositing mode by the iframe. -->
+    <iframe id="iframe" src="resources/composited-subframe.html"></iframe>
+    
+    <div class="overlay">
+    </div>
+
+    <div id="result">Test only works in DRT</div>
+</body>
+</html>

@@ -1,0 +1,9 @@
+Verify texImage2D and texSubImage2D code paths taking image elements (RGBA/HALF_FLOAT_OES)
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS No OES_texture_half_float support -- this is legal
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

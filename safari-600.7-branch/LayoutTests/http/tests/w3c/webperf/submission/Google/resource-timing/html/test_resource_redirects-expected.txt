@@ -1,0 +1,12 @@
+Description
+
+This test validates that redirects do not alter the URL.
+
+
+
+PASS /w3c/webperf/resources/redirect.php?location=/w3c/webperf/resources/generate_resource.php%3Ftype=css is expected to have initiatorType link 
+PASS /w3c/webperf/resources/redirect.php?location=/w3c/webperf/resources/generate_resource.php%3Ftype=iframe is expected to have initiatorType iframe 
+PASS /w3c/webperf/resources/redirect.php?location=/w3c/webperf/resources/generate_resource.php%3Ftype=iframe%26id=xhr is expected to have initiatorType xmlhttprequest 
+PASS /w3c/webperf/resources/redirect.php?location=/w3c/webperf/resources/generate_resource.php%3Ftype=image is expected to have initiatorType img 
+PASS /w3c/webperf/resources/redirect.php?location=/w3c/webperf/resources/generate_resource.php%3Ftype=script is expected to have initiatorType script 
+

@@ -1,0 +1,7 @@
+Description
+
+This test validates the functionality of onresourcetimingbufferfull in resource timing.
+
+
+PASS onresourcetimingbufferfull should have been invoked once buffer is full! 
+

@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<body>
+<p>
+  This test verifies that the speech input control is rendered correctly for
+dir=rtl/ltr.
+</p>
+<ul>
+<li>The Microphone icon should be on the <b>right</b>:
+      <input id='speechInputLTR' x-webkit-speech></li>
+<li>The Microphone icon should be on the <b>right</b>:
+      <input id='speechInputLTRWithPadding' x-webkit-speech style="padding:5px 10px"></li>
+<li>The Microphone icon should be on the <b>right</b>:
+      <input id='speechInputRTLtoLTR' x-webkit-speech style="padding:5px 10px" dir=rtl></li>
+
+
+<li>The Microphone icon should be on the <b>left</b>:
+      <input id='speechInputRTL' x-webkit-speech dir=rtl></li>
+<li>The Microphone icon should be on the <b>left</b>:
+      <input id='speechInputLTRWithPadding' x-webkit-speech style="padding:5px 10px" dir=rtl></li>
+<li>The Microphone icon should be on the <b>left</b>:
+      <input id='speechInputLTRtoRTL' x-webkit-speech style="padding:5px 10px" dir=ltr></li>
+</ul>
+
+<script>
+  document.getElementById("speechInputRTLtoLTR").dir = 'ltr';
+  document.getElementById("speechInputLTRtoRTL").dir = 'rtl';
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+Test for bug 31660: Image load event fires before the document fragment is attached.
+
+PASS
+

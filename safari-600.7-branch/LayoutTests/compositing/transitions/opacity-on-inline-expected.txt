@@ -1,0 +1,4 @@
+This should not assert in debug builds
+
+Opacity fade on inline
+

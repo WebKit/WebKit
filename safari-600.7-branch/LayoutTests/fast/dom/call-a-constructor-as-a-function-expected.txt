@@ -1,0 +1,24 @@
+This tests if TypeError is thrown or not when we call a constructor as a normal function.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+SKIP AudioContext is not implemented.
+PASS FormData() threw exception TypeError: FormDataConstructor is not a function (evaluating 'FormData()').
+PASS EventSource() threw exception TypeError: EventSourceConstructor is not a function (evaluating 'EventSource()').
+PASS FileReader() threw exception TypeError: FileReaderConstructor is not a function (evaluating 'FileReader()').
+PASS Audio() threw exception TypeError: AudioConstructor is not a function (evaluating 'Audio()').
+PASS Image() threw exception TypeError: ImageConstructor is not a function (evaluating 'Image()').
+PASS Option() threw exception TypeError: OptionConstructor is not a function (evaluating 'Option()').
+PASS MessageChannel() threw exception TypeError: MessageChannelConstructor is not a function (evaluating 'MessageChannel()').
+PASS SharedWorker() threw exception TypeError: SharedWorkerConstructor is not a function (evaluating 'SharedWorker()').
+PASS WebKitCSSMatrix() threw exception TypeError: WebKitCSSMatrixConstructor is not a function (evaluating 'WebKitCSSMatrix()').
+PASS WebKitPoint() threw exception TypeError: WebKitPointConstructor is not a function (evaluating 'WebKitPoint()').
+PASS WebSocket() threw exception TypeError: WebSocketConstructor is not a function (evaluating 'WebSocket()').
+PASS Worker() threw exception TypeError: WorkerConstructor is not a function (evaluating 'Worker()').
+PASS XMLHttpRequest() threw exception TypeError: XMLHttpRequestConstructor is not a function (evaluating 'XMLHttpRequest()').
+PASS XSLTProcessor() threw exception TypeError: XSLTProcessorConstructor is not a function (evaluating 'XSLTProcessor()').
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

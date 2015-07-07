@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html> 
+<head>
+<style>
+.editing { 
+    border: 2px solid red; 
+    font-size: 24px; 
+}
+.explanation { 
+    border: 2px solid blue; 
+    padding: 12px; 
+    font-size: 24px; 
+    margin-bottom: 24px;
+}
+.scenario { margin-bottom: 16px;}
+.scenario:first-line { font-weight: bold; margin-bottom: 16px;}
+.expected-results:first-line { font-weight: bold }
+</style>
+</head> 
+<body>
+<div class="explanation">
+<div class="scenario">
+Tests: 
+<br>
+Smart paste when pasting after a word at the end of a line.
+</div>
+<div class="expected-results">
+Expected Results:
+<br>
+A space should be added between the preexisting word and the word that's pasted. It should like this:
+<BR>
+test test
+</div>
+</div>
+
+<div contenteditable id="root" style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
+<div id="test" class="editing">
+test
+</div>
+</div>
+<script src="../editing.js"></script>
+<script>
+
+function editingTest() {
+    doubleClickAtSelectionStart();
+    copyCommand();
+    moveSelectionForwardByCharacterCommand();
+    pasteCommand();
+}
+
+runDumpAsTextEditingTest(true);
+</script>
+</body>
+</html>

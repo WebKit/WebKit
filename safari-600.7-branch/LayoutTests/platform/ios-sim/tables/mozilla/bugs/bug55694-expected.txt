@@ -1,0 +1,48 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 256x19
+          text run at (0,0) width 256: "The table below is inside a div tag with "
+        RenderInline {B} at (0,0) size 58x19
+          RenderText {#text} at (255,0) size 58x19
+            text run at (255,0) width 58: "absolute"
+        RenderText {#text} at (312,0) size 762x39
+          text run at (312,0) width 155: " positioning for top and "
+          text run at (466,0) width 142: "left but not for width. "
+          text run at (607,0) width 155: "The table should push it"
+          text run at (0,20) width 341: "out to 100% but it doesn't. Instead the layer collapses"
+      RenderBlock {P} at (0,56) size 784x80
+        RenderBR {BR} at (0,0) size 0x19
+        RenderBR {BR} at (0,20) size 0x19
+        RenderBR {BR} at (0,40) size 0x19
+        RenderBR {BR} at (0,60) size 0x19
+      RenderBlock {P} at (0,152) size 784x40
+        RenderText {#text} at (0,0) size 266x19
+          text run at (0,0) width 266: "The next table is inside a div tag set with "
+        RenderInline {B} at (0,0) size 53x19
+          RenderText {#text} at (265,0) size 53x19
+            text run at (265,0) width 53: "relative"
+        RenderText {#text} at (317,0) size 85x19
+          text run at (317,0) width 85: " positioning. "
+        RenderBR {BR} at (401,15) size 1x0
+        RenderText {#text} at (0,20) size 142x19
+          text run at (0,20) width 142: "No width has been set"
+layer at (8,70) size 142x30
+  RenderBlock (positioned) {DIV} at (8,70) size 142x30 [bgcolor=#CCFFCC]
+    RenderTable {TABLE} at (0,0) size 142x30 [border: (1px outset #808080)]
+      RenderTableSection {TBODY} at (1,1) size 140x28
+        RenderTableRow {TR} at (0,2) size 140x24
+          RenderTableCell {TD} at (2,2) size 136x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderText {#text} at (2,2) size 132x19
+              text run at (2,2) width 132: "Table width = 100%"
+layer at (8,216) size 784x30
+  RenderBlock (relative positioned) {DIV} at (0,208) size 784x30 [bgcolor=#CC0066]
+    RenderTable {TABLE} at (0,0) size 784x30 [border: (1px outset #808080)]
+      RenderTableSection {TBODY} at (1,1) size 782x28
+        RenderTableRow {TR} at (0,2) size 782x24
+          RenderTableCell {TD} at (2,2) size 778x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+            RenderText {#text} at (2,2) size 132x19
+              text run at (2,2) width 132: "Table width = 100%"

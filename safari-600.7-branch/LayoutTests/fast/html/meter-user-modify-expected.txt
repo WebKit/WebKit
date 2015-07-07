@@ -1,0 +1,7 @@
+PASS renderTreeAfterType is renderTreeBeforeType
+PASS successfullyParsed is true
+
+TEST COMPLETE
+The inner element of meter should not be deleteable.
+
+(before)(after)

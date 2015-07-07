@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+html {
+    font-size: 10px;
+    font-family: Ahem;
+    -webkit-font-smoothing: none;
+}
+
+a {
+    color: #0F0;
+    background: #F00;
+}
+a:hover {
+	background: #0F0;
+}
+
+#table {
+	display: table;
+	overflow: hidden;
+}
+</style>
+<script src="resources/repaint.js"></script>
+<script>
+    function repaintTest()
+    {
+        if (!window.testRunner)
+            return;
+
+        var table = document.getElementById("table");
+        var tableBox = table.getBoundingClientRect();
+        var tableCenterX = (tableBox.left + tableBox.right) / 2;
+        var tableCenterY = (tableBox.top + tableBox.bottom) / 2;
+
+        eventSender.mouseMoveTo(tableCenterX, tableCenterY);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+    window.addEventListener("load", runRepaintTest);
+</script>
+</head>
+<body>
+<!--
+    REGRESSION(r110072): :hover doesn't work on table child with overflow: hidden
+    http://webkit.org/b/81460
+    To test this bug outside DRT, hover on the link below.
+-->
+<div id="table">
+    <a href="inexistant_resources.html" >When hovered, the background should have the same color as this text.</a>
+</div>
+</body>
+</html>

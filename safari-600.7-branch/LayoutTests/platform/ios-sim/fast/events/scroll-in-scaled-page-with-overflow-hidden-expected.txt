@@ -1,0 +1,4 @@
+This tests that a usually overflow: hidden viewport should be scrollable when scaled. Otherwise, you can't get to content you would have been able to get to had you not been zoomed it.
+PASS window.document.body.scrollTop is 0
+FAIL window.document.body.scrollTop should be 100. Was 0.
+

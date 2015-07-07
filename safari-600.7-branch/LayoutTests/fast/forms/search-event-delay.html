@@ -1,0 +1,64 @@
+<script>
+
+var count = 0;
+var keyEventTime;
+
+function sendKeyEvent()
+{
+    if (window.eventSender)
+        eventSender.keyDown("x");
+}
+
+function sendDeleteKeyEvent()
+{
+    if (window.eventSender)
+        eventSender.keyDown("delete");
+}
+
+function keyEvent(event)
+{
+    keyEventTime = event.timeStamp;
+}
+
+function searchEvent(event)
+{
+    document.getElementById("times").innerHTML += " " + (Math.round((event.timeStamp - keyEventTime) / 100) / 10);
+    count += 1;
+    if (count != 6) {
+        if (count != 5)
+            sendKeyEvent();
+        else {
+            document.getElementById("search").select();
+            sendDeleteKeyEvent();
+        }
+    } else {
+        if (window.testRunner)
+            setTimeout("testRunner.notifyDone()", 0); // Do it on a timer to avoid Windows DRT hanging.
+    }
+}
+
+function startTest()
+{
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    document.getElementById("search").focus();
+    sendKeyEvent();
+}
+
+</script>
+
+<body onload="startTest()">
+
+<p>This tests the delay between when you type and the search event fires.</p>
+
+<p>As of this writing we can't use DOM events to type into a search field, so the test uses the event sender and only runs under DumpRenderTree.</p>
+
+<p><input id="search" type="search" incremental onkeydown="keyEvent(event)" onsearch="searchEvent(event)"></p>
+
+<div>The two rows below should match.</div>
+<div>0.5 0.4 0.3 0.2 0.2 0</p>
+<div id="times"></div>
+
+</body>

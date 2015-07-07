@@ -1,0 +1,7 @@
+Tests that console exposes last evaluation result as $_.
+
+1+1
+2
+$_
+2
+

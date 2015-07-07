@@ -1,0 +1,4 @@
+This test is to ensure SVG elements can't be created by being embedded in xml documents. It can not be tested manually.
+
+ FAIL: Successfully embedded SVG in document
+

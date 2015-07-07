@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+    <title>Phone Numbers in MobileSafari</title>
+    <script src="../../../../../../resources/dump-as-markup.js"></script>
+    <script type="text/javascript">
+        if (window.testRunner) {
+            Markup.waitUntilDone();
+            testRunner.setTelephoneNumberParsingEnabled(true);
+        }
+
+        window.addEventListener('load', function() {
+            if (!window.testRunner)
+                return;
+
+            Markup.description('<rdar://problem/8909578> Reintegrate iOS telephone parsing with new HTML5 parser');
+            Markup.dump('body', 'phone number detection');
+            testRunner.setTelephoneNumberParsingEnabled(false);
+
+            Markup.notifyDone();
+        }, false);
+    </script>
+</head>
+<body id="body">
+    <iframe src="resources/phone.html">
+    </iframe>
+</body>
+</html>

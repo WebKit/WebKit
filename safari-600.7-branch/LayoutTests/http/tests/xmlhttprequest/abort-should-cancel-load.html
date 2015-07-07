@@ -1,0 +1,35 @@
+<html>
+<head>
+<script>
+function f() {
+    req = new XMLHttpRequest();
+    req.open("GET", "resources/endlessxml.php"); 
+    req.send(null);  
+    req.abort();
+}
+
+function runTest() {
+    console_messages = document.createElement("ul");
+    document.body.appendChild(console_messages);
+
+    if (window.testRunner) {
+        testRunner.dumpResourceLoadCallbacks();
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+    
+    f();
+    testRunner.notifyDone();
+}
+
+function log(message)
+{
+    var item = document.createElement("li");
+    item.appendChild(document.createTextNode(message));
+    console_messages.appendChild(item);
+}
+</script>
+<body onload="runTest()">
+    This tests that calling abort() on an XHR object stops the load, causing the relevant resource load delegates to be sent.
+</body>
+</html>

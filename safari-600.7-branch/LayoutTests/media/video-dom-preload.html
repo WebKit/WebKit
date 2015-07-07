@@ -1,0 +1,67 @@
+<html>
+    <head>
+        <script src=video-test.js></script>
+        <script>
+            function setPreload(value, expected)
+            {
+                consoleWrite("- set via DOM");
+                run("video.removeAttribute('preload')");
+                run("video.preload = '" + value + "'");
+                testExpected("video.getAttribute('preload')", expected);
+                testExpected("video.preload", expected);
+                consoleWrite("- and via attribute");
+                run("video.removeAttribute('preload')");
+                run("video.setAttribute('preload', '" + value + "')");
+                testExpected("video.preload", expected);
+                testExpected("video.getAttribute('preload')", expected);
+                consoleWrite("");
+
+            }
+
+            function test()
+            {
+                findMediaElement();
+                consoleWrite("");
+
+                consoleWrite("++ Test default attribute value");
+                testExpected("video.preload", "auto");
+                testExpected("video.getAttribute('preload')", null);
+                consoleWrite("");
+
+                consoleWrite("++ Remove attribute, should revert to default");
+                run("video.removeAttribute('preload')");
+                testExpected("video.preload", "auto");
+                consoleWrite("");
+
+                consoleWrite("++ Set to 'none'");
+                setPreload("none", "none");
+
+                consoleWrite("++ Set to 'auto'");
+                setPreload("auto", "auto");
+
+                consoleWrite("++ set to bogus value, should revert to default value");
+                run("video.removeAttribute('preload')");
+                consoleWrite("- set via DOM");
+                run("video.preload = 'bogus'");
+                testExpected("video.getAttribute('preload')", "bogus");
+                testExpected("video.preload", "auto");
+                consoleWrite("- and via attribute");
+                run("video.setAttribute('preload', 'bogus')");
+                testExpected("video.preload", "auto");
+                testExpected("video.getAttribute('preload')", "bogus");
+                consoleWrite("");
+
+                consoleWrite("++ Set to 'metadata'");
+                setPreload("metadata", "metadata");
+        
+                endTest();
+            }
+        </script>
+
+    </head>
+
+    <body onload="test()">
+        <video controls></video>
+    </body>
+</html>
+

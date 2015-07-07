@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            body { font: 16px/1.25 monospace; }
+
+            #content {
+                -webkit-flow-into: flow1;
+                padding: 5px;
+            }
+
+            #first-box {
+                border: 1px solid blue;
+                height:125px;
+            }
+
+            #second-box {
+                margin:auto;
+                border: 1px solid green;
+                width:75%;
+            }
+
+            #region1, #region2 {
+                border: 1px solid red;
+                -webkit-flow-from: flow1;
+            }
+
+            #region1 {
+                width: 412px;
+                height: 140px;
+            }
+
+            #region2 {
+                width: 300px;
+                height: 150px;
+                position: relative;
+                left: 100px;
+                top: 50px;
+            }
+            #p1, #p2 {
+                margin: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <p>In the test case below, the green block should not be fragmented into the second region. It is overflowing downwards out of the first region because its parent (the blue block) is only flowed inside the first region.</p>
+        <div id="content">
+            <div id="first-box">
+                <div id="second-box">
+                    <p id="p1">These lines should all fit to the width of the block in the first region and spill out of the bottom of the first region.</p>
+                    <p id="p2">These lines should all fit to the width of the block in the first region and spill out of the bottom of the first region.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="container">
+            <div id="region1"></div>
+            <div id="region2"></div>
+        </div>
+    </body>
+</html>

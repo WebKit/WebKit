@@ -1,0 +1,106 @@
+/*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.layer-tree.panel .data-grid {
+    border-right: none;
+    border-left: none;
+    border-bottom: none;
+}
+
+.layer-tree.panel .name-column .icon {
+    content: url(../Images/DOMElement.svg);
+}
+
+.layer-tree.panel tr.reflection .name-column .icon {
+    content: url(../Images/Reflection.svg);
+}
+
+.layer-tree.panel tr.pseudo-element .name-column .icon {
+    content: url(../Images/PseudoElement.svg);
+}
+
+.layer-tree.panel .name-column .pseudo-element,
+.layer-tree.panel .name-column .reflection {
+    color: rgb(128, 128, 128);
+}
+
+.layer-tree.panel tr.selected .name-column .pseudo-element,
+.layer-tree.panel tr.selected .name-column .reflection {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.layer-tree.panel .bottom-bar {
+    position: relative;
+    height: 28px;
+    display: -webkit-flex;
+}
+
+body.mac-platform.legacy .layer-tree.panel .bottom-bar {
+    height: 22px;
+}
+
+.layer-tree.panel .bottom-bar > div {
+    padding: 4px 6px;
+
+    line-height: 20px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    display: -webkit-flex;
+    -webkit-flex: 1;
+}
+
+body.mac-platform.legacy .layer-tree.panel .bottom-bar > div {
+    line-height: inherit;
+    text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;
+}
+
+.layer-tree.panel .layers-memory-label {
+    -webkit-justify-content: flex-end;
+}
+
+.layer-tree-popover {
+    padding: 5px;
+}
+
+body.mac-platform.legacy .layer-tree-popover {
+    text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;
+}
+
+.layer-tree-popover p {
+    margin: 0;
+}
+
+.layer-tree-popover ul {
+    list-style-type: none;
+    margin: 10px 0 0 0;
+    padding-left: 10px;
+}
+
+.layer-tree-popover li {
+    line-height: 1.3em;
+}

@@ -1,0 +1,10 @@
+Test for FontLoader.loading attribute
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL document.fontloader does not exist
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

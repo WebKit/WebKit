@@ -1,0 +1,5 @@
+The dominant plugin should play automatically, and then so should the identical plugin that is added a bit later.
+
+PASS
+
+

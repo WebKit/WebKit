@@ -1,0 +1,31 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<meta http-equiv="Content-Security-Policy" content="script-src 'unsafe-inline'">
+<script>
+function test()
+{
+    InspectorTest.evaluateInPage("document", didReceiveDocumentObject);
+    function didReceiveDocumentObject(remoteObject, wasThrown)
+    {
+        InspectorTest.addResult("didReceiveDocumentObject");
+        DOMAgent.requestNode(remoteObject.objectId, didRequestNode);
+    }
+
+    function didRequestNode(error, nodeId)
+    {
+        InspectorTest.addResult("didRequestNode error = " + error);
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>
+Tests that JS object to node resolution still works even if script evals are prohibited by Content-Security-Policy.
+The test passes if it doesn't crash.
+<a href="https://bugs.webkit.org/show_bug.cgi?id=78705">Bug 78705.</a>
+</p>
+</body>
+</html>

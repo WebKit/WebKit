@@ -1,0 +1,76 @@
+<html>
+<head>
+    <script src="../resources/cross-frame-access.js"></script>
+    <script>
+        window.onload = function()
+        {
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.dumpChildFramesAsText();
+                testRunner.waitUntilDone();
+            }
+
+            var innerURL = 'javascript:\\\"<html>'
+                + "<head>"
+                +     "<scr" + "ipt>"
+                +         "window.onload = function()"
+                +         "{"
+                +             "if (window.testRunner)"
+                +                 "testRunner.globalFlag = true;"
+                +         "}"
+                +     "</scr" + "ipt>"
+                + "</head>"
+                + "<body>"
+                +     '<p id=\\\\\\"accessMe\\\\\\">FAIL: Cross frame access to a javascript: URL 2 levels deep was denied.</p>'
+                +     "<p>Inner-inner iframe.</p>"
+                + "</body>"
+                + '</html>\\\"';
+
+            var url = "javascript:\"<html>"
+                + "<body>"
+                +     "<iframe src='" + innerURL + "'></iframe>"
+                +     "<p>Inner iframe.</p>"
+                + "</body>"
+                + "</html>\"";
+
+            var iframe = document.getElementById("aFrame");
+            iframe.src = url;
+
+            if (window.testRunner) {
+                setTimeout(pollForTest, 1);
+            } else {
+                log("To run the test, click the button below when the opened window finishes loading.");
+                var button = document.createElement("button");
+                button.appendChild(document.createTextNode("Run Test"));
+                button.onclick = runTest;
+                document.body.appendChild(button);
+            }
+        }
+
+        pollForTest = function()
+        {
+            if (!testRunner.globalFlag) {
+                setTimeout(pollForTest, 1);
+                return;
+            }
+            runTest();
+            testRunner.notifyDone();
+        }
+
+        runTest = function()
+        {
+            try {
+                window[0][0].document.getElementById('accessMe').innerHTML = 'PASS: Cross frame access to a javascript: URL 2 levels deep was allowed!';
+                log('PASS: Cross frame access to a javascript: URL 2 levels deep was allowed!');
+            } catch (e) {
+                log('FAIL: Cross frame access to a javascript: URL 2 levels deep was denied.');
+            }
+        }
+    </script>
+</head>
+<body>
+    <p>This tests that the main frame has access to a javascript: URL loaded in an iframe inside another javascript: URL loaded iframe.</p>
+    <iframe id="aFrame" style="width: 500px; height: 300px;"></iframe>
+    <pre id='console'></pre>
+</body>
+</html>

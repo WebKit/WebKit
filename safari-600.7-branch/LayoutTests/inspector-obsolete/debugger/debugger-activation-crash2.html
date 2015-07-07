@@ -1,0 +1,54 @@
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+
+<script>
+var closures = [];
+function makeClosure() {
+    var v1, v2, v3, v4, v5, v6, v7, v8, v9, v10; // Make a lot of potentially captured variables.
+    return function () { 
+        var x = v1; // But only capture one in optimizing compiles.
+        return x;
+    };
+}
+
+for (var i = 0; i < 100; ++i) {
+    closures.push(makeClosure());
+}
+
+closures[0](); // Force compilation.
+function testFunction() {
+    closures[0](); // Force recompilation.
+    
+    // At this point, closures[0] captured 1 variable but thinks it captured 10.
+    // If so, stopping at a breakpoint should make it crash.
+}
+
+function test() {
+    InspectorTest.startDebuggerTest(step1);
+
+    function step1()
+    {
+        InspectorTest.showScriptSource("debugger-activation-crash2.html", step2);
+    }
+
+    function step2(sourceFrame)
+    {
+        InspectorTest.addResult("Script source was shown.");
+        InspectorTest.setBreakpoint(sourceFrame, 8, "", true);
+        InspectorTest.runTestFunctionAndWaitUntilPaused(step3);
+    }
+
+    function step3(callFrames)
+    {
+        InspectorTest.captureStackTrace(callFrames, true);
+        InspectorTest.completeDebuggerTest();
+    }
+}
+
+window.onload = runTest;
+</script>
+
+<p>
+Tests for a crash when paused at a breakpoint caused by inaccurate Activation records.
+<a href="https://bugs.webkit.org/show_bug.cgi?id=57120">Bug 57120</a>
+</p>

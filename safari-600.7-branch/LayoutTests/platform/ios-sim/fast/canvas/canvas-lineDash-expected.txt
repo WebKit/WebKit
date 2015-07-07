@@ -1,0 +1,46 @@
+Basic test for setLineDash, getLineDash and lineDashOffset
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ctx.lineDashOffset is 0
+PASS lineDash[0] is 15
+PASS lineDash[1] is 10
+PASS ctx.lineDashOffset is 5
+PASS lineDash[0] is 5
+PASS lineDash[1] is 10
+PASS lineDash[2] is 15
+PASS lineDash[3] is 5
+PASS lineDash[4] is 10
+PASS lineDash[5] is 15
+PASS lineDash[0] is 1
+PASS lineDash[1] is 2
+PASS ctx.lineDashOffset is 5
+PASS getPixel(25,10) is [0,255,0,255]
+FAIL getPixel(35,10) should be 0,0,0,0. Was 0,255,0,255.
+PASS getPixel(40,25) is [0,255,0,255]
+FAIL getPixel(40,35) should be 0,0,0,0. Was 0,255,0,255.
+PASS getPixel(25,40) is [0,255,0,255]
+FAIL getPixel(15,40) should be 0,0,0,0. Was 0,255,0,255.
+PASS getPixel(10,25) is [0,255,0,255]
+FAIL getPixel(10,15) should be 0,0,0,0. Was 0,255,0,255.
+FAIL getPixel(55,10) should be 0,0,0,0. Was 0,255,0,255.
+PASS getPixel(65,10) is [0,255,0,255]
+FAIL getPixel(80,15) should be 0,0,0,0. Was 0,255,0,255.
+PASS getPixel(80,25) is [0,255,0,255]
+FAIL getPixel(75,40) should be 0,0,0,0. Was 0,255,0,255.
+PASS getPixel(65,40) is [0,255,0,255]
+FAIL getPixel(50,35) should be 0,0,0,0. Was 0,255,0,255.
+PASS getPixel(50,25) is [0,255,0,255]
+FAIL getPixel(95,10) should be 0,0,0,0. Was 0,255,0,255.
+PASS getPixel(105,10) is [0,255,0,255]
+FAIL getPixel(120,15) should be 0,0,0,0. Was 0,255,0,255.
+PASS getPixel(120,25) is [0,255,0,255]
+FAIL getPixel(115,40) should be 0,0,0,0. Was 0,255,0,255.
+PASS getPixel(105,40) is [0,255,0,255]
+FAIL getPixel(90,35) should be 0,0,0,0. Was 0,255,0,255.
+PASS getPixel(90,25) is [0,255,0,255]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

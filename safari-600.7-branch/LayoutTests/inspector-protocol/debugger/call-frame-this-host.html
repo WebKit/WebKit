@@ -1,0 +1,93 @@
+<html>
+<head>
+<script src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script>
+// Put this here instead of on <body onload> to prevent an extra Debugger.scriptParsed event.
+window.onload = runTest;
+
+function test()
+{
+    // This test sets a breakpoint on line:column in the <script> below.
+    // We set a breakpoint before evaluating 'sum += ...', and verify that
+    // call frame this values are what we expect.
+
+    InspectorTest.sendCommand("Debugger.enable", {});
+
+    InspectorTest.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    {
+        if (/call-frame-this-host\.html$/.test(messageObject.params.url) && messageObject.params.startLine > 10) {
+            InspectorTest.log("Found <script>");
+            var scriptIdentifier = messageObject.params.scriptId;
+            var lineNumber = messageObject.params.startLine + 6;
+            var columnNumber = 12;
+            var location = {scriptId: scriptIdentifier, lineNumber: lineNumber, columnNumber: columnNumber};
+            InspectorTest.sendCommand("Debugger.setBreakpoint", {location: location}, function() {
+                InspectorTest.log("Running testFunction");
+                InspectorTest.sendCommand("Runtime.evaluate", {expression: "testFunction()"});
+            });
+        }
+    }
+
+    InspectorTest.eventHandler["Debugger.paused"] = function(messageObject)
+    {
+        InspectorTest.log("Hit Breakpoint!");
+        var thisValues = [ ];
+        var i;
+        for (i = 0; i < 3; i++)
+            thisValues[i] = messageObject.params.callFrames[i].this;
+        
+        function assertThisValue(index, actual, expected) {
+            var success = true;
+            if (actual.type != expected.type) {
+                InspectorTest.log('FAIL: frame[' + index + '] expect type "' + expected.type + '", actual "' + actual.type + '"');
+                success = false;
+            }
+
+            if (actual.className != expected.className) {
+                InspectorTest.log('FAIL: frame[' + index + '] expect className "' + expected.className + '", actual "' + actual.className + '"');
+                success = false;
+            }
+
+            if (success)
+                InspectorTest.log('PASS: frame[' + index + '] type "' + actual.type + '" className "' + actual.className + '"');
+        }
+
+        // frame 0 should be the anonymous inner function.
+        assertThisValue(0, thisValues[0], {
+            "type": "object",
+            "className": "Window"
+        });
+
+        // frame 1 should be "forEach" (an internal/host function).
+        assertThisValue(1, thisValues[1], {
+            "type": "object",
+            "className": "Array"
+        });
+
+        // frame 2 should be "testFunction".
+        assertThisValue(2, thisValues[2], {
+            "type": "object",
+            "className": "Window"
+        });
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body>
+<p>Debugger.setBreakpoint on line:column in &lt;script&gt;</p>
+<script>// Line 0
+function testFunction() { // Line 1
+    try { // Line 2
+        var array = [2, 5, 7]; // Line 3
+        var sum = 0; // Line 4
+        array.forEach(function(value) { // Line 5
+            sum += array[value]; // Line 6
+        });
+    } catch (e) {
+        console.log("Exception: " + e);
+    }
+}
+</script>
+</body>
+</html>

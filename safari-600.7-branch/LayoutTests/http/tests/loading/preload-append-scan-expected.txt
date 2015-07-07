@@ -1,0 +1,9 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+
+This test needs to be run in DRT. Preload scanner should see the image resource.
+<img src="resources/preload-test.jpg">
+PASS

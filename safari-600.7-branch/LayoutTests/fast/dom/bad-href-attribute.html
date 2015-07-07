@@ -1,0 +1,31 @@
+<body>
+<p>Test that you can't set a prefix for a node with null namespace.</p>
+<p>Should say PASS:</p>
+<pre id = log></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function log(msg)
+{
+    document.getElementById("log").innerHTML += msg + "\n";
+}
+
+var a = document.createElement("a");
+var attr = document.createAttribute("href");
+attr.value = "#";
+
+try {
+    attr.prefix = "foo";
+    log("FAIL: Was able to change the prefix.");
+} catch (ex) {
+    log("PASS");
+}
+    
+a.setAttributeNode(attr);
+
+// WebKit used to crash with an assertion here.
+a.href;
+
+</script>
+</body>

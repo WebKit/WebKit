@@ -1,0 +1,31 @@
+This tests that we can correctly call Function.prototype.apply
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS myObject.apply() is [myObject, "myObject.apply"]
+PASS forwarder(myObject) is [myObject, "myObject.apply"]
+PASS myFunction('arg1') is [this, "myFunction", "arg1"]
+PASS forwarder(myFunction, null, ['arg1']) is [this, "myFunction", "arg1"]
+PASS myFunction.apply(myObject, ['arg1']) is [myObject, "myFunction", "arg1"]
+PASS myFunction.apply(myObject, arg1Array) is [myObject, "myFunction", "arg1"]
+PASS forwarder(myFunction, myObject, arg1Array) is [myObject, "myFunction", "arg1"]
+PASS myFunction.apply() is [this, "myFunction", undefined]
+PASS myFunction.apply(null) is [this, "myFunction", undefined]
+PASS myFunction.apply(undefined) is [this, "myFunction", undefined]
+PASS myFunction.aliasedApply(myObject, ['arg1']) is [myObject, "myFunction", "arg1"]
+PASS myFunction.aliasedApply() is [this, "myFunction", undefined]
+PASS myFunction.aliasedApply(null) is [this, "myFunction", undefined]
+PASS myFunction.aliasedApply(undefined) is [this, "myFunction", undefined]
+PASS myFunctionWithApply.apply(myObject, ['arg1']) is [myFunctionWithApply, "myFunctionWithApply.apply", myObject]
+PASS myFunctionWithApply.aliasedApply(myObject, ['arg1']) is [myObject, "myFunctionWithApply", "arg1"]
+PASS myFunctionWithApply.apply(myObject, arg1Array) is [myFunctionWithApply, "myFunctionWithApply.apply", myObject]
+PASS forwarder(myFunctionWithApply, myObject, arg1Array) is [myFunctionWithApply, "myFunctionWithApply.apply", myObject]
+PASS myFunctionWithApply.aliasedApply(myObject, arg1Array) is [myObject, "myFunctionWithApply", "arg1"]
+PASS myFunction.apply(null, new Array(5000000)) threw exception RangeError: Maximum call stack size exceeded..
+PASS myFunction.apply(null, new Array(1 << 30)) threw exception RangeError: Maximum call stack size exceeded..
+PASS recurseArguments.apply(null, new Array(50000)) threw exception RangeError: Maximum call stack size exceeded..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,50 @@
+<html>
+<head>
+<link rel="stylesheet" href="resources/import-pseudoclass-crash.css">
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function test()
+{
+    WebInspector.showPanel("elements");
+    InspectorTest.nodeWithId("lastchild", nodeFound);
+
+    function nodeFound(node)
+    {
+        WebInspector.cssModel.getMatchedStylesAsync(node.id, true, false, matchedStylesCallback);
+    }
+
+    var styleSheetId;
+
+    function matchedStylesCallback(styles)
+    {
+        styleSheetId = styles.matchedCSSRules[1].id.styleSheetId;
+        CSSAgent.setStyleSheetText(styleSheetId,
+            "@import url(\"import-pseudoclass-crash-empty.css\");\n\n:last-child { color: #000001; }\n", modifiedCallback);
+    }
+
+    function modifiedCallback()
+    {
+        CSSAgent.setStyleSheetText(styleSheetId, "@import url(\"import-pseudoclass-crash-empty.css\");\n\n:last-child { color: #002001; }\n", modifiedCallback2);
+    }
+
+    function modifiedCallback2()
+    {
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that modifying stylesheet text with @import and :last-child selector does not crash (<a href="https://bugs.webkit.org/show_bug.cgi?id=95324">Bug 95324</a>).
+</p>
+
+<div>
+    <p id="lastchild">:last-child</p>
+</div>
+</body>
+</html>

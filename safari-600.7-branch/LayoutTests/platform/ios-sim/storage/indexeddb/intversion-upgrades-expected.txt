@@ -1,0 +1,17 @@
+CONSOLE MESSAGE: line 15: TypeError: undefined is not an object (evaluating 'request.onsuccess = deleteSuccess')
+Upgrade a database, open a second connection at the same version, ensure specifying a lower version causes an error
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = "intversion-upgrades.html"
+indexedDB.deleteDatabase(dbname)
+FAIL indexedDB.deleteDatabase(dbname) threw exception TypeError: null is not an object (evaluating 'indexedDB.deleteDatabase')
+FAIL String(request) should be [object IDBOpenDBRequest]. Was undefined.
+FAIL Unexpected error: TypeError: undefined is not an object (evaluating 'request.onsuccess = deleteSuccess')
+FAIL successfullyParsed should be true. Was false.
+
+TEST COMPLETE
+

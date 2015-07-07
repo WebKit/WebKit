@@ -1,0 +1,16 @@
+This is a test case for bug 64678.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Object.prototype.toString.call(undefined) is "[object Undefined]"
+PASS Object.prototype.toString.call(null) is "[object Null]"
+PASS Object.prototype.toLocaleString.call(undefined) threw exception TypeError: undefined is not an object (evaluating 'Object.prototype.toLocaleString.call(undefined)').
+PASS Object.prototype.valueOf.call(undefined) threw exception TypeError: undefined is not an object (evaluating 'Object.prototype.valueOf.call(undefined)').
+PASS Object.prototype.hasOwnProperty.call(undefined, 'hasOwnProperty') threw exception TypeError: undefined is not an object (evaluating 'Object.prototype.hasOwnProperty.call(undefined, 'hasOwnProperty')').
+PASS Object.prototype.propertyIsEnumerable.call(undefined, 'propertyIsEnumerable') threw exception TypeError: undefined is not an object (evaluating 'Object.prototype.propertyIsEnumerable.call(undefined, 'propertyIsEnumerable')').
+PASS Object.prototype.isPrototypeOf.call(undefined, this) threw exception TypeError: undefined is not an object (evaluating 'Object.prototype.isPrototypeOf.call(undefined, this)').
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

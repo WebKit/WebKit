@@ -1,0 +1,161 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+/* The element count starts at 1, no count <= 1 can match anything */
+li:nth-child(0n+0) {
+    background-color:rgb(1, 2, 3);
+}
+li:nth-child(-0n+0) {
+    background-color:rgb(1, 2, 3);
+}
+li:nth-child(0n-0) {
+    background-color:rgb(1, 2, 3);
+}
+li:nth-child(-0n-0) {
+    background-color:rgb(1, 2, 3);
+}
+li:nth-child(0n) {
+    background-color:rgb(1, 2, 3);
+}
+li:nth-child(-0n) {
+    background-color:rgb(1, 2, 3);
+}
+li:nth-child(0) {
+    background-color:rgb(1, 2, 3);
+}
+li:nth-child(-0) {
+    background-color:rgb(1, 2, 3);
+}
+li:nth-child(-1) {
+    background-color:rgb(1, 2, 3);
+}
+
+/* IntMax (2147483647) and IntMin (-2147483647). The tree is not big enough to match any of those. */
+li:nth-child(2147483647n+2147483647) {
+    background-color:rgb(1, 2, 3);
+}
+li:nth-child(2147483647n) {
+    background-color:rgb(1, 2, 3);
+}
+li:nth-child(2147483647) {
+    background-color:rgb(1, 2, 3);
+}
+li:nth-child(-2147483648n-2147483648) {
+    background-color:rgb(1, 2, 3);
+}
+li:nth-child(-2147483648n) {
+    background-color:rgb(1, 2, 3);
+}
+li:nth-child(-2147483648) {
+    background-color:rgb(1, 2, 3);
+}
+li:nth-child(2147483647n-2147483648) {
+    background-color:rgb(1, 2, 3);
+}
+li:nth-child(-2147483648n+2147483647) {
+    background-color:rgb(1, 2, 3);
+}
+
+/* Values too large/small for int32 */
+li:nth-child(2147483648n+2147483648) {
+    background-color:rgb(1, 2, 3);
+}
+li:nth-child(2147483648n) {
+    background-color:rgb(1, 2, 3);
+}
+li:nth-child(2147483648) {
+    background-color:rgb(1, 2, 3);
+}
+li:nth-child(3147483647n+3147483647) {
+    background-color:rgb(1, 2, 3);
+}
+li:nth-child(3147483647n) {
+    background-color:rgb(1, 2, 3);
+}
+li:nth-child(3147483647) {
+    background-color:rgb(1, 2, 3);
+}
+li:nth-child(-2147483649n-2147483649) {
+    background-color:rgb(1, 2, 3);
+}
+li:nth-child(-2147483649n) {
+    background-color:rgb(1, 2, 3);
+}
+li:nth-child(-2147483649) {
+    background-color:rgb(1, 2, 3);
+}
+
+</style>
+</head>
+<body>
+<div style="display:none">
+    <ul id=targetTree>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+</div>
+</body>
+<script>
+description('Test the boundary values of the :nth-child() selector.');
+
+shouldBe('document.querySelectorAll("li:nth-child(0n+0)").length', '0');
+shouldBe('document.querySelectorAll("li:nth-child(-0n+0)").length', '0');
+shouldBe('document.querySelectorAll("li:nth-child(0n-0)").length', '0');
+shouldBe('document.querySelectorAll("li:nth-child(-0n-0)").length', '0');
+shouldBe('document.querySelectorAll("li:nth-child(-0n)").length', '0');
+shouldBe('document.querySelectorAll("li:nth-child(0)").length', '0');
+shouldBe('document.querySelectorAll("li:nth-child(-0)").length', '0');
+shouldBe('document.querySelectorAll("li:nth-child(-1)").length', '0');
+
+shouldBe('document.querySelectorAll("li:nth-child(2147483647n+2147483647)").length', '0');
+shouldBe('document.querySelectorAll("li:nth-child(2147483647n)").length', '0');
+shouldBe('document.querySelectorAll("li:nth-child(2147483647)").length', '0');
+shouldBe('document.querySelectorAll("li:nth-child(-2147483648n)").length', '0');
+shouldBe('document.querySelectorAll("li:nth-child(-2147483648)").length', '0');
+shouldBe('document.querySelectorAll("li:nth-child(2147483647n-2147483648)").length', '0');
+shouldBe('document.querySelectorAll("li:nth-child(-2147483648n+2147483647)").length', '0');
+
+shouldBe('document.querySelectorAll("li:nth-child(2147483648n+2147483648)").length', '0');
+shouldBe('document.querySelectorAll("li:nth-child(2147483648n)").length', '0');
+shouldBe('document.querySelectorAll("li:nth-child(2147483648)").length', '0');
+shouldBe('document.querySelectorAll("li:nth-child(3147483647n+3147483647)").length', '0');
+shouldBe('document.querySelectorAll("li:nth-child(3147483647n)").length', '0');
+shouldBe('document.querySelectorAll("li:nth-child(3147483647)").length', '0');
+
+shouldBe('document.querySelectorAll("li:nth-child(-2147483649n-2147483649)").length', '0');
+shouldBe('document.querySelectorAll("li:nth-child(-2147483649n)").length', '0');
+shouldBe('document.querySelectorAll("li:nth-child(-2147483649)").length', '0');
+
+var allItems = document.querySelectorAll('li');
+var coloredCount = 0;
+for (var i = 0; i < allItems.length; ++i) {
+    if (getComputedStyle(allItems[i]).backgroundColor === 'rgb(1, 2, 3)')
+        coloredCount++;
+}
+
+shouldBe('allItems.length', '20');
+shouldBe('coloredCount', '0');
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

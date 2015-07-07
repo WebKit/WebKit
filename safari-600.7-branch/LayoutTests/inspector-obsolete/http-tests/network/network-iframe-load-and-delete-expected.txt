@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: line 36: Done.
+Tests that if iframe is loaded and then deleted, inspector could still show its content. Note that if iframe.src is changed to "javascript:'...some html...'" after loading, then we have different codepath, hence two tests;
+
+http://127.0.0.1:8000/inspector/network/resources/resource.php
+resource.type: document
+resource.content before requesting content: undefined
+resource.content after requesting content: Hello world
+http://127.0.0.1:8000/inspector/network/resources/resource.php
+resource.type: document
+resource.content before requesting content: undefined
+resource.content after requesting content: Hello world
+

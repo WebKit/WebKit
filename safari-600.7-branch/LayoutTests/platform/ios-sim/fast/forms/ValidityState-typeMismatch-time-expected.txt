@@ -1,0 +1,40 @@
+This test aims to check for typeMismatch flag with type=time input fields
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS "" is a correct valid time string.
+PASS "00:00" is a correct valid time string.
+PASS "23:59" is a correct valid time string.
+PASS "23:59:59" is a correct valid time string.
+PASS "23:59:59.1" is a correct valid time string.
+PASS "23:59:59.12" is a correct valid time string.
+PASS "23:59:59.123" is a correct valid time string.
+PASS "23:59:59.1234567890" is a correct valid time string.
+PASS "00:00:00.0000000000" is a correct valid time string.
+FAIL " 00:00 " is an incorrect valid time string.
+FAIL "1:23" is an incorrect valid time string.
+FAIL "011:11" is an incorrect valid time string.
+FAIL "ab:11" is an incorrect valid time string.
+FAIL "-1:11" is an incorrect valid time string.
+FAIL "24:11" is an incorrect valid time string.
+FAIL "11" is an incorrect valid time string.
+FAIL "11-" is an incorrect valid time string.
+FAIL "11:-2" is an incorrect valid time string.
+FAIL "11:60" is an incorrect valid time string.
+FAIL "11:2b" is an incorrect valid time string.
+FAIL "11:ab" is an incorrect valid time string.
+FAIL "11:034" is an incorrect valid time string.
+FAIL "23:45:" is an incorrect valid time string.
+FAIL "23:45:6" is an incorrect valid time string.
+FAIL "23:45:-1" is an incorrect valid time string.
+FAIL "23:45:70" is an incorrect valid time string.
+FAIL "23:45:zz" is an incorrect valid time string.
+FAIL "23:45:06." is an incorrect valid time string.
+FAIL "23:45:06.abc" is an incorrect valid time string.
+FAIL "23:45:06.789abc" is an incorrect valid time string.
+PASS "invalid" is a correct valid time string when disabled.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

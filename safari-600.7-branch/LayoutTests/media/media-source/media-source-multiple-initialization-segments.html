@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mock-media-source</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function runTest() {
+        findMediaElement();
+
+        source = new MediaSource();
+        waitForEventOn(source, 'sourceopen', sourceOpen);
+        waitForEventOn(source, 'sourceended', sourceEnded);
+        run('video.src = URL.createObjectURL(source)');
+    }
+
+    function sourceOpen() {
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+
+        waitForEventOn(sourceBuffer, 'updateend', firstUpdate, false, true);
+        initSegment = makeAInit(100, [
+            makeATrack(1, 'mock', TRACK_KIND.VIDEO),
+        ]);
+        run('sourceBuffer.appendBuffer(initSegment)');
+    }
+
+    function sourceEnded() {
+        if (!expected)
+            logResult(Failed, 'Unexpected "sourceended" event');
+        endTest();
+    }
+    
+    function firstUpdate() {
+        consoleWrite('Test that a replacement initialization segment containing a track with the same codec but a different trackID succeeds.')
+        waitForEventOn(sourceBuffer, 'updateend', secondUpdate, false, true);
+        initSegment = makeAInit(100, [
+            makeATrack(2, 'mock', TRACK_KIND.VIDEO),
+        ]);
+        run('sourceBuffer.appendBuffer(initSegment)');
+    }
+
+    function secondUpdate() {
+        consoleWrite('Test that a replacement initialization segment containing a track with a different codec but the same trackID fails.')
+        waitForEventOn(sourceBuffer, 'updateend', endTest, false, true);
+        expected = true;
+        initSegment = makeAInit(100, [
+            makeATrack(2, '!moc', TRACK_KIND.VIDEO),
+        ]);
+        run('sourceBuffer.appendBuffer(initSegment)');
+    }
+
+    </script>
+</head>
+<body onload="runTest()">
+    <video></video>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<html>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+</script>
+<body id="body">
+    <!-- This test ensures that a plugin that is not accessible, will not appear in the AX hierachy-->
+
+    <a href="#a">more</a><BR>
+    <div id="hiddenDiv" style="visibility: hidden; left: 0px; "><a href="#b">hello</a></div>
+    
+    <div id="result"></div>
+
+     
+    <script>
+        if (window.accessibilityController) {
+            var result = document.getElementById("result");
+
+            var body = document.getElementById("body");
+            body.focus();
+            var links1 = accessibilityController.focusedElement.attributesOfDocumentLinks();
+ 
+            // toggle the div
+            var divElement = document.getElementById("hiddenDiv");
+            divElement.style.visibility = "visible";
+
+            accessibilityController.focusedElement.attributesOfChildren();
+            var links2 = accessibilityController.focusedElement.attributesOfDocumentLinks();
+            if (links1 != links2) {
+                result.innerHTML += "PASS";
+            }
+            else {
+                result.innerHTML += "FAIL - The div's visibility was toggled, but the new link did not appear\n\n";
+                result.innerHTML += "Links1: " + links1 + "\n\nLinks2: " + links2 + "\n\n";
+            }
+        }
+    </script>
+</body>
+</html>

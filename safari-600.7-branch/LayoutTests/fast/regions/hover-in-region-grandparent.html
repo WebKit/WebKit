@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            /* Make sure the console and the description don't interfere with the rest of the layout. */
+            #description {
+                position: absolute;
+                top: 0px;
+            }
+
+            #console {
+                position: absolute;
+                top: 100px;
+            }
+
+            #grandparent { 
+                width: 100px; 
+                height: 100px; 
+                border: 5px solid blue; 
+                background-color: lightblue; 
+            }
+
+            #parent { 
+                width: 100px; 
+                height: 100px; 
+                border: 5px solid red; 
+                background-color: darkred; 
+                -webkit-flow-into: flow1; 
+            }
+
+            #child { 
+                width: 100px; 
+                height: 100px; 
+                -webkit-flow-into: flow2; 
+                border: 5px solid green; 
+                background-color: orange;
+            }
+
+            #region1 { 
+                width: 150px; 
+                height: 150px; 
+                -webkit-flow-from: flow1; 
+                border: 1px solid lime;
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+
+            #region2 { 
+                width: 150px; 
+                height: 150px; 
+                -webkit-flow-from: flow2; 
+                border: 1px solid lime; 
+            }
+
+            #child:hover { 
+                background-color: green; 
+            }
+
+            #parent:hover { 
+                background-color: green; 
+            }
+
+            #grandparent:hover { 
+                background-color: green; 
+            }
+        </style>
+
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <ol>
+            <li>Move the mouse over the orange square
+                <ul>
+                    <li>All three squares should turn green</li>
+                </ul>
+            </li>
+            <li>Move the mouse over the red square
+                <ul>
+                    <li>The first two squares should turn green</li>
+                </ul>
+            </li>
+        </ol>
+
+        <div class="box" id="grandparent">
+            <div class="box" id="parent">
+                <div class="box" id="child"></div>
+            </div>
+        </div>
+        <div class="box" id="region1"></div>
+        <div class="box" id="region2"></div>
+
+        <script type="text/javascript">
+            description("Test hover on children when flowed into region.")
+
+            if (window.eventSender) {
+                var child  = document.querySelector("#child");
+                var parent = document.querySelector("#parent");
+                var grandparent = document.querySelector("#grandparent");
+
+                // move mouse on the child object
+                {
+                    eventSender.mouseMoveTo(child.offsetLeft + 10, child.offsetTop + 50);
+                    eventSender.mouseDown(0);
+                    eventSender.leapForward(500);
+                    eventSender.mouseUp(0);
+
+                    var childColor = window.getComputedStyle(child).getPropertyValue("background-color");
+                    var parentColor = window.getComputedStyle(parent).getPropertyValue("background-color");
+                    var grandparentColor = window.getComputedStyle(grandparent).getPropertyValue("background-color");
+                    
+                    if (childColor == "rgb(0, 128, 0)")
+                        testPassed("Child hover event processed OK.");
+                    else
+                        testFailed("Child hover event FAILED to process.");
+
+                    if (parentColor == "rgb(0, 128, 0)")
+                        testPassed("Parent hover event processed OK.");
+                    else
+                        testFailed("Parent hover event FAILED to process.");
+
+                    if (grandparentColor == "rgb(0, 128, 0)")
+                        testPassed("Grandparent hover event processed OK.");
+                    else
+                        testFailed("Grandparent hover event FAILED to process.");
+                }
+
+                // move mouse on the parent object
+                {
+                    eventSender.mouseMoveTo(parent.offsetLeft + 10, parent.offsetTop + 50);
+                    eventSender.mouseDown(0);
+                    eventSender.leapForward(500);
+                    eventSender.mouseUp(0);
+
+                    var childColor = window.getComputedStyle(child).getPropertyValue("background-color");
+                    var parentColor = window.getComputedStyle(parent).getPropertyValue("background-color");
+                    var grandparentColor = window.getComputedStyle(grandparent).getPropertyValue("background-color");
+                    
+                    if (childColor != "rgb(0, 128, 0)")
+                        testPassed("Child hover event processed OK.");
+                    else
+                        testFailed("Child hover event FAILED to process.");
+
+                    if (parentColor == "rgb(0, 128, 0)")
+                        testPassed("Parent hover event processed OK.");
+                    else
+                        testFailed("Parent hover event FAILED to process.");
+
+                    if (grandparentColor == "rgb(0, 128, 0)")
+                        testPassed("Grandparent hover event processed OK.");
+                    else
+                        testFailed("Grandparent hover event FAILED to process.");
+                }
+            }
+
+            if (window.testRunner) {
+                var elementsToHide = document.querySelectorAll("ol, .box");
+                for (var i=0; i<elementsToHide.length; i++)
+                    elementsToHide[i].style.visibility = "hidden";
+            }
+
+            else {
+                var elementsToHide = document.querySelectorAll("#console, #description");
+                for (var i=0; i<elementsToHide.length; i++)
+                    elementsToHide[i].style.visibility = "hidden";
+            }
+        </script>
+
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

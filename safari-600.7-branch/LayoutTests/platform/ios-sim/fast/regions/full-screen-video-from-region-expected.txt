@@ -1,0 +1,5 @@
+This tests the full screen video playing from a region flow. After entering full screen mode, only the full screen video should be visible. Click go full screen to run the test.
+
+Element.prototype.webkitRequestFullScreen == undefined FAIL
+END OF TEST
+

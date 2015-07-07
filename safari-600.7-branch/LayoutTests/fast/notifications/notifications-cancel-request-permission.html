@@ -1,0 +1,44 @@
+<html>
+<head>
+    <script type="text/javascript">
+
+        // Timeout is to ensure that the iframe was removed.
+        setTimeout(isDone,500);
+
+        function log(message)
+        {
+            document.getElementById("result").innerHTML += message + "<br>";
+        }
+        
+        function runTests()
+        {
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            }
+
+            if (!window.webkitNotifications) {
+                log("FAIL: No webkitNotifications interface!");
+            }
+            
+            document.getElementById("test").innerHTML="Pass if notification is cancelled";
+        }
+
+        function isDone()
+        {
+            if (window.testRunner) {
+                testRunner.notifyDone();
+            }
+        }
+
+    </script>
+</head>
+<body onload="runTests();">
+    <p>Requesting and cancelling notification permission...</p>
+    
+<div id="result"></div>
+<div id="test">
+<iframe src="resources/notifications-cancel-request-permission.html" width=800 height=800></iframe>
+</div>
+</body>
+</html>

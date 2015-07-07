@@ -1,0 +1,7 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion Preferred argument conversion:  undefined
+
+FAIL TEST_CLASS.ambiguous(1) should be SHORT. Was BYTE.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

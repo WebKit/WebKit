@@ -1,0 +1,59 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x149
+        RenderText {#text} at (0,0) size 502x17
+          text run at (0,0) width 502: "This tests that typing in a scrolled textarea does not cause unnecessary scrolling."
+        RenderBR {BR} at (502,14) size 0x0
+        RenderText {#text} at (205,132) size 4x17
+          text run at (205,132) width 4: " "
+        RenderBR {BR} at (209,146) size 0x0
+      RenderBlock {DIV} at (0,149) size 784x0
+layer at (10,27) size 201x125 clip at (11,28) size 184x123 scrollY 238 scrollHeight 361
+  RenderTextControl {TEXTAREA} at (2,19) size 201x125 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 180x357
+      RenderText {#text} at (0,0) size 58x340
+        text run at (0,0) width 9: "1"
+        text run at (9,0) width 0: " "
+        text run at (0,17) width 9: "2"
+        text run at (9,17) width 0: " "
+        text run at (0,34) width 9: "3"
+        text run at (9,34) width 0: " "
+        text run at (0,51) width 9: "4"
+        text run at (9,51) width 0: " "
+        text run at (0,68) width 9: "5"
+        text run at (9,68) width 0: " "
+        text run at (0,85) width 9: "6"
+        text run at (9,85) width 0: " "
+        text run at (0,102) width 9: "7"
+        text run at (9,102) width 0: " "
+        text run at (0,119) width 9: "8"
+        text run at (9,119) width 0: " "
+        text run at (0,136) width 9: "9"
+        text run at (9,136) width 0: " "
+        text run at (0,153) width 18: "10"
+        text run at (18,153) width 0: " "
+        text run at (0,170) width 18: "11"
+        text run at (18,170) width 0: " "
+        text run at (0,187) width 18: "12"
+        text run at (18,187) width 0: " "
+        text run at (0,204) width 18: "13"
+        text run at (18,204) width 0: " "
+        text run at (0,221) width 18: "14"
+        text run at (18,221) width 0: " "
+        text run at (0,238) width 18: "15"
+        text run at (18,238) width 0: " "
+        text run at (0,255) width 18: "16"
+        text run at (18,255) width 0: " "
+        text run at (0,272) width 18: "17"
+        text run at (18,272) width 0: " "
+        text run at (0,289) width 58: "18 Pass"
+        text run at (58,289) width 0: " "
+        text run at (0,306) width 18: "19"
+        text run at (18,306) width 0: " "
+        text run at (0,323) width 18: "20"
+        text run at (18,323) width 0: " "
+      RenderBR {BR} at (0,340) size 0x17
+caret: position 49 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 3 {TEXTAREA} of body

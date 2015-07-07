@@ -1,0 +1,6 @@
+This test passes if the numbers displayed below are 1 and 2 in this order.
+
+PASS window.internals.counterValue(document.getElementById('c2')) is '2'
+
+TEST COMPLETE
+

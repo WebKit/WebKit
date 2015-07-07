@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 374x19
+          text run at (0,0) width 374: "If you see any red or orange below then the test has failed."
+      RenderBlock (anonymous) at (0,36) size 784x100
+        RenderText {#text} at (100,0) size 4x19
+          text run at (100,0) width 4: " "
+        RenderBR {BR} at (0,0) size 0x0
+        RenderBlock {DIV} at (0,50) size 100x50 [bgcolor=#FF0000]
+        RenderText {#text} at (0,0) size 0x0
+layer at (8,44) size 100x19
+  RenderInline (relative positioned) {SPAN} at (0,0) size 100x19
+    RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#008000]

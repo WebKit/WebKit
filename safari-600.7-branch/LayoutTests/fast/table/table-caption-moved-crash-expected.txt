@@ -1,0 +1,3 @@
+Bug 95090: Crash in RenderTable::removeCaption
+This test PASSED as it did not crash.
+

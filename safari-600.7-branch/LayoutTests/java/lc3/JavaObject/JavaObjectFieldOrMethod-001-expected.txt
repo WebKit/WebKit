@@ -1,0 +1,8 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaObject Field or method access
+
+FAIL dt.amIAFieldOrAMethod should be FIELD! (of type string). Was FIELD! (of type object).
+FAIL dt.amIAFieldOrAMethod() should be METHOD!. Threw exception TypeError: 'FIELD!' is not a function (evaluating 'dt.amIAFieldOrAMethod()')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

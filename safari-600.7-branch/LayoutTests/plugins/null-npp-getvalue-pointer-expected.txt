@@ -1,0 +1,2 @@
+
+This tests that we don't crash when the plugin passes 0 for its NPP_GetValue pointer.

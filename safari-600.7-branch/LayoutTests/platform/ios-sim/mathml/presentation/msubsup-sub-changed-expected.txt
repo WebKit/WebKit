@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x58
+  RenderBlock {html} at (0,0) size 800x58
+    RenderBody {body} at (8,16) size 784x26
+      RenderBlock {p} at (0,0) size 784x26
+        RenderMathMLMath {math} at (0,2) size 17x24
+          RenderMathMLSubSup {msubsup} at (1,0) size 15x24
+            RenderMathMLBlock {msubsup} at (0,0) size 8x17
+              RenderInline {mi} at (0,0) size 8x17
+                RenderText {#text} at (0,1) size 8x17
+                  text run at (0,1) width 8: "x"
+            RenderMathMLBlock {msubsup} at (9,0) size 6x24
+              RenderMathMLBlock {msubsup} at (0,0) size 6x12
+                RenderInline {mi} at (0,0) size 6x13
+                  RenderText {#text} at (0,0) size 6x13
+                    text run at (0,0) width 6: "k"
+              RenderMathMLBlock {msubsup} at (0,12) size 6x0
+              RenderMathMLBlock {msubsup} at (0,12) size 6x12
+                RenderInline {mn} at (0,0) size 6x13
+                  RenderText {#text} at (0,0) size 6x13
+                    text run at (0,0) width 6: "2"
+        RenderText {#text} at (0,0) size 0x0

@@ -1,0 +1,41 @@
+Tests VTTCue interface
+
+
+
+*** Test cue loaded from the file.
+RUN(trackCue = cues[0])
+EXPECTED (trackCue instanceof '[object TextTrackCueConstructor]') OK
+EXPECTED (trackCue.track == '[object TextTrack]') OK
+EXPECTED (trackCue.id == '1') OK
+EXPECTED (trackCue.startTime == '0') OK
+EXPECTED (trackCue.endTime == '0.3') OK
+EXPECTED (trackCue.pauseOnExit == 'false') OK
+EXPECTED (trackCue instanceof '[object VTTCueConstructor]') OK
+EXPECTED (trackCue.vertical == '') OK
+EXPECTED (trackCue.snapToLines == 'true') OK
+EXPECTED (trackCue.line == '-1') OK
+EXPECTED (trackCue.position == '50') OK
+EXPECTED (trackCue.size == '100') OK
+EXPECTED (trackCue.align == 'middle') OK
+EXPECTED (trackCue.text == 'Lorem') OK
+EXPECTED (serialize(trackCue.getCueAsHTML()) == 'Lorem') OK
+
+*** Create a new cue, check values
+RUN(newCue = new VTTCue(3.14, 6.28, 'Pie'))
+EXPECTED (newCue instanceof '[object TextTrackCueConstructor]') OK
+EXPECTED (newCue.track == 'null') OK
+EXPECTED (newCue.id == '') OK
+EXPECTED (newCue.startTime == '3.14') OK
+EXPECTED (newCue.endTime == '6.28') OK
+EXPECTED (newCue.pauseOnExit == 'false') OK
+EXPECTED (newCue instanceof '[object VTTCueConstructor]') OK
+EXPECTED (newCue.vertical == '') OK
+EXPECTED (newCue.snapToLines == 'true') OK
+EXPECTED (newCue.line == '-1') OK
+EXPECTED (newCue.position == '50') OK
+EXPECTED (newCue.size == '100') OK
+EXPECTED (newCue.align == 'middle') OK
+EXPECTED (newCue.text == 'Pie') OK
+EXPECTED (serialize(newCue.getCueAsHTML()) == 'Pie') OK
+END OF TEST
+

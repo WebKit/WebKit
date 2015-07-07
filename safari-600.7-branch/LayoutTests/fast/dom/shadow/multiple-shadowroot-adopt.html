@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p>This test checks multiple shadow trees can be moved into another document.</p>
+<pre id="console"></pre>
+
+<iframe id="iframe"></iframe>
+
+<script>
+function doTest() {
+    var target = document.createElement('div');
+    sr1 = target.webkitCreateShadowRoot();
+    sr2 = target.webkitCreateShadowRoot();
+
+    shouldBe('document', 'sr1.ownerDocument');
+    shouldBe('sr1.ownerDocument', 'sr2.ownerDocument');
+
+    var iframe = document.getElementById('iframe');
+    iframeDoc = iframe.contentDocument;
+    iframeDoc.body.appendChild(target);
+
+    shouldBe('sr1.ownerDocument', 'iframeDoc');
+    shouldBe('sr2.ownerDocument', 'iframeDoc');
+}
+
+doTest();
+var successfullyParsed = true;
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

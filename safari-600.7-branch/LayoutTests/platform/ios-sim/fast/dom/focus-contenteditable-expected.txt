@@ -1,0 +1,21 @@
+layer at (0,0) size 800x902
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x902
+  RenderBlock {HTML} at (0,0) size 800x902
+    RenderBody {BODY} at (8,8) size 784x886
+      RenderBlock (anonymous) at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 511x19
+          text run at (0,0) width 511: "This test will try to call focus() on a contenteditable div, and then a normal div. "
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {#text} at (0,20) size 380x19
+          text run at (0,20) width 380: "The window should scroll to reveal the contenteditable div."
+      RenderBlock {DIV} at (0,40) size 500x800
+      RenderBlock {DIV} at (0,840) size 784x26 [border: (3px solid #000000)]
+        RenderText {#text} at (3,3) size 125x19
+          text run at (3,3) width 125: "contentEditable div"
+      RenderBlock {DIV} at (0,866) size 784x20
+        RenderText {#text} at (0,0) size 80x19
+          text run at (0,0) width 80: "Test Passed."
+      RenderBlock {DIV} at (0,886) size 784x0
+caret: position 0 of child 0 {#text} of child 5 {DIV} of body
+scrolled to 0,282

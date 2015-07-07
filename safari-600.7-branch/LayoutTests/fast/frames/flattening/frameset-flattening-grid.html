@@ -1,0 +1,50 @@
+<html>
+<head>
+    <script type="text/javascript">
+    function test()
+    {
+        if (window.internals)
+            internals.settings.setFrameFlatteningEnabled(true);
+        // Force synchronous layout.
+        document.body.offsetHeight;
+    }
+    </script>
+</head>
+<frameset border=0 rows="100,400" cols="300,300" onload="test()">
+    <frame src="data:text/html,
+        <style>body { background-color: green; }</style>
+        <p>
+            Test for frameset flattening. The flattening only works inside the DRT.
+        </p>
+        <p>
+            This frame should be 300px wide, 200px tall and not be scrollable (have scrollbars).
+        </p>
+        <div style='position: absolute; width: 300px; height: 200px; left: 0; top: 0px;'></div>
+    ">
+    </frame>
+    <frame src="data:text/html,
+        <style>body { background-color: red; }</style>
+        <p>
+            This frame should be 300px wide, 200px tall and not be scrollable (have scrollbars).
+        </p>
+        <div style='position: absolute; width: 300px; height: 50px; left: 0; top: 0px;'></div>
+    ">
+    </frame>
+    <frame src="data:text/html,
+        <style>body { background-color: yellow; }</style>
+        <p>
+            This frame should be 600px wide, 600px tall and not be scrollable (have scrollbars).
+        </p>
+        <div style='position: absolute; width: 600px; height: 600px; left: 0; top: 0px;'></div>
+    ">
+    </frame>
+    <frame src="data:text/html,
+        <style>body { background-color: blue; }</style>
+        <p>
+            This frame should be 600px wide, 600px tall and not be scrollable (have scrollbars).
+        </p>
+        <div style='position: absolute; width: 600px; height: 600px; left: 0; top: 0px;'></div>
+    ">
+    </frame>
+</frameset>
+</html>

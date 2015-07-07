@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 680x19
+          text run at (0,0) width 680: "The textarea below should have standard line-height because textareas should ignore negative line-heights"
+        RenderBR {BR} at (679,15) size 1x0
+      RenderBlock {P} at (0,36) size 784x245
+        RenderText {#text} at (0,0) size 85x19
+          text run at (0,0) width 85: "TEXTAREA"
+        RenderBR {BR} at (84,15) size 1x0
+        RenderText {#text} at (400,205) size 4x19
+          text run at (400,205) width 4: " "
+        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (0,225) size 0x19
+layer at (8,64) size 400x200 clip at (9,65) size 398x198
+  RenderTextControl {TEXTAREA} at (0,20) size 400x200 [bgcolor=#FFFFFF] [border: (1px dotted #C0C0C0)]
+    RenderBlock {DIV} at (3,3) size 394x34
+      RenderText {#text} at (3,0) size 379x34
+        text run at (3,0) width 374: "Demo text here that wraps a bit and should demonstrate"
+        text run at (376,0) width 6: " "
+        text run at (3,17) width 179: "the goodness of line-height"

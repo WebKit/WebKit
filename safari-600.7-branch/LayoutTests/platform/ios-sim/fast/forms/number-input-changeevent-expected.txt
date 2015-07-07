@@ -1,0 +1,9 @@
+This test ensures change event is fired for input[type=number] when the user reverts the change made by a script.
+
+FAIL eventSender.keyDown('1');eventSender.keyDown('2');dummy.focus();numberOfChangeEventsFired should be 1. Was 0.
+FAIL test.value = '34';numberOfChangeEventsFired should be 1. Was 0.
+FAIL test.focus();test.value = '34';document.execCommand('SelectAll'); eventSender.keyDown('1');eventSender.keyDown('2');dummy.focus();numberOfChangeEventsFired should be 2. Was 0.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

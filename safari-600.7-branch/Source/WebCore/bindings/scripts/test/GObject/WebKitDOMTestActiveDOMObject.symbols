@@ -1,0 +1,3 @@
+void webkit_dom_test_active_dom_object_exciting_function(WebKitDOMTestActiveDOMObject*, WebKitDOMNode*)
+void webkit_dom_test_active_dom_object_post_message(WebKitDOMTestActiveDOMObject*, const gchar*)
+glong webkit_dom_test_active_dom_object_get_exciting_attr(WebKitDOMTestActiveDOMObject*)

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<pre id="console">
+This tests that the JavaScript wrapper objects of shadow DOM objects
+are not prematurely garbage collected.
+
+</pre>
+<script>
+if (window.internals) {
+    var ps = [];
+
+    for (var i = 0; i < 10; i++) {
+        var p = document.createElement('p');
+        ps.push(p);
+
+        var shadow = internals.ensureShadowRoot(p);
+        shadow.tattoo = 'I <3 WebKit';
+        shadow = null;
+    }
+
+    gc();
+
+    for (i = 0; i < ps.length; i++) {
+        shouldBe('internals.shadowRoot(ps[' + i + ']).tattoo', '"I <3 WebKit"');
+    }
+}
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

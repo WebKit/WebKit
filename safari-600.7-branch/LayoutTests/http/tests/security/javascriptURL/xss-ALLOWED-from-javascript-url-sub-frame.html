@@ -1,0 +1,25 @@
+<html>
+<body>
+    <p>This tests that a javascript: URL loaded in an iframe has access to its parent's frame</p>
+    <iframe id="aFrame"></iframe>
+    <p id='accessMe'>FAIL: Cross frame access from a javascript: URL was denied.</p>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.dumpChildFramesAsText();
+        }
+
+        var url = "javascript:\"<html>"
+            + "<scr" + "ipt>"
+            +     "parent.document.getElementById('accessMe').innerHTML = 'PASS: Cross frame access from a javascript: URL was allowed!';"
+            + "</scri" + "pt>"
+            + "<body>"
+            +     "<p>Inner iframe.</p>"
+            + "</body>"
+            + "</html>\"";
+
+        var iframe = document.getElementById("aFrame");
+        iframe.src = url;
+    </script>
+</body>
+</html>

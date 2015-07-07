@@ -1,0 +1,27 @@
+<p>The dominant plugin should play automatically, and then so should the identical plugin that is added a bit later.</p>
+<div id="result">FAIL</div>
+<script>
+if (window.testRunner) {
+    internals.settings.setPlugInSnapshottingEnabled(true);
+    internals.settings.setMaximumPlugInSnapshotAttempts(0);
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    setTimeout(function () {
+        var div = document.createElement("div");
+        div.innerHTML = '<embed id="plugin2" src="../resources/lines.swf" width="200" height="200"></embed>';
+        document.body.appendChild(div);
+        setTimeout(function () {
+            var result = document.getElementById("result");
+            var embed1 = document.getElementById("plugin1");
+			var embed2 = document.getElementById("plugin2");
+            if (!(internals.isPluginSnapshotted(embed1)
+                || internals.isPluginSnapshotted(embed2)))
+                result.innerHTML = "PASS";
+            testRunner.notifyDone();
+        }, 1000);
+    }, 500);
+}
+</script>
+<div>
+<embed id="plugin1" src="../resources/lines.swf" width="600" height="600"></embed>
+</div>

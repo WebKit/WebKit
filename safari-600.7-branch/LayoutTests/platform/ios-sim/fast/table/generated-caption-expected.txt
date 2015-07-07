@@ -1,0 +1,40 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 55x19
+          text run at (0,0) width 55: "Test for "
+        RenderInline {I} at (0,0) size 681x19
+          RenderInline {A} at (0,0) size 306x19 [color=#0000EE]
+            RenderText {#text} at (54,0) size 306x19
+              text run at (54,0) width 306: "http://bugs.webkit.org/show_bug.cgi?id=15309"
+          RenderText {#text} at (359,0) size 376x19
+            text run at (359,0) width 5: " "
+            text run at (363,0) width 372: "Crash due to infinite recursion in RenderTable::addChild"
+        RenderText {#text} at (734,0) size 5x19
+          text run at (734,0) width 5: "."
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 514x19
+          text run at (0,0) width 514: "The following should look the same (and have identical render tree hierarchies):"
+      RenderBlock {P} at (0,72) size 784x40
+        RenderTable {SPAN} at (0,0) size 32x40
+          RenderTableSection (anonymous) at (0,0) size 32x20
+            RenderTableRow (anonymous) at (0,0) size 32x20
+              RenderTableCell (anonymous) at (0,0) size 32x20 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 32x19
+                  text run at (0,0) width 32: "table"
+          RenderBlock (generated) at (0,20) size 32x20
+            RenderText at (0,0) size 30x19
+              text run at (0,0) width 30: "after"
+      RenderBlock {P} at (0,128) size 784x40
+        RenderTable {TABLE} at (0,0) size 32x40
+          RenderTableSection {TBODY} at (0,0) size 32x20
+            RenderTableRow {TR} at (0,0) size 32x20
+              RenderTableCell {TD} at (0,0) size 32x20 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 32x19
+                  text run at (0,0) width 32: "table"
+          RenderBlock {CAPTION} at (0,20) size 32x20
+            RenderText {#text} at (1,0) size 30x19
+              text run at (1,0) width 30: "after"

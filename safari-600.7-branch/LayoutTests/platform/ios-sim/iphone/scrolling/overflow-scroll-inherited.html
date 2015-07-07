@@ -1,0 +1,39 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<style>
+.a { -webkit-overflow-scrolling: touch; }
+.b .c { -webkit-overflow-scrolling: touch; }
+#grouping > div:nth-of-type(n+3) {
+}
+
+</style>
+<div class=a>
+    <div id=test1></div>
+</div>
+<div id=test2></div>
+
+<div id=grouping>
+    <div class=b>
+        <div class=c id=test3>
+        </div>
+    </div>
+    <div class=b>
+        <div class=c id=test4>
+        </div>
+    </div>
+</div>
+
+<script>
+function test(e, p) {
+    var testDiv = document.getElementById(e);
+    var cssValue = window.getComputedStyle(testDiv).getPropertyCSSValue(p);
+    document.write(e + " " + p + ": " + cssValue.cssText + "<br>");
+}
+    
+test('test1', '-webkit-overflow-scrolling');
+test('test2', '-webkit-overflow-scrolling');
+test('test3', '-webkit-overflow-scrolling');
+test('test4', '-webkit-overflow-scrolling');
+</script>

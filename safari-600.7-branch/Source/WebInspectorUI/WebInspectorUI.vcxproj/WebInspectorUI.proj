@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project InitialTargets="PreBuild" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- normalize configuration case -->
+  <PropertyGroup Condition="'$(CONFIGURATION)'=='Release'">
+	<CONFIG>Production</CONFIG>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(CONFIGURATION)'=='Debug'">
+    <!-- We use the same content for Debug and Release targets. Don't let them accidentally ship the non-minimized version -->
+	<CONFIG>Production</CONFIG>
+  </PropertyGroup>
+
+  <!-- Wrapper to build WebInspectorUI for both win32 and x64. -->
+  <PropertyGroup>
+    <OFFICIAL_BUILD>1</OFFICIAL_BUILD>
+    <WebKit_Libraries>$(SRCROOT)\AppleInternal</WebKit_Libraries>
+    <WebKit_OutputDir>$(OBJROOT)</WebKit_OutputDir>
+    <AppleInternal>$(DSTROOT)\AppleInternal</AppleInternal>
+    <ProgramFilesAAS32>Program Files (x86)\Common Files\Apple\Apple Application Support</ProgramFilesAAS32>
+    <ProgramFilesAAS64>Program Files\Common Files\Apple\Apple Application Support</ProgramFilesAAS64>
+    <ConfigurationBuildDir>$(OBJROOT)\$(CONFIG)</ConfigurationBuildDir>  
+    <OutputDirectory>$(DSTROOT)</OutputDirectory>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <WebInspectorUI Include="WebInspectorUI.vcxproj">
+      <AdditionalProperties>Platform=Win32;WEBKIT_OUTPUTDIR=$(WebKit_OutputDir);WEBKIT_LIBRARIES=$(WebKit_Libraries);OFFICIAL_BUILD=$(OFFICIAL_BUILD)</AdditionalProperties>
+    </WebInspectorUI>
+    <WebInspectorUI Include="WebInspectorUI.vcxproj">
+      <AdditionalProperties>Platform=x64;WEBKIT_OUTPUTDIR=$(WebKit_OutputDir);WEBKIT_LIBRARIES=$(WebKit_Libraries);OFFICIAL_BUILD=$(OFFICIAL_BUILD)</AdditionalProperties>
+    </WebInspectorUI>
+  </ItemGroup>
+ 
+  <!-- Prepare for build -->
+  <Target Name="PreBuild" BeforeTargets="Build">
+    <Error Text="DSTROOT property or environment variable must be defined." Condition="'$(DSTROOT)' == ''" />
+    <Error Text="OBJROOT property or environment variable must be defined." Condition="'$(OBJROOT)' == ''" />
+    <Message Text="Copying necessary headers to $(ConfigurationBuildDir)" />
+    <MakeDir Directories="$(DSTROOT);$(OBJROOT)" />
+ 
+    <Message Text="Build output -> $(OBJROOT)" />
+    <Message Text="Final output -> $(DSTROOT)" />
+    <MakeDir Directories="$(DSTROOT)\$(ProgramFilesAAS32);$(DSTROOT)\$(ProgramFilesAAS64)" />
+    <MakeDir Directories="$(DSTROOT)\$(ProgramFilesAAS32)\WebKit.resources;$(DSTROOT)\$(ProgramFilesAAS64)\WebKit.resources" />
+    <MakeDir Directories="$(DSTROOT)\$(ProgramFilesAAS32)\WebKit.resources\WebInspectorUI;$(DSTROOT)\$(ProgramFilesAAS64)\WebKit.resources\WebInspectorUI" />
+  </Target>
+
+  <!-- Generate the WebInspectorUI Bundle -->
+  <Target Name="Build" AfterTargets="PreBuild">
+    <Message Text="Building $(CONFIGURATION) Solution" />
+    <Error Text="DSTROOT property or environment variable must be defined." Condition="'$(DSTROOT)' == ''" />
+    <Message Text="Output=$(WebKit_OutputDir)" />
+    <MSBuild Projects="@(WebInspectorUI)" Properties="Configuration=$(CONFIG)" Targets="ReBuild" />
+  </Target>
+
+  <Target Name="PostBuild" AfterTargets="Build">
+    <Error Text="DSTROOT property or environment variable must be defined." Condition="'$(DSTROOT)' == ''" />
+    <Message Text="Moving $(CONFIG) build results to $(DSTROOT)" />
+
+    <!-- Identify the files to copy over -->
+    <CreateItem Include="$(ConfigurationBuildDir)\bin32\WebKit.resources\**\*.*">
+      <Output TaskParameter="Include" ItemName="Bin32Resources" />
+    </CreateItem>
+    <CreateItem Include="$(ConfigurationBuildDir)\bin64\WebKit.resources\**\*.*">
+      <Output TaskParameter="Include" ItemName="Bin64Resources" />
+    </CreateItem>
+
+    <Copy SourceFiles="@(Bin32Resources)" DestinationFiles="@(Bin32Resources->'$(DSTROOT)\$(ProgramFilesAAS32)\WebKit.resources\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(Bin64Resources)" DestinationFiles="@(Bin64Resources->'$(DSTROOT)\$(ProgramFilesAAS64)\WebKit.resources\%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+
+</Project>
+

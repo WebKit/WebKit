@@ -1,0 +1,8 @@
+<div id="a" style="background-color: green !important">The background of this element should be green. It is </div>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    var a = document.getElementById("a");
+    a.style.backgroundColor = "red";
+    a.innerHTML += a.style.backgroundColor;
+</script>

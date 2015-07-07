@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg">
+  <script type="text/javascript">
+  <![CDATA[
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    var txt = document.createElementNS('http://www.w3.org/2000/svg', "text");
+    txt.setAttribute("id", "console");
+    txt.textContent = "PASS";
+    document.rootElement.appendChild(txt);
+    var ie = document.createElementNS('http://www.w3.org/2000/svg', "image");
+    ie.onerror = function() { document.getElementById("console").textContent = "FAIL"; }
+    ie.setAttribute("x", "0");
+    ie.setAttribute("y", "0");
+    ie.setAttribute("width", "100");
+    ie.setAttribute("height", "100");
+    ie.setAttributeNS("http://www.w3.org/XML/1998/namespace", "xml:base", "resources/");
+    ie.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", "green-checker.png");
+    document.rootElement.appendChild(ie);
+  ]]>
+  </script>
+</svg>

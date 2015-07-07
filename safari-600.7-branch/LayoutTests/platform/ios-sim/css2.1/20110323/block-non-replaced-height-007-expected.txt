@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x324
+  RenderBlock {HTML} at (0,0) size 800x324
+    RenderBody {BODY} at (8,16) size 784x260
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 273x19
+          text run at (0,0) width 273: "Test passes if there is a blue square below."
+layer at (8,84) size 784x192
+  RenderBlock (relative positioned) {DIV} at (0,68) size 784x192
+    RenderBlock {DIV} at (0,0) size 96x96 [bgcolor=#0000FF] [border: (48px solid #0000FF) none]
+    RenderBlock {DIV} at (0,96) size 96x96 [bgcolor=#0000FF] [border: none (48px solid #0000FF) none]
+layer at (104,84) size 96x192
+  RenderBlock (positioned) {DIV} at (96,0) size 96x192 [bgcolor=#0000FF]

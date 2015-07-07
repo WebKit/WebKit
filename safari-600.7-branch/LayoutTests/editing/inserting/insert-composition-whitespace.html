@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+var sel = document.getSelection();
+var root = document.createElement("root");
+document.body.appendChild(root);
+
+
+function createEditable(tagName, text) {
+    var node = document.createElement(tagName);
+    node.contentEditable = true;
+    node.innerHTML = text;
+    return node;
+}
+
+function test(tagName, compositionText, expected) {
+    var node = createEditable(tagName, "X");
+    root.appendChild(node);
+
+    var textNode = node.firstChild;
+    sel.setBaseAndExtent(textNode, 0, textNode, textNode.data.length);
+    document.execCommand("Delete", false);
+
+    textInputController.setMarkedText(compositionText, 0, compositionText.length);
+    compositingText = node.innerText;
+    textInputController.unmarkText();
+    confirmedText = node.innerText;
+
+    shouldBe("compositingText", "'" + expected + "'");
+    shouldBe("confirmedText", "'" + expected + "'");
+}
+
+test("div", "AB", "AB");
+test("div", "A B", "A B");
+test("div", "A  B", "A \xA0B");
+test("div", "A   B", "A \xA0 B");
+test("div", "A    B", "A \xA0 \xA0B"); 
+
+test("div", " AB", "\xA0AB");
+test("div", "  AB", "\xA0 AB");
+test("div", "   AB", "\xA0 \xA0AB");
+test("div", "    AB", "\xA0 \xA0 AB");
+test("div", "     AB", "\xA0 \xA0 \xA0AB");
+test("div", "      AB", "\xA0 \xA0 \xA0 AB");
+test("div", "       AB", "\xA0 \xA0 \xA0 \xA0AB");
+test("div", "AB  ", "AB \xA0");
+test("div", "AB   ", "AB \xA0\xA0");
+test("div", "AB    ", "AB \xA0 \xA0");
+test("div", "AB     ", "AB \xA0 \xA0\xA0");
+test("div", "AB      ", "AB \xA0 \xA0 \xA0");
+test("div", "AB       ", "AB \xA0 \xA0 \xA0\xA0");
+
+test("div", "  A  B  ", "\xA0 A \xA0B \xA0");
+test("div", "\t\tA\t\tB\t\t", "\xA0 A \xA0B \xA0");
+
+test("div", " ", "\xA0");
+test("div", "  ", "\xA0\xA0");
+test("div", "   ", "\xA0 \xA0");
+
+test("pre", "AB", "AB");
+test("pre", "A B", "A B");
+test("pre", "A  B", "A  B");
+test("pre", "A   B", "A   B");
+test("pre", "A    B", "A    B");
+test("pre", "AB  ", "AB  ");
+test("pre", "AB   ", "AB   ");
+test("pre", "AB    ", "AB    ");
+test("pre", "AB     ", "AB     ");
+test("pre", "AB      ", "AB      ");
+test("pre", "AB       ", "AB       ");
+test("pre", "  AB", "  AB");
+test("pre", "   AB", "   AB");
+test("pre", "    AB", "    AB");
+test("pre", "     AB", "     AB");
+test("pre", "      AB", "      AB");
+test("pre", "       AB", "       AB");
+
+test("pre", "  A  B  ", "  A  B  ");
+test("pre", "\t\tA\t\tB\t\t", "\t\tA\t\tB\t\t");
+test("pre", " ", " ");
+test("pre", "  ", "  ");
+test("pre", "   ", "   ");
+
+root.style.display = "none";
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

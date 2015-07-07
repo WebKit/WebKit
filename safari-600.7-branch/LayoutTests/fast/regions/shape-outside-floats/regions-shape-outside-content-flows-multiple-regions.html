@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .content {
+        font: 50px/1 Ahem, sans-serif;
+        line-height: 50px;
+        color: green;
+    }
+
+    .polygon {
+        -webkit-shape-outside: inset(0 50% 0 0);
+        float: left;
+        width: 100px;
+        height: 300px;
+    }
+
+    .regionBox {
+        float: left;
+        width: 100px;
+        height: 100px;
+        margin-left: 20px;
+        border: 1px solid green;
+    }
+
+    #test1 { -webkit-flow-into: flow1;}
+    .region1 { -webkit-flow-from: flow1; }
+
+    #test2 { -webkit-flow-into: flow2; }
+    .region2 { -webkit-flow-from: flow2; }
+</style>
+</head>
+<body>
+    <div id="test1" class="content">
+        <div class="polygon"></div>
+        X X X X X X
+    </div>
+
+    <div style="width: 380px; height: 180px;">
+        <div class="region1 regionBox"></div>
+        <div class="region1 regionBox"></div>
+        <div class="region1 regionBox"></div>
+        <p>The shape flows into 3 regions. The first column should be white, the second column should be green in each region container.</p>
+    </div>
+
+    <div id="test2" class="content">
+        <div class="polygon" style="height: 150px;"></div>
+        X X X XX XX XX
+    </div>
+
+    <div style="width: 380px; height: 150px;">
+        <div class="region2 regionBox"></div>
+        <div class="region2 regionBox"></div>
+        <div class="region2 regionBox"></div>
+        <p>The shape flows into the first 2 regions. The first column in the first region should be white. The upper left quarter of the second region should be white, the rest of the regions should be green.</p>
+    </div>
+    <p style="margin-top: 80px;">Requires Ahem font. The content wraps around a shape and it flows into regions.</p>
+</body>
+</html>

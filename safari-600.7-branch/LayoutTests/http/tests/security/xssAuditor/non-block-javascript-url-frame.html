@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.setXSSAuditorEnabled(true);
+  testRunner.dumpChildFramesAsText();
+}
+</script>
+</head>
+<body>
+<iframe src="javascript:'PASS'"></iframe>
+</body>
+</html>

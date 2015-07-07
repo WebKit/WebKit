@@ -1,0 +1,246 @@
+<html>
+<head>
+<title>Test for Range.compareNode()</title>
+<script>
+function test() 
+{
+    // This method returns one of the following constants:
+    // Node starts before the Range ( NODE_BEFORE = 0 )
+    // Node starts after the Range ( NODE_AFTER = 1 )
+    // Node starts before and ends after the Range ( NODE_BEFORE_AND_AFTER = 2 )
+    // Node starts after and ends before the Range, i.e. the Node is completely
+    // selected by the Range. ( NODE_INSIDE = 3 )
+
+    var range = document.createRange();
+
+    // test 1 - start before range, end before range
+    expectedResult = 0;
+    range.selectNode(document.getElementById("a2"));
+    result = range.compareNode(document.getElementById("b1"));
+    if (result == expectedResult)
+        document.getElementById("test1").innerHTML = "test 1 passed: start before range, end before range";
+
+    // test 2 - start before range, end on 1
+    expectedResult = 0;
+    range.setStart(document.getElementById("b2"), 1);
+    range.setEnd(document.getElementById("c2"), 1);
+    result = range.compareNode(document.getElementById("b2"));
+    if (result == expectedResult)
+        document.getElementById("test2").innerHTML = "test 2 passed: start before range, end on range start";
+    
+    // test 3 - start before range, end in range
+    expectedResult = 0;
+    range.setStart(document.getElementById("b2"), 0);
+    range.setEnd(document.getElementById("c3"), 0);
+    result = range.compareNode(document.getElementById("a2"));
+    if (result == expectedResult)
+        document.getElementById("test3").innerHTML = "test 3 passed: start before range, end in range";
+        
+    // test 4 - start on 0, end in range
+    expectedResult = 0;
+    range.setStart(document.getElementById("b2"), 0);
+    range.setEnd(document.getElementById("c2"),1);
+    result = range.compareNode(document.getElementById("b2"));
+    if (result == expectedResult) 
+        document.getElementById("test4").innerHTML = "test 4 passed: start on range start, end in range";
+            
+    // test 5 - start in range, end in range
+    expectedResult = 3;
+    range.selectNode(document.getElementById("a2"));
+    result = range.compareNode(document.getElementById("b2"));
+    if (result == expectedResult)
+        document.getElementById("test5").innerHTML = "test 5 passed: start in range, end in range";
+            
+    // test 6 - start in range, end on 1
+    expectedResult = 1;
+    range.setStart(document.getElementById("b1"), 1);
+    range.setEnd(document.getElementById("c2"), 1);
+    result = range.compareNode( document.getElementById("c2"));
+    if (result == expectedResult) 
+        document.getElementById("test6").innerHTML = "test 6 passed: start in range, end on range end";
+
+    // test 7 - start in range, end after range end
+    expectedResult = 1;
+    range.setStart(document.getElementById("b1"), 1);
+    range.setEnd(document.getElementById("c2"), 0);
+    result = range.compareNode( document.getElementById("c2"));
+    if (result == expectedResult) 
+        document.getElementById("test7").innerHTML = "test 7 passed: start in range, end after range end";
+
+    // test 8 - start on 1, end after range
+    expectedResult = 1;
+    range.setStart(document.getElementById("b2"), 1);
+    range.setEnd(document.getElementById("c2"), 0);
+    result = range.compareNode( document.getElementById("c2"));
+    if (result == expectedResult) 
+        document.getElementById("test8").innerHTML = "test 8 passed: start on range end, end after range";
+
+    // test 9 - start on range start, end on range end
+    expectedResult = 3;
+    range.selectNode(document.getElementById("a2"));
+    result = range.compareNode(document.getElementById("a2"));
+    if (result == expectedResult) 
+        document.getElementById("test9").innerHTML = "test 9 passed: start on range start, end on range end";
+
+    // test 10 - start after range, end after range
+    expectedResult = 1;
+    range.selectNode(document.getElementById("b2"));
+    result = range.compareNode(document.getElementById("c3"));
+    if (result == expectedResult) 
+        document.getElementById("test10").innerHTML = "test 10 passed: start after range, end after range";
+
+    // test 11 - start before range, end after range
+    expectedResult = 2;
+    range.selectNode(document.getElementById("b2"));
+    result = range.compareNode(document.getElementById("a2"));
+    if (result == expectedResult) 
+        document.getElementById("test11").innerHTML = "test 11 passed: start before range, end after range"; 
+
+    // test 12 - start before range, end 1
+    expectedResult = 2;
+    range.setEnd(document.getElementById("c2"), 1);
+    range.setStart(document.getElementById("c2"), 1);
+    result = range.compareNode(document.getElementById("c2"));
+    if (result == expectedResult) 
+        document.getElementById("test12").innerHTML = "test 12 passed: start before range, end at range end";
+
+    // test 13 - start at 0, end after range
+    expectedResult = 2;
+    range.setStart(document.getElementById("b2"), 0);
+    range.setEnd(document.getElementById("b2"), 1);
+    result = range.compareNode(document.getElementById("b2"));
+    if (result == expectedResult) 
+        document.getElementById("test13").innerHTML = "test 13 passed: start at range start, end after range";
+
+    // test 14 - detached range, attached node
+    // firefox throws an exception and does not return a value
+    var detachedRange = document.createRange();
+    detachedRange.detach();
+    try {
+        result = detachedRange.compareNode(document.getElementById("a1"));
+    } catch (e) {
+        if(e.code == DOMException.INVALID_STATE_ERR) {
+            document.getElementById("test14").innerHTML = "test 14 passed: detached range, attached node"; 
+        } else {
+            document.getElementById("test14").innerHTML = "<span style=\"color: red;\">test 14 failed error: " + e.message + "</span>";
+        }
+    }
+        
+    // test 15 - attached range, detached node
+    // firefox does not throw an exception and returns 0 for this test
+    expectedResult = 0;
+    range.selectNode(document.getElementById("a1"));
+    var node = document.getElementById("b1");
+    node.parentNode.removeChild(node);
+    result = range.compareNode(node);
+    if (result == expectedResult)
+        document.getElementById("test15").innerHTML = "test 15 passed: attached range, detached node";
+
+    // test 16 - node has no parent
+    range.selectNode(document.getElementById("a2"));
+    try {
+        result = range.compareNode(document);
+    } catch (e) {
+        if(e.code == DOMException.NOT_FOUND_ERR) {
+            document.getElementById("test16").innerHTML = "test 16 passed: the node has no parent";
+        } else {
+            document.getElementById("test16").innerHTML = "<span style=\"color: red;\">test 16 failed error: " + e.message + "</span>";
+        }
+    }
+
+    // test 17 - range has no parent
+    try {
+        range.selectNode(document);
+    } catch (e) {
+        if(e.code == RangeException.INVALID_NODE_TYPE_ERR) {
+            document.getElementById("test17").innerHTML = "test 17 passed: the range has no parent";
+        } else {
+            document.getElementById("test17").innerHTML = "<span style=\"color: red;\">test 17 failed error: " + e.message + "\n Code: " + e.code +"</span>";
+        }
+    }    
+
+    // test 18 - wrong documents
+    // firefox does not throw an exception here instead it returns 0
+    exptectedResult = 0;
+    var src1 = "<html>\n<head>\n<body>\n<div id=f1>f1</div>\n</body>\n</head>\n<html>";
+    window.frames['frame1'].document.open("text/html", "replace");
+    window.frames['frame1'].document.write(src1);
+    window.frames['frame1'].document.close();
+
+    var src2 = "<html>\n<head>\n<body>\n<div id=f2>f2</div>\n</body>\n</head>\n<html>";
+    window.frames['frame2'].document.open("text/html", "replace");
+    window.frames['frame2'].document.write(src2);
+    window.frames['frame2'].document.close();
+
+    var framerange = window.frames['frame1'].document.createRange();    
+    var F1Div = window.frames['frame1'].document.getElementById("f1");
+    framerange.selectNode(F1Div);
+    
+    result = framerange.compareNode(window.frames['frame2'].document.getElementById("f2"));
+    if (result == expectedResult)
+        document.getElementById("test18").innerHTML = "test 18 passed: wrong documents";
+
+
+    // test 19 - node deleted   
+    range.selectNode(document.getElementById("a2"));
+    var node = null;
+    try {
+        result = range.compareNode(node);
+    } catch (e) {
+        if(e.code == DOMException.NOT_FOUND_ERR) {
+            document.getElementById("test19").innerHTML = "test 19 passed: deleted node";
+        } else {
+            document.getElementById("test19").innerHTML = "<span style=\"color: red;\">test 19 failed error: " + e.message + "</span>";
+        }
+    }
+    
+    if (window.testRunner)
+        testRunner.dumpAsText();
+}
+
+</script>
+</head>
+<body onload="test();">
+
+<!-- visible area with test results -->
+<div id=test1><span style="color: red;">test 1 failed</span></div>
+<div id=test2><span style="color: red;">test 2 failed</span></div>
+<div id=test3><span style="color: red;">test 3 failed</span></div>
+<div id=test4><span style="color: red;">test 4 failed</span></div>
+<div id=test5><span style="color: red;">test 5 failed</span></div>
+<div id=test6><span style="color: red;">test 6 failed</span></div>
+<div id=test7><span style="color: red;">test 7 failed</span></div>
+<div id=test8><span style="color: red;">test 8 failed</span></div>
+<div id=test9><span style="color: red;">test 9 failed</span></div>
+<div id=test10><span style="color: red;">test 10 failed</span></div>
+<div id=test11><span style="color: red;">test 11 failed</span></div>
+<div id=test12><span style="color: red;">test 12 failed</span></div>
+<div id=test13><span style="color: red;">test 13 failed</span></div>
+<div id=test14><span style="color: red;">test 14 failed</span></div>
+<div id=test15><span style="color: red;">test 15 failed</span></div>
+<div id=test16><span style="color: red;">test 16 failed</span></div>
+<div id=test17><span style="color: red;">test 17 failed</span></div>
+<div id=test18><span style="color: red;">test 18 failed</span></div>
+<div id=test19><span style="color: red;">test 19 failed</span></div>
+<!-- hidden area to create the ranges being tested -->
+<div  style="visibility: hidden">
+    <div id=a1>a1
+        <div id=b1>b1</div>
+        <div id=c1>c1</div>
+    </div>
+    
+    <div id=a2>a2
+        <div id=b2>b2</div>
+        <div id=c2>c2</div>
+    </div>
+    <div id=a3>a3
+        <div id=b3>b3</div>
+        <div id=c3>c3</div>
+    </div>
+    
+    <iframe name="frame1" style="border: 1px solid black;"></iframe>
+    <iframe name="frame2" style="border: 1px solid black;"></iframe>
+</div>
+
+</body>
+</html>

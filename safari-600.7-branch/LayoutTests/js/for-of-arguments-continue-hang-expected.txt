@@ -1,0 +1,13 @@
+This test makes sure we don't hang we use continue inside a for-of over arguments
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS test() is 0
+PASS test(1) is 1
+PASS test(1,2) is 2
+PASS test(1,2,3) is 3
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

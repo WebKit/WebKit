@@ -1,0 +1,12 @@
+Test for speech button style applied on non-input elements.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Test
+Test
+
+Test Test

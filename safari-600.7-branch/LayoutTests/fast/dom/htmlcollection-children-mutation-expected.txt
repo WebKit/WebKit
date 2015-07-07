@@ -1,0 +1,15 @@
+Test traversing children using HTMLCollection while mutating DOM
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS child.firstChild.innerText is "child 0"
+PASS child.firstChild.innerText is "child 1"
+PASS child.firstChild.innerText is "child 2"
+PASS child.firstChild.innerText is "child 3"
+PASS child.firstChild.innerText is "child 4"
+PASS child is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

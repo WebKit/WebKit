@@ -1,0 +1,11 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion Preferred argument conversion:  JavaScript Object to Long
+
+FAIL TEST_CLASS.ambiguous( MyFunction ) +'' should be LONG. Was BYTE.
+FAIL TEST_CLASS.ambiguous( MyOtherFunction ) +'' should be LONG. Was BYTE.
+FAIL TEST_CLASS.ambiguous( new MyObject(12345) ) +'' should be LONG. Was BYTE.
+FAIL TEST_CLASS.ambiguous( new MyOtherObject("12345") ) +'' should be LONG. Was BYTE.
+FAIL TEST_CLASS.ambiguous( new AnotherObject("12345") ) +'' should be LONG. Was BYTE.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

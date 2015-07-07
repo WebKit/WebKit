@@ -1,0 +1,87 @@
+<html>
+<head>
+    <title>Test rendering of volume slider of video tag</title>
+    <script src=media-file.js></script>
+    <script src=media-controls.js></script>
+    <script src=video-test.js></script>
+    <script>
+        var video;
+        var panel;
+        var muteButtonCoordinates;
+        var fadeoutTime = 300;
+
+        function init()
+        {
+            video = document.getElementsByTagName("video")[0];
+            video.src = findMediaFile("video", "content/test");
+
+            consoleWrite("");
+            consoleWrite("** Playing the video **");
+            run("video.play()");
+        }
+
+        function test()
+        {
+            panel = mediaControlsElement(internals.shadowRoot(video).firstChild, "-webkit-media-controls-panel");
+
+            if (window.eventSender) {
+                try {
+                    muteButtonCoordinates = mediaControlsButtonCoordinates(video, "mute-button");
+                } catch (exception) {
+                    testRunner.notifyDone();
+                    return;
+                }
+
+                consoleWrite("");
+                consoleWrite("** Move mouse somewhere over the panel **");
+                run("eventSender.mouseMoveTo(muteButtonCoordinates[0], muteButtonCoordinates[1])");
+            }
+
+            consoleWrite("");
+            consoleWrite("** Test that controls are shown when controls attribute is present **");
+            testExpected("panel.style['display']", 'none', "!=");
+
+            if (window.eventSender) {
+                consoleWrite("");
+                consoleWrite("** Move mouse outside the video **");
+                run("eventSender.mouseMoveTo(video.offsetLeft, video.offsetTop + 2 * video.offsetHeight)");
+            }
+
+            setTimeout(continueTest, fadeoutTime);
+        }
+
+        function continueTest()
+        {
+            if (panel.style['display'] != 'none') {
+                setTimeout(continueTest, fadeoutTime);
+                return;
+            }
+
+            consoleWrite("");
+            consoleWrite("** The controls should have the display property set to none");
+            testExpected("panel.style['display']", 'none', "==");
+
+            consoleWrite("");
+            consoleWrite("** Remove controls attribute**");
+            run("video.removeAttribute('controls')");
+
+            consoleWrite("");
+            consoleWrite("** Move mouse back over the panel **");
+            run("eventSender.mouseMoveTo(muteButtonCoordinates[0], muteButtonCoordinates[1])");
+
+            consoleWrite("");
+            consoleWrite("** Video controls should not be shown **");
+            testExpected("panel.style['display']", 'none', "==");
+
+            consoleWrite("");
+
+            endTest();
+        }
+
+    </script>
+</head>
+<body onload="init()">
+    Tests that showing / hiding video controls uses the sets the display:none property<br>
+    <video onplay="test()" controls></video>
+</body>
+</html>

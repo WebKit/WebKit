@@ -1,0 +1,4 @@
+Tests formatting of different types of remote objects.
+
+date = Wed Dec 07 2011 12:01:00 
+

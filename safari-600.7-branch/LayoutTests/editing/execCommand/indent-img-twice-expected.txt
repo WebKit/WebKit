@@ -1,0 +1,23 @@
+Test indenting an image element twice.
+
+Initial state:
+| <img>
+|   src="../resources/abe.png"
+
+After indenting once:
+| <blockquote>
+|   style="margin: 0 0 0 40px; border: none; padding: 0px;"
+|   <#selection-anchor>
+|   <img>
+|     src="../resources/abe.png"
+|   <#selection-focus>
+
+After indenting again:
+| <blockquote>
+|   style="margin: 0 0 0 40px; border: none; padding: 0px;"
+|   <blockquote>
+|     style="margin: 0 0 0 40px; border: none; padding: 0px;"
+|     <#selection-anchor>
+|     <img>
+|       src="../resources/abe.png"
+|     <#selection-focus>

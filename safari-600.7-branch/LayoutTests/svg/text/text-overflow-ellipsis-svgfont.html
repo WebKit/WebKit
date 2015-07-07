@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Test for text-overflow: ellipsis using SVG font</title>
+<style>
+
+@font-face {
+    font-family: 'ABCFont';
+    src: local('☺'), url('../../svg/custom/resources/ABCFont.svg#ABCFont') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.ellipsis {
+    width: 180px;
+    margin: 0 0 20px 0;
+    border: 1px solid black;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.svgfont {
+	font-family: 'ABCFont';
+}
+</style>
+</head>
+<body>
+
+This test checks that the text-overflow: ellipsis property is handled correctly when using an SVG font.<br><br>
+
+Pass if some text is shown followed by an ellipsis (NOT just the ellipsis by itself).
+<br><br>
+
+<div class="ellipsis svgfont">
+	abc abc abc abc abc abc abc abc abc abc
+</div>
+
+</body>
+</html>

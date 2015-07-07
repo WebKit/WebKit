@@ -1,0 +1,18 @@
+set(EWEBKIT2_FOUND TRUE)
+
+set(EWEBKIT2_VERSION_MAJOR @PROJECT_VERSION_MAJOR@)
+set(EWEBKIT2_VERSION_MINOR @PROJECT_VERSION_MINOR@)
+set(EWEBKIT2_VERSION @PROJECT_VERSION@)
+
+set(_SHARED_CORE @SHARED_CORE@)
+set(_libdir "@LIB_INSTALL_DIR@")
+
+find_path(EWEBKIT2_INCLUDE_DIR EWebKit2.h HINTS "@CMAKE_INSTALL_PREFIX@/include/@WebKit2_OUTPUT_NAME@-@PROJECT_VERSION_MAJOR@")
+find_library(EWEBKIT2_LIBRARY NAMES ewebkit2 HINTS ${_libdir})
+
+if (_SHARED_CORE)
+    find_library(_webcore_library NAMES webcore_efl HINTS ${_libdir})
+    find_library(_javascript_library NAMES javascriptcore_efl HINTS ${_libdir})
+
+    list(APPEND EWEBKIT2_LIBRARY ${_webcore_library} ${_javascript_library})
+endif ()

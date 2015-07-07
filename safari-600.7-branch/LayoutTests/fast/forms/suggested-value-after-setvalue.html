@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p id="description">This test setting a value clears suggested value.</p>
+<pre><input id="test" type="text" value="initial value"></pre>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+var input = document.getElementById('test');
+var result = document.getElementById('result');
+if (!window.internals)
+    testFailed('This test requires internals object');
+else {
+    input.focus();
+    input.selectionStart = input.selectionEnd = 0;
+
+    internals.setSuggestedValue(input, 'suggested value');
+
+    Markup.description(document.getElementById('description').textContent)
+
+    function addText(text) {
+        input.parentNode.appendChild(document.createTextNode(text));
+    }
+
+    function log() {
+        while (input.parentNode.firstChild != input.parentNode.lastChild)
+            input.parentNode.removeChild(input.parentNode.lastChild);
+        function addTextResult(value) { addText(value + ': ' + eval(value)); }
+        addTextResult('input.value');
+        addTextResult('internals.suggestedValue(input)');
+        addTextResult('input.selectionStart');
+        addTextResult('input.selectionEnd');
+    }
+
+    log();
+    Markup.dump(input.parentNode, 'After setting suggestedValue');
+
+    input.value = 'new value';
+
+    log();
+    var innerTextValue = internals.shadowRoot(input).firstChild.innerText;
+    addText(innerTextValue == 'new value' ? 'PASS' : 'FAIL');
+    Markup.dump(input.parentNode, 'After setting value');
+}
+
+</script>
+</body>
+</html>

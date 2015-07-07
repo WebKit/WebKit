@@ -1,0 +1,12 @@
+LiveConnect 3.0 Call static methods from an instance
+
+PASS dt.staticSetBoolean( true ); dt.PUB_STATIC_BOOLEAN is true
+PASS dt.staticSetBoolean( true ); dt.staticGetBoolean() is true
+PASS typeof dt.staticGetBoolean() is "boolean"
+PASS dt.staticSetBoolean( false ); dt.PUB_STATIC_BOOLEAN is false
+PASS dt.staticSetBoolean( false ); dt.staticGetBoolean() is false
+PASS typeof dt.staticGetBoolean() is "boolean"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

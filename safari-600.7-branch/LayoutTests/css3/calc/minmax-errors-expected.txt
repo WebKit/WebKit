@@ -1,0 +1,21 @@
+All boxes below should be 100px * 100px and green.
+
+MIN
+unclosed min => PASS
+unclosed min with garbage => PASS
+garbage => PASS
+extra trailing comma => PASS
+leading comma => PASS
+trailing garbage => PASS
+bad expression => PASS
+mix length and number => PASS
+mix number and length => PASS
+mix percent and number => PASS
+mix number and percent => PASS
+MAX
+unclosed max => PASS
+unclosed max with garbage => PASS
+mix length and number => PASS
+mix number and length => PASS
+mix percent and number => PASS
+mix number and percent => PASS

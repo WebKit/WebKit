@@ -1,0 +1,17 @@
+<html>
+<head>
+<style type="text/css">
+	table { width: 500px; }
+	table.thin { border: 1px solid black; }
+	table.border_collapse { border-collapse: collapse; }
+	table.overflow_hidden { overflow: hidden; }
+</style>
+</head>
+<body>
+  <h2>webkit.org/b/18305: Clipping overflow on a table should not impinge on the borders.</h2>
+  <table class="thin border_collapse overflow_hidden" style="background-color: #FFAAAA;">
+    <tr><th colspan="2">border-collapse: collapse and overflow: hidden</th></tr>
+    <tr><td>First cell</td><td>Second cell</td></tr>
+  </table>
+</body>
+</html>

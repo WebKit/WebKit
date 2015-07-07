@@ -1,0 +1,16 @@
+Test that Java objects can be passed to NPAPI plug-ins, and vice versa.
+
+Some tests below are written in a way that works around issues with preserving object identity. They can be simplified once these issues are fixed.
+
+PASS document.plg.getAndForgetRememberedObject() + "" is document.javaTest.getSelf() + ""
+PASS document.plg.getAndForgetRememberedObject().getSelf().getSelf() + "" is document.javaTest.getSelf() + ""
+PASS document.plg.testHasMethod(document.javaTest, "getSelf") is true
+PASS document.plg.testHasMethod(document.javaTest, "doesNotExist") is false
+PASS document.plg.testHasMethod(document.javaTest.getSelf(), "getSelf") is true
+PASS document.plg.testHasMethod(document.javaTest.getSelf(), "doesNotExist") is false
+PASS document.javaTest.getAndForgetRememberedObject().objectPointer is document.plg.testObject.objectPointer
+PASS typeof document.javaTest.testGetMember(document.plg, "testDOMAccess") is "function"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

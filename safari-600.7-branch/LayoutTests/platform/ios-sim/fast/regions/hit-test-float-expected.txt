@@ -1,0 +1,3 @@
+Test for hit-testing of floats inside CSS Regions.
+
+FAIL: Hit null

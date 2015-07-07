@@ -1,0 +1,26 @@
+Test that media file is not reloaded when an element is inserted into the DOM.
+
+RUN(mediaElement = document.createElement('audio'))
+RUN(mediaElement.src = 'content/test.wav')
+RUN(mediaElement.load())
+
+EVENT(loadstart)
+EVENT(durationchange)
+EVENT(loadeddata)
+EVENT(canplaythrough)
+
+RUN(document.getElementById('parent').appendChild(mediaElement))
+RUN(mediaElement.play())
+
+EVENT(canplaythrough)
+EVENT(canplaythrough)
+
+RUN(document.getElementById('parent').appendChild(mediaElement))
+RUN(mediaElement.play())
+
+EVENT(canplaythrough)
+EVENT(play)
+EVENT(playing)
+
+END OF TEST
+

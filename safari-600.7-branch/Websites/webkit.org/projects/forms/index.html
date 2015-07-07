@@ -1,0 +1,33 @@
+<?php
+    $title = "HTML Forms";
+    include("../../header.inc");
+?>
+<h2>HTML Forms</h2>
+
+<h3>Overview</h3>
+<p>Welcome to the project page for the HTML form controls.  Form controls are the various widgets that can be used in an HTML form and that can 
+participate in form submission.  The code in the engine that talks to the controls is in the <tt>WebCore</tt> framework.  The DOM elements are
+under the <tt>html</tt> directory, and the rendering objects are under the <tt>rendering</tt> directory.</p>
+
+<h3>Get Involved!</h3>
+
+<a href="https://bugs.webkit.org/buglist.cgi?product=WebKit&amp;component=HTML+Forms&amp;resolution=---">
+View bugs in the HTML Forms component in Bugzilla.
+</a>
+
+<p>Below is a sampling of interesting open issues with our HTML form controls.  To get involved <a href="../../contact.html">contact us</a>!
+</p>
+
+<dl>
+<dt>Stabilize the new form controls</dt>
+<dd>Form controls have recently switched from using standard AppKit controls to being rendered within the engine itself.  This allows us to support more CSS properties for controls, and makes our code more portable to other platforms.  Because this is such a major architectural change, we ask that you scrutinize the new controls closely and <a href="http://webkit.org/quality/reporting.html">report any bugs</a>. An evolving survey of form and other interactive controls for HTML5 <a href="survey.html">is available</a>.
+
+<dt>Implement Web Forms</dt>
+<dd>The <a href="http://whatwg.org">WhatWG</a> has outlined extensions to existing HTML forms.  We are interested in supporting these extensions (along with Opera
+and Mozilla).  The <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/">specification</a> details all of these enhancements.  We welcome bugs, contributions and
+testers to help us implement these improvements.
+</dl>
+
+<?php
+    include("../../footer.inc");
+?>

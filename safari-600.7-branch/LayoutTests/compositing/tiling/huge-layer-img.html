@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+    #container {
+        width: 500px;
+        height: 20000px;
+        -webkit-transform:translateZ(0);
+    }
+    body {
+      overflow: hidden;
+    }
+    </style>
+    <script type="text/javascript" charset="utf-8">
+        if (window.testRunner)
+            testRunner.dumpAsText(true);
+
+        function testOnLoad()
+        {
+            var canvas = document.createElement('canvas');
+            var img = document.getElementById("container")
+            canvas.width = img.width;
+            canvas.height = img.height;
+            var context = canvas.getContext('2d');
+            context.fillStyle = "yellow";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            context.fillStyle = "red";
+            context.fillRect(50, 50, 200, 200);
+            img.src = canvas.toDataURL();
+
+            if (window.testRunner)
+                document.getElementById('layers').innerHTML = window.internals.layerTreeAsText(document);
+        }
+
+        window.addEventListener('load', testOnLoad, false);
+    </script>
+  </head>
+  <body>
+      <!--
+        The yellow box should be large enough to scroll off the bottom.
+        There should be a red box within the yellow box.
+        This tests that we can support very large composited image layers.
+      -->
+        <img id="container">
+        <pre id="layers">Layer tree appears here in DRT.</pre>
+  </body>
+</html>

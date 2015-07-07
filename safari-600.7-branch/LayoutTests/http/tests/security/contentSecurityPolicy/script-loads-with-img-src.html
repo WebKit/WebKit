@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.dumpChildFramesAsText();
+}
+</script>
+</head>
+<body>
+  <iframe src="http://127.0.0.1:8000/security/contentSecurityPolicy/resources/echo-script-src.pl?should_run=yes&q=http://127.0.0.1:8000/security/contentSecurityPolicy/resources/script.js&csp=script-img%20'none'"></iframe>
+</body>
+</html>

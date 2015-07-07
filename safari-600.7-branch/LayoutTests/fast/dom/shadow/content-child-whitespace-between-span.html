@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<style>
+summary { display: none; }
+span { background-color: red; }
+/* relative positioning ensures underlying RenderLayer */
+.container { position: relative; }
+</style>
+<script>
+function log(message)
+{
+    document.getElementById("console").innerHTML += (message + "\n");
+}
+
+function removeContainerLines(text)
+{
+    var lines = text.split("\n");
+    lines.splice(0, 2);
+    return lines.join("\n");
+}
+
+function test()
+{
+    if (!window.testRunner)
+        return;
+    testRunner.dumpAsText();
+
+    var targetContainerRenderTree = window.internals.elementRenderTreeAsText(document.getElementById("targetContainer"));
+    var targetRenderTree = removeContainerLines(targetContainerRenderTree);
+    var refContainerRenderTree = window.internals.elementRenderTreeAsText(document.getElementById("refContainer"));
+    var refRenderTree = removeContainerLines(refContainerRenderTree);
+
+    targetRenderTree = targetRenderTree.replace("RenderBlock {DETAILS}", "RenderBlock {DIV}");
+
+    if (targetRenderTree == refRenderTree)
+        log("PASS");
+    else {
+        log("FAIL");
+        log("Expected:");
+        log(refRenderTree);
+        log("Actual:");
+        log(targetRenderTree);
+    }
+    
+    document.getElementById("test").style.display = "none";
+}
+
+</script>
+</head>
+<body onload="test()">
+<p>Two conainers should be layed out in the same way</p>
+<div id="test">
+<div class="container" id="targetContainer">
+<div>
+<details open>
+<div>Hello1</div>
+<span>Hello2</span>
+<span>Hello3</span>
+<summary></summary>
+</details>
+</div>
+</div>
+<hr />
+<div class="container" id="refContainer" >
+<div>
+<div>
+<div>Hello1</div>
+<span>Hello2</span>
+<span>Hello3</span>
+<span style="display: none;"></span>
+</div>
+</div>
+</div>
+</div>
+<pre id="console"></pre>
+</body>
+</html>

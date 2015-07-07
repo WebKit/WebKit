@@ -1,0 +1,3 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<rect width="200" height="200" fill="green" style="-webkit-clip-path: inset(20px round 20px)"/>
+</svg>

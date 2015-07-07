@@ -1,0 +1,28 @@
+<html>
+<head>
+<script src="resources/profiler-test-JS-resources.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.internals)
+    internals.setJavaScriptProfilingEnabled(true);
+
+function startTest()
+{
+    startProfile("Profile call in included file");
+    endTest();
+}
+</script>
+</head>
+
+<body onload="startTest()">
+This page calls the profiler from the included file.
+<br>
+<br>
+To run this test manually, load it in the browser then load the WebInspector and look at
+the profile.  If there is a profile that is sufficient for this test.
+<div id="output"></div>
+<script>
+</script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+# Copyright (C) 2013 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
+
+messages -> WebIDBServerConnection LegacyReceiver {
+    DidGetOrEstablishIDBDatabaseMetadata(uint64_t requestID, bool success, WebCore::IDBDatabaseMetadata metadata)
+    DidDeleteDatabase(uint64_t requestID, bool success)
+
+    DidOpenTransaction(uint64_t requestID, bool success)
+    DidBeginTransaction(uint64_t requestID, bool success)
+    DidCommitTransaction(uint64_t requestID, bool success)
+    DidResetTransaction(uint64_t requestID, bool success)
+    DidRollbackTransaction(uint64_t requestID, bool success)
+
+    DidChangeDatabaseVersion(uint64_t requestID, bool success)
+    DidCreateObjectStore(uint64_t requestID, bool success)
+    DidDeleteObjectStore(uint64_t requestID, bool success)
+    DidClearObjectStore(uint64_t requestID, bool success)
+    
+    DidCreateIndex(uint64_t requestID, bool success)
+    DidDeleteIndex(uint64_t requestID, bool success)
+
+    DidPutRecord(uint64_t requestID, WebCore::IDBKeyData resultKey, uint32_t errorCode, String errorMessage)
+    DidGetRecord(uint64_t requestID, WebCore::IDBGetResult getResult, uint32_t errorCode, String errorMessage)
+    DidOpenCursor(uint64_t requestID, int64_t cursorID, WebCore::IDBKeyData key, WebCore::IDBKeyData primaryKey, IPC::DataReference value, uint32_t errorCode, String errorMessage)
+    DidAdvanceCursor(uint64_t requestID, WebCore::IDBKeyData key, WebCore::IDBKeyData primaryKey, IPC::DataReference value, uint32_t errorCode, String errorMessage)
+    DidIterateCursor(uint64_t requestID, WebCore::IDBKeyData key, WebCore::IDBKeyData primaryKey, IPC::DataReference value, uint32_t errorCode, String errorMessage)
+    DidCount(uint64_t requestID, int64_t count, uint32_t errorCode, String errorMessage)
+    DidDeleteRange(uint64_t requestID, uint32_t errorCode, String errorMessage)
+}
+
+#endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)

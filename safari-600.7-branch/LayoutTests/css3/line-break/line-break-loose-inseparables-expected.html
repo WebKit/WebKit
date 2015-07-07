@@ -1,0 +1,73 @@
+<html>
+    <head>
+        <title>Line breaks using [-webkit-]line-break : auto - between inseparables</title>
+        <style>
+          div > div {
+            font-family: 'Lucida Grande';
+            font-size: 16pt;
+            width: 2.1em;
+          }
+          div > p {
+            border: solid blue 1px;
+          }
+        </style>
+    </head>
+    <body>
+        <div lang="en">
+            <div>
+                <p>&#x4e00;&#x2025;<br>&#x2025</p>
+            </div>
+            <div>
+                <p>&#x4e00;&#x2025;<br>&#x2026</p>
+            </div>
+            <div>
+                <p>&#x4e00;&#x2026;<br>&#x2025</p>
+            </div>
+            <div>
+                <p>&#x4e00;&#x2026;<br>&#x2026</p>
+            </div>
+        </div>
+        <div lang="ja">
+            <div>
+                <p>&#x4e00;&#x2025;<br>&#x2025</p>
+            </div>
+            <div>
+                <p>&#x4e00;&#x2025;<br>&#x2026</p>
+            </div>
+            <div>
+                <p>&#x4e00;&#x2026;<br>&#x2025</p>
+            </div>
+            <div>
+                <p>&#x4e00;&#x2026;<br>&#x2026</p>
+            </div>
+        </div>
+        <div lang="ko">
+            <div>
+                <p>&#x4e00;&#x2025;<br>&#x2025</p>
+            </div>
+            <div>
+                <p>&#x4e00;&#x2025;<br>&#x2026</p>
+            </div>
+            <div>
+                <p>&#x4e00;&#x2026;<br>&#x2025</p>
+            </div>
+            <div>
+                <p>&#x4e00;&#x2026;<br>&#x2026</p>
+            </div>
+        </div>
+        <div lang="zh">
+            <div>
+                <p>&#x4e00;&#x2025;<br>&#x2025</p>
+            </div>
+            <div>
+                <p>&#x4e00;&#x2025;<br>&#x2026</p>
+            </div>
+            <div>
+                <p>&#x4e00;&#x2026;<br>&#x2025</p>
+            </div>
+            <div>
+                <p>&#x4e00;&#x2026;<br>&#x2026</p>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .container {
+            height: 100px;
+            width: 100px;
+            padding: 10px;
+            border: 1px solid gray;
+        }
+        .box {
+          width: 100px;
+          height: 100px;
+          background-color: silver;
+        }
+        
+        .transformed {
+            -webkit-transform: translate(10px, 10px);
+        }
+        .backface-hidden {
+            -webkit-backface-visibility: hidden;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function dumpLayers()
+        {
+            var layersResult = document.getElementById('layers');
+            if (window.testRunner)
+                layersResult.innerText = window.internals.layerTreeAsText(document);
+
+        }
+        window.addEventListener('load', dumpLayers, false)
+    </script>
+</head>
+<body>
+    <p>Should be no layers here.</p>
+    <div class="transformed container">
+        <div class="backface-hidden box"></div>
+    </div>
+<pre id="layers"></pre>
+</body>
+</html>

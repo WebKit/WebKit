@@ -1,0 +1,21 @@
+Test that WebKitMutationObserver.observe throws exceptions appropriately
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS observer.observe() threw exception TypeError: Not enough arguments.
+PASS observer.observe(null) threw exception TypeError: Not enough arguments.
+PASS observer.observe(undefined) threw exception TypeError: Not enough arguments.
+PASS observer.observe(document.body) threw exception TypeError: Not enough arguments.
+PASS observer.observe(document.body, null) threw exception Error: SyntaxError: DOM Exception 12.
+PASS observer.observe(document.body, undefined) threw exception Error: SyntaxError: DOM Exception 12.
+PASS observer.observe(null, {attributes: true}) threw exception Error: NotFoundError: DOM Exception 8.
+PASS observer.observe(undefined, {attributes: true}) threw exception Error: NotFoundError: DOM Exception 8.
+PASS observer.observe(document.body, {subtree: true}) threw exception Error: SyntaxError: DOM Exception 12.
+PASS observer.observe(document.body, {childList: true, attributeOldValue: true}) threw exception Error: SyntaxError: DOM Exception 12.
+PASS observer.observe(document.body, {attributes: true, characterDataOldValue: true}) threw exception Error: SyntaxError: DOM Exception 12.
+PASS observer.observe(document.body, {characterData: true, attributeFilter: ["id"]}) threw exception Error: SyntaxError: DOM Exception 12.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

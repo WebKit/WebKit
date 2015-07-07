@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that repaint rect tracking works for hiDPI cases.</title>
+<head>
+<style>
+  div {
+    position: absolute;
+    border: green solid 1px;
+    width: 20px;
+    height: 20px;
+    left: 0px;
+    top: 0px;
+  }
+</style>
+</head>
+<body>
+<div id=foo></div>
+
+<script>
+  function move() {
+    document.getElementById("foo").style.left = "1.5px";
+    if (window.testRunner) {
+        var dummy = document.body.offsetTop;
+        var repaintRects = window.internals.repaintRectsAsText();
+        window.internals.stopTrackingRepaints();
+
+        var pre = document.createElement('pre');
+        document.body.appendChild(pre);
+        pre.innerHTML = repaintRects;
+        testRunner.notifyDone();
+      }
+  }
+  
+  if (window.testRunner && window.internals) {
+    window.testRunner.dumpAsText(false);
+    window.internals.startTrackingRepaints();
+    testRunner.waitUntilDone();
+  }
+
+  setTimeout(move, 0);
+</script>
+</body>
+</html>

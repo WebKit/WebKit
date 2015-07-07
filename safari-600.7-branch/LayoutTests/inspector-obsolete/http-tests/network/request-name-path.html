@@ -1,0 +1,44 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script>
+function test()
+{
+    function createNetworkRequestForURLAndDumpNameAndPath(url)
+    {
+        InspectorTest.addResult("Dumping request name and path for url: " + url);
+        var request = new WebInspector.NetworkRequest(0, url);
+        InspectorTest.addResult("    name = " + request.name());
+        InspectorTest.addResult("    path = " + request.path());
+    }
+
+    createNetworkRequestForURLAndDumpNameAndPath("http://www.example.com/foo/bar/baz?key=value");
+    createNetworkRequestForURLAndDumpNameAndPath("http://www.example.com/foo/bar/?key=value");
+    createNetworkRequestForURLAndDumpNameAndPath("http://www.example.com/foo/bar/baz");
+    createNetworkRequestForURLAndDumpNameAndPath("http://www.example.com/foo/bar/");
+
+    createNetworkRequestForURLAndDumpNameAndPath("http://www.example.com/baz?key=value");
+    createNetworkRequestForURLAndDumpNameAndPath("http://www.example.com/?key=value");
+    createNetworkRequestForURLAndDumpNameAndPath("http://www.example.com/baz");
+    createNetworkRequestForURLAndDumpNameAndPath("http://www.example.com/");
+
+    createNetworkRequestForURLAndDumpNameAndPath("http://127.0.0.1/foo/bar/baz?key=value");
+    createNetworkRequestForURLAndDumpNameAndPath("http://127.0.0.1/foo/bar/?key=value");
+    createNetworkRequestForURLAndDumpNameAndPath("http://127.0.0.1/foo/bar/baz");
+    createNetworkRequestForURLAndDumpNameAndPath("http://127.0.0.1/foo/bar/");
+
+    createNetworkRequestForURLAndDumpNameAndPath("http://127.0.0.1/baz?key=value");
+    createNetworkRequestForURLAndDumpNameAndPath("http://127.0.0.1/?key=value");
+    createNetworkRequestForURLAndDumpNameAndPath("http://127.0.0.1/baz");
+    createNetworkRequestForURLAndDumpNameAndPath("http://127.0.0.1/");
+
+    InspectorTest.completeTest();
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests name() and path() methods of NetworkRequest.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=101064">Bug 101064</a>
+</body>
+</html>

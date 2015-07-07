@@ -1,0 +1,66 @@
+<html>
+<body>
+<p>
+This page tests redirection of HEAD requests with different codes (301, 302, 303, 307).
+<br/>
+As described in http://tools.ietf.org/html/draft-ietf-httpbis-p2-semantics (in particular sections 7.4.2, 7.4.3, 7.4.4 and 7.4.7 as of version 22 of the document), a redirected HEAD request is expected to remain a HEAD request.
+<br/>
+<br/>
+This test loads a web page that does a XHR HEAD request to a first script.
+This script does a redirection to a second script that sends a response containing the request method as a HTTP header.
+</p>
+<pre id="console"></pre>
+  <script type="text/javascript">
+    function log(message) {
+       document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
+    }
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    var testIndex = 0;
+    var tests = [
+        {testName : "HEAD-301", method : "HEAD", code : 301, expectedMethod : "HEAD"},
+        {testName : "HEAD-302", method : "HEAD", code : 302, expectedMethod : "HEAD"},
+        {testName : "HEAD-303", method : "HEAD", code : 303, expectedMethod : "HEAD"},
+        {testName : "HEAD-307", method : "HEAD", code : 307, expectedMethod : "HEAD"},
+    ];
+
+    function checkResult(xhr, hasError) {
+        var test = tests[testIndex];
+        if (xhr.status != 200 && xhr.status != 304)
+            hasError = true;
+        var msg = test.testName;
+        if (hasError) {
+            msg += " - error";
+        } else {
+            var requestMethod = xhr.getResponseHeader("REQMETHOD");
+            msg += " - expected " + test.expectedMethod + " and received " + requestMethod;
+        }
+        log(msg);
+
+        if (++testIndex < tests.length) {
+            testMethodSync();
+        } else if (window.testRunner) {
+            testRunner.notifyDone();
+        }
+    }
+
+    var urlTemplate = "/xmlhttprequest/resources/redirect_methods.php?url=/xmlhttprequest/resources/get_method.php&code=";
+
+    function testMethodSync() {
+        var test = tests[testIndex];
+        try {
+            xhr = new XMLHttpRequest;
+            xhr.open(test.method, urlTemplate + test.code, false);
+            xhr.send("");
+            checkResult(xhr, false);
+        } catch(e) {
+            checkResult(xhr, true);
+        }
+    }
+    testMethodSync();
+</script>
+</body>
+</html>

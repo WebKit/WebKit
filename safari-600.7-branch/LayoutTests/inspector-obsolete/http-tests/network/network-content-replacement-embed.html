@@ -1,0 +1,117 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script>
+
+var loadedFirstURL = false;
+function streamLoaded()
+{
+    if (loadedFirstURL)
+        return;
+
+    loadedFirstURL = true;
+    loadURLs();
+}
+
+var snifferInstalled = false;
+function onSnifferInstalled()
+{
+    snifferInstalled = true;
+    loadURLs();
+}
+
+function loadURLs()
+{
+    if (!snifferInstalled || !loadedFirstURL)
+        return;
+
+    if (!window.internals) {
+        console.log("This test can not be run as window.internals is not available.");
+        return;
+    }
+    internals.setInspectorResourcesDataSizeLimits(300, 200);
+
+    // Here we test replacement logic. We save first two resources content,
+    // discard third resource content once we see its size exceeds limit,
+    // and finally replace first resource content with the last resource content.
+
+    plg.getURLNotify("resources/resource.php?size=200", null, "loadURL2");
+}
+
+function loadURL2()
+{
+    plg.getURLNotify("resources/resource.php?size=100", null, "loadURL3");
+}
+
+function loadURL3()
+{
+    plg.getURLNotify("resources/resource.php?size=201", null, "loadURL4");
+}
+
+function loadURL4()
+{
+    plg.getURLNotify("resources/resource.php?size=100", null, "allURLsLoaded");
+}
+
+function allURLsLoaded()
+{
+    console.log("Done.");
+}
+
+function test()
+{
+    InspectorTest.addConsoleSniffer(step1);
+    InspectorTest.evaluateInPage("onSnifferInstalled()");
+
+    function dumpRequest(request, callback)
+    {
+        if (!request)
+            return callback();
+        InspectorTest.addResult(request.url);
+
+        function contentLoaded()
+        {
+            InspectorTest.addResult("resource.content after requesting content: " + request.content);
+            callback();
+        }
+
+        request.requestContent(contentLoaded);
+    }
+
+    function step1()
+    {
+        var request = WebInspector.panel("network").requests[WebInspector.panel("network").requests.length - 4];
+        dumpRequest(request, step2);
+    }
+
+    function step2()
+    {
+        var request = WebInspector.panel("network").requests[WebInspector.panel("network").requests.length - 3];
+        dumpRequest(request, step3);
+    }
+
+    function step3()
+    {
+        var request = WebInspector.panel("network").requests[WebInspector.panel("network").requests.length - 2];
+        dumpRequest(request, step4);
+    }
+
+    function step4()
+    {
+        var request = WebInspector.panel("network").requests[WebInspector.panel("network").requests.length - 1];
+        dumpRequest(request, step5);
+    }
+
+    function step5()
+    {
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests NetworkResourcesData logic for embed content replacement.</p>
+    <embed name="plg" type="application/x-webkit-test-netscape" src="resources/resource.php?type=image" onstreamload="streamLoaded()"></embed>
+</body>
+</html>
+

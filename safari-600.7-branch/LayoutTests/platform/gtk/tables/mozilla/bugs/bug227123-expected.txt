@@ -1,0 +1,9 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x137
+  RenderBlock {html} at (0,0) size 800x137
+    RenderBody {body} at (8,16) size 784x113
+      RenderBlock {p} at (0,0) size 784x17
+        RenderText {#text} at (0,0) size 328x17
+          text run at (0,0) width 328: "There should be a green block under this paragraph."
+      RenderTable {table} at (0,33) size 80x80 [bgcolor=#008000]

@@ -1,0 +1,41 @@
+<html manifest="manifest-for-appcache.manifest">
+<head>
+<script>
+function updateAppCache(callback) {
+	appCacheCallback = callback;
+	window.applicationCache.update();
+}
+
+window.applicationCache.onnoupdate = function(e) {
+	console.log("Application cache loaded");
+	if (window.appCacheCallback) {
+		appCacheCallback(true);
+	}
+}
+
+window.applicationCache.oncached = function(e) {
+	console.log("Application cache loaded");
+	if (window.appCacheCallback) {
+		appCacheCallback(true);
+	}
+}
+
+window.applicationCache.onupdateready = function(e) {
+	console.log("Application cache loaded");
+	if (window.appCacheCallback) {
+		appCacheCallback(true);
+	}
+}
+
+window.applicationCache.onerror = function(e) {
+	console.log("Application cache not loaded");
+	if (window.appCacheCallback) {
+		appCacheCallback(false);
+	}
+}
+</script>
+</head>
+<body>
+<img src="abe.png">
+</body>
+</html>

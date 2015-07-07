@@ -1,0 +1,60 @@
+Tests that forced subtitles are enable automatically.
+
+
+RUN(internals.settings.setShouldDisplayTrackKind('Captions', false))
+RUN(internals.settings.setShouldDisplayTrackKind('Subtitles', true))
+RUN(internals.setUserPreferredLanguages(['en']))
+RUN(internals.setPrimaryAudioTrackLanguageOverride('fr'))
+RUN(internals.setCaptionDisplayMode('ForcedOnly'))
+EVENT(canplaythrough)
+
+** Forced tracks should be in .textTracks, but not in the menu
+EXPECTED (video.textTracks.length == '9') OK
+EXPECTED (trackMenuItems.length == '6') OK
+
+** Only the 'fr' forced track should be showing
+EXPECTED (video.textTracks[0].language == 'en') OK
+EXPECTED (video.textTracks[0].kind == 'subtitles') OK
+EXPECTED (video.textTracks[0].mode == 'disabled') OK
+
+EXPECTED (video.textTracks[1].language == 'en') OK
+EXPECTED (video.textTracks[1].kind == 'forced') OK
+EXPECTED (video.textTracks[1].mode == 'disabled') OK
+
+EXPECTED (video.textTracks[2].language == 'fr') OK
+EXPECTED (video.textTracks[2].kind == 'subtitles') OK
+EXPECTED (video.textTracks[2].mode == 'disabled') OK
+
+EXPECTED (video.textTracks[3].language == 'fr') OK
+EXPECTED (video.textTracks[3].kind == 'forced') OK
+EXPECTED (video.textTracks[3].mode == 'showing') OK
+
+EXPECTED (video.textTracks[4].language == 'es') OK
+EXPECTED (video.textTracks[4].kind == 'subtitles') OK
+EXPECTED (video.textTracks[4].mode == 'disabled') OK
+
+EXPECTED (video.textTracks[5].language == 'es') OK
+EXPECTED (video.textTracks[5].kind == 'forced') OK
+EXPECTED (video.textTracks[5].mode == 'disabled') OK
+
+EXPECTED (video.textTracks[6].language == 'de') OK
+EXPECTED (video.textTracks[6].kind == 'subtitles') OK
+EXPECTED (video.textTracks[6].mode == 'disabled') OK
+
+EXPECTED (video.textTracks[7].language == 'de') OK
+EXPECTED (video.textTracks[7].kind == 'forced') OK
+EXPECTED (video.textTracks[7].mode == 'disabled') OK
+
+EXPECTED (video.textTracks[8].language == 'en') OK
+EXPECTED (video.textTracks[8].kind == 'captions') OK
+EXPECTED (video.textTracks[8].mode == 'disabled') OK
+
+RUN(video.currentTime = 9.5)
+
+EVENT(seeked)
+EVENT(cuechange)
+EXPECTED (video.textTracks[3].activeCues.length == '1') OK
+EXPECTED (textTrackDisplayElement(video, 'cue') != 'null') OK
+
+END OF TEST
+

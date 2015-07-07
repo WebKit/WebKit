@@ -1,0 +1,6 @@
+Tests that Web Inspector gets populated with databases that were opened before inspector is shown.
+
+Name: InspectorDatabaseTest
+Version: 1.0
+Domain: 127.0.0.1
+

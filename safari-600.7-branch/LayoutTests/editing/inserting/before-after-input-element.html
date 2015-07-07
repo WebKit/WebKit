@@ -1,0 +1,17 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
+</script>
+<p>This tests text insertion before/after an input element.</p>
+<div id="div" contenteditable="true"><input type="text"></div>
+
+<script>
+var div = document.getElementById("div");
+var sel = window.getSelection();
+sel.setPosition(div, 0);
+
+document.execCommand("InsertText", false, "Hello");
+sel.setPosition(div, div.childNodes.length);
+
+document.execCommand("InsertText", false, "World");
+</script>

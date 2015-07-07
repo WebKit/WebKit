@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 3: Viewport argument key "x" not recognized and ignored.
+ALERT: viewport size 320x352 scale 1 with limits [1, 5] and userScalable true
+

@@ -1,0 +1,20 @@
+﻿<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+        <title>window.performance.now frame</title>
+        <link rel="author" title="Google" href="http://www.google.com/" />
+
+        <script>
+            var performanceNamespace = window.performance;
+            performanceNamespace.now = (function()  {
+              return performanceNamespace.now ||
+                     performanceNamespace.mozNow ||
+                     performanceNamespace.msNow ||
+                     performanceNamespace.oNow ||
+                     performanceNamespace.webkitNow;
+            })();
+        </script>
+    </head>
+    <body></body>
+</html>

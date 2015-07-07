@@ -1,0 +1,12 @@
+This tests that the AXSelection property is correctly reported for non-native text boxes.
+Some text in a textbox (34 chars).
+PASS: axSelection is {0, 0} (Collapsed selection at start)
+PASS: axSelection is {34, 0} (Collapsed selection at end)
+PASS: axSelection is {15, 0} (Collapsed selection in the middle)
+PASS: axSelection is {15, 2} (Non-collapsed selection in the middle)
+PASS: axSelection is {0, 15} (Non-collapsed selection at the start)
+PASS: axSelection is {15, 19} (Non-collapsed selection at the end)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,27 @@
+<html>
+<head>
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+}
+
+window.onload = function() {
+    window.location.href = "resources/notify-done.html";
+}
+
+window.onpagehide = function(evt) {
+    alert("Main frame window.onpagehide called");
+}
+
+</script>
+</head>
+<body>
+Tests if a page with a subframe that has an unload handler is allowed to go in the page cache.  (It should not be.)<br>
+If the subframe's unload handler is called when navigating away from this page, it did *NOT* go in the page cache and all is well.<br>
+However, if *only* its pageshow handler is called, then it *did* go in
+<iframe src="resources/subframe-with-subsubframe-with-unload-handler.html"></iframe>
+</body>
+</html>

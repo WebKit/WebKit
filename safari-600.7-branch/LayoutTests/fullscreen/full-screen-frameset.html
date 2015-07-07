@@ -1,0 +1,35 @@
+<script src="full-screen-test.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpChildFramesAsText();
+
+var waitingFor = 2;
+function runTest() {
+    if (--waitingFor)
+        return;
+    var frame = document.getElementById('frame');
+
+    waitForEvent(frame.contentDocument, 'webkitfullscreenchange', function() { 
+            consoleWrite("FAIL - entered full screen!");
+            endTest(); 
+            if (testRunner)
+                testRunner.notifyDone();     
+    });
+
+    runWithKeyDown(function() {
+
+        setTimeout(function() { 
+            consoleWrite("SUCCEED - did not enter full screen!"); 
+            endTest();
+            if (testRunner)
+                testRunner.notifyDone();     
+        }, 50);
+
+        frame.contentDocument.documentElement.webkitRequestFullScreen();
+    });
+}
+</script>
+<frameset rows="150,*">
+    <frame name="header" src="resources/not-allowed.html" webkitfullscreenallowed onload="runTest()">
+    <frame id="frame" src="resources/inner.html" onload="runTest()">
+</frameset>

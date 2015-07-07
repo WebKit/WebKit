@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,152) size 784x20
+        RenderBR {BR} at (0,0) size 0x19
+layer at (8,8) size 302x152
+  RenderBlock {DIV} at (0,0) size 302x152 [bgcolor=#FF0000] [border: (1px solid #000000)]
+    RenderNamedFlowFragment at (1,1) size 300x150
+layer at (8,180) size 302x202
+  RenderBlock {DIV} at (0,172) size 302x202 [bgcolor=#FF0000] [border: (1px solid #000000)]
+    RenderNamedFlowFragment at (1,1) size 300x200
+Named flows
+  Named flow 'flow1'
+    layer at (0,0) size 300x350
+      RenderNamedFlowThread at (0,0) size 300x350
+        RenderBlock {DIV} at (0,0) size 300x350
+          RenderBlock {DIV} at (0,0) size 300x350 [bgcolor=#008000]
+    Regions for named flow 'flow1'
+      RenderNamedFlowFragment (anonymous child of {DIV} #region1)
+      RenderNamedFlowFragment (anonymous child of {DIV} #region2)

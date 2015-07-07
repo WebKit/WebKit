@@ -1,0 +1,54 @@
+<!--
+  Each of the two regions should only display two line boxes in this test. 
+  The buggy behavior splits the third line box between the first and second region.
+  --> 
+<script type="text/javascript" charset="utf-8" src="resources/helper.js"></script>
+
+<style type="text/css"> 
+  .article{
+    -webkit-flow-into: thread;
+    line-height:14px;
+  }
+  .region{
+    -webkit-flow-from: thread;
+    width:4em;
+    height:35px;  /*2.5x line height*/
+    background-color:lightgray;
+  }
+  .divider{
+    width:4em;
+    height:10px;
+  }
+  .description{
+    color:blue;
+  }
+</style> 
+ 
+<div id="test">
+  <div class="region"></div> 
+  <div class="divider"></div> 
+  <div id="secondRegion" class="region"></div> 
+  <div class="article"> 
+    mnopqr mnopqr <span id="testSpan">m</span>nopqr mnopqr
+  </div>
+  <p class="description">The two regions on either side of the divider should each have two text lines.</p>
+  <p class="description">There should be no text line split between the regions.</p>
+  <p class="description">The top left corner of the third text line should be in the top left corner of the second region.</p>
+</div>
+<div id="result"></div>
+
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+    
+  var testElement = document.getElementById("testSpan")
+  var testRect = testElement.getBoundingClientRect();
+  var regionElement = document.getElementById("secondRegion")
+  var regionRect = regionElement.getBoundingClientRect();
+  var resultString = assertTopLeftMatch (regionRect, testRect);
+
+  if (window.testRunner)
+  	document.getElementById("test").innerText="";
+  var resultDiv = document.getElementById("result");
+  resultDiv.innerText = resultString;
+</script>

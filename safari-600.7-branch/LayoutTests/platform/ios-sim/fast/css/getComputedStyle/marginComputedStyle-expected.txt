@@ -1,0 +1,10 @@
+Test
+width: 392px
+height: 31px
+margin-left: 186px
+margin-right: 186px
+margin-top: 0px
+margin-bottom: 0px
+padding-left: 0px
+left: auto
+

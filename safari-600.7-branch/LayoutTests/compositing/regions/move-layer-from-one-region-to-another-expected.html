@@ -1,0 +1,64 @@
+<html>
+	<head>
+		<title>Bug 120457: [CSS Regions] The layers from the flow thread should be collected under the regions' layers.</title>
+		<style>
+			html {
+				-webkit-font-smoothing: none;
+			}
+
+			.content {
+				width: 150px;
+				height: 100px;
+				background-color: Yellow;
+			}
+
+			body .region:nth-child(2) .content {
+				margin-top: 0px; /*margins are collapsed when fragmented*/
+			}
+
+			.movesTheLayerToNextRegion {
+				height: 225px;
+			}
+
+			#causesTheRegionToBeComposited {
+				-webkit-transform:translateZ(1px); /*so the div is composited*/
+				width: 100px;
+				height: 40px;
+				background-color: Lime;
+			}
+
+			.region {
+				-webkit-transform:translateZ(1px); /*so the div is composited, just like the region*/
+				height: 230px;
+				border:solid 1px #888;
+			}
+		</style>
+	</head>
+	<body>
+		some text 1.
+
+		<div class="region">
+			<div id="willBeAddedToTheFlow" class="content movesTheLayerToNextRegion">goes in the 1st region.</div>
+		</div>
+
+		some text.
+
+		<div class="region">
+			<div class="content">
+				some text 2.
+				<div id="causesTheRegionToBeComposited">
+					some text 3.
+				</div>
+				some text 4.
+				<div>some text.</div>
+				<div>some text.</div>
+				<div>some text.</div>
+				<div>some text.</div>
+			</div>
+		</div>
+
+		some text 5.
+
+		<p>If we have layers that moved from one region to another, we trigger a composited layers rebuild to make sure that the regions will collect the right layers.</p>
+	</body>
+</html>

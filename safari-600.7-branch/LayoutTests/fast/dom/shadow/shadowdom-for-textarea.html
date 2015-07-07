@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="resources/polyfill.js"></script>
+
+<form>
+    <textarea id="host" cols="20" rows="4">Something in the air</textarea>
+</form>
+
+<script>
+if (window.internals)
+    internals.settings.setAuthorShadowDOMForAnyElementEnabled(true);
+
+var shadowRoot = host.webkitCreateShadowRoot();
+
+var div = document.createElement('div');
+div.innerHTML = "(before)<shadow></shadow>(after)";
+shadowRoot.appendChild(div);
+</script>
+
+</body>
+</html>

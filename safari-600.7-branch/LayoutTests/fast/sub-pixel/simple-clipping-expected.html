@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Simple clipping. This tests that we properly clip device pixel positioned elements.</title>
+<style>
+  div {
+    width: 20px;
+    height: 20px;
+    border: solid 1px red;
+    position: absolute;
+    top: 0px;
+  }
+</style>
+</head>
+<body>
+<p id="container"></p>
+
+<script>
+  var container = document.getElementById("container");
+  for (i = 0; i < 100; i = i + 21) {
+    var e1 = document.createElement("div");
+    var e2 = document.createElement("div");
+    var e3 = document.createElement("div");
+
+    e1.style.left = i + 101 + "px";
+
+    e2.style.top = "22px";
+    e2.style.left = i + 101.5 +"px";
+
+    e3.style.top = "44px";
+    e3.style.left = i + 102 + "px";
+
+    container.appendChild(e1);
+    container.appendChild(e2);
+    container.appendChild(e3);
+  }
+</script>
+
+</body>
+</html>
+

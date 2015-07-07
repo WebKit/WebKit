@@ -1,0 +1,52 @@
+{
+    "domain": "Timeline",
+    "description": "Timeline provides its clients with instrumentation records that are generated during the page runtime. Timeline instrumentation can be started and stopped using corresponding commands. While timeline is started, it is generating timeline event records.",
+    "types": [
+        {
+            "id": "EventType",
+            "type": "string",
+            "enum": ["EventDispatch", "ScheduleStyleRecalculation", "RecalculateStyles", "InvalidateLayout", "Layout", "Paint", "ScrollLayer", "ResizeImage", "ParseHTML", "TimerInstall", "TimerRemove", "TimerFire", "EvaluateScript", "MarkLoad", "MarkDOMContent", "TimeStamp", "Time", "TimeEnd", "ScheduleResourceRequest", "ResourceSendRequest", "ResourceReceiveResponse", "ResourceReceivedData", "ResourceFinish", "XHRReadyStateChange", "XHRLoad", "FunctionCall", "ProbeSample", "ConsoleProfile", "GCEvent", "RequestAnimationFrame", "CancelAnimationFrame", "FireAnimationFrame", "WebSocketCreate", "WebSocketSendHandshakeRequest", "WebSocketReceiveHandshakeResponse", "WebSocketDestroy"],
+            "description": "Timeline record type."
+        },
+        {
+            "id": "TimelineEvent",
+            "type": "object",
+            "properties": [
+                { "name": "type", "$ref": "EventType", "description": "Event type." },
+                { "name": "data", "type": "object", "description": "Event data." },
+                { "name": "children", "type": "array", "optional": true, "items": { "$ref": "TimelineEvent" }, "description": "Nested records." }
+            ],
+            "description": "Timeline record contains information about the recorded activity."
+        }
+    ],
+    "commands": [
+        {
+            "name": "start",
+            "parameters": [
+                { "name": "maxCallStackDepth", "optional": true, "type": "integer", "description": "Samples JavaScript stack traces up to <code>maxCallStackDepth</code>, defaults to 5." }
+            ],
+            "description": "Starts capturing instrumentation events."
+        },
+        {
+            "name": "stop",
+            "description": "Stops capturing instrumentation events."
+        }
+    ],
+    "events": [
+        {
+            "name": "eventRecorded",
+            "parameters": [
+                { "name": "record", "$ref": "TimelineEvent", "description": "Timeline event record data." }
+            ],
+            "description": "Fired for every instrumentation event while timeline is started."
+        },
+        {
+            "name": "recordingStarted",
+            "description": "Fired when recording has started."
+        },
+        {
+            "name": "recordingStopped",
+            "description": "Fired when recording has stopped."
+        }
+    ]
+}

@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://127.0.0.1:8080". Protocols, domains, and ports must match.
+ PASS: Cross frame access to different port was denied!
+
+
+--------
+Frame: 'aFrame'
+--------
+Inner iframe.

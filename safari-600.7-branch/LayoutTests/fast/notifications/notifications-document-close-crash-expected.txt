@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 36: Uncaught Error: InvalidStateError: DOM Exception 11
+PASS

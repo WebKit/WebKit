@@ -1,0 +1,48 @@
+<html>
+    <script>
+    // Pre-conditions
+    // - Error page handling is supported on DRT.
+
+    // Navigation steps:
+    // 1- loads this page.
+    // 2- loads a non-existent page (an error page is loaded).
+    // 4- executes a back, forward and back navigations.
+
+    // Expected results:
+    // - forward-list should comprise the non-existent loaded page(2).
+
+    var isOkToContinue = "                                  "+
+    "{                                                      "+
+    "    var console = document.getElementById('console');  "+
+    "    if (console != null)                               "+
+    "        console.innerHTML = 'SUCCESS';                 "+
+    "    else                                               "+
+    "        console.innerHTML = 'FAIL';                    "+
+    "}";
+
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+        testRunner.handleErrorPages();
+        testRunner.dumpBackForwardList();
+    }
+
+    function onPageShow(evt)
+    {
+        if (!evt.persisted) {
+            // this is the first time the page has been loaded, then setup the
+            // to-be-tested scenario.
+            testRunner.queueLoad("./non-existent.html");
+            testRunner.queueBackNavigation(1);
+            testRunner.queueForwardNavigation(1);
+            testRunner.queueBackNavigation(1);
+            testRunner.queueNonLoadingScript("eval(\"" + isOkToContinue + "\")");
+        }
+    }
+
+    window.onpageshow = onPageShow;
+    </script>
+    <body>
+        <h1 id='console'/>
+    </body>
+</html>

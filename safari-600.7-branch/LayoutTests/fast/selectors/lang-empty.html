@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+* {
+    color: rgb(0, 0, 0);
+}
+:lang() {
+    color: rgb(1, 2, 3);
+}
+
+:lang() * {
+    color: rgb(4, 5, 6);
+}
+</style>
+</head>
+<body>
+    <div style="display:none">
+        <a>
+            <b>
+                <c id="target1"></c>
+            </b>
+        </a>
+    </div>
+</body>
+<script>
+description('Verify empty :lang() selectors.');
+
+shouldThrow('document.querySelectorAll(":lang()").length');
+shouldThrow('document.querySelectorAll(":lang() *").length');
+shouldBeEqualToString('getComputedStyle(document.getElementById("target1")).color', 'rgb(0, 0, 0)');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

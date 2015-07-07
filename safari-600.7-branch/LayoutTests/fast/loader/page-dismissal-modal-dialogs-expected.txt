@@ -1,0 +1,32 @@
+frame "<!--framePath //<!--frame0-->-->" - has 1 onunload handler(s)
+CONSOLE MESSAGE: Use of window.alert is not allowed during beforeunload event dispatch.
+CONSOLE MESSAGE: Use of window.confirm is not allowed during beforeunload event dispatch.
+CONSOLE MESSAGE: Use of window.prompt is not allowed during beforeunload event dispatch.
+CONSOLE MESSAGE: Use of window.alert is not allowed during beforeunload event dispatch.
+CONSOLE MESSAGE: Use of window.confirm is not allowed during beforeunload event dispatch.
+CONSOLE MESSAGE: Use of window.prompt is not allowed during beforeunload event dispatch.
+CONSOLE MESSAGE: Use of window.alert is not allowed during beforeunload event dispatch.
+CONSOLE MESSAGE: Use of window.confirm is not allowed during beforeunload event dispatch.
+CONSOLE MESSAGE: Use of window.prompt is not allowed during beforeunload event dispatch.
+CONSOLE MESSAGE: Use of window.alert is not allowed during beforeunload event dispatch.
+CONSOLE MESSAGE: Use of window.confirm is not allowed during beforeunload event dispatch.
+CONSOLE MESSAGE: Use of window.prompt is not allowed during beforeunload event dispatch.
+ALERT: mainFrame pagehide PASS
+CONFIRM: mainFrame pagehide PASS
+PROMPT: mainFrame pagehide PASS, default text: PASS
+ALERT: iFrame click PASS
+CONFIRM: iFrame click PASS
+PROMPT: iFrame click PASS, default text: PASS
+ALERT: mainFrame unload PASS
+CONFIRM: mainFrame unload PASS
+PROMPT: mainFrame unload PASS, default text: PASS
+ALERT: iFrame click PASS
+CONFIRM: iFrame click PASS
+PROMPT: iFrame click PASS, default text: PASS
+ALERT: iFrame pagehide PASS
+CONFIRM: iFrame pagehide PASS
+PROMPT: iFrame pagehide PASS, default text: PASS
+ALERT: iFrame unload PASS
+CONFIRM: iFrame unload PASS
+PROMPT: iFrame unload PASS, default text: PASS
+PASS

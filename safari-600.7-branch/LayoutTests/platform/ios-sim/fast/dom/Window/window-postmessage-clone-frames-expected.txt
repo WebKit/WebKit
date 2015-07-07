@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 110: TypeError: 'undefined' is not a function (evaluating 'eventSender.beginDragWithFiles(['get-file-upload.html'])')
+FAIL: Timed out waiting for notifyDone to be called
+Tests that we clone object hierarchies
+
+PASS: (frames[0].tests[0]).eventData instanceof (frames[0]).Object is true of type boolean
+PASS: (frames[0].tests[0]).event.data instanceof (frames[0]).Object is true of type boolean
+PASS: (frames[0].tests[1]).eventData instanceof (frames[0]).Array is true of type boolean
+PASS: (frames[0].tests[1]).event.data instanceof (frames[0]).Array is true of type boolean
+PASS: (frames[0].tests[2]).eventData instanceof (frames[0]).Date is true of type boolean
+PASS: (frames[0].tests[2]).event.data instanceof (frames[0]).Date is true of type boolean
+

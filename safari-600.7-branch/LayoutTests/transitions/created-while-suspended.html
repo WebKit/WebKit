@@ -1,0 +1,92 @@
+<title>Test that newly created transitions do not run while we are suspended</title>
+<style>
+#box {
+    position: relative;
+    left: 0px;
+    height: 50px;
+    width: 50px;
+    background-color: blue;
+}
+</style>
+<script>
+var box;
+
+function suspend()
+{
+    if (window.internals)
+        internals.suspendAnimations();
+}
+
+function resume()
+{
+    if (window.internals)
+        internals.resumeAnimations();
+}
+
+function transitionEnded(event)
+{
+    log("#### Transition ended on element with id: " + event.target.id);
+}
+
+function suspendAndCreate()
+{
+    log("*** Suspending Animations/Transitions");
+    suspend();
+    setTimeout(function() {
+        if (window.internals)
+            log("Transitions should be suspended: " + (window.internals.animationsAreSuspended() ? "PASS" : "FAIL"));
+
+        log("*** Creating the box.")
+        box = document.createElement("div");
+        box.id = "box";
+        document.addEventListener("webkitTransitionEnd", transitionEnded, false);
+        document.body.insertBefore(box, document.querySelector("#results"));
+        setTimeout(function() {
+            log("*** Adding transition property and setting left to 100px. We should NOT see transition events.")
+            box.style.webkitTransitionDuration = "100ms";
+            box.style.left = "100px";
+            setTimeout(endTest, 200);
+        }, 100);
+    }, 100);
+}
+
+function endTest()
+{
+    log("*** Resuming Animations/Transitions");
+    resume();
+    if (window.internals)
+        log("Transitions should not be suspended: " + (window.internals.animationsAreSuspended() ? "FAIL" : "PASS"));
+
+    resume(); // Just in case.
+    log("*** Test finished");
+    if (window.testRunner)
+        setTimeout(function () { testRunner.notifyDone();}, 8000);
+}
+
+function startTest()
+{
+    log("*** Starting test.")
+
+    if (window.internals)
+        log("Transitions should not be suspended: " + (window.internals.animationsAreSuspended() ? "FAIL" : "PASS"));
+
+    suspendAndCreate();
+}
+
+function log(message)
+{
+    var results = document.getElementById("results");
+    results.innerHTML = results.innerHTML + message + "<br>";
+}
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+window.addEventListener("load", startTest, false);
+
+</script>
+<p>This test creates a box, adds a transition, then sets the left property. It will only have reproducible output when run in the test system</p>
+<div id="results">
+</div>

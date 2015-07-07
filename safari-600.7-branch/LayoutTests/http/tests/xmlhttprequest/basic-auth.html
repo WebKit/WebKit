@@ -1,0 +1,114 @@
+<html>
+<body>
+<p>Tests for XMLHttpRequest authentication.
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    
+    var console_messages = document.createElement("ol");
+    document.body.appendChild(console_messages);
+    
+    function log(message)
+    {
+        var item = document.createElement("li");
+        item.appendChild(document.createTextNode(message));
+        console_messages.appendChild(item);
+    }
+
+    function sendAndLogResponse(uid, req)
+    {
+        try {
+            req.send("");
+            log(uid + ': ' + req.responseText);
+        } catch (e) {
+            log(uid + ": req.send raised exception: " + e);
+            log(uid + ": req.readyState: " + req.readyState);
+            log(uid + ": req.status: " + req.status);
+        }
+    }
+
+    // sync
+    req = new XMLHttpRequest;
+    req.open("GET", "resources/basic-auth/basic-auth.php?uid=sync", false, "sync", "123");
+    sendAndLogResponse("sync", req);
+
+    req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.php?uid=sync2"), false, "sync2", "123");
+    sendAndLogResponse("sync2", req);
+
+    req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.php?uid=sync3").replace("http://", "http://sync3:123@"), false);
+    sendAndLogResponse("sync3", req);
+
+    req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.php?uid=sync4").replace("http://", "http://incorrect:incorrect@"), false, "sync4", "123");
+    sendAndLogResponse("sync4", req);
+
+    req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.php?uid=sync5").replace("http://", "http://sync5:123@"), false, undefined, undefined);
+    sendAndLogResponse("sync5", req);
+
+    req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.php?uid=sync6").replace("http://", "http://sync6:123@"), false, undefined);
+    sendAndLogResponse("sync6", req);
+
+    req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.php?uid=sync7").replace("http://", "http://sync7:123@"), false, undefined, "incorrect");
+    sendAndLogResponse("sync7", req);
+
+    // async
+    var asyncStep = 1;
+
+    req.onreadystatechange = processStateChange;
+    req.open("GET", "resources/basic-auth/basic-auth.php?uid=async", true, "async", "123");
+    req.send("");
+
+    function processStateChange() {
+    
+      if (req.readyState == 4){
+        if (req.status == 200){
+          if (asyncStep == 1) {
+            asyncStep = 2;
+            log('async: ' + req.responseText);
+            req.onreadystatechange = processStateChange;
+            req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.php?uid=async2"), true, "async2", "123");
+            req.send("");
+          } else if (asyncStep == 2) {
+            asyncStep = 3;
+            log('async2: ' + req.responseText);
+            req.onreadystatechange = processStateChange;
+            req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.php?uid=async3").replace("http://", "http://async3:123@"), true, "async3", "123");
+            req.send("");
+          } else if (asyncStep == 3) {
+            asyncStep = 4;
+            log('async3: ' + req.responseText);
+            req.onreadystatechange = processStateChange;
+            req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.php?uid=async4").replace("http://", "http://incorrect:incorrect@"), true, "async4", "123");
+            req.send("");
+          } else if (asyncStep == 4) {
+            asyncStep = 5;
+            log('async4: ' + req.responseText);
+            req.onreadystatechange = processStateChange;
+            req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.php?uid=async5").replace("http://", "http://async5:123@"), true, undefined, undefined);
+            req.send("");
+          } else if (asyncStep == 5) {
+            asyncStep = 6;
+            log('async5: ' + req.responseText);
+            req.onreadystatechange = processStateChange;
+            req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.php?uid=async6").replace("http://", "http://async6:123@"), true, undefined);
+            req.send("");
+          } else if (asyncStep == 6) {
+            asyncStep = 7;
+            log('async6: ' + req.responseText);
+            req.onreadystatechange = processStateChange;
+            req.open("GET", document.URL.replace("basic-auth.html", "resources/basic-auth/basic-auth.php?uid=async7").replace("http://", "http://async7:123@"), true, undefined, "incorrect");
+            req.send("");
+          } else if (asyncStep == 7) {
+            log('async7: ' + req.responseText);
+            if (window.testRunner)
+              testRunner.notifyDone();
+          }
+        } else {
+            log("async" + asyncStep + " failed with unexpected status: " + req.status);
+        }
+      }
+    }
+</script>
+</body>
+</html>

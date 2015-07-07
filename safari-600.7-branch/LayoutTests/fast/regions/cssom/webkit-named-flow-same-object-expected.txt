@@ -1,0 +1,7 @@
+Test for 66642: [CSSRegions]Implement NamedFlow interface
+
+Asking for the same webkit named flow twice should return the same non-null object.
+
+On success, you should see PASS below.
+
+PASS

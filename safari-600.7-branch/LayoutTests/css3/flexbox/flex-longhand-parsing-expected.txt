@@ -1,0 +1,39 @@
+Tests the interaction between the -webkit-flex shorthand propery and the -webkit-flex-grow, -webkit-flex-shrink, and -webkit-flex-basis longhand properties.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS flexitem.style.webkitFlex is ""
+PASS getComputedStyle(flexitem).webkitFlex is "0 1 auto"
+PASS flexitem.style.webkitFlexGrow is "2"
+PASS getComputedStyle(flexitem).webkitFlexGrow is "2"
+PASS getComputedStyle(flexitem).webkitFlex is "2 1 auto"
+PASS flexitem.style.webkitFlexShrink is "3"
+PASS getComputedStyle(flexitem).webkitFlexShrink is "3"
+PASS getComputedStyle(flexitem).webkitFlex is "2 3 auto"
+PASS flexitem.style.webkitFlexBasis is "0px"
+PASS getComputedStyle(flexitem).webkitFlexBasis is "0px"
+PASS getComputedStyle(flexitem).webkitFlex is "2 3 0px"
+PASS flexitem.style.webkitFlexShrink is "0"
+PASS getComputedStyle(flexitem).webkitFlex is "2 0 0px"
+PASS flexitem.style.webkitFlexBasis is "50%"
+PASS getComputedStyle(flexitem).webkitFlexBasis is "50%"
+PASS getComputedStyle(flexitem).webkitFlex is "2 0 50%"
+PASS flexitem.style.webkitFlexBasis is "auto"
+PASS getComputedStyle(flexitem).webkitFlex is "2 0 auto"
+PASS flexitem.style.webkitFlex is "0 0 auto"
+PASS flexitem.style.webkitFlexGrow is "0"
+PASS flexitem.style.webkitFlexShrink is "0"
+PASS flexitem.style.webkitFlexBasis is "auto"
+PASS getComputedStyle(flexitem).webkitFlex is "0 0 auto"
+PASS flexitem.style.webkitFlex is "1.5 0 auto"
+PASS getComputedStyle(flexitem).webkitFlex is "1.5 0 auto"
+PASS flexitem.style.webkitFlex is "3 1 0px"
+PASS flexitem.style.webkitFlexGrow is "3"
+PASS flexitem.style.webkitFlexShrink is "1"
+PASS flexitem.style.webkitFlexBasis is "0px"
+PASS getComputedStyle(flexitem).webkitFlex is "3 1 0px"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

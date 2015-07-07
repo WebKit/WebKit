@@ -1,0 +1,7 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion Preferred argument conversion:  boolean
+
+PASS TEST_CLASS["ambiguous(long)"](true) threw exception TypeError: 'undefined' is not a function (evaluating 'TEST_CLASS["ambiguous(long)"](true)').
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

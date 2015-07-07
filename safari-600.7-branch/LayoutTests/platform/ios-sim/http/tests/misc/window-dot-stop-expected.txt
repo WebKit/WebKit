@@ -1,0 +1,7 @@
+<unknown> - didFinishLoading
+http://127.0.0.1:8000/incremental/slow-utf8-text.pl - willSendRequest <NSURLRequest http://127.0.0.1:8000/incremental/slow-utf8-text.pl> redirectResponse (null)
+http://127.0.0.1:8000/incremental/slow-utf8-text.pl - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -999, failing URL "http://127.0.0.1:8000/incremental/slow-utf8-text.pl">
+FAIL: Timed out waiting for notifyDone to be called
+This tests for the successful use of window.stop()
+
+

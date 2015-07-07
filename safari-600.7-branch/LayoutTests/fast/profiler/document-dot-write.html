@@ -1,0 +1,28 @@
+<html>
+<head>
+<script src="resources/profiler-test-JS-resources.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.internals)
+    internals.setJavaScriptProfilingEnabled(true);
+
+function startTest()
+{
+    console.profile("Call Document.write()");
+
+    document.write("<div id=\"output\"></div>");
+
+    endTest();
+}
+</script>
+</head>
+
+<body onload="startTest()">
+This page calls document.write().
+<br>
+<br>
+To run this test manually, load it in the browser then load the WebInspector and look at
+the profile.  If there is a profile it should show write().
+</body>
+</html>

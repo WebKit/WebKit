@@ -1,0 +1,32 @@
+This tests that pressing Tab key should traverse into iframe and shadow tree, and pressing Shift-Tab should reverse the order. Makes sure that a shadow host element should act like a iframe element.
+
+Focus input-01.
+id:input-01(tabIndex=1) is focused.
+
+Press Tab 11 times.
+id:input-13(tabIndex=1) is focused.
+id:input-15(tabIndex=2) is focused.
+id:input-02(tabIndex=0) is focused.
+id:input-04(tabIndex=0) is focused.
+id:input-14(tabIndex=0) is focused.
+id:input-01(tabIndex=1) is focused.
+id:input-13(tabIndex=1) is focused.
+id:input-15(tabIndex=2) is focused.
+id:input-02(tabIndex=0) is focused.
+id:input-04(tabIndex=0) is focused.
+
+Press Shift-Tab 11 times.
+id:input-02(tabIndex=0) is focused.
+id:input-15(tabIndex=2) is focused.
+id:input-13(tabIndex=1) is focused.
+id:input-01(tabIndex=1) is focused.
+id:input-14(tabIndex=0) is focused.
+id:input-04(tabIndex=0) is focused.
+id:input-02(tabIndex=0) is focused.
+id:input-15(tabIndex=2) is focused.
+id:input-13(tabIndex=1) is focused.
+id:input-01(tabIndex=1) is focused.
+
+Test finished.
+
+

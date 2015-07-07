@@ -1,0 +1,16 @@
+
+Test for bug 13029: Permit NPAPI plug-ins to see HTTP response headers.
+
+Expected result below is two HTTP response extracts, one for the initial stream specified in the "src" attribute, the other for an NPN_GetURLNotify request. Each block should contain the URL; the status line, which should say "HTTP 200 OK"; and the MIME-type, which should say "Content-Type: text/plain".
+
+----------
+
+http://[varies, not being tested]/plugins/resources/load-me-1.txt
+HTTP 200 OK
+Content-Type: text/plain
+
+----------
+
+http://[varies, not being tested]/plugins/resources/load-me-2.txt
+HTTP 200 OK
+Content-Type: text/plain

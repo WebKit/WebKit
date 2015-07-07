@@ -1,0 +1,42 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x171
+  RenderBlock {HTML} at (0,0) size 800x171
+    RenderBody {BODY} at (8,8) size 784x155
+      RenderBlock {FORM} at (0,0) size 784x155
+        RenderTextControl {INPUT} at (0,2) size 312x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderBR {BR} at (312,2) size 0x19
+        RenderTextControl {INPUT} at (0,28) size 312x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderBR {BR} at (312,28) size 0x19
+        RenderTextControl {INPUT} at (0,54) size 312x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderBR {BR} at (312,54) size 0x19
+        RenderTextControl {INPUT} at (0,80) size 312x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderBR {BR} at (312,80) size 0x19
+        RenderTextControl {INPUT} at (0,106) size 312x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderBR {BR} at (312,106) size 0x19
+        RenderTextControl {INPUT} at (0,132) size 312x21 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderBR {BR} at (312,131) size 0x19
+layer at (14,14) size 300x14
+  RenderBlock {DIV} at (6,4) size 300x14
+    RenderText {#text} at (1,0) size 63x14
+      text run at (1,0) width 63: "Apr 27, 2011"
+layer at (14,40) size 300x14
+  RenderBlock {DIV} at (6,4) size 300x14
+    RenderText {#text} at (1,0) size 108x14
+      text run at (1,0) width 108: "Apr 26, 2011 6:56 PM"
+layer at (14,66) size 300x14
+  RenderBlock {DIV} at (6,4) size 300x14
+    RenderText {#text} at (1,0) size 108x14
+      text run at (1,0) width 108: "Apr 27, 2011 1:56 AM"
+layer at (14,92) size 300x14
+  RenderBlock {DIV} at (6,4) size 300x14
+    RenderText {#text} at (1,0) size 50x14
+      text run at (1,0) width 50: "April 2011"
+layer at (14,118) size 300x14
+  RenderBlock {DIV} at (6,4) size 300x14
+    RenderText {#text} at (1,0) size 41x14
+      text run at (1,0) width 41: "1:56 AM"
+layer at (14,143) size 300x14
+  RenderBlock {DIV} at (6,3) size 300x14
+    RenderText {#text} at (1,0) size 51x14
+      text run at (1,0) width 51: "2011-W17"

@@ -1,0 +1,21 @@
+
+This tests that a sub-tree within a node marked with aria-hidden=false will be exposed in the AX tree.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+AXRole: AXSection
+AXDescription: group0
+
+  AXRole: AXGroup
+  AXDescription: group2
+
+    AXRole: AXButton
+    AXDescription: button1
+
+Non-rendered iframe content should not be visible when aria-hidden=true. The first child should be a group and NOT static text.
+iFrame child role: AXRole: AXWebArea
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

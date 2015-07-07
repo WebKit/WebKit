@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,495) size 800x105
+  RenderBlock {HTML} at (0,0) size 800x105 [border: (10px solid #800000)]
+    RenderBody {BODY} at (18,18) size 764x69
+      RenderText {#text} at (0,1) size 221x45
+        text run at (0,1) width 221: "\x{653B}\x{6BBB} \x{6A5F}\x{52D5}\x{968A} "
+      RenderRuby (inline) {RUBY} at (0,0) size 202x45
+        RenderRubyRun (anonymous) at (220,0) size 81x47
+          RenderRubyText {RT} at (0,46) size 81x24
+            RenderText {#text} at (0,0) size 81x23
+              text run at (0,0) width 81: "\x{3053}\x{3046}\x{304B}\x{304F}"
+          RenderRubyBase (anonymous) at (0,0) size 81x47
+            RenderText {#text} at (0,1) size 81x45
+              text run at (0,1) width 81: "\x{653B}\x{6BBB}"
+        RenderRubyRun (anonymous) at (301,0) size 121x47
+          RenderRubyText {RT} at (0,46) size 121x24
+            RenderText {#text} at (2,0) size 117x23
+              text run at (2,0) width 117: "\x{304D}\x{3069}\x{3046}\x{305F}\x{3044}"
+          RenderRubyBase (anonymous) at (0,0) size 121x47
+            RenderText {#text} at (0,1) size 121x45
+              text run at (0,1) width 121: "\x{6A5F}\x{52D5}\x{968A}"
+      RenderText {#text} at (0,0) size 0x0

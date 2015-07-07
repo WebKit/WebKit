@@ -1,0 +1,4 @@
+Two conainers should be layed out in the same way
+
+PASS
+

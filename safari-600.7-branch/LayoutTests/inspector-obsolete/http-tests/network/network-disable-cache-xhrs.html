@@ -1,0 +1,75 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../network-test.js"></script>
+<script>
+function test()
+{
+    // Since this test could be run together with other inspector backend cache
+    // tests, we need to reset size limits to default ones.
+    InspectorTest.resetInspectorResourcesData(step1);
+
+    function step1()
+    {
+        InspectorTest.makeSimpleXHR("GET", "resources/resource.php?random=1&cached=1", true, firstXHRLoaded);
+
+        function firstXHRLoaded()
+        {
+            InspectorTest.makeSimpleXHR("GET", "resources/resource.php?random=1&cached=1", true, step2);
+        }
+    }
+
+    function step2(msg)
+    {
+        NetworkAgent.setCacheDisabled(true, step3);
+    }
+
+    function step3(msg)
+    {
+        InspectorTest.makeSimpleXHR("GET", "resources/resource.php?random=1&cached=1", true, step4);
+    }
+
+    function step4(msg)
+    {
+        // inspector-test.js appears in network panel occasionally in Safari on
+        // Mac, so checking two last resources.
+        var requestsCount = WebInspector.panel("network").requests.length;
+        var request1 = WebInspector.panel("network").requests[requestsCount - 3];
+        var request2 = WebInspector.panel("network").requests[requestsCount - 2];
+        var request3 = WebInspector.panel("network").requests[requestsCount - 1];
+        request1.requestContent(contentLoaded);
+        request2.requestContent(contentLoaded);
+        request3.requestContent(contentLoaded);
+    }
+
+    var contentLoadedCount = 0;
+    function contentLoaded()
+    {
+        if (++contentLoadedCount !== 3)
+            return;
+
+        var requestsCount = WebInspector.panel("network").requests.length;
+        var request1 = WebInspector.panel("network").requests[requestsCount - 3];
+        var request2 = WebInspector.panel("network").requests[requestsCount - 2];
+        var request3 = WebInspector.panel("network").requests[requestsCount - 1];
+
+        InspectorTest.addResult(request1.url);
+        InspectorTest.addResult(request2.url);
+        InspectorTest.addResult(request3.url);
+        InspectorTest.assertTrue(request1.content === request2.content, "First and second resources are equal");
+        InspectorTest.assertTrue(request2.content !== request3.content, "Second and third resources differ");
+        NetworkAgent.setCacheDisabled(false, step5);
+    }
+
+    function step5(msg)
+    {
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests disabling cache from inspector.</p>
+</body>
+</html>
+

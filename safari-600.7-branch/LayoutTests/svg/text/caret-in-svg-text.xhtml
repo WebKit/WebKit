@@ -1,0 +1,35 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<body style="margin: 0px; ">
+  <div style="width: 400px; height: 100px;">
+    <svg xmlns="http://www.w3.org/2000/svg"> 
+        <text x="20" y="30"><tspan>Sheriff Woody</tspan></text>
+        <text x="20" y="50"><tspan>שדגש</tspan></text>
+    </svg>
+  </div>
+  <div id="log"></div>
+  <script>
+  function log(message) {
+    document.getElementById("log").innerText = document.getElementById("log").innerText + "\n" + message;
+  }
+  function assert(found, expected) {
+      if (found == expected)
+        log("Success");
+      else
+        log("Failure. Was: " + found + ", expected: " + expected);
+  }
+  if (window.testRunner) {
+    window.testRunner.dumpAsText();
+    // First offset, left edge, LTR text
+    assert(textInputController.firstRectForCharacterRange(0, 0), "20,566,0,18");
+    // Last offset, right edge, RTL text
+    assert(textInputController.firstRectForCharacterRange(13, 0), "114,566,0,18");
+
+    // FIXME: These edges are incorrect (although carets in the middle of RTL runs are correct).
+    // First offset, right edge, RTL text
+    assert(textInputController.firstRectForCharacterRange(14, 0), "58,546,0,18");
+    // Last offset, left edge, RTL text
+    assert(textInputController.firstRectForCharacterRange(18, 0), "20,546,0,18");
+  }
+  </script>
+</body>
+</html>

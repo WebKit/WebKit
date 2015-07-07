@@ -1,0 +1,77 @@
+<html>
+<head>
+    <script src="../resources/cross-frame-access.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.dumpChildFramesAsText();
+            testRunner.waitUntilDone();
+        }
+        
+        function loaded() {
+            var innerURL = 'data:text/html,<html>'
+                + "<head>"
+                +     "<scr" + "ipt>"
+                +         "function fireSentinel() {"
+                +             "if (window.testRunner)"
+                +                 "testRunner.globalFlag = true;"
+                +         "}"
+                +     "</scr" + "ipt>"
+                + "</head>"
+                + "<body onload=\"fireSentinel();\">"
+                +     "<p id=\"accessMe\">PASS: Cross frame access to a data: URL 2 levels deep was denied.</p>"
+                +     "<p>Inner-inner iframe.</p>"
+                + "</body>"
+                + '</html>';
+
+            var url = "data:text/html,<html>"
+                + "<body>"
+                +     "<p>Inner iframe.</p>"
+                +     "<iframe src='" + innerURL + "'></iframe>"
+                + "</body>"
+                + "</html>";
+
+            var iframe = document.getElementById("aFrame");
+            iframe.src = url;
+
+            if (window.testRunner) {
+                setTimeout(waitForFlag, 1);
+                function waitForFlag() {
+                    if (!testRunner.globalFlag) {
+                        setTimeout(waitForFlag, 1);
+                        return;
+                    }
+                    performTest();
+                }
+            } else {
+                log("Click the button when all the subframes have finished loading.");
+            }
+        }
+
+        function performTest() {
+            try {
+                var innerInnerFrame = window.frames[0].frames[0];
+                if (innerInnerFrame.document.getElementById('accessMe')) {
+                    innerInnerFrame.document.getElementById('accessMe').innerHTML = 'FAIL: Cross frame access to a data: URL 2 levels deep was allowed.';
+                    log('FAIL: Cross frame access to a data: URL 2 levels deep was allowed.');
+                    if (window.testRunner)
+                        testRunner.notifyDone();
+                    return;
+                }
+            } catch (e) {
+            }
+            
+            log('PASS: Cross frame access to a data: URL 2 levels deep was denied.');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+    </script>
+</head>
+<body onload="loaded();">
+    <p>This tests that the main frame doesn't have access to a data: URL loaded in an iframe inside another data: URL loaded iframe.</p>
+    <button onclick="performTest()">Test</button>
+    <iframe id="aFrame" style="width: 500px; height: 300px;"></iframe>
+    <pre id='console'></pre>
+</body>
+</html>

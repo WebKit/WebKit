@@ -1,0 +1,39 @@
+Test to make sure -webkit-text-decoration longhand values are accepted in every possible ordering in shorthand.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+-line -style -color ordering (underline dashed red):
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'underline'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText is 'dashed'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'red'
+
+-line -color -style ordering (overline blue dotted):
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'overline'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText is 'dotted'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'blue'
+
+-style -line -color ordering (double line-through underline overline green):
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'line-through underline overline'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText is 'double'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'green'
+
+-style -color -line ordering (wavy yellow line-through):
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'line-through'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText is 'wavy'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'yellow'
+
+-color -line -style ordering (black underline solid):
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'underline'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText is 'solid'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'black'
+
+-color style -line -style ordering (navy dashed overline):
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'overline'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-style').cssText is 'dashed'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'navy'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

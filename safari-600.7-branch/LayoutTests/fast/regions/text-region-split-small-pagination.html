@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<head>
+<style>
+    #content { -webkit-flow-into: flow; }
+    .region { -webkit-flow-from: flow; border:2px solid black; margin:1em 0}
+    .finished #content, .finished .region { display: none; }
+
+    #region1 { width: 200px; height: 30px; }
+    #region2 { width: 200px; height: 50px; }
+    #region3 { width: 200px; height: 50px; }
+    #region4 { width: 200px; height: 50px; }
+</style>
+</head>
+<div id="content">
+    <p style="-webkit-region-break-after: always"><b class="check region2">Text in region 2.</b> This paragraph has "<i>-webkit-region-break-after: always</i>". <b class="check region3">There should be nothing in this region after this line.</b></p>
+    
+   </div>
+
+<div id="region1" class="region"></div>
+<div id="region2" class="region"></div>
+<div id="region3" class="region"></div>
+<div id="region4" class="region"></div>

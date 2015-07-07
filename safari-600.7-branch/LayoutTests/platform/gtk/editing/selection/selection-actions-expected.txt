@@ -1,0 +1,40 @@
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 15 of #text > BODY > HTML > #document to 15 of #text > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 15 of #text > BODY > HTML > #document to 15 of #text > BODY > HTML > #document toDOMRange:range from 11 of #text > BODY > HTML > #document to 4 of #text > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 11 of #text > BODY > HTML > #document to 4 of #text > BODY > HTML > #document toDOMRange:range from 11 of #text > BODY > HTML > #document to 8 of BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 772x34
+        text run at (0,0) width 772: "This tests whether certain NSResponder methods that should only operate on editable regions modify a selection that is not"
+        text run at (0,17) width 132: "in an editable region."
+      RenderBR {BR} at (132,31) size 0x0
+      RenderText {#text} at (0,34) size 84x17
+        text run at (0,34) width 84: "This is a para"
+      RenderInline {SPAN} at (0,0) size 8x17 [color=#0000FF]
+        RenderText {#text} at (84,34) size 8x17
+          text run at (84,34) width 8: "g"
+      RenderText {#text} at (92,34) size 32x17
+        text run at (92,34) width 32: "raph."
+      RenderBR {BR} at (124,48) size 0x0
+      RenderText {#text} at (0,51) size 63x17
+        text run at (0,51) width 63: "Some text"
+      RenderBR {BR} at (63,65) size 0x0
+      RenderText {#text} at (0,68) size 63x17
+        text run at (0,68) width 63: "Some text"
+      RenderBR {BR} at (63,82) size 0x0
+      RenderText {#text} at (0,85) size 63x17
+        text run at (0,85) width 63: "Some text"
+      RenderBR {BR} at (63,99) size 0x0
+      RenderText {#text} at (0,102) size 63x17
+        text run at (0,102) width 63: "Some text"
+      RenderBR {BR} at (63,116) size 0x0
+      RenderText {#text} at (0,119) size 124x17
+        text run at (0,119) width 124: "This is a paragraph."
+      RenderText {#text} at (0,0) size 0x0
+selection start: position 11 of child 2 {#text} of body
+selection end:   position 1 of child 7 {BR} of body

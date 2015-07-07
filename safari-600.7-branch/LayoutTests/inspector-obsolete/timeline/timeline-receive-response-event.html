@@ -1,0 +1,77 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/timeline-test.js"></script>
+<script>
+
+function performActions()
+{
+    var image = new Image();
+    image.onload = bar;
+    image.src = "resources/anImage.png";
+
+    function bar() {
+        var image = new Image();
+        image.onload = function() { testRunner.evaluateInWebInspector(0, "window.step2()"); }
+        image.src = "resources/anotherImage.png";
+    }
+}
+
+function test()
+{
+    WebInspector.showPanel("timeline");
+    WebInspector.panels.timeline._model._collectionEnabled = true;
+    WebInspector.panels.timeline._presentationModel.setGlueRecords(true);
+    WebInspector.panels.timeline._model._collectionEnabled = true;
+
+    TimelineAgent.start(step1);
+
+    function step1()
+    {
+        InspectorTest.evaluateInPage("performActions()");
+    }
+
+    window.step2 = function()
+    {
+        TimelineAgent.stop(step3);
+    }
+
+    function step3()
+    {
+        function dumpFormattedRecord(record, prefix)
+        {
+             prefix = prefix || "";
+             // Here and below: pretend coalesced record are just not there, as coalescation is time dependent and, hence, not stable.
+             if (!record.coalesced && record.type !== "GCEvent")
+                 InspectorTest.addResult(prefix + record.type);
+             // Ignore stray paint & rendering events for better stability.
+             if (record.category.name !== "loading" && record.category.name !== "scripting")
+                 return;
+             if (record._children) {
+                 var childPrefix = prefix + (record.coalesced ? "" : "    ");
+                 for (var i = 0; i < record._children.length; ++i)
+                     dumpFormattedRecord(record._children[i], childPrefix);
+             }
+        }
+        WebInspector.panels.timeline._model._collectionEnabled = false;
+
+        var records = WebInspector.panels.timeline._rootRecord().children;
+        for (var i = 0; i < records.length; ++i)
+            dumpFormattedRecord(records[i]);
+        InspectorTest.completeTest();
+    }
+}
+
+if (!window.testRunner)
+    setTimeout(performActions, 3000);
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests the Timeline API instrumentation of a SendRequest, ReceiveResponse etc.
+</p>
+
+</body>
+</html>

@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x536
+  RenderBlock {HTML} at (0,0) size 800x536
+    RenderBody {BODY} at (8,8) size 784x520
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 713x19
+          text run at (0,0) width 713: "The two green blocks below should be identical and should each take up half the width of the browser window."
+        RenderBlock (floating) {DIV} at (392,20) size 392x500 [bgcolor=#008000] [border: (1px solid #000000)]
+        RenderText {#text} at (0,0) size 0x0
+layer at (8,28) size 392x500 clip at (9,29) size 390x498
+  RenderBlock {DIV} at (0,20) size 392x500 [bgcolor=#008000] [border: (1px solid #000000)]

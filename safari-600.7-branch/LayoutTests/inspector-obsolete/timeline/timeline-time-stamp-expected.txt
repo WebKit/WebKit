@@ -1,0 +1,28 @@
+Tests the Timeline API timeStamp feature
+
+TimeStamp Properties:
+{
+    counters : <object>
+    data : {
+        message : "TIME STAMP"
+    }
+    frameId : <string>
+    stackTrace : <object>
+    startTime : <number>
+    type : "TimeStamp"
+    usedHeapSize : <number>
+}
+Timestamp records: 
+TimeStamp Properties:
+{
+    counters : <object>
+    data : {
+        message : "TIME STAMP"
+    }
+    frameId : <string>
+    stackTrace : <object>
+    startTime : <number>
+    type : "TimeStamp"
+    usedHeapSize : <number>
+}
+

@@ -1,0 +1,59 @@
+<!doctype html>
+
+ <style>
+    #content {
+        -webkit-flow-into: flow1;
+        text-align: justify;
+        padding: 5px;
+    }
+    
+    #first-box {
+        margin:10%
+    }
+    
+    #second-box {
+        position:absolute;
+        left:0;
+        top:0;
+        height:450px;
+        width:50%;
+        background-color:green
+    }
+    
+    #region1, #region2, #region3 {
+        border: 1px solid black;
+        -webkit-flow-from: flow1;
+    }
+
+    #region1 {
+        width: 200px;
+        height: 150px;
+    }
+    
+    #region2 {
+        width: 300px;
+        height: 180px;
+    }
+    
+    #region3 {
+        width: 120px;
+        height: 120px;
+    }
+</style>
+
+<body>
+<p>The green positioned object should span all the regions. It should fill the left half of every region.</p>
+
+<div id="content">
+    <div id="first-box">
+        <div id="second-box">
+            
+        </div>
+    </div>
+</div>
+
+<div id="container">
+    <div id="region1"></div>
+    <div id="region2"></div>
+    <div id="region3"></div>
+</div>

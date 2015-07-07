@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html style="font-size: 16px">
+<head>
+
+<meta name="viewport" content="width=800">
+<style>
+  body {
+    width: 800px;
+    margin: 0;
+    overflow-y: hidden;
+  }
+</style>
+
+<script>
+if (window.internals) {
+    window.internals.settings.setTextAutosizingEnabled(true);
+    window.internals.settings.setTextAutosizingWindowSizeOverride(320, 480);
+} else if (window.console && console.warn) {
+    console.warn("This test depends on the Text Autosizing setting being true, so run it in DumpRenderTree, or manually enable Text Autosizing, and either use a mobile device with 320px device-width (like Nexus S or iPhone), or define HACK_FORCE_TEXT_AUTOSIZING_ON_DESKTOP.");
+}
+</script>
+
+</head>
+<body>
+
+<div>
+    This paragraph should be autosized to 40px computed font-size (16 * 800/320),
+    whereas the check boxes below should be rendered at their default size and
+    the accompanying text below should remain 16px.
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+    incididunt ut labore et dolore magna aliqua.
+</div>
+<div>
+    Check one or more:
+    <input type="checkbox" name="vehicle" value="Bike">I have a bike<br/>
+    <input type="checkbox" name="vehicle" value="Car">I have a car <br/>
+</div>
+
+</body>
+</html>

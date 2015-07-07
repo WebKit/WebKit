@@ -1,0 +1,77 @@
+Test multi-touch is sent to the same iframe.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+First touch is on inner iframe.
+PASS ev.type is "touchstart"
+PASS touchreceiver is "iframe1"
+PASS ev.changedTouches.length is 1
+PASS ev.touches.length is 1
+PASS ev.targetTouches.length is 1
+PASS ev.touches[0].pageX is 50
+PASS ev.touches[0].pageY is 50
+PASS ev.touches[0].target.ownerDocument.title is "iframe1"
+PASS ev.changedTouches[0].target.ownerDocument.title is "iframe1"
+PASS ev.targetTouches[0].target.ownerDocument.title is "iframe1"
+
+Second touch is on outer iframe, nothing should happen.
+
+Moves the first touch outside inner iframe.
+PASS ev.type is "touchmove"
+PASS touchreceiver is "iframe1"
+PASS ev.changedTouches.length is 1
+PASS ev.touches.length is 1
+PASS ev.targetTouches.length is 1
+PASS ev.touches[0].pageX is 200
+PASS ev.touches[0].pageY is 200
+PASS ev.touches[0].target.ownerDocument.title is "iframe1"
+PASS ev.changedTouches[0].target.ownerDocument.title is "iframe1"
+PASS ev.targetTouches[0].target.ownerDocument.title is "iframe1"
+
+Release the first touch.
+PASS ev.type is "touchend"
+PASS touchreceiver is "iframe1"
+PASS ev.changedTouches.length is 1
+PASS ev.touches.length is 0
+PASS ev.targetTouches.length is 0
+PASS ev.changedTouches[0].target.ownerDocument.title is "iframe1"
+
+Third touch is on outer iframe, nothing should happen.
+PASS ev.type is "touchstart"
+PASS touchreceiver is "iframe2"
+FAIL ev.changedTouches.length should be 1. Was 2.
+FAIL ev.touches.length should be 1. Was 2.
+FAIL ev.targetTouches.length should be 1. Was 2.
+FAIL ev.touches[0].pageX should be 30. Was 20.
+FAIL ev.touches[0].pageY should be 30. Was 20.
+PASS ev.touches[0].target.ownerDocument.title is "iframe2"
+PASS ev.changedTouches[0].target.ownerDocument.title is "iframe2"
+PASS ev.targetTouches[0].target.ownerDocument.title is "iframe2"
+
+Release all touches on outer iframe, and touch outer iframe again.
+FAIL ev.type should be touchstart. Was touchend.
+PASS touchreceiver is "iframe2"
+FAIL ev.changedTouches.length should be 1. Was 2.
+FAIL ev.touches.length should be 2. Was 0.
+FAIL ev.targetTouches.length should be 1. Was 0.
+FAIL ev.touches[0].pageX should be 30. Threw exception TypeError: undefined is not an object (evaluating 'ev.touches[0].pageX')
+FAIL ev.touches[0].pageY should be 30. Threw exception TypeError: undefined is not an object (evaluating 'ev.touches[0].pageY')
+FAIL ev.touches[0].target.ownerDocument.title should be iframe2. Threw exception TypeError: undefined is not an object (evaluating 'ev.touches[0].target')
+PASS ev.changedTouches[0].target.ownerDocument.title is "iframe2"
+FAIL ev.targetTouches[0].target.ownerDocument.title should be iframe2. Threw exception TypeError: undefined is not an object (evaluating 'ev.targetTouches[0].target')
+FAIL ev.type should be touchend. Was touchstart.
+PASS touchreceiver is "iframe2"
+FAIL ev.changedTouches.length should be 2. Was 1.
+FAIL ev.touches.length should be 0. Was 1.
+FAIL ev.targetTouches.length should be 0. Was 1.
+PASS ev.changedTouches[0].target.ownerDocument.title is "iframe2"
+FAIL ev.changedTouches[1].target.ownerDocument.title should be iframe2. Threw exception TypeError: undefined is not an object (evaluating 'ev.changedTouches[1].target')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+Touch inner iframe, this will trigger onTouch as it is inside outer iframe.
+
+Release all touches.
+

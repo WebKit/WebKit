@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    #container {
+      position: relative;
+      width: 400px;
+      height: 100px;
+      border: 1px solid black;
+    }
+    #box {
+      position: absolute;
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+      -webkit-transition-duration: 1s;
+      -webkit-transition-timing-function: linear;
+    }
+  </style>
+  <script>
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+    }
+
+    function startTransition()
+    {
+      var box = document.getElementById('box');
+      box.style.left = '300px';
+      box.style.opacity = 0.5;
+      window.setTimeout(function() {
+        box.style.left = '0px';
+        
+        window.setTimeout(function() {
+          var boxPos = parseInt(window.getComputedStyle(box).left);
+          document.getElementById('result').innerHTML = (boxPos < 200) ? "PASS" : "FAIL";
+          if (window.testRunner)
+              testRunner.notifyDone();
+        }, 250);
+      }, 500);
+    }
+    window.addEventListener('load', startTransition, false)
+  </script>
+</head>
+<body>
+
+<p>Box should start moving left after left style is reset after 500ms</p>
+<div id="container">
+  <div id="box">
+  </div>
+</div>
+<div id="result">
+</div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 282x19
+          text run at (0,0) width 282: "These two tables should be the same height."
+      RenderBlock {DIV} at (0,20) size 82x320
+        RenderTable {TABLE} at (0,0) size 22x320
+          RenderTableSection {TBODY} at (0,0) size 22x320
+            RenderTableRow {TR} at (0,0) size 22x320
+              RenderTableCell {TD} at (0,0) size 22x70 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 19x8
+                  text run at (1,1) width 8: "1"
+              RenderTableCell {TD} at (0,70) size 22x244 [border: (1px solid #008000)] [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 19x8
+                  text run at (1,1) width 8: "2"
+              RenderTableCell {TD} at (0,314) size 22x6 [border: (1px solid #008000)] [r=0 c=2 rs=1 cs=1]
+                RenderImage {IMG} at (1,1) size 20x4 [bgcolor=#FFA500]
+        RenderBlock {P} at (38,0) size 0x320
+        RenderTable {TABLE} at (38,0) size 44x320
+          RenderTableSection {TBODY} at (0,0) size 44x320
+            RenderTableRow {TR} at (0,0) size 22x320
+              RenderTableCell {TD} at (0,0) size 22x64 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 19x8
+                  text run at (1,1) width 8: "1"
+              RenderTableCell {TD} at (0,69) size 22x246 [border: (1px solid #008000)] [r=0 c=1 rs=1 cs=1]
+                RenderImage {IMG} at (6,-4) size 10x254 [bgcolor=#FFA500]
+            RenderTableRow {TR} at (0,22) size 22x320
+              RenderTableCell {TD} at (22,0) size 22x320 [border: (1px solid #008000)] [r=1 c=0 rs=1 cs=3]
+                RenderText {#text} at (1,1) size 19x8
+                  text run at (1,1) width 8: "1"

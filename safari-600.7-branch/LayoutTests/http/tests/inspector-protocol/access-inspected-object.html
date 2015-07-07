@@ -1,0 +1,75 @@
+<html>
+<head>
+<script type="text/javascript" src="resources/protocol-test.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function test()
+{
+    InspectorTest.sendCommand("DOM.getDocument", {}, didGetDocument);
+
+    function didGetDocument(messageObject)
+    {
+        InspectorTest.sendCommand("DOM.querySelector", {
+                "nodeId": messageObject.result.root.nodeId,
+                "selector": "iframe#myframe"
+            }, didFindIframe);
+        InspectorTest.eventHandler["DOM.setChildNodes"] = iframeRequestHandler;
+    }
+
+    function didFindIframe(messageObject)
+    {
+        if (messageObject.error) {
+            InspectorTest.log("FAIL: " + messageObject.error);
+            InspectorTest.completeTest();
+        }
+    }
+
+    function iframeRequestHandler(messageObject)
+    {
+        var node = messageObject.params.nodes[0];
+        if (!node || node.nodeName !== "IFRAME")
+            return;
+        InspectorTest.eventHandler["DOM.setChildNodes"] = null;
+        InspectorTest.sendCommand("DOM.querySelector", {
+                "nodeId": node.contentDocument.nodeId,
+                "selector": "div#rootDiv"
+            }, didFindDiv);
+    }
+
+    function didFindDiv(messageObject)
+    {
+        InspectorTest.sendCommand("Console.enable", {});
+        InspectorTest.sendCommand("Console.addInspectedNode", {
+                "nodeId": messageObject.result.nodeId
+            }, didAddInspectedNode);
+    }
+
+    function didAddInspectedNode(messageObject)
+    {
+        InspectorTest.sendCommand("Runtime.evaluate", {
+                "expression": "$0",
+                "includeCommandLineAPI": true
+            }, didEvaluate);
+    }
+
+    function didEvaluate(messageObject)
+    {
+        if (messageObject.result.wasThrown)
+            InspectorTest.log("FAIL: unexpected exception: " + JSON.stringify(messageObject, null, 2));
+        if (messageObject.result.result.value !== null)
+            InspectorTest.log("FAIL: unexpected value: " + JSON.stringify(messageObject, null, 2));
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+<body>
+<p>Test that code evaluated in the main frame cannot access $0 that resolves into a node in a frame from a different domain. <a href="https://bugs.webkit.org/show_bug.cgi?id=105423">Bug 105423.</p>
+<iframe id="myframe" src="http://localhost:8000/inspector-protocol/resources/test-page.html" onload="runTest()"></iframe>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<style>
+</style>
+</head>
+<body>
+<p>Test appearances of input-speech-button in &lt;input type='search'&gt;.</p>
+<div id="console"></div>
+
+<script>
+var parent = document.createElement('div');
+document.body.appendChild(parent);
+parent.innerHTML = '<table><tr><td id=p1><td id=p2><td id=p3></tr></table>';
+var cells = ["", "", ""];
+var maxCellCount = [7, 5, 5];
+var cellCount = 0;
+var index = 0;
+for (var size = 8; size < 24; size++) {
+    cells[index] += '<input type="search" style="font-size:' + size + 'px" x-webkit-speech><br>'
+        + '<input type="search" style="font-size:' + size + 'px" value="012345678901234567890123456789"><br>'
+        + '<input type="search" style="font-size:' + size + 'px" value="012345678901234567890123456789" x-webkit-speech><br>';
+    if (++cellCount >= maxCellCount[index]) {
+        ++index;
+        cellCount = 0;
+    }
+}
+for (var i = 0; i < cells.length; ++i) {
+  var div = document.createElement('div');
+  div.innerHTML = cells[i];
+  document.getElementById('p' + (i + 1)).appendChild(div);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+main frame - has 1 onunload handler(s)
+main frame - has 1 onunload handler(s)
+This tests that history.go(0) will force a page reload.
+
+Test Passed

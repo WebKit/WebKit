@@ -1,0 +1,3 @@
+Parsing style property 129 (value "2*") failed
+Parsing style property 129 (value "1*") failed
+Parsing style property 129 (value "3*") failed

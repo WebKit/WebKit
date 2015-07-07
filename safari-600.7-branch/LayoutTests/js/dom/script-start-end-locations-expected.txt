@@ -1,0 +1,280 @@
+program { 7:9 - 19:1 }
+program { 21:9 - 21:50 }
+program { 21:68 - 21:109 }
+program { 23:9 - 23:50 }
+program { 23:68 - 23:109 }
+program { 25:9 - 26:1 }
+program { 27:13 - 28:1 }
+function "hf1" { 30:24 - 30:38 }
+function "hf2" { 31:28 - 31:42 }
+function "hf3" { 32:32 - 32:46 }
+function "hf4" { 34:24 - 36:9 }
+function "hf5" { 37:28 - 39:9 }
+function "hf6" { 40:32 - 42:9 }
+function "hf7" { 45:16 - 47:5 }
+function "hf8" { 49:35 - 49:45 }
+function "hf9" { 49:97 - 49:107 }
+
+program { 1:1 - 474:1 }
+
+  On first line:
+function "f0" { 1:115 - 1:266 }
+function "f0a" { 1:142 - 1:257 }
+function "f0b" { 1:170 - 1:248 }
+eval { 1:1 - 1:56 }
+function "x0" { 1:298 - 1:476 }
+function "x0a" { 1:330 - 1:466 }
+function "x0b" { 1:364 - 1:456 }
+eval { 1:1 - 1:56 }
+
+  Functions Declarations in a function:
+function "f1" { 9:22 - 9:113 }
+eval { 1:1 - 1:56 }
+function "f2" { 12:22 - 16:5 }
+function "f2a" { 14:24 - 14:116 }
+eval { 1:1 - 1:56 }
+function "f3" { 19:22 - 31:5 }
+function "f3a" { 21:24 - 29:9 }
+function "f3b" { 23:28 - 27:13 }
+eval { 1:1 - 1:56 }
+function "f4" { 34:22 - 34:71 }
+function "f4a" { 34:49 - 34:50 }
+function "f5" { 36:22 - 36:151 }
+function "f5a" { 36:49 - 36:141 }
+eval { 1:1 - 1:56 }
+function "f6" { 38:22 - 38:189 }
+function "f6a" { 38:49 - 38:179 }
+function "f6b" { 38:77 - 38:169 }
+eval { 1:1 - 1:56 }
+
+  Indented Functions Declarations in a function:
+function "fi1" { 43:27 - 43:119 }
+eval { 1:1 - 1:56 }
+function "fi2" { 46:27 - 50:9 }
+function "fi2a" { 48:29 - 48:122 }
+eval { 1:1 - 1:56 }
+function "fi3" { 53:27 - 65:9 }
+function "fi3a" { 55:29 - 63:13 }
+function "fi3b" { 57:33 - 61:17 }
+eval { 1:1 - 1:56 }
+function "fi4" { 68:27 - 68:80 }
+function "fi4a" { 68:56 - 68:57 }
+function "fi5" { 70:27 - 70:160 }
+function "fi5a" { 70:56 - 70:149 }
+eval { 1:1 - 1:56 }
+function "fi6" { 72:27 - 72:201 }
+function "fi6a" { 72:56 - 72:190 }
+function "fi6b" { 72:86 - 72:179 }
+eval { 1:1 - 1:56 }
+
+  Functions Expressions in a function:
+function "x1" { 77:28 - 77:119 }
+eval { 1:1 - 1:56 }
+function "x2" { 80:28 - 84:5 }
+function "x2a" { 82:30 - 82:122 }
+eval { 1:1 - 1:56 }
+function "x3" { 87:28 - 99:5 }
+function "x3a" { 89:30 - 97:9 }
+function "x3b" { 91:34 - 95:13 }
+eval { 1:1 - 1:56 }
+function "x4" { 102:28 - 102:83 }
+function "x4a" { 102:61 - 102:62 }
+function "x5" { 104:28 - 104:163 }
+function "x5a" { 104:61 - 104:153 }
+eval { 1:1 - 1:56 }
+function "x6" { 106:28 - 106:207 }
+function "x6a" { 106:61 - 106:197 }
+function "x6b" { 106:95 - 106:187 }
+eval { 1:1 - 1:56 }
+
+  Indented Functions Expressions in a function:
+function "xi1" { 111:33 - 111:125 }
+eval { 1:1 - 1:56 }
+function "xi2" { 114:33 - 118:9 }
+function "xi2a" { 116:35 - 116:128 }
+eval { 1:1 - 1:56 }
+function "xi3" { 121:33 - 133:9 }
+function "xi3a" { 123:35 - 131:13 }
+function "xi3b" { 125:39 - 129:17 }
+eval { 1:1 - 1:56 }
+function "xi4" { 136:33 - 136:92 }
+function "xi4a" { 136:68 - 136:69 }
+function "xi5" { 138:33 - 138:172 }
+function "xi5a" { 138:68 - 138:161 }
+eval { 1:1 - 1:56 }
+function "xi6" { 140:33 - 140:219 }
+function "xi6a" { 140:68 - 140:208 }
+function "xi6b" { 140:104 - 140:197 }
+eval { 1:1 - 1:56 }
+
+  Anonymous Function Declaration in a function:
+function "" { 146:58 - 151:5 }
+eval { 1:1 - 1:56 }
+
+  Global eval:
+eval { 1:1 - 1:56 }
+
+  Global Functions Declarations:
+function "gf1" { 161:19 - 161:111 }
+eval { 1:1 - 1:56 }
+function "gf2" { 164:19 - 168:1 }
+function "gf2a" { 166:21 - 166:114 }
+eval { 1:1 - 1:56 }
+function "gf3" { 171:19 - 183:1 }
+function "gf3a" { 173:21 - 181:5 }
+function "gf3b" { 175:25 - 179:9 }
+eval { 1:1 - 1:56 }
+function "gf4" { 186:19 - 186:72 }
+function "gf4a" { 186:48 - 186:49 }
+function "gf5" { 188:19 - 188:152 }
+function "gf5a" { 188:48 - 188:141 }
+eval { 1:1 - 1:56 }
+function "gf6" { 190:19 - 190:193 }
+function "gf6a" { 190:48 - 190:182 }
+function "gf6b" { 190:78 - 190:171 }
+eval { 1:1 - 1:56 }
+
+  Indented Global Functions Declarations:
+function "gfi1" { 195:24 - 195:117 }
+eval { 1:1 - 1:56 }
+function "gfi2" { 198:24 - 202:5 }
+function "gfi2a" { 200:26 - 200:120 }
+eval { 1:1 - 1:56 }
+function "gfi3" { 205:24 - 217:5 }
+function "gfi3a" { 207:26 - 215:9 }
+function "gfi3b" { 209:30 - 213:13 }
+eval { 1:1 - 1:56 }
+function "gfi4" { 220:24 - 220:81 }
+function "gfi4a" { 220:55 - 220:56 }
+function "gfi5" { 222:24 - 222:161 }
+function "gfi5a" { 222:55 - 222:149 }
+eval { 1:1 - 1:56 }
+function "gfi6" { 224:24 - 224:205 }
+function "gfi6a" { 224:55 - 224:193 }
+function "gfi6b" { 224:87 - 224:181 }
+eval { 1:1 - 1:56 }
+
+  Global Functions Expressions:
+function "gx1" { 229:25 - 229:117 }
+eval { 1:1 - 1:56 }
+function "gx2" { 232:25 - 236:1 }
+function "gx2a" { 234:27 - 234:120 }
+eval { 1:1 - 1:56 }
+function "gx3" { 239:25 - 251:1 }
+function "gx3a" { 241:27 - 249:5 }
+function "gx3b" { 243:31 - 247:9 }
+eval { 1:1 - 1:56 }
+function "gx4" { 254:25 - 254:84 }
+function "gx4a" { 254:60 - 254:61 }
+function "gx5" { 256:25 - 256:164 }
+function "gx5a" { 256:60 - 256:153 }
+eval { 1:1 - 1:56 }
+function "gx6" { 258:25 - 258:211 }
+function "gx6a" { 258:60 - 258:200 }
+function "gx6b" { 258:96 - 258:189 }
+eval { 1:1 - 1:56 }
+
+  Indented Functions Declarations:
+function "gxi1" { 263:30 - 263:123 }
+eval { 1:1 - 1:56 }
+function "gxi2" { 266:30 - 270:5 }
+function "gxi2a" { 268:32 - 268:126 }
+eval { 1:1 - 1:56 }
+function "gxi3" { 273:30 - 285:5 }
+function "gxi3a" { 275:32 - 283:9 }
+function "gxi3b" { 277:36 - 281:13 }
+eval { 1:1 - 1:56 }
+function "gxi4" { 288:30 - 288:93 }
+function "gxi4a" { 288:67 - 288:68 }
+function "gxi5" { 290:30 - 290:173 }
+function "gxi5a" { 290:67 - 290:161 }
+eval { 1:1 - 1:56 }
+function "gxi6" { 292:30 - 292:223 }
+function "gxi6a" { 292:67 - 292:211 }
+function "gxi6b" { 292:105 - 292:199 }
+eval { 1:1 - 1:56 }
+
+  Anonymous Global Function Declarations:
+function "" { 299:56 - 304:1 }
+eval { 1:1 - 1:56 }
+
+  Function Declarations in an eval:
+eval { 1:1 - 16:7 }
+function "ef1" { 3:20 - 14:5 }
+function "ef1a" { 5:25 - 12:9 }
+function "ef1b" { 7:29 - 10:13 }
+eval { 1:1 - 1:56 }
+eval { 1:1 - 1:225 }
+function "ef2" { 1:59 - 1:217 }
+function "ef2a" { 1:88 - 1:207 }
+function "ef2b" { 1:118 - 1:197 }
+eval { 1:1 - 1:56 }
+eval { 1:1 - 17:8 }
+function "efi1" { 4:21 - 15:5 }
+function "efi1a" { 6:26 - 13:9 }
+function "efi1b" { 8:30 - 11:13 }
+eval { 1:1 - 1:56 }
+eval { 1:1 - 1:234 }
+function "efi2" { 1:60 - 1:225 }
+function "efi2a" { 1:91 - 1:214 }
+function "efi2b" { 1:123 - 1:203 }
+eval { 1:1 - 1:56 }
+
+  Function Expressions in an eval:
+eval { 1:1 - 16:7 }
+function "ex1" { 3:26 - 14:5 }
+function "ex1a" { 5:31 - 12:9 }
+function "ex1b" { 7:35 - 10:13 }
+eval { 1:1 - 1:56 }
+eval { 1:1 - 1:246 }
+function "ex2" { 1:65 - 1:237 }
+function "ex2a" { 1:100 - 1:226 }
+function "ex2b" { 1:136 - 1:215 }
+eval { 1:1 - 1:56 }
+eval { 1:1 - 17:8 }
+function "exi1" { 4:27 - 15:5 }
+function "exi1a" { 6:32 - 13:9 }
+function "exi1b" { 8:36 - 11:13 }
+eval { 1:1 - 1:56 }
+eval { 1:1 - 1:255 }
+function "exi2" { 1:66 - 1:245 }
+function "exi2a" { 1:103 - 1:233 }
+function "exi2b" { 1:141 - 1:221 }
+eval { 1:1 - 1:56 }
+
+  new Function Object:
+function "" { 1:1 - 1:228 }
+function "nf1a" { 1:60 - 1:219 }
+function "nf1b" { 1:90 - 1:209 }
+function "nf1c" { 1:120 - 1:199 }
+eval { 1:1 - 1:56 }
+function "" { 1:1 - 17:8 }
+function "nf2a" { 4:21 - 15:5 }
+function "nf2b" { 6:25 - 13:9 }
+function "nf2c" { 8:29 - 11:13 }
+eval { 1:1 - 1:56 }
+function "" { 1:1 - 1:228 }
+function "nf1a" { 1:60 - 1:219 }
+function "nf1b" { 1:90 - 1:209 }
+function "nf1c" { 1:120 - 1:199 }
+eval { 1:1 - 1:56 }
+function "" { 1:1 - 1:237 }
+function "nfi1a" { 1:61 - 1:227 }
+function "nfi1b" { 1:93 - 1:216 }
+function "nfi1c" { 1:125 - 1:205 }
+eval { 1:1 - 1:56 }
+function "" { 1:1 - 17:8 }
+function "nf2a" { 4:21 - 15:5 }
+function "nf2b" { 6:25 - 13:9 }
+function "nf2c" { 8:29 - 11:13 }
+eval { 1:1 - 1:56 }
+function "" { 1:1 - 17:9 }
+function "nfi2a" { 4:22 - 15:5 }
+function "nfi2b" { 6:26 - 13:9 }
+function "nfi2c" { 8:30 - 11:13 }
+eval { 1:1 - 1:56 }
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

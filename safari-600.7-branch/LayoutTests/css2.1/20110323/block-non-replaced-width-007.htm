@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>CSS Test: Box centering with 'margin-left' and 'margin-right' set to auto</title>
+        <link rel="author" title="Microsoft" href="http://www.microsoft.com/">
+        <link rel="help" href="http://www.w3.org/TR/CSS21/visudet.html#blockwidth">
+        <meta name="flags" content="ahem">
+        <meta name="assert" content="When 'margin-left' and 'margin-right' are set to auto and the element has a 'width' then the box will be centered.">
+        <style type="text/css">
+            #div1
+            {
+                border: solid black;
+                height: 2in;
+                width: 2in;
+            }
+            #div2
+            {
+                background-color: orange;
+                border-color: orange;
+                border-style: solid;
+                border-width: 0 0.25in;
+                margin: 0 auto;
+                padding: 0;
+                height: 1in;
+                width: 0.5in;
+            }
+            #div3
+            {
+                color: blue;
+                font: 1in/1em Ahem;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test passes if the blue and orange boxes are the same width and the blue box is directly below the orange box.</p>
+        <div id="div1">
+            <div id="div2"></div>
+            <div id="div3">X</div>
+        </div>
+    </body>
+</html>

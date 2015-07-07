@@ -1,0 +1,20 @@
+
+
+This tests that AXRequired is reported for popup buttons.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Verify required attribute works as expected.
+PASS button1.isAttributeSupported('AXRequired') is true
+PASS button1.boolAttributeValue('AXRequired') is true
+Verify aria-required attribute works as expected.
+PASS button2.isAttributeSupported('AXRequired') is true
+PASS button2.boolAttributeValue('AXRequired') is true
+Verify aria-required attribute works when it's false.
+PASS button3.isAttributeSupported('AXRequired') is true
+PASS button3.boolAttributeValue('AXRequired') is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

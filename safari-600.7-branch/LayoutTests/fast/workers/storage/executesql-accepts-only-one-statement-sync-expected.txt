@@ -1,0 +1,10 @@
+Test that executeSql() accepts only one statement.
+PASS: INSERT INTO Test VALUES (1), 
+PASS: INSERT INTO Test VALUES (2);, 
+PASS:    INSERT INTO Test VALUES (3)    , 
+PASS:    INSERT INTO Test VALUES (4);   , 
+PASS: INSERT INTO Test VALUES (5)   ;, 
+PASS: INSERT INTO Test VALUES (6); garbage, could not prepare statement (1, not an error)
+PASS: INSERT INTO Test VALUES (7); INSERT INTO Test VALUES (8), could not prepare statement (1, not an error)
+PASS:   INSERT INTO Test VALUES (9);   INSERT INTO Test VALUES (10);   , could not prepare statement (1, not an error)
+

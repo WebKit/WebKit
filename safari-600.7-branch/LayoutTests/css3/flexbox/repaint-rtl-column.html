@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<style>
+#flexbox {
+    display: -webkit-flex;
+    -webkit-flex-flow: column;
+    height: 300px;
+    width: 200px;
+}
+#left {
+    -webkit-flex: 1;
+    background-color: yellow;
+    min-height: 0;
+}
+#content {
+    -webkit-flex: 1;
+    border: 5px solid blue;
+    min-height: 0;
+}
+#content > div {
+    height: 350px;
+    background-color: orange;
+}
+</style>
+<script>
+// This test makes sure that we repaint the right region of a flexbox when
+// changing the flex values. Only the middle of the test page should be
+// repainted. If the top of the test page (above the flexbox) is repainted,
+// this test fails.
+function setFlex(value)
+{
+    document.getElementById("content").style.webkitFlex = value;
+}
+
+window.onload = function() {
+    if (window.testRunner) {
+        testRunner.dumpAsText(true);
+        document.body.offsetTop;
+        testRunner.display();
+        testRunner.waitUntilDone();
+    }
+    setTimeout(function() {
+        setFlex(4.6);
+        setTimeout(function() {
+            setFlex(5);
+            if (window.testRunner)
+                testRunner.notifyDone();
+        })
+    })
+};
+</script>
+<div style="height: 60px"></div>
+<div id="flexbox" dir="rtl">
+<div id="left"></div>
+<div id="content"><div></div></div>

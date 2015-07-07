@@ -1,0 +1,3 @@
+'max-width: none' should have no effect because it is the initial state. The test succeeds if the following two blocks are rendered in the same way.
+
+PASS

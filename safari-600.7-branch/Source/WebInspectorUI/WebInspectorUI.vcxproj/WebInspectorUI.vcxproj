@@ -1,0 +1,826 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="DebugSuffix|Win32">
+      <Configuration>DebugSuffix</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="DebugSuffix|x64">
+      <Configuration>DebugSuffix</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug_WinCairo|Win32">
+      <Configuration>Debug_WinCairo</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Production|Win32">
+      <Configuration>Production</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release_WinCairo|Win32">
+      <Configuration>Release_WinCairo</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug_WinCairo|x64">
+      <Configuration>Debug_WinCairo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Production|x64">
+      <Configuration>Production</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release_WinCairo|x64">
+      <Configuration>Release_WinCairo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{0473724F-0AB3-4F12-892E-9FAB0186C804}</ProjectGuid>
+    <RootNamespace>WebInspectorUI</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Production|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Production|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\debug.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\debug.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\release.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Production|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\release.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\release.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\debug.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\debug.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\debug.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\release.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Production|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\release.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\release.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\common.props" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\debug.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Production|Win32'" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+    <Link />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+    <Link />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+    </ClCompile>
+    <Link />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+    </ClCompile>
+    <Link />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+    </ClCompile>
+    <Link />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <None Include="..\Info.plist" />
+    <None Include="..\Localizations\en.lproj\localizedStrings.js" />
+    <None Include="..\Scripts\combine-resources.pl" />
+    <None Include="..\Scripts\copy-user-interface-resources.pl" />
+    <None Include="..\Scripts\cssmin.py" />
+    <None Include="..\Scripts\jsmin.py" />
+    <None Include="..\Scripts\remove-console-asserts.pl" />
+    <None Include="..\Scripts\update-codemirror-resources.rb" />
+    <None Include="..\Scripts\update-pretty-printer.rb" />
+    <None Include="..\UserInterface\ActivateButtonNavigationItem.js" />
+    <None Include="..\UserInterface\ActivateButtonToolbarItem.js" />
+    <None Include="..\UserInterface\ApplicationCacheDetailsSidebarPanel.js" />
+    <None Include="..\UserInterface\ApplicationCacheFrame.js" />
+    <None Include="..\UserInterface\ApplicationCacheFrameContentView.css" />
+    <None Include="..\UserInterface\ApplicationCacheFrameContentView.js" />
+    <None Include="..\UserInterface\ApplicationCacheFrameTreeElement.js" />
+    <None Include="..\UserInterface\ApplicationCacheIcons.css" />
+    <None Include="..\UserInterface\ApplicationCacheManager.js" />
+    <None Include="..\UserInterface\ApplicationCacheManifest.js" />
+    <None Include="..\UserInterface\ApplicationCacheManifestTreeElement.js" />
+    <None Include="..\UserInterface\ApplicationCacheObserver.js" />
+    <None Include="..\UserInterface\BlankStylePropertiesSection.js" />
+    <None Include="..\UserInterface\BottomUpProfileDataGridTree.js" />
+    <None Include="..\UserInterface\BoxModelDetailsSectionRow.css" />
+    <None Include="..\UserInterface\BoxModelDetailsSectionRow.js" />
+    <None Include="..\UserInterface\Branch.js" />
+    <None Include="..\UserInterface\BranchManager.js" />
+    <None Include="..\UserInterface\Breakpoint.css" />
+    <None Include="..\UserInterface\Breakpoint.js" />
+    <None Include="..\UserInterface\BreakpointIcons.css" />
+    <None Include="..\UserInterface\BreakpointTreeElement.css" />
+    <None Include="..\UserInterface\BreakpointTreeElement.js" />
+    <None Include="..\UserInterface\ButtonNavigationItem.css" />
+    <None Include="..\UserInterface\ButtonNavigationItem.js" />
+    <None Include="..\UserInterface\ButtonToolbarItem.css" />
+    <None Include="..\UserInterface\ButtonToolbarItem.js" />
+    <None Include="..\UserInterface\CallFrame.js" />
+    <None Include="..\UserInterface\CallFrameIcons.css" />
+    <None Include="..\UserInterface\CallFrameTreeElement.js" />
+    <None Include="..\UserInterface\CanvasDataGridNode.js" />
+    <None Include="..\UserInterface\CanvasObserver.js" />
+    <None Include="..\UserInterface\CanvasProfileObject.js" />
+    <None Include="..\UserInterface\CanvasProfileType.js" />
+    <None Include="..\UserInterface\CanvasProfileView.js" />
+    <None Include="..\UserInterface\ClusterContentView.css" />
+    <None Include="..\UserInterface\ClusterContentView.js" />
+    <None Include="..\UserInterface\CodeMirrorAdditions.js" />
+    <None Include="..\UserInterface\CodeMirrorCompletionController.css" />
+    <None Include="..\UserInterface\CodeMirrorCompletionController.js" />
+    <None Include="..\UserInterface\CodeMirrorDragToAlterNumberController.css" />
+    <None Include="..\UserInterface\CodeMirrorDragToAlterNumberController.js" />
+    <None Include="..\UserInterface\CodeMirrorFormatters.js" />
+    <None Include="..\UserInterface\CodeMirrorOverrides.css" />
+    <None Include="..\UserInterface\CodeMirrorTokenTrackingController.css" />
+    <None Include="..\UserInterface\CodeMirrorTokenTrackingController.js" />
+    <None Include="..\UserInterface\Color.js" />
+    <None Include="..\UserInterface\CompletionSuggestionsView.css" />
+    <None Include="..\UserInterface\CompletionSuggestionsView.js" />
+    <None Include="..\UserInterface\ComputedStyleDetailsPanel.js" />
+    <None Include="..\UserInterface\ConsoleCommand.js" />
+    <None Include="..\UserInterface\ConsoleCommandResult.js" />
+    <None Include="..\UserInterface\ConsoleGroup.js" />
+    <None Include="..\UserInterface\ConsoleMessage.js" />
+    <None Include="..\UserInterface\ConsoleMessageImpl.js" />
+    <None Include="..\UserInterface\ConsoleObserver.js" />
+    <None Include="..\UserInterface\ConsolePrompt.css" />
+    <None Include="..\UserInterface\ConsolePrompt.js" />
+    <None Include="..\UserInterface\ContentBrowser.css" />
+    <None Include="..\UserInterface\ContentBrowser.js" />
+    <None Include="..\UserInterface\ContentView.css" />
+    <None Include="..\UserInterface\ContentView.js" />
+    <None Include="..\UserInterface\ContentViewContainer.css" />
+    <None Include="..\UserInterface\ContentViewContainer.js" />
+    <None Include="..\UserInterface\ContextMenu.js" />
+    <None Include="..\UserInterface\ControlToolbarItem.css" />
+    <None Include="..\UserInterface\ControlToolbarItem.js" />
+    <None Include="..\UserInterface\CookieIcon.css" />
+    <None Include="..\UserInterface\CookieStorageContentView.css" />
+    <None Include="..\UserInterface\CookieStorageContentView.js" />
+    <None Include="..\UserInterface\CookieStorageObject.js" />
+    <None Include="..\UserInterface\CookieStorageTreeElement.js" />
+    <None Include="..\UserInterface\ColorPicker.css" />
+    <None Include="..\UserInterface\ColorPicker.js" />
+    <None Include="..\UserInterface\CSSCompletions.js" />
+    <None Include="..\UserInterface\CSSKeywordCompletions.js" />
+    <None Include="..\UserInterface\CSSMedia.js" />
+    <None Include="..\UserInterface\CSSObserver.js" />
+    <None Include="..\UserInterface\CSSProperty.js" />
+    <None Include="..\UserInterface\CSSRule.js" />
+    <None Include="..\UserInterface\CSSStyleDeclaration.js" />
+    <None Include="..\UserInterface\CSSStyleDeclarationSection.css" />
+    <None Include="..\UserInterface\CSSStyleDeclarationSection.js" />
+    <None Include="..\UserInterface\CSSStyleDeclarationTextEditor.css" />
+    <None Include="..\UserInterface\CSSStyleDeclarationTextEditor.js" />
+    <None Include="..\UserInterface\CSSStyleDetailsSidebarPanel.css" />
+    <None Include="..\UserInterface\CSSStyleDetailsSidebarPanel.js" />
+    <None Include="..\UserInterface\CSSStyleManager.js" />
+    <None Include="..\UserInterface\CSSStyleSheet.js" />
+    <None Include="..\UserInterface\DashboardManager.js" />
+    <None Include="..\UserInterface\DashboardView.css" />
+    <None Include="..\UserInterface\DashboardView.js" />
+    <None Include="..\UserInterface\DatabaseContentView.css" />
+    <None Include="..\UserInterface\DatabaseContentView.js" />
+    <None Include="..\UserInterface\DatabaseHostTreeElement.js" />
+    <None Include="..\UserInterface\DatabaseIcon.css" />
+    <None Include="..\UserInterface\DatabaseObject.js" />
+    <None Include="..\UserInterface\DatabaseObserver.js" />
+    <None Include="..\UserInterface\DatabaseTableContentView.css" />
+    <None Include="..\UserInterface\DatabaseTableContentView.js" />
+    <None Include="..\UserInterface\DatabaseTableIcon.css" />
+    <None Include="..\UserInterface\DatabaseTableObject.js" />
+    <None Include="..\UserInterface\DatabaseTableTreeElement.js" />
+    <None Include="..\UserInterface\DatabaseTreeElement.js" />
+    <None Include="..\UserInterface\DataGrid.css" />
+    <None Include="..\UserInterface\DataGrid.js" />
+    <None Include="..\UserInterface\DebuggerManager.js" />
+    <None Include="..\UserInterface\DebuggerObserver.js" />
+    <None Include="..\UserInterface\DebuggerSidebarPanel.css" />
+    <None Include="..\UserInterface\DebuggerSidebarPanel.js" />
+    <None Include="..\UserInterface\DetailsSection.css" />
+    <None Include="..\UserInterface\DetailsSection.js" />
+    <None Include="..\UserInterface\DetailsSectionDataGridRow.js" />
+    <None Include="..\UserInterface\DetailsSectionGroup.js" />
+    <None Include="..\UserInterface\DetailsSectionPropertiesRow.js" />
+    <None Include="..\UserInterface\DetailsSectionRow.js" />
+    <None Include="..\UserInterface\DetailsSectionSimpleRow.js" />
+    <None Include="..\UserInterface\DetailsSidebarPanel.css" />
+    <None Include="..\UserInterface\DetailsSidebarPanel.js" />
+    <None Include="..\UserInterface\DividerNavigationItem.css" />
+    <None Include="..\UserInterface\DividerNavigationItem.js" />
+    <None Include="..\UserInterface\DOMDetailsSidebarPanel.js" />
+    <None Include="..\UserInterface\DOMNode.js" />
+    <None Include="..\UserInterface\DOMNodeDetailsSidebarPanel.js" />
+    <None Include="..\UserInterface\DOMNodeStyles.js" />
+    <None Include="..\UserInterface\DOMObserver.js" />
+    <None Include="..\UserInterface\DOMSearchMatchObject.js" />
+    <None Include="..\UserInterface\DOMStorageContentView.css" />
+    <None Include="..\UserInterface\DOMStorageContentView.js" />
+    <None Include="..\UserInterface\DOMStorageIcons.css" />
+    <None Include="..\UserInterface\DOMStorageObject.js" />
+    <None Include="..\UserInterface\DOMStorageObserver.js" />
+    <None Include="..\UserInterface\DOMStorageTreeElement.js" />
+    <None Include="..\UserInterface\DOMTree.js" />
+    <None Include="..\UserInterface\DOMTreeContentView.css" />
+    <None Include="..\UserInterface\DOMTreeContentView.js" />
+    <None Include="..\UserInterface\DOMTreeElement.js" />
+    <None Include="..\UserInterface\DOMTreeElementPathComponent.js" />
+    <None Include="..\UserInterface\DOMTreeManager.js" />
+    <None Include="..\UserInterface\DOMTreeOutline.css" />
+    <None Include="..\UserInterface\DOMTreeOutline.js" />
+    <None Include="..\UserInterface\DOMTreeUpdater.js" />
+    <None Include="..\UserInterface\DOMUtilities.js" />
+    <None Include="..\UserInterface\Editing.css" />
+    <None Include="..\UserInterface\EditingSupport.js" />
+    <None Include="..\UserInterface\EventHandler.js" />
+    <None Include="..\UserInterface\EventListenerSection.js" />
+    <None Include="..\UserInterface\EventListenerSectionGroup.css" />
+    <None Include="..\UserInterface\EventListenerSectionGroup.js" />
+    <None Include="..\UserInterface\ExecutionContext.js" />
+    <None Include="..\UserInterface\ExecutionContextList.js" />
+    <None Include="..\UserInterface\External\CodeMirror\clojure.js" />
+    <None Include="..\UserInterface\External\CodeMirror\closebrackets.js" />
+    <None Include="..\UserInterface\External\CodeMirror\codemirror.css" />
+    <None Include="..\UserInterface\External\CodeMirror\codemirror.js" />
+    <None Include="..\UserInterface\External\CodeMirror\coffeescript.js" />
+    <None Include="..\UserInterface\External\CodeMirror\comment.js" />
+    <None Include="..\UserInterface\External\CodeMirror\css.js" />
+    <None Include="..\UserInterface\External\CodeMirror\htmlmixed.js" />
+    <None Include="..\UserInterface\External\CodeMirror\javascript.js" />
+    <None Include="..\UserInterface\External\CodeMirror\less.js" />
+    <None Include="..\UserInterface\External\CodeMirror\LICENSE" />
+    <None Include="..\UserInterface\External\CodeMirror\livescript.js" />
+    <None Include="..\UserInterface\External\CodeMirror\matchbrackets.js" />
+    <None Include="..\UserInterface\External\CodeMirror\overlay.js" />
+    <None Include="..\UserInterface\External\CodeMirror\placeholder.js" />
+    <None Include="..\UserInterface\External\CodeMirror\runmode.js" />
+    <None Include="..\UserInterface\External\CodeMirror\sass.js" />
+    <None Include="..\UserInterface\External\CodeMirror\searchcursor.js" />
+    <None Include="..\UserInterface\External\CodeMirror\sql.js" />
+    <None Include="..\UserInterface\External\CodeMirror\xml.js" />
+    <None Include="..\UserInterface\FilterBar.css" />
+    <None Include="..\UserInterface\FilterBar.js" />
+    <None Include="..\UserInterface\FindBanner.css" />
+    <None Include="..\UserInterface\FindBanner.js" />
+    <None Include="..\UserInterface\FlexibleSpaceNavigationItem.css" />
+    <None Include="..\UserInterface\FlexibleSpaceNavigationItem.js" />
+    <None Include="..\UserInterface\FolderIcon.css" />
+    <None Include="..\UserInterface\FolderTreeElement.js" />
+    <None Include="..\UserInterface\FontResourceContentView.css" />
+    <None Include="..\UserInterface\FontResourceContentView.js" />
+    <None Include="..\UserInterface\Formatter.js" />
+    <None Include="..\UserInterface\FormatterContentBuilder.js" />
+    <None Include="..\UserInterface\FormatterSourceMap.js" />
+    <None Include="..\UserInterface\Frame.js" />
+    <None Include="..\UserInterface\FrameContentView.js" />
+    <None Include="..\UserInterface\FrameResourceManager.js" />
+    <None Include="..\UserInterface\FrameTreeElement.js" />
+    <None Include="..\UserInterface\GeneralTreeElement.js" />
+    <None Include="..\UserInterface\GeneralTreeElementPathComponent.js" />
+    <None Include="..\UserInterface\GenericResourceContentView.js" />
+    <None Include="..\UserInterface\Geometry.js" />
+    <None Include="..\UserInterface\HierarchicalPathComponent.css" />
+    <None Include="..\UserInterface\HierarchicalPathComponent.js" />
+    <None Include="..\UserInterface\HierarchicalPathNavigationItem.js" />
+    <None Include="..\UserInterface\ImageResourceContentView.css" />
+    <None Include="..\UserInterface\ImageResourceContentView.js" />
+    <None Include="..\UserInterface\Images\ApplicationCache%402x.png" />
+    <None Include="..\UserInterface\Images\ApplicationCache.png" />
+    <None Include="..\UserInterface\Images\ApplicationCacheManifest%402x.png" />
+    <None Include="..\UserInterface\Images\ApplicationCacheManifest.png" />
+    <None Include="..\UserInterface\Images\BackArrow.svg" />
+    <None Include="..\UserInterface\Images\BackArrowLegacy.svg" />
+    <None Include="..\UserInterface\Images\BottomUpTree.svg" />
+    <None Include="..\UserInterface\Images\Breakpoint%402x.png" />
+    <None Include="..\UserInterface\Images\Breakpoint.png" />
+    <None Include="..\UserInterface\Images\BreakpointButton.svg" />
+    <None Include="..\UserInterface\Images\BreakpointInactive%402x.png" />
+    <None Include="..\UserInterface\Images\BreakpointInactive.png" />
+    <None Include="..\UserInterface\Images\BreakpointInactiveButton.svg" />
+    <None Include="..\UserInterface\Images\Breakpoints.svg" />
+    <None Include="..\UserInterface\Images\ClippingCSS%402x.png" />
+    <None Include="..\UserInterface\Images\ClippingCSS.png" />
+    <None Include="..\UserInterface\Images\ClippingGeneric%402x.png" />
+    <None Include="..\UserInterface\Images\ClippingGeneric.png" />
+    <None Include="..\UserInterface\Images\ClippingJS%402x.png" />
+    <None Include="..\UserInterface\Images\ClippingJS.png" />
+    <None Include="..\UserInterface\Images\Close.svg" />
+    <None Include="..\UserInterface\Images\Colors%402x.png" />
+    <None Include="..\UserInterface\Images\Colors.png" />
+    <None Include="..\UserInterface\Images\Cookie%402x.png" />
+    <None Include="..\UserInterface\Images\Cookie.png" />
+    <None Include="..\UserInterface\Images\Crosshair.svg" />
+    <None Include="..\UserInterface\Images\Database%402x.png" />
+    <None Include="..\UserInterface\Images\Database.png" />
+    <None Include="..\UserInterface\Images\DatabaseTable%402x.png" />
+    <None Include="..\UserInterface\Images\DatabaseTable.png" />
+    <None Include="..\UserInterface\Images\DisclosureTriangleSmallClosed.svg" />
+    <None Include="..\UserInterface\Images\DisclosureTriangleSmallOpen.svg" />
+    <None Include="..\UserInterface\Images\DisclosureTriangleTinyClosed.svg" />
+    <None Include="..\UserInterface\Images\DisclosureTriangleTinyOpen.svg" />
+    <None Include="..\UserInterface\Images\DockBottom.svg" />
+    <None Include="..\UserInterface\Images\DockRight.svg" />
+    <None Include="..\UserInterface\Images\DocumentCSS%402x.png" />
+    <None Include="..\UserInterface\Images\DocumentCSS.png" />
+    <None Include="..\UserInterface\Images\DocumentFont%402x.png" />
+    <None Include="..\UserInterface\Images\DocumentFont.png" />
+    <None Include="..\UserInterface\Images\DocumentGeneric%402x.png" />
+    <None Include="..\UserInterface\Images\DocumentGeneric.png" />
+    <None Include="..\UserInterface\Images\DocumentImage%402x.png" />
+    <None Include="..\UserInterface\Images\DocumentImage.png" />
+    <None Include="..\UserInterface\Images\DocumentJS%402x.png" />
+    <None Include="..\UserInterface\Images\DocumentJS.png" />
+    <None Include="..\UserInterface\Images\DocumentMarkup%402x.png" />
+    <None Include="..\UserInterface\Images\DocumentMarkup.png" />
+    <None Include="..\UserInterface\Images\DOMCharacterData.svg" />
+    <None Include="..\UserInterface\Images\DOMComment.svg" />
+    <None Include="..\UserInterface\Images\DOMDocument.svg" />
+    <None Include="..\UserInterface\Images\DOMDocumentType.svg" />
+    <None Include="..\UserInterface\Images\DOMElement.svg" />
+    <None Include="..\UserInterface\Images\DOMNode.svg" />
+    <None Include="..\UserInterface\Images\DOMTextNode.svg" />
+    <None Include="..\UserInterface\Images\DOMTree.svg" />
+    <None Include="..\UserInterface\Images\Error.svg" />
+    <None Include="..\UserInterface\Images\Errors.svg" />
+    <None Include="..\UserInterface\Images\ErrorsEnabled.svg" />
+    <None Include="..\UserInterface\Images\EventListener.svg" />
+    <None Include="..\UserInterface\Images\Exception.svg" />
+    <None Include="..\UserInterface\Images\FilterFieldGlyph.svg" />
+    <None Include="..\UserInterface\Images\FolderGeneric%402x.png" />
+    <None Include="..\UserInterface\Images\FolderGeneric.png" />
+    <None Include="..\UserInterface\Images\ForwardArrow.svg" />
+    <None Include="..\UserInterface\Images\ForwardArrowLegacy.svg" />
+    <None Include="..\UserInterface\Images\Function.svg" />
+    <None Include="..\UserInterface\Images\GoToArrow.svg" />
+    <None Include="..\UserInterface\Images\HierarchicalNavigationItemChevron.svg" />
+    <None Include="..\UserInterface\Images\IndeterminateProgressSpinner1.svg" />
+    <None Include="..\UserInterface\Images\IndeterminateProgressSpinner10.svg" />
+    <None Include="..\UserInterface\Images\IndeterminateProgressSpinner11.svg" />
+    <None Include="..\UserInterface\Images\IndeterminateProgressSpinner12.svg" />
+    <None Include="..\UserInterface\Images\IndeterminateProgressSpinner2.svg" />
+    <None Include="..\UserInterface\Images\IndeterminateProgressSpinner3.svg" />
+    <None Include="..\UserInterface\Images\IndeterminateProgressSpinner4.svg" />
+    <None Include="..\UserInterface\Images\IndeterminateProgressSpinner5.svg" />
+    <None Include="..\UserInterface\Images\IndeterminateProgressSpinner6.svg" />
+    <None Include="..\UserInterface\Images\IndeterminateProgressSpinner7.svg" />
+    <None Include="..\UserInterface\Images\IndeterminateProgressSpinner8.svg" />
+    <None Include="..\UserInterface\Images\IndeterminateProgressSpinner9.svg" />
+    <None Include="..\UserInterface\Images\InstructionPointer%402x.png" />
+    <None Include="..\UserInterface\Images\InstructionPointer.png" />
+    <None Include="..\UserInterface\Images\Issues.svg" />
+    <None Include="..\UserInterface\Images\IssuesEnabled.svg" />
+    <None Include="..\UserInterface\Images\LayerBorders.svg" />
+    <None Include="..\UserInterface\Images\LessColumns.svg" />
+    <None Include="..\UserInterface\Images\LocalStorage%402x.png" />
+    <None Include="..\UserInterface\Images\LocalStorage.png" />
+    <None Include="..\UserInterface\Images\Locked.svg" />
+    <None Include="..\UserInterface\Images\Log%402x.png" />
+    <None Include="..\UserInterface\Images\Log.png" />
+    <None Include="..\UserInterface\Images\Logs.svg" />
+    <None Include="..\UserInterface\Images\Memory.svg" />
+    <None Include="..\UserInterface\Images\MoreColumns.svg" />
+    <None Include="..\UserInterface\Images\Native.svg" />
+    <None Include="..\UserInterface\Images\NavigationItemAngleBrackets.svg" />
+    <None Include="..\UserInterface\Images\NavigationItemBrushAndRuler.svg" />
+    <None Include="..\UserInterface\Images\NavigationItemBug.svg" />
+    <None Include="..\UserInterface\Images\NavigationItemCurleyBraces.svg" />
+    <None Include="..\UserInterface\Images\NavigationItemFile.svg" />
+    <None Include="..\UserInterface\Images\NavigationItemLayers.svg" />
+    <None Include="..\UserInterface\Images\NavigationItemLog.svg" />
+    <None Include="..\UserInterface\Images\NavigationItemMagnifyingGlass.svg" />
+    <None Include="..\UserInterface\Images\NavigationItemStopwatch.svg" />
+    <None Include="..\UserInterface\Images\NavigationItemStorage.svg" />
+    <None Include="..\UserInterface\Images\NavigationItemTrash.svg" />
+    <None Include="..\UserInterface\Images\NavigationItemVariable.svg" />
+    <None Include="..\UserInterface\Images\Network%402x.png" />
+    <None Include="..\UserInterface\Images\Network.png" />
+    <None Include="..\UserInterface\Images\NetworkBarBlue%402x.png" />
+    <None Include="..\UserInterface\Images\NetworkBarBlue.png" />
+    <None Include="..\UserInterface\Images\NetworkBarGray%402x.png" />
+    <None Include="..\UserInterface\Images\NetworkBarGray.png" />
+    <None Include="..\UserInterface\Images\NetworkBarGreen%402x.png" />
+    <None Include="..\UserInterface\Images\NetworkBarGreen.png" />
+    <None Include="..\UserInterface\Images\NetworkBarLabelCalloutLeft.svg" />
+    <None Include="..\UserInterface\Images\NetworkBarLabelCalloutRight.svg" />
+    <None Include="..\UserInterface\Images\NetworkBarLabelCalloutWhiteLeft.svg" />
+    <None Include="..\UserInterface\Images\NetworkBarLabelCalloutWhiteRight.svg" />
+    <None Include="..\UserInterface\Images\NetworkBarOrange%402x.png" />
+    <None Include="..\UserInterface\Images\NetworkBarOrange.png" />
+    <None Include="..\UserInterface\Images\NetworkBarPurple%402x.png" />
+    <None Include="..\UserInterface\Images\NetworkBarPurple.png" />
+    <None Include="..\UserInterface\Images\NetworkBarRed%402x.png" />
+    <None Include="..\UserInterface\Images\NetworkBarRed.png" />
+    <None Include="..\UserInterface\Images\NetworkBarWhiteFlat%402x.png" />
+    <None Include="..\UserInterface\Images\NetworkBarWhiteFlat.png" />
+    <None Include="..\UserInterface\Images\NetworkBarYellow%402x.png" />
+    <None Include="..\UserInterface\Images\NetworkBarYellow.png" />
+    <None Include="..\UserInterface\Images\NetworkHollowBarBlue%402x.png" />
+    <None Include="..\UserInterface\Images\NetworkHollowBarBlue.png" />
+    <None Include="..\UserInterface\Images\NetworkHollowBarGray%402x.png" />
+    <None Include="..\UserInterface\Images\NetworkHollowBarGray.png" />
+    <None Include="..\UserInterface\Images\NetworkHollowBarGreen%402x.png" />
+    <None Include="..\UserInterface\Images\NetworkHollowBarGreen.png" />
+    <None Include="..\UserInterface\Images\NetworkHollowBarOrange%402x.png" />
+    <None Include="..\UserInterface\Images\NetworkHollowBarOrange.png" />
+    <None Include="..\UserInterface\Images\NetworkHollowBarPurple%402x.png" />
+    <None Include="..\UserInterface\Images\NetworkHollowBarPurple.png" />
+    <None Include="..\UserInterface\Images\NetworkHollowBarRed%402x.png" />
+    <None Include="..\UserInterface\Images\NetworkHollowBarRed.png" />
+    <None Include="..\UserInterface\Images\NetworkHollowBarYellow%402x.png" />
+    <None Include="..\UserInterface\Images\NetworkHollowBarYellow.png" />
+    <None Include="..\UserInterface\Images\Pause.svg" />
+    <None Include="..\UserInterface\Images\Percent.svg" />
+    <None Include="..\UserInterface\Images\Plus.svg" />
+    <None Include="..\UserInterface\Images\Profile%402x.png" />
+    <None Include="..\UserInterface\Images\Profile.png" />
+    <None Include="..\UserInterface\Images\PseudoElement.svg" />
+    <None Include="..\UserInterface\Images\Recording%402x.png" />
+    <None Include="..\UserInterface\Images\Recording.png" />
+    <None Include="..\UserInterface\Images\RecordingHovered%402x.png" />
+    <None Include="..\UserInterface\Images\RecordingHovered.png" />
+    <None Include="..\UserInterface\Images\RecordingStopped%402x.png" />
+    <None Include="..\UserInterface\Images\RecordingStopped.png" />
+    <None Include="..\UserInterface\Images\Reflection.svg" />
+    <None Include="..\UserInterface\Images\Reload.svg" />
+    <None Include="..\UserInterface\Images\ReloadSelected.svg" />
+    <None Include="..\UserInterface\Images\Request.svg" />
+    <None Include="..\UserInterface\Images\Resources.svg" />
+    <None Include="..\UserInterface\Images\Response.svg" />
+    <None Include="..\UserInterface\Images\ResultLine.svg" />
+    <None Include="..\UserInterface\Images\Resume.svg" />
+    <None Include="..\UserInterface\Images\Script%402x.png" />
+    <None Include="..\UserInterface\Images\Script.png" />
+    <None Include="..\UserInterface\Images\SessionStorage%402x.png" />
+    <None Include="..\UserInterface\Images\SessionStorage.png" />
+    <None Include="..\UserInterface\Images\ShadowDOM.svg" />
+    <None Include="..\UserInterface\Images\SortIndicatorDownArrow.svg" />
+    <None Include="..\UserInterface\Images\SortIndicatorUpArrow.svg" />
+    <None Include="..\UserInterface\Images\SourceCode.svg" />
+    <None Include="..\UserInterface\Images\SplitToggleDown.svg" />
+    <None Include="..\UserInterface\Images\SplitToggleUp.svg" />
+    <None Include="..\UserInterface\Images\StepInto.svg" />
+    <None Include="..\UserInterface\Images\StepOut.svg" />
+    <None Include="..\UserInterface\Images\StepOver.svg" />
+    <None Include="..\UserInterface\Images\Stopwatch%402x.png" />
+    <None Include="..\UserInterface\Images\Stopwatch.png" />
+    <None Include="..\UserInterface\Images\StyleRuleAuthor.svg" />
+    <None Include="..\UserInterface\Images\StyleRuleInherited.svg" />
+    <None Include="..\UserInterface\Images\StyleRuleInheritedElement.svg" />
+    <None Include="..\UserInterface\Images\StyleRuleInspector.svg" />
+    <None Include="..\UserInterface\Images\StyleRuleUser.svg" />
+    <None Include="..\UserInterface\Images\StyleRuleUserAgent.svg" />
+    <None Include="..\UserInterface\Images\Time.svg" />
+    <None Include="..\UserInterface\Images\TimelineBarBlue%402x.png" />
+    <None Include="..\UserInterface\Images\TimelineBarBlue.png" />
+    <None Include="..\UserInterface\Images\TimelineBarOrange%402x.png" />
+    <None Include="..\UserInterface\Images\TimelineBarOrange.png" />
+    <None Include="..\UserInterface\Images\TimelineBarPurple%402x.png" />
+    <None Include="..\UserInterface\Images\TimelineBarPurple.png" />
+    <None Include="..\UserInterface\Images\Undock.svg" />
+    <None Include="..\UserInterface\Images\UpDownArrows.svg" />
+    <None Include="..\UserInterface\Images\UserInputPrompt.svg" />
+    <None Include="..\UserInterface\Images\UserInputPromptPrevious.svg" />
+    <None Include="..\UserInterface\Images\UserInputResult.svg" />
+    <None Include="..\UserInterface\Images\Warning.svg" />
+    <None Include="..\UserInterface\Images\Weight.svg" />
+    <None Include="..\UserInterface\ImageUtilities.js" />
+    <None Include="..\UserInterface\IndeterminateProgressSpinner.css" />
+    <None Include="..\UserInterface\IndeterminateProgressSpinner.js" />
+    <None Include="..\UserInterface\InspectorBackend.js" />
+    <None Include="..\UserInterface\InspectorFrontendAPI.js" />
+    <None Include="..\UserInterface\InspectorFrontendHostStub.js" />
+    <None Include="..\UserInterface\InspectorObserver.js" />
+    <None Include="..\UserInterface\InstrumentIcons.css" />
+    <None Include="..\UserInterface\InstrumentSidebarPanel.css" />
+    <None Include="..\UserInterface\InstrumentSidebarPanel.js" />
+    <None Include="..\UserInterface\IssueManager.js" />
+    <None Include="..\UserInterface\IssueMessage.js" />
+    <None Include="..\UserInterface\JavaScriptLogViewController.js" />
+    <None Include="..\UserInterface\JavaScriptProfileObject.js" />
+    <None Include="..\UserInterface\JavaScriptProfileType.js" />
+    <None Include="..\UserInterface\JavaScriptProfileView.css" />
+    <None Include="..\UserInterface\JavaScriptProfileView.js" />
+    <None Include="..\UserInterface\KeyboardShortcut.js" />
+    <None Include="..\UserInterface\LayerTreeDataGrid.js" />
+    <None Include="..\UserInterface\LayerTreeDataGridNode.js" />
+    <None Include="..\UserInterface\LayerTreeManager.js" />
+    <None Include="..\UserInterface\LayerTreeObserver.js" />
+    <None Include="..\UserInterface\LayerTreeSidebarPanel.css" />
+    <None Include="..\UserInterface\LayerTreeSidebarPanel.js" />
+    <None Include="..\UserInterface\LayoutTimelineDataGrid.js" />
+    <None Include="..\UserInterface\LayoutTimelineDataGridNode.js" />
+    <None Include="..\UserInterface\LayoutTimelineRecord.js" />
+    <None Include="..\UserInterface\Legacy\6.0\InspectorWebBackendCommands.js" />
+    <None Include="..\UserInterface\Legacy\7.0\InspectorWebBackendCommands.js" />
+    <None Include="..\UserInterface\LoadInspectorBackendCommands.js" />
+    <None Include="..\UserInterface\LoadLocalizedStrings.js" />
+    <None Include="..\UserInterface\LogContentView.css" />
+    <None Include="..\UserInterface\LogContentView.js" />
+    <None Include="..\UserInterface\LogIcon.css" />
+    <None Include="..\UserInterface\LogManager.js" />
+    <None Include="..\UserInterface\LogObject.js" />
+    <None Include="..\UserInterface\LogTreeElement.js" />
+    <None Include="..\UserInterface\Main.css" />
+    <None Include="..\UserInterface\Main.html" />
+    <None Include="..\UserInterface\Main.js" />
+    <None Include="..\UserInterface\MetricsStyleDetailsPanel.js" />
+    <None Include="..\UserInterface\MIMETypeUtilities.js" />
+    <None Include="..\UserInterface\NavigationBar.css" />
+    <None Include="..\UserInterface\NavigationBar.js" />
+    <None Include="..\UserInterface\NavigationItem.js" />
+    <None Include="..\UserInterface\NavigationSidebarPanel.css" />
+    <None Include="..\UserInterface\NavigationSidebarPanel.js" />
+    <None Include="..\UserInterface\NetworkDataGrid.css" />
+    <None Include="..\UserInterface\NetworkDataGrid.js" />
+    <None Include="..\UserInterface\NetworkGraphCalculator.js" />
+    <None Include="..\UserInterface\NetworkObserver.js" />
+    <None Include="..\UserInterface\NetworkTimeline.css" />
+    <None Include="..\UserInterface\Object.js" />
+    <None Include="..\UserInterface\ObjectPropertiesSection.js" />
+    <None Include="..\UserInterface\PageObserver.js" />
+    <None Include="..\UserInterface\PathComponentIcons.css" />
+    <None Include="..\UserInterface\Popover.css" />
+    <None Include="..\UserInterface\Popover.js" />
+    <None Include="..\UserInterface\ProfileDataGridTree.js" />
+    <None Include="..\UserInterface\ProfileManager.js" />
+    <None Include="..\UserInterface\ProfileObject.js" />
+    <None Include="..\UserInterface\ProfilerObserver.js" />
+    <None Include="..\UserInterface\ProfileType.js" />
+    <None Include="..\UserInterface\ProfileView.css" />
+    <None Include="..\UserInterface\ProfileView.js" />
+    <None Include="..\UserInterface\PropertiesSection.js" />
+    <None Include="..\UserInterface\QuickConsole.css" />
+    <None Include="..\UserInterface\QuickConsole.js" />
+    <None Include="..\UserInterface\QuickConsoleNavigationBar.js" />
+    <None Include="..\UserInterface\RadioButtonNavigationItem.css" />
+    <None Include="..\UserInterface\RadioButtonNavigationItem.js" />
+    <None Include="..\UserInterface\RemoteObject.js" />
+    <None Include="..\UserInterface\Resource.js" />
+    <None Include="..\UserInterface\ResourceClusterContentView.js" />
+    <None Include="..\UserInterface\ResourceCollection.js" />
+    <None Include="..\UserInterface\ResourceContentView.js" />
+    <None Include="..\UserInterface\ResourceDetailsSidebarPanel.js" />
+    <None Include="..\UserInterface\ResourceIcons.css" />
+    <None Include="..\UserInterface\ResourceSearchMatchObject.js" />
+    <None Include="..\UserInterface\ResourceSidebarPanel.css" />
+    <None Include="..\UserInterface\ResourceSidebarPanel.js" />
+    <None Include="..\UserInterface\ResourceTimelineDataGridNode.js" />
+    <None Include="..\UserInterface\ResourceTimelineDataGridNodePathComponent.js" />
+    <None Include="..\UserInterface\ResourceTimelineRecord.js" />
+    <None Include="..\UserInterface\ResourceTreeElement.css" />
+    <None Include="..\UserInterface\ResourceTreeElement.js" />
+    <None Include="..\UserInterface\Revision.js" />
+    <None Include="..\UserInterface\RulesStyleDetailsPanel.css" />
+    <None Include="..\UserInterface\RulesStyleDetailsPanel.js" />
+    <None Include="..\UserInterface\RuntimeObserver.js" />
+    <None Include="..\UserInterface\ScopeBar.css" />
+    <None Include="..\UserInterface\ScopeBar.js" />
+    <None Include="..\UserInterface\ScopeBarItem.js" />
+    <None Include="..\UserInterface\ScopeChainDetailsSidebarPanel.js" />
+    <None Include="..\UserInterface\ScopeChainNode.js" />
+    <None Include="..\UserInterface\ScopeVariableTreeElement.js" />
+    <None Include="..\UserInterface\Script.js" />
+    <None Include="..\UserInterface\ScriptContentView.css" />
+    <None Include="..\UserInterface\ScriptContentView.js" />
+    <None Include="..\UserInterface\ScriptTimelineDataGrid.js" />
+    <None Include="..\UserInterface\ScriptTimelineDataGridNode.js" />
+    <None Include="..\UserInterface\ScriptTimelineRecord.js" />
+    <None Include="..\UserInterface\ScriptTreeElement.js" />
+    <None Include="..\UserInterface\SearchBar.css" />
+    <None Include="..\UserInterface\SearchBar.js" />
+    <None Include="..\UserInterface\SearchIcons.css" />
+    <None Include="..\UserInterface\SearchResultTreeElement.js" />
+    <None Include="..\UserInterface\Section.css" />
+    <None Include="..\UserInterface\Section.js" />
+    <None Include="..\UserInterface\Setting.js" />
+    <None Include="..\UserInterface\Sidebar.css" />
+    <None Include="..\UserInterface\Sidebar.js" />
+    <None Include="..\UserInterface\SidebarPanel.js" />
+    <None Include="..\UserInterface\SourceCode.js" />
+    <None Include="..\UserInterface\SourceCodeLocation.js" />
+    <None Include="..\UserInterface\SourceCodePosition.js" />
+    <None Include="..\UserInterface\SourceCodeRevision.js" />
+    <None Include="..\UserInterface\SourceCodeTextEditor.css" />
+    <None Include="..\UserInterface\SourceCodeTextEditor.js" />
+    <None Include="..\UserInterface\SourceCodeTextRange.js" />
+    <None Include="..\UserInterface\SourceCodeTreeElement.js" />
+    <None Include="..\UserInterface\SourceMap.js" />
+    <None Include="..\UserInterface\SourceMapManager.js" />
+    <None Include="..\UserInterface\SourceMapResource.js" />
+    <None Include="..\UserInterface\SourceMapResourceTreeElement.js" />
+    <None Include="..\UserInterface\StorageManager.js" />
+    <None Include="..\UserInterface\StorageTreeElement.js" />
+    <None Include="..\UserInterface\StyleDetailsPanel.js" />
+    <None Include="..\UserInterface\StyleRuleIcons.css" />
+    <None Include="..\UserInterface\SyntaxHighlightingDefaultTheme.css" />
+    <None Include="..\UserInterface\SyntaxHighlightingSupport.js" />
+    <None Include="..\UserInterface\TextContentView.css" />
+    <None Include="..\UserInterface\TextContentView.js" />
+    <None Include="..\UserInterface\TextEditor.css" />
+    <None Include="..\UserInterface\TextEditor.js" />
+    <None Include="..\UserInterface\TextRange.js" />
+    <None Include="..\UserInterface\TextResourceContentView.css" />
+    <None Include="..\UserInterface\TextResourceContentView.js" />
+    <None Include="..\UserInterface\TimelineDataGrid.css" />
+    <None Include="..\UserInterface\TimelineDataGrid.js" />
+    <None Include="..\UserInterface\TimelineDecorations.css" />
+    <None Include="..\UserInterface\TimelineDecorations.js" />
+    <None Include="..\UserInterface\TimelineEventMarker.js" />
+    <None Include="..\UserInterface\TimelineManager.js" />
+    <None Include="..\UserInterface\TimelineObserver.js" />
+    <None Include="..\UserInterface\TimelineOverview.css" />
+    <None Include="..\UserInterface\TimelineOverview.js" />
+    <None Include="..\UserInterface\TimelineRecord.js" />
+    <None Include="..\UserInterface\TimelinesContentView.css" />
+    <None Include="..\UserInterface\TimelinesContentView.js" />
+    <None Include="..\UserInterface\TimelinesObject.js" />
+    <None Include="..\UserInterface\ToggleButtonNavigationItem.js" />
+    <None Include="..\UserInterface\ToggleControlToolbarItem.js" />
+    <None Include="..\UserInterface\Toolbar.css" />
+    <None Include="..\UserInterface\Toolbar.js" />
+    <None Include="..\UserInterface\TopDownProfileDataGridTree.js" />
+    <None Include="..\UserInterface\TreeOutline.js" />
+    <None Include="..\UserInterface\Utilities.js" />
+    <None Include="..\UserInterface\WebInspector.js" />
+    <None Include="build-webinspectorui.pl" />
+    <None Include="WebInspectorUI.make" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

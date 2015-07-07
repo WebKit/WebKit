@@ -1,0 +1,46 @@
+This test checks basic and corner cases of 'f.arguments'.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS basicTest('one')[0] is 'one'
+PASS basicTest('one')[2] is undefined.
+PASS basicTest('one', 'two', 'three')[1] is 'two'
+PASS lengthTest() is '0'
+PASS lengthTest('From', '%E5%8C%97%E4%BA%AC', 360, '/', 'webkit.org') is '5'
+PASS assignTest().toString() is '[object Arguments]'
+PASS assignVarUndefinedTest().toString() is '[object Arguments]'
+PASS assignVarUndefinedTest2().toString() is '[object Arguments]'
+PASS assignVarInitTest().toString() is '[object Arguments]'
+PASS assignVarInitTest2().toString() is '[object Arguments]'
+PASS assignConstUndefinedTest().toString() is '[object Arguments]'
+PASS assignConstUndefinedTest2().toString() is '[object Arguments]'
+PASS assignConstInitTest().toString() is '[object Arguments]'
+PASS assignConstInitTest2().toString() is '[object Arguments]'
+PASS assignForInitTest().toString() is '[object Arguments]'
+PASS assignForInitTest2().toString() is '[object Arguments]'
+PASS assignForInInitTest().toString() is '[object Arguments]'
+PASS paramInitTest(true).toString() is '[object Arguments]'
+PASS paramFunctionConstructorInitTest(true).toString() is '[object Arguments]'
+PASS tearOffTest()[0] is true
+PASS tearOffTest2(true)[0] is true
+PASS lexicalArgumentsLiveRead1(0, 2, 3) is 1
+PASS lexicalArgumentsLiveRead2(1, 0, 3) is 2
+PASS lexicalArgumentsLiveRead3(1, 2, 0) is 3
+PASS lexicalArgumentsLiveWrite1(0, 2, 3) is 0
+PASS lexicalArgumentsLiveWrite2(1, 0, 3) is 0
+PASS lexicalArgumentsLiveWrite3(1, 2, 0) is 0
+PASS argumentsNotLiveRead1(0, 2, 3) is 0
+PASS argumentsNotLiveRead2(1, 0, 3) is 0
+PASS argumentsNotLiveRead3(1, 2, 0) is 0
+PASS argumentsNotLiveWrite1(0, 2, 3) is 0
+PASS argumentsNotLiveWrite2(1, 0, 3) is 0
+PASS argumentsNotLiveWrite3(1, 2, 0) is 0
+PASS argumentsIdentity() is true
+PASS overwroteArgumentsInDynamicScope1() is true
+PASS overwroteArgumentsInDynamicScope2() is true
+PASS overwroteArgumentsInDynamicScope3().toString() is '[object Arguments]'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 16: ReferenceError: Can't find variable: debug
+This test makes sure that navigator.isProtocolHandlerRegistered throws the proper exceptions and returns the default state of handler.
+
+

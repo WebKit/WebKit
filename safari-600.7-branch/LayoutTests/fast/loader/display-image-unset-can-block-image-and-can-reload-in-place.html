@@ -1,0 +1,47 @@
+<html>
+<head>
+<script>
+// Setting WebKitDisplayImagesKey is asynchronous, so using queueReload and setInterval to check when the setting actually take effect.
+
+var intervalId;
+var imageOnloadFired = 0;
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    window.internals.settings.setImagesEnabled(true);
+    testRunner.overridePreference('WebKitDisplayImagesKey', 0);
+    testRunner.queueReload();
+}
+
+function runTest()
+{
+    var image = document.getElementById('image');
+    if (image.naturalHeight != 0 || image.naturalWidth != 0 || imageOnloadFired != 0) {
+        document.getElementById('result').innerHTML = 'FAILURE: Image should not be loaded when DisplayImage is unset';
+        return;
+    }
+
+    testRunner.overridePreference('WebKitDisplayImagesKey', 1);
+    document.getElementById('result').innerHTML = 'FAILURE: Image should reload in-place when DispalyImage is changes from unset to set';
+    testRunner.waitUntilDone();
+    intervalId = window.setInterval(runTestRest, 10);
+}
+
+function runTestRest()
+{
+    var image = document.getElementById('image');
+    if (image.naturalHeight == 33 && image.naturalWidth == 37 && imageOnloadFired == 1) {
+        document.getElementById('result').innerHTML = 'SUCCESS';
+        window.clearInterval(intervalId);
+        testRunner.notifyDone();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+  Test that DisplayImages disabled can block http image and can be reloaded in-place when toggled.
+  <div id="result">FAILURE: Test script didn't run.</div>
+  <img id="image" src="../images/resources/oval.png" onload="imageOnloadFired=1;">
+</body>
+</html>
+

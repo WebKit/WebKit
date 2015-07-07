@@ -1,0 +1,1610 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="DebugSuffix|Win32">
+      <Configuration>DebugSuffix</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="DebugSuffix|x64">
+      <Configuration>DebugSuffix</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug_WinCairo|Win32">
+      <Configuration>Debug_WinCairo</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug_WinCairo|x64">
+      <Configuration>Debug_WinCairo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Production|Win32">
+      <Configuration>Production</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Production|x64">
+      <Configuration>Production</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release_WinCairo|Win32">
+      <Configuration>Release_WinCairo</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release_WinCairo|x64">
+      <Configuration>Release_WinCairo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{22413D41-3A18-42B7-92A8-CEDC6CE86920}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>JavaScriptCore2</RootNamespace>
+    <ProjectName>JavaScriptCore</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Production|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Production|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="JavaScriptCoreDebug.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="JavaScriptCoreDebug.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="JavaScriptCoreDebugCFLite.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="JavaScriptCoreDebugCFLite.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="JavaScriptCoreDebug.props" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\debugsuffix.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="JavaScriptCoreDebug.props" />
+    <Import Project="$(WebKit_Libraries)\tools\vsprops\debugsuffix.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="JavaScriptCoreRelease.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="JavaScriptCoreRelease.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="JavaScriptCoreReleaseCFLite.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="JavaScriptCoreReleaseCFLite.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Production|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="JavaScriptCoreProduction.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Production|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="JavaScriptCoreProduction.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Production|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Production|x64'" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+    </ClCompile>
+    <Link />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+    </ClCompile>
+    <Link />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+    </ClCompile>
+    <Link />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+    </ClCompile>
+    <Link />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+    </ClCompile>
+    <Link />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+    </ClCompile>
+    <Link />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+    </ClCompile>
+    <Link />
+    <Link />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+    </ClCompile>
+    <Link />
+    <Link />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+    </ClCompile>
+    <Link />
+    <Link />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+    </ClCompile>
+    <Link />
+    <Link />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+    </ClCompile>
+    <Link />
+    <Link />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Production|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+    </ClCompile>
+    <Link />
+    <Link />
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\API\JSBase.cpp" />
+    <ClCompile Include="..\API\JSCallbackConstructor.cpp" />
+    <ClCompile Include="..\API\JSCallbackFunction.cpp" />
+    <ClCompile Include="..\API\JSCallbackObject.cpp" />
+    <ClCompile Include="..\API\JSClassRef.cpp" />
+    <ClCompile Include="..\API\JSContextRef.cpp" />
+    <ClCompile Include="..\API\JSCTestRunnerUtils.cpp" />
+    <ClCompile Include="..\API\JSObjectRef.cpp" />
+    <ClCompile Include="..\API\JSScriptRef.cpp" />
+    <ClCompile Include="..\API\JSStringRef.cpp" />
+    <ClCompile Include="..\API\JSStringRefBSTR.cpp" />
+    <ClCompile Include="..\API\JSStringRefCF.cpp" />
+    <ClCompile Include="..\API\JSValueRef.cpp" />
+    <ClCompile Include="..\API\JSWeakObjectMapRefPrivate.cpp" />
+    <ClCompile Include="..\API\OpaqueJSString.cpp" />
+    <ClCompile Include="..\assembler\LinkBuffer.cpp" />
+    <ClCompile Include="..\assembler\MacroAssembler.cpp" />
+    <ClInclude Include="..\API\JSCTestRunnerUtils.h" />
+    <ClInclude Include="..\assembler\MacroAssemblerX86Common.cpp" />
+    <ClCompile Include="..\bindings\ScriptFunctionCall.cpp" />
+    <ClCompile Include="..\bindings\ScriptObject.cpp" />
+    <ClCompile Include="..\bindings\ScriptValue.cpp" />
+    <ClCompile Include="..\builtins\BuiltinExecutables.cpp" />
+    <ClCompile Include="..\bytecode\ArrayAllocationProfile.cpp" />
+    <ClCompile Include="..\bytecode\ArrayProfile.cpp" />
+    <ClCompile Include="..\bytecode\BytecodeBasicBlock.cpp" />
+    <ClCompile Include="..\bytecode\BytecodeLivenessAnalysis.cpp" />
+    <ClCompile Include="..\bytecode\CallLinkInfo.cpp" />
+    <ClCompile Include="..\bytecode\CallLinkStatus.cpp" />
+    <ClCompile Include="..\bytecode\CodeBlock.cpp" />
+    <ClCompile Include="..\bytecode\CodeBlockHash.cpp" />
+    <ClCompile Include="..\bytecode\CodeBlockJettisoningWatchpoint.cpp" />
+    <ClCompile Include="..\bytecode\CodeOrigin.cpp" />
+    <ClCompile Include="..\bytecode\CodeType.cpp" />
+    <ClCompile Include="..\bytecode\DeferredCompilationCallback.cpp" />
+    <ClCompile Include="..\bytecode\DFGExitProfile.cpp" />
+    <ClCompile Include="..\bytecode\ExecutionCounter.cpp" />
+    <ClCompile Include="..\bytecode\ExitKind.cpp" />
+    <ClCompile Include="..\bytecode\ExitingJITType.cpp" />
+    <ClCompile Include="..\bytecode\GetByIdStatus.cpp" />
+    <ClCompile Include="..\bytecode\GetByIdVariant.cpp" />
+    <ClCompile Include="..\bytecode\InlineCallFrameSet.cpp" />
+    <ClCompile Include="..\bytecode\JumpTable.cpp" />
+    <ClCompile Include="..\bytecode\LazyOperandValueProfile.cpp" />
+    <ClCompile Include="..\bytecode\MethodOfGettingAValueProfile.cpp" />
+    <ClCompile Include="..\bytecode\Opcode.cpp" />
+    <ClCompile Include="..\bytecode\PolymorphicGetByIdList.cpp" />
+    <ClCompile Include="..\bytecode\PolymorphicPutByIdList.cpp" />
+    <ClCompile Include="..\bytecode\ProfiledCodeBlockJettisoningWatchpoint.cpp" />
+    <ClCompile Include="..\bytecode\PreciseJumpTargets.cpp" />
+    <ClCompile Include="..\bytecode\PutByIdStatus.cpp" />
+    <ClCompile Include="..\bytecode\PutByIdVariant.cpp" />
+    <ClCompile Include="..\bytecode\ReduceWhitespace.cpp" />
+    <ClCompile Include="..\bytecode\SamplingTool.cpp" />
+    <ClCompile Include="..\bytecode\SpecialPointer.cpp" />
+    <ClCompile Include="..\bytecode\SpeculatedType.cpp" />
+    <ClCompile Include="..\bytecode\StructureStubClearingWatchpoint.cpp" />
+    <ClCompile Include="..\bytecode\StructureStubInfo.cpp" />
+    <ClCompile Include="..\bytecode\UnlinkedCodeBlock.cpp" />
+    <ClCompile Include="..\bytecode\UnlinkedInstructionStream.cpp" />
+    <ClCompile Include="..\bytecode\ValueRecovery.cpp" />
+    <ClCompile Include="..\bytecode\Watchpoint.cpp" />
+    <ClCompile Include="..\bytecompiler\BytecodeGenerator.cpp" />
+    <ClCompile Include="..\bytecompiler\NodesCodegen.cpp" />
+    <ClCompile Include="..\debugger\Debugger.cpp" />
+    <ClCompile Include="..\debugger\DebuggerActivation.cpp" />
+    <ClCompile Include="..\debugger\DebuggerCallFrame.cpp" />
+    <ClCompile Include="..\dfg\DFGAbstractHeap.cpp" />
+    <ClCompile Include="..\dfg\DFGAbstractValue.cpp" />
+    <ClCompile Include="..\dfg\DFGArgumentsSimplificationPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGArithMode.cpp" />
+    <ClCompile Include="..\dfg\DFGArrayMode.cpp" />
+    <ClCompile Include="..\dfg\DFGAtTailAbstractState.cpp" />
+    <ClCompile Include="..\dfg\DFGAvailability.cpp" />
+    <ClCompile Include="..\dfg\DFGBackwardsPropagationPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGBasicBlock.cpp" />
+    <ClCompile Include="..\dfg\DFGBinarySwitch.cpp" />
+    <ClCompile Include="..\dfg\DFGBlockInsertionSet.cpp" />
+    <ClCompile Include="..\dfg\DFGByteCodeParser.cpp" />
+    <ClCompile Include="..\dfg\DFGCapabilities.cpp" />
+    <ClCompile Include="..\dfg\DFGCFAPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGCFGSimplificationPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGClobberize.cpp" />
+    <ClCompile Include="..\dfg\DFGClobberSet.cpp" />
+    <ClCompile Include="..\dfg\DFGCommon.cpp" />
+    <ClCompile Include="..\dfg\DFGCommonData.cpp" />
+    <ClCompile Include="..\dfg\DFGCompilationKey.cpp" />
+    <ClCompile Include="..\dfg\DFGCompilationMode.cpp" />
+    <ClCompile Include="..\dfg\DFGConstantFoldingPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGCPSRethreadingPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGCriticalEdgeBreakingPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGCSEPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGDCEPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGDesiredIdentifiers.cpp" />
+    <ClCompile Include="..\dfg\DFGDesiredStructureChains.cpp" />
+    <ClCompile Include="..\dfg\DFGDesiredTransitions.cpp" />
+    <ClCompile Include="..\dfg\DFGDesiredWatchpoints.cpp" />
+    <ClCompile Include="..\dfg\DFGDesiredWeakReferences.cpp" />
+    <ClCompile Include="..\dfg\DFGDesiredWriteBarriers.cpp" />
+    <ClCompile Include="..\dfg\DFGDisassembler.cpp" />
+    <ClCompile Include="..\dfg\DFGDominators.cpp" />
+    <ClCompile Include="..\dfg\DFGDriver.cpp" />
+    <ClCompile Include="..\dfg\DFGEdge.cpp" />
+    <ClCompile Include="..\dfg\DFGFailedFinalizer.cpp" />
+    <ClCompile Include="..\dfg\DFGFinalizer.cpp" />
+    <ClCompile Include="..\dfg\DFGFixupPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGFlushedAt.cpp" />
+    <ClCompile Include="..\dfg\DFGFlushFormat.cpp" />
+    <ClCompile Include="..\dfg\DFGFunctionWhitelist.cpp" />
+    <ClCompile Include="..\dfg\DFGGraph.cpp" />
+    <ClCompile Include="..\dfg\DFGGraphSafepoint.cpp" />
+    <ClCompile Include="..\dfg\DFGInPlaceAbstractState.cpp" />
+    <ClCompile Include="..\dfg\DFGIntegerCheckCombiningPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGInvalidationPointInjectionPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGJITCode.cpp" />
+    <ClCompile Include="..\dfg\DFGJITCompiler.cpp" />
+    <ClCompile Include="..\dfg\DFGJITFinalizer.cpp" />
+    <ClCompile Include="..\dfg\DFGJumpReplacement.cpp" />
+    <ClCompile Include="..\dfg\DFGLazyJSValue.cpp" />
+    <ClCompile Include="..\dfg\DFGLICMPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGLivenessAnalysisPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGLongLivedState.cpp" />
+    <ClCompile Include="..\dfg\DFGLoopPreHeaderCreationPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGMinifiedNode.cpp" />
+    <ClCompile Include="..\dfg\DFGNaturalLoops.cpp" />
+    <ClCompile Include="..\dfg\DFGNode.cpp" />
+    <ClCompile Include="..\dfg\DFGNodeFlags.cpp" />
+    <ClCompile Include="..\dfg\DFGOperations.cpp" />
+    <ClCompile Include="..\dfg\DFGOSRAvailabilityAnalysisPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGOSREntry.cpp" />
+    <ClCompile Include="..\dfg\DFGOSREntrypointCreationPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGOSRExit.cpp" />
+    <ClCompile Include="..\dfg\DFGOSRExitBase.cpp" />
+    <ClCompile Include="..\dfg\DFGOSRExitCompiler.cpp" />
+    <ClCompile Include="..\dfg\DFGOSRExitCompiler32_64.cpp" />
+    <ClCompile Include="..\dfg\DFGOSRExitCompiler64.cpp" />
+    <ClCompile Include="..\dfg\DFGOSRExitCompilerCommon.cpp" />
+    <ClCompile Include="..\dfg\DFGOSRExitJumpPlaceholder.cpp" />
+    <ClCompile Include="..\dfg\DFGOSRExitPreparation.cpp" />
+    <ClCompile Include="..\dfg\DFGPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGPlan.cpp" />
+    <ClCompile Include="..\dfg\DFGPredictionInjectionPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGPredictionPropagationPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGResurrectionForValidationPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGSafepoint.cpp" />
+    <ClCompile Include="..\dfg\DFGSpeculativeJIT.cpp" />
+    <ClCompile Include="..\dfg\DFGSpeculativeJIT32_64.cpp" />
+    <ClCompile Include="..\dfg\DFGSpeculativeJIT64.cpp" />
+    <ClCompile Include="..\dfg\DFGSSAConversionPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGSSALoweringPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGStackLayoutPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGStaticExecutionCountEstimationPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGStoreBarrierElisionPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGStrengthReductionPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGThreadData.cpp" />
+    <ClCompile Include="..\dfg\DFGThunks.cpp" />
+    <ClCompile Include="..\dfg\DFGTierUpCheckInjectionPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGToFTLDeferredCompilationCallback.cpp" />
+    <ClCompile Include="..\dfg\DFGToFTLForOSREntryDeferredCompilationCallback.cpp" />
+    <ClCompile Include="..\dfg\DFGTypeCheckHoistingPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGUnificationPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGUseKind.cpp" />
+    <ClCompile Include="..\dfg\DFGValidate.cpp" />
+    <ClCompile Include="..\dfg\DFGValueSource.cpp" />
+    <ClCompile Include="..\dfg\DFGVariableAccessData.cpp" />
+    <ClCompile Include="..\dfg\DFGVariableAccessDataDump.cpp" />
+    <ClCompile Include="..\dfg\DFGVariableEvent.cpp" />
+    <ClCompile Include="..\dfg\DFGVariableEventStream.cpp" />
+    <ClCompile Include="..\dfg\DFGVirtualRegisterAllocationPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGWatchpointCollectionPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGWorklist.cpp" />
+    <ClCompile Include="..\disassembler\Disassembler.cpp" />
+    <ClCompile Include="..\disassembler\LLVMDisassembler.cpp" />
+    <ClCompile Include="..\disassembler\X86Disassembler.cpp" />
+    <ClCompile Include="..\ftl\FTLAbstractHeap.cpp" />
+    <ClCompile Include="..\ftl\FTLAbstractHeapRepository.cpp" />
+    <ClCompile Include="..\ftl\FTLAvailableRecovery.cpp" />
+    <ClCompile Include="..\ftl\FTLCapabilities.cpp" />
+    <ClCompile Include="..\ftl\FTLCommonValues.cpp" />
+    <ClCompile Include="..\ftl\FTLCompile.cpp" />
+    <ClCompile Include="..\ftl\FTLDataSection.cpp" />
+    <ClCompile Include="..\ftl\FTLDWARFDebugLineInfo.cpp" />
+    <ClCompile Include="..\ftl\FTLDWARFRegister.cpp" />
+    <ClCompile Include="..\ftl\FTLExitArgument.cpp" />
+    <ClCompile Include="..\ftl\FTLExitArgumentForOperand.cpp" />
+    <ClCompile Include="..\ftl\FTLExitThunkGenerator.cpp" />
+    <ClCompile Include="..\ftl\FTLExitValue.cpp" />
+    <ClCompile Include="..\ftl\FTLFail.cpp" />
+    <ClCompile Include="..\ftl\FTLForOSREntryJITCode.cpp" />
+    <ClCompile Include="..\ftl\FTLInlineCacheSize.cpp" />
+    <ClCompile Include="..\ftl\FTLIntrinsicRepository.cpp" />
+    <ClCompile Include="..\ftl\FTLJITCode.cpp" />
+    <ClCompile Include="..\ftl\FTLJITFinalizer.cpp" />
+    <ClCompile Include="..\ftl\FTLJSCall.cpp" />
+    <ClCompile Include="..\ftl\FTLLink.cpp" />
+    <ClCompile Include="..\ftl\FTLLocation.cpp" />
+    <ClCompile Include="..\ftl\FTLLowerDFGToLLVM.cpp" />
+    <ClCompile Include="..\ftl\FTLOSREntry.cpp" />
+    <ClCompile Include="..\ftl\FTLOSRExit.cpp" />
+    <ClCompile Include="..\ftl\FTLOSRExitCompiler.cpp" />
+    <ClCompile Include="..\ftl\FTLOutput.cpp" />
+    <ClCompile Include="..\ftl\FTLRecoveryOpcode.cpp" />
+    <ClCompile Include="..\ftl\FTLRegisterAtOffset.cpp" />
+    <ClCompile Include="..\ftl\FTLSaveRestore.cpp" />
+    <ClCompile Include="..\ftl\FTLSlowPathCall.cpp" />
+    <ClCompile Include="..\ftl\FTLSlowPathCallKey.cpp" />
+    <ClCompile Include="..\ftl\FTLStackMaps.cpp" />
+    <ClCompile Include="..\ftl\FTLState.cpp" />
+    <ClCompile Include="..\ftl\FTLThunks.cpp" />
+    <ClCompile Include="..\ftl\FTLUnwindInfo.cpp" />
+    <ClCompile Include="..\ftl\FTLValueFormat.cpp" />
+    <ClCompile Include="..\ftl\FTLValueRange.cpp" />
+    <ClCompile Include="..\heap\BlockAllocator.cpp" />
+    <ClCompile Include="..\heap\CodeBlockSet.cpp" />
+    <ClCompile Include="..\heap\ConservativeRoots.cpp" />
+    <ClCompile Include="..\heap\CopiedSpace.cpp" />
+    <ClCompile Include="..\heap\CopyVisitor.cpp" />
+    <ClCompile Include="..\heap\DeferGC.cpp" />
+    <ClCompile Include="..\heap\EdenGCActivityCallback.cpp" />
+    <ClCompile Include="..\heap\FullGCActivityCallback.cpp" />
+    <ClCompile Include="..\heap\GCActivityCallback.cpp" />
+    <ClCompile Include="..\heap\GCLogging.cpp" />
+    <ClCompile Include="..\heap\GCThread.cpp" />
+    <ClCompile Include="..\heap\GCThreadSharedData.cpp" />
+    <ClCompile Include="..\heap\HandleSet.cpp" />
+    <ClCompile Include="..\heap\HandleStack.cpp" />
+    <ClCompile Include="..\heap\Heap.cpp" />
+    <ClCompile Include="..\heap\HeapStatistics.cpp" />
+    <ClCompile Include="..\heap\HeapTimer.cpp" />
+    <ClCompile Include="..\heap\IncrementalSweeper.cpp" />
+    <ClCompile Include="..\heap\JITStubRoutineSet.cpp" />
+    <ClCompile Include="..\heap\MachineStackMarker.cpp" />
+    <ClCompile Include="..\heap\MarkedAllocator.cpp" />
+    <ClCompile Include="..\heap\MarkedBlock.cpp" />
+    <ClCompile Include="..\heap\MarkedSpace.cpp" />
+    <ClCompile Include="..\heap\MarkStack.cpp" />
+    <ClCompile Include="..\heap\SlotVisitor.cpp" />
+    <ClCompile Include="..\heap\SuperRegion.cpp" />
+    <ClCompile Include="..\heap\Weak.cpp" />
+    <ClCompile Include="..\heap\WeakBlock.cpp" />
+    <ClCompile Include="..\heap\WeakHandleOwner.cpp" />
+    <ClCompile Include="..\heap\WeakSet.cpp" />
+    <ClCompile Include="..\heap\WriteBarrierBuffer.cpp" />
+    <ClCompile Include="..\heap\WriteBarrierSupport.cpp" />
+    <ClCompile Include="..\inspector\ConsoleMessage.cpp" />
+    <ClCompile Include="..\inspector\ContentSearchUtilities.cpp" />
+    <ClCompile Include="..\inspector\IdentifiersFactory.cpp" />
+    <ClCompile Include="..\inspector\InjectedScript.cpp" />
+    <ClCompile Include="..\inspector\InjectedScriptBase.cpp" />
+    <ClCompile Include="..\inspector\InjectedScriptHost.cpp" />
+    <ClCompile Include="..\inspector\InjectedScriptManager.cpp" />
+    <ClCompile Include="..\inspector\InjectedScriptModule.cpp" />
+    <ClCompile Include="..\inspector\InspectorAgentRegistry.cpp" />
+    <ClCompile Include="..\inspector\InspectorBackendDispatcher.cpp" />
+    <ClCompile Include="..\inspector\InspectorValues.cpp" />
+    <ClCompile Include="..\inspector\JSInjectedScriptHost.cpp" />
+    <ClCompile Include="..\inspector\JSInjectedScriptHostPrototype.cpp" />
+    <ClCompile Include="..\inspector\JSJavaScriptCallFrame.cpp" />
+    <ClCompile Include="..\inspector\JSJavaScriptCallFramePrototype.cpp" />
+    <ClCompile Include="..\inspector\JavaScriptCallFrame.cpp" />
+    <ClCompile Include="..\inspector\ScriptArguments.cpp" />
+    <ClCompile Include="..\inspector\ScriptCallFrame.cpp" />
+    <ClCompile Include="..\inspector\ScriptCallStack.cpp" />
+    <ClCompile Include="..\inspector\ScriptCallStackFactory.cpp" />
+    <ClCompile Include="..\inspector\ScriptDebugServer.cpp" />
+    <ClCompile Include="..\inspector\agents\InspectorAgent.cpp" />
+    <ClCompile Include="..\inspector\agents\InspectorConsoleAgent.cpp" />
+    <ClCompile Include="..\inspector\agents\InspectorDebuggerAgent.cpp" />
+    <ClCompile Include="..\inspector\agents\InspectorProfilerAgent.cpp" />
+    <ClCompile Include="..\inspector\agents\InspectorRuntimeAgent.cpp" />
+    <ClCompile Include="..\interpreter\AbstractPC.cpp" />
+    <ClCompile Include="..\interpreter\CallFrame.cpp" />
+    <ClCompile Include="..\interpreter\Interpreter.cpp" />
+    <ClCompile Include="..\interpreter\JSStack.cpp" />
+    <ClCompile Include="..\interpreter\ProtoCallFrame.cpp" />
+    <ClCompile Include="..\interpreter\StackVisitor.cpp" />
+    <ClCompile Include="..\interpreter\VMInspector.cpp" />
+    <ClCompile Include="..\jit\AccessorCallJITStubRoutine.cpp" />
+    <ClCompile Include="..\jit\ArityCheckFailReturnThunks.cpp" />
+    <ClCompile Include="..\jit\AssemblyHelpers.cpp" />
+    <ClCompile Include="..\jit\ClosureCallStubRoutine.cpp" />
+    <ClCompile Include="..\jit\ExecutableAllocator.cpp" />
+    <ClCompile Include="..\jit\GCAwareJITStubRoutine.cpp" />
+    <ClCompile Include="..\jit\HostCallReturnValue.cpp" />
+    <ClCompile Include="..\jit\JIT.cpp" />
+    <ClCompile Include="..\jit\JITArithmetic.cpp" />
+    <ClCompile Include="..\jit\JITArithmetic32_64.cpp" />
+    <ClCompile Include="..\jit\JITCall.cpp" />
+    <ClCompile Include="..\jit\JITCall32_64.cpp" />
+    <ClCompile Include="..\jit\JITCode.cpp" />
+    <ClCompile Include="..\jit\JITDisassembler.cpp" />
+    <ClCompile Include="..\jit\JITExceptions.cpp" />
+    <ClCompile Include="..\jit\JITInlineCacheGenerator.cpp" />
+    <ClCompile Include="..\jit\JITOpcodes.cpp" />
+    <ClCompile Include="..\jit\JITOpcodes32_64.cpp" />
+    <ClCompile Include="..\jit\JITOperations.cpp" />
+    <ClCompile Include="..\jit\JITOperationsMSVC64.cpp" />
+    <ClCompile Include="..\jit\JITPropertyAccess.cpp" />
+    <ClCompile Include="..\jit\JITPropertyAccess32_64.cpp" />
+    <ClCompile Include="..\jit\JITStubRoutine.cpp" />
+    <ClCompile Include="..\jit\JITStubs.cpp" />
+    <ClCompile Include="..\jit\JITThunks.cpp" />
+    <ClCompile Include="..\jit\JITToDFGDeferredCompilationCallback.cpp" />
+    <ClCompile Include="..\jit\Reg.cpp" />
+    <ClCompile Include="..\jit\RegisterPreservationWrapperGenerator.cpp" />
+    <ClCompile Include="..\jit\Repatch.cpp" />
+    <ClCompile Include="..\jit\ScratchRegisterAllocator.cpp" />
+    <ClCompile Include="..\jit\ThunkGenerators.cpp" />
+    <ClCompile Include="..\llint\LLIntCLoop.cpp" />
+    <ClCompile Include="..\llint\LLIntData.cpp" />
+    <ClCompile Include="..\llint\LLIntEntrypoint.cpp" />
+    <ClCompile Include="..\llint\LLIntExceptions.cpp" />
+    <ClCompile Include="..\llint\LLIntOffsetsExtractor.cpp" />
+    <ClCompile Include="..\llint\LLIntSlowPaths.cpp" />
+    <ClCompile Include="..\llint\LLIntThunks.cpp" />
+    <ClCompile Include="..\llint\LowLevelInterpreter.cpp" />
+    <ClCompile Include="..\llvm\InitializeLLVM.cpp" />
+    <ClCompile Include="..\llvm\InitializeLLVMWin.cpp" />
+    <ClCompile Include="..\llvm\LLVMAPI.cpp" />
+    <ClCompile Include="..\parser\Lexer.cpp" />
+    <ClCompile Include="..\parser\Nodes.cpp" />
+    <ClCompile Include="..\parser\Parser.cpp" />
+    <ClCompile Include="..\parser\ParserArena.cpp" />
+    <ClCompile Include="..\parser\SourceCode.cpp" />
+    <ClCompile Include="..\parser\SourceProvider.cpp" />
+    <ClCompile Include="..\parser\SourceProviderCache.cpp" />
+    <ClCompile Include="..\profiler\LegacyProfiler.cpp" />
+    <ClCompile Include="..\profiler\Profile.cpp" />
+    <ClCompile Include="..\profiler\ProfileGenerator.cpp" />
+    <ClCompile Include="..\profiler\ProfileNode.cpp" />
+    <ClCompile Include="..\profiler\ProfilerBytecode.cpp" />
+    <ClCompile Include="..\profiler\ProfilerBytecodes.cpp" />
+    <ClCompile Include="..\profiler\ProfilerBytecodeSequence.cpp" />
+    <ClCompile Include="..\profiler\ProfilerCompilation.cpp" />
+    <ClCompile Include="..\profiler\ProfilerCompilationKind.cpp" />
+    <ClCompile Include="..\profiler\ProfilerCompiledBytecode.cpp" />
+    <ClCompile Include="..\profiler\ProfilerDatabase.cpp" />
+    <ClCompile Include="..\profiler\ProfilerJettisonReason.cpp" />
+    <ClCompile Include="..\profiler\ProfilerOrigin.cpp" />
+    <ClCompile Include="..\profiler\ProfilerOriginStack.cpp" />
+    <ClCompile Include="..\profiler\ProfilerOSRExit.cpp" />
+    <ClCompile Include="..\profiler\ProfilerOSRExitSite.cpp" />
+    <ClCompile Include="..\profiler\ProfilerProfiledBytecodes.cpp" />
+    <ClCompile Include="..\runtime\ArgList.cpp" />
+    <ClCompile Include="..\runtime\Arguments.cpp" />
+    <ClCompile Include="..\runtime\ArgumentsIteratorConstructor.cpp" />
+    <ClCompile Include="..\runtime\ArgumentsIteratorPrototype.cpp" />
+    <ClCompile Include="..\runtime\ArrayBuffer.cpp" />
+    <ClCompile Include="..\runtime\ArrayBufferNeuteringWatchpoint.cpp" />
+    <ClCompile Include="..\runtime\ArrayBufferView.cpp" />
+    <ClCompile Include="..\runtime\ArrayConstructor.cpp" />
+    <ClCompile Include="..\runtime\ArrayIteratorConstructor.cpp" />
+    <ClCompile Include="..\runtime\ArrayIteratorPrototype.cpp" />
+    <ClCompile Include="..\runtime\ArrayPrototype.cpp" />
+    <ClCompile Include="..\runtime\BooleanConstructor.cpp" />
+    <ClCompile Include="..\runtime\BooleanObject.cpp" />
+    <ClCompile Include="..\runtime\BooleanPrototype.cpp" />
+    <ClCompile Include="..\runtime\CallData.cpp" />
+    <ClCompile Include="..\runtime\CodeCache.cpp" />
+    <ClCompile Include="..\runtime\CodeSpecializationKind.cpp" />
+    <ClCompile Include="..\runtime\CommonIdentifiers.cpp" />
+    <ClCompile Include="..\runtime\CommonSlowPaths.cpp" />
+    <ClCompile Include="..\runtime\CommonSlowPathsExceptions.cpp" />
+    <ClCompile Include="..\runtime\CompilationResult.cpp" />
+    <ClCompile Include="..\runtime\Completion.cpp" />
+    <ClCompile Include="..\runtime\ConsoleClient.cpp" />
+    <ClCompile Include="..\runtime\ConsolePrototype.cpp" />
+    <ClCompile Include="..\runtime\ConstructData.cpp" />
+    <ClCompile Include="..\runtime\CustomGetterSetter.cpp" />
+    <ClCompile Include="..\runtime\DataView.cpp" />
+    <ClCompile Include="..\runtime\DateConstructor.cpp" />
+    <ClCompile Include="..\runtime\DateConversion.cpp" />
+    <ClCompile Include="..\runtime\DateInstance.cpp" />
+    <ClCompile Include="..\runtime\DatePrototype.cpp" />
+    <ClCompile Include="..\runtime\DumpContext.cpp" />
+    <ClCompile Include="..\runtime\Error.cpp" />
+    <ClCompile Include="..\runtime\ErrorConstructor.cpp" />
+    <ClCompile Include="..\runtime\ErrorHandlingScope.cpp" />
+    <ClCompile Include="..\runtime\ErrorInstance.cpp" />
+    <ClCompile Include="..\runtime\ErrorPrototype.cpp" />
+    <ClCompile Include="..\runtime\ExceptionHelpers.cpp" />
+    <ClCompile Include="..\runtime\Executable.cpp" />
+    <ClCompile Include="..\runtime\FunctionConstructor.cpp" />
+    <ClCompile Include="..\runtime\FunctionExecutableDump.cpp" />
+    <ClCompile Include="..\runtime\FunctionPrototype.cpp" />
+    <ClCompile Include="..\runtime\GetterSetter.cpp" />
+    <ClCompile Include="..\runtime\Identifier.cpp" />
+    <ClCompile Include="..\runtime\IndexingType.cpp" />
+    <ClCompile Include="..\runtime\InitializeThreading.cpp" />
+    <ClCompile Include="..\runtime\IntendedStructureChain.cpp" />
+    <ClCompile Include="..\runtime\InternalFunction.cpp" />
+    <ClCompile Include="..\runtime\JSAPIValueWrapper.cpp" />
+    <ClCompile Include="..\runtime\JSActivation.cpp" />
+    <ClCompile Include="..\runtime\JSArgumentsIterator.cpp" />
+    <ClCompile Include="..\runtime\JSArray.cpp" />
+    <ClCompile Include="..\runtime\JSArrayIterator.cpp" />
+    <ClCompile Include="..\runtime\JSArrayBuffer.cpp" />
+    <ClCompile Include="..\runtime\JSArrayBufferConstructor.cpp" />
+    <ClCompile Include="..\runtime\JSArrayBufferPrototype.cpp" />
+    <ClCompile Include="..\runtime\JSArrayBufferView.cpp" />
+    <ClCompile Include="..\runtime\JSBoundFunction.cpp" />
+    <ClCompile Include="..\runtime\JSCJSValue.cpp" />
+    <ClCompile Include="..\runtime\JSCell.cpp" />
+    <ClCompile Include="..\runtime\JSConsole.cpp" />
+    <ClCompile Include="..\runtime\JSDataView.cpp" />
+    <ClCompile Include="..\runtime\JSDataViewPrototype.cpp" />
+    <ClCompile Include="..\runtime\JSDateMath.cpp" />
+    <ClCompile Include="..\runtime\JSFunction.cpp" />
+    <ClCompile Include="..\runtime\JSGlobalObject.cpp" />
+    <ClCompile Include="..\runtime\JSGlobalObjectFunctions.cpp" />
+    <ClCompile Include="..\runtime\JSLock.cpp" />
+    <ClCompile Include="..\runtime\JSMap.cpp" />
+    <ClCompile Include="..\runtime\JSMapIterator.cpp" />
+    <ClCompile Include="..\runtime\JSNameScope.cpp" />
+    <ClCompile Include="..\runtime\JSNotAnObject.cpp" />
+    <ClCompile Include="..\runtime\JSONObject.cpp" />
+    <ClCompile Include="..\runtime\JSObject.cpp" />
+    <ClCompile Include="..\runtime\JSPromise.cpp" />
+    <ClCompile Include="..\runtime\JSPromiseConstructor.cpp" />
+    <ClCompile Include="..\runtime\JSPromiseDeferred.cpp" />
+    <ClCompile Include="..\runtime\JSPromiseFunctions.cpp" />
+    <ClCompile Include="..\runtime\JSPromiseReaction.cpp" />
+    <ClCompile Include="..\runtime\JSPromisePrototype.cpp" />
+    <ClCompile Include="..\runtime\JSPropertyNameIterator.cpp" />
+    <ClCompile Include="..\runtime\JSProxy.cpp" />
+    <ClCompile Include="..\runtime\JSScope.cpp" />
+    <ClCompile Include="..\runtime\JSSegmentedVariableObject.cpp" />
+    <ClCompile Include="..\runtime\JSSet.cpp" />
+    <ClCompile Include="..\runtime\JSSetIterator.cpp" />
+    <ClCompile Include="..\runtime\JSString.cpp" />
+    <ClCompile Include="..\runtime\JSStringJoiner.cpp" />
+    <ClCompile Include="..\runtime\JSSymbolTableObject.cpp" />
+    <ClCompile Include="..\runtime\JSTypedArrayConstructors.cpp" />
+    <ClCompile Include="..\runtime\JSTypedArrayPrototypes.cpp" />
+    <ClCompile Include="..\runtime\JSTypedArrays.cpp" />
+    <ClCompile Include="..\runtime\JSVariableObject.cpp" />
+    <ClCompile Include="..\runtime\JSWeakMap.cpp" />
+    <ClCompile Include="..\runtime\JSWithScope.cpp" />
+    <ClCompile Include="..\runtime\JSWrapperObject.cpp" />
+    <ClCompile Include="..\runtime\LiteralParser.cpp" />
+    <ClCompile Include="..\runtime\Lookup.cpp" />
+    <ClCompile Include="..\runtime\MapConstructor.cpp" />
+    <ClCompile Include="..\runtime\MapData.cpp" />
+    <ClCompile Include="..\runtime\MapIteratorConstructor.cpp" />
+    <ClCompile Include="..\runtime\MapIteratorPrototype.cpp" />
+    <ClCompile Include="..\runtime\MapPrototype.cpp" />
+    <ClCompile Include="..\runtime\MathObject.cpp" />
+    <ClCompile Include="..\runtime\MemoryStatistics.cpp" />
+    <ClCompile Include="..\runtime\NameConstructor.cpp" />
+    <ClCompile Include="..\runtime\NameInstance.cpp" />
+    <ClCompile Include="..\runtime\NamePrototype.cpp" />
+    <ClCompile Include="..\runtime\NativeErrorConstructor.cpp" />
+    <ClCompile Include="..\runtime\NativeErrorPrototype.cpp" />
+    <ClCompile Include="..\runtime\NumberConstructor.cpp" />
+    <ClCompile Include="..\runtime\NumberObject.cpp" />
+    <ClCompile Include="..\runtime\NumberPrototype.cpp" />
+    <ClCompile Include="..\runtime\ObjectConstructor.cpp" />
+    <ClCompile Include="..\runtime\ObjectPrototype.cpp" />
+    <ClCompile Include="..\runtime\Operations.cpp" />
+    <ClCompile Include="..\runtime\Options.cpp" />
+    <ClCompile Include="..\runtime\PropertyDescriptor.cpp" />
+    <ClCompile Include="..\runtime\PropertyNameArray.cpp" />
+    <ClCompile Include="..\runtime\PropertySlot.cpp" />
+    <ClCompile Include="..\runtime\PropertyTable.cpp" />
+    <ClCompile Include="..\runtime\PrototypeMap.cpp" />
+    <ClCompile Include="..\runtime\RegExp.cpp" />
+    <ClCompile Include="..\runtime\RegExpCache.cpp" />
+    <ClCompile Include="..\runtime\RegExpCachedResult.cpp" />
+    <ClCompile Include="..\runtime\RegExpConstructor.cpp" />
+    <ClCompile Include="..\runtime\RegExpMatchesArray.cpp" />
+    <ClCompile Include="..\runtime\RegExpObject.cpp" />
+    <ClCompile Include="..\runtime\RegExpPrototype.cpp" />
+    <ClCompile Include="..\runtime\SamplingCounter.cpp" />
+    <ClCompile Include="..\runtime\SetConstructor.cpp" />
+    <ClCompile Include="..\runtime\SetIteratorConstructor.cpp" />
+    <ClCompile Include="..\runtime\SetIteratorPrototype.cpp" />
+    <ClCompile Include="..\runtime\SetPrototype.cpp" />
+    <ClCompile Include="..\runtime\SimpleTypedArrayController.cpp" />
+    <ClCompile Include="..\runtime\SmallStrings.cpp" />
+    <ClCompile Include="..\runtime\SparseArrayValueMap.cpp" />
+    <ClCompile Include="..\runtime\StrictEvalActivation.cpp" />
+    <ClCompile Include="..\runtime\StringConstructor.cpp" />
+    <ClCompile Include="..\runtime\StringObject.cpp" />
+    <ClCompile Include="..\runtime\StringPrototype.cpp" />
+    <ClCompile Include="..\runtime\StringRecursionChecker.cpp" />
+    <ClCompile Include="..\runtime\Structure.cpp" />
+    <ClCompile Include="..\runtime\StructureChain.cpp" />
+    <ClCompile Include="..\runtime\StructureIDTable.cpp" />
+    <ClCompile Include="..\runtime\StructureRareData.cpp" />
+    <ClCompile Include="..\runtime\SymbolTable.cpp" />
+    <ClCompile Include="..\runtime\TestRunnerUtils.cpp" />
+    <ClCompile Include="..\runtime\TypedArrayController.cpp" />
+    <ClCompile Include="..\runtime\TypedArrayType.cpp" />
+    <ClCompile Include="..\runtime\VM.cpp" />
+    <ClCompile Include="..\runtime\VMEntryScope.cpp" />
+    <ClCompile Include="..\runtime\Watchdog.cpp" />
+    <ClCompile Include="..\runtime\WatchdogNone.cpp" />
+    <ClCompile Include="..\runtime\WeakMapConstructor.cpp" />
+    <ClCompile Include="..\runtime\WeakMapData.cpp" />
+    <ClCompile Include="..\runtime\WeakMapPrototype.cpp" />
+    <ClCompile Include="..\tools\CodeProfile.cpp" />
+    <ClCompile Include="..\tools\CodeProfiling.cpp" />
+    <ClCompile Include="..\yarr\RegularExpression.cpp" />
+    <ClCompile Include="..\yarr\YarrCanonicalizeUCS2.cpp" />
+    <ClCompile Include="..\yarr\YarrInterpreter.cpp" />
+    <ClCompile Include="..\yarr\YarrJIT.cpp" />
+    <ClCompile Include="..\yarr\YarrPattern.cpp" />
+    <ClCompile Include="..\yarr\YarrSyntaxChecker.cpp" />
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorJSBackendDispatchers.cpp" />
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorJSFrontendDispatchers.cpp" />
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorJSTypeBuilders.cpp" />
+    <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSCBuiltins.cpp" />
+    <ClCompile Include="JavaScriptCoreDLL.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\ArrayConstructor.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\ArrayPrototype.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\BooleanPrototype.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\DateConstructor.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\DatePrototype.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\ErrorPrototype.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\HeaderDetection.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InjectedScriptSource.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorJSBackendDispatchers.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorJSFrontendDispatchers.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\InspectorJSTypeBuilders.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSDataViewPrototype.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSGlobalObject.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSONObject.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSPromiseConstructor.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSPromisePrototype.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\KeywordLookup.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\Lexer.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\NamePrototype.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\NumberConstructor.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\NumberPrototype.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\ObjectConstructor.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\RegExpConstructor.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\RegExpJitTables.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\RegExpObject.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\RegExpPrototype.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\StringConstructor.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSCBuiltins.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\API\APICallbackFunction.h" />
+    <ClInclude Include="..\API\APICast.h" />
+    <ClInclude Include="..\API\JavaScript.h" />
+    <ClInclude Include="..\API\JavaScriptCore.h" />
+    <ClInclude Include="..\API\JSAPIWrapperObject.h" />
+    <ClInclude Include="..\API\JSBase.h" />
+    <ClInclude Include="..\API\JSBasePrivate.h" />
+    <ClInclude Include="..\API\JSCallbackConstructor.h" />
+    <ClInclude Include="..\API\JSCallbackFunction.h" />
+    <ClInclude Include="..\API\JSCallbackObject.h" />
+    <ClInclude Include="..\API\JSCallbackObjectFunctions.h" />
+    <ClInclude Include="..\API\JSClassRef.h" />
+    <ClInclude Include="..\API\JSContext.h" />
+    <ClInclude Include="..\API\JSContextInternal.h" />
+    <ClInclude Include="..\API\JSContextRef.h" />
+    <ClInclude Include="..\API\JSContextRefPrivate.h" />
+    <ClInclude Include="..\API\JSExport.h" />
+    <ClInclude Include="..\API\JSObjectRef.h" />
+    <ClInclude Include="..\API\JSObjectRefPrivate.h" />
+    <ClInclude Include="..\API\JSRetainPtr.h" />
+    <ClInclude Include="..\API\JSScriptRefPrivate.h" />
+    <ClInclude Include="..\API\JSStringRef.h" />
+    <ClInclude Include="..\API\JSStringRefBSTR.h" />
+    <ClInclude Include="..\API\JSStringRefCF.h" />
+    <ClInclude Include="..\API\JSValue.h" />
+    <ClInclude Include="..\API\JSValueInternal.h" />
+    <ClInclude Include="..\API\JSValueRef.h" />
+    <ClInclude Include="..\API\JSWeakObjectMapRefInternal.h" />
+    <ClInclude Include="..\API\JSWeakObjectMapRefPrivate.h" />
+    <ClInclude Include="..\API\JSWrapperMap.h" />
+    <ClInclude Include="..\API\OpaqueJSString.h" />
+    <ClInclude Include="..\API\WebKitAvailability.h" />
+    <ClInclude Include="..\assembler\AbortReason.h" />
+    <ClInclude Include="..\assembler\AbstractMacroAssembler.h" />
+    <ClInclude Include="..\assembler\AssemblerBuffer.h" />
+    <ClInclude Include="..\assembler\CodeLocation.h" />
+    <ClInclude Include="..\assembler\LinkBuffer.h" />
+    <ClInclude Include="..\assembler\MacroAssembler.h" />
+    <ClInclude Include="..\assembler\MacroAssemblerX86.h" />
+    <ClInclude Include="..\assembler\MacroAssemblerX86Common.h" />
+    <ClInclude Include="..\assembler\MacroAssemblerX86_64.h" />
+    <ClInclude Include="..\assembler\MaxFrameExtentForSlowPathCall.h" />
+    <ClInclude Include="..\assembler\RepatchBuffer.h" />
+    <ClInclude Include="..\assembler\X86Assembler.h" />
+    <ClInclude Include="..\bindings\ScriptFunctionCall.h" />
+    <ClInclude Include="..\bindings\ScriptObject.h" />
+    <ClInclude Include="..\bindings\ScriptValue.h" />
+    <ClInclude Include="..\builtins\BuiltinExecutables.h" />
+    <ClInclude Include="..\bytecode\ArrayAllocationProfile.h" />
+    <ClInclude Include="..\bytecode\ArrayProfile.h" />
+    <ClInclude Include="..\bytecode\ByValInfo.h" />
+    <ClInclude Include="..\bytecode\BytecodeBasicBlock.h" />
+    <ClInclude Include="..\bytecode\BytecodeLivenessAnalysis.h" />
+    <ClInclude Include="..\bytecode\BytecodeUseDef.h" />
+    <ClInclude Include="..\bytecode\CallLinkInfo.h" />
+    <ClInclude Include="..\bytecode\CallLinkStatus.h" />
+    <ClInclude Include="..\bytecode\CallReturnOffsetToBytecodeOffset.h" />
+    <ClInclude Include="..\bytecode\CodeBlock.h" />
+    <ClInclude Include="..\bytecode\CodeBlockHash.h" />
+    <ClInclude Include="..\bytecode\CodeBlockJettisoningWatchpoint.h" />
+    <ClInclude Include="..\bytecode\CodeBlockWithJITType.h" />
+    <ClInclude Include="..\bytecode\CodeOrigin.h" />
+    <ClInclude Include="..\bytecode\CodeType.h" />
+    <ClInclude Include="..\bytecode\Comment.h" />
+    <ClInclude Include="..\bytecode\DataFormat.h" />
+    <ClInclude Include="..\bytecode\DeferredCompilationCallback.h" />
+    <ClInclude Include="..\bytecode\DFGExitProfile.h" />
+    <ClInclude Include="..\bytecode\EvalCodeCache.h" />
+    <ClInclude Include="..\bytecode\ExecutionCounter.h" />
+    <ClInclude Include="..\bytecode\ExitKind.h" />
+    <ClInclude Include="..\bytecode\ExpressionRangeInfo.h" />
+    <ClInclude Include="..\bytecode\GetByIdStatus.h" />
+    <ClInclude Include="..\bytecode\GetByIdVariant.h" />
+    <ClInclude Include="..\bytecode\HandlerInfo.h" />
+    <ClInclude Include="..\bytecode\InlineCallFrameSet.h" />
+    <ClInclude Include="..\bytecode\Instruction.h" />
+    <ClInclude Include="..\bytecode\JumpTable.h" />
+    <ClInclude Include="..\bytecode\LazyOperandValueProfile.h" />
+    <ClInclude Include="..\bytecode\LLIntCallLinkInfo.h" />
+    <ClInclude Include="..\bytecode\MethodOfGettingAValueProfile.h" />
+    <ClInclude Include="..\bytecode\Opcode.h" />
+    <ClInclude Include="..\bytecode\Operands.h" />
+    <ClInclude Include="..\bytecode\PolymorphicGetByIdList.h" />
+    <ClInclude Include="..\bytecode\PolymorphicPutByIdList.h" />
+    <ClInclude Include="..\bytecode\ProfiledCodeBlockJettisoningWatchpoint.h" />
+    <ClInclude Include="..\bytecode\PreciseJumpTargets.h" />
+    <ClInclude Include="..\bytecode\PutByIdStatus.h" />
+    <ClInclude Include="..\bytecode\PutByIdVariant.h" />
+    <ClInclude Include="..\bytecode\PutKind.h" />
+    <ClInclude Include="..\bytecode\ReduceWhitespace.h" />
+    <ClInclude Include="..\bytecode\SamplingTool.h" />
+    <ClInclude Include="..\bytecode\SpecialPointer.h" />
+    <ClInclude Include="..\bytecode\SpeculatedType.h" />
+    <ClInclude Include="..\bytecode\StructureSet.h" />
+    <ClInclude Include="..\bytecode\StructureStubClearingWatchpoint.h" />
+    <ClInclude Include="..\bytecode\StructureStubInfo.h" />
+    <ClInclude Include="..\bytecode\UnlinkedCodeBlock.h" />
+    <ClInclude Include="..\bytecode\UnlinkedInstructionStream.h" />
+    <ClInclude Include="..\bytecode\ValueProfile.h" />
+    <ClInclude Include="..\bytecode\ValueRecovery.h" />
+    <ClInclude Include="..\bytecode\VariableWatchpointSet.h" />
+    <ClInclude Include="..\bytecode\VirtualRegister.h" />
+    <ClInclude Include="..\bytecode\Watchpoint.h" />
+    <ClInclude Include="..\bytecompiler\BytecodeGenerator.h" />
+    <ClInclude Include="..\bytecompiler\Label.h" />
+    <ClInclude Include="..\bytecompiler\LabelScope.h" />
+    <ClInclude Include="..\bytecompiler\RegisterID.h" />
+    <ClInclude Include="..\config.h" />
+    <ClInclude Include="..\debugger\Breakpoint.h" />
+    <ClInclude Include="..\debugger\Debugger.h" />
+    <ClInclude Include="..\debugger\DebuggerActivation.h" />
+    <ClInclude Include="..\debugger\DebuggerCallFrame.h" />
+    <ClInclude Include="..\debugger\DebuggerPrimitives.h" />
+    <ClInclude Include="..\dfg\DFGAbstractHeap.h" />
+    <ClInclude Include="..\dfg\DFGAbstractInterpreter.h" />
+    <ClInclude Include="..\dfg\DFGAbstractInterpreterInlines.h" />
+    <ClInclude Include="..\dfg\DFGAbstractValue.h" />
+    <ClInclude Include="..\dfg\DFGAdjacencyList.h" />
+    <ClInclude Include="..\dfg\DFGAllocator.h" />
+    <ClInclude Include="..\dfg\DFGAnalysis.h" />
+    <ClInclude Include="..\dfg\DFGArgumentPosition.h" />
+    <ClInclude Include="..\dfg\DFGArgumentsSimplificationPhase.h" />
+    <ClInclude Include="..\dfg\DFGArrayifySlowPathGenerator.h" />
+    <ClInclude Include="..\dfg\DFGArithMode.h" />
+    <ClInclude Include="..\dfg\DFGArrayMode.h" />
+    <ClInclude Include="..\dfg\DFGAtTailAbstractState.h" />
+    <ClInclude Include="..\dfg\DFGAvailability.h" />
+    <ClInclude Include="..\dfg\DFGBackwardsPropagationPhase.h" />
+    <ClInclude Include="..\dfg\DFGBasicBlock.h" />
+    <ClInclude Include="..\dfg\DFGBasicBlockInlines.h" />
+    <ClInclude Include="..\dfg\DFGBinarySwitch.h" />
+    <ClInclude Include="..\dfg\DFGBlockInsertionSet.h" />
+    <ClInclude Include="..\dfg\DFGBranchDirection.h" />
+    <ClInclude Include="..\dfg\DFGByteCodeParser.h" />
+    <ClInclude Include="..\dfg\DFGCallArrayAllocatorSlowPathGenerator.h" />
+    <ClInclude Include="..\dfg\DFGCapabilities.h" />
+    <ClInclude Include="..\dfg\DFGCCallHelpers.h" />
+    <ClInclude Include="..\dfg\DFGCFAPhase.h" />
+    <ClInclude Include="..\dfg\DFGCFGSimplificationPhase.h" />
+    <ClInclude Include="..\dfg\DFGClobberize.h" />
+    <ClInclude Include="..\dfg\DFGClobberSet.h" />
+    <ClInclude Include="..\dfg\DFGCommon.h" />
+    <ClInclude Include="..\dfg\DFGCommonData.h" />
+    <ClInclude Include="..\dfg\DFGCompilationKey.h" />
+    <ClInclude Include="..\dfg\DFGCompilationMode.h" />
+    <ClInclude Include="..\dfg\DFGConstantFoldingPhase.h" />
+    <ClInclude Include="..\dfg\DFGCPSRethreadingPhase.h" />
+    <ClInclude Include="..\dfg\DFGCriticalEdgeBreakingPhase.h" />
+    <ClInclude Include="..\dfg\DFGCSEPhase.h" />
+    <ClInclude Include="..\dfg\DFGDCEPhase.h" />
+    <ClInclude Include="..\dfg\DFGDesiredIdentifiers.h" />
+    <ClInclude Include="..\dfg\DFGDesiredStructureChains.h" />
+    <ClInclude Include="..\dfg\DFGDesiredTransitions.h" />
+    <ClInclude Include="..\dfg\DFGDesiredWatchpoints.h" />
+    <ClInclude Include="..\dfg\DFGDesiredWeakReferences.h" />
+    <ClInclude Include="..\dfg\DFGDesiredWriteBarriers.h" />
+    <ClInclude Include="..\dfg\DFGDisassembler.h" />
+    <ClInclude Include="..\dfg\DFGDominators.h" />
+    <ClInclude Include="..\dfg\DFGDoubleFormatState.h" />
+    <ClInclude Include="..\dfg\DFGDriver.h" />
+    <ClInclude Include="..\dfg\DFGEdge.h" />
+    <ClInclude Include="..\dfg\DFGEdgeDominates.h" />
+    <ClInclude Include="..\dfg\DFGEdgeUsesStructure.h" />
+    <ClInclude Include="..\dfg\DFGFailedFinalizer.h" />
+    <ClInclude Include="..\dfg\DFGFiltrationResult.h" />
+    <ClInclude Include="..\dfg\DFGFinalizer.h" />
+    <ClInclude Include="..\dfg\DFGFixupPhase.h" />
+    <ClInclude Include="..\dfg\DFGFlushedAt.h" />
+    <ClInclude Include="..\dfg\DFGFlushFormat.h" />
+    <ClInclude Include="..\dfg\DFGFPRInfo.h" />
+    <ClInclude Include="..\dfg\DFGFunctionWhitelist.h" />
+    <ClInclude Include="..\dfg\DFGGenerationInfo.h" />
+    <ClInclude Include="..\dfg\DFGGPRInfo.h" />
+    <ClInclude Include="..\dfg\DFGGraph.h" />
+    <ClInclude Include="..\dfg\DFGGraphSafepoint.h" />
+    <ClInclude Include="..\dfg\DFGInPlaceAbstractState.h" />
+    <ClInclude Include="..\dfg\DFGInsertionSet.h" />
+    <ClInclude Include="..\dfg\DFGIntegerCheckCombiningPhase.h" />
+    <ClInclude Include="..\dfg\DFGInvalidationPointInjectionPhase.h" />
+    <ClInclude Include="..\dfg\DFGJITCode.h" />
+    <ClInclude Include="..\dfg\DFGJITCompiler.h" />
+    <ClInclude Include="..\dfg\DFGJITFinalizer.h" />
+    <ClInclude Include="..\dfg\DFGJumpReplacement.h" />
+    <ClInclude Include="..\dfg\DFGLazyJSValue.h" />
+    <ClInclude Include="..\dfg\DFGLICMPhase.h" />
+    <ClInclude Include="..\dfg\DFGLivenessAnalysisPhase.h" />
+    <ClInclude Include="..\dfg\DFGLongLivedState.h" />
+    <ClInclude Include="..\dfg\DFGLoopPreHeaderCreationPhase.h" />
+    <ClInclude Include="..\dfg\DFGMergeMode.h" />
+    <ClInclude Include="..\dfg\DFGMinifiedGraph.h" />
+    <ClInclude Include="..\dfg\DFGMinifiedID.h" />
+    <ClInclude Include="..\dfg\DFGMinifiedNode.h" />
+    <ClInclude Include="..\dfg\DFGNaturalLoops.h" />
+    <ClInclude Include="..\dfg\DFGNode.h" />
+    <ClInclude Include="..\dfg\DFGNodeAllocator.h" />
+    <ClInclude Include="..\dfg\DFGNodeFlags.h" />
+    <ClInclude Include="..\dfg\DFGNodeOrigin.h" />
+    <ClInclude Include="..\dfg\DFGNodeType.h" />
+    <ClInclude Include="..\dfg\DFGOperations.h" />
+    <ClInclude Include="..\dfg\DFGOSRAvailabilityAnalysisPhase.h" />
+    <ClInclude Include="..\dfg\DFGOSREntry.h" />
+    <ClInclude Include="..\dfg\DFGOSREntrypointCreationPhase.h" />
+    <ClInclude Include="..\dfg\DFGOSRExit.h" />
+    <ClInclude Include="..\dfg\DFGOSRExitBase.h" />
+    <ClInclude Include="..\dfg\DFGOSRExitCompilationInfo.h" />
+    <ClInclude Include="..\dfg\DFGOSRExitCompiler.h" />
+    <ClInclude Include="..\dfg\DFGOSRExitCompilerCommon.h" />
+    <ClInclude Include="..\dfg\DFGOSRExitJumpPlaceholder.h" />
+    <ClInclude Include="..\dfg\DFGOSRExitPreparation.h" />
+    <ClInclude Include="..\dfg\DFGPhase.h" />
+    <ClInclude Include="..\dfg\DFGPlan.h" />
+    <ClInclude Include="..\dfg\DFGPredictionInjectionPhase.h" />
+    <ClInclude Include="..\dfg\DFGPredictionPropagationPhase.h" />
+    <ClInclude Include="..\dfg\DFGRegisterBank.h" />
+    <ClInclude Include="..\dfg\DFGRegisterSet.h" />
+    <ClInclude Include="..\dfg\DFGResurrectionForValidationPhase.h" />
+    <ClInclude Include="..\dfg\DFGSafeToExecute.h" />
+    <ClInclude Include="..\dfg\DFGSafepoint.h" />
+    <ClInclude Include="..\dfg\DFGSaneStringGetByValSlowPathGenerator.h" />
+    <ClInclude Include="..\dfg\DFGScannable.h" />
+    <ClInclude Include="..\dfg\DFGScoreBoard.h" />
+    <ClInclude Include="..\dfg\DFGScratchRegisterAllocator.h" />
+    <ClInclude Include="..\dfg\DFGSilentRegisterSavePlan.h" />
+    <ClInclude Include="..\dfg\DFGSlowPathGenerator.h" />
+    <ClInclude Include="..\dfg\DFGSpeculativeJIT.h" />
+    <ClInclude Include="..\dfg\DFGSSAConversionPhase.h" />
+    <ClInclude Include="..\dfg\DFGSSALoweringPhase.h" />
+    <ClInclude Include="..\dfg\DFGStackLayoutPhase.h" />
+    <ClInclude Include="..\dfg\DFGStaticExecutionCountEstimationPhase.h" />
+    <ClInclude Include="..\dfg\DFGStoreBarrierElisionPhase.h" />
+    <ClInclude Include="..\dfg\DFGStrengthReductionPhase.h" />
+    <ClInclude Include="..\dfg\DFGStructureAbstractValue.h" />
+    <ClInclude Include="..\dfg\DFGThreadData.h" />
+    <ClInclude Include="..\dfg\DFGThunks.h" />
+    <ClInclude Include="..\dfg\DFGTierUpCheckInjectionPhase.h" />
+    <ClInclude Include="..\dfg\DFGToFTLDeferredCompilationCallback.h" />
+    <ClInclude Include="..\dfg\DFGToFTLForOSREntryDeferredCompilationCallback.h" />
+    <ClInclude Include="..\dfg\DFGTypeCheckHoistingPhase.h" />
+    <ClInclude Include="..\dfg\DFGUnificationPhase.h" />
+    <ClInclude Include="..\dfg\DFGUseKind.h" />
+    <ClInclude Include="..\dfg\DFGValidate.h" />
+    <ClInclude Include="..\dfg\DFGValueRecoveryOverride.h" />
+    <ClInclude Include="..\dfg\DFGValueSource.h" />
+    <ClInclude Include="..\dfg\DFGVariableAccessData.h" />
+    <ClInclude Include="..\dfg\DFGVariableAccessDataDump.h" />
+    <ClInclude Include="..\dfg\DFGVariableEvent.h" />
+    <ClInclude Include="..\dfg\DFGVariableEventStream.h" />
+    <ClInclude Include="..\dfg\DFGVariadicFunction.h" />
+    <ClInclude Include="..\dfg\DFGVirtualRegisterAllocationPhase.h" />
+    <ClInclude Include="..\dfg\DFGWatchpointCollectionPhase.h" />
+    <ClInclude Include="..\dfg\DFGWorklist.h" />
+    <ClInclude Include="..\disassembler\Disassembler.h" />
+    <ClInclude Include="..\disassembler\LLVMDisassembler.h" />
+    <ClInclude Include="..\ftl\FTLAbbreviatedTypes.h" />
+    <ClInclude Include="..\ftl\FTLAbbreviations.h" />
+    <ClInclude Include="..\ftl\FTLAbstractHeap.h" />
+    <ClInclude Include="..\ftl\FTLAbstractHeapRepository.h" />
+    <ClInclude Include="..\ftl\FTLAvailableRecovery.h" />
+    <ClInclude Include="..\ftl\FTLCapabilities.h" />
+    <ClInclude Include="..\ftl\FTLCommonValues.h" />
+    <ClInclude Include="..\ftl\FTLCompile.h" />
+    <ClInclude Include="..\ftl\FTLDataSection.h" />
+    <ClInclude Include="..\ftl\FTLDWARFDebugLineInfo.h" />
+    <ClInclude Include="..\ftl\FTLDWARFRegister.h" />
+    <ClInclude Include="..\ftl\FTLExitArgument.h" />
+    <ClInclude Include="..\ftl\FTLExitArgumentForOperand.h" />
+    <ClInclude Include="..\ftl\FTLExitArgumentList.h" />
+    <ClInclude Include="..\ftl\FTLExitThunkGenerator.h" />
+    <ClInclude Include="..\ftl\FTLExitValue.h" />
+    <ClInclude Include="..\ftl\FTLFail.h" />
+    <ClInclude Include="..\ftl\FTLFormattedValue.h" />
+    <ClInclude Include="..\ftl\FTLForOSREntryJITCode.h" />
+    <ClInclude Include="..\ftl\FTLGeneratedFunction.h" />
+    <ClInclude Include="..\ftl\FTLInlineCacheDescriptor.h" />
+    <ClInclude Include="..\ftl\FTLInlineCacheSize.h" />
+    <ClInclude Include="..\ftl\FTLIntrinsicRepository.h" />
+    <ClInclude Include="..\ftl\FTLJITCode.h" />
+    <ClInclude Include="..\ftl\FTLJITFinalizer.h" />
+    <ClInclude Include="..\ftl\FTLJSCall.h" />
+    <ClInclude Include="..\ftl\FTLLink.h" />
+    <ClInclude Include="..\ftl\FTLLocation.h" />
+    <ClInclude Include="..\ftl\FTLLowerDFGToLLVM.h" />
+    <ClInclude Include="..\ftl\FTLLoweredNodeValue.h" />
+    <ClInclude Include="..\ftl\FTLOSREntry.h" />
+    <ClInclude Include="..\ftl\FTLOSRExit.h" />
+    <ClInclude Include="..\ftl\FTLOSRExitCompilationInfo.h" />
+    <ClInclude Include="..\ftl\FTLOSRExitCompiler.h" />
+    <ClInclude Include="..\ftl\FTLOutput.h" />
+    <ClInclude Include="..\ftl\FTLRecoveryOpcode.h" />
+    <ClInclude Include="..\ftl\FTLRegisterAtOffset.h" />
+    <ClInclude Include="..\ftl\FTLSaveRestore.h" />
+    <ClInclude Include="..\ftl\FTLSlowPathCall.h" />
+    <ClInclude Include="..\ftl\FTLSlowPathCallKey.h" />
+    <ClInclude Include="..\ftl\FTLStackMaps.h" />
+    <ClInclude Include="..\ftl\FTLState.h" />
+    <ClInclude Include="..\ftl\FTLSwitchCase.h" />
+    <ClInclude Include="..\ftl\FTLThunks.h" />
+    <ClInclude Include="..\ftl\FTLTypedPointer.h" />
+    <ClInclude Include="..\ftl\FTLUnwindInfo.h" />
+    <ClInclude Include="..\ftl\FTLValueFormat.h" />
+    <ClInclude Include="..\ftl\FTLValueFromBlock.h" />
+    <ClInclude Include="..\ftl\FTLValueRange.h" />
+    <ClInclude Include="..\ftl\FTLWeight.h" />
+    <ClInclude Include="..\ftl\FTLWeightedTarget.h" />
+    <ClInclude Include="..\heap\BlockAllocator.h" />
+    <ClInclude Include="..\heap\CodeBlockSet.h" />
+    <ClInclude Include="..\heap\ConservativeRoots.h" />
+    <ClInclude Include="..\heap\CopiedAllocator.h" />
+    <ClInclude Include="..\heap\CopiedBlock.h" />
+    <ClInclude Include="..\heap\CopiedBlockInlines.h" />
+    <ClInclude Include="..\heap\CopiedSpace.h" />
+    <ClInclude Include="..\heap\CopiedSpaceInlines.h" />
+    <ClInclude Include="..\heap\CopyToken.h" />
+    <ClInclude Include="..\heap\CopyVisitor.h" />
+    <ClInclude Include="..\heap\CopyVisitorInlines.h" />
+    <ClInclude Include="..\heap\CopyWorkList.h" />
+    <ClInclude Include="..\heap\CopyWriteBarrier.h" />
+    <ClInclude Include="..\heap\DeferGC.h" />
+    <ClInclude Include="..\heap\DelayedReleaseScope.h" />
+    <ClInclude Include="..\heap\EdenGCActivityCallback.h" />
+    <ClInclude Include="..\heap\FullGCActivityCallback.h" />
+    <ClInclude Include="..\heap\GCActivityCallback.h" />
+    <ClInclude Include="..\heap\GCLogging.h" />
+    <ClInclude Include="..\heap\GCSegmentedArray.h" />
+    <ClInclude Include="..\heap\GCSegmentedArrayInlines.h" />
+    <ClInclude Include="..\heap\GCAssertions.h" />
+    <ClInclude Include="..\heap\GCThread.h" />
+    <ClInclude Include="..\heap\GCThreadSharedData.h" />
+    <ClInclude Include="..\heap\Handle.h" />
+    <ClInclude Include="..\heap\HandleBlock.h" />
+    <ClInclude Include="..\heap\HandleBlockInlines.h" />
+    <ClInclude Include="..\heap\HandleSet.h" />
+    <ClInclude Include="..\heap\HandleStack.h" />
+    <ClInclude Include="..\heap\HandleTypes.h" />
+    <ClInclude Include="..\heap\Heap.h" />
+    <ClInclude Include="..\heap\HeapBlock.h" />
+    <ClInclude Include="..\heap\HeapInlines.h" />
+    <ClInclude Include="..\heap\HeapOperation.h" />
+    <ClInclude Include="..\heap\HeapRootVisitor.h" />
+    <ClInclude Include="..\heap\HeapStatistics.h" />
+    <ClInclude Include="..\heap\HeapTimer.h" />
+    <ClInclude Include="..\heap\IncrementalSweeper.h" />
+    <ClInclude Include="..\heap\JITStubRoutineSet.h" />
+    <ClInclude Include="..\heap\ListableHandler.h" />
+    <ClInclude Include="..\heap\Local.h" />
+    <ClInclude Include="..\heap\LocalScope.h" />
+    <ClInclude Include="..\heap\MachineStackMarker.h" />
+    <ClInclude Include="..\heap\MarkedAllocator.h" />
+    <ClInclude Include="..\heap\MarkedBlock.h" />
+    <ClInclude Include="..\heap\MarkedBlockSet.h" />
+    <ClInclude Include="..\heap\MarkedSpace.h" />
+    <ClInclude Include="..\heap\MarkStack.h" />
+    <ClInclude Include="..\heap\RecursiveAllocationScope.h" />
+    <ClInclude Include="..\heap\Region.h" />
+    <ClInclude Include="..\heap\SlotVisitor.h" />
+    <ClInclude Include="..\heap\SlotVisitorInlines.h" />
+    <ClInclude Include="..\heap\Strong.h" />
+    <ClInclude Include="..\heap\StrongInlines.h" />
+    <ClInclude Include="..\heap\SuperRegion.h" />
+    <ClInclude Include="..\heap\TinyBloomFilter.h" />
+    <ClInclude Include="..\heap\UnconditionalFinalizer.h" />
+    <ClInclude Include="..\heap\Weak.h" />
+    <ClInclude Include="..\heap\WeakBlock.h" />
+    <ClInclude Include="..\heap\WeakHandleOwner.h" />
+    <ClInclude Include="..\heap\WeakImpl.h" />
+    <ClInclude Include="..\heap\WeakReferenceHarvester.h" />
+    <ClInclude Include="..\heap\WeakSet.h" />
+    <ClInclude Include="..\heap\WeakSetInlines.h" />
+    <ClInclude Include="..\heap\WriteBarrierBuffer.h" />
+    <ClInclude Include="..\heap\WriteBarrierSupport.h" />
+    <ClInclude Include="..\inspector\ConsoleMessage.h" />
+    <ClInclude Include="..\inspector\ContentSearchUtilities.h" />
+    <ClInclude Include="..\inspector\IdentifiersFactory.h" />
+    <ClInclude Include="..\inspector\InjectedScript.h" />
+    <ClInclude Include="..\inspector\InjectedScriptBase.h" />
+    <ClInclude Include="..\inspector\InjectedScriptHost.h" />
+    <ClInclude Include="..\inspector\InjectedScriptManager.h" />
+    <ClInclude Include="..\inspector\InjectedScriptModule.h" />
+    <ClInclude Include="..\inspector\InspectorAgentBase.h" />
+    <ClInclude Include="..\inspector\InspectorAgentRegistry.h" />
+    <ClInclude Include="..\inspector\InspectorBackendDispatcher.h" />
+    <ClInclude Include="..\inspector\InspectorEnvironment.h" />
+    <ClInclude Include="..\inspector\InspectorFrontendChannel.h" />
+    <ClInclude Include="..\inspector\InspectorTypeBuilder.h" />
+    <ClInclude Include="..\inspector\InspectorValues.h" />
+    <ClInclude Include="..\inspector\JSInjectedScriptHost.h" />
+    <ClInclude Include="..\inspector\JSInjectedScriptHostPrototype.h" />
+    <ClInclude Include="..\inspector\JSJavaScriptCallFrame.h" />
+    <ClInclude Include="..\inspector\JSJavaScriptCallFramePrototype.h" />
+    <ClInclude Include="..\inspector\JavaScriptCallFrame.h" />
+    <ClInclude Include="..\inspector\ScriptArguments.h" />
+    <ClInclude Include="..\inspector\ScriptBreakpoint.h" />
+    <ClInclude Include="..\inspector\ScriptCallFrame.h" />
+    <ClInclude Include="..\inspector\ScriptCallStack.h" />
+    <ClInclude Include="..\inspector\ScriptCallStackFactory.h" />
+    <ClInclude Include="..\inspector\ScriptDebugListener.h" />
+    <ClInclude Include="..\inspector\ScriptDebugServer.h" />
+    <ClInclude Include="..\inspector\agents\InspectorAgent.h" />
+    <ClInclude Include="..\inspector\agents\InspectorConsoleAgent.h" />
+    <ClInclude Include="..\inspector\agents\InspectorDebuggerAgent.h" />
+    <ClInclude Include="..\inspector\agents\InspectorProfilerAgent.h" />
+    <ClInclude Include="..\inspector\agents\InspectorRuntimeAgent.h" />
+    <ClInclude Include="..\interpreter\AbstractPC.h" />
+    <ClInclude Include="..\interpreter\CachedCall.h" />
+    <ClInclude Include="..\interpreter\CallFrame.h" />
+    <ClInclude Include="..\interpreter\CallFrameInlines.h" />
+    <ClInclude Include="..\interpreter\CallFrameClosure.h" />
+    <ClInclude Include="..\interpreter\Interpreter.h" />
+    <ClInclude Include="..\interpreter\JSStack.h" />
+    <ClInclude Include="..\interpreter\JSStackInlines.h" />
+    <ClInclude Include="..\interpreter\ProtoCallFrame.h" />
+    <ClInclude Include="..\interpreter\Register.h" />
+    <ClInclude Include="..\interpreter\StackVisitor.h" />
+    <ClInclude Include="..\interpreter\VMInspector.h" />
+    <ClInclude Include="..\jit\AccessorCallJITStubRoutine.h" />
+    <ClInclude Include="..\jit\ArityCheckFailReturnThunks.h" />
+    <ClInclude Include="..\jit\AssemblyHelpers.h" />
+    <ClInclude Include="..\jit\CCallHelpers.h" />
+    <ClInclude Include="..\jit\ClosureCallStubRoutine.h" />
+    <ClInclude Include="..\jit\CompactJITCodeMap.h" />
+    <ClInclude Include="..\jit\ExecutableAllocator.h" />
+    <ClInclude Include="..\jit\FPRInfo.h" />
+    <ClInclude Include="..\jit\GCAwareJITStubRoutine.h" />
+    <ClInclude Include="..\jit\GPRInfo.h" />
+    <ClInclude Include="..\jit\HostCallReturnValue.h" />
+    <ClInclude Include="..\jit\JIT.h" />
+    <ClInclude Include="..\jit\JITCode.h" />
+    <ClInclude Include="..\jit\JITCompilationEffort.h" />
+    <ClInclude Include="..\jit\JITDisassembler.h" />
+    <ClInclude Include="..\jit\JITExceptions.h" />
+    <ClInclude Include="..\jit\JITInlineCacheGenerator.h" />
+    <ClInclude Include="..\jit\JITInlines.h" />
+    <ClInclude Include="..\jit\JITOperations.h" />
+    <ClInclude Include="..\jit\JITStubRoutine.h" />
+    <ClInclude Include="..\jit\JITStubs.h" />
+    <ClInclude Include="..\jit\JITStubsX86.h" />
+    <ClInclude Include="..\jit\JITStubsX86Common.h" />
+    <ClInclude Include="..\jit\JITStubsX86_64.h" />
+    <ClInclude Include="..\jit\JITThunks.h" />
+    <ClInclude Include="..\jit\JITToDFGDeferredCompilationCallback.h" />
+    <ClInclude Include="..\jit\JITWriteBarrier.h" />
+    <ClInclude Include="..\jit\JSInterfaceJIT.h" />
+    <ClCompile Include="..\jit\RegisterSet.cpp" />
+    <ClInclude Include="..\jit\Reg.h" />
+    <ClInclude Include="..\jit\RegisterPreservationWrapperGenerator.h" />
+    <ClInclude Include="..\jit\RegisterSet.h" />
+    <ClInclude Include="..\jit\Repatch.h" />
+    <ClInclude Include="..\jit\ScratchRegisterAllocator.h" />
+    <ClInclude Include="..\jit\SpecializedThunkJIT.h" />
+    <ClCompile Include="..\jit\TempRegisterSet.cpp" />
+    <ClInclude Include="..\jit\TempRegisterSet.h" />
+    <ClInclude Include="..\jit\ThunkGenerator.h" />
+    <ClInclude Include="..\jit\ThunkGenerators.h" />
+    <ClInclude Include="..\jit\UnusedPointer.h" />
+    <ClInclude Include="..\llint\LLIntCLoop.h" />
+    <ClInclude Include="..\llint\LLIntCommon.h" />
+    <ClInclude Include="..\llint\LLIntData.h" />
+    <ClInclude Include="..\llint\LLIntEntrypoint.h" />
+    <ClInclude Include="..\llint\LLIntExceptions.h" />
+    <ClInclude Include="..\llint\LLIntOfflineAsmConfig.h" />
+    <ClInclude Include="..\llint\LLIntOpcode.h" />
+    <ClInclude Include="..\llint\LLIntSlowPaths.h" />
+    <ClInclude Include="..\llint\LLIntThunks.h" />
+    <ClInclude Include="..\llint\LowLevelInterpreter.h" />
+    <ClInclude Include="..\llvm\InitializeLLVM.h" />
+    <ClInclude Include="..\llvm\LLVMAPI.h" />
+    <ClInclude Include="..\llvm\LLVMAPIFunctions.h" />
+    <ClInclude Include="..\llvm\LLVMHeaders.h" />
+    <ClInclude Include="..\parser\ASTBuilder.h" />
+    <ClInclude Include="..\parser\Lexer.h" />
+    <ClInclude Include="..\parser\NodeConstructors.h" />
+    <ClInclude Include="..\parser\NodeInfo.h" />
+    <ClInclude Include="..\parser\Nodes.h" />
+    <ClInclude Include="..\parser\Parser.h" />
+    <ClInclude Include="..\parser\ParserArena.h" />
+    <ClInclude Include="..\parser\ParserModes.h" />
+    <ClInclude Include="..\parser\ParserTokens.h" />
+    <ClInclude Include="..\parser\ResultType.h" />
+    <ClInclude Include="..\parser\SourceCode.h" />
+    <ClInclude Include="..\parser\SourceProvider.h" />
+    <ClInclude Include="..\parser\SourceProviderCache.h" />
+    <ClInclude Include="..\parser\SourceProviderCacheItem.h" />
+    <ClInclude Include="..\parser\SyntaxChecker.h" />
+    <ClInclude Include="..\profiler\CallIdentifier.h" />
+    <ClInclude Include="..\profiler\LegacyProfiler.h" />
+    <ClInclude Include="..\profiler\Profile.h" />
+    <ClInclude Include="..\profiler\ProfileGenerator.h" />
+    <ClInclude Include="..\profiler\ProfileNode.h" />
+    <ClInclude Include="..\profiler\ProfilerBytecode.h" />
+    <ClInclude Include="..\profiler\ProfilerBytecodes.h" />
+    <ClInclude Include="..\profiler\ProfilerBytecodeSequence.h" />
+    <ClInclude Include="..\profiler\ProfilerCompilation.h" />
+    <ClInclude Include="..\profiler\ProfilerCompilationKind.h" />
+    <ClInclude Include="..\profiler\ProfilerCompiledBytecode.h" />
+    <ClInclude Include="..\profiler\ProfilerDatabase.h" />
+    <ClInclude Include="..\profiler\ProfilerExecutionCounter.h" />
+    <ClInclude Include="..\profiler\ProfilerJettisonReason.h" />
+    <ClInclude Include="..\profiler\ProfilerOrigin.h" />
+    <ClInclude Include="..\profiler\ProfilerOriginStack.h" />
+    <ClInclude Include="..\profiler\ProfilerOSRExit.h" />
+    <ClInclude Include="..\profiler\ProfilerOSRExitSite.h" />
+    <ClInclude Include="..\profiler\ProfilerProfiledBytecodes.h" />
+    <ClInclude Include="..\runtime\ArgList.h" />
+    <ClInclude Include="..\runtime\Arguments.h" />
+    <ClInclude Include="..\runtime\ArrayBuffer.h" />
+    <ClInclude Include="..\runtime\ArrayBufferNeuteringWatchpoint.h" />
+    <ClInclude Include="..\runtime\ArrayBufferView.h" />
+    <ClInclude Include="..\runtime\ArrayConstructor.h" />
+    <ClInclude Include="..\runtime\ArrayConventions.h" />
+    <ClInclude Include="..\runtime\ArrayIteratorConstructor.h" />
+    <ClInclude Include="..\runtime\ArrayIteratorPrototype.h" />
+    <ClInclude Include="..\runtime\ArrayPrototype.h" />
+    <ClInclude Include="..\runtime\ArrayStorage.h" />
+    <ClInclude Include="..\runtime\BatchedTransitionOptimizer.h" />
+    <ClInclude Include="..\runtime\BigInteger.h" />
+    <ClInclude Include="..\runtime\BooleanConstructor.h" />
+    <ClInclude Include="..\runtime\BooleanObject.h" />
+    <ClInclude Include="..\runtime\BooleanPrototype.h" />
+    <ClInclude Include="..\runtime\Butterfly.h" />
+    <ClInclude Include="..\runtime\ButterflyInlines.h" />
+    <ClInclude Include="..\runtime\CallData.h" />
+    <ClInclude Include="..\runtime\ClassInfo.h" />
+    <ClInclude Include="..\runtime\CodeCache.h" />
+    <ClInclude Include="..\runtime\CodeSpecializationKind.h" />
+    <ClInclude Include="..\runtime\CommonIdentifiers.h" />
+    <ClInclude Include="..\runtime\CommonSlowPaths.h" />
+    <ClInclude Include="..\runtime\CommonSlowPathsExceptions.h" />
+    <ClInclude Include="..\runtime\CompilationResult.h" />
+    <ClInclude Include="..\runtime\Completion.h" />
+    <ClInclude Include="..\runtime\ConsoleClient.h" />
+    <ClInclude Include="..\runtime\ConsolePrototype.h" />
+    <ClInclude Include="..\runtime\ConsoleTypes.h" />
+    <ClInclude Include="..\runtime\ConstantMode.h" />
+    <ClInclude Include="..\runtime\ConstructData.h" />
+    <ClInclude Include="..\runtime\CustomGetterSetter.h" />
+    <ClInclude Include="..\runtime\DataView.h" />
+    <ClInclude Include="..\runtime\DateConstructor.h" />
+    <ClInclude Include="..\runtime\DateConversion.h" />
+    <ClInclude Include="..\runtime\DateInstance.h" />
+    <ClInclude Include="..\runtime\DateInstanceCache.h" />
+    <ClInclude Include="..\runtime\DatePrototype.h" />
+    <ClInclude Include="..\runtime\DumpContext.h" />
+    <ClInclude Include="..\runtime\Error.h" />
+    <ClInclude Include="..\runtime\ErrorConstructor.h" />
+    <ClInclude Include="..\runtime\ErrorHandlingScope.h" />
+    <ClInclude Include="..\runtime\ErrorInstance.h" />
+    <ClInclude Include="..\runtime\ErrorPrototype.h" />
+    <ClInclude Include="..\runtime\ExceptionHelpers.h" />
+    <ClInclude Include="..\runtime\Executable.h" />
+    <ClInclude Include="..\runtime\Float32Array.h" />
+    <ClInclude Include="..\runtime\Float64Array.h" />
+    <ClInclude Include="..\runtime\FunctionConstructor.h" />
+    <ClInclude Include="..\runtime\FunctionExecutableDump.h" />
+    <ClInclude Include="..\runtime\FunctionPrototype.h" />
+    <ClInclude Include="..\runtime\GenericTypedArrayView.h" />
+    <ClInclude Include="..\runtime\GenericTypedArrayViewInlines.h" />
+    <ClInclude Include="..\runtime\GetterSetter.h" />
+    <ClInclude Include="..\runtime\Identifier.h" />
+    <ClInclude Include="..\runtime\IndexingHeader.h" />
+    <ClInclude Include="..\runtime\IndexingHeaderInlines.h" />
+    <ClInclude Include="..\runtime\IndexingType.h" />
+    <ClInclude Include="..\runtime\InitializeThreading.h" />
+    <ClInclude Include="..\runtime\Int16Array.h" />
+    <ClInclude Include="..\runtime\Int32Array.h" />
+    <ClInclude Include="..\runtime\Int8Array.h" />
+    <ClInclude Include="..\runtime\IntendedStructureChain.h" />
+    <ClInclude Include="..\runtime\InternalFunction.h" />
+    <ClInclude Include="..\runtime\Intrinsic.h" />
+    <ClInclude Include="..\runtime\JSAPIValueWrapper.h" />
+    <ClInclude Include="..\runtime\JSActivation.h" />
+    <ClInclude Include="..\runtime\JSArgumentsIterator.h" />
+    <ClInclude Include="..\runtime\JSArray.h" />
+    <ClInclude Include="..\runtime\JSArrayBuffer.h" />
+    <ClInclude Include="..\runtime\JSArrayBufferConstructor.h" />
+    <ClInclude Include="..\runtime\JSArrayBufferPrototype.h" />
+    <ClInclude Include="..\runtime\JSArrayBufferView.h" />
+    <ClInclude Include="..\runtime\JSArrayBufferViewInlines.h" />
+    <ClInclude Include="..\runtime\JSArrayIterator.h" />
+    <ClInclude Include="..\runtime\JSBoundFunction.h" />
+    <ClInclude Include="..\runtime\JSCInlines.h" />
+    <ClInclude Include="..\runtime\JSCJSValue.h" />
+    <ClInclude Include="..\runtime\JSCJSValueInlines.h" />
+    <ClInclude Include="..\runtime\JSCell.h" />
+    <ClInclude Include="..\runtime\JSConsole.h" />
+    <ClInclude Include="..\runtime\JSDataView.h" />
+    <ClInclude Include="..\runtime\JSDataViewPrototype.h" />
+    <ClInclude Include="..\runtime\JSDateMath.h" />
+    <ClInclude Include="..\runtime\JSDestructibleObject.h" />
+    <ClInclude Include="..\runtime\JSExportMacros.h" />
+    <ClInclude Include="..\runtime\JSFloat32Array.h" />
+    <ClInclude Include="..\runtime\JSFloat64Array.h" />
+    <ClInclude Include="..\runtime\JSFunction.h" />
+    <ClInclude Include="..\runtime\JSGenericTypedArrayView.h" />
+    <ClInclude Include="..\runtime\JSGenericTypedArrayViewConstructor.h" />
+    <ClInclude Include="..\runtime\JSGenericTypedArrayViewConstructorInlines.h" />
+    <ClInclude Include="..\runtime\JSGenericTypedArrayViewInlines.h" />
+    <ClInclude Include="..\runtime\JSGenericTypedArrayViewPrototype.h" />
+    <ClInclude Include="..\runtime\JSGenericTypedArrayViewPrototypeInlines.h" />
+    <ClInclude Include="..\runtime\JSGlobalObject.h" />
+    <ClInclude Include="..\runtime\JSGlobalObjectFunctions.h" />
+    <ClInclude Include="..\runtime\JSInt16Array.h" />
+    <ClInclude Include="..\runtime\JSInt32Array.h" />
+    <ClInclude Include="..\runtime\JSInt8Array.h" />
+    <ClInclude Include="..\runtime\JSLock.h" />
+    <ClInclude Include="..\runtime\JSMap.h" />
+    <ClInclude Include="..\runtime\JSMapIterator.h" />
+    <ClInclude Include="..\runtime\JSNameScope.h" />
+    <ClInclude Include="..\runtime\JSNotAnObject.h" />
+    <ClInclude Include="..\runtime\JSONObject.h" />
+    <ClInclude Include="..\runtime\JSObject.h" />
+    <ClInclude Include="..\runtime\JSPromise.h" />
+    <ClInclude Include="..\runtime\JSPromiseConstructor.h" />
+    <ClInclude Include="..\runtime\JSPromiseDeferred.h" />
+    <ClInclude Include="..\runtime\JSPromiseFunctions.h" />
+    <ClInclude Include="..\runtime\JSPromiseReaction.h" />
+    <ClInclude Include="..\runtime\JSPromisePrototype.h" />
+    <ClInclude Include="..\runtime\JSPropertyNameIterator.h" />
+    <ClInclude Include="..\runtime\JSProxy.h" />
+    <ClInclude Include="..\runtime\JSScope.h" />
+    <ClInclude Include="..\runtime\JSSegmentedVariableObject.h" />
+    <ClInclude Include="..\runtime\JSSet.h" />
+    <ClInclude Include="..\runtime\JSSetIterator.h" />
+    <ClInclude Include="..\runtime\JSString.h" />
+    <ClInclude Include="..\runtime\JSStringBuilder.h" />
+    <ClInclude Include="..\runtime\JSStringJoiner.h" />
+    <ClInclude Include="..\runtime\JSSymbolTableObject.h" />
+    <ClInclude Include="..\runtime\JSType.h" />
+    <ClInclude Include="..\runtime\JSTypeInfo.h" />
+    <ClInclude Include="..\runtime\JSTypedArrayConstructors.h" />
+    <ClInclude Include="..\runtime\JSTypedArrayPrototypes.h" />
+    <ClInclude Include="..\runtime\JSTypedArrays.h" />
+    <ClInclude Include="..\runtime\JSUint16Array.h" />
+    <ClInclude Include="..\runtime\JSUint32Array.h" />
+    <ClInclude Include="..\runtime\JSUint8Array.h" />
+    <ClInclude Include="..\runtime\JSUint8ClampedArray.h" />
+    <ClInclude Include="..\runtime\JSVariableObject.h" />
+    <ClInclude Include="..\runtime\JSWeakMap.h" />
+    <ClInclude Include="..\runtime\JSWithScope.h" />
+    <ClInclude Include="..\runtime\JSWrapperObject.h" />
+    <ClInclude Include="..\runtime\LiteralParser.h" />
+    <ClInclude Include="..\runtime\Lookup.h" />
+    <ClInclude Include="..\runtime\MapConstructor.h" />
+    <ClInclude Include="..\runtime\MapData.h" />
+    <ClInclude Include="..\runtime\MapIteratorConstructor.h" />
+    <ClInclude Include="..\runtime\MapIteratorPrototype.h" />
+    <ClInclude Include="..\runtime\MapPrototype.h" />
+    <ClInclude Include="..\runtime\MatchResult.h" />
+    <ClInclude Include="..\runtime\MathObject.h" />
+    <ClInclude Include="..\runtime\MemoryStatistics.h" />
+    <ClInclude Include="..\runtime\Microtask.h" />
+    <ClInclude Include="..\runtime\NameConstructor.h" />
+    <ClInclude Include="..\runtime\NameInstance.h" />
+    <ClInclude Include="..\runtime\NamePrototype.h" />
+    <ClInclude Include="..\runtime\NativeErrorConstructor.h" />
+    <ClInclude Include="..\runtime\NativeErrorPrototype.h" />
+    <ClInclude Include="..\runtime\NumberConstructor.h" />
+    <ClInclude Include="..\runtime\NumberObject.h" />
+    <ClInclude Include="..\runtime\NumberPrototype.h" />
+    <ClInclude Include="..\runtime\NumericStrings.h" />
+    <ClInclude Include="..\runtime\ObjectConstructor.h" />
+    <ClInclude Include="..\runtime\ObjectPrototype.h" />
+    <ClInclude Include="..\runtime\Operations.h" />
+    <ClInclude Include="..\runtime\Options.h" />
+    <ClInclude Include="..\runtime\PrivateName.h" />
+    <ClInclude Include="..\runtime\PropertyDescriptor.h" />
+    <ClInclude Include="..\runtime\PropertyMapHashTable.h" />
+    <ClInclude Include="..\runtime\PropertyName.h" />
+    <ClInclude Include="..\runtime\PropertyNameArray.h" />
+    <ClInclude Include="..\runtime\PropertyOffset.h" />
+    <ClInclude Include="..\runtime\PropertySlot.h" />
+    <ClInclude Include="..\runtime\PropertyStorage.h" />
+    <ClInclude Include="..\runtime\Protect.h" />
+    <ClInclude Include="..\runtime\PrototypeMap.h" />
+    <ClInclude Include="..\runtime\PutDirectIndexMode.h" />
+    <ClInclude Include="..\runtime\PutPropertySlot.h" />
+    <ClInclude Include="..\runtime\RegExp.h" />
+    <ClInclude Include="..\runtime\RegExpCache.h" />
+    <ClInclude Include="..\runtime\RegExpCachedResult.h" />
+    <ClInclude Include="..\runtime\RegExpConstructor.h" />
+    <ClInclude Include="..\runtime\RegExpKey.h" />
+    <ClInclude Include="..\runtime\RegExpMatchesArray.h" />
+    <ClInclude Include="..\runtime\RegExpObject.h" />
+    <ClInclude Include="..\runtime\RegExpPrototype.h" />
+    <ClInclude Include="..\runtime\Reject.h" />
+    <ClInclude Include="..\runtime\SamplingCounter.h" />
+    <ClInclude Include="..\runtime\SetConstructor.h" />
+    <ClInclude Include="..\runtime\SetIteratorConstructor.h" />
+    <ClInclude Include="..\runtime\SetIteratorPrototype.h" />
+    <ClInclude Include="..\runtime\SetPrototype.h" />
+    <ClInclude Include="..\runtime\SimpleTypedArrayController.h" />
+    <ClInclude Include="..\runtime\SmallStrings.h" />
+    <ClInclude Include="..\runtime\SparseArrayValueMap.h" />
+    <ClInclude Include="..\runtime\StackAlignment.h" />
+    <ClInclude Include="..\runtime\StrictEvalActivation.h" />
+    <ClInclude Include="..\runtime\StringConstructor.h" />
+    <ClInclude Include="..\runtime\StringObject.h" />
+    <ClInclude Include="..\runtime\StringPrototype.h" />
+    <ClInclude Include="..\runtime\StringRecursionChecker.h" />
+    <ClInclude Include="..\runtime\Structure.h" />
+    <ClInclude Include="..\runtime\StructureChain.h" />
+    <ClInclude Include="..\runtime\StructureIDBlob.h" />
+    <ClInclude Include="..\runtime\StructureIDTable.h" />
+    <ClInclude Include="..\runtime\StructureRareData.h" />
+    <ClInclude Include="..\runtime\StructureRareDataInlines.h" />
+    <ClInclude Include="..\runtime\StructureTransitionTable.h" />
+    <ClInclude Include="..\runtime\SymbolTable.h" />
+    <ClInclude Include="..\runtime\TestRunnerUtils.h" />
+    <ClInclude Include="..\runtime\Tracing.h" />
+    <ClInclude Include="..\runtime\ToNativeFromValue.h" />
+    <ClInclude Include="..\runtime\TypedArrayAdaptors.h" />
+    <ClInclude Include="..\runtime\TypedArrayController.h" />
+    <ClInclude Include="..\runtime\TypedArrayInlines.h" />
+    <ClInclude Include="..\runtime\TypedArrayType.h" />
+    <ClInclude Include="..\runtime\TypedArrays.h" />
+    <ClInclude Include="..\runtime\Uint16Array.h" />
+    <ClInclude Include="..\runtime\Uint16WithFraction.h" />
+    <ClInclude Include="..\runtime\Uint32Array.h" />
+    <ClInclude Include="..\runtime\Uint8Array.h" />
+    <ClInclude Include="..\runtime\VM.h" />
+    <ClInclude Include="..\runtime\VMEntryScope.h" />
+    <ClInclude Include="..\runtime\Watchdog.h" />
+    <ClInclude Include="..\runtime\WeakGCMap.h" />
+    <ClInclude Include="..\runtime\WeakMapConstructor.h" />
+    <ClInclude Include="..\runtime\WeakMapData.h" />
+    <ClInclude Include="..\runtime\WeakMapPrototype.h" />
+    <ClInclude Include="..\runtime\WeakRandom.h" />
+    <ClInclude Include="..\runtime\WriteBarrier.h" />
+    <ClInclude Include="..\runtime\WriteBarrierInlines.h" />
+    <ClInclude Include="..\tools\CodeProfile.h" />
+    <ClInclude Include="..\tools\CodeProfiling.h" />
+    <ClInclude Include="..\tools\ProfileTreeNode.h" />
+    <ClInclude Include="..\tools\TieredMMapArray.h" />
+    <ClInclude Include="..\yarr\RegularExpression.h" />
+    <ClInclude Include="..\yarr\Yarr.h" />
+    <ClInclude Include="..\yarr\YarrCanonicalizeUCS2.h" />
+    <ClInclude Include="..\yarr\YarrInterpreter.h" />
+    <ClInclude Include="..\yarr\YarrJIT.h" />
+    <ClInclude Include="..\yarr\YarrParser.h" />
+    <ClInclude Include="..\yarr\YarrPattern.h" />
+    <ClInclude Include="..\yarr\YarrSyntaxChecker.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\bytecode\BytecodeList.json" />
+    <None Include="JavaScriptCorePostBuild.cmd">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="JavaScriptCorePreBuild.cmd">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="JavaScriptCorePreLink.cmd">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <MASM Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\LowLevelInterpreterWin.asm">
+      <UseSafeExceptionHandlers Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</UseSafeExceptionHandlers>
+      <UseSafeExceptionHandlers Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</UseSafeExceptionHandlers>
+      <UseSafeExceptionHandlers Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</UseSafeExceptionHandlers>
+      <UseSafeExceptionHandlers Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</UseSafeExceptionHandlers>
+      <UseSafeExceptionHandlers Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</UseSafeExceptionHandlers>
+      <UseSafeExceptionHandlers Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</UseSafeExceptionHandlers>
+    </MASM>
+    <MASM Include="..\jit\JITStubsMSVC64.asm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </MASM>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets" />
+  </ImportGroup>
+</Project>

@@ -1,0 +1,2 @@
+Failed assertion ctx.createPattern(img, 'repeat') === null (got [object CanvasPattern][object], expected [object])
+

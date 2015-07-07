@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div hidden aria-hidden="false" aria-label="group0">
+   <div aria-hidden="true" aria-label="group1">
+      ignore me
+   </div>
+   <div role="group" aria-label="group2">
+     <div role="button" aria-label="button1">button</div>
+     don't ignore me
+  </div>
+</div>
+
+<div id="iframe">
+<iframe onload="testiFrameContent();" aria-hidden="false" src="resources/cake.png">hidden content</iframe>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that a sub-tree within a node marked with aria-hidden=false will be exposed in the AX tree.");
+
+    var iframeChild;
+    function testiFrameContent() {
+        // Test that aria-hidden=false does NOT expose iframe fallback text.
+        var iframe = accessibilityController.accessibleElementById("iframe").childAtIndex(0).childAtIndex(0);
+
+        debug("Non-rendered iframe content should not be visible when aria-hidden=true. The first child should be a group and NOT static text.");
+        iframeChild = iframe.childAtIndex(0);
+        debug("iFrame child role: " + iframeChild.role);
+
+        finishJSTest();
+    }
+
+    function dumpAccessibilityChildren(element, level) {
+        if (!element) {
+            return;
+        }
+        var indent = "";
+        for (var k = 0; k < level; k++) { indent += "  "; }
+        debug(indent + element.role + "\n" + indent + element.description + "\n");
+        var childrenCount = element.childrenCount;
+        for (var k = 0; k < childrenCount; k++) {
+            dumpAccessibilityChildren(element.childAtIndex(k), level+1);
+        }
+    }
+ 
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var root = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0);
+        dumpAccessibilityChildren(root, 0);
+}
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+<body style="margin: 0;" onload="runRepaintTest()">
+    <script>
+        function repaintTest()
+        {
+            document.getElementById("target").innerText += " la";
+        }
+    </script>
+    <script src="resources/repaint.js"></script>
+    <div style="height:200px; width:200px">
+      <div style="position:absolute">
+        <div id="target">La la la</div>
+      </div>
+    </div>
+</body>

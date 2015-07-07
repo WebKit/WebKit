@@ -1,0 +1,29 @@
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="resources/scripted-random.js"></script>
+<script src="resources/viewspec-parser.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    var tests = [];
+
+    // preserveAspectRatio with random assortments of valid characters
+    for (var i = 0; i < 50; i++) { //>
+        var attributeString = "svgView(preserveAspectRatio(";
+        var count = Math.scriptedRandomInt(20);
+        for (var j = 0; j < count; j++) { //>
+            attributeString += characters[Math.scriptedRandomInt(characters.length)];
+        }
+        tests.push(attributeString);
+    }
+
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    startViewspecTests(tests);
+
+</script>
+</html>

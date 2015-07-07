@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <script>
+    function check_bbox(bbox, test_name)
+    {
+        var result_str = "";
+        
+        if (bbox.x == 50 && bbox.y == 50 && bbox.width == 0 && bbox.height == 0) {                           
+            result_str += " passed";
+        } else {
+            result_str += test_name + ": failed"
+            result_str += "("+bbox.x+","+bbox.y+":"+bbox.width + "," + bbox.height+")";
+        }
+        
+        var p_result = document.querySelector("#result");
+        p_result.appendChild(document.createTextNode(result_str + "; "));
+    }
+  
+    function run()
+    {
+        if (window.testRunner)
+            testRunner.dumpAsText();
+        
+        var svg = document.querySelector("svg");        
+        var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", "50");
+        circle.setAttribute("cy", "50");
+        circle.setAttribute("r", "0");
+        circle.setAttribute("height", "0");
+        svg.appendChild(circle);
+        check_bbox(circle.getBBox(), "zero radius circle");
+        
+        circle.setAttribute("stroke-width", "10");
+        circle.setAttribute("stroke", "red");
+        check_bbox(circle.getBBox(), "with stroke");
+ 
+        circle.setAttribute("vector-effect", "non-scaling-stroke");
+        check_bbox(circle.getBBox(), "with non-scaling-stroke");
+    }
+  </script>
+
+<body onload="run()">
+<p>Bug <a href="https://bugs.webkit.org/show_bug.cgi?id=93290">93290</a>: getBBox() returns (0,0) incorrectly when width or height is zero.</p>
+<p>For this test to pass, you should see 'Passed' times below.</p>
+<p id="result"></p>
+<svg xmlns="http://www.w3.org/2000/svg">
+</svg>
+</body>
+</html>

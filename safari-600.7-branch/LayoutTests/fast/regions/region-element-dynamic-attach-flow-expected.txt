@@ -1,0 +1,3 @@
+Tests that changing the element into a region without an existing flow disconnects the element's content.
+
+PASS

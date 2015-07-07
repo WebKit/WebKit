@@ -1,0 +1,33 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/console-test.js"></script>
+<script>
+
+function onload()
+{
+    console.log('Message format number %i, %d and %f', 1, 2, 3.5);
+    console.log('Message %s for %s', 'format', 'string');
+    console.log('Object %o', {'foo' : 'bar' });
+    console.log("Floating as integers: %d %i", 42.5, 42.5);
+    console.log("Floating as is: %f", 42.5);
+    console.log("Non-numbers as numbers: %d %i %f", document, null, "document");
+    console.log("String as is: %s", "string");
+    console.log("Object as string: %s", document);
+
+    runTest();
+}
+
+function test()
+{
+    InspectorTest.expandConsoleMessages();
+    InspectorTest.dumpConsoleMessages();
+    InspectorTest.completeTest();
+}
+</script>
+</head>
+
+<body onload="onload()">
+<p id="p">Tests that console logging uses proper message formatting.</p>
+</body>
+</html>

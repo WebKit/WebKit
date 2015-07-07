@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="../../../../fast/js/resources/js-test-style.css">
+  <script src="../../../../fast/js/resources/js-test-pre.js"></script>
+  <style>
+    body {
+      height: 2000px;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    #scroller {
+      height: 100px;
+      width: 100px;
+      overflow: scroll;
+    }
+    .content {
+      height: 200px;
+      width: 200px;
+    }
+  </style>
+</head>
+<body>
+<div id="scroller">
+  <div class="content"></div>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description('Tests navigating away from a page with accelerated overflow scrolling does not assert.');
+
+var pageShowCount = 0;
+function onPageShow()
+{
+  debug('pageshow ' + pageShowCount);
+  if (++pageShowCount == 2) {
+      window.setTimeout(function() {
+        finishJSTest();
+      }, 10);
+    }
+}
+
+function onPageLoad()
+{
+    if (window.testRunner)
+      testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+
+    // Navigate in a timeout to make sure we create a history entry.
+    setTimeout(function() {
+      window.location.href = 'resources/jump-back.html';
+    }, 0);
+};
+
+window.addEventListener('load', onPageLoad, false);
+window.addEventListener('pageshow', onPageShow, false);
+
+var successfullyParsed = true;
+var jsTestIsAsync = true;
+</script> 
+
+<script src="../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

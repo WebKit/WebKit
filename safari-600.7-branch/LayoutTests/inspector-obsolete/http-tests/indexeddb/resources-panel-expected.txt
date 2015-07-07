@@ -1,0 +1,36 @@
+CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback1
+CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback2
+CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback3
+CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback4
+CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback5
+CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback6
+Tests IndexedDB tree element on resources panel.
+
+Expanded IndexedDB tree element.
+Dumping IndexedDB tree:
+    (empty)
+Created database.
+Database added.
+Database loaded.
+Dumping IndexedDB tree:
+    database: testDatabase - http://127.0.0.1:8000
+        Object store: testObjectStore
+            Index: testIndexName
+Navigated to another security origin.
+Database removed.
+Page reloaded.
+Dumping IndexedDB tree:
+    (empty)
+Navigated back.
+Database added.
+Database loaded.
+Page reloaded.
+Dumping IndexedDB tree:
+    database: testDatabase - http://127.0.0.1:8000
+        Object store: testObjectStore
+            Index: testIndexName
+Deleted database.
+Database removed.
+Dumping IndexedDB tree:
+    (empty)
+

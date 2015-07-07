@@ -1,0 +1,13 @@
+text
+text
+This tests that landmarks return their type as part of the AX label.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS main.iphoneLabel is 'AXLabel: main'
+PASS banner.iphoneLabel is 'AXLabel: banner'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

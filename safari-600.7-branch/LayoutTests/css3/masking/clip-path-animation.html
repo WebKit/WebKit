@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    .box {
+        height: 100px;
+        width: 100px;
+        margin: 10px;
+        background-color: blue;
+        display: inline-block;
+    }
+
+    #inset-box {
+      -webkit-animation: inset-anim 2s linear
+    }
+
+    #circle-box {
+      -webkit-animation: circle-anim 2s linear
+    }
+
+    #ellipse-box {
+      -webkit-animation: ellipse-anim 2s linear
+    }
+
+    #polygon-box {
+      -webkit-animation: polygon-anim 2s linear
+    }
+
+    #none-box {
+      -webkit-animation: none-anim 2s linear
+    }
+
+    @-webkit-keyframes inset-anim {
+        from { -webkit-clip-path: inset(0); }
+        to   { -webkit-clip-path: inset(20%); }
+    }
+
+    @-webkit-keyframes circle-anim {
+        from { -webkit-clip-path: circle(50% at 50% 50%); }
+        to   { -webkit-clip-path: circle(20% at 20% 20%); }
+    }
+
+    @-webkit-keyframes ellipse-anim {
+        from { -webkit-clip-path: ellipse(50% 40% at 50% 50%); }
+        to   { -webkit-clip-path: ellipse(20% 20% at 20% 20%); }
+    }
+
+    @-webkit-keyframes polygon-anim {
+        from { -webkit-clip-path: polygon(nonzero, 0% 0%, 100% 0%, 100% 100%, 0% 100%); }
+        to   { -webkit-clip-path: polygon(nonzero, 20% 20%, 80% 20%, 80% 80%, 20% 80%); }
+    }
+
+    @-webkit-keyframes none-anim {
+        /* We do not support animations from or to 'none' as specified. */
+        from { -webkit-clip-path: none; }
+        to   { -webkit-clip-path: polygon(nonzero, 20% 20%, 80% 20%, 80% 80%, 20% 80%); }
+    }
+
+  </style>
+  <script src="../../animations/resources/animation-test-helpers.js"></script>
+  <script type="text/javascript">
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["inset-anim",  1, "inset-box", "webkitClipPath", "inset(10%)", 0.05],
+      ["circle-anim",  1, "circle-box", "webkitClipPath", "circle(35% at 35% 35%)", 0.05],
+      ["ellipse-anim",  1, "ellipse-box", "webkitClipPath", "ellipse(35% 30% at 35% 35%)", 0.05],
+      ["polygon-anim",  1, "polygon-box", "webkitClipPath", "polygon(10% 10%, 90% 10%, 90% 90%, 10% 90%)", 0.05],
+      ["none-anim",  1, "none-box", "webkitClipPath", "polygon(20% 20%, 80% 20%, 80% 80%, 20% 80%)", 0],
+    ];
+    
+    runAnimationTest(expectedValues);
+  </script>
+</head>
+<body>
+
+<div class="box" id="inset-box"></div>
+<div class="box" id="circle-box"></div>
+<div class="box" id="ellipse-box"></div>
+<div class="box" id="polygon-box"></div>
+<div class="box" id="none-box"></div>
+
+<div id="result">
+</div>
+</body>
+</html>

@@ -1,0 +1,16 @@
+This test ensure that the multiple shadow root is available.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.shadowRoot(div) is null
+PASS internals.shadowRoot(div) is shadowRoot1
+PASS internals.olderShadowRoot(shadowRoot1) is null
+PASS internals.shadowRoot(div) is shadowRoot2
+PASS internals.olderShadowRoot(shadowRoot2) is shadowRoot1
+PASS internals.shadowRoot(div) is shadowRoot3
+PASS internals.olderShadowRoot(shadowRoot3) is shadowRoot2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/helper.js"></script>
+<style>
+* {
+    margin: 0px;
+    padding: 0px;
+    font-size: 20px;
+    font-family: Ahem;
+    line-height: 20px;
+}
+#content1 {
+    height: 100px;
+    width: 200px;
+    position: absolute;
+    top: 50px;
+}
+#nestedRegion {
+    height: 100px;
+    width: 200px;
+    color: red;
+    position: absolute;
+    top: 250px;
+}
+#content2 {
+    height: 100px;
+    width: 200px;
+    position: absolute;
+    top: 150px;
+}
+</style>
+</head>
+<body onload="selectBaseAndExtent('start', 0, 'end', 1)">
+<h1>Selecting text through different CSS-Region flows</h1>
+<div id="content1">
+    X X X X X
+    X X X X X
+    X X <span id="start">X</span> X X
+    X X X X X
+    X X X X XX
+</div>
+<div id="nestedRegion">
+    X X X X X
+    X X X X X
+    X X <span id="end">X</span> X X
+    X X X X X
+    X X X X X
+</div>
+<div id="content2">
+    X X X X X
+    X X X X X
+    X X X X X
+    X X X X X
+    X X X X X
+</div>
+</body>
+</html>

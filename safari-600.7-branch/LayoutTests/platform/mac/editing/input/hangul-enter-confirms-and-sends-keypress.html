@@ -1,0 +1,48 @@
+<div>
+    This tests that the hangul IM behaviour in which enter both confirms a composition but still sends a keypress for the &lt;enter&gt;.<br />
+    To test manually, switch to the 2-Set Korean IM and type at least two characters and press &lt;enter&gt;, if the behaviour is correct a single keypress event should be fired as the last event.
+</div>
+<input id="targetInput" onkeydown="keyDown()" onkeypress="keyPress()"></input>
+<ul id="console"></console>
+
+<script src="logger.js"></script>
+<script src="hangul.js"></script>
+<script>
+    var shouldBeCompositionEvent = false;
+    function keyDown() {
+        if (!window.testRunner) {
+            log("keydown : keyCode == " + event.keyCode);
+            return;
+        }
+        if (shouldBeCompositionEvent && event.keyCode != 229)
+            log("FAILURE: received keyCode " + event.keyCode + " in a keydown when VK_PROCESSKEY is expected");
+        else if (!shouldBeCompositionEvent && event.keyCode == 229)
+            log("FAILURE: received a keyDown with VK_PROCESSKEY as the keyCode, when an actual key code was expected.");
+        else
+            log("Received valid keydown event");
+    }
+    
+    function keyPress() {
+        if (!window.testRunner) {
+            log("keypress : keyCode == " + event.keyCode);
+            return;
+        }
+        if (shouldBeCompositionEvent)
+            log("FAILURE: received keypress event during composition");
+        else
+            log("Received valid keypress event");
+    }
+
+
+    var targetInput = document.getElementById('targetInput');
+    targetInput.focus();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        textInputController.setInputMethodHandler(hangul);
+        shouldBeCompositionEvent = true;
+        eventSender.keyDown('t');
+        eventSender.keyDown('o');
+        shouldBeCompositionEvent = false;
+        eventSender.keyDown('\n');
+    }
+</script> 

@@ -1,0 +1,46 @@
+In this test, we create a complex Shadow DOM and try to drag from a div in nested shadow root of older shadow root to a div in nested shadow root of younger shadow root. Then we get selection from the following TreeScopes:
+ * treeScopes[0] = document
+ * treeScopes[1] = OLDER SHADOW ROOT
+ * treeScopes[2] = YOUNGER SHADOW ROOT
+ * treeScopes[3] = NESTED SHADOW ROOT IN OLDER SHADOW ROOT
+ * treeScopes[4] = NESTED SHADOW ROOT IN YOUNGER SHADOW ROOT
+and check selection.anchorNode, selection.focusNode, selection.baseNode, and selection.extentNode are null or in the same treescope.
+
+Dragged from (DIV 2 IN NESTED SHADOW DOM OF OLDER SHADOW ROOT) to (DIV 2 IN NESTED SHADOW DOM OF YOUNGER SHADOW ROOT)
+
+treeScopes[0] is document
+PASS internals.treeScopeRootNode(treeScopes[0].getSelection().anchorNode) is document
+PASS internals.treeScopeRootNode(treeScopes[0].getSelection().focusNode) is document
+PASS internals.treeScopeRootNode(treeScopes[0].getSelection().baseNode) is document
+PASS internals.treeScopeRootNode(treeScopes[0].getSelection().extentNode) is document
+
+treeScopes[1] is OLDER SHADOW ROOT
+PASS internals.treeScopeRootNode(treeScopes[1].getSelection().anchorNode) is treeScopes[1]
+PASS internals.treeScopeRootNode(treeScopes[1].getSelection().focusNode) is treeScopes[1]
+PASS internals.treeScopeRootNode(treeScopes[1].getSelection().baseNode) is treeScopes[1]
+PASS internals.treeScopeRootNode(treeScopes[1].getSelection().extentNode) is treeScopes[1]
+
+treeScopes[2] is YOUNGER SHADOW ROOT
+Since treeScope[2] is outside of selection start point, no node should not be taken.
+PASS treeScopes[2].getSelection().anchorNode is null
+PASS treeScopes[2].getSelection().focusNode is null
+PASS treeScopes[2].getSelection().baseNode is null
+PASS treeScopes[2].getSelection().extentNode is null
+
+treeScopes[3] is NESTED SHADOW ROOT IN OLDER SHADOW ROOT
+PASS internals.treeScopeRootNode(treeScopes[3].getSelection().anchorNode) is treeScopes[3]
+PASS internals.treeScopeRootNode(treeScopes[3].getSelection().focusNode) is treeScopes[3]
+PASS internals.treeScopeRootNode(treeScopes[3].getSelection().baseNode) is treeScopes[3]
+PASS internals.treeScopeRootNode(treeScopes[3].getSelection().extentNode) is treeScopes[3]
+
+treeScopes[4] is NESTED SHADOW ROOT IN YOUNGER SHADOW ROOT
+Since treeScope[4] is outside of selection start point, no node should not be taken.
+PASS treeScopes[4].getSelection().anchorNode is null
+PASS treeScopes[4].getSelection().focusNode is null
+PASS treeScopes[4].getSelection().baseNode is null
+PASS treeScopes[4].getSelection().extentNode is null
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,8 @@
+main frame - has 1 onunload handler(s)
+ALERT: window.onload
+ALERT: window.onpageshow, target = [object HTMLDocument], persisted = false
+ALERT: window.onpagehide, target = [object HTMLDocument], persisted = false
+main frame "pageshow/pagehide" - has 1 onunload handler(s)
+ALERT: window.onload
+ALERT: window.onpageshow, target = [object HTMLDocument], persisted = false
+Test pageshow/pagehide event behavior when navigating back to an uncached page.

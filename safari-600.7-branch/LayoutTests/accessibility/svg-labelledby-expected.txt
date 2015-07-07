@@ -1,0 +1,11 @@
+
+This tests that aria-labelledby works on SVG elements.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+SVG Element: AXDescription: Sudan
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

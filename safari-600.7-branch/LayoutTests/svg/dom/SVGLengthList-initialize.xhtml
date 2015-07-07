@@ -1,0 +1,126 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script>window.enablePixelTesting = true;</script>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<svg id="svg" xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+    <text id="text1" x="500 1000 1500" y="25">   ABC  </text>
+    <text id="text2" x="50 500" y="50">   ABC  </text>
+    <text id="text3" x="50 500 50" y="75">ABC</text>
+    <text id="text4" x="500" y="100">ABC</text>
+    <text id="reference" x="50" y="125">ABC</text>
+</svg>
+
+<p id="description"></p>
+<div id="console"></div>
+<script type="text/javascript">
+<![CDATA[
+    description("This is a test of the SVGLengthList::initialize() API.");
+
+    var svg = document.getElementById("svg");
+    var text1 = document.getElementById("text1");
+    var text2 = document.getElementById("text2");
+    var text3 = document.getElementById("text3");
+    var text4 = document.getElementById("text4");
+
+    debug("Check initial list state of text1");
+    shouldBe("text1.x.baseVal.numberOfItems", "3");
+    shouldBe("text1.x.baseVal.getItem(0).value", "500");
+    shouldBe("text1.x.baseVal.getItem(1).value", "1000");
+    shouldBe("text1.x.baseVal.getItem(2).value", "1500");
+    shouldThrow("text1.x.baseVal.getItem(3)");
+
+    debug("");
+    debug("Check initial list state of text2");
+    shouldBe("text2.x.baseVal.numberOfItems", "2");
+    shouldBe("text2.x.baseVal.getItem(0).value", "50");
+    shouldBe("text2.x.baseVal.getItem(1).value", "500");
+    shouldThrow("text2.x.baseVal.getItem(2)");
+
+    debug("");
+    debug("Check initial list state of text3");
+    shouldBe("text3.x.baseVal.numberOfItems", "3");
+    shouldBe("text3.x.baseVal.getItem(0).value", "50");
+    shouldBe("text3.x.baseVal.getItem(1).value", "500");
+    shouldBe("text3.x.baseVal.getItem(2).value", "50");
+    shouldThrow("text3.x.baseVal.getItem(3)");
+
+    debug("");
+    debug("Check initial list state of text4");
+    shouldBe("text4.x.baseVal.numberOfItems", "1");
+    shouldBe("text4.x.baseVal.getItem(0).value", "500");
+    shouldThrow("text4.x.baseVal.getItem(1)");
+
+    debug("");
+    debug("Create a new SVGLength object, that will be the only x coordinate in the first text element.");
+    var newLength = svg.createSVGLength();
+    newLength.value = 50;
+    shouldBe("newLength.value", "50");
+
+    // Spec: Clears all existing current items from the list and re-initializes the list to hold the single item specified by the parameter.
+    debug("");
+    debug("Initialize SVGLengthList with 'newLength'");
+    shouldBe("text1.x.baseVal.initialize(newLength)", "newLength");
+    shouldBe("text1.x.baseVal.getItem(0)", "newLength");
+
+    debug("");
+    debug("Take the second x item '500' of the second text element, store it in 'itemInAnotherList' change it to '50'");
+    shouldBe("text2.x.baseVal.getItem(1).value", "500");
+    var itemInAnotherList = text2.x.baseVal.getItem(1);
+    itemInAnotherList.value = 50;
+    shouldBe("text2.x.baseVal.getItem(1).value", "50");
+
+    // Spec: If the inserted item is already in a list, it is removed from its previous list before it is inserted into this list.
+    //       The inserted item is the item itself and not a copy.
+    debug("");
+    debug("Override the third text elements x list with the item x=50 from the second text element, where it should be removed afterwards");
+    shouldBe("text3.x.baseVal.initialize(itemInAnotherList)", "itemInAnotherList");
+    shouldBe("text3.x.baseVal.getItem(0).value", "50");
+    shouldBe("text2.x.baseVal.getItem(0).value", "50");
+    shouldThrow("text2.x.baseVal.getItem(1)");
+
+    debug("")
+    debug("Assure that the 'itemInAnotherList' item is still live anymore, set value to 999 then back to 50");
+    shouldBe("itemInAnotherList.value = 999;", "999");
+    shouldBe("itemInAnotherList.value", "999");
+    shouldBe("text3.x.baseVal.getItem(0).value", "999");
+    shouldBe("itemInAnotherList.value = 50;", "50");
+    shouldBe("itemInAnotherList.value", "50");
+    shouldBe("text3.x.baseVal.getItem(0).value", "50");
+
+    debug("");
+    debug("Move item from text3 to text4");
+    shouldBe("text4.x.baseVal.initialize(text3.x.baseVal.getItem(0))", "itemInAnotherList");
+    shouldBe("text4.x.baseVal.getItem(0).value", "50");
+    shouldThrow("text3.x.baseVal.getItem(0)");
+
+    debug("");
+    debug("Initialize text3 using setAttribute('x', '50')");
+    text3.setAttribute("x", "50");
+    shouldBe("text3.x.baseVal.getItem(0).value", "50");
+
+    debug("");
+    debug("Final check whether the lists all look like expected");
+    shouldBe("text1.x.baseVal.getItem(0).value", "50");
+    shouldBe("text2.x.baseVal.getItem(0).value", "50");
+    shouldBe("text3.x.baseVal.getItem(0).value", "50");
+    shouldBe("text4.x.baseVal.getItem(0).value", "50");
+    shouldBe("text1.x.baseVal.numberOfItems", "1");
+    shouldBe("text2.x.baseVal.numberOfItems", "1");
+    shouldBe("text3.x.baseVal.numberOfItems", "1");
+    shouldBe("text4.x.baseVal.numberOfItems", "1");
+    shouldThrow("text1.x.baseVal.getItem(1)");
+    shouldThrow("text2.x.baseVal.getItem(1)");
+    shouldThrow("text3.x.baseVal.getItem(1)");
+    shouldThrow("text4.x.baseVal.getItem(1)");
+
+    debug("");
+    debug("The test passes if you only see 'PASS' messages, and all five text elements on top look the same");
+    debug("");
+
+]]>
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

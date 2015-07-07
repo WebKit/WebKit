@@ -1,0 +1,27 @@
+LiveConnect 3.0 Call static methods from an instance
+
+FAIL dt.staticSetDoubleObject( 99 ); dt.PUB_STATIC_DOUBLE_OBJECT.doubleValue() should be 99. Threw exception TypeError: 'null' is not an object (evaluating 'dt.PUB_STATIC_DOUBLE_OBJECT.doubleValue')
+FAIL dt.staticSetDoubleObject( 99 ); dt.staticGetDoubleObject().doubleValue() should be 99. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.staticGetDoubleObject().doubleValue')
+FAIL dt.staticGetDoubleObject().getClass().getName() +'' should be java.lang.Double. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.staticGetDoubleObject().getClass')
+FAIL dt.staticSetShortObject( new java.lang.Short(32109) ); dt.PUB_STATIC_SHORT_OBJECT.doubleValue() should be 32109. Threw exception ReferenceError: Can't find variable: java
+FAIL dt.staticSetShortObject( new java.lang.Short(32109) ); dt.staticGetShortObject().doubleValue() should be 32109. Threw exception ReferenceError: Can't find variable: java
+PASS dt.staticGetShortObject().getClass().getName() +'' is "java.lang.Short"
+FAIL dt.staticSetIntegerObject( new java.lang.Integer(2109876543) ); dt.PUB_STATIC_INTEGER_OBJECT.doubleValue() should be 2109876543. Threw exception ReferenceError: Can't find variable: java
+FAIL dt.staticSetIntegerObject( new java.lang.Integer(2109876543) ); dt.staticGetIntegerObject().doubleValue() should be 2109876543. Threw exception ReferenceError: Can't find variable: java
+PASS dt.staticGetIntegerObject().getClass().getName() +'' is "java.lang.Integer"
+FAIL dt.staticSetLongObject( new java.lang.Long(9012345678901234567) ); dt.PUB_STATIC_LONG_OBJECT.doubleValue() should be 9012345678901235000. Threw exception ReferenceError: Can't find variable: java
+FAIL dt.staticSetLongObject( new java.lang.Long(9012345678901234567) ); dt.staticGetLongObject().doubleValue() should be 9012345678901235000. Threw exception ReferenceError: Can't find variable: java
+PASS dt.staticGetLongObject().getClass().getName() +'' is "java.lang.Long"
+FAIL java.lang.Double.MIN_VALUE: ReferenceError: Can't find variable: java
+FAIL java.lang.Double.MIN_VALUE: ReferenceError: Can't find variable: java
+FAIL java.lang.Double: ReferenceError: Can't find variable: java
+FAIL java.lang.Float.MIN_VALUE: ReferenceError: Can't find variable: java
+FAIL java.lang.Float.MIN_VALUE: ReferenceError: Can't find variable: java
+PASS dt.staticGetFloatObject().getClass().getName() +'' is "java.lang.Float"
+FAIL dt.staticSetCharacter( new java.lang.Character(45678) ); dt.PUB_STATIC_CHAR_OBJECT.charValue() should be 45678. Threw exception ReferenceError: Can't find variable: java
+FAIL dt.staticSetCharacter( new java.lang.Character(45678) ); dt.staticGetCharacter().charValue() should be 45678. Threw exception ReferenceError: Can't find variable: java
+PASS dt.staticGetCharacter().getClass().getName()+'' is "java.lang.Character"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

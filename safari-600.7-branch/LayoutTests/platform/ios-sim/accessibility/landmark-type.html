@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+</script>
+</head>
+<body id="body">
+
+<div role="main" id="main">
+text
+</div>
+
+<div role="banner" id="banner">
+text
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that landmarks return their type as part of the AX label.");
+
+    if (window.accessibilityController) {
+
+        var main = accessibilityController.accessibleElementById("main");
+        shouldBe("main.iphoneLabel", "'AXLabel: main'");
+
+        var banner = accessibilityController.accessibleElementById("banner");
+        shouldBe("banner.iphoneLabel", "'AXLabel: banner'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>
+

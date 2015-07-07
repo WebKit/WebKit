@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style type="text/css">
+        @media (orientation: landscape) {
+            body:before {
+                content: "landscape";
+            }
+        }
+        
+        @media (orientation: portrait) {
+            body:before {
+                content: "portrait";
+            }
+        }
+    </style>
+</head>
+<body>
+    <textarea></textarea>
+    <script type="text/javascript">
+        if (!window.eventSender)
+            return;
+
+        var textArea = document.getElementsByTagName("textarea")[0];
+        var x = textArea.offsetLeft + textArea.offsetWidth / 2;
+        var y = textArea.offsetTop + textArea.offsetHeight / 2;
+        eventSender.mouseMoveTo(x, y);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    </script>
+</body>
+</html>

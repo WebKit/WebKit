@@ -1,0 +1,7 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (10,60) size 226x19
+    RenderSVGText {text} at (10,60) size 226x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 226x19
+        chunk 1 text run 1 at (10.00,75.00) startOffset 0 endOffset 38 width 225.74: "This test passes if it does not crash."

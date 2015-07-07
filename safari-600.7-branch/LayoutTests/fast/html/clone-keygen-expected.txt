@@ -1,0 +1,9 @@
+Tests that a cloned keygen has the right shadow pseudo ID. You should see two big keygens with purple text (they should look the same.)
+
+
+PASS specialK.clientHeight is k.clientHeight
+PASS internals.shadowPseudoId(cloneShadow.firstChild) is internals.shadowPseudoId(kShadow.firstChild)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

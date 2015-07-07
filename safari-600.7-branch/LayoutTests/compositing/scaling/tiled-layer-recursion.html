@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    .composited {
+      background-color: green;
+      width: 200px;
+      height: 1333px;
+      -webkit-transform: translateZ(0);
+    }
+  </style>
+  <script>
+    if (window.testRunner)
+      testRunner.dumpAsText(true);
+
+    function scalePage()
+    {
+      if (window.internals)
+        window.internals.setPageScaleFactor(1.50025, 0, 0);
+    }
+  
+    window.addEventListener('load', scalePage, false);
+  </script>
+</head>
+<body>
+  <!-- This test should not crash. -->
+  <div class="composited"></div>
+</body>
+</html>

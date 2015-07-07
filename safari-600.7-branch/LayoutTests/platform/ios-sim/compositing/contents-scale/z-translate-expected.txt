@@ -1,0 +1,48 @@
+Box
+Box
+(GraphicsLayer
+  (bounds 800.00 600.00)
+  (visible rect 0.00, 0.00 800.00 x 600.00)
+  (contentsScale 2.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (visible rect 0.00, 0.00 800.00 x 600.00)
+      (contentsScale 2.00)
+      (children 1
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 102.00 102.00)
+          (childrenTransform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 -0.00] [0.00 0.00 0.00 1.00])
+          (visible rect 0.00, 0.00 102.00 x 102.00)
+          (contentsScale 2.00)
+          (children 1
+            (GraphicsLayer
+              (position 11.00 11.00)
+              (bounds 100.00 100.00)
+              (contentsOpaque 1)
+              (preserves3D 1)
+              (drawsContent 1)
+              (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 100.00 1.00])
+              (visible rect 0.00, 0.00 100.00 x 100.00)
+              (contentsScale 2.50)
+              (children 1
+                (GraphicsLayer
+                  (position 20.00 40.00)
+                  (bounds 100.00 100.00)
+                  (contentsOpaque 1)
+                  (preserves3D 1)
+                  (drawsContent 1)
+                  (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 100.00 1.00])
+                  (visible rect 0.00, 0.00 100.00 x 100.00)
+                  (contentsScale 3.33)
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

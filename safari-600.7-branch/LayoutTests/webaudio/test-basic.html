@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+<!--
+This is a very basic test to make sure testRunner.setAudioResult() works correctly.
+It generates a 2 seconds long stereo result @44.1KHz
+The left channel will be a 880Hz tone, while the right will be 440Hz.
+-->
+
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+
+</head>
+<body>
+
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Tests basic audio test infrastructure: specifically testRunner.setAudioResult()");
+
+var sampleRate = 44100.0;
+var lengthInSeconds = 2;
+
+function generateSinWave(audioBuffer) {
+    var n = audioBuffer.length;
+    var channelL = audioBuffer.getChannelData(0);
+    var channelR = audioBuffer.getChannelData(1);
+    var sampleRate = audioBuffer.sampleRate;
+    
+    for (var i = 0; i < n; ++i) {
+        channelL[i] = Math.sin(880.0 * 2.0*Math.PI * i / sampleRate);
+        channelR[i] = Math.sin(440.0 * 2.0*Math.PI * i / sampleRate);
+    }
+}
+
+function runTest() {
+    if (!window.testRunner)
+        return;
+    
+    var context = new webkitAudioContext();
+    var audioBuffer = context.createBuffer(2, lengthInSeconds * sampleRate, sampleRate);
+    
+    generateSinWave(audioBuffer);
+
+    var audioData = createAudioData(audioBuffer);
+    testRunner.setAudioResult(audioData);
+
+    testRunner.notifyDone();
+}
+
+runTest();
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+
+<body>
+</body>
+</html>

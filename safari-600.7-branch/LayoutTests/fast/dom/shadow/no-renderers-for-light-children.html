@@ -1,0 +1,20 @@
+<html>
+<head>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.addEventListener('load', function()
+{
+    document.getElementsByTagName('keygen')[0].appendChild(document.createTextNode('FAIL'));
+}, false);
+
+</script>
+</head>
+<body>
+Children of an element are never rendered is it has a shadow DOM subtree.<br>
+Should not see the word FAIL below.<br>
+<keygen></keygen>
+</body>
+</html>

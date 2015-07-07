@@ -1,0 +1,30 @@
+Tests calling WebGL APIs with objects from other contexts
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS contextA.compileShader(shaderB) generated expected GL error: INVALID_OPERATION.
+PASS contextA.linkProgram(programB) generated expected GL error: INVALID_OPERATION.
+PASS contextA.attachShader(programA, shaderB) generated expected GL error: INVALID_OPERATION.
+PASS contextA.attachShader(programB, shaderA) generated expected GL error: INVALID_OPERATION.
+PASS contextA.attachShader(programB, shaderB) generated expected GL error: INVALID_OPERATION.
+PASS contextA.detachShader(programA, shaderB) generated expected GL error: INVALID_OPERATION.
+PASS contextA.detachShader(programB, shaderA) generated expected GL error: INVALID_OPERATION.
+PASS contextA.detachShader(programB, shaderB) generated expected GL error: INVALID_OPERATION.
+PASS contextA.shaderSource(shaderB, 'foo') generated expected GL error: INVALID_OPERATION.
+PASS contextA.bindAttribLocation(programB, 0, 'foo') generated expected GL error: INVALID_OPERATION.
+PASS contextA.bindFramebuffer(contextA.FRAMEBUFFER, frameBufferB) generated expected GL error: INVALID_OPERATION.
+PASS contextA.bindRenderbuffer(contextA.RENDERBUFFER, renderBufferB) generated expected GL error: INVALID_OPERATION.
+PASS contextA.bindTexture(contextA.TEXTURE_2D, textureB) generated expected GL error: INVALID_OPERATION.
+PASS contextA.framebufferRenderbuffer(contextA.FRAMEBUFFER, contextA.DEPTH_ATTACHMENT, contextA.RENDERBUFFER, renderBufferB) generated expected GL error: INVALID_OPERATION.
+PASS contextA.framebufferTexture2D(contextA.FRAMEBUFFER, contextA.COLOR_ATTACHMENT0, contextA.TEXTURE_2D, textureB, 0) generated expected GL error: INVALID_OPERATION.
+PASS contextA.getProgramParameter(programB, 0) generated expected GL error: INVALID_OPERATION.
+PASS contextA.getProgramInfoLog(programB, 0) generated expected GL error: INVALID_OPERATION.
+PASS contextA.getShaderParameter(shaderB, 0) generated expected GL error: INVALID_OPERATION.
+PASS contextA.getShaderInfoLog(shaderB, 0) generated expected GL error: INVALID_OPERATION.
+PASS contextA.getShaderSource(shaderB) generated expected GL error: INVALID_OPERATION.
+PASS contextA.getUniform(programB, locationA) generated expected GL error: INVALID_OPERATION.
+PASS contextA.getUniformLocation(programB, 'u_modelViewProjMatrix') generated expected GL error: INVALID_OPERATION.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

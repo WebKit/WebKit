@@ -1,0 +1,19 @@
+<style>
+    div.test {
+        width: 100px;
+        height: 100px;
+        -webkit-writing-mode: vertical-rl;
+        -webkit-columns: 2;
+        -webkit-column-rule: 50px solid orange;
+        -webkit-column-gap: 50px;
+        -webkit-column-fill: auto;
+        columns: 2;
+        column-rule: 50px solid orange;
+        column-gap: 50px;
+        column-fill: auto;
+    }
+
+    div.test div { width: 200px; }
+</style>
+<div class="test" style="-webkit-border-before: 50px solid blue;"><div></div></div>
+<div class="test" style="-webkit-border-after: 50px solid blue;"><div></div></div>

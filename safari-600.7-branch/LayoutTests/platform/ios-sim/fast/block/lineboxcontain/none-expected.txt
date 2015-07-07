@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x100
+  RenderBlock {HTML} at (0,0) size 800x100
+    RenderBody {BODY} at (8,8) size 784x84
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 467x19
+          text run at (0,0) width 229: "You should see a green line below. "
+          text run at (228,0) width 239: "If you see any red, the test has failed."
+      RenderBlock {DIV} at (0,84) size 784x0 [bgcolor=#FF0000]
+        RenderInline {SPAN} at (0,0) size 320x65 [color=#FF0000]
+          RenderText {#text} at (0,-52) size 320x65
+            text run at (0,-52) width 320: "xxxxx"
+        RenderBR {BR} at (320,-52) size 0x65
+        RenderInline {SPAN} at (0,0) size 320x65 [color=#FF0000]
+          RenderText {#text} at (0,-52) size 320x65
+            text run at (0,-52) width 320: "xxxxx"
+        RenderBR {BR} at (320,-52) size 0x65
+        RenderInline {SPAN} at (0,0) size 320x65 [color=#FF0000]
+          RenderText {#text} at (0,-52) size 320x65
+            text run at (0,-52) width 320: "xxxxx"
+        RenderBR {BR} at (320,-52) size 0x65
+        RenderInline {SPAN} at (0,0) size 320x65 [color=#FF0000]
+          RenderText {#text} at (0,-52) size 320x65
+            text run at (0,-52) width 320: "xxxxx"
+        RenderBR {BR} at (320,-52) size 0x65
+        RenderInline {SPAN} at (0,0) size 320x65 [color=#008000]
+          RenderText {#text} at (0,-52) size 320x65
+            text run at (0,-52) width 320: "xxxxx"
+        RenderText {#text} at (0,0) size 0x0

@@ -1,0 +1,32 @@
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+ 
+----- tests for getting window.location's properties -----
+
+PASS: canGet('targetWindow.location') should be 'true' and is.
+PASS: toString('targetWindow.location', '') should be '' and is.
+Firefox allows access to 'location.toString' but throws an exception when you call it.
+PASS: canGet('targetWindow.location.toString') should be 'false' and is.
+PASS: canGet('targetWindow.location.href') should be 'false' and is.
+PASS: canGet('targetWindow.location.hash') should be 'false' and is.
+PASS: canGet('targetWindow.location.host') should be 'false' and is.
+PASS: canGet('targetWindow.location.hostname') should be 'false' and is.
+PASS: canGet('targetWindow.location.pathname') should be 'false' and is.
+PASS: canGet('targetWindow.location.port') should be 'false' and is.
+PASS: canGet('targetWindow.location.protocol') should be 'false' and is.
+PASS: canGet('targetWindow.location.search') should be 'false' and is.
+PASS: canGet('targetWindow.location.assign') should be 'true' and is.
+PASS: canGet('targetWindow.location.reload') should be 'true' and is.
+PASS: canGet('targetWindow.location.replace') should be 'true' and is.
+PASS: canGet('targetWindow.location.existingCustomProperty') should be 'false' and is.
+

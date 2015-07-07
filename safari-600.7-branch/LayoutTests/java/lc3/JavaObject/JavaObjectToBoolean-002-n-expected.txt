@@ -1,0 +1,9 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaObject to boolean
+
+FAIL dt.PUB_BOOLEAN_REPRESENTATION = false ;dt.setBoolean( dt ); dt.PUB_BOOLEAN should throw an exception. Was false.
+FAIL dt.PUB_BOOLEAN_REPRESENTATION = false ;dt.setBoolean( dt ); dt.getBoolean() should throw an exception. Was false.
+FAIL typeof dt.getBoolean should throw an exception. Was function.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

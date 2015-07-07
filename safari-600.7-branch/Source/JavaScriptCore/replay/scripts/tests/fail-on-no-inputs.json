@@ -1,0 +1,7 @@
+{
+    "types": {
+        "Global": [
+            { "name": "double", "mode": "SCALAR" }
+        ]
+    }
+}

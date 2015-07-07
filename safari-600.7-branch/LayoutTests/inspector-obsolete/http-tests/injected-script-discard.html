@@ -1,0 +1,75 @@
+<html>
+<head>
+<script src="../inspector/inspector-test.js"></script>
+<script src="../inspector/console-test.js"></script>
+<script>
+
+function openWebInspector()
+{
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.showWebInspector();
+        runTest();
+    }
+}
+
+function reopenWebInspector(objectId)
+{
+    window.objectId = unescape(objectId);
+    testRunner.closeWebInspector();
+    setTimeout(function() {
+      testRunner.showWebInspector();
+      runTest();
+    }, 0);
+}
+
+function test()
+{
+    RuntimeAgent.evaluate("window.objectId", dispatch);
+
+    function dispatch(error, result, wasThrown)
+    {
+        if (result.type !== "string") {
+            InspectorTest.evaluateInPage("console.log('Opening front-end for the first time')");
+            installHandleInInjectedScript();
+        } else {
+            InspectorTest.evaluateInPage("console.log('Opening front-end second time')");
+            checkHandleInInjectedScript(result.value, InspectorTest.completeTest);
+        }
+    }
+
+    function installHandleInInjectedScript()
+    {
+        RuntimeAgent.evaluate("({ handle : \"handle\" })", storeIdInTargetWindow);
+
+        function storeIdInTargetWindow(error, result, wasThrown)
+        {
+            checkHandleInInjectedScript(result.objectId, reopenInspector);
+
+            function reopenInspector()
+            {
+                InspectorTest.evaluateInPage("reopenWebInspector('" + escape(result.objectId) + "')");
+            }
+        }
+    }
+
+    function checkHandleInInjectedScript(objectId, callback)
+    {
+        RuntimeAgent.getProperties(objectId, false, propertiesAvailable);
+
+        function propertiesAvailable(error, properties)
+        {
+            InspectorTest.evaluateInPage(error ? "console.log('Error resolving object')" : "console.log('Resolved object successfully')", callback);
+        }
+    }
+}
+
+</script>
+</head>
+<body onload="openWebInspector()">
+<p>
+Tests that injected script is discarded upon front-end close.
+</p>
+<div id="container"/>
+</body>
+</html>

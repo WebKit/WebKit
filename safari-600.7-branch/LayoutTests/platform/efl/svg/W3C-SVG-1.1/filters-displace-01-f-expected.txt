@@ -1,0 +1,83 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (15,15) size 415x333
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGResourceFilter {filter} [id="DispMapChecker"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feImage image-size="256.00x256.00"]
+        RenderSVGResourceFilter {filter} [id="RotateMap"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feImage image-size="128.00x128.00"]
+        RenderSVGResourceFilter {filter} [id="SphereMap"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feImage image-size="128.00x128.00"]
+        RenderSVGResourceFilter {filter} [id="RotateMapTest"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feDisplacementMap scale="64.00" xChannelSelector="RED" yChannelSelector="GREEN"]
+            [feImage image-size="256.00x256.00"]
+            [feImage image-size="128.00x128.00"]
+        RenderSVGResourceFilter {filter} [id="SphereMapTest"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feDisplacementMap scale="64.00" xChannelSelector="RED" yChannelSelector="GREEN"]
+            [feImage image-size="256.00x256.00"]
+            [feImage image-size="128.00x128.00"]
+      RenderSVGContainer {g} at (15,15) size 415x333
+        RenderSVGRect {rect} at (15,15) size 128x128 [fill={[type=SOLID] [color=#000000]}] [x=15.00] [y=15.00] [width=128.00] [height=128.00]
+          [filter="DispMapChecker"] RenderSVGResourceFilter {filter} at (15,15) size 128x128
+        RenderSVGRect {rect} at (20,115) size 118x20 [fill={[type=SOLID] [color=#DDDDDD]}] [x=20.00] [y=115.00] [width=118.00] [height=20.00]
+        RenderSVGText {text} at (21,119) size 116x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 115x14
+            chunk 1 (middle anchor) text run 1 at (21.50,130.00) startOffset 0 endOffset 18 width 115.00: "Checkerboard Image"
+        RenderSVGRect {rect} at (158,15) size 128x128 [fill={[type=SOLID] [color=#000000]}] [x=158.00] [y=15.00] [width=128.00] [height=128.00]
+          [filter="RotateMap"] RenderSVGResourceFilter {filter} at (158,15) size 128x128
+        RenderSVGRect {rect} at (163,112) size 118x30 [fill={[type=SOLID] [color=#DDDDDD]}] [x=163.00] [y=112.00] [width=118.00] [height=30.00]
+        RenderSVGText {text} at (169,114) size 106x27 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 102x14
+            RenderSVGInlineText {#text} at (0,0) size 102x14
+              chunk 1 (middle anchor) text run 1 at (169.50,125.00) startOffset 0 endOffset 16 width 102.00: "Displacement Map"
+          RenderSVGInlineText {#text} at (102,0) size 3x14
+            chunk 1 (middle anchor) text run 1 at (271.50,125.00) startOffset 0 endOffset 1 width 3.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 93x14
+            RenderSVGInlineText {#text} at (6,13) size 93x14
+              chunk 1 (middle anchor) text run 1 at (175.50,138.00) startOffset 0 endOffset 18 width 93.00: "(20 deg. rotation)"
+        RenderSVGRect {rect} at (301,15) size 128x128 [fill={[type=SOLID] [color=#000000]}] [x=301.00] [y=15.00] [width=128.00] [height=128.00]
+          [filter="RotateMapTest"] RenderSVGResourceFilter {filter} at (301,15) size 128x128
+        RenderSVGRect {rect} at (323,37) size 84x84 [transform={m=((30.07,10.94)(-10.94,30.07)) t=(365.00,79.00)}] [fill={[type=SOLID] [color=#0000FF] [opacity=0.50]}] [x=-1.00] [y=-1.00] [width=2.00] [height=2.00]
+        RenderSVGText {text} at (300,149) size 130x38 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 35x14
+            RenderSVGInlineText {#text} at (46,0) size 35x14
+              chunk 1 (middle anchor) text run 1 at (346.00,160.00) startOffset 0 endOffset 6 width 35.00: "Result"
+          RenderSVGInlineText {#text} at (81,0) size 3x14
+            chunk 1 (middle anchor) text run 1 at (381.00,160.00) startOffset 0 endOffset 1 width 3.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 127x14
+            RenderSVGInlineText {#text} at (0,12) size 127x14
+              chunk 1 (middle anchor) text run 1 at (300.00,172.00) startOffset 0 endOffset 23 width 127.00: "(overlayed with 20 deg."
+          RenderSVGInlineText {#text} at (127,12) size 3x14
+            chunk 1 (middle anchor) text run 1 at (427.00,172.00) startOffset 0 endOffset 1 width 3.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 124x14
+            RenderSVGInlineText {#text} at (3,24) size 123x14
+              chunk 1 (middle anchor) text run 1 at (303.50,184.00) startOffset 0 endOffset 23 width 123.00: "rotated blue rectangle)"
+        RenderSVGRect {rect} at (15,158) size 128x128 [fill={[type=SOLID] [color=#000000]}] [x=15.00] [y=158.00] [width=128.00] [height=128.00]
+          [filter="DispMapChecker"] RenderSVGResourceFilter {filter} at (15,158) size 128x128
+        RenderSVGRect {rect} at (20,258) size 118x20 [fill={[type=SOLID] [color=#DDDDDD]}] [x=20.00] [y=258.00] [width=118.00] [height=20.00]
+        RenderSVGText {text} at (21,262) size 116x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 115x14
+            chunk 1 (middle anchor) text run 1 at (21.50,273.00) startOffset 0 endOffset 18 width 115.00: "Checkerboard Image"
+        RenderSVGRect {rect} at (158,158) size 128x128 [fill={[type=SOLID] [color=#000000]}] [x=158.00] [y=158.00] [width=128.00] [height=128.00]
+          [filter="SphereMap"] RenderSVGResourceFilter {filter} at (158,158) size 128x128
+        RenderSVGRect {rect} at (163,255) size 118x30 [fill={[type=SOLID] [color=#DDDDDD]}] [x=163.00] [y=255.00] [width=118.00] [height=30.00]
+        RenderSVGText {text} at (166,257) size 112x29 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 102x14
+            RenderSVGInlineText {#text} at (3,0) size 102x14
+              chunk 1 (middle anchor) text run 1 at (169.50,268.00) startOffset 0 endOffset 16 width 102.00: "Displacement Map"
+          RenderSVGInlineText {#text} at (105,0) size 3x14
+            chunk 1 (middle anchor) text run 1 at (271.50,268.00) startOffset 0 endOffset 1 width 3.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 111x14
+            RenderSVGInlineText {#text} at (0,15) size 111x14
+              chunk 1 (middle anchor) text run 1 at (166.50,283.00) startOffset 0 endOffset 22 width 111.00: "(spherical distortion)"
+        RenderSVGRect {rect} at (301,200) size 128x128 [fill={[type=SOLID] [color=#000000]}] [x=301.00] [y=200.00] [width=128.00] [height=128.00]
+          [filter="SphereMapTest"] RenderSVGResourceFilter {filter} at (301,200) size 128x128
+        RenderSVGText {text} at (347,334) size 36x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 35x14
+            chunk 1 (middle anchor) text run 1 at (347.50,345.00) startOffset 0 endOffset 6 width 35.00: "Result"
+    RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 264x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.6 $"
+    RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

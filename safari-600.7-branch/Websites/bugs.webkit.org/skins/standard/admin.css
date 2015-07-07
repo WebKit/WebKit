@@ -1,0 +1,115 @@
+/* The contents of this file are subject to the Mozilla Public
+  * License Version 1.1 (the "License"); you may not use this file
+  * except in compliance with the License. You may obtain a copy of
+  * the License at http://www.mozilla.org/MPL/
+  *
+  * Software distributed under the License is distributed on an "AS
+  * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  * implied. See the License for the specific language governing
+  * rights and limitations under the License.
+  *
+  * The Original Code is the Bugzilla Bug Tracking System.
+  *
+  * Contributor(s): Marc Schumann <wurblzap@gmail.com>
+  */
+
+.warningmessages, .criticalmessages {
+    background-color: white;
+    border-style: solid;
+    border-width: 1px;
+    padding: 1ex 1ex 1ex 4ex;
+    margin: 1ex;
+}
+
+.warningmessages {
+    border-color: yellow;
+}
+
+.criticalmessages {
+    border-color: red;
+}
+
+.alert {
+    color: red;
+    background-color: inherit;
+}
+
+p.areyoureallyreallysure {
+    color: red;
+    font-size: 120%;
+    font-weight: bold;
+}
+
+tr.param_disabled {
+    background-color: lightgrey;
+}
+
+td.admin_links {
+    width: 50%;
+    padding: 1em;
+    vertical-align: top;
+}
+
+td.admin_links dt {
+    margin-top: 1em;
+}
+
+td.admin_links dt.forbidden, td.admin_links dd.forbidden {
+    font-size: smaller;
+    font-style: italic;
+    color: #aaa;
+}
+
+td.admin_links dt.forbidden a, td.admin_links dd.forbidden a {
+    text-decoration: none;
+    color: inherit;
+    cursor: default;
+}
+
+.col-header {
+    width: 8em;
+}
+
+.checkbox-cell {
+    border: 1px black solid;
+}
+
+/* Grey-green color */
+.open-status {
+    color: #286;
+}
+
+/* Brown-red color */
+.closed-status {
+    color: #a63;
+}
+
+/* Dark green color */
+.checked {
+    background-color: #5b4;
+}
+
+/* Dark red color */
+td.forbidden {
+    background-color: #811;
+}
+
+/* Light green color */
+td.set {
+    background-color: #efe;
+}
+
+/* Light red color */
+td.unset {
+    background-color: #fee;
+}
+
+tr.highlight:hover {
+    background-color: yellow;
+}
+
+th.title {
+    font-size: larger;
+    text-align: center;
+    vertical-align: middle;
+}

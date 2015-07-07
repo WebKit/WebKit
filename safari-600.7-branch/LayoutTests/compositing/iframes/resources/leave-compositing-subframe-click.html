@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style type="text/css" media="screen">
+    body { background-color:silver }
+    
+    .box {
+        height: 200px;
+        width: 200px;
+        margin: 10px;
+        padding: 5px;
+        background-color: blue;
+        cursor: pointer;
+    }
+    
+    .composited {
+      -webkit-transform: translateZ(0);
+    }
+
+  </style>
+  <script type="text/javascript">
+    function doTest()
+    {
+      window.setTimeout(function() {
+        document.getElementById('target').className = 'box';
+        parent.testDone();
+      }, 50);
+    }
+    window.addEventListener('load', doTest, false);
+  </script>
+</head>
+<body>
+    <div id="target" class="composited box" onmousedown="parent.nodeClicked(this)"></div>
+</body>
+</html>

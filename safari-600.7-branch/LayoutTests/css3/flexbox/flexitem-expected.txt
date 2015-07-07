@@ -1,0 +1,39 @@
+button
+
+object
+
+PASS
+
+PASS
+
+PASS
+PASS
+button
+PASS
+PASS
+FAIL:
+Expected 600 for width, but got 0. 
+
+<div class="flexbox">
+  <!-- FIXME: This table should flex. -->
+  <div data-expected-display="table" data-expected-width="600" style="display: inline-table"></div>
+</div>
+
+PASS
+
+PASS
+
+PASS
+button
+
+object
+
+PASS
+
+PASS
+
+PASS
+
+PASS
+
+PASS

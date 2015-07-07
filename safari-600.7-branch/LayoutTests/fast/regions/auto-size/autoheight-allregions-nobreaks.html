@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            .flowContent { font-size: 50px; color: green; font-family: Ahem; }
+            #article { -webkit-flow-into: flow; }
+
+            .regionSize { width: 250px; }
+            #region { -webkit-flow-from: flow; position: absolute; top: 150px; }
+            #region2 { -webkit-flow-from: flow; position: absolute; top: 150px; left: 300px; }
+            #region3 { -webkit-flow-from: flow; position: absolute; top: 150px; left: 600px; }
+
+            .redBox { position: absolute; height: 50px; background-color: red; }
+            #red { top: 200px; }
+            #red1 { top: 300px; }
+            #red2 { top: 400px; }
+        </style>
+    </head>
+    <body>
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=91097"> Auto height is not working for regions</a>.</p>
+        <p>The three regions in the region chain all have auto-height, but the first region has all the flow thread content.</p>
+        <p>On success, you should see 3 vertical green lines.</p>
+        <div id="red" class="redBox regionSize"></div>
+        <div id="red1" class="redBox regionSize"></div>
+        <div id="red2" class="redBox regionSize"></div>
+        <div id="article" class="flowContent">
+            <p id="p1">aaaaa</p>
+            <p id="p2">aaaaa</p>
+            <p id="p3">aaaaa</p>
+        </div>
+        <div id="region" class="regionSize"></div>
+        <div id="region2" class="regionSize"></div>
+        <div id="region3" class="regionSize"></div>
+    </body>
+</html>

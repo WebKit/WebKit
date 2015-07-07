@@ -1,0 +1,69 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {FORM} at (0,0) size 784x31
+        RenderMenuList {SELECT} at (2,2) size 111x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 109x25
+            RenderText at (4,4) size 83x17
+              text run at (4,4) width 83: "append cell"
+        RenderText {#text} at (115,7) size 52x17
+          text run at (115,7) width 52: "   tbody "
+        RenderTextControl {INPUT} at (169,4) size 56x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (227,7) size 41x17
+          text run at (227,7) width 41: "   row "
+        RenderTextControl {INPUT} at (270,4) size 56x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (328,7) size 35x17
+          text run at (328,7) width 35: "   col "
+        RenderTextControl {INPUT} at (365,4) size 56x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (423,7) size 74x17
+          text run at (423,7) width 74: "   row span "
+        RenderTextControl {INPUT} at (499,4) size 56x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (557,7) size 68x17
+          text run at (557,7) width 68: "   col span "
+        RenderTextControl {INPUT} at (627,4) size 56x23 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (685,7) size 20x17
+          text run at (685,7) width 20: "     "
+        RenderButton {INPUT} at (707,3) size 49x26 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderBlock (anonymous) at (8,4) size 33x17
+            RenderText at (0,0) size 33x17
+              text run at (0,0) width 33: "Do It"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,47) size 784x17
+        RenderBR {BR} at (0,0) size 0x17
+      RenderTable {TABLE} at (0,64) size 62x50 [bgcolor=#FFA500] [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 60x48
+          RenderTableRow {TR} at (0,2) size 60x21
+            RenderTableCell {TD} at (2,2) size 27x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 23x17
+                text run at (2,2) width 23: "c11"
+          RenderTableRow {TR} at (0,25) size 60x21
+            RenderTableCell {TD} at (2,25) size 27x21 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 23x17
+                text run at (2,2) width 23: "c21"
+            RenderTableCell {TD} at (31,25) size 27x21 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 23x17
+                text run at (2,2) width 23: "c22"
+      RenderBlock (anonymous) at (0,114) size 784x17
+        RenderBR {BR} at (0,0) size 0x17
+layer at (180,15) size 50x17
+  RenderBlock {DIV} at (3,3) size 50x17
+    RenderText {#text} at (0,0) size 9x17
+      text run at (0,0) width 9: "0"
+layer at (281,15) size 50x17
+  RenderBlock {DIV} at (3,3) size 50x17
+    RenderText {#text} at (0,0) size 9x17
+      text run at (0,0) width 9: "0"
+layer at (376,15) size 50x17
+  RenderBlock {DIV} at (3,3) size 50x17
+    RenderText {#text} at (0,0) size 9x17
+      text run at (0,0) width 9: "0"
+layer at (510,15) size 50x17
+  RenderBlock {DIV} at (3,3) size 50x17
+    RenderText {#text} at (0,0) size 9x17
+      text run at (0,0) width 9: "1"
+layer at (638,15) size 50x17
+  RenderBlock {DIV} at (3,3) size 50x17
+    RenderText {#text} at (0,0) size 9x17
+      text run at (0,0) width 9: "1"

@@ -1,0 +1,6 @@
+S15.1.1.2_R4
+
+FAIL SputnikError: #1: Infinity = true; Infinity++; Infinity === 2
+
+TEST COMPLETE
+

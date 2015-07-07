@@ -1,0 +1,40 @@
+<html>
+<head>
+<script src="inspector-test.js"></script>
+<script src="extensions-test.js"></script>
+<script type="text/javascript">
+
+function extension_testAddHeaders(nextTest)
+{
+    webInspector.network.addRequestHeaders({
+        "x-webinspector-extension": "test",
+        "user-agent": "Mozilla/4.0 (compatible; MSIE 7.0b; Windows NT 6.0)"
+    });
+    function cleanUpHeaders()
+    {
+        webInspector.network.addRequestHeaders({
+            "x-webinspector-extension": null,
+            "user-agent": null
+        });
+    }
+    webInspector.inspectedWindow.eval("doXHR()", callbackAndNextTest(cleanUpHeaders, nextTest));
+}
+
+function doXHR()
+{
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "resources/echo-headers.php", false);
+    xhr.send(null);
+    // Can't use output() here due to output order instability: this is invoked by inspectedWindow.eval(),
+    // which is not serialized against output from extension, as the latter is posted asynchronously via
+    // postMessage to front-end window.
+    document.getElementById("headers").textContent += xhr.responseText;
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests WebInspector extension API</p>
+<div style="white-space: pre" id="headers"></div>
+</body>
+</html>

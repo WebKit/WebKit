@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/recv.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+addEventListener("message", recv, false);
+
+function tryPostMessage(win, origin) {
+    try {
+        win.postMessage("Trying origin=" + origin, origin);
+    } catch(ex) {
+        log("Error sending message to " + origin + ". " + ex);
+    }
+}
+
+function test() {
+    var winLocalhost = document.getElementById('iframe-localhost').contentWindow;
+    var win127= document.getElementById('iframe-127').contentWindow;
+
+    // Should succeed:
+    tryPostMessage(winLocalhost, "http://localhost:8000");
+    tryPostMessage(winLocalhost, "http://localhost:8000/");
+    tryPostMessage(winLocalhost, "http://localhost:8000/foo");
+    tryPostMessage(winLocalhost, "http://localhost:8000/foo?bar");
+    tryPostMessage(winLocalhost, "http://localhost:8000/foo?bar#baz");
+    tryPostMessage(winLocalhost, "http://user:pass@localhost:8000/foo?bar#baz");
+    tryPostMessage(winLocalhost, "*");
+    tryPostMessage(win127, "/");
+
+    // Should fail:
+    tryPostMessage(winLocalhost, "/");
+    tryPostMessage(winLocalhost, "http://localhost:9090");
+    tryPostMessage(winLocalhost, "http://localhost");
+    tryPostMessage(winLocalhost, "https://localhost");
+    tryPostMessage(winLocalhost, "https://localhost:8000");
+    tryPostMessage(winLocalhost, "http://www.example.com");
+
+    // Should throw syntax error:
+    tryPostMessage(winLocalhost, null);
+    tryPostMessage(winLocalhost, undefined);
+    tryPostMessage(win127, "//");
+
+    winLocalhost.postMessage('done', '*');
+}
+</script>
+<body onload="test()">
+<div>window.location.href = <script>document.write(window.location.href);</script></div>
+<div><iframe src="http://localhost:8000/security/postMessage/resources/post-message-listener.html"
+  id="iframe-localhost" width="800" height="300" style="border: 1px solid black;">
+</iframe><iframe src="http://127.0.0.1:8000/security/postMessage/resources/post-message-listener.html"
+  id="iframe-127" width="800" height="300" style="border: 1px solid black;"></iframe>
+<div id="result">waiting...</div>
+</body>
+</html>

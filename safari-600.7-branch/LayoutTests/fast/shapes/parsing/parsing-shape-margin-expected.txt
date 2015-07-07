@@ -1,0 +1,32 @@
+Test parsing of the CSS shape-margin property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getCSSText("-webkit-shape-margin", "1.5ex") is "1.5ex"
+PASS getCSSText("-webkit-shape-margin", "2em") is "2em"
+PASS getCSSText("-webkit-shape-margin", "2.5in") is "2.5in"
+PASS getCSSText("-webkit-shape-margin", "3cm") is "3cm"
+PASS getCSSText("-webkit-shape-margin", "3.5mm") is "3.5mm"
+PASS getCSSText("-webkit-shape-margin", "4pt") is "4pt"
+PASS getCSSText("-webkit-shape-margin", "4.5pc") is "4.5pc"
+PASS getCSSText("-webkit-shape-margin", "5px") is "5px"
+PASS getCSSText("-webkit-shape-margin", "120%") is "120%"
+PASS getCSSText("-webkit-shape-margin", "0") is "0px"
+PASS getCSSText("-webkit-shape-margin", "-5px") is ""
+PASS getCSSText("-webkit-shape-margin", "none") is ""
+PASS getCSSText("-webkit-shape-margin", "'string'") is ""
+PASS getComputedStyleValue("-webkit-shape-margin", "0") is "0px"
+PASS getComputedStyleValue("-webkit-shape-margin", "1px") is "1px"
+PASS getComputedStyleValue("-webkit-shape-margin", "-5em") is "0px"
+PASS getComputedStyleValue("-webkit-shape-margin", "identifier") is "0px"
+PASS getComputedStyleValue("-webkit-shape-margin", "'string'") is "0px"
+PASS getComputedStyleValue("-webkit-shape-margin", "calc(25%*3 - 10in)") is "calc(75% - 960px)"
+PASS getChildComputedStyle("-webkit-shape-margin", "0", "0") is "0px"
+PASS getChildComputedStyle("-webkit-shape-margin", "0", "1px") is "1px"
+PASS getChildComputedStyle("-webkit-shape-margin", "1px", "-1em") is "0px"
+PASS getChildComputedStyle("-webkit-shape-margin", "2px", "1px") is "1px"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

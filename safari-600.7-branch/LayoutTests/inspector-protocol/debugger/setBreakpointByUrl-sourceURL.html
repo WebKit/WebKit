@@ -1,0 +1,44 @@
+<html>
+<head>
+<script src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script src="resources/breakpoint.js"></script>
+<script>
+// sourceURL-test.js:
+eval("function sourceURLFunction() {\n    var a = 1;\n    var b = 2;\n    var c = a+b;\n}\n//# sourceURL=sourceURL-test.js")
+
+function test()
+{
+    InspectorTest.sendCommand("Debugger.enable", {});
+
+    InspectorTest.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    {
+        if (/sourceURL-test\.js$/.test(messageObject.params.url)) {
+            InspectorTest.log("Found sourceURL-test.js");
+            var params = {url: messageObject.params.url, lineNumber: 3, columnNumber: 0};
+            InspectorTest.sendCommand("Debugger.setBreakpointByUrl", params, function(responseObject) {
+                InspectorTest.checkForError(responseObject);
+                InspectorTest.log("Running sourceURLFunction");
+                InspectorTest.sendCommand("Runtime.evaluate", {expression: "sourceURLFunction()"});
+            });
+        }
+    }
+
+    InspectorTest.eventHandler["Debugger.paused"] = function(messageObject)
+    {
+        InspectorTest.log("Hit Breakpoint!");
+        var callFrameIdentifier = messageObject.params.callFrames[0].callFrameId;
+        InspectorTest.sendCommand("Debugger.evaluateOnCallFrame", {callFrameId: callFrameIdentifier, expression: "a"}, function(messageObject) {
+            InspectorTest.log("Evaluted value of `a` (expecting number 1) was: " + JSON.stringify(messageObject.result.result));
+            InspectorTest.sendCommand("Debugger.evaluateOnCallFrame", {callFrameId: callFrameIdentifier, expression: "c"}, function(messageObject) {
+                InspectorTest.log("Evaluted value of `c` (expecting undefined) was: " + JSON.stringify(messageObject.result.result));
+                InspectorTest.completeTest();
+            });
+        });
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Debugger.setBreakpointByUrl in Script named via sourceURL</p>
+</body>
+</html>

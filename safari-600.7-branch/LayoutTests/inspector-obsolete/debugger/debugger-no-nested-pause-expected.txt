@@ -1,0 +1,10 @@
+Tests that debugger will skip breakpoint hit when script execution is already paused. See bug
+
+Debugger was enabled.
+Set timer for test function.
+Script execution paused.
+Set timer for test function.
+testFunction.invocationCount = 2
+Script execution resumed.
+Debugger was disabled.
+

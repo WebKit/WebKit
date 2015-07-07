@@ -1,0 +1,55 @@
+<html>
+<head>
+<script>
+console.error("Console error 1.");
+console.error("Console error 2.");
+</script>
+<script src="../inspector-test.js"></script>
+<script src="../resources-test.js"></script>
+<script src="resource-tree-test.js"></script>
+<script>
+
+function test()
+{
+    var resourcesWereFinished = false;
+    var pageWasReloaded = false;
+
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.MainFrameNavigated, frameNavigated);
+    InspectorTest.reloadPage(pageReloaded);
+
+    function frameNavigated()
+    {
+        InspectorTest.runAfterResourcesAreFinished(["resource-tree-errors-reload.html"], resourcesFinished);
+    }
+
+    function resourcesFinished()
+    {
+        if (pageWasReloaded)
+            step1();
+        else
+            resourcesWereFinished = true;
+    }
+
+    function pageReloaded()
+    {
+        if (resourcesWereFinished)
+            step1();
+        else
+            pageWasReloaded = true;
+
+    }
+
+    function step1()
+    {
+        var resource = WebInspector.resourceTreeModel.resourceForURL("http://127.0.0.1:8000/inspector/resource-tree/resource-tree-errors-reload.html");
+        InspectorTest.addResult("Number of errors for the main resource: " + resource.errors);
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that console messages are matched to resources after page reload.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=60701">Bug 60701</a>
+</body>
+</html>

@@ -1,0 +1,29 @@
+Tests the basic operation of all BatteryStatus events.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+chargingchange event is raised
+PASS battery.charging is false
+PASS battery.chargingTime is Infinity
+PASS battery.dischargingTime is 6000
+PASS battery.level is 0.7
+chargingtimechange event is raised
+PASS battery.charging is false
+PASS battery.chargingTime is Infinity
+PASS battery.dischargingTime is 6000
+PASS battery.level is 0.7
+dischargingtimechange event is raised
+PASS battery.charging is false
+PASS battery.chargingTime is Infinity
+PASS battery.dischargingTime is 6000
+PASS battery.level is 0.7
+levelchange event is raised
+PASS battery.charging is false
+PASS battery.chargingTime is Infinity
+PASS battery.dischargingTime is 6000
+PASS battery.level is 0.7
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

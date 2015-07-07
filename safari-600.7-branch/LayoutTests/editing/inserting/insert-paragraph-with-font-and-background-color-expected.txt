@@ -1,0 +1,23 @@
+This test checks behaviour of insertParagraph method.
+The style and the font should be preserved in new line of text - the "Bar" should be green and have red background.
+
+| "
+"
+| <font>
+|   color="#1b6f11"
+|   "
+"
+|   <span>
+|     id="textSpan"
+|     style="background-color: rgb(191,35,28);"
+|     "Foo"
+| <div>
+|   <font>
+|     color="#1b6f11"
+|     <span>
+|       style="background-color: rgb(191, 35, 28);"
+|       "Bar<#selection-caret>"
+|       <br>
+|   <br>
+|   "
+"

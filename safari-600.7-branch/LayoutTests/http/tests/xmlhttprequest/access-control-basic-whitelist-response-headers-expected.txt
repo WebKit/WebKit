@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: Refused to get unsafe header "x-webkit"
+PASS: Response header cache-control allowed.
+PASS: Response header content-language allowed.
+PASS: Response header content-type allowed.
+PASS: Response header expires allowed.
+PASS: Response header last-modified allowed.
+PASS: Response header pragma allowed.
+PASS: Response header x-webkit denied.
+PASS: Non-whitelisted headers not passed to getAllResponseHeaders().
+

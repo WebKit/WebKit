@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: line 14: TypeError: undefined is not an object (evaluating 'request.onsuccess = initiallyDeleted')
+Test that a deleteDatabase called while handling an upgradeneeded event is queued and fires its events at the right time. The close() call to unblock the delete occurs in the connection's 'versionchange' event handler.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = "delete-in-upgradeneeded-close-in-versionchange.html"
+indexedDB.deleteDatabase(dbname)
+FAIL indexedDB.deleteDatabase(dbname) threw exception TypeError: null is not an object (evaluating 'indexedDB.deleteDatabase')
+FAIL Unexpected error: TypeError: undefined is not an object (evaluating 'request.onsuccess = initiallyDeleted')
+FAIL successfullyParsed should be true. Was false.
+
+TEST COMPLETE
+

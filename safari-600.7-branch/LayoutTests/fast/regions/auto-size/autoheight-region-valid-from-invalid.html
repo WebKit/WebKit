@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+        .flowA { -webkit-flow-into: flowA; }
+        .flowB { -webkit-flow-into: flowB; }
+        .flowC { -webkit-flow-into: flowC; }
+
+        .regionFlowA { -webkit-flow-from: flowA; }
+        .regionFlowB { -webkit-flow-from: flowB; }
+        .regionFlowC { -webkit-flow-from: flowC; }
+
+        .greenBox { width: 50px; height: 50px; background-color: green; }
+        .redBox { width: 50px; height: 50px; background-color: red; }
+        .autoheightRegion { width: 50px; overflow: hidden; }
+        </style>
+    </head>
+    <body>
+        <p>Test than an auto-height region correctly fragments named flow content when changing from invalid to valid.</p>
+        <p>On success you should see a green rectangle below and no red.</p>
+        <div class="flowA">
+            <div class="regionFlowB"></div>
+        </div>
+
+        <div class="flowB greenBox">
+            <div class="regionFlowC"></div>
+        </div>
+
+        <div class="flowC">
+            <!-- The following region will initially be invalid.
+            Removing regionFlowC should make it valid again. -->
+            <div class="regionFlowA autoheightRegion"></div>
+        </div>
+
+        <div class="regionFlowC redBox"></div>
+
+        <script>
+            document.body.offsetTop;    // force layout
+            var el = document.getElementsByClassName("regionFlowC")[0];
+            el.parentNode.removeChild(el);
+        </script>
+    </body>
+</html>

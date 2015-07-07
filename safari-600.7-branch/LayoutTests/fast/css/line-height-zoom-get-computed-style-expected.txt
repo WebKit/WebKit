@@ -1,0 +1,12 @@
+This tests that page zoom and getComputedStyle of line-height works well together. To test manually, open this page in a browser window, and zoom-in and reload repeatedly. This text should get bigger at each step proportionately but the line-height value should stay constant.On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+PASS 12.00 is 12.00
+PASS 12.00 is 12.00
+PASS 12.00 is 12.00
+PASS 12.00 is 12.00
+PASS 12.00 is 12.00
+PASS 12.00 is 12.00
+PASS 12.00 is 12.00
+PASS 12.00 is 12.00
+PASS 12.00 is 12.00
+PASS 12.00 is 12.00
+text of font-size 10px with 120% line height.

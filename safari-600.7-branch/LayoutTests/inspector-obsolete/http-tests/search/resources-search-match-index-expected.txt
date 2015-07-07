@@ -1,0 +1,120 @@
+Tests search match index calculation in resources panel.
+
+Bug 66050
+
+Running: test1
+Running test for matches counts: [1]
+Element index: 1, index: 0, match index: 1.
+Element index: 1, index: 0, match index: 1.
+Element index: 1, index: 0, match index: 1.
+Element index: 1, index: 0, match index: 1.
+Element index: 1, index: 0, match index: 1.
+Element index: 1, index: 0, match index: 1.
+
+
+Running: test2
+Running test for matches counts: [1,2,3]
+Element index: 1, index: 0, match index: 1.
+Element index: 2, index: 0, match index: 2.
+Element index: 2, index: 1, match index: 3.
+Element index: 3, index: 0, match index: 4.
+Element index: 3, index: 1, match index: 5.
+Element index: 3, index: 2, match index: 6.
+Element index: 1, index: 0, match index: 1.
+Element index: 3, index: 2, match index: 6.
+Element index: 3, index: 1, match index: 5.
+Element index: 3, index: 0, match index: 4.
+Element index: 2, index: 1, match index: 3.
+Element index: 2, index: 0, match index: 2.
+Element index: 1, index: 0, match index: 1.
+Element index: 3, index: 2, match index: 6.
+Element index: 1, index: 0, match index: 1.
+Element index: 3, index: 2, match index: 6.
+
+
+Running: test3
+Running test for matches counts: [1,0,2,0,3]
+Element index: 1, index: 0, match index: 1.
+Element index: 3, index: 0, match index: 2.
+Element index: 3, index: 1, match index: 3.
+Element index: 5, index: 0, match index: 4.
+Element index: 5, index: 1, match index: 5.
+Element index: 5, index: 2, match index: 6.
+Element index: 1, index: 0, match index: 1.
+Element index: 5, index: 2, match index: 6.
+Element index: 5, index: 1, match index: 5.
+Element index: 5, index: 0, match index: 4.
+Element index: 3, index: 1, match index: 3.
+Element index: 3, index: 0, match index: 2.
+Element index: 1, index: 0, match index: 1.
+Element index: 5, index: 2, match index: 6.
+Element index: 1, index: 0, match index: 1.
+Element index: 5, index: 2, match index: 6.
+Element index: 3, index: 0, match index: 2.
+Element index: 1, index: 0, match index: 1.
+Element index: 5, index: 0, match index: 4.
+Element index: 3, index: 1, match index: 3.
+
+
+Running: test4
+Running test for matches counts: [0,0,0,3,0,0,0,3,0,0,0]
+Element index: 4, index: 0, match index: 1.
+Element index: 4, index: 1, match index: 2.
+Element index: 4, index: 2, match index: 3.
+Element index: 8, index: 0, match index: 4.
+Element index: 8, index: 1, match index: 5.
+Element index: 8, index: 2, match index: 6.
+Element index: 4, index: 0, match index: 1.
+Element index: 8, index: 2, match index: 6.
+Element index: 8, index: 1, match index: 5.
+Element index: 8, index: 0, match index: 4.
+Element index: 4, index: 2, match index: 3.
+Element index: 4, index: 1, match index: 2.
+Element index: 4, index: 0, match index: 1.
+Element index: 8, index: 2, match index: 6.
+Element index: 4, index: 0, match index: 1.
+Element index: 8, index: 2, match index: 6.
+Element index: 4, index: 0, match index: 1.
+Element index: 8, index: 2, match index: 6.
+Element index: 4, index: 0, match index: 1.
+Element index: 8, index: 2, match index: 6.
+Element index: 4, index: 0, match index: 1.
+Element index: 8, index: 2, match index: 6.
+Element index: 8, index: 0, match index: 4.
+Element index: 4, index: 2, match index: 3.
+Element index: 8, index: 0, match index: 4.
+Element index: 4, index: 2, match index: 3.
+Element index: 8, index: 0, match index: 4.
+Element index: 4, index: 2, match index: 3.
+Element index: 4, index: 0, match index: 1.
+Element index: 8, index: 2, match index: 6.
+Element index: 4, index: 0, match index: 1.
+Element index: 8, index: 2, match index: 6.
+Element index: 4, index: 0, match index: 1.
+Element index: 8, index: 2, match index: 6.
+
+
+Running: test5
+Running test for matches counts: [0,0,0,0,1,0,0,0]
+Element index: 5, index: 0, match index: 1.
+Element index: 5, index: 0, match index: 1.
+Element index: 5, index: 0, match index: 1.
+Element index: 5, index: 0, match index: 1.
+Element index: 5, index: 0, match index: 1.
+Element index: 5, index: 0, match index: 1.
+Element index: 5, index: 0, match index: 1.
+Element index: 5, index: 0, match index: 1.
+Element index: 5, index: 0, match index: 1.
+Element index: 5, index: 0, match index: 1.
+Element index: 5, index: 0, match index: 1.
+Element index: 5, index: 0, match index: 1.
+Element index: 5, index: 0, match index: 1.
+Element index: 5, index: 0, match index: 1.
+Element index: 5, index: 0, match index: 1.
+Element index: 5, index: 0, match index: 1.
+Element index: 5, index: 0, match index: 1.
+Element index: 5, index: 0, match index: 1.
+Element index: 5, index: 0, match index: 1.
+Element index: 5, index: 0, match index: 1.
+
+

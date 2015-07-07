@@ -1,0 +1,21 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<p>There was a bug in paste's smart replace whitespace handling.  In some cases, it used information gathered at the start of the selection being pasted into to decide whether or not a space needed to be added to the end of the incoming content.</p>
+<p>A smart paste is performed into a selection starting in one block and ending in another.  Spaces should surround the pasted word.</p>
+<div id="test" contenteditable="true"><div>foo</div><div>x bar</div></div>
+
+<script type="text/javascript" src="../editing.js"></script>
+<script>
+var s = window.getSelection();
+var e = document.getElementById("test");
+
+setSelectionCommand(e, 0, e, 0);
+doubleClickAtSelectionStart();
+copyCommand();
+moveSelectionBackwardByCharacterCommand();
+moveSelectionForwardByCharacterCommand();
+extendSelectionForwardByLineCommand();
+pasteCommand();
+</script>

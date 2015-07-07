@@ -1,0 +1,78 @@
+<html>
+	<head>
+		<style>
+		div {
+			margin: 0px;
+		}
+
+		.container {
+			border: thin solid blue;
+			width: 350px;
+			float: left;
+		}
+
+		.level1 {
+			margin-top: 10px;
+			margin-bottom: 10px;
+			border: 1px dashed black;
+			background-color: green;
+		}
+
+		.level2 {
+			margin-top: 25px;
+			margin-bottom: 20px;
+			background-color: orange;
+		}
+
+		.level3 {
+			margin-top: 30px;
+			margin-bottom: 30px;
+			background-color: pink;
+		}
+
+		.collapse_top {
+			-webkit-margin-top-collapse: collapse;
+		}
+
+		.collapse_bottom {
+			-webkit-margin-bottom-collapse: collapse;
+		}
+
+		.discard_top {
+			-webkit-margin-top-collapse: discard;
+		}
+
+		.discard_bottom {
+			-webkit-margin-bottom-collapse: discard;
+		}
+
+		.separate_top {
+			-webkit-margin-top-collapse: separate;
+		}
+
+		.separate_bottom {
+			-webkit-margin-bottom-collapse: separate;
+		}
+		</style>
+	</head>
+	<body>
+		<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=108168">Implement the -webkit-margin-collapse properties correct rendering</a>.</p>
+		<p>This ref test covers basic collapsing behavior between a box and its container when using -webkit-margin-collapse.</p>
+		<div class="container">
+			<div class="level1"><div class="level2"><div class="level3 discard_top">Pink: discard top</div></div></div>
+			<div class="level1"><div class="level2"><div class="level3 discard_bottom">Pink: discard bottom</div></div></div>
+			<div class="level1"><div class="level2 discard_top"><div class="level3">Orange: discard top</div></div></div>
+			<div class="level1"><div class="level2 discard_bottom"><div class="level3">Orange: discard bottom</div></div></div>
+			<div class="level1"><div class="level2 discard_top discard_bottom"><div class="level3">Orange: discard top, discard bottom</div></div></div>
+			<div class="level1"><div class="level2"><div class="level3 discard_top discard_bottom">Pink: discard top, discard bottom</div></div></div>
+			<div class="level1"><div class="level2 separate_top"><div class="level3 discard_top">Orange: separate top, Pink: discard top</div></div></div>
+			<div class="level1"><div class="level2 separate_bottom"><div class="level3 discard_bottom">Orange: separate bottom, Pink: discard bottom</div></div></div>
+		</div>
+		<div class="container">
+			<div class="level1"><div class="level2 discard_top"><div class="level3 separate_top">Orange: discard top, Pink: separate top</div></div></div>
+			<div class="level1"><div class="level2 discard_bottom"><div class="level3 separate_bottom">Orange: discard bottom, Pink: separate bottom</div></div></div>
+			<div class="level1"><div class="level2 separate_top"><div class="level3 separate_top">Orange: separate top, Pink: separate top</div></div></div>
+			<div class="level1"><div class="level2 separate_bottom"><div class="level3 separate_bottom">Orange: separate bottom, Pink: separate bottom</div></div></div>
+		</div>
+	</body>
+</html>

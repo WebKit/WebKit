@@ -1,0 +1,103 @@
+{
+    "domain": "Profiler",
+    "types": [
+        {
+            "id": "ProfileHeader",
+            "type": "object",
+            "description": "Profile header.",
+            "properties": [
+                { "name": "typeId", "type": "string", "enum": ["CPU"], "description": "Profile type name." },
+                { "name": "title", "type": "string", "description": "Profile title." },
+                { "name": "uid", "type": "integer", "description": "Unique identifier of the profile." }
+            ]
+        },
+        {
+            "id": "CPUProfileNodeCall",
+            "type": "object",
+            "description": "CPU Profile call info. Holds time information for a specific call that happened on a node.",
+            "properties": [
+                { "name": "startTime", "type": "number", "description": "Start time for the call." },
+                { "name": "totalTime", "type": "number", "description": "Total execution time for the call." }
+            ]
+        },
+        {
+            "id": "CPUProfileNode",
+            "type": "object",
+            "description": "CPU Profile node. Holds callsite information, execution statistics and child nodes.",
+            "properties": [
+                { "name": "id", "type": "integer", "description": "Unique identifier for this call site." },
+                { "name": "calls", "type": "array", "items": { "$ref": "CPUProfileNodeCall" }, "description": "Calls making up this node." },
+                { "name": "functionName", "type": "string", "optional": true, "description": "Function name." },
+                { "name": "url", "type": "string", "optional": true, "description": "URL." },
+                { "name": "lineNumber", "type": "integer", "optional": true, "description": "Line number." },
+                { "name": "columnNumber", "type": "integer", "optional": true, "description": "Column number." },
+                { "name": "children", "type": "array", "items": { "$ref": "CPUProfileNode" }, "optional": true, "description": "Child nodes." }
+            ]
+        },
+        {
+            "id": "CPUProfile",
+            "type": "object",
+            "description": "Profile.",
+            "properties": [
+                { "name": "rootNodes", "type": "array", "items": { "$ref": "CPUProfileNode" }, "description": "Top level nodes in the stack." },
+                { "name": "idleTime", "type": "number", "optional": true }
+            ]
+        }
+    ],
+    "commands": [
+        {
+            "name": "enable"
+        },
+        {
+            "name": "disable"
+        },
+        {
+            "name": "start"
+        },
+        {
+            "name": "stop"
+        },
+        {
+            "name": "getProfileHeaders",
+            "returns": [
+                { "name": "headers", "type": "array", "items": { "$ref": "ProfileHeader"} }
+            ]
+        },
+        {
+            "name": "getCPUProfile",
+            "parameters": [
+                { "name": "uid", "type": "integer" }
+            ],
+            "returns": [
+                { "name": "profile", "$ref": "CPUProfile" }
+            ]
+        },
+        {
+            "name": "removeProfile",
+            "parameters": [
+                { "name": "type", "type": "string" },
+                { "name": "uid", "type": "integer" }
+            ]
+        },
+        {
+            "name": "clearProfiles"
+        }
+    ],
+    "events": [
+        {
+            "name": "addProfileHeader",
+            "parameters": [
+                { "name": "header", "$ref": "ProfileHeader" }
+            ]
+        },
+        {
+            "name": "setRecordingProfile",
+            "parameters": [
+                { "name": "isProfiling", "type": "boolean" }
+            ]
+        },
+        {
+            "name": "resetProfiles"
+        }
+    ]
+}

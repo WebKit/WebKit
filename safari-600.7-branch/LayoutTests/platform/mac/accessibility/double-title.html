@@ -1,0 +1,33 @@
+<html>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+<body id="body">
+
+    <!-- This test makes sure that the input field does not have an AXTitle, because it has a titleUIElement  -->
+ 
+    Field with label:<BR>
+    <label for="usernameField1">Desired User Name Label</label><BR>
+    <input style="width:320" maxlength="20" type="text" value="dtseng" name="MEMBERNAME" id="usernameField1"/>&nbsp;<br>    
+
+    <div id="result"></div>
+     
+    <script>
+        if (window.accessibilityController) {
+            var result = document.getElementById("result");
+
+            var username = document.getElementById("usernameField1");
+            username.focus();
+            username = accessibilityController.focusedElement;
+
+            if (username.titleUIElement() != null && username.title == "AXTitle: ") {
+                result.innerText += "Test passed\n";
+            }
+            else {
+                 result.innerText += "Test failed\n";
+            }
+        }
+    </script>
+</body>
+</html>

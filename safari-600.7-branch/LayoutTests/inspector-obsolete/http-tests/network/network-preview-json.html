@@ -1,0 +1,56 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script>
+
+function test()
+{
+    WebInspector.showPanel("network");
+
+    var testData;
+
+    testData = "while(1);";
+    InspectorTest.assertTrue(!WebInspector.RequestJSONView.parseJSON(testData), "Should not be able to parse \"" + testData + "\".");
+
+    testData = "{\"name\": \"value\"";
+    InspectorTest.assertTrue(!WebInspector.RequestJSONView.parseJSON(testData), "Should not be able to parse \"" + testData + "\".");
+
+    testData = "{\"name\": \"value\"}";
+    var parsedJSON = WebInspector.RequestJSONView.parseJSON(testData);
+    InspectorTest.assertEquals(parsedJSON.prefix, "");
+    InspectorTest.assertEquals(parsedJSON.data.name, "value");
+    InspectorTest.assertEquals(parsedJSON.suffix, "");
+
+    testData = "while(1); {\"name\": \"value\"}";
+    parsedJSON = WebInspector.RequestJSONView.parseJSON(testData);
+    InspectorTest.assertEquals(parsedJSON.prefix, "while(1); ");
+    InspectorTest.assertEquals(parsedJSON.data.name, "value");
+    InspectorTest.assertEquals(parsedJSON.suffix, "");
+
+    testData = "func({)";
+    InspectorTest.assertTrue(!WebInspector.RequestJSONView.parseJSONP(testData), "Should not be able to parse \"" + testData + "\".");
+
+    testData = "func){(";
+    InspectorTest.assertTrue(!WebInspector.RequestJSONView.parseJSONP(testData), "Should not be able to parse \"" + testData + "\".");
+
+    testData = "func({\"name\": \"value\"}";
+    InspectorTest.assertTrue(!WebInspector.RequestJSONView.parseJSONP(testData), "Should not be able to parse \"" + testData + "\".");
+
+    testData = "func{\"name\": \"value\"})";
+    InspectorTest.assertTrue(!WebInspector.RequestJSONView.parseJSONP(testData), "Should not be able to parse \"" + testData + "\".");
+
+    testData = "func({\"name\": \"value\"})";
+    var parsedJSONP = WebInspector.RequestJSONView.parseJSONP(testData);
+    InspectorTest.assertEquals(parsedJSONP.prefix, "func(");
+    InspectorTest.assertEquals(parsedJSONP.data.name, "value");
+    InspectorTest.assertEquals(parsedJSONP.suffix, ")");
+
+    InspectorTest.completeTest();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests RequestJSONView ability to parse JSON passed in XHR, JSONP</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=65559">Bug 65559</a>
+</body>
+</html>

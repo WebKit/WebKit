@@ -1,0 +1,5 @@
+This tests verifies that the Function constructor creates functions with the correct 'this' and 'window' in scope.
+
+PASS: result['this'].location.href should be about:blank and is.
+PASS: result['window'].location.href should be about:blank and is.
+

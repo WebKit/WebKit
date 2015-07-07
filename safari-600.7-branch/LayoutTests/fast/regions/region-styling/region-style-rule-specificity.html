@@ -1,0 +1,143 @@
+<!doctype html>
+<html>
+        <head>
+                <style>
+                body {
+                        font-family: monospace;
+                        font-size: 1em;
+                }
+                p {
+                        margin: 0;
+                        line-height: 1em;
+                }
+                .container {
+                        background-color: lightgray;
+                        width: 15em;
+                        height: 5em;
+                }
+                /* selector specificity
+                #id => 100
+                .class => 10
+                element => 1
+                */
+                /*
+                selector position
+                in style="" attribute
+                in <style/> element / external file
+                */
+
+                /* Testing selector specificity is respected in @region style blocks */
+                #f1 {
+                        -webkit-flow-into: flow1;
+                }
+                #r1 {
+                        -webkit-flow-from: flow1;
+                }
+                @-webkit-region #r1 {
+                        * {
+                                background-color: yellow;
+                        }
+                        p {
+                                background-color: lightgreen;
+                        }
+                        .cr1 {
+                                background-color: lime;
+                        }
+                        #p1 {
+                                background-color: green;
+                        }
+                }
+
+                /* Testing selector position is respected in @region style blocks */
+                #f2 {
+                        -webkit-flow-into: flow2;
+                }
+                #r2 {
+                        -webkit-flow-from: flow2;
+                }
+                @-webkit-region #r2 {
+                        p, .cr21, #p2 {
+                                background-color: red;
+                        }
+                }
+                @-webkit-region #r2 {
+                        p {
+                                background-color: lightgreen;
+                        }
+                        .cr22 {
+                                background-color: lime;
+                        }
+                        #p2 {
+                                background-color: green;
+                        }
+                }
+
+                /* More specific selector in flowed content than in @region style */
+                .c3 {
+                        background-color: lime;
+                }
+                #p31, #p32 {
+                        background-color: lime;
+                }
+                #f3 {
+                        -webkit-flow-into: flow3;
+                }
+                #r3 {
+                        -webkit-flow-from: flow3;
+                }
+                @-webkit-region #r3 {
+                        p, .cr3 {
+                                background-color: red;
+                        }
+                }
+
+                /* Flowed content has style attribute */
+                #f4 {
+                        -webkit-flow-into: flow4;
+                }
+                #r4 {
+                        -webkit-flow-from: flow4;
+                }
+                @-webkit-region #r4 {
+                        p, #p4, .cr4 {
+                                background-color: red;
+                        }
+                }
+                </style>
+        </head>
+        <body>
+                <!-- Flowed content -->
+                <div id='f1'>
+                        <p>Plain paragraph</p>
+                        <p class='cr1'>Styled with class</p>
+                        <p id='p1'>Styled with ID</p>
+                </div>
+                <div id='f2'>
+                        <p>Plain paragraph</p>
+                        <p class='cr21 cr22'>Styled with class</p>
+                        <p id='p2'>Styled with ID</p>
+                </div>
+                <div id='f3'>
+                        <p class='c3'>Class in content</p>
+                        <p id='p31'>ID in content</p>
+                        <p class='cr3' id='p32'>ID in content</p>
+                </div>
+                <div id='f4'>
+                        <p style='background-color: lime;' >Element style in region</p>
+                        <p style='background-color: lime;' id='p2'>ID style in region</p>
+                        <p style='background-color: lime;' class='cr2'>Class in region</p>
+                </div>
+
+                <!-- Regions -->
+                <h1>Testing CSS selectors specificity/position is respected when using @region styling</h1>
+
+                Selector specificity in @region rule
+                <div class='container' id='r1'></div>
+                Selector position in @region rule
+                <div class='container' id='r2'></div>
+                More specific selector in flowed content
+                <div class='container' id='r3'></div>
+                Style attribute in flowed content
+                <div class='container' id='r4'></div>
+        </body>
+</html>

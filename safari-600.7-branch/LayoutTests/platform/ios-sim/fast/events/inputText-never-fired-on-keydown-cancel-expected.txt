@@ -1,0 +1,15 @@
+Test that ensure textInput events should not fired when preceding key events are cancelled
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL window.targetNode should be null. Was [object HTMLInputElement].
+PASS null is receivedEventTarget
+FAIL window.targetNode should be null. Was [object HTMLTextAreaElement].
+PASS null is receivedEventTarget
+FAIL window.targetNode should be null. Was [object HTMLDivElement].
+PASS null is receivedEventTarget
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

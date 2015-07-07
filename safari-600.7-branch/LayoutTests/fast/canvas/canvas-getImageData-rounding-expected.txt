@@ -1,0 +1,36 @@
+Test the handling of non-integer source coordinates in getImageData().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+getImageData(0, 0, 20, 10)
+PASS imageData.width is 20
+PASS imageData.height is 10
+getImageData(0.1, 0.2, 20, 10)
+PASS imageData.width is 21
+PASS imageData.height is 11
+getImageData(0.9, 0.8, 20, 10)
+PASS imageData.width is 21
+PASS imageData.height is 11
+getImageData(0, 0, 19.9, 9.9)
+PASS imageData.width is 20
+PASS imageData.height is 10
+getImageData(0, 0, 19.1, 9.1)
+PASS imageData.width is 20
+PASS imageData.height is 10
+getImageData(0.9, 0, 0.2, 10)
+PASS imageData.width is 2
+PASS imageData.height is 10
+getImageData(-1, -1, 20, 10)
+PASS imageData.width is 20
+PASS imageData.height is 10
+getImageData(-1.1, 0, 20, 10)
+PASS imageData.width is 21
+PASS imageData.height is 10
+getImageData(-1.9, 0, 20, 10)
+PASS imageData.width is 21
+PASS imageData.height is 10
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+<script src="resources/shadow-dom.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function runTest() {
+    document.body.appendChild(
+        createDOM('div',  {'id': 'div1'},
+            createShadowRoot(document.createTextNode('-1910120134')),
+            createShadowRoot(createDOM('div', {'id': 'div2'},
+                createShadowRoot()),
+                createDOM('shadow', {}))));
+    document.body.offsetLeft;
+    getNodeInShadowTreeStack('div1//div2').appendChild(
+        createDOM('div', {'id': 'div3'},
+            createDOM('shadow', {})));
+    document.body.offsetLeft;
+    document.body.innerHTML = 'PASS';
+}
+</script>
+</head>
+<body onload="runTest()">
+  <!-- [bug 113275] styleForText should consider the case where parent -->
+  <!-- node has no style. -->
+  <!-- If this test passes, we can just see 'PASS' without any crash. -->
+</body>
+</html>

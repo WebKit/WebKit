@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<style>
+
+body {
+    margin: 0;
+}
+#svg-root {
+    margin: 5px;
+    border: solid 10px aqua;
+    padding: 15px;
+    background-color: blue;
+}
+
+</style>
+
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function test()
+{
+    function nodeSelected(node)
+    {
+        RuntimeAgent.evaluate("dumpInspectorHighlightRects()", InspectorTest.completeTest);
+    }
+
+    InspectorTest.selectNodeWithId("svg-root", nodeSelected);
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+
+<svg id="svg-root" width="100" height="100" viewbox="0 0 50 50"></svg>
+<p id="description">This test verifies the position and size of the highlight rectangles overlayed on an SVG root element.</p>
+
+</body>
+</html>

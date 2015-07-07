@@ -1,0 +1,12 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion Preferred argument conversion:  boolean
+
+FAIL TEST_CLASS["ambiguous(java.lang.Boolean)"](true) should be BOOLEAN_OBJECT. Threw exception TypeError: 'undefined' is not a function (evaluating 'TEST_CLASS["ambiguous(java.lang.Boolean)"](true)')
+FAIL TEST_CLASS["ambiguous(java.lang.Boolean)"](false) should be BOOLEAN_OBJECT. Threw exception TypeError: 'undefined' is not a function (evaluating 'TEST_CLASS["ambiguous(java.lang.Boolean)"](false)')
+FAIL TEST_CLASS["ambiguous(java.lang.Object)"](true) should be OBJECT. Threw exception TypeError: 'undefined' is not a function (evaluating 'TEST_CLASS["ambiguous(java.lang.Object)"](true)')
+FAIL TEST_CLASS["ambiguous(java.lang.Object)"](false) should be OBJECT. Threw exception TypeError: 'undefined' is not a function (evaluating 'TEST_CLASS["ambiguous(java.lang.Object)"](false)')
+FAIL TEST_CLASS["ambiguous(java.lang.String)"](true) should be STRING. Threw exception TypeError: 'undefined' is not a function (evaluating 'TEST_CLASS["ambiguous(java.lang.String)"](true)')
+FAIL TEST_CLASS["ambiguous(java.lang.String)"](false) should be STRING. Threw exception TypeError: 'undefined' is not a function (evaluating 'TEST_CLASS["ambiguous(java.lang.String)"](false)')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

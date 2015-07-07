@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x354
+  RenderBlock {HTML} at (0,0) size 800x354
+    RenderBody {BODY} at (10,10) size 780x328
+      RenderBlock {DIV} at (0,0) size 388x292 [border: (2px solid #000000)]
+      RenderBlock {P} at (0,308) size 780x20
+        RenderText {#text} at (0,0) size 407x19
+          text run at (0,0) width 407: "Test passes if the two blue lines are radii of the rounded corner."
+layer at (10,10) size 52x82
+  RenderBlock (positioned) {DIV} at (10,10) size 52x82 [border: none (2px solid #0000FF) none]

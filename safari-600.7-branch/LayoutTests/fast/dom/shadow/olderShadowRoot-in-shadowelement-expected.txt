@@ -1,0 +1,39 @@
+Confirms shadow.olderShadowRoot returns correct ShadowRoot
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+
+shadow in younger ShadowDOM
+PASS shadow.olderShadowRoot is oldestShadowRoot
+
+shadow in the oldest ShadowDOM
+PASS shadow.olderShadowRoot is null
+
+2 active shadows
+PASS shadow1.olderShadowRoot is oldestShadowRoot
+PASS shadow2.olderShadowRoot is null
+
+the first shadow is not active
+PASS shadow1.olderShadowRoot is null
+PASS shadow2.olderShadowRoot is oldestShadowRoot
+
+nested ShadowDOM case
+PASS shadow1.olderShadowRoot is null
+PASS shadow2.olderShadowRoot is nestedOldestShadowRoot
+
+orphan shadow
+PASS shadow.olderShadowRoot is null
+
+orphan Shadow DOM
+PASS shadow.olderShadowRoot is oldestShadowRoot
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+
+

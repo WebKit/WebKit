@@ -1,0 +1,37 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/console-test.js"></script>
+<script>
+
+function test()
+{
+    InspectorTest.addConsoleSniffer(addMessage, true);
+    InspectorTest.evaluateInPage("loadIframe()");
+    function addMessage(message)
+    {
+        if (message.toString().indexOf("setTimeout") !== -1) {
+            InspectorTest.expandConsoleMessages();
+            InspectorTest.dumpConsoleMessages();
+            InspectorTest.completeTest();
+        }
+    }
+}
+
+function loadIframe()
+{
+    var iframe = document.createElement("iframe");
+    iframe.src = "resources/uncaught-in-iframe.html";
+    document.body.appendChild(iframe);
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that uncaught exceptions are logged into console.<a href="https://bugs.webkit.org/show_bug.cgi?id=47250">Bug 47250.</a>
+</p>
+
+</body>
+</html>

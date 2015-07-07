@@ -1,0 +1,98 @@
+# Copyright (C) 2010 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+messages -> WebProcess LegacyReceiver {
+    # Initialize the WebProcess. 
+    InitializeWebProcess(WebKit::WebProcessCreationParameters processCreationParameters, WebKit::WebContextUserMessageEncoder initializationUserData) Variadic
+
+    # Create a new page.
+    CreateWebPage(uint64_t newPageID, WebKit::WebPageCreationParameters pageCreationParameters)
+
+    # Global preferences.
+    SetCacheModel(uint32_t cacheModel)
+    RegisterURLSchemeAsEmptyDocument(String scheme)
+    RegisterURLSchemeAsSecure(String scheme)
+    SetDomainRelaxationForbiddenForURLScheme(String scheme)
+    RegisterURLSchemeAsLocal(String scheme)
+    RegisterURLSchemeAsNoAccess(String scheme)
+    RegisterURLSchemeAsDisplayIsolated(String scheme)
+    RegisterURLSchemeAsCORSEnabled(String scheme)
+#if ENABLE(CACHE_PARTITIONING)
+    RegisterURLSchemeAsCachePartitioned(String scheme)
+#endif
+    SetDefaultRequestTimeoutInterval(double timeoutInterval)
+    SetAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
+    SetShouldUseFontSmoothing(bool useFontSmoothing)
+    UserPreferredLanguagesChanged(Vector<String> languages)
+    FullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
+#if USE(SOUP)
+    SetIgnoreTLSErrors(bool ignoreTLSErrors)
+#endif
+
+    // Legacy private browsing session is per process. Individual pages or page groups may use the private session or the default one as appropriate.
+    EnsurePrivateBrowsingSession(WebCore::SessionID sessionID)
+    DestroyPrivateBrowsingSession(WebCore::SessionID sessionID)
+
+    # Plug-ins.
+    DidAddPlugInAutoStartOriginHash(uint32_t hash, double expirationTime, WebCore::SessionID sessionID)
+    ResetPlugInAutoStartOriginDefaultHashes(HashMap<uint32_t,double> hashes)
+    ResetPlugInAutoStartOriginHashes(HashMap<WebCore::SessionID, HashMap<uint32_t,double>> hashes)
+
+    void StartMemorySampler(WebKit::SandboxExtension::Handle sampleLogFileHandle, String sampleLogFilePath, double interval);
+    void StopMemorySampler();
+
+    # Downloads. This should really be in a Download.messages.in, but it seemed unnecessary to create a new file just for
+    # two messages.
+    DownloadRequest(uint64_t downloadID, uint64_t initiatingPageID, WebCore::ResourceRequest request)
+    CancelDownload(uint64_t downloadID)
+
+    SetTextCheckerState(WebKit::TextCheckerState textCheckerState)
+
+    SetEnhancedAccessibility(bool flag)
+
+    GetWebCoreStatistics(uint64_t callbackID)
+    GarbageCollectJavaScriptObjects()
+    SetJavaScriptGarbageCollectorTimerEnabled(bool enable)
+
+    SetInjectedBundleParameter(String parameter, IPC::DataReference value);
+    PostInjectedBundleMessage(IPC::DataReference messageData);
+
+    ReleasePageCache()
+
+    SetProcessSuppressionEnabled(bool flag)
+#if PLATFORM(COCOA)
+    SetQOS(int latencyQOS, int throughputQOS)
+#endif
+
+#if USE(SOUP)
+    AllowSpecificHTTPSCertificateForHost(WebCore::CertificateInfo certificate, String host)
+#endif
+
+    SetMemoryCacheDisabled(bool disabled);
+
+#if ENABLE(SERVICE_CONTROLS)
+    SetEnabledServices(bool hasImageServices, bool hasSelectionServices, bool hasRichContentServices)
+#endif
+
+    ProcessWillSuspend()
+    CancelProcessWillSuspend()
+}

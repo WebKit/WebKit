@@ -1,0 +1,3 @@
+
+Click the orange border, a focus ring should not appear. 
+IFRAME Event: focus PASS

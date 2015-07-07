@@ -1,0 +1,31 @@
+<html>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+<body id="body">
+
+    <!-- This test makes sure that an input image returns its URL -->
+ 
+    <input type="image" src="resources/cake.png" width=100 height=100 id="image1">
+    
+    <div id="result"></div>
+     
+    <script>
+        if (window.accessibilityController) {
+            var result = document.getElementById("result");
+
+            var image1 = document.getElementById("image1");
+            image1.focus();
+            var img = accessibilityController.focusedElement;
+            var pattern = "AXURL: LayoutTests/platform/mac/accessibility/resources/cake.png";
+            if (img.allAttributes().indexOf(pattern) != -1) {
+                result.innerText += "Test passed\n";
+            }
+            else {
+                 result.innerText += "Test failed\n";
+            }
+        }
+    </script>
+</body>
+</html>

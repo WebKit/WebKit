@@ -1,0 +1,57 @@
+Test parsing, element style and computed style for paint-order property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS innerStyle("paint-order", "normal") is "normal"
+PASS innerStyle("paint-order", "fill") is "fill"
+PASS innerStyle("paint-order", "stroke") is "stroke"
+PASS innerStyle("paint-order", "markers") is "markers"
+PASS innerStyle("paint-order", "fill stroke") is "fill"
+PASS innerStyle("paint-order", "fill stroke markers") is "fill"
+PASS innerStyle("paint-order", "fill markers") is "fill markers"
+PASS innerStyle("paint-order", "fill markers stroke") is "fill markers"
+PASS innerStyle("paint-order", "stroke fill") is "stroke"
+PASS innerStyle("paint-order", "stroke fill markers") is "stroke"
+PASS innerStyle("paint-order", "stroke markers") is "stroke markers"
+PASS innerStyle("paint-order", "stroke markers fill") is "stroke markers"
+PASS innerStyle("paint-order", "stroke fill") is "stroke"
+PASS innerStyle("paint-order", "stroke fill markers") is "stroke"
+PASS innerStyle("paint-order", "stroke markers") is "stroke markers"
+PASS innerStyle("paint-order", "stroke markers fill") is "stroke markers"
+PASS computedStyle("paint-order", "normal") is "normal"
+PASS computedStyle("paint-order", "fill") is "fill"
+PASS computedStyle("paint-order", "stroke") is "stroke"
+PASS computedStyle("paint-order", "markers") is "markers"
+PASS computedStyle("paint-order", "fill stroke") is "fill"
+PASS computedStyle("paint-order", "fill stroke markers") is "fill"
+PASS computedStyle("paint-order", "fill markers") is "fill markers"
+PASS computedStyle("paint-order", "fill markers stroke") is "fill markers"
+PASS computedStyle("paint-order", "stroke fill") is "stroke"
+PASS computedStyle("paint-order", "stroke fill markers") is "stroke"
+PASS computedStyle("paint-order", "stroke markers") is "stroke markers"
+PASS computedStyle("paint-order", "stroke markers fill") is "stroke markers"
+PASS computedStyle("paint-order", "stroke fill") is "stroke"
+PASS computedStyle("paint-order", "stroke fill markers") is "stroke"
+PASS computedStyle("paint-order", "stroke markers") is "stroke markers"
+PASS computedStyle("paint-order", "stroke markers fill") is "stroke markers"
+PASS innerStyle("paint-order", "normal fill") is null
+PASS computedStyle("paint-order", "normal fill") is "normal"
+PASS innerStyle("paint-order", "normal stroke") is null
+PASS computedStyle("paint-order", "normal stroke") is "normal"
+PASS innerStyle("paint-order", "normal markers") is null
+PASS computedStyle("paint-order", "normal markers") is "normal"
+PASS innerStyle("paint-order", "fill fill") is null
+PASS computedStyle("paint-order", "fill fill") is "normal"
+PASS innerStyle("paint-order", "stroke stroke") is null
+PASS computedStyle("paint-order", "stroke stroke") is "normal"
+PASS innerStyle("paint-order", "markers markers") is null
+PASS computedStyle("paint-order", "markers markers") is "normal"
+PASS innerStyle("paint-order", "markers fill markers") is null
+PASS computedStyle("paint-order", "markers fill markers") is "normal"
+PASS innerStyle("paint-order", "markers stroke markers") is null
+PASS computedStyle("paint-order", "markers stroke markers") is "normal"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

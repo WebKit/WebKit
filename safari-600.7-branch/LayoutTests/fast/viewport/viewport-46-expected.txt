@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 3: Viewport maximum-scale cannot be larger than 10.0. The maximum-scale will be set to 10.0.
+CONSOLE MESSAGE: line 3: Viewport maximum-scale cannot be larger than 10.0. The maximum-scale will be set to 10.0.
+CONSOLE MESSAGE: line 3: Viewport maximum-scale cannot be larger than 10.0. The maximum-scale will be set to 10.0.
+ALERT: viewport size 32x35.2 scale 10 with limits [10, 10] and userScalable true
+

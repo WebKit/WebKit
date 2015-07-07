@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <style>
+        .region {
+            -webkit-flow-from: article;
+            border: 1px solid blue;
+            float: left;
+            height: auto;
+        }
+
+        #article {
+            -webkit-flow-into: article;
+            width: 100%;
+            margin: 0px;
+        }
+
+        #region1 {
+            width: 20%;
+        }
+
+        #region2 {
+            width: 20%;
+        }
+
+        #region3 {
+            width: 30%;
+        }
+
+        #container {
+            margin: auto;
+            margin-top: 50px;
+            width: 50%;
+            background-color: rgb(42, 137, 57);
+            -webkit-region-break-inside: avoid;
+        }
+
+        #firstChild {
+            height: 31px;
+            margin-left: auto;
+            margin-top: 25px;
+            width: 70%;
+            background-color: rgb(255, 157, 0);
+            margin-right: auto;
+        }
+
+        #secondChild {
+            height: 27px;
+            margin-left: auto;
+            margin-top: 34px;
+            width: 70%;
+            background-color: rgb(255, 0, 0);
+            margin-right: auto;
+            -webkit-region-break-before: always;
+            -webkit-region-break-after: always;
+        }
+
+        #thirdChild {
+            height: 31px;
+            margin: auto;
+            width: 70%;
+            background-color: rgb(216, 0, 255);
+        }
+
+    </style>
+    <script src="../../resources/check-layout.js"></script>
+    </head>
+    <body onload="checkLayout('.region')">
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=121318">[CSS Regions] Strange layout for content with region breaks</a>.</p>
+        <p>The green rectangle is flowed inside three regions with blue borders. The first region should contain the whole green rectangle. The second and the third regions should have a height of 0px.</p>
+        <div id='region1' class='region' data-expected-height='175px'></div>
+        <div id='region2' class='region' data-expected-height='2px'></div>
+        <div id='region3' class='region' data-expected-height='2px'></div>
+        <div id='article'>
+            <div id='container'>
+                <div id='firstChild'></div>
+                <div id='secondChild'></div>
+                <div id='thirdChild'></div>
+            </div>
+        </div>
+    </body>
+</html>

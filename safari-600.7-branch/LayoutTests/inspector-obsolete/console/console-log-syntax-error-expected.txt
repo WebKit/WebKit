@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 1: SyntaxError: Unexpected token ')'
+Tests that syntax errors are logged into console and doesn't cause browser crash.
+
+SyntaxError: Unexpected token ')' syntax-error.js:1
+

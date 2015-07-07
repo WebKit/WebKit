@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="menu" role="menu">
+    <div role="menuitem" id="item1" aria-label="item1" tabindex="0">Menu item 1</div>
+    <div role="menuitemradio" id="item2" aria-label="item2" tabindex="0">Menu item 2</div>
+    <div role="menuitemcheckbox" id="item3" aria-label="item3" tabindex="0">Menu item 3</div>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that a AXMenuItemSelected notification gets fired when a menuitem is focused.");
+
+    var element = 0;
+    var notification = 0;
+    var notificationCount = 0;
+    function ariaCallback(element, notification) {
+        if (notification == "AXMenuItemSelected") {
+           notificationCount++;
+
+           debug("Received menu item selected notification: " + notification);
+           debug("Menu item selected element: " + element.role);
+           debug("Menu item selected element description: " + element.description + "\n");
+           if (notificationCount == 3) {
+               accessibilityController.removeNotificationListener();
+               finishJSTest();
+           }
+        }
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var addedNotification = accessibilityController.addNotificationListener(ariaCallback);
+        accessibilityController.rootElement;
+
+        shouldBe("addedNotification", "true");
+
+        // Trigger notification through focus.
+        document.getElementById("item1").focus();
+
+        // Trigger notification through aria-selected.
+        document.getElementById("item2").setAttribute("aria-selected", "true");
+
+        // Ensure we don't get a notification when aria-selected is false.
+        document.getElementById("item2").setAttribute("aria-selected", "false");
+
+        // Trigger another notification through focus to ensure we don't
+        document.getElementById("item3").focus();
+    }
+
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

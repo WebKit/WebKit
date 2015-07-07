@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 6: XHR loaded: 1
+CONSOLE MESSAGE: line 6: XHR loaded: 2
+Tests empty xhr content is correctly loaded in inspector.
+
+Bug 79026
+http://127.0.0.1:8000/inspector/network/resources/empty.html
+resource.content: 
+http://127.0.0.1:8000/inspector/network/resources/empty.html
+resource.content: 
+

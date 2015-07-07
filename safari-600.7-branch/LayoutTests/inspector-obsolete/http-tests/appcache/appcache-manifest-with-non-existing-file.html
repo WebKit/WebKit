@@ -1,0 +1,42 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="appcache-test.js"></script>
+<script>
+function test()
+{
+    var frameId1;
+    var frameId2;
+    var frameId3;
+
+    WebInspector.showPanel("resources");
+    InspectorTest.startApplicationCacheStatusesRecording();
+    InspectorTest.dumpApplicationCache();
+    InspectorTest.createAndNavigateIFrame("resources/page-with-manifest.php?manifestId=with-non-existing-file", step1);
+
+    function step1(frameId)
+    {
+        frameId1 = frameId;
+        // Waiting for at least two status events notifications from backend, to make sure
+        // we are not completing test before loading application cache.
+        InspectorTest.ensureFrameStatusEventsReceived(frameId, 2, step2)
+    }
+
+    function step2()
+    {
+        InspectorTest.waitForFrameManifestURLAndStatus(frameId1, "", applicationCache.UNCACHED, step3);
+    }
+
+    function step3()
+    {
+        InspectorTest.dumpApplicationCache();
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that application cache model keeps track of manifest urls and statuses correctly when there is a non existing file listed in manifest.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=64581">Bug 64581</a>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<html>
+<head>
+    <script src="resources/cross-frame-access.js"></script>
+    <script>
+        window.onload = function()
+        {
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            }
+
+            if (window.testRunner) {
+                setTimeout(pollForTest, 1);
+            } else {
+                log("To run the test, click the button below when the frame window finishes loading.");
+                var button = document.createElement("button");
+                button.appendChild(document.createTextNode("Run Test"));
+                button.onclick = runTest;
+                document.body.appendChild(button);
+            }
+        }
+
+        pollForTest = function()
+        {
+            if (!testRunner.globalFlag) {
+                setTimeout(pollForTest, 1);
+                return;
+            }
+            runTest();
+            testRunner.notifyDone();
+        }
+
+        runTest = function()
+        {
+            window.targetWindow = frames[0];
+
+            log("\n----- tests for getting window.location's properties -----\n");
+
+            shouldBeTrue("canGet('targetWindow.location')");
+            shouldBe("toString('targetWindow.location', '')", "''");
+
+            log("Firefox allows access to 'location.toString' but throws an exception when you call it.");
+            shouldBeFalse("canGet('targetWindow.location.toString')");
+
+            shouldBeFalse("canGet('targetWindow.location.href')");
+            shouldBeFalse("canGet('targetWindow.location.hash')");
+            shouldBeFalse("canGet('targetWindow.location.host')");
+            shouldBeFalse("canGet('targetWindow.location.hostname')");
+            shouldBeFalse("canGet('targetWindow.location.pathname')");
+            shouldBeFalse("canGet('targetWindow.location.port')");
+            shouldBeFalse("canGet('targetWindow.location.protocol')");
+            shouldBeFalse("canGet('targetWindow.location.search')");
+
+            shouldBeTrue("canGet('targetWindow.location.assign')");
+            shouldBeTrue("canGet('targetWindow.location.reload')");
+            shouldBeTrue("canGet('targetWindow.location.replace')");
+
+            shouldBeFalse("canGet('targetWindow.location.existingCustomProperty')");
+        }
+    </script>
+</head>
+<body>
+    <iframe src="http://localhost:8000/security/resources/cross-frame-iframe-for-location-get-test.html"></iframe>
+    <pre id="console"></pre>
+</body>
+</html>

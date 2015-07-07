@@ -1,0 +1,16 @@
+Tests that the TextTrack "id" attribute is appropriately set.
+
+
+
+++ Test default attribute value
+EXPECTED (textTrack.id == 'LoremIpsum') OK
+EXPECTED (video.textTracks[0].id == 'LoremIpsum') OK
+
+++ Make sure we can look tracks up by id
+EXPECTED (video.textTracks.getTrackById('LoremIpsum') == '[object TextTrack]') OK
+
+++ Test that it's readonly
+RUN(textTrack.id = 'newvalue';)
+EXPECTED (textTrack.id == 'LoremIpsum') OK
+END OF TEST
+

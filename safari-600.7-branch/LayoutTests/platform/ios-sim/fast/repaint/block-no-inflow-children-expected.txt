@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (0,0) size 800x600
+      RenderBlock {DIV} at (0,0) size 200x200
+layer at (0,0) size 64x20
+  RenderBlock (positioned) {DIV} at (0,0) size 64x20
+    RenderBlock {DIV} at (0,0) size 64x20
+      RenderText {#text} at (0,0) size 64x19
+        text run at (0,0) width 64: "La la la la"

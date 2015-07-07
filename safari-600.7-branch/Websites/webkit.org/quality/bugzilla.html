@@ -1,0 +1,42 @@
+<?php
+    $title = "Bugzilla";
+    include("../header.inc");
+?>
+<h2>Bugzilla</h2>
+
+<h3>Creating a Bugzilla account</h3>
+<p>
+    All you have to do to create a Bugzilla account is enter your email-address and optionally your real name. You will then receive 
+    an email with your password, with which you can login and do anything you want. Just follow this link: 
+    <a href="https://bugs.webkit.org/createaccount.cgi">get a Bugzilla account</a>.
+</p>
+<h3>Bugzilla "bits"</h3>
+<p>
+    A "bit" in Bugzilla terms is a setting that allows you to do something. The ones most people doing a lot with Bugzilla should
+    have are the "canconfirm"-bit and the "editbugs"-bit. You probably figured out what they do yourself just by their names but 
+    i'll explain them anyway.
+</p>
+<p>
+    <strong>canconfirm-bit</strong><br>
+    This bit, when switched on, allows you to confirm bugs of other people when you have confirmed that the bug they describe is 
+    real, moving a bug from UNCONFIRMED to NEW. It also allows you to file your own bugs as NEW, instead of UNCONFIRMED, which
+    saves you time when you know for certain that a bug is real.
+</p>
+<p>
+    <strong>editbugs-bit</strong><br>
+    The editbugs bit allows you to edit any part of a bugreport even if you haven't filed the bug yourself. You can change
+    the title, keywords, component etc. to what you think is best. Having this bit means you can automatically also confirm
+    bugs.
+</p>
+<h3>How to get these "bits"?</h3>
+<p>
+    When you think you have earned the right to have either of these bits switched on for you, <a href="../contact.html">contact us</a>.
+    Do not hesitate to <a href="mailto:webkit-dev@lists.webkit.org">mail the mailing-list</a> or ask on 
+    <a href="irc://irc.freenode.net/#webkit">our IRC channel</a>. If you mail the mailing-list, give us the numbers of a few bugs you 
+    filed or bugs you commented on, so we can check if we think you've earned it too.
+</p>
+
+<!-- TODO: add info about keywords and their usage, and information about other "bits" -->
+<?php
+    include("../footer.inc");
+?>

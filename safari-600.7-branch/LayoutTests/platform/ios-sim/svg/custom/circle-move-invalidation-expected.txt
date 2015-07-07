@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x359
+  RenderBlock {html} at (0,0) size 800x359
+    RenderBody {body} at (8,8) size 784x343
+      RenderBlock (anonymous) at (0,0) size 784x307
+        RenderSVGRoot {svg} at (195,195) size 78x78
+          RenderSVGEllipse {circle} at (196,196) size 76x76 [fill={[type=SOLID] [color=#FF0000]}] [cx=300.00] [cy=300.00] [r=50.00]
+        RenderText {#text} at (302,287) size 4x19
+          text run at (302,287) width 4: " "
+        RenderBR {br} at (306,287) size 0x19
+      RenderBlock {p} at (0,323) size 784x0
+      RenderBlock {p} at (0,323) size 784x0
+      RenderBlock (anonymous) at (0,323) size 784x20
+        RenderText {#text} at (0,0) size 569x19
+          text run at (0,0) width 569: "The circle should not be (partially or fully)visible at the original position after moving it."

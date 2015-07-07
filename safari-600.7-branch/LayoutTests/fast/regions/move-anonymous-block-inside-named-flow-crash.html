@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+<style>
+.container { -webkit-column-count: 1; -webkit-flow-into: flow; }
+.columnSpan { -webkit-column-span: all; }
+.flow { -webkit-flow-from: flow; width: 100px; height: 100px; }
+</style>
+</head>
+<body>
+<div class="container">
+    <div id="test">
+        <div class="columnSpan"></div>
+    </div>
+</div>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    var test = document.getElementById("test");
+    test.innerHTML = "Bug 90865:[CSSRegions]Crash when moving anonymous block children inside a named flow.\
+                      Test passes if it does not CRASH or ASSERT.";
+    var article = document.createElement("div");
+    article.setAttribute("class", "flow");
+    document.body.appendChild(article);
+</script>
+</body>
+</html>

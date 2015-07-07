@@ -1,0 +1,411 @@
+/*
+ * Copyright (C) 2012, 2013, 2014 Apple Inc.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
+
+audio {
+    min-width: 260px;
+    height: 39px;
+}
+
+body:-webkit-full-page-media {
+    background-color: rgb(38, 38, 38);
+}
+
+video:-webkit-full-page-media {
+    margin: auto;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+video:-webkit-full-page-media::-webkit-media-controls-panel {
+    bottom: 0px;
+}
+
+::-webkit-media-controls {
+    width: inherit;
+    height: inherit;
+    position: relative;
+    display: -webkit-flex;
+    -webkit-align-items: stretch;
+    -webkit-justify-content: flex-end;
+    -webkit-flex-direction: column;
+    font-family: -apple-system-font;
+    overflow: hidden;
+    min-width: 260px;
+}
+
+video::-webkit-media-controls-panel input[type="button"],
+audio::-webkit-media-controls-panel input[type="button"],
+video::-webkit-media-controls-panel button,
+audio::-webkit-media-controls-panel button {
+    padding: 0;
+    border: none;
+    -webkit-appearance: none;
+}
+
+video::-webkit-media-controls-wireless-playback-status,
+audio::-webkit-media-controls-wireless-playback-status {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 100% 50%;
+}
+
+video::-webkit-media-controls-wireless-playback-status.hidden,
+audio::-webkit-media-controls-wireless-playback-status.hidden {
+    display: none;
+}
+
+audio::-webkit-media-controls-wireless-playback-picker-button,
+video::-webkit-media-controls-wireless-playback-picker-button {
+    display: block;
+    background-color: black;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: 0 1px;
+}
+
+audio::-webkit-media-controls-wireless-playback-picker-button {
+    width: 44px;
+    height: 39px;
+    -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 39"><g fill="none"><path stroke="white" stroke-width="1" d="M15.5,24.5  10.5,24.5  10.5,11.5  31.5,11.5  31.5,24.5  26.5,24.5  31.5,24.5  31.5,11.5  10.5,11.5  10.5,24.5  15.5,24.5 Z" /><path fill="white" d="M21,21  13.5,29  28.5,29" /></g></svg>');
+}
+
+video::-webkit-media-controls-wireless-playback-picker-button {
+    width: 42px;
+    height: 44px;
+    -webkit-mask-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 42 44"><g fill="none"><path stroke="white" stroke-width="1" d="M15,27.5  10.5,27.5  10.5,14.5  30.5,14.5  30.5,27.5  26,27.5  30.5,27.5  30.5,14.5  10.5,14.5  10.5,27.5  15,27.5 Z" /><path fill="white" d="M20.5,23.5  13,31.5  28,31.5" /></g></svg>');
+    opacity: 0.5;
+}
+
+video::-webkit-media-controls-wireless-playback-picker-button.active,
+audio::-webkit-media-controls-wireless-playback-picker-button.active {
+    background-color: #1060FE;
+}
+
+video::-webkit-media-text-track-container,
+audio::-webkit-media-text-track-container {
+    position: relative;
+    -webkit-flex: 1 1 auto;
+}
+
+video::-webkit-media-controls-panel-composited-parent {
+    -webkit-transform: translateZ(0);
+    width: 100%;
+    direction: ltr;
+}
+
+audio::-webkit-media-controls-panel,
+video::-webkit-media-controls-panel {
+    box-sizing: border-box;
+    position: absolute;
+    bottom: 0;
+
+    -webkit-user-select: none;
+
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
+    -webkit-align-items: center;
+    -webkit-user-select: none;
+
+    transition: opacity 0.25s linear;
+    -webkit-transform-origin: bottom left;
+}
+
+video::-webkit-media-controls-panel {
+    background-color: rgba(255, 255, 255, 0.6);
+}
+
+audio::-webkit-media-controls-panel {
+    background-color: rgba(228, 228, 228, 1);
+}
+
+audio::-webkit-media-controls-panel {
+    height: 39px;
+    padding-right: 8px;
+    padding-left: 7px;
+}
+
+video::-webkit-media-controls-panel {
+    height: 44px;
+    width: 100%;
+    opacity: 0;
+    padding-right: 24px;
+    padding-left: 24px;
+}
+
+video::-webkit-media-controls-panel.show,
+video::-webkit-media-controls-panel.paused,
+video::-webkit-media-controls-panel:hover {
+    opacity: 1;
+}
+
+video::-webkit-media-controls-rewind-button,
+audio::-webkit-media-controls-rewind-button,
+video::-webkit-media-controls-panel .mute-box,
+audio::-webkit-media-controls-panel .mute-box,
+video::-webkit-media-controls-mute-button,
+audio::-webkit-media-controls-mute-button,
+video::-webkit-media-controls-volume-max-button,
+video::-webkit-media-controls-panel .volume-box,
+audio::-webkit-media-controls-panel .volume-box,
+audio::-webkit-media-controls-volume-slider,
+video::-webkit-media-controls-volume-slider {
+    display: none !important;
+}
+
+video::-webkit-media-controls-start-playback-button,
+audio::-webkit-media-controls-start-playback-button {
+    -webkit-appearance: none;
+    display: block;
+    padding: 0;
+    border: 0;
+    position: absolute;
+    width: 72px;
+    height: 72px;
+    left: calc(50% - 36px);
+    top: calc(50% - 36px);
+    background-origin: content-box;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-image: url('data:image/svg+xml,<svg viewBox="0 0 144 144" xmlns="http://www.w3.org/2000/svg"><circle cx="72" cy="72" r="70" fill="rgba(247, 247, 247, .82)"/><path d="M48,36v74L109,74L48,36z" fill="rgba(129, 129, 129, .9)"/></svg>');
+}
+
+video::-webkit-media-controls-start-playback-button:active,
+audio::-webkit-media-controls-start-playback-button:active {
+    background-image: url('data:image/svg+xml,<svg viewBox="0 0 144 144" xmlns="http://www.w3.org/2000/svg"><circle cx="72" cy="72" r="70" fill="rgba(192, 192, 192, .82)"/><path d="M48,36v74L109,74L48,36z" fill="rgba(96, 96, 96, .9)"/></svg>');
+}
+
+video::-webkit-media-controls-start-playback-button.failed,
+audio::-webkit-media-controls-start-playback-button.failed {
+    background-image: url('data:image/svg+xml,<svg viewBox="0 0 144 144" xmlns="http://www.w3.org/2000/svg"><circle cx="72" cy="72" r="70" fill="rgba(247, 247, 247, .82)"/><g fill="rgba(129, 129, 129, .9)"><rect x="14" y="70.4" transform="matrix(0.8493 0.5279 -0.5279 0.8493 48.8614 -27.1595)" width="116" height="3.2"/><polygon points="109,74 48,36 48,52.3 95.6,81.9 "/><polygon points="48,110 87.7,86.6 48,61.9 "/></g></svg>');
+}
+
+video::-webkit-media-controls-play-button,
+audio::-webkit-media-controls-play-button,
+video::-webkit-media-controls-fullscreen-button,
+audio::-webkit-media-controls-fullscreen-button {
+    -webkit-appearance: none;
+    display: block;
+    padding: 0;
+    border: 0;
+    -webkit-user-select: none;
+    background-repeat: no-repeat;
+}
+
+audio::-webkit-media-controls-play-button {
+    width: 42px;
+    height: 39px;
+    background-size: 42px 39px;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 42 39"><g fill="rgba(2, 2, 2, 1)"><rect x="13" y="9.5" width="6" height="20.5"/><rect x="24" y="9.5" width="6" height="20.5"/></g></svg>');
+}
+
+audio::-webkit-media-controls-play-button:active {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 42 39"><g fill="white"><rect x="13" y="9.5" width="6" height="20.5"/><rect x="24" y="9.5" width="6" height="20.5"/></g></svg>');
+}
+
+audio::-webkit-media-controls-play-button.paused {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 42 39"><path fill="rgba(2, 2, 2, 1)" d="M11,9.5 32,20.5 11,31.5z"/></svg>');
+}
+
+video::-webkit-media-controls-fullscreen-button {
+    width: 35px;
+    height: 44px;
+    background-size: 35px 44px;
+    opacity: 0.9;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 35 44"><g stroke="rgba(0, 0, 0, 0.4)" fill="none"><path d="M 10.5,20.5 v -5 h 5 M 10.5,15.5 l 5,5"/><path d="M 24.5,24.5 v 5 h -5 M 24.5,29.5 l -5,-5"/></g></svg>');
+}
+
+video::-webkit-media-controls-play-button {
+    width: 41px;
+    height: 44px;
+    background-size: 41px 44px;
+    opacity: 0.9;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 41 44"><g fill="rgba(0, 0, 0, 0.4)"><rect x="11" y="11" width="6" height="22"/><rect x="23" y="11" width="6" height="22"/></g></svg>');
+}
+
+video::-webkit-media-controls-play-button:active {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 41 44"><g fill="white"><rect x="11" y="11" width="6" height="22"/><rect x="23" y="11" width="6" height="22"/></g></svg>');
+}
+
+video::-webkit-media-controls-play-button.paused {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 41 44"><path fill="rgba(0, 0, 0, 0.4)" d="M10,11  31,22  10,33 Z"/></svg>');
+}
+
+video::-webkit-media-controls-fullscreen-button:active {
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 35 44"><g stroke="white" fill="none"><path d="M 10,20 v -5 h 5 M 10,15 l 5,5"/><path d="M 24,24 v 5 h -5 M 24,29 l -5,-5"/></g></svg>');
+}
+
+video::-webkit-media-controls-timeline,
+audio::-webkit-media-controls-timeline {
+    -webkit-appearance: none;
+    -webkit-flex: 1 1 0;
+    height: 3px;
+    margin: 0;
+
+    border-radius: 1.5px;
+}
+
+video::-webkit-media-controls-timeline {
+    opacity: 0.75;
+}
+
+video::-webkit-media-controls-timeline::-webkit-slider-thumb,
+audio::-webkit-media-controls-timeline::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 0;
+    border-radius: 8px;
+    background-image: url('data:image/svg+xml,<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg"><circle r="7.75" cy="8" cx="8" fill="white" stroke="rgba(0, 0, 0, .25)" stroke-width=".5"/></svg>');
+    background-color: transparent !important;
+    box-shadow: 0 3px 1px -1px rgba(0, 0, 0, .15);
+
+    /* rotateZ() forces the layer into compositing mode. Slider 
+       thumbs are small, so forcing a compositing layer is inexpensive,
+       and it keeps the slider from having to repaint while sliding. */
+    -webkit-transform: rotateZ(0deg);
+}
+
+video::-webkit-media-controls-current-time-display,
+video::-webkit-media-controls-time-remaining-display,
+audio::-webkit-media-controls-current-time-display,
+audio::-webkit-media-controls-time-remaining-display {
+    -webkit-user-select: none;
+    -webkit-flex: 0 0 0;
+    display: -webkit-flex;
+    -webkit-justify-content: center;
+    -webkit-align-items: center;
+    cursor: default;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    min-width: 44px;
+    letter-spacing: normal;
+    word-spacing: normal;
+    line-height: normal;
+    text-transform: none;
+    text-indent: 0px;
+    text-decoration: none;
+}
+
+video::-webkit-media-controls-current-time-display,
+video::-webkit-media-controls-time-remaining-display {
+    font-size: 13px;
+    color: rgba(0, 0, 0, .5);
+}
+
+video::-webkit-media-controls-current-time-display {
+    padding-left: 6px;
+}
+
+video::-webkit-media-controls-time-remaining-display {
+    padding-right: 13px;
+}
+
+audio::-webkit-media-controls-current-time-display, 
+audio::-webkit-media-controls-time-remaining-display {
+    font-size: 12px;
+    color: rgba(5, 5, 5, 1);
+}
+
+video::-webkit-media-controls-timeline-container .hour-long-time,
+audio::-webkit-media-controls-timeline-container .hour-long-time {
+    min-width: 67px;
+}
+
+video::-webkit-media-controls-timeline-container,
+audio::-webkit-media-controls-timeline-container {
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
+    -webkit-align-items: center;
+    -webkit-user-select: none;
+    -webkit-flex: 1 1 0;
+    position: relative;
+    padding: 0;
+}
+
+video::-webkit-media-controls-panel .hidden,
+audio::-webkit-media-controls-panel .hidden {
+    display: none;
+}
+
+video::-webkit-media-text-track-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    padding-bottom: 5px;
+    z-index: 0;
+
+    text-align: center;
+    color: rgba(255, 255, 255, 1);
+
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0;
+    text-decoration: none;
+    pointer-events: none;
+    -webkit-user-select: none;
+    word-break: break-word;
+
+    -webkit-flex: 1 1;
+
+    -webkit-line-box-contain: block inline-box replaced;
+}
+
+video::cue {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+video::-webkit-media-text-track-display {
+    position: absolute;
+    overflow: hidden;
+    white-space: pre-wrap;
+    -webkit-box-sizing: border-box;
+    font: 22px sans-serif;
+}
+
+video::-webkit-media-text-track-display-backdrop {
+    display: inline-block;
+}
+
+video::cue(:future) {
+    color: gray;
+}
+
+video::-webkit-media-text-track-container b {
+    font-weight: bold;
+}
+
+video::-webkit-media-text-track-container u {
+    text-decoration: underline;
+}
+
+video::-webkit-media-text-track-container i {
+    font-style: italic;
+}

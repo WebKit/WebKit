@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("Test to make sure border-radius shorthand property returns CSSValueList properly.")
+
+var testContainer = document.createElement("div");
+testContainer.contentEditable = true;
+document.body.appendChild(testContainer);
+
+testContainer.innerHTML = '<div style="width:100px;height:100px"><div id="test">hello</div></div>';
+
+var element = document.getElementById('test');
+var computedStyle = window.getComputedStyle(element, null);
+
+function checkComputedStyleValue() {
+    var before = window.getComputedStyle(element, null).getPropertyValue('border-radius');
+    element.style.background = 'none';
+    element.style.background = before;
+    return (window.getComputedStyle(element, null).getPropertyValue('border-radius') == before);
+}
+
+element.style.borderRadius = "4em";
+shouldBe("computedStyle.getPropertyValue('border-radius')", "'64px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-radius').toString()", "'[object CSSValueList]'");
+shouldBe("computedStyle.getPropertyCSSValue('border-radius').cssText", "'64px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-top-left-radius').cssText", "'64px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-top-right-radius').cssText", "'64px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-bottom-right-radius').cssText", "'64px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-bottom-left-radius').cssText", "'64px'");
+shouldBe("checkComputedStyleValue()", "true");
+
+element.style.borderRadius = "2em 1em 4em / 0.5em 3em";
+shouldBe("computedStyle.getPropertyValue('border-radius')", "'32px 16px 64px / 8px 48px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-radius').toString()", "'[object CSSValueList]'");
+shouldBe("computedStyle.getPropertyCSSValue('border-radius').cssText", "'32px 16px 64px / 8px 48px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-top-left-radius').cssText", "'32px 8px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-top-right-radius').cssText", "'16px 48px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-bottom-right-radius').cssText", "'64px 8px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-bottom-left-radius').cssText", "'16px 48px'");
+shouldBe("checkComputedStyleValue()", "true");
+
+element.style.borderRadius = "";
+element.style.borderTopLeftRadius = "4em";
+element.style.borderTopRightRadius = "4em";
+element.style.borderBottomLeftRadius = "4em";
+element.style.borderBottomRightRadius = "4em";
+shouldBe("computedStyle.getPropertyValue('border-radius')", "'64px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-radius').toString()", "'[object CSSValueList]'");
+shouldBe("computedStyle.getPropertyCSSValue('border-radius').cssText", "'64px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-top-left-radius').cssText", "'64px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-top-right-radius').cssText", "'64px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-bottom-right-radius').cssText", "'64px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-bottom-left-radius').cssText", "'64px'");
+shouldBe("checkComputedStyleValue()", "true");
+
+element.style.borderRadius = "1px 2px";
+shouldBe("computedStyle.getPropertyValue('border-radius')", "'1px 2px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-radius').toString()", "'[object CSSValueList]'");
+shouldBe("computedStyle.getPropertyCSSValue('border-radius').cssText", "'1px 2px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-top-left-radius').cssText", "'1px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-top-right-radius').cssText", "'2px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-bottom-right-radius').cssText", "'1px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-bottom-left-radius').cssText", "'2px'");
+shouldBe("checkComputedStyleValue()", "true");
+
+element.style.borderRadius = "1px 2px 4px";
+shouldBe("computedStyle.getPropertyValue('border-radius')", "'1px 2px 4px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-radius').toString()", "'[object CSSValueList]'");
+shouldBe("computedStyle.getPropertyCSSValue('border-radius').cssText", "'1px 2px 4px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-top-left-radius').cssText", "'1px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-top-right-radius').cssText", "'2px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-bottom-right-radius').cssText", "'4px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-bottom-left-radius').cssText", "'2px'");
+shouldBe("checkComputedStyleValue()", "true");
+
+element.style.borderRadius = "1px 2px 4px 6px";
+shouldBe("computedStyle.getPropertyValue('border-radius')", "'1px 2px 4px 6px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-radius').toString()", "'[object CSSValueList]'");
+shouldBe("computedStyle.getPropertyCSSValue('border-radius').cssText", "'1px 2px 4px 6px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-top-left-radius').cssText", "'1px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-top-right-radius').cssText", "'2px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-bottom-right-radius').cssText", "'4px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-bottom-left-radius').cssText", "'6px'");
+shouldBe("checkComputedStyleValue()", "true");
+
+element.style.borderRadius = "1px 2px 4px 6px / 4em";
+shouldBe("computedStyle.getPropertyValue('border-radius')", "'1px 2px 4px 6px / 64px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-radius').toString()", "'[object CSSValueList]'");
+shouldBe("computedStyle.getPropertyCSSValue('border-radius').cssText", "'1px 2px 4px 6px / 64px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-top-left-radius').cssText", "'1px 64px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-top-right-radius').cssText", "'2px 64px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-bottom-right-radius').cssText", "'4px 64px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-bottom-left-radius').cssText", "'6px 64px'");
+shouldBe("checkComputedStyleValue()", "true");
+
+element.style.borderRadius = "1px 2px 4px 6px / 4em 3px";
+shouldBe("computedStyle.getPropertyValue('border-radius')", "'1px 2px 4px 6px / 64px 3px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-radius').toString()", "'[object CSSValueList]'");
+shouldBe("computedStyle.getPropertyCSSValue('border-radius').cssText", "'1px 2px 4px 6px / 64px 3px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-top-left-radius').cssText", "'1px 64px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-top-right-radius').cssText", "'2px 3px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-bottom-right-radius').cssText", "'4px 64px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-bottom-left-radius').cssText", "'6px 3px'");
+shouldBe("checkComputedStyleValue()", "true");
+
+element.style.borderRadius = "1px 2px 4px 6px / 4em 3px 7px";
+shouldBe("computedStyle.getPropertyValue('border-radius')", "'1px 2px 4px 6px / 64px 3px 7px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-radius').toString()", "'[object CSSValueList]'");
+shouldBe("computedStyle.getPropertyCSSValue('border-radius').cssText", "'1px 2px 4px 6px / 64px 3px 7px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-top-left-radius').cssText", "'1px 64px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-top-right-radius').cssText", "'2px 3px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-bottom-right-radius').cssText", "'4px 7px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-bottom-left-radius').cssText", "'6px 3px'");
+shouldBe("checkComputedStyleValue()", "true");
+
+element.style.borderRadius = "1px 2px 4px 6px / 4em 3px 7px 8px";
+shouldBe("computedStyle.getPropertyValue('border-radius')", "'1px 2px 4px 6px / 64px 3px 7px 8px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-radius').toString()", "'[object CSSValueList]'");
+shouldBe("computedStyle.getPropertyCSSValue('border-radius').cssText", "'1px 2px 4px 6px / 64px 3px 7px 8px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-top-left-radius').cssText", "'1px 64px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-top-right-radius').cssText", "'2px 3px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-bottom-right-radius').cssText", "'4px 7px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-bottom-left-radius').cssText", "'6px 8px'");
+shouldBe("checkComputedStyleValue()", "true");
+
+element.style.borderRadius = "10px 20px 30px 40px / 15px 25px 35px 45px";
+shouldBe("computedStyle.getPropertyValue('border-radius')", "'10px 20px 30px 40px / 15px 25px 35px 45px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-radius').toString()", "'[object CSSValueList]'");
+shouldBe("computedStyle.getPropertyCSSValue('border-radius').cssText", "'10px 20px 30px 40px / 15px 25px 35px 45px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-top-left-radius').cssText", "'10px 15px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-top-right-radius').cssText", "'20px 25px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-bottom-right-radius').cssText", "'30px 35px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-bottom-left-radius').cssText", "'40px 45px'");
+shouldBe("checkComputedStyleValue()", "true");
+
+element.style.borderRadius = "10px 20px 30px 40px / 10px 25px 35px 45px";
+shouldBe("computedStyle.getPropertyValue('border-radius')", "'10px 20px 30px 40px / 10px 25px 35px 45px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-radius').toString()", "'[object CSSValueList]'");
+shouldBe("computedStyle.getPropertyCSSValue('border-radius').cssText", "'10px 20px 30px 40px / 10px 25px 35px 45px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-top-left-radius').cssText", "'10px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-top-right-radius').cssText", "'20px 25px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-bottom-right-radius').cssText", "'30px 35px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-bottom-left-radius').cssText", "'40px 45px'");
+shouldBe("checkComputedStyleValue()", "true");
+
+element.style.borderRadius = "10px 20px 30px 40px / 10px 20px 35px 45px";
+shouldBe("computedStyle.getPropertyValue('border-radius')", "'10px 20px 30px 40px / 10px 20px 35px 45px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-radius').toString()", "'[object CSSValueList]'");
+shouldBe("computedStyle.getPropertyCSSValue('border-radius').cssText", "'10px 20px 30px 40px / 10px 20px 35px 45px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-top-left-radius').cssText", "'10px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-top-right-radius').cssText", "'20px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-bottom-right-radius').cssText", "'30px 35px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-bottom-left-radius').cssText", "'40px 45px'");
+shouldBe("checkComputedStyleValue()", "true");
+
+element.style.borderRadius = "10px 20px 30px 40px / 10px 20px 30px 45px";
+shouldBe("computedStyle.getPropertyValue('border-radius')", "'10px 20px 30px 40px / 10px 20px 30px 45px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-radius').toString()", "'[object CSSValueList]'");
+shouldBe("computedStyle.getPropertyCSSValue('border-radius').cssText", "'10px 20px 30px 40px / 10px 20px 30px 45px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-top-left-radius').cssText", "'10px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-top-right-radius').cssText", "'20px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-bottom-right-radius').cssText", "'30px'");
+shouldBe("computedStyle.getPropertyCSSValue('border-bottom-left-radius').cssText", "'40px 45px'");
+shouldBe("checkComputedStyleValue()", "true");
+
+document.body.removeChild(testContainer);
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

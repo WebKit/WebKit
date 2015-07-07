@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+  You should see the text 'after' in the inner box with no mangled pixels.
+  <div id="parent" style="position:absolute; width:125px; height:300px; overflow:hidden; border: solid 1px red">
+    <div style="position:absolute; width:100px; height:100px; left:100px; top:100px; border:solid 1px green; overflow:hidden">
+      <div id="target" style="width:50px; height:50px">before</div>
+    </div>
+    <div style="width:1000px; height:1000px;"></div>
+  </div>
+</body>
+<script>
+  parent = document.getElementById('parent');
+  parent.scrollTop = 10;
+  parent.scrollLeft = 10;
+  if (window.testRunner)
+    testRunner.waitUntilDone();
+
+  window.setTimeout(function() {
+    if (window.testRunner)
+      testRunner.display();
+
+    document.getElementById('target').innerText = 'after';
+
+    if (window.testRunner)
+      testRunner.notifyDone();
+  }, 50);
+</script>
+</html>

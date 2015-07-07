@@ -1,0 +1,11 @@
+
+Test HTMLMediaElement canPlayType() method with multiple video mpeg4 MIME types.
+
+These tests may be expected to fail if the WebKit port does not support the format.
+
+EXPECTED (video.canPlayType('video/x-m4v') == 'maybe') OK
+EXPECTED (video.canPlayType('video/mp4') == 'maybe') OK
+EXPECTED (video.canPlayType('video/mp4; Codecs="avc1.4D400C"') == 'probably') OK
+EXPECTED (video.canPlayType(' Video/MP4 ; CODECS="mp4v.20.8, mp4a.40.2"') == 'probably'), OBSERVED 'maybe' FAIL
+END OF TEST
+

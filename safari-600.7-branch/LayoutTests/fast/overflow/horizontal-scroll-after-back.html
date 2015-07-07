@@ -1,0 +1,62 @@
+<html>
+<script>
+
+// Navigation steps
+// 1. loads this page and it has a horizontal scrollbar
+// 2. Navigates to a data URL and navigates back
+function verifyPage()
+{
+    var result = (innerHeight === document.documentElement.offsetHeight)
+        ? "FAIL: Scrollbar did not appear"
+        : "PASS";
+    document.body.innerHTML = result;
+    if (window.testRunner)
+            testRunner.notifyDone();
+}
+
+function navigateAwayAndBack() 
+{
+    // Simulate a link click to create a history entry
+    var evt = document.createEvent("MouseEvents");
+    evt.initMouseEvent("click", true, true, window,
+      0, 0, 0, 0, 0, false, false, false, false, 0, null);
+    document.getElementById('anchor').dispatchEvent(evt);
+}
+
+function runTestStep() 
+{
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    }
+    window.setTimeout("navigateAwayAndBack()", 200);
+}
+
+function onVerifyPage(evt)
+{
+    // If pageshow is happening as result of navigation back then we proceed.
+    if (evt.persisted)
+        setTimeout("verifyPage()", 200);
+}
+
+window.onpageshow = onVerifyPage;
+</script>
+<head>
+<style type="text/css">
+<!--
+#content {
+  background: #fff;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 1500px;
+  height: 1500px;
+}
+-->
+</style>
+</head>
+<body onload='runTestStep()'>
+<div id="content"> <a id='anchor' href='data:text/html,<body onload="history.back()"></body>'>Where is the scrollbar?</a></div>
+</body>
+</html>

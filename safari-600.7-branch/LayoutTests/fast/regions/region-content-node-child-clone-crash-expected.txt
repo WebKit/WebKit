@@ -1,0 +1,7 @@
+Test that cloning and removing a region child that has a content node child does not crash or assert.
+
+On success you should see PASS below.
+
+PASS
+
+

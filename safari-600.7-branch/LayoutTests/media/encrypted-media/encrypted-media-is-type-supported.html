@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>WebKitMediaKeys.isTypeSupported()</title>
+        <script src=../video-test.js></script>
+        <script>
+            // Initialize the MockCDM. It supports the key system 'com.webcore.mock', the 
+            // mime type 'video/mock'. It requires init data to begin with 'mock', and
+            // keys to begin with 'key'.
+            if (internals)
+                internals.initializeMockCDM();
+
+            function runTest() {
+                consoleWrite("Always return false for a null type.");
+                testExpected("WebKitMediaKeys.isTypeSupported(null)", false);
+
+                consoleWrite("<br>Always return false for an empty type.");
+                testExpected("WebKitMediaKeys.isTypeSupported('')", false);
+                testExpected("WebKitMediaKeys.isTypeSupported('', '')", false);
+                testExpected("WebKitMediaKeys.isTypeSupported('', null)", false);
+                testExpected("WebKitMediaKeys.isTypeSupported('', undefined)", false);
+                testExpected("WebKitMediaKeys.isTypeSupported('', 'video/invalid')", false);
+
+                consoleWrite("<br>Always return true for supported types.");
+                testExpected("WebKitMediaKeys.isTypeSupported('com.webcore.mock')", true);
+
+                consoleWrite("<br>Always return true for supported types and containers.");
+                testExpected("WebKitMediaKeys.isTypeSupported('com.webcore.mock', 'video/mock')", true);
+
+                consoleWrite("<br>Always return false for supported types but unsupported containers.");
+                testExpected("WebKitMediaKeys.isTypeSupported('com.webcore.mock', 'video/invalid')", false);
+
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <p>Test Encrypted Media extension of WebKitMediaKeys <em>isTypeSupported()</em> method.</p>
+    </body>
+</html>

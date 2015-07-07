@@ -1,0 +1,10 @@
+Description
+
+This test validates that all of the initiator types are represented even when dynamically inserted.
+
+
+
+PASS /w3c/webperf/resources/generate_resource.php?type=css is expected to have initiatorType link 
+PASS /w3c/webperf/resources/generate_resource.php?type=iframe is expected to have initiatorType iframe 
+PASS /w3c/webperf/resources/generate_resource.php?type=image is expected to have initiatorType img 
+

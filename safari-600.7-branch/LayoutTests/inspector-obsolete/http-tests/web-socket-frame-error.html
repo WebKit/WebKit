@@ -1,0 +1,37 @@
+<html>
+<head>
+<script src="inspector-test.js"></script>
+<script src="../../../../js-test-resources/js-test-pre.js"></script>
+<script>
+var ws;
+function sendMessages() {
+    ws = new WebSocket("ws://localhost:8000/websocket/tests/hybi/does_not_exist");
+    ws.onclose = function()
+    {
+        debug("Closed.");
+    };
+}
+
+function test() {
+    function onRequest(event)
+    {
+        var request = event.data;
+        if (request._type._name === "websocket") {
+            for (var i = 0; i < request.frames().length; i++) {
+                var frame = request.frame(i);
+                var result = String.sprintf("%d: %s", (i + 1), frame.errorMessage);
+                InspectorTest.addResult(result);
+                if (frame.errorMessage)
+                    InspectorTest.completeTest();
+            }
+        }
+    }
+    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.RequestUpdated, onRequest);
+    InspectorTest.evaluateInPage("sendMessages()");
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that WebSocketFrames errors are visible to Web Inspector.</p>
+</body>
+</html>

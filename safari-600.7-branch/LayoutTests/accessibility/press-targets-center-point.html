@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<style>
+    .result {
+        font-family:monospace;
+    }
+    .target {
+        background-color:silver;
+        border:1px solid;
+        cursor:default;
+    }
+</style>
+<title>Press Targets Center Point</title>
+</head>
+<body>
+
+<div class="target" id="t0" style="height: 18px; width:160px;">target</div>
+<p>Actual: <span class="result" id="a0">waiting</span><br>Expected: <span class="result" id="e0">waiting</span></p>
+
+<div class="target" id="t1" style="-webkit-transform:translate(160px, 160px); height: 18px; width:240px;">translate transform target</div>
+<p>Actual: <span class="result" id="a1">waiting</span><br>Expected: <span class="result" id="e1">waiting</span></p>
+
+<div class="target" id="t2" style="-webkit-writing-mode:vertical-lr; width: 18px;">vertical left-to-right writing mode target</div>
+<p>Actual: <span class="result" id="a2">waiting</span><br>Expected: <span class="result" id="e2">waiting</span></p>
+
+<div class="target" id="t3" style="direction:rtl; height: 18px; width:240px;">right-to-left direction target</div>
+<p>Actual: <span class="result" id="a3">waiting</span><br>Expected: <span class="result" id="e3">waiting</span></p>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that press targets the receiving elements center point.");
+    
+    var targetCount = document.getElementsByClassName("target").length;
+    
+    for (var i = 0; i < targetCount; ++i) {
+        (function(i) {
+            document.getElementById("t" + i).addEventListener("click", function(e) {
+                document.getElementById("a" + i).innerHTML = "(" + e.clientX + ", " + e.clientY + ")";
+            });
+        })(i);
+        
+        var targetClientRect = document.getElementById("t" + i).getBoundingClientRect();
+        var targetClientX = Math.round(targetClientRect.left + targetClientRect.width / 2);
+        var targetClientY = Math.round(targetClientRect.top + targetClientRect.height / 2);
+        document.getElementById("e" + i).innerHTML = "(" + targetClientX + ", " + targetClientY + ")";
+    }
+    
+    if (window.accessibilityController) {
+        // Press all targets.
+        for (var i = 0; i < targetCount; ++i)
+            accessibilityController.accessibleElementById("t" + i).press();
+    }
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

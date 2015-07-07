@@ -1,0 +1,33 @@
+<html>
+<script>
+var NPERR_NO_ERROR = 0;
+var NPERR_GENERIC_ERROR = 1;
+
+function callback(result) {
+    var d = document.getElementById('result');
+
+    if (result == NPERR_NO_ERROR)
+        d.innerHTML = "SUCCESS"
+    else
+        d.innerHTML = "FAILED - got error code " + result
+
+    testRunner.notifyDone();
+}
+
+function runtest() {
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        plg.getURLNotify("data:,hello world", "frame", "callback");
+    } else {
+        document.write("Cannot run interactively");
+    }
+}
+</script>
+<body onload="runtest()">
+<embed id="plg" type="application/x-webkit-test-netscape"></embed>
+This tests that the plugin properly receives NPP_URLNotify for subframe loads.
+<div id="result">FAILED</div>
+<iframe id="frame"></iframe>
+</body>
+</html>

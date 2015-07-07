@@ -1,0 +1,27 @@
+This tests that the methods on CSSPrimitiveValue throw exceptions
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS div.style.getPropertyCSSValue('width').getFloatValue(CSSPrimitiveValue.CSS_UNKNOWN) threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS div.style.getPropertyCSSValue('width').getFloatValue(CSSPrimitiveValue.CSS_STRING) threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS div.style.getPropertyCSSValue('width').getFloatValue(CSSPrimitiveValue.CSS_HZ) threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS div.style.getPropertyCSSValue('width').getFloatValue(CSSPrimitiveValue.CSS_S) threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS div.style.getPropertyCSSValue('width').getFloatValue(CSSPrimitiveValue.CSS_RAD) threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS div.style.getPropertyCSSValue('width').getFloatValue(CSSPrimitiveValue.CSS_PERCENTAGE) threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS div.style.getPropertyCSSValue('height').getFloatValue(CSSPrimitiveValue.CSS_PX) threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS div.style.getPropertyCSSValue('height').getFloatValue(CSSPrimitiveValue.CSS_DEG) threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS div.style.getPropertyCSSValue('clip').primitiveType is CSSPrimitiveValue.CSS_RECT
+PASS div.style.getPropertyCSSValue('clip').getFloatValue(CSSPrimitiveValue.CSS_PX) threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS div.style.getPropertyCSSValue('clip').getStringValue() threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS div.style.getPropertyCSSValue('clip').getCounterValue() threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS div.style.getPropertyCSSValue('clip').getRGBColorValue() threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS div.style.getPropertyCSSValue('color').primitiveType is CSSPrimitiveValue.CSS_RGBCOLOR
+PASS div.style.getPropertyCSSValue('color').getFloatValue(CSSPrimitiveValue.CSS_PX) threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS div.style.getPropertyCSSValue('color').getStringValue() threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS div.style.getPropertyCSSValue('color').getCounterValue() threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS div.style.getPropertyCSSValue('color').getRectValue() threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

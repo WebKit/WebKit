@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div tabindex=0 id="item1" role="img" aria-flowto="extra extra2">Item 1</div>
+<div>Item 2</div>
+<div>Item 3</div>
+
+<div id="extra" role="button">BUTTON</div>
+<div id="extra2" role="radio">RADIO BUTTON</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that aria-flowto correctly identifies the right elements.");
+
+    if (window.accessibilityController) {
+
+          var item = document.getElementById("item1");
+          item.focus();
+          item = accessibilityController.focusedElement;
+          shouldBe("item.ariaFlowToElementAtIndex(0).role", "'AXRole: AXButton'");
+          shouldBe("item.ariaFlowToElementAtIndex(0).title", "'AXTitle: BUTTON'");
+          shouldBe("item.ariaFlowToElementAtIndex(1).role", "'AXRole: AXRadioButton'");
+          shouldBe("item.ariaFlowToElementAtIndex(1).title", "'AXTitle: RADIO BUTTON'");
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

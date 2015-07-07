@@ -1,0 +1,22 @@
+<html>
+<head>
+    <script>
+        function loaded()
+        {
+            document.getElementsByTagName('h4')[0].innerHTML = document.domain;
+            // Allow the user to click the button during manuel runs.
+            if (window.testRunner)
+                performTest();
+        }
+
+        function performTest()
+        {
+            parent.location = "http://localhost:8000/security/frameNavigation/resources/navigation-changed-iframe.html";
+        }
+    </script>
+</head>
+<body onload="loaded();">
+    <h4>DOMAIN</h4>
+    <button onclick="performTest();">Perform Test</button>
+</body>
+</html>

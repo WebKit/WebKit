@@ -1,0 +1,7 @@
+frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
+frame "<!--framePath //<!--frame0-->-->" - didFinishDocumentLoadForFrame
+frame "<!--framePath //<!--frame0-->-->" - didFailLoadWithError
+main frame - didFinishLoadForFrame
+This tests a subframe that removes itself to make sure a delegate message to indicate the interrupted load fires.

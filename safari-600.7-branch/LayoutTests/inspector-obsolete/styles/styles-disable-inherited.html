@@ -1,0 +1,47 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function test()
+{
+
+    InspectorTest.selectNodeAndWaitForStyles("nested", step1);
+
+    function step1()
+    {
+        var treeItem = InspectorTest.getElementStylePropertyTreeItem("font-weight");
+        InspectorTest.addResult("Before disable");
+        InspectorTest.dumpSelectedElementStyles(true);
+
+        InspectorTest.selectNodeAndWaitForStyles("container", step2);
+    }
+
+    function step2()
+    {
+        InspectorTest.toggleStyleProperty("font-weight", false);
+        InspectorTest.selectNodeAndWaitForStyles("nested", step3);
+    }
+
+    function step3()
+    {
+        InspectorTest.addResult("After disable:");
+        InspectorTest.dumpSelectedElementStyles(true);
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that disabling inherited style property does not break further style inspection.
+</p>
+
+<div id="container" style="font-weight:bold">
+    <div id="nested"></div>
+</div>
+
+</body>
+</html>

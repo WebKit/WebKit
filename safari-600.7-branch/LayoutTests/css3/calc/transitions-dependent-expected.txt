@@ -1,0 +1,12 @@
+This tests that calc() expressions depending on transitioning elements behave correctly.
+PASS - "width" property for "inner" element at 0s was: 60
+PASS - "width" property for "inner" element at 0.25s was: 110
+PASS - "width" property for "inner" element at 0.5s was: 160
+PASS - "width" property for "inner" element at 0.75s was: 210
+PASS - "width" property for "inner" element at 1s was: 260
+PASS - "width" property for "innerTransition" element at 0s was: 20
+PASS - "width" property for "innerTransition" element at 0.25s was: 70
+PASS - "width" property for "innerTransition" element at 0.5s was: 165
+PASS - "width" property for "innerTransition" element at 0.75s was: 305
+PASS - "width" property for "innerTransition" element at 1s was: 490
+

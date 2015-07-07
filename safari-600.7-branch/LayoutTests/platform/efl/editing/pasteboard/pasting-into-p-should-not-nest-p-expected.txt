@@ -1,0 +1,46 @@
+This tests copying and pasting a p element into another p element doesn't end up in a nested p elements.
+
+After paste:
+| "
+"
+| <p>
+|   style="font-size: 12px; color: blue;"
+|   <span>
+|     id="source"
+|     "Copy this line"
+| "
+"
+| <p>
+|   style="font-size: 12px;"
+|   <strong>
+|     "Paste it below in the empty line below. The font size should be 12px and the text should be in blue."
+| "
+"
+| <p>
+|   style="font-size: 12px; color: blue;"
+|   <#selection-caret>
+|   <br>
+| "
+"
+
+After innerHTML = innerHTML:
+| "
+"
+| <p>
+|   style="font-size: 12px; color: blue;"
+|   <span>
+|     id="source"
+|     "Copy this line"
+| "
+"
+| <p>
+|   style="font-size: 12px;"
+|   <strong>
+|     "Paste it below in the empty line below. The font size should be 12px and the text should be in blue."
+| "
+"
+| <p>
+|   style="font-size: 12px; color: blue;"
+|   <br>
+| "
+"

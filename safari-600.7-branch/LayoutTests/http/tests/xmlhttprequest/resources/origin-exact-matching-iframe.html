@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+description("Check that exact matching is used when comparing a request's originating url and the value provided by Access-Control-Allow-Origin.");
+var urlTemplate = "http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=";
+
+function shouldPass(origin) {
+    debug("Should allow origin: '" + origin + "'");
+    xhr = new XMLHttpRequest();
+    xhr.open('GET', urlTemplate + encodeURIComponent(origin), false);
+    shouldBeUndefined("xhr.send(null)");
+}
+
+function shouldFail(origin) {
+    debug("Should disallow origin: '" + origin + "'");
+    xhr = new XMLHttpRequest();
+    xhr.open('GET', urlTemplate + encodeURIComponent(origin), false);
+    shouldThrow("xhr.send(null)");
+}
+
+shouldPass('*');
+shouldPass(' *  ');
+shouldPass('	*');
+shouldPass(location.protocol + "//" + location.host);
+shouldPass(" "+location.protocol + "//" + location.host);
+shouldPass(" "+location.protocol + "//" + location.host + "   	 ");
+shouldPass("	"+location.protocol + "//" + location.host);
+shouldFail(location.protocol + "//www2." + location.host);
+shouldFail("//" + location.host);
+shouldFail("://" + location.host);
+shouldFail("ftp://" + location.host);
+shouldFail("http:://" + location.host);
+shouldFail("http:/" + location.host);
+shouldFail("http:" + location.host);
+shouldFail(location.host);
+shouldFail(location.protocol + "//" + location.host + "?");
+shouldFail(location.protocol + "//" + location.host + "/");
+shouldFail(location.protocol + "//" + location.host + " /");
+shouldFail(location.protocol + "//" + location.host + "#");
+shouldFail(location.protocol + "//" + location.host + "%23");
+shouldFail(location.protocol + "//" + location.host + ":80");
+shouldFail(location.protocol + "//" + location.host + ", *");
+//shouldFail(location.protocol + "//" + location.host + "\0"); // Doesn't fail in chromium-linux. See http://wkbug.com/88688 and http://wkbug.com/88139
+shouldFail((location.protocol + "//" + location.host).toUpperCase());
+shouldFail(location.protocol.toUpperCase() + "//" + location.host);
+shouldFail("-");
+shouldFail("**");
+shouldFail("\0*");
+//shouldFail("*\0"); // Doesn't fail in chromium-linux. http://wkbug.com/88688 and http://wkbug.com/88139
+shouldFail("'*'");
+shouldFail('"*"');
+shouldFail("* *");
+shouldFail("*" + location.protocol + "//" + "*");
+shouldFail("*" + location.protocol + "//" + location.host);
+shouldFail("* " + location.protocol + "//" + location.host);
+shouldFail("*, " + location.protocol + "//" + location.host);
+shouldFail("\0" + location.protocol + "//" + location.host);
+shouldFail("null " + location.protocol + "//" + location.host);
+shouldFail('http://example.net');
+shouldFail('null');
+shouldFail('');
+shouldFail(location.href);
+shouldFail(location.href.replace(/\/[^\/]*$/, '/'));
+shouldFail(location.href.replace(location.hostname, "localhost"));
+
+</script>
+<script src="../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>

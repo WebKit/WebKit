@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 1: SyntaxError: Unexpected EOF
+KDE JS Test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Got expected error: 'SyntaxError'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

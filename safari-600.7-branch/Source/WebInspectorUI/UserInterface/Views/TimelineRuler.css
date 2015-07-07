@@ -1,0 +1,176 @@
+/*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.timeline-ruler {
+    position: relative;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.timeline-ruler.allows-time-range-selection {
+    pointer-events: all;
+}
+
+.timeline-ruler > * {
+    pointer-events: none;
+}
+
+.timeline-ruler > .header {
+    border-bottom: 1px solid rgb(179, 179, 179);
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 22px;
+}
+
+.timeline-ruler > .header > .divider {
+    position: absolute;
+    width: 1px;
+    top: 0;
+    bottom: 0;
+    -webkit-transform: translateX(-1px);
+    background-image: linear-gradient(to bottom, rgba(179, 179, 179, 0), rgba(179, 179, 179, 1) 85%);
+}
+
+.timeline-ruler > .header > .divider > .label {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 9px;
+    color: rgb(128, 128, 128);
+    white-space: nowrap;
+}
+
+.timeline-ruler > .markers {
+    position: absolute;
+    top: 22px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+}
+
+.timeline-ruler > .markers > .divider {
+    position: absolute;
+    width: 1px;
+    top: 1px;
+    bottom: 0;
+    -webkit-transform: translateX(-1px);
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.timeline-ruler > .markers > .marker {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+
+    -webkit-transform: translateX(-1px);
+
+    border-left-width: 1px;
+    border-left-style: dashed;
+    border-left-color: rgba(128, 128, 128, 0.5);
+}
+
+.timeline-ruler > .markers > .marker.current-time {
+    border-left-color: red;
+    border-left-style: solid;
+}
+
+.timeline-ruler > .markers > .marker.current-time::before {
+    position: absolute;
+    top: -5px;
+    left: -5px;
+
+    width: 9px;
+    height: 9px;
+    border-radius: 5px;
+
+    background-color: red;
+
+    content: "";
+}
+
+.timeline-ruler > .markers > .marker.load-event {
+    border-left-color: rgba(255, 0, 0, 0.5);
+}
+
+.timeline-ruler > .markers > .marker.dom-content-event {
+    border-left-color: rgba(0, 0, 255, 0.5);
+}
+
+.timeline-ruler > .markers > .marker.timestamp {
+    border-left-color: rgba(0, 110, 0, 0.5);
+}
+
+.timeline-ruler > .selection-drag {
+    position: absolute;
+    top: 0;
+    height: 22px;
+    cursor: -webkit-grab;
+    pointer-events: all;
+}
+
+.timeline-ruler > .selection-drag:active {
+    cursor: -webkit-grabbing;
+}
+
+.timeline-ruler > .selection-handle {
+    position: absolute;
+    top: 0;
+    width: 8px;
+    height: 21px;
+    border-radius: 5px;
+    background-color: rgb(164, 164, 164);
+    border: 1px solid white;
+    cursor: col-resize;
+    pointer-events: all;
+    z-index: 15;
+}
+
+.timeline-ruler > .selection-handle.left {
+    -webkit-transform: translateX(-4px);
+}
+
+.timeline-ruler > .selection-handle.right {
+    -webkit-transform: translateX(4px);
+}
+
+.timeline-ruler > .shaded-area {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.1);
+    z-index: 15;
+}
+
+.timeline-ruler > .shaded-area.left {
+    left: 0;
+}
+
+.timeline-ruler > .shaded-area.right {
+    right: 0;
+}

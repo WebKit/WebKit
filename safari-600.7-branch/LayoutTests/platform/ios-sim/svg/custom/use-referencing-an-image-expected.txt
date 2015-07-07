@@ -1,0 +1,9 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 0x0
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGRect {rect} at (0,0) size 167x167 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+    RenderSVGContainer {use} at (0,0) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(25.00,25.00)}]
+      RenderSVGImage {image} at (0,0) size 0x0
+    RenderSVGImage {image} at (0,0) size 0x0

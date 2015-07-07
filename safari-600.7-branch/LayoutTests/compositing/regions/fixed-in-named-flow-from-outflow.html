@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            .collectedInNamedFlow { -webkit-flow-into: flow; }
+            .region { -webkit-flow-from: flow; }
+            #red { position: absolute; top: 100px; left: 100px; width: 50px; height: 50px; background-color: red; }
+            #fixed { position: fixed; top: 100px; left: 100px; width: 50px; height: 50px; background-color: green; }
+        </style>
+        <script>
+            if (window.internals)
+                window.internals.settings.setAcceleratedCompositingForFixedPositionEnabled(true);
+
+            if (window.testRunner)
+                testRunner.dumpAsText();
+
+            window.addEventListener("load", function() {
+                document.getElementById("fixed").className = "collectedInNamedFlow";
+                if (window.internals)
+                    document.getElementById("layerTree").innerText = window.internals.layerTreeAsText(document);
+            }, false);
+        </script>
+    </head>
+    <body>
+        <p>Test that a fixed positioned element that is dinamically collected into a named flow is still positioned relative to viewport and composited.</p>
+        <p>On success you should not see red below.</p>
+        <!-- The region is necessary in order to show the fixed element -->
+        <div class="region"></div>
+        <div id="red"></div>
+        <div id="fixed"></div>
+        <pre id="layerTree"></pre>
+    </body>
+</html>

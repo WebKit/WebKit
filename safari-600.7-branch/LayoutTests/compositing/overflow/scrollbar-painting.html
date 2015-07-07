@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+  .composited {
+    -webkit-transform: translateZ(0);
+  }
+  
+  .box {
+    margin: 10px;
+    width: 100px;
+    height: 100px;
+    z-index: 0;
+  }
+  .overflow {
+    position: relative;
+    overflow: scroll;
+  }
+
+  .content {
+    height: 500px;
+    width: 500px;
+    background-color: gray;
+  }
+
+  .resizable {
+    overflow: auto;
+    resize: both;
+  }
+  </style>
+  </head>
+<body>
+  <p>You should see scrollbars on the gray square, and a resizer control below it.</p>
+  <div class="overflow box">
+    <div class="content composited"></div>
+  </div>
+
+  <div class="resizable composited box">
+  </div>
+</body>
+</html>

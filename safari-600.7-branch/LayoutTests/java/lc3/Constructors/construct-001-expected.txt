@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 37: ReferenceError: Can't find variable: Packages
+LiveConnect 3.0 JavaScript to Java Data Conversion
+
+FAIL successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
+
+TEST COMPLETE
+ 

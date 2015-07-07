@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x537
+  RenderBlock {HTML} at (0,0) size 800x537
+    RenderBody {BODY} at (8,20) size 784x501
+      RenderBlock {DIV} at (20,0) size 240x200 [bgcolor=#0000807F]
+      RenderBlock (anonymous) at (0,220) size 784x245
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,481) size 784x20
+        RenderText {#text} at (0,0) size 246x19
+          text run at (0,0) width 246: "Top and bottom should look the same."
+layer at (28,260) size 240x200
+  RenderHTMLCanvas {CANVAS} at (20,20) size 240x200 [bgcolor=#0000807F]

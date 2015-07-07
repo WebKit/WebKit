@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 345x19
+          text run at (0,0) width 345: "You should see a PASS with a solid outline around it."
+        RenderText {#text} at (0,0) size 0x0
+      RenderTable {TABLE} at (0,20) size 43x24
+        RenderTableSection (anonymous) at (0,0) size 43x24
+          RenderTableRow (anonymous) at (0,2) size 43x20
+            RenderTableCell (anonymous) at (2,2) size 39x20 [r=0 c=0 rs=1 cs=1]
+              RenderInline {SPAN} at (0,0) size 39x19
+                RenderText {#text} at (0,0) size 39x19
+                  text run at (0,0) width 39: "PASS"
+              RenderInline {SPAN} at (0,0) size 1x19

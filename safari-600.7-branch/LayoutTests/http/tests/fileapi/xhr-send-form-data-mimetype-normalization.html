@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="/js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script src="../local/formdata/resources/send-form-data-common.js"></script>
+<script>
+description("Test the normalization of Blob MIME types passed to FormData.append().");
+
+function runTest()
+{
+    debug("Testing the test infrastructure with a simple MIME type:");
+    window.response = testSendingFormData([{
+        'type': 'blob', 'name': 'file', 'filename': 'filename',
+        'value': new Blob(['1234567890'], {type: "text/plain"})
+    }]);
+    shouldBe("response", "'file=filename:text/plain:1234567890'");
+
+    debug("Sending FormData containing CRs in MIME type:");
+    response = testSendingFormData([{
+        'type': 'blob', 'name': 'file', 'filename': 'filename',
+        'value': new Blob(['1234567890'], {type: "\rtext/\rcrs\r"})
+    }]);
+    shouldBe("response", "'file=filename:application/octet-stream:1234567890'");
+
+    debug("Sending FormData containing LF in MIME type:");
+    response = testSendingFormData([{
+        'type': 'blob', 'name': 'file', 'filename': 'filename',
+        'value': new Blob(['1234567890'], {type: "\ntext/\nlfs\n"})
+    }]);
+    shouldBe("response", "'file=filename:application/octet-stream:1234567890'");
+
+    debug("Sending FormData containing a MIME header in its MIME type:");
+    response = testSendingFormData([
+        {
+          'type': 'blob', 'name': 'file', 'filename': 'filename',
+          'value': new Blob(['1234567890'], {type: "application/mimeheader\r\nContent-Length: 20\r\n\r\n"}),
+        },
+        {
+          'type': 'blob', 'name': 'file2', 'filename': 'filename2',
+          'value': new Blob(['1234567890'], {type: "text/plain"})
+        }
+    ]);
+    shouldBe("response", "'file=filename:application/octet-stream:1234567890&file2=filename2:text/plain:1234567890'");
+}
+
+runTest();
+formDataTestingCleanup();
+
+var successfullyParsed = true;
+</script>
+<script src="/js-test-resources/js-test-post.js"></script>
+</body>
+</html>
+

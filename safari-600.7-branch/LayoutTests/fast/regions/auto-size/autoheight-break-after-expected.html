@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            .region {
+                width: 200px;
+                margin: 10px;
+                float: left;
+                overflow: hidden;
+            }
+            .regionAuto {
+                border: thick solid red;
+            }
+            .regionNonAuto {
+                height: 200px;
+                border: thick solid blue;
+            }
+            #break_after {
+                -webkit-region-break-after: always;
+                margin-bottom: 100px;
+            }
+            .region > p {
+                font-family: Ahem;
+                font-size: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=112241"> [CSS Regions] Break after doesn't work correctly with auto-height regions</a>.</p>
+        <p>There are three regions: one with auto-height (red), one with a specified height (blue) and the last one with auto-height (red). The first region contains a paragraph with a break after. The last auto-height region should fit the lorem ipsum content fragment.</p>
+        <p>On success, you should not see overflow in the last region.</p>
+        <div class="region regionAuto"><p id="break_after">BreakAfter</p></div>
+        <div class="region regionNonAuto"><p style="margin-bottom: 0px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque tempor est eu turpis tincidunt at sollicitudin felis fermentum. Nullam sollicitudin eros at elit facilisis condimentum. Ut tempor, nunc at volutpat cursus, sapien mi gravida velit, ut ullamcorper felis nunc ac risus. Suspendisse vel eros</p></div>
+        <div class="region regionAuto"><p style="margin-top: 0px;">tortor, non cursus metus. Nam hendrerit pharetra sapien, sodales mattis arcu varius a. Curabitur non arcu id sem hendrerit tincidunt vel a nisi. Phasellus at erat nec nunc consectetur posuere. Aliquam consequat tempus pulvinar. Pellentesque ut sapien quis urna vestibulum dignissim.</p></div>
+    </body>
+</html>

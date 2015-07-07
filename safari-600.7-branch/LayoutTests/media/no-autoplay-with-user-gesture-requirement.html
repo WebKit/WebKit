@@ -1,0 +1,41 @@
+<html>
+    <head>
+        <title>Test that media autoplay should not work if user gesture is required for playback</title>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            if (window.internals) 
+                window.internals.settings.setMediaPlaybackRequiresUserGesture(true);
+
+            function testPlay()
+            {
+                failTest("play event should not fire without user gesture.");
+            }
+
+            function testPaused()
+            {
+                testExpected("video.paused", true);
+                endTest();
+            }
+
+            function canplaythrough()
+            {
+                 setTimeout(testPaused, 100);
+            }
+
+            function start()
+            {
+                 findMediaElement();
+                 video.src = findMediaFile("video", "content/test");
+                 testExpected("video.paused", true);
+                 waitForEvent('canplaythrough', canplaythrough);
+                 waitForEvent('play', testPlay);
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+    <p>Test that media autoplay should not work if user gesture is required for playback.</p>
+    <video controls autoplay></video>
+    </body>
+</html>

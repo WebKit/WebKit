@@ -1,0 +1,260 @@
+Test 1, LTR:
+  Moving right: "\n        abc\n    "[9, 10, 11, 12]
+  Moving left:  "\n        abc\n    "[12, 11, 10, 9]
+Test 1, RTL:
+  Moving left: "\n        abc\n    "[9, 11, 10, 12]
+  Moving right:  "\n        abc\n    "[12, 10, 11, 9]
+Test 2, LTR:
+  Moving right: "\n        ABC\n    "[9, 11, 10, 12]
+  Moving left:  "\n        ABC\n    "[12, 10, 11, 9]
+Test 2, RTL:
+  Moving left: "\n        ABC\n    "[9, 10, 11, 12]
+  Moving right:  "\n        ABC\n    "[12, 11, 10, 9]
+Test 3, LTR:
+  Moving right: <DIV>[0], "abc\n    "[0, 1, 2, 3]
+  Moving left:  "abc\n    "[3, 2, 1, 0], <DIV>[0]
+Test 3, RTL:
+  Moving left: <DIV>[0], "abc\n    "[0, 2, 1, 3]
+  Moving right:  "abc\n    "[3, 1, 2, 0], <DIV>[0]
+Test 4, LTR:
+  Moving right: <DIV>[0], "ABC\n    "[0, 2, 1, 3]
+  Moving left:  "ABC\n    "[3, 1, 2, 0], <DIV>[0]
+Test 4, RTL:
+  Moving left: <DIV>[0], "ABC\n    "[0, 1, 2, 3]
+  Moving right:  "ABC\n    "[3, 2, 1, 0], <DIV>[0]
+Test 5, LTR:
+  Moving right: "\n        abcABCdef\n    "[9, 10, 11, 12, 14, 13, 15, 16, 17, 18]
+  Moving left:  "\n        abcABCdef\n    "[18, 17, 16, 15, 13, 14, 12, 11, 10, 9]
+Test 5, RTL:
+  Moving left: "\n        abcABCdef\n    "[9, 11, 10, 12, 13, 14, 15, 17, 16, 18]
+  Moving right:  "\n        abcABCdef\n    "[18, 16, 17, 15, 14, 13, 12, 10, 11, 9]
+Test 6, LTR:
+  Moving right: "\n        ABCabcDEF\n    "[9, 11, 10, 12, 13, 14, 15, 17, 16, 18]
+  Moving left:  "\n        ABCabcDEF\n    "[18, 16, 17, 15, 14, 13, 12, 10, 11, 9]
+Test 6, RTL:
+  Moving left: "\n        ABCabcDEF\n    "[9, 10, 11, 12, 14, 13, 15, 16, 17, 18]
+  Moving right:  "\n        ABCabcDEF\n    "[18, 17, 16, 15, 13, 14, 12, 11, 10, 9]
+Test 7, LTR:
+  Moving right: "\n        abcABCDEF\n    "[9, 10, 11, 12, 17, 16, 15, 14, 13, 18]
+  Moving left:  "\n        abcABCDEF\n    "[18, 13, 14, 15, 16, 17, 12, 11, 10, 9]
+Test 7, RTL:
+  Moving left: "\n        abcABCDEF\n    "[9, 11, 10, 12, 13, 14, 15, 16, 17, 18]
+  Moving right:  "\n        abcABCDEF\n    "[18, 17, 16, 15, 14, 13, 12, 10, 11, 9]
+Test 8, LTR:
+  Moving right: "\n        ABCabcdef\n    "[9, 11, 10, 12, 13, 14, 15, 16, 17, 18]
+  Moving left:  "\n        ABCabcdef\n    "[18, 17, 16, 15, 14, 13, 12, 10, 11, 9]
+Test 8, RTL:
+  Moving left: "\n        ABCabcdef\n    "[9, 10, 11, 12, 17, 16, 15, 14, 13, 18]
+  Moving right:  "\n        ABCabcdef\n    "[18, 13, 14, 15, 16, 17, 12, 11, 10, 9]
+Test 9, LTR:
+  Moving right: "123ABC"[0, 5, 4, 1, 2, 6]
+  Moving left:  "123ABC"[6, 2, 1, 4, 5, 0]
+Test 9, RTL:
+  Moving left: "123ABC"[0, 2, 1, 3, 4, 5, 6]
+  Moving right:  "123ABC"[6, 5, 4, 3, 1, 2, 0]
+Test 10, LTR:
+  Moving right: "ABC123"[0, 4, 5, 2, 1, 6]
+  Moving left:  "ABC123"[6, 1, 2, 5, 4, 0]
+Test 10, RTL:
+  Moving left: "ABC123"[0, 1, 2, 3, 5, 4, 6]
+  Moving right:  "ABC123"[6, 4, 5, 3, 2, 1, 0]
+Test 11, LTR:
+  Moving right: "abc"[0, 1, 2, 3], "ABCdef\n    "[2, 1, 3, 4, 5, 6]
+  Moving left:  "ABCdef\n    "[6, 5, 4, 3, 1, 2], "abc"[3, 2, 1, 0]
+Test 11, RTL:
+  Moving left: "abc"[0, 2, 1, 3], "ABCdef\n    "[1, 2, 3, 5, 4, 6]
+  Moving right:  "ABCdef\n    "[6, 4, 5, 3, 2, 1], "abc"[3, 1, 2, 0]
+Test 12, LTR:
+  Moving right: "ABC"[0, 2, 1, 3], "abcDEF\n    "[1, 2, 3, 5, 4, 6]
+  Moving left:  "abcDEF\n    "[6, 4, 5, 3, 2, 1], "ABC"[3, 1, 2, 0]
+Test 12, RTL:
+  Moving left: "ABC"[0, 1, 2, 3], "abcDEF\n    "[2, 1, 3, 4, 5, 6]
+  Moving right:  "abcDEF\n    "[6, 5, 4, 3, 1, 2], "ABC"[3, 2, 1, 0]
+Test 13, LTR:
+  Moving right: "abcABC123DEFdef\n    "[0, 1, 2, 3, 11, 10, 6, 7, 8, 9, 5, 4, 12, 13, 14, 15]
+  Moving left:  "abcABC123DEFdef\n    "[15, 14, 13, 12, 4, 5, 9, 8, 7, 6, 10, 11, 3, 2, 1, 0]
+Test 13, RTL:
+  Moving left: "abcABC123DEFdef\n    "[0, 2, 1, 3, 4, 5, 6, 8, 7, 9, 10, 11, 12, 14, 13, 15]
+  Moving right:  "abcABC123DEFdef\n    "[15, 13, 14, 12, 11, 10, 9, 7, 8, 6, 5, 4, 3, 1, 2, 0]
+Test 14, LTR:
+  Moving right: "abcABC123\n    "[0, 1, 2, 3, 7, 8, 5, 4, 9]
+  Moving left:  "abcABC123\n    "[9, 4, 5, 8, 7, 3, 2, 1, 0]
+Test 14, RTL:
+  Moving left: "abcABC123\n    "[0, 2, 1, 3, 4, 5, 6, 8, 7, 9]
+  Moving right:  "abcABC123\n    "[9, 7, 8, 6, 5, 4, 3, 1, 2, 0]
+Test 15, LTR:
+  Moving right: "abcABC123def\n    "[0, 1, 2, 3, 7, 8, 5, 4, 9, 10, 11, 12]
+  Moving left:  "abcABC123def\n    "[12, 11, 10, 9, 4, 5, 8, 7, 6, 2, 1, 0]
+WARNING: Moving to the left did not visit the same positions in reverse order as moving to the right.
+Test 15, RTL:
+  Moving left: "abcABC123def\n    "[0, 2, 1, 3, 4, 5, 6, 11, 10, 9, 8, 7, 12]
+  Moving right:  "abcABC123def\n    "[12, 7, 8, 9, 10, 11, 6, 5, 4, 3, 1, 2, 0]
+Test 16, LTR:
+  Moving right: "ABC123DEFabcGHI456JLM\n    "[0, 8, 7, 3, 4, 5, 6, 2, 1, 9, 10, 11, 12, 20, 19, 15, 16, 17, 18, 14, 13, 21]
+  Moving left:  "ABC123DEFabcGHI456JLM\n    "[21, 13, 14, 18, 17, 16, 15, 19, 20, 12, 11, 10, 9, 1, 2, 6, 5, 4, 3, 7, 8, 0]
+Test 16, RTL:
+  Moving left: "ABC123DEFabcGHI456JLM\n    "[0, 1, 2, 3, 5, 4, 6, 7, 8, 9, 11, 10, 12, 13, 14, 15, 17, 16, 18, 19, 20, 21]
+  Moving right:  "ABC123DEFabcGHI456JLM\n    "[21, 20, 19, 18, 16, 17, 15, 14, 13, 12, 10, 11, 9, 8, 7, 6, 4, 5, 3, 2, 1, 0]
+Test 17, LTR:
+  Moving right: "\n        before    AHYJ AQWJXMFUDJE\n    "[9, 10, 11, 12, 13, 14, 15, 16, 22, 21, 20, 23, 24, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 35]
+  Moving left:  "\n        before    AHYJ AQWJXMFUDJE\n    "[35, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 24, 23, 20, 21, 22, 16, 15, 14, 13, 12, 11, 10, 9]
+Test 17, RTL:
+  Moving left: "\n        before    AHYJ AQWJXMFUDJE\n    "[9, 14, 13, 12, 11, 10, 15, 16, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35]
+  Moving right:  "\n        before    AHYJ AQWJXMFUDJE\n    "[35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 16, 15, 10, 11, 12, 13, 14, 9]
+Test 18, LTR:
+  Moving right: "\n        MUQJ    after encyclopedia\n    "[9, 12, 11, 10, 13, 14, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35]
+  Moving left:  "\n        MUQJ    after encyclopedia\n    "[35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 14, 13, 10, 11, 12, 9]
+Test 18, RTL:
+  Moving left: "\n        MUQJ    after encyclopedia\n    "[9, 10, 11, 12, 13, 14, 21, 20, 19, 18, 22, 23, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 35]
+  Moving right:  "\n        MUQJ    after encyclopedia\n    "[35, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 23, 22, 18, 19, 20, 21, 14, 13, 12, 11, 10, 9]
+Test 19, LTR:
+  Moving right: "\n        before    AHYJ AQWJXMFUDJE\n    "[9, 10, 11, 12, 13, 14, 15, 16, 22, 21, 20, 23, 24, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 35]
+  Moving left:  "\n        before    AHYJ AQWJXMFUDJE\n    "[35, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 24, 23, 20, 21, 22, 16, 15, 14, 13, 12, 11, 10, 9]
+Test 19, RTL:
+  Moving left: "\n        before    AHYJ AQWJXMFUDJE\n    "[9, 14, 13, 12, 11, 10, 15, 16, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35]
+  Moving right:  "\n        before    AHYJ AQWJXMFUDJE\n    "[35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 16, 15, 10, 11, 12, 13, 14, 9]
+Test 20, LTR:
+  Moving right: "\n        MUQJ    after encyclopedia\n    "[9, 12, 11, 10, 13, 14, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35]
+  Moving left:  "\n        MUQJ    after encyclopedia\n    "[35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 14, 13, 10, 11, 12, 9]
+Test 20, RTL:
+  Moving left: "\n        MUQJ    after encyclopedia\n    "[9, 10, 11, 12, 13, 14, 21, 20, 19, 18, 22, 23, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 35]
+  Moving right:  "\n        MUQJ    after encyclopedia\n    "[35, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 23, 22, 18, 19, 20, 21, 14, 13, 12, 11, 10, 9]
+Test 21, LTR:
+  Moving right: "\n        This is JF[Y WY OJ[Y the boxes. \n    "[9, 10, 11, 12, 13, 14, 15, 16, 17, 20, 19, 18, 21, 22, 28, 27, 26, 25, 24, 23, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40]
+  Moving left:  "\n        This is JF[Y WY OJ[Y the boxes. \n    "[40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 23, 24, 25, 26, 27, 28, 22, 21, 18, 19, 20, 17, 16, 15, 14, 13, 12, 11, 10, 9]
+Test 21, RTL:
+  Moving left: "\n        This is JF[Y WY OJ[Y the boxes. \n    "[9, 15, 14, 13, 12, 11, 10, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 32, 31, 33, 34, 38, 37, 36, 35, 39, 40]
+  Moving right:  "\n        This is JF[Y WY OJ[Y the boxes. \n    "[40, 39, 35, 36, 37, 38, 34, 33, 31, 32, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 10, 11, 12, 13, 14, 15, 9]
+Test 22, LTR:
+  Moving right: "\n        This is JF[Y WY OJ[Y the boxes. \n    "[9, 10, 11, 12, 13, 14, 15, 16, 17, 20, 19, 18, 21, 22, 28, 27, 26, 25, 24, 23, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40]
+  Moving left:  "\n        This is JF[Y WY OJ[Y the boxes. \n    "[40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 23, 24, 25, 26, 27, 28, 22, 21, 18, 19, 20, 17, 16, 15, 14, 13, 12, 11, 10, 9]
+Test 22, RTL:
+  Moving left: "\n        This is JF[Y WY OJ[Y the boxes. \n    "[9, 15, 14, 13, 12, 11, 10, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 32, 31, 33, 34, 38, 37, 36, 35, 39, 40]
+  Moving right:  "\n        This is JF[Y WY OJ[Y the boxes. \n    "[40, 39, 35, 36, 37, 38, 34, 33, 31, 32, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 10, 11, 12, 13, 14, 15, 9]
+Test 23, LTR:
+  Moving right: "\n        Lorem\n        "[9, 10, 11, 12, 13, 14], <DIV>[0], "\n        ipsum\n    "[9, 10, 11, 12, 13, 14]
+  Moving left:  "\n        ipsum\n    "[14, 13, 12, 11, 10, 9], <DIV>[0], "\n        Lorem\n        "[14, 13, 12, 11, 10, 9]
+Test 23, RTL:
+  Moving left: "\n        Lorem\n        "[9, 13, 12, 11, 10, 14], <DIV>[0], "\n        ipsum\n    "[9, 13, 12, 11, 10, 14]
+  Moving right:  "\n        ipsum\n    "[14, 10, 11, 12, 13, 9], <DIV>[0], "\n        Lorem\n        "[14, 10, 11, 12, 13, 9]
+Test 24, LTR:
+  Moving right: "\n        WMH[\n        "[9, 12, 11, 10, 13], <DIV>[0], "\n        OWQU[\n    "[9, 13, 12, 11, 10, 14]
+  Moving left:  "\n        OWQU[\n    "[14, 10, 11, 12, 13, 9], <DIV>[0], "\n        WMH[\n        "[13, 10, 11, 12, 9]
+Test 24, RTL:
+  Moving left: "\n        WMH[\n        "[9, 10, 11, 12, 13], <DIV>[0], "\n        OWQU[\n    "[9, 10, 11, 12, 13, 14]
+  Moving right:  "\n        OWQU[\n    "[14, 13, 12, 11, 10, 9], <DIV>[0], "\n        WMH[\n        "[13, 12, 11, 10, 9]
+Test 25, LTR:
+  Moving right: "\n        abcdefABC"[9, 10, 11, 12, 13, 14, 15], "DEF\n    "[2, 1], <DIV>[2], "\n        abcdefABC"[18, 17, 16], "DEF\n    "[3]
+  Moving left:  "DEF\n    "[3], "\n        abcdefABC"[16, 17, 18], <DIV>[2], "DEF\n    "[1, 2], "\n        abcdefABC"[15, 14, 13, 12, 11, 10, 9]
+Test 25, RTL:
+  Moving left: "\n        abcdefABC"[9, 14, 13, 12, 11, 10, 15, 16, 17, 18], <DIV>[2], "DEF\n    "[1, 2, 3]
+  Moving right:  "DEF\n    "[3, 2, 1], <DIV>[2], "\n        abcdefABC"[18, 17, 16, 15, 10, 11, 12, 13, 14, 9]
+Test 26, LTR:
+  Moving right: "\n        ABCDEFabc"[9, 14, 13, 12, 11, 10, 15, 16, 17, 18], <DIV>[2], "def\n    "[1, 2, 3]
+  Moving left:  "def\n    "[3, 2, 1], <DIV>[2], "\n        ABCDEFabc"[18, 17, 16, 15, 10, 11, 12, 13, 14, 9]
+Test 26, RTL:
+  Moving left: "\n        ABCDEFabc"[9, 10, 11, 12, 13, 14, 15], "def\n    "[2, 1], <DIV>[2], "\n        ABCDEFabc"[18, 17, 16], "def\n    "[3]
+  Moving right:  "def\n    "[3], "\n        ABCDEFabc"[16, 17, 18], <DIV>[2], "def\n    "[1, 2], "\n        ABCDEFabc"[15, 14, 13, 12, 11, 10, 9]
+Test 27, LTR:
+  Moving right: "\n        abc"[9, 10, 11, 12], <DIV>[2], "DEFghi\n    "[2, 1], <DIV>[5, 4], "ABC"[3, 2, 1], "DEFghi\n    "[3, 4, 5, 6]
+  Moving left:  "DEFghi\n    "[6, 5, 4, 3], "ABC"[1, 2, 3], <DIV>[4, 5], "DEFghi\n    "[1, 2], <DIV>[2], "\n        abc"[12, 11, 10, 9]
+Test 27, RTL:
+  Moving left: "\n        abc"[9, 11, 10, 12], <DIV>[2], "ABC"[1, 2, 3], <DIV>[4, 5], "DEFghi\n    "[1, 2, 3, 5, 4, 6]
+  Moving right:  "DEFghi\n    "[6, 4, 5, 3, 2, 1], <DIV>[5, 4], "ABC"[3, 2, 1], <DIV>[2], "\n        abc"[12, 10, 11, 9]
+Test 28, LTR:
+  Moving right: "\n        ABC"[9, 11, 10, 12], <DIV>[2], "abc"[1, 2, 3], <DIV>[4, 5], "defDEF\n    "[1, 2, 3, 5, 4, 6]
+  Moving left:  "defDEF\n    "[6, 4, 5, 3, 2, 1], <DIV>[5, 4], "abc"[3, 2, 1], <DIV>[2], "\n        ABC"[12, 10, 11, 9]
+Test 28, RTL:
+  Moving left: "\n        ABC"[9, 10, 11, 12], <DIV>[2], "defDEF\n    "[2, 1], <DIV>[5, 4], "abc"[3, 2, 1], "defDEF\n    "[3, 4, 5, 6]
+  Moving right:  "defDEF\n    "[6, 5, 4, 3], "abc"[1, 2, 3], <DIV>[4, 5], "defDEF\n    "[1, 2], <DIV>[2], "\n        ABC"[12, 11, 10, 9]
+Test 29, LTR:
+  Moving right: "\n        abcABC"[9, 10, 11, 12], "DEF"[2, 1], "\n        abcABC"[15, 14, 13], "DEF"[3]
+  Moving left:  "DEF"[3], "\n        abcABC"[13, 14, 15], "DEF"[1, 2], "\n        abcABC"[12, 11, 10, 9]
+Test 29, RTL:
+  Moving left: "\n        abcABC"[9, 11, 10, 12, 13, 14, 15], "DEF"[1, 2, 3]
+  Moving right:  "DEF"[3, 2, 1], "\n        abcABC"[15, 14, 13, 12, 10, 11, 9]
+Test 30, LTR:
+  Moving right: "\n        ABCabc"[9, 11, 10, 12, 13, 14, 15], "def"[1, 2, 3]
+  Moving left:  "def"[3, 2, 1], "\n        ABCabc"[15, 14, 13, 12, 10, 11, 9]
+Test 30, RTL:
+  Moving left: "\n        ABCabc"[9, 10, 11, 12], "def"[2, 1], "\n        ABCabc"[15, 14, 13], "def"[3]
+  Moving right:  "def"[3], "\n        ABCabc"[13, 14, 15], "def"[1, 2], "\n        ABCabc"[12, 11, 10, 9]
+Test 31, LTR:
+  Moving right: "\n        ab"[9, 10, 11], "cABCdef"[1, 3, 2, 4, 5, 6, 7]
+  Moving left:  "cABCdef"[7, 6, 5, 4, 2, 3, 1], "\n        ab"[11, 10, 9]
+Test 31, RTL:
+  Moving left: "\n        ab"[9, 11, 10], "cABCdef"[1, 2, 3, 4, 6, 5, 7]
+  Moving right:  "cABCdef"[7, 5, 6, 4, 3, 2, 1], "\n        ab"[10, 11, 9]
+Test 32, LTR:
+  Moving right: "\n        AB"[9, 11, 10], "CabcDEF"[1, 2, 3, 4, 6, 5, 7]
+  Moving left:  "CabcDEF"[7, 5, 6, 4, 3, 2, 1], "\n        AB"[10, 11, 9]
+Test 32, RTL:
+  Moving left: "\n        AB"[9, 10, 11], "CabcDEF"[1, 3, 2, 4, 5, 6, 7]
+  Moving right:  "CabcDEF"[7, 6, 5, 4, 2, 3, 1], "\n        AB"[11, 10, 9]
+Test 33, LTR:
+  Moving right: "\n        abc"[9, 10, 11, 12], "ABCdef"[2, 1, 3, 4, 5, 6]
+  Moving left:  "ABCdef"[6, 5, 4, 3, 1, 2], "\n        abc"[12, 11, 10, 9]
+Test 33, RTL:
+  Moving left: "\n        abc"[9, 11, 10, 12], "ABCdef"[1, 2, 3, 5, 4, 6]
+  Moving right:  "ABCdef"[6, 4, 5, 3, 2, 1], "\n        abc"[12, 10, 11, 9]
+Test 34, LTR:
+  Moving right: "\n        ABC"[9, 11, 10, 12], "abcDEF"[1, 2, 3, 5, 4, 6]
+  Moving left:  "abcDEF"[6, 4, 5, 3, 2, 1], "\n        ABC"[12, 10, 11, 9]
+Test 34, RTL:
+  Moving left: "\n        ABC"[9, 10, 11, 12], "abcDEF"[2, 1, 3, 4, 5, 6]
+  Moving right:  "abcDEF"[6, 5, 4, 3, 1, 2], "\n        ABC"[12, 11, 10, 9]
+Test 35, LTR:
+  Moving right: "\n        abcAdef\n    "[9, 10, 11, 12, 13, 14, 15, 16]
+  Moving left:  "\n        abcAdef\n    "[16, 15, 14, 13, 12, 11, 10, 9]
+Test 35, RTL:
+  Moving left: "\n        abcAdef\n    "[9, 11, 10, 12, 13, 15, 14, 16]
+  Moving right:  "\n        abcAdef\n    "[16, 14, 15, 13, 12, 10, 11, 9]
+Test 36, LTR:
+  Moving right: "\n        ABCaDEF\n    "[9, 11, 10, 12, 13, 15, 14, 16]
+  Moving left:  "\n        ABCaDEF\n    "[16, 14, 15, 13, 12, 10, 11, 9]
+Test 36, RTL:
+  Moving left: "\n        ABCaDEF\n    "[9, 10, 11, 12, 13, 14, 15, 16]
+  Moving right:  "\n        ABCaDEF\n    "[16, 15, 14, 13, 12, 11, 10, 9]
+Test 37, LTR:
+  Moving right: "\n        abcABC"[9, 10, 11, 12, 14, 13, 15], "def"[1, 2, 3]
+  Moving left:  "def"[3, 2, 1], "\n        abcABC"[15, 13, 14, 12, 11, 10, 9]
+Test 37, RTL:
+  Moving left: "\n        abcABC"[9, 11, 10, 12, 13, 14, 15], "def"[2, 1, 3]
+  Moving right:  "def"[3, 1, 2], "\n        abcABC"[15, 14, 13, 12, 10, 11, 9]
+Test 38, LTR:
+  Moving right: "\n        ABCabc"[9, 11, 10, 12, 13, 14, 15], "DEF"[2, 1, 3]
+  Moving left:  "DEF"[3, 1, 2], "\n        ABCabc"[15, 14, 13, 12, 10, 11, 9]
+Test 38, RTL:
+  Moving left: "\n        ABCabc"[9, 10, 11, 12, 14, 13, 15], "DEF"[1, 2, 3]
+  Moving right:  "DEF"[3, 2, 1], "\n        ABCabc"[15, 13, 14, 12, 11, 10, 9]
+Test 39, LTR:
+  Moving right: "\n        abcA"[9, 10, 11, 12], "BCdef"[1], "\n        abcA"[13], "BCdef"[2, 3, 4, 5]
+  Moving left:  "BCdef"[5, 4, 3, 2], "\n        abcA"[13], "BCdef"[1], "\n        abcA"[12, 11, 10, 9]
+Test 39, RTL:
+  Moving left: "\n        abcA"[9, 11, 10, 12, 13], "BCdef"[1, 2, 4, 3, 5]
+  Moving right:  "BCdef"[5, 3, 4, 2, 1], "\n        abcA"[13, 12, 10, 11, 9]
+Test 40, LTR:
+  Moving right: "\n        ABCa"[9, 11, 10, 12, 13], "bcDEF"[1, 2, 4, 3, 5]
+  Moving left:  "bcDEF"[5, 3, 4, 2, 1], "\n        ABCa"[13, 12, 10, 11, 9]
+Test 40, RTL:
+  Moving left: "\n        ABCa"[9, 10, 11, 12], "bcDEF"[1], "\n        ABCa"[13], "bcDEF"[2, 3, 4, 5]
+  Moving right:  "bcDEF"[5, 4, 3, 2], "\n        ABCa"[13], "bcDEF"[1], "\n        ABCa"[12, 11, 10, 9]
+Test 41, LTR:
+  Moving right: "abc"[0, 1, 2, 3], "def"[0, 1, 2, 3]
+  Moving left:  "def"[3, 2, 1, 0], "abc"[3, 2, 1, 0]
+Test 41, RTL:
+  Moving left: "abc"[0, 2, 1, 3], "def"[0, 2, 1, 3]
+  Moving right:  "def"[3, 1, 2, 0], "abc"[3, 1, 2, 0]
+Test 42, LTR:
+  Moving right: "ABC"[0, 2, 1, 3], "DEF"[0, 2, 1, 3]
+  Moving left:  "DEF"[3, 1, 2, 0], "ABC"[3, 1, 2, 0]
+Test 42, RTL:
+  Moving left: "ABC"[0, 1, 2, 3], "DEF"[0, 1, 2, 3]
+  Moving right:  "DEF"[3, 2, 1, 0], "ABC"[3, 2, 1, 0]
+Test 43, LTR:
+  Moving right: "abcXXX123QQQdef"[0, 13, 14, 11, 10, 6, 7, 8, 9, 5, 4, 1, 2, 15]
+  Moving left:  "abcXXX123QQQdef"[15, 2, 1, 4, 5, 9, 8, 7, 6, 10, 11, 14, 13, 0]
+Test 43, RTL:
+  Moving left: "abcXXX123QQQdef"[0, 2, 1, 3, 4, 5, 6, 8, 7, 9, 10, 11, 12, 14, 13, 15]
+  Moving right:  "abcXXX123QQQdef"[15, 13, 14, 12, 11, 10, 9, 7, 8, 6, 5, 4, 3, 1, 2, 0]
+

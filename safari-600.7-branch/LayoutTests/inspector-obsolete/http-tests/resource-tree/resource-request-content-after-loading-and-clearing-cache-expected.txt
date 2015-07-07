@@ -1,0 +1,12 @@
+Tests resource content is correctly loaded if Resource.requestContent was called before network request was finished.
+
+Bug 90153
+Adding dynamic script: 
+Waiting for script request to finish: 
+Clearing memory cache: 
+Requesting content: 
+Resource url: http://127.0.0.1:8000/inspector/resource-tree/resources/dynamic-script.js
+Resource content: function foo() {
+}
+
+

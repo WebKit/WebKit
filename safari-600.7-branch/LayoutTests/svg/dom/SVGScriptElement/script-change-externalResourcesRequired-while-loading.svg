@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xhtml="http://www.w3.org/1999/xhtml" onload="startTest()">
+<defs>
+<script>
+var resourceLoaded = false;
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+// The SVGLoad event should be fired right after appending the script element to the document, before the target resource is loaded
+function startTest() {
+    var scriptElement = document.createElementNS("http://www.w3.org/2000/svg", "svg:script");
+    scriptElement.href.baseVal = "resources/script-load.js";
+    scriptElement.onload = function() {
+        if (resourceLoaded)
+            document.getElementById("test1").innerHTML = "FAIL: onload fired too late. External resource already completed loading";
+        else {
+            document.getElementById("test1").innerHTML = "PASS";
+            window.setTimeout('continueTest1()', 0);
+        }
+    };
+
+    document.getElementsByTagName("defs")[0].appendChild(scriptElement);
+}
+
+// The SVGLoad event should be fired right after appending the script element to the document, before the target resource is loaded
+// Changing the 'externalResourcesRequired' property after appending the script element, shouldn't affect the SVGLoad event dispatching.
+function continueTest1() {
+    resourceLoaded = false;
+
+    var scriptElement = document.createElementNS("http://www.w3.org/2000/svg", "svg:script");
+    scriptElement.href.baseVal = "resources/script-load2.js";
+        scriptElement.onload = function() {
+
+        if (resourceLoaded)
+            document.getElementById("test2").innerHTML = "FAIL: onload fired too late. External resource already completed loading";
+        else {
+            document.getElementById("test2").innerHTML = "PASS";
+            window.setTimeout('continueTest2()', 0);
+        }
+    };
+
+    document.getElementsByTagName("defs")[0].appendChild(scriptElement);
+    scriptElement.externalResourcesRequired.baseVal = true;
+}
+
+// The SVGLoad event should be dispatched, afer the external resource has finished loading
+function continueTest2() {
+    resourceLoaded = false;
+
+    var scriptElement = document.createElementNS("http://www.w3.org/2000/svg", "svg:script");
+    scriptElement.externalResourcesRequired.baseVal = true;
+    scriptElement.href.baseVal = "resources/script-load3.js";
+    scriptElement.onload = function() {
+        if (!resourceLoaded)
+            document.getElementById("test3").innerHTML = "FAIL: onload fired too early. External resource still loading";
+        else {
+            document.getElementById("test3").innerHTML = "PASS";
+            window.setTimeout('continueTest3()', 0);
+        }
+    };
+
+    document.getElementsByTagName("defs")[0].appendChild(scriptElement);
+}
+
+// The SVGLoad event should be dispatched, afer the external resource has finished loading
+// Changing the 'externalResourcesRequired' property from 'true' to 'false' after inserting the script element
+// in the document, should cause an immediate dispatch of the SVGLoad event.
+function continueTest3() {
+    resourceLoaded = false;
+
+    var scriptElement = document.createElementNS("http://www.w3.org/2000/svg", "svg:script");
+    scriptElement.externalResourcesRequired.baseVal = true;
+    scriptElement.href.baseVal = "resources/script-load4.js";
+    scriptElement.onload = function() {
+        if (resourceLoaded)
+            document.getElementById("test4").innerHTML = "FAIL: onload fired too late. early. External resource still loading";
+        else {
+            document.getElementById("test4").innerHTML = "PASS";
+            window.setTimeout('finishTest()', 0);
+        }
+    };
+
+    document.getElementsByTagName("defs")[0].appendChild(scriptElement);
+    scriptElement.externalResourcesRequired.baseVal = false;
+}
+
+function finishTest() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</defs>
+<foreignObject>
+Test changing externalResourcesRequired after inserting the element into the tree.
+<xhtml:hr/>
+<xhtml:p>Test 1: <xhtml:span id="test1">DID NOT EXECUTE</xhtml:span></xhtml:p>
+<xhtml:p>Test 2: <xhtml:span id="test2">DID NOT EXECUTE</xhtml:span></xhtml:p>
+<xhtml:p>Test 3: <xhtml:span id="test3">DID NOT EXECUTE</xhtml:span></xhtml:p>
+<xhtml:p>Test 4: <xhtml:span id="test4">DID NOT EXECUTE</xhtml:span></xhtml:p>
+</foreignObject>
+</svg>

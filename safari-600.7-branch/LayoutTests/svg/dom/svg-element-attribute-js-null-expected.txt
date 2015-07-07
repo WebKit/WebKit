@@ -1,0 +1,12 @@
+This test setting various attributes of a SVG elements to JavaScript null.
+
+TEST SUCCEEDED: The value was the empty string. [tested SVGElement.id]
+TEST SUCCEEDED: The value was the empty string. [tested SVGElement.xmlbase]
+
+TEST SUCCEEDED: The value was the string '0'. [tested SVGAngle.valueAsString]
+
+TEST SUCCEEDED: The value was the string '0'. [tested SVGLength.valueAsString]
+
+TEST SUCCEEDED: The value was the empty string. [tested SVGScriptElement.type]
+
+

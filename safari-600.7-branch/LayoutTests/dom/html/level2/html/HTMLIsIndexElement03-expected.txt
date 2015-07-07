@@ -1,0 +1,3 @@
+Test:	http://www.w3.org/2001/DOM-Test-Suite/level2/html/HTMLIsIndexElement03	
+Status:	failure
+Detail:	Asize: assertEquals failed, actual 0, expected 2.

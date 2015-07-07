@@ -1,0 +1,36 @@
+<html>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+<body>
+    
+    <div id="result"></div>
+    
+    <textarea name="area1" id="area1" rows="5" cols="40">
+line 1
+line 2
+line 3
+    </textarea>
+
+    <script>
+        if (window.accessibilityController) {
+            var result = document.getElementById("result");
+
+            var area1 = document.getElementById("area1");
+            area1.focus();
+
+            for (var k = 0; k < 3; k++) {
+                var index = (k*7);
+                var lineNumber = accessibilityController.focusedElement.lineForIndex(index);
+                if (lineNumber == k) {
+                    result.innerText += "Test:" + k + ") Line For Index: Pass [" + index + "->" + lineNumber + "]\n";       
+                }
+                else {
+                    result.innerText += "Test:" + k + ") Line For Index: Fail [" + index + "->" + lineNumber + "]\n";       
+                }
+            }
+        }
+    </script>
+</body>
+</html>

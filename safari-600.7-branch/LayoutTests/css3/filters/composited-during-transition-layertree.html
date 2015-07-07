@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    img {
+        margin: 10px;
+    }
+
+    #grayscale-box {
+        -webkit-transition: -webkit-filter 5s;
+        -webkit-filter: grayscale(0);
+    }
+
+    .trigger #grayscale-box {
+        -webkit-filter: grayscale(1);
+    }
+
+    #sepia-box {
+        -webkit-filter: sepia(1);
+    }
+
+    #saturate-box {
+        -webkit-transition: -webkit-filter 5s;
+        -webkit-filter: saturate(0);
+    }
+
+    .trigger #saturate-box {
+        -webkit-filter: saturate(1);
+    }
+
+    #huerotate-box {
+        -webkit-filter: hue-rotate(90deg);
+    }
+
+    #invert-box {
+        -webkit-transition: -webkit-filter 5s;
+        -webkit-filter: invert(0);
+    }
+
+    .trigger #invert-box {
+        -webkit-filter: invert(1);
+    }
+
+    #opacity-box {
+        -webkit-filter: opacity(0.5);
+    }
+
+    #brightness-box {
+        -webkit-transition: -webkit-filter 5s;
+        -webkit-filter: brightness(0);
+    }
+
+    .trigger #brightness-box {
+        -webkit-filter: brightness(1);
+    }
+
+    #contrast-box {
+        -webkit-filter: contrast(0);
+    }
+  </style>
+  <script>
+      if (window.testRunner) {
+          testRunner.waitUntilDone();
+          testRunner.dumpAsText();
+      }
+
+      function doTest() {
+          if (window.testRunner) {
+              document.getElementById('layer-tree').innerText = window.internals.layerTreeAsText(document)
+              testRunner.notifyDone();
+          }
+      }
+
+      function triggerTransition() {
+          document.body.className = "trigger";
+          setTimeout(doTest, 200);
+      }
+
+      window.addEventListener("load", triggerTransition, false);
+  </script>
+</head>
+<body>
+
+<!-- Every third image below will transition, and thus might
+     get a compositing layer. Every 3n+1 element is not transitioning but
+     has a static filter, and shouldn't need a compositing layer.
+     Every 3n+2 element is a purely static image, and shouldn't
+     even be a layer -->
+<img src="resources/reference.png" id="grayscale-box">
+<img src="resources/reference.png" id="sepia-box">
+<img src="resources/reference.png">
+<br>
+<img src="resources/reference.png" id="saturate-box">
+<img src="resources/reference.png" id="huerotate-box">
+<img src="resources/reference.png">
+<br>
+<img src="resources/reference.png" id="invert-box">
+<img src="resources/reference.png" id="opacity-box">
+<img src="resources/reference.png">
+<br>
+<img src="resources/reference.png" id="brightness-box">
+<img src="resources/reference.png" id="contrast-box">
+<img src="resources/reference.png">
+
+<pre id="layer-tree">Layer tree goes here in DRT</pre>
+
+</body>
+</html>

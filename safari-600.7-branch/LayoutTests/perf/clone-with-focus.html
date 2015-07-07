@@ -1,0 +1,55 @@
+<!DOCTYPE html> 
+<html> 
+  <body> 
+    <input id="input"> 
+    <ul id="list"><li><span></span></li></ul>
+    <div id="console"></div>
+    
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+            
+        var listElement = document.getElementById('list');
+        var templateElement = list.firstChild;
+        var inputElement = document.getElementById('input');
+        
+        function test(numberOfElements, focusInput)
+        {
+            if (focusInput)
+                inputElement.focus();
+                
+            var startTime = Date.now();
+            for (var i = 0; i < numberOfElements; i++) {
+                var clone = templateElement.cloneNode(true);
+                clone.childNodes[0].textContent = i;
+                listElement.appendChild(clone);
+            }
+            var endTime = Date.now();
+            
+            if (focusInput)
+                inputElement.blur();
+                
+            while (listElement.firstChild != listElement.lastChild)
+                listElement.removeChild(listElement.lastChild);
+            
+            return endTime - startTime;
+        }
+
+        function log(str)
+        {
+            var element = document.createElement('div');
+            element.appendChild(document.createTextNode(str));
+            document.getElementById('console').appendChild(element);
+        }
+
+        var timeWithoutFocus = test(1000, false);
+        var timeWithFocus = test(1000, true);
+
+        if (Math.abs(timeWithFocus - timeWithoutFocus) <= timeWithoutFocus) {
+            log('PASS. Cloning elements takes roughly as long with as without focus.');
+        } else {
+            log('FAIL. Cloning 1000 elements with focus took ' + timeWithFocus + 'ms, without took ' + timeWithoutFocus + 'ms.');
+        }
+    </script> 
+  </body> 
+</html> 

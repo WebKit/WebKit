@@ -1,0 +1,22 @@
+<body>
+<p>This tests deleting a selection that ends inside an empty table cell.  No merging should happen, only editable selected content should be removed.</p>
+<div contenteditable="true">
+<table border="1"><tr>
+    <td></td>
+    <td id="start">Editable</td>
+</tr></table>
+<table border="1"><tr>
+    <td id="end"></td>
+    <td>There should be one empty cell to the left of this one.</td>
+</tr></table>
+</div>
+
+<script>
+var sel = window.getSelection();
+var start = document.getElementById("start").firstChild;
+var end = document.getElementById("end");
+
+sel.setBaseAndExtent(start, 0, end, 0);
+document.execCommand("Delete");
+</script>
+</body>

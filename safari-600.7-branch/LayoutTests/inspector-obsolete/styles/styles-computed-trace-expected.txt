@@ -1,0 +1,64 @@
+Tests that computed styles expand and allow tracing to style rules.
+
+==== Computed style for ID1 ====
+[expanded] 
+-webkit-background-clip: border-box;
+-webkit-background-origin: padding-box;
+-webkit-background-size: auto;
+background-attachment: scroll;
+    #id1 - initial styles-computed-trace.html:23
+background-clip: border-box;
+    #id1 - initial styles-computed-trace.html:23
+background-color: rgb(128, 128, 128);
+    #id1 - gray styles-computed-trace.html:23
+    /-- overloaded --/ #id1 - black styles-computed-trace.html:18
+    /-- overloaded --/ #id1 - green styles-computed-trace.html:13
+background-image: none;
+    #id1 - initial styles-computed-trace.html:23
+background-origin: padding-box;
+    #id1 - initial styles-computed-trace.html:23
+background-size: auto;
+    #id1 - initial styles-computed-trace.html:23
+display: block;
+    div - block user agent stylesheet
+font-family: Courier;
+    #id1 - Courier styles-computed-trace.html:18
+    /-- overloaded --/ #id1 - Times styles-computed-trace.html:13
+    /-- overloaded --/ body - Arial styles-computed-trace.html:4
+text-decoration: underline;
+    div - underline styles-computed-trace.html:9
+
+[expanded] 
+element.style  { ()
+
+
+==== Computed style for ID2 ====
+[expanded] 
+background-color: rgb(0, 0, 255);
+    #id2 - blue styles-computed-trace.html:27
+display: block;
+    div - block user agent stylesheet
+font-family: Courier;
+    #id2 - Courier styles-computed-trace.html:27
+    /-- overloaded --/ #id1 - Courier styles-computed-trace.html:18
+    /-- overloaded --/ #id1 - Times styles-computed-trace.html:13
+    /-- overloaded --/ body - Arial styles-computed-trace.html:4
+text-decoration: underline;
+    /-- overloaded --/ #id2 - invalidvalue styles-computed-trace.html:27
+    div - underline styles-computed-trace.html:9
+
+[expanded] 
+element.style  { ()
+
+
+==== Style for ID3 ====
+[expanded] 
+element.style  { ()
+
+======== Matched CSS Rules ========
+[expanded] 
+button[Attributes Style]  { ()
+display: none;
+
+
+

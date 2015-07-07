@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<table width="100%" border="0" cellspacing="2" cellpadding="1" summary="Test" id="table">
+  <caption>Test</caption>
+  <colgroup width="100%" span="2"><col width="50%"><col width="50%"></colgroup>
+  <tbody><tr><th>Cell 1</th><th id="cell2">Cell 2</th></tr></tbody>
+</table>
+  
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that if a table's initial section has fewer columns than the rest of the table, we'll still detect the total column count correctly");
+
+    if (window.accessibilityController) {
+        var table = accessibilityController.accessibleElementById("table");
+        shouldBe("table.columnCount", "2");
+        var cell = table.cellForColumnAndRow(1, 0);
+        var cellCompare = accessibilityController.accessibleElementById('cell2');
+        shouldBeTrue("cell.isEqual(accessibilityController.accessibleElementById('cell2'))");
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

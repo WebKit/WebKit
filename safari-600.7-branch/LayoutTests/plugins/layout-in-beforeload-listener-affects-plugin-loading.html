@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+        
+        window._beforeloadReceivedForEmbed = false;
+        
+        document.addEventListener("beforeload", function(event) {
+            if (document.getElementsByTagName("object")[0] == event.target) {
+                // trigger a layout
+                event.target.offsetWidth;
+                return;
+            }
+            
+            _beforeloadReceivedForEmbed = document.getElementsByTagName("embed")[0] == event.target;
+        }, true);
+        
+        function test() {
+            // The <embed> should load as a post-layout task that executes in
+            // the current run loop iteration. Queue a task to check if the
+            // <embed>'s beforeload event fired.
+            window.setTimeout(function() {
+                console.log(_beforeloadReceivedForEmbed ? "PASS" : "FAIL");
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
+        }
+    </script>
+</head>
+<body onload="test();">
+    <!-- Test that performing layout in a beforeload listener does not affect
+         plug-in loading. See http://webkit.org/b/77167 for details. This test
+         requires TestNetscapePlugIn so it must be run in DumpRenderTree. -->
+    <object>
+        <embed type="application/x-webkit-test-netscape">
+    </object>
+</body>
+</html>

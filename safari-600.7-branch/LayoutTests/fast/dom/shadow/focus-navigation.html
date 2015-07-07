@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="resources/shadow-dom.js"></script>
+</head>
+<body>
+<p>This tests that pressing Tab key should traverse into shadow DOM subtrees, and pressing Shift-Tab should reverse the order.</p>
+<pre id="console"></pre>
+<script>
+
+function prepareDOMTree(parent)
+{
+    parent.appendChild(
+        // FIXME: Use more descriptive ids for each elements.
+        createDOM('div', {'id': 'top-div'},
+                  createDOM('input', {'id': 'input-A-1', 'tabindex': 1}),
+                  createDOM('input', {'id': 'input-B-1', 'tabindex': 1}),
+                  createDOM('div'),  // Should not be selected.
+                  createDOM('input', {'id': 'input-A-0', 'tabindex': 0}),
+                  createDOM('div', {'id': 'host-A', 'tabindex': -1},
+                            createShadowRoot(
+                                createDOM('input', {'id': 'input-1', 'tabindex': 1}),
+                                createDOM('div', {'id': 'nested-host', 'tabindex': 30},
+                                          createShadowRoot(
+                                              createDOM('input', {'tabindex': -1}),
+                                              createDOM('input', {'id': 'input-15', 'tabindex': 15}),
+                                              createDOM('input', {'id': 'input-25', 'tabindex': 25}))),
+                                createDOM('input', {'id': 'input-20', 'tabindex': 20}))),
+                  createDOM('input', {'id': 'input-C-1', 'tabindex': 1}),
+                  createDOM('input', {'id': 'input-B-0', 'tabindex': 0}),
+                  createDOM('div', {'id': 'host-B', 'tabindex': 1},
+                            createShadowRoot(
+                                createDOM('input', {'id': 'older-input-A-0', 'tabindex': 0}),
+                                createDOM('input', {'id': 'older-input-A-1', 'tabindex': 1}),
+                                createDOM('content', {'select': '#light-child-selected-0, #light-child-selected-1'}),
+                                createDOM('input', {'id': 'older-input-B-0', 'tabindex': 0}),
+                                createDOM('input', {'id': 'older-input-B-1', 'tabindex': 1})),
+                            createShadowRoot(
+                                createDOM('input', {'id': 'younger-input-A-0', 'tabindex': 0}),
+                                createDOM('input', {'id': 'younger-input-A-1', 'tabindex': 1}),  // The first node in the focusScope
+                                createDOM('shadow'),
+                                createDOM('input', {'id': 'younger-input-B-0', 'tabindex': 0}),  // The last node in the focusScope
+                                createDOM('input', {'id': 'younger-input-B-1', 'tabindex': 1})),
+                            createDOM('input', {'id': 'light-child-selected-0', 'tabindex': 0}),
+                            createDOM('input', {'id': 'light-child-selected-1', 'tabindex': 1}),
+                            createDOM('input', {'id': 'light-child-non-selected-1', 'tabindex': 1})),
+                  createDOM('input', {'id': 'input-D-1', 'tabindex': 1}),
+                  createDOM('input', {'id': 'input-C-0', 'tabindex': 0}),
+                  createDOM('div', {'id': 'host-C', 'tabindex': -1},
+                            createShadowRoot(
+                                createDOM('input', {'tabindex': -1}))),
+                  createDOM('input', {'id': 'input-D-0', 'tabindex': 0}),
+                  createDOM('div', {},
+                            createDOM('div', {'id': 'host-D', 'tabindex': 0},
+                                      createShadowRoot())),
+                  createDOM('input', {'id': 'input-E-0', 'tabindex': 0})));
+    parent.offsetLeft;
+}
+
+function test() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    if (!window.eventSender) {
+        testFailed('');
+        return;
+    }
+
+    prepareDOMTree(document.body);
+
+    // FIXME: Output inserted comments in this array to expected.txt for readability of the result.
+    elementsNavigatedInForward = [
+        'input-A-1', 'input-B-1',
+        // Traverse elements which have tabindex=1.
+        // Should skip every elements, even though they have the same tabindex, in non-focusable shadow host (id=host-A) 
+        // since non-focusable shadow host acted as if they were assinged to tabindex=0 so it was skipped in this turn.
+        'input-C-1',
+
+        // Traverse a focusable shadow host.
+        'host-B',
+
+        // Enter a focus scope of the shadow host and travese the first focusable node in shadow DOM navigation.
+        'host-B//younger-input-A-1',
+
+        // A <shadow> element should be resolved.
+        'host-B/older-input-A-1',
+
+        // A <content> element should be resolved.
+        'light-child-selected-1',
+        'host-B/older-input-B-1',
+        'host-B//younger-input-B-1',
+
+        // All elements with tabindex=1 had been traversed. So elements with tabindex=0 shooud follow.
+        'host-B//younger-input-A-0',
+        'host-B/older-input-A-0',
+        'light-child-selected-0',
+        'host-B/older-input-B-0',
+        'host-B//younger-input-B-0',
+
+        // Exit a focus scope of the shadow host (id=host-B) and traverse the next.
+        'input-D-1',
+
+        // All elements with tabindex=1 had been traversed in the outermost scope.
+        // So traverse elements with tabindex=0 in next.
+        'input-A-0',
+
+        // A non-focusable shadow host (id=host-A) will be "replaced" with its shadow DOM navigation.
+        'host-A/input-1',
+        'host-A/input-20',
+        'host-A/nested-host',
+
+        // Enter a nested focus scope inside of a shadow host (id=nested-host).
+        'host-A/nested-host/input-15',
+        'host-A/nested-host/input-25',
+
+        // Exit a nested shadow host.
+        'input-B-0',
+        'input-C-0',
+
+        // A non-focusable shadow host (id=host-C), which does not have focusable elements, should be skipped entirely.
+        'input-D-0',
+        'host-D',
+        'input-E-0',
+
+        // Wraps to the first element in the outermost focus scope.
+        'input-A-1',
+    ];
+
+
+    elementsNavigatedInBackward = [
+        'input-A-1',
+        'input-E-0',
+        'host-D',
+        'input-D-0',
+        'input-C-0',
+        'input-B-0',
+
+        // Tricky navigation. Travarse the deeply last element in nested shadow DOM navigation.
+        'host-A/nested-host/input-25',
+        'host-A/nested-host/input-15',
+        'host-A/nested-host',
+        'host-A/input-20',
+        'host-A/input-1',
+
+        // Exit a shado host.
+        'input-A-0',
+
+        // All elements with tabindex=0 had been traversed. So traverse elements with tabindex=1 in reverse order.
+        'input-D-1',
+
+        // Yet another tricky navigation. Should traverse the last element in the shadow DOM navigation.
+        'host-B//younger-input-B-0',
+        'host-B/older-input-B-0',
+        'light-child-selected-0',
+        'host-B/older-input-A-0',
+        'host-B//younger-input-A-0',
+
+        'host-B//younger-input-B-1',
+        'host-B/older-input-B-1',
+        'light-child-selected-1',
+        'host-B/older-input-A-1',
+        'host-B//younger-input-A-1',
+
+        // A shadow host should be selected just after the first element in its shadow DOM navigation.
+        // Note that a 'focus' event is not called here since a focus moves within the same shadow host.
+        'host-B',
+        'input-C-1',
+        'input-B-1',
+        'input-A-1',
+
+        // Wraps to the last element in the outermost focus scope.
+        'input-E-0',
+    ];
+
+    testFocusNavigationFowrad(elementsNavigatedInForward);
+    testFocusNavigationBackward(elementsNavigatedInBackward);
+
+    debug('Test finished.');
+}
+
+test();
+
+</script>
+</body>
+</html>

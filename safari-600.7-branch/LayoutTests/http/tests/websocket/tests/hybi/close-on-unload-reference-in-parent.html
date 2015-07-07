@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../../js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script type="text/javascript">
+description("Test if Web Socket opened in iframe but referred in parent document is closed on unloading the frame.");
+
+window.jsTestIsAsync = true;
+
+var frameDiv;
+var closedSocket;
+document.childWebSocket = null;
+
+var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/close-on-unload");
+ws.onopen = function()
+{
+    debug("PASS ws on master document is ready.");
+    frameDiv = document.createElement("iframe");
+    frameDiv.src = "resources/close-on-unload-iframe-reference-in-parent.html";
+    document.body.appendChild(frameDiv);
+    debug("PASS insert a iframe, where open ws called 'socket1'");
+};
+ws.onmessage = function(evt)
+{
+    closedSocket = evt.data;
+    ws.close();
+};
+ws.onclose = function()
+{
+    shouldBe("closedSocket", '"socket1"');
+    shouldBe("document.childWebSocket.readyState", "3");
+    finishJSTest();
+};
+
+document.iframeReady = function()
+{
+    shouldBeNonNull("document.childWebSocket");
+    debug("PASS 'socket1' is sent to the server. unload the iframe. expect receiving 'socket1' on ws...");
+    document.body.removeChild(frameDiv);
+};
+
+</script>
+<script src="../../../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>

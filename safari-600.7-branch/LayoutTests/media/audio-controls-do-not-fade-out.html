@@ -1,0 +1,24 @@
+<body>
+<p>
+    This tests that audio controls do not fade out when the audio is playing.
+</p>
+<p id="result">
+    FAIL: Test did not run.
+</p>
+<audio id="audio" controls autoplay onplaying="playing()" src="content/silence.wav"></audio><br>
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+
+    function playing() {
+        setTimeout(function() {
+            var controls = internals.shadowRoot(document.getElementById("audio")).firstChild.firstChild;
+            var opacity = getComputedStyle(controls).opacity;
+            document.getElementById("result").innerText = opacity < 1 ? "FAIL" : "PASS";
+            testRunner.notifyDone();
+        }, 250)
+    }
+</script>
+</body>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+
+function pass()
+{
+    var el = document.querySelector('pre');
+    el.textContent = 'PASS';
+}
+
+function fail()
+{
+    var el = document.querySelector('pre');
+    el.textContent = 'FAIL';
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.overridePreference('WebKitTabToLinksPreferenceKey', false);
+}
+
+window.onload = function()
+{
+    if (!window.testRunner)
+        return;
+
+    for (var i = 0; i < 1; i++) {
+        eventSender.keyDown('\t');
+    }
+};
+
+</script>
+</head>
+<body>
+
+<p>This test ensures that we can tab to an a element with a tab index. Press tab
+to focus the element below.
+
+<p><a tabindex=0 onfocus="fail()" href="#">Not focusable (given the WebKitTabToLinks pref is set to false)</a>
+<p><a tabindex=0 onfocus="pass()">Focusable</a>
+
+<p>Result
+
+<pre>FAIL</pre>
+
+</body>
+</html>

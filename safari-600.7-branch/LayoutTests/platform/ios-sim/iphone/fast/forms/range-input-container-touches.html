@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../../../../../fast/js/resources/js-test-style.css">
+<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../../fast/js/resources/js-test-post-function.js"></script>
+<!--
+  Touch tests that involve the ontouchstart, ontouchmove, ontouchend or ontouchcancel callbacks
+  should be written in an asynchronous fashion so they can be run on mobile platforms like Android.
+  This template will generate an asynchronous style test by using the js-test-post-function script.
+  You will need to invoke isSuccessfullyParsed() in your test script when the test completes.
+-->
+<style>
+input[type="range"] {
+  -webkit-appearance: none;
+  height: 100px;
+  width: 500px;
+  background: black;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  background: blue;
+  width: 100px;
+  height: 100px;
+}
+</style>
+</head>
+<body>
+<div id="container"><input id="slider" type="range"></div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+var sliderThumbMoved = false;
+
+var container = document.getElementById("container");
+container.addEventListener("touchstart", function(event) {
+    testPassed("#container touchstart");
+}, false);
+container.addEventListener("touchend", function(event) {
+    testPassed("#container touchend");
+    endTest();
+}, false);
+
+var slider = document.getElementById("slider");
+slider.addEventListener("input", function(event) {
+    sliderThumbMoved = true;
+    testFailed("Slider Thumb should not have moved.");
+}, false);
+
+function endTest() {
+    if (window.testRunner) {
+        // We need to call the isSucccessfullyParsed function to output the correct TEST COMPLETE footer message.
+        shouldBeFalse("sliderThumbMoved");
+        successfullyParsed = true;
+        isSuccessfullyParsed();
+        testRunner.notifyDone();
+    }
+}
+
+
+const aGoodY = 70;
+const FIRST_FINGER = 1;
+
+function sendTouchSequence()
+{
+    // iOS <input type="range"> uses identifier 0 as the "NoIdentifier".
+    // So swallow touch point 0 and ignore it from now on. Currently
+    // a 0 identifier cannot happen on iOS.
+    eventSender.addTouchPoint(0, 0);
+
+    debug("First finger down on the slider's track.");
+    eventSender.addTouchPoint(100, aGoodY);
+    eventSender.touchStart();
+
+    debug("Move that finger around. It should not do anything.");
+    eventSender.updateTouchPoint(FIRST_FINGER, 50, aGoodY - 10); // Left a bit.
+    eventSender.touchMove();
+    eventSender.updateTouchPoint(FIRST_FINGER, 270, aGoodY); // On the thumb.
+    eventSender.touchMove();
+    eventSender.updateTouchPoint(FIRST_FINGER, 400, aGoodY); // Right a bit
+    eventSender.touchMove();
+
+    debug("Release the first finger.");
+    eventSender.releaseTouchPoint(FIRST_FINGER);
+    eventSender.touchEnd(); // The test will end with this release.
+}
+
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+if (window.eventSender) {
+    description("This tests touch events not on the slider thumb but on the slider are ignored by the thumb.");
+    sendTouchSequence();
+} else {
+    debug("This test requires DumpRenderTree to send touch events.")
+}
+</script>
+</body>
+</html>

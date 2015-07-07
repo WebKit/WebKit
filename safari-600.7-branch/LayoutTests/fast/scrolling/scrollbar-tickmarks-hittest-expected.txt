@@ -1,0 +1,10 @@
+Checks that clicking on scrollbar works when tickmarks are added.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS did scroll
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

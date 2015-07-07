@@ -1,0 +1,10 @@
+Test behavior of Document.replaceChild() when oldChild is null.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.replaceChild(document.firstChild, null) threw exception Error: NotFoundError: DOM Exception 8.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

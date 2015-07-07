@@ -1,0 +1,21 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion number conversion to byte
+
+PASS dt.setByte( 0 ); dt.PUB_BYTE is 0
+PASS dt.setByte( 0 ); dt.getByte() is 0
+PASS typeof dt.getByte() is "number"
+PASS dt.setByte( -0 ); Infinity / dt.PUB_BYTE is Infinity
+PASS dt.setByte( -0 ); Infinity / dt.getByte() is Infinity
+PASS typeof dt.getByte() is "number"
+FAIL java.lang.Byte.MAX_VALUE: ReferenceError: Can't find variable: java
+FAIL java.lang.Byte.MIN_VALUE: ReferenceError: Can't find variable: java
+FAIL -java.lang.Byte.MAX_VALUE: ReferenceError: Can't find variable: java
+PASS dt.setByte(1e-2000); dt.PUB_BYTE is 0
+PASS dt.setByte(1e-2000); dt.getByte() is 0
+PASS typeof dt.getByte() is "number"
+PASS dt.setByte(-1e-2000); dt.PUB_BYTE is 0
+PASS dt.setByte(-1e-2000); dt.getByte() is 0
+PASS typeof dt.getByte() is "number"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

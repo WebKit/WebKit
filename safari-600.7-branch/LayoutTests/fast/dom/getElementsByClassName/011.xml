@@ -1,0 +1,19 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:g="http://www.w3.org/2000/svg" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:t="http://tc.labs.opera.com/#test">
+ <head>
+  <title>document.getElementsByClassName(): "tricky" compound</title>
+  <script src="resources/common.js"></script>
+ </head>
+ <body>
+  <p id="r">FAIL (script did not run)</p>  
+  <x class="a"/>
+  <g:x class="a"/>
+  <x t:class="a" h:class="a" g:class="a"/>
+  <g:x t:class="a" h:class="a" g:class="a"/>
+  <t:x class="a" t:class="a" h:class="a" g:class="a"/>
+  <script>
+   var collection = document.getElementsByClassName("a"),
+       test = document.getElementsByTagName("x")
+   t(collection, [test[0], test[1]])
+  </script>
+ </body>
+</html>

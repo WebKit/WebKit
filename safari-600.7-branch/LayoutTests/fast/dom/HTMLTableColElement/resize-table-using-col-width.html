@@ -1,0 +1,46 @@
+<html>
+<head>
+
+    <script type="text/javascript">
+    
+    function changeColWidthUsingWidth()
+    {
+        var column = document.getElementById("col");
+        column.width = "500px";
+    }
+    
+    </script>
+</head>
+<body>
+    
+   <table border="1">
+        <colgroup span="3">
+            <col id="col" />
+            <col />
+            <col />
+        </colgroup>
+        <tbody>
+        <tr>
+            <td id="cell">col 1 row 1</td>
+            <td>col 2 row 1</td>
+            <td>col 3 row 1</td>    
+        </tr>
+        <tr>
+            <td>col 1 row 2</td>
+            <td>col 2 row 2</td>
+            <td>col 3 row 3</td>
+        </tr>
+        </tbody>
+    </table>
+    <button onclick="changeColWidthUsingWidth();">Click me to test manually. The first column should grow to 500px.</button>
+    
+    <script>
+        if (window.eventSender) {
+            eventSender.mouseMoveTo(50, 75);
+            eventSender.mouseDown();
+            eventSender.mouseUp();
+        }
+    </script>
+
+</body>
+</html>

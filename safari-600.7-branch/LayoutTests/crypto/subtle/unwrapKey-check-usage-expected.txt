@@ -1,0 +1,15 @@
+CONSOLE MESSAGE: Key usages do not include 'unwrapKey'
+Verify that usage is respected in unwrapKey operation.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Importing RSA keys...
+Importing an AES key...
+Wrapping it...
+Unwrapping it...
+PASS crypto.subtle.unwrapKey("raw", wrappedKey, privateKey, wrapAlgorithm, "aes-cbc", extractable, ["encrypt", "decrypt"]) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

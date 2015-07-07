@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<style>
+body {
+    margin: 0;
+}
+.flexbox {
+    width: 600px;
+    display: -webkit-flex;
+    background-color: grey;
+}
+.flexbox div {
+    height: 20px;
+    border: 0;
+}
+
+.rtl {
+    direction: rtl;
+}
+
+.bt {
+    -webkit-writing-mode: horizontal-bt;
+}
+
+.vertical-rl, .vertical-lr {
+    height: 600px;
+}
+
+:-webkit-any(.vertical-rl, .vertical-lr) div {
+    width: 20px;
+}
+
+.vertical-rl {
+    -webkit-writing-mode: vertical-rl;
+}
+
+.vertical-lr {
+    -webkit-writing-mode: vertical-lr;
+}
+
+.flexbox > :nth-child(1) {
+    background-color: blue;
+}
+.flexbox > :nth-child(2) {
+    background-color: green;
+}
+.flexbox > :nth-child(3) {
+    background-color: red;
+}
+</style>
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.flexbox')">
+
+<div class="flexbox rtl">
+  <div data-expected-width="75" data-offset-x="525" style="-webkit-flex: 1 0 0; margin: 0 auto;"></div>
+  <div data-expected-width="350" data-offset-x="175" style="-webkit-flex: 2 0 0; padding: 0 100px;"></div>
+  <div data-expected-width="75" data-offset-x="100" style="-webkit-flex: 1 0 0; margin-left: 100px;"></div>
+</div>
+
+<div class="flexbox rtl">
+  <div data-expected-width="75" data-offset-x="525" style="-webkit-flex: 1 0 0; margin: 0 auto;"></div>
+  <div data-expected-width="350" data-offset-x="175" style="-webkit-flex: 2 0 0; padding: 0 100px;"></div>
+  <div data-expected-width="75" data-offset-x="0" style="-webkit-flex: 1 0 0; -webkit-margin-start: 100px;"></div>
+</div>
+
+<div class="flexbox rtl" style="-webkit-margin-start: 20px;-webkit-margin-end: 50px;">
+  <div data-expected-width="75" data-offset-x="575" style="-webkit-flex: 1 0 0; margin: 0 auto;"></div>
+  <div data-expected-width="350" data-offset-x="225" style="-webkit-flex: 2 0 0; padding: 0 100px;"></div>
+  <div data-expected-width="75" data-offset-x="50" style="-webkit-flex: 1 0 0; -webkit-margin-start: 100px;"></div>
+</div>
+
+<div style="position:relative">
+<div class="flexbox vertical-lr">
+  <div data-expected-height="150" data-offset-y="0" style="-webkit-flex: 1 0 0;"></div>
+  <div data-expected-height="300" data-offset-y="150" style="-webkit-flex: 2 0 0;"></div>
+  <div data-expected-height="150" data-offset-y="450" style="-webkit-flex: 1 0 0;"></div>
+</div>
+</div>
+
+<div style="position:relative">
+<div class="flexbox vertical-lr">
+  <div data-expected-height="150" data-offset-y="0" data-offset-x="50" style="-webkit-flex: 1 0 0; margin: 0 100px 0 50px;"></div>
+  <div data-expected-height="300" data-offset-y="150" style="-webkit-flex: 2 0 0;"></div>
+  <div data-expected-height="150" data-offset-y="450" style="-webkit-flex: 1 0 0;"></div>
+</div>
+</div>
+
+<div style="position:relative">
+<div class="flexbox vertical-lr">
+  <div data-expected-height="150" data-offset-y="0" style="-webkit-flex: 1 0 0;"></div>
+  <div data-expected-height="300" data-offset-y="150" class="bt" style="-webkit-flex: 2 0 0;"></div>
+  <div data-expected-height="150" data-offset-y="450" style="-webkit-flex: 1 0 0;"></div>
+</div>
+</div>
+
+<div style="position:relative">
+<div class="flexbox vertical-lr">
+  <div data-expected-height="450" data-offset-y="0" style="-webkit-flex: 1 0 0;-webkit-padding-start:200px;-webkit-padding-end:200px;-webkit-padding-before:100px;-webkit-padding-after:100px;"></div>
+  <div data-expected-height="100" data-offset-y="450" style="-webkit-flex: 2 0 0;"></div>
+  <div data-expected-height="50" data-offset-y="550" style="-webkit-flex: 1 0 0;"></div>
+</div>
+</div>
+
+<div style="position:relative">
+<div class="flexbox vertical-lr">
+  <div data-expected-height="300" data-offset-y="0" class="bt" style="-webkit-flex: 1 0 0;-webkit-padding-start:200px;-webkit-padding-end:200px;-webkit-padding-before:100px;-webkit-padding-after:100px;"></div>
+  <div data-expected-height="200" data-offset-y="300" style="-webkit-flex: 2 0 0;"></div>
+  <div data-expected-height="100" data-offset-y="500" style="-webkit-flex: 1 0 0;"></div>
+</div>
+</div>
+
+
+<div style="position:relative">
+<div class="flexbox vertical-lr">
+  <div data-expected-height="150" data-offset-y="0" style="-webkit-flex: 1 0 0; margin: auto 0;"></div>
+  <div data-expected-height="300" data-offset-y="150" style="-webkit-flex: 2 0 0;"></div>
+  <div data-expected-height="150" data-offset-y="450" style="-webkit-flex: 1 0 0;"></div>
+</div>
+</div>
+
+<div style="position:relative">
+<div class="flexbox vertical-lr">
+  <div data-expected-height="75" data-offset-y="0" style="-webkit-flex: 1 0 0;margin: auto 0;"></div>
+  <div data-expected-height="450" data-offset-y="75" style="-webkit-flex: 2 0 auto; height: auto;"><div data-offset-y="75" style="width:200px;height:300px;background-color:orange;"></div></div>
+  <div data-expected-height="75" data-offset-y="525" style="-webkit-flex: 1 0 0;"></div>
+</div>
+</div>
+
+<div style="position:relative">
+<div class="flexbox vertical-lr">
+  <div data-expected-height="75" data-offset-y="0" style="-webkit-flex: 1 0 0;margin: auto 0;"></div>
+  <div data-expected-height="450" data-offset-y="75" class="bt" style="-webkit-flex: 2 0 auto; height: auto;"><div style="width:200px;height:300px;background-color:orange;"></div></div>
+  <div data-expected-height="75" data-offset-y="525" style="-webkit-flex: 1 0 0;"></div>
+</div>
+</div>
+
+<div style="position:relative">
+<div class="flexbox vertical-lr">
+  <div data-expected-height="150" data-offset-y="0" style="-webkit-flex: 1 0 0;-webkit-margin-start:auto;-webkit-margin-end:auto;-webkit-margin-before:0;-webkit-margin-after:0;;"></div>
+  <div data-expected-height="300" data-offset-y="150" style="-webkit-flex: 2 0 0;"></div>
+  <div data-expected-height="150" data-offset-y="450" style="-webkit-flex: 1 0 0;"></div>
+</div>
+</div>
+
+<div style="position:relative">
+<div class="flexbox vertical-lr">
+  <div data-expected-height="150" data-offset-y="0" class="bt" style="-webkit-flex: 1 0 0;-webkit-margin-start:auto;-webkit-margin-end:auto;-webkit-margin-before:0;-webkit-margin-after:0;;"></div>
+  <div data-expected-height="300" data-offset-y="150" style="-webkit-flex: 2 0 0;"></div>
+  <div data-expected-height="150" data-offset-y="450" style="-webkit-flex: 1 0 0;"></div>
+</div>
+</div>
+
+<div style="position:relative">
+<div class="flexbox vertical-lr rtl">
+  <div data-expected-height="75" data-offset-y="525" style="-webkit-flex: 1 0 0; margin: auto 0;"></div>
+  <div data-expected-height="350" data-offset-y="175" class="bt" style="-webkit-flex: 2 0 0; padding: 100px 0;"></div>
+  <div data-expected-height="75" data-offset-y="0" style="-webkit-flex: 1 0 0; -webkit-margin-start: 100px;"></div>
+</div>
+</div>
+
+<div class="flexbox vertical-lr">
+  <div data-expected-height="350" style="-webkit-flex: 1 1 400px; min-height: 350px;"></div>
+  <div data-expected-height="250" style="-webkit-flex: 1 1 400px;"></div>
+</div>
+
+<div style="position:relative">
+<div class="flexbox vertical-rl">
+  <div data-expected-height="150" data-offset-y="0" data-offset-x="580" style="-webkit-flex: 1 0 0;"></div>
+  <div data-expected-height="300" data-offset-y="150" data-offset-x="580" style="-webkit-flex: 2 0 0;"></div>
+  <div data-expected-height="150" data-offset-y="450" data-offset-x="580" style="-webkit-flex: 1 0 0;"></div>
+</div>
+</div>
+
+<div style="position:relative">
+<div class="flexbox vertical-rl">
+  <div data-expected-height="150" data-offset-y="0" data-offset-x="480" style="-webkit-flex: 1 0 0; margin: 0 100px 0 50px;"></div>
+  <div data-expected-height="300" data-offset-y="150" data-offset-x="580" style="-webkit-flex: 2 0 0;"></div>
+  <div data-expected-height="150" data-offset-y="450" data-offset-x="580" style="-webkit-flex: 1 0 0;"></div>
+</div>
+</div>
+
+<div style="position:relative">
+<div class="flexbox bt" style="height:200px">
+  <div data-expected-width="150" data-offset-y="180" data-offset-x="0" style="-webkit-flex: 1 0 0;"></div>
+  <div data-expected-width="300" data-offset-y="180" data-offset-x="150" style="-webkit-flex: 2 0 0;"></div>
+  <div data-expected-width="150" data-offset-y="180" data-offset-x="450" style="-webkit-flex: 1 0 0;"></div>
+</div>
+</div>
+
+<div style="position:relative">
+<div class="flexbox bt" style="height:200px">
+  <div data-expected-width="150" data-offset-y="130" data-offset-x="0" style="-webkit-flex: 1 0 0; margin: 100px 0 50px 0;"></div>
+  <div data-expected-width="300" data-offset-y="180" data-offset-x="150" style="-webkit-flex: 2 0 0;"></div>
+  <div data-expected-width="150" data-offset-y="180" data-offset-x="450" style="-webkit-flex: 1 0 0;"></div>
+</div>
+</div>
+
+<div style="position: relative;">
+    <div data-expected-width="600" style="direction: rtl; display: -webkit-flex; margin-left: 10px; margin-right:20px;" class="flexbox">
+      <div data-expected-width="75" data-offset-x="535" style="-webkit-flex: 1 0 0; margin: 0 auto;"></div>
+      <div data-expected-width="350" data-offset-x="185" style="-webkit-flex: 2 0 0; padding: 0 100px;"></div>
+      <div data-expected-width="75" data-offset-x="10" style="-webkit-flex: 1 0 0;margin-right: 100px;"></div>
+    </div>
+</div>
+
+<div style="position: relative;">
+    <div data-expected-width="700" style="direction: rtl; display: -webkit-flex; padding-left: 10px; padding-right: 20px; border-style: solid; border-left: 30px solid; border-right: 40px solid;" class="flexbox ">
+      <div data-expected-width="75" data-offset-x="565" style="-webkit-flex: 1 0 0; margin: 0 auto;"></div>
+      <div data-expected-width="350" data-offset-x="215" style="-webkit-flex: 2 0 0; padding: 0 100px;"></div>
+      <div data-expected-width="75" data-offset-x="40" style="-webkit-flex: 1 0 0;margin-right: 100px;"></div>
+    </div>
+</div>
+
+</body>
+</html>

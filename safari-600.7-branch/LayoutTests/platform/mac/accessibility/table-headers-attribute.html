@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<table border="1" cellpadding="5" cellspacing="2" id="table">
+  <tbody>
+  <tr>
+    <th id="header1" scope="col" abbr="Name">Course Name</th>
+    <th id="header2" scope="col" abbr="Tutor">Course Tutor</th>
+    <th id="header3" scope="col">Summary</th>
+    <th id="header4" scope="col">Code</th>
+    <th id="header5" scope="col" colspan="2">Fee</th>
+  </tr>
+  <tr>
+    <td id="cell1" headers="header1 header3 header5">After the Civil War</td>
+    <td id="cell2" headers="header4 header3 header6">Dr. John Wroughton</td>
+    <td>October</td>
+    <td>H27</td>
+    <td>£32</td>
+    <td>£32</td>
+  </tr>
+</tbody></table>
+
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the headers attribute returns the correct headers for a table cell.");
+
+    if (window.accessibilityController) {
+
+        var table = accessibilityController.accessibleElementById("table");
+
+        // The first cell references header1 header3 header5.
+        var cell1 = table.cellForColumnAndRow(0, 1);
+        var colHeaders = cell1.columnHeaders();
+        shouldBe("colHeaders.length", "3");
+        shouldBeTrue("colHeaders[0].isEqual(table.cellForColumnAndRow(0, 0))");
+        shouldBeTrue("colHeaders[1].isEqual(table.cellForColumnAndRow(2, 0))");
+        shouldBeTrue("colHeaders[2].isEqual(table.cellForColumnAndRow(4, 0))");
+
+        // The second cell references header4 header3 and a non-existent header6.
+        var cell2 = table.cellForColumnAndRow(1, 1);
+        var colHeaders = cell2.columnHeaders();
+        shouldBe("colHeaders.length", "2");
+        shouldBeTrue("colHeaders[0].isEqual(table.cellForColumnAndRow(3, 0))");
+        shouldBeTrue("colHeaders[1].isEqual(table.cellForColumnAndRow(2, 0))");
+    }
+
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

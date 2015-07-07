@@ -1,0 +1,51 @@
+-webkit-linear-gradient
+
+
+PASS testGradient("background-image: -webkit-linear-gradient(black 0%", "background-image") is "none"
+PASS testGradient("background-image: -webkit-linear-gradient(top)", "background-image") is "none"
+PASS testGradient("background-image: -webkit-linear-gradient(10deg)", "background-image") is "none"
+PASS testGradient("background-image: -webkit-linear-gradient(top center, black 0%)", "background-image") is "none"
+PASS testGradient("background-image: -webkit-linear-gradient(10px 20%, black 0%)", "background-image") is "none"
+PASS testGradient("background-image: -webkit-linear-gradient(left left)", "background-image") is "none"
+PASS testGradient("background-image: -webkit-linear-gradient(left center)", "background-image") is "none"
+PASS testGradient("background-image: -webkit-linear-gradient(left 10deg, black 0%)", "background-image") is "none"
+PASS testGradient("background-image: -webkit-linear-gradient(black)", "background-image") is "none"
+PASS testGradient("background-image: -webkit-linear-gradient(black, white)", "background-image") is "-webkit-linear-gradient(top, black, white)"
+PASS testGradient("background-image: -webkit-linear-gradient(black 0, white)", "background-image") is "-webkit-linear-gradient(top, black 0px, white)"
+PASS testGradient("background-image: -webkit-linear-gradient(black 0%, white)", "background-image") is "-webkit-linear-gradient(top, black 0%, white)"
+PASS testGradient("background-image: -webkit-linear-gradient(black 0%, white)", "background-image") is "-webkit-linear-gradient(top, black 0%, white)"
+PASS testGradient("background-image: -webkit-linear-gradient(black, white)", "background-image") is "-webkit-linear-gradient(top, black, white)"
+PASS testGradient("background-image: -webkit-linear-gradient(black 10px, white 20px)", "background-image") is "-webkit-linear-gradient(top, black 10px, white 20px)"
+PASS testGradient("background-image: -webkit-linear-gradient(top left, black 0%, white)", "background-image") is "-webkit-linear-gradient(left top, black 0%, white)"
+PASS testGradient("background-image: -webkit-linear-gradient(top, black 0%, white)", "background-image") is "-webkit-linear-gradient(top, black 0%, white)"
+PASS testGradient("background-image: -webkit-linear-gradient(10deg, black 0%, white)", "background-image") is "-webkit-linear-gradient(10deg, black 0%, white)"
+-webkit-repeating-linear-gradient
+
+
+PASS testGradient("background-image: -webkit-repeating-linear-gradient(black, white)", "background-image") is "-webkit-repeating-linear-gradient(top, black, white)"
+-webkit-radial-gradient
+
+
+PASS testGradient("background-image: -webkit-radial-gradient(white, black)", "background-image") is "-webkit-radial-gradient(center, white, black)"
+PASS testGradient("background-image: -webkit-radial-gradient(bottom right, white, black)", "background-image") is "-webkit-radial-gradient(100% 100%, white, black)"
+PASS testGradient("background-image: -webkit-radial-gradient(cover, white, black)", "background-image") is "-webkit-radial-gradient(center, ellipse cover, white, black)"
+PASS testGradient("background-image: -webkit-radial-gradient(circle, white, black)", "background-image") is "-webkit-radial-gradient(center, circle cover, white, black)"
+PASS testGradient("background-image: -webkit-radial-gradient(circle contain, white, black)", "background-image") is "-webkit-radial-gradient(center, circle contain, white, black)"
+PASS testGradient("background-image: -webkit-radial-gradient(top, circle contain, white, black)", "background-image") is "-webkit-radial-gradient(50% 0%, circle contain, white, black)"
+PASS testGradient("background-image: -webkit-radial-gradient(top left, circle contain, white, black)", "background-image") is "-webkit-radial-gradient(0% 0%, circle contain, white, black)"
+PASS testGradient("background-image: -webkit-radial-gradient(10px 20%, circle contain, white, black)", "background-image") is "-webkit-radial-gradient(10px 20%, circle contain, white, black)"
+PASS testGradient("background-image: -webkit-radial-gradient(10px, 20%, circle contain, white, black)", "background-image") is "none"
+PASS testGradient("background-image: -webkit-radial-gradient(circle 10px 20%, circle contain, white, black)", "background-image") is "none"
+PASS testGradient("background-image: -webkit-radial-gradient(circle 10px, circle contain, white, black)", "background-image") is "none"
+PASS testGradient("background-image: -webkit-radial-gradient(center, 10px, white, black)", "background-image") is "none"
+PASS testGradient("background-image: -webkit-radial-gradient(center, 10px 10px, white, black)", "background-image") is "-webkit-radial-gradient(50% 50%, 10px 10px, white, black)"
+PASS testGradient("background-image: -webkit-radial-gradient(ellipse farthest-corner, white, black)", "background-image") is "-webkit-radial-gradient(center, ellipse farthest-corner, white, black)"
+PASS testGradient("background-image: -webkit-radial-gradient(circle closest-side, white, black)", "background-image") is "-webkit-radial-gradient(center, circle closest-side, white, black)"
+-webkit-repeating-radial-gradient
+
+
+PASS testGradient("background-image: -webkit-repeating-radial-gradient(white, black)", "background-image") is "-webkit-repeating-radial-gradient(center, white, black)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

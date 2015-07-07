@@ -1,0 +1,42 @@
+<?php
+    $title = "CSS (Cascading Style Sheets)";
+    include("../../header.inc");
+?>
+<h2>CSS (Cascading Style Sheets)</h2>
+
+<h3>Overview</h3>
+<p>This is the project page for WebKit's Cascading Style Sheets (CSS) implementation.  CSS is a <a href="http://www.w3.org/Style/CSS/">W3C specification</a>, and
+WebKit has implemented virtually all of CSS1, most of CSS2.1 and even some CSS3.  At this time we are focusing our efforts on completing CSS1 and CSS2.1 support.
+Some features of CSS3 are far enough along (like selectors) that they can be implemented safely as well.</p>
+
+<h3>Get Involved!</h3>
+
+<a href="https://bugs.webkit.org/buglist.cgi?product=WebKit&amp;component=CSS&amp;resolution=---">
+View bugs in the CSS component in Bugzilla.
+</a>
+
+<p>Here are some of the tasks that you can get involved with in CSS.</p>
+
+<dl>
+<dt>Complete CSS1 Support</dt>
+<dd>Only a handful of CSS1 bugs remain, primarily with text-transform capitalize.  Look for bugs that have been prefaced with "CSS1:" in the title.
+Complete support is measured by passing the CSS1 test suite.
+
+<dt>Finish CSS2.1 Support</dt>
+<dd>Most of CSS2.1 has been implemented in WebKit, but a few holes remain.  The new white-space values <code>pre-wrap</code> and <code>pre-line</code> are not yet
+supported.  Some of these features have been implemented in the current KHTML tree, and a merge may be possible for
+some of these features.
+
+<dt>Finish CSS3 Selectors</dt>
+<dd>Many of the CSS3 selectors are already supported by WebKit, but a few remain.  Help complete support and test against the CSS selectors test suite to verify
+compliance.
+
+<dt>CSS2.1 Test Suite</dt>
+<dd>Check out the <a href="http://www.w3.org/Style/CSS/Test/CSS2.1/current/">CSS2.1 test suite</a>
+ and file compliance bugs so that we can track open issues with our CSS2.1 compliance.
+
+</dl>
+
+<?php
+    include("../../footer.inc");
+?>

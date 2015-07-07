@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (0,8) size 800x584 [bgcolor=#C0C0C0]
+      RenderTable {TABLE} at (0,0) size 800x30 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 798x28
+          RenderTableRow {TR} at (0,2) size 798x24
+            RenderTableCell {TD} at (2,2) size 794x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 24x19
+                text run at (2,2) width 24: "text"

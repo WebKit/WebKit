@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<map name="navMap">
+<area shape=rect coords="0,0,100,100" href onclick="document.getElementById('res1').innerHTML = 'success';return false;"> 
+</map>
+<img border=2 width=100 height=100 usemap=#navmap ismap>
+
+<br>
+
+<map name="navmap2">
+<area shape=rect coords="0,0,100,100" href onclick="document.getElementById('res2').innerHTML = 'success';return false;"> 
+</map>
+<img border=2 width=100 height=100 usemap=#navMap2 ismap>
+
+<div id=res1></div>
+<div id=res2></div>
+
+<script>
+    if (window.eventSender) {
+        eventSender.mouseMoveTo(50, 50);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+        eventSender.mouseMoveTo(50, 150);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }    
+</script>

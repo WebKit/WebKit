@@ -1,0 +1,14 @@
+<script>
+if (window.testRunner) {
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    testRunner.dumpAsText();
+    testRunner.queueLoadHTMLString("<script>document.write('<div id=result>FAIL: The alternate HTML string was cached, but should not have been cached for an error page</div>');<\/script>", "resources", "http://127.0.0.1:8000/navigation/resources/page-treated-as-unreachable.html");
+    testRunner.queueLoad("resources/page-to-go-back-from.html");
+    testRunner.queueBackNavigation(1);
+} else
+    document.write('This test must be run by DumpRenderTree!')
+</script>
+
+<p>This tests that going back to an error page (an unreachable URL for which there is substitute
+data) does not cause an assertion failure.</p>
+

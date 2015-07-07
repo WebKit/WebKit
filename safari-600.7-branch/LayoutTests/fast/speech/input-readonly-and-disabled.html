@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+description('Tests for speech button click with readonly and disabled input fields.');
+
+function onWebkitSpeechChange() {
+    testFailed('Received unexpected onwebkitspeechchange callback.');
+    finishJSTest();
+}
+
+function testField(index) {
+    // Clicking the speech button should fill in mock speech-recognized text.
+    var allInputFields = document.getElementsByTagName('input');
+    var input = allInputFields[index];
+    var x = input.offsetLeft + input.offsetWidth - 4;
+    var y = input.offsetTop + input.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    setTimeout(function() {
+        if (index < allInputFields.length - 1) {
+            testField(index +1);
+        } else {
+            finishJSTest();
+        }
+    }, 50);
+}
+
+function run() {
+    if (window.testRunner && window.eventSender) {
+        testRunner.addMockSpeechInputResult('Test', 1.0, '');
+        testField(0);
+    }
+}
+
+window.onload = run;
+window.jsTestIsAsync = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+<input id='readonlyInput' x-webkit-speech onwebkitspeechchange="onWebkitSpeechChange()" readonly>
+<input id='disabledInput' x-webkit-speech onwebkitspeechchange="onWebkitSpeechChange()" disabled>
+</body>
+</html>

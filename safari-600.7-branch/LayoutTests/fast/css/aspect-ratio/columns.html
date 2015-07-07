@@ -1,0 +1,71 @@
+<style>
+.column-container {
+    max-width: 180px;
+}
+
+.columns {
+    box-sizing: border-box;
+    -webkit-column-width: 100px;
+    height: 300px;
+}
+
+img {
+    max-width: 100%;
+    max-height: 100%;
+    margin-bottom: 10px;
+}
+
+#b, #c, #e, #g {
+    width: 300px;
+    height: 300px;
+    -webkit-aspect-ratio: from-intrinsic;
+}
+
+#d, #e {
+    min-width: 20px;
+    max-width: 20px;
+    min-height: 20px;
+    max-height: 20px;
+}
+
+#f, #g {
+    width: auto;
+    height: auto;
+    min-width: 30px;
+    min-height: 30px;
+}
+
+#results {
+    width: initial;
+    height: initial;
+    max-width: initial;
+    max-height: initial;
+}
+</style>
+
+<div class="column-container">
+    <div class="columns">
+
+        <!-- auto sizing within constrained bounds -->
+        <div><img id="a" src="badchess-wide.png"></div>
+
+        <!-- specified sizing within constrained bounds and aspect ratio -->
+        <div><img id="b" src="badchess-wide.png"></div>
+
+        <!-- specified sizing within constrained bounds and aspect ratio -->
+        <div><img id="c" src="badchess-tall.png"></div>
+
+        <!-- sizing with min/max constraints -->
+        <div><img id="d" src="badchess-wide.png"></div>
+
+        <!-- sizing with min/max constraints and aspect ratio -->
+        <div><img id="e" src="badchess-wide.png"></div>
+
+        <!-- auto sizing with min constraints -->
+        <div><img id="f" src="badchess-wide.png"></div>
+
+        <!-- auto sizing with min constraints and aspect ratio -->
+        <div><img id="g" src="badchess-wide.png"></div>
+
+    </div>
+</div>

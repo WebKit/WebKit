@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html manifest="resources/video.manifest">
+    <head>
+        <title>test media in the app cache</title>
+        <style>
+            video { background-color: yellow; width: 320px; height: 240px; }
+        </style>
+        <script src=/media-resources/media-file.js></script>
+        <script src=/media-resources/video-test.js></script>
+        <script>
+            var test;
+
+            function unexpectedEvent(event)
+            {
+                failTest(false, '<br>Unexpected "' + event.type + '" event!!');
+            }
+
+            function errorEvent()
+            {
+                consoleWrite("");
+                switch(test)
+                {
+                    case 1:
+                        failTest(false, "Failed loading file included in manifest!");
+                        break;
+                    case 2:
+                        test3()
+                        break;
+                    case 3:
+                        endTest();
+                        break;
+                }
+            }
+
+            function durationchangeEvent()
+            {
+                switch(test)
+                {
+                    case 1:
+                        test2();
+                        break;
+                    case 2:
+                        failTest("<br>Loaded file NOT included in manifest!");
+                        break;
+                    case 3:
+                        failTest("<br>Loaded JavaScript file as media!");
+                        break;
+                }
+            }
+
+            function test3()
+            {
+                consoleWrite("*** Setting 'src' to non-media file that is in manifest. This file should fail to load.<br>");
+
+                test = 3;
+                video = document.getElementsByTagName('video')[0];
+                video.src = "/media-resources/media-file.js";
+            }
+
+            function test2()
+            {
+                consoleWrite("<br>*** Setting 'src' to valid media file not in manifest. This file should fail to load.<br>");
+
+                test = 2;
+                video = document.getElementsByTagName('video')[0];
+                video.src = "/media-resources/content/" + findMediaFile("audio", "silence");
+            }
+
+            function test1()
+            {
+                consoleWrite("*** Setting 'src' to file specified in manifest. This file should load.<br>");
+                test = 1;
+
+                waitForEvent('durationchange', durationchangeEvent);
+                waitForEvent('error', errorEvent);
+
+                video = document.getElementsByTagName('video')[0];
+                video.src = "/media-resources/content/" + findMediaFile("video", "test");
+            }
+
+            function updateready(event)
+            {
+                applicationCache.swapCache();
+                test1();
+            }
+
+            applicationCache.addEventListener("updateready", updateready, false);
+            applicationCache.addEventListener("noupdate", test1, false);
+            applicationCache.addEventListener("cached", test1, false);
+
+            applicationCache.addEventListener("obsolete", unexpectedEvent, false);
+            applicationCache.addEventListener("error", unexpectedEvent, false);
+        </script>
+
+    </head>
+    <body>
+
+        <video controls ></video>
+
+        <p>Test that &lt;video&gt; can be loaded from the application cache.</p>
+    </body>
+</html>
+

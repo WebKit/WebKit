@@ -1,0 +1,49 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="search-test.js"></script>
+<script>
+function test()
+{
+    // This file should not match search query.
+    var text = "searchTest" + "UniqueString";
+
+    InspectorTest.addResult("Case insensitive, non regex:");
+    PageAgent.searchInResources(text, false, false, step2);
+
+    function step2(error, searchResults)
+    {
+        InspectorTest.dumpSearchResults(searchResults);
+        InspectorTest.addResult("Case sensitive, non regex:");
+        PageAgent.searchInResources(text, true, false, step3);
+    }
+
+    function step3(error, searchResults)
+    {
+        InspectorTest.dumpSearchResults(searchResults);
+        InspectorTest.addResult("Case insensitive, regex:");
+        PageAgent.searchInResources(text, false, true, step4);
+    }
+
+    function step4(error, searchResults)
+    {
+        InspectorTest.dumpSearchResults(searchResults);
+        InspectorTest.addResult("Case sensitive, regex:");
+        PageAgent.searchInResources(text, true, true, step5);
+    }
+
+    function step5(error, searchResults)
+    {
+        InspectorTest.dumpSearchResults(searchResults);
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body>
+<p>Tests backend search in inspector.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=61205">Bug 61205</a>
+
+<iframe src="resources/search.html" onload="runTest()">
+</body>
+</html>

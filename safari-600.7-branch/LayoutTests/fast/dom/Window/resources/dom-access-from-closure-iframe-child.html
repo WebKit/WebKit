@@ -1,0 +1,20 @@
+<script>
+    parent.accessFrame = function()
+    {
+        function normalizeURL(url)
+        {
+            return url.substring(url.lastIndexOf("LayoutTests"));
+        }
+
+        try {
+            parent.log("document.URL: " + normalizeURL(document.URL));
+            parent.log("window.document.URL: " + normalizeURL(window.document.URL));
+            parent.log("name: " + name);
+            parent.log("window.name: " + window.name);
+        } catch (e) {
+            parent.log("An exception was thrown: " + e.message);
+        }
+    }
+
+    window.location = "notify-parent-done.html";
+</script>

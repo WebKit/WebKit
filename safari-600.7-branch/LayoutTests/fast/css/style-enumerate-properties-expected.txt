@@ -1,0 +1,18 @@
+This test makes sure that CSSStyleDeclaration enumerates JavaScript properties for defined and non-defined CSS properties, indexed properties, and properties defined on the prototype. See Bug 23946.
+PASS document.body.style.length is 2
+PASS '0' in document.body.style is true
+PASS '1' in document.body.style is true
+PASS 'textDecoration' in document.body.style is true
+PASS 'borderTopColor' in document.body.style is true
+PASS 'border' in document.body.style is true
+PASS 'font' in document.body.style is true
+PASS 'webkitTransform' in document.body.style is true
+PASS 'WebkitTransform' in document.body.style is true
+PASS 'bogus-random-String' in document.body.style is false
+PASS 'cssText' in document.body.style is true
+PASS 'getPropertyCSSValue' in document.body.style is true
+PASS The CSS property order is correct
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

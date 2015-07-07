@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+    <head>
+    </head>
+    <body>
+        <video></video>
+        <p>Test Encrypted Media extension of HTMLMediaElement <em>canPlayType()</em> method.</p>
+        <p>The test is designed to pass with any implementation regardless of supported media types and relies on the expected log to detect the expected results for some types.
+           To get sufficient coverage, it is important that an implementation support clearkey encryption of at least one of the types below.</p>
+
+        <script src=../video-test.js></script>
+        <script>
+            video = mediaElement = document.getElementsByTagName('video')[0];
+
+            consoleWrite("Always return the empty string for no type.");
+            testExpected("video.canPlayType()", "");
+
+            consoleWrite("<br>Always return the empty string for an empty type.");
+            testExpected("video.canPlayType('')", "");
+            testExpected("video.canPlayType('', '')", "");
+            testExpected("video.canPlayType('', null)", "");
+            testExpected("video.canPlayType('', undefined)", "");
+            testExpected("video.canPlayType('', 'webkit-org.w3.clearkey')", "");
+            testExpected("video.canPlayType('', 'WeBkIt-OrG.W3.ClEaRkEy')", "");
+            testExpected("video.canPlayType('', 'com.example.invalid')", "");
+
+            consoleWrite("<br>Always return the empty string for when no container is specified.");
+            testExpected("video.canPlayType('video/')", "");
+            testExpected("video.canPlayType('video/', '')", "");
+            testExpected("video.canPlayType('video/', null)", "");
+            testExpected("video.canPlayType('video/', undefined)", "");
+            testExpected("video.canPlayType('video/', 'webkit-org.w3.clearkey')", "");
+            testExpected("video.canPlayType('video/', 'WeBkIt-OrG.W3.ClEaRkEy')", "");
+            testExpected("video.canPlayType('video/', 'com.example.invalid')", "");
+
+            consoleWrite("<br>Always return the empty string for an unsupported container.");
+            testExpected("video.canPlayType('video/blahblah')", "");
+            testExpected("video.canPlayType('video/blahblah', '')", "");
+            testExpected("video.canPlayType('video/blahblah', null)", "");
+            testExpected("video.canPlayType('video/blahblah', undefined)", "");
+            testExpected("video.canPlayType('video/blahblah', 'webkit-org.w3.clearkey')", "");
+            testExpected("video.canPlayType('video/blahblah', 'WeBkIt-OrG.W3.ClEaRkEy')", "");
+            testExpected("video.canPlayType('video/blahblah', 'com.example.invalid')", "");
+
+            consoleWrite("<br>Empty key system parameters should not affect the result of video/mp4 types.");
+            var mp4Result = video.canPlayType('video/mp4; Codecs=\"avc1.4D400C\"');
+            var mp4ResultLogString = "Result of video.canPlayType('video/mp4; Codecs=\"avc1.4D400C\"'): '" + mp4Result + "'";
+            consoleWrite(mp4ResultLogString);
+            testExpected("video.canPlayType('video/mp4; Codecs=\"avc1.4D400C\"', '')", mp4Result);
+            testExpected("video.canPlayType('video/mp4; Codecs=\"avc1.4D400C\"', null)", mp4Result);
+            testExpected("video.canPlayType('video/mp4; Codecs=\"avc1.4D400C\"', undefined)", mp4Result);
+            consoleWrite("There are currently no implementations supporting encryption of video/mp4.");
+            testExpected("video.canPlayType('video/mp4; Codecs=\"avc1.4D400C\"', 'webkit-org.w3.clearkey')", "");
+            testExpected("video.canPlayType('video/mp4; Codecs=\"avc1.4D400C\"', 'WeBkIt-OrG.W3.ClEaRkEy')", "");
+            testExpected("video.canPlayType('video/mp4; Codecs=\"avc1.4D400C\"', 'com.example.invalid')", "");
+
+            consoleWrite("<br>Empty key system parameters should not affect the result of audio/mpeg types.");
+            var mpegResult = video.canPlayType('audio/mpeg');
+            var mpegResultLogString = "Result of video.canPlayType('audio/mpeg'): '" + mpegResult + "'";
+            consoleWrite(mpegResultLogString);
+            testExpected("video.canPlayType('audio/mpeg', '')", mpegResult);
+            testExpected("video.canPlayType('audio/mpeg', null)", mpegResult);
+            testExpected("video.canPlayType('audio/mpeg', undefined)", mpegResult);
+            consoleWrite("There are currently no implementations supporting encryption of audio/mpeg.");
+            testExpected("video.canPlayType('audio/mpeg', 'webkit-org.w3.clearkey')", "");
+            testExpected("video.canPlayType('audio/mpeg', 'WeBkIt-OrG.W3.ClEaRkEy')", "");
+            testExpected("video.canPlayType('audio/mpeg', 'com.example.invalid')", "");
+
+            consoleWrite("<br>Empty key system parameters should not affect the result of audio/wav types.");
+            var wavResult = video.canPlayType('audio/wav');
+            var wavResultLogString = "Result of video.canPlayType('audio/wav'): '" + wavResult + "'";
+            consoleWrite(wavResultLogString);
+            testExpected("video.canPlayType('audio/wav', '')", wavResult);
+            testExpected("video.canPlayType('audio/wav', null)", wavResult);
+            testExpected("video.canPlayType('audio/wav', undefined)", wavResult);
+            consoleWrite("There are currently no implementations supporting encryption of audio/wav.");
+            testExpected("video.canPlayType('audio/wav', 'webkit-org.w3.clearkey')", "");
+            testExpected("video.canPlayType('audio/wav', 'WeBkIt-OrG.W3.ClEaRkEy')", "");
+            testExpected("video.canPlayType('audio/wav', 'com.example.invalid')", "");
+
+            consoleWrite("<br>Empty key system parameters should not affect the result of video/webm types.");
+            var webmResult = video.canPlayType('video/webm');
+            var webmResultLogString = "Result of video.canPlayType('video/webm'): '" + webmResult + "'";
+            consoleWrite(webmResultLogString);
+            testExpected("video.canPlayType('video/webm', '')", webmResult);
+            testExpected("video.canPlayType('video/webm', null)", webmResult);
+            testExpected("video.canPlayType('video/webm', undefined)", webmResult);
+            consoleWrite("All implementations that support WebM and Encrypted Media support encrypted WebM.");
+            testExpected("video.canPlayType('video/webm', 'webkit-org.w3.clearkey')", webmResult);
+            testExpected("video.canPlayType('video/webm', 'WeBkIt-OrG.W3.ClEaRkEy')", webmResult);
+            testExpected("video.canPlayType('video/webm', 'com.example.invalid')", "");
+
+            endTest();
+        </script>
+    </body>
+</html>

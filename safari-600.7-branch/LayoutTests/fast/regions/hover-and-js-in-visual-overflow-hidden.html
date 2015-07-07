@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+    body, p, ol {
+        margin: 0;
+        padding: 0;
+    }
+    input {
+        width: 100px;
+    }
+    #content {
+        font-family: monospace;
+        font-size: 20px;
+        line-height: 1em;
+        -webkit-flow-into: f;
+    }
+    .spacer {
+        width: 100%;
+        height: 80px;
+        display: block;
+    }
+    .highlite {
+        color: deepskyblue;
+    }
+    .highlite:hover {
+        background-color: green;
+        color: white;
+    }
+    #region {
+        border: 2px solid black;
+        background-color: lightgray;
+        width: 100px;
+        height: 100px;
+        -webkit-flow-from: f;
+    }
+    #parent {
+        float: left;
+        overflow: hidden;
+    }
+    #region p {
+        background-color: red;
+        width: 100%;
+        height: 50%;
+    }
+    #result {
+        color: green;
+        font-weight: bold;
+    }
+    </style>
+</head>
+
+<script type="text/javascript">
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    function beginTest() {
+        if (window.eventSender) {
+            var obj  = document.querySelector(".highlite");
+
+            // move mouse on the hover test object
+            eventSender.mouseMoveTo(obj.offsetLeft + 5, obj.offsetTop + 5);
+            eventSender.mouseDown(0);
+
+            testRunner.notifyDone();
+        }
+    }
+</script>
+
+<body onload="beginTest()">
+    <div id="parent">
+        <div id="region">
+            <p></p>
+        </div>
+    </div>
+    <ol>
+        <li>Bug <a href="https://bugs.webkit.org/show_bug.cgi?id=126886">126886</a>.</li>
+        <li>You should not see any red before or during this test.</li>
+        <li>Move the mouse below the gray rectangle.</li>
+        <li>You should see the word "PASS" displayed below, in green, wherever you position the mouse cursor.</li>
+    </ol>
+    <div id="content"><span class="spacer"></span>This text has <span class="highlite">overflow</span></div>
+    <div id="result">PASS</div>
+    <script>
+        var word = document.querySelector(".highlite");
+        word.addEventListener("mouseover", function(evt) 
+        {
+            document.getElementById("result").style.color = "red";
+            document.getElementById("result").innerHTML = "FAIL";
+        });
+    </script>
+</body>
+</html>

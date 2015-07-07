@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,11) size 784x539
+      RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,25) size 784x52
+        RenderText {#text} at (0,0) size 79x26
+          text run at (0,0) width 79: "Test for "
+        RenderInline {I} at (0,0) size 752x52
+          RenderInline {A} at (0,0) size 456x26 [color=#0000EE]
+            RenderText {#text} at (79,0) size 456x26
+              text run at (79,0) width 456: "https://bugs.webkit.org/show_bug.cgi?id=22118"
+          RenderText {#text} at (535,0) size 752x52
+            text run at (535,0) width 6: " "
+            text run at (541,0) width 211: "Resize corner does not"
+            text run at (0,26) width 277: "track in transformed elements"
+        RenderText {#text} at (277,26) size 6x26
+          text run at (277,26) width 6: "."
+      RenderBlock {HR} at (0,100) size 784x2 [border: (1px inset #000000)]
+layer at (58,163) size 154x104 clip at (60,165) size 150x100
+  RenderBlock {DIV} at (50,152) size 154x104 [border: (2px solid #0000FF)]
+caret: position 0 of child 7 {DIV} of body

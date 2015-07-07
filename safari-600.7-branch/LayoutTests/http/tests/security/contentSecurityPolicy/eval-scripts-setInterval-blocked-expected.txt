@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Refused to evaluate script because it violates the following Content Security Policy directive: "script-src 'unsafe-inline'".
+
+ALERT: PASS
+
+

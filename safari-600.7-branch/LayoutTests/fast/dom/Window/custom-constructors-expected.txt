@@ -1,0 +1,18 @@
+Test constructors for classes in Window
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS Audio.prototype.toString.call(new Audio) is '[object HTMLAudioElement]'
+PASS Image.prototype.toString.call(new Image) is '[object HTMLImageElement]'
+PASS Option.prototype.toString.call(new Option) is '[object HTMLOptionElement]'
+PASS WebKitPoint.prototype.toString.call(new WebKitPoint) is '[object WebKitPoint]'
+PASS WebKitCSSMatrix.prototype.toString.call(new WebKitCSSMatrix) is 'matrix(1.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000)'
+PASS WebKitCSSMatrix.prototype.toString.call(new WebKitCSSMatrix()) is 'matrix(1.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000)'
+PASS new WebKitCSSMatrix(null) threw exception Error: SyntaxError: DOM Exception 12.
+PASS new WebKitCSSMatrix(undefined) threw exception Error: SyntaxError: DOM Exception 12.
+PASS XMLHttpRequest.prototype.toString.call(new XMLHttpRequest) is '[object XMLHttpRequest]'
+PASS XSLTProcessor.prototype.toString.call(new XSLTProcessor) is '[object XSLTProcessor]'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

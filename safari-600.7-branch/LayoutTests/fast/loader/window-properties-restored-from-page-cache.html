@@ -1,0 +1,110 @@
+<script>
+if (window.testRunner) {
+	testRunner.dumpAsText();
+	testRunner.waitUntilDone();
+	testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+}
+
+var cachedApplicationCache = window.applicationCache;
+var cachedConsole = window.console;
+var cachedCrypto = window.crypto;
+var cachedHistory = window.history;
+var cachedLocalStorage = window.localStorage;
+var cachedLocation = window.location;
+var cachedLocationbar = window.locationbar;
+var cachedMedia = window.styleMedia;
+var cachedMenubar = window.menubar;
+var cachedNavigator = window.navigator;
+var cachedPersonalbar = window.personalbar;
+var cachedScreen = window.screen;
+var cachedScrollbars = window.scrollbars;
+var cachedSelection = window.getSelection();
+var cachedSessionStorage = window.sessionStorage;
+var cachedStatusbar = window.statusbar;
+var cachedToolbar = window.toolbar;
+
+function logMessage(msg)
+{
+	document.getElementById("outputDiv").innerText += msg + " \n";
+}
+
+function logErrorMessage(msg)
+{
+	document.getElementById("errorDiv").innerText += msg + " \n";
+}
+
+window.onpageshow = function(evt) {
+	if (!evt.persisted) {
+		window.setTimeout("window.location.href = 'resources/empty-document-goes-back.html'", 0);
+		return;
+	}
+	
+	// First alert all of the objects to make sure we get a valid toString()-ification
+	// instead of "undefined", "null", or "Object"
+	logMessage(window.applicationCache);
+	logMessage(window.console);
+	logMessage(window.crypto);
+	logMessage(window.history);
+	logMessage(window.localStorage);
+	logMessage(window.location != null && window.location != undefined);
+	logMessage(window.locationbar);
+	logMessage(window.styleMedia);
+	logMessage(window.menubar);
+	logMessage(window.navigator);
+	logMessage(window.personalbar);
+	logMessage(window.screen);
+	logMessage(window.scrollbars);
+	logMessage(window.getSelection() != null && window.getSelection() != undefined);
+	logMessage(window.sessionStorage);
+	logMessage(window.statusbar);
+	logMessage(window.toolbar);
+	
+	// Then make sure the window properties match the cached references from the initial page load
+	if (cachedApplicationCache != window.applicationCache)
+		logErrorMessage("applicationCache");
+	if (cachedConsole != window.console)
+		logErrorMessage("console");
+	if (cachedCrypto != window.crypto)
+		logErrorMessage("crypto");
+	if (cachedHistory != window.history)
+		logErrorMessage("history");
+	if (cachedLocalStorage != window.localStorage)
+		logErrorMessage("localStorage");
+	if (cachedLocation != window.location)
+		logErrorMessage("location");
+	if (cachedLocationbar != window.locationbar)
+		logErrorMessage("locationbar");
+	if (cachedMedia != window.styleMedia)
+		logErrorMessage("styleMedia");
+	if (cachedMenubar != window.menubar)
+		logErrorMessage("menubar");
+	if (cachedNavigator != window.navigator)
+		logErrorMessage("navigator");
+	if (cachedPersonalbar != window.personalbar)
+		logErrorMessage("personalbar");
+	if (cachedScreen != window.screen)
+		logErrorMessage("screen");
+	if (cachedScrollbars != window.scrollbars)
+		logErrorMessage("scrollbars");
+	if (cachedSelection != window.getSelection())
+		logErrorMessage("getSelection");
+	if (cachedSessionStorage != window.sessionStorage)
+		logErrorMessage("sessionStorage");
+	if (cachedStatusbar != window.statusbar)
+		logErrorMessage("statusbar");
+	if (cachedToolbar != window.toolbar)
+		logErrorMessage("toolbar");
+
+	if (document.getElementById("errorDiv").innerText == "")
+		document.getElementById("errorDiv").innerText = "All tests passed.";
+
+	if (window.testRunner)
+		testRunner.notifyDone();
+}
+
+</script>
+<body>
+This test makes sure that various properties on the window object are correctly reconnected after restoring a page from the page cache.<br>
+<div id="outputDiv"></div><br>
+<div id="errorDiv"></div>
+</body>

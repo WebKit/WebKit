@@ -1,0 +1,32 @@
+This tests to see if an editable selection containing a focusable node is draggable by content inside that focusable node. To achieve this we delay focus of such nodes until mouse up. Below, the table should be inside the red bordered div.
+| "
+"
+| <div>
+|   contenteditable="true"
+|   id="div"
+|   style="border: 1px solid blue;"
+|   "
+"
+|   "
+"
+| "
+"
+| <div>
+|   contenteditable="true"
+|   id="destination"
+|   style="border: 1px solid red;"
+|   <#selection-anchor>
+|   <table>
+|     border="1"
+|     <tbody>
+|       <tr>
+|         <td>
+|           contenteditable="true"
+|           id="cell"
+|           "editable<#selection-focus>"
+| "
+"
+| <ul>
+|   id="console"
+| "
+"

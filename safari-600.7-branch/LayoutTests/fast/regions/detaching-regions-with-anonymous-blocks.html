@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+    <head>
+
+        <script type="text/javascript">
+            if(window.testRunner)
+                window.testRunner.dumpAsText();
+
+            window.addEventListener("load",function(){
+                // This previously caused the ASSERT to be hit.
+                var parentNode = document.body.parentNode;
+                parentNode.removeChild(document.body);
+
+                // Display the human readable test result.
+                var body = document.createElement("body");
+                parentNode.appendChild(body);
+                body.innerHTML = "<p>Bug <a href=\"https://bugs.webkit.org/show_bug.cgi?id=104517\">104517</a>: [CSSRegions] Assertion failure in Node::detach (!renderer || renderer->inRenderFlowThread())</p> <p>This test PASSES if it does not CRASH or ASSERT.</p>";
+            });
+        </script>
+
+    </head>
+
+    <body>
+        <div style="-webkit-flow-into: flow;">
+            <span>
+                a <p>b</p> a
+            </span>
+        </div>
+        <div id="region" style="-webkit-flow-from:flow;"></div>
+    </body>
+</html>

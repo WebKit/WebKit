@@ -1,0 +1,6 @@
+Slow loading WebVTT file interrupted in the middle of a timestamp line.
+
+EXPECTED (track.track.cues.length === '2') OK
+EXPECTED (track.track.cues[0].text === 'Lorem ipsum') OK
+END OF TEST
+

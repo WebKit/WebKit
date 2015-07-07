@@ -1,0 +1,129 @@
+ABC
+ABC
+ABC
+ABC
+ABC
+This is a test of the SVGLengthList::replaceItem() API.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Create three SVGLength objects, with values=50,100,150
+PASS newLength1.value is 50
+PASS newLength2.value is 100
+PASS newLength3.value is 150
+
+Check initial list state of text1
+PASS text1.x.baseVal.numberOfItems is 3
+PASS text1.x.baseVal.getItem(0).value is 500
+PASS text1.x.baseVal.getItem(1).value is 1000
+PASS text1.x.baseVal.getItem(2).value is 1500
+PASS text1.x.baseVal.getItem(3) threw exception Error: IndexSizeError: DOM Exception 1.
+
+Replace the first three values in text1 x list with 'newLength1/2/3'
+PASS text1.x.baseVal.replaceItem(newLength1, 0) is newLength1
+PASS text1.x.baseVal.replaceItem(newLength2, 1) is newLength2
+PASS text1.x.baseVal.replaceItem(newLength3, 2) is newLength3
+PASS text1.x.baseVal.replaceItem(newLength3, -100) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS text1.x.baseVal.replaceItem(newLength3, -1) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS text1.x.baseVal.replaceItem(newLength3, 3) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS text1.x.baseVal.replaceItem(newLength3, 100) threw exception Error: IndexSizeError: DOM Exception 1.
+
+Verify that the text1 x value list is correct
+PASS text1.x.baseVal.numberOfItems is 3
+PASS text1.x.baseVal.getItem(0).value is 50
+PASS text1.x.baseVal.getItem(1).value is 100
+PASS text1.x.baseVal.getItem(2).value is 150
+
+Check initial list state of text2
+PASS text2.x.baseVal.numberOfItems is 4
+PASS text2.x.baseVal.getItem(0).value is 500
+PASS text2.x.baseVal.getItem(1).value is 100
+PASS text2.x.baseVal.getItem(2).value is 50
+PASS text2.x.baseVal.getItem(3).value is 150
+PASS text2.x.baseVal.getItem(4) threw exception Error: IndexSizeError: DOM Exception 1.
+
+Replace the first item in text2 x list with the third item in the list
+PASS text2.x.baseVal.replaceItem(text2.x.baseVal.getItem(2), 0).value is 50
+PASS text2.x.baseVal.numberOfItems is 3
+PASS text2.x.baseVal.getItem(0).value is 50
+PASS text2.x.baseVal.getItem(1).value is 100
+PASS text2.x.baseVal.getItem(2).value is 150
+
+Check initial list state of text3
+PASS text3.x.baseVal.numberOfItems is 5
+PASS text3.x.baseVal.getItem(0).value is 50
+PASS text3.x.baseVal.getItem(1).value is 50
+PASS text3.x.baseVal.getItem(2).value is 100
+PASS text3.x.baseVal.getItem(3).value is 100
+PASS text3.x.baseVal.getItem(4).value is 150
+PASS text3.x.baseVal.getItem(5) threw exception Error: IndexSizeError: DOM Exception 1.
+
+Check initial list state of text4
+PASS text4.x.baseVal.numberOfItems is 4
+PASS text4.x.baseVal.getItem(0).value is 100
+PASS text4.x.baseVal.getItem(1).value is 50
+PASS text4.x.baseVal.getItem(2).value is 150
+PASS text4.x.baseVal.getItem(3).value is 150
+PASS text4.x.baseVal.getItem(4) threw exception Error: IndexSizeError: DOM Exception 1.
+
+Replace the first item in text4 x list with the second item in the text3 x list
+PASS text4.x.baseVal.replaceItem(text3.x.baseVal.getItem(1), 0).value is 50
+PASS text3.x.baseVal.numberOfItems is 4
+PASS text3.x.baseVal.getItem(0).value is 50
+PASS text3.x.baseVal.getItem(1).value is 100
+PASS text3.x.baseVal.getItem(2).value is 100
+PASS text3.x.baseVal.getItem(3).value is 150
+PASS text3.x.baseVal.getItem(4) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS text4.x.baseVal.numberOfItems is 4
+PASS text4.x.baseVal.getItem(0).value is 50
+PASS text4.x.baseVal.getItem(1).value is 50
+PASS text4.x.baseVal.getItem(2).value is 150
+PASS text4.x.baseVal.getItem(3).value is 150
+PASS text4.x.baseVal.getItem(4) threw exception Error: IndexSizeError: DOM Exception 1.
+
+Replace the second item in text4 x list with the second item in the text4 x list
+PASS text4.x.baseVal.replaceItem(text3.x.baseVal.getItem(2), 1).value is 100
+PASS text4.x.baseVal.numberOfItems is 4
+PASS text4.x.baseVal.getItem(0).value is 50
+PASS text4.x.baseVal.getItem(1).value is 100
+PASS text4.x.baseVal.getItem(2).value is 150
+PASS text4.x.baseVal.getItem(3).value is 150
+PASS text4.x.baseVal.getItem(4) threw exception Error: IndexSizeError: DOM Exception 1.
+
+Check final list state of text1
+PASS text1.x.baseVal.numberOfItems is 3
+PASS text1.x.baseVal.getItem(0).value is 50
+PASS text1.x.baseVal.getItem(1).value is 100
+PASS text1.x.baseVal.getItem(2).value is 150
+PASS text1.x.baseVal.getItem(3) threw exception Error: IndexSizeError: DOM Exception 1.
+
+Check final list state of text2
+PASS text2.x.baseVal.numberOfItems is 3
+PASS text2.x.baseVal.getItem(0).value is 50
+PASS text2.x.baseVal.getItem(1).value is 100
+PASS text2.x.baseVal.getItem(2).value is 150
+PASS text2.x.baseVal.getItem(3) threw exception Error: IndexSizeError: DOM Exception 1.
+
+Check final list state of text3
+PASS text3.x.baseVal.numberOfItems is 3
+PASS text3.x.baseVal.getItem(0).value is 50
+PASS text3.x.baseVal.getItem(1).value is 100
+PASS text3.x.baseVal.getItem(2).value is 150
+PASS text3.x.baseVal.getItem(3) threw exception Error: IndexSizeError: DOM Exception 1.
+
+Check final list state of text4
+PASS text4.x.baseVal.numberOfItems is 4
+PASS text4.x.baseVal.getItem(0).value is 50
+PASS text4.x.baseVal.getItem(1).value is 100
+PASS text4.x.baseVal.getItem(2).value is 150
+PASS text4.x.baseVal.getItem(3).value is 150
+PASS text4.x.baseVal.getItem(4) threw exception Error: IndexSizeError: DOM Exception 1.
+
+The test passes if you only see 'PASS' messages, and all five text elements on top look the same
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

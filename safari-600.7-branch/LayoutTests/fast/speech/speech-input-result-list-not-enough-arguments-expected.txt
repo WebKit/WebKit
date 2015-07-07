@@ -1,0 +1,10 @@
+Tests for SpeechInputResultList' behavior with too few arguments.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.event.results.item() threw exception TypeError: Not enough arguments.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,7 @@
+Tests that removing a <track> element and adding it again does not crash.
+
+If this test does not crash, it passes.
+
+
+END OF TEST
+

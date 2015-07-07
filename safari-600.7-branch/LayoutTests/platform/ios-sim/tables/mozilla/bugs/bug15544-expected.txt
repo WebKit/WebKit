@@ -1,0 +1,40 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 80x93
+        RenderTableSection {TBODY} at (0,0) size 80x93
+          RenderTableRow {TR} at (0,0) size 80x28
+            RenderTableCell {TD} at (0,0) size 30x93 [r=0 c=0 rs=3 cs=1]
+              RenderImage {IMG} at (0,0) size 30x93
+            RenderTableCell {TD} at (30,0) size 50x28 [r=0 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (0,0) size 25x28
+              RenderImage {IMG} at (25,0) size 25x28
+          RenderTableRow {TR} at (0,28) size 80x25
+            RenderTableCell {TD} at (30,28) size 50x25 [r=1 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (0,0) size 25x25
+              RenderImage {IMG} at (25,0) size 25x25
+          RenderTableRow {TR} at (0,53) size 80x40
+            RenderTableCell {TD} at (30,53) size 50x40 [r=2 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (0,0) size 25x40
+              RenderImage {IMG} at (25,0) size 25x40
+      RenderBlock (anonymous) at (0,93) size 784x20
+        RenderText {#text} at (0,0) size 324x19
+          text run at (0,0) width 324: "Here's the same table without the off-by-one error."
+      RenderTable {TABLE} at (0,113) size 80x93
+        RenderTableSection {TBODY} at (0,0) size 80x93
+          RenderTableRow {TR} at (0,0) size 80x28
+            RenderTableCell {TD} at (0,0) size 30x93 [r=0 c=0 rs=3 cs=1]
+              RenderImage {IMG} at (0,0) size 30x93
+            RenderTableCell {TD} at (30,0) size 50x28 [r=0 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (0,0) size 25x28
+              RenderImage {IMG} at (25,0) size 25x28
+          RenderTableRow {TR} at (0,28) size 80x25
+            RenderTableCell {TD} at (30,28) size 50x25 [r=1 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (0,0) size 25x25
+              RenderImage {IMG} at (25,0) size 25x25
+          RenderTableRow {TR} at (0,53) size 80x40
+            RenderTableCell {TD} at (30,53) size 50x40 [r=2 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (0,0) size 25x40
+              RenderImage {IMG} at (25,0) size 25x40

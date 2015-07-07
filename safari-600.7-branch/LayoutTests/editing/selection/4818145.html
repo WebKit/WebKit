@@ -1,0 +1,9 @@
+<p>This tries to select a table inside an editable region whose content is not editable.  The table and its contents should be selected.</p>
+<div id="div" contenteditable="true"><table id="table" border="1" contenteditable="false"><tr><td>foo</td></tr></table></div>
+
+<script>
+var div = document.getElementById("div");
+var sel = window.getSelection();
+// Try to select the table.
+sel.setBaseAndExtent(div, 0, div, 1);
+</script>

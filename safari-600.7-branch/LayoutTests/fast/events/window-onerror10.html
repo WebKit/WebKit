@@ -1,0 +1,33 @@
+<html>
+<body>
+<p>Test that "error" event listener added with window.addEventListener is invoked for uncaucht exceptions. <a href="https://bugs.webkit.org/show_bug.cgi?id=8519">Bug 8519</a>.</p>
+<div id="console"></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function log(msg) {
+    document.getElementById("console").innerHTML += msg + "<br>";
+}
+
+function lastPathComponent(url) {
+    return url ? url.match( /[^\/]+\/?$/ )[0] : url;
+}
+
+window.addEventListener("error", function(e) {
+    log("event passed to the listener is the same as window.event: " + (window.event === e));
+    log("Event details:");
+    log("type: " + e.type);
+    log("phase: " + e.eventPhase)
+    log("currentTarget is the global object: " + (e.currentTarget === window));
+    log("message: " + e.message);
+    log("filename: " + lastPathComponent(e.filename));
+    log("lineno: " + e.lineno);
+    e.preventDefault();
+}, false);
+
+throw new Error("My fault.");
+
+</script>
+</body>
+</html>

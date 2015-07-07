@@ -1,0 +1,5 @@
+PASS navigator.webkitGetGamepads is defined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Make sure the main polling access point exists on navigator.

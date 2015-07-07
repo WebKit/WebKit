@@ -1,0 +1,53 @@
+<html><head>
+<script>
+var theWinref;
+
+function test()
+{
+    if (window.testRunner) {
+        testRunner.setCanOpenWindows();
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    }
+    theWinref = window.open('','_blank','scrollbars=no');
+    setTimeout(doNewWindow, 250);
+    setTimeout(printResult, 750);
+}
+
+function doNewWindow()
+{
+    theWinref.document.open();
+    theWinref.document.write("<html><body><iframe height='100%' width='100%' src=''></iframe><div>If you can see this, the test has failed.</div></body></html>");
+    theWinref.resizeTo(200,100);
+    theWinref.document.close();
+    theWinref.scrollTo(200,100);
+}
+
+function printResult()
+{
+    if (theWinref.document.body.scrollTop == 0)
+        document.getElementById("console").innerHTML = "PASSED";
+    else
+        document.getElementById("console").innerHTML = "FAILED - window should not have been scrolled but was scrolled to " + theWinref.document.body.scrollTop;
+    theWinref.close();
+    endTest();
+}
+
+function endTest()
+{
+    if (window.testRunner) {
+        if (theWinref.closed)
+            testRunner.notifyDone();
+        else
+            setTimeout("endTest()", 10);
+    }
+}
+
+</script>
+</head>
+<body onload="test();">
+<div id="console">
+NOT DONE YET
+</div>
+</body>
+</html>

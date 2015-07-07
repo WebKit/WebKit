@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        function startTest() {
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            }
+
+            // Access all objects/properties that we're going to use later in the test so that JS
+            // allocations only happen when we expect.
+            var body = document.body;
+            body.removeChild;
+            var plugin = body.getElementsByTagName('embed')[0];
+            var testObject = plugin.testObject;
+            setTimeout;
+
+            testObject = null;
+
+            // Allocate a bunch of JS memory. This should cause testObject to be finalized, but it's
+            // destructor shouldn't run until the GCController.collect call we make later.
+            var array = new Array(10000);
+            for (var i = 0; i < 10000; ++i)
+                array[i] = new Object();
+
+            // Remove the plugin and wait for a little bit to ensure it has been unloaded (WebKit1
+            // on Windows unloads plugins after a delay).
+            body.removeChild(plugin);
+            setTimeout(finishTest, 250);
+        }
+
+        function finishTest() {
+            // Force a GC. If we don't crash here, we've passed the test.
+            if (window.GCController)
+                GCController.collect();
+
+            document.body.appendChild(document.createTextNode('PASSED'));
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        addEventListener('load', startTest, false);
+    </script>
+</head>
+<body>
+    <p>This test will only work in DumpRenderTree/WebKitTestRunner.</p>
+    <embed type="application/x-webkit-test-netscape">
+</body>
+</html>

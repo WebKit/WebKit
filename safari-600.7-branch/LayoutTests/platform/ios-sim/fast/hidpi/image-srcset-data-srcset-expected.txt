@@ -1,0 +1,3 @@
+FAIL document.getElementById("foo").clientWidth==150 should be true. Was false.
+This test passes if the image below looks like a 2x2 grid (yellow, gray, light green, dark green). In this case the srcset attribute has a base64 url.
+

@@ -1,0 +1,19 @@
+a
+
+
+a
+PASS gFocusedDocument.activeElement.getAttribute("id") is "1"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "2"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "3"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "7"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "6"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "end"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "4"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "5"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "6"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "3"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "7"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "3"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "2"
+PASS gFocusedDocument.activeElement.getAttribute("id") is "1"
+

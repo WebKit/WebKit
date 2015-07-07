@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            .region {
+                background-color: blue;
+                height: 100px;
+                width: 100px;
+                overflow: hidden;
+              }
+
+            .floatLeft {
+                float: left;
+                width: 100px;
+                height: 100px;
+                background-color: green;
+            }
+        </style>
+    </head>
+    <body>
+          <p>Test that a region establishes a new block formatting context and it cannot overlap a floating element.</p>
+          <p>Test passes if you see a blue square to the right of a green square.</p>
+          <div class="floatLeft"></div>
+          <div class="region"></div>
+    </body>
+</html>

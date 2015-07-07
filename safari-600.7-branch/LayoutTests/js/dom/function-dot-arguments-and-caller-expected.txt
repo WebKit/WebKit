@@ -1,0 +1,6 @@
+This page tests function.caller and function.arguments in interesting nested scopes.
+
+If the test passes, you'll see a series of PASS messages below.
+
+PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS,PASS
+

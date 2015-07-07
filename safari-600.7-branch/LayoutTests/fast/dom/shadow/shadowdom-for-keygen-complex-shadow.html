@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<script src="resources/polyfill.js"></script>
+
+<p>A mixed case of a shadow element and content element.</p>
+<form>
+    <keygen id="host">
+</form>
+
+<script>
+if (window.internals)
+    internals.settings.setAuthorShadowDOMForAnyElementEnabled(true);
+
+host.appendChild(document.createTextNode('foobar'));
+
+var shadowRoot = host.webkitCreateShadowRoot();
+shadowRoot.innerHTML = "<content></content><div style='margin: 20px'><shadow></shadow></div>"
+</script>

@@ -1,0 +1,15 @@
+The test verified that when a word is modified, its Spelling and Autocorrection Markers are removed. When manully testing, type "it's a meagesga", then edit the word "meagesga". You should see the underline under the modified "meagesga" disppears after editing.
+
+
+SUCCESS
+FAILURE. The word 'ameagesga' has underline.
+FAILURE. The word 'eagesga' has underline.
+FAILURE. The segment 'mea gesga' has underline.
+SUCCESS
+FAILURE. The segment 'mea ga' has underline.
+FAILURE. The word 'ameagesga' has underline.
+SUCCESS
+SUCCESS
+SUCCESS
+SUCCESS
+

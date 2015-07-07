@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Check that negative (out of range) key frame percentage doesn't cause subsequent first or second ruleset to be skipped.</title>
+<style>
+#test { background-color: red; color: black }
+@-webkit-keyframes fade { -10% { color: red; } }
+#test { background-color: green; }                 /* if skipped, then background will be red */ 
+#test { color: white; }                            /* if skipped, then text will be black */
+</style>
+</head>
+<body>
+<div id="test">The background color of this element should be green and the text should be white.</div>
+<div id="result"></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+var r = '';
+var s = getComputedStyle(document.getElementById("test"));
+if (s.backgroundColor === "rgb(0, 128, 0)") {
+  r += 'PASS: background color is green';
+} else {
+  r += 'FAIL: background color not green';
+}
+r += '<br>';
+if (s.color === "rgb(255, 255, 255)") {
+  r += 'PASS: text color is white';
+} else {
+  r += 'FAIL: text color not white';
+}
+r += '<br>';
+document.getElementById("result").innerHTML = r;
+</script>
+</body>
+</html>

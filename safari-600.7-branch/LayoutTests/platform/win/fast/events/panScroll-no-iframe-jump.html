@@ -1,0 +1,40 @@
+<html>
+    <head>
+        <title>Pan Scrolling Test</title>
+    </head>
+    <body>
+        <script>
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            }
+        </script>
+        <div id="overflow" style="width:500px; height:150px; overflow:auto; border:2px solid red; padding:10px">
+            <iframe width="100px" height="100px"></iframe>
+            <h1>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=32399">bug 32399</a> This tests that pan
+            scrolling doesn't jump out of an iFrame if the action begins in an iFrame that cannot scroll.</h1>
+        </div>
+        <p>
+        <div id="console"></div>
+        <script>
+            if (window.eventSender)
+            {
+                eventSender.mouseMoveTo(50, 50);
+                eventSender.mouseDown(1);
+                eventSender.mouseUp(1);
+                eventSender.mouseMoveTo(50, 200);
+                setTimeout(finished, 500);
+            }
+            
+            function finished()
+            {
+                if (!document.getElementById('overflow').scrollTop)
+                    document.getElementById('console').innerHTML = "Success! Div with overflow was not scrolled";
+                else
+                    document.getElementById('console').innerHTML = "Fail! Div with overflow was scrolled";
+                
+                window.testRunner.notifyDone();
+            }
+        </script>
+    </body>
+</html>

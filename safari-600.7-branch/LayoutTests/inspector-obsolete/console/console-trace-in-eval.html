@@ -1,0 +1,52 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/console-test.js"></script>
+<script>
+
+
+function evalSource()
+{
+    function b()
+    {
+        console.trace();
+    }
+
+    function a()
+    {
+        b();
+    }
+
+    a();
+}
+
+function doEvalSource()
+{
+    setTimeout(function() {
+        eval("(" + evalSource + ")()//@ sourceURL=evalURL.js");
+    }, 0);
+}
+
+function test()
+{
+    function callback()
+    {
+        InspectorTest.dumpConsoleMessages();
+        InspectorTest.completeTest();
+    }
+    InspectorTest.evaluateInPage("doEvalSource()");
+    InspectorTest.addConsoleSniffer(callback);
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that when console.trace is called in eval'ed script ending
+with //@ sourceURL=url it will dump a stack trace that will have
+the url as the script source. <a href="https://bugs.webkit.org/show_bug.cgi?id=47252">Bug 47252.</a>
+</p>
+
+</body>
+</html>

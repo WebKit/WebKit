@@ -1,0 +1,1 @@
+GType webkit_dom_object_get_type(void)

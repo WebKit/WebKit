@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+<select id="test" disabled size=3>
+<option selected>foo1</option>
+<option>foo2</option>
+<option>foo3</option>
+<option>foo4</option>
+<option>foo5</option>
+</select>
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+<script>
+description('Test that scrolling the listbox does not fire change event.');
+
+var selectElement = document.getElementById('test');
+
+if (!window.eventSender) {
+    debug('To manually test, click and drag the select element using the mouse. It should not fire change event.');
+    selectElement.addEventListener('change', function () {
+        testFailed('A disabled select should not fire change event');
+    });
+} else {
+    var changeEventCount = 0;
+    selectElement.addEventListener('change', function () { changeEventCount++; });
+
+    mouseMoveToIndexInListbox(1, 'test');
+    eventSender.mouseDown(0);
+    mouseMoveToIndexInListbox(2, 'test');
+    eventSender.mouseUp(0);
+
+    shouldBe('changeEventCount', '0');
+}
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

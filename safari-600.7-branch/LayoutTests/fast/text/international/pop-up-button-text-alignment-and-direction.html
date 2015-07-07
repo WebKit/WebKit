@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style>
+   select { display: block; font-size: 16px; }
+   .reflection { font: 13px "Lucida Grande"; padding: 10px; width: 245px; }
+</style>
+</head>
+<body>
+<p>
+    Verify that the alignment and writing direction of each selected item matches
+    the one below the pop-up button.
+</p>
+
+<div id="left-aligned">
+    <select class="menu" style="width:500px">
+        <option style="direction: ltr;">
+            First שניה (03) רביעית fifth
+        </option>
+        <option style="direction: rtl;">
+            First שניה (03) רביעית fifth
+        </option>
+        <option style="direction: ltr; unicode-bidi: bidi-override;">
+            First שניה (03) רביעית fifth
+        </option>
+        <option style="direction: rtl; unicode-bidi: bidi-override;">
+            First שניה (03) רביעית fifth
+        </option>
+    </select>
+    <div class="reflection" style="direction:ltr; width:450px">
+            First שניה (03) רביעית fifth
+    </div>
+</div>
+
+<script>
+    // Clone 3 left-aligned <select>.
+    var select = document.getElementsByClassName("menu")[0];
+    var div = document.getElementsByClassName("reflection")[0];
+    for (var i = 1; i < 4; ++i) {
+        var clonedSelect = select.cloneNode(true);
+        var clonedDiv = div.cloneNode(true);
+        var optionStyle = getComputedStyle(select.options[i]);
+        clonedDiv.style.direction = optionStyle.direction;
+        clonedDiv.style.unicodeBidi = optionStyle.unicodeBidi;
+        clonedDiv.style.textAlign = "left";
+        document.getElementById("left-aligned").appendChild(clonedSelect);
+        document.getElementById("left-aligned").appendChild(clonedDiv);
+    }
+
+    // Clone 4 right-aligned <select>.
+    var cloned = document.getElementById("left-aligned").cloneNode(true);
+    for (var child = cloned.firstChild; child; child = child.nextSibling) {
+        if (child.tagName == "SELECT") 
+            child.style.direction = "rtl";
+        if (child.tagName == "DIV") 
+            child.style.textAlign = "right";
+    }
+    cloned.setAttribute("id", "right-aligned");
+    document.body.appendChild(cloned);
+
+    var selectElements = document.getElementsByClassName("menu");
+    for (var i = 0; i < selectElements.length; ++i) {
+        document.body.offsetTop; // Force layout
+        selectElements[i].selectedIndex = i % 4;
+    }
+</script>
+</body>

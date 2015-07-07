@@ -1,0 +1,43 @@
+Test addPath of Path2D.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Add path B with path data to path A without path data.
+PASS refTest(result.data, expected.data) is true
+
+Add empty path B to path A with path data.
+PASS refTest(result.data, expected.data) is true
+
+Add path with path data B to path A with path data.
+PASS refTest(result.data, expected.data) is true
+
+Add path with path data B to path A with path data. Fill with winding rule evenodd.
+PASS refTest(result.data, expected.data) is true
+
+Add path B to path A with transformation matrix.
+PASS refTest(result.data, expected.data) is true
+
+Add path A to itself with transformation matrix.
+PASS refTest(result.data, expected.data) is true
+
+Add path B to path A with singular transformation matrix (1).
+PASS refTest(result.data, expected.data) is true
+
+Add path B to path A with singular transformation matrix (2).
+PASS refTest(result.data, expected.data) is true
+
+Add path B to path A with singular transformation matrix (3).
+PASS refTest(result.data, expected.data) is true
+
+Various tests of invalid values.
+PASS pathA.addPath(matrix, pathB) threw exception Error: TypeMismatchError: DOM Exception 17.
+PASS pathA.addPath(pathB, ctx.canvas) threw exception Error: TypeMismatchError: DOM Exception 17.
+PASS pathA.addPath(pathB, null) threw exception Error: TypeMismatchError: DOM Exception 17.
+PASS pathA.addPath(pathB, undefined) threw exception Error: TypeMismatchError: DOM Exception 17.
+PASS pathA.addPath(pathB, 0) threw exception Error: TypeMismatchError: DOM Exception 17.
+PASS pathA.addPath(pathB, "0") threw exception Error: TypeMismatchError: DOM Exception 17.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

@@ -1,0 +1,34 @@
+<body>
+    <p>This tests that the video element's timeline controls are draggable in full screen.  Press any key to continue.</p>
+    <video id="video" width="300" controls></video>
+    <script src="full-screen-test.js"></script>
+    <script src="../media/media-controls.js"></script>
+    <script src="../media/media-file.js"></script>
+    <script>
+        var video = document.getElementById('video');
+        var timeline;
+
+        waitForEvent(document, 'webkitfullscreenchange', function() {
+            if (window.internals) {
+                timeline = mediaControlsElement(internals.shadowRoot(video).firstChild, '-webkit-media-controls-timeline');
+                var box = internals.boundingBox(timeline);
+
+                eventSender.mouseMoveTo(box.left + 5, box.top + 5);
+
+                waitForEvent(timeline, 'mousedown');
+                eventSender.mouseDown();
+
+                waitForEventAndEnd(timeline, 'mouseup');
+                eventSender.mouseUp();
+            }
+            else
+                logResult(false, "window.internals == undefined");
+        });
+
+        waitForEvent(video, 'canplaythrough', function() {
+            runWithKeyDown(function(){video.webkitRequestFullScreen()});
+        });
+
+        video.src = findMediaFile('video', '../media/content/test');
+    </script>
+</body>

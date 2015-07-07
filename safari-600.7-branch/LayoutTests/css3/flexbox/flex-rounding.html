@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<style>
+.flexbox {
+    display: -webkit-flex;
+    background-color: #aaa;
+    position: relative;
+}
+.flexbox :nth-child(1) {
+    background-color: blue;
+}
+.flexbox :nth-child(2) {
+    background-color: green;
+}
+.flexbox :nth-child(3) {
+    background-color: red;
+}
+.flexbox :nth-child(4) {
+    background-color: yellow;
+}
+.flexbox :nth-child(5) {
+    background-color: purple;
+}
+.flexbox :nth-child(6) {
+    background-color: orange;
+}
+.flexbox :nth-child(7) {
+    background-color: lime;
+}
+
+.flexbox > div {
+    -webkit-flex: 1;
+}
+.column {
+    -webkit-flex-direction: column;
+    width: 200px;
+    height: 200px;
+}
+</style>
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.flexbox')">
+
+<div class="flexbox" style="width: 101px; height: 10px">
+    <div data-expected-width="51" data-offset-x="0"></div>
+    <div data-expected-width="50" data-offset-x="51"></div>
+</div>
+
+<div class="flexbox" style="width: 100px; height: 10px">
+    <div data-expected-width="33" data-offset-x="0"></div>
+    <div data-expected-width="34" data-offset-x="33"></div>
+    <div data-expected-width="33" data-offset-x="67"></div>
+</div>
+
+<div class="flexbox" style="-webkit-flex-direction: row-reverse; width: 101px; height: 10px">
+    <div data-expected-width="50" data-offset-x="51"></div>
+    <div data-expected-width="51" data-offset-x="0"></div>
+</div>
+
+<div class="flexbox" style="-webkit-flex-direction: row-reverse; width: 100px; height: 10px">
+    <div data-expected-width="33" data-offset-x="67"></div>
+    <div data-expected-width="34" data-offset-x="33"></div>
+    <div data-expected-width="33" data-offset-x="0"></div>
+</div>
+
+<div class="flexbox" style="-webkit-flex-direction: column; height: 101px; width: 100px">
+    <div data-expected-height="51" data-offset-y="0"></div>
+    <div data-expected-height="50" data-offset-y="51"></div>
+</div>
+
+<div class="flexbox" style="-webkit-flex-direction: column; height: 100px; width: 100px">
+    <div data-expected-height="33" data-offset-y="0"></div>
+    <div data-expected-height="34" data-offset-y="33"></div>
+    <div data-expected-height="33" data-offset-y="67"></div>
+</div>
+
+<div class="flexbox" style="-webkit-flex-direction: column-reverse; height: 101px; width: 100px">
+    <div data-expected-height="50" data-offset-y="51"></div>
+    <div data-expected-height="51" data-offset-y="0"></div>
+</div>
+
+<div class="flexbox" style="-webkit-flex-direction: column-reverse; height: 100px; width: 100px">
+    <div data-expected-height="33" data-offset-y="67"></div>
+    <div data-expected-height="34" data-offset-y="33"></div>
+    <div data-expected-height="33" data-offset-y="0"></div>
+</div>
+
+</body>
+</html>

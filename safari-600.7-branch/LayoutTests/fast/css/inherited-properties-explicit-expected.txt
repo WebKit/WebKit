@@ -1,0 +1,9 @@
+PASS test('test1a', 'margin-left') is "0px"
+PASS test('test1b', 'margin-left') is "0px"
+PASS test('test2a', 'margin-left') is "5px"
+PASS test('test2b', 'margin-left') is "5px"
+PASS test('test3a', 'margin-left') is "10px"
+PASS test('test3b', 'margin-left') is "10px"
+Test that the matched declaration cache handles explicitly inherited properties correctly.
+
+

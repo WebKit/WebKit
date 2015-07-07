@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>texImage2D ImageData Test</title>
+    <script src="resources/webgl-test.js"> </script>
+    <script id="vshader" type="x-shader/x-vertex">
+        attribute vec3 vPosition;
+        attribute vec2 vTexCoord0;
+        varying vec2 texCoord;
+        void main()
+        {
+            gl_Position = vec4(vPosition.x, vPosition.y, vPosition.z, 1.0);
+            texCoord = vTexCoord0;
+        }
+    </script>
+
+    <script id="fshader" type="x-shader/x-fragment">
+        #ifdef GL_ES
+        precision highp float;
+        #endif
+        uniform sampler2D tex;
+        varying vec2 texCoord;
+        void main()
+        {
+            gl_FragColor = texture2D(tex, texCoord);
+        }
+    </script>
+
+    <script>
+        function fail(x,y, buf, shouldBe)
+        {
+            var i = (y*64+x) * 4;
+            var reason = "pixel at ("+x+","+y+") is ("+buf[i]+","+buf[i+1]+","+buf[i+2]+","+buf[i+3]+"), should be "+shouldBe;
+            document.getElementById("results").innerHTML = "Test <span style='color:red'>FAILED</span> "+reason;
+        }
+        
+        function pass()
+        {
+            document.getElementById("results").innerHTML = "Test <span style='color:green'>PASSED</span>";
+        }
+        
+        function checkGLError()
+        {
+            var error = gl.getError();
+            if (error != gl.NO_ERROR) {
+                var str = "GL Error: " + error;
+                document.body.appendChild(document.createTextNode(str));
+                throw str;
+            }
+        }
+        
+        function init()
+        {
+            if (window.testRunner) {
+                testRunner.overridePreference("WebKitWebGLEnabled", "1");
+                testRunner.dumpAsText();
+            }
+            // Set up a canvas to get image data from
+            var canvas2d = document.getElementById("texcanvas");
+            var context2d = canvas2d.getContext("2d");
+            context2d.fillStyle = 'red';
+            context2d.fillRect(0,0,64,64);
+                        
+            gl = initWebGL("example", "vshader", "fshader", [ "vPosition", "vTexCoord0"], [ 1, 0, 1, 1 ], 100);
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+            
+            var vertexObject = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, vertexObject);
+            var vertices = new Float32Array([
+                -1,  1, 0,
+                -1, -1, 0,
+                 1,  1, 0,
+                 1, -1, 0,
+                 1,  1, 0,
+                -1, -1, 0]);
+            var texCoords = new Float32Array([
+                 0, 1,
+                 0, 0,
+                 1, 1,
+                 1, 0,
+                 1, 1,
+                 0, 0]);
+            g_texCoordOffset = vertices.byteLength;
+            gl.bufferData(gl.ARRAY_BUFFER, g_texCoordOffset + texCoords.byteLength, gl.STATIC_DRAW);
+            gl.bufferSubData(gl.ARRAY_BUFFER, 0, vertices);
+            gl.bufferSubData(gl.ARRAY_BUFFER, g_texCoordOffset, texCoords);
+            
+            gl.enableVertexAttribArray(0);
+            gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 0, 0);
+            gl.enableVertexAttribArray(1);
+            gl.vertexAttribPointer(1, 2, gl.FLOAT, gl.FALSE, 0, g_texCoordOffset);
+
+            // Create a texture from the canvas's image data
+            var tex = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, tex);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, context2d.getImageData(0, 0, 64, 64));
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+            
+            g_textureLoc = gl.getUniformLocation(gl.program, "tex");
+            gl.uniform1i(g_textureLoc, 0);
+            
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+            
+            checkGLError();
+
+            // Test several locations
+            // Each line should be all red 
+            var buf = new Uint8Array(64 * 64 * 4);
+            gl.readPixels(0, 0, 64, 64, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+            
+            var offset15 = 3840; // (15*64) * 4
+            var offset40 = 10240; // (40*64) * 4
+            var offset63 = 16128; // (63*64) * 4
+            for (var i = 0; i < 64; ++i) {
+                var test0 = (buf[i*4] != 255 || buf[i*4+1] != 0 || buf[i*4+2] != 0 || buf[i*4+3] != 255);
+                var test15 = (buf[offset15+i*4] != 255 || buf[offset15+i*4+1] != 0 || buf[offset15+i*4+2] != 0 || buf[offset15+i*4+3] != 255);
+                var test40 = (buf[offset40+i*4] != 255 || buf[offset40+i*4+1] != 0 || buf[offset40+i*4+2] != 0 || buf[offset40+i*4+3] != 255);
+                var test63 = (buf[offset63+i*4] != 255 || buf[offset63+i*4+1] != 0 || buf[offset63+i*4+2] != 0 || buf[offset63+i*4+3] != 255);
+                if (test0) {
+                    fail(i, 0, buf, "(255,0,0,255)");
+                    return;
+                }
+                if (test15) {
+                    fail(i, 15, buf, "(255,0,0,255)");
+                    return;
+                }
+                if (test40) {
+                    fail(i, 40, buf, "(255,0,0,255)");
+                    return;
+                }
+                if (test63) {
+                    fail(i, 63, buf, "(255,0,0,255)");
+                    return;
+                }
+            }
+            pass();
+       }
+    </script>
+  </head>
+  <body onload="init()">
+    <canvas id="texcanvas" width="64px" height="64px"></canvas>
+    <canvas id="example" width="64px" height="64px">
+    There is supposed to be an example drawing here, but it's not important.
+    </canvas>
+    <div id="results">Test <span style="color:red">FAILED</span></div>
+  </body>
+</html>

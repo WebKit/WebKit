@@ -1,0 +1,44 @@
+<?php
+$extra_head_content = <<<EOF
+<style type="text/css">
+p { margin: 0px 0px 4px 0px; }
+</style>
+EOF;
+include("header.inc");
+?>
+
+<h2>Welcome to the website for the WebKit Open Source Project!</h2>
+<p>WebKit is an open source web browser engine.
+WebKit is also the name of the Mac OS X system framework version of the engine that's used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, Mail, and many other OS X applications.
+WebKit's HTML and JavaScript code began as a branch of the <a href="http://konqueror.kde.org/features/browser.php">KHTML</a> and KJS libraries from <a href="http://kde.org/">KDE</a>.
+</p>
+
+<h2>Getting involved</h2>
+<a href="http://nightly.webkit.org/"><img src="images/download.png" id="download" alt="download nightly" width="189" height="65"></a>
+<p>There are many ways to get involved. You can:</p>
+<ul>
+   <li><a href="http://nightly.webkit.org/">download the latest nightly build</a></li>
+    <li><a href="building/tools.html">install developer tools</a> and then <a href="building/checkout.html">check out</a> and <a href="building/build.html">build the source code</a></li>
+</ul>
+<p>Once you have either of these, you can help by:</p>
+<ul>
+    <li><a href="quality/reporting.html">reporting bugs</a> you find in the software</li>
+    <li>providing <a href="quality/reduction.html">reductions</a> to bugs</li>
+    <li>submitting <a href="coding/contributing.html">patches for review</a></li>
+</ul>
+
+<h2>More info</h2>
+<p>More information about WebKit can be found on its <a href="http://trac.webkit.org/wiki">wiki</a>. You can help here too, by adding information that can help others learn about WebKit. If you have more questions, <a href="contact.html">contact us</a>.</p>
+
+<h2>Projects</h2>
+<p>There are many exciting (new) <a href="projects/index.html">projects</a> that you can contribute to:</p> 
+<ul>
+    <li>help us improve <a href="projects/compat/index.html">Website compatibility</a></li>
+    <li>write <a href="projects/documentation/index.html">documentation</a></li>
+    <li><a href="projects/svg/index.html">SVG</a></li>
+    <li><a href="projects/mathml/index.html">MathML</a></li>
+    <li><a href="projects/css/index.html">CSS</a></li>
+    <li><a href="projects/dom/index.html">DOM</a></li>
+</ul>
+
+<?php include("footer.inc"); ?>

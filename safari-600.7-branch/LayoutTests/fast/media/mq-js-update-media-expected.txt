@@ -1,0 +1,7 @@
+This test verifies that when media query is updated, style is recalculated.
+
+PASS Testing that background color is red. Media query "all and (color)" 
+PASS Testing that updated media query doesn't match and background color is not red. Media query "(monochrome) and (color)" 
+PASS Testing that background color is red. Media query "all and (color)" 
+PASS Testing that updated media query doesn't match and background color is not red. Media query "(monochrome) and (color)" 
+

@@ -1,0 +1,52 @@
+<body>
+<p>Test SharedWorker onerror functionality. Prints multiple SUCCESS lines, then DONE when complete.</p>
+<div id=result></div>
+<script>
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function testSimpleLoadError()
+{
+    var worker = new SharedWorker("file_does_not_exist.js", "name");
+    worker.onerror = function(evt) {
+        log("PASS: Received load error event: " + evt);
+        testLoadErrorGC();
+    }
+}
+
+function testLoadErrorGC()
+{
+    var worker = new SharedWorker("file_does_not_exist.js", "name");
+    worker.onerror = handleError;
+    worker = null;
+    gc();
+}
+
+function gc()
+{
+    if (window.GCController)
+        return GCController.collect();
+
+    for (var i = 0; i < 10000; i++) { // force garbage collection (FF requires about 9K allocations before a collect)
+        var s = new String("abc");
+    }
+}
+
+
+function handleError(evt) {
+    log("PASS: Received error event after worker GC'd: " + evt);
+    log("DONE");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+testSimpleLoadError();
+</script>
+</body>

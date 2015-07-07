@@ -1,0 +1,25 @@
+<head>
+    <title>Testing the View Mode Media Feature</title>
+    <style type="text/css">
+        div {
+            background-color: red;
+        }
+        @media (-webkit-view-mode: minimized) {
+            body {
+                background-color: blue;
+            }
+        }
+        @media (-webkit-view-mode) {
+            div {
+                background-color: green;
+            }
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.setViewModeMediaFeature("minimized");
+    </script>
+</head>
+<body>
+    <div style="width: 200; height: 200;"\>
+</body>

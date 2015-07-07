@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    #target {
+      position: relative;
+      top: 100px;
+      left: 100px;
+      width: 100px;
+      height: 100px;
+      background-color: blue;
+      -webkit-transition-property: left;
+      -webkit-transition-duration: 0s;
+      -webkit-transition-delay: 0.5s;
+    }
+    
+    #target.moved {
+      left: 200px;
+    }
+   </style>
+   <script src="resources/transition-test-helpers.js"></script>
+   <script>
+    const expectedValues = [
+      // [time, element-id, property, expected-value, tolerance]
+      [1, "target", "left", 200, 4],
+    ];
+
+    function setupTest()
+    {
+      document.getElementById('target').className = 'moved';
+    }
+
+    // Pause API isn't happy pausing during delay yet.
+    // https://bugs.webkit.org/show_bug.cgi?id=59475
+    runTransitionTest(expectedValues, setupTest, dontUsePauseAPI);
+   </script>
+</head>
+<body>
+
+  <div id="target"></div>
+  <div id="result"></div>
+
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<title>Line Range for Text Marker</title>
+</head>
+<body>
+
+<div id="container">
+<p>Before.</p>
+<p id="line">Line of text.</p>
+<p>After.</p>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that line range is returned correctly for a given text marker.");
+    
+    var lineText = 0;
+    
+    function lineTextForPoint(x, y) {
+        // Get the element for this point.
+        var element = accessibilityController.elementAtPoint(x, y);
+        // Get the text marker for this point.
+        var marker = element.textMarkerForPoint(x, y);
+        // Get the line text marker range for this text marker.
+        var range = element.lineTextMarkerRangeForTextMarker(marker);
+        // Return the text for this line text marker range.
+        return element.stringForTextMarkerRange(range);
+    }
+    
+    if (window.accessibilityController) {
+        var line = accessibilityController.accessibleElementById("line");
+        // Line text from first text marker (add one to make sure we get the first marker for THIS line).
+        lineText = lineTextForPoint(line.x + 1, line.y + 1);
+        shouldBe("lineText", "'Line of text.'");
+        // Line text from center text marker.
+        lineText = lineTextForPoint(line.x + line.width / 2, line.y + line.height / 2);
+        shouldBe("lineText", "'Line of text.'");
+        // Line text from last text marker (subtract one to make sure we get the last marker for THIS line).
+        lineText = lineTextForPoint(line.x + line.width - 1, line.y + line.height - 1);
+        shouldBe("lineText", "'Line of text.'");
+        
+        // Hide superfluous text.
+        document.getElementById("container").style.display = "none";
+    }
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

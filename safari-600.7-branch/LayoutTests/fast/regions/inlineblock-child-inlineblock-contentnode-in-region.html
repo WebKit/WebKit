@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #red { position: absolute; top: 155px; left: 105px; width: 100px; height: 150px; background-color: red; }
+            #region { -webkit-flow-from: flow; position: absolute; top: 150px; left: 100px; width: 100px; height: 100px; border: 5px solid black; }
+            #content { -webkit-flow-into: flow; display: inline-block; }
+            #inside { display: inline-block; background-color: green; width: 100px; height: 150px; }
+        </style>
+    </head>
+    <body>
+        <p>Test that an inline block, child of a inline-block content node, is correctly displayed in a region.</p>
+        <p>The inline block with green background should overflow the black border region.</p>
+        <p>On success you should see a green rectangle with black border on left, top, right and no red.</p>
+        <div id="red"></div>
+        <div id="region"></div>
+        <div id="content">
+            <div id="inside"></div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,27 @@
+<html>
+<head>
+<script src="resources/profiler-test-JS-resources.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.internals)
+    internals.setJavaScriptProfilingEnabled(true);
+
+function startTest()
+{
+    console.profile("A simple profile test where an event happens.");
+    // FIXME: this is not testing what it says it is.
+    endTest();
+}
+</script>
+</head>
+
+<body onload="startTest()">
+This page's JavaScript has an onload event.
+<br>
+<br>
+To run this test manually, load it in the browser then load the WebInspector and look at
+the profile.  There should be only one onload node.
+<div id="output"></div>
+</body>
+</html>

@@ -1,0 +1,29 @@
+Tests script search in inspector debugger agent.
+
+Bug 69015  
+Debugger was enabled.
+http://127.0.0.1:8000/inspector/search/resources/search.js
+Search matches: 
+lineNumber: 0, line: 'function searchTestUniqueString()'
+lineNumber: 3, line: '    // searchTestUniqueString two occurences on the same line searchTestUniqueString'
+lineNumber: 9, line: '    searchTestUniqueString();'
+lineNumber: 10, line: '    // SEARCHTestUniqueString();'
+
+Search matches: 
+lineNumber: 0, line: 'function searchTestUniqueString()'
+lineNumber: 3, line: '    // searchTestUniqueString two occurences on the same line searchTestUniqueString'
+lineNumber: 9, line: '    searchTestUniqueString();'
+
+Search matches: 
+lineNumber: 0, line: 'function searchTestUniqueString()'
+lineNumber: 3, line: '    // searchTestUniqueString two occurences on the same line searchTestUniqueString'
+lineNumber: 9, line: '    searchTestUniqueString();'
+lineNumber: 10, line: '    // SEARCHTestUniqueString();'
+
+Search matches: 
+lineNumber: 0, line: 'function searchTestUniqueString()'
+lineNumber: 3, line: '    // searchTestUniqueString two occurences on the same line searchTestUniqueString'
+lineNumber: 9, line: '    searchTestUniqueString();'
+
+Debugger was disabled.
+

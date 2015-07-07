@@ -1,0 +1,78 @@
+(Frame scrolling node
+  (scrollable area size 785 585)
+  (contents size 1805 5108)
+  (frame scale factor 2.30)
+  (children 4
+    (Fixed node
+      (anchor edges: AnchorEdgeLeft AnchorEdgeTop)
+      (viewport rect at last layout: 0.00 0.00 785.00 585.00)
+      (layer position at last layout -4.00 -4.00)
+    )
+    (Fixed node
+      (anchor edges: AnchorEdgeLeft AnchorEdgeTop)
+      (viewport rect at last layout: 0.00 0.00 785.00 585.00)
+      (layer position at last layout 6.00 196.00)
+    )
+    (Fixed node
+      (anchor edges: AnchorEdgeRight AnchorEdgeTop)
+      (viewport rect at last layout: 0.00 0.00 785.00 585.00)
+      (layer position at last layout 597.00 196.00)
+    )
+    (Fixed node
+      (anchor edges: AnchorEdgeLeft AnchorEdgeBottom)
+      (viewport rect at last layout: 0.00 0.00 785.00 585.00)
+      (layer position at last layout -4.00 497.00)
+    )
+  )
+)
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 1805.00 5108.00)
+  (visible rect 0.00, 0.00 785.00 x 585.00)
+  (contentsScale 1.00)
+  (children 1
+    (GraphicsLayer
+      (anchor 0.00 0.00)
+      (bounds 785.00 2221.00)
+      (contentsOpaque 1)
+      (transform [2.30 0.00 0.00 0.00] [0.00 2.30 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
+      (visible rect 0.00, 0.00 341.30 x 254.35)
+      (contentsScale 2.30)
+      (tile cache coverage 0, 0 445 x 445)
+      (tile size 512 x 512)
+      (top left tile 0, 0 tiles grid 2 x 2)
+      (children 4
+        (GraphicsLayer
+          (position -4.00 -4.00)
+          (bounds 786.00 82.00)
+          (drawsContent 1)
+          (visible rect 4.00, 4.00 341.30 x 78.00)
+          (contentsScale 2.30)
+        )
+        (GraphicsLayer
+          (position 6.00 196.00)
+          (bounds 182.00 332.00)
+          (drawsContent 1)
+          (visible rect 0.00, 0.00 182.00 x 58.35)
+          (contentsScale 2.30)
+        )
+        (GraphicsLayer
+          (position 597.00 196.00)
+          (bounds 182.00 332.00)
+          (drawsContent 1)
+          (visible rect 0.00, 0.00 0.00 x 0.00)
+          (contentsScale 2.30)
+        )
+        (GraphicsLayer
+          (position -4.00 497.00)
+          (bounds 786.00 82.00)
+          (drawsContent 1)
+          (visible rect 0.00, 0.00 0.00 x 0.00)
+          (contentsScale 2.30)
+        )
+      )
+    )
+  )
+)
+This is the top bar. This is the left bar. This is the right bar. This is the bottom bar.

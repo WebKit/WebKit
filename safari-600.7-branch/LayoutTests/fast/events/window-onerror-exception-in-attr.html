@@ -1,0 +1,38 @@
+<html>
+<head>
+<script src="resources/window-onerror.js">
+</script>
+</head>
+<body>
+<p>Test that window.onerror is called on window object when there is an exception(excluding syntax errors)
+in attribute handler. <a href="https://bugs.webkit.org/show_bug.cgi?id=70991">Bug 70991</a>.</p>
+<div id="console"></div>
+<button id="btn1" onclick="null.m()">Button 1</button>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function log(msg) {
+    document.getElementById("console").innerHTML += msg + "<br>";
+}
+
+window.onerror = function(msg, url, line)
+{
+    url = url ? url.match( /[^\/]+\/?$/ )[0] : url;
+    log("Main frame window.onerror: " + msg + " at " + url + ":" + line);
+    return true;
+}
+
+document.write('<button id="btn2" onclick="null.m()">Button 2</button>\n');
+
+var button3 = document.createElement("button");
+button3.textContent = "Button 3";
+button3.setAttribute("onclick", "null.m()");
+document.body.appendChild(button3);
+
+document.getElementById("btn1").click();
+document.getElementById("btn2").click();
+button3.click();
+</script>
+</body>
+</html>

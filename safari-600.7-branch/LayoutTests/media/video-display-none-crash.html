@@ -1,0 +1,11 @@
+<video controls></video>
+<p>Test that pause() after changing display to "none" doesn't cause a crash.</p>
+<script src="media-file.js"></script>
+<script src="video-test.js"></script>
+<script>
+    video.src = findMediaFile("video", "content/test");
+    video.play();
+    video.style.display = "none";
+    video.pause();
+    endTest();
+</script>

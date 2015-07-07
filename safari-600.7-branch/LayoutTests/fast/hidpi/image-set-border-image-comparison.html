@@ -1,0 +1,57 @@
+<html>
+<head>
+<script>
+    function startTest() {
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.setBackingScaleFactor(2, finishTest);
+        }
+    }
+    
+    function finishTest() {
+        setTimeout(function() { testRunner.notifyDone(); }, 0);
+    }
+</script>
+
+<style>
+div {
+	box-sizing: border-box;
+    width: 40px;
+    height: 13px;
+}
+
+.test1 {
+    border-image: -webkit-image-set(url('resources/Breakpoint.png') 1x, url('resources/Breakpoint-2x.png') 2x) 3 7 3 3 fill / 3px 7px 3px 3px;
+}
+
+.test2 {
+    border-image: -webkit-image-set(url('resources/Breakpoint.png') 1x, url('resources/Breakpoint-2x.png') 2x) 3 7 3 3 fill;
+    border-width: 3px 7px 3px 3px;
+}
+
+.test3 {
+    border-image: url('resources/Breakpoint.png') 3 7 3 3 fill / 3px 7px 3px 3px;
+}
+
+.test4 {
+    border-image: url('resources/Breakpoint.png') 3 7 3 3 fill;
+    border-width: 3px 7px 3px 3px;
+}
+
+@media (-webkit-min-device-pixel-ratio: 2) {
+    .test3, .test4 {
+    	border-image-source: url('resources/Breakpoint-2x.png');
+    	border-image-slice: 6 14 6 6 fill;
+    }
+}
+</style>
+</head>
+
+<body onload="startTest();">
+The first two tests should match the last two.<br><br>
+<div class="test1"></div><br>
+<div class="test2"></div><br>
+<div class="test3"></div><br>
+<div class="test4"></div><br>
+</body>
+</html>

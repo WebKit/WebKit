@@ -1,0 +1,5 @@
+FAIL spanWidth should be 43.34765625. Was 44.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

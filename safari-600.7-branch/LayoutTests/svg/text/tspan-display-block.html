@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<head>
+<style>
+tspan { display: block; }
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<p>Tests that a &lt;tspan&gt; with display block doesn't cause an assertion failure.</p>
+<svg><text x="0" y="20">PA<tspan>S</tspan>S</text></svg>
+</body>
+</html>

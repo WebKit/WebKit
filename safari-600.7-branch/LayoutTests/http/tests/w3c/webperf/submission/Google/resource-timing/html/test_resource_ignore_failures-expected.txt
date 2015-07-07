@@ -1,0 +1,8 @@
+Description
+
+This test validates that failed resources aren't present in the Resource Timing buffer.
+
+
+
+PASS entries.length == 0 
+

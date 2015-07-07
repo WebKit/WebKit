@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.editing {
+    border: 2px solid red;
+    padding: 12px;
+    font-size: 24px;
+}
+</style>
+<script src="../editing.js" language="JavaScript" type="text/JavaScript" ></script>
+</head>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+
+<div id="container"></div>
+
+<script>
+description("Tests spelling and grammar markers for misspellings.");
+
+jsTestIsAsync = true;
+
+if (window.internals) {
+    internals.settings.setUnifiedTextCheckerEnabled(true);
+    internals.settings.setAsynchronousSpellCheckingEnabled(true);
+}
+
+function createEditableElement(parent) {
+    var e = document.createElement('div');
+    e.setAttribute("contentEditable", "true");
+    e.className = 'editing';
+
+    parent.appendChild(e);
+    return e;
+}
+
+function typeText(elem, text) {
+    elem.focus();
+    for (var i = 0; i < text.length; ++i)
+        typeCharacterCommand(text[i]);
+}
+
+var container = document.getElementById('container');
+
+var elementWithGrammarIssue = createEditableElement(container);
+typeText(elementWithGrammarIssue, 'I have a issue.');
+
+var elementWithSpellingIssue  = createEditableElement(container);
+typeText(elementWithSpellingIssue, 'zz.');
+
+var elementWithGrammarAndSpellingIssue = createEditableElement(container);
+typeText(elementWithGrammarAndSpellingIssue, 'orange,zz,apple.');
+
+var misspellings = [
+    { marker:'grammar',  issue:'a' },
+    { marker:'spelling', issue:'zz' },
+    { marker:'grammar',  issue:'orange,zz,apple.' }
+];
+
+var tests = [
+    function() { verifyDesiredMarkers(elementWithGrammarIssue, misspellings.slice(0, 1)) },
+    function() { verifyDesiredMarkers(elementWithSpellingIssue, misspellings.slice(1, 2)) },
+    function() { verifyDesiredMarkers(elementWithGrammarAndSpellingIssue, misspellings.slice(1, 3)) },
+
+    // Those expect to have only one kind of markers either spelling or grammar.
+    function() { verifyUnexpectedMarkers(elementWithGrammarIssue, misspellings.slice(0, 1)) },
+    function() { verifyUnexpectedMarkers(elementWithSpellingIssue, misspellings.slice(1, 2)) },
+];
+
+var element;
+var nextMisspellingData;
+
+function verifyDesiredMarkers(e, misspellings)
+{
+    if (!window.internals)
+        return done();
+
+    element = e;
+    nextMisspellingData = misspellings.shift();
+    if (!nextMisspellingData)
+        return done();
+
+    debug("Checking " + nextMisspellingData.marker + " issue on '" + element.firstChild.nodeValue + "'");
+
+    shouldBecomeDifferent('internals.markerRangeForNode(element.firstChild, nextMisspellingData.marker, 0)', "null", function() {
+        range = internals.markerRangeForNode(element.firstChild, nextMisspellingData.marker, 0);
+        shouldBeEqualToString('range.toString()', nextMisspellingData.issue);
+        debug("");
+        verifyDesiredMarkers(element, misspellings);
+    });
+}
+
+var oppositeMarker;
+function verifyUnexpectedMarkers(e, misspellings)
+{
+    element = e;
+    nextMisspellingData = misspellings.shift();
+
+    if (nextMisspellingData.marker == 'grammar')
+        oppositeMarker = 'spelling';
+    else if (nextMisspellingData.marker == 'spelling')
+        oppositeMarker = 'grammar';
+
+    debug("Checking " + oppositeMarker + " issue on '" + element.firstChild.nodeValue + "'");
+
+    shouldBecomeEqual('internals.markerCountForNode(element.firstChild, oppositeMarker)', '0', function() {
+        debug("");
+        done();
+    });
+}
+
+function done()
+{
+    var next = tests.shift();
+    if (next)
+        return window.setTimeout(next, 0);
+
+    finishJSTest();
+}
+done();
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

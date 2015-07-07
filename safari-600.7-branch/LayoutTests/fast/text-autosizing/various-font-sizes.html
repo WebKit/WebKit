@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta name="viewport" content="width=800">
+<style>
+body { width: 800px; margin: 0; overflow-y: hidden; }
+</style>
+
+<script>
+if (window.internals) {
+    window.internals.settings.setTextAutosizingEnabled(true);
+    window.internals.settings.setTextAutosizingWindowSizeOverride(320, 480);
+} else if (window.console && console.warn) {
+    console.warn("This test depends on the Text Autosizing setting being true, so run it in DumpRenderTree, or manually enable Text Autosizing, and either use a mobile device with 320px device-width (like Nexus S or iPhone), or define HACK_FORCE_TEXT_AUTOSIZING_ON_DESKTOP.");
+}
+</script>
+
+</head>
+<body>
+
+<div style="font-size: 8px">
+    This should be scaled by 2.5x to become 20px (since it was small, it got fully multiplied).
+</div>
+<div style="font-size: 16px">
+    This should be scaled by 2.5x to become 40px (since it was small, it got fully multiplied).
+</div>
+<div style="font-size: 32px">
+    This should be scaled by 1.5x to become 48px (since it was medium size, it got multiplied less).
+</div>
+<div style="font-size: 48px">
+    This should be scaled by 1.17x to become 56px (since it was large, it got multiplied much less).
+</div>
+<div style="font-size: 64px">
+    This should not be scaled at all, hence remain 64px (since it was huge, it didn't get multiplied at all).
+</div>
+
+</body>
+</html>

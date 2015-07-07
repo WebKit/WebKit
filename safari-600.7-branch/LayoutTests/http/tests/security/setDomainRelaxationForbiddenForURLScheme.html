@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test for Bug 33806: Would like API to disallow setting of document.domain for pages with certain URL schemes</title>
+</head>
+<body>
+    <p>Test for <a href="http://webkit.org/b/33806">Bug 33806: Would like API to disallow setting of
+    document.domain for pages with certain URL schemes</a>. If the test succeeds, you will see a
+    series of "PASS" messages below.</p>
+
+    <pre id=log></pre>
+    <script>
+        function log(msg)
+        {
+            document.getElementById("log").appendChild(document.createTextNode(msg + "\n"));
+        }
+
+        function domainShouldBe(expected)
+        {
+            var actual = document.domain;
+            var succeeded = actual === expected;
+            if (succeeded)
+                log("PASS: document.domain should be " + expected + " and is");
+            else
+                log("FAIL: document.domain should be " + expected + " but is " + actual);
+        }
+
+        if (window.testRunner)
+            testRunner.dumpAsText();
+        else
+            log("This test can be run meaningfully only in DumpRenderTree");
+
+        domainShouldBe("127.0.0.1");
+        document.domain = "0.0.1";
+        domainShouldBe("0.0.1");
+
+        log("Forbidding domain relaxation for the http: scheme");
+
+        if (window.testRunner)
+            testRunner.setDomainRelaxationForbiddenForURLScheme(true, "http");
+
+        var exception;
+        try {
+            document.domain = "0.1";
+        } catch (e) {
+            exception = e;
+        }
+
+        if (exception)
+            log("PASS: Setting document.domain from a forbidden URL scheme threw exception \"" + exception + "\"");
+        else
+            log("FAIL: Setting document.domain from a forbidden URL scheme should have thrown an exception, but didn't");
+
+        domainShouldBe("0.0.1");
+
+        if (window.testRunner)
+            testRunner.setDomainRelaxationForbiddenForURLScheme(false, "http");
+
+        log("Allowing domain relaxation for the http: scheme");
+
+        document.domain = "0.1";
+        domainShouldBe("0.1");
+
+        log("Forbidding domain relaxation for the not-http: scheme");
+
+        if (window.testRunner)
+            testRunner.setDomainRelaxationForbiddenForURLScheme(true, "not-http");
+
+        document.domain = "1";
+        domainShouldBe("1");
+
+        log("Allowing domain relaxation for the not-http: scheme");
+
+        if (window.testRunner)
+            testRunner.setDomainRelaxationForbiddenForURLScheme(false, "not-http");
+    </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+  <head>
+    <title>mroot-pref-width</title>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+
+    <!-- This verifies whether the pref width of the <mroot> element is large
+         enough. If not, the width of the cell will not be large enough and
+         the left part of the <mroot> element will be visible. -->
+    <math>
+      <mtable>
+        <mtr>
+          <mtd style="border: solid 1px red; background: black;">
+            <mroot>
+              <mi>x</mi>
+              <mn>1234567890</mn>
+            </mroot>
+          </mtd>
+        </mtr>
+      </mtable>
+    </math>
+
+  </body>
+</html>

@@ -1,0 +1,37 @@
+<html>
+<body>
+<p>Test that setRequestHeader properly checks for line feeds in header values.</p>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function test(val) {
+    var req = new XMLHttpRequest;
+    req.open("GET", "resources/print-headers.cgi", false);
+
+    try {
+        req.setRequestHeader("Test", val);
+    } catch (ex) {
+        document.write("<p>" + escape(val) + " -> SUCCESS, setRequestHeader() raised an exception " + ex + "</p>");
+        return;
+    }
+
+    try {
+        req.send("");
+        if (req.responseText.match("HTTP_EVIL"))
+            document.write("<p>" + escape(val) + " -> FAILURE - evil header injected!</p>");
+        else
+            document.write("<p>" + escape(val) + " -> setRequestHeader() didn't throw, but server didn't see the evil header.</p>");
+
+    } catch (ex) {
+        alert("Unexpected exception: " + ex);
+    }
+}
+
+test("\nEvil: on");
+test("\rEvil: on");
+test("\r\nEvil: on");
+test("\n\rEvil: on");
+</script>
+</body>
+</html>

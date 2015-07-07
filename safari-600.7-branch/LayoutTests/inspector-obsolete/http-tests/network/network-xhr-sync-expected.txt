@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 6: XHR loaded: 1
+Tests XHR network resource type and content for synchronous requests. Bug 61205
+
+http://127.0.0.1:8000/inspector/network/resources/resource.php
+resource.type: xhr
+resource.content before requesting content: undefined
+resource.content after requesting content: Hello world
+

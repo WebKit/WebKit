@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+    </script>
+</head>
+<body>
+    <embed type="application/x-webkit-test-netscape" test="call-javascript-that-destroys-plugin"></embed>
+    <p>This tests that, if a plug-in directs the browser to evaluate JavaScript that removes the plug-in from the page,
+    the plug-in is destroyed asynchronously.</p>
+</body>
+</html>
+

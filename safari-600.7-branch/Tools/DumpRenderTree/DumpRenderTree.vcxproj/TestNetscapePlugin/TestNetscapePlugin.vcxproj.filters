@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\TestNetscapePlugIn\main.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\PluginObject.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\PluginTest.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\TestObject.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\win\WindowedPluginTest.cpp">
+      <Filter>win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TestNetscapePlugIn\win\WindowGeometryTest.cpp">
+      <Filter>win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\DocumentOpenInDestroyStream.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\EvaluateJSAfterRemovingPluginElement.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\FormValue.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\GetURLNotifyWithURLThatFailsToLoad.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\GetURLWithJavaScriptURL.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\GetURLWithJavaScriptURLDestroyingPlugin.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\GetUserAgentWithNullNPPFromNPPNew.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\LogNPPSetWindow.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\NPDeallocateCalledBeforeNPShutdown.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\NPPNewFails.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\NPPSetWindowCalledDuringDestruction.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\NPRuntimeCallsWithNullNPP.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\NPRuntimeObjectFromDestroyedPlugin.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\NPRuntimeRemoveProperty.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\NullNPPGetValuePointer.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\PassDifferentNPPStruct.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\PluginScriptableNPObjectInvokeDefault.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\PluginScriptableObjectOverridesAllProperties.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\PrivateBrowsing.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\ToStringAndValueOfObject.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\win\CallJSThatDestroysPlugin.cpp">
+      <Filter>Tests\win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\win\DrawsGradient.cpp">
+      <Filter>Tests\win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\win\DumpWindowRect.cpp">
+      <Filter>Tests\win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\win\GetValueNetscapeWindow.cpp">
+      <Filter>Tests\win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\win\NPNInvalidateRectInvalidatesWindow.cpp">
+      <Filter>Tests\win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\win\WindowGeometryInitializedBeforeSetWindow.cpp">
+      <Filter>Tests\win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\win\WindowlessPaintRectCoordinates.cpp">
+      <Filter>Tests\win</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\win\WindowRegionIsSetToClipRect.cpp">
+      <Filter>Tests\win</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\TestNetscapePlugIn\PluginObject.h" />
+    <ClInclude Include="..\..\TestNetscapePlugIn\PluginTest.h" />
+    <ClInclude Include="..\..\TestNetscapePlugIn\TestObject.h" />
+    <ClInclude Include="..\..\TestNetscapePlugIn\win\WindowedPluginTest.h">
+      <Filter>win</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\TestNetscapePlugIn\win\WindowGeometryTest.h">
+      <Filter>win</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="win">
+      <UniqueIdentifier>{aa1f1b22-247a-4070-93ee-9c1bb139a200}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{a13508d3-bda2-4026-bd33-320d54d4ae5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tests">
+      <UniqueIdentifier>{33b0adeb-c8af-4e7a-b827-3ea7ed8a095b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tests\win">
+      <UniqueIdentifier>{62e11b7d-49c8-463f-8897-fcc43d8f314c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="TestNetscapePlugin.def">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="TestNetscapePluginPostBuild.cmd" />
+    <None Include="TestNetscapePluginPreBuild.cmd" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="TestNetscapePlugin.rc">
+      <Filter>Resources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

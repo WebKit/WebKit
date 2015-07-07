@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+  <head>
+    <title>Subscript and Superscripts</title>
+    <script>
+    if (window.testRunner)
+      testRunner.dumpAsText();
+    </script>
+  </head>
+  <body>
+    <math id="m1" xmlns='http://www.w3.org/1998/Math/MathML'>
+      <mtext>This test passes if the page has no other text.</mtext>
+      <msubsup id="m2">
+        <mi id="m3">Z</mi>
+        <mrow id="m4"><mi id="m5">x</mi><mo id="m6">+</mo><mi id="m7">y</mi><mo id="m8">+</mo><mi id="m9">z</mi></mrow>
+        <mi id="m10">j</mi>
+      </msubsup>
+    </math>
+    <script>
+    try {
+      document.getElementById("m2").textContent=undefined;
+    } catch(e) {document.write("Error: " + e.name + ": " + e.message + + " for " + i);}
+    </script>
+  </body>
+</html>

@@ -1,0 +1,6 @@
+
+Test for Bug 60568: REGRESSION (WebKit2): Flash plugin doesn't appear on a hanes.com page.
+
+SUCCESS (no return value): NPP_URLNotify was not called, or was called with a reason of NPRES_DONE
+SUCCESS (return value): NPP_URLNotify was not called, or was called with a reason of NPRES_DONE
+

@@ -1,0 +1,6 @@
+S15.10.2.12_A2_T6
+
+FAIL SputnikError: #1680 
+
+TEST COMPLETE
+

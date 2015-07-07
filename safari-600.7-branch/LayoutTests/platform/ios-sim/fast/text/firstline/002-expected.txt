@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x47 [border: (2px solid #0000FF)]
+        RenderInline (generated) at (0,0) size 33x41 [color=#800000]
+          RenderText {#text} at (2,3) size 33x41
+            text run at (2,3) width 33: "M"
+        RenderText {#text} at (34,21) size 184x19
+          text run at (34,21) width 184: "aroon on the first letter only."

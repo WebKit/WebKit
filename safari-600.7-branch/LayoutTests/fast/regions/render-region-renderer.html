@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+    <style>
+    .region
+    {
+        -webkit-flow-from: no-flow;
+    }
+
+    .border
+    {
+        border: 1px solid red;
+    }
+
+    .size
+    {
+        width:50px;
+        height:50px;
+    }
+
+    .sizePercent
+    {
+        width: 50%;
+        height: 50%;
+    }
+
+    .pos
+    {
+        top: 150px;
+        position: absolute;
+    }
+
+    .pos2
+    {
+        top: 200px;
+        position: absolute;
+    }
+
+    .pos3
+    {
+        top: 250px;
+        position: absolute;
+    }
+
+    .parent
+    {
+        width: 100px;
+        height: 100px;
+    }
+
+    .outline
+    {
+        outline: green dotted thick;
+    }
+
+    .notvisible
+    {
+        visibility: hidden;
+    }
+    </style>
+</head>
+<body>
+    <div class="region border">FAIL if you see the text inside the region.</div>
+    <div class="region border size">FAIL if you see the text inside the region.</div>
+    <div class="parent">
+        <div class="region border sizePercent">FAIL if you see the text inside the region.</div>
+    </div>
+    <div class="region border size pos">FAIL if you see the text inside the region.</div>
+    <div class="region border size pos2 outline">FAIL if you see the text inside the region.</div>
+    <div class="region border size pos3 notvisible">FAIL if you see the text inside the region.</div>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<style>
+  #box {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100px;
+      width: 100px;
+      background-color: red;
+      -webkit-animation-name: flip;
+      -webkit-animation-duration: 1s;
+      -webkit-animation-timing-function: linear;
+  }
+
+  @-webkit-keyframes flip {
+      from { -webkit-transform: matrix( 1,  0,  0, 1, 0, 0); }
+      to   { -webkit-transform: matrix( 1,  0,  0, -1, 0, 0); }
+  }
+
+  p {
+    position: relative;
+    top: 150px;
+  }
+  #result {
+    position: relative;
+    top: 200px;
+  }
+</style>
+<script src="resources/animation-test-helpers.js"></script>
+<script>
+const expectedValues = [
+  // [animation-name, time, element-id, property, expected-value, tolerance]
+  ["flip", 0.5, "box", "webkitTransform", [1, 0, 0, 0, 0, 0], 0.3],
+];
+
+if (window.internals)
+    window.internals.settings.setAcceleratedCompositedAnimationsEnabled(false);
+
+runAnimationTest(expectedValues, null, null, true, null, function () {
+    if (window.internals)
+        window.internals.settings.setAcceleratedCompositedAnimationsEnabled(true);
+});
+</script>
+
+<div id="box"></div>
+<p>
+  During the animation, the box should flip in the horizontal axis. It should
+  not disappear into a single point (i.e. the visual width should not change).
+</p>
+<div id="result"></div>

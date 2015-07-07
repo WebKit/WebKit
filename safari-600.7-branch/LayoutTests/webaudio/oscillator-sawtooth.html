@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<!--
+Create an oscillator of type SAWTOOTH and generate a slow exponential tone sweep.
+The result can be checked for the correct wave shape and for aliasing artifacts.
+See oscillator-testing.js for details.
+-->
+
+<html>
+<head>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+<script type="text/javascript" src="resources/oscillator-testing.js"></script>
+</head>
+<body>
+
+<script>
+
+window.onload = init;
+
+function init() {
+    if (!window.testRunner)
+        return;
+
+    generateExponentialOscillatorSweep(OSC.SAWTOOTH);
+}
+
+</script>
+
+</body>
+</html>

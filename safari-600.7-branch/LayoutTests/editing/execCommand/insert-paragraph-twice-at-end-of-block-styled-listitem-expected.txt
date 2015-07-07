@@ -1,0 +1,87 @@
+This test verifies that inserting paragraph twice at the end of last listitem styled with display:block/float does not remove entire list.
+Expected behavior is list should not be removed and one empty line should get added.
+
+Initial:
+| "
+        "
+| <p>
+|   "Paragraph before list."
+| "
+        "
+| <ul>
+|   "
+            "
+|   <li>
+|     "List item one"
+|   "
+            "
+|   <li>
+|     id="target"
+|     "List item two.<#selection-caret>"
+|   "
+        "
+| "
+        "
+| <p>
+|   "Paragraph after list."
+| "
+    "
+
+After inserting first paragraph:
+| "
+        "
+| <p>
+|   "Paragraph before list."
+| "
+        "
+| <ul>
+|   "
+            "
+|   <li>
+|     "List item one"
+|   "
+            "
+|   <li>
+|     id="target"
+|     "List item two."
+|   <li>
+|     id="target"
+|     <#selection-caret>
+|     <br>
+|   "
+        "
+| "
+        "
+| <p>
+|   "Paragraph after list."
+| "
+    "
+
+After inserting second paragraph:
+| "
+        "
+| <p>
+|   "Paragraph before list."
+| "
+        "
+| <ul>
+|   "
+            "
+|   <li>
+|     "List item one"
+|   "
+            "
+|   <li>
+|     id="target"
+|     "List item two."
+|   "
+        "
+| <div>
+|   <#selection-caret>
+|   <br>
+| "
+        "
+| <p>
+|   "Paragraph after list."
+| "
+    "

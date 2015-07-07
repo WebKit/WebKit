@@ -1,0 +1,39 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script>
+
+function test()
+{
+    RuntimeAgent.evaluate("var doc = document.implementation.createHTMLDocument(''); doc.lastChild.innerHTML = '<span></span>'; doc.lastChild", step1);
+
+    function step1(error, result, wasThrown)
+    {
+        var spanWrapper = WebInspector.RemoteObject.fromPayload(result);
+        spanWrapper.pushNodeToFrontend(step2);
+    }
+
+    function step2(nodeId)
+    {
+        var node = WebInspector.domAgent.nodeForId(nodeId);
+        InspectorTest.assertTrue(node, "Node object should be resovled");
+        WebInspector.RemoteObject.resolveNode(node, undefined, step3);
+    }
+
+    function step3(remoteObject)
+    {
+        InspectorTest.addResult("Alien node should resolve to null: " + remoteObject);
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that resolveNode from alien document does not crash. https://bugs.webkit.org/show_bug.cgi?id=71806.
+</p>
+
+</body>
+</html>

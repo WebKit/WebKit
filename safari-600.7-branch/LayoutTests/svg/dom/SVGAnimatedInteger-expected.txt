@@ -1,0 +1,30 @@
+This test checks the SVGAnimatedInteger API - utilizing the filterResX property of SVGFilterElement
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Check initial filterResX value
+PASS filterElement.filterResX.toString() is "[object SVGAnimatedInteger]"
+PASS typeof(filterElement.filterResX.baseVal) is "number"
+PASS filterElement.filterResX.baseVal is 0
+
+Check that integers are static, caching value in a local variable and modifying it, should have no effect
+PASS numRef is 100
+PASS filterElement.filterResX.baseVal is 0
+
+Check assigning various valid and invalid values
+PASS filterElement.filterResX.baseVal = -1 is -1
+PASS filterElement.filterResX.baseVal = 300 is 300
+PASS filterElement.filterResX.baseVal = 'aString' is 'aString'
+PASS filterElement.filterResX.baseVal is 0
+PASS filterElement.filterResX.baseVal = filterElement is filterElement
+PASS filterElement.filterResX.baseVal is 0
+PASS filterElement.filterResX.baseVal = 300 is 300
+
+Check that the filterResX value remained 300
+PASS filterElement.filterResX.baseVal is 300
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

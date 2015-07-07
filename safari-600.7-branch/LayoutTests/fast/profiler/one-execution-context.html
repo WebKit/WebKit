@@ -1,0 +1,27 @@
+<html>
+<head>
+<script src="resources/profiler-test-JS-resources.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.internals)
+    internals.setJavaScriptProfilingEnabled(true);
+
+function startTest()
+{
+    console.profile("One Execution Context");
+    endTest();
+}
+
+</script>
+</head>
+
+<body onload="startTest()">
+This page has a single script tag with some simple JavaScript.
+<br>
+<br>
+To run this test manually, load it in the browser then load the WebInspector and look at
+the profile.
+<div id="output"></div>
+</body>
+</html>

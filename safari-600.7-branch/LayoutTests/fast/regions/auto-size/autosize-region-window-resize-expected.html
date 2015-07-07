@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            html {
+                font: 16px/1.25 monospace;
+            }
+
+            body {
+                margin: 0;
+            }
+
+            #region {
+                width: auto;
+                height: auto;
+                border: 5px solid green;
+            }
+
+            #region2 {
+                width: 310px;
+                height: 80px;
+                border: 5px solid blue;
+            }
+    </style>
+    <script>
+        function test() {
+            window.resizeTo(320, 640);
+        }
+    </script>
+</head>
+<body onload="test()">
+    <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=102221">WebKit Bug 102221</a> [CSS Regions] Auto-sized regions don't recompute their dimensions on window resize</p>
+    <p>On success you should not see any text in the blue border region.</p>
+    <div id="region">Lorem ipsum dolor sin amet Lorem ipsum dolor sin amet Lorem ipsum dolor sin amet Lorem ipsum dolor sin amet</div>
+    <div id="region2"></div>
+</body>
+</html>

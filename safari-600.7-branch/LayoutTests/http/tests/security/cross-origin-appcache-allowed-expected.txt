@@ -1,0 +1,16 @@
+This iframe should have a cache:
+
+
+This iframe should have a cache:
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+Cache found
+
+--------
+Frame: '<!--framePath //<!--frame1-->-->'
+--------
+Cache found

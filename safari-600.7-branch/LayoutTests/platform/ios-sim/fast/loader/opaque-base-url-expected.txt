@@ -1,0 +1,8 @@
+Test how opaque base URLs work for fetching subresources.
+
+SUCCESS
+SUCCESS
+SUCCESS
+Expected failure, see bug 9706.
+SUCCESS
+     

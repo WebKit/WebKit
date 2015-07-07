@@ -1,0 +1,11 @@
+namespace=Exception
+
+DOMCoreException
+EventException
+FileException
+RangeException
+SQLException conditional=SQL_DATABASE
+SVGException
+XMLHttpRequestException
+XPathException
+

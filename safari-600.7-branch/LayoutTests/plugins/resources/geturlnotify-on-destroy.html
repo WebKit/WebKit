@@ -1,0 +1,10 @@
+<body>
+<embed id="testPlugin" type="application/x-webkit-test-netscape" width="20" height="20" testGetURLOnDestroy>
+<script>
+    var plugin = document.getElementById('testPlugin');
+    plugin.logDestroy = true;
+
+    window.opener.setTimeout('setTimeout("testRunner.notifyDone()", 50)', 0);
+    window.close();
+</script>
+</body>

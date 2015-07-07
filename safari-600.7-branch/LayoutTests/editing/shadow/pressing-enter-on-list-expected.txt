@@ -1,0 +1,5 @@
+Pressing enter on the last character of <li> element in Shadow DOM was triggering assertion, becasue modifying Shadow DOM removes the renderer in Shadow DOM and desendant of shadow host.
+
+This tests confirms it won't happen any more.
+
+PASS

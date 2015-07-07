@@ -1,0 +1,3 @@
+PASS connection is allowed when no policy exists.
+PASS connection is not allowed when policy exists.
+

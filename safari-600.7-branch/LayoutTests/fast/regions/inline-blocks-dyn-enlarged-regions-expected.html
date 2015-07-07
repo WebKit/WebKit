@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #greenContainer {
+                position: absolute;
+                top: 100px;
+                left: 100px;
+                width: 100px;
+            }
+            #green1, #green2 {
+                width: 100px;
+                height: 100px;
+                background-color: green;
+                display: inline-block;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test that inline blocks are correctly displayed in regions when the height of the regions is dynamically increased.</p>
+        <p>On success you should see 2 green rectangles and no red.</p>
+        <div id="greenContainer">
+            <div id="green1"></div>
+            <div id="green2"></div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,23 @@
+Test for regular expressions with non-character values in them, specifically in character classes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS "F".match(/[\uD7FF]/) is null
+PASS "0".match(/[\uD800]/) is null
+PASS "F".match(/[\uDFFF]/) is null
+PASS "E".match(/[\uE000]/) is null
+PASS "y".match(/[\uFDBF]/) is null
+PASS "y".match(/[\uFDD0]/) is null
+PASS "y".match(/[\uFDEF]/) is null
+PASS "y".match(/[\uFDF0]/) is null
+PASS "y".match(/[\uFEFF]/) is null
+PASS "y".match(/[\uFEFF]/) is null
+PASS "y".match(/[\uFFFE]/) is null
+PASS "y".match(/[\uFFFF]/) is null
+PASS "y".match(/[\u10FFFF]/) is null
+PASS "y".match(/[\u110000]/) is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

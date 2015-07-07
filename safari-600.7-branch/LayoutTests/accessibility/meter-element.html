@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<script src="../resources/js-test-pre.js"></script>
+
+<div id="content">
+<meter id="meter1" value=6 max=8>6 blocks used (out of 8 total)</meter>
+<meter id="meter2" value=0.75><img alt="75%" src="graph75.png"></meter>
+<meter id="meter3" min="0" max="100" value="75"></meter>
+<meter id="meter4" min=0 max=20 value=12>12cm</meter>
+<meter id="meter5" min=0 max=10 value=2>2cm</meter>
+<meter id="meter6" min=0 max=20 value=12 title="centimeters">12cm</meter>
+<meter id="meter7" min=0 max=10 value=2 title="centimeters">2cm</meter>
+</div>
+
+<div id="console"></div>
+<script>
+
+description("This tests that the meter element is accessible.");
+
+if (window.testRunner && window.accessibilityController) {
+    for (var k = 1; k < 8; k++) {
+        var meter = accessibilityController.accessibleElementById("meter" + k);
+        debug("Meter" + k);
+        debug(meter.role);
+        debug(meter.title);
+        debug(meter.description);
+        debug(meter.valueDescription);
+        debug("AXValueSettable: " + meter.isAttributeSettable("AXValue"));
+        debug("\n");
+    }
+
+    document.getElementById("content").style.visibility = 'hidden';    
+}
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

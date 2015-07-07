@@ -1,0 +1,96 @@
+<p>This page tests function.caller and function.arguments in interesting nested scopes.
+</p>
+<p>If the test passes, you'll see a series of PASS messages below.
+</p>
+<pre id="console"></pre>
+
+<script>
+function log(s)
+{
+    document.getElementById("console").appendChild(document.createTextNode(s + "\n"));
+}
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function f() { return this.eval('f.arguments instanceof Object ? "PASS" : "FAIL"'); }
+
+var resultArray = [
+// ----- arguments -----
+
+// function scope inside global eval scope, uncalled function
+(function g() { return this.eval('f.arguments instanceof Object ? "FAIL" : "PASS"'); })(),
+
+// function scope inside local eval scope, uncalled function
+(function g() { return eval('f.arguments instanceof Object ? "FAIL" : "PASS"'); })(),
+
+// global eval scope, called function
+f(),
+
+// local eval scope, called function
+(function f() { return eval('f.arguments instanceof Object ? "PASS" : "FAIL"'); })(),
+
+// eval scope, uncalled function
+eval('(function () { }).arguments instanceof Object ? "FAIL" : "PASS"'),
+
+// re-entrant function scope, outer called function
+(function f() {
+    return String({ toString: function g() { return f.arguments instanceof Object ? "PASS" : "FAIL"; } });
+})(),
+
+// re-entrant function scope, inner called function
+(function f() {
+    return String({ toString: function g() { return g.arguments instanceof Object ? "PASS" : "FAIL"; } });
+})(),
+
+// function scope, outer called function
+(function f() {
+    return (function g() {
+        return f.arguments instanceof Object ? "PASS" : "FAIL";
+    })();
+})(),
+
+// function scope, inner called function
+(function f() {
+    return (function g() {
+        return g.arguments instanceof Object ? "PASS" : "FAIL";
+    })();
+})(),
+
+// function scope, uncalled function
+(function f() {
+    return (function g() { }).arguments instanceof Object ? "FAIL" : "PASS";
+})(),
+
+// global scope, uncalled function
+(function () { }).arguments instanceof Object ? "FAIL" : "PASS",
+
+// ----- caller -----
+
+(function f() {
+    return (function g() {
+        return g.caller instanceof Object ? "PASS" : "FAIL";
+    })();
+})(),
+
+(function f() { return f.caller instanceof Object ? "FAIL" : "PASS"; })(),
+
+(function () { }).caller instanceof Object ? "FAIL" : "PASS",
+
+eval('(function f() { return f.caller instanceof Object ? "FAIL" : "PASS"; })()'),
+
+(function f() {
+    return String({ toString: function g() { return g.caller instanceof Object ? "PASS" : "FAIL"; } });
+})(),
+
+(function f() {
+    function g() { return h.apply(this); }
+    function h() { return k(); }
+    function k() { return k.caller instanceof Object ? "PASS" : "FAIL"; }
+    
+    return g();
+})()
+];
+
+log(resultArray);
+</script>

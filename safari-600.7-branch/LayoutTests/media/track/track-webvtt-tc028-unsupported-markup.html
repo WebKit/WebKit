@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+            
+            function trackLoaded()
+            {
+                findMediaElement();
+                var expected = 
+                {
+                    length : 3,
+                    tests:
+                    [
+                        {
+                            property : "getCueAsHTML().textContent",
+                            values : ["Bear is Coming!!!!!\nAnd what kind of a bear it is - just have look.",
+                                      "\n  I said Bear is coming!!!!\n  I said Bear is still coming!!!!\n",
+                                      "\n  I said Bear is coming now!!!!\n  \n  \n"],
+                        },
+                        {
+                            property : "text",
+                            values : ["<h1>Bear is Coming!!!!!</h1>\n<p>And what kind of a bear it is - just have <a href=\"webpage.html\">look</a>.</p>",
+                                      "<ul>\n  <li>I said Bear is coming!!!!</li>\n  <li>I said Bear is still coming!!!!</li>\n</ul>",
+                                      "<ol>\n  <li>I said Bear is coming now!!!!</li>\n  <li><img src=\"bear.png\" alt=\"mighty bear\"></li>\n  <li><video src=\"bear_ad.webm\" controls></video></li>\n</ol>"],
+                        },
+                    ],
+                };
+                testCues(0, expected);
+
+                endTest();
+            }
+
+            setCaptionDisplayMode('Automatic');
+        </script>
+    </head>
+    <body>
+        <p>Tests that unsupported markup is properly ignored.</p>
+        <video> 
+            <track src="captions-webvtt/tc028-unsupported-markup.vtt" onload="trackLoaded()" default>
+        </video>
+    </body>
+</html>

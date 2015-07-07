@@ -1,0 +1,32 @@
+<html>
+<head>
+<script src="resources/profiler-test-JS-resources.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.internals)
+    internals.setJavaScriptProfilingEnabled(true);
+
+function startTest()
+{    
+    console.profile("Event handler");
+
+    var myButton = document.getElementById("buttonWithAnEventListener");
+    myButton.addEventListener("click", insertNewText, false);
+    myButton.click();
+
+    endTest();
+}
+</script>
+</head>
+
+<body onload="startTest()">
+This page has an event handler.
+<br>
+<br>
+To run this test manually, load it in the browser then load the WebInspector and look at
+the profile.  In the profile insertnewText() should be a sibling to onload().
+<input type="button" id="buttonWithAnEventListener" value="Button with an event listener">
+<div id="output"></div>
+</body>
+</html>

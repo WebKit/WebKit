@@ -1,0 +1,42 @@
+<button onclick="presetAuthorization()">Start</button>
+<pre id="console"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows();
+}
+
+function log(message)
+{
+    document.getElementById('console').appendChild(document.createTextNode(message + '\n'));
+}
+
+function presetAuthorization()
+{
+    if (window.testRunner)
+        testRunner.authenticateSession("http://localhost:8000/xmlhttprequest/resources/cross-origin-authorization.php", "test", "test");
+
+    test();
+}
+
+function test()
+{
+    var req = new XMLHttpRequest;
+    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/cross-origin-authorization.php", false);
+    try {
+        req.send();
+        log((req.status == 401) ? "PASS" : "FAIL: credentials were sent");
+    } catch (ex) {
+        // This is not a correct outcome, but it's fine for the purposes of this test.
+        log("PASS");
+    }
+    log("DONE");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+
+if (window.testRunner)
+    presetAuthorization();
+</script>

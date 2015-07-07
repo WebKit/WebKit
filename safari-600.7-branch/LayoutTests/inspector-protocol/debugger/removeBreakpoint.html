@@ -1,0 +1,60 @@
+<html>
+<head>
+<script src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script src="resources/breakpoint.js"></script>
+<script>
+function test()
+{
+    InspectorTest.sendCommand("Debugger.enable", {});
+
+    var breakpointTriggered = 0;
+
+    InspectorTest.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    {
+        if (/resources\/breakpoint\.js$/.test(messageObject.params.url)) {
+            InspectorTest.log("Found breakpoint.js");
+            var scriptIdentifier = messageObject.params.scriptId;
+            var location = {scriptId: scriptIdentifier, lineNumber: 3, columnNumber: 0};
+            InspectorTest.sendCommand("Debugger.setBreakpoint", {location: location}, function(responseObject) {
+                InspectorTest.checkForError(responseObject);
+                InspectorTest.log("Set Breakpoint, Triggering it");
+                breakpointIdentifier = responseObject.result.breakpointId;
+                InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointBasic()"});
+            });
+        }
+    }
+
+    InspectorTest.eventHandler["Debugger.paused"] = function(messageObject)
+    {
+        InspectorTest.log("Hit Breakpoint!");
+        ++breakpointTriggered;
+
+        if (breakpointTriggered === 1)
+            InspectorTest.sendCommand("Debugger.resume", {});
+        else {
+            InspectorTest.log("FAIL: should not have hit breakpoint after it was removed.");
+            InspectorTest.completeTest();
+        }
+    }
+
+    InspectorTest.eventHandler["Debugger.resumed"] = function(messageObject)
+    {
+        InspectorTest.log("Resumed, Removing Breakpoint and trying to trigger it again");
+        InspectorTest.sendCommand("Debugger.removeBreakpoint", {"breakpointId": breakpointIdentifier}, function(responseObject) {
+            InspectorTest.checkForError(responseObject);
+            InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointBasic()"}, function(responseObject) {
+                InspectorTest.checkForError(responseObject);
+                setTimeout(function() {
+                    InspectorTest.log("PASS: did not hit breakpoint after removing it.");
+                    InspectorTest.completeTest();
+                }, 50);
+            });
+        });
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Debugger.removeBreakpoint</p>
+</body>
+</html>

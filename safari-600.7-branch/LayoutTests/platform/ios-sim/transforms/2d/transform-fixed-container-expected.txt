@@ -1,0 +1,21 @@
+layer at (0,0) size 800x1150
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x1150
+  RenderBlock {HTML} at (0,0) size 800x1150
+    RenderBody {BODY} at (0,150) size 800x1000
+      RenderBlock {P} at (0,250) size 800x20
+        RenderText {#text} at (0,0) size 557x19
+          text run at (0,0) width 557: "Tests fixed position elements combined with transforms. You should see no red above."
+layer at (50,200) size 100x100
+  RenderBlock (positioned) {DIV} at (50,200) size 100x100 [bgcolor=#FF0000]
+layer at (250,200) size 100x100
+  RenderBlock (positioned) {DIV} at (250,200) size 100x100 [bgcolor=#FF0000]
+layer at (50,150) size 100x100
+  RenderBlock {DIV} at (50,0) size 100x100
+layer at (50,200) size 100x100
+  RenderBlock (positioned) {DIV} at (0,50) size 100x100 [bgcolor=#008000]
+layer at (250,50) size 100x100
+  RenderBlock (positioned) {DIV} at (250,50) size 100x100
+layer at (250,100) size 100x100
+  RenderBlock {DIV} at (0,50) size 100x100 [bgcolor=#008000]
+scrolled to 0,100

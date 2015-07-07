@@ -1,0 +1,30 @@
+<img style="background: green" >
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText(true);
+    testRunner.waitUntilDone();
+}
+
+function loadAndStall()
+{
+    return "http://127.0.0.1:8000/resources/load-and-stall.php";
+}
+
+function jpegImage()
+{
+    return "?name=../../../fast/images/resources/lenna.jpg&mimeType=image%2Fjpeg";
+}
+
+function testDone()
+{
+    window.testRunner && testRunner.notifyDone();
+}
+
+function runTest()
+{
+    document.querySelector("img").src = loadAndStall() + jpegImage() + "&stallAt=14337&stallFor=60";
+    setTimeout(testDone, 500);
+}
+
+setTimeout(runTest, 0);
+</script>

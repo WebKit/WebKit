@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+if (window.testRunner)
+  testRunner.dumpAsText();
+</script>
+</head>
+<body>
+
+<div id="button1" tabindex="0" role="button" aria-disabled="true">button 1</div>
+<div id="button2" tabindex="0" role="button" aria-disabled="false">button 2</div>
+<div id="button3" tabindex="0" role="button">button 3</div>
+
+<select disabled tabindex="0" id="select1"><option>1</option></select>
+<select tabindex="0" id="select2"><option>2</option></select>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+   description("This test thats disabled and aria-disabled change the traits returned.");
+
+   if (window.accessibilityController) {
+
+       document.getElementById("button1").focus();
+       var btn1 = accessibilityController.focusedElement;
+
+       document.getElementById("button2").focus();
+       var btn2 = accessibilityController.focusedElement;
+       shouldBe("btn1.iphoneTraits != btn2.iphoneTraits", "true");
+
+       document.getElementById("button3").focus();
+       var btn3 = accessibilityController.focusedElement;
+       shouldBe("btn2.iphoneTraits == btn3.iphoneTraits", "true");
+
+       document.getElementById("select1").focus();
+       var select1 = accessibilityController.focusedElement;
+
+       document.getElementById("select2").focus();
+       var select2 = accessibilityController.focusedElement;
+
+       shouldBe("select1.iphoneTraits != select2.iphoneTraits", "true");
+   }
+
+   successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+
+</body>
+</html>

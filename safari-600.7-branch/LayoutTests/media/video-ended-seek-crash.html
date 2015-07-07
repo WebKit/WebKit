@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>video-ended-seek-crash</title>
+    <script src="video-test.js"></script>
+    <script src="media-file.js"></script>
+    <script>
+        function startTest()
+        {
+            findMediaElement();
+            waitForEventOnce('canplaythrough', canPlayThrough);
+            video.src = findMediaFile('video', 'content/test');
+        }
+
+        function canPlayThrough()
+        {
+            waitForEventOnce('ended', ended);
+            run('video.currentTime = video.duration - 0.1');
+            run('video.play()');
+        }
+
+        function ended()
+        {
+            waitForEventOnce('seeked', seekedToBeginning);
+            run('video.setAttribute("loop", "loop")');
+            run('video.currentTime = 0');
+            run('video.play()');
+        }
+
+        function seekedToBeginning()
+        {
+            endTest();
+        }
+    </script>
+</head>
+<body onload="startTest()">
+    <video controls></video>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<html>
+    <head>
+        <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.setCanOpenWindows();
+            testRunner.dumpChildFramesAsText();
+            testRunner.waitUntilDone();
+            testRunner.setCloseRemainingWindowsWhenComplete()
+            testRunner.setPopupBlockingEnabled(true);
+        }
+
+        function test()
+        {
+            var myLink = document.getElementById('link');
+            var myFrame = document.getElementById('otherFrame').contentWindow;
+            myLink.onclick = myFrame.handleClick;
+            if (window.testRunner) {
+                var x = myLink.offsetLeft + 2;
+                var y = myLink.offsetTop + 2;
+                eventSender.mouseMoveTo(x, y);
+                eventSender.mouseDown();
+                eventSender.mouseUp();
+            }
+        }
+
+        function log(msg)
+        {
+            var res = document.getElementById('res');
+            res.innerHTML = res.innerHTML + msg + "<br>";
+        }
+        </script>
+    </head>
+    <body onload="test()">
+        This tests that window.open works across frames.<br>
+        To run manually click the link below.<br>
+        <a href="resources/greenbox.png" id="link">GreenBox or Success page.</a><br>
+        <iframe src="resources/open-window-from-another-frame-otherFrame.html" id="otherFrame"></iframe>
+        <div id="res"></div>
+    </body>
+</html>

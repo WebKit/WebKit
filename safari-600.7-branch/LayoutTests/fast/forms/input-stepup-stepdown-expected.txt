@@ -1,0 +1,14 @@
+Check stepUp() and stepDown() bahevior for unsupported types.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Unsupported type
+PASS input.step = "3"; input.min = ""; input.max = ""; input.value = "2"; input.stepDown() threw exception Error: InvalidStateError: DOM Exception 11.
+PASS input.stepDown(0) threw exception Error: InvalidStateError: DOM Exception 11.
+PASS input.stepUp() threw exception Error: InvalidStateError: DOM Exception 11.
+PASS input.stepUp(0) threw exception Error: InvalidStateError: DOM Exception 11.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

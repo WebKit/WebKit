@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+    <!--
+    Test that the content is properly flowed into regions when regions are dinamically removed from flow.
+    On success you should see that colored boxes are displayed inside the first 2 rectangles with black border.
+    The green box should be displayed in left region.
+    The blue box should be displayed in middle region.
+    The orange box should not be displayed in the right region.
+    -->
+    <head>
+        <link rel="stylesheet" href="resources/region-style.css">
+    </head>
+    <body>
+        <div class="flowArticle">
+            <div class="greenBox"></div>
+            <div class="blueBox"></div>
+            <div class="orangeBox"></div>
+        </div>
+        <div class="regionArticle borderBox"></div>
+        <div class="regionArticle borderBox"></div>
+        <div class="regionArticle borderBox" id="region"></div>
+        <script>
+            var region = document.getElementById("region");
+            region.className = "borderBox";
+        </script>
+    </body>
+</html>

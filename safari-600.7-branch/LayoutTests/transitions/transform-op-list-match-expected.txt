@@ -1,0 +1,5 @@
+Box should spin 540 degrees because that is the specified rotation and the transform operation lists match, so we should animate each operation separately.
+
+PASS - "-webkit-transform.0" property for "box" element at 0.5s saw something close to: -0.70711
+PASS - "-webkit-transform.0" property for "box" element at 1s saw something close to: 0
+

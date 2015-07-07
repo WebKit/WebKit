@@ -1,0 +1,64 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 400x400
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderSVGContainer {g} at (0,0) size 400x400
+      RenderSVGPath {rect} at (0,0) size 400x400 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=400.00] [height=400.00]
+      RenderSVGPath {rect} at (2,2) size 196x396 [fill={[type=SOLID] [color=#FF0000]}] [x=2.00] [y=2.00] [width=196.00] [height=396.00]
+      RenderSVGText {text} at (10,18) size 170x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 170x28
+          chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 17 width 169.30: "Should be default"
+      RenderSVGText {text} at (10,48) size 69x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 69x28
+          chunk 1 text run 1 at (10.00,70.00) startOffset 0 endOffset 7 width 68.65: "matrix."
+      RenderSVGPath {rect} at (0,0) size 200x104 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=200.00] [height=104.00]
+      RenderSVGText {text} at (10,118) size 170x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 170x28
+          chunk 1 text run 1 at (10.00,140.00) startOffset 0 endOffset 17 width 169.30: "Should be default"
+      RenderSVGText {text} at (10,148) size 81x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 81x28
+          chunk 1 text run 1 at (10.00,170.00) startOffset 0 endOffset 9 width 80.62: "saturate."
+      RenderSVGPath {rect} at (0,100) size 200x104 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=100.00] [width=200.00] [height=104.00]
+      RenderSVGText {text} at (10,218) size 170x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 170x28
+          chunk 1 text run 1 at (10.00,240.00) startOffset 0 endOffset 17 width 169.30: "Should be default"
+      RenderSVGText {text} at (10,248) size 104x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 104x28
+          chunk 1 text run 1 at (10.00,270.00) startOffset 0 endOffset 10 width 103.30: "hueRotate."
+      RenderSVGPath {rect} at (0,200) size 200x104 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=200.00] [width=200.00] [height=104.00]
+      RenderSVGText {text} at (10,318) size 151x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 151x28
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 15 width 150.66: "Should be valid"
+      RenderSVGText {text} at (10,348) size 104x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 104x28
+          chunk 1 text run 1 at (10.00,370.00) startOffset 0 endOffset 10 width 103.30: "hueRotate."
+      RenderSVGPath {rect} at (0,300) size 200x99 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=300.00] [width=200.00] [height=99.00]
+      RenderSVGPath {rect} at (202,2) size 196x96 [fill={[type=SOLID] [color=#FF0000]}] [x=202.00] [y=2.00] [width=196.00] [height=96.00]
+      RenderSVGText {text} at (210,18) size 137x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 137x28
+          chunk 1 text run 1 at (210.00,40.00) startOffset 0 endOffset 14 width 136.63: "Invalid matrix"
+      RenderSVGText {text} at (210,48) size 154x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 154x28
+          chunk 1 text run 1 at (210.00,70.00) startOffset 0 endOffset 17 width 153.28: "values attribute."
+      RenderSVGPath {rect} at (202,102) size 196x96 [fill={[type=SOLID] [color=#FF0000]}] [x=202.00] [y=102.00] [width=196.00] [height=96.00]
+      RenderSVGText {text} at (210,118) size 149x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 149x28
+          chunk 1 text run 1 at (210.00,140.00) startOffset 0 endOffset 16 width 148.61: "Invalid saturate"
+      RenderSVGText {text} at (210,148) size 154x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 154x28
+          chunk 1 text run 1 at (210.00,170.00) startOffset 0 endOffset 17 width 153.28: "values attribute."
+      RenderSVGPath {rect} at (202,202) size 196x96 [fill={[type=SOLID] [color=#FF0000]}] [x=202.00] [y=202.00] [width=196.00] [height=96.00]
+      RenderSVGText {text} at (210,218) size 172x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 172x28
+          chunk 1 text run 1 at (210.00,240.00) startOffset 0 endOffset 17 width 171.28: "Invalid hueRotate"
+      RenderSVGText {text} at (210,248) size 154x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 154x28
+          chunk 1 text run 1 at (210.00,270.00) startOffset 0 endOffset 17 width 153.28: "values attribute."
+      RenderSVGPath {rect} at (202,302) size 196x96 [fill={[type=SOLID] [color=#FF0000]}] [x=202.00] [y=302.00] [width=196.00] [height=96.00]
+      RenderSVGText {text} at (210,318) size 160x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 160x28
+          chunk 1 text run 1 at (210.00,340.00) startOffset 0 endOffset 16 width 159.96: "Saturate must be"
+      RenderSVGText {text} at (210,348) size 163x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 163x28
+          chunk 1 text run 1 at (210.00,370.00) startOffset 0 endOffset 16 width 162.61: "between 0 and 1."

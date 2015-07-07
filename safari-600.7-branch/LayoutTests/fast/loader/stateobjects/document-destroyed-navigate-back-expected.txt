@@ -1,0 +1,16 @@
+main frame - has 1 onunload handler(s)
+ALERT: State popped - FirstEntry (type string)
+ALERT: State popped - SecondEntry (type string)
+ALERT: Navigating back...
+main frame - has 1 onunload handler(s)
+ALERT: Last path component of location is document-destroyed-navigate-back.html?SecondEntryWillLaterBeReactivated
+ALERT: State popped - SecondEntryWillLaterBeReactivated (type string)
+ALERT: State popped - FirstEntryWillLaterBeReactivated (type string)
+ALERT: Test complete
+This test:
+-Builds up a list of state object entries with fragment URLs.
+-Navigates through them to verify that the popstate event is fired.
+-Navigates away to a new document, with the old document being destroyed.
+-Navigates back to the state object entries and verifies the popstate event is fired even on the new documents.
+
+

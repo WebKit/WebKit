@@ -1,0 +1,4 @@
+Tests that a <tspan> with display block doesn't cause an assertion failure.
+
+PASS
+

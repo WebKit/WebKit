@@ -1,0 +1,44 @@
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitJavaEnabled", "1");
+</script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<object name="objectWithJavaClassId" type="application/x-java-applet" classid="java:SharedApplet.class"></object>
+
+<object name="objectWithJavaType" type="application/x-java-applet" code="SharedApplet.class"></object>
+
+<object name="objectWithClassIdBeforeType" classid="java:SharedApplet.class" type="application/x-java-applet"></object>
+
+<object name="objectWithCodeBeforeType" code="SharedApplet.class" type="application/x-java-applet"></object>
+
+<object name="objectWithActiveXClassId" classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93">
+    <object name="fallbackObjectWithJavaClassId" type="application/x-java-applet" classid="java:SharedApplet.class"></object>
+</object>
+
+<script>
+description("Test that Java applets can be embedded using the object element. Applet resources should be able to be specified using the classid or code attribute. Fallback content should be rendered if the object uses an IE-specific classid.");
+
+shouldBeNonNull("document.objectWithJavaClassId");
+shouldBeNonNull("document.objectWithJavaClassId.getSelf()");
+shouldBeNonNull("document.objectWithJavaType");
+shouldBeNonNull("document.objectWithJavaType.getSelf()");
+shouldBeNonNull("document.objectWithClassIdBeforeType");
+shouldBeNonNull("document.objectWithClassIdBeforeType.getSelf()");
+shouldBeNonNull("document.objectWithCodeBeforeType");
+shouldBeNonNull("document.objectWithCodeBeforeType.getSelf()");
+shouldBeUndefined("document.objectWithActiveXClassId");
+shouldBeNonNull("document.fallbackObjectWithJavaClassId");
+shouldBeNonNull("document.fallbackObjectWithJavaClassId.getSelf()");
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

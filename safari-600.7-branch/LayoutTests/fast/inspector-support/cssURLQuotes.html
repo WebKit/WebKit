@@ -1,0 +1,13 @@
+<div id="testUnquoted" style="background-image: url(file:///unquoted)"></div>
+<div id="testNoQuotesNeeded" style="background-image: url('file:///noQuotesNeeded')"></div>
+<div id="testShouldQuote" style="background-image: url('file:///should(Quote)')"></div>
+<script>
+function test(id, reason) {
+    alert(document.getElementById(id).style.getPropertyValue("background-image") + " (" + reason + ")");
+}
+if (window.testRunner)
+    testRunner.dumpAsText();
+test("testUnquoted", "URL should not be quoted");
+test("testNoQuotesNeeded", "URL should not be quoted");
+test("testShouldQuote", "URL should be quoted");
+</script>

@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: Refused to evaluate script because it violates the following Content Security Policy directive: "script-src 'self' 'unsafe-inline'".
+
+This test attempts to evaluate script via setTimeout. The resulting console error should contain a stack trace tied to line 11.
+
+Message[0]: csp-setTimeout-warning-contains-stacktrace.html:11 Refused to evaluate script because it violates the following Content Security Policy directive: "script-src 'self' 'unsafe-inline'".
+
+Stack Trace:
+
+    url: http://127.0.0.1:8000/inspector/stacktraces/csp-setTimeout-warning-contains-stacktrace.html
+    function: thisTest
+    line: 11
+

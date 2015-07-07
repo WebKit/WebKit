@@ -1,0 +1,16 @@
+Regression test for http://webkit.org/b/102283
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = "transaction-crash-in-tasks.html"
+indexedDB.open(dbname, 2)
+FAIL indexedDB.open(dbname, 2) threw exception TypeError: null is not an object (evaluating 'indexedDB.open')
+indexedDB.open(dbname, 3)
+FAIL indexedDB.open(dbname, 3) threw exception TypeError: null is not an object (evaluating 'indexedDB.open')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

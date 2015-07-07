@@ -1,0 +1,34 @@
+This tests inserting h6 inside h6 doesn't end up in a nested h6'es.
+All three lines should be of the same font size. Each line should be of the said color.
+
+After paste:
+| "
+"
+| <h6>
+|   id="target"
+|   style="color: blue"
+|   "Blue Line 1"
+|   <br>
+| <h6>
+|   "Black Line<#selection-caret>"
+| <h6>
+|   style="color: blue"
+|   "Blue Line 2"
+| "
+"
+
+After innerHTML = innerHTML:
+| "
+"
+| <h6>
+|   id="target"
+|   style="color: blue"
+|   "Blue Line 1"
+|   <br>
+| <h6>
+|   "Black Line"
+| <h6>
+|   style="color: blue"
+|   "Blue Line 2"
+| "
+"

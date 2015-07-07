@@ -1,0 +1,85 @@
+This test checks that -webkit-text-align-last parses properly the properties from CSS 3 Text.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test the initial value:
+PASS computedStyle.webkitTextAlignLast is 'auto'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText is 'auto'
+
+Value 'start':
+PASS e.style.webkitTextAlignLast is 'start'
+PASS e.style.getPropertyCSSValue('-webkit-text-align-last').cssText is 'start'
+PASS computedStyle.webkitTextAlignLast is 'start'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText is 'start'
+
+Value 'end':
+PASS e.style.webkitTextAlignLast is 'end'
+PASS e.style.getPropertyCSSValue('-webkit-text-align-last').cssText is 'end'
+PASS computedStyle.webkitTextAlignLast is 'end'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText is 'end'
+
+Value 'left':
+PASS e.style.webkitTextAlignLast is 'left'
+PASS e.style.getPropertyCSSValue('-webkit-text-align-last').cssText is 'left'
+PASS computedStyle.webkitTextAlignLast is 'left'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText is 'left'
+
+Value 'right':
+PASS e.style.webkitTextAlignLast is 'right'
+PASS e.style.getPropertyCSSValue('-webkit-text-align-last').cssText is 'right'
+PASS computedStyle.webkitTextAlignLast is 'right'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText is 'right'
+
+Value 'center':
+PASS e.style.webkitTextAlignLast is 'center'
+PASS e.style.getPropertyCSSValue('-webkit-text-align-last').cssText is 'center'
+PASS computedStyle.webkitTextAlignLast is 'center'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText is 'center'
+
+Value 'justify':
+PASS e.style.webkitTextAlignLast is 'justify'
+PASS e.style.getPropertyCSSValue('-webkit-text-align-last').cssText is 'justify'
+PASS computedStyle.webkitTextAlignLast is 'justify'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText is 'justify'
+
+Value 'auto':
+PASS e.style.webkitTextAlignLast is 'auto'
+PASS e.style.getPropertyCSSValue('-webkit-text-align-last').cssText is 'auto'
+PASS computedStyle.webkitTextAlignLast is 'auto'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText is 'auto'
+
+Invalid value test - '-webkit-left':
+PASS e.style.webkitTextAlignLast is 'auto'
+PASS e.style.getPropertyCSSValue('-webkit-text-align-last').cssText is 'auto'
+PASS computedStyle.webkitTextAlignLast is 'auto'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText is 'auto'
+
+Invalid value test - '-webkit-right':
+PASS e.style.webkitTextAlignLast is 'auto'
+PASS e.style.getPropertyCSSValue('-webkit-text-align-last').cssText is 'auto'
+PASS computedStyle.webkitTextAlignLast is 'auto'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText is 'auto'
+
+Invalid value test - '-webkit-center':
+PASS e.style.webkitTextAlignLast is 'auto'
+PASS e.style.getPropertyCSSValue('-webkit-text-align-last').cssText is 'auto'
+PASS computedStyle.webkitTextAlignLast is 'auto'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText is 'auto'
+
+Invalid value test - '-webkit-match-parent':
+PASS e.style.webkitTextAlignLast is 'auto'
+PASS e.style.getPropertyCSSValue('-webkit-text-align-last').cssText is 'auto'
+PASS computedStyle.webkitTextAlignLast is 'auto'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText is 'auto'
+
+Invalid value test - '-webkit-auto':
+PASS e.style.webkitTextAlignLast is 'auto'
+PASS e.style.getPropertyCSSValue('-webkit-text-align-last').cssText is 'auto'
+PASS computedStyle.webkitTextAlignLast is 'auto'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-align-last').cssText is 'auto'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+hello world

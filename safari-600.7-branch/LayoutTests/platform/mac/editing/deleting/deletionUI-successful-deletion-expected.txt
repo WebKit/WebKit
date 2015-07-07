@@ -1,0 +1,8 @@
+This tests if the deletion UI will delete the associated element when activated. This test can be run by DRT but not in the browser.
+
+dontDeleteMeA HAS deletion UI
+dontDeleteMeB HAS deletion UI
+deleteMe HAS deletion UI
+This is an element that will show the deletion UI when the selection is within it. The test will not delete this element.
+This is an element that will show the deletion UI when the selection is within it. The test will not delete this element.
+

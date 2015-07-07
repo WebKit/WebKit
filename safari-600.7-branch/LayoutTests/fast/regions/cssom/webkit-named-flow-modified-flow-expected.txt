@@ -1,0 +1,9 @@
+Test for 66642: [CSSRegions]Implement NamedFlow interface
+
+Getting the webkit flow name for the previous flow should return a non-null object.
+
+Getting the webkit flow name for the new flow should return a non-null object.
+
+On success, you should see PASS below.
+
+PASS

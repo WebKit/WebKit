@@ -1,0 +1,47 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 103x19
+          text run at (0,0) width 103: "Repaint test for "
+        RenderInline {I} at (0,0) size 778x39
+          RenderInline {A} at (0,0) size 307x19 [color=#0000EE]
+            RenderText {#text} at (102,0) size 307x19
+              text run at (102,0) width 307: "http://bugs.webkit.org/show_bug.cgi?id=15838"
+          RenderText {#text} at (408,0) size 778x39
+            text run at (408,0) width 370: " Incomplete repaint toggling \"How you know this person\""
+            text run at (0,20) width 84: "on Facebook"
+        RenderText {#text} at (83,20) size 5x19
+          text run at (83,20) width 5: "."
+      RenderBlock {DIV} at (0,56) size 784x280
+        RenderBlock (anonymous) at (0,0) size 784x100
+          RenderText {#text} at (0,0) size 41x19
+            text run at (0,0) width 41: "Word,"
+          RenderBR {BR} at (40,15) size 1x0
+          RenderText {#text} at (0,20) size 44x19
+            text run at (0,20) width 44: "words,"
+          RenderBR {BR} at (43,35) size 1x0
+          RenderText {#text} at (0,40) size 80x19
+            text run at (0,40) width 80: "more words."
+          RenderBR {BR} at (79,55) size 1x0
+          RenderText {#text} at (0,60) size 45x19
+            text run at (0,60) width 45: "I could"
+          RenderBR {BR} at (44,75) size 1x0
+          RenderText {#text} at (0,80) size 80x19
+            text run at (0,80) width 80: "write a book"
+          RenderBR {BR} at (79,95) size 1x0
+        RenderBlock {DIV} at (0,100) size 10x100 [bgcolor=#FFFF00]
+        RenderBlock (anonymous) at (0,200) size 784x80
+          RenderText {#text} at (0,0) size 113x19
+            text run at (0,0) width 113: "about all the stuff"
+          RenderBR {BR} at (112,15) size 1x0
+          RenderText {#text} at (0,20) size 69x19
+            text run at (0,20) width 69: "that comes"
+          RenderBR {BR} at (68,35) size 1x0
+          RenderText {#text} at (0,40) size 30x19
+            text run at (0,40) width 30: "after"
+          RenderBR {BR} at (29,55) size 1x0
+          RenderText {#text} at (0,60) size 64x19
+            text run at (0,60) width 64: "the break."

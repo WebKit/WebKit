@@ -1,0 +1,20 @@
+{
+    "types": {
+        "Global": [
+            { "name": "double", "mode": "SCALAR" }
+        ]
+    },
+
+    "inputs": [
+        {
+            "description": "Supplies the system time to Date.now() and new Date().",
+            "queue": "SCRIPT_MEMOIZED",
+            "members": [
+                {
+                    "name": "currentTime",
+                    "type": "double"
+                }
+            ]
+        }
+    ]
+}

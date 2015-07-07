@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<select id="group" multiple="multiple">
+    <option>Option 1</option>
+    <option>Option 2</option>
+    <option>Option 3</option>
+    <option>Option 4</option>
+</select>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("Tests that checks whether setting selection at the given index works correctly");
+
+    if (window.accessibilityController) {
+        document.getElementById("group").focus();
+        var selectElement = accessibilityController.focusedElement;
+
+        shouldBe("selectElement.selectedChildrenCount", "0");
+
+        var option1 = selectElement.childAtIndex(0);
+        var option2 = selectElement.childAtIndex(1);
+        var option3 = selectElement.childAtIndex(2);
+        var option4 = selectElement.childAtIndex(3);
+
+        selectElement.setSelectedChildAtIndex(0);
+        shouldBe("selectElement.selectedChildrenCount", "1");
+        shouldBeTrue("option1.isSelected");
+        shouldBeTrue("selectElement.selectedChildAtIndex(0).isEqual(option1)");
+
+        selectElement.setSelectedChildAtIndex(1);
+        shouldBe("selectElement.selectedChildrenCount", "2");
+        shouldBeTrue("option2.isSelected");
+        shouldBeTrue("selectElement.selectedChildAtIndex(1).isEqual(option2)");
+
+        shouldBeFalse("option3.isSelected");
+
+        selectElement.setSelectedChildAtIndex(3);
+        shouldBe("selectElement.selectedChildrenCount", "3");
+        shouldBeTrue("option4.isSelected");
+        shouldBeTrue("selectElement.selectedChildAtIndex(3).isEqual(option4)");
+
+        selectElement.removeSelectionAtIndex(3);
+        shouldBeFalse("option4.isSelected");
+        shouldBe("selectElement.selectedChildrenCount", "2");
+
+        selectElement.removeSelectionAtIndex(1);
+        shouldBeFalse("option2.isSelected");
+        shouldBe("selectElement.selectedChildrenCount", "1");
+
+        selectElement.removeSelectionAtIndex(0);
+        shouldBeFalse("option1.isSelected");
+        shouldBe("selectElement.selectedChildrenCount", "0");
+}
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

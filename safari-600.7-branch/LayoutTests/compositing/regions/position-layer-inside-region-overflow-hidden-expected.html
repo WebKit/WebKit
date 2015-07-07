@@ -1,0 +1,37 @@
+<html>
+    <head>
+        <title>Expected Result - Bug #124042: [CSS Regions] Fix positioning composited layers when the region has overflow:hidden</title>
+        <style>
+            html {
+                -webkit-font-smoothing: none;
+                font-size: 16px;
+            }
+            .content {
+                -webkit-flow-into: theFlow;
+            }
+            .transformed {
+                -webkit-transform: translateZ(1px);
+            }
+            .region {
+                -webkit-flow-from: theFlow;
+                width: 600px;
+                height: 150px;
+                box-shadow: 0px 0px 0px 10px Green;
+            }
+            .region, .content {
+                border: solid 5px #888;
+                padding: 5px 10px 15px 20px;
+                margin: 10px 15px 20px 25px;
+            }
+        </style>
+    </head>
+    <body>
+        <span class="content">some text 1.</span>
+        <div class="content transformed">composited</div>
+        <span class="content">some text 2.</span>
+
+        <div class="region"></div>
+
+        <p>Test passes if the composited layer is positioned at the same place (in the region with overflow:hidden) as in the region that doesn't have overflow:hidden .</p>
+    </body>
+</html>

@@ -1,0 +1,9 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion number conversion to long
+
+FAIL dt.setLong( -Infinity ); dt.PUB_LONG should be -Infinity. Was 0.
+FAIL dt.setLong( -Infinity ); dt.getLong()  should be -Infinity. Was -9223372036854776000.
+PASS typeof dt.getLong() is "number"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

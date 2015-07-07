@@ -1,0 +1,42 @@
+<html>
+<script>
+
+// When both timeouts finish, the counter will be 2.
+window.completionCounter = 0;
+function test()
+{
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    // Get the iframe's window.
+    var iframeWindow = window.frames["testIframe"];
+    // setTimeout with a callback specified as a JS closure.
+    // This one should run in the context of the main page.
+    iframeWindow.setTimeout(
+        function() { 
+            document.getElementById("closureResult").innerText = (window == parent ? "PASS" : "FAIL");
+            completionCounter++;
+        }, 1);
+    // setTimeout with a JS string containing similar code.
+    // This one should run 'inside' iframe.
+    iframeWindow.setTimeout(
+        "parent.document.getElementById('stringResult').innerText = (window != parent ? 'PASS' : 'FAIL');" +
+        "parent.completionCounter++;"
+        , 1);
+    window.setInterval(checkResult, 10);
+}
+function checkResult() {
+    if (completionCounter < 2)
+        return;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+<body onload="test()">
+<p>Test verifies that a timeout callback is run in the proper execution context. 2 timeouts are set on a child iframe's window. 'Closure' callback should execute in the main page, 'string' callback should execute in the iframe. Test passes if you see 2 lines 'PASS' below.</p>
+<div id=closureResult>FAIL</div>
+<div id=stringResult>FAIL</div>
+<iframe style="display:none" src="about:blank" id=testIframe></iframe>
+</body>
+</html>

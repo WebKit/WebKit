@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <symbol id="symbol">
+            <use id="use"/>
+        </symbol>
+    </defs>
+    <use xlink:href="#symbol"/>
+<script><![CDATA[
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+document.getElementById("symbol").setAttribute("style","-webkit-flow-into:thread;");
+document.getElementById("use").appendChild(document.createElement("radialGradient"));
+var elem = document.getElementById("symbol").appendChild(document.createElement("title"));
+
+]]></script>
+    <text x="10" y="20">Test for WebKitBug 84493: crash when collecting svg symbol element in named flow.</text>
+    <text x="10" y="40">This test PASSES if it does not CRASH or ASSERT.</text>
+</svg>

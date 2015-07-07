@@ -1,0 +1,47 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpEditingCallbacks();
+    testRunner.dumpAsText();
+}
+
+function log(str) {
+    var li = document.createElement("li");
+    li.appendChild(document.createTextNode(str));
+    var console = document.getElementById("console");
+    console.appendChild(li);
+}
+function shouldBe(expected, actual) {
+    if (expected != actual)
+        log("Failure. Expected: " + expected + ", Actual: " + actual);
+    else
+        log("Passed");
+}
+</script>
+<p>This tests copy/paste of select elements.  All the options should be included.</p>
+<div id="copy" contenteditable="true">
+    <select id="select">
+        <option>One</option>
+        <option>Two</option>
+        <option>Three</option>
+    </select>
+</div>
+
+<div id="paste" contenteditable="true"></div>
+<ul id="console"></ul>
+<script>
+var copy = document.getElementById("copy");
+copy.focus();
+document.execCommand("SelectAll");
+document.execCommand("Cut");
+
+shouldBe(document.getElementById("select"), null);
+
+var paste = document.getElementById("paste");
+paste.focus();
+document.execCommand("Paste");
+
+var select = document.getElementById("select");
+shouldBe(select.options[0].value, "One");
+shouldBe(select.options[1].value, "Two");
+shouldBe(select.options[2].value, "Three");
+</script>

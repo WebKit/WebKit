@@ -1,0 +1,3 @@
+Test for bug 12733: XPath namespace is attached to a wrong step.
+
+SUCCESS

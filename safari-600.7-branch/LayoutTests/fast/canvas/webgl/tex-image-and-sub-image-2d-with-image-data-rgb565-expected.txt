@@ -1,0 +1,50 @@
+ 
+Verify texImage2D and texSubImage2D code paths taking ImageData (RGB/UNSIGNED_SHORT_5_6_5)
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Testing texImage2D with flipY=true and premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 0,255,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texImage2D with flipY=false and premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,255,0,255
+Testing texImage2D with flipY=true and premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 0,0,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texImage2D with flipY=false and premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,0,0,255
+Testing texSubImage2D with flipY=true and premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 0,255,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texSubImage2D with flipY=false and premultiplyAlpha=false
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,255,0,255
+Testing texSubImage2D with flipY=true and premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 0,0,0,255
+Checking top pixel
+PASS shouldBe 255,0,0,255
+Testing texSubImage2D with flipY=false and premultiplyAlpha=true
+Checking bottom pixel
+PASS shouldBe 255,0,0,255
+Checking top pixel
+PASS shouldBe 0,0,0,255
+PASS getError was expected value: NO_ERROR : should be no errors
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

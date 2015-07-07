@@ -1,0 +1,58 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+gc = window.gc || function()
+{
+    if (window.GCController)
+        return GCController.collect();
+    
+    for (var i = 0; i < 10000; ++i)
+        var s = new String("AAAA");
+}
+
+handler = function()
+{   
+    this.removeEventListener("DOMNodeRemoved", handler, false);
+    document.body.removeChild(object);
+}
+
+window.onload = function()
+{
+    object = document.createElement("object");
+    object.setAttribute("form", "a");
+    
+    attr = document.createAttribute("width");
+    object.setAttributeNode(attr);
+    attr.appendChild(document.createTextNode(1));
+    attr.childNodes[0].addEventListener("DOMNodeRemoved", handler, false);
+
+    embed = document.createElement("embed");
+    embed.setAttribute("width", 2);
+    object.appendChild(embed);
+    
+    document.body.appendChild(object);
+    
+    object = embed = attr = null;
+    gc();
+    
+    setTimeout(finishTest, 0);
+}
+
+finishTest = function()
+{
+    form = document.createElement("form");
+    form.id = "form";
+    document.body.appendChild(form);
+    
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</head>
+<body>PASS</body
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script src=media-controls.js></script>
+        <script>
+
+            function canplaythrough()
+            {
+                consoleWrite("<br>** Initial state: no text tracks, controls should not be visible **");
+                testExpected("video.textTracks.length", 0);
+                testExpected("video.controls", false, '==');
+                testExpected("internals.shadowRoot(video)", null);
+
+                consoleWrite("<br>** Add a text track, controls should not become visible **");
+                run("video.addTextTrack('captions')");
+                testExpected("video.textTracks.length", 1);
+                testExpected("video.controls", false);
+                testExpected("internals.shadowRoot(video)", null);
+
+                consoleWrite("<br>** Enable controls **");
+                run("video.setAttribute('controls','controls')");
+                testExpected("video.textTracks.length", 1);
+                testExpected("video.controls", true);
+                controlsElement = mediaControlsElement(internals.shadowRoot(video).firstChild, "-webkit-media-controls-panel");
+                testExpected("internals.shadowRoot(video)", null, "!=");
+                testExpected("controlsElement.style['display']", 'none', "!=");
+
+                consoleWrite("");
+                endTest();
+            }
+
+            function start()
+            {
+                findMediaElement();
+
+                waitForEvent('canplaythrough', canplaythrough);
+                video.src = findMediaFile("video", "content/test");
+            }
+
+        </script>
+    </head>
+    <body onload="start()">
+        <video>
+        </video>
+        <p>Tests that adding a text track does not make controls visible.</p>
+    </body>
+</html>

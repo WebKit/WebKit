@@ -1,0 +1,9 @@
+Test that files are not accessible while dragging. To test manually, drop an HTML file on the box below.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS event.dataTransfer.files.length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

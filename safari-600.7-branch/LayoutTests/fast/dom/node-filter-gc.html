@@ -1,0 +1,22 @@
+<html>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+    
+var iterator = document.createNodeIterator(document, NodeFilter.SHOW_ELEMENT, 0, false);
+var walker = document.createTreeWalker(document, NodeFilter.SHOW_ELEMENT, 0, false);
+
+// create lots of objects to force a garbage collection
+ var i = 0;
+ var s;
+ while (i < 5000) {
+     i = i+1.11;
+    s = s + " ";
+ }
+ 
+</script>
+</html>
+<body>
+    This tests that garbage collecting a node iterator or a tree walker without a filter doesn't crash.
+</body>
+</html>

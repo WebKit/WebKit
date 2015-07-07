@@ -1,0 +1,101 @@
+<body>
+<p>Test MessagePort messaging/entangle/detangle across threads. Should print "SUCCESS" when done.</p>
+<div id=result></div>
+<script>
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+
+var channel = new MessageChannel();
+var numMessages = 50000;
+
+// Create a channel which we will use to clone and re-clone one end of a
+// MessageChannel.
+var cloneChannel = new MessageChannel();
+var stopCloning = false;
+cloneChannel.port1.onmessage = cloneChannel.port2.onmessage = resendPort;
+cloneChannel.port1.start();
+cloneChannel.port2.start();
+cloneChannel.port1.postMessage("", [channel.port2]);
+
+// Create worker with other end of port and have it send messages back to us
+// while we clone our end of the port repeatedly.
+var worker = new Worker("resources/worker-cloneport.js");
+worker.postMessage("postBack " + numMessages, [channel.port1]);
+
+// Test posting back 50000 messages, make sure ordering is fine
+worker.onmessage = function(evt) {
+    if (evt.data == "postBackDone") {
+        stopCloning = true;
+    } else {
+        // Log message from worker
+        log(evt.data);
+    }
+}
+
+// Keep cloning the passed port until we're told to stop.
+function resendPort(evt)
+{
+    if (!evt.ports)
+        log("FAIL: evt.ports not set");
+    if (evt.ports.length != 1)
+        log("FAIL: ports.length = " + evt.ports.length);
+
+    if (!stopCloning) {
+        evt.target.postMessage("", evt.ports);
+    } else {
+        // Make sure the messages arrived in order.
+        var itemNum = 0;
+        // Queue up a task to execute once the messages have been processed. The timeout value is set fairly large to account for Chromium's different message delivery architecture.
+        // This only fires in the case of a test failure, so it does not slow down test running.
+        var timer = setTimeout(function() {
+            log("FAILURE: Received: " + itemNum + " events - expected: " + numMessages);
+        }, 1000);
+        evt.ports[0].onmessage = function(event) {
+            var done = false;
+            if (event.data == itemNum) {
+                itemNum++;
+                if (itemNum == numMessages) {
+                    log("SUCCESS - received " + numMessages + " messages.");
+                    done = true;
+                }
+            } else {
+                log("FAILURE: Out of order message: expected #: " + itemNum + ", received: " + event.data);
+                done = true;
+            }
+            clearTimeout(timer);
+            if (done) {
+                gc();
+                setTimeout(reportDone, 100);  // Make sure no unexpected events come in.
+            }
+        }
+        evt.ports[0].start();
+    }
+}
+
+function gc()
+{
+    if (window.GCController)
+        return GCController.collect();
+
+    for (var i = 0; i < 10000; i++) { // force garbage collection (FF requires about 9K allocations before a collect).
+        var s = new String("abc");
+    }
+}
+function reportDone()
+{
+     log("DONE");
+     if (window.testRunner)
+         testRunner.notifyDone();
+}
+
+</script>
+</body>
+</html>

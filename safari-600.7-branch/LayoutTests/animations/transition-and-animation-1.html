@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Transition/Animation Test #1</title>
+  <style type="text/css" media="screen">
+    #box {
+        position: absolute;
+        left: 0;
+        top: 100px;
+        height: 100px;
+        width: 100px;
+        background-color: blue;
+        -webkit-animation-duration: 0.5s;
+        -webkit-animation-timing-function: linear;
+        -webkit-animation-name: "anim";
+        -webkit-transition-property: -webkit-transform;
+        -webkit-transition-duration: 10s;
+    }
+    @-webkit-keyframes "anim" {
+        from { -webkit-transform: translateX(200px); }
+        to   { -webkit-transform: translateX(300px); }
+    }
+    </style>
+    <script src="resources/animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+    
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      [null, 0.55, "box", "webkitTransform", "none", null],
+    ];
+    
+    runAnimationTest(expectedValues);
+    
+  </script>
+</head>
+<body>
+This test has a transition and animation on the same property (-webkit-transform). But the transition is never triggered,
+so nothing should be moving when the animation finishes.
+<div id="box">
+</div>
+<div id="result">
+</div>
+</body>
+</html>

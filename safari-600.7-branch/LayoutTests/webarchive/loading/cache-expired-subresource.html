@@ -1,0 +1,17 @@
+<html>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpResourceLoadCallbacks();
+        testRunner.waitUntilDone();
+    }
+    
+    function frameLoaded() {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+<body>
+<iframe onload="frameLoaded();" src="resources/cache-expired-subresource.webarchive"></iframe><br>
+This tests that loading a webarchive with a subresource that has an expired cache header does not attempt to hit the network for resource, and actually uses the archived data
+</body>
+</html>

@@ -1,0 +1,27 @@
+<html>
+<head>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function run() {
+    selection = window.getSelection();
+    range = document.createRange();
+    selection.addRange(range);
+
+    document.designMode = "on";
+    document.execCommand("InsertText", false, 'x');
+    document.open();
+    document.execCommand("Undo");
+
+    selection.deleteFromDocument();
+
+    document.write('This calling deleteFromDocument after document.open. WebKit should not crash.<br>');
+    document.write('PASS<br>');
+}
+</script>
+</head>
+<body onload="run()">
+</body>
+</html>

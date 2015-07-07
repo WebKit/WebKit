@@ -1,0 +1,18 @@
+<p>This tests caret movement across buttons.  The caret should be just after the second button.</p>
+<div id="div" contenteditable="true">
+<input type="submit" value="Foo"><input type="reset" value="Bar">
+</div>
+
+<script src="../editing.js"></script>
+<script>
+runEditingTest();
+
+function editingTest() {
+    var sel = window.getSelection();
+    var div = document.getElementById("div");
+    sel.setPosition(div, 0);
+    
+    moveSelectionForwardByCharacterCommand();
+    moveSelectionForwardByCharacterCommand();
+}
+</script>

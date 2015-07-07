@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    #target {
+      position: absolute;
+      background-color: green;
+      z-index: 0;
+      overflow: hidden;
+      left: 0px;
+      top: 0px;
+      width: 200px;
+      height: 200px;
+    }
+    #inner {
+      background-color: red;
+      -webkit-transform: translateZ(0);
+      width: 100px;
+      height: 100px;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.testRunner)
+      testRunner.dumpAsText();
+
+    function doTest() {
+      if (window.internals)
+          window.internals.startTrackingRepaints();
+
+      document.getElementById("target").style.left = '300px';
+
+      if (window.internals) {
+          document.getElementById('layers').textContent = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
+          window.internals.stopTrackingRepaints();
+      }
+    }
+
+    window.addEventListener('load', doTest, false);
+  </script>
+</head>
+<body>
+  <div id='target'>
+    <div id='inner'></div>
+  </div>
+</body>
+<pre id="layers"></pre>
+</html>

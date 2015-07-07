@@ -1,0 +1,69 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+<script>
+
+function testFunction()
+{
+    foo();
+}
+
+function foo()
+{
+}
+
+function test()
+{
+    InspectorTest.runDebuggerTestSuite([
+        function testSetNoneOfURLAndRegex(next)
+        {
+            DebuggerAgent.setBreakpointByUrl.invoke({lineNumber: 1}, step2);
+
+            function step2(error)
+            {
+                InspectorTest.addResult(error);
+                next();
+            }
+        },
+
+        function testSetBothURLAndRegex(next)
+        {
+            var url = "debugger-set-breakpoint.js";
+            var urlRegex = "debugger-set-breakpoint.*";
+            DebuggerAgent.setBreakpointByUrl(1, url, urlRegex, step2);
+
+            function step2(error)
+            {
+                InspectorTest.addResult(error);
+                next();
+            }
+        },
+
+        function testSetByRegex(next)
+        {
+            DebuggerAgent.setBreakpointByUrl.invoke({urlRegex: "debugger-set-breakpoint.*", lineNumber:8}, step2);
+
+            function step2(result)
+            {
+                InspectorTest.runTestFunctionAndWaitUntilPaused(step3);
+            }
+        
+            function step3(callFrames)
+            {
+                InspectorTest.captureStackTrace(callFrames);
+                next();
+            }
+        }
+    ]);
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests Debugger.setBreakpointByUrl with isRegex set to true.
+</p>
+</body>
+</html>

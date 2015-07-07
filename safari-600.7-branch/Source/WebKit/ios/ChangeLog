@@ -1,0 +1,841 @@
+2015-04-17  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r180110
+
+    2015-02-14  Alexey Proskuryakov  <ap@apple.com>
+
+            rel="noreferrer" should make window.opener null
+            https://bugs.webkit.org/show_bug.cgi?id=141579
+
+            Reviewed by Darin Adler.
+
+            * WebView/WebPDFViewPlaceholder.mm:
+            (-[WebPDFViewPlaceholder simulateClickOnLinkToURL:]): Updated for a new WebCore
+            function signature. There is no rel="noreferrer" in PDF, so we can just always allow.
+
+2014-07-03  Daniel Bates  <dabates@apple.com>
+
+        Add WTF::move()
+        https://bugs.webkit.org/show_bug.cgi?id=134500
+
+        Rubber-stamped by Anders Carlsson.
+
+        Substitute WTF::move() for std::move().
+
+        * WebCoreSupport/WebFixedPositionContent.mm:
+        (-[WebFixedPositionContent setViewportConstrainedLayers:stickyContainerMap:]):
+        * WebCoreSupport/WebInspectorClientIOS.mm:
+        (WebInspectorFrontendClient::WebInspectorFrontendClient):
+
+2014-07-01  Alex Christensen  <achristensen@webkit.org>
+
+        [iOS] Compile fix with pointer lock enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=134472
+
+        Reviewed by Pratik Solanki.
+
+        * WebView/WebPDFViewPlaceholder.mm:
+        (-[WebPDFViewPlaceholder simulateClickOnLinkToURL:]):
+        Add parameters required for pointer lock.
+
+2014-06-05  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS][WK2] Add device orientation
+        https://bugs.webkit.org/show_bug.cgi?id=133530
+
+        Reviewed by Tim Horton.
+
+        Change WebKit1 to provide the deviceOrientation as pull instead of push.
+
+        * DefaultDelegates/WebDefaultUIKitDelegate.m:
+        (-[WebDefaultUIKitDelegate deviceOrientation]):
+        * WebCoreSupport/WebChromeClientIOS.h:
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        (WebChromeClientIOS::deviceOrientation):
+        * WebView/WebUIKitDelegate.h:
+
+2014-05-09  Benjamin Poulain  <benjamin@webkit.org>
+
+        [iOS] Switch geolocation to an explicit authorization query model
+        https://bugs.webkit.org/show_bug.cgi?id=132717
+        <rdar://problem/16762390>
+
+        Reviewed by Sam Weinig.
+
+        WebGeolocationCoreLocationProvider is the general WebKit wrapper for CoreLocation.
+
+        The old model was to start WebGeolocationCoreLocationProvider and have the start fail or succeed.
+        The new model is to explicitely ask for authorization through "requestGeolocationAuthorization", and
+        listen to "geolocationAuthorizationGranted" and "geolocationAuthorizationDenied".
+
+        We assume the client of WebGeolocationCoreLocationProvider is well behaved and ask for authorization
+        before invoking "start".
+        If "start" is called and the authorization is not granted, we assume geolocation was reset since
+        the last time authorization was requested, and we reset the client.
+
+
+        WebGeolocationProviderIOS has been adapted to that model. Instead of doing the "warmup" sequence
+        to get the authorization, it queries WebGeolocationCoreLocationProvider explicitly.
+
+        * Misc/WebGeolocationCoreLocationProvider.h:
+        * Misc/WebGeolocationCoreLocationProvider.mm:
+        (-[WebGeolocationCoreLocationProvider createLocationManager]):
+        (-[WebGeolocationCoreLocationProvider dealloc]):
+        (-[WebGeolocationCoreLocationProvider requestGeolocationAuthorization]):
+        (isAuthorizationGranted):
+        (-[WebGeolocationCoreLocationProvider start]):
+        (-[WebGeolocationCoreLocationProvider stop]):
+        (-[WebGeolocationCoreLocationProvider locationManager:didChangeAuthorizationStatus:]):
+        (-[WebGeolocationCoreLocationProvider setEnableHighAccuracy:]):
+        (-[WebGeolocationCoreLocationProvider handleExternalAuthorizationStatusChange:]): Deleted.
+        * Misc/WebGeolocationProviderIOS.mm:
+        (-[WebGeolocationProviderIOS suspend]):
+        (-[WebGeolocationProviderIOS resume]):
+        (-[WebGeolocationProviderIOS registerWebView:]):
+        (-[WebGeolocationProviderIOS unregisterWebView:]):
+        (-[WebGeolocationProviderIOS setEnableHighAccuracy:]):
+        (-[WebGeolocationProviderIOS initializeGeolocationForWebView:listener:]):
+        (-[WebGeolocationProviderIOS geolocationAuthorizationGranted]):
+        (-[WebGeolocationProviderIOS geolocationAuthorizationDenied]):
+        (-[WebGeolocationProviderIOS stopTrackingWebView:]):
+        (-[WebGeolocationProviderIOS resetGeolocation]):
+        (-[_WebCoreLocationUpdateThreadingProxy geolocationAuthorizationGranted]):
+        (-[_WebCoreLocationUpdateThreadingProxy geolocationAuthorizationDenied]):
+        (-[_WebCoreLocationUpdateThreadingProxy positionChanged:WebCore::]):
+        (-[_WebCoreLocationUpdateThreadingProxy errorOccurred:]):
+        (-[_WebCoreLocationUpdateThreadingProxy resetGeolocation]):
+        (-[WebGeolocationProviderIOS _startCoreLocationDelegate]): Deleted.
+        (-[WebGeolocationProviderIOS _stopCoreLocationDelegateIfNeeded]): Deleted.
+        (-[WebGeolocationProviderIOS cancelWarmUpForWebView:]): Deleted.
+        (-[WebGeolocationProviderIOS geolocationDelegateStarted]): Deleted.
+        (-[WebGeolocationProviderIOS geolocationDelegateUnableToStart]): Deleted.
+        (-[_WebCoreLocationUpdateThreadingProxy geolocationDelegateStarted]): Deleted.
+        (-[_WebCoreLocationUpdateThreadingProxy geolocationDelegateUnableToStart]): Deleted.
+
+2014-04-30  Anders Carlsson  <andersca@apple.com>
+
+        Move the legacy WebKit API into WebKitLegacy.framework and move it inside WebKit.framework
+        https://bugs.webkit.org/show_bug.cgi?id=132399
+        <rdar://problem/15920046>
+
+        Reviewed by Dan Bernstein.
+
+        Import WebKitLegacy headers instead of WebKit headers.
+        
+        * DefaultDelegates/WebDefaultFormDelegate.h:
+        * DefaultDelegates/WebDefaultFrameLoadDelegate.m:
+        * DefaultDelegates/WebDefaultResourceLoadDelegate.m:
+        * DefaultDelegates/WebDefaultUIKitDelegate.h:
+        * Misc/WebGeolocationProviderIOS.h:
+        * Misc/WebNSStringExtrasIPhone.h:
+        * WebCoreSupport/WebFrameIOS.h:
+        * WebCoreSupport/WebFrameIOS.mm:
+        * WebCoreSupport/WebFrameIPhone.h:
+        * WebCoreSupport/WebSelectionRect.h:
+        * WebCoreSupport/WebVisiblePosition.h:
+        * WebView/WebPDFViewIOS.h:
+        * WebView/WebPDFViewIOS.mm:
+        * WebView/WebPDFViewIPhone.h:
+        * WebView/WebPDFViewPlaceholder.h:
+        * WebView/WebPDFViewPlaceholder.mm:
+        * WebView/WebPlainWhiteView.h:
+        * WebView/WebUIKitDelegate.h:
+
+2014-04-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        FontCache::fontCache() never returns nullptr so it can be made to return a reference instead
+        https://bugs.webkit.org/show_bug.cgi?id=132110
+
+        Reviewed by Tim Horton.
+
+        Updates callers to use '.' instead of '->'.
+
+        No new tests are necessary because there should be no behavior change.
+
+        * Misc/EmojiFallbackFontSelector.cpp:
+        (EmojiFallbackFontSelector::getFallbackFontData):
+
+2014-04-17  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Hook up screen.{availHeight, availWidth, height, width}
+        https://bugs.webkit.org/show_bug.cgi?id=131821
+        <rdar://problem/16413795>
+
+        Reviewed by Benjamin Poulain and Tim Horton.
+
+        Provide iOS-specific WebKit1 implementation for ChromeClient::availableScreenSize().
+
+        Additionally substitute "screenSize" for "viewporScreenSize" to make the code more understandable.
+
+        * WebCoreSupport/WebChromeClientIOS.h:
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        (WebChromeClientIOS::screenSize): Renamed; formerly named viewportScreenSize.
+        (WebChromeClientIOS::availableScreenSize): Added; ASSERT_NOT_REACHED() as a widget
+        should consult it's associated WAKWindow for the available screen size.
+
+2014-04-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Rename Clipboard to DataTransfer
+        https://bugs.webkit.org/show_bug.cgi?id=131371
+
+        Reviewed by Anders Carlsson.
+
+        * WebView/WebPDFViewPlaceholder.mm:
+
+2014-04-02  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS] Remove the legacy string drawing code
+        https://bugs.webkit.org/show_bug.cgi?id=131088
+
+        Reviewed by Sam Weinig.
+
+        * Misc/WebNSStringDrawing.h: Removed.
+        * Misc/WebNSStringDrawing.mm: Removed.
+        * Misc/WebUIKitSupport.h:
+
+2014-04-02  Mark Rowe  <mrowe@apple.com>
+
+        Build fix after r166684.
+
+        * WebView/WebPDFViewPlaceholder.mm:
+        (-[WebPDFViewPlaceholder simulateClickOnLinkToURL:]):
+
+2014-03-31  Anders Carlsson  <andersca@apple.com>
+
+        Fix iOS build.
+
+        * WebCoreSupport/WebChromeClientIOS.h:
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        * WebCoreSupport/WebFixedPositionContent.mm:
+        * WebCoreSupport/WebFixedPositionContentInternal.h:
+
+2014-03-30  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix the iOS build.
+
+        * Misc/WebGeolocationCoreLocationProvider.mm:
+        (-[WebGeolocationCoreLocationProvider start]):
+        (-[WebGeolocationCoreLocationProvider locationManager:didChangeAuthorizationStatus:]):
+
+2014-03-27  Enrica Casucci  <enrica@apple.com>
+
+        Add support for AirPlay picker for iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=130876
+        <rdar://problem/15349859>
+
+        Reviewed by Benjamin Poulain.
+
+        Adds support for the AirPlay picker for WebKit.
+        The actual picker is implemented in UIKit.
+
+        * DefaultDelegates/WebDefaultUIKitDelegate.m:
+        (-[WebDefaultUIKitDelegate interactionLocation]):
+        (-[WebDefaultUIKitDelegate showPlaybackTargetPicker:fromRect:]):
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        (WebChromeClientIOS::showPlaybackTargetPicker):
+        * WebCoreSupport/WebFrameIOS.h:
+        * WebCoreSupport/WebFrameIOS.mm:
+        (-[WebFrame elementRectAtPoint:]):
+        * WebView/WebUIKitDelegate.h:
+
+2014-03-27  Enrica Casucci  <enrica@apple.com>
+
+        Add support for AirPlay picker in WK2 for iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=130855
+        <rdar://problem/15349859>
+
+        Reviewed by Eric Carlson, Joseph Pecoraro and Benjamin Poulain.
+
+        Adds stub for new WebKit chrome client method.
+
+        * WebCoreSupport/WebChromeClientIOS.h:
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        (WebChromeClientIOS::showAirPlayRoutePicker):
+
+2014-03-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [iOS] Inspector View Indication Support
+        https://bugs.webkit.org/show_bug.cgi?id=130709
+
+        Reviewed by Simon Fraser.
+
+        * WebCoreSupport/WebInspectorClientIOS.mm:
+        (WebInspectorClient::showInspectorIndication):
+        (WebInspectorClient::hideInspectorIndication):
+        Renamed methods.
+
+2014-03-22  Darin Adler  <darin@apple.com>
+
+        Remove String::deprecatedCharacters
+        https://bugs.webkit.org/show_bug.cgi?id=126854
+
+        Reviewed by Sam Weinig.
+
+        * Misc/WebNSStringDrawing.h: Added a FIXME about deleting this file; we can probably do it soon.
+        * Misc/WebNSStringDrawing.mm:
+        (+[NSString _web_setWordRoundingEnabled:]):
+        (+[NSString _web_wordRoundingEnabled]):
+        (+[NSString _web_setWordRoundingAllowed:]):
+        (+[NSString _web_wordRoundingAllowed]):
+        (+[NSString _web_setAscentRoundingEnabled:]):
+        (+[NSString _web_ascentRoundingEnabled]):
+        (-[NSString _web_drawAtPoint:withFont:]):
+        (-[NSString _web_sizeWithFont:]):
+        (-[NSString _web_sizeWithFont:forWidth:ellipsis:]):
+        (-[NSString _web_sizeWithFont:forWidth:ellipsis:letterSpacing:]):
+        (-[NSString _web_sizeWithFont:forWidth:ellipsis:letterSpacing:resultRange:]):
+        (-[NSString _web_drawAtPoint:forWidth:withFont:ellipsis:]):
+        (-[NSString _web_drawAtPoint:forWidth:withFont:ellipsis:letterSpacing:]):
+        (-[NSString _web_drawAtPoint:forWidth:withFont:ellipsis:letterSpacing:includeEmoji:]):
+        (-[NSString _web_drawInRect:withFont:ellipsis:alignment:lineSpacing:includeEmoji:truncationRect:measureOnly:]):
+        (-[NSString _web_drawInRect:withFont:ellipsis:alignment:lineSpacing:includeEmoji:truncationRect:]):
+        (-[NSString _web_drawInRect:withFont:ellipsis:alignment:lineSpacing:]):
+        (-[NSString _web_drawInRect:withFont:ellipsis:alignment:]):
+        (-[NSString _web_sizeInRect:withFont:ellipsis:lineSpacing:]):
+        (-[NSString _web_sizeInRect:withFont:ellipsis:]):
+        (-[NSString _web_stringForWidth:withFont:ellipsis:letterSpacing:includeEmoji:]):
+        (-[NSString _web_sizeForWidth:withAttributes:]):
+        (-[NSString _web_drawAtPoint:forWidth:withAttributes:]):
+        (-[NSString _web_sizeInRect:withAttributes:]):
+        (-[NSString _web_drawInRect:withAttributes:]):
+        Emptied out all these functions since callers aren't really using them any more.
+
+2014-03-21  Tim Horton  <timothy_horton@apple.com>
+
+        Always retrieve the screen scale factor from WKSI
+        <rdar://problem/16329679>
+
+        Reviewed by Sam Weinig.
+
+        * Misc/WebUIKitSupport.mm:
+        (WebKitSetIsClassic): Empty this out; it's no longer needed, but will still be called.
+
+2014-03-19  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS] WebPDFViewPlaceholder divides-by-zero with an empty document
+        https://bugs.webkit.org/show_bug.cgi?id=130444
+        <rdar://problem/15580682>
+
+        Reviewed by Sam Weinig.
+
+        * WebView/WebPDFViewPlaceholder.h:
+        * WebView/WebPDFViewPlaceholder.mm:
+        (-[WebPDFViewPlaceholder layout]):
+        Get rid of boundingSize, it's never assigned to anything but CGSizeZero,
+        which is confusing.
+
+        Don't divide by zero if we have no pages, instead return an empty bounding size.
+
+        (-[WebPDFViewPlaceholder _computePageRects:]):
+        If we have an empty document, set the background color to white.
+        Otherwise, set it to black. It's not clear that black is the ideal
+        background color, but this retains existing behavior.
+
+2014-03-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Replace "Apple Computer, Inc." with "Apple Inc." in copyright headers
+        https://bugs.webkit.org/show_bug.cgi?id=130276
+        <rdar://problem/16266927>
+        
+        Reviewed by Simon Fraser.
+
+        * WebCoreSupport/WebCaretChangeListener.h:
+        * WebCoreSupport/WebInspectorClientIOS.mm:
+        * WebView/WebPlainWhiteView.h:
+        * WebView/WebPlainWhiteView.mm:
+
+2014-03-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        Rename DEFINE_STATIC_LOCAL to DEPRECATED_DEFINE_STATIC_LOCAL
+        https://bugs.webkit.org/show_bug.cgi?id=129612
+
+        Reviewed by Darin Adler.
+
+        For new code use static NeverDestroyed<T> instead.
+
+        * Misc/EmojiFallbackFontSelector.cpp:
+        (EmojiFallbackFontSelector::getFallbackFontData):
+        * WebCoreSupport/WebFixedPositionContent.mm:
+        (WebFixedPositionContentDataLock):
+
+2014-03-13  Benjamin Poulain  <bpoulain@apple.com>
+
+        The viewport code should not depend on WebKitSystemInterface
+        https://bugs.webkit.org/show_bug.cgi?id=130218
+
+        Reviewed by Tim Horton.
+
+        * WebCoreSupport/WebChromeClientIOS.h:
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        (WebChromeClientIOS::viewportScreenSize):
+        Get the viewport size from WebKitSystemInterface.
+
+2014-03-12  Enrica Casucci  <enrica@apple.com>
+
+        Incorrect reference counting of Range in WebFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=130160
+        <rdar://problem/16282535>
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebFrameIOS.mm:
+        (-[WebFrame selectionRects]):
+
+2014-03-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Spelling is hard
+        https://bugs.webkit.org/show_bug.cgi?id=130146
+
+        Reviewed by Beth Dakin.
+        
+        Fix spelling (constained -> constrained).
+
+        * WebCoreSupport/WebFixedPositionContent.mm:
+        (-[WebFixedPositionContent scrollOrZoomChanged:]):
+        (-[WebFixedPositionContent overflowScrollPositionForLayer:changedTo:]):
+        (-[WebFixedPositionContent setViewportConstrainedLayers:WTF::WebCore::stickyContainerMap:WTF::]):
+        (-[WebFixedPositionContent hasFixedOrStickyPositionLayers]):
+        (-[WebFixedPositionContent minimumOffsetFromFixedPositionLayersToAnchorEdge:ofRect:inLayer:]):
+
+2014-02-17  Sergio Correia  <sergio.correia@openbossa.org>
+
+        Replace uses of PassOwnPtr/OwnPtr with std::unique_ptr in WebCore/inspector
+        https://bugs.webkit.org/show_bug.cgi?id=128681
+
+        Reviewed by Timothy Hatcher.
+
+        Another step towards getting rid of PassOwnPtr/OwnPtr, now targeting
+        WebCore/inspector/*. Besides files in there, a few other files in
+        JavaScriptCore/inspector, WebKit/, WebKit2/WebProcess/WebCoreSupport/
+        and WebCore/testing were touched.
+
+        * WebCoreSupport/WebInspectorClientIOS.mm:
+
+2014-02-12  Benjamin Poulain  <bpoulain@apple.com>
+
+        [WK2][iOS] Add back the special viewport for the old xhtml mobile doctype
+        https://bugs.webkit.org/show_bug.cgi?id=128639
+
+        Reviewed by Andreas Kling.
+
+        * WebCoreSupport/WebChromeClientIOS.h:
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        (WebChromeClientIOS::didReceiveMobileDocType):
+
+2014-02-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r163739.
+
+        * WebCoreSupport/WebFrameIOS.mm:
+        (-[WebFrame collapseSelection]):
+        (-[WebFrame aggressivelyExpandSelectionToWordContainingCaretSelection]):
+
+2014-02-03  Dan Bernstein  <mitz@apple.com>
+
+        More iOS build fixing.
+
+        * Misc/WebNSStringDrawing.mm:
+        (-[NSString __web_drawAtPoint:forWidth:withFont:ellipsis:letterSpacing:includeEmoji:measureOnly:renderedStringOut:drawUnderline:]):
+        (-[NSString __web_drawInRect:withFont:ellipsis:alignment:letterSpacing:lineSpacing:includeEmoji:truncationRect:measureOnly:renderedStringOut:drawUnderline:]):
+
+2014-01-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove inline member functions of FrameSelection that access m_selection
+        https://bugs.webkit.org/show_bug.cgi?id=127986
+
+        Reviewed by Enrica Casucci.
+
+        * WebCoreSupport/WebFrameIOS.mm:
+        (-[WebFrame extendSelection:]):
+        (-[WebFrame ensureRangedSelectionContainsInitialStartPoint:initialEndPoint:]):
+        (-[WebFrame aggressivelyExpandSelectionToWordContainingCaretSelection]):
+        (-[WebFrame expandSelectionToSentence]):
+        (-[WebFrame setBaseWritingDirection:]):
+        (-[WebFrame smartExtendRangedSelection:]):
+
+2014-01-30  Andrei Bucur  <abucur@adobe.com>
+
+        Remove the ACCELERATED_COMPOSITING flag
+        https://bugs.webkit.org/show_bug.cgi?id=127833
+
+        Reviewed by Antti Koivisto.
+
+        Remove the USE(ACCELERATED_COMPOSITING) conditionals from the code base and make AC
+        mandatory.
+
+        * WebCoreSupport/WebChromeClientIOS.h:
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        (WebChromeClientIOS::attachRootGraphicsLayer):
+        * WebView/WebUIKitDelegate.h:
+
+2014-01-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed iOS build fix. FALLTHROUGHs for iOS.
+
+        * Misc/WebNSStringDrawing.mm:
+        (needsBidiLayout):
+
+2014-01-27  Andy Estes  <aestes@apple.com>
+
+        Scrub WebKit API headers of WTF macros
+        https://bugs.webkit.org/show_bug.cgi?id=127706
+
+        Reviewed by David Kilzer.
+
+        * WebCoreSupport/WebMIMETypeRegistry.h: Changed PLATFORM(IOS) to
+        TARGET_OS_IPHONE.
+
+2014-01-15  Sam Weinig  <sam@webkit.org>
+
+        TextBreakIterator's should support Latin-1 for all iterator types (Part 3)
+        https://bugs.webkit.org/show_bug.cgi?id=126856
+
+        Reviewed by Ryosuke Niwa.
+
+        Change all the TextBreakIterator creation functions to take StringViews. Remove a few
+        now unnecessary up-conversions to UTF-16 in the process.
+
+        * Misc/WebNSStringDrawing.mm:
+
+2014-01-16  Anders Carlsson  <andersca@apple.com>
+
+        Change all uses of FINAL to final now that all our compilers support it
+        https://bugs.webkit.org/show_bug.cgi?id=127142
+
+        Reviewed by Benjamin Poulain.
+
+        * WebCoreSupport/WebDiskImageCacheClientIOS.h:
+
+2014-01-16  Peter Molnar  <pmolnar.u-szeged@partner.samsung.com>
+
+        Remove workaround for compilers not supporting explicit override control
+        https://bugs.webkit.org/show_bug.cgi?id=127111
+
+        Reviewed by Anders Carlsson.
+
+        Now all compilers support explicit override control, this workaround can be removed.
+
+        * Misc/EmojiFallbackFontSelector.h:
+        * Storage/WebSQLiteDatabaseTrackerClient.h:
+        * WebCoreSupport/PopupMenuIOS.h:
+        * WebCoreSupport/SearchPopupMenuIOS.h:
+        * WebCoreSupport/WebChromeClientIOS.h:
+        * WebCoreSupport/WebDiskImageCacheClientIOS.h:
+
+2014-01-16  Andy Estes  <aestes@apple.com>
+
+        [iOS] Fix build issues with exported headers
+
+        * Misc/WebNSStringExtrasIOS.h: Changed PLATFORM(IOS) to
+        TARGET_OS_IPHONE.
+
+2014-01-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid PLATFORM() macros in exported headers.
+
+        * WebView/WebPDFViewPlaceholder.h:
+
+2014-01-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up exports and headers for iOS.
+
+        * Misc/WebNSStringDrawing.h: Don't use PLATFORM() macro in an exported header.
+        * WebCoreSupport/WebFrameIOS.h: Ditto.
+        * WebCoreSupport/WebSelectionRect.h: Ditto.
+
+2014-01-14  Dean Jackson  <dino@apple.com>
+
+        Remove .objc_class_name_WebInspectorXPCWrapper from export on iOS build.
+
+        * WebKit.iOS.exp:
+
+2014-01-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix WK1 iOS build: need implementations of these functions in WebInspectorClientIOS.
+
+        * WebCoreSupport/WebInspectorClientIOS.mm:
+        (WebInspectorClient::indicate):
+        (WebInspectorClient::hideIndication):
+
+2014-01-13  Simon Fraser  <simon.fraser@apple.com>
+
+        More work towards getting iOS WK1 building.
+
+        * WebCoreSupport/WebFrameIOS.mm:
+        (-[WebFrame imageForNode:allowDownsampling:drawContentBehindTransparentNodes:]): Stub out this
+        function, since it should use recently-refactored node snapshotting code. Covered by <rdar://problem/15808709>.
+
+2014-01-12  Darin Adler  <darin@apple.com>
+
+        Add type checking to isEqual methods
+        https://bugs.webkit.org/show_bug.cgi?id=126862
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebVisiblePosition.mm:
+        (-[WebVisiblePosition isEqual:]): Add type checking on the argument.
+        Add a FIXME about the lack of a hash method override. Simplified by
+        removing the unneeded local variables.
+
+2014-01-02  Andy Estes  <aestes@apple.com>
+
+        [iOS] Upstream remainder of minimal-ui viewport changes
+        https://bugs.webkit.org/show_bug.cgi?id=126410
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        (dictionaryForViewportArguments):
+        * WebKit.iOS.exp:
+
+2013-12-31  Andy Estes  <aestes@apple.com>
+
+        [iOS] Upstream PLATFORM(IOS) changes to Source/WebKit/
+        https://bugs.webkit.org/show_bug.cgi?id=125746
+
+        Reviewed by David Kilzer.
+
+        * WebCoreSupport/WebVisiblePosition.mm:
+        (-[WebVisiblePosition positionAtStartOrEndOfWord]): Changed a comment
+        to mention iOS rather than iPhone.
+
+2013-12-27  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Upstream WebCore/page changes
+        https://bugs.webkit.org/show_bug.cgi?id=126180
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebChromeClientIOS.mm: Substitute ENABLE(IOS_TOUCH_EVENTS) for ENABLE(TOUCH_EVENTS).
+
+2013-12-04  Brian J. Burg  <burg@cs.washington.edu>
+
+        Consolidate various frame snapshot capabilities.
+        https://bugs.webkit.org/show_bug.cgi?id=124325
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebFrameIOS.mm: use new header file.
+
+2013-12-04  Andy Estes  <aestes@apple.com>
+
+        [iOS] Upstream build fixes in Source/WebKit/ios/
+        https://bugs.webkit.org/show_bug.cgi?id=125230
+
+        Reviewed by Sam Weinig.
+
+        * DefaultDelegates/WebDefaultUIKitDelegate.m:
+        (-[WebDefaultUIKitDelegate webViewDidReceiveMobileDocType:]):
+        * Misc/WebNSStringDrawing.mm:
+        (needsBidiLayout):
+        (-[NSString __web_drawAtPoint:forWidth:withFont:ellipsis:letterSpacing:includeEmoji:measureOnly:renderedStringOut:drawUnderline:]):
+        (-[NSString __web_drawInRect:withFont:ellipsis:alignment:letterSpacing:lineSpacing:includeEmoji:truncationRect:measureOnly:renderedStringOut:drawUnderline:]):
+        * Misc/WebUIKitSupport.mm:
+        (WebKitInitialize):
+        * WebCoreSupport/WebChromeClientIOS.h:
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        (WebChromeClientIOS::didReceiveMobileDocType):
+        (WebChromeClientIOS::focusedElementChanged):
+        * WebCoreSupport/WebFrameIOS.mm:
+        (-[WebFrame clearSelection]):
+        (-[WebFrame selectionState]):
+        (-[WebFrame collapseSelection]):
+        (-[WebFrame extendSelection:]):
+        (-[WebFrame selectionRects]):
+        (-[WebFrame setRangedSelectionWithExtentPoint:]):
+        (-[WebFrame setRangedSelectionExtentPoint:baseIsStart:allowFlipping:]):
+        (-[WebFrame setSelectionWithBasePoint:extentPoint:baseIsStart:allowFlipping:]):
+        (-[WebFrame setSelectionWithFirstPoint:secondPoint:]):
+        (-[WebFrame ensureRangedSelectionContainsInitialStartPoint:initialEndPoint:]):
+        (-[WebFrame aggressivelyExpandSelectionToWordContainingCaretSelection]):
+        (-[WebFrame expandSelectionToSentence]):
+        (-[WebFrame setBaseWritingDirection:]):
+        (-[WebFrame moveSelectionToStart]):
+        (-[WebFrame moveSelectionToEnd]):
+        (-[WebFrame moveSelectionToPoint:]):
+        (-[WebFrame setSelectionGranularity:]):
+        (-[WebFrame smartExtendRangedSelection:]):
+        (-[WebFrame previousUnperturbedDictationResultBoundaryFromPosition:]):
+        (-[WebFrame nextUnperturbedDictationResultBoundaryFromPosition:]):
+        * WebCoreSupport/WebInspectorClientIOS.mm:
+        (WebInspectorClient::WebInspectorClient):
+        (WebInspectorClient::didSetSearchingForNode):
+        (WebInspectorClient::setupRemoteConnection):
+        (WebInspectorClient::teardownRemoteConnection):
+        * WebCoreSupport/WebVisiblePosition.mm:
+        (-[WebVisiblePosition enclosingRangeWithDictationPhraseAlternatives:]):
+        (-[WebVisiblePosition enclosingRangeWithCorrectionIndicator]):
+        (-[DOMHTMLInputElement startPosition]):
+        (-[DOMHTMLInputElement endPosition]):
+        (-[DOMHTMLTextAreaElement startPosition]):
+        (-[DOMHTMLTextAreaElement endPosition]):
+        * WebView/WebPDFViewIOS.mm:
+        (+[WebPDFView shadowColor]):
+        (+[WebPDFView backgroundColor]):
+        (-[WebPDFView _checkPDFTitle]):
+        * WebView/WebPDFViewPlaceholder.mm:
+        (-[WebPDFViewPlaceholder simulateClickOnLinkToURL:]):
+        * WebView/WebUIKitDelegate.h:
+
+2013-12-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Push Remote Inspector debugging connection management into JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=124613
+
+        Reviewed by Timothy Hatcher.
+
+        * WebCoreSupport/WebInspectorClientIOS.mm:
+        (WebInspectorClient::WebInspectorClient):
+        (WebInspectorClient::inspectorDestroyed):
+
+2013-12-03  Ralph Thomas  <ralpht@gmail.com>
+
+        Typo: FixedPositionConstaint -> FixedPositionConstraint
+        https://bugs.webkit.org/show_bug.cgi?id=125171
+
+        Reviewed by Simon Fraser.
+
+        * WebCoreSupport/WebFixedPositionContent.mm:
+        (-[WebFixedPositionContent scrollOrZoomChanged:]):
+
+2013-11-18  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r159455.
+        http://trac.webkit.org/changeset/159455
+        https://bugs.webkit.org/show_bug.cgi?id=124568
+
+        broke two api tests (see bug 124564) (Requested by thorton on
+        #webkit).
+
+        * WebCoreSupport/WebFrameIOS.mm:
+
+2013-11-18  Brian J. Burg  <burg@cs.washington.edu>
+
+        Consolidate various frame snapshot capabilities.
+        https://bugs.webkit.org/show_bug.cgi?id=124325
+
+        Reviewed by Timothy Hatcher.
+
+        * WebCoreSupport/WebFrameIOS.mm: use new header file.
+
+2013-11-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove a PLATFORM(IOS) from WebKit Private Header
+        https://bugs.webkit.org/show_bug.cgi?id=124014
+
+        Reviewed by Timothy Hatcher.
+
+        * WebKit.iOS.exp:
+
+2013-10-29  Andy Estes  <aestes@apple.com>
+
+        [iOS] Upstream Source/WebKit/ios/
+        https://bugs.webkit.org/show_bug.cgi?id=123470
+
+        Reviewed by Sam Weinig.
+
+        * DefaultDelegates/WebDefaultFormDelegate.h: Added.
+        * DefaultDelegates/WebDefaultFormDelegate.m: Added.
+        * DefaultDelegates/WebDefaultFrameLoadDelegate.h: Added.
+        * DefaultDelegates/WebDefaultFrameLoadDelegate.m: Added.
+        * DefaultDelegates/WebDefaultResourceLoadDelegate.h: Added.
+        * DefaultDelegates/WebDefaultResourceLoadDelegate.m: Added.
+        * DefaultDelegates/WebDefaultUIKitDelegate.h: Added.
+        * DefaultDelegates/WebDefaultUIKitDelegate.m: Added.
+        * Misc/EmojiFallbackFontSelector.cpp: Added.
+        * Misc/EmojiFallbackFontSelector.h: Added.
+        * Misc/MemoryMeasure.h: Added.
+        * Misc/MemoryMeasure.mm: Added.
+        * Misc/WebGeolocationCoreLocationProvider.h: Added.
+        * Misc/WebGeolocationCoreLocationProvider.mm: Added.
+        * Misc/WebGeolocationProviderIOS.h: Added.
+        * Misc/WebGeolocationProviderIOS.mm: Added.
+        * Misc/WebNSStringDrawing.h: Added.
+        * Misc/WebNSStringDrawing.mm: Added.
+        * Misc/WebNSStringExtrasIOS.h: Added.
+        * Misc/WebNSStringExtrasIOS.m: Added.
+        * Misc/WebNSStringExtrasIPhone.h: Added.
+        * Misc/WebUIKitSupport.h: Added.
+        * Misc/WebUIKitSupport.mm: Added.
+        * Storage/WebSQLiteDatabaseTrackerClient.h: Added.
+        * Storage/WebSQLiteDatabaseTrackerClient.mm: Added.
+        * WebCoreSupport/PopupMenuIOS.h: Added.
+        * WebCoreSupport/PopupMenuIOS.mm: Added.
+        * WebCoreSupport/SearchPopupMenuIOS.cpp: Added.
+        * WebCoreSupport/SearchPopupMenuIOS.h: Added.
+        * WebCoreSupport/WebCaretChangeListener.h: Added.
+        * WebCoreSupport/WebChromeClientIOS.h: Added.
+        * WebCoreSupport/WebChromeClientIOS.mm: Added.
+        * WebCoreSupport/WebFixedPositionContent.h: Added.
+        * WebCoreSupport/WebFixedPositionContent.mm: Added.
+        * WebCoreSupport/WebFixedPositionContentInternal.h: Added.
+        * WebCoreSupport/WebFrameIOS.h: Added.
+        * WebCoreSupport/WebFrameIOS.mm: Added.
+        * WebCoreSupport/WebFrameIPhone.h: Added.
+        * WebCoreSupport/WebGeolocation.mm: Added.
+        * WebCoreSupport/WebGeolocationInternal.h: Added.
+        * WebCoreSupport/WebGeolocationPrivate.h: Added.
+        * WebCoreSupport/WebMIMETypeRegistry.h: Added.
+        * WebCoreSupport/WebMIMETypeRegistry.mm: Added.
+        * WebCoreSupport/WebSelectionRect.h: Added.
+        * WebCoreSupport/WebSelectionRect.m: Added.
+        * WebCoreSupport/WebVisiblePosition.h: Added.
+        * WebCoreSupport/WebVisiblePosition.mm: Added.
+        * WebCoreSupport/WebVisiblePositionInternal.h: Added.
+        * WebKit.iOS.exp: Added.
+        * WebView/WebFrameViewWAKCompatibility.m: Added.
+        * WebView/WebMailDelegate.h: Added.
+        * WebView/WebPDFViewIOS.h: Added.
+        * WebView/WebPDFViewIOS.mm: Added.
+        * WebView/WebPDFViewIPhone.h: Added.
+        * WebView/WebPDFViewPlaceholder.h: Added.
+        * WebView/WebPDFViewPlaceholder.mm: Added.
+        * WebView/WebPlainWhiteView.h: Added.
+        * WebView/WebPlainWhiteView.mm: Added.
+        * WebView/WebUIKitDelegate.h: Added.
+
+2013-10-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Upstream ENABLE(REMOTE_INSPECTOR) and enable on iOS and Mac
+        https://bugs.webkit.org/show_bug.cgi?id=123111
+
+        Reviewed by Timothy Hatcher.
+
+        iOS does not have a local inspector, only remote. So give it a custom
+        implementation separate from the WebKit/mac WebInspectorClient
+        implementation which handles an attaching/detaching local inspector.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * ios/WebCoreSupport/WebInspectorClientIOS.mm: Added.
+        (WebInspectorClient::WebInspectorClient):
+        (WebInspectorClient::inspectorDestroyed):
+        (WebInspectorClient::openInspectorFrontend):
+        (WebInspectorClient::bringFrontendToFront):
+        (WebInspectorClient::closeInspectorFrontend):
+        (WebInspectorClient::didResizeMainFrame):
+        (WebInspectorClient::highlight):
+        (WebInspectorClient::hideHighlight):
+        (WebInspectorClient::didSetSearchingForNode):
+        (WebInspectorClient::sendMessageToFrontend):
+        (WebInspectorClient::sendMessageToBackend):
+        (WebInspectorClient::setupRemoteConnection):
+        (WebInspectorClient::teardownRemoteConnection):
+        (WebInspectorClient::hasLocalSession):
+        (WebInspectorClient::canBeRemotelyInspected):
+        (WebInspectorClient::inspectedWebView):
+        (WebInspectorFrontendClient::WebInspectorFrontendClient):
+        (WebInspectorFrontendClient::attachAvailabilityChanged):
+        (WebInspectorFrontendClient::frontendLoaded):
+        (WebInspectorFrontendClient::localizedStringsURL):
+        (WebInspectorFrontendClient::bringToFront):
+        (WebInspectorFrontendClient::closeWindow):
+        (WebInspectorFrontendClient::disconnectFromBackend):
+        (WebInspectorFrontendClient::attachWindow):
+        (WebInspectorFrontendClient::detachWindow):
+        (WebInspectorFrontendClient::setAttachedWindowHeight):
+        (WebInspectorFrontendClient::setAttachedWindowWidth):
+        (WebInspectorFrontendClient::setToolbarHeight):
+        (WebInspectorFrontendClient::inspectedURLChanged):
+        (WebInspectorFrontendClient::updateWindowTitle):
+        (WebInspectorFrontendClient::save):
+        (WebInspectorFrontendClient::append):

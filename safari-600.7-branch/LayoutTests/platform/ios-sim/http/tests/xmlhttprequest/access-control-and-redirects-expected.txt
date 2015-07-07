@@ -1,0 +1,24 @@
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/resources/redirect.php?url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-basic-allow.cgi. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+Tests that redirects between origins are never allowed, even when access control is involved.
+
+Per the spec, these test cases should be allowed, but cross-origin redirects are currently unsupported in WebCore.
+
+Testing /resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi (sync)
+Expecting success: false
+FAIL: 
+Testing /resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi(async)
+Expecting success: false
+PASS: 0
+Testing http://localhost:8000/resources/redirect.php?url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-basic-allow.cgi (sync)
+Expecting success: false
+PASS: Error: NETWORK_ERR: XMLHttpRequest Exception 101
+Testing http://localhost:8000/resources/redirect.php?url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-basic-allow.cgi(async)
+Expecting success: false
+PASS: 0
+Testing http://localhost:8000/resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi (sync)
+Expecting success: false
+PASS: Error: NETWORK_ERR: XMLHttpRequest Exception 101
+Testing http://localhost:8000/resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi(async)
+Expecting success: false
+PASS: 0
+

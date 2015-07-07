@@ -1,0 +1,16 @@
+<body onload='parent.postMessage("onload", "*");'>
+    iframe2<br>
+    Manual test: click here.
+    <script src="../full-screen-test.js"></script>
+    <script>
+        document.body.onclick = function() {
+            document.body.webkitRequestFullScreen();
+            setTimeout(function() {
+                parent.postMessage("FAIL - did not enter full screen!", "*");
+            }, 50);
+        };
+        waitForEvent(document, 'webkitfullscreenchange', function() {
+            parent.postMessage("SUCCEED - entered full screen!", "*");
+        });
+    </script>
+</body>

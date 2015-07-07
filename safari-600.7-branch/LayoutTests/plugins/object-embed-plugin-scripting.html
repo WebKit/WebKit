@@ -1,0 +1,132 @@
+<html>
+<head>
+<script>
+function print(message)
+{
+    var paragraph = document.createElement("p");
+    paragraph.appendChild(document.createTextNode(message));
+    document.getElementById("console").appendChild(paragraph);
+}
+
+function test() 
+{ 
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+    }
+
+    print("plugin <object> with nested plugin <embed>: should have a plugin and does " + (document.getElementById('myO').testCallback ? "" : "not"));
+    print("plugin <embed> netsted in plugin <object>: should have a plugin and does " + (document.getElementById('myE').testCallback ? "" : "not"));
+    print("empty <object> with nested plugin <embed>: should not have a plugin and does " + (document.getElementById('myO2').testCallback ? "" : "not"));
+    print("plugin <embed> nested in empty <object>: should have a plugin and does " + (document.getElementById('myE2').testCallback ? "" : "not"));
+    print("plugin <embed> nested in image <object>: should not have a plugin and does " + (document.getElementById('myE3').testCallback ? "" : "not"));
+    print("plugin <embed> nested in empty <object> nested in plugin <object>: should not have a plugin and does " + (document.getElementById('myE4').testCallback ? "" : "not"));
+    print("standalone plugin <embed>: should have a plugin and does " + (document.getElementById('myE5').testCallback ? "" : "not"));
+    print("plugin <object> with nested plugin <embed> of the same name should have a plugin and does " + (document.Plugin.testCallback ? "" : "not"));
+    print("empty <object> with nested plugin <embed> of the same name should have a plugin and does " + (document.Plugin2.testCallback ? "" : "not"));
+}
+</script>
+</head>
+<body onload="test()">
+<p>This test checks for a regression against <i>rdar://problem/4214080 document.embeds: embeds[0].Play() undefined at languageguide.org</i>.</p>
+<p>Each test below states its expected outcome.</p>
+<hr>
+<div id="console"></div>
+
+<OBJECT 
+    id="myO"
+    type="application/x-webkit-test-netscape"
+    width = 0 height = 0
+    >
+    <PARAM name="src" value="resources/simple_blank.swf">
+    <PARAM name="autostart" value="false">
+    
+    <EMBED 
+        id="myE"
+        type="application/x-webkit-test-netscape"
+        autostart="false"
+        enablejavascript="true"
+        width = 0 height = 0
+    >
+    </EMBED>
+</OBJECT>
+
+<object id="myO2">
+    <embed 
+        id="myE2"
+        type="application/x-webkit-test-netscape"
+        autostart="false"
+        enablejavascript="true"
+        width = 0 height = 0
+    >
+</object>
+
+<object 
+    data="resources/apple.gif" 
+    type="image/gif"
+    width = 0 height = 0
+>
+    <embed 
+        id="myE3"
+        type="application/x-webkit-test-netscape"
+        autostart="false"
+        enablejavascript="true"
+        width = 0 height = 0
+    >
+</object>
+
+<object 
+    data="resources/apple.gif" 
+    type="image/gif"
+    width = 0 height = 0
+>
+    <object>
+        <embed 
+            id="myE4"
+            type="application/x-webkit-test-netscape"
+            autostart="false"
+            enablejavascript="true"
+            width = 0 height = 0
+        >
+    </object>
+</object>
+
+<embed 
+    id="myE5"
+    type="application/x-webkit-test-netscape"
+    autostart="false"
+    enablejavascript="true"
+    width = 0 height = 0
+>
+
+<object
+    name="Plugin"
+    type="application/x-webkit-test-netscape"
+    width = 0 height = 0
+    >
+    <param name="src" value="resources/simple_blank.swf">
+    <param name="autostart" value="false">
+    <param name="enablejavascript" value="true">
+    
+    <embed
+        name="Plugin"
+        type="application/x-webkit-test-netscape"
+        autostart="false"
+        enablejavascript="true"
+        width = 0 height = 0
+    >
+    </embed>
+</object>
+
+<object name="Plugin2">
+    <embed
+        name="Plugin2"
+        type="application/x-webkit-test-netscape"
+        autostart="false"
+        enablejavascript="true"
+        width = 0 height = 0
+    >
+    </embed>
+</object>
+
+</body>
+</html>

@@ -1,0 +1,88 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var request = new XMLHttpRequest();
+
+function getXMLOfType(type)
+{
+    var escapedType = escape(type).replace(/\+/g, "^^PLUS^^"); // Perl CGI module seems replace + with a space
+    request.open("GET", "supported-xml-content-types.cgi?type=" + escapedType, false);
+    request.send(null);
+    return request.responseXML;
+}
+
+function testXMLType(type, expected)
+{
+    var xmlResult = getXMLOfType(type);
+    var statusText = "FAIL (response type: " + request.getResponseHeader("Content-type") + ")";
+
+    if (xmlResult) {
+        statusText = "FAIL (got document -- response type: " + request.getResponseHeader("Content-type") + ")";
+        var typeElement = xmlResult.firstChild;
+        if (expected && typeElement) {
+            if (typeElement.textContent == type)
+                statusText = "PASS";
+            else
+                statusText = "FAIL (incorrect content: " + typeElement.textContent + " expected: " + type + ")";
+        }
+    } else if (!expected)
+        statusText = "PASS";
+    
+    document.write("<p>" + statusText + " -- testing: " + type + " -- responseXML: " + xmlResult + "</p>");
+}
+
+// valid types
+testXMLType("text/xml", true);
+testXMLType("image/svg+xml", true);
+testXMLType("application/soap+xml", true);
+testXMLType("foo/bar+xml", true);
+testXMLType("123/BAR+xml", true);
+
+// They may be strange, but these should all be valid:
+testXMLType("foo_bar/baz+xml", true);
+testXMLType("foo-bar/baz+xml", true);
+testXMLType("foo+bar/baz+xml", true);
+testXMLType("foo~bar/baz+xml", true);
+testXMLType("foo!bar/baz+xml", true);
+testXMLType("foo$bar/baz+xml", true);
+testXMLType("foo^bar/baz+xml", true);
+testXMLType("foo{bar/baz+xml", true);
+testXMLType("foo}bar/baz+xml", true);
+testXMLType("foo|bar/baz+xml", true);
+testXMLType("foo%bar/baz+xml", true);
+testXMLType("foo'bar/baz+xml", true);
+testXMLType("foo`bar/baz+xml", true);
+testXMLType("foo#bar/baz+xml", true);
+testXMLType("foo&bar/baz+xml", true);
+testXMLType("foo*bar/baz+xml", true);
+
+// non-xml types
+testXMLType("text/html", false);
+testXMLType("image/png", false);
+
+
+// invalid types
+testXMLType("invalid", false);
+
+// FIXME: our code intentionally skips spaces, that seems wrong to me.
+// https://bugs.webkit.org/show_bug.cgi?id=8644
+testXMLType("foo bar/baz+xml", false);
+
+testXMLType("foo[bar/baz+xml", false);
+testXMLType("foo]bar/baz+xml", false);
+testXMLType("foo(bar/baz+xml", false);
+testXMLType("foo)bar/baz+xml", false);
+testXMLType("foo<bar/baz+xml", false);
+testXMLType("foo>bar/baz+xml", false);
+testXMLType("foo@bar/baz+xml", false);
+testXMLType("foo,bar/baz+xml", false);
+testXMLType("foo;bar/baz+xml", false);
+testXMLType("foo:bar/baz+xml", false);
+testXMLType("foo\\bar/baz+xml", false);
+testXMLType('foo"bar/baz+xml', false);
+testXMLType("foo/bar/baz+xml", false);
+testXMLType("foo?bar/baz+xml", false);
+testXMLType("foo=bar/baz+xml", false);
+
+</script>

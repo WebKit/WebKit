@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<div id="container" style="position: relative;"></div>
+<script>
+description('offsetParent should not leak nodes in user agent Shadow DOM.');
+
+if (!window.internals)
+    fail('This test requires window.internals to manipulate user agent Shadow DOM.');
+
+function configureShadowRoot(shadow) {
+    shadow.innerHTML =
+        '<div id="x" style="position: relative;"><content></content></div>';
+    shadow.positionedElement = shadow.querySelector('#x');
+}
+
+var container = document.querySelector('#container');
+
+// Test that offsetParent works in author Shadow DOM
+var host = document.createElement('div');
+container.appendChild(host);
+var child = document.createElement('div');
+host.appendChild(child);
+var shadow = host.webkitCreateShadowRoot();
+configureShadowRoot(shadow);
+shouldBe('child.offsetParent', 'shadow.positionedElement');
+
+// Test that offsetParent works 'through' Shadow DOM when there is no
+// positioned ancestor in user agent Shadow DOM
+shadow.positionedElement.removeAttribute('style');
+shouldBe('child.offsetParent', 'container');
+
+// Test that when the offsetParent is in user agent Shadow DOM, it is
+// not exposed to script
+host = document.createElement('details');
+container.appendChild(host);
+host.setAttribute('open', 'open');
+host.appendChild(child);
+var shadow = window.internals.youngestShadowRoot(host);  // this is a UA shadow root
+configureShadowRoot(shadow);
+shouldBe('child.offsetParent', 'null');
+
+// Test that offsetParent works 'through' user agent Shadow DOM when there is no
+// positioned ancestor in user agent Shadow DOM
+shadow.positionedElement.removeAttribute('style');
+shouldBe('child.offsetParent', 'container');
+
+container.remove();
+
+successfullyParsed = true;
+</script>
+<script src="../../../resources/js-test-post.js"></script>

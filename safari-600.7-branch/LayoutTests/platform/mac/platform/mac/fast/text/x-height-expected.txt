@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 159x18
+          text run at (0,0) width 159: "Test x-height caluclation."
+      RenderBlock {P} at (0,34) size 784x18
+        RenderText {#text} at (0,0) size 243x18
+          text run at (0,0) width 243: "This box is 5ex by 5ex at 100px Arial."
+      RenderBlock {DIV} at (0,68) size 260x260 [bgcolor=#0000FF]

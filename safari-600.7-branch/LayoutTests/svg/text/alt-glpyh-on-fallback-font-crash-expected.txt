@@ -1,0 +1,1 @@
+A A: This test passes if you see two As at the start of this message.

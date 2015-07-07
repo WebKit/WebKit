@@ -1,0 +1,19 @@
+When contentEditable is set to invalid string, SYNTAX_ERR exception (code: 12) must be raised.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.getElementById('div').contentEditable = 'abc' threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.getElementById("div").getAttribute("contentEditable") is "true"
+PASS document.getElementById("div").contentEditable is "true"
+PASS document.getElementById("div").isContentEditable is true
+PASS window.getComputedStyle(div, "").getPropertyValue("-webkit-user-modify") is "read-write"
+PASS document.getElementById('div').contentEditable = '' threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.getElementById("div").getAttribute("contentEditable") is "true"
+PASS document.getElementById("div").contentEditable is "true"
+PASS document.getElementById("div").isContentEditable is true
+PASS window.getComputedStyle(div, "").getPropertyValue("-webkit-user-modify") is "read-write"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

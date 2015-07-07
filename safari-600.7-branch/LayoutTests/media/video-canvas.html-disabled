@@ -1,0 +1,85 @@
+<html>
+    <head>
+        <title>drawing &lt;video&gt; to &lt;canvas&gt;</title>
+        <script src=../http/tests/media/video-test.js></script>
+
+        <script>
+            var ctx;
+            var results = {
+                current: 0,
+                values: [
+                    { time:0, r:255, g:255, b:0 },
+                    { time:2, r:8, g:0, b:226 },
+                    { time:4, r:0, g:24, b:197 },
+                    { time:6, r:0, g:46, b:166 },
+                    { time:8, r:0, g:66, b:136 },
+                    { time:10, r:0, g:85, b:112 },
+                ]
+            };
+
+            var width;
+            var height;
+
+            function testPixel()
+            {
+                var expected = results.values[results.current];
+                if (expected.time) 
+                    ctx.drawImage(video, 0, 0, width, height);
+
+                var frame = ctx.getImageData(0, 0, width, height);
+                r = frame.data[4 * 2 * width + 16 + 0];
+                g = frame.data[4 * 2 * width + 16 + 1];
+                b = frame.data[4 * 2 * width + 16 + 2];
+
+                testExpected("r", expected.r);
+                testExpected("g", expected.g);
+                testExpected("b", expected.b);
+
+                if (++results.current >= results.values.length)
+                    endTest();
+                else
+                    setTimeout(testFrame, 0);
+            }
+
+            function testFrame()
+            {
+                video.pause();
+                consoleWrite("");
+                var expected = results.values[results.current];
+                if (expected.time) 
+                    run("video.currentTime = " + expected.time);
+                setTimeout(testPixel, 100);
+            }
+
+            function loadedmetadata()
+            {
+                width = video.videoWidth / 2;
+                height = video.videoHeight / 2;
+
+                ctx = canvas.getContext("2d");
+                ctx.fillStyle = 'yellow'; 
+                ctx.fillRect(0, 0, width, height);
+                testFrame();
+            }
+
+            function start()
+            {
+                findMediaElement();
+                canvas = document.getElementsByTagName('canvas')[0];
+                waitForEvent('loadedmetadata', loadedmetadata);
+                run("video.src = 'content/counting.mp4'");
+            }
+        </script>
+    </head>
+
+    <body onload="start()" >
+
+    <div>
+        <video controls="true"></video>
+        <canvas width="160" height="120" ></canvas>
+    </div>
+
+    <p>Test &lt;video&gt; as a source for &lt;canvas&gt;.</p>
+    
+    </body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/helper.js"></script>
+<style>
+* {
+    margin: 0px;
+    padding: 0px;
+    font-size: 20px;
+    font-family: Ahem;
+    line-height: 20px;
+}
+
+#nestedRegion {
+    -webkit-flow-into: nestedRegion;
+    color: red;
+}
+
+#content {
+    -webkit-flow-into: content;
+}
+
+#nestedRegionRegion {
+    -webkit-flow-from: nestedRegion;
+    height: 100px;
+    width: 200px;
+}
+#region {
+    -webkit-flow-from: content;
+    height: 200px;
+    width: 200px;
+}
+
+#content1 {
+    height: 100px;
+}
+
+#content2 {
+    height: 100px;
+}
+
+h1 {
+    height: 50px;
+}
+</style>
+</head>
+<body>
+
+<h1>Selecting text through different CSS-Region flows</h1>
+<div id="region"></div>
+<div id="nestedRegionRegion"></div>
+<div id="content">
+    <div id="content1">
+        X X X X X
+        X X X X X
+        X X <span id="start">X</span> X X
+        X X X X X
+        X X X X XX
+    </div>
+    <div id="nestedRegion">
+        X X X X X
+        X X X X X
+        X X <span id="end">X</span> X X
+        X X X X X
+        X X X X X
+    </div>
+    <div id="content2">
+        X X X X X
+        X X X X X
+        X X X X X
+        X X X X X
+        X X X X X
+    </div>
+</div>
+
+<script>
+selectContentByIds("start", "end");
+</script>
+</body>
+</html>

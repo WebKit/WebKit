@@ -1,0 +1,9 @@
+Description
+
+This test validates the behavior of shrink resource timing buffer size.
+
+
+PASS There should be entries in resource timing buffer! 
+PASS Resource timing buffer should never been changed even buffer size is shrunk! 
+PASS There should be no entries in resource timing buffer after clearResourceTimings 
+

@@ -1,0 +1,12 @@
+This tests that line range is returned correctly for a given text marker.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS lineText is 'Line of text.'
+PASS lineText is 'Line of text.'
+PASS lineText is 'Line of text.'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

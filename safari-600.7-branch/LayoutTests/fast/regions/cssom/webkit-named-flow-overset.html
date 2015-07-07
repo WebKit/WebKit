@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/helper.js"></script>
+<style>
+    body { font-family: monospace; }
+    .flow { -webkit-flow-into: flow }
+    .region { -webkit-flow-from: flow; }
+    #region { width: 250px; height: 50px; }
+    #region2 { width: 250px; height: 50px; }
+    #region3 { width: 250px; height: 50px; }
+</style>
+</head>
+<body>
+<div id="article" class="flow">
+    <p>Content inside article</p>
+</div>
+<script>
+    description("Test for https://bugs.webkit.org/show_bug.cgi?id=87491 [CSS Regions]Rename NamedFlow::overflow to NamedFlow::overset. \
+                For more details see http://www.w3.org/TR/2012/WD-css3-regions-20120503/");
+
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
+
+    // Flow article does not have any regions yet
+    var namedFlow = getFlowByName("flow");
+
+    // Overset should be false for a flow without regions
+    shouldBe("namedFlow.overset", "true");
+
+    // Add a region to take the content, overset should be false since the content first the regions.
+    var region = document.createElement("div");
+    document.body.appendChild(region);
+    region.id = "region";
+    region.className = "region";
+
+    // Overset should be false since the content fits the regions
+    shouldBe("namedFlow.overset", "false");
+
+    // Add more content to the flow, overset should be true.
+    var p = document.createElement("p");
+    p.appendChild(document.createTextNode("Content inside article"));
+    document.getElementById("article").appendChild(p);
+
+    // Overset should be true since the content does not fit the regions
+    shouldBe("namedFlow.overset", "true");
+
+    // Add another region, overset should be false
+    var region2 = document.createElement("div");
+    document.body.appendChild(region2);
+    region2.id = "region2";
+    region2.className = "region";
+
+    // Overset should be false since the content fits in the regions
+    shouldBe("namedFlow.overset", "false");
+
+    // Add visual overset, overset should be true.
+    document.getElementById("article").style.webkitBoxShadow="0px 50px lime";
+
+    // Overset should be false even if the content shadow overflows the last region
+    // since the visual overflow does not influence the overset property.
+    shouldBe("namedFlow.overset", "false");
+
+    // Add the third region, overset should be false.
+    var region3 = document.createElement("div");
+    document.body.appendChild(region3);
+    region3.id = "region3";
+    region3.className = "region";
+
+    // Overset should be false since the content fits in regions
+    shouldBe("namedFlow.overset", "false");
+
+    // Remove the first region from the flow, overset should be true.
+    region.className = "";
+
+    // Overset should be false even if the content shadow overflows the last region
+    // since the visual overflow does not influence the overset property.
+    shouldBe("namedFlow.overset", "false");
+
+    // Remove the content from the flow, overset should be false.
+    document.getElementById("article").className = "";
+
+    // Overset should be false since the flow does not have any content
+    shouldBe("namedFlow.overset", "false");
+
+    // Remove all the regions from the flow
+    region2.className = region3.className = "";
+
+    // Overset should be true since the flow does not have any region chain
+    shouldBe("namedFlow.overset", "true");
+
+    document.getElementById("article").style.display = "none";
+    region.style.display = "none";
+    region2.style.display = "none";
+    region3.style.display = "none";
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

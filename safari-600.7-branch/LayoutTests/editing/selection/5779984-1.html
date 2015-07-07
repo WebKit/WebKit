@@ -1,0 +1,18 @@
+<div id="description">This tests setting the WebkitUserSelect property on a CSSStyleDeclaration.</div>
+<div contenteditable="true" id="test">This text should not be selectable.</div>
+
+<script>
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+div = document.getElementById("test");
+text = div.firstChild;
+if (div.style.WebkitUserSelect == undefined)
+    document.write("FAILURE: CSSStyleDeclaration::WebkitUserSelect was undefined.<br>");
+div.style.WebkitUserSelect = "none";
+s = window.getSelection();
+s.setBaseAndExtent(text, 1, text, 2);
+if (s.type != "None")
+    document.write("FAILURE: Setting -webkit-user-select to none did not have the expected effect. Setting the selection did not fail.<br>");
+    
+document.write("This test passed if you see no failure messages.")
+</script>

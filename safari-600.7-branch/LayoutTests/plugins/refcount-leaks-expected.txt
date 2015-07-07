@@ -1,0 +1,12 @@
+Test that we can get an NPObject returned through a method on an NPAPI Object.
+Prints "SUCCESS" on success, "FAILURE" on failure.  
+
+--- num test objects:
+countAfterCreate == countOrig + 3? PASS
+countOrig == countAfterGC? PASS
+
+--- refcount on plug.testObject:
+originally: 2
+after GC: 2
+after passing: 2
+SUCCESS

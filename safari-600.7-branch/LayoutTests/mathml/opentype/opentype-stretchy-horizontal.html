@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Open Type MATH - stretchy operator</title>
+    <meta charset="utf-8"/>
+    <style type="text/css">
+      /* This font is taken from Mozilla's test suite. */
+      @font-face {
+        font-family: stretchy;
+        src: url("stretchy.woff");
+      }
+      math {
+        font-family: stretchy;
+        font-size: 10px;
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- This checks various horizontal size variants. -->
+    <p>
+      <math>
+        <mstyle scriptsizemultiplier="1">
+          <mover><mo stretchy="true">&#x219C;</mo><mspace width="1em" height="1px"/></mover>
+        </mstyle>
+      </math>
+    </p>
+    <p>
+      <math>
+        <mstyle scriptsizemultiplier="1">
+          <mover><mo stretchy="true">&#x219C;</mo><mspace width="2em" height="1px"/></mover>
+        </mstyle>
+      </math>
+    </p>
+
+    <!-- This checks horizontal glyph assembly. -->
+    <p>
+      <math>
+        <mstyle scriptsizemultiplier="1">
+          <mover><mo stretchy="true">&#x219C;</mo><mspace width="20em" height="1px"/></mover>
+        </mstyle>
+      </math>
+    </p>
+
+  </body>
+</html>

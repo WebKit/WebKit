@@ -1,0 +1,12 @@
+Toggle button
+Button title
+This tests that a toggle button properly exposes the title when there isn't a direct relation and textUnderElement is required to be used.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Role: push button
+FAIL tbutton1.title should be AXTitle: Toggle button. Was Toggle button.
+Role: push button
+FAIL button.title should be AXTitle: Button title. Was Button title.
+

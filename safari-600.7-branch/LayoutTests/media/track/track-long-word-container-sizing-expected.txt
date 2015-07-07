@@ -1,0 +1,70 @@
+CONSOLE MESSAGE: line 25: ReferenceError: Can't find variable: setCaptionDisplayMode
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x240
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,240) size 784x54
+        RenderText {#text} at (0,0) size 162x18
+          text run at (0,0) width 162: "EVENT(canplaythrough)"
+        RenderBR {BR} at (162,14) size 0x0
+        RenderText {#text} at (0,18) size 107x18
+          text run at (0,18) width 107: "EVENT(seeked)"
+        RenderBR {BR} at (107,32) size 0x0
+        RenderText {#text} at (0,36) size 102x18
+          text run at (0,36) width 102: "END OF TEST"
+        RenderBR {BR} at (102,50) size 0x0
+layer at (8,8) size 320x240
+  RenderVideo {VIDEO} at (0,0) size 320x240
+layer at (8,8) size 320x240
+  RenderFlexibleBox {DIV} at (0,0) size 320x240
+layer at (8,8) size 320x215
+  RenderBlock (relative positioned) {DIV} at (0,0) size 320x215 [color=#FFFFFF]
+layer at (8,209) size 144x14
+  RenderBlock (positioned) {DIV} at (0,201) size 144x14
+    RenderBlock {DIV} at (0,0) size 144x14
+      RenderInline {SPAN} at (0,0) size 144x14 [bgcolor=#000000CC]
+        RenderText {#text} at (0,0) size 144x14
+          text run at (0,0) width 144: "thiswordisquitelongindeed"
+layer at (8,223) size 320x25
+  RenderFlexibleBox {DIV} at (0,215) size 320x25
+layer at (14,228) size 16x16
+  RenderButton {BUTTON} at (6,4) size 16x17 [color=#FFFFFF]
+layer at (40,228) size 16x16
+  RenderButton {BUTTON} at (32,5) size 16x16 [color=#FFFFFF]
+layer at (57,231) size 187x11
+  RenderFlexibleBox {DIV} at (49,7) size 187x12
+layer at (57,231) size 45x11
+  RenderFlexibleBox {DIV} at (0,0) size 45x11 [color=#FFFFFF]
+    RenderBlock (anonymous) at (10,0) size 25x11
+      RenderText {#text} at (0,0) size 25x11
+        text run at (0,0) width 25: "00:01"
+layer at (199,231) size 45x11
+  RenderFlexibleBox {DIV} at (142,0) size 45x11 [color=#FFFFFF]
+    RenderBlock (anonymous) at (8,0) size 29x11
+      RenderText {#text} at (0,0) size 29x11
+        text run at (0,0) width 29: "-00:05"
+layer at (104,232) size 93x9
+  RenderFlexibleBox {DIV} at (47,1) size 93x9
+    RenderSlider {INPUT} at (0,0) size 93x9 [color=#909090] [bgcolor=#4A4A4A]
+      RenderFlexibleBox {DIV} at (0,0) size 93x9
+        RenderBlock {DIV} at (0,1) size 93x7
+layer at (118,233) size 6x6
+  RenderBlock {DIV} at (14,0) size 7x6 [bgcolor=#FFFFFF]
+layer at (244,225) size 22x22
+  RenderFlexibleBox {DIV} at (236,2) size 22x22
+layer at (244,225) size 2x22
+  RenderFlexibleBox {DIV} at (0,0) size 2x22 [border: (1px solid #000000F3)]
+    RenderSlider {INPUT} at (-7,6) size 2x10 [color=#909090] [border: (1px solid #000000DF)]
+      RenderFlexibleBox {DIV} at (1,1) size 0x8
+        RenderBlock {DIV} at (0,0) size 0x8
+layer at (230,232) size 8x8
+  RenderBlock {DIV} at (-8,0) size 8x8
+layer at (247,228) size 16x16
+  RenderButton {BUTTON} at (3,3) size 16x16 [color=#FFFFFF]
+layer at (275,228) size 16x16
+  RenderButton {BUTTON} at (267,5) size 16x16 [color=#FFFFFF]
+layer at (305,228) size 16x16
+  RenderButton {BUTTON} at (297,5) size 16x16 [color=#FFFFFF]

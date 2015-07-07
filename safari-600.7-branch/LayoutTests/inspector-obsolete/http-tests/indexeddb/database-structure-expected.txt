@@ -1,0 +1,123 @@
+CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback1
+CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback2
+CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback3
+CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback4
+CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback5
+CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback6
+CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback7
+CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback8
+CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback9
+CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback10
+Tests that database names are correctly loaded and saved in IndexedDBModel.
+
+Dumping database:
+Dumping database:
+testDatabase1
+    intVersion: 1
+    objectStores:
+
+Dumping database:
+testDatabase1
+    intVersion: 2
+    objectStores:
+    testObjectStore1
+        keyPath: "test.key.path"
+        autoIncrement: true
+        indexes: 
+
+Dumping database:
+testDatabase1
+    intVersion: 3
+    objectStores:
+    testObjectStore1
+        keyPath: "test.key.path"
+        autoIncrement: true
+        indexes: 
+    testObjectStore2
+        keyPath: null
+        autoIncrement: false
+        indexes: 
+
+Dumping database:
+testDatabase1
+    intVersion: 4
+    objectStores:
+    testObjectStore1
+        keyPath: "test.key.path"
+        autoIncrement: true
+        indexes: 
+    testObjectStore2
+        keyPath: null
+        autoIncrement: false
+        indexes: 
+        testIndexName1
+            keyPath: ""
+            unique: false
+            multiEntry: true
+
+Dumping database:
+testDatabase1
+    intVersion: 5
+    objectStores:
+    testObjectStore1
+        keyPath: "test.key.path"
+        autoIncrement: true
+        indexes: 
+    testObjectStore2
+        keyPath: null
+        autoIncrement: false
+        indexes: 
+        testIndexName1
+            keyPath: ""
+            unique: false
+            multiEntry: true
+        testIndexName2
+            keyPath: ["key.path1","key.path2"]
+            unique: true
+            multiEntry: false
+
+Dumping database:
+testDatabase1
+    intVersion: 6
+    objectStores:
+    testObjectStore1
+        keyPath: "test.key.path"
+        autoIncrement: true
+        indexes: 
+    testObjectStore2
+        keyPath: null
+        autoIncrement: false
+        indexes: 
+        testIndexName1
+            keyPath: ""
+            unique: false
+            multiEntry: true
+
+Dumping database:
+testDatabase1
+    intVersion: 7
+    objectStores:
+    testObjectStore1
+        keyPath: "test.key.path"
+        autoIncrement: true
+        indexes: 
+    testObjectStore2
+        keyPath: null
+        autoIncrement: false
+        indexes: 
+
+Dumping database:
+testDatabase1
+    intVersion: 8
+    objectStores:
+    testObjectStore1
+        keyPath: "test.key.path"
+        autoIncrement: true
+        indexes: 
+
+Dumping database:
+testDatabase1
+    intVersion: 9
+    objectStores:
+
+

@@ -1,0 +1,6 @@
+SUCCESS
+
+============== Back Forward List ==============
+curr->  (file test):fast/history/back-forward-reset-after-error-handling.html  **nav target**
+        (file test):fast/history/non-existent.html  **nav target**
+===============================================

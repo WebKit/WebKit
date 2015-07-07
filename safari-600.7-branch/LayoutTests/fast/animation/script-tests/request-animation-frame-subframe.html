@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+    window.requestAnimationFrame(function() {
+        parent.callbackInvoked = true;
+    });
+
+    parent.doDisplay();
+    
+    setTimeout(function() {
+        parent.doCheckResult();
+    }, 100);
+
+    setTimeout(function() {
+        parent.doTestDone();
+    }, 200);    
+</script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+Using document.register() for extending HTML and non-HTML elements.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS html1.namespaceURI is 'http://www.w3.org/1999/xhtml'
+PASS html2.namespaceURI is 'http://www.w3.org/1999/xhtml'
+PASS html3.namespaceURI is 'http://www.w3.org/1999/xhtml'
+PASS html4.namespaceURI is 'http://www.w3.org/1999/xhtml'
+PASS notHTML.namespaceURI is 'http://www.example.com/'
+PASS notHTML instanceof CustomHTMLElement is false
+PASS notHTML instanceof HTMLElement is false
+PASS svg1.tagName is 'svg-foo'
+PASS svg1.namespaceURI is 'http://www.w3.org/2000/svg'
+PASS svg2.tagName is 'svg-foo'
+PASS svg2.namespaceURI is 'http://www.w3.org/2000/svg'
+PASS svg3.tagName is 'svg-foo'
+PASS svg3.namespaceURI is 'http://www.w3.org/2000/svg'
+PASS notSVG1.namespaceURI is 'http://www.w3.org/1999/xhtml'
+PASS notSVG1 instanceof CustomSVGElement is false
+PASS notSVG1 instanceof HTMLUnknownElement is true
+PASS notSVG2.namespaceURI is 'http://www.w3.org/1999/xhtml'
+PASS notSVG2 instanceof CustomSVGElement is false
+PASS notSVG2 instanceof HTMLUnknownElement is true
+PASS xml1.tagName is 'xml-foo'
+PASS xml1.namespaceURI is null
+PASS xml2.tagName is 'xml-foo'
+PASS xml2.namespaceURI is null
+PASS notXML1.namespaceURI is 'http://www.w3.org/1999/xhtml'
+PASS notXML1 instanceof CustomXMLElement is false
+PASS notXML1 instanceof HTMLUnknownElement is true
+PASS notXML2.namespaceURI is 'http://www.w3.org/1999/xhtml'
+PASS notXML2 instanceof CustomXMLElement is false
+PASS notXML2 instanceof HTMLUnknownElement is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

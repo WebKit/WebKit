@@ -1,0 +1,14 @@
+Tests the Timeline save/load functionality.
+
+Also tests save/load of unknown (incompatible) record types. (Bug 91714)
+
+
+Running: testNormal
+passed
+
+Running: testIncompatible
+passed
+
+Running: testMalformed
+passed
+

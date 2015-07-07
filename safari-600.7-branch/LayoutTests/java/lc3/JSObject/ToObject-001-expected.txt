@@ -1,0 +1,60 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaScript Object to java.lang.String
+
+PASS dt.setObject(string); dt.PUB_OBJECT +'' is string +""
+PASS dt.setObject(string); dt.getObject() +'' is string +""
+PASS dt.getObject().constructor is String
+FAIL dt.setObject( myobject ); dt.PUB_OBJECT should be JavaScript String Value. Was JavaScript String Value.
+PASS dt.setObject( myobject ); dt.getObject() is myobject
+PASS dt.getObject().constructor is MyObject
+FAIL dt.setObject(bool_true); dt.PUB_OBJECT should be true. Was true.
+PASS dt.setObject(bool_true); dt.getObject() is bool_true
+PASS dt.getObject().constructor is Boolean
+FAIL dt.setObject(bool_false); dt.PUB_OBJECT should be false. Was false.
+PASS dt.setObject(bool_false); dt.getObject() is bool_false
+PASS dt.getObject().constructor is Boolean
+FAIL dt.setObject( object); dt.PUB_OBJECT should be [object Object]. Was [object Object].
+PASS dt.setObject( object); dt.getObject() is object
+PASS dt.getObject().constructor is Object
+FAIL dt.setObject( number ); dt.PUB_OBJECT should be 0. Was 0.
+PASS dt.setObject( number ); dt.getObject() is number
+PASS dt.getObject().constructor is Number
+FAIL dt.setObject( nan ); dt.PUB_OBJECT should be NaN. Was NaN.
+PASS dt.setObject( nan ); dt.getObject() is nan
+PASS dt.getObject().constructor is Number
+FAIL dt.setObject( infinity ); dt.PUB_OBJECT should be Infinity. Was Infinity.
+PASS dt.setObject( infinity ); dt.getObject() is infinity
+PASS dt.getObject().constructor is Number
+FAIL dt.setObject( neg_infinity ); dt.PUB_OBJECT should be -Infinity. Was -Infinity.
+PASS dt.setObject( neg_infinity ); dt.getObject() is neg_infinity
+PASS dt.getObject().constructor is Number
+FAIL dt.setObject(array); dt.PUB_OBJECT should be 1,2,3. Was null.
+FAIL dt.setObject(array); dt.getObject() should be 1,2,3 (of type object). Was undefined (of type undefined).
+FAIL dt.getObject().constructor should be function Array() {
+    [native code]
+}. Threw exception TypeError: 'undefined' is not an object (evaluating 'dt.getObject().constructor')
+FAIL dt.setObject( MyObject ); dt.PUB_OBJECT should be function MyObject(stringValue) {
+  this.stringValue = String(stringValue);
+  this.toString = new Function( "return this.stringValue" );
+} (of type function). Was function MyObject(stringValue) {
+  this.stringValue = String(stringValue);
+  this.toString = new Function( "return this.stringValue" );
+} (of type object).
+PASS dt.setObject( MyObject ); dt.getObject() is MyObject
+PASS dt.getObject().constructor is Function
+FAIL dt.setObject( THIS ); dt.PUB_OBJECT should be [object Window]. Was [object Window].
+PASS dt.setObject( THIS ); dt.getObject() is this
+PASS dt.getObject().constructor is this.constructor
+FAIL dt.setObject( Math ); dt.PUB_OBJECT should be [object Math]. Was [object Math].
+PASS dt.setObject( Math ); dt.getObject() is Math
+PASS dt.getObject().constructor is Object
+FAIL dt.setObject( Function ); dt.PUB_OBJECT should be function Function() {
+    [native code]
+} (of type function). Was function Function() {
+    [native code]
+} (of type object).
+PASS dt.setObject( Function ); dt.getObject() is Function
+PASS dt.getObject().constructor is Function
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

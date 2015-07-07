@@ -1,0 +1,44 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x100
+  RenderBlock {HTML} at (0,0) size 800x100
+    RenderBody {BODY} at (8,16) size 784x76
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 288x19
+          text run at (0,0) width 288: "The following two lines should be the same:"
+      RenderBlock {DIV} at (0,36) size 784x20
+        RenderInline {SPAN} at (0,0) size 14x19
+          RenderInline (generated) at (0,0) size 14x19
+            RenderCounter at (0,0) size 8x19
+              text run at (0,0) width 8: "1"
+            RenderText at (8,0) size 6x19
+              text run at (8,0) width 6: "-"
+        RenderInline {SPAN} at (0,0) size 52x19
+          RenderInline {SPAN} at (0,0) size 52x19
+            RenderInline {SPAN} at (0,0) size 26x19
+              RenderInline (generated) at (0,0) size 26x19
+                RenderCounter at (14,0) size 20x19
+                  text run at (14,0) width 20: "1.1"
+                RenderText at (34,0) size 6x19
+                  text run at (34,0) width 6: "-"
+            RenderInline {SPAN} at (0,0) size 26x19
+              RenderInline (generated) at (0,0) size 26x19
+                RenderCounter at (40,0) size 20x19
+                  text run at (40,0) width 20: "1.2"
+                RenderText at (60,0) size 6x19
+                  text run at (60,0) width 6: "-"
+        RenderInline {SPAN} at (0,0) size 14x19
+          RenderInline (generated) at (0,0) size 14x19
+            RenderCounter at (66,0) size 8x19
+              text run at (66,0) width 8: "1"
+            RenderText at (74,0) size 6x19
+              text run at (74,0) width 6: "-"
+        RenderInline {SPAN} at (0,0) size 14x19
+          RenderInline (generated) at (0,0) size 14x19
+            RenderCounter at (80,0) size 8x19
+              text run at (80,0) width 8: "2"
+            RenderText at (88,0) size 6x19
+              text run at (88,0) width 6: "-"
+      RenderBlock {DIV} at (0,56) size 784x20
+        RenderText {#text} at (0,0) size 80x19
+          text run at (0,0) width 80: "0.1-0.2-1-2-"

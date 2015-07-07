@@ -1,0 +1,48 @@
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<p>
+  Lorem ipsum dolor sit amet,<br>
+  consectetur adipiscing elit.<br>
+  Aliquam faucibus diam sit amet nunc vestibulum auctor.
+</p>
+
+<p style="max-width:150px;">
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam faucibus diam sit amet nunc vestibulum auctor.
+</p>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+description("This test checks that linebreaks explicitly set by the author are properly exposed to ATs.");
+
+if (window.testRunner) {
+  testRunner.dumpAsText();
+
+  if (window.accessibilityController) {
+
+    document.body.focus();
+    var webArea = accessibilityController.focusedElement;
+
+    var brokenParagraph = webArea.childAtIndex(0);
+    debug("Role of the paragraph with break lines: " + brokenParagraph.role);
+    debug("Value of the paragraph with break lines: " + brokenParagraph.stringValue);
+    debug("<br>");
+
+    var wrappedParagraph = webArea.childAtIndex(1);
+    debug("Role of the paragraph with wrapped lines: " + wrappedParagraph.role);
+    debug("Value of the paragraph with wrapped lines: " + wrappedParagraph.stringValue);
+    debug("<br>");
+  }
+}
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+
+</body>
+</html>

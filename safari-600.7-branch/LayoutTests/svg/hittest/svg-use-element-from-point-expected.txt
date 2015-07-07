@@ -1,0 +1,4 @@
+elementFromPoint should not enter infinite loop.
+
+PASS
+

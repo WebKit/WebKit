@@ -1,0 +1,12 @@
+Test the style.length of an element with a border-image.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS e.style.length is 5
+PASS e.style.length is 0
+PASS e.style.length is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

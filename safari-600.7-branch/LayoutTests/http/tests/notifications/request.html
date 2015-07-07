@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/notifications-test-pre.js"></script>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("This test checks that a request for permission is made.");
+
+function step1() {
+    debug("Requesting permission with default permission");
+    shouldBeEqualToString("Notification.permission", "default");
+    Notification.requestPermission(function(permission) {
+        if (permission == 'granted')
+            testPassed("permission is granted");
+        else
+            testFailed("permission should be granted, but is " + permission);
+        shouldBeEqualToString("Notification.permission", "granted");
+        setTimeout(step2, 0);
+    });
+}
+
+function step2() {
+    debug("Requesting permission with non-default permission");
+    testRunner.denyWebNotificationPermission(testURL);
+    Notification.requestPermission(function(permission) {
+        if (permission == 'denied')
+            testPassed("permission is denied");
+        else
+            testFailed("permission should be denied, but is " + permission);
+        shouldBeEqualToString("Notification.permission", "denied");
+        testCompleted();
+    });
+}
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    step1();
+}
+
+setTimeout(testCompleted, 100);
+</script>

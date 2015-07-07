@@ -1,0 +1,8 @@
+Description
+
+This test validates the behavior of read and clear operation in onresourcetimingbufferfull callback of resource timing.
+
+
+PASS No entry should be stored in resource timing buffer since it's cleared once an item arrived! 
+PASS 4 resource timing entries should be moved to global buffer! 
+

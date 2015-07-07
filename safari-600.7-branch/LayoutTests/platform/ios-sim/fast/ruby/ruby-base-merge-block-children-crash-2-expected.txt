@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {SUMMARY} at (0,0) size 784x184
+        RenderInline {I} at (0,0) size 304x19
+          RenderRuby (inline) {RUBY} at (0,0) size 300x19
+            RenderRubyRun (anonymous) at (0,171) size 0x0
+              RenderRubyText {RT} at (0,0) size 0x0
+              RenderRubyBase (anonymous) at (0,0) size 0x0
+                RenderText {#text} at (0,0) size 0x0
+            RenderRubyRun (anonymous) at (0,0) size 300x185
+              RenderRubyBase (anonymous) at (0,21) size 300x143
+                RenderBlock {H1} at (0,0) size 300x142
+                  RenderBlock (anonymous) at (0,0) size 300x150
+                    RenderEmbeddedObject {OBJECT} at (0,0) size 300x150
+                    RenderImage {IMG} at (0,150) size 0x0
+                    RenderText {#text} at (0,0) size 0x0
+                  RenderBlock {DIV} at (0,150) size 300x-8
+          RenderText {#text} at (300,156) size 4x19
+            text run at (300,156) width 4: " "
+        RenderEmbeddedObject {OBJECT} at (304,21) size 300x150
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,184) size 784x20
+        RenderInline {A} at (0,0) size 139x19 [color=#0000EE]
+          RenderText {#text} at (0,0) size 139x19
+            text run at (0,0) width 139: "WebKit bug #127515"
+        RenderText {#text} at (138,0) size 466x19
+          text run at (138,0) width 466: ". This test must be run under Guard Malloc. It passes if it does not crash."
+selection start: position 0 of child 1 {OBJECT} of child 3 {H1} of child 0 {RUBY} of child 1 {I} of child 0 {SUMMARY} of body
+selection end:   position 0 of child 3 {#text} of child 0 {SUMMARY} of body

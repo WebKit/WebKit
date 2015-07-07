@@ -1,0 +1,46 @@
+<html>
+<head>
+<script src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script src="resources/breakpoint.js"></script>
+
+<script>
+// Put this here instead of on <body onload> to prevent an extra Debugger.scriptParsed event.
+window.onload = runTest;
+
+function test()
+{
+    // This test setting 2 breakpoints in DFG compiled functions: one inlined,
+    // and one not inlined.
+
+    InspectorTest.sendCommand("Debugger.enable", {});
+
+    var breakpointFound = false;
+
+    InspectorTest.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    {
+        if (/resources\/breakpoint\.js$/.test(messageObject.params.url)) {
+            InspectorTest.log("Found breakpoint.js");
+
+            InspectorTest.sendCommand("Runtime.evaluate", {
+                expression: "debuggerStatement();"
+            }, function(responseObject) {
+                if (breakpointFound)
+                    InspectorTest.log("PASS");
+                InspectorTest.completeTest();
+            });
+        }
+    }
+
+    InspectorTest.eventHandler["Debugger.paused"] = function(messageObject)
+    {
+        InspectorTest.log("Broke at debugger statement\n");
+        breakpointFound = true;
+        InspectorTest.sendCommand("Debugger.resume", {});
+    }
+}
+</script>
+</head>
+<body>
+<p>Debugger statement should break in debugger.</p>
+</body>
+</html>

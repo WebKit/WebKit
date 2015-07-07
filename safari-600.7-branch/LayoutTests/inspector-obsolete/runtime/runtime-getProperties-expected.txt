@@ -1,0 +1,49 @@
+Tests RemoteObject.getProperties.
+
+
+Running: testSetUp
+
+Running: testGetterAndSetter
+{
+    enumerable : true
+    name : "get foo"
+    value : {
+        description : "function () { return 1; }"
+        objectId : <string>
+        type : "function"
+    }
+    writable : false
+}
+{
+    enumerable : true
+    name : "set foo"
+    value : {
+        description : "function (value) { }"
+        objectId : <string>
+        type : "function"
+    }
+    writable : false
+}
+
+Running: testGetterOnly
+{
+    enumerable : true
+    name : "get foo"
+    value : {
+        description : "function () { return 1; }"
+        objectId : <string>
+        type : "function"
+    }
+    writable : false
+}
+{
+    enumerable : true
+    name : "set foo"
+    value : {
+        description : "undefined"
+        objectId : <undefined>
+        type : "undefined"
+    }
+    writable : false
+}
+

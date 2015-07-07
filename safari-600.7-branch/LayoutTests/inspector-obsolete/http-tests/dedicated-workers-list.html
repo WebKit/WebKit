@@ -1,0 +1,63 @@
+<html>
+<head>
+<script src="../inspector/inspector-test.js"></script>
+<script src="../inspector/debugger-test.js"></script>
+
+<script>
+function handleLoad()
+{
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    var worker1 = new Worker("resources/dedicated-worker.js?id=1");
+    worker1.onmessage = handleMessageFromWorker;
+    var worker2 = new Worker("resources/dedicated-worker.js?id=2");
+    worker2.onmessage = handleMessageFromWorker;
+    var messageCount = 0;
+    function handleMessageFromWorker(event)
+    {
+        messageCount++;
+        console.log("Received message from worker " + messageCount);
+        if (messageCount === 2) {
+            if (window.testRunner)
+                testRunner.showWebInspector();
+            runTest();
+        }
+    }
+}
+
+
+function test()
+{
+    WorkerAgent.disable(didDisableWorkerInspection);
+
+    function didDisableWorkerInspection()
+    {
+        WebInspector.workerManager.addEventListener(WebInspector.WorkerManager.Events.WorkerAdded, workerAdded, this);
+        WorkerAgent.enable();
+        InspectorTest.addResult("Worker inspection enabled");
+    }
+
+    var workerCount = 0;
+    function workerAdded()
+    {
+        workerCount++;
+        InspectorTest.addResult("Added worker: " + workerCount);
+        if (workerCount === 2) {
+            InspectorTest.addResult("Done.");
+            InspectorTest.completeTest();
+        }
+    }
+};
+
+</script>
+
+</head>
+
+<body onload="handleLoad()">
+<p>Tests that dedicated workers created before worker inspection was enabled will be reported to the front-end.
+<a href="https://bugs.webkit.org/show_bug.cgi?id=72020">Bug 72020</a>
+</p>
+
+</body>
+</html>

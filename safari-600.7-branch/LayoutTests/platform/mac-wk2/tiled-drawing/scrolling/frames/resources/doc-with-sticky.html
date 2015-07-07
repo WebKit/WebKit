@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .box {
+            height: 100px;
+            width: 100px;
+            background-color: blue;
+        }
+        
+        .scrolling {
+            height: 300px;
+            width: 400px;
+            overflow: scroll;
+            -webkit-overflow-scrolling: touch;
+            border: 2px solid black;
+        }
+        
+        .spacer {
+            height: 400px;
+            margin: 10px;
+            background-color: silver;
+        }
+        .sticky {
+            position: -webkit-sticky;
+            top: 10px;
+            bottom: 10px;
+        }
+        
+        .composited {
+            -webkit-transform: translateZ(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="composited scrolling">
+        <div class="spacer"></div>
+        <div class="spacer"></div>
+        <div class="sticky box"></div>
+        <div class="spacer"></div>
+        <div class="spacer"></div>
+    </div>
+    <div class="sticky box"></div>
+
+</body>
+</html>

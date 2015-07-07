@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: line 1: SomeError
+The test passes if window.onerror gets sanitized information about the script error.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS msg.match(/SomeError/) is null
+PASS url is ""
+PASS line is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

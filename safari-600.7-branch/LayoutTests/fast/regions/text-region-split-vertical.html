@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<style>
+    html { -webkit-writing-mode: vertical-lr; }
+    
+    #content { -webkit-flow-into: flow; }
+    .region { -webkit-flow-from: flow; }
+    .finished #content, .finished .region { display: none; }
+    
+    #region1 { height: 70px; width: 60px; }
+    #region2 { height: 200px; width: 150px; }
+    #region3 { height: 110px; width: 120px; }
+    #region4 { height: 220px; width: 100px; }
+    #region5 { height: 110px; width: 200px; }
+    #region6 { height: 300px; width: 120px; }
+</style>
+
+<div id="content">
+    <p style="-webkit-region-break-after: always"><b class="check region1">Text in region 1.</b> This paragraph has "<i>-webkit-region-break-after: always</i>". <b class="check region2">There should be nothing in this region after this line.</b></p>
+    
+    <p><b class="check region3">First element in the region 3.</b> Some text inside a flow. Some text inside a flow. Some text inside a flow. <b class="check region4">Text in region 4.</b> </p>
+    
+    <p>
+        <!-- Using the paragraph element to test nested blocks region-breaks. -->
+        <div><span class="check region4">Simple line in region 4.</span></div>
+        <div style="-webkit-margin-before:50px;"><b class="check region5">First line in region 5.</b> This paragraph displays in region 5 because it has a margin-top, which is too high to fit in the previous region.</div>
+        <div style="-webkit-region-break-before: always"><b class="check region6">First line in region 6.</b> This paragraph uses "<i>-webkit-region-break-before: always</i>".</div>
+    </p>
+</div>
+
+<div id="region1" class="region"></div>
+<div id="region2" class="region"></div>
+<div id="region3" class="region"></div>
+<div id="region4" class="region"></div>
+<div id="region5" class="region"></div>
+<div id="region6" class="region"></div>
+
+<script src="resources/helper.js"></script>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    if (testContentToRegionsMapping())
+        document.body.className = "finished";
+</script>

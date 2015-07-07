@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+</head>
+<body>
+
+<a href="#" title="LINK"><img alt="" src="empty.png" width=100 height=100></a>
+
+<div role="heading" aria-label="HEADING" style='border:1px solid black; width:100px; height:100px;'></div>
+
+
+<script>
+
+    //description("This test makes sure that links or headers that don't have children still appear in accessibility. The link doesn't have children because the image as a zero length alt tag.");
+
+    if (window.accessibilityController) {
+
+        var obj = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0);
+        var succeeded = obj.iphoneIsElement && obj.iphoneLabel == "AXLabel: LINK";
+
+        //  shouldBe("succeeded", "true");
+        var failed = false;
+        if (!succeeded) {
+            failed = true;
+        }
+
+        obj = accessibilityController.rootElement.childAtIndex(1);
+        succeeded = obj.iphoneIsElement && obj.iphoneLabel == "AXLabel: HEADING";
+        //  shouldBe("succeeded", "true");
+
+        if (!succeeded) {
+           failed = true;
+        }
+
+        if (failed)
+            alert("Tests failed");
+        else
+           alert("Tests passed");
+
+    }
+
+    successfullyParsed = true;
+</script>
+
+
+</body>
+</html>
+

@@ -1,0 +1,56 @@
+<html>
+	<head>
+		<title>Bug #</title>
+		<style>
+			.transformed {
+				-webkit-transform:rotateX(15deg) rotateZ(15deg);
+			}
+			.transparent {
+				opacity: 0.5;
+			}
+			.positioned {
+				position: relative;
+			}
+			.content {
+				-webkit-flow-into:theFlow;
+				white-space: nowrap;
+			}
+			.region {
+				-webkit-flow-from:theFlow;
+				width:200px;
+				border-left-width: 5px;
+				border-top-width: 1em;
+				padding-left: 4%;
+				padding-top: 3pt;
+				margin: 20px;
+			}
+			* {
+				border:solid 1px #888;
+				padding: 2px;
+				margin: 3px;
+			}
+		</style>
+		<script src="../resources/media-testing.js"></script>
+		<script src="../../media/media-file.js"></script>
+
+		<script type="text/javascript" charset="utf-8">
+			function testDone() {
+				if (window.testRunner)
+					testRunner.notifyDone();
+			}
+
+			window.onload = function() {
+				var video = document.getElementsByTagName('video')[0];
+				setupVideo(video, '../../media/content/counting', null, testDone);
+			};
+		</script>
+	</head>
+	<body>
+		<div class="transformed content">transformed content</div>
+		<div class="transparent content">transparent content</div>
+		<div class="positioned content">positioned content</div>
+		<video class="content" height="150" width="210" id="video" controls></video>
+		<div class="content">not transformed content</div>
+		<div class="region"></div>
+	</body>
+</html>

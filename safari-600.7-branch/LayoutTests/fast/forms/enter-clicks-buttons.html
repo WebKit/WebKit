@@ -1,0 +1,66 @@
+<script>
+function log(msg)
+{
+    document.getElementById('console').appendChild(document.createTextNode(msg + '\n'));
+}
+
+function nodeIsChildOfForm(node)
+{
+    return node.parentNode && node.parentNode.tagName == 'FORM';
+}
+
+function description(node)
+{
+    return node.nodeName + (node.type ? ' type=' + node.type : '') + (nodeIsChildOfForm(node) ? ' in form' : '');
+}
+
+function logEvent(event)
+{
+    var type = event.target.type;
+    log(event.type + ': ' + description(event.target));
+}
+
+function loaded()
+{
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    var keys = ['\r', ' '];
+    var keyNames = ['Enter', 'U+0020'];
+    var tagNames = ['button', 'input'];
+
+    for (var i in keys) {
+        log('\n\nSending ' + keyNames[i] + ' keypresses...\n');
+        for (var j in tagNames) {
+            var elements = document.getElementsByTagName(tagNames[j]);
+            log('\nLooping over ' + elements.length + ' ' + tagNames[j] + ' elements...\n');
+            for (var k = 0; k < elements.length; ++k) {
+                elements[k].focus();
+                eventSender.keyDown(keys[i], []);
+            }
+        }
+    }
+}
+</script>
+<body onload="loaded()">
+<p>Test for &lt;<a href="rdar://5483519">rdar://5483519</a>&gt; Pressing Enter on selected buttons should fire onclick</p>
+<p>In a form:</p>
+<form onsubmit="logEvent(event); return false">
+    <button type="button" onclick="logEvent(event)">button type="button"</button>
+    <button type="submit" onclick="logEvent(event)">button type="submit"</button>
+    <button type="reset" onclick="logEvent(event)">button type="reset"</button>
+    <input type="checkbox" onclick="logEvent(event)" value="input type='checkbox'">
+    <input type="button" onclick="logEvent(event)" value="input type='button'">
+    <input type="submit" onclick="logEvent(event)" value="input type='submit'">
+    <input type="reset" onclick="logEvent(event)" value="input type='reset'">
+</form>
+<p>Outside a form:</p>
+<button type="button" onclick="logEvent(event)">button type="button"</button>
+<button type="submit" onclick="logEvent(event)">button type="submit"</button>
+<button type="reset" onclick="logEvent(event)">button type="reset"</button>
+<input type="checkbox" onclick="logEvent(event)" value="input type='checkbox'">
+<input type="button" onclick="logEvent(event)" value="input type='button'">
+<input type="submit" onclick="logEvent(event)" value="input type='submit'">
+<input type="reset" onclick="logEvent(event)" value="input type='reset'">
+
+<pre id='console'></pre>

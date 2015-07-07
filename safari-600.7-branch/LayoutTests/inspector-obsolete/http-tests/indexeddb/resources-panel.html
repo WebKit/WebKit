@@ -1,0 +1,125 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="indexeddb-test.js"></script>
+<script>
+function test()
+{
+    var mainFrameId = WebInspector.resourceTreeModel.mainFrame.id;
+    var indexedDBModel;
+    var withoutIndexedDBURL = "http://localhost:8000/inspector/indexeddb/resources/without-indexed-db.html";
+    var originalURL = "http://127.0.0.1:8000/inspector/indexeddb/resources-panel.html";
+    var databaseName = "testDatabase";
+    var objectStoreName = "testObjectStore";
+    var indexName = "testIndexName";
+
+    function createDatabase(callback)
+    {
+        InspectorTest.createDatabase(mainFrameId, databaseName, step2);
+
+        function step2()
+        {
+            InspectorTest.createObjectStore(mainFrameId, databaseName, objectStoreName, "", false, step3);
+        }
+
+        function step3()
+        {
+            InspectorTest.createObjectStoreIndex(mainFrameId, databaseName, objectStoreName, indexName, "", false, false, callback);
+        }
+    }
+
+    function deleteDatabase(callback)
+    {
+        InspectorTest.deleteObjectStoreIndex(mainFrameId, databaseName, objectStoreName, indexName, step2);
+
+        function step2()
+        {
+            InspectorTest.deleteObjectStore(mainFrameId, databaseName, objectStoreName, step3);
+        }
+
+        function step3()
+        {
+            InspectorTest.deleteDatabase(mainFrameId, databaseName, callback);
+        }
+    }
+
+    WebInspector.showPanel("resources");
+
+    InspectorTest.addSniffer(WebInspector.IndexedDBTreeElement.prototype, "_indexedDBAdded", indexedDBAdded, true);
+    function indexedDBAdded()
+    {
+        InspectorTest.addResult("Database added.");
+    }
+
+    InspectorTest.addSniffer(WebInspector.IndexedDBTreeElement.prototype, "_indexedDBRemoved", indexedDBRemoved, true);
+    function indexedDBRemoved()
+    {
+        InspectorTest.addResult("Database removed.");
+    }
+
+    InspectorTest.addSniffer(WebInspector.IndexedDBTreeElement.prototype, "_indexedDBLoaded", indexedDBLoaded, true);
+    function indexedDBLoaded()
+    {
+        InspectorTest.addResult("Database loaded.");
+    }
+
+    InspectorTest.addResult("Expanded IndexedDB tree element.");
+    WebInspector.panels.resources.indexedDBListTreeElement.expand();
+
+    InspectorTest.addSniffer(WebInspector.IndexedDBModel.prototype, "_updateOriginDatabaseNames", indexedDBTreeElementExpanded, false);
+    function indexedDBTreeElementExpanded()
+    {
+        InspectorTest.dumpIndexedDBTree();
+        InspectorTest.addResult("Created database.");
+        createDatabase(databaseCreated);
+    }
+
+    function databaseCreated()
+    {
+        indexedDBModel = WebInspector.panels.resources.indexedDBListTreeElement._indexedDBModel;
+        indexedDBModel.addEventListener(WebInspector.IndexedDBModel.EventTypes.DatabaseLoaded, databaseLoaded);
+        WebInspector.panels.resources.indexedDBListTreeElement.refreshIndexedDB();
+    }
+
+    function databaseLoaded()
+    {
+        indexedDBModel.removeEventListener(WebInspector.IndexedDBModel.EventTypes.DatabaseLoaded, databaseLoaded);
+        InspectorTest.dumpIndexedDBTree();
+        InspectorTest.addResult("Navigated to another security origin.");
+        InspectorTest.navigate(withoutIndexedDBURL, navigatedAway);
+    }
+
+    function navigatedAway()
+    {
+        InspectorTest.dumpIndexedDBTree();
+        InspectorTest.addResult("Navigated back.");
+        InspectorTest.navigate(originalURL, navigatedBack);
+    }
+
+    function navigatedBack()
+    {
+        InspectorTest.dumpIndexedDBTree();
+        InspectorTest.addResult("Deleted database.");
+        deleteDatabase(databaseDeleted);
+    }
+
+    function databaseDeleted()
+    {
+        WebInspector.panels.resources.indexedDBListTreeElement.refreshIndexedDB();
+        InspectorTest.addSniffer(WebInspector.IndexedDBModel.prototype, "_updateOriginDatabaseNames", databaseNamesLoadedAfterDeleting, false);
+    }
+
+    function databaseNamesLoadedAfterDeleting()
+    {
+        InspectorTest.dumpIndexedDBTree();
+        WebInspector.panels.resources.indexedDBListTreeElement.collapse();
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests IndexedDB tree element on resources panel.</p>
+</body>
+</html>

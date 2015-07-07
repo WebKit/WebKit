@@ -1,0 +1,3 @@
+Previously this would crash Chromium Linux by triggering a NULL pointer dereference in the font fallback code.
+
+Foo

@@ -1,0 +1,30 @@
+This test checks behavior of invalid arguments to Canvas::drawImage.
+
+PASS: no arguments, got exception as expected
+PASS: image argument only, got exception as expected
+PASS: image argument plus one number, got exception as expected
+PASS: image argument plus 2 numbers
+PASS: image argument plus 4 numbers
+PASS: image argument plus 8 numbers
+PASS: image argument plus zero size
+PASS: image argument plus 8 numbers, zero size
+PASS: image argument plus 8 numbers, negative size of source, zero size, got exception as expected
+PASS: image argument plus 8 numbers, negative size of destination, zero size, got exception as expected
+PASS: image argument plus 8 numbers, negative size of source and destination, zero size, got exception as expected
+PASS: null image, got exception as expected
+PASS: null image, got exception as expected
+PASS: null image, got exception as expected
+PASS: null image, got exception as expected
+PASS: imageRect does not contain sourceRect on the left side
+PASS: imageRect does not contain sourceRect on the right side
+PASS: imageRect does not contain sourceRect on top
+PASS: imageRect does not contain sourceRect on bottom
+PASS: sourceRect is bigger than imageSource on every side
+PASS: negative size of source, imageRect does not contain sourceRect on the left side
+PASS: negative size of source, imageRect does not contain sourceRect on the right side
+PASS: negative size of source, imageRect does not contain sourceRect on top
+PASS: negative size of source, imageRect does not contain sourceRect on bottom
+PASS: negative size of source, imageRect does not contain sourceRect on every side
+Test complete.
+
+

@@ -1,0 +1,25 @@
+# Try to find OpenGLES2. Once done this will define:
+#     OPENGLES2_FOUND
+#     OPENGLES2_INCLUDE_DIRS
+#     OPENGLES2_LIBRARIES
+#     OPENGLES2_DEFINITIONS
+
+find_package(PkgConfig)
+
+pkg_check_modules(PC_OPENGLES2 glesv2)
+
+if (PC_OPENGLES2_FOUND)
+    set(OPENGLES2_INCLUDE_DIRS ${PC_OPENGLES2_INCLUDE_DIRS})
+    set(OPENGLES2_DEFINITIONS ${PC_OPENGLES2_CFLAGS_OTHER})
+else ()
+    find_path(OPENGLES2_INCLUDE_DIRS NAMES GLES2/gl2.h)
+endif ()
+
+find_library(OPENGLES2_LIBRARIES GLESv2
+    HINTS ${PC_OPENGLES2_LIBRARY_DIRS} ${PC_OPENGLES2_LIBDIR}
+)
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(OpenGLES2 DEFAULT_MSG OPENGLES2_LIBRARIES OPENGLES2_INCLUDE_DIRS)
+
+mark_as_advanced(OPENGLES2_INCLUDE_DIRS OPENGLES2_LIBRARY)

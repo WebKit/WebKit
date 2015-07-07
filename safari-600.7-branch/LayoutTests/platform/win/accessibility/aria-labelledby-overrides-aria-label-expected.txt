@@ -1,0 +1,12 @@
+This tests that if aria-labelledby is used, then aria-label attributes are not used.
+
+Alpha Beta Delta Eta Epsilon Theta
+usingNone.title: [Alpha]
+usingNone.description: []
+usingLabel.title: [Beta]
+usingLabel.description: [Description: Gamma]
+usingLabelledby.title: [Delta]
+usingLabelledby.description: [Description: Epsilon]
+usingLabeledby.title: [Eta]
+usingLabeledby.description: [Description: Theta]
+

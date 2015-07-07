@@ -1,0 +1,33 @@
+This test document.elementFromPoint is evaluated in with respect to the viewport, not the document.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS unscrolledBoxInitial is '0'
+FAIL scrolledDownBoxInitial should be 5. Was 0.
+FAIL scrolledRightBoxInitial should be 3. Was 
+    
+    0123456789101112131415161718192021222324
+    This box is here to create scrollbars.
+    
+    This box is here to create even more scrollbars!
+.
+FAIL scrolledDownAndRightBoxInitial should be 8. Was 5.
+FAIL unscrolledBoxOffscreen should be 0. Was This box is here to create scrollbars..
+FAIL scrolledDownBoxOffscreen should be 5. Was 10.
+FAIL scrolledRightBoxOffscreen should be 3. Was This box is here to create scrollbars..
+FAIL scrolledDownAndRightBoxOffscreen should be 8. Was 15.
+PASS unscrolledBoxInitial is '0'
+FAIL scrolledDownBoxInitial should be 5. Was 0.
+FAIL scrolledRightBoxInitial should be 3. Was 
+    
+    01234567891011121314151617181920212223240123456789101112131415161718192021222324
+    This box is here to create scrollbars.
+    0123456789101112131415161718192021222324
+    This box is here to create even more scrollbars!
+.
+FAIL scrolledDownAndRightBoxInitial should be 8. Was 5.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,4 @@
+Closure returns: {"type":"string","value":"ttttrue52013"}
+ (expected: 'ttttrue52013')
+Protocol command 'Debugger.setVariableValue' failed
+

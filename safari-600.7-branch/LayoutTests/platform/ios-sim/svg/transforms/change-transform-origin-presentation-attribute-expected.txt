@@ -1,0 +1,8 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x8
+  RenderBlock {html} at (0,0) size 800x8
+    RenderBody {body} at (8,8) size 784x0
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (25,25) size 100x100
+    RenderSVGRect {rect} at (25,25) size 100x100 [transform={m=((2.00,0.00)(0.00,2.00)) t=(-75.00,-75.00)}] [fill={[type=SOLID] [color=#008000]}] [x=50.00] [y=50.00] [width=50.00] [height=50.00]

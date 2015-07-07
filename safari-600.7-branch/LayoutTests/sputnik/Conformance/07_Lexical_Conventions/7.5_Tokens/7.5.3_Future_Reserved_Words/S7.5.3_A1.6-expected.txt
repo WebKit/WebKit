@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 76: SyntaxError: Unexpected token '='. Expected an identifier name in const declaration.
+S7.5.3_A1.6
+
+PASS Expected parsing failure
+
+TEST COMPLETE
+

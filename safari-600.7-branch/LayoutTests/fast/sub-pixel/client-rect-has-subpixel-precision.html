@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>client rect precision test</title>
+    <style> 
+        #test {
+            width: 4.5px;
+            height: 4.5px;
+            background: navy;
+        }
+    </style>
+</head>
+<body>
+    <div id="test"></div>
+    <div id="console">
+        Box above should be 5x5px.<br>
+    </div>
+</body>
+<script>
+    var testElement = document.getElementById('test');
+    var consoleElement = document.getElementById('console');
+
+    function test()
+    {
+        var rect = testElement.getBoundingClientRect();
+        var width = rect.right - rect.left;
+
+        if (width == 4.5 && testElement.clientWidth == 5)
+            log('PASS: getBoundingClientRect reports width with subpixel precision (4.5) and clientWidth reports snapped size (5).');
+        else
+            log('FAIL: getBoundingClientRect reports width of ' + width + ', expected 4.5. clientWidth reports width of ' + testElement.clientWidth + ', expected 5.');
+    }
+
+    function log(str)
+    {
+        consoleElement.appendChild(document.createTextNode(str));
+        consoleElement.appendChild(document.createElement('br'));
+    }
+
+    test();
+</script>
+</html>

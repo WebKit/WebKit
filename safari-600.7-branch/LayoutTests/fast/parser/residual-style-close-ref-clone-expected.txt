@@ -1,0 +1,5 @@
+Test for rdar://problem/7341364 Crash at HTMLParser::popOneBlockCommon() after handling misnested residual style tags.
+
+No crash means PASS.
+
+

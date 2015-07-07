@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            #article { -webkit-flow-into: flow; width: 40px; height: 50px; background-color: green; }
+            #container { width: 200px; height: 200px; position: absolute; top: 150px; }
+            #region { -webkit-flow-from: flow; height: 50px; padding-left: 5px; padding-right: 5px; position: absolute; background-color: green; box-sizing: border-box; }
+            #red { position: absolute; width: 50px; height: 50px; top: 150px; background-color: red; }
+        </style>
+    </head>
+    <body>
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=74135"> Auto width is not working for regions</a>.</p>
+        <p>The region is an absolutely positioned, non replaced element.</p>
+        <p>On success, you should not see a red rectangle below.</p>
+        <div id="red"></div>
+        <div id="article"></div>
+        <div id="container">
+            <div id="region"></div>
+        </div>
+    </body>
+</html>

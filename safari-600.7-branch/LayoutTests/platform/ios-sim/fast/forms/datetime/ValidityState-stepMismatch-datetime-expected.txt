@@ -1,0 +1,39 @@
+Check stepMismatch results for type=datetime.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Empty values
+PASS stepMismatchFor("", null, null) is false
+PASS stepMismatchFor("", "2", "1969-12-31T12:34:56Z") is false
+Normal step values
+PASS stepMismatchFor("2010-02-09T12:34:55Z", "1", "2010-02-09T12:34:56Z") is false
+FAIL stepMismatchFor("2010-02-09T12:34:55.001Z", "1", "2010-02-09T12:34:56Z") should be true. Was false.
+PASS stepMismatchFor("2010-02-09T12:34:56.001Z", "0.001", "2010-02-09T12:34:56Z") is false
+FAIL stepMismatchFor("2010-02-09T12:34:55Z", "0.333", "2010-02-09T12:34:56Z") should be true. Was false.
+PASS stepMismatchFor("2010-02-09T12:34:55.001Z", "0.333", "2010-02-09T12:34:56Z") is false
+PASS stepMismatchFor("2010-02-09T12:34Z", "86400", "2010-02-08T12:34Z") is false
+FAIL stepMismatchFor("2010-02-09T12:34:56Z", "86400", "2010-02-08T12:34Z") should be true. Was false.
+FAIL stepMismatchFor("275760-09-13T00:00Z", "3", "275760-09-12T23:59:50Z") should be true. Was false.
+PASS stepMismatchFor("275760-09-13T00:00Z", "2", "275760-09-12T23:59:50Z") is false
+FAIL stepMismatchFor("0001-01-01T00:00Z", "3", "0001-01-11T00:00:02Z") should be true. Was false.
+PASS stepMismatchFor("0001-01-01T00:00Z", "2", "0001-01-11T00:00:02Z") is false
+Implicit step base
+PASS stepMismatchFor("1970-01-01T12:34Z", "120", null) is false
+FAIL stepMismatchFor("1970-01-01T12:35Z", "120", null) should be true. Was false.
+Small step values
+PASS stepMismatchFor("2010-02-10T12:34:56.000Z", "0.0003", "2010-02-10T12:34.55.000Z") is false
+FAIL stepMismatchFor("2010-02-10T12:34:55.001Z", "0.0019", "2010-02-10T12:34.55.000Z") should be true. Was false.
+Invalid or no step values
+PASS stepMismatchFor("2010-02-10T12:34Z", null, "2010-02-09T12:34Z") is false
+FAIL stepMismatchFor("2010-02-10T12:34:56Z", null, "2010-02-09T12:34Z") should be true. Was false.
+PASS stepMismatchFor("2010-02-10T12:34Z", "-1", "2010-02-09T12:34Z") is false
+PASS stepMismatchFor("2010-02-10T12:34Z", "foo", "2010-02-09T12:34Z") is false
+Special step value
+PASS stepMismatchFor("2010-02-09T12:34Z", "any", "2010-02-09T12:34Z") is false
+Disabled
+PASS stepMismatchFor("2010-02-09T12:34:55.001Z", "1", "2010-02-09T12:34:56Z", true) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

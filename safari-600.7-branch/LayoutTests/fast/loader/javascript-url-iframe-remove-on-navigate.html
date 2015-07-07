@@ -1,0 +1,17 @@
+<iframe src="http://does.not.exist/" id="target"></iframe>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+setTimeout(function() {
+        document.getElementById("target").src = "javascript:alert('FAIL')";
+    }, 0);
+
+window.addEventListener("popstate", function() {
+        document.write("PASS - Javascript URL blocked without crashing.");
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, false);
+</script>

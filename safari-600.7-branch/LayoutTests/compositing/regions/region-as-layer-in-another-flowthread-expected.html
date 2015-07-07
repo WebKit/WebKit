@@ -1,0 +1,69 @@
+<html>
+	<head>
+		<title>Bug 120457: [CSS Regions] The layers from the flow thread should be collected under the regions' layers.</title>
+		<style>
+			html {
+				-webkit-font-smoothing: none;
+			}
+
+			.content {
+				width: 250px;
+				height: 110px;
+				background-color: Yellow;
+				padding: 2px 3px 4px 5px;
+				margin: 3px 4px 5px 6px;
+			}
+
+			#causesTheRegionToBeComposited {
+				-webkit-transform: translateZ(1px) translateY(-140px) translateX(400px);
+				width: 100px;
+				height: 40px;
+				background-color: Lime;
+				padding: 4px 5px 6px 7px;
+				margin: 5px 6px 7px 8px;
+			}
+
+			#region {
+				border: double 3px Green;
+				outline: double 5px Blue;
+				padding: 6px 7px 8px 9px;
+				margin: 27px 18px 29px 20px;
+			}
+
+			#outterRegion {
+				border: double 3px Green;
+				outline: double 5px Blue;
+				padding: 7px 8px 9px 10px;
+				margin: 8px 9px 10px 11px;
+			}
+
+			.forcedStackingContext {
+				position: relative;
+				z-index: 1;
+			}
+
+			.boxShadow {
+				box-shadow: 2px 2px 15px Black;
+				margin: 35px; /* Removes overlapping of box-shadows which resulted in flaky results. */
+			}
+		</style>
+	</head>
+	<body>
+		some text 1.
+		<div id="outterRegion" class="forcedStackingContext boxShadow">
+			<div class="outterFlow content boxShadow"></div>
+			<div id="region" class="forcedStackingContext boxShadow">
+				<div class="content">
+					some text 2.
+					<div id="causesTheRegionToBeComposited" class="boxShadow">
+						some text 3.
+					</div>
+					some text 4.
+				</div>
+			</div>
+			<div class="content boxShadow"></div>
+		</div>
+		some text 5.
+		<p>RenderRegions may be composited RenderLayers inside another flow thread.</p>
+	</body>
+</html>

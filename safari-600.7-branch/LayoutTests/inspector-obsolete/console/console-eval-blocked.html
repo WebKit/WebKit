@@ -1,0 +1,24 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/console-test.js"></script>
+<meta http-equiv="Content-Security-Policy" content="script-src 'unsafe-inline'">
+<script>
+function test()
+{
+    InspectorTest.evaluateInConsole("1+2", step1);
+    function step1()
+    {
+        InspectorTest.dumpConsoleMessages();
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>
+Tests that evaluation in console still works even if script evals are prohibited by Content-Security-Policy.
+<a href="https://bugs.webkit.org/show_bug.cgi?id=60800">Bug 60800.</a>
+</p>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="100%" height="100%"  viewBox="0 0 480 360" xmlns="http://www.w3.org/2000/svg">
+<g font-family="Arial" font-size="18">
+    <text x="10" y="50"><tspan direction="ltr" unicode-bidi="bidi-override">نشاط التدويل، W3C</tspan></text>
+    <text x="10" y="80"><tspan direction="ltr" unicode-bidi="normal">نشاط التدويل، W3C</tspan></text>
+    <g id="container"/>
+
+    <script type="text/javascript">
+        function highlightText(text, start, length, color) {
+            var startExtent = text.getExtentOfChar(start);
+            var endExtent = text.getExtentOfChar(start + length);
+
+            // Highlight rect that we've selected using the extent information
+            var rectElement = document.createElementNS("http://www.w3.org/2000/svg", "svg:rect");
+            rectElement.setAttribute("x", startExtent.x);
+            rectElement.setAttribute("y", endExtent.y);
+            rectElement.setAttribute("width", endExtent.x + endExtent.width - startExtent.x);
+            rectElement.setAttribute("height", endExtent.height);
+            rectElement.setAttribute("fill-opacity", "0.4");
+            rectElement.setAttribute("fill", color);
+            document.getElementById("container").appendChild(rectElement);
+        }
+
+        // Highlight arabic text by an half-opaque rect rectangle and latin text by a green one.
+        var text1 = document.getElementsByTagName("text")[0];
+        highlightText(text1, 0, text1.getNumberOfChars() - 5, "red");
+        highlightText(text1, text1.getNumberOfChars() - 3, 2, "green");
+
+        var text2 = document.getElementsByTagName("text")[1];
+        highlightText(text2, 0, text2.getNumberOfChars() - 5, "red");
+        highlightText(text2, text2.getNumberOfChars() - 3, 2, "green");
+    </script>
+</g>
+</svg>

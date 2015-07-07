@@ -1,0 +1,3 @@
+FAIL Width of text element is 387.203125, expected 388.9375
+Sphinx of black quartz, judge my vow.
+.

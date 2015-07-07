@@ -1,0 +1,9 @@
+This tests ensures that the DFG StackLayoutPhase is only accessing a union'ed calleeVariable. This test should not crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,7 @@
+AddType application/x-httpd-php html
+AddType text/cache-manifest manifest
+
+RewriteRule .*webdevelopers.* http://trac.webkit.org/projects/webkit/wiki/WebDevelopers [R=301]
+Redirect 301 /perf/sunspider-0.9/sunspider.html /perf/sunspider/sunspider.html
+Redirect 301 /perf/sunspider-0.9.1/sunspider.html /perf/sunspider/sunspider.html
+Redirect 301 /perf/sunspider-0.9.1/versions.html /perf/sunspider/sunspider.html

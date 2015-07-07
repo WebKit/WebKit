@@ -1,0 +1,23 @@
+<style>
+#span2
+{ position: relative; }
+</style>
+ <script>
+function run() {
+	document.getElementById("span2").style.position = "static";
+}
+</script>
+<body>
+This test passes if it does not crash.
+<span id="span2">
+<div></div>
+<script>
+try {
+var x = window.getSelection();
+x.getRangeAt(document.body.appendChild(document.createElement("frame")).height);
+} catch (e) {}
+document.body.offsetWidth
+run()
+if (window.testRunner)
+    testRunner.dumpAsText()
+</script>

@@ -1,0 +1,50 @@
+This test checks the use of SVGAnimatedEnumeration within SVGComponentTransferFunctionElement
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Check initial 'type' value
+PASS feFuncRElement.type.toString() is "[object SVGAnimatedEnumeration]"
+PASS typeof(feFuncRElement.type.baseVal) is "number"
+PASS feFuncRElement.type.baseVal is SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_IDENTITY
+
+Switch to 'table'
+PASS feFuncRElement.type.baseVal = SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_TABLE is SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_TABLE
+PASS feFuncRElement.type.baseVal is SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_TABLE
+PASS feFuncRElement.getAttribute('type') is "table"
+
+Switch to 'discrete'
+PASS feFuncRElement.type.baseVal = SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_DISCRETE is SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_DISCRETE
+PASS feFuncRElement.type.baseVal is SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_DISCRETE
+PASS feFuncRElement.getAttribute('type') is "discrete"
+
+Switch to 'linear'
+PASS feFuncRElement.type.baseVal = SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_LINEAR is SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_LINEAR
+PASS feFuncRElement.type.baseVal is SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_LINEAR
+PASS feFuncRElement.getAttribute('type') is "linear"
+
+Switch to 'gamma'
+PASS feFuncRElement.type.baseVal = SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_GAMMA is SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_GAMMA
+PASS feFuncRElement.type.baseVal is SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_GAMMA
+PASS feFuncRElement.getAttribute('type') is "gamma"
+
+Try setting invalid values
+PASS feFuncRElement.type.baseVal = 6 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS feFuncRElement.type.baseVal is SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_GAMMA
+PASS feFuncRElement.getAttribute('type') is "gamma"
+PASS feFuncRElement.type.baseVal = -1 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS feFuncRElement.type.baseVal is SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_GAMMA
+PASS feFuncRElement.getAttribute('type') is "gamma"
+PASS feFuncRElement.type.baseVal = 0 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS feFuncRElement.type.baseVal is SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_GAMMA
+PASS feFuncRElement.getAttribute('type') is "gamma"
+
+Switch to 'identity'
+PASS feFuncRElement.type.baseVal = SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_IDENTITY is SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_IDENTITY
+PASS feFuncRElement.type.baseVal is SVGComponentTransferFunctionElement.SVG_FECOMPONENTTRANSFER_TYPE_IDENTITY
+PASS feFuncRElement.getAttribute('type') is "identity"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

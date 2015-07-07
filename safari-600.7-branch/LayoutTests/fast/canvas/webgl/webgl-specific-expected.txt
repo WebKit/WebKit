@@ -1,0 +1,70 @@
+Tests the a few differences between WebGL and GLES2
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS getError was expected value: NO_ERROR : Setup should succeed
+
+Verify that constant color and constant alpha cannot be used together as source and destination factors in the blend function
+PASS gl.blendFunc(gl.CONSTANT_COLOR, gl.CONSTANT_ALPHA) generated expected GL error: INVALID_OPERATION.
+PASS gl.blendFunc(gl.ONE_MINUS_CONSTANT_COLOR, gl.CONSTANT_ALPHA) generated expected GL error: INVALID_OPERATION.
+PASS gl.blendFunc(gl.CONSTANT_COLOR, gl.ONE_MINUS_CONSTANT_ALPHA) generated expected GL error: INVALID_OPERATION.
+PASS gl.blendFunc(gl.ONE_MINUS_CONSTANT_COLOR, gl.ONE_MINUS_CONSTANT_ALPHA) generated expected GL error: INVALID_OPERATION.
+PASS gl.blendFunc(gl.CONSTANT_ALPHA, gl.CONSTANT_COLOR) generated expected GL error: INVALID_OPERATION.
+PASS gl.blendFunc(gl.CONSTANT_ALPHA, gl.ONE_MINUS_CONSTANT_COLOR) generated expected GL error: INVALID_OPERATION.
+PASS gl.blendFunc(gl.ONE_MINUS_CONSTANT_ALPHA, gl.CONSTANT_COLOR) generated expected GL error: INVALID_OPERATION.
+PASS gl.blendFunc(gl.ONE_MINUS_CONSTANT_ALPHA, gl.ONE_MINUS_CONSTANT_COLOR) generated expected GL error: INVALID_OPERATION.
+PASS gl.blendFuncSeparate(gl.CONSTANT_COLOR, gl.CONSTANT_ALPHA, gl.ONE, gl.ZERO) generated expected GL error: INVALID_OPERATION.
+PASS gl.blendFuncSeparate(gl.ONE_MINUS_CONSTANT_COLOR, gl.CONSTANT_ALPHA, gl.ONE, gl.ZERO) generated expected GL error: INVALID_OPERATION.
+PASS gl.blendFuncSeparate(gl.CONSTANT_COLOR, gl.ONE_MINUS_CONSTANT_ALPHA, gl.ONE, gl.ZERO) generated expected GL error: INVALID_OPERATION.
+PASS gl.blendFuncSeparate(gl.ONE_MINUS_CONSTANT_COLOR, gl.ONE_MINUS_CONSTANT_ALPHA, gl.ONE, gl.ZERO) generated expected GL error: INVALID_OPERATION.
+PASS gl.blendFuncSeparate(gl.CONSTANT_ALPHA, gl.CONSTANT_COLOR, gl.ONE, gl.ZERO) generated expected GL error: INVALID_OPERATION.
+PASS gl.blendFuncSeparate(gl.CONSTANT_ALPHA, gl.ONE_MINUS_CONSTANT_COLOR, gl.ONE, gl.ZERO) generated expected GL error: INVALID_OPERATION.
+PASS gl.blendFuncSeparate(gl.ONE_MINUS_CONSTANT_ALPHA, gl.CONSTANT_COLOR, gl.ONE, gl.ZERO) generated expected GL error: INVALID_OPERATION.
+PASS gl.blendFuncSeparate(gl.ONE_MINUS_CONSTANT_ALPHA, gl.ONE_MINUS_CONSTANT_COLOR, gl.ONE, gl.ZERO) generated expected GL error: INVALID_OPERATION.
+
+Verify that in depthRange zNear <= zFar
+PASS gl.depthRange(20, 10) generated expected GL error: INVALID_OPERATION.
+
+Verify that front/back settings should be the same for stenclMask and stencilFunc
+PASS gl.stencilMask(255) generated expected GL error: NO_ERROR.
+PASS gl.drawArrays(gl.TRIANGLES, 0, 0) generated expected GL error: NO_ERROR.
+PASS gl.stencilMaskSeparate(gl.FRONT, 1) generated expected GL error: NO_ERROR.
+PASS gl.drawArrays(gl.TRIANGLES, 0, 0) generated expected GL error: INVALID_OPERATION.
+PASS gl.stencilMaskSeparate(gl.BACK, 1) generated expected GL error: NO_ERROR.
+PASS gl.drawArrays(gl.TRIANGLES, 0, 0) generated expected GL error: NO_ERROR.
+PASS gl.stencilFunc(gl.ALWAYS, 0, 255) generated expected GL error: NO_ERROR.
+PASS gl.drawArrays(gl.TRIANGLES, 0, 0) generated expected GL error: NO_ERROR.
+PASS gl.stencilFuncSeparate(gl.BACK, gl.ALWAYS, 1, 255) generated expected GL error: NO_ERROR.
+PASS gl.drawArrays(gl.TRIANGLES, 0, 0) generated expected GL error: INVALID_OPERATION.
+PASS gl.stencilFuncSeparate(gl.FRONT, gl.ALWAYS, 1, 255) generated expected GL error: NO_ERROR.
+PASS gl.drawArrays(gl.TRIANGLES, 0, 0) generated expected GL error: NO_ERROR.
+PASS gl.stencilFuncSeparate(gl.BACK, gl.ALWAYS, 1, 1) generated expected GL error: NO_ERROR.
+PASS gl.drawArrays(gl.TRIANGLES, 0, 0) generated expected GL error: INVALID_OPERATION.
+PASS gl.stencilFuncSeparate(gl.FRONT, gl.ALWAYS, 1, 1) generated expected GL error: NO_ERROR.
+PASS gl.drawArrays(gl.TRIANGLES, 0, 0) generated expected GL error: NO_ERROR.
+
+Verify that IMPLEMENTATION_COLOR_READ_FORMAT and IMPLEMENTATION_COLOR_READ_TYPE are undefined
+PASS undefined is undefined.
+PASS undefined is undefined.
+
+Verify that *LENGTH are undefined
+PASS undefined is undefined.
+PASS undefined is undefined.
+PASS undefined is undefined.
+PASS undefined is undefined.
+
+Verify that UNPACK_COLORSPACE_CONVERSION_WEBGL is supported
+PASS gl.getParameter(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL) is gl.BROWSER_DEFAULT_WEBGL
+PASS gl.getParameter(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL) is gl.NONE
+PASS getError was expected value: NO_ERROR : set/get UNPACK_COLORSPACE_CONVERSION_WEBGL should generate no error
+
+Verify that drawingBufferWidth and drawingBufferHeights are implemented
+PASS gl.drawingBufferWidth >= 0 && gl.drawingBufferHeight >= 0 is true
+
+Verify that bindAttribLocation rejects names start with webgl_ or _webgl_
+PASS gl.bindAttribLocation(program, 0, 'webgl_a') generated expected GL error: INVALID_OPERATION.
+PASS gl.bindAttribLocation(program, 0, '_webgl_a') generated expected GL error: INVALID_OPERATION.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

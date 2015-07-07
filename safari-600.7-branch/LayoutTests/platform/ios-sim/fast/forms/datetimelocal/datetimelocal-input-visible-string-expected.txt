@@ -1,0 +1,7 @@
+The user-visible values of week input fields should be localized if the platform has a LocalizedDate implementation. Otherwise, they should be in the HTML5 formats.
+
+datetime-local: value='2011-04-27T01:56:20.391' visible='Apr 27, 2011, 1:56 AM'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

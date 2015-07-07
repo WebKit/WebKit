@@ -1,0 +1,11 @@
+Description
+
+This test validates that the "loading", "interactive" and "complete" document.readyState states are available during a navigation.
+
+Refresh this page to guarantee all readyState phases.
+
+
+PASS Document readiness has loading state. 
+PASS Document readiness has interactive state. 
+PASS Document readiness has complete state. 
+

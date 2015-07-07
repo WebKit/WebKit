@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x88
+  RenderBlock {HTML} at (0,0) size 800x88
+    RenderBody {BODY} at (8,16) size 784x56
+      RenderBlock {P} at (0,0) size 784x20
+        RenderInline {A} at (0,0) size 310x19 [color=#0000EE]
+          RenderText {#text} at (0,0) size 310x19
+            text run at (0,0) width 310: "https://bugs.webkit.org/show_bug.cgi?id=22026"
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 666x19
+          text run at (0,0) width 666: "Test that elements with transform and opacity on a parent are not clipped. You should see no red below."
+layer at (150,200) size 100x100
+  RenderBlock (positioned) {DIV} at (150,200) size 100x100 [bgcolor=#FF0000]
+layer at (100,150) size 100x100
+  RenderBlock (positioned) {DIV} at (100,150) size 100x100
+layer at (100,150) size 10x10
+  RenderBlock {DIV} at (0,0) size 10x10
+layer at (100,150) size 100x100
+  RenderBlock (positioned) {DIV} at (0,0) size 100x100 [bgcolor=#008000]

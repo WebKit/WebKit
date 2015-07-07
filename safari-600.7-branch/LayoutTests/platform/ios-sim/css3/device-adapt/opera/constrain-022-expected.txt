@@ -1,0 +1,7 @@
+
+FAIL CSS Test: @viewport constrained - height is device-height. assert_true: expected true got false(stack: assert@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:2168:73
+assert_true@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:663:15
+file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/opera/constrain-022.xhtml:69:94
+step@file:///Volumes/Data/WebKit.git/LayoutTests/resources/testharness.js:1186:30
+onload@file:///Volumes/Data/WebKit.git/LayoutTests/css3/device-adapt/opera/constrain-022.xhtml:68:14)
+

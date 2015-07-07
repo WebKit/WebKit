@@ -1,0 +1,70 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpEditingCallbacks();
+}
+</script>
+
+<style>
+body { margin: 0; padding: 0; }
+</style>
+<script type="text/javascript">
+function step7()
+{
+    eventSender.mouseUp();
+    testRunner.notifyDone();
+}
+
+function step6()
+{
+    eventSender.mouseMoveTo(50, 10);
+    window.setTimeout(step7, 0);
+}
+
+function step5()
+{
+    eventSender.mouseMoveTo(31, 10);
+    window.setTimeout(step6, 0);
+}
+
+function step4()
+{
+    eventSender.mouseDown();
+    window.setTimeout(step5, 0);
+}
+
+function step3()
+{
+    eventSender.mouseMoveTo(30, 10);
+    eventSender.leapForward(1000);
+    window.setTimeout(step4, 0);
+}
+
+function step2()
+{
+    eventSender.mouseUp();
+    window.setTimeout(step3, 0);
+}
+
+function step1()
+{
+    eventSender.mouseDown();
+    window.setTimeout(step2, 0);
+}
+
+function step0()
+{
+    eventSender.mouseMoveTo(1, 10);
+    window.setTimeout(step1, 0);
+}
+
+step0();
+testRunner.waitUntilDone();
+</script>
+</head>
+<body>
+<div contenteditable>Select me, select me, select me</div>
+</body>
+</html>

@@ -1,0 +1,18 @@
+(GraphicsLayer
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (children 1
+        (GraphicsLayer
+          (position 58.00 8.00)
+          (anchor 0.25 0.50)
+          (bounds 200.00 100.00)
+          (drawsContent 1)
+          (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [-50.00 0.00 0.00 1.00])
+        )
+      )
+    )
+  )
+)
+

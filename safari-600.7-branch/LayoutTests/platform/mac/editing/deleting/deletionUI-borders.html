@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+    <style type="text/css">
+        div {width:51; height:51}
+        #oneBorder {border-bottom:1px solid red}
+        #twoBorder {border-bottom:1px solid red; border-top:1px solid red}
+        #threeBorder {border-bottom:1px solid red; border-top:1px solid red; border-right:1px solid red}
+        #fourBorder {border-bottom:1px solid red; border-top:1px solid red; border-right:1px solid red; border-left:1px solid red}
+    </style>
+    <script src="resources/deletionUI-helpers.js"></script>
+    <script>
+        function test()
+        {
+            if (window.testRunner)
+                testRunner.dumpAsText();
+
+            determineDeletionUIExistence("oneBorder");
+            determineDeletionUIExistence("twoBorder");
+            determineDeletionUIExistence("threeBorder");
+            determineDeletionUIExistence("fourBorder");
+        }
+    </script>
+</head>
+<body onload="test()">
+    <p>This tests if the deletion UI will show on elements with different numbers of visible borders. This test can be run by DRT but not in the browser.</p>
+    <div id="console"></div>
+
+    <div contenteditable="true" style="padding: 1em;">
+        <div id="oneBorder" class="needsDeletionUI"><br></div>
+        <div id="twoBorder" class="needsDeletionUI"><br></div>
+        <div id="threeBorder" class="needsDeletionUI"><br></div>
+        <div id="fourBorder" class="needsDeletionUI"><br></div>
+    <div>
+
+</body>
+</html>

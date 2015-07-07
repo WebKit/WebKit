@@ -1,0 +1,7 @@
+
+EXPECTED (source.readyState == 'closed') OK
+EVENT(sourceopen)
+RUN(video.src = "")
+EVENT(sourceclose)
+END OF TEST
+

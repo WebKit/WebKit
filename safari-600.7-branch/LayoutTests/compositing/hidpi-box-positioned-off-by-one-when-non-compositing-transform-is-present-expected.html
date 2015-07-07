@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests if flooring the transformed boxes' coordinates produce the same result as if compositing transform is present.</title>
+<head>
+<style>
+  div {
+    background: green;
+    width: 5px;
+    height: 5px;
+    position: absolute;
+    -webkit-transform: rotate3D(0, 0, 0, 0deg);
+  }
+</style>
+</head>
+<body>
+<p id="container"></p>
+<script>
+  var container = document.getElementById("container");
+  for (i = 0; i < 40; ++i) {
+    adjustment = 0.25;
+    for (j = 0; j < 40; ++j) {
+      var e = document.createElement("div");
+      e.style.top = (i * 5 + adjustment) +  "px";
+      e.style.left = ( j * 5 + adjustment) + "px";
+      container.appendChild(e);
+      adjustment+=0.05;
+    }
+  }
+</script>
+</body>
+</html>

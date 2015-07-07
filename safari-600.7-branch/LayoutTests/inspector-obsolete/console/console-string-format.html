@@ -1,0 +1,31 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/console-test.js"></script>
+<script>
+function test()
+{
+    var params = [
+        ["%T", 1],
+        ["10% x 20%", "of the original"],
+        ["%%", ""],
+        ["%", ""],
+        ["% %d", 1],
+        ["%d % %s", 1, "foo"],
+        ["%.2f", 0.12345],
+        ["foo%555 bar", ""],
+    ];
+    for (var i = 0; i < params.length; ++i)
+        InspectorTest.addResult("String.sprintf(" + params[i].join(", ") + ") = \"" + String.sprintf.apply(String, params[i]) + "\"");
+    InspectorTest.completeTest();
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that formatting processes '%' properly in case of missing formatters.
+</p>
+
+</body>
+</html>

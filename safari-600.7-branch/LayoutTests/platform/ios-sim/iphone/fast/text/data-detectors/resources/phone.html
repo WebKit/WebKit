@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+<head>
+    <title>Phone Numbers in MobileSafari</title>
+</head>
+<body>
+<p>
+    These phone numbers should be linkified:<br />
+1-866-MY-APPLE<br/>
+(312) 961 - 0509<br/>
+01 42 84 90 00<br/>
++33 (0)1 42 84 90 00<br/>
+(+33) 1 53 05 15 00<br/>
+(0)1 55 54 45 45<br/>
+010-1-800-MY-APPLE<br/>
+604 736 7331<br />
+０８０３５３８４９９０に<br />
+00447782326380
+</p>
+<p>This is a phone number, but it should not be linkified because it's inside a <pre>pre</pre> tag: <br />
+    <pre>1-866-MY-APPLE</pre>
+</p>
+<p>
+    These are not phone numbers, so they should not get linkified:<br />
+KSY-24339-985<br/>
+in 1.158970 seconds <br/>
+rdar://1234567
+</p>
+</body>
+</html>

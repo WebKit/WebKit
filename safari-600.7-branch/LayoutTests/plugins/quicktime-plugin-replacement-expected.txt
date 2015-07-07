@@ -1,0 +1,74 @@
+
+
+** Test 'qtsrc'. src = yellow.mov qtsrc = orange.mov, qtsrc should load.
+EVENT(qt_begin)
+EVENT(qt_validated)
+EVENT(qt_canplay)
+EVENT(qt_canplaythrough)
+
+** Test to make sure <video> element is in the shadow DOM.
+shadowElement = internals.shadowRoot(embed).firstChild
+PASS shadowElement.tagName is "VIDEO"
+PASS internals.shadowPseudoId(shadowElement) is "-webkit-plugin-replacement"
+
+** Test for the presence of overridden methods.
+PASS embed.SetURL is a function.
+PASS embed.GetURL is a function.
+PASS embed.Play is a function.
+PASS embed.Stop is a function.
+PASS embed.GetRate is a function.
+PASS embed.SetRate is a function.
+PASS embed.IsFullScreen is a function.
+PASS embed.ExitFullScreen is a function.
+PASS embed.GetPluginStatus is a function.
+PASS embed.GetTime is a function.
+PASS embed.SetTime is a function.
+PASS embed.SeekToDate is a function.
+PASS embed.GetDate is a function.
+PASS embed.GetDuration is a function.
+PASS embed.GetTimeScale is a function.
+PASS embed.GetMaxTimeLoaded is a function.
+PASS embed.GetMaxBytesLoaded is a function.
+PASS embed.GetMovieSize is a function.
+PASS embed.GetTimedMetadataUpdates is a function.
+PASS embed.GetAccessLog is a function.
+PASS embed.GetErrorLog is a function.
+
+** Test overridden methods.
+PASS embed.GetURL().indexOf('orange.mov') != -1 is true
+PASS embed.GetDuration() is 300000
+PASS embed.GetMovieSize() is 24962
+PASS embed.GetMaxTimeLoaded() is 300000
+PASS embed.GetMaxBytesLoaded() is 24962
+PASS embed.GetMovieSize() is 24962
+PASS embed.GetPluginStatus() is "Playable"
+PASS new Date(embed.GetDate()) - new Date() is within 100 of 0
+embed.SetTime(embed.GetTimeScale() * 2)
+
+PASS embed.GetTime() is 60000
+embed.Play()
+
+EVENT(qt_play)
+PASS embed.GetRate() is 1
+embed.Stop()
+
+EVENT(qt_pause)
+PASS embed.GetRate() is 0
+
+** SetURL expects a url relative to the original src, not to the document.
+embed.SetURL('yellow.mov')
+EVENT(qt_begin)
+EVENT(qt_validated)
+EVENT(qt_canplay)
+EVENT(qt_canplaythrough)
+PASS embed.GetURL().indexOf('yellow.mov') != -1 is true
+
+** SetURL to an empty string should generate an error.
+embed.SetURL('')
+EVENT(qt_begin)
+EVENT(qt_error)
+PASS embed.GetURL() is ""
+PASS embed.GetPluginStatus() is "Error"
+
+END TEST.
+

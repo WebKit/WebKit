@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+    <style>
+        #article { -webkit-flow-into: flow; }
+        #region { -webkit-flow-from: flow; }
+        @-webkit-region #region {
+            #article { color: #00ff00; }
+        }
+    </style>
+    <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=106191">WebKit Bug 106191</a> Crash when an anonymous block in a flow thread is deleted because it has only block children. </p>
+    <p>The test passes if it does not crash or assert.</p>
+    <p>PASS</p>
+    <div id="article">
+        <em style="display: block;"></em>
+        Text color styled in region: #00ff00.
+        <em id="em">Em color styled in region: #008000.</em>
+    </div>
+    <div id="region"></div>
+<script>
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+
+document.body.offsetTop;
+var elem = document.getElementById("em");
+var new_elem = document.createElement("table");
+elem.parentNode.insertBefore(new_elem, elem);
+document.body.offsetTop;
+document.getElementById("article").style.visibility = "hidden";
+</script>
+</html>

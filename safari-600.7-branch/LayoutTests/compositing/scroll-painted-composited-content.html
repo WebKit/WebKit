@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test scrolling with composited content that has already been painted</title>
+    <style>
+        body {
+            width: 600px;
+        }
+        div {
+            -webkit-transform: translateZ(0);
+            width: 1000px;
+            height: 800px;
+        }
+    </style>
+</head>
+<body>
+    <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=52720">Bug 52720 - REGRESSION
+    (r75987): Assertion failure in WebView::scrollBackingStore when scrolling page with composited
+    content</a>. The test passes if it doesn't assert in Debug builds.</p>
+
+    <div></div>
+
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            // Force a paint so that the content will be painted at the current scroll offset (0x0)
+            // before we scroll.
+            testRunner.display();
+        }
+        window.scrollBy(300, 0);
+    </script>
+</body>
+</html>

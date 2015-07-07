@@ -1,0 +1,35 @@
+<p>This tests for HIERARCHY_REQUEST_ERRs when calling Range::surroundContents.</p>
+<div id="select" style="border: 1px solid blue;">Hello world.</div>
+<div id="insert" style="border: 1px solid red;"></div>
+<ul id="console"></ul>
+<script>
+function log(str) {
+    var li = document.createElement("li");
+    li.appendChild(document.createTextNode(str));
+    var console = document.getElementById("console");
+    console.appendChild(li);
+}
+
+var range = document.createRange();
+var select = document.getElementById("select");
+var text = select.firstChild;
+
+var insert = document.getElementById("insert");
+
+range.setStart(text, 0);
+range.setEnd(text, text.length);
+
+try {
+    range.surroundContents(select);    
+} catch (e) {
+    var error = "Error: HierarchyRequestError: DOM Exception 3";
+    if (e != error)
+        log ("Failure, expected: " + error);
+}
+
+try {
+    range.surroundContents(insert); 
+} catch (e) {
+    log ("Failure: " + error);
+}
+</script>

@@ -1,0 +1,4 @@
+
+The test passes if it doesn't trigger an assert. When hitting the RootInlineBox of the flowed image, the region should be hit and have its :hover state activated.
+
+PASS

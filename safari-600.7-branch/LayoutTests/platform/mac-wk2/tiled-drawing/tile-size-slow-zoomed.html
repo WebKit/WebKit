@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .box {
+            height: 100px;
+            width: 100px;
+            background-image: -webkit-repeating-linear-gradient(red 10%, green 10%, green 30%);
+            background-attachment: fixed; /* Force slow mode. */
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function doTest()
+        {
+            if (window.eventSender)
+                eventSender.scalePageBy(1.7, 0, 0);
+
+            if (window.internals) {
+                document.getElementById('layers').innerText = internals.layerTreeAsText(document,
+                    internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS | internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+            }
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+<div class="box">
+</div>
+<pre id="layers">Layer tree goes here</p>
+</body>
+</html>

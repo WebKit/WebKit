@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.overridePreference("WebKitJavaEnabled", "1");
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body onload="onload()">
+
+<div id="console"></div>
+
+<object
+  classid="clsid:CAFEEFAC-0015-0000-0000-ABCDEFFEDCBA"
+  width=500
+  height=200
+  <param name="codebase" value="../../../java">
+  <param name="code" value="lc3.class">
+  <param name="archive" value="jstests.jar">
+  <comment>
+    <embed
+      code="lc3.class"
+      codebase="../../../java"
+      archive="jstests.jar"
+      type="application/x-java-applet"
+      width=500
+      height=200>
+    <noembed>
+      No Java Support.
+    </noembed>
+  </comment>
+</object>
+
+
+<script>
+function startTest()
+{
+    window.applet = document.getElementsByTagName("embed")[0];
+    if (!applet.createQAObject)
+        window.applet = document.getElementsByTagName("object")[0];
+
+    debug(TITLE + "\n");
+}
+
+function shouldBeWithErrorCheck(_a, _b)
+{
+    // Don't want full stack traces from Java exceptions.
+    if (window.testRunner) {
+        try {
+            eval(_a);
+        } catch (ex) {
+            if (/Caused by: /.test(ex)) {
+                testFailed(_a + ": Exception raised");
+                return;
+            }
+        }
+    }
+
+    var b_eval;
+    try {
+        b_eval = eval(_b);
+    } catch (ex) {
+        testFailed(_b + ": " + ex);
+        return;
+    }
+
+    if (b_eval == "error")
+        shouldThrow(_a);
+    else
+        shouldBe(_a, _b);
+}
+
+function wkTestStringToJavaByteArray(string)
+{
+    return applet.stringToByteArray(string);
+}
+
+function appendScript(text)
+{
+    var el = document.createElement("script")
+    el.appendChild = document.createTextNode(text);
+    document.body.appendChild(el);
+}
+
+function onload()
+{
+    try {
+        var req = new XMLHttpRequest();
+        req.open("GET", window.location.pathname.replace(/html$/, "js"), false);
+        if (req.overrideMimeType)
+            req.overrideMimeType("text/plain");
+        req.send();
+
+        if (!req.responseText.length)
+            throw "could not load test script";
+
+        var scriptElement = document.createElement("script")
+        scriptElement.appendChild(document.createTextNode(
+            req.responseText + "\n"));
+        document.body.appendChild(scriptElement);
+    } catch (ex) {
+        testFailed("Could not run test: " + ex);
+    }
+
+    scriptElement = document.createElement("script")
+    scriptElement.src = '../../../resources/js-test-post-async.js'
+    document.body.appendChild(scriptElement);
+}
+</script>
+</body>
+</html>

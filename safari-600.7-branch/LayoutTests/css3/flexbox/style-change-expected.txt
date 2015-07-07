@@ -1,0 +1,8 @@
+This test verifies that changing order, align-content, align-items, align-self, or justify-content will relayout.
+
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS

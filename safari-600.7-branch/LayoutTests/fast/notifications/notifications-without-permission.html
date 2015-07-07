@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript">
+        function log(message)
+        {
+            document.getElementById("result").innerHTML += message + "<br>";
+        }
+        
+        function runTests()
+        {
+            if (window.testRunner) {
+                // NO PERMISSION testRunner.grantWebNotificationPermission("file://");
+                testRunner.dumpAsText();
+            }
+
+            if (!window.webkitNotifications) {
+                log("FAIL: No webkitNotifications interface!");
+            }
+            
+            try {
+                var N = window.webkitNotifications.createNotification("http://0.0.0.0/my_icon.png", "New E-mail", "Meet me tonight at 8!");
+                N.show();
+                log("FAIL: Should have thrown security exception.");
+            } catch (e) {
+                log("PASS: Exception thrown.");
+            }
+        }
+    </script>
+</head>
+<body>
+<p>Sending notifications without permission...</p>
+<div id="result"></div>
+
+<script type="text/javascript">
+runTests();
+</script>
+</body>
+</html>

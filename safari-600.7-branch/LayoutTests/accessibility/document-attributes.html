@@ -1,0 +1,30 @@
+<html>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<body id="body">
+    <!-- This tests the exposure of a document's encoding and URI to assistive technologies -->
+    <div id="result"></div>
+    <script>
+        if (window.accessibilityController) {
+            var body = document.getElementById("body");
+            body.focus();
+            var webArea = accessibilityController.focusedElement;
+            var result = document.getElementById("result");
+
+            var documentEncoding = webArea.documentEncoding;
+            var documentURI = webArea.documentURI;
+
+            if (documentEncoding == "UTF-8" && documentURI == location.href) {
+               result.innerText = "Passed";
+            }
+            else {
+               result.innerText = "Failed:\nExpected: UTF-8 and " + location.href + ".\nActual: " + documentEncoding + " and " + documentURI + ".";
+            }
+        }
+    </script>
+</body>
+</html>

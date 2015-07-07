@@ -1,0 +1,1 @@
+logCurrentScript('b');

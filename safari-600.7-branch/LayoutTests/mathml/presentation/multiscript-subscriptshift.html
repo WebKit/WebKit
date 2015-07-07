@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script>
+            function runTest() {
+                description('Tests that subscriptshift works on mmultiscripts. After adding subscriptshift the height of mmultiscripts element should increase');
+
+                var rect = document.getElementById("multiscriptEle").getBoundingClientRect();
+                height = rect.bottom - rect.top;
+
+                shouldBeTrue("height > 150");
+                isSuccessfullyParsed();
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <math>
+            <mmultiscripts subscriptshift="60px" id="multiscriptEle">
+                <mspace width="50px" height="50px" mathbackground="green"/>
+                <mspace width="50px" height="50px" mathbackground="blue"/>
+                <mspace width="50px" height="50px" mathbackground="red"/>
+				<mprescripts />
+				<mspace width="50px" height="50px" mathbackground="yellow"/>
+                <mspace width="50px" height="50px" mathbackground="black"/>
+            </mmultiscripts>
+      </math>
+    </body>
+</html>

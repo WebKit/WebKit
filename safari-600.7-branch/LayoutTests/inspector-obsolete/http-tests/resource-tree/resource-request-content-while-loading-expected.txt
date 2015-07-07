@@ -1,0 +1,9 @@
+Tests resource content is correctly loaded if Resource.requestContent was called before network request was finished.
+
+Bug 90153
+Resource url: http://127.0.0.1:8000/inspector/resource-tree/resources/styles-initial.css
+Resource content: html {
+    background-color: green;
+}
+
+

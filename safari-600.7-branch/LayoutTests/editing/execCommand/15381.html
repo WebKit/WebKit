@@ -1,0 +1,24 @@
+<div id="test"><div id="edit" contentEditable="true">centered text</div></div>
+
+<script>
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+    
+test = document.getElementById("test");
+edit = document.getElementById("edit");
+
+window.getSelection().setPosition(edit, 0);
+document.execCommand("JustifyCenter");
+
+expected = '<div id="edit" contenteditable="true"><div style="text-align: center;">centered text</div></div>';
+actual = test.innerHTML;
+
+output = "This tests to make sure that centering content whose enclosing block is the root editable element doesn't modify the root editable element.\n\n"
+
+if (actual == expected)
+    output += "Success";
+else
+    output += "Failure.  Expected: " + expected + ", found: " + actual;
+    
+document.body.innerText = output;
+</script>

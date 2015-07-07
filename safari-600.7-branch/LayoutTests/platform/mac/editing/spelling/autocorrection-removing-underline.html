@@ -1,0 +1,50 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+</style>
+<script src=../../../../editing/editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    typeCharacterCommand('t');
+    typeCharacterCommand('h');
+    typeCharacterCommand('e');
+    typeCharacterCommand(' ');
+    typeCharacterCommand('n');
+    typeCharacterCommand('o');
+    typeCharacterCommand('t');
+    typeCharacterCommand('a');
+    typeCharacterCommand('t');
+    typeCharacterCommand('i');
+    typeCharacterCommand('o');
+    typeCharacterCommand('n');
+    typeCharacterCommand('l');
+    typeCharacterCommand(' ');
+    typeCharacterCommand('\n');
+}
+
+</script>
+
+<title>Autocorrection Simple Test</title> 
+</head> 
+<body>
+<div>This test verifies the removal of autocorrection underline upon inserting paragraph separator. You should see phrase 'the notational' without blue underline.</div>
+<p  style="color:green">Note, this test can fail due to user specific spell checking data. If the user has previously dismissed 'notational' as the correct spelling of 'notationl' several times, the spell checker will not provide 'notational' as a suggestion anymore. To fix this, remove all files in ~/Library/Spelling.</p>
+<div contenteditable id="root" class="editing">
+<span id="test"></span>
+</div>
+
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

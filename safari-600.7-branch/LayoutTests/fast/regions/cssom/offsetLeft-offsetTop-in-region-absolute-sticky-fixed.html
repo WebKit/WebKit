@@ -1,0 +1,305 @@
+<html>
+<head>
+	<style type="text/css">
+		/* Make sure the console and the description don't interfere with the rest of the layout. */
+		#description {
+			position: absolute;
+			top: 0px;
+		}
+
+		#console {
+			position: absolute;
+			top: 100px;
+		}
+
+		#divMain1 {
+			border: 2px solid blue;
+			height: 105px;
+			margin: 10px;
+			position: relative;
+			-webkit-flow-into: flow1;
+		}
+
+		#divMain2 {
+			border: 2px solid blue;
+			height: 120px;
+			margin: 10px;
+			-webkit-flow-into: flow2;
+		}
+
+		#divMain3 {
+			border: 2px solid blue;
+			width: 211px;
+			height: 146px;
+			padding-left: 5px;
+			margin: 5px;
+			margin-left: 10px;
+			left: 40px;
+			-webkit-flow-into: flow3;
+		}
+
+		#divMain4 {
+			border: 2px solid blue;
+			width: 225px;
+			height: 120px;
+			padding-left: 5px;
+			padding-top: 5px;
+			margin: 8px;
+			-webkit-flow-into: flow4;
+		}
+
+		.divText {
+			border: 1px solid green;
+			color: green;
+			font-size: 14px;
+		}
+
+		#divText1 {
+			width: 250px;
+			position: absolute;
+			left: 10px;
+			top: 10px;
+		}
+
+		#divText2 {
+			width: 200px;
+			position: absolute;
+			left: 20px;
+			top: 20px;
+		}
+
+		#divText3 {
+			border-color: #009999;
+			color: #009999;
+			margin: 10px;
+			width: 180px;
+			height: 90px;
+			position: -webkit-sticky;
+			top: 50px;
+		}
+
+		#divText4 {
+			border-color: #009999;
+			color: #009999;
+			width: 180px;
+			height: 100px;
+			position: fixed;
+			left: 50px;
+			top: 20px;
+		}
+
+		#dummy {
+			width: 100px;
+			height: 25px;
+			border: 1px solid black;
+			margin: 5px;
+			margin-left: 20px;
+		}
+
+		#region1 {
+			-webkit-flow-from: flow1;
+			border: 1px solid red;
+			position: relative;
+			left: 59px;
+			top: 335px;
+			width: 304px;
+			height: 125px;
+		}
+
+		#region2 {
+			-webkit-flow-from: flow2;
+			border: 1px solid red;
+			position: relative;
+			left: 71px;
+			top: 344px;
+			width: 304px;
+			height: 140px;
+		}
+
+		#region3 {
+			-webkit-flow-from: flow3;
+			border: 1px solid red;
+			position: relative;
+			margin-top: 20px;
+			left: 564px;
+			top: 53px;
+			width: 250px;
+			height: 160px;
+			overflow: hidden;
+		}
+
+		#region4 {
+			-webkit-flow-from: flow4;
+			border: 1px solid red;
+			position: relative;
+			margin-top: 20px;
+			left: 450px;
+			top: 53px;
+			width: 250px;
+			height: 140px;
+		}
+
+		.grid {
+			position: absolute;
+			top: 750px;
+			width: 100px;
+			height: 100px;
+			border-right: 1px solid blue;
+			text-align: right;
+			font-size: 14px;
+			color: blue;
+		}
+
+		.vgrid {
+			position: absolute;
+			left: 900px;
+			width: 100px;
+			height: 100px;
+			border-bottom: 1px solid blue;
+			text-align: bottom;
+			font-size: 14px;
+			color: blue;
+		}
+
+		#grid1 {
+			left: 0px;
+		}
+		#grid2 {
+			left: 100px;
+		}
+		#grid3 {
+			left: 200px;
+		}
+		#grid4 {
+			left: 300px;
+		}
+		#grid5 {
+			left: 400px;
+		}
+		#grid6 {
+			left: 500px;
+		}
+		#grid7 {
+			left: 600px;
+		}
+
+		#vgrid1 {
+			top: 0px;
+		}
+		#vgrid2 {
+			top: 100px;
+		}
+		#vgrid3 {
+			top: 200px;
+		}
+		#vgrid4 {
+			top: 300px;
+		}
+		#vgrid5 {
+			top: 400px;
+		}
+		#vgrid6 {
+			top: 500px;
+		}
+		#vgrid7 {
+			top: 600px;
+		}
+		#vgrid8 {
+			top: 700px;
+			border: none;
+		}
+	</style>
+
+	<script src="../../../resources/js-test-pre.js"></script>
+
+	<script type="text/javascript">
+		function writeOffsetInfo(selector) {
+			var divItems = document.querySelectorAll(selector);
+				
+			for (var i=0; i<divItems.length; i++) {
+				var divItem = divItems[i];
+				var existingHTML = divItem.innerHTML;
+				var newHTML = existingHTML.replace("#offTop#", divItem.offsetTop);
+				newHTML = newHTML.replace("#offLeft#", divItem.offsetLeft);
+				if (divItem.offsetParent)
+					newHTML = newHTML.replace("#offParent#", divItem.offsetParent.tagName + "(" + divItem.offsetParent.id + ")");
+				else
+					newHTML = newHTML.replace("#offParent#", "null");
+				divItem.innerHTML = newHTML;
+			}
+		}
+		function myOnLoad() {
+			writeOffsetInfo(".divText");
+		}
+	</script>
+</head>
+
+<body id="body" onload = "myOnLoad();">
+	<div id="divMain1">
+		<div class="divText" id="divText1">This is <b>divText1</b> (absolute):<br/>- offsetParent is <b>#offParent#</b><br/>- offsetLeft is <b>#offLeft#</b><br/>- offsetTop is <b>#offTop#</b></div>
+	</div>
+
+	<div id="divMain2">
+		<div class="divText" id="divText2">This is <b>divText2</b> (absolute):<br/>- offsetParent is <b>#offParent#</b><br/>- offsetLeft is <b>#offLeft#</b><br/>- offsetTop is <b>#offTop#</b></div>
+	</div>
+
+	<div id="divMain3">
+		<div class="dummy" id="dummy">dummy</div>
+		<div class="divText" id="divText3"><span class="offsetInfo">This is <b>divText3</b> (sticky):<br/>- offsetParent is <b>#offParent#</b><br/>- offsetLeft is <b>#offLeft#</b><br/>- offsetTop is <b>#offTop#</b></span></div>
+	</div>
+
+	<div id="divMain4">
+		<div class="divText" id="divText4">This is <b>divText4</b> (fixed):<br/>- offsetParent is <b>#offParent#</b><br/>- offsetLeft is <b>#offLeft#</b><br/>- offsetTop is <b>#offTop#</b></div>
+	</div>
+
+	<div class="region" id="region1"></div>
+	<div class="region" id="region2"></div>
+	<div class="region" id="region3"></div>
+	<div class="region" id="region4"></div>
+
+	<div id="grid1" class="grid">100px</div>
+	<div id="grid2" class="grid">200px</div>
+	<div id="grid3" class="grid">300px</div>
+	<div id="grid4" class="grid">400px</div>
+	<div id="grid5" class="grid">500px</div>
+	<div id="grid6" class="grid">600px</div>
+	<div id="grid7" class="grid">700px</div>
+
+	<div id="vgrid1" class="vgrid"></div>
+	<div id="vgrid2" class="vgrid">100px</div>
+	<div id="vgrid3" class="vgrid">200px</div>
+	<div id="vgrid4" class="vgrid">300px</div>
+	<div id="vgrid5" class="vgrid">400px</div>
+	<div id="vgrid6" class="vgrid">500px</div>
+	<div id="vgrid7" class="vgrid">600px</div>
+	<div id="vgrid8" class="vgrid">700px</div>
+
+	<script>
+		description("Test offsetLeft and offsetTop in a named flow with absolute, sticky and fixed positioning.")
+
+		shouldBe("divText1.offsetParent", "divMain1");
+		shouldBe("divText1.offsetLeft", "10");
+		shouldBe("divText1.offsetTop", "10");
+
+		shouldBe("divText2.offsetParent", "document.body");
+		shouldBe("divText2.offsetLeft", "100");
+		shouldBe("divText2.offsetTop", "500");
+
+		shouldBe("divText3.offsetParent", "document.body");
+		shouldBe("divText3.offsetLeft", "600");
+		shouldBe("divText3.offsetTop", "400");
+
+		shouldBeNull("divText4.offsetParent");
+		shouldBe("divText4.offsetLeft", "50");
+		shouldBe("divText4.offsetTop", "20");
+
+		if (window.testRunner) {
+			var allGraphicElements = document.querySelectorAll(".region, .divText, .grid, .vgrid, #dummy");
+			for (var i=0; i<allGraphicElements.length; i++)
+				allGraphicElements[i].style.display = "none";
+		}
+		
+	</script>
+	<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

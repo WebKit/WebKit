@@ -1,0 +1,42 @@
+layer at (0,0) size 785x1187
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x1187
+  RenderBlock {HTML} at (0,0) size 785x1187
+    RenderBody {BODY} at (8,8) size 769x1171
+      RenderBlock (anonymous) at (0,0) size 769x17
+        RenderText {#text} at (0,0) size 339x17
+          text run at (0,0) width 339: "This test should scroll recursively to reveal the button."
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,17) size 769x500
+      RenderBlock (anonymous) at (0,517) size 769x154
+        RenderIFrame {IFRAME} at (0,0) size 304x154 [border: (2px inset #000000)]
+          layer at (0,0) size 308x316
+            RenderView at (0,0) size 285x135
+          layer at (0,0) size 285x316
+            RenderBlock {HTML} at (0,0) size 285x316
+              RenderBody {BODY} at (8,8) size 269x300
+          layer at (8,8) size 300x300 clip at (8,8) size 285x300 scrollY 542 scrollHeight 1267
+            RenderBlock {DIV} at (0,0) size 300x300
+              RenderBlock (anonymous) at (0,0) size 285x17
+                RenderText {#text} at (0,0) size 88x17
+                  text run at (0,0) width 88: "overflow:auto"
+              RenderBlock {DIV} at (0,17) size 285x600
+              RenderBlock {DIV} at (0,767) size 285x500
+          layer at (8,83) size 150x150 clip at (8,83) size 135x150 scrollY 474 scrollHeight 864
+            RenderBlock {DIV} at (0,617) size 150x150
+              RenderBlock (anonymous) at (0,0) size 135x17
+                RenderText {#text} at (0,0) size 88x17
+                  text run at (0,0) width 88: "overflow:auto"
+              RenderBlock {DIV} at (0,17) size 135x500
+              RenderBlock (anonymous) at (0,517) size 135x47
+                RenderBR {BR} at (0,0) size 0x17
+                RenderButton {INPUT} at (2,19) size 62x26 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+                  RenderBlock (anonymous) at (8,4) size 46x17
+                    RenderText at (0,0) size 46x17
+                      text run at (0,0) width 46: "Button"
+                RenderText {#text} at (0,0) size 0x0
+              RenderBlock {DIV} at (0,564) size 135x300
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,671) size 769x500
+scrolled to 0,7
+frame 'fr' scrolled to 0,91

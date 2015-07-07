@@ -1,0 +1,127 @@
+<html>
+<head>
+<meta http-equiv="x-webkit-csp" content="style-src https://*:443">
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function test()
+{
+    var nodeId;
+    var rule;
+
+    WebInspector.showPanel("elements");
+    InspectorTest.runTestSuite([
+        function testSetUp(next) {
+          InspectorTest.selectNodeAndWaitForStyles("inspected", next);
+        },
+
+        function testAddRule(next)
+        {
+            var idToDOMNode = WebInspector.domAgent._idToDOMNode;
+            for (var id in idToDOMNode) {
+                node = idToDOMNode[id];
+                if (node.getAttribute && node.getAttribute("id") === "inspected") {
+                    nodeId = parseInt(id, 10);
+                    WebInspector.cssModel.addRule(nodeId, "#inspected", successCallback, failureCallback);
+                    break;
+                }
+            }
+
+            function successCallback(newRule, doesAffectSelectedNode)
+            {
+                rule = newRule;
+                InspectorTest.addResult("=== Rule added ===");
+                InspectorTest.addResult(rule.selectorText + " {" + rule.style.cssText + "}");
+                InspectorTest.addResult("Affects selected (#inspected) node: " + doesAffectSelectedNode);
+                next();
+            }
+
+            function failureCallback()
+            {
+                InspectorTest.addResult("[!] Failed to add rule.");
+                InspectorTest.completeTest();
+            }
+        },
+
+        function testAddProperty(next)
+        {
+            rule.style.appendProperty("width", "100%", callback);
+
+            function callback(newStyle)
+            {
+                InspectorTest.addResult("=== Added rule modified ===");
+                if (!newStyle) {
+                    InspectorTest.addResult("[!] No valid rule style received");
+                    InspectorTest.completeTest();
+                } else {
+                    dumpProperties(newStyle);
+                    WebInspector.cssModel.setRuleSelector(rule.id, nodeId, "body", successCallback, failureCallback);
+                }
+            }
+
+            function successCallback(rule, doesAffectSelectedNode)
+            {
+                InspectorTest.addResult("=== Selector changed ===");
+                InspectorTest.addResult(rule.selectorText + " {" + rule.style.cssText + "}");
+                InspectorTest.addResult("Affects selected (#inspected) node: " + doesAffectSelectedNode);
+
+                next();
+            }
+
+            function failureCallback()
+            {
+                InspectorTest.addResult("[!] Failed to change selector");
+                InspectorTest.completeTest();
+            }
+        },
+
+        function testModifyInlineStyle(next)
+        {
+            WebInspector.cssModel.getInlineStylesAsync(nodeId, stylesCallback);
+
+            function stylesCallback(inlineStyle)
+            {
+                if (!inlineStyle) {
+                    InspectorTest.completeTest();
+                    return;
+                }
+                inlineStyle.appendProperty("font-size", "14px", appendCallback);
+            }
+
+            function appendCallback(newStyle)
+            {
+                InspectorTest.addResult("=== Inline style modified ===");
+                if (!newStyle) {
+                    InspectorTest.addResult("No valid inline style received");
+                    InspectorTest.completeTest();
+                    return;
+                }
+
+                dumpProperties(newStyle);
+                next();
+            }
+        }
+    ]);
+
+    function dumpProperties(style)
+    {
+       if (!style)
+           return;
+       var allProperties = style.allProperties;
+       for (var i = 0; i < allProperties.length; ++i)
+           InspectorTest.addResult(allProperties[i].text);
+    }
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that adding a new rule does not crash the renderer and modifying an inline style does not report errors when forbidden by Content-Security-Policy.
+</p>
+
+<div id="inspected">Text</div>
+
+</body>
+</html>

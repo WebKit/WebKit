@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 4: ReferenceError: Can't find variable: foo
+This test checks whether exceptions in SharedWorkers are logged to the parent document. An exception should be logged to the error console.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS: Received ping message
+
+TEST COMPLETE
+

@@ -1,0 +1,11 @@
+FAIL: Timed out waiting for notifyDone to be called
+Test <video> element with and without a poster.
+
+Testing poster null, with 'width' and 'height' attributes.
+EXPECTED (video.getAttribute('poster') == 'null') OK
+EXPECTED (relativeURL(video.poster) == '') OK
+EXPECTED (video.clientWidth == '320') OK
+EXPECTED (video.clientHeight == '240') OK
+
+Setting poster to "content/greenbox.png"
+

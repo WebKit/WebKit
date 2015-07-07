@@ -1,0 +1,13 @@
+Test insertAdjacentHTML exceptions to make sure they match HTML5
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS div.insertAdjacentHTML('beforeBegin', 'text') is undefined.
+PASS div.insertAdjacentHTML('afterEnd', 'text') is undefined.
+PASS div.insertAdjacentHTML('FOO', 'text') threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.documentElement.insertAdjacentHTML('afterEnd', 'text') threw exception Error: NoModificationAllowedError: DOM Exception 7.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

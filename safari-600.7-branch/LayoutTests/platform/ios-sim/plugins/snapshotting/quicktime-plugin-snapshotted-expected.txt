@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 755x39
+          text run at (0,0) width 417: "This test ensures that quicktime plugins can also be snapshotted. "
+          text run at (416,0) width 339: "We make the plugin here too small to be the primary"
+          text run at (0,20) width 243: "plugin, thus it should get snapshotted."
+      RenderBlock (anonymous) at (0,56) size 784x300
+        RenderText {#text} at (0,0) size 0x0
+layer at (8,64) size 300x300
+  RenderEmbeddedObject {EMBED} at (0,0) size 300x300

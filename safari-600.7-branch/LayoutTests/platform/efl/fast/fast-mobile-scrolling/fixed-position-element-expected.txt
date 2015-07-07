@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 781x35
+          text run at (0,0) width 781: "This tests that fixed background images are honored on a page with at least one fixed position element. If the square (below)"
+          text run at (0,18) width 201: "is green, then the test PASSED."
+      RenderBlock {DIV} at (0,84) size 64x64 [bgcolor=#008000]
+        RenderText {#text} at (0,0) size 4x17
+          text run at (0,0) width 4: " "
+layer at (8,100) size 64x64
+  RenderBlock (positioned) {DIV} at (8,100) size 64x64
+    RenderText {#text} at (0,0) size 4x17
+      text run at (0,0) width 4: " "

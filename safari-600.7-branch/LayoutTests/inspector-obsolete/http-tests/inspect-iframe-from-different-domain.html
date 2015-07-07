@@ -1,0 +1,39 @@
+<html>
+<head>
+<title>Inspect style in iframe from different domain.</title>
+<script src="inspector-test.js"></script>
+<script src="elements-test.js"></script>
+<script>
+
+var onIFrameLoadCalled = false;
+function onIFrameLoad()
+{
+    if (onIFrameLoadCalled)
+        return;
+    onIFrameLoadCalled = true;
+    runTest();
+}
+
+function test()
+{
+    InspectorTest.selectNodeAndWaitForStyles("iframe-body", step1);
+
+    function step1()
+    {
+        var treeItem = InspectorTest.getElementStylePropertyTreeItem("background");
+        InspectorTest.dumpStyleTreeItem(treeItem, "");
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+<body>
+    <iframe src="http://localhost:8000/inspector/resources/iframe-from-different-domain-data.html" id="receiver" onload="onIFrameLoad()"></iframe>
+    <p>
+    Tests that style properties of elements in iframes loaded from domain different from
+    the main document domain can be inspected.
+    See <a href="https://bugs.webkit.org/show_bug.cgi?id=31587">bug 31587</a>.
+    </p>
+</body>
+</html>

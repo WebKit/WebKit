@@ -1,0 +1,2 @@
+gboolean webkit_dom_html_text_area_element_is_edited(WebKitDOMHTMLTextAreaElement*)
+gboolean webkit_dom_html_input_element_is_edited(WebKitDOMHTMLInputElement*)

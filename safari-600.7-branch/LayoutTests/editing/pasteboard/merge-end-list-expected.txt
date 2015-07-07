@@ -1,0 +1,21 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 0 of #text > DIV > BODY > HTML > #document toDOMRange:range from 6 of #text > DIV > LI > UL > DIV > BODY > HTML > #document to 6 of #text > DIV > LI > UL > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+This tests pasting a list ('Item 1') into a position that would normally result in an end merge.
+
+Before insertion:
+| "xx"
+
+After insertion:
+| "x"
+| <ul>
+|   <li>
+|     <div>
+|       "Item 1<#selection-caret>"
+| "x"

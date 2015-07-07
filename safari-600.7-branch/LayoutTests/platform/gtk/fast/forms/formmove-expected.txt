@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {FORM} at (0,0) size 784x22
+        RenderBlock {INPUT} at (2,3) size 16x16
+        RenderText {#text} at (20,3) size 34x17
+          text run at (20,3) width 34: "Two "
+        RenderBlock {INPUT} at (56,3) size 16x16
+        RenderText {#text} at (74,3) size 37x17
+          text run at (74,3) width 37: "Three"
+      RenderBlock {FORM} at (0,38) size 784x22
+        RenderBlock {INPUT} at (2,3) size 16x16
+        RenderText {#text} at (20,3) size 31x17
+          text run at (20,3) width 31: "One "
+        RenderBlock {INPUT} at (53,3) size 16x16
+        RenderText {#text} at (71,3) size 34x17
+          text run at (71,3) width 34: "Two "
+        RenderBlock {INPUT} at (107,3) size 16x16
+        RenderText {#text} at (125,3) size 41x17
+          text run at (125,3) width 41: "Three "
+        RenderBlock {INPUT} at (168,3) size 16x16
+        RenderText {#text} at (186,3) size 27x17
+          text run at (186,3) width 27: "One"
+      RenderBlock (anonymous) at (0,76) size 784x34
+        RenderText {#text} at (0,0) size 766x34
+          text run at (0,0) width 505: "The count of the # of elements in form 1 should be 2 and in form 2 should be 4. "
+          text run at (505,0) width 261: "The count in form 1 is 2, and the count in"
+          text run at (0,17) width 68: "form 2 is 4"

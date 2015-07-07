@@ -1,0 +1,130 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script>
+function test()
+{
+    WebInspector.showPanel("resources");
+
+    var FakeElement = function(elements, index, searchMatchesCount)
+    {
+        this._elements = elements;
+        this.index = index;
+        this.searchMatchesCount = searchMatchesCount;
+    };
+
+    FakeElement.prototype = {
+        // Ignore all parameters.
+        traversePreviousTreeElement: function()
+        {
+            return this.index > 0 ? this._elements[this.index - 1] : null;
+        },
+
+        // Ignore all parameters.
+        traverseNextTreeElement: function()
+        {
+            return this.index < this._elements.length - 1 ? this._elements[this.index + 1] : null;
+        }
+    };
+
+    function createElementsTreeWithMatchesCounts(matchesCounts)
+    {
+        var elements = [];
+        var totalMatchesCount = 0;
+        var element = new FakeElement(elements, 0, 0);
+        elements.push(element);
+        for (var i = 0; i < matchesCounts.length; ++i) {
+            element = new FakeElement(elements, i + 1, matchesCounts[i]);
+            elements.push(element);
+            totalMatchesCount += matchesCounts[i];
+        }
+        elements.totalMatchesCount = totalMatchesCount;
+        return elements;
+    }
+
+    function dumpSearchResult(searchResult)
+    {
+        if (searchResult) {
+            var elementIndex = searchResult.treeElement.index;
+            var index = searchResult.index;
+            var matchIndex = searchResult.currentMatchIndex;
+            InspectorTest.addResult("Element index: " + elementIndex + ", index: " + index + ", match index: " + matchIndex + ".");
+        } else
+            InspectorTest.addResult("No search result found.");
+    }
+
+    function runTestForMatchesCounts(matchesCounts)
+    {
+        InspectorTest.addResult("Running test for matches counts: " + JSON.stringify(matchesCounts));
+        var elements = createElementsTreeWithMatchesCounts(matchesCounts);
+        var controller = new WebInspector.ResourcesSearchController(elements[0], elements.totalMatchesCount);
+        var lastSearchResult;
+
+        // First of all make a full cycle through the tree.
+        for (var i = 0; i < elements.totalMatchesCount + 1; ++i) {
+            lastSearchResult = controller.nextSearchResult(lastSearchResult ? lastSearchResult.treeElement : null);
+            dumpSearchResult(lastSearchResult);
+            if (!lastSearchResult)
+                break;
+        }
+
+        // Then make another one in the opposite direction.
+        for (var i = 0; i < elements.totalMatchesCount + 1; ++i) {
+            lastSearchResult = controller.previousSearchResult(lastSearchResult ? lastSearchResult.treeElement : null);
+            dumpSearchResult(lastSearchResult);
+            if (!lastSearchResult)
+                break;
+        }
+
+        // Now dump next and previous search results for each element without search matches.
+        for (var i = 0; i < elements.length; ++i) {
+            if (elements[i].searchMatchesCount === 0) {
+                var searchResult = controller.nextSearchResult(elements[i]);
+                dumpSearchResult(searchResult);
+                searchResult = controller.previousSearchResult(elements[i]);
+                dumpSearchResult(searchResult);
+            }
+        }
+        InspectorTest.addResult("");
+    }
+
+    InspectorTest.runTestSuite([
+        function test1(next)
+        {
+            runTestForMatchesCounts([1]);
+            next();
+        },
+
+        function test2(next)
+        {
+            runTestForMatchesCounts([1, 2, 3]);
+            next();
+        },
+
+        function test3(next)
+        {
+            runTestForMatchesCounts([1, 0, 2, 0, 3]);
+            next();
+        },
+
+        function test4(next)
+        {
+            runTestForMatchesCounts([0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0]);
+            next();
+        },
+
+        function test5(next)
+        {
+            runTestForMatchesCounts([0, 0, 0, 0, 1, 0, 0, 0]);
+            next();
+        }
+    ]);
+
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests search match index calculation in resources panel.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=66050">Bug 66050</a>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+
+        <script>
+            var textTrack;
+
+            function canplaythrough()
+            {
+                testExpected("video.textTracks.length", 0, ">");
+                run("textTrack = video.textTracks[0]");
+                run("textTrack.mode = \"hidden\"");
+                waitForEvent('cuechange', gotcues, false, true, textTrack);
+
+                /* set to playing so we get cuechange events */
+                video.play();
+            }
+
+            function gotcues()
+            {
+                testExpected("textTrack.cues.length", 0, ">");
+                consoleWrite("Validating " + textTrack.cues.length + " cues...");
+                for (i = 0; i !== textTrack.cues.length; ++i) { 
+                    var cue = textTrack.cues[i];
+                    var expectedCueID = i + 1;
+                    if (cue.id != expectedCueID)
+                        logResult(Failed, "Cue # " + i + ": expected id \"" + expectedCueID + "\", saw \"" + cue.id + "\"");
+
+                    var expectedStartTime = expectedCueID;
+                    if (cue.startTime != expectedStartTime)
+                        logResult(Failed, "Cue # " + i + ": expected start time \"" + expectedStartTime + "\", saw \"" + cue.startTime + "\"");
+
+                    var expectedEndTime = expectedCueID + 1;
+                    if (cue.endTime != expectedEndTime)
+                        logResult(Failed, "Cue # " + i + ": expected end time \"" + expectedEndTime + "\", saw \"" + cue.endTime + "\"");
+
+                    var expectedCueText = expectedCueID + " - " + "Lorem ipsum dolor sit amet, consectetuer adipiscing elit";
+                    if (cue.text != expectedCueText)
+                        logResult(Failed, "Cue # " + i + ": expected cue text \"" + expectedCueText + "\", saw \"" + cue.text + "\"");
+                }
+
+                consoleWrite("");
+                endTest();
+            }
+
+            function setup()
+            {
+                findMediaElement();
+                waitForEvent('canplaythrough', canplaythrough);
+                video.src = findMediaFile("video", "../content/test");
+            }
+        </script>
+    </head>
+    <body onload="setup()">
+        <video controls>
+            <track src="./captions-webvtt/captions-long.vtt" kind="captions">
+        </video>
+
+        <p>Tests that the all captions in a long WebVTT file are parsed correctly.</p>
+
+    </body>
+</html>

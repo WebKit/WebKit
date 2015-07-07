@@ -1,0 +1,24 @@
+<html>
+<head>
+<script src="../../../../resources/js-test-pre.js"></script>
+<script src="../../../../fast/encoding/resources/char-decoding-utils.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("This tests decoding characters in various character sets.");
+
+testDecode('x-nextstep', '%E1', 'U+00C6');
+debug('');
+
+debug("The x-nextstep test is meant to ensure that we still support legacy encodings that are not part of ICU - it is expected that it fails in other browsers, which do not support this particular encoding. See <a href=\"http://bugs.webkit.org/show_bug.cgi?id=4195\">http://bugs.webkit.org/show_bug.cgi?id=4195</a> for more details.");
+
+debug('');
+
+
+</script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

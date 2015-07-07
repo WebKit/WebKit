@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Strict//EN">
+<html>
+<head>
+<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<title>Null frame access tests</title>
+<script>
+window.onload = function() {
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    var tag = document.getElementById('subframe');
+    var win = tag.contentWindow;
+    // remove the element so the window has a null frame
+    tag.parentNode.removeChild(tag);
+
+    // schedule to run after the frame is null
+    setTimeout(function() {
+        document.body.appendChild(document.createTextNode(win.test || 'property: PASS ... '));
+        document.body.appendChild(document.createTextNode(win[20] || 'array: PASS ... '));
+        document.body.appendChild(document.createTextNode(win.Comment || 'missing property: PASS.'));
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+};
+</script>
+</head>
+<body>
+This tests access to a window with a null frame. You should see "PASS" for each of the three tests below.<br /><br />
+<iframe id="subframe" src="data:text/html,&lt;script&gt;window.test='FAIL ... ';window[20]='FAIL ... ';&lt;/script&gt;" />
+</body>
+</html>

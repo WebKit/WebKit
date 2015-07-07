@@ -1,0 +1,5 @@
+Test that collecting the html element in a named flow is possible.
+
+On success, you should see a green rectangle below and the test does not crash or assert.
+
+

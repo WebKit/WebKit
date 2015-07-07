@@ -1,0 +1,3 @@
+This tests to see if deleting an input element that starts at the start of a block adds an extra placeholder.
+You should see a single placeholder in the block below.
+| <br>

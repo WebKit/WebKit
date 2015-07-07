@@ -1,0 +1,23 @@
+<html>
+<body>
+<script src="../resources/magnitude-perf.js"></script>
+<script>
+function setupFunction(magnitude)
+{
+}
+
+function test(magnitude)
+{
+    for (var i = 0; i < magnitude; i++) {
+        document.body.appendChild(document.createTextNode(' '));
+        document.body.appendChild(document.createElement('div'));
+        document.body.appendChild(document.createTextNode(' '));
+    }
+    document.body.innerHTML = "";
+}
+
+Magnitude.description("Tests that style recalculation time is linear when adding text nodes that do not have renderers. See https://bugs.webkit.org/show_bug.cgi?id=110786");
+Magnitude.run(setupFunction, test, Magnitude.LINEAR);
+</script>
+</body>
+</html>

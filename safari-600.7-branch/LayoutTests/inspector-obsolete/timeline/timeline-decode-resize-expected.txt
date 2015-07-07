@@ -1,0 +1,186 @@
+Tests the Timeline API instrumentation of a DecodeImage and ResizeImage events
+
+
+DecodeImage Properties:
+{
+    children : <object>
+    counters : <object>
+    data : {
+        imageType : "BMP"
+    }
+    endTime : <number>
+    stackTrace : <object>
+    startTime : <number>
+    type : "DecodeImage"
+    usedHeapSize : <number>
+}
+ResizeImage Properties:
+{
+    children : <object>
+    counters : <object>
+    data : {
+        cached : true
+    }
+    endTime : <number>
+    stackTrace : <object>
+    startTime : <number>
+    type : "ResizeImage"
+    usedHeapSize : <number>
+}
+DecodeImage Properties:
+{
+    children : <object>
+    counters : <object>
+    data : {
+        imageType : "GIF"
+    }
+    endTime : <number>
+    stackTrace : <object>
+    startTime : <number>
+    type : "DecodeImage"
+    usedHeapSize : <number>
+}
+ResizeImage Properties:
+{
+    children : <object>
+    counters : <object>
+    data : {
+        cached : true
+    }
+    endTime : <number>
+    stackTrace : <object>
+    startTime : <number>
+    type : "ResizeImage"
+    usedHeapSize : <number>
+}
+DecodeImage Properties:
+{
+    children : <object>
+    counters : <object>
+    data : {
+        imageType : "ICO"
+    }
+    endTime : <number>
+    stackTrace : <object>
+    startTime : <number>
+    type : "DecodeImage"
+    usedHeapSize : <number>
+}
+ResizeImage Properties:
+{
+    children : <object>
+    counters : <object>
+    data : {
+        cached : true
+    }
+    endTime : <number>
+    stackTrace : <object>
+    startTime : <number>
+    type : "ResizeImage"
+    usedHeapSize : <number>
+}
+DecodeImage Properties:
+{
+    children : <object>
+    counters : <object>
+    data : {
+        imageType : "JPEG"
+    }
+    endTime : <number>
+    stackTrace : <object>
+    startTime : <number>
+    type : "DecodeImage"
+    usedHeapSize : <number>
+}
+ResizeImage Properties:
+{
+    children : <object>
+    counters : <object>
+    data : {
+        cached : true
+    }
+    endTime : <number>
+    stackTrace : <object>
+    startTime : <number>
+    type : "ResizeImage"
+    usedHeapSize : <number>
+}
+DecodeImage Properties:
+{
+    children : <object>
+    counters : <object>
+    data : {
+        imageType : "PNG"
+    }
+    endTime : <number>
+    stackTrace : <object>
+    startTime : <number>
+    type : "DecodeImage"
+    usedHeapSize : <number>
+}
+ResizeImage Properties:
+{
+    children : <object>
+    counters : <object>
+    data : {
+        cached : true
+    }
+    endTime : <number>
+    stackTrace : <object>
+    startTime : <number>
+    type : "ResizeImage"
+    usedHeapSize : <number>
+}
+DecodeImage Properties:
+{
+    children : <object>
+    counters : <object>
+    data : {
+        imageType : "WEBP"
+    }
+    endTime : <number>
+    stackTrace : <object>
+    startTime : <number>
+    type : "DecodeImage"
+    usedHeapSize : <number>
+}
+ResizeImage Properties:
+{
+    children : <object>
+    counters : <object>
+    data : {
+        cached : true
+    }
+    endTime : <number>
+    stackTrace : <object>
+    startTime : <number>
+    type : "ResizeImage"
+    usedHeapSize : <number>
+}
+DecodeImage Properties:
+{
+    children : <object>
+    counters : <object>
+    data : {
+        imageType : "PNG"
+    }
+    endTime : <number>
+    stackTrace : <object>
+    startTime : <number>
+    type : "DecodeImage"
+    usedHeapSize : <number>
+}
+ResizeImage Properties:
+{
+    children : <object>
+    counters : <object>
+    data : {
+        cached : false
+    }
+    endTime : <number>
+    stackTrace : <object>
+    startTime : <number>
+    type : "ResizeImage"
+    usedHeapSize : <number>
+}
+

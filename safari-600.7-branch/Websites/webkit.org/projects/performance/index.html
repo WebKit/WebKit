@@ -1,0 +1,64 @@
+<?php
+    $title = "Performance";
+    include("../../header.inc");
+?>
+
+<h2>Performance</h2>
+
+<h3>Overview</h3>
+
+<p>Performance is a top priority for WebKit.  We adhere to a simple directive for all work we do on WebKit.</p>
+
+<p><i>The way to make a program faster is to never let it get slower.</i></p>
+
+<p>We have a zero-tolerance policy for performance regressions.
+If a patch lands that regresses performance according to our benchmarks,
+then the person responsible must either back the patch out of the tree or drop everything immediately and fix the regression.</p>
+
+<p>Common excuses people give when they regress performance are, "But the new way is cleaner!" or "The new
+way is more correct." We don't care. No performance regressions are allowed, regardless of the reason. There is no justification
+for regressing performance. None.</p>
+
+<p>We have a number of benchmarks that we use to measure performance.</p>
+
+<ol>
+<li>The i-Bench test suite was the most well-known cross-browser benchmark. We used to use this for testing the performance.
+The suite was developed by Lionbridge, but unfortunately they no longer support it thus the suite isn't available now. We are looking for good alternatives.
+<li>Our internal page load test suite (called the PLT for short) must also not regress.
+The PLT contains pages that are representative of sites that are encountered in
+the real world. The harness itself is built into Safari and is accessible from the <i>Debug</i> menu.
+You can actually make Safari run the PLT on any set of test pages.
+Unfortunately, the pages we use internally at Apple contain copyrighted material and therefore cannot be open source at this time.
+We hope that in the future sites will be willing to donate snapshots of their front pages so that an open source cross-browser
+test suite can be developed with content that is not as homogenous as the i-Bench pages.</li>
+</ol>
+
+<h3>Get Involved!</h3>
+
+<p>How can you help improve WebKit's performance?</p>
+
+<dl>
+<dt>Test for Regressions</dt>
+<dd>If you have your own performance tests, run WebKit through them daily. Make sure that the performance of the sites you care about
+does not regress. Test the above benchmarks on your hardware to help double-check that there have not been any regressions. Remember, the best
+way to stay fast is to never let your code become slower.
+
+<dt>Open Source Benchmark</dt>
+<dd>We have discussed with Mozilla and Opera the idea of an open-source cross-browser benchmark. The stumbling block to the construction of such
+a test suite is that we need to get buy-in from high profile sites like <a href="http://www.google.com">Google</a>, <a href="http://www.amazon.com">Amazon</a>
+or <a href="http://www.yahoo.com">Yahoo</a> to use snapshots of their front pages in the benchmark. The benefits of having your site in such a benchmark
+are obvious, since browser vendors will make your sites faster as they optimize for the content of the benchmark.
+
+<p>If you work for one of these high profile sites we encourage you to <a href="../../contact.html">contact us</a> if you are interested in having your
+company contribute content
+to such a benchmark.</p>
+
+<dt>Profile with Shark</dt>
+<dd>OS X now has an excellent profiling tool called Shark. If you find operations that are slow in WebKit, we encourage you to use Shark to isolate
+performance problems and file bugs with that information. <a href="http://developer.apple.com/tools/shark_optimize.html">Here is a link</a> to get you
+started using Shark.
+
+</dl>
+<?php
+    include("../../footer.inc");
+?>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="resources/polyfill.js"></script>
+
+<p>A mixed case of a shadow element and content element.</p>
+<form>
+    <button id="host">button 1<span>button 2</span></button>
+</form>
+
+<script>
+var host = document.getElementById('host');
+var shadowRoot = host.webkitCreateShadowRoot();
+shadowRoot.innerHTML = '<div><content select="span"></content><shadow></shadow></div>'
+</script>
+
+</body>
+</html>

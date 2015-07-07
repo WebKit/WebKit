@@ -1,0 +1,145 @@
+Series of tests to ensure correct results on applying different blend modes when globalAlpha is set.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Running test in non accelerated mode
+
+Testing blend mode source-over
+PASS actualColor(0, 0)[0] is within 5 of 141.6
+PASS actualColor(0, 0)[1] is within 5 of 242.4
+PASS actualColor(0, 0)[2] is within 5 of 129
+PASS actualColor(0, 0)[3] is within 5 of 255
+
+Testing blend mode multiply
+PASS actualColor(0, 0)[0] is within 5 of 129
+PASS actualColor(0, 0)[1] is within 5 of 242.4
+PASS actualColor(0, 0)[2] is within 5 of 122.62588235294116
+PASS actualColor(0, 0)[3] is within 5 of 255
+
+Testing blend mode screen
+PASS actualColor(0, 0)[0] is within 5 of 141.6
+PASS actualColor(0, 0)[1] is within 5 of 255
+PASS actualColor(0, 0)[2] is within 5 of 135.3741176470588
+PASS actualColor(0, 0)[3] is within 5 of 255
+
+Testing blend mode overlay
+PASS actualColor(0, 0)[0] is within 5 of 141.6
+PASS actualColor(0, 0)[1] is within 5 of 255
+PASS actualColor(0, 0)[2] is within 5 of 129.14823529411763
+PASS actualColor(0, 0)[3] is within 5 of 255
+
+Testing blend mode darken
+PASS actualColor(0, 0)[0] is within 5 of 129
+PASS actualColor(0, 0)[1] is within 5 of 242.4
+PASS actualColor(0, 0)[2] is within 5 of 129
+PASS actualColor(0, 0)[3] is within 5 of 255
+
+Testing blend mode lighten
+PASS actualColor(0, 0)[0] is within 5 of 141.6
+PASS actualColor(0, 0)[1] is within 5 of 255
+PASS actualColor(0, 0)[2] is within 5 of 129
+PASS actualColor(0, 0)[3] is within 5 of 255
+
+Testing blend mode color-dodge
+FAIL actualColor(0, 0)[0] should be within 5 of 141.6. Was 255.
+PASS actualColor(0, 0)[1] is within 5 of 255
+PASS actualColor(0, 0)[2] is within 5 of 141.6
+PASS actualColor(0, 0)[3] is within 5 of 255
+
+Testing blend mode color-burn
+PASS actualColor(0, 0)[0] is within 5 of 129
+PASS actualColor(0, 0)[1] is within 5 of 255
+PASS actualColor(0, 0)[2] is within 5 of 116.69302325581394
+PASS actualColor(0, 0)[3] is within 5 of 255
+
+Testing blend mode hard-light
+PASS actualColor(0, 0)[0] is within 5 of 141.6
+PASS actualColor(0, 0)[1] is within 5 of 255
+PASS actualColor(0, 0)[2] is within 5 of 129.14823529411763
+PASS actualColor(0, 0)[3] is within 5 of 255
+
+Testing blend mode difference
+PASS actualColor(0, 0)[0] is within 5 of 128.7
+PASS actualColor(0, 0)[1] is within 5 of 242.10000000000002
+PASS actualColor(0, 0)[2] is within 5 of 116.1
+PASS actualColor(0, 0)[3] is within 5 of 255
+
+Testing blend mode exclusion
+PASS actualColor(0, 0)[0] is within 5 of 128.7
+PASS actualColor(0, 0)[1] is within 5 of 242.10000000000002
+PASS actualColor(0, 0)[2] is within 5 of 128.84823529411764
+PASS actualColor(0, 0)[3] is within 5 of 255
+
+Running test in hardware accelerated mode
+
+Testing blend mode source-over
+PASS actualColor(0, 0)[0] is within 5 of 141.6
+PASS actualColor(0, 0)[1] is within 5 of 242.4
+PASS actualColor(0, 0)[2] is within 5 of 129
+PASS actualColor(0, 0)[3] is within 5 of 255
+
+Testing blend mode multiply
+PASS actualColor(0, 0)[0] is within 5 of 129
+PASS actualColor(0, 0)[1] is within 5 of 242.4
+PASS actualColor(0, 0)[2] is within 5 of 122.62588235294116
+PASS actualColor(0, 0)[3] is within 5 of 255
+
+Testing blend mode screen
+PASS actualColor(0, 0)[0] is within 5 of 141.6
+PASS actualColor(0, 0)[1] is within 5 of 255
+PASS actualColor(0, 0)[2] is within 5 of 135.3741176470588
+PASS actualColor(0, 0)[3] is within 5 of 255
+
+Testing blend mode overlay
+PASS actualColor(0, 0)[0] is within 5 of 141.6
+PASS actualColor(0, 0)[1] is within 5 of 255
+PASS actualColor(0, 0)[2] is within 5 of 129.14823529411763
+PASS actualColor(0, 0)[3] is within 5 of 255
+
+Testing blend mode darken
+PASS actualColor(0, 0)[0] is within 5 of 129
+PASS actualColor(0, 0)[1] is within 5 of 242.4
+PASS actualColor(0, 0)[2] is within 5 of 129
+PASS actualColor(0, 0)[3] is within 5 of 255
+
+Testing blend mode lighten
+PASS actualColor(0, 0)[0] is within 5 of 141.6
+PASS actualColor(0, 0)[1] is within 5 of 255
+PASS actualColor(0, 0)[2] is within 5 of 129
+PASS actualColor(0, 0)[3] is within 5 of 255
+
+Testing blend mode color-dodge
+FAIL actualColor(0, 0)[0] should be within 5 of 141.6. Was 255.
+PASS actualColor(0, 0)[1] is within 5 of 255
+PASS actualColor(0, 0)[2] is within 5 of 141.6
+PASS actualColor(0, 0)[3] is within 5 of 255
+
+Testing blend mode color-burn
+PASS actualColor(0, 0)[0] is within 5 of 129
+PASS actualColor(0, 0)[1] is within 5 of 255
+PASS actualColor(0, 0)[2] is within 5 of 116.69302325581394
+PASS actualColor(0, 0)[3] is within 5 of 255
+
+Testing blend mode hard-light
+PASS actualColor(0, 0)[0] is within 5 of 141.6
+PASS actualColor(0, 0)[1] is within 5 of 255
+PASS actualColor(0, 0)[2] is within 5 of 129.14823529411763
+PASS actualColor(0, 0)[3] is within 5 of 255
+
+Testing blend mode difference
+PASS actualColor(0, 0)[0] is within 5 of 128.7
+PASS actualColor(0, 0)[1] is within 5 of 242.10000000000002
+PASS actualColor(0, 0)[2] is within 5 of 116.1
+PASS actualColor(0, 0)[3] is within 5 of 255
+
+Testing blend mode exclusion
+PASS actualColor(0, 0)[0] is within 5 of 128.7
+PASS actualColor(0, 0)[1] is within 5 of 242.10000000000002
+PASS actualColor(0, 0)[2] is within 5 of 128.84823529411764
+PASS actualColor(0, 0)[3] is within 5 of 255
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

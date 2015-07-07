@@ -1,0 +1,13 @@
+<iframe src="resources/innocent-victim.html"></iframe>
+<div id="console">FAIL</div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function() {
+    window.f = frames[0].atob;
+    document.domain = "0.0.1";
+    if (btoa(window.f("PASS")) == "PASS")
+        document.getElementById("console").innerHTML = "PASS"
+}
+</script>

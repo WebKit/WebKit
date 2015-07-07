@@ -1,0 +1,53 @@
+From dbbdf54778771535dfea5ddbdeeaba89d9bc7be6 Mon Sep 17 00:00:00 2001
+From: Wim Taymans <wim.taymans@collabora.co.uk>
+Date: Wed, 12 Dec 2012 11:08:13 +0100
+Subject: [PATCH 1/2] udpsrc: improve timeouts
+
+Make it possible to set the timeout after we went to the READY state by using
+the timeout when checking the condition. This also makes it possible to set the
+timeout with a higher granularity than seconds.
+---
+ gst/udp/gstudpsrc.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
+
+diff --git a/gst/udp/gstudpsrc.c b/gst/udp/gstudpsrc.c
+index bdad5b3..5b54021 100644
+--- a/gst/udp/gstudpsrc.c
++++ b/gst/udp/gstudpsrc.c
+@@ -397,13 +397,20 @@ retry:
+     goto no_select;
+ 
+   do {
++    gint64 timeout;
++
+     try_again = FALSE;
+ 
++    if (udpsrc->timeout)
++      timeout = udpsrc->timeout / 1000;
++    else
++      timeout = -1;
++
+     GST_LOG_OBJECT (udpsrc, "doing select, timeout %" G_GUINT64_FORMAT,
+-        udpsrc->timeout);
++        timeout);
+ 
+-    if (!g_socket_condition_wait (udpsrc->used_socket, G_IO_IN | G_IO_PRI,
+-            udpsrc->cancellable, &err)) {
++    if (!g_socket_condition_timed_wait (udpsrc->used_socket, G_IO_IN | G_IO_PRI,
++            timeout, udpsrc->cancellable, &err)) {
+       if (g_error_matches (err, G_IO_ERROR, G_IO_ERROR_BUSY)
+           || g_error_matches (err, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
+         goto stopped;
+@@ -823,9 +830,6 @@ gst_udpsrc_start (GstBaseSrc * bsrc)
+       goto getsockname_error;
+   }
+ 
+-  if (src->timeout)
+-    g_socket_set_timeout (src->used_socket, src->timeout / GST_SECOND);
+-
+ #if GLIB_CHECK_VERSION (2, 35, 7)
+   {
+     gint val = 0;
+-- 
+1.8.1.2
+

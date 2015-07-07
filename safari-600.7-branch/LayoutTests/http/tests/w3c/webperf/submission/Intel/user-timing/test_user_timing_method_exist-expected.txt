@@ -1,0 +1,14 @@
+Description
+
+This test validates that all of the user timing methods exist in window.performance (but does not validate that their functionality).
+
+
+PASS window.performance is defined 
+PASS performance.webkitMark is supported! 
+PASS performance.webkitClearMarks is supported! 
+PASS performance.webkitMeasure is supported! 
+PASS performance.webkitClearMeasures is supported! 
+PASS performance.webkitGetEntries is supported! 
+PASS performance.webkitGetEntriesByType is supported! 
+PASS performance.webkitGetEntriesByName is supported! 
+

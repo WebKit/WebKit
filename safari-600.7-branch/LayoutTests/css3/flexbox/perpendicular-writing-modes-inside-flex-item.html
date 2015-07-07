@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<style>
+.flexbox {
+    display: -webkit-flex;
+    -webkit-flex-direction: column;
+    height: 300px;
+    width: 200px;
+    padding: 3px;
+    border: 4px solid black;
+}
+.flexitem {
+    -webkit-flex: 1;
+    padding: 3px;
+    border: 4px solid cyan;
+    min-height: 0;
+}
+.vertical {
+    position: relative;
+    -webkit-writing-mode: vertical-lr;
+    padding: 3px;
+    border: 4px solid blue;
+}
+.inlineContent {
+    display: inline-block;
+    height: 200px;
+    width: 20px;
+    background-color: salmon;
+}
+</style>
+
+<script src="../../resources/check-layout.js"></script>
+
+<body onload="checkLayout('.flexbox')">
+    <div class="flexbox">
+        <div class="flexitem" data-expected-width=200 data-expected-height=300>
+            <div class="vertical" data-expected-height=286>
+                <div class="inlineContent" data-expected-y=3 data-expected-x=3></div>
+                <div class="inlineContent" data-expected-y=3></div>
+            </div>
+        </div>
+    </div>
+</body>

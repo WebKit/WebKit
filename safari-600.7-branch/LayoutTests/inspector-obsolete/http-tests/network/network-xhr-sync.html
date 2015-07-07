@@ -1,0 +1,43 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../network-test.js"></script>
+<script>
+function test()
+{
+    // Since this test could be run together with other inspector backend cache
+    // tests, we need to reset size limits to default ones.
+    InspectorTest.resetInspectorResourcesData(step1);
+
+    function step1()
+    {
+        InspectorTest.makeSimpleXHR("GET", "resources/resource.php", false, step2);
+    }
+
+    function step2()
+    {
+        var request1 = WebInspector.panel("network").requests[WebInspector.panel("network").requests.length - 1];
+        InspectorTest.addResult(request1.url);
+        InspectorTest.addResult("resource.type: " + request1.type);
+        InspectorTest.addResult("resource.content before requesting content: " + request1.content);
+        InspectorTest.assertTrue(!request1.failed, "Resource loading failed.");
+        request1.requestContent(step3);
+    }
+
+    function step3()
+    {
+        var request1 = WebInspector.panel("network").requests[WebInspector.panel("network").requests.length - 1];
+        InspectorTest.addResult("resource.content after requesting content: " + request1.content);
+
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+ <p>
+ Tests XHR network resource type and content for synchronous requests.
+<a href="https://bugs.webkit.org/show_bug.cgi?id=61205">Bug 61205</a>
+</p>
+</body>
+</html>

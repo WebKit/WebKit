@@ -1,0 +1,15 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > SPAN > DIV > DIV > DIV > BODY > HTML > #document to 6 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > SPAN > DIV > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document to 6 of #text > DIV > BLOCKQUOTE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+This tests indenting three paragraphs with different hierarchies.
+Hello  world
+Hello  world
+Hello  world
+
+Before indent: <div id="test"> <div><span class="Apple-style-span" style="background-color: rgb(255, 0, 0);">Hello <img src="http://"> world</span></div> <div>Hello <img src="http://"> world</div> Hello <img src="http://"> world </div>
+After indent: <blockquote style="margin: 0 0 0 40px; border: none; padding: 0px;"><div id="test"><div><span class="Apple-style-span" style="background-color: rgb(255, 0, 0);">Hello <img src="http://"> world</span></div></div><div id="test"><div>Hello <img src="http://"> world</div></div><div id="test"> Hello <img src="http://"> world </div></blockquote>

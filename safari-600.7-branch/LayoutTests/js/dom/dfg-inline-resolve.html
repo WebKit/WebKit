@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Eval'ed Function losing scope</title>
+    </head>
+    <body>
+        <script type="text/javascript" charset="utf-8">
+            if (self.testRunner) {
+                testRunner.dumpAsText(self.enablePixelTesting);
+                testRunner.waitUntilDone();
+            }
+            
+            var counts = [0, 0, 0];
+            (function() {
+                var code = [
+                    "var div = document.createElement('div');",
+                    "document.body.appendChild(div);",
+                    "window.printFoo = function (counts) {",
+                        "++counts[1];",
+                        "div.innerHTML += 'foo ';",
+                        "++counts[2];",
+                    "};"
+                ].join('\n');
+                eval(code);
+            })();
+            
+            function callPrintFoo() {
+                window.printFoo(counts);
+            }
+
+            setInterval(function () {
+                if (counts[0] == 200) {
+                    var text;
+                    if (counts[0] == counts[1] && counts[1] == counts[2])
+                        text = "TEST PASSED";
+                    else
+                        text = "TEST FAILED: counts = " + counts;
+                    var div = document.createElement('div');
+                    document.body.appendChild(div);
+                    div.innerHTML = text;
+                    if (self.testRunner)
+                        testRunner.notifyDone();
+                }
+                ++counts[0];
+                callPrintFoo();
+            }, 5);
+        </script>
+    </body>
+</html>

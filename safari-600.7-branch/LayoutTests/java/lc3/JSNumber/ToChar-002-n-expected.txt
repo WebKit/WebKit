@@ -1,0 +1,9 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion number conversion to char
+
+PASS dt.setChar(java.lang.Character.MAX_VALUE +1); dt.PUB_CHAR threw exception ReferenceError: Can't find variable: java.
+PASS dt.setChar(java.lang.Character.MAX_VALUE +1); dt.getChar() threw exception ReferenceError: Can't find variable: java.
+PASS typeof dt.getChar() is 'number'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

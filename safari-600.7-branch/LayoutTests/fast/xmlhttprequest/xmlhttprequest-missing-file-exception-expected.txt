@@ -1,0 +1,8 @@
+This test checks for rdar://problem/4962298 REGRESSION: Synchronous XHR for missing local file throws exception -- breaks Wikipedia widget
+
+PASS: No exception.
+readyState: 4 (number)
+responseText:  (string)
+responseXML: null (object)
+statusText:  (string)
+

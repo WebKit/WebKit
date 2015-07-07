@@ -1,0 +1,67 @@
+<script src="../editing.js"></script>
+
+<script>
+function log(message) {
+    var console = document.getElementById("console");
+    var li = document.createElement("li");
+    var text = document.createTextNode(message);
+    li.appendChild(text);
+    console.appendChild(li);
+}
+
+function part1() {
+    frames['iframe'].document.body.focus();
+    
+    // Hack to perform the editing command.  Should be able to 
+    // call execCommand on the main document.
+    frames['iframe'].document.execCommand('InsertText', false, 'c');
+
+    if (frames['iframe'].document.body.innerText != 'c') {
+        log("FAIL: could not insert text.");
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+
+    if (!document.queryCommandEnabled('Undo')) {
+        log("FAIL: Undo is not enabled after text insertion.");
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+
+    window.location = window.location.toString() + "?part2";
+}
+
+function part2() {
+    if (frames['iframe'].document.body.innerText != '')
+        log("FAIL: subframe still has old content after navigaiton.");
+
+    if (!document.queryCommandEnabled('Undo'))
+        log("Success");
+    else
+        log("Failure, Undo was still enabled after the location changed (but at least we didn't crash!)");
+        
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function runTest() {
+    if (window.location.toString().indexOf("?part2") == -1) {
+        part1();
+    } else {
+        part2();
+    }
+}
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+</script>
+
+<body onload="runTest()">
+<iframe name="iframe" src="../resources/contenteditable-iframe-src.html"></iframe>
+<ul id="console"></ul>
+</body>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<head>
+<style>
+body, td, tr, tbody {
+    margin: 0px;
+    padding: 4px;
+    border: solid black 4px;
+}
+table {
+    margin: 0px;
+    padding: 4px;
+    border-spacing: 5px;
+}
+</style>
+<script src="../../resources/check-layout.js"></script>
+</head>
+<p>webkit.org/b/11582: The offsetTop of tbody, rows and cells should include the table's border. The tbody should include border-spacing in its
+   offsetTop and offsetLeft too but that is a separate and more involved bug (webkit.org/b/119020) which when it's resolved should change the 
+   offsets from 14 to 19 for the tbody in this test. The offsetLeft for the row is also wrong (webkit.org/b/119021), fixing it will require a 
+   lot of rebaselining.</p>
+<body>
+    <table border="10">
+        <tbody data-offset-y=14 data-offset-x=14>
+            <tr data-offset-y=19 data-offset-x=14>
+                <td data-offset-y=19 data-offset-x=19>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <script>
+    checkLayout('table');
+    </script>
+</body>

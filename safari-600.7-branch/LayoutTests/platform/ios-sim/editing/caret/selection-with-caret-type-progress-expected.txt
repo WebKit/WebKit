@@ -1,0 +1,11 @@
+Tests whether explicitly set caret style is retained on performing text selection
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Try selecting this text by dragging the mouse.
+FAIL currentCursorType should be Progress. Was FAIL: Cursor details not available on this.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

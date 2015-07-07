@@ -1,0 +1,91 @@
+<?php
+$title = "Getting the Code";
+include("../header.inc");
+?>
+<h2>Getting WebKit</h2>
+<p>To download a pre-built bundle containing the latest WebKit, visit <a href="http://nightly.webkit.org/">WebKit Nightly Builds</a>.</p>
+
+<h2>Browsing the Code</h2>
+<p>To browse the source code online, visit <a href="https://trac.webkit.org/browser">WebKit Trac</a>.
+
+<h2>Checking Out with Subversion</h2>
+<p>To work with the WebKit source tree, you will need a Subversion or a Git client installed.
+See <a href="tools.html">Installing Developer Tools</a> for information on how
+to install Subversion.</p>
+<div class="unix-instructions">
+<h4>Mac OS X or Linux</h4>
+<ol>
+    <li>
+        <p>Open a shell.</p>
+        <p>On OS X, you can use the <i>Terminal</i> App, which resides in /Applications/Utilities.</p>
+    </li>
+    <li>
+        <p>You can download a snapshot of the WebKit source tree from
+            <a href="http://nightly.webkit.org/files/WebKit-SVN-source.tar.bz2">http://nightly.webkit.org/files/WebKit-SVN-source.tar.bz2</a>.
+            It is updated every six hours. Note the archived checkout uses an HTTP connection. We recommend running the following command to use HTTPS instead:</p>
+        <p class="code">svn switch --relocate http://svn.webkit.org/repository/webkit/trunk https://svn.webkit.org/repository/webkit/trunk</p>
+        <p>Type these commands to check out the WebKit source tree:</p>
+        <p class="code">tar jxvf WebKit-SVN-source.tar.bz2<br>cd webkit</p>
+        <div>
+            <p>Alternatively, type this command to check out the WebKit source tree:</p>
+            <p class="code">svn checkout https://svn.webkit.org/repository/webkit/trunk WebKit</p>
+        </div>
+    </li>
+    <li>
+        <p>Run the <code>./Tools/Scripts/update-webkit</code> <a href="/coding/scripts.html">script</a> to update your source tree.</p>
+    </li>
+</ol>
+</div>
+
+<div class="windows-instructions">
+<h4>Windows</h4>
+<ol>
+    <li>
+        <p>Open a Cygwin Shell</p>
+        <p>Double-click the Cygwin icon on your Desktop to launch a new shell.</p>
+    </li>
+    <li>
+        <p>You can download a snapshot of the WebKit source tree from
+            <a href="http://nightly.webkit.org/files/WebKit-SVN-source.tar.bz2">http://nightly.webkit.org/files/WebKit-SVN-source.tar.bz2</a>.
+            It is updated every six hours. Note the archived checkout uses an HTTP connection. We recommend running the following command to use HTTPS instead:</p>
+        <p class="code">svn switch --relocate http://svn.webkit.org/repository/webkit/trunk https://svn.webkit.org/repository/webkit/trunk</p>
+        <p>Type these commands to check out the WebKit source tree:</p>
+        <p class="code">tar jxvf WebKit-SVN-source.tar.bz2<br>cd webkit</p>
+        <div>
+            <p>Alternatively, type this command to check out the WebKit source tree:</p>
+            <p class="code">svn checkout https://svn.webkit.org/repository/webkit/trunk WebKit</p>
+        </div>
+    </li>
+    <li>
+        <p>Install the WebKit Support Libraries</p>
+        <p>Download the <a href="http://developer.apple.com/opensource/internet/webkit_sptlib_agree.html">WebKit Support Libraries</a> to the root of your source tree (<code>C:\cygwin\home\&lt;username&gt;\WebKit</code>).</p>
+        <p>If the file is incorrectly named, rename it to <code>WebKitSupportLibrary.zip</code>. Do not extract its contents.</p>
+    </li>
+    <li>
+        <p>Run the <code>./Tools/Scripts/update-webkit</code> <a href="/coding/scripts.html">script</a> to update your source tree.</p>
+        <p>If you downloaded the tarball, this will bring it up to date.  Windows users
+            must always execute this command after first obtaining the code, since it will
+            download additional libraries that are needed to build.</p>
+    </li>
+</ol>
+</div>
+
+<p>Once you have a current tree, the next step is
+<a href="build.html">building WebKit</a>.</p>
+
+<h2>Checking Out with Git</h2>
+<p>To work with the WebKit source tree using a Git client, install a Git client with Subversion support and run the following command on your terminal:</p>
+<p class="code">git clone git://git.webkit.org/WebKit.git WebKit</p>
+
+<p>If you want to be able to commit changes to the Subversion repository, or just want to check out branches that aren't contained in WebKit.git, you will need track the Subversion repository. You can run the following command to configure this and other options of the new Git clone for WebKit development.</p>
+<p class="code">Tools/Scripts/webkit-patch setup-git-clone</p>
+
+<p>For information about this, and other aspects of using Git with WebKit, read <a href="https://trac.webkit.org/wiki/UsingGitWithWebKit">the wiki page</a>.</p>
+
+<h2>Keeping up to Date</h2>
+<p>At any time, you can rerun the <code>update-webkit</code> script to update
+your source tree.</p>
+
+<?php
+include("../footer.inc");
+?>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div>
+  <ol>
+    <li>A</li>
+    <li id="hostEquivalent"></li>
+    <li>C</li>
+  </ol>
+</div>
+<script>
+// We cannot use hostEquivalent.innerHTML instead of appendChild()s becuase
+// the parser prevents to create expected tree:
+//
+// <ol>
+//   <li>A</li>
+//   <li>
+//      <li>X</li>
+//      <ul>B</ul>
+//      <li>Y</li>
+//   </li>
+//   <li>C</li>
+// </ol>   
+var hostEquivalent = document.getElementById("hostEquivalent");
+var shadowListRoot = document.createElement("ol");
+shadowListRoot.style.paddingLeft = "0px";
+hostEquivalent.appendChild(shadowListRoot);
+
+var childX = document.createElement("li");
+childX.innerHTML = "X";
+childX.style.listStylePosition = "inside";
+shadowListRoot.appendChild(childX);
+
+var childUl = document.createElement("ul");
+childUl.innerHTML = "B";
+shadowListRoot.appendChild(childUl);
+
+var childY = document.createElement("li");
+childY.innerHTML = "Y";
+childY.style.listStylePosition = "inside";
+shadowListRoot.appendChild(childY);
+</script>
+</body>
+</html>

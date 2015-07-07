@@ -1,0 +1,44 @@
+<html>
+<head>
+<title>ValidityState minimal test case</title>
+<script language="JavaScript" type="text/javascript">
+    function log(message) {
+        document.getElementById("console").innerHTML += "<li>"+message+"</li>";
+    }
+
+    function countAttr(o) {
+        a = 0;
+
+        for (pisell in o)
+            a++;
+
+        return a;
+    }
+
+    function test() {
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        v = document.getElementsByName("victim");
+
+        for (i = 0; i < v.length; i++)
+            log('Test for ' + v[i].tagName + ': ' + ((v[i].validity && countAttr(v[i].validity) == 10) ? "SUCCESS" : "FAILURE"));
+    }
+</script>
+</head>
+<body onload="test()">
+<p>Each form control in this document exposes a validity attribute that returns
+a live instance of ValidityState.</p>
+<fieldset name="victim">
+<select name="victim"></select>
+<input name="victim"/>
+<textarea name="victim"></textarea>
+<button name="victim"></button>
+<output name="victim"></output>
+<object name="victim"></object>
+<keygen name="victim"></keygen>
+</fieldset>
+<hr>
+<ol id="console"></ol>
+</body>
+</html>

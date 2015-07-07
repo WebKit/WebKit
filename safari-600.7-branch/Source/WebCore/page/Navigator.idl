@@ -1,0 +1,51 @@
+/*
+    Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Library General Public
+    License as published by the Free Software Foundation; either
+    version 2 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Library General Public License for more details.
+
+    You should have received a copy of the GNU Library General Public License
+    along with this library; see the file COPYING.LIB.  If not, write to
+    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    Boston, MA 02110-1301, USA.
+*/
+
+[
+    GenerateIsReachable=ImplFrame,
+] interface Navigator {
+    [Nondeterministic] readonly attribute DOMString appCodeName;
+    [Nondeterministic] readonly attribute DOMString appName;
+    [Nondeterministic] readonly attribute DOMString appVersion;
+    [Nondeterministic] readonly attribute DOMString language;
+    [Nondeterministic] readonly attribute DOMString userAgent;
+    [Nondeterministic] readonly attribute DOMString platform;
+    readonly attribute DOMPluginArray plugins;
+    readonly attribute DOMMimeTypeArray mimeTypes;
+    [Nondeterministic] readonly attribute DOMString product;
+    [Nondeterministic] readonly attribute DOMString productSub;
+    [Nondeterministic] readonly attribute DOMString vendor;
+    [Nondeterministic] readonly attribute DOMString vendorSub;
+    [Nondeterministic] readonly attribute boolean cookieEnabled;
+    [Nondeterministic] boolean javaEnabled();
+
+    readonly attribute boolean onLine;
+
+#if defined(ENABLE_NAVIGATOR_HWCONCURRENCY)
+    readonly attribute long hardwareConcurrency;
+#endif
+
+    // FIXME: Convert this #if'def to an IDL conditional attribute.
+#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
+    readonly attribute boolean standalone;
+#endif
+
+    void getStorageUpdates(); // FIXME: Remove this method or rename to yieldForStorageUpdates.
+};
+

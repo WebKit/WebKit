@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            #content { font: 20px/1 monospace; }
+            #content:first-letter { -webkit-flow-into: flow; }
+            #region { -webkit-flow-from: flow; position: absolute; top: 200px; }
+        </style>
+    </head>
+    <script src="../../resources/check-layout.js"></script>
+    <body onload="checkLayout('#region')">
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=105046"> [CSSRegions] Pseudo-elements should not be directly collected into a named flow</a>.</p>
+        <p>The region should have size 0 because pseudo-elements cannot be collected directly into a named flow and such there is no content to be displayed in region.</p>
+        <p>On success, you should not see FAIL below.</p>
+        <div id="content">:first-letter content</div>
+        <div id="region" data-expected-width=0 data-expected-height=0></div>
+    </body>
+</html>

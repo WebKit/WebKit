@@ -1,0 +1,6 @@
+GType webkit_dom_event_target_get_type(void)
+void webkit_dom_event_target_dispatch_event(WebKitDOMEventTarget*, WebKitDOMEvent* event, GError**)
+gboolean webkit_dom_event_target_add_event_listener(WebKitDOMEventTarget* target, const char*, GCallback, gboolean, gpointer)
+gboolean webkit_dom_event_target_remove_event_listener(WebKitDOMEventTarget*, const char*, GCallback, gboolean)
+gboolean webkit_dom_event_target_add_event_listener_with_closure(WebKitDOMEventTarget*, const char*, GClosure*, gboolean)
+gboolean webkit_dom_event_target_remove_event_listener_with_closure(WebKitDOMEventTarget*, const char*, GClosure*, gboolean)

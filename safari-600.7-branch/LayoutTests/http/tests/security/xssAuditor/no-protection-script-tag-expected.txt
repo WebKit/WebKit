@@ -1,0 +1,4 @@
+ALERT: /PASS/
+This script should run because XSS protection is disabled.
+
+

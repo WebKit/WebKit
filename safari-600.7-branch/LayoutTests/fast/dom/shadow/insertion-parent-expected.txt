@@ -1,0 +1,14 @@
+Tests for node's insertionParent().
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.webkitInsertionParent is undefined.
+PASS document.getElementById('host-1').webkitInsertionParent is null
+PASS document.getElementById('child').webkitInsertionParent.id is "content-1"
+PASS document.getElementById('reprojected-child').webkitInsertionParent.id is "content-2"
+PASS textNode.webkitInsertionParent.id is "content-3"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+hello

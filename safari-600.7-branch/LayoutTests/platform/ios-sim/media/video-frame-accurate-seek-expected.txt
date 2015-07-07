@@ -1,0 +1,29 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x416
+  RenderBlock {HTML} at (0,0) size 800x416
+    RenderBody {BODY} at (8,16) size 784x392
+      RenderBlock {P} at (0,0) size 784x62
+        RenderText {#text} at (0,1) size 715x60
+          text run at (0,1) width 715: "Test that setting currentTime is frame-accurate. The three videos below"
+          text run at (0,32) width 417: "should be showing frames 12, 13, and 14."
+      RenderBlock (anonymous) at (0,78) size 784x314
+        RenderText {#text} at (300,135) size 4x19
+          text run at (300,135) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (300,292) size 4x19
+          text run at (300,292) width 4: " "
+        RenderText {#text} at (304,284) size 56x29
+          text run at (304,284) width 56: "FAIL"
+layer at (8,94) size 300x150
+  RenderEmbeddedObject {VIDEO} at (0,0) size 300x150
+layer at (312,94) size 300x150
+  RenderEmbeddedObject {VIDEO} at (304,0) size 300x150
+layer at (8,251) size 300x150
+  RenderEmbeddedObject {VIDEO} at (0,157) size 300x150
+layer at (8,94) size 300x150
+  RenderFlexibleBox {DIV} at (0,0) size 300x150
+layer at (312,94) size 300x150
+  RenderFlexibleBox {DIV} at (0,0) size 300x150
+layer at (8,251) size 300x150
+  RenderFlexibleBox {DIV} at (0,0) size 300x150

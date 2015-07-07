@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>CSS Test: Inline non-replaced elements with 'auto' value for 'left', 'right', and 'margin-left'</title>
+        <link rel="author" title="Microsoft" href="http://www.microsoft.com/">
+        <link rel="help" href="http://www.w3.org/TR/CSS21/visudet.html#inline-width">
+        <meta name="flags" content="ahem">
+        <meta name="assert" content="Computed value of 'auto' for 'left', 'right', and 'margin-left' becomes a used value of '0'.">
+        <style type="text/css">
+            div
+            {
+                border: solid black;
+                height: 2in;
+                width: 2in;
+            }
+            span
+            {
+                color: blue;
+                font: 1in/1em Ahem;
+                left: auto;
+                margin-left: auto;
+                position: relative;
+                right: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test passes if the blue box below is in the upper-left corner of the black box.</p>
+        <div>
+            <span>X</span>
+        </div>
+    </body>
+</html>

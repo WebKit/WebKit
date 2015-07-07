@@ -1,0 +1,98 @@
+<canvas width="200" height="200" id="canvas">FAIL: no canvas support</canvas>
+<div id="log"></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var canvas = document.getElementById("canvas").getContext("2d");
+//four tests
+// 1. Infinite dimensions to fillRect
+canvas.fillStyle = "green";
+canvas.fillRect(0, 0, 100, 100);
+canvas.fillStyle = "red";
+try {
+    canvas.fillRect(0, 0, Infinity, Infinity);
+} catch (e) {
+    canvas.fillRect(0, 0, 100, 100);
+}
+
+// 2. Infinite dimensions to rect
+canvas.fillStyle = "green";
+canvas.fillRect(100, 0, 100, 100);
+canvas.fillStyle = "red";
+try {
+    canvas.rect(100, 0, Infinity, Infinity);
+    canvas.fill();
+} catch (e) {
+    canvas.fillRect(100, 0, 100, 100);
+}
+
+// 3. Infinite argument to moveTo
+canvas.translate(0, 100);
+canvas.fillStyle = "red";
+canvas.fillRect(0, 0, 100, 100);
+canvas.fillStyle = "green";
+try {
+    canvas.beginPath();
+    canvas.moveTo(Infinity, Infinity);
+    canvas.rect(0, 0, 100, 100);
+    canvas.fill();
+} catch (e) {
+    alert(e);
+}
+
+// 4. Infinite argument to lineTo
+canvas.translate(100, 0);
+canvas.fillStyle = "red";
+canvas.fillRect(0, 0, 100, 100);
+canvas.fillStyle = "green";
+try {
+    canvas.beginPath();
+    canvas.moveTo(0,0);
+    canvas.lineTo(100, 0);
+    canvas.lineTo(100, 100);
+    canvas.lineTo(0, 100);
+    canvas.lineTo(Infinity, 100);
+    canvas.fill();
+} catch (e) {
+}
+
+function log(msg){
+    document.getElementById("log").innerHTML += msg + "<br/>";
+}
+
+function dataToArray(data) {
+    var result = new Array(data.length)
+    for (var i = 0; i < data.length; i++)
+        result[i] = data[i];
+    return result;
+}
+
+function getPixel(ctx, x, y) {
+    var data = ctx.getImageData(x,y,1,1);
+    if (!data) // getImageData failed, which should never happen
+        return [-1,-1,-1,-1];
+    return dataToArray(data.data);
+}
+
+function pixelShouldBe(ctx, x, y, colour) {
+    var ctxColour = getPixel(ctx, x, y);
+    var correct = true;
+    for (var i = 0; i < 4; i++)
+        if (colour[i] != ctxColour[i]) {
+            correct = false;
+            break;
+        }
+    if (correct)
+        log("PASS: pixel at ("+[x,y]+") was ["+colour+"]");
+    else
+        log("FAIL: pixel at ("+[x,y]+") was ["+ctxColour+"], expected ["+colour+"]");
+}
+
+var points = [25, 50, 75, 125, 150, 175];
+for (var x = 0; x < points.length; x++) {
+    for (var y = 0; y < points.length; y++) {
+        pixelShouldBe(canvas, points[x], points[y], [0, 128, 0, 255]);
+    }
+}
+</script>

@@ -1,0 +1,101 @@
+body {
+    background: url('http://webkit.org/images/blue-background.png') top left repeat-x;
+    padding: 10px 25px 25px;
+    font-size: 12px;
+    line-height: 1.5em;
+    font-family: 'Lucida Grande', Verdana, Arial;
+}
+
+a {
+    color: #369;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+img {
+    border: 0;
+}
+
+h1, h2, h3 {
+    text-shadow: #bbb 2px 2px 2px;
+}
+
+h1 {
+    font-size: 18px;
+    margin-top: 5px;
+}
+
+h3 {
+    margin: 0 0 5px 0;
+    font-size: 20px;
+}
+
+h3 a {
+    color: #025;
+}
+
+h4 {
+    margin: 0;
+    font-weight: normal;
+    font-size: 14px;
+}
+
+#icon {
+    position: absolute;
+    top: 10px;
+    right: 0;
+    background: url('images/planet-webkit.png') top left no-repeat;
+    height: 188px;
+    width: 233px;
+    z-index: 3;
+}
+
+.sidebar {
+    position: absolute;
+    background: url('http://webkit.org/images/nav.png') top left no-repeat;
+    height: 350px;
+    width: 145px;
+    top: 173px;
+    right: 30px;
+    padding: 20px 5px 0 15px;
+    font-size: 11px;
+    line-height: 17px;
+}
+
+.sidebar h2 {
+    font-weight: bold;
+    font-size: 11px;
+    line-height: 17px;
+    margin: 0;
+    padding: 0;
+    text-shadow: none;
+}
+
+.sidebar ul {
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar ul li {
+    list-style-type: none;
+    margin: 3px 0;
+}
+
+#wrapper {
+    margin: 0 190px 0 0;
+}
+
+#wrapper ul li {
+    list-style-image: url('http://webkit.org/images/blue-bullet.png');
+}
+
+.entry .content {
+    margin: 10px 15px 0;
+}
+
+.entrygroup {
+    margin: 0 0 25px 0;
+}

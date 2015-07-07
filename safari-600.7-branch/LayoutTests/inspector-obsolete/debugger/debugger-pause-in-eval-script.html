@@ -1,0 +1,40 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+<script>
+
+
+var test = function()
+{
+    var scriptToEvaluate = "function testFunction() {\n" +
+                           "    debugger;\n" +
+                           "}\n" +
+                           "setTimeout(testFunction, 0);\n";
+
+    InspectorTest.startDebuggerTest(step1);
+
+    function step1()
+    {
+        InspectorTest.evaluateInConsole(scriptToEvaluate, InspectorTest.addResult.bind(InspectorTest, "Evaluated script in console."));
+        InspectorTest.waitUntilPaused(step2);
+    }
+
+    function step2(callFrames)
+    {
+        InspectorTest.captureStackTrace(callFrames);
+        InspectorTest.completeDebuggerTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that debugger will stop on "debugger" statement in a function that was added
+to the inspected page via evaluation in Web Inspector console.<a href="https://bugs.webkit.org/show_bug.cgi?id=41058">Bug 41058</a>
+</p>
+
+</body>
+</html>

@@ -1,0 +1,5 @@
+ALERT: Page was loaded
+
+Test for NPN_RelaodPlugin in which reloadOpenPages is false. You should see one alert, indicating that the page was loaded once.
+
+SUCCESS

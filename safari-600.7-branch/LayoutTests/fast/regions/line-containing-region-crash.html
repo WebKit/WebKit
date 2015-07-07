@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+    <style>
+        #content {
+            width: 500px;
+            height: 150px;
+            -webkit-flow-into: flow;
+        }
+        .region {
+            -webkit-flow-from: flow;
+            width: 500px;
+            height: 500px;
+        }
+    </style>
+</head>
+<body>
+    <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=101332">WebKit Bug 101332</a> Crash </p>
+    <p>The test passes if it does not crash or assert.</p>
+    <p>PASS</p>
+    <div id="content">
+        Hello Crash!
+    </div>
+    <div id="region"></div>
+    <script>
+        if (window.testRunner)
+            window.testRunner.dumpAsText();
+        var content = document.getElementById("content");
+        content.style.height = "200px";
+        document.body.offsetTop;
+        var region = document.getElementById("region");
+        region.className = "region";
+        document.body.offsetTop;
+        region.className = "noregion";
+        document.body.offsetTop;
+    </script>
+</body>
+</html>

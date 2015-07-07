@@ -1,0 +1,6 @@
+Test for iframe flattening. The flattening only works inside the DRT.
+
+The frame should not be resized to the size of the containing content.
+
+
+PASS

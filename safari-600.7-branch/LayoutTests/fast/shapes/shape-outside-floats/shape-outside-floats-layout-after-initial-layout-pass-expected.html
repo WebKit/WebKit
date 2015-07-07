@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.shape-outside {
+    float: left;
+    width: 50px;
+    height: 100px;
+    background-color: green;
+}
+#content {
+    font: 25px/1 Ahem, sans-serif;
+    width: 200px;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+</style>
+</head>
+
+<body>
+    <div id="content">
+        <p><div class="shape-outside"></div>XXXX XXXX XXXX XXXX</p>
+    </div>
+</body>
+
+<p style="margin-top: 150px;">
+    There is a green left floating container with shape-outside (50px wide, 100px tall) and inline content (black rectangle). The whole content flows into a region.
+    The black rectangle should respect the shape-outside, thus the black rectangle should have 50px left offset, which is represented by the green rectangular area.
+</p>
+<p>Bug <a href="http://webkit.org/b/114829">114829</a>: [CSS Regions][CSS Shapes] Content in region doesn't respect shape-outside after initial layout pass</p>
+</html>

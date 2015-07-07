@@ -1,0 +1,177 @@
+Tests that InspectorCSSAgent formats the CSS style text based on the CSS model modifications.
+
+Formatted
+Unformatted
+
+Running: initFormattedStyle
+
+Running: testFormattedInsertStart
+raw cssText:
+{ 
+    firstProperty: firstValue;
+    property1: value1;
+    property2: value2;
+    property3: value3;
+}
+
+Running: testFormattedRemoveStart
+raw cssText:
+{ 
+    property1: value1;
+    property2: value2;
+    property3: value3;
+}
+
+Running: testFormattedInsertMiddle
+raw cssText:
+{ 
+    property1: value1;
+    middleProperty: middleValue;
+    property2: value2;
+    property3: value3;
+}
+
+Running: testFormattedRemoveMiddle
+raw cssText:
+{ 
+    property1: value1;
+    property2: value2;
+    property3: value3;
+}
+
+Running: testFormattedInsertEnd
+raw cssText:
+{ 
+    property1: value1;
+    property2: value2;
+    property3: value3;
+    endProperty: endValue;
+}
+
+Running: testFormattedRemoveEnd
+raw cssText:
+{ 
+    property1: value1;
+    property2: value2;
+    property3: value3;
+}
+
+Running: testFormattedDisableStart
+raw cssText:
+{ 
+    property2: value2;
+    property3: value3;
+}
+
+Running: testFormattedDisableEnd
+raw cssText:
+{ 
+    property2: value2;
+}
+
+Running: testFormattedDisableMiddle
+raw cssText:
+{ 
+}
+
+Running: testFormattedInsert1
+raw cssText:
+{ 
+    propA: valA;
+}
+
+Running: testFormattedInsert2
+raw cssText:
+{ 
+    propA: valA;
+    propB: valB;
+}
+
+Running: testFormattedInsert3
+raw cssText:
+{ 
+    propA: valA;
+    propB: valB;
+    propC: valC;
+}
+
+Running: testFormattedEnableStart
+raw cssText:
+{ 
+    propA: valA;
+    property1: value1;
+    propB: valB;
+    propC: valC;
+}
+
+Running: testFormattedEnableEnd
+raw cssText:
+{ 
+    propA: valA;
+    property1: value1;
+    propB: valB;
+    property3: value3;
+    propC: valC;
+}
+
+Running: testFormattedEnableMiddle
+raw cssText:
+{ 
+    propA: valA;
+    property1: value1;
+    propB: valB;
+    property2: value2;
+    property3: value3;
+    propC: valC;
+}
+
+Running: initUnformattedStyle
+
+Running: testUnformattedInsertStart
+raw cssText:
+{firstProperty: firstValue;property1:value1;property2:value2;property3:value3;}
+
+Running: testUnformattedRemoveStart
+raw cssText:
+{property1:value1;property2:value2;property3:value3;}
+
+Running: testUnformattedInsertMiddle
+raw cssText:
+{property1:value1;middleProperty: middleValue;property2:value2;property3:value3;}
+
+Running: testUnformattedRemoveMiddle
+raw cssText:
+{property1:value1;property2:value2;property3:value3;}
+
+Running: testUnformattedInsertEnd
+raw cssText:
+{property1:value1;property2:value2;property3:value3;endProperty: endValue;}
+
+Running: testUnformattedRemoveEnd
+raw cssText:
+{property1:value1;property2:value2;property3:value3;}
+
+Running: testUnformattedDisableStart
+raw cssText:
+{property2:value2;property3:value3;}
+
+Running: testUnformattedDisableEnd
+raw cssText:
+{property2:value2;}
+
+Running: testUnformattedDisableMiddle
+raw cssText:
+{}
+
+Running: testUnformattedEnableStart
+raw cssText:
+{property1:value1;}
+
+Running: testUnformattedEnableEnd
+raw cssText:
+{property1:value1;property3:value3;}
+
+Running: testUnformattedEnableMiddle
+raw cssText:
+{property1:value1;property2:value2;property3:value3;}
+

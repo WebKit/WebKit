@@ -1,0 +1,3 @@
+Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/domconfigschemalocation1
+Status	error
+Message	Line 95: TypeError

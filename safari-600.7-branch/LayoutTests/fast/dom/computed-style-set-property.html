@@ -1,0 +1,24 @@
+<body>
+<p>You should see two "PASS" messages below:</p>
+
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+document.write("Computed style parent (should be null): " + document.defaultView.getComputedStyle(document.body, null).parentRule);
+try {
+  document.defaultView.getComputedStyle(document.body, null).color = "blue";
+  document.write("<p>FAIL: did not get an exception when trying to change a computed style declaration.");
+} catch (ex) {
+  document.write("<p>PASS: got an exception when trying to change a computed style declaration, " + ex);
+}
+
+try {
+  document.defaultView.getComputedStyle(document.body, null).setProperty("color", "blue");
+  document.write("<p>FAIL: did not get an exception when trying to change a computed style declaration via setProperty.");
+} catch (ex) {
+  document.write("<p>PASS: got an exception when trying to change a computed style declaration via setProperty, " + ex);
+}
+
+</script>
+</body>

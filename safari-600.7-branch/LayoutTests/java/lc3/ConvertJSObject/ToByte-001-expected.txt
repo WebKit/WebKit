@@ -1,0 +1,12 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion Preferred argument conversion:  JavaScript Object to short
+
+PASS TEST_CLASS.ambiguous( new String() ) +'' is 'BYTE'
+PASS TEST_CLASS.ambiguous( new Boolean() ) +'' is 'BYTE'
+PASS TEST_CLASS.ambiguous( new Number() ) +'' is 'BYTE'
+PASS TEST_CLASS.ambiguous( new Date(99) ) +'' is 'BYTE'
+PASS TEST_CLASS.ambiguous( new MyObject(127) ) +'' is 'BYTE'
+PASS TEST_CLASS.ambiguous( MyFunction ) +'' is 'BYTE'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

@@ -1,0 +1,156 @@
+Verify WebGLContextAttributes are working as specified, including alpha, depth, stencil, antialias, but not premultipliedAlpha
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Testing alpha = true
+PASS getError was expected value: NO_ERROR : should be no errors
+PASS gl = getWebGL(1, 1, { alpha: true, depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 0 ], 1, 0) is non-null.
+PASS gl.getParameter(gl.ALPHA_BITS) >= 8 is true
+PASS gl.getParameter(gl.RED_BITS) >= 8 is true
+PASS gl.getParameter(gl.GREEN_BITS) >= 8 is true
+PASS gl.getParameter(gl.BLUE_BITS) >= 8 is true
+PASS gl.getParameter(gl.DEPTH_BITS) == 0 is true
+PASS gl.getParameter(gl.STENCIL_BITS) == 0 is true
+PASS contextAttribs = gl.getContextAttributes() is non-null.
+PASS contextAttribs.alpha == true is true
+PASS pixel is correctColor
+PASS Math.abs(pixel[0] - 127) <= 1 && Math.abs(pixel[1] - 127) <= 1 && Math.abs(pixel[2] - 127) <= 1 && Math.abs(pixel[3] - 127) <= 1 is true
+Testing alpha = false
+PASS getError was expected value: NO_ERROR : should be no errors
+PASS gl = getWebGL(1, 1, { alpha: false, depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 0 ], 1, 0) is non-null.
+PASS gl.getParameter(gl.ALPHA_BITS) == 0 is true
+PASS gl.getParameter(gl.RED_BITS) >= 8 is true
+PASS gl.getParameter(gl.GREEN_BITS) >= 8 is true
+PASS gl.getParameter(gl.BLUE_BITS) >= 8 is true
+PASS gl.getParameter(gl.DEPTH_BITS) == 0 is true
+PASS gl.getParameter(gl.STENCIL_BITS) == 0 is true
+PASS contextAttribs = gl.getContextAttributes() is non-null.
+PASS contextAttribs.alpha == false is true
+PASS pixel is correctColor
+PASS Math.abs(pixel[0] - 127) <= 1 && Math.abs(pixel[1] - 127) <= 1 && Math.abs(pixel[2] - 127) <= 1 && Math.abs(pixel[3] - 127) <= 1 is true
+Testing depth = true
+PASS getError was expected value: NO_ERROR : should be no errors
+PASS gl = getWebGL(1, 1, { depth: true, stencil: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0) is non-null.
+PASS gl.getParameter(gl.DEPTH_BITS) >= 16 is true
+PASS gl.getParameter(gl.RED_BITS) >= 8 is true
+PASS gl.getParameter(gl.GREEN_BITS) >= 8 is true
+PASS gl.getParameter(gl.BLUE_BITS) >= 8 is true
+PASS gl.getParameter(gl.ALPHA_BITS) >= 8 is true
+PASS contextAttribs = gl.getContextAttributes() is non-null.
+PASS pixel is correctColor
+PASS pixel is [0, 0, 0, 255]
+Testing depth = false
+PASS getError was expected value: NO_ERROR : should be no errors
+PASS gl = getWebGL(1, 1, { depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0) is non-null.
+PASS gl.getParameter(gl.DEPTH_BITS) == 0 is true
+PASS gl.getParameter(gl.RED_BITS) >= 8 is true
+PASS gl.getParameter(gl.GREEN_BITS) >= 8 is true
+PASS gl.getParameter(gl.BLUE_BITS) >= 8 is true
+PASS gl.getParameter(gl.ALPHA_BITS) >= 8 is true
+PASS contextAttribs = gl.getContextAttributes() is non-null.
+PASS pixel is correctColor
+PASS pixel is [0, 0, 0, 255]
+Testing stencil = true, depth = false
+PASS getError was expected value: NO_ERROR : should be no errors
+PASS gl = getWebGL(1, 1, { depth: false, stencil: true, antialias: false }, [ 0, 0, 0, 1 ], 1, 0) is non-null.
+PASS gl.getParameter(gl.RED_BITS) >= 8 is true
+PASS gl.getParameter(gl.GREEN_BITS) >= 8 is true
+PASS gl.getParameter(gl.BLUE_BITS) >= 8 is true
+PASS gl.getParameter(gl.ALPHA_BITS) >= 8 is true
+PASS gl.getParameter(gl.DEPTH_BITS) == 0 is true
+PASS gl.getParameter(gl.STENCIL_BITS) >= 8 is true
+PASS contextAttribs = gl.getContextAttributes() is non-null.
+PASS pixel is correctColor
+PASS pixel is [0, 0, 0, 255]
+Testing stencil = false, depth = false
+PASS getError was expected value: NO_ERROR : should be no errors
+PASS gl = getWebGL(1, 1, { depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0) is non-null.
+PASS gl.getParameter(gl.RED_BITS) >= 8 is true
+PASS gl.getParameter(gl.GREEN_BITS) >= 8 is true
+PASS gl.getParameter(gl.BLUE_BITS) >= 8 is true
+PASS gl.getParameter(gl.ALPHA_BITS) >= 8 is true
+PASS gl.getParameter(gl.DEPTH_BITS) == 0 is true
+PASS gl.getParameter(gl.STENCIL_BITS) == 0 is true
+PASS contextAttribs = gl.getContextAttributes() is non-null.
+PASS pixel is correctColor
+PASS pixel is [0, 0, 0, 255]
+Testing stencil = true, depth = true
+PASS getError was expected value: NO_ERROR : should be no errors
+PASS gl = getWebGL(1, 1, { depth: true, stencil: true, antialias: false }, [ 0, 0, 0, 1 ], 1, 0) is non-null.
+PASS gl.getParameter(gl.RED_BITS) >= 8 is true
+PASS gl.getParameter(gl.GREEN_BITS) >= 8 is true
+PASS gl.getParameter(gl.BLUE_BITS) >= 8 is true
+PASS gl.getParameter(gl.ALPHA_BITS) >= 8 is true
+PASS gl.getParameter(gl.DEPTH_BITS) >= 16 is true
+PASS gl.getParameter(gl.STENCIL_BITS) >= 8 is true
+PASS contextAttribs = gl.getContextAttributes() is non-null.
+PASS pixel is correctColor
+PASS pixel is [0, 0, 0, 255]
+Testing stencil = false, depth = true
+PASS getError was expected value: NO_ERROR : should be no errors
+PASS gl = getWebGL(1, 1, { depth: true, stencil: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0) is non-null.
+PASS gl.getParameter(gl.RED_BITS) >= 8 is true
+PASS gl.getParameter(gl.GREEN_BITS) >= 8 is true
+PASS gl.getParameter(gl.BLUE_BITS) >= 8 is true
+PASS gl.getParameter(gl.ALPHA_BITS) >= 8 is true
+PASS gl.getParameter(gl.DEPTH_BITS) >= 16 is true
+PASS gl.getParameter(gl.STENCIL_BITS) == 0 is true
+PASS contextAttribs = gl.getContextAttributes() is non-null.
+PASS pixel is correctColor
+PASS pixel is [0, 0, 0, 255]
+Testing antialias = true
+PASS getError was expected value: NO_ERROR : should be no errors
+PASS gl = getWebGL(2, 2, { depth: false, stencil: false, alpha: false, antialias: true }, [ 0, 0, 0, 1 ], 1, 0) is non-null.
+PASS contextAttribs = gl.getContextAttributes() is non-null.
+PASS pixel[0] != 255 && pixel[0] != 0 is contextAttribs.antialias
+Testing antialias = false
+PASS getError was expected value: NO_ERROR : should be no errors
+PASS gl = getWebGL(2, 2, { depth: false, stencil: false, alpha: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0) is non-null.
+PASS contextAttribs = gl.getContextAttributes() is non-null.
+PASS pixel[0] != 255 && pixel[0] != 0 is contextAttribs.antialias
+Testing default values for attributes
+Testing default alpha = true
+PASS getError was expected value: NO_ERROR : should be no errors
+PASS gl = getWebGL(1, 1, { depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 0 ], 1, 0) is non-null.
+PASS gl.getParameter(gl.ALPHA_BITS) >= 8 is true
+PASS gl.getParameter(gl.RED_BITS) >= 8 is true
+PASS gl.getParameter(gl.GREEN_BITS) >= 8 is true
+PASS gl.getParameter(gl.BLUE_BITS) >= 8 is true
+PASS gl.getParameter(gl.DEPTH_BITS) == 0 is true
+PASS gl.getParameter(gl.STENCIL_BITS) == 0 is true
+PASS contextAttribs = gl.getContextAttributes() is non-null.
+PASS contextAttribs.alpha == true is true
+PASS pixel is correctColor
+PASS Math.abs(pixel[0] - 127) <= 1 && Math.abs(pixel[1] - 127) <= 1 && Math.abs(pixel[2] - 127) <= 1 && Math.abs(pixel[3] - 127) <= 1 is true
+Testing default depth = true
+PASS getError was expected value: NO_ERROR : should be no errors
+PASS gl = getWebGL(1, 1, { stencil: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0) is non-null.
+PASS gl.getParameter(gl.DEPTH_BITS) >= 16 is true
+PASS gl.getParameter(gl.RED_BITS) >= 8 is true
+PASS gl.getParameter(gl.GREEN_BITS) >= 8 is true
+PASS gl.getParameter(gl.BLUE_BITS) >= 8 is true
+PASS gl.getParameter(gl.ALPHA_BITS) >= 8 is true
+PASS contextAttribs = gl.getContextAttributes() is non-null.
+PASS pixel is correctColor
+PASS pixel is [0, 0, 0, 255]
+Testing default stencil = false and default depth = true
+PASS getError was expected value: NO_ERROR : should be no errors
+PASS gl = getWebGL(1, 1, { antialias: false }, [ 0, 0, 0, 1 ], 1, 0) is non-null.
+PASS gl.getParameter(gl.RED_BITS) >= 8 is true
+PASS gl.getParameter(gl.GREEN_BITS) >= 8 is true
+PASS gl.getParameter(gl.BLUE_BITS) >= 8 is true
+PASS gl.getParameter(gl.ALPHA_BITS) >= 8 is true
+PASS gl.getParameter(gl.DEPTH_BITS) >= 16 is true
+PASS gl.getParameter(gl.STENCIL_BITS) == 0 is true
+PASS contextAttribs = gl.getContextAttributes() is non-null.
+PASS pixel is correctColor
+PASS pixel is [0, 0, 0, 255]
+Testing default antialias = true
+PASS getError was expected value: NO_ERROR : should be no errors
+PASS gl = getWebGL(2, 2, { depth: false, stencil: false, alpha: false }, [ 0, 0, 0, 1 ], 1, 0) is non-null.
+PASS contextAttribs = gl.getContextAttributes() is non-null.
+PASS pixel[0] != 255 && pixel[0] != 0 is contextAttribs.antialias
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

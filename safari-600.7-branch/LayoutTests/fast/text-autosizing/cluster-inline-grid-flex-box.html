@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Test for https://bugs.webkit.org/show_bug.cgi?id=104702</title>
+<meta name="viewport" content="width=800">
+<style>
+html { font-size: 16px; }
+body { width: 800px; margin: 0; overflow-y: hidden; }
+</style>
+
+<script>
+if (window.internals) {
+    window.internals.settings.setTextAutosizingEnabled(true);
+    window.internals.settings.setTextAutosizingWindowSizeOverride(320, 480);
+} else if (window.console && console.warn) {
+    console.warn("This test depends on the Text Autosizing setting being true, so run it in DumpRenderTree, or manually enable Text Autosizing, and either use a mobile device with 320px device-width (like Nexus S or iPhone), or define HACK_FORCE_TEXT_AUTOSIZING_ON_DESKTOP.");
+}
+</script>
+
+</head>
+<body>
+<div>
+    <div>
+        <div style="display: -webkit-inline-grid; width: 600px">
+            This element becomes a separate autosizing cluster since it's a -webkit-inline-grid element. Hence its computed font size is 30px (16 * 600 / 320).<br>
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </div></div>
+    <div>
+        <div style="display: -webkit-inline-flex; width: 400px">
+            This element becomes a separate autosizing cluster since it's a -webkit-inline-flex element. Hence its computed font size is 20px (16 * 400 / 320).<br>
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </div></div>
+    <div>
+        <div style="display: -webkit-inline-box; width: 600px">
+            This element becomes a separate autosizing cluster since it's a -webkit-inline-box element. Hence its computed font size is 30px (16 * 600 / 320).<br>
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </div></div>
+</div>
+</body>
+</html>

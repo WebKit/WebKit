@@ -1,0 +1,2 @@
+Bug 75215: Crash in RenderTable::borderBefore
+This test has passed!

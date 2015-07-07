@@ -1,0 +1,31 @@
+Test having a <style scoped> element as a direct child of a ShadowRoot.
+
+--- Initial ---
+PASS internals.numberOfScopedHTMLStyleChildren(host) is 0
+PASS internals.numberOfScopedHTMLStyleChildren(sr) is 0
+--- Attaching <style scoped> ---
+PASS internals.numberOfScopedHTMLStyleChildren(host) is 0
+PASS internals.numberOfScopedHTMLStyleChildren(sr) is 1
+--- Removing host ---
+PASS internals.numberOfScopedHTMLStyleChildren(host) is 0
+PASS internals.numberOfScopedHTMLStyleChildren(sr) is 0
+--- Inserting host ---
+PASS internals.numberOfScopedHTMLStyleChildren(host) is 0
+PASS internals.numberOfScopedHTMLStyleChildren(sr) is 1
+--- Unsetting @scoped ---
+PASS internals.numberOfScopedHTMLStyleChildren(host) is 0
+PASS internals.numberOfScopedHTMLStyleChildren(sr) is 1
+--- Setting @scoped ---
+PASS internals.numberOfScopedHTMLStyleChildren(host) is 0
+PASS internals.numberOfScopedHTMLStyleChildren(sr) is 1
+--- Detaching <style scoped> ---
+PASS internals.numberOfScopedHTMLStyleChildren(host) is 0
+PASS internals.numberOfScopedHTMLStyleChildren(sr) is 0
+--- Attaching <style scoped> under host ---
+PASS internals.numberOfScopedHTMLStyleChildren(host) is 1
+PASS internals.numberOfScopedHTMLStyleChildren(sr) is 0
+--- DONE ---
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

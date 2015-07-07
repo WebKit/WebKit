@@ -1,0 +1,16 @@
+Test for the Vibration API.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS navigator.vibrate(0); is true
+PASS navigator.vibrate([]); is true
+PASS navigator.vibrate(1); is true
+PASS navigator.vibrate([1, 2]); is true
+PASS navigator.vibrate([1, 2, 3]); is true
+PASS navigator.vibrate(); threw exception TypeError: Not enough arguments.
+PASS navigator.vibrate([1], [2]); threw exception TypeError: Type error.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

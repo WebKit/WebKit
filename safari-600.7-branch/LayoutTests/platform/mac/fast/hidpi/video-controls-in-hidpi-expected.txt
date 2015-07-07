@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 539x18
+          text run at (0,0) width 539: "This test passes if the video controls are non-blurry and properly positioned in HiDPI."
+      RenderBlock (anonymous) at (0,18) size 784x150
+        RenderText {#text} at (0,0) size 0x0
+layer at (8,26) size 300x150
+  RenderVideo {VIDEO} at (0,0) size 300x150
+layer at (8,26) size 300x150
+  RenderFlexibleBox {DIV} at (0,0) size 300x150
+layer at (8,151) size 300x25
+  RenderFlexibleBox {DIV} at (0,125) size 300x25
+layer at (14,156) size 16x16
+  RenderButton {BUTTON} at (6,4) size 16x17 [color=#FFFFFF]
+layer at (40,156) size 16x16
+  RenderButton {BUTTON} at (32,5) size 16x16 [color=#FFFFFF]
+layer at (195,160) size 113x9
+  RenderFlexibleBox {DIV} at (186,8) size 114x10
+layer at (197,160) size 110x9
+  RenderFlexibleBox {DIV} at (2,0) size 110x9

@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 76: SyntaxError: Unexpected string literal ''. Expected ';' after var declaration.
+S8.4_A13_T3
+
+PASS Expected parsing failure
+
+TEST COMPLETE
+

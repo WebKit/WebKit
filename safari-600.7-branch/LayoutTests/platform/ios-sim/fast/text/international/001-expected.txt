@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderInline {A} at (0,0) size 32x19 [color=#0000EE]
+        RenderText {#text} at (0,0) size 32x19
+          text run at (0,0) width 32: "\x{5EFA}\x{7BC9}"
+      RenderText {#text} at (32,0) size 8x19
+        text run at (32,0) width 8: ", "
+      RenderInline {A} at (0,0) size 48x19 [color=#0000EE]
+        RenderText {#text} at (40,0) size 48x19
+          text run at (40,0) width 48: "\x{7F8E}\x{8853}\x{9928}"
+      RenderText {#text} at (88,0) size 8x19
+        text run at (88,0) width 8: ", "
+      RenderInline {A} at (0,0) size 32x19 [color=#0000EE]
+        RenderText {#text} at (96,0) size 32x19
+          text run at (96,0) width 32: "\x{6B74}\x{53F2}"
+      RenderText {#text} at (128,0) size 8x19
+        text run at (128,0) width 8: ", "
+      RenderInline {A} at (0,0) size 32x19 [color=#0000EE]
+        RenderText {#text} at (136,0) size 32x19
+          text run at (136,0) width 32: "\x{6587}\x{5B66}"
+      RenderText {#text} at (168,0) size 24x19
+        text run at (168,0) width 4: " "
+        text run at (172,0) width 20: "...a"

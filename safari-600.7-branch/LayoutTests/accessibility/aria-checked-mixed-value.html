@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="content">
+
+<div id="element1" role="radio" aria-checked="mixed"></div> <!-- treat as false for radio roles -->
+<div id="element2" role="menuitemradio" aria-checked="mixed"></div> <!-- treat as false for menuitemradio roles -->
+<div id="element3" role="checkbox" aria-checked="mixed"></div>
+<div id="element4" role="menuitemcheckbox" aria-checked="mixed"></div>
+<div id="element5" role="checkbox" indeterminate="true"></div>
+<div id="element6" role="checkbox" indeterminate="false"></div>
+
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("Tests whether mixed values are reported properly.");
+
+    if (window.accessibilityController) {
+          for (var i = 1; i < 7; i++) {
+              var element = accessibilityController.accessibleElementById("element" + i);
+              debug("Role: " + element.role);
+              debug("Mixed: " + element.isIndeterminate);
+              debug("\n");
+          }
+
+          document.getElementById("content").style.visibility = "hidden";
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

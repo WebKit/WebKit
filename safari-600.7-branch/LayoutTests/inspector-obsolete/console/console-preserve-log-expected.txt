@@ -1,0 +1,5 @@
+Tests that the console can preserve log messages across navigations. Bug 53359
+
+Page reloaded.
+PASS
+

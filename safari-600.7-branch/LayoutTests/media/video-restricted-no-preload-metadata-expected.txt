@@ -1,0 +1,17 @@
+
+Test that "no preloading restriction" disables preloading in spite of preload='auto'.
+
+** setting video.src
+EXPECTED (video.preload == 'auto') OK
+RUN(internals.setMediaSessionRestrictions('video', 'MetadataPreloadingNotPermitted'))
+** Pausing...
+
+** 250ms timer fired
+EXPECTED (video.readyState == '0') OK
+EXPECTED (video.buffered.length == '0') OK
+RUN(video.load())
+
+EVENT(loadedmetadata)
+
+END OF TEST
+

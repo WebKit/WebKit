@@ -1,0 +1,57 @@
+
+Test that default positioned TextTrack's cues are rendered correctly.
+EVENT(canplaythrough)
+EVENT(seeked)
+EXPECTED (video.currentTime == '0.5') OK
+EXPECTED (testTrack.track.activeCues.length == '1') OK
+EXPECTED (testTrack.track.activeCues[0].text == 'Lorem') OK
+EXPECTED (testCueDisplayBox.innerText == 'Lorem') OK
+EXPECTED (2 * testCueDisplayBox.offsetLeft == video.videoWidth - testCueDisplayBox.offsetWidth == 'true') OK
+
+RUN(video.currentTime = 1.5)
+EVENT(seeked)
+EXPECTED (video.currentTime == '1.5') OK
+EXPECTED (testTrack.track.activeCues.length == '1') OK
+EXPECTED (testTrack.track.activeCues[0].text == 'ipsum') OK
+EXPECTED (testCueDisplayBox.innerText == 'ipsum') OK
+EXPECTED (2 * testCueDisplayBox.offsetLeft == video.videoWidth - testCueDisplayBox.offsetWidth == 'true') OK
+
+RUN(video.currentTime = 2.5)
+EVENT(seeked)
+EXPECTED (video.currentTime == '2.5') OK
+EXPECTED (testTrack.track.activeCues.length == '1') OK
+EXPECTED (testTrack.track.activeCues[0].text == 'dolor') OK
+EXPECTED (testCueDisplayBox.innerText == 'dolor') OK
+EXPECTED (2 * testCueDisplayBox.offsetLeft == video.videoWidth - testCueDisplayBox.offsetWidth == 'true') OK
+
+RUN(video.currentTime = 3.5)
+EVENT(seeked)
+EXPECTED (video.currentTime == '3.5') OK
+EXPECTED (testTrack.track.activeCues.length == '1') OK
+EXPECTED (testTrack.track.activeCues[0].text == 'sit') OK
+EXPECTED (testCueDisplayBox.innerText == 'sit') OK
+EXPECTED (2 * testCueDisplayBox.offsetLeft == video.videoWidth - testCueDisplayBox.offsetWidth == 'true') OK
+
+Test the cue display colors and font.
+RUN(video.width = 320)
+RUN(video.height = 240)
+EXPECTED (getComputedStyle(currentCue).fontSize == '12px') OK
+
+RUN(video.width = 640)
+RUN(video.height = 480)
+EXPECTED (getComputedStyle(currentCue).fontSize == '24px') OK
+
+RUN(video.width = 960)
+RUN(video.height = 720)
+EXPECTED (getComputedStyle(currentCue).fontSize == '36px') OK
+
+RUN(video.width = 1280)
+RUN(video.height = 960)
+EXPECTED (getComputedStyle(currentCue).fontSize == '48px') OK
+
+EXPECTED (getComputedStyle(currentCue).fontFamily == 'sans-serif') OK
+EXPECTED (getComputedStyle(currentCue).color == 'rgb(255, 255, 255)') OK
+EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'display').firstChild).backgroundColor == 'rgba(0, 0, 0, 0.8)') OK
+
+END OF TEST
+

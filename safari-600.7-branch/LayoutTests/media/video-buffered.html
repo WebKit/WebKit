@@ -1,0 +1,24 @@
+<video controls></video>
+<script src=media-file.js></script>
+<script src=video-test.js></script>
+<script>
+    testExpected("video.buffered.length", 0);
+    testDOMException("video.buffered.start(-1)", "DOMException.INDEX_SIZE_ERR");
+    testDOMException("video.buffered.end(-1)", "DOMException.INDEX_SIZE_ERR");
+    testDOMException("video.buffered.start(0)", "DOMException.INDEX_SIZE_ERR");
+    testDOMException("video.buffered.end(0)", "DOMException.INDEX_SIZE_ERR");
+    waitForEvent('canplaythrough', 
+        function () 
+        {
+            testExpected("video.buffered.length", 1);
+            testExpected("video.buffered.start(0)", 0);
+            testExpected("video.buffered.end(0)", 0, '>');
+            testDOMException("video.buffered.start(-1)", "DOMException.INDEX_SIZE_ERR");
+            testDOMException("video.buffered.end(-1)", "DOMException.INDEX_SIZE_ERR");
+            testDOMException("video.buffered.start(1)", "DOMException.INDEX_SIZE_ERR");
+            testDOMException("video.buffered.end(1)", "DOMException.INDEX_SIZE_ERR");
+            endTest();
+        }
+    );
+    video.src = findMediaFile("video", "content/test");
+</script>

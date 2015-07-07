@@ -1,0 +1,9 @@
+FAIL: Timed out waiting for notifyDone to be called
+Test changing externalResourcesRequired after inserting the element into the tree.
+Test 1: PASS
+
+Test 2: FAIL: onload fired too late. External resource already completed loading
+
+Test 3: DID NOT EXECUTE
+
+Test 4: DID NOT EXECUTE

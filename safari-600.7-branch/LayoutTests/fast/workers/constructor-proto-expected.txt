@@ -1,0 +1,13 @@
+This tests that setting the proto of a built in constructor is not reset
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+proto = new Number(42): 42
+Object.getPrototypeOf(WorkerLocation): [object Object]
+WorkerLocation.__proto__ = proto: 42
+Object.getPrototypeOf(WorkerLocation): 42
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

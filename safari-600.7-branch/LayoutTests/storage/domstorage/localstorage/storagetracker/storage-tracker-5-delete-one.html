@@ -1,0 +1,44 @@
+<html>
+<head>
+<script src="../../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Test API to view origins that have local storage and to delete local storage by origin.");
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+    
+function finishTest() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function test()
+{
+    if (!window.localStorage) {
+        testFailed("localStorage DOES NOT exist");
+        return;
+    }
+
+    if (testRunner.originsWithLocalStorage().length > 0) {
+        shouldBeEqualToString("testRunner.originsWithLocalStorage().toString()", "file__0");
+        // We're just going to delete the existing origin, so we'll get one origin change notification.
+        testRunner.observeStorageTrackerNotifications(1);
+        // At this point, we're guaranteed to have one origin with local storage.
+        testRunner.deleteLocalStorageForOrigin("file://");
+    } else {
+        testFailed("Ran with no origins with local storage.");
+        testRunner.notifyDone();
+    }
+
+}
+
+test();	
+
+isSuccessfullyParsed();
+</script>
+</body>
+</html>

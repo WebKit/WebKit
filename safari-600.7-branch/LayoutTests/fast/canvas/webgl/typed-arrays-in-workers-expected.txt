@@ -1,0 +1,128 @@
+Tests copying and transferring typed arrays and ArrayBuffers to and from workers
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS copy Float32Array from worker to main thread
+PASS copy ArrayBuffer containing Float32Array values from worker to main thread
+PASS transfer Float32Array from worker to main thread
+PASS transfer ArrayBuffer containing Float32Array values from worker to main thread
+PASS copy Float32Array from worker to main thread
+PASS ping-pong with copy Float32Array from worker to main thread
+PASS copy ArrayBuffer containing Float32Array values from worker to main thread
+PASS ping-pong with copy containing Float32Array values from worker to main thread
+PASS transfer Float32Array from worker to main thread
+PASS ping-pong with transfer Float32Array from worker to main thread
+PASS transfer ArrayBuffer containing Float32Array values from worker to main thread
+PASS ping-pong with transfer containing Float32Array values from worker to main thread
+PASS copy DataView containing Float32 from worker to main thread
+PASS transfer DataView containing Float32 from worker to main thread
+PASS copy DataView containing Float32 from worker to main thread
+PASS ping-pong with copy DataView containing Float32 from worker to main thread
+PASS transfer DataView containing Float32 from worker to main thread
+PASS ping-pong with transfer DataView containing Float32 from worker to main thread
+PASS copy Float64Array from worker to main thread
+PASS copy ArrayBuffer containing Float64Array values from worker to main thread
+PASS transfer Float64Array from worker to main thread
+PASS transfer ArrayBuffer containing Float64Array values from worker to main thread
+PASS copy Float64Array from worker to main thread
+PASS ping-pong with copy Float64Array from worker to main thread
+PASS copy ArrayBuffer containing Float64Array values from worker to main thread
+PASS ping-pong with copy containing Float64Array values from worker to main thread
+PASS transfer Float64Array from worker to main thread
+PASS ping-pong with transfer Float64Array from worker to main thread
+PASS transfer ArrayBuffer containing Float64Array values from worker to main thread
+PASS ping-pong with transfer containing Float64Array values from worker to main thread
+PASS copy Int8Array from worker to main thread
+PASS copy ArrayBuffer containing Int8Array values from worker to main thread
+PASS transfer Int8Array from worker to main thread
+PASS transfer ArrayBuffer containing Int8Array values from worker to main thread
+PASS copy Int8Array from worker to main thread
+PASS ping-pong with copy Int8Array from worker to main thread
+PASS copy ArrayBuffer containing Int8Array values from worker to main thread
+PASS ping-pong with copy containing Int8Array values from worker to main thread
+PASS transfer Int8Array from worker to main thread
+PASS ping-pong with transfer Int8Array from worker to main thread
+PASS transfer ArrayBuffer containing Int8Array values from worker to main thread
+PASS ping-pong with transfer containing Int8Array values from worker to main thread
+PASS copy Int16Array from worker to main thread
+PASS copy ArrayBuffer containing Int16Array values from worker to main thread
+PASS transfer Int16Array from worker to main thread
+PASS transfer ArrayBuffer containing Int16Array values from worker to main thread
+PASS copy Int16Array from worker to main thread
+PASS ping-pong with copy Int16Array from worker to main thread
+PASS copy ArrayBuffer containing Int16Array values from worker to main thread
+PASS ping-pong with copy containing Int16Array values from worker to main thread
+PASS transfer Int16Array from worker to main thread
+PASS ping-pong with transfer Int16Array from worker to main thread
+PASS transfer ArrayBuffer containing Int16Array values from worker to main thread
+PASS ping-pong with transfer containing Int16Array values from worker to main thread
+PASS copy Int32Array from worker to main thread
+PASS copy ArrayBuffer containing Int32Array values from worker to main thread
+PASS transfer Int32Array from worker to main thread
+PASS transfer ArrayBuffer containing Int32Array values from worker to main thread
+PASS copy Int32Array from worker to main thread
+PASS ping-pong with copy Int32Array from worker to main thread
+PASS copy ArrayBuffer containing Int32Array values from worker to main thread
+PASS ping-pong with copy containing Int32Array values from worker to main thread
+PASS transfer Int32Array from worker to main thread
+PASS ping-pong with transfer Int32Array from worker to main thread
+PASS transfer ArrayBuffer containing Int32Array values from worker to main thread
+PASS ping-pong with transfer containing Int32Array values from worker to main thread
+PASS copy DataView containing Int32 from worker to main thread
+PASS transfer DataView containing Int32 from worker to main thread
+PASS copy DataView containing Int32 from worker to main thread
+PASS ping-pong with copy DataView containing Int32 from worker to main thread
+PASS transfer DataView containing Int32 from worker to main thread
+PASS ping-pong with transfer DataView containing Int32 from worker to main thread
+PASS copy Uint8Array from worker to main thread
+PASS copy ArrayBuffer containing Uint8Array values from worker to main thread
+PASS transfer Uint8Array from worker to main thread
+PASS transfer ArrayBuffer containing Uint8Array values from worker to main thread
+PASS copy Uint8Array from worker to main thread
+PASS ping-pong with copy Uint8Array from worker to main thread
+PASS copy ArrayBuffer containing Uint8Array values from worker to main thread
+PASS ping-pong with copy containing Uint8Array values from worker to main thread
+PASS transfer Uint8Array from worker to main thread
+PASS ping-pong with transfer Uint8Array from worker to main thread
+PASS transfer ArrayBuffer containing Uint8Array values from worker to main thread
+PASS ping-pong with transfer containing Uint8Array values from worker to main thread
+PASS copy Uint8ClampedArray from worker to main thread
+PASS copy ArrayBuffer containing Uint8ClampedArray values from worker to main thread
+PASS transfer Uint8ClampedArray from worker to main thread
+PASS transfer ArrayBuffer containing Uint8ClampedArray values from worker to main thread
+PASS copy Uint8ClampedArray from worker to main thread
+PASS ping-pong with copy Uint8ClampedArray from worker to main thread
+PASS copy ArrayBuffer containing Uint8ClampedArray values from worker to main thread
+PASS ping-pong with copy containing Uint8ClampedArray values from worker to main thread
+PASS transfer Uint8ClampedArray from worker to main thread
+PASS ping-pong with transfer Uint8ClampedArray from worker to main thread
+PASS transfer ArrayBuffer containing Uint8ClampedArray values from worker to main thread
+PASS ping-pong with transfer containing Uint8ClampedArray values from worker to main thread
+PASS copy Uint16Array from worker to main thread
+PASS copy ArrayBuffer containing Uint16Array values from worker to main thread
+PASS transfer Uint16Array from worker to main thread
+PASS transfer ArrayBuffer containing Uint16Array values from worker to main thread
+PASS copy Uint16Array from worker to main thread
+PASS ping-pong with copy Uint16Array from worker to main thread
+PASS copy ArrayBuffer containing Uint16Array values from worker to main thread
+PASS ping-pong with copy containing Uint16Array values from worker to main thread
+PASS transfer Uint16Array from worker to main thread
+PASS ping-pong with transfer Uint16Array from worker to main thread
+PASS transfer ArrayBuffer containing Uint16Array values from worker to main thread
+PASS ping-pong with transfer containing Uint16Array values from worker to main thread
+PASS copy Uint32Array from worker to main thread
+PASS copy ArrayBuffer containing Uint32Array values from worker to main thread
+PASS transfer Uint32Array from worker to main thread
+PASS transfer ArrayBuffer containing Uint32Array values from worker to main thread
+PASS copy Uint32Array from worker to main thread
+PASS ping-pong with copy Uint32Array from worker to main thread
+PASS copy ArrayBuffer containing Uint32Array values from worker to main thread
+PASS ping-pong with copy containing Uint32Array values from worker to main thread
+PASS transfer Uint32Array from worker to main thread
+PASS ping-pong with transfer Uint32Array from worker to main thread
+PASS transfer ArrayBuffer containing Uint32Array values from worker to main thread
+PASS ping-pong with transfer containing Uint32Array values from worker to main thread
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

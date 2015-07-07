@@ -1,0 +1,41 @@
+CONSOLE MESSAGE: line 58: Done.
+Tests that network panel shows content for embed objects.
+
+
+http://127.0.0.1:8000/inspector/network/resources/resource.php?type=image
+resource.type: other
+resource.content before requesting content: undefined
+resource.content after requesting content: null
+http://127.0.0.1:8000/inspector/network/resources/plugin-data.php?filename=utf8.xml&mimetype=text/html&charset=utf8
+resource.type: other
+resource.content before requesting content: undefined
+resource.content after requesting content: <?xml version='1.0' encoding='utf-8'?>
+<root>
+  <utf8>SUССЕSS - These 'CCE' are cyrillic letters.</utf8>
+</root>
+
+http://127.0.0.1:8000/inspector/network/resources/plugin-data.php?filename=cp1251.xml&mimetype=text/html&charset=cp1251
+resource.type: other
+resource.content before requesting content: undefined
+resource.content after requesting content: <?xml version='1.0' encoding='cp1251'?>
+<root>
+  <cp1251>SUССЕSS - These 'CCE' are cyrillic letters.</cp1251>
+</root>
+
+http://127.0.0.1:8000/inspector/network/resources/plugin-data.php?filename=utf8.xml&mimetype=application/xml
+resource.type: other
+resource.content before requesting content: undefined
+resource.content after requesting content: <?xml version='1.0' encoding='utf-8'?>
+<root>
+  <utf8>SUССЕSS - These 'CCE' are cyrillic letters.</utf8>
+</root>
+
+http://127.0.0.1:8000/inspector/network/resources/plugin-data.php?filename=cp1251.xml&mimetype=application/xml
+resource.type: other
+resource.content before requesting content: undefined
+resource.content after requesting content: <?xml version='1.0' encoding='cp1251'?>
+<root>
+  <cp1251>SUССЕSS - These 'CCE' are cyrillic letters.</cp1251>
+</root>
+
+

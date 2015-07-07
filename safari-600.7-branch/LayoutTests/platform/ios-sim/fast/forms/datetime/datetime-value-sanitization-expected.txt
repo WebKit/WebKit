@@ -1,0 +1,38 @@
+Tests for value sanitization algorithm.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Valid values:
+PASS input.value = "2009-09-07T16:49Z"; input.value is "2009-09-07T16:49Z"
+PASS input.value = "2009-09-07T16:49:31.123Z"; input.value is "2009-09-07T16:49:31.123Z"
+Valid values, normalized:
+FAIL input.value = "2009-09-07T16:49:00Z"; input.value should be 2009-09-07T16:49Z. Was 2009-09-07T16:49:00Z.
+FAIL input.value = "2009-09-07T16:49:00.000Z"; input.value should be 2009-09-07T16:49Z. Was 2009-09-07T16:49:00.000Z.
+FAIL input.value = "2012-01-01T00:00+00:00"; input.value should be 2012-01-01T00:00Z. Was 2012-01-01T00:00+00:00.
+FAIL input.value = "2012-01-01T00:00-00:00"; input.value should be 2012-01-01T00:00Z. Was 2012-01-01T00:00-00:00.
+FAIL input.value = "2012-01-01T00:00+01:00"; input.value should be 2011-12-31T23:00Z. Was 2012-01-01T00:00+01:00.
+FAIL input.value = "2012-01-01T00:00-01:00"; input.value should be 2012-01-01T01:00Z. Was 2012-01-01T00:00-01:00.
+FAIL input.value = "2011-12-31T23:59:59.999-23:59"; input.value should be 2012-01-01T23:58:59.999Z. Was 2011-12-31T23:59:59.999-23:59.
+Invalid values:
+FAIL input.value = "a"; input.value should be . Was a.
+FAIL input.value = "2009-09-07T16:49Z "; input.value should be . Was 2009-09-07T16:49Z .
+FAIL input.value = " 2009-09-07T16:49Z"; input.value should be . Was  2009-09-07T16:49Z.
+FAIL input.value = "2009-09-07T16:49"; input.value should be . Was 2009-09-07T16:49.
+FAIL input.value = "2009-09-07T16:49"; input.value should be . Was 2009-09-07T16:49.
+FAIL input.value = "2009-09-07T16:49-24:00"; input.value should be . Was 2009-09-07T16:49-24:00.
+FAIL input.value = "2009-09-07T16:49-01:00:00"; input.value should be . Was 2009-09-07T16:49-01:00:00.
+FAIL input.value = "0000-12-31T23:59"; input.value should be . Was 0000-12-31T23:59.
+FAIL input.value = "2012-01-00T00:00"; input.value should be . Was 2012-01-00T00:00.
+FAIL input.value = "2012-00-01T00:00"; input.value should be . Was 2012-00-01T00:00.
+FAIL input.value = "0001-01-01T00:00:60"; input.value should be . Was 0001-01-01T00:00:60.
+FAIL input.value = "0001-01-01T00:60:00"; input.value should be . Was 0001-01-01T00:60:00.
+FAIL input.value = "0001-01-01T24:00:00"; input.value should be . Was 0001-01-01T24:00:00.
+FAIL input.value = "0001-01-32T00:00:00"; input.value should be . Was 0001-01-32T00:00:00.
+FAIL input.value = "0001-02-29T00:00:00"; input.value should be . Was 0001-02-29T00:00:00.
+FAIL input.value = "0001-13-01T00:00:00"; input.value should be . Was 0001-13-01T00:00:00.
+FAIL input.value = "2147483648-01-01T00:00:00"; input.value should be . Was 2147483648-01-01T00:00:00.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

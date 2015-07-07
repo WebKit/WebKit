@@ -1,0 +1,16 @@
+layer at (0,0) size 800x2028
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 369x19
+        text run at (0,0) width 369: "The purple box should stick to the bottom of the window."
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0
+layer at (8,28) size 1x2000
+  RenderBlock (positioned) {DIV} at (8,28) size 1x2000
+layer at (8,500) size 100x100
+  RenderBlock (positioned) {DIV} at (8,500) size 100x100 [bgcolor=#800080]

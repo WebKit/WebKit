@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<a href="#" aria-haspopup="true" tabindex="0" id="link1">Link 1</a>
+<a href="#" aria-haspopup="false" tabindex="0" id="link2">Link 2</a>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that an element will report that it has a popup correctly.");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("link1").focus();
+        shouldBe("accessibilityController.focusedElement.hasPopup", "true");
+
+        document.getElementById("link2").focus();
+        shouldBe("accessibilityController.focusedElement.hasPopup", "false");
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

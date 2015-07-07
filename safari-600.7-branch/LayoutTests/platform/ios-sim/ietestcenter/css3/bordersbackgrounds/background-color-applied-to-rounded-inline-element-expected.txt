@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x80
+  RenderBlock {HTML} at (0,0) size 800x80
+    RenderBody {BODY} at (8,16) size 784x56
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 419x19
+          text run at (0,0) width 419: "Test passes if there is an orange box with rounded corners below."
+      RenderBlock (anonymous) at (0,36) size 784x20
+        RenderInline {DIV} at (0,0) size 98x49 [color=#FFA500] [bgcolor=#FFA500]
+          RenderText {#text} at (15,0) size 68x19
+            text run at (15,0) width 68: "Filler Text"
+        RenderText {#text} at (0,0) size 0x0

@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            body { font: 16px/1.25 monospace; }
+
+            #first-box-1 {
+                border-top: 1px solid blue;
+                border-left: 1px solid blue;
+                border-right: 1px solid blue;
+                height:204px;
+                position: relative;
+            }
+
+            #first-box-2 {
+                border-bottom: 1px solid blue;
+                border-left: 1px solid blue;
+                border-right: 1px solid blue;
+                height:96px;
+                position: relative;
+            }
+
+            #region1 {
+                padding-left: 5px;
+                padding-top: 5px;
+                padding-right: 5px;
+                width: 402px;
+                height: 205px;
+            }
+
+            #region2 {
+                width: 290px;
+                padding-left: 5px;
+                padding-bottom: 5px;
+                padding-right: 5px;
+                height: 150px;
+            }
+
+            #p1 {
+                margin: 0;
+                width: 40%;
+                position: absolute;
+                top: 150px;
+                left: 10px;
+                height: 120px;
+                overflow: scroll;
+            }
+        </style>
+    </head>
+    <body>
+        <p>In the test case below, the paragraph with a scroll is absolutely positioned inside the blue div, between two regions. The paragraph should appear as a monolithical single box, sized relatively to the blue div fragment inside the first region.</p>
+        <div id="container">
+            <div id="region1">
+                <div id="first-box-1">
+                    <p id="p1">These lines should all fit the scrollable box. These lines should all fit the scrollable box. These lines should all fit the scrollable box. These lines should all fit the scrollable box.</p>
+                </div>
+            </div>
+            <div id="region2">
+                <div id="first-box-2"></div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,12 @@
+When an optgroup element became 'disabled' or not-'disabled', distribution should happen.
+
+Since an optgroup element does not create a renderer, we cannot check this using reftest.
+
+PASS nodes1.length is 1
+PASS nodes1.item(0).innerHTML is "optgroup 2"
+PASS nodes2.length is 1
+PASS nodes2.item(0).innerHTML is "optgroup 3"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

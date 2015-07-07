@@ -1,0 +1,10 @@
+document.xmlEncoding : UTF-8
+document.xmlVersion : 1.0
+document.xmlStandalone : true
+document.readyState : loading
+div.innerHTML = threw exception: Error: SyntaxError: DOM Exception 12
+document.xmlEncoding : UTF-8
+document.xmlVersion : 1.0
+document.xmlStandalone : true
+document.readyState : loading
+

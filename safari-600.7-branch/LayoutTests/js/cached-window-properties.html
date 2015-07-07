@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+var foo = function(o) {
+    return o.screenX;
+};
+
+var x = window.screenX;
+var niters = 100000;
+var sum = 0;
+for (var i = 0; i < niters; ++i) {
+    sum += foo(window);
+}
+if (sum !== x * niters)
+    throw new Error("Incorrect sum");
+
+window.screenX = 42;
+
+sum = 0;
+for (var i = 0; i < niters; ++i) {
+    sum += foo(window);
+}
+if (sum !== 42 * niters)
+    throw new Error("Incorrect sum");
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

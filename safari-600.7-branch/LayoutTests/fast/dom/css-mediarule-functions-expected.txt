@@ -1,0 +1,12 @@
+This tests the insertRule(rule, index) and deleteRule(index) methods of the CSSMediaRule interface. It has passed if all of the output below begins with the text "PASS".
+
+PASS: No exception raised! New rule inserted successfully.
+PASS: Exception raised successfully. Type: Error: IndexSizeError: DOM Exception 1
+PASS: Exception raised successfully. Type: Error: IndexSizeError: DOM Exception 1
+PASS: Exception raised successfully. Type: Error: SyntaxError: DOM Exception 12
+PASS: Exception raised successfully. Type: Error: HierarchyRequestError: DOM Exception 3
+PASS: Exception raised successfully. Type: Error: SyntaxError: DOM Exception 12
+PASS: Exception raised successfully. Type: Error: SyntaxError: DOM Exception 12
+PASS: No exception raised! Rule at position 'length - 1' deleted successfully.
+PASS: Exception raised successfully. Type: Error: IndexSizeError: DOM Exception 1
+PASS: Exception raised successfully. Type: Error: IndexSizeError: DOM Exception 1

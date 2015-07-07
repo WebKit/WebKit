@@ -1,0 +1,15 @@
+<html>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText()
+    }
+</script>
+<body> 
+<p>
+Test for <i><a href="https://bugs.webkit.org/show_bug.cgi?id=19891">Bug https://bugs.webkit.org/show_bug.cgi?id=19891</a></i>
+Broken HTML object elements cause de-reference of pointer to freed memory
+</p>
+<object data="this.object.does.not.exist.gif" codetype="image/gif" height="10"></object>
+Pass if there is no crash or ASSERT.
+</body>
+</html>

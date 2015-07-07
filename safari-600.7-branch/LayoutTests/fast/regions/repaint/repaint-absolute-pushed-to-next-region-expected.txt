@@ -1,0 +1,12 @@
+Bug 131617 - [CSSRegions] Incorrect background paint on positioned element hover
+When hovering the blue div, it should turn green
+
+(repaint rects
+  (rect 105 205 100 300)
+  (rect 305 105 100 300)
+  (rect 105 205 100 300)
+  (rect 305 105 100 300)
+  (rect 105 205 100 300)
+  (rect 305 105 100 300)
+)
+

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+function makeOrphanShadow() {
+    var host = document.createElement("div");
+    var shadow = host.webkitCreateShadowRoot();
+    return shadow;
+};
+
+var shadow = makeOrphanShadow();
+gc(true);
+
+try { shadow.innerHTML = "Hello"; } catch(e) { }
+shadow.appendChild(document.createElement("span"));
+shadow.resetStyleInheritance = true;
+shadow.applyAuthorStyles = false;
+
+document.body.innerHTML = "PASS unless crash.";
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

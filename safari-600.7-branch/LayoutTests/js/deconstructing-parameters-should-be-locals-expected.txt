@@ -1,0 +1,14 @@
+This tests to ensure that ddeconstructing parameters behave like regular locals
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS readDeconstructedParameter(['inner']) is 'inner'
+PASS overwriteDeconstructedParameter(['unused']); value; is 'outer'
+PASS readCapturedDeconstructedParameter(['inner']) is 'inner'
+PASS overwriteCapturedDeconstructedParameter(['unused']); is 'innermost'
+PASS value is 'outer'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

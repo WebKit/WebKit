@@ -1,0 +1,29 @@
+<html>
+  <head>
+    <body>
+      <div id="console"></div>
+      <div style="position: relative; width: 2400px; height: 2400px; background-color: white;">
+        <div style="position:fixed; left: 50px; top: 30px; width: 200px; height: 250px; background-color: green;"></div>
+        <div style="position:absolute; left: 600px; top: 800px;"> <input id="textbox" type="text"></div>
+      </div>
+    </body>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+      var box = document.getElementById('textbox');
+      if (window.internals)
+        window.internals.scrollElementToRect(box, 50, 30, 200, 250);
+
+      var rect = box.getBoundingClientRect();
+      var computedLeft = 50 + Math.floor((200 - rect.width) / 2);
+      var computedTop = 30 + Math.floor((250 - rect.height) / 2);
+      debug("Scrolled element to rect");
+      shouldBe("rect.left", "computedLeft");
+      shouldBe("rect.top", "computedTop");
+      if (window.testRunner) {
+        testRunner.dumpAsText();
+      }
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+    </script>
+  </head>
+</html>

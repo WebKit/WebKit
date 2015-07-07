@@ -1,0 +1,42 @@
+Test removing the 'scoped' attribute on a <style> element
+
+Text
+Text
+
+Text
+
+    
+Text
+Text
+
+Text
+
+    
+Text
+Text
+
+Text
+
+    
+--- ORIGINAL ---
+S1: rgb(0, 0, 0)
+P1: rgb(0, 0, 0)
+R1: rgb(0, 0, 0)
+S2: rgb(255, 0, 0)
+P2: rgb(0, 128, 0)
+R2: rgb(255, 0, 0)
+S3: rgb(0, 0, 0)
+P3: rgb(0, 0, 0)
+R3: rgb(0, 0, 0)
+--- AFTER UN-SETTING @SCOPED ---
+S1: rgb(255, 0, 0)
+P1: rgb(0, 128, 0)
+R1: rgb(0, 0, 255)
+S2: rgb(255, 0, 0)
+P2: rgb(0, 128, 0)
+R2: rgb(0, 0, 255)
+S3: rgb(255, 0, 0)
+P3: rgb(0, 128, 0)
+R3: rgb(0, 0, 255)
+--- FINISHED ---
+

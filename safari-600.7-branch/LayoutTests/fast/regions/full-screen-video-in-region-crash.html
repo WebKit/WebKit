@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../fullscreen/full-screen-test.js"></script>
+    <style>
+        .content {
+            -webkit-flow-into: content-flow;
+        }
+
+        .region {
+            -webkit-flow-from: content-flow;
+        }
+   </style>
+</head>
+<body>
+    <p>Test that a video element inside a content node, exiting the full screen mode, is correctly displayed in region.</p>
+    <p>To manually test, click the "Enter Fullscreen" button.</p>
+    <p>The test passes if it does not crash.</p>
+    <div class="content"><span>PASS</span><video id="video"></video></div>
+    <div class="region"></div>
+    <script>
+        // Bail out early if the full screen API is not enabled or is missing:
+        if (Element.prototype.webkitRequestFullScreen == undefined) {
+            logResult(false, "Element.prototype.webkitRequestFullScreen == undefined");
+            endTest();
+        } else {
+            var callback;
+            var fullscreenChanged = function(event)
+            {
+                if (callback)
+                    callback(event);
+            };
+
+            waitForEvent(document, 'webkitfullscreenchange', fullscreenChanged);
+
+            var videoEnteredFullScreen = function(event) {
+                callback = videoExitedFullScreen;
+                document.webkitExitFullscreen();
+            };
+
+            var videoExitedFullScreen = function(event) {
+                callback = null;
+                endTest();
+            };
+
+            callback = videoEnteredFullScreen;
+            runWithKeyDown(function() { video.webkitRequestFullScreen() } );
+        }
+    </script>
+    <button onclick="video.webkitRequestFullScreen()">Enter Fullscreen</button>
+</body>
+</html>

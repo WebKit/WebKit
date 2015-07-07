@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Security-Policy" content="script-src 'unsafe-inline' 'self'">
+    </head>
+    <body>
+        <p>
+            blob: URLs are same-origin with the page in which they were created,
+            and should therefore match the 'self' source in CSP directives.
+        </p>
+
+        <script>
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            }
+            function pass() {
+                alert("PASS (1/1)!");
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }
+
+            var b = new Blob(['pass();'], { type: 'application/javascript' });
+
+            var script = document.createElement('script');
+            script.src = URL.createObjectURL(b);
+            document.body.appendChild(script);
+        </script>
+    </body>
+</html>

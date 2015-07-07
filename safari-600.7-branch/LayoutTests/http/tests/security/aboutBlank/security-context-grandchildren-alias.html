@@ -1,0 +1,59 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+}
+
+function log(msg) {
+  var line = document.createElement('div');
+  line.appendChild(document.createTextNode(msg));
+  document.getElementById('console').appendChild(line);
+}
+
+function doTest() {
+  // Grab a pointer to the document because we'll lose access to it after
+  // we set our document.domain property.
+  var doc0 = frames[0].frames[0].document;
+  var doc1 = frames[0].frames[1].document;
+
+  log('--- Test begins ---\n');
+  log('* "about:blank"\n');
+  log('document.domain = ' + doc0.domain + '\n');
+  log('* ""\n');
+  log('document.domain = ' + doc1.domain + '\n');
+  log('--- After document.open() ---\n');
+  doc0.open();
+  doc1.open();
+  log('* "about:blank"\n');
+  log('document.domain = ' + doc0.domain + '\n');
+  log('* ""\n');
+  log('document.domain = ' + doc1.domain + '\n');
+  log('--- After setting document.domain ---\n');
+  document.domain = '0.0.1';
+  log('* "about:blank"\n');
+  log('document.domain = ' + doc0.domain + '\n');
+  log('* ""\n');
+  log('document.domain = ' + doc1.domain + '\n');
+  log('--- After document.close() ---\n');
+  doc0.close();
+  doc1.close();
+  log('* "about:blank"\n');
+  log('document.domain = ' + doc0.domain + '\n');
+  log('* ""\n');
+  log('document.domain = ' + doc1.domain + '\n');
+  log('--- Test ends ---\n');
+
+  testRunner.notifyDone();
+}
+</script>
+</head>
+<body>
+<iframe 
+  onload="doTest()"
+  src="resources/iframe-with-about-blank-children.html">
+</iframe>
+<div id="console"></div>
+</body>
+</html>

@@ -1,0 +1,7 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion undefined conversion
+
+FAIL dt.setDouble( void 0 ) should throw an exception. Was undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

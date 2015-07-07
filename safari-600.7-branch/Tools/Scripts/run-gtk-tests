@@ -1,0 +1,458 @@
+#!/usr/bin/env python
+#
+# Copyright (C) 2011, 2012 Igalia S.L.
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Library General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with this library; see the file COPYING.LIB.  If not, write to
+# the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+# Boston, MA 02110-1301, USA.
+
+import subprocess
+import os
+import sys
+import optparse
+import re
+from signal import alarm, signal, SIGALRM, SIGKILL, SIGSEGV
+from gi.repository import Gio, GLib
+
+top_level_directory = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", ".."))
+sys.path.append(os.path.join(top_level_directory, "Tools", "jhbuild"))
+sys.path.append(os.path.join(top_level_directory, "Tools", "gtk"))
+import common
+import jhbuildutils
+
+class SkippedTest:
+    ENTIRE_SUITE = None
+
+    def __init__(self, test, test_case, reason, bug=None):
+        self.test = test
+        self.test_case = test_case
+        self.reason = reason
+        self.bug = bug
+
+    def __str__(self):
+        skipped_test_str = "%s" % self.test
+
+        if not(self.skip_entire_suite()):
+            skipped_test_str += " [%s]" % self.test_case
+
+        skipped_test_str += ": %s " % self.reason
+        if self.bug is not None:
+            skipped_test_str += "(https://bugs.webkit.org/show_bug.cgi?id=%d)" % self.bug
+        return skipped_test_str
+
+    def skip_entire_suite(self):
+        return self.test_case == SkippedTest.ENTIRE_SUITE
+
+class TestTimeout(Exception):
+    pass
+
+class TestRunner:
+    TEST_DIRS = [ "WebKit2Gtk", "WebKit2", "JavaScriptCore", "WTF", "WebCore" ]
+
+    SKIPPED = [
+        SkippedTest("WebKit2Gtk/TestUIClient", "/webkit2/WebKitWebView/mouse-target", "Test times out after r150890", 117689),
+        SkippedTest("WebKit2Gtk/TestContextMenu", SkippedTest.ENTIRE_SUITE, "Test times out after r150890", 117689),
+        SkippedTest("WebKit2APITests/TestWebKitAccessibility", "/webkit2/WebKitAccessibility/atspi-basic-hierarchy", "Test is flaky", 132134),
+        SkippedTest("WebKit2Gtk/TestWebKitWebView", "/webkit2/WebKitWebView/snapshot", "Test fails", 120404),
+        SkippedTest("WebKit2Gtk/TestWebKitWebView", "/webkit2/WebKitWebView/page-visibility", "Test fails or times out", 131731),
+        SkippedTest("WebKit2Gtk/TestCookieManager", "/webkit2/WebKitCookieManager/persistent-storage", "Test is flaky", 134580),
+        SkippedTest("WebKit2/TestWebKit2", "WebKit2.MouseMoveAfterCrash", "Test is flaky", 85066),
+        SkippedTest("WebKit2/TestWebKit2", "WebKit2.NewFirstVisuallyNonEmptyLayoutForImages", "Test is flaky", 85066),
+        SkippedTest("WebKit2/TestWebKit2", "WebKit2.NewFirstVisuallyNonEmptyLayoutFrames", "Test fails", 85037),
+        SkippedTest("WebKit2/TestWebKit2", "WebKit2.RestoreSessionStateContainingFormData", "Session State is not implemented in GTK+ port", 84960),
+        SkippedTest("WebKit2/TestWebKit2", "WebKit2.SpacebarScrolling", "Test fails", 84961),
+        SkippedTest("WebKit2/TestWebKit2", "WebKit2.WKConnection", "Tests fail and time out out", 84959),
+        SkippedTest("WebKit2/TestWebKit2", "WebKit2.WKPageGetScaleFactorNotZero", "Test fails and times out", 88455),
+        SkippedTest("WebKit2/TestWebKit2", "WebKit2.ForceRepaint", "Test times out", 105532),
+        SkippedTest("WebKit2/TestWebKit2", "WebKit2.ReloadPageAfterCrash", "Test flakily times out", 110129),
+        SkippedTest("WebKit2/TestWebKit2", "WebKit2.DidAssociateFormControls", "Test times out", 120302),
+        SkippedTest("WebKit2/TestWebKit2", "WebKit2.InjectedBundleFrameHitTest", "Test times out", 120303),
+        SkippedTest("WebKit2/TestWebKit2", "WebKit2.TerminateTwice", "Test causes crash on the next test", 121970),
+        SkippedTest("WebKit2/TestWebKit2", "WebKit2.GeolocationTransitionToHighAccuracy", "Test causes crash on the next test", 125068),
+        SkippedTest("WebKit2/TestWebKit2", "WebKit2.GeolocationTransitionToLowAccuracy", "Test causes crash on the next test", 125068),
+        SkippedTest("WebKit2Gtk/TestInspectorServer", SkippedTest.ENTIRE_SUITE, "Timing out on the bot", 122571),
+    ]
+
+    def __init__(self, options, tests=[]):
+        self._options = options
+
+        self._build_type = "Debug" if self._options.debug else "Release"
+        common.set_build_types((self._build_type,))
+
+        self._programs_path = common.binary_build_path()
+        self._tests = self._get_tests(tests)
+        self._skipped_tests = TestRunner.SKIPPED
+        self._disabled_tests = []
+        if not sys.stdout.isatty():
+            self._tty_colors_pattern = re.compile("\033\[[0-9;]*m")
+
+        # These SPI daemons need to be active for the accessibility tests to work.
+        self._spi_registryd = None
+        self._spi_bus_launcher = None
+
+    def _test_programs_base_dir(self):
+        return os.path.join(self._programs_path, "TestWebKitAPI")
+
+    def _get_tests_from_dir(self, test_dir):
+        if not os.path.isdir(test_dir):
+            return []
+
+        tests = []
+        for test_file in os.listdir(test_dir):
+            if not test_file.lower().startswith("test"):
+                continue
+            test_path = os.path.join(test_dir, test_file)
+            if os.path.isfile(test_path) and os.access(test_path, os.X_OK):
+                tests.append(test_path)
+        return tests
+
+    def _get_tests(self, initial_tests):
+        tests = []
+        for test in initial_tests:
+            if os.path.isdir(test):
+                tests.extend(self._get_tests_from_dir(test))
+            else:
+                tests.append(test)
+        if tests:
+            return tests
+
+        tests = []
+        for test_dir in self.TEST_DIRS:
+            absolute_test_dir = os.path.join(self._test_programs_base_dir(), test_dir)
+            tests.extend(self._get_tests_from_dir(absolute_test_dir))
+        return tests
+
+    def _lookup_atspi2_binary(self, filename):
+        exec_prefix = common.pkg_config_file_variable('atspi-2', 'exec_prefix')
+        if not exec_prefix:
+            return None
+        for path in ['libexec', 'lib/at-spi2-core', 'lib32/at-spi2-core', 'lib64/at-spi2-core']:
+            filepath = os.path.join(exec_prefix, path, filename)
+            if os.path.isfile(filepath):
+                return filepath
+
+        return None
+
+    def _start_accessibility_daemons(self):
+        spi_bus_launcher_path = self._lookup_atspi2_binary('at-spi-bus-launcher')
+        spi_registryd_path = self._lookup_atspi2_binary('at-spi2-registryd')
+        if not spi_bus_launcher_path or not spi_registryd_path:
+            return False
+
+        try:
+            self._spi_bus_launcher = subprocess.Popen([spi_bus_launcher_path], env=self._test_env)
+        except:
+            sys.stderr.write("Failed to launch the accessibility bus\n")
+            sys.stderr.flush()
+            return False
+
+        # We need to wait until the SPI bus is launched before trying to start the SPI
+        # registry, so we spin a main loop until the bus name appears on DBus.
+        loop = GLib.MainLoop()
+        Gio.bus_watch_name(Gio.BusType.SESSION, 'org.a11y.Bus', Gio.BusNameWatcherFlags.NONE,
+                           lambda *args: loop.quit(), None)
+        loop.run()
+
+        try:
+            self._spi_registryd = subprocess.Popen([spi_registryd_path], env=self._test_env)
+        except:
+            sys.stderr.write("Failed to launch the accessibility registry\n")
+            sys.stderr.flush()
+            return False
+
+        return True
+
+    def _run_xvfb(self):
+        self._xvfb = None
+        if not self._options.use_xvfb:
+            return True
+
+        self._test_env["DISPLAY"] = self._options.display
+
+        try:
+            self._xvfb = subprocess.Popen(["Xvfb", self._options.display, "-screen", "0", "800x600x24", "-nolisten", "tcp"],
+                                          stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        except Exception as e:
+            sys.stderr.write("Failed to run Xvfb: %s\n" % e)
+            sys.stderr.flush()
+            return False
+
+        return True
+
+    def _setup_testing_environment(self):
+        self._test_env = os.environ
+        self._test_env['GSETTINGS_BACKEND'] = 'memory'
+        self._test_env["TEST_WEBKIT_API_WEBKIT2_RESOURCES_PATH"] = common.top_level_path("Tools", "TestWebKitAPI", "Tests", "WebKit2")
+        self._test_env["TEST_WEBKIT_API_WEBKIT2_INJECTED_BUNDLE_PATH"] = common.library_build_path()
+        self._test_env["WEBKIT_EXEC_PATH"] = self._programs_path
+
+        if not self._run_xvfb():
+            return False
+
+        # If we cannot start the accessibility daemons, we can just skip the accessibility tests.
+        if not self._start_accessibility_daemons():
+            print "Could not start accessibility bus, so disabling TestWebKitAccessibility"
+            self._disabled_tests.append("WebKit2APITests/TestWebKitAccessibility")
+        return True
+
+    def _tear_down_testing_environment(self):
+        if self._spi_registryd:
+            self._spi_registryd.terminate()
+        if self._spi_bus_launcher:
+            self._spi_bus_launcher.terminate()
+        if self._xvfb:
+            self._xvfb.terminate()
+
+    def _test_cases_to_skip(self, test_program):
+        if self._options.skipped_action != 'skip':
+            return []
+
+        test_cases = []
+        for skipped in self._skipped_tests:
+            if test_program.endswith(skipped.test) and not skipped.skip_entire_suite():
+                test_cases.append(skipped.test_case)
+        return test_cases
+
+    def _should_run_test_program(self, test_program):
+        for disabled_test in self._disabled_tests:
+            if test_program.endswith(disabled_test):
+                return False
+
+        if self._options.skipped_action != 'skip':
+            return True
+
+        for skipped in self._skipped_tests:
+            if test_program.endswith(skipped.test) and skipped.skip_entire_suite():
+                return False
+        return True
+
+    def _get_child_pid_from_test_output(self, output):
+        if not output:
+            return -1
+        match = re.search(r'\(pid=(?P<child_pid>[0-9]+)\)', output)
+        if not match:
+            return -1
+        return int(match.group('child_pid'))
+
+    def _kill_process(self, pid):
+        try:
+            os.kill(pid, SIGKILL)
+        except OSError:
+            # Process already died.
+            pass
+
+    def _run_test_command(self, command, timeout=-1):
+        def alarm_handler(signum, frame):
+            raise TestTimeout
+
+        child_pid = [-1]
+        def parse_line(line, child_pid = child_pid):
+            if child_pid[0] == -1:
+                child_pid[0] = self._get_child_pid_from_test_output(line)
+
+            if sys.stdout.isatty():
+                sys.stdout.write(line)
+            else:
+                sys.stdout.write(self._tty_colors_pattern.sub('', line.replace('\r', '')))
+
+        def waitpid(pid):
+            while True:
+                try:
+                    return os.waitpid(pid, 0)
+                except (OSError, IOError) as e:
+                    if e.errno == errno.EINTR:
+                        continue
+                    raise
+
+        def return_code_from_exit_status(status):
+            if os.WIFSIGNALED(status):
+                return -os.WTERMSIG(status)
+            elif os.WIFEXITED(status):
+                return os.WEXITSTATUS(status)
+            else:
+                # Should never happen
+                raise RuntimeError("Unknown child exit status!")
+
+        pid, fd = os.forkpty()
+        if pid == 0:
+            os.execvpe(command[0], command, self._test_env)
+            sys.exit(0)
+
+        if timeout > 0:
+            signal(SIGALRM, alarm_handler)
+            alarm(timeout)
+
+        try:
+            common.parse_output_lines(fd, parse_line)
+            if timeout > 0:
+                alarm(0)
+        except TestTimeout:
+            self._kill_process(pid)
+            if child_pid[0] > 0:
+                self._kill_process(child_pid[0])
+            raise
+
+        try:
+            dummy, status = waitpid(pid)
+        except OSError as e:
+            if e.errno != errno.ECHILD:
+                raise
+            # This happens if SIGCLD is set to be ignored or waiting
+            # for child processes has otherwise been disabled for our
+            # process.  This child is dead, we can't get the status.
+            status = 0
+
+        return return_code_from_exit_status(status)
+
+    def _run_test_glib(self, test_program):
+        tester_command = ['gtester', '-k']
+        if self._options.verbose:
+            tester_command.append('--verbose')
+        for test_case in self._test_cases_to_skip(test_program):
+            tester_command.extend(['-s', test_case])
+        tester_command.append(test_program)
+
+        return self._run_test_command(tester_command, self._options.timeout)
+
+    def _get_tests_from_google_test_suite(self, test_program):
+        try:
+            output = subprocess.check_output([test_program, '--gtest_list_tests'])
+        except subprocess.CalledProcessError:
+            sys.stderr.write("ERROR: could not list available tests for binary %s.\n" % (test_program))
+            sys.stderr.flush()
+            return 1
+
+        skipped_test_cases = self._test_cases_to_skip(test_program)
+
+        tests = []
+        prefix = None
+        for line in output.split('\n'):
+            if not line.startswith('  '):
+                prefix = line
+                continue
+            else:
+                test_name = prefix + line.strip()
+                if not test_name in skipped_test_cases:
+                    tests.append(test_name)
+        return tests
+
+    def _run_google_test(self, test_program, subtest):
+        test_command = [test_program, '--gtest_filter=%s' % (subtest)]
+        return self._run_test_command(test_command, self._options.timeout)
+
+    def _run_google_test_suite(self, test_program):
+        for subtest in self._get_tests_from_google_test_suite(test_program):
+            retcode = self._run_google_test(test_program, subtest)
+            if retcode:
+                return retcode
+        return 0
+
+    def _run_test(self, test_program):
+        basedir = os.path.basename(os.path.dirname(test_program))
+        if basedir in ["WebKit2Gtk", "WebKitGtk"]:
+            return self._run_test_glib(test_program)
+
+        if basedir in ["WebKit2", "JavaScriptCore", "WTF", "WebCore",  "WebCoreGtk"]:
+            return self._run_google_test_suite(test_program)
+
+        return 1
+
+    def run_tests(self):
+        if not self._tests:
+            sys.stderr.write("ERROR: tests not found in %s.\n" % (self._test_programs_base_dir()))
+            sys.stderr.flush()
+            return 1
+
+        if not self._setup_testing_environment():
+            return 1
+
+        # Remove skipped tests now instead of when we find them, because
+        # some tests might be skipped while setting up the test environment.
+        self._tests = [test for test in self._tests if self._should_run_test_program(test)]
+
+        crashed_tests = []
+        failed_tests = []
+        timed_out_tests = []
+        try:
+            for test in self._tests:
+                exit_status_code = 0
+                try:
+                    exit_status_code = self._run_test(test)
+                except TestTimeout:
+                    sys.stdout.write("TEST: %s: TIMEOUT\n" % test)
+                    sys.stdout.flush()
+                    timed_out_tests.append(test)
+
+                if exit_status_code == -SIGSEGV:
+                    sys.stdout.write("TEST: %s: CRASHED\n" % test)
+                    sys.stdout.flush()
+                    crashed_tests.append(test)
+                elif exit_status_code != 0:
+                    failed_tests.append(test)
+        finally:
+            self._tear_down_testing_environment()
+
+        if failed_tests:
+            names = [test.replace(self._test_programs_base_dir(), '', 1) for test in failed_tests]
+            sys.stdout.write("Tests failed (%d): %s\n" % (len(names), ", ".join(names)))
+            sys.stdout.flush()
+
+        if crashed_tests:
+            names = [test.replace(self._test_programs_base_dir(), '', 1) for test in crashed_tests]
+            sys.stdout.write("Tests that crashed (%d): %s\n" % (len(names), ", ".join(names)))
+            sys.stdout.flush()
+
+        if timed_out_tests:
+            names = [test.replace(self._test_programs_base_dir(), '', 1) for test in timed_out_tests]
+            sys.stdout.write("Tests that timed out (%d): %s\n" % (len(names), ", ".join(names)))
+            sys.stdout.flush()
+
+        if self._skipped_tests and self._options.skipped_action == 'skip':
+            sys.stdout.write("Tests skipped (%d):\n%s\n" %
+                             (len(self._skipped_tests),
+                              "\n".join([str(skipped) for skipped in self._skipped_tests])))
+            sys.stdout.flush()
+
+        return len(failed_tests) + len(timed_out_tests)
+
+if __name__ == "__main__":
+    if not jhbuildutils.enter_jhbuild_environment_if_available("gtk"):
+        print "***"
+        print "*** Warning: jhbuild environment not present. Run update-webkitgtk-libs before build-webkit to ensure proper testing."
+        print "***"
+
+    option_parser = optparse.OptionParser(usage='usage: %prog [options] [test...]')
+    option_parser.add_option('-r', '--release',
+                             action='store_true', dest='release',
+                             help='Run in Release')
+    option_parser.add_option('-d', '--debug',
+                             action='store_true', dest='debug',
+                             help='Run in Debug')
+    option_parser.add_option('-v', '--verbose',
+                             action='store_true', dest='verbose',
+                             help='Run gtester in verbose mode')
+    option_parser.add_option('--display', action='store', dest='display', default=':55',
+                             help='Display to run Xvfb')
+    option_parser.add_option('--skipped', action='store', dest='skipped_action',
+                             choices=['skip', 'ignore', 'only'], default='skip',
+                             metavar='skip|ignore|only',
+                             help='Specifies how to treat the skipped tests')
+    option_parser.add_option('-t', '--timeout',
+                             action='store', type='int', dest='timeout', default=10,
+                             help='Time in seconds until a test times out')
+    option_parser.add_option('--no-xvfb', action='store_false', dest='use_xvfb', default=True,
+                             help='Do not run tests under Xvfb')
+    options, args = option_parser.parse_args()
+
+    sys.exit(TestRunner(options, args).run_tests())

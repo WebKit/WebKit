@@ -1,0 +1,34 @@
+<html>
+<head>
+<style>
+iframe {
+    width: 20%;
+    height: 20%;
+    border: 0;
+}  
+</style>
+<script src="../../../../../resources/check-layout.js"></script>
+<script type="text/javascript">
+if (window.testRunner)
+    testRunner.overridePreference("WebKitFrameFlatteningEnabled", "1");
+
+window.onload = function()
+{
+    document.body.offsetLeft;
+    checkLayout('#test');
+};
+</script>
+</head>
+<body>
+<style>body { background-color: green; }</style>
+<p>Test for iframe flattening. The flattening only works inside the DRT.</p>
+<p>This inner frame should be 400px in each direction and it must not be scrollable or have scrollbars.</p>
+
+<p id="test"><iframe data-expected-width=400 data-expected-height=400 src="data:text/html,
+    <style>body { background-color: red; margin: 0; }</style>
+    <body>
+        <div style='width: 400px; height: 400px; background-color: green;'></div>
+    </body>
+"></p>
+</body>
+</html>

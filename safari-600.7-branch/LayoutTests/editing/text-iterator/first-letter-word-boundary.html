@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style type="text/css">
+
+#test:first-letter {
+    color: red;
+}
+
+</style>
+</head>
+<body>
+<p>This tests moving caret around a word with a first-letter rule. WebKit should not crash.
+This test also demonstrates a bug that word position is incorrectly reported.</p>
+<div id="test" contenteditable> hello world'</div>
+<pre id="console"></pre>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.internals)
+  internals.settings.setEditingBehavior("mac");
+
+function runTest(actor, expectedOffset) {
+    window.getSelection().setPosition(test.firstChild, 4);
+    var action = actor() + ' from offset ' + 4 + ' put caret at offset ';
+    var startOffset = window.getSelection().getRangeAt(0).startOffset;
+    action += startOffset;
+    if (startOffset == expectedOffset)
+        console.innerHTML += 'PASS: ' + action + '\n';
+    else
+        console.innerHTML += 'FAIL: ' + action + ' but expected ' + expectedOffset + '\n';
+}
+
+var test = document.getElementById('test');
+var console = document.getElementById('console');
+
+console.innerHTML += 'white-space: normal;\n';
+runTest(function () {window.getSelection().modify('move', 'forward', 'word'); return 'moving forward by word';}, 6);
+runTest(function () {window.getSelection().modify('move', 'backward', 'word'); return 'moving backward by word';}, 1);
+
+console.innerHTML += 'white-space: pre;\n';
+test.style.whiteSpace = 'pre';
+runTest(function () {window.getSelection().modify('move', 'forward', 'word'); return 'moving forward by word';}, 6);
+runTest(function () {window.getSelection().modify('move', 'backward', 'word'); return 'moving backward by word';}, 1);
+
+</script>
+</body>
+</html>

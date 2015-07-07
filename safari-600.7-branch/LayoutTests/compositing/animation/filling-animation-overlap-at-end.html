@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .box {
+            position: relative;
+            height: 100px;
+            width: 100px;
+            margin: 40px;
+            background-color: orange;
+            box-shadow: 0 0 10px black;
+        }
+        
+        .animating {
+            -webkit-animation: spin 1 0.1s forwards;
+            background-color: blue;
+        }
+
+        @-webkit-keyframes spin {
+            from { -webkit-transform: rotate(0); }
+            to   { -webkit-transform: rotate(45deg); }
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+            
+        function doTest()
+        {
+            document.getElementById('box').addEventListener('webkitAnimationEnd', function() {
+                if (window.testRunner) {
+                    document.getElementById('results').innerText = window.internals.layerTreeAsText(document);
+                    testRunner.notifyDone();
+                }
+            })
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+<div id="box" class="animating box"></div>
+<div class="box"></div>
+
+<pre id="results">Layer tree dump goes here</pre>
+</body>
+</html>

@@ -1,0 +1,57 @@
+'playbackRate' should not change when play() is called.
+'playbackRate' and 'defaultPlaybackRate' should always return the last value set.
+*** setting src
+EVENT(canplaythrough)
+
+*** checking defaults
+EXPECTED (video.playbackRate == '1') OK
+EXPECTED (video.defaultPlaybackRate == '1') OK
+
+*** setting defaultPlaybackRate
+RUN(video.defaultPlaybackRate = 2)
+EXPECTED (video.playbackRate == '1') OK
+EXPECTED (video.defaultPlaybackRate == '2') OK
+
+EVENT(canplaythrough)
+
+*** checking defaults
+EXPECTED (video.playbackRate == '1') OK
+EXPECTED (video.defaultPlaybackRate == '1'), OBSERVED '2' FAIL
+
+*** setting defaultPlaybackRate
+RUN(video.defaultPlaybackRate = 2)
+EXPECTED (video.playbackRate == '1') OK
+EXPECTED (video.defaultPlaybackRate == '2') OK
+
+EVENT(ratechange)
+*** checking rates after event
+EXPECTED (video.playbackRate == '1') OK
+EXPECTED (video.defaultPlaybackRate == '2') OK
+
+*** setting playbackRate
+RUN(video.playbackRate = 2)
+EXPECTED (video.playbackRate == '2') OK
+EXPECTED (video.defaultPlaybackRate == '2') OK
+
+EVENT(ratechange)
+*** checking rates after event
+EXPECTED (video.playbackRate == '2') OK
+EXPECTED (video.defaultPlaybackRate == '2') OK
+
+*** beginning playback
+RUN(video.playbackRate = 1)
+EXPECTED (video.playbackRate == '1') OK
+EXPECTED (video.defaultPlaybackRate == '2') OK
+RUN(video.play())
+
+EVENT(ratechange)
+*** checking rates after event
+EXPECTED (video.playbackRate == '1') OK
+EXPECTED (video.defaultPlaybackRate == '2') OK
+
+EVENT(ended)
+EXPECTED (video.playbackRate == '1') OK
+EXPECTED (video.defaultPlaybackRate == '2') OK
+
+END OF TEST
+

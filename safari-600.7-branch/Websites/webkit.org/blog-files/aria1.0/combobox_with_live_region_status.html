@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>ARIA Combobox Example</title>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=480">
+    <style type="text/css">
+        html, body {
+            color: #000;
+            background-color: #fff;
+            font-size: 100%;
+            font-family: sans-serif;
+        }
+        [hidden] {
+            display: none !important;
+        }
+        .pc {
+            /* pc is positioning context */ 
+            position: relative;
+            width: 30em;
+            max-width: 400px;
+        }
+        .pc input[role="combobox"] {
+            font-size: 12px;
+            height: 1.5em;
+            width: 100%; /* of pc */
+            border: solid 1px #000;
+            min-height: 1em;
+            padding: 0.9em 0.5em;
+            box-sizing: border-box;
+        }
+        .pc [role="status"] {
+            position: absolute;
+            top: 0.3em;
+            right: 0.5em;
+            font-size: 0.8em;
+            color: #777;
+        }
+        .pc ul[role="listbox"] {
+            position: absolute;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            top: 1.5em;
+            left: 0;
+            background-color: #fff;
+            border: solid 1px #ccc;
+            width: 100%; /* of pc */
+            box-sizing: border-box;
+        }
+        .pc li[role="option"] {
+            display: block;
+            margin: 0;
+            padding: 0.3em 0.5em;
+            list-style: none;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .pc li[role="option"]:hover {
+            color: #000;
+            background-color: #ccc;
+        }
+        [aria-selected="true"] {
+            color: #fff;
+            background-color: #666;
+        }
+    </style>
+    <script type="text/javascript">
+
+    function $(id) {
+        return document.getElementById(id);
+    }
+        
+    var initComboBoxes = (function() {
+        
+        var field=null, status=null, list=null, options=null, selectedOption=null, hideAll=false, kRETURN=13, kESC=27, kUP=38, kDOWN=40;
+        
+        var submitHandler = function (e) {
+            updateMenuDisplay();
+            e.preventDefault();
+        };    
+
+        var keyUpHandler = function (e){
+            switch(e.keyCode) {
+                case kRETURN: return;
+                case kESC:    handleEscape(e);  break;
+                case kUP:     return;
+                case kDOWN:   return;
+            }
+            updateMenuDisplay();
+        };
+        
+        var keyDownHandler = function (e){
+            switch(e.keyCode) {
+                case kRETURN: handleReturn(e);    break; // Catch Return on keyDown, b/c keyUp fires after submit.
+                case kUP:     handleUpArrow(e);   break;
+                case kDOWN:   handleDownArrow(e); break;
+            }
+        };
+        
+        var handleEscape = function (e){
+            e.preventDefault();
+            clearField();
+        };
+
+        var handleUpArrow = function (e){
+            selectPreviousOption();
+            e.preventDefault();
+        };
+
+        var handleDownArrow = function (e){
+            selectNextOption();
+            e.preventDefault();
+        };
+
+        var handleReturn = function (e){
+            insertValue();
+            e.preventDefault();
+        };
+
+        var blurHandler = function (e){
+            hideMenu();
+        };
+
+        var focusHandler = function (e){
+            if (field.value) {
+                updateMenuDisplay();
+            } else {
+                hideMenu();
+            }
+        };
+
+        var mouseDownHandler = function (e) {
+            if (e.target.tagName.toLowerCase() === "li") {
+                updateSelectedOption(e.target);
+                field.focus();
+                insertValue();
+            }
+        };
+
+        var updateMenuDisplay = function () {
+            filter();
+            list.hidden = hideAll ? true : false;
+            field.setAttribute('aria-expanded', hideAll ? 'false': 'true');
+            updateStatus();
+        };
+
+        var hideMenu = function () {
+            list.hidden = true;
+            field.setAttribute('aria-expanded', 'false');
+            updateStatus();
+        };
+
+        var clearField = function (){
+            if (field.value) field.value = '';
+            else if (field.textContent) field.textContent = '';
+            clearSelectedOption();
+        };
+
+        var clearSelectedOption = function (){
+            if (selectedOption) {
+                field.removeAttribute('aria-activedescendant');
+                list.removeAttribute('data-selection');
+                selectedOption.removeAttribute('aria-selected');
+            }
+            selectedOption = null;
+            hideMenu();
+        };
+
+        var updateSelectedOption = function (el){
+            if (!el) {
+                return;
+            }
+            if (selectedOption) selectedOption.removeAttribute('aria-selected');
+            selectedOption = el;
+            list.setAttribute('data-selection', el.id);
+            el.setAttribute('aria-selected', 'true');
+            field.setAttribute('aria-activedescendant', el.id);
+        };
+
+        var selectNextOption = function () {
+            var so = shownOptions();
+            for (var i=0, c=so.length; i<c; i++) {
+                var o = so[i];
+                if (o == selectedOption) {
+                    if (so[i+1]) updateSelectedOption(so[i+1]);
+                    return;
+                }
+            }
+            // otherwise, select the first option
+            if (!selectedOption && so.length) {
+                updateSelectedOption(so[0]);
+            }
+        };
+
+        var selectPreviousOption = function () {
+            var so = shownOptions();
+            for (var i=so.length-1; i>0; i--) {
+                var o = so[i];
+                if (o == selectedOption) {
+                    if (so[i-1]) updateSelectedOption(so[i-1]);
+                    return;
+                }
+            }
+            // otherwise, select the last option
+            if (!selectedOption && so.length) {
+                updateSelectedOption(so[so.length-1]);
+            }
+        };
+        
+        var shownOptions = function () {
+            // It's possible this selector will fail on some Windows browsers. May need to make it a simple classname.
+            return list.querySelectorAll('li:not([hidden])');
+        };
+
+        var updateStatus = function () {
+            var itemCount = shownOptions().length;
+            var statusContent = "";
+            if (!list.hidden && itemCount) {
+                if (itemCount === 1) {
+                    statusContent = "%@ item".replace("%@", itemCount);
+                } else {
+                    statusContent = "%@ items".replace("%@", itemCount);
+                }
+            }
+            status.textContent = statusContent;
+        };
+
+        var insertValue = function (){
+            if (selectedOption) {
+                if (field.value) {
+                    field.value = selectedOption.textContent;
+                } else if (field.textContent) {
+                    field.textContent = selectedOption.textContent;
+                }
+                clearSelectedOption();
+            }
+        };
+
+        var filter = function () {
+            var s = field.value || field.textContent;
+            s = s.toUpperCase();
+            hideAll = true;
+            if (s=='') return;
+            for (var i=0, c=options.length; i<c; i++) {
+                var o = options[i];
+                var t = o.textContent.toUpperCase();
+                // if typed string is not substring of state name or code (case insensitive), and is not exact match for state
+                if ((t.indexOf(s)==-1 && o.id.indexOf(s)==-1) || t==s) { 
+                    o.hidden = true;
+                } else {
+                    o.hidden = false;
+                    hideAll = false;
+                }
+            }
+            clearSelectedOption();
+        };
+
+        var initCombo = function (){
+            // TODO: If time allows, update example to account for multiple comboboxes.
+            form = document.querySelector('form');
+            field = document.querySelector('[role="combobox"]');
+            status = document.querySelector('[role="status"]');
+            list = $(field.getAttribute('aria-owns'));
+            options = list.getElementsByTagName('li');
+            form.addEventListener('submit', submitHandler); // Search on iOS "Go" button.
+            field.addEventListener('keyup', keyUpHandler);
+            field.addEventListener('keydown', keyDownHandler);
+            field.addEventListener('blur', blurHandler);
+            field.addEventListener('focus', focusHandler);
+            list.addEventListener('mousedown', mouseDownHandler);
+        };
+
+        return initCombo;
+    }());
+
+    window.addEventListener('load', function () {
+        initComboBoxes();
+    });
+    </script>
+</head>
+<body>
+    <p>Focus the accessible combobox, type a few letters of a US state or territory (e.g. 'New'), then arrow down on a desktop browser, or submit the form on mobile browsers. You'll get a filtered autocomplete list as well as status update listing the total number of filtered results.</p>
+    <p>Some <a href="#">focusable content</a> before the combobox.</p>
+    <form class="pc">
+        <!-- Note that this field is labelled by itself, which in this case, is an explicit pointer to use the placeholder attribute value. -->
+        <input type="text" tabindex="0" id="state" aria-labelledby="state" role="combobox" aria-autocomplete="list" aria-owns="statelist" aria-expanded="false" placeholder="US State or Territory" autocomplete="off" autocorrect="off" autocapitalize="off">
+        <div role="status">
+            <!-- This is the list status live region: e.g. "4 items." -->
+        </div>
+        <ul role="listbox" id="statelist" hidden>
+            <li id="AL" role="option">Alabama</li>
+            <li id="AK" role="option">Alaska</li>
+            <li id="AS" role="option">American Samoa</li>
+            <li id="AZ" role="option">Arizona</li>
+            <li id="AR" role="option">Arkansas</li>
+            <li id="CA" role="option">California</li>
+            <li id="CO" role="option">Colorado</li>
+            <li id="CT" role="option">Connecticut</li>
+            <li id="DE" role="option">Delaware</li>
+            <li id="DC" role="option">District of Columbia</li>
+            <li id="FL" role="option">Florida</li>
+            <li id="GA" role="option">Georgia</li>
+            <li id="GU" role="option">Guam</li>
+            <li id="HI" role="option">Hawaii</li>
+            <li id="ID" role="option">Idaho</li>
+            <li id="IL" role="option">Illinois</li>
+            <li id="IN" role="option">Indiana</li>
+            <li id="IA" role="option">Iowa</li>
+            <li id="KS" role="option">Kansas</li>
+            <li id="KY" role="option">Kentucky</li>
+            <li id="LA" role="option">Louisiana</li>
+            <li id="ME" role="option">Maine</li>
+            <li id="MD" role="option">Maryland</li>
+            <li id="MA" role="option">Massachusetts</li>
+            <li id="MI" role="option">Michigan</li>
+            <li id="MN" role="option">Minnesota</li>
+            <li id="MS" role="option">Mississippi</li>
+            <li id="MO" role="option">Missouri</li>
+            <li id="MT" role="option">Montana</li>
+            <li id="NE" role="option">Nebraska</li>
+            <li id="NV" role="option">Nevada</li>
+            <li id="NH" role="option">New Hampshire</li>
+            <li id="NJ" role="option">New Jersey</li>
+            <li id="NM" role="option">New Mexico</li>
+            <li id="NY" role="option">New York</li>
+            <li id="NC" role="option">North Carolina</li>
+            <li id="ND" role="option">North Dakota</li>
+            <li id="MP" role="option">Northern Marianas Islands</li>
+            <li id="OH" role="option">Ohio</li>
+            <li id="OK" role="option">Oklahoma</li>
+            <li id="OR" role="option">Oregon</li>
+            <li id="PA" role="option">Pennsylvania</li>
+            <li id="PR" role="option">Puerto Rico</li>
+            <li id="RI" role="option">Rhode Island</li>
+            <li id="SC" role="option">South Carolina</li>
+            <li id="SD" role="option">South Dakota</li>
+            <li id="TN" role="option">Tennessee</li>
+            <li id="TX" role="option">Texas</li>
+            <li id="UT" role="option">Utah</li>
+            <li id="VT" role="option">Vermont</li>
+            <li id="VA" role="option">Virginia</li>
+            <li id="VI" role="option">Virgin Islands</li>
+            <li id="WA" role="option">Washington</li>
+            <li id="WV" role="option">West Virginia</li>
+            <li id="WI" role="option">Wisconsin</li>
+            <li id="WY" role="option">Wyoming</li>
+        </ul>
+    </form>
+    <p>Some <a href="#">focusable content</a> after the combobox.</p>
+</body>
+</html>

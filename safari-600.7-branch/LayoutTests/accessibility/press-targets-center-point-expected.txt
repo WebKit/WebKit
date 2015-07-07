@@ -1,0 +1,25 @@
+target
+Actual: (89, 18)
+Expected: (89, 18)
+
+translate transform target
+Actual: (289, 266)
+Expected: (289, 266)
+
+vertical left-to-right writing mode target
+Actual: (18, 309)
+Expected: (18, 309)
+
+right-to-left direction target
+Actual: (129, 512)
+Expected: (129, 512)
+
+This tests that press targets the receiving elements center point.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

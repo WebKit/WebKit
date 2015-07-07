@@ -1,0 +1,229 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="indexeddb-test.js"></script>
+<script>
+function test()
+{
+    var IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange;
+    var indexedDBModel = new WebInspector.IndexedDBModel();
+    var mainFrameId = WebInspector.resourceTreeModel.mainFrame.id;
+    var securityOrigin = "http://127.0.0.1:8000";
+    var databaseName = "testDatabase";
+    var objectStoreName = "testObjectStore";
+    var indexName = "testIndexName";
+    var databaseId = new WebInspector.IndexedDBModel.DatabaseId(securityOrigin, databaseName);
+
+    function addIDBValues(count, callback)
+    {
+        var i = 0;
+        addValues();
+
+        function addValues()
+        {
+            if (i == count) {
+                callback();
+                return;
+            }
+            ++i;
+            var id = i < 10 ? "0" + i : i;
+            var key = "key_" + id;
+            var value = "value_" + id;
+            InspectorTest.addIDBValue(mainFrameId, databaseName, objectStoreName, { key: key, value: value }, "", addValues);
+        }
+    }
+
+    function loadValuesAndDump(fromIndex, idbKeyRange, skipCount, pageSize, callback)
+    {
+        var idbKeyRangeString = idbKeyRange ? "{lower:\"" + idbKeyRange.lower + "\",lowerOpen:" + idbKeyRange.lowerOpen + ",upper:\"" + idbKeyRange.upper + "\",upperOpen:" + idbKeyRange.upperOpen + "}" : "null";
+        InspectorTest.addResult("Dumping values, fromIndex = " + fromIndex + ", skipCount = " + skipCount + ", pageSize = " + pageSize + ", idbKeyRange = " + idbKeyRangeString);
+        if (fromIndex)
+            indexedDBModel.loadIndexData(databaseId, objectStoreName, indexName, idbKeyRange, skipCount, pageSize, innerCallback);
+        else
+            indexedDBModel.loadObjectStoreData(databaseId, objectStoreName, idbKeyRange, skipCount, pageSize, innerCallback);
+
+        function innerCallback(entries, hasMore)
+        {
+            var index = 0;
+            var entry;
+            dumpEntries();
+
+            function dumpEntries()
+            {
+                if (index === entries.length) {
+                    InspectorTest.addResult("    hasMore = " + hasMore);
+                    callback();
+                    return;
+                }
+                entry = entries[index];
+                entry.value.callFunctionJSON(dumpMe, undefined, dumped.bind(this));
+                ++index;
+            }
+
+            function dumpMe()
+            {
+                return "{\"key\":\"" + this.key + "\",\"value\":\"" + this.value + "\"}";
+            }
+
+            function dumped(value)
+            {
+                InspectorTest.addResult("    Key = " + entry.key.description + ", primaryKey = " + entry.primaryKey.description + ", value = " + value);
+                dumpEntries();
+            }
+        }
+    }
+
+    InspectorTest.addSniffer(WebInspector.IndexedDBModel.prototype, "_updateOriginDatabaseNames", fillDatabase, false);
+
+    function fillDatabase()
+    {
+        InspectorTest.createDatabase(mainFrameId, databaseName, step2);
+
+        function step2()
+        {
+            InspectorTest.createObjectStore(mainFrameId, databaseName, objectStoreName, "key", true, step3);
+        }
+
+        function step3()
+        {
+            InspectorTest.createObjectStoreIndex(mainFrameId, databaseName, objectStoreName, indexName, "value", false, true, step4);
+        }
+
+        function step4()
+        {
+            addIDBValues(6, refreshDatabaseNames);
+        }
+    }
+
+    function refreshDatabaseNames()
+    {
+        InspectorTest.addSniffer(WebInspector.IndexedDBModel.prototype, "_updateOriginDatabaseNames", refreshDatabase, false);
+        indexedDBModel.refreshDatabaseNames();
+    }
+
+    function refreshDatabase()
+    {
+        indexedDBModel.addEventListener(WebInspector.IndexedDBModel.EventTypes.DatabaseLoaded, runObjectStoreTests);
+        indexedDBModel.refreshDatabase(databaseId);
+    }
+
+    function runObjectStoreTests()
+    {
+        indexedDBModel.removeEventListener(WebInspector.IndexedDBModel.EventTypes.DatabaseLoaded, runObjectStoreTests);
+        loadValuesAndDump(false, null, 0, 2, step2)
+
+        function step2()
+        {
+            loadValuesAndDump(false, null, 2, 2, step3)
+        }
+
+        function step3()
+        {
+            loadValuesAndDump(false, null, 4, 2, step4);
+        }
+
+        function step4()
+        {
+            loadValuesAndDump(false, null, 5, 2, step5);
+        }
+
+        function step5()
+        {
+            loadValuesAndDump(false, null, 6, 2, step6);
+        }
+
+        function step6()
+        {
+            loadValuesAndDump(false, null, 7, 2, step7);
+        }
+
+        function step7()
+        {
+            loadValuesAndDump(false, IDBKeyRange.bound("key_02", "key_05", true, false), 0, 2, step8);
+        }
+
+        function step8()
+        {
+            loadValuesAndDump(false, IDBKeyRange.bound("key_02", "key_05", true, false), 0, 3, step9);
+        }
+
+        function step9()
+        {
+            loadValuesAndDump(false, IDBKeyRange.bound("key_02", "key_05", true, false), 0, 4, step10);
+        }
+
+        function step10()
+        {
+            loadValuesAndDump(false, IDBKeyRange.bound("key_02", "key_05", true, false), 1, 2, step11);
+        }
+
+        function step11()
+        {
+            loadValuesAndDump(false, IDBKeyRange.bound("key_02", "key_05", true, false), 1, 3, step12);
+        }
+
+        function step12()
+        {
+            loadValuesAndDump(false, IDBKeyRange.bound("key_02", "key_05", true, false), 1, 4, step13);
+        }
+
+        function step13()
+        {
+            runIndexTests();
+        }
+    }
+
+    function runIndexTests()
+    {
+        loadValuesAndDump(true, null, 0, 2, step2)
+
+        function step2()
+        {
+            runClearTests();
+        }
+    }
+
+    function runClearTests()
+    {
+        indexedDBModel.clearObjectStore(databaseId, objectStoreName, step1);
+        InspectorTest.addResult("Cleared data from objectStore");
+
+        function step1() {
+            indexedDBModel.addEventListener(WebInspector.IndexedDBModel.EventTypes.DatabaseLoaded, step2);
+            indexedDBModel.refreshDatabase(databaseId);
+        }
+        function step2() {
+            indexedDBModel.removeEventListener(WebInspector.IndexedDBModel.EventTypes.DatabaseLoaded, step2);
+            loadValuesAndDump(false, null, 0, 10, step3);
+        }
+
+        function step3() {
+            deleteDatabase();
+        }
+    }
+
+    function deleteDatabase() {
+        InspectorTest.deleteObjectStoreIndex(mainFrameId, databaseName, objectStoreName, indexName, step2);
+
+        function step2()
+        {
+            InspectorTest.deleteObjectStore(mainFrameId, databaseName, objectStoreName, step3);
+        }
+
+        function step3()
+        {
+            InspectorTest.deleteDatabase(mainFrameId, databaseName, step4);
+        }
+
+        function step4()
+        {
+            InspectorTest.completeTest();
+        }
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that data is correctly loaded by IndexedDBModel from IndexedDB object store and index.</p>
+</body>
+</html>

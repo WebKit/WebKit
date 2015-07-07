@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: line 9: one
+CONSOLE MESSAGE: line 10: two
+CONSOLE MESSAGE: line 11: three
+Tests that console is cleared upon clear() eval in console.
+
+=== Before clear ===
+one console-command-clear.html:9
+two console-command-clear.html:10
+three console-command-clear.html:11
+=== After clear ===
+undefined
+

@@ -1,0 +1,3 @@
+This tests for a crash when inserting text into a textarea that has been shrunk to zero rows just before the insertion.
+
+

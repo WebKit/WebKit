@@ -1,0 +1,3 @@
+This page tests the beforeload event on link elements. You should see the word PASS below underneath a green square.
+
+PASS

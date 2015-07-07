@@ -1,0 +1,3 @@
+Webkit bug 83552 - Crash due to captions list not updated after section recalc.
+Test passes if it does not crash.
+

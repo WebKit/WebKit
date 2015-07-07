@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<style>
+.test { 
+  font-size: 100px;
+};
+
+.test2 {
+  font-weight: bold;
+};
+
+</style>
+</head>
+<body id="body">
+
+<div id="item1" class="test test2">content</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the DOM id and the DOM class list can be retrieved");
+
+    if (window.accessibilityController) {
+
+          var item = accessibilityController.accessibleElementById("item1");
+          shouldBeTrue("item.isAttributeSupported('AXDOMIdentifier')");
+          shouldBe("item.stringAttributeValue('AXDOMIdentifier')", "'item1'");
+
+          shouldBeTrue("item.isAttributeSupported('AXDOMClassList')");
+          shouldBe("item.classList", "'test, test2'");
+    }
+
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+#ifndef WebCore_FWD_InspectorJSFrontendDispatchers_h
+#define WebCore_FWD_InspectorJSFrontendDispatchers_h
+#include <JavaScriptCore/InspectorJSFrontendDispatchers.h>
+#endif

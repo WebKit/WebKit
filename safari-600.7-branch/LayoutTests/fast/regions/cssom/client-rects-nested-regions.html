@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript" charset="utf-8" src="../resources/helper.js"></script>
+    <title>117407 - [CSS Regions] Fix getClientRects() for content nodes</title>
+    <style>
+    body, html {
+        margin: 0px;
+    }
+
+    .finished .region, .finished #content, .finished #innerContent {
+        display: none;
+    }
+
+    #innerContent {
+        font-family: Ahem;
+        font-size: 20px;
+        -webkit-flow-into: flow;
+    }
+
+    #content {
+        -webkit-flow-into: flow2;
+    }
+
+    .region {
+        -webkit-flow-from: flow2;
+        position: absolute;
+        border: 1px solid black;
+    }
+
+    #region1 {
+        top: 10px;
+        left: 10px;
+        width: 100px;
+        height: auto;
+    }
+
+    #region2 {
+        top: 30px;
+        left: 120px;
+        width: 150px;
+        height: auto;
+    }
+
+    #region3 {
+        top: 40px;
+        left: 300px;
+        width: 100px;
+        height: 50px;
+    }
+
+    #before {
+        -webkit-region-break-after: always;
+        width: 50px;
+        height: 50px;
+        background-color: green;
+        -webkit-flow-from: flow;
+    }
+
+    #after {
+        -webkit-region-break-after: always;
+        width: 70px;
+        height: 70px;
+        background-color: blue;
+        -webkit-flow-from: flow;
+    }
+    </style>
+</head>
+<body>
+    <div id="innerContent">X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X</div>
+    <div id="content">
+        <div id="before"></div><div id="after"></div>
+    </div>
+
+    <div id="region1" class="region"></div>
+    <div id="region2" class="region"></div>
+    <div id="region3" class="region"></div>
+
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+        
+        var contentClientRects = [[11, 11, 61, 111, 100, 50], [31, 121, 101, 271, 150, 70]];
+        var beforeClientRects = [[11, 11, 61, 61, 50, 50]];
+        var afterClientRects = [[31, 121, 101, 191, 70, 70]];
+        var innerContentClientRects = [[11, 11, 61, 61, 50, 50], [31, 121, 411, 191, 70, 380]];
+
+        var ok = testClientRects("content", contentClientRects);
+        ok = testClientRects("before", beforeClientRects) && ok;
+        ok = testClientRects("after", afterClientRects) && ok;
+        ok = testClientRects("innerContent", innerContentClientRects) && ok;
+        if (ok)
+            document.body.className = "finished";
+    </script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            if (window.internals)
+                window.internals.settings.setAcceleratedCompositingForFixedPositionEnabled(false);
+        </script>
+        <style>
+            .fixedPosition { top: 50px; left: 50px; }
+            .fixedPositionNew { top: 150px; left: 150px; }
+
+            #red { position: fixed; top: 150px; left: 150px; width: 100px; height: 100px; background-color: red; }
+            #fixed { -webkit-flow-into: flow; position: fixed; width: 100px; height: 100px; background-color: green; }
+            /* We need a region otherwise the fixed positioned element is not displayed */
+            #region { -webkit-flow-from: flow; }
+        </style>
+    </head>
+    <body onload="changePosition()">
+        <!--
+            Fixed positioned element inside a named flow, dynamically changed top/left
+            https://bugs.webkit.org/show_bug.cgi?id=126807
+        -->
+        <p>Test that a fixed positioned element whose position is dynamically changed
+            is correctly painted in the new position.</p>
+        <p>On success you should see a green rectangle and no red.</p>
+        <div id="red"></div>
+        <div id="fixed" class="fixedPosition"></div>
+        <div id="region"></div>
+        <script>
+            function changePosition() {
+                document.getElementById("fixed").className = "fixedPositionNew";
+            }
+        </script>
+    </body>
+</html>

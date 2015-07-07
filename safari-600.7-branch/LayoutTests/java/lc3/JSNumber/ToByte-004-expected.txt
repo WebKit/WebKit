@@ -1,0 +1,12 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion number conversion to byte
+
+FAIL java.lang.Byte.MIN_VALUE + 1: ReferenceError: Can't find variable: java
+FAIL java.lang.Byte.MIN_VALUE + 1: ReferenceError: Can't find variable: java
+FAIL java.lang.Byte.MIN_VALUE + 1: ReferenceError: Can't find variable: java
+FAIL java.lang.Byte.MIN_VALUE: ReferenceError: Can't find variable: java
+FAIL java.lang.Byte.MIN_VALUE: ReferenceError: Can't find variable: java
+FAIL java.lang.Byte.MIN_VALUE: ReferenceError: Can't find variable: java
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

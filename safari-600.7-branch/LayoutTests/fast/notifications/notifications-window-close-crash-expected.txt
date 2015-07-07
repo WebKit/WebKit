@@ -1,0 +1,1 @@
+This test needs to run manually and cannot run inside DumpRenderTree. Passes if it does not crash on running the test alongwith with a couple of page reloads.

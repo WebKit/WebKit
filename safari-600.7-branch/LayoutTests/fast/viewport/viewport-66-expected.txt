@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 3: Viewport argument key ";initial-scale" not recognized and ignored.
+ALERT: viewport size 100x110 scale 3.2 with limits [3.2, 5] and userScalable true
+

@@ -1,0 +1,123 @@
+
+----------------------
+AXRole: AXLink
+AXSubrole: (null)
+AXRoleDescription: link
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXLink>
+AXSize: NSSize: {123, 62}
+AXTitle: 
+AXDescription: Link1
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXLink>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: (null)
+AXEndTextMarker: (null)
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXLink>
+AXLanguage: 
+AXDOMIdentifier: 
+AXDOMClassList: <array of size 0>
+AXURL: http://www.apple.com/
+AXAccessKey: (null)
+AXElementBusy: 0
+AXPath: <AXLink>
+
+------------
+AXRole: AXLink
+AXSubrole: (null)
+AXRoleDescription: link
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXLink>
+AXSize: NSSize: {113, 22}
+AXTitle: 
+AXDescription: Link2
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXLink>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: (null)
+AXEndTextMarker: (null)
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXLink>
+AXLanguage: 
+AXDOMIdentifier: 
+AXDOMClassList: <array of size 0>
+AXURL: http://www.apple.com/
+AXAccessKey: (null)
+AXElementBusy: 0
+AXPath: <AXLink>
+
+------------
+AXRole: AXLink
+AXSubrole: (null)
+AXRoleDescription: link
+AXChildren: <array of size 1>
+AXHelp: 
+AXParent: <AXLink: 'link 3'>
+AXSize: NSSize: {36, 18}
+AXTitle: link 3
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXLink: 'link 3'>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXLink: 'link 3'>
+AXEndTextMarker: <AXLink: 'link 3'>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXLink: 'link 3'>
+AXLanguage: 
+AXDOMIdentifier: 
+AXDOMClassList: <array of size 0>
+AXURL: http://webkit.org/
+AXAccessKey: (null)
+AXElementBusy: 0
+
+------------
+AXRole: AXLink
+AXSubrole: (null)
+AXRoleDescription: link
+AXChildren: <array of size 1>
+AXHelp: 
+AXParent: <AXLink: 'link 4'>
+AXSize: NSSize: {36, 18}
+AXTitle: link 4
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXLink: 'link 4'>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXLink: 'link 4'>
+AXEndTextMarker: <AXLink: 'link 4'>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXLink: 'link 4'>
+AXLanguage: 
+AXDOMIdentifier: 
+AXDOMClassList: <array of size 0>
+AXURL: LayoutTests/platform/mac/accessibility/document-links.html#asdf
+AXAccessKey: (null)
+AXElementBusy: 0
+
+------------
+
+
+ link 3 link 4

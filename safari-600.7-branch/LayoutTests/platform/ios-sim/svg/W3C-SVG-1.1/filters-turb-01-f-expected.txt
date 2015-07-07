@@ -1,0 +1,71 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (21,25) size 408x274
+      RenderSVGContainer {g} at (21,25) size 408x274
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGPath {rect} at (25,25) size 100x75 [fill={[type=SOLID] [color=#000000]}] [x=25.00] [y=25.00] [width=100.00] [height=75.00]
+        RenderSVGText {text} at (33,106) size 84x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 84x14
+            chunk 1 (middle anchor) text run 1 at (33.24,117.00) startOffset 0 endOffset 15 width 83.52: "type=turbulence"
+        RenderSVGText {text} at (21,118) size 108x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 108x14
+            chunk 1 (middle anchor) text run 1 at (21.88,129.00) startOffset 0 endOffset 18 width 106.24: "baseFrequency=0.05"
+        RenderSVGText {text} at (36,130) size 78x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 78x14
+            chunk 1 (middle anchor) text run 1 at (36.48,141.00) startOffset 0 endOffset 12 width 77.04: "numOctaves=2"
+        RenderSVGPath {rect} at (175,25) size 100x75 [fill={[type=SOLID] [color=#000000]}] [x=175.00] [y=25.00] [width=100.00] [height=75.00]
+        RenderSVGText {text} at (183,106) size 84x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 84x14
+            chunk 1 (middle anchor) text run 1 at (183.24,117.00) startOffset 0 endOffset 15 width 83.52: "type=turbulence"
+        RenderSVGText {text} at (175,118) size 100x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 100x14
+            chunk 1 (middle anchor) text run 1 at (175.06,129.00) startOffset 0 endOffset 17 width 99.88: "baseFrequency=0.1"
+        RenderSVGText {text} at (186,130) size 78x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 78x14
+            chunk 1 (middle anchor) text run 1 at (186.48,141.00) startOffset 0 endOffset 12 width 77.04: "numOctaves=2"
+        RenderSVGPath {rect} at (325,25) size 100x75 [fill={[type=SOLID] [color=#000000]}] [x=325.00] [y=25.00] [width=100.00] [height=75.00]
+        RenderSVGText {text} at (333,106) size 84x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 84x14
+            chunk 1 (middle anchor) text run 1 at (333.24,117.00) startOffset 0 endOffset 15 width 83.52: "type=turbulence"
+        RenderSVGText {text} at (321,118) size 108x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 108x14
+            chunk 1 (middle anchor) text run 1 at (321.88,129.00) startOffset 0 endOffset 18 width 106.24: "baseFrequency=0.05"
+        RenderSVGText {text} at (336,130) size 78x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 78x14
+            chunk 1 (middle anchor) text run 1 at (336.48,141.00) startOffset 0 endOffset 12 width 77.04: "numOctaves=8"
+        RenderSVGPath {rect} at (25,180) size 100x75 [fill={[type=SOLID] [color=#000000]}] [x=25.00] [y=180.00] [width=100.00] [height=75.00]
+        RenderSVGText {text} at (30,261) size 90x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 90x14
+            chunk 1 (middle anchor) text run 1 at (30.31,272.00) startOffset 0 endOffset 17 width 89.38: "type=fractalNoise"
+        RenderSVGText {text} at (25,273) size 100x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 100x14
+            chunk 1 (middle anchor) text run 1 at (25.06,284.00) startOffset 0 endOffset 17 width 99.88: "baseFrequency=0.1"
+        RenderSVGText {text} at (36,285) size 78x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 78x14
+            chunk 1 (middle anchor) text run 1 at (36.48,296.00) startOffset 0 endOffset 12 width 77.04: "numOctaves=4"
+        RenderSVGPath {rect} at (175,180) size 100x75 [fill={[type=SOLID] [color=#000000]}] [x=175.00] [y=180.00] [width=100.00] [height=75.00]
+        RenderSVGText {text} at (180,261) size 90x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 90x14
+            chunk 1 (middle anchor) text run 1 at (180.31,272.00) startOffset 0 endOffset 17 width 89.38: "type=fractalNoise"
+        RenderSVGText {text} at (175,273) size 100x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 100x14
+            chunk 1 (middle anchor) text run 1 at (175.06,284.00) startOffset 0 endOffset 17 width 99.88: "baseFrequency=0.4"
+        RenderSVGText {text} at (186,285) size 78x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 78x14
+            chunk 1 (middle anchor) text run 1 at (186.48,296.00) startOffset 0 endOffset 12 width 77.04: "numOctaves=4"
+        RenderSVGPath {rect} at (325,180) size 100x75 [fill={[type=SOLID] [color=#000000]}] [x=325.00] [y=180.00] [width=100.00] [height=75.00]
+        RenderSVGText {text} at (330,261) size 90x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 90x14
+            chunk 1 (middle anchor) text run 1 at (330.31,272.00) startOffset 0 endOffset 17 width 89.38: "type=fractalNoise"
+        RenderSVGText {text} at (325,273) size 100x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 100x14
+            chunk 1 (middle anchor) text run 1 at (325.06,284.00) startOffset 0 endOffset 17 width 99.88: "baseFrequency=0.1"
+        RenderSVGText {text} at (336,285) size 78x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 78x14
+            chunk 1 (middle anchor) text run 1 at (336.48,296.00) startOffset 0 endOffset 12 width 77.04: "numOctaves=1"
+    RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 264x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.1 $"
+    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

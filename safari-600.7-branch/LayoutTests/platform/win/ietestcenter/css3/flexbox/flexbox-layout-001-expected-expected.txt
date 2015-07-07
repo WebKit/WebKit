@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x158
+  RenderBlock {HTML} at (0,0) size 800x158
+    RenderBody {BODY} at (8,16) size 784x134
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 303x18
+          text run at (0,0) width 303: "Test passes if there is no red visible on the page."
+      RenderBlock {DIV} at (0,34) size 784x100
+        RenderTable {TABLE} at (0,0) size 100x100 [bgcolor=#008000]
+          RenderTableSection {TBODY} at (0,0) size 100x100
+            RenderTableRow {TR} at (0,0) size 100x50
+              RenderTableCell {TD} at (0,0) size 50x18 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 44x18
+                  text run at (0,0) width 44: "top left"
+              RenderTableCell {TD} at (50,0) size 50x36 [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 29x36
+                  text run at (0,0) width 20: "top"
+                  text run at (0,18) width 29: "right"
+            RenderTableRow {TR} at (0,50) size 100x50
+              RenderTableCell {TD} at (0,50) size 50x36 [r=1 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 44x36
+                  text run at (0,0) width 44: "bottom"
+                  text run at (0,18) width 20: "left"
+              RenderTableCell {TD} at (50,50) size 50x36 [r=1 c=1 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 44x36
+                  text run at (0,0) width 44: "bottom"
+                  text run at (0,18) width 29: "right"

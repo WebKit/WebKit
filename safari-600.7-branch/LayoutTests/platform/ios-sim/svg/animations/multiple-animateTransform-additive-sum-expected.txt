@@ -1,0 +1,6 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (161,114) size 318x159
+    RenderSVGContainer {g} at (161,114) size 318x159 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,60.00)}]
+      RenderSVGRect {rect} at (161,114) size 318x159 [transform={m=((2.83,1.41)(-2.83,1.41)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFF99]}] [x=-10.00] [y=-10.00] [width=20.00] [height=20.00]

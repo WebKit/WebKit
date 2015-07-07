@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 766x36
+          text run at (0,0) width 647: "This tests copying plain text with tabs and pasting it into an editable region using paste and match tyle. "
+          text run at (647,0) width 119: "The tabs should be"
+          text run at (0,18) width 65: "preserved."
+      RenderBlock (anonymous) at (0,52) size 784x36
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,88) size 784x18
+        RenderText {#text} at (0,0) size 39x18
+          text run at (0,0) width 39: "Tab->"
+        RenderInline {SPAN} at (0,0) size 25x18
+          RenderText {#text} at (39,0) size 25x18
+            text run at (39,0) width 25: "\x{9}"
+        RenderText {#text} at (64,0) size 39x18
+          text run at (64,0) width 39: "<-Tab"
+layer at (10,62) size 161x32 clip at (11,63) size 159x30
+  RenderTextControl {TEXTAREA} at (2,2) size 161x32 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 155x13
+      RenderText {#text} at (0,0) size 91x13
+        text run at (0,0) width 91: "Tab->\x{9}<-Tab"
+caret: position 5 of child 2 {#text} of child 4 {DIV} of body

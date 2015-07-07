@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<head>
+<script src="inspector-test.js"></script>
+<script src="resources-test.js"></script>
+
+<script>
+var test = function()
+{
+    function visibleNewlines(s)
+    {
+        return s.replace(/\r/, "\\r").replace(/\n/, "\\n");
+    }
+
+    function setRequestValues(request)
+    {
+        request.requestHeaders = [
+            { name: "Request", value: "request-value" }
+        ];
+        request.requestHeadersText = "GET http://example.com/inspector-test.js HTTP/1.1\r\nRequest: headers-text";
+
+        request.responseHeaders = [
+            { name: "Response", value: "response-value" }
+        ];
+        request.responseHeadersText = "HTTP/1.1 200 OK\r\nResponse: headers-text";
+
+        request.documentURL = "http://example.com/inspector-test.js";
+        request.requestMethod = "GET";
+        request.mimeType = "text/html";
+        request.statusCode = 200;
+        request.statusText = "OK";
+        request.resourceSize = 1000;
+        request._transferSize = 539; // 39 = header size at the end of the day
+    }
+
+    var testRequest = new WebInspector.NetworkRequest("testRequest", "http://example.com/inspector-test.js", 1); 
+    setRequestValues(testRequest);
+    var requestResults = {
+        "request": {
+            "headers": testRequest.requestHeaders,
+            "headersText": visibleNewlines(testRequest.requestHeadersText),
+            "headersSize": testRequest.requestHeadersSize,
+        },
+        "response": {
+            "headers": testRequest.responseHeaders,
+            "headersText": visibleNewlines(testRequest.responseHeadersText),
+            "headersSize": testRequest.responseHeadersSize,
+            "resourceSize": testRequest.resourceSize,
+            "transferSize": testRequest.transferSize
+        }
+    };
+    InspectorTest.addObject(requestResults, {}, "", "Resource:");
+
+    var stillNondeterministic = {
+        "startedDateTime": "formatAsTypeName",
+        "time": "formatAsTypeName",
+        "timings": "formatAsTypeName"
+    };
+    InspectorTest.addObject(new WebInspector.HAREntry(testRequest).build(), stillNondeterministic, "", "HAR:");
+    InspectorTest.completeTest();
+}
+</script>
+
+
+</head>
+
+<body onload="runTest()">
+<p>
+Tests the nondeterministic bits of HAR conversion via the magic of hard-coded values.
+</p>
+
+</body>
+</html>

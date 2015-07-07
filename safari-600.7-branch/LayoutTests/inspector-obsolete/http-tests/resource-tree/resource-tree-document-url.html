@@ -1,0 +1,37 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../resources-test.js"></script>
+<script src="resource-tree-test.js"></script>
+
+<script>
+
+function test()
+{
+    InspectorTest.runAfterResourcesAreFinished(["dummy-iframe.html", "inspector-test.js", "resources-test.js", "resource-tree-test.js"], step1);
+
+    function step1()
+    {
+        function formatter(resource)
+        {
+            return resource.url + " => " + resource.documentURL;
+        }
+    
+        InspectorTest.dumpResources(formatter);    
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+
+</head>
+
+<body>
+<p>
+Tests that resources have proper documentURL set in the tree model.
+</p>
+
+<iframe src="resources/dummy-iframe.html" onload="runTest()">
+
+</body>
+</html>

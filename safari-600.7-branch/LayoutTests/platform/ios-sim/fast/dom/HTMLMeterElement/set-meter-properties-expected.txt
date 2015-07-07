@@ -1,0 +1,78 @@
+Test setting valid and invalid properties of HTMLMeterElement.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test values before properties were set
+FAIL m.min should be 0 (of type number). Was undefined (of type undefined).
+FAIL m.value should be 0 (of type number). Was undefined (of type undefined).
+FAIL m.max should be 1 (of type number). Was undefined (of type undefined).
+FAIL m.low should be 0 (of type number). Was undefined (of type undefined).
+FAIL m.high should be 1 (of type number). Was undefined (of type undefined).
+FAIL m.optimum should be 0.5 (of type number). Was undefined (of type undefined).
+Set valid values
+FAIL m.min should be -10 (of type number). Was -10 (of type string).
+PASS m.value is 70
+FAIL m.max should be 100 (of type number). Was 1e2 (of type string).
+FAIL m.low should be 10.1 (of type number). Was 10.1 (of type string).
+FAIL m.high should be 99.5 (of type number). Was 99.5 (of type string).
+FAIL m.optimum should be 70 (of type number). Was 70 (of type string).
+Set attributes to improper values - 1
+PASS m.min is -10
+FAIL m.value should be 100. Was 200.
+PASS m.max is 100
+FAIL m.low should be 100. Was 200.
+FAIL m.high should be 100. Was -50.
+FAIL m.optimum should be 0 (of type number). Was null (of type object).
+Set attributes to improper values - 2
+PASS m.min is 200.0
+FAIL m.value should be 200. Was -200.
+FAIL m.max should be 200. Was 0.
+FAIL m.low should be 200 (of type number). Was null (of type object).
+Set attributes to improper values - 3
+PASS m.min is 100.0
+FAIL m.value should be 100. Was 200.
+FAIL m.max should be 100. Was 50.
+FAIL m.low should be 100. Was 10.
+FAIL m.high should be 100. Was 150.
+FAIL m.optimum should be 100. Was 12.5.
+Set attributes to improper values - 4
+PASS m.min is 0.0
+FAIL m.value should be 200. Was 250.
+PASS m.max is 200.0
+FAIL m.low should be 0. Was -10.
+FAIL m.high should be 200. Was 1500.
+PASS m.optimum is 12.5
+Set value to invalid value
+FAIL m.value = "value"; should throw Error: NOT_SUPPORTED_ERR: DOM Exception 9. Was value.
+Set min to NaN
+FAIL m.min = NaN; should throw Error: NOT_SUPPORTED_ERR: DOM Exception 9. Was NaN.
+Set max to Infinity
+FAIL m.max = Infinity; should throw Error: NOT_SUPPORTED_ERR: DOM Exception 9. Was Infinity.
+Set low to invalid value
+FAIL m.low = "low"; should throw Error: NOT_SUPPORTED_ERR: DOM Exception 9. Was low.
+Set high to NaN
+FAIL m.high = NaN; should throw Error: NOT_SUPPORTED_ERR: DOM Exception 9. Was NaN.
+Set optimum to Infinity
+FAIL m.optimum = Infinity; should throw Error: NOT_SUPPORTED_ERR: DOM Exception 9. Was Infinity.
+Set attributes to valid numbers
+FAIL m.value should be 5 (of type number). Was value (of type string).
+FAIL m.max should be 10. Was Infinity.
+PASS parseInt(m.getAttribute('value')) is 5
+PASS parseInt(m.getAttribute('max')) is 10
+Set attributes to invalid values
+FAIL m.value should be 0 (of type number). Was value (of type string).
+FAIL m.max should be 1. Was Infinity.
+PASS m.getAttribute('value') is 'ABC'
+PASS m.getAttribute('max') is '#'
+Set attributes to numbers with leading spaces
+FAIL m.value should be 0 (of type number). Was value (of type string).
+FAIL m.min should be 0. Was NaN.
+FAIL m.max should be 1. Was Infinity.
+FAIL m.low should be 0 (of type number). Was low (of type string).
+FAIL m.high should be 1. Was NaN.
+FAIL m.optimum should be 0.5. Was Infinity.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,18 @@
+<html>
+<body>
+<pre>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+document.domain = '0.0.1';
+
+document.write('Waiting...\n');
+var xhr = new XMLHttpRequest();
+xhr.open('POST', 'resources/post-echo.cgi', false);
+xhr.send('PASS: XMLHttpRequest allowed with document.domain set.\n');
+document.write(xhr.responseText);
+</script>
+</pre>
+</body>
+</html>

@@ -1,0 +1,34 @@
+Tests webkitGetUserMedia.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS navigator.webkitGetUserMedia({audio:false, video:false}, error, error); threw exception Error: NotSupportedError: DOM Exception 9.
+PASS navigator.webkitGetUserMedia({audio:true}, gotStream1, error); did not throw exception.
+PASS Stream generated.
+PASS stream.getAudioTracks().length is 1
+PASS stream.getVideoTracks().length is 0
+PASS navigator.webkitGetUserMedia({video:true}, gotStream2, error); did not throw exception.
+PASS Stream generated.
+PASS stream.getAudioTracks().length is 0
+PASS stream.getVideoTracks().length is 1
+PASS navigator.webkitGetUserMedia({audio:true, video:true}, gotStream3, error); did not throw exception.
+PASS Stream generated.
+PASS stream.getAudioTracks().length is 1
+PASS stream.getVideoTracks().length is 1
+PASS navigator.webkitGetUserMedia({audio:{mandatory:{}, optional:[]}, video:true}, gotStream4, error); did not throw exception.
+PASS Stream generated.
+PASS stream.getAudioTracks().length is 1
+PASS stream.getVideoTracks().length is 1
+PASS navigator.webkitGetUserMedia({audio:{mandatory:{'valid_but_unsupported_1':0}, optional:[]}, video:true}, gotStreamInError, error1); did not throw exception.
+PASS Error callback called.
+PASS errorArg.name is "ConstraintNotSatisfiedError"
+PASS errorArg.constraintName is "valid_but_unsupported_1"
+PASS navigator.webkitGetUserMedia({audio:{mandatory:{'valid_and_supported_1':1}, optional:[{'valid_but_unsupported_1':0}]}, video:true}, gotStream5, error); did not throw exception.
+PASS Stream generated.
+PASS stream.getAudioTracks().length is 1
+PASS stream.getVideoTracks().length is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

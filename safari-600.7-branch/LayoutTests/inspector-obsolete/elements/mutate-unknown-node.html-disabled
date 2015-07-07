@@ -1,0 +1,88 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function appendChild()
+{
+    var hidden = document.getElementById("hidden");
+    var child = document.createElement("div");
+    child.setAttribute("id", "appended");
+    hidden.appendChild(child);
+}
+
+function removeChild()
+{
+    var child = document.getElementById("appended");
+    child.parentNode.removeChild(child);
+}
+
+function modifyAttribute()
+{
+    var hidden = document.getElementById("hidden");
+    hidden.setAttribute("foo", "bar");
+}
+
+function test()
+{
+    function listener(type, event)
+    {
+        node = event.data.node || event.data;
+        InspectorTest.addResult("DOMAgent event fired. Should only happen once for output node: " + type + " " + event.data.nodeName() + "#" + event.data.getAttribute("id"));
+    }
+
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrModified, listener.bind(this, "DOMAttrModified"));
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.CharacterDataModified, listener.bind(this, "DOMCharacterDataModified"));
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.NodeInserted, listener.bind(this, "DOMNodeInserted"));
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.NodeRemoved, listener.bind(this, "DOMNodeRemoved"));
+
+    WebInspector.domAgent.requestDocument(step0.bind(this));
+
+    function step0()
+    {
+        InspectorTest.evaluateInPage("appendChild()", step1);
+    }
+
+    function step1()
+    {
+        InspectorTest.addResult("Appended");
+        InspectorTest.evaluateInPage("removeChild()", step2);
+    }
+
+    function step2()
+    {
+        InspectorTest.addResult("Removed");
+        InspectorTest.evaluateInPage("modifyAttribute()", step3);
+    }
+
+    function step3()
+    {
+        InspectorTest.addResult("Attribute modified");
+        InspectorTest.evaluateInPage("true", step4);
+    }
+
+    function step4()
+    {
+        InspectorTest.addResult("========= Result DOMAgent tree ========");
+        InspectorTest.dumpDOMAgentTree();
+
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that elements panel does not receive events upon changes to the undiscovered nodes.
+</p>
+
+<div>
+<div id="hidden">
+</div>
+</div>
+
+</body>
+</html>

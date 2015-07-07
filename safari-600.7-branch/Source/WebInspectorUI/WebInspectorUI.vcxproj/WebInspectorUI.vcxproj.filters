@@ -1,0 +1,1731 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="UserInterface">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="UserInterface\External">
+      <UniqueIdentifier>{d72f8977-200b-4163-a143-26f87692daa3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UserInterface\External\CodeMirror">
+      <UniqueIdentifier>{9bcfd9cb-d15d-4f40-b20d-2c95f99c0d3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UserInterface\Legacy">
+      <UniqueIdentifier>{78dfa843-ec32-47d5-9365-6336032fd35b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UserInterface\Legacy\6.0">
+      <UniqueIdentifier>{f3a0840d-35a0-41f6-8642-5f87f6f19b07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UserInterface\Legacy\7.0">
+      <UniqueIdentifier>{f3a0840d-35a0-41f6-8642-162354612341}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Images">
+      <UniqueIdentifier>{af041f00-ecbb-405c-a2e0-02bbd07bfc7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scripts">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\UserInterface\ActivateButtonNavigationItem.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ActivateButtonToolbarItem.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ApplicationCacheDetailsSidebarPanel.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ApplicationCacheFrame.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ApplicationCacheFrameContentView.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ApplicationCacheFrameContentView.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ApplicationCacheFrameTreeElement.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ApplicationCacheIcons.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ApplicationCacheManager.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ApplicationCacheManifest.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ApplicationCacheManifestTreeElement.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ApplicationCacheObserver.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\BlankStylePropertiesSection.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\BottomUpProfileDataGridTree.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\BoxModelDetailsSectionRow.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\BoxModelDetailsSectionRow.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\Branch.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\BranchManager.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\Breakpoint.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\Breakpoint.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\BreakpointIcons.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\BreakpointTreeElement.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\BreakpointTreeElement.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ButtonNavigationItem.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ButtonNavigationItem.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ButtonToolbarItem.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ButtonToolbarItem.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CallFrame.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CallFrameIcons.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CallFrameTreeElement.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CanvasDataGridNode.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CanvasObserver.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CanvasProfileObject.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CanvasProfileType.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CanvasProfileView.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ClusterContentView.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ClusterContentView.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CodeMirrorAdditions.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CodeMirrorCompletionController.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CodeMirrorCompletionController.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CodeMirrorDragToAlterNumberController.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CodeMirrorDragToAlterNumberController.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CodeMirrorFormatters.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CodeMirrorOverrides.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CodeMirrorTokenTrackingController.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CodeMirrorTokenTrackingController.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\Color.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CompletionSuggestionsView.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CompletionSuggestionsView.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ComputedStyleDetailsPanel.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ConsoleCommand.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ConsoleCommandResult.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ConsoleGroup.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ConsoleMessage.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ConsoleMessageImpl.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ConsoleObserver.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ConsolePrompt.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ConsolePrompt.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ContentBrowser.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ContentBrowser.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ContentView.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ContentView.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ContentViewContainer.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ContentViewContainer.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ContextMenu.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ControlToolbarItem.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ControlToolbarItem.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CookieIcon.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CookieStorageContentView.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CookieStorageContentView.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CookieStorageObject.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CookieStorageTreeElement.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ColorPicker.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ColorPicker.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CSSCompletions.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CSSKeywordCompletions.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CSSMedia.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CSSObserver.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CSSProperty.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CSSRule.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CSSStyleDeclaration.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CSSStyleDeclarationSection.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CSSStyleDeclarationSection.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CSSStyleDeclarationTextEditor.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CSSStyleDeclarationTextEditor.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CSSStyleDetailsSidebarPanel.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CSSStyleDetailsSidebarPanel.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CSSStyleManager.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\CSSStyleSheet.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DashboardManager.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DashboardView.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DashboardView.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DatabaseContentView.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DatabaseContentView.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DatabaseHostTreeElement.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DatabaseIcon.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DatabaseObject.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DatabaseObserver.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DatabaseTableContentView.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DatabaseTableContentView.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DatabaseTableIcon.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DatabaseTableObject.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DatabaseTableTreeElement.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DatabaseTreeElement.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DataGrid.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DataGrid.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DebuggerManager.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DebuggerObserver.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DebuggerSidebarPanel.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DebuggerSidebarPanel.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DetailsSection.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DetailsSection.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DetailsSectionDataGridRow.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DetailsSectionGroup.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DetailsSectionPropertiesRow.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DetailsSectionRow.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DetailsSectionSimpleRow.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DetailsSidebarPanel.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DetailsSidebarPanel.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DividerNavigationItem.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DividerNavigationItem.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DOMDetailsSidebarPanel.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DOMNode.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DOMNodeDetailsSidebarPanel.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DOMNodeStyles.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DOMObserver.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DOMSearchMatchObject.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DOMStorageContentView.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DOMStorageContentView.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DOMStorageIcons.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DOMStorageObject.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DOMStorageObserver.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DOMStorageTreeElement.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DOMTree.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DOMTreeContentView.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DOMTreeContentView.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DOMTreeElement.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DOMTreeElementPathComponent.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DOMTreeManager.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DOMTreeOutline.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DOMTreeOutline.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DOMTreeUpdater.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\DOMUtilities.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\Editing.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\EditingSupport.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\EventHandler.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\EventListenerSection.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\EventListenerSectionGroup.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\EventListenerSectionGroup.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ExecutionContext.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ExecutionContextList.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\FilterBar.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\FilterBar.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\FindBanner.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\FindBanner.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\FlexibleSpaceNavigationItem.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\FlexibleSpaceNavigationItem.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\FolderIcon.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\FolderTreeElement.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\FontResourceContentView.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\FontResourceContentView.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\Formatter.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\FormatterContentBuilder.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\FormatterSourceMap.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\Frame.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\FrameContentView.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\FrameResourceManager.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\FrameTreeElement.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\GeneralTreeElement.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\GeneralTreeElementPathComponent.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\GenericResourceContentView.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\Geometry.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\HierarchicalPathComponent.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\HierarchicalPathComponent.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\HierarchicalPathNavigationItem.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ImageResourceContentView.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ImageResourceContentView.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ImageUtilities.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\IndeterminateProgressSpinner.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\IndeterminateProgressSpinner.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\InspectorBackend.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\InspectorFrontendAPI.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\InspectorFrontendHostStub.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\InspectorObserver.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\InstrumentIcons.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\InstrumentSidebarPanel.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\InstrumentSidebarPanel.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\IssueManager.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\IssueMessage.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\JavaScriptLogViewController.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\JavaScriptProfileObject.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\JavaScriptProfileType.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\JavaScriptProfileView.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\JavaScriptProfileView.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\KeyboardShortcut.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\LayerTreeDataGrid.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\LayerTreeDataGridNode.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\LayerTreeManager.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\LayerTreeObserver.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\LayerTreeSidebarPanel.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\LayerTreeSidebarPanel.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\LayoutTimelineDataGrid.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\LayoutTimelineDataGridNode.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\LayoutTimelineRecord.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\LoadInspectorBackendCommands.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\LoadLocalizedStrings.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\LogContentView.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\LogContentView.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\LogIcon.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\LogManager.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\LogObject.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\LogTreeElement.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\Main.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\Main.html">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\Main.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\MetricsStyleDetailsPanel.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\MIMETypeUtilities.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\NavigationBar.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\NavigationBar.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\NavigationItem.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\NavigationSidebarPanel.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\NavigationSidebarPanel.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\NetworkDataGrid.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\NetworkDataGrid.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\NetworkGraphCalculator.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\NetworkObserver.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\NetworkTimeline.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\Object.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ObjectPropertiesSection.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\PageObserver.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\PathComponentIcons.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\Popover.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\Popover.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ProfileDataGridTree.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ProfileManager.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ProfileObject.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ProfilerObserver.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ProfileType.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ProfileView.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ProfileView.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\PropertiesSection.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\QuickConsole.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\QuickConsole.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\QuickConsoleNavigationBar.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\RadioButtonNavigationItem.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\RadioButtonNavigationItem.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\RemoteObject.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\Resource.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ResourceClusterContentView.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ResourceCollection.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ResourceContentView.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ResourceDetailsSidebarPanel.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ResourceIcons.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ResourceSearchMatchObject.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ResourceSidebarPanel.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ResourceSidebarPanel.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ResourceTimelineDataGridNode.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ResourceTimelineDataGridNodePathComponent.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ResourceTimelineRecord.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ResourceTreeElement.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ResourceTreeElement.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\Revision.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\RulesStyleDetailsPanel.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\RulesStyleDetailsPanel.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\RuntimeObserver.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ScopeBar.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ScopeBar.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ScopeBarItem.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ScopeChainDetailsSidebarPanel.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ScopeChainNode.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ScopeVariableTreeElement.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\Script.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ScriptContentView.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ScriptContentView.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ScriptTimelineDataGrid.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ScriptTimelineDataGridNode.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ScriptTimelineRecord.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ScriptTreeElement.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\SearchBar.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\SearchBar.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\SearchIcons.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\SearchResultTreeElement.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\Section.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\Section.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\Setting.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\Sidebar.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\Sidebar.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\SidebarPanel.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\SourceCode.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\SourceCodeLocation.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\SourceCodePosition.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\SourceCodeRevision.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\SourceCodeTextEditor.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\SourceCodeTextEditor.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\SourceCodeTextRange.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\SourceCodeTreeElement.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\SourceMap.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\SourceMapManager.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\SourceMapResource.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\SourceMapResourceTreeElement.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\StorageManager.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\StorageTreeElement.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\StyleDetailsPanel.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\StyleRuleIcons.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\SyntaxHighlightingDefaultTheme.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\SyntaxHighlightingSupport.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\TextContentView.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\TextContentView.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\TextEditor.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\TextEditor.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\TextRange.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\TextResourceContentView.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\TextResourceContentView.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\TimelineDataGrid.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\TimelineDataGrid.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\TimelineDecorations.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\TimelineDecorations.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\TimelineEventMarker.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\TimelineManager.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\TimelineObserver.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\TimelineOverview.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\TimelineOverview.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\TimelineRecord.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\TimelinesContentView.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\TimelinesContentView.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\TimelinesObject.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ToggleButtonNavigationItem.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\ToggleControlToolbarItem.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\Toolbar.css">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\Toolbar.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\TopDownProfileDataGridTree.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\TreeOutline.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\Utilities.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\WebInspector.js">
+      <Filter>UserInterface</Filter>
+    </None>
+    <None Include="..\UserInterface\External\CodeMirror\clojure.js">
+      <Filter>UserInterface\External\CodeMirror</Filter>
+    </None>
+    <None Include="..\UserInterface\External\CodeMirror\closebrackets.js">
+      <Filter>UserInterface\External\CodeMirror</Filter>
+    </None>
+    <None Include="..\UserInterface\External\CodeMirror\codemirror.css">
+      <Filter>UserInterface\External\CodeMirror</Filter>
+    </None>
+    <None Include="..\UserInterface\External\CodeMirror\codemirror.js">
+      <Filter>UserInterface\External\CodeMirror</Filter>
+    </None>
+    <None Include="..\UserInterface\External\CodeMirror\coffeescript.js">
+      <Filter>UserInterface\External\CodeMirror</Filter>
+    </None>
+    <None Include="..\UserInterface\External\CodeMirror\comment.js">
+      <Filter>UserInterface\External\CodeMirror</Filter>
+    </None>
+    <None Include="..\UserInterface\External\CodeMirror\css.js">
+      <Filter>UserInterface\External\CodeMirror</Filter>
+    </None>
+    <None Include="..\UserInterface\External\CodeMirror\htmlmixed.js">
+      <Filter>UserInterface\External\CodeMirror</Filter>
+    </None>
+    <None Include="..\UserInterface\External\CodeMirror\javascript.js">
+      <Filter>UserInterface\External\CodeMirror</Filter>
+    </None>
+    <None Include="..\UserInterface\External\CodeMirror\less.js">
+      <Filter>UserInterface\External\CodeMirror</Filter>
+    </None>
+    <None Include="..\UserInterface\External\CodeMirror\LICENSE">
+      <Filter>UserInterface\External\CodeMirror</Filter>
+    </None>
+    <None Include="..\UserInterface\External\CodeMirror\livescript.js">
+      <Filter>UserInterface\External\CodeMirror</Filter>
+    </None>
+    <None Include="..\UserInterface\External\CodeMirror\matchbrackets.js">
+      <Filter>UserInterface\External\CodeMirror</Filter>
+    </None>
+    <None Include="..\UserInterface\External\CodeMirror\overlay.js">
+      <Filter>UserInterface\External\CodeMirror</Filter>
+    </None>
+    <None Include="..\UserInterface\External\CodeMirror\placeholder.js">
+      <Filter>UserInterface\External\CodeMirror</Filter>
+    </None>
+    <None Include="..\UserInterface\External\CodeMirror\runmode.js">
+      <Filter>UserInterface\External\CodeMirror</Filter>
+    </None>
+    <None Include="..\UserInterface\External\CodeMirror\sass.js">
+      <Filter>UserInterface\External\CodeMirror</Filter>
+    </None>
+    <None Include="..\UserInterface\External\CodeMirror\searchcursor.js">
+      <Filter>UserInterface\External\CodeMirror</Filter>
+    </None>
+    <None Include="..\UserInterface\External\CodeMirror\sql.js">
+      <Filter>UserInterface\External\CodeMirror</Filter>
+    </None>
+    <None Include="..\UserInterface\External\CodeMirror\xml.js">
+      <Filter>UserInterface\External\CodeMirror</Filter>
+    </None>
+    <None Include="..\UserInterface\Legacy\6.0\InspectorWebBackendCommands.js">
+      <Filter>UserInterface\Legacy\6.0</Filter>
+    </None>
+    <None Include="..\UserInterface\Legacy\7.0\InspectorWebBackendCommands.js">
+      <Filter>UserInterface\Legacy\7.0</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Weight.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\ApplicationCache.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\ApplicationCache%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\ApplicationCacheManifest.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\ApplicationCacheManifest%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\BackArrow.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\BackArrowLegacy.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\BottomUpTree.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Breakpoint.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Breakpoint%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\BreakpointButton.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\BreakpointInactive.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\BreakpointInactive%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\BreakpointInactiveButton.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Breakpoints.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\ClippingCSS.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\ClippingCSS%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\ClippingGeneric.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\ClippingGeneric%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\ClippingJS.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\ClippingJS%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Close.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Colors.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Colors%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Cookie.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Cookie%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Crosshair.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Database.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Database%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\DatabaseTable.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\DatabaseTable%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\DisclosureTriangleSmallClosed.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\DisclosureTriangleSmallOpen.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\DisclosureTriangleTinyClosed.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\DisclosureTriangleTinyOpen.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\DockBottom.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\DockRight.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\DocumentCSS.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\DocumentCSS%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\DocumentFont.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\DocumentFont%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\DocumentGeneric.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\DocumentGeneric%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\DocumentImage.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\DocumentImage%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\DocumentJS.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\DocumentJS%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\DocumentMarkup.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\DocumentMarkup%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\DOMCharacterData.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\DOMComment.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\DOMDocument.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\DOMDocumentType.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\DOMElement.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\DOMNode.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\DOMTextNode.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\DOMTree.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Error.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Errors.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\ErrorsEnabled.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\EventListener.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Exception.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\FilterFieldGlyph.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\FolderGeneric.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\FolderGeneric%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\ForwardArrow.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\ForwardArrowLegacy.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Function.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\GoToArrow.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\HierarchicalNavigationItemChevron.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\IndeterminateProgressSpinner1.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\IndeterminateProgressSpinner10.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\IndeterminateProgressSpinner11.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\IndeterminateProgressSpinner12.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\IndeterminateProgressSpinner2.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\IndeterminateProgressSpinner3.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\IndeterminateProgressSpinner4.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\IndeterminateProgressSpinner5.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\IndeterminateProgressSpinner6.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\IndeterminateProgressSpinner7.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\IndeterminateProgressSpinner8.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\IndeterminateProgressSpinner9.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\InstructionPointer.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\InstructionPointer%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Issues.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\IssuesEnabled.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\LayerBorders.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\LessColumns.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\LocalStorage.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\LocalStorage%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Locked.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Log.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Log%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Logs.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Memory.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\MoreColumns.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Native.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NavigationItemAngleBrackets.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NavigationItemBrushAndRuler.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NavigationItemBug.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NavigationItemCurleyBraces.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NavigationItemFile.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NavigationItemLayers.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NavigationItemLog.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NavigationItemMagnifyingGlass.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NavigationItemStopwatch.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NavigationItemStorage.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NavigationItemTrash.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NavigationItemVariable.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Network.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Network%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkBarBlue.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkBarBlue%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkBarGray.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkBarGray%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkBarGreen.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkBarGreen%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkBarLabelCalloutLeft.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkBarLabelCalloutRight.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkBarLabelCalloutWhiteLeft.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkBarLabelCalloutWhiteRight.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkBarOrange.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkBarOrange%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkBarPurple.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkBarPurple%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkBarRed.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkBarRed%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkBarWhiteFlat.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkBarWhiteFlat%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkBarYellow.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkBarYellow%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkHollowBarBlue.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkHollowBarBlue%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkHollowBarGray.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkHollowBarGray%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkHollowBarGreen.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkHollowBarGreen%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkHollowBarOrange.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkHollowBarOrange%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkHollowBarPurple.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkHollowBarPurple%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkHollowBarRed.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkHollowBarRed%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkHollowBarYellow.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\NetworkHollowBarYellow%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Pause.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Percent.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Plus.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Profile.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Profile%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\PseudoElement.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Recording.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Recording%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\RecordingHovered.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\RecordingHovered%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\RecordingStopped.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\RecordingStopped%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Reflection.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Reload.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\ReloadSelected.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Request.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Resources.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Response.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\ResultLine.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Resume.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Script.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Script%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\SessionStorage.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\SessionStorage%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\ShadowDOM.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\SortIndicatorDownArrow.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\SortIndicatorUpArrow.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\SourceCode.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\SplitToggleDown.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\SplitToggleUp.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\StepInto.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\StepOut.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\StepOver.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Stopwatch.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Stopwatch%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\StyleRuleAuthor.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\StyleRuleInherited.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\StyleRuleInheritedElement.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\StyleRuleInspector.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\StyleRuleUser.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\StyleRuleUserAgent.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Time.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\TimelineBarBlue.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\TimelineBarBlue%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\TimelineBarOrange.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\TimelineBarOrange%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\TimelineBarPurple.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\TimelineBarPurple%402x.png">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Undock.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\UpDownArrows.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\UserInputPrompt.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\UserInputPromptPrevious.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\UserInputResult.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\UserInterface\Images\Warning.svg">
+      <Filter>Images</Filter>
+    </None>
+    <None Include="..\Info.plist">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Localizations\en.lproj\localizedStrings.js">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Scripts\combine-resources.pl">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\Scripts\copy-user-interface-resources.pl">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\Scripts\cssmin.py">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\Scripts\jsmin.py">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\Scripts\remove-console-asserts.pl">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\Scripts\update-codemirror-resources.rb">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\Scripts\update-pretty-printer.rb">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="WebInspectorUI.make" />
+    <None Include="build-webinspectorui.pl" />
+  </ItemGroup>
+</Project>

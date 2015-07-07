@@ -1,0 +1,40 @@
+Test for Bug 97184 and 104346 : HTMLShadowElement should be registered correctly.
+
+In the case host is in document
+PASS internals.hasShadowInsertionPoint(shadowRoot) is false
+PASS internals.hasShadowInsertionPoint(shadowRoot) is true
+PASS internals.hasShadowInsertionPoint(shadowRoot) is false
+PASS internals.hasShadowInsertionPoint(shadowRoot) is false
+PASS internals.hasShadowInsertionPoint(shadowRoot) is false
+PASS internals.hasShadowInsertionPoint(shadowRoot) is true
+PASS internals.hasShadowInsertionPoint(shadowRoot) is true
+PASS internals.hasShadowInsertionPoint(shadowRoot) is true
+PASS internals.hasShadowInsertionPoint(youngerShadowRoot) is false
+PASS internals.hasShadowInsertionPoint(shadowRoot) is false
+PASS internals.hasShadowInsertionPoint(youngerShadowRoot) is false
+PASS internals.hasShadowInsertionPoint(shadowRoot) is false
+PASS internals.hasShadowInsertionPoint(youngerShadowRoot) is true
+In the case host is not in document
+PASS internals.hasShadowInsertionPoint(shadowRoot) is false
+PASS internals.hasShadowInsertionPoint(shadowRoot) is true
+PASS internals.hasShadowInsertionPoint(shadowRoot) is false
+PASS internals.hasShadowInsertionPoint(shadowRoot) is false
+PASS internals.hasShadowInsertionPoint(shadowRoot) is false
+PASS internals.hasShadowInsertionPoint(shadowRoot) is true
+PASS internals.hasShadowInsertionPoint(shadowRoot) is true
+PASS internals.hasShadowInsertionPoint(shadowRoot) is true
+PASS internals.hasShadowInsertionPoint(youngerShadowRoot) is false
+PASS internals.hasShadowInsertionPoint(shadowRoot) is false
+PASS internals.hasShadowInsertionPoint(youngerShadowRoot) is false
+PASS internals.hasShadowInsertionPoint(shadowRoot) is false
+PASS internals.hasShadowInsertionPoint(youngerShadowRoot) is true
+insertedInto/removedFrom can be called several times.
+PASS internals.hasShadowInsertionPoint(shadowRoot) is false
+PASS internals.hasShadowInsertionPoint(shadowRoot) is true
+PASS internals.hasShadowInsertionPoint(shadowRoot) is true
+PASS internals.hasShadowInsertionPoint(shadowRoot) is true
+PASS internals.hasShadowInsertionPoint(shadowRoot) is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

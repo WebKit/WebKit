@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript">
+        function log(message)
+        {
+            document.getElementById("result").innerHTML += message + "<br>";
+        }
+        
+        function runTests()
+        {
+            if (window.testRunner) {
+                testRunner.grantWebNotificationPermission("file://");
+                testRunner.dumpAsText();
+            }
+
+            if (!window.webkitNotifications) {
+                log("FAIL: No webkitNotifications interface!");
+            }
+            
+            var N = window.webkitNotifications.createNotification("http://localhost/my_icon.png", "New E-mail", "Meet me tonight at 8!");
+            N.addEventListener("display", function(e) { log("PASS: addEventListener(display) non-capture callback invoked"); });
+            N.ondisplay =                 function(e) { log("PASS: ondisplay attribute event callback invoked."); }
+            N.addEventListener("display", function(e) { log("PASS: addEventListener(display) capture callback invoked"); e.stopPropagation(); }, true );
+            N.show();
+            N.cancel();
+        }
+    </script>
+</head>
+<body>
+<p>Sending notifications with permission...</p>
+<div id="result"></div>    
+    
+<script type="text/javascript">
+runTests();
+</script>
+</body>
+</html>

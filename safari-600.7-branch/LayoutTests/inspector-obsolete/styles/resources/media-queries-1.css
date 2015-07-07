@@ -1,0 +1,7 @@
+body {
+    margin: 0;
+}
+
+@media not aural {
+    #main { border: 1px solid black; }
+}

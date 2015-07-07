@@ -1,0 +1,171 @@
+<html>
+<head>
+    <script type="text/javascript" src="./prototype-for-gebcn-test.js"></script>
+    <script type="text/javascript">        
+        function run(type)
+        {
+            var iterations = 10000;
+            var result;
+            var i = 0;
+            var current;
+            
+            var start;
+            
+            var body = document.body;
+            
+            switch(type)
+            {
+            case "native":
+                //test for a working native getElementsByClassName
+                if(!document.getElementsByClassName)
+                {
+                    alert("Your browser does not have a native implementation of getElementsByClassName");
+                    return;
+                }
+                start = new Date();
+
+                for(; iterations > 0; --iterations)
+                {
+                    result = body.getElementsByClassName("test1 test2 test3 test4");
+                    for(; current = result[i]; i++) {}
+                }
+                break;
+            
+            case "xpath":
+                start = new Date();
+
+                for(; iterations > 0; --iterations)
+                {
+                    result = document.getXPathElementsByClassName("test1 test2 test3 test4", body);
+                    for(; current = result[i]; i++) {}
+                }
+                break;
+            case "js":
+                start = new Date();
+
+                for(; iterations > 0; --iterations)
+                {
+                    result = document.getJSElementsByClassName("test1 test2 test3 test4", body);
+                    for(; current = result[i]; i++) {}
+                }
+                break;
+            }
+            
+            var end = new Date();
+            document.getElementById("output").innerHTML = end - start;
+        }
+    </script>
+</head>
+<body>
+    <button onclick="run('native');">run</button>
+    <button onclick="run('xpath');">runxpath</button>
+    <button onclick="run('js');">runjs</button>
+
+    <span id="output"></span>
+    <div class="test1 test2 test3 test4">
+        <div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+<div class="test1 test2 test3 test4"></div>
+    </div>
+</body>
+</html>

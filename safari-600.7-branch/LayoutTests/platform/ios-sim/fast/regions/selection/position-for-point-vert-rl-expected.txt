@@ -1,0 +1,51 @@
+CONSOLE MESSAGE: line 330: 
+Expected selection: word1 inside region inside region inside region inside region word2
+Actual selection: 
+Expected focus node: word2
+Actual focus node: 
+Expected focus offset: 5
+Actual focus offset: 171
+CONSOLE MESSAGE: line 330: 
+Expected selection: word1 inside region inside region inside region inside region word2
+Actual selection: 
+Expected focus node: word2
+Actual focus node: 
+Expected focus offset: 5
+Actual focus offset: 171
+CONSOLE MESSAGE: line 330: 
+Expected selection: word1 inside region inside region inside region inside region word2 word5 inside region inside region inside region inside region word6 
+Actual selection: 
+Expected focus node: outside
+Actual focus node: 
+Expected focus offset: 0
+Actual focus offset: 171
+CONSOLE MESSAGE: line 330: 
+Expected selection: word5 inside region inside region inside region inside region word6 
+Actual selection: 
+Expected focus node: word5
+Actual focus node: 
+Expected focus offset: 0
+Actual focus offset: 171
+CONSOLE MESSAGE: line 330: 
+Expected selection: word5 inside region inside region inside region inside region word6
+Actual selection: 
+Expected focus node: word6
+Actual focus node: 
+Expected focus offset: 5
+Actual focus offset: 171
+word1 inside region inside region inside region inside region word2
+word5 inside region inside region inside region inside region word6
+word3 outside region outside region outside region outside region word4
+Bug #120769 - [CSSRegions] Selection focusNode set to the "region" block, instead of the "source" block
+
+Top margin, padding and border points should be mapped to the beginning of the Region block, while bottom points are mapped to the block end. The Left coordinate its just adjusted to fit in the Flow Thread boundaries, since its not affected by the Flow direction.
+
+Test 1) Select from "word1" to "word2" and move down without leaving the region. Focus should be at the end of "word2". Selected content should go from "word1" to "word2". FAIL
+
+Test 2) Select from "word1" to "word2" and move down until reaching the region border. Focus should be at the end of "word2". Selected content should go from "word1" to "word2". FAIL
+
+Test 3) Select from "word1" to "word2" and move down leaving the block without entering in the next element. Focus should be at at the beginning of "outside". Selected content should go from "word1" to "word2" and from "word5" to "word6". FAIL
+
+Test 4) Select from "word3" to "word4" and move down leaving the block without entering in the next element. Focus should be at at the beginning of "word5". Selected content should go from "word5" to "word6". FAIL
+
+Test 5) Select from "word5" to "word6" and move down without leaving the region. Focus should be at the end of "word6". Selected content should go from "word5" to "word6". FAIL

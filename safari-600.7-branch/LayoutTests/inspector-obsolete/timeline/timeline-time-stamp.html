@@ -1,0 +1,26 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/timeline-test.js"></script>
+<script>
+
+function performActions()
+{
+    console.timeStamp("TIME STAMP");
+}
+
+function test()
+{
+    InspectorTest.performActionsAndPrint("performActions()", "TimeStamp", true);
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests the Timeline API timeStamp feature
+</p>
+
+</body>
+</html>

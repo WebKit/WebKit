@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x252
+  RenderBlock {HTML} at (0,0) size 800x252
+    RenderBody {BODY} at (8,16) size 784x228
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 310x19
+          text run at (0,0) width 310: "Test passes if there is no red visible on the page."
+layer at (8,52) size 784x192
+  RenderBlock (relative positioned) {DIV} at (0,36) size 784x192
+layer at (8,148) size 306x102
+  RenderPartObject {IFRAME} at (0,96) size 306x102 [border: (3px solid #FF0000)]
+    layer at (0,0) size 300x96
+      RenderView at (0,0) size 300x96
+    layer at (0,0) size 300x96
+      RenderBlock {HTML} at (0,0) size 300x96
+        RenderBody {BODY} at (8,8) size 284x80
+layer at (8,148) size 306x102
+  RenderBlock (positioned) {DIV} at (0,96) size 306x102 [border: (3px solid #008000)]

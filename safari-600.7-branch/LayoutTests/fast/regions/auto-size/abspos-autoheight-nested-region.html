@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #content1 {
+                -webkit-flow-into: flow1;
+            }
+
+            #region1 {
+                -webkit-flow-from: flow1;
+                border: 5px solid blue;
+                width: 110px;
+                position: absolute;
+                top: 100px;
+                left: 50px;
+            }
+
+            #content2 {
+                -webkit-flow-into: flow2;
+                width: 50px;
+                height: 50px;
+                background-color: green;
+            }
+
+            #region2 {
+                -webkit-flow-from: flow2;
+                border: 5px solid green;
+                position: absolute;
+                top: 25px;
+                left: 25px;
+            }
+        </style>
+        <script src="../../../resources/check-layout.js"></script>
+    </head>
+    <body onload="checkLayout('#region1, #region2')">
+        <p>Test that an auto-height region taking content from a namedflow that contains another absolutely positioned auto-height region has its height computed properly.</p>
+        <p>On success, you should see a green square inside a blue border rectangle and two PASS below.</p>
+        <div id="content1">
+            <div style="width: 110px; height: 110px;"></div>
+            <div id="region2" data-expected-width=60 data-expected-height=60></div>
+        </div>
+        <div id="content2"></div>
+        <div id="region1" data-expected-height=120></div>
+    </body>
+</html>

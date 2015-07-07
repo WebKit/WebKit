@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 784x66
+        RenderTableSection {TBODY} at (0,0) size 784x66
+          RenderTableRow {TR} at (0,2) size 784x62
+            RenderTableCell {TD} at (2,2) size 780x62 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 778x60
+                RenderText {#text} at (0,0) size 778x59
+                  text run at (0,0) width 756: "Three cheers    for OldVet and the letter he wrote to Senator Dodd (see above Comment).  We all need to be proactive"
+                  text run at (755,0) width 5: " "
+                  text run at (0,20) width 775: "and contact our senators and representatives to let them know our strong feelings on this subject.  I would lose what little"
+                  text run at (774,20) width 4: " "
+                  text run at (0,40) width 471: "faith I have left in our government if they engineered a tax payer bailout. "
+                  text run at (470,40) width 1: " "

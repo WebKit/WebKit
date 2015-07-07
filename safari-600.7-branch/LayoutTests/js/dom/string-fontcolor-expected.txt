@@ -1,0 +1,18 @@
+This is a test case for String.prototype.fontcolor(color).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS '_'.fontcolor('b') is "<font color=\"b\">_</font>"
+PASS '<'.fontcolor('b') is "<font color=\"b\"><</font>"
+PASS '_'.fontcolor(0x2A) is "<font color=\"42\">_</font>"
+PASS '_'.fontcolor('"') is "<font color=\"&quot;\">_</font>"
+PASS '_'.fontcolor('" size="2px') is "<font color=\"&quot; size=&quot;2px\">_</font>"
+PASS String.prototype.fontcolor.call(0x2A, 0x2A) is "<font color=\"42\">42</font>"
+PASS String.prototype.fontcolor.call(undefined) threw exception TypeError: Type error.
+PASS String.prototype.fontcolor.call(null) threw exception TypeError: Type error.
+PASS String.prototype.fontcolor.length is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

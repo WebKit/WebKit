@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Test suspendAnimations()/resumeAnimations() for animations</title>
+  <style type="text/css" media="screen">
+    #box {
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+      -webkit-animation-duration: 1.25s;
+      -webkit-animation-timing-function: linear;
+      -webkit-animation-name: "move";
+    }
+    @-webkit-keyframes "move" {
+        from { -webkit-transform: translateX(0); }
+        to   { -webkit-transform: translateX(500px); }
+    }
+  </style>
+  <script src="resources/animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+    
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["rotate", 0.6, "box", "webkitTransform", [1,0,0,1, 200, 0], 30],
+      ["rotate", 0.9, "box", "webkitTransform", [1,0,0,1, 200, 0], 30],
+      ["rotate", 1.5, "box", "webkitTransform", [1,0,0,1, 400, 0], 30],
+    ];
+    
+    function suspend()
+    {
+        if (window.internals)
+            internals.suspendAnimations();
+    }
+    
+    function resume()
+    {
+        if (window.internals)
+            internals.resumeAnimations();
+    }
+    
+    function setTimers()
+    {
+        setTimeout(suspend, 500);
+        setTimeout(resume, 1000);
+    }
+
+    runAnimationTest(expectedValues, setTimers, undefined, true);
+    
+  </script>
+</head>
+<body>
+<p>
+This test shows suspend and resume of a box moving to the right 500px. If running inside DumpRenderTest the box should stop at 200px
+after 500ms and then continue to complete the move in another 750ms
+<div id="box">
+</div>
+<div id="result">
+</div>
+</body>
+</html>

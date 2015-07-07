@@ -1,0 +1,40 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 5 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > I > B > DIV > BODY > HTML > #document to 9 of #text > FONT > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of #text > I > B > DIV > BODY > HTML > #document to 9 of #text > FONT > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 9 of #text > FONT > DIV > DIV > BODY > HTML > #document to 9 of #text > FONT > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+
+Markup before:
+| "
+"
+| <b>
+|   <i>
+|     "<#selection-caret>hello bold and italic"
+| <div>
+|   <i>
+|     "hello italic"
+| <div>
+|   <font>
+|     color="#ff0000"
+|     "hello red"
+| "
+"
+
+Markup after:
+| <b>
+|   <i>
+|     "hello bold and italic"
+| <div>
+|   <i>
+|     "hello italic"
+| <div>
+|   <font>
+|     color="#ff0000"
+|     "hello red<#selection-caret>"
+| "
+"

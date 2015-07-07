@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 55x19
+          text run at (0,0) width 55: "Test for "
+        RenderInline {A} at (0,0) size 311x19 [color=#0000EE]
+          RenderText {#text} at (54,0) size 311x19
+            text run at (54,0) width 311: "https://bugs.webkit.org/show_bug.cgi?id=21248"
+        RenderText {#text} at (364,0) size 5x19
+          text run at (364,0) width 5: "."
+      RenderBlock (anonymous) at (0,36) size 784x38
+        RenderText {#text} at (0,0) size 0x0
+layer at (10,46) size 135x34 clip at (11,47) size 133x32
+  RenderTextControl {TEXTAREA} at (2,2) size 135x34 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+    RenderBlock {DIV} at (3,3) size 129x14
+      RenderText {#text} at (3,0) size 43x14
+        text run at (3,0) width 43: "New text"

@@ -1,0 +1,9 @@
+Tests that resources have proper documentURL set in the tree model.
+
+
+http://127.0.0.1:8000/inspector/inspector-test.js => http://127.0.0.1:8000/inspector/resource-tree/resource-tree-document-url.html
+http://127.0.0.1:8000/inspector/resource-tree/resource-tree-document-url.html => http://127.0.0.1:8000/inspector/resource-tree/resource-tree-document-url.html
+http://127.0.0.1:8000/inspector/resource-tree/resource-tree-test.js => http://127.0.0.1:8000/inspector/resource-tree/resource-tree-document-url.html
+http://127.0.0.1:8000/inspector/resource-tree/resources/dummy-iframe.html => http://127.0.0.1:8000/inspector/resource-tree/resources/dummy-iframe.html
+http://127.0.0.1:8000/inspector/resources-test.js => http://127.0.0.1:8000/inspector/resource-tree/resource-tree-document-url.html
+

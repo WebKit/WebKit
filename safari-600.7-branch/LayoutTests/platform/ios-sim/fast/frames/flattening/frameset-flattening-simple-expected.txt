@@ -1,0 +1,25 @@
+layer at (0,0) size 1000x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderFrameSet {FRAMESET} at (0,0) size 1000x600
+      RenderFrame {FRAME} at (0,0) size 800x600
+        layer at (0,0) size 800x600
+          RenderView at (0,0) size 800x600
+        layer at (0,0) size 800x600
+          RenderBlock {HTML} at (0,0) size 800x600
+            RenderBody {BODY} at (8,8) size 784x576 [bgcolor=#008000]
+              RenderBlock {P} at (0,0) size 784x20
+                RenderText {#text} at (0,0) size 455x19
+                  text run at (0,0) width 455: "Test for frameset flattening. The flattening only works inside the DRT."
+              RenderBlock {P} at (0,36) size 784x20
+                RenderText {#text} at (0,0) size 467x19
+                  text run at (0,0) width 467: "This frame should be 800px wide and not be scrollable (have scrollbars)."
+        layer at (0,100) size 800x1
+          RenderBlock (positioned) {DIV} at (0,100) size 800x1
+      RenderFrame {FRAME} at (800,0) size 200x600
+        layer at (0,0) size 200x600
+          RenderView at (0,0) size 200x600
+        layer at (0,0) size 200x600
+          RenderBlock {HTML} at (0,0) size 200x600
+            RenderBody {BODY} at (8,8) size 184x584

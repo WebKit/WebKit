@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<script src="resources/move-by-word-visually.js"></script>
+<script>
+
+onload = function() {
+    try {
+        runTest();
+        document.body.innerHTML = "Crash test passed";
+    } finally {
+    }
+};
+
+if (window.testRunner && window.internals) {
+    testRunner.dumpAsText();
+    internals.settings.setEditingBehavior('win');
+}
+</script>
+<vkern></vkern><marquee><div title="0|0" class="test_move_by_word">abc def
+

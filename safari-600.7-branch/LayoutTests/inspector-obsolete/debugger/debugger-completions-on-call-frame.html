@@ -1,0 +1,87 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+<script>
+
+var a = 1;
+function testFunction()
+{
+    var var1 = 2;
+    var var2 = 3;
+    debugger;
+}
+
+var test = function()
+{
+    InspectorTest.startDebuggerTest(step1);
+
+    function step1()
+    {
+        InspectorTest.runTestFunctionAndWaitUntilPaused(step2);
+    }
+
+    function step2()
+    {
+        WebInspector.runtimeModel._completionsForExpression("", "var", false, checkAgainstGolden.bind(this, [ "var1", "var2" ], [], step3));
+    }
+
+    function step3()
+    {
+        WebInspector.runtimeModel._completionsForExpression("", "di", false, checkAgainstGolden.bind(this, [ "dir", "dirxml" ], [], step4));
+    }
+
+    function step4()
+    {
+        WebInspector.runtimeModel._completionsForExpression("", "win", false, checkAgainstGolden.bind(this, [ "window" ], [], step5));
+    }
+
+    function step5()
+    {
+        WebInspector.runtimeModel._completionsForExpression("", "t", false, checkAgainstGolden.bind(this, [ "this" ], [], step6));
+    }
+
+    function step6()
+    {
+        WebInspector.runtimeModel._completionsForExpression("var1", "toExp", false, checkAgainstGolden.bind(this, [ "toExponential" ], [], step7));
+    }
+
+    function step7()
+    {
+        WebInspector.runtimeModel._completionsForExpression("123", "toExp", false, checkAgainstGolden.bind(this, [], [ "toExponential" ], step8));
+    }
+
+    function step8()
+    {
+        InspectorTest.completeDebuggerTest();
+    }
+
+    function checkAgainstGolden(golden, antiGolden, continuation, completions)
+    {
+        for (var i = 0; i < golden.length; ++i) {
+            if (completions.indexOf(golden[i]) !== -1)
+                InspectorTest.addResult(golden[i]);
+            else
+                InspectorTest.addResult("NOT FOUND: " + golden[i]);
+        }
+
+        for (var i = 0; i < antiGolden.length; ++i) {
+            if (completions.indexOf(antiGolden[i]) !== -1)
+                InspectorTest.addResult("FOUND: " + antiGolden[i]);
+        }
+
+        continuation();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Test that completions in the context of the call frame will result in names
+of its scope variables.
+</p>
+
+</body>
+</html>

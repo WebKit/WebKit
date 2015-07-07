@@ -1,0 +1,17 @@
+layer at (0,0) size 785x1784
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x1784
+  RenderBlock {HTML} at (0,0) size 785x1784
+    RenderBody {BODY} at (8,8) size 769x1768
+      RenderText {#text} at (0,0) size 0x0
+layer at (8,8) size 612x1768
+  RenderInline {SPAN} at (0,0) size 612x1768 [bgcolor=#800000]
+    RenderText {#text} at (0,0) size 612x1768
+      text run at (0,0) width 356: "This"
+      text run at (0,221) width 590: "content"
+      text run at (0,442) width 534: "should"
+      text run at (0,663) width 189: "be"
+      text run at (0,884) width 612: "masked"
+      text run at (0,1105) width 495: "with a"
+      text run at (0,1326) width 301: "soft"
+      text run at (0,1547) width 450: "glow."

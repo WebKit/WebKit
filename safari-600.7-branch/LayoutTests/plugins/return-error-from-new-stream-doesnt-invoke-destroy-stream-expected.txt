@@ -1,0 +1,10 @@
+This tests that NPP_DestroyStream is not called if a plug-in returns an error from its NPP_NewStream callback.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS plugin.returnErrorFromNewStream is true
+PASS destroyStreamCalled is false
+
+TEST COMPLETE
+

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #article {
+                -webkit-flow-into: flow;
+            }
+            #article1, #article2 { display: inline-block; }
+
+            #inside1, #inside2 {
+                width: 100px;
+                height: 100px;
+                background-color: green;
+            }
+
+            #region1, #region2 {
+                -webkit-flow-from: flow;
+                width: 100px;
+                height: 120px;
+                position: absolute;
+                top: 100px;
+                left: 100px;
+            }
+            #region1 { left: 100px; }
+            #region2 { left: 300px; }
+
+            #redContainer {
+                position: absolute;
+                top: 100px;
+                left: 100px;
+                width: 100px;
+            }
+            #red1, #red2 {
+                width: 100px;
+                height: 100px;
+                background-color: red;
+                display: inline-block;
+            }
+        </style>
+        <script>
+            window.addEventListener("load",
+                function() {
+                    document.getElementById("region1").style.height = "300px";
+                }
+            );
+        </script>
+    </head>
+    <body>
+        <p>Test that inline blocks are correctly displayed in regions when the height of the regions is dynamically increased.</p>
+        <p>On success you should see 2 green rectangles and no red.</p>
+        <div id="redContainer">
+            <div id="red1"></div>
+            <div id="red2"></div>
+        </div>
+        <div id="article">
+            <div id="article1">
+                <div id="inside1"></div>
+            </div><div id="article2">
+                <div id="inside2"></div>
+            </div>
+        </div>
+        <div id="region1"></div>
+        <div id="region2"></div>
+    </body>
+</html>

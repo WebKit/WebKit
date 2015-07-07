@@ -1,0 +1,1 @@
+XThis tests that when we re-entrantly create and cancel XHRs, we don't try to disconnect the same CachedResourceClient multiple times from its CachedResource. We pass if we don't crash. XX

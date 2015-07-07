@@ -1,0 +1,73 @@
+<body>
+<p>Test SharedWorker constructor functionality. Should print a series of PASS messages, followed with DONE.</p>
+<div id=result></div>
+<script>
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+try {
+    new SharedWorker({toString:function(){throw "exception"}}, "name")
+    log("FAIL: toString exception not propagated.");
+} catch (ex) {
+    if (ex == "exception")
+        log("PASS: toString exception propagated correctly.");
+    else
+        log("FAIL: unexpected exception (" + ex + ") received instead of one propagated from toString.");
+}
+
+try {
+    var foo = {toString:function(){new Worker(foo)}}
+    new SharedWorker(foo, name);
+    log("FAIL: no exception when trying to create workers recursively");
+} catch (ex) {
+    log("PASS: trying to create workers recursively resulted in an exception (" + ex + ")");
+}
+
+try {
+    new SharedWorker();
+    log("FAIL: invoking SharedWorker constructor without arguments did not result in an exception");
+} catch (ex) {
+    log("PASS: invoking SharedWorker constructor without arguments resulted in an exception (" + ex + ")");
+}
+
+try {
+    var worker = new SharedWorker("resources/shared-worker-common.js");
+    log("PASS: invoking SharedWorker constructor without name did not result in an exception");
+} catch (ex) {
+    log("FAIL: Constructor failed when no name is passed: (" + ex + ")");
+}
+
+try {
+    new SharedWorker("resources/shared-worker-common.js", null);
+    log("PASS: invoking SharedWorker constructor with null name did not result in an exception");
+} catch (ex) {
+    log("FAIL: invoking SharedWorker constructor with null name resulted in an exception (" + ex + ")");
+}
+
+try {
+    new SharedWorker("resources/shared-worker-common.js", undefined);
+    log("PASS: invoking SharedWorker constructor with undefined name did not result in an exception");
+} catch (ex) {
+    log("FAIL: invoking SharedWorker constructor with undefined name resulted in an exception (" + ex + ")");
+}
+
+try {
+    var worker = new SharedWorker("resources/shared-worker-common.js", "name");
+    log ("PASS: SharedWorker constructor succeeded: " + worker);
+} catch (ex) {
+    log("FAIL: invoking SharedWorker constructor resulted in an exception (" + ex + ")");
+}
+
+log("DONE");
+if (window.testRunner)
+    testRunner.notifyDone();
+
+</script>
+</body>

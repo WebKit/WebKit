@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    #indicator {
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      height: 100px;
+      width: 100px;
+      background-color: red;
+    }
+    #clipper {
+      -webkit-transform:translateZ(0);
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      height: 100px;
+      width: 100px;
+      background-color: green;
+      clip: rect(25px, 75px, 75px, 25px);
+    }
+  </style>
+  <script>
+    if (window.testRunner)
+      testRunner.dumpAsText(true);
+    function doTest() {
+      if (window.testRunner)
+        testRunner.display();
+      // The change in clip style should be reflected immediately in the size
+      // of the composited clipper layer. After changing the clip, it should
+      // entirely cover the indicator.
+      var clipper = document.getElementById("clipper");
+      clipper.style.clip = "rect(0px, 100px, 100px, 0px)";
+    }
+    window.addEventListener("load", doTest, false);
+  </script>
+</head>
+  <body>
+    <div id="indicator"></div>
+    <div id="clipper"></div>
+  </body>
+</html>

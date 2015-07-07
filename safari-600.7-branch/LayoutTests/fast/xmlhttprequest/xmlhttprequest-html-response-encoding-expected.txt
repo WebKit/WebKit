@@ -1,0 +1,4 @@
+Test for bug 14288: XMLHttpRequest doesn't use a correct content type for file:// URLs.
+
+HTML, charset determined by a META: Проверка
+Async: HTML, charset determined by a META: Проверка

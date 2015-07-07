@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 687x19
+        text run at (0,0) width 687: "In the selection list below, the text 'The label for this element is \"1\"' should appear, and not the character '1'"
+      RenderBR {BR} at (686,15) size 1x0
+      RenderMenuList {SELECT} at (2,22) size 180x20 [bgcolor=#FFFFFF02] [border: (1px solid #4C4C4C)]
+        RenderBlock (anonymous) at (6,3) size 168x14
+          RenderText at (0,0) size 148x14
+            text run at (0,0) width 148: "the label for this element is \"1\""
+      RenderText {#text} at (0,0) size 0x0

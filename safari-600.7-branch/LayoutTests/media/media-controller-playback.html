@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+
+        <script>
+        var controller;
+        var video2;
+
+        function start() {
+            var videos = document.getElementsByTagName('video');
+            video = videos[0];
+            video2 = videos[1];
+            run('controller = video.controller');
+            controller.addEventListener('canplaythrough', canplaythrough, true);
+            var src = findMediaFile('video', 'content/test');
+            video.src = src;
+            video2.src = src;
+        }
+        
+        function canplaythrough() {
+            consoleWrite("EVENT(canplaythrough)");
+            controller.removeEventListener('canplaythrough', canplaythrough, true);
+            controller.addEventListener('playing', playing, true);
+            run('controller.play()');
+        }
+        
+        function playing() { 
+            consoleWrite("EVENT(playing)");
+            controller.removeEventListener('playing', playing, true);
+            testExpected('controller.paused', false);
+            controller.addEventListener('ended', ended, true);
+            run('controller.currentTime = 5');
+            testExpected('video.currentTime', 5);
+            testExpected('video2.currentTime', 5);
+        }
+
+        function ended() { 
+            consoleWrite("EVENT(ended)");
+            controller.removeEventListener('ended', ended, true);
+            endTest();
+        }
+        </script>
+    </head>
+    <body onload="start()">
+        <video mediaGroup="group" controls></video>
+        <video mediaGroup="group" controls></video>
+    </body>
+</html>

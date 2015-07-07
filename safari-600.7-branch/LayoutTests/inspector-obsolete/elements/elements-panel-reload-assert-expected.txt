@@ -1,0 +1,5 @@
+Tests that the inspected page does not crash in a debug build when reloading a page containing shadow DOM with open inspector. Bug 84154.
+
+
+Page reloaded.
+

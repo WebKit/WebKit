@@ -1,0 +1,44 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+<style>
+.editing {
+    border: 2px solid red;
+    padding: 12px;
+    font-size: 24px;
+}
+
+.selected {
+    background-color: #afdaff;
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    for (i = 0; i < 9; i++) {
+        extendSelectionForwardByCharacterCommand();
+    }
+}
+
+</script>
+
+<title>Bidi Extend Selection Test</title>
+</head>
+<body>
+The selection range in the red box should look like this:&nbsp;&nbsp;
+<span class="selected">abc אבג 1</span>23 דהו def
+<br><br>
+
+<div contenteditable id="root" class="editing">
+<span id="test">abc אבג 123 דהו def</span>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

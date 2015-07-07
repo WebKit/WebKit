@@ -1,0 +1,15 @@
+Tests using DeviceProximity from multiple frames.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS DeviceProximityEvent.value is firedEvent.value
+PASS DeviceProximityEvent.min is firedEvent.min
+PASS DeviceProximityEvent.max is firedEvent.max
+PASS DeviceProximityEvent.value is firedEvent.value
+PASS DeviceProximityEvent.min is firedEvent.min
+PASS DeviceProximityEvent.max is firedEvent.max
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,16 @@
+formatblock on selection with a contenteditable="false" child.
+| <h1>
+|   <i>
+|     "
+        <#selection-anchor>Will select from here
+        "
+|   <br>
+|   <i>
+|     "
+        until here.<#selection-focus>
+    "
+| <div>
+|   contenteditable="false"
+|   "
+            over this contenteditable=false div
+        "

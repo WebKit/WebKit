@@ -1,0 +1,21 @@
+--- Test begins ---
+* "about:blank"
+document.domain = 127.0.0.1
+* ""
+document.domain = 127.0.0.1
+--- After document.open() ---
+* "about:blank"
+document.domain = 127.0.0.1
+* ""
+document.domain = 127.0.0.1
+--- After setting document.domain ---
+* "about:blank"
+document.domain = 0.0.1
+* ""
+document.domain = 0.0.1
+--- After document.close() ---
+* "about:blank"
+document.domain = 0.0.1
+* ""
+document.domain = 0.0.1
+--- Test ends ---

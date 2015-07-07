@@ -1,0 +1,15 @@
+KDE JS Test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS test0
+PASS test1
+PASS test2
+PASS test3
+PASS test4.(1)
+PASS test4.(2)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

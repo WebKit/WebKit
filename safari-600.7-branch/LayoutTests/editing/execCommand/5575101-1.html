@@ -1,0 +1,16 @@
+<p>This tests for a hang when outdenting a list item within a sublist twice.</p>
+<div contenteditable="true">
+<ol>
+    <li>one</li>
+    <li id="insert">two<ol><li id="outdent">three</li><li>four</li></ol></li>
+</ol>
+</div>
+
+<script>
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+outdent = document.getElementById("outdent");
+window.getSelection().setPosition(outdent, 0);
+document.execCommand("Outdent");
+document.execCommand("Outdent");
+</script>

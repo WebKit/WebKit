@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+</head>
+<body>
+
+<a href="#">This is a link that <b>would</b> normally appear <b>as multiple</b> elements</a>.
+
+<script>
+
+    //description("This test makes sure that only one element is returned for the link object, instead of many elements that are all links.");
+
+    if (window.accessibilityController) {
+
+        var obj = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0);
+        var succeeded = obj.iphoneLabel == "AXLabel: This is a link that would normally appear as multiple elements";
+        //  shouldBe("succeeded", "true");
+        var failed = false;
+        if (!succeeded) {
+            failed = true;
+        }
+
+        succeeded = obj.iphoneIsElement;
+        //  shouldBe("succeeded", "true");
+
+        if (!succeeded) {
+           failed = true;
+        }
+
+        if (failed)
+            alert("Tests failed");
+        else
+           alert("Tests passed");
+
+    }
+
+    successfullyParsed = true;
+</script>
+
+
+</body>
+</html>
+

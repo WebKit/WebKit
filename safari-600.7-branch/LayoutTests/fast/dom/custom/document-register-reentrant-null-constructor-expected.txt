@@ -1,0 +1,9 @@
+Fuzzing document.register() through getters. PASS uless crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

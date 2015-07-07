@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style type="text/css">
+        /* Valid viewport syntax. */
+        @-webkit-viewport {
+        }
+
+        /* Valid viewport syntax, extras spaces should be ignored. */
+        @-webkit-viewport          {
+        }
+
+        /* Valid viewport syntax, regular attributes. */
+        @-webkit-viewport {
+            max-height: 200px;
+            min-height: 200px;
+        }
+
+        /* Valid viewport syntax, should omit the malformed attribute. */
+        @-webkit-viewport {
+            asdasd
+        }
+
+        /* Valid viewport syntax, it is allowed inside media queries. */
+        @media all {
+            @-webkit-viewport {
+            }
+        }
+
+        /* Nested viewport rules are not allowed. The inner rule should be ignored. */
+        @-webkit-viewport {
+            max-height: 100px;
+            min-height: 100px;
+
+            @-webkit-viewport {
+                max-height: 200px;
+                min-height: 200px;
+            }
+        }
+
+        /* Rules inside a viewport should be ignored. */
+        @-webkit-viewport {
+            max-height: 50px;
+            min-height: 50px;
+
+            @import url('../../resources/testharness.css');
+        }
+
+        /* Should ignore unprefixed viewport rule. We need to change this
+           test if at some point we remove the prefix. */
+        @viewport {
+        }
+    </style>
+    <meta charset="utf-8" />
+    <link rel="help" href="http://www.w3.org/TR/css-device-adapt/#syntax" />
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script type="text/javascript">
+        var rules = document.styleSheets[0].cssRules;
+
+        test(function() {
+            assert_equals(rules.item(0).cssText, "@-webkit-viewport { }");
+        }, "Empty at-rule parsing");
+
+        test(function() {
+            assert_equals(rules.item(1).cssText, "@-webkit-viewport { }");
+        }, "at-rule with extra spaces");
+
+        test(function() {
+            assert_equals(rules.item(2).cssText, "@-webkit-viewport { max-height: 200px; min-height: 200px; }");
+        }, "Rule with attributes");
+
+        test(function() {
+            assert_equals(rules.item(3).cssText, "@-webkit-viewport { }");
+        }, "Rule with malformed attributes");
+
+        test(function() {
+            assert_equals(rules.item(4).cssText, "@media all { \n  @-webkit-viewport { }\n}");
+        }, "Should be accepted inside media queries");
+
+        test(function() {
+            assert_equals(rules.item(5).cssText, "@-webkit-viewport { max-height: 100px; min-height: 100px; }");
+        }, "Nested viewport rule");
+
+        test(function() {
+            assert_equals(rules.item(6).cssText, "@-webkit-viewport { max-height: 50px; min-height: 50px; }");
+        }, "Rules inside a viewport rule");
+
+        // The total number of parsed rules should be 6, meaning that the parser
+        // ignored the last two rules.
+        test(function() {
+            assert_equals(rules.length, 7)
+        }, "Should ignore unprefixed at-rule");
+    </script>
+</head>
+<body>
+    <div id="log"></div>
+</body>
+</html>

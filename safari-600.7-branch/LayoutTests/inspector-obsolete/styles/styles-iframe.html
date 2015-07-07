@@ -1,0 +1,53 @@
+<html>
+<head>
+
+<style type="text/css" media="screen">
+  #main { background:blue; }
+</style>
+
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function loadIframe()
+{
+    var iframe = document.createElement("iframe");
+    iframe.src = "resources/styles-iframe-data.html";
+    document.getElementById("main").appendChild(iframe);
+}
+
+function test()
+{
+    InspectorTest.evaluateInPage("loadIframe()");
+    InspectorTest.addConsoleSniffer(step0);
+
+    function step0()
+    {
+        InspectorTest.selectNodeAndWaitForStyles("main", step1);
+    }
+
+    function step1()
+    {
+        InspectorTest.addResult("Main frame style:");
+        InspectorTest.dumpSelectedElementStyles(true, false, true);
+        InspectorTest.selectNodeAndWaitForStyles("iframeBody", step2);
+    }
+
+    function step2()
+    {
+        InspectorTest.addResult("iframe style:");
+        InspectorTest.dumpSelectedElementStyles(true, false, true);
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that proper (and different) styles are returned for body elements of main document and iframe.
+</p>
+
+<div id="main"></div>
+</body>
+</html>

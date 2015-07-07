@@ -1,0 +1,67 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../resources-test.js"></script>
+<script src="search-test.js"></script>
+<script>
+function test()
+{
+    InspectorTest.runAfterResourcesAreFinished(["search.js"], step2);
+    var resource;
+    var staticContentProvider;
+
+    function step2()
+    {
+        resource = WebInspector.resourceForURL("http://127.0.0.1:8000/inspector/search/resources/search.js");
+        resource.requestContent(step3);
+    }
+
+    function step3()
+    {
+        staticContentProvider = new WebInspector.StaticContentProvider(WebInspector.resourceTypes.Script, resource.content);
+        InspectorTest.addResult(resource.url);
+
+        var text = "searchTestUniqueString";
+        staticContentProvider.searchInContent(text, true, false, step4);
+    }
+
+    function step4(searchMatches)
+    {
+        InspectorTest.dumpSearchMatches(searchMatches);
+
+        var text = "searchTestUniqueString";
+        staticContentProvider.searchInContent(text, true, false, step5);
+    }
+
+    function step5(searchMatches)
+    {
+        InspectorTest.dumpSearchMatches(searchMatches);
+
+        var text = "[a-z]earchTestUniqueString";
+        staticContentProvider.searchInContent(text, false, true, step6);
+    }
+
+    function step6(searchMatches)
+    {
+        InspectorTest.dumpSearchMatches(searchMatches);
+
+        var text = "[a-z]earchTestUniqueString";
+        staticContentProvider.searchInContent(text, true, true, step7);
+    }
+
+    function step7(searchMatches)
+    {
+        InspectorTest.dumpSearchMatches(searchMatches);
+
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body>
+<p>Tests static content provider search.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=70354">Bug 70354</a>
+
+<iframe src="resources/search.html" onload="runTest()">
+</body>
+</html>

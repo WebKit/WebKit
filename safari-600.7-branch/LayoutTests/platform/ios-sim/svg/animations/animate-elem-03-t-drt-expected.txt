@@ -1,0 +1,27 @@
+SVG 1.1 dynamic animation tests
+
+A copy of the corresponding W3C-SVG-1.1 test, which dumps the animation at certain times
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS parseFontSizeFromString() is 40
+PASS color.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS color.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS color.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
+PASS parseFontSizeFromString() is 60
+PASS color.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS color.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 59
+PASS color.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 128
+PASS parseFontSizeFromString() is 80
+PASS color.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS color.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 119
+PASS color.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS parseFontSizeFromString() is 80
+PASS color.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS color.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 119
+PASS color.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

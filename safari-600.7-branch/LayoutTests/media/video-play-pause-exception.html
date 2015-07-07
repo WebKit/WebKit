@@ -1,0 +1,28 @@
+<html>
+<body>
+<video controls></video>
+
+<p>Video has no src. Test that the playing event is not dispatched.</p>
+
+<script src=video-test.js></script>
+<script>
+    waitForEventAndFail('playing');
+
+    waitForEvent("loadstart");
+    waitForEvent("timeupdate");
+    waitForEvent("waiting");
+
+    function onpause()
+    {
+        testExpected("video.networkState", HTMLMediaElement.NETWORK_EMPTY);
+        endTest();
+        consoleWrite("");
+     }
+
+    waitForEvent("pause", onpause);
+
+    run("video.play()");
+    run("video.pause()");
+</script>
+</body>
+</html>

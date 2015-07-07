@@ -1,0 +1,6 @@
+You should see two "PASS" messages below:
+
+Computed style parent (should be null): null
+PASS: got an exception when trying to change a computed style declaration, Error: NoModificationAllowedError: DOM Exception 7
+
+PASS: got an exception when trying to change a computed style declaration via setProperty, Error: NoModificationAllowedError: DOM Exception 7

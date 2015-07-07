@@ -1,0 +1,21 @@
+Click on a listbox scrollbar should not dispatch change evnet.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Click on the scrollbar. No change event should be fired.
+PASS selectElement.selectedIndex is -1
+PASS changeEventCounter is 0
+
+Click on the first option. A change event should be fired.
+FAIL selectElement.selectedIndex should be 0. Was -1.
+FAIL changeEventCounter should be 1. Was 0.
+
+Add an option item and then click on the scrollbar again. No change event should be fired.
+FAIL selectElement.selectedIndex should be 0. Was -1.
+FAIL changeEventCounter should be 1. Was 0.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

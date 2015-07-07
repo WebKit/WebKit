@@ -1,0 +1,3 @@
+This test loading the document itself with Application Cache, and deferred load, does not crash WebKit. The most reliable way to reproduce is in Debug where you hit assertions.
+
+SUCCESS

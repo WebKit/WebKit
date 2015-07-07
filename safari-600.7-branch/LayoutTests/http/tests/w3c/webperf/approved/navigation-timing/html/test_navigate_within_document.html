@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" >
+        <title>window.performance.timing in document navigation</title>
+        <link rel="author" title="Google" href="http://www.google.com/" />
+ 	<link rel="help" href="http://www.w3.org/TR/navigation-timing/#sec-navigation-timing-interface"/>
+	<script src="/w3c/resources/testharness.js"></script>
+        <script src="/w3c/resources/testharnessreport.js"></script>
+        <script src="/w3c/webperf/resources/webperftestharness.js"></script>
+<script id="metadata_cache">/*
+{
+  "window.performance is defined": {
+    "help": "http://www.w3.org/TR/navigation-timing/#sec-window.performance-attribute",
+    "assert": "The window.performance attribute provides a hosting area for performance related attributes. ",
+    "author": "W3C http://www.w3.org/"
+  },
+  "window.performance.timing is defined": {
+    "help": "http://www.w3.org/TR/navigation-timing/#sec-window.performance-attribute",
+    "assert": "The window.performance attribute provides a hosting area for performance related attributes. ",
+    "author": "W3C http://www.w3.org/"
+  },
+  "connectEnd is the same after in document navigation.": {},
+  "connectStart is the same after in document navigation.": {},
+  "domComplete is the same after in document navigation.": {},
+  "domContentLoadedEventEnd is the same after in document navigation.": {},
+  "domContentLoadedEventStart is the same after in document navigation.": {},
+  "domInteractive is the same after in document navigation.": {},
+  "domLoading is the same after in document navigation.": {},
+  "domainLookupEnd is the same after in document navigation.": {},
+  "domainLookupStart is the same after in document navigation.": {},
+  "fetchStart is the same after in document navigation.": {},
+  "loadEventEnd is the same after in document navigation.": {},
+  "loadEventStart is the same after in document navigation.": {},
+  "navigationStart is the same after in document navigation.": {},
+  "redirectEnd is the same after in document navigation.": {},
+  "redirectStart is the same after in document navigation.": {},
+  "requestStart is the same after in document navigation.": {},
+  "responseEnd is the same after in document navigation.": {},
+  "responseStart is the same after in document navigation.": {},
+  "unloadEventEnd is the same after in document navigation.": {},
+  "unloadEventStart is the same after in document navigation.": {}
+}
+*/</script>
+    </head>
+    <body>
+        <h1>Description</h1>
+        <p>This test validates that all of the window.performance.timing attributes remain unchanged after an in document navigation (URL fragment change).</p>
+
+        <div id="log"></div>
+        <script>
+            setup({explicit_done: true});
+
+            // explicitly test the namespace before we start testing
+            test_namespace('timing');
+
+            var timing;
+
+            function check_timing_not_changed()
+            {
+                for (var i = 0; i < timingAttributes.length; ++i)
+                {
+                    var property = timingAttributes[i];
+                    test_equals(timing[property], initial_timing[property],
+                                property + " is the same after in document navigation.");
+                }
+                done();
+            }
+
+            var initial_timing = {};
+            function save_timing_after_load()
+            {
+                for (var i = 0; i < timingAttributes.length; ++i)
+                {
+                    var property = timingAttributes[i];
+                    initial_timing[property] = timing[property];
+                }
+                window.location.href = "#1";
+                setTimeout("check_timing_not_changed()", 0);
+            }
+
+            function load_handler()
+            {
+                if (performanceNamespace === undefined)
+                {
+                    // avoid script errors
+                    done();
+                    return;
+                }
+            
+                timing = performanceNamespace.timing;
+            
+                window.removeEventListener("load", load_handler);
+                setTimeout("save_timing_after_load()", 0);
+            }
+
+            window.addEventListener("load", load_handler, false);
+        </script>
+    </body>
+</html>

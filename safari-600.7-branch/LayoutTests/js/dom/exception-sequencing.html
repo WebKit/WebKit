@@ -1,0 +1,765 @@
+Test exception handling with various arithmetic and logic operators, it checks the following things:<br/>
+<ul>
+    <li>In assignment expressions the lefthand side is not modified if the right hand side throws</li>
+    <li>If the left hand side of a binary operator throws then the right hand should not be executed</li>
+    <li>If valueOf/toString throws in the left hand expression of a binop it does not prevent evaluation of the right hand expression, but does prevent evaluation of toString/valueOf on the rhs.</li>
+</ul>
+<div id="log"></div>
+<script>
+if (this.testRunner)
+    testRunner.dumpAsText();
+
+if (this.document) {
+    log = function(msg) {document.getElementById("log").innerHTML += msg + "<br />";};
+    fail = function(msg) {log("<span style='color: red'>FAIL: </span>" + msg) };
+    pass = function(msg) { passCount++; log("<span style='color: green'>PASS: </span>" + msg) };
+} else {
+    log = print;
+    fail = function(msg) {log("FAIL: " + msg) };
+    pass = function(msg) { passCount++; log("PASS: " + msg); };
+}
+
+var unaryOps = ['~', '+', '-', '++', '--'];
+var binaryOps = ['-', '+', '*', '/', '%', '|', '&', '^', '<', '<=', '>=', '>', '==', '!=', '<<', '>>'];
+
+var valueOfThrower = { valueOf: function() { throw "throw from valueOf"; } }
+var toStringThrower = { toString: function() { throw "throw from toString"; } }
+var testCount = 0;
+var passCount = 0;
+function id(){}
+function createTest(expr) {
+    // For reasons i don't quite understand these tests aren't expected to throw
+    if (expr == "valueOfThrower == rhsNonZeroNum") return id;
+    if (expr == "toStringThrower == rhsNonZeroNum") return id;
+    if (expr == "valueOfThrower != rhsNonZeroNum") return id;
+    if (expr == "toStringThrower != rhsNonZeroNum") return id;
+    if (expr == "valueOfThrower == rhsToStringThrower") return id;
+    if (expr == "toStringThrower == rhsToStringThrower") return id;
+    if (expr == "valueOfThrower != rhsToStringThrower") return id;
+    if (expr == "toStringThrower != rhsToStringThrower") return id;
+
+    // This creates a test case that ensures that a binary operand will execute the left hand expression first,
+    // and will not execute the right hand side if the left hand side throws.
+    var functionPrefix = "(function(){ executedRHS = false; var result = 'PASS'; try { result = ";
+    var functionPostfix = "; fail('Did not throw exception with \"' + expr + '\"') } catch (e) { " +
+                          " if (result != 'PASS' && executedRHS) { fail('\"'+expr+'\" threw exception, but modified assignment target and executed RHS'); " +
+                          " } else if (result != 'PASS') { fail('\"'+expr+'\" threw exception, but modified assignment target'); " +
+                          " } else if (executedRHS) { fail('\"'+expr+'\" threw exception, but executed right hand half of expression')" +
+                          " } else { pass('Handled \"'+ expr +'\" correctly.') } } })";
+    testCount++;
+    try {
+        return eval(functionPrefix + expr + functionPostfix);
+    } catch(e) {
+        throw new String(expr);
+    }
+}
+
+function createTestWithRHSExec(expr) {
+    // This tests that we evaluate the right hand side of a binary expression before we
+    // do any type conversion with toString and/or valueOf which may throw.
+    var functionPrefix = "(function(){ executedRHS = false; var result = 'PASS'; try { result = ";
+    var functionPostfix = "; fail('Did not throw exception with \"' + expr + '\"') } catch (e) { " +
+                          " if (result != 'PASS') { fail('\"'+expr+'\" threw exception, but modified assignment target'); " +
+                          " } else if (!executedRHS) { fail('\"'+expr+'\" threw exception, and failed to execute RHS when expected')" +
+                          " } else { pass('Handled \"'+ expr +'\" correctly.') } } })";
+    testCount++;
+    try {
+        return eval(functionPrefix + expr + functionPostfix);
+    } catch(e) {
+        throw new String(expr);
+    }
+}
+
+window.__defineGetter__('throwingProperty', function(){ throw "throwing resolve"; });
+
+var throwingPropStr = 'throwingProperty';
+var valueOfThrowerStr = 'valueOfThrower';
+var toStringThrowerStr = 'toStringThrower';
+var throwingObjGetter = '({get throwingProperty(){ throw "throwing property" }}).throwingProperty';
+
+createTest(throwingPropStr)();
+createTest(throwingObjGetter)();
+createTest("!undefinedProperty")();
+var local = new String("PASS");
+var localTest;
+globalValueOfThrower = valueOfThrower;
+
+localTest = local;
+try {
+    testCount++;
+    localTest = ~valueOfThrower;
+    fail("Failed to throw an exception for local = ~valueOfThrower");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = ~valueOfThrower worked as expected;");
+}
+
+localTest = local;
+try {
+    testCount++;
+    localTest = +valueOfThrower;
+    fail("Failed to throw an exception for local = +valueOfThrower");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = +valueOfThrower worked as expected;");
+}
+
+localTest = local;
+try {
+    testCount++;
+    localTest = -valueOfThrower;
+    fail("Failed to throw an exception for local = -valueOfThrower");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = -valueOfThrower worked as expected;");
+}
+
+localTest = local;
+try {
+    testCount++;
+    localTest = ++valueOfThrower;
+    fail("Failed to throw an exception for local = ++valueOfThrower");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = ++valueOfThrower worked as expected;");
+}
+
+localTest = local;
+try {
+    testCount++;
+    localTest = --valueOfThrower;
+    fail("Failed to throw an exception for local = --valueOfThrower");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = --valueOfThrower worked as expected;");
+}
+
+
+localTest = local;
+try {
+    testCount++;
+    localTest = ~globalValueOfThrower;
+    fail("Failed to throw an exception for local = ~globalValueOfThrower");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = ~globalValueOfThrower worked as expected;");
+}
+
+localTest = local;
+try {
+    testCount++;
+    localTest = +globalValueOfThrower;
+    fail("Failed to throw an exception for local = +globalValueOfThrower");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = +globalValueOfThrower worked as expected;");
+}
+
+localTest = local;
+try {
+    testCount++;
+    localTest = -globalValueOfThrower;
+    fail("Failed to throw an exception for local = -globalValueOfThrower");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = -globalValueOfThrower worked as expected;");
+}
+
+localTest = local;
+try {
+    testCount++;
+    localTest = ++globalValueOfThrower;
+    fail("Failed to throw an exception for local = ++globalValueOfThrower");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = ++globalValueOfThrower worked as expected;");
+}
+
+localTest = local;
+try {
+    testCount++;
+    localTest = --globalValueOfThrower;
+    fail("Failed to throw an exception for local = --globalValueOfThrower");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = --globalValueOfThrower worked as expected;");
+}
+
+// Dot node tests
+
+localTest = local;
+try {
+    testCount++;
+    localTest = ~this.globalValueOfThrower;
+    fail("Failed to throw an exception for local = ~this.globalValueOfThrower");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = ~this.globalValueOfThrower worked as expected;");
+}
+
+localTest = local;
+try {
+    testCount++;
+    localTest = +this.globalValueOfThrower;
+    fail("Failed to throw an exception for local = +this.globalValueOfThrower");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = +this.globalValueOfThrower worked as expected;");
+}
+
+localTest = local;
+try {
+    testCount++;
+    localTest = -this.globalValueOfThrower;
+    fail("Failed to throw an exception for local = -this.globalValueOfThrower");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = -this.globalValueOfThrower worked as expected;");
+}
+
+localTest = local;
+try {
+    testCount++;
+    localTest = ++this.globalValueOfThrower;
+    fail("Failed to throw an exception for local = ++this.globalValueOfThrower");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = ++this.globalValueOfThrower worked as expected;");
+}
+
+localTest = local;
+try {
+    testCount++;
+    localTest = --this.globalValueOfThrower;
+    fail("Failed to throw an exception for local = --this.globalValueOfThrower");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = --this.globalValueOfThrower worked as expected;");
+}
+
+
+// Bracket node tests
+
+localTest = local;
+try {
+    testCount++;
+    localTest = ~this['globalValueOfThrower'];
+    fail("Failed to throw an exception for local = ~this['globalValueOfThrower']");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = ~this['globalValueOfThrower'] worked as expected;");
+}
+
+localTest = local;
+try {
+    testCount++;
+    localTest = +this['globalValueOfThrower'];
+    fail("Failed to throw an exception for local = +this['globalValueOfThrower']");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = +this['globalValueOfThrower'] worked as expected;");
+}
+
+localTest = local;
+try {
+    testCount++;
+    localTest = -this['globalValueOfThrower'];
+    fail("Failed to throw an exception for local = -this['globalValueOfThrower']");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = -this['globalValueOfThrower'] worked as expected;");
+}
+
+localTest = local;
+try {
+    testCount++;
+    localTest = ++this['globalValueOfThrower'];
+    fail("Failed to throw an exception for local = ++this['globalValueOfThrower']");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = ++this['globalValueOfThrower'] worked as expected;");
+}
+
+localTest = local;
+try {
+    testCount++;
+    localTest = --this['globalValueOfThrower'];
+    fail("Failed to throw an exception for local = --this['globalValueOfThrower']");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = --this['globalValueOfThrower'] worked as expected;");
+}
+
+// getter tests
+
+localTest = local;
+try {
+    testCount++;
+    localTest = ~throwingProperty;
+    fail("Failed to throw an exception for local = ~throwingProperty");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = ~throwingProperty worked as expected;");
+}
+
+localTest = local;
+try {
+    testCount++;
+    localTest = +throwingProperty;
+    fail("Failed to throw an exception for local = +throwingProperty");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = +throwingProperty worked as expected;");
+}
+
+localTest = local;
+try {
+    testCount++;
+    localTest = -throwingProperty;
+    fail("Failed to throw an exception for local = -throwingProperty");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = -throwingProperty worked as expected;");
+}
+
+localTest = local;
+try {
+    testCount++;
+    localTest = ++throwingProperty;
+    fail("Failed to throw an exception for local = ++throwingProperty");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = ++throwingProperty worked as expected;");
+}
+
+localTest = local;
+try {
+    testCount++;
+    localTest = --throwingProperty;
+    fail("Failed to throw an exception for local = --throwingProperty");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = --throwingProperty worked as expected;");
+}
+
+// Dot node tests
+
+localTest = local;
+try {
+    testCount++;
+    localTest = ~this.throwingProperty;
+    fail("Failed to throw an exception for local = ~this.throwingProperty");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = ~this.throwingProperty worked as expected;");
+}
+
+localTest = local;
+try {
+    testCount++;
+    localTest = +this.throwingProperty;
+    fail("Failed to throw an exception for local = +this.throwingProperty");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = +this.throwingProperty worked as expected;");
+}
+
+localTest = local;
+try {
+    testCount++;
+    localTest = -this.throwingProperty;
+    fail("Failed to throw an exception for local = -this.throwingProperty");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = -this.throwingProperty worked as expected;");
+}
+
+localTest = local;
+try {
+    testCount++;
+    localTest = ++this.throwingProperty;
+    fail("Failed to throw an exception for local = ++this.throwingProperty");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = ++this.throwingProperty worked as expected;");
+}
+
+localTest = local;
+try {
+    testCount++;
+    localTest = --this.throwingProperty;
+    fail("Failed to throw an exception for local = --this.throwingProperty");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = --this.throwingProperty worked as expected;");
+}
+
+
+// Brack node tests
+
+localTest = local;
+try {
+    testCount++;
+    localTest = ~this['throwingProperty'];
+    fail("Failed to throw an exception for local = ~this['throwingProperty']");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = ~this['throwingProperty'] worked as expected;");
+}
+
+localTest = local;
+try {
+    testCount++;
+    localTest = +this['throwingProperty'];
+    fail("Failed to throw an exception for local = +this['throwingProperty']");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = +this['throwingProperty'] worked as expected;");
+}
+
+localTest = local;
+try {
+    testCount++;
+    localTest = -this['throwingProperty'];
+    fail("Failed to throw an exception for local = -this['throwingProperty']");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = -this['throwingProperty'] worked as expected;");
+}
+
+localTest = local;
+try {
+    testCount++;
+    localTest = ++this['throwingProperty'];
+    fail("Failed to throw an exception for local = ++this['throwingProperty']");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = ++this['throwingProperty'] worked as expected;");
+}
+
+localTest = local;
+try {
+    testCount++;
+    localTest = --this['throwingProperty'];
+    fail("Failed to throw an exception for local = --this['throwingProperty']");
+} catch (e) {
+    if (local !== localTest)
+        fail("assigned to local despite exception being thrown.");
+    else 
+        pass("local = --this['throwingProperty'] worked as expected;");
+}
+
+
+
+for (var i = 0; i < unaryOps.length; i++) {
+    try {
+        createTest(unaryOps[i] + "undefinedProperty")();
+    } catch(e) {
+        fail("Erroneously encountered exception " + e + " with op " + unaryOps[i]);
+    }
+    try {
+        createTest(unaryOps[i] + "undefinedProperty.imaginaryProperty")();
+    } catch(e) {
+        fail("Erroneously encountered exception " + e + " with op " + unaryOps[i]);
+    }
+    try {
+        createTest(unaryOps[i] + "undefinedProperty['imaginaryProperty']")();
+    } catch(e) {
+        fail("Erroneously encountered exception " + e + " with op " + unaryOps[i]);
+    }
+    try {
+        createTest(unaryOps[i] + valueOfThrowerStr)();
+    } catch(e) {
+        fail("Erroneously encountered exception " + e + " with op " + unaryOps[i]);
+    }
+    try {
+        createTest(unaryOps[i] + toStringThrowerStr)();
+    } catch(e) {
+        fail("Erroneously encountered exception " + e + " with op " + unaryOps[i]);
+    }
+    try {
+        createTest(unaryOps[i] + throwingPropStr)();
+    } catch(e) {
+        fail("Erroneously encountered exception " + e + " with op " + unaryOps[i]);
+    }
+    try {
+        createTest(unaryOps[i] + throwingObjGetter)();
+    } catch(e) {
+        fail("Erroneously encountered exception " + e + " with op " + unaryOps[i]);
+    }
+    try {
+        createTest(unaryOps[i] + "this." + valueOfThrowerStr)();
+    } catch(e) {
+        fail("Erroneously encountered exception " + e + " with op " + unaryOps[i]);
+    }
+    try {
+        createTest(unaryOps[i] + "this." + toStringThrowerStr)();
+    } catch(e) {
+        fail("Erroneously encountered exception " + e + " with op " + unaryOps[i]);
+    }
+    try {
+        createTest(unaryOps[i] + "this." + throwingPropStr)();
+    } catch(e) {
+        fail("Erroneously encountered exception " + e + " with op " + unaryOps[i]);
+    }
+    try {
+        createTest(unaryOps[i] + "this[valueOfThrowerStr]")();
+    } catch(e) {
+        fail("Erroneously encountered exception " + e + " with op " + unaryOps[i]);
+    }
+    try {
+        createTest(unaryOps[i] + "this[toStringThrowerStr]")();
+    } catch(e) {
+        fail("Erroneously encountered exception " + e + " with op " + unaryOps[i]);
+    }
+    try {
+        createTest(unaryOps[i] + "this[throwingPropStr]")();
+    } catch(e) {
+        fail("Erroneously encountered exception " + e + " with op " + unaryOps[i]);
+    }
+    try {
+        createTest(unaryOps[i] + throwingPropStr + ".imaginaryProperty")();
+    } catch(e) {
+        fail("Erroneously encountered exception " + e + " with op " + unaryOps[i]);
+    }
+    try {
+        createTest(unaryOps[i] + throwingObjGetter + ".imaginaryProperty")();
+    } catch(e) {
+        fail("Erroneously encountered exception " + e + " with op " + unaryOps[i]);
+    }
+    try {
+        createTest(unaryOps[i] + throwingPropStr + "['imaginaryProperty']")();
+    } catch(e) {
+        fail("Erroneously encountered exception " + e + " with op " + unaryOps[i]);
+    }
+    try {
+        createTest(unaryOps[i] + throwingObjGetter + "['imaginaryProperty']")();
+    } catch(e) {
+        fail("Erroneously encountered exception " + e + " with op " + unaryOps[i]);
+    }
+}
+
+var postfixOps = ['++', '--'];
+for (var i = 0; i < postfixOps.length; i++) {
+    try {
+        createTest("undefinedProperty" + postfixOps[i])();
+    } catch(e) {
+        fail("Erroneously encountered exception " + e + " with op " + postfixOps[i]);
+    }
+    try {
+        createTest("undefinedProperty.imaginaryProperty" + postfixOps[i])();
+    } catch(e) {
+        fail("Erroneously encountered exception " + e + " with op " + postfixOps[i]);
+    }
+    try {
+        createTest(valueOfThrowerStr + postfixOps[i])();
+    } catch(e) {
+        fail("Erroneously encountered exception " + e + " with op " + postfixOps[i]);
+    }
+    try {
+        createTest(toStringThrowerStr + postfixOps[i])();
+    } catch(e) {
+        fail("Erroneously encountered exception " + e + " with op " + postfixOps[i]);
+    }
+    try {
+        createTest(throwingPropStr + postfixOps[i])();
+    } catch(e) {
+        fail("Erroneously encountered exception " + e + " with op " + postfixOps[i]);
+    }
+    try {
+        createTest("this." + valueOfThrowerStr + postfixOps[i])();
+    } catch(e) {
+        fail("Erroneously encountered exception " + e + " with op " + postfixOps[i]);
+    }
+    try {
+        createTest("this." + toStringThrowerStr + postfixOps[i])();
+    } catch(e) {
+        fail("Erroneously encountered exception " + e + " with op " + postfixOps[i]);
+    }
+    try {
+        createTest("this." + throwingPropStr + postfixOps[i])();
+    } catch(e) {
+        fail("Erroneously encountered exception " + e + " with op " + postfixOps[i]);
+    }
+    try {
+        createTest("this[valueOfThrowerStr]" + postfixOps[i])();
+    } catch(e) {
+        fail("Erroneously encountered exception " + e + " with op " + postfixOps[i]);
+    }
+    try {
+        createTest("this[toStringThrowerStr]" + postfixOps[i])();
+    } catch(e) {
+        fail("Erroneously encountered exception " + e + " with op " + postfixOps[i]);
+    }
+    try {
+        createTest("this[throwingPropStr]" + postfixOps[i])();
+    } catch(e) {
+        fail("Erroneously encountered exception " + e + " with op " + postfixOps[i]);
+    }
+}
+
+rhsNonZeroNum = { valueOf: function(){ executedRHS = true; return 1; } };
+rhsZeroNum = { valueOf: function(){ executedRHS = true; return 0; } };
+rhsToStringThrower = { toString: function(){ executedRHS = true; return 'string'; }};
+getterThrower = { get value() { throw "throwing in getter"; }};
+var getterThrowerStr = "getterThrower.value";
+rhsGetterTester = { get value() { executedRHS = true; return 'string'; }};
+var rhsGetterTesterStr = "rhsGetterTester.value";
+
+var executionOrder = "";
+window.__defineGetter__("nonThrowingIndexBase", function(){ 
+    executionOrder += "nonThrowingIndexBase, "; 
+    return {
+        get nonThrowingTestIndex(){ executionOrder += "get nonThrowingTestIndex, "; return undefined; },
+        get throwingTestIndex(){ executionOrder += "get nonThrowingTestIndex, "; throw {}; return undefined; },
+        set nonThrowingTestIndex(){ executionOrder += "set nonThrowingTestIndex, "; return undefined; },
+        set throwingTestIndex(){ executionOrder += "set nonThrowingTestIndex, "; throw {}; return undefined; }
+    }
+  });
+window.__defineGetter__("throwingIndexBase", function(){ 
+    executionOrder += "throwingIndexBase, "; 
+    throw {};
+  });
+
+window.__defineGetter__("nonThrowingIndexNoThrowProperty", function(){
+    return {
+        toString: function() {executionOrder += "nonThrowingIndexNoThrowProperty, "; return "nonThrowingTestIndex"; }
+    }
+});
+
+window.__defineGetter__("nonThrowingIndexThrowProperty", function(){ 
+    return {
+        toString: function() {executionOrder += "nonThrowingIndexThrowProperty, "; return "throwingTestIndex"; }
+    }
+});
+
+window.__defineGetter__("throwingIndex", function(){
+    return {
+        toString: function() {executionOrder += "throwingIndex, "; throw {};}
+    }
+});
+
+window.__defineGetter__("valueForAssignment", function(){ executionOrder += "valueForAssignment, "; return 1; })
+
+function createTestWithExecOrderTest(expr, expected) {
+    // This tests that we evaluate the right hand side of a binary expression before we
+    // do any type conversion with toString and/or valueOf which may throw.
+    var functionPrefix = "(function(){ executionOrder = ''; var result = 'PASS'; try { result = ";
+    var functionPostfix = "; } catch (e) { executionOrder +=  '***throw***'; } if (executionOrder == expected) pass(expr); else " +
+                          "fail(expr + ' executed as: <br/>' + executionOrder + ' expected: <br/>'+executionOrder); })";
+    testCount++;
+    try {
+        return eval(functionPrefix + expr + functionPostfix);
+    } catch(e) {
+        throw new String(expr);
+    }
+}
+
+createTestWithExecOrderTest("nonThrowingIndexBase[nonThrowingIndexNoThrowProperty]", "nonThrowingIndexBase, nonThrowingIndexNoThrowProperty, get nonThrowingTestIndex, ")();
+
+createTestWithExecOrderTest("nonThrowingIndexBase[nonThrowingIndexThrowProperty]", "nonThrowingIndexBase, nonThrowingIndexThrowProperty, get nonThrowingTestIndex, ***throw***")();
+
+createTestWithExecOrderTest("nonThrowingIndexBase[throwingIndex]", "nonThrowingIndexBase, throwingIndex, ***throw***")();
+
+createTestWithExecOrderTest("throwingIndexBase[nonThrowingIndexNoThrowProperty]", "throwingIndexBase, ***throw***")();
+
+createTestWithExecOrderTest("throwingIndexBase[nonThrowingIndexThrowProperty]", "throwingIndexBase, ***throw***")();
+
+createTestWithExecOrderTest("throwingIndexBase[throwingIndex]", "throwingIndexBase, ***throw***")();
+
+createTestWithExecOrderTest("nonThrowingIndexBase[nonThrowingIndexNoThrowProperty] = valueForAssignment", "nonThrowingIndexBase, valueForAssignment, nonThrowingIndexNoThrowProperty, set nonThrowingTestIndex, ")();
+
+createTestWithExecOrderTest("nonThrowingIndexBase[nonThrowingIndexThrowProperty] = valueForAssignment", "nonThrowingIndexBase, valueForAssignment, nonThrowingIndexThrowProperty, set nonThrowingTestIndex, ***throw***")();
+
+createTestWithExecOrderTest("nonThrowingIndexBase[throwingIndex] = valueForAssignment", "nonThrowingIndexBase, valueForAssignment, throwingIndex, ***throw***")();
+
+createTestWithExecOrderTest("throwingIndexBase[nonThrowingIndexNoThrowProperty] = valueForAssignment", "throwingIndexBase, ***throw***")();
+
+createTestWithExecOrderTest("throwingIndexBase[nonThrowingIndexThrowProperty] = valueForAssignment", "throwingIndexBase, ***throw***")();
+
+createTestWithExecOrderTest("throwingIndexBase[throwingIndex] = valueForAssignment", "throwingIndexBase, ***throw***")();
+
+testCount++;
+(function() {
+    executionOrder = "";
+    var result = true;
+    try {
+        result = Number.prototype.toString.call(false);
+    } catch (e) {
+        if (result == true)
+            pass("Number.prototype.toString.call(false)");
+        else
+            fail("Number.prototype.toString.call(false) writes to return destination before throwing an exception");
+    }
+})();
+
+log("Passed " + passCount + " of " + testCount + " tests.");
+</script>

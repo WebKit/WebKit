@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 158x19
+          text run at (0,0) width 158: "Test controls placement."
+      RenderBlock {DIV} at (0,36) size 784x150
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,186) size 784x160
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,346) size 784x0
+      RenderBlock (anonymous) at (0,346) size 784x20
+        RenderText {#text} at (0,0) size 36x19
+          text run at (0,0) width 36: "FAIL"
+layer at (8,44) size 300x150
+  RenderEmbeddedObject {VIDEO} at (0,0) size 300x150
+layer at (8,194) size 320x160
+  RenderEmbeddedObject {VIDEO} at (0,0) size 320x160
+layer at (8,354) size 320x160
+  RenderEmbeddedObject {VIDEO} at (8,354) size 320x160

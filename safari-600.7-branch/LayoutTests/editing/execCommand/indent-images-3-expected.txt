@@ -1,0 +1,10 @@
+This test indents insides a document with exactly two image elements.
+Indentation should fail because the root editable element is inline.
+| <span>
+|   contenteditable=""
+|   <img>
+|   <img>
+| "
+"
+| "
+"

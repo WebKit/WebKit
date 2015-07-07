@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xhtml="http://www.w3.org/1999/xhtml" onerror="svgOnErrorHandler(evt)">
+<defs>
+<title>&lt;SCRIPT&gt; error event bubbling</title>
+<script type="text/javascript">
+var messages = [];
+
+function addResult(message)
+{
+    messages.push(message);
+}
+
+function print(message)
+{
+    var paragraph = document.createElementNS("http://www.w3.org/1999/xhtml", "html:div");
+    paragraph.appendChild(document.createTextNode(message));
+    document.getElementById("results").appendChild(paragraph);
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function svgOnErrorHandler(e) {
+    addResult("FAIL: svg.onerror invoked " + e.message + " " + e.filename + ":" + e.lineno);
+}
+
+function scriptOnErrorHandler(id) {
+    addResult("PASS: script onerror ivoked for script id = " + id + "");
+}
+
+function testOnErrorInDynamicScript() {
+    var scriptElement = document.createElementNS("http://www.w3.org/2000/svg", "svg:script");
+    scriptElement.id = 3;
+    scriptElement.type.baseVal = "text/javascript";
+    scriptElement.href.baseVal = "resources/doesnotexist.js";
+
+    scriptElement.addEventListener("error", function() {
+        addResult("PASS: onerror invoked on a dynamic script");
+        setTimeout(endTest, 0);
+    }, true);
+
+    document.getElementsByTagName("defs")[0].appendChild(scriptElement);
+}
+
+function endTest() {
+    addResult("DONE.");
+    messages.forEach(print);
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+<script id="0" type="text/javascript" onerror="scriptOnErrorHandler(0)" xlink:href="resources/certainlydoesnotexist.js"></script>
+<script id="1" type="text/javascript" onerror="scriptOnErrorHandler(1)" xlink:href="resources/certainlydoesnotexisttoo.js" externalResourcesRequired="true" />
+<script id="2" type="text/javascript" onload="testOnErrorInDynamicScript()" xlink:href="resources/script-load.js"></script>
+</defs>
+<foreignObject>
+Test that "error" event is dispatched to SVGScriptElement onerror handler and doesn't bubble.
+<xhtml:hr/>
+<xhtml:p id="results"></xhtml:p>
+</foreignObject>
+</svg>

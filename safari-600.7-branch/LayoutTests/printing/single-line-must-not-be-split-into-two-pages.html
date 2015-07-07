@@ -1,0 +1,50 @@
+<html>
+<head>
+</head>
+<style>
+/* relative positioning ensures underlying RenderLayer */
+.renderingArea {
+    position: relative;
+}
+</style>
+<body>
+<p>
+A single line must not be split into two pages.
+This test checks if a single line is not split into two pages.
+To run this test manually, comment out the last two lines of JavaScript
+(See the comment in JavaScript) and then print this page.
+If no lines are split into two pages, the test passes.
+</p>
+<div class="renderingArea" id="renderingArea1"></div>
+<div class="renderingArea" id="renderingArea2"></div>
+<p>Non-overflowed lines:</p>
+<pre id="nonOverflowedLines"></pre>
+<p>Overflowed lines:</p>
+<pre id="overflowedLines"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var str = "";
+for (var i = 0; i < 400; i++) {
+  str += "WWWWWW<br />";
+}
+document.getElementById("renderingArea1").innerHTML = str;
+if (window.internals)
+    document.getElementById("nonOverflowedLines").innerText = window.internals.elementRenderTreeAsText(document.getElementById("renderingArea1"));
+
+str = "";
+for (var i = 0; i < 400; i++) {
+  str += "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW<br />";
+}
+document.getElementById("renderingArea2").innerHTML = str;
+if (window.internals)
+    document.getElementById("overflowedLines").innerText = window.internals.elementRenderTreeAsText(document.getElementById("renderingArea2"));
+
+// To test manually, comment out the following two lines,
+// print this page, and check if no lines are split across two pages.
+document.getElementById("renderingArea1").innerHTML = "";
+document.getElementById("renderingArea2").innerHTML = "";
+</script>
+</body>
+</html>

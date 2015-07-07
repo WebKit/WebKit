@@ -1,0 +1,92 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../network-test.js"></script>
+<script>
+function scheduleScriptLoad() {
+    window.setTimeout(loadScript, 0);
+}
+
+function loadScript() {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = "resources/random-script.php";
+    document.head.appendChild(script);
+}
+
+function test()
+{
+    var content1;
+    var content2;
+    var content3;
+
+    function loadScriptAndGetContent(callback)
+    {
+        InspectorTest.addConsoleSniffer(scriptLoaded);
+        InspectorTest.evaluateInPage("scheduleScriptLoad()");
+
+        function scriptLoaded()
+        {
+            var requestsCount = WebInspector.panel("network").requests.length;
+            var request = WebInspector.panel("network").requests[requestsCount - 1];
+            request.requestContent(contentLoaded);
+        }
+
+        function contentLoaded()
+        {
+            var requestsCount = WebInspector.panel("network").requests.length;
+            var request = WebInspector.panel("network").requests[requestsCount - 1];
+            callback(request.content);
+        }
+    }
+
+    loadScriptAndGetContent(step1);
+
+    function step1(content)
+    {
+        content1 = content;
+        InspectorTest.reloadPage(step2);
+    }
+
+    function step2(msg)
+    {
+        loadScriptAndGetContent(step3);
+    }
+
+    function step3(content)
+    {
+        content2 = content;
+        NetworkAgent.setCacheDisabled(true, step4);
+    }
+
+    function step4(msg)
+    {
+        InspectorTest.reloadPage(step5);
+    }
+
+    function step5(msg)
+    {
+        loadScriptAndGetContent(step6);
+    }
+
+    function step6(content)
+    {
+        content3 = content;
+
+        InspectorTest.assertTrue(content1 === content2, "First and second scripts should be equal.");
+        InspectorTest.assertTrue(content2 !== content3, "Second and third scripts should differ.");
+        NetworkAgent.setCacheDisabled(false, step7);
+    }
+
+    function step7(msg)
+    {
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests disabling cache from inspector.</p>
+</body>
+</html>
+

@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Tests CSS parser autocloses braces.</title>
+  <style type="text/css" media="screen">
+    @-webkit-keyframes "foo" {
+        from { left: 100px; }
+        40%  { left: 200px; }
+        60%  { left: 200px; }
+        to   { left: 300px;
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    function findKeyframesRule(rule)
+    {
+        var ss = document.styleSheets;
+        for (var i = 0; i < ss.length; ++i) {
+            for (var j = 0; j < ss[i].cssRules.length; ++j) {
+                if (ss[i].cssRules[j].type == window.CSSRule.WEBKIT_KEYFRAMES_RULE && ss[i].cssRules[j].name == rule)
+                    return ss[i].cssRules[j];
+            }
+        }
+
+        return null;
+    }
+
+    function test()
+    {
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        var keyframes = findKeyframesRule("foo");
+        document.getElementById("console").textContent = keyframes && keyframes.cssRules.length == 4 ? "Test passed" : "Test failed";
+    }
+
+  </script>
+</head>
+<body onload="test()">
+<div>Tests parsing the @-webkit-keyframes rule without closing brace. &quot;User agents must close all open constructs ... at the end of the style sheet.&quot;
+(<a href="http://www.w3.org/TR/CSS21/syndata.html#parsing-errors">http://www.w3.org/TR/CSS21/syndata.html#parsing-errors</a>). So it must be parsed as if
+all braces are closed.</div>
+<div id="console"></div>
+</body>
+</html>

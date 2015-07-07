@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (133,46) size 446x292
+    RenderSVGContainer {g} at (133,46) size 446x292 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,20.00)}]
+      RenderSVGText {text} at (2,-15) size 13x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 13x19
+          chunk 1 text run 1 at (2.00,0.00) startOffset 0 endOffset 1 width 11.64: "A"
+          chunk 1 text run 1 at (3.00,0.00) startOffset 0 endOffset 1 width 10.76: "B"
+          chunk 1 text run 1 at (4.00,0.00) startOffset 0 endOffset 1 width 10.76: "C"
+        RenderSVGInlineText {#text} at (0,0) size 0x0
+      RenderSVGText {text} at (1,15) size 31x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 31x19
+          chunk 1 text run 1 at (1.00,30.00) startOffset 0 endOffset 3 width 30.46: "DEF"
+        RenderSVGInlineText {#text} at (0,0) size 0x0
+      RenderSVGText {text} at (120,45) size 29x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 29x19
+          chunk 1 text run 1 at (120.00,60.00) startOffset 0 endOffset 3 width 28.66: "GHI"
+        RenderSVGInlineText {#text} at (0,0) size 0x0
+      RenderSVGText {text} at (0,75) size 167x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (160,0) size 167x19
+          chunk 1 text run 1 at (160.00,90.00) startOffset 0 endOffset 1 width 6.28: "J"
+          chunk 1 text run 1 at (0.00,90.00) startOffset 0 endOffset 2 width 21.49: "KL"
+        RenderSVGInlineText {#text} at (0,0) size 0x0

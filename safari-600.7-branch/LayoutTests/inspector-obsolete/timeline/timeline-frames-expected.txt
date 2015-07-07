@@ -1,0 +1,7 @@
+Tests reporting and canceling of didBeginFrame events in Timeline
+
+BeginFrame
+TimeStamp : FRAME 1
+BeginFrame
+TimeStamp : FRAME 2
+

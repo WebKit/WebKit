@@ -1,0 +1,47 @@
+<html>
+<head>
+<script src="resources/profiler-test-JS-resources.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.internals)
+    internals.setJavaScriptProfilingEnabled(true);
+
+function startTest()
+{
+    indirection();
+    functionWichStartsAndStopsTheProfiler();
+    endTest();
+}
+
+function indirection()
+{
+    functionWichStartsAndStopsTheProfiler();
+}
+
+var firstTime = true;
+function functionWichStartsAndStopsTheProfiler()
+{
+    if (firstTime) {
+        console.profile("Calling the same function where the profile started from another function");
+        firstTime = false;
+    }
+
+    for (var i = 0; i < 10000000; i++)
+        var b = i + 2;
+}
+
+</script>
+</head>
+
+<body onload="startTest()">
+This page's JavaScript starts profiling from within a function which is then called
+later from another context.
+<br>
+<br>
+To run this test manually, load it in the browser then load the WebInspector and look at
+the profile.  In the profiler you should see a call to indirection() and
+functionWichStartsAndStopsTheProfiler()
+<div id="output"></div>
+</body>
+</html>

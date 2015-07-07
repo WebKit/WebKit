@@ -1,0 +1,7 @@
+Testing that the ContentFlows events are correctly dispatched when new flows are created/removed.
+
+PASS: ContentFlow was added
+PASS: Flow count is 1
+PASS: ContentFlow was removed
+PASS: Flow count is 0
+

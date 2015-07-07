@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/shadow-dom.js"></script>
+</head>
+<body>
+<div id="sandbox"></div>
+<script>
+var shadowStyle = document.createElement('style');
+shadowStyle.innerHTML = 'shadow::-webkit-distributed(div) { color: green; }';
+
+var sandbox = document.getElementById('sandbox');
+sandbox.appendChild(
+    createDOM('div', {'id': 'host'},
+              createShadowRoot(
+                  createDOM('div', {},
+                            document.createTextNode('green'))),
+              createShadowRoot(
+                  shadowStyle,
+                  createDOM('shadow'))));
+</script>
+</body>
+</html>

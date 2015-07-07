@@ -1,0 +1,1 @@
+This page shouldn't crash when parsing CSS - Bug 95706.

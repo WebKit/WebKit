@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 78: TypeError: null is not an object (evaluating 'extension.loseContext')
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: ../../resources/webgl_test_files/conformance/context/context-lost-restored.html
+PASS
+

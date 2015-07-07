@@ -1,0 +1,21 @@
+
+This tests that if the body or html tags have click handlers, then non-control elements do not automatically have the press action on them.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS text1.role is 'AXRole: AXStaticText'
+PASS text2.role is 'AXRole: AXStaticText'
+When a click handler is on the HTML tag, AXPress should not be supported on static text children elements automatically.
+PASS text1.isPressActionSupported() is false
+PASS text2.isPressActionSupported() is false
+When a click handler is on the BODY tag, AXPress should not be supported on static text children elements automatically.
+PASS text1.isPressActionSupported() is false
+PASS text2.isPressActionSupported() is false
+When a click handler is on a parent tag, AXPress should be supported on static text children elements automatically.
+PASS text1.isPressActionSupported() is true
+PASS text2.isPressActionSupported() is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

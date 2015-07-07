@@ -1,0 +1,36 @@
+<html>
+<head>
+<script>
+
+function navigate()
+{
+    if (location.hash == "") {
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+            testRunner.waitUntilDone();
+        }
+
+        scrollTo(0,100);
+        history.pushState({ }, "", window.location + "#1");
+        setTimeout("window.location.href = 'resources/empty-document-goes-back.html'", 0);
+        return;
+    }
+
+    setTimeout(function () { 
+        var scrollPosition = document.body.scrollTop;
+        var result = document.getElementById("result");
+        if (scrollPosition == 100)
+            result.innerHTML = "Success! The scroll position was restored after navigation."
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+}
+
+</script>
+</head>
+<body style="width:800px" onpageshow="navigate();">
+    <div id="result">Fail. The scroll position was not restored after navigation.</div><br/><br/>
+    <div style="width:600; height:1000; background-color:purple;"></div>
+</body>
+</htmL>

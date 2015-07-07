@@ -1,0 +1,22 @@
+Home	Help	Login
+	Tip us on news
+This tests the rowRange and columnRange attributes of table cells in a table with colspans that are invalid.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Table: Rows: 2, Columns: 3
+[Table cell at row: 0, column: 0] Row range: {0, 1}, Column range: {0, 1}
+	PASSED Cell is same cell at (0, 0)
+[Table cell at row: 1, column: 0] Row range: {1, 1}, Column range: {0, 2}
+	PASSED Cell is same cell at (1, 0)
+	PASSED Cell is same cell at (1, 1)
+[Table cell at row: 1, column: 1] Row range: {1, 1}, Column range: {0, 2}
+	PASSED Cell is same cell at (1, 0)
+	PASSED Cell is same cell at (1, 1)
+[Table cell at row: 1, column: 2] Row range: {1, 1}, Column range: {2, 1}
+	PASSED Cell is same cell at (1, 2)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

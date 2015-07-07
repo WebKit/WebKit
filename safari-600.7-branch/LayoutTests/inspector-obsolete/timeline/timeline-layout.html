@@ -1,0 +1,57 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/timeline-test.js"></script>
+<style>
+.relayout-boundary {
+    overflow: hidden;
+    width: 100px;
+    height: 100px;
+}
+</style>
+<script>
+
+function invalidateAndForceLayout(element)
+{
+    element.style.marginTop = "10px";
+    var unused = element.offsetHeight;
+}
+
+function performActions()
+{
+    invalidateAndForceLayout(document.getElementById("invalidate1"));
+    invalidateAndForceLayout(document.getElementById("invalidate2"));
+}
+
+function test()
+{
+    InspectorTest.evaluateInPage("testRunner.display()", function() {
+        InspectorTest.performActionsAndPrint("performActions()", "Layout");
+    });
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests the Timeline API instrumentation of a Layout event
+</p>
+<div class="relayout-boundary">
+    <div>text</div>
+    <div></div>
+    <div>
+        <div id="invalidate1"><div>text</div></div>
+    </div>
+</div>
+<div class="relayout-boundary">
+    <div></div>
+    <div>text</div>
+    <div id="invalidate2"><div>text</div></div>
+    <div></div>
+    <div></div>
+    <div>text</div>
+</div>
+
+</body>
+</html>

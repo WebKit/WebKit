@@ -1,0 +1,74 @@
+<html>
+  <head>
+    <title>XMLHttpRequest: blob, arraybuffer and document response getters should return null in case of abort</title>
+    <script src="/js-test-resources/testharness.js"></script>
+    <script src="/js-test-resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <div id="log"></div>
+    <script>
+    function runTest(name, fileName, mimeType, setupClient, checkResponse) {
+      var test = async_test(name)
+      test.step(function() {
+        var client = new XMLHttpRequest()
+        var url = "/resources/load-then-wait.cgi?name=../xmlhttprequest/" + fileName + "&waitFor=1&mimeType=" + mimeType
+        client.open("GET", url, true)
+        setupClient(test, client)
+        client.isAborting = false
+        client.hasAborted = false
+        client.isResponseChecked = false
+
+        client.onprogress = test.step_func(function (e) {
+            if (!client.isAborting && e.total == e.loaded) {
+                client.isAborting = true
+                client.abort()
+            }
+        })
+        client.onreadystatechange = test.step_func(function() {
+            if (client.readyState == 4) {
+                checkResponse(test, client)
+                client.isResponseChecked = true
+            }
+        })
+
+        client.onabort = test.step_func(function () {
+            client.hasAborted = true
+        })
+
+        client.onloadend = test.step_func(function () {
+            assert_true(client.hasAborted, "xhr should have aborted")
+            assert_true(client.isResponseChecked, "xhr response should have been checked")
+            test.done()
+        })
+        client.send(null)
+      })
+    }
+
+    runTest("getting arraybuffer response within abort event callback",
+        "onabort-response-getters.html","text/html",
+        function(test, client) {client.responseType = "arraybuffer"},
+        function(test, client) {assert_true(client.response == null, "arraybuffer response must be empty")}
+    )
+
+    runTest("getting blob response within abort event callback",
+        "onabort-response-getters.html","text/html",
+        function(test, client) {client.responseType = "blob"},
+        function(test, client) {assert_true(client.response == null, "blob response must be empty")}
+    )
+
+    runTest("getting json response within abort event callback",
+        "resources/test.json","text/plain",
+        function(test, client) {client.responseType = "json"},
+        function(test, client) {assert_true(client.response == null, "json response must be empty")}
+    )
+
+    runTest("getting document response within abort event callback",
+        "resources/test.xml","text/xml",
+        function(test, client) {client.responseType = "document"},
+        function(test, client) {assert_true(client.response == null, "document response must be empty")}
+    )
+
+    </script>
+  </body>
+</html>
+

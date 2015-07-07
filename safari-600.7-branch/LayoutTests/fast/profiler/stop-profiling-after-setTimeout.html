@@ -1,0 +1,29 @@
+<html>
+<head>
+<script src="resources/profiler-test-JS-resources.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+if (window.internals)
+    internals.setJavaScriptProfilingEnabled(true);
+
+function startTest()
+{
+    console.profile("Stop profiling from a timeout");    
+    setTimeout("endTest()", 20);
+}
+
+</script>
+</head>
+
+<body onload="startTest()">
+This page's JavaScript stops profiling from a timeout.
+<br>
+<br>
+To run this test manually, load it in the browser then load the WebInspector and look at
+the profile.  In the profile endProfile() should not be a child of (program).
+<div id="output"></div>
+</body>
+</html>

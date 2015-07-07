@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script>
+            function runTest() {
+                description('Tests that superscriptshift works on msup. After adding superscriptshift the height of msup element should increase');
+
+                var rect = document.getElementById("msupEle").getBoundingClientRect();
+                height = rect.bottom - rect.top;
+
+                shouldBeTrue("height > 100");
+                isSuccessfullyParsed();
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <math>
+		    <msup superscriptshift="60px" id="msupEle">
+                <mspace width="50px" height="50px" mathbackground="green"/>
+                <mspace width="50px" height="50px" mathbackground="red"/>
+            </msup>
+        </math>
+    </body>
+</html>

@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: unable to open database, version mismatch, '1.0' does not match the currentVersion of ''
+This test tests openDatabaseSync()'s creation callback.
+PASS: Creation callback was called.
+PASS: Version set to empty string as expected.
+PASS: An exception was thrown and db1Fail is null as expected.
+

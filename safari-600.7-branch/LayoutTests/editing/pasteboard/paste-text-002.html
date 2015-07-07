@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html> 
+<head>
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+</style>
+</head> 
+<body>
+<p>This tests copy and pastes "is a tide in the affairs of men,\nWhich taken" twice.</p>
+<div id="root" contenteditable>
+<div id="test" class="editing">There is a tide in the affairs of men,</div>
+<div class="editing">Which taken at the flood leads on to fortune.</div>
+<div class="editing">Omitted, all the voyage of their life,</div>
+<div class="editing">Is bound in shallows and in miseries.</div>
+</div>
+<script src="../editing.js"></script>
+<script>
+
+function editingTest() {
+    for (i = 0; i < 6; i++)
+        moveSelectionForwardByCharacterCommand();
+    for (i = 0; i < 44; i++)
+        extendSelectionForwardByCharacterCommand();
+    copyCommand();
+    pasteCommand();
+    pasteCommand();
+}
+
+runDumpAsTextEditingTest(true);
+</script>
+</body>
+</html>

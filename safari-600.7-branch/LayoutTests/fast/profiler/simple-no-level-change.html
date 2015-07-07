@@ -1,0 +1,39 @@
+<html>
+<head>
+<script src="resources/profiler-test-JS-resources.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.internals)
+    internals.setJavaScriptProfilingEnabled(true);
+
+function startTest()
+{
+    functionWichStartsAndStopsTheProfiler();
+}
+
+function functionWichStartsAndStopsTheProfiler()
+{
+    console.profile("A simple profile test where no scope chagnes");
+
+    for (var i = 0; i < 10000000; i++)
+        var b = i + 2;
+
+    document.getElementById("output");
+
+    console.profileEnd();
+    printProfilesDataWithoutTime();
+}
+</script>
+</head>
+
+<body onload="startTest()">
+This page's JavaScript starts and stops profiling from the same scope.
+<br>
+<br>
+To run this test manually, load it in the browser then load the WebInspector and look at
+the profile.  There should be no function calls between console.profile() and
+console.profileEnd().
+<div id="output"></div>
+</body>
+</html>

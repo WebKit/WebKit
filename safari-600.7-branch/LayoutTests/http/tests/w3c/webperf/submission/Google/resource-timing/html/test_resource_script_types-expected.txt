@@ -1,0 +1,16 @@
+Description
+
+This test validates that all of the different types of script loads are reported with the correct initiator.
+
+
+
+PASS /w3c/webperf/resources/generate_resource.php?type=script&id=1 is expected to have initiatorType script 
+PASS /w3c/webperf/resources/generate_resource.php?type=script&id=2 is expected to have initiatorType script 
+PASS /w3c/webperf/resources/generate_resource.php?type=script&id=3 is expected to have initiatorType script 
+PASS /w3c/webperf/resources/generate_resource.php?type=script&id=4 is expected to have initiatorType script 
+PASS /w3c/webperf/resources/generate_resource.php?type=script&id=5 is expected to have initiatorType script 
+PASS /w3c/webperf/resources/generate_resource.php?type=script&id=6 is expected to have initiatorType script 
+PASS /w3c/webperf/resources/generate_resource.php?type=script&id=7 is expected to have initiatorType script 
+PASS /w3c/webperf/resources/generate_resource.php?type=script&id=8 is expected to have initiatorType script 
+PASS /w3c/webperf/resources/generate_resource.php?type=script&id=9 is expected to have initiatorType script 
+

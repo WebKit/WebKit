@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 3: Viewport argument key "width:680" not recognized and ignored.
+ALERT: viewport size 980x1078 scale 0.326531 with limits [0.326531, 5] and userScalable true
+

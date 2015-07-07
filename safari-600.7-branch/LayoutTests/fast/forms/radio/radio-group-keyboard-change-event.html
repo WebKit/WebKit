@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=32013">https://bugs.webkit.org/show_bug.cgi?id=32013</a>.
+
+<p>For manual testing, focus a radio button in the first group and use the arrow keys. Changing the checked
+radio button should fire change events.
+
+<p>
+<input type=radio name=aaa value=a checked onchange="handleChange(event)" onclick="handleClick(event)">a
+<input type=radio name=aaa value=b onchange="handleChange(event)" onclick="handleClick(event)">b
+<input type=radio name=aaa value=c onchange="handleChange(event)" onclick="handleClick(event)">c
+
+<p>For manual testing, focus a radio button in the second group and use the arrow keys. Change events
+should still be dispatched but the checked radio should not change.
+
+<p>
+<input type=radio name=bbb value=d checked onchange="handleChange(event)" onclick="handleClick(event)">d
+<input type=radio name=bbb value=e onchange="handleChange(event)" onclick="handleClick(event)">e
+<input type=radio name=bbb value=f onchange="handleChange(event)" onclick="handleClick(event)">f
+
+<pre id=out></pre>
+
+<script>
+
+var preventClickValues = 'def';
+
+function handleChange(e)
+{
+    var value = e.target.value;
+    print(value + ' dispatched change event');
+}
+
+function handleClick(e)
+{
+    var value = e.target.value;
+    if (preventClickValues.indexOf(value) !== -1)
+        e.preventDefault();
+}
+
+function print(s)
+{
+    document.getElementById('out').textContent += s + '\n';
+}
+
+function pass(s) {
+    print('PASS: ' + s);
+}
+
+function fail(s) {
+    print('FAIL: ' + s);
+}
+
+function getRadio(value)
+{
+    return document.querySelector('input[value="' + value + '"]');
+}
+
+function assertChecked(value)
+{
+    if (getRadio(value).checked)
+        pass(value + ' is checked');
+    else
+        fail(value + ' should be checked');
+}
+
+function assertNotChecked(value)
+{
+    if (!getRadio(value).checked)
+        pass(value + ' is not checked');
+    else
+        fail(value + ' should not be checked');
+}
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+if (window.eventSender) {
+    getRadio('a').focus();
+    eventSender.keyDown('downArrow');
+    eventSender.keyDown('downArrow');
+
+    getRadio('d').focus();
+    eventSender.keyDown('downArrow');
+    eventSender.keyDown('downArrow');
+
+    assertNotChecked('a');
+    assertNotChecked('b');
+    assertChecked('c');
+
+    assertChecked('d');
+    assertNotChecked('e');
+    assertNotChecked('f');
+}
+
+</script>
+</body>
+</html>

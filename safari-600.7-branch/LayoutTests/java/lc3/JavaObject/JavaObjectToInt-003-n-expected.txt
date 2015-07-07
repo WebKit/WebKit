@@ -1,0 +1,9 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaObject to int
+
+FAIL dt.PUB_DOUBLE_REPRESENTATION = Infinity ;dt.setInteger( dt ); dt.PUB_INTEGER should throw an exception. Was undefined.
+FAIL dt.PUB_DOUBLE_REPRESENTATION = Infinity ;dt.setInteger( dt ); dt.getInteger() should throw an exception. Was -2147483648.
+PASS typeof dt.getInteger() is 'number'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

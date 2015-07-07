@@ -1,0 +1,10 @@
+This test checks that iframe with percentage height within anonymous table cell has the correct height (strict mode).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL getHeight('iframe-100') should be 460. Was 600.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

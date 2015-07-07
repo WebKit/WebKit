@@ -1,0 +1,24 @@
+<body>
+    <p>Test for <a href="http://bugs.webkit.org/show_bug.cgi?id=15248">bug 15248</a>:
+        Can not enter accented characters using alt-numeric keypad.
+    </p>
+    <div contenteditable id=ce></div>
+    <script>
+        document.getElementById("ce").focus();
+
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+
+            eventSender.dispatchMessage(eventSender.WM_SYSKEYDOWN, 18 /* Alt */, 0x20380001);
+            eventSender.dispatchMessage(eventSender.WM_SYSKEYDOWN, 45 /* Num Pad 0 */, 0x20520001);
+            eventSender.dispatchMessage(eventSender.WM_SYSKEYUP, 45 /* Num Pad 0 */, 0xe0520001);
+            eventSender.dispatchMessage(eventSender.WM_SYSKEYDOWN, 12 /* Num Pad 5 */, 0x204c0001);
+            eventSender.dispatchMessage(eventSender.WM_SYSKEYUP, 12 /* Num Pad 5 */, 0xe04c0001);
+            eventSender.dispatchMessage(eventSender.WM_SYSKEYDOWN, 45 /* Num Pad 0 */, 0x20520001);
+            eventSender.dispatchMessage(eventSender.WM_SYSKEYUP, 45 /* Num Pad 0 */, 0xe0520001);
+            eventSender.dispatchMessage(eventSender.WM_KEYUP, 18 /* Alt */, 0xc038001);
+            eventSender.dispatchMessage(eventSender.WM_CHAR, 50 /* '2' */, 0xe0520001);
+        } else
+            document.write("To test manually, type Alt+050 on numpad. Character '2' should be inserted into active text input.");
+    </script>
+</body>

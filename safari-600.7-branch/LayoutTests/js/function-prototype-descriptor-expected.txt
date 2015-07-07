@@ -1,0 +1,19 @@
+Test for function.prototype's property descriptor.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS descriptor['writable'] is true
+PASS descriptor['enumerable'] is false
+PASS descriptor['configurable'] is false
+PASS descriptor['writable'] is true
+PASS descriptor['enumerable'] is false
+PASS descriptor['configurable'] is false
+PASS Object.defineProperty(c, 'prototype', { get: function(){} }) threw exception TypeError: Attempting to change access mechanism for an unconfigurable property..
+PASS descriptor['writable'] is true
+PASS descriptor['enumerable'] is false
+PASS descriptor['configurable'] is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

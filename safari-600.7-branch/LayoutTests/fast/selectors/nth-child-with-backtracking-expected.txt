@@ -1,0 +1,15 @@
+Test nth-child inside deep backtracking.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.querySelectorAll("li+li+:nth-child(-5n+7)+li+li+li~li+li+li~li").length is 7
+PASS allItems.length is 20
+PASS coloredItems is 7
+PASS document.querySelectorAll("ul>[foo=bar]:nth-child(-3n+3)+li+li+li~li+li+li~li>span.first>span.second a").length is 11
+PASS allLinks.length is 20
+PASS backgroundColoredCount is 11
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

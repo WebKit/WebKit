@@ -1,0 +1,36 @@
+#!/usr/bin/env python
+# Copyright (C) 2011 Igalia S.L.
+# Copyright (C) 2012 Intel Corporation
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../jhbuild") )
+import jhbuildrc_common
+
+# FIXME: The depedencies of EFL 1.9 can not be updated unless MAKEFLAGS is set to '-j1'.
+os.environ['MAKEFLAGS'] = '-j1'
+
+# Setting use_lib64 to False is necessary, otherwise CMake will not find
+# the lib64/cmake/<name> folder that contains the <Name>Config.cmake files.
+use_lib64 = False
+
+jhbuildrc_common.init(globals(), "efl") 
+
+addpath('XDG_DATA_DIRS', '/usr/share')
+addpath('XDG_CONFIG_DIRS', '/etc/xdg')
+
+partial_build = False

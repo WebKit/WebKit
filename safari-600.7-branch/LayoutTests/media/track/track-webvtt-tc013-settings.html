@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>            
+
+            numberOfTrackTests = 2;
+            
+            function trackLoaded()
+            {
+                numberOfTracksLoaded++;
+                if (numberOfTracksLoaded == numberOfTrackTests) {
+                    for (var i = 0; i <= numberOfTrackTests; ++i)
+                        testTrack(i);
+                }
+            }
+
+            function testTrack(i)
+            {
+                findMediaElement();
+                var expected = 
+                [
+                    {
+                        length : 4,
+                        tests:
+                        [
+                            {
+                                property : "line",
+                                values : [100, 15, -1, 95],
+                            },
+                            {
+                                property : "position",
+                                values : [50, 40, 10, 50],
+                            },
+                            {
+                                property : "align",
+                                values : ["start", "middle", "middle", "end"],
+                            },
+                            {
+                                property : "vertical",
+                                values : ["", "rl", "", "lr"],
+                            },
+                        ],
+                    },
+                    {
+                        length : 4,
+                        tests:
+                        [
+                            {
+                                property : "line",
+                                values : [43, -1, -1, -1],
+                            },
+                            {
+                                property : "position",
+                                values : [10, 50, 50, 90],
+                            },
+                            {
+                                property : "align",
+                                values : ["middle", "end", "middle", "middle"],
+                            },
+                            {
+                                property : "vertical",
+                                values : ["", "", "", "lr"],
+                            },
+                        ],
+                    }
+                ]
+                testCues(i, expected[i]);
+
+                allTestsEnded();
+            }
+        </script>
+    </head>
+    <body onload="enableAllTextTracks()">
+    <p>Tests WebVTT settings.</p>
+        <video>
+            <track src="captions-webvtt/tc013-settings.vtt" onload="trackLoaded()">
+            <track src="captions-webvtt/tc013-settings-bad-separation.vtt" onload="trackLoaded()">
+        </video>
+    </body>
+</html>

@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+    <!--
+    The content from a flow is displayed into a region. The content fills up the region and the remaining content is not displayed.
+    This test shows that the content in the region cannot be scrolled. On success, you should see a green box followed by 'PASS'.
+    -->
+    <head>
+        <style>
+            .box {
+                width: 100px;
+                height: 100px;
+            }
+
+            #flow {
+                -webkit-flow-into: article;
+            }
+
+            #region {
+                -webkit-flow-from: article;
+                overflow: hidden;
+            }
+
+            #greenBox {
+                background-color: green;
+            }
+
+            #redBox {
+                background-color: red;
+            }
+        </style>
+        <script>
+            if (window.testRunner)
+                testRunner.dumpAsText();
+
+            function test()
+            {
+                document.getElementById('redBox').scrollIntoView(false);
+                var element = document.elementFromPoint(50, 50);
+
+                // Check whether the red box was moved upwards.
+                if (element == document.getElementById('redBox'))
+                    document.getElementById('result').innerText = "FAIL";
+            }
+        </script>
+    </head>
+    <body onload="test()">
+        <div id="flow">
+            <div id="greenBox" class="box"></div>
+            <div id="redBox" class="box"></div>
+        </div>
+        <div id="region" class="box"></div>
+        <div id="result">PASS</div>
+    </body>
+</html>

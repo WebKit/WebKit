@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            if (window.internals)
+                window.internals.settings.setAcceleratedCompositingForFixedPositionEnabled(true);
+        </script>
+        <style>
+            #fixed { position: fixed; top: 150px; left: 150px; background-color: green; width: 100px; height: 100px; }
+        </style>
+    </head>
+    <body>
+        <!-- Fixed positioned element inside a named flow, dynamically changed top/left -->
+        <p>Test that a fixed positioned element whose position is dynamically changed
+            is correctly painted in the new position.</p>
+        <p>On success you should see a green rectangle and no red.</p>
+        <div id="fixed"></div>
+    </body>
+</html>

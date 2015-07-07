@@ -1,0 +1,43 @@
+
+
+--------
+Frame: 'left'
+--------
+PASS escape(window.frameElement.name) is "left"
+PASS escape(window.name) is "left"
+
+
+--------
+Frame: '<!--framePath //<!--frame1-->-->'
+--------
+PASS escape(window.frameElement.name) is ""
+PASS escape(window.name) is ""
+
+
+--------
+Frame: '<!--framePath //<!--frame2-->-->'
+--------
+PASS escape(window.frameElement.name) is "_blank"
+PASS escape(window.name) is "_blank"
+
+
+--------
+Frame: '_parent'
+--------
+PASS escape(window.frameElement.name) is "_parent"
+PASS escape(window.name) is "_parent"
+
+
+--------
+Frame: '_self'
+--------
+PASS escape(window.frameElement.name) is "_self"
+PASS escape(window.name) is "_self"
+
+
+--------
+Frame: '_top'
+--------
+PASS escape(window.frameElement.name) is "_top"
+PASS escape(window.name) is "_top"
+

@@ -1,0 +1,29 @@
+<!doctype html>
+<html style="border:10px solid maroon; -webkit-writing-mode:vertical-rl">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<script src="../../repaint/resources/repaint.js"></script>
+<script>
+function repaintTest()
+{
+    if (eventSender) {
+        eventSender.mouseMoveTo(600, 300);
+        eventSender.mouseDown();
+        eventSender.mouseMoveTo(400, 300);
+        eventSender.mouseUp();
+    }
+}
+</script>
+
+<style>
+body {
+    font: 20px/1.25 "HiraMinPro-W3";
+}
+</style>
+</head>
+<body style="border:5px solid black;" onload="runRepaintTest()">
+<div style="-webkit-flow-into:thread">
+せっかく見つけたすばらしい記事がどこにあったか忘れてしまった経験はありますかならタイトルとアドレスだけでなく、訪問したウェブページのコンテンツからも検索することができます。せっかく見つけたすばらしい記事がどこにあったか忘れてしまった経験はありますか ならタイトルとアドレスだけでなく、訪問したウェブページのコンテンツからも検索することができます。訪問したウェブページのコンテンツからも検索することができます。せっかく見つけたすばらしい記事がどこにあったか忘れてしまった経験はありますか ならタイトルとアドレスだけでなく、訪問
+</div>
+<div style="-webkit-flow-from: thread; position:absolute;right:100px; top:100px; border:2px solid black; width:400px; height:400px"></div>
+</body>

@@ -1,0 +1,18 @@
+<html>
+<head>
+    <script>
+
+        window.focus = function() { return "new focus"; }
+        window.__proto__.blur = function() { return "new blur"; }
+        window.history.close = "new close";
+
+        window.onload = function()
+        {
+            if (window.testRunner)
+                testRunner.globalFlag = true;
+        }
+    </script>
+</head>
+<body>
+</body>
+</html>

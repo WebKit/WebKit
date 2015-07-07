@@ -1,0 +1,111 @@
+Test Encrypted Media extension of HTMLMediaElement canPlayType() method for WebM types.
+
+WebM video container without a codec results in "maybe".
+EXPECTED (video.canPlayType('video/webm') == 'maybe') OK
+EXPECTED (video.canPlayType('video/webm', '') == 'maybe') OK
+EXPECTED (video.canPlayType('video/webm', null) == 'maybe') OK
+EXPECTED (video.canPlayType('video/webm', undefined) == 'maybe') OK
+EXPECTED (video.canPlayType('video/webm', 'webkit-org.w3.clearkey') == 'maybe') OK
+EXPECTED (video.canPlayType('video/webm', 'WeBkIt-OrG.W3.ClEaRkEy') == 'maybe') OK
+EXPECTED (video.canPlayType('video/webm', 'com.example.invalid') == '') OK
+
+WebM video container with a valid codec results in "probably".
+EXPECTED (video.canPlayType('video/webm; codecs="vp8"') == 'probably') OK
+EXPECTED (video.canPlayType('video/webm; codecs="vp8"', '') == 'probably') OK
+EXPECTED (video.canPlayType('video/webm; codecs="vp8"', null) == 'probably') OK
+EXPECTED (video.canPlayType('video/webm; codecs="vp8"', undefined) == 'probably') OK
+EXPECTED (video.canPlayType('video/webm; codecs="vp8"', 'webkit-org.w3.clearkey') == 'probably') OK
+EXPECTED (video.canPlayType('video/webm; codecs="vp8"', 'WeBkIt-OrG.W3.ClEaRkEy') == 'probably') OK
+EXPECTED (video.canPlayType('video/webm; codecs="vp8"', 'com.example.invalid') == '') OK
+
+WebM video container with two valid codecs result in "probably".
+EXPECTED (video.canPlayType('video/webm; codecs="vp8, vorbis"') == 'probably') OK
+EXPECTED (video.canPlayType('video/webm; codecs="vp8, vorbis"', '') == 'probably') OK
+EXPECTED (video.canPlayType('video/webm; codecs="vp8, vorbis"', null) == 'probably') OK
+EXPECTED (video.canPlayType('video/webm; codecs="vp8, vorbis"', undefined) == 'probably') OK
+EXPECTED (video.canPlayType('video/webm; codecs="vp8, vorbis"', 'webkit-org.w3.clearkey') == 'probably') OK
+EXPECTED (video.canPlayType('video/webm; codecs="vp8, vorbis"', 'WeBkIt-OrG.W3.ClEaRkEy') == 'probably') OK
+EXPECTED (video.canPlayType('video/webm; codecs="vp8, vorbis"', 'com.example.invalid') == '') OK
+
+WebM video container with two valid codecs result in "probably" regardless of the order.
+EXPECTED (video.canPlayType('video/webm; codecs="vorbis, vp8"') == 'probably') OK
+EXPECTED (video.canPlayType('video/webm; codecs="vorbis, vp8"', '') == 'probably') OK
+EXPECTED (video.canPlayType('video/webm; codecs="vorbis, vp8"', null) == 'probably') OK
+EXPECTED (video.canPlayType('video/webm; codecs="vorbis, vp8"', undefined) == 'probably') OK
+EXPECTED (video.canPlayType('video/webm; codecs="vorbis, vp8"', 'webkit-org.w3.clearkey') == 'probably') OK
+EXPECTED (video.canPlayType('video/webm; codecs="vorbis, vp8"', 'WeBkIt-OrG.W3.ClEaRkEy') == 'probably') OK
+EXPECTED (video.canPlayType('video/webm; codecs="vorbis, vp8"', 'com.example.invalid') == '') OK
+
+WebM video container with an invalid codec results in "".
+EXPECTED (video.canPlayType('video/webm; codecs="1"') == '') OK
+EXPECTED (video.canPlayType('video/webm; codecs="1"', '') == '') OK
+EXPECTED (video.canPlayType('video/webm; codecs="1"', null) == '') OK
+EXPECTED (video.canPlayType('video/webm; codecs="1"', undefined) == '') OK
+EXPECTED (video.canPlayType('video/webm; codecs="1"', 'webkit-org.w3.clearkey') == '') OK
+EXPECTED (video.canPlayType('video/webm; codecs="1"', 'WeBkIt-OrG.W3.ClEaRkEy') == '') OK
+EXPECTED (video.canPlayType('video/webm; codecs="1"', 'com.example.invalid') == '') OK
+
+WebM video container with any invalid codec results in "".
+EXPECTED (video.canPlayType('video/webm; codecs="vp8, 1"') == '') OK
+EXPECTED (video.canPlayType('video/webm; codecs="vp8, 1"', '') == '') OK
+EXPECTED (video.canPlayType('video/webm; codecs="vp8, 1"', null) == '') OK
+EXPECTED (video.canPlayType('video/webm; codecs="vp8, 1"', undefined) == '') OK
+EXPECTED (video.canPlayType('video/webm; codecs="vp8, 1"', 'webkit-org.w3.clearkey') == '') OK
+EXPECTED (video.canPlayType('video/webm; codecs="vp8, 1"', 'WeBkIt-OrG.W3.ClEaRkEy') == '') OK
+EXPECTED (video.canPlayType('video/webm; codecs="vp8, 1"', 'com.example.invalid') == '') OK
+
+WebM video container with any invalid codec results in "" regardless of the order.
+EXPECTED (video.canPlayType('video/webm; codecs="1, vp8"') == '') OK
+EXPECTED (video.canPlayType('video/webm; codecs="1, vp8"', '') == '') OK
+EXPECTED (video.canPlayType('video/webm; codecs="1, vp8"', null) == '') OK
+EXPECTED (video.canPlayType('video/webm; codecs="1, vp8"', undefined) == '') OK
+EXPECTED (video.canPlayType('video/webm; codecs="1, vp8"', 'webkit-org.w3.clearkey') == '') OK
+EXPECTED (video.canPlayType('video/webm; codecs="1, vp8"', 'WeBkIt-OrG.W3.ClEaRkEy') == '') OK
+EXPECTED (video.canPlayType('video/webm; codecs="1, vp8"', 'com.example.invalid') == '') OK
+
+WebM audio container without a codec results in "maybe".
+EXPECTED (video.canPlayType('audio/webm') == 'maybe') OK
+EXPECTED (video.canPlayType('audio/webm', '') == 'maybe') OK
+EXPECTED (video.canPlayType('audio/webm', null) == 'maybe') OK
+EXPECTED (video.canPlayType('audio/webm', undefined) == 'maybe') OK
+EXPECTED (video.canPlayType('audio/webm', 'webkit-org.w3.clearkey') == 'maybe') OK
+EXPECTED (video.canPlayType('audio/webm', 'WeBkIt-OrG.W3.ClEaRkEy') == 'maybe') OK
+EXPECTED (video.canPlayType('audio/webm', 'com.example.invalid') == '') OK
+
+WebM audio container with a valid codec results in "probably".
+EXPECTED (video.canPlayType('audio/webm; codecs="vorbis"') == 'probably') OK
+EXPECTED (video.canPlayType('audio/webm; codecs="vorbis"', '') == 'probably') OK
+EXPECTED (video.canPlayType('audio/webm; codecs="vorbis"', null) == 'probably') OK
+EXPECTED (video.canPlayType('audio/webm; codecs="vorbis"', undefined) == 'probably') OK
+EXPECTED (video.canPlayType('audio/webm; codecs="vorbis"', 'webkit-org.w3.clearkey') == 'probably') OK
+EXPECTED (video.canPlayType('audio/webm; codecs="vorbis"', 'WeBkIt-OrG.W3.ClEaRkEy') == 'probably') OK
+EXPECTED (video.canPlayType('audio/webm; codecs="vorbis"', 'com.example.invalid') == '') OK
+
+WebM video container with a video codec results in "".
+EXPECTED (video.canPlayType('audio/webm; codecs="vp8"') == '') OK
+EXPECTED (video.canPlayType('audio/webm; codecs="vp8"', '') == '') OK
+EXPECTED (video.canPlayType('audio/webm; codecs="vp8"', null) == '') OK
+EXPECTED (video.canPlayType('audio/webm; codecs="vp8"', undefined) == '') OK
+EXPECTED (video.canPlayType('audio/webm; codecs="vp8"', 'webkit-org.w3.clearkey') == '') OK
+EXPECTED (video.canPlayType('audio/webm; codecs="vp8"', 'WeBkIt-OrG.W3.ClEaRkEy') == '') OK
+EXPECTED (video.canPlayType('audio/webm; codecs="vp8"', 'com.example.invalid') == '') OK
+
+Case does not matter (except for the codecs string).
+EXPECTED (video.canPlayType('ViDeO/WeBm; CoDeCs="vp8, vorbis"') == 'probably') OK
+EXPECTED (video.canPlayType('ViDeO/WeBm; CoDeCs="vp8, vorbis"', '') == 'probably') OK
+EXPECTED (video.canPlayType('ViDeO/WeBm; CoDeCs="vp8, vorbis"', null) == 'probably') OK
+EXPECTED (video.canPlayType('ViDeO/WeBm; CoDeCs="vp8, vorbis"', undefined) == 'probably') OK
+EXPECTED (video.canPlayType('ViDeO/WeBm; CoDeCs="vp8, vorbis"', 'webkit-org.w3.clearkey') == 'probably') OK
+EXPECTED (video.canPlayType('ViDeO/WeBm; CoDeCs="vp8, vorbis"', 'WeBkIt-OrG.W3.ClEaRkEy') == 'probably') OK
+EXPECTED (video.canPlayType('ViDeO/WeBm; CoDeCs="vp8, vorbis"', 'com.example.invalid') == '') OK
+
+The codecs string is case sensitive, so non-lower-case codecs result in "".
+EXPECTED (video.canPlayType('ViDeO/WeBm; CoDeCs="Vp8, VoRbIs"') == '') OK
+EXPECTED (video.canPlayType('ViDeO/WeBm; CoDeCs="Vp8, VoRbIs"', '') == '') OK
+EXPECTED (video.canPlayType('ViDeO/WeBm; CoDeCs="Vp8, VoRbIs"', null) == '') OK
+EXPECTED (video.canPlayType('ViDeO/WeBm; CoDeCs="Vp8, VoRbIs"', undefined) == '') OK
+EXPECTED (video.canPlayType('ViDeO/WeBm; CoDeCs="Vp8, VoRbIs"', 'webkit-org.w3.clearkey') == '') OK
+EXPECTED (video.canPlayType('ViDeO/WeBm; CoDeCs="Vp8, VoRbIs"', 'WeBkIt-OrG.W3.ClEaRkEy') == '') OK
+EXPECTED (video.canPlayType('ViDeO/WeBm; CoDeCs="Vp8, VoRbIs"', 'com.example.invalid') == '') OK
+END OF TEST
+

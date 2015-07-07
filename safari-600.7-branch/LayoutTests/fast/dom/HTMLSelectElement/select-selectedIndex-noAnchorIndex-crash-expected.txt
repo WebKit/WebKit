@@ -1,0 +1,5 @@
+PASS multiselect.selectedIndex is -1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

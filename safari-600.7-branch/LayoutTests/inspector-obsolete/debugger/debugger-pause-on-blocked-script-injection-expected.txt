@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self'".
+
+Tests that pause on exception works for inline scripts blocked by CSP.
+
+Debugger was enabled.
+Script execution paused.
+Call stack:
+    0) testAction (pause-on-blocked-script-injection.js:5)
+Script execution resumed.
+Debugger was disabled.
+

@@ -1,0 +1,6 @@
+Tests how revision requests content if original content was not loaded yet.
+
+Bug 63631
+http://127.0.0.1:8000/inspector/network/resources/style.css
+
+

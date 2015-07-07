@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+
+        <script>
+        var controller;
+        var video;
+        var firstTime;
+        var secondTime;
+
+        function start() {
+            video = document.getElementById('video');
+            run('controller = video.controller');
+            controller.addEventListener('canplaythrough', canplaythrough, true);
+            var src = findMediaFile('video', 'content/test');
+            video.src = src;
+        }
+        
+        function canplaythrough() {
+            consoleWrite("EVENT(canplaythrough)");
+            controller.removeEventListener('canplaythrough', canplaythrough, true);
+            run('video.play()');
+            controller.addEventListener('playing', playing, true);
+            run('controller.play()');
+        }
+        
+        function playing() { 
+            consoleWrite("EVENT(playing)");
+            controller.removeEventListener('playing', playing, true);
+            run('firstTime = controller.currentTime');
+            run('secondTime = controller.currentTime');
+            testExpected('firstTime - secondTime', 0);
+            endTest();
+        }
+        </script>
+    </head>
+    <body onload="start()">
+        <video id="video" mediaGroup="group" controls></video>
+        <div>This tests that currentTime is kept stable during script execution.</div>
+    </body>
+</html>

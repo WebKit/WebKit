@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2014 Apple Inc. All rights reserved. -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15">
+    <clipPath id="2">
+        <path d="M 6 13 L 6 2 L 15 7.5 L 6 13 L 6 13 Z"/>
+    </clipPath>
+    <path fill="none" stroke="black" stroke-width="2" clip-path="url(#2)" d="M 6 13 L 6 2 L 15 7.5 L 6 13 L 6 13 Z"/>
+    <rect fill="none" stroke="black" x="0.5" y="2.5" width="3" height="10"/>
+</svg>

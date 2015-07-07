@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script type="text/javascript">
+description("WebSocket should fail if invalid subprotocols are specified");
+
+var url = "ws://127.0.0.1:8880/websocket/tests/simple";
+shouldThrow("new WebSocket(url, 'a b')", "'Error: SyntaxError: DOM Exception 12'");
+shouldThrow("new WebSocket(url, 'a,b')", "'Error: SyntaxError: DOM Exception 12'");
+shouldThrow("new WebSocket(url, 'a\\0b')", "'Error: SyntaxError: DOM Exception 12'");
+shouldThrow("new WebSocket(url, '\\u3042')", "'Error: SyntaxError: DOM Exception 12'");
+shouldThrow("new WebSocket(url, ['a', 'b', 'c d'])", "'Error: SyntaxError: DOM Exception 12'");
+shouldThrow("new WebSocket(url, ['a', 'b', 'c', 'a'])", "'Error: SyntaxError: DOM Exception 12'");
+
+</script>
+<script src="../../../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>

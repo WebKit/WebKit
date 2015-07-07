@@ -1,0 +1,25 @@
+<html>
+<body>
+<iframe src="about:blank"></iframe><br>
+<iframe src=""></iframe><br>
+<pre>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+document.write('--- Test begins ---\n');
+document.write('* "about:blank"\n');
+document.write('document.domain = ' + frames[0].document.domain + '\n');
+document.write('* ""\n');
+document.write('document.domain = ' + frames[1].document.domain + '\n');
+document.write('--- After setting document.domain ---\n');
+document.domain = '0.0.1';
+document.write('* "about:blank"\n');
+document.write('document.domain = ' + frames[0].document.domain + '\n');
+document.write('* ""\n');
+document.write('document.domain = ' + frames[1].document.domain + '\n');
+document.write('--- Test ends ---\n');
+</script>
+</pre>
+</body>
+</html>

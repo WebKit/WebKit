@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: Blocked a frame with origin "null" from accessing a frame with origin "http://127.0.0.1:8000".  The frame requesting access has a protocol of "data", the frame being accessed has a protocol of "http". Protocols must match.
+
+ALERT: PASS: Exception thrown successfully.
+Opener Frame
+
+Pass: Cross frame access from a data: URL on a different domain was denied.

@@ -1,0 +1,18 @@
+<html>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpResourceLoadCallbacks();
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    
+    function frameLoaded() {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+<body>
+    <iframe onload="frameLoaded();" src="resources/subresource-null-mimetype.webarchive"></iframe>
+    This tests that doing a normal load of a webarchive with a null mimetype for a subresource does not crash.
+</body>
+</html>

@@ -1,0 +1,9 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaObject to byte
+
+FAIL dt.PUB_DOUBLE_REPRESENTATION = -Infinity;dt.setByte( dt ); dt.PUB_BYTE should throw an exception. Was 0.
+FAIL dt.PUB_DOUBLE_REPRESENTATION = -Infinity;dt.setByte( dt ); dt.getByte() should throw an exception. Was 0.
+PASS typeof dt.getByte() is 'number'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

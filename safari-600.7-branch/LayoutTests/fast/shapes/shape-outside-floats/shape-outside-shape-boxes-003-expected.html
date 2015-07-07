@@ -1,0 +1,28 @@
+<html>
+<head>
+<style>
+.container {
+    width: 90px;
+    height: 90px;
+    color: green;
+    background-color: green;
+    margin: 10px;
+}
+</style>
+</head>
+<body>
+    <p>These tests set the shape-outside to a &lt;shape&gt; &lt;box&gt; pair with writing-mode: vertical-rl, where the shape takes up its entire sizing box. They test for each of the various sizing boxes (margin/border/padding/content). They require the Ahem font. You should see green squares, with no red.</p>
+    <p>shape-outside: content-box</p>
+    <div class='container'>
+    </div>
+    <p>shape-outside: padding-box</p>
+    <div class='container'>
+    </div>
+    <p>shape-outside: border-box</p>
+    <div class='container'>
+    </div>
+    <p>shape-outside: margin-box</p>
+    <div class='container'>
+    </div>
+</body>
+</html>

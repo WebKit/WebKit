@@ -1,0 +1,59 @@
+Tests that setting selector text can be undone.
+
+=== Before selector modification ===
+[expanded] 
+element.style  { ()
+
+======== Matched CSS Rules ========
+[expanded] 
+#inspected  { (undo-set-selector-text.html:4)
+color: green;
+
+[expanded] 
+div  { (user agent stylesheet)
+display: block;
+
+
+=== After selector modification ===
+[expanded] 
+element.style  { ()
+
+======== Matched CSS Rules ========
+[expanded] 
+#inspected, #other  { (undo-set-selector-text.html:4)
+color: green;
+
+[expanded] 
+div  { (user agent stylesheet)
+display: block;
+
+
+=== After undo ===
+[expanded] 
+element.style  { ()
+
+======== Matched CSS Rules ========
+[expanded] 
+#inspected  { (undo-set-selector-text.html:4)
+color: green;
+
+[expanded] 
+div  { (user agent stylesheet)
+display: block;
+
+
+=== After redo ===
+[expanded] 
+element.style  { ()
+
+======== Matched CSS Rules ========
+[expanded] 
+#inspected, #other  { (undo-set-selector-text.html:4)
+color: green;
+
+[expanded] 
+div  { (user agent stylesheet)
+display: block;
+
+
+

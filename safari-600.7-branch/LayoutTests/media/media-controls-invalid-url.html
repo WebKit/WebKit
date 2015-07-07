@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script src=media-controls.js></script>
+        <script>
+            var video;
+
+            function init()
+            {
+                video = document.getElementsByTagName("video")[0];
+                video.src = findMediaFile("video", "content/test");
+
+                waitForEvent("canplaythrough", start);
+                waitForEvent("seeked", seeked);
+                waitForEvent("error", error);
+            }
+
+            function getTimeLineValue()
+            {
+                var timeline;
+                var shadowRoot = internals.shadowRoot(video);
+
+                timeline = mediaControlsElement(shadowRoot.firstChild.firstChild, '-webkit-media-controls-timeline');
+
+                if(!timeline)
+                    throw "Faild to find -webkit-media-controls-timeline";
+
+                return timeline.value;
+            }
+
+            function error()
+            {
+                try {
+                    testExpected("getTimeLineValue()", video.currentTime);
+                    endTest();
+                } catch (exception) {
+                    failTest(exception.description);
+                }
+            }
+
+            function seeked()
+            {
+                try {
+                    testExpected("getTimeLineValue()", video.currentTime);
+                } catch (exception) {
+                    failTest(exception.description);
+                }
+
+                // Change video source to an invalid one
+                video.src = "/invalid.mov";
+            }
+
+            function start()
+            {
+                if (!window.testRunner)
+                    return;
+
+                try {
+                    testExpected("getTimeLineValue()", video.currentTime);
+                } catch (exception) {
+                    failTest(exception.description);
+                }
+
+                // Seeking to time value 1.0
+                video.currentTime = 1.0;
+            }
+        </script>
+    </head>
+    <body onload="init()">
+        <p>This tests that media element controls are reset to their default state when the src is changed to an invalid url.</p>
+        <p>This test only runs in DRT!</p>
+        <video controls></video>
+        <div id="console"></div>
+    </body>
+</html>

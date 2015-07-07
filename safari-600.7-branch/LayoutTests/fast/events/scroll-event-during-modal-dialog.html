@@ -1,0 +1,32 @@
+<html>
+<script src="../../resources/js-test-pre.js"></script>
+<body style="min-height: 2000px"> 
+
+<script type="text/javascript">
+if (window.testRunner)
+    testRunner.setCanOpenWindows();
+
+description('Tests that scroll events are not fired while modal dialogs are displayed.');
+
+var triggeredCaptureListener = false;
+var triggeredBubbleListener = false;
+
+onscroll = function()
+{
+    debug('Scroll handler fired');
+    finishJSTest();
+}
+
+onload = function()
+{
+    debug('Scrolling window');
+    window.scrollTo(200, 200);
+    debug('Showing modal dialog');
+    showModalDialog('resources/scroll-event-modal-dialog.html');
+    debug('Returned from modal dialog');
+}
+var jsTestIsAsync = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

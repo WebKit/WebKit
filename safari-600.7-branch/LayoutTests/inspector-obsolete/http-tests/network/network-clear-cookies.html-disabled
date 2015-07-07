@@ -1,0 +1,70 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../network-test.js"></script>
+<script>
+function test()
+{
+    // Since this test could be run together with other inspector backend cache
+    // tests, we need to reset size limits to default ones.
+    InspectorTest.resetInspectorResourcesData(step1);
+
+    function step1()
+    {
+        InspectorTest.makeSimpleXHRWithPayload("GET", "resources/set-cookie.php", true, step2);
+    }
+
+    function step2(msg)
+    {
+        if (typeof(NetworkAgent.clearBrowserCookies) === 'function')
+            NetworkAgent.clearBrowserCookies(step3);
+        else
+            step3();
+    }
+
+    function step3(msg)
+    {
+        InspectorTest.makeSimpleXHRWithPayload("GET", "resources/set-cookie.php", true, firstXHRLoaded);
+
+        function firstXHRLoaded()
+        {
+            InspectorTest.makeSimpleXHRWithPayload("GET", "resources/set-cookie.php", true, step4);
+        }
+    }
+
+    function step4(msg)
+    {
+        // inspector-test.js appears in network panel occasionally in Safari on
+        // Mac, so checking two last resources.
+        var resourcesCount = WebInspector.panel("network").resources.length;
+        var resource1 = WebInspector.panel("network").resources[resourcesCount - 2];
+        var resource2 = WebInspector.panel("network").resources[resourcesCount - 1];
+
+        InspectorTest.addResult(resource1.url);
+        InspectorTest.addResult(resource2.url);
+
+        InspectorTest.assertTrue(!hasRequestCookieWithName(resource1, "TestCookie"));
+        InspectorTest.assertTrue(hasRequestCookieWithName(resource2, "TestCookie"));
+        InspectorTest.completeTest();
+
+    }
+
+    function hasRequestCookieWithName(resource, name)
+    {
+        var requestCookies = resource.requestCookies;
+        if (!requestCookies)
+            return false;
+        for (var  i = 0; i < requestCookies.length; i++) {
+            if (requestCookies[i].name === name)
+                return true;
+        }
+        return false;
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests clearing browser cookies from inspector.</p>
+</body>
+</html>
+

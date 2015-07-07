@@ -1,0 +1,7 @@
+This test flex item should ignore flex container's firstLine pseudo element, but flex item's firstLine should be valid.
+
+The first item.
+
+The second item.
+
+PASS

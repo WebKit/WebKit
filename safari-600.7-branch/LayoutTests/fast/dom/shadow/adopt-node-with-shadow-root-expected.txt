@@ -1,0 +1,5 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS document.adoptNode(shadow) threw exception Error: HierarchyRequestError: DOM Exception 3.
+

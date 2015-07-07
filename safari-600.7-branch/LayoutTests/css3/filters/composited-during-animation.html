@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    img {
+        margin: 10px;
+    }
+
+    .animating img {
+        -webkit-animation-duration: 2s !important;
+        -webkit-animation-timing-function: linear !important;
+    }
+
+    #grayscale-box {
+        -webkit-animation-name: grayscale-anim;
+        -webkit-filter: grayscale(1);
+    }
+
+    #sepia-box {
+        -webkit-animation: sepia-anim;
+        -webkit-filter: sepia(1);
+    }
+
+    #saturate-box {
+        -webkit-animation: saturate-anim;
+        -webkit-filter: saturate(1);
+    }
+
+    #huerotate-box {
+        -webkit-animation: huerotate-anim;
+        -webkit-filter: hue-rotate(90deg);
+    }
+
+    #invert-box {
+        -webkit-animation: invert-anim;
+        -webkit-filter: invert(1);
+    }
+
+    #opacity-box {
+        -webkit-animation: opacity-anim;
+        -webkit-filter: opacity(0);
+    }
+
+    #brightness-box {
+        -webkit-animation: brightness-anim;
+        -webkit-filter: brightness(0);
+    }
+
+    #contrast-box {
+        -webkit-animation: contrast-anim;
+        -webkit-filter: contrast(0);
+    }
+
+    #blur-box {
+        -webkit-animation: blur-anim;
+        -webkit-filter: blur(10px);
+    }
+
+    @-webkit-keyframes grayscale-anim {
+        from { -webkit-filter: grayscale(0); }
+        to   { -webkit-filter: grayscale(1); }
+    }
+
+    @-webkit-keyframes sepia-anim {
+        from { -webkit-filter: sepia(0); }
+        to   { -webkit-filter: sepia(1); }
+    }
+
+    @-webkit-keyframes saturate-anim {
+        from { -webkit-filter: saturate(0); }
+        to   { -webkit-filter: saturate(1); }
+    }
+
+    @-webkit-keyframes huerotate-anim {
+        from { -webkit-filter: hue-rotate(0); }
+        to   { -webkit-filter: hue-rotate(180deg); }
+    }
+
+    @-webkit-keyframes invert-anim {
+        from { -webkit-filter: invert(0); }
+        to   { -webkit-filter: invert(1); }
+    }
+
+    @-webkit-keyframes opacity-anim {
+        from { -webkit-filter: opacity(1); }
+        to   { -webkit-filter: opacity(0); }
+    }
+
+    @-webkit-keyframes brightness-anim {
+        from { -webkit-filter: brightness(1); }
+        to   { -webkit-filter: brightness(0); }
+    }
+
+    @-webkit-keyframes contrast-anim {
+        from { -webkit-filter: contrast(1); }
+        to   { -webkit-filter: contrast(0); }
+    }
+
+    @-webkit-keyframes blur-anim {
+        from { -webkit-filter: blur(0); }
+        to   { -webkit-filter: blur(20px); }
+    }
+
+  </style>
+  <script src="../../animations/resources/animation-test-helpers.js"></script>
+  <script type="text/javascript">
+
+    const preExpectedValues = [
+        // [element-id, property, expected-value]
+        ["grayscale-box", "webkitFilter", 'grayscale(1)'],
+        ["sepia-box", "webkitFilter", 'sepia(1)'],
+        ["saturate-box", "webkitFilter", 'saturate(1)'],
+        ["huerotate-box", "webkitFilter", 'hue-rotate(90deg)'],
+        ["invert-box", "webkitFilter", 'invert(1)'],
+        ["opacity-box", "webkitFilter", 'opacity(0)'],
+        ["brightness-box", "webkitFilter", 'brightness(0)'],
+        ["contrast-box", "webkitFilter", 'contrast(0)'],
+        ["blur-box", "webkitFilter", 'blur(10px)'],
+    ];
+
+    const expectedValues = [
+        // [animation-name, time, element-id, property, expected-value, tolerance]
+        ["grayscale-anim",  1, "grayscale-box", "webkitFilter", 'grayscale(0.5)', 0.15],
+        ["sepia-anim",  1, "sepia-box", "webkitFilter", 'sepia(0.5)', 0.15],
+        ["saturate-anim",  1, "saturate-box", "webkitFilter", 'saturate(0.5)', 0.15],
+        ["huerotate-anim",  1, "huerotate-box", "webkitFilter", 'hue-rotate(90deg)', 20],
+        ["invert-anim",  1, "invert-box", "webkitFilter", 'invert(0.5)', 0.15],
+        ["opacity-anim",  1, "opacity-box", "webkitFilter", 'opacity(0.5)', 0.15],
+        ["brightness-anim",  1, "brightness-box", "webkitFilter", 'brightness(0.5)', 0.15],
+        ["contrast-anim",  1, "contrast-box", "webkitFilter", 'contrast(0.5)', 0.15],
+        ["blur-anim",  1, "blur-box", "webkitFilter", 'blur(10px)', 4],
+    ];
+
+    function runPreTest() {
+        var preResult = "";
+
+        for (var i=0; i < preExpectedValues.length; i++) {
+            var id = preExpectedValues[i][0];
+            var prop = preExpectedValues[i][1];
+            var expected = preExpectedValues[i][2];
+            var element = document.getElementById(id);
+            var computedStyle = window.getComputedStyle(element)[prop];
+            if (computedStyle == expected)
+              preResult += "PASS: Element " + id + " had filter value " + expected + " before animation.<br>";
+            else
+              preResult += "FAIL: Element " + id + " had filter value " + computedStyle + " rather than " + expected + " before animation.<br>";
+        }
+        document.getElementById("preresult").innerHTML = preResult;
+
+        // Completed the pre-animation tests. Now start the animation.
+        setTimeout(function () {
+            document.body.className = "animating";
+            runAnimationTest(expectedValues);
+        }, 0);
+    }
+
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    window.addEventListener("load", runPreTest, false);
+  </script>
+</head>
+<body>
+
+<img src="resources/reference.png" id="grayscale-box">
+<img src="resources/reference.png" id="sepia-box">
+<img src="resources/reference.png" id="saturate-box">
+<img src="resources/reference.png" id="huerotate-box">
+<img src="resources/reference.png" id="invert-box">
+<img src="resources/reference.png" id="opacity-box">
+<img src="resources/reference.png" id="brightness-box">
+<img src="resources/reference.png" id="contrast-box">
+<img src="resources/reference.png" id="blur-box">
+
+<!-- this result element is filled in the script above, before the animations start -->
+<div id="preresult">
+</div>
+
+<!-- this result element is filled by the animation test system -->
+<div id="result">
+</div>
+</body>
+</html>

@@ -1,0 +1,3 @@
+This test checks that individual characters can be selected correctly when using an SVG font.
+aaaaaaaaaa
+FAIL: range was [3, 3]; expected [3, 6]

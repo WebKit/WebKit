@@ -1,0 +1,6 @@
+Use the i, j, k and l keys to navigate, e, c to expand and collapse, and f to flag
+expand all collapse all options
+Only unexpected results
+Toggle images
+Use newlines in flagged list
+

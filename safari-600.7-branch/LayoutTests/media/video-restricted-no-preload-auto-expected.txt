@@ -1,0 +1,21 @@
+
+Test that "no auto-loading restriction" only allows metadata to load in spite of preload='auto'.
+
+** setting video.src
+EXPECTED (video.preload == 'auto') OK
+RUN(internals.setMediaSessionRestrictions('video', 'AutoPreloadingNotPermitted'))
+
+EVENT(loadedmetadata)
+EXPECTED (video.readyState < '2') OK
+** Pausing...
+
+
+** 250ms timer fired
+EXPECTED (video.readyState < '2') OK
+EXPECTED (video.buffered.length == '0') OK
+RUN(video.play())
+
+EVENT(canplaythrough)
+
+END OF TEST
+

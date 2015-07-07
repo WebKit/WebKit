@@ -1,0 +1,37 @@
+<html>
+<head>
+<script>
+var frames = 2;
+if (window.testRunner) {
+	testRunner.dumpAsText();
+	testRunner.dumpChildFramesAsText();
+	testRunner.setPrivateBrowsingEnabled(true);
+	testRunner.waitUntilDone();
+}
+
+function decrement() {
+	--frames;
+	if (!frames) {
+		if (window.testRunner)
+			testRunner.setPrivateBrowsingEnabled(false);
+		for (var i = 0; i < 2; ++i) {
+			var frame = document.getElementsByTagName('iframe')[i].contentWindow;
+			frame.postMessage('loaded', '*');
+		}
+		frames = 2;
+	}
+}
+
+window.onmessage = function() {
+	--frames;
+	if (window.testRunner)
+		testRunner.notifyDone();
+}
+</script>
+<body>
+<p>This iframe should not have private browsing enabled:</p>
+<iframe src="http://localhost:8000/security/resources/cross-origin-iframe-for-plugin-async.html" onload="decrement()"></iframe>
+<p>This iframe should not have private browsing enabled:</p>
+<iframe src="http://127.0.0.1:8000/security/resources/cross-origin-iframe-for-plugin-async.html" onload="decrement()"></iframe>
+</body>
+</html>

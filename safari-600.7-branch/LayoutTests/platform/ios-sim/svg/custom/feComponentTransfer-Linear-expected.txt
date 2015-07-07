@@ -1,0 +1,29 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (25,15) size 750x487
+    RenderSVGContainer {g} at (25,15) size 750x487
+      RenderSVGViewportContainer {svg} at (25,15) size 750x487
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+          RenderSVGResourceLinearGradient {linearGradient} [id="MyGradient"] [gradientUnits=userSpaceOnUse] [start=(10,0)] [end=(590,0)]
+            RenderSVGGradientStop {stop} [offset=0.00] [color=#00FF00]
+            RenderSVGGradientStop {stop} [offset=1.00] [color=#000000]
+        RenderSVGPath {rect} at (25,15) size 750x487 [stroke={[type=SOLID] [color=#0000FF]}] [x=1.00] [y=1.00] [width=648.00] [height=418.00]
+        RenderSVGContainer {g} at (25,15) size 750x487
+          RenderSVGPath {rect} at (25,15) size 750x487 [stroke={[type=SOLID] [color=#0000FF]}] [x=1.00] [y=1.00] [width=648.00] [height=418.00]
+          RenderSVGPath {rect} at (46,26) size 673x49 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=20.00] [y=10.00] [width=580.00] [height=40.00]
+          RenderSVGText {text} at (20,54) size 101x20 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 101x20
+              chunk 1 text run 1 at (20.00,70.00) startOffset 0 endOffset 14 width 100.05: "type: identity"
+          RenderSVGPath {rect} at (46,141) size 673x49 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=20.00] [y=110.00] [width=580.00] [height=40.00]
+          RenderSVGText {text} at (20,154) size 451x20 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 451x20
+              chunk 1 text run 1 at (20.00,170.00) startOffset 0 endOffset 61 width 450.46: "type: linear slope=1 intercept=0 -- Result should be identity"
+          RenderSVGPath {rect} at (46,258) size 673x47 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=20.00] [y=210.00] [width=580.00] [height=40.00]
+          RenderSVGText {text} at (20,254) size 469x20 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 469x20
+              chunk 1 text run 1 at (20.00,270.00) startOffset 0 endOffset 63 width 468.33: "type: linear slope=-1 intercept=0 -- Should invert the gradient"
+          RenderSVGPath {rect} at (46,373) size 673x47 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=20.00] [y=310.00] [width=580.00] [height=40.00]
+          RenderSVGText {text} at (20,354) size 596x20 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 596x20
+              chunk 1 text run 1 at (20.00,370.00) startOffset 0 endOffset 79 width 595.03: "type: linear slope=0.5 intercept=0.25 -- Result should be less extreme gradient"

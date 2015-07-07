@@ -1,0 +1,36 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 7 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of OL > DIV > BODY > HTML > #document to 0 of OL > DIV > BODY > HTML > #document toDOMRange:range from 0 of SPAN > DIV > BODY > HTML > #document to 0 of SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of OL > DIV > BODY > HTML > #document to 0 of OL > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 0 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of OL > DIV > BODY > HTML > #document to 0 of OL > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 0 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 14 of DIV > BODY > HTML > #document to 14 of DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > DIV > BODY > HTML > #document to 0 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 14 of DIV > BODY > HTML > #document to 14 of DIV > BODY > HTML > #document toDOMRange:range from 14 of DIV > BODY > HTML > #document to 14 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+This test checks to see that Insert{Un}OrderedList can remove items from a list, can remove empty list when they are emptied, and can remove content from orphaned list items.
+
+foo
+This should not be a list. 
+
+bar
+baz
+This should not be in a list.
+foo
+This should not be in a list.
+bar
+This should not be in a list.
+This should not be in a list.
+<ol style="border: 1px solid red;"> <li>foo</li> </ol><span id="item1">This should not be a list.</span>&nbsp;<br><ol style="border: 1px solid red;"><br> bar <li>baz</li> </ol>This should not be in a list.<br><ol style="border: 1px solid red;"><li>foo</li> </ol>This should not be in a list.<br><ol style="border: 1px solid red;"> <li>bar</li> </ol> This should not be in a list.<br>This should not be in a list.

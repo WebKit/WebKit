@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+    jsTestIsAsync = true;
+    description("Tests how the performance object works when it's owning window is not fully active due to navigation.");
+
+    var perfFromInitialFrame;
+
+    // Called by initialFrame.html
+    function initialFrameLoaded()
+    {
+        var otherWindow = document.getElementById("frame").contentWindow;
+        perfFromInitialFrame = otherWindow.performance;
+        otherWindow.location.href = "secondFrame.html";
+    }
+
+    // Called by secondFrame.html
+    function secondFrameLoaded()
+    {
+        // This should not crash.
+        value = perfFromInitialFrame.now();
+        
+        // Note: We return 0 for this because we need the Frame to get correct timing based on the document loader, and it our
+        // usual idiom to return a 'null-ish' value when the window is disconnected. Firefox returns a non-zero value here, but
+        // there doesn't seem to be anything in the spec that says it must.
+        shouldBe('value', '0');
+
+        finishJSTest();
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+<iframe id="frame" src="resources/initialFrame.html"></iframe>
+</body>
+</html>

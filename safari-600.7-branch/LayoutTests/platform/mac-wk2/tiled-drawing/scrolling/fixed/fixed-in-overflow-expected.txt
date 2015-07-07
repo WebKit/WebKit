@@ -1,0 +1,15 @@
+(Frame scrolling node
+  (scrollable area size 785 600)
+  (contents size 785 2213)
+  (requested scroll position 0 200)
+  (non-fast-scrollable region
+    at (0,13) size 204x204)
+  (children 1
+    (Fixed node
+      (anchor edges: AnchorEdgeLeft AnchorEdgeTop)
+      (viewport rect at last layout: 0.00 200.00 785.00 600.00)
+      (layer position at last layout 2.00 215.00)
+    )
+  )
+)
+

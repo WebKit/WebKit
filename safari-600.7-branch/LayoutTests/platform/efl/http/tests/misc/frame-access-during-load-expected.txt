@@ -1,0 +1,37 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 780x35
+          text run at (0,0) width 134: "This test verifies that "
+          text run at (134,0) width 646: "accessing a frame's document while it is still loading does not prevent the load, but can access at least a"
+          text run at (0,18) width 177: "temporary empty document."
+      RenderBlock (anonymous) at (0,52) size 784x116
+        RenderIFrame {IFRAME} at (0,0) size 300x40
+          layer at (0,0) size 300x40
+            RenderView at (0,0) size 300x40
+          layer at (0,0) size 300x40
+            RenderBlock {HTML} at (0,0) size 300x40
+              RenderBody {BODY} at (8,8) size 284x24
+                RenderText {#text} at (0,0) size 71x17
+                  text run at (0,0) width 71: "SUCCESS"
+        RenderBR {BR} at (300,40) size 0x0
+        RenderIFrame {IFRAME} at (0,40) size 300x40
+          layer at (0,0) size 300x40
+            RenderView at (0,0) size 300x40
+          layer at (0,0) size 300x40
+            RenderBlock {HTML} at (0,0) size 300x40
+              RenderBody {BODY} at (8,8) size 284x24
+                RenderText {#text} at (0,0) size 71x17
+                  text run at (0,0) width 71: "SUCCESS"
+        RenderBR {BR} at (300,80) size 0x0
+        RenderText {#text} at (0,80) size 164x17
+          text run at (0,80) width 164: "[object HTMLDocument]"
+        RenderBR {BR} at (164,94) size 0x0
+        RenderText {#text} at (0,98) size 164x17
+          text run at (0,98) width 164: "[object HTMLDocument]"
+      RenderBlock {P} at (0,184) size 784x18
+        RenderText {#text} at (0,0) size 614x17
+          text run at (0,0) width 614: "If this test passes, you should see SUCCESS twice, followed by [object HTMLDocument] twice."

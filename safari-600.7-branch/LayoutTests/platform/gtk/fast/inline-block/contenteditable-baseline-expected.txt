@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 501x17
+        text run at (0,0) width 501: "This tests that contenteditable elements, with no children, get the right baseline. "
+      RenderBR {BR} at (501,14) size 0x0
+      RenderBR {BR} at (0,17) size 0x17
+      RenderBlock {DIV} at (0,34) size 154x21 [border: (1px solid #FF0000)]
+        RenderBlock {DIV} at (1,1) size 152x19 [border: (1px solid #008000)]
+      RenderText {#text} at (154,36) size 442x17
+        text run at (154,36) width 442: "This text should line up with the bottom of the text in the editable div. "
+      RenderBR {BR} at (596,50) size 0x0
+      RenderBR {BR} at (0,55) size 0x17
+      RenderBlock {DIV} at (0,72) size 210x94 [border: (10px solid #FF0000)]
+        RenderBlock (anonymous) at (10,10) size 190x17
+          RenderText {#text} at (0,0) size 23x17
+            text run at (0,0) width 23: "text"
+        RenderBlock {DIV} at (10,27) size 190x57 [border: (20px solid #008000)]
+      RenderText {#text} at (210,119) size 442x17
+        text run at (210,119) width 442: "This text should line up with the bottom of the text in the editable div. "
+      RenderBR {BR} at (652,133) size 0x0
+      RenderBR {BR} at (0,166) size 0x17
+      RenderBlock {DIV} at (0,183) size 180x168 [border: (5px solid #FF0000)]
+        RenderBlock {DIV} at (5,5) size 170x158 [border: (10px solid #008000)]
+      RenderText {#text} at (180,299) size 438x17
+        text run at (180,299) width 438: "This text should line up with the bottom of the text in the editable div."

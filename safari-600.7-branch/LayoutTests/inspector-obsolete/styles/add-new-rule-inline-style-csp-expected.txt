@@ -1,0 +1,24 @@
+Tests that adding a new rule does not crash the renderer and modifying an inline style does not report errors when forbidden by Content-Security-Policy.
+
+Text
+
+Running: testSetUp
+
+Running: testAddRule
+=== Rule added ===
+#inspected {}
+Affects selected (#inspected) node: true
+
+Running: testAddProperty
+=== Added rule modified ===
+width: 100%;
+=== Selector changed ===
+body {
+    width: 100%;
+}
+Affects selected (#inspected) node: false
+
+Running: testModifyInlineStyle
+=== Inline style modified ===
+font-size: 14px;
+

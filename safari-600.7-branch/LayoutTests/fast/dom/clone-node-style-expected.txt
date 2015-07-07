@@ -1,0 +1,3 @@
+This test checks for a crash that once happened due to cloned nodes copying style declaration pointers without retaining them.
+
+PASS: You didn't crash.

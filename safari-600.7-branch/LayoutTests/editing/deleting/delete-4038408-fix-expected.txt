@@ -1,0 +1,140 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 5 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of DIV > DIV > BODY > HTML > #document to 2 of DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document to 0 of DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document to 0 of DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 8 of BLOCKQUOTE > DIV > DIV > BODY > HTML > #document to 8 of BLOCKQUOTE > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document to 0 of DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document to 0 of DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 6 of BLOCKQUOTE > DIV > DIV > BODY > HTML > #document to 6 of BLOCKQUOTE > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document to 0 of DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 35 of #text > DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document to 0 of DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 4 of BLOCKQUOTE > DIV > DIV > BODY > HTML > #document to 4 of BLOCKQUOTE > DIV > DIV > BODY > HTML > #document toDOMRange:range from 35 of #text > DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document to 35 of #text > DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 35 of #text > DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document to 35 of #text > DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document toDOMRange:range from 2 of DIV > DIV > BODY > HTML > #document to 2 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 31 of #text > DIV > DIV > BODY > HTML > #document to 31 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 31 of #text > DIV > DIV > BODY > HTML > #document to 31 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+rdar://problems/4038408&4154187&4125087&4125381, This tests deletion from underneath quoted text:
+
+before deletion:
+| "
+"
+| <div>
+|   <#selection-caret>
+|   <br>
+|     class="khtml-block-placeholder"
+| "
+"
+| <div>
+|   "
+"
+|   <blockquote>
+|     style="color:blue;"
+|     type="cite"
+|     "
+"
+|     <div>
+|       "Here is some reply text"
+|     "
+"
+|     <div>
+|       "It should have the reply text style"
+|     "
+"
+|     <div>
+|       <br>
+|         class="khtml-block-placeholder"
+|     "
+"
+|     <div>
+|       <br>
+|         class="khtml-block-placeholder"
+|     "
+"
+|     <div>
+|       <br>
+|         class="khtml-block-placeholder"
+|     "
+"
+|   "
+
+
+"
+|   <div>
+|     <br>
+|       class="khtml-block-placeholder"
+|   "
+"
+| "
+
+"
+
+after deletion:
+| "
+"
+| <div>
+|   <br>
+|     class="khtml-block-placeholder"
+| "
+"
+| <div>
+|   "
+"
+|   <blockquote>
+|     style="color:blue;"
+|     type="cite"
+|     "
+"
+|     <div>
+|       "Here is some reply text"
+|     "
+"
+|     <div>
+|       "It should have the reply text style<#selection-caret>"
+|   "
+"
+| "
+
+"
+
+after insert text:
+| "
+"
+| <div>
+|   <br>
+|     class="khtml-block-placeholder"
+| "
+"
+| <div>
+|   "
+"
+|   <blockquote>
+|     style="color:blue;"
+|     type="cite"
+|     "
+"
+|     <div>
+|       "Here is some reply text"
+|     "
+"
+|     <div>
+|       "It should have the reply text style"
+|   "This text should not be quoted.<#selection-caret>"
+|   "
+"
+| "
+
+"

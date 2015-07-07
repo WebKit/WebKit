@@ -1,0 +1,33 @@
+<html>
+<head>
+<script>
+function runTests() {
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.dumpTitleChanges();
+    }
+    
+    document.title = '1. setting document.title';
+
+    title = document.getElementsByTagName('title').item(0);
+    
+    title.text = '2. setting title.text';
+    
+    newTitle = document.createElement('title');
+    newTitle.appendChild(document.createTextNode('3. appending a new title node (should not trigger a title change)'));
+    
+    document.getElementsByTagName('head').item(0).appendChild(newTitle);
+    
+    // Remove both title elements
+    titleElements = document.getElementsByTagName('title');
+    while (titleElements.length) {
+        titleElement = titleElements[titleElements.length - 1];
+        titleElement.parentNode.removeChild(titleElement);
+    }
+}
+</script>
+<title>Initial title</title>
+</head> 
+<body onload="runTests();" >
+</body>
+</html>

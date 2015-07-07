@@ -1,0 +1,47 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../resources-test.js"></script>
+<script src="../debugger-test.js"></script>
+<script src="search-test.js"></script>
+<script>
+function test()
+{
+    // This file should not match search query.
+    var text = "searchTest" + "UniqueString";
+    InspectorTest.startDebuggerTest(step1);
+
+    function step1()
+    {
+        InspectorTest.runAfterResourcesAreFinished(["search-concatenated.html"], step2);
+    }
+
+    function step2()
+    {
+        InspectorTest.showScriptSource("search-concatenated.html", step3);
+    }
+
+    function step3()
+    {
+        var url = "http://127.0.0.1:8000/inspector/search/resources/search-concatenated.html";
+        var scripts = InspectorTest.queryScripts(function(s) { return s.sourceURL === url; });
+        var contentProvider = new WebInspector.ConcatenatedScriptsContentProvider(scripts);
+        InspectorTest.addResult(url);
+        contentProvider.searchInContent(text, false, false, step4);
+    }
+
+    function step4(searchMatches)
+    {
+        InspectorTest.dumpSearchMatches(searchMatches);
+        InspectorTest.completeDebuggerTest();
+    }
+}
+</script>
+</head>
+<body>
+<p>Tests concatenated script search in inspector debugger agent.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=69015">Bug 69015</a>
+
+<iframe src="resources/search-concatenated.html" onload="runTest()">
+</body>
+</html>

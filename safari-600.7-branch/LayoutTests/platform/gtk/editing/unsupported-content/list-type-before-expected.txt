@@ -1,0 +1,75 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of LI > UL > DIV > DIV > BODY > HTML > #document to 0 of LI > UL > DIV > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > LI > UL > DIV > DIV > BODY > HTML > #document to 1 of #text > LI > UL > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > LI > UL > DIV > DIV > BODY > HTML > #document to 1 of #text > LI > UL > DIV > DIV > BODY > HTML > #document toDOMRange:range from 2 of #text > LI > UL > DIV > DIV > BODY > HTML > #document to 2 of #text > LI > UL > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > LI > UL > DIV > DIV > BODY > HTML > #document to 2 of #text > LI > UL > DIV > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > LI > UL > DIV > DIV > BODY > HTML > #document to 3 of #text > LI > UL > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x212 [border: (4px solid #0000FF)]
+        RenderBlock {DIV} at (20,20) size 744x66
+          RenderText {#text} at (0,0) size 67x26
+            text run at (0,0) width 67: "Tests: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,26) size 663x20
+            text run at (0,26) width 663: "Our ability to \"edit around\" content the HTML editing code does not yet handle very well. "
+          RenderBR {BR} at (663,42) size 0x0
+          RenderInline {I} at (0,0) size 99x20
+            RenderText {#text} at (0,46) size 99x20
+              text run at (0,46) width 99: "For this test: "
+          RenderText {#text} at (99,46) size 228x20
+            text run at (99,46) width 228: "Test typing at the start of a list."
+        RenderBlock (anonymous) at (20,86) size 744x20
+          RenderBR {BR} at (0,0) size 0x20
+        RenderBlock {DIV} at (20,106) size 744x86
+          RenderText {#text} at (0,0) size 189x26
+            text run at (0,0) width 189: "Expected Results: "
+          RenderBR {BR} at (189,21) size 0x0
+          RenderText {#text} at (0,26) size 709x40
+            text run at (0,26) width 709: "The content in the red box must exactly match the content in the green box (except for the border"
+            text run at (0,46) width 53: "color). "
+          RenderBR {BR} at (53,62) size 0x0
+          RenderInline {I} at (0,0) size 99x20
+            RenderText {#text} at (0,66) size 99x20
+              text run at (0,66) width 99: "For this test: "
+          RenderText {#text} at (99,66) size 415x20
+            text run at (99,66) width 415: "Typed text should appear at the start of the first list item."
+      RenderBlock {DIV} at (0,222) size 784x130 [border: (2px solid #008000)]
+        RenderBlock {UL} at (2,26) size 780x78
+          RenderListItem {LI} at (40,0) size 740x26
+            RenderListMarker at (-22,0) size 9x26: bullet
+            RenderText {#text} at (0,0) size 114x26
+              text run at (0,0) width 114: "xxxline one"
+          RenderListItem {LI} at (40,26) size 740x26
+            RenderListMarker at (-22,0) size 9x26: bullet
+            RenderText {#text} at (0,0) size 79x26
+              text run at (0,0) width 79: "line two"
+          RenderListItem {LI} at (40,52) size 740x26
+            RenderListMarker at (-22,0) size 9x26: bullet
+            RenderText {#text} at (0,0) size 92x26
+              text run at (0,0) width 92: "line three"
+      RenderBlock {DIV} at (0,362) size 784x130
+        RenderBlock {DIV} at (0,0) size 784x130 [border: (2px solid #FF0000)]
+          RenderBlock {UL} at (2,26) size 780x78
+            RenderListItem {LI} at (40,0) size 740x26
+              RenderListMarker at (-22,0) size 9x26: bullet
+              RenderText {#text} at (0,0) size 114x26
+                text run at (0,0) width 114: "xxxline one"
+            RenderListItem {LI} at (40,26) size 740x26
+              RenderListMarker at (-22,0) size 9x26: bullet
+              RenderText {#text} at (0,0) size 79x26
+                text run at (0,0) width 79: "line two"
+            RenderListItem {LI} at (40,52) size 740x26
+              RenderListMarker at (-22,0) size 9x26: bullet
+              RenderText {#text} at (0,0) size 92x26
+                text run at (0,0) width 92: "line three"
+caret: position 3 of child 0 {#text} of child 1 {LI} of child 1 {UL} of child 1 {DIV} of child 5 {DIV} of body

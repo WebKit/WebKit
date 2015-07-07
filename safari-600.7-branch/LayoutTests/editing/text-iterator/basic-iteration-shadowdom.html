@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="resources/js-test-selection-shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description('Unit tests for WebCore text iterator with shadow tree support enabled');
+
+var subframe = document.createElement('iframe');
+document.body.appendChild(subframe);
+
+function appendBrElement(node)
+{
+    node.appendChild(document.createElement('br'));
+}
+
+function addShadowTreeWithDivElement(node)
+{
+    node.webkitCreateShadowRoot();
+    internals.oldestShadowRoot(node).innerHTML = '<div>b</div>';
+}
+
+var testDocument = subframe.contentDocument;
+var range = testDocument.createRange();
+
+var head = testDocument.createElement("head");
+testDocument.documentElement.insertBefore(head, testDocument.documentElement.firstChild);
+
+testDocument.body.innerHTML = '<div>a</div>';
+var div = testDocument.body.childNodes[0];
+shouldBe('addShadowTreeWithDivElement(div); range.selectNodeContents(internals.oldestShadowRoot(div)); internals.rangeAsText(range)', '"b"');
+
+shouldBe('appendBrElement(internals.oldestShadowRoot(div).childNodes[0]); range.selectNodeContents(internals.oldestShadowRoot(div)); internals.rangeAsText(range)', '"b\\n"');
+
+document.body.removeChild(subframe);
+
+var successfullyParsed = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

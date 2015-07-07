@@ -1,0 +1,59 @@
+<?php
+    $title = "Prioritizing Web Kit Bugs in Bugzilla";
+    include("../header.inc");
+?>
+<h2>Prioritizing Web Kit Bugs in Bugzilla</h2>
+
+    <p>This document describes the current guidelines for assigning priorities to Web Kit bugs in <a href="https://bugs.webkit.org/">Bugzilla</a>.
+The relevant bugs are all of those whose product is "WebKit".</p>
+
+    <a id="standardrules"></a><h3>Standard priority rules</h3>
+    <p>Each bug is assigned the first appropriate priority listed below 
+        from top to bottom.</p>
+
+    <strong>P1</strong>
+    <ul>
+        <li>Any reproducible crash or hang.</li>
+        <li>Any regression from a previous publicly released version of WebKit.</li>
+        <li>Serious problem on important site due to site change or newly-important site.</li>
+        <li>Serious security issue.</li>
+    </ul>
+
+    <strong>P2</strong>
+    <ul>
+        <li>Site that does not function in some non-trivial way.</li>
+        <li>Serious performance complaints.</li>
+        <li>Site that has really bad cosmetic problems (e.g., content overlapping such that it's very hard to read).</li>
+        <li>Unreproducible crash or hang that has been reported many times.</li> 
+    </ul>
+
+    <strong>P3</strong>
+    <ul>
+        <li>Site that works but has some cosmetic problems.</li>
+        <li>Minor performance complaints, such as trivial memory leaks.</li>
+        <li>Architecture issues that could help with correctness or performance but are not a clear win in advance.</li>
+        <li>Unreproducible crash or hang.</li>
+    </ul>
+
+    <strong>P4</strong>
+    <ul>
+        <li>All enhancement requests and feature requests not covered the criteria for p1, p2, or p3.</li>
+    </ul>
+
+    <strong>P5</strong>
+    <ul>
+        <li>P5 is not used for WebKit bugs. WebKit shares its Bugzilla with other
+        projects who might use it, that's why it's still there.</li>
+    </ul>
+
+    <a id="commonadjustments"></a><h3>Common adjustments to priority</h3>
+    <ul>
+        <li>If there is a workaround, the priority may be moved down.</li>
+        <li>If a bug gets a lot of duplicates, the priority may be moved up.</li>
+        <li>If a bug is getting a lot of public attention, the priority may be moved up.</li>
+        <li>If a bug is on a very important site, the priority may be moved up.</li>
+    </ul>
+
+<?php
+    include("../footer.inc");
+?>

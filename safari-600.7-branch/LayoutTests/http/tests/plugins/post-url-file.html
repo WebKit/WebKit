@@ -1,0 +1,23 @@
+<script>
+    function log(msg) {
+        document.getElementById("log").appendChild(document.createTextNode(msg + "\r\n"));
+    }
+
+    function test() {
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.dumpChildFramesAsText();
+            testRunner.waitUntilDone();
+        }
+
+        document.getElementById("result").onload = function() { testRunner.notifyDone(); }
+
+        if (!plg.testPostURLFile("resources/dump-post.pl", "result", testRunner.pathToLocalResource("/tmp/post-url-file.txt"), "SUCCESS")) {
+            log("FAIL: testPostURLFile returned false");
+            testRunner.notifyDone();
+        }
+    }
+</script>
+<embed name="plg" type="application/x-webkit-test-netscape"></embed>
+<pre id="log"></pre>
+<iframe id="result" name="result" onload="test()" src="data:text/html,FAIL"></iframe>

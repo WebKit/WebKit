@@ -1,0 +1,52 @@
+layer at (0,0) size 785x644
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x644
+  RenderBlock {HTML} at (0,0) size 785x644
+    RenderBody {BODY} at (8,16) size 769x620
+      RenderBlock {P} at (0,0) size 769x34
+        RenderText {#text} at (0,0) size 763x34
+          text run at (0,0) width 763: "Test that when we have images sprinkled within a span, borders, paddings and margins are still"
+          text run at (0,17) width 168: "calculated correctly ."
+      RenderBlock {DIV} at (0,50) size 212x285 [border: (1px solid #000000)]
+        RenderBlock {P} at (6,22) size 200x161
+          RenderText {#text} at (0,7) size 190x49
+            text run at (0,7) width 190: "aaa bbb ccc ddd eee fff"
+            text run at (0,39) width 109 RTL: "\x{5DC}\x{5DE}\x{5D4} \x{5E2}\x{5E9}\x{5D9}\x{5EA}\x{5D9} \x{5D6}\x{5D0}\x{5EA}"
+            text run at (109,39) width 5: " "
+            text run at (114,39) width 20: "gg"
+          RenderInline {SPAN} at (0,0) size 168x19 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
+            RenderText {#text} at (45,72) size 48x17
+              text run at (45,72) width 48: "dgnjk "
+            RenderImage {IMG} at (93,64) size 22x22 [border: (1px solid #0000FF)]
+            RenderText {#text} at (115,72) size 43x17
+              text run at (115,72) width 43: "njkng"
+          RenderText {#text} at (0,104) size 181x49
+            text run at (0,104) width 146 RTL: "\x{5D6}\x{5D0}\x{5EA} \x{2013} \x{5D0}\x{5D9}\x{5E0}\x{5D9} \x{5D9}\x{5D5}\x{5D3}\x{5E2} \x{5D1}\x{5E2}\x{5E6}\x{5DE}"
+            text run at (146,104) width 35: " qqq"
+            text run at (0,136) width 140: "rrr sss ttt uuu vvv"
+        RenderBlock {P} at (6,199) size 200x64
+          RenderInline {SPAN} at (0,0) size 150x51 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
+            RenderText {#text} at (45,7) size 105x17
+              text run at (45,7) width 105: "Some fill text"
+            RenderImage {IMG} at (0,33) size 20x20
+      RenderBlock {DIV} at (0,335) size 212x285 [border: (1px solid #000000)]
+        RenderBlock {P} at (6,22) size 200x161
+          RenderText {#text} at (10,7) size 190x49
+            text run at (10,7) width 190: "aaa bbb ccc ddd eee fff"
+            text run at (66,39) width 20: "gg"
+            text run at (86,39) width 114 RTL: "\x{5DC}\x{5DE}\x{5D4} \x{5E2}\x{5E9}\x{5D9}\x{5EA}\x{5D9} \x{5D6}\x{5D0}\x{5EA} "
+          RenderInline {SPAN} at (0,0) size 168x19 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
+            RenderText {#text} at (42,72) size 48x17
+              text run at (42,72) width 48: "dgnjk "
+            RenderImage {IMG} at (90,64) size 22x22 [border: (1px solid #0000FF)]
+            RenderText {#text} at (112,72) size 43x17
+              text run at (112,72) width 43: "njkng"
+          RenderText {#text} at (19,104) size 181x49
+            text run at (19,104) width 30: "qqq"
+            text run at (49,104) width 151 RTL: "\x{5D6}\x{5D0}\x{5EA} \x{2013} \x{5D0}\x{5D9}\x{5E0}\x{5D9} \x{5D9}\x{5D5}\x{5D3}\x{5E2} \x{5D1}\x{5E2}\x{5E6}\x{5DE} "
+            text run at (60,136) width 140: "rrr sss ttt uuu vvv"
+        RenderBlock {P} at (6,199) size 200x64
+          RenderInline {SPAN} at (0,0) size 150x51 [border: (1px solid #0000FF) (10px solid #FFA500) (1px solid #0000FF) (10px solid #008000)]
+            RenderText {#text} at (50,7) size 105x17
+              text run at (50,7) width 105: "Some fill text"
+            RenderImage {IMG} at (180,33) size 20x20

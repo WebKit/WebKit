@@ -1,0 +1,16 @@
+<html>
+<head>
+    <script>
+        function fireSentinel()
+        {
+            parent.postMessage("LOADED", "*");
+            if (window.testRunner)
+                testRunner.globalFlag = true;
+        }
+    </script>
+</head>
+<body onload="fireSentinel();">
+    <p id='accessMe'></p>
+    <p>Inner iframe.</p>
+</body>
+</html>

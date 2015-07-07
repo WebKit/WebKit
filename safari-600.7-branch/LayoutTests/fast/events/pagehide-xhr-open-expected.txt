@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: line 6: XMLHttpRequest in subframe-1 created
+CONSOLE MESSAGE: line 5: Loaded pagehide-timeout-go-back.html, going back
+CONSOLE MESSAGE: line 17: Restored page from page cache.
+Tries to trigger an assert in xmlhttprequest during pagehide.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

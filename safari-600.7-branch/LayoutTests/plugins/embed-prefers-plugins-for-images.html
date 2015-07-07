@@ -1,0 +1,28 @@
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    
+    function runTest()
+    {
+        var plugin = document.getElementById("plugin");
+        
+        // Both QuickTime and TestNetscapePlugIn register for image/png.
+        if (plugin && (plugin.testCallback || plugin.GetQuickTimeVersion))
+            logSuccess();
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+    
+    function logSuccess()
+    {
+        document.getElementById("console").innerHTML = "PASS";
+    }
+</script>
+<body onload="runTest()">
+<p>Test that WebKit will load a plug-in to render an image before rendering it natively.</p>
+<div id="console">FAIL</div>
+<embed id="plugin" src="image.png">
+    

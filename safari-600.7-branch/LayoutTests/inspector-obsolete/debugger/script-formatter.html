@@ -1,0 +1,106 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+<script src="resources/obfuscated.js"></script>
+
+<script>
+
+var test = function()
+{
+    var panel = WebInspector.panels.scripts;
+    var worker = new Worker("ScriptFormatterWorker.js");
+
+    InspectorTest.runDebuggerTestSuite([
+        function testScriptFormatterWorker(next)
+        {
+            worker.onmessage = InspectorTest.safeWrap(function(event)
+            {
+                InspectorTest.assertEquals("var x = 0\n", event.data.content);
+                next();
+            });
+
+            worker.onerror = function(event)
+            {
+                InspectorTest.addResult("Error in worker: " + event.data);
+                next();
+            };
+
+            worker.postMessage({ method: "format", params: { mimeType: "text/javascript", content: "var x=0" } });
+        },
+
+        function testSourceMapping(next)
+        {
+            var formatter = new WebInspector.ScriptFormatter();
+
+            InspectorTest.showScriptSource("obfuscated.js", didShowScriptSource);
+            function didShowScriptSource(sourceFrame)
+            {
+                formatter.formatContent("text/javascript", sourceFrame._textEditor.text(), didFormatContent);
+            }
+
+            function didFormatContent(content, mapping)
+            {
+                var source = WebInspector.panels.scripts.visibleView._textEditor.text();
+                var formattedSource = content;
+
+                function testMapping(string)
+                {
+                    var originalPosition = source.indexOf(string);
+                    InspectorTest.assertTrue(originalPosition !== -1);
+                    var originalLocation = WebInspector.Formatter.positionToLocation(source.lineEndings(), originalPosition);
+                    var formattedLocation = mapping.originalToFormatted(originalLocation[0], originalLocation[1]);
+                    var formattedPosition = WebInspector.Formatter.locationToPosition(formattedSource.lineEndings(), formattedLocation[0], formattedLocation[1]);
+                    var expectedFormattedPosition = formattedSource.indexOf(string);
+                    InspectorTest.assertEquals(expectedFormattedPosition, formattedPosition, "wrong mapping for <" + string + ">");
+                }
+
+                testMapping("function");
+                testMapping("formatted1");
+                testMapping("variable1");
+
+                testMapping("    return \"functionWithComments\"");
+
+                testMapping("onmessage");
+                testMapping("indent_start");
+                testMapping("function require");
+                testMapping("var regexp");
+                testMapping("importScripts");
+
+                testMapping("formatted2");
+                testMapping("variable2");
+
+                next();
+            }
+        },
+
+        function testFormatInlinedScripts(next)
+        {
+            worker.onmessage = InspectorTest.safeWrap(function(event)
+            {
+                InspectorTest.addResult(event.data.content);
+                next();
+            });
+
+            worker.onerror = function(event)
+            {
+                InspectorTest.addResult("Error in worker: " + event.data);
+                next();
+            };
+
+            var content = "<html><body><script>function f(){}<" + "/script><script>function g(){var a;if (a) return;}<" + "/script></body></html>";
+            worker.postMessage({ method: "format", params: { mimeType: "text/html", content: content, indentString: "**" } });
+        }
+    ]);
+}
+
+</script>
+
+</head>
+
+<body onload="runTest()">
+<p>Tests the script formatting functionality.
+</p>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+<html>
+<head>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function fail(s) {
+    document.body.innerHTML = "FAIL: " + s;
+}
+
+function runTest() {
+    if (window.find('nonsense')) fail('found: nonsense');
+    if (window.find('nonsense', true)) fail('found: nonsense');
+    if (window.find('nonsense', false)) fail('found: nonsense');
+    if (!window.find('for')) fail('not found: for');
+    if (window.find('for')) fail('found: for');
+    // Go backwards.
+    if (!window.find('test', true, true, false)) fail('not found: test');
+    if (window.find('for', true, true, false)) fail('found: for');
+    // Backwards and case sensitivity.
+    if (window.find('this', true, true, false)) fail('found: this');
+    if (!window.find('This', true, true, false)) fail('not found: This');
+    // Wrap-around forwards.
+    if (!window.find('for', true, false, true)) fail('not found: for');
+    if (!window.find('for', true, false, true)) fail('not found: for');
+    // Wrap-around backwards.
+    if (!window.find('for', true, true, true)) fail('not found: for');
+    if (!window.find('for', true, true, true)) fail('not found: for');
+    // Case sensitivity, forwards.
+    if (!window.find('for', true, false, true)) fail('not found: for');
+    if (!window.find('fOR', false, false, true)) fail('not found: for');
+    if (!window.find('for', false, false, true)) fail('not found: for');
+    if (!window.find('for', true, false, true)) fail('not found: for');
+    if (window.find('FOR', true, false, true)) fail('found: FOR');
+
+    document.body.innerHTML = "This is a test for window.find(). SUCCESS!";
+}
+
+</script>
+</head>
+<body onload="runTest()">
+This is a test for window.find(); the test has not run yet.
+</body>
+</html>

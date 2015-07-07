@@ -1,0 +1,59 @@
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+internals.settings.setSimpleLineLayoutEnabled(false);
+</script>
+<body>
+<p id=test>Etenim qUid est, Catilina, quod iam amplius expectes, si neque nox
+tenebris obscurare coeptus nefarios nec privata domus parietibus continere
+voces coniurationis tuae potest, si illustrantur, si erumpunt omnia?  Muta
+iam istam mentem, mihi crede, obliviscere caedis atque incendiorum.
+Teneris undique; luce sunt clariora nobis tua consilia omnia; quae iam
+mecum licet recognoscas.  Meministine me ante diem XII Kalendas Novembris
+dicere in senatu fore in armis certo die, qui dies futurus esset ante diem
+VI Kal.  Novembris, C. Manlium, audaciae satellitem atque administrum
+tuae?  Num me fefellit, Catilina, non modo res tanta, tam atrox tamque
+incredibilis, verum, id quod multo magis est admirandum, dies?  Dixi ego
+idem in senatu caedem te optumatium contulisse in ante diem V Kalendas
+Novembris, tum cum multi principes civitatis Roma non tam sui conservandi
+quam tuorum consiliorum reprimendorum causa profugerunt.  Num infitiari
+potes te illo ipso die meis praesidiis, mea diligentia circumclusum
+commovere te contra rem publicam non potuisse, cum tu discessu ceterorum
+nostra tamen, qui remansissemus, caede te contentum esse dicebas?  QUid?
+cum te Praeneste Kalendis ipsis Novembribus occupaturum nocturno impetu
+esse confideres, sensistin illam coloniam meo iussu meis praesidiis,
+custodiis, vigiliis esse munitam?  Nihil agis, nihil moliris, nihil
+cogitas, quod non ego non modo audiam, sed etiam videam planeque sentiam.
+Recognosce tandem mecum noctem illam superiorem; iam intelleges multo me
+vigilare acrius ad salutem quam te ad perniciem rei publicae.  Dico te
+priore nocte venisse inter falcarios (non agam obscure) in M. Laecae
+domum; convenisse eodem complures eiusdem amentiae scelerisque socios.
+Num negare audes?  quid taces?  Convincam, si negas.  Video enim esse hic
+in senatu quosdam, qui tecum una fuerunt.  O di inmortales! ubinam gentium
+sumus?  in qua urbe vivimus?  quam rem publicam habemus?  Hic, hic sunt in
+nostro numero, patres conscripti, in hoc orbis terrae sanctissimo
+gravissimoque consilio, qui de nostro omnium interitu, qui de huius urbis
+atque adeo de orbis terrarum exitio cogitent! Hos ego video consul et de
+re publica sententiam rogo et, quos ferro trucidari oportebat, eos nondum
+voce volnero! Fuisti igitur apud Laecam illa nocte, Catilina, distribuisti
+partes Italiae, statuisti, quo quemque proficisci placeret, delegisti,
+quos Romae relinqueres, quos tecum educeres, discripsisti urbis partes ad
+incendia, confirmasti te ipsum iam esse exiturum, dixisti paulum tibi esse
+etiam nunc morae, quod ego viverem.  Reperti sunt duo equites Romani, qui
+te ista cura liberarent et sese illa ipsa nocte paulo ante lucem me in meo
+lectulo interfecturos [esse] pollicerentur.  Haec ego omnia vixdum etiam
+coetu vestro dimisso comperi; domum meam maioribus praesidiis munivi atque
+firmavi, exclusi eos, quos tu ad me salutatum mane miseras, cum illi ipsi
+venissent, quos ego iam multis ac summis viris ad me id temporis venturos
+esse praedixeram.
+</p>
+<script>
+var text = document.getElementById('test').firstChild;
+shouldBe("internals.countMatchesForText('Catilina', 23, 'mark')", "3");
+shouldBe("internals.markerCountForNode(text, 'all')", "3");
+shouldBe("internals.countMatchesForText('Roma', 23, 'mark')", "3");
+shouldBe("internals.markerCountForNode(text, 'all')", "6");
+shouldBe("internals.countMatchesForText('uid', 23, 'mark')", "2");
+shouldBe("internals.markerCountForNode(text, 'all')", "8");
+</script>
+<script src="../../resources/js-test-post.js"></script>

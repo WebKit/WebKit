@@ -1,0 +1,7 @@
+Test for WebKit Bug 93276 Crash when using style in region for removed element.
+
+The test passes if it does not crash or assert.
+
+PASS
+
+

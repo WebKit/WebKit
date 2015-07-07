@@ -1,0 +1,23 @@
+SUCCESS
+
+Rules from the stylesheet:
+
+#a:nth-child(n-1) { color: green; }
+#b:nth-child(n- 10) { color: green; }
+#g:nth-child(-n-1) { color: green; }
+#h:nth-child(-n- 10) { color: green; }
+#n:nth-child(-n
+    - 1) { color: green; }
+#o:nth-child(-n
+    +13) { color: green; }
+Expected result:
+
+#a:nth-child(n-1) { color: green; }
+#b:nth-child(n- 10) { color: green; }
+#g:nth-child(-n-1) { color: green; }
+#h:nth-child(-n- 10) { color: green; }
+#n:nth-child(-n
+    - 1) { color: green; }
+#o:nth-child(-n
+    +13) { color: green; }
+

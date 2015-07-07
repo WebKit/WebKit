@@ -1,0 +1,4 @@
+Referer should be set for XMLHttpRequest from Workers.
+
+PASS: Sync referer.
+PASS: Async referer.

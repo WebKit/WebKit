@@ -1,0 +1,23 @@
+<html>
+<head>
+<script>
+function test()
+{    
+    window.frames['crossDomainFrame'].location.replace("http://127.0.0.1:8000/misc/resources/success.html");
+    if (window.testRunner)
+        setTimeout("testRunner.notifyDone()", 1);
+}
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+    
+</script>
+</head>
+<body onload="test();">
+<iframe id="crossDomainFrame" src="http://localhost:8000/misc/resources/failure.html"></iframe>
+</body>
+</html>
+<!--     
+<rdar://problem/4808039> 
+http://bugs.webkit.org/show_bug.cgi?id=11230
+-->

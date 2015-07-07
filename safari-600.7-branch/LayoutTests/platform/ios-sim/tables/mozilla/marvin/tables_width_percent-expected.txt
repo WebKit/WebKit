@@ -1,0 +1,59 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 769x39
+          text run at (0,0) width 698: "This test case shows how WIDTH can set the width of the table to a fixed size using PERCENT. PERCENT "
+          text run at (697,0) width 72: "is based on"
+          text run at (0,20) width 454: "the percentage of the space between the current left and right margins. "
+          text run at (453,20) width 260: "This first table has a width of 80 percent"
+      RenderTable {TABLE} at (0,40) size 627x50
+        RenderTableSection {TBODY} at (0,0) size 627x50
+          RenderTableRow {TR} at (0,2) size 627x22
+            RenderTableCell {TD} at (2,2) size 207x22 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 64x19
+                text run at (1,1) width 64: "Navigator"
+            RenderTableCell {TD} at (211,2) size 219x22 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 70x19
+                text run at (1,1) width 70: "Messenger"
+            RenderTableCell {TD} at (432,2) size 193x22 [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 56x19
+                text run at (1,1) width 56: "Collabra"
+          RenderTableRow {TR} at (0,26) size 627x22
+            RenderTableCell {TD} at (2,26) size 207x22 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 66x19
+                text run at (1,1) width 66: "Composer"
+            RenderTableCell {TD} at (211,26) size 219x22 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 58x19
+                text run at (1,1) width 58: "Calendar"
+            RenderTableCell {TD} at (432,26) size 193x22 [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 61x19
+                text run at (1,1) width 61: "Netcaster"
+      RenderBlock (anonymous) at (0,90) size 784x40
+        RenderBR {BR} at (0,0) size 0x19
+        RenderText {#text} at (0,20) size 320x19
+          text run at (0,20) width 320: "While, this second table has a width of 50 percent"
+      RenderTable {TABLE} at (0,130) size 392x50
+        RenderTableSection {TBODY} at (0,0) size 392x50
+          RenderTableRow {TR} at (0,2) size 392x22
+            RenderTableCell {TD} at (2,2) size 128x22 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 64x19
+                text run at (1,1) width 64: "Navigator"
+            RenderTableCell {TD} at (132,2) size 136x22 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 70x19
+                text run at (1,1) width 70: "Messenger"
+            RenderTableCell {TD} at (270,2) size 120x22 [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 56x19
+                text run at (1,1) width 56: "Collabra"
+          RenderTableRow {TR} at (0,26) size 392x22
+            RenderTableCell {TD} at (2,26) size 128x22 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 66x19
+                text run at (1,1) width 66: "Composer"
+            RenderTableCell {TD} at (132,26) size 136x22 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 58x19
+                text run at (1,1) width 58: "Calendar"
+            RenderTableCell {TD} at (270,26) size 120x22 [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 61x19
+                text run at (1,1) width 61: "Netcaster"

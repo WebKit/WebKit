@@ -1,0 +1,36 @@
+Tests the basics of the Speech JavaScript API
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 'webkitSpeechRecognition' in self is true
+PASS webkitSpeechRecognition == null is false
+PASS speechReco == null is false
+PASS 'grammars' in speechReco is true
+PASS speechReco.grammars == null is false
+PASS speechReco.grammars.length === 0 is true
+PASS 'lang' in speechReco is true
+PASS 'continuous' in speechReco is true
+PASS 'interimResults' in speechReco is true
+PASS 'maxAlternatives' in speechReco is true
+PASS 'start' in speechReco is true
+PASS 'stop' in speechReco is true
+PASS 'abort' in speechReco is true
+PASS 'onaudiostart' in speechReco is true
+PASS 'onsoundstart' in speechReco is true
+PASS 'onspeechstart' in speechReco is true
+PASS 'onspeechend' in speechReco is true
+PASS 'onsoundend' in speechReco is true
+PASS 'onaudioend' in speechReco is true
+PASS 'onresult' in speechReco is true
+PASS 'onnomatch' in speechReco is true
+PASS 'onerror' in speechReco is true
+PASS 'onstart' in speechReco is true
+PASS 'onend' in speechReco is true
+PASS 'addEventListener' in speechReco is true
+PASS 'removeEventListener' in speechReco is true
+PASS 'dispatchEvent' in speechReco is true
+PASS speechReco.lang is ''
+PASS speechReco.continuous is false
+PASS speechReco.maxAlternatives is 1
+

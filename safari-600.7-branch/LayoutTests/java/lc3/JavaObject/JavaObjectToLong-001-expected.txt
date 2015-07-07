@@ -1,0 +1,30 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaObject to long
+
+PASS dt.PUB_DOUBLE_REPRESENTATION = 0.5 ;dt.setLong( dt ); dt.PUB_LONG is 0
+PASS dt.PUB_DOUBLE_REPRESENTATION = 0.5 ;dt.setLong( dt ); dt.getLong() is 0
+PASS typeof dt.getLong() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = -0.5;dt.setLong( dt ); dt.PUB_LONG is 0
+PASS dt.PUB_DOUBLE_REPRESENTATION = -0.5;dt.setLong( dt ); dt.getLong() is 0
+PASS typeof dt.getLong() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = 0.5;dt.setLong( dt ); dt.PUB_LONG is 0
+PASS dt.PUB_DOUBLE_REPRESENTATION = 0.5;dt.setLong( dt ); dt.getLong() is 0
+PASS typeof dt.getLong() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = -0.4;dt.setLong( dt ); dt.PUB_LONG is 0
+PASS dt.PUB_DOUBLE_REPRESENTATION = -0.4;dt.setLong( dt ); dt.getLong() is 0
+PASS typeof dt.getLong() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = 0.6;dt.setLong( dt ); dt.PUB_LONG is 0
+PASS dt.PUB_DOUBLE_REPRESENTATION = 0.6;dt.setLong( dt ); dt.getLong() is 0
+PASS typeof dt.getLong() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = -0.6;dt.setLong( dt ); dt.PUB_LONG is 0
+PASS dt.PUB_DOUBLE_REPRESENTATION = -0.6;dt.setLong( dt ); dt.getLong() is 0
+PASS typeof dt.getLong() is 'number'
+FAIL dt.PUB_DOUBLE_REPRESENTATION = 3.141592653589793;dt.setLong( dt ); dt.PUB_LONG should be 3. Was 0.
+PASS dt.PUB_DOUBLE_REPRESENTATION = 3.141592653589793;dt.setLong( dt ); dt.getLong() is 3
+PASS typeof dt.getLong() is 'number'
+FAIL dt.PUB_DOUBLE_REPRESENTATION = -3.141592653589793;dt.setLong( dt ); dt.PUB_LONG should be -3. Was 0.
+PASS dt.PUB_DOUBLE_REPRESENTATION = -3.141592653589793;dt.setLong( dt ); dt.getLong() is -3
+PASS typeof dt.getLong() is 'number'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

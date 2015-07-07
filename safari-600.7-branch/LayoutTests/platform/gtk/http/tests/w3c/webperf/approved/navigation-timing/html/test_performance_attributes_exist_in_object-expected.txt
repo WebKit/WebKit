@@ -1,0 +1,10 @@
+Description
+
+This test validates that the window.performance object exists in an object element (but does not validate that their values are correct).
+
+
+
+PASS window.performance is defined 
+PASS window.performance.timing is defined 
+PASS window.performance.navigation is defined 
+

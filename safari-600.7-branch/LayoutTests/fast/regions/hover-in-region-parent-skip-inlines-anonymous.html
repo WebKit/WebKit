@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            /* Make sure the console and the description don't interfere with the rest of the layout. */
+            #description {
+                position: absolute;
+                top: 0px;
+            }
+
+            #console {
+                position: absolute;
+                top: 100px;
+            }
+
+            #grandparent, #parent2 { 
+                width: 200px; 
+                height: 200px; 
+                background-color: lightblue; 
+                border: 2px solid blue;
+            }
+
+            #parent2 {
+                background-color: yellow;
+            }
+
+            #parent { 
+                width: 150px; height: 150px; 
+                -webkit-flow-into: flow; 
+                background-color: orange; 
+            }
+
+            #child { 
+                width: 100px; 
+                height: 100px; 
+                background-color: red; 
+                border: 2px solid blue; 
+            }
+
+            #region { 
+                width: 200px; 
+                height: 200px; 
+                -webkit-flow-from: flow; 
+                border: 2px solid lime;
+                position: relative;
+                left: 250px;
+                top: -300px;
+            }
+
+            #spanBefore, #spanAfter, #spanAway { 
+                -webkit-flow-into: flow; 
+                background-color: salmon; 
+            }
+
+            #child:hover {
+                background-color: green; 
+            }
+
+            #grandparent:hover, #parent2:hover { 
+                background-color: green; 
+            }
+
+            #spanBefore:hover, #spanAfter:hover, #spanAway:hover {
+                background-color: yellow;
+            }
+        </style>
+
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <ol class="visualElement">
+            <li>Move the mouse over the orange square
+                <ul>
+                    <li>The lightblue square should turn green</li>
+                </ul>
+            </li>
+            <li>Move the mouse over the red square
+                <ul>
+                    <li>The red and lightblue squares should turn green</li>
+                </ul>
+            </li>
+            <li>Move the mouse over the "Before" or "After" texts
+                <ul>
+                    <li>The text's background should turn yellow and the lightblue square should turn green</li>
+                </ul>
+            </li>
+            <li>Move the mouse over the "Away" text
+                <ul>
+                    <li>The text's background should turn yellow and the yellow square should turn green</li>
+                </ul>
+            </li>
+        </ol>
+
+        <div class="visualElement" id="grandparent">
+            <span id="spanBefore">Before</span>
+            <div class="visualElement" id="parent">
+                <div class="visualElement" id="child"></div>
+            </div>
+            <span id="spanAfter">After</span>
+        </div>
+        <div class="visualElement" id="parent2">
+            <span id="spanAway">Away</span>
+        </div>
+        <div class="visualElement" id="region"></div>
+
+        <script type="text/javascript">
+            description("Test hover on child when flowed into region.")
+
+            if (window.eventSender) {
+                var child  = document.querySelector("#child");
+                var parent = document.querySelector("#parent");
+                var parent2 = document.querySelector("#parent2");
+                var grandparent = document.querySelector("#grandparent");
+                var textBefore = document.querySelector("#spanBefore");
+                var textAfter = document.querySelector("#spanAfter");
+                var textAway = document.querySelector("#spanAway");
+
+                // move mouse on the parent object
+                {
+                    eventSender.mouseMoveTo(parent.offsetLeft + 145, parent.offsetTop + 50);
+                    eventSender.mouseDown(0);
+                    eventSender.leapForward(500);
+                    eventSender.mouseUp(0);
+
+                    var childColor = window.getComputedStyle(child).getPropertyValue("background-color");
+                    var grandparentColor = window.getComputedStyle(grandparent).getPropertyValue("background-color");
+
+                    if (childColor == "rgb(255, 0, 0)")
+                        testPassed("Child hover event processed OK.");
+                    else
+                        testFailed("Child hover event FAILED to process, " + childColor);
+
+                    if (grandparentColor == "rgb(0, 128, 0)")
+                        testPassed("Grandparent hover event processed OK.");
+                    else
+                        testFailed("Grandparent hover event FAILED to process.");
+                }
+
+                // move mouse on the child object
+                {
+                    eventSender.mouseMoveTo(child.offsetLeft + 10, child.offsetTop + 50);
+                    eventSender.mouseDown(0);
+                    eventSender.leapForward(500);
+                    eventSender.mouseUp(0);
+
+                    var childColor = window.getComputedStyle(child).getPropertyValue("background-color");
+                    var grandparentColor = window.getComputedStyle(grandparent).getPropertyValue("background-color");
+
+                    if (childColor == "rgb(0, 128, 0)")
+                        testPassed("Child hover event processed OK.");
+                    else
+                        testFailed("Child hover event FAILED to process.");
+
+                    if (grandparentColor == "rgb(0, 128, 0)")
+                        testPassed("Grandparent hover event processed OK.");
+                    else
+                        testFailed("Grandparent hover event FAILED to process.");
+                }
+
+                // move mouse on the "Before" text
+                {
+                    eventSender.mouseMoveTo(spanBefore.offsetLeft + 5, spanBefore.offsetTop + 5);
+                    eventSender.mouseDown(0);
+                    eventSender.leapForward(500);
+                    eventSender.mouseUp(0);
+
+                    var grandparentColor = window.getComputedStyle(grandparent).getPropertyValue("background-color");
+                    var textColor = window.getComputedStyle(spanBefore).getPropertyValue("background-color");
+
+                    if (textColor == "rgb(255, 255, 0)")
+                        testPassed("Span hover event processed OK.");
+                    else
+                        testFailed("Span hover event FAILED to process.");
+
+                    if (grandparentColor == "rgb(0, 128, 0)")
+                        testPassed("Grandparent hover event processed OK.");
+                    else
+                        testFailed("Grandparent hover event FAILED to process.");
+                }
+
+                // move mouse on the "After" text
+                {
+                    eventSender.mouseMoveTo(spanAfter.offsetLeft + 5, spanAfter.offsetTop + 5);
+                    eventSender.mouseDown(0);
+                    eventSender.leapForward(500);
+                    eventSender.mouseUp(0);
+
+                    var grandparentColor = window.getComputedStyle(grandparent).getPropertyValue("background-color");
+                    var textColor = window.getComputedStyle(spanAfter).getPropertyValue("background-color");
+
+                    if (textColor == "rgb(255, 255, 0)")
+                        testPassed("Span hover event processed OK.");
+                    else
+                        testFailed("Span hover event FAILED to process.");
+
+                    if (grandparentColor == "rgb(0, 128, 0)")
+                        testPassed("Grandparent hover event processed OK.");
+                    else
+                        testFailed("Grandparent hover event FAILED to process.");
+                }
+
+                // move mouse on the "Away" text
+                {
+                    eventSender.mouseMoveTo(spanAway.offsetLeft + 5, spanAway.offsetTop + 5);
+                    eventSender.mouseDown(0);
+                    eventSender.leapForward(500);
+                    eventSender.mouseUp(0);
+
+                    var parent2Color = window.getComputedStyle(parent2).getPropertyValue("background-color");
+                    var textColor = window.getComputedStyle(spanAway).getPropertyValue("background-color");
+
+                    if (textColor == "rgb(255, 255, 0)")
+                        testPassed("Span hover event processed OK.");
+                    else
+                        testFailed("Span hover event FAILED to process.");
+
+                    if (parent2Color == "rgb(0, 128, 0)")
+                        testPassed("Parent2 hover event processed OK.");
+                    else
+                        testFailed("Parent2 hover event FAILED to process.");
+                }
+            }
+
+            if (window.testRunner) {
+                var elementsToHide = document.querySelectorAll(".visualElement");
+                for (var i=0; i<elementsToHide.length; i++)
+                    elementsToHide[i].style.visibility = "hidden";
+            }
+
+            else {
+                var elementsToHide = document.querySelectorAll("#console, #description");
+                for (var i=0; i<elementsToHide.length; i++)
+                    elementsToHide[i].style.visibility = "hidden";
+            }
+        </script>
+
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

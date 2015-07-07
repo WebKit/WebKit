@@ -1,0 +1,4 @@
+This test forces a plugin to snapshot immediately, then tries to restart it.
+
+PASS
+

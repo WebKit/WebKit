@@ -1,0 +1,60 @@
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script>
+            var expectedScrollTop = 5;
+            var expectedScrollLeft = 3;
+            var pixelsPerWheelTick = 40;
+            var event;
+            var div;
+
+            if (window.testRunner)
+                testRunner.waitUntilDone();
+
+            function dispatchWheelEvent()
+            {
+                var overflowElement = document.getElementById("overflow");
+                if (overflowElement)
+                    overflowElement.addEventListener("mousewheel", mousewheelHandler, false);
+
+                if (window.eventSender) {
+                    eventSender.mouseMoveTo(100, 110);
+                    eventSender.mouseScrollBy(-window.expectedScrollLeft, -window.expectedScrollTop);
+                }
+
+                setTimeout('checkOffsets();', 100);
+            }
+
+            function checkOffsets()
+            {
+                div = document.getElementById("overflow");
+                shouldBe("div.scrollTop", "window.expectedScrollTop*window.pixelsPerWheelTick");
+                shouldBe("div.scrollLeft", "window.expectedScrollLeft*window.pixelsPerWheelTick");
+
+                if (window.testRunner)
+                    window.testRunner.notifyDone();
+            }
+
+            function mousewheelHandler(e)
+            {
+                event = e;
+                shouldBe("event.wheelDeltaY", "window.expectedScrollTop*-120");
+                shouldBe("event.wheelDeltaX", "window.expectedScrollLeft*-120");
+
+                if (e.wheelDeltaY)
+                    shouldBe("event.wheelDelta", "window.expectedScrollTop*-120");
+                else
+                    shouldBe("event.wheelDelta", "window.expectedScrollLeft*-120");
+            }
+        </script>
+    </head>
+
+    <body style="margin:0" onload="setTimeout('dispatchWheelEvent();', 100)">
+        <div id="overflow" style="border:2px solid black;overflow:auto;height:200px;width:200px;">
+            <div style="background-color:red;height:200px;width:400px;"></div>
+            <div style="background-color:green;height:200px;width:400px;"></div>
+            <div style="background-color:red;height:200px;width:400px;"></div>
+        </div>
+        <div id="console"></div>
+    </body>
+</html>

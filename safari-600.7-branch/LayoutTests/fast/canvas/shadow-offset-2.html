@@ -1,0 +1,14 @@
+<!DOCTYPE HTML>
+<body>
+<script src="resources/shadow-offset.js"></script>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText(true);
+
+setter = function(ctx, offsetX, offsetY) {
+    ctx.setShadow(offsetX, offsetY, 0, 0.5);
+}
+
+onload = test(setter);
+</script>
+</body>

@@ -1,0 +1,38 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderInline {B} at (0,0) size 62x19
+          RenderText {#text} at (0,0) size 62x19
+            text run at (0,0) width 62: "BUG ID:"
+        RenderText {#text} at (61,0) size 5x19
+          text run at (61,0) width 5: " "
+        RenderInline {A} at (0,0) size 119x19 [color=#0000EE]
+          RenderText {#text} at (65,0) size 119x19
+            text run at (65,0) width 119: "Bugzilla bug 3509"
+        RenderText {#text} at (183,0) size 577x19
+          text run at (183,0) width 577: " REGRESSION(125-412) Portion of nested table is not painted correctly on cafepress site"
+      RenderBlock {P} at (0,36) size 784x26 [bgcolor=#98FB98]
+        RenderInline {B} at (0,0) size 90x19
+          RenderText {#text} at (3,3) size 90x19
+            text run at (3,3) width 90: "TEST PASS:"
+        RenderText {#text} at (92,3) size 292x19
+          text run at (92,3) width 5: " "
+          text run at (96,3) width 288: "The blue rectangle will change into a square."
+      RenderBlock {P} at (0,78) size 784x26 [bgcolor=#FF3300]
+        RenderInline {B} at (0,0) size 89x19
+          RenderText {#text} at (3,3) size 89x19
+            text run at (3,3) width 89: "TEST FAIL:"
+        RenderText {#text} at (91,3) size 399x19
+          text run at (91,3) width 5: " "
+          text run at (95,3) width 395: "The blue rectangle will change into a shape that is not square."
+      RenderTable {TABLE} at (0,120) size 784x106
+        RenderTableSection {TBODY} at (0,0) size 784x106
+          RenderTableRow {TR} at (0,2) size 784x102
+            RenderTableCell {TD} at (2,2) size 780x102 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (1,33) size 778x0
+              RenderBlock {DIV} at (1,1) size 100x100 [bgcolor=#0000FF]
+                RenderText {#text} at (0,0) size 4x19
+                  text run at (0,0) width 4: " "

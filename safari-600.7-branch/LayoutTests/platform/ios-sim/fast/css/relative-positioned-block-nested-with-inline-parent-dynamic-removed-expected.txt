@@ -1,0 +1,47 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x272
+  RenderBlock {HTML} at (0,0) size 800x272
+    RenderBody {BODY} at (8,16) size 784x248
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 770x39
+          text run at (0,0) width 770: "Test passes if each of the orange boxes is sandwiched between two blue boxes and two groups of blue and orange boxes"
+          text run at (0,20) width 190: "are inside the big yellow box "
+          text run at (189,20) width 232: "and the remaining group is below it."
+layer at (8,72) size 192x192
+  RenderBlock (relative positioned) {DIV} at (0,56) size 192x192 [bgcolor=#FFFF00]
+    RenderBlock (anonymous) at (0,0) size 192x20
+      RenderInline {DIV} at (0,0) size 68x19 [bgcolor=#0000FF]
+        RenderText {#text} at (0,0) size 68x19
+          text run at (0,0) width 68: "Filler Text"
+    RenderBlock (anonymous) at (0,20) size 192x20
+      RenderBlock {DIV} at (0,0) size 192x20 [bgcolor=#FFA500]
+        RenderText {#text} at (0,0) size 68x19
+          text run at (0,0) width 68: "Filler Text"
+    RenderBlock (anonymous) at (0,40) size 192x20
+      RenderInline {DIV} at (0,0) size 68x19 [bgcolor=#0000FF]
+    RenderBlock (anonymous) at (0,80) size 192x20
+      RenderInline {DIV} at (0,0) size 68x19 [bgcolor=#0000FF]
+        RenderText {#text} at (0,0) size 0x0
+    RenderBlock (anonymous) at (0,100) size 192x20
+      RenderBlock {DIV} at (0,0) size 192x20 [bgcolor=#FFA500]
+        RenderText {#text} at (0,0) size 68x19
+          text run at (0,0) width 68: "Filler Text"
+    RenderBlock (anonymous) at (0,120) size 192x20
+      RenderInline {DIV} at (0,0) size 68x19 [bgcolor=#0000FF]
+        RenderText {#text} at (0,0) size 68x19
+          text run at (0,0) width 68: "Filler Text"
+      RenderText {#text} at (0,0) size 0x0
+layer at (8,304) size 68x19
+  RenderInline (relative positioned) {DIV} at (0,0) size 68x19
+    RenderText {#text} at (0,0) size 68x19
+      text run at (0,0) width 68: "Filler Text"
+layer at (8,324) size 192x20
+  RenderBlock (anonymous) at (0,60) size 192x20
+    RenderBlock {DIV} at (0,0) size 192x20 [bgcolor=#FFA500]
+      RenderText {#text} at (0,0) size 68x19
+        text run at (0,0) width 68: "Filler Text"
+layer at (8,344) size 68x19
+  RenderInline (relative positioned) {DIV} at (0,0) size 68x19
+    RenderText {#text} at (0,0) size 68x19
+      text run at (0,0) width 68: "Filler Text"

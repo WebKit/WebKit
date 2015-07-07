@@ -1,0 +1,65 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+<script>
+
+var globalVar = { b: 1 };
+
+function slave(x)
+{
+    var y = 20;
+    debugger;
+}
+
+function testFunction()
+{
+    var localObject = { a: 300 };
+    slave(4000);
+}
+
+var test = function()
+{
+    InspectorTest.startDebuggerTest(step1);
+
+    function step1()
+    {
+        InspectorTest.runTestFunctionAndWaitUntilPaused(step2);
+    }
+
+    function step2(callFrames)
+    {
+        InspectorTest.evaluateInConsole("x + y + globalVar.b", step3.bind(null, callFrames));
+    }
+
+    function step3(callFrames, result)
+    {
+        InspectorTest.addResult("Evaluated script on the top frame: " + result);
+        var pane = WebInspector.panels.scripts.sidebarPanes.callstack;
+        pane._placardSelected(pane.placards[1]);
+        InspectorTest.runAfterPendingDispatches(step4);
+    }
+
+    function step4()
+    {
+        InspectorTest.evaluateInConsole("localObject.a + globalVar.b", step5);
+    }
+
+    function step5(result)
+    {
+        InspectorTest.addResult("Evaluated script on the calling frame: " + result);
+        InspectorTest.completeDebuggerTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that evaluation in console works fine when script is paused. It also checks that
+stack and global variables are accessible from the console.
+</p>
+
+</body>
+</html>

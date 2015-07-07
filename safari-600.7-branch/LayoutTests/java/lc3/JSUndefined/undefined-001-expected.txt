@@ -1,0 +1,12 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion undefined conversion
+
+PASS dt.setObject( undefined ); dt.PUB_OBJECT +'' is "undefined"
+PASS dt.setObject( undefined ); dt.getObject() + '' is "undefined"
+FAIL java.lang.Class.forName( "java.lang.String" ): ReferenceError: Can't find variable: java
+PASS dt.setStringObject( undefined ); dt.PUB_STRING +'' is "undefined"
+PASS dt.setStringObject( undefined ); dt.getStringObject() + '' is "undefined"
+FAIL java.lang.Class.forName( "java.lang.String" ): ReferenceError: Can't find variable: java
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

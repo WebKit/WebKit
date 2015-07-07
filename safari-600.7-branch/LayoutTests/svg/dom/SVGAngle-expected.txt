@@ -1,0 +1,192 @@
+This test checks the SVGAngle API
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Check initial angle values
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
+PASS angle.valueAsString is "0"
+PASS angle.value is 0
+PASS angle.valueInSpecifiedUnits is 0
+
+Check invalid arguments for 'convertToSpecifiedUnits'
+PASS angle.convertToSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_UNKNOWN) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS angle.convertToSpecifiedUnits(-1) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS angle.convertToSpecifiedUnits(5) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS angle.convertToSpecifiedUnits('aString') threw exception Error: NotSupportedError: DOM Exception 9.
+PASS angle.convertToSpecifiedUnits(angle) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS angle.convertToSpecifiedUnits(svgElement) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS angle.convertToSpecifiedUnits() threw exception TypeError: Not enough arguments.
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
+
+Check valid arguments for 'convertToSpecifiedUnits', that should only modify the 'valueAsString'
+PASS angle.convertToSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_RAD) is undefined.
+PASS angle.valueAsString is "0rad"
+PASS angle.value is 0
+PASS angle.valueInSpecifiedUnits is 0
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_RAD
+PASS angle.convertToSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_GRAD) is undefined.
+PASS angle.valueAsString is "0grad"
+PASS angle.value is 0
+PASS angle.valueInSpecifiedUnits is 0
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_GRAD
+PASS angle.convertToSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG) is undefined.
+PASS angle.valueAsString is "0deg"
+PASS angle.value is 0
+PASS angle.valueInSpecifiedUnits is 0
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_DEG
+PASS angle.convertToSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_UNSPECIFIED) is undefined.
+PASS angle.valueAsString is "0"
+PASS angle.value is 0
+PASS angle.valueInSpecifiedUnits is 0
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
+
+Check invalid arguments for 'newValueSpecifiedUnits'
+PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_UNKNOWN, 50) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS angle.newValueSpecifiedUnits(-1, 50) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS angle.newValueSpecifiedUnits(5, 50) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG) threw exception TypeError: Not enough arguments.
+PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, 'aString') is undefined.
+PASS angle.value is NaN
+PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, 0) is undefined.
+PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, angle) is undefined.
+PASS angle.value is NaN
+PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, svgElement) is undefined.
+PASS angle.value is NaN
+PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG) threw exception TypeError: Not enough arguments.
+PASS angle.newValueSpecifiedUnits('aString', 4) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS angle.newValueSpecifiedUnits(angle, 4) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS angle.newValueSpecifiedUnits(svgElement, 4) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS angle.newValueSpecifiedUnits('aString', 'aString') threw exception Error: NotSupportedError: DOM Exception 9.
+PASS angle.newValueSpecifiedUnits(angle, angle) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS angle.newValueSpecifiedUnits(svgElement, svgElement) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS angle.newValueSpecifiedUnits() threw exception TypeError: Not enough arguments.
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_DEG
+
+Check valid arguments for 'newValueSpecifiedUnits', that should only modify the 'valueAsString'
+PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_RAD, parseFloat(Math.PI.toFixed(5))) is undefined.
+PASS angle.valueAsString is "3.14159rad"
+PASS angle.value.toFixed(1) is "180.0"
+PASS angle.valueInSpecifiedUnits.toFixed(5) is Math.PI.toFixed(5)
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_RAD
+PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_GRAD, 400) is undefined.
+PASS angle.valueAsString is "400grad"
+PASS angle.value.toFixed(1) is "360.0"
+PASS angle.valueInSpecifiedUnits is 400
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_GRAD
+PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, 360) is undefined.
+PASS angle.valueAsString is "360deg"
+PASS angle.value is 360
+PASS angle.valueInSpecifiedUnits is 360
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_DEG
+PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_UNSPECIFIED, 180) is undefined.
+PASS angle.valueAsString is "180"
+PASS angle.value is 180
+PASS angle.valueInSpecifiedUnits is 180
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
+
+Reset to initial angle state
+PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_UNSPECIFIED, 0) is undefined.
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
+
+Check setting invalid 'valueAsString' arguments
+PASS angle.valueAsString = '10px' threw exception Error: SyntaxError: DOM Exception 12.
+PASS angle.valueAsString is "0"
+PASS angle.value is 0
+PASS angle.valueInSpecifiedUnits is 0
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
+PASS angle.valueAsString = '10x' threw exception Error: SyntaxError: DOM Exception 12.
+PASS angle.valueAsString is "0"
+PASS angle.value is 0
+PASS angle.valueInSpecifiedUnits is 0
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
+PASS angle.valueAsString = '5graD' threw exception Error: SyntaxError: DOM Exception 12.
+PASS angle.valueAsString is "0"
+PASS angle.value is 0
+PASS angle.valueInSpecifiedUnits is 0
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
+PASS angle.valueAsString = '5Rad' threw exception Error: SyntaxError: DOM Exception 12.
+PASS angle.valueAsString is "0"
+PASS angle.value is 0
+PASS angle.valueInSpecifiedUnits is 0
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
+PASS angle.valueAsString = ',5 rad' threw exception Error: SyntaxError: DOM Exception 12.
+PASS angle.valueAsString is "0"
+PASS angle.value is 0
+PASS angle.valueInSpecifiedUnits is 0
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
+
+Check setting invalid 'valueInSpecifiedUnits' arguments
+PASS angle.valueInSpecifiedUnits = 'test' is 'test'
+PASS angle.value is NaN
+PASS angle.valueInSpecifiedUnits is NaN
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
+PASS angle.valueInSpecifiedUnits = 0 is 0
+PASS angle.valueInSpecifiedUnits = angle is angle
+PASS angle.value is NaN
+PASS angle.valueInSpecifiedUnits is NaN
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
+
+Check setting invalid 'value' arguments
+PASS angle.value = 0 is 0
+PASS angle.value = 'test' is 'test'
+PASS angle.value is NaN
+PASS angle.valueInSpecifiedUnits is NaN
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
+PASS angle.value = 0 is 0
+PASS angle.value = angle is angle
+PASS angle.value is NaN
+PASS angle.valueInSpecifiedUnits is NaN
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
+
+Reset to angle in degree units
+PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, 0) is undefined.
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_DEG
+
+Check setting valid 'value' arguments, assure that 'valueInSpecifiedUnits' and 'valueAsString' are synchronized
+PASS angle.value = 50 is 50
+PASS angle.valueInSpecifiedUnits is 50
+PASS angle.valueAsString is "50deg"
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_DEG
+
+Try modifiying the readonly 'unitType', needs to fail
+PASS angle.unitType = SVGAngle.SVG_ANGLETTYE_RAD is undefined.
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_DEG
+
+Check setting valid 'valueInSpecifiedUnits' arguments, assure that 'value' and 'valueAsString' are synchronized
+PASS angle.valueInSpecifiedUnits = 100 is 100
+PASS angle.value is 100
+PASS angle.valueAsString is "100deg"
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_DEG
+
+Check setting valid 'valueAsString' arguments, assure that 'value' and 'valueInSpecifiedUnits' are synchronized
+PASS angle.valueAsString = '200grad' is "200grad"
+PASS angle.valueInSpecifiedUnits is 200
+PASS angle.value.toFixed(1) is "180.0"
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_GRAD
+
+Now convert the GRAD value into a RAD value, and assure that all properties have been synchronized
+PASS angle.convertToSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_RAD) is undefined.
+PASS angle.value.toFixed(1) is "180.0"
+PASS angle.valueInSpecifiedUnits.toFixed(5) is "3.14159"
+PASS angle.valueAsString is "3.14159rad"
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_RAD
+
+Now try converting the RAD value into an unknown value, that should fail and throw
+PASS angle.convertToSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_UNKNOWN) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS angle.value.toFixed(1) is "180.0"
+PASS angle.valueInSpecifiedUnits.toFixed(5) is "3.14159"
+PASS angle.valueAsString is "3.14159rad"
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_RAD
+
+Now convert the RAD value into a DEG value, and assure that all properties have been synchronized
+PASS angle.convertToSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG) is undefined.
+PASS angle.value.toFixed(1) is "180.0"
+PASS angle.valueInSpecifiedUnits.toFixed(1) is "180.0"
+PASS angle.valueAsString is "180deg"
+PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_DEG
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

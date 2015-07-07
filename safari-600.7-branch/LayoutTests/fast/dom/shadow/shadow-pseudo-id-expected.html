@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+
+<p>This test checks a custom pseudo element selector is valid only if it starts with 'x-'</p>
+
+<div id="console"></div>
+<div id="host1"><div style="color:red">pseudo is x-shadow: This should be red.</div></div>
+<div id="host2"><div>pseudo is -test: This should not be red.</div></div>
+<div id="host2"><div>pseudo is foobar: This should not be red.</div></div>
+
+</body>
+</html>

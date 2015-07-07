@@ -1,0 +1,11 @@
+When an option element became 'checked' or not-'checked', distribution should happen.
+
+Since an option element does not create a renderer, we cannot check this using reftest.
+
+PASS nodes1.length is 0
+PASS nodes2.length is 1
+PASS nodes2.item(0).innerHTML is "option 2"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,29 @@
+Test phone number parsing via innerText
+
+phone number detection:
+| "
+    "
+| <iframe>
+|   id="iframe"
+|   src="resources/phone-dynamic.html"
+| "
+
+
+"
+
+FRAME 0:
+| <head>
+|   "
+"
+| "
+"
+| <body>
+|   "
+  "
+|   <div>
+|     id="container"
+|     "Call me (308) 555 5555 please"
+|   "
+
+
+"

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<!--
+  Check if the appearance of a validation message is good.
+   * The bubble is on the password field.
+   * The message is folded
+     ** after the bold message, and
+     ** after "letters."
+   * Letters in the bubble is readable, not -webkit-text-security:disc;
+-->
+<form action="validation-message-appearance.html">
+<input type=password required maxlength=20 title="Needs at least 8 letters.&#x0a;Should not be identical with the current password.">
+<input type=submit id=submit>
+</form>
+
+<script>
+document.getElementById('submit').click();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    setTimeout(function() { testRunner.notifyDone(); }, 10);
+}
+</script>
+

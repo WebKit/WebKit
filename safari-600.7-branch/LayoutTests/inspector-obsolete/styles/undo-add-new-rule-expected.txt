@@ -1,0 +1,65 @@
+Tests that adding a new rule can be undone.
+
+Text
+After adding new rule:
+[expanded] 
+element.style  { ()
+font-size: 12px;
+
+======== Matched CSS Rules ========
+[expanded] 
+div.foo  { (inspector-stylesheet:1)
+
+[expanded] 
+div.foo  { (inspector-stylesheet:1)
+
+[expanded] 
+div  { (user agent stylesheet)
+display: block;
+
+
+===== Style sheet text: =====
+div.foo {}
+div.foo {}
+=============================
+After undo:
+[expanded] 
+element.style  { ()
+color: red;
+
+======== Matched CSS Rules ========
+[expanded] 
+div.foo  { (inspector-stylesheet:1)
+
+[expanded] 
+div  { (user agent stylesheet)
+display: block;
+
+
+===== Style sheet text: =====
+div.foo {}
+
+=============================
+After redo:
+[expanded] 
+element.style  { ()
+font-size: 12px;
+
+======== Matched CSS Rules ========
+[expanded] 
+div.foo  { (inspector-stylesheet:1)
+
+[expanded] 
+div.foo  { (inspector-stylesheet:1)
+
+[expanded] 
+div  { (user agent stylesheet)
+display: block;
+
+
+===== Style sheet text: =====
+div.foo {}
+
+div.foo {}
+=============================
+

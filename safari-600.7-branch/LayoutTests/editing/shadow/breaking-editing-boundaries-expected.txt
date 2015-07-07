@@ -1,0 +1,8 @@
+When selecting from a child of shadow host to an element in Shadow DOM, a crash should not be caused. This is because the start position of Selection comes after the end position of Selection.
+
+before host drag from here after host
+PASS
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

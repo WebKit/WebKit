@@ -1,0 +1,16 @@
+<script>
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.addURLToRedirect("http://localhost:8000/loading/resources/bar.txt", "http://localhost:8000/loading/resources/foo.txt");
+
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function() {
+        if (request.readyState == 4)
+            testRunner.notifyDone();
+    }
+    request.open("GET", "http://localhost:8000/loading/resources/bar.txt");
+    request.send();
+</script>
+<p>
+    The console message above should report failure to load foo.txt due to cross-origin access, not a network error.
+</p>

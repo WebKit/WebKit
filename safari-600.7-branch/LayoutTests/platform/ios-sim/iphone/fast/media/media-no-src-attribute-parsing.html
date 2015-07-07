@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+    </script>
+</head>
+<body>
+    <p>Test that attributes on media elements are parsed even when the media isn't playable. This test uses the class attribute as a proxy for correct attribute parsing. On success, you should see 'PASS' logged to the console.</p>
+    <video class="foo"></video>
+    <script>
+        console.log(document.getElementsByClassName("foo").length ? "PASS" : "FAIL");
+    </script>
+</body>
+</html>

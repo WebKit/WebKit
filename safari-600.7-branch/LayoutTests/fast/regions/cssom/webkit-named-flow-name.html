@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/helper.js"></script>
+<style>
+    .flow { -webkit-flow-into: flow-name; }
+    .region { -webkit-flow-from: flow-name; }
+    #region { width: 250px; height: 50px; }
+</style>
+</head>
+<body>
+    <p id="article" class="flow">The content flow</p>
+<script>
+
+description("This tests the implementation of the 'name' attribute on the NamedFlow object attached to a flow thread. \
+            For more details see http://www.w3.org/TR/2012/WD-css3-regions-20120503/#dom-named-flow");
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+// Flow article does not have any regions yet
+var namedFlow = getFlowByName("flow-name");
+
+// The name should be 'flow-name' when there are no regions to flow into
+shouldBe("namedFlow.name", "'flow-name'");
+
+// Add a region to take the content, the name should be the same
+var region = document.createElement("div");
+document.body.appendChild(region);
+region.id = "region";
+region.className = "region";
+
+// The name should be 'flow-name' when there are regions to flow into
+shouldBe("namedFlow.name", "'flow-name'");
+
+var article = document.getElementById("article");
+
+// Remove the flow and the region element, move the NamedFlow object in the NULL state
+region.className = "";
+article.className = "";
+region.style.display = "none";
+article.style.display = "none";
+
+// The name should be 'flow-name' when the named flow is in the NULL state
+shouldBe("namedFlow.name", "'flow-name'");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

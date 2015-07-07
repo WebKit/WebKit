@@ -1,0 +1,20 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>CSS Test: Test for wrapping around floats which are overlapped by the element that must avoid them</title>
+    <link rel="author" title="WebKit" href="http://webkit.org/">
+    <link rel="help" href="http://www.w3.org/TR/CSS21/visuren.html#floats">
+    <style type="text/css">
+        .container { position: relative; }
+        .reference { position: absolute; width: 100px; height: 100px; background: black; } 
+    </style>
+</head>
+<body>
+<!-- Ensure lineboxes respect line-box-contain when avoiding floats. -->
+There should be no red below.
+<div class="container">
+    <div class="reference"></div>
+</div>
+
+
+</body></html>

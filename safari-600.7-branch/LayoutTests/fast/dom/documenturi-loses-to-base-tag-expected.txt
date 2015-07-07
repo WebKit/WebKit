@@ -1,0 +1,4 @@
+Hyperlink to foo.html
+a.href = http://pass.example.com/foo.html
+
+

@@ -1,0 +1,44 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/timeline-test.js"></script>
+<script>
+
+function performActions()
+{
+    var script = document.createElement("script");
+    script.src = "timeline-script-tag-2.js";
+    document.body.appendChild(script);
+}
+
+function test() 
+{
+    InspectorTest.startTimeline(step1);
+    function step1()
+    {
+        InspectorTest.addConsoleSniffer(step2);
+        InspectorTest.evaluateInPage("performActions()");
+    }
+
+    function step2()
+    {
+        InspectorTest.stopTimeline(step3);
+    }
+
+    function step3()
+    {
+        InspectorTest.printTimelineRecords("EvaluateScript");
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests the Timeline API instrumentation of a script tag with an external script.
+</p>
+
+</body>
+</html>

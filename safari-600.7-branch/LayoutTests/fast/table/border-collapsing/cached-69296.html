@@ -1,0 +1,60 @@
+<!--
+Test for bug69296.
+Collapsed borders should not disappear.
+-->
+<html>
+    <head>
+        <style>
+            BODY {
+                margin: 20px;
+            }
+            TABLE {
+                border-collapse: collapse;
+            }
+            TD {
+                width: 50px;
+                height: 50px;
+                border: 1px solid #333333;
+            }
+            #row1:hover {
+                background-color: #ddd;
+                color: #111;
+            }
+        </style>
+    <head>
+        <script type="text/javascript">
+            function test() {
+                document.body.offsetTop;
+                if (window.testRunner) {
+                    testRunner.display();
+                }
+                if (window.eventSender) {
+                    row = document.getElementById('row1');
+                    rowRect = row.getBoundingClientRect();
+                    x = rowRect.left + 75;
+                    y = rowRect.top;
+                    eventSender.mouseMoveTo(x, y + 1);
+                    eventSender.mouseMoveTo(x, y - 1);
+                }
+            }
+        </script>
+    </head>
+    <body onload="test()">
+        <table>
+            <tr id="row1">
+                <td valign="top"/>
+                <td/>
+                <td>
+                    <div>
+                        <div style="width: 20px; height: 20px; background: lime;"/>
+                    </div>
+                </td>
+            </tr>
+            <tr id="row2">
+                <td/>
+                <td/>
+                <td/>
+            </tr>
+        </table>
+    </body>
+</html>

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<p>
+This is to test a usecase in which caret position after deletion and the destination position coincides.
+To pass this testcase it should not crash.
+<div contenteditable="true" id="div"><hkern><span contenteditable="false"><dl>000A0<script>
+var sel = window.getSelection();
+sel.setPosition(div, 2000000000);
+document.execCommand("Delete");
+</script>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../../resources/js-test-pre.js"></script>
+        <style type="text/css">
+            ::-webkit-scrollbar {
+                width: 10px;
+                height: 10px;
+            }
+            ::-webkit-scrollbar-thumb {
+                border-radius: 4px;
+                background-color: #CCCCCC;
+                -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+            }
+        </style>
+        <script type="text/javascript">
+            function runTest() {
+                description('Tests that element.clientWidth of visible element with scrollbars returns proper values');
+
+                var inner = document.createElement('p');
+                var style = inner.style;
+                style.width = "100%";
+                style.height = "200px";
+                style.padding = "0px";
+
+                var outer = document.createElement('div');
+                outer.setAttribute("id", "scrollDiv");
+                style = outer.style;
+                style.position = "absolute";
+                style.top = "200px";
+                style.left = "0px";
+                style.backgroundColor = "red";
+                style.width = "200px";
+                style.height = "150px";
+                style.padding = "0px";
+                style.overflow = "hidden";
+                outer.appendChild(inner);
+
+                document.body.appendChild(outer);
+                outer.style.overflow = 'scroll';
+                shouldBe("document.getElementById('scrollDiv').clientWidth", "190");
+                isSuccessfullyParsed();
+            }
+        </script>
+    </head>
+    <body id="label" onload="runTest()">
+    </body>
+</html>

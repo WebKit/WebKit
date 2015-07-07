@@ -1,0 +1,65 @@
+<head>
+
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function runTest() {
+    if (!window.testRunner) {
+        log("This test can only be run under WebKit's testRunner environment");
+        return;
+    }
+
+    testRunner.evaluateScriptInIsolatedWorld(0, " \
+        function test(msg, expected) \
+        { \
+            var console = document.getElementById('console'); \
+            var span = document.createElement('span'); \
+			if (msg == undefined) \
+				msg = 'undefined'; \
+			else \
+				msg = msg.toString(); \
+            span.innerHTML = msg == expected ? 'PASS<br>' : 'FAIL - <br>(' + msg + ') but expected <br>(' + expected + ')<br>'; \
+            console.appendChild(span); \
+        } \
+        \
+        pluginEmbed = document.getElementById('plugin-embed'); \
+        \
+        test('madeUpProperty' in pluginEmbed, 'true'); \
+        test(typeof pluginEmbed.madeUpProperty, 'string'); \
+        test(pluginEmbed.madeUpProperty, 'My name is madeUpProperty'); \
+        test('getAttribute' in pluginEmbed, 'true'); \
+        test(typeof pluginEmbed.getAttribute, 'function'); \
+        test(pluginEmbed.getAttribute, 'function getAttribute() {\\n    [native code]\\n}'); \
+        \
+        test(Object.getOwnPropertyDescriptor(pluginEmbed, 'madeUpProperty'), '[object Object]'); \
+        test(Object.getOwnPropertyDescriptor(pluginEmbed, 'getAttribute'), 'undefined'); \
+        \
+        pluginObject = document.getElementById('plugin-object'); \
+        \
+        test('madeUpProperty' in pluginObject, 'true'); \
+        test(typeof pluginObject.madeUpProperty, 'string'); \
+        test(pluginObject.madeUpProperty, 'My name is madeUpProperty'); \
+        test('getAttribute' in pluginObject, 'true'); \
+        test(typeof pluginObject.getAttribute, 'function'); \
+        test(pluginObject.getAttribute, 'function getAttribute() {\\n    [native code]\\n}'); \
+        \
+        test(Object.getOwnPropertyDescriptor(pluginObject, 'madeUpProperty'), '[object Object]'); \
+        test(Object.getOwnPropertyDescriptor(pluginObject, 'getAttribute'), 'undefined'); \
+    ");
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</head>
+
+<body onLoad="runTest()">
+<embed id="plugin-embed" type="application/x-webkit-test-netscape" test="plugin-scriptable-object-overrides-all-properties"></embed><br>
+<object id="plugin-object" type="application/x-webkit-test-netscape" test="plugin-scriptable-object-overrides-all-properties"></object><br>
+Test that the plugin script object - in a non-standard world - can override any property on its owning node *except* for the properties that are built in to the node or its constructor/prototype chain.<br>
+For example, it can override "madeUpProperty" but cannot override "getAttribute" or "className".<br>
+<div id="console"></div>
+</body>

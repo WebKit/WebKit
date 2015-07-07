@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #container {
+                font: 20px/1 Ahem;
+                width: 100px;
+                height: 100px;
+                background-color: green;
+            }
+
+            #container::before {
+                content: "AAAAA";
+                display: block;
+            }
+
+            #container::after {
+                content: "AAAAA";
+                display: block;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test that the pseudo-elements children of a region are properly laid out after the region becomes an ordinary element.</p>
+        <p>On success, you see a green rectangle with a black stripe on top.</p>
+        <div id="container"></div>
+    </body>
+</html>

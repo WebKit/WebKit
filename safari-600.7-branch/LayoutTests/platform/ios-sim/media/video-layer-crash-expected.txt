@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 373x19
+          text run at (0,0) width 373: "Test dynamic removal of transformed and reflected video"
+      RenderBlock (anonymous) at (0,36) size 784x262
+        RenderText {#text} at (0,0) size 4x19
+          text run at (0,0) width 4: " "
+        RenderBR {BR} at (4,15) size 0x0
+        RenderText {#text} at (0,111) size 4x19
+          text run at (0,111) width 4: " "
+        RenderBR {BR} at (210,126) size 0x0
+        RenderText {#text} at (0,222) size 4x19
+          text run at (0,222) width 4: " "
+        RenderBR {BR} at (210,237) size 0x0
+        RenderText {#text} at (0,242) size 36x19
+          text run at (0,242) width 36: "FAIL"
+layer at (12,64) size 206x106
+  RenderEmbeddedObject {VIDEO} at (4,20) size 206x106 [border: (3px solid #FF0000)]
+layer at (12,175) size 206x106
+  RenderEmbeddedObject {VIDEO} at (4,131) size 206x106 [border: (3px solid #FF0000)]

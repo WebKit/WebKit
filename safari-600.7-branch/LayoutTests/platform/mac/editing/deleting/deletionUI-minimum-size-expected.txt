@@ -1,0 +1,12 @@
+This tests if the deletion UI will show on elements with different sizes. This test can be run by DRT but not in the browser.
+
+smallWidth has NO deletion UI
+smallHeight has NO deletion UI
+smallWidthSmallHeight has NO deletion UI
+sufficientWidthAndHeight HAS deletion UI
+
+
+
+
+
+

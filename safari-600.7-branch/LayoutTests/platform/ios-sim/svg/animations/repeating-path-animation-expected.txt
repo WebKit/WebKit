@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (49,49) size 252x352
+    RenderSVGContainer {g} at (49,49) size 252x52
+      RenderSVGPath {path} at (49,49) size 52x52 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 50 50 L 100 50 L 100 100 L 50 100 Z"]
+      RenderSVGPath {path} at (149,49) size 52x52 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}] [stroke={[type=SOLID] [color=#0000FF]}] [data="M 50 50 L 100 50 L 100 100 L 50 100 Z"]
+      RenderSVGPath {path} at (249,49) size 52x52 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,0.00)}] [stroke={[type=SOLID] [color=#0000FF]}] [data="M 50 50 L 100 50 L 100 100 L 50 100 Z"]
+    RenderSVGContainer {g} at (49,149) size 252x52 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,100.00)}]
+      RenderSVGPath {path} at (49,149) size 52x52 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 50 50 L 100 50 L 100 100 L 50 100 Z"]
+      RenderSVGPath {path} at (149,149) size 52x52 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}] [stroke={[type=SOLID] [color=#0000FF]}] [data="M 50 50 L 100 50 L 100 100 L 50 100 Z"]
+      RenderSVGPath {path} at (249,149) size 52x52 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,0.00)}] [stroke={[type=SOLID] [color=#0000FF]}] [data="M 50 50 L 100 50 L 100 100 L 50 100 Z"]
+    RenderSVGContainer {g} at (49,249) size 252x52 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,200.00)}]
+      RenderSVGPath {path} at (49,249) size 52x52 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 50 50 L 100 50 L 100 100 L 50 100 Z"]
+      RenderSVGPath {path} at (149,249) size 52x52 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}] [stroke={[type=SOLID] [color=#0000FF]}] [data="M 50 50 L 100 50 L 100 100 L 50 100 Z"]
+      RenderSVGPath {path} at (249,249) size 52x52 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,0.00)}] [stroke={[type=SOLID] [color=#0000FF]}] [data="M 50 50 L 100 50 L 100 100 L 50 100 Z"]
+    RenderSVGContainer {g} at (49,349) size 252x52 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,300.00)}]
+      RenderSVGPath {path} at (49,349) size 52x52 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 50 50 L 100 50 L 100 100 L 50 100 Z"]
+      RenderSVGPath {path} at (149,349) size 52x52 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}] [stroke={[type=SOLID] [color=#0000FF]}] [data="M 50 50 L 100 50 L 100 100 L 50 100 Z"]
+      RenderSVGPath {path} at (249,349) size 52x52 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,0.00)}] [stroke={[type=SOLID] [color=#0000FF]}] [data="M 50 50 L 100 50 L 100 100 L 50 100 Z"]

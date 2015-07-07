@@ -1,0 +1,32 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+This test makes sure that calls to pushState() and replaceState() with URLs that violate the security origin check fail as expected.
+
+Trying to pushState() with url http://localhost/test.html failed with exception Error: SecurityError: DOM Exception 18
+History length is 1
+Trying to replaceState() with url http://localhost/test.html failed with exception Error: SecurityError: DOM Exception 18
+History length is 1
+Trying to pushState() with url http://localhost:8001/test.html failed with exception Error: SecurityError: DOM Exception 18
+History length is 1
+Trying to replaceState() with url http://localhost:8001/test.html failed with exception Error: SecurityError: DOM Exception 18
+History length is 1
+Trying to pushState() with url http://www.webkit.org/test.html failed with exception Error: SecurityError: DOM Exception 18
+History length is 1
+Trying to replaceState() with url http://www.webkit.org/test.html failed with exception Error: SecurityError: DOM Exception 18
+History length is 1
+Trying to pushState() with url http://www.webkit.org/ failed with exception Error: SecurityError: DOM Exception 18
+History length is 1
+Trying to replaceState() with url http://www.webkit.org/ failed with exception Error: SecurityError: DOM Exception 18
+History length is 1
+Trying to pushState() with url ftp://www.webkit.org/ failed with exception Error: SecurityError: DOM Exception 18
+History length is 1
+Trying to replaceState() with url ftp://www.webkit.org/ failed with exception Error: SecurityError: DOM Exception 18
+History length is 1
+Trying to pushState() with url file://anyfile.html/ failed with exception Error: SecurityError: DOM Exception 18
+History length is 1
+Trying to replaceState() with url file://anyfile.html/ failed with exception Error: SecurityError: DOM Exception 18
+History length is 1
+

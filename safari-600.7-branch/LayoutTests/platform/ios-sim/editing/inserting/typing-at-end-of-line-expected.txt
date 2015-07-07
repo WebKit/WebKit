@@ -1,0 +1,38 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 143 of #text > DIV > BODY > HTML > #document to 143 of #text > DIV > BODY > HTML > #document toDOMRange:range from 145 of #text > DIV > BODY > HTML > #document to 145 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 145 of #text > DIV > BODY > HTML > #document to 145 of #text > DIV > BODY > HTML > #document toDOMRange:range from 146 of #text > DIV > BODY > HTML > #document to 146 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 146 of #text > DIV > BODY > HTML > #document to 146 of #text > DIV > BODY > HTML > #document toDOMRange:range from 147 of #text > DIV > BODY > HTML > #document to 147 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 147 of #text > DIV > BODY > HTML > #document to 147 of #text > DIV > BODY > HTML > #document toDOMRange:range from 148 of #text > DIV > BODY > HTML > #document to 148 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 148 of #text > DIV > BODY > HTML > #document to 148 of #text > DIV > BODY > HTML > #document toDOMRange:range from 149 of #text > DIV > BODY > HTML > #document to 149 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 879x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x60
+        RenderText {#text} at (0,0) size 783x59
+          text run at (0,0) width 783: "This test validates the fix for a bug that occurred when typing a blank at the end of a line when the character doesn't fix by"
+          text run at (0,20) width 762: "a fraction of a pixel. If the test runs correctly, you should see the word 'you' at the end of the line and the word 'have' at"
+          text run at (0,40) width 227: "the beginning of the following line."
+      RenderBlock (anonymous) at (0,60) size 784x20
+        RenderBR {BR} at (0,0) size 0x19
+      RenderBlock {DIV} at (0,80) size 871x100
+        RenderText {#text} at (0,0) size 864x32
+          text run at (0,0) width 856: "and Anna, you can do your regular weekly report run, and I'll extract the key sections into this. Andrew and Mark, I'd like to include any new"
+          text run at (855,0) width 9: "  "
+          text run at (0,16) width 77: "havebits you"
+caret: position 149 of child 0 {#text} of child 5 {DIV} of body

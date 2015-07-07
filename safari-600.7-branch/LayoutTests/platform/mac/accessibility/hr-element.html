@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="content">
+<hr id="hr1" onclick="test();">
+
+<hr id="hr2">
+
+<hr id="hr3" aria-label="RULER" tabindex="0">
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the 'hr' element is accessible on the Mac.");
+
+    if (window.accessibilityController) {
+
+        for (var k = 1; k <= 3; k++) {
+           var hr = accessibilityController.accessibleElementById("hr" + k);
+           debug("hr" + k + " role: " + hr.role);
+           debug("hr" + k + " subrole: " + hr.subrole);
+           debug("hr" + k + " roleDescription: " + hr.roleDescription);
+           debug("hr" + k + " description: " + hr.description);
+           debug("hr" + k + " is value settable: " + hr.isAttributeSettable('AXValue'));
+           debug("hr" + k + " is enabled: " + hr.isEnabled + "\n");
+        }
+        document.getElementById("content").style.visibility = "none";
+    }
+
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

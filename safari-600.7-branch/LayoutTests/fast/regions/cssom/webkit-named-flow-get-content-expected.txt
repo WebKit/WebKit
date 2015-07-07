@@ -1,0 +1,36 @@
+Test for 90163: [CSSRegions]Rename NamedFlow::contentNodes to NamedFlow::getContent()
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getFlowByName("flow") is null
+PASS namedFlowContent3.length is 1
+PASS namedFlowContent3.item(0).id is "article"
+PASS namedFlowContent4.length is 1
+PASS namedFlowContent4.item(0).id is "article"
+PASS namedFlowContent5.length is 2
+PASS namedFlowContent5.item(0).id is "article2"
+PASS namedFlowContent5.item(1).id is "article"
+PASS namedFlowContent6.length is 2
+PASS namedFlowContent7.length is 2
+PASS namedFlowContent8.length is 3
+PASS namedFlowContent9.length is 3
+PASS namedFlowContent9.item(0).id is "article2"
+PASS namedFlowContent9.item(1).id is "span1"
+PASS namedFlowContent9.item(2).id is "article"
+PASS namedFlowContent10.length is 3
+PASS namedFlowContent10.item(0).id is "article"
+PASS namedFlowContent11.length is 5
+PASS namedFlowContent12.length is 1
+PASS namedFlowContent12.item(0).id is "article"
+PASS namedFlowContent11.length is 0
+PASS namedFlowContent12.length is 1
+PASS namedFlowContent12.item(0).id is "article"
+PASS getFlowByName("flow2") is null
+PASS namedFlowContent13.length is 0
+PASS namedFlowContent14.length is 0
+PASS namedFlowContent15.length is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

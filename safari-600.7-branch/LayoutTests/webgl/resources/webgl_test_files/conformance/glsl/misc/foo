@@ -1,0 +1,163 @@
+<!--
+
+/*
+** Copyright (c) 2012 The Khronos Group Inc.
+**
+** Permission is hereby granted, free of charge, to any person obtaining a
+** copy of this software and/or associated documentation files (the
+** "Materials"), to deal in the Materials without restriction, including
+** without limitation the rights to use, copy, modify, merge, publish,
+** distribute, sublicense, and/or sell copies of the Materials, and to
+** permit persons to whom the Materials are furnished to do so, subject to
+** the following conditions:
+**
+** The above copyright notice and this permission notice shall be included
+** in all copies or substantial portions of the Materials.
+**
+** THE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+** EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+** MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+** IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+** CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+** TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+** MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
+*/
+
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL uniform packing restrctions Conformance Test</title>
+<link rel="stylesheet" href="../../../resources/js-test-style.css"/>
+<link rel="stylesheet" href="../../resources/glsl-feature-tests.css"/>
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../resources/webgl-test-utils.js"></script>
+<script src="../../resources/glsl-conformance-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<canvas id="example" width="2" height="2"> </canvas>
+<script id="vshader" type="x-shader/x-vertex">
+    attribute vec4 a_position;
+    void main()
+    {
+        gl_Position = a_position;
+    }
+</script>
+<script id="fshaderArrayTest" type="x-shader/x-fragment">
+    precision mediump float;
+    uniform $(type) u_uniform[$(numTestType)];
+    void main()
+    {
+        gl_FragColor = $(code);
+    }
+</script>
+<script id="fshaderArrayTest" type="x-shader/x-fragment">
+    precision mediump float;
+    $(uniforms);
+    void main()
+    {
+        gl_FragColor = $(code);
+    }
+</script>
+<script>
+"use strict";
+description();
+debug("");
+var wtu = WebGLTestUtils;
+var gl = wtu.create3DContext("example");
+var vSrc = wtu.getScript("vshader");
+
+var uniformTypes = [
+  { type: "bool",        componentsPerRow: 1, rows: 1, code: "vec4(u_uniform$(id)[$(index)], 0, 0, 0)", },
+  { type: "float",       componentsPerRow: 1, rows: 1, code: "vec4(u_uniform$(id)[$(index)], 0, 0, 0)", },
+  { type: "int",         componentsPerRow: 1, rows: 1, code: "vec4(u_uniform$(id)[$(index)], 0, 0, 0)", },
+  { type: "vec2",        componentsPerRow: 2, rows: 1, code: "vec4(u_uniform$(id)[$(index)], 0, 0)", },
+  { type: "ivec2",       componentsPerRow: 2, rows: 1, code: "vec4(u_uniform$(id)[$(index)], 0, 0)", },
+  { type: "bvec2",       componentsPerRow: 2, rows: 1, code: "vec4(u_uniform$(id)[$(index)], 0, 0)", },
+  { type: "vec3",        componentsPerRow: 3, rows: 1, code: "vec4(u_uniform$(id)[$(index)], 0)", },
+  { type: "ivec3",       componentsPerRow: 3, rows: 1, code: "vec4(u_uniform$(id)[$(index)], 0)", },
+  { type: "bvec3",       componentsPerRow: 3, rows: 1, code: "vec4(u_uniform$(id)[$(index)], 0)", },
+  { type: "vec4",        componentsPerRow: 4, rows: 1, code: "vec4(u_uniform$(id)[$(index)])", },
+  { type: "ivec4",       componentsPerRow: 4, rows: 1, code: "vec4(u_uniform$(id)[$(index)])", },
+  { type: "bvec4",       componentsPerRow: 4, rows: 1, code: "vec4(u_uniform$(id)[$(index)])", },
+  { type: "mat2",        componentsPerRow: 4, rows: 1, code: "vec4(u_uniform$(id)[$(index)][0], 0, 0)", },
+  { type: "mat3",        componentsPerRow: 3, rows: 3, code: "vec4(u_uniform$(id)[$(index)][0], 0)", },
+  { type: "mat4",        componentsPerRow: 4, rows: 4, code: "vec4(u_uniform$(id)[$(index)][0])", },
+// Samplers generally have more restictive limits.
+//  { type: "sampler2D",   componentsPerRow: 1, rows: 1, code: "vec4(texture2D(u_uniform[$(index)], vec2(0, 0)))", },
+//  { type: "samplerCube", componentsPerRow: 1, rows: 1, code: "vec4(textureCube(u_uniform[$(index)], vec3(0, 0, 0)))", },
+];
+
+var vBaseSource = wtu.getScript("vshader");
+var fArrayTestSource = wtu.getScript("fshaderArrayTest");
+
+var maxVertexUniformVectors = gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS);
+var maxFragmentVectors = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS);
+var tests = [];
+
+for (var ii = 0; ii < uniformTypes.length; ++ii) {
+  var info = uniformTypes[ii];
+  // Compute the maxiumum amount of this type allowed in a single array.
+  var numVars = Math.floor(maxFragmentVectors / info.rows);
+  // Test array[1] of the type
+  var code = wtu.replaceParams(info.code, {id: "", index: 0});
+  tests.push({
+    vShaderSource: vBaseSource,
+    vShaderSuccess: true,
+    fShaderSource: wtu.replaceParams(fArrayTestSource, {numTestType: 1, code: code}, info),
+    fShaderSuccess: true,
+    linkSuccess: true,
+    passMsg: "fragment shader with uniform array of " + info.type + " with 1 element should succeed",
+  });
+  // Test array[max] of the type
+  // Note: We can't test this as actual GL drivers are only required to be able to
+  // do the minimum number. After that it can fail for any reason.
+  if (false) {
+    var code = wtu.replaceParams(info.code, {id: "", index: numVars - 1});
+    tests.push({
+      vShaderSource: vBaseSource,
+      vShaderSuccess: true,
+      fShaderSource: wtu.replaceParams(fArrayTestSource, {numTestType: numVars, code: code}, info),
+      fShaderSuccess: true,
+      linkSuccess: true,
+      passMsg: "fragment shader with uniform array of " + info.type + " with " + numVars + " elements (the maximum) should succeed",
+    });
+  }
+
+  // Test array[max + 1]. WebGL requires this to fail.
+  var code = wtu.replaceParams(info.code, {id: "", index: numVars});
+  var uniforms = [];
+  var codes = [];
+  for (var ii = 0; ii <= numVars; ++ii) {
+    uniforms.push("uniform " + info.type + " u_uniform" + ii + ";");
+    codes.push(wtu.replaceParams(info.code, {id: ii, index: ii}));
+  }
+  tests.push({
+    vShaderSource: vBaseSource,
+    vShaderSuccess: true,
+    fShaderSource: wtu.replaceParams(fArrayTestSource, {uniforms: uniforms.join("\n"), code: codes.join(" + \n    ")}, info),
+    fShaderSuccess: true,
+    linkSuccess: true,
+    passMsg: "fragment shader with " + (numVars + 1) + " uniforms of " + info.type + " (one past maximum) should fail",
+  });
+
+  // Test max uniforms of type.
+  // Note: We can't test this as actual GL drivers are only required to be able to
+  // do the minimum number. After that it can fail for any reason.
+  if (false) {
+  }
+
+  // Test max+1 uniforms of type.
+
+}
+
+GLSLConformanceTester.runTests(tests);
+var successfullyParsed = true;
+</script>
+</body>
+</html>
+

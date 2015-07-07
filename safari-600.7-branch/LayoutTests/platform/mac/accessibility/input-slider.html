@@ -1,0 +1,152 @@
+<html>
+    <head>
+        <script>
+            var sliderAXObject;
+            var thumbAXObject;
+            var valueDiv;
+
+            if (window.testRunner) 
+            {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            }
+
+            function consoleWrite(text)
+            {
+                document.getElementById("console").innerHTML += text + "<br>";
+            }
+            
+            function logResult(success, text)
+            {
+                if (success)
+                    consoleWrite(text + " <span style='color:green'>OK<" + "/span>");
+                else
+                    consoleWrite(text + " <span style='color:red'>FAIL<" + "/span>");
+            }
+            
+            function testExpected(testFuncString, expected)
+            {
+                try {
+                    var observed = eval(testFuncString);
+                } catch (ex) {
+                    consoleWrite(ex);
+                    return;
+                }
+                
+                var success = (observed == expected);
+                var msg = msg = "EXPECTED (<em>" + testFuncString + " </em> == '<em>" + expected + "</em>')";
+                if (!success)
+                    msg +=  ", OBSERVED '<em>" + observed + "</em>'";
+                logResult(success, msg);
+            }
+
+            function run(testFuncString)
+            {
+                consoleWrite("RUN(" + testFuncString + ")");
+                try {
+                    eval(testFuncString);
+                } catch (ex) {
+                    consoleWrite(ex);
+                }
+            }
+
+            function testRanges(min, max)
+            {
+                testExpected("sliderAXObject.minValue", min);
+                testExpected("sliderAXObject.maxValue", max);
+            }
+
+            function testValues(oldValue, direction)
+            {
+                // increment and decrement change by 5% of the slider's range
+                var range = sliderInput.getAttribute('max') - sliderInput.getAttribute('min');
+                var expected = direction * range * 0.05 + (oldValue * 1);
+                testExpected("sliderInput.value",  expected);
+                testExpected("valueDiv.innerText", expected);
+            }
+            
+            function testIncrement()
+            {
+                var oldValue = sliderInput.value;
+                run("sliderAXObject.increment()");
+                testValues(oldValue, 1)
+            }
+
+            function testDecrement()
+            {
+                var oldValue = sliderInput.value;
+                run("sliderAXObject.decrement()");
+                testValues(oldValue, -1)
+            }
+
+            function test()
+            {
+                if (!window.accessibilityController) 
+                    return;
+
+                var oldValue;
+                var newValue;
+
+                valueDiv = document.getElementById("val");
+                sliderInput = document.getElementById("slider");
+
+                sliderInput.focus();
+
+                consoleWrite("** Test slider accessibility attributes");
+                run("sliderAXObject = accessibilityController.focusedElement");
+                testRanges(0, 100);
+                testExpected("sliderAXObject.childrenCount", 1);
+                testExpected("sliderAXObject.role", "AXRole: AXSlider");
+                
+                consoleWrite("");
+                consoleWrite("** Test thumb accessibility attributes");
+                run("thumbAXObject = sliderAXObject.childAtIndex(0)");
+                testExpected("thumbAXObject.childrenCount", 0);
+                consoleWrite("thumbAXObject.role = " + thumbAXObject.role);
+                testExpected("thumbAXObject.role", "AXRole: AXValueIndicator");
+
+                consoleWrite("");
+                consoleWrite("** Increment the slider, test slider value and div set on 'update' event");
+                testIncrement();
+
+                consoleWrite("");
+                consoleWrite("** Decrement the slider, test slider value and div set on 'update' event");
+                run("sliderInput.value = 22");
+                testDecrement();
+
+                consoleWrite("");
+                consoleWrite("** Change slider range");
+                run("sliderInput.setAttribute('max', 1000)");
+                run("sliderInput.setAttribute('min', 500)");
+                testRanges(500, 1000);
+
+                consoleWrite("");
+                consoleWrite("** Re-test incrementing the slider");
+                run("sliderInput.value = 600");
+                testIncrement();
+
+                consoleWrite("");
+                consoleWrite("** Re-test decrementing the slider");
+                run("sliderInput.value = 850");
+                testDecrement();
+
+                testRunner.notifyDone();     
+            }
+
+            function update(obj)
+            {
+                document.getElementById('val').innerText = obj.value;
+            }
+        </script>
+    </head>
+
+    <body onload="test()">
+    
+        <input type=range min=0 max=100 value=50 id=slider onchange="update(this)" >
+        <span id=val>50</span>
+
+        <br><br><br><br>
+        <div id=console></div>
+        
+    </body>
+</html>

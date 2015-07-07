@@ -1,0 +1,45 @@
+<html>
+<head>
+    <script src="../resources/helper.js"></script>
+    <link rel="stylesheet" href="../resources/region-style.css"></link>
+    <style>
+        html {
+            -webkit-writing-mode: horizontal-bt;
+        }
+
+        body {
+            margin-bottom: 0;
+        }
+    </style>
+    <script>
+        onMouseUpLogSelection("selected-content");
+    </script>
+</head>
+<body onload="selectContentByIds('word1', 'word2');">
+    <div class="flowArticle">
+        inside region inside region inside region inside region
+        inside region inside region inside region inside region
+    </div>
+    <div class="bigBox float">
+        outside region outside region outside region outside region
+        <span id="word1" class="token">word1</span>
+        outside region outside region outside region outside region
+    </div>
+    <div class="clear"></div>
+    <div class="regionArticle greyBigBox"></div>
+    <div class="bigBox float">
+        outside region outside region outside region outside region
+        <span id="word2" class="token">word2</span>
+        outside region outside region outside region outside region
+    </div>
+    <div class="clear"></div>
+    <div class="description">
+        <h1><a href="https://bugs.webkit.org/show_bug.cgi?id=122353">Bug #122353 - [CSS Regions] Layout Test for selecting text ignoring region content</a></h1>
+        <p>This test checks the selection in 2 text wrapping a region. If you select from <span class="token">word1</span> to <span class="token">word2</span> you will see that "inside region" text is not highlighted and not included in the selected content (because of the content of the region is before the "outside region" element in the DOM).</p>
+        <dl>
+            <dt>Selected content:</dt>
+            <dd id="selected-content"></dd>
+        </dl>
+    </div>
+</body>
+</html>

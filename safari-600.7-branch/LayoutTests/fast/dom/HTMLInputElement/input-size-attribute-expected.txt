@@ -1,0 +1,20 @@
+HTMLInputElement size attribute test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS input.size is 20
+PASS input.setAttribute('size', '-1'); input.size is 20
+PASS input.removeAttribute('size'); input.size is 20
+PASS input.setAttribute('size', '1'); input.size is 1
+PASS input.setAttribute('size', '2'); input.size is 2
+PASS input.removeAttribute('size'); input.size is 20
+PASS input.setAttribute('size', 'a'); input.size is 20
+PASS input.removeAttribute('size'); input.size is 20
+PASS input.setAttribute('size', '0'); input.size is 20
+PASS input.setAttribute('size', '10'); input.size is 10
+PASS input.size = 0 threw exception Error: IndexSizeError: DOM Exception 1.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

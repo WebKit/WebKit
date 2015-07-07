@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<script src="../resources/js-test-pre.js"></script>
+
+<div id="content">
+
+<div role="text" id="text">
+	<div>Song Title</div>
+	<div>Artist Name</div>
+	<span role="text" aria-label="(4 stars, 1,234 ratings)">★★★★☆</span>
+	<span aria-hidden="true">(1,234)</span>
+</div>
+</div>
+
+<div id="console"></div>
+<script>
+
+description("This tests that when calculating the text under an element, aria-hidden is observed.")
+
+if (window.testRunner && window.accessibilityController) {
+    var text = accessibilityController.accessibleElementById("text");
+    shouldBe("text.stringValue", "'AXValue: Song Title Artist Name (4 stars, 1,234 ratings)'");
+    document.getElementById("content").style.visibility = 'hidden';    
+}
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

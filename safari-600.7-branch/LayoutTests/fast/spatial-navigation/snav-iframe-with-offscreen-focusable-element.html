@@ -1,0 +1,84 @@
+<html>
+  <!--
+    This test ensures the cross iframe traversal correctness of Spatial Navigation
+    algorithm: focusable elements in an <iframe> should be accessible even when
+    the current focused element is in another <iframe> in the same page.
+
+    * Pre-conditions:
+    1) DRT support for SNav enable/disable.
+
+    * Navigation steps:
+    1) Loads this page, focus goes to "start" automatically.
+    2) Focus moves along the elements in the two iframes in the
+       Web page, eventually going to outer an southward link, but
+       going back to the iframe on the top later on.
+  -->
+  <head>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script src="resources/spatial-navigation-utils.js"></script>
+    <script type="application/javascript">
+
+    var resultMap = [
+      ["Down", "1"],
+      ["Down", "1"],
+      ["Down", "1"],
+      ["Down", "1"],
+      ["Down", "1"],
+      ["Down", "1"],
+      ["Down", "1"],
+      ["Down", "2"],
+      ["Down", "end"],
+      ["Up", "2"],
+      ["Up", "2"],
+      ["Up", "2"],
+      ["Up", "2"],
+      ["Up", "2"],
+      ["Up", "2"],
+      ["Up", "2"],
+      ["Up", "1"],
+      ["Up", "start"],
+      ["DONE", "DONE"]
+    ];
+
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.setSpatialNavigationEnabled(true);
+      testRunner.overridePreference("WebKitTabToLinksPreferenceKey", 1);
+      testRunner.waitUntilDone();
+    }
+
+    function runTest()
+    {
+      // starting the test itself: get to a known place.
+      document.getElementById("start").focus();
+
+      initTest(resultMap, testCompleted);
+    }
+
+    function testCompleted()
+    {
+      if (window.testRunner)
+        testRunner.notifyDone();
+    }
+
+    window.onload = runTest;
+    </script>
+    <script src="../resources/js-test-post.js"></script>
+  </head>
+  <body id="some-content" xmlns="http://www.w3.org/1999/xhtml">
+    <div><a id="start" href="a"><img src="resources/green.png" width=30 height=30></a></div>
+
+    <iframe width="80" height="80" scrolling="auto" src="data:text/html,
+      <body>
+        <a id='1' href='a'><img src='no_image' width=30 height=30></a>
+        <div>
+          <img src='no_image' width=50 height=300>
+          <a id='2' href='a'><img src='no_image' width=30 height=30></a>
+        </div>
+      </body>
+    "></iframe><br>
+
+    <div><a id="end" href="a"><img src="resources/green.png" width=30 height=30></a></div>
+    <div id="console"></div>
+  </body>
+</html>

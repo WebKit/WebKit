@@ -1,0 +1,36 @@
+<html>
+<head>
+<script src="resources/profiler-test-JS-resources.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.internals)
+    internals.setJavaScriptProfilingEnabled(true);
+
+function startTest()
+{
+    functionWichStartsAndStopsTheProfiler();
+}
+
+function functionWichStartsAndStopsTheProfiler()
+{
+    console.profile("Profiling From A Nested Location");
+
+    for (var i = 0; i < 10000000; i++)
+        var b = i + 2;
+
+    endTest();
+}
+
+</script>
+</head>
+
+<body onload="startTest()">
+This page's JavaScript starts profiling from within a nested location.
+<br>
+<br>
+To run this test manually, load it in the browser then load the WebInspector and look at
+the profile.  In the profile there should be a call to functionWichStartsAndStopsTheProfiler().
+<div id="output"></div>
+</body>
+</html>

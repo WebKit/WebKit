@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>            
+
+            var numberOfTrackTests = 3;
+            
+            function trackLoaded()
+            {
+                numberOfTracksLoaded++;
+                if (numberOfTracksLoaded == numberOfTrackTests) {
+                    testTrack(0);
+                    testTrack(1);
+                    testTrackError(2);
+                }
+            }
+
+            function testTrack(i)
+            {
+                findMediaElement();
+                var expected = 
+                {
+                    length : 3,
+                    tests:
+                    [
+                        {
+                            property : "vertical",
+                            values : ["rl", "lr", "rl"],
+                        },
+                        {
+                            property : "align",
+                            values : ["middle", "middle", "start"],
+                        },
+                        {
+                            property : "position",
+                            values : [50, 50, 0],
+                        },
+                    ],
+                };
+                testCues(i, expected);
+                
+                allTestsEnded();
+            }
+
+            function testTrackError(i)
+            {
+                findMediaElement();
+                var expected = 
+                {
+                    length : 3,
+                    tests:
+                    [
+                        {
+                            property : "vertical",
+                            values : ["", "", ""],
+                        },
+                    ],
+                };
+                testCues(i, expected);
+                
+                allTestsEnded();
+            }
+        </script>
+    </head>
+    <body onload="enableAllTextTracks()">
+        <p>Tests cue vertical alignment (direction) from settings.</p>
+        <video> 
+            <track src="captions-webvtt/tc021-valign.vtt" onload="trackLoaded()">
+            <track src="captions-webvtt/tc021-valign-ltr.vtt" onload="trackLoaded()">
+            <track src="captions-webvtt/tc021-valign-bad.vtt" onload="trackLoaded()">
+        </video>
+    </body>
+</html>

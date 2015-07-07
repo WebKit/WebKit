@@ -1,0 +1,76 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/console-test.js"></script>
+<script>
+
+function onload()
+{
+    window.db = openDatabase("InspectorDatabaseTest", "1.0", "Test of database reveal in inspector", 1);
+    window.db2 = openDatabase("InspectorDatabaseTest2", "1.0", "Test of database reveal in inspector", 1);
+    localStorage["inspector"] = "Test of local storage reveal in inspector";
+    sessionStorage["inspector"] = "Test of session storage reveal in inspector";
+    runTest();
+}
+
+function test()
+{
+    InspectorTest.addSniffer(WebInspector, "inspect", sniffInspect, true);
+
+    function sniffInspect(objectId, hints)
+    {
+        InspectorTest.addResult("WebInspector.inspect called with: " + objectId.description);
+        InspectorTest.addResult("WebInspector.inspect's hints are: " + JSON.stringify(Object.keys(hints)));
+    }
+
+    function evalAndDump(expression, next)
+    {
+        InspectorTest.addResult("\n");
+        InspectorTest.evaluateInConsoleAndDump(expression, next);
+    }
+
+    InspectorTest.runTestSuite([
+        function testRevealElement(next)
+        {
+            InspectorTest.addSniffer(WebInspector, "_updateFocusedNode", step2);
+            evalAndDump("inspect($('#p1'))");
+
+            function step2()
+            {
+                InspectorTest.addResult("Selected node id: '" + WebInspector.panels.elements.selectedDOMNode().getAttribute("id") + "'.");
+                next();
+            }
+        },
+
+        function testRevealDatabase(next)
+        {
+            evalAndDump("inspect(db)", next);
+        },
+
+        function testRevealDatabase2(next)
+        {
+            evalAndDump("inspect(db2)", next);
+        },
+
+        function testRevealLocalStorage(next)
+        {
+            evalAndDump("inspect(localStorage)", next);
+        },
+
+        function testRevealSessionStorage(next)
+        {
+            evalAndDump("inspect(sessionStorage)", next);
+        }
+    ]);
+}
+
+</script>
+</head>
+
+<body onload="onload()">
+<p id="p1">
+Tests that inspect() command line api works.
+</p>
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+
+<style>
+    #region {
+        border: 5px solid blue;
+        width: 200px;
+        height: 100px;
+        padding: 80px;
+        margin: 50px;
+        overflow: hidden;
+    }
+
+    #content {
+        background-color: lightgrey;
+        width: 200px;
+        height: 100px;
+    }
+</style>
+
+<body>
+    <a href="https://bugs.webkit.org/show_bug.cgi?id=128590">[CSS Regions] Overflow above the first region is not properly painted for regions with padding</a>
+
+    <div id="region">
+        <div id="content">
+            <div style="position:relative; top: -40px; color:red">This line should be visible</div>
+            <div>The red line above this one should be visible</div>
+        </div>
+    </div>
+</body>

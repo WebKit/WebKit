@@ -1,0 +1,7 @@
+Test for bug 10676: @charset rules not accessible via DOM
+
+cssText: @charset "utf-8";
+encoding: utf-8
+Resetting encoding...
+cssText: @charset "koi8-r";
+encoding: koi8-r

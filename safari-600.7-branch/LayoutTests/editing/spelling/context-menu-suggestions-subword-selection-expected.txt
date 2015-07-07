@@ -1,0 +1,16 @@
+Spell check suggestions should not be populated when user selects a part of misspelling. To test manually, type 'wellcome home.' select 'llco', and context-click on the selection. The test suceeds when the context menu has no spell check suggestions.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.markerCountForNode(destination.childNodes[0], "spelling") became different from 0
+PASS spellingMarkerRange.toString() is "wellcome"
+PASS window.getSelection().toString() is ""
+PASS window.getSelection().toString() is "llco"
+PASS window.getSelection().toString() is "llco"
+PASS contextMenuItemsWithoutSpellingSuggestions < contextMenuItemsWithSpellingSuggestions is true
+PASS spellingMarkerRange.toString() became "wellcome"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+wellcome home.

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 480 360">
+<defs>
+    <font horiz-adv-x="500">
+        <font-face font-family="SVGFont" units-per-em="1000" ascent="800" descent="200" alphabetic="200"/>
+        <missing-glyph horiz-adv-x="500" d="M0 0L500 0L500 1000L0 1000M50 50L50 950L450 950L450 50Z"/>
+        <glyph unicode=" " glyph-name="space"/>
+        <glyph unicode="a" glyph-name="upward-triangle" lang="en" d="M0 0L500 0L250 900Z"/>
+        <glyph unicode="a" glyph-name="square" lang="fr" d="M0 250L500 250L500 750L0 750Z"/>
+    </font>
+
+    <font horiz-adv-x="500">
+        <font-face font-family="SVGFont1" units-per-em="1000" ascent="800" descent="200" alphabetic="200"/>
+        <missing-glyph horiz-adv-x="500" d="M0 0L500 0L500 1000L0 1000M50 50L50 950L450 950L450 50Z"/>
+        <glyph unicode=" " glyph-name="space"/>
+        <glyph unicode="a" glyph-name="upward-triangle" xml:lang="en" d="M0 0L500 0L250 900Z"/>
+        <glyph unicode="a" glyph-name="square" xml:lang="fr" d="M0 250L500 250L500 750L0 750Z"/>
+    </font>
+</defs>
+
+<g font-family="SVGFont" font-size="50">
+    <!-- Should produce an upward pointing triangle -->
+    <text x="50" y="50" lang="fr" xml:lang="en">a</text>
+
+    <!-- Should produce a square -->
+    <text x="50" y="120" lang="en" xml:lang="fr">a</text>
+
+    <!-- Should produce missing glyph -->
+    <text x="50" y="190" lang="en" xml:lang="bogus">a</text>
+
+    <!-- Should produce missing glyph -->
+    <text x="50" y="260" lang="fr" xml:lang="bogus">a</text>
+
+    <!-- Should produce missing glyph -->
+    <text x="50" y="330" lang="" xml:lang="">a</text>
+</g>
+
+<g font-family="SVGFont1" font-size="50" transform="translate(100, 0)">
+    <!-- Should produce an upward pointing triangle -->
+    <text x="50" y="50" lang="fr" xml:lang="en">a</text>
+
+    <!-- Should produce an upward pointing triangle -->
+    <text x="50" y="120" lang="en" xml:lang="fr">a</text>
+
+    <!-- Should produce an upward pointing triangle -->
+    <text x="50" y="190" lang="en" xml:lang="bogus">a</text>
+
+    <!-- Should produce an upward pointing triangle -->
+    <text x="50" y="260" lang="fr" xml:lang="bogus">a</text>
+
+    <!-- Should produce an upward pointing triangle -->
+    <text x="50" y="330" lang="" xml:lang="">a</text>
+</g>
+
+<rect x="1" y="1" width="478" height="358" fill="none" stroke="#000000"/>
+</svg>

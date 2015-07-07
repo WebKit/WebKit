@@ -1,0 +1,100 @@
+namespace="SVG"
+namespaceURI="http://www.w3.org/2000/svg"
+fallbackInterfaceName="SVGUnknownElement"
+fallbackJSInterfaceName="SVGElement"
+
+a
+#if ENABLE_SVG_FONTS
+altGlyph generateTypeHelpers
+altGlyphDef generateTypeHelpers
+altGlyphItem generateTypeHelpers
+#endif
+animate
+animateColor
+animateMotion generateTypeHelpers
+animateTransform generateTypeHelpers
+set
+circle generateTypeHelpers
+clipPath generateTypeHelpers
+#if 0
+color_profile
+#endif
+cursor generateTypeHelpers
+defs
+desc
+ellipse generateTypeHelpers
+#if ENABLE_FILTERS
+feBlend
+feColorMatrix
+feComponentTransfer
+feComposite
+feConvolveMatrix
+feDiffuseLighting
+feDisplacementMap
+feDistantLight generateTypeHelpers
+feDropShadow
+feFlood
+feFuncA generateTypeHelpers
+feFuncB generateTypeHelpers
+feFuncG generateTypeHelpers
+feFuncR generateTypeHelpers
+feGaussianBlur
+feImage
+feMerge
+feMergeNode generateTypeHelpers
+feMorphology
+feOffset
+fePointLight generateTypeHelpers
+feSpecularLighting
+feSpotLight generateTypeHelpers
+feTile
+feTurbulence
+filter generateTypeHelpers
+#endif
+#if ENABLE_SVG_FONTS
+font generateTypeHelpers
+font_face generateTypeHelpers
+font_face_format
+font_face_name generateTypeHelpers
+font_face_src generateTypeHelpers
+font_face_uri generateTypeHelpers
+#endif
+foreignObject generateTypeHelpers
+g generateTypeHelpers
+#if ENABLE_SVG_FONTS
+glyph generateTypeHelpers
+glyphRef generateTypeHelpers
+hkern interfaceName=SVGHKernElement, generateTypeHelpers
+#endif
+image generateTypeHelpers
+line generateTypeHelpers
+linearGradient generateTypeHelpers
+marker generateTypeHelpers
+mask generateTypeHelpers
+metadata
+#if ENABLE_SVG_FONTS
+missing_glyph generateTypeHelpers
+#endif
+mpath interfaceName=SVGMPathElement, generateTypeHelpers
+path generateTypeHelpers
+pattern generateTypeHelpers
+polygon generateTypeHelpers
+polyline generateTypeHelpers
+radialGradient generateTypeHelpers
+rect generateTypeHelpers
+script constructorNeedsCreatedByParser, generateTypeHelpers
+stop generateTypeHelpers
+style constructorNeedsCreatedByParser, generateTypeHelpers
+svg interfaceName=SVGSVGElement, generateTypeHelpers
+switch
+symbol
+text generateTypeHelpers
+textPath generateTypeHelpers
+title generateTypeHelpers
+tref interfaceName=SVGTRefElement
+tspan interfaceName=SVGTSpanElement
+use constructorNeedsCreatedByParser, generateTypeHelpers
+view generateTypeHelpers
+#if ENABLE_SVG_FONTS
+vkern interfaceName=SVGVKernElement, generateTypeHelpers
+#endif

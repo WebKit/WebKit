@@ -1,0 +1,15 @@
+Test for the list attribute.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL input.list should be null (of type object). Was undefined (of type undefined).
+FAIL input.list should be null (of type object). Was undefined (of type undefined).
+FAIL input.list should be null (of type object). Was undefined (of type undefined).
+FAIL input.list should be [object HTMLElement] (of type object). Was undefined (of type undefined).
+FAIL input.list should be null (of type object). Was undefined (of type undefined).
+FAIL datalist.className should be former. Threw exception TypeError: 'undefined' is not an object (evaluating 'datalist.className')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+         

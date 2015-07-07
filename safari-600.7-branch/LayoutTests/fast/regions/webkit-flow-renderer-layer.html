@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+<style>
+    .size1 {
+        width: 50px;
+        height: 50px;
+    }
+    .size2 {
+        width: 50px;
+        height: 100px;
+    }
+
+    #div1 {
+        -webkit-flow-into: flowA;
+        position: absolute;
+        background-color: green;
+    }
+    #div2 {
+        -webkit-flow-into: flowB;
+        background-color: green;
+    }
+    #div3 {
+        background-color: orange;
+    }
+    #div4 {
+        background-color: blue;
+        position: absolute;
+        z-index: -1;
+    }
+
+    #region1 {
+        -webkit-flow-from: flowA;
+        background-color: red;
+    }
+    #region2 {
+        -webkit-flow-from: flowB;
+        background-color: red;
+    }
+</style>
+</head>
+<body>
+<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=64516"> [CSSRegions] Collect flowed elements in different render element</a>.</p>
+<p>Test that elements requiring a layer, collected in a flow thread, are correctly displayed in a region.</p>
+<p>On success, you should not see a red rectangle below.</p>
+<div id="div1" class="size1"></div>
+
+<div id="div2">
+    <div id="div3" class="size1"></div>
+    <div id="div4" class="size1"></div>
+</div>
+
+<div id="region1" class="size1"></div>
+<div id="region2" class="size2"></div>
+</body>
+</html>

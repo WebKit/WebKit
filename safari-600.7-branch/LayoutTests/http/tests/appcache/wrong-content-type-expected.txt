@@ -1,0 +1,6 @@
+Test that a manifest served with an arbitrary content-type is OK.
+
+Should say SUCCESS:
+
+SUCCESS
+

@@ -1,0 +1,7 @@
+prefetch-purpose.php has MIME type text/html
+prefetch-purpose.php has MIME type text/html
+The cookie was set!
+
+Purpose: prefetch
+
+This test verifies that prefetches are sent with the HTTP request header Purpose: prefetch. To do this, the root page has a prefetch link targetting this subresource which contains a PHP script (resources/prefetch-purpose.php). That initial prefetch of this resource sets a cookie. Later, the root page sets window.location to target this script, which verifies the presence of the cookie, and generates the happy test output that you hopefully see right now.

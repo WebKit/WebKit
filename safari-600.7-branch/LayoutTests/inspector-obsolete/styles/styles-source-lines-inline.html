@@ -1,0 +1,37 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+
+<style>
+.foo {
+    color: blue;
+}
+</style>
+
+<script>
+
+function test()
+{
+    InspectorTest.selectNodeAndWaitForStyles("foo", step2);
+
+    function step2()
+    {
+        InspectorTest.dumpSelectedElementStyles(true, false, true);
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that elements panel shows proper inline style locations in the sidebar panel.
+</p>
+
+<div id="foo" class="foo" style="display:none">Foo</div>
+<iframe src="resources/styles-source-lines-inline-iframe.html">
+
+</body>
+</html>

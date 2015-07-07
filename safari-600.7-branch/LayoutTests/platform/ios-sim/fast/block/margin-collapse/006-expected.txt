@@ -1,0 +1,34 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x418
+  RenderBlock {HTML} at (0,0) size 800x418
+    RenderBody {BODY} at (8,8) size 784x402
+      RenderBlock (anonymous) at (0,0) size 784x20
+        RenderInline {DIV} at (0,0) size 528x17 [color=#FFFFFF] [bgcolor=#FF0000]
+          RenderText {#text} at (0,2) size 528x17
+            text run at (0,2) width 528: "Ahem_font_required_for_this_test."
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 515x19
+          text run at (0,0) width 515: "The following two columns should be pixel perfect identical with no red visible."
+      RenderTable {TABLE} at (0,72) size 106x256 [bgcolor=#FF0000] [border: (3px solid #000000)]
+        RenderTableSection {TBODY} at (3,3) size 100x250
+          RenderTableRow {TR} at (0,0) size 100x250
+            RenderTableCell {TD} at (0,0) size 50x250 [bgcolor=#FFA500] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (0,50) size 50x50 [color=#FFFF00] [bgcolor=#FF0000]
+                RenderText {#text} at (0,0) size 50x50
+                  text run at (0,0) width 50: "X"
+              RenderBlock {DIV} at (0,150) size 50x50 [color=#00FF00] [bgcolor=#FF0000]
+                RenderText {#text} at (0,0) size 50x50
+                  text run at (0,0) width 50: "X"
+            RenderTableCell {TD} at (50,0) size 50x250 [r=0 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (0,0) size 50x50 [border: (50px solid #FFA500) none]
+              RenderBlock {DIV} at (0,50) size 50x50 [border: (50px solid #FFFF00) none]
+              RenderBlock {DIV} at (0,100) size 50x50 [border: (50px solid #FFA500) none]
+              RenderBlock {DIV} at (0,150) size 50x50 [border: (50px solid #00FF00) none]
+              RenderBlock {DIV} at (0,200) size 50x50 [border: (50px solid #FFA500) none]
+      RenderBlock {P} at (0,344) size 784x20
+        RenderText {#text} at (0,0) size 572x19
+          text run at (0,0) width 572: "Control: This test is meaningless if you see any red below. (You should only see orange.)"
+      RenderBlock {DIV} at (0,380) size 166x22 [bgcolor=#FF0000] [border: (3px solid #000000)]
+        RenderBlock {DIV} at (3,3) size 160x16 [border: (16px solid #FFA500) none]

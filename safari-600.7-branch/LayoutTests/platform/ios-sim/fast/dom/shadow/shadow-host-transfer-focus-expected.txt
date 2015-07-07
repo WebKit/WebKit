@@ -1,0 +1,17 @@
+When a shadow host is focused, the shadow host should transfer focus to the first focusable element in the shadow root if there is an such an element.
+
+Focusing: shadow0
+PASS elementWasFocused(input0) is false
+PASS elementWasFocused(input1) is true
+PASS elementWasFocused(input2) is false
+PASS input0.value is ""
+PASS input1.value is ""
+PASS input2.value is ""
+Pressing: "a"
+PASS input0.value is ""
+FAIL input1.value should be a. Was .
+PASS input2.value is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

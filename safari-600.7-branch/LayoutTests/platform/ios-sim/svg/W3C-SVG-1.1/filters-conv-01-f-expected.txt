@@ -1,0 +1,42 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (30,45) size 419x181
+      RenderSVGContainer {g} at (30,45) size 419x181 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,40.00)}]
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGContainer {g} at (30,45) size 419x181
+          RenderSVGText {text} at (10,5) size 68x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 68x19
+              chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 10 width 67.10: "Blur (3x3)"
+          RenderSVGContainer {g} at (30,70) size 50x63
+            RenderSVGImage {image} at (30,70) size 50x63
+          RenderSVGText {text} at (10,5) size 138x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 138x19
+              chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 20 width 137.73: "Edge Detection (3x3)"
+          RenderSVGContainer {g} at (180,70) size 50x63 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,0.00)}]
+            RenderSVGImage {image} at (180,70) size 50x63
+          RenderSVGText {text} at (10,5) size 112x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 112x19
+              chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 16 width 111.53: "Sharpening (3x3)"
+          RenderSVGContainer {g} at (330,70) size 50x63 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,0.00)}]
+            RenderSVGImage {image} at (330,70) size 50x63
+          RenderSVGText {text} at (10,5) size 110x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 110x19
+              chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 15 width 109.77: "Embossing (3x3)"
+          RenderSVGContainer {g} at (30,163) size 50x63 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,93.00)}]
+            RenderSVGImage {image} at (30,163) size 50x63
+          RenderSVGText {text} at (10,5) size 137x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 137x19
+              chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 21 width 136.85: "Horizontal blur (3x1)"
+          RenderSVGContainer {g} at (180,163) size 50x63 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,93.00)}]
+            RenderSVGImage {image} at (180,163) size 50x63
+          RenderSVGText {text} at (10,5) size 119x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 119x19
+              chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 19 width 118.18: "Vertical blur (1x3)"
+          RenderSVGContainer {g} at (330,163) size 50x63 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,93.00)}]
+            RenderSVGImage {image} at (330,163) size 50x63
+    RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 264x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.5 $"
+    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

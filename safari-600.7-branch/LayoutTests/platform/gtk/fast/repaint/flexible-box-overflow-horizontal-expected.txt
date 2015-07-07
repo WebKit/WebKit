@@ -1,0 +1,42 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x552
+      RenderBlock {P} at (0,0) size 784x34
+        RenderText {#text} at (0,0) size 226x17
+          text run at (0,0) width 226: "This is a test for regressions against "
+        RenderInline {I} at (0,0) size 762x34
+          RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
+            RenderText {#text} at (226,0) size 348x17
+              text run at (226,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8056"
+          RenderText {#text} at (574,0) size 762x34
+            text run at (574,0) width 4: " "
+            text run at (578,0) width 184: "Flexible boxes do not repaint"
+            text run at (0,17) width 238: "their top, left and children's overflows"
+        RenderText {#text} at (238,17) size 4x17
+          text run at (238,17) width 4: "."
+      RenderBlock {HR} at (0,50) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,60) size 784x100
+        RenderDeprecatedFlexibleBox {DIV} at (10,10) size 80x80 [bgcolor=#FFFF00]
+          RenderBlock {DIV} at (-10,-10) size 100x100 [border: (1px solid #000000)]
+            RenderText {#text} at (1,1) size 177x17
+              text run at (1,1) width 177: "Lorem ipsum dolor sit amet."
+      RenderBlock {DIV} at (0,180) size 784x100
+        RenderDeprecatedFlexibleBox {DIV} at (10,10) size 80x80 [bgcolor=#FFFF00]
+          RenderBlock {DIV} at (-10,-10) size 100x100 [border: (1px solid #000000)]
+      RenderBlock {DIV} at (0,300) size 784x100
+        RenderDeprecatedFlexibleBox {DIV} at (10,10) size 80x80 [bgcolor=#FFFF00]
+          RenderBlock {DIV} at (-10,-10) size 100x100 [border: (1px solid #000000)]
+      RenderBlock {DIV} at (0,420) size 784x100
+        RenderDeprecatedFlexibleBox {DIV} at (10,10) size 80x80 [bgcolor=#FFFF00]
+          RenderBlock {DIV} at (-10,-10) size 100x100 [border: (1px solid #000000)]
+            RenderText {#text} at (1,1) size 98x136
+              text run at (1,1) width 84: "Lorem ipsum"
+              text run at (1,18) width 89: "dolor sit amet,"
+              text run at (1,35) width 78: "consectetuer"
+              text run at (1,52) width 91: "adipiscing elit."
+              text run at (1,69) width 98: "Etiam et ipsum."
+              text run at (1,86) width 31: "Nam"
+              text run at (1,103) width 98: "consectetuer mi"
+              text run at (1,120) width 61: "eget velit."

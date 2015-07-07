@@ -1,0 +1,10 @@
+@import "generate_resource.php?type=css&id=n1";
+
+@font-face {
+    font-family: remoteFont;
+    src: url('generate_resource.php?type=font&id=n1');
+}
+ol {
+    font-family: remoteFont;
+    list-style-image: url('generate_resource.php?type=image&id=n1');
+}

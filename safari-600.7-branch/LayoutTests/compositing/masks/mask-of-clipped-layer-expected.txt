@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x216
+  RenderBlock {HTML} at (0,0) size 800x216
+    RenderBody {BODY} at (8,8) size 784x200
+layer at (8,8) size 200x200 scrollWidth 300 scrollHeight 300
+  RenderBlock {DIV} at (0,0) size 200x200 [bgcolor=#0000FF]
+    RenderBlock {DIV} at (0,0) size 140x140 [bgcolor=#FF0000]
+layer at (8,8) size 300x300 backgroundClip at (8,8) size 200x200 clip at (8,8) size 200x200 outlineClip at (8,8) size 200x200
+  RenderBlock {DIV} at (0,0) size 300x300 [bgcolor=#00FF00]

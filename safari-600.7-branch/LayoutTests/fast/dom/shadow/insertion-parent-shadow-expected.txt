@@ -1,0 +1,11 @@
+Tests for insertionParent with a shadow element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getNodeInShadowTreeStack('host/older-shadow-root-child').webkitInsertionParent.id is "shadow"
+PASS getNodeInShadowTreeStack('host//shadow').webkitInsertionParent is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

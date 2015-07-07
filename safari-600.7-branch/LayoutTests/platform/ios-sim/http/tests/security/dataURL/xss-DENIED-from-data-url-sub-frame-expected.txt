@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: Blocked a frame with origin "null" from accessing a frame with origin "http://127.0.0.1:8000".  The frame requesting access has a protocol of "data", the frame being accessed has a protocol of "http". Protocols must match.
+
+This tests that a data: URL loaded in an iframe doesn't have access to its parent's frame
+
+PASS: Cross frame access from a data: URL was denied.
+
+--------
+Frame: 'aFrame'
+--------
+Inner iframe.

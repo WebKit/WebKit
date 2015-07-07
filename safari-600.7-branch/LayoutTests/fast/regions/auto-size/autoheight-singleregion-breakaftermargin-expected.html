@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            .greenContainer { border: 15px solid green; position: absolute; top: 150px; width: 250px; height: 200px; }
+            .greenBox { width: 250px; height: 50px; margin-top: 75px; margin-bottom: 75px; background-color: green;  }
+        </style>
+    </head>
+    <body>
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=91097"> Auto height is not working for regions</a>.</p>
+        <p>The region is a block element. The flow has a forced break inside it, after an element</p>
+        <p>On success, you should see 1 green line inside a rectangle with a green border.</p>
+
+        <div class="greenContainer">
+            <div class="greenBox"></div>
+        </div>
+    </body>
+</html>

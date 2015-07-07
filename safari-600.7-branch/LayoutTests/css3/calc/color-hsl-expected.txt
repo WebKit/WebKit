@@ -1,0 +1,11 @@
+Tests that CSS3 calc() can be used with the hsl() and hsla() functions
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(document.getElementById("simple"), null).color is "rgb(31, 223, 31)"
+PASS getComputedStyle(document.getElementById("alpha"), null).color is "rgba(31, 223, 31, 0.701961)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

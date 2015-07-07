@@ -1,0 +1,17 @@
+  
+Focus the text field in the frame
+Main document.hasFocus() should be true : PASS
+Sub-frame document.hasFocus() should be true : PASS
+
+Focus the text field in the main document
+Main document.hasFocus() should be true : PASS
+Sub-frame document.hasFocus() should be false : PASS
+
+Blur the window
+Main document.hasFocus() should be false : PASS
+Sub-frame document.hasFocus() should be false : PASS
+
+Focus the window again
+Main document.hasFocus() should be true : PASS
+Sub-frame document.hasFocus() should be false : PASS
+

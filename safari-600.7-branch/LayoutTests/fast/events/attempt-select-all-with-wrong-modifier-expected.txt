@@ -1,0 +1,3 @@
+Test for bug 34615. Trying to do a keyboard "select all" using the wrong modifier (e.g. Control on the Mac) should not do anything.
+
+PASS

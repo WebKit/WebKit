@@ -1,0 +1,15 @@
+Test that invalid canvas getContext() requests return null.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS canvas.getContext('') is null
+PASS canvas.getContext('2d#') is null
+PASS canvas.getContext('This is clearly not a valid context name.') is null
+PASS canvas.getContext('2d\0') is null
+PASS canvas.getContext('2ｄ') is null
+PASS canvas.getContext('2D') is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

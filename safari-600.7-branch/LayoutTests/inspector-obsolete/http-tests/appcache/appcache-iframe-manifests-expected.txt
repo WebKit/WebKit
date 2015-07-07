@@ -1,0 +1,81 @@
+Tests that application cache model keeps track of manifest urls and statuses correctly.
+
+Bug 64581
+Dumping application cache tree:
+    (empty)
+Dumping application cache model:
+    (empty)
+
+Dumping application cache tree:
+    Manifest URL: http://127.0.0.1:8000/inspector/appcache/resources/manifest.php?manifestId=1
+        Frame: frame1 (page-with-manifest.php)
+Dumping application cache model:
+    Frame: frame1
+        manifest url: http://127.0.0.1:8000/inspector/appcache/resources/manifest.php?manifestId=1
+        status:       IDLE
+
+Dumping application cache tree:
+    Manifest URL: http://127.0.0.1:8000/inspector/appcache/resources/manifest.php?manifestId=2
+        Frame: frame1 (page-with-manifest.php)
+Dumping application cache model:
+    Frame: frame1
+        manifest url: http://127.0.0.1:8000/inspector/appcache/resources/manifest.php?manifestId=2
+        status:       IDLE
+
+Dumping application cache tree:
+    Manifest URL: http://127.0.0.1:8000/inspector/appcache/resources/manifest.php?manifestId=2
+        Frame: frame1 (page-with-manifest.php)
+    Manifest URL: http://127.0.0.1:8000/inspector/appcache/resources/manifest.php?manifestId=1
+        Frame: frame2 (page-with-manifest.php)
+Dumping application cache model:
+    Frame: frame1
+        manifest url: http://127.0.0.1:8000/inspector/appcache/resources/manifest.php?manifestId=2
+        status:       IDLE
+    Frame: frame2
+        manifest url: http://127.0.0.1:8000/inspector/appcache/resources/manifest.php?manifestId=1
+        status:       IDLE
+
+Dumping application cache tree:
+    Manifest URL: http://127.0.0.1:8000/inspector/appcache/resources/manifest.php?manifestId=2
+        Frame: frame1 (page-with-manifest.php)
+    Manifest URL: http://127.0.0.1:8000/inspector/appcache/resources/manifest.php?manifestId=1
+        Frame: frame2 (page-with-manifest.php)
+        Frame: frame3 (page-with-manifest.php)
+Dumping application cache model:
+    Frame: frame1
+        manifest url: http://127.0.0.1:8000/inspector/appcache/resources/manifest.php?manifestId=2
+        status:       IDLE
+    Frame: frame2
+        manifest url: http://127.0.0.1:8000/inspector/appcache/resources/manifest.php?manifestId=1
+        status:       IDLE
+    Frame: frame3
+        manifest url: http://127.0.0.1:8000/inspector/appcache/resources/manifest.php?manifestId=1
+        status:       IDLE
+
+Dumping application cache tree:
+    Manifest URL: http://127.0.0.1:8000/inspector/appcache/resources/manifest.php?manifestId=2
+        Frame: frame1 (page-with-manifest.php)
+    Manifest URL: http://127.0.0.1:8000/inspector/appcache/resources/manifest.php?manifestId=1
+        Frame: frame2 (page-with-manifest.php)
+Dumping application cache model:
+    Frame: frame1
+        manifest url: http://127.0.0.1:8000/inspector/appcache/resources/manifest.php?manifestId=2
+        status:       IDLE
+    Frame: frame2
+        manifest url: http://127.0.0.1:8000/inspector/appcache/resources/manifest.php?manifestId=1
+        status:       IDLE
+
+Dumping application cache tree:
+    Manifest URL: http://127.0.0.1:8000/inspector/appcache/resources/manifest.php?manifestId=2
+        Frame: frame1 (page-with-manifest.php)
+Dumping application cache model:
+    Frame: frame1
+        manifest url: http://127.0.0.1:8000/inspector/appcache/resources/manifest.php?manifestId=2
+        status:       IDLE
+
+Dumping application cache tree:
+    (empty)
+Dumping application cache model:
+    (empty)
+
+

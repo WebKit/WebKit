@@ -1,0 +1,17 @@
+<SCRIPT>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var oElement = document.createElement("s")
+var oElementNS = document.createElementNS();
+oElementNS.setAttributeNS();
+var oAttributeNS = oElementNS.getAttributeNodeNS();
+var oAttributeNSClone = oAttributeNS.cloneNode();
+oElement.setAttributeNode(oAttributeNSClone);
+</SCRIPT>
+<BODY>
+This tests that an Attribute object is not downcasted to a MappedAttribute.
+See http://bugs.webkit.org/show_bug.cgi?id=21032 .
+</BODY>
+
+

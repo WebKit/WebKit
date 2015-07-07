@@ -1,0 +1,14 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<style>
+#test::after { content:"after"; }
+#test.change::after { content:counter(ctr); }
+#test.change div { display: inline; }
+</style>
+<div id=test><div>This test passes if it does not crash.</div></div>
+<script>
+document.body.offsetWidth;
+document.getElementById("test").className = "change";
+</script>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Tests for ShadowAware JS APIs.");
+Element.prototype.createShadowRoot = Element.prototype.createShadowRoot || Element.prototype.webkitCreateShadowRoot;
+
+// ShadowAware.createShadowRoot()
+var host = document.createElement('div');
+var root1 = host.createShadowRoot();
+var root2 = host.createShadowRoot();
+shouldNotBe("root1", "root2");
+shouldBe("root1", "window.internals.oldestShadowRoot(host)");
+shouldBe("root2", "window.internals.youngestShadowRoot(host)");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

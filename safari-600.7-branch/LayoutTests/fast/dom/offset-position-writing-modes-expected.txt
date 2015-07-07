@@ -1,0 +1,6 @@
+PASS document.getElementById("vertical").offsetLeft is 65
+PASS document.getElementById("horizontal").offsetTop is 65
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

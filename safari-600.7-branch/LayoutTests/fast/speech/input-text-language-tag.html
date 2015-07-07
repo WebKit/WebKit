@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+description('Tests for language-specific results and language inheritance in speech buttons.');
+
+// Note: test cases are sequential to ensure that no new recognition starts when another recognition recording is active.
+function onChangeNone() {
+    shouldBeEqualToString('document.getElementById("speechInputNone").value', 'error: no result found for language \'\'');
+    setTimeout(function() { speechButtonClick('speechInputElement'); }, 50);
+}
+
+function onChangeElement() {
+    shouldBeEqualToString('document.getElementById("speechInputElement").value', 'Pictures of the moon');
+    setTimeout(function() { speechButtonClick('speechInputInherited'); }, 50);
+}
+
+function onChangeInherited() {
+    shouldBeEqualToString('document.getElementById("speechInputInherited").value', '月の写真');
+    finishJSTest();
+}
+
+function speechButtonClick(elementId) {
+    var element = document.getElementById(elementId);
+    var x = element.offsetLeft + element.offsetWidth - 4;
+    var y = element.offsetTop + element.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+function run() {
+    if (window.testRunner && window.eventSender) {
+        testRunner.addMockSpeechInputResult('Pictures of the moon', 1.0, 'en-GB');
+        testRunner.addMockSpeechInputResult('月の写真', 1.0, 'ja');
+        speechButtonClick('speechInputNone');
+    }
+}
+
+window.onload = run;
+window.jsTestIsAsync = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+<input id="speechInputNone" x-webkit-speech onwebkitspeechchange="onChangeNone()">
+<input id="speechInputElement" x-webkit-speech onwebkitspeechchange="onChangeElement()" lang="en-GB">
+<div lang="ja"> <input id="speechInputInherited" x-webkit-speech onwebkitspeechchange="onChangeInherited()"> </div>
+</body>
+</html>

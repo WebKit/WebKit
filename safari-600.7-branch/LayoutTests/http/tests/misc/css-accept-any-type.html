@@ -1,0 +1,25 @@
+<html>
+<head>
+    <title></title>
+    <link rel="stylesheet" href="resources/stylesheet.php">
+    <script>
+        function test()
+        {
+            if (window.testRunner)
+                testRunner.dumpAsText();
+            
+            var target = document.getElementById("target");
+            var style = getComputedStyle(target);
+            target.innerText = style.position == "relative" ? "SUCCESS" : "FAIL";
+        }
+    </script>
+</head>
+<body onload="test()">
+    <p>
+        Test for <i><a href="http://bugs.webkit.org/show_bug.cgi?id=11451">http://bugs.webkit.org/show_bug.cgi?id=11451</a>
+        REGRESSION: Dell.com does not render correctly in ToT (stylesheet not loaded)</i>.
+    </p>
+    <p id="target">
+    </p>
+</body>
+</html>

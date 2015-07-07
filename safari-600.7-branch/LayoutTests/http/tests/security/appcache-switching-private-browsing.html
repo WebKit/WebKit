@@ -1,0 +1,30 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+	testRunner.dumpAsText();
+	testRunner.dumpChildFramesAsText();
+	testRunner.waitUntilDone();
+	console.log('Test started');
+}
+
+function enterPrivateBrowsing(frame) {
+	if (window.testRunner)
+		testRunner.setPrivateBrowsingEnabled(true);
+	frame.contentWindow.appCacheCallback = function(result) {
+		frame.contentWindow.updateAppCache(function(result) {
+			if (window.testRunner)
+				testRunner.setPrivateBrowsingEnabled(false);
+			console.log(result ? 'FAIL' : 'PASS');
+			if (window.testRunner)
+				testRunner.notifyDone();
+		});
+	}
+}
+</script>
+</head>
+<body>
+<p>This test passes if the application cache does not load while in private browsing</p>
+<iframe src="resources/frame-for-appcache-in-private-browsing.html" onload="enterPrivateBrowsing(this)"></iframe>
+</body>
+</html>

@@ -1,0 +1,90 @@
+This test exercises the source expression offset information that is attached to exception objects for the inspector.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Testing 'undefined.a++'
+FAIL ex.message == "'undefined' is not an object (evaluating 'undefined.a')" should be true. Was false.
+
+Testing '++undefined.a'
+FAIL ex.message == "'undefined' is not an object (evaluating 'undefined.a')" should be true. Was false.
+
+Testing 'undefined[0]++'
+FAIL ex.message == "'undefined' is not an object (evaluating 'undefined[0]')" should be true. Was false.
+
+Testing '++undefined[1]'
+FAIL ex.message == "'undefined' is not an object (evaluating 'undefined[1]')" should be true. Was false.
+
+Testing 'undefined.b'
+FAIL ex.message == "'undefined' is not an object (evaluating 'undefined.b')" should be true. Was false.
+
+Testing 'undefined[0]'
+FAIL ex.message == "'undefined' is not an object (evaluating 'undefined[0]')" should be true. Was false.
+
+Testing 'undefined.b += 1'
+FAIL ex.message == "'undefined' is not an object (evaluating 'undefined.b')" should be true. Was false.
+
+Testing 'undefined[0] += 1'
+FAIL ex.message == "'undefined' is not an object (evaluating 'undefined[0]')" should be true. Was false.
+
+Testing 'undefined()'
+FAIL ex.message == "'undefined' is not a function (evaluating 'undefined()')" should be true. Was false.
+
+Testing 'new undefined()'
+FAIL ex.message == "'undefined' is not a constructor (evaluating 'new undefined()')" should be true. Was false.
+
+Testing '({}).b()'
+FAIL ex.message == "'undefined' is not a function (evaluating '({}).b()')" should be true. Was false.
+
+Testing 'new {}.b()'
+FAIL ex.message == "'undefined' is not a constructor (evaluating 'new {}.b()')" should be true. Was false.
+
+Testing '1()'
+FAIL ex.message == "'1' is not a function (evaluating '1()')" should be true. Was false.
+
+Testing 'new 1()'
+FAIL ex.message == "'1' is not a constructor (evaluating 'new 1()')" should be true. Was false.
+
+Testing 'throw { message : 'thrown object' }'
+PASS ex.message == "thrown object" is true
+
+Testing '1 in undefined'
+FAIL ex.message == "'undefined' is not a valid argument for 'in' (evaluating '1 in undefined')" should be true. Was false.
+
+Testing '1 instanceof undefined'
+FAIL ex.message == "'undefined' is not a valid argument for 'instanceof' (evaluating '1 instanceof undefined')" should be true. Was false.
+
+Testing 'for (undefined.b in [1]) {}'
+FAIL ex.message == "'undefined' is not an object (evaluating 'undefined.b')" should be true. Was false.
+
+Testing 'for (undefined[0] in [1]) {}'
+FAIL ex.message == "'undefined' is not an object (evaluating 'undefined[0]')" should be true. Was false.
+
+Testing 'undefined.a = 5'
+FAIL ex.message == "'undefined' is not an object (evaluating 'undefined.a = 5')" should be true. Was false.
+
+Testing 'undefined[0] = 5'
+FAIL ex.message == "'undefined' is not an object (evaluating 'undefined[0] = 5')" should be true. Was false.
+
+Testing '({b:undefined}).b.a = 5'
+FAIL ex.message == "'undefined' is not an object (evaluating '({b:undefined}).b.a = 5')" should be true. Was false.
+
+Testing '({b:undefined}).b[0] = 5'
+FAIL ex.message == "'undefined' is not an object (evaluating '({b:undefined}).b[0] = 5')" should be true. Was false.
+
+Testing 'undefined.a += 5'
+FAIL ex.message == "'undefined' is not an object (evaluating 'undefined.a')" should be true. Was false.
+
+Testing 'undefined[0] += 5'
+FAIL ex.message == "'undefined' is not an object (evaluating 'undefined[0]')" should be true. Was false.
+
+Testing '({b:undefined}).b.a += 5'
+FAIL ex.message == "'undefined' is not an object (evaluating '({b:undefined}).b.a')" should be true. Was false.
+
+Testing '({b:undefined}).b[0] += 5'
+FAIL ex.message == "'undefined' is not an object (evaluating '({b:undefined}).b[0]')" should be true. Was false.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

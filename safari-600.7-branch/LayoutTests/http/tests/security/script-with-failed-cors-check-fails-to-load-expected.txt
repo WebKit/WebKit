@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Cross-origin script load denied by Cross-Origin Resource Sharing policy.
+This test passes if the script does not load.
+
+PASS

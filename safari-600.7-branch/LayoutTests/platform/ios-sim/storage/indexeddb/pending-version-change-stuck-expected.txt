@@ -1,0 +1,15 @@
+CONSOLE MESSAGE: line 16: ReferenceError: Can't find variable: request
+Implicitly terminating worker with blocked setVersion call should allow later open calls to proceed
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+request = indexedDB.open("pending-version-change-stuck.html")
+FAIL request = indexedDB.open("pending-version-change-stuck.html") threw exception TypeError: null is not an object (evaluating 'indexedDB.open')
+FAIL Unexpected error: ReferenceError: Can't find variable: request
+FAIL successfullyParsed should be true. Was false.
+
+TEST COMPLETE
+

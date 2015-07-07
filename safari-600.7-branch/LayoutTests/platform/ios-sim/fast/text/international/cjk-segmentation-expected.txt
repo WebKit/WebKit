@@ -1,0 +1,42 @@
+Test Chinese Segmentation.
+
+==================================
+FAILED test
+actual: 国务院
+expected: 务
+==================================
+FAILED test
+actual:
+expected: 《
+==================================
+FAILED test
+actual:
+expected: 》
+==================================
+FAILED test
+actual: 俄罗斯
+expected: 罗斯
+==================================
+FAILED test
+actual:
+expected: ：
+==================================
+FAILED test
+actual: 5天
+expected: 5
+==================================
+FAILED test
+actual:
+expected: ，
+==================================
+FAILED test
+actual: 146万
+expected: 146
+==================================
+FAILED test
+actual: 146万
+expected: 146
+==================================
+FAILED test
+actual: 146万
+expected: 146

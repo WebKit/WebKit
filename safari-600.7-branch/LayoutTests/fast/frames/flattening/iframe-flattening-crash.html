@@ -1,0 +1,32 @@
+<html>
+<head>
+    <script type="text/javascript">
+        if (window.testRunner && window.internals) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+            internals.settings.setFrameFlatteningEnabled(true);
+        }
+    </script>
+</head>
+<body>
+    <style>body { background-color: green; }</style>
+    <p>This test passes if it does not crash <a href="https://bugs.webkit.org/show_bug.cgi?id=52449">https://bugs.webkit.org/show_bug.cgi?id=52449</a></p>
+
+    <p><iframe id="if"  width="20%" height="20%" scrolling=auto src="data:text/html,
+    <html>
+    <script>
+        function test2(){
+            var i = document.getElementsByTagName('html')[0].clientWidth; 
+            if (window.testRunner)
+                testRunner.notifyDone();
+            if (window.testRunner)
+                internals.settings.setFrameFlatteningEnabled(true);
+        }
+    </script>
+    <body onresize='test2();'>
+    <div style='position: absolute; width: 400px; height: 400px; left: 0; top: 0px;' id='p'><input id='in' value='abcd'></div>
+    </body></html>
+    ">
+</body>
+</html>
+

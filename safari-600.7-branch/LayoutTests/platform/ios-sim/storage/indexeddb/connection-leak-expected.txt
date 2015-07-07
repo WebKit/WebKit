@@ -1,0 +1,17 @@
+CONSOLE MESSAGE: line 17: ReferenceError: Can't find variable: request
+Regression test to ensure that IndexedDB connections don't leak
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+dbname = "connection-leak.html"
+
+doFirstOpen():
+request = indexedDB.open(dbname, 1)
+FAIL request = indexedDB.open(dbname, 1) threw exception TypeError: null is not an object (evaluating 'indexedDB.open')
+sawUpgradeNeeded1 = false
+FAIL Unexpected error: ReferenceError: Can't find variable: request
+FAIL successfullyParsed should be true. Was false.
+
+TEST COMPLETE
+

@@ -1,0 +1,10 @@
+Make sure we don't crash when compiling put_to_base in the baseline JIT.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS sum is 4662
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

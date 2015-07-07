@@ -1,0 +1,60 @@
+CONSOLE MESSAGE: line 6: XHR loaded: 1
+CONSOLE MESSAGE: line 6: XHR loaded: 2
+CONSOLE MESSAGE: line 6: XHR loaded: 3
+CONSOLE MESSAGE: line 6: XHR loaded: 4
+CONSOLE MESSAGE: line 6: XHR loaded: 5
+CONSOLE MESSAGE: line 6: XHR loaded: 6
+CONSOLE MESSAGE: line 6: XHR loaded: 7
+CONSOLE MESSAGE: line 6: XHR loaded: 8
+Tests XHR replaying. Bug 95187
+
+Running: testGetStaticAsync
+Dumping request: 
+    url: http://user:password@127.0.0.1:8000/inspector/network/resources/empty.html
+    requestMethod: GET
+    test request header value: headerValue
+
+Running: testGetStaticSync
+Dumping request: 
+    url: http://user:password@127.0.0.1:8000/inspector/network/resources/empty.html
+    requestMethod: GET
+    test request header value: headerValue
+
+Running: testGetCachedAsync
+Dumping request: 
+    url: http://user:password@127.0.0.1:8000/inspector/network/resources/random-cached.php
+    requestMethod: GET
+    test request header value: headerValue
+
+Running: testGetCachedSync
+Dumping request: 
+    url: http://user:password@127.0.0.1:8000/inspector/network/resources/random-cached.php
+    requestMethod: GET
+    test request header value: headerValue
+
+Running: testGetRandomAsync
+Dumping request: 
+    url: http://user:password@127.0.0.1:8000/inspector/network/resources/random.php
+    requestMethod: GET
+    test request header value: headerValue
+
+Running: testGetRandomSync
+Dumping request: 
+    url: http://user:password@127.0.0.1:8000/inspector/network/resources/random.php
+    requestMethod: GET
+    test request header value: headerValue
+
+Running: testPostAsync
+Dumping request: 
+    url: http://user:password@127.0.0.1:8000/inspector/network/resources/random.php
+    requestFormData: payload
+    requestMethod: POST
+    test request header value: headerValue
+
+Running: testPostSync
+Dumping request: 
+    url: http://user:password@127.0.0.1:8000/inspector/network/resources/random.php
+    requestFormData: payload
+    requestMethod: POST
+    test request header value: headerValue
+

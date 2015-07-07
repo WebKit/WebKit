@@ -1,0 +1,100 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            html { -webkit-writing-mode: vertical-rl; }
+
+            .first-box {
+                margin: 5px;
+                border: 1px solid blue;
+            }
+
+            #first-box {
+                border-left: 0;
+            }
+
+            #first-box-2 {
+                border-right: 0;
+                border-left: 0;
+                margin-left: 0;
+                margin-right: 0;
+            }
+
+            #first-box-3 {
+                border-right: 0;
+                margin-right: 0;
+            }
+
+            .second-box {
+                margin: 10px;
+                border: 1px solid green;
+            }
+
+            #second-box {
+                border-left: 0;
+            }
+
+            #second-box-2 {
+                border-right: 0;
+                border-left: 0;
+                margin-left: 0;
+                margin-right: 0;
+            }
+
+            #second-box-3 {
+                border-right: 0;
+                margin-right: 0;
+            }
+
+            p { margin: 0; font: 12px/16px monospace; }
+
+            #region1, #region2, #region3 {
+                border: 1px solid black;
+                overflow: hidden;
+            }
+
+            #region1 {
+                width: 200px;
+                height: 100px;
+            }
+
+            #region2 {
+                width: 300px;
+                height: 180px;
+            }
+
+            #region3 {
+                width: 120px;
+                height: 120px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container">
+            <div id="region1">
+                <div id="first-box" class="first-box">
+                    <div id="second-box" class="second-box">
+                        <p>This line of text should not get out of the region. This line of text should not get</p>
+                        <br/>
+                    </div>
+                </div>
+            </div>
+            <div id="region2">
+                <div id="first-box-2" class="first-box">
+                    <div id="second-box-2" class="second-box">
+                        <p>out of the region. This line of text should not get out of the region. This line of text should not get out of the region.</p>
+                        <p>This line of text should not get out of the region. This line of text should not get out of the region. This line of text should not get out of the region. This line of text should not get out of the region.</p>
+                        <br/>
+                    </div>
+                </div>
+            </div>
+            <div id="region3">
+                <div id="first-box-3" class="first-box">
+                    <div id="second-box-3" class="second-box">
+                        <p>This line of text should not get out of the region.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

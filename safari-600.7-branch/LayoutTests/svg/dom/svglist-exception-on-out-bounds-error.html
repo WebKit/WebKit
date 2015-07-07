@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+    description("Tests that out of bounds accesses of SVGList correctly throw exceptions");
+    var path = document.createElementNS("http://www.w3.org/2000/svg","path");
+    var svgList = path.pathSegList;
+    var indicesToTest = [-Infinity, NaN, -1, 0, 1, Infinity];
+    for (var i = 0; i < indicesToTest.length; i++) {
+         var index = indicesToTest[i];
+         shouldThrow("svgList.getItem(index)");
+         shouldThrow("svgList.insertItemBefore(null, index)");
+         var seg = path.createSVGPathSegClosePath();
+         shouldBe("svgList.insertItemBefore(seg, index)", "seg");
+         svgList.removeItem(0);
+         shouldThrow("svgList.replaceItem(seg, index)");
+         shouldThrow("svgList.replaceItem(null, index)");
+         shouldThrow("svgList.removeItem(index)");
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

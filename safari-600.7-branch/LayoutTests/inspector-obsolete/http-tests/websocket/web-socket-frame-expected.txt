@@ -1,0 +1,14 @@
+Connected.
+Tests that WebSocketFrames are being sent and recieved by Web Inspector.
+
+1- sent: test
+1- sent: test
+2- sent: exit
+1- sent: test
+2- sent: exit
+3- received: test
+1- sent: test
+2- sent: exit
+3- received: test
+4- received: exit
+

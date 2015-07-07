@@ -1,0 +1,31 @@
+<p>This tests that WebKit can obtain form value from plugins</p>
+<form action="" id="form">
+    <object type="application/x-webkit-test-netscape" test="form-value" name="plugin"></object>
+</form>
+<div id="console"></div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(message) {
+    var div = document.createElement('div');
+    div.innerHTML = message;
+    var console = document.getElementById('console');
+    console.appendChild(div);
+}
+
+if (document.location.href.indexOf('?') == -1) {
+    document.getElementById('form').submit();
+} else {
+    var values = document.location.search.substring(1);
+    log('form values: "' + values + '"');
+    if (values == 'plugin=Plugin+form+value')
+        log('PASS: The form value was successfully obtained.');
+    else
+        log('FAIL: Could not obtain the form value correctly.');
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>

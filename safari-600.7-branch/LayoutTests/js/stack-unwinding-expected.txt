@@ -1,0 +1,13 @@
+This test checks that JavaScriptCore does not crash when uwinding the stack that includes a host function.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Two host functions called in a row.
+WARN: shouldBe() expects string arguments
+PASS 5,6,7 is 5,6,7
+PASS Exception thrown and caught
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

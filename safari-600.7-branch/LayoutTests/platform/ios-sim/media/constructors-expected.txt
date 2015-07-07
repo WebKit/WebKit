@@ -1,0 +1,14 @@
+Test that media constructors behave consistently.
+
+ 
+EXPECTED (audioJS instanceof HTMLAudioElement == 'true') OK
+EXPECTED (audioJS instanceof HTMLMediaElement == 'true') OK
+EXPECTED (audioJS instanceof HTMLVideoElement == 'false') OK
+EXPECTED (audioElem instanceof HTMLAudioElement == 'true') OK
+EXPECTED (audioElem instanceof HTMLMediaElement == 'true') OK
+EXPECTED (audioElem instanceof HTMLVideoElement == 'false') OK
+EXPECTED (videoElem instanceof HTMLVideoElement == 'true') OK
+EXPECTED (videoElem instanceof HTMLMediaElement == 'true') OK
+EXPECTED (videoElem instanceof HTMLAudioElement == 'false') OK
+END OF TEST
+

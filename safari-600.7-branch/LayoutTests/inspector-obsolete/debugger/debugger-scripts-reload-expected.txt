@@ -1,0 +1,7 @@
+Tests that scripts list is cleared upon page reload.
+
+Debugger was enabled.
+Dummy script found: dummyScript.js
+Page reloaded.
+Debugger was disabled.
+

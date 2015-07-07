@@ -1,0 +1,5 @@
+Test that error is treated as handled when preventDefault is called on the error event.Bug 67119.
+
+Error event listener invoked. Error should *not* be printed in console.
+DONE.
+

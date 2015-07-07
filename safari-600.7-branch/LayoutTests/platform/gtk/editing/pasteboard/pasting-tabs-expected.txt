@@ -1,0 +1,36 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > #document-fragment to 0 of DIV > #document-fragment toDOMRange:range from 0 of #text > DIV > #document-fragment to 11 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertText:Tab->	<-Tab replacingDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document toDOMRange:range from 5 of #text > DIV > BODY > HTML > #document to 5 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x34
+        RenderText {#text} at (0,0) size 766x34
+          text run at (0,0) width 647: "This tests copying plain text with tabs and pasting it into an editable region using paste and match tyle. "
+          text run at (647,0) width 119: "The tabs should be"
+          text run at (0,17) width 65: "preserved."
+      RenderBlock (anonymous) at (0,50) size 784x44
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,94) size 784x17
+        RenderText {#text} at (0,0) size 39x17
+          text run at (0,0) width 39: "Tab->"
+        RenderInline {SPAN} at (0,0) size 25x17
+          RenderText {#text} at (39,0) size 25x17
+            text run at (39,0) width 25: "\x{9}"
+        RenderText {#text} at (64,0) size 39x17
+          text run at (64,0) width 39: "<-Tab"
+layer at (10,60) size 201x40 clip at (11,61) size 199x38
+  RenderTextControl {TEXTAREA} at (2,2) size 201x40 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 195x17
+      RenderText {#text} at (0,0) size 106x17
+        text run at (0,0) width 106: "Tab->\x{9}<-Tab"
+caret: position 5 of child 2 {#text} of child 4 {DIV} of body

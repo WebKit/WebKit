@@ -1,0 +1,8 @@
+This tests pasting two lines of text copied from pre content. To manually test, copy the selected text (including the new line) and paste it into textarea twice. There should be no blank line between two pasted lines.
+
+A line of text
+some other text
+
+A line of text
+A line of text
+

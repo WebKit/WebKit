@@ -1,0 +1,3 @@
+PASS plugin type is allowed when no policy exists.
+PASS plugin type is not allowed when policy exists.
+

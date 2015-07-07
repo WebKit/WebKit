@@ -1,0 +1,9 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion number conversion to byte
+
+PASS dt.setByte(java.lang.Byte.MIN_VALUE - 1); dt.PUB_BYTE threw exception ReferenceError: Can't find variable: java.
+PASS dt.setByte(java.lang.Byte.MIN_VALUE - 1); dt.getShort() threw exception ReferenceError: Can't find variable: java.
+PASS typeof dt.getShort() is 'number'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

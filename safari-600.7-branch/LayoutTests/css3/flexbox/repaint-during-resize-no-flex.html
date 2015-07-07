@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="resources/flexbox.css">
+<style>
+body {
+    margin: 0;
+}
+.flexbox {
+    background: #333;
+}
+.flex-item {
+    height: 50px;
+    margin: 20px;
+    background: #eee;
+    width: 10px;
+}
+
+.width {
+    width:50px;
+}
+</style>
+</head>
+<body>
+<div class="flexbox">
+    <div id="flex-item-1" class="flex-item"></div>
+    <div class="flex-item"></div>
+    <div class="flex-item"></div>
+</div>
+<script>
+function resizeFlexItem() {
+    var div = document.getElementById("flex-item-1");
+    div.classList.add("width");
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+window.onload = function() {
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.display();
+    } else {
+        document.body.appendChild(document.createTextNode(
+            "Tests to make sure that when changing the size of one flex item changes the "
+            + "location of another flex item, we properly repaint. The repaint rect should "
+            + "include the three flex items."));
+    }
+    setTimeout(resizeFlexItem, 0);
+};
+</script>
+</body></html>

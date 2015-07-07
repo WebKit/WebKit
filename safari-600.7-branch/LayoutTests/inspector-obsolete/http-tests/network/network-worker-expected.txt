@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 14: Done.
+Tests that worker content is available in network panel.
+
+Bug 65929
+http://127.0.0.1:8000/inspector/network/resources/worker.js
+resource.type: script
+resource.content before requesting content: undefined
+resource.content after requesting content: postMessage("Done.");
+
+

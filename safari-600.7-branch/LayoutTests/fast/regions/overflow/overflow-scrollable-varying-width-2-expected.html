@@ -1,0 +1,38 @@
+<!doctype html>
+<html style="font: 16px/1.25 monospace;">
+    <head>
+        <style>
+            .no_overflow { margin: 2px; }
+
+            #region1, #region2 { height: 100px; }
+            #region1 { border: 5px solid green; width: 150px; }
+            #region2 { border: 5px solid blue; width: 200px; }
+
+            .container {
+                border: thin solid red;
+                overflow: auto;
+                float: left;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test that horizontal overflow in one region doesn't affect the horizontal overflow of another region.</p>
+        <p>On success, the green region should generate an horizontal scrollbar inside the red container. The blue region should not generate scrollbars.</p>
+        <div class="container">
+            <div class="region" id="region1">
+                <p class="no_overflow">Linetext1</p>
+                <p class="no_overflow">Linetext2</p>
+                <p class="no_overflow">VeryVeryVeryVeryVeryVeryVeryLongLine</p>
+                <p class="no_overflow">Linetext4</p>
+            </div>
+        </div>
+        <div class="container">
+            <div class="region" id="region2">
+                <p class="no_overflow">LineText5</p>
+                <p class="no_overflow">Linetext6</p>
+                <p class="no_overflow">Linetext7</p>
+                <p class="no_overflow">Linetext8</p>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,33 @@
+<html>
+<head>
+<link rel="stylesheet" href="resources/styles-redirected-css.php" type="text/css">
+<script src="../inspector-test.js"></script>
+<script src="../elements-test.js"></script>
+<script>
+
+function test()
+{
+    InspectorTest.selectNodeAndWaitForStyles("test_div", step1);
+
+    function step1()
+    {
+        var treeItem = InspectorTest.getMatchedStylePropertyTreeItem("background-color");
+        treeItem.property.setDisabled(true, step2);
+    }
+
+    function step2(newStyle)
+    {
+        InspectorTest.assertTrue(!!newStyle, "Could not disable style in redirected css.");
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that styles in redirected css are editable.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=68631">Bug 68631</a>
+
+<div id="test_div">test</div>
+</body>
+</html>
+

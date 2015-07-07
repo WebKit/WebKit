@@ -1,0 +1,14 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
+frame "<!--framePath //<!--frame0-->-->" - didFinishDocumentLoadForFrame
+frame "<!--framePath //<!--frame0-->-->" - didHandleOnloadEventsForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+This test provokes HTMLTokenizer::timerFired to be called and from within timerFired we want to call WebCore::pageDestroyed.
+
+You pass this test if you don't see an ASSERT. This is from http://bugs.webkit.org/show_bug.cgi?id=15765.
+
+

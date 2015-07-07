@@ -1,0 +1,63 @@
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        var video;
+        function log(msg)
+        {
+            document.getElementById('console').appendChild(document.createTextNode(msg + "\n"));
+        }
+
+        function test()
+        {
+            video = document.getElementById('fr').contentDocument.getElementsByTagName('video')[0];
+            if (video.readyState >= 4)
+                test2();
+            else
+                video.addEventListener('canplaythrough', test2);
+        }
+        function test2()
+        {
+            var click = document.createEvent("MouseEvents");
+            click.initMouseEvent("click", true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, document);
+            video.dispatchEvent(click);
+            if (video.paused) {
+                log("PASS: video is paused.");
+                test3();
+            } else {
+                log("FAIL: video should be paused");
+                video.addEventListener('pause', test3);
+                video.pause();
+            }
+        }
+        function test3()
+        {
+            var doubleClick = document.createEvent("MouseEvents");
+            doubleClick.initMouseEvent("dblclick", true, true, window, 2, 0, 0, 0, 0, false, false, false, false, 0, document);
+            video.dispatchEvent(doubleClick);
+            if (!video.paused)
+                log("PASS: video is playing");
+            else
+                log("FAIL: video should be playing");
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        </script>
+    </head>
+    <body>
+    <iframe id="fr"></iframe>
+    <script>
+        var frame = document.getElementById("fr");
+        frame.src = findMediaFile("video", "content/test");
+        frame.addEventListener("load", test);
+    </script>
+    <p>This tests that clicking on a standalone video will pause and double-clicking will play.</p>
+    <pre id="console"></pre>
+    </body>
+</html>

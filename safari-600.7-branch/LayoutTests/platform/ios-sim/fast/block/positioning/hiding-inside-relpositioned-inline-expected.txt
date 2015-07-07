@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 474x19
+        text run at (0,0) width 474: "You should see the number 0 below, and the grey box should fit it snugly."
+layer at (8,8) size 1x19
+  RenderInline (relative positioned) {SPAN} at (0,0) size 1x19
+    RenderText {#text} at (0,0) size 0x0
+layer at (492,18) size 10x22
+  RenderBlock (positioned) {DIV} at (10,10) size 10x22 [bgcolor=#808080]
+    RenderBlock {DIV} at (0,0) size 10x22 [bgcolor=#ACACAC]
+      RenderBlock {DIV} at (1,1) size 8x20
+        RenderBlock {DIV} at (0,0) size 8x20
+          RenderText {#text} at (0,0) size 8x19
+            text run at (0,0) width 8: "0"

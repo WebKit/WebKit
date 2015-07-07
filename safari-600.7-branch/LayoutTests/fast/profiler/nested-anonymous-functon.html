@@ -1,0 +1,34 @@
+<html>
+<head>
+<script src="resources/profiler-test-JS-resources.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.internals)
+    internals.setJavaScriptProfilingEnabled(true);
+
+function startTest()
+{
+    console.profile("Nested anonymous functions called");
+
+    var AnonymousFunctionWichCallsAnAnonymousFunction = function() {
+        anonymousFunction();
+    }
+
+    AnonymousFunctionWichCallsAnAnonymousFunction();
+
+    endTest();
+}
+</script>
+</head>
+
+<body onload="startTest()">
+This page's JavaScript calls an anonymous which calls a nested anonymous function.
+<br>
+<br>
+To run this test manually, load it in the browser then load the WebInspector and look at
+the profile.  In the profile there should be an (anonymous function) with a child
+(anonymous function).
+<div id="output"></div>
+</body>
+</html>

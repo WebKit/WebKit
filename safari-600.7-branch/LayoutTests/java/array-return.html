@@ -1,0 +1,30 @@
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitJavaEnabled", "1");
+</script>
+</head>
+<body>
+
+<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=23742">bug 23742</a>:
+Applet methods can not return arrays to JS.</p>
+
+<div id="console"></div>
+<APPLET CODE="SharedApplet.class" NAME="javaTest" WIDTH=150 HEIGHT=25 MAYSCRIPT></APPLET>
+<script>
+
+var stringArray = document.javaTest.stringArray();
+var stringList = document.javaTest.stringList();
+
+shouldBe('stringArray.length', '3');
+shouldBe('stringArray[0] == "One"', 'true');
+shouldBe('stringList.getClass().getSimpleName() == "ArrayList"', 'true');
+shouldBe('stringList.get(0) == "One"', 'true');
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 11 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document toDOMRange:range from 0 of PRE > DIV > BODY > HTML > #document to 0 of PRE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of DIV > DIV > BODY > HTML > #document to 3 of DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of H1 > DIV > DIV > BODY > HTML > #document to 0 of H1 > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+This test uses FormatBlock to modify three of the paragraphs below
+
+Before FormatBlock:
+| "
+"
+| <p>
+|   id="item1"
+|   "Make Pre"
+| "
+"
+| <br>
+| "
+"
+| <div>
+|   "Foo"
+|   <br>
+|   <span>
+|     id="item2"
+|     "Make h1"
+|   <br>
+|   "baz"
+| "
+"
+| <br>
+| "
+"
+| <address>
+|   id="item3"
+|   "Attempt to apply the current formatting here"
+| "
+"
+
+After FormatBlock:
+| "
+"
+| <pre>
+|   "Make Pre"
+| "
+"
+| <br>
+| "
+"
+| <div>
+|   "Foo"
+|   <br>
+|   <h1>
+|     <span>
+|       id="item2"
+|       "Make h1"
+|   "baz"
+| "
+"
+| <br>
+| "
+"
+| <address>
+|   id="item3"
+|   "<#selection-caret>Attempt to apply the current formatting here"
+| "
+"

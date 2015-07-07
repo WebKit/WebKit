@@ -1,0 +1,128 @@
+horizontal-tb ltr row wrap
+PASS
+horizontal-tb ltr row wrap-reverse
+PASS
+horizontal-tb rtl row wrap
+PASS
+horizontal-tb rtl row wrap-reverse
+PASS
+horizontal-tb ltr column wrap
+PASS
+horizontal-tb ltr column wrap-reverse
+PASS
+horizontal-tb rtl column wrap
+PASS
+horizontal-tb rtl column wrap-reverse
+PASS
+horizontal-tb ltr row-reverse wrap
+PASS
+horizontal-tb ltr row-reverse wrap-reverse
+PASS
+horizontal-tb rtl row-reverse wrap
+PASS
+horizontal-tb rtl row-reverse wrap-reverse
+PASS
+horizontal-tb ltr column-reverse wrap
+PASS
+horizontal-tb ltr column-reverse wrap-reverse
+PASS
+horizontal-tb rtl column-reverse wrap
+PASS
+horizontal-tb rtl column-reverse wrap-reverse
+PASS
+horizontal-bt ltr row wrap
+PASS
+horizontal-bt ltr row wrap-reverse
+PASS
+horizontal-bt rtl row wrap
+PASS
+horizontal-bt rtl row wrap-reverse
+PASS
+horizontal-bt ltr column wrap
+PASS
+horizontal-bt ltr column wrap-reverse
+PASS
+horizontal-bt rtl column wrap
+PASS
+horizontal-bt rtl column wrap-reverse
+PASS
+horizontal-bt ltr row-reverse wrap
+PASS
+horizontal-bt ltr row-reverse wrap-reverse
+PASS
+horizontal-bt rtl row-reverse wrap
+PASS
+horizontal-bt rtl row-reverse wrap-reverse
+PASS
+horizontal-bt ltr column-reverse wrap
+PASS
+horizontal-bt ltr column-reverse wrap-reverse
+PASS
+horizontal-bt rtl column-reverse wrap
+PASS
+horizontal-bt rtl column-reverse wrap-reverse
+PASS
+vertical-rl ltr row wrap
+PASS
+vertical-rl ltr row wrap-reverse
+PASS
+vertical-rl rtl row wrap
+PASS
+vertical-rl rtl row wrap-reverse
+PASS
+vertical-rl ltr column wrap
+PASS
+vertical-rl ltr column wrap-reverse
+PASS
+vertical-rl rtl column wrap
+PASS
+vertical-rl rtl column wrap-reverse
+PASS
+vertical-rl ltr row-reverse wrap
+PASS
+vertical-rl ltr row-reverse wrap-reverse
+PASS
+vertical-rl rtl row-reverse wrap
+PASS
+vertical-rl rtl row-reverse wrap-reverse
+PASS
+vertical-rl ltr column-reverse wrap
+PASS
+vertical-rl ltr column-reverse wrap-reverse
+PASS
+vertical-rl rtl column-reverse wrap
+PASS
+vertical-rl rtl column-reverse wrap-reverse
+PASS
+vertical-lr ltr row wrap
+PASS
+vertical-lr ltr row wrap-reverse
+PASS
+vertical-lr rtl row wrap
+PASS
+vertical-lr rtl row wrap-reverse
+PASS
+vertical-lr ltr column wrap
+PASS
+vertical-lr ltr column wrap-reverse
+PASS
+vertical-lr rtl column wrap
+PASS
+vertical-lr rtl column wrap-reverse
+PASS
+vertical-lr ltr row-reverse wrap
+PASS
+vertical-lr ltr row-reverse wrap-reverse
+PASS
+vertical-lr rtl row-reverse wrap
+PASS
+vertical-lr rtl row-reverse wrap-reverse
+PASS
+vertical-lr ltr column-reverse wrap
+PASS
+vertical-lr ltr column-reverse wrap-reverse
+PASS
+vertical-lr rtl column-reverse wrap
+PASS
+vertical-lr rtl column-reverse wrap-reverse
+PASS

@@ -1,0 +1,316 @@
+<html>
+<head>
+    <style>
+        * { margin: 0; padding:0;}
+        #MatchesCase, #FailCase, #compiledSelector, .arrow, .compilationArrow, .htmlMatchingInputArrow, .headMatchingInputArrow, .bodyMatchingInputArrow, .navMatchingInputArrow, .articleMatchingInputArrow, .headerMatchingInputArrow, .sectionMatchingInputArrow {
+            opacity: 0;
+        }
+    
+        @-webkit-keyframes building-binary-animation {
+            from { opacity:0; }
+            to { opacity:1; }
+        }
+        @keyframes building-binary-animation {
+            from { opacity:0; }
+            to { opacity:1; }
+        }
+        .animated #compiledSelector {
+            -webkit-animation-name: building-binary-animation;
+            -webkit-animation-duration: 2s;
+            animation-name: input-arrows-animation;
+            animation-duration: 2s;
+            opacity:1;
+        }
+        @keyframes compilation-arrow-animation {
+            5% { opacity:1; }
+            95% { opacity:1; }
+        }
+        @-webkit-keyframes compilation-arrow-animation {
+            5% { opacity:1; }
+            95% { opacity:1; }
+        }
+        .animated .compilationArrow {
+            -webkit-animation-name: compilation-arrow-animation;
+            -webkit-animation-duration: 2s;
+            animation-name: input-arrows-animation;
+            animation-duration: 2s;
+        }
+        @-webkit-keyframes compilation-gear-animation {
+            5% { -webkit-transform: rotate(0); }
+            95% { -webkit-transform: rotate(30deg); -webkit-animation-timing-function: step-start; }
+        }
+        @keyframes compilation-gear-animation {
+            5% { transform: rotate(0); }
+            95% { transform: rotate(30deg); animation-timing-function: step-start; }
+        }
+        .animated #CompileGear {
+            -webkit-transform-origin: center;
+            -webkit-animation-name: compilation-gear-animation;
+            -webkit-animation-duration: 2s;
+            transform-origin: center;
+            animation-name: work-in-progress-animation;
+            animation-duration: 2s;
+            /* transform-origin behave completly randomly with Gecko :( */
+            -moz-animation-name:none;
+        }
+        @-webkit-keyframes work-in-progress-animation {
+            5% { -webkit-transform: rotate(0); }
+            95% { -webkit-transform: rotate(30deg); -webkit-animation-timing-function: step-start; }
+        }
+        @keyframes work-in-progress-animation {
+            5% { transform: rotate(0); }
+            95% { transform: rotate(30deg); animation-timing-function: step-start; }
+        }
+        .animated #WorkGear {
+            -webkit-transform-origin: center;
+            -webkit-animation-name: work-in-progress-animation;
+            -webkit-animation-duration: 0.25s;
+            -webkit-animation-iteration-count: 7;
+            -webkit-animation-delay: 2s;
+            transform-origin: center;
+            animation-name: work-in-progress-animation;
+            animation-duration: 0.25s;
+            animation-iteration-count: 7;
+            animation-delay: 2s;
+            /* transform-origin behave completly randomly with Gecko :( */
+            -moz-animation-name:none;
+            -moz-transform-origin: 486px 647px;
+        }
+        @-webkit-keyframes input-arrows-animation {
+            5% { opacity:1; }
+            75% { opacity:1; }
+            80% { opacity:0; }
+        }
+        @keyframes input-arrows-animation {
+            5% { opacity:1; }
+            75% { opacity:1; }
+            80% { opacity:0; }
+        }
+        .animated .arrow {
+            -webkit-animation-name: input-arrows-animation;
+            -webkit-animation-duration: 0.25s;
+            animation-name: input-arrows-animation;
+            animation-duration: 0.25s;
+        }
+        .animated .htmlMatchingInputArrow {
+            -webkit-animation-delay: 2s;
+            animation-delay: 2s;
+        }
+        .animated .headMatchingInputArrow {
+            -webkit-animation-delay: 2.25s;
+            animation-delay: 2.25s;
+        }
+        .animated .bodyMatchingInputArrow {
+            -webkit-animation-delay: 2.5s;
+            animation-delay: 2.5s;
+        }
+        .animated .navMatchingInputArrow {
+            -webkit-animation-delay: 2.75s;
+            animation-delay: 2.75s;
+        }
+        .animated .articleMatchingInputArrow {
+            -webkit-animation-delay: 3s;
+            animation-delay: 3s;
+        }
+        .animated .headerMatchingInputArrow {
+            -webkit-animation-delay: 3.25s;
+            animation-delay: 3.25s;
+        }
+        .animated .sectionMatchingInputArrow {
+            -webkit-animation-delay: 3.5s;
+            animation-delay: 3.5s;
+        }
+        @-webkit-keyframes output-animation {
+            75% { opacity:0; }
+            80% { opacity:1; }
+            95% { opacity:1; }
+        }
+        @keyframes output-animation {
+            75% { opacity:0; }
+            80% { opacity:1; }
+            95% { opacity:1; }
+        }
+        
+        .animated #FailCase {
+            -webkit-animation-name: output-animation;
+            -webkit-animation-duration: 0.25s;
+            -webkit-animation-iteration-count: 6;
+            -webkit-animation-delay: 2s;
+            animation-name: output-animation;
+            animation-duration: 0.25s;
+            animation-iteration-count: 6;
+            animation-delay: 2s;
+        }
+        .animated #MatchesCase {
+            -webkit-animation-name: output-animation;
+            -webkit-animation-duration: 0.25s;
+            -webkit-animation-delay: 3.5s;
+            animation-name: output-animation;
+            animation-duration: 0.25s;
+            animation-delay: 3.5s;
+        }
+    
+    .clickToStart {
+        width: 400px;
+        background-color: rgba(0, 0, 0, 0.75);
+        position: absolute;
+        padding: 10px;
+        border-radius:25px;
+        text-align:center;
+        font-size: 18pt;
+        top: 50%;
+        left: 107px;
+        color:white;
+        cursor:hand;
+    }
+    </style>
+</head>
+<body>
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="18 70 588 613" width="614px" height="587px">
+        <defs>
+            <font-face font-family="Helvetica" font-size="12" units-per-em="1000" underline-position="-75.683594" underline-thickness="49.316406" slope="0" x-height="522.94922" cap-height="717.28516" ascent="770.01953" descent="-229.98047" font-weight="500">
+                <font-face-src><font-face-name name="Helvetica" /></font-face-src>
+            </font-face>
+            <font-face font-family="Helvetica Neue" font-size="22" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.99585" descent="-212.99744"
+            font-weight="500">
+                <font-face-src><font-face-name name="HelveticaNeue" /></font-face-src>
+            </font-face>
+            <font-face font-family="Helvetica" font-size="18" units-per-em="1000" underline-position="-75.683594" underline-thickness="49.316406" slope="0" x-height="522.94922" cap-height="717.28516" ascent="770.01953" descent="-229.98047" font-weight="500">
+                <font-face-src><font-face-name name="Helvetica" /></font-face-src>
+            </font-face>
+            <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker" viewBox="-1 -3 7 6" markerWidth="7" markerHeight="6" color="black">
+                <g>
+                    <path d="M 4.8 0 L 0 -1.8 L 0 1.8 Z" fill="currentColor" stroke="currentColor" stroke-width="1" />
+                </g>
+            </marker>
+            <font-face font-family="Helvetica" font-size="16" units-per-em="1000" underline-position="-75.683594" underline-thickness="49.316406" slope="0" x-height="522.94922" cap-height="717.28516" ascent="770.01953" descent="-229.98047" font-weight="500">
+                <font-face-src><font-face-name name="Helvetica" /></font-face-src>
+            </font-face>
+            <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker_2" viewBox="-1 -3 7 6" markerWidth="7" markerHeight="6" color="#992727">
+                <g>
+                    <path d="M 4.8 0 L 0 -1.8 L 0 1.8 Z" fill="currentColor" stroke="currentColor" stroke-width="1" />
+                </g>
+            </marker>
+            <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="FilledArrow_Marker_3" viewBox="-1 -3 7 6" markerWidth="7" markerHeight="6" color="#218041">
+                <g>
+                    <path d="M 4.8 0 L 0 -1.8 L 0 1.8 Z" fill="currentColor" stroke="currentColor" stroke-width="1" />
+                </g>
+            </marker>
+            <font-face font-family="Helvetica" font-size="22" units-per-em="1000" underline-position="-75.683594" underline-thickness="49.316406" slope="0" x-height="522.94922" cap-height="717.28516" ascent="770.01953" descent="-229.98047" font-weight="500">
+                <font-face-src><font-face-name name="Helvetica" /></font-face-src>
+            </font-face>
+        </defs>
+        <g stroke="none" stroke-dasharray="none" fill="none">
+            <g transform="scale(0.35) translate(875, 95)">
+                <path id="CompileGear" d="m469.34 451.62-8.125 46.281 0.0313 0.031c-9.9316 1.6228-19.54 4.2238-28.719 7.6875v-0.031l-30.156-36.031-28.344 16.375 16.094 44.125 0.0624 0.031c-7.6842 6.3076-14.727 13.375-21.031 21.063l-0.0312-0.094-44.125-16.094-16.375 28.344 36.031 30.188c-3.458 9.1707-6.0358 18.765-7.6562 28.688l-0.0313-0.031-46.281 8.125v32.75l46.281 8.125 0.0313-0.031c1.6203 9.9223 4.1982 19.517 7.6562 28.688l-36.031 30.188 16.375 28.344 44.125-16.094 0.0312-0.094c6.3041 7.687 13.347 14.755 21.031 21.062l-0.0624 0.031-16.094 44.125 28.344 16.375 30.156-36.031v-0.0312c9.1783 3.4637 18.787 6.0647 28.719 7.6875l-0.0313 0.031 8.125 46.281h32.719l8.125-46.281-0.0312-0.031c9.9296-1.6184 19.541-4.1977 28.719-7.6563l30.187 36.031 28.344-16.375-16.125-44.125c7.6669-6.2915 14.706-13.335 21-21l44.156 16.094 16.344-28.344-36-30.188c3.4588-9.1719 6.0668-18.764 7.6875-28.688l46.281-8.0937v-32.75l-46.281-8.125c-1.621-9.9131-4.2322-19.494-7.6875-28.656l36-30.188-16.344-28.344-44.156 16.094c-6.2938-7.6652-13.333-14.708-21-21l16.125-44.125-28.344-16.375-30.187 36.031c-9.1775-3.4583-18.789-6.0378-28.719-7.6562l0.0312-0.031-8.125-46.281h-32.719zm16.375 79.688c63.71 0 115.38 51.634 115.38 115.34 0 63.71-51.665 115.34-115.38 115.34-63.71 0-115.34-51.634-115.34-115.34 0-63.71 51.634-115.34 115.34-115.34z" fill="#e0e0e0"/>
+            </g>
+            <g>
+                <ellipse cx="150.644495" cy="290.25" rx="29.144542" ry="24.250039" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+                <text transform="translate(132.3289 283.25)" fill="black">
+                    <tspan font-family="Helvetica" font-size="12" font-weight="500" x="6.9806354" y="11" textLength="22.669922">html</tspan>
+                </text>
+                <ellipse cx="76.144495" cy="388.25" rx="29.144542" ry="24.250039" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+                <text transform="translate(57.8289 381.25)" fill="black">
+                    <tspan font-family="Helvetica" font-size="12" font-weight="500" x="4.96794" y="11" textLength="26.695312">head</tspan>
+                </text>
+                <ellipse cx="183.1445" cy="388.25" rx="29.144542" ry="24.250039" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+                <text transform="translate(164.8289 381.25)" fill="black">
+                    <tspan font-family="Helvetica" font-size="12" font-weight="500" x="5.304854" y="11" textLength="26.021484">body</tspan>
+                </text>
+                <line x1="135.061325" y1="310.74867" x2="91.727665" y2="367.75133" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+                <line x1="158.39821" y1="313.63042" x2="175.39078" y2="364.86958" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+                <ellipse cx="130.18356" cy="487.75" rx="29.144542" ry="24.250039" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+                <text transform="translate(111.86796 480.75)" fill="black">
+                    <tspan font-family="Helvetica" font-size="12" font-weight="500" x="8.641768" y="11" textLength="19.347656">nav</tspan>
+                </text>
+                <ellipse cx="233.18356" cy="490.25" rx="29.144542" ry="24.250039" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+                <text transform="translate(214.86796 483.25)" fill="black">
+                    <tspan font-family="Helvetica" font-size="12" font-weight="500" x="2.3107135" y="11" textLength="32.009766">article</tspan>
+                </text>
+                <ellipse cx="136.53906" cy="568.75" rx="35.500057" ry="24.250039" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+                <text transform="translate(113.13906 561.75)" fill="black">
+                    <tspan font-family="Helvetica" font-size="12" font-weight="500" x="4.7173828" y="11" textLength="37.365234">header</tspan>
+                </text>
+                <ellipse cx="213.5" cy="566.75" rx="35.500057" ry="24.250039" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+                <text transform="translate(190.1 559.75)" fill="black">
+                    <tspan font-family="Helvetica" font-size="12" font-weight="500" x="4.3892578" y="11" textLength="38.021484">section</tspan>
+                </text>
+                <line x1="171.3394" y1="410.42874" x2="141.98865" y2="465.57126" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+                <line x1="194.16163" y1="410.7074" x2="222.16642" y2="467.7926" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+                <line x1="212.32857" y1="507.18958" x2="159.38946" y2="550.18964" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+                <line x1="227.08153" y1="513.96547" x2="219.64588" y2="542.86407" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+                <line x1="253.83015" y1="507.36535" x2="301.03906" y2="546.5" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+                <line x1="301.03906" y1="546.5" x2="331.0039" y2="572.6914" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="1,4" />
+                <line x1="249.6333" y1="510.27333" x2="279.39453" y2="546.5" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+                <line x1="242.80672" y1="513.14585" x2="256.32805" y2="545.3164" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+                <line x1="256.32805" y1="545.3164" x2="269.04297" y2="574.0586" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="1,4" />
+                <line x1="279.39453" y1="546.5" x2="300.27344" y2="571.11328" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="1,4" />
+                <line x1="73.34009" y1="412.38817" x2="67.34375" y2="464" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+                <line x1="65.847823" y1="410.94252" x2="42" y2="463.5" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+                <line x1="114.33451" y1="508.10675" x2="86" y2="544.5" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+                <line x1="107.61227" y1="503.0939" x2="57" y2="537.5" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+                <line x1="125.923996" y1="591.8957" x2="101.03906" y2="646.15625" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+                <line x1="142.44099" y1="592.66447" x2="155.62891" y2="646.10156" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+                <line x1="205.9535" y1="590.44877" x2="188.78899" y2="644.35156" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+                <line x1="219.53639" y1="590.6489" x2="232.61719" y2="642.4375" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+                <line x1="227.25017" y1="589.114" x2="261.28899" y2="644.47656" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+                <line x1="233.18122" y1="586.93766" x2="289.40234" y2="644.60547" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+                <line x1="42" y1="463.5" x2="33" y2="483.39844" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="1,4" />
+                <line x1="67" y1="466" x2="65" y2="484.5" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="1,4" />
+                <line x1="57" y1="537.5" x2="25" y2="558.5" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="1,4" />
+                <line x1="86" y1="544.5" x2="63" y2="574.5" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="1,4" />
+                <line x1="101.03906" y1="646.15625" x2="87.5" y2="675.51562" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="1,4" />
+                <line x1="155.62891" y1="646.10156" x2="160.63672" y2="672.52734" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="1,4" />
+                <line x1="188.78899" y1="644.35156" x2="182.94531" y2="672.04297" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="1,4" />
+                <line x1="232.61719" y1="642.4375" x2="239.16406" y2="668.14062" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="1,4" />
+                <line x1="261.28899" y1="644.47656" x2="276.6289" y2="669.4883" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="1,4" />
+                <line x1="289.40234" y1="644.60547" x2="316.00781" y2="670.1797" stroke="#1d5aab" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="1,4" />
+                <text transform="translate(342.24942 80.5)" fill="black">
+                    <tspan font-family="Helvetica Neue" font-size="22" font-weight="500" x=".161" y="21" textLength="249.678">article &gt; header + section</tspan>
+                </text>
+                <g id="compiledSelector">
+                    <rect x="411.58425" y="434" width="130.33033" height="56.75" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+                    <g transform="translate(428, 399) scale(0.10)">
+                        <path id="WorkGear" d="m469.34 451.62-8.125 46.281 0.0313 0.031c-9.9316 1.6228-19.54 4.2238-28.719 7.6875v-0.031l-30.156-36.031-28.344 16.375 16.094 44.125 0.0624 0.031c-7.6842 6.3076-14.727 13.375-21.031 21.063l-0.0312-0.094-44.125-16.094-16.375 28.344 36.031 30.188c-3.458 9.1707-6.0358 18.765-7.6562 28.688l-0.0313-0.031-46.281 8.125v32.75l46.281 8.125 0.0313-0.031c1.6203 9.9223 4.1982 19.517 7.6562 28.688l-36.031 30.188 16.375 28.344 44.125-16.094 0.0312-0.094c6.3041 7.687 13.347 14.755 21.031 21.062l-0.0624 0.031-16.094 44.125 28.344 16.375 30.156-36.031v-0.0312c9.1783 3.4637 18.787 6.0647 28.719 7.6875l-0.0313 0.031 8.125 46.281h32.719l8.125-46.281-0.0312-0.031c9.9296-1.6184 19.541-4.1977 28.719-7.6563l30.187 36.031 28.344-16.375-16.125-44.125c7.6669-6.2915 14.706-13.335 21-21l44.156 16.094 16.344-28.344-36-30.188c3.4588-9.1719 6.0668-18.764 7.6875-28.688l46.281-8.0937v-32.75l-46.281-8.125c-1.621-9.9131-4.2322-19.494-7.6875-28.656l36-30.188-16.344-28.344-44.156 16.094c-6.2938-7.6652-13.333-14.708-21-21l16.125-44.125-28.344-16.375-30.187 36.031c-9.1775-3.4583-18.789-6.0378-28.719-7.6562l0.0312-0.031-8.125-46.281h-32.719zm16.375 79.688c63.71 0 115.38 51.634 115.38 115.34 0 63.71-51.665 115.34-115.38 115.34-63.71 0-115.34-51.634-115.34-115.34 0-63.71 51.634-115.34 115.34-115.34z" fill="#e0e0e0"/>
+                    </g>
+                    <text transform="translate(416.58425 451.375)" fill="black">
+                        <tspan font-family="Helvetica" font-size="18" font-weight="500" x="6.6441677" y="18" textLength="107.04199">Native Binary</tspan>
+                    </text>
+                </g>
+                <line class="arrow htmlMatchingInputArrow" x1="175.26025" y1="303.2427" x2="411.5823" y2="427.97843" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+                <line class="arrow headMatchingInputArrow" x1="105.28899" y1="387.5" x2="398.9386" y2="446.69073" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+                <line class="arrow bodyMatchingInputArrow" x1="212.28899" y1="390.5" x2="399.13581" y2="441.2812" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+                <line class="arrow navMatchingInputArrow" x1="159.21656" y1="485.62425" x2="398.7187" y2="468.08829" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+                <line class="arrow articleMatchingInputArrow" x1="262.05781" y1="486.94547" x2="398.76791" y2="471.29963" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+                <line class="arrow headerMatchingInputArrow" x1="168.827" y1="558.6544" x2="399.27207" y2="486.60017" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+                <line class="arrow sectionMatchingInputArrow" x1="244.2105" y1="554.57368" x2="399.59243" y2="492.96675" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+                <g id="FailCase">
+                    <path d="M 407.24942 601.5 L 446.74942 601.5 C 460.55654 601.5 471.74942 612.69288 471.74942 626.5 L 471.74942 633.25 C 471.74942 647.0571 460.55654 658.25 446.74942 658.25 L 407.24942 658.25 C 393.4423 658.25 382.24942 647.0571 382.24942 633.25 L 382.24942 626.5 C 382.24942 612.69288 393.4423 601.5 407.24942 601.5 Z"
+                stroke="#992727" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" />
+                    <text transform="translate(387.24942 620.375)" fill="#992727">
+                        <tspan font-family="Helvetica" font-size="16" font-weight="500" fill="#992727" x="26.859375" y="15" textLength="25.78125">Fail</tspan>
+                    </text>
+                    <line x1="468.32162" y1="490.75" x2="439.54565" y2="587.63393" marker-end="url(#FilledArrow_Marker_2)" stroke="#992727" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+                </g>
+                <g id="MatchesCase">
+                    <path d="M 532.74942 601.5 L 572.24942 601.5 C 586.05654 601.5 597.24942 612.69288 597.24942 626.5 L 597.24942 633.25 C 597.24942 647.0571 586.05654 658.25 572.24942 658.25 L 532.74942 658.25 C 518.9423 658.25 507.74942 647.0571 507.74942 633.25 L 507.74942 626.5 C 507.74942 612.69288 518.9423 601.5 532.74942 601.5 Z"
+                stroke="#218041" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" />
+                    <text transform="translate(512.74942 620.375)" fill="#218041">
+                        <tspan font-family="Helvetica" font-size="16" font-weight="500" fill="#218041" x="9.515625" y="15" textLength="60.46875">Match</tspan>
+                    </text>
+                    <line x1="489.5817" y1="490.75" x2="533.6732" y2="588.24608" marker-end="url(#FilledArrow_Marker_3)" stroke="#218041" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+                </g>
+                <rect x="377.31177" y="186" width="198.87529" height="146.5" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+                <text transform="translate(382.31177 246.25)" fill="black">
+                    <tspan font-family="Helvetica" font-size="22" font-weight="500" fill="black" x="6.6148915" y="21" textLength="81.898438">CSS JIT</tspan>
+                    <tspan font-family="Helvetica" font-size="22" font-weight="500" fill="black" x="88.12661" y="21" textLength="94.13379">Compiler</tspan>
+                </text>
+                <line class="compilationArrow" x1="476.24942" y1="118.14453" x2="476.24942" y2="173.1" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+                <line class="compilationArrow" x1="476.74942" y1="332.5" x2="476.74942" y2="421.1" marker-end="url(#FilledArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+            </g>
+        </g>
+    </svg>
+    <script defer async src="clicktostart.js"></script>
+</body>
+
+</html>

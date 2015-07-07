@@ -1,0 +1,18 @@
+<html>
+<head>
+<style>
+#square
+{
+    height: 64px;
+    width: 64px;
+    margin-top: 3em;
+    background: red url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAIAAAAlC+aJAAAAAXNSR0IArs4c6QAAAE1JREFUaN7tz0ENAAAIBKDT/p21gX83aEBl8lonAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgK3BVGGAX99FLDRAAAAAElFTkSuQmCC') no-repeat fixed
+}
+</style>
+</head>
+<body>
+<p>This tests that fixed background images are ignored on a page with no fixed positioned elements. If the square (below) is green, then the test PASSED.</p>
+<p>Note, we expect this test to fail on all ports that have not compiled with FAST_MOBILE_SCROLLING enabled.</p>
+<div id="square">&nbsp;</div>
+</body>
+</html>

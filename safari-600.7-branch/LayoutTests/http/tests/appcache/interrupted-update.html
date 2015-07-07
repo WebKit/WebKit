@@ -1,0 +1,76 @@
+<html manifest="resources/interrupted-update.manifest">
+<p>Test that an application cache update works again after interruption.</p>
+<pre id=log></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(msg)
+{
+    document.getElementById("log").innerHTML += msg + "\n";
+}
+
+var haveReloaded = localStorage.getItem("appcache-interrupted-update-reloaded") == "YES";
+localStorage.removeItem("appcache-interrupted-update-reloaded");
+
+if (haveReloaded)
+    log("Reloaded");
+
+function onchecking()
+{
+    log("CHECKING");
+}
+
+function ondownloading()
+{
+    log("DOWNLOADING");
+}
+
+function onprogress(event)
+{
+    log("PROGRESS " + event.loaded + "/" + event.total);
+
+    if (!haveReloaded && event.loaded == 2) {
+        localStorage.setItem("appcache-interrupted-update-reloaded", "YES");
+        console.log("Reloading...");
+        window.location.reload();
+    }
+}
+
+function onnoupdate()
+{
+    log("NOUPDATE");
+    log("\nFAIL - the cache was already present, so we couldn't test initial loading");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function oncached()
+{
+    log("CACHED");
+    log("\nPASS");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function onerror()
+{
+    log("ERROR");
+    log("\nFAIL");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+
+applicationCache.addEventListener('checking', onchecking, false);
+applicationCache.addEventListener('downloading', ondownloading, false);
+applicationCache.addEventListener('progress', onprogress, false);
+applicationCache.addEventListener('noupdate', onnoupdate, false);
+applicationCache.addEventListener('cached', oncached, false);
+applicationCache.addEventListener('error', onerror, false);
+
+</script>
+
+</html>

@@ -1,0 +1,31 @@
+<html>
+<head>
+    <script type="text/javascript">
+        if (window.testRunner && window.internals) {
+            testRunner.waitUntilDone();
+            internals.settings.setFrameFlatteningEnabled(true);
+        }
+
+        function test()
+        {
+            setTimeout(function() {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0);
+        }
+    </script>
+</head>
+<body onload="test()">
+    <style>body { background-color: green; }</style>
+    <p>Test for iframe flattening. The flattening only works inside the DRT.
+    <p>This inner frame should be 400px in each direction, disregarding the
+       border, and it must not be scrollable or have scrollbars.
+
+    <p><iframe width="200px" height="200px" scrolling=auto src="data:text/html,
+        <style>body { background-color: red; }</style>
+        <body>
+            <div style='position: absolute; width: 400px; height: 400px; left: 0; top: 0px;'></div>
+        </body>
+        "></iframe>
+</body>
+</html>

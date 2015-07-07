@@ -1,0 +1,13 @@
+This test makes sure we don't hang when setting cyclic prototype values: http://bugs.webkit.org/show_bug.cgi?id=6985
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS o1.__proto__ = o3; threw exception Error: cyclic __proto__ value.
+PASS ({}).hasOwnProperty.call(o1, '__proto__') is false
+PASS ({}).hasOwnProperty.call(o1, '__proto__') is true
+PASS Object.getPrototypeOf(o1) is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

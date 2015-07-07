@@ -1,0 +1,50 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+<script>
+
+function throwException()
+{
+    new Function("return ()");
+}
+
+function handleClick()
+{
+    throwException();
+}
+
+var test = function()
+{
+    InspectorTest.startDebuggerTest(step1);
+
+    function step1()
+    {
+        DebuggerAgent.setPauseOnExceptions(WebInspector.DebuggerModel.PauseOnExceptionsState.PauseOnUncaughtExceptions);
+        InspectorTest.showScriptSource("debugger-pause-in-internal.html", step2);
+    }
+
+    function step2()  
+    {
+        InspectorTest.addResult("Script source was shown.");
+        InspectorTest.evaluateInPage("setTimeout(handleClick, 0)");
+        InspectorTest.waitUntilPaused(step3);
+    }
+
+    function step3(callFrames)
+    {
+        InspectorTest.captureStackTrace(callFrames);
+        InspectorTest.completeDebuggerTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that pause on exception in internal script does not crash.
+</p>
+
+</body>
+</html>

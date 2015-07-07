@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<script type="text/javascript">
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    function onLoad()
+    {
+        setTimeout(
+            function()
+            {
+                var content = document.getElementById("content");
+                content.scrollIntoView(true);
+
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            },
+            0);
+    }
+</script>
+
+<style>
+    #region {
+        border: 4px solid brown;
+        padding: 5px;
+        position: relative;
+        top: 800px;
+    }
+
+    #content {
+        border: 2px solid green;
+        width: 210px;
+        height: 150px;
+        padding: 3px;
+    }
+</style>
+
+<body onload="onLoad()">
+    <div id="region">
+        <div id="content">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. <span style="color:brown"><b>THE END</b></span>.
+        </div>
+    </div>
+</body>

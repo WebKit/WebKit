@@ -1,0 +1,3 @@
+Test accessing a plugin object property via HTMLEmbedElement.
+
+SUCCESS

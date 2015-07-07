@@ -1,0 +1,26 @@
+<html>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onmessage = function(evt)
+{
+    if (evt.data == "setHistoryLength") {
+        setHistoryLength();
+        return;
+    } else
+        alert("Unknown message.");
+}
+
+function setHistoryLength()
+{
+    alert("Attempting to clear parent window's history object:");
+    parent.window.history = "";
+    parent.window.postMessage("done", "*");
+}
+
+</script>
+<body>
+HELLO THERE
+</body>
+</html>

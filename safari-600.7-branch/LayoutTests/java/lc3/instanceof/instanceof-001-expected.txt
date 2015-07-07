@@ -1,0 +1,14 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion instanceof
+
+FAIL "hi" instanceof java.lang.String should be false. Threw exception ReferenceError: Can't find variable: java
+FAIL new java.lang.String("hi") instanceof java.lang.String should be true. Threw exception ReferenceError: Can't find variable: java
+FAIL new java.lang.String("hi") instanceof java.lang.Object should be true. Threw exception ReferenceError: Can't find variable: java
+FAIL java.lang.String instanceof java.lang.Class should be false. Threw exception ReferenceError: Can't find variable: java
+FAIL java.lang.Class.forName("java.lang.String") instanceof java.lang.Class should be true. Threw exception ReferenceError: Can't find variable: java
+FAIL new java.lang.Double(5.0) instanceof java.lang.Double should be true. Threw exception ReferenceError: Can't find variable: java
+FAIL new java.lang.Double(5.0) instanceof java.lang.Number should be true. Threw exception ReferenceError: Can't find variable: java
+FAIL new java.lang.Double(5.0) instanceof java.lang.Double should be true. Threw exception ReferenceError: Can't find variable: java
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

@@ -1,0 +1,225 @@
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+</head>
+<body onLoad="runTest()">
+
+<p>Checking Web Inspector protocol for the Accessibility Node Inspector.</p>
+
+<div id="examples">
+
+<script class="ex"></script>
+<script class="ex" style="display:block;"></script>
+
+<div class="ex"><div></div></div>
+
+<div role="group" class="ex">
+    <div>foo</div>
+    <span>
+        bar
+        <span role="button">baz</span>
+    </span>
+    <div></div>
+    <div></div>
+</div>
+
+<div class="ex" role="presentation"><div></div></div>
+<div class="ex"></div>
+<div class="ex" aria-hidden="true"></div>
+<span class="ex"></span>
+<span class="ex" aria-hidden="true"></span>
+
+<div role="listbox" class="ex" aria-busy="true">
+    <!-- Despite having no required option children, this is valid because it is marked as busy. -->
+    <!-- For example, waiting for a script to load its contents. -->
+</div>
+
+<!-- Full coverage of live regions in getAccessibilityPropertiesForNode_liveRegion.html. -->
+<div class="ex" role="group" aria-live="off">off</div>
+<div class="ex" role="group" aria-live="polite">polite</div>
+<div class="ex" role="group" aria-live="assertive" aria-atomic="true">assertive (and atomic)</div>
+
+<div class="ex" role="button" tabindex="0"></div>
+<div class="ex" role="button" tabindex="0" aria-disabled="true">disabled</div>
+<div class="ex" role="button" tabindex="0" aria-pressed="true">FIXME: Pressed is false. Expected true. http://webkit.org/b/129830</div>
+<div class="ex" role="button" tabindex="0" aria-pressed="false">Not Pressed.</div>
+<button class="ex"></button>
+<input class="ex" type="button">
+
+<!-- FIXME: Inputs missing parentNodeId http://webkit.org/b/130181 -->
+<input class="ex">
+<input class="ex" required>
+
+<!-- Note: These correctly report childNodeIds.length of 1 b/c of their shadow DOM tree. See http://webkit.org/b/130302 -->
+<input class="ex" aria-required="true" value="required">
+<input class="ex" aria-invalid="spelling" value="invalid spelling">
+<input class="ex" aria-invalid="foo" value="fake value will eval to true">
+<input class="ex" readonly value="readonly">
+
+<div class="ex" role="textbox" tabindex="0" aria-readonly="true">readonly</div>
+<input class="ex" disabled value="disabled">
+<div class="ex" role="textbox" tabindex="0" aria-disabled="true">disabled</div>
+
+<input class="ex" type="checkbox">
+<input class="ex" type="checkbox" checked>
+<div class="ex" role="checkbox">unchecked (checked undefined evals to false on checkbox)</div>
+<div class="ex" role="checkbox" aria-checked="true">checked</div>
+<div class="ex" role="checkbox" aria-checked="mixed">mixed</div>
+<div class="ex" role="checkbox" aria-checked="false">unchecked</div>
+
+<input class="ex" type="radio">
+<input class="ex" type="radio" checked>
+<div class="ex" role="radio">unchecked (checked undefined evals to false on radio)</div>
+<div class="ex" role="radio" aria-checked="true">checked</div>
+<div class="ex" role="radio" aria-checked="mixed">unchecked [sic] mixed state will not be exposed on radios per ARIA spec.</div>
+<div class="ex" role="radio" aria-checked="false">unchecked</div>
+
+<input class="ex" aria-hidden="true">
+<input class="ex" style="display:none;">
+
+<!-- FIXME: Images missing parentNodeId http://webkit.org/b/130181 -->
+<img class="ex" src="./404.gif"><!-- img:not([alt]) ignored if it does not load.  -->
+<img class="ex" src="data:image/gif;base64,R0lGODlhEAARAJECAOHh4UpKSgAAAAAAACH5BAEAAAIALAAAAAAQABEAAAIllB8Zx63b4otSUWcvyuz5D4biSD7AiZroWSXa5r7CJNOvra1RAQA7">
+<img class="ex" src="data:image/gif;base64,R0lGODlhEAARAJECAOHh4UpKSgAAAAAAACH5BAEAAAIALAAAAAAQABEAAAIllB8Zx63b4otSUWcvyuz5D4biSD7AiZroWSXa5r7CJNOvra1RAQA7" alt="">
+<img class="ex" src="data:image/gif;base64,R0lGODlhEAARAJECAOHh4UpKSgAAAAAAACH5BAEAAAIALAAAAAAQABEAAAIllB8Zx63b4otSUWcvyuz5D4biSD7AiZroWSXa5r7CJNOvra1RAQA7" alt="x">
+<img class="ex" src="data:image/gif;base64,R0lGODlhEAARAJECAOHh4UpKSgAAAAAAACH5BAEAAAIALAAAAAAQABEAAAIllB8Zx63b4otSUWcvyuz5D4biSD7AiZroWSXa5r7CJNOvra1RAQA7" alt="x" aria-hidden="true">
+<img class="ex" src="data:image/gif;base64,R0lGODlhEAARAJECAOHh4UpKSgAAAAAAACH5BAEAAAIALAAAAAAQABEAAAIllB8Zx63b4otSUWcvyuz5D4biSD7AiZroWSXa5r7CJNOvra1RAQA7" alt="x" style="display:none;">
+
+<select multiple id="flowedTo2">
+    <option class="ex" selected>FIXME: Selected is false. Expected true. http://webkit.org/b/129835</option>
+    <option class="ex">not selected</option>
+</select>
+
+<input class="ex" role="combobox" aria-owns="ownedlistbox invalidIdRef" aria-controls="ownedlistbox invalidIdRef">
+<div role="listbox" class="ex" id="ownedlistbox">
+    <div class="ex" role="option" aria-selected="true">selected</div>
+    <div class="ex" role="option" aria-selected="false">not selected</div>
+</div>
+
+<div role="tablist" class="ex" aria-flowto="flowedTo1 invalidIdRef flowedTo2">
+    <div class="ex" role="tab" aria-selected="true">selected</div>
+    <div class="ex" role="tab" aria-selected="false">not selected</div>
+</div>
+
+<div role="listbox" class="ex" aria-multiselectable="true">
+    <div role="option" aria-selected="true">selected</div>
+    <div role="option" aria-selected="false">not selected</div>
+    <div role="option" aria-selected="true">selected</div>
+</div>
+
+<div role="listbox" aria-busy="true">
+    <div class="ex" role="option">busy (parent)</div>
+    <div class="ex" role="option" aria-busy="true">busy (self)</div>
+</div>
+
+<ul role="tree" class="ex" id="flowedTo1" aria-activedescendant="activedescendant">
+    <li class="ex" role="treeitem" aria-expanded="true">expanded</li>
+    <li class="ex" role="treeitem" aria-expanded="false" id="activedescendant" aria-selected="true">collapsed</li>
+    <li class="ex" role="treeitem" aria-expanded="undefined">expanded</li>
+</ul>
+
+<!-- Full test of mouseEventNodeId in getAccessibilityPropertiesForNode_mouseEventNodeId.html. -->
+<div class="ex" onclick="void(0);">click</div>
+
+</div>
+
+<script type="text/javascript">
+
+function $(selector) {
+    return document.querySelectorAll(selector);
+}
+function cleanup() {
+    // Hide the test element container to avoid irrelevant output diffs on subsequent updates.
+    document.getElementById("examples").style.display = "none";
+}
+
+function test() {
+
+    var examples = [];
+    var documentNodeId = null;
+
+    function onGotDocument(response) {
+        InspectorTest.checkForError(response);
+        documentNodeId = response.result.root.nodeId;
+        InspectorTest.sendCommand("DOM.getAccessibilityPropertiesForNode", {"nodeId": documentNodeId}, onGotAccessibilityPropertiesForDocumentNode);
+    }
+
+    function onGotAccessibilityPropertiesForDocumentNode(response) {
+        InspectorTest.checkForError(response);
+        InspectorTest.log("#document");
+        logAccessibilityProperties(response.result.properties);
+        InspectorTest.log("\n");
+        InspectorTest.sendCommand("DOM.querySelectorAll", {"nodeId": documentNodeId, "selector": ".ex"}, onGotQuerySelectorAll);
+    }
+
+    function onGotQuerySelectorAll(response) {
+        InspectorTest.checkForError(response);
+        examples = response.result.nodeIds;
+        InspectorTest.log("Total elements to be tested: " + examples.length + ".");
+        loop();
+    }
+
+    function loop() {
+        if (examples.length) {
+            InspectorTest.sendCommand("DOM.getOuterHTML", {"nodeId": examples[examples.length-1]}, onGotOuterHTML);
+        } else {
+            finishTest();
+        }
+    }
+
+    function onGotOuterHTML(response) {
+        InspectorTest.checkForError(response);
+        var outerHTML = response.result.outerHTML;
+        outerHTML = outerHTML.replace(/ class="ex"/g, ""); // remove any duplicated, unnecessary class attributes
+        outerHTML = outerHTML.replace(/;base64,.*?"/, "...\""); // suppress full data URIs in output
+        InspectorTest.log("\n" + outerHTML);
+        InspectorTest.sendCommand("DOM.getAccessibilityPropertiesForNode", {"nodeId": examples[examples.length-1]}, onGotAccessibilityProperties);
+    }
+
+    function onGotAccessibilityProperties(response) {
+        InspectorTest.checkForError(response);
+        logAccessibilityProperties(response.result.properties);
+        examples.pop();
+        loop();
+    }
+
+    function logAccessibilityProperties(properties) {
+        for (var key in properties) {
+            var value = properties[key];
+            switch (key){
+            case "nodeId":
+                continue;
+            case "activeDescendantNodeId":
+            case "mouseEventNodeId":
+            case "parentNodeId":
+                if (typeof value === "number")
+                    InspectorTest.log("    " + key + ": exists");
+                break;
+            case "childNodeIds":
+            case "controlledNodeIds":
+            case "flowedNodeIds":
+            case "ownedNodeIds":
+            case "selectedChildNodeIds":
+                if (typeof value === "object" && value.length)
+                    InspectorTest.log("    " + key + ".length: " + value.length);
+                break;
+            default:
+                InspectorTest.log("    " + key + ": " + value);
+            }
+        }
+    }
+
+    function finishTest() {
+        InspectorTest.sendCommand("Runtime.evaluate", {"expression": "cleanup()"}, function(){
+            InspectorTest.completeTest();
+        });
+    }
+
+
+
+    InspectorTest.sendCommand("DOM.getDocument", {}, onGotDocument);
+
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#tests div {
+    width: 100px;
+    margin-bottom: 20px;
+    border: 1px solid #000000;
+    font: 20px/1 Ahem, sans-serif;
+}
+</style>
+</head>
+<body>
+
+<div id="tests">
+    text-align-last : start
+    <div style='text-align: start;'>X X X XXX</div>
+
+    text-align-last : end
+    <div style='text-align: end;'>X X X XXX</div>
+
+    text-align-last : left
+    <div style='text-align: left;'>X X X XXX</div>
+
+    text-align-last : right
+    <div style='text-align: right;'>X X X XXX</div>
+
+    text-align-last : center
+    <div style='text-align: center;'>X X X XXX</div>
+
+    text-align-last : justify
+    <div style='text-align: justify;'>X X X XX &nbsp;X</div>
+</div>
+
+<p>Since text-align is justify, text-align-last property should be respected,
+thus the alignment of the last line in each box should be as defined by text-align-last.</p>
+
+</body>
+</html>

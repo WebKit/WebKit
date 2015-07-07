@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Hidden overflow and regions - Expected - https://webkit.org/b/119546</title>
+		<style>
+			* {
+				font: normal 20px Times;
+			}
+			.content {
+				margin-top: 2px;
+			}
+			.region {
+				width: 60px;
+				padding: 10px 20px 30px 40px;
+				border: double 10px Gray;
+				overflow-x: hidden;
+				overflow-y: hidden;
+				background-color: #eee;
+			}
+			.innerDivToShowPadding {
+				border-width: 0px; padding: 0px; margin: 0px;
+				background-color: DarkGray;
+			}
+		</style>
+	</head>
+	<body>
+		some text
+		<div class="region" style="height: 60px">
+			<div class="content innerDivToShowPadding" style="margin-top: 2px;">
+				<span style="position:relative;top:-20px;">AAAAAAAAAAAAAAAAAAAAA</span><br/> <!-- this is too wide, it will be clipped -->
+				BBBBB<br/>
+			</div>
+		</div>
+
+		some text
+
+		<div class="region" style="height: 70px">
+			<div class="content innerDivToShowPadding">
+				CCC 
+				<span style="position:relative;left:30px;">left:30px</span>  <!-- it will be clipped to the right -->
+				<span style="position:relative;left:-50px;">CCCCC</span>  <!-- it will be clipped to the left -->
+			</div>
+		</div>
+
+		some text
+
+		<div class="region" style="height: auto">
+			<div class="content innerDivToShowPadding">
+				DDD 
+				DDDDDD  <!-- this is too wide, it will be clipped -->
+				<span style="position:relative;top:40px;left:-50px;">DDDDD</span>  <!-- it will be clipped down and to the left -->
+			</div>
+		</div>
+	</body>
+</html>

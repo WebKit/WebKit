@@ -1,0 +1,80 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x180 layerType: background only
+layer at (8,52) size 220x120
+  RenderBlock (positioned) zI: -1 {DIV} at (0,0) size 220x120 [color=#FF0000] [bgcolor=#FF0000]
+    RenderText zI: -1 {#text} at (0,0) size 101x20
+      text run at (0,0) width 101: "XXXXX"
+    RenderInline {SPAN} at (0,0) size 21x20 [color=#008000]
+      RenderText {#text} at (100,0) size 21x20
+        text run at (100,0) width 21: "X"
+    RenderText zI: -1 {#text} at (120,0) size 221x40
+      text run at (120,0) width 101: "XXXXX"
+      text run at (0,20) width 101: "XXXXX"
+    RenderInline {SPAN} at (0,0) size 21x20 [color=#008000]
+      RenderText {#text} at (100,20) size 21x20
+        text run at (100,20) width 21: "X"
+    RenderText zI: -1 {#text} at (120,20) size 221x40
+      text run at (120,20) width 101: "XXXXX"
+      text run at (0,40) width 101: "XXXXX"
+    RenderInline {SPAN} at (0,0) size 21x20 [color=#008000]
+      RenderText {#text} at (100,40) size 21x20
+        text run at (100,40) width 21: "X"
+    RenderText zI: -1 {#text} at (120,40) size 221x40
+      text run at (120,40) width 101: "XXXXX"
+      text run at (0,60) width 81: "XXXX"
+    RenderInline {SPAN} at (0,0) size 41x20 [color=#008000]
+      RenderText {#text} at (80,60) size 41x20
+        text run at (80,60) width 41: "XX"
+    RenderText zI: -1 {#text} at (120,60) size 21x20
+      text run at (120,60) width 21: "X"
+    RenderInline {SPAN} at (0,0) size 21x20 [color=#008000]
+      RenderText {#text} at (140,60) size 21x20
+        text run at (140,60) width 21: "X"
+    RenderText zI: -1 {#text} at (160,60) size 221x40
+      text run at (160,60) width 61: "XXX"
+      text run at (0,80) width 101: "XXXXX"
+    RenderInline {SPAN} at (0,0) size 21x20 [color=#008000]
+      RenderText {#text} at (100,80) size 21x20
+        text run at (100,80) width 21: "X"
+    RenderText zI: -1 {#text} at (120,80) size 221x40
+      text run at (120,80) width 101: "XXXXX"
+      text run at (0,100) width 101: "XXXXX"
+    RenderInline {SPAN} at (0,0) size 21x20 [color=#008000]
+      RenderText {#text} at (100,100) size 21x20
+        text run at (100,100) width 21: "X"
+    RenderText zI: -1 {#text} at (120,100) size 101x20
+      text run at (120,100) width 101: "XXXXX"
+layer at (0,0) size 800x180 layerType: foreground only
+  RenderBlock {HTML} at (0,0) size 800x180
+    RenderBody {BODY} at (8,16) size 784x156
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 310x19
+          text run at (0,0) width 310: "Test passes if there is no red visible on the page."
+layer at (8,52) size 220x120
+  RenderBlock (relative positioned) {DIV} at (0,36) size 220x120 [color=#008000]
+layer at (8,52) size 220x120
+  RenderBlock {DIV} at (0,0) size 220x120
+    RenderText {#text} at (0,0) size 101x80
+      text run at (0,0) width 101: "XXXXX"
+      text run at (0,20) width 101: "XXXXX"
+      text run at (0,40) width 101: "XXXXX"
+      text run at (0,60) width 61: "XXX"
+    RenderBlock (floating) {SPAN} at (60,80) size 40x40
+      RenderText {#text} at (0,0) size 41x40
+        text run at (0,0) width 21: "X"
+        text run at (0,20) width 41: "XX"
+    RenderText {#text} at (0,120) size 101x120
+      text run at (0,120) width 61: "XXX"
+      text run at (0,140) width 101: "XXXXX"
+      text run at (0,160) width 101: "XXXXX"
+      text run at (0,180) width 101: "XXXXX"
+      text run at (0,200) width 101: "XXXXX"
+      text run at (0,220) width 61: "XXX"
+    RenderBlock (floating) {SPAN} at (0,240) size 40x40
+      RenderText {#text} at (0,0) size 41x40
+        text run at (0,0) width 21: "X"
+        text run at (0,20) width 41: "XX"
+    RenderText {#text} at (0,280) size 101x40
+      text run at (0,280) width 61: "XXX"
+      text run at (0,300) width 101: "XXXXX"

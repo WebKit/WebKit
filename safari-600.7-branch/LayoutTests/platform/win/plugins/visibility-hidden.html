@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        function loaded() {
+            var elementsToHide = document.getElementsByClassName('hide_soon');
+            for (var i = 0; i < elementsToHide.length; ++i)
+                elementsToHide[i].style.visibility = 'hidden';
+
+            var elementsToShow = document.getElementsByClassName('show_soon');
+            for (var i = 0; i < elementsToShow.length; ++i)
+                elementsToShow[i].style.visibility = 'visible';
+        }
+
+        if (window.testRunner)
+            testRunner.dumpAsText(true);
+        addEventListener('load', loaded, false);
+    </script>
+    <style>
+        embed {
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <p>This tests that windowed plugins are hidden by <code>visibility:hidden</code>.</p>
+
+    <p>Should be hidden:</p>
+    <ul>
+        <li><embed style="visibility:hidden" type="application/x-webkit-test-netscape" test="draws-gradient"></embed>
+        <li><embed class="hide_soon" type="application/x-webkit-test-netscape" test="draws-gradient"></embed>
+        <li><div style="visibility:hidden"><embed type="application/x-webkit-test-netscape" test="draws-gradient"></embed></div>
+        <li><div class="hide_soon"><embed type="application/x-webkit-test-netscape" test="draws-gradient"></embed></div>
+    </ul>
+
+    <p>Should be visible:</p>
+    <ul>
+        <li><embed type="application/x-webkit-test-netscape" test="draws-gradient"></embed>
+        <li><embed class="show_soon" style="visibility:hidden" type="application/x-webkit-test-netscape" test="draws-gradient"></embed>
+        <li><div class="show_soon" style="visibility:hidden"><embed type="application/x-webkit-test-netscape" test="draws-gradient"></embed></div>
+    </ul>
+</body>
+</html>

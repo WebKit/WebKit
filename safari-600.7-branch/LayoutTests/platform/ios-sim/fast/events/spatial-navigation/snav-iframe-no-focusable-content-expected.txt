@@ -1,0 +1,7 @@
+a
+
+
+e
+FAIL document.activeElement.getAttribute("id") should be end. Was start.
+PASS document.activeElement.getAttribute("id") is "start"
+

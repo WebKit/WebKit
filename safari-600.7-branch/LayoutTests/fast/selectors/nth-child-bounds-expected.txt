@@ -1,0 +1,35 @@
+Test the boundary values of the :nth-child() selector.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.querySelectorAll("li:nth-child(0n+0)").length is 0
+PASS document.querySelectorAll("li:nth-child(-0n+0)").length is 0
+PASS document.querySelectorAll("li:nth-child(0n-0)").length is 0
+PASS document.querySelectorAll("li:nth-child(-0n-0)").length is 0
+PASS document.querySelectorAll("li:nth-child(-0n)").length is 0
+PASS document.querySelectorAll("li:nth-child(0)").length is 0
+PASS document.querySelectorAll("li:nth-child(-0)").length is 0
+PASS document.querySelectorAll("li:nth-child(-1)").length is 0
+PASS document.querySelectorAll("li:nth-child(2147483647n+2147483647)").length is 0
+PASS document.querySelectorAll("li:nth-child(2147483647n)").length is 0
+PASS document.querySelectorAll("li:nth-child(2147483647)").length is 0
+PASS document.querySelectorAll("li:nth-child(-2147483648n)").length is 0
+PASS document.querySelectorAll("li:nth-child(-2147483648)").length is 0
+PASS document.querySelectorAll("li:nth-child(2147483647n-2147483648)").length is 0
+PASS document.querySelectorAll("li:nth-child(-2147483648n+2147483647)").length is 0
+PASS document.querySelectorAll("li:nth-child(2147483648n+2147483648)").length is 0
+PASS document.querySelectorAll("li:nth-child(2147483648n)").length is 0
+PASS document.querySelectorAll("li:nth-child(2147483648)").length is 0
+PASS document.querySelectorAll("li:nth-child(3147483647n+3147483647)").length is 0
+PASS document.querySelectorAll("li:nth-child(3147483647n)").length is 0
+PASS document.querySelectorAll("li:nth-child(3147483647)").length is 0
+PASS document.querySelectorAll("li:nth-child(-2147483649n-2147483649)").length is 0
+PASS document.querySelectorAll("li:nth-child(-2147483649n)").length is 0
+PASS document.querySelectorAll("li:nth-child(-2147483649)").length is 0
+PASS allItems.length is 20
+PASS coloredCount is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,132 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 4 of BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of BODY > HTML > #document to 0 of BODY > HTML > #document toDOMRange:range from 1 of #text > BODY > HTML > #document to 1 of #text > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > BODY > HTML > #document to 1 of #text > BODY > HTML > #document toDOMRange:range from 2 of #text > BODY > HTML > #document to 2 of #text > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > B > SPAN > BODY > HTML > #document to 1 of #text > B > SPAN > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > I > B > SPAN > BODY > HTML > #document to 1 of #text > I > B > SPAN > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > I > B > SPAN > BODY > HTML > #document to 1 of #text > I > B > SPAN > BODY > HTML > #document toDOMRange:range from 2 of #text > I > B > SPAN > BODY > HTML > #document to 2 of #text > I > B > SPAN > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > I > B > SPAN > BODY > HTML > #document to 2 of #text > I > B > SPAN > BODY > HTML > #document toDOMRange:range from 3 of #text > I > B > SPAN > BODY > HTML > #document to 3 of #text > I > B > SPAN > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > I > B > SPAN > BODY > HTML > #document to 3 of #text > I > B > SPAN > BODY > HTML > #document toDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document toDOMRange:range from 2 of #text > DIV > BODY > HTML > #document to 2 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > DIV > BODY > HTML > #document to 2 of #text > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > DIV > BODY > HTML > #document to 3 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > DIV > BODY > HTML > #document to 3 of #text > DIV > BODY > HTML > #document toDOMRange:range from 4 of #text > DIV > BODY > HTML > #document to 4 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 4 of #text > DIV > BODY > HTML > #document to 4 of #text > DIV > BODY > HTML > #document toDOMRange:range from 5 of #text > DIV > BODY > HTML > #document to 5 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > DIV > BODY > HTML > #document to 5 of #text > DIV > BODY > HTML > #document toDOMRange:range from 6 of #text > DIV > BODY > HTML > #document to 6 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 6 of #text > DIV > BODY > HTML > #document to 6 of #text > DIV > BODY > HTML > #document toDOMRange:range from 7 of #text > DIV > BODY > HTML > #document to 7 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 7 of #text > DIV > BODY > HTML > #document to 7 of #text > DIV > BODY > HTML > #document toDOMRange:range from 8 of #text > DIV > BODY > HTML > #document to 8 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 8 of #text > DIV > BODY > HTML > #document to 8 of #text > DIV > BODY > HTML > #document toDOMRange:range from 2 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document toDOMRange:range from 3 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document toDOMRange:range from 2 of #text > DIV > BODY > HTML > #document to 2 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > DIV > BODY > HTML > #document to 2 of #text > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > DIV > BODY > HTML > #document to 3 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > DIV > BODY > HTML > #document to 3 of #text > DIV > BODY > HTML > #document toDOMRange:range from 4 of #text > DIV > BODY > HTML > #document to 4 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 2 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document to 2 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document to 2 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document to 3 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document to 3 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 4 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document to 4 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 4 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document to 4 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 5 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document to 5 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document to 5 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 6 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document to 6 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 6 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document to 6 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 7 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document to 7 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 7 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document to 7 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 8 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document to 8 of #text > SPAN > FONT > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 2 of SPAN > FONT > SPAN > DIV > BODY > HTML > #document to 2 of SPAN > FONT > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+123456
+line two
+
+and three   
+
+Actual HTML:
+<pre> <div class="editing" id="test"></div> </pre>
+(0, 0):
+(0, 0) length: 0
+(0, 2): 12{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Roman 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
+(0, 2) length: 2
+(1, 2): 2{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Roman 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }3{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Bold 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
+(1, 2) length: 2
+(0, 3): 12{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Roman 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }3{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Bold 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
+(0, 3) length: 3
+(0, 6): 12{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Roman 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }3{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Bold 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }456{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-BoldItalic 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
+(0, 6) length: 6
+(0, 7): 12{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Roman 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }3{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Bold 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
+(0, 7) length: 3
+(0, 31): 12{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Roman 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }3{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Bold 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }456{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-BoldItalic 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; } {}
+(0, 31) length: 7
+(0, 100): 12{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Roman 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }3{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Bold 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }456{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-BoldItalic 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; } {}
+(0, 100) length: 7
+(1, 100): 2{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Roman 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }3{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Bold 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }456{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-BoldItalic 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; } {}
+(1, 100) length: 6
+(2, 3): 3{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Bold 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }45{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-BoldItalic 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
+(2, 3) length: 3
+(5, 1): 6{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-BoldItalic 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
+(5, 1) length: 1
+(5, 2): 6{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-BoldItalic 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
+(5, 2) length: 1
+(5, 5): 6{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-BoldItalic 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; } {}lin{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Roman 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }
+(5, 5) length: 5
+(15, 14): line two{ NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Roman 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; } {}and { NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Roman 16.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=4.00"; }three   { NSColor = NSCalibratedWhiteColorSpace 0 1; NSFont = "Times-Roman 48.00 pt. S [] (0xXXXXXXXX) fobj=0xXXXXXXXX, spc=12.00"; }
+(15, 14) length: 22
+(100, 0): undefined
+(100, 100): undefined
+
+

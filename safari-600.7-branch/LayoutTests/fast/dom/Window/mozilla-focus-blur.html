@@ -1,0 +1,124 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows();
+}
+
+var originatingWindow = self;
+
+function log(passed, message) {
+    var log = document.getElementById('log');
+    var text = document.createTextNode((passed ? 'PASS: ' : 'FAIL: ') + message);
+    var br = document.createElement('br');
+    log.appendChild(text);
+    log.appendChild(br);
+}
+
+function focusShouldNotChange(action, nextTest) {
+    var w = window.open('about:blank', '', 'foo');
+    var fail = false;
+
+    function failHandler() { fail = true; }
+
+    originatingWindow.addEventListener('focus', failHandler, false);
+    w.addEventListener('blur', failHandler, false);
+
+    action(w);
+
+    originatingWindow.setTimeout(function () {
+        originatingWindow.removeEventListener('focus', failHandler, false);
+        w.removeEventListener('blur', failHandler, false);
+
+        log(!fail, 'The focus should not have been changed!');
+
+        // Cleaning and running next test.
+        w.close();
+        originatingWindow.setTimeout(nextTest, 0);
+    }, 0);
+}
+
+function focusShouldNotChange2(url, nextTest) {
+    var fail = false;
+    var w;
+    function failHandler() { fail = true; }
+
+    function msgHandler() {
+        originatingWindow.removeEventListener('message', msgHandler, false);
+        originatingWindow.removeEventListener('focus', failHandler, false);
+
+        log(!fail, 'The focus should not have been changed with URL=' + url);
+
+        // Cleaning and running next test.
+        w.close();
+        originatingWindow.setTimeout(nextTest, 0);
+    }
+    originatingWindow.addEventListener('message', msgHandler, false)
+
+    var w = window.open(url, '', 'foo');
+
+    originatingWindow.addEventListener('focus', failHandler, false);
+    w.addEventListener('blur', failHandler, false);
+}
+
+function test1() {
+    focusShouldNotChange(function (aW) { aW.blur(); }, test2);
+}
+
+function test2() {
+    focusShouldNotChange(function () { originatingWindow.focus(); }, test3);
+}
+
+function test3() {
+    focusShouldNotChange2('data:text/html,<script>opener.focus();opener.postMessage("", "*");<\/script>', test4);
+}
+
+function test4() {
+    focusShouldNotChange2('data:text/html,<script>blur();opener.postMessage("", "*");<\/script>', test5);
+}
+
+function test5()
+{
+    var w = window.open('about:blank', '', 'foo');
+    var fail = true;
+
+    function handler() { fail = false; }
+
+    w.addEventListener('focus', handler, false);
+
+    w.focus();
+
+    originatingWindow.setTimeout(function () {
+        w.removeEventListener('focus', handler, false);
+
+        log(!fail, 'The last opened window should be able to get focus');
+
+        w.close();
+        originatingWindow.setTimeout(finished, 0);
+    }, 0);
+}
+
+function finished() {
+    log(true, 'All tests finished');
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+</script>
+</head>
+<body onload='test1()'>
+<p>
+Check that window.blur() does nothing, and window.focus() only works if it is
+invoked from the window that opened the former. If the test passes, you should
+see a series of PASS messages with the last being 'All tests finished'.
+</p>
+<p>
+This test is adopted from <a href='http://mxr.mozilla.org/mozilla-aurora/source/dom/tests/mochitest/bugs/test_bug369306.html'>mozilla's tests</a>.
+</p>
+</div>
+<div id='log'></div>
+</body>
+</html>

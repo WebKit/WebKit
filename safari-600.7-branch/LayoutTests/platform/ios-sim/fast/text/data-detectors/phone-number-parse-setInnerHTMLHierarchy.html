@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../../../resources/dump-as-markup.js"></script>
+    <script type="text/javascript">
+        if (window.testRunner) {
+            Markup.waitUntilDone();
+            testRunner.setTelephoneNumberParsingEnabled(true);
+        }
+
+        window.addEventListener('load', function() {
+            if (!window.testRunner)
+                return;
+
+            var container = document.getElementById('iframe').contentDocument.getElementById('container');
+
+            container.innerHTML = '<p>Call me (308) 555 5555 please</p>';
+            Markup.description('Test that there is no phone number parsing via innerHTML');
+            Markup.dump('body', 'no phone number detection in innerHTML fragments');
+
+            container.innerHTML = '<pre>Call me (308) 555 5555 please</pre>';
+            Markup.dump('body', 'no phone number detection in <pre> in innerHTML fragments');
+
+            container.innerHTML = '<div><scr' + 'ipt type="text/javascript">print("Hello!");</scr' + 'ipt><p>Call me <!-- The phone number here should be detected --> (308) 555 5555 please.</p></div><p><!--  This is a phone number too, but it\'s inside a comment: 06 12 34 56 78  --></p>';
+            Markup.dump('body', 'no phone number detection in complex innerHTML fragments');
+
+            Markup.notifyDone();
+            testRunner.setTelephoneNumberParsingEnabled(false);
+        }, false);
+    </script>
+</head>
+<body id="body">
+    <iframe id="iframe" src="resources/phone-dynamic.html"></iframe>
+</body>
+</html>

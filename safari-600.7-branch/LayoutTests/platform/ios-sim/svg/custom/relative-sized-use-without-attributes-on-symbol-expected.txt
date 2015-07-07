@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x462
+  RenderBlock {html} at (0,0) size 800x462
+    RenderBody {body} at (8,16) size 784x438
+      RenderBlock {p} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 689x19
+          text run at (0,0) width 689: "The svg area contained in the div element (red box), should fill out the whole area with a green shaped path"
+      RenderBlock {div} at (0,36) size 402x402 [border: (1px solid #FF0000)]
+        RenderSVGRoot {svg} at (27,69) size 364x364
+          RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+            RenderSVGHiddenContainer {symbol} at (0,0) size 0x0
+              RenderSVGPath {path} at (15,59) size 137x137 [fill={[type=SOLID] [color=#008000]}] [data="M 143 103 L 143 117 C 143 130.909 112.555 142.185 75 142.185 C 37.4446 142.185 7.00001 130.909 7.00001 117 L 7 117 L 7 103 C 7 89.0906 37.4446 77.8148 75 77.8148 C 112.555 77.8148 143 89.0906 143 103 L 52 72 C 34.3123 70.6562 20.8513 55.5699 21.5237 37.8439 C 22.1961 20.118 36.7613 6.09483 54.5 6.09483 C 72.2387 6.09483 86.8039 20.118 87.4763 37.8439 C 88.1487 55.5699 74.6877 70.6562 57 72"]
+          RenderSVGContainer {use} at (27,69) size 364x364
+            RenderSVGViewportContainer {svg} at (27,69) size 364x364
+              RenderSVGPath {path} at (27,69) size 364x364 [fill={[type=SOLID] [color=#008000]}] [data="M 143 103 L 143 117 C 143 130.909 112.555 142.185 75 142.185 C 37.4446 142.185 7.00001 130.909 7.00001 117 L 7 117 L 7 103 C 7 89.0906 37.4446 77.8148 75 77.8148 C 112.555 77.8148 143 89.0906 143 103 L 52 72 C 34.3123 70.6562 20.8513 55.5699 21.5237 37.8439 C 22.1961 20.118 36.7613 6.09483 54.5 6.09483 C 72.2387 6.09483 86.8039 20.118 87.4763 37.8439 C 88.1487 55.5699 74.6877 70.6562 57 72"]
+        RenderText {#text} at (0,0) size 0x0

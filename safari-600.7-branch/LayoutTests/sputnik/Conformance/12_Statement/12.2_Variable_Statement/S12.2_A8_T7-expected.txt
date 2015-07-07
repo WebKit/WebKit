@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 78: SyntaxError: Unexpected token '>>'. Expected ';' after var declaration.
+S12.2_A8_T7
+
+PASS Expected parsing failure
+
+TEST COMPLETE
+

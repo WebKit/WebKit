@@ -1,0 +1,71 @@
+<html><body>
+<embed name="plg" type="application/x-webkit-test-netscape"></embed>
+<div id="getter">FAILURE: No exception caught on getting.</div>
+<div id="setter">FAILURE: No exception caught on setting.</div>
+<em>One could expect exceptions to be raised in the below cases, too - but Firefox doesn't
+do that in most of these (I do get an exception in the first case, but that's inconsistent with not
+getting it in the seconfd one).</em>
+<div id="getter2">No exception caught on getting via testCallback.</div>
+<div id="setter2">No exception caught on setting via testCallback.</div>
+<div id="getter3">No exception caught on getting via testGetBrowserProperty.</div>
+<div id="setter3">No exception caught on setting via testSetBrowserProperty.</div>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    var plg = document.getElementsByName("plg")[0];
+
+    // Firefox sometimes behaves inconsistently, leaving an exception dangling until the next call.
+    function sanityCheckExceptionState(logTarget)
+    {
+        try {
+            plg.testEvaluate("");
+        } catch (e) {
+            document.getElementById(logTarget).innerHTML += " Huh? Exception raised later!";
+        }
+    }
+
+    try {
+        plg.testThrowExceptionProperty;
+    } catch (e) {
+        document.getElementById('getter').innerHTML = 'SUCCESS: Exception caught: ' + e;
+    }
+    sanityCheckExceptionState("getter");
+
+    try {
+        plg.testThrowExceptionProperty = "";
+    } catch (e) {
+        document.getElementById('setter').innerHTML = 'SUCCESS: Exception caught: ' + e;
+    }
+    sanityCheckExceptionState("setter");
+
+    try {
+        plg.testEvaluate("plg.testThrowExceptionProperty");
+    } catch (e) {
+        document.getElementById('getter2').innerHTML = 'Exception caught: ' + e;
+    }
+    sanityCheckExceptionState("getter2");
+
+    try {
+        plg.testEvaluate("plg.testThrowExceptionProperty = 0");
+    } catch (e) {
+        document.getElementById('setter2').innerHTML = 'Exception caught: ' + e;
+    }
+    sanityCheckExceptionState("setter2");
+
+    try {
+        plg.testGetBrowserProperty(plg, "testThrowExceptionProperty");
+    } catch (e) {
+        document.getElementById('getter3').innerHTML = 'Exception caught: ' + e;
+    }
+    sanityCheckExceptionState("getter3");
+
+    try {
+        plg.testSetBrowserProperty(plg, "testThrowExceptionProperty", 0);
+    } catch (e) {
+        document.getElementById('setter3').innerHTML = 'Exception caught: ' + e;
+    }
+    sanityCheckExceptionState("setter3");
+</script>
+</body>
+</html>

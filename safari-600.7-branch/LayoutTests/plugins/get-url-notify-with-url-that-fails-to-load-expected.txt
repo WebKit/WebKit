@@ -1,0 +1,4 @@
+
+This tests that calling NPN_GetURLNotify on a URL that never even loads still calls NPP_URLNotify.
+
+SUCCESS

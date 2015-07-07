@@ -1,0 +1,23 @@
+Test the behavior of CanvasRenderingContext2D.setShadow() when called with different numbers of arguments.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ctx.setShadow() threw exception TypeError: Not enough arguments.
+PASS ctx.setShadow(0) threw exception TypeError: Not enough arguments.
+PASS ctx.setShadow(0, 0) threw exception TypeError: Not enough arguments.
+PASS ctx.setShadow(0, 0, 0) is undefined
+PASS ctx.setShadow(0, 0, 0, 0) is undefined
+PASS ctx.setShadow(0, 0, 0, 0, 0) is undefined
+PASS ctx.setShadow(0, 0, 0, 0, 0, 0) threw exception TypeError: Type error.
+PASS ctx.setShadow(0, 0, 0, 0, 'red') is undefined
+PASS ctx.setShadow(0, 0, 0, 0, 'red', 0) threw exception TypeError: Type error.
+PASS ctx.setShadow(0, 0, 0, 0, 'red', 0, 0) is undefined
+PASS ctx.setShadow(0, 0, 0, 0, 0, 0) threw exception TypeError: Type error.
+PASS ctx.setShadow(0, 0, 0, 0, 0, 0, 0) is undefined
+PASS ctx.setShadow(0, 0, 0, 0, 0, 0, 0, 0) is undefined
+PASS ctx.setShadow(0, 0, 0, 0, 0, 0, 0, 0, 0) threw exception TypeError: Type error.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<!--
+    This is a test reference file.
+    Test that the region paints over its sibling because regions create stacking contexts.
+    This test passes if there is no red visible.
+-->
+<html>
+<head>
+    <style>
+        #region {
+            position: relative; z-index: 0; /* regions create Stacking Contexts */
+            background-color: green;
+            width: 100px;
+            height: 100px;
+        }
+        #sibling-of-region {
+            background-color: red;
+            width: 100px;
+            height: 100px;
+            margin-top: -100px;
+        }
+    </style>
+</head>
+<body>
+    <div id="region">region</div>
+    <div id="sibling-of-region">sibling</div>
+</body>
+</html>

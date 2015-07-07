@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+[a][b]+c+d~e>ul>li span {
+    background-color:rgb(1,2,3);
+}
+</style>
+</head>
+<body>
+<div style="display:none">
+    <!-- case [a][b]+c+d~e>ul>li span -->
+    <div a b></div>
+    <c></c>
+    <d></d>
+    <div></div>
+
+    <div a></div>
+    <c></c>
+    <d></d>
+    <div></div>
+
+    <c></c>
+    <d></d>
+    <div></div>
+    <e>
+        <ul>
+            <li>
+
+                <!-- Subtree that fails, and should backtrack to the tree above. -->
+                <div a></div>
+                <c></c>
+                <d></d>
+                <div></div>
+                <c></c>
+                <d></d>
+                <div></div>
+                <e>
+                    <ul>
+                        <li>
+                            <span id="target1"></span>
+                        </li>
+                    </ul>
+                </e>
+
+            </li>
+        </ul>
+    </e>
+</div>
+</body>
+<script>
+description('The backtracking register was not taken into account when in an adjacent chain inside a backtracking descendant chain.');
+
+debug("Adjacent relations (tree modifiers), no descendant backtracking, multi-attribute match.");
+shouldBeEqualToString('getComputedStyle(document.getElementById("target1")).backgroundColor', 'rgb(1, 2, 3)');
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

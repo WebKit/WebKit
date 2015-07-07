@@ -1,0 +1,45 @@
+Tests that out of bounds accesses of SVGList correctly throw exceptions
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS svgList.getItem(index) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgList.insertItemBefore(null, index) threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
+PASS svgList.insertItemBefore(seg, index) is seg
+PASS svgList.replaceItem(seg, index) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgList.replaceItem(null, index) threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
+PASS svgList.removeItem(index) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgList.getItem(index) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgList.insertItemBefore(null, index) threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
+PASS svgList.insertItemBefore(seg, index) is seg
+PASS svgList.replaceItem(seg, index) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgList.replaceItem(null, index) threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
+PASS svgList.removeItem(index) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgList.getItem(index) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgList.insertItemBefore(null, index) threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
+PASS svgList.insertItemBefore(seg, index) is seg
+PASS svgList.replaceItem(seg, index) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgList.replaceItem(null, index) threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
+PASS svgList.removeItem(index) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgList.getItem(index) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgList.insertItemBefore(null, index) threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
+PASS svgList.insertItemBefore(seg, index) is seg
+PASS svgList.replaceItem(seg, index) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgList.replaceItem(null, index) threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
+PASS svgList.removeItem(index) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgList.getItem(index) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgList.insertItemBefore(null, index) threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
+PASS svgList.insertItemBefore(seg, index) is seg
+PASS svgList.replaceItem(seg, index) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgList.replaceItem(null, index) threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
+PASS svgList.removeItem(index) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgList.getItem(index) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgList.insertItemBefore(null, index) threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
+PASS svgList.insertItemBefore(seg, index) is seg
+PASS svgList.replaceItem(seg, index) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS svgList.replaceItem(null, index) threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
+PASS svgList.removeItem(index) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

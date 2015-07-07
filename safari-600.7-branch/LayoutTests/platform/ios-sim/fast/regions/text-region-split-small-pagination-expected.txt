@@ -1,0 +1,45 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x276
+  RenderBlock {HTML} at (0,0) size 800x276
+    RenderBody {BODY} at (8,16) size 784x244
+layer at (8,16) size 204x34
+  RenderBlock {DIV} at (0,0) size 204x34 [border: (2px solid #000000)]
+    RenderNamedFlowFragment at (2,2) size 200x30
+layer at (8,66) size 204x54
+  RenderBlock {DIV} at (0,50) size 204x54 [border: (2px solid #000000)]
+    RenderNamedFlowFragment at (2,2) size 200x50
+layer at (8,136) size 204x54
+  RenderBlock {DIV} at (0,120) size 204x54 [border: (2px solid #000000)]
+    RenderNamedFlowFragment at (2,2) size 200x50
+layer at (8,206) size 204x54
+  RenderBlock {DIV} at (0,190) size 204x54 [border: (2px solid #000000)]
+    RenderNamedFlowFragment at (2,2) size 200x50
+Named flows
+  Named flow 'flow'
+    layer at (0,0) size 200x180
+      RenderNamedFlowThread at (0,0) size 200x180
+        RenderBlock {DIV} at (0,30) size 200x120
+          RenderBlock {P} at (0,0) size 200x120
+            RenderInline {B} at (0,0) size 112x19
+              RenderText {#text} at (0,0) size 112x19
+                text run at (0,0) width 112: "Text in region 2."
+            RenderText {#text} at (111,0) size 145x39
+              text run at (111,0) width 34: " This"
+              text run at (0,20) width 100: "paragraph has \""
+            RenderInline {I} at (0,0) size 200x49
+              RenderText {#text} at (99,20) size 200x49
+                text run at (99,20) width 101: "-webkit-region-"
+                text run at (0,50) width 126: "break-after: always"
+            RenderText {#text} at (125,50) size 16x19
+              text run at (125,50) width 16: "\". "
+            RenderInline {B} at (0,0) size 182x69
+              RenderText {#text} at (140,50) size 182x69
+                text run at (140,50) width 42: "There"
+                text run at (0,70) width 169: "should be nothing in this"
+                text run at (0,100) width 143: "region after this line."
+    Regions for named flow 'flow'
+      RenderNamedFlowFragment (anonymous child of {DIV} #region1)
+      RenderNamedFlowFragment (anonymous child of {DIV} #region2)
+      RenderNamedFlowFragment (anonymous child of {DIV} #region3)
+      RenderNamedFlowFragment (anonymous child of {DIV} #region4)

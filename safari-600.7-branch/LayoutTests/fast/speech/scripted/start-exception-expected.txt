@@ -1,0 +1,36 @@
+Test getting an exception when calling start() in the Speech JavaScript API
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 'webkitSpeechRecognition' in self is true
+PASS webkitSpeechRecognition == null is false
+
+doubleStart():
+window.r = new webkitSpeechRecognition()
+PASS r.start() did not throw exception.
+PASS r.start() threw exception Error: InvalidStateError: DOM Exception 11.
+onstart
+PASS r.start() threw exception Error: InvalidStateError: DOM Exception 11.
+onaudiostart
+PASS r.start() threw exception Error: InvalidStateError: DOM Exception 11.
+onsoundstart
+PASS r.start() threw exception Error: InvalidStateError: DOM Exception 11.
+onspeechstart
+PASS r.start() threw exception Error: InvalidStateError: DOM Exception 11.
+onnomatch
+PASS r.start() threw exception Error: InvalidStateError: DOM Exception 11.
+onspeechend
+PASS r.start() threw exception Error: InvalidStateError: DOM Exception 11.
+onsoundend
+PASS r.start() threw exception Error: InvalidStateError: DOM Exception 11.
+onaudioend
+PASS r.start() threw exception Error: InvalidStateError: DOM Exception 11.
+onend
+PASS r.start() did not throw exception.
+r.abort()
+onend
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

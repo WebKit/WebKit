@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 755x26
+        RenderTableSection {TBODY} at (0,0) size 755x26
+          RenderTableRow {TR} at (0,2) size 755x22
+            RenderTableCell {TD} at (2,2) size 308x22 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 306x19
+                text run at (1,1) width 306: "The quick brown fox jumped over the lazy dog."
+            RenderTableCell {TD} at (312,2) size 441x22 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 439x19
+                text run at (1,1) width 439: "Now is the time for all good men to come to the aid of their country."

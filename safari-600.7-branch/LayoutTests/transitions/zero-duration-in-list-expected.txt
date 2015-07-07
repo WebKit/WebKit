@@ -1,0 +1,5 @@
+Tests that with a zero duration transition on top, it does not animate
+
+PASS - "left" property for "box" element at 0.25s saw something close to: 50
+PASS - "top" property for "box" element at 0.25s saw something close to: 100
+

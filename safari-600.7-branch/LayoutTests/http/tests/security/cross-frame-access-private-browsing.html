@@ -1,0 +1,46 @@
+<html>
+<head>
+    <script src="resources/cross-frame-access.js"></script>
+    <script>
+        function loaded() {
+            if (!window.testRunner) {
+                log("This test must be run in the DumpRenderTree to work.");
+                return;
+            }
+
+            testRunner.dumpAsText();
+            testRunner.dumpChildFramesAsText();
+            testRunner.waitUntilDone();
+
+            // Poll until the subframe has finished loading.
+            setTimeout(waitForFlag, 1);
+            function waitForFlag() {
+                if (!testRunner.globalFlag) {
+                    setTimeout(waitForFlag, 1);
+                    return;
+                }
+                runTest();
+            }
+        }
+
+        function runTest() {
+            var subFrame = window.frames[0];
+            testRunner.setPrivateBrowsingEnabled(true);
+
+            try {
+                log("Attempting to violate the same-origin policy with private browsing enabled.  If this succeeds the console should not log the violation.");
+                // Access the document to violate the same-origin policy.
+                var doc = subFrame.document;
+            } catch(e) {
+            }
+
+            testRunner.notifyDone();
+        }
+    </script>
+</head>
+<body onload="loaded();">
+    <p>This test checks cross-frame access security checks don't log when private browsing is enabled (rdar://problem/5394877).</p>
+    <iframe src="http://localhost:8000/security/resources/cross-frame-iframe.html"></iframe>
+    <pre id="console"></pre>
+</body>
+</html>

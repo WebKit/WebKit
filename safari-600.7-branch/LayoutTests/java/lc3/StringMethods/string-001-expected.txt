@@ -1,0 +1,31 @@
+LiveConnect 3.0 java.lang.Strings using JavaScript String methods
+
+FAIL Cannot get methods for java.lang.String: ReferenceError: Can't find variable: java
+FAIL s0 = new java.lang.String("hello"); s0.valueOf(0) +'' should be 0.0. Threw exception ReferenceError: Can't find variable: java
+FAIL s0.valueOf == String.prototype.valueOf should be false. Threw exception ReferenceError: Can't find variable: s0
+FAIL s1 = new java.lang.String("boo"); s1.toString() +'' should be boo. Threw exception ReferenceError: Can't find variable: java
+FAIL s1.toString == String.prototype.toString should be false. Threw exception ReferenceError: Can't find variable: s1
+FAIL s2 = new java.lang.String("JavaScript LiveConnect"); s2.charAt(0) should be 74. Threw exception ReferenceError: Can't find variable: java
+FAIL s2.charAt == String.prototype.charAt should be false. Threw exception ReferenceError: Can't find variable: s2
+FAIL s3 = new java.lang.String("JavaScript LiveConnect"); s3.indexOf("L") should be 11. Threw exception ReferenceError: Can't find variable: java
+FAIL s3.indexOf == String.prototype.indexOf should be false. Threw exception ReferenceError: Can't find variable: s3
+FAIL s4 = new java.lang.String("JavaScript LiveConnect"); s4.lastIndexOf("t") should be 21. Threw exception ReferenceError: Can't find variable: java
+FAIL s4.lastIndexOf == String.prototype.lastIndexOf should be false. Threw exception ReferenceError: Can't find variable: s4
+FAIL s5 = new java.lang.String("JavaScript LiveConnect"); s5.substring("11") +'' should be LiveConnect. Threw exception ReferenceError: Can't find variable: java
+FAIL s5.substring == String.prototype.substring should be false. Threw exception ReferenceError: Can't find variable: s5
+FAIL s6 = new java.lang.String("JavaScript LiveConnect"); s6.substring("15") +'' should be Connect. Threw exception ReferenceError: Can't find variable: java
+FAIL s6.substring == String.prototype.substring should be false. Threw exception ReferenceError: Can't find variable: s6
+FAIL s7 = new java.lang.String("JavaScript LiveConnect"); s7.substring(4,10) +'' should be Script. Threw exception ReferenceError: Can't find variable: java
+FAIL s7.substring == String.prototype.substring should be false. Threw exception ReferenceError: Can't find variable: s7
+FAIL s8 = new java.lang.String("JavaScript LiveConnect"); s8.toLowerCase() +'' should be javascript liveconnect. Threw exception ReferenceError: Can't find variable: java
+FAIL s8.substring == String.prototype.substring should be false. Threw exception ReferenceError: Can't find variable: s8
+FAIL s9 = new java.lang.String("JavaScript LiveConnect"); s9.toUpperCase() +'' should be JAVASCRIPT LIVECONNECT. Threw exception ReferenceError: Can't find variable: java
+FAIL s9.substring == String.prototype.substring should be false. Threw exception ReferenceError: Can't find variable: s9
+FAIL s10 = new java.lang.String("0 1 2 3 4 5 6 7 8 9"); s10.constructor should be function String() {
+    [native code]
+}. Threw exception ReferenceError: Can't find variable: java
+FAIL s10.constructor == String.prototype.constructor should be true. Threw exception ReferenceError: Can't find variable: s10
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

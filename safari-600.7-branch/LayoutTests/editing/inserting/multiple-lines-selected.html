@@ -1,0 +1,18 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<p>This tests inserting a paragraph separator into a selection that spans multiple paragraphs.  'ar' should be on the line after 'f' and the caret should be just before the 'a'.</p>
+<div id="test" contenteditable="true"><div>foo</div><div>bar</div></div>
+
+<script>
+var s = window.getSelection();
+var e = document.getElementById("test");
+
+s.setPosition(e, 0);
+s.modify("move", "forward", "character");
+s.modify("extend", "forward", "line");
+
+document.execCommand("InsertParagraph");
+
+</script>

@@ -1,0 +1,23 @@
+<body>
+<script src="../resources/magnitude-perf.js"></script>
+<script>
+    var path;
+
+    function setup(magnitude)
+    {
+        path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        var pathD = "";
+        for (var i = 0; i < magnitude; i++)
+            pathD += "M20 20Z";
+        path.setAttribute('d', pathD);
+    }
+
+    function test(magnitude)
+    {
+        path.pathSegList.appendItem(path.createSVGPathSegLinetoAbs(20, 20));
+    }
+
+    Magnitude.description("Tests that SVG path.appendItem() is constant with respect to the length of the path.");
+    Magnitude.run(setup, test, Magnitude.CONSTANT);
+</script>
+</body>

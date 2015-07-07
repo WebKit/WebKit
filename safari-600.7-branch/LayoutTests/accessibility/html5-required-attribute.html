@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+
+<input type="text" id="text1" required>
+<input type="file" id="file" required>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the required attribute is returned correctly through accessibility.");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("text1").focus();
+        shouldBeTrue("accessibilityController.focusedElement.isRequired");
+
+        document.getElementById("text1").removeAttribute("required");
+        shouldBeFalse("accessibilityController.focusedElement.isRequired");
+
+        var fileUpload = accessibilityController.accessibleElementById("file");
+        shouldBeTrue("fileUpload.isRequired");
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

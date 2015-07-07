@@ -1,0 +1,9 @@
+EXPECTED (video.currentTime == '0') OK
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EVENT(canplaythrough)
+EXPECTED (video.currentTime == '0') OK
+EVENT(play)
+EXPECTED (video.currentTime > '0') OK
+END OF TEST
+

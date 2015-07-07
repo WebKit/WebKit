@@ -1,0 +1,25 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x242
+  RenderBlock {HTML} at (0,0) size 800x242
+    RenderBody {BODY} at (8,16) size 784x128
+      RenderBlock {P} at (0,0) size 784x42 [color=#000080]
+        RenderText {#text} at (0,3) size 399x18
+          text run at (0,3) width 246: "In the following test, the purple square "
+          text run at (246,3) width 153: "should be on the left (\x{21E6}"
+        RenderImage {IMG} at (399,2) size 19x20
+        RenderText {#text} at (418,3) size 215x18
+          text run at (418,3) width 215: "), and the teal square on the right ("
+        RenderImage {IMG} at (633,2) size 19x20
+        RenderText {#text} at (652,3) size 744x39
+          text run at (652,3) width 92: "\x{21E8}) of the blue"
+          text run at (0,24) width 61: "rectangle."
+      RenderBlock {DIV} at (0,58) size 784x70
+        RenderBlock {DIV} at (16,0) size 752x70 [color=#0000FF] [bgcolor=#000080]
+          RenderImage {IMG} at (8,8) size 160x160
+          RenderImage {IMG} at (584,8) size 160x160
+          RenderText {#text} at (168,8) size 392x54
+            text run at (168,8) width 392: "Blue rectangle. Blue rectangle. Blue rectangle. Blue rectangle."
+            text run at (168,26) width 198: "Blue rectangle. Blue rectangle. "
+            text run at (366,26) width 194: "Blue rectangle. Blue rectangle."
+            text run at (168,44) width 392: "Blue rectangle. Blue rectangle. Blue rectangle. Blue rectangle."

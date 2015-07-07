@@ -1,0 +1,20 @@
+<html>
+    <head>
+        <script src="media-file.js"></script>
+        <script src="video-paint-test.js"></script>
+        <style>
+            video { width:200px; border: 3px solid red; -webkit-box-reflect: below 5px; }
+        </style>
+    </head>
+    <body>
+        <p>Test dynamic removal of transformed and reflected video </p>
+        &nbsp;<video id="one" style="-webkit-transform:rotate(20deg)"></video><br>
+        &nbsp;<video style="-webkit-transform:scale(0.5)"></video><br>
+        &nbsp;<video style="-webkit-transform:skew(20deg)"></video><br>
+        <script>
+            setSrcByTagName('video', findMediaFile('video', 'content/test'));
+            document.body.removeChild(document.getElementById('one')); document.body.offsetLeft;
+            init();
+        </script>
+    </body>
+</html>

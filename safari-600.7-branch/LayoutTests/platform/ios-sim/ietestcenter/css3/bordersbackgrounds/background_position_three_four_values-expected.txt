@@ -1,0 +1,11 @@
+layer at (0,0) size 800x688
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x688
+  RenderBlock {HTML} at (0,0) size 800x688
+    RenderBody {BODY} at (8,16) size 784x662
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 396x19
+          text run at (0,0) width 396: "Test passes if the content of the three black boxes is identical."
+      RenderBlock {DIV} at (10,36) size 298x202 [border: (5px solid #000000)]
+      RenderBlock {DIV} at (10,248) size 298x202 [border: (5px solid #000000)]
+      RenderBlock {DIV} at (10,460) size 298x202 [border: (5px solid #000000)]

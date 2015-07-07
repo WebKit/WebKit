@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<style>
+    #container {
+        width: 50vw;
+        height: 50vh;
+        border: 1px solid black;
+    }
+    #random {
+        width: 50%;
+        background-color: orange;
+    }
+</style>
+<body>
+    <div id="container">
+        <span id="firstContent">This is enough text content that it will wrap around in this container. We need lots of it to account for variances in font sizes.</span>
+        <div id="random">
+            This is some content in an inner div.
+        </div>
+        <span id="secondContent">And here is some more content that will also wrap around in this container. We need lots of it to account for variances in font sizes.</span>
+    </div>
+</body>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="resources/resize-test.js"></script>
+<script>
+description("Test viewport unit sizes work when an anonymous block is involved.");
+standardResizeTest(function () {
+    shouldBeEqualToString("getComputedStyle(container).width", innerWidth / 2 + "px");
+    shouldBeEqualToString("getComputedStyle(container).height", innerHeight / 2 + "px");
+    shouldBeEqualToString("getComputedStyle(random).width", innerWidth / 4 + "px");
+    shouldBeGreaterThanOrEqual("innerWidth / 2", "document.getElementById('firstContent').offsetWidth");
+    shouldBeGreaterThanOrEqual("innerWidth / 2", "document.getElementById('secondContent').offsetWidth");
+});
+</script>
+<script src="../../resources/js-test-post.js"></script>

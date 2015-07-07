@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<style>
+</style>
+</head>
+<body>
+<p>Test appearances of input-speech-button.</p>
+<div id="console"></div>
+
+<script>
+var parent = document.createElement('div');
+document.body.appendChild(parent);
+parent.innerHTML = '<table><tr><td id=p1><td id=p2><td id=p3></tr></table>';
+var cells = ["", "", ""];
+var maxCellCount = [7, 5, 5];
+var cellCount = 0;
+var index = 0;
+for (var size = 8; size < 24; size++) {
+    cells[index] += '<input style="font-size:' + size + 'px" value="A quick brown fox jumps over the lazy dog"><br>'
+        + '<input style="font-size:' + size + 'px" value="A quick brown fox jumps over the lazy dog" x-webkit-speech><br>';
+    if (++cellCount >= maxCellCount[index]) {
+        ++index;
+        cellCount = 0;
+    }
+}
+for (var i = 0; i < cells.length; ++i) {
+  var div = document.createElement('div');
+  div.innerHTML = cells[i];
+  document.getElementById('p' + (i + 1)).appendChild(div);
+}
+
+// Also check that setting the attribute from script renders similarly.
+var inputWithAttribute = document.createElement('input');
+document.body.appendChild(inputWithAttribute);
+inputWithAttribute.setAttribute('x-webkit-speech', 'x-webkit-speech');
+
+// Similar to above, check if removing the attribute with script renders an empty input field.
+var inputWithoutAttribute = document.createElement('input');
+inputWithoutAttribute.setAttribute('x-webkit-speech', 'x-webkit-speech');
+document.body.appendChild(inputWithoutAttribute);
+inputWithoutAttribute.removeAttribute('x-webkit-speech');
+
+</script>
+</body>
+</html>

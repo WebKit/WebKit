@@ -1,0 +1,248 @@
+<html>
+<head>
+
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function test()
+{
+    var formattedStyle;
+    var unformattedStyle;
+
+    InspectorTest.runTestSuite([
+        function initFormattedStyle(next)
+        {
+            function callback(styles)
+            {
+                if (!styles) {
+                    InspectorTest.addResult("empty styles");
+                    return;
+                }
+
+                formattedStyle = styles.matchedCSSRules[1].style;
+                next();
+            }
+
+            function nodeCallback(node)
+            {
+                WebInspector.cssModel.getMatchedStylesAsync(node.id, false, false, callback);
+            }
+            InspectorTest.selectNodeWithId("formatted", nodeCallback);
+        },
+
+        function testFormattedInsertStart(next)
+        {
+            formattedStyle.insertPropertyAt(0, "firstProperty", "firstValue", dumpFormattedAndCallNext.bind(null, next));
+        },
+
+        function testFormattedRemoveStart(next)
+        {
+            formattedStyle.allProperties[0].setText("", true, true, dumpFormattedAndCallNext.bind(null, next));
+        },
+
+        function testFormattedInsertMiddle(next)
+        {
+            formattedStyle.insertPropertyAt(1, "middleProperty", "middleValue", dumpFormattedAndCallNext.bind(null, next));
+        },
+
+        function testFormattedRemoveMiddle(next)
+        {
+            formattedStyle.allProperties[1].setText("", true, true, dumpFormattedAndCallNext.bind(null, next));
+        },
+
+        function testFormattedInsertEnd(next)
+        {
+            formattedStyle.insertPropertyAt(3, "endProperty", "endValue", dumpFormattedAndCallNext.bind(null, next));
+        },
+
+        function testFormattedRemoveEnd(next)
+        {
+            formattedStyle.allProperties[3].setText("", true, true, dumpFormattedAndCallNext.bind(null, next));
+        },
+
+        function testFormattedDisableStart(next)
+        {
+            formattedStyle.allProperties[0].setDisabled(true, dumpFormattedAndCallNext.bind(null, next));
+        },
+
+        function testFormattedDisableEnd(next)
+        {
+            formattedStyle.allProperties[2].setDisabled(true, dumpFormattedAndCallNext.bind(null, next));
+        },
+
+        function testFormattedDisableMiddle(next)
+        {
+            formattedStyle.allProperties[1].setDisabled(true, dumpFormattedAndCallNext.bind(null, next));
+        },
+
+        function testFormattedInsert1(next)
+        {
+            formattedStyle.insertPropertyAt(0, "propA", "valA", dumpFormattedAndCallNext.bind(null, next));
+        },
+
+        function testFormattedInsert2(next)
+        {
+            formattedStyle.insertPropertyAt(2, "propB", "valB", dumpFormattedAndCallNext.bind(null, next));
+        },
+
+        function testFormattedInsert3(next)
+        {
+            formattedStyle.insertPropertyAt(5, "propC", "valC", dumpFormattedAndCallNext.bind(null, next));
+        },
+
+        function testFormattedEnableStart(next)
+        {
+            formattedStyle.allProperties[1].setDisabled(false, dumpFormattedAndCallNext.bind(null, next));
+        },
+
+        function testFormattedEnableEnd(next)
+        {
+            formattedStyle.allProperties[4].setDisabled(false, dumpFormattedAndCallNext.bind(null, next));
+        },
+
+        function testFormattedEnableMiddle(next)
+        {
+            formattedStyle.allProperties[3].setDisabled(false, dumpFormattedAndCallNext.bind(null, next));
+        },
+
+        function initUnformattedStyle(next)
+        {
+            function callback(styles)
+            {
+                if (!styles) {
+                    InspectorTest.addResult("empty styles");
+                    return;
+                }
+
+                unformattedStyle = styles.matchedCSSRules[1].style;
+                next();
+            }
+
+            function nodeCallback(node)
+            {
+                WebInspector.cssModel.getMatchedStylesAsync(node.id, false, false, callback);
+            }
+            InspectorTest.selectNodeWithId("unformatted", nodeCallback);
+        },
+
+        function testUnformattedInsertStart(next)
+        {
+            unformattedStyle.insertPropertyAt(0, "firstProperty", "firstValue", dumpUnformattedAndCallNext.bind(null, next));
+        },
+
+        function testUnformattedRemoveStart(next)
+        {
+            unformattedStyle.allProperties[0].setText("", true, true, dumpUnformattedAndCallNext.bind(null, next));
+        },
+
+        function testUnformattedInsertMiddle(next)
+        {
+            unformattedStyle.insertPropertyAt(1, "middleProperty", "middleValue", dumpUnformattedAndCallNext.bind(null, next));
+        },
+
+        function testUnformattedRemoveMiddle(next)
+        {
+            unformattedStyle.allProperties[1].setText("", true, true, dumpUnformattedAndCallNext.bind(null, next));
+        },
+
+        function testUnformattedInsertEnd(next)
+        {
+            unformattedStyle.insertPropertyAt(3, "endProperty", "endValue", dumpUnformattedAndCallNext.bind(null, next));
+        },
+
+        function testUnformattedRemoveEnd(next)
+        {
+            unformattedStyle.allProperties[3].setText("", true, true, dumpUnformattedAndCallNext.bind(null, next));
+        },
+
+        function testUnformattedDisableStart(next)
+        {
+            unformattedStyle.allProperties[0].setDisabled(true, dumpUnformattedAndCallNext.bind(null, next));
+        },
+
+        function testUnformattedDisableEnd(next)
+        {
+            unformattedStyle.allProperties[2].setDisabled(true, dumpUnformattedAndCallNext.bind(null, next));
+        },
+
+        function testUnformattedDisableMiddle(next)
+        {
+            unformattedStyle.allProperties[1].setDisabled(true, dumpUnformattedAndCallNext.bind(null, next));
+        },
+
+        function testUnformattedEnableStart(next)
+        {
+            unformattedStyle.allProperties[0].setDisabled(false, dumpUnformattedAndCallNext.bind(null, next));
+        },
+
+        function testUnformattedEnableEnd(next)
+        {
+            unformattedStyle.allProperties[2].setDisabled(false, dumpUnformattedAndCallNext.bind(null, next));
+        },
+
+        function testUnformattedEnableMiddle(next)
+        {
+            unformattedStyle.allProperties[1].setDisabled(false, dumpUnformattedAndCallNext.bind(null, next));
+        }
+    ]);
+
+    // Data dumping
+
+    function dumpFormattedAndCallNext(next, style)
+    {
+        if (!style) {
+            InspectorTest.addResult("error: empty style");
+            InspectorTest.completeTest();
+        }
+
+        formattedStyle = style;
+        dumpStyle(style);
+        if (next)
+            next();
+    }
+
+    function dumpUnformattedAndCallNext(next, style)
+    {
+        if (!style) {
+            InspectorTest.addResult("error: empty style");
+            InspectorTest.completeTest();
+        }
+
+        unformattedStyle = style;
+        dumpStyle(style);
+        if (next)
+            next();
+    }
+
+    function dumpStyle(style)
+    {
+        if (!style)
+            return;
+        InspectorTest.addResult("raw cssText:");
+        InspectorTest.addResult("{" + style.cssText + "}");
+    }
+}
+</script>
+
+<style>
+
+#formatted { 
+    property1: value1;
+    property2: value2;
+    property3: value3;
+}
+
+#unformatted {property1:value1;property2:value2;property3:value3;}
+
+</style>
+</head>
+
+<body id="mainBody" onload="runTest()">
+<p>
+Tests that InspectorCSSAgent formats the CSS style text based on the CSS model modifications.
+</p>
+<div id="formatted">Formatted</div>
+<div id="unformatted">Unformatted</div>
+</body>
+</html>

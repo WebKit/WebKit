@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Animation of left property</title>
+    <style>
+         div {
+             position: relative;
+             left: 100px;
+             height: 200px;
+             width: 200px;
+             background-color: #9bb;
+             -webkit-animation-name: bounce;
+             -webkit-animation-duration: 2s;
+             -webkit-animation-iteration-count: infinite;
+             -webkit-animation-direction: alternate;
+             -webkit-animation-timing-function: ease-in-out;
+         }
+         
+         @-webkit-keyframes bounce {
+           from {
+             left: 100px;
+           }
+           to {
+             left: 300px;
+           }
+         }
+         
+     </style>
+</head>
+<body>
+  <h1>Animation of 'left' property</h1>
+
+  <p>The element below should bounce 200 pixels left and right continuously</p>
+  
+  <div id="target">
+    This element should animate.
+  </div>
+
+</body>
+</html>

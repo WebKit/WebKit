@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+	<head>
+		<style>
+			#outerContent {
+				-webkit-flow-into: outerFlow;
+				color: blue;
+			}
+			.outerRegion {
+				-webkit-flow-from: outerFlow;
+				width: 300px;
+				height: 180px;
+				border: solid 2px Gray;
+				margin: 5px;
+				border: 2px solid blue;
+				padding: 30px;
+			}
+			#innerContent {
+				-webkit-flow-into: innerFlow;
+				color: red;
+			}
+
+			#innerRegion {
+				-webkit-flow-from: innerFlow;
+				border: solid 2px red;
+				overflow: hidden;
+				color: blue;
+			}
+			#outerRegion1
+			{
+				float: left;
+			}
+			#outerRegion2
+			{
+				float: right;
+			}
+		</style>
+	</head>
+	<body>
+		<a href="https://bugs.webkit.org/show_bug.cgi?id=128811">Bug 128811</a><br/>
+		<p>The <span style="color:red">nested region</span> should <b>not</b> be split between the <span style="color:blue">2 outer regions</span> and should overflow the first region</p>
+
+		<div id="outerContent">
+			<div id="innerRegion"></div>
+		</div>
+
+		<div id="innerContent">
+			Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+		</div>
+
+		<div class="outerRegion" id="outerRegion1"></div>
+		<div class="outerRegion" id="outerRegion2"></div>
+	</body>
+</html>

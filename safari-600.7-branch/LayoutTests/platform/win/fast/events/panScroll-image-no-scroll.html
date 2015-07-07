@@ -1,0 +1,40 @@
+<html>
+    <head>
+        <title>Pan Scrolling Test</title>
+    </head>
+    <body>
+        <script>
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            }
+        </script>
+        <div id="overflow" style="width:500px; height:150px; overflow:auto; border:2px solid red; padding:10px">
+            <a href="#"><img src="" width="100px" height="100px"></img></a>
+            <h1>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=32399">bug 32399</a> This tests that middle
+            clicking on an image within a link doesn't start to scroll.</h1>
+        </div>
+        <p>
+        <div id="console"></div>
+        <script>
+            if (window.eventSender)
+            {
+                eventSender.mouseMoveTo(50, 50);
+                eventSender.mouseDown(1);
+                eventSender.mouseUp(1);
+                eventSender.mouseMoveTo(50, 200);
+                setTimeout(finished, 500);
+            }
+            
+            function finished()
+            {
+                if (!document.getElementById('overflow').scrollTop)
+                    document.getElementById('console').innerHTML = "Success! Div with overflow was not scrolled";
+                else
+                    document.getElementById('console').innerHTML = "Fail! Div with overflow was scrolled";
+                
+                window.testRunner.notifyDone();
+            }
+        </script>
+    </body>
+</html>

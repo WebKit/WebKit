@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            if (window.internals)
+                window.internals.settings.setAcceleratedCompositingForFixedPositionEnabled(false);
+        </script>
+        <style>
+            #red { position: absolute; top: 200px; left: 200px; width: 50px; height: 50px; background-color: red;}
+
+            #region { -webkit-flow-from: flow; position: absolute; top: 100px; left: 100px; width: 200px; height: 200px; }
+
+            #parent { -webkit-flow-into: flow; position: absolute; top: 50px; left: 50px; width: 100px; height: 100px; }
+
+            #fixed { position: fixed; top: 50px; left: 50px; width: 50px; height: 50px; background-color: green; }
+
+            .transformed { -webkit-transform: scale3d(1, 1, 1); }
+        </style>
+    </head>
+    <body onload="runRepaintTest()">
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=125756">WebKit Bug 125756</a> [CSSRegions] Incorrect repaint of fixed element with transformed parent</p>
+        <p>That that a fixed positioned element whose parent gets a 3d transform dynamically is correctly re-positioned relative to the parent.</p>
+        <p>On success, you should see a green rectangle and no red.</p>
+        <div id="red"></div>
+        <div id="parent">
+            <div id="fixed"></div>
+        </div>
+        <div id="region"></div>
+        <script>
+            function repaintTest() {
+                document.getElementById("parent").className = "transformed";
+            }
+
+            function runRepaintTest() {
+                if (window.testRunner) {
+                    document.body.offsetTop;
+                    repaintTest();
+                } else {
+                    setTimeout(repaintTest, 100);
+                }
+            }
+        </script>
+    </body>
+</html>

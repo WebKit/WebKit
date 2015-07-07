@@ -1,0 +1,12 @@
+
+Check in-band text tracks' kind attributes.
+
+EVENT(canplaythrough)
+
+** Check in-band kind attributes
+EXPECTED (video.textTracks.length == '2') OK
+EXPECTED (video.textTracks[0].kind == 'subtitles') OK
+EXPECTED (video.textTracks[1].kind == 'subtitles') OK
+
+END OF TEST
+

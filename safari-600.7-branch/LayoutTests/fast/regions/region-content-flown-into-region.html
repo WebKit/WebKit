@@ -1,0 +1,117 @@
+<html>
+    <head>
+        <title>74144 - [CSS Regions] Elements in a region should be assignable to a named flow</title>
+        <style type="text/css">
+            .content {
+                -webkit-flow-into: flow;
+            }
+            .region {
+                -webkit-flow-from: flow;
+                border:solid 1px red;
+            }
+
+            .redirectContent {
+                -webkit-flow-into: redirectFlow;
+            }
+            .redirectRegion {
+                -webkit-flow-from: redirectFlow;
+                border:solid 1px blue;
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+
+            .redirectContent2 {
+                -webkit-flow-into: redirectFlow2;
+            }
+            .redirectRegion2 {
+                -webkit-flow-from: redirectFlow2;
+                border:solid 1px green;
+            }
+
+            .redirectContentToNowhere {
+                -webkit-flow-into: redirectToNowhere;
+            }
+
+            .displayNone {
+                display: none;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="content">PASS r0: content that goes in the region.</div>
+        <div class="region">
+            FAIL: this should not be visible 1.
+
+            <span class="redirectContentToNowhere">FAIL: this should not be visible (redirected to nowhere) 1.</span>
+
+            <div class="redirectContent">PASS r1: content in the region that has flow-into. 1.</div>
+
+            FAIL: this should not be visible 2.
+
+            <div>
+                FAIL: this should not be visible 3.
+
+                <div class="redirectContent">PASS r1: (enclosed in a div) content in the region that has flow-into. 2.
+                    <div class="redirectContentToNowhere">FAIL: this should not be visible (redirected to nowhere) 2.</div>
+                    <b><br/>PASS r1: (b enclosed in the div above) content in the region that has flow-into. 3.</b>
+                </div>
+
+                FAIL: this should not be visible 4.
+            </div>
+
+            <div>
+                FAIL: this should not be visible 5.
+
+                <div class="redirectContent">PASS r1: (enclosed in a div) content in the region that has flow-into. 4.
+                    <span class="redirectContent2">PASS r2: content that is already in a flow goes to another flow
+                        <span class="redirectContentToNowhere">FAIL: this should not be visible (redirected to nowhere) 3.</span>.
+                    </span>
+                </div>
+
+                FAIL: this should not be visible 7.
+            </div>
+
+            FAIL: this should not be visible 8.
+
+            <span class="redirectContentToNowhere">FAIL: this should not be visible (redirected to nowhere) 4.</span>
+
+            <div class="redirectContent">PASS r1: content in the region that has flow-into. 5.</div>
+
+            FAIL: this should not be visible 9.
+
+            <div>
+                FAIL: this should not be visible 10.
+
+                <svg class="redirectContent" xmlns="http://www.w3.org/2000/svg" version="1.1" height="70">
+                    <text x="0" y="15">PASS: SVG text</text>
+                    <text x="0" y="30" class="redirectContentToNowhere">PASS: SVG text redirected to a flow without regions. only svg root elements are directly collected by a render flow thread.</text>
+                    <text x="0" y="45" class="redirectContent2">PASS: SVG text redirected to a flow with regions. only svg root elements are directly collected by a render flow thread.</text>
+                </svg>
+
+                FAIL: this should not be visible 11.
+            </div>
+
+            <div class="displayNone">
+                FAIL: this should not be visible 12.
+
+                <div class="redirectContent">FAIL r1: (enclosed in a div) content in the region that has flow-into but display:none
+                    <div class="redirectContentToNowhere">FAIL: this should not be visible (redirected to nowhere AND display:none)</div>
+                    <b><br/>FAIL r1: (b enclosed in the div above) content in the region that has flow-into but display:none</b>
+                </div>
+
+                FAIL: this should not be visible 13.
+            </div>
+        </div>
+
+        <div class="redirectRegion">
+            FAIL: this should not be visible 14.
+        </div>
+
+        <div class="redirectRegion2">
+            FAIL: this should not be visible 15.
+        </div>
+
+        <p><a href="https://bugs.webkit.org/show_bug.cgi?id=74144">Bug 74144</a> - [CSS Regions] Elements in a region should be assignable to a named flow</p>
+    </body>
+</html>

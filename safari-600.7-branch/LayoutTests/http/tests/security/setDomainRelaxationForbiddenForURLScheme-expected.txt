@@ -1,0 +1,13 @@
+Test for Bug 33806: Would like API to disallow setting of document.domain for pages with certain URL schemes. If the test succeeds, you will see a series of "PASS" messages below.
+
+PASS: document.domain should be 127.0.0.1 and is
+PASS: document.domain should be 0.0.1 and is
+Forbidding domain relaxation for the http: scheme
+PASS: Setting document.domain from a forbidden URL scheme threw exception "Error: SecurityError: DOM Exception 18"
+PASS: document.domain should be 0.0.1 and is
+Allowing domain relaxation for the http: scheme
+PASS: document.domain should be 0.1 and is
+Forbidding domain relaxation for the not-http: scheme
+PASS: document.domain should be 1 and is
+Allowing domain relaxation for the not-http: scheme
+

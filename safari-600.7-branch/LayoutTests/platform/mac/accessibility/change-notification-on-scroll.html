@@ -1,0 +1,38 @@
+<html>
+<body>
+<textarea rows=25 cols=10 id="textarea">
+hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello 
+</textarea>
+
+<div id="result">This test has either failed, or it is being run manually.</div>
+
+<script>
+
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    var textarea = 0;
+    function ariaCallback(notification) {
+        if (notification == "AXValueChanged") {
+            var result = document.getElementById("result");
+            result.innerHTML = "Success!"; 
+            textarea.removeNotificationListener();
+            window.testRunner.notifyDone();
+        }
+    }
+
+    if (window.accessibilityController) {
+        window.testRunner.waitUntilDone();
+        document.getElementById("textarea").focus();
+        textarea = window.accessibilityController.focusedElement;
+        
+        var addedNotification = textarea.addNotificationListener(ariaCallback);
+        
+        window.eventSender.mouseMoveTo(80, 150);
+        window.eventSender.mouseDown();
+        window.eventSender.mouseUp();
+    }
+</script>
+
+</body>
+</html>

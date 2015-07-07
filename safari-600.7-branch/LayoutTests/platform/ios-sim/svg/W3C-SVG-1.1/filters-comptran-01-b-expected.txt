@@ -1,0 +1,35 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (15,5) size 450x300
+      RenderSVGViewportContainer {svg} at (15,5) size 450x300
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+          RenderSVGResourceLinearGradient {linearGradient} [id="MyGradient"] [gradientUnits=userSpaceOnUse] [start=(10,0)] [end=(590,0)]
+            RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+            RenderSVGGradientStop {stop} [offset=0.33] [color=#00FF00]
+            RenderSVGGradientStop {stop} [offset=0.67] [color=#0000FF]
+            RenderSVGGradientStop {stop} [offset=1.00] [color=#000000]
+        RenderSVGPath {rect} at (15,5) size 450x300 [stroke={[type=SOLID] [color=#0000FF]}] [x=1.00] [y=1.00] [width=628.00] [height=418.00]
+        RenderSVGContainer {g} at (15,5) size 450x300
+          RenderSVGPath {rect} at (15,5) size 450x300 [stroke={[type=SOLID] [color=#0000FF]}] [x=1.00] [y=1.00] [width=628.00] [height=418.00]
+          RenderSVGPath {rect} at (22,12) size 415x29 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=10.00] [y=10.00] [width=580.00] [height=40.00]
+          RenderSVGText {text} at (10,49) size 200x38 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 200x38
+              chunk 1 text run 1 at (10.00,80.00) startOffset 0 endOffset 14 width 199.64: "type: identity"
+          RenderSVGPath {rect} at (22,83) size 415x30 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=10.00] [y=110.00] [width=580.00] [height=40.00]
+          RenderSVGText {text} at (10,149) size 162x38 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 162x38
+              chunk 1 text run 1 at (10.00,180.00) startOffset 0 endOffset 11 width 161.64: "type: table"
+          RenderSVGPath {rect} at (22,155) size 415x29 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=10.00] [y=210.00] [width=580.00] [height=40.00]
+          RenderSVGText {text} at (10,249) size 584x38 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 584x38
+              chunk 1 text run 1 at (10.00,280.00) startOffset 0 endOffset 40 width 583.66: "type:linear slope:.5 intercepts:.25/0/.5"
+          RenderSVGPath {rect} at (22,226) size 415x29 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=10.00] [y=310.00] [width=580.00] [height=40.00]
+          RenderSVGText {text} at (10,349) size 574x38 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 574x38
+              chunk 1 text run 1 at (10.00,380.00) startOffset 0 endOffset 34 width 573.50: "type: gamma ampl:2 exponents:5/3/1"
+    RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 264x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.6 $"
+    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

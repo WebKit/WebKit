@@ -1,0 +1,20 @@
+(GraphicsLayer
+  (position -800.00 0.00)
+  (bounds 1600.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 1600.00 600.00)
+      (children 1
+        (GraphicsLayer
+          (position 4.00 116.00)
+          (bounds 130.00 130.00)
+          (drawsContent 1)
+          (repaint rects
+            (rect 27.00 25.00 52.00 77.00)
+          )
+        )
+      )
+    )
+  )
+)
+

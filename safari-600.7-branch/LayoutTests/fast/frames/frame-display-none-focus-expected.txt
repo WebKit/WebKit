@@ -1,0 +1,2 @@
+This tests that trying to focus a frame that is display:none will not crash.
+

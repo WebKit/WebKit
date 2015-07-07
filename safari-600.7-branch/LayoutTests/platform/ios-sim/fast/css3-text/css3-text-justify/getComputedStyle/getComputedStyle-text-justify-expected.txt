@@ -1,0 +1,127 @@
+This test checks that -webkit-text-justify parses properly the properties from CSS 3 Text.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test the initial value:
+FAIL computedStyle.webkitTextJustify should be auto (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText')
+
+Value 'auto':
+PASS e.style.webkitTextJustify is 'auto'
+FAIL e.style.getPropertyCSSValue('-webkit-text-justify').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-justify').cssText')
+FAIL computedStyle.webkitTextJustify should be auto (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText')
+
+Value 'none':
+PASS e.style.webkitTextJustify is 'none'
+FAIL e.style.getPropertyCSSValue('-webkit-text-justify').cssText should be none. Threw exception TypeError: null is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-justify').cssText')
+FAIL computedStyle.webkitTextJustify should be none (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText should be none. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText')
+
+Value 'inter-word':
+PASS e.style.webkitTextJustify is 'inter-word'
+FAIL e.style.getPropertyCSSValue('-webkit-text-justify').cssText should be inter-word. Threw exception TypeError: null is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-justify').cssText')
+FAIL computedStyle.webkitTextJustify should be inter-word (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText should be inter-word. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText')
+
+Value 'inter-ideograph':
+PASS e.style.webkitTextJustify is 'inter-ideograph'
+FAIL e.style.getPropertyCSSValue('-webkit-text-justify').cssText should be inter-ideograph. Threw exception TypeError: null is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-justify').cssText')
+FAIL computedStyle.webkitTextJustify should be inter-ideograph (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText should be inter-ideograph. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText')
+
+Value 'inter-cluster':
+PASS e.style.webkitTextJustify is 'inter-cluster'
+FAIL e.style.getPropertyCSSValue('-webkit-text-justify').cssText should be inter-cluster. Threw exception TypeError: null is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-justify').cssText')
+FAIL computedStyle.webkitTextJustify should be inter-cluster (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText should be inter-cluster. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText')
+
+Value 'distribute':
+PASS e.style.webkitTextJustify is 'distribute'
+FAIL e.style.getPropertyCSSValue('-webkit-text-justify').cssText should be distribute. Threw exception TypeError: null is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-justify').cssText')
+FAIL computedStyle.webkitTextJustify should be distribute (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText should be distribute. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText')
+
+Value 'kashida':
+PASS e.style.webkitTextJustify is 'kashida'
+FAIL e.style.getPropertyCSSValue('-webkit-text-justify').cssText should be kashida. Threw exception TypeError: null is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-justify').cssText')
+FAIL computedStyle.webkitTextJustify should be kashida (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText should be kashida. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText')
+
+Invalid value test - '-webkit-left':
+FAIL e.style.webkitTextJustify should be auto. Was -webkit-left.
+FAIL e.style.getPropertyCSSValue('-webkit-text-justify').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-justify').cssText')
+FAIL computedStyle.webkitTextJustify should be auto (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText')
+
+Invalid value test - '-webkit-right':
+FAIL e.style.webkitTextJustify should be auto. Was -webkit-right.
+FAIL e.style.getPropertyCSSValue('-webkit-text-justify').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-justify').cssText')
+FAIL computedStyle.webkitTextJustify should be auto (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText')
+
+Invalid value test - '-webkit-center':
+FAIL e.style.webkitTextJustify should be auto. Was -webkit-center.
+FAIL e.style.getPropertyCSSValue('-webkit-text-justify').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-justify').cssText')
+FAIL computedStyle.webkitTextJustify should be auto (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText')
+
+Invalid value test - '-webkit-match-parent':
+FAIL e.style.webkitTextJustify should be auto. Was -webkit-match-parent.
+FAIL e.style.getPropertyCSSValue('-webkit-text-justify').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-justify').cssText')
+FAIL computedStyle.webkitTextJustify should be auto (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText')
+
+Invalid value test - '-webkit-auto':
+FAIL e.style.webkitTextJustify should be auto. Was -webkit-auto.
+FAIL e.style.getPropertyCSSValue('-webkit-text-justify').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-justify').cssText')
+FAIL computedStyle.webkitTextJustify should be auto (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText')
+
+Invalid value test - 'solid':
+FAIL e.style.webkitTextJustify should be auto. Was solid.
+FAIL e.style.getPropertyCSSValue('-webkit-text-justify').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-justify').cssText')
+FAIL computedStyle.webkitTextJustify should be auto (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText')
+
+Invalid value test - 'normal':
+FAIL e.style.webkitTextJustify should be auto. Was normal.
+FAIL e.style.getPropertyCSSValue('-webkit-text-justify').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-justify').cssText')
+FAIL computedStyle.webkitTextJustify should be auto (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText')
+
+Invalid value test - 'bold':
+FAIL e.style.webkitTextJustify should be auto. Was bold.
+FAIL e.style.getPropertyCSSValue('-webkit-text-justify').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-justify').cssText')
+FAIL computedStyle.webkitTextJustify should be auto (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText')
+
+Invalid value test - 'background':
+FAIL e.style.webkitTextJustify should be auto. Was background.
+FAIL e.style.getPropertyCSSValue('-webkit-text-justify').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-justify').cssText')
+FAIL computedStyle.webkitTextJustify should be auto (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText')
+
+Invalid value test - 'ltr':
+FAIL e.style.webkitTextJustify should be auto. Was ltr.
+FAIL e.style.getPropertyCSSValue('-webkit-text-justify').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-justify').cssText')
+FAIL computedStyle.webkitTextJustify should be auto (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText')
+
+Computed value test - 'inherit':
+PASS e.style.webkitTextJustify is 'inherit'
+FAIL e.style.getPropertyCSSValue('-webkit-text-justify').cssText should be inherit. Threw exception TypeError: null is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-justify').cssText')
+FAIL computedStyle.webkitTextJustify should be auto (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText')
+
+Computed value test - 'initial':
+PASS e.style.webkitTextJustify is 'initial'
+FAIL e.style.getPropertyCSSValue('-webkit-text-justify').cssText should be initial. Threw exception TypeError: null is not an object (evaluating 'e.style.getPropertyCSSValue('-webkit-text-justify').cssText')
+FAIL computedStyle.webkitTextJustify should be auto (of type string). Was undefined (of type undefined).
+FAIL computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText should be auto. Threw exception TypeError: null is not an object (evaluating 'computedStyle.getPropertyCSSValue('-webkit-text-justify').cssText')
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+hello world

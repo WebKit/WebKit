@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: line 7: log
+CONSOLE MESSAGE: line 8: debug
+CONSOLE MESSAGE: line 9: info
+CONSOLE MESSAGE: line 10: warn
+CONSOLE MESSAGE: line 11: error
+Tests that Web Inspector won't crash if some console have been logged by the time it's opening.
+
+log console-log-before-inspector-open.html:7
+debug console-log-before-inspector-open.html:8
+info console-log-before-inspector-open.html:9
+warn console-log-before-inspector-open.html:10
+error console-log-before-inspector-open.html:11
+

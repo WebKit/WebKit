@@ -1,0 +1,41 @@
+<html>
+	<head>
+		<style>
+		div {
+			margin: 0px;
+		}
+
+		.container {
+			border: thin solid blue;
+			width: 600px;
+		}
+
+		#float {
+			float: left;
+			width: 200px;
+			height: 200px;
+			background-color: green;
+		}
+
+		#parent {
+			margin-top: 50px;
+		}
+
+		#content {
+			margin-top: 50px;
+			clear: left;
+		}
+		</style>
+	</head>
+	<body>
+		<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=108168">Implement the -webkit-margin-collapse properties correct rendering</a>.</p>
+		<p>This ref test covers basic collapsing behavior when a child with a discard top margin is cleared and its top margin doesn't collapse with the top margin of the containing block any more.
+			The top margin of the containing block needs to be restored.</p>
+		<div class="container">
+			<div id="parent">
+				<div id="float"></div>
+				<div id="content">Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nunc orci mauris, ultrices non blandit non, fermentum a libero. Morbi ante elit, faucibus vel dignissim quis, euismod a arcu. Sed tempus suscipit nulla, vitae varius elit suscipit et. Pellentesque consequat lobortis blandit. Vivamus a tempus diam. Suspendisse nulla lectus, consequat quis tempor vitae, placerat sed lorem. Phasellus at dolor felis, ut ultricies lacus. Praesent vel turpis lacus. Nam ultricies augue in erat congue ac tempor neque cursus.</div>
+			</div>
+		</div>
+	</body>
+</html>

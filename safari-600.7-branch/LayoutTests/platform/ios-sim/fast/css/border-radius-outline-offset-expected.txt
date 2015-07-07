@@ -1,0 +1,27 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 55x19
+          text run at (0,0) width 55: "Test for "
+        RenderInline {I} at (0,0) size 631x19
+          RenderInline {A} at (0,0) size 306x19 [color=#0000EE]
+            RenderText {#text} at (54,0) size 306x19
+              text run at (54,0) width 306: "http://bugs.webkit.org/show_bug.cgi?id=11930"
+          RenderText {#text} at (359,0) size 326x19
+            text run at (359,0) width 5: " "
+            text run at (363,0) width 322: "Specifying border-radius makes the outline shrink"
+        RenderText {#text} at (684,0) size 5x19
+          text run at (684,0) width 5: "."
+      RenderBlock {P} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 278x19
+          text run at (0,0) width 278: "These two squares should be the same size:"
+      RenderBlock (anonymous) at (0,72) size 784x20
+        RenderBlock {DIV} at (0,5) size 10x10
+        RenderText {#text} at (10,0) size 4x19
+          text run at (10,0) width 4: " "
+        RenderBlock {DIV} at (14,5) size 10x10
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,108) size 784x0

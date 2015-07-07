@@ -1,0 +1,57 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 4 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > B > DIV > DIV > BODY > HTML > #document to 3 of #text > B > DIV > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > B > DIV > DIV > BODY > HTML > #document to 3 of #text > B > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > B > DIV > DIV > BODY > HTML > #document to 3 of #text > B > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 4 of #text > B > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > B > DIV > DIV > BODY > HTML > #document to 3 of #text > B > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x200 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x104
+          RenderText {#text} at (0,0) size 67x26
+            text run at (0,0) width 67: "Tests: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {#text} at (0,26) size 721x52
+            text run at (0,26) width 721: "Inserting blocks for paragraphs should do a better job of finding a block to"
+            text run at (0,52) width 117: "insert after. "
+          RenderInline {A} at (0,0) size 260x26 [color=#0000EE]
+            RenderText {#text} at (117,52) size 260x26
+              text run at (117,52) width 260: "<rdar://problem/3996605>"
+          RenderText {#text} at (377,52) size 735x52
+            text run at (377,52) width 358: " Insert paragraph command puts new"
+            text run at (0,78) width 554: "block in wrong place, creating difficult-to-handle HTML"
+        RenderBlock {DIV} at (14,134) size 756x52
+          RenderText {#text} at (0,0) size 189x26
+            text run at (0,0) width 189: "Expected Results: "
+          RenderBR {BR} at (189,21) size 0x0
+          RenderText {#text} at (0,26) size 442x26
+            text run at (0,26) width 442: "Should see this content in the red box below: "
+          RenderInline {B} at (0,0) size 20x26
+            RenderText {#text} at (442,26) size 20x26
+              text run at (442,26) width 20: "fo"
+          RenderText {#text} at (462,26) size 12x26
+            text run at (462,26) width 12: "x"
+      RenderBlock {DIV} at (0,224) size 784x30
+        RenderBlock {DIV} at (0,0) size 784x30 [border: (2px solid #FF0000)]
+          RenderInline {B} at (0,0) size 20x26
+            RenderText {#text} at (2,2) size 20x26
+              text run at (2,2) width 20: "fo"
+          RenderText {#text} at (22,2) size 12x26
+            text run at (22,2) width 12: "x"
+caret: position 3 of child 0 {#text} of child 0 {B} of child 1 {DIV} of child 3 {DIV} of body

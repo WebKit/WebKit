@@ -1,0 +1,11 @@
+Initial name:
+PASS isindex.name is "isindex"
+Adding a name attribute:
+PASS isindex.setAttribute("name", "foo"); isindex.name is "foo"
+Removing the name attribute:
+PASS isindex.removeAttribute("name"); isindex.name is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This is a searchable index. Enter search keywords: 
+

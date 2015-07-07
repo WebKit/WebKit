@@ -1,0 +1,33 @@
+<html>
+<head>
+  <title>Scaling and box-shadow</title>
+  <style type="text/css" media="screen">
+    #box {
+      height: 100px;
+      width: 100px;
+      margin: 20px;
+      background-color: gray;
+      -webkit-transform-origin: top left;
+      -webkit-box-shadow: 0px 20px 20px black;
+      -webkit-transform: scale(2);
+    }
+    
+    #box.smaller {
+      -webkit-transform: scale(1);
+    }
+  </style>
+
+  <script src="resources/repaint.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+    function repaintTest()
+    {
+      document.getElementById('box').className = 'smaller';
+    }
+  </script>
+</head>
+<body onload="runRepaintTest()">
+
+<img id="box">
+
+</body>
+</html>

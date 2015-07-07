@@ -1,0 +1,8 @@
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Bug 110686: [CSS Regions] Crash when MathML used in CSS Regions
+
+This test PASSES if it does not CRASH or ASSERT.
+
+

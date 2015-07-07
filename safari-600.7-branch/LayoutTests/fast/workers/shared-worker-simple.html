@@ -1,0 +1,32 @@
+<body>
+<p>Test simple shared worker construction case.</p>
+<div id=result></div>
+<script>
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var worker = new SharedWorker('resources/shared-worker-common.js', 'name');
+
+worker.port.postMessage("ping");
+worker.port.postMessage("done");
+
+worker.port.onmessage = function(event) {
+    log(event.data);
+    if (event.data == "DONE")
+        done();
+};
+
+function done()
+{
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</body>

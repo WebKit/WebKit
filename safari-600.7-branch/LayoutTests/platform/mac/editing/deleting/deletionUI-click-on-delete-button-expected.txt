@@ -1,0 +1,5 @@
+There should be no visible content in the markup below. This test is for a bug where the delete button wouldn't work because it had -webkit-user-select:none instead of -webkit-user-select:ignore.
+| "
+"
+| "
+"

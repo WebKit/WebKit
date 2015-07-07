@@ -1,0 +1,44 @@
+<html>
+<head>
+<script src="resources/webgl-test.js"></script>
+</head>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function gc()
+{
+    if (window.GCController)
+        return GCController.collect();
+
+    for (var i = 0; i < 10000; ++i)
+        var s = new String("AAAA");
+}
+
+window.onload = function()
+{
+    canvas = document.createElement("canvas");
+    context = create3DContext(canvas);
+    extension = context.getExtension("WEBGL_lose_context");
+    
+    canvas = null;
+    context = null;
+    gc();
+    
+    setTimeout(finishTest, 1);
+}
+
+function finishTest()
+{
+    extension.loseContext();
+    
+    document.body.innerHTML = "PASS";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</body>
+</html>

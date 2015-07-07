@@ -1,0 +1,3 @@
+Tests that setAttribute is constant time.
+PASS
+

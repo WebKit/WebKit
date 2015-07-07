@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+
+        <script>
+            var mediaElement;
+
+            function start()
+            {
+                mediaElement = new Audio();
+
+                waitForEvent('error');
+                waitForEvent('playing', playing);
+
+                mediaElement.src = findMediaFile('audio', 'content/test');
+                mediaElement.play();
+            }
+
+            function playing()
+            {
+                testExpected("mediaElement.paused", false);
+                waitForEvent('pause', paused);
+                internals.simulateAudioInterruption(mediaElement);
+            }
+
+            function paused()
+            {
+                testExpected("mediaElement.paused", true);
+                testExpected("mediaElement.ended", false);
+                consoleWrite("");
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload="start()">
+        <p><b>Test paused by:</b>
+        <ol>
+            <li>Getting a higher priority audio stream.</li>
+            <li>This test does not work in the launchers, only with
+            the test runners.</li>
+        </ol>
+        </p>
+    </body>
+</html>

@@ -1,0 +1,10 @@
+This tests that string replacement with a large replacement string causes an out-of-memory exception. See bug 102956 for more details.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS x.replace(/\d/g, y) threw exception Error: Out of memory.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

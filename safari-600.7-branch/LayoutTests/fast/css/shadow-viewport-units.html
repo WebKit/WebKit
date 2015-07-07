@@ -1,0 +1,18 @@
+<style>
+#a { text-shadow: 0px 0px 0vh black; } /* Should be valid - we support viewport units in shadow */
+</style>
+<div id="a"></div>
+<script>
+window.addEventListener("load", function () {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    var a = document.getElementById("a");
+    var output = document.createElement("p");
+    document.body.appendChild(output);
+    if (window.getComputedStyle(a).textShadow == "none")
+        output.innerText = "FAIL: No shadow style";
+    else
+        output.innerText = "PASS: Shadow style: " + window.getComputedStyle(a).textShadow;
+}, false);
+</script>

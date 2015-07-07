@@ -1,0 +1,133 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script>window.enablePixelTesting = true;</script>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<svg id="svg" xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+    <text id="text1" x="500 1000 1500" y="50">   ABC  </text>
+    <text id="reference" x="50 100 150" y="100">   ABC  </text>
+</svg>
+
+<p id="description"></p>
+<div id="console"></div>
+<script type="text/javascript">
+<![CDATA[
+    description("This is a test of the SVGLengthList::insertItemBefore() API.");
+
+    var svg = document.getElementById("svg");
+    var text1 = document.getElementById("text1");
+
+    debug("");
+    debug("Create three SVGLength objects, with values=50,100,150");
+    var newLength1 = svg.createSVGLength();
+    newLength1.value = 50;
+    shouldBe("newLength1.value", "50");
+
+    var newLength2 = svg.createSVGLength();
+    newLength2.value = 100;
+    shouldBe("newLength2.value", "100");
+
+    var newLength3 = svg.createSVGLength();
+    newLength3.value = 150;
+    shouldBe("newLength3.value", "150");
+    
+    shouldBeTrue("newLength1 != newLength2");
+    shouldBeTrue("newLength2 != newLength3");
+    shouldBeTrue("newLength3 != newLength1");
+    shouldBeTrue("newLength1.value == newLength2.value - 50");
+    shouldBeTrue("newLength2.value + 50 == newLength3.value");
+
+    debug("");
+    debug("Check initial list state");
+    shouldBe("text1.x.baseVal.numberOfItems", "3");
+    shouldBe("text1.x.baseVal.getItem(0).value", "500");
+    shouldBe("text1.x.baseVal.getItem(1).value", "1000");
+    shouldBe("text1.x.baseVal.getItem(2).value", "1500");
+    shouldThrow("text1.x.baseVal.getItem(3)");
+
+    // Spec: If the index is greater than or equal to numberOfItems, then the new item is appended to the end of the list.
+    debug("");
+    debug("Insert item 'newLength1' at the end of the list, by using a large index");
+    shouldBe("text1.x.baseVal.insertItemBefore(newLength1, 1000)", "newLength1");
+    shouldBe("text1.x.baseVal.numberOfItems", "4");
+    shouldBe("text1.x.baseVal.getItem(0).value", "500");
+    shouldBe("text1.x.baseVal.getItem(1).value", "1000");
+    shouldBe("text1.x.baseVal.getItem(2).value", "1500");
+    shouldBe("text1.x.baseVal.getItem(3).value", "50");
+    shouldThrow("text1.x.baseVal.getItem(4)");
+
+    debug("");
+    debug("Storing getItem(0/1/2) in local variables");
+    var item0 = text1.x.baseVal.getItem(0);
+    var item1 = text1.x.baseVal.getItem(1);
+    var item2 = text1.x.baseVal.getItem(2);
+    var item3 = text1.x.baseVal.getItem(3);
+
+    // Spec: If the index is equal to 0, then the new item is inserted at the front of the list.
+    debug("");
+    debug("Insert item 'newLength2' at the front of the list, by using index=0");
+    shouldBe("text1.x.baseVal.insertItemBefore(newLength2, 0)", "newLength2");
+    shouldBe("text1.x.baseVal.numberOfItems", "5");
+    shouldBe("text1.x.baseVal.getItem(0).value", "100");
+    shouldBe("text1.x.baseVal.getItem(1).value", "500");
+    shouldBe("text1.x.baseVal.getItem(2).value", "1000");
+    shouldBe("text1.x.baseVal.getItem(3).value", "1500");
+    shouldBe("text1.x.baseVal.getItem(4).value", "50");
+    shouldThrow("text1.x.baseVal.getItem(5)");
+
+    debug("");
+    debug("Assure that previously saved wrappers still show the old values");
+    shouldBe("item0.value", "500");
+    shouldBe("item1.value", "1000");
+    shouldBe("item2.value", "1500");
+    shouldBe("item3.value", "50");
+
+    // Spec: The index of the item before which the new item is to be inserted.
+    debug("");
+    debug("Insert item 'newLength3' at position=2, between '500' and '1000'");
+    shouldBe("text1.x.baseVal.insertItemBefore(newLength3, 2)", "newLength3");
+    shouldBe("text1.x.baseVal.numberOfItems", "6");
+    shouldBe("text1.x.baseVal.getItem(0).value", "100");
+    shouldBe("text1.x.baseVal.getItem(1).value", "500");
+    shouldBe("text1.x.baseVal.getItem(2).value", "150");
+    shouldBe("text1.x.baseVal.getItem(3).value", "1000");
+    shouldBe("text1.x.baseVal.getItem(4).value", "1500");
+    shouldBe("text1.x.baseVal.getItem(5).value", "50");
+    shouldThrow("text1.x.baseVal.getItem(6)");
+
+    // Spec: If newItem is already in a list, it is removed from its previous list before it is inserted into this list.
+    // Spec: If the item is already in this list, note that the index of the item to insert before is before the removal of the item. 
+    debug("");
+    debug("Insert item 'newLength3' at position=1, between '100' and '500', remove it from the old position=2 afterwards.");
+    shouldBe("text1.x.baseVal.insertItemBefore(newLength3, 1)", "newLength3");
+    shouldBe("text1.x.baseVal.numberOfItems", "6");
+    shouldBe("text1.x.baseVal.getItem(0).value", "100");
+    shouldBe("text1.x.baseVal.getItem(1).value", "150");
+    shouldBe("text1.x.baseVal.getItem(2).value", "500");
+    shouldBe("text1.x.baseVal.getItem(3).value", "1000");
+    shouldBe("text1.x.baseVal.getItem(4).value", "1500");
+    shouldBe("text1.x.baseVal.getItem(5).value", "50");
+    shouldThrow("text1.x.baseVal.getItem(6)");
+
+    debug("");
+    debug("Insert item 'newLength3' at position=0, before '100', remove it from the old position=5 afterwards.");
+    shouldBe("text1.x.baseVal.insertItemBefore(newLength1, 0)", "newLength1");
+    shouldBe("text1.x.baseVal.numberOfItems", "6");
+    shouldBe("text1.x.baseVal.getItem(0).value", "50");
+    shouldBe("text1.x.baseVal.getItem(1).value", "100");
+    shouldBe("text1.x.baseVal.getItem(2).value", "150");
+    shouldBe("text1.x.baseVal.getItem(3).value", "500");
+    shouldBe("text1.x.baseVal.getItem(4).value", "1000");
+    shouldBe("text1.x.baseVal.getItem(5).value", "1500");
+    shouldThrow("text1.x.baseVal.getItem(6)");
+
+    debug("");
+    debug("The test passes if you only see 'PASS' messages, and both text elements on top look the same");
+    debug("");
+
+]]>
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

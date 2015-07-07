@@ -1,0 +1,61 @@
+<html>
+<head>
+    <title>Test resource load callbacks going back to a cached main resource</title>
+    <script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.dumpResourceLoadCallbacks();
+        testRunner.setCanOpenWindows();
+        testRunner.waitUntilDone();
+        testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    }
+
+    // Window we will be controlling.
+    var target;
+
+    // Counter for visits to first page.
+    var firstPageVisits = 0;
+
+    window.addEventListener('message', function(event) {
+
+        if (event.data === 'first-page') {
+            firstPageVisits++;
+            if (firstPageVisits < 3)
+                target.postMessage('navigate-other-page', '*');
+            if (firstPageVisits == 3)
+                window.testRunner.notifyDone();
+            return;
+        }
+
+        if (event.data === 'other-page') {
+            switch (firstPageVisits) {
+            case 1:
+                target.postMessage('navigate-first-page', '*');
+                break;
+            case 2:
+                target.postMessage('navigate-back', '*');
+                break;
+            }
+            return;
+        }
+
+    }, false);
+
+    function startTest() {
+        // Open the target window and we will start to exchange messages.
+        target = window.open('resources/first-page.html');
+    }
+    </script>
+</head>
+<body onload="startTest();">
+    <p>This test check the following situation:</p>
+    <ul>
+        <li>First you navigate to a page (first-page.html).</li>
+        <li>Then you go to another page (other-page.html).</li>
+        <li>You repeat previous steps again (going to first-page.html and then to other-page.html).</li>
+        <li>Finally you click back.</li>
+    </ul>
+    <p>The problem was that the resource load callbacks when going back to the cached main resource were not being called.</p>
+    <p>See <a href="https://bugs.webkit.org/show_bug.cgi?id=112418">bug #112418</a>.</p>
+</body>
+</html>

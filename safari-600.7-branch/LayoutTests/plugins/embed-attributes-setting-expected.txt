@@ -1,0 +1,15 @@
+[Embed is element specified in markup]
+PASS: embed.getAttribute('align') should be 1 and is.
+PASS: embed.getAttribute('height') should be 1 and is.
+PASS: embed.getAttribute('name') should be 1 and is.
+PASS: embed.getAttribute('width') should be 1 and is.
+PASS: embed.getAttribute('type') should be 1 and is.
+PASS: embed.getAttribute('src') should be 1 and is.
+PASS: typeof embed.testCallback should be function and is.
+----------
+[Embed is dynamically created element with only type specified]
+PASS: typeof embed.testCallback should be function and is.
+----------
+[Embed is dynamically created element with only src specified]
+PASS: typeof embed.testCallback should be function and is.
+ 

@@ -1,0 +1,226 @@
+description("This test checks the SVGAngle API");
+
+var svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+var angle = svgElement.createSVGAngle();
+
+debug("");
+debug("Check initial angle values");
+shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
+shouldBeEqualToString("angle.valueAsString", "0");
+shouldBe("angle.value", "0");
+shouldBe("angle.valueInSpecifiedUnits", "0");
+
+// Spec: Raised if unitType is SVG_ANGLETYPE_UNKNOWN or not a valid unit type constant (one of the other SVG_ANGLETYPE_* constants defined on this interface).
+debug("");
+debug("Check invalid arguments for 'convertToSpecifiedUnits'");
+shouldThrow("angle.convertToSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_UNKNOWN)");
+shouldThrow("angle.convertToSpecifiedUnits(-1)");
+shouldThrow("angle.convertToSpecifiedUnits(5)");
+// 'aString' converts to short 0 (through NaN) according to ECMA-262, ToUint16.
+// Therefore this throws NOT_SUPPORTED_ERR.
+shouldThrow("angle.convertToSpecifiedUnits('aString')");
+// Same here, via ToString conversion of object.
+shouldThrow("angle.convertToSpecifiedUnits(angle)");
+// Same here, via ToString conversion of object.
+shouldThrow("angle.convertToSpecifiedUnits(svgElement)");
+shouldThrow("angle.convertToSpecifiedUnits()");
+shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
+
+debug("");
+debug("Check valid arguments for 'convertToSpecifiedUnits', that should only modify the 'valueAsString'");
+shouldBeUndefined("angle.convertToSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_RAD)");
+shouldBeEqualToString("angle.valueAsString", "0rad");
+shouldBe("angle.value", "0");
+shouldBe("angle.valueInSpecifiedUnits", "0");
+shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_RAD");
+
+shouldBeUndefined("angle.convertToSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_GRAD)");
+shouldBeEqualToString("angle.valueAsString", "0grad");
+shouldBe("angle.value", "0");
+shouldBe("angle.valueInSpecifiedUnits", "0");
+shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_GRAD");
+
+shouldBeUndefined("angle.convertToSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG)");
+shouldBeEqualToString("angle.valueAsString", "0deg");
+shouldBe("angle.value", "0");
+shouldBe("angle.valueInSpecifiedUnits", "0");
+shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_DEG");
+
+shouldBeUndefined("angle.convertToSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_UNSPECIFIED)");
+shouldBeEqualToString("angle.valueAsString", "0");
+shouldBe("angle.value", "0");
+shouldBe("angle.valueInSpecifiedUnits", "0");
+shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
+
+// Spec: Raised if unitType is SVG_ANGLETYPE_UNKNOWN or not a valid unit type constant (one of the other SVG_ANGLETYPE_* constants defined on this interface).
+debug("");
+debug("Check invalid arguments for 'newValueSpecifiedUnits'");
+shouldThrow("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_UNKNOWN, 50)");
+shouldThrow("angle.newValueSpecifiedUnits(-1, 50)");
+shouldThrow("angle.newValueSpecifiedUnits(5, 50)");
+shouldThrow("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG)");
+shouldBeUndefined("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, 'aString')");
+shouldBe("angle.value", "NaN");
+shouldBeUndefined("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, 0)");
+shouldBeUndefined("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, angle)");
+shouldBe("angle.value", "NaN");
+shouldBeUndefined("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, svgElement)");
+shouldBe("angle.value", "NaN");
+shouldThrow("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG)");
+// All of the following unitType arguments convert to 0 (SVG_ANGLETYPE_UNKNOWN).
+shouldThrow("angle.newValueSpecifiedUnits('aString', 4)");
+shouldThrow("angle.newValueSpecifiedUnits(angle, 4)");
+shouldThrow("angle.newValueSpecifiedUnits(svgElement, 4)");
+shouldThrow("angle.newValueSpecifiedUnits('aString', 'aString')");
+shouldThrow("angle.newValueSpecifiedUnits(angle, angle)");
+shouldThrow("angle.newValueSpecifiedUnits(svgElement, svgElement)");
+shouldThrow("angle.newValueSpecifiedUnits()");
+shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_DEG");
+
+debug("");
+debug("Check valid arguments for 'newValueSpecifiedUnits', that should only modify the 'valueAsString'");
+shouldBeUndefined("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_RAD, parseFloat(Math.PI.toFixed(5)))");
+shouldBeEqualToString("angle.valueAsString", Math.PI.toFixed(5) + "rad");
+shouldBeEqualToString("angle.value.toFixed(1)", "180.0");
+shouldBe("angle.valueInSpecifiedUnits.toFixed(5)", "Math.PI.toFixed(5)");
+shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_RAD");
+
+shouldBeUndefined("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_GRAD, 400)");
+shouldBeEqualToString("angle.valueAsString", "400grad");
+shouldBeEqualToString("angle.value.toFixed(1)", "360.0");
+shouldBe("angle.valueInSpecifiedUnits", "400");
+shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_GRAD");
+
+shouldBeUndefined("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, 360)");
+shouldBeEqualToString("angle.valueAsString", "360deg");
+shouldBe("angle.value", "360");
+shouldBe("angle.valueInSpecifiedUnits", "360");
+shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_DEG");
+
+shouldBeUndefined("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_UNSPECIFIED, 180)");
+shouldBeEqualToString("angle.valueAsString", "180");
+shouldBe("angle.value", "180");
+shouldBe("angle.valueInSpecifiedUnits", "180");
+shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
+
+debug("");
+debug("Reset to initial angle state");
+shouldBeUndefined("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_UNSPECIFIED, 0)");
+shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
+
+// Spec: Raised if the assigned string cannot be parsed as a valid <angle>.
+debug("");
+debug("Check setting invalid 'valueAsString' arguments");
+shouldThrow("angle.valueAsString = '10px'");
+shouldBeEqualToString("angle.valueAsString", "0");
+shouldBe("angle.value", "0");
+shouldBe("angle.valueInSpecifiedUnits", "0");
+shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
+
+shouldThrow("angle.valueAsString = '10x'");
+shouldBeEqualToString("angle.valueAsString", "0");
+shouldBe("angle.value", "0");
+shouldBe("angle.valueInSpecifiedUnits", "0");
+shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
+
+shouldThrow("angle.valueAsString = '5graD'");
+shouldBeEqualToString("angle.valueAsString", "0");
+shouldBe("angle.value", "0");
+shouldBe("angle.valueInSpecifiedUnits", "0");
+shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
+
+shouldThrow("angle.valueAsString = '5Rad'");
+shouldBeEqualToString("angle.valueAsString", "0");
+shouldBe("angle.value", "0");
+shouldBe("angle.valueInSpecifiedUnits", "0");
+shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
+
+shouldThrow("angle.valueAsString = ',5 rad'");
+shouldBeEqualToString("angle.valueAsString", "0");
+shouldBe("angle.value", "0");
+shouldBe("angle.valueInSpecifiedUnits", "0");
+shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
+
+debug("");
+debug("Check setting invalid 'valueInSpecifiedUnits' arguments");
+shouldBe("angle.valueInSpecifiedUnits = 'test'", "'test'");
+shouldBe("angle.value", "NaN");
+shouldBe("angle.valueInSpecifiedUnits", "NaN");
+shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
+shouldBe("angle.valueInSpecifiedUnits = 0", "0");
+
+shouldBe("angle.valueInSpecifiedUnits = angle", "angle");
+shouldBe("angle.value", "NaN");
+shouldBe("angle.valueInSpecifiedUnits", "NaN");
+shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
+
+debug("");
+debug("Check setting invalid 'value' arguments");
+shouldBe("angle.value = 0", "0");
+shouldBe("angle.value = 'test'", "'test'");
+shouldBe("angle.value", "NaN");
+shouldBe("angle.valueInSpecifiedUnits", "NaN");
+shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
+
+shouldBe("angle.value = 0", "0");
+shouldBe("angle.value = angle", "angle");
+shouldBe("angle.value", "NaN");
+shouldBe("angle.valueInSpecifiedUnits", "NaN");
+shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
+
+debug("");
+debug("Reset to angle in degree units");
+shouldBeUndefined("angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, 0)");
+shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_DEG");
+
+debug("");
+debug("Check setting valid 'value' arguments, assure that 'valueInSpecifiedUnits' and 'valueAsString' are synchronized");
+shouldBe("angle.value = 50", "50");
+shouldBe("angle.valueInSpecifiedUnits", "50");
+shouldBeEqualToString("angle.valueAsString", "50deg");
+shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_DEG");
+
+debug("");
+debug("Try modifiying the readonly 'unitType', needs to fail");
+shouldBeUndefined("angle.unitType = SVGAngle.SVG_ANGLETTYE_RAD");
+shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_DEG");
+
+debug("");
+debug("Check setting valid 'valueInSpecifiedUnits' arguments, assure that 'value' and 'valueAsString' are synchronized");
+shouldBe("angle.valueInSpecifiedUnits = 100", "100");
+shouldBe("angle.value", "100");
+shouldBeEqualToString("angle.valueAsString", "100deg");
+shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_DEG");
+
+debug("");
+debug("Check setting valid 'valueAsString' arguments, assure that 'value' and 'valueInSpecifiedUnits' are synchronized");
+shouldBeEqualToString("angle.valueAsString = '200grad'", "200grad");
+shouldBe("angle.valueInSpecifiedUnits", "200");
+shouldBeEqualToString("angle.value.toFixed(1)", "180.0");
+shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_GRAD");
+
+debug("");
+debug("Now convert the GRAD value into a RAD value, and assure that all properties have been synchronized");
+shouldBeUndefined("angle.convertToSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_RAD)");
+shouldBeEqualToString("angle.value.toFixed(1)", "180.0");
+shouldBeEqualToString("angle.valueInSpecifiedUnits.toFixed(5)", Math.PI.toFixed(5));
+shouldBeEqualToString("angle.valueAsString", Math.PI.toFixed(5) + "rad");
+shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_RAD");
+
+debug("");
+debug("Now try converting the RAD value into an unknown value, that should fail and throw");
+shouldThrow("angle.convertToSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_UNKNOWN)");
+shouldBeEqualToString("angle.value.toFixed(1)", "180.0");
+shouldBeEqualToString("angle.valueInSpecifiedUnits.toFixed(5)", Math.PI.toFixed(5));
+shouldBeEqualToString("angle.valueAsString", Math.PI.toFixed(5) + "rad");
+shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_RAD");
+
+debug("");
+debug("Now convert the RAD value into a DEG value, and assure that all properties have been synchronized");
+shouldBeUndefined("angle.convertToSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG)");
+shouldBeEqualToString("angle.value.toFixed(1)", "180.0");
+shouldBeEqualToString("angle.valueInSpecifiedUnits.toFixed(1)", "180.0");
+shouldBeEqualToString("angle.valueAsString", "180deg");
+shouldBe("angle.unitType", "SVGAngle.SVG_ANGLETYPE_DEG");
+
+successfullyParsed = true;

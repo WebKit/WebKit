@@ -1,0 +1,54 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script>
+function loadImages()
+{
+    var image = document.createElement("img");
+    image.onload = resourceLoaded;
+    image.setAttribute("src", "resources/resource.php?type=image&size=500");
+    document.body.appendChild(image);
+
+    var image2 = document.createElement("img");
+    image2.onload = resourceLoaded;
+    image2.setAttribute("src", "resources/resource.php?type=image&size=500&gzip=true");
+    document.body.appendChild(image2);
+}
+
+var loadedResourceCount = 0;
+function resourceLoaded()
+{
+    if (++loadedResourceCount === 2) {
+        console.log("Done.");
+    }
+}
+
+function test()
+{
+    InspectorTest.addConsoleSniffer(step2);
+    InspectorTest.evaluateInPage("loadImages()");
+
+    function step2()
+    {
+        // inspector-test.js appears in network panel occasionally in Safari on
+        // Mac, so checking two last resources.
+        var requestsCount = WebInspector.panel("network").requests.length;
+        var request1 = WebInspector.panel("network").requests[requestsCount - 2];
+        InspectorTest.addResult(request1.url);
+        InspectorTest.addResult("resourceSize: " + request1.resourceSize);
+        InspectorTest.addResult("transferSize: " + (request1.transferSize - request1.responseHeadersSize));
+
+        var request2 = WebInspector.panel("network").requests[requestsCount - 1];
+        InspectorTest.addResult(request2.url);
+        InspectorTest.addResult("resourceSize: " + request2.resourceSize);
+        InspectorTest.addResult("transferSize: " + (request2.transferSize - request2.responseHeadersSize));
+
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests network resource size reporting.</p>
+</body>
+</html>

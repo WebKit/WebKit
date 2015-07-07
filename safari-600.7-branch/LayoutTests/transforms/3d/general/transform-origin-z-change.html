@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style type="text/css">
+  body {
+    margin: 0;
+  }
+
+  .container {
+    top: 10px;
+    left: 10px;
+    -webkit-transform-style: preserve-3d;
+    -webkit-perspective: 500px;
+    outline: 1px solid black;
+  }
+  
+  .box {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+  }
+  
+  .intermediate {
+    -webkit-transform: rotateY(-90deg);
+    -webkit-transform-style: preserve-3d;
+  }
+  
+  .inner {
+    -webkit-transform: rotateY(-90deg);
+    background: green;
+  }
+  
+  .indicator {
+    top: 10px;
+    left: 110px;
+    background-color: red;
+  }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.testRunner) {
+      testRunner.dumpAsText(true);
+      testRunner.waitUntilDone();
+    }
+    
+    function doTest()
+    {
+      window.setTimeout(function() {
+        document.getElementById('target').style.webkitTransformOriginZ = '100px';
+        if (window.testRunner)
+          testRunner.notifyDone();
+      }, 0);
+    }
+
+    window.addEventListener('load', doTest, false);
+  </script>
+</head>
+<body>
+  <!-- The gren box should snap to the right, obscuring the red box. -->
+  <div class="indicator box"></div>
+  <div class="container box">
+    <div id="target" class="intermediate box">
+      <div class="inner box">
+      </div>
+    </div>
+  </div>
+</body>
+</html>

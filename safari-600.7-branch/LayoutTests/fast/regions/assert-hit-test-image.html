@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+    <title>Test - Bug 123329: [CSS Regions] Fix Assert SHOULD NEVER BE REACHED in RenderLayer::enclosingElement()</title>
+    <style>
+        .content {
+            -webkit-flow-into: flow;
+            width: 100px;
+            height: 100px;
+        }
+        .region {
+            -webkit-flow-from: flow;
+        }
+    </style>
+</head>
+<body>
+    <img src="resources/ipad.jpg" class="content"/>
+    <div class="region"></div>
+    <p>
+        The test passes if it doesn't trigger an assert.
+        When hitting the RootInlineBox of the flowed image, the region should be hit and have its :hover state activated.
+    </p>
+    <p class="result"></p>
+
+    <script type="text/javascript">
+        if (window.testRunner)
+            window.testRunner.dumpAsText(false);
+
+        function isHover(element) {
+            return (element.parentElement.querySelector(':hover') === element);
+        }
+
+        if(window.eventSender) {
+            var img = document.querySelector("img");
+            window.eventSender.mouseMoveTo( img.offsetLeft + 1, img.offsetTop + img.offsetHeight + 1 );
+            document.querySelector(".result").innerHTML = isHover(document.querySelector(".region")) ? "PASS" : "FAIL";
+        }
+    </script>
+</body>
+</html>

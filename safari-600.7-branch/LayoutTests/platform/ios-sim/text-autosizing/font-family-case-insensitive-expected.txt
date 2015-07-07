@@ -1,0 +1,11 @@
+Each row of the table should have text that is the same size.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS <font> rows were all the same size
+PASS <span> rows were all the same size
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

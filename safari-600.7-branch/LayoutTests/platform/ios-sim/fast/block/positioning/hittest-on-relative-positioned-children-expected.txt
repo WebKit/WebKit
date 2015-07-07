@@ -1,0 +1,16 @@
+This tests hit testing on relative positioned children. To manually test, select text by a mouse drag starting in the blue box but outside red boxes and ending inside a red box.
+
+FAIL Selecting line 1 of box 1 selected "", expected "first line"
+FAIL Selecting line 2 of box 1 selected "", expected "second line"
+FAIL Selecting line 3 of box 1 selected "", expected "third line"
+FAIL Selecting line 1 of box 2 selected "", expected "first line"
+FAIL Selecting line 2 of box 2 selected "", expected "second line"
+FAIL Selecting line 3 of box 2 selected "", expected "third line"
+FAIL Selecting line 1 of box 3 selected "", expected "first line"
+FAIL Selecting line 2 of box 3 selected "", expected "second line"
+FAIL Selecting line 3 of box 3 selected "", expected "third line"
+FAIL Selecting line 1 of box 4 selected "", expected "first line"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

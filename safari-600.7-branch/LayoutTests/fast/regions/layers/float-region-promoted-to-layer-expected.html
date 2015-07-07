@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+    <head>
+        <link rel="stylesheet" href="../resources/region-style.css">
+        <style>
+            .dummyFloat
+            {
+                float: left;
+                width: 1px;
+                height: 10px;
+            }
+            .box1
+            {
+                width: 52px;
+                height: 1px;
+            }
+            .box2
+            {
+                /* The following border will be painted on top of the first region */
+                border-left: gray 52px solid;
+                /* Making box2 have its own layer */
+                position: relative;
+                width: 200px;
+                height: 61px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="box1">
+            <div class="dummyFloat"></div>
+            <div class="borderBox" style="position: relative">
+                <div class="redBox"></div>
+            </div>
+        </div>
+
+        <div class="box2">
+            <div class="borderBox">
+                <div class="orangeBox"></div>
+            </div>
+        </div>
+    </body>
+</html>

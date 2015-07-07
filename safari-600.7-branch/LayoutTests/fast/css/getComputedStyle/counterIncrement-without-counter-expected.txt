@@ -1,0 +1,3 @@
+PASS style.counterIncrement is '';
+PASS style.counterReset is '';
+

@@ -1,0 +1,275 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 435x19
+          text run at (0,0) width 435: "Test appearances of input-speech-button in <input type='number'>."
+      RenderBlock {DIV} at (0,36) size 784x0
+      RenderBlock {DIV} at (0,36) size 784x352
+        RenderTable {TABLE} at (0,0) size 716x352
+          RenderTableSection {TBODY} at (0,0) size 716x352
+            RenderTableRow {TR} at (0,2) size 716x348
+              RenderTableCell {TD} at (2,14) size 180x324 [r=0 c=0 rs=1 cs=1]
+                RenderBlock {DIV} at (1,1) size 178x322
+                  RenderTextControl {INPUT} at (0,0) size 101x16 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (93,1) size 0x14
+                    RenderBlock {DIV} at (96,3) size 0x11
+                  RenderBR {BR} at (101,11) size 0x0
+                  RenderTextControl {INPUT} at (0,16) size 101x16 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (93,1) size 0x14
+                    RenderBlock {DIV} at (96,3) size 0x11
+                  RenderBR {BR} at (101,27) size 0x0
+                  RenderTextControl {INPUT} at (0,32) size 113x17 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (105,1) size 0x15
+                    RenderBlock {DIV} at (108,3) size 0x12
+                  RenderBR {BR} at (113,43) size 0x0
+                  RenderTextControl {INPUT} at (0,49) size 113x17 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (105,1) size 0x15
+                    RenderBlock {DIV} at (108,3) size 0x12
+                  RenderBR {BR} at (113,60) size 0x0
+                  RenderTextControl {INPUT} at (0,66) size 126x20 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (117,1) size 0x18
+                    RenderBlock {DIV} at (120,4) size 0x13
+                  RenderBR {BR} at (126,79) size 0x0
+                  RenderTextControl {INPUT} at (0,86) size 126x20 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (117,1) size 0x18
+                    RenderBlock {DIV} at (120,4) size 0x13
+                  RenderBR {BR} at (126,99) size 0x0
+                  RenderTextControl {INPUT} at (2,108) size 137x21 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (128,1) size 0x19
+                    RenderBlock {DIV} at (131,4) size 0x14
+                  RenderBR {BR} at (141,122) size 0x0
+                  RenderTextControl {INPUT} at (2,133) size 137x21 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (128,1) size 0x19
+                    RenderBlock {DIV} at (131,4) size 0x14
+                  RenderBR {BR} at (141,147) size 0x0
+                  RenderTextControl {INPUT} at (2,158) size 150x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (140,1) size 0x20
+                    RenderBlock {DIV} at (143,4) size 0x15
+                  RenderBR {BR} at (154,173) size 0x0
+                  RenderTextControl {INPUT} at (2,184) size 150x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (140,1) size 0x20
+                    RenderBlock {DIV} at (143,4) size 0x15
+                  RenderBR {BR} at (154,199) size 0x0
+                  RenderTextControl {INPUT} at (2,210) size 161x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (151,1) size 0x21
+                    RenderBlock {DIV} at (154,4) size 0x16
+                  RenderBR {BR} at (165,226) size 0x0
+                  RenderTextControl {INPUT} at (2,237) size 161x23 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (151,1) size 0x21
+                    RenderBlock {DIV} at (154,4) size 0x16
+                  RenderBR {BR} at (165,253) size 0x0
+                  RenderTextControl {INPUT} at (2,264) size 174x26 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (163,1) size 0x24
+                    RenderBlock {DIV} at (166,4) size 0x18
+                  RenderBR {BR} at (178,281) size 0x0
+                  RenderTextControl {INPUT} at (2,294) size 174x26 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (163,1) size 0x24
+                    RenderBlock {DIV} at (166,4) size 0x18
+                  RenderBR {BR} at (178,311) size 0x0
+              RenderTableCell {TD} at (184,2) size 240x348 [r=0 c=1 rs=1 cs=1]
+                RenderBlock {DIV} at (1,1) size 238x346
+                  RenderTextControl {INPUT} at (2,2) size 185x28 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (174,1) size 0x26
+                    RenderBlock {DIV} at (177,5) size 0x19
+                  RenderBR {BR} at (189,21) size 0x0
+                  RenderTextControl {INPUT} at (2,34) size 185x28 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (174,1) size 0x26
+                    RenderBlock {DIV} at (177,5) size 0x19
+                  RenderBR {BR} at (189,53) size 0x0
+                  RenderTextControl {INPUT} at (2,66) size 198x29 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (186,1) size 0x27
+                    RenderBlock {DIV} at (189,5) size 0x20
+                  RenderBR {BR} at (202,86) size 0x0
+                  RenderTextControl {INPUT} at (2,99) size 198x29 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (186,1) size 0x27
+                    RenderBlock {DIV} at (189,5) size 0x20
+                  RenderBR {BR} at (202,119) size 0x0
+                  RenderTextControl {INPUT} at (2,132) size 210x31 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (198,1) size 0x29
+                    RenderBlock {DIV} at (201,5) size 0x21
+                  RenderBR {BR} at (214,153) size 0x0
+                  RenderTextControl {INPUT} at (2,167) size 210x31 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (198,1) size 0x29
+                    RenderBlock {DIV} at (201,5) size 0x21
+                  RenderBR {BR} at (214,188) size 0x0
+                  RenderTextControl {INPUT} at (2,202) size 223x32 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (210,1) size 0x30
+                    RenderBlock {DIV} at (213,5) size 0x22
+                  RenderBR {BR} at (227,223) size 0x0
+                  RenderTextControl {INPUT} at (2,238) size 223x32 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (210,1) size 0x30
+                    RenderBlock {DIV} at (213,5) size 0x22
+                  RenderBR {BR} at (227,259) size 0x0
+                  RenderTextControl {INPUT} at (2,274) size 234x33 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (221,1) size 0x31
+                    RenderBlock {DIV} at (224,5) size 0x23
+                  RenderBR {BR} at (238,296) size 0x0
+                  RenderTextControl {INPUT} at (2,311) size 234x33 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (221,1) size 0x31
+                    RenderBlock {DIV} at (224,5) size 0x23
+                  RenderBR {BR} at (238,333) size 0x0
+              RenderTableCell {TD} at (426,6) size 288x340 [r=0 c=2 rs=1 cs=1]
+                RenderBlock {DIV} at (1,1) size 286x338
+                  RenderTextControl {INPUT} at (2,2) size 247x36 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (233,1) size 0x34
+                    RenderBlock {DIV} at (236,6) size 0x24
+                  RenderBR {BR} at (251,26) size 0x0
+                  RenderTextControl {INPUT} at (2,42) size 247x36 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (233,1) size 0x34
+                    RenderBlock {DIV} at (236,6) size 0x24
+                  RenderBR {BR} at (251,66) size 0x0
+                  RenderTextControl {INPUT} at (2,82) size 258x38 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (244,1) size 0x36
+                    RenderBlock {DIV} at (247,6) size 0x26
+                  RenderBR {BR} at (262,108) size 0x0
+                  RenderTextControl {INPUT} at (2,124) size 258x38 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (244,1) size 0x36
+                    RenderBlock {DIV} at (247,6) size 0x26
+                  RenderBR {BR} at (262,150) size 0x0
+                  RenderTextControl {INPUT} at (2,166) size 271x39 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (256,1) size 0x37
+                    RenderBlock {DIV} at (259,6) size 0x27
+                  RenderBR {BR} at (275,192) size 0x0
+                  RenderTextControl {INPUT} at (2,209) size 271x39 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (256,1) size 0x37
+                    RenderBlock {DIV} at (259,6) size 0x27
+                  RenderBR {BR} at (275,235) size 0x0
+                  RenderTextControl {INPUT} at (2,252) size 282x40 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (267,1) size 0x38
+                    RenderBlock {DIV} at (270,6) size 0x28
+                  RenderBR {BR} at (286,279) size 0x0
+                  RenderTextControl {INPUT} at (2,296) size 282x40 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+                    RenderBlock {DIV} at (267,1) size 0x38
+                    RenderBlock {DIV} at (270,6) size 0x28
+                  RenderBR {BR} at (286,323) size 0x0
+layer at (16,61) size 84x11 scrollWidth 136
+  RenderBlock {DIV} at (5,2) size 84x11
+    RenderText {#text} at (1,0) size 134x11
+      text run at (1,0) width 134: "012345678901234567890123456789"
+layer at (16,77) size 84x11 scrollWidth 136
+  RenderBlock {DIV} at (5,2) size 84x11
+    RenderText {#text} at (1,0) size 134x11
+      text run at (1,0) width 134: "012345678901234567890123456789"
+layer at (16,93) size 96x12 scrollWidth 153
+  RenderBlock {DIV} at (5,2) size 96x12
+    RenderText {#text} at (1,0) size 151x12
+      text run at (1,0) width 151: "012345678901234567890123456789"
+layer at (16,110) size 96x12 scrollWidth 153
+  RenderBlock {DIV} at (5,2) size 96x12
+    RenderText {#text} at (1,0) size 151x12
+      text run at (1,0) width 151: "012345678901234567890123456789"
+layer at (17,128) size 106x13 scrollWidth 169
+  RenderBlock {DIV} at (6,3) size 106x13
+    RenderText {#text} at (1,0) size 167x13
+      text run at (1,0) width 167: "012345678901234567890123456789"
+layer at (17,148) size 106x13 scrollWidth 169
+  RenderBlock {DIV} at (6,3) size 106x13
+    RenderText {#text} at (1,0) size 167x13
+      text run at (1,0) width 167: "012345678901234567890123456789"
+layer at (19,170) size 117x14 scrollWidth 186
+  RenderBlock {DIV} at (6,3) size 117x14
+    RenderText {#text} at (1,0) size 184x14
+      text run at (1,0) width 184: "012345678901234567890123456789"
+layer at (19,195) size 117x14 scrollWidth 186
+  RenderBlock {DIV} at (6,3) size 117x14
+    RenderText {#text} at (1,0) size 184x14
+      text run at (1,0) width 184: "012345678901234567890123456789"
+layer at (20,220) size 127x15 scrollWidth 203
+  RenderBlock {DIV} at (7,3) size 127x15
+    RenderText {#text} at (1,0) size 201x15
+      text run at (1,0) width 201: "012345678901234567890123456789"
+layer at (20,246) size 127x15 scrollWidth 203
+  RenderBlock {DIV} at (7,3) size 127x15
+    RenderText {#text} at (1,0) size 201x15
+      text run at (1,0) width 201: "012345678901234567890123456789"
+layer at (20,272) size 138x16 scrollWidth 219
+  RenderBlock {DIV} at (7,3) size 138x16
+    RenderText {#text} at (1,0) size 217x16
+      text run at (1,0) width 217: "012345678901234567890123456789"
+layer at (20,299) size 138x16 scrollWidth 219
+  RenderBlock {DIV} at (7,3) size 138x16
+    RenderText {#text} at (1,0) size 217x16
+      text run at (1,0) width 217: "012345678901234567890123456789"
+layer at (21,327) size 148x18 scrollWidth 236
+  RenderBlock {DIV} at (8,4) size 148x18
+    RenderText {#text} at (1,0) size 234x18
+      text run at (1,0) width 234: "012345678901234567890123456789"
+layer at (21,357) size 148x18 scrollWidth 236
+  RenderBlock {DIV} at (8,4) size 148x18
+    RenderText {#text} at (1,0) size 234x18
+      text run at (1,0) width 234: "012345678901234567890123456789"
+layer at (203,53) size 159x19 scrollWidth 253
+  RenderBlock {DIV} at (8,4) size 159x19
+    RenderText {#text} at (1,0) size 251x19
+      text run at (1,0) width 251: "012345678901234567890123456789"
+layer at (203,85) size 159x19 scrollWidth 253
+  RenderBlock {DIV} at (8,4) size 159x19
+    RenderText {#text} at (1,0) size 251x19
+      text run at (1,0) width 251: "012345678901234567890123456789"
+layer at (204,117) size 169x20 scrollWidth 269
+  RenderBlock {DIV} at (9,4) size 169x20
+    RenderText {#text} at (1,0) size 267x20
+      text run at (1,0) width 267: "012345678901234567890123456789"
+layer at (204,150) size 169x20 scrollWidth 269
+  RenderBlock {DIV} at (9,4) size 169x20
+    RenderText {#text} at (1,0) size 267x20
+      text run at (1,0) width 267: "012345678901234567890123456789"
+layer at (204,184) size 181x21 scrollWidth 286
+  RenderBlock {DIV} at (9,5) size 181x21
+    RenderText {#text} at (1,0) size 284x21
+      text run at (1,0) width 284: "012345678901234567890123456789"
+layer at (204,219) size 181x21 scrollWidth 286
+  RenderBlock {DIV} at (9,5) size 181x21
+    RenderText {#text} at (1,0) size 284x21
+      text run at (1,0) width 284: "012345678901234567890123456789"
+layer at (205,254) size 191x22 scrollWidth 303
+  RenderBlock {DIV} at (10,5) size 191x22
+    RenderText {#text} at (1,0) size 301x22
+      text run at (1,0) width 301: "012345678901234567890123456789"
+layer at (205,290) size 191x22 scrollWidth 303
+  RenderBlock {DIV} at (10,5) size 191x22
+    RenderText {#text} at (1,0) size 301x22
+      text run at (1,0) width 301: "012345678901234567890123456789"
+layer at (205,326) size 202x23 scrollWidth 320
+  RenderBlock {DIV} at (10,5) size 202x23
+    RenderText {#text} at (1,0) size 318x23
+      text run at (1,0) width 318: "012345678901234567890123456789"
+layer at (205,363) size 202x23 scrollWidth 320
+  RenderBlock {DIV} at (10,5) size 202x23
+    RenderText {#text} at (1,0) size 318x23
+      text run at (1,0) width 318: "012345678901234567890123456789"
+layer at (448,59) size 212x24 scrollWidth 336
+  RenderBlock {DIV} at (11,6) size 212x24
+    RenderText {#text} at (1,0) size 334x24
+      text run at (1,0) width 334: "012345678901234567890123456789"
+layer at (448,99) size 212x24 scrollWidth 336
+  RenderBlock {DIV} at (11,6) size 212x24
+    RenderText {#text} at (1,0) size 334x24
+      text run at (1,0) width 334: "012345678901234567890123456789"
+layer at (448,139) size 223x26 scrollWidth 353
+  RenderBlock {DIV} at (11,6) size 223x26
+    RenderText {#text} at (1,0) size 351x26
+      text run at (1,0) width 351: "012345678901234567890123456789"
+layer at (448,181) size 223x26 scrollWidth 353
+  RenderBlock {DIV} at (11,6) size 223x26
+    RenderText {#text} at (1,0) size 351x26
+      text run at (1,0) width 351: "012345678901234567890123456789"
+layer at (449,223) size 233x27 scrollWidth 370
+  RenderBlock {DIV} at (12,6) size 233x27
+    RenderText {#text} at (1,0) size 368x27
+      text run at (1,0) width 368: "012345678901234567890123456789"
+layer at (449,266) size 233x27 scrollWidth 370
+  RenderBlock {DIV} at (12,6) size 233x27
+    RenderText {#text} at (1,0) size 368x27
+      text run at (1,0) width 368: "012345678901234567890123456789"
+layer at (449,309) size 244x28 scrollWidth 386
+  RenderBlock {DIV} at (12,6) size 244x28
+    RenderText {#text} at (1,0) size 384x28
+      text run at (1,0) width 384: "012345678901234567890123456789"
+layer at (449,353) size 244x28 scrollWidth 386
+  RenderBlock {DIV} at (12,6) size 244x28
+    RenderText {#text} at (1,0) size 384x28
+      text run at (1,0) width 384: "012345678901234567890123456789"

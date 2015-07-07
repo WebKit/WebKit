@@ -1,0 +1,67 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script>
+
+function test()
+{
+    var obj1, obj2;
+
+    InspectorTest.runTestSuite([
+        function testThis(next)
+        {
+            RuntimeAgent.evaluate("({ a : 1, b : 2 })", step1);
+
+            function step1(error, result, wasThrown)
+            {
+
+                function sum()
+                {
+                    return this.a + this.b;
+                }
+
+                obj1 = result;
+                RuntimeAgent.callFunctionOn(obj1.objectId, sum.toString(), step2);
+            }
+
+            function step2(error, result, wasThrown)
+            {
+                InspectorTest.addResult(result.value);
+                next();
+            }
+        },
+
+        function testArguments(next)
+        {
+            RuntimeAgent.evaluate("({ c : 1, d : 2 })", step1);
+
+            function step1(error, result, wasThrown)
+            {
+                function format(aobj1, aobj2, val, undef)
+                {
+                    return JSON.stringify(this) + "\n" + JSON.stringify(aobj1) + "\n" + JSON.stringify(aobj2) + "\n" + val + "\n" + undef;
+                }
+
+                obj2 = result;
+                RuntimeAgent.callFunctionOn(obj1.objectId, format.toString(), [obj1, obj2, {value:4}, {}], step2);
+            }
+
+            function step2(error, result, wasThrown)
+            {
+                InspectorTest.addResult(result.value);
+                next();
+            }
+        }
+    ]);
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests RuntimeAgent.callFunctionOn usages.
+</p>
+
+</body>
+</html>

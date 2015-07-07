@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,60) size 800x480
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGPath {path} at (0,0) size 192x100 [fill={[type=SOLID] [color=#000000]}] [data="M -25 0 C 120 -40 -80 -60 20 25 Z M 20 10 C 13.3333 3.33333 14 0 22 0"]
+    RenderSVGRect {rect} at (0,60) size 800x480 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=500.00] [height=300.00]
+    RenderSVGContainer {g} at (80,236) size 320x143
+      RenderSVGContainer {use} at (80,236) size 320x143 [transform={m=((1.00,0.00)(0.00,1.00)) t=(130.00,170.00)}]
+        RenderSVGPath {path} at (80,236) size 320x143 [stroke={[type=SOLID] [color=#880000] [stroke width=10.00]}] [data="M -25 0 C 120 -40 -80 -60 20 25 Z M 20 10 C 13.3333 3.33333 14 0 22 0"]
+      RenderSVGContainer {use} at (80,236) size 320x143 [transform={m=((1.00,0.00)(0.00,1.00)) t=(130.00,170.00)}]
+        RenderSVGPath {path} at (80,236) size 320x143 [stroke={[type=SOLID] [color=#8888FF] [stroke width=10.00]}] [data="M -25 0 C 120 -40 -80 -60 20 25 Z M 20 10 C 13.3333 3.33333 14 0 22 0"]

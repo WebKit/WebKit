@@ -1,0 +1,7 @@
+Test for WebKit Bug 95645 Crash
+
+The test passes if it does not crash or assert.
+
+PASS
+
+

@@ -1,0 +1,66 @@
+Test window.CSS.supports()
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL CSS.supports("(display: none)") should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("(display: deadbeef)") should be false. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("not (display: deadbeef)") should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("not (display: none)") should be false. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("not (not (display: none))") should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("not (not (not (display: none)))") should be false. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("(display: none) and (display: block)") should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("(display: none) and (display: block) and (display: inline)") should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("(display: none) and (display: block) and (display: deadbeef) and (display: inline)") should be false. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("(display: none) or (display: inline)") should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("(display: none) or (display: block) or (display: inline)") should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("(display: none) or (display: deadbeef) or (display: inline)") should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("(display: ohhai) or (display: deadbeef) or (display: rainbows)") should be false. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("(display: none) and (display: block) or (display: inline)") should be false. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("not (display: deadbeef) and (display: block)") should be false. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("(not (border: 1px 1px 1px 1px 1px solid #000)) and (display: block)") should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("(display: block !important) and ((display: inline) or (display: deadbeef))") should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("not ((not (display: block)) or ((display: none) and (deadbeef: 1px)))") should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("not( display: deadbeef)") should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("(display: none)and (   -webkit-transition: all 1s )") should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("(display: none)or(-webkit-transition: all 1s)") should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("(display: none) or(-webkit-transition: all 1s    )") should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("(((((((display: none)))))))") should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("(!important)") should be false. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("not not not not (display: none)") should be false. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("(top: -webkit-calc(80% - 20px))") should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("(background-color: rgb(0, 128, 0))") should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("(background: url('/blah'))") should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("((top: -webkit-calc(80% - 20px)) and (not (background-color: rgb(0, 128, 0)))) or (background: url('/blah'))") should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("(background: invalid('/blah'))") should be false. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("top", "20%") should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("top", " 20px   ") should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("top", "20") should be false. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("dis\nplay", "none") should be false. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("display", "rainbow") should be false. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("display", "url(rainbow.png)") should be false. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports(" background   ", "url(rainbow.png)") should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("background", "invalid(rainbow.png)") should be false. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("background-color", "#000") should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("background-color", "rgba(0,0,0,0)") should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("background-color", "inherit") should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("display", "none !important") should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("display", "none!important") should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("display", "!important none") should be false. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("display", "none !important ! important ") should be false. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("display", "none ! important") should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("display", "none ! 	important") should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("display", "none ! \nimportant") should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("", "") should be false. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports(true, "") should be false. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports([], "none") should be false. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("display", "") should be false. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("display:", "none") should be false. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("z-index", 1) should be true. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("content", []) should be false. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("content", "!important") should be false. Threw exception ReferenceError: Can't find variable: CSS
+FAIL CSS.supports("(display: none)", undefined) should be false. Threw exception ReferenceError: Can't find variable: CSS
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

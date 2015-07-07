@@ -1,0 +1,58 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script>
+
+function A() {
+    this.testFoo = "abc";
+}
+
+function B() { 
+    this.testBar = "cde";
+}
+
+B.prototype = new A();
+b = new B();
+
+function test()
+{
+    function fail(message)
+    {
+        InspectorTest.addResult(message);
+        InspectorTest.completeTest();
+    }
+
+    RuntimeAgent.evaluate("window.b", step1);
+
+    function step1(error, result)
+    {
+        RuntimeAgent.getProperties(result.objectId, /* isOwnProperty */ false, step2);
+    }
+
+    function step2(error, properties) 
+    {
+        if (error) 
+            return fail("Error took place during RuntimeAgent.getProperties call");
+        
+        if (!properties) 
+            return fail("Properties do not exist");
+        
+        for (var i = 0; i < properties.length; i++) {
+            var property = properties[i];
+            if (property.name.match(/^test/)) 
+                InspectorTest.addResult("property.name==\"" + property.name + "\" isOwn==\"" + property.isOwn + "\"");
+        }
+        InspectorTest.completeTest();
+    }
+
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests RemoteObject.getProperties.
+</p>
+
+</body>
+</html>

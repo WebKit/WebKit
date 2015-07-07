@@ -1,0 +1,28 @@
+Test that the methods throw INVALID_STATE_ERR when the media element has not loaded. canPlayType() never throws.
+
+EXPECTED (video.networkState == '0') OK
+EXPECTED (video.currentSrc == '') OK
+No 'src'. Verify that all methods except canPlayType() throw INVALID_STATE_ERR.
+TEST(video.webkitGenerateKeyRequest('webkit-org.w3.clearkey')) THROWS(DOMException.INVALID_STATE_ERR) OK
+TEST(video.webkitAddKey('webkit-org.w3.clearkey', key)) THROWS(DOMException.INVALID_STATE_ERR) OK
+TEST(video.webkitCancelKeyRequest('webkit-org.w3.clearkey')) THROWS(DOMException.INVALID_STATE_ERR) OK
+RUN(video.canPlayType('audio/wav', 'webkit-org.w3.clearkey'))
+
+'src' has been set, but loading has not yet started. Verify that all methods except canPlayType() throw INVALID_STATE_ERR.
+EXPECTED (video.networkState == '3') OK
+EXPECTED (video.currentSrc == '') OK
+TEST(video.webkitGenerateKeyRequest('webkit-org.w3.clearkey')) THROWS(DOMException.INVALID_STATE_ERR) OK
+TEST(video.webkitAddKey('webkit-org.w3.clearkey', key)) THROWS(DOMException.INVALID_STATE_ERR) OK
+TEST(video.webkitCancelKeyRequest('webkit-org.w3.clearkey')) THROWS(DOMException.INVALID_STATE_ERR) OK
+RUN(video.canPlayType('audio/wav', 'webkit-org.w3.clearkey'))
+
+EVENT(loadstart)
+TEST(video.networkState == video.NETWORK_LOADING || video.networkState == video.NETWORK_IDLE) OK
+EXPECTED (video.currentSrc != '') OK
+Verify that none of the methods throw when load has started.
+RUN(video.webkitGenerateKeyRequest('webkit-org.w3.clearkey'))
+RUN(video.webkitAddKey('webkit-org.w3.clearkey', key))
+RUN(video.webkitCancelKeyRequest('webkit-org.w3.clearkey'))
+RUN(video.canPlayType('audio/wav', 'webkit-org.w3.clearkey'))
+END OF TEST
+

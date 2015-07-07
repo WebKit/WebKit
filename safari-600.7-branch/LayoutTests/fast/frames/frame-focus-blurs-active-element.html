@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+<input id="input" type="text"></input>
+<iframe id="iframe"></iframe>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var input = document.getElementById("input");
+var iframe = document.getElementById("iframe");
+
+window.addEventListener("blur", function(event) {
+    if (event.target === input)
+        console.log("PASS: blur event was fired on the active element when the iframe was focused.");
+    else if (event.target === window && window.testRunner)
+        testRunner.notifyDone();
+}, true);
+
+input.focus();
+iframe.contentWindow.focus();
+</script>
+</body>
+</html>

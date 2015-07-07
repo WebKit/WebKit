@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 3: Referrer: 
+CONSOLE MESSAGE: line 7: window.opener: PASS
+Test that a new window opened via <a target='_blank'> with rel="noreferrer" has a null opener.
+
+Click me to test.

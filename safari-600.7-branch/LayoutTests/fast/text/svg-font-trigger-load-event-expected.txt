@@ -1,0 +1,5 @@
+This test makes sure that drawing text in an SVG font that resides in another document doesn't cause load events to be fired. The test is successful if the image load hander line blow occurs after the line that says it should be before the image load handler.
+This line should occur before the image load handler.
+Image load handler occurred.
+
+This is some dummy text

@@ -1,0 +1,57 @@
+<svg version="1.1" baseProfile="basic" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runRepaintTest()">
+  <script xlink:href="../../fast/repaint/resources/repaint.js"/>
+  <title>Test for SVGElementInstance::correspondingElement and SVGElementInstance::correspondingUseElement</title>
+
+  <defs>
+    <rect id="reference" x="240" y="1" width="239" height="358" />
+    <script type="text/ecmascript">
+    <![CDATA[
+      function repaintTest() {
+          if (window.eventSender) {
+              testRunner.waitUntilDone();
+              eventSender.mouseMoveTo(250, 50);
+              eventSender.mouseDown();
+              eventSender.mouseUp();
+          }
+      }
+
+      function test (event) {
+        // get pointers to use and reference elements
+        var reference = document.getElementById('reference');
+        var use = document.getElementById('use');
+
+        // initialize the pass count and colors
+        var pass = 0;
+        var colors = ['red', 'orange', 'green'];
+
+        // event.target.correspondingUseElement test
+        if (event.target.correspondingUseElement == use) {
+          document.getElementById('assertion_1').setAttributeNS(null, 'fill', 'green');
+          pass++;
+        }
+
+        // event.target.correspondingElement test
+        if (event.target.correspondingElement == reference) {
+          document.getElementById('assertion_2').setAttributeNS(null, 'fill', 'green');
+          pass++;
+        }
+
+        // show the result
+        use.setAttributeNS(null, 'fill', colors[pass]);
+
+        if (window.testRunner)
+          testRunner.notifyDone();
+      }
+    ]]>
+    </script>
+  </defs>
+
+  <use id="use" xlink:href="#reference" onclick="test(evt)" fill="grey" />
+
+  <text transform="translate(5,20)">Click on the grey rectangle to start</text>
+  <text id="assertion_1" fill="red" transform="translate(5,80)">Test for correspondingUseElement</text>
+  <text id="assertion_2" fill="red" transform="translate(5,110)">Test for correspondingElement</text>
+
+  <rect id="test-frame" x="1" y="1" width="478" height="358" fill="none" stroke="#000"/>
+
+</svg>

@@ -1,0 +1,8 @@
+Test for [CSSRegions] RenderFlowThread should keep a count of auto height regions.
+
+The region height changes dynamically from auto to defined.
+
+On success, you should see PASS below.
+
+a a a a a a
+PASS

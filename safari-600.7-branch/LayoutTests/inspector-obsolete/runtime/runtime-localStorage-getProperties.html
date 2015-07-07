@@ -1,0 +1,40 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script>
+
+localStorage.testProperty = "testPropertyValue";
+
+function test()
+{
+    RuntimeAgent.evaluate("localStorage", step1);
+
+    function step1(error, result, wasThrown)
+    {
+        var localStorageHandle = WebInspector.RemoteObject.fromPayload(result);
+        localStorageHandle.getOwnProperties(step2);
+    }
+
+    function step2(properties)
+    {
+        for (var i = 0; i < properties.length; ++i) {
+            var property = properties[i];
+            if (property.name !== "testProperty")
+                continue;
+            property.value = { type: property.value.type, description: property.value.description };                
+            InspectorTest.dump(property);
+        }
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests RemoteObject.getProperties on localStorage object. <a href="https://bugs.webkit.org/show_bug.cgi?id=66215">66215</a>
+</p>
+
+</body>
+</html>

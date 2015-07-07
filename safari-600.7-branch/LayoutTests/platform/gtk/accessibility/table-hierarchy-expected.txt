@@ -1,0 +1,55 @@
+foo	bar
+Odd	Even
+1	2
+3	4
+hello	world
+Odd	Even
+1
+
+2
+
+3
+
+4
+
+This tests the Atk table hierarhy.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS table1.role is 'AXRole: AXTable'
+PASS table1.rowCount is 1
+PASS table1.columnCount is 2
+PASS table2.role is 'AXRole: AXTable'
+PASS table2.rowCount is 3
+PASS table2.columnCount is 2
+PASS table3.role is 'AXRole: AXTable'
+PASS table3.rowCount is 1
+PASS table3.columnCount is 2
+PASS table4.role is 'AXRole: AXTable'
+PASS table4.rowCount is 3
+PASS table4.columnCount is 2
+PASS children is 2
+PASS table1.childAtIndex(i).role is 'AXRole: AXCell'
+PASS table1.childAtIndex(i).role is 'AXRole: AXCell'
+PASS children is 6
+PASS table2.childAtIndex(i).role is 'AXRole: AXCell'
+PASS table2.childAtIndex(i).role is 'AXRole: AXCell'
+PASS table2.childAtIndex(i).role is 'AXRole: AXCell'
+PASS table2.childAtIndex(i).role is 'AXRole: AXCell'
+PASS table2.childAtIndex(i).role is 'AXRole: AXCell'
+PASS table2.childAtIndex(i).role is 'AXRole: AXCell'
+PASS children is 2
+PASS table3.childAtIndex(i).role is 'AXRole: AXCell'
+PASS table3.childAtIndex(i).role is 'AXRole: AXCell'
+PASS children is 6
+PASS table4.childAtIndex(i).role is 'AXRole: AXCell'
+PASS table4.childAtIndex(i).role is 'AXRole: AXCell'
+PASS table4.childAtIndex(i).role is 'AXRole: AXCell'
+PASS table4.childAtIndex(i).role is 'AXRole: AXCell'
+PASS table4.childAtIndex(i).role is 'AXRole: AXCell'
+PASS table4.childAtIndex(i).role is 'AXRole: AXCell'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

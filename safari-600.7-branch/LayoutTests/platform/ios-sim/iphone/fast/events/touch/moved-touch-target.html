@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+<head>
+  <title>Moved Touch Target</title>
+  <style>
+  body {
+      margin: 0;
+      padding: 0;
+  }
+
+  .container1 {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 50px;
+      height: 50px;
+      border: 1px solid green;
+  }
+
+  .container2 {
+      position: absolute;
+      top: 10px;
+      left: 100px;
+      width: 50px;
+      height: 50px;
+      border: 1px solid blue;
+  }
+
+  .target {
+      width: 40px;
+      height: 40px;
+      background-color: red;
+  }
+
+  #results {
+    position: absolute;
+    top: 100px;
+  }
+  </style>
+  <script src="misc-touch-helpers.js"></script>
+  <script>
+
+    var expectedTouches = 2;
+
+    function targetTouched(event) {
+        logTouch(event);
+        expectedTouches--;
+        if (expectedTouches) {
+            debug("Now move the element from one parent to another. Second touch should be at 110,20");
+            var target = document.querySelector(".target");
+            var container2 = document.querySelector(".container2");
+            container2.appendChild(target);
+            tapSoon(110, 20);
+        } else {
+            debug("PASSED");
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+    }
+
+    function init() {
+        var target = document.querySelector(".target");
+        target.addEventListener("touchstart", targetTouched, false);
+        debug("Should see two touches. The first should be at 20,20");
+        tapSoon(20, 20);
+    }
+
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    window.addEventListener("load", init, false);
+</script>
+</head>
+<body>
+  <div class="container1">
+    <div class="target">
+    </div>
+  </div>
+  <div class="container2">
+  </div>
+  <div id="results">
+  </div>
+</body>
+</html>

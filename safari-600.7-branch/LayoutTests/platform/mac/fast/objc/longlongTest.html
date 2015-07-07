@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script type="text/javascript" charset="utf-8">
+            function log(msg)
+            {
+                document.getElementById('console').innerHTML += msg + "\n"
+            }
+
+            function testLongLong(num, expected)
+            {
+                var result = objCController.longLongRoundTrip(num);
+                if (result == expected)
+                    log("PASS Test LongLong: result is " + result + " as expected!");
+                else
+                    log("FAIL Test LongLong: result is " + result + ", should be " + expected);
+            }
+
+            function testUnsignedLongLong(num, expected)
+            {
+                var result = objCController.unsignedLongLongRoundTrip(num);
+                if (result == expected)
+                    log("PASS Test UnsignedLongLong: result is " + result + " as expected!");
+                else
+                    log("FAIL Test UnsignedLongLong: result is " + result + ", should be " + expected);
+            }
+
+            function test()
+            {
+                if (!window.testRunner) {
+                    log("This test can only be run under DumpRenderTree.");
+                    return;
+                }
+
+                testRunner.dumpAsText();
+    
+                testLongLong(0, 0);
+                testLongLong(1, 1);
+                testLongLong(-1, -1);
+                testLongLong(9223372036854776001, -9223372036854776000);
+                testLongLong(-9223372036854776001, -9223372036854776000);
+
+                testUnsignedLongLong(0, 0);
+                testUnsignedLongLong(1, 1);
+                testUnsignedLongLong(-1, 18446744073709552000);
+                testUnsignedLongLong(9223372036854776001, 9223372036854776000);
+                testUnsignedLongLong(-9223372036854776001, 9223372036854776000);
+
+            }
+        </script>
+    </head>
+    <body onload="test();">
+        <pre id="console"></pre>
+    </body>
+</html>

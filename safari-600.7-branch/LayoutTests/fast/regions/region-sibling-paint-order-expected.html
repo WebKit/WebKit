@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<!--
+    This is a test reference file.
+    This test verifies that if a region appears before a sibling element in DOM order, the region's
+    content paints below the sibling.
+    This test passes if there is no red visible.
+-->
+<html>
+<head>
+    <style>
+        #region {
+            position: relative; z-index: 1; /* regions create Stacking Contexts */
+            background-color: gray;
+            width: 100px;
+            height: 100px;
+        }
+        #sibling-of-region {
+            position: relative; z-index: 1; /* create Stacking Contexts */
+            background-color: green;
+            width: 100px;
+            height: 100px;
+            margin-top: -90px;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="region"></div>
+    <div id="sibling-of-region"></div>
+</body>
+</html>

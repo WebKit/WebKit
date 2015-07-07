@@ -1,0 +1,20 @@
+PASS breakDownURL('about:blank') is 'protocol=about:, pathname=blank, origin=null'
+PASS breakDownURL('http://example.com/') is 'protocol=http:, host=example.com, pathname=/, origin=http://example.com'
+PASS breakDownURL('http://@example.com/') is 'protocol=http:, host=example.com, pathname=/, origin=http://example.com, toString=http://example.com/'
+PASS breakDownURL('http://a@example.com/') is 'protocol=http:, username=a, host=example.com, pathname=/, origin=http://example.com'
+PASS breakDownURL('http://a:@example.com/') is 'protocol=http:, username=a, host=example.com, pathname=/, origin=http://example.com, toString=http://a@example.com/'
+PASS breakDownURL('http://joebob1:abc123@example.com/') is 'protocol=http:, username=joebob1, password=abc123, host=example.com, pathname=/, origin=http://example.com'
+PASS breakDownURL('http://:def456@example.com/') is 'protocol=http:, password=def456, host=example.com, pathname=/, origin=http://example.com'
+PASS breakDownURL('http://example.com/foo/bar') is 'protocol=http:, host=example.com, pathname=/foo/bar, origin=http://example.com'
+PASS breakDownURL('HTTP://example.com/foo/bar') is 'protocol=http:, host=example.com, pathname=/foo/bar, origin=http://example.com, toString=http://example.com/foo/bar'
+PASS breakDownURL('https://example.com/ttt?ggg') is 'protocol=https:, host=example.com, pathname=/ttt, search=?ggg, origin=https://example.com'
+PASS breakDownURL('ftp://example.com/ttt?ggg') is 'protocol=ftp:, host=example.com, pathname=/ttt, search=?ggg, origin=ftp://example.com'
+PASS breakDownURL('file:///Users/darin') is 'protocol=file:, pathname=/Users/darin, origin=file://'
+PASS breakDownURL('data:text/html,<b>foo</b>') is 'protocol=data:, pathname=text/html,<b>foo</b>, origin=null'
+PASS breakDownURL('http://a:b@c:1/e/f?g%h') is 'protocol=http:, username=a, password=b, hostname=c, host=c:1, port=1, pathname=/e/f, search=?g%h, origin=http://c:1'
+PASS breakDownURL('http://ex%61mple.com/') is 'protocol=http:, host=ex%61mple.com, pathname=/, origin=http://ex%61mple.com'
+PASS breakDownURL('http://ex%2fmple.com/') is 'protocol=http:, host=ex%2fmple.com, pathname=/, origin=http://ex%2fmple.com'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

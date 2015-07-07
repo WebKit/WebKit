@@ -1,0 +1,44 @@
+Test parsing of CSS number types.
+
+FAILURE
+
+Rules from the stylesheet:
+
+#a { font-size: 1em; }
+#b { }
+#c { }
+#d { }
+#e { font-size: 1rem; }
+#f { }
+#g { font-size: 16px; }
+#h { font-size: 16px; }
+#i { }
+#j { }
+#k { font-size: 1cm; }
+#l { }
+#m { font-size: 1in; }
+#n { font-size: 12pt; }
+#o { }
+#p { }
+#q { font-size: 100%; }
+Expected result:
+
+#a { font-size: 1em; }
+#b { font-size: 1em; }
+#c { font-size: 1em; }
+#d { font-size: 1em; }
+#e { font-size: 1rem; }
+#f { font-size: 1ex; }
+#g { font-size: 16px; }
+#h { font-size: 16px; }
+#i { font-size: 16px; }
+#j { font-size: 16px; }
+#k { font-size: 1cm; }
+#l { font-size: 1mm; }
+#m { font-size: 1in; }
+#n { font-size: 12pt; }
+#o { font-size: 16px; }
+#p { font-size: 1pc; }
+#q { font-size: 100%; }
+
+

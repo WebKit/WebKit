@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+
+description("Tests what happens when you make prototype chain accesses with impure GetOwnPropertySlot traps in the way.");
+
+var obj = {};
+obj.__proto__ = document;
+document.foo = function () {};
+
+function f() {
+    return obj.foo;
+}
+
+var expected = "\"function\"";
+for (var i = 0; i < 40; ++i) {
+    if (i == 35) {
+        var img = new Image();
+        img.name = "foo";
+        document.body.appendChild(img);
+        expected = "\"object\"";
+    }
+    shouldBe("typeof f()", expected);
+}
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

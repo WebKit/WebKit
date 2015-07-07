@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<head>
+    <script src="../resources/js-test-pre.js"></script>
+    <script src="resources/audio-testing.js"></script>
+    <script src="resources/audiobuffersource-testing.js"></script>
+    <script>
+        var context;
+        var source;
+
+        function runTest() 
+        {
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            }
+
+            var sampleRate = 44100.0;
+            var numberOfFrames = 32;
+            context = new webkitOfflineAudioContext(1, numberOfFrames, sampleRate);
+            source = context.createBufferSource();
+            source.buffer = createTestBuffer(context, numberOfFrames);
+            source.connect(context.destination);
+            source.onended = function() 
+            {
+                testPassed("source.onended called.");
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }
+            source.start(0);
+            context.startRendering();
+        }
+    </script>
+
+</head>
+<body onload="runTest()">
+    <div>Tests that AudioBufferSourceNode calls its onended EventListener.</div>
+    <div id="console"></div>
+</body>

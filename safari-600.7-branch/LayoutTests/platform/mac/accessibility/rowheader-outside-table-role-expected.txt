@@ -1,0 +1,11 @@
+Placeholder content
+This tests that if a rowheader is used outside of a table, it won't have an unknown role.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS rowheader.role is 'AXRole: AXGroup'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

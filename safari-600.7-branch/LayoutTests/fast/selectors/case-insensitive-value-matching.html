@@ -1,0 +1,130 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+[checked=false] {
+    background-color: red;
+}
+
+[lang=en]>[checked=false] {
+    text-indent: 21px;
+}
+
+[clear=yes]>[lang=en]>[checked=false] {
+    font-family: uncomon;
+}
+
+[dir=webkit][disabled=no]>[type=awesome][charset=latin1]>[lang=fr][checked=false] {
+    opacity: 0;
+}
+
+[dir=webkit][disabled=no][clear=yes]>[type=awesome][charset=latin1][lang=en]>[lang=fr][checked=false] {
+    color: green;
+}
+
+[dir=webkit]>[charset=latin1]>[scrolling=fast] ul>li {
+    background-color: blue;
+}
+
+[dir=webkit][disabled=yes][clear=no]>[type=awesome][charset=latin1][lang=en]>[lang=fr][checked=maybe][scrolling=fast] ul>li {
+    font-family: hipster;
+}
+
+</style>
+</head>
+<body>
+<div style="display:none">
+    <!-- No backtracking tree -->
+    <div clear=Yes dir=WebKit disabled=No>
+        <div charset=Latin1 lang=En type=Awesome>
+            <div lang=Fr checked=False id=target1>
+            </div>
+        </div>
+    </div>
+    <!-- Backtracking tree -->
+    <div clear=No dir=WebKit disabled=Yes>
+        <div charset=Latin1 lang=En type=Awesome>
+            <div lang=Fr checked=Maybe scrolling=Fast>
+
+                <!-- First backtracking level, does not match the top level [div=webkit]-->
+                <div clear=No dir=WebKit2 disabled=Yes>
+                    <div charset=Latin1 lang=En type=Awesome>
+                        <div lang=Fr checked=Maybe scrolling=Fast>
+
+                            <!-- Fails on the second level, on the charset-->
+                            <div clear=No dir=WebKit disabled=Yes>
+                                <div charset=None lang=En type=Awesome>
+                                    <div lang=Fr checked=Maybe scrolling=Fast>
+
+                                        <!-- Fails on the third level, on the scrolling attribute. -->
+                                        <div clear=No dir=WebKit disabled=Yes>
+                                            <div charset=None lang=En type=Awesome>
+                                                <div lang=Fr checked=Maybe scrolling=Slow>
+
+                                                    <!-- Finaly, the target. Congratulation if you read this far :) -->
+                                                    <ul>
+                                                        <li id=target2></li>
+                                                    </ul>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- End of third level failure. -->
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End of second level failure -->
+                        </div>
+                    </div>
+                </div>
+                <!-- End of first level failure -->
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+description('Some HTML attribute require case insensitive comparison when matching their value. Test those cases with and without backtracking.');
+
+debug("No backtracking, simple matches per level.")
+// One level.
+shouldBe('document.querySelectorAll("[checked=false]").length', '1');
+shouldBeEqualToString('document.querySelectorAll("[checked=false]")[0].id', 'target1');
+shouldBeEqualToString('getComputedStyle(document.querySelectorAll("[checked=false]")[0]).backgroundColor', 'rgb(255, 0, 0)');
+
+// Two level.
+shouldBe('document.querySelectorAll("[lang=en]>[checked=false]").length', '1');
+shouldBeEqualToString('document.querySelectorAll("[lang=en]>[checked=false]")[0].id', 'target1');
+shouldBeEqualToString('getComputedStyle(document.querySelectorAll("[lang=en]>[checked=false]")[0]).textIndent', '21px');
+
+// Three level.
+shouldBe('document.querySelectorAll("[clear=yes]>[lang=en]>[checked=false]").length', '1');
+shouldBeEqualToString('document.querySelectorAll("[clear=yes]>[lang=en]>[checked=false]")[0].id', 'target1');
+shouldBeEqualToString('getComputedStyle(document.querySelectorAll("[clear=yes]>[lang=en]>[checked=false]")[0]).fontFamily', 'uncomon');
+
+debug("No backtracking, multiple matches per level.");
+// Three level, 2 matches per level.
+shouldBe('document.querySelectorAll("[dir=webkit][disabled=no]>[type=awesome][charset=latin1]>[lang=fr][checked=false]").length', '1');
+shouldBeEqualToString('document.querySelectorAll("[dir=webkit][disabled=no]>[type=awesome][charset=latin1]>[lang=fr][checked=false]")[0].id', 'target1');
+shouldBeEqualToString('getComputedStyle(document.querySelectorAll("[dir=webkit][disabled=no]>[type=awesome][charset=latin1]>[lang=fr][checked=false]")[0]).opacity', '0');
+
+// Three level, 3 matches per level.
+shouldBe('document.querySelectorAll("[dir=webkit][disabled=no][clear=yes]>[type=awesome][charset=latin1][lang=en]>[lang=fr][checked=false]").length', '1');
+shouldBeEqualToString('document.querySelectorAll("[dir=webkit][disabled=no][clear=yes]>[type=awesome][charset=latin1][lang=en]>[lang=fr][checked=false]")[0].id', 'target1');
+shouldBeEqualToString('getComputedStyle(document.querySelectorAll("[dir=webkit][disabled=no][clear=yes]>[type=awesome][charset=latin1][lang=en]>[lang=fr][checked=false]")[0]).color', 'rgb(0, 128, 0)');
+
+debug("Backtracking, single matches per level.");
+// A single sequence of backtracking, 3 level to force one slow-path backtracking.
+shouldBe('document.querySelectorAll("[dir=webkit]>[charset=latin1]>[scrolling=fast] ul>li").length', '1');
+shouldBeEqualToString('document.querySelectorAll("[dir=webkit]>[charset=latin1]>[scrolling=fast] ul>li")[0].id', 'target2');
+shouldBeEqualToString('getComputedStyle(document.querySelectorAll("[dir=webkit]>[charset=latin1]>[scrolling=fast] ul>li")[0]).backgroundColor', 'rgb(0, 0, 255)');
+
+debug("Backtracking, multiple matches per level.");
+// Multiple matches per level to make the attribute match loop more complex.
+shouldBe('document.querySelectorAll("[dir=webkit][disabled=yes][clear=no]>[type=awesome][charset=latin1][lang=en]>[lang=fr][checked=maybe][scrolling=fast] ul>li").length', '1');
+shouldBeEqualToString('document.querySelectorAll("[dir=webkit][disabled=yes][clear=no]>[type=awesome][charset=latin1][lang=en]>[lang=fr][checked=maybe][scrolling=fast] ul>li")[0].id', 'target2');
+shouldBeEqualToString('getComputedStyle(document.querySelectorAll("[dir=webkit][disabled=yes][clear=no]>[type=awesome][charset=latin1][lang=en]>[lang=fr][checked=maybe][scrolling=fast] ul>li")[0]).fontFamily', 'hipster');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

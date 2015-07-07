@@ -1,0 +1,34 @@
+<html>
+<script src="../../resources/js-test-pre.js"></script>
+<body>
+
+<iframe src="resources/subframe-xmlhttprequest.html" id="a-frame"></iframe> <iframe src="resources/suspend-subframe-2.html" id="b-frame"></iframe>
+
+<script type="text/javascript">
+description('Tries to trigger an assert in xmlhttprequest during pagehide.');
+
+if (window.testRunner)
+    testRunner.overridePreference('WebKitUsesPageCachePreferenceKey', 1);
+
+
+onpageshow = function(event)
+{
+    if (event.persisted) {
+        console.log('Restored page from page cache.');
+        if (!window.wasFinishJSTestCalled)
+            finishJSTest();
+    }
+}
+
+onload = function()
+{
+    setTimeout(function() {
+        location.href = 'resources/pagehide-timeout-go-back.html';
+    }, 0);
+}
+var successfullyParsed = true;
+var jsTestIsAsync = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<html>
+<head>
+<script>
+function doTest()
+{
+    // Test DOM access
+    document.getElementById("testPlugin").testDOMAccess();
+}
+</script>
+</head>
+<body onload="doTest();">
+<p>This page tests whether Netscape plug-ins can access their own DOM elements.  The plug-in should have a 3px red border.</p>
+<embed id="testPlugin" type="application/x-webkit-test-netscape" width="200" height="200"></embed>
+</body>
+</html>

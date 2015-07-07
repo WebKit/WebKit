@@ -1,0 +1,64 @@
+<html>
+<head>
+
+<style>
+h1 {
+    color: red;
+}
+</style>
+
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function test()
+{
+    WebInspector.showPanel("elements");
+    CSSAgent.getAllStyleSheets(styleSheetInfosLoaded);
+
+    function styleSheetInfosLoaded(error, infos)
+    {
+        if (error) {
+            InspectorTest.addResult("error: " + error);
+            InspectorTest.completeTest();
+            return;
+        }
+
+        for (var i = 0; i < infos.length; ++i)
+            CSSAgent.getStyleSheet(infos[i].styleSheetId, styleSheetLoaded);
+    }
+
+    function styleSheetLoaded(error, styleSheet)
+    {
+        if (error) {
+            InspectorTest.addResult("error: " + error);
+            InspectorTest.completeTest();
+            return;
+        }
+        editRule(styleSheet.rules[0]);
+    }
+
+    function editRule(rule)
+    {
+        var style = rule.style;
+        InspectorTest.addResult(style.cssProperties[0].text);
+
+        const outOfBOundsRuleIndex = 10;
+        CSSAgent.setPropertyText(style.styleId, outOfBOundsRuleIndex, "color:blue;", true, dumpErrorMessage);
+    }
+
+    function dumpErrorMessage(error)
+    {
+        InspectorTest.addResult(error);
+        InspectorTest.completeTest();
+    }   
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that setting CSS property text out of boundaries does not crash.
+</p>
+</body>
+</html>

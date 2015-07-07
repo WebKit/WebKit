@@ -1,0 +1,10 @@
+This test checks that per-origin usage is reported correctly by loading two iframes which use ~15K each and querying origin usage.
+
+Cleared application cache
+PASS - cached iframe-1
+Usage for http://127.0.0.1:8000 after first frame is between 15000 and 16000 bytes: true
+PASS - cached iframe-2
+Usage for http://127.0.0.1:8000 after second frame is between 30000 and 32000 bytes: true
+Removing Application Cache for http://127.0.0.1:8000
+Usage for http://127.0.0.1:8000: 0
+

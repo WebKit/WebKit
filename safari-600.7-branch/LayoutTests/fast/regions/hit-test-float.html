@@ -1,0 +1,28 @@
+<style>
+    #target { width: 50px; height: 50px; background-color: green; margin: 10px; }
+</style>
+<p>
+    Test for hit-testing of floats inside CSS Regions.
+</p>
+<div style="position:relative; margin: 100px; width: 300px; height: 200px; outline: solid black;">
+    <div style="position:absolute;left:0;top:0; -webkit-flow-from: flow; width:150px;height:200px;"></div>
+    <div style="position:absolute;left:150px;top:0; -webkit-flow-from: flow; width:150px;height:200px"></div>
+    <div style="-webkit-flow-into: flow">
+        <div style="height: 250px; background-color: purple;"></div>
+        <div style="float: right; background-color: lightyellow; margin: 5px;">
+            <div id="target"></div>
+        </div>
+    </div>
+</div>
+<div id="result">FAIL: Test did not run.</div>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    var result = document.getElementById("result");
+    var hitElement = document.elementFromPoint(370, 230);
+    if (hitElement === document.getElementById("target"))
+        result.innerText = "PASS";
+    else
+        result.innerText = "FAIL: Hit " + hitElement;
+</script>

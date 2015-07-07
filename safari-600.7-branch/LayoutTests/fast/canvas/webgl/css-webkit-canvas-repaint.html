@@ -1,0 +1,117 @@
+<html>
+    <head>
+        <style>
+            div {
+                width:200px;
+                height:200px;
+                border:2px solid black;
+                content: -webkit-canvas(triangle);
+            }
+        </style>
+ 
+        <script id="vertexShader" type="x-shader/x-vertex">
+            attribute vec4 vPosition;
+
+            void main() {
+                gl_Position = vPosition;
+            }
+        </script>
+
+        <script id="fragmentShader" type="x-shader/x-fragment">
+            void main() {
+                gl_FragColor = vec4(0.8, 0.7, 0, 1.0);
+            }
+        </script>
+
+        <script type="application/x-javascript">
+            function getFragmentShader()
+            {
+                var shaderNode = document.getElementById("fragmentShader"); // fragmentShader has been defined at the top
+                var shaderSource = getShaderSource(shaderNode);
+
+                var shader = gl.createShader(gl.FRAGMENT_SHADER);
+                gl.shaderSource(shader, shaderSource);
+                gl.compileShader(shader);
+
+                return shader;
+            }
+
+            function getShaderSource(shaderNode)
+            {
+                var shaderSource = "";
+                var node = shaderNode.firstChild;
+                while (node) {
+                    if (node.nodeType == 3) // Node.TEXT_NODE
+                        shaderSource += node.textContent;
+                    node = node.nextSibling;
+                }
+
+                return shaderSource;
+            }
+
+            function getVertexShader()
+            {
+                var shaderNode = document.getElementById("vertexShader");
+                var shaderSource = getShaderSource(shaderNode);
+
+                var shader = gl.createShader(gl.VERTEX_SHADER);
+                gl.shaderSource(shader, shaderSource);
+                gl.compileShader(shader);
+
+                return shader;
+            }
+
+            function initialize()
+            {
+                gl = document.getCSSCanvasContext("experimental-webgl", "triangle", 200, 200);
+
+                var vertexShader = getVertexShader();
+                var fragmentShader = getFragmentShader();
+
+                var shaderProgram = gl.createProgram();
+                gl.attachShader(shaderProgram, vertexShader);
+                gl.attachShader(shaderProgram, fragmentShader);
+                gl.bindAttribLocation(shaderProgram, 0, "vPosition"); // vPosition has been defined at the top
+                gl.linkProgram(shaderProgram);
+
+                gl.useProgram(shaderProgram);
+
+                 var buffer = gl.createBuffer();
+                gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+            }
+
+            function draw(r, g, b)
+            {
+                var vertices = [ 0.0, 0.8, 0.0,
+                                -0.8, -0.8, 0.0,
+                                0.8, -0.8, 0.0 ]; 
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+
+                gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0); // Load the vertex data
+                gl.enableVertexAttribArray(0);
+                gl.clearColor(r, g, b, 1);
+                gl.clear(gl.COLOR_BUFFER_BIT);
+                gl.drawArrays(gl.TRIANGLES, 0, 3); 
+            }
+            
+            if (window.testRunner) {
+                testRunner.waitUntilDone();
+                testRunner.overridePreference("WebKitWebGLEnabled", "1");
+            }
+            
+            initialize();
+
+            setTimeout(function() {
+                draw(0.7, 0, 0);
+                setTimeout(function() {
+                    draw(0, 0.5, 0);
+                    if (window.testRunner)
+                        testRunner.notifyDone();
+                }, 100);
+            }, 100);
+        </script>
+    </head>
+    <body>
+        <div></div>
+    </body>
+</html>

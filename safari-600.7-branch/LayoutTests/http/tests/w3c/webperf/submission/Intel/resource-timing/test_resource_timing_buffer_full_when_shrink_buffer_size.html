@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>onresourcetimingbufferfull callback of resource timing</title>
+        <script src="/w3c/webperf/resources/webperftestharnessextension.js"></script>
+        <script>
+            var context = new PerformanceContext(performance);
+            var count = 0;
+            function buffer_full_call_back()
+            {
+                count++;
+            }
+
+            context.registerResourceTimingBufferFullCallback(buffer_full_call_back);
+        </script>
+        <link rel="author" title="Intel" href="http://www.intel.com/" />
+        <link rel="help" href="http://www.w3.org/TR/resource-timing/#performanceresourcetiming"/>
+        <script src="/w3c/resources/testharness.js"></script>
+        <script src="/w3c/resources/testharnessreport.js"></script>
+        <script src="/w3c/webperf/resources/webperftestharness.js"></script>
+        <script>
+            setup({ explicit_done: true });            
+            function onload_test()
+            {
+                context.setResourceTimingBufferSize(3);
+                context.setResourceTimingBufferSize(2);
+                test_equals(count, 2, "onresourcetimingbufferfull should be invoked once the buffer is shrunk to size which is less than or equal to current entry number!");
+                done();                
+            }
+        </script>
+    </head>
+    <body onload=onload_test()>
+        <h1>Description</h1>
+        <p>This test validates the functionality of onresourcetimingbufferfull in resource timing.</p>
+    </body>
+</html>

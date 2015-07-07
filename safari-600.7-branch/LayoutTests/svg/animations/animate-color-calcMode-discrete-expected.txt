@@ -1,0 +1,29 @@
+SVG 1.1 dynamic animation tests
+
+Test calcMode discrete with from-to animation on colors. You should see a green 100x100 rect and only PASS messages
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS color.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 128
+PASS color.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
+PASS color.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
+PASS color.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
+PASS color.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS color.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS color.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
+PASS color.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS color.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS color.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS color.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
+PASS color.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
+PASS color.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS color.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
+PASS color.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
+PASS color.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 128
+PASS color.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
+PASS color.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

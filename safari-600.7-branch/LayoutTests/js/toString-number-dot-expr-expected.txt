@@ -1,0 +1,14 @@
+This test checks that toString() round-trip on a function that has a expression of form 4..x does not lose its meaning. The expression accesses the property 'x' from number '4'.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS unevalf(eval(unevalf(f1))) is unevalf(f1)
+PASS unevalf(eval(unevalf(f2))) is unevalf(f2)
+PASS unevalf(eval(unevalf(f3))) is unevalf(f3)
+PASS unevalf(eval(unevalf(f4))) is unevalf(f4)
+PASS unevalf(eval(unevalf(f5))) is unevalf(f5)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

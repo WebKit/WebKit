@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .tiled {
+            height: 5500px;
+            width: 300px;
+            background-color: silver;
+            border: 1px solid black;
+        }
+        
+        .composited {
+            -webkit-transform: translateZ(1px);
+            -webkit-transform-style: preserve-3d;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+        }
+    </script>
+</head>
+<body>
+
+<div class="composited tiled">
+    This test should not crash.
+</div>
+</body>
+</html>

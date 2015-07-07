@@ -1,0 +1,20 @@
+Test canvas createImageData()
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ctx.createImageData(null) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS imageData.width is 100
+PASS imageData.height is 50
+PASS imageData.data[32] is 255
+PASS sameSizeImageData.width is 100
+PASS sameSizeImageData.height is 50
+PASS sameSizeImageData.data[32] is 0
+PASS imgdata1.data.length is 800
+PASS imgdata1.data.length is imgdata2.data.length
+PASS imgdata2.data.length is imgdata3.data.length
+PASS imgdata3.data.length is imgdata4.data.length
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

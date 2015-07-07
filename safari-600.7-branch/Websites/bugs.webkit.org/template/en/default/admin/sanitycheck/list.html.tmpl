@@ -1,0 +1,37 @@
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla Bug Tracking System.
+  #
+  # The Initial Developer of the Original Code is Frédéric Buclin.
+  #
+  # Contributor(s): Frédéric Buclin <LpSolit@gmail.com>
+  #%]
+
+[% PROCESS global/variables.none.tmpl %]
+
+[% PROCESS global/header.html.tmpl title = "Sanity Check"
+                                   style_urls = ['skins/standard/admin.css'] %]
+
+<div>
+  <p>
+    [% terms.Bugzilla %] is checking the referential integrity of your database.
+    This may take several minutes to complete.
+  </p>
+
+  <p>
+    Errors, if any, will be <span class="alert">emphasized like this</span>.
+    Depending on the errors found, some links will be displayed allowing you
+    to easily fix them. Fixing these errors will automatically run this script
+    again (so be aware that it may take an even longer time than the first run).
+  </p>
+</div>
+
+<hr>

@@ -1,0 +1,12 @@
+This test creates a box, adds a transition, then sets the left property. It will only have reproducible output when run in the test system
+
+*** Starting test.
+Transitions should not be suspended: FAIL
+*** Suspending Animations/Transitions
+Transitions should be suspended: PASS
+*** Creating the box.
+*** Adding transition property and setting left to 100px. We should NOT see transition events.
+*** Resuming Animations/Transitions
+Transitions should not be suspended: PASS
+*** Test finished
+

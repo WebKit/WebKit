@@ -1,0 +1,12 @@
+Test the JavaScript property descriptor of the name getter.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Object.getOwnPropertyDescriptor(NodeList, 'aWildId').configurable is false
+PASS Object.getOwnPropertyDescriptor(NodeList, 'aWildId').enumerable is false
+PASS Object.getOwnPropertyDescriptor(NodeList, 'aWildId').writable is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Wild

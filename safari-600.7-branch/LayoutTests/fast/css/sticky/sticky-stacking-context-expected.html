@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<style>
+    body {
+        margin: 0;
+    }
+    
+    .container {
+        width: 200px;
+        height: 400px;
+        outline: 2px solid black;
+    }
+    
+    .box {
+        width: 200px;
+        height: 200px;
+    }
+
+    .sticky {
+        position: -webkit-sticky;
+    }
+    
+    .child {
+        position: relative;
+        background-color: green;
+        z-index: 2;
+    }
+</style>
+</head>
+<body>
+    <div class="group">
+        <div class="container">
+            <div class="sticky box">
+                <div class="child box"></div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

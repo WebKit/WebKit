@@ -1,0 +1,2 @@
+This tests to make sure that content that has the document default color is pasted as blue (or whatever the color for quoted content is) during a Paste as Quotation.
+<blockquote>This text should be blue (it should not be wrapped in a style span).</blockquote>

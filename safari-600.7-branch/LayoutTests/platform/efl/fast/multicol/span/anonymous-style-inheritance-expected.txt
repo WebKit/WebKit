@@ -1,0 +1,53 @@
+layer at (0,0) size 843x585
+  RenderView at (0,0) size 800x585
+layer at (0,0) size 800x497
+  RenderBlock {HTML} at (0,0) size 800x497
+    RenderBody {BODY} at (8,17) size 784x463
+layer at (8,18) size 835x462
+  RenderBlock {DIV} at (0,0) size 835x462 [border: (5px solid #800000)]
+    RenderBlock (anonymous multi-column span) at (5,5) size 825x74
+      RenderBlock {H2} at (0,21) size 825x31 [bgcolor=#EEEEEE]
+        RenderText {#text} at (0,0) size 723x29
+          text run at (0,0) width 723: "This is a spanning element at the beginning of the columns block."
+layer at (13,96) size 825x378
+  RenderBlock (anonymous multi-column) at (5,78) size 825x379
+    RenderText {#text} at (0,0) size 403x755
+      text run at (0,0) width 381: "Lorem ipsum dolor sit amet, consectetuer adipiscing"
+      text run at (0,21) width 373: "elit. Nulla varius enim ac mi. Curabitur sollicitudin"
+      text run at (0,42) width 363: "felis quis lectus. Quisque adipiscing rhoncus sem."
+      text run at (0,63) width 396: "Proin nulla purus, vulputate vel, varius ut, euismod et,"
+      text run at (0,84) width 361: "nisi. Sed vitae felis vel orci sagittis aliquam. Cras"
+      text run at (0,105) width 347: "convallis adipiscing sem. Nam nonummy enim."
+      text run at (0,126) width 370: "Nullam bibendum lobortis neque. Vestibulum velit"
+      text run at (0,147) width 377: "orci, tempus euismod, pretium quis, interdum vitae,"
+      text run at (0,168) width 351: "nulla. Phasellus eget ante et tortor condimentum"
+      text run at (0,189) width 396: "vestibulum. Suspendisse hendrerit quam nec felis. Sed"
+      text run at (0,210) width 386: "varius turpis vitae pede. Lorem ipsum dolor sit amet,"
+      text run at (0,231) width 207: "consectetuer adipiscing elit. "
+      text run at (207,231) width 162: "Lorem ipsum dolor sit"
+      text run at (0,252) width 403: "amet, consectetuer adipiscing elit. Nulla varius enim ac"
+      text run at (0,273) width 372: "mi. Curabitur sollicitudin felis quis lectus. Quisque"
+      text run at (0,294) width 382: "adipiscing rhoncus sem. Proin nulla purus, vulputate"
+      text run at (0,315) width 393: "vel, varius ut, euismod et, nisi. Sed vitae felis vel orci"
+      text run at (0,336) width 385: "sagittis aliquam. Cras convallis adipiscing sem. Nam"
+      text run at (0,357) width 368: "nonummy enim. Nullam bibendum lobortis neque."
+      text run at (0,378) width 388: "Vestibulum velit orci, tempus euismod, pretium quis,"
+      text run at (0,399) width 362: "interdum vitae, nulla. Phasellus eget ante et tortor"
+      text run at (0,420) width 397: "condimentum vestibulum. Suspendisse hendrerit quam"
+      text run at (0,441) width 379: "nec felis. Sed varius turpis vitae pede. Lorem ipsum"
+      text run at (0,462) width 317: "dolor sit amet, consectetuer adipiscing elit. "
+      text run at (317,462) width 48: "Lorem"
+      text run at (0,483) width 361: "ipsum dolor sit amet, consectetuer adipiscing elit."
+      text run at (0,504) width 376: "Nulla varius enim ac mi. Curabitur sollicitudin felis"
+      text run at (0,525) width 371: "quis lectus. Quisque adipiscing rhoncus sem. Proin"
+      text run at (0,546) width 388: "nulla purus, vulputate vel, varius ut, euismod et, nisi."
+      text run at (0,567) width 395: "Sed vitae felis vel orci sagittis aliquam. Cras convallis"
+      text run at (0,588) width 336: "adipiscing sem. Nam nonummy enim. Nullam"
+      text run at (0,609) width 349: "bibendum lobortis neque. Vestibulum velit orci,"
+      text run at (0,630) width 385: "tempus euismod, pretium quis, interdum vitae, nulla."
+      text run at (0,651) width 395: "Phasellus eget ante et tortor condimentum vestibulum."
+      text run at (0,672) width 401: "Suspendisse hendrerit quam nec felis. Sed varius turpis"
+      text run at (0,693) width 386: "vitae pede. Lorem ipsum dolor sit amet, consectetuer"
+      text run at (0,714) width 112: "adipiscing elit. "
+      text run at (112,714) width 207: "Lorem ipsum dolor sit amet,"
+      text run at (0,735) width 387: "consectetuer adipiscing elit. Nulla varius enim ac mi."

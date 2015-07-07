@@ -1,0 +1,48 @@
+<html>
+<head>
+    <script src="../resources/cross-frame-access.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.setCanOpenWindows();
+            testRunner.waitUntilDone();
+        }
+        function loaded() {
+            var url = "data:text/html,<html>"
+                + "<head>"
+                +     "<scr" + "ipt>"
+                +         "function test() {"
+                +             "try {"
+                +                 "opener.document.getElementById(\"accessMe\").innerHTML = \"FAIL: Access from a window opened with a data: URL was allowed!\";"
+                +             "} catch (e) {"
+                +             "}"
+                +             "if (window.testRunner)"
+                +                 "testRunner.globalFlag = true;" // Flag that the test has completed and we can close the window now
+                +         "}"
+                +     "</scri" + "pt>"
+                + "</head>"
+                + "<body onload=\"test();\">"
+                +     "<p>Opened Frame.</p>"
+                + "</body>"
+                + "</html>";
+
+            var openedWindow = window.open(url);
+
+            if (window.testRunner) {
+                setTimeout(waitForFlag, 1);
+                function waitForFlag() {
+                    if (!testRunner.globalFlag) {
+                        setTimeout(waitForFlag, 1);
+                        return;
+                    }
+                    closeWindowAndNotifyDone(openedWindow);
+                }
+            }
+        }
+    </script>
+</head>
+<body onload="loaded();">
+    <p>Opener Frame</p>
+    <p id='accessMe'>PASS: Access from a window opened with a data: URL was denied.</p>
+</body>
+</html>

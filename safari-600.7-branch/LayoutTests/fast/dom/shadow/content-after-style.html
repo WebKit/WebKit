@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="host"><div>host content</div></div>
+<script>
+if (window.testRunner)
+    window.testRunner.waitUntilDone();
+var root = document.querySelector('#host').webkitCreateShadowRoot();
+root.innerHTML = '<style>invalid { }</style>' +
+                 'text<content></content>';
+window.setTimeout(function() {
+    if (window.testRunner)
+        window.testRunner.notifyDone();
+}, 0);
+</script>
+</body>
+</html>

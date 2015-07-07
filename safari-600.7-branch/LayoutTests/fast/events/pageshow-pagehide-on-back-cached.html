@@ -1,0 +1,28 @@
+<p>Test pageshow/pagehide event behavior when navigating back to an cached page.</p>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+      testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+}
+
+window.onload = function(evt) {
+    alert("window.onload");
+}
+
+window.onpageshow = function(evt) {
+    alert("window.onpageshow" + ", target = " + evt.target + ", persisted = " + evt.persisted);
+    if (evt.persisted) {
+        // Returned back.
+        window.onpagehide = null;
+        setTimeout(function() { if (window.testRunner) testRunner.notifyDone(); }, 0);
+    } else {
+        setTimeout('window.location.href = "data:text/html,<script>history.back();</scr" + "ipt>"', 0);
+    }
+}
+
+window.onpagehide = function(evt) {
+    alert("window.onpagehide" + ", target = " + evt.target + ", persisted = " + evt.persisted);
+}
+
+</script>

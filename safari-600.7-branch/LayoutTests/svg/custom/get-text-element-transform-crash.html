@@ -1,0 +1,23 @@
+<html>
+  <head>
+    <script type="application/javascript">
+      function test() {
+        document.getElementById("crash").getTransformToElement();
+      }
+
+      if (window.testRunner) {
+        testRunner.dumpAsText();
+      }
+
+    </script>
+  </head>
+  <body>
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" onload="test()">
+      <animateTransform >
+        <text id="crash">
+        </text>
+      </animateTransform>
+    </svg>
+    PASS
+  </body>
+</html>

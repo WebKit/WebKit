@@ -1,0 +1,20 @@
+Test that multiple audio elements can play concurrently.
+
+Starting a total of 2 concurrent audio elements.
+EVENT(0, canplaythrough)
+EXPECTED (0, testElement.currentTime == '0') OK
+EVENT(0, canplaythrough)
+EXPECTED (0, testElement.currentTime == '0') OK
+EVENT(0, playing)
+EXPECTED (0, testElement.currentTime > '0') OK
+EVENT(1, canplaythrough)
+EXPECTED (1, testElement.currentTime == '0') OK
+EVENT(1, canplaythrough)
+EXPECTED (1, testElement.currentTime == '0') OK
+EVENT(1, playing)
+EXPECTED (1, testElement.currentTime > '0') OK
+Making sure all 2 audio elements are in playing state:
+EXPECTED (0, testElement.paused == 'false') OK
+EXPECTED (1, testElement.paused == 'false') OK
+END OF TEST
+

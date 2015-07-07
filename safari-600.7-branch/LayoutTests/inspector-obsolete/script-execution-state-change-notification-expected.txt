@@ -1,0 +1,9 @@
+Tests that whenever Script Execution state is changed outside inspector, its notified to the Inspector front-end.
+
+Registered PageDispatcher.scriptsEnabled()
+running disableJavaScriptTest...
+PageDispatcher.scriptsEnabled should be invoked with isEnabled=false
+running enableJavaScriptTest...
+PageDispatcher.scriptsEnabled should be invoked with isEnabled=true
+Finished verification.
+

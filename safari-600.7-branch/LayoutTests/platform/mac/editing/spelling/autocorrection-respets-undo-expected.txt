@@ -1,0 +1,5 @@
+PASS editor.innerText is 'wellcome '
+Test that undoing autocorrection from "wellcome" to "welcome" and typing a space doesn't re-autocorrect "wellcome".
+To manually test, type "testt " and observe that it's auto-corrected to "test ". Then undo the auto-correction and type a space again. You should see "testt ".
+
+wellcome 

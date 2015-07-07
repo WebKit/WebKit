@@ -1,0 +1,30 @@
+<html>
+<body>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+
+<div id="div">
+  <table id="table">
+    <script>
+      var table = document.getElementById('table');
+      table.parentNode.removeChild(table);
+      var docFragment = document.createDocumentFragment();
+      docFragment.appendChild(table);
+    </script>
+    <h1 id="h1">Otherwise, if there is a table element in the stack of open elements, but the last table element in the stack of open elements has no parent, or its parent node is not an element, then the foster parent element is the element before the last table element in the stack of open elements.</h1>
+  </table>
+</div>
+
+<script>
+var div = document.getElementById('div');
+var h1 = document.getElementById('h1');
+
+if (h1 && h1 === div.firstElementChild)
+    document.write("success");
+else
+    document.write("failure");
+</script>
+</body>
+</html>

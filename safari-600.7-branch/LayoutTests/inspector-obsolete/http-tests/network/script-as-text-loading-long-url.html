@@ -1,0 +1,30 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../console-test.js"></script>
+<script>
+function loadScript()
+{
+    var i = document.createElement('script');
+    i.src = "http://127.0.0.1:8000/inspector/network/resources/script-as-text-with-a-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-url.php";
+    document.body.appendChild(i);
+}
+
+function test()
+{
+    InspectorTest.addConsoleSniffer(step1);
+    InspectorTest.evaluateInPage("loadScript()");
+
+    function step1()
+    {
+        InspectorTest.dumpConsoleMessages();
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that long URLs are correctly trimmed in anchor links.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=100095">Bug 100095</a>
+</body>
+</html>

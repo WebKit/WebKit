@@ -1,0 +1,3 @@
+Tests that OscillatorNode calls its onended EventListener.
+PASS osc.onended called.
+

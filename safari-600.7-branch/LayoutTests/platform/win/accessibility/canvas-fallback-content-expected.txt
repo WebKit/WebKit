@@ -1,0 +1,101 @@
+Link  Button          
+Focusable
+ARIA button
+ARIA link
+This test makes sure that focusable elements in canvas fallback content are accessible.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+link1
+PASS document.activeElement == element is true
+FAIL axElement.role should be AXRole: AXLink. Was link.
+
+button1
+PASS document.activeElement == element is true
+FAIL axElement.role should be AXRole: AXButton. Was push button.
+
+text1
+PASS document.activeElement == element is true
+FAIL axElement.role should be AXRole: AXTextField. Was editable text.
+
+checkbox1
+PASS document.activeElement == element is true
+FAIL axElement.role should be AXRole: AXCheckBox. Was check box.
+
+radio1
+PASS document.activeElement == element is true
+FAIL axElement.role should be AXRole: AXRadioButton. Was radio button.
+
+submit1
+PASS document.activeElement == element is true
+FAIL axElement.role should be AXRole: AXButton. Was push button.
+
+combobox1
+PASS document.activeElement == element is true
+FAIL axElement.role should be AXRole: AXPopUpButton. Was combo box.
+
+focusable1
+PASS document.activeElement == element is true
+FAIL axElement.role should be AXRole: AXGroup. Was grouping.
+
+aria-button1
+PASS document.activeElement == element is true
+FAIL axElement.role should be AXRole: AXButton. Was push button.
+
+aria-link1
+PASS document.activeElement == element is true
+FAIL axElement.role should be AXRole: AXLink. Was link.
+
+link2
+PASS document.activeElement == element is true
+FAIL axElement.role should be AXRole: AXLink. Was link.
+
+button2
+PASS document.activeElement == element is true
+FAIL axElement.role should be AXRole: AXButton. Was push button.
+
+text2
+PASS document.activeElement == element is true
+FAIL axElement.role should be AXRole: AXTextField. Was editable text.
+
+checkbox2
+PASS document.activeElement == element is true
+FAIL axElement.role should be AXRole: AXCheckBox. Was check box.
+
+radio2
+PASS document.activeElement == element is true
+FAIL axElement.role should be AXRole: AXRadioButton. Was radio button.
+
+submit2
+PASS document.activeElement == element is true
+FAIL axElement.role should be AXRole: AXButton. Was push button.
+
+combobox2
+PASS document.activeElement == element is true
+FAIL axElement.role should be AXRole: AXPopUpButton. Was combo box.
+
+focusable2
+PASS document.activeElement == element is true
+FAIL axElement.role should be AXRole: AXGroup. Was grouping.
+
+aria-button2
+PASS document.activeElement == element is true
+FAIL axElement.role should be AXRole: AXButton. Was push button.
+
+aria-link2
+PASS document.activeElement == element is true
+FAIL axElement.role should be AXRole: AXLink. Was link.
+
+focusable1
+PASS document.activeElement == element is true
+FAIL axElement.role should be AXRole: AXButton. Was grouping.
+
+focusable2
+PASS document.activeElement == element is true
+FAIL axElement.role should be AXRole: AXButton. Was push button.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

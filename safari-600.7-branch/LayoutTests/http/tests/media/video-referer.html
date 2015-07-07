@@ -1,0 +1,33 @@
+<html>
+<head>
+</head>
+<body onload="loadCookieAndReferer()">
+<video id="video">
+    <source id="source">
+</video>
+<script src=../../media-resources/video-test.js></script>
+<script src=../../media-resources/media-file.js></script>
+<script>
+    function loadCookieAndReferer () {
+        var movie = findMediaFile('video', 'test');
+        var type = mimeTypeForExtension(movie.split('.').pop());
+        var frame = document.createElement('iframe');
+        frame.width = 0;
+        frame.height = 0;
+        frame.addEventListener('load', function () {
+                source = document.getElementById('source');
+                source.src = 'http://127.0.0.1:8000/media/resources/video-referer-check-referer.php?name=' + movie + '&type=' + type;
+                source.type = type;
+
+                waitForEventAndFail('error');
+                waitForEventAndEnd('canplay');
+                video.load();
+        });
+
+        frame.src = "data:text/html,<b>test</b>";
+        document.body.appendChild(frame);
+    }
+</script>
+Tests that the media player will send the relevant referer when requesting the media file.<br/>
+</body>
+</html>

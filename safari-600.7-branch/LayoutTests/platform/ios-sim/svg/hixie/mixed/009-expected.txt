@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x305
+  RenderBlock {html} at (0,0) size 800x305
+    RenderBody {body} at (8,10) size 784x285
+      RenderBlock {p} at (0,0) size 784x20 [color=#000080]
+        RenderText {#text} at (0,0) size 460x19
+          text run at (0,0) width 460: "The word \"TEST \" should appear twice below, the same size each time."
+      RenderBlock (anonymous) at (0,30) size 784x125
+        RenderSVGRoot {svg} at (8,40) size 400x120
+          RenderSVGRect {rect} at (8,40) size 400x120 [transform={m=((10.00,0.00)(0.00,10.00)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=0.00] [y=0.00] [width=60.00] [height=12.00]
+          RenderSVGForeignObject {foreignObject} at (0,0) size 60x10
+            RenderBlock {div} at (0,0) size 60x13 [color=#000080]
+              RenderText {#text} at (0,0) size 24x12
+                text run at (0,0) width 24: "TEST"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {div} at (0,165) size 400x120 [color=#000080] [bgcolor=#EEEEEE]
+        RenderText {#text} at (0,2) size 239x112
+          text run at (0,2) width 239: "TEST"

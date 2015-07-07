@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+    iframe {
+        border: 10px solid black;
+        padding: 5px;
+        margin: 20px;
+        height: 150px;
+        width: 300px;
+        -webkit-box-shadow: 0 0 20px black;
+    }
+
+    .container {
+        position: relative;
+    }
+
+    .overlay {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        top: 5px;
+        left: 5px;
+        background-color: rgba(0, 0, 0, 0.2);
+    }
+    </style>
+</head>
+<body>
+
+    <p>
+        This tests that layers are rebuilt properly after the page
+        is restored from the page cache.
+    </p>
+
+    <!-- Some iframes with composited content. -->
+    <div class="container">
+        <iframe src="resources/page-cache-iframe.html"></iframe>
+        <div class="overlay"></div>
+    </div>
+    <div class="container">
+        <iframe src="resources/large-composited-subframe.html"></iframe>
+        <div class="overlay"></div>
+    </div>
+
+    <!-- Dump the layer tree output here. -->
+    <pre id="output"></pre>
+
+    <script>
+    if (window.testRunner) {
+        window.testRunner.dumpAsText();
+        window.testRunner.waitUntilDone();
+        window.testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    }
+
+    function finishTest() {
+        var output = document.getElementById("output");
+        output.innerText = window.internals.layerTreeAsText(document);
+
+        if (window.testRunner)
+            window.testRunner.notifyDone();        
+    }
+
+    window.addEventListener("pageshow", function(event) {
+        alert("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+        if (event.persisted)
+            setTimeout(finishTest, 0);
+    }, false);
+
+    window.addEventListener("pagehide", function(event) {
+        alert("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    }, false);
+
+    // Force a back navigation back to this page.
+    window.addEventListener("load", function(event) {
+        setTimeout(function() {
+            window.location.href = "resources/page-cache-helper.html";
+        }, 0);
+    }, false);
+    </script>
+
+</body>
+</html>

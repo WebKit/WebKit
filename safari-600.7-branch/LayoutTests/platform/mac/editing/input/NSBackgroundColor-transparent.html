@@ -1,0 +1,33 @@
+<div id="target" contenteditable>T</div>
+<p>
+    Test that an NSAttributedString from a range with transparent background color does not include
+    the NSBackgroundColor attribute.
+</p>
+<pre id="console"></pre>
+<script>
+    function log(message)
+    {
+        document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
+    }
+
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+
+        var target = document.getElementById("target");
+        target.focus();
+
+        var attributedString = textInputController.attributedSubstringFromRange(0, 1);
+        var attributeNames = attributedString.getAttributeNamesAtIndex(0);
+        for (var i = 0; i < attributeNames.length; ++i) {
+            if (attributeNames[i] == "NSBackgroundColor") {
+                log("FAIL: Attributes included NSBackgroundColor with value " + attributedString.getAttributeValueAtIndex("NSBackgroundColor", 0));
+                break;
+            }
+        }
+        if (i == attributeNames.length)
+            log("PASS: Attributes did not include NSBackgroundColor");
+
+        target.parentNode.removeChild(target);
+    } else
+        log("This test can only run in DumpRenderTree.");
+</script>

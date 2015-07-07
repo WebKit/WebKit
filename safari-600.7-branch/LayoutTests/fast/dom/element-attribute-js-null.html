@@ -1,0 +1,614 @@
+<html>
+<head>
+    <style type="text/css">
+        .pass { color: green; }
+        .fail { color: red; }
+    </style>
+    <script>
+        function printOut(msg)
+        {
+            var console = document.getElementById("console");
+            var span = document.createElement('span');
+            span.innerHTML = msg + '<br>';
+            console.appendChild(span);
+        }
+
+        function resultStringifier(result)
+        {
+            if (result === "")
+                return "<b>the empty string</b>";
+            else if (result === null)
+                return "<b>null</b>";
+            else if (result === undefined)
+                return "<b>undefined</b>";
+            return "the string '" + result + "'";
+        }
+
+        function nullTestElementAttribute(elementType, element, attr, expected)
+        {
+            var exceptionThrown;
+            try {
+                element[attr] = null;
+            } catch (ec) {
+                exceptionThrown = ec;
+            }
+            var result;
+            if (exceptionThrown) {
+                if (expected === 'exception')
+                    result = "<span class='pass'>TEST SUCCEEDED:</span> Exception (" + exceptionThrown + ") was thrown as expected.";
+                else
+                    result = "<span class='fail'>TEST FAILED:</span> An exception was thrown unexpectedly.";
+            } else {
+                if (expected === 'exception')
+                    result = "<span class='fail'>TEST FAILED:</span> An exception should have been thrown.";
+                else if (element[attr] === expected)
+                    result = "<span class='pass'>TEST SUCCEEDED:</span> The value was " + resultStringifier(expected) + ".";
+                else
+                    result = "<span class='fail'>TEST FAILED:</span> The value should have been " + resultStringifier(expected) + " but was " + resultStringifier(element[attr]) + ".";
+            }
+            result += " [tested " + elementType + "." + attr + "]";
+            printOut(result);
+        }
+
+        function runTests()
+        {
+            if (window.testRunner)
+                testRunner.dumpAsText();
+
+            // Others to test:
+            //  Core DOM
+            //    Attr.value (expected: null)
+            //    CharacterData.data
+            //    ProcessingInstruction.data
+            //  Functions
+
+            var listing = [
+                {
+                    type: 'Node',
+                    elementToUse: document.createElement('div'),
+                    attributes: [
+                        {name: 'nodeValue', expectedNull: null},
+                         // 'prefix' only works because this is an HTMLElement type node, if it were an
+                         // XML node (created using createElementNS()) this would throw an exception. We
+                         // should test this further as Firefox has a different behavior.
+                        {name: 'prefix', expectedNull: null},
+                        {name: 'textContent', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLElement',
+                    elementToUse: document.createElement('div'),
+                    attributes: [
+                        {name: 'title', expectedNull: ''},
+                        {name: 'id', expectedNull: ''},
+                        {name: 'lang', expectedNull: ''},
+                        {name: 'dir', expectedNull: ''},
+                        {name: 'className', expectedNull: ''},
+                        {name: 'innerHTML', expectedNull: ''},
+                        {name: 'innerText', expectedNull: ''},
+                        // FIXME: TEST THESE
+                        // {name: 'outerHTML', expectedNull: ''},
+                        // {name: 'outerText', expectedNull: ''},
+                        {name: 'contentEditable', expectedNull: 'exception'}
+                    ]
+                },
+                {
+                    type: 'HTMLAnchorElement',
+                    elementToUse: document.createElement('a'),
+                    attributes: [
+                        {name: 'accessKey', expectedNull: ''},
+                        {name: 'charset', expectedNull: ''},
+                        {name: 'coords', expectedNull: ''},
+                        {name: 'href', expectedNull: ''},
+                        {name: 'hreflang', expectedNull: ''},
+                        {name: 'name', expectedNull: ''},
+                        {name: 'rel', expectedNull: ''},
+                        {name: 'rev', expectedNull: ''},
+                        {name: 'shape', expectedNull: ''},
+                        {name: 'target', expectedNull: ''},
+                        {name: 'type', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLAppletElement',
+                    elementToUse: document.createElement('applet'),
+                    attributes: [
+                        {name: 'align', expectedNull: ''},
+                        {name: 'alt', expectedNull: ''},
+                        {name: 'archive', expectedNull: ''},
+                        {name: 'code', expectedNull: ''},
+                        {name: 'codeBase', expectedNull: ''},
+                        {name: 'height', expectedNull: ''},
+                        {name: 'hspace', expectedNull: ''},
+                        {name: 'name', expectedNull: ''},
+                        {name: 'object', expectedNull: ''},
+                        {name: 'vspace', expectedNull: ''},
+                        {name: 'width', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLAreaElement',
+                    elementToUse: document.createElement('area'),
+                    attributes: [
+                        {name: 'accessKey', expectedNull: ''},
+                        {name: 'alt', expectedNull: ''},
+                        {name: 'coords', expectedNull: ''},
+                        {name: 'href', expectedNull: ''},
+                        {name: 'shape', expectedNull: ''},
+                        {name: 'target', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLBaseElement',
+                    elementToUse: document.createElement('base'),
+                    attributes: [
+                        {name: 'target', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLBaseFontElement',
+                    elementToUse: document.createElement('basefont'),
+                    attributes: [
+                        {name: 'color', expectedNull: ''},
+                        {name: 'face', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLBlockquoteElement',
+                    elementToUse: document.createElement('blockquote'),
+                    attributes: [
+                        {name: 'cite', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLBodyElement',
+                    elementToUse: document.createElement('body'),
+                    attributes: [
+                        {name: 'aLink', expectedNull: ''},
+                        {name: 'background', expectedNull: ''},
+                        {name: 'bgColor', expectedNull: ''},
+                        {name: 'link', expectedNull: ''},
+                        {name: 'text', expectedNull: ''},
+                        {name: 'vLink', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLBRElement',
+                    elementToUse: document.createElement('br'),
+                    attributes: [
+                        {name: 'clear', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLButtonElement',
+                    elementToUse: document.createElement('button'),
+                    attributes: [
+                        {name: 'accessKey', expectedNull: ''},
+                        {name: 'name', expectedNull: ''},
+                        {name: 'value', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLDivElement',
+                    elementToUse: document.createElement('div'),
+                    attributes: [
+                        {name: 'align', expectedNull: ''}
+                    ]
+                },
+
+                // HTMLDListElement
+                // NONE
+
+                {
+                    type: 'HTMLEmbedElement',
+                    elementToUse: document.createElement('embed'),
+                    attributes: [
+                        {name: 'align', expectedNull: ''},
+                        {name: 'name', expectedNull: ''},
+                        {name: 'src', expectedNull: ''},
+                        {name: 'type', expectedNull: ''}
+                    ]
+                },
+
+                // HTMLFieldSetElement
+                // NONE
+
+                {
+                    type: 'HTMLFontElement',
+                    elementToUse: document.createElement('font'),
+                    attributes: [
+                        {name: 'color', expectedNull: ''},
+                        {name: 'face', expectedNull: ''},
+                        {name: 'size', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLFormElement',
+                    elementToUse: document.createElement('form'),
+                    attributes: [
+                        {name: 'name', expectedNull: ''},
+                        {name: 'acceptCharset', expectedNull: ''},
+                        {name: 'action', expectedNull: ''},
+                        {name: 'encoding', expectedNull: 'application/x-www-form-urlencoded'},
+                        {name: 'enctype', expectedNull: 'application/x-www-form-urlencoded'},
+                        {name: 'method', expectedNull: 'get'},
+                        {name: 'target', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLFrameElement',
+                    elementToUse: document.createElement('frame'),
+                    attributes: [
+                        {name: 'frameBorder', expectedNull: ''},
+                        {name: 'longDesc', expectedNull: ''},
+                        {name: 'marginHeight', expectedNull: ''},
+                        {name: 'marginWidth', expectedNull: ''},
+                        {name: 'name', expectedNull: ''},
+                        {name: 'scrolling', expectedNull: ''},
+                        {name: 'src', expectedNull: ''},
+                        {name: 'location', expectedNull: ''} // not a documented attribute
+                    ]
+                },
+                {
+                    type: 'HTMLFrameSetElement',
+                    elementToUse: document.createElement('frameset'),
+                    attributes: [
+                        {name: 'cols', expectedNull: ''},
+                        {name: 'rows', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLHeadElement',
+                    elementToUse: document.createElement('head'),
+                    attributes: [
+                        {name: 'profile', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLHeadingElement',
+                    // no need to test h2-h6
+                    elementToUse: document.createElement('h1'),
+                    attributes: [
+                        {name: 'align', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLHRElement',
+                    elementToUse: document.createElement('hr'), // no need to test h2-h6
+                    attributes: [
+                        {name: 'align', expectedNull: ''},
+                        {name: 'size', expectedNull: ''},
+                        {name: 'width', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLHtmlElement',
+                    elementToUse: document.createElement('html'),
+                    attributes: [
+                        {name: 'version', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLIFrameElement',
+                    elementToUse: document.createElement('iframe'),
+                    attributes: [
+                        {name: 'align', expectedNull: ''},
+                        {name: 'frameBorder', expectedNull: ''},
+                        {name: 'height', expectedNull: ''},
+                        {name: 'longDesc', expectedNull: ''},
+                        {name: 'marginHeight', expectedNull: ''},
+                        {name: 'marginWidth', expectedNull: ''},
+                        {name: 'name', expectedNull: ''},
+                        {name: 'scrolling', expectedNull: ''},
+                        {name: 'src', expectedNull: ''},
+                        {name: 'width', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLImageElement',
+                    elementToUse: document.createElement('img'),
+                    attributes: [
+                        {name: 'name', expectedNull: ''},
+                        {name: 'align', expectedNull: ''},
+                        {name: 'alt', expectedNull: ''},
+                        {name: 'border', expectedNull: ''},
+                        {name: 'longDesc', expectedNull: ''},
+                        {name: 'src', expectedNull: ''},
+                        {name: 'useMap', expectedNull: ''},
+                        {name: 'lowsrc', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLInputElement',
+                    elementToUse: document.createElement('input'),
+                    attributes: [
+                        {name: 'accept', expectedNull: ''},
+                        {name: 'accessKey', expectedNull: ''},
+                        {name: 'align', expectedNull: ''},
+                        {name: 'alt', expectedNull: ''},
+                        {name: 'defaultValue', expectedNull: ''},
+                        {name: 'name', expectedNull: ''},
+                        {name: 'src', expectedNull: ''},
+                        {name: 'type', expectedNull: 'text'},
+                        {name: 'useMap', expectedNull: ''},
+                        {name: 'value', expectedNull: ''},
+                    ]
+                },
+                {
+                    type: 'HTMLLabelElement',
+                    elementToUse: document.createElement('label'),
+                    attributes: [
+                        {name: 'accessKey', expectedNull: ''},
+                        {name: 'htmlFor', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLLegendElement',
+                    elementToUse: document.createElement('legend'),
+                    attributes: [
+                        {name: 'accessKey', expectedNull: ''},
+                        {name: 'align', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLLIElement',
+                    elementToUse: document.createElement('li'),
+                    attributes: [
+                        {name: 'type', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLLinkElement',
+                    elementToUse: document.createElement('link'),
+                    attributes: [
+                        {name: 'charset', expectedNull: ''},
+                        {name: 'href', expectedNull: ''},
+                        {name: 'hreflang', expectedNull: ''},
+                        {name: 'media', expectedNull: ''},
+                        {name: 'rel', expectedNull: ''},
+                        {name: 'rev', expectedNull: ''},
+                        {name: 'target', expectedNull: ''},
+                        {name: 'type', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLMapElement',
+                    elementToUse: document.createElement('map'),
+                    attributes: [
+                        {name: 'name', expectedNull: ''}
+                    ]
+                },
+
+                // HTMLMenuElement
+                // NONE
+
+                {
+                    type: 'HTMLMetaElement',
+                    elementToUse: document.createElement('meta'),
+                    attributes: [
+                        {name: 'content', expectedNull: ''},
+                        {name: 'httpEquiv', expectedNull: ''},
+                        {name: 'name', expectedNull: ''},
+                        {name: 'scheme', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLModElement',
+                    elementToUse: document.createElement('ins'), // same as 'del'
+                    attributes: [
+                        {name: 'cite', expectedNull: ''},
+                        {name: 'dateTime', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLObjectElement',
+                    elementToUse: document.createElement('object'),
+                    attributes: [
+                        {name: 'code', expectedNull: ''},
+                        {name: 'align', expectedNull: ''},
+                        {name: 'archive', expectedNull: ''},
+                        {name: 'border', expectedNull: ''},
+                        {name: 'codeBase', expectedNull: ''},
+                        {name: 'codeType', expectedNull: ''},
+                        {name: 'data', expectedNull: ''},
+                        {name: 'height', expectedNull: ''},
+                        {name: 'name', expectedNull: ''},
+                        {name: 'standby', expectedNull: ''},
+                        {name: 'type', expectedNull: ''},
+                        {name: 'useMap', expectedNull: ''},
+                        {name: 'width', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLOListElement',
+                    elementToUse: document.createElement('ol'),
+                    attributes: [
+                        {name: 'type', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLOptGroupElement',
+                    elementToUse: document.createElement('optgroup'),
+                    attributes: [
+                        {name: 'label', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLOptionElement',
+                    elementToUse: document.createElement('option'),
+                    attributes: [
+                        {name: 'text', expectedNull: 'null'},
+                        {name: 'label', expectedNull: 'null'},
+                        {name: 'value', expectedNull: 'null'}
+                    ]
+                },
+                {
+                    type: 'HTMLParagraphElement',
+                    elementToUse: document.createElement('p'),
+                    attributes: [
+                        {name: 'align', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLParamElement',
+                    elementToUse: document.createElement('param'),
+                    attributes: [
+                        {name: 'name', expectedNull: ''},
+                        {name: 'type', expectedNull: ''},
+                        {name: 'value', expectedNull: ''},
+                        {name: 'valueType', expectedNull: ''}
+                    ]
+                },
+
+                // HTMLPreElement
+                // NONE
+
+                {
+                    type: 'HTMLQuoteElement',
+                    elementToUse: document.createElement('q'),
+                    attributes: [
+                        {name: 'cite', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLScriptElement',
+                    elementToUse: document.createElement('script'),
+                    attributes: [
+                        {name: 'text', expectedNull: ''},
+                        {name: 'htmlFor', expectedNull: ''},
+                        {name: 'event', expectedNull: ''},
+                        {name: 'charset', expectedNull: ''},
+                        {name: 'src', expectedNull: ''},
+                        {name: 'type', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLSelectElement',
+                    elementToUse: document.createElement('select'),
+                    attributes: [
+                        {name: 'value', expectedNull: ''},
+                        {name: 'name', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLStyleElement',
+                    elementToUse: document.createElement('style'),
+                    attributes: [
+                        {name: 'media', expectedNull: ''},
+                        {name: 'type', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLTableCaptionElement',
+                    elementToUse: document.createElement('caption'),
+                    attributes: [
+                        {name: 'align', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLTableCellElement',
+                    elementToUse: document.createElement('td'),
+                    attributes: [
+                        {name: 'abbr', expectedNull: ''},
+                        {name: 'align', expectedNull: ''},
+                        {name: 'axis', expectedNull: ''},
+                        {name: 'bgColor', expectedNull: ''},
+                        {name: 'ch', expectedNull: ''},
+                        {name: 'chOff', expectedNull: ''},
+                        {name: 'headers', expectedNull: ''},
+                        {name: 'height', expectedNull: ''},
+                        {name: 'scope', expectedNull: ''},
+                        {name: 'vAlign', expectedNull: ''},
+                        {name: 'width', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLTableColElement',
+                    elementToUse: document.createElement('col'),
+                    attributes: [
+                        {name: 'align', expectedNull: ''},
+                        {name: 'ch', expectedNull: ''},
+                        {name: 'chOff', expectedNull: ''},
+                        {name: 'vAlign', expectedNull: ''},
+                        {name: 'width', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLTableElement',
+                    elementToUse: document.createElement('table'),
+                    attributes: [
+                        {name: 'align', expectedNull: ''},
+                        {name: 'bgColor', expectedNull: ''},
+                        {name: 'border', expectedNull: ''},
+                        {name: 'cellPadding', expectedNull: ''},
+                        {name: 'cellSpacing', expectedNull: ''},
+                        {name: 'frame', expectedNull: ''},
+                        {name: 'rules', expectedNull: ''},
+                        {name: 'summary', expectedNull: ''},
+                        {name: 'width', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLTableRowElement',
+                    elementToUse: document.createElement('tr'),
+                    attributes: [
+                        {name: 'align', expectedNull: ''},
+                        {name: 'bgColor', expectedNull: ''},
+                        {name: 'ch', expectedNull: ''},
+                        {name: 'chOff', expectedNull: ''},
+                        {name: 'vAlign', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLTableSectionElement',
+                    elementToUse: document.createElement('tbody'),
+                    attributes: [
+                        {name: 'align', expectedNull: ''},
+                        {name: 'ch', expectedNull: ''},
+                        {name: 'chOff', expectedNull: ''},
+                        {name: 'vAlign', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLTextAreaElement',
+                    elementToUse: document.createElement('textarea'),
+                    attributes: [
+                        {name: 'defaultValue', expectedNull: ''},
+                        {name: 'accessKey', expectedNull: ''},
+                        {name: 'name', expectedNull: ''},
+                        {name: 'value', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLTitleElement',
+                    elementToUse: document.createElement('title'),
+                    attributes: [
+                        {name: 'text', expectedNull: ''}
+                    ]
+                },
+                {
+                    type: 'HTMLUListElement',
+                    elementToUse: document.createElement('ul'),
+                    attributes: [
+                        {name: 'type', expectedNull: ''}
+                    ]
+                }
+            ];
+
+            for (element in listing) {
+                var type = listing[element].type;
+                var elementToUse = listing[element].elementToUse;
+                var attrs = listing[element].attributes;
+                for (attr in attrs) {
+                    nullTestElementAttribute(type, elementToUse, attrs[attr].name, attrs[attr].expectedNull);
+                }
+                printOut('');
+            }
+        }
+    </script>
+</head>
+<body onload="runTests()">
+    <p>This test setting various attributes of a elements to JavaScript null.</p>
+    <div id="console"></div>
+</body>
+</html>

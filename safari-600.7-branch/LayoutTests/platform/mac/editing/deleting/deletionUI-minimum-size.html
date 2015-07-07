@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+    <style type="text/css">
+        div {border:1px solid red}
+        #smallWidth {width:10; height:251}
+        #smallHeight {width:251; height:10}
+        #smallWidthSmallHeight {width:10; height:10}
+        #sufficientWidthAndHeight {width:51; height:51}
+    </style>
+    <script src="resources/deletionUI-helpers.js"></script>
+    <script>
+        function test()
+        {
+            if (window.testRunner)
+                testRunner.dumpAsText();
+
+            determineDeletionUIExistence("smallWidth");
+            determineDeletionUIExistence("smallHeight");
+            determineDeletionUIExistence("smallWidthSmallHeight");
+            determineDeletionUIExistence("sufficientWidthAndHeight");
+        }
+    </script>
+</head>
+<body onload="test()">
+    <p>This tests if the deletion UI will show on elements with different sizes. This test can be run by DRT but not in the browser.</p>
+    <div id="console"></div>
+
+    <div contenteditable="true" style="padding: 1em;">
+        <div id="smallWidth" class="needsDeletionUI"><br></div>
+        <div id="smallHeight" class="needsDeletionUI"><br></div>
+        <div id="smallWidthSmallHeight" class="needsDeletionUI"><br></div>
+        <div id="sufficientWidthAndHeight" class="needsDeletionUI"><br></div>
+    <div>
+
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<style>
+body {
+    margin: 0;
+}
+.flexbox {
+    display: -webkit-flex;
+    position: relative;
+    -webkit-flex-flow: column;
+}
+.flexbox > div {
+    height: 0;
+}
+.flexbox > div > div {
+    width: 20px;
+    height: 20px;
+    line-height: 0px;
+    background-color: blue;
+}
+</style>
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.flexbox')">
+
+<div data-expected-height=0 data-offset-x=0 data-offset-y=0 class="flexbox">
+    <div data-expected-height=0 data-offset-x=0 data-offset-y=0>
+        <div data-expected-height=20 data-offset-x=0 data-offset-y=0></div>
+    </div>
+</div>
+
+</body>
+</html>

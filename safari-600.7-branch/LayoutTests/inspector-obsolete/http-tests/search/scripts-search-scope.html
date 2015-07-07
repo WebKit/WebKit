@@ -1,0 +1,80 @@
+<html>
+<head>
+<title>Change inspected iframe's "src" attribute.</title>
+<script src="../inspector-test.js"></script>
+<script src="../resources-test.js"></script>
+<script>
+function test()
+{
+    WebInspector.showPanel("scripts");
+    InspectorTest.runAfterResourcesAreFinished(["search.html", "search.js", "search.css"], step1)
+
+    function runSearchAndDumpResults(searchConfig, callback)
+    {
+        var searchResults = [];
+        var scope = new WebInspector.ScriptsSearchScope(WebInspector.workspace);
+        scope.performSearch(searchConfig, searchResultCallback, searchFinishedCallback);
+
+        function searchResultCallback(searchResult)
+        {
+            searchResults.push(searchResult);
+        }
+
+        function searchFinishedCallback()
+        {
+            function filterOutEmptySearchResults(searchResult)
+            {
+                return searchResult.searchMatches.length;
+            }
+            searchResults = searchResults.filter(filterOutEmptySearchResults);
+
+            for (var i = 0; i < searchResults.length; ++i) {
+                var searchResult = searchResults[i];
+                var uiSourceCode = searchResult.uiSourceCode;
+                var searchMatches = searchResult.searchMatches;
+
+                if (!searchMatches.length)
+                    continue;
+                InspectorTest.addResult("Search result #" + (i + 1) + ": uiSourceCode.uri = " + uiSourceCode.uri());
+                for (var j = 0; j < searchMatches.length; ++j) {
+                    var lineNumber = searchMatches[j].lineNumber;
+                    var lineContent = searchMatches[j].lineContent;
+                    InspectorTest.addResult("  search match #" + (j + 1) + ": lineNumber = " + lineNumber + ", lineContent = '" + lineContent + "'");
+                }
+            }
+            callback();
+        }
+    }
+
+    function step1()
+    {
+        InspectorTest.runTestSuite([
+            function testIgnoreCase(next)
+            {
+                var searchConfig = {};
+                searchConfig.query = "searchTest" + "UniqueString";
+                searchConfig.ignoreCase = true;
+                searchConfig.isRegex = false;
+                runSearchAndDumpResults(searchConfig, next);
+            },
+
+            function testCaseSensitive(next)
+            {
+                var searchConfig = {};
+                searchConfig.query = "searchTest" + "UniqueString";
+                searchConfig.ignoreCase = false;
+                searchConfig.isRegex = false;
+                runSearchAndDumpResults(searchConfig, next);
+            },
+        ]);
+    }
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<iframe src="resources/search.html">
+<p>Tests that ScriptSearchScope performs search across all sources correctly.</p>
+See <a href="https://bugs.webkit.org/show_bug.cgi?id=41350">bug 41350</a>.
+</body>
+</html>

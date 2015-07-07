@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div>This tests that a drop handler's default action must be prevented in order to stop navigation.
+Otherwise, if event.preventDefault() is not called, navigation should occur. To test manually,
+simply drag and drop another link or HTML file on this page. If navigation occurs, then the test
+passed.</div>
+<script>
+function log(text)
+{
+    document.body.appendChild(document.createElement('br'));
+    document.body.appendChild(document.createElement('div').appendChild(document.createTextNode(text)));
+}
+window.addEventListener('beforeunload', function ()
+{
+    log('PASS');
+    testRunner.notifyDone();
+});
+document.body.addEventListener('dragenter', function (event)
+{
+    event.preventDefault();
+});
+document.body.addEventListener('dragover', function (event)
+{
+    event.preventDefault();
+});
+document.body.addEventListener('drop', function (event)
+{
+    log('Not preventing default event on drop.');
+});
+(function ()
+{
+    if (!window.testRunner)
+        return;
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    log('Starting test');
+    eventSender.beginDragWithFiles(['DRTFakeFile']);
+    eventSender.mouseMoveTo(document.body.offsetLeft + 10, document.body.offsetTop + 10);
+    eventSender.mouseUp();
+    window.setTimeout(function ()
+    {
+        // Deadman's switch so we don't need to wait for the test to timeout to fail.
+        log('FAIL');
+        testRunner.notifyDone();
+    }, 0);
+})();
+</script>
+</body>
+</html>

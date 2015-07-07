@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../../../js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Test whether WebSocket rejects control frames longer than 125 bytes.");
+
+window.jsTestIsAsync = true;
+
+var url = "ws://localhost:8880/websocket/tests/hybi/long-control-frame";
+var ws = new WebSocket(url);
+var closeEvent;
+var message;
+
+ws.onopen = function()
+{
+    debug("onopen() was called.");
+};
+
+ws.onclose = function(event)
+{
+    closeEvent = event;
+    shouldBeFalse("closeEvent.wasClean");
+    finishJSTest();
+};
+
+</script>
+<script src="../../../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>

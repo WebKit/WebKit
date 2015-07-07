@@ -1,0 +1,59 @@
+<!doctype html>
+
+ <style>
+
+    #first-box, #second-box, #third-box {
+        background-color: green;
+    }
+    
+    #first-box {
+        height:100%;
+        width:50%;
+    }
+    
+    #second-box {
+        height:100%;
+        width:50%;
+    }
+    
+    #third-box {
+        height:100%;
+        width:50%;
+    }
+    
+    #region1, #region2, #region3 {
+        border: 1px solid black;
+    }
+
+    #region1 {
+        width: 200px;
+        height: 150px;
+    }
+    
+    #region2 {
+        width: 300px;
+        height: 180px;
+    }
+    
+    #region3 {
+        width: 120px;
+        height: 120px;
+    }
+</style>
+
+<body>
+<p>The green positioned object should span all the regions. It should fill the left half of every region.</p>
+
+    <div id="region1">
+        <div id="first-box">
+         </div>
+    </div>
+    <div id="region2">
+        <div id="second-box">
+        </div>
+    </div>
+    <div id="region3">
+         <div id="third-box">
+        </div>
+    </div>
+

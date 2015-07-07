@@ -1,0 +1,19 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <body>
+    <script src="../resources/securitypolicy-tests-base.js"></script>
+    <script>
+      if (document.securityPolicy.allowsEval)
+          log('PASS eval is allowed when no policy exists.');
+      else
+          log('FAIL eval is not allowed when no policy exists.');
+
+      injectPolicy("script-src 'unsafe-inline';");
+
+      if (!document.securityPolicy.allowsEval)
+          log('PASS eval is not allowed when policy exists.');
+      else
+          log('FAIL eval is allowed when policy exists.');
+    </script>
+  </body>
+</html>

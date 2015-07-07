@@ -1,0 +1,4 @@
+This tests that focusing an editable iframe's window works correctly and allows text and newlines to be entered.
+
+TEST
+PASS

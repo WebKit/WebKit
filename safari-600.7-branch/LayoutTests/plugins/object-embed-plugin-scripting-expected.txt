@@ -1,0 +1,23 @@
+This test checks for a regression against rdar://problem/4214080 document.embeds: embeds[0].Play() undefined at languageguide.org.
+
+Each test below states its expected outcome.
+
+plugin <object> with nested plugin <embed>: should have a plugin and does
+
+plugin <embed> netsted in plugin <object>: should have a plugin and does
+
+empty <object> with nested plugin <embed>: should not have a plugin and does not
+
+plugin <embed> nested in empty <object>: should have a plugin and does
+
+plugin <embed> nested in image <object>: should not have a plugin and does not
+
+plugin <embed> nested in empty <object> nested in plugin <object>: should not have a plugin and does not
+
+standalone plugin <embed>: should have a plugin and does
+
+plugin <object> with nested plugin <embed> of the same name should have a plugin and does
+
+empty <object> with nested plugin <embed> of the same name should have a plugin and does
+
+            

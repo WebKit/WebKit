@@ -1,0 +1,59 @@
+<html>
+<style type="text/css" media="screen">
+  body {
+    height: 1000px;
+  }
+
+  .fixed {
+    position: fixed;
+    left: 20px;
+    top: 20px;
+  }
+
+  p {
+    margin-top: 200px;
+  }
+
+  embed {
+    margin: 20px;
+  }
+</style>
+<script>
+
+  function runTest()
+  {
+    window.scrollBy(50, 50);
+
+    if (!window.testRunner) {
+        document.body.appendChild(document.createTextNode("This test does not work in manual mode."));
+        return;
+    }
+
+    testRunner.dumpAsText();
+
+    plg.windowedPlugin = false;
+    plg.eventLoggingEnabled = true;
+
+    eventSender.mouseMoveTo(70,70);
+    eventSender.mouseMoveTo(90,90);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    eventSender.mouseMoveTo(100,100);
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(110,100);
+    eventSender.mouseUp();
+    eventSender.mouseMoveTo(20,20);
+
+    plg.eventLoggingEnabled = false; // stop logging so our output doesn't bleed into the next test
+  }
+  
+  window.addEventListener('load', runTest, false);
+</script>
+<body>
+  <div class="fixed">
+    <embed name="plg" type="application/x-webkit-test-netscape" windowedPlugin="false" width=100 height=100></embed>
+  </div>
+
+<p>Tests for widget positions being correctly updated after scrolling. <a href="rdar://problem/7559069">rdar://problem/7559069</a></p>
+</body>
+</html>

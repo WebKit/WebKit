@@ -1,0 +1,29 @@
+<html>
+<head>
+<script>
+    function test()
+    {
+        document.body.offsetTop;
+        var target = document.getElementById("target");
+        target.style.visibility = "visible";
+        document.body.offsetTop;
+        
+        if (window.testRunner) {
+            testRunner.display();
+            finish();
+        } else
+            setTimeout(finish, 0);
+    }
+
+    function finish()
+    {
+        var target = document.getElementById("target");
+        target.style.left = "0";
+        target.style.backgroundColor = "green";
+    }
+</script>
+</head>
+<body onload="test()">
+    <div id="target" style="position: absolute; top: 0; left: 100px; width: 100px; height: 100px; background-color: red; visibility: hidden;"></div>
+</body>
+</html>

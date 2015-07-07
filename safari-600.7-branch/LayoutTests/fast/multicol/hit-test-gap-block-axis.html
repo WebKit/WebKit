@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<p id="result">
+    FAIL: Test did not run.
+</p>
+<div id="target" style="
+    outline: dashed lightblue;
+    width: 200px;
+    -webkit-column-axis: vertical;
+    -webkit-column-gap: 100px;
+    height: 90px;
+    font: 20px ahem;
+    color: rgba(0, 0, 0, 0.5);
+">Lorem ipsum dolor sit amet consectetur elit.</div>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    // Clicking in the gap after the first column should not select anything from the second column.
+    var target = document.getElementById("target");
+    var hitOffset = document.caretRangeFromPoint(target.offsetLeft + 45, target.offsetTop + 115).startOffset;
+    document.getElementById("result").innerText = hitOffset === 26 || hitOffset === 24 ? "PASS" : "FAIL: hit offset " + hitOffset + ".";
+</script>

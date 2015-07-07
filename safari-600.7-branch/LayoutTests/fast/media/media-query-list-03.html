@@ -1,0 +1,72 @@
+<html>
+<head>
+<title>Test CSSOM View module: MediaQueryList interface</title>
+<style type="text/css">
+
+</style>
+<script type="text/javascript" charset="utf-8">
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function log(m) {
+        document.getElementById('results').innerHTML += m + '<br>';
+    }
+
+    function callback1(query) {
+        log("[1] - query " + query.media + " changed to " + (query.matches ? "true" : "false"));
+    }
+
+    function callback2(query) {
+        log("[2] - query " + query.media + " changed to " + (query.matches ? "true" : "false"));
+    }
+
+    function runTests()
+    {
+        if (!window.testRunner)
+            return;
+
+        testRunner.setViewModeMediaFeature("windowed");
+
+        windowedQuery = window.matchMedia("(-webkit-view-mode: windowed)");
+        minimizedQuery = window.matchMedia("(-webkit-view-mode: minimized)");
+
+        log("adding windowed[1], minimized[1], windowed[2] and minimized[2]<br>");
+        windowedQuery.addListener(callback1);
+        minimizedQuery.addListener(callback1);
+        windowedQuery.addListener(callback2);
+        minimizedQuery.addListener(callback2);
+
+        log("------------- minimized -------------");
+        testRunner.setViewModeMediaFeature("minimized");
+        log("------------- windowed -------------");
+        testRunner.setViewModeMediaFeature("windowed");
+
+        log("<br><br>removing windowed[1] and minimized[2]<br>");
+        windowedQuery.removeListener(callback1);
+        minimizedQuery.removeListener(callback2);
+
+        log("------------- minimized -------------");
+        testRunner.setViewModeMediaFeature("minimized");
+        log("------------- windowed -------------");
+        testRunner.setViewModeMediaFeature("windowed");
+
+        log("<br><br>adding windowed[1] and minimized[2]<br>");
+        windowedQuery.addListener(callback1);
+        minimizedQuery.addListener(callback2);
+
+        log("------------- minimized -------------");
+        testRunner.setViewModeMediaFeature("minimized");
+        log("------------- windowed -------------");
+        testRunner.setViewModeMediaFeature("windowed");
+
+    }
+
+</script>
+</head>
+<body onload="runTests()">
+    <p>Test the MediaQueryList interface: <a href="http://dev.w3.org/csswg/cssom-view/#the-mediaquerylist-interface" title="CSSOM View Module">http://dev.w3.org/csswg/cssom-view/#the-mediaquerylist-interface</a>.</p>
+    <p>Testing removeListener in different MediaQueryList objects and the callback call sequence</p>
+    <div id="results">
+    </div>
+</body>
+</html>

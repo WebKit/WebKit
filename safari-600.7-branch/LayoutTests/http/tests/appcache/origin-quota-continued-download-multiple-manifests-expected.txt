@@ -1,0 +1,8 @@
+UI DELEGATE APPLICATION CACHE CALLBACK: exceededApplicationCacheOriginQuotaForSecurityOrigin:{http, 127.0.0.1, 8000} totalSpaceNeeded:~30000
+This test checks that per-origin application cache quota works correctly with multiple manifests/caches per-origin.
+
+This test sets the quota for the origin to 20kb, and attempts to fill it up with 2 different application caches about 15kb each. The first frame will cache successfully and fill up about 15kb of the origin quota. The second frame will reach the quota, cause a delegate callback, dump the totalSpaceNeeded. The space needed should be enough for both iframe caches, so we would expect ~30kb bytes. The delegate will automatically increase the quota and cause the second appcache to succeed.
+
+PASS - cached iframe
+PASS - cached iframe
+

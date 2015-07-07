@@ -1,0 +1,36 @@
+<html>
+<head>
+<title>Test CSSOM View module: MediaQueryList interface</title>
+<style type="text/css">
+
+</style>
+<script type="text/javascript" charset="utf-8">
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function log(m) {
+        document.getElementById('results').innerHTML += m + '<br>';
+    }
+
+    function runTests()
+    {
+        if (!window.testRunner)
+            return;
+
+        testRunner.setViewModeMediaFeature("windowed");
+
+        var query = window.matchMedia("(-webkit-view-mode: windowed)");
+        log('Query result before changing view-mode: ' + query.matches);
+        testRunner.setViewModeMediaFeature("minimized");
+        log('Query result after changing view-mode: ' + query.matches);
+    }
+
+</script>
+</head>
+<body onload="runTests()">
+    <p>Test the MediaQueryList interface: <a href="http://dev.w3.org/csswg/cssom-view/#the-mediaquerylist-interface" title="CSSOM View Module">http://dev.w3.org/csswg/cssom-view/#the-mediaquerylist-interface</a>.</p>
+    <p>Testing queries that have no registered listener.</p>
+    <div id="results">
+    </div>
+</body>
+</html>

@@ -1,0 +1,10 @@
+This test checks that content-editable is not propagated from shadow host to a shadow subtree.
+
+This p is required to produce the issue.
+
+This div and parent div are required to produce the issue.
+PASS computedStyle(nodeInShadowRoot1, userModifyPropertyName) is "read-only"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,1 @@
+PASSED: fallbackRect had pointer

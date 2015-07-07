@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x17
+        RenderText {#text} at (0,0) size 329x17
+          text run at (0,0) width 329: "Test correct colorspace for yuv422, i.e. YU16 video"
+      RenderBlock (anonymous) at (0,33) size 784x156
+layer at (8,41) size 206x156
+  RenderVideo {VIDEO} at (0,0) size 206x156 [border: (3px solid #FF0000)]

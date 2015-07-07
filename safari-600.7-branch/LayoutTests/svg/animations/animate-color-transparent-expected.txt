@@ -1,0 +1,17 @@
+SVG 1.1 dynamic animation tests
+
+Tests that 'transparent' is treated as a valid color.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS color.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS color.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 255
+PASS color.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS color.red.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 127
+PASS color.green.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS color.blue.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

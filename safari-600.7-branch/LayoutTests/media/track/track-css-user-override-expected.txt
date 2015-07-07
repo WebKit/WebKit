@@ -1,0 +1,34 @@
+
+
+internals.captionsStyleSheetOverride = function captionsStyleSheetOverride() { [native code] }
+Test that style to all cues is applied correctly.
+EVENT(canplaythrough)
+EVENT(seeked)
+
+** Check style in .vtt file **
+EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'cue')).color == 'rgb(255, 255, 255)') OK
+EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'cue')).backgroundColor == 'rgba(0, 0, 0, 0.8)') OK
+
+** Add style to the document **
+RUN(stylesheet.insertRule('video::cue { color: purple; background-color: lime; }', 0))
+EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'cue')).color == 'rgb(128, 0, 128)') OK
+EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'cue')).backgroundColor == 'rgb(0, 255, 0)') OK
+
+** Add an override, without '!important' **
+RUN(internals.setCaptionsStyleSheetOverride('video::cue { color: blue; background-color: yellow; }'))
+internals.captionsStyleSheetOverride = function captionsStyleSheetOverride() { [native code] }
+EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'cue')).color == 'rgb(128, 0, 128)') OK
+EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'cue')).backgroundColor == 'rgb(0, 255, 0)') OK
+
+** Mark background-color '!important' **
+RUN(internals.setCaptionsStyleSheetOverride('video::cue { color: blue ; background-color: yellow !important; }'))
+EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'cue')).color == 'rgb(128, 0, 128)') OK
+EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'cue')).backgroundColor == 'rgb(255, 255, 0)') OK
+
+** Mark color '!important' **
+RUN(stylesheet.insertRule('video::cue { color: blue !important; background-color: yellow !important; }', 0))
+EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'cue')).color == 'rgb(0, 0, 255)') OK
+EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'cue')).backgroundColor == 'rgb(255, 255, 0)') OK
+
+END OF TEST
+

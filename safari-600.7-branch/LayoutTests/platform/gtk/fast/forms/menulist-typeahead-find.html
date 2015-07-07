@@ -1,0 +1,55 @@
+<p>
+<select id="menulist">
+    <option>Apple</option>
+    <option>Banana</option>
+    <option>Carrot</option>
+    <option>Cauliflower</option>
+    <option>Corn</option>
+    <option>Star fish</option>
+    <option>Star fruit</option>
+</select>
+</p>
+<div id="result">Cannot run interactively.</div>
+
+<script>
+var result = document.getElementById('result');
+var menulist = document.getElementById('menulist');
+
+function testTypeAheadFind(keys, expectedMenuListText)
+{
+    if (!window.eventSender)
+        return;
+
+    eventSender.mouseMoveTo(menulist.offsetLeft + (menulist.offsetWidth / 2), menulist.offsetTop + (menulist.offsetHeight / 2));
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+
+    for (var i = 0; i < keys.length; i++)
+        eventSender.keyDown(keys[i]);
+    eventSender.keyDown('\n');
+
+    result.innerHTML += "<br/>" + "Expected " + expectedMenuListText + ": ";
+    result.innerHTML += "was " + menulist.value;
+}
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+testTypeAheadFind(['a'], "Apple");
+testTypeAheadFind(['c'], "Carrot");
+
+// This tests that iterating via pressing the same key works.
+testTypeAheadFind(['c', 'c'], "Cauliflower");
+testTypeAheadFind(['c', 'c', 'c'], "Corn");
+
+// This tests that this also wraps around properly.
+testTypeAheadFind(['c', 'c', 'c', 'c'], "Carrot");
+
+// This tests that typing larger segments of words works.
+testTypeAheadFind(['a', 'p', 'p'], "Apple");
+testTypeAheadFind(['c', 'a', 'u'], "Cauliflower");
+
+// This tests that a sequence with a space works.
+testTypeAheadFind(['S', 't', 'a', 'r', ' ', 'f', 'r'], "Star fruit");
+
+</script>

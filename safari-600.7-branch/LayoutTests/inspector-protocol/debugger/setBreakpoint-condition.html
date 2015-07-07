@@ -1,0 +1,82 @@
+<html>
+<head>
+<script src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script src="resources/breakpoint.js"></script>
+<script>
+function test()
+{
+    InspectorTest.sendCommand("Debugger.enable", {});
+
+    var inBreakpoint = false;
+    var breakpointTriggered = 0;
+
+    InspectorTest.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    {
+        if (/resources\/breakpoint\.js$/.test(messageObject.params.url)) {
+            InspectorTest.log("Found breakpoint.js");
+            var scriptIdentifier = messageObject.params.scriptId;
+            var location = {scriptId: scriptIdentifier, lineNumber: 8, columnNumber: 0};
+            var options = {condition: "(a + b) > 10"};
+            InspectorTest.sendCommand("Debugger.setBreakpoint", {location: location, options: options}, function(responseObject) {
+                InspectorTest.checkForError(responseObject);
+                InspectorTest.log("Running breakpointWithCondition multiple times");
+                InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointWithCondition(1, 2)"});
+                InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointWithCondition(5, 5)"});
+                InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointWithCondition(7, 4)"});
+            });
+        }
+    }
+
+    InspectorTest.eventHandler["Debugger.paused"] = function(messageObject)
+    {
+        InspectorTest.log("Hit Breakpoint!");
+        inBreakpoint = true;
+        ++breakpointTriggered;
+
+        var callFrameIdentifier = messageObject.params.callFrames[0].callFrameId;
+        if (breakpointTriggered === 1) {
+            InspectorTest.sendCommand("Debugger.evaluateOnCallFrame", {callFrameId: callFrameIdentifier, expression: "a"}, function(messageObject) {
+                InspectorTest.log("Evaluted value of `a` (expecting number 7) was: " + JSON.stringify(messageObject.result.result));
+                InspectorTest.sendCommand("Debugger.evaluateOnCallFrame", {callFrameId: callFrameIdentifier, expression: "b"}, function(messageObject) {
+                    InspectorTest.log("Evaluted value of `b` (expecting number 4) was: " + JSON.stringify(messageObject.result.result));
+                    InspectorTest.sendCommand("Debugger.resume", {});
+                });
+            });
+        } else if (breakpointTriggered === 2) {
+            InspectorTest.sendCommand("Debugger.evaluateOnCallFrame", {callFrameId: callFrameIdentifier, expression: "a"}, function(messageObject) {
+                InspectorTest.log("Evaluted value of `a` (expecting number 4) was: " + JSON.stringify(messageObject.result.result));
+                InspectorTest.sendCommand("Debugger.evaluateOnCallFrame", {callFrameId: callFrameIdentifier, expression: "b"}, function(messageObject) {
+                    InspectorTest.log("Evaluted value of `b` (expecting number 7) was: " + JSON.stringify(messageObject.result.result));
+                    InspectorTest.log("PASS: hit breakpoints with expected values");
+                    InspectorTest.completeTest();
+                });
+            });
+        } else {
+            InspectorTest.log("FAIL: hit too many breakpoints.");
+            InspectorTest.completeTest();
+        }
+    }
+
+    InspectorTest.eventHandler["Debugger.resumed"] = function(messageObject)
+    {
+        InspectorTest.log("Resumed, running breakpointWithCondition multiple times again");
+        inBreakpoint = false;
+
+        InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointWithCondition(9, 0)"});
+        InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointWithCondition(12, -4)"});
+        InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointWithCondition(4, 7)"}, function() {
+            setTimeout(function() {
+                if (!inBreakpoint) {
+                    InspectorTest.log("FAIL: Did not hit conditional breakpoint the second time");
+                    InspectorTest.completeTest();
+                }
+            }, 100);
+        });
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Debugger.setBreakpoint options.condition</p>
+</body>
+</html>

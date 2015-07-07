@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+
+        <script>
+        function startTest()
+        {
+            findMediaElement();
+
+            consoleWrite("** Add a text track through JS to the video element **");
+            var t = video.addTextTrack('captions', 'English', 'en');
+
+            consoleWrite("** Add cue to the text track **");
+            t.addCue(new TextTrackCue(0.0, 10.0, 'wow wow'));
+
+            consoleWrite("** Set the track mode to showing **");
+            t.mode = "showing";
+
+            consoleWrite("");
+            consoleWrite("No crash. PASS.");
+            consoleWrite("");
+
+            endTest();
+        }
+        </script>
+    </head>
+
+    <body onload="startTest()">
+        <p>Tests that adding a track and changing its mode through JS doesn't crash the browser.</p>
+        <video controls>
+            <!-- If the src is specified through JS after the body load, the test doesn't crash anymore. -->
+            <source src="../content/test.mp4" type="video/mp4">
+            <source src="../content/test.ogv" type="video/ogg">
+        </video>
+    </body>
+</html>

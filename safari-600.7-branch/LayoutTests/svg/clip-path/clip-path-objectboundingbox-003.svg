@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<clipPath id="clip1" clipPathUnits="objectBoundingBox">
+  <circle cx="0.25" cy="0.25" r="0.25"/>
+</clipPath>
+<rect width="10" height="10" fill="green" transform="scale(20 20)" clip-path="url(#clip1)"/>
+</svg>

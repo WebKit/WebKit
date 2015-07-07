@@ -1,0 +1,28 @@
+CONSOLE MESSAGE: WebSocket connection to 'ws://127.0.0.1:8880/websocket/tests/hybi/invalid-encode-length?case=126_125' failed: The minimal number of bytes MUST be used to encode the length
+CONSOLE MESSAGE: WebSocket connection to 'ws://127.0.0.1:8880/websocket/tests/hybi/invalid-encode-length?case=126_0' failed: The minimal number of bytes MUST be used to encode the length
+CONSOLE MESSAGE: WebSocket connection to 'ws://127.0.0.1:8880/websocket/tests/hybi/invalid-encode-length?case=127_65535' failed: The minimal number of bytes MUST be used to encode the length
+CONSOLE MESSAGE: WebSocket connection to 'ws://127.0.0.1:8880/websocket/tests/hybi/invalid-encode-length?case=127_0' failed: The minimal number of bytes MUST be used to encode the length
+Test whether WebSocket aborts the connection when it receives an unexpected encoding length frame.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Case 126_125: Test started.
+onopen() was called.
+onclose() was called.
+PASS closeEvent.wasClean is false
+Case 126_0: Test started.
+onopen() was called.
+onclose() was called.
+PASS closeEvent.wasClean is false
+Case 127_65535: Test started.
+onopen() was called.
+onclose() was called.
+PASS closeEvent.wasClean is false
+Case 127_0: Test started.
+onopen() was called.
+onclose() was called.
+PASS closeEvent.wasClean is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,7 @@
+This test checks that application cache groups correctly become obsolete after application cache is deletion for a specific origin.
+
+PASS - cached iframe-1
+clearing cache for origin
+appcache_status=5
+SUCCESS - cache was made obsolete
+

@@ -1,0 +1,27 @@
+<html>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onmessage = function(evt)
+{
+    if (evt.data == "setHistoryLength") {
+        setHistoryLength();
+        return;
+    } else
+        alert("Unknown message.");
+}
+
+function setHistoryLength()
+{
+    alert("About to shadow child window's history object: " + window.history);
+    window.history = "";
+    alert("Shadowed child window's history object: " + window.history);
+    parent.window.postMessage("done", "*");
+}
+
+</script>
+<body>
+HELLO THERE
+</body>
+</html>

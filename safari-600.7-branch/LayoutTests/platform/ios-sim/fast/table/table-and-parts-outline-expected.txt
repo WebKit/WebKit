@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 676x19
+          text run at (0,0) width 676: "You should see a table with a dotted green outline, and four table cells inside it with a solid black outline."
+        RenderBR {BR} at (675,15) size 1x0
+        RenderBR {BR} at (0,20) size 0x19
+      RenderTable {TABLE} at (0,40) size 88x50
+        RenderTableSection {TBODY} at (0,0) size 88x50
+          RenderTableRow {TR} at (0,2) size 88x22
+            RenderTableCell {TD} at (2,2) size 41x22 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 39x19
+                text run at (1,1) width 39: "Cell 1"
+            RenderTableCell {TD} at (45,2) size 41x22 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 39x19
+                text run at (1,1) width 39: "Cell 2"
+          RenderTableRow {TR} at (0,26) size 88x22
+            RenderTableCell {TD} at (2,26) size 41x22 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 39x19
+                text run at (1,1) width 39: "Cell 3"
+            RenderTableCell {TD} at (45,26) size 41x22 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 39x19
+                text run at (1,1) width 39: "Cell 4"

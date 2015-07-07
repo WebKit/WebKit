@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+<text>Test for &lt;http://bugs.webkit.org/show_bug.cgi?id=12801> Assertion failure in createMarkup() (root) when doing Select All, Copy in an SVG document.</text>
+<script xmlns="http://www.w3.org/1999/xhtml" type="text/javascript">
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    document.execCommand("selectall");
+    document.execCommand("copy");
+</script>
+</root>

@@ -1,0 +1,9 @@
+http://127.0.0.1:8000/misc/resources/compass.jpg - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/misc/resources/compass.jpg, main document URL (null), http method GET> redirectResponse (null)
+http://127.0.0.1:8000/misc/resources/compass.jpg - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/misc/resources/compass.jpg, http status code 200>
+http://127.0.0.1:8000/misc/resources/compass.jpg - didFinishLoading
+http://127.0.0.1:8000/cache/willsendrequest-returns-null-for-memory-cache-load.html - didFinishLoading
+http://127.0.0.1:8000/cache/resources/cached-image.html - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/cache/resources/cached-image.html, main document URL http://127.0.0.1:8000/cache/willsendrequest-returns-null-for-memory-cache-load.html, http method GET> redirectResponse (null)
+http://127.0.0.1:8000/cache/resources/cached-image.html - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/cache/resources/cached-image.html, http status code 200>
+http://127.0.0.1:8000/misc/resources/compass.jpg - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/misc/resources/compass.jpg, main document URL (null), http method GET> redirectResponse (null)
+http://127.0.0.1:8000/misc/resources/compass.jpg - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -999, failing URL "http://127.0.0.1:8000/misc/resources/compass.jpg">
+ 

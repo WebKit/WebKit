@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setCustomPolicyDelegate(true, false);
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<p>Tests that we do not redirect to an invalid URL initiated by JavaScript. This test PASSED if you see an entry in the dumped frame load callbacks of the form: &quot;willPerformClientRedirectToURL: http://A=a&amp;B=b&quot; followed by &quot;didCancelClientRedirectForFrame&quot;.</p>
+<p>Note, this test must be run in DumpRenderTree.</p>
+<script>
+window.location.href = "http://A=a&B=b";
+window.setTimeout(function() {
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 0);
+</script>
+</body>
+</html>

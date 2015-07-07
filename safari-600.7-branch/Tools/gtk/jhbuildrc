@@ -1,0 +1,38 @@
+#!/usr/bin/env python
+# Copyright (C) 2011 Igalia S.L.
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../jhbuild") )
+import jhbuildrc_common
+jhbuildrc_common.init(globals(), "gtk") 
+
+__gtk_tools_directory = os.path.abspath(os.path.dirname(__file__))
+sys.path = [__gtk_tools_directory] + sys.path
+import common
+
+# GTK+ 3.0.12 misses the -lm flag when linking the tests.
+module_makeargs['gtk+'] = 'LDFLAGS="-lm" ' + makeargs
+
+# We always enable introspection so that we can sniff out problems with our
+# annotations sooner rather than later.
+autogenargs='--enable-introspection'
+
+if use_lib64:
+    os.environ['LLVMPIPE_LIBGL_PATH'] = os.path.abspath(os.path.join(checkoutroot, 'Mesa-10.2.1', 'lib64'))
+else:
+    os.environ['LLVMPIPE_LIBGL_PATH'] = os.path.abspath(os.path.join(checkoutroot, 'Mesa-10.2.1', 'lib'))

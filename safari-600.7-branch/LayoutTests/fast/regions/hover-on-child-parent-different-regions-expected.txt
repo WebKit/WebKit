@@ -1,0 +1,4 @@
+PASS Child hover event processed OK.
+PASS Parent hover event processed OK.
+
+

@@ -1,0 +1,9 @@
+Test that you can select an option from a multiple type select element displayed in region.
+
+To manually test it, click on option_2 item.
+
+On success, it should be selected and you should see PASS below.
+
+FAIL
+
+

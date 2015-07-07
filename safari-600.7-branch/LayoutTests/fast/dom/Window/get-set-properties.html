@@ -1,0 +1,308 @@
+<p>This page tests getting and setting window properties and functions.</p>
+<pre id="console"></pre>
+
+<script>
+function log(s)
+{
+    document.getElementById("console").appendChild(document.createTextNode(s + "\n"));
+}
+
+function shouldBe(a, b)
+{
+    var evalA, evalB;
+    try {
+        evalA = eval(a);
+        evalB = eval(b);
+    } catch(e) {
+        evalA = e;
+    }
+
+    var message = (evalA === evalB)
+                    ? "PASS: " + a + " should be '" + evalB + "' and is."
+                    : "*** FAIL: " + a + " should be '" + evalB + "' but instead is " + evalA + ". ***";
+    log(message);
+}
+
+function shouldBeTrue(a) 
+{ 
+    shouldBe(a, "true"); 
+}
+
+function shouldBeFalse(b) 
+{ 
+    shouldBe(b, "false"); 
+}
+
+function canGet(keyPath)
+{
+    try {
+        return eval("window." + keyPath) !== undefined;
+    } catch(e) {
+        return false;
+    }
+}
+
+window.marker = { "foo": "bar", toString: function(){ return "window.marker.toString()"; } };
+
+function canSet(keyPath)
+{
+    var valuePath = "window.marker";
+
+    try {
+        eval("window." + keyPath + " = " + valuePath);
+        return eval("window." + keyPath) === eval("window." + valuePath);
+    } catch(e) {
+        return false;
+    }
+}
+
+function canSetWithTypeConversion(keyPath)
+{
+    var valuePath = "window.marker";
+
+    try {
+        eval("window." + keyPath + " = " + valuePath);
+        return eval("window." + keyPath) == eval("window." + valuePath);
+    } catch(e) {
+        return false;
+    }
+}
+
+var windowReadWriteProperties = [
+    "Attr", 
+    "CDATASection", 
+    "CSSPrimitiveValue", 
+    "CSSRule", 
+    "CSSStyleDeclaration", 
+    "CSSValue", 
+    "CharacterData", 
+    "Comment", 
+    "DOMException", 
+    "DOMImplementation", 
+    "DOMParser", 
+    "Document", 
+    "DocumentFragment", 
+    "DocumentType", 
+    "Element", 
+    "Entity", 
+    "EntityReference", 
+    "EvalError", 
+    "Event", 
+    "HTMLAnchorElement", 
+    "HTMLAppletElement", 
+    "HTMLAreaElement", 
+    "HTMLBRElement", 
+    "HTMLBaseElement", 
+    "HTMLBaseFontElement", 
+    "HTMLBodyElement", 
+    "HTMLButtonElement", 
+    "HTMLCanvasElement", 
+    "HTMLDListElement", 
+    "HTMLDirectoryElement", 
+    "HTMLDivElement", 
+    "HTMLDocument", 
+    "HTMLElement", 
+    "HTMLFieldSetElement", 
+    "HTMLFontElement", 
+    "HTMLFormElement", 
+    "HTMLFrameElement", 
+    "HTMLFrameSetElement", 
+    "HTMLHRElement", 
+    "HTMLHeadElement", 
+    "HTMLHeadingElement", 
+    "HTMLHtmlElement", 
+    "HTMLIFrameElement", 
+    "HTMLImageElement", 
+    "HTMLInputElement", 
+    "HTMLIsIndexElement", 
+    "HTMLLIElement", 
+    "HTMLLabelElement", 
+    "HTMLLegendElement", 
+    "HTMLLinkElement", 
+    "HTMLMapElement", 
+    "HTMLMarqueeElement", 
+    "HTMLMenuElement", 
+    "HTMLMetaElement", 
+    "HTMLModElement", 
+    "HTMLOListElement", 
+    "HTMLOptGroupElement", 
+    "HTMLOptionElement", 
+    "HTMLParagraphElement", 
+    "HTMLParamElement", 
+    "HTMLPreElement", 
+    "HTMLQuoteElement", 
+    "HTMLScriptElement", 
+    "HTMLSelectElement", 
+    "HTMLStyleElement", 
+    "HTMLTableCaptionElement", 
+    "HTMLTableCellElement", 
+    "HTMLTableColElement", 
+    "HTMLTableElement", 
+    "HTMLTableRowElement", 
+    "HTMLTableSectionElement", 
+    "HTMLTextAreaElement", 
+    "HTMLTitleElement", 
+    "HTMLUListElement", 
+    "Image", 
+    "MutationEvent", 
+    "Node", 
+    "NodeFilter", 
+    "Notation", 
+    "Option", 
+    "ProcessingInstruction", 
+    "Range", 
+    "RangeError", 
+    "RangeException", 
+    "ReferenceError", 
+    "SyntaxError", 
+    "Text", 
+    "TypeError", 
+    "URIError", 
+    "XMLDocument", 
+    "XMLHttpRequest", 
+    "XMLSerializer", 
+    "XPathEvaluator", 
+    "XPathResult", 
+    "XSLTProcessor",
+    "addEventListener", 
+    "alert", 
+    "atob", 
+    "btoa", 
+    "captureEvents", 
+    "clearInterval", 
+    "clearTimeout",
+    "clientInformation", 
+    "console", 
+    "devicePixelRatio", 
+    "event", 
+    "frames",
+    "history",
+    "innerHeight", 
+    "innerWidth", 
+    "length",
+    "locationbar", 
+    "menubar", 
+    "navigator", 
+    "offscreenBuffering", 
+    "opener",
+    "outerHeight", 
+    "outerWidth", 
+    "parent",
+    "personalbar",
+    "screenLeft", 
+    "screenTop", 
+    "screenX", 
+    "screenY", 
+    "scrollX", 
+    "scrollY", 
+    "scrollbars",
+    "self",
+    "statusbar",
+    "toolbar"
+];
+
+var windowReadOnlyProperties = [
+    "closed",
+    "document",
+    "pageXOffset",
+    "pageYOffset",
+    "window",
+    "top"
+];
+
+var windowReadWriteStringProperties = [
+    "defaultStatus",
+    "defaultstatus",
+    "name",
+    "status"
+];
+
+var windowFunctions = [
+    "blur",
+    "close",
+    "confirm",
+    "find", 
+    "focus",
+    "getComputedStyle",
+    "getMatchedCSSRules", 
+    "getSelection",
+    "moveBy", 
+    "moveTo", 
+    "onabort", 
+    "onbeforeunload", 
+    "onblur", 
+    "onchange", 
+    "onclick", 
+    "ondblclick", 
+    "onerror", 
+    "onfocus", 
+    "onkeydown", 
+    "onkeypress", 
+    "onkeyup", 
+    "onload", 
+    "onmousedown", 
+    "onmousemove", 
+    "onmouseout", 
+    "onmouseover", 
+    "onmouseup", 
+    "onmousewheel", 
+    "onreset", 
+    "onresize", 
+    "onscroll", 
+    "onsearch", 
+    "onselect", 
+    "onsubmit", 
+    "onunload", 
+    "open", 
+    "print", 
+    "prompt", 
+    "releaseEvents", 
+    "removeEventListener", 
+    "resizeBy", 
+    "resizeTo", 
+    "scroll", 
+    "scrollBy", 
+    "scrollTo", 
+    "setInterval", 
+    "setTimeout", 
+    "stop"
+];
+
+window.onload = function()
+{
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    log("\n----- tests for getting/setting read-write properties -----\n");
+
+    for (var i = 0; i < windowReadWriteProperties.length; i++) { //>
+        var property = windowReadWriteProperties[i];
+        shouldBeTrue("canGet('" + property + "')");
+        shouldBeTrue("canSet('" + property + "')");
+    }
+
+    log("\n----- tests for getting/setting readonly properties -----\n");
+
+    for (var i = 0; i < windowReadOnlyProperties.length; i++) { //>
+        var property = windowReadOnlyProperties[i];
+        shouldBeTrue("canGet('" + property + "')");
+        shouldBeFalse("canSet('" + property + "')");
+    }
+
+    log("\n----- tests for getting/setting string properties -----\n");
+    for (var i = 0; i < windowReadWriteStringProperties.length; i++) { //>
+        var property = windowReadWriteStringProperties[i];
+        shouldBeTrue("canGet('" + property + "')");
+        shouldBeTrue("canSetWithTypeConversion('" + property + "')");
+        
+    }
+
+    log("\n----- tests for getting/setting functions -----\n");
+
+    for (var i = 0; i < windowFunctions.length; i++) { //>
+        var property = windowFunctions[i];
+        shouldBeTrue("canGet('" + property + "')");
+        shouldBeTrue("canSet('" + property + "')");
+    }
+}
+</script>

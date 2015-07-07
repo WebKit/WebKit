@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 1: TypeError: undefined is not an object (evaluating 'e.toString')
+Tests the properties of the XMLHttpRequestException object.
+
+

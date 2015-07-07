@@ -1,0 +1,9 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+This is a test for execCommand("RemoveFormat"). You should see Some%20text before and after RemoveFormat is executed. This test case is due to the WebKit bug 14062, regression (r21212).
+
+Some text.
+Before: Some%20text.
+
+After: Some%20text.

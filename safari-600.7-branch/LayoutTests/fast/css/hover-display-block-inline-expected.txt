@@ -1,0 +1,2 @@
+PASS Setting display to inline on hover processed OK.
+

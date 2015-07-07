@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 6: ReferenceError: Can't find variable: noInline
+Check that the DFG can handle MakeRope on values that have side effects on [[ToPrimitive]].
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
+
+TEST COMPLETE
+

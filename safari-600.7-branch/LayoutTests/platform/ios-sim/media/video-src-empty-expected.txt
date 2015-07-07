@@ -1,0 +1,25 @@
+<video> element with src="" should invoke media element's load algorithm and should fire 'error' event. Network state should be NETWORK_NO_SOURCE and set error to MEDIA_ERR_SRC_NOT_SUPPORTED.
+
+** <video> with valid non-empty 'src' attribute**
+EVENT(loadstart)
+EVENT(loadedmetadata)
+EVENT(loadeddata)
+EVENT(canplaythrough)
+
+** <video> with empty src attribute**
+RUN(video.src = "")
+EVENT(canplaythrough)
+
+** <video> with empty src attribute**
+RUN(video.src = "")
+EVENT(abort)
+EVENT(emptied)
+EVENT(loadstart)
+EVENT(error)
+
+'error' event:
+EXPECTED (event.target == '[object HTMLVideoElement]') OK
+EXPECTED (video.error.code == '4') OK
+EXPECTED (video.networkState == '3') OK
+END OF TEST
+

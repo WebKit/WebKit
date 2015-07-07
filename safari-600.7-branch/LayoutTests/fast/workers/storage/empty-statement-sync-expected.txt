@@ -1,0 +1,4 @@
+This test tries to execute an empty statement.
+PASS: result is null
+PASS
+

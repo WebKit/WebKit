@@ -1,0 +1,33 @@
+<html>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+<body id="body">
+    
+    <div id="result"></div>
+    
+    <!-- This test passes if it finds all four links in this page -->
+
+    <map id="apple" name="imagemap1">
+      <area shape="rect" coords="10,10,133,72" href="http://www.apple.com" title="Link1" />
+      <area shape="rect" coords="20,50,133,72" href="http://www.apple.com" title="Link2" />
+    </map>
+
+    <img src="resources/cake.png"  border="0" align="left" usemap="#imagemap1" vspace="1">
+
+    <a href="http://webkit.org">link 3</a>
+    <a href="#asdf">link 4</a>
+     
+    <script>
+        if (window.accessibilityController) {
+            var result = document.getElementById("result");
+
+            var body = document.getElementById("body");
+            body.focus();
+            result.innerText += "\n----------------------\n";
+            result.innerText += accessibilityController.focusedElement.attributesOfDocumentLinks() + "\n\n"; 
+        }
+    </script>
+</body>
+</html>

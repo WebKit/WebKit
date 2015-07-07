@@ -1,0 +1,22 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+    var expectedType = window.location.search[1];
+
+    description("This tests that performance.navigation.type is " + expectedType);
+
+    window.performance = window.performance || {};
+    var navigation = performance.navigation || {};
+    shouldBe("navigation.type", stringify(expectedType));
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>
+
+

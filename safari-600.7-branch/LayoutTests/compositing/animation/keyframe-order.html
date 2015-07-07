@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+    * {
+        box-sizing: border-box;
+    }
+    .container {
+        position: absolute;
+        height: 100px;
+        width: 100px;
+        background-color: green;
+        margin: 100px;
+    }
+
+    .spinner {
+        position: absolute;
+        top: -50px;
+        left: -50px;
+    }
+    
+    .spinner.animating {
+        -webkit-animation: imageSpin 999999999s linear 0 infinite
+    }
+
+    .inner {
+        width: 50px;
+        height: 50px;
+    }
+
+    .bordered {
+        width: 100px;
+        height: 100px;
+        border: 20px solid black;
+    }
+
+    @-webkit-keyframes imageSpin {
+        from {
+            -webkit-transform: rotateZ(0deg) translate3d(50px, 50px, 0)
+        }
+
+        to {
+            -webkit-transform: rotateZ(360deg) translate3d(50px, 50px 0)
+        }
+    }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+        
+        function doTest()
+        {
+            var box = document.getElementById('spinner');
+            box.addEventListener('webkitAnimationStart', function() {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, false);
+            box.classList.add('animating');
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+<div class="container">
+    <div id="spinner" class="spinner">
+        <div class="inner">
+            <div class="bordered"></div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

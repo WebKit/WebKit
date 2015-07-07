@@ -1,0 +1,57 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 437x19
+          text run at (0,0) width 437: "All the X\x{2019}s below should be green. All other letters should be black."
+      RenderBlock {DIV} at (0,36) size 784x20
+        RenderInline (generated) at (0,0) size 12x19 [color=#008000]
+          RenderText {#text} at (0,0) size 12x19
+            text run at (0,0) width 12: "X"
+        RenderText {#text} at (11,0) size 13x19
+          text run at (11,0) width 13: "Y"
+      RenderBlock {DIV} at (0,56) size 784x20
+        RenderImage {IMG} at (0,15) size 0x0
+        RenderText {#text} at (0,0) size 22x19
+          text run at (0,0) width 22: "YZ"
+      RenderBlock {DIV} at (0,76) size 784x20
+        RenderImage {IMG} at (0,0) size 0x0
+        RenderInline (generated) at (0,0) size 12x19 [color=#008000]
+          RenderText {#text} at (0,0) size 12x19
+            text run at (0,0) width 12: "X"
+        RenderText {#text} at (11,0) size 13x19
+          text run at (11,0) width 13: "Y"
+      RenderBlock {DIV} at (0,96) size 784x20
+        RenderInline (generated) at (0,0) size 12x19 [color=#008000]
+          RenderText {#text} at (0,0) size 12x19
+            text run at (0,0) width 12: "X"
+        RenderText {#text} at (11,0) size 13x19
+          text run at (11,0) width 13: "Y"
+      RenderBlock {DIV} at (0,116) size 784x20
+        RenderBlock {DIV} at (0,0) size 784x20
+          RenderInline (generated) at (0,0) size 12x19 [color=#008000]
+            RenderText {#text} at (0,0) size 12x19
+              text run at (0,0) width 12: "X"
+          RenderText {#text} at (11,0) size 13x19
+            text run at (11,0) width 13: "Y"
+      RenderBlock {DIV} at (0,136) size 784x20
+        RenderBlock {DIV} at (0,0) size 784x20
+          RenderImage {IMG} at (0,15) size 0x0
+          RenderText {#text} at (0,0) size 4x19
+            text run at (0,0) width 4: " "
+          RenderText {#text} at (4,0) size 22x19
+            text run at (4,0) width 22: "YZ"
+layer at (100,104) size 27x20
+  RenderBlock (positioned) {DIV} at (100,104) size 27x20
+    RenderText {#text} at (0,0) size 27x19
+      text run at (0,0) width 27: "VW"
+layer at (100,124) size 27x20
+  RenderBlock (positioned) {DIV} at (100,124) size 27x20
+    RenderText {#text} at (0,0) size 27x19
+      text run at (0,0) width 27: "VW"
+layer at (100,164) size 27x20
+  RenderBlock (positioned) {DIV} at (100,164) size 27x20
+    RenderText {#text} at (0,0) size 27x19
+      text run at (0,0) width 27: "VW"

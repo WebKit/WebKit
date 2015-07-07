@@ -1,0 +1,62 @@
+<div>
+    This tests a subset of pseudo-kotoeri behaviour:
+    <ul>
+        <li>All keydown events never result in keypress during composition</li>
+        <li>During composition all keydown events should have keyCode 229, this is necessary to match the behaviour of windows browsers, including WebKit/Win</li>
+    </ul>
+    To test this manually switch to the Kotoeri/Hiragana input method, and type 'toukyou'&lt;enter&gt;&lt;enter&gt;.<br />
+    You should see only a single keypress event, as the very last reported event.
+</div>
+<input id="targetInput" onkeydown="keyDown()" onkeypress="keyPress()">
+<ul id="console"></console>
+
+<script src="logger.js"></script>
+<script src="kotoeri.js"></script>
+<script>
+    var shouldBeCompositionEvent = false;
+    function keyDown() {
+        if (!window.testRunner) {
+            log("keydown : keyCode == " + event.keyCode);
+            return;
+        }
+        if (shouldBeCompositionEvent && event.keyCode != 229)
+            log("FAILURE: received keyCode " + event.keyCode + " in a keydown when VK_PROCESSKEY is expected");
+        else if (!shouldBeCompositionEvent && event.keyCode == 229)
+            log("FAILURE: received a keyDown with VK_PROCESSKEY as the keyCode, when an actual key code was expected.");
+        else
+            log("Received valid keydown event");
+    }
+    
+    function keyPress() {
+        if (!window.testRunner) {
+            log("keypress : keyCode == " + event.keyCode);
+            return;
+        }
+        if (shouldBeCompositionEvent)
+            log("FAILURE: received keypress event during composition");
+        else
+            log("Received valid keypress event");
+    }
+    
+    var targetInput = document.getElementById('targetInput');
+    targetInput.focus();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        textInputController.setInputMethodHandler(kotoeri);
+        shouldBeCompositionEvent = true;
+        eventSender.keyDown('t');
+        eventSender.keyDown('o');
+        eventSender.keyDown('u');
+        eventSender.keyDown('k');
+        eventSender.keyDown('y');
+        eventSender.keyDown('o');
+        eventSender.keyDown('u');
+        eventSender.keyDown('\n');
+        shouldBeCompositionEvent = false;
+        eventSender.keyDown('\n');
+        if (targetInput.value != "toukyou")
+            log("FAILED: Input field should countain the text 'toukyou'");
+        else
+            log("PASSED: Successfully typed 'toukyou'");
+    }
+</script> 

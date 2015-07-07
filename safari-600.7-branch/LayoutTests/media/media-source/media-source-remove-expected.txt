@@ -1,0 +1,14 @@
+This tests the SourceBuffer.remove() API. The test will remove samples from the given startTime (0) up to but not including the presentation start time of the sync sample (4) after endTime (2).
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock"))
+RUN(sourceBuffer.appendBuffer(initSegment))
+EVENT(updateend)
+RUN(sourceBuffer.appendBuffer(samples))
+EVENT(updateend)
+RUN(sourceBuffer.remove(0, 2))
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.start(0).toFixed(1) == '4') OK
+END OF TEST
+

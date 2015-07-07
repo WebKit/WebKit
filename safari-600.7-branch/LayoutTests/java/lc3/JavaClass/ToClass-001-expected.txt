@@ -1,0 +1,8 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaClass to java.lang.Class
+
+FAIL java.lang.Class.forName("java.lang.Byte"): ReferenceError: Can't find variable: java
+FAIL java.lang.Class.forName("java.lang.Byte"): ReferenceError: Can't find variable: java
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

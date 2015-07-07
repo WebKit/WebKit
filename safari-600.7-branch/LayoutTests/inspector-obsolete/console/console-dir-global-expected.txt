@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: line 9: [object Window]
+Tests that console dumps global object with properties.
+
+{
+    Array : 1
+    console : 1
+    constructor : 1
+    document : 1
+    doit : 1
+    eval : 1
+    frames : 1
+    window : 1
+}
+

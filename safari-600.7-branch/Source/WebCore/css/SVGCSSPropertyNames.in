@@ -1,0 +1,53 @@
+//
+// SVG CSS property names
+//
+
+// SVG style props
+buffered-rendering
+clip-path
+clip-rule [Inherited]
+mask
+// opacity
+enable-background
+filter
+flood-color
+flood-opacity
+lighting-color
+stop-color
+stop-opacity
+// pointer-events
+color-interpolation [Inherited]
+color-interpolation-filters [Inherited]
+color-profile
+color-rendering [Inherited]
+fill [Inherited]
+fill-opacity [Inherited]
+fill-rule [Inherited]
+//font-size-adjust
+//image-rendering
+marker [Inherited]
+marker-end [Inherited]
+marker-mid [Inherited]
+marker-start [Inherited]
+mask-type
+shape-rendering [Inherited]
+stroke [Inherited]
+stroke-dasharray [Inherited]
+stroke-dashoffset [Inherited]
+stroke-linecap [Inherited]
+stroke-linejoin [Inherited]
+stroke-miterlimit [Inherited]
+stroke-opacity [Inherited]
+stroke-width [Inherited]
+// text-rendering
+alignment-baseline
+baseline-shift
+dominant-baseline
+glyph-orientation-horizontal [Inherited]
+glyph-orientation-vertical [Inherited]
+kerning [Inherited]
+text-anchor [Inherited]
+vector-effect
+writing-mode [Inherited]
+
+-webkit-svg-shadow

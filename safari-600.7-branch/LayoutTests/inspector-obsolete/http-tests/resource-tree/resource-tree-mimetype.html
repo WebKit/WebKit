@@ -1,0 +1,31 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="resource-tree-test.js"></script>
+<link rel="stylesheet" href="resources/styles-initial.css">
+<script>
+function test()
+{
+    WebInspector.panel("network")._reset();
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.CachedResourcesLoaded, step2);
+    WebInspector.resourceTreeModel._fetchResourceTree();
+
+    function step2()
+    {
+        function format(resource)
+        {
+            return resource.type.name() + " " + resource.mimeType + " " + resource.url;
+        }
+
+        InspectorTest.dumpResources(format);
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that resources panel correctly shows mime type when it loads data from memory cache.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=63701">Bug 63701</a>
+<img src="resources/empty.png">
+</body>
+</html>

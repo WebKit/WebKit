@@ -1,0 +1,31 @@
+Test that the rendering context's strokeStyle and fillStyle are intact after calling strokeText() and fillText()
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Checking initial state for sanity
+PASS ctx.fillStyle is '#ff0000'
+PASS imgdata[0] is 255
+PASS imgdata[1] is 0
+PASS imgdata[2] is 0
+PASS imgdata[3] is 255
+PASS imgdata[4] is 0
+PASS imgdata[5] is 0
+PASS imgdata[6] is 0
+PASS imgdata[7] is 0
+Calling fillText() to try and break the strokeStyle.
+PASS ctx.strokeStyle is '#008000'
+PASS imgdata[0] is 0
+PASS imgdata[1] is 128
+PASS imgdata[2] is 0
+PASS imgdata[3] is 255
+Calling strokeText() to try and break the fillStyle.
+PASS ctx.fillStyle is '#008000'
+PASS imgdata[0] is 0
+PASS imgdata[1] is 128
+PASS imgdata[2] is 0
+PASS imgdata[3] is 255
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,48 @@
+Tests that disabling shorthand removes the "overriden" mark from the UA shorthand it overrides.
+
+Before disable
+[expanded] 
+element.style  { ()
+margin: 10px;
+
+======== Matched CSS Rules ========
+[expanded] 
+#container  { (user stylesheet)
+/-- overloaded --/ margin: 8px;
+
+[expanded] 
+div  { (user agent stylesheet)
+display: block;
+
+
+After disable
+[expanded] 
+element.style  { ()
+/-- overloaded --/ /-- disabled --/ margin: 10px;
+
+======== Matched CSS Rules ========
+[expanded] 
+#container  { (user stylesheet)
+margin: 8px;
+
+[expanded] 
+div  { (user agent stylesheet)
+display: block;
+
+
+After enable
+[expanded] 
+element.style  { ()
+margin: 10px;
+
+======== Matched CSS Rules ========
+[expanded] 
+#container  { (user stylesheet)
+/-- overloaded --/ margin: 8px;
+
+[expanded] 
+div  { (user agent stylesheet)
+display: block;
+
+
+

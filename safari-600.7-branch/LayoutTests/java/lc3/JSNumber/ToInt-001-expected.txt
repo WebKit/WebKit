@@ -1,0 +1,27 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion number conversion to int
+
+PASS dt.setInteger( 0 ); dt.PUB_INT is 0
+PASS dt.setInteger( 0 ); dt.getInteger() is 0
+PASS typeof dt.getInteger() is 'number'
+PASS dt.setInteger( -0 ); Infinity / dt.PUB_INT is Infinity
+PASS dt.setInteger( -0 ); Infinity / dt.getInteger() is Infinity
+PASS typeof dt.getInteger() is "number"
+FAIL java.lang.Integer.MAX_VALUE: ReferenceError: Can't find variable: java
+FAIL java.lang.Integer.MAX_VALUE: ReferenceError: Can't find variable: java
+PASS typeof dt.getInteger() is "number"
+FAIL java.lang.Integer.MIN_VALUE: ReferenceError: Can't find variable: java
+FAIL java.lang.Integer.MIN_VALUE: ReferenceError: Can't find variable: java
+PASS typeof dt.getInteger() is "number"
+FAIL -java.lang.Integer.MAX_VALUE: ReferenceError: Can't find variable: java
+FAIL -java.lang.Integer.MAX_VALUE: ReferenceError: Can't find variable: java
+PASS typeof dt.getInteger() is "number"
+PASS dt.setInteger(1e-2000); dt.PUB_INT is 0
+PASS dt.setInteger(1e-2000); dt.getInteger() is 0
+PASS typeof dt.getInteger() is 'number'
+PASS dt.setInteger(-1e-2000); dt.PUB_INT is 0
+PASS dt.setInteger(-1e-2000); dt.getInteger() is 0
+PASS typeof dt.getInteger() is 'number'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

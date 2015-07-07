@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<clipPath id="clip1">
+  <!-- nothing should be visible, containers are not allowed in clipPath -->
+  <g>
+    <rect width="100" height="100"/>
+  </g>
+</clipPath>
+<rect width="200" height="200" fill="green" clip-path="url(#clip1)"/>
+</svg>

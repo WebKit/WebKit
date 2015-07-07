@@ -1,0 +1,27 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/timeline-test.js"></script>
+<script>
+
+function test() {
+    /* This test seems silly, but originally it tickled bug 31080 */
+    function callback()
+    {
+        InspectorTest.addResult("Timeline started");
+        InspectorTest.completeTest();
+    }
+    InspectorTest.startTimeline(callback);
+}
+
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p> 
+Trivial use of inspector frontend tests
+</p>
+
+</body>
+</html>

@@ -1,0 +1,11 @@
+Test that DOMSubtreeModified listeners cannot cause DocumentOrderedMap to be incorrect
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.contains(el) is true
+PASS document.getElementById('el') is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

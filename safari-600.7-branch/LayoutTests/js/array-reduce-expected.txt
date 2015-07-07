@@ -1,0 +1,40 @@
+This test checks the behavior of the reduce() method on a number of objects.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS [0,1,2,3].reduce(function(a,b){ return a + b; }) is 6
+PASS [1,2,3].reduce(function(a,b){ return a + b; }) is 6
+PASS [0,1,2,3].reduce(function(a,b){ return a + b; }, 4) is 10
+PASS [1,2,3].reduce(function(a,b){ return a + b; }, 4) is 10
+PASS toObject([0,1,2,3]).reduce(function(a,b){ return a + b; }) is 6
+PASS toObject([1,2,3]).reduce(function(a,b){ return a + b; }) is 6
+PASS toObject([0,1,2,3]).reduce(function(a,b){ return a + b; }, 4) is 10
+PASS toObject([1,2,3]).reduce(function(a,b){ return a + b; }, 4) is 10
+PASS toUnorderedObject([0,1,2,3]).reduce(function(a,b){ return a + b; }) is 6
+PASS toUnorderedObject([1,2,3]).reduce(function(a,b){ return a + b; }) is 6
+PASS toUnorderedObject([0,1,2,3]).reduce(function(a,b){ return a + b; }, 4) is 10
+PASS toUnorderedObject([1,2,3]).reduce(function(a,b){ return a + b; }, 4) is 10
+PASS sparseArray.reduce(function(a,b){ return a + b; }, 0) is 10
+PASS toObject(sparseArray).reduce(function(a,b){ return a + b; }, 0) is 10
+PASS sparseArray.reduce(function(a,b){ callCount++; }); callCount is 0
+PASS toObject(sparseArray).reduce(function(a,b){ callCount++; }); callCount is 0
+PASS sparseArray.reduce(function(a,b){ callCount++; }, 0); callCount is 1
+PASS toObject(sparseArray).reduce(function(a,b){ callCount++; }, 0); callCount is 1
+PASS [0,1,2,3,4].reduce(function(a,b){ callCount++; }, 0); callCount is 5
+PASS [0,1,2,3,4].reduce(function(a,b){ callCount++; }); callCount is 4
+PASS [1, 2, 3, 4].reduce(function(a,b, i, thisObj){ thisObj.length--; callCount++; return a + b; }, 0); callCount is 2
+PASS [1, 2, 3, 4].reduce(function(a,b, i, thisObj){ thisObj.length++; callCount++; return a + b; }, 0); callCount is 4
+PASS toObject([1, 2, 3, 4]).reduce(function(a,b, i, thisObj){ thisObj.length--; callCount++; return a + b; }, 0); callCount is 4
+PASS toObject([1, 2, 3, 4]).reduce(function(a,b, i, thisObj){ thisObj.length++; callCount++; return a + b; }, 0); callCount is 4
+PASS [[0,1], [2,3], [4,5]].reduce(function(a,b) {return a.concat(b);}, []) is [0,1,2,3,4,5]
+PASS toObject([[0,1], [2,3], [4,5]]).reduce(function(a,b) {return a.concat(b);}, []) is [0,1,2,3,4,5]
+PASS toObject([0,1,2,3,4,5]).reduce(function(a,b,i) {return a.concat([i,b]);}, []) is [0,0,1,1,2,2,3,3,4,4,5,5]
+PASS toUnorderedObject([[0,1], [2,3], [4,5]]).reduce(function(a,b) {return a.concat(b);}, []) is [0,1,2,3,4,5]
+PASS toUnorderedObject([0,1,2,3,4,5]).reduce(function(a,b,i) {return a.concat([i,b]);}, []) is [0,0,1,1,2,2,3,3,4,4,5,5]
+PASS [0,1,2,3,4,5].reduce(function(a,b,i) {return a.concat([i,b]);}, []) is [0,0,1,1,2,2,3,3,4,4,5,5]
+PASS [2,3].reduce(function() {'use strict'; return this;}) is undefined
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

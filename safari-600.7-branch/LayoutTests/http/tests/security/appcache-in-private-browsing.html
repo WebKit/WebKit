@@ -1,0 +1,29 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+	testRunner.dumpAsText();
+	testRunner.dumpChildFramesAsText();
+	testRunner.waitUntilDone();
+}
+
+function finishTest(frame) {
+	if (window.testRunner) {
+		testRunner.setPrivateBrowsingEnabled(false);
+		testRunner.notifyDone();
+	}
+}
+
+function enterPrivateBrowsing(frame) {
+	if (window.testRunner)
+		testRunner.setPrivateBrowsingEnabled(true);
+	frame.onload = finishTest;
+	frame.contentWindow.location.reload();
+}
+</script>
+</head>
+<body>
+<p>This test passes if the application cache does not load while in private browsing</p>
+<iframe src="resources/frame-for-appcache-in-private-browsing.html" onload="enterPrivateBrowsing(this)"></iframe>
+</body>
+</html>

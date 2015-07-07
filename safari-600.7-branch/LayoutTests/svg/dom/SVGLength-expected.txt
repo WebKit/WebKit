@@ -1,0 +1,58 @@
+This test checks the SVGLength API
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Check initial length values
+PASS length.unitType is SVGLength.SVG_LENGTHTYPE_NUMBER
+PASS length.value is 0
+PASS length.valueInSpecifiedUnits is 0
+PASS length.valueAsString is "0"
+
+Set value to be 2px
+PASS length.unitType is SVGLength.SVG_LENGTHTYPE_PX
+PASS length.value is 2
+PASS length.valueInSpecifiedUnits is 2
+PASS length.valueAsString is "2px"
+
+Check invalid arguments for 'convertToSpecifiedUnits'
+PASS length.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_UNKNOWN) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS length.convertToSpecifiedUnits(-1) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS length.convertToSpecifiedUnits(11) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS length.convertToSpecifiedUnits('aString') threw exception Error: NotSupportedError: DOM Exception 9.
+PASS length.convertToSpecifiedUnits(length) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS length.convertToSpecifiedUnits(svgElement) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS length.convertToSpecifiedUnits() threw exception TypeError: Not enough arguments.
+PASS length.unitType is SVGLength.SVG_LENGTHTYPE_PX
+PASS length.value is 2
+PASS length.valueInSpecifiedUnits is 2
+PASS length.unitType is SVGLength.SVG_LENGTHTYPE_PX
+
+Check invalid arguments for 'newValueSpecifiedUnits'
+PASS length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_UNKNOWN, 4) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS length.newValueSpecifiedUnits(-1, 4) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS length.newValueSpecifiedUnits(11, 4) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX, 'aString') is undefined.
+PASS length.value is NaN
+PASS length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX, 0) is undefined.
+PASS length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX, length) is undefined.
+PASS length.value is NaN
+PASS length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX, 0) is undefined.
+PASS length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX, svgElement) is undefined.
+PASS length.value is NaN
+PASS length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX) threw exception TypeError: Not enough arguments.
+PASS length.newValueSpecifiedUnits('aString', 4) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS length.newValueSpecifiedUnits(length, 4) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS length.newValueSpecifiedUnits(svgElement, 4) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS length.newValueSpecifiedUnits('aString', 'aString') threw exception Error: NotSupportedError: DOM Exception 9.
+PASS length.newValueSpecifiedUnits(length, length) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS length.newValueSpecifiedUnits(svgElement, svgElement) threw exception Error: NotSupportedError: DOM Exception 9.
+PASS length.unitType is SVGLength.SVG_LENGTHTYPE_PX
+PASS length.value is 2
+PASS length.valueInSpecifiedUnits is 2
+PASS length.unitType is SVGLength.SVG_LENGTHTYPE_PX
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

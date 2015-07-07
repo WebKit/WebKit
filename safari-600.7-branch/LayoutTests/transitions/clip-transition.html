@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    #box {
+      position: absolute;
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+      clip: rect(10px, 2.38cm, 90px, 10px);
+      -webkit-transition: clip 1s linear;
+    }
+
+    #box.changed {
+      clip: rect(0.795cm, 70px, 1.85cm, 30px);
+    }
+  </style>
+  <script src="resources/transition-test-helpers.js"></script>
+  <script type="text/javascript">
+    
+    const expectedValues = [
+      // [time, element-id, property, expected-value, tolerance]
+      [0.5, 'box', 'clip', [20, 80, 80, 20], 2],
+    ];
+
+    function setupTest()
+    {
+      document.getElementById('box').className = 'changed';
+    }
+
+    runTransitionTest(expectedValues, setupTest, usePauseAPI);
+  </script>
+</head>
+<body>
+  <div id="box"></div>
+  <div id="result"></div>
+</body>
+</html>

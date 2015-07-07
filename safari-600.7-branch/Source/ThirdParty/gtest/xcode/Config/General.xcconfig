@@ -1,0 +1,76 @@
+//
+//  General.xcconfig
+//
+//  These are General configuration settings for the gtest framework and
+//  examples.
+//  This file is based on the Xcode Configuration files in:
+//  http://code.google.com/p/google-toolbox-for-mac/
+//
+
+#include "iOS.xcconfig"
+
+GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+
+ARCHS = $(ARCHS_STANDARD_32_64_BIT);
+
+HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include $(WEBCORE_PRIVATE_HEADERS_DIR)/ForwardingHeaders ../ ../include/
+
+// Zerolink prevents link warnings so turn it off
+ZERO_LINK = NO
+
+// Prebinding considered unhelpful in 10.3 and later
+PREBINDING = NO
+
+// Strictest warning policy
+WARNING_CFLAGS = -Wall -Werror -Wendif-labels -Wnewline-eof -Wno-sign-compare -Wshadow
+CLANG_WARN_CONSTANT_CONVERSION = YES;
+CLANG_WARN_EMPTY_BODY = YES;
+CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+GCC_WARN_ABOUT_RETURN_TYPE = YES;
+GCC_WARN_UNDECLARED_SELECTOR = YES;
+GCC_WARN_UNINITIALIZED_AUTOS = YES;
+GCC_WARN_UNUSED_FUNCTION = YES;
+GCC_WARN_UNUSED_VARIABLE = YES;
+
+// Work around Xcode bugs by using external strip. See:
+// http://lists.apple.com/archives/Xcode-users/2006/Feb/msg00050.html
+SEPARATE_STRIP = YES
+
+// Force C99 dialect
+GCC_C_LANGUAGE_STANDARD = c99
+
+// Force C++11
+CLANG_CXX_LANGUAGE_STANDARD = gnu++0x;
+
+// not sure why apple defaults this on, but it's pretty risky
+ALWAYS_SEARCH_USER_PATHS = NO
+
+// Turn on position dependent code for most cases (overridden where appropriate)
+GCC_DYNAMIC_NO_PIC = YES
+
+GCC_PREPROCESSOR_DEFINITIONS = $(GCC_PREPROCESSOR_DEFINITIONS) GTEST_HAS_TR1_TUPLE=0 GTEST_HAS_RTTI=0;
+
+CLANG_CXX_LIBRARY = libc++;
+
+TARGET_MAC_OS_X_VERSION_MAJOR = $(MAC_OS_X_VERSION_MAJOR);
+
+
+// VERSIONING BUILD SETTINGS (used in Info.plist)
+GTEST_VERSIONINFO_ABOUT =  © 2008 Google Inc.
+OTHER_CFLAGS = $(ASAN_OTHER_CFLAGS);
+OTHER_CPLUSPLUSFLAGS = $(ASAN_OTHER_CPLUSPLUSFLAGS);
+OTHER_LDFLAGS = $(ASAN_OTHER_LDFLAGS);
+
+TOOLCHAINS = $(TOOLCHAINS_$(MAC_OS_X_VERSION_MAJOR));
+TOOLCHAINS_1080 = default;
+TOOLCHAINS_1090 = $(TOOLCHAINS);
+TOOLCHAINS_101000 = $(TOOLCHAINS_1090);
+
+SDKROOT = $(SDKROOT_$(PLATFORM_NAME));
+SDKROOT_iphoneos = $(SDKROOT);
+SDKROOT_iphonesimulator = $(SDKROOT);
+SDKROOT_macosx = $(SDKROOT_macosx_$(USE_INTERNAL_SDK));
+SDKROOT_macosx_ = macosx;
+SDKROOT_macosx_YES = macosx.internal;
+
+SUPPORTED_PLATFORMS = macosx iphoneos iphonesimulator;

@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script>
+            var mediaStream;
+            var newMediaStream;
+            var audioTracks;
+            var videoTracks;
+            var newAudioTracks;
+            var newVideoTracks;
+
+            function checkTracks(trackSet1, trackSet2) {
+                for (var i = 0; i < trackSet1.length; i++) {
+                    shouldBe('trackSet1[i].readyState', 'trackSet2[i].readyState');
+                    shouldBe('trackSet1[i].enabled', 'trackSet2[i].enabled');
+                    shouldBe('trackSet1[i].muted', 'trackSet2[i].muted');
+                }
+            }
+
+            function gotStream(stream) {
+                mediaStream = stream;
+                debug("");
+
+                evalAndLog("newMediaStream = mediaStream.clone()");
+
+                shouldNotBe('mediaStream.id', 'newMediaStream.id');
+
+                evalAndLog("audioTracks = mediaStream.getAudioTracks()");
+                evalAndLog("videoTracks = mediaStream.getVideoTracks()");
+                evalAndLog("newAudioTracks = newMediaStream.getAudioTracks()");
+                evalAndLog("newVideoTracks = newMediaStream.getVideoTracks()");
+
+                checkTracks(audioTracks, newAudioTracks);
+                checkTracks(videoTracks, newVideoTracks);
+            }
+
+            function getUserMediaError() {
+                testFailed('Could not get MediaStream');
+                finishJSTest();
+            }
+
+            function start() {
+                try {
+                    navigator.webkitGetUserMedia({audio:true, video:true}, gotStream, getUserMediaError);
+                } catch (e) {
+                    testFailed('webkitGetUserMedia threw exception :' + e);
+                    finishJSTest();
+                }
+            }
+
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+    </head>
+    <body onload="start()">
+        <p id="description"></p>
+        <div id="console"></div>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

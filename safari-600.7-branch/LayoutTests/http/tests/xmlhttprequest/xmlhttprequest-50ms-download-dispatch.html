@@ -1,0 +1,93 @@
+<html>
+<head>
+    <title> Test case for bug 18655 </title>
+</head>
+<body>
+<p> Test case for Bug <a href="https://bugs.webkit.org/show_bug.cgi?id=18655">18655</a>: [XHR] onProgress event
+needs to be dispatched according to what the specification states </p>
+<p> This test verify that we "dispatch a progress event called progress about
+every 50ms or for every byte received, whichever is least frequent".</p>
+<p> You should see a sequence of 5 PASSED. </p>
+<p id="console"></p>
+
+<script type="text/javascript">
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(message)
+{
+    document.getElementById("console").appendChild(document.createTextNode(message));
+    document.getElementById("console").appendChild(document.createElement("br"));
+}
+
+var testsCompleted = 0;
+
+function test(iteration, delay, compare, testDescription)
+{
+    var count = 0;
+    var sawReadyStateDONE = false;
+    function onProgress(e) {
+        ++count;
+        if (sawReadyStateDONE)
+            log("FAILED: saw 'progress' event after readystate 'DONE' event for " + testDescription);
+    }
+
+    function onReadyState(e) {
+        if (this.readyState == 4) {
+            sawReadyStateDONE = true;
+            var passed =  compare(count, iteration);
+            log(passed ? "PASSED" : "FAILED (count was " + count + ") for " + testDescription);
+            ++testsCompleted;
+            if (testsCompleted == 5) {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }
+        }
+    }
+
+    var req = new XMLHttpRequest();
+    req.onprogress = onProgress;
+    req.onreadystatechange = onReadyState;
+    req.open("GET", "resources/download-with-delay.php?iteration=" + iteration + "&delay=" + delay, true);
+    req.send(null);
+}
+
+try {
+// Number of chunks to send, delay between chunks
+var strictTests = [ 2, 80,
+                    1, 1000,
+                    2, 50 ];
+function compareStrict(count, iteration)
+{
+    return count == iteration;
+}
+
+var i = 0;
+while (strictTests.length) {
+    var iteration = strictTests.shift();
+    var delay = strictTests.shift();
+    test(iteration, delay, compareStrict, "strict test " + ++i);
+}
+
+// Number of chunks to send, delay between chunks
+var throttledTests = [ 5, 20,
+                       6, 30 ];
+function compareThrottled(count, iteration)
+{
+    return count < iteration;
+}
+
+i = 0;
+while(throttledTests.length) {
+    var iteration = throttledTests.shift();
+    var delay = throttledTests.shift();
+    test(iteration, delay, compareThrottled, "throttled test " + ++i);
+}
+} catch(e) {
+    log("FAILED: exception raised: " + e.message);
+}
+</script>
+</body>
+</html>

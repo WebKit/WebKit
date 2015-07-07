@@ -1,0 +1,12 @@
+Test region's computed values for z-index.
+
+A region establishes a stacking context.
+
+On success you should see PASS below
+
+PASS window.getComputedStyle(document.getElementById("region")).zIndex is "0"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

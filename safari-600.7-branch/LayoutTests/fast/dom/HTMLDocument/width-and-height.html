@@ -1,0 +1,9 @@
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    if ('width' in document && 'height' in document)
+        document.write("PASS. The document.width and document.height properties are accessible from JavaScript.");
+    else
+        document.write("FAIL. document.width or document.height are not accessible from JavaScript.");
+</script>

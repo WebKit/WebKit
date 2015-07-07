@@ -1,0 +1,37 @@
+<html>
+<head>
+<style type="text/css">
+#main {
+    height: 100px;
+    background: #000;
+    background: #bada55;
+}
+</style>
+
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function test()
+{
+    InspectorTest.selectNodeAndWaitForStyles("main", step1);
+
+    function step1()
+    {
+        InspectorTest.dumpSelectedElementStyles(true, false, true);
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that overriding shorthands within rule are visible.
+</p>
+
+<div id="main"></div>
+
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p id="description">This tests deleting when the caret is at the start of a paragraph just after a table.  The content in that paragraph should be moved into the last table cell unless that content is another table.</p>
+<div contenteditable="true" id="root"><table border="1"><tr><td>All the content in this editable region&nbsp;</td></tr></table><div id="div">should be in one table cell.</div></div>
+
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+var sel = window.getSelection();
+var div = document.getElementById("div");
+sel.setPosition(div, 0);
+document.execCommand("Delete");
+Markup.description(description.textContent);
+Markup.dump("root");
+</script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla Bug Tracking System.
+  #
+  # Contributor(s): Frédéric Buclin <LpSolit@gmail.com>
+  #%]
+
+[%# INTERFACE:
+  # token: string. The token to be used in the user account creation.
+  # email: email address of the user account.
+  # date: creation date of the token.
+  #%]
+
+[% title = BLOCK %]Create a new user account for '[% email FILTER html %]'[% END %]
+[% PROCESS "global/header.html.tmpl"
+           title = title
+           onload = "document.forms['confirm_account_form'].realname.focus();" %]
+
+[% expiration_ts = date + (constants.MAX_TOKEN_AGE * 86400) %]
+<div>
+  To create your account, you must enter a password in the form below.
+  Your email address and Real Name (if provided) will be shown with
+  changes you make.
+</div>
+
+<form id="confirm_account_form" method="post" action="token.cgi">
+  <input type="hidden" name="t" value="[% token FILTER html %]">
+  <input type="hidden" name="a" value="confirm_new_account">
+  <table>
+    <tr>
+      <th align="right">Email Address:</th>
+      <td>[% email FILTER html %]</td>
+    </tr>
+    <tr>
+      <th align="right"><small><i>(OPTIONAL)</i></small> <label for="realname">Real Name</label>:</th>
+      <td><input type="text" id="realname" name="realname" value=""></td>
+    </tr>
+    <tr>
+      <th align="right"><label for="passwd1">Type your password</label>:</th>
+      <td><input type="password" id="passwd1" name="passwd1" value=""></td>
+    </tr>
+    <tr>
+      <th align="right"><label for="passwd2">Confirm your password</label>:</th>
+      <td><input type="password" id="passwd2" name="passwd2" value=""></td>
+    </tr>
+    <tr>
+      <th align="right">&nbsp;</th>
+      <td><input type="submit" id="confirm" value="Send"></td>
+    </tr>
+  </table>
+</form>
+
+<p>
+  This account will not be created if this form is not completed by
+  <u>[%+ time2str("%B %o, %Y at %H:%M %Z", expiration_ts) %]</u>.
+</p>
+
+<p>
+  If you do not wish to create an account with this email click the
+  cancel account button below and your details will be forgotten.
+</p>
+
+<form id="cancel_account_form" method="post" action="token.cgi">
+  <input type="hidden" name="t" value="[% token FILTER html %]">
+  <input type="hidden" name="a" value="cancel_new_account">
+  <input type="submit" id="confirm" value="Cancel Account">
+</form>
+
+[% PROCESS global/footer.html.tmpl %]

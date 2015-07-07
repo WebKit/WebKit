@@ -1,0 +1,31 @@
+To manually test, press your browser shortcut for copy and then for paste. Several lines that say 'PASS' should appear below.
+
+Copy handler: 
+Paste handler: 
+Running test with Legacy copy handler and Legacy paste handler
+PASS: 4 === 4
+PASS: sample === sample
+PASS: http://www.google.com/ === http://www.google.com/
+PASS: <em>Markup</em> === <em>Markup</em>
+PASS: hello world === hello world
+Running test with Legacy copy handler and DataTransferItemList paste handler
+PASS: 4 === 4
+PASS: [{"kind":"string","type":"custom-data"},{"kind":"string","type":"text/html"},{"kind":"string","type":"text/plain"},{"kind":"string","type":"text/uri-list"}] === [{"kind":"string","type":"custom-data"},{"kind":"string","type":"text/html"},{"kind":"string","type":"text/plain"},{"kind":"string","type":"text/uri-list"}]
+PASS: hello world === hello world
+PASS: <em>Markup</em> === <em>Markup</em>
+PASS: sample === sample
+PASS: http://www.google.com/ === http://www.google.com/
+Running test with DataTransferItemList copy handler and Legacy paste handler
+PASS: 4 === 4
+PASS: sample === sample
+PASS: http://www.google.com/ === http://www.google.com/
+PASS: <em>Markup</em> === <em>Markup</em>
+PASS: hello world === hello world
+Running test with DataTransferItemList copy handler and DataTransferItemList paste handler
+PASS: 4 === 4
+PASS: [{"kind":"string","type":"custom-data"},{"kind":"string","type":"text/html"},{"kind":"string","type":"text/plain"},{"kind":"string","type":"text/uri-list"}] === [{"kind":"string","type":"custom-data"},{"kind":"string","type":"text/html"},{"kind":"string","type":"text/plain"},{"kind":"string","type":"text/uri-list"}]
+PASS: hello world === hello world
+PASS: <em>Markup</em> === <em>Markup</em>
+PASS: sample === sample
+PASS: http://www.google.com/ === http://www.google.com/
+

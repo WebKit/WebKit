@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>CSS Test: Absolutely positioned non-replaced element when only 'margin-left' is 'auto' and direction is right-to-left</title>
+        <link rel="author" title="Microsoft" href="http://www.microsoft.com/">
+        <link rel="help" href="http://www.w3.org/TR/CSS21/visudet.html#abs-non-replaced-width">
+        <meta name="flags" content="ahem">
+        <meta name="assert" content="When direction is right-to-left and 'left', 'width', 'margin-right' and 'right' are not 'auto', solve for 'margin-left'.">
+        <style type="text/css">
+            #div1
+            {
+                border: solid black;
+                direction: rtl;
+                height: 2in;
+                position: relative;
+                width: 2in;
+            }
+            div div
+            {
+                background: red;
+                color: blue;
+                font: 1in/1em Ahem;
+                left: 1in;
+                margin-left: auto;
+                margin-right: 0.5in;
+                position: absolute;
+                right: 0.5in;
+                width: 1in;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test passes if the blue box is in the upper-left corner of the black box and there is no red visible on the page.</p>
+        <div id="div1">
+            <div>X</div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,176 @@
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" [
+    <!ENTITY % myents SYSTEM "bugzilla.ent">
+    %myents;
+
+<!-- Include macros -->
+<!ENTITY about SYSTEM "about.xml">
+<!ENTITY conventions SYSTEM "conventions.xml">
+<!ENTITY doc-index SYSTEM "index.xml">
+<!ENTITY gfdl SYSTEM "gfdl.xml">
+<!ENTITY glossary SYSTEM "glossary.xml">
+<!ENTITY installation SYSTEM "installation.xml">
+<!ENTITY administration SYSTEM "administration.xml">
+<!ENTITY security SYSTEM "security.xml">
+<!ENTITY using SYSTEM "using.xml">
+<!ENTITY integration SYSTEM "integration.xml">
+<!ENTITY index SYSTEM "index.xml">
+<!ENTITY customization SYSTEM "customization.xml">
+<!ENTITY troubleshooting SYSTEM "troubleshooting.xml">
+<!ENTITY patches SYSTEM "patches.xml">
+<!ENTITY introduction SYSTEM "introduction.xml">
+<!ENTITY modules SYSTEM "modules.xml">
+
+<!-- Things to change for a stable release:
+     * bz-ver to current stable
+     * bz-nexver to next stable
+     * bz-date to the release date
+     * landfillbase to the branch install
+     * Remove the BZ-DEVEL comments
+     - COMPILE DOCS AND CHECKIN -
+       Also, tag and tarball before completing
+     * bz-ver to devel version
+ 
+     For a devel release, simple bump bz-ver and bz-date
+-->
+
+<!ENTITY bz-ver "3.2.3">
+<!ENTITY bz-nextver "3.4">
+<!ENTITY bz-date "2009-03-30">
+<!ENTITY current-year "2009">
+
+<!ENTITY landfillbase "http://landfill.bugzilla.org/bugzilla-3.2-branch/">
+<!ENTITY bz "http://www.bugzilla.org/">
+<!ENTITY bzg-bugs "<ulink url='https://bugzilla.mozilla.org/enter_bug.cgi?product=Bugzilla&amp;component=Documentation'>Bugzilla Documentation</ulink>">
+<!ENTITY mysql "http://www.mysql.com/">
+
+<!ENTITY min-perl-ver "5.8.1">
+]>
+
+
+<!-- Coding standards for this document 
+
+*  Other than the GFDL, please use the "section" tag instead of "sect1", 
+   "sect2", etc.
+*  Use Entities to include files for new chapters in Bugzilla-Guide.xml.
+*  Try to use Entities for frequently-used passages of text as well.
+*  Ensure all documents compile cleanly to HTML after modification.
+   The warning, "DTDDECL catalog types not supported" is normal.
+*  Try to index important terms wherever possible.
+*  Use "glossterm" whenever you introduce a new term.
+*  Follow coding standards at http://www.tldp.org, and
+   check out the KDE guidelines (they are nice, too)
+   http://i18n.kde.org/doc/markup.html
+*  All tags should be lowercase.
+*  Please use sensible spacing.  The comments at the very end of each
+   file define reasonable defaults for PSGML mode in EMACS.
+*  Double-indent tags, use double spacing whenever possible, and
+   try to avoid clutter and feel free to waste space in the code to make it 
+   more readable.
+
+-->
+
+<book id="index">
+
+<!-- Header -->
+
+  <bookinfo>
+    <title>The Bugzilla Guide - &bz-ver; 
+    Release</title>
+
+    <authorgroup>
+      <corpauthor>The Bugzilla Team</corpauthor>
+    </authorgroup>
+
+    <pubdate>&bz-date;</pubdate>
+
+    <abstract>
+      <para>
+	      This is the documentation for Bugzilla, a 
+	      bug-tracking system from mozilla.org.
+	      Bugzilla is an enterprise-class piece of software
+	      that tracks millions of bugs and issues for hundreds of
+	      organizations around the world.
+      </para>
+
+      <para>
+        The most current version of this document can always be found on the
+        <ulink url="http://www.bugzilla.org/docs/">Bugzilla 
+        Documentation Page</ulink>.
+      </para>
+
+    </abstract>
+
+    <keywordset>
+      <keyword>Bugzilla</keyword>
+      <keyword>Guide</keyword>
+      <keyword>installation</keyword>
+      <keyword>FAQ</keyword>
+      <keyword>administration</keyword>
+      <keyword>integration</keyword>
+      <keyword>MySQL</keyword>
+      <keyword>Mozilla</keyword>
+      <keyword>webtools</keyword>
+    </keywordset>
+  </bookinfo>
+
+<!-- About This Guide -->
+&about;
+
+<!-- Installing Bugzilla -->
+&installation;
+
+<!-- Administering Bugzilla -->
+&administration;
+
+<!-- Securing Bugzilla -->
+&security;
+
+<!-- Using Bugzilla -->
+&using;
+
+<!-- Customizing Bugzilla -->
+&customization;
+
+<!-- Appendix: Troubleshooting -->
+&troubleshooting;
+
+<!-- Appendix: Custom Patches -->
+&patches;
+
+<!-- Appendix: Manually Installing Perl Modules -->
+&modules;
+
+<!-- Appendix: GNU Free Documentation License -->
+&gfdl;
+
+<!-- Glossary -->
+&glossary;
+
+<!-- Index -->
+&index;
+
+
+</book>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-always-quote-attributes:t
+sgml-auto-insert-required-elements:t
+sgml-balanced-tag-edit:t
+sgml-exposed-tags:nil
+sgml-general-insert-case:lower
+sgml-indent-data:t
+sgml-indent-step:2
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+sgml-minimize-attributes:nil
+sgml-namecase-general:t
+sgml-omittag:t
+sgml-parent-document:("Bugzilla-Guide.xml" "book" "chapter")
+sgml-shorttag:t
+sgml-tag-region-if-active:t
+End:
+-->
+

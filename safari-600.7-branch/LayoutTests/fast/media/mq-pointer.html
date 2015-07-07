@@ -1,0 +1,58 @@
+<html>
+<head>
+<title>Test CSS4 media query "pointer" and "hover" features.</title>
+<style type="text/css">
+
+</style>
+<script type="text/javascript" charset="utf-8">
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function log(m) {
+        document.getElementById('results').innerHTML += m + '<br>';
+    }
+
+    function testQueries()
+    {
+        var queries = [
+            "(pointer)",
+            "(Pointer)",
+            "(pointer:none)",
+            "(pointer:coarse)",
+            "(pointer:coARse)",
+            "(pointer:bogusvalue)",
+            "(pointer:fine)",
+            "(hover)",
+            "(hover:0)",
+            "(hover:1)",
+            "(hover:bogusvalue)" ];
+        for (var index=0; index < queries.length; index++) {
+            log("Query &quot;" + queries[index] + "&quot: " +
+                window.matchMedia(queries[index]).matches);
+        }
+    }
+
+    function runTests()
+    {
+        log("------------- default configuration -------------");
+        testQueries();
+
+        if (window.internals) {
+            internals.settings.setDeviceSupportsTouch(true);
+
+            log("------------- with touch screen -------------");
+            testQueries();
+        }
+    }
+
+</script>
+</head>
+<body onload="runTests()">
+    <p>Test the <a href="http://dev.w3.org/csswg/css4-mediaqueries/#pointer">(pointer)</a> and
+    <a href="http://dev.w3.org/csswg/css4-mediaqueries/#hover">(hover)</a> media features.
+    See <a href="https://bugs.webkit.org/show_bug.cgi?id=87403">Bug 87403</a> for details.</p>
+
+    <div id="results">
+    </div>
+</body>
+</html>

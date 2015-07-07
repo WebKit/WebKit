@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Test for https://bugs.webkit.org/show_bug.cgi?id=102957</title>
+        <style>
+        .region {
+            height: 50px;
+        }
+
+        .region ul {
+            margin: 0px;
+        }
+
+        #target {
+            font-size: 50px;
+            color: green;
+            font-family: Ahem;
+            color: green;
+            list-style-type: none;
+        }
+        </style>
+    </head>
+    <body onload="removeFirstLetter()">
+        <p>Test case for <a href="https://bugs.webkit.org/show_bug.cgi?id=102957">102957</a>.</p>
+        <p>Testing that the removal of the list-marker render object will not crash the flow thread logic.</p>
+        <p>You should see a green rectangle. There should be no red.</p>
+        <div class="region">
+            <ul>
+                <li id="target">aaaa</li>
+            </ul>
+        </div>
+    </body>
+</html>

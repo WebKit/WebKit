@@ -1,0 +1,53 @@
+Tests the basics of SpeechGrammar and SpeechGrammarList
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 'webkitSpeechGrammar' in window is true
+PASS webkitSpeechGrammar == null is false
+PASS 'webkitSpeechGrammarList' in window is true
+PASS webkitSpeechGrammarList == null is false
+window.g = new webkitSpeechGrammar()
+PASS g == null is false
+PASS g.weight is 1.0
+PASS g.src is ''
+g.weight = 2
+PASS g.weight is 2.0
+g.src = 'grammar.xml'
+PASS g.src is base + 'grammar.xml'
+g.src = 'http://example.tld/grammar.xml'
+PASS g.src is 'http://example.tld/grammar.xml'
+g.src = 'foo bar'
+PASS g.src is base + 'foo%20bar'
+window.gs = new webkitSpeechGrammarList()
+PASS gs == null is false
+PASS gs.length is 0
+PASS gs.item(0) == null is true
+PASS gs[0] == undefined is true
+PASS gs.item(-1) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS gs[-1] == undefined is true
+gs.addFromUri('grammar', 2)
+PASS gs.length is 1
+PASS gs.item(1) == null is true
+PASS gs[1] == undefined is true
+PASS gs.item(-1) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS gs[-1] == undefined is true
+PASS gs[0] is gs.item(0)
+PASS gs.item(0).src is base + 'grammar'
+PASS gs.item(0).weight is 2
+gs.addFromUri('http://foo.tld/grammar.xml', 3)
+PASS gs.length is 2
+PASS gs[1] is gs.item(1)
+PASS gs.item(1).src is 'http://foo.tld/grammar.xml'
+PASS gs.item(1).weight is 3
+gs.addFromString('foo', 4)
+PASS gs.length is 3
+PASS gs[2] is gs.item(2)
+PASS gs.item(2).src is 'data:application/xml,%3Cgrammar%3Efoo%3C/grammar%3E'
+PASS gs.item(2).weight is 4
+PASS gs[2].src is 'data:application/xml,%3Cgrammar%3Efoo%3C/grammar%3E'
+PASS gs[2].weight is 4
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

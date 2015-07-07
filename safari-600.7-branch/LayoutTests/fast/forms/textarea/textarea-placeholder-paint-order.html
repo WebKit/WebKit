@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<body>
+<script>
+// We don't care a render tree of this test.
+if (window.testRunner)
+    testRunner.dumpAsText(true);
+</script>
+<style>
+textarea {
+    color: lime;
+    text-indent: 1px;
+    zoom: 8;
+}
+
+textarea::-webkit-input-placeholder {
+    text-indent: -1px;
+    font-weight: bold;
+    color: red;
+}
+</style>
+<p>This test is meaningfull only if RenderTheme::shouldShowPlaceholderWhenFocused() returns true.</p>
+<p>The green caret in the following text box should painted over the red placeholder text.</p>
+<textarea placeholder="Placeholder" autofocus></textarea>
+</body>

@@ -1,0 +1,82 @@
+<html>
+<head>
+<!--
+    Line numbers are reported wrt the opened style tag baseline.
+    Allow some space here to align local line numbers to be style + 10.
+    Selector sourceLine is the line of the corresponding { following the
+    selector text.
+-->
+
+<style type="text/css" media="screen">
+#main, .at_line_15::/*
+Multiline comment
+before pseudo element
+              */before 
+{
+    color:red;
+    content: "Before"
+}
+/*
+
+Multiline comment followed with whitespace
+
+
+*/
+
+#main, .at_line_29
+
+
+{
+    /* Comment in definition*/
+    /* Comment in definition 2*/
+
+    /* Comment in definition 3
+    */font-family:/*  Comment in 
+                      value  */courier;
+    color blue;
+}/*Multiline comment
+
+followed by selector
+*/#main,
+.at_line_43
+
+{
+    font-size:
+        10px;
+}
+
+
+#main, .at_line_50
+{
+    border: 1px solid
+    red;
+}
+</style>
+
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function test()
+{
+    InspectorTest.selectNodeAndWaitForStyles("main", step1);
+
+    function step1()
+    {
+        InspectorTest.dumpSelectedElementStyles(true, false, true);
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that proper source lines are reported for the parsed styles.
+</p>
+
+<div id="main"></div>
+
+</body>
+</html>

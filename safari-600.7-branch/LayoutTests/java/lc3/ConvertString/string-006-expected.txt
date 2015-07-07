@@ -1,0 +1,15 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion Preferred argument conversion: string
+
+FAIL TEST_CLASS["ambiguous(java.lang.String)"](string) + '' should be STRING. Threw exception TypeError: 'undefined' is not a function (evaluating 'TEST_CLASS["ambiguous(java.lang.String)"](string)')
+FAIL TEST_CLASS["ambiguous(java.lang.Object)"](string) + '' should be OBJECT. Threw exception TypeError: 'undefined' is not a function (evaluating 'TEST_CLASS["ambiguous(java.lang.Object)"](string)')
+FAIL TEST_CLASS["ambiguous(char)"](string) + '' should be CHAR. Threw exception TypeError: 'undefined' is not a function (evaluating 'TEST_CLASS["ambiguous(char)"](string)')
+FAIL TEST_CLASS["ambiguous(double)"](string) + '' should be DOUBLE. Threw exception TypeError: 'undefined' is not a function (evaluating 'TEST_CLASS["ambiguous(double)"](string)')
+FAIL TEST_CLASS["ambiguous(float)"](string) + '' should be FLOAT. Threw exception TypeError: 'undefined' is not a function (evaluating 'TEST_CLASS["ambiguous(float)"](string)')
+FAIL TEST_CLASS["ambiguous(long)"](string) + '' should be LONG. Threw exception TypeError: 'undefined' is not a function (evaluating 'TEST_CLASS["ambiguous(long)"](string)')
+FAIL TEST_CLASS["ambiguous(int)"](string) + '' should be INT. Threw exception TypeError: 'undefined' is not a function (evaluating 'TEST_CLASS["ambiguous(int)"](string)')
+FAIL TEST_CLASS["ambiguous(short)"](string) + '' should be SHORT. Threw exception TypeError: 'undefined' is not a function (evaluating 'TEST_CLASS["ambiguous(short)"](string)')
+FAIL TEST_CLASS["ambiguous(byte)"]("127") + '' should be BYTE. Threw exception TypeError: 'undefined' is not a function (evaluating 'TEST_CLASS["ambiguous(byte)"]("127")')
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

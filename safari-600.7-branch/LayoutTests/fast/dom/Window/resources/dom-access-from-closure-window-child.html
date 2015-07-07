@@ -1,0 +1,20 @@
+<script>
+    opener.accessFrame = function()
+    {
+        function normalizeURL(url)
+        {
+            return url.substring(url.lastIndexOf("LayoutTests"));
+        }
+
+        try {
+            opener.log("document.URL: " + normalizeURL(document.URL));
+            opener.log("window.document.URL: " + normalizeURL(window.document.URL));
+            opener.log("name: " + name);
+            opener.log("window.name: " + window.name);
+        } catch (e) {
+            opener.log("An exception was thrown: " + e.message);
+        }
+    }
+
+    window.location = "notify-opener-done.html";
+</script>

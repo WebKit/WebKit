@@ -1,0 +1,37 @@
+This tests that the navigator object of a deleted frame is disconnected properly. Accessing fields or methods shouldn't crash the browser. 
+ Check Navigator
+navigator.appCodeName is OK
+navigator.appName is OK
+navigator.appVersion is OK
+navigator.cookieEnabled is OK
+navigator.getStorageUpdates() is OK
+navigator.javaEnabled() is OK
+navigator.language is OK
+navigator.mimeTypes is OK
+navigator.onLine is OK
+navigator.platform is OK
+navigator.plugins is OK
+navigator.product is OK
+navigator.productSub is OK
+navigator.standalone is OK
+navigator.userAgent is OK
+navigator.vendor is OK
+navigator.vendorSub is OK
+navigator.appCodeName is OK
+navigator.appName is OK
+navigator.appVersion is OK
+navigator.cookieEnabled is OK
+navigator.getStorageUpdates() is OK
+navigator.javaEnabled() is OK
+navigator.language is OK
+navigator.mimeTypes is OK
+navigator.onLine is OK
+navigator.platform is OK
+navigator.plugins is OK
+navigator.product is OK
+navigator.productSub is OK
+navigator.standalone is OK
+navigator.userAgent is OK
+navigator.vendor is OK
+navigator.vendorSub is OK
+

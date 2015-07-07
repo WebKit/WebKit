@@ -1,0 +1,29 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,1) size 750x74
+        text run at (0,1) width 750: "This is just a minimal page that we navigate in response to"
+        text run at (0,39) width 221: "an HTTP POST. "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (0,77) size 0x36
+      RenderText {#text} at (0,115) size 766x112
+        text run at (0,115) width 743: "If the next line is empty after the colon, it probably means"
+        text run at (0,153) width 179: "that we made "
+        text run at (178,153) width 588: "a mistake and requested this page with a GET"
+        text run at (0,191) width 436: "with no query instead of a POST. "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderBR {BR} at (0,229) size 0x36
+      RenderText {#text} at (0,267) size 708x36
+        text run at (0,267) width 708: "The first text field contained: New form text from user "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderText {#text} at (0,305) size 575x36
+        text run at (0,305) width 575: "This page was requested with an HTTP GET"
+
+============== Back Forward List ==============
+        http://127.0.0.1:8000/navigation/postredirect-goback1.html  **nav target**
+        http://127.0.0.1:8000/navigation/resources/success200.html  **nav target**
+curr->  http://127.0.0.1:8000/navigation/resources/postresult.pl?submitwithpostredirect=Submit%20with%20POST%20followed%20by%20a%20redirect&textfield1=New%20form%20text%20from%20user&textfield2=&radiogroup1=female&checkbox2=on&selectgroup1=fiat&textarea1=More%20new%20form%20text%20from%20user%2C%20which%20should%20be%20restored%20when%20we%20return%20to%20this%20page.&redirectHappened=true  **nav target**
+        http://127.0.0.1:8000/navigation/resources/otherpage.html  **nav target**
+===============================================

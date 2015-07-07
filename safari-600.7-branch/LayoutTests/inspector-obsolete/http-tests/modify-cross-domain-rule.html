@@ -1,0 +1,110 @@
+<html>
+<head>
+<link rel="stylesheet" href="http://localhost:8000/inspector/styles/modify-cross-domain-rule.css">
+<script src="inspector-test.js"></script>
+<script src="elements-test.js"></script>
+<script>
+
+function test()
+{
+    var nodeId;
+    var allRules;
+    var rule;
+    var matchedRules;
+
+    WebInspector.showPanel("elements");
+
+    InspectorTest.runTestSuite([
+        function testSetUp(next) {
+            InspectorTest.selectNodeAndWaitForStyles("inspected", selectCallback);
+
+            function selectCallback()
+            {
+                var idToDOMNode = WebInspector.domAgent._idToDOMNode;
+                for (var id in idToDOMNode) {
+                    node = idToDOMNode[id];
+                    if (node.getAttribute && node.getAttribute("id") === "inspected") {
+                        nodeId = parseInt(id, 10);
+                        break;
+                    }
+                }
+
+                if (!nodeId) {
+                    InspectorTest.completeTest();
+                    return;
+                }
+
+                WebInspector.cssModel.getMatchedStylesAsync(nodeId, false, false, callback);
+            }
+
+            function callback(rules)
+            {
+                if (!rules || !rules.matchedCSSRules || !rules.matchedCSSRules.length) {
+                    InspectorTest.addResult("[!] No rules found");
+                    InspectorTest.completeTest();
+                    return;
+                }
+
+                allRules = rules.matchedCSSRules;
+                next();
+            }
+        },
+
+        function testAddProperty(next)
+        {
+            for (var i = 0; i < allRules.length; ++i) {
+                if (allRules[i].isRegular) {
+                    rule = allRules[i];
+                    break;
+                }
+            }
+            rule.style.appendProperty("width", "100%", callback);
+            function callback(newStyle)
+            {
+                InspectorTest.addResult("=== Rule modified ===");
+                if (!newStyle) {
+                    InspectorTest.addResult("[!] No valid rule style received");
+                    InspectorTest.completeTest();
+                } else {
+                    dumpProperties(newStyle);
+                    WebInspector.cssModel.setRuleSelector(rule.id, nodeId, "body", successCallback, failureCallback);
+                }
+            }
+
+            function successCallback(rule, doesAffectSelectedNode)
+            {
+                InspectorTest.addResult("=== Selector changed ===");
+                InspectorTest.addResult(rule.selectorText + " {" + rule.style.cssText + "}");
+                InspectorTest.addResult("Affects selected (#inspected) node: " + doesAffectSelectedNode);
+                next();
+            }
+
+            function failureCallback()
+            {
+                InspectorTest.addResult("[!] Failed to change selector");
+                InspectorTest.completeTest();
+            }
+        }
+    ]);
+
+    function dumpProperties(style)
+    {
+       if (!style)
+           return;
+       var allProperties = style.allProperties;
+       for (var i = 0; i < allProperties.length; ++i)
+           InspectorTest.addResult(allProperties[i].text);
+    }
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that modifying a rule in a stylesheet loaded from a different domain does not crash the renderer.
+</p>
+
+<div id="inspected">Text</div>
+
+</body>
+</html>

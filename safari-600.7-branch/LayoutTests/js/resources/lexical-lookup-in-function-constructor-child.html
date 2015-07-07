@@ -1,0 +1,10 @@
+<script>
+message = "SUCCESS";
+function doTest(para) {
+    var f = new Function('para', 'para.innerHTML = message;');
+    f(para);
+}
+</script>
+<body>
+</body>
+

@@ -1,0 +1,38 @@
+<p>This tests that option-tab moves you from a text field to a link, but plain old tab does not.</p>
+<p>Note: Option is the Mac name for what other platforms call Alt.</p>
+<input id="textField" type=text> <a onfocus="window.linkFocused = true" href="http://www.apple.com">link</a>
+<input id="searchField" type=search> <a onfocus="window.linkFocused = true" href="http://www.apple.com">link</a>
+<pre id="console">
+</pre>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function test(fieldId)
+{
+    window.linkFocused = false;
+    document.getElementById(fieldId).focus();
+    var event = document.createEvent("KeyboardEvents");
+    event.initKeyboardEvent("keydown", true, true, document.defaultView, "U+0009", 0, false, true, false, false, false);
+    document.getElementById(fieldId).dispatchEvent(event);
+    if (window.linkFocused)
+        document.getElementById("console").innerHTML += "SUCCESS: Option-tab did tab to the link (" + fieldId + ").\n";
+    else
+        document.getElementById("console").innerHTML += "FAIL: Option-tab did not tab to the link (" + fieldId + ").\n";
+
+    window.linkFocused = false;
+    document.getElementById(fieldId).focus();
+    event = document.createEvent("KeyboardEvents");
+    event.initKeyboardEvent("keydown", true, true, document.defaultView, "U+0009", 0, false, false, false, false, false);
+    document.getElementById(fieldId).dispatchEvent(event);
+    if (window.linkFocused)
+        document.getElementById("console").innerHTML += "FAIL: Plain old tab did tab to the link (" + fieldId + ").\n";
+    else
+        document.getElementById("console").innerHTML += "SUCCESS: Plain old tab did not tab to the link (" + fieldId + ").\n";
+}
+
+test("textField");
+test("searchField");
+
+</script>

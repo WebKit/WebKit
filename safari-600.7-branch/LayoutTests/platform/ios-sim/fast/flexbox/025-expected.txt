@@ -1,0 +1,8 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderDeprecatedFlexibleBox {HTML} at (0,0) size 800x600 [bgcolor=#FFFFFF]
+    RenderDeprecatedFlexibleBox {BODY} at (0,0) size 800x600 [color=#FFFFFF] [bgcolor=#008000]
+      RenderBlock (anonymous) at (0,0) size 457x600
+        RenderText {#text} at (0,0) size 457x19
+          text run at (0,0) width 457: "You should see white text on a green background that fills the window."

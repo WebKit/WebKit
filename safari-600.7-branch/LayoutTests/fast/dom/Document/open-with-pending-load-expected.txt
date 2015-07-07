@@ -1,0 +1,3 @@
+This tests that calling document.open on a document that has a pending load correctly cancels the load
+SUCCESS
+

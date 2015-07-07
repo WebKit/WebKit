@@ -1,0 +1,21 @@
+ <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>XHR2 Timeout Property Tests in Worker</title>
+    <link rel="help" href="http://www.w3.org/TR/XMLHttpRequest/#timeout-error" />
+    <link rel="stylesheet" href="testharness.css" />
+    <script src="/w3c/resources/testharness.js"></script>
+    <script src="/w3c/resources/testharnessreport.js"></script>
+    <script src="xmlhttprequest-timeout-runner.js"></script>
+</head>
+<body>
+    <h1>Description</h1>
+    <p>This test validates that the XHR2 timeout property behaves as expected in in a worker context.</p>
+    <div id="log"></div>
+    <script type="text/javascript">
+        var worker = new Worker("xmlhttprequest-timeout-aborted.js");
+        worker.addEventListener("message", testResultCallbackHandler);
+    </script>
+</body>
+</html>

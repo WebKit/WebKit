@@ -1,0 +1,34 @@
+<html>
+<head>
+    <script src="../../http/tests/inspector/inspector-test.js"></script>
+    <script src="../../http/tests/inspector/console-test.js"></script>
+    <script src="../../http/tests/inspector/elements-test.js"></script>
+    <script>
+        var test = function()
+        {
+            var expressions = [
+                "$", "$$", "$x", "dir", "dirxml", "keys", "values", "profile", "profileEnd",
+                "monitorEvents", "unmonitorEvents", "inspect", "copy", "clear", "getEventListeners"
+            ];
+
+            function executeExpression()
+            {
+                if (!expressions.length) {
+                    InspectorTest.dumpConsoleMessages();
+                    InspectorTest.completeTest();
+                    return;
+                }
+                var expression = expressions[0];
+                expressions.splice(0, 1);
+                WebInspector.log("\n");
+                InspectorTest.evaluateInConsole(expression, executeExpression);
+            }
+
+            executeExpression();
+        }
+    </script>
+</head>
+<body onload="runTest()">
+    <p>Tests that command-line API methods behave similarly to native code by returning '[WebInspector console function]' via toString().</p>
+</body>
+</html>

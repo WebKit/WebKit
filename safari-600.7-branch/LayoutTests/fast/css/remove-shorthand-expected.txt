@@ -1,0 +1,76 @@
+Test for http://bugs.webkit.org/show_bug.cgi?id=9284 Quirksmode (CSS1): Removing inline border styles is impossible.
+
+Starting with a declaration containing all properties that are constituents of shortcuts, see what is removed when a shortcut property is removed. The shortcut’s constituents and only them should be removed.
+
+Removing background
+removes "background-image, background-attachment, background-color, background-position, background-repeat"
+and adds "".
+Removing background-position
+removes "background-position"
+and adds "".
+Removing border
+removes "border"
+and adds "".
+Removing border-top
+removes "border"
+and adds "border-right-width, border-bottom-width, border-left-width, border-right-style, border-bottom-style, border-left-style, border-right-color, border-bottom-color, border-left-color".
+Removing border-right
+removes "border"
+and adds "border-top-width, border-bottom-width, border-left-width, border-top-style, border-bottom-style, border-left-style, border-top-color, border-bottom-color, border-left-color".
+Removing border-bottom
+removes "border"
+and adds "border-top-width, border-right-width, border-left-width, border-top-style, border-right-style, border-left-style, border-top-color, border-right-color, border-left-color".
+Removing border-left
+removes "border"
+and adds "border-top-width, border-right-width, border-bottom-width, border-top-style, border-right-style, border-bottom-style, border-top-color, border-right-color, border-bottom-color".
+Removing border-color
+removes "border"
+and adds "border-width, border-style".
+Removing border-style
+removes "border"
+and adds "border-width, border-color".
+Removing border-width
+removes "border"
+and adds "border-style, border-color".
+Removing border-radius
+removes "border-top-left-radius, border-top-right-radius, border-bottom-right-radius, border-bottom-left-radius"
+and adds "".
+Removing -webkit-border-radius
+removes "border-top-left-radius, border-top-right-radius, border-bottom-right-radius, border-bottom-left-radius"
+and adds "".
+Removing border-spacing
+removes "border-spacing"
+and adds "".
+Removing -webkit-columns
+removes "-webkit-column-width, -webkit-column-count"
+and adds "".
+Removing -webkit-column-rule
+removes "-webkit-column-rule-width, -webkit-column-rule-style, -webkit-column-rule-color"
+and adds "".
+Removing list-style
+removes "list-style-type, list-style-position, list-style-image"
+and adds "".
+Removing margin
+removes "margin"
+and adds "".
+Removing -webkit-margin-collapse
+removes "-webkit-margin-before-collapse, -webkit-margin-after-collapse"
+and adds "".
+Removing -webkit-marquee
+removes "-webkit-marquee-direction, -webkit-marquee-increment, -webkit-marquee-repetition, -webkit-marquee-style, -webkit-marquee-speed"
+and adds "".
+Removing -webkit-mask
+removes "-webkit-mask"
+and adds "".
+Removing -webkit-mask-position
+removes "-webkit-mask"
+and adds "-webkit-mask".
+Removing overflow
+removes "overflow"
+and adds "".
+Removing padding
+removes "padding"
+and adds "".
+Removing -webkit-text-stroke
+removes "-webkit-text-stroke-color, -webkit-text-stroke-width"
+and adds "".

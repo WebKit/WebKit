@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x54
+  RenderBlock {test} at (0,0) size 800x54
+    RenderBlock {p} at (0,16) size 800x22
+      RenderBlock {input} at (2,3) size 16x16 [bgcolor=#00FF00] [border: (1px solid #FFFFFF00)]
+      RenderText {#text} at (20,2) size 4x19
+        text run at (20,2) width 4: " "
+      RenderInline {span} at (0,0) size 394x19 [bgcolor=#00FF00]
+        RenderText {#text} at (24,2) size 394x19
+          text run at (24,2) width 394: "Everything in this paragraph should have a green background"

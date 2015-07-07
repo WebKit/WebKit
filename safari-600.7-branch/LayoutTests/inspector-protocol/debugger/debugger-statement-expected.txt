@@ -1,0 +1,9 @@
+Debugger statement should break in debugger.
+
+Found breakpoint.js
+In function with debugger statement
+Broke at debugger statement
+
+After debugger statement
+PASS
+

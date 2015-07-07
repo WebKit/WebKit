@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+description('Test Speech JavaScript API errors');
+
+function run() {
+    // Check availability of constructors.
+    shouldBeTrue("'webkitSpeechRecognition' in self");
+    shouldBeFalse("webkitSpeechRecognition == null");
+
+    notAllowedTest();
+}
+
+function setDefaultHandlers(r) {
+    for (var prop in r) {
+        if (prop.match('^on')) {
+            r[prop] = function() {
+                testFailed('unexpected ' + event.type + ' event!');
+                finishJSTest();
+            }
+        }
+    }
+}
+
+function notAllowedTest() {
+    debug('\nnotAllowedTest():');
+    var r = new webkitSpeechRecognition();
+    setDefaultHandlers(r);
+    window.count = 0;
+
+    r.start();
+    testRunner.setMockSpeechRecognitionError("NotAllowedError", "not allowed");
+
+    // Check that we get an error event.
+    r.onerror = function() {
+        debug('onerror');
+        shouldBe('count', '0');
+        count++;
+        shouldBeEqualToString('event.error', 'not-allowed');
+        shouldBeEqualToString('event.message', 'not allowed');
+        shouldBeEqualToString('event.type', 'error');
+    }
+
+    // Check that we get an end event after the error event.
+    r.onend = function() {
+        debug('onend');
+        shouldBe('count', '1');
+        finishJSTest();
+    }
+}
+
+window.onload = run;
+window.jsTestIsAsync = true;
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>
+

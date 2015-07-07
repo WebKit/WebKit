@@ -1,0 +1,14 @@
+<select id="select">
+    <option>FAIL</option>
+    <option>PASS</option>
+    <option selected="true">Did not run</option>
+</select>
+<p id="result">
+</p>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    select.selectedIndex = 1;
+    result.innerText = select.selectedIndex == 1 ? "PASS" : "FAIL";
+</script>

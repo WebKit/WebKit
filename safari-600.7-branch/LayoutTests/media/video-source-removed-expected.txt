@@ -1,0 +1,33 @@
+Test to make sure removing a media element's <source>(s) does not cause a crash.
+
+Removing all <source> elements with removeChild()
+-> removeChild(0)
+-> removeChild(1)
+-> removeChild(2)
+-> removeChild(3)
+-> removeChild(4)
+-> removeChild(5)
+-> removeChild(6)
+-> removeChild(7)
+-> removeChild(8)
+-> removeChild(9)
+
+Removing all <source> by setting .innerHTML
+-> video.innerHTML = ''
+
+Removing all <source> elements with replaceChild()
+-> replaceChild(0)
+-> replaceChild(1)
+-> replaceChild(2)
+-> replaceChild(3)
+-> replaceChild(4)
+-> replaceChild(5)
+-> replaceChild(6)
+-> replaceChild(7)
+-> replaceChild(8)
+-> replaceChild(9)
+
+PASS: A crash did not occur when removing <source> elements.
+
+END OF TEST
+

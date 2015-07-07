@@ -1,0 +1,467 @@
+//
+// CSS property names
+//
+// Some properties are used internally, but are not part of CSS. They are used to get
+// HTML4 compatibility in the rendering engine.
+//
+// Microsoft extensions are documented here:
+// http://msdn.microsoft.com/workshop/author/css/reference/attributes.asp
+// 
+
+
+// high-priority property names have to be listed first, to simplify the check
+// for applying them first.
+color [Inherited]
+direction [Inherited]
+display
+font [Inherited]
+font-family [Inherited]
+font-size [Inherited]
+font-style [Inherited]
+font-variant [Inherited]
+font-weight [Inherited]
+text-rendering [Inherited]
+-webkit-font-feature-settings [Inherited]
+-webkit-font-kerning [Inherited]
+-webkit-font-smoothing [Inherited]
+-webkit-font-variant-ligatures [Inherited]
+-webkit-locale [Inherited]
+-webkit-text-orientation [Inherited]
+-epub-text-orientation = -webkit-text-orientation
+#if defined(ENABLE_IOS_TEXT_AUTOSIZING) && ENABLE_IOS_TEXT_AUTOSIZING
+-webkit-text-size-adjust [Inherited]
+#endif
+-webkit-writing-mode [Inherited]
+-epub-writing-mode = -webkit-writing-mode
+zoom
+
+// line height needs to be right after the above high-priority properties
+line-height [Inherited]
+
+// The remaining properties are listed in alphabetical order
+background
+background-attachment
+background-blend-mode
+background-clip
+background-color
+background-image
+background-origin
+background-position
+background-position-x
+background-position-y
+background-repeat
+background-repeat-x
+background-repeat-y
+background-size
+border
+border-bottom
+border-bottom-color
+border-bottom-left-radius
+-webkit-border-bottom-left-radius = border-bottom-left-radius
+border-bottom-right-radius
+-webkit-border-bottom-right-radius = border-bottom-right-radius
+border-bottom-style
+border-bottom-width
+border-collapse [Inherited]
+border-color
+border-image
+border-image-outset
+border-image-repeat
+border-image-slice
+border-image-source
+border-image-width
+border-left
+border-left-color
+border-left-style
+border-left-width
+border-radius
+border-right
+border-right-color
+border-right-style
+border-right-width
+border-spacing [Inherited]
+border-style
+border-top
+border-top-color
+border-top-left-radius
+-webkit-border-top-left-radius = border-top-left-radius
+border-top-right-radius
+-webkit-border-top-right-radius = border-top-right-radius
+border-top-style
+border-top-width
+border-width
+bottom
+box-shadow
+box-sizing
+// -webkit-box-sizing worked in Safari 4 and earlier.
+-webkit-box-sizing = box-sizing
+caption-side [Inherited]
+-epub-caption-side = caption-side
+clear
+clip
+-webkit-clip-path
+content
+counter-increment
+counter-reset
+cursor [Inherited]
+#if defined(ENABLE_CURSOR_VISIBILITY) && ENABLE_CURSOR_VISIBILITY
+-webkit-cursor-visibility [Inherited]
+#endif
+empty-cells [Inherited]
+float
+font-stretch
+height
+#if defined(ENABLE_CSS_IMAGE_ORIENTATION) && ENABLE_CSS_IMAGE_ORIENTATION
+image-orientation [Inherited]
+#endif
+image-rendering [Inherited]
+#if defined(ENABLE_CSS_IMAGE_RESOLUTION) && ENABLE_CSS_IMAGE_RESOLUTION
+image-resolution [Inherited]
+#endif
+left
+letter-spacing [Inherited]
+list-style [Inherited]
+list-style-image [Inherited]
+list-style-position [Inherited]
+list-style-type [Inherited]
+margin
+margin-bottom
+margin-left
+margin-right
+margin-top
+max-height
+max-width
+min-height
+min-width
+object-fit
+opacity
+// Honor -webkit-opacity as a synonym for opacity. This was the only syntax that worked in Safari 1.1,
+// and may be in use on some websites and widgets.
+-webkit-opacity = opacity
+orphans [Inherited]
+outline
+outline-color
+outline-offset
+outline-style
+outline-width
+overflow
+overflow-wrap
+overflow-x
+overflow-y
+padding
+padding-bottom
+padding-left
+padding-right
+padding-top
+page
+page-break-after
+page-break-before
+page-break-inside
+paint-order
+pointer-events [Inherited]
+position
+quotes [Inherited]
+resize [Inherited]
+right
+size
+src
+speak [Inherited]
+table-layout
+tab-size [Inherited]
+text-align [Inherited]
+text-decoration
+text-indent [Inherited]
+text-line-through
+text-line-through-color
+text-line-through-mode
+text-line-through-style
+text-line-through-width
+text-overflow
+text-overline
+text-overline-color
+text-overline-mode
+text-overline-style
+text-overline-width
+text-shadow [Inherited]
+text-transform [Inherited]
+-epub-text-transform = text-transform
+text-underline
+text-underline-color
+text-underline-mode
+text-underline-style
+text-underline-width
+top
+transition
+transition-delay
+transition-duration
+transition-property
+transition-timing-function
+
+unicode-bidi
+unicode-range
+vertical-align
+visibility [Inherited]
+white-space [Inherited]
+widows [Inherited]
+width
+word-break [Inherited]
+-epub-word-break = word-break
+word-spacing [Inherited]
+word-wrap [Inherited]
+z-index
+-webkit-alt
+-webkit-animation
+-webkit-animation-delay
+-webkit-animation-direction
+-webkit-animation-duration
+-webkit-animation-fill-mode
+-webkit-animation-iteration-count
+-webkit-animation-name
+-webkit-animation-play-state
+-webkit-animation-timing-function
+-webkit-appearance
+-webkit-aspect-ratio [Inherited]
+-webkit-backface-visibility
+-webkit-background-clip
+-webkit-background-composite
+-webkit-background-origin
+// -webkit-background-size differs from background-size only in the interpretation of
+// a single value: -webkit-background-size: l; is equivalent to background-size: l l;
+// whereas background-size: l; is equivalent to background-size: l auto;
+-webkit-background-size
+-webkit-border-after
+-webkit-border-after-color
+-webkit-border-after-style
+-webkit-border-after-width
+-webkit-border-before
+-webkit-border-before-color
+-webkit-border-before-style
+-webkit-border-before-width
+-webkit-border-end
+-webkit-border-end-color
+-webkit-border-end-style
+-webkit-border-end-width
+-webkit-border-fit
+-webkit-border-horizontal-spacing [Inherited]
+-webkit-border-image
+// -webkit-border-radius differs from border-radius only in the interpretation of
+// a value consisting of two lengths: "-webkit-border-radius: l1 l2;" is equivalent
+// to "border-radius: l1 / l2;"
+-webkit-border-radius
+-webkit-border-start
+-webkit-border-start-color
+-webkit-border-start-style
+-webkit-border-start-width
+-webkit-border-vertical-spacing [Inherited]
+-webkit-box-align
+-webkit-box-direction [Inherited]
+-webkit-box-flex
+-webkit-box-flex-group
+-webkit-box-lines
+-webkit-box-ordinal-group
+-webkit-box-orient
+-webkit-box-pack
+-webkit-box-reflect
+// -webkit-box-shadow differs from box-shadow in its treatement of blur radii > 8px.
+// Let -webkit-box-shadow blur radius be w_r and box-shadow blur radius be b_r. For
+// w_r > 8px, b_r = 8 + 4 * sqrt((w_r - 8) / 2).
+-webkit-box-shadow
+-webkit-color-correction [Inherited]
+-webkit-column-axis
+-webkit-column-break-after
+-webkit-column-break-before
+-webkit-column-break-inside
+-webkit-column-count
+-webkit-column-fill
+-webkit-column-gap
+-webkit-column-progression
+-webkit-column-rule
+-webkit-column-rule-color
+-webkit-column-rule-style
+-webkit-column-rule-width
+-webkit-column-span
+-webkit-column-width
+-webkit-columns
+#if defined(ENABLE_CSS_BOX_DECORATION_BREAK) && ENABLE_CSS_BOX_DECORATION_BREAK
+-webkit-box-decoration-break
+#endif
+#if defined(ENABLE_CSS_COMPOSITING) && ENABLE_CSS_COMPOSITING
+mix-blend-mode
+isolation
+#endif
+#if defined(ENABLE_CSS_FILTERS) && ENABLE_CSS_FILTERS
+-webkit-filter
+#endif
+-webkit-align-content
+-webkit-align-items
+-webkit-align-self
+-webkit-flex
+-webkit-flex-basis
+-webkit-flex-direction
+-webkit-flex-flow
+-webkit-flex-grow
+-webkit-flex-shrink
+-webkit-flex-wrap
+-webkit-justify-content
+-webkit-justify-self
+-webkit-font-size-delta
+#if defined(ENABLE_CSS_GRID_LAYOUT) && ENABLE_CSS_GRID_LAYOUT
+-webkit-grid
+-webkit-grid-area
+-webkit-grid-auto-columns
+-webkit-grid-auto-rows
+-webkit-grid-column-end
+-webkit-grid-column-start
+-webkit-grid-template
+-webkit-grid-template-columns
+-webkit-grid-template-rows
+-webkit-grid-row-end
+-webkit-grid-row-start
+-webkit-grid-column
+-webkit-grid-row
+-webkit-grid-template-areas
+-webkit-grid-auto-flow
+#endif
+-webkit-hyphenate-character [Inherited]
+-webkit-hyphenate-limit-after [Inherited]
+-webkit-hyphenate-limit-before [Inherited]
+-webkit-hyphenate-limit-lines [Inherited]
+-webkit-hyphens [Inherited]
+-epub-hyphens = -webkit-hyphens
+-webkit-line-box-contain [Inherited]
+-webkit-line-align [Inherited]
+-webkit-line-break [Inherited]
+-webkit-line-clamp
+-webkit-line-grid [Inherited]
+-webkit-line-snap [Inherited]
+-webkit-logical-width
+-webkit-logical-height
+-webkit-margin-after-collapse
+-webkit-margin-before-collapse
+-webkit-margin-bottom-collapse
+-webkit-margin-top-collapse
+-webkit-margin-collapse
+-webkit-margin-after
+-webkit-margin-before
+-webkit-margin-end
+-webkit-margin-start
+-webkit-marquee
+-webkit-marquee-direction
+-webkit-marquee-increment
+-webkit-marquee-repetition
+-webkit-marquee-speed
+-webkit-marquee-style
+-webkit-mask
+-webkit-mask-box-image
+-webkit-mask-box-image-outset
+-webkit-mask-box-image-repeat
+-webkit-mask-box-image-slice
+-webkit-mask-box-image-source
+-webkit-mask-box-image-width
+-webkit-mask-clip
+-webkit-mask-composite
+-webkit-mask-image
+-webkit-mask-origin
+-webkit-mask-position
+-webkit-mask-position-x
+-webkit-mask-position-y
+-webkit-mask-repeat
+-webkit-mask-repeat-x
+-webkit-mask-repeat-y
+-webkit-mask-size
+-webkit-mask-source-type
+-webkit-max-logical-width
+-webkit-max-logical-height
+-webkit-min-logical-width
+-webkit-min-logical-height
+-webkit-nbsp-mode [Inherited]
+-webkit-order
+-webkit-padding-after
+-webkit-padding-before
+-webkit-padding-end
+-webkit-padding-start
+-webkit-perspective
+-webkit-perspective-origin
+-webkit-perspective-origin-x
+-webkit-perspective-origin-y
+-webkit-print-color-adjust [Inherited]
+-webkit-rtl-ordering [Inherited]
+-webkit-ruby-position [Inherited]
+-webkit-text-combine [Inherited]
+-epub-text-combine = -webkit-text-combine
+#if defined(ENABLE_CSS3_TEXT) && ENABLE_CSS3_TEXT
+-webkit-text-align-last [Inherited]
+-webkit-text-justify [Inherited]
+#endif
+-webkit-text-decoration
+-webkit-text-decoration-line
+-webkit-text-decoration-style
+-webkit-text-decoration-color
+-webkit-text-decoration-skip [Inherited]
+-webkit-text-underline-position [Inherited]
+-webkit-text-decorations-in-effect [Inherited]
+-webkit-text-emphasis [Inherited]
+-epub-text-emphasis = -webkit-text-emphasis
+text-emphasis = -webkit-text-emphasis
+-webkit-text-emphasis-color [Inherited]
+-epub-text-emphasis-color = -webkit-text-emphasis-color
+text-emphasis-color = -webkit-text-emphasis-color
+-webkit-text-emphasis-position [Inherited]
+text-emphasis-position = -webkit-text-emphasis-position
+-webkit-text-emphasis-style [Inherited]
+-epub-text-emphasis-style = -webkit-text-emphasis-style
+text-emphasis-style = -webkit-text-emphasis-style
+-webkit-text-fill-color [Inherited]
+-webkit-text-security [Inherited]
+-webkit-text-stroke [Inherited]
+-webkit-text-stroke-color [Inherited]
+-webkit-text-stroke-width [Inherited]
+-webkit-transform
+-webkit-transform-origin
+-webkit-transform-origin-x
+-webkit-transform-origin-y
+-webkit-transform-origin-z
+-webkit-transform-style
+-webkit-transition
+-webkit-transition-delay
+-webkit-transition-duration
+-webkit-transition-property
+-webkit-transition-timing-function
+-webkit-user-drag
+-webkit-user-modify [Inherited]
+-webkit-user-select [Inherited]
+#if defined(ENABLE_CSS_REGIONS) && ENABLE_CSS_REGIONS
+-webkit-flow-into
+-webkit-flow-from
+-webkit-region-fragment
+-webkit-region-break-after
+-webkit-region-break-before
+-webkit-region-break-inside
+#endif
+#if defined(ENABLE_CSS_SHAPES) && ENABLE_CSS_SHAPES
+-webkit-shape-outside
+-webkit-shape-margin
+-webkit-shape-image-threshold
+#endif
+#if defined(ENABLE_CSS_DEVICE_ADAPTATION) && ENABLE_CSS_DEVICE_ADAPTATION
+max-zoom
+min-zoom
+orientation
+user-zoom
+#endif
+#if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
+-webkit-tap-highlight-color [Inherited]
+#endif
+#if defined(ENABLE_DASHBOARD_SUPPORT) && ENABLE_DASHBOARD_SUPPORT
+-webkit-dashboard-region
+#endif
+#if defined(ENABLE_ACCELERATED_OVERFLOW_SCROLLING) && ENABLE_ACCELERATED_OVERFLOW_SCROLLING
+-webkit-overflow-scrolling [Inherited]
+#endif
+#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
+-webkit-touch-callout [Inherited]
+
+// FIXME: This property shouldn't be iOS-specific. Once we fix up its usage in InlineTextBox::paintCompositionBackground()
+// we should move it outside the WTF_PLATFORM_IOS-guard.
+-webkit-composition-fill-color [Inherited]
+#endif

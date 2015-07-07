@@ -1,0 +1,104 @@
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector/inspector-test.js"></script>
+<script type="text/javascript" src="../../http/tests/inspector/replay/replay-test.js"></script>
+<script>
+function shallowCopy(object, properties) {
+    var copiedObject = {};
+    for (var prop of properties)
+        copiedObject[prop] = object[prop];
+
+    return copiedObject;
+}
+
+function shallowIndexOf(candidates, objectToFind, properties) {
+    if (!objectToFind    || !candidates.length)
+        return -1;
+
+    for (var i = 0; i < candidates.length; ++i) {
+        var objectCandidate = candidates[i];
+        var propIsEqual = function(prop) {
+            return objectCandidate[prop] === objectToFind[prop];
+        };
+
+        if (properties.every(propIsEqual))
+            return i;
+    }
+
+    return -1;
+}
+
+function dumpNondeterministicState()
+{
+    var mimeKeys = ["type", "suffixes", "description"];
+    var pluginKeys = ["name", "filename", "description", "length"];
+
+    var mimeTypes = [];
+    var plugins = [];
+
+    var pluginArray = window.navigator.plugins;
+    var mimesArray = window.navigator.mimeTypes;
+
+    // First gather all of the instances into an array.
+    for (var i = 0; i < pluginArray.length; ++i)
+        plugins.push(pluginArray.item(i));
+
+    for (var i = 0; i < mimesArray.length; ++i)
+        mimeTypes.push(mimesArray.item(i));
+
+    function serializePlugin(object) {
+        console.assert(object instanceof window.Plugin);
+
+        // Copy shallow properties and find indices for cross-references.
+        var data = shallowCopy(object, pluginKeys);
+        var mimeIndices = [];
+        for (var i = 0; i < object.length; ++i)
+            mimeIndices.push(shallowIndexOf(mimeTypes, object.item(i), mimeKeys));
+
+        data.mimeIndices = mimeIndices;
+        return data;
+    }
+
+    function serializeMimeType(object) {
+        console.assert(object instanceof window.MimeType);
+
+        // Copy shallow properties and find indices for cross-references.
+        var data = shallowCopy(object, mimeKeys);
+        data.pluginIndex = shallowIndexOf(plugins, object.enabledPlugin, pluginKeys);
+        return data;
+    }
+
+    return {
+        "plugins": plugins.map(serializePlugin),
+        "mimeTypes": mimeTypes.map(serializeMimeType)
+    };
+}
+
+// These functions are called in the previous main frame prior to the initial
+// navigation that begins capturing or replaying. Careful, heap state will be lost.
+function setupPreCapture() {
+    InspectorTestProxy.addResult("Enabling plugins before capture.");
+    testRunner.setPluginsEnabled(false);
+}
+
+function setupPreReplay() {
+    InspectorTestProxy.addResult("Disabling plugins before replay.");
+    testRunner.setPluginsEnabled(true);
+}
+
+function test()
+{
+    function statesAreEqual(a, b)
+    {
+        return a === b;
+    }
+
+    InspectorTest.Replay.runSingleSegmentRefTest(statesAreEqual);
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that we can capture and replay nondeterminism in <tt>window.navigator.plugins<tt> and <tt>window.navigator.mimeTypes</tt>.</p>
+</body>
+</html>

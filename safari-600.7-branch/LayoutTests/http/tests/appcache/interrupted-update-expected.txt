@@ -1,0 +1,20 @@
+CONSOLE MESSAGE: line 37: Reloading...
+Test that an application cache update works again after interruption.
+
+Reloaded
+CHECKING
+DOWNLOADING
+PROGRESS 0/9
+PROGRESS 1/9
+PROGRESS 2/9
+PROGRESS 3/9
+PROGRESS 4/9
+PROGRESS 5/9
+PROGRESS 6/9
+PROGRESS 7/9
+PROGRESS 8/9
+PROGRESS 9/9
+CACHED
+
+PASS
+

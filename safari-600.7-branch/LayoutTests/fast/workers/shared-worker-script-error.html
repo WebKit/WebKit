@@ -1,0 +1,73 @@
+<body>
+<p>Test SharedWorker script error handling functionality. Should print a series of PASS messages, followed with DONE.</p>
+<div id=result></div>
+<script>
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+var testCases = [
+    "testScriptErrorUnhandled",
+    "testScriptErrorHandled"
+];
+var testIndex = 0;
+
+function runNextTest()
+{
+    if (testIndex < testCases.length) {
+        testIndex++;
+        try {
+            window[testCases[testIndex - 1]]();
+        } catch (ex) {
+            log("FAIL: unexpected exception " + ex);
+            runNextTest();
+        }
+    } else {
+        log("DONE");
+        // Wait briefly to make sure that any pending console messages get written out so they don't spill over into subsequent tests and cause failures.
+        setTimeout(function() {
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 10);
+    }
+}
+
+function testScriptErrorUnhandled()
+{
+    var worker = new SharedWorker("resources/shared-worker-script-error.js", "name");
+    // SharedWorkers should only invoke onerror for loading errors.
+    worker.onerror = function(evt) {
+        log("FAIL: onerror invoked for a script error");
+    };
+    worker.port.postMessage("unhandledError");
+    worker.port.onmessage = function(evt) {
+        log(evt.data);
+        runNextTest();
+    }
+}
+
+function testScriptErrorHandled()
+{
+    var worker = new SharedWorker("resources/shared-worker-script-error.js", "name2");
+    // SharedWorkers should only invoke onerror for loading errors.
+    worker.onerror = function(evt) {
+        log("FAIL: onerror invoked for a script error");
+    };
+    worker.port.postMessage("handledError");
+    worker.port.onmessage = function(evt) {
+        log(evt.data);
+        runNextTest();
+    }
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+runNextTest();
+
+</script>
+</body>
+

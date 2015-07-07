@@ -1,0 +1,9 @@
+Description
+
+This test validates that connectStart and connectEnd are the same when a connection is reused.
+
+
+
+PASS There should be 2 PerformanceEntries 
+PASS connectStart and connectEnd should be the same 
+

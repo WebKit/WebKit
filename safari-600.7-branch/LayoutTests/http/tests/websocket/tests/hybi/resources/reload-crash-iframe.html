@@ -1,0 +1,16 @@
+<html>
+<head>
+<script src="../../../../../js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script type="text/javascript">
+var reloadCount = parent.document.iframeReady();
+if (!reloadCount) {
+    var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/close-on-unload");
+    location.reload();
+}
+</script>
+</body>
+</html>

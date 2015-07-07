@@ -1,0 +1,44 @@
+<head>
+<script>
+function test()
+{
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    var testString = "";
+    for (var i = 0; i < 32; ++i) // >
+        if (i != 9 && i != 10 && i != 13) // ;
+            testString += String.fromCharCode(i);
+    testString += String.fromCharCode(0x200B);
+    testString += String.fromCharCode(0x200C);
+    testString += String.fromCharCode(0x200D);
+    testString += String.fromCharCode(0x200E);
+    testString += String.fromCharCode(0x200F);
+    testString += String.fromCharCode(0xFEFF);
+    testString += String.fromCharCode(0xFFFC);
+    var span = document.getElementById("characters");
+    var abWidth = span.offsetWidth;
+    span.firstChild.data = "a";
+    var aWidth = span.offsetWidth;
+    span.firstChild.data = "a" + testString + "b";
+    var abWithCharactersWidth = span.offsetWidth;
+
+    var testArea = document.getElementById("testArea");
+    testArea.parentNode.removeChild(testArea);
+
+    if (abWithCharactersWidth > abWidth)
+        result = "FAIL: One or more of the characters had a non-zero width.";
+    else if (abWidth > aWidth)
+        result = "PASS: All the characters had zero width.";
+    else
+        result = "FAIL: Width measurement seems to have failed.";
+
+    document.getElementById("result").firstChild.data = result;
+}
+</script>
+</head>
+<body onload="test()">
+<p>This test checks various characters that should always be zero width to ensure that they are.
+The WebKit text system ensures this in a way that's independent of the fonts installed on the system.</p>
+<p id="result">FAIL: Script did not run to completion.</p>
+<p id="testArea"><span id="characters">ab</span></p>
+</body>

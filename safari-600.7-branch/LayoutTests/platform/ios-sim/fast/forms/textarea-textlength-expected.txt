@@ -1,0 +1,14 @@
+Test for HTMLTextAreaElement.textLength
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS textArea.textLength is 0
+PASS textArea.textLength is 4
+FAIL textArea.textLength should be 5. Was 4.
+PASS textArea.textLength is 2
+PASS textArea.textLength is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

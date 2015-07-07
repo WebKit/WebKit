@@ -1,0 +1,16 @@
+blah   
+
+
+This tests that the center point for a checkbox with a label is not the same as the mid point of the frame (because the frame includes the bounds of the label)
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS (x + w/2) == clickPointX is false
+PASS (y + h/2) == clickPointY is false
+PASS (x + w/2) == clickPointX is true
+PASS (y + h/2) == clickPointY is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

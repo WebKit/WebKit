@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+  <head>
+    <title>fractions linethickness</title>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+
+    <!-- From the MathML spec:
+         'The default value is "medium", "thin" is thinner, but visible,
+         "thick" is thicker; the exact thickness of these is left up to the
+         rendering agent.'
+         'A number without a unit is intepreted as a multiple of the default
+         value.'
+         
+         Here are the linethickness values used by WebKit:
+         
+         gLineThin = 0.33f;
+         gLineMedium = 1.f;
+         gLineThick = 3.f;
+      -->
+
+    <math mathsize="32px">
+      <mfrac linethickness="0.33px"><mn>1</mn><mn>2</mn></mfrac>
+      <mfrac linethickness="1px"><mn>1</mn><mn>2</mn></mfrac>
+      <mfrac linethickness="3px"><mn>1</mn><mn>2</mn></mfrac>
+      <mfrac linethickness="5px"><mn>1</mn><mn>2</mn></mfrac>
+    </math>
+
+  </body>
+</html>

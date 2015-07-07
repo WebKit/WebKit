@@ -1,0 +1,12 @@
+<script src="../../resources/dump-as-markup.js"></script>
+<p>This tests InsertList inside an empty div with no placeholder.  You should see an empty list item with a caret inside of it.</p>
+<div id="div" contenteditable="true"></div>
+
+<script>
+var sel = window.getSelection();
+var div = document.getElementById("div");
+sel.setPosition(div, 0);
+
+document.execCommand("InsertUnorderedList");
+Markup.dump("div");
+</script>

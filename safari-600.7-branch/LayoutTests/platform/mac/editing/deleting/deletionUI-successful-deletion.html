@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+    <style type="text/css">
+        .needsDeletionUI { border: 1px solid black; min-height: 100px; }
+    </style>
+    <script src="resources/deletionUI-helpers.js"></script>
+    <script>
+        function test()
+        {
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+
+                // We make the WebView editable here so that the code path responsible for
+                // <http://webkit.org/b/37115> / <rdar://problem/7829331> is exercised.
+                testRunner.setWebViewEditable(true);
+            }
+
+            determineDeletionUIExistence("dontDeleteMeA");
+            determineDeletionUIExistence("dontDeleteMeB");
+            determineDeletionUIExistence("deleteMe");
+
+            var deleteButton = deletionUIDeleteButtonForElement("deleteMe");
+            var clickEvent = document.createEvent("MouseEvents");
+            clickEvent.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+            deleteButton.dispatchEvent(clickEvent);
+
+            if (document.getElementById("deleteMe"))
+                debug("ERROR: Element deleteMe was found in the document after the delete button in the deletion UI was clicked!");
+        }
+    </script>
+</head>
+<body onload="test()">
+    <p>This tests if the deletion UI will delete the associated element when activated. This test can be run by DRT but not in the browser.</p>
+    <div id="console"></div>
+
+    <div contenteditable="true" style="padding: 1em;">
+            <div id="dontDeleteMeA" class="needsDeletionUI">This is an element that will show the deletion UI when the selection is within it.  The test <em>will not</em> delete this element.</div>
+            <div id="deleteMe" class="needsDeletionUI">This is an element that will show the deletion UI when the selection is within it.  The test <em>will</em> delete this element.</div>
+            <div id="dontDeleteMeB" class="needsDeletionUI">This is an element that will show the deletion UI when the selection is within it.  The test <em>will not</em> delete this element.</div>
+    <div>
+
+</body>
+</html>

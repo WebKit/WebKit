@@ -1,0 +1,3 @@
+This page tests that you can correctly remove an iframe element in its beforeload listener without causing a crash.
+
+PASS

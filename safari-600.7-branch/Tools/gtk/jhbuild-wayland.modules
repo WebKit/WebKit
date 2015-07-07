@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!DOCTYPE moduleset SYSTEM "moduleset.dtd">
+<?xml-stylesheet type="text/xsl" href="moduleset.xsl"?>
+<moduleset>
+
+  <!-- This file contains a set of modules to set up an enviroment for wayland support. -->
+  <repository type="tarball" name="ftp.gnome.org"
+      href="http://ftp.gnome.org"/>
+
+  <autotools id="gdk-pixbuf" autogen-sh="configure"
+             autogenargs="--disable-introspection">
+    <dependencies>
+      <dep package="glib"/>
+    </dependencies>
+    <branch module="/pub/GNOME/sources/gdk-pixbuf/2.29/gdk-pixbuf-2.29.3.tar.xz" version="2.29.3"
+            repo="ftp.gnome.org"
+            hash="sha256:f3ab2e153809ceedc3f8b9b22cdee018ffe7bbec2d2a8b5154e0ce220ea7d088"/>
+  </autotools>
+
+  <autotools id="gtk+" autogen-sh="configure"
+             autogenargs="--disable-introspection --enable-x11-backend --enable-wayland-backend">
+    <dependencies>
+      <dep package="glib"/>
+      <dep package="cairo"/>
+      <dep package="at-spi2-atk"/>
+      <dep package="gdk-pixbuf"/>
+    </dependencies>
+    <branch module="/pub/GNOME/sources/gtk+/3.12/gtk+-3.12.0.tar.xz" version="3.12.0"
+            repo="ftp.gnome.org"
+            hash="sha256:eb69741cd4029b5a1ac9cf04d9de55dcf9e30777a63891750f5d20cc554b6e4b"/>
+  </autotools>
+
+  <autotools id="glib"
+             autogen-sh="configure"
+             autogenargs="--disable-dtrace">
+    <dependencies>
+      <dep package="libffi"/>
+    </dependencies>
+    <branch module="/pub/GNOME/sources/glib/2.40/glib-2.40.0.tar.xz" version="2.40.0"
+            repo="ftp.gnome.org"
+            hash="sha256:0d27f195966ecb1995dcce0754129fd66ebe820c7cd29200d264b02af1aa28b5"/>
+  </autotools>
+</moduleset>

@@ -1,0 +1,30 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/console-test.js"></script>
+<script>
+function test()
+{
+    InspectorTest.evaluateInConsole("var x = {a:1}; x.self = x; undefined = x;", step1);
+
+    function step1()
+    {
+        InspectorTest.evaluateInConsole("unknownVar", step2);
+    }
+    function step2()
+    {
+        InspectorTest.dumpConsoleMessages();
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<p>
+Tests that evaluating something in console won't crash the browser if undefined value
+is overriden. The test passes if it doesn't crash.
+<a href="https://bugs.webkit.org/show_bug.cgi?id=64155">Bug 64155.</a>
+</p>
+</body>
+</html>

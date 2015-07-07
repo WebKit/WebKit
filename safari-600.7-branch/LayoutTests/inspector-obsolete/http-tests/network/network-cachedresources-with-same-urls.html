@@ -1,0 +1,65 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script>
+function loadImages()
+{
+    var image = new Image();
+    image.onload = step2;
+    image.src = "resources/resource.php?type=image&random=1";
+    document.body.appendChild(image);
+}
+
+function step2()
+{
+    var image = new Image();
+    image.onload = imageLoaded;
+    image.src = "resources/resource.php?type=image&random=1";
+    document.body.appendChild(image);
+}
+
+function imageLoaded()
+{
+    console.log("Done.");
+}
+
+function test()
+{
+    InspectorTest.addConsoleSniffer(step2, true);
+    InspectorTest.evaluateInPage("loadImages()");
+
+    function step2(msg)
+    {
+        // inspector-test.js appears in network panel occasionally in Safari on
+        // Mac, so checking two last requests.
+        var requestsCount = WebInspector.panel("network").requests.length;
+        var request1 = WebInspector.panel("network").requests[requestsCount - 2];
+        var request2 = WebInspector.panel("network").requests[requestsCount - 1];
+        request1.requestContent(contentLoaded);
+        request2.requestContent(contentLoaded);
+    }
+
+    var contentLoadedCount = 0;
+    function contentLoaded()
+    {
+        if (++contentLoadedCount !== 2)
+            return;
+
+        var requestsCount = WebInspector.panel("network").requests.length;
+        var request1 = WebInspector.panel("network").requests[requestsCount - 2];
+        var request2 = WebInspector.panel("network").requests[requestsCount - 1];
+
+        InspectorTest.addResult(request1.url);
+        InspectorTest.addResult(request2.url);
+        InspectorTest.assertTrue(request1.content !== request2.content);
+        InspectorTest.completeTest();
+    }
+
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that when we load two different images from the same url (e.g. counters),
+their content is different in network panel as well.</p>
+</body>
+</html>

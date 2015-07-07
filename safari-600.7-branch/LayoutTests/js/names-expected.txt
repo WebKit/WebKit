@@ -1,0 +1,25 @@
+This tests an early experimental implementation of ES6-esque private names.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS prop in o is false
+PASS 'prop' in o is false
+PASS Object.getOwnPropertyNames(o).length is 0
+PASS forIn(o) is []
+PASS prop in o is true
+PASS 'prop' in o is false
+PASS Object.getOwnPropertyNames(o).length is 0
+PASS forIn(o) is []
+PASS o[prop] is 42
+PASS o['prop'] is 101
+PASS Object.getOwnPropertyNames(o).length is 1
+PASS forIn(o) is ["prop"]
+PASS prop in o is false
+PASS 'prop' in o is true
+PASS Object.getOwnPropertyNames(o).length is 1
+PASS forIn(o) is ["prop"]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,75 @@
+// Copyright (C) 2009, 2013 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+
+#include "<DEVELOPER_DIR>/AppleInternal/XcodeConfig/AspenFamily.xcconfig"
+
+CLANG_CXX_LANGUAGE_STANDARD = gnu++0x;
+CLANG_CXX_LIBRARY = libc++;
+CLANG_WARN_CXX0X_EXTENSIONS = NO;
+HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include $(BUILT_PRODUCTS_DIR)/WebCoreTestSupport ForwardingHeaders $(HEADER_SEARCH_PATHS_$(PLATFORM_NAME)) $(SRCROOT)/../../Source/JavaScriptCore/icu;
+HEADER_SEARCH_PATHS_iphoneos = $(SDKROOT)/usr/local/include $(SDKROOT)/usr/local/include/WebCoreTestSupport;
+HEADER_SEARCH_PATHS_iphonesimulator = $(HEADER_SEARCH_PATHS_iphoneos);
+HEADER_SEARCH_PATHS_macosx = mac/InternalHeaders $(NEXT_ROOT)/usr/local/include/WebCoreTestSupport;
+FRAMEWORK_SEARCH_PATHS = $(FRAMEWORK_SEARCH_PATHS_$(PLATFORM_NAME));
+FRAMEWORK_SEARCH_PATHS_macosx = $(interited);
+FRAMEWORK_SEARCH_PATHS_iphoneos = $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks;
+FRAMEWORK_SEARCH_PATHS_iphonesimulator = $(FRAMEWORK_SEARCH_PATHS_iphoneos);
+GCC_PREPROCESSOR_DEFINITIONS = $(DEBUG_DEFINES) $(GCC_PREPROCESSOR_DEFINITIONS_$(PLATFORM_NAME)) WEBKIT_VERSION_MIN_REQUIRED=WEBKIT_VERSION_LATEST;
+GCC_PREPROCESSOR_DEFINITIONS_macosx = ENABLE_DASHBOARD_SUPPORT;
+DEBUG_INFORMATION_FORMAT = dwarf-with-dsym;
+PREBINDING = NO
+GCC_C_LANGUAGE_STANDARD = gnu99
+GCC_ENABLE_CPP_RTTI = NO;
+GCC_OBJC_CALL_CXX_CDTORS = YES
+GCC_PRECOMPILE_PREFIX_HEADER = YES
+GCC_TREAT_WARNINGS_AS_ERRORS = YES
+GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO
+GCC_WARN_UNUSED_FUNCTION = YES
+GCC_WARN_UNUSED_VARIABLE = YES
+// FIXME: <http://webkit.org/b/118590> DumpRenderTree should build with -Wshorten-64-to-32
+GCC_WARN_64_TO_32_BIT_CONVERSION[arch=arm64] = NO;
+GCC_WARN_64_TO_32_BIT_CONVERSION[arch=x86_64] = NO;
+WARNING_CFLAGS = -Wall -W -Wno-unused-parameter -Wundef
+LINKER_DISPLAYS_MANGLED_NAMES = YES;
+
+DEBUG_DEFINES_debug = ;
+DEBUG_DEFINES_normal = NDEBUG;
+DEBUG_DEFINES = $(DEBUG_DEFINES_$(CURRENT_VARIANT));
+
+TARGET_MAC_OS_X_VERSION_MAJOR = $(MAC_OS_X_VERSION_MAJOR);
+
+
+SDKROOT = macosx.internal;
+
+WEBKIT_SYSTEM_INTERFACE_LIBRARY = WebKitSystemInterface
+
+TOOLCHAINS = $(TOOLCHAINS_$(PLATFORM_NAME));
+TOOLCHAINS_iphoneos = $(TOOLCHAINS);
+TOOLCHAINS_iphonesimulator = $(TOOLCHAINS);
+TOOLCHAINS_macosx = $(TOOLCHAINS_macosx_$(MAC_OS_X_VERSION_MAJOR));
+TOOLCHAINS_macosx_1080 = default;
+TOOLCHAINS_macosx_1090 = $(TOOLCHAINS);
+TOOLCHAINS_macosx_101000 = $(TOOLCHAINS_macosx_1090);
+
+SUPPORTED_PLATFORMS = macosx iphoneos iphonesimulator;

@@ -1,0 +1,19 @@
+This is a test case for String.prototype.link(href).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS '_'.link('"') is "<a href=\"&quot;\">_</a>"
+PASS '_'.link('b') is "<a href=\"b\">_</a>"
+PASS '<'.link('b') is "<a href=\"b\"><</a>"
+PASS '_'.link(0x2A) is "<a href=\"42\">_</a>"
+PASS '_'.link('"') is "<a href=\"&quot;\">_</a>"
+PASS '_'.link('" target="_blank') is "<a href=\"&quot; target=&quot;_blank\">_</a>"
+PASS String.prototype.link.call(0x2A, 0x2A) is "<a href=\"42\">42</a>"
+PASS String.prototype.link.call(undefined) threw exception TypeError: Type error.
+PASS String.prototype.link.call(null) threw exception TypeError: Type error.
+PASS String.prototype.link.length is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

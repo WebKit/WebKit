@@ -1,0 +1,36 @@
+<html>
+<head>
+<script src="resources/console-clear-arguments-test.js"></script>
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+var loadCount = 0;
+function frameLoaded(event) {
+    ++loadCount;
+    if (loadCount === 1) {
+        document.getElementById('theFrame').src = "about:blank";
+        return;
+    }
+
+    dumpConsoleMessageArgumentCounts();
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+</script>
+
+</head>
+<body>
+<p>
+Tests that Web Inspector will discard console message arguments when iframe where the message was
+logged is navigated to a different page.
+</p>
+<iframe id="theFrame" onload="frameLoaded(event)" src="resources/console-clear-arguments-iframe.html"></iframe>
+<div id="output"></div>
+</body>
+</html>
+

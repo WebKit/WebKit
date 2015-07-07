@@ -1,0 +1,21 @@
+PASS document.anchors.customProperty is 0
+PASS document.applets.customProperty is 1
+PASS document.embeds.customProperty is 2
+PASS document.forms.customProperty is 3
+PASS document.images.customProperty is 4
+PASS document.links.customProperty is 5
+PASS document.plugins.customProperty is 6
+PASS document.scripts.customProperty is 7
+PASS element.children.customProperty is 8
+PASS fieldset.elements.customProperty is 9
+PASS form.elements.customProperty is 10
+PASS map.areas.customProperty is 11
+PASS section.rows.customProperty is 12
+PASS select.selectedOptions.customProperty is 13
+PASS table.rows.customProperty is 14
+PASS table.tBodies.customProperty is 15
+PASS tableRow.cells.customProperty is 16
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

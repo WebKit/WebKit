@@ -1,0 +1,82 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x331
+  RenderBlock {HTML} at (0,0) size 800x331
+    RenderBody {BODY} at (8,8) size 784x315
+      RenderBlock (anonymous) at (0,0) size 784x243
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,243) size 784x72
+        RenderText {#text} at (0,0) size 368x19
+          text run at (0,0) width 368: "Rendering vertical line-positioned cues with Japanese text."
+        RenderBR {BR} at (368,0) size 0x19
+        RenderText {#text} at (0,18) size 162x19
+          text run at (0,18) width 162: "EVENT(canplaythrough)"
+        RenderBR {BR} at (162,18) size 0x19
+        RenderText {#text} at (0,36) size 107x19
+          text run at (0,36) width 107: "EVENT(seeked)"
+        RenderBR {BR} at (107,36) size 0x19
+        RenderText {#text} at (0,54) size 102x19
+          text run at (0,54) width 102: "END OF TEST"
+        RenderBR {BR} at (102,54) size 0x19
+layer at (8,8) size 320x240
+  RenderVideo {VIDEO} at (0,0) size 320x240
+layer at (8,8) size 320x240
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 320x240
+layer at (8,8) size 320x220
+  RenderBlock (relative positioned) {DIV} at (0,0) size 320x220 [color=#FFFFFF]
+layer at (12,8) size 14x220 scrollX 2 scrollWidth 16
+  RenderBlock (positioned) {DIV} at (4,0) size 14x220
+    RenderInline {DIV} at (0,0) size 18x116 [bgcolor=#000000CC]
+      RenderText {#text} at (0,52) size 14x112
+        text run at (0,52) width 111: "Cue 1: \x{79C1}\x{306F}\x{7ACB}\x{6D3E}\x{306A}\x{4EBA}"
+    RenderInline {DIV} at (0,0) size 16x5 [bgcolor=#000000CC]
+layer at (30,8) size 14x220 scrollX 2 scrollWidth 16
+  RenderBlock (positioned) {DIV} at (22,0) size 14x220
+    RenderInline {DIV} at (0,0) size 18x116 [bgcolor=#000000CC]
+      RenderText {#text} at (0,52) size 14x112
+        text run at (0,52) width 111: "Cue 2: \x{79C1}\x{306F}\x{7ACB}\x{6D3E}\x{306A}\x{4EBA}"
+    RenderInline {DIV} at (0,0) size 16x5 [bgcolor=#000000CC]
+layer at (260,8) size 14x220 scrollX 2 scrollWidth 16
+  RenderBlock (positioned) {DIV} at (252,0) size 14x220
+    RenderInline {DIV} at (0,0) size 18x116 [bgcolor=#000000CC]
+      RenderText {#text} at (0,52) size 14x112
+        text run at (0,52) width 111: "Cue 3: \x{79C1}\x{306F}\x{7ACB}\x{6D3E}\x{306A}\x{4EBA}"
+    RenderInline {DIV} at (0,0) size 16x5 [bgcolor=#000000CC]
+layer at (242,8) size 14x220 scrollX 2 scrollWidth 16
+  RenderBlock (positioned) {DIV} at (234,0) size 14x220
+    RenderInline {DIV} at (0,0) size 18x116 [bgcolor=#000000CC]
+      RenderText {#text} at (0,52) size 14x112
+        text run at (0,52) width 111: "Cue 4: \x{79C1}\x{306F}\x{7ACB}\x{6D3E}\x{306A}\x{4EBA}"
+    RenderInline {DIV} at (0,0) size 16x5 [bgcolor=#000000CC]
+layer at (310,8) size 14x220 scrollWidth 16
+  RenderBlock (positioned) {DIV} at (302,0) size 14x220
+    RenderInline {DIV} at (0,0) size 18x116 [bgcolor=#000000CC]
+      RenderText {#text} at (0,52) size 14x112
+        text run at (0,52) width 111: "Cue 5: \x{79C1}\x{306F}\x{7ACB}\x{6D3E}\x{306A}\x{4EBA}"
+    RenderInline {DIV} at (0,0) size 16x5 [bgcolor=#000000CC]
+layer at (292,8) size 14x220 scrollWidth 16
+  RenderBlock (positioned) {DIV} at (284,0) size 14x220
+    RenderInline {DIV} at (0,0) size 18x116 [bgcolor=#000000CC]
+      RenderText {#text} at (0,52) size 14x112
+        text run at (0,52) width 111: "Cue 6: \x{79C1}\x{306F}\x{7ACB}\x{6D3E}\x{306A}\x{4EBA}"
+    RenderInline {DIV} at (0,0) size 16x5 [bgcolor=#000000CC]
+layer at (8,228) size 320x20 scrollHeight 31
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,220) size 320x20
+    RenderButton {INPUT} at (0,0) size 20x20
+    RenderDeprecatedFlexibleBox {DIV} at (20,0) size 220x20 [border: none (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
+      RenderBlock (anonymous) at (1,0) size 65x31
+        RenderDeprecatedFlexibleBox {DIV} at (0,1) size 65x30
+          RenderBlock (anonymous) at (5,5) size 55x20
+            RenderText {#text} at (0,0) size 55x12
+              text run at (0,0) width 55: "00:00 / 00:06"
+      RenderSlider {INPUT} at (66,0) size 153x20
+        RenderFlexibleBox {DIV} at (2,0) size 149x20
+          RenderBlock {DIV} at (0,4) size 137x12
+            RenderBlock {DIV} at (17,0) size 12x12
+          RenderBlock {DIV} at (137,0) size 12x12
+    RenderButton {INPUT} at (240,0) size 20x20
+    RenderButton {INPUT} at (260,0) size 20x20
+    RenderButton {INPUT} at (280,0) size 20x20
+    RenderBlock {DIV} at (300,0) size 20x20
+layer at (308,228) size 20x20
+  RenderButton zI: 2 {INPUT} at (0,0) size 20x20

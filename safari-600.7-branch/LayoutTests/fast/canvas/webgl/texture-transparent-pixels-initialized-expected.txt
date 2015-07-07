@@ -1,0 +1,12 @@
+Tests there is no garbage in transparent regions of images uploaded as textures
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Checking lower left corner
+PASS shouldBe 0,0,0
+Checking upper left corner
+PASS shouldBe 0,0,0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

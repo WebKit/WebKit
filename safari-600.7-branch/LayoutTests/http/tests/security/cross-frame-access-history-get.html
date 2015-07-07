@@ -1,0 +1,70 @@
+<html>
+<head>
+    <script src="resources/cross-frame-access.js"></script>
+    <script>
+        window.onload = function()
+        {
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            }
+
+            if (window.testRunner) {
+                setTimeout(pollForTest, 1);
+            } else {
+                log("To run the test, click the button below when the opened window finishes loading.");
+                var button = document.createElement("button");
+                button.appendChild(document.createTextNode("Run Test"));
+                button.onclick = runTest;
+                document.body.appendChild(button);
+            }
+        }
+
+        pollForTest = function()
+        {
+            if (!testRunner.globalFlag) {
+                setTimeout(pollForTest, 1);
+                return;
+            }
+            runTest();
+            testRunner.notifyDone();
+        }
+
+        runTest = function()
+        {
+            window.targetWindow = frames[0];
+
+            log("\n----- tests for getting window.history and its properties -----\n");
+
+            // history object
+            shouldBeFalse("canGet('targetWindow.history.length')");
+
+            shouldBeTrue("canGet('targetWindow.history.back')");
+            shouldBeTrue("canGet('targetWindow.history.forward')");
+            shouldBeTrue("canGet('targetWindow.history.go')");
+
+            // FIXME: Calling these currently cause the subsequent test to include a dump of this test's render tree.
+            // (see http://bugs.webkit.org/show_bug.cgi?id=16510)
+            // shouldBeTrue("canCall('targetWindow.history.back')");
+            // shouldBeTrue("canCall('targetWindow.history.forward')");
+            // shouldBeTrue("canCall('targetWindow.history.go', '-1')");
+
+            shouldBeTrue("canGet('targetWindow.history.toString')");
+            shouldBe("toString('targetWindow.history')", "'[object History]'");
+
+            shouldBeFalse("canGet('targetWindow.__proto__')");
+            shouldBeFalse("canGet('targetWindow.constructor')");
+
+            // Check custom properties
+            shouldBeFalse("canGet('targetWindow.history.existingCustomProperty')");
+            shouldBeFalse("canGet('targetWindow.history.__proto__.prototypeCustomProperty')");
+            shouldBeFalse("canCall('targetWindow.history.existingCustomFunction')");
+            shouldBeFalse("canCall('targetWindow.history.prototypeCustomFunction')");
+        }
+    </script>
+</head>
+<body>
+<iframe src="http://localhost:8000/security/resources/cross-frame-iframe-for-history-get-test.html"></iframe>
+<pre id="console"></pre>
+</body>
+</html>

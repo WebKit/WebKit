@@ -1,0 +1,115 @@
+This tests that pressing Tab key should traverse into shadow DOM subtrees, and pressing Shift-Tab should reverse the order.
+
+Should move from input-A-1 to input-B-1 in forward
+PASS
+Should move from input-B-1 to input-C-1 in forward
+PASS
+Should move from input-C-1 to host-B in forward
+PASS
+Should move from host-B to host-B//younger-input-A-1 in forward
+PASS
+Should move from host-B//younger-input-A-1 to host-B/older-input-A-1 in forward
+PASS
+Should move from host-B/older-input-A-1 to light-child-selected-1 in forward
+PASS
+Should move from light-child-selected-1 to host-B/older-input-B-1 in forward
+PASS
+Should move from host-B/older-input-B-1 to host-B//younger-input-B-1 in forward
+PASS
+Should move from host-B//younger-input-B-1 to host-B//younger-input-A-0 in forward
+PASS
+Should move from host-B//younger-input-A-0 to host-B/older-input-A-0 in forward
+PASS
+Should move from host-B/older-input-A-0 to light-child-selected-0 in forward
+PASS
+Should move from light-child-selected-0 to host-B/older-input-B-0 in forward
+PASS
+Should move from host-B/older-input-B-0 to host-B//younger-input-B-0 in forward
+PASS
+Should move from host-B//younger-input-B-0 to input-D-1 in forward
+PASS
+Should move from input-D-1 to input-A-0 in forward
+PASS
+Should move from input-A-0 to host-A/input-1 in forward
+PASS
+Should move from host-A/input-1 to host-A/input-20 in forward
+PASS
+Should move from host-A/input-20 to host-A/nested-host in forward
+PASS
+Should move from host-A/nested-host to host-A/nested-host/input-15 in forward
+PASS
+Should move from host-A/nested-host/input-15 to host-A/nested-host/input-25 in forward
+PASS
+Should move from host-A/nested-host/input-25 to input-B-0 in forward
+PASS
+Should move from input-B-0 to input-C-0 in forward
+PASS
+Should move from input-C-0 to input-D-0 in forward
+PASS
+Should move from input-D-0 to host-D in forward
+PASS
+Should move from host-D to input-E-0 in forward
+PASS
+Should move from input-E-0 to input-A-1 in forward
+PASS
+Should move from input-A-1 to input-E-0 in backward
+PASS
+Should move from input-E-0 to host-D in backward
+PASS
+Should move from host-D to input-D-0 in backward
+PASS
+Should move from input-D-0 to input-C-0 in backward
+PASS
+Should move from input-C-0 to input-B-0 in backward
+PASS
+Should move from input-B-0 to host-A/nested-host/input-25 in backward
+PASS
+Should move from host-A/nested-host/input-25 to host-A/nested-host/input-15 in backward
+PASS
+Should move from host-A/nested-host/input-15 to host-A/nested-host in backward
+PASS
+Should move from host-A/nested-host to host-A/input-20 in backward
+PASS
+Should move from host-A/input-20 to host-A/input-1 in backward
+PASS
+Should move from host-A/input-1 to input-A-0 in backward
+PASS
+Should move from input-A-0 to input-D-1 in backward
+PASS
+Should move from input-D-1 to host-B//younger-input-B-0 in backward
+PASS
+Should move from host-B//younger-input-B-0 to host-B/older-input-B-0 in backward
+PASS
+Should move from host-B/older-input-B-0 to light-child-selected-0 in backward
+PASS
+Should move from light-child-selected-0 to host-B/older-input-A-0 in backward
+PASS
+Should move from host-B/older-input-A-0 to host-B//younger-input-A-0 in backward
+PASS
+Should move from host-B//younger-input-A-0 to host-B//younger-input-B-1 in backward
+PASS
+Should move from host-B//younger-input-B-1 to host-B/older-input-B-1 in backward
+PASS
+Should move from host-B/older-input-B-1 to light-child-selected-1 in backward
+PASS
+Should move from light-child-selected-1 to host-B/older-input-A-1 in backward
+PASS
+Should move from host-B/older-input-A-1 to host-B//younger-input-A-1 in backward
+PASS
+Should move from host-B//younger-input-A-1 to host-B in backward
+PASS
+Should move from host-B to input-C-1 in backward
+PASS
+Should move from input-C-1 to input-B-1 in backward
+PASS
+Should move from input-B-1 to input-A-1 in backward
+PASS
+Should move from input-A-1 to input-E-0 in backward
+PASS
+Test finished.
+
+
+
+
+
+

@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 6: XHR loaded: 1
+Tests that after disabling network domain, content saved on backend is removed. Bug 67995
+
+resource.content after disabling network domain: null
+

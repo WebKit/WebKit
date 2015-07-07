@@ -1,0 +1,38 @@
+<html>
+<head>
+    <script type="text/javascript">
+
+        function test()
+        {
+            if (window.testRunner && window.internals) {
+                testRunner.dumpAsText();
+                internals.settings.setFrameFlatteningEnabled(true);
+            }
+
+            // Force synchronous layout.
+            document.body.offsetHeight;
+
+            var theframe = document.getElementById("theframe");
+            var width = parseInt(getComputedStyle(theframe).width);
+            var height = parseInt(getComputedStyle(theframe).height);
+            var pass = false;
+            if (width == 0 && height == 0)
+                pass = true;
+            document.getElementById("console").innerText = pass ? "PASS" : "FAIL";
+        }
+    </script>
+</head>
+<body onload="test()">
+    <style>body { background-color: green; }</style>
+    <p>Test for iframe flattening. The flattening only works inside the DRT.
+    <p>The frame should not be resized to the size of the containing content.
+
+    <p><iframe id=theframe width="0" height="0" scrolling=auto src="data:text/html,
+        <style>body { background-color: red; }</style>
+        <body>
+            <div style='position: absolute; width: 400px; height: 400px; left: 0; top: 0px;'></div>
+        </body>
+        "></iframe>
+<div id=console></div>
+</body>
+</html>

@@ -1,0 +1,1 @@
+PASS - this test checks that removing a block element while it's in an imporperly closed inline doesn't crash. This is checking for regression against bug 6778.

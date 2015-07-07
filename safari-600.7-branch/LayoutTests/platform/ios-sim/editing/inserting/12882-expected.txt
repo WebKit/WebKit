@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x60
+        RenderText {#text} at (0,0) size 770x39
+          text run at (0,0) width 568: "This tests for a bug where images with align right/left would fail to be inserted on paste. "
+          text run at (567,0) width 203: "You should see a picture of abe"
+          text run at (0,20) width 316: "in the editable region below, aligned to the right. "
+        RenderInline {B} at (0,0) size 743x39
+          RenderText {#text} at (315,20) size 743x39
+            text run at (315,20) width 428: "This demonstrates a bug: the focus halo for the editable region"
+            text run at (0,40) width 333: "doesn't expand to fit an image with align='right'."
+      RenderBlock {DIV} at (0,76) size 784x40
+        RenderText {#text} at (0,0) size 201x19
+          text run at (0,0) width 201: "Four score and seven years ago"
+        RenderImage {IMG} at (708,0) size 76x103
+        RenderText {#text} at (200,0) size 698x39
+          text run at (200,0) width 494: " our fathers brought forth on this continent a new nation, conceived in liberty"
+          text run at (693,0) width 5: " "
+          text run at (0,20) width 402: "and dedicated to the proposition that all men are created equal."
+caret: position 1 of child 1 {IMG} of child 2 {DIV} of body

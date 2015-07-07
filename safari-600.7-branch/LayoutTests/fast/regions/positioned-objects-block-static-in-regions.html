@@ -1,0 +1,59 @@
+<!doctype html>
+
+ <style>
+    #content {
+       -webkit-flow-into: flow1;
+    }
+    
+    #first-box {
+        margin:10%
+    }
+    
+    #second-box {
+        position:absolute;
+        top:0;
+        bottom:0;
+        width:160px;
+        background-color:green
+    }
+    
+    #region1, #region2, #region3 {
+        border: 1px solid black;
+        -webkit-flow-from: flow1;
+    }
+
+    #region1 {
+        width: 200px;
+        height: 150px;
+    }
+    
+    #region2 {
+        width: 300px;
+        height: 180px;
+    }
+    
+    #region3 {
+        width: 120px;
+        height: 120px;
+    }
+</style>
+
+<body>
+<p>The green positioned object should only be as tall as the first region it
+is contained in. It should be centered in the first region, and no red
+should be visible.</p>
+
+<div id="content">
+    <div id="first-box">
+        <div style="width:100px;height:100px;background-color:red"></div>
+        <div id="second-box">
+            
+        </div>
+    </div>
+</div>
+
+<div id="container">
+    <div id="region1"></div>
+    <div id="region2"></div>
+    <div id="region3"></div>
+</div>

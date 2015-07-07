@@ -1,0 +1,11 @@
+15.12.3-6-b-4 (TestCases/chapter15/15.12/15.12.3/15.12.3-6-b-4.js) JSON.stringify treats numeric space arguments (in the range 1..10) is equivalent to a string of spaces of that length.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ES5Harness.preconditionPassed is true
+PASS ES5Harness.testPassed is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

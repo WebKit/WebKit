@@ -1,0 +1,32 @@
+<html>
+<body>
+<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=36854">bug 36854<a>:
+Body from cross origin preflight response is prepended to the actual response body.</p>
+<div id=result>Running test...</div>
+<script>
+
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+  }
+
+  window.onload = function() {
+      var xhr = new XMLHttpRequest();
+      xhr.onreadystatechange=function() {
+        if (xhr.readyState==4) {
+          document.getElementById("result").innerHTML = (xhr.responseText == "echo") ? "PASS" : ("FAIL: " + xhr.responseText);
+          if (window.testRunner)
+            testRunner.notifyDone();
+        }
+       };
+
+       xhr.open("GET","http://localhost:8000/xmlhttprequest/resources/access-control-allow-with-body.php");
+       xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+       xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+       xhr.send(null);
+  };
+  
+</script>
+
+</body>
+</html>

@@ -1,0 +1,13 @@
+Test addEventListener() and removeEventListener() fail silently if arguments are missing.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.addEventListener("foo") is undefined
+PASS window.removeEventListener("bar") is undefined
+PASS window.addEventListener() is undefined
+PASS window.removeEventListener() is undefined
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

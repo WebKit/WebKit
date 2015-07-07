@@ -1,0 +1,199 @@
+html, body {
+  font-family: "helvetica neue", arial, helvetica, sans-serif;
+  font-size:24px;
+  color:#333;
+  background-color:#fff;
+  margin:30px;
+  padding:0;
+}
+.toolbar{
+  margin:0 0 -1px 0;
+  padding:19px;
+  height:51px;
+  background-color:#7c8992; /* to #5e6a75 */
+  border:solid 1px #181b1e;
+}
+
+/* standard push buttons */
+.buttons {
+  margin:0;
+  padding:0;
+  list-style-type:none;
+  display:inline;
+}
+.buttons li {
+  margin:0;
+  padding:0;
+  list-style-type:none;
+  display:inline;
+}
+.buttons a {
+  color:#fff;
+  display:block;
+  position:relative;
+  float:left;
+  width:102px;
+  height:52px;
+  margin:0 -1px 0 0;
+  padding:0;
+  text-indent:-9999px;
+  overflow:hidden;
+  background:transparent url(./img/buttons.png) 0 0 no-repeat;
+  /*outline:0;*/
+}
+#btn_del { margin-left:10px; background-position: -222px 0;}
+#btn_get { background-position:0 0; }
+#btn_com { background-position:-101px 0; }
+
+.buttons a:active, .buttons a:focus {
+  z-index:2; /* raise z-index when focused, so focus ring shows higher than sibling elements that appear later in the DOM */
+}
+
+#btn_del:hover, #btn_del:focus { background-position:-222px -52px; }
+#btn_get:hover, #btn_get:focus { background-position:   0px -52px; }
+#btn_com:hover, #btn_com:focus { background-position:-101px -52px; }
+#btn_del:active { background-position:-222px -104px; }
+#btn_get:active { background-position:   0px -104px; }
+#btn_com:active { background-position:-101px -104px; }
+
+.buttons a span {
+  display:block;
+  position:absolute;
+  top:50%;
+  left:50%;
+  margin:-16px 0 0 -16px;
+  height:32px;
+  width:32px;
+  background:transparent url(./img/icons.png) 0 0 no-repeat;
+}
+#btn_del span { background-position:-64px 0; }
+#btn_get span { background-position:0 0; }
+#btn_com span { background-position:-32px 0; }
+
+
+/* segmented control (view selector like radio buttons, not like tabs) */
+.segmentedcontrol{
+  margin:0;
+  padding:0;
+  list-style-type:none;
+  display:inline;
+}
+.segmentedcontrol li {
+  margin:0;
+  padding:0 -1px 0 0;
+  list-style-type:none;
+  display:block;
+  position:relative;
+  float:left;
+  width:102px;
+  height:52px;
+  text-indent:-9999px;
+  overflow:hidden;
+  background:transparent url(./img/buttons.png) 0 0 no-repeat;
+  cursor:pointer;
+  /*outline:0;*/
+}
+.segmentedcontrol li:active, .segmentedcontrol li:focus {
+  z-index:2; /* raise z-index when focused, so focus ring shows higher than sibling elements that appear later in the DOM */
+}
+#radio_list { background-position:   0px  0; margin-left:10px; }
+#radio_ico1 { background-position:-446px  0; width:99px; }
+#radio_ico2 { background-position:-101px 0; }
+
+#radio_list:hover, #radio_list:focus { background-position:   0px -52px; }
+#radio_ico1:hover, #radio_ico1:focus { background-position:-446px -52px; }
+#radio_ico2:hover, #radio_ico2:focus { background-position:-101px -52px; }
+
+#radio_list.active, #radio_list:active { background-position:   0px -104px; }
+#radio_ico1.active, #radio_ico1:active { background-position:-446px -104px; }
+#radio_ico2.active, #radio_ico2:active { background-position:-101px -104px; }
+
+.segmentedcontrol li span {
+  display:block;
+  position:absolute;
+  top:50%;
+  left:50%;
+  margin:-16px 0 0 -16px;
+  height:32px;
+  width:32px;
+  background:transparent url(./img/icons.png) 0 0 no-repeat;
+}
+#radio_list span { background-position: -96px 0; }
+#radio_ico1 span { background-position:-128px 0; }
+#radio_ico2 span { background-position:-160px 0; }
+#radio_list.active span, #radio_list:active span, #radio_list:hover span, #radio_list:focus span { background-position: -96px -32px; }
+#radio_ico1.active span, #radio_ico1:active span, #radio_ico1:hover span, #radio_ico1:focus span { background-position:-128px -32px; }
+#radio_ico2.active span, #radio_ico2:active span, #radio_ico2:hover span, #radio_ico2:focus span { background-position:-160px -32px; }
+
+
+/* selectable item list */
+.itemlist {
+  font-weight:bold;
+  display:block;
+  margin:0;
+  padding:0;
+  list-style-type:none;
+  border:solid 1px #181b1e;
+  height:1%;
+  overflow:auto;
+}
+.itemlist li {
+  display:block;
+  margin:0;
+  padding:5px 10px;
+  list-style-type:none;
+  border-bottom:solid 1px #eee;
+  outline:0;
+  position:relative;
+}
+.itemlist.style_ico1 li, .itemlist.style_ico2 li {
+  display:block;
+  float:left;
+  margin:10px;
+  width:80px;
+  padding:85px 5px 5px 5px;
+  list-style-type:none;
+  border-bottom:0;
+  font-size:11px;
+  text-align:center;
+  border-radius:8px;
+  -o-border-radius:8px;
+  -ie-border-radius:8px;
+  -moz-border-radius:8px;
+  -webkit-border-radius:8px;
+}
+.itemlist.style_ico2 li {
+  width:180px;
+  padding:190px 5px 10px 5px;
+  font-size:16px;
+}
+.style_ico1 span, .style_ico2 span {
+  display:block;
+  position:absolute;
+  top:12px;
+  left:50%;
+  margin-left:-33px;
+  background:#999;
+  width:66px;
+  height:66px;
+  border-radius:2px;
+  -o-border-radius:2px;
+  -ie-border-radius:2px;
+  -moz-border-radius:2px;
+  -webkit-border-radius:2px;
+}
+.style_ico2 span {
+  margin-left:-83px;
+  width:166px;
+  height:166px;
+}
+.itemlist li.active {
+  background-color:#d0d1d3;
+}
+.itemlist li:focus, .itemlist li.active:focus {
+  color:#000;
+  background-color:#9bbbdb;
+}
+.itemlist li:last-child {
+  border-bottom:0;
+}

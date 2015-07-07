@@ -1,0 +1,20 @@
+<body>
+<script src="../../js-test-resources/js-test-pre.js"></script>
+<script>
+window.jsTestIsAsync = true;
+description("The test passes if window.onerror gets sanitized information about the script error.");
+
+window.onerror = function(msg, url, line) {
+    window.msg = msg;
+    window.url = url;
+    window.line = line;
+    shouldBeNull("msg.match(/SomeError/)");
+    shouldBeEqualToString("url", "");
+    shouldBe("line", "0");
+    finishJSTest();
+}
+</script>
+<!-- crossorigin attribute is not set, we shouldn't get any specific info on the error. -->
+<script src="http://localhost:8000/security/resources/cors-script.php?fail=true"></script>
+<script src="../../js-test-resources/js-test-post.js"></script>
+

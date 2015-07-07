@@ -1,0 +1,2019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Form element matrix</title>
+</head>
+<style>
+table {border: 1px solid #080; border-spacing: 0; border-collapse:collapse;}
+td {border-bottom: 1px solid #070; padding:.5em 1em;}
+menu,li {margin:0;padding:0;}
+
+input.vertical {width:20px;height:100px;}
+.larger {font-size:1.25em;}
+.small {font-size:.6em;}
+
+.tiny {font-size:7px;}
+.mini {font-size:9px;}
+.small {font-size:11px;}
+.regular {font-size:13px;}
+.big {font-size:16px;}
+</style>
+
+
+<body> <!-- http://www.iconfinder.com/search/?q=iconset%3Avintage -->
+
+
+
+<h1>HTML5 Interactive and Form Content Survey</h1>
+Todos: Validation. -webkit-transform? required? autocomplete? more lists.
+<p>WHATWG discussion of:
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/content-models.html#interactive-content">interactive content</a>
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/commands.html#commands">commands</a>
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/forms.html#form-associated-element">form-associated elements</a>
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/forms.html#category-label">labelable elements</a>
+</p>
+<ul style="-webkit-columns:3;">
+    <li><a href="#section-anchor">Anchor</a></li>
+    <li><a href="#section-av">Audio and video controls</a></li>
+    <li><a href="#section-button">Button controls</a></li>
+    <li><a href="#section-check-radio">Checkboxes</a></li>
+    <li><a href="#section-color">Color control</a></li>
+    <li><a href="#section-date">Date controls</a></li>
+    <li><a href="#section-details">Details</a></li>
+    <li><a href="#section-embed">Embed</a></li>
+    <li><a href="#section-file-input">File input</a></li>
+    <li><a href="#section-iframe">Iframe</a></li>
+    <li><a href="#section-image">Images</a></li>
+    <li><a href="#section-keygen">Keygen</a></li>
+    <li><a href="#section-label">Labels</a></li>
+    <li><a href="#section-menu">Menus</a></li>
+    <li><a href="#section-meter">Meter</a></li>
+    <li><a href="#section-object">Object</a></li>
+    <li><a href="#section-output">Output form element</a></li>
+    <li><a href="#section-progress">Progress</a></li>
+    <li><a href="#section-check-radio">Radio buttons</a></li>
+    <li><a href="#section-select">Select controls and option groups</a></li>
+    <li><a href="#section-slider">Slider control</a></li>
+    <li><a href="#section-text">Text controls</a></li>
+    <li><a href="#section-textarea">Text area control</a></li>
+</ul>
+
+<h2 id="section-image">Images</h2>
+<p>WHATWG specs:
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/embedded-content-1.html#the-img-element"><code>&lt;img&gt;</code></a> |
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-map-element.html#attr-hyperlink-usemap"><code>usemap</code></a>
+</p>
+
+<table>
+    <tbody>
+        <tr>
+            <td><code>&lt;img usemap&gt;</code> with <code>&lt;map&gt;</code>.  Image map includes using the <code>rect</code>, <code>circle</code>, and <code>poly</code> shapes.</td>
+            <td>
+                When you tap on a region, the page will scroll to one of these lines.<br/>
+                <p id="shape-box">You clicked on the red box with the hole.</p>
+                <p id="shape-circle">You clicked on the green circle.</p>
+                <p id="shape-triangle">You clicked on the blue triangle.</p>
+                <p id="shape-star">You clicked on the yellow star.</p>
+                Four shapes are available: a red hollow box, a green circle, a blue triangle, and a yellow four-pointed star.<br />
+                <img src="image-usemap.png" usemap="#usemapShapes" />
+                <map name="usemapShapes">
+                  <area shape=rect coords="50,50,100,100"> <!-- the hole in the red box -->
+                  <area shape=rect coords="25,25,125,125" href="#shape-box" alt="Red box.">
+                  <area shape=circle coords="200,75,50" href="#shape-circle" alt="Green circle.">
+                  <area shape=poly coords="325,25,262,125,388,125" href="#shape-triangle" alt="Blue triangle.">
+                  <area shape=poly coords="450,25,435,60,400,75,435,90,450,125,465,90,500,75,465,60"
+                        href="#shape-star" alt="Yellow star.">
+                </map>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+<h2 id="section-button">Button controls</h2>
+<p>WHATWG specs: <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-button-element.html#the-button-element"><code>&lt;button&gt;</code></a> |
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/number-state.html#submit-button-state"><code>&lt;input type="submit"&gt;</code></a> |
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/number-state.html#reset-button-state"><code>&lt;input type="reset"&gt;</code></a> |
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/number-state.html#button-state"><code>&lt;input type="button"&gt;</code></a> |
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/number-state.html#image-button-state"><code>&lt;input type="image"&gt;</code></a>
+</p>
+<table>
+    <tbody>
+        <tr>
+            <td><code>&lt;button type="submit | reset | button" /&gt;</code><br/>
+                * (no flow content, flow content)</td>
+            <td><button type="submit"></button>
+                <button type="reset"></button>
+                <button type="button"></button>
+                <button type="submit">Submit Text</button>
+                <button type="reset">Reset Text</button>
+                <button type="button">Button Text</button>
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;input type="submit | reset | button" /&gt;</code><br/>
+                * (empty <code>value</code>, <code>value</code> defined)</td>
+            <td><input type="submit" />
+                <input type="reset" />
+                <input type="button" />
+                <input type="submit" value="Submit Text"/>
+                <input type="reset" value="Reset Text"/>
+                <input type="button" value="Button Text" />
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;button type="button" /&gt;</code><br/>
+                + large image - <code>alt</code><br/>
+                + small image + <code>alt</code><br/>
+                + invalid image - <code>alt</code><br/>
+                + invalid image + <code>alt</code><br/>
+                + invalid image with dimensions + <code>alt</code>
+            </td>
+            <td><button type="button"><img src="image1.png" /></button>
+                <button type="button"><img src="image10.png" alt="small image" /></button>
+                <button type="button"><img src="imageInvalid.png" /></button>
+                <button type="button"><img src="imageInvalid.png" alt="invalid image" /></button>
+                <button type="button"><img src="imageInvalid.png" alt="invalid image" width="100" height="50" /></button>
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;input type="image" /&gt;</code><br/>
+                + large image - <code>alt</code><br/>
+                + small image + <code>alt</code><br/>
+                + invalid image - <code>alt</code><br/>
+                + invalid image + <code>alt</code><br/>
+                + invalid image + <code>width</code> + <code>height</code> - <code>alt</code><br/>
+                + invalid image + <code>width</code> + <code>height</code> + <code>alt</code>
+            </td>
+            <td><input type="image" />
+                <input type="image" src="image1.png" alt="large icon"/>
+                <input type="image" src="image10.png" alt="small image" />
+                <input type="image" src="imageInvalid.png" />
+                <input type="image" src="imageInvalid.png" alt="invalid image" />
+                <input type="image" src="imageInvalid.png" width="60" height="60" />
+                <input type="image" src="imageInvalid.png" alt="invalid image" width="80" height="60" />
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;button type="button" /&gt;</code><br/>
+                + mixed flow content<br/>
+                + flow content + small image<br/>
+                + flow content + medium image<br/>
+            </td>
+            <td>
+                <button type="button"><div>I'm a div!</div> <span>I'm a span.</span></button>
+                <button type="button">Next <img src="image10.png" /></button>
+                <button type="button"><img src="image16.png" /> Favorite</button>
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;button disabled /&gt;</code><br/>
+                + large image<br />
+                + small image<br />
+                + button text<br />
+                + mixed flow content<br/>
+            </td>
+            <td>
+                <button disabled />
+                <button disabled><img src="image1.png" /></button>
+                <button disabled><img src="image10.png" /></button>
+                <button disabled>Button text</button>
+                <button disabled><div>I'm a div!</div> <span>I'm a span.</span></button>
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;input type="image" disabled /&gt;</code><br/>
+                + large image<br />
+                + small image<br />
+                + invalid image<br/>
+                <code>&lt;input type="reset" disabled /&gt;</code><br/>
+                <code>&lt;input type="button" disabled /&gt;</code><br/>
+                + <code>value</code><br/>
+            </td>
+            <td>
+                <input type="image" disabled />
+                <input type="image" src="image1.png" disabled />
+                <input type="image" src="image10.png" disabled />
+                <input type="image" src="imageInvalid.png" disabled />
+                <input type="reset" disabled />
+                <input type="button" disabled />
+                <input type="button" value="Button text" disabled />
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+ILLEGAL: usemap
+
+<h3>Rendering</h3>
+<table>
+    <thead>
+        <tr><th></th><th>"Tiny" (7px)</th><th>Mini (9px)</th><th>Small (11px)</th><th>Regular (13px)</th><th>"Big" (16px)</th></tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>&lt;input type="button"&gt;</code></td>
+            <td><input type="button" class="tiny" /> <input type="button" value="Button" class="tiny" /> Abc<br/>
+                <input type="button" disabled class="tiny" /> <input type="button" value="Button" class="tiny" disabled /> Abc
+            </td>
+            <td><input type="button" class="mini" /> <input type="button" value="Button" class="mini" /> Abc<br/>
+                <input type="button" disabled class="mini" /> <input type="button" value="Button" class="mini" disabled /> Abc
+            </td>
+            <td><input type="button" class="small" /> <input type="button" value="Button" class="small" /> Abc<br/>
+                <input type="button" disabled class="small" /> <input type="button" value="Button" class="small" disabled /> Abc
+            </td>
+            <td><input type="button" class="regular" /> <input type="button" value="Button" class="regular" /> Abc<br/>
+                <input type="button" disabled class="regular" /> <input type="button" value="Button" class="regular" disabled /> Abc
+            </td>
+            <td><input type="button" class="big" /> <input type="button" value="Button" class="big" /> Abc<br/>
+                <input type="button" disabled class="big" /> <input type="button" value="Button" class="big" disabled /> Abc
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;button&gt;</code></td>
+            <td><button class="tiny"></button> <button class="tiny">Button</button> Abc<br/>
+                <button class="tiny" disabled></button> <button class="tiny" disabled>Button</button> Abc
+            </td>
+            <td><button class="mini"></button> <button class="mini">Button</button> Abc<br/>
+                <button class="mini" disabled></button> <button class="mini" disabled>Button</button> Abc
+            </td>
+            <td><button class="small"></button> <button class="small">Button</button> Abc<br/>
+                <button class="small" disabled></button> <button class="small" disabled>Button</button> Abc
+            </td>
+            <td><button class="regular"></button> <button class="regular">Button</button> Abc<br/>
+                <button class="regular" disabled></button> <button class="regular" disabled>Button</button> Abc
+            </td>
+            <td><button class="big"></button> <button class="big">Button</button> Abc<br/>
+                <button class="big" disabled></button> <button class="big" disabled>Button</button> Abc
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+<h2 id="section-text">Text controls</h2>
+<p>WHATWG specs:
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#text-state-and-search-state"><code>&lt;input type="text|search"&gt;</code></a> |
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#telephone-state"><code>&lt;input type="tel"&gt;</code></a> |
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#url-state"><code>&lt;input type="url"&gt;</code></a> |
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state"><code>&lt;input type="email"&gt;</code></a> |
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#password-state"><code>&lt;input type="password"&gt;</code></a> |
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/number-state.html#number-state"><code>&lt;input type="number"&gt;</code></a>
+    </p>
+
+<table>
+    <tbody>
+        <tr>
+            <td><code>&lt;input type="text | search | tel | url | email | password | number" /&gt;</code>
+            </td>
+            <td><input type="text" /> <input type="search" />
+                <input type="tel" /> <input type="url" />
+                <input type="email" />
+                <input type="password" /> <input type="number" />
+            </td>
+        </tr>
+        <tr>
+            <td>+ <code>placeholder</code>
+            </td>
+            <td><input type="text" placeholder="text placeholder" />
+                <input type="search" placeholder="search placeholder" />
+                <input type="tel" placeholder="tel placeholder" />
+                <input type="url" placeholder="url placeholder" />
+                <input type="email" placeholder="email placeholder" />
+                <input type="password" placeholder="password placeholder" />
+                <input type="number" placeholder="number placeholder" />
+            </td>
+        </tr>
+        <tr>
+            <td>+ <code>value</code>
+            </td>
+            <td><input type="text" value="text value" />
+                <input type="search" value="search value" />
+                <input type="tel" value="tel value" />
+                <input type="url" value="url value" />
+                <input type="email" value="email value" />
+                <input type="password" value="password value" />
+                <input type="number" value="12345678" />
+            </td>
+        </tr>
+        <tr>
+            <td>+ <code>value</code> + <code>readonly</code>
+            </td>
+            <td><input type="text" value="text value" readonly />
+                <input type="search" value="search value" readonly />
+                <input type="tel" value="tel value" readonly />
+                <input type="url" value="url value" readonly />
+                <input type="email" value="email value" readonly />
+                <input type="password" value="password value" readonly />
+                <input type="number" value="123.456789" readonly />
+            </td>
+        </tr>
+        <tr>
+            <td>+ <code>value</code> + <code>disabled</code>
+            </td>
+            <td><input type="text" value="text value" disabled />
+                <input type="search" value="search value" disabled />
+                <input type="tel" value="tel value" disabled />
+                <input type="url" value="url value" disabled />
+                <input type="email" value="email value" disabled />
+                <input type="password" value="password value" disabled />
+                <input type="number" value="234.5678901" disabled />
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;input type="text | search | tel | url | number" list /&gt;</code>
+            </td>
+            <td>
+                <input type="text" list="text-datalist" />
+                <input type="search" list="text-datalist" />
+                <input type="tel" list="text-number" />
+                <input type="url" list="text-url" />
+                <input type="number" list="text-number" />
+                <datalist id="text-datalist">
+                    <option value="Data list text 1" />
+                    <option value="Data list text 2" />
+                    <option value="Data list text 3" />
+                    <option value="Data list text 4" />
+                </datalist>
+                <datalist id="text-url">
+                    <option label="MIME: Format of Internet Message Bodies" value="http://tools.ietf.org/html/rfc2045">
+                    <option label="HTML 4.01 Specification" value="http://www.w3.org/TR/html4/">
+                    <option label="Form Controls" value="http://www.w3.org/TR/xforms/slice8.html#ui-commonelems-hint">
+                    <option label="Scalable Vector Graphics (SVG) 1.1 Specification" value="http://www.w3.org/TR/SVG/">
+                    <option label="Feature Sets - SVG 1.1 - 20030114" value="http://www.w3.org/TR/SVG/feature.html">
+                    <option label="The Single UNIX Specification, Version 3" value="http://www.unix-systems.org/version3/">
+                </datalist>
+                <datalist id="text-number">
+                    <option value="1" />
+                    <option value="2" />
+                    <option value="3" />
+                    <option value="4" />
+                </datalist>
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;input type="search" results /&gt;</code> [NOT STANDARD]<br/>
+                + <code>results=5</code>
+            </td>
+            <td>
+                <input type="search" results />
+                <input type="search" results=5 />
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;input type="email" list /&gt;</code><br/>
+                + <code>multiple</code>
+            </td>
+            <td>
+                <input type="email" list="email-datalist" />
+                <input type="email" multiple list="email-datalist" />
+                <datalist id="email-datalist">
+                    <option value="a@example.com" />
+                    <option value="b@example.com" />
+                    <option value="c@example.com" />
+                    <option value="d@example.com" />
+                </datalist>
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;input type="text | search | tel | url | email | password" /&gt;</code><br/>
+                + <code>size=10</code> + <code>value</code><br/>
+                + <code>maxlength=10</code> + <code>value</code><br/>
+            </td>
+            <td><input type="text" size=10 value="1234567890" />
+                <input type="search" size=10 value="1234567890" />
+                <input type="tel" size=10 value="1234567890"  />
+                <input type="url" size=10 value="1234567890"  />
+                <input type="email" size=10 value="1234567890"  />
+                <input type="password" size=10 value="1234567890"  />
+                <input type="text" maxlength=10 value="abcdefghij" />
+                <input type="search" maxlength=10 value="abcdefghij" />
+                <input type="tel" maxlength=10 value="abcdefghij"  />
+                <input type="url" maxlength=10 value="abcdefghij"  />
+                <input type="email" maxlength=10 value="abcdefghij"  />
+                <input type="password" maxlength=10 value="abcdefghij"  />
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;input type="number" value&gt;</code><br/>
+                + <code>min=10</code><br/>
+                + <code>max=20</code><br/>
+                + <code>step=5</code><br/>
+            </td>
+            <td><input type="number" value=42.5 />
+                <input type="number" min=10 value=150 />
+                <input type="number" max=20 value=15 />
+                <input type="number" step=5 value=8 />
+            </td>
+        </tr>
+    </tbody>
+</table>
+pattern (- number)
+
+<h3>Rendering</h3>
+<table>
+    <thead>
+        <tr><th></th><th>"Tiny" (7px)</th><th>Mini (9px)</th><th>Small (11px)</th><th>Regular (13px)</th><th>"Big" (16px)</th></tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>&lt;input type="text"&gt;</code><br/>
+                + <code>readonly</code><br/>
+                + <code>disabled</code></td>
+            <td><input type="text" value="Text field" class="tiny" /><br/>
+                <input type="text" readonly value="Text field" class="tiny" /><br/>
+                <input type="text" disabled value="Text field" class="tiny" />
+            </td>
+            <td><input type="text" value="Text field" class="mini" /><br/>
+                <input type="text" readonly value="Text field" class="mini" /><br/>
+                <input type="text" disabled value="Text field" class="mini" />
+            </td>
+            <td><input type="text" value="Text field" class="small" /><br/>
+                <input type="text" readonly value="Text field" class="small" /><br/>
+                <input type="text" disabled value="Text field" class="small" />
+            </td>
+            <td><input type="text" value="Text field" class="regular" /><br/>
+                <input type="text" readonly value="Text field" class="regular" /><br/>
+                <input type="text" disabled value="Text field" class="regular" />
+            </td>
+            <td><input type="text" value="Text field" class="big" /><br/>
+                <input type="text" readonly value="Text field" class="big" /><br/>
+                <input type="text" disabled value="Text field" class="big" />
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;input type="search" results&gt;</code><br/>
+                + <code>readonly</code><br/>
+                + <code>disabled</code></td>
+            <td><input type="search" results value="Text field" class="tiny" /><br/>
+                <input type="search" readonly results value="Text field" class="tiny" /><br/>
+                <input type="search" disabled results value="Text field" class="tiny" />
+            </td>
+            <td><input type="search" results value="Text field" class="mini" /><br/>
+                <input type="search" readonly results value="Text field" class="mini" /><br/>
+                <input type="search" disabled results value="Text field" class="mini" />
+            </td>
+            <td><input type="search" results value="Text field" class="small" /><br/>
+                <input type="search" readonly results value="Text field" class="small" /><br/>
+                <input type="search" disabled results value="Text field" class="small" />
+            </td>
+            <td><input type="search" results value="Text field" class="regular" /><br/>
+                <input type="search" readonly results value="Text field" class="regular" /><br/>
+                <input type="search" disabled results value="Text field" class="regular" />
+            </td>
+            <td><input type="search" results value="Text field" class="big" /><br/>
+                <input type="search" readonly results value="Text field" class="big" /><br/>
+                <input type="search" disabled results value="Text field" class="big" />
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;input type="search" results=5&gt;</code><br/>
+                + <code>readonly</code><br/>
+                + <code>disabled</code></td>
+            <td><input type="search" results=5 value="Text field" class="tiny" /><br/>
+                <input type="search" readonly results=5 value="Text field" class="tiny" /><br/>
+                <input type="search" disabled results=5 value="Text field" class="tiny" />
+            </td>
+            <td><input type="search" results=5 value="Text field" class="mini" /><br/>
+                <input type="search" readonly results=5 value="Text field" class="mini" /><br/>
+                <input type="search" disabled results=5 value="Text field" class="mini" />
+            </td>
+            <td><input type="search" results=5 value="Text field" class="small" /><br/>
+                <input type="search" readonly results=5 value="Text field" class="small" /><br/>
+                <input type="search" disabled results=5 value="Text field" class="small" />
+            </td>
+            <td><input type="search" results=5 value="Text field" class="regular" /><br/>
+                <input type="search" readonly results=5 value="Text field" class="regular" /><br/>
+                <input type="search" disabled results=5 value="Text field" class="regular" />
+            </td>
+            <td><input type="search" results=5 value="Text field" class="big" /><br/>
+                <input type="search" readonly results=5 value="Text field" class="big" /><br/>
+                <input type="search" disabled results=5 value="Text field" class="big" />
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;input type="number"&gt;</code><br/>
+                + <code>readonly</code><br/>
+                + <code>disabled</code></td>
+            <td><input type="number" value="12345" class="tiny" /><br/>
+                <input type="number" readonly value="12345" class="tiny" /><br/>
+                <input type="number" disabled value="12345" class="tiny" />
+            </td>
+            <td><input type="number" value="12345" class="mini" /><br/>
+                <input type="number" readonly value="12345" class="mini" /><br/>
+                <input type="number" disabled value="12345" class="mini" />
+            </td>
+            <td><input type="number" value="12345" class="small" /><br/>
+                <input type="number" readonly value="12345" class="small" /><br/>
+                <input type="number" disabled value="12345" class="small" />
+            </td>
+            <td><input type="number" value="12345" class="regular" /><br/>
+                <input type="number" readonly value="12345" class="regular" /><br/>
+                <input type="number" disabled value="12345" class="regular" />
+            </td>
+            <td><input type="number" value="12345" class="big" /><br/>
+                <input type="number" readonly value="12345" class="big" /><br/>
+                <input type="number" disabled value="12345" class="big" />
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+<h2 id="section-date">Date controls</h2>
+<p>WHATWG spec:
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#date-and-time-state"><code>&lt;input type="datetime"&gt;</code></a> |
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#date-state"><code>&lt;input type="date"&gt;</code></a> |
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#month-state"><code>&lt;input type="month"&gt;</code></a> |
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#week-state"><code>&lt;input type="week"&gt;</code></a> |
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#time-state"><code>&lt;input type="time"&gt;</code></a> |
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#local-date-and-time-state"><code>&lt;input type="datetime-local"&gt;</code></a> |
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/common-microsyntaxes.html#months">valid month string</a> |
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/common-microsyntaxes.html#dates">valid date string</a> |
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/common-microsyntaxes.html#valid-time-string">valid time string</a> |
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/common-microsyntaxes.html#local-dates-and-times">valid local datetime</a> |
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/common-microsyntaxes.html#global-dates-and-times">valid global datetime</a> |
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/common-microsyntaxes.html#weeks">valid week string</a>
+</p>
+
+<table>
+    <tbody>
+        <tr>
+            <td><code>&lt;input type="datetime | datetime-local | date | month | week | time"&gt;</code></td>
+            <td><input type="datetime" />
+                <input type="datetime-local" />
+                <input type="date" />
+                <input type="month" />
+                <input type="week" />
+                <input type="time" />
+            </td>
+        </tr>
+        <tr>
+            <td>+ <code>value</code></td>
+            <td>
+                <input type="datetime" value="1984-01-22T21:05Z" />
+                <input type="datetime-local" value="1984-01-22T21:05" />
+                <input type="date" value="1983-12-31" />
+                <input type="month" value="2001-10" />
+                <input type="week" value="2011-W14" />
+                <input type="time" value="12:02:34.5" />
+            </td>
+        </tr>
+        <tr>
+            <td>+ <code>value</code> + <code>readonly</code></td>
+            <td>
+                <input type="datetime" value="1984-01-22T21:05Z" readonly />
+                <input type="datetime-local" value="1984-01-22T21:05" readonly />
+                <input type="date" value="1983-12-31" readonly />
+                <input type="month" value="2001-10" readonly />
+                <input type="week" value="2011-W14" readonly />
+                <input type="time" value="12:02:34.5" readonly />
+            </td>
+        </tr>
+        <tr>
+            <td>+ <code>value</code> + <code>disabled</code></td>
+            <td>
+                <input type="datetime" value="1984-01-22T21:05Z" disabled />
+                <input type="datetime-local" value="1984-01-22T21:05" disabled />
+                <input type="date" value="1983-12-31" disabled />
+                <input type="month" value="2001-10" disabled />
+                <input type="week" value="2011-W14" disabled />
+                <input type="time" value="12:02:34.5" disabled />
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;input type="datetime | date" list /&gt;</code></td>
+            <td>
+                <input type="datetime" list="datetime-datalist" />
+                <datalist id="datetime-datalist">
+                    <option value="2005-07-03T06:00Z"></option>
+                    <option value="2005-07-03T07:00Z"></option>
+                    <option value="2005-07-03T08:30Z"></option>
+                </datalist>
+                <input type="date" list="date-datalist" />
+                <datalist id="date-datalist">
+                    <option value="2001-03-05"></option>
+                    <option value="2001-03-08"></option>
+                    <option value="2001-03-11"></option>
+                </datalist>
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;input type="datetime{-local}" value&gt;</code> formatted as<br />
+                + local date and time<br />
+                + global date and time (UTC)<br />
+                + global date and time (with time offset)<br />
+                + malformed local<br />
+                + malformed global
+            </td>
+            <td>
+                <input type="datetime-local" value="1984-01-22T21:05" />
+                <input type="datetime" value="1984-01-22T21:05Z" />
+                <input type="datetime" value="1984-01-22T21:05-05:00" />
+                <input type="datetime-local" value="1984-01-22T21:5" />
+                <input type="datetime" value="1984-01-22T21:5Z" />
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;input type="date" value&gt;</code> formatted as<br />
+                + year-month-day<br />
+                + leap day<br />
+                + leap day in non-leap year<br />
+                + malformed string
+            </td>
+            <td>
+                <input type="date" value="1984-01-22" />
+                <input type="date" value="1984-02-29" />
+                <input type="date" value="1983-02-29" />
+                <input type="date" value="19840229" />
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;input type="month" value&gt;</code> formatted as<br />
+                + year-month<br />
+                + overflow month<br />
+                + malformed string
+            </td>
+            <td>
+                <input type="month" value="2005-09" />
+                <input type="month" value="2005-14" />
+                <input type="month" value="200512" />
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;input type="week" value&gt;</code> formatted as<br />
+                + year-week<br />
+                + week 53 in year where January 1 is on a Thursday<br />
+                + week 53 in year where January 1 is not on a Thursday<br />
+                + overflow (week 60)<br/>
+                + malformed string
+            </td>
+            <td>
+                <input type="week" value="2011-W01" />
+                <input type="week" value="2009-W53" />
+                <input type="week" value="2010-W53" />
+                <input type="week" value="1999-W60" />
+                <input type="week" value="2010-53" />
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;input type="time" value&gt;</code> formatted as<br />
+                + hour + minute<br />
+                + hour + minute + second<br />
+                + hour + minute + second + fractional<br />
+                + malformed string
+            </td>
+            <td><input type="time" value="16:20" />
+                <input type="time" value="16:20:24" />
+                <input type="time" value="16:20:24.30" />
+                <input type="time" value="16:2" />
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;input type="datetime | datetime-local" min max /&gt;</code><br />
+                + <code>value</code><br />
+                + <code>value</code> + <code>step</code>
+            </td>
+            <td><input type="datetime" min="2005-07-03T05:00Z" max="2005-07-03T10:00Z" />
+                <input type="datetime" min="2005-07-03T05:00Z" max="2005-07-03T10:00Z" value="2005-07-03T07:46Z" />
+                <input type="datetime" min="2005-07-03T05:00Z" max="2005-07-03T10:00Z" value="2005-07-03T07:46Z" step="300" />
+                <input type="datetime-local" min="2005-07-03T05:00+02:00" max="2005-07-03T10:00+02:00" />
+                <input type="datetime-local" min="2005-07-03T05:00+02:00" max="2005-07-03T10:00+02:00" value="2005-07-03T07:46+02:00" />
+                <input type="datetime-local" min="2005-07-03T05:00+02:00" max="2005-07-03T10:00+02:00" value="2005-07-03T07:46+02:00" step="300" />
+                
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;input type="date" min max /&gt;</code><br />
+                + <code>value</code><br />
+                + <code>value</code> + <code>step</code>
+            </td>
+            <td>
+                <input type="date" min="2005-07-03" max="2005-07-10" />
+                <input type="date" min="2005-07-03" max="2005-07-10" value="2005-07-06" />
+                <input type="date" min="2005-07-03" max="2005-07-11" value="2005-07-07" step="2" />
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;input type="month" min max /&gt;</code><br />
+                + <code>value</code><br />
+                + <code>value</code> + <code>step</code>
+            </td>
+            <td>
+                <input type="month" min="2005-02" max="2005-10" />
+                <input type="month" min="2005-02" max="2005-10" value="2005-07" />
+                <input type="month" min="2005-02" max="2005-10" value="2005-06" step="2" />
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;input type="week" min max /&gt;</code><br />
+                + <code>value</code><br />
+                + <code>value</code> + <code>step</code>
+            </td>
+            <td>
+                <input type="week" min="2011-W10" max="2011-W40" />
+                <input type="week" min="2011-W10" max="2011-W40" value="2011-W24" />
+                <input type="week" min="2011-W10" max="2011-W40" value="2011-W24" step="2" />
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;input type="time" min max /&gt;</code><br />
+                + <code>value</code><br />
+                + <code>value</code> + <code>step</code>
+            </td>
+            <td>
+                <input type="time" min="02:00" max="06:00" />
+                <input type="time" min="02:00" max="06:00" value="04:25" />
+                <input type="time" min="02:00" max="06:00" value="04:25:16" step="5" />
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+<h2 id="section-slider">Slider control</h2>
+<p>WHATWG spec: <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/number-state.html#range-state"><code>&lt;input type="range"&gt;</code></a></p>
+
+<table>
+    <tbody>
+        <tr>
+            <td><code>&lt;input type="range" /&gt;</code><br/>
+                + <code>width=20px</code> + <code>height=100px</code> (vertical)</td>
+            <td><input type="range" /><input type="range" class="vertical" /></td>
+        </tr>
+        <tr>
+            <td>+ <code>max</code> + <code>min</code> + <code>step</code><br/>
+                * (horizontal, vertical)</td>
+            <td><input type="range" min="0" max="100" step="10" />
+                <input type="range" min="0" max="100" step="10" class="vertical" /></td>
+        </tr>
+        <tr>
+            <td>+ <code>list</code><br/>
+                * (horizontal, vertical)</td>
+            <td><input type="range" list="slider-datalist" />
+                <input type="range" class="vertical" list="slider-datalist" />
+                <datalist id="slider-datalist">
+                    <option value="0"></option>
+                    <option value="20"></option>
+                    <option value="50"></option>
+                    <option value="80"></option>
+                    <option value="100"></option>
+                </datalist>
+            </td>
+        </tr>
+        <tr>
+            <td>+ <code>disabled</code><br/>
+                * (horizontal, vertical)</td>
+            <td><input type="range" disabled />
+                <input type="range" class="vertical" disabled />
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Rendering</h3>
+<table>
+    <thead>
+        <tr><th></th><th>"Tiny" (7px)</th><th>Mini (9px)</th><th>Small (11px)</th><th>Regular (13px)</th><th>"Big" (16px)</th></tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>&lt;input type="range"&gt;</code><br/>
+                + <code>disabled</code>
+            </td>
+            <td><input type="range" class="tiny" /><br/>
+                <input type="range" disabled class="tiny" />
+            </td>
+            <td><input type="range" class="small" /><br/>
+                <input type="range" disabled class="small" />
+            </td>
+            <td><input type="range" class="mini" /><br/>
+                <input type="range" disabled class="mini" />
+            </td>
+            <td><input type="range" class="regular" /><br/>
+                <input type="range" disabled class="regular" />
+            </td>
+            <td><input type="range" class="big" /><br/>
+                <input type="range" disabled class="big" />
+            </td>
+        </tr>
+        <tr>
+            <td>vertical <code>&lt;input type="range"&gt;</code><br/>
+                + <code>disabled</code>
+            </td>
+            <td><input type="range" class="vertical tiny" />
+                <input type="range" disabled class="vertical tiny" />
+            </td>
+            <td><input type="range" class="vertical small" />
+                <input type="range" disabled class="vertical small" />
+            </td>
+            <td><input type="range" class="vertical mini" />
+                <input type="range" disabled class="vertical mini" />
+            </td>
+            <td><input type="range" class="vertical regular" />
+                <input type="range" disabled class="vertical regular" />
+            </td>
+            <td><input type="range" class="vertical big" />
+                <input type="range" disabled class="vertical big" />
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+
+<h2 id="section-color">Color control</h2>
+<p>WHATWG spec: <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/number-state.html#color-state"><code>&lt;input type="color"&gt;</code></a></p>
+<table>
+    <tbody>
+        <tr>
+            <td><code>&lt;input type="color" /&gt;</code></td>
+            <td><input type="color" /></td>
+        </tr>
+        <tr>
+            <td>+ <code>list</code></td>
+            <td><datalist id="color-datalist">
+                    <option value="#f00" label="red" />
+                    <option value="#0f0" label="green" />
+                    <option value="#00f" label="blue" />
+                </datalist>
+                <input type="color" list="color-datalist" />
+            </td>
+        </tr>
+        <tr>
+            <td>+ <code>disabled</code></td>
+            <td><input type="color" disabled /></td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+<h2 id="section-check-radio">Checkboxes and radio buttons</h2>
+<p>WHATWG specs:
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/number-state.html#checkbox-state"><code>&lt;input type="checkbox"&gt;</code></a> |
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/number-state.html#radio-button-state"><code>&lt;input type="radio"&gt;</code></a>
+</p>
+
+<table>
+    <tbody>
+        <tr>
+            <td>[<br/>
+                <code>&lt;input type="checkbox"&gt;</code><br/>
+                + <code>checked</code><br />
+                + script to set indeterminate value<br/>
+                + <code>checked</code> + script to set indeterminate value<br/>
+                ]</td>
+            <td><input type="checkbox" />
+                <input type="checkbox" checked />
+                <input type="checkbox" id="checkbox-indeterminate" />
+                <input type="checkbox" checked id="checkbox-checked-indeterminate" />
+                <script>
+                    document.getElementById("checkbox-indeterminate").indeterminate = true;
+                    document.getElementById("checkbox-checked-indeterminate").indeterminate = true;
+                </script>
+            </td>
+        </tr>
+        <tr>
+            <td>+ <code>disabled</code></td>
+            <td><input type="checkbox" disabled />
+                <input type="checkbox" checked disabled />
+                <input type="checkbox" id="checkbox-disabled-indeterminate" disabled />
+                <input type="checkbox" id="checkbox-checked-disabled-indeterminate" checked disabled />
+                <script>
+                    document.getElementById("checkbox-disabled-indeterminate").indeterminate = true;
+                    document.getElementById("checkbox-checked-disabled-indeterminate").indeterminate = true;
+                </script>
+            </td>
+        </tr>
+        <tr>
+            <td>[<br/>
+                <code>&lt;input type="radio"&gt;</code><br />
+                + <code>checked</code><br/>
+                ]
+            </td>
+            <td><input type="radio" />
+                <input type="radio" checked />
+            </td>
+        </tr>
+        <tr>
+            <td>+ <code>disabled</code></td>
+            <td><input type="radio" disabled />
+                <input type="radio" checked disabled />
+            </td>
+        </tr>
+        <tr>
+            <td>+ <code>name</code> (radio grouping)</td>
+            <td><input type="radio" name="radio-group" />
+                <input type="radio" name="radio-group" checked />
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Rendering</h3>
+<table>
+    <thead>
+        <tr><th></th><th>"Tiny" (7px)</th><th>Mini (9px)</th><th>Small (11px)</th><th>Regular (13px)</th><th>"Big" (16px)</th></tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>&lt;input type="checkbox"&gt;<br/>
+                + <code>checked</code><br/>
+                + indeterminate<br/>
+                * <code>disabled</code>
+            </td>
+            <td>
+                <input type="checkbox" class="tiny" />
+                <input type="checkbox" class="tiny" checked />
+                <input type="checkbox" class="tiny" id="ci1" /> Abc<br/>
+                <input type="checkbox" disabled class="tiny" />
+                <input type="checkbox" disabled class="tiny" checked />
+                <input type="checkbox" disabled class="tiny" id="ci2" /> Abc
+            </td>
+            <td>
+                <input type="checkbox" class="mini" />
+                <input type="checkbox" class="mini" checked />
+                <input type="checkbox" class="mini" id="ci3" /> Abc<br/>
+                <input type="checkbox" disabled class="mini" />
+                <input type="checkbox" disabled class="mini" checked />
+                <input type="checkbox" disabled class="mini" id="ci4" /> Abc
+            </td>
+            <td>
+                <input type="checkbox" class="small" />
+                <input type="checkbox" class="small" checked />
+                <input type="checkbox" class="small" id="ci5" /> Abc<br/>
+                <input type="checkbox" disabled class="small" />
+                <input type="checkbox" disabled class="small" checked />
+                <input type="checkbox" disabled class="small" id="ci6" /> Abc
+            </td>
+            <td>
+                <input type="checkbox" class="regular" />
+                <input type="checkbox" class="regular" checked />
+                <input type="checkbox" class="regular" id="ci7" /> Abc<br/>
+                <input type="checkbox" disabled class="regular" />
+                <input type="checkbox" disabled class="regular" checked />
+                <input type="checkbox" disabled class="regular" id="ci8" /> Abc
+            </td>
+            <td>
+                <input type="checkbox" class="big" />
+                <input type="checkbox" class="big" checked />
+                <input type="checkbox" class="big" id="ci9" /> Abc<br/>
+                <input type="checkbox" disabled class="big" />
+                <input type="checkbox" disabled class="big" checked />
+                <input type="checkbox" disabled class="big" id="ci10" /> Abc
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;input type="radio"&gt;<br/>
+                + <code>checked</code><br/>
+                * <code>disabled</code>
+            </td>
+            <td>
+                <input type="radio" class="tiny" />
+                <input type="radio" class="tiny" checked /> Abc<br/>
+                <input type="radio" disabled class="tiny" />
+                <input type="radio" disabled class="tiny" checked /> Abc
+            </td>
+            <td>
+                <input type="radio" class="mini" />
+                <input type="radio" class="mini" checked /> Abc<br/>
+                <input type="radio" disabled class="mini" />
+                <input type="radio" disabled class="mini" checked /> Abc
+            </td>
+            <td>
+                <input type="radio" class="small" />
+                <input type="radio" class="small" checked /> Abc<br/>
+                <input type="radio" disabled class="small" />
+                <input type="radio" disabled class="small" checked /> Abc
+            </td>
+            <td>
+                <input type="radio" class="regular" />
+                <input type="radio" class="regular" checked /> Abc<br/>
+                <input type="radio" disabled class="regular" />
+                <input type="radio" disabled class="regular" checked /> Abc
+            </td>
+            <td>
+                <input type="radio" class="big" />
+                <input type="radio" class="big" checked /> Abc<br/>
+                <input type="radio" disabled class="big" />
+                <input type="radio" disabled class="big" checked /> Abc
+            </td>
+        </tr>
+    </tbody>
+<table>
+<script>
+    for (var i = 1; i <= 10; ++i )
+        document.getElementById("ci" + i).indeterminate = true;
+</script>
+
+
+
+<h2 id="section-file-input">File input</h2>
+<p>WHATWG spec:
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/number-state.html#file-upload-state"><code>&lt;input type="file"&gt;</code></a>
+</p>
+<table>
+    <tbody>
+        <tr>
+            <td><code>&lt;input type="file" /&gt;</code></td>
+            <td><input type="file" /></td>
+        </tr>
+        <tr>
+            <td>+ <code>disabled</code></td>
+            <td><input type="file" disabled /></td>
+        </tr>
+        <tr>
+            <td>+ <code>multiple</code></td>
+            <td><input type="file" multiple /></td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Rendering</h3>
+<table>
+    <thead>
+        <tr><th></th><th>"Tiny" (7px)</th><th>Mini (9px)</th></tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>&lt;input type="file"&gt;</code><br/
+                + <code>disabled</code><br/>
+                + <code>multiple</code></td>
+            <td>
+                <input type="file" class="tiny" /><br/>
+                <input type="file" disabled class="tiny" /><br/>
+                <input type="file" multiple class="tiny" /><br/>
+            </td>
+            <td>
+                <input type="file" class="mini" /><br/>
+                <input type="file" disabled class="mini" /><br/>
+                <input type="file" multiple class="mini" /><br/>
+            </td>
+        </tr>
+        <tr>
+            <th></th><th>Small (11px)</th><th>Regular (13px)</th>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="file" class="small" /><br/>
+                <input type="file" disabled class="small" /><br/>
+                <input type="file" multiple class="small" /><br/>
+            </td>
+            <td>
+                <input type="file" class="regular" /><br/>
+                <input type="file" disabled class="regular" /><br/>
+                <input type="file" multiple class="regular" /><br/>
+            </td>
+        </tr>
+        <tr>
+            <th></th><th>"Big" (16px)</th><th></th>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="file" class="big" /><br/>
+                <input type="file" disabled class="big" /><br/>
+                <input type="file" multiple class="big" /><br/>
+            </td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+<h2 id="section-select">Select controls and option groups</h2>
+<p>WHATWG specs:
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-button-element.html#the-select-element">&lt;select&gt;</a> |
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-button-element.html#the-option-element">&lt;option&gt;</a> |
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-button-element.html#the-optgroup-element">&lt;optgroup&gt;</a>
+</p>
+
+<table>
+    <tbody>
+        <tr>
+            <td><code>&lt;select&gt;</code><br />
+                + <code>&lt;option&gt;</code>s</td>
+            <td><select></select>
+                <select>
+                    <option>Choice 1</option>
+                    <option>Choice 2</option>
+                    <option>Choice 3</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;option disabled&gt;</code>
+            </td>
+            <td>
+                <select>
+                    <option disabled>Disabled option 1</option>
+                    <option>Option 1</option>
+                    <option disabled>Disabled option 2</option>
+                    <option>Option 2</option>
+                    <option disabled>Disabled option 3</option>
+                    <option>Option 3</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>+ <code>selected</code> on second element</td>
+            <td><select>
+                    <option>Choice 1</option>
+                    <option selected>Choice 2</option>
+                    <option>Choice 3</option>
+                </select></td>
+        </tr>
+        <tr>
+            <td>+ script turns selected index to -1 (nothing selected)</td>
+            <td><select id="selectSelectedIndexNone">
+                    <option>Choice 1</option>
+                    <option>Choice 2</option>
+                    <option>Choice 3</option>
+                </select>
+                <script>
+                    document.getElementById("selectSelectedIndexNone").selectedIndex = -1;
+                </script>
+            </td>
+        </tr>
+        <tr>
+            <td>+ <code>size</code><br />
+                + <code>size</code> + <code>&lt;option&gt;</code>s<br />
+                </td>
+            <td><select size=5></select>
+                <select size=5>
+                    <option>Choice 1</option>
+                    <option>Choice 2</option>
+                    <option>Choice 3</option>
+                    <option>Choice 4</option>
+                    <option>Choice 5</option>
+                    <option>Choice 6</option>
+                    <option>Choice 7</option>
+                    <option>Choice 8</option>
+                    <option>Choice 9</option>
+                    <option>Choice 10</option>
+                    <option>Choice 11</option>
+                    <option>Choice 12</option>
+                    <option>Choice 13</option>
+                    <option>Choice 14</option>
+                    <option>Choice 15</option>
+                    <option>Choice 16</option>
+                    <option>Choice 17</option>
+                    <option>Choice 18</option>
+                    <option>Choice 19</option>
+                    <option>Choice 20</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>+ <code>multiple</code><br />
+                + <code>multiple</code> + <code>&lt;option&gt;</code>s<br />
+                + <code>multiple</code> + <code>&lt;option&gt;</code>s + <code>size</code><br />
+                </td>
+            <td><select multiple></select>
+                <select multiple>
+                    <option>Choice 1</option>
+                    <option>Choice 2</option>
+                    <option>Choice 3</option>
+                </select>
+                <select multiple size=5>
+                    <option>Choice 1</option>
+                    <option>Choice 2</option>
+                    <option>Choice 3</option>
+                    <option>Choice 4</option>
+                    <option>Choice 5</option>
+                    <option>Choice 6</option>
+                    <option>Choice 7</option>
+                    <option>Choice 8</option>
+                    <option>Choice 9</option>
+                    <option>Choice 10</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>+ <code>multiple</code> + <code>&lt;option [disabled] [selected]&gt;</code></td>
+            <td><select multiple>
+                    <option selected>Default Selected Choice 1</option>
+                    <option>Choice 2</option>
+                    <option selected>Default Selected Choice 3</option>
+                    <option>Choice 4</option>
+                    <option selected disabled>Default Selected Disabled Choice 5</option>
+                    <option>Choice 6</option>
+                    <option disabled>Disabled Choice 7</option>
+                    <option>Choice 8</option>
+                    <option>Choice 9</option>
+                    <option>Choice 10</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Placeholder option:<br/>
+                + <code>required</code> + <code>size=1</code> (either explicitly or implicitly) + <code>&lt;option value=""&gt; + <code>&lt;option&gt;</code>s</code>
+            </td>
+            <td>
+                <select required size=1>
+                    <option value="">Select placeholder</option>
+                    <option value=1>Choice 1</option>
+                    <option value=2>Choice 2</option>
+                    <option value=3>Choice 3</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>+ empty <code>&lt;optgroup&gt;</code><br />
+                * (no <code>multiple</code>, <code>multiple</code>)
+            </td>
+            <td><select>
+                    <optgroup label="Empty group"></optgroup>
+                </select>
+                <select multiple>
+                    <optgroup label="Empty group"></optgroup>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;optgroup&gt;</code> + <code>&lt;option&gt;</code>s<br/>
+                * (no <code>multiple</code>, <code>multiple</code>)
+            </td>
+            <td><select>
+                    <optgroup label="Group 1">
+                        <option>Choice 1</option>
+                        <option>Choice 2</option>
+                        <option>Choice 3</option>
+                    </optgroup>
+                    <optgroup label="Group 2">
+                        <option>Choice 1</option>
+                        <option>Choice 2</option>
+                        <option>Choice 3</option>
+                    </optgroup>
+                </select>
+                <select multiple>
+                    <optgroup label="Group 1">
+                        <option>Choice 1</option>
+                        <option>Choice 2</option>
+                        <option>Choice 3</option>
+                    </optgroup>
+                    <optgroup label="Group 2">
+                        <option>Choice 1</option>
+                        <option>Choice 2</option>
+                        <option>Choice 3</option>
+                    </optgroup>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;optgroup disabled&gt;</code> + <code>&lt;option&gt;</code>s<br/>
+                * (no <code>multiple</code>, <code>multiple</code>)
+            </td>
+            <td><select>
+                    <optgroup label="Group 1" disabled>
+                        <option>Choice 1</option>
+                        <option>Choice 2</option>
+                        <option>Choice 3</option>
+                    </optgroup>
+                </select>
+                <select multiple>
+                    <optgroup label="Group 1" disabled>
+                        <option>Choice 1</option>
+                        <option>Choice 2</option>
+                        <option>Choice 3</option>
+                    </optgroup>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>+ nested <code>&lt;optgroup&gt;</code>s [ILLEGAL]<br/>
+                * (no <code>multiple</code>, <code>multiple</code>)
+            </td>
+            <td>
+                <select>
+                        <optgroup label="Group 1">
+                        <option>Group 1, choice 1</option>
+                        <optgroup label="Nested Group 2">
+                            <option>Nested Group 2, choice 1</option>
+                            <option>Nested Group 2, choice 2</option>
+                            <option>Nested Group 2, choice 3</option>
+                        </optgroup>
+                        <option>Group 1, choice 2</option>
+                        <option>Group 1, choice 3</option>
+                    </optgroup>
+                </select>
+                <select multiple>
+                    <optgroup label="Group 1">
+                        <option>Group 1, choice 1</option>
+                        <optgroup label="Nested Group 2">
+                            <option>Nested Group 2, choice 1</option>
+                            <option>Nested Group 2, choice 2</option>
+                            <option>Nested Group 2, choice 3</option>
+                        </optgroup>
+                        <option>Group 1, choice 2</option>
+                        <option>Group 1, choice 3</option>
+                    </optgroup>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>+ <code>disabled</code><br/>
+                + <code>disabled</code> + <code>&lt;option&gt;</code>s<br/>
+                * (no <code>multiple</code>, <code>multiple</code>)
+            </td>
+            <td>
+                <select disabled></select>
+                <select disabled>
+                    <option>Choice 1</option>
+                    <option>Choice 2</option>
+                    <option>Choice 3</option>
+                    <option>Choice 4</option>
+                    <option>Choice 5</option>
+                </select>
+                <select multiple disabled></select>
+                <select multiple disabled>
+                    <option>Choice 1</option>
+                    <option>Choice 2</option>
+                    <option>Choice 3</option>
+                    <option>Choice 4</option>
+                    <option>Choice 5</option>
+                </select>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Rendering</h3>
+<table>
+    <thead>
+        <tr><th></th><th>"Tiny" (7px)</th><th>Mini (9px)</th><th>Small (11px)</th><th>Regular (13px)</th><th>"Big" (16px)</th></tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>&lt;select&gt;</code></td>
+            <td>
+                <select class="tiny"><option>Option 1</option><option>Option 2</option></select>
+                <select disabled class="tiny"><option>Option 1</option><option>Option 2</option></select>
+            </td>
+            <td>
+                <select class="mini"><option>Option 1</option><option>Option 2</option></select>
+                <select disabled class="mini"><option>Option 1</option><option>Option 2</option></select>
+            </td>
+            <td>
+                <select class="small"><option>Option 1</option><option>Option 2</option></select>
+                <select disabled class="small"><option>Option 1</option><option>Option 2</option></select>
+            </td>
+            <td>
+                <select class="regular"><option>Option 1</option><option>Option 2</option></select>
+                <select disabled class="regular"><option>Option 1</option><option>Option 2</option></select>
+            </td>
+            <td>
+                <select class="big"><option>Option 1</option><option>Option 2</option></select>
+                <select disabled class="big"><option>Option 1</option><option>Option 2</option></select>
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;select size&gt;</code></td>
+            <td>
+                <select size=5 class="tiny"><option>Option 1</option><option>Option 2</option></select>
+                <select disabled size=5 class="tiny"><option>Option 1</option><option>Option 2</option></select>
+            </td>
+            <td>
+                <select size=5 class="mini"><option>Option 1</option><option>Option 2</option></select>
+                <select disabled size=5 class="mini"><option>Option 1</option><option>Option 2</option></select>
+            </td>
+            <td>
+                <select size=5 class="small"><option>Option 1</option><option>Option 2</option></select>
+                <select disabled size=5 class="small"><option>Option 1</option><option>Option 2</option></select>
+            </td>
+            <td>
+                <select size=5 class="regular"><option>Option 1</option><option>Option 2</option></select>
+                <select disabled size=5 class="regular"><option>Option 1</option><option>Option 2</option></select>
+            </td>
+            <td>
+                <select size=5 class="big"><option>Option 1</option><option>Option 2</option></select>
+                <select disabled size=5 class="big"><option>Option 1</option><option>Option 2</option></select>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+<h2 id="section-textarea">Text area control</h2>
+<p>WHATWG spec: <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-button-element.html#the-textarea-element"><code>&lt;textarea&gt;</code></a></p>
+
+<table>
+    <tbody>
+        <tr>
+            <td><code>&lt;textarea&gt;&lt;/textarea&gt;</code></td>
+            <td><textarea></textarea></td>
+        </tr>
+        <tr>
+            <td>+ <code>placeholder</code></td>
+            <td><textarea placeholder="Text area placeholder"></textarea></td>
+        </tr>
+        <tr>
+            <td>+ <code>dir="rtl"</code></td>
+            <td><textarea dir="rtl"></textarea></td>
+        </tr>
+        <tr>
+            <td>+ <code>rows=4</code><br />
+                + <code>cols=10</code>
+            </td>
+            <td>
+<textarea rows="4">1
+2
+3
+4
+5
+6
+7
+8
+9
+10</textarea> <textarea cols="10">12345678901234567890</textarea></td>
+        </tr>
+        <tr>
+            <td>+ <code>wrap="soft"</code><br/>
+                + <code>wrap="hard"</code> + <code>cols</code><br />
+                + <code>wrap="off"</code> [NOT STANDARD]
+            </td>
+            <td>
+<textarea wrap="soft">
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Nam porta, velit at consequat rutrum, lorem lacus fringilla nulla, a consequat purus dui ut ipsum.
+</textarea>
+<textarea wrap="hard" cols=20>
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Nam porta, velit at consequat rutrum, lorem lacus fringilla nulla, a consequat purus dui ut ipsum.
+</textarea>
+<textarea wrap="off">
+Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Nam porta, velit at consequat rutrum, lorem lacus fringilla nulla, a consequat purus dui ut ipsum.
+</textarea>
+            </td>
+        </tr>
+        <tr>
+            <td>+ <code>maxlength=20</code> + overflow text
+            </td>
+            <td>
+<textarea maxlength=20>
+123456789012345678901234567890
+</textarea>
+            </td>
+        </tr>
+        <tr>
+            <td>+ content + <code>disabled</code></td>
+            <td><textarea disabled>This is a disabled text area.</textarea></td>
+        </tr>
+        <tr>
+            <td>+ content + <code>readonly</code></td>
+            <td><textarea readonly>This is a readonly text area.</textarea></td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Rendering</h3>
+<table>
+    <thead>
+        <tr><th></th><th>"Tiny" (7px)</th><th>Mini (9px)</th><th>Small (11px)</th></tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>&lt;textarea&gt;</code><br/>
+                + <code>readonly</code><br/>
+                + <code>disabled</code></td>
+            <td>
+                <textarea class="tiny">Text area</textarea>
+                <textarea readonly class="tiny">Text area</textarea>
+                <textarea disabled class="tiny">Text area</textarea>
+            </td>
+            <td>
+                <textarea class="mini">Text area</textarea>
+                <textarea readonly class="mini">Text area</textarea>
+                <textarea disabled class="mini">Text area</textarea>
+            </td>
+            <td>
+                <textarea class="small">Text area</textarea>
+                <textarea readonly class="small">Text area</textarea>
+                <textarea disabled class="small">Text area</textarea>
+            </td>
+        </tr>
+        <tr>
+            <th></th><th>Regular (13px)</th><th>"Big" (16px)</th><th></th>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <textarea class="regular">Text area</textarea>
+                <textarea readonly class="regular">Text area</textarea>
+                <textarea disabled class="regular">Text area</textarea>
+            </td>
+            <td>
+                <textarea class="big">Text area</textarea>
+                <textarea readonly class="big">Text area</textarea>
+                <textarea disabled class="big">Text area</textarea>
+            </td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+<h2 id="section-label">Labels</h2>
+<p>WHATWG spec:
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/forms.html#the-label-element"><code>&lt;label&gt;</code></a> |
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/forms.html#category-label">labelable elements</a>
+</p>
+
+<table>
+    <tbody>
+        <tr>
+            <td>[<br/>
+                <code>&lt;label for&gt;&lt;/label&gt;</code>{element},<br />
+                <code>&lt;label&gt;</code>{element}<code>&lt;/label&gt;</code><br />
+                ]
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;button&gt;</code></td>
+            <td><label for="label-button">Label for referenced button:</label> <button id="label-button">Button!</button>
+                <label>Label for inline button: <button>Button!</button></label></td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;input type="text"&gt;</code></td>
+            <td><label for="label-input-text">Label for referenced text control:</label> <input type="text" id="label-input-text" />
+                <label>Label for inline text control: <input type="text" /></label></td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;input type="search"&gt;</code></td>
+            <td><label for="label-input-search">Label for referenced search control:</label> <input type="search" id="label-input-search" />
+                <label>Label for inline search control: <input type="search" /></label></td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;input type="tel"&gt;</code></td>
+            <td><label for="label-input-tel">Label for referenced telephone control:</label> <input type="tel" id="label-input-tel" />
+                <label>Label for inline telephone control: <input type="tel" /></label></td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;input type="url"&gt;</code></td>
+            <td><label for="label-input-url">Label for referenced URL control:</label> <input type="url" id="label-input-url" />
+                <label>Label for inline URL control: <input type="url" /></label></td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;input type="email"&gt;</code></td>
+            <td><label for="label-input-email">Label for referenced email control:</label> <input type="email" id="label-input-email">
+                <label>Label for inline email control: <input type="email" /></label></td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;input type="password"&gt;</code></td>
+            <td><label for="label-input-password">Label for referenced password control:</label> <input type="password" id="label-input-password" />
+                <label>Label for inline password control: <input type="password" /></label></td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;input type="datetime"&gt;</code></td>
+            <td><label for="label-input-datetime">Label for referenced datetime control:</label> <input type="datetime" id="label-input-datetime" />
+                <label>Label for inline datetime control: <input type="datetime" /></label></td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;input type="datetime-local"&gt;</code></td>
+            <td><label for="label-input-datetime-local">Label for referenced local datetime control:</label> <input type="datetime-local" id="label-input-datetime-local" />
+                <label>Label for inline local datetime control: <input type="datetime-local" /></label></td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;input type="month"&gt;</code></td>
+            <td><label for="label-input-month">Label for referenced month control:</label> <input type="month" id="label-input-month" />
+                <label>Label for inline month control: <input type="month" /></label></td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;input type="week"&gt;</code></td>
+            <td><label for="label-input-week">Label for referenced week control:</label> <input type="week" id="label-input-week" />
+                <label>Label for inline week control: <input type="week" /></label></td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;input type="time"&gt;</code></td>
+            <td><label for="label-input-time">Label for referenced time control:</label> <input type="time" id="label-input-time" />
+                <label>Label for inline time control: <input type="time" /></label></td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;input type="number"&gt;</code></td>
+            <td><label for="label-input-number">Label for referenced number control:</label> <input type="number" id="label-input-number" />
+                <label>Label for inline number control: <input type="number" /></label></td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;input type="range"&gt;</code></td>
+            <td><label for="label-input-range">Label for referenced range control:</label> <input type="range" id="label-input-range" />
+                <label>Label for inline range control: <input type="range" /></label></td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;input type="color"&gt;</code></td>
+            <td><label for="label-input-color">Label for referenced color control:</label> <input type="color" id="label-input-color" />
+                <label>Label for inline color control: <input type="color" /></label></td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;input type="checkbox"&gt;</code></td>
+            <td><label for="label-input-checkbox">Label for referenced checkbox control:</label> <input type="checkbox" id="label-input-checkbox" />
+                <label>Label for inline checkbox control: <input type="checkbox" /></label></td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;input type="radio"&gt;</code></td>
+            <td><label for="label-input-radio">Label for referenced radio control:</label> <input type="radio" id="label-input-radio" />
+                <label>Label for inline radio control: <input type="radio" /></label></td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;input type="file"&gt;</code></td>
+            <td><label for="label-input-file">Label for referenced file control:</label> <input type="file" id="label-input-file" />
+                <label>Label for inline file control: <input type="file" /></label></td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;input type="submit"&gt;</code></td>
+            <td><label for="label-input-submit">Label for referenced submit control:</label> <input type="submit" id="label-input-submit" />
+                <label>Label for inline submit control: <input type="submit" /></label></td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;input type="image"&gt;</code></td>
+            <td><label for="label-input-image">Label for referenced image control:</label> <input type="image" id="label-input-image" />
+                <label>Label for inline image control: <input type="image" /></label></td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;input type="reset"&gt;</code></td>
+            <td><label for="label-input-reset">Label for referenced reset control:</label> <input type="reset" id="label-input-reset" />
+                <label>Label for inline reset control: <input type="reset" /></label></td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;input type="button"&gt;</code></td>
+            <td><label for="label-input-button">Label for referenced button control:</label> <input type="button" id="label-input-button" />
+                <label>Label for inline button control: <input type="button" /></label></td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;keygen&gt;</code></td>
+            <td><label for="label-keygen">Label for referenced keygen:</label> <keygen id="label-keygen" />
+                <label>Label for inline keygen: <keygen /></label></td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;meter&gt;</code></td>
+            <td><label for="label-meter">Label for referenced meter:</label> <meter id="label-meter" value=".3">.3</meter>
+                <label>Label for inline meter: <meter value=.3>.3</meter></label></td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;output&gt;</code></td>
+            <td><label for="label-output">Label for referenced output:</label> <output id="label-output">Here is some output.</output>
+                <label>Label for inline output: <output>Here is some output.</output></label></td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;progress&gt;</code></td>
+            <td><label for="label-progress">Label for referenced progress:</label> <progress id="label-progress">Please wait...</progress>
+                <label>Label for inline progress: <progress value=.3>30% done</progress></label></td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;select&gt;</code><br />
+                + <code>&lt;select multiple&gt;</code>
+            </td>
+            <td><label for="label-select">Label for referenced select:</label>
+                <select id="label-select">
+                    <option>Choice 1</option>
+                    <option>Choice 2</option>
+                    <option>Choice 3</option>
+                </select>
+                <label>Label for inline select:
+                    <select>
+                        <option>Choice 1</option>
+                        <option>Choice 2</option>
+                        <option>Choice 3</option>
+                    </select>
+                </label>
+                <br/>
+                <label for="label-select-multiple">Label for referenced multiple select:</label>
+                <select id="label-select-multiple" multiple>
+                    <option>Choice 1</option>
+                    <option>Choice 2</option>
+                    <option>Choice 3</option>
+                    <option>Choice 4</option>
+                    <option>Choice 5</option>
+                    <option>Choice 6</option>
+                </select>
+                <label>Label for inline multiple select:
+                    <select multiple>
+                        <option>Choice 1</option>
+                        <option>Choice 2</option>
+                        <option>Choice 3</option>
+                        <option>Choice 4</option>
+                        <option>Choice 5</option>
+                        <option>Choice 6</option>
+                    </select>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;textarea&gt;</code></td>
+            <td><label for="label-textarea">Label for referenced text area:</label> <textarea id="label-textarea"></textarea>
+                <label>Label for inline text area: <textarea></textarea></label></td>
+        </tr>
+        <tr>
+            <td>multiple <code>&lt;label&gt;</code>s for a given control</td>
+            <td><label for="label-1-checkbox">This label toggles a referenced checkbox.</label> <label><input type="checkbox" id="label-1-checkbox" /> This label toggles the same checkbox, which is inlined.</label></td>
+        </tr>
+        <tr>
+            <td><code>&lt;label&gt;</code> containing multiple inline controls</td>
+            <td>
+                <label>This label has 2 inline checkboxes. <input type="checkbox" /> <input type="checkbox" />
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+<h2 id="section-details">Details</h2>
+<p>WHATWG Spec: <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/interactive-elements.html#the-details-element"><code>&lt;details&gt;</code></a></p>
+
+<table>
+    <tbody>
+        <tr>
+            <td><code>&lt;details&gt;</code> with no <code>&lt;summary&gt;</code></td>
+            <td><details>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</details></td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;summary&gt;</code></td>
+            <td><details><summary>Summary of details</summary>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</details></td>
+        </tr>
+        <tr>
+            <td>+ <code>&lt;summary&gt;</code> in the middle of flow content</td>
+            <td><details>
+                Flow content prior to summary.
+                    <summary>Summary of this detail element</summary>
+                More flow content after the summary element.
+                </details>
+            </td>
+        </tr>
+        <tr>
+            <td>+ two <code>&lt;summary&gt;</code> elements</td>
+            <td><details>
+                    <summary>First summary of this detail element</summary>
+                    <summary>Second summary of this detail element</summary>
+                More flow content after the two summary elements
+                </details>
+            </td>
+        </tr>
+        <tr>
+            <td>+ embedded <code>&lt;details&gt;</code> element (hierarchical <code>&lt;details&gt;</code>)</td>
+            <td><details>
+                <summary>The summary of some details</summary>
+                 More details to come! Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    <details>
+                        <summary>The summary of more detailey details</summary>
+                        Even more detailey details: Nam porta, velit at consequat rutrum, lorem lacus fringilla nulla, a consequat purus dui ut ipsum.
+                    </details>
+                </details>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+<h2 id="section-meter">Meter</h2>
+<p>WHATWG spec:
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-button-element.html#the-meter-element"><code>&lt;meter&gt;</code></a>
+</p>
+<table>
+    <tbody>
+        <tr>
+            <td><code>&lt;meter /&gt;</code></td>
+            <td><meter></meter></td>
+        </tr>
+        <tr>
+            <td><code>&lt;meter value&gt;</code>content<code>&lt;/meter&gt;</code></td>
+            <td><meter value=.66>.66</meter></td>
+        </tr>
+        <tr>
+            <td>+ <code>min</code> + <code>max</code></td>
+            <td><meter value=7 min=1 max=10>7 between 1 and 10</meter></td>
+        </tr>
+        <tr>
+            <td>+ <code>low</code> + <code>high</code> + <code>optimum</code></td>
+            <td><meter value=.66 low=.25 high=.75 optimum=.5>66%, low 25%, high 75%, optimum 50%</meter></td>
+        </tr>
+        <tr>
+            <td>+ <code>min</code> + <code>max</code> + <code>title</code> for units</td>
+            <td><meter min=0 max=20 value=12 title="centimeters">12cm</meter></td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+<h2 id="section-progress">Progress</h2>
+<p>WHATWG spec:
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-button-element.html#the-progress-element"><code>&lt;progress&gt;</code></a>
+</p>
+
+<table>
+    <tbody>
+        <tr>
+            <td><code>&lt;progress&gt;&lt;/progress&gt;</code><br/>
+                + small</td>
+            <td><progress></progress> <progress class="small"></progress></td>
+        </tr>
+        <tr>
+            <td>+ <code>value=.3</code><br />
+                + <code>value</code> + content<br />
+                * (regular, small)
+            </td>
+            <td><progress value=".3"></progress>
+                <progress value=".3"><span>30</span>% completed</progress>
+                <progress value=".3" class="small"></progress>
+                <progress value=".3" class="small"><span>30</span>% completed</progress>
+            </td>
+        </tr>
+        <tr>
+            <td>+ <code>value</code> + <code>max</code><br/>
+                * (regular, small)</td>
+            <td><progress value="30" max="100"></progress>
+                <progress value="30" max="100" class="small"></progress></td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+<h2 id="section-output">Output form element</h2>
+<p>WHATWG spec:
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-button-element.html#the-output-element"><code>&lt;output&gt;</code></a>
+</p>
+
+<table>
+    <tbody>
+        <tr>
+            <td><code>&lt;output&gt;</code> within <code>&lt;form&gt;</code></td>
+            <td><form onsubmit="return false" oninput="output1.value = output1a.valueAsNumber + output1b.valueAsNumber">
+                    <input name=output1a type=number step=any> +
+                    <input name=output1b type=number step=any> =
+                    <output name=output1></output>
+                </form>
+            </td>
+        </tr>
+        <tr>
+            <td>+ <code>defaultValue</code></td>
+            <td><form onsubmit="return false" oninput="output2.value = output2a.valueAsNumber + output2b.valueAsNumber">
+                    <input name=output2a type=number step=any> +
+                    <input name=output2b type=number step=any> =
+                    <output name=output2 defaultValue="sum"></output>
+                    <input type="reset" />
+                </form>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+<h2 id="section-av">Audio and video controls</h2>
+<p>WHATWG spec:
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#the-audio-element"><code>&lt;audio&gt;</code></a> |
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#the-video-element"><code>&lt;video&gt;</code></a>
+</p>
+
+<table>
+    <tbody>
+        <tr>
+            <td><code>&lt;audio controls&gt;</code> with embedded audio content</td>
+            <td>
+                <audio controls>
+                    <source src="http://www.pirateslovedaisies.com/audio/music/M-GameIntro3.mp3" />
+                    <source src="http://www.pirateslovedaisies.com/audio/music/M-GameIntro3.ogg" />
+                </audio>
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;video controls poster src&gt;</code></td>
+            <td>
+                <video controls poster="http://cdn.kaltura.org/apis/html5lib/kplayer-examples/media/bbb480.jpg" src="http://cdn.kaltura.org/apis/html5lib/kplayer-examples/media/bbb_trailer_iphone270P.m4v"></video>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+<h2 id="section-anchor">Anchor</h2>
+<p>WHATWG spec:
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/links.html#links-created-by-a-and-area-elements"><code>&lt;a&gt;</code></a>
+</p>
+<p>Microformats: <a href="http://microformats.org/wiki/existing-rel-values">Extensions on <code>rel</code></a></p>
+
+<table>
+    <tbody>
+        <tr>
+            <td><code>&lt;a rel&gt;</code>content<code>&lt;/a&gt;</code></td>
+            <td>
+                <a href="#section-anchor" rel="alternate">Link type <code>alternate</code>.</a>
+                <a href="#section-anchor" rel="author">Link type <code>author</code>.</a><br/>
+                <a href="#section-anchor" rel="bookmark">Link type <code>bookmark</code>.</a>
+                <a href="#section-anchor" rel="external">Link type <code>external</code>.</a><br/>
+                <a href="#section-anchor" rel="help">Link type <code>help</code>.</a>
+                <a href="#section-anchor" rel="license">Link type <code>license</code>.</a><br/>
+                <a href="#section-anchor" rel="next">Link type <code>next</code>.</a>
+                <a href="#section-anchor" rel="nofollow">Link type <code>nofollow</code>.</a><br/>
+                <a href="#section-anchor" rel="noreferrer">Link type <code>noreferrer</code>.</a>
+                <a href="#section-anchor" rel="prefetch">Link type <code>prefetch</code>.</a><br/>
+                <a href="#section-anchor" rel="prev">Link type <code>prev</code>.</a>
+                <a href="#section-anchor" rel="search">Link type <code>search</code>.</a><br/>
+                <a href="#section-anchor" rel="sidebar">Link type <code>sidebar</code>.</a>
+                <a href="#section-anchor" rel="tag">Link type <code>tag</code>.</a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+<h2 id="section-menu">Menus</h2>
+<p>WHATWG Spec: <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/interactive-elements.html#the-menu-element"><code>&lt;menu&gt;</code></a></p>
+<p>Only toolbar menus are considered interactive.  <code>type</code> attribute set to <code>list</code> or <code>context</code> are not.</p>
+<table>
+    <tbody>
+        <tr>
+            <td><code>&lt;menu type="toolbar"&gt;</code><br/>
+                Includes commands with <code>&lt;button&gt;</code>, <code>&lt;input type="button"&gt;</code>, and <code>&lt;a&gt;</code><br/>
+                Includes inner menus with <code>&lt;menu label&gt;</code> and <code>&lt;optgroup&gt;</code><br/>
+                Includes <code>&lt;hr /&gt;</code> and <code>&lt;option /&gt;</code> separators<br/>
+                
+            </td>
+            <td><menu type="toolbar">
+             <li><menu label="File">
+               <button type="button">New...</button>
+               <button type="button">Open...</button>
+               <hr />
+               <input type="button" value="Save" />
+               <input type="button" value="Save as..." />
+              </menu>
+             </li>
+             <li>
+              <optgroup label="Edit">
+               <button type="button">Copy</button>
+               <button type="button">Cut</button>
+               <button type="button">Paste</button>
+               <option value="" disabled>-</option>
+               <button type="button">Characters</button>
+              </optgroup>
+             </li>
+             <li>
+              <menu label="Help">
+               <li><a href="help.html">Help</a></li>
+               <li><a href="about.html">About</a></li>
+              </menu>
+             </li>
+            </menu>
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;menu type="toolbar"&gt;</code> with inner <code>&lt;input type="submit"&gt;</code> fallback if browser has no menu support</td>
+            <td><menu type="toolbar">
+              <label for="goto">Go to...</label>
+              <menu label="Go">
+               <select id="goto">
+                <option value="" selected="selected"> Select site: </option>
+                <option value="http://www.apple.com/"> Apple </option>
+                <option value="http://www.mozilla.org/"> Mozilla </option>
+                <option value="http://www.opera.com/"> Opera </option>
+               </select>
+               <span><input type="submit" value="Go"></span>
+              </menu>
+            </menu>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="section-keygen">Keygen</h2>
+<p>WHATWG Spec: <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-button-element.html#the-keygen-element"><code>&lt;keygen&gt;</code></a></p>
+<table>
+    <tbody>
+        <tr>
+            <td><code>&lt;keygen /&gt;</code></td>
+            <td><keygen /></td>
+        </tr>
+        <tr>
+            <td>+ <code>disabled</code></td>
+            <td><keygen disabled /></td>
+        </tr>
+        <tr>
+            <td>+ invalid <code>keytype</code> attribute</td>
+            <td><keygen keytype="customKeyType" /></td>
+        </tr>
+    </tbody>
+</table>
+<h2 id="section-object"><del>Object</del></h2>
+If usemap attribute is present
+<h2 id="section-embed"><del>Embed</del></h2>
+<h2 id="section-iframe"><del>Iframe</del></h2>
+</body>
+</html>

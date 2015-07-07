@@ -1,0 +1,20 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setAllowUniversalAccessFromFileURLs(false);
+    testRunner.setAllowFileAccessFromFileURLs(false);
+}
+</script>
+</head>
+<body>
+<iframe src="resources/xmlhttprequest-no-file-access-real.html"></iframe>
+<div id="results"></div>
+The child iframe cannot paste its textual results into this iframe because it
+is considered a different domain - that's the point of this test!
+Therefore, success is denoted by the child iframe calling notifyDone.
+The test will hang if something goes amiss with the access control checks.
+</body>
+</html>

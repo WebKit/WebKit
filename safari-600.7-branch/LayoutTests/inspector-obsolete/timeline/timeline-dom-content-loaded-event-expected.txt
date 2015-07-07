@@ -1,0 +1,15 @@
+Tests the DOM content loaded event.
+
+Page reloaded.
+MarkDOMContent Properties:
+{
+    counters : <object>
+    data : {
+        isMainFrame : true
+    }
+    frameId : <string>
+    startTime : <number>
+    type : "MarkDOMContent"
+    usedHeapSize : <number>
+}
+

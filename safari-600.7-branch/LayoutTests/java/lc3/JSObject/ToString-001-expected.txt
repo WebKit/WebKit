@@ -1,0 +1,48 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaScript Object to java.lang.String
+
+PASS dt.setStringObject( new String("JavaScript String Value")); dt.PUB_STRING +'' is stringValue
+PASS dt.setStringObject( new String("JavaScript String Value")); dt.getStringObject() +'' is stringValue
+FAIL java.lang.Class.forName("java.lang.String"): ReferenceError: Can't find variable: java
+PASS dt.setStringObject( new MyObject("JavaScript String Value")); dt.PUB_STRING +'' is stringValue
+PASS dt.setStringObject( new MyObject("JavaScript String Value")); dt.getStringObject() +'' is stringValue
+FAIL java.lang.Class.forName("java.lang.String"): ReferenceError: Can't find variable: java
+PASS dt.setStringObject( new Boolean(true)); dt.PUB_STRING +'' is "true"
+PASS dt.setStringObject( new Boolean(true)); dt.getStringObject() +'' is "true"
+FAIL java.lang.Class.forName("java.lang.String"): ReferenceError: Can't find variable: java
+PASS dt.setStringObject( new Boolean(false)); dt.PUB_STRING +'' is "false"
+PASS dt.setStringObject( new Boolean(false)); dt.getStringObject() +'' is "false"
+FAIL java.lang.Class.forName("java.lang.String"): ReferenceError: Can't find variable: java
+PASS dt.setStringObject( new Object()); dt.PUB_STRING +'' is "[object Object]"
+PASS dt.setStringObject( new Object()); dt.getStringObject() +'' is "[object Object]"
+FAIL java.lang.Class.forName("java.lang.String"): ReferenceError: Can't find variable: java
+PASS dt.setStringObject( new Number(0)); dt.PUB_STRING +'' is "0"
+PASS dt.setStringObject( new Number(0)); dt.getStringObject() +'' is "0"
+FAIL java.lang.Class.forName("java.lang.String"): ReferenceError: Can't find variable: java
+PASS dt.setStringObject( new Number(NaN)); dt.PUB_STRING +'' is "NaN"
+PASS dt.setStringObject( new Number(NaN)); dt.getStringObject() +'' is "NaN"
+FAIL java.lang.Class.forName("java.lang.String"): ReferenceError: Can't find variable: java
+PASS dt.setStringObject( new Number(Infinity)); dt.PUB_STRING +'' is "Infinity"
+PASS dt.setStringObject( new Number(Infinity)); dt.getStringObject() +'' is "Infinity"
+FAIL java.lang.Class.forName("java.lang.String"): ReferenceError: Can't find variable: java
+PASS dt.setStringObject( new Number(-Infinity)); dt.PUB_STRING +'' is "-Infinity"
+PASS dt.setStringObject( new Number(-Infinity)); dt.getStringObject() +'' is "-Infinity"
+FAIL java.lang.Class.forName("java.lang.String"): ReferenceError: Can't find variable: java
+PASS dt.setStringObject( new Array(1,2,3)); dt.PUB_STRING +'' is "1,2,3"
+PASS dt.setStringObject( new Array(1,2,3)); dt.getStringObject() +'' is "1,2,3"
+FAIL java.lang.Class.forName("java.lang.String"): ReferenceError: Can't find variable: java
+PASS dt.setStringObject( MyObject ); dt.PUB_STRING +'' is MyObject.toString()
+PASS dt.setStringObject( MyObject ); dt.getStringObject() +'' is MyObject.toString()
+FAIL java.lang.Class.forName("java.lang.String"): ReferenceError: Can't find variable: java
+FAIL dt.setStringObject( THIS ); dt.PUB_STRING +'' should be [object global]. Was [object Window].
+FAIL dt.setStringObject( THIS ); dt.getStringObject() +'' should be [object global]. Was [object Window].
+FAIL java.lang.Class.forName("java.lang.String"): ReferenceError: Can't find variable: java
+PASS dt.setStringObject( Math ); dt.PUB_STRING +'' is "[object Math]"
+PASS dt.setStringObject( Math ); dt.getStringObject() +'' is "[object Math]"
+FAIL java.lang.Class.forName("java.lang.String"): ReferenceError: Can't find variable: java
+PASS dt.setStringObject( MyFunction ); dt.PUB_STRING +'' is "MyFunction"
+PASS dt.setStringObject( MyFunction ); dt.getStringObject() +'' is "MyFunction"
+FAIL java.lang.Class.forName("java.lang.String"): ReferenceError: Can't find variable: java
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

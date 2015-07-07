@@ -1,0 +1,4 @@
+This test that the load event is fired for XMLHttpRequestUpload objects.
+
+PASS: load event fired on XMLHttpRequestUpload.
+

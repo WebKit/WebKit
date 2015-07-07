@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="img-src *.127.0.0.1:8000; script-src 'unsafe-inline'">
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<img src="../resources/abe.png" onload="alert(this.width == 76 ? 'PASS' : 'FAIL')">
+</body>
+</html>

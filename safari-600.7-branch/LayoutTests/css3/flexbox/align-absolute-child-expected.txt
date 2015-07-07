@@ -1,0 +1,15 @@
+PASS beforePosition[key] is afterPosition[key]
+PASS beforePosition[key] is afterPosition[key]
+PASS beforePosition[key] is afterPosition[key]
+PASS beforePosition[key] is afterPosition[key]
+PASS beforePosition[key] is afterPosition[key]
+PASS beforePosition[key] is afterPosition[key]
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS
+PASS

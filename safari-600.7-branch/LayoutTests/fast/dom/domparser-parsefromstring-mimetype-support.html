@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.fail {
+    color: red;
+    font-weight: bold;
+}
+
+.pass {
+    color: green;
+    font-weight: bold;
+}
+</style>
+<script>
+var htmlContent =
+                "<html>" +
+                    "<head>" +
+                        "<noscript>" +
+                            "Scripts must be disabled for the document created using DOMParser.parseFromString()" +
+                        "</noscript>" +
+                    "</head>" +
+                    "<body>" +
+                        "<div id='text'>Sample text content</div>" +
+                        "<script>document.getElementById('text').textContent = 'Modified text content';<\/script>" +
+                    "</body>" +
+                "</html>";
+
+var xmlContent =
+                "<root>" +
+                "</root>";
+
+
+var xhtmlContent =
+                "<!DOCTYPE html>" +
+                "<html xmlns=\"http://www.w3.org/1999/xhtml\">" +
+                    "<head>" +
+                        "<title>Title of document</title>" +
+                        "<noscript>" +
+                            "Scripts must be disabled for the document created using DOMParser.parseFromString()" +
+                        "</noscript>" +
+                    "</head>" +
+                    "<body>" +
+                        "<div id='text'></div>" +
+                        "<script>document.getElementById('text').textContent = 'Newly added text';<\/script>" +
+                    "</body>" +
+                "</html>";
+
+var svgImageContent =
+                "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">" +
+                    "<circle cx=\"100\" cy=\"50\" r=\"40\" stroke=\"black\" stroke-width=\"2\" fill=\"red\"/>" +
+                "</svg>";
+
+var xslContent =
+                "<?xml version=\"1.0\"?>" +
+                "<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">" +
+                    "<xsl:template match=\"/\">" +
+                        "<html>" +
+                            "<head>" +
+                                "<title>XML XSL Example</title>" +
+                                "<style type=\"text/css\">" +
+                                    "body" +
+                                    "{" +
+                                        "background-color:red;" +
+                                    "}" +
+                                "</style>" +
+                            "</head>" +
+                            "<body>" +
+                                "<xsl:apply-templates/>" +
+                            "</body>" +
+                        "</html>" +
+                    "</xsl:template>" +
+                    "" +
+                    "<xsl:template match=\"tutorial\">" +
+                        "<span><xsl:value-of select=\"name\"/></span>" +
+                        "<span><xsl:value-of select=\"url\"/></span>" +
+                    "</xsl:template>" +
+                "</xsl:stylesheet>";
+
+var count = 0;
+
+function shouldSupport(content, mimeType)
+{
+    var description = document.createElement("div");
+    description.innerHTML = (++count) + ". Should support mime-type = \"" + mimeType + "\"";
+    document.body.appendChild(description);
+
+    var parser = new DOMParser();
+    try {
+        var resultDocument = parser.parseFromString(content, mimeType);
+        var content = document.createElement("div");
+        var docElement = resultDocument.documentElement;
+        if (mimeType.lastIndexOf("xml") === mimeType.length - 3)
+            content.innerHTML = "Root element: " + docElement.tagName;
+        else
+            content.innerHTML = "HTML content:<br>" + docElement.innerHTML;
+        document.body.appendChild(content);
+
+        var result = document.createElement("div");
+        result.className = "pass";
+        result.textContent = "PASS";
+        document.body.appendChild(result);
+    } catch (exception) {
+        var result = document.createElement("div");
+        result.className = "fail";
+        result.textContent = "FAIL";
+        document.body.appendChild(result);
+    }
+    document.body.appendChild(document.createElement("br"));
+}
+
+function shouldNotSupport(content, mimeType)
+{
+    var description = document.createElement("div");
+    description.innerHTML = (++count) + ". Should NOT support mime-type = \"" + mimeType + "\"";
+    document.body.appendChild(description);
+
+    var parser = new DOMParser();
+    try {
+        var resultDocument = parser.parseFromString(content, mimeType);
+        var result = document.createElement("div");
+        result.className = "fail";
+        result.textContent = "FAIL";
+        document.body.appendChild(result);
+    } catch (exception) {
+        var result = document.createElement("div");
+        result.className = "pass";
+        result.textContent = "PASS";
+        document.body.appendChild(result);
+    }
+    document.body.appendChild(document.createElement("br"));
+}
+
+function runTest()
+{
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    shouldSupport(htmlContent, "text/html");
+    shouldSupport(xmlContent, "text/xml");
+    shouldSupport(xmlContent, "application/xml");
+    shouldSupport(xhtmlContent, "application/xhtml+xml");
+    shouldSupport(svgImageContent, "image/svg+xml");
+    shouldNotSupport(xslContent, "text/xsl");
+    shouldNotSupport(xmlContent, "text/dummy+xml");
+    shouldNotSupport(xmlContent, "text/XML");
+    shouldNotSupport(htmlContent, "TEXT/html");
+}
+</script>
+</head>
+<body onload="runTest();">
+<p>This tests DOMParser supports creating Document for HTML content with mime-type "text/html".</p>
+</body>
+</html>

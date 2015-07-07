@@ -1,0 +1,67 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x540
+  RenderBlock {html} at (0,0) size 800x540
+    RenderBody {body} at (48,30) size 752x502
+      RenderBlock {div} at (0,0) size 752x502
+        RenderBlock {h1} at (0,0) size 692x31
+          RenderText {#text} at (0,0) size 216x30
+            text run at (0,0) width 216: "rightsizing to box"
+        RenderBlock {h4} at (0,31) size 752x16
+          RenderText {#text} at (0,0) size 138x16
+            text run at (0,0) width 138: "WICD Core 1.0 #20-1"
+        RenderBlock {div} at (0,66) size 176x63 [bgcolor=#FF0000]
+          RenderImage {object} at (0,0) size 176x62
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock (anonymous) at (0,128) size 752x19
+          RenderBR {br} at (0,0) size 0x17
+        RenderBlock {div} at (0,146) size 176x63 [bgcolor=#FF0000]
+          RenderEmbeddedObject {object} at (0,0) size 176x62
+            layer at (0,0) size 176x62
+              RenderView at (0,0) size 176x62
+            layer at (0,0) size 176x62
+              RenderSVGRoot {svg} at (0,0) size 176x62
+                RenderSVGRect {rect} at (0,0) size 176x62 [fill={[type=SOLID] [color=#CCCCCC]}] [x=0.00] [y=0.00] [width=176.00] [height=62.00]
+                RenderSVGRect {rect} at (2,2) size 174x60 [fill={[type=SOLID] [color=#333333]}] [x=2.00] [y=2.00] [width=174.00] [height=60.00]
+                RenderSVGRect {rect} at (2,2) size 172x58 [fill={[type=SOLID] [color=#FFFFFF]}] [x=2.00] [y=2.00] [width=172.00] [height=58.00]
+                RenderSVGRect {rect} at (86,2) size 88x58 [fill={[type=SOLID] [color=#FFCC33]}] [x=86.00] [y=2.00] [width=88.00] [height=58.00]
+                RenderSVGText {text} at (46,10) size 80x46 contains 1 chunk(s)
+                  RenderSVGInlineText {#text} at (0,0) size 80x46
+                    chunk 1 (middle anchor) text run 1 at (46.00,46.00) startOffset 0 endOffset 3 width 80.00: "SVG"
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock {p} at (0,211) size 692x33
+          RenderText {#text} at (0,0) size 684x32
+            text run at (0,0) width 684: "Above there must be a GIF- and a SVG-image visible. Both are referenced by an object element (width:100%, no"
+            text run at (0,16) width 481: "defined height) and each nested into a div element (width:176px, height:62px)."
+        RenderBlock {div} at (0,248) size 176x63 [bgcolor=#FF0000]
+          RenderImage {object} at (0,0) size 176x62
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock (anonymous) at (0,310) size 752x19
+          RenderBR {br} at (0,0) size 0x17
+        RenderBlock {div} at (0,328) size 176x63 [bgcolor=#FF0000]
+          RenderEmbeddedObject {object} at (0,0) size 176x62
+            layer at (0,0) size 176x62
+              RenderView at (0,0) size 176x62
+            layer at (0,0) size 176x62
+              RenderSVGRoot {svg} at (0,0) size 176x62
+                RenderSVGRect {rect} at (0,0) size 176x62 [fill={[type=SOLID] [color=#CCCCCC]}] [x=0.00] [y=0.00] [width=176.00] [height=62.00]
+                RenderSVGRect {rect} at (2,2) size 174x60 [fill={[type=SOLID] [color=#333333]}] [x=2.00] [y=2.00] [width=174.00] [height=60.00]
+                RenderSVGRect {rect} at (2,2) size 172x58 [fill={[type=SOLID] [color=#FFFFFF]}] [x=2.00] [y=2.00] [width=172.00] [height=58.00]
+                RenderSVGRect {rect} at (86,2) size 88x58 [fill={[type=SOLID] [color=#FFCC33]}] [x=86.00] [y=2.00] [width=88.00] [height=58.00]
+                RenderSVGText {text} at (46,10) size 80x46 contains 1 chunk(s)
+                  RenderSVGInlineText {#text} at (0,0) size 80x46
+                    chunk 1 (middle anchor) text run 1 at (46.00,46.00) startOffset 0 endOffset 3 width 80.00: "SVG"
+          RenderText {#text} at (0,0) size 0x0
+        RenderBlock {p} at (0,393) size 692x33
+          RenderText {#text} at (0,0) size 653x32
+            text run at (0,0) width 653: "Above there must be a GIF- and a SVG-image visible. Both are referenced by an object element (no defined"
+            text run at (0,16) width 512: "width, height:100%) and each nested into a div element (width:176px, height:62px)."
+        RenderBlock {p} at (0,431) size 692x33
+          RenderText {#text} at (0,0) size 667x32
+            text run at (0,0) width 667: "This tests have succeeded, if in both cases, the look (dimensions) of the SVG and the GIF are exactly the same"
+            text run at (0,16) width 410: "(except the text apparently) and no red background color is visible."
+        RenderBlock {p} at (0,469) size 692x33
+          RenderBR {br} at (0,0) size 0x16
+          RenderInline {a} at (0,0) size 29x16 [color=#000066]
+            RenderText {#text} at (0,16) size 29x16
+              text run at (0,16) width 29: "Back"

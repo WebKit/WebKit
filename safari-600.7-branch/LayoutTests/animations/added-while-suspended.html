@@ -1,0 +1,127 @@
+<title>Test that new animations do not run while we are suspended</title>
+<style>
+#box {
+    position: relative;
+    height: 100px;
+    width: 100px;
+    background-color: blue;
+    -webkit-animation-name: move;
+    -webkit-animation-duration: 0.1s;
+}
+
+#box-with-delay {
+    position: relative;
+    height: 100px;
+    width: 100px;
+    background-color: blue;
+    -webkit-animation-name: move;
+    -webkit-animation-duration: 0.1s;
+    -webkit-animation-delay: 0.3s;
+}
+
+@-webkit-keyframes move {
+    from { left: 0; }
+    to { left: 500px; }
+}
+</style>
+<script>
+
+var animationsYetToEnd = 2;
+
+function suspend()
+{
+    if (window.internals)
+        internals.suspendAnimations();
+}
+
+function resume()
+{
+    if (window.internals)
+        internals.resumeAnimations();
+}
+
+function animationStarted(event)
+{
+    log("Animation started on element with id: " + event.target.id);
+}
+
+function animationEnded(event)
+{
+    log("Animation ended on element with id: " + event.target.id);
+    animationsYetToEnd--;
+    if (!animationsYetToEnd)
+        endTest();
+}
+
+function addDivWithId(id)
+{
+    var div = document.createElement("div");
+    div.id = id;
+    document.body.appendChild(div);
+}
+
+function addFirstBox()
+{
+    if (window.internals)
+        log("Animations should be suspended: " + (window.internals.animationsAreSuspended() ? "PASS" : "FAIL"));
+
+    log("*** Adding first box with animation");
+    addDivWithId("box");
+    setTimeout(addSecondBox, 100);
+}
+
+function addSecondBox()
+{
+    log("*** Adding second box with animation and delay");
+    addDivWithId("box-with-delay");
+    setTimeout(resumeAndContinue, 50);
+}
+
+function resumeAndContinue()
+{
+    log("*** Resuming Animations");
+    resume();
+}
+
+function endTest()
+{
+    if (window.internals)
+        log("Animations should not be suspended: " + (window.internals.animationsAreSuspended() ? "FAIL" : "PASS"));
+    log("*** Animations finished");
+    resume(); // Just in case.
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function startTest()
+{
+    document.addEventListener("webkitAnimationStart", animationStarted, false);
+    document.addEventListener("webkitAnimationEnd", animationEnded, false);
+
+    if (window.internals)
+        log("Animations should not be suspended: " + (window.internals.animationsAreSuspended() ? "FAIL" : "PASS"));
+
+    setTimeout(function() {
+        log("*** Suspending Animations");
+        suspend();
+        setTimeout(addFirstBox, 50);
+    }, 50);
+}
+
+function log(message)
+{
+    var results = document.getElementById("results");
+    results.innerHTML = results.innerHTML + message + "<br>";
+}
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+window.addEventListener("load", startTest, false);
+
+</script>
+<p>This test adds some elements to the document when animations should be paused. It will only have reproducible output when run in the test system</p>
+<div id="results">
+</div>

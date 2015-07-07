@@ -1,0 +1,27 @@
+layer at (0,0) size 1600x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 1222x600
+  RenderBlock {HTML} at (0,0) size 1222x600
+    RenderBody {BODY} at (8,8) size 1206x584
+      RenderBlock {DIV} at (0,0) size 1206x584 [border: (3px solid #000000)]
+        RenderBR {BR} at (3,3) size 50x0
+        RenderBR {BR} at (53,3) size 50x0
+        RenderBR {BR} at (103,3) size 50x0
+        RenderBR {BR} at (153,3) size 50x0
+        RenderBR {BR} at (203,3) size 50x0
+        RenderBR {BR} at (253,3) size 50x0
+        RenderBR {BR} at (303,3) size 50x0
+        RenderBR {BR} at (353,3) size 50x0
+        RenderBR {BR} at (403,3) size 50x0
+        RenderBR {BR} at (453,3) size 50x0
+        RenderBR {BR} at (503,3) size 50x0
+        RenderBR {BR} at (553,3) size 50x0
+        RenderBR {BR} at (603,3) size 50x0
+        RenderBR {BR} at (653,3) size 50x0
+        RenderText {#text} at (703,3) size 50x250
+          text run at (703,3) width 250: "Lorem"
+        RenderBR {BR} at (713,253) size 0x0
+        RenderInline {SPAN} at (0,0) size 50x250 [color=#FF0000]
+          RenderText {#text} at (792,3) size 50x250
+            text run at (792,3) width 250: "ipsum"
+          RenderBR {BR} at (802,253) size 0x0

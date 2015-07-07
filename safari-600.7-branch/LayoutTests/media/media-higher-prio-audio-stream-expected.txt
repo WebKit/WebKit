@@ -1,0 +1,12 @@
+Test paused by:
+
+Getting a higher priority audio stream.
+This test does not work in the launchers, only with the test runners.
+EVENT(playing)
+EXPECTED (mediaElement.paused == 'false') OK
+EVENT(pause)
+EXPECTED (mediaElement.paused == 'true') OK
+EXPECTED (mediaElement.ended == 'false') OK
+
+END OF TEST
+

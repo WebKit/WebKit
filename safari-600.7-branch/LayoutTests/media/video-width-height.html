@@ -1,0 +1,21 @@
+<video width=100 height=50 controls></video>
+<script src=video-test.js></script>
+<script>
+    testExpected("video.width", 100);
+    testExpected("video.height", 50);
+    testExpected("video.offsetWidth", 100);
+    testExpected("video.offsetHeight", 50);
+    video.setAttribute('width', '200');
+    video.setAttribute('height', '100');
+    testExpected("video.width", 200);
+    testExpected("video.height", 100);
+    testExpected("video.offsetWidth", 200);
+    testExpected("video.offsetHeight", 100);
+    video.width = 400;
+    video.height = 200;
+    testExpected("video.getAttribute('width')", 400);
+    testExpected("video.getAttribute('height')", 200);
+    testExpected("video.offsetWidth", 400);
+    testExpected("video.offsetHeight", 200);
+    endTest();
+</script>

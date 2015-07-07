@@ -1,0 +1,65 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="appcache-test.js"></script>
+<script src="../network-test.js"></script>
+<script>
+function test()
+{
+    var frameId1;
+    var frameId2;
+
+    WebInspector.showPanel("resources");
+    InspectorTest.startApplicationCacheStatusesRecording();
+    InspectorTest.dumpApplicationCache();
+    InspectorTest.createAndNavigateIFrame("resources/with-versioned-manifest.php", step1);
+
+    function step1(frameId)
+    {
+        frameId1 = frameId;
+        InspectorTest.waitForFrameManifestURLAndStatus(frameId1, "resources/versioned-manifest.php", applicationCache.IDLE, step2);
+    }
+
+    function step2()
+    {
+        InspectorTest.dumpApplicationCache();
+        InspectorTest.makeSimpleXHR("GET", "resources/versioned-manifest.php?command=step", true, step3);
+    }
+
+    function step3()
+    {
+        InspectorTest.createAndNavigateIFrame("resources/with-versioned-manifest.php", step4);
+    }
+
+    function step4(frameId)
+    {
+        frameId2 = frameId;
+        InspectorTest.waitForFrameManifestURLAndStatus(frameId1, "resources/versioned-manifest.php", applicationCache.UPDATEREADY, step5);
+    }
+
+    function step5(frameId)
+    {
+        InspectorTest.waitForFrameManifestURLAndStatus(frameId2, "resources/versioned-manifest.php", applicationCache.UPDATEREADY, step6);
+    }
+
+    function step6()
+    {
+        InspectorTest.dumpApplicationCache();
+
+        InspectorTest.swapFrameCache(frameId1);
+        InspectorTest.waitForFrameManifestURLAndStatus(frameId1, "resources/versioned-manifest.php", applicationCache.IDLE, step7);
+    }
+
+    function step7()
+    {
+        InspectorTest.dumpApplicationCache();
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that application cache model keeps track of manifest urls and statuses correctly after UPDATEREADY event and swapCache() call.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=72123">Bug 72123</a>
+</body>
+</html>

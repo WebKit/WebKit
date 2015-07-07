@@ -1,0 +1,6 @@
+Blocked access to external URL http://mashable.com/wp-content/uploads/2008/08/thunderbird-logo-64x64.png
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: ../../../resources/webgl_test_files/conformance/more/functions/texImage2DHTML.html
+FAIL
+

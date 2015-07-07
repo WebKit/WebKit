@@ -1,0 +1,34 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<p>These are tests for execCommand(InsertHorizontalRule).</p>
+
+<p>This test inserts an hr between 'foo' and 'bar'.</p>
+<div id="test1" contenteditable="true">foobar</div>
+
+<p>This test inserts an hr with id="hr" between 'foo' and 'bar', fetches the hr using its id, then removes it.</p>
+<div id="test2" contenteditable="true">foobar</div>
+
+<script type="text/javascript" src="../editing.js"></script>
+<script>
+var s = window.getSelection();
+var e;
+
+e = document.getElementById("test1");
+s.setPosition(e, 0);
+moveSelectionForwardByCharacterCommand();
+moveSelectionForwardByCharacterCommand();
+moveSelectionForwardByCharacterCommand();
+document.execCommand("InsertHorizontalRule", false, "");
+
+e = document.getElementById("test2");
+s.setPosition(e, 0);
+moveSelectionForwardByCharacterCommand();
+moveSelectionForwardByCharacterCommand();
+moveSelectionForwardByCharacterCommand();
+var id = "hr";
+document.execCommand("InsertHorizontalRule", false, id);
+var hr = document.getElementById(id);
+hr.parentNode.removeChild(hr);
+</script>

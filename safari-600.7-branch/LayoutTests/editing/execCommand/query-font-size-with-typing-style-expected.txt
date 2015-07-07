@@ -1,0 +1,3 @@
+This tests querying font size when there is a typing style. WebKit should not crash and you should see 'PASS':
+
+PASS

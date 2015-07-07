@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x56
+  RenderBlock {html} at (0,0) size 800x56
+    RenderBody {body} at (8,8) size 784x40
+      RenderBlock {tests} at (0,0) size 784x40 [color=#008000]
+        RenderBlock {testA} at (0,0) size 784x20
+          RenderText {#text} at (0,0) size 138x19
+            text run at (0,0) width 138: "This should be green."
+        RenderBlock {testB} at (0,20) size 784x20
+          RenderText {#text} at (0,0) size 138x19
+            text run at (0,0) width 138: "This should be green."

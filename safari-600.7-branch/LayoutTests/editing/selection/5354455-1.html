@@ -1,0 +1,38 @@
+<p>This tests whether right clicking on a paragraph break in editable content selects it.  The break should be selected on OS X, but not on Windows or Unix.  To run it manually, right click on the paragraph break after the first paragraph below.</p>
+<div id="div" contenteditable="true">
+<div><span id="text">The following paragraph break should be selected on OS X.</span></div>
+<br>
+</div>
+<p>Mac: <span id="resultmac">RUNNING</span></p>
+<p>Win: <span id="resultwin">RUNNING</span></p>
+<p>Unix: <span id="resultunix">RUNNING</span></p>
+
+<script>
+function test(platform, result) {
+    window.getSelection().removeAllRanges();
+    internals.settings.setEditingBehavior(platform);
+    
+    paragraph = document.getElementById("text");
+    x = paragraph.offsetParent.offsetLeft + paragraph.offsetLeft + paragraph.offsetWidth + 10;
+    y = paragraph.offsetParent.offsetTop + paragraph.offsetTop + paragraph.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    // Give the editable region focus.
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    // Right click on the paragraph break to select it.
+    eventSender.contextClick();
+    // esc key to kill the context menu.
+    eventSender.keyDown(String.fromCharCode(0x001B), null);
+    
+    document.getElementById(result).innerHTML = window.getSelection().type;
+}
+
+if (window.eventSender && window.testRunner && window.internals) {
+    testRunner.dumpAsText();
+
+    test('mac', 'resultmac');
+    test('win', 'resultwin');
+    test('unix', 'resultunix');
+}
+</script>
+

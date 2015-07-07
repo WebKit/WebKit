@@ -1,0 +1,9 @@
+Test for [CSS Regions] Absolutely positioned regions do not expand to fill their container.
+
+On success, you should not see FAIL below.
+
+PASS
+PASS
+PASS
+PASS
+PASS

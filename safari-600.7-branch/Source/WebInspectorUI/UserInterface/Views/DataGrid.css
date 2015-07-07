@@ -1,0 +1,312 @@
+/*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.data-grid {
+    position: relative;
+    outline: none;
+}
+
+.data-grid .highlight {
+    background-color: rgb(255, 230, 179);
+}
+
+.data-grid tr.selected .highlight {
+    background-color: transparent;
+}
+
+.data-grid table {
+    table-layout: fixed;
+    border-spacing: 0;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.data-grid .data-container {
+    position: absolute;
+    top: 23px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow-x: hidden;
+    overflow-y: overlay;
+}
+
+.data-grid.inline .data-container {
+    position: static;
+}
+
+.data-grid.inline {
+    border: 1px solid rgb(179, 179, 179);
+}
+
+.data-grid.no-header > table.header {
+    display: none;
+}
+
+.data-grid.no-header .data-container {
+    top: 0;
+}
+
+.data-grid th {
+    text-align: left;
+    vertical-align: middle;
+
+    background-color: white;
+
+    border-bottom: 1px solid rgb(179, 179, 179);
+
+    font-weight: normal;
+
+    height: 22px;
+    padding: 0 6px;
+
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.data-grid :-webkit-any(th, td):not(:last-child) {
+    border-right: 1px solid rgb(179, 179, 179);
+}
+
+.data-grid th.sortable:active {
+    background-color: rgb(179, 179, 179);
+}
+
+.data-grid th:-webkit-any(.sort-ascending, .sort-descending) {
+    background-color: rgb(230, 230, 230);
+}
+
+.data-grid tr.filler {
+    display: table-row !important;
+    height: auto !important;
+}
+
+.data-grid tr.filler td {
+    height: auto !important;
+    padding: 0 !important;
+}
+
+.data-grid table.data {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    height: 100%;
+    border-top: 0 none transparent;
+    background-image: linear-gradient(to bottom, white, white 50%, rgb(243, 246, 250) 50%, rgb(243, 246, 250));
+    background-size: 100% 42px;
+    table-layout: fixed;
+}
+
+.data-grid.inline table.data {
+    position: static;
+}
+
+.data-grid table.data tr {
+    display: none;
+}
+
+.data-grid table.data tr.revealed {
+    display: table-row;
+}
+
+.data-grid td {
+    vertical-align: top;
+    height: 12px;
+    line-height: 17px;
+    padding: 2px 6px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.data-grid:focus tr.selected td:not(:last-child) {
+    border-right-color: rgb(0, 102, 204);
+}
+
+body.mac-platform.legacy .data-grid:focus tr.selected td:not(:last-child) {
+    border-right-color: rgb(53, 109, 189);
+}
+
+.data-grid :-webkit-any(th, td) > div {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.data-grid .centered div {
+    text-align: center;
+}
+
+.data-grid .right div {
+    text-align: right;
+}
+
+.data-grid th.sortable div {
+    position: relative;
+}
+
+.data-grid th:-webkit-any(.sort-ascending, .sort-descending) > div:first-child {
+    padding-right: 12px;
+}
+
+.data-grid th.sort-ascending > div:first-child::after {
+    position: absolute;
+    top: 1px;
+    bottom: 0;
+    right: 0;
+
+    margin-bottom: auto;
+    margin-top: auto;
+
+    width: 9px;
+    height: 8px;
+
+    content: "";
+
+    background-image: -webkit-canvas(data-grid-sort-indicator-up-arrow);
+    background-size: 9px 8px;
+    background-repeat: no-repeat;
+}
+
+.data-grid th.sort-descending > div:first-child::after {
+    position: absolute;
+    top: 1px;
+    bottom: 0;
+    right: 0;
+
+    margin-bottom: auto;
+    margin-top: auto;
+
+    width: 9px;
+    height: 8px;
+
+    content: "";
+
+    background-image: -webkit-canvas(data-grid-sort-indicator-down-arrow);
+    background-size: 9px 8px;
+    background-repeat: no-repeat;
+}
+
+.data-grid button {
+    line-height: 19px;
+}
+
+.data-grid tr.parent td.disclosure::before {
+    float: left;
+
+    content: "";
+
+    background-image: -webkit-canvas(disclosure-triangle-tiny-closed-normal);
+    background-size: 8px 8px;
+    background-repeat: no-repeat;
+
+    width: 8px;
+    height: 8px;
+
+    margin-top: 2px;
+    margin-right: 2px;
+}
+
+.data-grid tr.parent.expanded td.disclosure::before {
+    background-image: -webkit-canvas(disclosure-triangle-tiny-open-normal);
+}
+
+.data-grid:focus tr.parent.selected td.disclosure::before {
+    background-image: -webkit-canvas(disclosure-triangle-tiny-closed-selected);
+}
+
+.data-grid:focus tr.parent.expanded.selected td.disclosure::before {
+    background-image: -webkit-canvas(disclosure-triangle-tiny-open-selected);
+}
+
+.data-grid tr.selected {
+    background-color: rgb(212, 212, 212) !important;
+    color: inherit !important;
+}
+
+.data-grid:focus tr.selected {
+    background-color: rgb(0, 128, 252) !important;
+    color: white !important;
+}
+
+body.mac-platform.legacy .data-grid:focus tr.selected {
+    background-color: rgb(56, 121, 217) !important;
+}
+
+.data-grid tr:not(.parent) td.disclosure {
+    text-indent: 10px;
+}
+
+.data-grid td .subtitle {
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.data-grid td .subtitle::before {
+    content: " — ";
+}
+
+.data-grid:focus tr.selected td .subtitle {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.data-grid td.error {
+    color: rgb(224, 16, 16);
+}
+
+.data-grid tr.selected td.error {
+    color: inherit;
+}
+
+.data-grid td .icon {
+    display: inline-block;
+    vertical-align: top;
+
+    width: 16px;
+    height: 16px;
+
+    margin-right: 2px;
+}
+
+.data-grid td .go-to-arrow {
+    float: right;
+
+    display: none;
+
+    margin-left: 2px;
+}
+
+.data-grid tr:-webkit-any(.selected, :hover) .go-to-arrow {
+    display: block;
+}
+
+.data-grid-resizer {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 5px;
+    z-index: 500;
+    cursor: col-resize;
+}

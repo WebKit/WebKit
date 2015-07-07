@@ -1,0 +1,4 @@
+There should be two boxes of equal height on the left and 3 boxes of equal height on the right.
+PASS
+None of the boxes should overflow and the inner most boxes should be end aligned.
+PASS

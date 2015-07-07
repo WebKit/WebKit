@@ -1,0 +1,54 @@
+<html>
+<head>
+    <style>
+        div.block { height: 400px; border: 1px solid black; margin:10px; }
+    </style>
+    <script>
+        var resizecount = 0;
+        var loaded = false;
+        window.onresize = function() {
+            resizecount++;
+            document.getElementById('count1').innerHTML = resizecount;
+        }
+    </script>
+</head>
+<body>
+    <div>
+        Test how many resize events are emitted during page load and dynamic content generation.
+
+        Do not resize the page. It invalidates the test.
+        <p style="text-indent: 10px" id=result1>
+        Resize events (should be 0): <span id=count1>0</span>
+    </div>
+    <div id=expandingblock>
+    </div>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+        }
+
+        var blockcount = 0;
+        function addBlock() {
+            var el = document.createElement('div');
+            el.setAttribute('class','block');
+            document.getElementById('expandingblock').appendChild(el);
+            if (++blockcount < 10)
+                setTimeout(addBlock, 20);
+            else
+                finish();
+        }
+        function finish() {
+            var result;
+            // No resize events are acceptable.
+            if (resizecount < 1)
+                result = '<p style="color: green">PASS';
+            else
+                result = '<p style="color: red">FAIL';
+            var resultElement = document.getElementById('result1')
+            resultElement.innerHTML += result;
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        onload = addBlock;
+    </script>
+</body>

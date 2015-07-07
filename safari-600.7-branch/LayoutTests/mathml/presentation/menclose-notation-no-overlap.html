@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script>
+            function runTest() {
+                description('Tests that menclose with notation value as circle is sqrt(2) times the inner width/height.');
+
+                shouldBeTrue("document.getElementById('mathmenclose1').offsetWidth >= 141");
+                shouldBeTrue("document.getElementById('mathmenclose1').offsetHeight >= 70");
+				isSuccessfullyParsed();
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <p>
+            <math>
+                <menclose notation="circle" id="mathmenclose1"><mspace width="100px" height="50px" mathbackground="red"/></menclose>
+            </math>
+        </p>        
+    </body>
+</html>

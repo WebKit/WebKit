@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {DIV} at (0,0) size 522x522 [border: (1px solid #000000)]
+        RenderTableSection (anonymous) at (11,11) size 500x500
+          RenderTableRow {DIV} at (0,0) size 500x500 [border: (1px solid #FF0000)]
+            RenderTableCell {DIV} at (0,0) size 500x480 [border: (1px solid #0000FF)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {DIV} at (1,1) size 498x478 [border: none]
+                RenderTableSection (anonymous) at (0,0) size 477x477
+                  RenderTableRow {DIV} at (0,0) size 477x477 [border: (1px solid #00FFFF)]
+                    RenderTableCell {DIV} at (0,0) size 497x1 [border: (1px solid #FF00FF)] [r=0 c=0 rs=1 cs=1]

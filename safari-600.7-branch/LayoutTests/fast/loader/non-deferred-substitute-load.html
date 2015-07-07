@@ -1,0 +1,15 @@
+<p>This tests that using substitute load in combination with non-deferred main resource loading will not cause
+assertions or duplicate loads, which can happen if the substitute document contains JavaScript-alerts.</p>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setDeferMainResourceDataLoad(false);
+    testRunner.queueLoadHTMLString("<script>if (typeof(hasBeenLoaded) != 'undefined') {" +
+        "document.getElementById('result').innerHTML = 'FAILURE';" +
+    "} else { " +
+        "hasBeenLoaded = true; document.write('<div id=result>PASS</div>'); alert('Triggering bug through JS-alert'); }" +
+    "<\/script>");
+} else
+    document.write('This test must be run by DumpRenderTree!')
+</script>
+

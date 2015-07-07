@@ -1,0 +1,34 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 7 of BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 2 of #text > B > DIV > BODY > HTML > #document to 2 of #text > I > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > I > DIV > BODY > HTML > #document to 2 of BODY > HTML > #document toDOMRange:range from 2 of #text > B > DIV > BODY > HTML > #document to 2 of #text > B > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584 [border: (2px solid #FF0000)]
+      RenderBlock {DIV} at (14,14) size 756x28
+        RenderInline {B} at (0,0) size 25x28
+          RenderText {#text} at (0,0) size 25x28
+            text run at (0,0) width 25: "on"
+        RenderInline {I} at (0,0) size 12x28
+          RenderText {#text} at (25,0) size 12x28
+            text run at (25,0) width 12: "o"
+      RenderBlock {DIV} at (14,42) size 756x28
+        RenderInline {B} at (0,0) size 54x28
+          RenderText {#text} at (0,0) size 54x28
+            text run at (0,0) width 54: "three"
+        RenderInline {I} at (0,0) size 40x28
+          RenderText {#text} at (54,0) size 40x28
+            text run at (54,0) width 40: "four"
+caret: position 2 of child 0 {#text} of child 0 {B} of child 1 {DIV} of body

@@ -1,0 +1,23 @@
+Tests cue size and alignment from settings.
+
+
+
+*** Testing text track 0
+EXPECTED (cues.length == '3') OK
+EXPECTED (cues[0].size == '100') OK
+EXPECTED (cues[0].align == 'start') OK
+EXPECTED (cues[1].size == '10') OK
+EXPECTED (cues[1].align == 'end') OK
+EXPECTED (cues[2].size == '0') OK
+EXPECTED (cues[2].align == 'middle') OK
+
+*** Testing text track 1
+EXPECTED (cues.length == '3') OK
+EXPECTED (cues[0].size == '100') OK
+EXPECTED (cues[0].align == 'middle') OK
+EXPECTED (cues[1].size == '100') OK
+EXPECTED (cues[1].align == 'end') OK
+EXPECTED (cues[2].size == '100') OK
+EXPECTED (cues[2].align == 'middle') OK
+END OF TEST
+

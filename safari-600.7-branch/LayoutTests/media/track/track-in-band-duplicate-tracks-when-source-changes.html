@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+            // Don't hard code the number of tracks, because ports may
+            // disagree. All that matters is that the number doesn't change.
+            var numTracks;
+
+            function storeTrackNumber()
+            {
+                consoleWrite("<br><i>** Storing number of tracks and reloading video</i>");
+                testExpected("video.textTracks.length", 0, ">");
+                run("numTracks = video.textTracks.length");
+
+                var source = document.createElement("source");
+                source.src = '../content/counting-subtitled.m4v';
+                video.replaceChild(source, video.firstChild);
+
+                waitForEventAndEnd("canplaythrough", checkTrackNumber);
+            }
+
+            function checkTrackNumber()
+            {
+                consoleWrite("<br><i>** Loaded video again, checking if tracks number is the same</i>");
+                reportExpected(video.textTracks.length == numTracks, "video.textTracks.length", "==", "numTracks", numTracks);
+            }
+
+            function setup()
+            {
+                findMediaElement();
+                // This bug only occurs when using the <source> element.
+                // Don't change this to use video.src.
+                var source = document.createElement("source");
+                source.src = '../content/counting-subtitled.m4v';
+                video.appendChild(source);
+                waitForEventOnce('canplaythrough', storeTrackNumber);
+            }
+
+        </script>
+    </head>
+    <body onload="setup()">
+        <video controls></video>
+        <p>When changing the source for a video, we shouldn't get duplicate in-band tracks.</p>
+    </body>
+</html>

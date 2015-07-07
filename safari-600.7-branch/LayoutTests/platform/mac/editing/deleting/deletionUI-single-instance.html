@@ -1,0 +1,32 @@
+<body>
+
+<p>
+This test can only be run with DRT and not manually from the browser.  This test makes sure that we don't make the mistake of adding new m_containerElements to the DeletionUI over and over again.
+A successful run of the test will not have multiple instances of deletion UI render objects at the same coordinates:
+</p>
+
+<div contenteditable="true" style="padding: 1em;">
+<table class="needsDeletionUI">
+
+<tr>
+<td id="td">
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas odio. Morbi sed tortor id nisl bibendum commodo. Donec pede. Praesent accumsan dui vitae mauris. Mauris non dui at neque lacinia pulvinar. Quisque nibh. Nulla vitae lectus. Pellentesque enim. Mauris hendrerit molestie dui. Etiam pretium ligula a pede. Fusce consectetuer purus sit amet sem. Morbi tincidunt mollis libero. Maecenas molestie.
+</td>
+</tr>
+</table>
+
+</div>
+
+<script>
+
+sel = window.getSelection();
+td = document.getElementById("td");
+sel.setPosition(td, td.textContent.length);
+
+if (window.testRunner) {
+    for (i = 0; i < 5; i++)
+        document.execCommand("Delete");
+}
+
+</script>
+</body>

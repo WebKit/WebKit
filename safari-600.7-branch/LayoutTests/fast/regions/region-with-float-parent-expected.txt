@@ -1,0 +1,7 @@
+Test that the width of a floating block is correctly computed when its child is a region
+
+On success, you will see a series of PASS below.
+
+PASS
+PASS
+PASS

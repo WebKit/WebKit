@@ -1,0 +1,52 @@
+<html>
+<body>
+<pre id='console'></pre>
+<script type="text/javascript">
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function log(message)
+    {
+        document.getElementById('console').appendChild(document.createTextNode(message + "\n"));
+    }
+
+    var xhr;
+
+    function testAllowed(name)
+    {
+        if (xhr.getResponseHeader(name))
+            log("PASS: Response header " + name + " allowed.");
+        else
+            log("FAIL: Response header " + name + " not allowed.");
+    }
+
+    function testDenied(name)
+    {
+        if (!xhr.getResponseHeader(name))
+            log("PASS: Response header " + name + " denied.");
+        else
+            log("FAIL: Response header " + name + " not denied.");
+    }
+
+
+    xhr = new XMLHttpRequest;
+    xhr.open("GET", "http://localhost:8000/xmlhttprequest/resources/access-control-basic-whitelist-response-headers.cgi", false);
+    xhr.send();
+
+    // Test getResponseHeader()
+    testAllowed("cache-control");
+    testAllowed("content-language");
+    testAllowed("content-type");
+    testAllowed("expires");
+    testAllowed("last-modified");
+    testAllowed("pragma");
+    testDenied("x-webkit");
+
+    // Test getAllResponseHeaders()
+    if (!xhr.getAllResponseHeaders().match("foobar"))
+        log("PASS: Non-whitelisted headers not passed to getAllResponseHeaders().");
+    else
+        log("FAIL: Non-whitelisted headers passed to getAllResponseHeaders().");
+</script>
+</body>
+</html>

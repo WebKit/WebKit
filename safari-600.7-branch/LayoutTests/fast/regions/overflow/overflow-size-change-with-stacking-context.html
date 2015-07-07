@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            body {
+                font: 16px/1.25 monospace;
+            }
+
+            #content {
+                -webkit-flow-into: flow1;
+                padding: 5px;
+            }
+
+            .first-box {
+                border: 1px solid blue;
+            }
+
+            .second-box {
+                margin: auto;
+                border: 1px solid green;
+                overflow:hidden;
+                width:75%;
+                position:relative;
+                z-index:0;
+                padding-bottom:20px;
+            }
+
+            #region1, #region2, #region3 {
+                border: 1px solid black;
+                -webkit-flow-from: flow1;
+            }
+
+            #region1 {
+                width: 200px;
+                height: 100px;
+            }
+
+            #region2 {
+                width: 300px;
+                height: 180px;
+            }
+
+            #region3 {
+                width: 120px;
+                height: 120px;
+            }
+        </style>
+    </head>
+    <body>
+        <p>The first and last lines of text in the regions below should be clipped to the green box. The overflow
+        section sizes itself and clips differently in each region.</p>
+
+        <div id="content">
+            <div class="first-box">
+                <div class="second-box">
+                    <div style="width:500px; opacity:0.8">Clipped line of text that should not be visible.</div>
+                    <p>These lines will not spill out of the regions. These lines will not spill out of the regions.
+                    These lines will not spill out of the regions. These lines will not spill out of the regions.
+                    These lines will not spill out of the regions.</p>
+                    <div style="width:500px; position:absolute;bottom:0">Clipped line of text that should not be visible.</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="container">
+            <div id="region1"></div>
+            <div id="region2"></div>
+            <div id="region3"></div>
+        </div>
+    </body>
+</html>

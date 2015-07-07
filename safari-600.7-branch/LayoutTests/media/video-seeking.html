@@ -1,0 +1,39 @@
+<video controls></video>
+<p>Test that seeking attribute is true immediately after a seek,
+ goes back to false when seeking completes, and that a 'seeked' event
+ is fired for each seek
+ </p>
+<script src=media-file.js></script>
+<script src=video-test.js></script>
+<script>
+
+    var seekedCount = 0;
+
+    function seeked()
+    { 
+        ++seekedCount; 
+        consoleWrite("");
+
+        testExpected("video.seeking", false);
+        testExpected("video.currentTime", seekedCount * 0.5);
+        run("video.currentTime = " + (seekedCount + 1) * 0.5);
+        testExpected("video.seeking", true);
+
+        consoleWrite("");
+
+        if (seekedCount == 3)
+            endTest();
+     }
+
+    function canplaythrough() 
+    {
+        run("video.currentTime = 0.5");
+        consoleWrite("");
+    }
+    
+    waitForEvent('waiting' );
+    waitForEvent('seeked', seeked );
+    waitForEvent('canplaythrough', canplaythrough);
+
+    video.src = findMediaFile("video", "content/test");
+</script>

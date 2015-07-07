@@ -1,0 +1,159 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 53x17
+          text run at (0,0) width 53: "Test for "
+        RenderInline {I} at (0,0) size 774x35
+          RenderInline {A} at (0,0) size 301x17 [color=#0000EE]
+            RenderText {#text} at (53,0) size 301x17
+              text run at (53,0) width 301: "http://bugs.webkit.org/show_bug.cgi?id=13153"
+          RenderText {#text} at (354,0) size 774x35
+            text run at (354,0) width 4: " "
+            text run at (358,0) width 416: "REGRESSION: Visual highlighting of pre-populated blank line in"
+            text run at (0,18) width 113: "textarea is broken"
+        RenderText {#text} at (113,18) size 4x17
+          text run at (113,18) width 4: "."
+      RenderBlock {P} at (0,52) size 784x18
+        RenderText {#text} at (0,0) size 333x17
+          text run at (0,0) width 333: "Testing the highlighting of and near hard line breaks."
+      RenderBlock (anonymous) at (0,86) size 784x80
+        RenderIFrame {IFRAME} at (4,4) size 62x72 [border: (1px solid #0000FF)]
+          layer at (0,0) size 60x70
+            RenderView at (0,0) size 60x70
+          layer at (0,0) size 60x70
+            RenderBlock {HTML} at (0,0) size 60x70
+              RenderBody {BODY} at (8,8) size 44x54
+                RenderBlock {PRE} at (0,0) size 44x45
+                  RenderText {#text} at (0,0) size 24x45
+                    text run at (0,0) width 24: "foo"
+                    text run at (24,0) width 0: " "
+                    text run at (0,15) width 0: " "
+                    text run at (0,30) width 24: "bar"
+        RenderIFrame {IFRAME} at (74,4) size 62x72 [border: (1px solid #0000FF)]
+          layer at (0,0) size 60x70
+            RenderView at (0,0) size 60x70
+          layer at (0,0) size 60x70
+            RenderBlock {HTML} at (0,0) size 60x70
+              RenderBody {BODY} at (8,8) size 44x54
+                RenderBlock {PRE} at (0,0) size 44x45
+                  RenderText {#text} at (0,0) size 24x45
+                    text run at (0,0) width 24: "foo"
+                    text run at (24,0) width 0: " "
+                    text run at (0,15) width 0: " "
+                    text run at (0,30) width 24: "bar"
+        RenderIFrame {IFRAME} at (144,4) size 62x72 [border: (1px solid #0000FF)]
+          layer at (0,0) size 60x70
+            RenderView at (0,0) size 60x70
+          layer at (0,0) size 60x70
+            RenderBlock {HTML} at (0,0) size 60x70
+              RenderBody {BODY} at (8,8) size 44x54
+                RenderBlock {PRE} at (0,0) size 44x45
+                  RenderText {#text} at (0,0) size 24x45
+                    text run at (0,0) width 24: "foo"
+                    text run at (24,0) width 0: " "
+                    text run at (0,15) width 0: " "
+                    text run at (0,30) width 24: "bar"
+        RenderIFrame {IFRAME} at (214,4) size 62x72 [border: (1px solid #0000FF)]
+          layer at (0,0) size 60x70
+            RenderView at (0,0) size 60x70
+          layer at (0,0) size 60x70
+            RenderBlock {HTML} at (0,0) size 60x70
+              RenderBody {BODY} at (8,8) size 44x54
+                RenderBlock {PRE} at (0,0) size 44x45
+                  RenderText {#text} at (0,0) size 24x45
+                    text run at (0,0) width 24: "foo"
+                    text run at (24,0) width 0: " "
+                    text run at (0,15) width 0: " "
+                    text run at (0,30) width 24: "bar"
+        RenderIFrame {IFRAME} at (284,4) size 62x72 [border: (1px solid #0000FF)]
+          layer at (0,0) size 60x70
+            RenderView at (0,0) size 60x70
+          layer at (0,0) size 60x70
+            RenderBlock {HTML} at (0,0) size 60x70
+              RenderBody {BODY} at (8,8) size 44x54
+                RenderBlock {PRE} at (0,0) size 44x45
+                  RenderText {#text} at (0,0) size 24x45
+                    text run at (0,0) width 24: "foo"
+                    text run at (24,0) width 0: " "
+                    text run at (0,15) width 0: " "
+                    text run at (0,30) width 24: "bar"
+        RenderIFrame {IFRAME} at (354,4) size 62x72 [border: (1px solid #0000FF)]
+          layer at (0,0) size 60x70
+            RenderView at (0,0) size 60x70
+          layer at (0,0) size 60x70
+            RenderBlock {HTML} at (0,0) size 60x70
+              RenderBody {BODY} at (8,8) size 44x54
+                RenderBlock {PRE} at (0,0) size 44x45
+                  RenderText {#text} at (0,0) size 24x45
+                    text run at (0,0) width 24: "foo"
+                    text run at (24,0) width 0: " "
+                    text run at (0,15) width 0: " "
+                    text run at (0,30) width 24: "bar"
+        RenderIFrame {IFRAME} at (424,4) size 62x72 [border: (1px solid #0000FF)]
+          layer at (0,0) size 60x70
+            RenderView at (0,0) size 60x70
+          layer at (0,0) size 60x70
+            RenderBlock {HTML} at (0,0) size 60x70
+              RenderBody {BODY} at (8,8) size 44x54
+                RenderBlock {PRE} at (0,0) size 44x45
+                  RenderText {#text} at (0,0) size 24x45
+                    text run at (0,0) width 24: "foo"
+                    text run at (24,0) width 0: " "
+                    text run at (0,15) width 0: " "
+                    text run at (0,30) width 24: "bar"
+        RenderIFrame {IFRAME} at (494,4) size 62x72 [border: (1px solid #0000FF)]
+          layer at (0,0) size 60x70
+            RenderView at (0,0) size 60x70
+          layer at (0,0) size 60x70
+            RenderBlock {HTML} at (0,0) size 60x70
+              RenderBody {BODY} at (8,8) size 44x54
+                RenderBlock {PRE} at (0,0) size 44x45
+                  RenderText {#text} at (0,0) size 24x45
+                    text run at (0,0) width 24: "foo"
+                    text run at (24,0) width 0: " "
+                    text run at (0,15) width 0: " "
+                    text run at (0,30) width 24: "bar"
+        RenderIFrame {IFRAME} at (564,4) size 62x72 [border: (1px solid #0000FF)]
+          layer at (0,0) size 60x70
+            RenderView at (0,0) size 60x70
+          layer at (0,0) size 60x70
+            RenderBlock {HTML} at (0,0) size 60x70
+              RenderBody {BODY} at (8,8) size 44x54
+                RenderBlock {PRE} at (0,0) size 44x45
+                  RenderText {#text} at (0,0) size 24x45
+                    text run at (0,0) width 24: "foo"
+                    text run at (24,0) width 0: " "
+                    text run at (0,15) width 0: " "
+                    text run at (0,30) width 24: "bar"
+        RenderIFrame {IFRAME} at (634,4) size 62x72 [border: (1px solid #0000FF)]
+          layer at (0,0) size 60x70
+            RenderView at (0,0) size 60x70
+          layer at (0,0) size 60x70
+            RenderBlock {HTML} at (0,0) size 60x70
+              RenderBody {BODY} at (8,8) size 44x54
+                RenderBlock {PRE} at (0,0) size 44x45
+                  RenderText {#text} at (0,0) size 24x45
+                    text run at (0,0) width 24: "foo"
+                    text run at (24,0) width 0: " "
+                    text run at (0,15) width 0: " "
+                    text run at (0,30) width 24: "bar"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,182) size 784x18
+        RenderText {#text} at (0,0) size 312x17
+          text run at (0,0) width 312: "Testing the highlighting of text split across boxes."
+      RenderBlock (anonymous) at (0,216) size 784x80
+        RenderIFrame {IFRAME} at (4,4) size 130x72 [border: (1px solid #0000FF)]
+          layer at (0,0) size 128x70
+            RenderView at (0,0) size 128x70
+          layer at (0,0) size 128x70
+            RenderBlock {HTML} at (0,0) size 128x70
+              RenderBody {BODY} at (8,8) size 112x54
+                RenderBlock {DIV} at (0,0) size 112x36
+                  RenderText {#text} at (0,0) size 84x35
+                    text run at (0,0) width 46: "Lorem "
+                    text run at (46,0) width 38: "ipsum"
+                    text run at (0,18) width 33: "dolor"
+        RenderText {#text} at (0,0) size 0x0

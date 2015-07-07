@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 240: Failed to pause 'color' transition on element 'test'
+CONSOLE MESSAGE: line 240: Failed to pause 'color' transition on element 'test'
+CONSOLE MESSAGE: line 240: Failed to pause 'color' transition on element 'test'
+This test will probably fail when run manually; it requires the pause API for accurate results.
+FAIL - "color" property for "test" element at 0.4998s expected: 127,0,128 but saw: 255,0,0
+FAIL - "color" property for "test" element at 0.5s expected: 128,0,128 but saw: 255,0,0
+FAIL - "color" property for "test" element at 0.5002s expected: 128,0,127 but saw: 255,0,0
+

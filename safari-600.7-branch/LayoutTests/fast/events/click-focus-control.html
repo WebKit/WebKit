@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+
+    <script type="text/javascript">
+
+        var numberOfFocusedElements = 0;
+        function test()
+        {
+            if (!window.testRunner)
+                return;
+
+            for (var i = 1; i <= 5; i++) {
+                var aElement = document.getElementById('a' + i);
+                aElement.onfocus = handleFocus;
+                eventSender.mouseMoveTo(aElement.offsetLeft + 2, aElement.offsetTop + 2);
+                eventSender.mouseDown();
+                eventSender.mouseUp();
+            }
+
+            if(numberOfFocusedElements == 5)
+               testPassed("All form elements got focus");
+            else
+               testFailed("Some form elements didn't get focus");
+
+            var tc = document.getElementById('test-container');
+            tc.parentNode.removeChild(tc);
+        };
+
+        function handleFocus(e)
+        {
+            var el = e.target;
+            debug(el.id + ' received focus (' + el.title + ')');
+            numberOfFocusedElements = numberOfFocusedElements + 1;
+        }
+
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+        }
+
+    </script>
+</head>
+
+<body onLoad="test()">
+
+<p>This test ensures that we can click to focus an a element.
+Click on the element below.
+
+<p>The expected result is platform specific. Mac doesn't allow some form controls to be
+mouse focusable.
+
+<div id=test-container>
+<form id="form1">
+<p>
+<strong>This is form1</strong><br/>
+
+First name here<br/>
+<input type="text" name="name" title="input name" size="6" maxlength="10"/><br/>
+
+Password:<br/>
+<input type="password" name="password" size="6" maxlength="10"/><br/>
+
+comments:<br/>
+<textarea name="comments" title="textarea comments" rows="2" cols="20">anything form1 goes here</textarea><br/>
+
+Select 1:<br/>
+<input id=a1 type="radio" name="radio1" value="radio1a"/><br/>
+<input id=a2 type="radio" name="radio1" value="radio1b"/><br/>
+
+Check it:<br/>
+<input id=a3 type="checkbox" name="checkbox1" value="checkbox1"/><br/>
+
+Select 1:<br/>
+  <select id=a4 name="Select" size="2">
+    <option>1</option>
+    <option>2</option>
+    <option selected="selected">3</option>
+    <option>4</option>
+  </select><br/>
+<input id=a5 type="button" name="button" value="Button 1"/>
+</p></form><p><strong>End form1</strong></p>
+</div>
+
+<p>Result
+
+<pre id=console></pre>
+
+</body>
+</html>

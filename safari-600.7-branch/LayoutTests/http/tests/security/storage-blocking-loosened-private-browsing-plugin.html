@@ -1,0 +1,32 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+	testRunner.waitUntilDone();
+	testRunner.dumpAsText();
+	testRunner.dumpChildFramesAsText();
+	internals.settings.setStorageBlockingPolicy('BlockAll');
+}
+
+function decrement() {
+	if (window.testRunner) {
+		testRunner.setPrivateBrowsingEnabled(true);
+		internals.settings.setStorageBlockingPolicy('AllowAll');
+	}
+	for (var i = 0; i < window.frames.length; ++i)
+		window.frames[i].postMessage('blocked', '*');
+}
+
+window.onmessage = function() {
+	if (window.testRunner) {
+		testRunner.notifyDone();
+		testRunner.setPrivateBrowsingEnabled(false);
+	}
+}
+</script>
+</head>
+<body>
+<p>This iframe should have private browsing enabled:</p>
+<iframe src="http://127.0.0.1:8000/security/resources/cross-origin-iframe-for-plugin-async.html" onload="decrement()"></iframe>
+</body>
+</html>

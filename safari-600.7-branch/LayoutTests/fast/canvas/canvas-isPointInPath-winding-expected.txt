@@ -1,0 +1,18 @@
+Series of tests to ensure correct results of the winding rule in isPointInPath.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Testing default isPointInPath
+PASS ctx.isPointInPath(50, 50) is true
+
+Testing nonzero isPointInPath
+PASS ctx.isPointInPath(50, 50, 'nonzero') is true
+
+Testing evenodd isPointInPath
+PASS ctx.isPointInPath(50, 50, 'evenodd') is false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

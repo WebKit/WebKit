@@ -1,0 +1,21 @@
+This test is for a bug when delete commands is applied on paragraph with positioning other than static then the below paragraph are incorrectly collapsed, 3 & 4 should not be merged as 43
+
+BeforeDeletion:
+| <p>
+|   "1"
+| <p>
+|   id="paragraphToDelete"
+|   "2<#selection-caret>"
+| <p>
+|   "3"
+| <p>
+|   "4"
+
+AfterDeletion:
+| <p>
+|   "1"
+| <br>
+| <p>
+|   "3"
+| <p>
+|   "4"

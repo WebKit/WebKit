@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div role="tablist" aria-disabled="true" id="tablist">
+	<div role="tab" aria-selected="false" aria-labelledby="foo" id="item1">
+		<label id="foo">Foo</label>
+	</div>
+
+	<div role="tab" aria-disabled="false" aria-selected="false" aria-labelledby="bar" id="item2">
+		<label id="bar">Bar</label>
+	</div>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that aria-disabled will be taken from an ancestor if available");
+
+    if (window.accessibilityController) {
+
+          // Item1 should be enabled=false because its parent is enabled=false.
+          var item1 = accessibilityController.accessibleElementById("item1");
+          shouldBeFalse("item1.isEnabled");
+
+          // Item2 should be enabled=true because it has an explicit aria-disabled=false.
+          var item2 = accessibilityController.accessibleElementById("item2");
+          shouldBeTrue("item2.isEnabled");
+
+          // The tablist should be enabled=false because aria-disabled=true.
+          var tablist = accessibilityController.accessibleElementById("tablist");
+          shouldBeFalse("tablist.isEnabled");
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

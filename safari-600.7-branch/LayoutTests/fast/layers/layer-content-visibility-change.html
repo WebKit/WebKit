@@ -1,0 +1,18 @@
+<div style="position: relative;">
+    <div style="width: 100px; height: 100px; background-color: red;"></div>
+    <div style="visibility: hidden; position: absolute; top: 0;">
+        <div id="inner" style="width: 100px; height: 100px; background-color: green;"></div>
+    </div>
+</div>
+<script>
+    function test()
+    {
+        document.getElementById("inner").style.visibility = "visible";
+    }
+    if (window.testRunner) {
+        document.body.offsetTop;
+        testRunner.display();
+        test();
+    } else
+        setTimeout(test, 0);
+</script>

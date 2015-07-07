@@ -1,0 +1,30 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaScript Object to int
+
+FAIL dt.setLong(new Boolean(true)); dt.PUB_LONG should be 1. Was 0.
+PASS dt.setLong(new Boolean(true)); dt.getLong() is 1
+PASS typeof dt.getLong() is "number"
+PASS dt.setLong(bool = new Boolean(false)); dt.PUB_LONG is 0
+PASS dt.setLong(bool = new Boolean(false)); dt.getLong() is 0
+PASS typeof dt.getLong() is "number"
+PASS dt.setLong( number ); dt.PUB_LONG is 0
+PASS dt.setLong( number ); dt.getLong() is 0
+PASS typeof dt.getLong() is "number"
+FAIL dt.setLong(new String(32767)); dt.PUB_LONG should be 32767. Was 0.
+PASS dt.setLong(new String(32767)); dt.getLong() is 32767
+PASS typeof dt.getLong() is "number"
+FAIL dt.setLong(new String(-32768)); dt.PUB_LONG should be -32768. Was 0.
+PASS dt.setLong(new String(-32768)); dt.getLong() is -32768
+PASS typeof dt.getLong() is "number"
+FAIL dt.setLong(new MyObject('5.5')); dt.PUB_LONG should be 5. Was 0.
+PASS dt.setLong(new MyObject('5.5')); dt.getLong() is 5
+PASS typeof dt.getLong() is "number"
+FAIL dt.setLong(new MyOtherObject('-107.5')); dt.PUB_LONG should be -107. Was 0.
+PASS dt.setLong(new MyOtherObject('-107.5')); dt.getLong() is -107
+PASS typeof dt.getLong() is "number"
+FAIL dt.setLong(new AnotherObject('6666')); dt.PUB_LONG should be 6666. Was 0.
+PASS dt.setLong(new AnotherObject('6666')); dt.getLong() is 6666
+PASS typeof dt.getLong() is "number"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

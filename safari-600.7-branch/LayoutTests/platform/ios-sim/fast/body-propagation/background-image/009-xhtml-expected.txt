@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (50,50) size 700x156
+  RenderBlock {html} at (50,50) size 700x156 [border: (1px solid #000000)]
+    RenderBody {body} at (51,51) size 598x54 [color=#000080] [border: (1px solid #000080)]
+      RenderBlock {p} at (1,17) size 596x20
+        RenderText {#text} at (0,0) size 352x19
+          text run at (0,0) width 352: "There should be a yellow square in the top-left corner, "
+        RenderInline {em} at (0,0) size 53x19
+          RenderText {#text} at (351,0) size 53x19
+            text run at (351,0) width 53: "between"
+        RenderText {#text} at (403,0) size 81x19
+          text run at (403,0) width 81: " the borders."

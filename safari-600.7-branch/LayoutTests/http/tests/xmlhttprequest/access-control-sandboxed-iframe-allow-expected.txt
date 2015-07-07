@@ -1,0 +1,9 @@
+This test verifies that sandboxed iframe has XmlHttpRequest access to the server that accepts all domains. It will print "PASS" on success.
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+PASS: Sandboxed iframe XHR access allowed.
+

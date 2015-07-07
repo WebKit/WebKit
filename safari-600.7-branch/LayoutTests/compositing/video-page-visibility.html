@@ -1,0 +1,32 @@
+<html>
+<head>
+  <style>
+    video {
+      width: 400px;
+      height: 300px;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.testRunner) {
+      testRunner.dumpAsText(true);
+      testRunner.waitUntilDone();
+    }
+  </script>
+</head>
+<body>
+  <video></video>
+  <script>
+    var video = document.getElementsByTagName('video')[0];
+    video.src = 'resources/video.' + (video.canPlayType('video/ogg') ? 'ogv' : 'mp4');
+    video.addEventListener('canplaythrough', function() {
+      if (window.testRunner) {
+        testRunner.display();
+        testRunner.setPageVisibility("hidden");
+        testRunner.display();
+        testRunner.resetPageVisibility();
+        testRunner.notifyDone();
+      }
+    }, false);
+  </script>
+</body>
+</html>

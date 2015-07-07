@@ -1,0 +1,5 @@
+FAIL: Timed out waiting for notifyDone to be called
+Test that dataunavailable, timeupdate and waiting events are sent when media load stalls in the middle.
+
+FAIL: timed out
+

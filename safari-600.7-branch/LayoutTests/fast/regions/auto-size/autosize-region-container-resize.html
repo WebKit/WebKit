@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            html {
+                font: 16px/1.25 monospace;
+            }
+
+            #article {
+                -webkit-flow-into: article;
+            }
+
+            #regionContainer {
+                width: 600px;
+            }
+
+            #region {
+                -webkit-flow-from: article;
+                width: auto;
+                height: auto;
+                border: 5px solid green;
+            }
+
+            #region2 {
+                -webkit-flow-from: article;
+                width: 300px;
+                height: 40px;
+                border: 5px solid blue;
+                position: absolute;
+                top: 150px;
+            }
+    </style>
+</head>
+<body>
+    <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=102221">WebKit Bug 102221</a> [CSS Regions] Auto-sized regions don't recompute their dimensions on window resize</p>
+    <p>On success you should not see any text in the blue border region.</p>
+    <div id="article">
+        Lorem ipsum dolor sin amet Lorem ipsum dolor sin amet
+    </div>
+    <div id="regionContainer">
+        <div id="region"></div>
+    </div>
+    <div id="region2"></div>
+    <script>
+        document.body.offsetTop;
+        document.getElementById("regionContainer").style.width = "310px";
+    </script>
+</body>
+</html>

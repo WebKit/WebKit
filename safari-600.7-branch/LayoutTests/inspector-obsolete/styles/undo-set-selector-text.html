@@ -1,0 +1,65 @@
+<html>
+<head>
+<style>
+#inspected {
+  color: green;
+}
+</style>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function test()
+{
+    WebInspector.showPanel("elements");
+    InspectorTest.selectNodeAndWaitForStyles("inspected", step1);
+
+    function step1()
+    {
+        InspectorTest.addResult("=== Before selector modification ===");
+        InspectorTest.dumpSelectedElementStyles(true);
+        var section = WebInspector.panels.elements.sidebarPanes.styles.sections[0][2];
+        section.startEditingSelector();
+        section._selectorElement.textContent = "#inspected, #other";
+        section._selectorElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
+        InspectorTest.selectNodeAndWaitForStyles("other", step2);
+    }
+
+    function step2()
+    {
+        InspectorTest.addResult("=== After selector modification ===");
+        InspectorTest.dumpSelectedElementStyles(true);
+        WebInspector.domAgent.undo();
+        InspectorTest.selectNodeAndWaitForStyles("inspected", step3);
+    }
+
+    function step3()
+    {
+        InspectorTest.addResult("=== After undo ===");
+        InspectorTest.dumpSelectedElementStyles(true);
+
+        WebInspector.domAgent.redo();
+        InspectorTest.selectNodeAndWaitForStyles("other", step4);
+    }
+
+    function step4()
+    {
+        InspectorTest.addResult("=== After redo ===");
+        InspectorTest.dumpSelectedElementStyles(true);
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that setting selector text can be undone.
+</p>
+
+<div id="inspected"></div>
+<div id="other"></div>
+
+</body>
+</html>

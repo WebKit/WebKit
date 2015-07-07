@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 1: Opening front-end for the first time
+CONSOLE MESSAGE: line 1: Resolved object successfully
+CONSOLE MESSAGE: line 1: Opening front-end second time
+CONSOLE MESSAGE: line 1: Error resolving object
+Tests that injected script is discarded upon front-end close.
+
+

@@ -1,0 +1,41 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../resources-test.js"></script>
+<script src="resource-tree-test.js"></script>
+
+<link rel="stylesheet" href="resources/styles-initial.css">
+
+<script>
+
+function test()
+{
+    WebInspector.showPanel("resources");
+
+    InspectorTest.reloadPage(step1);
+
+    function step1()
+    {
+        InspectorTest.runAfterResourcesAreFinished(["resource-tree-reload-iframe.html", "script-initial.js", "styles-initial-2.css"], step2);
+    }
+
+    function step2()
+    {
+        InspectorTest.dumpResourceTreeEverything();
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+
+</head>
+
+<body>
+<p>
+Tests resource tree model on page reload, compares resource tree against golden. Every line is important.
+</p>
+
+<iframe src="resources/resource-tree-reload-iframe.html" onload="runTest()">
+
+</body>
+</html>

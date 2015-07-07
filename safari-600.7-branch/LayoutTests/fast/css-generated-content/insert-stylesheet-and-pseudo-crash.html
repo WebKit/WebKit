@@ -1,0 +1,13 @@
+<script src="../../resources/js-test-pre.js"></script>
+<body>
+<script>
+    var style = document.createElement("style");
+    style.innerText = '#test:before { content: "before"; } #test:after { content: "after"; }';
+    var span = document.createElement("span");
+    span.id = "test";
+    var div = document.createElement("div");
+    div.appendChild(style);
+    div.appendChild(span);
+    document.body.appendChild(div);
+</script>
+<script src="../../resources/js-test-post.js"></script>

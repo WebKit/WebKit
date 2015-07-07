@@ -1,0 +1,14 @@
+
+Test iframe with main frame scroll offset case of tap-to-zoom mechanics.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS zoomableArea.top is 600
+PASS zoomableArea.left is 100
+PASS zoomableArea.width is 200
+PASS zoomableArea.height is 100
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

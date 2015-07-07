@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .bar {
+            width: 200px;
+            height: 50px;
+            margin-left: 50px;
+            background-color: gray;
+            -webkit-transform: translateZ(0);
+        }
+
+        #overflow {
+            position: absolute;
+            top: 70px;
+            left: 100px;
+            z-index: 100;
+            height: 200px;
+            width: 200px;
+            border: 1px solid black;
+            overflow: scroll;
+        }
+        
+        #overflow > div {
+            position: relative;
+            height: 50px;
+            width: 100%;
+            border: 2px solid black;
+            margin: 2px;
+        }
+        
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText(true);
+            testRunner.waitUntilDone();
+        }
+
+        function doTest()
+        {
+            var overflow = document.getElementById('overflow');
+            overflow.scrollTop = 50;
+
+            if (window.testRunner)
+                testRunner.display();
+            
+            window.setTimeout(function() {
+                overflow.scrollTop = 75;
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }, 0)
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+    <div class="bar"></div>
+    
+    <div id="overflow">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</body>
+</html>

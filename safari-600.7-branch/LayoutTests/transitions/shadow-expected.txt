@@ -1,0 +1,3 @@
+First box should transition to no shadow. Second should transition to a shadow.
+
+PASS

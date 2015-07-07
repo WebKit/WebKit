@@ -1,0 +1,7 @@
+Test for WebKitBug 126113 [CSSRegions] Crash when trying to select content from invalid region
+
+An invalid region, part of a dependency cycle, should not attempt select content from the associated named flow when clicked.
+
+On success it should not crash and you should see 3 rectangles painted in the following order: green, blue, orange.
+
+

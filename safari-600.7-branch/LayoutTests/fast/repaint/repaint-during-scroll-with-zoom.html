@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            background: silver;
+            zoom: 1.25;
+        }
+        iframe {
+            position: absolute;
+            top: 50px;
+            width: 200px;
+            height: 200px;
+            overflow: auto;
+        }
+    </style>
+</head>
+<body>
+    <iframe src="javascript:void(0);"></iframe>
+    <script>
+        var frame = window.frames[0];
+        var doc = frame.document;
+        doc.body.style.backgroundColor = 'white';
+        doc.body.style.width = '2000px';
+        doc.body.style.height = '2000px';
+        doc.body.appendChild(doc.createTextNode('scroll me'));
+        frame.scrollBy(100, 100);
+    </script>
+    <script>
+        function testScrollRepaint()
+        {
+            if (window.testRunner) {
+                testRunner.waitUntilDone();
+                frame.onscroll = function() {
+                    if (window.testRunner)
+                        testRunner.notifyDone();
+                };
+            }
+            frame.scrollBy(-90, -90);
+        }
+
+        if (window.testRunner) {
+            testRunner.display();
+            testScrollRepaint();
+        } else {
+            setTimeout(testScrollRepaint, 100);
+        }
+    </script>
+</body>
+</html>

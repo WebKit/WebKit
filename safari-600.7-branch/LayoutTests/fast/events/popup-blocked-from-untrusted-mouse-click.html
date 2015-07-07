@@ -1,0 +1,83 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setCanOpenWindows();
+    testRunner.setCloseRemainingWindowsWhenComplete(true);
+    testRunner.waitUntilDone();
+}
+
+var TEST_STARTED = 0;
+var TEST_WITH_ENABLING_POPUP_BLOCKER = 1;
+var TEST_WITH_DISABLING_POPUP_BLOCKER = 2;
+var TEST_COMPLETED = 3;
+
+function nextTestStage() {
+    window.testStage++;
+    if (TEST_WITH_ENABLING_POPUP_BLOCKER == window.testStage) {
+        window.popupBlockerIsEnabled = true;
+        doClick();
+    } else if (TEST_WITH_DISABLING_POPUP_BLOCKER == window.testStage) {
+        window.popupBlockerIsEnabled = false;
+        doClick();
+    } else {
+        document.getElementById("console").innerHTML = "PASSED";
+        testRunner.notifyDone();
+    }
+}
+
+function dispatchEvent(obj, evt)  { 
+    return function() {
+        return obj.dispatchEvent(evt);
+    }
+}
+
+function simulateClick() {
+    var evt = document.createEvent("MouseEvents");
+    evt.initMouseEvent("click", true, true, window,
+        0, 0, 0, 0, 0, false, false, false, false, 0, null);
+    var cb = document.getElementById("anchor"); 
+    setTimeout(dispatchEvent(cb, evt), 100);
+}
+
+function openWindow(evt) {
+    window.open("data:text/html\, try to open new window", "_blank");
+    // If we enabled the popup blocker, the new window should be blocked.
+    // The windowCount should still be 1.
+    var expectedWindowCount = 1;
+    // If we disabled the popup blocker, the new window should be created.
+    // The windowCount should be 2.
+    if (!window.popupBlockerIsEnabled)
+        expectedWindowCount = 2;
+    // Encounter a failure, quit test.
+    if (testRunner.windowCount() != expectedWindowCount) {
+        testRunner.notifyDone();
+        return;
+    }
+    // Go to next test stage.
+    window.setTimeout(nextTestStage, 0);
+}
+
+function doClick() {
+    testRunner.setPopupBlockingEnabled(window.popupBlockerIsEnabled);
+    // Send a mouse-click event to click the button.
+    eventSender.mouseMoveTo(0, 0);
+    eventSender.mouseMoveTo(20, 20);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+function test() {
+    if (!window.testRunner)
+        return;
+    window.testStage = TEST_STARTED;
+    nextTestStage();
+}
+
+</script>
+<body onload="window.setTimeout(test, 0);">
+<input type="button" onclick="simulateClick();" value="click me" id="btn"><br>
+<a onclick="openWindow(event)" id="anchor"> open a new window </a><br>
+The JavaScript created (untrusted) event inside a user-initiated (trusted) event should not cache the UserGesture status. This test is for bug https://bugs.webkit.org/show_bug.cgi?id=50508.
+<div id="console">FAILED</div>

@@ -1,0 +1,54 @@
+<html>
+<head>
+<script src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script src="resources/exception.js"></script>
+<script>
+function test()
+{
+    function testFunction() {
+        // This function runs in the second inspector window. We can use this one to debug the first inspector.
+
+        InspectorTest.sendCommand("Debugger.enable", {});
+        InspectorTest.sendCommand("Debugger.setPauseOnExceptions", {state: "all"}, function(responseObject) {
+            InspectorTest.checkForError(responseObject);
+            InspectorTest.log("Debugger.setPauseOnExceptions - all");
+
+            // Trigger an exception in the main inspector.
+            InspectorTest.sendCommand("Runtime.evaluate", {expression: "setTimeout(function() { throw new Error('PASS: Expected exception') }, 0);"});
+        });
+
+        InspectorTest.eventHandler["Debugger.paused"] = function(messageObject)
+        {
+            InspectorTest.log("PASS: Paused!");
+            InspectorTest.sendCommand("Debugger.resume", {});
+        }
+
+        InspectorTest.eventHandler["Debugger.resumed"] = function(messageObject)
+        {
+            InspectorTest.log("PASS: Resumed!");
+
+            // Revert Debugger.setPauseOnExceptions as it can have an impact on the following tests.
+            InspectorTest.sendCommand("Debugger.setPauseOnExceptions", {state: "none"}, function(responseObject) {
+                InspectorTest.completeTest();
+            });
+        }
+    };
+
+    window.log = InspectorTest.log.bind(InspectorTest);
+    window.closeTest = function()
+    {
+        window.internals.closeDummyInspectorFrontend();
+        InspectorTest.completeTest();
+    }
+
+    var secondInspectorFrontend = window.internals.openDummyInspectorFrontend("protocol-test.html");
+    secondInspectorFrontend.addEventListener("load", function(event) {
+        secondInspectorFrontend.postMessage("(" + testFunction.toString() +")();", "*");
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Checking that the inspector code can be debugged using a second inspector window.</p>
+</body>
+</html>

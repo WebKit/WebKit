@@ -1,0 +1,33 @@
+<html>
+<head>
+<script src="resources/profiler-test-JS-resources.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.internals)
+    internals.settings.setJavaScriptProfilingEnabled(true);
+
+console.profile("Throw within an eval.");
+
+function startTest()
+{
+    insertNewText();
+
+    endTest();
+}
+</script>
+<script>
+eval("throw('Test exception.');");
+</script>
+</head>
+
+<body onload="startTest()">
+This page throws an exception from within eval().
+<br>
+<br>
+To run this test manually, load it in the browser then load the WebInspector and look at
+the profile.  The profiler should not crash and still show the stack under
+insertnewText().
+<div id="output"></div>
+</body>
+</html>

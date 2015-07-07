@@ -1,0 +1,51 @@
+<html>
+<head>
+
+<style>
+
+body {
+    margin: 0;
+}
+
+iframe {
+    position: absolute;
+    left: 83px;
+    top: 53px;
+    width: 200px;
+    height: 200px;
+}
+
+</style>
+
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function onload()
+{
+    if (window.internals)
+        window.internals.setPageScaleFactor(2, 0, 0);
+    runTest();
+}
+    
+function test()
+{
+    WebInspector.showPanel("elements");
+    WebInspector.panels.elements.treeOutline.addEventListener(WebInspector.ElementsTreeOutline.Events.SelectedNodeChanged, selectedNodeChanged, this);
+
+    function selectedNodeChanged(event)
+    {
+        var node = event.data;
+        if (node.getAttribute("id") == "div")
+            RuntimeAgent.evaluate("dumpInspectorHighlightRects()", InspectorTest.completeTest);
+    }
+    InspectorTest.evaluateInConsole("inspect(iframeDivElement)");
+}
+
+</script>
+</head>
+
+<body onload="onload()">
+<iframe src="resources/highlight-node-scaled-iframe.html"></iframe>
+</body>
+</html>

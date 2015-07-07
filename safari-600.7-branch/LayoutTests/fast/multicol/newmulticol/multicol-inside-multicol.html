@@ -1,0 +1,25 @@
+<style>
+    div.test { -webkit-column-width: 100px; }
+    div.test > div { -webkit-logical-height: 100%; }
+</style>
+<div id="outerdiv" class="test">
+    <div id="innerdiv"></div><div></div>
+</div>
+<script>
+document.execCommand("SelectAll");
+for (i=0;i<5;i++) {
+var canvas = document.createElement("canvas");
+document.getElementById("innerdiv").insertBefore(canvas, document.getElementById("innerdiv").appendChild(document.createElement("strong")));
+var ctx = canvas.getContext("2d");
+ctx.createImageData(1024, 65534);
+}
+</script>
+<script>
+head = document.getElementsByTagName("head")[0];
+var style = document.createElement("style");
+var rule = document.createTextNode("* { position: absolute;");
+style.appendChild(rule);
+head.appendChild(style);
+var elem = document.getElementById("outerdiv");
+elem.parentNode.removeChild(elem);
+</script>

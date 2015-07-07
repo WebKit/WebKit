@@ -1,0 +1,37 @@
+<html>
+<script>
+    function debug(str) {
+        document.getElementById('console').innerHTML += str + "<br>";
+    }
+    
+    function pluginCallback() {
+        debug('SUCCESS');
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+    
+    function runTest() {
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+        
+        var plugin = document.plugin;
+    
+        debug('plugin object is: ' + plugin);
+        plugin.getURL('javascript:pluginCallback()', '_self')
+    }
+</script>
+<body onload="runTest()">
+<object name="plugin" type="application/x-webkit-test-netscape">
+    <span>
+        <embed name="plugin" type="application/x-webkit-test-netscape"></embed>
+    </span>
+</object>
+<div>
+    This tests that it's possible to control an embed that is nested inside an object with a span tag in between.
+</div>
+<div id="console">
+</div>
+</body>
+</html>

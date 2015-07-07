@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>CSS Test: Absolutely positioned non-replaced elements with 'margin-left' and 'margin-right' set to 'auto'</title>
+        <link rel="author" title="Microsoft" href="http://www.microsoft.com/">
+        <link rel="help" href="http://www.w3.org/TR/CSS21/visudet.html#abs-non-replaced-width">
+        <meta name="flags" content="ahem">
+        <meta name="assert" content="When 'left', 'width' and 'right' are not 'auto', set 'margin-left' and 'margin-right' to equal values.">
+        <style type="text/css">
+            #containingblock
+            {
+                border: solid black;
+                height: 2in;
+                position: relative;
+                width: 4in;
+            }
+            div div
+            {
+                /* left + margin-left + border-left-width + padding-left + width + padding-right + border-right-width + margin-right + right = width of containing block */
+                /* 1in + solve       + 0                 + 0            + 1in   + 0             + 0                  + solve        + -2in   = 4in */
+                background: red;
+                color: blue;
+                font: 1in/1em Ahem;
+                left: 1in;
+                margin-left: auto; /* value is solved to 2in */
+                margin-right: auto; /* value is solved to 2in */
+                position: absolute;
+                right: -2in;
+                width: 1in;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test passes if the blue square in in the upper-right corner of the black rectangle and there is no red visible on the page.</p>
+        <div id="containingblock">
+            <div>X</div>
+        </div>
+    </body>
+</html>

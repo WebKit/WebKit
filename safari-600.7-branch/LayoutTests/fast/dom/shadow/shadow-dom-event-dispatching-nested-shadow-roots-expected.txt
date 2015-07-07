@@ -1,0 +1,54 @@
+Tests to ensure that event dispatching behaves as the Shadow DOM spec describes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+
+Composed Shadow Tree will be:
+DIV	 id=sandbox
+	DIV	 id=top
+		DIV	 id=A
+			DIV	 id=B
+				DIV	 id=G
+					DIV	 id=J
+						DIV	 id=C
+							DIV	 id=D
+					DIV	 id=L
+						DIV	 id=E
+							DIV	 id=F
+
+
+Moving mouse from F to D
+
+  mouseout
+
+  mouseover
+
+Moving mouse from B/G/L to D
+
+  mouseout
+
+  mouseover
+
+Moving mouse from B/G/L to B/G/J
+
+  mouseout
+
+  mouseover
+
+Moving mouse from A to D
+
+  mouseout
+
+  mouseover
+
+Moving mouse from D to A
+
+  mouseout
+
+  mouseover
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,37 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.overridePreference("WebKitJavaEnabled", "1");
+}
+</script>
+</head>
+<body>
+
+<p>Test accessing a field of a non-public class. This may or may not need to work, but it definitely
+shouldn't crash.</p>
+
+<pre id="console"></pre>
+<applet CODE="SharedApplet.class" NAME="javaTest" WIDTH=150 HEIGHT=25 MAYSCRIPT></applet>
+<script>
+function log(message)
+{
+    document.getElementById("console").innerHTML += message;
+}
+
+try {
+    var result = document.javaTest.getObjectOfNonPublicClass().arrayField[0];
+    if (result == 5)
+        log("PASS");
+    else
+        log("FAIL: result is " + result);
+} catch (ex) {
+    if (window.testRunner)
+        log("FAIL: Exception raised");
+    else
+        log(ex);
+}
+</script>
+</body>
+</html>

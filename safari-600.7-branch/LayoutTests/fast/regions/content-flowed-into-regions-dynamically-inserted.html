@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+    <!--
+    Test that the content is properly flowed into dynamically added regions.
+    On success you should see that the colored boxes are displayed inside the 3 rectangles with black border.
+    The green box should be displayed in left region.
+    The blue box should be displayed in middle region.
+    The orange box should be displayed in right region.
+    -->
+    <head>
+        <link rel="stylesheet" href="resources/region-style.css">
+    </head>
+    <body>
+        <div class="flowArticle">
+            <div class="greenBox"></div>
+            <div class="blueBox"></div>
+            <div class="orangeBox"></div>
+        </div>
+        <div class="regionArticle borderBox"></div>
+        <div id="region"></div>
+        <div class="regionArticle borderBox"></div>
+        <script>
+            var region = document.getElementById("region");
+            // The next line will create a new RenderRegion and insert it
+            // into the flow thread.
+            region.className = "regionArticle borderBox";
+        </script>
+    </body>
+</html>

@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x286
+  RenderBlock {HTML} at (0,0) size 800x286
+    RenderBody {BODY} at (8,16) size 784x262
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 613x19
+          text run at (0,0) width 613: "Test passes if there are two black boxes with rounded corners and red is not visible on the page."
+      RenderTable {TABLE} at (0,36) size 450x226
+        RenderTableSection {TBODY} at (0,0) size 450x226
+          RenderTableRow {TR} at (0,2) size 450x222
+            RenderTableCell {TD} at (2,2) size 222x222 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 220x220 [border: (10px solid #FF0000)]
+              RenderBlock {DIV} at (1,1) size 220x220 [border: (10px solid #000000)]
+            RenderTableCell {TD} at (226,2) size 222x222 [r=0 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 220x220 [border: (10px solid #FF0000)]
+              RenderBlock {DIV} at (1,1) size 220x220 [border: (10px solid #000000)]

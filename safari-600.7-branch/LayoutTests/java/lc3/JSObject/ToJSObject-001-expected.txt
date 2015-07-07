@@ -1,0 +1,33 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaScript Object to java.lang.String
+
+FAIL jsoc.setJSObject(array); jsoc.PUB_JSOBJECT should be 1,2,3. Was null.
+FAIL jsoc.setJSObject(array); jsoc.getJSObject() should be 1,2,3 (of type object). Was undefined (of type undefined).
+FAIL jsoc.getJSObject().constructor should be function Array() {
+    [native code]
+}. Threw exception TypeError: 'undefined' is not an object (evaluating 'jsoc.getJSObject().constructor')
+FAIL jsoc.setJSObject( MyObject ); jsoc.PUB_JSOBJECT should be function MyObject(stringValue) {
+  this.stringValue = String(stringValue);
+  this.toString = new Function( "return this.stringValue" );
+} (of type function). Was function MyObject(stringValue) {
+  this.stringValue = String(stringValue);
+  this.toString = new Function( "return this.stringValue" );
+} (of type object).
+PASS jsoc.setJSObject( MyObject ); jsoc.getJSObject() is MyObject
+PASS jsoc.getJSObject().constructor is Function
+FAIL jsoc.setJSObject( THIS ); jsoc.PUB_JSOBJECT should be [object Window]. Was [object Window].
+PASS jsoc.setJSObject( THIS ); jsoc.getJSObject() is this
+PASS jsoc.getJSObject().constructor is this.constructor
+FAIL jsoc.setJSObject( Math ); jsoc.PUB_JSOBJECT should be [object Math]. Was [object Math].
+PASS jsoc.setJSObject( Math ); jsoc.getJSObject() is Math
+PASS jsoc.getJSObject().constructor is Object
+FAIL jsoc.setJSObject( Function ); jsoc.PUB_JSOBJECT should be function Function() {
+    [native code]
+} (of type function). Was function Function() {
+    [native code]
+} (of type object).
+PASS jsoc.setJSObject( Function ); jsoc.getJSObject() is Function
+PASS jsoc.getJSObject().constructor is Function
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

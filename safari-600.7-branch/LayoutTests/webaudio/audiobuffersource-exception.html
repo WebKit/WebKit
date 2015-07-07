@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+<script src="resources/audio-testing.js"></script>
+<script src="resources/audiobuffersource-testing.js"></script>
+</head>
+
+<body>
+
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Tests that AudioBufferSourceNode validates start and stop calls.");
+
+var bufferSource;
+
+function runTest() {
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    window.jsTestIsAsync = true;
+
+    var sampleRate = 44100.0;
+    var numberOfFrames = 32;
+    var context = new webkitOfflineAudioContext(1, numberOfFrames, sampleRate);
+    bufferSource = context.createBufferSource();
+    bufferSource.buffer = createTestBuffer(context, numberOfFrames);
+    bufferSource.connect(context.destination);
+
+    // 'stop' should be called only after 'start'.
+    shouldThrow("bufferSource.stop(0)", "'Error: InvalidStateError: DOM Exception 11'");
+    bufferSource.start(0);
+
+    // 'start' should be called only once.
+    shouldThrow("bufferSource.start(0)", "'Error: InvalidStateError: DOM Exception 11'");
+    bufferSource.stop(0);
+
+    // 'stop' should be called only once.
+    shouldThrow("bufferSource.stop(0)", "'Error: InvalidStateError: DOM Exception 11'");
+
+    context.oncomplete = finishJSTest;
+    context.startRendering();
+}
+
+runTest();
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

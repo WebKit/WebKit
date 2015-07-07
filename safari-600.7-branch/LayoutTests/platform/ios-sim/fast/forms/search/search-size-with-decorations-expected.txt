@@ -1,0 +1,81 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x191
+  RenderBlock {HTML} at (0,0) size 800x191
+    RenderBody {BODY} at (8,8) size 784x175
+      RenderTextControl {INPUT} at (2,2) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderFlexibleBox {DIV} at (6,3) size 123x15
+          RenderBlock {DIV} at (0,7) size 0x0
+          RenderBlock {DIV} at (0,0) size 123x14
+          RenderBlock {DIV} at (122,7) size 1x0
+      RenderText {#text} at (139,1) size 5x19
+        text run at (139,1) width 5: " "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderTextControl {INPUT} at (2,27) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderFlexibleBox {DIV} at (6,3) size 123x15
+          RenderBlock {DIV} at (0,7) size 0x0
+          RenderBlock {DIV} at (0,0) size 123x14
+          RenderBlock {DIV} at (122,7) size 1x0
+      RenderText {#text} at (139,26) size 5x19
+        text run at (139,26) width 5: " "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderTextControl {INPUT} at (2,52) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderFlexibleBox {DIV} at (6,3) size 123x15
+          RenderBlock {DIV} at (0,7) size 0x0
+          RenderBlock {DIV} at (0,0) size 123x14
+          RenderBlock {DIV} at (122,7) size 1x0
+      RenderText {#text} at (139,51) size 5x19
+        text run at (139,51) width 5: " "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderTextControl {INPUT} at (2,77) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderFlexibleBox {DIV} at (6,3) size 123x15
+          RenderBlock {DIV} at (0,7) size 0x0
+          RenderBlock {DIV} at (0,0) size 123x14
+          RenderBlock {DIV} at (122,7) size 1x0
+      RenderText {#text} at (139,76) size 5x19
+        text run at (139,76) width 5: " "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderTextControl {INPUT} at (2,102) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderFlexibleBox {DIV} at (6,3) size 123x15
+          RenderBlock {DIV} at (0,7) size 0x0
+          RenderBlock {DIV} at (0,0) size 123x14
+          RenderBlock {DIV} at (122,7) size 1x0
+      RenderText {#text} at (139,101) size 5x19
+        text run at (139,101) width 5: " "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderTextControl {INPUT} at (2,127) size 136x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderFlexibleBox {DIV} at (6,3) size 123x15
+          RenderBlock {DIV} at (0,7) size 0x0
+          RenderBlock {DIV} at (0,0) size 123x14
+          RenderBlock {DIV} at (122,7) size 1x0
+      RenderText {#text} at (139,126) size 5x19
+        text run at (139,126) width 5: " "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderTextControl {INPUT} at (2,152) size 258x22 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+        RenderFlexibleBox {DIV} at (6,3) size 246x15
+          RenderBlock {DIV} at (0,7) size 0x0
+          RenderBlock {DIV} at (0,0) size 245x14
+          RenderBlock {DIV} at (244,7) size 1x0
+      RenderText {#text} at (0,0) size 0x0
+layer at (17,13) size 122x14
+  RenderBlock {DIV} at (0,0) size 123x14
+layer at (17,38) size 122x14 scrollWidth 124
+  RenderBlock {DIV} at (0,0) size 123x14
+    RenderText {#text} at (0,0) size 123x14
+      text run at (0,0) width 123: "12345678901234567890"
+layer at (17,63) size 122x14
+  RenderBlock {DIV} at (0,0) size 123x14
+layer at (17,88) size 122x14 scrollWidth 124
+  RenderBlock {DIV} at (0,0) size 123x14
+    RenderText {#text} at (0,0) size 123x14
+      text run at (0,0) width 123: "12345678901234567890"
+layer at (17,113) size 122x14
+  RenderBlock {DIV} at (0,0) size 123x14
+layer at (17,138) size 122x14 scrollWidth 124
+  RenderBlock {DIV} at (0,0) size 123x14
+    RenderText {#text} at (0,0) size 123x14
+      text run at (0,0) width 123: "12345678901234567890"
+layer at (17,163) size 245x14 backgroundClip at (17,163) size 244x14 clip at (17,163) size 244x14 scrollWidth 246
+  RenderBlock {DIV} at (0,0) size 245x14
+    RenderText {#text} at (0,0) size 245x14
+      text run at (0,0) width 245: "1234567890123456789012345678901234567890"

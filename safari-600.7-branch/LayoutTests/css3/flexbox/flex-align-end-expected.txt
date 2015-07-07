@@ -1,0 +1,64 @@
+horizontal-tb ltr row
+PASS
+horizontal-tb rtl row
+PASS
+horizontal-tb ltr column
+PASS
+horizontal-tb rtl column
+PASS
+horizontal-tb ltr row-reverse
+PASS
+horizontal-tb rtl row-reverse
+PASS
+horizontal-tb ltr column-reverse
+PASS
+horizontal-tb rtl column-reverse
+PASS
+horizontal-bt ltr row
+PASS
+horizontal-bt rtl row
+PASS
+horizontal-bt ltr column
+PASS
+horizontal-bt rtl column
+PASS
+horizontal-bt ltr row-reverse
+PASS
+horizontal-bt rtl row-reverse
+PASS
+horizontal-bt ltr column-reverse
+PASS
+horizontal-bt rtl column-reverse
+PASS
+vertical-lr ltr row
+PASS
+vertical-lr rtl row
+PASS
+vertical-lr ltr column
+PASS
+vertical-lr rtl column
+PASS
+vertical-lr ltr row-reverse
+PASS
+vertical-lr rtl row-reverse
+PASS
+vertical-lr ltr column-reverse
+PASS
+vertical-lr rtl column-reverse
+PASS
+vertical-rl ltr row
+PASS
+vertical-rl rtl row
+PASS
+vertical-rl ltr column
+PASS
+vertical-rl rtl column
+PASS
+vertical-rl ltr row-reverse
+PASS
+vertical-rl rtl row-reverse
+PASS
+vertical-rl ltr column-reverse
+PASS
+vertical-rl rtl column-reverse
+PASS

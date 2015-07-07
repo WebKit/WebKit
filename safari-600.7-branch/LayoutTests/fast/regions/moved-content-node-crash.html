@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<body>
+    <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=95645">WebKit Bug 95645</a> Crash </p>
+    <p>The test passes if it does not crash or assert.</p>
+    <p>PASS</p>
+    <div id="DIV1">
+        <div id="DIV2">
+            <iframe id="FRAME1" style="-webkit-flow-into: flow;"></iframe>
+            <iframe id="FRAME2"></iframe>
+            <script>
+                if (window.testRunner)
+                    window.testRunner.dumpAsText();
+
+                div1 = document.getElementById("DIV1");
+                div2 = document.getElementById("DIV2");
+                frame1 = document.getElementById("FRAME1");
+                frame2 = document.getElementById("FRAME2");
+                frame2.contentDocument.body.appendChild(frame1);
+
+                document.body.offsetTop;
+                div1.replaceChild(frame1, div2);
+            </script>
+        </div>
+    </div>
+</body>
+</html>

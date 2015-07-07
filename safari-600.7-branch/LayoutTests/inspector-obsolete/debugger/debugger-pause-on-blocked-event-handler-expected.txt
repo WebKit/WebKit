@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: line 13: Refused to execute inline event handler because it violates the following Content Security Policy directive: "script-src 'self'".
+
+Tests that pause on exception works for inline event handlers blocked by CSP.
+
+Button
+Debugger was enabled.
+Script execution paused.
+Call stack:
+    0) testAction (pause-on-blocked-event-handler.js:4)
+Script execution resumed.
+Debugger was disabled.
+

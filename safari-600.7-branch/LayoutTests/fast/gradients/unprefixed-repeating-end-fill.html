@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    div {
+      display: inline-block;
+      width: 200px;
+      height: 100px;
+      background-image: repeating-linear-gradient(red 10%, green 10%, green 30%);
+    }
+
+    .ref {
+      background-image: repeating-linear-gradient(green 10%, green 30%);
+    }
+  </style>
+  <script>
+    if (window.testRunner) {
+      var dumpPixels = true;
+      testRunner.dumpAsText(dumpPixels);
+    }
+  </script>
+</head>
+<body>
+
+  <!-- You should see two green rectangles, with no red. -->
+  <div></div>
+  <div class="ref"></div>
+
+</body>
+</html>

@@ -1,0 +1,5 @@
+This test is to see if a local directory index can be diplayed.
+
+PASS: Local directory loaded.
+
+

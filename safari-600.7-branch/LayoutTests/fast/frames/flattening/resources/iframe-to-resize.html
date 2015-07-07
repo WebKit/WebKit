@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script>
+  var resizeEventCounter = 0;
+  var resizeCounter = 0;
+  
+  window.onresize = function(event) {
+    resizeEventCounter++;
+  }
+
+  function getRandomArbitrary(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+  function resizeMe() {
+    document.getElementById('contentToResize').style.height = getRandomArbitrary(50, 500) + 'px';
+    document.body.offsetHeight;
+  
+    if (++resizeCounter < 100)
+      setTimeout('resizeMe();', 0);
+    else {
+      parent.document.getElementById('result').innerHTML = resizeEventCounter > 100 ? "FAILED. Too many resize events" : "PASS";
+      if (window.testRunner)
+        testRunner.notifyDone();
+    }
+  }
+  
+</script>
+</head>
+<body onload='resizeMe();'>
+    <p id='contentToResize'></p>
+</body>
+</html>

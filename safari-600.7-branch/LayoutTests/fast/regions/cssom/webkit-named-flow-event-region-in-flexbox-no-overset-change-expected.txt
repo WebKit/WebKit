@@ -1,0 +1,13 @@
+Tests the regionOversetChange event for regions inside flexboxes
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Flowing content into regions...
+PASS event.target.name is "article"
+Engaging flexbox...
+PASS eventFiredCount is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

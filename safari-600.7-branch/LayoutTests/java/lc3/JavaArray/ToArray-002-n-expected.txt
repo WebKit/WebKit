@@ -1,0 +1,9 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaArray to Object[]
+
+PASS var vector = new java.util.Vector(); vector.addElement( "a" ); vector.addElement( "b" ); vector.copyInto( DT.PUB_STATIC_ARRAY_CHAR ); DT.PUB_STATIC_ARRAY_OBJECT[0] +'' threw exception ReferenceError: Can't find variable: java.
+PASS var vector = new java.util.Vector(); vector.addElement( "a" ); vector.addElement( "b" ); vector.copyInto( DT.PUB_STATIC_ARRAY_CHAR ); DT.staticGetObjectArray()[0] +'' threw exception ReferenceError: Can't find variable: java.
+FAIL typeof DT.staticGetObjectArray()[0] should throw an exception. Was object.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

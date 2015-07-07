@@ -1,0 +1,3 @@
+Test for bug 32140: Mailman administrative functionality is broken.
+
+PASS

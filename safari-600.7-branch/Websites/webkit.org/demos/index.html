@@ -1,0 +1,28 @@
+<?php
+    $title = "WebKit Demos";
+    include("../header.inc");
+?>
+
+Here are some demo web applications that display various web technologies supported by WebKit.
+
+<a href="calendar"><h2>Offline Calendar</h2></a>
+<span class="datestamp">Added May 27th, 2009</span>
+<p>Picking up where the <a href="sticky-notes">sticky notes example</a> leaves off, the Offline Calendar demo goes much more in depth into the power of the HTML 5 database API.</p>
+<p>By storing the user's calendar events in a local databases and caching the application resources themselves using the HTML 5 <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/offline.html">application cache</a> the calendar can be used with no network connection!</p>
+
+<a href="transitions-and-transforms"><h2>CSS Transitions and Transforms</h2></a>
+<span class="datestamp">Added May 12th, 2008</span>
+<p><a href="transitions-and-transforms">This demo</a> shows off how straight forward it is to add transforms and implicit animations to a web application by adding a small amount of CSS.</p>
+<p>Check out our blog posts about <a href="http://webkit.org/blog/138/css-animation/">CSS animations</a> and <a href="http://webkit.org/blog/130/css-transforms/">CSS transforms</a> for more details and examples.</p>
+
+<a href="editingToolbar"><h2>Editing Toolbar</h2></a>
+<span class="datestamp">Added November 4th, 2007</span>
+<p>The editing toolbar shows off a rich HTML editing toolbar in WebKit.  It uses JavaScript and CSS to fade in and out and to implement the buttons that apply text formatting and alignment. Click in the text area to see the toolbar appear.</p>
+
+<a href="sticky-notes"><h2>Sticky Notes</h2></a>
+<span class="datestamp">Added October 19th, 2007</span>
+<p>Referenced in our <a href="http://webkit.org/blog/126/webkit-does-html5-client-side-database-storage/">blog post</a> about adding HTML 5 <a href="http://dev.w3.org/html5/webstorage/#sql">structured database storage</a>, this is a simple example of how the database API works in the form of persistent yellow sticky notes.</p>
+<p>Storing simple data, it is a great way for developers to introduce themselves to how the database API works.</p>
+<?php
+    include("../footer.inc");
+?>

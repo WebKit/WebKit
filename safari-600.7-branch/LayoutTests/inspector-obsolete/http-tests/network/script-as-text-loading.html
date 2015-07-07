@@ -1,0 +1,30 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../console-test.js"></script>
+<script>
+function loadScript()
+{
+    var s = document.createElement("script");
+    s.src = "resources/script-as-text.php";
+    document.body.appendChild(s);
+}
+
+function test()
+{
+    InspectorTest.addConsoleSniffer(step1);
+    InspectorTest.evaluateInPage("loadScript()");
+
+    function step1()
+    {
+        InspectorTest.dumpConsoleMessages();
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests console message when script is loaded with incorrect text/html mime type.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=69972">Bug 69972</a>
+</body>
+</html>

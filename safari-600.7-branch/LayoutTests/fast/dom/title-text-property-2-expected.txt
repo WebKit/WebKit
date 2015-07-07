@@ -1,0 +1,4 @@
+TITLE CHANGED: '1. setting document.title'
+TITLE CHANGED: '2. setting title.text'
+TITLE CHANGED: ''
+

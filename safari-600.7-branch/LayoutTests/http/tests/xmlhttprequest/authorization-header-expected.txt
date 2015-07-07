@@ -1,0 +1,3 @@
+Test that Authorization header can be set via setRequestHeader.
+
+PASS

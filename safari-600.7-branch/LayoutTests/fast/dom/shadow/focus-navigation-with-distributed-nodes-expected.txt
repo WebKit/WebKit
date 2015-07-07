@@ -1,0 +1,35 @@
+This tests that pressing Tab key should traverse into shadow DOM subtrees, and pressing Shift-Tab should reverse the order.
+
+
+
+Should move from input-1 to shadowhost in forward
+PASS
+Should move from shadowhost to distributed-node-1 in forward
+PASS
+Should move from distributed-node-1 to shadowhost/input-2 in forward
+PASS
+Should move from shadowhost/input-2 to distributed-node-2 in forward
+PASS
+Should move from distributed-node-2 to input-3 in forward
+PASS
+Should move from input-3 to distributed-node-2 in backward
+PASS
+Should move from distributed-node-2 to shadowhost/input-2 in backward
+PASS
+Should move from shadowhost/input-2 to distributed-node-1 in backward
+PASS
+Should move from distributed-node-1 to shadowhost in backward
+PASS
+Should move from shadowhost to input-1 in backward
+PASS
+details/summary elements use Shadow DOM and distributed nodes internally.
+Should move from input-1 to summary-1 in forward
+PASS
+Should move from summary-1 to input-2 in forward
+PASS
+Should move from input-2 to summary-1 in backward
+PASS
+Should move from summary-1 to input-1 in backward
+PASS
+Test finished.
+

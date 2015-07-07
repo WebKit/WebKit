@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style type="text/css" media="screen">
+    .box {
+      display: inline-block;
+      height: 120px;
+      width: 200px;
+      margin: 10px;
+      border: 1px solid black;
+      background-repeat: no-repeat;
+    }
+
+    .radial1 {
+      background-image: -webkit-repeating-radial-gradient(white, black 20%);
+      background-image: -moz-repeating-radial-gradient(white, black 20%);
+    }
+    
+    .radial2 {
+      background-image: -webkit-repeating-radial-gradient(white 80%, black);
+      background-image: -moz-repeating-radial-gradient(white 80%, black);
+    }
+
+    .radial3 {
+      background-image: -webkit-repeating-radial-gradient(top left, red, blue 20px, red 40px);
+      background-image: -moz-repeating-radial-gradient(top left, red, blue 20px, red 40px);
+    }
+
+    .radial4 {
+      background-image: -webkit-repeating-radial-gradient(bottom left, red 10%, blue 30%);
+      background-image: -moz-repeating-radial-gradient(bottom left, red 10%, blue 30%);
+    }
+
+    .radial5 {
+      background-image: -webkit-repeating-radial-gradient(left, red -10%, blue -5%);
+      background-image: -moz-repeating-radial-gradient(left, red -10%, blue -5%);
+    }
+
+    .radial6 {
+      background-image: -webkit-repeating-radial-gradient(left, red -10%, blue 105%);
+      background-image: -moz-repeating-radial-gradient(left, red -10%, blue 105%);
+    }
+
+    .radial7 {
+      background-image: -webkit-repeating-radial-gradient(left, red 90%, blue 105%);
+      background-image: -moz-repeating-radial-gradient(left, red 90%, blue 105%);
+    }
+
+    .radial8 {
+      background-image: -webkit-repeating-radial-gradient(top, red 2em, blue 3em);
+      background-image: -moz-repeating-radial-gradient(top, red 2em, blue 3em);
+    }
+
+    .radial9 {
+      background-image: -webkit-repeating-radial-gradient(left, circle, red, orange, yellow, green, blue, red 60px);
+      background-image: -moz-repeating-radial-gradient(left, circle, red, orange, yellow, green, blue, red 60px);
+    }
+
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.testRunner) {
+      var dumpPixels = true;
+      testRunner.dumpAsText(dumpPixels);
+    }
+  </script>
+</head>
+<body>
+
+  <div class="radial1 box"></div>
+  <div class="radial2 box"></div>
+  <div class="radial3 box"></div>
+  <br>
+  <div class="radial4 box"></div>
+  <div class="radial5 box"></div>
+  <div class="radial6 box"></div>
+  <br>
+  <div class="radial7 box"></div>
+  <div class="radial8 box"></div>
+  <div class="radial9 box"></div>
+
+</body>
+</html>

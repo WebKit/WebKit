@@ -1,0 +1,26 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/console-test.js"></script>
+<script>
+
+function test()
+{
+    InspectorTest.evaluateInConsole("1 + 1", step1);
+    function step1()
+    {
+        InspectorTest.dumpConsoleMessages(true);
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+    Tests that console result has originating command associated with it.
+</p>
+
+</body>
+</html>

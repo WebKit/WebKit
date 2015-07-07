@@ -1,0 +1,26 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 5 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x51
+        RenderText {#text} at (0,0) size 778x51
+          text run at (0,0) width 764: "This tests deletion of an empty line starting inside a <div> element, but ending outside that element (just before a <br>). If"
+          text run at (0,17) width 778: "the deletion is successful, the result should have two lines, and the insertion point should be on the second line, at the end of"
+          text run at (0,34) width 106: "the editable area."
+      RenderBlock {DIV} at (0,67) size 784x34
+        RenderBlock {DIV} at (0,0) size 784x17
+          RenderText {#text} at (0,0) size 7x17
+            text run at (0,0) width 7: "a"
+        RenderBlock {DIV} at (0,17) size 784x17
+          RenderBR {BR} at (0,0) size 0x17
+        RenderBlock (anonymous) at (0,34) size 784x0
+caret: position 0 of child 0 {BR} of child 2 {DIV} of child 3 {DIV} of body

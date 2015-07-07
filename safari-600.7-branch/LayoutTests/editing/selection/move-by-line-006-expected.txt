@@ -1,0 +1,10 @@
+| "
+aaaa aaaa
+"
+| <span>
+|   style="border-style: dashed; background-color: #000"
+|   "
+aaaa aaaa aaaa <#selection-caret>aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa
+aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa"
+| "
+"

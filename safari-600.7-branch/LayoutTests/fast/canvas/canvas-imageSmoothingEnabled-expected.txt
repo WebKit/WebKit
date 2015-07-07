@@ -1,0 +1,32 @@
+Tests for the imageSmoothingEnabled attribute.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test that the default value is true.
+PASS ctx.webkitImageSmoothingEnabled is true
+Test that false is returned after a the attribute is set to false.
+PASS ctx.webkitImageSmoothingEnabled is false
+Test that restore works. We save a false state; create, then save a true state; and then finally restore.
+PASS ctx.webkitImageSmoothingEnabled is false
+New canvas element created.
+Test that the image is smoothed by default. We check by making sure the pixel just to the left of the middle line is not completely black.
+PASS left_of_center_pixel.data[0] !== 0 is true
+PASS left_of_center_pixel.data[1] !== 0 is true
+PASS left_of_center_pixel.data[2] !== 0 is true
+Test that nearest neighbour is used when imageSmoothingEnabled is set to false. We check this by making sure the pixel just to the left of the middle line is completely black.
+PASS left_of_center_pixel.data[0] is 0
+PASS left_of_center_pixel.data[1] is 0
+PASS left_of_center_pixel.data[2] is 0
+Test that the image is smoothed when imageSmoothingEnabled is set to true.
+PASS left_of_center_pixel.data[0] !== 0 is true
+PASS left_of_center_pixel.data[1] !== 0 is true
+PASS left_of_center_pixel.data[2] !== 0 is true
+Test that restoring actually changes smoothing and not just the attribute value. We are restoring to a point where imageSmoothingEnabled is set to false.
+PASS left_of_center_pixel.data[0] is 0
+PASS left_of_center_pixel.data[1] is 0
+PASS left_of_center_pixel.data[2] is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

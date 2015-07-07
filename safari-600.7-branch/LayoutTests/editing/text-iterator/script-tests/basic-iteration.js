@@ -1,0 +1,53 @@
+description('Unit tests for WebCore text iterator');
+
+function appendBrElement(node)
+{
+    node.appendChild(document.createElement('br'));
+}
+
+function addShadowTreeWithDivElement(node)
+{
+    node.webkitCreateShadowRoot();
+    internals.shadowRoot(node).innerHTML = '<div>b</div>';
+}
+
+var subframe = document.createElement('iframe');
+document.body.appendChild(subframe);
+
+var testDocument = subframe.contentDocument;
+var range = testDocument.createRange();
+
+var head = testDocument.createElement("head");
+testDocument.documentElement.insertBefore(head, testDocument.documentElement.firstChild);
+
+testDocument.body.innerHTML = '';
+shouldBe('range.selectNodeContents(testDocument.body); internals.rangeAsText(range)', '""');
+
+testDocument.body.innerHTML = 'a';
+shouldBe('range.selectNodeContents(testDocument.body); internals.rangeAsText(range)', '"a"');
+
+testDocument.body.innerHTML = '<div>a</div>';
+shouldBe('range.selectNodeContents(testDocument.body); internals.rangeAsText(range)', '"a"');
+
+testDocument.body.innerHTML = '<div>a</div><div>b</div>';
+shouldBe('range.selectNodeContents(testDocument.body); internals.rangeAsText(range)', '"a\\nb"');
+
+testDocument.body.innerHTML = '<div style="line-height: 18px; min-height: 436px; " id="node-content" class="note-content">debugging this note</div>';
+shouldBe('range.selectNodeContents(testDocument.body); internals.rangeAsText(range)', '"debugging this note"');
+
+testDocument.body.innerHTML = '<div>Hello<div><span><span><br></div></div>';
+shouldBe('range.selectNodeContents(testDocument.body); internals.rangeAsText(range)', '"Hello\\n"');
+
+testDocument.body.innerHTML = '<div class="note-rule-vertical" style="left:22px"></div>\n\t\t<div class="note-rule-vertical" style="left:26px"></div>\n\n\t\t<div class="note-wrapper">\n\t\t\t<div class="note-header">\n\t\t\t\t<div class="note-body" id="note-body">\n\t\t\t\t\t<div class="note-content" id="note-content" contenteditable="true" style="line-height: 20px; min-height: 580px; ">hey</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n\t\n';
+shouldBe('range.selectNodeContents(testDocument.body); internals.rangeAsText(range)', '"hey"');
+shouldBe('range.setStartBefore(testDocument.body); range.setEndAfter(testDocument.body); internals.rangeAsText(range)', '"hey"');
+
+testDocument.body.innerHTML = '<input id="a" value="b" />';
+var input = testDocument.querySelector('input');
+shouldBe('range.selectNodeContents(internals.shadowRoot(input)); internals.rangeAsText(range)', '"b"');
+
+shouldBe('appendBrElement(internals.shadowRoot(input).childNodes[0]); range.selectNodeContents(internals.shadowRoot(input)); internals.rangeAsText(range)', '"b"');
+
+document.body.removeChild(subframe);
+
+var successfullyParsed = true;

@@ -1,0 +1,16 @@
+This tests the value attribute in file input forms
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS file.value is "C:\\fakepath\\foo.txt"
+PASS file.files.length is 1
+PASS file.value = 'foo' threw exception Error: InvalidStateError: DOM Exception 11.
+PASS file.value is "C:\\fakepath\\foo.txt"
+PASS file.files.length is 1
+PASS file.value is ""
+PASS file.files.length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

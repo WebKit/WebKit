@@ -1,0 +1,2 @@
+This tests to make sure that an Apple-paste-as-quotation blockquote can override document default styles even if they are different than the insertion position.
+<blockquote>This text should have the blockquote color (blue). There should be no style spans around it.</blockquote>

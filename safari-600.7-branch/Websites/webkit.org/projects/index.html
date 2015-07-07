@@ -1,0 +1,106 @@
+<?php
+    $title = "WebKit Projects";
+    include("../header.inc");
+?>
+
+<h2>WebKit Projects</h2>
+
+<p>There are many exciting projects that we are actively working on in the WebKit source tree.   To find out more about
+each project you can visit that project's home page.  If you are interested in starting a new project in the WebKit
+tree, <a href="../contact.html">contact us!</a></p>
+
+<h3>General Projects</h3>
+
+<dl>
+<dt><a href="compat/index.html">Web Site Compatibility</a>
+<dd>The most important project that we are working on (and the one that receives the most attention) is web site compatibility.
+Our top priority is ensuring that WebKit works with as many web sites as possible.  This is a cross-functional project that
+touches many areas of the code.
+
+<dt><a href="performance/index.html">Performance</a>
+<dd>Our second highest priority after compatibility is performance.  Find out about our performance measurement tools and policies here.
+
+<dt><a href="cleanup/index.html">Code Cleanup</a>
+<dd>We have a number of tasks in mind for code cleanup.  In addition to reformatting existing code to match our coding style guidelines, we also
+have plenty of work to do moving WebKit code into WebCore now that both frameworks are open source.
+
+<dt><a href="portability/index.html">Portability</a>
+<dd>Making the WebKit code more portable to other platforms is also a priority.  We would like to begin integration of ports to other platforms,
+such as the GTK+ port of WebCore.  Find out about our plans here.</dd>
+
+<dt><a href="documentation/index.html">Documentation</a>
+<dd>Want to add documents to the WebKit web site?  We're interested in architecture documents, support charts and any other documents you think
+will help people trying to use WebKit.</dd>
+</dl>
+
+<h3>Specific Projects</h3>
+
+<dl>
+<dt><a href="css/index.html">CSS (Cascading Style Sheets)</a>
+<dd>Cascading Style Sheets (CSS) is a simple mechanism for adding style to Web documents.  It is a <a href="http://www.w3.org/Style/CSS/">W3C standard</a>.
+
+<dt><a href="dom/index.html">DOM (Document Object Model)</a>
+<dd>The Document Object Model is a platform and language neutral interface that allows code to dynamically access and update the content, structure and style of 
+documents.  It is a <a href="http://www.w3.org/DOM">W3C standard</a>.
+
+<dt><a href="html/index.html">HTML/XHTML (HyperText Markup Language)</a>
+<dd>The HTML project is concerned with the implementation of the <a href="http://www.w3.org/MarkUp/">HTML
+ and XHTML specifications</a> from the W3C.  In addition to the W3C work on HTML and XHTML, we are also interested
+in the extensions to HTML proposed by the WhatWG in the <a href="http://whatwg.org/specs/web-apps/current-work/">Web Apps specification</a>.
+
+<dt><a href="editing/index.html">HTML Editing</a>
+<dd>The HTML editing project provides rich text editing capabilities both as WebKit API for applications and through support of <code>contentEditable</code>
+and <code>designMode</code> for use in Web pages.
+
+<dt><a href="forms/index.html">HTML Forms</a>
+<dd>The HTML form controls project is about the code to support the form controls that are available in HTML and XHTML.
+We would like to extend forms to support the work of the <a href="http://whatwg.org">WhatWG</a> (in particular the
+<a href="http://whatwg.org/specs/web-forms/current-work/">Web Forms</a> specification).  We also plan to change how the forms are implemented in order to
+improve performance and portability of the controls.
+
+<dt><a href="javascript/index.html">JavaScript</a>
+<dd>JavaScript is the primary scripting language of the Web, and WebKit's JS engine is one of the fastest out there.  Find out about
+some of the interesting improvements planned for the JavaScript interpreter.
+
+<dt><a href="layout/index.html">Layout and Rendering</a>
+<dd>For work on the layout and rendering of XML/HTML+CSS.  This includes block and line layout, table layout and extensions like the XUL box layout.
+This also includes work on rendering and display issues.
+
+<dt><a href="mathml/index.html">MathML</a>
+<dd><a href="http://www.w3.org/Math/">MathML</a> is a specification for the inclusion of mathematical expressions in Web documents.  Although this is not yet implemented in
+WebKit, we are keenly interested in developing a fully integrated implementation.
+
+<dt><a href="plugins/index.html">Plug-ins</a>
+<dd>WebKit supports two types of plug-ins, cross-browser plug-ins using an enhanced form of the Netscape plug-in API and WebKit plug-ins that are designed for use by
+embedded applications that need to display native OS X content integrated with the Web document. 
+
+<dt><a href="printing/index.html">Printing</a>
+<dd>Find out about WebKit's printing architecture here and about planned improvements to make page breaks work more cleanly when splitting up objects like
+HTML tables.
+
+<dt><a href="svg/index.html">SVG (Scalable Vector Graphics)</a>
+<dd><a href="http://www.w3.org/Graphics/SVG/">SVG</a> is a standard from the W3C for describing two-dimensional graphics for Web documents.  This is not yet
+implemented in WebKit, but we are very interested in merging KSVG and the KDOM work into our code base to achieve a fully integrated SVG solution.
+If you want to see Dashboard widgets that use SVG, come on in and help make it happen!
+
+<dt><a href="webkit/index.html">WebKit API</a>
+<dd>The WebKit embedding API provides clients with a public API for loading, displaying and manipulating Web content.  WebKit clients can find out
+about plans for the API and get involved in the design process.
+
+<dt><a href="accessibility/index.html">Web Page Accessibility</a>
+<dd>WebKit has accessibility features designed to work with the VoiceOver technology of OS X.  Get involved and make suggestions for how this
+support can be improved in future releases.  We are also interested in how to generalize our current accessibility support to make it portable to other
+platforms.
+
+<dt><a href="xml/index.html">XML (Extensible Markup Language)</a>
+<dd><a href="http://www.w3.org/XML/">XML</a> is the foundation of WebKit's document object model and in the future will be the preferred format for
+compound documents that use HTML, SVG and MathML together.  This project covers the implementation of XML in WebKit and also other XML-related technologies
+like XPath.
+
+<dt><a href="xslt/index.html">XSLT</a>
+<dd><a href="http://www.w3.org/TR/xslt">XSL Transformations</a> provide the ability to take source XML and transform it into text, HTML or XML.  This capability
+is a recent inclusion in WebKit, and there is still lots of interesting work to do in this area.
+
+</dl>
+
+<?php include("../footer.inc"); ?>

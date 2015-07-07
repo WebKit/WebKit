@@ -1,0 +1,26 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 5 of #text > DIV > BODY > HTML > #document to 5 of #text > DIV > BODY > HTML > #document givenAction:WebViewInsertActionDropped
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > DIV > BODY > HTML > #document to 5 of #text > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > A > DIV > BODY > HTML > #document to 14 of #text > A > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 7 of #text > DIV > BODY > HTML > #document to 7 of #text > DIV > BODY > HTML > #document givenAction:WebViewInsertActionDropped
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 7 of #text > DIV > BODY > HTML > #document to 7 of #text > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > A > DIV > BODY > HTML > #document to 53 of #text > A > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+This test checks that links dragged into editable regions preserve their title and URL.
+HelloThis is a link
+GoodbyeThis </a><a href="http://webkit.org/">is another link
+Link is http://apple.com/
+Link is http://apple.com/
+Success!
+To run this test manually, drag the first link into the box with 'Hello' in it, drag the second link into the box with 'Goodbye' in it, and then click on the button.
+

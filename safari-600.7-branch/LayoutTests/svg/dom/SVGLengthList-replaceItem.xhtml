@@ -1,0 +1,169 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script>window.enablePixelTesting = true;</script>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<svg id="svg" xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+    <text id="text1" x="500 1000 1500" y="50">  ABC   </text>
+    <text id="text2" x="500 100 50 150" y="75"> ABC   </text>
+    <text id="text3" x="50 50 100 100 150" y="100">  ABC</text>
+    <text id="text4" x="100 50 150 150" y="125">   ABC</text>
+    <text id="reference" x="50 100 150" y="150">ABC  </text>
+</svg>
+
+<p id="description"></p>
+<div id="console"></div>
+<script type="text/javascript">
+<![CDATA[
+    description("This is a test of the SVGLengthList::replaceItem() API.");
+
+    var svg = document.getElementById("svg");
+    var text1 = document.getElementById("text1");
+    var text2 = document.getElementById("text2");
+    var text3 = document.getElementById("text3");
+    var text4 = document.getElementById("text4");
+
+    debug("");
+    debug("Create three SVGLength objects, with values=50,100,150");
+    var newLength1 = svg.createSVGLength();
+    newLength1.value = 50;
+    shouldBe("newLength1.value", "50");
+
+    var newLength2 = svg.createSVGLength();
+    newLength2.value = 100;
+    shouldBe("newLength2.value", "100");
+
+    var newLength3 = svg.createSVGLength();
+    newLength3.value = 150;
+    shouldBe("newLength3.value", "150");
+
+    debug("");
+    debug("Check initial list state of text1");
+    shouldBe("text1.x.baseVal.numberOfItems", "3");
+    shouldBe("text1.x.baseVal.getItem(0).value", "500");
+    shouldBe("text1.x.baseVal.getItem(1).value", "1000");
+    shouldBe("text1.x.baseVal.getItem(2).value", "1500");
+    shouldThrow("text1.x.baseVal.getItem(3)");
+
+    debug("");
+    debug("Replace the first three values in text1 x list with 'newLength1/2/3'");
+    shouldBe("text1.x.baseVal.replaceItem(newLength1, 0)", "newLength1");
+    shouldBe("text1.x.baseVal.replaceItem(newLength2, 1)", "newLength2");
+    shouldBe("text1.x.baseVal.replaceItem(newLength3, 2)", "newLength3");
+    shouldThrow("text1.x.baseVal.replaceItem(newLength3, -100)");
+    shouldThrow("text1.x.baseVal.replaceItem(newLength3, -1)");
+    shouldThrow("text1.x.baseVal.replaceItem(newLength3, 3)");
+    shouldThrow("text1.x.baseVal.replaceItem(newLength3, 100)");
+
+    debug("");
+    debug("Verify that the text1 x value list is correct");
+    shouldBe("text1.x.baseVal.numberOfItems", "3");
+    shouldBe("text1.x.baseVal.getItem(0).value", "50");
+    shouldBe("text1.x.baseVal.getItem(1).value", "100");
+    shouldBe("text1.x.baseVal.getItem(2).value", "150");
+
+    debug("");
+    debug("Check initial list state of text2");
+    shouldBe("text2.x.baseVal.numberOfItems", "4");
+    shouldBe("text2.x.baseVal.getItem(0).value", "500");
+    shouldBe("text2.x.baseVal.getItem(1).value", "100");
+    shouldBe("text2.x.baseVal.getItem(2).value", "50");
+    shouldBe("text2.x.baseVal.getItem(3).value", "150");
+    shouldThrow("text2.x.baseVal.getItem(4)");
+
+    debug("");
+    debug("Replace the first item in text2 x list with the third item in the list");
+    shouldBe("text2.x.baseVal.replaceItem(text2.x.baseVal.getItem(2), 0).value", "50");
+    shouldBe("text2.x.baseVal.numberOfItems", "3");
+    shouldBe("text2.x.baseVal.getItem(0).value", "50");
+    shouldBe("text2.x.baseVal.getItem(1).value", "100");
+    shouldBe("text2.x.baseVal.getItem(2).value", "150");
+
+    debug("");
+    debug("Check initial list state of text3");
+    shouldBe("text3.x.baseVal.numberOfItems", "5");
+    shouldBe("text3.x.baseVal.getItem(0).value", "50");
+    shouldBe("text3.x.baseVal.getItem(1).value", "50");
+    shouldBe("text3.x.baseVal.getItem(2).value", "100");
+    shouldBe("text3.x.baseVal.getItem(3).value", "100");
+    shouldBe("text3.x.baseVal.getItem(4).value", "150");
+    shouldThrow("text3.x.baseVal.getItem(5)");
+
+    debug("");
+    debug("Check initial list state of text4");
+    shouldBe("text4.x.baseVal.numberOfItems", "4");
+    shouldBe("text4.x.baseVal.getItem(0).value", "100");
+    shouldBe("text4.x.baseVal.getItem(1).value", "50");
+    shouldBe("text4.x.baseVal.getItem(2).value", "150");
+    shouldBe("text4.x.baseVal.getItem(3).value", "150");
+    shouldThrow("text4.x.baseVal.getItem(4)");
+
+    debug("");
+    debug("Replace the first item in text4 x list with the second item in the text3 x list");
+    shouldBe("text4.x.baseVal.replaceItem(text3.x.baseVal.getItem(1), 0).value", "50");
+    shouldBe("text3.x.baseVal.numberOfItems", "4");
+    shouldBe("text3.x.baseVal.getItem(0).value", "50");
+    shouldBe("text3.x.baseVal.getItem(1).value", "100");
+    shouldBe("text3.x.baseVal.getItem(2).value", "100");
+    shouldBe("text3.x.baseVal.getItem(3).value", "150");
+    shouldThrow("text3.x.baseVal.getItem(4)");
+    shouldBe("text4.x.baseVal.numberOfItems", "4");
+    shouldBe("text4.x.baseVal.getItem(0).value", "50");
+    shouldBe("text4.x.baseVal.getItem(1).value", "50");
+    shouldBe("text4.x.baseVal.getItem(2).value", "150");
+    shouldBe("text4.x.baseVal.getItem(3).value", "150");
+    shouldThrow("text4.x.baseVal.getItem(4)");
+
+    debug("");
+    debug("Replace the second item in text4 x list with the second item in the text4 x list");
+    shouldBe("text4.x.baseVal.replaceItem(text3.x.baseVal.getItem(2), 1).value", "100");
+    shouldBe("text4.x.baseVal.numberOfItems", "4");
+    shouldBe("text4.x.baseVal.getItem(0).value", "50");
+    shouldBe("text4.x.baseVal.getItem(1).value", "100");
+    shouldBe("text4.x.baseVal.getItem(2).value", "150");
+    shouldBe("text4.x.baseVal.getItem(3).value", "150");
+    shouldThrow("text4.x.baseVal.getItem(4)");
+
+    debug("");
+    debug("Check final list state of text1");
+    shouldBe("text1.x.baseVal.numberOfItems", "3");
+    shouldBe("text1.x.baseVal.getItem(0).value", "50");
+    shouldBe("text1.x.baseVal.getItem(1).value", "100");
+    shouldBe("text1.x.baseVal.getItem(2).value", "150");
+    shouldThrow("text1.x.baseVal.getItem(3)");
+
+    debug("");
+    debug("Check final list state of text2");
+    shouldBe("text2.x.baseVal.numberOfItems", "3");
+    shouldBe("text2.x.baseVal.getItem(0).value", "50");
+    shouldBe("text2.x.baseVal.getItem(1).value", "100");
+    shouldBe("text2.x.baseVal.getItem(2).value", "150");
+    shouldThrow("text2.x.baseVal.getItem(3)");
+
+    debug("");
+    debug("Check final list state of text3");
+    shouldBe("text3.x.baseVal.numberOfItems", "3");
+    shouldBe("text3.x.baseVal.getItem(0).value", "50");
+    shouldBe("text3.x.baseVal.getItem(1).value", "100");
+    shouldBe("text3.x.baseVal.getItem(2).value", "150");
+    shouldThrow("text3.x.baseVal.getItem(3)");
+
+    debug("");
+    debug("Check final list state of text4");
+    shouldBe("text4.x.baseVal.numberOfItems", "4");
+    shouldBe("text4.x.baseVal.getItem(0).value", "50");
+    shouldBe("text4.x.baseVal.getItem(1).value", "100");
+    shouldBe("text4.x.baseVal.getItem(2).value", "150");
+    shouldBe("text4.x.baseVal.getItem(3).value", "150");
+    shouldThrow("text4.x.baseVal.getItem(4)");
+
+    debug("");
+    debug("The test passes if you only see 'PASS' messages, and all five text elements on top look the same");
+    debug("");
+
+]]>
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

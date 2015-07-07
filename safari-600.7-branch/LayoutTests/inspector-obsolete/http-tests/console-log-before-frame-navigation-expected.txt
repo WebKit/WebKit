@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 5: Console message (C) %d with element
+Tests that Web Inspector won't crash if there are messages written to console from a frame which has already navigated to a page from a different domain.
+
+
+Received console messages:
+Message[0]:
+Message: resources/console-log-frame-before-navigation.html:5 Console message (C) %d with element
+TEST COMPLETE.
+

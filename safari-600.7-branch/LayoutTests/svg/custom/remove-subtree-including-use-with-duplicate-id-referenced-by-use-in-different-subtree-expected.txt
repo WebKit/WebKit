@@ -1,0 +1,3 @@
+This tests that we don't cause an assertion failure when implicitly removing a <use> (by removing its parent), with the same id as another element, that is referenced by a later <use> in a different SVG subtree.
+
+PASS

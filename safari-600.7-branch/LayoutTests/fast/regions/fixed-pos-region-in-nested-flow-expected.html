@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+    if (window.internals)
+        internals.settings.setAcceleratedCompositingForFixedPositionEnabled(false);
+    </script>
+    <style>
+        body {
+            font: 16px/1.25 monospace;
+        }
+
+        #region1 {
+            width: 250px;
+            position: absolute;
+            top: 200px;
+            left: 50px;
+            border: thick solid blue;
+        }
+
+        #region2 {
+            width: 250px;
+            position: fixed;
+            top: 350px;
+            left: 50px;
+            border: thick solid green;
+        }
+    </style>
+</head>
+<body>
+    <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=111176">[CSS Regions] position: fixed is computed relative to the first region, not the viewport</a>.</p>
+    <p>Test that a fixed positioned region inside a nested flow is laid out properly.</p>
+    <p>On success, you should see pass below and 2 regions: a blue border and below a green border region.</p>
+    <div class="region2" id="region2">Content in second flow.</div>
+    <div class="region1" id="region1">Content in first flow.<br/>Content in first flow.</div>
+</body>
+</html>

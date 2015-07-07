@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            var ratechangeCount = 0;
+            var playingCount = 0;
+            var progressEventCount = 0;
+            var pauseEventCount = 0;
+
+            function eventHandler()
+            {
+                // Don't log progress event since the number and order are platform
+                // specific.
+                if (event.type != "progress")
+                    consoleWrite("EVENT(" + event.type + ")");
+                switch (event.type)
+                {
+                    case "canplaythrough":
+                        testExpected('progressEventCount', 1, '>=');
+                        consoleWrite("<br>*** starting playback");
+                        run("video.play()"); 
+                        break;
+                    case "playing":
+                        if (++playingCount == 1) {
+                            consoleWrite("<br>*** changing playback rate");
+                            run("video.playbackRate = 2");
+                        }
+                        break;
+                    case "ratechange":
+                        if (++ratechangeCount == 1) {
+                            consoleWrite("<br>*** setting volume");
+                            run("video.volume = 0.5");
+                        }
+                        break;
+                    case "volumechange":
+                        consoleWrite("<br>*** pausing playback");
+                        run("video.pause()");
+                        break;
+                    case "pause":
+                        if(++pauseEventCount == 1) {
+                            consoleWrite("<br>*** seeking");
+                            run("video.currentTime = 5.6");
+                        }
+                        break;
+                    case "seeked":
+                        consoleWrite("<br>*** beginning playback");
+                        run("video.play()");
+                        break;
+                    case "ended":
+                        var mediaFile = findMediaFile("video", "content/garbage");
+                        consoleWrite("<br>*** played to end, setting 'src' to an invalid movie");
+                        run("progressEventCount = 0");
+                        video.src = mediaFile;
+                        break;
+                    case "progress":
+                        ++progressEventCount;
+                        break;
+                    case "error":
+                        testExpected('progressEventCount', 0);
+                        endTest();
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            function start()
+            {
+                setSrcByTagName("video", findMediaFile("video", "content/test"));
+                findMediaElement();
+            }
+
+        </script>
+    </head>
+
+    <body onload="start()">
+
+        <video controls
+            onabort="eventHandler()"
+            oncanplay="eventHandler()"
+            oncanplaythrough="eventHandler()"
+            ondurationchange="eventHandler()"
+            onemptied="eventHandler()"
+            onended="eventHandler()"
+            onerror="eventHandler()"
+            onloadeddata="eventHandler()"
+            onloadedmetadata="eventHandler()"
+            onloadstart="eventHandler()"
+            onpause="eventHandler()"
+            onplay="eventHandler()"
+            onplaying="eventHandler()"
+            onprogress="eventHandler()"
+            onratechange="eventHandler()"
+            onseeked="eventHandler()"
+            onseeking="eventHandler()"
+            onstalled="eventHandler()"
+            onvolumechange="eventHandler()"
+            onwaiting="eventHandler()"
+            >
+        </video>
+
+    </body>
+</html>

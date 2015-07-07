@@ -1,0 +1,5 @@
+PASS x.foo is "bar"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

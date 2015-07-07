@@ -1,0 +1,9 @@
+Check that XHR prototype allows defineProperty for built-in attributes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

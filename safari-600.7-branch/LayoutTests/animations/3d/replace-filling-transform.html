@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+
+        #result {
+          opacity: 0; /* hide from pixel test */
+        }
+
+        #box {
+            position: absolute;
+            height: 100px;
+            width: 100px;
+            background-color: green;
+            -webkit-animation: anim1 0.1s ease 0s forwards;
+         }
+
+         #correctposition {
+             position: absolute;
+             height: 100px;
+             width: 100px;
+             background-color: red;
+             -webkit-transform: translate3d(50px, 200px, 0);
+         }
+
+         @-webkit-keyframes anim1 {
+           from {
+             -webkit-transform: translate3d(100px, 0, 0);
+           }
+           to {
+             -webkit-transform: translate3d(200px, 0, 0);
+           }
+         }
+
+         @-webkit-keyframes anim2 {
+           from {
+             -webkit-transform: translate3d(50px, 0, 0);
+           }
+           to {
+             -webkit-transform: translate3d(50px, 200px, 0);
+           }
+         }
+    </style>
+    <script>
+
+        var box;
+        var expectedValue = "matrix(1, 0, 0, 1, 50, 200)";
+        
+        function testState()
+        {
+            var result = document.getElementById("result");
+            var computedValue = window.getComputedStyle(box).webkitTransform;
+
+            if (computedValue == expectedValue)
+                result.innerHTML = "PASS - final state was " + expectedValue;
+            else
+                result.innerHTML = "FAIL - final state was " + computedValue + " expected " + expectedValue;
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        function swapAnim()
+        {
+            // remove this listener
+            box.removeEventListener("webkitAnimationEnd", swapAnim);
+            // add the test listener
+            box.addEventListener("webkitAnimationEnd", testState, false);
+            // change the animation
+            box.style.webkitAnimation = "anim2 0.1s ease 0s forwards";
+        }
+        
+        function setup()
+        {
+            box = document.getElementById("box");
+            document.addEventListener("webkitAnimationEnd", swapAnim, false);
+        }
+        
+        if (window.testRunner) {
+            testRunner.dumpAsText(true);
+            testRunner.waitUntilDone();
+        }
+
+        window.addEventListener("load", setup, false);
+        
+    </script>
+</head>
+<body>
+<!--
+This sets up two animations. It runs the first and then triggers the 2nd. The first fills
+forwards, but should still be replaced by the second. The first is a horizontal animation, the second is
+vertical, so the box should end up translated vertically down the page.
+-->
+<div id="correctposition">
+</div>
+<div id="box">
+</div>
+<div id="result">
+</div>
+</body>
+</html>

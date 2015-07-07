@@ -1,0 +1,11 @@
+Tests that 'initial' is handled correctly for the -webkit-flex-flow shorthand.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.getComputedStyle(test1).webkitFlexDirection is "row"
+PASS window.getComputedStyle(test2).webkitFlexDirection is "row"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

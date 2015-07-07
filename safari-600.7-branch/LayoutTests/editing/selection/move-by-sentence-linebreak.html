@@ -1,0 +1,23 @@
+<p>This tests for sentence boundary when there are empty line breaks between lines of text.<br>
+The result insertion point should be at the end of the sentence "How are you?"
+</p>
+<div id="div" contenteditable="true">
+hello
+<div><br></div>
+<div>world</div>
+<div><br class="webkit-block-placeholder"></div>
+<div><br class="webkit-block-placeholder"></div>
+<div>This is a test.  How are you?  Life is sweet!</div>
+</div>
+
+<script>
+var sel = window.getSelection();
+sel.setPosition(div, 0);
+sel.modify("move", "forward", "sentence");
+sel.modify("move", "forward", "sentence");
+sel.modify("move", "forward", "sentence");
+sel.modify("move", "forward", "sentence");
+sel.modify("move", "forward", "sentence");
+sel.modify("move", "forward", "sentence");
+sel.modify("move", "forward", "sentence");
+</script>

@@ -1,0 +1,20 @@
+<html>
+   <head>
+      <script>
+         function test()
+         {
+            document.getElementById("anch").focus();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                eventSender.keyDown('s');
+            }
+         }
+      </script>
+   </head>
+   <body onload="test()">
+    This tests that focus() works on an empty anchor.<br>
+    <a id="anch" href="#" onkeydown="document.getElementById('console').innerText = 'TEST PASSED'"></a>
+    <br>
+    <pre id="console">TEST FAILED</pre>
+    </body>
+</html>

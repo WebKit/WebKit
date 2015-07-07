@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="resources/extend-selection.css" />
+<script src="resources/move-by-word-visually.js"></script>
+<script>
+onload = function() {
+    try {
+        var sel = window.getSelection();
+        sel.setPosition(document.getElementById('d_1'), 0); 
+        sel.modify("move", "right", "word");
+        if (sel.anchorOffset == 5)
+            log("PASS");       
+        else
+            log("ctrl/alt+right from left of סטז should move cursor to left of opq. " +
+                "But it actually moved to position " + sel.anchorOffset);
+    } finally {
+        flushLog();
+    }
+};
+
+if (window.testRunner && window.internals) {
+    testRunner.dumpAsText();
+    internals.settings.setEditingBehavior('win');
+}
+</script>
+<title>wrong result because VisiblePosition.left()/right() returns wrong result</title>
+</head>
+<body>
+<div id="testMoveByWord">
+<div dir=ltr contenteditable>abc ששש def <span id="d_1" dir=rtl>שנב  opq סטז</span>  uvw ששש xyz</div>
+</div>
+<ul id="console"></ul>
+</body>
+</html>

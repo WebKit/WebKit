@@ -1,0 +1,42 @@
+<html>
+<head>
+<style>
+::-webkit-scrollbar {
+    height: 30px;
+    width: 30px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: blue;
+    height: 30px;
+    width: 30px;
+}
+
+body {
+  background-color: black;
+}
+
+</style>
+<script>
+function test()
+{
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText(true);
+        testRunner.display();
+    }
+
+    window.setTimeout(function() {
+        document.body.scrollTop = 2000;
+        if (window.testRunner) {
+            testRunner.display();
+            testRunner.notifyDone();
+        }
+    }, 0);
+}
+</script>
+</head>
+<body onload="test()">
+<div style="height: 2000px; color: white;">PASS if blue scrollbar is at the bottom.</div>
+</body>
+</head>

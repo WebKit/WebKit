@@ -1,0 +1,39 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x0
+  RenderBlock {HTML} at (0,0) size 800x0
+    RenderBody {BODY} at (0,0) size 800x0
+layer at (0,0) size 800x600
+  RenderBlock (positioned) {DIV} at (0,0) size 800x600
+layer at (0,0) size 800x40
+  RenderBlock (positioned) {DIV} at (0,0) size 800x40 [bgcolor=#FFC0CB]
+    RenderText {#text} at (0,0) size 47x19
+      text run at (0,0) width 47: "Header"
+layer at (0,40) size 800x30
+  RenderBlock (positioned) {DIV} at (0,40) size 800x30 [bgcolor=#FA8072]
+    RenderText {#text} at (0,0) size 27x19
+      text run at (0,0) width 27: "Info"
+layer at (0,70) size 800x60
+  RenderBlock (positioned) {DIV} at (0,70) size 800x60 [bgcolor=#FF00FF]
+    RenderText {#text} at (0,0) size 51x19
+      text run at (0,0) width 51: "Context"
+layer at (0,130) size 800x470
+  RenderBlock (relative positioned) {DIV} at (0,130) size 800x470
+layer at (0,130) size 135x470
+  RenderBlock (positioned) {DIV} at (0,0) size 135x470 [bgcolor=#800080]
+    RenderText {#text} at (0,0) size 72x19
+      text run at (0,0) width 72: "Navigation"
+layer at (135,130) size 665x470
+  RenderBlock (relative positioned) {DIV} at (135,0) size 665x470
+layer at (135,130) size 665x44
+  RenderBlock (positioned) {DIV} at (0,0) size 665x44 [bgcolor=#4B0082]
+    RenderText {#text} at (0,0) size 101x19
+      text run at (0,0) width 101: "Content Header"
+layer at (135,174) size 665x381
+  RenderBlock (relative positioned) {DIV} at (0,44) size 665x381 [bgcolor=#FA8072]
+    RenderText {#text} at (0,0) size 51x19
+      text run at (0,0) width 51: "Content"
+layer at (135,555) size 665x45
+  RenderBlock (positioned) {DIV} at (0,425) size 665x45 [bgcolor=#6495ED]
+    RenderText {#text} at (0,0) size 97x19
+      text run at (0,0) width 97: "Content Footer"

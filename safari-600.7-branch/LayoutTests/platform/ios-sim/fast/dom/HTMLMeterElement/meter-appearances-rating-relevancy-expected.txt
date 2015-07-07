@@ -1,0 +1,118 @@
+layer at (0,0) size 800x605
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x605
+  RenderBlock {HTML} at (0,0) size 800x605
+    RenderBody {BODY} at (8,8) size 784x581
+      RenderBlock {H1} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 220x19
+          text run at (0,0) width 220: "Meters with various appearance"
+      RenderBlock {H2} at (0,33) size 784x20
+        RenderText {#text} at (0,0) size 146x19
+          text run at (0,0) width 146: "rating-level-indicator"
+      RenderBlock {H2} at (0,69) size 784x230
+        RenderBlock {UL} at (0,0) size 784x230
+          RenderListItem {LI} at (40,0) size 744x20 [bgcolor=#EEEEEE]
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 88x19
+              text run at (0,0) width 88: "value=10/10:"
+            RenderBlock (floating) {METER} at (744,0) size 0x0
+          RenderListItem {LI} at (40,20) size 744x20 [bgcolor=#CCCCCC]
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 80x19
+              text run at (0,0) width 80: "value=8/10:"
+            RenderBlock (floating) {METER} at (744,0) size 0x0
+          RenderListItem {LI} at (40,40) size 744x20 [bgcolor=#EEEEEE]
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 80x19
+              text run at (0,0) width 80: "value=5/10:"
+            RenderBlock (floating) {METER} at (744,0) size 0x0
+          RenderListItem {LI} at (40,60) size 744x20 [bgcolor=#CCCCCC]
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 80x19
+              text run at (0,0) width 80: "value=2/10:"
+            RenderBlock (floating) {METER} at (744,0) size 0x0
+          RenderListItem {LI} at (40,80) size 744x20 [bgcolor=#EEEEEE]
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 80x19
+              text run at (0,0) width 80: "value=0/10:"
+            RenderBlock (floating) {METER} at (744,0) size 0x0
+          RenderListItem {LI} at (40,100) size 744x20 [bgcolor=#CCCCCC]
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 39x19
+              text run at (0,0) width 39: "RTL:"
+            RenderBlock (floating) {METER} at (744,0) size 0x0
+          RenderListItem {LI} at (40,120) size 744x50 [bgcolor=#EEEEEE]
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 33x19
+              text run at (0,0) width 33: "Tall:"
+            RenderBlock (floating) {METER} at (744,0) size 0x50
+          RenderListItem {LI} at (40,170) size 744x20 [bgcolor=#CCCCCC]
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 44x19
+              text run at (0,0) width 44: "Short:"
+            RenderBlock (floating) {METER} at (744,0) size 0x5
+          RenderListItem {LI} at (40,190) size 744x20 [bgcolor=#EEEEEE]
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 42x19
+              text run at (0,0) width 42: "Wide:"
+            RenderBlock (floating) {METER} at (444,0) size 300x0
+          RenderListItem {LI} at (40,210) size 744x20 [bgcolor=#CCCCCC]
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 59x19
+              text run at (0,0) width 59: "Narrow:"
+            RenderBlock (floating) {METER} at (714,0) size 30x0
+      RenderBlock {H2} at (0,315) size 784x20
+        RenderText {#text} at (0,0) size 170x19
+          text run at (0,0) width 170: "relevancy-level-indicator"
+      RenderBlock {H2} at (0,351) size 784x230
+        RenderBlock {UL} at (0,0) size 784x230
+          RenderListItem {LI} at (40,0) size 744x20 [bgcolor=#EEEEEE]
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 88x19
+              text run at (0,0) width 88: "value=10/10:"
+            RenderBlock (floating) {METER} at (744,0) size 0x0
+          RenderListItem {LI} at (40,20) size 744x20 [bgcolor=#CCCCCC]
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 80x19
+              text run at (0,0) width 80: "value=8/10:"
+            RenderBlock (floating) {METER} at (744,0) size 0x0
+          RenderListItem {LI} at (40,40) size 744x20 [bgcolor=#EEEEEE]
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 80x19
+              text run at (0,0) width 80: "value=5/10:"
+            RenderBlock (floating) {METER} at (744,0) size 0x0
+          RenderListItem {LI} at (40,60) size 744x20 [bgcolor=#CCCCCC]
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 80x19
+              text run at (0,0) width 80: "value=2/10:"
+            RenderBlock (floating) {METER} at (744,0) size 0x0
+          RenderListItem {LI} at (40,80) size 744x20 [bgcolor=#EEEEEE]
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 80x19
+              text run at (0,0) width 80: "value=0/10:"
+            RenderBlock (floating) {METER} at (744,0) size 0x0
+          RenderListItem {LI} at (40,100) size 744x20 [bgcolor=#CCCCCC]
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 39x19
+              text run at (0,0) width 39: "RTL:"
+            RenderBlock (floating) {METER} at (744,0) size 0x0
+          RenderListItem {LI} at (40,120) size 744x50 [bgcolor=#EEEEEE]
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 33x19
+              text run at (0,0) width 33: "Tall:"
+            RenderBlock (floating) {METER} at (744,0) size 0x50
+          RenderListItem {LI} at (40,170) size 744x20 [bgcolor=#CCCCCC]
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 44x19
+              text run at (0,0) width 44: "Short:"
+            RenderBlock (floating) {METER} at (744,0) size 0x5
+          RenderListItem {LI} at (40,190) size 744x20 [bgcolor=#EEEEEE]
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 42x19
+              text run at (0,0) width 42: "Wide:"
+            RenderBlock (floating) {METER} at (444,0) size 300x0
+          RenderListItem {LI} at (40,210) size 744x20 [bgcolor=#CCCCCC]
+            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderText {#text} at (0,0) size 59x19
+              text run at (0,0) width 59: "Narrow:"
+            RenderBlock (floating) {METER} at (714,0) size 30x0

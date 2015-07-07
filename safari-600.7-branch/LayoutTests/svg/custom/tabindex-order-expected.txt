@@ -1,0 +1,35 @@
+This page tests that the SVG tabbing order is respected properly.
+
+To test, put focus in "a". Pressing Tab should focus "a" through "k" in order, and pressing Shift-Tab should reverse the order.
+
+ Tabbing forward....
+
+id: a tabindex: 1 [object SVGCircleElement] is focused.
+id: b tabindex: 1 [object SVGGElement] is focused.
+id: c tabindex: 1 [object SVGEllipseElement] is focused.
+id: d tabindex: 1 [object SVGPathElement] is focused.
+id: e tabindex: 3 [object SVGAElement] is focused.
+id: f tabindex: 4 [object SVGPolylineElement] is focused.
+id: g tabindex: 6 [object SVGRectElement] is focused.
+id: h tabindex: 6 [object SVGTextElement] is focused.
+id: i tabindex: 0 [object SVGSVGElement] is focused.
+id: j tabindex: 0 [object SVGLineElement] is focused.
+id: k tabindex: 0 [object SVGPolygonElement] is focused.
+
+Tabbing backward....
+
+id: k tabindex: 0 [object SVGPolygonElement] is focused.
+id: j tabindex: 0 [object SVGLineElement] is focused.
+id: i tabindex: 0 [object SVGSVGElement] is focused.
+id: h tabindex: 6 [object SVGTextElement] is focused.
+id: g tabindex: 6 [object SVGRectElement] is focused.
+id: f tabindex: 4 [object SVGPolylineElement] is focused.
+id: e tabindex: 3 [object SVGAElement] is focused.
+id: d tabindex: 1 [object SVGPathElement] is focused.
+id: c tabindex: 1 [object SVGEllipseElement] is focused.
+id: b tabindex: 1 [object SVGGElement] is focused.
+id: a tabindex: 1 [object SVGCircleElement] is focused.
+
+Test finished
+
+

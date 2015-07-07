@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: The Content Security Policy directive 'default-src' contains 'script-src' as a source expression. Did you mean 'default-src ...; script-src...' (note the semicolon)?
+CONSOLE MESSAGE: The Content Security Policy directive 'script-src' contains 'object-src' as a source expression. Did you mean 'script-src ...; object-src...' (note the semicolon)?
+CONSOLE MESSAGE: The Content Security Policy directive 'script-src' contains 'style-src' as a source expression. Did you mean 'script-src ...; style-src...' (note the semicolon)?
+If a web author forgets a semicolon, we should do our best to warn them that the policy they've defined is probably not what they intended.
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame1-->-->'
+--------
+PASS

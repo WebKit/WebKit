@@ -1,0 +1,35 @@
+This test checks the use of SVGAnimatedEnumeration within SVGTextContentElement
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Check initial 'lengthAdjust' value
+PASS textContentElement.lengthAdjust.toString() is "[object SVGAnimatedEnumeration]"
+PASS typeof(textContentElement.lengthAdjust.baseVal) is "number"
+PASS textContentElement.lengthAdjust.baseVal is SVGTextContentElement.LENGTHADJUST_SPACING
+
+Switch to 'spacingAndGlyphs'
+PASS textContentElement.lengthAdjust.baseVal = SVGTextContentElement.LENGTHADJUST_SPACINGANDGLYPHS is SVGTextContentElement.LENGTHADJUST_SPACINGANDGLYPHS
+PASS textContentElement.lengthAdjust.baseVal is SVGTextContentElement.LENGTHADJUST_SPACINGANDGLYPHS
+PASS textContentElement.getAttribute('lengthAdjust') is "spacingAndGlyphs"
+
+Try setting invalid values
+PASS textContentElement.lengthAdjust.baseVal = 3 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS textContentElement.lengthAdjust.baseVal is SVGTextContentElement.LENGTHADJUST_SPACINGANDGLYPHS
+PASS textContentElement.getAttribute('lengthAdjust') is "spacingAndGlyphs"
+PASS textContentElement.lengthAdjust.baseVal = -1 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS textContentElement.lengthAdjust.baseVal is SVGTextContentElement.LENGTHADJUST_SPACINGANDGLYPHS
+PASS textContentElement.getAttribute('lengthAdjust') is "spacingAndGlyphs"
+PASS textContentElement.lengthAdjust.baseVal = 0 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS textContentElement.lengthAdjust.baseVal is SVGTextContentElement.LENGTHADJUST_SPACINGANDGLYPHS
+PASS textContentElement.getAttribute('lengthAdjust') is "spacingAndGlyphs"
+
+Switch to 'spacing'
+PASS textContentElement.lengthAdjust.baseVal = SVGTextContentElement.LENGTHADJUST_SPACING is SVGTextContentElement.LENGTHADJUST_SPACING
+PASS textContentElement.lengthAdjust.baseVal is SVGTextContentElement.LENGTHADJUST_SPACING
+PASS textContentElement.getAttribute('lengthAdjust') is "spacing"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

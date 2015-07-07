@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>CSS Test: Solved for 'left' when absolutely positioned non-replaced elements has 'right' and 'width' not set to 'auto'</title>
+        <link rel="author" title="Microsoft" href="http://www.microsoft.com/">
+        <link rel="help" href="http://www.w3.org/TR/CSS21/visudet.html#abs-non-replaced-width">
+        <meta name="flags" content="ahem">
+        <meta name="assert" content="When 'left' is 'auto' and 'width' and 'right' are not 'auto' element solves for 'left'.">
+        <style type="text/css">
+            #div1
+            {
+                border: solid black;
+                height: 2in;
+                position: relative;
+                width: 2in;
+            }
+            div div
+            {
+                background: red;
+                color: blue;
+                font: 1in/1em Ahem;
+                left: auto;
+                margin-left: auto;
+                margin-right: auto;
+                position: absolute;
+                right: 1in;
+                width: 1in;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test passes if the blue box is in the upper-left corner of the black box and there is no red visible on the page.</p>
+        <div id="div1">
+            <div>X</div>
+        </div>
+    </body>
+</html>

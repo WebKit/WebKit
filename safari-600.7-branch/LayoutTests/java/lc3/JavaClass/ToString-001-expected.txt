@@ -1,0 +1,12 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaClass to java.lang.Class
+
+FAIL java.lang.Class.forName("java.lang.Integer") +"": ReferenceError: Can't find variable: java
+FAIL java.lang.Class.forName("java.lang.Integer") +"": ReferenceError: Can't find variable: java
+FAIL dt.getStringObject().getClass() should be string (of type string). Was class java.lang.String (of type object).
+FAIL java.lang.Class.forName("java.lang.Class") +"": ReferenceError: Can't find variable: java
+FAIL java.lang.Class.forName("java.lang.Class") +"": ReferenceError: Can't find variable: java
+FAIL dt.getStringObject().getClass() should be string (of type string). Was class java.lang.String (of type object).
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

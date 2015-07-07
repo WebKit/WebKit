@@ -1,0 +1,38 @@
+<html>
+<head>
+    <style>
+    #article {
+        -webkit-flow-into: article;
+    }
+    #region {
+        -webkit-flow-from: article;
+        display: inline-block;
+        height: 200px;
+        width: 300px;
+    }
+    </style>
+</head>
+<body>
+    <div id="article"></div>
+    <div id="region"></div>
+    <div><a href="https://bugs.webkit.org/show_bug.cgi?id=131647">131647</a> - The test passes if it doesn't crash and if it displays the PASS below this line.</div>
+    <div>PASS</div>
+    <script>
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
+    var elem = document.getElementById("article");
+    var new_elem = document.createElement("table");
+    elem.appendChild(new_elem); elem = new_elem;
+    new_elem = document.createElement("video");
+    elem.appendChild(new_elem); elem = new_elem;
+    new_elem = document.createElement("div");
+    elem.appendChild(new_elem); 
+    document.designMode = "on";
+    document.execCommand("SelectAll");
+    document.execCommand("StrikeThrough");
+    document.body.offsetTop;
+    if (window.testRunner)
+        document.getElementById("region").style.visibility = "hidden";
+    </script>
+</body>
+</html>

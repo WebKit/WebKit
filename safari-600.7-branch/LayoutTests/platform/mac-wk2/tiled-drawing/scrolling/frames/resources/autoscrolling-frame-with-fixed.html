@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            height: 1000px;
+            background-image: repeating-linear-gradient(to bottom, silver, white 100px);
+        }
+
+        .fixed {
+            position: fixed;
+            left: 10px;
+            width: 600px;
+            top: 10px;
+            height: 100px;
+            background-color: gray;
+        }
+    </style>
+    <script>
+        function doScroll()
+        {
+            window.setTimeout(function() {
+                document.body.scrollTop = 120;
+                window.parent.frameDidChange();
+            }, 0);
+        }
+        window.addEventListener('load', doScroll, false);
+    </script>
+</head>
+<body>
+
+<div class="fixed">
+    Top bar
+</div>
+
+</body>
+</html>

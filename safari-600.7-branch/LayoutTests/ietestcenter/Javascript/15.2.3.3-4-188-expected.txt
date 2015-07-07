@@ -1,0 +1,11 @@
+15.2.3.3-4-188 (TestCases/chapter15/15.2/15.2.3/15.2.3.3/15.2.3.3-4-188.js) Object.getOwnPropertyDescriptor returns undefined for non-existent properties on built-ins (Function (instance).name)
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS ES5Harness.preconditionPassed is true
+FAIL ES5Harness.testPassed should be true (of type boolean). Was undefined (of type undefined).
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

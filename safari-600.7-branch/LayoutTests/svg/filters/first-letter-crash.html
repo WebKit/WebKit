@@ -1,0 +1,16 @@
+<head>
+    <style>
+        div:first-letter { -webkit-filter: url(#blurFirstLetter); }
+    </style>
+</head>
+
+<div>PASS.</div>
+
+<p>
+    WebKit bug #<a href="https://bugs.webkit.org/show_bug.cgi?id=121887">121887</a>: Crash when applying SVG filter to first-letter pseudo element. This test passes if it does not crash.
+</p>
+
+<script>
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
+</script>

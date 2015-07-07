@@ -1,0 +1,31 @@
+<head>
+<p>Test that multipe workers can be spawned simultaneously.
+Should print "DONE" when done.</p>
+<div id=result></div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+totalWorkers = 30;
+replies = 0;
+
+for (var i = 0; i < totalWorkers; i++) {
+    var worker = new Worker('resources/worker-init.js');
+    worker.onmessage = function(evt) {
+        log(evt.data);
+        if (++replies < totalWorkers)
+            return;
+        log("DONE");
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+}
+</script>
+</body>

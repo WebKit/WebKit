@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+
+<style>
+body { -webkit-margin-collapse: separate; }
+
+.flowA { -webkit-flow-into: flowA; }
+.flowB { -webkit-flow-into: flowB; }
+.flowC { -webkit-flow-into: flowC; }
+
+.regionFlowA { -webkit-flow-from: flowA; }
+.regionFlowB { -webkit-flow-from: flowB; }
+.regionFlowC { -webkit-flow-from: flowC; }
+
+.regionFlowA, .regionFlowB, .regionFlowC { width: 0px; height: 0px; }
+</style>
+
+<div class="flowA">
+    <div class="regionFlowB"></div>
+</div>
+
+<div class="flowB">
+    <div class="regionFlowC"></div>
+</div>
+
+<div class="flowC">
+    <!-- The following region will initially be invalid. Removing regionFlowC should make it valid again. -->
+    <div class="regionFlowA"></div>
+</div>
+
+<!-- Force the creation of the flows. In the future we might avoid creating flows if there are no reachable regions. -->
+<div class="regionFlowA"></div>
+
+<script>
+    document.body.offsetTop;    // force layout
+    var el = document.getElementsByClassName("regionFlowC")[0];
+    el.parentNode.removeChild(el);
+</script>

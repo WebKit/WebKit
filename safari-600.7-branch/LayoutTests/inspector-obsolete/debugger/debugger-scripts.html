@@ -1,0 +1,59 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+
+<script>
+function test()
+{
+    var scripts = [];
+    InspectorTest.startDebuggerTest(step1);
+
+    function step1()
+    {
+        InspectorTest.queryScripts(function(script) { step2({ data: script }) });
+        WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, step2);
+    }
+
+    function step2(event)
+    {
+        var script = event.data;
+        if (script.sourceURL !== WebInspector.inspectedPageURL)
+            return;
+        scripts.push(script);
+        if (scripts.length === 6)
+            step3();
+    }
+
+    function step3()
+    {
+        scripts.sort(function(x, y) { return x.lineOffset - y.lineOffset });
+        for (var i = 0; i < scripts.length; ++i) {
+            InspectorTest.addResult("script " + (i + 1) + ":");
+            InspectorTest.addResult("    start: " + scripts[i].lineOffset + ":" + scripts[i].columnOffset);
+            InspectorTest.addResult("    end: " + scripts[i].endLine + ":" + scripts[i].endColumn);
+        }
+        InspectorTest.completeDebuggerTest();
+    }
+}
+</script>    <script>
+function f1()
+{
+}
+</script>
+   <script> function f2() {}    </script>
+   <script>function f3() {}
+</script>
+   <script>
+   function f4() {}
+</script>
+
+</head>
+<body onload="window.dummy = function() { }; runTest()">
+<p>
+Tests that valid parsed script notifications are received by front-end.
+<a href="https://bugs.webkit.org/show_bug.cgi?id=52721">Bug 52721</a>
+</p>
+</body>
+
+</html>

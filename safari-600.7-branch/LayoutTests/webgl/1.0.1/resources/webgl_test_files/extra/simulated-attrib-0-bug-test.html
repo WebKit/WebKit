@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Simulated Attrib 0 Bug Test</title>
+<script src="../resources/js-test-pre.js"></script>
+<script src="../conformance/resources/webgl-test.js"></script>
+</head>
+<body>
+<div>Simulated Attrib 0 Bug Test</div>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+var context = create3DContext();
+var program = loadStandardProgram(context);
+
+context.useProgram(program);
+debug("This line attempts to draw with 0x7FFFFFFF triangles with attrib 0 off");
+debug("A buggy simulated attrib 0 impl will probably mult 0x7FFFFFFF * sizeof(vec4)");
+shouldBe("context.drawArrays(context.TRIANGLES, 0, 0x7fffffff);", "undefined");
+debug("This line attempts to draw with 0x7ffffff triangles.");
+debug("A buggy simulated attrib 0 impl will probably pass 0x7FFFFFF0 to glBufferData and then not check that it failed");
+shouldBe("context.drawArrays(context.TRIANGLES, 0, 0x7ffffff);", "undefined");
+debug("")
+debug("NOTE!: You may not see any manifestation here. Check your impl for these issues");
+</script>
+</body>
+</html>
+

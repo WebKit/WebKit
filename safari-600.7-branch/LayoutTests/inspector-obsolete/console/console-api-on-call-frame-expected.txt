@@ -1,0 +1,10 @@
+Test that command line api does not mask values of scope variables while evaluating on a call frame.
+
+Debugger was enabled.
+Set timer for test function.
+Script execution paused.
+Evaluated in console in the top frame context: dir + clear + inspect = "dirclearinspect"
+Evaluated in console in the top frame context: typeof $$ = "function"
+Script execution resumed.
+Debugger was disabled.
+

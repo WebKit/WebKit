@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector/inspector-test.js"></script>
+<script>
+function test()
+{
+    WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, function(event) {
+        var url = WebInspector.frameResourceManager.mainFrame.url;
+        InspectorTest.log("Main frame: " + url.substring(url.lastIndexOf("/") + 1));
+        InspectorTest.completeTest();
+    });
+
+    InspectorTest.reloadPage();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that the inspector scripts are loaded and the main frame URL can be received.</p>
+</body>
+</html>

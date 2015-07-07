@@ -1,0 +1,89 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="resources/extend-selection.css" />
+<style>
+.fix_width {font-size: 10px; font-family: sans-serif;}
+</style>
+<script src="resources/move-by-word-visually.js"></script>
+<script>
+
+onload = function() {
+    try {
+        runTest();
+    } finally {
+        flushLog();
+    }
+};
+
+if (window.testRunner && window.internals) {
+    testRunner.dumpAsText();
+    internals.settings.setEditingBehavior('win');
+}
+</script>
+</head>
+<body>
+<div id="testMoveByWord">
+<!-- 
+Title saves the word breaks.
+The format of title is "xxx|xxxx".
+
+The sequence on the left of "|" is word boundaries when moving caret from left to right.
+The sequence on the right of "|" is word boundaries when moving caret from right to left.
+
+If there is a single node in the line, the sequence are offsets.
+If there are multiple nodes in the line, the sequence is array of [anchor_node_id, offset, child_node_index], 
+where child_node_index is optional, default is the first child of the anchor node.
+-->
+
+<!-- test multi-line -->
+<div><span class="fix_width" id="span_size">אאא אאא</span></div>
+<div contenteditable dir=ltr id="ml_1" class="test_move_by_word fix_width" title="[ml_1, 0][ml_1, 4][ml_1, 8][ml_1, 12][ml_1, 16][ml_1, 0, 5][ml_1, 4, 5][ml_1, 8, 5][ml_1, 12, 5][ml_1, 15, 5]|[ml_1, 15, 5][ml_1, 12, 5][ml_1, 8, 5][ml_1, 4, 5][ml_1, 0, 5][ml_1, 16][ml_1, 12][ml_1, 8][ml_1, 4][ml_1, 0]">abc def ghi jkl mn <br/><br/><br/>opq rst uvw xyz</div>
+
+<div contenteditable dir=ltr id="ml_2" class="test_move_by_word fix_width" title="[ml_2, 0][ml_2, 4][ml_2, 8][ml_2, 12][ml_2, 16][ml_2, 0, 5][ml_2, 4, 5][ml_2, 8, 5][ml_2, 12, 5][ml_2, 15, 5]|[ml_2, 15, 5][ml_2, 12, 5][ml_2, 8, 5][ml_2, 4, 5][ml_2, 0, 5][ml_2, 16][ml_2, 12][ml_2, 8][ml_2, 4][ml_2, 0]">abc def ghi jkl mn <div><br/></div><div><br/></div><div><br/></div>opq rst uvw xyz</div>
+
+<div contenteditable dir=ltr id="ml_3" class="test_move_by_word fix_width" title="[ml_3, 0][ml_3, 3][ml_3, 8][ml_3, 11]][ml_3, 0, 5][ml_3, 3, 5][ml_3, 8, 5][ml_3, 11, 5][ml_3, 15, 5]|[ml_3, 15, 5][ml_3, 11, 5][ml_3, 8, 5][ml_3, 3, 5][ml_3, 0, 5][ml_3, 11][ml_3, 8][ml_3, 3][ml_3, 0]">אאא אאא אאא אאא <br/><br/><br/>אאא אאא אאא אאא</div>
+
+<div contenteditable dir=ltr id="ml_4" class="test_move_by_word fix_width" title="[ml_4, 0][ml_4, 3][ml_4, 8][ml_4, 11][ml_4, 0, 5][ml_4, 3, 5][ml_4, 8, 5][ml_4, 11, 5][ml_4, 15, 5]|[ml_4, 15, 5][ml_4, 11, 5][ml_4, 8, 5][ml_4, 3, 5][ml_4, 0, 5][ml_4, 11][ml_4, 8][ml_4, 3][ml_4, 0]">אאא אאא אאא אאא <div><br/></div><div><br/></div><div><br/></div>אאא אאא אאא אאא</div>
+
+<div contenteditable dir=ltr id="ml_5" class="test_move_by_word fix_width" title="[ml_5, 1][ml_5, 5][ml_5, 9][ml_5, 12][ml_5, 17][ml_5, 21][ml_5, 25][ml_5, 29][ml_5, 33][ml_5, 0, 5][ml_5, 4, 5][ml_5, 7, 5][ml_5, 11, 5][ml_5, 14, 5][ml_5, 18, 5][ml_5, 22, 5][ml_5, 25, 5]|[ml_5, 25, 5][ml_5, 22, 5][ml_5, 18, 5][ml_5, 14, 5][ml_5, 11, 5][ml_5, 7, 5][ml_5, 4, 5][ml_5, 0, 5][ml_5, 33][ml_5, 29][ml_5, 25][ml_5, 21][ml_5, 17][ml_5, 12][ml_5, 9][ml_5, 5][ml_5, 1]"> abc def אאא אאא hij אאא אאא uvw xyz <br/><br/><br/>אאא kj אאא mn opq אאא אאא</div>
+
+<div contenteditable dir=ltr id="ml_6" class="test_move_by_word fix_width" title="[ml_6, 1][ml_6, 5][ml_6, 9][ml_6, 12][ml_6, 17][ml_6, 21][ml_6, 25][ml_6, 29][ml_6, 33][ml_6, 0, 5][ml_6, 4, 5][ml_6, 7, 5][ml_6, 11, 5][ml_6, 14, 5][ml_6, 18, 5][ml_6, 22, 5][ml_6, 25, 5]|[ml_6, 25, 5][ml_6, 22, 5][ml_6, 18, 5][ml_6, 14, 5][ml_6, 11, 5][ml_6, 7, 5][ml_6, 4, 5][ml_6, 0, 5][ml_6, 33][ml_6, 29][ml_6, 25][ml_6, 21][ml_6, 17][ml_6, 12][ml_6, 9][ml_6, 5][ml_6, 1]"> abc def אאא אאא hij אאא אאא uvw xyz <div><br/></div><div><br/></div><div><br/></div>אאא kj אאא mn opq אאא אאא</div>
+
+
+<div contenteditable dir=rtl id="ml_7" class="test_move_by_word fix_width" title="[ml_7, 15, 5][ml_7, 11, 5][ml_7, 8, 5][ml_7, 3, 5][ml_7, 0, 5][ml_7, 16][ml_7, 11][ml_7, 8][ml_7, 3][ml_7, 0]|[ml_7, 0][ml_7, 3][ml_7, 8][ml_7, 11][ml_7, 16][ml_7, 0, 5][ml_7, 3, 5][ml_7, 8, 5][ml_7, 11, 5][ml_7, 15, 5]">abc def ghi jkl mn <br/><br/><br/>opq rst uvw xyz</div>
+
+<div contenteditable dir=rtl id="ml_8" class="test_move_by_word fix_width" title="[ml_8, 15, 5][ml_8, 11, 5][ml_8, 8, 5][ml_8, 3, 5][ml_8, 0, 5][ml_8, 16][ml_8, 11][ml_8, 8][ml_8, 3][ml_8, 0]|[ml_8, 0][ml_8, 3][ml_8, 8][ml_8, 11][ml_8, 16][ml_8, 0, 5][ml_8, 3, 5][ml_8, 8, 5][ml_8, 11, 5][ml_8, 15, 5]">abc def ghi jkl mn <div><br/></div><div><br/></div><div><br/></div>opq rst uvw xyz</div>
+
+<div contenteditable dir=rtl id="ml_9" class="test_move_by_word fix_width" title="[ml_9, 15, 5][ml_9, 12, 5][ml_9, 8, 5][ml_9, 4, 5][ml_9, 0, 5][ml_9, 12][ml_9, 8][ml_9, 4][ml_9, 0]|[ml_9, 0][ml_9, 4][ml_9, 8][ml_9, 12][ml_9, 0, 5][ml_9, 4, 5][ml_9, 8, 5][ml_9, 12, 5][ml_9, 15, 5]">אאא אאא אאא אאא <br/><br/><br/>אאא אאא אאא אאא</div>
+
+<div contenteditable dir=rtl id="ml_10" class="test_move_by_word fix_width" title="[ml_10, 15, 5][ml_10, 12, 5][ml_10, 8, 5][ml_10, 4, 5][ml_10, 0, 5][ml_10, 12][ml_10, 8][ml_10, 4][ml_10, 0]|[ml_10, 0][ml_10, 4][ml_10, 8][ml_10, 12][ml_10, 0, 5][ml_10, 4, 5][ml_10, 8, 5][ml_10, 12, 5][ml_10, 15, 5]">אאא אאא אאא אאא <div><br/></div><div><br/></div><div><br/></div>אאא אאא אאא אאא</div>
+
+<div contenteditable dir=rtl id="ml_11" class="test_move_by_word fix_width" title="
+[ml_11, 25, 5][ml_11, 22, 5][ml_11, 18, 5][ml_11, 14, 5][ml_11, 11, 5][ml_11, 7, 5][ml_11, 4, 5][ml_11, 0, 5][ml_11, 33][ml_11, 29][ml_11, 25][ml_11, 21][ml_11, 17][ml_11, 13][ml_11, 9][ml_11, 4][ml_11, 1]|[ml_11, 1][ml_11, 4][ml_11, 9][ml_11, 13][ml_11, 17][ml_11, 21][ml_11, 25][ml_11, 29][ml_11, 33][ml_11, 0, 5][ml_11, 4, 5][ml_11, 7, 5][ml_11, 11, 5][ml_11, 14, 5][ml_11, 18, 5][ml_11, 22, 5][ml_11, 25, 5]
+"> abc def אאא אאא hij אאא אאא uvw xyz <br/><br/><br/>אאא kj אאא mn opq אאא אאא</div>
+
+<div contenteditable dir=rtl id="ml_12" class="test_move_by_word fix_width" title="
+[ml_12, 25, 5][ml_12, 22, 5][ml_12, 18, 5][ml_12, 14, 5][ml_12, 11, 5][ml_12, 7, 5][ml_12, 4, 5][ml_12, 0, 5][ml_12, 33][ml_12, 29][ml_12, 25][ml_12, 21][ml_12, 17][ml_12, 13][ml_12, 9][ml_12, 4][ml_12, 1]|[ml_12, 1][ml_12, 4][ml_12, 9][ml_12, 13][ml_12, 17][ml_12, 21][ml_12, 25][ml_12, 29][ml_12, 33][ml_12, 0, 5][ml_12, 4, 5][ml_12, 7, 5][ml_12, 11, 5][ml_12, 14, 5][ml_12, 18, 5][ml_12, 22, 5][ml_12, 25, 5]
+"> abc def אאא אאא hij אאא אאא uvw xyz <div><br/></div><div><br/></div><div><br/></div>אאא kj אאא mn opq אאא אאא</div>
+
+<div contenteditable dir=ltr id="ml_13" class="test_move_by_word fix_width" title="[ml_13, 0][ml_13, 4][ml_13, 8][ml_13, 12][ml_13, 16][ml_13, 0, 5][ml_13, 4, 5][ml_13, 8, 5][ml_13, 12, 5][ml_13, 15, 5]|[ml_13, 15, 5][ml_13, 12, 5][ml_13, 8, 5][ml_13, 4, 5][ml_13, 0, 5][ml_13, 16][ml_13, 12][ml_13, 8][ml_13, 4][ml_13, 0]">abc def ghi jkl mn <div></div><div></div><div></div>opq rst uvw xyz</div>
+
+<div contenteditable dir=ltr id="ml_14" class="test_move_by_word fix_width" title="[ml_14, 0][ml_14, 4][ml_14, 8][ml_14, 12][ml_14, 16][ml_14, 18]|[ml_14, 18][ml_14, 16][ml_14, 12][ml_14, 8][ml_14, 4][ml_14, 0]">abc def ghi jkl mn <div></div><div></div><div></div></div>
+
+<div contenteditable dir=ltr id="ml_15" class="test_move_by_word fix_width" title="[ml_15, 0][ml_15, 4][ml_15, 8][ml_15, 12][ml_15, 16][ml_15, 0, 5][ml_15, 4, 5][ml_15, 8, 5][ml_15, 12, 5][ml_15, 15, 5]|[ml_15, 15, 5][ml_15, 12, 5][ml_15, 8, 5][ml_15, 4, 5][ml_15, 0, 5][ml_15, 16][ml_15, 12][ml_15, 8][ml_15, 4][ml_15, 0]">abc def ghi jkl mn <div><img src=../../accessibility/resources/cake.png></div><div></div><div></div>opq rst uvw xyz</div>
+
+<!-- mixed editability -->
+<div dir=ltr class="test_move_by_word" title="0 4 8|8 5 1">abc def <span contenteditable> inside span </span> hij opq</div>
+
+<div class="test_move_by_word" contenteditable dir=ltr title="0|0"></div>
+
+<div contenteditable>
+00<base dir=ltr class="test_move_by_word" title="3|3 1">
+</div>
+
+</div>
+<pre id="console"></pre>
+</body>
+</html>

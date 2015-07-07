@@ -1,0 +1,41 @@
+<html>
+<head>
+<script src="resources/console-clear-arguments-test.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function removeIFrame()
+{
+    var container = document.getElementById('container');
+    var child = container.firstChild;
+    while (child) {
+        container.removeChild(child);
+        child = container.firstChild;
+    }
+    dumpConsoleMessageArgumentCounts();
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function createIFrame()
+{
+    var iframe = document.createElement('iframe');
+    iframe.setAttribute('src', 'resources/console-clear-arguments-iframe.html');
+    iframe.onload= removeIFrame;
+    document.getElementById('container').appendChild(iframe);
+}
+
+</script>
+</head>
+<body onload="createIFrame()">
+<p>
+Tests that console message arguments will be cleared when iframe where the messages were
+created is removed.
+</p>
+<div id="container"></div>
+<div id="output"></div>
+</body>
+</html>

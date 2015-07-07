@@ -1,0 +1,17 @@
+Tests for Node.compareDocumentPosition() for nodes in shadow tree.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS a1.compareDocumentPosition(a2) is Node.DOCUMENT_POSITION_CONTAINED_BY | Node.DOCUMENT_POSITION_FOLLOWING
+PASS a2.compareDocumentPosition(a1) is Node.DOCUMENT_POSITION_CONTAINS | Node.DOCUMENT_POSITION_PRECEDING
+PASS a2.compareDocumentPosition(a3) is Node.DOCUMENT_POSITION_FOLLOWING
+PASS b1.compareDocumentPosition(b2) is Node.DOCUMENT_POSITION_CONTAINED_BY | Node.DOCUMENT_POSITION_FOLLOWING
+PASS b2.compareDocumentPosition(b1) is Node.DOCUMENT_POSITION_CONTAINS | Node.DOCUMENT_POSITION_PRECEDING
+PASS b2.compareDocumentPosition(b3) is Node.DOCUMENT_POSITION_FOLLOWING
+PASS a1.compareDocumentPosition(b1) is Node.DOCUMENT_POSITION_DISCONNECTED | Node.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC
+PASS b1.compareDocumentPosition(c1) is Node.DOCUMENT_POSITION_DISCONNECTED | Node.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

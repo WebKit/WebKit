@@ -1,0 +1,90 @@
+<!doctype html>
+
+ <style>
+    
+    #blue-box-1 {
+        border: 1px solid blue;
+    }
+
+	#blue-box-2 {
+        border-bottom: 1px solid blue;
+        border-left: 1px solid blue;
+        border-right: 1px solid blue;
+    }
+    
+    #green-box-1 {
+        margin:auto;
+        border: 1px solid green;
+        padding-bottom:1px;
+        width:75%
+    }
+ 
+   #green-box-2 {
+        margin:auto;
+        border-bottom: 1px solid green;
+        border-left: 1px solid green;
+        border-right: 1px solid green;
+        width:75%
+    }
+    
+    #region1, #region2, #region3 {
+        border: 1px solid black;
+    }
+
+    #region1 {
+        width: 270px;
+        height: 95px;
+        padding-top:5px;
+        padding-left:5px;
+        padding-right:5px;
+        overflow:hidden;
+    }
+    
+    #region2 {
+        width: 390px;
+        height: 180px;
+        padding-left:5px;
+        padding-right:5px;
+    }
+    
+    #region3 {
+        width: 220px;
+        height: 120px;
+    }
+    
+    .float { 
+	    width:50px; 
+	    height:50px; 
+	    background-color: lime;  
+	}
+    
+    .left { 
+	    float: left 
+	}
+    
+   .right { 
+	    float: right 
+	}
+</style>
+
+<body>
+<!--<p>The first and last lines of text in the regions below should be clipped to the green box. The overflow
+section sizes itself and clips differently in each region.</p>-->
+<div id="region1">
+    <div id="blue-box-1">
+        <div id="green-box-1">
+            <div class="float left"></div> <div class="float right"></div>
+            <p>These lines will not spill out of the regions. These lines will not spill out</p>
+         </div>
+    </div>
+</div>
+<div id="region2">
+    <div id="blue-box-2">
+	    <div id="green-box-2">
+                     of the regions. These lines will not spill out of the regions. These lines will not spill out of the regions.
+		     <p>These lines will not spill out of the regions. These lines will not spill out of the regions.
+	            These lines will not spill out of the regions. These lines will not spill out of the regions. </p>
+           </div>    
+    </div>
+</div>
+<div id="region3"></div>

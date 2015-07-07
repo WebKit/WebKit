@@ -1,0 +1,15 @@
+<body style="font: 20px ahem; margin: 0;">
+    <div id="result" style="outline: solid blue; height: 100px; width: 100px; -webkit-transform: translatez(0)"></div>
+    <div style="height: 900px"></div>
+    <div style="height: 100px;">target</div>
+    <div style="height: 1000px;"></div>
+    <script>
+        if (window.testRunner && window.internals) {
+            testRunner.dumpAsText();
+            window.internals.setPageScaleFactor(2, 0, 0);
+        }
+
+        document.execCommand("FindString", false, "target");
+        document.getElementById("result").innerText = document.body.scrollTop === 864 ? "PASS" : "FAIL";
+    </script>
+</body>

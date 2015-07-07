@@ -1,0 +1,6 @@
+Test that an auto-height region taking content from a namedflow that contains another absolutely positioned auto-height region has its height computed properly.
+
+On success, you should see a green square inside a blue border rectangle and two PASS below.
+
+PASS
+PASS

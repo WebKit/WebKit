@@ -1,0 +1,21 @@
+The test verifies if the spelling markers disappear when the multiple misspelled words are concatenated by delete command. To test manually, type "it's a meagesga meagesga", then select and delete "esga meag". The test succeeds if the remaining text does not have any underline.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.hasSpellingMarker(spellingPositions[0], spellingLengths[0]) became false
+PASS internals.hasSpellingMarker(spellingPositions[1], spellingLengths[1]) became true
+
+PASS internals.hasSpellingMarker(spellingPositions[0], spellingLengths[0]) became false
+PASS internals.hasSpellingMarker(spellingPositions[1], spellingLengths[1]) became false
+
+PASS internals.hasSpellingMarker(spellingPositions[0], spellingLengths[0]) became false
+PASS internals.hasSpellingMarker(spellingPositions[1], spellingLengths[1]) became false
+
+PASS internals.hasSpellingMarker(spellingPositions[0], spellingLengths[0]) became false
+PASS internals.hasSpellingMarker(spellingPositions[1], spellingLengths[1]) became false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

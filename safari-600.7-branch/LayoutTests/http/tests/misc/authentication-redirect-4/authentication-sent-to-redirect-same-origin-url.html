@@ -1,0 +1,27 @@
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.setHandlesAuthenticationChallenges(true);
+    testRunner.setAuthenticationUsername("testUser");
+    testRunner.setAuthenticationPassword("testPassword");
+}
+
+function appendFrame()
+{
+    i = document.createElement("iframe");
+    i.setAttribute("src", "http://127.0.0.1:8000/misc/authentication-redirect-4/resources/auth-then-redirect.php?redirect");
+    document.body.appendChild(i);
+}
+
+</script>
+
+<body onload="appendFrame();">
+https://bugs.webkit.org/show_bug.cgi?id=105190<br>
+You should load this page at 127.0.0.1:8000 because the test relies on redirects within the 127.0.0.1:8000 security origin.<br>
+This test loads a php script which demands http authentication, then uses it to redirect via 301 to another script in the same origin that shows what authentication headers were sent with the final request. It verifies that the credentials are not placed in the final URL.<br>
+If not running under DRT, enter any credentials when asked.<br>
+</body>
+

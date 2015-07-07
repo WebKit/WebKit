@@ -1,0 +1,7 @@
+Test entering full screen for a nested iframe works with a mixture of both allowfullscreen and webkitallowfullscreen.
+
+To test manually, click into inner frame, the page should enter full screen mode.
+
+SUCCEED - entered full screen!
+END OF TEST
+

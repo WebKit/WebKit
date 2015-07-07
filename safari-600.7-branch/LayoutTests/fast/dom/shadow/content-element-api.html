@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div>
+  <content id="content-simplest"></content>
+</div>
+<script>
+description("This test ensure that the content element is available.");
+var contentSimplest = document.getElementById("content-simplest");
+shouldBe("contentSimplest.select", "''");
+contentSimplest.setAttribute("select", "foo");
+shouldBe("contentSimplest.select", "'foo'");
+contentSimplest.select = "bar"
+shouldBe("contentSimplest.getAttribute('select')", "'bar'");
+shouldBeTrue("0 <= contentSimplest.constructor.toString().indexOf('HTMLContentElement')");
+shouldBe("window.HTMLContentElement", "contentSimplest.constructor");
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

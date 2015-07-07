@@ -1,0 +1,129 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaArray to String
+
+FAIL dt.setStringObject(java.lang.String(wkTestStringToJavaByteArray("hello"))); dt.PUB_STRING +'' should be hello. Threw exception ReferenceError: Can't find variable: java
+FAIL dt.setStringObject(java.lang.String(wkTestStringToJavaByteArray("hello"))); dt.getStringObject() +'' should be hello. Threw exception ReferenceError: Can't find variable: java
+PASS typeof dt.getStringObject() is "object"
+FAIL dt.setStringObject(java.lang.String(new java.lang.String("goodbye").toCharArray())); dt.PUB_STRING +'' should be goodbye. Threw exception ReferenceError: Can't find variable: java
+FAIL dt.setStringObject(java.lang.String(new java.lang.String("goodbye").toCharArray())); dt.getStringObject() +'' should be goodbye. Threw exception ReferenceError: Can't find variable: java
+PASS typeof dt.getStringObject() is "object"
+FAIL dt.setStringObject(java.lang.String(new java.lang.String("goodbye").toCharArray())); dt.PUB_STRING +'' should be goodbye. Threw exception ReferenceError: Can't find variable: java
+FAIL dt.setStringObject(java.lang.String(new java.lang.String("goodbye").toCharArray())); dt.getStringObject() +'' should be goodbye. Threw exception ReferenceError: Can't find variable: java
+PASS typeof dt.getStringObject() is "object"
+FAIL var vector = new java.util.Vector(); vector.addElement( "a" ); vector.addElement( "b" ); vector.copyInto( DT.PUB_STATIC_ARRAY_OBJECT ); DT.PUB_STATIC_ARRAY_OBJECT[0] +'' should be a. Threw exception ReferenceError: Can't find variable: java
+FAIL var vector = new java.util.Vector(); vector.addElement( "a" ); vector.addElement( "b" ); vector.copyInto( DT.PUB_STATIC_ARRAY_OBJECT ); DT.staticGetObjectArray()[0] +'' should be a. Threw exception ReferenceError: Can't find variable: java
+PASS typeof DT.staticGetObjectArray()[0] is "object"
+FAIL var vector = new java.util.Vector(); vector.addElement( "a" ); vector.addElement( 3 ); vector.copyInto( DT.PUB_STATIC_ARRAY_OBJECT ); DT.PUB_STATIC_ARRAY_OBJECT[1] +'' should be 3.0. Threw exception ReferenceError: Can't find variable: java
+FAIL var vector = new java.util.Vector(); vector.addElement( "a" ); vector.addElement( 3 ); vector.copyInto( DT.PUB_STATIC_ARRAY_OBJECT ); DT.staticGetObjectArray()[1] +'' should be 3.0. Threw exception ReferenceError: Can't find variable: java
+FAIL DT.staticGetObjectArray()[1].getClass().getName() +'' should be java.lang.Double. Was [C.
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.PUB_STATIC_ARRAY_BYTE[0] is 48
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.getByteArray()[0] is 48
+PASS typeof dt.getByteArray()[0] is "number"
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.PUB_STATIC_ARRAY_BYTE[1] is 46
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.getByteArray()[1] is 46
+PASS typeof dt.getByteArray()[1] is "number"
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.PUB_STATIC_ARRAY_BYTE[2] is 52
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.getByteArray()[2] is 52
+PASS typeof dt.getByteArray()[2] is "number"
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.PUB_STATIC_ARRAY_BYTE[3] is 56
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.getByteArray()[3] is 56
+PASS typeof dt.getByteArray()[3] is "number"
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.PUB_STATIC_ARRAY_BYTE[4] is 53
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.getByteArray()[4] is 53
+PASS typeof dt.getByteArray()[4] is "number"
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.PUB_STATIC_ARRAY_BYTE[5] is 57
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.getByteArray()[5] is 57
+PASS typeof dt.getByteArray()[5] is "number"
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.PUB_STATIC_ARRAY_BYTE[6] is 50
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.getByteArray()[6] is 50
+PASS typeof dt.getByteArray()[6] is "number"
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.PUB_STATIC_ARRAY_BYTE[7] is 50
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.getByteArray()[7] is 50
+PASS typeof dt.getByteArray()[7] is "number"
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.PUB_STATIC_ARRAY_BYTE[8] is 48
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.getByteArray()[8] is 48
+PASS typeof dt.getByteArray()[8] is "number"
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.PUB_STATIC_ARRAY_BYTE[9] is 50
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.getByteArray()[9] is 50
+PASS typeof dt.getByteArray()[9] is "number"
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.PUB_STATIC_ARRAY_BYTE[10] is 53
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.getByteArray()[10] is 53
+PASS typeof dt.getByteArray()[10] is "number"
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.PUB_STATIC_ARRAY_BYTE[11] is 53
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.getByteArray()[11] is 53
+PASS typeof dt.getByteArray()[11] is "number"
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.PUB_STATIC_ARRAY_BYTE[12] is 49
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.getByteArray()[12] is 49
+PASS typeof dt.getByteArray()[12] is "number"
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.PUB_STATIC_ARRAY_BYTE[13] is 54
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.getByteArray()[13] is 54
+PASS typeof dt.getByteArray()[13] is "number"
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.PUB_STATIC_ARRAY_BYTE[14] is 54
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.getByteArray()[14] is 54
+PASS typeof dt.getByteArray()[14] is "number"
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.PUB_STATIC_ARRAY_BYTE[15] is 50
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.getByteArray()[15] is 50
+PASS typeof dt.getByteArray()[15] is "number"
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.PUB_STATIC_ARRAY_BYTE[16] is 57
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.getByteArray()[16] is 57
+PASS typeof dt.getByteArray()[16] is "number"
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.PUB_STATIC_ARRAY_BYTE[17] is 50
+PASS dt.setByteArray(wkTestStringToJavaByteArray("0.4859220255166292")); dt.getByteArray()[17] is 50
+PASS typeof dt.getByteArray()[17] is "number"
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.PUB_STATIC_ARRAY_CHAR[0] should be 48. Threw exception ReferenceError: Can't find variable: java
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.getCharArray()[0] should be 48. Threw exception ReferenceError: Can't find variable: java
+PASS typeof dt.getCharArray()[0] is "number"
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.PUB_STATIC_ARRAY_CHAR[1] should be 46. Threw exception ReferenceError: Can't find variable: java
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.getCharArray()[1] should be 46. Threw exception ReferenceError: Can't find variable: java
+PASS typeof dt.getCharArray()[1] is "number"
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.PUB_STATIC_ARRAY_CHAR[2] should be 56. Threw exception ReferenceError: Can't find variable: java
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.getCharArray()[2] should be 56. Threw exception ReferenceError: Can't find variable: java
+PASS typeof dt.getCharArray()[2] is "number"
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.PUB_STATIC_ARRAY_CHAR[3] should be 56. Threw exception ReferenceError: Can't find variable: java
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.getCharArray()[3] should be 56. Threw exception ReferenceError: Can't find variable: java
+PASS typeof dt.getCharArray()[3] is "number"
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.PUB_STATIC_ARRAY_CHAR[4] should be 51. Threw exception ReferenceError: Can't find variable: java
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.getCharArray()[4] should be 51. Threw exception ReferenceError: Can't find variable: java
+PASS typeof dt.getCharArray()[4] is "number"
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.PUB_STATIC_ARRAY_CHAR[5] should be 50. Threw exception ReferenceError: Can't find variable: java
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.getCharArray()[5] should be 50. Threw exception ReferenceError: Can't find variable: java
+PASS typeof dt.getCharArray()[5] is "number"
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.PUB_STATIC_ARRAY_CHAR[6] should be 48. Threw exception ReferenceError: Can't find variable: java
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.getCharArray()[6] should be 48. Threw exception ReferenceError: Can't find variable: java
+PASS typeof dt.getCharArray()[6] is "number"
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.PUB_STATIC_ARRAY_CHAR[7] should be 56. Threw exception ReferenceError: Can't find variable: java
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.getCharArray()[7] should be 56. Threw exception ReferenceError: Can't find variable: java
+PASS typeof dt.getCharArray()[7] is "number"
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.PUB_STATIC_ARRAY_CHAR[8] should be 54. Threw exception ReferenceError: Can't find variable: java
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.getCharArray()[8] should be 54. Threw exception ReferenceError: Can't find variable: java
+PASS typeof dt.getCharArray()[8] is "number"
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.PUB_STATIC_ARRAY_CHAR[9] should be 53. Threw exception ReferenceError: Can't find variable: java
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.getCharArray()[9] should be 53. Threw exception ReferenceError: Can't find variable: java
+PASS typeof dt.getCharArray()[9] is "number"
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.PUB_STATIC_ARRAY_CHAR[10] should be 54. Threw exception ReferenceError: Can't find variable: java
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.getCharArray()[10] should be 54. Threw exception ReferenceError: Can't find variable: java
+PASS typeof dt.getCharArray()[10] is "number"
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.PUB_STATIC_ARRAY_CHAR[11] should be 54. Threw exception ReferenceError: Can't find variable: java
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.getCharArray()[11] should be 54. Threw exception ReferenceError: Can't find variable: java
+PASS typeof dt.getCharArray()[11] is "number"
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.PUB_STATIC_ARRAY_CHAR[12] should be 56. Threw exception ReferenceError: Can't find variable: java
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.getCharArray()[12] should be 56. Threw exception ReferenceError: Can't find variable: java
+PASS typeof dt.getCharArray()[12] is "number"
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.PUB_STATIC_ARRAY_CHAR[13] should be 51. Threw exception ReferenceError: Can't find variable: java
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.getCharArray()[13] should be 51. Threw exception ReferenceError: Can't find variable: java
+PASS typeof dt.getCharArray()[13] is "number"
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.PUB_STATIC_ARRAY_CHAR[14] should be 53. Threw exception ReferenceError: Can't find variable: java
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.getCharArray()[14] should be 53. Threw exception ReferenceError: Can't find variable: java
+PASS typeof dt.getCharArray()[14] is "number"
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.PUB_STATIC_ARRAY_CHAR[15] should be 54. Threw exception ReferenceError: Can't find variable: java
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.getCharArray()[15] should be 54. Threw exception ReferenceError: Can't find variable: java
+FAIL typeof dt.getCharArray()[15] should be number. Was undefined.
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.PUB_STATIC_ARRAY_CHAR[16] should be 52. Threw exception ReferenceError: Can't find variable: java
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.getCharArray()[16] should be 52. Threw exception ReferenceError: Can't find variable: java
+FAIL typeof dt.getCharArray()[16] should be number. Was undefined.
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.PUB_STATIC_ARRAY_CHAR[17] should be 50. Threw exception ReferenceError: Can't find variable: java
+FAIL dt.setCharArray(java.lang.String("0.8832086566835642").toCharArray()); dt.getCharArray()[17] should be 50. Threw exception ReferenceError: Can't find variable: java
+FAIL typeof dt.getCharArray()[17] should be number. Was undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

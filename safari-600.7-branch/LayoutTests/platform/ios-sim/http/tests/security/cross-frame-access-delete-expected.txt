@@ -1,0 +1,27 @@
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+ PASS: eval('delete targetWindow.existingProperty') should be 'false' and is.
+PASS: eval('delete targetWindow[1]') should be 'false' and is.
+PASS: eval('delete targetWindow.history.existingProperty') should be 'false' and is.
+PASS: eval('delete targetWindow.history[1]') should be 'false' and is.
+PASS: eval('delete targetWindow.location.existingProperty') should be 'false' and is.
+PASS: eval('delete targetWindow.location[1]') should be 'false' and is.
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+
+----- tests for deleting the properties of window, window.history, and window.location cross-domain -----
+
+PASS: window.existingProperty should be 'test value' and is.
+PASS: window[1] should be 'test value' and is.
+PASS: window.history.existingProperty should be 'test value' and is.
+PASS: window.history[1] should be 'test value' and is.
+PASS: window.location.existingProperty should be 'test value' and is.
+PASS: window.location[1] should be 'test value' and is.
+

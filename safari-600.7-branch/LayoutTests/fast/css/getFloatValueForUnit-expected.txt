@@ -1,0 +1,38 @@
+Testing whether CSSPrimitiveValue.getFloatValue() converts units correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getFloatValue('font-size', CSSPrimitiveValue.CSS_PT) is 10
+PASS getFloatValue('font-size', CSSPrimitiveValue.CSS_MM) is 3.527778
+PASS getFloatValue('font-size', CSSPrimitiveValue.CSS_CM) is 0.352778
+PASS getFloatValue('font-size', CSSPrimitiveValue.CSS_IN) is 0.138889
+PASS getFloatValue('font-size', CSSPrimitiveValue.CSS_PC) is 0.833333
+PASS getFloatValue('font-size', CSSPrimitiveValue.CSS_PX) is 13.333333
+PASS getFloatValue('font-size', CSSPrimitiveValue.CSS_NUMBER) is 13.333333
+PASS getFirstFloatValueInList('-webkit-transform', CSSPrimitiveValue.CSS_DEG) is 90
+PASS getFirstFloatValueInList('-webkit-transform', CSSPrimitiveValue.CSS_RAD) is 1.570796
+PASS getFirstFloatValueInList('-webkit-transform', CSSPrimitiveValue.CSS_GRAD) is 100
+PASS getFirstFloatValueInList('-webkit-transform', CSSPrimitiveValue.CSS_NUMBER) is 90
+PASS getFloatValue('-webkit-animation-delay', CSSPrimitiveValue.CSS_MS) is 200
+PASS getFloatValue('-webkit-animation-delay', CSSPrimitiveValue.CSS_S) is 0.2
+PASS getFloatValue('-webkit-animation-delay', CSSPrimitiveValue.CSS_NUMBER) is 200
+PASS getFloatValue('font-size', CSSPrimitiveValue.CSS_PERCENTAGE) threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS getFloatValue('font-size', CSSPrimitiveValue.CSS_MS) threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS getFloatValue('font-size', CSSPrimitiveValue.CSS_HZ) threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS getFloatValue('font-size', CSSPrimitiveValue.CSS_DEG) threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS getFloatValue('font-size', CSSPrimitiveValue.CSS_RGBCOLOR) threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS getFirstFloatValueInList('-webkit-transform', CSSPrimitiveValue.CSS_PERCENTAGE) threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS getFirstFloatValueInList('-webkit-transform', CSSPrimitiveValue.CSS_PX) threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS getFirstFloatValueInList('-webkit-transform', CSSPrimitiveValue.CSS_MS) threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS getFirstFloatValueInList('-webkit-transform', CSSPrimitiveValue.CSS_HZ) threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS getFirstFloatValueInList('-webkit-transform', CSSPrimitiveValue.CSS_RGBCOLOR) threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS getFloatValue('-webkit-animation-delay', CSSPrimitiveValue.CSS_PERCENTAGE) threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS getFloatValue('-webkit-animation-delay', CSSPrimitiveValue.CSS_PX) threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS getFloatValue('-webkit-animation-delay', CSSPrimitiveValue.CSS_DEG) threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS getFloatValue('-webkit-animation-delay', CSSPrimitiveValue.CSS_HZ) threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS getFloatValue('-webkit-animation-delay', CSSPrimitiveValue.CSS_RGBCOLOR) threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

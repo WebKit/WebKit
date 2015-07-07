@@ -1,0 +1,4 @@
+Caught expected exception: Error: NotSupportedError: DOM Exception 9
+1 (black) 2 (green) 3 (green) 4 (black) 
+
+PASS

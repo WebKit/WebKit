@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            #region1 { }
+            @-webkit-region #region1
+            @-webkit-region #region1 { }
+        </style>
+    </head>
+    <body>
+        <script>
+            if (window.testRunner)
+                testRunner.dumpAsText();
+            var rulesText = "";
+            var cssRules = document.styleSheets[0].cssRules;
+            for (var idx = 0; idx < cssRules.length; idx++)
+                rulesText += cssRules.item(idx).parentStyleSheet;
+        </script>
+        PASS if it does not crash or cause an ASSERT failure.
+  </body>
+</html>

@@ -1,0 +1,9 @@
+word1 before empty region word2
+after empty region
+Test that when you start the selection outside an empty region and end the selection inside the empty region, only the content before the empty region is selected.
+
+To manually test, start selection from "word1" and move to the middle of the box with black border, representing the empty region.
+
+Focus node should be the empty region.
+
+Selected content should go from "word1" to "word2": PASS

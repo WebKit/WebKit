@@ -1,0 +1,197 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Controllers">
+      <UniqueIdentifier>{f76f7e03-4f6a-46fd-a3e6-3cc4d2f7e918}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Delegates">
+      <UniqueIdentifier>{964367be-8e77-444f-9b05-7c906d89e35e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Support">
+      <UniqueIdentifier>{59309c9f-8148-4c01-a552-888c6c065f73}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\AccessibilityController.cpp">
+      <Filter>Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\GCController.cpp">
+      <Filter>Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\TestRunner.cpp">
+      <Filter>Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\AccessibilityControllerWin.cpp">
+      <Filter>Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\DRTDataObject.cpp">
+      <Filter>Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\DRTDropSource.cpp">
+      <Filter>Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\EventSender.cpp">
+      <Filter>Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\GCControllerWin.cpp">
+      <Filter>Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\TestRunnerWin.cpp">
+      <Filter>Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\TextInputController.cpp">
+      <Filter>Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\TextInputControllerWin.cpp">
+      <Filter>Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\DRTDesktopNotificationPresenter.cpp">
+      <Filter>Delegates</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\HistoryDelegate.cpp">
+      <Filter>Delegates</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\PolicyDelegate.cpp">
+      <Filter>Delegates</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\ResourceLoadDelegate.cpp">
+      <Filter>Delegates</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\UIDelegate.cpp">
+      <Filter>Delegates</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\EditingDelegate.cpp">
+      <Filter>Delegates</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\FrameLoadDelegate.cpp">
+      <Filter>Delegates</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AccessibilityTextMarker.cpp">
+      <Filter>Support</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\AccessibilityUIElementWin.cpp">
+      <Filter>Support</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AccessibilityUIElement.cpp">
+      <Filter>Support</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\CyclicRedundancyCheck.cpp">
+      <Filter>Support</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DumpRenderTreeCommon.cpp">
+      <Filter>Support</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\DumpRenderTree.cpp">
+      <Filter>Support</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\MD5.cpp">
+      <Filter>Support</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PixelDumpSupport.cpp">
+      <Filter>Support</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\WorkQueueItemWin.cpp">
+      <Filter>Support</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cairo\PixelDumpSupportCairo.cpp">
+      <Filter>Support</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\cg\PixelDumpSupportCG.cpp">
+      <Filter>Support</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\PixelDumpSupportWin.cpp">
+      <Filter>Support</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\WorkQueue.cpp">
+      <Filter>Support</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\JavaScriptThreading.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\AccessibilityController.h">
+      <Filter>Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\GCController.h">
+      <Filter>Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\TestRunner.h">
+      <Filter>Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\win\DRTDataObject.h">
+      <Filter>Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\win\DRTDropSource.h">
+      <Filter>Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\win\EventSender.h">
+      <Filter>Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\win\TextInputController.h">
+      <Filter>Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\win\DRTDesktopNotificationPresenter.h">
+      <Filter>Delegates</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\win\HistoryDelegate.h">
+      <Filter>Delegates</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\win\PolicyDelegate.h">
+      <Filter>Delegates</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\win\ResourceLoadDelegate.h">
+      <Filter>Delegates</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\win\UIDelegate.h">
+      <Filter>Delegates</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\win\EditingDelegate.h">
+      <Filter>Delegates</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\win\FrameLoadDelegate.h">
+      <Filter>Delegates</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\config.h" />
+    <ClInclude Include="..\..\AccessibilityTextMarker.h">
+      <Filter>Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\AccessibilityUIElement.h">
+      <Filter>Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DumpRenderTreePrefix.h" />
+    <ClInclude Include="..\..\CyclicRedundancyCheck.h">
+      <Filter>Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\win\DraggingInfo.h">
+      <Filter>Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DumpRenderTree.h">
+      <Filter>Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\win\DumpRenderTreeWin.h">
+      <Filter>Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\win\MD5.h">
+      <Filter>Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PixelDumpSupport.h">
+      <Filter>Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cairo\PixelDumpSupportCairo.h">
+      <Filter>Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\cg\PixelDumpSupportCG.h">
+      <Filter>Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\WorkQueue.h">
+      <Filter>Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\WorkQueueItem.h">
+      <Filter>Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\JavaScriptThreading.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="DumpRenderTreePostBuild.cmd" />
+    <None Include="DumpRenderTreePreBuild.cmd" />
+  </ItemGroup>
+</Project>

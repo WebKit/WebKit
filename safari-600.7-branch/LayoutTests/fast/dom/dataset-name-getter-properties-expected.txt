@@ -1,0 +1,13 @@
+Test the JavaScript property descriptor of the name getter.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Object.getOwnPropertyDescriptor(document.body.dataset, 'webkitRocks').configurable is false
+PASS Object.getOwnPropertyDescriptor(document.body.dataset, 'webkitRocks').enumerable is false
+PASS Object.getOwnPropertyDescriptor(document.body.dataset, 'webkitRocks').writable is false
+PASS Object.getOwnPropertyDescriptor(document.body.dataset, 'webkitRocks').value is "yes"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,10 @@
+This test checks multiple shadow trees can be moved into another document.
+
+PASS document is sr1.ownerDocument
+PASS sr1.ownerDocument is sr2.ownerDocument
+PASS sr1.ownerDocument is iframeDoc
+PASS sr2.ownerDocument is iframeDoc
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

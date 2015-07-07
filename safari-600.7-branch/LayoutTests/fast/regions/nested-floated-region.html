@@ -1,0 +1,49 @@
+<html>
+    <head>
+        <style>
+            * {
+                border: solid 1px #888;
+                padding: 2px;
+                margin: 3px;
+            }
+            .no_decorations {
+                border: none;
+                padding: 0px;
+                margin: 0px;
+            }
+            .nestedContent {
+                -webkit-flow-into: nestedFlow;
+            }
+            .outerContent {
+                -webkit-flow-into: outerFlow;
+            }
+            .outerRegion {
+                -webkit-flow-from: outerFlow;
+                border: 1px solid red;
+            }
+            .nestedRegion {
+                -webkit-flow-from: nestedFlow;
+                border: 1px solid blue;
+                display: inline-block;
+                float: right;
+                width: 210px;
+                height: 110px;
+                background-color: #eee;
+            }
+            .width600px {
+                width: 600px;
+            }
+        </style>
+    </head>
+    <body>
+        <p><b>The text inside the large <span class="no_decorations" style="color:red">region</span> should properly flow around the <span class="no_decorations" style="color:blue">floated, nested region</span>.</b></p><br/>
+        <div class="outerContent">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Mollitia, cupiditate, porro, dignissimos fuga impedit corrupti suscipit tempora earum odit asperiores quia nam soluta repellat perspiciatis iste et voluptatem molestiae magni a voluptas maxime officiis iusto dolor ut dicta. 
+            <div class="nestedRegion"></div> 
+            Et, ad sit praesentium recusandae omnis reiciendis ipsa eveniet accusantium vero reprehenderit enim minus perferendis sapiente maxime fugiat iure soluta minima suscipit.
+        </div>
+
+        <div class="width600px outerRegion"></div>
+        <div class="nestedContent">This text is flowed into a nested region</div>
+    </body>
+</html>

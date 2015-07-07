@@ -1,0 +1,18 @@
+This tests the computed value of unicode-bidi property.
+
+PASS styleOf("span", {}).unicodeBidi is "normal"
+PASS styleOf("span", {"style":"unicode-bidi: embed;"}).unicodeBidi is "embed"
+PASS styleOf("span", {"style":"unicode-bidi: -webkit-isolate;"}).unicodeBidi is "-webkit-isolate"
+PASS styleOf("span", {"style":"unicode-bidi: bidi-override;"}).unicodeBidi is "bidi-override"
+PASS styleOf("span", {"style":"unicode-bidi: -webkit-plaintext;"}).unicodeBidi is "-webkit-plaintext"
+PASS styleOf("span", {"style":"unicode-bidi: bad-value;"}).unicodeBidi is "normal"
+PASS styleOf("span", {"style":"unicode-bidi: embed embed;"}).unicodeBidi is "normal"
+PASS styleOf("span", {"style":"unicode-bidi: embed -webkit-plain-text;"}).unicodeBidi is "normal"
+PASS styleOf("span", {"style":"unicode-bidi: bidi-override -webkit-isolate;"}).unicodeBidi is "normal"
+PASS styleOf("span", {"style":"unicode-bidi: -webkit-isolate bidi-override;"}).unicodeBidi is "normal"
+PASS styleOf("span", {"style":"unicode-bidi: -webkit-isolate-override;"}).unicodeBidi is "-webkit-isolate-override"
+PASS styleOf("span", {"style":"unicode-bidi: bidi-override -webkit-isolate bidi-override;"}).unicodeBidi is "normal"
+PASS styleOf("span", {"style":"unicode-bidi: bidi-override -webkit-isolate -webkit-isolate;"}).unicodeBidi is "normal"
+PASS styleOf("span", {"style":"unicode-bidi: bidi-override bad-value;"}).unicodeBidi is "normal"
+PASS styleOf("span", {"style":"unicode-bidi: bidi-override embed;"}).unicodeBidi is "normal"
+

@@ -1,0 +1,16 @@
+Tests XMLHttpRequest 'document' loading with the .responseType and .response attributes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS responseType property exists.
+PASS response property exists.
+PASS xhr.responseType has been correctly set to 'document'.
+PASS DONE LOADING
+PASS received response object of type : object.
+PASS exception correctly thrown when xhr.responseType is set to valid value too late in the loading process : Error: InvalidStateError: DOM Exception 11.
+PASS xhr.response is a Document.
+PASS xhr.response == xhr.responseXML.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

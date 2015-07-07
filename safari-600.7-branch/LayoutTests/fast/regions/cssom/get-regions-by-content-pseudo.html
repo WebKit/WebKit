@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../../resources/js-test-pre.js"></script>
+        <script src="../resources/helper.js"></script>
+        <style>
+            #article {
+                -webkit-flow-into: article;
+                height: 150px;
+                width: 50px;
+                background-color: green;
+            }
+
+            #region_1 {
+                position: absolute;
+                top:200px;
+                left: 100px;
+            }
+
+            #region_1::before {
+                display: block;
+                width: 50px;
+                height: 50px;
+                border: 1px solid black;
+                -webkit-flow-from: article;
+            }
+
+            #region_1::after {
+                display: block;
+                width: 50px;
+                height: 50px;
+                border: 1px solid black;
+                -webkit-flow-from: article;    
+            }
+
+            #region_2 {
+                -webkit-flow-from: article;
+                height:50px;
+                width:50px;
+                position: absolute;
+                top: 200px;
+                left: 200px;
+                border: 1px solid black;
+            }
+        </style>
+    </head>
+    <body>
+        <!--
+        Test that the pseudo-elements regions are not exposed to JS.
+        -->
+        <div id="article"></div>
+
+        <div id="region_1"></div>
+        <div id="region_2"></div>
+        <script>
+            if (window.testRunner)
+                testRunner.dumpAsText();
+            description("Tests WebKitNamedFlow.getRegionsByContent() and pseudo-elements as regions")
+
+            var namedFlow = getFlowByName("article");
+            var targetNode = document.getElementById("article");
+            var regionList = namedFlow.getRegionsByContent(targetNode);
+
+            shouldEvaluateTo("regionList.length", 1);
+            shouldBeEqualToString("regionList.item(0).id", "region_2");
+
+            document.getElementById("article").style.visibility = "hidden";
+            document.getElementById("region_1").style.visibility = "hidden";
+            document.getElementById("region_2").style.visibility = "hidden";
+        </script>
+        <script src="../../../resources/js-test-post.js"></script>
+    </body>
+</html>

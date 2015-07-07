@@ -1,0 +1,16 @@
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink="http://www.w3.org/1999/xlink" onload="runRepaintTest()">>
+    <script xlink:href="../../fast/repaint/resources/repaint.js"/>
+    <defs>
+        <linearGradient id='test'>
+            <stop id='stop' offset='0' stop-color='red' />
+        </linearGradient>
+    </defs>
+    <rect fill="url(#test)" width='100' height='100' />
+    <script>
+    <![CDATA[
+        function repaintTest() {
+            document.getElementById("stop").style.stopColor = 'green';
+        }
+    ]]>
+    </script>
+</svg>

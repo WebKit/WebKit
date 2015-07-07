@@ -1,0 +1,11 @@
+Verifies that GL texture bindings do not change when canvas is resized
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+test before resizing canvas
+PASS should be blue
+PASS should be green
+test after resizing canvas
+PASS should be blue
+PASS should be green
+

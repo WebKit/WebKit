@@ -1,0 +1,31 @@
+<html>
+<head>
+<style>
+    @font-face {
+        font-family: webkit-ahem;
+        font-style: normal;
+        src: url(../../../resources/Ahem.ttf) format(truetype);
+    }
+</style>
+</head>
+
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    document.onreadystatechange = function() {
+        if (document.readyState === 'complete')
+            setTimeout(function() {testRunner.notifyDone();}, 100);
+    };
+}
+</script>
+
+<!-- This test verifies that the CTM does not cause text that has a synthetic
+oblique to render in the wrong part of the page. You should be able to see
+three separate block characters with the middle rendered in italic.  -->
+
+<div style="position: absolute; top: 200px; font-family: webkit-ahem; font-size: 30pt;">
+A <cite>B</cite> C
+</div>
+</body>
+</html>

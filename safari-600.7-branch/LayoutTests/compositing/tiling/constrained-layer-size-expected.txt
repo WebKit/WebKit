@@ -1,0 +1,7 @@
+layer at (0,0) size 5000x27000
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x27000
+  RenderBlock {HTML} at (0,0) size 800x27000
+    RenderBody {BODY} at (0,0) size 800x27000 [bgcolor=#FF0000]
+layer at (0,0) size 5000x27000
+  RenderBlock {DIV} at (0,0) size 5000x27000 [bgcolor=#008000]

@@ -1,0 +1,22 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 8 of BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > BODY > HTML > #document to 0 of #text > BODY > HTML > #document toDOMRange:range from 1 of #text > BODY > HTML > #document to 5 of BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 812x585
+  RenderView at (0,0) size 800x585
+layer at (0,0) size 800x585
+  RenderBlock {HTML} at (0,0) size 800x585
+    RenderBody {BODY} at (64,64) size 748x457 [border: (50px solid #FF0000)]
+      RenderBlock {DIV} at (74,74) size 600x0
+      RenderBlock (anonymous) at (74,74) size 600x48
+        RenderText {#text} at (0,10) size 54x28
+          text run at (0,10) width 54: "Hello"
+      RenderTable {TABLE} at (74,122) size 6x6
+        RenderTableSection {TBODY} at (0,0) size 6x6
+          RenderTableRow {TR} at (0,2) size 6x2
+            RenderTableCell {TD} at (2,2) size 2x2 [r=0 c=0 rs=1 cs=1]
+      RenderBlock (anonymous) at (74,128) size 600x48
+        RenderBR {BR} at (0,10) size 0x28
+selection start: position 1 of child 2 {#text} of body
+selection end:   position 0 of child 5 {BR} of body

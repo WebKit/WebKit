@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2014 Apple Inc. All rights reserved. -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+    <clipPath id="1">
+        <path d="M 7.5 15 C 11.08985 15 14 12.089851 14 8.5 C 14 4.91015 11.08985 2 7.5 2 C 3.910149 2 1 4.91015 1 8.5 C 1 12.089851 3.910149 15 7.5 15 L 7.5 15 Z"/>
+    </clipPath>
+    <g clip-path="url(#1)" fill="none" stroke-linecap="square" stroke="black">
+        <path class="stroked" stroke-width="2" d="M 7.5 15 C 11.08985 15 14 12.08985 14 8.5 C 14 4.910149 11.08985 2 7.5 2 C 3.910149 2 1 4.910149 1 8.5 C 1 12.08985 3.910149 15 7.5 15 L 7.5 15 Z"/>
+        <path class="stroked" d="M 10.5 8.5 L 7.5 11.5"/>
+        <path class="stroked" d="M 4.5 8.5 L 7.5 11.5"/>
+        <path class="stroked" d="M 7.5 3 L 7.5 10.5"/>
+    </g>
+</svg>

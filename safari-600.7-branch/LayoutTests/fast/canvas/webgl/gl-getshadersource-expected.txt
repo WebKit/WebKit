@@ -1,0 +1,10 @@
+Tests that the source that goes into a shader is what comes out.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS source is original
+PASS getError was expected value: NO_ERROR : Should be no errors.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

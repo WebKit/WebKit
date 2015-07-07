@@ -1,0 +1,26 @@
+<html>
+    <head>
+        <script>
+            if (window.testRunner)
+                testRunner.dumpAsText();
+
+            function debug(str) {
+                document.getElementById('console').innerHTML += str + "<br>";
+            }
+        </script>
+    </head>
+    <body>
+        <object>
+            <p>This test verifies that an &lt;embed&gt; tag is rendered along with other fallback content when an &lt;object&gt; fails to load.  On success, you should see this text, followed by 'PASS'.</p>
+            <embed name="plugin" type="application/x-webkit-test-netscape">
+        </object>
+        <div id="console"></div>
+        <script>
+            var plugin = document.plugin;
+            if (plugin && plugin.getURL)
+                debug("PASS");
+            else
+                debug("FAIL");
+        </script>
+    </body>
+</html>

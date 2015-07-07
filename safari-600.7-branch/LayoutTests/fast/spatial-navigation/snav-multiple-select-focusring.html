@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<body>
+
+<select id="multiselect" multiple="multiple">
+    <option>make-the-item-long-enough-to-make-a-difference-in-pixel-test</option>
+    <option>b</option>
+</select>
+
+<script>
+if (window.testRunner) {
+    testRunner.setSpatialNavigationEnabled(true);
+    testRunner.overridePreference("WebKitTabToLinksPreferenceKey", 1);
+}
+
+var multiselect = document.getElementById('multiselect');
+
+if (window.eventSender) {
+    eventSender.mouseMoveTo(multiselect.offsetLeft + 5, multiselect.offsetTop + 5);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+} else {
+    document.write("To manually test, click on the 'a' option and no focus ring on the selected item should be seen.");
+}
+</script>
+</body>
+</html>

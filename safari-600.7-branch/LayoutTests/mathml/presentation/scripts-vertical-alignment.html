@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+  <head>
+    <title>vertical alignment</title>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+
+    <!-- The MathML recommendation does not specify vertical alignment of scripts. We right align prescripts and left align postscripts. See http://lists.w3.org/Archives/Public/www-math/2012Aug/0006.html -->
+    <math>
+      <msubsup>
+        <mn>0</mn>
+        <mspace width="10px" height="10px" mathbackground="red"/>
+        <mspace width="20px" height="10px" mathbackground="blue"/>
+      </msubsup>
+      <msubsup>
+        <mn>0</mn>
+        <mspace width="20px" height="10px" mathbackground="blue"/>
+        <mspace width="10px" height="10px" mathbackground="red"/>
+      </msubsup>
+      <mmultiscripts>
+        <mn>0</mn>
+        <mspace width="10px" height="10px" mathbackground="red"/>
+        <mspace width="20px" height="10px" mathbackground="blue"/>
+        <mspace width="20px" height="10px" mathbackground="blue"/>
+        <mspace width="10px" height="10px" mathbackground="red"/>
+        <mprescripts/>
+        <mspace width="10px" height="10px" mathbackground="red"/>
+        <mspace width="20px" height="10px" mathbackground="blue"/>
+        <mspace width="20px" height="10px" mathbackground="blue"/>
+        <mspace width="10px" height="10px" mathbackground="red"/>
+      </mmultiscripts>
+    </math>
+
+  </body>
+</html>

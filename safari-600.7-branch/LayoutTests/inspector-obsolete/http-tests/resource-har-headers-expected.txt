@@ -1,0 +1,72 @@
+Tests the nondeterministic bits of HAR conversion via the magic of hard-coded values.
+
+Resource:{
+    request : {
+        headers : [
+            {
+                name : "Request"
+                value : "request-value"
+            }
+        ]
+        headersSize : 72
+        headersText : "GET http://example.com/inspector-test.js HTTP/1.1\r\nRequest: headers-text"
+    }
+    response : {
+        headers : [
+            {
+                name : "Response"
+                value : "response-value"
+            }
+        ]
+        headersSize : 39
+        headersText : "HTTP/1.1 200 OK\r\nResponse: headers-text"
+        resourceSize : 1000
+        transferSize : 539
+    }
+}
+HAR:{
+    cache : {
+    }
+    request : {
+        bodySize : 0
+        cookies : [
+        ]
+        headers : [
+            {
+                name : "Request"
+                value : "request-value"
+            }
+        ]
+        headersSize : 72
+        httpVersion : "HTTP/1.1"
+        method : "GET"
+        queryString : [
+        ]
+        url : "http://example.com/inspector-test.js"
+    }
+    response : {
+        bodySize : 500
+        content : {
+            compression : 500
+            mimeType : "text/html"
+            size : 1000
+        }
+        cookies : [
+        ]
+        headers : [
+            {
+                name : "Response"
+                value : "response-value"
+            }
+        ]
+        headersSize : 39
+        httpVersion : "HTTP/1.1"
+        redirectURL : ""
+        status : 200
+        statusText : "OK"
+    }
+    startedDateTime : <object>
+    time : <number>
+    timings : <object>
+}
+

@@ -1,0 +1,22 @@
+<html>
+<head>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.setWillSendRequestReturnsNull(true);
+    } else {
+        document.write ('This test must be run through DumpRenderTree.')
+    }
+</script>
+<style type="text/css">
+@font-face
+{
+    font-family: DummyType;
+    src: url(dummyfont.otf);
+}
+</style>
+<body>
+<div style="font-family: DummyType;">
+This tests &lt;rdar://problem/11822378&gt; - we should get a didFinishLoading callback when client cancels a font load from style resolution. The test times out on failure.
+</div>
+</html>

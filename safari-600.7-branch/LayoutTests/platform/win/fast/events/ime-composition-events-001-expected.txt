@@ -1,0 +1,24 @@
+This tests that calling input-method functions sends Composition Events and Text Events introduced in DOM Level 3.
+
+To test manually, enable an IME, input CJK characters, and see this page doesn't show 'FAILED' lines.
+
+
+SUCCESS: INPUT - compositionstart - "1"
+SUCCESS: INPUT - compositionupdate - "1"
+SUCCESS: INPUT - compositionupdate - "2"
+SUCCESS: INPUT - compositionupdate - "3"
+SUCCESS: INPUT - compositionend - "4"
+SUCCESS: INPUT - textInput - "4"
+SUCCESS: INPUT - compositionstart - "5"
+SUCCESS: INPUT - compositionupdate - "5"
+SUCCESS: INPUT - compositionupdate - "6"
+SUCCESS: INPUT - compositionupdate - "7"
+SUCCESS: INPUT - compositionend - ""
+SUCCESS: INPUT - compositionend - "8"
+SUCCESS: INPUT - textInput - "8"
+SUCCESS: INPUT - compositionstart - "9"
+SUCCESS: INPUT - compositionupdate - "9"
+SUCCESS: INPUT - compositionend - "9"
+SUCCESS: INPUT - textInput - "9"
+SUCCESS: INPUT - compositionend - ""
+SUCCESS: INPUT - textInput - ""

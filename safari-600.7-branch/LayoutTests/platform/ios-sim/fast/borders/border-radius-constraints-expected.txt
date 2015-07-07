@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x572
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 423x19
+          text run at (0,0) width 423: "Test that corner-radii are constrained according to the CSS3 rules."
+      RenderBlock {DIV} at (20,40) size 240x80 [border: (20px solid #000000)]
+      RenderBlock {DIV} at (20,140) size 80x240 [border: (20px solid #000000)]

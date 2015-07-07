@@ -1,0 +1,27 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGPath {path} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data="M 200 200 L 200 200"]
+      RenderSVGPath {path} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data="M 200 150 L 200 150"]
+      RenderSVGPath {path} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data="M 300 300 L 300 300"]
+      RenderSVGPath {path} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data="M 100 100 L 100 100"]
+      RenderSVGPath {path} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data="M 200 100 L 200 100"]
+      RenderSVGPath {path} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data="M 100 150 L 100 150"]
+      RenderSVGPath {path} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data="M 350 350 L 350 350"]
+      RenderSVGPath {path} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data="M 150 150 L 150 150"]
+      RenderSVGPath {path} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data="M 330 330 L 330 330"]
+      RenderSVGPath {path} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data="M 100 200 L 100 200"]
+      RenderSVGPath {path} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data="M 150 200 L 150 200"]
+    RenderSVGRect {rect} at (0,0) size 800x600 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=800.00] [height=600.00]
+    RenderSVGRect {rect} at (100,100) size 150x150 [fill={[type=SOLID] [color=#FF0000]}] [x=100.00] [y=100.00] [width=150.00] [height=150.00]
+    RenderSVGRect {rect} at (100,100) size 50x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,100.00)}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+    RenderSVGRect {rect} at (150,100) size 50x50 [fill={[type=SOLID] [color=#00FF00]}] [x=150.00] [y=100.00] [width=50.00] [height=50.00]
+    RenderSVGRect {rect} at (200,100) size 50x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,100.00)}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+    RenderSVGRect {rect} at (100,150) size 50x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,150.00)}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+    RenderSVGRect {rect} at (150,150) size 50x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,150.00)}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+    RenderSVGRect {rect} at (200,150) size 50x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,150.00)}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+    RenderSVGRect {rect} at (100,200) size 50x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,200.00)}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+    RenderSVGRect {rect} at (150,200) size 50x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,200.00)}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
+    RenderSVGRect {rect} at (200,200) size 50x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,200.00)}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]

@@ -1,0 +1,7 @@
+This test verifies the position and size of the highlight rectangles overlayed on an SVG root element.
+
+margin rect is 160 x 160 at (0, 0)
+border rect is 150 x 150 at (5, 5)
+padding rect is 130 x 130 at (15, 15)
+content rect is 100 x 100 at (30, 30)
+

@@ -1,0 +1,19 @@
+<!DOCTYPE HTML>
+<!-- Test based on that found at 
+     http://philip.html5.org/tests/canvas/suite/tests/index.2d.transformation.transform.html
+  -->
+<title>Canvas test: xbm.image.rendering</title>
+<canvas id="canvas" class="output" width="32" height="32"><p class="fallback">FAIL (fallback content)</p></canvas>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText(true);
+
+var ctx = document.getElementById("canvas").getContext("2d");
+var img = new Image();
+img.onload = function () {
+    ctx.fillStyle = '#0f0';
+    ctx.fillRect(0, 0, 32, 32);
+    ctx.drawImage(img,0,0);
+}
+img.src = 'resources/smile.xbm'
+</script>

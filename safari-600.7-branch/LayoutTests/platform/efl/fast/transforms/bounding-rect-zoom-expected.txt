@@ -1,0 +1,46 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (7,7) size 786x586
+      RenderBlock {P} at (0,0) size 786x32
+        RenderText {#text} at (0,0) size 303x15
+          text run at (0,0) width 303: "Tests that these functions account for full page zoom."
+        RenderBR {BR} at (303,12) size 0x0
+        RenderText {#text} at (0,16) size 176x15
+          text run at (0,16) width 176: "There should be no red visible."
+      RenderTable {TABLE} at (0,46) size 785x19
+        RenderTableSection {TBODY} at (0,0) size 785x18
+          RenderTableRow {TR} at (0,1) size 785x16
+            RenderTableCell {TD} at (1,1) size 181x16 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 145x15
+                text run at (0,0) width 145: "getClientBoundingRect():"
+              RenderText {#text} at (0,0) size 0x0
+              RenderText {#text} at (0,0) size 0x0
+              RenderText {#text} at (0,0) size 0x0
+            RenderTableCell {TD} at (183,1) size 601x16 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 95x15
+                text run at (0,0) width 95: "getClientRects():"
+              RenderText {#text} at (0,0) size 0x0
+              RenderText {#text} at (0,0) size 0x0
+              RenderText {#text} at (0,0) size 0x0
+layer at (90,90) size 90x90
+  RenderBlock (positioned) {DIV} at (90,90) size 90x90 [bgcolor=#FF0000]
+layer at (90,90) size 90x90
+  RenderBlock (positioned) {DIV} at (90,90) size 90x90 [bgcolor=#008000]
+layer at (9,198) size 35x16
+  RenderBlock (positioned) {DIV} at (9,198) size 35x16
+    RenderInline {SPAN} at (0,0) size 35x15 [color=#008000]
+      RenderInline {B} at (0,0) size 35x15
+        RenderText {#text} at (0,0) size 35x15
+          text run at (0,0) width 35: "PASS"
+layer at (270,90) size 90x90
+  RenderBlock (positioned) {DIV} at (270,90) size 90x90 [bgcolor=#FF0000]
+layer at (270,90) size 91x91
+  RenderBlock (positioned) {DIV} at (270,90) size 91x91 [bgcolor=#008000]
+layer at (198,198) size 35x16
+  RenderBlock (positioned) {DIV} at (198,198) size 35x16
+    RenderInline {SPAN} at (0,0) size 35x15 [color=#008000]
+      RenderInline {B} at (0,0) size 35x15
+        RenderText {#text} at (0,0) size 35x15
+          text run at (0,0) width 35: "PASS"

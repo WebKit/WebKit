@@ -1,0 +1,34 @@
+Tests for value sanitization algorithm.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL input.value should be #000000. Was .
+FAIL input.value = ""; input.value should be #000000. Was .
+PASS input.value = "#000000"; input.value is "#000000"
+PASS input.value = "#123456"; input.value is "#123456"
+PASS input.value = "#789abc"; input.value is "#789abc"
+FAIL input.value = "#defABC"; input.value should be #defabc. Was #defABC.
+FAIL input.value = "#DEF012"; input.value should be #def012. Was #DEF012.
+FAIL input.value = "black"; input.value should be #000000. Was black.
+FAIL input.value = "blue"; input.value should be #000000. Was blue.
+FAIL input.value = "red"; input.value should be #000000. Was red.
+FAIL input.value = "purple"; input.value should be #000000. Was purple.
+FAIL input.value = "green"; input.value should be #000000. Was green.
+FAIL input.value = "cyan"; input.value should be #000000. Was cyan.
+FAIL input.value = "yellow"; input.value should be #000000. Was yellow.
+FAIL input.value = "white"; input.value should be #000000. Was white.
+FAIL input.value = "White"; input.value should be #000000. Was White.
+FAIL input.value = "WHITE"; input.value should be #000000. Was WHITE.
+FAIL input.value = "000000"; input.value should be #000000. Was 000000.
+FAIL input.value = "#FFF"; input.value should be #000000. Was #FFF.
+FAIL input.value = " #ffffff"; input.value should be #000000. Was  #ffffff.
+FAIL input.value = "#ffffff "; input.value should be #000000. Was #ffffff .
+FAIL input.value = "#00112233"; input.value should be #000000. Was #00112233.
+FAIL input.value = "rgb(0,0,0)"; input.value should be #000000. Was rgb(0,0,0).
+FAIL input.value = "xxx-non-existent-color-name"; input.value should be #000000. Was xxx-non-existent-color-name.
+FAIL input.value = "transparent"; input.value should be #000000. Was transparent.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

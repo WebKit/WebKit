@@ -1,0 +1,34 @@
+Tests for .valueAsNumber with <input type=datetime>.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS valueAsNumberFor("") is Number.NaN
+FAIL valueAsNumberFor("1969-12-31T12:34:56.789Z") should be -41103211. Was NaN.
+FAIL valueAsNumberFor("1970-01-01T00:00:00.000Z") should be 0. Was NaN.
+FAIL valueAsNumberFor("2009-12-22T11:32:11Z") should be 1261481531000. Was NaN.
+FAIL setValueAsNumberAndGetValue(1969, 11, 1, 0, 0, 0, 0) should be 1969-12-01T00:00Z. Threw exception Error: InvalidStateError: DOM Exception 11
+FAIL setValueAsNumberAndGetValue(1970, 0, 1, 10, 1, 0, 100) should be 1970-01-01T10:01:00.100Z. Threw exception Error: InvalidStateError: DOM Exception 11
+FAIL setValueAsNumberAndGetValue(2009, 11, 31, 23, 59, 59, 999) should be 2009-12-31T23:59:59.999Z. Threw exception Error: InvalidStateError: DOM Exception 11
+FAIL setValueAsNumberAndGetValue(10000, 0, 1, 12, 0, 1, 0) should be 10000-01-01T12:00:01Z. Threw exception Error: InvalidStateError: DOM Exception 11
+FAIL setValueAsNumberAndGetValue(-1, 0, 1, 0, 0, 0, 0) should be . Threw exception Error: InvalidStateError: DOM Exception 11
+FAIL setValueAsNumberAndGetValue(0, 11, 31, 23, 59, 59, 999) should be . Threw exception Error: InvalidStateError: DOM Exception 11
+FAIL setValueAsNumberAndGetValue(1, 0, 1, 0, 0, 0, 0) should be 0001-01-01T00:00Z. Threw exception Error: InvalidStateError: DOM Exception 11
+FAIL setValueAsNumberAndGetValue(275760, 8, 12, 0, 0, 0, 1) should be 275760-09-12T00:00:00.001Z. Threw exception Error: InvalidStateError: DOM Exception 11
+FAIL setValueAsNumberAndGetValue(275760, 8, 13, 0, 0, 0, 0) should be 275760-09-13T00:00Z. Threw exception Error: InvalidStateError: DOM Exception 11
+Tests to set invalid values to valueAsNumber:
+FAIL input.value = ""; input.valueAsNumber = null; input.value should be 1970-01-01T00:00Z. Threw exception Error: InvalidStateError: DOM Exception 11
+PASS input.valueAsNumber = "foo" threw exception Error: NotSupportedError: DOM Exception 9.
+PASS input.valueAsNumber = NaN threw exception Error: NotSupportedError: DOM Exception 9.
+PASS input.valueAsNumber = Number.NaN threw exception Error: NotSupportedError: DOM Exception 9.
+PASS input.valueAsNumber = Infinity threw exception Error: NotSupportedError: DOM Exception 9.
+PASS input.valueAsNumber = Number.POSITIVE_INFINITY threw exception Error: NotSupportedError: DOM Exception 9.
+PASS input.valueAsNumber = Number.NEGATIVE_INFINITY threw exception Error: NotSupportedError: DOM Exception 9.
+PASS input.valueAsNumber = Date.UTC(275760, 8, 13, 0, 0, 0, 1) threw exception Error: NotSupportedError: DOM Exception 9.
+Step attribute value and string representation:
+FAIL input.step = "1"; setValueAsNumberAndGetValue(2010, 0, 21, 0, 0, 0, 0) should be 2010-01-21T00:00Z. Threw exception Error: InvalidStateError: DOM Exception 11
+FAIL input.step = "0.001"; setValueAsNumberAndGetValue(2010, 0, 21, 0, 0, 0, 0) should be 2010-01-21T00:00Z. Threw exception Error: InvalidStateError: DOM Exception 11
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

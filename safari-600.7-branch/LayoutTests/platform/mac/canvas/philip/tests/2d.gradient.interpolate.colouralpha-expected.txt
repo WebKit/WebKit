@@ -1,0 +1,1 @@
+Failed assertion: got pixel [192,192,67,65] at (25,25), expected [191,191,63,63] +/- 3

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>            
+
+            numberOfTrackTests = 2;
+            
+            function trackLoaded()
+            {
+                numberOfTracksLoaded++;
+                if (numberOfTracksLoaded == numberOfTrackTests) {
+                    testTrack(0);
+                    testTrack(1);
+                }
+            }
+            
+            function testTrack(i)
+            {
+                var expected = 
+                {
+                    length : 2,
+                    tests:
+                    [
+                        {
+                            property : "id",
+                            values : [1, 2],
+                        },
+                        {
+                            property : "startTime",
+                            values : [0.0, 31.0],
+                        },
+                        {
+                            property : "endTime",
+                            values : [30.5, 1200.5],
+                        },
+                        {
+                            property : "text",
+                            values : ["Bear is Coming!!!!!", "I said Bear is coming!!!!"],
+                        },
+                    ],
+                };
+                testCues(i, expected);
+
+                allTestsEnded();
+            }
+        </script>
+    </head>
+    <body onload="enableAllTextTracks()">
+        <p>Tests that the optional comment area under the "WEBVTT" file header is properly ignored.  Also, default settings and styling are currently ignored (treated as faulty cues).</p>
+        <video>
+            <track src="captions-webvtt/tc005-default-styles.vtt" onload="trackLoaded()">
+            <track src="captions-webvtt/tc005-metadata-area.vtt" onload="trackLoaded()">
+        </video>
+    </body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function addShadowRoot(inNode) {
+    var root = inNode.webkitCreateShadowRoot();
+    root.innerHTML = '<style>@host { *.selected { background: green; } }</style>I should be green!';
+}
+    
+function runTest() {
+    var host1 = document.getElementById('host1');
+    var host2 = document.getElementById('host2');
+    addShadowRoot(host1);
+    addShadowRoot(host2);
+    setTimeout(function() {
+      internals.address(host2);
+      host2.classList.add('selected');
+      testRunner.notifyDone();
+    }, 0)
+}
+</script>
+</head>
+<body onload="runTest()">
+  <div>Bug 112869 - <a href="https://bugs.webkit.org/show_bug.cgi?id=112869">https://bugs.webkit.org/show_bug.cgi?id=112869</a>[shadow] @host styles are not applied dynamiccaly.</div>
+  <div id="host1" class="selected"></div>
+  <br>
+  <p id="host2"></p>
+</body>
+</html>

@@ -1,0 +1,28 @@
+
+Results:
+1) Make sure onChange doesn't fire when clicking on an initially selected item
+2) Make sure onChange fires when deselecting an initially selected item
+Incorrect selection: "0" instead of ""
+3) Make sure onChange fires when clicking
+Incorrect selection: "0" instead of "2"
+4) Make sure onChange doesn't fire when clicking again on the same item
+Incorrect selection: "0" instead of "2"
+5) Make sure onChange fires when clicking on a new item
+6) Make sure onChange fires when changing the selection with the keyboard
+Incorrect selection: "1" instead of "0,1"
+7) Make sure onChange doesn't fire when setting the select element's value from JS
+8) Make sure onChange doesn't fire when clicking on the already selected option
+9) Make sure onChange doesn't fire when setting an option's selected state from JS
+10) Make sure onChange doesn't fire when clicking on this option
+11) Make sure onChange fires when deselecting the last selected option with a mouse click
+Incorrect selection: "3" instead of ""
+12) Make sure onChange doesn't fire when adding a new selected option
+Incorrect selection: "3,4" instead of "4"
+13) Make sure onChange doesn't fire when clicking on it
+Incorrect selection: "3,4" instead of "4"
+14) Make sure onChange fires when clicking on a previously selected option
+15) Make sure onChange doesn't fire when removing a selected option
+16) Make sure onChange doesn't fire when clicking on the option that remains selected
+17) Make sure onChange fires when typing the name of an option
+onChange fired
+18) Make sure onChange doesn't fire when leaving the select

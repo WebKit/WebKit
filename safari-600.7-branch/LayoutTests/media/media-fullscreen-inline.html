@@ -1,0 +1,45 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>inline &lt;video&gt; element fullscreen test</title>
+
+        <script src=video-test.js></script>
+        <script src=media-fullscreen.js></script>
+
+        <script>
+            var movieInfo = 
+            {
+                current : -1,
+                movies : 
+                [ 
+                    {
+                        url : "content/test.mp4", 
+                        description : "even though it has video", 
+                        supportsFS : false,
+                        inline : true,
+                        type : 'audio',
+                    },
+                    {
+                        url : "content/test.mp4", 
+                        description : "because it is a &lt;video&gt element with video media", 
+                        supportsFS : true,
+                        inline : true,
+                        type : 'video',
+                    },
+                ]
+            };
+        </script>
+
+    </head>
+
+    <body onload="openNextMovie()">
+
+        <p>Test media element fullscreen API when an element is in the DOM.</p>
+
+        <div id='parent'>
+        </div>
+        <br>
+        <input type="button" id="button" value="Enter Fullscreen" onmouseup="buttonClickHandler()"> 
+
+    </body>
+</html>

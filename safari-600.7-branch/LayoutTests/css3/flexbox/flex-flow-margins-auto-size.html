@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<style>
+.container {
+    position: relative;
+    background-color: pink;
+    outline: 1px solid black;
+    display: inline-block;
+}
+.flexbox {
+    display: -webkit-flex;
+    background-color: grey;
+    margin: 10px 20px 30px 40px;
+}
+.title {
+    margin-top: 1em;
+}
+.ltr {
+    direction: ltr;
+}
+.rtl {
+    direction: rtl;
+}
+.horizontal-tb {
+    -webkit-writing-mode: horizontal-tb;
+}
+.horizontal-bt {
+    -webkit-writing-mode: horizontal-bt;
+}
+.vertical-rl {
+    -webkit-writing-mode: vertical-rl;
+}
+.vertical-lr {
+    -webkit-writing-mode: vertical-lr;
+}
+.row {
+    -webkit-flex-flow: row;
+}
+.row-reverse {
+    -webkit-flex-flow: row-reverse;
+}
+.column {
+    -webkit-flex-flow: column;
+}
+.column-reverse {
+    -webkit-flex-flow: column-reverse;
+}
+.flexbox > div {
+    margin: 13px 2px 17px 8px;
+    background-color: blue;
+}
+</style>
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.flexbox')">
+
+<script>
+
+// The vertical test cases are failing because of the orthogonal writing modes.
+// https://bugs.webkit.org/show_bug.cgi?id=70769
+var writingModes = ['horizontal-tb', 'horizontal-bt', 'vertical-lr', 'vertical-rl'];
+var flexFlows = ['row', 'column', 'row-reverse', 'column-reverse'];
+var directions = ['rtl', 'ltr'];
+
+writingModes.forEach(function(writingMode) {
+    flexFlows.forEach(function(flexFlow) {
+        directions.forEach(function(direction) {
+            var flexboxClassName = writingMode + ' ' + direction + ' ' + flexFlow;
+            var title = document.createElement('div');
+            title.className = 'title';
+            title.innerHTML = flexboxClassName;
+            document.body.appendChild(title);
+
+            var flexboxExpectations = 'data-offset-x="40" data-offset-y="10"';
+            var flexItemExpectations = 'data-expected-width="20" data-expected-height="20" data-offset-x="48" data-offset-y="23"';
+
+            var container = document.createElement('div');
+            container.className = 'container';
+            container.setAttribute('data-expected-width', 90);
+            container.setAttribute('data-expected-height', 90);
+
+            container.innerHTML = '<div class="flexbox ' + flexboxClassName + '" ' + flexboxExpectations + '>\n' +
+                '<div style="-webkit-flex: 1 auto; width: 20px; height: 20px;" ' + flexItemExpectations + '></div>\n' +
+            '</div>';
+
+            document.body.appendChild(container);
+        })
+    })
+})
+</script>
+</body>
+</html>

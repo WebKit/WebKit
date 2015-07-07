@@ -1,0 +1,12 @@
+<p>This tests for a bug where images with align right/left would fail to be inserted on paste.  You should see a picture of abe in the editable region below, aligned to the right. <b>This demonstrates a bug: the focus halo for the editable region doesn't expand to fit an image with align='right'.</b></p>
+<div id="div" contenteditable="true">Four score and seven years ago our fathers brought forth on this continent a new nation, conceived in liberty and dedicated to the proposition that all men are created equal.</div>
+
+<script>
+var sel = window.getSelection();
+var div = document.getElementById("div");
+var text = div.firstChild;
+
+sel.setPosition(text, 30);
+
+document.execCommand("InsertHTML", false, "<img src='../resources/abe.png' align='right'>");
+</script>

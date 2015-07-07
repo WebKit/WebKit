@@ -1,0 +1,5 @@
+Tests console message when script is loaded with incorrect text/html mime type and the URL contains the '^' character.
+
+Bug 103248
+Resource interpreted as Script but transferred with MIME type text/plain: "http://127.0.0.1:8000/inspector/network/resources/script-as-text.php?this-i…-with^carats^like^these^because^who^doesnt^love^strange^characters^in^urls". [native code]:1
+

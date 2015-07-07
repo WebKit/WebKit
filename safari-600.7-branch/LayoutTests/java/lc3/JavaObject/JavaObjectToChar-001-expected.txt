@@ -1,0 +1,33 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaObject to char
+
+PASS dt.PUB_DOUBLE_REPRESENTATION = 0.5 ;dt.setChar( dt ); dt.PUB_CHAR is 0
+PASS dt.PUB_DOUBLE_REPRESENTATION = 0.5 ;dt.setChar( dt ); dt.getChar() is 0
+PASS typeof dt.getChar() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = -0.5;dt.setChar( dt ); dt.PUB_CHAR is 0
+PASS dt.PUB_DOUBLE_REPRESENTATION = -0.5;dt.setChar( dt ); dt.getChar() is 0
+PASS typeof dt.getChar() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = 0.5;dt.setChar( dt ); dt.PUB_CHAR is 0
+PASS dt.PUB_DOUBLE_REPRESENTATION = 0.5;dt.setChar( dt ); dt.getChar() is 0
+PASS typeof dt.getChar() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = -0.4;dt.setChar( dt ); dt.PUB_CHAR is 0
+PASS dt.PUB_DOUBLE_REPRESENTATION = -0.4;dt.setChar( dt ); dt.getChar() is 0
+PASS typeof dt.getChar() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = 0.6;dt.setChar( dt ); dt.PUB_CHAR is 0
+PASS dt.PUB_DOUBLE_REPRESENTATION = 0.6;dt.setChar( dt ); dt.getChar() is 0
+PASS typeof dt.getChar() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = -0.6;dt.setChar( dt ); dt.PUB_CHAR is 0
+PASS dt.PUB_DOUBLE_REPRESENTATION = -0.6;dt.setChar( dt ); dt.getChar() is 0
+PASS typeof dt.getChar() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = 3.141592653589793;dt.setChar( dt ); dt.PUB_CHAR is 3
+PASS dt.PUB_DOUBLE_REPRESENTATION = 3.141592653589793;dt.setChar( dt ); dt.getChar() is 3
+PASS typeof dt.getChar() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = 65535;dt.setChar( dt ); dt.PUB_CHAR is 65535
+PASS dt.PUB_DOUBLE_REPRESENTATION = 65535;dt.setChar( dt ); dt.getChar() is 65535
+PASS typeof dt.getChar() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = 65535.5;dt.setChar( dt ); dt.PUB_CHAR is 65535
+PASS dt.PUB_DOUBLE_REPRESENTATION = 65535.5;dt.setChar( dt ); dt.getChar() is 65535
+PASS typeof dt.getChar() is 'number'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

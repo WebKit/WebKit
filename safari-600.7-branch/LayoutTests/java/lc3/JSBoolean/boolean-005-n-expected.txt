@@ -1,0 +1,9 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion boolean conversion
+
+FAIL dt.setInteger( true ); dt.PUB_INT should throw an exception. Was 1.
+FAIL dt.setInteger( true ); dt.getInteger() should throw an exception. Was 1.
+PASS typeof dt.getInt() threw exception TypeError: 'undefined' is not a function (evaluating 'dt.getInt()').
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

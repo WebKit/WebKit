@@ -1,0 +1,21 @@
+<div></div>
+<div contenteditable="true" id="div"></div>
+<div></div>
+<script>
+
+div = document.getElementById("div");
+sel = window.getSelection();
+sel.setPosition(div, 0);
+if (window.testRunner) {
+    // Test to see if deleteWordBackward: hangs.
+    testRunner.execCommand("DeleteWordBackward");
+    document.execCommand("InsertText", false, "Success FAIL");
+    // Delete 'FAIL' with deleteWordBackward: to verify that it's not a no-op.
+    testRunner.execCommand("DeleteWordBackward");
+    testRunner.execCommand("DeleteBackward");
+    document.execCommand("InsertText", false, "\nThis tests that deleting backward by word in an empty div doesn't hang, and that it deletes exactly one word. You should see 'Success' above.");
+    window.testRunner.dumpAsText();
+} else {
+    document.execCommand("InsertText", false, "To run this test manually.  Delete all this text and then option-delete.  Safari shouldn't hang.");
+}
+</script>

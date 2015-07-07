@@ -1,0 +1,38 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    typeCharacterCommand('a');
+    insertParagraphCommand();
+    typeCharacterCommand('z');
+    typeCharacterCommand('z');
+    typeCharacterCommand(' ');
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+<div>You should see 'a' on the first line below, and 'zz a' on the second line. 'zz' (and only 'zz') should be marked as misspelled.</div>
+<div contenteditable id="root" class="editing">
+<span id="test">a</span>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

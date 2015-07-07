@@ -1,0 +1,49 @@
+<html>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+var i = 0;
+function test() {
+    try {
+        o1 = {
+            toString : function () {
+                i++;
+                if (i<50)
+                    document.getElementById("testFrame").contentDocument.location = o1;
+                else
+                    alert("completed o1.toString()");
+                document.open();
+                return "data:text/plain,o1-" + i;
+            }
+        }
+        o2 = {
+            get toString() {
+                i++;
+                if (i<50)
+                    document.getElementById("testFrame").contentDocument.location = o2
+                else
+                    alert("completed o2.toString");
+                document.open();
+                return function(){ return "data:text/plain,o2-" + i; }
+            }
+        }
+
+        tmp = document.getElementById("testFrame");
+        i = 0;
+        tmp.contentDocument.location = o1;
+        document.write("<iframe src='about:blank' id='testFrame'/>");
+        tmp = document.getElementById("testFrame");
+        i = 0;
+        tmp.contentDocument.location = o2;
+    } finally {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+}
+</script>
+<body id="log" onload="test()">
+<iframe src="about:blank" id="testFrame"/>
+</body>
+</html>

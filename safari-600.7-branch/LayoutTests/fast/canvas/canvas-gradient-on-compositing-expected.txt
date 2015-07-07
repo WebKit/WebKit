@@ -1,0 +1,11 @@
+Test that compositing does not influence the gradient space to context space mapping.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getPixel(125,50) is [0,0,0,0]
+PASS getPixel(175,50) is [0,128,0,255]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

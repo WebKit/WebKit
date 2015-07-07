@@ -1,0 +1,2260 @@
+---
+- path: ecma/Array/15.4-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Array/15.4-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Array/15.4.1.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Array/15.4.1.2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Array/15.4.1.3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Array/15.4.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Array/15.4.2.1-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Array/15.4.2.1-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Array/15.4.2.1-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Array/15.4.2.2-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Array/15.4.2.2-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Array/15.4.2.3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Array/15.4.3.1-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Array/15.4.3.2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Array/15.4.3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Array/15.4.4.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Array/15.4.4.2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Array/15.4.4.3-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Array/15.4.4.4-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Array/15.4.4.4-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Array/15.4.4.5-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Array/15.4.4.5-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Array/15.4.4.5-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Array/15.4.4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Array/15.4.5.1-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Array/15.4.5.1-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Array/15.4.5.2-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Array/15.4.5.2-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Boolean/15.6.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Boolean/15.6.2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Boolean/15.6.3.1-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Boolean/15.6.3.1-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Boolean/15.6.3.1-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Boolean/15.6.3.1-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Boolean/15.6.3.1-5.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Boolean/15.6.3.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Boolean/15.6.3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Boolean/15.6.4-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Boolean/15.6.4-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Boolean/15.6.4.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Boolean/15.6.4.2-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Boolean/15.6.4.2-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Boolean/15.6.4.2-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Boolean/15.6.4.2-4-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Boolean/15.6.4.3-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Boolean/15.6.4.3-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Boolean/15.6.4.3-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Boolean/15.6.4.3-4-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Boolean/15.6.4.3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Boolean/15.6.4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.1.1-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.1.1-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.2.1.js
+  cmd: defaultRunMozillaTest :skip, "../shell.js"
+- path: ecma/Date/15.9.2.2-1.js
+  cmd: defaultRunMozillaTest :skip, "../shell.js"
+- path: ecma/Date/15.9.2.2-2.js
+  cmd: defaultRunMozillaTest :skip, "../shell.js"
+- path: ecma/Date/15.9.2.2-3.js
+  cmd: defaultRunMozillaTest :skip, "../shell.js"
+- path: ecma/Date/15.9.2.2-4.js
+  cmd: defaultRunMozillaTest :skip, "../shell.js"
+- path: ecma/Date/15.9.2.2-5.js
+  cmd: defaultRunMozillaTest :skip, "../shell.js"
+- path: ecma/Date/15.9.2.2-6.js
+  cmd: defaultRunMozillaTest :skip, "../shell.js"
+- path: ecma/Date/15.9.3.1-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.3.1-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.3.1-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.3.1-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.3.1-5.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.3.2-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.3.2-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.3.2-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.3.2-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.3.2-5.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.3.8-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.3.8-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.3.8-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.3.8-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.3.8-5.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.4.2-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.4.2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.4.3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.10-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.10-10.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.10-11.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.10-12.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.10-13.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.10-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.10-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.10-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.10-5.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.10-6.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.10-7.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.10-8.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.10-9.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.11-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.11-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.11-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.11-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.11-5.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.11-6.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.11-7.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.12-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.12-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.12-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.12-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.12-5.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.12-6.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.12-7.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.12-8.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.13-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.13-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.13-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.13-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.13-5.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.13-6.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.13-7.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.13-8.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.14.js
+  cmd: defaultRunMozillaTest :skip, "../shell.js"
+- path: ecma/Date/15.9.5.15.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.16.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.17.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.18.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.19.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.2-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.2-2-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Date/15.9.5.2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.20.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.21-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.21-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.21-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.21-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.21-5.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.21-6.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.21-7.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.21-8.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.22-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.22-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.22-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.22-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.22-5.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.22-6.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.22-7.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.22-8.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.23-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.23-10.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.23-11.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.23-12.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.23-13.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.23-14.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.23-15.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.23-16.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.23-17.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.23-18.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.23-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.23-3-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Date/15.9.5.23-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.23-5.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.23-6.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.23-7.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.23-8.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.23-9.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.24-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.24-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.24-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.24-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.24-5.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.24-6.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.24-7.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.24-8.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.25-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.26-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.27-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.28-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.29-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.3-1-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Date/15.9.5.3-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.30-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.31-1.js
+  cmd: defaultRunMozillaTest :skip, "../shell.js"
+- path: ecma/Date/15.9.5.32-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.33-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.34-1.js
+  cmd: defaultRunMozillaTest :skip, "../shell.js"
+- path: ecma/Date/15.9.5.35-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.36-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.36-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.36-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.36-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.36-5.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.36-6.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.36-7.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.37-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.37-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.37-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.37-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.37-5.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.4-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.4-2-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Date/15.9.5.5.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.6.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.7.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.8.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.9.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Date/15.9.5.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ExecutionContexts/10.1.3-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ExecutionContexts/10.1.3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ExecutionContexts/10.1.4-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ExecutionContexts/10.1.4-10.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ExecutionContexts/10.1.4-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ExecutionContexts/10.1.4-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ExecutionContexts/10.1.4-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ExecutionContexts/10.1.4-5.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ExecutionContexts/10.1.4-6.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ExecutionContexts/10.1.4-7.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ExecutionContexts/10.1.4-8.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ExecutionContexts/10.1.4-9.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ExecutionContexts/10.1.5-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ExecutionContexts/10.1.5-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ExecutionContexts/10.1.5-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ExecutionContexts/10.1.5-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ExecutionContexts/10.1.6.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ExecutionContexts/10.1.8-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ExecutionContexts/10.1.8-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ExecutionContexts/10.2.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ExecutionContexts/10.2.2-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ExecutionContexts/10.2.2-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ExecutionContexts/10.2.3-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ExecutionContexts/10.2.3-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.1.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.10-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.10-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.10-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.12-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.12-2-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Expressions/11.12-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.12-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.13.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.13.2-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.13.2-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.13.2-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.13.2-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.13.2-5.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.13.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.14-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.2.1-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.2.1-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.2.1-3-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Expressions/11.2.1-4-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Expressions/11.2.1-5.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.2.2-1-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Expressions/11.2.2-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.2.2-10-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Expressions/11.2.2-11.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.2.2-2-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Expressions/11.2.2-3-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Expressions/11.2.2-4-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Expressions/11.2.2-5-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Expressions/11.2.2-6-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Expressions/11.2.2-7-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Expressions/11.2.2-8-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Expressions/11.2.2-9-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Expressions/11.2.3-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.2.3-2-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Expressions/11.2.3-3-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Expressions/11.2.3-4-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Expressions/11.2.3-5.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.3.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.3.2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.4.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.4.2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.4.3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.4.4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.4.5.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.4.6.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.4.8.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.4.9.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.5.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.5.2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.5.3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.6.1-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.6.1-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.6.1-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.6.2-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.6.3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.7.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.7.2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.7.3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.8.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.8.2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.8.3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.8.4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.9.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.9.2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Expressions/11.9.3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/FunctionObjects/15.3.1.1-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/FunctionObjects/15.3.1.1-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/FunctionObjects/15.3.1.1-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/FunctionObjects/15.3.2.1-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/FunctionObjects/15.3.2.1-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/FunctionObjects/15.3.2.1-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/FunctionObjects/15.3.3.1-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/FunctionObjects/15.3.3.1-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/FunctionObjects/15.3.3.1-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/FunctionObjects/15.3.3.1-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/FunctionObjects/15.3.3.2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/FunctionObjects/15.3.4-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/FunctionObjects/15.3.4.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/FunctionObjects/15.3.4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/FunctionObjects/15.3.5-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/FunctionObjects/15.3.5-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/FunctionObjects/15.3.5.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/FunctionObjects/15.3.5.3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/GlobalObject/15.1-1-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/GlobalObject/15.1-2-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/GlobalObject/15.1.1.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/GlobalObject/15.1.1.2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/GlobalObject/15.1.2.1-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/GlobalObject/15.1.2.1-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/GlobalObject/15.1.2.2-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/GlobalObject/15.1.2.2-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/GlobalObject/15.1.2.3-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/GlobalObject/15.1.2.3-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/GlobalObject/15.1.2.4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/GlobalObject/15.1.2.5-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/GlobalObject/15.1.2.5-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/GlobalObject/15.1.2.5-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/GlobalObject/15.1.2.6.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/GlobalObject/15.1.2.7.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/LexicalConventions/7.1-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/LexicalConventions/7.1-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/LexicalConventions/7.1-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/LexicalConventions/7.2-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/LexicalConventions/7.2-2-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.2-3-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.2-4-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.2-5-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.2-6.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/LexicalConventions/7.3-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/LexicalConventions/7.3-10.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/LexicalConventions/7.3-11.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/LexicalConventions/7.3-12.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/LexicalConventions/7.3-13-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.3-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/LexicalConventions/7.3-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/LexicalConventions/7.3-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/LexicalConventions/7.3-5.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/LexicalConventions/7.3-6.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/LexicalConventions/7.3-7.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/LexicalConventions/7.3-8.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/LexicalConventions/7.3-9.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/LexicalConventions/7.4.1-1-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.1-2-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.1-3-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.2-1-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.2-10-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.2-11-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.2-12-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.2-13-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.2-14-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.2-15-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.2-16-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.2-2-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.2-3-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.2-4-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.2-5-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.2-6-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.2-7-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.2-8-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.2-9-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.3-1-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.3-10-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.3-11-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.3-12-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.3-13-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.3-14-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.3-15-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.3-16-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.3-2-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.3-3-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.3-4-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.3-5-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.3-6-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.3-7-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.3-8-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.4.3-9-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.5-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/LexicalConventions/7.5-10-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.5-2-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.5-3-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.5-4-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.5-5-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.5-6.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/LexicalConventions/7.5-7.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/LexicalConventions/7.5-8-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.5-9-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/LexicalConventions/7.6.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/LexicalConventions/7.7.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/LexicalConventions/7.7.2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/LexicalConventions/7.7.3-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/LexicalConventions/7.7.3-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/LexicalConventions/7.7.3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/LexicalConventions/7.7.4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/LexicalConventions/7.8.2-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Math/15.8-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8-2-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Math/15.8-3-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Math/15.8.1.1-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.1.1-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.1.2-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.1.2-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.1.3-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.1.3-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.1.4-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.1.4-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.1.5-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.1.5-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.1.6-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.1.6-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.1.7-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.1.7-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.1.8-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.1.8-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.1.8-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.2.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.2.10.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.2.11.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.2.12.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.2.13.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.2.14.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.2.15.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.2.16.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.2.17.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.2.18.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.2.2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.2.3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.2.4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.2.5.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.2.6.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.2.7.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.2.8.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Math/15.8.2.9.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/NativeObjects/15-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/NativeObjects/15-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.3.1-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.3.1-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.3.1-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.3.2-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.3.2-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.3.2-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.3.2-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.3.3-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.3.3-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.3.3-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.3.3-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.3.4-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.3.4-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.3.4-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.3.4-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.3.5-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.3.5-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.3.5-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.3.5-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.3.6-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.3.6-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.3.6-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.3.6-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.4-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.4.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.4.2-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.4.2-2-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Number/15.7.4.2-3-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Number/15.7.4.2-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.4.3-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.4.3-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Number/15.7.4.3-3-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Number/15.7.4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ObjectObjects/15.2.1.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ObjectObjects/15.2.1.2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ObjectObjects/15.2.2.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ObjectObjects/15.2.2.2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ObjectObjects/15.2.3-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ObjectObjects/15.2.3.1-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ObjectObjects/15.2.3.1-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ObjectObjects/15.2.3.1-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ObjectObjects/15.2.3.1-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ObjectObjects/15.2.3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ObjectObjects/15.2.4.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ObjectObjects/15.2.4.2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ObjectObjects/15.2.4.3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/ObjectObjects/15.2.4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/SourceText/6-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/SourceText/6-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Statements/12.10-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Statements/12.10.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Statements/12.2-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Statements/12.5-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Statements/12.5-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Statements/12.6.1-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Statements/12.6.2-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Statements/12.6.2-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Statements/12.6.2-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Statements/12.6.2-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Statements/12.6.2-5.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Statements/12.6.2-6.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Statements/12.6.2-7.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Statements/12.6.2-8.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Statements/12.6.2-9-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Statements/12.6.3-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Statements/12.6.3-10.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Statements/12.6.3-11.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Statements/12.6.3-12.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Statements/12.6.3-19.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Statements/12.6.3-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Statements/12.6.3-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Statements/12.6.3-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Statements/12.6.3-5-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Statements/12.6.3-6-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Statements/12.6.3-7-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Statements/12.6.3-8-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Statements/12.6.3-9-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Statements/12.7-1-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Statements/12.8-1-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/Statements/12.9-1-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/String/15.5.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.3.1-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.3.1-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.3.1-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.3.1-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.3.2-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.3.2-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.3.2-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.10-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.11-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.11-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.11-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.11-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.11-5.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.11-6.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.12-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.12-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.12-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.12-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.12-5.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.2-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.2-2-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/String/15.5.4.2-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.3-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.3-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.3-3-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma/String/15.5.4.4-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.4-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.4-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.4-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.5-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.5-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.5-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.5-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.5-5.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.5-6.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.6-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.6-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.7-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.7-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.7-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.8-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.8-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.8-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.9-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/String/15.5.5.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/TypeConversion/9.2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/TypeConversion/9.3-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/TypeConversion/9.3.1-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/TypeConversion/9.3.1-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/TypeConversion/9.3.1-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/TypeConversion/9.3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/TypeConversion/9.4-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/TypeConversion/9.4-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/TypeConversion/9.5-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/TypeConversion/9.6.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/TypeConversion/9.7.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/TypeConversion/9.8.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/TypeConversion/9.9-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Types/8.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Types/8.4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma/Types/8.6.2.1-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/boolean-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/boolean-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/date-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/date-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/date-003.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/date-004.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/exception-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/exception-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/exception-003.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/exception-004.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/exception-005.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/exception-006.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/exception-007.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/exception-008.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/exception-009.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/exception-010-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma_2/Exceptions/exception-011-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma_2/Exceptions/expression-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/expression-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/expression-003.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/expression-004.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/expression-005.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/expression-006.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/expression-007.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/expression-008.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/expression-009.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/expression-010.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/expression-011.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/expression-012.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/expression-013.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/expression-014.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/expression-015.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/expression-016.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/expression-017.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/expression-019.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/function-001.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: ecma_2/Exceptions/global-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/global-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-003.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-004.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-005.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-006.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-007.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-008.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-009.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-010.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-011.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-012.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-013.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-014.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-015.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-016.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-017.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-018.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-019.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-020.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-021.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-022.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-023.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-024.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-025.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-026.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-027.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-028.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-029.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-030.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-031.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-032.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-033.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-034.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-035.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-036.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-037.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-038.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-039.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-040.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-041.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-042.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-047.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-048.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-049.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-050.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-051.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-052.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-053.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/lexical-054.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/number-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/number-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/number-003.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/statement-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/statement-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/statement-003.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/statement-004.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/statement-005.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/statement-006.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/statement-007.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/statement-008.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/statement-009.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/string-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Exceptions/string-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Expressions/instanceof-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Expressions/instanceof-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Expressions/instanceof-003-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma_2/Expressions/instanceof-004-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma_2/Expressions/instanceof-005-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma_2/Expressions/instanceof-006.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Expressions/StrictEquality-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/FunctionObjects/apply-001-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma_2/FunctionObjects/call-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/instanceof/instanceof-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/instanceof/instanceof-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/instanceof/instanceof-003.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/instanceof/regress-7635.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/LexicalConventions/keywords-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/LexicalConventions/regexp-literals-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/LexicalConventions/regexp-literals-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/RegExp/constructor-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/RegExp/exec-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/RegExp/exec-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/RegExp/function-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/RegExp/hex-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/RegExp/multiline-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/RegExp/octal-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/RegExp/octal-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/RegExp/octal-003.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/RegExp/properties-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/RegExp/properties-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/RegExp/regexp-enumerate-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/RegExp/regress-001.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: ecma_2/RegExp/unicode-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Statements/dowhile-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Statements/dowhile-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Statements/dowhile-003.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Statements/dowhile-004.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Statements/dowhile-005.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Statements/dowhile-006.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Statements/dowhile-007.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Statements/forin-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Statements/forin-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Statements/if-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Statements/label-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Statements/label-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Statements/switch-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Statements/switch-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Statements/switch-003.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Statements/switch-004.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Statements/try-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Statements/try-003.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Statements/try-004.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Statements/try-005.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Statements/try-006.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Statements/try-007.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Statements/try-008.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Statements/try-009.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Statements/try-010.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Statements/try-012.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Statements/while-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Statements/while-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Statements/while-003.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/Statements/while-004.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/String/match-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/String/match-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/String/match-003.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/String/match-004.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/String/replace-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/String/split-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/String/split-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_2/String/split-003.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Array/15.4.4.3-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Array/15.4.4.4-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Array/regress-101488.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Array/regress-130451.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Date/15.9.5.3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/Date/15.9.5.4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/Date/15.9.5.5.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/Date/15.9.5.6.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/Date/15.9.5.7.js
+  cmd: defaultRunMozillaTest :skip, "../shell.js", "shell.js"
+- path: ecma_3/Exceptions/15.11.1.1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Exceptions/15.11.4.4-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Exceptions/15.11.7.6-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Exceptions/15.11.7.6-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Exceptions/15.11.7.6-003.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Exceptions/binding-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Exceptions/regress-181654.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Exceptions/regress-181914.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Exceptions/regress-58946.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Exceptions/regress-95101.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/ExecutionContexts/10.1.3-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/ExecutionContexts/10.1.3-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/ExecutionContexts/10.1.3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/ExecutionContexts/10.1.4-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/ExecutionContexts/regress-23346.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Expressions/11.6.1-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Expressions/11.9.6-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Function/15.3.4.3-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Function/15.3.4.4-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Function/arguments-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Function/call-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Function/regress-104584.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Function/regress-131964.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Function/regress-137181.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Function/regress-193555.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Function/regress-49286.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Function/regress-58274.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Function/regress-85880.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Function/regress-94506.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Function/regress-97921.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Function/scope-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Function/scope-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/FunExpr/fe-001-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma_3/FunExpr/fe-001.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: ecma_3/FunExpr/fe-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Number/15.7.4.5-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Number/15.7.4.6-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Number/15.7.4.7-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/NumberFormatting/tostring-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Object/8.6.2.6-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/Object/class-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/Object/class-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/Object/class-003.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/Object/class-004.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/Object/class-005.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/Object/regress-72773.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/Object/regress-79129-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/Operators/11.13.1-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Operators/11.4.1-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/RegExp/15.10.2-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/15.10.3.1-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/15.10.3.1-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/15.10.4.1-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/15.10.4.1-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/15.10.4.1-3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/15.10.4.1-4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/15.10.4.1-5-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/15.10.6.2-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/15.10.6.2-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/octal-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/octal-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/perlstress-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/perlstress-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/regress-100199.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/regress-103087.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/regress-105972.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/regress-119909.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/regress-122076.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/regress-123437.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/regress-165353.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/regress-169497.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/regress-169534.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/regress-187133.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/regress-188206.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/regress-191479.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/regress-202564.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/regress-209067.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/regress-209919.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/regress-216591.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/regress-220367-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/regress-220367-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/regress-24712.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/regress-28686.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/regress-31316.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/regress-57572.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/regress-57631.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/regress-67773.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/regress-72964.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/regress-76683.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/regress-78156.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/regress-85721.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/regress-87231.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/RegExp/regress-98306.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: ecma_3/Statements/regress-121744.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Statements/regress-131348.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Statements/regress-157509.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Statements/regress-194364.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: ecma_3/Statements/regress-74474-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Statements/regress-74474-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Statements/regress-74474-003.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Statements/regress-83532-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Statements/regress-83532-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Statements/switch-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/String/regress-104375.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/String/regress-189898.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/String/regress-83293.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Unicode/uc-001-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma_3/Unicode/uc-001.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: ecma_3/Unicode/uc-002-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: ecma_3/Unicode/uc-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Unicode/uc-003.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Unicode/uc-004.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: ecma_3/Unicode/uc-005.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_1/regress/function-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/Array/array_split_1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/Array/general1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/Array/general2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/Array/slice.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/Array/splice1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/Array/splice2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/Array/tostring_1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/Array/tostring_2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/function/definition-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/function/function-001-n.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/function/Function_object.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: js1_2/function/length.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/function/nesting-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/function/nesting.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/function/Number.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/function/regexparg-1.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: js1_2/function/regexparg-2-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: js1_2/function/String.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/function/tostring-1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/function/tostring-2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/Objects/toString-001.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: js1_2/operator/equality.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: js1_2/operator/strictEquality.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/alphanumeric.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/asterisk.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/backslash.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/backspace.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/beginLine.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/character_class.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/compile.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/control_characters.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/digit.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/dot.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/endLine.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/everything.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/exec.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/flags.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/global.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/hexadecimal.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/ignoreCase.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/interval.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/octal.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/parentheses.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/plus.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/question_mark.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/RegExp_dollar_number.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/RegExp_input.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/RegExp_input_as_array.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/RegExp_lastIndex.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: js1_2/regexp/RegExp_lastMatch.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/RegExp_lastMatch_as_array.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/RegExp_lastParen.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/RegExp_lastParen_as_array.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/RegExp_leftContext.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/RegExp_leftContext_as_array.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/RegExp_multiline.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/RegExp_multiline_as_array.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/RegExp_object.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/RegExp_rightContext.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/RegExp_rightContext_as_array.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/regress-6359.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: js1_2/regexp/regress-9141.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: js1_2/regexp/simple_form.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: js1_2/regexp/source.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/special_characters.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/string_replace.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/string_search.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/string_split.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: js1_2/regexp/test.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/toString.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/vertical_bar.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/whitespace.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regexp/word_boundary.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regress/regress-144834.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/regress/regress-7703.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/statements/break.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/statements/continue.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/statements/do_while.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/statements/switch.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/statements/switch2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/String/charCodeAt.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/String/concat.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/String/match.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/String/slice.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_2/version120/boolean-001.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js", "shell.js"
+- path: js1_2/version120/regress-99663.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js", "shell.js"
+- path: js1_3/Boolean/boolean-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_3/inherit/proto_1.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_3/inherit/proto_10.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_3/inherit/proto_11.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_3/inherit/proto_12.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_3/inherit/proto_2.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_3/inherit/proto_3.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_3/inherit/proto_4.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_3/inherit/proto_5.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_3/inherit/proto_6.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_3/inherit/proto_7.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_3/inherit/proto_8.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_3/inherit/proto_9.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_3/regress/delete-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_3/regress/function-001-n.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_3/regress/function-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_3/regress/in-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_3/regress/new-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_3/regress/switch-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_3/Script/delete-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_3/Script/function-001-n.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_3/Script/function-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_3/Script/in-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_3/Script/new-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_3/Script/script-001.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: js1_3/Script/switch-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_4/Eval/eval-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_4/Eval/eval-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_4/Eval/eval-003.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_4/Functions/function-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_4/Regress/date-001-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: js1_4/Regress/function-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_4/Regress/function-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_4/Regress/function-003.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_4/Regress/function-004-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: js1_4/Regress/regress-7224.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_4/Regress/toString-001-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: js1_5/Array/array-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Array/regress-101964.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Array/regress-107138.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Array/regress-108440.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Array/regress-154338.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Array/regress-157652.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Array/regress-178722.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Array/regress-94257.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Exceptions/catchguard-001-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: js1_5/Exceptions/catchguard-001.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: js1_5/Exceptions/catchguard-002-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: js1_5/Exceptions/catchguard-002.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: js1_5/Exceptions/catchguard-003-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: js1_5/Exceptions/catchguard-003.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: js1_5/Exceptions/errstack-001.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: js1_5/Exceptions/regress-121658.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Exceptions/regress-123002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Exceptions/regress-50447.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: js1_5/Expressions/regress-192288.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: js1_5/Expressions/regress-96526-argsub.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: js1_5/Expressions/regress-96526-delelem.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: js1_5/Expressions/regress-96526-noargsub.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: js1_5/GetSet/getset-001.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: js1_5/GetSet/getset-002.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: js1_5/GetSet/getset-003.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: js1_5/GetSet/getset-004.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/GetSet/getset-005.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/GetSet/getset-006.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/LexicalConventions/lexical-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/LexicalConventions/regress-177314.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Object/regress-137000.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Object/regress-192105.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Object/regress-90596-001.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: js1_5/Object/regress-90596-002.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: js1_5/Object/regress-90596-003.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Object/regress-96284-001.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: js1_5/Object/regress-96284-002.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: js1_5/Regress/regress-102725.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-103602.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: js1_5/Regress/regress-104077.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: js1_5/Regress/regress-110286.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-111557.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-114491.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-114493.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-118849.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-127557.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: js1_5/Regress/regress-131510-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-140974.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-146596.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-152646.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-156354.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-159334.js
+  cmd: |
+      if ($architecture !~ /x86/i and $hostOS == "darwin") or $memoryLimited
+          skip
+      else
+          defaultRunMozillaTest :normal, "../shell.js"
+      end
+- path: js1_5/Regress/regress-168347.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-170193.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-172699.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: js1_5/Regress/regress-179524.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: js1_5/Regress/regress-185165.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-191633.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-191668.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-192414.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-192465.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-193418.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-203402.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-203841.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-204210.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-210682.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-216320.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-31255.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-39309.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-44009.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: js1_5/Regress/regress-57043.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-68498-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-68498-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-68498-003.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-68498-004.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-69607.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-71107.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-76054.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-80981.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-82306.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-89443.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-89474.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-90445.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-96128-n.js
+  cmd: defaultRunMozillaTest :negative, "../shell.js"
+- path: js1_5/Regress/regress-96526-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-96526-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Regress/regress-96526-003.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Scope/regress-154693.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Scope/regress-181834.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Scope/regress-184107.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Scope/regress-185485.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Scope/regress-191276.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Scope/regress-192226.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Scope/regress-202678-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Scope/regress-202678-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Scope/regress-208496-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Scope/regress-208496-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Scope/regress-220362.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Scope/regress-220584.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: js1_5/Scope/regress-77578-001.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Scope/scope-001.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js"
+- path: js1_5/Scope/scope-002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Scope/scope-003.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/Scope/scope-004.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/String/regress-107771.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_5/String/regress-179068.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
+- path: js1_6/Array/browser.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: js1_6/Array/regress-290592.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: js1_6/Array/regress-304828.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: js1_6/Array/regress-305002.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: js1_6/Array/regress-310425-01.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: js1_6/Array/regress-310425-02.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: js1_6/Array/regress-320887.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: js1_6/Regress/browser.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: js1_6/Regress/regress-301574.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js", "shell.js"
+- path: js1_6/Regress/regress-309242.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js", "shell.js"
+- path: js1_6/Regress/regress-311157-01.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: js1_6/Regress/regress-311157-02.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: js1_6/Regress/regress-314887.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js", "shell.js"
+- path: js1_6/Regress/regress-320172.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: js1_6/String/browser.js
+  cmd: defaultRunMozillaTest :normal, "../shell.js", "shell.js"
+- path: js1_6/String/regress-306591.js
+  cmd: defaultRunMozillaTest :fail, "../shell.js", "shell.js"

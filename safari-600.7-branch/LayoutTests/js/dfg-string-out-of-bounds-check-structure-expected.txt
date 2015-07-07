@@ -1,0 +1,9 @@
+Tests what happens when you do a out-of-bounds access on a string and use that to install a getter that clobbers a structure.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Passed some tests silently.
+
+TEST COMPLETE
+

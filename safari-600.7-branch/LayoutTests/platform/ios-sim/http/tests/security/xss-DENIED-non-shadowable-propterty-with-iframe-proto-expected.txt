@@ -1,0 +1,4 @@
+ Tests that making other frame window a prototype doesn't expose that window properties
+PASS: location === originalLocation should be 'true' and is.
+PASS: this.location === originalLocation should be 'true' and is.
+

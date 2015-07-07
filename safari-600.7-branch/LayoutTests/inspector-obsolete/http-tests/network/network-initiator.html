@@ -1,0 +1,111 @@
+<html>
+<head>
+<link href="resources/initiator.css" rel="stylesheet" type="text/css">
+<script src="../inspector-test.js"></script>
+<script src="../network-test.js"></script>
+<script>
+
+function addClassToDiv()
+{
+    // We need to setTimeout, to make sure that style recalculation scheduling
+    // is really triggered by adding a class to the div.
+    window.setTimeout(addClassToDivStep2, 0);
+}
+
+function addClassToDivStep2()
+{
+    document.getElementById("div-without-class").className = "image-background-2";
+}
+
+function loadData()
+{
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function()
+    {
+        if (xhr.readyState === XMLHttpRequest.DONE)
+            resourceLoaded();
+    };
+    xhr.open("GET", "resources/resource.php?type=image&random=1&size=400", true);
+    xhr.send(null);
+}
+
+function resourceLoaded()
+{
+    console.log("Done.");
+}
+
+var test = function()
+{
+    InspectorTest.hardReloadPage(step1);
+
+    function findRequestByURL(url)
+    {
+        var requests = WebInspector.networkLog.requests;
+        for (var i = 0; i < requests.length; ++i) {
+            if (url.test(requests[i].url))
+                return requests[i];
+        }
+    }
+
+    function step1()
+    {
+        WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.RequestFinished, onRequest);
+        InspectorTest.evaluateInPage("addClassToDiv()", step2);
+    }
+
+    function onRequest(event)
+    {
+        var request = event.data;
+        if (/size=300/.test(request.url))
+            step2();
+    }
+
+    function step2()
+    {
+        if (!findRequestByURL(/size=300/))
+            return;
+
+        InspectorTest.addConsoleSniffer(step3);
+        InspectorTest.evaluateInPage("loadData()");
+    }
+
+    function step3()
+    {
+        function dumpInitiator(request)
+        {
+            var initiator = request.initiator;
+            InspectorTest.addResult(request.url + ": " + initiator.type);
+            if (initiator.url)
+                InspectorTest.addResult("    " + initiator.url + " " + initiator.lineNumber);
+            if (initiator.stackTrace) {
+                var stackTrace = initiator.stackTrace;
+                for (var i = 0; i < stackTrace.length; ++i) {
+                    var frame = stackTrace[i];
+                    if (frame.lineNumber) {
+                        InspectorTest.addResult("    " + frame.functionName + " " + frame.url + " " + frame.lineNumber);
+                        break;
+                    }
+                }
+            }
+        }
+
+        dumpInitiator(findRequestByURL(/initiator\.css/));
+        dumpInitiator(findRequestByURL(/size=100/));
+        dumpInitiator(findRequestByURL(/size=200/));
+        dumpInitiator(findRequestByURL(/size=300/));
+        dumpInitiator(findRequestByURL(/size=400/));
+
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests resources initiator for images initiated by IMG tag, static CSS, CSS class added from JavaScript and XHR.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=65105">Bug 65105</a>
+<img src="resources/resource.php?type=image&random=1&size=100">
+<div class="image-background">This div has background image set from CSS.</div>
+<div id="div-without-class">This div will have background image set from JavaScript.</div>
+</body>
+</html>

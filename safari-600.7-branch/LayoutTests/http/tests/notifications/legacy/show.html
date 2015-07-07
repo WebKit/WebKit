@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/notifications-test-pre.js"></script>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+if (window.testRunner)
+	testRunner.waitUntilDone();
+
+description("This test looks for the dispatch of the onshow event handler.");
+
+var n = null;
+function part1() {
+	shouldBe("window.webkitNotifications.checkPermission()", "1");
+	shouldThrow("window.webkitNotifications.createNotification('', 'title 1', 'body');");
+	setTimeout(part2, 0);
+}
+
+function part2() {
+	debug("Granting permission to " + testURL);
+	testRunner.grantWebNotificationPermission(testURL);
+	shouldBe("window.webkitNotifications.checkPermission()", "0");
+
+	n = window.webkitNotifications.createNotification("", "title 2", "body");
+	n.ondisplay = function() {
+		testPassed("ondisplay event handler was called");
+		shouldBe("this.ondisplay", "this.onshow");
+		setTimeout(part3, 0);
+	};
+	n.onerror = function() {
+		testFailed("onerror event handler should not be called");
+		setTimeout(part3, 0);
+	};
+	n.show();
+}
+
+function part3() {
+	debug("Denying permission to " + testURL);
+	testRunner.denyWebNotificationPermission(testURL);
+	shouldBe("window.webkitNotifications.checkPermission()", "2");
+	shouldThrow("window.webkitNotifications.createNotification('', 'title 3', 'body');");
+	setTimeout(part4, 0);
+}
+
+function part4() {
+	debug("Resetting all permissions");
+	testRunner.removeAllWebNotificationPermissions();
+	shouldBe("window.webkitNotifications.checkPermission()", "1");
+	testCompleted();
+}
+
+part1();
+
+setTimeout(testCompleted, 100);
+</script>

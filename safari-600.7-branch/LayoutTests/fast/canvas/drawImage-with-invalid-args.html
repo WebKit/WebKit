@@ -1,0 +1,181 @@
+<body onload="draw();">
+<p>This test checks behavior of invalid arguments to Canvas::drawImage.</p>
+<p id="result"></p>
+<canvas id="canvas" width="150" height="150"></canvas>
+<script>
+    // Create image
+    var myImage = new Image();   
+    var img_src = 'resources/apple.gif';
+    myImage.src = img_src;
+
+    function print(message)
+    {
+        var line = document.createElement("div");
+        line.appendChild(document.createTextNode(message));
+        document.getElementById("result").appendChild(line);
+    }
+
+    function draw() {
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        var ctx = document.getElementById('canvas').getContext('2d');
+
+        // draw image
+        try{
+            ctx.drawImage();
+            print("FAIL");
+        } catch (e) {
+            print("PASS: no arguments, got exception as expected");
+        }
+        try{
+            ctx.drawImage(myImage);
+            print("FAIL");
+        } catch (e) {
+            print("PASS: image argument only, got exception as expected");
+        }
+        try{
+            ctx.drawImage(myImage, 0);
+            print("FAIL");
+        } catch (e) {
+            print("PASS: image argument plus one number, got exception as expected");
+        }
+        try{
+            ctx.drawImage(myImage, 0, 0);
+            print("PASS: image argument plus 2 numbers");
+        } catch (e) {
+            print("FAIL");
+        }
+        try{
+            ctx.drawImage(myImage, 0, 0, 20, 20);
+            print("PASS: image argument plus 4 numbers");
+        } catch (e) {
+            print("FAIL");
+        }
+        try{
+            ctx.drawImage(myImage, 0, 0, 20, 20, 0, 0, 20, 20);
+            print("PASS: image argument plus 8 numbers");
+        } catch (e) {
+            print("FAIL");
+        }
+        try{
+            ctx.drawImage(myImage, 0, 0, 0, 0);
+            print("PASS: image argument plus zero size");
+        } catch (e) {
+            print("FAIL");
+        }
+        try{
+            ctx.drawImage(myImage, 0, 0, 20, 20, 0, 0, 0, 0);
+            print("PASS: image argument plus 8 numbers, zero size");
+        } catch (e) {
+            print("FAIL");
+        }
+        try{
+            ctx.drawImage(myImage, 20, 20, -20, 0, 0, 0, 20, 20);
+            print("FAIL");
+        } catch (e) {
+            print("PASS: image argument plus 8 numbers, negative size of source, zero size, got exception as expected");
+        }
+        try{
+            ctx.drawImage(myImage, 0, 0, 20, 0, 20, 20, -20, -20);
+            print("FAIL");
+        } catch (e) {
+            print("PASS: image argument plus 8 numbers, negative size of destination, zero size, got exception as expected");
+        }
+        try{
+            ctx.drawImage(myImage, 20, 20, -20, 0, 20, 20, -20, -20);
+            print("FAIL");
+        } catch (e) {
+            print("PASS: image argument plus 8 numbers, negative size of source and destination, zero size, got exception as expected");
+        }
+        try{
+            ctx.drawImage(null);
+            print("FAIL");
+        } catch (e) {
+            print("PASS: null image, got exception as expected");
+        }
+        try{
+            ctx.drawImage(null, 0);
+            print("FAIL");
+        } catch (e) {
+            print("PASS: null image, got exception as expected");
+        }
+        try{
+            ctx.drawImage(null, 0, 0);
+            print("FAIL");
+        } catch (e) {
+            print("PASS: null image, got exception as expected");
+        }
+        try{
+            ctx.drawImage(null, 0, 0, 20, 20);
+            print("FAIL");
+        } catch (e) {
+            print("PASS: null image, got exception as expected");
+        }
+        try{
+            ctx.drawImage(myImage, -10, 0, 52, 64, 0, 0, 20, 20);
+            print("PASS: imageRect does not contain sourceRect on the left side");
+        } catch (e) {
+            print("FAIL");
+        }
+        try{
+            ctx.drawImage(myImage, 10, 0, 52, 64, 0, 0, 20, 20);
+            print("PASS: imageRect does not contain sourceRect on the right side");
+        } catch (e) {
+            print("FAIL");
+        }
+        try{
+            ctx.drawImage(myImage, 0, -10, 52, 64, 0, 0, 20, 20);
+            print("PASS: imageRect does not contain sourceRect on top");
+        } catch (e) {
+            print("FAIL");
+        }
+        try{
+            ctx.drawImage(myImage, 0, 10, 52, 64, 0, 0, 20, 20);
+            print("PASS: imageRect does not contain sourceRect on bottom");
+        } catch (e) {
+            print("FAIL");
+        }
+        try{
+            ctx.drawImage(myImage, -10, -10, 72, 84, 0, 0, 20, 20);
+            print("PASS: sourceRect is bigger than imageSource on every side");
+        } catch (e) {
+            print("FAIL");
+        }
+        try{
+            ctx.drawImage(myImage, 42, 64, -52, -64, 0, 0, 20, 20);
+            print("PASS: negative size of source, imageRect does not contain sourceRect on the left side");
+        } catch (e) {
+            print("FAIL");
+        }
+        try{
+            ctx.drawImage(myImage, 62, 64, -52, -64, 0, 0, 20, 20);
+            print("PASS: negative size of source, imageRect does not contain sourceRect on the right side");
+        } catch (e) {
+            print("FAIL");
+        }
+        try{
+            ctx.drawImage(myImage, 52, 54, -52, -64, 0, 0, 20, 20);
+            print("PASS: negative size of source, imageRect does not contain sourceRect on top");
+        } catch (e) {
+            print("FAIL");
+        }
+        try{
+            ctx.drawImage(myImage, 52, 74, -52, -64, 0, 0, 20, 20);
+            print("PASS: negative size of source, imageRect does not contain sourceRect on bottom");
+        } catch (e) {
+            print("FAIL");
+        }
+        try{
+            ctx.drawImage(myImage, 62, 74, -72, -84, 0, 0, 20, 20);
+            print("PASS: negative size of source, imageRect does not contain sourceRect on every side");
+        } catch (e) {
+            print("FAIL");
+        }
+        ctx.fillStyle = 'green';
+        ctx.fillRect(0,0,150,150);
+
+        print("Test complete.");
+    }
+</script>
+</body>

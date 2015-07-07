@@ -1,0 +1,2 @@
+
+The inner text element of the search input should never be 0-height: FAIL

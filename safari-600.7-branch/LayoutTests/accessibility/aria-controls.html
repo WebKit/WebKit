@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<ul id="tablist" role="tablist">
+<li id="tab1" role="tab" aria-controls="panel1 panel2"></li>
+</ul>
+
+<div id="panel1">Panel 1</div>
+<div id="panel2">Panel 2</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that aria-controls returns correct element at the given index");
+
+    if (window.accessibilityController) {
+        var tablist = accessibilityController.accessibleElementById("tablist");
+        var tab1 = tablist.childAtIndex(0);
+
+        shouldBe("tab1.ariaControlsElementAtIndex(0).stringValue", "'AXValue: Panel 1'");
+        shouldBe("tab1.ariaControlsElementAtIndex(1).stringValue", "'AXValue: Panel 2'");
+    }
+
+</script>
+
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

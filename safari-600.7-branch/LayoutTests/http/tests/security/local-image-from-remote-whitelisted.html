@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<script>
+
+testRunner.dumpAsText();
+testRunner.addOriginAccessWhitelistEntry('http://127.0.0.1:8000', 'file', '', true);
+
+var localImageLocation = testRunner.pathToLocalResource('file:///tmp/LayoutTests/http/tests/security/resources/compass.jpg');
+
+var localImageElement = document.createElement('img');
+localImageElement.src = localImageLocation;
+document.body.appendChild(localImageElement);
+
+window.onload = function() {
+    var result = document.getElementById('result');
+    if (localImageElement.height == 0 && localImageElement.width == 0)
+        result.textContent = 'Test Failed: Local image not loaded remotely.';
+    else
+        result.textContent = 'Test Passed. Local image loaded remotely.';
+};
+
+</script>
+
+<p>This test is to see if a remote file can include a local image when the
+access has been white listed using addOriginAccessWhitelistEntry.
+
+<p id=result>Test has not run.
+
+</body>
+</html>

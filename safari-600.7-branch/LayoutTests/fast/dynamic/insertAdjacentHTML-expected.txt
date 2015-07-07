@@ -1,0 +1,4 @@
+Caught expected exception: Error: SyntaxError: DOM Exception 12
+1 (black) 2 (green) 3 (green) 4 (black) 
+
+PASS

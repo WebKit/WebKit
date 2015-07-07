@@ -1,0 +1,16 @@
+On success, no text should be clipped and you should see LAST LINE at the bottom of the text
+
+Above all, avoid lies, all lies, especially the lie to yourself. Keep watch on your own lie and examine it every hour, every minute. And avoid contempt, both of others and of yourself: what seems bad to you in yourself is purified by the very fact that you have noticed it in yourself. And avoid fear, though fear is simply the consequence of every lie. Never be frightened at your own faintheartedness in attaining love, and meanwhile do not even be very frightened by your own bad acts.
+
+LAST LINE
+
+(repaint rects
+  (rect 106 306 300 160)
+  (rect 14 56 300 260)
+  (rect 106 106 300 260)
+  (rect 60 150 312 266)
+  (rect 100 200 312 266)
+  (rect 14 56 300 260)
+  (rect 106 106 300 260)
+)
+

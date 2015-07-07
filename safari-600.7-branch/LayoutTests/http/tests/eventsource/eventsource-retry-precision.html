@@ -1,0 +1,37 @@
+<html>
+<body>
+<p>Test EventSource retry time precision. Should print PASS followed by DONE.</p>
+<script>
+function log(msg) {
+    document.body.innerHTML += msg + "<br>";
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var timeoutId = setTimeout(function () {
+    log("PASS: did not immediately reconnect");
+    end();
+}, 500);
+
+var count = 0;
+var es = new EventSource("resources/precise-retry.asis");
+es.onopen = function () {
+    if (count++ != 2)
+        return;
+    clearTimeout(timeoutId);
+    log("FAIL: reconnected too soon");
+    end();
+};
+
+function end() {
+    es.close();
+    log("DONE");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</body>
+</html>

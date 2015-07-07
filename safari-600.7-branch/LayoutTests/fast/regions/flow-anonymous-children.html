@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<style>
+.flow { -webkit-flow-into: flow; }
+#region { -webkit-flow-from: flow; }
+span { display: inline-block; }
+</style>
+
+<span id="el1" class="flow"></span>
+<!-- Force creation of an anonymous block. -->
+<div class="flow"></div>
+<span id="el2"></span>
+
+<div id="region"></div>
+
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    var el1 = document.getElementById("el1");
+    var el2 = document.getElementById("el2");
+    el1.style.display = "none";
+    el2.className = "flow";
+    // Test passes if there's no crash.
+    document.write("PASS");
+</script>

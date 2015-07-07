@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 6: XHR loaded: 1
+Tests network panel sidebar width with and without preference set.
+
+Bug 65256
+Sidebar width: 200
+Sidebar width: 242
+

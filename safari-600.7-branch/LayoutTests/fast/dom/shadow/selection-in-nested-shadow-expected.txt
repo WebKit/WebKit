@@ -1,0 +1,12 @@
+Select text in non-nested ShadowDOM and remove an element containing shadow host.
+Then the anchor node of the selection should become be the parent element of the removed element (container).
+PASS window.getSelection().anchorNode is container
+
+Select text in nested ShadowDOM and remove an element containing shadow host.
+In this case, the anchor node of the selection should also become be the parent element of the removed element (container).
+PASS window.getSelection().anchorNode is container
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

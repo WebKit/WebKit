@@ -1,0 +1,3 @@
+Should be your browser default encoding: ISO-8859-1
+
+If it's latin-1 (ISO-8859-1), this should be accented e: é

@@ -1,0 +1,32 @@
+<!DOCTYPE>
+<html>
+<head>
+  <title>RTL page with composited elements</title>
+
+<style type="text/css" media="screen">
+body {
+  direction: rtl;
+}
+#wrapper {
+  position: relative;
+  background: green;
+  width: 200px;
+  height: 200px;
+  z-index: 5;
+}
+.accelerated {
+  -webkit-transform: translate3d(0,0,0);
+}
+</style>
+<script type="text/javascript" charset="utf-8">
+    if (window.testRunner)
+        testRunner.dumpAsText(true);
+</script>
+</head>
+<body>
+<body>
+<!-- There should be a green box at the top right corner of the window -->
+    <div id="wrapper"></div>
+    <div class="accelerated"></div>
+</body>
+</html>

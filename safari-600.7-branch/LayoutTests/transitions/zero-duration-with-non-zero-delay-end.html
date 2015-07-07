@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    body {
+      margin: 0;
+    }
+    
+    #target {
+      position: relative;
+      top: 100px;
+      left: 100px;
+      width: 200px;
+      height: 200px;
+      background-color: red;
+      -webkit-transition-property: left;
+      -webkit-transition-duration: 0s;
+      -webkit-transition-delay: 0.5s;
+    }
+   </style>
+   <script>
+    function sample0() {
+      var expected = 1;
+      var current = internals.numberOfActiveAnimations();
+      if (current == expected)
+        document.getElementById('result0').innerHTML = "Number of active animations before transition is (" + current + ") as expected";
+      else
+        document.getElementById('result0').innerHTML = "Number of active animations before transition is (" + current + ") but was expecting (" + expected + ")";
+    }
+    
+    function sample1() {
+      var expected = 0;
+      var current = internals.numberOfActiveAnimations();
+      if (current == expected)
+        document.getElementById('result1').innerHTML = "Number of active animations after transition is (" + current + ") as expected";
+      else
+        document.getElementById('result1').innerHTML = "Number of active animations after transition is (" + current + ") but was expecting (" + expected + ")";
+      
+      testRunner.notifyDone();
+    }
+    
+    function runTest() {
+      window.setTimeout(sample0, 250);
+      // Note that since 0-delay transitions do not disptach transitionEnd events
+      // we have to use a timeout here.
+      window.setTimeout(sample1, 750);
+    }
+    
+    function startTest() {
+      if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        
+        var target = document.getElementById('target');
+        target.style.left = '200px';
+        runTest();
+      }
+    }
+   </script>
+</head>
+<body onload="startTest()">
+  <h1>Test for DRT numberOfActiveAnimations() API</h1>
+
+  <div id="target">
+  </div>
+  
+  <div id="result0">
+  </div>
+  
+  <div id="result1">
+  </div>
+
+</body>
+</html>

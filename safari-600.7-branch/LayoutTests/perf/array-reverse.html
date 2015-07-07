@@ -1,0 +1,18 @@
+<script src="../resources/magnitude-perf.js"></script>
+<script>
+function setupFunction(magnitude)
+{
+    array = [];
+    for (var i = 0; i < magnitude; i++) {
+        array[i] = i;
+    }
+}
+
+function test(magnitude)
+{
+    array.lastIndexOf(1);
+}
+
+Magnitude.description("Tests that Array reverse is linear.");
+Magnitude.run(setupFunction, test, Magnitude.LINEAR);
+</script>

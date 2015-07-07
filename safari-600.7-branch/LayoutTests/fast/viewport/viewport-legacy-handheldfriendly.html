@@ -1,0 +1,13 @@
+<head>
+    <title>HandheldFriendly Meta with "true".</title>
+    <meta name="HandheldFriendly" content="true">
+    <script>
+        function test() {
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                alert(internals.configurationForViewport(1, 320, 480, 320, 352));
+            }
+        }
+    </script>
+</head>
+<body onload="test();">

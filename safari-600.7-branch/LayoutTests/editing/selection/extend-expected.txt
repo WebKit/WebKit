@@ -1,0 +1,8 @@
+foobarbaz
+Success: window.getSelection() is ar.
+Success: s.extend(span2.firstChild, 4) raised Error: IndexSizeError: DOM Exception 1.
+Success: s.extend(span2.firstChild, -1) raised Error: IndexSizeError: DOM Exception 1.
+Success: window.getSelection() is b.
+Success: window.getSelection() is arbaz.
+Success: s.extend() raised Error: TypeMismatchError: DOM Exception 17.
+Success: s.extend(null, 0) raised Error: TypeMismatchError: DOM Exception 17.

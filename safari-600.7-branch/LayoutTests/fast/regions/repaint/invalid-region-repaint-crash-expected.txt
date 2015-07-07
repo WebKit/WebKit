@@ -1,0 +1,17 @@
+Test that an invalid region, part of a dependency cycle, does not try to repaint content from its corresponding named flow.
+
+On success it should not crash and you should see 3 rectangles painted in the following order: green, blue, orange.
+
+(repaint rects
+  (rect 50 50 50 150)
+  (rect 100 100 50 150)
+  (rect 50 50 50 150)
+  (rect 100 100 50 150)
+  (rect 100 100 50 150)
+  (rect 100 100 50 100)
+  (rect 100 100 50 100)
+  (rect 100 100 50 50)
+  (rect 100 100 50 100)
+  (rect 100 100 50 50)
+)
+

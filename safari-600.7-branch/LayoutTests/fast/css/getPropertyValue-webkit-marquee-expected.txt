@@ -1,0 +1,25 @@
+Bug 110816: getPropertyValue for -webkit-marquee returns null, should compute the shorthand value
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS webkitMarqueeValue("marquee1") is 'forwards medium 10 slide normal'
+PASS webkitMarqueeValue("marquee2") is 'auto large 10 slide'
+PASS webkitMarqueeValue("marquee3") is 'forwards infinite slide normal'
+PASS webkitMarqueeValue("marquee4") is 'forwards medium slide normal'
+PASS webkitMarqueeValue("marquee5") is 'medium 10 slide normal'
+PASS webkitMarqueeValue("marquee6") is 'forwards small normal'
+PASS webkitMarqueeValue("marquee7") is 'forwards medium infinite'
+PASS webkitMarqueeValue("marquee8") is 'slide fast'
+PASS webkitMarqueeValue("marquee9") is 'forwards'
+PASS webkitMarqueeValue("marquee10") is 'alternate'
+PASS webkitMarqueeValue("marquee11") is 'infinite'
+NOTE: 'foo' is an illegal CSS value for '-webkit-marquee'.
+PASS webkitMarqueeValue("marquee12") is null
+NOTE: If only few longhand properties are specified, getPropertyValue for shorthand property returns null.
+PASS webkitMarqueeValue("marquee13") is null
+PASS webkitMarqueeValue("marquee14") is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+          

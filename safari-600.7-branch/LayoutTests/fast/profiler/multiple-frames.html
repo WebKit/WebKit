@@ -1,0 +1,36 @@
+<html>
+<head>
+<script src="resources/profiler-test-JS-resources.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.internals)
+    internals.setJavaScriptProfilingEnabled(true);
+
+function startTest()
+{
+    console.profile("Other window executing JavaScript");
+
+    var myFrame = document.getElementById("mySubFrame");
+    var secret = myFrame.contentWindow.functionInOtherFrame();
+    insertGivenText(secret);
+
+    endTest();
+}
+
+function functionInParentFrame() {
+    return "Pi";
+}
+</script>
+</head>
+
+<body onload="startTest()">
+This test has JS executing in another window.
+<br>
+<br>
+To run this test manually, load it in the browser then load the WebInspector and look at
+the profile.  In the profile there should be a call to functionInOtherFrame().
+<div id="output"></div>
+<iframe src="resources/other-frame.html" id="mySubFrame"></iframe>
+</body>
+</html>

@@ -1,0 +1,71 @@
+layer at (0,0) size 800x992
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x992
+  RenderBlock {HTML} at (0,0) size 800x993
+    RenderBody {BODY} at (8,8) size 784x969
+      RenderBlock {H2} at (0,0) size 784x30
+        RenderText {#text} at (0,0) size 165x29
+          text run at (0,0) width 165: "Normal Weight"
+      RenderBlock {P} at (0,49) size 784x21
+        RenderText {#text} at (0,0) size 666x20
+          text run at (0,0) width 666: "Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"
+      RenderBlock {H2} at (0,89) size 784x31
+        RenderText {#text} at (0,0) size 125x29
+          text run at (0,0) width 125: "100 Weight"
+      RenderBlock {P} at (0,139) size 784x21
+        RenderText {#text} at (0,0) size 590x20
+          text run at (0,0) width 590: "Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"
+      RenderBlock {H2} at (0,179) size 784x31
+        RenderText {#text} at (0,0) size 125x29
+          text run at (0,0) width 125: "200 Weight"
+      RenderBlock {P} at (0,229) size 784x21
+        RenderText {#text} at (0,0) size 617x20
+          text run at (0,0) width 617: "Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"
+      RenderBlock {H2} at (0,269) size 784x31
+        RenderText {#text} at (0,0) size 125x29
+          text run at (0,0) width 125: "300 Weight"
+      RenderBlock {P} at (0,319) size 784x21
+        RenderText {#text} at (0,0) size 640x20
+          text run at (0,0) width 640: "Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"
+      RenderBlock {H2} at (0,359) size 784x31
+        RenderText {#text} at (0,0) size 125x29
+          text run at (0,0) width 125: "400 Weight"
+      RenderBlock {P} at (0,409) size 784x21
+        RenderText {#text} at (0,0) size 666x20
+          text run at (0,0) width 666: "Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"
+      RenderBlock {H2} at (0,449) size 784x31
+        RenderText {#text} at (0,0) size 125x29
+          text run at (0,0) width 125: "500 Weight"
+      RenderBlock {P} at (0,498) size 784x21
+        RenderText {#text} at (0,0) size 666x20
+          text run at (0,0) width 666: "Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"
+      RenderBlock {H2} at (0,538) size 784x31
+        RenderText {#text} at (0,0) size 137x29
+          text run at (0,0) width 137: "Bold Weight"
+      RenderBlock {P} at (0,588) size 784x21
+        RenderText {#text} at (0,0) size 688x20
+          text run at (0,0) width 688: "Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"
+      RenderBlock {H2} at (0,628) size 784x31
+        RenderText {#text} at (0,0) size 125x29
+          text run at (0,0) width 125: "600 Weight"
+      RenderBlock {P} at (0,678) size 784x21
+        RenderText {#text} at (0,0) size 688x20
+          text run at (0,0) width 688: "Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"
+      RenderBlock {H2} at (0,718) size 784x31
+        RenderText {#text} at (0,0) size 125x29
+          text run at (0,0) width 125: "700 Weight"
+      RenderBlock {P} at (0,768) size 784x21
+        RenderText {#text} at (0,0) size 688x20
+          text run at (0,0) width 688: "Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"
+      RenderBlock {H2} at (0,808) size 784x31
+        RenderText {#text} at (0,0) size 125x29
+          text run at (0,0) width 125: "800 Weight"
+      RenderBlock {P} at (0,858) size 784x21
+        RenderText {#text} at (0,0) size 688x20
+          text run at (0,0) width 688: "Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"
+      RenderBlock {H2} at (0,898) size 784x31
+        RenderText {#text} at (0,0) size 125x29
+          text run at (0,0) width 125: "900 Weight"
+      RenderBlock {P} at (0,948) size 784x21
+        RenderText {#text} at (0,0) size 688x20
+          text run at (0,0) width 688: "Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"

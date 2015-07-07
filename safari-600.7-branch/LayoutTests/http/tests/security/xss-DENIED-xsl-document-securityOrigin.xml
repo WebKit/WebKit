@@ -1,0 +1,45 @@
+<?xml-stylesheet type="text/xsl" href="xss-DENIED-xsl-document-securityOrigin.xml"?>
+<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:template match="/">
+<html>
+<head>
+<script>
+<![CDATA[
+if (window.testRunner) {
+	testRunner.dumpAsText();
+	testRunner.waitUntilDone();
+	testRunner.setCanOpenWindows();
+	testRunner.setCloseRemainingWindowsWhenComplete(true);
+ }
+
+window.onload = function()
+{
+	if (!opener) {
+		victim = document.body.appendChild(document.createElement("iframe"));
+		wnd = victim.contentWindow.open();
+		victim.src = "http://localhost:8080/security/resources/innocent-victim.html";
+		victim.onload = function() { wnd.eval("location = '" + location + "'"); }
+	} else if (location != "about:blank") {
+		url = location.href;
+		blank = document.body.appendChild(document.createElement("iframe"));
+		blank.contentWindow.eval("parent.document.open()");
+		location = "javascript:(\"\x3C?xml-stylesheet type='text/xsl' href='" + url + "'?\x3E\x3Croot/\x3E\")";
+	} else {
+		victim = opener;
+		open("javascript:void(0)", "_self");
+		if (victim.eval)
+			victim.eval("alert(document.body.innerHTML)");
+
+		if (window.testRunner)
+			testRunner.notifyDone();
+	}
+}
+]]>
+</script>
+</head>
+<body>
+This test passes if it doesn't alert the contents of innocent-victim.html.
+</body>
+</html>
+</xsl:template>
+</xsl:stylesheet>

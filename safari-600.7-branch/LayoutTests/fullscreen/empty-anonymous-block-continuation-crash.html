@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+WebKit Bug 89386 - Crash in RenderInline::willBeDestroyed.<br />
+Test passes if it does not crash.
+<summary>
+<i>
+<span id="test">
+<div></div>
+</span>
+</i>
+</summary>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+if ("webkitRequestFullScreen" in Element.prototype) {
+	var span = document.getElementById('test');
+	var fullscreenChangeEvent = function(event) {
+	    if (document.webkitIsFullScreen)
+	        document.webkitCancelFullScreen();
+	};
+
+	document.addEventListener('webkitfullscreenchange', fullscreenChangeEvent);
+	document.addEventListener('keydown', function () {
+	    span.webkitRequestFullScreen();
+    });
+
+    eventSender.keyDown('a');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+Basic tests for MediaStreamAudioSourceNode API.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS {audio:true} generated stream
+PASS s.getAudioTracks().length is 1
+PASS s.getVideoTracks().length is 0
+PASS Source AudioNode has no inputs.
+PASS Source AudioNode has one output.
+PASS connect() exception thrown for illegal destination AudioNode.
+PASS connect() exception thrown for illegal output index.
+PASS connect() exception thrown for illegal input index.
+PASS mediaStreamSource.connect(context.destination) succeeded.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

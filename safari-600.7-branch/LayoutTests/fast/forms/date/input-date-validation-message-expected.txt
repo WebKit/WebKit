@@ -1,0 +1,21 @@
+Test for validationMessage IDL attribute for <input type=date>
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+No message
+PASS testIt("", "", "") is ""
+Value missing
+PASS testIt("", "", "") is "value missing"
+Type mismatch
+PASS testIt("foo", "", "") is ""
+Range overflow
+PASS testIt("1982-11-02", "", "1970-12-31") is "range overflow"
+Range underflow
+PASS testIt("1982-11-02", "1990-05-25", "1990-12-24") is "range underflow"
+Step mismatch
+PASS testIt("1982-11-02", "", "", "123") is "step mismatch"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

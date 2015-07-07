@@ -1,0 +1,9 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion number conversion to int
+
+PASS dt.setByte(java.lang.Byte.MAX_VALUE +1); dt.PUB_BYTE threw exception ReferenceError: Can't find variable: java.
+PASS dt.setByte(java.lang.Byte.MAX_VALUE +1); dt.getByte() threw exception ReferenceError: Can't find variable: java.
+PASS typeof dt.getByte() is 'number'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

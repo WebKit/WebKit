@@ -1,0 +1,60 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script>
+
+function test()
+{
+    var messages = [
+        'some wrong string',
+        '{}',
+        '{"id":"not a number"}',
+        '{"id":1,"method":1}',
+        '{"id":2,"method":"resourceContent"}',
+        '{"id":3,"method":"DOM.test"}',
+        '{"id":4,"method":"Page.getResourceContent"}',
+        '{"id":5,"method":"Page.getResourceContent","params":[]}',
+        '{"id":6,"method":"Page.getResourceContent","params":{}}',
+        '{"id":7,"method":"Page.getResourceContent","params":{"frameId":"not a number"}}',
+        '{"id":8,"method":"Page.test"}',
+        '{"id":9,"method":"Page.test" }',
+        '{"id":10,"method": "Page.test" }',
+        '{"id":11,"method" : "Page.test" }',
+        '{"id":12, "method" : "Page.test" }',
+        '{"id": 13, "method" : "Page.test" }',
+        '{"id" : 14, "method" : "Page.test" }',
+        '{ "id" : 15, "method" : "Page.test" }',
+        '{  "id"\n :\r 16,\t "method"\f :\v "Page.test" }',
+    ];
+    var numberOfReports = 0;
+
+    InspectorBackend.reportProtocolError = function(message)
+    {
+
+        if (numberOfReports < messages.length) {
+            InspectorTest.addObject(message);
+            InspectorTest.addResult("-------------------------------------------------------");
+        }
+
+        if (++numberOfReports === messages.length)
+            InspectorTest.completeTest();
+    }
+
+    function fire() {
+        for (var i = 0; i < messages.length; ++i)
+            InspectorFrontendHost.sendMessageToBackend(messages[i]);
+    }
+
+    DebuggerAgent.disable(fire);
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that InspectorBackendDispatcher is catching incorrect messages.
+</p>
+
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p id="description">This tests dragging a selected table by mousing down on the contents of one of its cells. It should be in the red bordered area.</p>
+<div id="root">
+<div id="source" style="border: 1px solid blue;" contenteditable="true"><table border="1"><tr><td id="cell">foo</td></tr></table></div>
+<div id="destination" style="border: 1px solid red;" contenteditable="true"><br></div>
+</div>
+
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+function runTest() {
+    if (!window.testRunner)
+        return;
+        
+    var cell = document.getElementById("cell");
+    var source = document.getElementById("source");
+    source.focus();
+    document.execCommand("SelectAll");
+
+    var x, y;
+    x = cell.offsetParent.offsetLeft + cell.offsetLeft + cell.offsetWidth / 2;
+    y = cell.offsetParent.offsetTop + cell.offsetTop + cell.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.leapForward(1000);
+    
+    var destination = document.getElementById("destination");
+    x = destination.offsetParent.offsetLeft + destination.offsetLeft + destination.offsetWidth / 2;
+    y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
+    
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseUp();
+    Markup.description(description.textContent);
+    Markup.dump(root);
+}
+
+runTest();
+</script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<html>
+<head>
+<script src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script src="resources/breakpoint.js"></script>
+<script>
+function test()
+{
+    InspectorTest.eventHandler["Debugger.scriptParsed"] = function(messageObject)
+    {
+        if (/resources\/breakpoint\.js$/.test(messageObject.params.url)) {
+            InspectorTest.log("Found breakpoint.js");
+            var breakpoint = {
+                location: {
+                    scriptId: messageObject.params.scriptId,
+                    lineNumber: 8,
+                    columnNumber: 0
+                },
+                options: {
+                    autoContinue: true,
+                    condition: "else", // a bad script that should fail to parse.
+                    action: [
+                        {type: "log", data: "FAIL: The breakpoint action should not be executed if the condition had an exception."}
+                    ]
+                }
+            };
+            InspectorTest.sendCommand("Debugger.setBreakpoint", breakpoint, InspectorTest.checkForError);
+            InspectorTest.sendCommand("Runtime.evaluate", {expression: "breakpointWithCondition(1,2)"}, function() {
+                InspectorTest.log("PASS: The VM should not crash.");
+                completeTest();
+            });
+        }
+    }
+
+    InspectorTest.eventHandler["Debugger.paused"] = function(messageObject)
+    {
+        InspectorTest.log("FAIL: Paused in debugger: reason = \"" + messageObject.params.reason + "\"");
+        completeTest();
+    }
+
+    function completeTest()
+    {
+        // Reset the pauseOnException state before ending the test.
+        InspectorTest.completeTest();
+    }
+
+    InspectorTest.sendCommand("Debugger.enable", {});
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>The debugger should not crash when executing a bad script for testing a breakpoint condition.</p>
+</body>
+</html>

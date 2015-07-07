@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head contenteditable style="display: block; white-space: nowrap; margin:100px; border: solid 1px black;"></head>
+<body>
+<div id="firstLine">Click on the right of this line outside the black box.</div>
+<span id="longLine">The caret should be placed on the right of the first line, NOT on the right of this line.<span></span></span>
+<pre><script>
+
+var head = document.getElementsByTagName('head')[0];
+var longLine = document.getElementById('longLine');
+var firstLine = document.getElementById('firstLine');
+
+// Work-around HTML5 parser.
+head.appendChild(firstLine);
+head.appendChild(longLine);
+
+while (longLine.offsetWidth < head.offsetWidth + 200)
+    longLine.lastChild.textContent += ' some text';
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+
+    eventSender.mouseMoveTo(firstLine.offsetLeft + head.offsetWidth + 10,
+        100 + firstLine.offsetHeight / 2);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+
+    if (!getSelection().isCollapsed)
+        document.writeln('FAIL - selection was not collapsed');
+    else if (getSelection().baseNode != firstLine.firstChild)
+        document.writeln('FAIL - caret was not in the first line');
+    else if (getSelection().baseOffset != firstLine.textContent.length)
+        document.writeln('FAIL - caret was not on the right edge');
+    else
+        document.writeln('PASS');
+
+    longLine.lastChild.style.display = 'none';
+}
+
+</script></pre>
+</body>
+</html>

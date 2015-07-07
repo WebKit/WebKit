@@ -1,0 +1,15 @@
+Tests that search across files works with formatted scripts.
+
+Debugger was enabled.
+Pre-format search results:
+Search matches: 
+lineNumber: 24, line: '        scriptSource.searchInContent("magic-string", true, false, dump1);'
+lineNumber: 39, line: '        scriptSource.searchInContent("magic-string", true, false, dump2);'
+
+Original content was requested.
+Post-format search results:
+Search matches: 
+lineNumber: 28, line: '        scriptSource.searchInContent("magic-string", true, false, dump1);'
+lineNumber: 43, line: '        scriptSource.searchInContent("magic-string", true, false, dump2);'
+
+

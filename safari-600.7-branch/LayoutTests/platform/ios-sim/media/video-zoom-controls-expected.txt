@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (12,12) size 776x576
+      RenderBlock {P} at (0,0) size 776x30
+        RenderText {#text} at (0,1) size 279x28
+          text run at (0,1) width 279: "Zoomed video with controls."
+      RenderBlock (anonymous) at (0,525) size 776x30
+        RenderText {#text} at (0,1) size 54x28
+          text run at (0,1) width 54: "FAIL"
+layer at (57,87) size 240x180
+  RenderEmbeddedObject {VIDEO} at (45,75) size 240x180
+layer at (57,312) size 240x180
+  RenderEmbeddedObject {VIDEO} at (45,300) size 240x180

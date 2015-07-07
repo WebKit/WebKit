@@ -1,0 +1,7 @@
+Tests that when media/plugin playback is disabled (such as when in a background tab), removing a plug-in element that was never initialized does not crash.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Removing the plug-in element did not crash.
+

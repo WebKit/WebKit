@@ -1,0 +1,35 @@
+Test media element fullscreen API when an element is not in the DOM.
+
+
+
+
+*** Creating <video> element with "content/counting.mp4" not in the document, should support fullscreen because it has video
+EVENT(loadstart)
+EVENT(durationchange)
+EVENT(canplaythrough)
+* event handler NOT triggered by a user gesture
+EXPECTED (mediaElement.webkitSupportsFullscreen == 'true') OK
+EXPECTED (mediaElement.webkitDisplayingFullscreen == 'false') OK
+TEST(mediaElement.webkitEnterFullScreen()) THROWS(DOMException.INVALID_STATE_ERR) OK
+* clicking on button
+EVENT(mouseup)
+* event handler triggered by user gesture
+RUN(mediaElement.webkitEnterFullScreen())
+EVENT(webkitbeginfullscreen)
+EXPECTED (mediaElement.webkitDisplayingFullscreen == 'true') OK
+RUN(mediaElement.webkitExitFullScreen())
+EVENT(webkitendfullscreen)
+
+*** Creating <audio> element with "content/silence.mpg" not in the document, should NOT support fullscreen 
+EVENT(loadstart)
+EVENT(durationchange)
+EVENT(canplaythrough)
+* event handler NOT triggered by a user gesture
+EXPECTED (mediaElement.webkitSupportsFullscreen == 'undefined') OK
+EXPECTED (mediaElement.webkitDisplayingFullscreen == 'undefined') OK
+* clicking on button
+EVENT(mouseup)
+* event handler triggered by user gesture
+
+END OF TEST
+

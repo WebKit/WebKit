@@ -1,0 +1,12 @@
+This tests setting the value of an attribute node after caching childNodes of the attribute node.
+The cache should be cleared and childNodes[0].data should return the new value.
+You should see PASS below:
+
+PASS nameAttrNode.childNodes.length is 1
+PASS nameAttrNode.childNodes[0] is oldValue
+PASS nameAttrNode.childNodes[0].data is "oldName"
+
+PASS nameAttrNode.value = 'newName'; nameAttrNode.value is "newName"
+PASS nameAttrNode.childNodes[0] is not oldValue
+PASS nameAttrNode.childNodes[0].data is "newName"
+

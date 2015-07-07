@@ -1,0 +1,16 @@
+<html>
+<head>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.dumpChildFramesAsText();
+            testRunner.waitUntilDone();
+        }
+    </script>
+</head>
+<body>
+    <p>This tests that the comparison of the host for security is done case insensitive.</p>
+    <iframe id="frameA" src="http://localhost:8000/security/resources/cross-frame-iframe.html"></iframe>
+    <iframe id="frameB" src="http://LOCALHOST:8000/security/resources/localhost-accesssor.html"></iframe>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<html>
+<head>
+<style>
+.container {
+    width: 90px;
+    height: 90px;
+    color: green;
+    background-color: red;
+    font: 30px/1 Ahem, sans-serif;
+    margin: 10px;
+    -webkit-font-smoothing: antialiased;
+    -webkit-writing-mode: vertical-rl;
+}
+.content-box {
+    -webkit-shape-outside: content-box;
+    background-clip: content-box;
+    width: 30px;
+    height: 30px;
+    padding: 10px;
+    border: 10px solid transparent;
+    margin: 10px;
+}
+.padding-box {
+    -webkit-shape-outside: padding-box;
+    background-clip: padding-box;
+    width: 10px;
+    height: 10px;
+    padding: 20px 10px;
+    border: 15px solid transparent;
+    margin: 15px;
+}
+.border-box {
+    -webkit-shape-outside: border-box;
+    background-clip: border-box;
+    width: 10px;
+    height: 10px;
+    padding: 10px 5px;
+    border: 5px solid transparent;
+    border-bottom-width: 10px;
+    margin: 30px;
+}
+.margin-box {
+    -webkit-shape-outside: margin-box;
+    width: 10px;
+    height: 10px;
+    padding: 4px 2px;
+    border: 3px solid transparent;
+    border-bottom-width: 6px;
+    margin: 10px 5px;
+}
+.margin-box::before {
+    display: block;
+    margin-right: -10px;
+    width: 30px;
+    height: 30px;
+    background-color: green;
+    content: ' ';
+}
+.shape {
+    background-color: green;
+    float: left;
+    border-top-width: 0;
+    padding-top: 0;
+    margin-top: 0;
+}
+</style>
+</head>
+<body>
+    <p>These tests set the shape-outside to a &lt;shape&gt; &lt;box&gt; pair with writing-mode: vertical-rl, where the shape takes up its entire sizing box. They test for each of the various sizing boxes (margin/border/padding/content). They require the Ahem font. You should see green squares, with no red.</p>
+    <p>shape-outside: content-box</p>
+    <div class='container'>
+        <div class='shape content-box'></div>
+        xxx xx xxx
+    </div>
+    <p>shape-outside: padding-box</p>
+    <div class='container'>
+        <div class='shape padding-box'></div>
+        xxx xx xxx
+    </div>
+    <p>shape-outside: border-box</p>
+    <div class='container'>
+        <div class='shape border-box'></div>
+        xxx xx xxx
+    </div>
+    <p>shape-outside: margin-box</p>
+    <div class='container'>
+        <div class='shape margin-box'></div>
+        xx xxx xxx
+    </div>
+</body>
+</html>

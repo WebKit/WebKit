@@ -1,0 +1,47 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+<script>
+
+var a = 1;
+function testFunction()
+{
+    var a = 2;
+    debugger;
+}
+
+var test = function()
+{
+    InspectorTest.startDebuggerTest(step1);
+
+    function step1()
+    {
+        InspectorTest.runTestFunctionAndWaitUntilPaused(step2);
+    }
+
+    function step2()
+    {
+        InspectorTest.evaluateInConsole("a", step3);
+    }
+
+    function step3(result)
+    {
+        InspectorTest.addResult("Evaluated in console in the top frame context: a = " + result);
+        InspectorTest.completeDebuggerTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Test that evaluation in the context of top frame will see values
+of its local variables, even if there are global variables with
+same names. On success the test will print a = 2(value of the
+local variable a). <a href="https://bugs.webkit.org/show_bug.cgi?id=47358">Bug 47358.</a>
+</p>
+
+</body>
+</html>

@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>window.performance.timing attributes</title>
+        <link rel="author" title="Microsoft" href="http://www.microsoft.com/" />
+	<link rel="help" href="http://www.w3.org/TR/navigation-timing/#sec-navigation-timing-interface"/>        
+        <script src="/w3c/resources/testharness.js"></script>
+        <script src="/w3c/resources/testharnessreport.js"></script>
+        <script src="/w3c/webperf/resources/webperftestharness.js"></script>
+<script id="metadata_cache">/*
+{
+  "window.performance is defined": {
+    "help": "http://www.w3.org/TR/navigation-timing/#sec-window.performance-attribute",
+    "assert": "The window.performance attribute provides a hosting area for performance related attributes. ",
+    "author": "W3C http://www.w3.org/"
+  },
+  "window.performance.timing is defined": {
+    "help": "http://www.w3.org/TR/navigation-timing/#sec-window.performance-attribute",
+    "assert": "The window.performance attribute provides a hosting area for performance related attributes. ",
+    "author": "W3C http://www.w3.org/"
+  },
+  "window.performance.timing.connectEnd is defined.": {},
+  "window.performance.timing.connectStart is defined.": {},
+  "window.performance.timing.domComplete is defined.": {},
+  "window.performance.timing.domContentLoadedEventEnd is defined.": {},
+  "window.performance.timing.domContentLoadedEventStart is defined.": {},
+  "window.performance.timing.domInteractive is defined.": {},
+  "window.performance.timing.domLoading is defined.": {},
+  "window.performance.timing.domainLookupEnd is defined.": {},
+  "window.performance.timing.domainLookupStart is defined.": {},
+  "window.performance.timing.fetchStart is defined.": {},
+  "window.performance.timing.loadEventEnd is defined.": {},
+  "window.performance.timing.loadEventStart is defined.": {},
+  "window.performance.timing.navigationStart is defined.": {},
+  "window.performance.timing.redirectEnd is defined.": {},
+  "window.performance.timing.redirectStart is defined.": {},
+  "window.performance.timing.requestStart is defined.": {},
+  "window.performance.timing.responseEnd is defined.": {},
+  "window.performance.timing.responseStart is defined.": {},
+  "window.performance.timing.unloadEventEnd is defined.": {},
+  "window.performance.timing.unloadEventStart is defined.": {}
+}
+*/</script>
+    </head>
+    <body>
+        <h1>Description</h1>
+        <p>This test validates that all of the window.performance.timing attributes exist (but does not validate that their values are correct).</p>
+
+        <div id="log"></div>
+
+        <script>
+        test_namespace('timing');
+
+        for (var i = 0; i < timingAttributes.length; ++i)
+        {
+            test_attribute_exists('timing', timingAttributes[i]);
+        }
+        </script>
+    </body>
+</html>

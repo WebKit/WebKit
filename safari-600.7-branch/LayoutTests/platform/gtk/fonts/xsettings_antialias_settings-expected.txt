@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x34
+        RenderText {#text} at (0,0) size 758x34
+          text run at (0,0) width 462: "This text should be rendered with subpixel anti-aliasing turned on if your "
+          text run at (462,0) width 296: "XSettings specifies that. This should always be"
+          text run at (0,17) width 117: "true for this test in "
+          text run at (117,17) width 119: "DumpRenderTree."

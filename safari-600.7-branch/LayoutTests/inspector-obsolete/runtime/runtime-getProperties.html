@@ -1,0 +1,84 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script>
+
+var object1 = { get foo() { return 1; }, set foo(value) { } };
+var object2 = { get foo() { return 1; } };
+
+function test()
+{
+    var obj1, obj2;
+
+    InspectorTest.runTestSuite([
+        function testSetUp(next)
+        {
+            InspectorTest.evaluateInPage("dumpObjects('Initial')", step0);
+
+            function step0()
+            {
+                RuntimeAgent.evaluate("object1", step1);
+            }
+
+            function step1(error, result, wasThrown)
+            {
+                obj1 = WebInspector.RemoteObject.fromPayload(result);
+                RuntimeAgent.evaluate("object2", step2);
+            }
+
+            function step2(error, result, wasThrown)
+            {
+                obj2 = WebInspector.RemoteObject.fromPayload(result);
+                next();
+            }
+        },
+
+        function testGetterAndSetter(next)
+        {
+            obj1.getOwnProperties(step1);
+
+            function step1(properties)
+            {
+                for (var i = 0; i < properties.length; ++i)
+                    dumpProperty(properties[i]);
+
+                next();
+            }
+        },
+
+        function testGetterOnly(next)
+        {
+            obj2.getOwnProperties(step1);
+
+            function step1(properties)
+            {
+                for (var i = 0; i < properties.length; ++i)
+                    dumpProperty(properties[i]);
+
+                next();
+            }
+        }
+    ]);
+
+    function dumpProperty(property)
+    {
+        if (property.name === "__proto__")
+            return;
+
+        var value = property.value;
+        if (value)
+            property.value = { type: value.type, description: value.description.replace("function foo", "function "), objectId: value.objectId };
+        InspectorTest.dump(property, { objectId: "formatAsTypeName" });
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests RemoteObject.getProperties.
+</p>
+
+</body>
+</html>

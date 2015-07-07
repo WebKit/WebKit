@@ -1,0 +1,34 @@
+layer at (0,0) size 785x682
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x471
+  RenderBlock {HTML} at (0,0) size 785x471
+    RenderBody {BODY} at (8,8) size 769x455
+      RenderTable {TABLE} at (0,0) size 200x455 [border: (1px outset #808080)]
+        RenderBlock {CAPTION} at (0,0) size 200x206 [border: (3px solid #FFA500)]
+          RenderText {#text} at (78,3) size 44x36
+            text run at (78,3) width 44: "cap"
+        RenderTableSection {TBODY} at (1,207) size 198x247
+          RenderTableRow {TR} at (0,30) size 198x47
+            RenderTableCell {TD} at (30,45) size 54x17 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 18x15
+                text run at (1,1) width 18: "foo"
+            RenderTableCell {TD} at (114,30) size 54x47 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 17x15
+                text run at (1,1) width 17: "bar"
+              RenderBR {BR} at (18,1) size 0x15
+              RenderText {#text} at (1,16) size 19x15
+                text run at (1,16) width 19: "baz"
+              RenderBR {BR} at (20,16) size 0x15
+              RenderText {#text} at (1,31) size 19x15
+                text run at (1,31) width 19: "zap"
+          RenderTableRow {TR} at (0,107) size 198x110
+            RenderTableCell {TD} at (30,107) size 54x110 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 44x108
+                text run at (1,1) width 43: "foo"
+                text run at (1,37) width 41: "bar"
+                text run at (1,73) width 44: "baz"
+            RenderTableCell {TD} at (114,163) size 54x54 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 52x52 [border: (1px solid #008000)]
+                RenderBlock {DIV} at (1,1) size 402x302 [border: (1px solid #FF0000)]
+                  RenderText {#text} at (1,1) size 16x36
+                    text run at (1,1) width 16: "d"

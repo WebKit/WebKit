@@ -1,0 +1,18 @@
+Tests that elements panel shows proper inline style locations in the sidebar panel.
+
+
+[expanded] 
+element.style  { ()
+display: none;
+
+======== Matched CSS Rules ========
+[expanded] 
+.foo  { (styles-source-lines-inline.html:7)
+color: blue;
+
+[expanded] 
+div  { (user agent stylesheet)
+/-- overloaded --/ display: block;
+
+
+

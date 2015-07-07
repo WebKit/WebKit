@@ -1,0 +1,31 @@
+<pre id="console"></pre>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function log(message)
+    {
+        document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
+    }
+
+    function test(declaration, expectedHyphenateLimit)
+    {
+        var element = document.createElement("div");
+        element.style.cssText = declaration;
+        var hyphenateLimit = element.style.webkitHyphenateLimitLines;
+        if (hyphenateLimit === expectedHyphenateLimit)
+            log("PASS: '" + declaration + "' parsed as '" + hyphenateLimit + "'");
+        else
+            log("FAIL: '" + declaration + "' parsed as '" + hyphenateLimit + "'");
+    }
+
+    test('-webkit-hyphenate-limit-lines: initial;', 'initial');
+    test('-webkit-hyphenate-limit-lines: inherit;', 'inherit');
+    test('-webkit-hyphenate-limit-lines: no-limit;', 'no-limit');
+    test('-webkit-hyphenate-limit-lines: 0;', '0');
+    test('-webkit-hyphenate-limit-lines: 4;', '4');
+    test('-webkit-hyphenate-limit-lines: 2 2;', '');
+    test('-webkit-hyphenate-limit-lines: 2px;', '');
+    test('-webkit-hyphenate-limit-lines: -1;', '');
+    test('-webkit-hyphenate-limit-lines: "1";', '');
+</script>

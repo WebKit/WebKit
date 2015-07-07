@@ -1,0 +1,39 @@
+<html>
+<head>
+<style>
+    body {
+        height: 5000px;
+        background-color: red;
+        overflow: hidden;
+    }
+
+    #trigger {
+        -webkit-transform:translateZ(0);
+    }
+
+    #overlap {
+        width: 1000px;
+        height: 1000px;
+        background-color: green;
+        position: fixed;
+        left: 0px;
+        top: 0px;
+    }
+</style>
+</head>
+<script>
+    function doTest() {
+        if (window.testRunner)
+            testRunner.dumpAsText(true);
+        window.scrollTo(0, 2000);
+        if (window.testRunner)
+            testRunner.display();
+        window.scrollTo(0, 1800);
+    }
+    window.addEventListener("load", doTest, false);
+</script>
+<body>
+    <div id="trigger"></div>
+    <div id="overlap"></div>
+</body>
+</html>

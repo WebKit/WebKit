@@ -1,0 +1,5 @@
+Test that click events are fired for a slider when the range of values is dense enough that the thumb element is repositioned under the cursor on mouse press.
+
+
+PASS clickCount is 3
+

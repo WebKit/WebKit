@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Test WebSocket.extensions attribute.");
+
+window.jsTestIsAsync = true;
+
+var ws = new WebSocket("ws://localhost:8880/websocket/tests/hybi/simple");
+debug("Check the value before opening the connection:");
+shouldBeEqualToString("ws.extensions", "");
+
+// extensions attribute is read-only.
+debug("Check if the value is read only:");
+shouldBeEqualToString("ws.extensions = 'foo'; ws.extensions", "");
+
+ws.onopen = function(event)
+{
+    debug("Check the value after the connection is established:");
+    shouldBeEqualToString("ws.extensions", "x-webkit-deflate-frame");
+    finishJSTest();
+};
+
+</script>
+<script src="../../../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<p>
+    Test a Dashboard quirk that allows the <tt>src</tt> attribute of an HTML <tt>img</tt> element to
+    be specified using a form of CSS URL value notation.
+</p>
+<p id="result">
+    This test can only run in DumpRenderTree.
+</p>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        testRunner.setUseDashboardCompatibilityMode(true);
+
+        var image = document.createElement("img");
+
+        image.addEventListener("load", function(event) {
+            document.getElementById("result").innerText = "PASS";
+            testRunner.notifyDone();
+        }, false);
+
+        image.addEventListener("error", function(event) {
+            document.getElementById("result").innerText = "FAIL";
+            testRunner.notifyDone();
+        }, false);
+
+        image.src = 'url("resources/blue_rect.jpg")';
+    }
+</script>

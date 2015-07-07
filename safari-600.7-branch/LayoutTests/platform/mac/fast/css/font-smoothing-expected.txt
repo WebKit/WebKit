@@ -1,0 +1,36 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderInline {SPAN} at (0,0) size 303x23
+        RenderText {#text} at (0,0) size 303x23
+          text run at (0,0) width 303: "Hello. This is absolutely regular text."
+      RenderText {#text} at (303,4) size 4x18
+        text run at (303,4) width 4: " "
+      RenderBR {BR} at (307,18) size 0x0
+      RenderInline {SPAN} at (0,0) size 780x23
+        RenderText {#text} at (0,23) size 780x23
+          text run at (0,23) width 780: "Hello. This is text with -webkit-font-smoothing:auto. It should look like absolutely regular text."
+      RenderText {#text} at (780,27) size 4x18
+        text run at (780,27) width 4: " "
+      RenderBR {BR} at (784,41) size 0x0
+      RenderInline {SPAN} at (0,0) size 437x23
+        RenderText {#text} at (0,46) size 437x23
+          text run at (0,46) width 437: "Hello. This is text with -webkit-font-smoothing:none."
+      RenderText {#text} at (437,50) size 4x18
+        text run at (437,50) width 4: " "
+      RenderBR {BR} at (441,64) size 0x0
+      RenderInline {SPAN} at (0,0) size 486x23
+        RenderText {#text} at (0,69) size 486x23
+          text run at (0,69) width 486: "Hello. This is text with -webkit-font-smoothing:antialiased."
+      RenderText {#text} at (486,73) size 4x18
+        text run at (486,73) width 4: " "
+      RenderBR {BR} at (490,87) size 0x0
+      RenderInline {SPAN} at (0,0) size 716x46
+        RenderText {#text} at (0,92) size 716x46
+          text run at (0,92) width 716: "Hello. This is text with -webkit-font-smoothing:subpixel-antialiased. It should look like"
+          text run at (0,115) width 188: "absolutely regular text."
+      RenderText {#text} at (188,119) size 4x18
+        text run at (188,119) width 4: " "
+      RenderBR {BR} at (192,133) size 0x0

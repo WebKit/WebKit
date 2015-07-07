@@ -1,0 +1,32 @@
+<p>This tests Selection::addRange().  It should have no effect if the range passed to it does not intersect the currently selected range.  '3456' should be selected.</p>
+<div id="div">123456789</div>
+
+<script>
+var sel = window.getSelection();
+var div = document.getElementById("div");
+var text = div.firstChild;
+
+var range = document.createRange();
+range.setStart(text, 3);
+range.setEnd(text, 5);
+sel.addRange(range);
+
+range.setStart(text, 4);
+range.setEnd(text, 6);
+sel.addRange(range);
+
+range.setStart(text, 2);
+range.setEnd(text, 3);
+sel.addRange(range);
+
+// This should have no effect (until we support discontiguous selections) since this range doesn't intersect the currently selected range.
+range.setStart(text, 7);
+range.setEnd(text, 8);
+sel.addRange(range);
+
+// Ditto.
+range.setStart(text, 0);
+range.setEnd(text, 1);
+sel.addRange(range);
+
+</script>

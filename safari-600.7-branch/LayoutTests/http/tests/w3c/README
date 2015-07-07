@@ -1,0 +1,14 @@
+This directory contains files imported from the W3C.
+
+These files should not be modified directly unless noted otherwise.
+Please source the files from the following locations:
+
+resources - http://w3c-test.org/resources/ (last included changeset 06cab30bcee2)
+ WebIDLParser.js
+ idlharness.js
+ testharness.js
+ testharness.css
+ testharnessreport.js - Modify directly.
+
+webperf/ - http://w3c-test.org/resources/ (last included changeset unknown)
+ (Use Tools/Scripts/import-w3c-performance-wg-tests for updating)

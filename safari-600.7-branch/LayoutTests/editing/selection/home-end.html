@@ -1,0 +1,189 @@
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <style>
+        div.test {
+            -webkit-user-modify: read-write;
+            padding: 4px;
+            border: 1px dashed lightblue;
+            margin: 4px 4px 4px 24px;
+            outline: none;
+            font-family: Lucida Grande;
+            counter-increment: test-number;
+        }
+        div.test:before { content: counter(test-number); position: absolute; left: 8px; font-size: x-small; text-align: right; width: 20px; }
+        div.test span { background-color: #def; }
+        div.test img { width: 1em; height: 1em; background-color: lightgreen; }
+        div.test img + img { background-color: lightblue; }
+        div.test div { border: 1px dashed pink; padding: 3px; height: 2em; }
+    </style>
+    <script>
+        function log(message)
+        {
+            document.getElementById("console").appendChild(document.createTextNode(message));
+        }
+
+        function positionsMovingInDirection(sel, direction)
+        {
+            var positions = [];
+            positions.push({ node: sel.anchorNode, offset: sel.focusOffset});
+            sel.modify("move", direction, "lineBoundary");
+            positions.push({ node: sel.anchorNode, offset: sel.focusOffset});
+            return positions;
+        }
+
+        function fold(string)
+        {
+            var result = "";
+            for (var i = 0; i < string.length; ++i) {
+                var char = string.charCodeAt(i);
+                if (char >= 0x05d0)
+                    char -= 0x058f;
+                else if (char == 10) {
+                    result += "\\n";
+                    continue;
+                }
+                result += String.fromCharCode(char);
+            }
+            return result;
+        }
+
+        function logPositions(positions)
+        {
+            for (var i = 0; i < positions.length; ++i) {
+                if (i) {
+                    if (positions[i].node != positions[i - 1].node)
+                        log("]");
+                    log(", ");
+                }
+                if (!i || positions[i].node != positions[i - 1].node)
+                    log((positions[i].node instanceof Text ? '"' + fold(positions[i].node.data) + '"' : "<" + positions[i].node.tagName + ">") + "[");
+                log(positions[i].offset);
+            }
+            log("]");
+        }
+
+        onload = function()
+        {
+            if (!window.testRunner)
+                return;
+
+            testRunner.dumpAsText();
+
+            var tests = document.getElementsByClassName("test");
+            var sel = getSelection();
+            log("Test Moving forward/backward\n");
+            for (var i = 0; i < tests.length; ++i) {
+                var positionsMovingForward;
+                var positionsMovingBackward;
+    
+                log("Test " + (i + 1) + ", LTR:\n  Moving forward: ");
+                sel.setPosition(tests[i], 0);
+                positionsMovingForward = positionsMovingInDirection(sel, "forward");
+                logPositions(positionsMovingForward);
+                log("\n");
+
+                log("  Moving backward:  ");
+                positionsMovingBackward = positionsMovingInDirection(sel, "backward");
+                logPositions(positionsMovingBackward);
+                log("\n");
+
+                tests[i].style.direction = "rtl";
+
+                log("Test " + (i + 1) + ", RTL:\n  Moving forward: ");
+                sel.setPosition(tests[i], 0);
+                positionsMovingForward = positionsMovingInDirection(sel, "forward");
+                logPositions(positionsMovingForward);
+                log("\n");
+
+                log("  Moving backward:  ");
+                positionsMovingBackward = positionsMovingInDirection(sel, "backward");
+                logPositions(positionsMovingBackward);
+                log("\n");
+
+            }
+            log("Test Moving right/left\n");
+            for (var i = 0; i < tests.length; ++i) {
+                var positionsMovingRight;
+                var positionsMovingLeft;
+
+                tests[i].style.direction = "ltr";
+    
+                log("Test " + (i + 1) + ", LTR:\n  Moving right: ");
+                sel.setPosition(tests[i], 0);
+                positionsMovingRight = positionsMovingInDirection(sel, "right");
+                logPositions(positionsMovingRight);
+                log("\n");
+
+                log("  Moving left:  ");
+                positionsMovingLeft = positionsMovingInDirection(sel, "left");
+                logPositions(positionsMovingLeft);
+                log("\n");
+
+                tests[i].style.direction = "rtl";
+
+                log("Test " + (i + 1) + ", RTL:\n  Moving left: ");
+                sel.setPosition(tests[i], 0);
+                positionsMovingLeft = positionsMovingInDirection(sel, "left");
+                logPositions(positionsMovingLeft);
+                log("\n");
+
+                log("  Moving right:  ");
+                positionsMovingRight = positionsMovingInDirection(sel, "right");
+                logPositions(positionsMovingRight);
+                log("\n");
+
+                tests[i].style.display = "none";
+            }
+        }
+
+    </script>
+</head>
+<body>
+
+<div contenteditable class="test">
+abc &#1488;&#1489;&#1490; xyz &#1491;&#1492;&#1493; def
+</div>
+<div contenteditable class="test">
+&#1488;&#1489;&#1490; xyz &#1491;&#1492;&#1493; def &#1494;&#1495;&#1496;
+</div>
+<div contenteditable class="test">
+&#1488;&#1489;&#1490; &#1491;&#1492;&#1493; &#1488;&#1489;&#1490;
+</div>
+<div contenteditable class="test">
+abc efd dabeb
+</div>
+
+<div contenteditable  class="test">Lorem <span  style="direction: rtl">ipsum dolor sit</span> amet</div>
+<div contenteditable  class="test">Lorem <span  style="direction: rtl">ipsum dolor<div > just a test</div> sit</span> amet</div>
+<div contenteditable class="test">Lorem <span  dir="rtl">ipsum dolor sit</span> amet</div>
+<div contenteditable class="test">Lorem <div  dir="rtl">ipsum dolor sit</div> amet</div>
+
+<div contenteditable  class="test">Lorem <span  style="direction: ltr">ipsum dolor sit</span> amet</div>
+<div contenteditable  class="test">Lorem <span  style="direction: ltr">ipsum dolor<div > just a test</div> sit</span> amet</div>
+<div contenteditable class="test">Lorem <span  dir="ltr">ipsum dolor sit</span> amet</div>
+<div contenteditable class="test">Lorem <div  dir="ltr">ipsum dolor sit</div> amet</div>
+
+<div class="test" style="direction: ltr;" contenteditable>
+ Just
+ <span>testing רק</span>
+ בודק
+</div>
+
+<div class="test" style="direction: ltr;" contenteditable>
+ Just
+ <span>testing what</span>
+ ever
+</div>
+
+
+<div class="test" contenteditable>car means &#1488;&#1489;&#1490;.</div>
+<div class="test" contenteditable>&#x202B;car &#1491;&#1492;&#1493; &#1488;&#1489;&#1490;.&#x202c;</div>
+<div class="test" contenteditable>he said "&#x202B;car &#1491;&#1492;&#1493; &#1488;&#1489;&#1490;&#x202c;."</div>
+<div class="test" contenteditable>&#1494;&#1495;&#1496; &#1497;&#1498;&#1499; &#1500;&#1501;&#1502; '&#x202a;he said "&#x202B;car &#1491;&#1492;&#1493; &#1488;&#1489;&#1490;&#x202c;"&#x202c;'?</div>
+
+
+<div class="test" contenteditable>&#1488;&#1489;&#1490; abc &#1491;&#1492;&#1493;<br />edf &#1494;&#1495;&#1496; abrebg</div>
+<div class="test" contenteditable style="line-break:before-white-space; width:100px">abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg </div>
+<div class="test" contenteditable style="line-break:after-white-space; width:100px">abcdefg abcdefg abcdefg a abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg abcdefg </div>
+<pre id="console"></pre>
+</body>

@@ -1,0 +1,5 @@
+The test passes if all DIVs are green.
+
+DIV1
+DIV2
+Pass

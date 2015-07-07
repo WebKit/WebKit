@@ -1,0 +1,66 @@
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla Bug Tracking System.
+  #
+  # Contributor(s): Alexander Eiser <alexe@ed.ca>
+  #%]
+
+[%# INTERFACE:
+  # field: object; the field object that you are trying to delete.
+  # token: string; the delete_field token required to complete deletion.
+  #%]
+
+[% PROCESS "global/field-descs.none.tmpl" %]
+
+[% title = BLOCK %]
+  Delete the Custom Field '[% field.name FILTER html %]' ([% field.description FILTER html %])
+[% END %]
+
+[% PROCESS global/header.html.tmpl
+           title = title
+           doc_section = "custom-fields.html#delete-custom-fields"
+%]
+
+<table border="1" cellpadding="4" cellspacing="0">
+<tr bgcolor="#6666FF">
+  <th valign="top" align="left">Field</th>
+  <th valign="top" align="left">Value</th>
+</tr>
+<tr>
+  <td valign="top">Custom Field:</td>
+  <td valign="top">[% field.name FILTER html %]</td>
+</tr>
+<tr>
+  <td valign="top">Description:</td>
+  <td valign="top">[% field.description FILTER html %]</td>
+</tr>
+<tr>
+  <td valign="top">Type:</td>
+  <td valign="top">[% field_types.${field.type} FILTER html %]</td>
+</tr>
+</table>
+
+<h2>Confirmation</h2>
+
+<p>
+  Are you sure you want to remove this field from the database?<br>
+  <em>This action will only be successful if the field is obsolete,
+  and has never been used in [% terms.abug FILTER html %].</em>
+</p>
+
+<a href="editfields.cgi?action=delete&amp;name=[% field.name FILTER html %]&amp;token=[% token FILTER html %]">
+  Delete field '[% field.description FILTER html %]'</a>
+
+<p>
+  <a href="editfields.cgi">Back to the list of existing custom fields</a>
+</p>
+
+[% PROCESS global/footer.html.tmpl %]

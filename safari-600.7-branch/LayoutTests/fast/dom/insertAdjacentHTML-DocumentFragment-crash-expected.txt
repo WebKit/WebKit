@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 9: NoModificationAllowedError: DOM Exception 7: An attempt was made to modify an object where modifications are not allowed.
+This test passes if it doesn't crash (or ASSERT).

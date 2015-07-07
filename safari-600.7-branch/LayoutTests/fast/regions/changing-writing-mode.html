@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Changing writing mode on the first region</title>
+    </head>
+    <body style="color:black; background:white;">
+        <p>Below you should see the word 'PASS' on a lime background.</p>
+        <div id="container" style="width:20em; height:20em; line-height:2em;">
+            <div style="-webkit-flow-into:thread;">
+                <br>
+                <div style="-webkit-region-break-after:always;"></div>
+                <div style="-webkit-writing-mode:horizontal-tb;">PASS</div>
+            </div>
+            <div style="-webkit-flow-from:thread; background:black;"></div>
+            <div style="-webkit-flow-from:thread; background:lime;"></div>
+        </div>
+        <script>
+            document.getElementById('container').offsetLeft; // Make sure we have laid out.
+            document.getElementById('container').style.WebkitWritingMode = 'vertical-rl';
+        </script>
+    </body>
+</html>

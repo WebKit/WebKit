@@ -1,0 +1,41 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x269
+  RenderBlock {HTML} at (0,0) size 800x269
+    RenderBody {BODY} at (8,16) size 784x245
+      RenderBlock {P} at (0,0) size 784x17
+        RenderInline {B} at (0,0) size 62x17
+          RenderText {#text} at (0,0) size 62x17
+            text run at (0,0) width 62: "BUG ID:"
+        RenderText {#text} at (62,0) size 4x17
+          text run at (62,0) width 4: " "
+        RenderInline {A} at (0,0) size 117x17 [color=#0000EE]
+          RenderText {#text} at (66,0) size 117x17
+            text run at (66,0) width 117: "Bugzilla bug 7235"
+        RenderText {#text} at (183,0) size 395x17
+          text run at (183,0) width 395: " Pure CSS Tooltips method renders wrong and creates artifacts"
+      RenderBlock {P} at (0,33) size 784x23 [bgcolor=#98FB98]
+        RenderInline {B} at (0,0) size 91x17
+          RenderText {#text} at (3,3) size 91x17
+            text run at (3,3) width 91: "TEST PASS:"
+        RenderText {#text} at (94,3) size 262x17
+          text run at (94,3) width 4: " "
+          text run at (98,3) width 258: "The square should change to solid green."
+      RenderBlock {P} at (0,72) size 784x40 [bgcolor=#FF3300]
+        RenderInline {B} at (0,0) size 90x17
+          RenderText {#text} at (3,3) size 90x17
+            text run at (3,3) width 90: "TEST FAIL:"
+        RenderText {#text} at (93,3) size 773x34
+          text run at (93,3) width 4: " "
+          text run at (97,3) width 679: "The square will remain red and will only change to green when the window is resized, scrolled or otherwise"
+          text run at (3,20) width 62: "repainted."
+      RenderBlock {P} at (0,128) size 784x0
+      RenderBlock (anonymous) at (0,128) size 784x17
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,145) size 100x100 [bgcolor=#FF0000]
+layer at (-92,144) size 4x17 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600 outlineClip at (0,0) size 800x600
+  RenderInline (relative positioned) {SPAN} at (0,0) size 4x17
+    RenderText {#text} at (100,0) size 4x17
+      text run at (100,0) width 4: " "
+layer at (8,161) size 100x100
+  RenderBlock (positioned) {DIV} at (0,17) size 100x100 [bgcolor=#008000]

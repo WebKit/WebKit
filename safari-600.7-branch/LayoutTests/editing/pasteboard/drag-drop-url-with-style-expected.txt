@@ -1,0 +1,18 @@
+This tests dragging and dropping a URL. The content before and after the drag and drop should match.
+
+before:
+| <a>
+|   href="http://webkit.org/"
+|   style="color:orange"
+|   target="_blank"
+|   title="some title"
+|   "<#selection-anchor>drag me<#selection-focus>"
+
+after:
+| <a>
+|   href="http://webkit.org/"
+|   style="color: orange;"
+|   target="_blank"
+|   title="some title"
+|   "<#selection-anchor>drag me<#selection-focus>"
+| <br>

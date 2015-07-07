@@ -1,0 +1,8 @@
+This test ensures that setting the src attribute does not cause the document inside the iframe to change.
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+PASS

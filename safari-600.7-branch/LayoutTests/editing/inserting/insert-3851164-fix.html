@@ -1,0 +1,32 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    word-wrap: break-word; 
+    -khtml-nbsp-mode: space; 
+    -khtml-line-break: after-white-space;
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    selectAllCommand();
+    deleteCommand();
+    typeCharacterCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body contenteditable id="test" class="editing"><P style='margin: 0.0px 0.0px 0.0px 0.0px; font: 24.0px sans-serif'>@@ -571,6 +607,7 @@</P>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,33 @@
+Tests that asynchronous XMLHttpRequests handle redirects according to the CORS standard.
+
+Testing resources/redirect-cors.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi
+Expecting success: false
+PASS: 0
+Testing resources/redirect-cors.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi&  access-control-allow-origin=http://localhost:8000&  access-control-allow-credentials=true
+Expecting success: false
+PASS: 0
+Testing resources/redirect-cors.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi&  access-control-allow-origin=http://localhost:8000&  access-control-allow-credentials=true
+Expecting success: false
+PASS: 0
+Testing http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi
+Expecting success: false
+PASS: 0
+Testing http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi&  access-control-allow-origin=http://localhost:8000
+Expecting success: true
+FAIL: 0
+Testing http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?url=http://username:password@localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi&  access-control-allow-origin=http://localhost:8000
+Expecting success: false
+PASS: 0
+Testing http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?url=foo://bar.cgi&  access-control-allow-origin=http://localhost:8000
+Expecting success: false
+PASS: 0
+Testing http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?redirect-preflight=true&  url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi&  access-control-allow-origin=*
+Expecting success: false
+PASS: 0
+Testing http://localhost:8000/xmlhttprequest/resources/redirect-cors.php?redirect-preflight=false&  url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi&  access-control-allow-origin=*&  access-control-allow-headers=x-webkit
+Expecting success: false
+PASS: 0
+Testing resources/redirect-cors.php?url=http://127.0.0.1:8000/xmlhttprequest/resources/get.txt
+Expecting success: true
+PASS: PASS
+

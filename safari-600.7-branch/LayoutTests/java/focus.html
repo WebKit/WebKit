@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitJavaEnabled", "1");
+</script>
+</head>
+<body>
+<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=32292">bug 32292</a>:
+"Unable to focus on embedded plugins such as Flash via javascript focus()"</p>
+<p>This tests focusing Applets. See LayoutTests/plugins for Embed and Object elements.</p>
+<div id=appletOwner>
+
+<applet id="appletElem" width=150 height=25 code="SharedApplet.class" name="javaTest" shouldFocus=true></applet>
+
+<applet id="appletElemWithFallbackContents" width=150 height=25 code="SharedApplet.class" name="javaTest" shouldFocus=true>Fallback Contents.</applet>
+
+<applet id="noCodeAppletElem" width=150 height=25 code="DoesNotExist.class" shouldFocus=false></applet>
+
+<applet id="noCodeAppletElemWithFallbackContents" width=150 height=25 code="DoesNotExist.class" shouldFocus=false>Fallback contents.</applet>
+
+<applet id="noCodeAppletElemWithTabindex" width=150 height=25 code="DoesNotExist.class" tabindex=-1 shouldFocus=true></applet>
+
+<applet id="noCodeAppletElemWithContenteditable" width=150 height=25 code="DoesNotExist.class" shouldFocus=true></applet>
+
+</div>
+<script>
+
+description("Test for Applet for bug 32292: Unable to focus on embedded plugins such as Flash via javascript focus().");
+
+function RunTest() {
+    var owner = document.getElementById("appletOwner");
+    for (var i = 0; i < owner.childNodes.length; ++i) {
+        pluginElement = owner.childNodes[i];
+        if (pluginElement.id) {
+            pluginElement.focus();
+            shouldBe('"' + pluginElement.id + '"; document.activeElement === pluginElement',
+                pluginElement.getAttribute("shouldFocus").toString());
+            pluginElement.blur();
+        }
+    }
+}
+
+document.addEventListener("DOMContentLoaded", RunTest, false);
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

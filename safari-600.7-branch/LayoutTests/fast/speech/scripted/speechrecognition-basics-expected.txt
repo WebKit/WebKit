@@ -1,0 +1,57 @@
+Test basic interaction with the Speech JavaScript API
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 'webkitSpeechRecognition' in self is true
+PASS webkitSpeechRecognition == null is false
+
+oneMatchTest():
+onstart
+PASS count is 0
+onaudiostart
+PASS count is 1
+onsoundstart
+PASS count is 2
+onspeechstart
+PASS count is 3
+onresult
+PASS count is 4
+PASS event.results.length is 1
+PASS event.results[0].length is 1
+PASS event.results[0].isFinal is true
+PASS event.results[0].item(0).transcript is "hello, world"
+PASS event.results[0].item(0).confidence is within 0.001 of 0.42
+onspeechend
+PASS count is 5
+onsoundend
+PASS count is 6
+onaudioend
+PASS count is 7
+onend
+PASS count is 8
+
+noMatchTest():
+onstart
+PASS count is 0
+onaudiostart
+PASS count is 1
+onsoundstart
+PASS count is 2
+onspeechstart
+PASS count is 3
+onnomatch
+PASS count is 4
+PASS event.results is null
+onspeechend
+PASS count is 5
+onsoundend
+PASS count is 6
+onaudioend
+PASS count is 7
+onend
+PASS count is 8
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

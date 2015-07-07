@@ -1,0 +1,30 @@
+<html>
+<head>
+    <script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+    <script>
+        function test()
+        {
+            if (window.testRunner)
+                testRunner.dumpAsText();
+
+            var target = document.getElementById("target");
+            getSelection().setBaseAndExtent(target.firstChild, 0, target.frstChild, 0);
+            moveSelectionForwardByLineCommand();
+
+            document.getElementById("result").innerText = getSelection().baseOffset == 63 ? "PASS" : "FAIL";
+        }
+    </script>
+</head>
+<body onload="test()">
+    <p>
+        Test for <i><a href="http://bugs.webkit.org/show_bug.cgi?id=14972">http://bugs.webkit.org/show_bug.cgi?id=14972</a>
+        Moving cursor down in contentEditable section fails if styled line-height:1em</i>.
+    </p>
+    <p id="result">
+        Test did not run
+    </p>
+    <p contenteditable="true" id="target" style="white-space: pre-line; line-height: 1em;">Pressing the down arrow when the caret is on this line
+        should move it to this line.
+    </p>
+</body>
+</html>

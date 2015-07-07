@@ -1,0 +1,59 @@
+# Copyright (C) 2013 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#if ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)
+
+messages -> DatabaseProcessIDBConnection LegacyReceiver {
+    EstablishConnection(String databaseName, WebKit::SecurityOriginData openingOrigin, WebKit::SecurityOriginData mainFrameOrigin)
+    GetOrEstablishIDBDatabaseMetadata(uint64_t requestID)
+    DeleteDatabase(uint64_t requestID, String databaseName)
+
+    OpenTransaction(uint64_t requestID, int64_t transactionID, Vector<int64_t> objectStoreIDs, uint64_t transactionMode)
+    BeginTransaction(uint64_t requestID, int64_t transactionID)
+    CommitTransaction(uint64_t requestID, int64_t transactionID)
+    ResetTransaction(uint64_t requestID, int64_t transactionID)
+    RollbackTransaction(uint64_t requestID, int64_t transactionID)
+
+    ResetTransactionSync(int64_t transactionID) -> (bool success) Delayed
+    RollbackTransactionSync(int64_t transactionID) -> (bool success) Delayed
+    
+    ChangeDatabaseVersion(uint64_t requestID, int64_t transactionID, uint64_t newVersion)
+    CreateObjectStore(uint64_t requestID, int64_t transactionID, WebCore::IDBObjectStoreMetadata objectStoreMetadata)
+    DeleteObjectStore(uint64_t requestID, int64_t transactionID, int64_t objectStoreID)
+    ClearObjectStore(uint64_t requestID, int64_t transactionID, int64_t objectStoreID);
+    CreateIndex(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, WebCore::IDBIndexMetadata indexMetadata)
+    DeleteIndex(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID)
+
+    PutRecord(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, WebCore::IDBKeyData key, IPC::DataReference value, int64_t putMode, Vector<int64_t> indexIDs, Vector<Vector<WebCore::IDBKeyData>> indexKeys)
+    GetRecord(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID, WebCore::IDBKeyRangeData keyRange, int64_t cursorType)
+    
+    OpenCursor(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID, int64_t cursorDirection, int64_t cursorType, int64_t taskType, WebCore::IDBKeyRangeData keyRange)
+    CursorAdvance(uint64_t requestID, int64_t cursorID, uint64_t count)
+    CursorIterate(uint64_t requestID, int64_t cursorID, WebCore::IDBKeyData key)
+    
+    Count(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, int64_t indexID, WebCore::IDBKeyRangeData keyRange)
+    DeleteRange(uint64_t requestID, int64_t transactionID, int64_t objectStoreID, WebCore::IDBKeyRangeData keyRange)
+    
+    Close()
+}
+
+#endif // ENABLE(INDEXED_DATABASE) && ENABLE(DATABASE_PROCESS)

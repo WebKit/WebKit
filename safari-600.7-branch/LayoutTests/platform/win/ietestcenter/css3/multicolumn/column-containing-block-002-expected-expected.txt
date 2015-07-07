@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x170
+  RenderBlock {HTML} at (0,0) size 800x170
+    RenderBody {BODY} at (0,16) size 800x154
+      RenderBlock {P} at (8,0) size 792x18
+        RenderText {#text} at (0,0) size 303x18
+          text run at (0,0) width 303: "Test passes if there is no red visible on the page."
+layer at (0,50) size 220x120
+  RenderBlock (relative positioned) {DIV} at (0,34) size 220x120 [color=#008000] [bgcolor=#008000]

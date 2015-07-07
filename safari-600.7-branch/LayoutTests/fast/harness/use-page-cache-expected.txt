@@ -1,0 +1,8 @@
+This test uses testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1); to enable back-forward WebKit page cache for the duration of the test. The test enables cache, navigates to page-1, then to page-2 and then does history.back() to page-1. On navigation back to page-1, test verifies that previously-initialized timer continues to fire and onload is not called again. If test fails it hangs or outputs 'FAIL' below.
+
+open page-1
+page-1, about to navigate to page-2.
+page-2, about to go back to page-1
+Back on page-1, timer is still firing.
+PASS.
+

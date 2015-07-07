@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<script src='resources/autoresize-util.js'></script>
+<script>
+function runTest()
+{
+    if (window.testRunner) {
+        testRunner.enableAutoResizeMode(10, 10, 1000, 1000);
+        testRunner.dumpAsText();
+    }
+    shouldBe('document.body.clientWidth', 'window.innerWidth');
+    shouldBe('document.body.clientHeight', 'window.innerHeight');
+    shouldBe('document.body.scrollWidth', 'window.innerWidth');
+    shouldBe('document.body.scrollHeight', 'window.innerHeight');
+    shouldBe('window.innerWidth', 'window.outerWidth');
+    shouldBe('window.innerHeight', 'window.outerHeight');
+    if (window.testRunner)
+        testRunner.disableAutoResizeMode(200, 200);
+
+    shouldBe('window.outerWidth', 200);
+    shouldBe('window.outerHeight', 200);
+    document.body.style.width = '100px';
+    shouldBe('window.outerWidth', 200);
+
+    log('DONE');
+}
+</script>
+<body onload="runTest()" style="margin:0; width:900px">
+This test verifies that turning off auto resize functions correctly. It only works when run in dumprendertree as it relies on having auto-resize function available.
+<br>
+<br>
+When it succeeds, there should be a series of PASS messages followed by a DONE message.
+<br>
+<br>
+<div id='result'>
+</div>
+</body>
+</html>

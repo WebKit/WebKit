@@ -1,0 +1,40 @@
+This test makes sure that navigator.unregisterProtocolHandler throws the proper exceptions and has no-op default implementation.
+
+Fail: window.navigator.unregisterProtocolHandler is not defined.
+Fail: Invalid protocol "http" allowed.
+Fail: Invalid protocol "https" allowed.
+Fail: Invalid protocol "file" allowed.
+Fail: Invalid protocol "web+" allowed.
+Fail: Valid protocol "bitcoin" failed.
+Fail: Valid protocol "BitcoIn" failed.
+Fail: Valid protocol "geo" failed.
+Fail: Valid protocol "im" failed.
+Fail: Valid protocol "irc" failed.
+Fail: Valid protocol "Irc" failed.
+Fail: Valid protocol "ircs" failed.
+Fail: Valid protocol "magnet" failed.
+Fail: Valid protocol "MagneT" failed.
+Fail: Valid protocol "mailto" failed.
+Fail: Valid protocol "mms" failed.
+Fail: Valid protocol "news" failed.
+Fail: Valid protocol "nntp" failed.
+Fail: Valid protocol "sip" failed.
+Fail: Valid protocol "sms" failed.
+Fail: Valid protocol "smsto" failed.
+Fail: Valid protocol "SmsTo" failed.
+Fail: Valid protocol "ssh" failed.
+Fail: Valid protocol "tel" failed.
+Fail: Valid protocol "urn" failed.
+Fail: Valid protocol "webcal" failed.
+Fail: Valid protocol "WebCAL" failed.
+Fail: Valid protocol "wtai" failed.
+Fail: Valid protocol "WTAI" failed.
+Fail: Valid protocol "xmpp" failed.
+Pass: Invalid scheme "mailto:" failed.
+Pass: Invalid scheme "ssh:/" failed.
+Pass: Invalid scheme "magnet:+" failed.
+Pass: Invalid scheme "tel:sip" failed.
+Fail: Invalid url "" allowed.
+Fail: Invalid url "%S" allowed.
+Fail: Invalid call did not succeed.
+

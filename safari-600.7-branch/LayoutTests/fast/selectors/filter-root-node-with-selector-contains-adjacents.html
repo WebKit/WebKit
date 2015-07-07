@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div style="display:none">
+    <span class="ok" id="first"></span>
+    <t1></t1>
+
+    <span class="ok" id="second"></span>
+    <t2></t2>
+
+    <span class="ok" id="third"></span>
+    <t3><t4></t4></t3>
+
+    <span class="ok" id="fourth">
+        <t6>
+        </t6>
+        <t7></t7>
+        <t7></t7>
+        <t7>
+            <t7></t7>
+        </t7>
+    </span>
+</div>
+</body>
+<script>
+description('Test filtering the root nodes by leveraging #id inside selectors with adjacents.');
+
+[
+    'span$',
+    '.ok$',
+    '$.ok',
+    'span$.ok',
+    'span.ok$'
+].forEach(function (selector) {
+    shouldBe('document.querySelectorAll("' + selector.replace('$', '#first')  + ' + t1").length', '1');
+    shouldBe('document.querySelectorAll("' + selector.replace('$', '#second') + ' ~ t2").length', '1');
+    shouldBe('document.querySelectorAll("' + selector.replace('$', '#third')  + ' + t3 > t4").length', '1');
+    shouldBe('document.querySelectorAll("' + selector.replace('$', '#third')  + ' + t3 > t5").length', '0');
+    shouldBe('document.querySelectorAll("' + selector.replace('$', '#fourth') + ' t6 ~ t7").length', '3');
+});
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

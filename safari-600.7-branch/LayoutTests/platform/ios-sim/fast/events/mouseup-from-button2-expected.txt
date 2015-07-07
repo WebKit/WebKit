@@ -1,0 +1,10 @@
+This test verifies that a right mousebutton click generates a mousedown, context and mouseup event.
+
+If the test passes, you'll see a PASS message below.
+
+To run this test in Safari:
+
+Right mouse down inside the box.
+Right mouse up.
+box
+

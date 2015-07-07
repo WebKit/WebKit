@@ -1,0 +1,30 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaArray to String
+
+FAIL dt.setStringObject( DT.staticGetByteArray() ); dt.PUB_STRING +'': Exception raised
+FAIL dt.setStringObject( DT.staticGetByteArray() ); dt.getStringObject() +'': Exception raised
+FAIL typeof dt.getStringObject() +'' should be string. Was object.
+FAIL dt.setStringObject( DT.staticGetCharArray() ); dt.PUB_STRING +'': Exception raised
+FAIL dt.setStringObject( DT.staticGetCharArray() ); dt.getStringObject() +'': Exception raised
+FAIL typeof dt.getStringObject() +'' should be string. Was object.
+FAIL dt.setStringObject( DT.staticGetShortArray() ); dt.PUB_STRING +'': Exception raised
+FAIL dt.setStringObject( DT.staticGetShortArray() ); dt.getStringObject() +'': Exception raised
+FAIL typeof dt.getStringObject() +'' should be string. Was object.
+FAIL dt.setStringObject( DT.staticGetLongArray() ); dt.PUB_STRING +'': Exception raised
+FAIL dt.setStringObject( DT.staticGetLongArray() ); dt.getStringObject() +'': Exception raised
+FAIL typeof dt.getStringObject() +'' should be string. Was object.
+FAIL dt.setStringObject( DT.staticGetIntArray() ); dt.PUB_STRING +'': Exception raised
+FAIL dt.setStringObject( DT.staticGetIntArray() ); dt.getStringObject() +'': Exception raised
+FAIL typeof dt.getStringObject() +'' should be string. Was object.
+FAIL dt.setStringObject( DT.staticGetFloatArray() ); dt.PUB_STRING +'': Exception raised
+FAIL dt.setStringObject( DT.staticGetFloatArray() ); dt.getStringObject() +'': Exception raised
+FAIL typeof dt.getStringObject() +'' should be string. Was object.
+FAIL dt.setStringObject( DT.staticGetObjectArray() ); dt.PUB_STRING +'': Exception raised
+FAIL dt.setStringObject( DT.staticGetObjectArray() ); dt.getStringObject() +'': Exception raised
+FAIL typeof dt.getStringObject() +'' should be string. Was object.
+FAIL dt.setStringObject(java.lang.String(wkTestStringToJavaByteArray("hello"))); dt.PUB_STRING +'' should be hello. Threw exception ReferenceError: Can't find variable: java
+FAIL dt.setStringObject(java.lang.String(wkTestStringToJavaByteArray("hello"))); dt.getStringObject() +'' should be hello. Threw exception ReferenceError: Can't find variable: java
+FAIL typeof dt.getStringObject() +'' should be string. Was object.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

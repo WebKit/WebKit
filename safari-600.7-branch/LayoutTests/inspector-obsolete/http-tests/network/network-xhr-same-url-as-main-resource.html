@@ -1,0 +1,23 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../network-test.js"></script>
+<script>
+function test()
+{
+    InspectorTest.makeSimpleXHR("GET", "network-xhr-same-url-as-main-resource.html", true, step2);
+
+    function step2()
+    {
+        var request1 = WebInspector.panel("network").requests[WebInspector.panel("network").requests.length - 1];
+        InspectorTest.addResult(request1.type.name());
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that XHRs with the same url as a main resource have correct category.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=68648">Bug 68648</a>
+</body>
+</html>

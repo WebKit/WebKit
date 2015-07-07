@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x108
+  RenderBlock {HTML} at (0,0) size 800x108
+    RenderBody {BODY} at (8,16) size 784x76
+      RenderBlock {P} at (0,0) size 784x40
+        RenderInline {SPAN} at (0,0) size 477x39
+          RenderBR {BR} at (0,0) size 0x19
+          RenderText {#text} at (0,20) size 477x19
+            text run at (0,20) width 477: "There shouldn\x{2019}t be a black dot or line above the first letter of this sentence"
+        RenderText {#text} at (476,20) size 5x19
+          text run at (476,20) width 5: "."
+      RenderBlock {P} at (0,56) size 784x20
+        RenderText {#text} at (0,0) size 55x19
+          text run at (0,0) width 55: "Test for "
+        RenderInline {I} at (0,0) size 661x19
+          RenderInline {A} at (0,0) size 306x19 [color=#0000EE]
+            RenderText {#text} at (54,0) size 306x19
+              text run at (54,0) width 306: "http://bugs.webkit.org/show_bug.cgi?id=14245"
+          RenderText {#text} at (359,0) size 356x19
+            text run at (359,0) width 5: " "
+            text run at (363,0) width 352: "Underline painted under <br>, not repainted properly"
+        RenderText {#text} at (714,0) size 5x19
+          text run at (714,0) width 5: "."

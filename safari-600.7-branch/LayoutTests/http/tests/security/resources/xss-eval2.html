@@ -1,0 +1,17 @@
+<script>
+document.testExpando = "It's me too!";
+
+parent.childEval = eval;
+
+parent.childEvalCaller = function(s) {
+    return window.eval(s);
+}
+
+parent.childLocalEvalCaller = (function()
+{
+    var e = eval;
+    return function(s) { return e(s); };
+})();
+
+location.href = "http://localhost:8000/security/resources/xss-eval3.html";
+</script>

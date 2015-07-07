@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html style="font: 16px/1.25 monospace;">
+    <head>
+        <script type="text/javascript">
+            onload = function()
+            {
+                document.getElementById("container").scrollTop = 20;
+            }
+        </script>
+
+        <style>
+            #container {
+                border: thick solid green;
+                height: 150px;
+                overflow: scroll;
+                margin: 15px;
+                padding: 5px;
+                -webkit-flow-into: flow;
+            }
+
+            #region {
+                width: 300px;
+                height: 200px;
+                -webkit-flow-from: flow;
+                border: 2px solid blue;
+                margin: 10px;
+                padding: 35px;
+            }
+
+            .blueBackground {
+                background: lightblue;
+            }
+
+            #bottomDiv {
+                position: relative;
+                top: 50px;
+                width: 100px;
+                height: 100px;
+                background: green;
+            }
+        </style>
+    </head>
+
+    <body>
+        <a style="font-size: 14px" href="https://bugs.webkit.org/show_bug.cgi?id=130574">[CSS Regions] The background of children of scrollable elements flowed into regions is not properly scrolled</a>
+        <p>This test passes if the <span style="color:lightblue"><b>background</b></span> of the paragraphs inside the <span style="color:green"><b>green box</b></span> is properly painted when scrolling the box.</p>
+
+        <div id="region"></div>
+
+        <div id="container">
+            <p class="blueBackground">This text should have a lightblue background which properly paints when scrolling the parent.</p>
+            <p class="blueBackground">This text should have a lightblue background which properly paints when scrolling the parent.</p>
+            <div id="bottomDiv"></div>
+        </div>
+    </body>
+</html>

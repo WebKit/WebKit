@@ -1,0 +1,204 @@
+#!/usr/bin/env python
+# Copyright (C) 2011 Igalia S.L.
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
+from __future__ import print_function
+from ConfigParser import SafeConfigParser
+
+import argparse
+import codecs
+import common
+import glob
+import gtkdoc
+import logging
+import os.path
+import sys
+import webkitdom
+
+sys.stdout = codecs.getwriter("utf-8")(sys.stdout)
+sys.stderr = codecs.getwriter("utf-8")(sys.stderr)
+
+def configure_logging(verbose):
+    level = logging.DEBUG if verbose else logging.INFO
+    logger = logging.getLogger('gtkdoc')
+    logger.setLevel(level)
+    handler = logging.StreamHandler()
+    handler.setLevel(level)
+    logger.addHandler(handler)
+    if level == logging.DEBUG:
+        handler.setFormatter(logging.Formatter('[%(asctime)s]  %(message)s'))
+    else:
+        handler.setFormatter(logging.Formatter('%(message)s'))
+
+def get_gtkdoc_module_paths():
+    dependent_packages = {
+        'glib-2.0' : ['glib', 'gobject', 'gio'],
+        'libsoup-2.4' : ['libsoup-2.4'],
+        'gdk-pixbuf-2.0': ['gdk-pixbuf'],
+        'gtk+-3.0' : ['gtk3', 'gdk3']
+    }
+
+    paths = []
+    html_dir = os.path.join('share', 'gtk-doc', 'html')
+    for package, modules in dependent_packages.iteritems():
+        prefix = common.prefix_of_pkg_config_file(package)
+        if prefix is None:
+            continue
+        for module in modules:
+            paths.append(os.path.join(prefix, html_dir, module))
+    # This technically is not needed for the GObject DOM bindings documentation itself,
+    # but adding it doesn't hurt and allows us to avoid a check here.
+    paths.append(common.build_path('Documentation', 'webkitdomgtk', 'html'))
+    return paths
+
+def print_missing_api(generator):
+    missing_api = generator.api_missing_documentation()
+    if not missing_api:
+        return
+    print("\nThe following API are missing documentation:")
+    for api in missing_api:
+        print("\t{0}".format(api))
+
+def files_to_ignore(source_dirs, headers_with_gtkdoc):
+    """
+    Find files to ignore during documentation generation. We assume that if an
+    implementation file exists for a header with gtkdoc (say webkitfoo.cpp for
+    webkitfoo.h) we shouldn't ignore that file. Currently this holds true for all
+    of the WebKit project.
+    """
+    implementation_files = list(headers_with_gtkdoc)
+    for header in headers_with_gtkdoc:
+        def add_file_if_exists(file):
+            if os.path.isfile(file):
+                implementation_files.append(os.path.abspath(file))
+        header_name_without_extension = os.path.splitext(header)[0]
+        add_file_if_exists(header_name_without_extension + ".cpp")
+        add_file_if_exists(header_name_without_extension + ".c")
+
+    def file_should_be_ignored(file):
+        if os.path.splitext(file)[1] not in ['.h', '.c', '.cpp', '.cc']:
+            return False # These files are ignored anyway.
+        if not os.path.isfile(file):
+            return False
+        return os.path.abspath(file) not in implementation_files
+
+    all_files = sum([[os.path.join(dir, file) for file in os.listdir(dir)] for dir in source_dirs], [])
+    return filter(file_should_be_ignored, all_files)
+
+def get_generator_for_config(config_file, virtual_root):
+    if not os.path.isfile(config_file):
+        return None
+
+    config = SafeConfigParser()
+    config.read(config_file)
+    module_name = config.sections()[0]
+    pkgconfig_file = config.get(module_name, 'pkgconfig_file')
+
+    if not os.path.isfile(pkgconfig_file):
+        return None
+
+    source_dirs = config.get(module_name, 'source_dirs').replace(';', ' ').split()
+    headers = [os.path.abspath(f) for f in config.get(module_name, 'headers').replace(';', ' ').split()]
+    return gtkdoc.PkgConfigGTKDoc(pkgconfig_file, {
+        'decorator': 'WEBKIT_API|WEBKIT_DEPRECATED|WEBKIT_DEPRECATED_FOR\(.+\)',
+        'deprecation_guard': 'WEBKIT_DISABLE_DEPRECATED',
+        'library_path': common.library_build_path(),
+        'virtual_root': virtual_root,
+        'module_name': module_name,
+        'namespace': config.get(module_name, 'namespace'),
+        'doc_dir': config.get(module_name, 'doc_dir'),
+        'output_dir': common.build_path('Documentation', module_name),
+        'source_dirs': source_dirs,
+        'headers': headers,
+        'cflags': " ".join(config.get(module_name, 'cflags').split()),
+        'cross_reference_deps': get_gtkdoc_module_paths(),
+        'ignored_files': files_to_ignore(source_dirs, headers),
+    })
+
+def generate_doc(generator, skip_html):
+    print("\nGenerating {0} documentation...".format(generator.module_name))
+    generator.generate(not skip_html)
+    if generator.saw_warnings:
+        print_missing_api(generator)
+    return generator.saw_warnings
+
+def rebase_doc(generator):
+    print("\nRebasing {0} documentation...".format(generator.module_name))
+    try:
+        generator.rebase_installed_docs()
+    except Exception:
+        print("Rebase did not happen, likely no documentation is present.")
+
+def generate_documentation_for_config(config_file):
+    generator = get_generator_for_config(config_file, arguments.virtual_root)
+    if not generator:
+        print("{0} does not exist! Skipping that documentation.".format(os.path.basename(config_file)))
+        return
+
+    if not arguments.rebase:
+        return generate_doc(generator, arguments.skip_html)
+
+    rebase_doc(generator)
+    return False
+
+def prepare_environment_for_gtkdoc_generation():
+    # We need to add the JavaScriptCore build directory to the PKG_CONFIG_PATH
+    # so that pkgconfig can properly resolve the libjavascriptcore dependency.
+    pkg_config_path = os.environ.get("PKG_CONFIG_PATH")
+    os.environ['PKG_CONFIG_PATH'] = common.build_path('Source', 'JavaScriptCore')
+    if pkg_config_path:
+        os.environ['PKG_CONFIG_PATH'] += ':' + pkg_config_path
+
+    # Newer versions of glib have deprecated g_type_init, so we need to disable
+    # that warning when running gtkdoc-scanobj by overriding the CFLAGS we use
+    # to compile it.
+    cflags = os.environ.get('CFLAGS', '')
+    cflags += ' -DGLIB_VERSION_MIN_REQUIRED=GLIB_VERSION_2_32'
+
+    # In non-x86 architectures, when a pointer is cast to (void*) and
+    # back, the compiler thinks that the alignment is random. Since
+    # gtkdoc build is broken at any warning message, it is better to
+    # silence these false positives.
+    cflags += ' -Wno-cast-align'
+    os.environ['CFLAGS'] = cflags
+
+    # Paths from the GNUmakefile generated configuration files are relative to the build directory.
+    os.chdir(common.build_path())
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Generate gtkdoc for WebKit.')
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help='Whether or not to run in verbose mode.')
+    parser.add_argument('--rebase', action='store_true',
+                        help='When specified, run the tool in rebase mode.')
+    parser.add_argument('--skip-html', action='store_true',
+                        help='Whether or not to skip HTML generation, which can be slow.')
+    parser.add_argument('--virtual-root', type=str, default='',
+                        help='A temporary installation directory which is used as the root ' + \
+                             'where the actual installation prefix lives; this is mostly ' + \
+                             'useful for packagers, and should be set to what is given to ' + \
+                             'make install as DESTDIR.')
+
+    arguments = parser.parse_args()
+    configure_logging(arguments.verbose)
+
+    prepare_environment_for_gtkdoc_generation()
+
+    webkitdom.write_doc_files()
+    generate_documentation_for_config(common.build_path('gtkdoc-webkitdom.cfg'))
+    saw_warnings = generate_documentation_for_config(common.build_path('gtkdoc-webkit2gtk.cfg'))
+
+    sys.exit(saw_warnings)

@@ -1,0 +1,60 @@
+Tests to ensure that some kinds of events are stopeed at shadow boundary.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Other events than "click" should be stopped at shadow boundary.  A "click" is added for the purpose of comparing results.
+
+  abort
+     @target (target: target)
+     @parent-of-target (target: target)
+
+  select
+     @target (target: target)
+     @parent-of-target (target: target)
+
+  change
+     @target (target: target)
+     @parent-of-target (target: target)
+
+  reset
+     @target (target: target)
+     @parent-of-target (target: target)
+
+  resize
+     @target (target: target)
+     @parent-of-target (target: target)
+
+  scroll
+     @target (target: target)
+     @parent-of-target (target: target)
+
+  selectstart
+     @target (target: target)
+     @parent-of-target (target: target)
+
+  load
+     @target (target: target)
+     @parent-of-target (target: target)
+
+  error
+     @target (target: target)
+     @parent-of-target (target: target)
+
+  click
+     @target (target: target)
+     @parent-of-target (target: target)
+     @host (target: host)
+     @top (target: host)
+
+An event fired on a distributed child should not be stopped at the shadow boundary of its host (host2), but should be stopped at the nearest shadow boundary (host1).
+
+  selectstart
+     @distributed-child (target: distributed-child)
+     @content (target: distributed-child)
+     @parent-of-content (target: distributed-child)
+     @host2 (target: distributed-child)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

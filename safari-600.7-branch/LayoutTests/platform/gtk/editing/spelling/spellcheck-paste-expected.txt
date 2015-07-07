@@ -1,0 +1,18 @@
+For Bug 40092: Spell checking for pasted text.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL INPUT should have a marker on 'zz apple'
+FAIL INPUT should have a marker on 'z<b>z appl</b>e'
+FAIL INPUT should have a marker on 'zz zz zz'
+FAIL TEXTAREA should have a marker on 'zz apple'
+FAIL TEXTAREA should have a marker on 'z<b>z appl</b>e'
+FAIL TEXTAREA should have a marker on 'zz zz zz'
+FAIL DIV should have a marker on 'zz apple'
+FAIL DIV should have a marker on 'z<b>z appl</b>e'
+FAIL DIV should have a marker on 'zz zz zz'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

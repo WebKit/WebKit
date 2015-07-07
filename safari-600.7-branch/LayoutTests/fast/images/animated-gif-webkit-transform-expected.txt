@@ -1,0 +1,18 @@
+Test that animated images are correctly paused / resumed when translated in and out of view using -webkit-transform.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS isFirstImagePaused() is false
+PASS isSecondImagePaused() became true
+PASS isFirstImagePaused() is false
+Translating images left so that first image is no longer visible, but second image is.
+PASS isFirstImagePaused() became true
+PASS isSecondImagePaused() became false
+Translating images right so that second image is no longer visible, but first image is.
+PASS isFirstImagePaused() became false
+PASS isSecondImagePaused() became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+  

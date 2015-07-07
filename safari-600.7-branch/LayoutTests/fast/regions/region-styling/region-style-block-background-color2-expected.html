@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            html { font: 16px/1.25 monospace; }
+            .regionBox { width: 420px; height: 50px; }
+            .regionBox1 { width: 420px; height: 30px; }
+            .regionBox2 { width: 420px; height: 100px; }
+            .regionBox3 { width: 420px; height: 10px; }
+            .regionParagraphFlowRemoved { width: 420px; height: 20px; }
+            .greenBackground { background-color: green; }
+            .limeBackground { background-color: lime; }
+        </style>
+    </head>
+    <body>
+        <div class="regionBox">
+            <div class="greenBackground">Green background text styled in region1.</div>
+        </div>
+        <div>
+            <div class="limeBackground regionParagraphFlowRemoved">Lime background text styled out region2.</div>
+        </div>
+        <div class="regionBox">
+            <br>
+            <div class="greenBackground">Green background text styled in region31.</div>
+        </div>
+        <div class="regionBox1">
+            <div class="limeBackground">Lime background text styled in region32.</div>
+        </div>
+        <div class="regionBox">
+            <div class="greenBackground">Green background text styled in region41.</div>
+        </div>
+        <div class="regionBox1">
+            <div class="limeBackground">Lime background text styled in region42.</div>
+        </div>
+        <div class="regionBox2">
+            <div class="greenBackground">Green background text styled in region51.</div>
+            <br>
+            <div class="greenBackground">Green background text styled in region51.</div>
+        </div>
+        <div class="regionBox3"></div>
+
+        <div class="regionBox">
+            <div class="greenBackground">Green background text styled in region61.</div>
+        </div>
+        <div class="regionBox1">
+            <div class="limeBackground">Lime background text styled in region62.</div>
+        </div>
+        <div class="regionBox">
+            <div class="greenBackground">Green background text styled in region71.</div>
+        </div>
+        <div class="regionBox1">
+            <div class="limeBackground">Lime background text styled in region72.</div>
+        </div>
+    </body>
+</html>

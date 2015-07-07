@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TargetName>DumpRenderTree</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>USE_CONSOLE_ENTRY_POINT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)DumpRenderTree$(DebugSuffix).exe</OutputFile>
+      <SubSystem>Console</SubSystem>
+      <ProgramDatabaseFile>$(TargetDir)$(TargetName)Launcher.pdb</ProgramDatabaseFile>
+    </Link>
+  </ItemDefinitionGroup>
+</Project>

@@ -1,0 +1,286 @@
+Tests BreakpointManager class.
+
+
+Running: testSetBreakpoint
+  Created breakpoints manager
+  Dumping Storage
+  Adding UISourceCode: a.js
+  Setting breakpoint at a.js:30 enabled:true condition:
+    debuggerModel.setBreakpoint(a.js:30:)
+    breakpointAdded(a.js, 30, , true)
+    Location created: a.js:30
+  Dumping Storage
+    a.js:30 enabled:true condition:
+  Resetting breakpoint manager
+    breakpointRemoved(a.js, 30)
+    Location disposed: a.js:30
+    debuggerModel.removeBreakpoint(a.js:30)
+
+Running: testSetDisabledBreakpoint
+  Created breakpoints manager
+  Dumping Storage
+  Adding UISourceCode: a.js
+  Setting breakpoint at a.js:30 enabled:false condition:
+    breakpointAdded(a.js, 30, , false)
+  Dumping Storage
+    a.js:30 enabled:false condition:
+  Enabling breakpoint
+    debuggerModel.setBreakpoint(a.js:30:)
+    breakpointRemoved(a.js, 30)
+    breakpointAdded(a.js, 30, , true)
+    Location created: a.js:30
+  Dumping Storage
+    a.js:30 enabled:true condition:
+  Resetting breakpoint manager
+    breakpointRemoved(a.js, 30)
+    Location disposed: a.js:30
+    debuggerModel.removeBreakpoint(a.js:30)
+
+Running: testSetConditionalBreakpoint
+  Created breakpoints manager
+  Dumping Storage
+  Adding UISourceCode: a.js
+  Setting breakpoint at a.js:30 enabled:true condition:condition
+    debuggerModel.setBreakpoint(a.js:30:condition)
+    breakpointAdded(a.js, 30, condition, true)
+    Location created: a.js:30
+  Dumping Storage
+    a.js:30 enabled:true condition:condition
+  Updating condition
+    debuggerModel.removeBreakpoint(a.js:30)
+    debuggerModel.setBreakpoint(a.js:30:)
+    breakpointRemoved(a.js, 30)
+    Location disposed: a.js:30
+    breakpointAdded(a.js, 30, , true)
+    Location created: a.js:30
+  Dumping Storage
+    a.js:30 enabled:true condition:
+  Resetting breakpoint manager
+    breakpointRemoved(a.js, 30)
+    Location disposed: a.js:30
+    debuggerModel.removeBreakpoint(a.js:30)
+
+Running: testRestoreBreakpoints
+  Created breakpoints manager
+  Dumping Storage
+    a.js:10 enabled:true condition:foo == bar
+    a.js:20 enabled:false condition:
+    b.js:3 enabled:true condition:
+  Adding UISourceCode: a.js
+    debuggerModel.setBreakpoint(a.js:10:foo == bar)
+    breakpointAdded(a.js, 20, , false)
+    breakpointAdded(a.js, 10, foo == bar, true)
+    Location created: a.js:10
+  Dumping Storage
+    a.js:10 enabled:true condition:foo == bar
+    a.js:20 enabled:false condition:
+    b.js:3 enabled:true condition:
+  Resetting breakpoint manager
+    breakpointRemoved(a.js, 10)
+    Location disposed: a.js:10
+    debuggerModel.removeBreakpoint(a.js:10)
+    breakpointRemoved(a.js, 20)
+
+Running: testRestoreBreakpointsTwice
+  Created breakpoints manager
+  Dumping Storage
+    a.js:10 enabled:true condition:foo == bar
+    a.js:20 enabled:false condition:
+    b.js:3 enabled:true condition:
+  Adding UISourceCode: a.js
+    debuggerModel.setBreakpoint(a.js:10:foo == bar)
+    breakpointAdded(a.js, 20, , false)
+  Adding UISourceCode: a.js
+    breakpointAdded(a.js, 10, foo == bar, true)
+    Location created: a.js:10
+  Dumping Storage
+    a.js:10 enabled:true condition:foo == bar
+    a.js:20 enabled:false condition:
+    b.js:3 enabled:true condition:
+  Resetting breakpoint manager
+    breakpointRemoved(a.js, 10)
+    Location disposed: a.js:10
+    debuggerModel.removeBreakpoint(a.js:10)
+    breakpointRemoved(a.js, 20)
+
+Running: testRemoveBreakpoints
+  Created breakpoints manager
+  Dumping Storage
+    a.js:10 enabled:true condition:foo == bar
+    a.js:20 enabled:false condition:
+    b.js:3 enabled:true condition:
+  Adding UISourceCode: a.js
+    debuggerModel.setBreakpoint(a.js:10:foo == bar)
+    breakpointAdded(a.js, 20, , false)
+    breakpointAdded(a.js, 10, foo == bar, true)
+    Location created: a.js:10
+  Setting breakpoint at a.js:30 enabled:true condition:
+    debuggerModel.setBreakpoint(a.js:30:)
+    breakpointAdded(a.js, 30, , true)
+    Location created: a.js:30
+  Removing breakpoint at a.js:30
+    breakpointRemoved(a.js, 30)
+    Location disposed: a.js:30
+    debuggerModel.removeBreakpoint(a.js:30)
+  Removing breakpoint at a.js:10
+    breakpointRemoved(a.js, 10)
+    Location disposed: a.js:10
+    debuggerModel.removeBreakpoint(a.js:10)
+  Removing breakpoint at a.js:20
+    breakpointRemoved(a.js, 20)
+  Dumping Storage
+    b.js:3 enabled:true condition:
+  Resetting breakpoint manager
+
+Running: testSetBreakpointThatShifts
+  Created breakpoints manager
+  Dumping Storage
+  Adding UISourceCode: a.js
+  Setting breakpoint at a.js:1015 enabled:true condition:
+    debuggerModel.setBreakpoint(a.js:1015:)
+    breakpointAdded(a.js, 1025, , true)
+    Location created: a.js:1025
+  Dumping Storage
+    a.js:1015 enabled:true condition:
+  Resetting breakpoint manager
+    breakpointRemoved(a.js, 1025)
+    Location disposed: a.js:1025
+    debuggerModel.removeBreakpoint(a.js:1015)
+
+Running: testSetBreakpointThatShiftsTwice
+  Created breakpoints manager
+  Dumping Storage
+  Adding UISourceCode: a.js
+  Setting breakpoint at a.js:1015 enabled:true condition:
+    debuggerModel.setBreakpoint(a.js:1015:)
+    breakpointAdded(a.js, 1025, , true)
+    Location created: a.js:1025
+  Setting breakpoint at a.js:1015 enabled:true condition:
+  Dumping Storage
+    a.js:1015 enabled:true condition:
+  Resetting breakpoint manager
+    breakpointRemoved(a.js, 1025)
+    Location disposed: a.js:1025
+    debuggerModel.removeBreakpoint(a.js:1015)
+
+Running: testSetBreakpointOutsideScript
+  Created breakpoints manager
+  Dumping Storage
+  Adding UISourceCode: a.js
+    debuggerModel.setBreakpoint(a.js:2500:)
+    breakpointAdded(a.js, 2500, , true)
+  Dumping Storage
+    a.js:2500 enabled:true condition:
+  Resetting breakpoint manager
+    breakpointRemoved(a.js, 2500)
+    debuggerModel.removeBreakpoint(a.js:2500)
+
+Running: testNavigation
+  Created breakpoints manager
+  Dumping Storage
+    a.js:10 enabled:true condition:foo == bar
+    a.js:20 enabled:false condition:
+    b.js:3 enabled:true condition:
+  Adding UISourceCode: a.js
+    debuggerModel.setBreakpoint(a.js:10:foo == bar)
+    breakpointAdded(a.js, 20, , false)
+    breakpointAdded(a.js, 10, foo == bar, true)
+    Location created: a.js:10
+
+  Navigating to B.
+  Resetting debugger.
+  Resetting workspace.
+    breakpointRemoved(a.js, 10)
+    Location disposed: a.js:10
+    breakpointRemoved(a.js, 20)
+  Adding UISourceCode: b.js
+    debuggerModel.setBreakpoint(b.js:3:)
+    breakpointAdded(b.js, 3, , true)
+    Location created: b.js:3
+
+  Navigating back to A.
+  Resetting debugger.
+  Resetting workspace.
+    breakpointRemoved(b.js, 3)
+    Location disposed: b.js:3
+  Resolving provisional breakpoint.
+  Adding temporary UISourceCode: a.js
+    breakpointAdded(a.js, 11, foo == bar, true)
+    Location created: a.js:11
+  Adding UISourceCode: a.js
+    breakpointRemoved(a.js, 11)
+    Location disposed: a.js:11
+    debuggerModel.removeBreakpoint(a.js:10)
+    debuggerModel.setBreakpoint(a.js:10:foo == bar)
+    breakpointAdded(a.js, 20, , false)
+    breakpointAdded(a.js, 10, foo == bar, true)
+    Location created: a.js:10
+  Dumping Storage
+    a.js:10 enabled:true condition:foo == bar
+    a.js:20 enabled:false condition:
+    b.js:3 enabled:true condition:
+  Resetting breakpoint manager
+    breakpointRemoved(a.js, 10)
+    Location disposed: a.js:10
+    debuggerModel.removeBreakpoint(a.js:10)
+    breakpointRemoved(a.js, 20)
+    debuggerModel.removeBreakpoint(b.js:3)
+
+Running: testSourceMapping
+  Created breakpoints manager
+  Dumping Storage
+    a.js:10 enabled:true condition:foo == bar
+    a.js:20 enabled:true condition:
+  Adding UISourceCode: a.js
+    debuggerModel.setBreakpoint(a.js:10:foo == bar)
+    debuggerModel.setBreakpoint(a.js:20:)
+    breakpointAdded(a.js, 10, foo == bar, true)
+    Location created: a.js:10
+    breakpointAdded(a.js, 20, , true)
+    Location created: a.js:20
+
+  Toggling source mapping.
+    breakpointRemoved(a.js, 10)
+    breakpointAdded(a.js, 20, foo == bar, true)
+    breakpointRemoved(a.js, 20)
+    breakpointAdded(a.js, 30, , true)
+
+  Toggling source mapping back.
+    breakpointRemoved(a.js, 20)
+    breakpointAdded(a.js, 10, foo == bar, true)
+    breakpointRemoved(a.js, 30)
+    breakpointAdded(a.js, 20, , true)
+  Dumping Storage
+    a.js:10 enabled:true condition:foo == bar
+    a.js:20 enabled:true condition:
+  Resetting breakpoint manager
+    breakpointRemoved(a.js, 10)
+    Location disposed: a.js:10
+    debuggerModel.removeBreakpoint(a.js:10)
+    breakpointRemoved(a.js, 20)
+    Location disposed: a.js:20
+    debuggerModel.removeBreakpoint(a.js:20)
+
+Running: testProvisionalBreakpointsResolve
+  Created breakpoints manager
+  Dumping Storage
+    a.js:10 enabled:true condition:foo == bar
+  Adding UISourceCode: a.js
+    debuggerModel.setBreakpoint(a.js:10:foo == bar)
+    breakpointAdded(a.js, 10, foo == bar, true)
+    Location created: a.js:10
+  Resetting debugger.
+  Resetting workspace.
+    breakpointRemoved(a.js, 10)
+    Location disposed: a.js:10
+  Resolving provisional breakpoint.
+  Adding temporary UISourceCode: a.js
+    breakpointAdded(a.js, 11, foo == bar, true)
+    Location created: a.js:11
+  Dumping Storage
+    a.js:10 enabled:true condition:foo == bar
+  Resetting breakpoint manager
+    breakpointRemoved(a.js, 11)
+    Location disposed: a.js:11
+    debuggerModel.removeBreakpoint(a.js:10)
+

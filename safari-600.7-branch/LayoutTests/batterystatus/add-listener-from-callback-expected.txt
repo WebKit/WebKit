@@ -1,0 +1,21 @@
+Tests that adding a new event listener from a callback works as expected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS battery.charging is false
+PASS battery.chargingTime is Infinity
+PASS battery.dischargingTime is 6000
+PASS battery.level is 0.7
+PASS battery.charging is false
+PASS battery.chargingTime is Infinity
+PASS battery.dischargingTime is 6000
+PASS battery.level is 0.7
+PASS battery.charging is false
+PASS battery.chargingTime is Infinity
+PASS battery.dischargingTime is 6000
+PASS battery.level is 0.7
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

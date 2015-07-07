@@ -1,0 +1,4 @@
+Tests that classList remove is linear.
+PASS
+PASS
+

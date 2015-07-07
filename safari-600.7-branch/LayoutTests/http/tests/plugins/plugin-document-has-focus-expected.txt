@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 1: PLUGIN: keyDown 'A'
+CONSOLE MESSAGE: line 1: PLUGIN: keyUp 'A'
+This tests that a full page plugin gets keyboard focus without the need to first click it.

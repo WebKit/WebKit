@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 9: SyntaxError: Unexpected keyword 'else'
+The debugger should not crash when executing a bad script for testing a breakpoint condition.
+
+Found breakpoint.js
+inside breakpointWithCondition a:(1) b:(2) a+b:(3)
+PASS: The VM should not crash.
+

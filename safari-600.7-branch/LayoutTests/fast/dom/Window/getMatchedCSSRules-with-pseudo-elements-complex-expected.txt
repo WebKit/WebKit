@@ -1,0 +1,12 @@
+Test for WebKit bug 78595: CollectingRules and QueryingRules modes of SelectorChecker miss some complex selectors with pseudo elements
+
+
+
+PASS Expected 'rgb(165, 42, 42)' for color in the matched CSS rule for element with id firstChild and pseudo-element :before and got 'rgb(165, 42, 42)'
+PASS Expected 'rgb(0, 255, 255)' for color in the matched CSS rule for element with id secondChild and pseudo-element :before and got 'rgb(0, 255, 255)'
+PASS Expected 'red' for color in the matched CSS rule for element with id thirdChild and pseudo-element :before and got 'red'
+PASS Expected 'rgb(255, 0, 255)' for color in the matched CSS rule for element with id fourthChild and pseudo-element :before and got 'rgb(255, 0, 255)'
+PASS Expected 'green' for color in the matched CSS rule for element with id firstParent and pseudo-element :before and got 'green'
+PASS Expected 'lime' for color in the matched CSS rule for element with id secondParent and pseudo-element :before and got 'lime'
+PASS Expected 'blue' for color in the matched CSS rule for element with id thirdParent and pseudo-element :before and got 'blue'
+PASS Expected 'rgb(220, 20, 60)' for color in the matched CSS rule for element with id fourthParent and pseudo-element :before and got 'rgb(220, 20, 60)'

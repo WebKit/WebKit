@@ -1,0 +1,81 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        // Prevent networking layer from reordering loads.
+        if (testRunner.setSerializeHTTPLoads)
+            testRunner.setSerializeHTTPLoads();
+    }
+
+    function CallCommand(cmd)
+    {
+     try {
+         var req = new XMLHttpRequest;
+         req.open("GET", "http://127.0.0.1:8000/resources/network-simulator.php?command=" + cmd, false);
+         req.send(null);
+         return req.responseText;
+     } catch (ex) {
+         return "";
+     }
+    }
+
+    function endTest()
+    {
+        getResourceLog();
+        CallCommand("clear-resource-request-log");
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+
+    function getResourceLog()
+    {
+        var log = CallCommand("get-resource-request-log");
+        var logLines = log.split('\n');
+        document.getElementById('result').innerText = logLines.join('\n');
+    }
+
+    CallCommand("start-resource-request-log");
+    window.addEventListener('load', endTest, false);
+  </script>
+  
+  <!-- This will trigger the preload scanner -->
+  <script src="http://127.0.0.1:8000/resources/network-simulator.php?command=log-resource-request&path=script.js"></script>
+
+  <link rel=stylesheet href="http://127.0.0.1:8000/resources/network-simulator.php?command=log-resource-request&path=no-media.css">
+  <link rel=stylesheet media="" href="http://127.0.0.1:8000/resources/network-simulator.php?command=log-resource-request&path=media-empty.css">
+  <link rel=stylesheet media="all" href="http://127.0.0.1:8000/resources/network-simulator.php?command=log-resource-request&path=media-all.css">
+  <link rel=stylesheet media="print" href="http://127.0.0.1:8000/resources/network-simulator.php?command=log-resource-request&path=media-print.css">
+  <link rel=stylesheet media="screen" href="http://127.0.0.1:8000/resources/network-simulator.php?command=log-resource-request&path=media-screen.css">
+  <link rel=stylesheet media="screen and (min-width: 1px)" href="http://127.0.0.1:8000/resources/network-simulator.php?command=log-resource-request&path=media-screen-query-success.css">
+  <link rel=stylesheet media="braille, screen" href="http://127.0.0.1:8000/resources/network-simulator.php?command=log-resource-request&path=media-braille-screen.css">
+  <link rel=stylesheet media="screen and (min-width: 1000000px)" href="http://127.0.0.1:8000/resources/network-simulator.php?command=log-resource-request&path=media-screen-query-fail.css">
+  <link rel=stylesheet media="aural" href="http://127.0.0.1:8000/resources/network-simulator.php?command=log-resource-request&path=media-aural.css">
+  <link rel=stylesheet media="braille" href="http://127.0.0.1:8000/resources/network-simulator.php?command=log-resource-request&path=media-braille.css">
+  <link rel=stylesheet media="handheld" href="http://127.0.0.1:8000/resources/network-simulator.php?command=log-resource-request&path=median-handheld.css">
+  <link rel=stylesheet media="projection" href="http://127.0.0.1:8000/resources/network-simulator.php?command=log-resource-request&path=media-projection.css">
+  <link rel=stylesheet media="tty" href="http://127.0.0.1:8000/resources/network-simulator.php?command=log-resource-request&path=media-tty.css">
+  <link rel=stylesheet media="tv" href="http://127.0.0.1:8000/resources/network-simulator.php?command=log-resource-request&path=media-tv.css">
+  <link rel=stylesheet href="http://127.0.0.1:8000/resources/network-simulator.php?command=log-resource-request&path=no-media-2.css">
+  <link rel=stylesheet media="" href="http://127.0.0.1:8000/resources/network-simulator.php?command=log-resource-request&path=media-empty-2.css">
+  <link rel=stylesheet media="all" href="http://127.0.0.1:8000/resources/network-simulator.php?command=log-resource-request&path=media-all-2.css">
+  <link rel=stylesheet media="print" href="http://127.0.0.1:8000/resources/network-simulator.php?command=log-resource-request&path=media-print-2.css">
+  <link rel=stylesheet media="screen" href="http://127.0.0.1:8000/resources/network-simulator.php?command=log-resource-request&path=media-screen-2.css">
+  <link rel=stylesheet media="screen and (min-width: 1px)" href="http://127.0.0.1:8000/resources/network-simulator.php?command=log-resource-request&path=media-screen-query-success-2.css">
+  <link rel=stylesheet media="braille, screen" href="http://127.0.0.1:8000/resources/network-simulator.php?command=log-resource-request&path=media-braille-screen-2.css">
+  <link rel=stylesheet media="screen and (min-width: 1000000px)" href="http://127.0.0.1:8000/resources/network-simulator.php?command=log-resource-request&path=media-screen-query-fail-2.css">
+  
+</head>
+<body>
+  <img src="http://127.0.0.1:8000/resources/network-simulator.php?command=log-resource-request&path=image.jpg">
+  <script src="http://127.0.0.1:8000/resources/network-simulator.php?command=log-resource-request&path=script-2.js"></script>
+
+  Test stylesheet load scheduling with preload scanner. Resource loads for screen stylesheets should be scheduled first, others should be scheduled last.
+
+  <h2>Resource requests:</h2>
+  <pre id="result">Request log goes here in DRT</pre>
+</body>
+</html>

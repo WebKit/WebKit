@@ -1,0 +1,70 @@
+{
+    "domain": "Worker",
+    "types": [],
+    "commands": [
+        {
+            "name": "enable"
+        },
+        {
+            "name": "disable"
+        },
+        {
+            "name": "sendMessageToWorker",
+            "parameters": [
+                { "name": "workerId", "type": "integer" },
+                { "name": "message", "type": "object" }
+            ]
+        },
+        {
+            "name": "canInspectWorkers",
+            "description": "Tells whether browser supports workers inspection.",
+            "returns": [
+                { "name": "result", "type": "boolean", "description": "True if browser has workers support." }
+            ]
+        },
+        {
+            "name": "connectToWorker",
+            "parameters": [
+                { "name": "workerId", "type": "integer" }
+            ]
+        },
+        {
+            "name": "disconnectFromWorker",
+            "parameters": [
+                { "name": "workerId", "type": "integer" }
+            ]
+        },
+        {
+            "name": "setAutoconnectToWorkers",
+            "parameters": [
+                { "name": "value", "type": "boolean" }
+            ]
+        }
+    ],
+    "events": [
+        {
+            "name": "workerCreated",
+            "parameters": [
+                { "name": "workerId", "type": "integer" },
+                { "name": "url", "type": "string" },
+                { "name": "inspectorConnected", "type": "boolean" }
+            ]
+        },
+        {
+            "name": "workerTerminated",
+            "parameters": [
+                { "name": "workerId", "type": "integer" }
+            ]
+        },
+        {
+            "name": "dispatchMessageFromWorker",
+            "parameters": [
+                { "name": "workerId", "type": "integer" },
+                { "name": "message", "type": "object" }
+            ]
+        },
+        {
+            "name": "disconnectedFromWorker"
+        }
+    ]
+}

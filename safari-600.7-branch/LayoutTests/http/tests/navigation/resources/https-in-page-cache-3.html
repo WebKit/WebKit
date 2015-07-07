@@ -1,0 +1,18 @@
+<script>
+
+window.onpageshow = function(evt) {
+	if (!evt.persisted)
+		return;
+
+	alert("The page was restored from the page cache. Good job!");
+
+	if (window.testRunner)
+		testRunner.notifyDone();
+}
+
+window.onload = function() {
+	alert("This page is https and should go in to the page cache.");
+	setTimeout('window.location = "go-back.html"', 0);
+}
+
+</script>

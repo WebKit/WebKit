@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            -webkit-perspective: 500px;
+            -webkit-perspective-origin: top left;
+        }
+        
+        .box {
+            height: 100px;
+            width: 100px;
+            margin-bottom: -20px;
+            background-color: silver;
+            border: 1px solid black;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function doTest()
+        {
+            if (window.internals)
+                document.getElementById('layers').innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS)
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div class="box" style="-webkit-transform: translateZ(-200px)"></div>
+    <div class="box" style="-webkit-transform: translateZ(-100px)"></div>
+    <div class="box" style="-webkit-transform: translateZ(0)"></div>
+    <div class="box" style="-webkit-transform: translateZ(50px)"></div>
+    <div class="box" style="-webkit-transform: translateZ(100px)"></div>
+    <div class="box" style="-webkit-transform: translateZ(150px)"></div>
+<pre id="layers"></pre>
+</body>
+</html>

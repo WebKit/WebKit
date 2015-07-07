@@ -1,0 +1,51 @@
+Tests to ensure that shadow element cannot be created in elements having dynamically created shadow root.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+DIV
+PASS element.webkitCreateShadowRoot() is not null
+SPAN
+PASS element.webkitCreateShadowRoot() is not null
+A
+PASS element.webkitCreateShadowRoot() is not null
+SECTION
+PASS element.webkitCreateShadowRoot() is not null
+INPUT
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
+tref
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
+AUDIO
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
+VIDEO
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
+SELECT
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
+IMG
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
+TEXTAREA
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
+IFRAME
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
+CANVAS
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
+METER
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
+PROGRESS
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
+OBJECT
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
+EMBED
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
+KEYGEN
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
+VIDEO
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
+AUDIO
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
+FIELDSET
+PASS element.webkitCreateShadowRoot() threw exception Error: HierarchyRequestError: DOM Exception 3.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

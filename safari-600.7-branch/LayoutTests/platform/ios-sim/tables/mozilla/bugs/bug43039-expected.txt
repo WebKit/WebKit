@@ -1,0 +1,121 @@
+layer at (0,0) size 16468x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 16460x120
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableSection {TBODY} at (0,0) size 16460x120
+          RenderTableRow {TR} at (0,0) size 16460x20
+            RenderTableCell {TD} at (0,0) size 588x20 [r=0 c=0 rs=1 cs=8]
+              RenderText {#text} at (0,0) size 344x19
+                text run at (0,0) width 344: "PRODUCT SPECIFICATIONS DAY CONTRACTS"
+            RenderTableCell {TD} at (588,10) size 64x0 [r=0 c=8 rs=1 cs=1]
+            RenderTableCell {TD} at (652,10) size 64x0 [r=0 c=9 rs=1 cs=1]
+            RenderTableCell {TD} at (716,10) size 64x0 [r=0 c=10 rs=1 cs=1]
+            RenderTableCell {TD} at (780,10) size 64x0 [r=0 c=11 rs=1 cs=1]
+            RenderTableCell {TD} at (844,10) size 64x0 [r=0 c=12 rs=1 cs=1]
+            RenderTableCell {TD} at (908,10) size 64x0 [r=0 c=13 rs=1 cs=1]
+            RenderTableCell {TD} at (972,10) size 64x0 [r=0 c=14 rs=1 cs=1]
+            RenderTableCell {TD} at (1036,10) size 64x0 [r=0 c=15 rs=1 cs=1]
+            RenderTableCell {TD} at (1100,10) size 64x0 [r=0 c=16 rs=1 cs=1]
+            RenderTableCell {TD} at (1164,10) size 64x0 [r=0 c=17 rs=1 cs=1]
+            RenderTableCell {TD} at (1228,10) size 64x0 [r=0 c=18 rs=1 cs=1]
+            RenderTableCell {TD} at (1292,10) size 64x0 [r=0 c=19 rs=1 cs=1]
+            RenderTableCell {TD} at (1356,10) size 64x0 [r=0 c=20 rs=1 cs=1]
+            RenderTableCell {TD} at (1420,10) size 64x0 [r=0 c=21 rs=1 cs=1]
+            RenderTableCell {TD} at (1484,10) size 64x0 [r=0 c=22 rs=1 cs=1]
+            RenderTableCell {TD} at (1548,10) size 64x0 [r=0 c=23 rs=1 cs=1]
+            RenderTableCell {TD} at (1612,10) size 64x0 [r=0 c=24 rs=1 cs=1]
+            RenderTableCell {TD} at (1676,10) size 64x0 [r=0 c=25 rs=1 cs=1]
+          RenderTableRow {TR} at (0,20) size 16460x40
+            RenderTableCell {TD} at (0,30) size 54x20 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 50x19
+                text run at (0,0) width 50: "Product"
+            RenderTableCell {TD} at (54,30) size 54x20 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 56x19
+                text run at (0,0) width 56: "Contract"
+            RenderTableCell {TD} at (108,30) size 70x20 [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 53x19
+                text run at (0,0) width 53: "Belongs"
+            RenderTableCell {TD} at (178,20) size 68x40 [r=1 c=3 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 57x39
+                text run at (0,0) width 57: "First day"
+                text run at (0,20) width 14: "of"
+            RenderTableCell {TD} at (246,20) size 70x40 [r=1 c=4 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 55x39
+                text run at (0,0) width 55: "Last day"
+                text run at (0,20) width 14: "of"
+            RenderTableCell {TD} at (316,30) size 92x20 [r=1 c=5 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 48x19
+                text run at (0,0) width 48: "Date of"
+            RenderTableCell {TD} at (408,30) size 122x20 [r=1 c=6 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 118x19
+                text run at (0,0) width 118: "Settlement against"
+            RenderTableCell {TD} at (530,30) size 58x20 [r=1 c=7 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 48x19
+                text run at (0,0) width 48: "Quoted"
+            RenderTableCell {TD} at (588,40) size 1152x0 [r=1 c=8 rs=1 cs=18]
+          RenderTableRow {TR} at (0,60) size 16460x20
+            RenderTableCell {TD} at (0,60) size 54x20 [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 37x19
+                text run at (0,0) width 37: "series"
+            RenderTableCell {TD} at (54,60) size 54x20 [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 36x19
+                text run at (0,0) width 36: "hours"
+            RenderTableCell {TD} at (108,60) size 70x20 [r=2 c=2 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 13x19
+                text run at (0,0) width 13: "to"
+            RenderTableCell {TD} at (178,60) size 68x20 [r=2 c=3 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 46x19
+                text run at (0,0) width 46: "trading"
+            RenderTableCell {TD} at (246,60) size 70x20 [r=2 c=4 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 46x19
+                text run at (0,0) width 46: "trading"
+            RenderTableCell {TD} at (316,60) size 92x20 [r=2 c=5 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 66x19
+                text run at (0,0) width 66: "settlement"
+            RenderTableCell {TD} at (408,60) size 122x20 [r=2 c=6 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 4x19
+                text run at (0,0) width 4: " "
+            RenderTableCell {TD} at (530,60) size 58x20 [r=2 c=7 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 56x19
+                text run at (0,0) width 56: "currency"
+            RenderTableCell {TD} at (588,70) size 1152x0 [r=2 c=8 rs=1 cs=18]
+          RenderTableRow {TR} at (0,80) size 16460x40
+            RenderTableCell {TD} at (0,80) size 54x40 [r=3 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 49x39
+                text run at (0,0) width 49: "D0101-"
+                text run at (0,20) width 16: "00"
+            RenderTableCell {TD} at (54,90) size 54x20 [r=3 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 16x19
+                text run at (0,0) width 16: "24"
+            RenderTableCell {TD} at (108,80) size 70x40 [r=3 c=2 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 63x39
+                text run at (0,0) width 63: "Week 52-"
+                text run at (0,20) width 16: "99"
+            RenderTableCell {TD} at (178,90) size 68x20 [r=3 c=3 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 57x19
+                text run at (0,0) width 57: "12/23/99"
+            RenderTableCell {TD} at (246,90) size 70x20 [r=3 c=4 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 57x19
+                text run at (0,0) width 57: "12/30/99"
+            RenderTableCell {TD} at (316,90) size 92x20 [r=3 c=5 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 41x19
+                text run at (0,0) width 41: "1/1/00"
+            RenderTableCell {TD} at (408,80) size 122x40 [r=3 c=6 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 84x39
+                text run at (0,0) width 84: "System Price"
+                text run at (0,20) width 41: "Elspot"
+            RenderTableCell {TD} at (530,90) size 58x20 [r=3 c=7 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 35x19
+                text run at (0,0) width 35: "NOK"
+            RenderTableCell {TD} at (588,100) size 1152x0 [r=3 c=8 rs=1 cs=18]

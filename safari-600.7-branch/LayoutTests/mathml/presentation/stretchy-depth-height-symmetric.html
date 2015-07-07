@@ -1,0 +1,110 @@
+<html>
+  <head>
+    <title>stretch depth/height</title>
+    <meta charset="utf-8">
+    <script type="text/javascript">
+      var result;
+      var epsilon = 2;
+
+      function almostEqual(x, y) {
+          return Math.abs(x - y) < epsilon;
+      }
+
+      function assert(text, condition) {
+          result += text + ": " + (condition ? "PASS" : "FAIL") + "\n";
+      }
+
+      function getAxis(id) {
+          var frac = document.getElementById("frac" + id).getBoundingClientRect();
+          var space = document.getElementById("space" + id).getBoundingClientRect();
+          return space.bottom - (frac.top + frac.bottom) / 2;
+      }
+
+      function test() {
+          result = "";
+
+          var axis1 = getAxis("1");
+          var s1 = document.getElementById("s1").getBoundingClientRect();
+          var c1 = document.getElementById("c1ref").getBoundingClientRect();
+          assert("large depth", almostEqual(s1.top, c1.top) && almostEqual(s1.height, (c1.height - axis1) * 2));
+
+          var axis1a = getAxis("1a");
+          var s1a = document.getElementById("s1a").getBoundingClientRect();
+          var c1a = document.getElementById("c1refa").getBoundingClientRect();
+          assert("large depth (explicit symmetric attribute)", almostEqual(s1a.top, c1a.top) && almostEqual(s1a.height, (c1a.height - axis1a) * 2));
+
+          var axis2 = getAxis("2");
+          var s2 = document.getElementById("s2").getBoundingClientRect();
+          var c2 = document.getElementById("c2ref").getBoundingClientRect();
+          assert("large height", almostEqual(s2.bottom, c2.bottom) && almostEqual(s2.height, (c2.height + axis2) * 2));
+
+          var axis2a = getAxis("2a");
+          var s2a = document.getElementById("s2a").getBoundingClientRect();
+          var c2a = document.getElementById("c2refa").getBoundingClientRect();
+          assert("large height (explicit symmetric attribute)", almostEqual(s2a.bottom, c2a.bottom) && almostEqual(s2a.height, (c2a.height + axis2a) * 2));
+          document.getElementById("result").innerText = result;
+  
+          if (window.testRunner)
+            testRunner.dumpAsText();
+      }
+    </script>
+  </head>
+  <body onload="test()">
+
+    <p>This test passes if the brace stretches symmetrically and is large enough to cover its sibling.</p>
+
+    <p>
+      <!-- This tests a large depth. -->
+      <math>
+        <mrow>
+          <mfrac id="frac1"><mspace width="1em"/><mspace width="1em"/></mfrac><mspace id="space1"/>
+          <mo id="s1">{</mo>
+          <mspace id="c12" width="10px" height="10px" depth="30px" mathbackground="blue"/>
+          <mspace id="c12" width="10px" height="0px" depth="50px" mathbackground="blue"/>
+          <mspace id="c13" width="10px" height="20px" depth="20px" mathbackground="blue"/>
+          <mspace id="c1ref" width="10px" height="80px" depth="0px" mathbackground="blue"/>
+          <mspace id="c14" width="10px" height="30px" depth="10px" mathbackground="blue"/>
+        </mrow>
+      </math>
+      <!-- This tests a large depth (explicit symmetric attribute). -->
+      <math>
+        <mrow>
+          <mfrac id="frac1a"><mspace width="1em"/><mspace width="1em"/></mfrac><mspace id="space1a"/>
+          <mo symmetric="true" id="s1a">{</mo>
+          <mspace id="c12a" width="10px" height="10px" depth="30px" mathbackground="blue"/>
+          <mspace id="c12a" width="10px" height="0px" depth="50px" mathbackground="blue"/>
+          <mspace id="c13a" width="10px" height="20px" depth="20px" mathbackground="blue"/>
+          <mspace id="c1refa" width="10px" height="80px" depth="0px" mathbackground="blue"/>
+          <mspace id="c14a" width="10px" height="30px" depth="10px" mathbackground="blue"/>
+        </mrow>
+      </math>
+      <!-- This tests a large height. -->
+      <math>
+        <mrow>
+          <mfrac id="frac2"><mspace width="1em"/><mspace width="1em"/></mfrac><mspace id="space2"/>
+          <mo id="s2">{</mo>
+          <mspace id="c22" width="10px" height="10px" depth="30px" mathbackground="blue"/>
+          <mspace id="c23" width="10px" height="50px" depth="0px" mathbackground="blue"/>
+          <mspace id="c2ref" width="10px" height="0px" depth="80px" mathbackground="blue"/>
+          <mspace id="c24" width="10px" height="20px" depth="20px" mathbackground="blue"/>
+          <mspace id="c25" width="10px" height="30px" depth="10px" mathbackground="blue"/>
+        </mrow>
+      </math>
+      <!-- This tests a large height (explicit symmetric attribute). -->
+      <math>
+        <mrow>
+          <mfrac id="frac2a"><mspace width="1em"/><mspace width="1em"/></mfrac><mspace id="space2a"/>
+          <mo symmetric="true" id="s2a">{</mo>
+          <mspace id="c22a" width="10px" height="10px" depth="30px" mathbackground="blue"/>
+          <mspace id="c23a" width="10px" height="50px" depth="0px" mathbackground="blue"/>
+          <mspace id="c2refa" width="10px" height="0px" depth="80px" mathbackground="blue"/>
+          <mspace id="c24a" width="10px" height="20px" depth="20px" mathbackground="blue"/>
+          <mspace id="c25a" width="10px" height="30px" depth="10px" mathbackground="blue"/>
+        </mrow>
+      </math>
+    </p>
+
+    <div id="result"></div>
+
+  </body>
+</html>

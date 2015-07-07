@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="../../repaint/resources/text-based-repaint.js"></script>
+
+    <style>
+      .page_body
+      {
+        border-bottom-left-radius: 5px;
+        overflow-x: hidden;
+        overflow-y: hidden;
+      }
+
+      li
+      {
+        background-color: lightblue;
+        margin-left: 1px;
+        border-top-left-radius: 5px;
+        float: left;
+        height: 215px;
+        overflow-x: hidden;
+        overflow-y: hidden;
+        position: relative;
+        width: 350px;
+      }
+
+      li:hover
+      {
+        background-color: red;
+      }
+    </style>
+
+    <script type="text/javascript">
+      function repaintTest() {
+        if(!window.testRunner)
+          return;
+
+        var first = document.getElementById("first");
+        var second = document.getElementById("second");
+
+        // hover the 1st item
+        var left = first.offsetLeft;
+        var top = first.offsetTop;
+        eventSender.mouseMoveTo(left + 20, top + 20);
+
+        // now hover the 2nd item
+        left = second.offsetLeft;
+        top = second.offsetTop;
+        eventSender.mouseMoveTo(left + 20, top + 20);
+      }
+    </script>
+
+  </head>
+
+  <body onload="runRepaintTest();">
+    <p>This test passes if moving the cursor from one of the blue items to the other produces no repaint errors (such as cropping of one of the blue items).
+    <div class="page_body">
+      <ul>
+        <li id="first"></li>
+        <li id="second"></li>
+      </ul>
+    </div>
+  </body>
+</html>

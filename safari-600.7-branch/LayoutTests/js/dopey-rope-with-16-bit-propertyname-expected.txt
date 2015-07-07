@@ -1,0 +1,10 @@
+Test that a 16-bit AtomicString containing only 8-bit characters doesn't confuse the JIT into thinking it's an 8-bit AtomicString.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS globalRope is 'foo.zest'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

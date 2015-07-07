@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Dynamic Keyframes test</title>
+  <style type="text/css" media="screen">
+    .box {
+        position: absolute;
+        left: 0;
+        top: 100px;
+        height: 100px;
+        width: 100px;
+        background-color: blue;
+        -webkit-animation-duration: 1s;
+        -webkit-animation-timing-function: linear;
+    }
+    #box2 { top: 210px; }
+    #box3 { top: 320px; }
+    </style>
+    <script src="resources/animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+    
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["anim1", 0.3, "box1", "left", 100, 1],
+      ["anim1", 0.7, "box1", "left", 200, 1],
+      ["anim2", 0.3, "box2", "left", 100, 1],
+      ["anim2", 0.7, "box2", "left", 200, 1],
+    ];
+
+    function addKeyframes() {
+        var style = document.createElement('style');
+        document.head.appendChild(style);
+        var keyframes =
+            "{\n" +
+            "    from { left: 50px; }\n" +
+            "    20%  { left: 100px; }\n" +
+            "    40%  { left: 100px; }\n" +
+            "    60%  { left: 200px; }\n" +
+            "    80%  { left: 200px; }\n" +
+            "    to   { left: 300px; }\n" +
+            "}";
+        var box1Keyframes = "@-webkit-keyframes anim1 " + keyframes;
+        var box2Keyframes = "@-webkit-keyframes anim2 " + keyframes;
+        var box3Keyframes = "@-webkit-keyframes anim3 " + keyframes;
+
+        style.sheet.insertRule(box1Keyframes, 0);
+        var box2Index = style.sheet.insertRule(box2Keyframes, 0);
+        var box3Index = style.sheet.insertRule(box3Keyframes, 0);
+        
+        var box1 = document.getElementById("box1");
+        var box2 = document.getElementById("box2");
+        var box3 = document.getElementById("box3");
+
+        box1.style.webkitAnimationName = 'anim1';
+        box2.style.webkitAnimationName = 'anim2';
+        box3.style.webkitAnimationName = 'anim3';
+
+        box2.addEventListener('webkitAnimationStart',
+            function() { style.sheet.removeRule(box2Index); }, true);
+
+        style.sheet.removeRule(box3Index);
+
+        runAnimationTest(expectedValues);
+
+        if (window.testRunner) {
+            if (internals.pauseAnimationAtTimeOnElement("anim3", 0.1, box3))
+                result += "FAIL - box3 animation was running<br>";
+            else
+                result += "PASS - box3 animation was not running<br>";
+        }
+    }
+    
+    window.addEventListener('DOMContentLoaded', addKeyframes, false);
+    
+  </script>
+</head>
+<body>
+This test performs an animation of the left property. It should stop for 100ms at 100px and 200px
+We test for those values 50ms after it has stopped at each position. The animations for the three
+boxes are inserted by JavaScript. The first box's keyframes remain in the stylesheet. The second
+box's keyframes are removed after its animation starts (but it should animate). The third box's
+keyframes are removed before its animation starts, and it should not animate.
+<div class="box" id="box1">
+</div>
+<div class="box" id="box2">
+</div>
+<div class="box" id="box3">
+</div>
+<div id="result">
+</div>
+</body>
+</html>

@@ -1,0 +1,16 @@
+Test that the resource selection algorithm is restarted when load() is called, and that all <source> elements are reconsidered.
+
++++ Test initial networkState.
+EXPECTED (video.networkState == '0') OK
+
++++ Add <source> elements to trigger loading, test networkState.
+EXPECTED (video.networkState == '3') OK
+EVENT(error)
+EVENT(canplaythrough)
+EXPECTED (stripExtension(relativeURL(video.currentSrc)) == 'content/test') OK
+
++++ Calling load().
+EVENT(canplaythrough)
+EXPECTED (stripExtension(relativeURL(video.currentSrc)) == 'content/test'), OBSERVED 'content/bogus' FAIL
+END OF TEST
+

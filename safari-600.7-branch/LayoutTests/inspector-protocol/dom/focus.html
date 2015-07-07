@@ -1,0 +1,47 @@
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script>
+window.addEventListener("load", function() {
+    document.querySelector("#second").addEventListener("focus", function() {
+        log("focused");
+    });
+});
+
+function test()
+{
+    InspectorTest.sendCommand("DOM.getDocument", {}, onGotDocument);
+
+    function onGotDocument(msg) {
+        if (msg.error) {
+            InspectorTest.log(msg.error.message);
+            InspectorTest.completeTest();
+            return;
+        }
+        var node = msg.result.root;
+        InspectorTest.sendCommand("DOM.querySelector", { "nodeId": node.nodeId, "selector": "#second" }, onQuerySelector);
+    }
+
+    function onQuerySelector(msg) {
+        if (msg.error) {
+            InspectorTest.log(msg.error.message);
+            InspectorTest.completeTest();
+            return;
+        }
+        var node = msg.result;
+        InspectorTest.sendCommand("DOM.focus", { "nodeId": node.nodeId }, onFocus);
+    }
+
+    function onFocus(msg) {
+        if (msg.error)
+            InspectorTest.log(msg.error);
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<input></input>
+<input id="second"></input>
+</body>
+</html>

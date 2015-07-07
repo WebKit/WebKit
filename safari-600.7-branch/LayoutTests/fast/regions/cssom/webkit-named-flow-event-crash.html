@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="../../../resources/js-test-pre.js"></script>
+        <style>
+        body, html {
+            width: 500px;
+            height: 500px;
+        }
+        #content {
+            width: 100%;
+            height: 100%;
+            -webkit-flow-into: flow;
+        }
+        #region {
+            width: 100%;
+            height: 100%;
+            -webkit-flow-from: flow;
+        }
+        </style>
+    </head>
+    <body>
+        <div id="content">
+            Hello crash!
+        </div>
+        <div id="region">
+        </div>
+        <script>
+        description("The test passes if there is no crash or assert.");
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function dummyHandler (evt) {
+            evt.target.removeEventListener("webkitregionoversetchange", dummyHandler);
+            debug("This line should not appear!");
+        }
+
+        setTimeout(function() {
+            var namedFlows = document.webkitGetNamedFlows();
+            namedFlows["flow"].addEventListener("webkitregionoversetchange", dummyHandler);
+            var content = document.getElementById("content");
+            var region = document.getElementById("region");
+            content.style.height = "600px";
+
+            // Schedule a regionoversetchange event.
+            document.body.offsetTop;
+
+            // Transition the flow to the "NULL" state.
+            document.body.removeChild(content);
+            document.body.removeChild(region);
+
+            setTimeout(function() {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            },0)
+        }, 0);
+        </script>
+        <script src="../../../resources/js-test-post.js"></script>
+    </body>
+</html>

@@ -1,0 +1,13 @@
+Bug 55696: Series of tests to ensure zero-length arc extends current subpath
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Pixel (50,20) is black.
+PASS Pixel (50,40) is black.
+PASS Pixel (50,60) is black.
+PASS Pixel (50,80) is black.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

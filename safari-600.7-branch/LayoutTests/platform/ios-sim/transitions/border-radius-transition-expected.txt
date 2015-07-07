@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 240: Failed to pause 'border-top-left-radius' transition on element 'box'
+CONSOLE MESSAGE: line 240: Failed to pause '-webkit-border-top-left-radius' transition on element 'box2'
+FAIL - "border-top-left-radius" property for "box" element at 0.25s expected: 25 but saw: 50
+FAIL - "-webkit-border-top-left-radius" property for "box2" element at 0.25s expected: 25 but saw: 50
+

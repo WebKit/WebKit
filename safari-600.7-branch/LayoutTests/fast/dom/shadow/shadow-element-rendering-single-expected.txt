@@ -1,0 +1,22 @@
+renderingSingleShadowRoot
+PASS
+renderingNotFallbacked
+PASS
+renderingFallbacked
+PASS
+renderingMixedOfFallbackAndNonFallback
+PASS
+renderingShadowRootBeforeContent
+PASS
+renderingShadowRootAfterContent
+PASS
+renderingShadowElementDynamicallyAdded
+PASS
+renderingShadowElementDynamicallyRemoved
+PASS
+renderingLightChildrenDynamicallyAdded
+PASS
+renderingLightChildrenDynamicallyRemoved
+PASS
+TEST COMPLETED
+

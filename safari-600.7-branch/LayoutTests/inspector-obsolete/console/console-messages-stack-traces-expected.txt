@@ -1,0 +1,15 @@
+CONSOLE MESSAGE: line 16: log
+CONSOLE MESSAGE: line 17: info
+CONSOLE MESSAGE: line 18: warn
+CONSOLE MESSAGE: line 19: debug
+CONSOLE MESSAGE: line 20: error
+CONSOLE MESSAGE: line 21: assert
+CONSOLE MESSAGE: line 22: trace
+CONSOLE MESSAGE: line 23: 1,2,3
+CONSOLE MESSAGE: line 24: [object HTMLBodyElement]
+CONSOLE MESSAGE: line 30: MARKER: EXPECT NO STACK TRACES
+CONSOLE MESSAGE: line 34: MARKER: DONE
+Tests that console-api messages contain stack traces.
+
+SUCCESS
+

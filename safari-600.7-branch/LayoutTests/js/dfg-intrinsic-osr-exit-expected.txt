@@ -1,0 +1,20 @@
+This tests that an OSR exit inside of an intrinsic that was not loaded with a method check works correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS foo([Math.abs], {f:5}) is 5
+PASS foo([Math.abs], {f:5.5}) is 5.5
+PASS foo([Math.abs], {f:5.5}) is 5.5
+PASS foo([Math.abs], {f:5.5}) is 5.5
+PASS foo([Math.abs], {f:5.5}) is 5.5
+PASS foo([Math.abs], {f:5.5}) is 5.5
+PASS foo([Math.abs], {f:5.5}) is 5.5
+PASS foo([Math.abs], {f:5.5}) is 5.5
+PASS foo([Math.abs], {f:5.5}) is 5.5
+PASS foo([Math.abs], {f:5.5}) is 5.5
+PASS foo([Math.abs], {f:5.5}) is 5.5
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

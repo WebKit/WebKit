@@ -1,0 +1,9 @@
+layer at (0,0) size 800x1018
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x1018
+  RenderBlock {HTML} at (0,0) size 800x1018
+    RenderBody {BODY} at (8,8) size 784x1002
+      RenderBlock {DIV} at (-3218,0) size 4002x1002 [border: (1px solid #FF0000)]
+        RenderText {#text} at (2511,1) size 1490x19
+          text run at (2511,1) width 1490: "BEGINddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddEND"
+scrolled to -500,0

@@ -1,0 +1,17 @@
+Tests that a degenerate cues without separating blank lines are parsed correctly.
+
+
+
+*** Testing text track 0
+EXPECTED (cues.length == '3') OK
+EXPECTED (cues[0].startTime == '0') OK
+EXPECTED (cues[0].endTime == '1') OK
+EXPECTED (cues[0].text == '') OK
+EXPECTED (cues[1].startTime == '2') OK
+EXPECTED (cues[1].endTime == '3') OK
+EXPECTED (cues[1].text == '') OK
+EXPECTED (cues[2].startTime == '4') OK
+EXPECTED (cues[2].endTime == '5') OK
+EXPECTED (cues[2].text == '') OK
+END OF TEST
+

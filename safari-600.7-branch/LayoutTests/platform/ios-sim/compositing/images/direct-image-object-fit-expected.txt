@@ -1,0 +1,29 @@
+
+(GraphicsLayer
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (children 3
+        (GraphicsLayer
+          (position 58.00 20.00)
+          (bounds 200.00 120.00)
+          (contents clipping layer 0.00, 0.00 200.00 x 120.00)
+          (contents layer -20.00, 0.00 240.00 x 120.00)
+        )
+        (GraphicsLayer
+          (position 58.00 160.00)
+          (bounds 200.00 120.00)
+          (contents layer 0.00, 10.00 200.00 x 100.00)
+        )
+        (GraphicsLayer
+          (position 58.00 300.00)
+          (bounds 200.00 120.00)
+          (contents clipping layer 0.00, 0.00 200.00 x 120.00)
+          (contents layer -44.00, -12.00 288.00 x 144.00)
+        )
+      )
+    )
+  )
+)
+

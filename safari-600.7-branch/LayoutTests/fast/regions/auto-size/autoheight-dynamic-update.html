@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            .flowContent { font-size: 50px; font-family: Ahem; }
+            #article { -webkit-flow-into: flow; }
+
+            #p1 {
+                color: green;
+            }
+
+            #p2 { 
+                color: blue;
+                -webkit-region-break-before: always; 
+            }
+
+            .region {
+                width: 250px;
+                -webkit-flow-from: flow;
+                margin-top: 10px;
+            }
+
+            #line1 {
+                display: none;
+            }
+        </style>
+    </head>
+    <script>
+    function forceLayout()
+    {
+        document.body.offsetTop; // force a layout;
+        document.getElementById('line1').style.display = "block";
+    }
+    </script>
+    </head>
+    <body onload="forceLayout();">
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=102954">bug 102954</a>.</p>
+        <p>Adding #line1 only after the first layout is done. That will force a second layout
+           and the first region needs to resize to accommodate the size of both lines.</p>
+        <p>You should see two boxes. The first box should have twice the height of the second one. 
+           The first box should be all green and the second box should be all blue.</p>
+        <div id="article" class="flowContent">
+            <div id="p1">
+                <div id="line1">aaaaa</div>
+                <div id="line2">aaaaa</div>
+            </div>
+            <div id="p2">aaaaa</div>
+        </div>
+
+        <div class="region"></div>
+        <div class="region"></div>
+    </body>
+</html>

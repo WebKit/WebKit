@@ -1,0 +1,19 @@
+<html>
+<head>
+<script>
+    if (window.testRunner) {
+        testRunner.setCanOpenWindows();
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    window.open("resources/plugin-document-has-focus.pl", "blah")
+     
+</script>
+<body style="margin:0px;overflow:hidden">
+
+<div>
+    This tests that a full page plugin gets keyboard focus without the need to first click it.
+</div>
+</body>
+</html>

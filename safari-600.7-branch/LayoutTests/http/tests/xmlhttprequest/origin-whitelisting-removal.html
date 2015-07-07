@@ -1,0 +1,51 @@
+<p>Tests the behavior of whitelisting origins and removing them later.</p>
+
+<pre id="console"></pre>
+<script>
+testRunner.dumpAsText();
+
+function log(message)
+{
+    document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
+}
+
+function loadURL(url, expectSuccess)
+{
+    log("Loading: " + url + " " + (expectSuccess ? "(expecting PASS)" : "(expecting NETWORK_ERR)"));
+
+    var req = new XMLHttpRequest();
+    req.open("GET", url, false);
+    try {
+        req.send(null);
+        log((expectSuccess ? "PASS: " : "FAIL: ") + req.responseText);
+    } catch (e) {
+        log((expectSuccess ? "FAIL: " : "PASS: ") + e);
+    }
+}
+
+function test(origin, protocol, host, subdomains, url)
+{
+    log("Testing: source origin: " + origin + " destination origin: " + protocol + ":" + host + " " + (subdomains ? "allowing subdomains" : ""));
+
+    loadURL(url, false);
+
+    testRunner.addOriginAccessWhitelistEntry(origin, protocol.toLowerCase(), host.toLowerCase(), subdomains);
+
+    loadURL(url, true);
+
+    testRunner.removeOriginAccessWhitelistEntry(origin, protocol, host, subdomains);
+
+    loadURL(url, false);
+
+    log("\n");
+}
+
+var tests = [
+    ["http://127.0.0.1:8000", "http", "localhost", false, "http://localhost:8000/xmlhttprequest/resources/get.txt"],
+    ["http://127.0.0.1:8000", "http", "localhost", true, "http://localhost:8000/xmlhttprequest/resources/get.txt"],
+    ["http://127.0.0.1:8000", "hTtP", "LoCaLhOsT", true, "http://localhost:8000/xmlhttprequest/resources/get.txt"],
+    ["http://127.0.0.1:8000", "http", "", true, "http://localhost:8000/xmlhttprequest/resources/get.txt"]
+];
+
+tests.forEach(function(testEntry) { test.apply(null, testEntry) });
+</script>

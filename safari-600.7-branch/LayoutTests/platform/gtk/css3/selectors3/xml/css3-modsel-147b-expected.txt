@@ -1,0 +1,74 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x357
+  RenderBlock {test} at (0,0) size 800x357
+    RenderBlock (anonymous) at (0,0) size 800x0
+      RenderInline {test} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+    RenderBlock (anonymous) at (0,0) size 800x357
+      RenderBlock {line} at (0,0) size 800x17
+        RenderText {#text} at (0,0) size 181x17
+          text run at (0,0) width 181: "This line should be unstyled."
+      RenderBlock {line} at (0,17) size 800x17 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 163x17
+          text run at (0,0) width 163: "This line should be green."
+      RenderBlock {line} at (0,34) size 800x17
+        RenderText {#text} at (0,0) size 181x17
+          text run at (0,0) width 181: "This line should be unstyled."
+      RenderBlock {line} at (0,51) size 800x17
+        RenderText {#text} at (0,0) size 181x17
+          text run at (0,0) width 181: "This line should be unstyled."
+      RenderBlock {line} at (0,68) size 800x17 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 163x17
+          text run at (0,0) width 163: "This line should be green."
+      RenderBlock {line} at (0,85) size 800x17
+        RenderText {#text} at (0,0) size 181x17
+          text run at (0,0) width 181: "This line should be unstyled."
+      RenderBlock {line} at (0,102) size 800x17
+        RenderText {#text} at (0,0) size 181x17
+          text run at (0,0) width 181: "This line should be unstyled."
+      RenderBlock {line} at (0,119) size 800x17 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 163x17
+          text run at (0,0) width 163: "This line should be green."
+      RenderBlock {line} at (0,136) size 800x17
+        RenderText {#text} at (0,0) size 181x17
+          text run at (0,0) width 181: "This line should be unstyled."
+      RenderBlock {line} at (0,153) size 800x17
+        RenderText {#text} at (0,0) size 181x17
+          text run at (0,0) width 181: "This line should be unstyled."
+      RenderBlock {line} at (0,170) size 800x17 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 163x17
+          text run at (0,0) width 163: "This line should be green."
+      RenderBlock {line} at (0,187) size 800x17
+        RenderText {#text} at (0,0) size 181x17
+          text run at (0,0) width 181: "This line should be unstyled."
+      RenderBlock {line} at (0,204) size 800x17
+        RenderText {#text} at (0,0) size 181x17
+          text run at (0,0) width 181: "This line should be unstyled."
+      RenderBlock {line} at (0,221) size 800x17 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 163x17
+          text run at (0,0) width 163: "This line should be green."
+      RenderBlock {line} at (0,238) size 800x17
+        RenderText {#text} at (0,0) size 181x17
+          text run at (0,0) width 181: "This line should be unstyled."
+      RenderBlock {line} at (0,255) size 800x17
+        RenderText {#text} at (0,0) size 181x17
+          text run at (0,0) width 181: "This line should be unstyled."
+      RenderBlock {line} at (0,272) size 800x17 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 163x17
+          text run at (0,0) width 163: "This line should be green."
+      RenderBlock {line} at (0,289) size 800x17
+        RenderText {#text} at (0,0) size 181x17
+          text run at (0,0) width 181: "This line should be unstyled."
+      RenderBlock {line} at (0,306) size 800x17
+        RenderText {#text} at (0,0) size 181x17
+          text run at (0,0) width 181: "This line should be unstyled."
+      RenderBlock {line} at (0,323) size 800x17 [bgcolor=#00FF00]
+        RenderText {#text} at (0,0) size 163x17
+          text run at (0,0) width 163: "This line should be green."
+      RenderBlock {line} at (0,340) size 800x17
+        RenderText {#text} at (0,0) size 181x17
+          text run at (0,0) width 181: "This line should be unstyled."
+    RenderBlock (anonymous) at (0,357) size 800x0
+      RenderInline {test} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0

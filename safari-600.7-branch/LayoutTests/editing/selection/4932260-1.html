@@ -1,0 +1,13 @@
+<p>This tests for a bug where images would act as sentence boundaries.</p>
+<div id="div" contenteditable="true">The caret should be <img src="../resources/abe.png">at the beginning of this sentence.</div>
+
+<script>
+if (window.testRunner)
+    window.testRunner.dumpEditingCallbacks();
+var sel = window.getSelection();
+var div = document.getElementById("div");
+sel.setPosition(div, 0);
+sel.modify("move", "forward", "sentence");
+sel.setPosition(div, div.childNodes.length);
+sel.modify("move", "backward", "sentence");
+</script>

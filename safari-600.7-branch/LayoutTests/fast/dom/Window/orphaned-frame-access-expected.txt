@@ -1,0 +1,3 @@
+This tests access to a window with a null frame. You should see "PASS" for each of the three tests below.
+
+property: PASS ... array: PASS ... missing property: PASS.

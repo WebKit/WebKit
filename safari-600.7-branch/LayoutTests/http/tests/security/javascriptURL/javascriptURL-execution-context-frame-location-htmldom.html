@@ -1,0 +1,44 @@
+<html>
+<head>
+    <script>
+        window.onload = function()
+        {
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.dumpChildFramesAsText();
+                testRunner.waitUntilDone();
+            }
+
+            if (window.testRunner) {
+                setTimeout(pollForTest, 1);
+            } else {
+                alert("This test requires it be run in DRT.");
+            }
+        }
+
+        pollForTest = function()
+        {
+            if (!testRunner.globalFlag) {
+                setTimeout(pollForTest, 1);
+                return;
+            }
+            runTest();
+            testRunner.notifyDone();
+        }
+
+        runTest = function()
+        {
+            var frame = document.getElementById('aFrame');
+            frame.location = 'javascript:"FAIL: this should not have been loaded."';
+            frame.location = ' javascript:"FAIL: this should not have been loaded."';
+            frame.location = 'java\0script:"FAIL: this should not have been loaded."';
+            frame.location = 'javascript\t:"FAIL: this should not have been loaded."';
+            frame.location = 'javascript\1:"FAIL: this should not have been loaded."';
+        }
+    </script>
+</head>
+<frameset rows="10%,*">
+    <frame id='main' src="data:text/html,<p>This test passes as long as the word 'FAIL' and an accompanying message do not appear in the frame below.</p>">
+    <frame id='aFrame' src='http://localhost:8000/security/resources/cross-frame-iframe.html'>
+</frameset>
+</html>

@@ -1,0 +1,4 @@
+This test that the loadstart event is fired for XMLHttpRequests
+
+PASS: loadstart event fired.
+

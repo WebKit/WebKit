@@ -1,0 +1,62 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../resources-test.js"></script>
+<script src="search-test.js"></script>
+<script>
+function test()
+{
+    InspectorTest.runAfterResourcesAreFinished(["search.js"], step2);
+    var resource;
+
+    function step2()
+    {
+        resource = WebInspector.resourceForURL("http://127.0.0.1:8000/inspector/search/resources/search.js");
+        InspectorTest.addResult(resource.url);
+
+        // This file should not match search query.
+        var text = "searchTest" + "UniqueString";
+        resource.searchInContent(text, false, false, step3);
+    }
+
+    function step3(searchMatches)
+    {
+        InspectorTest.dumpSearchMatches(searchMatches);
+
+        // This file should not match search query.
+        var text = "searchTest" + "UniqueString";
+        resource.searchInContent(text, true, false, step4);
+    }
+
+    function step4(searchMatches)
+    {
+        InspectorTest.dumpSearchMatches(searchMatches);
+
+        var text = "[a-z]earchTestUniqueString";
+        resource.searchInContent(text, false, true, step5);
+    }
+
+    function step5(searchMatches)
+    {
+        InspectorTest.dumpSearchMatches(searchMatches);
+
+        var text = "[a-z]earchTestUniqueString";
+        resource.searchInContent(text, true, true, step6);
+    }
+
+    function step6(searchMatches)
+    {
+        InspectorTest.dumpSearchMatches(searchMatches);
+
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body>
+<p>Tests single resource search in inspector page agent.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=68998">Bug 68998</a>
+
+<iframe src="resources/search.html" onload="runTest()">
+</body>
+</html>

@@ -1,0 +1,9 @@
+Test that setRequestHeader properly checks for line feeds in header values.
+
+%0AEvil%3A%20on -> SUCCESS, setRequestHeader() raised an exception Error: SyntaxError: DOM Exception 12
+
+%0DEvil%3A%20on -> SUCCESS, setRequestHeader() raised an exception Error: SyntaxError: DOM Exception 12
+
+%0D%0AEvil%3A%20on -> SUCCESS, setRequestHeader() raised an exception Error: SyntaxError: DOM Exception 12
+
+%0A%0DEvil%3A%20on -> SUCCESS, setRequestHeader() raised an exception Error: SyntaxError: DOM Exception 12

@@ -1,0 +1,42 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaObject to int
+
+PASS dt.PUB_DOUBLE_REPRESENTATION = 0.5 ;dt.setInteger( dt ); dt.PUB_INT is 0
+PASS dt.PUB_DOUBLE_REPRESENTATION = 0.5 ;dt.setInteger( dt ); dt.getInteger() is 0
+PASS typeof dt.getInteger() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = -0.5;dt.setInteger( dt ); dt.PUB_INT is 0
+PASS dt.PUB_DOUBLE_REPRESENTATION = -0.5;dt.setInteger( dt ); dt.getInteger() is 0
+PASS typeof dt.getInteger() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = 0.5;dt.setInteger( dt ); dt.PUB_INT is 0
+PASS dt.PUB_DOUBLE_REPRESENTATION = 0.5;dt.setInteger( dt ); dt.getInteger() is 0
+PASS typeof dt.getInteger() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = -0.4;dt.setInteger( dt ); dt.PUB_INT is 0
+PASS dt.PUB_DOUBLE_REPRESENTATION = -0.4;dt.setInteger( dt ); dt.getInteger() is 0
+PASS typeof dt.getInteger() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = 0.6;dt.setInteger( dt ); dt.PUB_INT is 0
+PASS dt.PUB_DOUBLE_REPRESENTATION = 0.6;dt.setInteger( dt ); dt.getInteger() is 0
+PASS typeof dt.getInteger() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = -0.6;dt.setInteger( dt ); dt.PUB_INT is 0
+PASS dt.PUB_DOUBLE_REPRESENTATION = -0.6;dt.setInteger( dt ); dt.getInteger() is 0
+PASS typeof dt.getInteger() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = 3.141592653589793;dt.setInteger( dt ); dt.PUB_INT is 3
+PASS dt.PUB_DOUBLE_REPRESENTATION = 3.141592653589793;dt.setInteger( dt ); dt.getInteger() is 3
+PASS typeof dt.getInteger() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = -3.141592653589793;dt.setInteger( dt ); dt.PUB_INT is -3
+PASS dt.PUB_DOUBLE_REPRESENTATION = -3.141592653589793;dt.setInteger( dt ); dt.getInteger() is -3
+PASS typeof dt.getInteger() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = 2147483647;dt.setInteger( dt ); dt.PUB_INT is 2147483647
+PASS dt.PUB_DOUBLE_REPRESENTATION = 2147483647;dt.setInteger( dt ); dt.getInteger() is 2147483647
+PASS typeof dt.getInteger() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = -2147483648;dt.setInteger( dt ); dt.PUB_INT is -2147483648
+PASS dt.PUB_DOUBLE_REPRESENTATION = -2147483648;dt.setInteger( dt ); dt.getInteger() is -2147483648
+PASS typeof dt.getInteger() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = -2147483648.5;dt.setInteger( dt ); dt.PUB_INT is -2147483648
+PASS dt.PUB_DOUBLE_REPRESENTATION = -2147483648.5;dt.setInteger( dt ); dt.getInteger() is -2147483648
+PASS typeof dt.getInteger() is 'number'
+PASS dt.PUB_DOUBLE_REPRESENTATION = 2147483647.5;dt.setInteger( dt ); dt.PUB_INT is 2147483647
+PASS dt.PUB_DOUBLE_REPRESENTATION = 2147483647.5;dt.setInteger( dt ); dt.getInteger() is 2147483647
+PASS typeof dt.getInteger() is 'number'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

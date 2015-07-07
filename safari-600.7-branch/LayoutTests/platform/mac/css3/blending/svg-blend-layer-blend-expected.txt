@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x462
+  RenderBlock {HTML} at (0,0) size 800x462
+    RenderBody {BODY} at (8,16) size 784x438
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 534x18
+          text run at (0,0) width 534: "Test for isolation caused by blending. This test passes if the whole rectangle is green."
+      RenderBlock (anonymous) at (0,34) size 784x404
+        RenderSVGRoot {svg} at (8,50) size 160x160
+          RenderSVGContainer {g} at (8,50) size 160x160 [transform={m=((4.00,0.00)(0.00,4.00)) t=(0.00,0.00)}]
+            RenderSVGRect {rect} at (8,50) size 160x160 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=40.00] [height=40.00]
+            RenderSVGContainer {g} at (48,90) size 80x80
+              RenderSVGRect {rect} at (48,90) size 80x80 [fill={[type=SOLID] [color=#00FF00]}] [x=10.00] [y=10.00] [width=20.00] [height=20.00]
+        RenderText {#text} at (0,0) size 0x0

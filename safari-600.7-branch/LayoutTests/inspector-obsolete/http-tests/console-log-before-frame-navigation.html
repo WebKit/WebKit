@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../inspector/inspector-test.js"></script>
+<script>
+
+function onload()
+{
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+}
+
+window.addEventListener("message", receiveMessage, false);
+
+function receiveMessage(event) {
+    if (event.data != "frameReloaded") {
+        testFailed("Unexpected message: " + event.data);
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+    if (window.testRunner)
+        testRunner.showWebInspector();
+    runTest();
+}
+
+function test()
+{
+    var messages = WebInspector.console.messages;
+    InspectorTest.addResult("Received console messages:");
+    for (var i = 0; i < messages.length; ++i) {
+        var m = messages[i];
+        InspectorTest.addResult("Message[" + i + "]:");
+        InspectorTest.addResult("Message: " + WebInspector.displayNameForURL(m.url) + ":" + m.line + " " + m.message);
+    }
+    InspectorTest.addResult("TEST COMPLETE.");
+    InspectorTest.completeTest();
+}
+
+</script>
+
+</head>
+<body onload="onload()">
+<p>
+Tests that Web Inspector won't crash if there are messages written to console from a frame which has already navigated to a page from a different domain.
+</p>
+<iframe id="theFrame" src="resources/console-log-frame-before-navigation.html"></iframe>
+</body>
+</html>

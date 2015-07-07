@@ -1,0 +1,6 @@
+Test that completions in the context of an iframe with a different origin will result in names of its global variables. Test passes if all global variables are found among completions AND there are NO console messages. Bug 65457.
+
+
+myGlobalVar
+myGlobalFunction
+

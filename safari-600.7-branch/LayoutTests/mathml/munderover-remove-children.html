@@ -1,0 +1,57 @@
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>MathML munder/mover removing children test</title>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<math xmlns='http://www.w3.org/1998/Math/MathML'>
+    <mtext>This test passes if this page has no other text.</mtext>
+    <munder>
+        <mi id="m1">A</mi>
+        <mi id="m2">X</mi>
+    </munder>
+    <mover>
+        <mi id="m3">B</mi>
+        <mi id="m4">Y</mi>
+    </mover>
+    <munderover>
+        <mi id="m5">C</mi>
+        <mi id="m6">Z</mi>
+        <mi id="m7">W</mi>
+    </munderover>
+</math>
+<script>
+try {
+    var elem = document.getElementById("m1");
+    elem.parentNode.removeChild(elem);
+} catch(e) {document.write("Error: " + e.name + ": " + e.message + + " for " + i);}
+try {
+    var elem = document.getElementById("m2");
+    elem.parentNode.removeChild(elem);
+} catch(e) {document.write("Error: " + e.name + ": " + e.message + + " for " + i);}
+try {
+    var elem = document.getElementById("m3");
+    elem.parentNode.removeChild(elem);
+} catch(e) {document.write("Error: " + e.name + ": " + e.message + + " for " + i);}
+try {
+    var elem = document.getElementById("m4");
+    elem.parentNode.removeChild(elem);
+} catch(e) {document.write("Error: " + e.name + ": " + e.message + + " for " + i);}
+try {
+    var elem = document.getElementById("m7");
+    elem.parentNode.removeChild(elem);
+} catch(e) {document.write("Error: " + e.name + ": " + e.message + + " for " + i);}
+try {
+    var elem = document.getElementById("m6");
+    elem.parentNode.removeChild(elem);
+} catch(e) {document.write("Error: " + e.name + ": " + e.message + + " for " + i);}
+try {
+    var elem = document.getElementById("m5");
+    elem.parentNode.removeChild(elem);
+} catch(e) {document.write("Error: " + e.name + ": " + e.message + + " for " + i);}
+</script>
+</body>
+</html>

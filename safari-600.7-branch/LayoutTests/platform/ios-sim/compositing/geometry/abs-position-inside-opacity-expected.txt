@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x542
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 332x19
+          text run at (0,0) width 332: "You should see two green boxes below, with no red"
+layer at (58,78) size 120x120
+  RenderBlock (relative positioned) {DIV} at (50,70) size 120x120 [border: (1px solid #000000)]
+layer at (69,89) size 100x100
+  RenderBlock {DIV} at (11,11) size 100x100 [bgcolor=#FF0000]
+layer at (69,89) size 100x100
+  RenderBlock (positioned) {DIV} at (11,11) size 100x100 [bgcolor=#008000]
+layer at (58,248) size 120x120
+  RenderBlock (relative positioned) {DIV} at (50,240) size 120x120 [border: (1px solid #000000)]
+layer at (69,259) size 100x100
+  RenderBlock {DIV} at (11,11) size 100x100 [bgcolor=#FF0000]
+layer at (69,259) size 100x100
+  RenderBlock (positioned) {DIV} at (11,11) size 100x100 [bgcolor=#008000]

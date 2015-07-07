@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="resources/common.js"></script>
+</head>
+<body>
+<p>Check if the appearance of a validation message for &lt;select> is good.</p>
+
+<form action="validation-message-on-menulist.html">
+<select id=host name=select required>
+<option value="">Choose one
+<option>One
+</select>
+<input type=submit id=submit>
+</form>
+
+<div id="console"></div>
+<script>
+function getTextNode(bubble) {
+    return bubble.lastChild.firstChild;
+}
+
+function check() {
+    hostRect = getAbsoluteRect(host);
+    bubbleRect = getAbsoluteRect(getValidationMessageBubbleNode(host));
+    debug('The top of the bubble should be on the bottom of the host node:');
+    shouldBe('bubbleRect.top', 'hostRect.bottom');
+    debug('');
+    debug('A long text should fit in the bubble:');
+    shouldBeGreaterThanOrEqual('getValidationMessageBubbleNode(host).offsetWidth', 'getTextNode(getValidationMessageBubbleNode(host)).offsetWidth');
+    debug('');
+
+    finishJSTest();
+}
+
+var host = $('host');
+var hostRect;
+var bubbleRect;
+host.setCustomValidity('Testing a long validation message in order to check white-space:pre in the UA stylesheet does not affect to the validation message appearance.');
+$('submit').click();
+if (window.testRunner) {
+    setTimeout(check, 0);
+} else {
+    debug('The test requires testRunner.');
+}
+
+var jsTestIsAsync = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>

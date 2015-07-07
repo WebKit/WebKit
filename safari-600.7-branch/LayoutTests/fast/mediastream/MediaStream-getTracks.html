@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+        <script>
+
+            var stream1;
+            var stream2;
+            var audioTrack;
+            var videoTrack;
+
+            function error()
+            {
+                testFailed('Stream generation failed.');
+                finishJSTest();
+            }
+
+            function getUserMedia(dictionary, callback)
+            {
+                try {
+                    navigator.webkitGetUserMedia(dictionary, callback, error);
+                } catch (e) {
+                    testFailed('webkitGetUserMedia threw exception :' + e);
+                    finishJSTest();
+                }
+            }
+
+            function tryAddTrack(stream, track)
+            {
+                try {
+                    stream.addTrack(track);
+                    testPassed("track added to stream.");
+                } catch (exception) {
+                    testFailed("addTrack threw an exception.");
+                    finishJSTest();
+                }
+            }
+
+            function createStreamAndAddTracks()
+            {
+                shouldBe('stream2.getTracks().length', '2');
+                audioTrack = stream1.getAudioTracks()[0];
+                tryAddTrack(stream2, audioTrack);
+                shouldBe('stream2.getAudioTracks().length', '2');
+                shouldBe('stream2.getVideoTracks().length', '1');
+                shouldBe('stream2.getTracks().length', '3');
+                videoTrack = stream1.getVideoTracks()[0];
+                tryAddTrack(stream2, videoTrack);
+                shouldBe('stream2.getAudioTracks().length', '2');
+                shouldBe('stream2.getVideoTracks().length', '2');
+                shouldBe('stream2.getTracks().length', '4');
+
+                finishJSTest();
+            }
+
+            function gotStream2(s)
+            {
+                stream2 = s;
+                createStreamAndAddTracks();
+            }
+
+            function gotStream1(s)
+            {
+                stream1 = s;
+                shouldBe('stream1.getTracks().length', '2');
+                getUserMedia({audio:true, video:true}, gotStream2);
+            }
+
+            function startMedia()
+            {
+                description("Test adding tracks to inactive MediaStream.");
+                getUserMedia({audio:true, video:true}, gotStream1); 
+            }
+            window.jsTestIsAsync = true;
+            window.successfullyParsed = true;
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </head>
+    <body onload="startMedia()">
+        <p id="description"></p>
+        <div id="console"></div>
+    </body>
+</html>

@@ -1,0 +1,10 @@
+Testcase for bug https://webkit.org/b/120726: When deleting editable content, typing style should be reset when moving into another node.
+
+Deleting 'W' in blue color and then inserting 'O'. The following markup should show 'O' in blue color:
+| "H "
+| <font>
+|   color="#0000ff"
+|   "O<#selection-caret>"
+
+Deleting the blue colored text and the preceding space and then inserting 'W'. 'W' should be not be in blue color in the following markup:
+| "HW<#selection-caret>"

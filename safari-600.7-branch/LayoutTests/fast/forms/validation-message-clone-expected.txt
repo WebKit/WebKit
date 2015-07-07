@@ -1,0 +1,8 @@
+There are two text fields. The first one should have a validation message bubble, and another should have no validation message.
+
+
+
+
+PASS internals.shadowPseudoId(lastInOriginalShadow) == "-webkit-validation-bubble" is true
+PASS internals.shadowPseudoId(lastInClonedShadow) == "-webkit-validation-bubble" is false
+

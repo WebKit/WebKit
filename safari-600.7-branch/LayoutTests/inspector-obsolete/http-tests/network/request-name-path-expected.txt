@@ -1,0 +1,52 @@
+Tests name() and path() methods of NetworkRequest.
+
+Bug 101064
+Dumping request name and path for url: http://www.example.com/foo/bar/baz?key=value
+    name = baz?key=value
+    path = www.example.com/foo/bar
+Dumping request name and path for url: http://www.example.com/foo/bar/?key=value
+    name = ?key=value
+    path = www.example.com/foo/bar
+Dumping request name and path for url: http://www.example.com/foo/bar/baz
+    name = baz
+    path = www.example.com/foo/bar
+Dumping request name and path for url: http://www.example.com/foo/bar/
+    name = bar/
+    path = www.example.com/foo
+Dumping request name and path for url: http://www.example.com/baz?key=value
+    name = baz?key=value
+    path = www.example.com
+Dumping request name and path for url: http://www.example.com/?key=value
+    name = ?key=value
+    path = www.example.com
+Dumping request name and path for url: http://www.example.com/baz
+    name = baz
+    path = www.example.com
+Dumping request name and path for url: http://www.example.com/
+    name = www.example.com
+    path = 
+Dumping request name and path for url: http://127.0.0.1/foo/bar/baz?key=value
+    name = baz?key=value
+    path = /foo/bar
+Dumping request name and path for url: http://127.0.0.1/foo/bar/?key=value
+    name = ?key=value
+    path = /foo/bar
+Dumping request name and path for url: http://127.0.0.1/foo/bar/baz
+    name = baz
+    path = /foo/bar
+Dumping request name and path for url: http://127.0.0.1/foo/bar/
+    name = bar/
+    path = /foo
+Dumping request name and path for url: http://127.0.0.1/baz?key=value
+    name = baz?key=value
+    path = 
+Dumping request name and path for url: http://127.0.0.1/?key=value
+    name = ?key=value
+    path = 
+Dumping request name and path for url: http://127.0.0.1/baz
+    name = baz
+    path = 
+Dumping request name and path for url: http://127.0.0.1/
+    name = 127.0.0.1
+    path = 
+

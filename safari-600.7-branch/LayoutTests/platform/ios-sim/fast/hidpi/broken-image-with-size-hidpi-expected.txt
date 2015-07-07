@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 652x19
+          text run at (0,0) width 652: "This test passes if the broken image icon appears high-resolution in HiDPI and is the appropriate size."
+      RenderBlock (anonymous) at (0,20) size 784x150
+        RenderImage {IMG} at (0,0) size 300x150
+        RenderText {#text} at (0,0) size 0x0

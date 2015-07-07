@@ -1,0 +1,93 @@
+<html>
+  <!--
+    This test ensures the cross iframe traversal correctness of spatial navigation:
+    focusable elements in nested inner frame should be accessible.
+
+    * Pre-conditions:
+    1) DRT support for spatial navigation enable/disable.
+
+    * Navigation steps:
+    1) Loads this page, focus goes to "start" automatically.
+    2) Focus moves along the elements in the two level deep nested frame,
+       but going back to the main frame later on.
+  -->
+  <head>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script src="resources/spatial-navigation-utils.js"></script>
+    <script type="application/javascript">
+
+    var resultMap = [
+      ["Right", "1"],
+      ["Right", "2"],
+      ["Right", "3"],
+      ["Right", "4"],
+      ["Right", "5"],
+      ["Right", "6"],
+      ["Right", "7"],
+      ["Right", "8"],
+      ["Right", "9"],
+      ["Left", "8"],
+      ["Left", "7"],
+      ["Left", "6"],
+      ["Left", "5"],
+      ["Left", "4"],
+      ["Left", "3"],
+      ["Left", "2"],
+      ["Left", "1"],
+      ["Left", "start"],
+      ["DONE", "DONE"]
+    ];
+
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.setSpatialNavigationEnabled(true);
+      testRunner.overridePreference("WebKitTabToLinksPreferenceKey", 1);
+      testRunner.waitUntilDone();
+    }
+
+    function runTest()
+    {
+      // starting the test itself: get to a known place.
+      document.getElementById("start").focus();
+
+      initTest(resultMap, testCompleted);
+    }
+
+    function testCompleted()
+    {
+      if (window.testRunner)
+        testRunner.notifyDone();
+    }
+
+    window.onload = runTest;
+    </script>
+    <script src="../resources/js-test-post.js"></script>
+  </head>
+  <body>
+  <table style="text-align: top;"  border="0" cellpadding="3px" cellspacing="3px">
+    <tr>
+      <td valign="top" width="10%">
+        <a id="start" href="#">Link</a><br>
+      </td>
+      <td valign="top">
+        <iframe width="50%" height="100px" frameborder="1" src="resources/iframe.html"></iframe><br>
+      </td>
+      <td valign="top" width="10%">
+        <a id="9" href="#">Link</a><br>
+      </td>
+    </tr>
+    <tr>
+      <td valign="top" width="10%">
+        <a id="10" href="#">Link</a><br>
+      </td>
+      <td valign="top">
+          <p><a id="11" href="#">Here</a> is a link.</p>
+      </td>
+      <td valign="top" width="10%">
+        <a id="12" href="#">Link</a><br>
+      </td>
+    </tr>
+  </table>
+  <div id="console"></div>
+  </body>
+</html>

@@ -1,0 +1,5 @@
+Test for WebKit Bug 117290 [CSSRegions] getBoundingClientRect wrong for inline content nodes
+
+On success you should see PASS below.
+
+PASS

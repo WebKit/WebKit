@@ -1,0 +1,3 @@
+This test passes if the three green boxes are on the same horizontal line.
+
+ PASS

@@ -1,0 +1,15 @@
+This tests that page scaling does not affect mouse event pageX and pageY coordinates.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Unscaled
+PASS eventLog is "click(10, 10)"
+
+setPageScale(0.5)
+FAIL eventLog should be click(20, 20). Was click(10, 10).
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,26 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.addEventListener("DOMContentLoaded", function() {
+    var canvas = document.createElement("canvas");
+    canvas.width = 100;
+    canvas.height = 100;
+
+    var ctx = canvas.getContext("2d");
+    ctx.fillStyle = "red";
+    ctx.fillRect(0, 0, 100, 100);
+
+    var data1 = canvas.toDataURL();
+
+    canvas = document.createElement("canvas");
+    canvas.width = 100;
+    canvas.height = 100;
+
+    ctx = canvas.getContext("2d");
+
+    var data2 = canvas.toDataURL();
+
+    document.body.appendChild(document.createTextNode((data1 == data2) ? "FAIL" : "PASS"));
+});
+</script>

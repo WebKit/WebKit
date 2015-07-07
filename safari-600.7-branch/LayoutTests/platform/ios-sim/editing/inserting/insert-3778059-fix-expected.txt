@@ -1,0 +1,29 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x214 [border: (2px solid #FF0000)]
+        RenderBlock {DIV} at (14,38) size 756x138
+          RenderBlock {BLOCKQUOTE} at (40,0) size 676x30
+            RenderText {#text} at (0,1) size 42x28
+              text run at (0,1) width 42: "Test"
+          RenderBlock (anonymous) at (0,54) size 756x30
+            RenderText {#text} at (0,1) size 12x28
+              text run at (0,1) width 12: "x"
+            RenderBR {BR} at (12,23) size 0x0
+          RenderBlock {BLOCKQUOTE} at (40,108) size 676x30
+            RenderText {#text} at (0,1) size 42x28
+              text run at (0,1) width 42: "Test"
+caret: position 1 of child 3 {#text} of child 1 {DIV} of child 1 {DIV} of body

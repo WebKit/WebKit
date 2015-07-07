@@ -1,0 +1,38 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x180
+  RenderBlock {HTML} at (0,0) size 800x180
+    RenderBody {BODY} at (8,16) size 784x156
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 310x19
+          text run at (0,0) width 310: "Test passes if there is no red visible on the page."
+layer at (8,52) size 220x120
+  RenderBlock (relative positioned) {DIV} at (0,36) size 220x120 [color=#008000] [bgcolor=#008000]
+    RenderText {#text} at (0,0) size 101x200
+      text run at (0,0) width 101: "XXXXX"
+      text run at (0,20) width 101: "XXXXX"
+      text run at (0,40) width 101: "XXXXX"
+      text run at (0,60) width 101: "XXXXX"
+      text run at (0,80) width 101: "XXXXX"
+      text run at (0,100) width 101: "XXXXX"
+      text run at (0,120) width 101: "XXXXX"
+      text run at (0,140) width 101: "XXXXX"
+      text run at (0,160) width 101: "XXXXX"
+      text run at (0,180) width 41: "XX"
+    RenderInline {SPAN} at (0,0) size 41x20 [color=#FF0000]
+      RenderText {#text} at (40,180) size 41x20
+        text run at (40,180) width 41: "XX"
+    RenderText {#text} at (80,180) size 101x40
+      text run at (80,180) width 21: "X"
+      text run at (0,200) width 41: "XX"
+    RenderInline {SPAN} at (0,0) size 41x20 [color=#FF0000]
+      RenderText {#text} at (40,200) size 41x20
+        text run at (40,200) width 41: "XX"
+    RenderText {#text} at (80,200) size 101x40
+      text run at (80,200) width 21: "X"
+      text run at (0,220) width 101: "XXXXX"
+layer at (168,232) size 40x40
+  RenderBlock (positioned) {SPAN} at (160,180) size 40x40
+    RenderText {#text} at (0,0) size 41x40
+      text run at (0,0) width 41: "XX"
+      text run at (0,20) width 41: "XX"

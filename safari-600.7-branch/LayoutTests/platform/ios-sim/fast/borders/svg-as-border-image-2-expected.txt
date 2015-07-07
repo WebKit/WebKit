@@ -1,0 +1,42 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 370x440 [border: (1px solid #000000)]
+        RenderBlock {H2} at (1,20) size 368x30
+          RenderText {#text} at (0,1) size 196x28
+            text run at (0,1) width 196: "SVG border-image"
+        RenderBlock (anonymous) at (1,69) size 368x370
+          RenderBlock {DIV} at (10,10) size 160x160 [border: (30px none #000000)]
+          RenderText {#text} at (180,165) size 4x19
+            text run at (180,165) width 4: " "
+          RenderBlock {DIV} at (194,10) size 160x160 [border: (30px none #000000)]
+          RenderText {#text} at (364,165) size 4x19
+            text run at (364,165) width 4: " "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderBlock {DIV} at (10,195) size 160x160 [border: (30px none #000000)]
+          RenderText {#text} at (180,350) size 4x19
+            text run at (180,350) width 4: " "
+          RenderBlock {DIV} at (194,195) size 160x160 [border: (30px none #000000)]
+          RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (370,419) size 4x19
+        text run at (370,419) width 4: " "
+      RenderBlock {DIV} at (374,0) size 370x440 [border: (1px solid #000000)]
+        RenderBlock {H2} at (1,20) size 368x30
+          RenderText {#text} at (0,1) size 197x28
+            text run at (0,1) width 197: "PNG border-image"
+        RenderBlock (anonymous) at (1,69) size 368x370
+          RenderBlock {DIV} at (10,10) size 160x160 [border: (30px none #000000)]
+          RenderText {#text} at (180,165) size 4x19
+            text run at (180,165) width 4: " "
+          RenderBlock {DIV} at (194,10) size 160x160 [border: (30px none #000000)]
+          RenderText {#text} at (364,165) size 4x19
+            text run at (364,165) width 4: " "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderBlock {DIV} at (10,195) size 160x160 [border: (30px none #000000)]
+          RenderText {#text} at (180,350) size 4x19
+            text run at (180,350) width 4: " "
+          RenderBlock {DIV} at (194,195) size 160x160 [border: (30px none #000000)]
+          RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,0) size 0x0

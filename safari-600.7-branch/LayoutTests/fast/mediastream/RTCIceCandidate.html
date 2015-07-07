@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <script src="../../resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <p id="description"></p>
+        <div id="console"></div>
+        <script>
+            description("Tests RTCIceCandidate.");
+
+            var initializer = {candidate:"foo", sdpMid:"bar", sdpMLineIndex:6};
+            var candidate;
+            shouldNotThrow('candidate = new RTCIceCandidate(initializer);');
+            shouldBe('candidate.candidate', '"foo"');
+            shouldBe('candidate.sdpMid', '"bar"');
+            shouldBe('candidate.sdpMLineIndex', '6');
+
+            shouldNotThrow('new RTCIceCandidate({});');
+            shouldNotThrow('new RTCIceCandidate({candidate:"foo"});');
+            shouldNotThrow('new RTCIceCandidate({sdpMid:"bar"});');
+            shouldNotThrow('new RTCIceCandidate({sdpMLineIndex:6});');
+
+            shouldThrow('new RTCIceCandidate({candidate:"foo", sdpMid:"bar", sdpMLineIndex:"a"});');
+            shouldThrow('new RTCIceCandidate({sdpMid:"bar", sdpMLineIndex:"a"});');
+            shouldThrow('new RTCIceCandidate({candidate:"foo", sdpMLineIndex:"a"});');
+            shouldThrow('new RTCIceCandidate({sdpMLineIndex:"a"});');
+
+            shouldThrow('new RTCIceCandidate({candidate:"", sdpMid:"bar", sdpMLineIndex:6});');
+            shouldThrow('new RTCIceCandidate({candidate:"", sdpMLineIndex:6});');
+            shouldThrow('new RTCIceCandidate({candidate:"", sdpMid:"bar"});');
+            shouldThrow('new RTCIceCandidate({candidate:""});');
+
+            shouldThrow('new RTCIceCandidate({candidate:"foo", sdpMid:"", sdpMLineIndex:6});');
+            shouldThrow('new RTCIceCandidate({sdpMid:"", sdpMLineIndex:6});');
+            shouldThrow('new RTCIceCandidate({candidate:"foo", sdpMid:""});');
+            shouldThrow('new RTCIceCandidate({sdpMid:""});');
+
+            shouldThrow('new RTCIceCandidate({candidate:"", sdpMid:"", sdpMLineIndex:"a"});');
+
+            shouldThrow('new RTCIceCandidate(5);');
+            shouldThrow('new RTCIceCandidate("foobar");');
+            shouldThrow('new RTCIceCandidate(candidate:"");');
+
+            window.successfullyParsed = true;
+        </script>
+        <script src="../../resources/js-test-post.js"></script>
+    </body>
+</html>

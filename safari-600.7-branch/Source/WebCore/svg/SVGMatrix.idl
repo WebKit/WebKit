@@ -1,0 +1,45 @@
+/*
+ * Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
+ * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ * Copyright (C) 2006 Apple Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+interface SVGMatrix {
+    // FIXME: these attributes should all be floats but since we implement
+    // AffineTransform with doubles setting these as doubles makes more sense.
+    [StrictTypeChecking] attribute unrestricted double a;
+    [StrictTypeChecking] attribute unrestricted double b;
+    [StrictTypeChecking] attribute unrestricted double c;
+    [StrictTypeChecking] attribute unrestricted double d;
+    [StrictTypeChecking] attribute unrestricted double e;
+    [StrictTypeChecking] attribute unrestricted double f;
+
+    [StrictTypeChecking] SVGMatrix multiply(SVGMatrix secondMatrix);
+    [RaisesException] SVGMatrix inverse();
+    [Immutable, StrictTypeChecking] SVGMatrix translate(unrestricted float x, unrestricted float y);
+    [Immutable, StrictTypeChecking] SVGMatrix scale(unrestricted float scaleFactor);
+    [Immutable, StrictTypeChecking] SVGMatrix scaleNonUniform(unrestricted float scaleFactorX, unrestricted float scaleFactorY);
+    [Immutable, StrictTypeChecking] SVGMatrix rotate(unrestricted float angle);
+    [StrictTypeChecking, RaisesException] SVGMatrix rotateFromVector(unrestricted float x, unrestricted float y);
+    [Immutable] SVGMatrix flipX();
+    [Immutable] SVGMatrix flipY();
+    [Immutable, StrictTypeChecking] SVGMatrix skewX(unrestricted float angle);
+    [Immutable, StrictTypeChecking] SVGMatrix skewY(unrestricted float angle);
+};
+

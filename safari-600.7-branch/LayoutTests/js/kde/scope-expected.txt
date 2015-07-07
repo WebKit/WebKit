@@ -1,0 +1,13 @@
+KDE JS Test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS f(2) is 22
+PASS OBJECT.toString() is 'hello'
+PASS s is 'hello'
+PASS g is 'foo'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

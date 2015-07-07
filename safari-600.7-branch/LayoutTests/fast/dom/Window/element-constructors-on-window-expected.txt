@@ -1,0 +1,115 @@
+Test that HTML element constructors are accessible as window object properties.
+
+HTMLElement: [object HTMLElementConstructor]
+
+HTMLAnchorElement: [object HTMLAnchorElementConstructor]
+
+HTMLAppletElement: [object HTMLAppletElementConstructor]
+
+HTMLAreaElement: [object HTMLAreaElementConstructor]
+
+HTMLBaseElement: [object HTMLBaseElementConstructor]
+
+HTMLBaseFontElement: [object HTMLBaseFontElementConstructor]
+
+HTMLBodyElement: [object HTMLBodyElementConstructor]
+
+HTMLBRElement: [object HTMLBRElementConstructor]
+
+HTMLButtonElement: [object HTMLButtonElementConstructor]
+
+HTMLDirectoryElement: [object HTMLDirectoryElementConstructor]
+
+HTMLDivElement: [object HTMLDivElementConstructor]
+
+HTMLDListElement: [object HTMLDListElementConstructor]
+
+HTMLFieldSetElement: [object HTMLFieldSetElementConstructor]
+
+HTMLFontElement: [object HTMLFontElementConstructor]
+
+HTMLFormElement: [object HTMLFormElementConstructor]
+
+HTMLFrameElement: [object HTMLFrameElementConstructor]
+
+HTMLFrameSetElement: [object HTMLFrameSetElementConstructor]
+
+HTMLHeadElement: [object HTMLHeadElementConstructor]
+
+HTMLHeadingElement: [object HTMLHeadingElementConstructor]
+
+HTMLHRElement: [object HTMLHRElementConstructor]
+
+HTMLHtmlElement: [object HTMLHtmlElementConstructor]
+
+HTMLIFrameElement: [object HTMLIFrameElementConstructor]
+
+HTMLImageElement: [object HTMLImageElementConstructor]
+
+HTMLInputElement: [object HTMLInputElementConstructor]
+
+HTMLLabelElement: [object HTMLLabelElementConstructor]
+
+HTMLLegendElement: [object HTMLLegendElementConstructor]
+
+HTMLLIElement: [object HTMLLIElementConstructor]
+
+HTMLLinkElement: [object HTMLLinkElementConstructor]
+
+HTMLMapElement: [object HTMLMapElementConstructor]
+
+HTMLMenuElement: [object HTMLMenuElementConstructor]
+
+HTMLMetaElement: [object HTMLMetaElementConstructor]
+
+HTMLModElement: [object HTMLModElementConstructor]
+
+HTMLObjectElement: [object HTMLObjectElementConstructor]
+
+HTMLOListElement: [object HTMLOListElementConstructor]
+
+HTMLOptGroupElement: [object HTMLOptGroupElementConstructor]
+
+HTMLOptionElement: [object HTMLOptionElementConstructor]
+
+HTMLParagraphElement: [object HTMLParagraphElementConstructor]
+
+HTMLParamElement: [object HTMLParamElementConstructor]
+
+HTMLPreElement: [object HTMLPreElementConstructor]
+
+HTMLQuoteElement: [object HTMLQuoteElementConstructor]
+
+HTMLScriptElement: [object HTMLScriptElementConstructor]
+
+HTMLSelectElement: [object HTMLSelectElementConstructor]
+
+HTMLStyleElement: [object HTMLStyleElementConstructor]
+
+HTMLTableCaptionElement: [object HTMLTableCaptionElementConstructor]
+
+HTMLTableCellElement: [object HTMLTableCellElementConstructor]
+
+HTMLTableColElement: [object HTMLTableColElementConstructor]
+
+HTMLTableElement: [object HTMLTableElementConstructor]
+
+HTMLTableRowElement: [object HTMLTableRowElementConstructor]
+
+HTMLTableSectionElement: [object HTMLTableSectionElementConstructor]
+
+HTMLTextAreaElement: [object HTMLTextAreaElementConstructor]
+
+HTMLTitleElement: [object HTMLTitleElementConstructor]
+
+HTMLUListElement: [object HTMLUListElementConstructor]
+
+HTMLCanvasElement: [object HTMLCanvasElementConstructor]
+
+HTMLInsElement: undefined
+
+HTMLDelElement: undefined
+
+HTMLEmbedElement: [object HTMLEmbedElementConstructor]
+
+HTMLMarqueeElement: [object HTMLMarqueeElementConstructor]

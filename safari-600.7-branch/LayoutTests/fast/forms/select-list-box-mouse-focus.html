@@ -1,0 +1,27 @@
+<script>
+function test()
+{
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    var select = document.getElementById("select");
+    var x = select.clientLeft + 10;
+    var y = select.clientTop + 10;
+    var event = document.createEvent("MouseEvent");
+    event.initMouseEvent("mousedown", true, true, document.defaultView, 1, x, y, x, y, false, false, false, false, 0, document);
+    select.dispatchEvent(event);
+}
+function reportFocus()
+{
+    document.getElementById("result").innerHTML = "PASS";
+}
+</script>
+<body onload="test()">
+<p>The select below should be focused because we dispatched a mouse down event to it.</p>
+<p id="result">FAIL</p>
+<select id="select" size="4" onfocus="reportFocus()">
+    <option>one</option>
+    <option>two</option>
+    <option>three</option>
+    <option>four</option>
+</select>
+</body>

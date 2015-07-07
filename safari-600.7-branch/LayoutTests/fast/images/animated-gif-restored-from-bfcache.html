@@ -1,0 +1,52 @@
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    }
+
+    function runTest() {
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        var image = document.getElementById("image");
+        var console = document.getElementById("console");            
+        var context = document.getElementById("canvas").getContext("2d");
+
+        image.style.visibility = "visible";
+
+        context.drawImage(image, 0, 0);
+        var frameOne = context.getImageData(0, 0, 1, 1).data;
+
+        window.setTimeout(function() {
+            context.drawImage(image, 0, 0);
+            var frameTwo = context.getImageData(0, 0, 1, 1).data;
+
+            // Compare RGBA of the two frames
+            if (frameOne[0] == frameTwo[0]
+                && frameOne[1] == frameTwo[1]
+                && frameOne[2] == frameTwo[2]
+                && frameOne[3] == frameTwo[3])
+                console.innerHTML = "<span style='color:red'>FAIL</span>";
+            else
+                console.innerHTML = "<span style='color:green'>PASS</span>";
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 100);
+    }
+
+    window.onpageshow = function(event) {
+        if (!event.persisted && window.testRunner) {
+            testRunner.queueLoad("about:blank");
+            testRunner.queueBackNavigation(1);
+            return;
+        }
+
+        if (event.persisted)
+            runTest();
+    }
+</script>
+<p>Test that animated GIFs resume animating after restoring a page from the back forward cache. To test manually, click <a href="about:blank">here</a> to visit about:blank, then press the browser's back button. On success, you should see a square that continuously animates through various shades of green followed by the word 'PASS'.</p>
+<img id="image" style="visibility:hidden" src="resources/animated-10color.gif">
+<div id="console"></div>
+<canvas id="canvas" style="visibility:hidden"><span style="color:red">FAIL</span></canvas>

@@ -1,0 +1,112 @@
+<html>
+<head>
+  <title>Listbox scrollbar hit testing</title>
+  <style type="text/css" media="screen">
+    select {
+      border: 20px inset gray;
+      padding: 10px;
+    }
+    
+    #results {
+      margin-top: 50px;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    function sendClick(element, clientX, clientY)
+    {
+      if (window.eventSender) {
+        eventSender.mouseMoveTo(clientX, clientY);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+      }
+    }
+
+    function mouseDownOnSelect(selId, translateX, translateY)
+    {
+      log('Testing clicks on ' + selId);
+
+      var selectElement = document.getElementById(selId);
+      var itemHeight = 14;
+      var border = 20;
+      var scrollbarWidth = 10;
+      var scrollbarButtonHeight = 12;
+      
+      var scrollbarMidX = translateX + selectElement.offsetLeft + selectElement.offsetWidth - border - scrollbarWidth / 2;
+      // Recall that DRT runs with both scroll arrows at the end of the scrollbar
+      var scrollbarTopArrowY = translateY + selectElement.offsetTop + selectElement.offsetHeight - border - scrollbarButtonHeight - 3;
+      var scrollbarBottomArrowY = translateY + selectElement.offsetTop + selectElement.offsetHeight - border - 3;
+      
+      sendClick(selectElement, scrollbarMidX, scrollbarBottomArrowY);
+      sendClick(selectElement, scrollbarMidX, scrollbarBottomArrowY);
+      if (selectElement.scrollTop == 2 * itemHeight)
+        log('Scrolled down by itemHeight on down arrow click: PASS');
+      else
+        log('Failed to scroll down - scrollTop is ' + selectElement.scrollTop + ': FAIL');
+
+      sendClick(selectElement, scrollbarMidX, scrollbarTopArrowY);
+      if (selectElement.scrollTop == itemHeight)
+        log('Scrolled up by itemHeight on up arrow click: PASS');
+      else
+        log('Failed to scroll up - scrollTop is ' + selectElement.scrollTop + ': FAIL');
+
+      log('');
+    }
+    
+    function log(msg)
+    {
+      var results = document.getElementById('results');
+      results.innerHTML += msg + '<br>';
+    }
+    
+    function test()
+    {
+      if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+      }
+      
+      if (!window.eventSender) {
+        log('This test only runs in DRT');
+      }
+      
+      // Have to wait for the select to be painted before the
+      // scrollbar is sized correctly.
+      setTimeout(function() {
+        mouseDownOnSelect('select1', 0, 0);
+        mouseDownOnSelect('select2', 50, 50);
+        if (window.testRunner)
+          testRunner.notifyDone();
+      }, 0);
+    }
+  </script>
+</head>
+<body onload="test()">
+
+  <select id="select1" size="5">
+    <option selected value="0">item 0</option>
+    <option value="1">item 1</option>
+    <option value="2">item 2</option>
+    <option value="3">item 3</option>
+    <option value="4">item 4</option>
+    <option value="5">item 5</option>
+    <option value="6">item 6</option>
+    <option value="7">item 7</option>
+    <option value="8">item 8</option>
+  </select>
+
+  <select id="select2" size="5" style="-webkit-transform: translate(50px, 50px);">
+    <option selected value="0">item 0</option>
+    <option value="1">item 1</option>
+    <option value="2">item 2</option>
+    <option value="3">item 3</option>
+    <option value="4">item 4</option>
+    <option value="5">item 5</option>
+    <option value="6">item 6</option>
+    <option value="7">item 7</option>
+    <option value="8">item 8</option>
+  </select>
+
+  <div id="results">
+  </div>
+</body>
+</html>

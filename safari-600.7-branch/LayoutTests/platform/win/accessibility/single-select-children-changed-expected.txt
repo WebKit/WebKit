@@ -1,0 +1,7 @@
+
+This tests that non-multiple select elements expose their updated children if they change.
+
+
+PASS option.title === "Option 1" is true
+PASS option2.title === "Option 2" is true
+

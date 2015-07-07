@@ -1,0 +1,21 @@
+<!DOCYTPE html>
+<html>
+<style>
+input { background: red; }
+input:focus { background: green; }
+</style>
+<body>
+<p>The following text box should have focus and should be green.</p>
+<input type="text" id="test" autofocus>
+<div id="result">FAIL</div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+}
+
+var test = document.getElementById("test");
+if (document.defaultView.getComputedStyle(test, null).getPropertyValue('background-color') == "rgb(0, 128, 0)")
+    result.innerHTML = "PASS";
+</script>
+</body>
+</html>

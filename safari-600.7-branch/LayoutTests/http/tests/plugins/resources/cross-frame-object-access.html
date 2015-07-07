@@ -1,0 +1,78 @@
+<html>
+<head>
+<script>
+function debug(str) {
+    var li = document.createElement('li');
+    li.appendChild(document.createTextNode(str));
+    document.getElementById('console').appendChild(li)
+}
+
+function checkLocationObject(l)
+{
+    if (!l) {
+        debug('could not access top.location');
+        return false;
+    }
+
+    if (l.href) {
+        debug('could access top.location.href');
+        return false;
+    }
+    
+    return true;
+}
+
+function runTest() {
+    var numErrors = 0;
+
+    // Try accessing childFrame.location using NPN_Evaluate
+    var l = document.plugin.testEvaluate('top.location')
+    if (!checkLocationObject(l))
+        numErrors++;
+
+    // Try getting childFrame.location.href using NPN_Evaluate
+    var href = document.plugin.testEvaluate('top.location.href');
+    if (href) {
+        debug("could access top.location.href")
+        numErrors++;
+    }
+    
+    // Try accessing childFrame.location using NPN_GetProperty
+    var l = document.plugin.testGetProperty('top', 'location');
+    if (!checkLocationObject(l))
+        numErrors++;
+        
+    var href = document.plugin.testGetProperty('top', 'location', 'href');
+    if (href) {
+        debug("could access top.location.href")
+        numErrors++;
+    }
+    
+    // Try accessing top.document using NPN_EVALUATE
+    var l = document.plugin.testEvaluate('top.document')
+    if (l) {
+        debug('could access top.document');
+        numErrors++;
+    }
+    
+    // Try accessing top.document using NPN_GetProperty
+    var l = document.plugin.testGetProperty('top', 'document')
+    if (l) {
+        debug('could access top.document');
+        numErrors++;
+    }
+    
+    if (numErrors == 0)
+        document.getElementById('result').innerHTML = 'SUCCESS';
+}
+    
+</script>
+</head>
+<body onload="runTest()">
+<embed name="plugin" type="application/x-webkit-test-netscape"></embed>
+<div>This tests that plug-ins can access objects in other frames as allowed by the security model enforced in WebCore.</div>
+<ul id="console">
+</ul>
+<div id="result">FAILURE</div>
+</body>
+</html>

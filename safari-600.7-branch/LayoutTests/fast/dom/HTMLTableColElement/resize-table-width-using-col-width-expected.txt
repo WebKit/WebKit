@@ -1,0 +1,10 @@
+Tests that the width of table cell changes on changing the colgroup width to new width which is less than its originally defined width. New width should be 100
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.getElementById('colWidth').offsetWidth is 100
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

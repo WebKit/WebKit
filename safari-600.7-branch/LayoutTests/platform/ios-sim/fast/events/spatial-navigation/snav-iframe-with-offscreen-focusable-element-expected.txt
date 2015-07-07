@@ -1,0 +1,14 @@
+a
+
+e
+FAIL document.activeElement.getAttribute("id") should be 1. Was start.
+FAIL document.activeElement.getAttribute("id") should be 1. Was start.
+FAIL document.activeElement.getAttribute("id") should be 1. Was start.
+FAIL document.activeElement.getAttribute("id") should be 2. Was start.
+FAIL document.activeElement.getAttribute("id") should be end. Was start.
+FAIL document.activeElement.getAttribute("id") should be 2. Was start.
+FAIL document.activeElement.getAttribute("id") should be 2. Was start.
+FAIL document.activeElement.getAttribute("id") should be 2. Was start.
+FAIL document.activeElement.getAttribute("id") should be 1. Was start.
+PASS document.activeElement.getAttribute("id") is "start"
+

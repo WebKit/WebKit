@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+    <!--
+    Test for https://bugs.webkit.org/show_bug.cgi?id=85633 ([CSSRegions]Add region styling support for color property).
+    You should not see any red text below.
+    -->
+    <head>
+        <style>
+            body { font-family: monospace; }
+            #p1 { color: #008000; position: absolute; top: 10px; }
+            #span2 { color: #008000; position: absolute; top: 50px; }
+            #article3 { color: #0000ff; position: absolute; top: 90px; }
+            #div3 { color: #008000; }
+            #span41 { color: #008000; position: absolute; top: 150px; }
+            #span42 { color: #00ff00; position: absolute; top: 190px; }
+            em { color: #008000; }
+            #div51 { color: #00ff00; position: absolute; top: 230px; width: 350px; height: 50px; }
+            #div52 { color: #00ff00; position: absolute; top: 290px; width: 350px; height: 50px; }
+        </style>
+    </head>
+    <body>
+		<p id="p1">P color styled in region: #008000.</p>
+		<span id="span2">Span color styled in region: #008000.</span>
+        <div id="article3">
+            Text color styled in region: #0000ff.
+            <div id="div3">Div color styled in region: #008000.</div>
+            Text color styled in region: #0000ff.
+        </div>
+        <span id="span41">Span text color styled in region: #008000.</span>
+        <span id="span42">Span text color styled in region: #00ff00.</span>
+        <div id="div51">
+            Text color styled in region: #00ff00.
+            <em style="display: block">Em color styled in region: #008000.</em>
+        </div>
+        <div id="div52">
+            Text color styled in region: #00ff00.
+            <em>Em color styled in region: #008000.</em>
+            Text color styled in region: #00ff00.
+        </div>
+    </body>
+</html>

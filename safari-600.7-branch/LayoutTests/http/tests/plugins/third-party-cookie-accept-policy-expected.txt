@@ -1,0 +1,5 @@
+ALERT: Cookies should be clear, and are: ''
+ALERT: About to set a cookie, but on localhost instead of 127.0.0.1, which is our main document domain - This should fail.
+ALERT: Cookies should still be clear, and are: ''
+This tests that plug-ins cannot set cookies in violation of the 3rd party cookie policy.
+

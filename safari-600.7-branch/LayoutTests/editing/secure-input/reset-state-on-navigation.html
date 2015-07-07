@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<input type=password>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+var passwordInput = document.getElementsByTagName("input")[0];
+
+passwordInput.focus();
+if (!testRunner.secureEventInputIsEnabled)
+    alert("FAIL: Secure event input is not enabled after focusing a password input");
+
+location = "resources/reset-state-on-navigation-target.html";
+
+</script>
+</body>
+</html>

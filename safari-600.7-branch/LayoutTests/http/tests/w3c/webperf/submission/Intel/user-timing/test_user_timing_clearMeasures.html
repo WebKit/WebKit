@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>functionality test of window.performance.clearMeasures</title>
+        <link rel="author" title="Intel" href="http://www.intel.com/" />
+        <link rel="help" href="http://www.w3.org/TR/user-timing/#extensions-performance-interface"/>
+        <script src="/w3c/resources/testharness.js"></script>
+        <script src="/w3c/resources/testharnessreport.js"></script>
+        <script src="/w3c/webperf/resources/webperftestharness.js"></script>
+        <script src="/w3c/webperf/resources/webperftestharnessextension.js"></script>
+        <script>
+        setup({ explicit_done: true });
+
+        function onload_test()
+        {
+            var context = new PerformanceContext(window.performance);
+            var entrylist_checker = new performance_entrylist_checker("measure");
+            var measure_names = measures.map(function(x) {return x[0];});
+
+            mark_names.forEach(context.mark, context);
+            measures.forEach(context.initialMeasures, context);
+            for (var i = 0; i < measures.length; ++i)
+            {
+                context.clearMeasures(measures[i][0]);
+                var retained_entries = context.getEntriesByType('measure');
+                var non_retained_entries = context.getEntriesByName(measures[i][0], 'measure');
+                entrylist_checker.entrylist_check(retained_entries, measures.length - i - 1, measure_names);
+                test_equals(non_retained_entries.length, 0, 'Measure that we cleared should not exist anymore.');
+            }
+
+            measures.forEach(context.initialMeasures, context);
+            context.clearMeasures();
+            test_equals(context.getEntriesByType('measure').length, 0, 'No measures should exist after we clear all.');
+
+            // Following cases test clear existed measure name that is tied for two times.
+            measures.forEach(context.initialMeasures, context);
+            mark_names.forEach(context.mark, context);
+            measures.forEach(context.initialMeasures, context);
+            for (var i = 0; i < measures.length; ++i)
+            {
+                context.clearMeasures(measures[i][0]);
+                var retained_entries = context.getEntriesByType('measure');
+                var non_retained_entries = context.getEntriesByName(measures[i][0], 'measure');
+                entrylist_checker.entrylist_check(retained_entries, (measures.length - i - 1) * 2, measure_names);
+                test_equals(non_retained_entries.length, 0, 'Measure that we cleared shall not existed anymore.');
+            }
+
+            // Following cases test clear functionality when measure names are tied for two times.
+            measures.forEach(context.initialMeasures, context);
+            measures.forEach(context.initialMeasures, context);
+            var entry_number_before_useless_clear = context.getEntriesByType('measure').length;
+            context.clearMeasures('NonExist');
+            var entry_number_after_useless_clear = context.getEntriesByType('measure').length;
+            test_equals(entry_number_before_useless_clear, entry_number_after_useless_clear, 'Nothing should happen if we clear a non-exist measure');
+            context.clearMeasures();
+            test_equals(context.getEntriesByType('measure').length, 0, 'No measures should exist when we clear all.');
+
+            done();
+        }
+        </script>
+    </head>
+    <body onload=onload_test()>
+        <h1>Description</h1>
+        <p>This test validates functionality of the interface window.performance.clearMeasures.</p>
+        <div id="log"></div>
+    </body>
+</html>

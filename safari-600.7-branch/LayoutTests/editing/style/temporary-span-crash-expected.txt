@@ -1,0 +1,3 @@
+Editing code creates temporary SPANs in some situations. Check we don't crash if we have style span { display: none }
+
+----------

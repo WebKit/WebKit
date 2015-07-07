@@ -1,0 +1,62 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x332
+  RenderBlock {HTML} at (0,0) size 800x332
+    RenderBody {BODY} at (8,8) size 784x316
+      RenderBlock (anonymous) at (0,0) size 784x244
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,244) size 784x72
+        RenderText {#text} at (0,0) size 266x18
+          text run at (0,0) width 266: "Rendering horizontal line-positioned cues."
+        RenderBR {BR} at (266,0) size 0x18
+        RenderText {#text} at (0,18) size 162x18
+          text run at (0,18) width 162: "EVENT(canplaythrough)"
+        RenderBR {BR} at (162,18) size 0x18
+        RenderText {#text} at (0,36) size 107x18
+          text run at (0,36) width 107: "EVENT(seeked)"
+        RenderBR {BR} at (107,36) size 0x18
+        RenderText {#text} at (0,54) size 102x18
+          text run at (0,54) width 102: "END OF TEST"
+        RenderBR {BR} at (102,54) size 0x18
+layer at (8,8) size 320x240
+  RenderVideo {VIDEO} at (0,0) size 320x240
+layer at (8,8) size 320x240
+  RenderFlexibleBox {DIV} at (0,0) size 320x240
+layer at (8,8) size 320x240
+  RenderBlock (relative positioned) {DIV} at (0,0) size 320x240 [color=#FFFFFF]
+layer at (8,8) size 320x14
+  RenderBlock (positioned) {DIV} at (0,0) size 320x14
+    RenderBlock {DIV} at (22,0) size 276x14
+      RenderInline {SPAN} at (0,0) size 275x14 [bgcolor=#000000CC]
+        RenderText {#text} at (0,0) size 275x14
+          text run at (0,0) width 275: "Cue 1: should be positioned at the top of the video."
+layer at (8,22) size 320x14
+  RenderBlock (positioned) {DIV} at (0,14) size 320x14
+    RenderBlock {DIV} at (8,0) size 304x14
+      RenderInline {SPAN} at (0,0) size 303x14 [bgcolor=#000000CC]
+        RenderText {#text} at (0,0) size 303x14
+          text run at (0,0) width 303: "Cue 2: should be the second cue and not overlap cue 1."
+layer at (8,36) size 320x14
+  RenderBlock (positioned) {DIV} at (0,28) size 320x14
+    RenderBlock {DIV} at (12,0) size 296x14
+      RenderInline {SPAN} at (0,0) size 296x14 [bgcolor=#000000CC]
+        RenderText {#text} at (0,0) size 296x14
+          text run at (0,0) width 296: "Cue 3: should become the third line from top to bottom."
+layer at (8,78) size 320x14
+  RenderBlock (positioned) {DIV} at (0,70) size 320x14
+    RenderBlock {DIV} at (16,0) size 288x14
+      RenderInline {SPAN} at (0,0) size 287x14 [bgcolor=#000000CC]
+        RenderText {#text} at (0,0) size 287x14
+          text run at (0,0) width 287: "Cue 4: should be fixed positioned around the middle."
+layer at (8,234) size 320x14
+  RenderBlock (positioned) {DIV} at (0,226) size 320x14
+    RenderBlock {DIV} at (14,0) size 292x14
+      RenderInline {SPAN} at (0,0) size 291x14 [bgcolor=#000000CC]
+        RenderText {#text} at (0,0) size 291x14
+          text run at (0,0) width 291: "Cue 5: should be displayed at the bottom of the video."
+layer at (8,220) size 320x14
+  RenderBlock (positioned) {DIV} at (0,212) size 320x14
+    RenderBlock {DIV} at (20,0) size 280x14
+      RenderInline {SPAN} at (0,0) size 279x14 [bgcolor=#000000CC]
+        RenderText {#text} at (0,0) size 279x14
+          text run at (0,0) width 279: "Cue 6: should be on top of bottom positioned cue 5."

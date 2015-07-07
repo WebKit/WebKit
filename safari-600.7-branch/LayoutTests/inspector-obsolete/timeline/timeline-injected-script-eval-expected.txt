@@ -1,0 +1,31 @@
+Tests the Timeline API function call record for InjectedScript.eval call feature.
+
+FunctionCall Properties:
+{
+    children : <object>
+    counters : <object>
+    data : {
+        scriptLine : <number>
+        scriptName : <string>
+    }
+    endTime : <number>
+    frameId : <string>
+    startTime : <number>
+    type : "FunctionCall"
+    usedHeapSize : <number>
+}
+FunctionCall Properties:
+{
+    children : <object>
+    counters : <object>
+    data : {
+        scriptLine : <number>
+        scriptName : <string>
+    }
+    endTime : <number>
+    frameId : <string>
+    startTime : <number>
+    type : "FunctionCall"
+    usedHeapSize : <number>
+}
+

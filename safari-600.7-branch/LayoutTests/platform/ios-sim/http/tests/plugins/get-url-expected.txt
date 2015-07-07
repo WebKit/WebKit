@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 16: TypeError: 'undefined' is not a function (evaluating 'plg.getURLNotify("resources/load-me-1.txt", null, "notify")')
+FAIL: Timed out waiting for notifyDone to be called
+This tests that NPN_GetURLNotify works as expected and does not ASSERT intermittently in debug builds. 

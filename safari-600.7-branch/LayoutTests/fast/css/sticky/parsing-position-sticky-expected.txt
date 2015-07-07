@@ -1,0 +1,11 @@
+This tests checks that the -webkit-sticky value for position parses correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS test("position: -webkit-sticky;") is "-webkit-sticky"
+PASS test("position: sticky;") is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

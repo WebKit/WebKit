@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="../../../../fast/js/resources/js-test-style.css">
+  <script src="../../../../fast/js/resources/js-test-pre.js"></script>
+  <style>
+    body {
+      height: 2000px;
+    }
+  </style>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description('Tests that scroll event listeners still work after going back to a page in the page cache.');
+
+function testScrollListener()
+{
+  window.scrollTo(0, 10);
+}
+
+var scrollEventCount = 0;
+window.addEventListener('scroll', function(e) {
+  ++scrollEventCount;
+  debug('Received scroll event ' + scrollEventCount);
+}, false);
+
+function onPageLoad()
+{
+    testScrollListener();
+    window.setTimeout(function() {
+      shouldBe('scrollEventCount', '1');
+      finishJSTest();
+    }, 10); // Scroll events are async.
+};
+
+window.addEventListener('load', onPageLoad, false);
+
+var successfullyParsed = true;
+var jsTestIsAsync = true;
+</script> 
+
+<script src="../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

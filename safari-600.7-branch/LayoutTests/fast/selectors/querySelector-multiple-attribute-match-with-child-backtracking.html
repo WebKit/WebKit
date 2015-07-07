@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div style="display:none">
+  <ul data-foo data-bar>
+    <li></li>
+    <li>
+      <ol>
+        <li></li>
+        <li><p id="target1">Target 1</p></li>
+        <li></li>
+      </ol>
+    </li>
+    <li></li>
+  </ul>
+  <ul data-foo data-bar>
+    <li>
+      <li>
+        <li><p id="target2">Target 2</p></li>
+      </li>
+    </li>
+  </ul>
+</div>
+</body>
+<script>
+description('Test backtracking of matching multiple attribute with a single child selector relation.');
+
+// Define the style dynamically to test lazy attributes.
+document.getElementById('target1').style.textDecoration='underline';
+document.getElementById('target2').style.textDecoration='underline';
+
+shouldBe('document.querySelectorAll("[data-foo][data-bar]>li [style]").length', '2');
+shouldBeEqualToString('document.querySelectorAll("[data-foo][data-bar]>li [style]")[0].id', 'target1');
+shouldBeEqualToString('document.querySelectorAll("[data-foo][data-bar]>li [style]")[1].id', 'target2');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

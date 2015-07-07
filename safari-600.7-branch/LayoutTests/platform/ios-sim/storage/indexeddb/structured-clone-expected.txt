@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 17: TypeError: undefined is not a function (evaluating 'eventSender.beginDragWithFiles(['resources/test-data.html', 'resources/test-data.txt'])')
+Test structured clone permutations in IndexedDB. File/FileList tests require DumpRenderTree.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL Unexpected error: TypeError: undefined is not a function (evaluating 'eventSender.beginDragWithFiles(['resources/test-data.html', 'resources/test-data.txt'])')
+FAIL successfullyParsed should be true. Was false.
+
+TEST COMPLETE
+

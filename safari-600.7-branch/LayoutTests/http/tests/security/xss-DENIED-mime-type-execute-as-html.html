@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+}
+
+var mime_types = ["application/atom+xml", "application/json",
+                  "application/javascript", "application/rss+xml", "text/",
+                  "text/cache-manifest", "text/css", "text/ecmascript",
+                  "text/javascript", "text/javascript1.1", "text/javascript1.2",
+                  "text/javascript1.3", "text/jscript", "text/livescript", "text/plain"];
+                  
+for(var i in mime_types) {
+  var ifr = document.createElement('iframe');
+  ifr.src = "http://localhost:8000/security/resources/send-mime-types.php?mt=" + encodeURIComponent(mime_types[i]);
+  document.body.appendChild(ifr);
+}
+</script>
+<p>Test non-image and javascript mime types are not rendered as HTML.</p>
+</body>
+</html>

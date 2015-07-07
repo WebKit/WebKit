@@ -1,0 +1,28 @@
+Tests backend search in inspector.
+
+Bug 61205  
+Case insensitive, non regex:
+Search results: 
+url: http://127.0.0.1:8000/inspector/search/resources/search.css, matchesCount: 3
+url: http://127.0.0.1:8000/inspector/search/resources/search.js, matchesCount: 5
+url: http://127.0.0.1:8000/inspector/search/resources/search.html, matchesCount: 3
+
+Case sensitive, non regex:
+Search results: 
+url: http://127.0.0.1:8000/inspector/search/resources/search.css, matchesCount: 3
+url: http://127.0.0.1:8000/inspector/search/resources/search.js, matchesCount: 4
+url: http://127.0.0.1:8000/inspector/search/resources/search.html, matchesCount: 3
+
+Case insensitive, regex:
+Search results: 
+url: http://127.0.0.1:8000/inspector/search/resources/search.css, matchesCount: 3
+url: http://127.0.0.1:8000/inspector/search/resources/search.js, matchesCount: 5
+url: http://127.0.0.1:8000/inspector/search/resources/search.html, matchesCount: 3
+
+Case sensitive, regex:
+Search results: 
+url: http://127.0.0.1:8000/inspector/search/resources/search.css, matchesCount: 3
+url: http://127.0.0.1:8000/inspector/search/resources/search.js, matchesCount: 4
+url: http://127.0.0.1:8000/inspector/search/resources/search.html, matchesCount: 3
+
+

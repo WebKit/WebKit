@@ -1,0 +1,3 @@
+# nothing in this directory is retrievable unless overriden by an .htaccess
+# in a subdirectory
+deny from all

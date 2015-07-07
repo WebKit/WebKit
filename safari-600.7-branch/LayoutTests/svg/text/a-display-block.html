@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<head>
+<style>
+a {
+    display: block;
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<p>Tests that an &lt;a&gt; with display block doesn't cause an assertion failure.</p>
+<svg>
+    <text x="0" y="20">
+        <a xlink:href="https://bugs.webkit.org/show_bug.cgi?id=130346">PASS</a>
+    </text>
+</svg>
+</body>
+</html>

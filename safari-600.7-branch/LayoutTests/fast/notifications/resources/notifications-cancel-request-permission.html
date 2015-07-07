@@ -1,0 +1,28 @@
+<html>
+<head>
+    <script type="text/javascript">
+        function log(message)
+        {
+            parent.document.getElementById("result").innerHTML += message + "<br>";
+        }
+        
+        function runTests()
+        {
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+            }
+
+            if (window.testRunner) {
+                testRunner.ignoreLegacyWebNotificationPermissionRequests();
+            }
+
+            window.webkitNotifications.requestPermission(
+                function() { log("FAIL: Permission callback invoked."); }
+            );
+
+        }
+    </script>
+</head>
+<body onload="runTests();">
+</body>
+</html>

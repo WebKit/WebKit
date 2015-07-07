@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x162
+  RenderBlock {HTML} at (0,0) size 800x162
+    RenderBody {BODY} at (8,16) size 784x138
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 529x19
+          text run at (0,0) width 529: "Test passes if the 'Filler Text' below is clipped to the curve of the rounded corners."
+layer at (8,52) size 198x102 clip at (11,55) size 192x96 scrollHeight 160
+  RenderBlock {DIV} at (0,36) size 198x102 [border: (3px solid #000000)]
+    RenderText {#text} at (3,3) size 187x159
+      text run at (3,3) width 152: "Filler Text. Filler Text. "
+      text run at (154,3) width 36: "Filler"
+      text run at (3,23) width 114: "Text. Filler Text. "
+      text run at (116,23) width 73: "Filler Text."
+      text run at (3,43) width 76: "Filler Text. "
+      text run at (78,43) width 112: "Filler Text. Filler"
+      text run at (3,63) width 38: "Text. "
+      text run at (40,63) width 149: "Filler Text. Filler Text."
+      text run at (3,83) width 152: "Filler Text. Filler Text. "
+      text run at (154,83) width 36: "Filler"
+      text run at (3,103) width 114: "Text. Filler Text. "
+      text run at (116,103) width 73: "Filler Text."
+      text run at (3,123) width 76: "Filler Text. "
+      text run at (78,123) width 112: "Filler Text. Filler"
+      text run at (3,143) width 34: "Text."

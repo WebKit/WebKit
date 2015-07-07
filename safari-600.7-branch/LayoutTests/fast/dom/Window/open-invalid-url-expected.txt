@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Unable to open a window with invalid URL '/'.
+
+ALERT: PASS
+

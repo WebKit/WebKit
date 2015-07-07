@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>window.performance.timing.redirect attributes on a cross-origin server redirected navigation</title>
+        <link rel="author" title="Microsoft" href="http://www.microsoft.com/" />
+	<link rel="help" href="http://www.w3.org/TR/navigation-timing/#sec-navigation-timing-interface"/>
+        <script src="/w3c/resources/testharness.js"></script>
+        <script src="/w3c/resources/testharnessreport.js"></script>
+        <script src="/w3c/webperf/resources/webperftestharness.js"></script>
+<script id="metadata_cache">/*
+{
+  "Starting document.location.hostname is correct (127.0.0.1:8000)": {},
+  "window.performance is defined": {
+    "help": "http://www.w3.org/TR/navigation-timing/#sec-window.performance-attribute",
+    "assert": "The window.performance attribute provides a hosting area for performance related attributes. ",
+    "author": "W3C http://www.w3.org/"
+  },
+  "window.performance.navigation is defined": {
+    "help": "http://www.w3.org/TR/navigation-timing/#sec-window.performance-attribute",
+    "assert": "The window.performance attribute provides a hosting area for performance related attributes. ",
+    "author": "W3C http://www.w3.org/"
+  }
+}
+*/</script>
+        <script>
+            setup({explicit_done: true});
+
+            //
+            // Test configuration
+            //
+
+            // the current page's origin
+            var pageOrigin = '127.0.0.1:8000';
+
+            // the origin to redirect through
+            var redirectOrigin = 'localhost:8000';
+
+            //
+            // Tests
+            //
+            function onload_test()
+            {
+                test_namespace('navigation');
+                if (performanceNamespace === undefined)
+                {
+                    // avoid script errors
+                    done();
+                    return;
+                }
+
+                performanceNamespace = document.getElementById("frameContext").contentWindow.performance;
+                test_equals(performanceNamespace.navigation.type,
+                        performanceNamespace.navigation.TYPE_NAVIGATE,
+                        'timing.navigation.type is TYPE_NAVIGATE',{help:"http://www.w3.org/TR/navigation-timing/#sec-navigation-info-interface"});
+                test_equals(performanceNamespace.navigation.redirectCount, 0, 'navigation.redirectCount == 0 on a cross-origin server redirected navigation', {help:"http://www.w3.org/TR/navigation-timing/#sec-navigation-info-interface"});
+
+                test_timing_greater_than('navigationStart', 0);
+
+                test_equals(performanceNamespace.timing.redirectStart, 0, 'timing.redirectStart == 0 on a server redirected navigation from another domain');
+                test_equals(performanceNamespace.timing.redirectEnd, 0, 'timing.redirectEnd == 0 on a server redirected navigation from another domain');
+
+                done();
+            }
+        </script>
+
+    </head>
+    <body>
+        <h1>Description</h1>
+        <p>This test validates the values of the window.performance.redirectCount and the
+           window.performance.timing.redirectStart/End times for a cross-origin server side redirect navigation.</p>
+
+        <div id="log"></div>
+        <br />
+        <iframe id="frameContext" src="" style="width: 250px; height: 250px;"></iframe>
+        <script>
+            // ensure we're starting at the right origin
+            test_equals(document.location.hostname, pageOrigin, 'Starting document.location.hostname is correct (' + pageOrigin + ')');
+
+            // combine the page origin and redirect origin into the IFRAME's src URL
+            var destUrl = 'http://' + redirectOrigin + '/w3c/webperf/resources/redirect.php';
+            destUrl    += '?location=http://' + pageOrigin + '/w3c/webperf/resources/blank_page_green.htm';
+
+            var frameContext = document.getElementById("frameContext");
+            frameContext.onload = onload_test;
+            frameContext.src = destUrl;
+        </script>
+    </body>
+</html>

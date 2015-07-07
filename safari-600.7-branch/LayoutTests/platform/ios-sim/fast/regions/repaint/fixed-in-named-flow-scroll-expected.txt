@@ -1,0 +1,4 @@
+Test that a fixed element inside a named flow is properly positioned when the view is scrolled. On success you should see PASS below and a green rectangle.
+
+FAIL
+

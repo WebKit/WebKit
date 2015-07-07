@@ -1,0 +1,133 @@
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=http%3A%2F%2Fwww2.localhost%3A8000. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=%2F%2Flocalhost%3A8000. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=%3A%2F%2Flocalhost%3A8000. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=ftp%3A%2F%2Flocalhost%3A8000. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=http%3A%3A%2F%2Flocalhost%3A8000. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=http%3A%2Flocalhost%3A8000. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=http%3Alocalhost%3A8000. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=localhost%3A8000. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=http%3A%2F%2Flocalhost%3A8000%3F. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=http%3A%2F%2Flocalhost%3A8000%2F. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=http%3A%2F%2Flocalhost%3A8000%20%2F. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=http%3A%2F%2Flocalhost%3A8000%23. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=http%3A%2F%2Flocalhost%3A8000%2523. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=http%3A%2F%2Flocalhost%3A8000%3A80. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=http%3A%2F%2Flocalhost%3A8000%2C%20*. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=HTTP%3A%2F%2FLOCALHOST%3A8000. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=HTTP%3A%2F%2Flocalhost%3A8000. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=-. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=**. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=%00*. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin='*'. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=%22*%22. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=*%20*. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=*http%3A%2F%2F*. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=*http%3A%2F%2Flocalhost%3A8000. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=*%20http%3A%2F%2Flocalhost%3A8000. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=*%2C%20http%3A%2F%2Flocalhost%3A8000. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=%00http%3A%2F%2Flocalhost%3A8000. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=null%20http%3A%2F%2Flocalhost%3A8000. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=http%3A%2F%2Fexample.net. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=null. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=http%3A%2F%2Flocalhost%3A8000%2Fxmlhttprequest%2Fresources%2Forigin-exact-matching-iframe.html. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=http%3A%2F%2Flocalhost%3A8000%2Fxmlhttprequest%2Fresources%2F. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8000/xmlhttprequest/resources/access-control-allow-lists.php?origin=http%3A%2F%2Flocalhost%3A8000%2Fxmlhttprequest%2Fresources%2Forigin-exact-matching-iframe.html. Origin http://localhost:8000 is not allowed by Access-Control-Allow-Origin.
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+Check that exact matching is used when comparing a request's originating url and the value provided by Access-Control-Allow-Origin.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Should allow origin: '*'
+PASS xhr.send(null) is undefined.
+Should allow origin: ' *  '
+PASS xhr.send(null) is undefined.
+Should allow origin: '	*'
+PASS xhr.send(null) is undefined.
+Should allow origin: 'http://localhost:8000'
+PASS xhr.send(null) is undefined.
+Should allow origin: ' http://localhost:8000'
+PASS xhr.send(null) is undefined.
+Should allow origin: ' http://localhost:8000   	 '
+PASS xhr.send(null) is undefined.
+Should allow origin: '	http://localhost:8000'
+PASS xhr.send(null) is undefined.
+Should disallow origin: 'http://www2.localhost:8000'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: '//localhost:8000'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: '://localhost:8000'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: 'ftp://localhost:8000'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: 'http:://localhost:8000'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: 'http:/localhost:8000'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: 'http:localhost:8000'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: 'localhost:8000'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: 'http://localhost:8000?'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: 'http://localhost:8000/'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: 'http://localhost:8000 /'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: 'http://localhost:8000#'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: 'http://localhost:8000%23'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: 'http://localhost:8000:80'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: 'http://localhost:8000, *'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: 'HTTP://LOCALHOST:8000'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: 'HTTP://localhost:8000'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: '-'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: '**'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: '*'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: ''*''
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: '"*"'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: '* *'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: '*http://*'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: '*http://localhost:8000'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: '* http://localhost:8000'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: '*, http://localhost:8000'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: 'http://localhost:8000'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: 'null http://localhost:8000'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: 'http://example.net'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: 'null'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: ''
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: 'http://localhost:8000/xmlhttprequest/resources/origin-exact-matching-iframe.html'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: 'http://localhost:8000/xmlhttprequest/resources/'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+Should disallow origin: 'http://localhost:8000/xmlhttprequest/resources/origin-exact-matching-iframe.html'
+PASS xhr.send(null) threw exception Error: NETWORK_ERR: XMLHttpRequest Exception 101.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

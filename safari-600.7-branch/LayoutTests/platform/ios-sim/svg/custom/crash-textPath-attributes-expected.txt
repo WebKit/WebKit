@@ -1,0 +1,3 @@
+Test for Update SVG position values on SVG DOM updates
+
+This test PASSES if he does not crash

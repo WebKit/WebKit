@@ -1,0 +1,137 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x478
+  RenderBlock {HTML} at (0,0) size 800x478
+    RenderBody {BODY} at (8,16) size 784x454 [color=#0000FF]
+      RenderBlock {P} at (0,0) size 784x248
+        RenderInline (generated) at (0,0) size 88x161 [color=#00FFFF]
+          RenderText {#text} at (0,3) size 88x161
+            text run at (0,3) width 88: "T"
+        RenderText {#text} at (87,89) size 59x54
+          text run at (87,89) width 59: "he "
+        RenderInline {STRONG} at (0,0) size 207x54
+          RenderText {#text} at (145,89) size 207x54
+            text run at (145,89) width 207: "first letter"
+        RenderText {#text} at (351,89) size 783x98
+          text run at (351,89) width 432: " of this paragraph, and"
+          text run at (0,168) width 61: "only that "
+          text run at (60,168) width 98: "one, should be "
+        RenderInline {STRONG} at (0,0) size 88x19
+          RenderText {#text} at (157,168) size 88x19
+            text run at (157,168) width 88: "600% bigger"
+        RenderText {#text} at (244,168) size 527x19
+          text run at (244,168) width 138: " than the normal text "
+          text run at (381,168) width 390: "(300% bigger than the rest of first line of this paragraph) and"
+        RenderInline {STRONG} at (0,0) size 34x19
+          RenderText {#text} at (0,188) size 34x19
+            text run at (0,188) width 34: "aqua"
+        RenderText {#text} at (33,188) size 113x19
+          text run at (33,188) width 113: ", while the entire "
+        RenderInline {STRONG} at (0,0) size 58x19
+          RenderText {#text} at (145,188) size 58x19
+            text run at (145,188) width 58: "first line"
+        RenderText {#text} at (202,188) size 71x19
+          text run at (202,188) width 5: " "
+          text run at (206,188) width 67: "should be "
+        RenderInline {STRONG} at (0,0) size 88x19
+          RenderText {#text} at (272,188) size 88x19
+            text run at (272,188) width 88: "300% bigger"
+        RenderText {#text} at (359,188) size 113x19
+          text run at (359,188) width 113: " than normal and "
+        RenderInline {STRONG} at (0,0) size 26x19
+          RenderText {#text} at (471,188) size 26x19
+            text run at (471,188) width 26: "teal"
+        RenderText {#text} at (496,188) size 778x59
+          text run at (496,188) width 282: ". If this precise combination does not occur,"
+          text run at (0,208) width 421: "then the user agent has failed this test. Remember that in order to "
+          text run at (420,208) width 358: "ensure a complete test, the paragraph must be displayed"
+          text run at (0,228) width 57: "on more "
+          text run at (56,228) width 149: "than one line. (TEST1)"
+      RenderBlock {P} at (0,264) size 784x78
+        RenderInline (generated) at (0,0) size 33x36 [color=#00FFFF]
+          RenderText {#text} at (0,1) size 33x36
+            text run at (0,1) width 33: "\"T"
+        RenderText {#text} at (32,15) size 99x19
+          text run at (32,15) width 99: "est\": The first "
+        RenderInline {STRONG} at (0,0) size 111x19
+          RenderText {#text} at (130,15) size 111x19
+            text run at (130,15) width 111: "two characters"
+        RenderText {#text} at (240,15) size 453x19
+          text run at (240,15) width 122: " in this paragraph "
+          text run at (361,15) width 332: "(a double-quote mark and a capital 'T') should be "
+        RenderInline {STRONG} at (0,0) size 90x19
+          RenderText {#text} at (692,15) size 90x19
+            text run at (692,15) width 45: "200% "
+            text run at (736,15) width 46: "bigger"
+        RenderText {#text} at (0,38) size 223x19
+          text run at (0,38) width 223: "than the rest of the paragraph, and "
+        RenderInline {STRONG} at (0,0) size 34x19
+          RenderText {#text} at (222,38) size 34x19
+            text run at (222,38) width 34: "aqua"
+        RenderText {#text} at (255,38) size 151x19
+          text run at (255,38) width 151: ". In addition, the entire "
+        RenderInline {STRONG} at (0,0) size 58x19
+          RenderText {#text} at (405,38) size 58x19
+            text run at (405,38) width 34: "first "
+            text run at (438,38) width 25: "line"
+        RenderText {#text} at (462,38) size 99x19
+          text run at (462,38) width 99: " should be in a "
+        RenderInline {STRONG} at (0,0) size 163x19
+          RenderText {#text} at (560,38) size 163x19
+            text run at (560,38) width 138: "small-caps font and "
+            text run at (697,38) width 26: "teal"
+        RenderText {#text} at (722,38) size 738x39
+          text run at (722,38) width 5: "."
+          text run at (0,58) width 323: "Remember that in order to ensure a complete test, "
+          text run at (322,58) width 416: "the paragraph must be displayed on more than one line. (TEST2)"
+      RenderBlock {P} at (0,358) size 784x60
+        RenderInline (generated) at (0,0) size 10x19 [color=#00FFFF]
+          RenderText {#text} at (0,0) size 10x19
+            text run at (0,0) width 10: "T"
+        RenderText {#text} at (9,0) size 20x19
+          text run at (9,0) width 20: "he "
+        RenderInline {STRONG} at (0,0) size 70x19
+          RenderText {#text} at (28,0) size 70x19
+            text run at (28,0) width 70: "first letter"
+        RenderText {#text} at (97,0) size 306x19
+          text run at (97,0) width 209: " of this paragraph, and only that "
+          text run at (305,0) width 98: "one, should be "
+        RenderInline {STRONG} at (0,0) size 35x19
+          RenderText {#text} at (402,0) size 35x19
+            text run at (402,0) width 35: "aqua"
+        RenderText {#text} at (436,0) size 112x19
+          text run at (436,0) width 112: ", while the entire "
+        RenderInline {STRONG} at (0,0) size 59x19
+          RenderText {#text} at (547,0) size 59x19
+            text run at (547,0) width 59: "first line"
+        RenderText {#text} at (605,0) size 70x19
+          text run at (605,0) width 70: " should be "
+        RenderInline {STRONG} at (0,0) size 26x19
+          RenderText {#text} at (674,0) size 26x19
+            text run at (674,0) width 26: "teal"
+        RenderText {#text} at (699,0) size 771x59
+          text run at (699,0) width 24: ". If "
+          text run at (722,0) width 24: "this"
+          text run at (0,20) width 385: "precise combination does not occur, then the user agent has "
+          text run at (384,20) width 387: "failed this test. Remember that in order to ensure a complete"
+          text run at (0,40) width 31: "test, "
+          text run at (30,40) width 416: "the paragraph must be displayed on more than one line. (TEST3)"
+      RenderBlock {DIV} at (0,434) size 784x20
+        RenderText {#text} at (0,0) size 170x19
+          text run at (0,0) width 170: "You should see the words "
+        RenderInline {STRONG} at (0,0) size 67x19
+          RenderText {#text} at (169,0) size 67x19
+            text run at (169,0) width 67: "\"TEST1\""
+        RenderText {#text} at (235,0) size 9x19
+          text run at (235,0) width 9: ", "
+        RenderInline {STRONG} at (0,0) size 68x19
+          RenderText {#text} at (243,0) size 68x19
+            text run at (243,0) width 68: "\"TEST2\""
+        RenderText {#text} at (310,0) size 36x19
+          text run at (310,0) width 36: ", and "
+        RenderInline {STRONG} at (0,0) size 68x19
+          RenderText {#text} at (345,0) size 68x19
+            text run at (345,0) width 68: "\"TEST3\""
+        RenderText {#text} at (412,0) size 241x19
+          text run at (412,0) width 88: " at the end of "
+          text run at (499,0) width 154: "three paragraphs above."

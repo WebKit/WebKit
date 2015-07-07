@@ -1,0 +1,3 @@
+didReceiveAuthenticationChallenge - Responding with username:password
+didReceiveAuthenticationChallenge - Simulating cancelled authentication sheet
+PASS

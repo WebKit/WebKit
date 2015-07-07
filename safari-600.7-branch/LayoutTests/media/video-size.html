@@ -1,0 +1,129 @@
+<html>
+    <head>
+        <title>&lt;video&gt; element size and resize test</title>
+        <script src=video-test.js></script>
+        <script src=media-file.js></script>
+
+        <script>
+            var movieInfo = 
+            {
+                current:0,
+                movies: 
+                [ 
+                    {   
+                        src:null,
+                        poster:null,
+                        description:"no 'src' and no 'poster', with 'width' and 'height' attributes",
+                        width:640,
+                        height:480,
+                        videoWidth:0,
+                        videoHeight:0
+                    },
+                    {
+                        src:null,
+                        poster:null,
+                        description:"no 'src' and no 'poster', with NO 'width' and 'height' attributes, should be default size",
+                        width:300,
+                        height:150,
+                        videoWidth:0,
+                        videoHeight:0
+                    },
+                    {
+                        src:null,
+                        poster:"content/abe.png",
+                        description:"'poster' but no  'src', should be image size",
+                        width:76,
+                        height:103,
+                        videoWidth:0,
+                        videoHeight:0
+                    },
+                    {
+                        src:"content/test",
+                        poster:"content/abe.png",
+                        description:"'poster' and  'src', should be &lt;video&gt; size",
+                        width:320,
+                        height:240,
+                        videoWidth:320,
+                        videoHeight:240
+                    },
+                    {
+                        src:"content/bogus",
+                        poster:"content/greenbox.png",
+                        description:"'poster' and invalid 'src', should be image size",
+                        width:25,
+                        height:25,
+                        videoWidth:0,
+                        videoHeight:0
+                    },
+                ]
+            };
+
+            function setupNextConfiguration()
+            {
+                consoleWrite("");
+                if (movieInfo.current >= movieInfo.movies.length)
+                {
+                    endTest();
+                    return;
+                }
+
+                var movie = movieInfo.movies[movieInfo.current];
+                if (movie.src || movie.poster) {
+                    var desc = "<b>Setting ";
+                    if (movie.src && relativeURL(video.src) != movie.src) {
+                        video.src = findMediaFile("video", movie.src);
+                        desc += "'src' to <em>\""+ movie.src + ".[extension]\"</em> ";
+                    }
+                    if (movie.poster && relativeURL(video.poster) != movie.poster) {
+                        video.poster = movie.poster;
+                        desc += "'poster' to <em>\""+ movie.poster + "\"</em>";
+                    }
+                    consoleWrite(desc + "</b>");
+                }
+
+                // Remove width/height attributes if present
+                if (video.width || video.height) {
+                    consoleWrite("<b>Removing 'width' and 'height' attributes.</b>");
+                    video.removeAttribute('width');
+                    video.removeAttribute('height');
+                }
+
+                if (!movie.src || movie.src.indexOf('bogus') >= 0)
+                    setTimeout(testMovie, 100);
+            }
+
+            function testMovie()
+            {
+                if (movieInfo.current >= movieInfo.movies.length)
+                    return;
+
+                var temp = document.body.offsetWidth;
+                var movie = movieInfo.movies[movieInfo.current];
+
+                var desc = "<b>Testing movie with " + movie.description + ".</b>";
+                consoleWrite(desc);
+
+                testExpected("video.clientWidth", movie.width);
+                testExpected("video.clientHeight", movie.height);
+                testExpected("video.videoWidth", movie.videoWidth);
+                testExpected("video.videoHeight", movie.videoHeight);
+
+                movieInfo.current++;
+                setupNextConfiguration();
+            }
+
+            function test()
+            {
+                findMediaElement();
+                testMovie();
+            }
+        </script>
+    </head>
+
+    <body onload="setTimeout(test, 100)">
+
+        <video controls width=640 height=480 onloadedmetadata="testMovie()"></video>
+        <p>Test &lt;video&gt; element size with and without 'src' and 'poster' attributes.</p>
+
+    </body>
+</html>

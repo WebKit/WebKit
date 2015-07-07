@@ -1,0 +1,17 @@
+The first iframe below should return a security error, and the second should successfully open the database.
+
+  
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+window.indexedDB.deleteDatabase() threw an exception: SecurityError
+window.indexedDB.open() threw an exception: SecurityError
+
+
+--------
+Frame: '<!--framePath //<!--frame1-->-->'
+--------
+Successfully called window.indexedDB.deleteDatabase().
+Successfully called window.indexedDB.open().
+

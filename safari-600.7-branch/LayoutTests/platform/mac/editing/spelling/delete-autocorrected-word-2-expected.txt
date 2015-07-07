@@ -1,0 +1,76 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV to 0 of DIV toDOMRange:range from 11 of #text > DIV to 11 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 11 of #text > DIV to 11 of #text > DIV toDOMRange:range from 4 of #text > DIV to 10 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldInsertText:message replacingDOMRange:range from 4 of #text > DIV to 10 of #text > DIV givenAction:WebViewInsertActionTyped
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 11 of #text > DIV to 11 of #text > DIV toDOMRange:range from 4 of #text > DIV to 10 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 11 of #text > DIV to 11 of #text > DIV toDOMRange:range from 4 of #text > DIV to 10 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 4 of #text > DIV to 11 of #text > DIV toDOMRange:range from 11 of #text > DIV to 11 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 11 of #text > DIV to 12 of #text > DIV
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 10 of #text > DIV to 11 of #text > DIV
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 9 of #text > DIV to 10 of #text > DIV
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 8 of #text > DIV to 9 of #text > DIV
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 7 of #text > DIV to 8 of #text > DIV
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 6 of #text > DIV to 7 of #text > DIV
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 5 of #text > DIV to 6 of #text > DIV
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 4 of #text > DIV to 5 of #text > DIV
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 4 of #text > DIV to 11 of #text > DIV toDOMRange:range from 11 of #text > DIV to 11 of #text > DIV affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 771x36
+          text run at (0,0) width 771: "The test verified that, after deleting an autocorrection, typing the same misspelled word at the same position will not trigger"
+          text run at (0,18) width 598: "autocorrection again. You should see the phrase \"the mesage \" with red underline on \"mesage\""
+      RenderBlock {P} at (0,52) size 784x54 [color=#008000]
+        RenderText {#text} at (0,0) size 783x54
+          text run at (0,0) width 766: "Note, this test can fail due to user specific spell checking data. If the user has previously dismissed 'message' as the correct"
+          text run at (0,18) width 783: "spelling of 'mesage' several times, the spell checker will not provide 'notational' as a suggestion anymore. To fix this, remove"
+          text run at (0,36) width 185: "all files in ~/Library/Spelling."
+      RenderBlock (anonymous) at (0,122) size 784x140
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+layer at (10,132) size 581x136 clip at (11,133) size 579x134
+  RenderTextControl {TEXTAREA} at (2,2) size 581x136 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 575x13
+      RenderText {#text} at (0,0) size 66x13
+        text run at (0,0) width 62: "the mesage"
+        text run at (61,0) width 5: " "
+caret: position 11 of child 0 {#text} of child 0 {DIV} of child 5 {TEXTAREA} of body

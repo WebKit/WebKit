@@ -1,0 +1,52 @@
+<!DOCTYPE>
+
+<html>
+<head>
+  <style>
+    body {
+      margin: 0;
+    }
+
+    .box {
+      height: 200px;
+      width: 200px;
+      background-color: red;
+      -webkit-transform: translateZ(1px);
+    }
+    
+    .indicator {
+      position: absolute;
+      top: 200px;
+      background-color: green;
+    }
+
+    .reflected {
+      -webkit-box-reflect: below 0;
+    }
+  </style>
+  <script>
+    
+    if (window.testRunner) {
+      testRunner.dumpAsText(true);
+      testRunner.waitUntilDone();
+    }
+    
+    function doTest()
+    {
+      window.setTimeout(function() {
+        document.getElementById('test').style.backgroundColor = 'transparent';
+        if (window.testRunner)
+          testRunner.notifyDone();
+      }, 0);
+    }
+    window.addEventListener('load', doTest, false);
+  </script>
+</head>
+<body>
+
+  <div class="indicator box"></div>
+  <!-- You should see no red box below -->
+  <div id="test" class="reflected box"></div>
+
+</body>
+</html>

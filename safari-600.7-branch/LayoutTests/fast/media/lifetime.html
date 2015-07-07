@@ -1,0 +1,46 @@
+<body onload="test()">
+<p>Test Media object lifetime.</p>
+<div id=result>Testing...</div>
+<iframe src="about:blank"></iframe>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function gc()
+{
+    if (window.GCController)
+        return GCController.collect();
+
+    for (var i = 0; i < 10000; i++) { // > force garbage collection (FF requires about 9K allocations before a collect)
+        var s = new String("abc");
+    }
+}
+
+function test()
+{
+    if (!window.styleMedia) {
+        document.getElementById("result").innerHTML = "FAIL - window.styleMedia is not supported.";
+        return;
+    }
+
+    styleMedia.foo = "bar";
+    gc();
+    if (styleMedia.foo != "bar") {
+        document.getElementById("result").innerHTML = "FAIL - window.styelMedia doesn't return the same object each time.";
+        return;
+    }
+
+    var m = frames[0].styleMedia;
+    document.body.removeChild(document.getElementsByTagName("iframe")[0]);
+    try { m.matchMedium("foobar") } catch (ex) { }
+    setTimeout(function() {
+        gc();
+        try { m.matchMedium("foobar") } catch (ex) { }
+        document.getElementById("result").innerHTML = "PASS";
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+}
+</script>

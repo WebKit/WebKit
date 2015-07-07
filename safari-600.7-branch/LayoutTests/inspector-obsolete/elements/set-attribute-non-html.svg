@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg">
+<foreignObject>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script><![CDATA[
+
+function test()
+{
+    var targetNode;
+
+    InspectorTest.runTestSuite([
+        function testDumpInitial(next)
+        {
+            function callback(node)
+            {
+                targetNode = node;
+                next();
+            }
+            InspectorTest.selectNodeWithId("node", callback);
+        },
+
+        function testSetAttributeText(next)
+        {
+            function callback(error)
+            {
+                next();
+            }
+            targetNode.setAttribute("foo", "foo2='baz2' foo3='baz3'", callback);
+        }
+    ]);
+}
+]]>
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that elements panel updates dom tree structure upon setting attribute on non HTML elements. PASSes if there is no crash.
+</p>
+
+<div id="node"></div>
+
+</body>
+</html>
+</foreignObject>
+</svg>

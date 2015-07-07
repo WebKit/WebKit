@@ -1,0 +1,94 @@
+<html>
+<body onload='startTest()'>
+
+<script src="../../resources/js-test-pre.js"></script>
+
+<script>
+
+description("This test checks that Page Visibility state values are correct and the event changes are fired correctly.");
+
+var jsTestIsAsync = true;
+
+function makePageVisible() {
+    if (window.testRunner)
+        testRunner.setPageVisibility("visible");
+}
+
+function makePageHidden() {
+    if (window.testRunner)
+        testRunner.setPageVisibility("hidden");
+}
+
+function makePagePrerender() {
+    if (window.testRunner)
+        testRunner.setPageVisibility("prerender");
+}
+
+function makePageUnloaded() {
+    if (window.testRunner)
+        testRunner.setPageVisibility("unloaded");
+}
+
+function checkIsPageVisible() {
+    shouldBeEqualToString("document.visibilityState", "visible");
+    shouldBeFalse("document.hidden");
+}
+
+function checkIsPageHidden() {
+    shouldBeEqualToString("document.visibilityState", "hidden");
+    shouldBeTrue("document.hidden");
+}
+
+// We will try to change the visibility states as:
+//  0 - visible. (Initial - i.e. on load).
+//  1 - hidden (should fire event).
+//  2 - hidden (no event).
+//  3 - visible (should fire event).
+var numVisibilityChanges = 0;
+
+function startTest() {
+    document.addEventListener(
+        "visibilitychange", onVisibilityChange, false);
+    checkIsPageVisible();
+    numVisibilityChanges++;
+    makePageHidden();
+}
+
+function finishTest() {
+    if (window.testRunner) {
+        testRunner.resetPageVisibility();
+    }
+    finishJSTest();
+}
+
+function onVisibilityChange() {
+    if (numVisibilityChanges == 1) {
+        checkIsPageHidden();
+        numVisibilityChanges++;
+        makePageHidden();
+        checkIsPageHidden();
+        numVisibilityChanges++;
+        makePageVisible();
+        return;
+    } else if (numVisibilityChanges == 2) {
+        testFailed("Invalid event fired on same state change.");
+        finishTest();
+        return;
+    } else if (numVisibilityChanges == 3) {
+        checkIsPageVisible();
+        numVisibilityChanges++;
+        finishTest();
+        return;
+    } else {
+        testFailed("Too many visibility transitions");
+        finishTest();
+        return;
+    }
+}
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+
+</body>
+</html>

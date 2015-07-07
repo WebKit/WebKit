@@ -1,0 +1,106 @@
+<html>
+<head>
+<script>
+window.onload = function()
+{
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+    }
+
+    function alertMsg(msg) { 
+        return "javascript:alert(\"FAIL: " + msg + 
+            "\");document.body.innerHTML=\"<p style='font-weight:bold;color:red'>Failure testing " + msg + "</p>\";//"; 
+    }
+    // Test different ways of setting iframe.src
+    var aliasTests = [
+        // Attr/Node attributes
+        function(iFrame) { iFrame.attributes['src'].value = alertMsg("value"); iFrame.src = iFrame.src;},
+        function(iFrame) { iFrame.attributes['src'].textContent = alertMsg("textContent");},
+        function(iFrame) { iFrame.attributes['src'].nodeValue = alertMsg("nodeValue");},
+        
+        // Text Node Manipulation
+        function(iFrame) { iFrame.attributes['src'].firstChild.replaceWholeText(alertMsg("nodeValue"));},
+        function(iFrame) { iFrame.attributes['src'].firstChild.data = alertMsg("nodeValue");},
+
+        // Node attribute manipulation functions
+        function(iFrame) { iFrame.setAttribute("src", alertMsg("setAttribute"));},
+        function(iFrame) { iFrame.setAttributeNS(null, "src", alertMsg("setAttributeNS"));},
+        function(iFrame) {
+            var a = document.createAttribute('src');
+            a.nodeValue = alertMsg("setAttributeNode");
+            iFrame.setAttributeNode(a);
+        },
+        function(iFrame) {
+            var a = document.createAttribute('src');
+            a.nodeValue = alertMsg("setAttributeNodeNS");
+            iFrame.setAttributeNodeNS(a);
+        },
+        // Child manipulation methods
+        function(iFrame) { 
+            var src = iFrame.attributes['src'];
+            src.appendChild(document.createTextNode(alertMsg("appendChild() + removeChild()")));
+            src.removeChild(src.firstChild);
+        },
+        function(iFrame) { 
+            var src = iFrame.attributes['src'];
+            src.replaceChild(document.createTextNode(alertMsg("replaceChild()")), src.firstChild);
+        },
+        function(iFrame) { 
+            var src = iFrame.attributes['src'];
+            while (src.firstChild)
+                src.removeChild(src.firstChild);
+            src.appendChild(document.createTextNode(alertMsg("removeChild() + appendChild()")));
+        },
+        function(iFrame) { 
+            var src = iFrame.attributes['src'];
+            while (src.firstChild)
+                src.removeChild(src.firstChild);
+            var msg = alertMsg("removeChild() + appendChild() + appendChild()");
+            src.appendChild(document.createTextNode(msg.slice(0,4)));
+            src.appendChild(document.createTextNode(msg.slice(4)));
+        },
+        function(iFrame) { 
+            var src = iFrame.attributes['src'];
+            src.insertBefore(document.createTextNode(alertMsg("insertBefore()")), src.firstChild);
+        },
+        // NamedNodeMap
+        function(iFrame) {
+            var a = document.createAttribute('src');
+            a.nodeValue = alertMsg("setNamedItem()");
+            iFrame.attributes.setNamedItem(a);
+        },
+        function(iFrame) {
+            var a = document.createAttribute('src');
+            a.nodeValue = alertMsg("setNamedItemNS()");
+            iFrame.attributes.setNamedItemNS(a);
+        }
+    ];
+
+    function makeOnloadHandler (idx, tgtFrame) {
+        return function() {
+            tgtFrame.onload = null;
+            try {
+                aliasTests[idx](tgtFrame);
+            } catch (e) {}
+        }
+    }
+
+    for (var i = 0; i < aliasTests.length; i++) {
+        aFrame = document.createElement('iframe');
+        aFrame.src = 'http://localhost:8080/security/resources/innocent-victim.html';
+        aFrame.onload = makeOnloadHandler(i, aFrame);
+        aFrame.width = 700;
+        aFrame.height = 40;
+        document.body.appendChild(aFrame);
+        document.body.appendChild(document.createElement('br'));
+    }
+}
+
+</script>
+</head>
+<body>
+<p>This script tests if iframe.src can be set to a JavaScript URL via alternate 
+   DOM interfaces (such as Node.textContent or NamedNode.setNamedItem). 
+   The test is successful if no alerts appear and the page finishes loading.</p>
+</body>
+</html>

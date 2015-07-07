@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test-pre.js"></script>
+
+<p>This test checks pseudo attribute is exposed correctly.</p>
+
+<pre id="console"></pre>
+
+<script>
+var div = document.createElement('div');
+
+shouldBe("div.webkitPseudo", "''");
+shouldBe("div.getAttribute('pseudo')", "null");
+
+div.setAttribute("pseudo", "foo");
+shouldBe("div.webkitPseudo", "'foo'");
+shouldBe("div.getAttribute('pseudo')", "'foo'");
+
+div.webkitPseudo = "bar";
+shouldBe("div.webkitPseudo", "'bar'");
+shouldBe("div.getAttribute('pseudo')", "'bar'");
+
+div.removeAttribute('pseudo');
+shouldBe("div.webkitPseudo", "''");
+shouldBe("div.getAttribute('pseudo')", "null");
+
+// Checks pseudo accepts known pseudo-element word.
+div.webkitPseudo = 'first-letter';
+shouldBe("div.webkitPseudo", "'first-letter'");
+
+finishJSTest();
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

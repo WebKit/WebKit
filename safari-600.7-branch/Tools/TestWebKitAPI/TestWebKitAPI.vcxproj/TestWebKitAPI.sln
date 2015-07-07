@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestWebKitAPI", "TestWebKitAPI.vcxproj", "{AF94D13A-36C1-45FF-9B0B-EB5D3FF6F43D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C8F6C172-56F2-4E76-B5FA-C3B423B31BE8} = {C8F6C172-56F2-4E76-B5FA-C3B423B31BE8}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-md", "..\..\..\Source\ThirdParty\gtest\msvc\gtest-md.vcxproj", "{C8F6C172-56F2-4E76-B5FA-C3B423B31BE8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AF94D13A-36C1-45FF-9B0B-EB5D3FF6F43D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{AF94D13A-36C1-45FF-9B0B-EB5D3FF6F43D}.Debug|Win32.Build.0 = Debug|Win32
+		{AF94D13A-36C1-45FF-9B0B-EB5D3FF6F43D}.Release|Win32.ActiveCfg = Release|Win32
+		{AF94D13A-36C1-45FF-9B0B-EB5D3FF6F43D}.Release|Win32.Build.0 = Release|Win32
+		{C8F6C172-56F2-4E76-B5FA-C3B423B31BE8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C8F6C172-56F2-4E76-B5FA-C3B423B31BE8}.Debug|Win32.Build.0 = Debug|Win32
+		{C8F6C172-56F2-4E76-B5FA-C3B423B31BE8}.Release|Win32.ActiveCfg = Release|Win32
+		{C8F6C172-56F2-4E76-B5FA-C3B423B31BE8}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv='Content-Security-Policy' content="img-src 'none'">
+        <script src='/inspector/console-test.js'></script>
+        <script src='/inspector/debugger-test.js'></script>
+        <script src='/inspector/inspector-test.js'></script>
+        <script src='/inspector/stacktraces/resources/stacktrace-test.js'></script>
+        <script>
+            function thisTest() {
+                var img = document.createElement('img');
+                img.src = '/resources/abe.png';
+                document.body.appendChild(img);
+            }
+        </script>
+    </head>
+    <body onload='runTest()'>
+        <p>This test injects a blocked image from JavaScript. The resulting console
+        error should contain a stack trace.</p>
+    </body>
+</html>

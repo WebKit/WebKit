@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..;$(ProjectDir)\..\..\win;$(ConfigurationBuildDir)\Include;$(ConfigurationBuildDir)\Include\private;$(ConfigurationBuildDir)\Include\DumpRenderTree\ForwardingHeaders;$(ConfigurationBuildDir)\Include\JavaScriptCore;$(ConfigurationBuildDir)\Include\private\JavaScriptCore;$(ConfigurationBuildDir)\Include\WebCoreTestSupport;$(ConfigurationBuildDir)\Include\WebCore;$(WebKit_Libraries)\Include;$(WebKit_Libraries)\Include\private;$(WebKit_Libraries)\Include\WebCore;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DisableSpecificWarnings>4146;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ForcedIncludeFiles>DumpRenderTreePrefix.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <AdditionalOptions>/NXCOMPAT %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>WTF$(DebugSuffix).lib;JavaScriptCore$(DebugSuffix).lib;WebKitGUID$(DebugSuffix).lib;WebKit$(DebugSuffix).lib;WebCoreTestSupport$(DebugSuffix).lib;gdi32.lib;ole32.lib;oleaut32.lib;user32.lib;shlwapi.lib;oleacc.lib;comsuppw.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+</Project>

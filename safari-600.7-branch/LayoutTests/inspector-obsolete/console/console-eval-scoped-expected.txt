@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 4: with: Object property value
+CONSOLE MESSAGE: line 1: eval in with: Object property value
+CONSOLE MESSAGE: line 1: eval in function: Function parameter
+Tests that evaluating 'console.log()' in the console will have access to its outer scope variables. Bug 60547.
+
+with: Object property value
+eval in with: Object property value
+eval in function: Function parameter
+

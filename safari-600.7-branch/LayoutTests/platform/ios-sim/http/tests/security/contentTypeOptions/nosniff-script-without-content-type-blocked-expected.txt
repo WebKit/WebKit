@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 1: Executed script with MIME type: ''.
+Check that script sent with an 'X-Content-Type-Options: nosniff' header is correctly blocked if no 'Content-Type' header is present.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL window.scriptsSuccessfullyLoaded should be 0. Was 1.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

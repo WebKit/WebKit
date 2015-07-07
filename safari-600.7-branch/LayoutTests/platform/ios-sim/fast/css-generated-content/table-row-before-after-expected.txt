@@ -1,0 +1,36 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x112
+  RenderBlock {HTML} at (0,0) size 800x112
+    RenderBody {BODY} at (8,16) size 784x88
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 473x19
+          text run at (0,0) width 473: "There word PASS should appear twice below, and there should be no red."
+      RenderTable {DIV} at (0,36) size 63x52 [color=#008000] [bgcolor=#FF0000]
+        RenderTableSection (anonymous) at (0,0) size 63x52
+          RenderTableRow {DIV} at (0,0) size 63x26
+            RenderTableCell {DIV} at (0,0) size 15x26 [bgcolor=#FFFFFF] [border: (3px solid #FFFFFF)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (3,3) size 9x19
+                text run at (3,3) width 9: "P"
+            RenderTableCell {DIV} at (15,0) size 18x26 [bgcolor=#FFFFFF] [border: (3px solid #FFFFFF)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (3,3) size 12x19
+                text run at (3,3) width 12: "A"
+            RenderTableCell {DIV} at (33,0) size 15x26 [bgcolor=#FFFFFF] [border: (3px solid #FFFFFF)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (3,3) size 9x19
+                text run at (3,3) width 9: "S"
+            RenderTableCell {DIV} at (48,0) size 15x26 [bgcolor=#FFFFFF] [border: (3px solid #FFFFFF)] [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (3,3) size 9x19
+                text run at (3,3) width 9: "S"
+          RenderTableRow {DIV} at (0,26) size 63x26
+            RenderTableCell (anonymous) at (0,26) size 15x26 [bgcolor=#FFFFFF] [border: (3px solid #FFFFFF)] [r=1 c=0 rs=1 cs=1]
+              RenderText at (3,3) size 9x19
+                text run at (3,3) width 9: "P"
+            RenderTableCell {DIV} at (15,26) size 18x26 [bgcolor=#FFFFFF] [border: (3px solid #FFFFFF)] [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (3,3) size 12x19
+                text run at (3,3) width 12: "A"
+            RenderTableCell {DIV} at (33,26) size 15x26 [bgcolor=#FFFFFF] [border: (3px solid #FFFFFF)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (3,3) size 9x19
+                text run at (3,3) width 9: "S"
+            RenderTableCell (anonymous) at (48,26) size 15x26 [bgcolor=#FFFFFF] [border: (3px solid #FFFFFF)] [r=1 c=3 rs=1 cs=1]
+              RenderText at (3,3) size 9x19
+                text run at (3,3) width 9: "S"

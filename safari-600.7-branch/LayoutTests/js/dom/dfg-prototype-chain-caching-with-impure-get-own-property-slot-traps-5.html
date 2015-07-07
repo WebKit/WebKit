@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+
+description("Tests what happens when you make prototype chain accesses with impure GetOwnPropertySlot traps in the way.");
+
+document.foo = function () {};
+
+function f() {
+    return document.foo;
+}
+
+dfgShouldBe(f, "typeof f()", "\"function\"");
+
+var img = new Image();
+img.name = "foo";
+document.body.appendChild(img);
+
+shouldBe("typeof f()", "\"object\"");
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+    .region {
+        height: auto;
+        width: 200px;
+        border: 2px solid blue;
+        margin: .5em;
+        overflow: hidden;
+    }
+
+    #r1 {
+        width: 300px;
+    }
+
+    #r3 {
+        width: 100px;
+    }
+    </style>
+</head>
+<body>
+    <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=118531">[CSS Regions] In a region chain with auto-height regions, lines get their length based only on the first region</a>.</p>
+    <p>Verify lines are correctly computed in regions with a huge max-height set on them.</p>
+    <div class="region" id="r1"><p>Lorem ipsum scurtum est.</p></div>
+    <div class="region"><p>Lorem ipsum lungum est, yet not that lungum, only slighter.</p></div>
+    <div class="region" id="r3"><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque, sint dolorum optio perferendis quam delectus fuga soluta itaque quisquam inventore.</p></div>
+</body>
+</html>

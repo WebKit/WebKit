@@ -1,0 +1,61 @@
+<html>
+<body>
+<pre id='console'></pre>
+<script type="text/javascript">
+function log(message)
+{
+    document.getElementById('console').appendChild(document.createTextNode(message + "\n"));
+}
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+(function() {
+    var xhr = new XMLHttpRequest();
+
+    try {
+        xhr.open("GET", "http://localhost:8000/xmlhttprequest/resources/access-control-preflight-denied-xsrf.php?state=reset", false);
+        xhr.send(null);
+    } catch(e) {
+        log("FAIL: Unable to reset server state: [" + e.message + "].");
+        return;
+    }
+
+    xhr = new XMLHttpRequest();
+
+    try {
+        xhr.open("PUT", "http://localhost:8000/xmlhttprequest/resources/access-control-preflight-denied-xsrf.php", false);
+    } catch(e) {
+        log("FAIL: Exception thrown. Cross-domain access is not allowed in first 'open'. [" + e.message + "].");
+        return;
+    }
+
+    try {
+        xhr.send(null);
+        log("FAIL: Cross-domain access allowed in first send without throwing an exception");
+        return;
+    } catch(e) {
+        // Eat the exception.
+    }
+
+    xhr = new XMLHttpRequest();
+
+    try {
+        xhr.open("GET", "http://localhost:8000/xmlhttprequest/resources/access-control-preflight-denied-xsrf.php?state=complete", false);
+    } catch(e) {
+        log("FAIL: Exception thrown. Cross-domain access is not allowed in second 'open'. [" + e.message + "].");
+        return;
+    }
+
+    try {
+        xhr.send(null);
+    } catch(e) {
+        log("FAIL: Exception thrown. Cross-domain access is not allowed in second 'send'. [" + e.message + "].");
+        return;
+    }
+
+    log(xhr.responseText);
+})();
+</script>
+</body>
+</html>

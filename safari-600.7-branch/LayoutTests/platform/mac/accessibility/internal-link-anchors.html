@@ -1,0 +1,29 @@
+<html>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+<body>
+    
+    <div id="result"></div>
+    
+    <!-- Test internally named linked anchors -->
+    <a href="#internal" id="anchor">Internal anchor</a>
+    <BR><BR>
+    <BR>
+    <a name="internal">Here I am</a>
+
+     
+    <script>
+        if (window.accessibilityController) {
+            var result = document.getElementById("result");
+
+            var labeledItem = document.getElementById("anchor");
+            labeledItem.focus();
+            result.innerText += "Anchor connection\n";
+            result.innerText += "----------------------\n";
+            result.innerText += accessibilityController.focusedElement.attributesOfLinkedUIElements() + "\n\n"; 
+        }
+    </script>
+</body>
+</html>

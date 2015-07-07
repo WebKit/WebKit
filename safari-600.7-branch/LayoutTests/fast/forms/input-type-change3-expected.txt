@@ -1,0 +1,36 @@
+Tests for writing and reading .type property of HTMLInputElement.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS input.type is "text"
+PASS input.type for "file" is correctly "file".
+PASS input.type for "file" is correctly "file".
+PASS input.type for "FILE" is correctly "file".
+PASS input.type for "text" is correctly "text".
+PASS input.type for "TEXT" is correctly "text".
+PASS input.type for " text " is correctly "text".
+PASS input.type for "button" is correctly "button".
+PASS input.type for " button " is correctly "text".
+PASS input.type for "checkbox" is correctly "checkbox".
+PASS input.type for "email" is correctly "email".
+PASS input.type for "file" is correctly "email".
+PASS input.type for "hidden" is correctly "hidden".
+PASS input.type for "image" is correctly "image".
+PASS input.type for "isindex" is correctly "text".
+PASS input.type for "number" is correctly "number".
+PASS input.type for "password" is correctly "password".
+PASS input.type for "passwd" is correctly "text".
+PASS input.type for "radio" is correctly "radio".
+PASS input.type for "range" is correctly "range".
+PASS input.type for "reset" is correctly "reset".
+PASS input.type for "search" is correctly "search".
+PASS input.type for "submit" is correctly "submit".
+PASS input.type for "tel" is correctly "tel".
+PASS input.type for "telephone" is correctly "text".
+PASS input.type for "url" is correctly "url".
+PASS input.type for "uri" is correctly "text".
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,77 @@
+[%# The contents of this file are subject to the Mozilla Public
+  # License Version 1.1 (the "License"); you may not use this file
+  # except in compliance with the License. You may obtain a copy of
+  # the License at http://www.mozilla.org/MPL/
+  #
+  # Software distributed under the License is distributed on an "AS
+  # IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+  # implied. See the License for the specific language governing
+  # rights and limitations under the License.
+  #
+  # The Original Code is the Bugzilla Bug Tracking System.
+  #
+  # The Initial Developer of the Original Code is Netscape Communications
+  # Corporation. Portions created by Netscape are
+  # Copyright (C) 1998 Netscape Communications Corporation. All
+  # Rights Reserved.
+  #
+  # Contributor(s): Myk Melez <myk@mozilla.org>
+  #%]
+
+[% PROCESS global/variables.none.tmpl %]
+
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Rietveld review patch #[% attachment.id %] for [% terms.Bug %] #[% attachment.bug_id %]: [% bugsummary FILTER html %]</title>
+<script type="text/javascript">
+<!--
+/**
+ * Handle the postMessage response from Rietveld.
+ * The response will be the comments to combine with those left in the
+ * comments box.
+ */
+function updateComments(e)
+{
+    if (e.origin == 'http://wkrietveld.appspot.com') {
+        var reviewFormDoc = document.getElementById('reviewFormFrame').
+            contentDocument;
+        // Add the Rietveld comments to the comments field.
+        if (e.data) {
+            var commentBox = reviewFormDoc.getElementById('comment');
+
+            if (commentBox.value)
+                commentBox.value += '\n---------------------------------\n';
+            commentBox.value += e.data;
+        }
+        reviewFormDoc.forms[0].submit();
+    }
+}
+
+/**
+ * Fetch comments from Rietveld via postMessage.
+ */
+function getComments()
+{
+    document.getElementById('rietveldFrame').contentWindow.
+        postMessage('publish', 'http://wkrietveld.appspot.com');
+}
+
+// Listen for messages from Rietveld.
+if (window.postMessage)
+    window.addEventListener("message", updateComments, false);
+else
+    alert('Error: Please load this page in a browser that supports postMessage');
+//-->
+</script>
+
+[% IF !user.login %]
+[%# We shouldn't ever hit this, since all links to this page use GoAheadAndLogIn.
+    This is just here as a safeguard if anyone directly navigates to it. %]
+Please log in and refresh this page.
+[% ELSE %]
+<frameset rows="80%,20%">
+<frame id=rietveldFrame src="http://wkrietveld.appspot.com/[% attachment.bug_id  %]?email=[% user.login %]">
+<frame id=reviewFormFrame src="attachment.cgi?id=[% attachment.id %]&action=reviewform&rietveldreview=true">
+</frameset>
+[% END %]

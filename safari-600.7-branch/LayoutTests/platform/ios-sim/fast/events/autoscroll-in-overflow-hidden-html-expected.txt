@@ -1,0 +1,3 @@
+ FAILED: anchor clicking within non-scrollable inner frame failed.
+PASSED: the autoscroll has not happened.
+

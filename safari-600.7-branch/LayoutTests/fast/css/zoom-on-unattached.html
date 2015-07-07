@@ -1,0 +1,15 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+root = document.createElement("body");
+d = document.implementation.createDocument();
+d.adoptNode(root);
+node = document.createElement("title");
+root.appendChild(node);
+node.setAttribute("style", "zoom:document;")
+node.appendChild(node.cloneNode());
+</script>
+<body>
+This test passes if it does not crash.
+</body>

@@ -1,0 +1,19 @@
+The first iframe below should return a security error, and the second should successfully open the database.
+
+  
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+self.webkitIndexedDB.deleteDatabase() threw an exception: SecurityError
+self.webkitIndexedDB.open() threw an exception: SecurityError
+self.webkitIndexedDB.webkitGetDatabaseNames() threw an exception: SecurityError
+
+
+--------
+Frame: '<!--framePath //<!--frame1-->-->'
+--------
+Successfully called self.webkitIndexedDB.deleteDatabase().
+Successfully called self.webkitIndexedDB.open().
+Successfully called self.webkitIndexedDB.webkitGetDatabaseNames().
+

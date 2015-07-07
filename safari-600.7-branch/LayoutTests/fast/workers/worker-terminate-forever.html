@@ -1,0 +1,11 @@
+<body>
+<p>Test Worker.terminate() for a worker that tries to run forever.</p>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var worker = new Worker('resources/worker-run-forever.js');
+worker.terminate();
+</script>
+</body>
+</html>

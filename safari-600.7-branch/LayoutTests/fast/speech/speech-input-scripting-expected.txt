@@ -1,0 +1,13 @@
+Tests for enabling and disabling speech input via script.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.getElementById("speechInput").value is "Pictures of the moon"
+PASS document.getElementById("speechInput").value is "Pictures of the moon"
+PASS document.getElementById("speechInput").value is "Pictures of the moon"
+PASS document.getElementById("speechInput").value is "Pictures of the moon"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+   

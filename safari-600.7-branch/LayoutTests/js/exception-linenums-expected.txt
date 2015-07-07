@@ -1,0 +1,25 @@
+This test exercises the source URL and line number that is embedded in JavaScript exceptions, which is displayed in places like the JavaScript console.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS typeof e.sourceURL is "string"
+PASS e.line is 12
+PASS typeof e.sourceURL is "string"
+PASS e.line is 22
+PASS typeof e.sourceURL is "string"
+PASS e.line is 32
+PASS typeof e.sourceURL is "string"
+PASS e.line is 42
+PASS typeof e.sourceURL is "string"
+PASS e.line is 5
+PASS typeof e.sourceURL is "string"
+PASS e.line is 64
+PASS e.line is 74
+PASS e.line is 78
+PASS e.line is 81
+PASS e.line is 85
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

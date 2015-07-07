@@ -1,0 +1,163 @@
+#!/usr/bin/perl -w
+#
+# Copyright (C) 2007, 2008, 2009, 2010 Apple Inc.  All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+use strict;
+use warnings;
+
+use File::Basename;
+use File::Find;
+use File::Temp qw(tempfile);
+use Getopt::Long;
+
+sub preprocessorFlags();
+sub preprocessorMacros($\@);
+sub process($$$);
+
+my $showHelp = 0;
+my $verbose = 1;
+
+my $result = GetOptions(
+    "help"        => \$showHelp,
+    "verbose"     => \$verbose,
+);
+if (!$result || $showHelp || scalar(@ARGV) != 2) {
+    print STDERR basename($0) . " [-h|--help] [-v|--verbose] infile outfile\n";
+    exit 1;
+}
+
+my $inFile = shift @ARGV;
+my $outFile = shift @ARGV;
+
+my $arch;
+if ($outFile =~ /\.([^.]+)\.exp$/) {
+    $arch = $1;
+}
+die "Unknown arch!" if !defined($arch) || !$arch;
+
+print "Processing $inFile for $arch...\n" if $verbose;
+process($inFile, $outFile, $arch);
+
+exit 0;
+
+sub preprocessorFlags()
+{
+    my @features = split(/\s+/, $ENV{GCC_PREPROCESSOR_DEFINITIONS});
+    return @features;
+}
+
+sub preprocessorMacros($\@)
+{
+    my ($cc, $cc_args) = @_;
+
+    my @args = @$cc_args;
+
+    push(@args, map { "-D" . $_ } preprocessorFlags());
+
+    push(@args, qw(-include wtf/Platform.h -include wtf/Assertions.h));
+    # Set framework search paths to find <JavaScriptCore/Platform.h>.  Without these, cc
+    # finds /System/Library/Frameworks/JavaScriptCore.framework/PrivateHeaders/Platform.h
+    # or complains if you don't have that installed.  We search BUILT_PRODUCTS_DIR first
+    # for local developer builds, then the installation path for B&I builds.
+    push(@args, "-F" . $ENV{BUILT_PRODUCTS_DIR}) if $ENV{BUILT_PRODUCTS_DIR};
+    push(@args, "-I" . $ENV{BUILT_PRODUCTS_DIR} . "/usr/local/include") if $ENV{BUILT_PRODUCTS_DIR};
+    push(@args, "-I" . $ENV{BUILT_PRODUCTS_DIR} . $ENV{SDKROOT} . "/usr/local/include") if $ENV{BUILT_PRODUCTS_DIR};
+    # Xcode 3.1 is required for SDKROOT to be set.
+    if (exists $ENV{SYSTEM_LIBRARY_DIR} && $ENV{SYSTEM_LIBRARY_DIR}) {
+        my $frameworkSearchPath = $ENV{SDKROOT} . $ENV{SYSTEM_LIBRARY_DIR};
+        if ($ENV{PLATFORM_NAME} eq "iphoneos" || $ENV{PLATFORM_NAME} eq "iphonesimulator") {
+            $frameworkSearchPath .= "/PrivateFrameworks";
+        } else {
+            $frameworkSearchPath .= "/Frameworks";
+        }
+        push(@args, "-F" . $frameworkSearchPath);
+    }
+
+    push(@args, "-I" . $ENV{BUILT_PRODUCTS_DIR} . $ENV{SDKROOT} . "/usr/local/include") if $ENV{BUILT_PRODUCTS_DIR};
+    push(@args, "-I" . $ENV{SDKROOT} . "/usr/local/include");
+
+    chomp(my $sdk_version = `xcrun --sdk $ENV{SDKROOT} --show-sdk-version`);
+    if ($ENV{PLATFORM_NAME} eq "iphoneos") {
+        push(@args, "-miphoneos-version-min=" . $sdk_version);
+    }
+    if ($ENV{PLATFORM_NAME} eq "iphonesimulator") {
+        push(@args, "-mios-simulator-version-min=" . $sdk_version);
+    }
+
+    # Print out #define lines for all macros.
+    push(@args, qw(-dM /dev/null));
+
+    print join(" ", $cc, @args), "\n" if $verbose;
+    local $/ = undef;
+    open(CC, "-|", $cc, @args) or die "$!";
+    my $macros = <CC>;
+    close(CC);
+
+    return $macros;
+}
+
+sub process($$$)
+{
+    my ($inFile, $outFile, $arch) = @_;
+
+    if (!exists $ENV{SDKROOT} or !$ENV{SDKROOT}) {
+        die "SDKROOT environment variable not found";
+    }
+
+    chomp (my $cc = `xcrun -find cc`);
+
+    # Run cpp (-E) but don't print the line number info (-P).
+    my @args = qw(-E -P);
+
+    # Provide a default source type since *.in isn't a known file extension.
+    push(@args, qw(-std=gnu++11 -x c++));
+
+    # Make sure cc knows which SDK we're using.
+    push(@args, "-isysroot", $ENV{SDKROOT});
+
+    push(@args, "-arch", $arch);
+
+    my $macros = preprocessorMacros($cc, @args);
+
+    push(@args, "-o", $outFile);
+    push(@args, "-");
+
+    print join(" ", $cc, @args), "\n" if $verbose;
+    open(CC, "|-", $cc, @args) or die "$!";
+    open(IN, "<", $inFile) or die "$!";
+
+    print CC $macros;
+    while (my $line = <IN>) {
+        next if ($line =~ /^#/ && $line !~ /^#\s*(if|ifdef|ifndef|else|elif|endif)/);
+        print CC $line;
+    }
+
+    close(IN);
+    close(CC);
+
+    my $fileCount = chmod 0644, $outFile;
+    if ($fileCount != 1) {
+        die "Could not chmod 0644 $outFile: $!";
+    }
+}
+

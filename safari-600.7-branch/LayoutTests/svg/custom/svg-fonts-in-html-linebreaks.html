@@ -1,0 +1,73 @@
+<head>
+
+<style type="text/css" media="all">
+@font-face {
+    font-family: ABCFont;
+    src: url(resources/ABCFont.svg#ABCFont) format('svg');
+}
+
+span {
+    margin-right: 10px;
+}
+</style>
+
+<script type="text/javascript">
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function log(msg)
+{
+    var div = document.createElement("div");
+    div.innerHTML = msg;
+    document.getElementById("console").appendChild(div);
+}
+
+function run()
+{
+    var withLinebreaks = document.getElementById("svg-with-linebreaks");
+    var withoutLinebreaks = document.getElementById("svg-without-linebreaks");
+
+    if (withLinebreaks.offsetWidth == withoutLinebreaks.offsetWidth) {
+        log("<span style='color: green'>PASS</span>");
+    } else {
+        log("<span style='color: red'>FAIL</span>("
+                + withLinebreaks.offsetWidth + "px != "+ withoutLinebreaks.offsetWidth + "px)");
+    }
+}
+</script>
+
+</head>
+
+<body onload="run()">
+
+<p>This test is to ensure that text rendered with a SVG-font has the same behavior for handling
+control characters like newlines, as text rendered though the normal (fast or complex) path.
+The two "a b c" strings below should have the same length and not produce any missing-glyph symbols.</p>
+<div>
+<span id="svg-with-linebreaks" style="font-family: ABCFont">a
+b
+c</span>
+<span>&#60;--- This text has line breaks in the source HTML ("\n")</span>
+</div>
+<div>
+<span id="svg-without-linebreaks" style="font-family: ABCFont">a b c</span>
+<span>&#60;--- This text has no line breaks (just "a b c")</span>
+</div>
+<br>
+<div>As a reference, this is how normal text looks like for the same usecase:</div>
+<br>
+<div>
+<span id="normal-with-linebreaks">a
+b
+c</span>
+<span>&#60;--- This text has line breaks in the source HTML ("\n")</span>
+</div>
+<div>
+<span id="normal-without-linebreaks">a b c</span>
+<span>&#60;--- This text has no line breaks (just "a b c")</span>
+</div>
+<br>
+<div id="console"></div>
+</body>
+

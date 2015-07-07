@@ -1,0 +1,35 @@
+<html>
+<head>
+<script>
+
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function runTest()
+    {
+        if (window.testRunner)
+            testRunner.notifyDone();
+
+        var frame = document.getElementById("frame");
+        var childWindow = frame.contentWindow;
+        frame.parentNode.removeChild(frame);
+        childWindow.toolbar.visible;
+        
+        document.getElementById("console").firstChild.data = "TEST RAN";
+    }
+
+</script>
+</head>
+<body>
+
+<p>This tests accessing the visible property of a BarInfo after the relevant frame is no longer in a web page.
+If the test did not crash, it passed.<p>
+
+<pre id="console">TEST DID NOT RUN</pre>
+
+<iframe id="frame" src="about:blank" onload="runTest()">
+
+</body>
+</html>

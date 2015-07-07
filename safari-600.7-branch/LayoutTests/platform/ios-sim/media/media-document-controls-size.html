@@ -1,0 +1,22 @@
+<p>Test that media documents have accurately sized media.<p>
+<script src="../../../media/media-file.js" type="text/javascript"></script>
+<script src="../../../media/video-test.js" type="text/javascript"></script>
+
+<iframe style="width: 200px; height: 180px; border: 0px;" id="container"> </iframe>
+
+<script type="text/javascript">
+var iframe = document.getElementById("container");
+var width, height;
+
+function runTest(event) {
+    var video = iframe.contentDocument.querySelector("video");
+    width = window.getComputedStyle(video).width;
+    height = window.getComputedStyle(video).height;
+    testExpected("width", "200px");
+    testExpected("height", "180px");
+    testRunner.notifyDone();
+};
+
+iframe.onload = runTest;
+iframe.src = "../../../media/" + findMediaFile("video", "content/test");
+</script>

@@ -1,0 +1,36 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
+      RenderTable {TABLE} at (0,0) size 606x248 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 604x246
+          RenderTableRow {TR} at (0,0) size 604x62
+            RenderTableCell {TD} at (0,0) size 114x136 [border: (1px inset #808080)] [r=0 c=0 rs=3 cs=1]
+              RenderImage {IMG} at (1,1) size 112x134
+            RenderTableCell {TD} at (114,0) size 490x62 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=2]
+              RenderImage {IMG} at (21,1) size 468x60
+          RenderTableRow {TR} at (0,62) size 604x22
+            RenderTableCell {TD} at (114,62) size 490x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=2]
+              RenderTable {TABLE} at (1,1) size 488x20
+                RenderTableSection {TBODY} at (0,0) size 488x20
+                  RenderTableRow {TR} at (0,0) size 488x20
+                    RenderTableCell {TD} at (0,0) size 488x20 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (0,0) size 84x19
+                        text run at (0,0) width 84: "Top Nav Bar"
+          RenderTableRow {TR} at (0,84) size 604x162
+            RenderTableCell {TD} at (114,164) size 337x2 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (451,84) size 153x162 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
+              RenderInline {B} at (0,0) size 150x159
+                RenderText {#text} at (1,1) size 150x159
+                  text run at (1,1) width 126: "\"Freakish animal-"
+                  text run at (1,21) width 128: "things, all sporting"
+                  text run at (1,41) width 116: "maniacal smiles, "
+                  text run at (116,41) width 31: "race"
+                  text run at (1,61) width 150: "around a series of ice-"
+                  text run at (1,81) width 102: "themed tracks,"
+                  text run at (1,101) width 93: "showing their"
+                  text run at (1,121) width 80: "malformed "
+                  text run at (80,121) width 52: "asses to"
+                  text run at (1,141) width 127: "the entire world. \""
+              RenderText {#text} at (0,0) size 0x0

@@ -1,0 +1,7 @@
+http://127.0.0.1:8000/cache/resources/empty.txt - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/cache/resources/empty.txt, main document URL http://127.0.0.1:8000/cache/cancel-multiple-post-xhrs.html, http method POST> redirectResponse (null)
+http://127.0.0.1:8000/cache/resources/empty.txt - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/cache/resources/empty.txt, main document URL http://127.0.0.1:8000/cache/cancel-multiple-post-xhrs.html, http method POST> redirectResponse (null)
+http://127.0.0.1:8000/cache/resources/empty.txt - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/cache/resources/empty.txt, main document URL http://127.0.0.1:8000/cache/cancel-multiple-post-xhrs.html, http method POST> redirectResponse (null)
+http://127.0.0.1:8000/cache/resources/empty.txt - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -999, failing URL "http://127.0.0.1:8000/cache/resources/empty.txt">
+http://127.0.0.1:8000/cache/resources/empty.txt - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -999, failing URL "http://127.0.0.1:8000/cache/resources/empty.txt">
+http://127.0.0.1:8000/cache/resources/empty.txt - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -999, failing URL "http://127.0.0.1:8000/cache/resources/empty.txt">
+

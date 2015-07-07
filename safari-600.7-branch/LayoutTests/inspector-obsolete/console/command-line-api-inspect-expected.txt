@@ -1,0 +1,39 @@
+Tests that inspect() command line api works.
+
+
+Running: testRevealElement
+
+
+WebInspector.inspect called with: p#p1
+WebInspector.inspect's hints are: []
+inspect($('#p1')) = 
+Selected node id: 'p1'.
+
+Running: testRevealDatabase
+
+
+WebInspector.inspect called with: Database
+WebInspector.inspect's hints are: ["databaseId"]
+inspect(db) = Database {version: "1.0", transaction: function, readTransaction: function, changeVersion: function}
+
+Running: testRevealDatabase2
+
+
+WebInspector.inspect called with: Database
+WebInspector.inspect's hints are: ["databaseId"]
+inspect(db2) = Database {version: "1.0", transaction: function, readTransaction: function, changeVersion: function}
+
+Running: testRevealLocalStorage
+
+
+WebInspector.inspect called with: Storage
+WebInspector.inspect's hints are: ["domStorageId"]
+inspect(localStorage) = Storage {}
+
+Running: testRevealSessionStorage
+
+
+WebInspector.inspect called with: Storage
+WebInspector.inspect's hints are: ["domStorageId"]
+inspect(sessionStorage) = Storage {}
+

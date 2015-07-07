@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,10) size 784x582
+      RenderBlock {DIV} at (10,0) size 200x200
+      RenderBlock {DIV} at (10,210) size 200x200
+      RenderBlock {DIV} at (0,420) size 784x40
+        RenderText {#text} at (0,0) size 589x19
+          text run at (0,0) width 589: "PASS - \"background-image\" property for \"box\" element at 0.5s saw something close to: 0.5"
+        RenderBR {BR} at (588,15) size 1x0
+        RenderText {#text} at (0,20) size 655x19
+          text run at (0,20) width 655: "PASS - \"background-image\" property for \"boxShorthand\" element at 0.5s saw something close to: 0.5"
+        RenderBR {BR} at (654,35) size 1x0

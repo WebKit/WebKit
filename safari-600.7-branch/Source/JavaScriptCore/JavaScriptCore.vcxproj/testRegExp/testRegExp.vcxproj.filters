@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\testRegExp.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="testRegExpPostBuild.cmd" />
+    <None Include="testRegExpPreBuild.cmd" />
+    <None Include="testRegExpPreLink.cmd" />
+  </ItemGroup>
+</Project>

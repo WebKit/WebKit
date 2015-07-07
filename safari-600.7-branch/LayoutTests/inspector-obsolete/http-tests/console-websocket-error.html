@@ -1,0 +1,84 @@
+<html>
+<head>
+<script src="inspector-test.js"></script>
+<script src="console-test.js"></script>
+<script>
+var testFunctions = [testDNSLookup, testSSLCertificate];
+var nextTestIndex = 0;
+
+function onload()
+{
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+    if (!window.WebSocket) {
+        console.log("WebSocket is not supported."); return;
+    }
+    doNextTest();
+}
+
+function doNextTest()
+{
+    if (nextTestIndex == testFunctions.length) {
+        runTest();
+        return;
+    }
+    var testFunction = testFunctions[nextTestIndex];
+    nextTestIndex++;
+    testFunction();
+}
+
+function testDNSLookup()
+{
+    console.log("testDNSLookup: Test started.");
+    var ws = new WebSocket("ws://nonexistent.domain.invalid/"); // Network error should be logged to console.
+    ws.onopen = function() {
+        console.log("testDNSLookup: onopen is called.");
+        ws.close();
+    };
+    ws.onerror = function() {
+        console.log("testDNSLookup: onerror is called.");
+        ws.close();
+    };
+    ws.onclose = function() {
+        console.log("testDNSLookup: onclose is called.");
+        doNextTest();
+    };
+}
+
+function testSSLCertificate()
+{
+    console.log("testSSLCertificate: Test started.");
+    // The following statement should cause "Untrusted root certificate" error.
+    // Note that port 8443 serves HTTPS content rather than secure WebSocket,
+    // but it does not matter because the test does not send or receive any payload.
+    var ws = new WebSocket("wss://127.0.0.1:8443/");
+    ws.onopen = function() {
+        console.log("testSSLCertificate: onopen is called.");
+        ws.close();
+    };
+    ws.onerror = function() {
+        console.log("testSSLCertificate: onerror is called.");
+        ws.close();
+    };
+    ws.onclose = function() {
+        console.log("testSSLCertificate: onclose is called.");
+        doNextTest();
+    };
+}
+
+function test()
+{
+    InspectorTest.dumpConsoleMessages();
+    InspectorTest.completeTest();
+}
+
+</script>
+</head>
+
+<body onload="onload()">
+<p>
+WebSocket's network errors should be logged to console.
+</p>
+
+</body>
+</html>

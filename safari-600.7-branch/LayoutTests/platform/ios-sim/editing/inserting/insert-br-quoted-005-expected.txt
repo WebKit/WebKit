@@ -1,0 +1,51 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > DIV > DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BLOCKQUOTE > DIV > DIV > BODY > HTML > #document toDOMRange:range from 2 of DIV > DIV > BODY > HTML > #document to 2 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x120
+        RenderBlock {DIV} at (0,0) size 784x30
+          RenderText {#text} at (0,1) size 277x28
+            text run at (0,1) width 277: "Splitting Mail blockquotes."
+        RenderBlock {DIV} at (0,30) size 784x90
+          RenderText {#text} at (0,1) size 190x28
+            text run at (0,1) width 190: "Expected Results: "
+          RenderBR {BR} at (189,23) size 1x0
+          RenderText {#text} at (0,30) size 376x19
+            text run at (0,30) width 376: "Two blockquotes, with an unquoted blank line in between."
+          RenderBR {BR} at (375,45) size 1x0
+          RenderText {#text} at (0,50) size 411x19
+            text run at (0,50) width 411: "The first blockquote contains two lines, the second one is blank."
+          RenderBR {BR} at (410,65) size 1x0
+          RenderText {#text} at (0,70) size 318x19
+            text run at (0,70) width 318: "The second blockquote is a single non-blank line."
+      RenderBlock {DIV} at (0,120) size 784x234 [border: (2px solid #FF0000)]
+        RenderBlock (anonymous) at (14,14) size 756x30
+          RenderText {#text} at (0,1) size 118x28
+            text run at (0,1) width 118: "My citation:"
+        RenderBlock {DIV} at (14,68) size 756x152
+          RenderBlock {BLOCKQUOTE} at (40,0) size 676x64 [border: (2px solid #0000FF)]
+            RenderBlock {DIV} at (2,2) size 672x30
+              RenderText {#text} at (0,1) size 35x28
+                text run at (0,1) width 35: "one"
+            RenderBlock {DIV} at (2,32) size 672x30
+              RenderBlock {DIV} at (0,0) size 672x30
+                RenderBlock {DIV} at (0,0) size 672x30
+                  RenderBR {BR} at (0,1) size 0x28
+          RenderBlock (anonymous) at (0,64) size 756x30
+            RenderBR {BR} at (0,1) size 0x28
+          RenderBlock {BLOCKQUOTE} at (40,118) size 676x34 [border: (2px solid #0000FF)]
+            RenderBlock {DIV} at (2,2) size 672x30
+              RenderText {#text} at (0,1) size 36x28
+                text run at (0,1) width 36: "two"
+caret: position 0 of child 2 {BR} of child 1 {DIV} of child 3 {DIV} of body

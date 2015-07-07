@@ -1,0 +1,15 @@
+Test that an element supports z-index once it is a grid item and it is repainted properly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test z-index property for a regular element
+PASS getComputedStyle(item, '').getPropertyValue('z-index') is 'auto'
+PASS getComputedStyle(item, '').getPropertyValue('z-index') is 'auto'
+Test z-index property once the element becomes a grid item
+PASS getComputedStyle(item, '').getPropertyValue('z-index') is '-10'
+PASS getComputedStyle(item, '').getPropertyValue('z-index') is '10'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

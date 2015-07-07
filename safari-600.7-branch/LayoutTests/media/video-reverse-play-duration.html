@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+
+<html>
+    <head>
+        <title>local video</title>
+
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+
+        <script>
+
+            var startedPlayback = 0;
+            var duration = 0;
+
+            function canplaythrough()
+            {
+                // Cache the duration, seek to 0.2 seconds
+                duration = video.duration;
+                testExpected("video.duration", 0, '>');
+                testExpected("video.currentTime", 0);
+                run("video.currentTime = 0.3");
+                consoleWrite("");
+            }
+
+            function seeked()
+            {
+                // Play backwards
+                testExpected("video.currentTime.toFixed(1)", 0.3);
+                run("video.play()");
+                run("video.playbackRate = -1");
+                startedPlayback = true;
+                consoleWrite("");
+            }
+
+            function timeupdate()
+            {
+                if (startedPlayback && video.currentTime == 0) {
+                    // Make sure the duration is still valid
+                    testExpected("video.duration", 0, '>');
+                    endTest();
+                }
+            }
+
+            function start()
+            {
+                findMediaElement();
+
+                waitForEvent("error");
+                waitForEvent('canplaythrough', canplaythrough);
+                waitForEvent('seeked', seeked);
+                video.addEventListener("timeupdate", timeupdate);
+
+                video.src = findMediaFile("video", "content/test");
+                consoleWrite("");
+            }
+
+        </script>
+    </head>
+    <body>
+        <video controls autobuffer></video>
+        <p>Tests that duration is not set to zero when playing in reverse to the origin.</p>
+        <script>start()</script>
+    </body>
+</html>
+
+

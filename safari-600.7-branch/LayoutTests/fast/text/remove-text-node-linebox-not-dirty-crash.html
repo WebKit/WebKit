@@ -1,0 +1,23 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.onload = function()
+{
+    document.body.offsetTop;
+    b.lastChild.parentNode.removeChild(b.lastChild);
+    document.body.offsetTop;
+    a.firstChild.parentNode.removeChild(a.firstChild);
+    document.body.offsetTop;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+<div id="a">foo</div>
+<div></div>
+ This test passes if it does not crash. <output>
+<unknown>bar</output>
+<span id="b">
+<span><div style="display:inline-block"></div><br><br></span>

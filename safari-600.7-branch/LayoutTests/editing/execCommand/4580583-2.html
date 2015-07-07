@@ -1,0 +1,32 @@
+<html>
+<head>
+    <style>
+    blockquote {
+        color: blue;
+        border-left: 2px solid blue;
+        margin-left: 2px;
+    }
+    </style>
+</head>
+<body>
+    <p>This tests to make sure that breaking a quoted list doesn't renumber the list.  You should see a list broken in two below, the list items numbered 1, 2, 2, 3, 4. Two list items will be numbered '2' because the original item '2' was split.</p>
+    <div contenteditable="true">
+        <blockquote type="cite">
+            <ol>
+                <li>One</li>
+                <li id="two">TwoTwo</li>
+                <li>Three</li>
+                <li>Four</li>
+            </ol>
+        </blockquote>
+    </div>
+
+    <script>
+    li = document.getElementById("two");
+    text = li.firstChild;
+    selection = window.getSelection();
+    selection.setPosition(text, 3);
+    document.execCommand("InsertNewlineInQuotedContent");
+    </script>
+</body>
+</html>

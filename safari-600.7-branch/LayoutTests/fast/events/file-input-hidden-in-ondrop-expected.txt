@@ -1,0 +1,2 @@
+PASS dropTarget.value is "C:\\fakepath\\abe.png"
+

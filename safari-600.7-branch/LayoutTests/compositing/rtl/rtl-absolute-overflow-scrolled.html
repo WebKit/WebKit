@@ -1,0 +1,69 @@
+<html>
+<head>
+<style>
+    body {
+        direction: rtl;
+        margin: 0px;
+        background-color: red;
+    }
+
+    .positioned {
+        position: absolute;
+        top: 50px;
+        left: 50px;
+        width: 100px;
+        height: 100px;
+    }
+
+    #indicator {
+        background-color: red;
+    }
+
+    #layer {
+        -webkit-transform:translateZ(0);
+        background-color: green;
+    }
+
+    #root {
+        width: 1000px;
+        height: 1000px;
+        background-color: white;
+    }
+
+    #layertree {
+        position: absolute;
+        top: 10000px;
+        left: 0px;
+    }
+</style>
+<script>
+    function doTest() {
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText(true);
+        }
+
+        // The far left coordinate of the document varies by window width.
+        var offset = document.body.clientWidth - document.body.scrollWidth + 1;
+        document.getElementById('layer').style.left = offset + 50;
+        document.getElementById('indicator').style.left = offset + 50;
+
+        window.setTimeout(function() {
+            window.scrollTo(offset, 0);
+            if (window.testRunner) {
+                if (top == self)
+                    document.getElementById('layertree').innerText = window.internals.layerTreeAsText(document);
+                testRunner.notifyDone();
+            }
+        }, 0);
+    }
+    window.addEventListener('load', doTest, false);
+</script>
+<body>
+    <div id="root"></div>
+    <div class="positioned" id="indicator"></div>
+    <div class="positioned" id="layer"></div>
+
+    <pre id="layertree"></pre>
+</body>
+</html>

@@ -1,0 +1,1 @@
+This test requires DumpRenderTree to see the log of what resources are loaded.

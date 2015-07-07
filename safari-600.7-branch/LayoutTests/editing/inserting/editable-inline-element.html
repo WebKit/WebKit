@@ -1,0 +1,10 @@
+<p>This tests InsertParagraph inside an editable inline element.</p>
+<div style="border: 1px solid red;"><span id="span" contenteditable="true">foo</span></div>
+
+<script>
+var sel = window.getSelection();
+var span = document.getElementById("span");
+
+sel.setPosition(span, 0);
+document.execCommand("InsertParagraph");
+</script>

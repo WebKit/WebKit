@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+/* relative positioning ensures underlying RenderLayer */
+.container {
+    position: relative;
+}
+
+.span {
+    display: boxed-inline;
+    margin: 2px;
+    border: solid;
+}
+</style>
+<script src="../resources/shadow-test-driver.js"></script>
+<script>
+var testFuncs = [];
+
+testFuncs.push(function testDoubleShadowSubtrees(callIfDone) {
+    document.getElementById('expect-container').innerHTML = "<div><span>BEFORE</span><span>MID</span><span>AFTER</span></div>";
+
+    var root = document.createElement('div');
+    root.appendChild(createSpanWithText('LIGHT'));
+
+    var sr1 = root.webkitCreateShadowRoot();
+    sr1.appendChild(createSpanWithText('BEFORE: SHOULD NOT BE RENDERED'));
+    sr1.appendChild(createSpanWithText('MID: SHOULD NOT BE RENDERED'));
+    sr1.appendChild(createSpanWithText('AFTER: SHOULD NOT BE RENDERED'));
+
+    var sr2 = root.webkitCreateShadowRoot();
+    sr2.appendChild(createSpanWithText('BEFORE'));
+    sr2.appendChild(createSpanWithText('MID'));
+    sr2.appendChild(createSpanWithText('AFTER'));
+
+    document.getElementById('actual-container').appendChild(root);
+
+    callIfDone();
+});
+
+testFuncs.push(function testTripleShadowSubtrees(callIfDone) {
+    document.getElementById('expect-container').innerHTML = "<div><span>BEFORE</span><span>MID</span><span>AFTER</span></div>";
+
+    var root = document.createElement('div');
+    root.appendChild(createSpanWithText('LIGHT'));
+
+    var sr1 = root.webkitCreateShadowRoot();
+    sr1.appendChild(createSpanWithText('BEFORE: SHOULD NOT BE RENDERED'));
+    sr1.appendChild(createSpanWithText('MID: SHOULD NOT BE RENDERED'));
+    sr1.appendChild(createSpanWithText('AFTER: SHOULD NOT BE RENDERED'));
+
+    var sr2 = root.webkitCreateShadowRoot();
+    sr2.appendChild(createSpanWithText('BEFORE: SHOULD NOT BE RENDERED'));
+    sr2.appendChild(createSpanWithText('MID: SHOULD NOT BE RENDERED'));
+    sr2.appendChild(createSpanWithText('AFTER: SHOULD NOT BE RENDERED'));
+
+    var sr3 = root.webkitCreateShadowRoot();
+    sr3.appendChild(createSpanWithText('BEFORE'));
+    sr3.appendChild(createSpanWithText('MID'));
+    sr3.appendChild(createSpanWithText('AFTER'));
+
+    document.getElementById('actual-container').appendChild(root);
+
+    callIfDone();
+});
+
+testFuncs.push(function testShadowSubtreesWithContent(callIfDone) {
+    document.getElementById('expect-container').innerHTML = "<div><span>BEFORE</span><span>LIGHT</span><span>AFTER</span></div>";
+
+    var root = document.createElement('div');
+    root.appendChild(createSpanWithText('LIGHT'));
+
+    var sr1 = root.webkitCreateShadowRoot();
+    sr1.appendChild(createSpanWithText('BEFORE: SHOULD NOT BE RENDERED'));
+    sr1.appendChild(createSpanWithText('MID: SHOULD NOT BE RENDERED'));
+    sr1.appendChild(createSpanWithText('AFTER: SHOULD NOT BE RENDERED'));
+
+    var sr2 = root.webkitCreateShadowRoot();
+    sr2.appendChild(createSpanWithText('BEFORE'));
+    sr2.appendChild(createContentWithSelect('span', 'FALLBACK'));
+    sr2.appendChild(createSpanWithText('AFTER'));
+
+    document.getElementById('actual-container').appendChild(root);
+
+    callIfDone();
+});
+
+testFuncs.push(function testShadowSubtreesWithContentInOlderSubtree(callIfDone) {
+    document.getElementById('expect-container').innerHTML = "<div><span>BEFORE</span><span>LIGHT 1</span><span>AFTER</span></div>";
+
+    var root = document.createElement('div');
+    root.appendChild(createSpanWithText('LIGHT 1', 'c1'));
+    root.appendChild(createSpanWithText('LIGHT 2', 'c2'));
+
+    var sr1 = root.webkitCreateShadowRoot();
+    sr1.appendChild(createSpanWithText('BEFORE: SHOULD NOT BE RENDERED'));
+    sr1.appendChild(createContentWithSelect('.c2', 'FALLBACK'));
+    sr1.appendChild(createSpanWithText('AFTER: SHOULD NOT BE RENDERED'));
+
+    var sr2 = root.webkitCreateShadowRoot();
+    sr2.appendChild(createSpanWithText('BEFORE'));
+    sr2.appendChild(createContentWithSelect('.c1', 'FALLBACK'));
+    sr2.appendChild(createSpanWithText('AFTER'));
+
+    document.getElementById('actual-container').appendChild(root);
+
+    callIfDone();
+});
+
+testFuncs.push(function testShadowSubtreesWithDynamicCreation(callIfDone) {
+    document.getElementById('expect-container').innerHTML = "<div><span>BEFORE</span><span>LIGHT 1</span><span>LIGHT 2</span><span>AFTER</span></div>";
+
+    var root = document.createElement('div');
+    root.appendChild(createSpanWithText('LIGHT 1', 'c1'));
+    root.appendChild(createSpanWithText('LIGHT 2', 'c2'));
+
+    var sr1 = root.webkitCreateShadowRoot();
+    sr1.appendChild(createSpanWithText('BEFORE: SHOULD NOT BE RENDERED'));
+    sr1.appendChild(createContentWithSelect('span', 'FALLBACK 1'));
+    sr1.appendChild(createSpanWithText('AFTER: SHOULD NOT BE RENDERED'));
+
+    document.getElementById('actual-container').appendChild(root);
+
+    setTimeout((function(callIfDone, root) { return function() {
+        var sr2 = root.webkitCreateShadowRoot();
+        sr2.appendChild(createSpanWithText('BEFORE'));
+        sr2.appendChild(createContentWithSelect('span', 'FALLBACK 2'));
+        sr2.appendChild(createSpanWithText('AFTER'));
+
+        callIfDone();
+    };})(callIfDone, root), 0);
+});
+
+testFuncs.push(function testShadowSubtreesWithDynamicCreationOutOfTree(callIfDone) {
+    document.getElementById('expect-container').innerHTML = "<div><span>BEFORE</span><span>LIGHT 1</span><span>LIGHT 2</span><span>AFTER</span></div>";
+
+    var root = document.createElement('div');
+    root.appendChild(createSpanWithText('LIGHT 1', 'c1'));
+    root.appendChild(createSpanWithText('LIGHT 2', 'c2'));
+
+    var sr1 = root.webkitCreateShadowRoot();
+    sr1.appendChild(createSpanWithText('BEFORE: SHOULD NOT BE RENDERED'));
+    sr1.appendChild(createContentWithSelect('span', 'FALLBACK 1'));
+    sr1.appendChild(createSpanWithText('AFTER: SHOULD NOT BE RENDERED'));
+
+    setTimeout((function(callIfDone, root) { return function() {
+        var sr2 = root.webkitCreateShadowRoot();
+        sr2.appendChild(createSpanWithText('BEFORE'));
+        sr2.appendChild(createContentWithSelect('span', 'FALLBACK 2'));
+        sr2.appendChild(createSpanWithText('AFTER'));
+
+        document.getElementById('actual-container').appendChild(root);
+
+        callIfDone();
+    };})(callIfDone, root), 0);
+});
+</script>
+</head>
+<body onload="doTest(testFuncs)">
+
+<div id="actual-container" class="container"></div>
+<div id="expect-container" class="container"></div>
+<pre id="console"></pre>
+
+</body>
+</html>

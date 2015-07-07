@@ -1,0 +1,47 @@
+CONSOLE MESSAGE: line 9: log
+CONSOLE MESSAGE: line 10: debug
+CONSOLE MESSAGE: line 11: info
+CONSOLE MESSAGE: line 12: warn
+CONSOLE MESSAGE: line 13: error
+CONSOLE MESSAGE: line 15: repeated
+CONSOLE MESSAGE: line 15: repeated
+CONSOLE MESSAGE: line 15: repeated
+CONSOLE MESSAGE: line 15: repeated
+CONSOLE MESSAGE: line 15: repeated
+CONSOLE MESSAGE: line 20: 1
+CONSOLE MESSAGE: line 22: [object Object]
+CONSOLE MESSAGE: line 23: 42
+CONSOLE MESSAGE: line 24: true
+CONSOLE MESSAGE: line 25: null
+CONSOLE MESSAGE: line 26: undefined
+CONSOLE MESSAGE: line 27: [object HTMLDocument]
+CONSOLE MESSAGE: line 28: function () { }
+CONSOLE MESSAGE: line 29: function f() { }
+CONSOLE MESSAGE: line 30: 1,2,3
+CONSOLE MESSAGE: line 31: /regexp.*/
+Tests that console logging dumps proper messages.
+
+log console-tests.html:9 console-message console-log-level
+debug console-tests.html:10 console-message console-debug-level
+info console-tests.html:11 console-message console-log-level
+warn console-tests.html:12 console-message console-warning-level
+error console-tests.html:13 console-message console-error-level
+5repeated console-tests.html:15 console-message console-log-level repeated-message
+count: 1 console-tests.html:17 console-message console-debug-level
+count: 2 console-tests.html:17 console-message console-debug-level
+group console-tests.html:18 console-message console-log-level console-group-title
+ console-message console-log-level
+1 2 3 console-tests.html:20 console-message console-log-level
+groupCollapsed console-tests.html:21 console-message console-log-level console-group-title
+Object console-tests.html:22 console-message console-log-level
+42 console-tests.html:23 console-message console-log-level
+true console-tests.html:24 console-message console-log-level
+null console-tests.html:25 console-message console-log-level
+undefined console-tests.html:26 console-message console-log-level
+#document console-tests.html:27 console-message console-log-level
+function () { } console-tests.html:28 console-message console-log-level
+function f() { } console-tests.html:29 console-message console-log-level
+Array[3] console-tests.html:30 console-message console-log-level
+/regexp.*/ console-tests.html:31 console-message console-log-level
+ console-message console-log-level
+

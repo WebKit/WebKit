@@ -1,0 +1,10 @@
+Test for a capturing spec change to consider .2 as valid real number for step
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL numberInput.value should be 0.5. Was 0.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

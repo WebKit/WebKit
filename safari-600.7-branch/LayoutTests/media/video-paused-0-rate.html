@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            var timeUpdateWasCalled = false;
+            function start()
+            {
+                findMediaElement();
+                video.src = findMediaFile("video", "content/test");
+                waitForEventAndFail('ended');
+                video.addEventListener('timeupdate', timeupdate);
+                waitForEventOnce('canplaythrough', canPlayThrough);
+            }
+
+            function canPlayThrough()
+            {
+                video.playbackRate = 0;
+                video.play();
+            }
+
+            function timeupdate()
+            {
+                testExpected('video.currentTime', 0);
+                testExpected('video.paused', false);
+                if(timeUpdateWasCalled)
+                    failTest("Time was updated, but should not change.");
+                timeUpdateWasCalled = true;
+                setTimeout("endTest()", 150);
+            }
+        </script>
+    </head>
+    <body onload="start()">
+        <video></video>
+        <p>Test that setting '0' playbackRate works correctly.</p>
+    </body>
+</html>

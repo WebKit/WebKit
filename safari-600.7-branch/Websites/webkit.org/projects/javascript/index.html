@@ -1,0 +1,49 @@
+<?php
+    $title = "JavaScript";
+    include("../../header.inc");
+?>
+<h2>JavaScript</h2>
+
+<h3>Overview</h3>
+
+<p>This is the project page for WebKit's JavaScript implementation.
+JavaScript is the primary programming language used on web pages. Originally named LiveScript and now also known as ECMAScript,
+it's a safe, dynamic language that's arguably one of the most well-known programming languages in the world.
+There's a <a href="http://www.ecma-international.org/publications/standards/Ecma-262.htm">JavaScript standard</a>, created by ECMA.
+WebKit's JavaScript engine, JavaScriptCore, based on KJS, is a framework separate from WebCore and WebKit, and is used
+on Mac OS X for applications other than web page JavaScript.</p>
+
+<h3>Get Involved!</h3>
+
+<a href="https://bugs.webkit.org/buglist.cgi?product=WebKit&amp;component=JavaScriptCore&amp;resolution=---">
+View bugs in the JavaScriptCore component in Bugzilla.
+</a>
+
+<p>Here are some of the tasks that you can get involved with in JavaScript.</p>
+
+<dl>
+
+<dt>Generational Garbage Collector</dt>
+<dd>The garbage collector in JavaScriptCore has been improved quite a bit from the earliest versions.
+But much greater efficiency can be achieved with a garbage collector that uses a generational algorithm,
+so we don't have to mark all the objects every time we garbage collect. This should make JavaScript
+run significantly faster.</dd>
+
+<dt>Mozilla JavaScript Test Suite</dt>
+<dd>JavaScriptCore has an implementation of the Mozilla JavaScript Test Suite, and there are currently many failures.
+Fixing any of those failures would help our JavaScript engine be more compliant with the specification, and more
+compatible with real-world web sites as well.</dd>
+
+<dt>Language Extensions</dt>
+<dd>The Mozilla project has begun adding some
+<a href="http://www.mozilla.org/projects/deerpark/new-web-dev-features.html">extensions to JavaScript</a>.
+Someone needs to evaluate these and decide which of them we should implement. We should also consider extensions of our own driven by
+demand in contexts like Dashboard widgets.</dd>
+
+<dt>Objective-C Language Binding</dt>
+<dd>JavaScriptCore currently provides a <a href="http://developer.apple.com/documentation/Carbon/Reference/WebKit_JavaScriptCore_Ref">low-level C API</a>, however using JavaScriptCore in an Objective-C application is somewhat involved.  We'd like to add a high-level Objective-C API.</dd>
+</dl>
+
+<?php
+    include("../../footer.inc");
+?>

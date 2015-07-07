@@ -1,0 +1,34 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (139,23) size 4x19
+        text run at (139,23) width 4: " "
+      RenderText {#text} at (0,0) size 0x0
+layer at (10,10) size 135x34 clip at (11,11) size 133x32 scrollHeight 74
+  RenderTextControl {TEXTAREA} at (2,2) size 135x34 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+    RenderBlock {DIV} at (3,3) size 129x70
+      RenderText {#text} at (3,0) size 123x56
+        text run at (3,0) width 120: "A quick brown fox jumps"
+        text run at (122,0) width 4: " "
+        text run at (3,14) width 98: "over the lazy dog. A"
+        text run at (100,14) width 4: " "
+        text run at (3,28) width 109: "quick brown fox jumps"
+        text run at (111,28) width 4: " "
+        text run at (3,42) width 87: "over the lazy dog."
+        text run at (89,42) width 1: " "
+      RenderBR {BR} at (3,56) size 0x14
+layer at (153,10) size 135x34 clip at (154,11) size 133x32 scrollHeight 58
+  RenderTextControl {TEXTAREA} at (145,2) size 135x34 [bgcolor=#FFFFFF] [border: (1px solid #4C4C4C)]
+    RenderBlock {DIV} at (3,3) size 129x14
+layer at (156,13) size 129x56 backgroundClip at (154,11) size 133x32 clip at (154,11) size 133x32 outlineClip at (154,11) size 133x32
+  RenderBlock (relative positioned) {DIV} at (3,3) size 129x56 [color=#A9A9A9]
+    RenderText {#text} at (2,0) size 129x56
+      text run at (2,0) width 120: "A quick brown fox jumps"
+      text run at (121,0) width 4: " "
+      text run at (0,14) width 126: "over the lazy dog. A quick"
+      text run at (125,14) width 4: " "
+      text run at (0,28) width 123: "brown fox jumps over the"
+      text run at (122,28) width 4: " "
+      text run at (0,42) width 45: "lazy dog."

@@ -1,0 +1,3 @@
+This test makes sure that all async database operations are immediately interrupted when the worker needs to terminate.
+PASS: database operations interrupted.
+

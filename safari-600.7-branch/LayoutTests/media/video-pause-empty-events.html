@@ -1,0 +1,21 @@
+<video controls></video>
+<p>Test that pause() from EMPTY network state triggers load()</p>
+<script src=media-file.js></script>
+<script src=video-test.js></script>
+<script>
+    video.src = findMediaFile("video", "content/test");
+    testExpected("video.networkState", HTMLMediaElement.NETWORK_NO_SOURCE);
+
+    waitForEvent("loadstart");
+    waitForEvent("ratechange");
+    waitForEvent("waiting");
+    waitForEvent("ratechange");
+    waitForEvent("durationchange");
+    waitForEvent("loadedmetadata");
+    waitForEvent("loadeddata");
+    waitForEvent("canplay");
+    waitForEventAndEnd("canplaythrough");
+
+    run("video.pause()");
+    consoleWrite("SCRIPT DONE");
+</script>

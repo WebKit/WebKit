@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>buffer size restriction functionality of resource timing</title>
+        <script src="/w3c/webperf/resources/webperftestharnessextension.js"></script>
+        <script>
+            var context = new PerformanceContext(performance);
+            var buffer_size = 2;
+            context.setResourceTimingBufferSize(buffer_size);
+        </script>
+        <link rel="author" title="Intel" href="http://www.intel.com/" />
+        <link rel="help" href="http://www.w3.org/TR/resource-timing/#performanceresourcetiming"/>
+        <script src="/w3c/resources/testharness.js"></script>
+        <script src="/w3c/resources/testharnessreport.js"></script>
+        <script src="/w3c/webperf/resources/webperftestharness.js"></script>
+        <script>
+            setup({ explicit_done: true });            
+            function onload_test()
+            {
+                test_equals(context.getEntriesByType("resource").length, buffer_size, buffer_size + " resource timing entries should be stored since buffer size is " + buffer_size + "!");
+                done();                
+            }
+        </script>
+    </head>
+    <body onload=onload_test()>
+        <h1>Description</h1>
+        <p>This test validates the functionality of setResourceTimingBufferSize method in resource timing.</p>
+    </body>
+</html>

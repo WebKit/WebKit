@@ -1,0 +1,18 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<p>This tests copying plain text with tabs and pasting it into an editable region using paste and match tyle.  The tabs should be preserved.</p>
+<textarea id="textarea">Tab->	<-Tab</textarea>
+
+<div id="div" contenteditable="true"></div>
+
+<script>
+var textarea = document.getElementById("textarea");
+textarea.setSelectionRange(0, 0);
+document.execCommand("SelectAll");
+document.execCommand("Copy");
+var div = document.getElementById("div");
+window.getSelection().setPosition(div, 0);
+document.execCommand("PasteAndMatchStyle");
+</script>

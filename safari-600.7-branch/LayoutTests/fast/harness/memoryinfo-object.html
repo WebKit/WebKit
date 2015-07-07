@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script type="text/javascript">
+shouldBeDefined(window.internals);
+
+var stats = window.internals.memoryInfo();
+shouldBeDefined(stats);
+shouldBeGreaterThanOrEqual("stats.usedJSHeapSize", "0");
+shouldBeGreaterThanOrEqual("stats.totalJSHeapSize", "0");
+</script>
+</head>
+<body>
+</body>
+</html>

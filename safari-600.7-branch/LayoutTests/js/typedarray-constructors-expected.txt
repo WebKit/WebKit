@@ -1,0 +1,29 @@
+This test case tests the various typed array and related constructors. In particular, makes sure that you use the "new" keyword when using the constructors.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Int8Array() threw exception TypeError: Function is not a function (evaluating 'Int8Array()').
+PASS new Int8Array() did not throw exception.
+PASS Int16Array() threw exception TypeError: Function is not a function (evaluating 'Int16Array()').
+PASS new Int16Array() did not throw exception.
+PASS Int32Array() threw exception TypeError: Function is not a function (evaluating 'Int32Array()').
+PASS new Int32Array() did not throw exception.
+PASS Uint8Array() threw exception TypeError: Function is not a function (evaluating 'Uint8Array()').
+PASS new Uint8Array() did not throw exception.
+PASS Uint16Array() threw exception TypeError: Function is not a function (evaluating 'Uint16Array()').
+PASS new Uint16Array() did not throw exception.
+PASS Uint32Array() threw exception TypeError: Function is not a function (evaluating 'Uint32Array()').
+PASS new Uint32Array() did not throw exception.
+PASS Uint8ClampedArray() threw exception TypeError: Function is not a function (evaluating 'Uint8ClampedArray()').
+PASS new Uint8ClampedArray() did not throw exception.
+PASS Float32Array() threw exception TypeError: Function is not a function (evaluating 'Float32Array()').
+PASS new Float32Array() did not throw exception.
+PASS Float64Array() threw exception TypeError: Function is not a function (evaluating 'Float64Array()').
+PASS new Float64Array() did not throw exception.
+PASS DataView(new ArrayBuffer()) threw exception TypeError: Function is not a function (evaluating 'DataView(new ArrayBuffer())').
+PASS new DataView(new ArrayBuffer()) did not throw exception.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

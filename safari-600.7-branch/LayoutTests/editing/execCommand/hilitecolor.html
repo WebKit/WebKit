@@ -1,0 +1,20 @@
+<script src="../../resources/dump-as-markup.js"></script>
+<div id="test" contenteditable="true">The second word, and only the second word of this sentence should have a red background color.</div>
+<script>
+if (window.internals)
+    internals.settings.setEditingBehavior('mac');
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+
+var sel = window.getSelection();
+var e = document.getElementById("test");
+
+sel.setPosition(e, 0);
+sel.modify("move", "forward", "word");
+sel.modify("move", "forward", "word");
+sel.modify("extend", "backward", "word");
+document.execCommand("HiliteColor", false, "red");
+sel.modify("move", "backward", "line");
+
+Markup.dump('test')
+</script>

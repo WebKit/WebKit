@@ -1,0 +1,46 @@
+<html>
+<head>
+    <script src="resources/print.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+        
+        var count = 0;
+        var maxCount = 10;
+        var timeout = 100;
+
+        document.addEventListener("beforeload", function(event) {
+            event.target.parentElement.removeChild(event.target);
+        }, true);
+    </script>
+</head>
+<body>
+    <p>This page tests that you can correctly remove a video object with a poster in a beforeload listener without causing a crash.</p>
+    <div id="console"></div>
+    <script>
+        function checkObjectRemoval()
+        {
+            if (!document.getElementsByTagName("video").length) {
+                print("PASS", "green");
+                if (window.testRunner)
+                    testRunner.notifyDone();
+                return;
+            }
+            
+            if (++count > maxCount) {
+                print("FAIL", "red");
+                if (window.testRunner)
+                    testRunner.notifyDone();
+                return;
+            }
+            
+            setTimeout("checkObjectRemoval()", timeout);
+        }
+        
+        setTimeout("checkObjectRemoval()", timeout);
+    </script>
+    <video poster="../resources/abe.png">>><source>>>
+</body>
+</html>

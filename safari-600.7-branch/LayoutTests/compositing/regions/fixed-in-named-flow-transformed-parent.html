@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #red { position: absolute; top: 150px; left: 150px; width: 50px; height: 50px; background-color: red; }
+            #transformedParent { -webkit-flow-into: flow; position: absolute; top: 100px; left: 100px; width: 150px; height: 150px; -webkit-transform: scale3d(1, 1, 1); }
+            #fixed { position: fixed; top: 50px; left: 50px; width: 50px; height: 50px; background-color: green; }
+            /* The region is requires because otherwise the fixed positioned element is not displayed */
+            #region { -webkit-flow-from: flow; position: absolute; top: 0px; left: 0px; }
+        </style>
+        <script>
+            if (window.internals)
+                window.internals.settings.setAcceleratedCompositingForFixedPositionEnabled(true);
+
+            if (window.testRunner)
+                testRunner.dumpAsText();
+
+            if (window.internals)
+                window.addEventListener("load", function() {
+                    document.getElementById("layerTree").innerText = window.internals.layerTreeAsText(document);
+                }, false);
+        </script>
+    </head>
+    <body>
+        <p>Test that a fixed positioned element with a transformed parent is positioned relative to the transformed parent and is not composited.</p>
+        <p>On success you should not see red below.</p>
+        <div id="red"></div>
+        <div id="transformedParent">
+            <div id="fixed"></div>
+        </div>
+        <div id="region"></div>
+        <pre id="layerTree"></pre>
+    </body>
+</html>

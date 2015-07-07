@@ -1,0 +1,120 @@
+<html>
+<body>
+    <pre id="console"></pre>
+    <datagrid id="test"></datagrid>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function log(msg)
+        {
+            document.getElementById('console').appendChild(document.createTextNode(msg + "\n"));
+        }
+        
+        try {
+
+            var datagrid = document.getElementById('test');
+
+            // Test initial value.
+            if (datagrid.columns != null) {
+                log("PASS: Initial value of datagrid.columns is defined.");
+            } else {
+                log("FAIL: Initial value of datagrid.columns was null.");
+            }
+
+            // Test initial length.
+            if (datagrid.columns.length == 0) {
+                log("PASS: Initial length of datagrid.columns is 0.");
+            } else {
+                log("FAIL: Initial length of datagrid.columns was " + datagrid.columns.length + ".");
+            }
+        
+            // Test adding a column.
+            var column = datagrid.columns.add("fromcol", "From", "text", true, 2);
+        
+            // Test return value from adding the column.
+            if (column != null) {
+                log("PASS: Column returned from add.");
+            } else {
+                log("FAIL: No column returned.");
+            }
+        
+            // Make sure the column list now has one column.
+            if (datagrid.columns.length == 1) {
+                log("PASS: We have one column in the list.");
+            } else {
+                log("FAIL: Expected one column in the list but have " + datagrid.columns.length + " columns instead.");
+            }
+        
+            // Use item(0) to make sure the column we got back from add is the one in the list.
+            var gotColumn = datagrid.columns.item(0);
+            if (gotColumn == column) {
+                log("PASS: The column at item(0) is the column we got back from add.");
+            } else {
+                log("FAIL: The column at item(0) (" + gotColumn + ") is not the one we expected (" + column + ").");
+            }
+        
+            // Use [0] to make sure the column we got back from add is the one in the list.
+            gotColumn = datagrid.columns[0];
+            if (gotColumn == column) {
+                log("PASS: The column at index 0 is the column we got back from add.");
+            } else {
+                log("FAIL: The column at index 0 (" + gotColumn + ") is not the one we expected (" + column + ").");
+            }
+        
+            gotColumn = datagrid.columns["fromcol"];
+            if (gotColumn == column) {
+                log("PASS: The column when referenced by name is the one we got back from add.");
+            } else {
+                log("FAIL: The column when referenced by name (" + gotColumn + ") is not the one we expected (" + column + ").");
+            }
+
+            // Examine the column's properties to make sure they are what we expected.
+            if (column.id == "fromcol") {
+                log("PASS: The column's ID is fromcol as expected.");
+            } else {
+                log("FAIL: The column's ID should be fromcol but is " + column.id + " instead.");
+            }
+        
+            if (column.label == "From") {
+                log("PASS: The column's label is From as expected.");
+            } else {
+                log("FAIL: The column's label should be From but is " + column.label + " instead.");
+            }
+
+            if (column.type == "text") {
+                log("PASS: The column's type is text as expected.");
+            } else {
+                log("FAIL: The column's type should be text but is " + column.type + " instead.");
+            }
+    
+            if (column.primary) {
+                log("PASS: The column's primary property is true as expected.");
+            } else {
+                log("FAIL: The column's primary property should be true but isn't.");
+            }
+
+            if (column.sortable == 2) {
+                log("PASS: The column's sortable property is 2 as expected.");
+            } else {
+                log("FAIL: The column's sortable property should be 2 but is " + column.sortable + " instead.");
+            }
+
+            // Make sure we got set as the primary column.
+            if (datagrid.columns.primaryColumn == column) {
+                log("PASS: The column returned from add is now the primary column.");
+            } else {
+                log("FAIL: The column is not the primary column as expected.");
+            }
+
+        } catch (exception) {
+            log("FAIL: Threw exception " + exception);
+        }
+        
+        if (window.testRunner)
+            testRunner.notifyDone();
+    </script>
+</body>
+</html>

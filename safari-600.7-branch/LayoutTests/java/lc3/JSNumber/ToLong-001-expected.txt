@@ -1,0 +1,33 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion number conversion to long
+
+PASS dt.setLong( 0 ); dt.PUB_LONG is 0
+PASS dt.setLong( 0 ); dt.getLong() is 0
+PASS typeof dt.getLong() is 'number'
+PASS dt.setLong( -0 ); Infinity / dt.PUB_LONG is Infinity
+PASS dt.setLong( -0 ); Infinity / dt.getLong() is Infinity
+PASS typeof dt.getLong() is "number"
+FAIL dt.setLong(1234567890123); dt.PUB_LONG should be 1234567890123. Was -1337151488.
+PASS dt.setLong(1234567890123); dt.getLong() is 1234567890123
+PASS typeof dt.getLong() is "number"
+FAIL dt.setLong(-1234567890123); dt.PUB_LONG should be -1234567890123. Was -1337151488.
+PASS dt.setLong(-1234567890123); dt.getLong() is -1234567890123
+PASS typeof dt.getLong() is "number"
+FAIL dt.setLong(0x7ffffffffffffff); dt.PUB_LONG should be 576460752303423500. Was 0.
+PASS dt.setLong(0x7ffffffffffffff); dt.getLong() is 0x7ffffffffffffff
+PASS typeof dt.getLong() is "number"
+FAIL dt.setLong(0x7ffffffffffffff); dt.PUB_LONG should be 576460752303423500. Was 0.
+PASS dt.setLong(0x7ffffffffffffff); dt.getLong() is 0x7ffffffffffffff
+PASS typeof dt.getLong() is "number"
+FAIL dt.setLong(0xfffffffffffffff); dt.PUB_LONG should be 1152921504606847000. Was 0.
+PASS dt.setLong(0xfffffffffffffff); dt.getLong() is 0xfffffffffffffff
+PASS typeof dt.getLong() is "number"
+FAIL dt.setLong(0x6fffffffffffffff); dt.PUB_LONG should be 8070450532247929000. Was 0.
+PASS dt.setLong(0x6fffffffffffffff); dt.getLong() is 0x6fffffffffffffff
+PASS typeof dt.getLong() is "number"
+FAIL dt.setLong(-0x6fffffffffffffff); dt.PUB_LONG should be -8070450532247929000. Was 0.
+PASS dt.setLong(-0x6fffffffffffffff); dt.getLong() is  -0x6fffffffffffffff
+PASS typeof dt.getLong() is "number"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

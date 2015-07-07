@@ -1,0 +1,15 @@
+
+Test that style is applied to all cues correctly.
+EVENT(canplaythrough)
+
+** Setting track 1 to showing and starting video
+RUN(video.play())
+EVENT(seeked)
+
+** Test current cue colors
+RUN(cueDisplayElement = textTrackDisplayElement(video, 'display', 0))
+EXPECTED (getComputedStyle(cueDisplayElement).color == 'rgb(255, 255, 255)') OK
+RUN(cueNode = textTrackDisplayElement(video, 'cue'))
+EXPECTED (getComputedStyle(cueNode).backgroundColor == 'rgba(0, 0, 0, 0.8)') OK
+END OF TEST
+

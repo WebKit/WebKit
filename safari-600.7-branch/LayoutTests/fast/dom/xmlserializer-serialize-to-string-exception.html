@@ -1,0 +1,105 @@
+<html>
+<head>
+<style>
+.failed {
+    color: red;
+    font-weight: bold;
+}
+
+.passed {
+    color: green;
+    font-weight: bold;
+}
+</style>
+<script>
+if (window.testRunner)
+    window.testRunner.dumpAsText();
+var count = 0;
+
+function shouldThrowException(node)
+{
+    document.body.appendChild(document.createElement("br"));
+    var header = document.createElement("div");
+    header.textContent = ++count + ". Verifying XMLSerializer.serializeToString() should THROW exception with node value = " + node;
+    document.body.appendChild(header);
+
+    var xs = new XMLSerializer();
+    try {
+        var str = xs.serializeToString(node);
+
+        var result = document.createElement("div");
+        result.className = "failed"
+        result.textContent = "FAIL";
+        document.body.appendChild(result);
+    } catch (exception) {
+        var err = "Exception thrown = [" + exception.name + ": " + exception.message + "]";
+        var content = document.createElement("div");
+        content.textContent = err;
+        document.body.appendChild(content);
+
+        var result = document.createElement("div");
+        result.className = "passed"
+        result.textContent = "PASS";
+        document.body.appendChild(result);
+    }
+}
+
+function shouldNOTThrowException(node)
+{
+    document.body.appendChild(document.createElement("br"));
+    var header = document.createElement("div");
+    header.textContent = ++count + ". Verifying XMLSerializer.serializeToString() should NOT-THROW exception with node value = " + node;
+    document.body.appendChild(header);
+
+    var xs = new XMLSerializer();
+    try {
+        var str = xs.serializeToString(node);
+
+        var result = document.createElement("div");
+        result.className = "passed"
+        result.textContent = "PASS";
+        document.body.appendChild(result);
+    } catch (exception) {
+        var err = "Exception thrown = [" + exception.name + ": " + exception.message + "]";
+        var content = document.createElement("div");
+        content.textContent = err;
+        document.body.appendChild(content);
+
+        var result = document.createElement("div");
+        result.className = "failed"
+        result.textContent = "FAIL";
+        document.body.appendChild(result);
+    }
+}
+
+function runTest()
+{
+    shouldThrowException(null);
+    shouldThrowException(undefined);
+    shouldThrowException("<html><title>Hello World</title></html>");
+    shouldThrowException(document.children);
+
+    shouldNOTThrowException(document);
+    shouldNOTThrowException(document.documentElement);
+    shouldNOTThrowException(document.firstChild);
+    shouldNOTThrowException(document.createElement("div"));
+    shouldNOTThrowException(document.getElementById("heading"));
+    shouldNOTThrowException(document.createElement("custom"));
+
+    var domParser = new DOMParser();
+
+    var htmlDoc = domParser.parseFromString("<html/>", "text/html");
+    shouldNOTThrowException(htmlDoc);
+    shouldNOTThrowException(htmlDoc.firstChild);
+
+    var xmlDoc = domParser.parseFromString("<root/>", "text/xml");
+    shouldNOTThrowException(xmlDoc);
+    shouldNOTThrowException(xmlDoc.lastChild);
+}
+</script>
+</head>
+<body onload="runTest();">
+This tests XMLSerializer.serializeToString() throwing exception when node value is invalid and passing otherwise.
+<h1 id="heading"/>
+</body>
+</html>

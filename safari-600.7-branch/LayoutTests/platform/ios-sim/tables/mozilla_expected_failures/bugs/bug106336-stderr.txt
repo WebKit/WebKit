@@ -1,0 +1,1 @@
+Parsing style property 24 (value "40%") failed

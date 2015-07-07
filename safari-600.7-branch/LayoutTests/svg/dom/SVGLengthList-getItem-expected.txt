@@ -1,0 +1,21 @@
+ABC
+This is a test of the SVGLengthList::getItem() API.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Check lengths of text x item lists
+PASS text1.x.baseVal.numberOfItems is 3
+
+Test with various index parameters
+PASS text1.x.baseVal.getItem(-100) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS text1.x.baseVal.getItem(-1) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS text1.x.baseVal.getItem(0).value is 50
+PASS text1.x.baseVal.getItem(1).value is 100
+PASS text1.x.baseVal.getItem(2).value is 150
+PASS text1.x.baseVal.getItem(3) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS text1.x.baseVal.getItem(100) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

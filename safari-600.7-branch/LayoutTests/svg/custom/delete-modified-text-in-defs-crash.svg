@@ -1,0 +1,29 @@
+<svg id="svgRoot" xmlns="http://www.w3.org/2000/svg" onload="go()">
+  <defs>
+    <text>
+      <tspan id="tspan1" x="375"></tspan>
+      <tspan>PASS</tspan>
+    </text>
+  </defs>
+  <g><rect id="legendbox"/></g>
+  <script><![CDATA[
+    document.execCommand("SelectAll");
+    elem = document.getElementById("tspan1");
+    elem.removeAttribute("x");
+    range = document.createRange();
+    range.setStartBefore(document.getElementById("tspan1"));
+    range.setEndAfter(document.getElementById("legendbox"));
+    range.deleteContents();
+
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function go() {
+      var svgRoot = document.getElementById("svgRoot");
+      var passText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      var textContent = document.createTextNode("PASS");
+      passText.appendChild(textContent);
+      svgRoot.appendChild(passText);
+    }
+  ]]></script>
+</svg>

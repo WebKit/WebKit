@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+This test checks that caching of property accesses doesn't allow for illegal cross-frame access of a custom property. It also checks for an assertion failure that once occurred in this situation.
+
+ PASS: getCustomProperty(targetWindow) should be 'undefined' and is.
+PASS: getCustomProperty(targetWindow) should be 'undefined' and is.
+PASS: getCustomProperty(targetWindow) should be 'undefined' and is.
+

@@ -1,0 +1,50 @@
+Heading Level 1
+
+Heading Level 2
+
+Heading Level 3
+
+Heading Level 4
+
+Heading Level 5
+
+Heading Level 6
+
+Link
+foo	bar
+Odd	Even
+1
+
+2
+
+3
+
+4
+
+This tests the exposure of Atk object attributes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS child.role is 'AXRole: heading'
+PASS child.allAttributes() is 'level:1, toolkit:WebKitGtk'
+PASS child.role is 'AXRole: heading'
+PASS child.allAttributes() is 'level:2, toolkit:WebKitGtk'
+PASS child.role is 'AXRole: heading'
+PASS child.allAttributes() is 'level:3, toolkit:WebKitGtk'
+PASS child.role is 'AXRole: heading'
+PASS child.allAttributes() is 'level:4, toolkit:WebKitGtk'
+PASS child.role is 'AXRole: heading'
+PASS child.allAttributes() is 'level:5, toolkit:WebKitGtk'
+PASS child.role is 'AXRole: heading'
+PASS child.allAttributes() is 'level:6, toolkit:WebKitGtk'
+PASS child.role is 'AXRole: link'
+PASS child.allAttributes() is 'toolkit:WebKitGtk'
+PASS child.role is 'AXRole: table'
+PASS child.allAttributes() is 'toolkit:WebKitGtk'
+PASS child.role is 'AXRole: table'
+PASS child.allAttributes() is 'toolkit:WebKitGtk'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

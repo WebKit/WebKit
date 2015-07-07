@@ -1,0 +1,70 @@
+<svg version="1.1" baseProfile="basic" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="runRepaintTest()">
+  <script xlink:href="../../fast/repaint/resources/repaint.js"/>
+  <defs>
+     <g id="reference">
+         <rect x="240" y="1" width="239" height="358" />
+         <circle cx="240" cy="1" width="39" height="58" />
+     </g>
+
+    <script type="text/ecmascript">
+    <![CDATA[
+      function repaintTest() {
+          if (window.eventSender) {
+              testRunner.waitUntilDone();
+              eventSender.mouseMoveTo(250, 50);
+              eventSender.mouseDown();
+              eventSender.mouseUp();
+          }
+      }
+
+      function test (event) {
+        // get pointers to use and referenced elements
+        var container = document.getElementById('reference');
+        var rect = container.firstChild.nextSibling;
+        var circle = rect.nextSibling.nextSibling;
+        var use = document.getElementById('use');
+
+        // test all SVGElementInstance methods (except childNodes) 
+        var rectInstance = event.target;
+        var gInstance = rectInstance.parentNode;
+        var circleInstance = rectInstance.nextSibling;
+    
+        // Check wheter correspdoningElement is the <rect>, and wheter <use> is set correctly.
+        if (rectInstance.correspondingElement != rect) return;
+        if (rectInstance.correspondingUseElement != use) return;
+
+        // Our <rect> doesn't have children.
+        if (rectInstance.firstChild) return;
+        if (rectInstance.lastChild) return;
+
+        // Our <rect> SVGElementInstance has the <g> SVGElementInstance as parent node
+        if (!gInstance) return;
+        if (gInstance.correspondingElement != container) return;
+
+        // Our <rect> SVGElementInstance has no previous sibling
+        if (rectInstance.previousSibling) return;
+
+        // Our <rect> SVGElementInstance has the <circle> SVGElementInstance as next sibling
+        if (!circleInstance) return;
+        if (circleInstance.correspondingElement != circle) return;
+        if (rectInstance.nextSibling != circleInstance) return;
+
+        // Our <g> SVGElementInstance has no parent node, and <rect> as firstChild, <circle> as lastChild
+        if (gInstance.parentNode) return;
+        if (gInstance.firstChild != rectInstance) return;
+        if (gInstance.lastChild != circleInstance) return;
+
+        // Hopefully we pass :-)
+        document.getElementById("status").firstChild.nodeValue = "Test passed.";
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+      }
+    ]]>
+    </script>
+  </defs>
+
+  <text x="100" y="50" id="status">Test failed.</text>
+  <use id="use" xlink:href="#reference" onclick="test(evt)" fill="grey" />
+  <rect id="test-frame" x="1" y="1" width="478" height="358" fill="none" stroke="#000"/>
+</svg>

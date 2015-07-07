@@ -1,0 +1,13 @@
+Tests the limits of crypto.randomValues.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 'crypto' in window is true
+PASS 'getRandomValues' in window.crypto is true
+PASS crypto.getRandomValues(almostTooLargeArray) did not throw exception.
+PASS crypto.getRandomValues(tooLargeArray) threw exception Error: QuotaExceededError: DOM Exception 22.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

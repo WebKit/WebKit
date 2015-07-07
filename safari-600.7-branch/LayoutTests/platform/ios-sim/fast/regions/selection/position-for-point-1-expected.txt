@@ -1,0 +1,33 @@
+CONSOLE MESSAGE: line 330: 
+Expected selection: 
+        word1 inside region inside region inside region inside region inside region inside region inside region inside region word2 inside region inside region inside region inside
+Actual selection: 
+CONSOLE MESSAGE: line 330: 
+Expected selection: 
+        word1 inside region inside region inside region inside region inside region inside region inside region inside region word2 inside region inside region inside region inside
+Actual selection: 
+CONSOLE MESSAGE: line 330: 
+Expected selection: 
+        word1 inside region inside region inside region inside region inside region inside region inside region inside region word2 inside region inside region inside region insideregion word5 inside region inside region inside region inside region inside region inside region inside region inside region word6
+Actual selection: 
+CONSOLE MESSAGE: line 330: 
+Expected selection: region word5 inside region inside region inside region inside region inside region inside region inside region inside region word6
+Actual selection: 
+CONSOLE MESSAGE: line 330: 
+Expected selection: region word5 inside region inside region inside region inside region inside region inside region inside region inside region word6
+Actual selection: 
+word1 inside region inside region inside region inside region inside region inside region inside region inside region word2 inside region inside region inside region inside region word5 inside region inside region inside region inside region inside region inside region inside region inside region word6
+word3 outside region outside region outside region outside region word4
+Bug #120769 - [CSSRegions] Selection focusNode set to the "region" block, instead of the "source" block
+
+Top margin, padding and border points should be mapped to the beginning of the Region block, while bottom points are mapped to the block end. The Left coordinate its just adjusted to fit in the Flow Thread boundaries, since its not affected by the Flow direction.
+
+Test 1) Select the entire content of "region-1" and move down without leaving the region. Focus should be at the last word rendered by "region-1" block. Selected content should be the entire "region-1" block. FAIL
+
+Test 2) Select the entire content of "region-1" and move down until reaching the region border. Focus should be at at the last word rendered by "region-1" block. Selected content should be the entire "region-1" block. FAIL
+
+Test 3) Select the entire content of "region-1" and move down leaving the block without entering in the next element. Focus should be at at the beginning of the "outside" block. Selected content should go from "word1" to "word2" and from "word5" to "word6". FAIL
+
+Test 4) Select from "word3" to "word4" and move down leaving the block without entering in the next element. Focus should be at the first word rendered by the "region-2" block. Selected content should be the whole "region-2" content. FAIL
+
+Test 5) Select the entire content of "region-2" and move down without leaving the region. Focus should be at the end of "word6". Selected content should be the entire "region-2" block. FAIL

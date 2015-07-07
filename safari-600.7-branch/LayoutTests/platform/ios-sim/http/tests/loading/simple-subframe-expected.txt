@@ -1,0 +1,28 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+frame "f1" - didStartProvisionalLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+frame "f1" - didCommitLoadForFrame
+frame "f1" - didFinishDocumentLoadForFrame
+frame "f1" - didHandleOnloadEventsForFrame
+main frame - didHandleOnloadEventsForFrame
+frame "f1" - didFinishLoadForFrame
+main frame - didFinishLoadForFrame
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 496x19
+        text run at (0,0) width 496: "This is a test of load callbacks. It is only useful inside the regression test tool."
+      RenderBR {BR} at (495,15) size 1x0
+      RenderPartObject {IFRAME} at (0,20) size 304x154 [border: (2px inset #000000)]
+        layer at (0,0) size 300x150
+          RenderView at (0,0) size 300x150
+        layer at (0,0) size 300x150
+          RenderBlock {HTML} at (0,0) size 300x150
+            RenderBody {BODY} at (8,8) size 284x134
+              RenderInline {B} at (0,0) size 24x19
+                RenderText {#text} at (0,0) size 24x19
+                  text run at (0,0) width 24: "test"
+      RenderText {#text} at (0,0) size 0x0

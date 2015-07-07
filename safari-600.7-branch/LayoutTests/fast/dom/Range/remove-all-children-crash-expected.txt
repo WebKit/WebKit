@@ -1,0 +1,3 @@
+Test for bug 28697.
+
+PASS, the test did not crash.

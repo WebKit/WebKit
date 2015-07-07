@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<head>
+    <script src="../resources/js-test-pre.js"></script>
+    <script src="resources/audio-testing.js"></script>
+    <script src="resources/audiobuffersource-testing.js"></script>
+    <script>
+        var sampleRate = 44100.0;
+        var lengthInSeconds = 0.1;
+        var context;
+        var source;
+        var sourceBuffer;
+
+        function runTest()
+        {
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            }
+
+            var numberOfFrames = sampleRate * lengthInSeconds;
+            context = new webkitOfflineAudioContext(1, numberOfFrames, sampleRate);
+            sourceBuffer = createConstantBuffer(context, numberOfFrames, 0.5);
+            var data = sourceBuffer.getChannelData(0).buffer;
+
+            var string = [
+                "onmessage = function(e) {",
+                "   var view = new Float32Array(e.data)",
+                "   for (var i=0; i < view.length; i++)",
+                "       view[i] = 100;",
+                "    postMessage('done');",
+                "};"
+            ].join('\n');
+            var blobURL = URL.createObjectURL(new Blob([string]));
+
+            var worker = new Worker(blobURL);
+            worker.onmessage = workerReply;
+            worker.postMessage(data, [data]);
+        }
+
+        function workerReply(event) {
+            source = context.createBufferSource();
+            source.buffer = sourceBuffer;
+            source.connect(context.destination);
+            source.start(0);
+            context.oncomplete = finishTest;
+            context.startRendering();
+        }
+
+        function finishTest(event) {
+            var renderedBuffer = event.renderedBuffer;
+            var numberOfFrames = sampleRate * lengthInSeconds;
+            var expectedBuffer = createConstantBuffer(context, numberOfFrames, 0.5);
+
+            var renderedData = renderedBuffer.getChannelData(0);
+            var expectedData = expectedBuffer.getChannelData(0);
+
+            for (var i = 0; i < numberOfFrames; ++i) {
+                if (expectedData[i] != renderedData[i]) {
+                    testFailed('expected: ' + expectedData[i] + ' actual: ' + renderedData[i]);
+                    finishJSTest();
+                    if (window.testRunner)
+                        testRunner.notifyDone();
+                }
+            }
+
+            testPassed('Output matches expectations.');
+            finishJSTest();
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+    </script>
+</head>
+<body onload="runTest()">
+    <div>Tests that neutered AudioBuffers do not produce garbage</div>
+    <div id="console"></div>
+</body>
+
+

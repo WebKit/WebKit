@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #container {
+                -webkit-transform-style: preserve-3d;
+                position: absolute;
+                top: 200px;
+                left: 200px;
+            }
+            #region {
+                -webkit-flow-from: flow;
+            }
+            #contentNode {
+                -webkit-flow-into: flow;
+                width: 100px;
+                height: 100px;
+                background-color: red;
+            }
+            #contentNode:hover {
+                background-color: green;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test that hit testing of a region inside a container having transform-style preserve3d works properly.</p>
+        <p>To manually test, move the mouse over the red rectangle. It should change its color to green.</p>
+        <div id="result"></div>
+        <div id="container">
+            <div id="inner">
+                <div id="region"></div>
+                <div id="contentNode"></div>
+            </div>
+        </div>
+        <script>
+            if (window.testRunner)
+                window.testRunner.dumpAsText();
+            var result = document.getElementById("result");
+            var hitElement = document.elementFromPoint(250, 250);
+            if (hitElement == document.getElementById("contentNode"))
+                result.innerText = "PASS";
+            else
+                result.innerText = "FAIL: hit" + hitElement;
+        </script>
+    </body>
+</html>
+

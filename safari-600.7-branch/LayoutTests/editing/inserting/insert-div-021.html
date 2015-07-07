@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div contenteditable id="root" style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
+<div style="border: none; height: 12px"></div>
+<span id="test">foo</span><br>bar
+</div>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpEditingCallbacks();
+
+var root = document.getElementById('root');
+root.focus();
+window.getSelection().setPosition(document.getElementById('test'), 0);
+
+for (i = 0; i < 4; i++)
+    window.getSelection().modify('move', 'forward', 'character');
+
+document.execCommand('Delete');
+document.execCommand('InsertParagraph');
+document.execCommand('InsertParagraph');
+
+Markup.description('Test inserting paragraphs: should see "foo", then an empty line, then "bar" in the next line.\n'+
+'Fix for this bug: <rdar://problem/3924579> REGRESSION (Mail): After deleting, hitting return key does not insert visible newline');
+Markup.dump(root);
+
+</script>
+</body>
+</html>

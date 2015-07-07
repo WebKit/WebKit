@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\;$(ProjectDir)..\..\Platform\;$(ProjectDir)..\..\ForwardingHeaders;$(WebKit_Libraries)\Include\JavaScriptCore;$(WebKit_Libraries)\include\private\JavaScriptCore;$(ConfigurationBuildDir)\Include\JavaScriptCore;$(ConfigurationBuildDir)\include\private\JavaScriptCore;$(ConfigurationBuildDir)\Include\WebCore\ForwardingHeaders;$(ConfigurationBuildDir)\Include;$(ConfigurationBuildDir)\Include\private;$(WebKit_Libraries)\QTInternalSDK\CIncludes;$(WebKit_Libraries)\QuickTime SDK\CIncludes;$(ProgramFiles)/QuickTime SDK/cincludes;$(WebKit_Libraries)\include\private;$(WebKit_Libraries)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_USRDLL;QTMOVIEWIN_EXPORTS;TARGET_OS_WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DisableSpecificWarnings>4819;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>QTMLClient.lib;CVClient.lib;JavaScriptCore$(DebugSuffix).lib;WebKitSystemInterface$(DebugSuffix).lib;WTF$(DebugSuffix).lib;winmm.lib;Msimg32.lib;user32.lib;advapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(WebKit_Libraries)\QTInternalSDK\Libraries;$(WebKit_Libraries)\QuickTime SDK\Libraries;$(ProgramFiles)\QuickTime SDK\Libraries;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+    </Link>
+  </ItemDefinitionGroup>
+</Project>

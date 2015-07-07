@@ -1,0 +1,6 @@
+This test makes sure we can't add manually parsed SVG to the document when in dashboard compatibility mode. It can not be tested manually.
+
+Parsing of the document isn't prevented and produces a [object Document]
+The circle element is of type [object SVGCircleElement]
+FAIL: Managed to insert SVG element into tree
+

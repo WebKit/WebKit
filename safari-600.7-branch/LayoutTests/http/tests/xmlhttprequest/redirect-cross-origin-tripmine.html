@@ -1,0 +1,100 @@
+<p>Test that a cross-origin redirect does not result in a non-simple request being sent to the target.</p>
+<pre id="console"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(message)
+{
+    document.getElementById('console').appendChild(document.createTextNode(message + '\n'));
+}
+
+function resetTripmine()
+{
+    var req = new XMLHttpRequest;
+    req.open("GET", "/resources/reset-temp-file.php?filename=tripmine-status", false);
+    req.send();
+}
+
+function tripmineStatus()
+{
+    var req = new XMLHttpRequest;
+    req.open("GET", "/resources/tripmine.php?command=status", false);
+    req.send();
+    return req.responseText;
+}
+
+function checkResult()
+{
+    var status = tripmineStatus();
+    if (status == "")
+        log("    PASS");
+    else
+        log("    " + status);
+}
+
+function testAsync(method, code, next)
+{
+    log("Asynchronous XMLHttpRequest " + code + " " + method + " redirect:");
+    resetTripmine();
+
+    var req = new XMLHttpRequest;
+    req.open(method, "/resources/redirect.php?code=" + code + "&url=http://localhost:8000/resources/tripmine.php", true);
+    req.setRequestHeader("X-WebKit-Test", "*");
+    req.setRequestHeader("Content-Type", "application/xml");
+    req.send("data");
+    req.onload = function() { setTimeout(function() { checkResult(); next(); }, 10) }
+    req.onerror = function() { setTimeout(function() { checkResult(); next(); }, 10) }
+}
+
+function testSync(method, code, next)
+{
+    log("Synchronous XMLHttpRequest " + code + " " + method + " redirect:");
+    resetTripmine();
+
+    var req = new XMLHttpRequest;
+    req.open(method, "/resources/redirect.php?code=" + code + "&url=http://localhost:8000/resources/tripmine.php", false);
+    req.setRequestHeader("X-WebKit-Test", "*");
+    req.setRequestHeader("Content-Type", "application/xml");
+    try {
+        req.send("data");
+    } catch (ex) {
+    }
+
+    setTimeout(function() { checkResult(); next(); }, 10);
+}
+
+function test1() { testAsync("POST", 307, test2) }
+function test2() { testAsync("GET", 307, test3) }
+function test3() { testAsync("POST", 303, test4) }
+function test4() { testAsync("GET", 303, test5) }
+function test5() { testAsync("POST", 302, test6) }
+function test6() { testAsync("GET", 302, test7) }
+function test7() { testAsync("DELETE", 307, test71) }
+function test71() { testAsync("POST", 301, test72) }
+function test72() { testAsync("GET", 301, test73) }
+function test73() { testAsync("DELETE", 301, test8) }
+function test8() { testSync("POST", 307, test9) }
+function test9() { testSync("GET", 307, test10) }
+function test10() { testSync("POST", 303, test11) }
+function test11() { testSync("GET", 303, test12) }
+function test12() { testSync("POST", 302, test13) }
+function test13() { testSync("GET", 302, test14) }
+function test14() { testSync("DELETE", 307, test15) }
+function test15() { testSync("POST", 301, test16) }
+function test16() { testSync("GET", 301, test17) }
+function test17() { testSync("DELETE", 301, done) }
+
+function done()
+{
+    resetTripmine();
+    log("DONE");
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+test1();
+</script>

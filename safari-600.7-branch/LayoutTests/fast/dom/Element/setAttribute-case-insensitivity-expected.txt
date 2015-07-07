@@ -1,0 +1,3 @@
+Text for bug 10147: REGRESSION: custom attribute values set via javascript are not persistent.
+
+SUCCESS

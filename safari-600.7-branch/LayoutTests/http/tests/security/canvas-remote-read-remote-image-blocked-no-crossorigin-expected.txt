@@ -1,0 +1,19 @@
+CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+CONSOLE MESSAGE: Unable to get image data from canvas because the canvas has been tainted by cross-origin data.
+Untainted canvas:
+PASS: Calling getImageData() from an untainted canvas was allowed.
+PASS: Calling toDataURL() on an untainted canvas was allowed.
+
+
+Tainted canvas:
+PASS: Calling getImageData() from a canvas tainted by a remote image was not allowed - Threw error: Error: SecurityError: DOM Exception 18.
+PASS: Calling toDataURL() on a canvas tainted by a remote image was not allowed - Threw error: Error: SecurityError: DOM Exception 18.
+PASS: Calling getImageData() from a canvas tainted by a tained canvas was not allowed - Threw error: Error: SecurityError: DOM Exception 18.
+PASS: Calling toDataURL() on a canvas tainted by a tained canvas was not allowed - Threw error: Error: SecurityError: DOM Exception 18.
+PASS: Calling getImageData() from a canvas tainted by a remote image tainted pattern was not allowed - Threw error: Error: SecurityError: DOM Exception 18.
+PASS: Calling toDataURL() on a canvas tainted by a remote image tainted pattern was not allowed - Threw error: Error: SecurityError: DOM Exception 18.
+PASS: Calling getImageData() from a canvas tainted by a tainted canvas pattern was not allowed - Threw error: Error: SecurityError: DOM Exception 18.
+PASS: Calling toDataURL() on a canvas tainted by a tainted canvas pattern was not allowed - Threw error: Error: SecurityError: DOM Exception 18.
+

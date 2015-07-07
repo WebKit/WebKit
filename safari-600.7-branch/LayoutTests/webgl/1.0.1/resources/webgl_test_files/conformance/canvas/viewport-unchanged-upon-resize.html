@@ -1,0 +1,112 @@
+<!--
+Copyright (c) 2011 The Chromium Authors. All rights reserved.
+Use of this source code is governed by a BSD-style license that can be
+found in the LICENSE file.
+ -->
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../resources/js-test-style.css"/>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/webgl-test.js"></script>
+<script id="vshader" type="x-shader/x-vertex">
+attribute vec3 g_Position;
+
+void main()
+{
+    gl_Position = vec4(g_Position.x, g_Position.y, g_Position.z, 1.0);
+}
+</script>
+
+<script id="fshader" type="x-shader/x-fragment">
+void main()
+{
+    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+}
+</script>
+
+</head>
+<body>
+<canvas id="example" width="4px" height="4px"></canvas>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description('Verifies that GL viewport does not change when canvas is resized');
+
+var err;
+var gl = initWebGL("example", "vshader", "fshader", [ "g_Position" ], [ 0, 0, 1, 1 ], 1);
+
+var vertices = new Float32Array([
+     1.0,  1.0, 0.0,
+    -1.0,  1.0, 0.0,
+    -1.0, -1.0, 0.0,
+     1.0,  1.0, 0.0,
+    -1.0, -1.0, 0.0,
+     1.0, -1.0, 0.0]);
+var vbo = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+gl.enableVertexAttribArray(0);
+gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+
+// Clear and set up
+gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+gl.useProgram(gl.program);
+// Draw the triangle pair to the frame buffer
+gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+// Ensure that the frame buffer is red at the sampled pixel
+var buf = new Uint8Array(1 * 1 * 4);
+gl.readPixels(2, 2, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+var passed = true;
+if (buf[0] != 255 ||
+    buf[1] != 0 ||
+    buf[2] != 0 ||
+    buf[3] != 255) {
+  testFailed("Pixel at (2, 2) should have been (255, 0, 0, 255), " +
+             "was (" + buf[0] + ", " + buf[1] + ", " + buf[2] + ", " + buf[3] + ")");
+  passed = false;
+}
+
+if (passed) {
+  // Now resize the canvas
+  glErrorShouldBe(gl, gl.NO_ERROR, "No GL errors before resizing the canvas");
+  var canvas = document.getElementById("example");
+  canvas.width = 8;
+  canvas.height = 8;
+  err = gl.getError();
+  // Some implementations might lost the context when resizing
+  if (err == gl.CONTEXT_LOST_WEBGL) {
+    testPassed("canvas lost context on resize");
+  } else {
+	shouldBe("err", "gl.NO_ERROR");
+    // Do another render
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+    // This time, because we did not change the viewport, it should
+    // still be (0, 0, 4, 4), so only the lower-left quadrant should
+    // have been filled.
+    var buf = new Uint8Array(1 * 1 * 4);
+    gl.readPixels(6, 6, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+    var passed = true;
+    if (buf[0] != 0 ||
+        buf[1] != 0 ||
+        buf[2] != 255 ||
+        buf[3] != 255) {
+      testFailed("Pixel at (6, 6) should have been (0, 0, 255, 255), " +
+                 "was (" + buf[0] + ", " + buf[1] + ", " + buf[2] + ", " + buf[3] + ")");
+      passed = false;
+    }
+    if (passed) {
+      testPassed("Viewport correctly did not change size during canvas resize");
+    }
+  }
+}
+
+successfullyParsed = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

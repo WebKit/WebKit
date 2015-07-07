@@ -1,0 +1,27 @@
+This tests the HTMLImageElement border property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS imageBorderWidth() is 0
+PASS imageBorderWidth(null) is 0
+PASS imageBorderWidth('') is 0
+PASS imageBorderWidth(0) is 0
+PASS imageBorderWidth('x') is 0
+PASS imageBorderWidth(undefined, 'border-width: 20px') is 0
+PASS imageBorderWidth(null, 'border-width: 20px') is 20
+PASS imageBorderWidth('', 'border-width: 20px') is 20
+PASS imageBorderWidth('x', 'border-width: 20px') is 20
+PASS imageBorderWidth(0, 'border-width: 20px') is 20
+PASS imageBorderWidth(10) is 10
+PASS imageBorderWidth(' 10') is 10
+PASS imageBorderWidth('10 ') is 10
+PASS imageBorderWidth(' 10 ') is 10
+PASS imageBorderWidth('10q') is 10
+PASS imageBorderWidth(' 10q') is 10
+PASS imageBorderWidth('10q ') is 10
+PASS imageBorderWidth(' 10q ') is 10
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

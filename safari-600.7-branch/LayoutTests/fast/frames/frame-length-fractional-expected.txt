@@ -1,0 +1,57 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderFrameSet {FRAMESET} at (0,0) size 800x600
+      RenderFrameSet {FRAMESET} at (0,0) size 195x600
+        RenderFrame {FRAME} at (0,0) size 195x297
+          layer at (0,0) size 195x297
+            RenderView at (0,0) size 195x297
+          layer at (0,0) size 195x297
+            RenderBlock {HTML} at (0,0) size 195x297
+              RenderBody {BODY} at (8,8) size 179x281
+        RenderFrame {FRAME} at (0,303) size 195x297
+          layer at (0,0) size 195x297
+            RenderView at (0,0) size 195x297
+          layer at (0,0) size 195x297
+            RenderBlock {HTML} at (0,0) size 195x297
+              RenderBody {BODY} at (8,8) size 179x281
+      RenderFrameSet {FRAMESET} at (201,0) size 195x600
+        RenderFrame {FRAME} at (0,0) size 195x301
+          layer at (0,0) size 195x301
+            RenderView at (0,0) size 195x301
+          layer at (0,0) size 195x301
+            RenderBlock {HTML} at (0,0) size 195x301
+              RenderBody {BODY} at (8,8) size 179x285
+        RenderFrame {FRAME} at (0,307) size 195x293
+          layer at (0,0) size 195x293
+            RenderView at (0,0) size 195x293
+          layer at (0,0) size 195x293
+            RenderBlock {HTML} at (0,0) size 195x293
+              RenderBody {BODY} at (8,8) size 179x277
+      RenderFrameSet {FRAMESET} at (402,0) size 195x600
+        RenderFrame {FRAME} at (0,0) size 195x298
+          layer at (0,0) size 195x298
+            RenderView at (0,0) size 195x298
+          layer at (0,0) size 195x298
+            RenderBlock {HTML} at (0,0) size 195x298
+              RenderBody {BODY} at (8,8) size 179x282
+        RenderFrame {FRAME} at (0,304) size 195x296
+          layer at (0,0) size 195x296
+            RenderView at (0,0) size 195x296
+          layer at (0,0) size 195x296
+            RenderBlock {HTML} at (0,0) size 195x296
+              RenderBody {BODY} at (8,8) size 179x280
+      RenderFrameSet {FRAMESET} at (603,0) size 197x600
+        RenderFrame {FRAME} at (0,0) size 197x302
+          layer at (0,0) size 197x302
+            RenderView at (0,0) size 197x302
+          layer at (0,0) size 197x302
+            RenderBlock {HTML} at (0,0) size 197x302
+              RenderBody {BODY} at (8,8) size 181x286
+        RenderFrame {FRAME} at (0,308) size 197x292
+          layer at (0,0) size 197x292
+            RenderView at (0,0) size 197x292
+          layer at (0,0) size 197x292
+            RenderBlock {HTML} at (0,0) size 197x292
+              RenderBody {BODY} at (8,8) size 181x276

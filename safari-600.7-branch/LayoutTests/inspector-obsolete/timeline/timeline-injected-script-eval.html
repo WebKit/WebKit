@@ -1,0 +1,25 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/timeline-test.js"></script>
+<script>
+
+function performActions()
+{
+}
+
+function test()
+{
+    InspectorTest.performActionsAndPrint("performActions()", "FunctionCall");
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests the Timeline API function call record for InjectedScript.eval call feature.
+</p>
+
+</body>
+</html>

@@ -1,0 +1,22 @@
+This tests that pages with plugins behave properly with the page cache. This includes:
+-The plugin being destroyed upon navigation away from the page.
+-The plugin being recreated upon restoring the page from the page cache.
+-Plugin script objects accessed the first time the plugin was created are appropriately invalidated after the page has been restored from the page cache.
+
+Unfortunately there is no reliable way to get affirmative confirmation that the plugin was destroyed upon navigation away from the page. For now we'll assume recreation means it had successfully been destroyed.
+
+Initial load: Page loaded
+Initial load: Page shown
+Initial load: Plugin created
+Initial load: Accessing testObject.property
+Initial load: Accessed testObject.property without exception
+Initial load: Assigning to testObject.property
+Initial load: Assigned to testObject.property without exception
+Initial load: Page hidden
+Restored from page cache: Page shown
+Restored from page cache: Plugin created
+Restored from page cache: Accessing testObject.property
+Restored from page cache: While accessing testObject.property: ReferenceError: Trying to access object from destroyed plug-in.
+Restored from page cache: Assigning to testObject.property
+Restored from page cache: While assigning to testObject.property: ReferenceError: Trying to access object from destroyed plug-in.
+

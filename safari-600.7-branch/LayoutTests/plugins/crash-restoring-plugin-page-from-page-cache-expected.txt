@@ -1,0 +1,11 @@
+ALERT: Made it back!
+This test - assuming it will pass - does the following:
+1 - Has nested plugin elements
+2 - Leaves the page, and the page enters the page cache
+3 - Returns, pulling the page from the page cache
+4 - Doesn't crash
+
+If you're not running under DRT, you'll need to leave the page then return to it yourself. 
+Some fallback text to force a renderer. 
+
+(Yes, the extreme number of object elements are necessary to more reliably reproduce the crash. Leave them.)

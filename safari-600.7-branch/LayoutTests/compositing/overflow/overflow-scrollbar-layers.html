@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<style>
+.container {
+width: 100px;
+height:100px;
+position:absolute;
+-webkit-transform:translateZ(0);
+overflow:auto;
+}
+
+.content {
+-webkit-transform: translateZ(0);
+position:absolute;
+width:10px;
+height:10px;
+}
+
+.tall {
+height:200px;
+}
+
+.wide {
+width:200px;
+}
+
+.resizeWidget {
+resize: both;
+}
+
+</style>
+<pre id="layerTree"></pre>
+<div class="container">
+  <div class="content tall"></div>
+</div>
+<div class="container">
+  <div class="content wide"></div>
+</div>
+<div class="container">
+  <div class="content wide tall"></div>
+</div>
+<div class="container resizeWidget">
+  <div class="content"></div>
+</div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.display(); // Ensure compositor tree is up to date.
+    document.getElementById("layerTree").innerText = window.internals.layerTreeAsText(document);
+}
+</script>

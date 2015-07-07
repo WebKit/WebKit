@@ -1,0 +1,62 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function CallCommand(cmd)
+        {
+            try {
+                var req = new XMLHttpRequest;
+                req.open("GET", "http://127.0.0.1:8000/resources/network-simulator.php?command=" + cmd, false);
+                req.send(null);
+                return req.responseText;
+            } catch (ex) {
+                return "";
+            }
+        }
+
+        function endTest()
+        {
+            getResourceLog();
+            CallCommand("clear-resource-request-log");
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        function getResourceLog()
+        {
+            var log = CallCommand("get-resource-request-log");
+            var logLines = log.split('\n');
+            document.getElementById('result').innerText = logLines.join('\n');
+        }
+
+        CallCommand("start-resource-request-log");
+        window.addEventListener('load', endTest, false);
+    </script>
+  
+    <style>
+        div {
+            background-image: url('http://127.0.0.1:8000/resources/network-simulator.php?command=log-resource-request&path=bg_pattern.jpg#div');
+        }
+        p {
+            background-image: url('http://127.0.0.1:8000/resources/network-simulator.php?command=log-resource-request&path=bg_pattern.jpg#p');
+        }
+    </style>
+
+</head>
+<body>
+    <div style="width: 100px; height: 100px;"></div>
+    <img src="http://127.0.0.1:8000/resources/network-simulator.php?command=log-resource-request&path=bg_pattern.jpg#img1">
+    <img src="http://127.0.0.1:8000/resources/network-simulator.php?command=log-resource-request&path=bg_pattern.jpg#img2">
+    
+  Test that resources with fragment identifiers are loaded only once.
+
+  <h2>Resource requests:</h2>
+  <pre id="result">Request log goes here in DRT</pre>
+</body>
+</html>

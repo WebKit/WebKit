@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<div style="display:none">
+<div>
+  <ul>
+    <li>
+      <div>
+        <ul>
+          <li>
+            <div>
+              <div>
+                <ul>
+                  <li>
+                    <p id="target"><span>Target.</span></p>
+                  </li>
+                </ul>
+              </div>
+            <div>
+          </li>
+        </ul>
+      </div>
+    </li>
+  </ul>
+</div>
+</div>
+</body>
+<script>
+description('Test backtracking with multiple chains of child relations.');
+
+shouldBe('document.querySelectorAll("div>ul>li>div ul>li ul>li p").length', '1');
+shouldBeEqualToString('document.querySelectorAll("div>ul>li>div ul>li ul>li p")[0].id', 'target');
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</html>

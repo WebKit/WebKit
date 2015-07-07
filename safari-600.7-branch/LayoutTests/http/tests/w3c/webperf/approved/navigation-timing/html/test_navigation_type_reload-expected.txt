@@ -1,0 +1,35 @@
+Description
+
+This test validates the value of window.performance.navigation.type and the values of window.performance.timing.* with a reloaded navigation.
+
+This page should be loaded with a green background frame below. The frame will be automatically reloaded and then verified that
+
+The window.performance.navigation.type = TYPE_RELOAD
+All of the widow.performance.timing.* values after reload are > all of the window.performance.timing.* values prior to reload.
+
+
+
+PASS window.performance is defined 
+PASS window.performance.navigation is defined 
+PASS window.performance.navigation.type == TYPE_RELOAD,{help:"http://www.w3.org/TR/navigation-timing/#sec-navigation-info-interface"} 
+PASS Reload connectEnd > Original connectEnd 
+PASS Reload connectStart > Original connectStart 
+PASS Reload domComplete > Original domComplete 
+PASS Reload domContentLoadedEventEnd > Original domContentLoadedEventEnd 
+PASS Reload domContentLoadedEventStart > Original domContentLoadedEventStart 
+PASS Reload domInteractive > Original domInteractive 
+PASS Reload domLoading > Original domLoading 
+PASS Reload domainLookupEnd > Original domainLookupEnd 
+PASS Reload domainLookupStart > Original domainLookupStart 
+PASS Reload fetchStart > Original fetchStart 
+PASS Reload loadEventEnd > Original loadEventEnd 
+PASS Reload loadEventStart > Original loadEventStart 
+PASS Reload navigationStart > Original navigationStart 
+PASS Reload redirectEnd == Original redirectEnd 
+PASS Reload redirectStart == Original redirectStart 
+PASS Reload requestStart > Original requestStart 
+PASS Reload responseEnd > Original responseEnd 
+PASS Reload responseStart > Original responseStart 
+PASS Reload unloadEventEnd > Original unloadEventEnd 
+PASS Reload unloadEventStart > Original unloadEventStart 
+

@@ -1,0 +1,46 @@
+<html>
+<body>
+Test pageshow/pagehide event behavior when navigating away from a page with frames, putting the page in the page cache, then back to it.
+<pre id="log"></pre>
+<iframe src="resources/pageshow-pagehide-subframe-cachable.html"></iframe>
+</body>
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+}
+
+function log(message)
+{
+    // Logging to the console instead of the "log" DIV in the DOM because
+    // otherwise we trigger the assert mentioned at http://webkit.org/b/43152
+    // (since we log during pagehide)
+    console.log(message);
+}
+
+log("***Top level frame being parsed for the initial page load***");
+
+window.onload = function(evt) {
+    log("Main frame window.onload");
+}
+
+window.onpageshow = function(evt) {
+    log("Main frame window.onpageshow" + ", target = " + evt.target + ", persisted = " + evt.persisted);
+    if (evt.persisted) {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    } else {
+        log("***Navigating top-level frame to a page that will immediately navigate back to this one***");
+        // Location changes need to happen outside the onload handler to generate history entries.
+        setTimeout(function() {window.location.href = "data:text/html,<script>history.back();</scr" + "ipt>";}, 0);
+    }
+}
+
+window.onpagehide = function(evt) {
+    log("Main frame window.onpagehide" + ", target = " + evt.target + ", persisted = " + evt.persisted);
+}
+
+</script>
+</html>

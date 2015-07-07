@@ -1,0 +1,48 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script>
+function loadIFrameWithDownload()
+{
+    var iframe = document.createElement("iframe");
+    iframe.setAttribute("src", "http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny.cgi");
+    document.body.appendChild(iframe);
+}
+
+function test()
+{
+    InspectorTest.addSniffer(WebInspector.NetworkDispatcher.prototype, "responseReceived", responseReceived);
+    InspectorTest.addSniffer(WebInspector.NetworkDispatcher.prototype, "loadingFailed", loadingFailed);
+    InspectorTest.addSniffer(WebInspector.NetworkDispatcher.prototype, "loadingFinished", loadingFinished);
+    InspectorTest.evaluateInPage("loadIFrameWithDownload()");
+
+    function responseReceived(requestId, time, resourceType, response)
+    {
+        var request = WebInspector.networkLog.requestForId(requestId);
+        if (/x-frame-options-deny\.cgi/.exec(request.url)) {
+            InspectorTest.addResult("Received response for x-frame-options-deny.cgi");
+            InspectorTest.addResult("SUCCESS");
+            InspectorTest.completeTest();
+        }
+    }
+
+    function loadingFinished(requestId, finishTime)
+    {
+        var request = WebInspector.networkLog.requestForId(requestId);
+        if (/x-frame-options-deny\.cgi/.exec(request.url))
+            InspectorTest.completeTest();
+    }
+
+    function loadingFailed(requestId, time, localizedDescription, canceled)
+    {
+        var request = WebInspector.networkLog.requestForId(requestId);
+        if (/x-frame-options-deny\.cgi/.exec(request.url))
+            InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that responseReceived is called on NetworkDispatcher for resource requests denied due to X-Frame-Options header.</p>
+</body>
+</html>

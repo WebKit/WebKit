@@ -1,0 +1,26 @@
+layer at (0,0) size 800x638
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x638
+  RenderBlock {HTML} at (0,0) size 800x638
+    RenderBody {BODY} at (8,8) size 784x622 [bgcolor=#C0C0C0]
+      RenderTable {TABLE} at (0,0) size 139x150 [border: (20px outset #808080)]
+        RenderTableSection {TBODY} at (20,20) size 99x110
+          RenderTableRow {TR} at (0,10) size 99x90
+            RenderTableCell {TD} at (10,43) size 79x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 75x19
+                text run at (2,2) width 75: "cell content"
+      RenderBlock {P} at (0,166) size 784x20
+        RenderText {#text} at (0,0) size 623x19
+          text run at (0,0) width 623: "The following two tables demostrates the bug with TD and TABLE both having height specified."
+      RenderTable {TABLE} at (0,202) size 258x210 [border: (20px outset #808080)]
+        RenderTableSection {TBODY} at (20,20) size 218x170
+          RenderTableRow {TR} at (0,10) size 218x150
+            RenderTableCell {TD} at (10,73) size 198x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 194x19
+                text run at (2,2) width 194: "height=210 (150+2*10+2*20)"
+      RenderTable {TABLE} at (0,412) size 275x210 [border: (20px outset #808080)]
+        RenderTableSection {TBODY} at (20,20) size 235x170
+          RenderTableRow {TR} at (0,10) size 235x150
+            RenderTableCell {TD} at (10,73) size 215x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 211x19
+                text run at (2,2) width 211: "height=211 (150+2*10+2*20+1)"

@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 15: Error: Problem parsing d="M147.231,26.23c70.188,0,127.086,57.77,127.086,129.032c0"
+PASS, if it doesn't crash.

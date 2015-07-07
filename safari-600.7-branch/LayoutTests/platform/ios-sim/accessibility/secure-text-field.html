@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+</script>
+</head>
+<body>
+
+<input type="password" id="pass" size="10">
+<input type="text" id="text" size="11">
+
+
+<script>
+
+    //description("This test makes sure that a password field and a text field do not have the same traits (because password field has secure text field traits)");
+
+    if (window.accessibilityController) {
+
+        var passfield = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0);
+        var textfield = accessibilityController.rootElement.childAtIndex(0).childAtIndex(1);
+        var succeeded = passfield.iphoneTraits != textfield.iphoneTraits;
+
+        //  shouldBe("succeeded", "true");
+        var failed = false;
+        if (!succeeded) {
+            failed = true;
+        }
+
+        if (failed)
+            alert("Tests failed");
+        else
+           alert("Tests passed");
+
+    }
+
+    successfullyParsed = true;
+</script>
+
+
+</body>
+</html>
+

@@ -1,0 +1,63 @@
+<html>
+<head>
+  <title>Test controls with zooming</title>
+  <style type="text/css" media="screen">
+    video {
+      margin: 50px;
+    }
+  </style>
+  <script src=media-file.js></script>
+  <script src=media-controls.js></script>
+  <script type="text/javascript" charset="utf-8">
+    function runTest()
+    {
+      window.setTimeout(function() {
+        document.documentElement.style.zoom = '150%';
+        video.addEventListener("playing", function() {
+            testExpected("video.paused", false);
+            endTest();
+        });
+
+        if (window.eventSender)
+        {
+            // Find the play button and click the middle of its bounding box.
+            var playCoords;
+            try {
+                playCoords = mediaControlsButtonCoordinates(video, "play-button");
+            } catch (exception) {
+                failTest(exception.description);
+                return;
+            }
+            var clickX = playCoords[0];
+            var clickY = playCoords[1];
+
+            // Apply the page zoom value to the coordinates because
+            // getBoundingClientRect() used in
+            // mediaControlsButtonCoordinates() doesn't do it.
+            clickX = clickX * 1.5;
+            clickY = clickY * 1.5;
+
+            eventSender.mouseMoveTo(clickX, clickY);
+            eventSender.mouseDown();
+            eventSender.mouseUp();
+        }
+      }, 50);
+    }
+  </script>
+</head>
+<body>
+    <video controls></video>
+    <p>Test controls on zoomed video.</p>
+    <p>This test only runs in DRT!</p>
+    <script src=video-test.js></script>
+    <script>
+        testExpected("video.controls", null, '!=');
+        waitForEvent('canplaythrough', function() {
+            runTest();
+        } );
+        video.src = findMediaFile("video", "content/test");
+    </script>
+</body>
+</html>
+
+

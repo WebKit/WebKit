@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style type="text/css" media="screen">
+    iframe {
+        border: 10px solid black;
+        padding: 5px;
+        margin: 20px;
+        height: 150px;
+        width: 300px;
+        -webkit-box-shadow: 0 0 20px black;
+    }
+    
+    .overlay {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      top: 5px;
+      left: 5px;
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+    
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function doTest()
+    {
+        // For some reason this delay is required for AppKit to not short-circuit the display.
+        window.setTimeout(function() {
+            var hadLayersBefore = false;
+            var hadLayersAfter = false;
+            if (window.testRunner) {
+                testRunner.display(); // Need to paint for overlap testing.
+                hadLayersBefore = window.internals.layerTreeAsText(document) != "";
+            }
+
+            document.getElementById('parent-iframe').src = "about:blank";
+            
+            window.setTimeout(function() {
+                if (window.testRunner) {
+                    hadLayersAfter = window.internals.layerTreeAsText(document) != "";
+
+                    var results = document.getElementById('results');
+                    if (hadLayersBefore && !hadLayersAfter)
+                        results.innerText = "PASS: layers disappeared when iframe source changed."
+                    else if (!hadLayersBefore)
+                        results.innerText = "FAIL: should have initially had layers, but did not."
+                    else if (hadLayersAfter)
+                        results.innerText = "FAIL: layers did not disappear when iframe source changed."
+
+                    testRunner.notifyDone();
+                }
+            }, 0);
+        }, 0);
+    }
+    
+    window.addEventListener('load', doTest, false);
+  </script>
+</head>
+<body>
+
+    <iframe id="parent-iframe" src="resources/composited-subframe.html"></iframe>
+    
+    <div class="overlay">
+    </div>
+
+    <p>The iframe content was removed. There should be no layers here.</p>
+    <p id="results">This test needs to be run in DRT.</p>
+</body>
+</html>

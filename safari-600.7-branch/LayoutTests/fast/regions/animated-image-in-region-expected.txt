@@ -1,0 +1,7 @@
+Test that an animated image displayed in a region is correctly animated.
+
+On success, you should see an image of an iPad displayed inside a black border box and no crash.
+
+PASS
+
+

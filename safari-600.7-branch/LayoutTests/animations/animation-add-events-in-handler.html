@@ -1,0 +1,58 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function touchElement(evt) {
+    getComputedStyle(evt.srcElement.firstElementChild)['-webkit-animation-duration'];
+    evt.srcElement.firstElementChild.style.display = 'block';
+    total++;
+    if (total == 500) {
+        document.getElementById("results").innerHTML = "PASS: Adding animation events in the handler did not crash.";
+        if (window.testRunner)
+          testRunner.notifyDone();
+    }
+}
+
+window.onload = function() {
+    total = 0;
+    var padding = document.getElementsByClassName("padding");
+    for (var i = 0; i < padding.length; i++)
+        padding[i].addEventListener('webkitAnimationIteration', touchElement, false, false);
+};
+</script>
+<style>
+@-webkit-keyframes keyframes {
+    from { }
+}
+
+.crash {
+    -webkit-animation-name: keyframes;
+}
+
+.padding {
+    -webkit-animation-name: keyframes;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-duration: 0.001;
+}
+</style>
+<div id="results">
+<div class="padding">
+<div class="padding">
+<div class="padding">
+<div class="padding">
+<div class="padding">
+<div class="padding">
+<div class="padding">
+<div class="padding">
+<div class="padding">
+<div class="padding">
+<div class="padding">
+<div class="padding">
+<div class="padding">
+<div class="padding">
+<div class="padding">
+<div class="padding">
+<div class="padding">
+<img class="crash">

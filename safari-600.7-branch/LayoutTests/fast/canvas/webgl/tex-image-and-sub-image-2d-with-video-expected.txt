@@ -1,0 +1,29 @@
+Verify texImage2D and texSubImage2D code paths taking video elements (RGBA/UNSIGNED_BYTE)
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Testing texImage2D with flipY=true
+Checking lower left corner
+PASS shouldBe 0,255,0
+Checking upper left corner
+PASS shouldBe 255,0,0
+Testing texImage2D with flipY=false
+Checking lower left corner
+PASS shouldBe 255,0,0
+Checking upper left corner
+PASS shouldBe 0,255,0
+Testing texSubImage2D with flipY=true
+Checking lower left corner
+PASS shouldBe 0,255,0
+Checking upper left corner
+PASS shouldBe 255,0,0
+Testing texSubImage2D with flipY=false
+Checking lower left corner
+PASS shouldBe 255,0,0
+Checking upper left corner
+PASS shouldBe 0,255,0
+PASS getError was expected value: NO_ERROR : should be no errors
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

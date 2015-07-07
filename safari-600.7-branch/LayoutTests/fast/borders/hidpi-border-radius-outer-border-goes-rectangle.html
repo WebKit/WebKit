@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  .radius {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    border: 1px solid red;
+    background: red;
+  }
+</style>
+</head>
+<body>
+<p id="container"></p>
+<script>
+  offset = 45;
+  radius = 20;
+  borderWidth = 0.6;
+  var container = document.getElementById("container");
+  for (i = 0; i < 10; ++i) {
+    borderWidth+=0.5;
+    for (j = 0; j < 10; ++j, radius+=0.1) {
+      var e = document.createElement("div");
+      e.style.top = i * offset + "px";
+      e.style.left = j * offset + "px";
+      e.style.borderRadius =  radius + "px";
+      e.style.borderWidth =  borderWidth + "px";
+      e.className = "radius";
+      container.appendChild(e);
+    }
+  }
+</script>
+</body>
+</html>

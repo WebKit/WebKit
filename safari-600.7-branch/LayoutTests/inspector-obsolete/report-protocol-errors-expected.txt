@@ -1,0 +1,170 @@
+Tests that InspectorBackendDispatcher is catching incorrect messages.
+
+{
+    error : {
+        code : -32700
+        message : "Message must be in JSON format"
+    }
+    id : null
+}
+-------------------------------------------------------
+{
+    error : {
+        code : -32600
+        message : "'id' property was not found"
+    }
+    id : null
+}
+-------------------------------------------------------
+{
+    error : {
+        code : -32600
+        message : "The type of 'id' property must be number"
+    }
+    id : null
+}
+-------------------------------------------------------
+{
+    error : {
+        code : -32600
+        message : "The type of 'method' property must be string"
+    }
+    id : 1
+}
+-------------------------------------------------------
+{
+    error : {
+        code : -32601
+        message : "'resourceContent' wasn't found"
+    }
+    id : 2
+}
+-------------------------------------------------------
+{
+    error : {
+        code : -32601
+        message : "'DOM.test' wasn't found"
+    }
+    id : 3
+}
+-------------------------------------------------------
+{
+    error : {
+        code : -32602
+        data : [
+            "'params' object must contain required parameter 'frameId' with type 'String'."
+            "'params' object must contain required parameter 'url' with type 'String'."
+        ]
+        message : "Some arguments of method 'Page.getResourceContent' can't be processed"
+    }
+    id : 4
+}
+-------------------------------------------------------
+{
+    error : {
+        code : -32602
+        data : [
+            "'params' object must contain required parameter 'frameId' with type 'String'."
+            "'params' object must contain required parameter 'url' with type 'String'."
+        ]
+        message : "Some arguments of method 'Page.getResourceContent' can't be processed"
+    }
+    id : 5
+}
+-------------------------------------------------------
+{
+    error : {
+        code : -32602
+        data : [
+            "Parameter 'frameId' with type 'String' was not found."
+            "Parameter 'url' with type 'String' was not found."
+        ]
+        message : "Some arguments of method 'Page.getResourceContent' can't be processed"
+    }
+    id : 6
+}
+-------------------------------------------------------
+{
+    error : {
+        code : -32602
+        data : [
+            "Parameter 'url' with type 'String' was not found."
+        ]
+        message : "Some arguments of method 'Page.getResourceContent' can't be processed"
+    }
+    id : 7
+}
+-------------------------------------------------------
+{
+    error : {
+        code : -32601
+        message : "'Page.test' wasn't found"
+    }
+    id : 8
+}
+-------------------------------------------------------
+{
+    error : {
+        code : -32601
+        message : "'Page.test' wasn't found"
+    }
+    id : 9
+}
+-------------------------------------------------------
+{
+    error : {
+        code : -32601
+        message : "'Page.test' wasn't found"
+    }
+    id : 10
+}
+-------------------------------------------------------
+{
+    error : {
+        code : -32601
+        message : "'Page.test' wasn't found"
+    }
+    id : 11
+}
+-------------------------------------------------------
+{
+    error : {
+        code : -32601
+        message : "'Page.test' wasn't found"
+    }
+    id : 12
+}
+-------------------------------------------------------
+{
+    error : {
+        code : -32601
+        message : "'Page.test' wasn't found"
+    }
+    id : 13
+}
+-------------------------------------------------------
+{
+    error : {
+        code : -32601
+        message : "'Page.test' wasn't found"
+    }
+    id : 14
+}
+-------------------------------------------------------
+{
+    error : {
+        code : -32601
+        message : "'Page.test' wasn't found"
+    }
+    id : 15
+}
+-------------------------------------------------------
+{
+    error : {
+        code : -32601
+        message : "'Page.test' wasn't found"
+    }
+    id : 16
+}
+-------------------------------------------------------
+

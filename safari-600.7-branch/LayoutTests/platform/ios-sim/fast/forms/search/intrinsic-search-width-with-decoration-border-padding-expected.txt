@@ -1,0 +1,5 @@
+FAIL document.getElementById("search1").offsetWidth should be 136. Was 135.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

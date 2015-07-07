@@ -1,0 +1,3 @@
+Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/textreplacewholetext08
+Status	failure
+Message	throw_NO_MODIFICATION_ALLOWED_ERR: assertTrue failed

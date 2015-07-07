@@ -1,0 +1,83 @@
+<script>
+  function noop(x) {
+  }
+
+  function doGC() {
+    if (window.GCController) {
+      // GC twice to make sure everything is cleaned up.
+      for (var i = 0; i < 2; i++) {
+        window.GCController.collect();
+      }
+    }
+  }
+
+  function runtest() {
+    if (window.testRunner)
+      testRunner.dumpAsText();
+
+
+    var output = document.getElementById("output");
+    output.innerHTML = "";
+
+    // Test that objects are deleted after their JS references are released.
+    var countOrig = plug.testObjectCount;
+    o1 = plug.testCreateTestObject();
+    o2 = plug.testCreateTestObject();
+    o3 = plug.testCreateTestObject();
+    var countAfterCreate = plug.testObjectCount;
+    o1 = o2 = o3 = null;
+    doGC();
+    var countAfterGC = plug.testObjectCount;
+
+    output.innerHTML += "--- num test objects:<br>";
+    output.innerHTML += "countAfterCreate == countOrig + 3? "
+        + ((countAfterCreate == countOrig + 3) ? "PASS" : "FAIL")
+        + "<br>";
+    output.innerHTML += "countOrig == countAfterGC? "
+        + ((countOrig == countAfterGC) ? "PASS" : "FAIL")
+        + "<br>";
+    output.innerHTML += "<br>";
+
+    // Test that the object refcount returns to normal after JS references
+    // are released.
+    var testObj = plug.testObject;
+    var refOrig = testObj.refCount;
+    var o1 = plug.testObject;
+    var o2 = plug.testObject;
+    var o3 = plug.testObject;
+    var refAfterGet = testObj.refCount;
+    o1 = o2 = o3 = null;
+    doGC();
+    var refAfterGetGC = testObj.refCount;
+
+    // Test that calling NPN_Invoke with our object as a parameter returns
+    // our refcount to normal (may require a GC).
+    plug.testPassTestObject("noop", testObj);
+    plug.testPassTestObject("noop", testObj);
+    plug.testPassTestObject("noop", testObj);
+    doGC();
+    var refAfterPass = testObj.refCount;
+
+    output.innerHTML += "--- refcount on plug.testObject:<br>";
+    output.innerHTML += "originally: " + refOrig + "<br>";
+    output.innerHTML += "after GC: " + refAfterGetGC + "<br>";
+    output.innerHTML += "after passing: " + refAfterPass + "<br>";
+
+    var success = (countAfterGC == countOrig) && (refAfterPass == refOrig);
+    output.innerHTML += (success ? "SUCCESS" : "FAILURE");
+  }
+</script>
+
+<body onload="runtest()">
+
+Test that we can get an NPObject returned through a method on
+an NPAPI Object.<P>
+
+Prints "SUCCESS" on success, "FAILURE" on failure.
+
+<embed name="plug" type="application/x-webkit-test-netscape">
+
+<div id=output>FAILURE</div>
+
+</body>
+

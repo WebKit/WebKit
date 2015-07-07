@@ -1,0 +1,304 @@
+#!/usr/bin/perl -w
+
+# Copyright (C) 2005, 2008, 2010, 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+use strict;
+use File::Spec;
+use FindBin;
+use Getopt::Long qw(:config pass_through);
+use lib $FindBin::Bin;
+use webkitdirs;
+
+my $showHelp = 0;
+my $llvm = 0;
+my $wksi = 0;
+my $llvmIncludePackage = "";
+my $llvmLibraryPackage = "";
+my $useFullLibPaths = 0;
+my $preferSystemLLVMOverDrops = 0;
+my $llvmSubdirectoryName = "llvm";
+my $llvmPrefix = "/usr/local/LLVMForJavaScriptCore";
+my $sdkName = ""; # Ideally we only use this for build commands, rather than deciding policies about what needs to get copied or built and where it needs to be placed.
+my $osxVersion;
+my $force = 0;
+
+my $programName = basename($0);
+my $usage = <<EOF;
+Usage: $programName [options]
+  --help                        Show this help message
+  --[no-]llvm                   Toggle copying LLVM drops (default: $llvm)
+  --[no-]wksi                   Toggle copying WebKitSystemInterface drops (default: $wksi)
+  --use-llvm-includes=<path>    Get the LLVM inludes package from <path>
+  --use-llvm-libraries=<path>   Get the LLVM libraries package from <path>
+  --[no-]use-full-lib-paths     Toggle using full library paths
+  --[no-]prefer-system-llvm     Toggle preferring the system LLVM over the binary drops (default: $preferSystemLLVMOverDrops)
+  --llvm-subdirectory=<name>    Set the name of the LLVM subdirectory to search for (default: $llvmSubdirectoryName)
+  --llvm-prefix=<path>          Set the prefix into which LLVM is installed (default: $llvmPrefix)
+  --sdk-name=<name>             Set the name of the Xcode SDK to use.
+  --osx-version=<version>       Set the OS X version to use when deciding what to copy.
+  --[no-]force                  Toggle forcing the copy - i.e. ignoring timestamps (default: $force)
+EOF
+
+GetOptions(
+    'help' => \$showHelp,
+    'llvm!' => \$llvm,
+    'wksi!' => \$wksi,
+    'use-llvm-includes=s' => \$llvmIncludePackage,
+    'use-llvm-libraries=s' => \$llvmLibraryPackage,
+    'use-full-lib-paths!' => \$useFullLibPaths,
+    'prefer-system-llvm!' => \$preferSystemLLVMOverDrops,
+    'llvm-subdirectory=s' => \$llvmSubdirectoryName,
+    'llvm-prefix=s' => \$llvmPrefix,
+    'sdk-name=s' => \$sdkName,
+    'osx-version=s' => \$osxVersion,
+    'force!' => \$force
+);
+
+if ($showHelp) {
+   print STDERR $usage;
+   exit 1;
+}
+
+my $productDir = shift @ARGV;
+if ($productDir) {
+    $productDir = File::Spec->rel2abs($productDir);
+} else {
+    $productDir = $ENV{BUILT_PRODUCTS_DIR} || productDir();
+}
+
+if (!$osxVersion) {
+    $osxVersion = `sw_vers -productVersion | cut -d. -f-2`;
+    chomp($osxVersion);
+}
+
+chdirWebKit();
+
+my $xcrunOptions = "";
+if ($sdkName ne "") {
+    $xcrunOptions .= " -sdk $sdkName";
+}
+my $ranlib = `xcrun $xcrunOptions -find ranlib`;
+chomp $ranlib;
+
+sub unpackIfNecessary
+{
+    my ($targetDir, $sampleFile, $package, $hasLibraries) = @_;
+    if ($force || !-e $sampleFile || -M $sampleFile > -M $package) {
+        print "Unpacking $package into $targetDir\n";
+        (system("tar -C $targetDir -xmf $package") == 0) or die;
+        if ($hasLibraries) {
+            foreach my $library (`tar -tf $package`) {
+                chomp $library;
+                print "   Ranlib $library\n";
+                (system($ranlib, $targetDir . "/" . $library) == 0) or die;
+            }
+        }
+        return 1;
+    }
+    return 0;
+}
+
+sub dittoHeaders
+{
+    my ($srcHeader, $header) = @_;
+    if ($force || !-e $header || -M $header > -M $srcHeader) {
+        print "Updating $header\n";
+        (system("ditto", $srcHeader, $header) == 0) or die;
+    }
+}
+
+if ($wksi) {
+    (system("mkdir", "-p", "$productDir/usr/local/include") == 0) or die;
+    
+    my $libraryDir = $useFullLibPaths ? "$productDir/usr/local/lib" : $productDir;
+    (system("mkdir", "-p", $libraryDir) == 0) or die;
+
+    my @librariesToCopy = (
+        "libWebKitSystemInterfaceMountainLion.a",
+        "libWebKitSystemInterfaceMavericks.a",
+    );
+    
+    foreach my $libName (@librariesToCopy) {
+        my $srcLib = "WebKitLibraries/" . $libName;
+        my $lib = "$libraryDir/" . $libName;
+        if ($force || !-e $lib || -M $lib > -M $srcLib) {
+            print "Updating $lib\n";
+            (system("ditto", $srcLib, $lib) == 0) or die;
+            (system($ranlib, $lib) == 0) or die;
+        }
+    }
+    
+    dittoHeaders("WebKitLibraries/WebKitSystemInterface.h", "$productDir/usr/local/include/WebKitSystemInterface.h");
+}
+
+if ($llvm) {
+    (system("mkdir", "-p", "$productDir$llvmPrefix/include") == 0) or die;
+
+    my $libraryDir = $useFullLibPaths ? "$productDir$llvmPrefix/lib" : $productDir;
+    (system("mkdir", "-p", $libraryDir) == 0) or die;
+
+    # Determine where to get LLVM binaries and headers.
+    my $useOwnLLVM = 0;
+    my $ownLLVMDirectory;
+    if (defined($ENV{LLVM_SOURCE_PATH})) {
+        print "Using LLVM from \$LLVM_SOURCE_PATH: " . $ENV{LLVM_SOURCE_PATH} . "\n";
+        $useOwnLLVM = 1;
+        $ownLLVMDirectory = $ENV{LLVM_SOURCE_PATH};
+    } elsif (-d $llvmSubdirectoryName && -e "$llvmSubdirectoryName/LLVMBuild.txt") {
+        print "Using LLVM from $llvmSubdirectoryName subdirectory.\n";
+        $useOwnLLVM = 1;
+        $ownLLVMDirectory = sourceDir() . "/$llvmSubdirectoryName";
+    } elsif ($llvmLibraryPackage ne "" && $llvmIncludePackage ne "") {
+        # Command-line arguments override our other ways of finding the packages.
+        print "Using LLVM binary drops specified on command-line: $llvmLibraryPackage and $llvmIncludePackage.\n";
+    } elsif (defined($ENV{LLVM_LIBRARY_PACKAGE}) && defined($ENV{LLVM_INCLUDE_PACKAGE})) {
+        $llvmLibraryPackage = $ENV{LLVM_LIBRARY_PACKAGE};
+        $llvmIncludePackage = $ENV{LLVM_INCLUDE_PACKAGE};
+        print "Using LLVM binary drops specified by \$LLVM_LIBRARY_PACKAGE and \$LLVM_INCLUDE_PACKAGE: $llvmLibraryPackage and $llvmIncludePackage.\n";
+    } elsif ($preferSystemLLVMOverDrops) {
+        # Don't fall through to drop detection.
+        print "Using system LLVM.\n";
+    } elsif ($osxVersion eq "10.8") {
+        $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesMountainLion.tar.bz2";
+        $llvmIncludePackage = "WebKitLibraries/LLVMIncludesMountainLion.tar.bz2";
+    } elsif ($osxVersion eq "10.9") {
+        $llvmLibraryPackage = "WebKitLibraries/LLVMLibrariesMavericks.tar.bz2";
+        $llvmIncludePackage = "WebKitLibraries/LLVMIncludesMavericks.tar.bz2";
+    } else {
+        print "Don't know where to find LLVM!\n";
+        print "\n";
+        print "Try defining LLVM_LIBRARY_PACKAGE and LLVM_INCLUDE_PACKAGE or setting the\n";
+        print "--use-llvm-includes and --use-llvm-libraries options.\n";
+        print "\n";
+        print "Alternatively, you can check out llvm trunk into the WebKit directory:\n";
+        print "svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm\n";
+        exit 1;
+    }
+
+    sub fileContains
+    {
+        my ($filename, $string) = @_;
+        open my $fileHandle, '<', $filename or die;
+        while (<$fileHandle>) {
+            return 1 if /^$string$/;
+        }
+        return 0;
+    }
+
+    sub fileContentsEquals
+    {
+        my ($filename, $string) = @_;
+        open my $fileHandle, '<', $filename or die;
+        binmode $fileHandle;
+        my $contents = <$fileHandle>;
+        return $contents eq $string;
+    }
+
+    my $shouldUpdateLLVMLibraryToken = 0;
+
+    if ($useOwnLLVM) {
+        if (!-e "$ownLLVMDirectory/wkLLVMBuild/Makefile.config") {
+            print("Configuring LLVM.\n");
+            (system("mkdir -p $ownLLVMDirectory/wkLLVMBuild"));
+            my $flags = "--enable-optimized=yes --enable-backtraces=no --enable-targets=x86_64 --enable-libcpp=yes --enable-zlib=no --enable-terminfo=no --enable-crash-overrides=no";
+            (system("(cd $ownLLVMDirectory/wkLLVMBuild && ../configure $flags)") == 0) or die;
+        }
+
+        print("Building LLVM.\n");
+        my $oldPath = $ENV{"PATH"};
+        chdir "$ownLLVMDirectory/wkLLVMBuild";
+        my $binariesDirectory = "binariesForLLVMBuild";
+        my $pathCommand = "";
+        if (-e $binariesDirectory) {
+            my $binariesPath = File::Spec->rel2abs($binariesDirectory);
+            print "Detected binaries directory; prepending to path: $binariesPath\n";
+            $pathCommand = "PATH=\\\$PWD/$binariesDirectory:\\\$PATH";
+        }
+        my $makeCommand = "env -i bash -l -c \"$pathCommand make -j `sysctl -n hw.activecpu`\"";
+        print $makeCommand . "\n";
+        (system($makeCommand) == 0) or die;
+        $ENV{"PATH"} = $oldPath;
+        chdirWebKit();
+        
+        my $ownLLVMBuildMode = "";
+        if (fileContains($ownLLVMDirectory . "/wkLLVMBuild/Makefile.config", "ENABLE_OPTIMIZED=1")) {
+            $ownLLVMBuildMode .= "Release";
+        } else {
+            $ownLLVMBuildMode .= "Debug";
+        }
+        
+        if (fileContains($ownLLVMDirectory . "/wkLLVMBuild/Makefile.config", "DISABLE_ASSERTIONS=1")) {
+            # Nothing to do.
+        } else {
+            $ownLLVMBuildMode .= "+Asserts";
+        }
+        
+        my $librarySourceDirectory = "$ownLLVMDirectory/wkLLVMBuild/$ownLLVMBuildMode/lib";
+        my $libraryTargetDirectory = $libraryDir;
+        $shouldUpdateLLVMLibraryToken = 0;
+        print("Symlinking libraries from $librarySourceDirectory to $libraryTargetDirectory\n");
+        opendir (my $dirHandle, $librarySourceDirectory);
+        while (my $filename = readdir($dirHandle)) {
+            next if $filename !~ /\.a$/;
+            next if $filename =~ /libgtest/;
+            print "   Symlink $filename\n";
+            my $sourceLibrary = "$librarySourceDirectory/$filename";
+            my $targetLibrary = "$libraryTargetDirectory/$filename";
+            my $ranlibToken = "$libraryTargetDirectory/.ranlibToken-$filename";
+            unlink($targetLibrary);
+            symlink($sourceLibrary, $targetLibrary);
+            if ($force
+                || !-e $ranlibToken
+                || !fileContentsEquals($ranlibToken, $sourceLibrary)
+                || -M $ranlibToken > -M $sourceLibrary) {
+                print "   Ranlib $filename\n";
+                (system($ranlib, $targetLibrary) == 0) or die;
+                (open my $fileHandle, ">", $ranlibToken) or die;
+                print {$fileHandle} "$sourceLibrary";
+                close $fileHandle;
+                $shouldUpdateLLVMLibraryToken = 1;
+            }
+        }
+        closedir $dirHandle;
+    } elsif (!$preferSystemLLVMOverDrops) {
+        $shouldUpdateLLVMLibraryToken =
+            unpackIfNecessary($libraryDir, "$libraryDir/libLLVMCore.a", $llvmLibraryPackage, 1);
+    }
+
+    (system("rm", "-f", "$productDir/ExtraIncludesForLocalLLVMBuild") == 0) or die;
+    if ($useOwnLLVM) {
+        (system("rm", "-rf", "$productDir$llvmPrefix/include/llvm") == 0) or die;
+        (system("rm", "-rf", "$productDir$llvmPrefix/include/llvm-c") == 0) or die;
+        symlink("$ownLLVMDirectory/include/llvm", "$productDir$llvmPrefix/include/llvm") or die;
+        symlink("$ownLLVMDirectory/include/llvm-c", "$productDir$llvmPrefix/include/llvm-c") or die;
+        symlink("$ownLLVMDirectory/wkLLVMBuild/include", "$productDir/ExtraIncludesForLocalLLVMBuild") or die;
+    } elsif (!$preferSystemLLVMOverDrops) {
+        unpackIfNecessary("$productDir$llvmPrefix/include", "$productDir$llvmPrefix/include/llvm-c/Core.h", $llvmIncludePackage, 0);
+    }
+
+    if ($shouldUpdateLLVMLibraryToken) {
+        (system("touch", "Source/JavaScriptCore/llvm/library/LLVMAnchor.cpp") == 0) or die;
+    }
+}
+

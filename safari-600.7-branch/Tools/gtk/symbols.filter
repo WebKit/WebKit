@@ -1,0 +1,11 @@
+{
+global:
+  webkit_*;
+  WebProcessMainGtk;
+  NetworkProcessMain;
+  _ZN6WebKit22WebGtkExtensionManager10initializeEPK14OpaqueWKBundlePKv;
+  _ZN6WebKit22WebGtkExtensionManager6sharedEv;
+local:
+  webkit_media_player_debug;
+  *;
+};

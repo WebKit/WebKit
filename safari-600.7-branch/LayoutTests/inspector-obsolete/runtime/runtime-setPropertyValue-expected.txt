@@ -1,0 +1,49 @@
+CONSOLE MESSAGE: line 11: ===== Initial =====
+CONSOLE MESSAGE: line 12: {"foo":1}
+CONSOLE MESSAGE: line 13: 
+CONSOLE MESSAGE: line 11: ===== Set primitive =====
+CONSOLE MESSAGE: line 12: {"foo":2}
+CONSOLE MESSAGE: line 13: 
+CONSOLE MESSAGE: line 11: ===== Set handle =====
+CONSOLE MESSAGE: line 12: {"foo":{"bar":2}}
+CONSOLE MESSAGE: line 13: 
+CONSOLE MESSAGE: line 11: ===== Set undefined =====
+CONSOLE MESSAGE: line 12: {}
+CONSOLE MESSAGE: line 13: 
+CONSOLE MESSAGE: line 11: ===== Set zero =====
+CONSOLE MESSAGE: line 12: {"foo":0}
+CONSOLE MESSAGE: line 13: 
+CONSOLE MESSAGE: line 11: ===== Set null =====
+CONSOLE MESSAGE: line 12: {"foo":null}
+CONSOLE MESSAGE: line 13: 
+CONSOLE MESSAGE: line 11: ===== Set empty string =====
+CONSOLE MESSAGE: line 12: {"foo":""}
+CONSOLE MESSAGE: line 13: 
+CONSOLE MESSAGE: line 11: ===== Set exception =====
+CONSOLE MESSAGE: line 12: {"foo":""}
+CONSOLE MESSAGE: line 13: 
+CONSOLE MESSAGE: line 11: ===== Set non-finite numbers =====
+CONSOLE MESSAGE: line 12: {"foo":"NaN","foo1":"Infinity","foo2":"-Infinity"}
+CONSOLE MESSAGE: line 13: 
+Tests WebInspector.RemoveObject.setPropertyValue implementation.
+
+
+Running: testSetUp
+
+Running: testSetPrimitive
+
+Running: testSetHandle
+
+Running: testSetUndefined
+
+Running: testSetZero
+
+Running: testSetNull
+
+Running: testSetEmptyString
+
+Running: testSetException
+exception
+
+Running: testSetNonFiniteNumbers
+

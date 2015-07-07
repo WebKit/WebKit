@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <style>
+            .region {
+                width: 200px;
+                height: 200px;
+                border: thin solid black;
+                float: left;
+                margin: 10px;
+            }
+
+            #mono {
+                margin-top: 50px;
+                margin-left: 20px;
+                width: 150px;
+                height: 300px;
+                overflow: scroll;
+                background-color: green;
+                color: white;
+            }
+
+            #after {
+                width: 150px;
+                background-color: blue;
+                color: white;
+            }
+        </style>
+    </head>
+
+    <body>
+        <p><a href="https://bugs.webkit.org/show_bug.cgi?id=130499">Bug 130499 - [CSS Regions] Monolithic elements should not affect the layout of the content outside its region</a></p>
+        <p>The blue div should be positioned below the green div.</p>
+
+        <div class="region">
+            <div id="mono" class="flow">MONOLITHIC</div>
+            <div id="after" class="flow">AFTER - One one one one one one one one one one one one one one one one one</div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Security-Policy" content="base-uri 'self'">
+    <script src="http://localhost:8000/js-test-resources/js-test-pre.js"></script>
+    <script src="http://localhost:8000/security/contentSecurityPolicy/resources/securitypolicyviolation-test.js"></script>
+    <script>
+        description('Check that base URIs cannot be set if they violate the page\'s policy.');
+
+        var expectations = {
+            'documentURI': document.location.toString(),
+            'referrer': document.referrer,
+            'blockedURI': 'http://example.com',
+            'violatedDirective': 'base-uri \'self\'',
+            'effectiveDirective': 'base-uri',
+            'originalPolicy': 'base-uri \'self\'',
+            'sourceFile': document.location.toString(),
+            'lineNumber': 24
+        };
+
+        function run() {
+            var base = document.createElement('base');
+            base.href = 'http://example.com/';
+            document.head.appendChild(base);
+
+            shouldBe('document.baseURI', 'document.location.href');
+        }
+    </script>
+    <script src="http://localhost:8000/js-test-resources/js-test-post.js"></script>
+</head>
+<body>
+</body>
+</html>

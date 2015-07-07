@@ -1,0 +1,82 @@
+<html>
+<head>
+    <title>Test rendering of video control after exiting fullscreen</title>
+    <script src=media-file.js></script>
+    <script src=media-controls.js></script>
+    <script src=video-test.js></script>
+    <script src=../fullscreen/full-screen-test.js></script>
+    <script>
+        var panel;
+        var playButtonCoordinates;
+        var fadeoutTime = 3500;
+        var count = 0;
+
+        function init()
+        {
+            findMediaElement();
+            waitForEvent(video, 'canplaythrough', oncanplaythrough);
+            video.src = findMediaFile('video', 'content/test');
+        }
+
+        function oncanplaythrough()
+        {
+            waitForEvent(video, 'webkitfullscreenchange', onfullscreenchange);
+
+            panel = mediaControlsElement(internals.shadowRoot(video).firstChild, "-webkit-media-controls-panel");
+            if (window.eventSender) {
+                try {
+                    playButtonCoordinates = mediaControlsButtonCoordinates(video, "play-button");
+                } catch (exception) {
+                    testRunner.notifyDone();
+                    return;
+                }
+                var x = playButtonCoordinates[0];
+                var y = playButtonCoordinates[1];
+
+                consoleWrite("** Move mouse to the play button and start playing the video **");                     
+                eventSender.mouseMoveTo(x, y);
+                eventSender.mouseDown();
+                eventSender.mouseUp();
+                consoleWrite("");
+            }
+
+            consoleWrite("** Test that controls are shown when controls attribute is present **");
+            var opacity = getComputedStyle(panel).opacity;
+            if (opacity < 1)
+                failTest("Media control is not opaque.");
+            else
+                runWithKeyDown(function(){ video.webkitRequestFullscreen(); });
+        }
+
+        function onfullscreenchange()
+        {
+            switch (count) {
+                case 0:
+                    setTimeout(continueTest, fadeoutTime);
+                    break;
+                case 1:
+                    consoleWrite("");
+                    consoleWrite("** The controls should be shown after exiting the fullscreen");
+                    var opacity = getComputedStyle(panel).opacity;
+                    if (opacity < 1)
+                        failTest("Media control is not opaque.");
+                    else
+                        endTest();
+            }
+            count++;
+        }
+
+        function continueTest()
+        {
+            consoleWrite("");
+            run("video.webkitExitFullScreen()");
+        }
+
+    </script>
+</head>
+<body onload="init()">
+    Tests that video controls are shwon after exiting fullscreen<br>
+    <video controls></video>
+</body>
+</html>
+

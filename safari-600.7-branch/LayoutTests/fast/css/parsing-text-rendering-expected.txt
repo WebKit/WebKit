@@ -1,0 +1,16 @@
+This tests checks that all of the input values for background-repeat parse correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS test("text-rendering: auto;") is "auto"
+PASS test("text-rendering: optimizeSpeed;") is "optimizespeed"
+PASS test("text-rendering: optimizeLegibility;") is "optimizelegibility"
+PASS test("text-rendering: geometricPrecision;") is "geometricprecision"
+PASS test("text-rendering: auto auto;") is null
+PASS test("text-rendering: optimizeCoconuts;") is null
+PASS test("text-rendering: 15;") is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,12 @@
+Tests how Geolocation handles receiving too few arguments.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.navigator.geolocation.getCurrentPosition() threw exception Error: TypeMismatchError: DOM Exception 17.
+PASS window.navigator.geolocation.watchPosition() threw exception Error: TypeMismatchError: DOM Exception 17.
+PASS window.navigator.geolocation.clearWatch() threw exception TypeError: Not enough arguments.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

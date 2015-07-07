@@ -1,0 +1,21 @@
+The square should be a uniform shade of green.
+<div style="width: 100px; height: 50px; background-color: green; opacity: 0.5;"></div>
+<span style="opacity: 0.9">
+    <div id="inner" style="float: left; width: 100px; height: 100px; overflow: hidden;">
+        <span style="display: inline-block; width: 100px; height: 50px; background-color: green; opacity: 0.5;"></span>
+    </div>
+</span>
+<script>
+    function test()
+    {
+        document.getElementById("inner").style.float = "none";
+    }
+
+    if (!window.testRunner)
+        setTimeout(test, 0);
+    else {
+        document.body.offsetTop;
+        testRunner.display();
+        test();
+    }
+</script>

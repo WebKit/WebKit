@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x216
+  RenderBlock {HTML} at (0,0) size 800x216
+    RenderBody {BODY} at (8,16) size 784x180
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 723x39
+          text run at (0,0) width 723: "You should see a black rectangle divided into two parts; the top part should be taller (reflection should be behind"
+          text run at (0,20) width 60: "original)."
+layer at (28,76) size 220x120
+  RenderBlock {DIV} at (20,60) size 220x120 [bgcolor=#FFFFFF] [border: (10px solid #000000)]
+    RenderText {#text} at (67,11) size 86x28
+      text run at (67,11) width 86: "Contents"

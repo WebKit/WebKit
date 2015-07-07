@@ -1,0 +1,19 @@
+<html>
+<script>
+    function startTest() {
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.setBackingScaleFactor(2, finishTest);
+        }
+    }
+    
+    function finishTest() {
+        setTimeout(function() { testRunner.notifyDone(); }, 0);
+    }
+    </script>
+</head>
+<body onload="startTest();">
+    <div>This test passes if the video controls are non-blurry and properly positioned in HiDPI.</div>
+    <video controls></video>
+</body>
+</html>

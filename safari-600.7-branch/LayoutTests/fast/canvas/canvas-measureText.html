@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Regression test for bug <a href="http://webkit.org/b/106244">106244</a></p>
+<p>Test passes by not crashing.</p>
+<canvas id="test"></canvas>
+</body>
+<script>
+if (window.testRunner)
+   testRunner.dumpAsText();
+
+var canvas = document.getElementById("test");
+var context = canvas.getContext("2d");
+for (x = 0; x < 100; x++) {
+     context.restore();
+     context.save();
+     context.save();
+     context.measureText("a", 0, 0, 0);
+}
+</script>
+</html>

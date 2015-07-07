@@ -1,0 +1,48 @@
+<script>
+
+window.onpageshow = function(evt) {
+    if (!window.testRunner)
+        return;
+
+    if (!evt.persisted)
+        return;
+    
+    setTimeout("testRunner.notifyDone()", 0);
+}
+
+function clickLinkToSlowPage() {
+    var link = document.getElementById("linkToSlowPage");
+    var linkRect = link.getClientRects()[0];
+    var targetX = linkRect.left + linkRect.width / 2;
+    var targetY = linkRect.top + linkRect.height / 2;
+    eventSender.mouseMoveTo(targetX, targetY);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+window.onload = function(evt) {
+    setTimeout("clickLinkToSlowPage()", 0);
+}
+
+if (window.testRunner) {
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+} else
+    document.write('This test must be run by WebKitTestRunner!');
+</script>
+
+This test dumps frame load callbacks.  It is only useful inside of WebKitTestRunner.<br><br>
+<a id="linkToSlowPage" href="resources/resource-that-goes-back-while-still-loading.php">This link goes to a slow loading page.</a>
+Bug <a href="https://bugs.webkit.org/show_bug.cgi?id=117112">117112 - Going "back" to a cached page from a page where the main resource never finished loading breaks scrolling, amongst other issues.</a><br><br>
+In the broken case, the second page gets a didFinishLoad callback intertwined with the restoration of the cached page, even though it's already gotten a didFailLoad callback.<br>
+The final 4 callbacks look like:<br>
+didFailLoadWithError<br>
+didStartProvisionalLoadForFrame<br>
+didFinishLoadForFrame<br>
+didCommitLoadForFrame<br><br>
+When fixed, the final 4 callbacks should be:<br>
+didFailLoadWithError<br>
+didStartProvisionalLoadForFrame<br>
+didCommitLoadForFrame<br>
+didFinishLoadForFrame<br>

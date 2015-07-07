@@ -1,0 +1,20 @@
+CONSOLE MESSAGE: line 10: Should always fail.
+CONSOLE MESSAGE: line 22: ASSERT message
+Test that a failing console.assert will pause in the debugger with an optional message.
+
+Should not pause on passing assert.
+inside assertOkay
+Should pause on failing assert.
+inside assertFalse
+PASS: Paused!
+Should not pause on passing assert.
+inside assertCondition, and condition is true
+Should pause on failing assert.
+inside assertCondition, and condition is false
+PASS: Paused!
+Should not pause on passing assert.
+inside assertConditionWithMessage, and condition is true
+Should pause on failing assert and include a message.
+inside assertConditionWithMessage, and condition is false
+PASS: Paused!
+

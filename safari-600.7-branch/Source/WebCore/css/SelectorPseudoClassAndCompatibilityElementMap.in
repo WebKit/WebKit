@@ -1,0 +1,67 @@
+-khtml-drag
+-webkit-any(
+-webkit-any-link
+-webkit-autofill
+-webkit-drag
+-webkit-full-page-media
+active
+after, PseudoClassUnknown, PseudoElementAfter
+before, PseudoClassUnknown, PseudoElementBefore
+checked
+corner-present
+decrement
+default
+disabled
+double-button
+empty
+enabled
+end
+first-child
+first-letter, PseudoClassUnknown, PseudoElementFirstLetter
+first-line, PseudoClassUnknown, PseudoElementFirstLine
+first-of-type
+focus
+horizontal
+hover
+in-range
+increment
+indeterminate
+invalid
+lang(
+last-child
+last-of-type
+link
+no-button
+not(
+nth-child(
+nth-last-child(
+nth-last-of-type(
+nth-of-type(
+only-child
+only-of-type
+optional
+out-of-range
+read-only
+read-write
+required
+root
+scope
+single-button
+start
+target
+valid
+vertical
+visited
+window-inactive
+
+#if ENABLE(FULLSCREEN_API)
+-webkit-animating-full-screen-transition
+-webkit-full-screen
+-webkit-full-screen-ancestor
+-webkit-full-screen-document
+#endif
+
+#if ENABLE(VIDEO_TRACK)
+future
+past
+#endif

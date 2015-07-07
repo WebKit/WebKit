@@ -1,0 +1,7 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion Preferred argument conversion:  boolean
+
+FAIL TEST_CLASS.ambiguous( false ) should throw an exception. Was 128.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

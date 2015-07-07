@@ -1,0 +1,11 @@
+Tests type enforcement on DOM setters.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.body = nodelist; threw exception Error: HierarchyRequestError: DOM Exception 3.
+PASS table.tHead = nodelist; threw exception Error: NotFoundError: DOM Exception 8.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

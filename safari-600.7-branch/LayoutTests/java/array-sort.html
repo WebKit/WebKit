@@ -1,0 +1,54 @@
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitJavaEnabled", "1");
+</script>
+</head>
+<body>
+
+<p>Test that Java arrays work with generic JS array methods.</p>
+<p>Also test that they work when passed as the second argument to apply(). This may or may not be correct behavior per LiveConnect spec.</p>
+
+<div id="console"></div>
+<applet CODE="SharedApplet.class" NAME="javaTest" WIDTH=150 HEIGHT=25 MAYSCRIPT></applet>
+<script>
+
+debug("call");
+var array = document.javaTest.stringArray();
+Array.prototype.sort.call(array);
+shouldBe("array[0] + ''", "'One'");
+shouldBe("array[1] + ''", "'Three'");
+shouldBe("array[2] + ''", "'Two'");
+
+debug("apply");
+array = document.javaTest.stringArray();
+Array.prototype.sort.apply(array, []);
+shouldBe("array[0] + ''", "'One'");
+shouldBe("array[1] + ''", "'Three'");
+shouldBe("array[2] + ''", "'Two'");
+
+function concat()
+{
+    var result = "";
+    for (i = 0; i < arguments.length; ++i)
+        result += arguments[i];
+    return result;
+}
+
+debug("passing array as function arguments, potentially parser-optimized apply");
+array = document.javaTest.stringArray();
+shouldBe("concat.apply({}, array)", "'OneTwoThree'");
+
+debug("passing array as function arguments, unoptimized apply");
+array = document.javaTest.stringArray();
+shouldBe('concat["apply"]({}, array)', "'OneTwoThree'");
+
+shouldThrow("array.length = 5");
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

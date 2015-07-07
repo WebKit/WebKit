@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript">
+        function log(message)
+        {
+            document.getElementById("result").innerHTML += message + "<br>";
+        }
+        
+        function runTests()
+        {
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+                testRunner.setCanOpenWindows();
+            }
+
+            win = window.open('about:blank');
+            if (win.webkitNotifications === undefined) {
+                log("PASS");
+            } else {
+                notificationCenter=win.webkitNotifications;
+                win.close();
+                try { 
+                    n=notificationCenter.createNotification(''); 
+                } catch (e) {}
+                // Just make sure we don't crash.
+                log("PASS");
+            }
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+    </script>
+</head>
+<body>
+<div id="result"></div>    
+    
+<script type="text/javascript">
+runTests();
+</script>
+
+</body>
+</html>

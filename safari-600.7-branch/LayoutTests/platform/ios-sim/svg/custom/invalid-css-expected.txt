@@ -1,0 +1,25 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 504x224
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceClipper {clipPath} [id="clip1"] [clipPathUnits=userSpaceOnUse]
+        RenderSVGPath {circle} at (33,50) size 34x34 [fill={[type=SOLID] [color=#000000]}] [cx=30.00] [cy=40.00] [r=10.00]
+      RenderSVGResourceLinearGradient {linearGradient} [id="grad"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#008000]
+    RenderSVGResourceMarker {marker} [id="marker1"] [markerUnits=strokeWidth] [ref at (5,5)] [angle=0.00]
+      RenderSVGPath {rect} at (0,0) size 4x4 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
+    RenderSVGText {text} at (0,-2) size 302x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 302x19
+        chunk 1 text run 1 at (0.00,13.00) startOffset 0 endOffset 46 width 301.84: "The rect should be opaque green, black stroke,"
+    RenderSVGText {text} at (0,18) size 172x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 172x19
+        chunk 1 text run 1 at (0.00,33.00) startOffset 0 endOffset 25 width 171.41: "no markers and no dashes."
+    RenderSVGPath {path} at (48,65) size 87x87 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#008000]}] [data="M 30 40 L 80 40 L 80 90 L 30 90 Z"]
+    RenderSVGPath {circle} at (265,65) size 70x70 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=LINEAR-GRADIENT] [id="grad"]}] [cx=180.00] [cy=60.00] [r=20.00]
+    RenderSVGText {text} at (0,95) size 287x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 287x19
+        chunk 1 text run 1 at (0.00,110.00) startOffset 0 endOffset 45 width 286.54: "The circle should be opaque green, no filter,"
+    RenderSVGText {text} at (0,115) size 109x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 109x19
+        chunk 1 text run 1 at (0.00,130.00) startOffset 0 endOffset 17 width 108.42: "green stop color."

@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+<script src="./resources/crypto-md5.js"></script>
+<script type="text/javascript" language="javascript" charset="utf-8">
+
+    function glyphForType(type) {
+        switch (type) {
+        case "mousedown": return "D";
+        case "mousemove": return "M";
+        case "mouseup": return "U";
+        case "mouseover": return "I";
+        case "mouseout": return "O";
+        case "click": return "C";
+        case "dblclick": return "2";
+        }
+    }
+
+    document.onmousedown = handleEvent;
+    document.onmousemove = handleEvent;
+    document.onmouseup = handleEvent;
+    document.onmouseover = handleEvent;
+    document.onmouseout = handleEvent;
+    document.onclick = handleEvent;
+    document.ondblclick = handleEvent;
+    
+    window.dumpedEvents = [];
+    
+    function handleEvent(event) {
+        var properties = ["type", "eventPhase", "bubbles", "cancelable", "screenX", "screenY", "clientX", "clientY", "ctrlKey", "shiftKey", "altKey", "metaKey", "button"];
+        obj = {};
+        for (var key of properties)
+            obj[key] = event[key];
+    
+        dumpedEvents.push(obj);
+
+        var block = createBlock(hex_md5(JSON.stringify(obj)));
+        block.textContent = glyphForType(event.type);
+        var blocksContainer = document.getElementById("blocks");
+        blocksContainer.appendChild(block);
+        
+        var hashLabel = document.getElementById("hash");
+        hash.textContent = hex_md5(JSON.stringify(dumpedEvents));
+    }
+    
+    function createBlock(hash) {
+        var color = "#" + hash.substr(0,6);
+        var block = document.createElement("span");
+        block.style.backgroundColor = color;
+        return block;
+    }
+    
+    function stateHash() {
+        return hex_md5(JSON.stringify(dumpedEvents));
+    }
+    
+</script>
+
+<style type="text/css">
+body {
+    max-width: 800px;
+}
+#blocks {
+    display: -webkit-flex;
+    width: 600px;
+    -webkit-flex-flow: row wrap;
+}
+    
+#blocks > span {
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    font-family: sans-serif;
+    color: #fff;
+    text-align: center;
+}
+</style>
+</head>
+<body>
+<p>This page is a manual test for capture and replay of mouse-related events.</p>
+<p>Below, a block is created for each mouse event, where the color is derived from a hash of the mouse event. At the bottom is a cumulative hash of all mouse event data.</p>
+<hr/>
+<p>
+To test the replay functionality, open the Web Inspector, start capturing, and then move the mouse around this test page. After some time, stop capturing and then replay. The replayed execution should produce the same sequence of blocks. More importantly, the cumulative hash value should be the same at the end of capturing and at the end of any subsequent replays.</p>
+</p>
+<hr/>
+<div id="hash"></div>
+<div id="blocks"></div>
+</body>
+</html>

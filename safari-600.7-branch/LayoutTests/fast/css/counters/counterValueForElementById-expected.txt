@@ -1,0 +1,11 @@
+This is the test for window.internals.counterValueForElementById
+   
+PASS window.internals.counterValue(document.getElementById('before')) is '0'
+PASS window.internals.counterValue(document.getElementById('after')) is '0'
+PASS window.internals.counterValue(document.getElementById('before_after')) is '0 0'
+PASS window.internals.counterValue(document.getElementById('twice')) is '0 0'
+PASS window.internals.counterValue(document.getElementById('point')) is '0.1'
+PASS window.internals.counterValue(document.getElementById('two-points')) is '0.1.2'
+PASS window.internals.counterValue(document.getElementById('greek')) is '0.α.β'
+PASS window.internals.counterValue(document.getElementById('three-greeks')) is '0.α.β 0.α.β 0.α.β'
+

@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            #region { -webkit-flow-from: flow; position: absolute; top: 120px; left: 120px; width: 50px; height: 50px; border: 50px solid blue; background-color: salmon; overflow: hidden; }
+            #region:hover { border: 50px solid green; }
+        </style>
+    </head>
+    <body>
+        <p>Test that hit-testing of out-of-flow regions with overflow: hidden works properly</p>
+        <p>To manually test, move the mouse over the blue border. It should change its color to green.</p>
+        <div id="result"></div>
+        <div id="region"></div>
+        <script>
+            if (window.testRunner)
+                window.testRunner.dumpAsText();
+            var result = document.getElementById("result");
+
+            // Find a point inside the region's border.
+            var hitElement = document.elementFromPoint(150, 150);
+            if (hitElement == document.getElementById("region"))
+                result.innerText = "PASS";
+            else
+                result.innerText = "FAIL: hit " + hitElement;
+        </script>
+    </body>
+</html>

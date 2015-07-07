@@ -1,0 +1,95 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../network-test.js"></script>
+<script>
+function setInspectorResourcesDataSizeLimits()
+{
+    if (!window.internals) {
+        console.log("This test can not be run as window.internals is not available.");
+        return;
+    }
+    internals.setInspectorResourcesDataSizeLimits(300, 200);
+    console.log("Done.");
+}
+
+function test()
+{
+    InspectorTest.addConsoleSniffer(dataSizeLimitsSet);
+    InspectorTest.evaluateInPage("setInspectorResourcesDataSizeLimits()");
+
+    function dataSizeLimitsSet()
+    {
+        // Here we test replacement logic. We save first two resources content,
+        // discard third resource content once we see its size exceeds limit,
+        // and finally replace first resource content with the last resource content.
+
+        InspectorTest.makeSimpleXHR("GET", "resources/resource.php?size=200", false, xhrLoaded1);
+    }
+
+    function xhrLoaded1()
+    {
+        InspectorTest.makeSimpleXHR("GET", "resources/resource.php?size=100", false, xhrLoaded2);
+    }
+
+    function xhrLoaded2()
+    {
+        InspectorTest.makeSimpleXHR("GET", "resources/resource.php?size=201", false, xhrLoaded3);
+    }
+
+    function xhrLoaded3()
+    {
+        InspectorTest.makeSimpleXHR("GET", "resources/resource.php?size=100", false, step1);
+    }
+
+    function dumpRequest(request, callback)
+    {
+        if (!request)
+            return callback();
+        InspectorTest.addResult(request.url);
+
+        function contentLoaded()
+        {
+            InspectorTest.addResult("resource.content: " + request.content);
+            callback();
+        }
+
+        request.requestContent(contentLoaded);
+    }
+
+    function step1()
+    {
+        var request = WebInspector.panel("network").requests[WebInspector.panel("network").requests.length - 4];
+        dumpRequest(request, step2);
+    }
+
+    function step2()
+    {
+        var request = WebInspector.panel("network").requests[WebInspector.panel("network").requests.length - 3];
+        dumpRequest(request, step3);
+    }
+
+    function step3()
+    {
+        var request = WebInspector.panel("network").requests[WebInspector.panel("network").requests.length - 2];
+        dumpRequest(request, step4);
+    }
+
+    function step4()
+    {
+        var request = WebInspector.panel("network").requests[WebInspector.panel("network").requests.length - 1];
+        dumpRequest(request, step5);
+    }
+
+    function step5()
+    {
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p> Tests NetworkResourcesData logic for XHR content replacement.</p>
+</body>
+</html>
+

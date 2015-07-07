@@ -1,0 +1,16 @@
+<html>
+<body>
+<p>This tests that the default Content-Type for XMLHttpRequest is application/x-www-form-urlencoded when running in the Dashboard compatibility mode.</p>
+<script>
+    if (window.testRunner) {
+        testRunner.setUseDashboardCompatibilityMode(true);
+        testRunner.dumpAsText();
+    }
+    
+    objXmlHttp = new XMLHttpRequest;
+    objXmlHttp.open("POST", "print-content-type.cgi", false);
+    objXmlHttp.send("");
+    document.write("<pre>" + objXmlHttp.responseText + "</pre>");
+</script>
+</body>
+</html>

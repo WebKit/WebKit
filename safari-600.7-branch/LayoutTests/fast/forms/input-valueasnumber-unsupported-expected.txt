@@ -1,0 +1,57 @@
+Tests for .valueAsNumber with non-supported input types.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Check for type=button
+PASS input.valueAsNumber is Number.NaN
+PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+Check for type=checkbox
+PASS input.valueAsNumber is Number.NaN
+PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+Check for type=color
+PASS input.valueAsNumber is Number.NaN
+PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+Check for type=email
+PASS input.valueAsNumber is Number.NaN
+PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+Check for type=file
+PASS input.valueAsNumber is Number.NaN
+PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+Check for type=hidden
+PASS input.valueAsNumber is Number.NaN
+PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+Check for type=image
+PASS input.valueAsNumber is Number.NaN
+PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+Check for type=khtml_isindex
+PASS input.valueAsNumber is Number.NaN
+PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+Check for type=password
+PASS input.valueAsNumber is Number.NaN
+PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+Check for type=radio
+PASS input.valueAsNumber is Number.NaN
+PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+Check for type=reset
+PASS input.valueAsNumber is Number.NaN
+PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+Check for type=search
+PASS input.valueAsNumber is Number.NaN
+PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+Check for type=submit
+PASS input.valueAsNumber is Number.NaN
+PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+Check for type=tel
+PASS input.valueAsNumber is Number.NaN
+PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+Check for type=text
+PASS input.valueAsNumber is Number.NaN
+PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+Check for type=url
+PASS input.valueAsNumber is Number.NaN
+PASS input.valueAsNumber = 0 threw exception Error: InvalidStateError: DOM Exception 11.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

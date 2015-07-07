@@ -1,0 +1,12 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+}
+if (!window.internals)
+    alert("This test requires window.internals");
+window.internals.settings.setUsesEncodingDetector(true);
+</script>
+This iframe should use UTF-8 because of its meta tag even in spite of this test
+enabling the encoding detector:<br>
+<iframe src="resources/meta-input-encoding.html"></iframe>

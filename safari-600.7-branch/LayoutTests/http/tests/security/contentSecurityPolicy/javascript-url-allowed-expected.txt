@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: The 'allow' directive has been replaced with 'default-src'. Please use that directive instead, as 'allow' has no effect.
+CONSOLE MESSAGE: The 'allow' directive has been replaced with 'default-src'. Please use that directive instead, as 'allow' has no effect.
+CONSOLE MESSAGE: The 'allow' directive has been replaced with 'default-src'. Please use that directive instead, as 'allow' has no effect.
+ALERT: PASS
+CONSOLE MESSAGE: The 'allow' directive has been replaced with 'default-src'. Please use that directive instead, as 'allow' has no effect.
+CONSOLE MESSAGE: The 'allow' directive has been replaced with 'default-src'. Please use that directive instead, as 'allow' has no effect.
+

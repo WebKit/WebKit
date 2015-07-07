@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x44
+  RenderBlock {HTML} at (0,0) size 800x44
+    RenderDeprecatedFlexibleBox {BODY} at (8,8) size 784x28
+      RenderBlock (anonymous) at (0,0) size 39x28
+        RenderText {#text} at (25,3) size 4x19
+          text run at (25,3) width 4: " "
+        RenderBlock {SPAN} at (29,8) size 10x10 [bgcolor=#FF0000]
+        RenderText {#text} at (0,0) size 0x0
+layer at (10,10) size 21x24 clip at (15,15) size 11x14
+  RenderMenuList {SELECT} at (2,2) size 21x24 [bgcolor=#FFFFFF02] [border: (5px solid #4C4C4C)]
+    RenderBlock (anonymous) at (10,5) size 1x14
+      RenderText at (-9999,0) size 0x14
+        text run at (-9999,0) width 0: " "

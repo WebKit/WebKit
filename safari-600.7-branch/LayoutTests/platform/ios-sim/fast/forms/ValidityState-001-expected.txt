@@ -1,0 +1,11 @@
+Each form control in this document exposes a validity attribute that returns a live instance of ValidityState.
+
+     
+Test for FIELDSET: SUCCESS
+Test for SELECT: SUCCESS
+Test for INPUT: SUCCESS
+Test for TEXTAREA: SUCCESS
+Test for BUTTON: SUCCESS
+Test for OUTPUT: SUCCESS
+Test for OBJECT: SUCCESS
+Test for KEYGEN: SUCCESS

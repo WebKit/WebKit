@@ -1,0 +1,18 @@
+<html>
+    <head>
+        <title>Test passes if shadow is not clipped after the shadow change.</title>
+        <script src="../../fast/repaint/resources/text-based-repaint.js"></script>
+        <script>
+            function repaintTest() {
+                document.getElementById("g").setAttribute("style", "-webkit-svg-shadow: 50px 50px 100px black;")
+            }
+        </script>
+    </head>
+    <body onload="runRepaintTest()">
+        <svg xmlns="http://www.w3.org/2000/svg">
+            <g id="g" style="-webkit-svg-shadow: 50px 50px 10px black;">
+                <rect width="100" height="100" x="50" y="50" fill="black" />
+            </g>
+        </svg>
+    </body>
+</html>

@@ -1,0 +1,2 @@
+The green LR block should be centered horizontally within the black-bordered block.
+PASS: The block is in the correct position.

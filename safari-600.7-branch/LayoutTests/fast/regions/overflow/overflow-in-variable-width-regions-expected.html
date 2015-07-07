@@ -1,0 +1,87 @@
+<!doctype html>
+
+ <style>
+    html {
+        font: 16px Times;
+    }
+
+    .content {
+        padding: 5px;
+    }
+
+    #region2 .content { /*fragmented content only has padding-top in the 1st fragment container*/
+        padding-top: 0px;
+    }
+    
+    .first-box {
+        border: 1px solid blue;
+    }
+
+    #region2 .first-box {
+        border-top-width: 0px;
+    }
+    
+    .second-box {
+        margin:40px;
+        border: 1px solid green;
+        overflow:hidden;
+    }
+
+    #region2 .second-box {
+        margin-top: 0px;
+        border-top-width: 0px;
+    }
+
+    #region2 .second-box > p:first-child {
+        margin-top: 0px
+    }
+    
+    #region1, #region2, #region3 {
+        border: 1px solid black;
+    }
+
+    #region1 {
+        width: 200px;
+        height: 100px;
+        overflow-y: hidden;
+    }
+    
+    #region2 {
+        width: 300px;
+        height: 180px;
+    }
+    
+    #region3 {
+        width: 120px;
+        height: 120px;
+    }
+</style>
+
+<body>
+<p>The first and last lines of text in the regions below should be clipped to the green box. The overflow
+section sizes itself independently in each region.</p>
+
+<div id="container">
+    <div id="region1">
+        <div class="content">
+            <div class="first-box">
+                <div class="second-box">
+                    <div style="width:500px">Clipped line of text that should not be visible.</div>
+                    <p>These lines will</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="region2">
+        <div class="content">
+            <div class="first-box">
+                <div class="second-box">
+                    <p>not spill out of the regions. These lines will not spill out of the regions.
+                    These lines will not spill out of the regions. </p>
+                    <div style="width:500px">Clipped line of text that should not be visible.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="region3"></div>
+</div>

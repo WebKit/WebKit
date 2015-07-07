@@ -1,0 +1,39 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../resources-test.js"></script>
+<link rel="stylesheet" href="resources/stylesheet-text-plain.php" type="text/css">
+<script>
+function test()
+{
+    var cssResource;
+
+    InspectorTest.runAfterResourcesAreFinished(["stylesheet-text-plain.php"], step1);
+
+    function step1()
+    {
+        WebInspector.resourceTreeModel.forAllResources(findCSSResource);
+        function findCSSResource(resource)
+        {
+            if (resource.url.indexOf("stylesheet-text-plain.php") !== -1)
+                cssResource = resource;
+        }
+        InspectorTest.addResult(cssResource.url);
+        InspectorTest.assertEquals(cssResource.type, WebInspector.resourceTypes.Stylesheet, "Resource type should be Stylesheet.");
+        InspectorTest.assertTrue(!cssResource.failed, "Resource loading failed.");
+        cssResource.requestContent(step2);
+    }
+
+    function step2()
+    {
+        InspectorTest.addResult("Resource.content: " + cssResource.content);
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that content is correctly shown for css loaded with invalid mime type in quirks mode.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=80528">Bug 80528</a>
+</body>
+</html>

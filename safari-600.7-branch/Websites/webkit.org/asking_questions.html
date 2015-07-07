@@ -1,0 +1,140 @@
+<?php
+    $title = "Asking questions on webkit-help";
+
+$extra_head_content = <<<END
+<style type="text/css">
+pre .code {
+   background-color: #F2F2F2;
+}
+
+.right {
+  color: #080 !important;
+}
+
+.wrong {
+  color: #f00 !important;
+}
+</style>
+END;
+include("header.inc");
+?>
+
+<h1> How to ask questions about WebKit </h1>
+
+The following tips are for new members of any WebKit mailing list who want to get help on learning WebKit.
+These include advice on other ways to find answers and help that go beyond the WebKit's mailing lists.
+
+<h2> Search the archives </h2>
+
+<p>Your question may have already been answered. Make sure you search at least webkit-help and webkit-dev archives.
+There are two ways to query the archives: doing a web search or the <a href="http://dir.gmane.org/search.php?match=webkit">gmane archives</a>.</p>
+<p>You can limit a web search to the mailing lists' archives by using "site:lists.webkit.org".
+<p>Here is a small example on how to query information about 'RenderLayer' on the previous mailing lists archives:</p>
+<ul>
+<li><a href="http://www.google.com/search?q=site:lists.webkit.org/pipermail/webkit-dev+RenderLayer">webkit-dev entries for RenderLayer</a></li>
+<li><a href="http://www.google.com/search?q=site:lists.webkit.org/pipermail/webkit-help+RenderLayer">webkit-help entries for RenderLayer</a></li>
+</ul>
+
+<h2> Be precise </h2>
+<p>Give as many details as possible. Generic questions will likely not get a valuable answer.</p>
+
+<p>Make sure you include at least:</p>
+<ul>
+<li> which port are you using: Mac, Windows, Chromium, Qt, Gtk, Wx, ...</li>
+<li> which operating system are you using? For Linux, paste the result of <code>uname -a</code></li>
+</ul>
+
+<p>Depending on your issue, make also sure to include:</p>
+<ul>
+<li> the revision or branch used</li>
+<li> which compiler are you using? (including the version)</li>
+<li> the CPU used</li>
+<li> the command invoked</li>
+<li> the <strong>complete output</strong> of the command. Do not paste only what you think is relevant.</li>
+<li> the expected result</li>
+</ul>
+
+<p>If one of these item is very long (hundreds of lines), do not paste it in the email. Instead use http://pastebin.com/
+(or other similar services) and include the link in the email.</p>
+
+<p>Since we cannot read your mind, the more you give us, the easier it will be for us to help you.</p>
+
+<h2> An example of question </h2>
+
+<p>
+<h4 class="wrong">Wrong:</h4>
+<p>WebKit does not compile!</p>
+<h4 class="right">Right:</h4>
+<p>When building Apple's port revision 34567 using <code>"Tools/Scripts/build-webkit --debug --no-svg"</code>, I get the following error:</p>
+<code>
+Cannot find class Foobar.
+</code>
+<p>(You can find the complete output here: <a href="http://pastebin.com/foobar">http://pastebin.com/foobar</a>).
+
+I have looked at the archives and the commits but did not find any solution. Does anyone know what could be the issue and whether this has been fixed?
+</p>
+
+<h2> Usual questions and answers </h2>
+
+<p>There are some questions that appear regularly on the mailing list. We have included the answers here for your convenience.</p>
+
+<h3> Does WebKit support Foo? </h3>
+
+<p>The most reliable way to answer it is by looking at the source code. WebKit development is fast
+paced. Often the requested feature is already implemented although it has
+not been widely used yet. Bear in mind that sometimes the level of
+supports between different ports is not the same.</p>
+<p>The following links are also useful:</p>
+<ul>
+<li><a href="http://en.wikipedia.org/wiki/Comparison_of_layout_engines_(HTML)">Wikipedia comparison of the layout engines: HTML support</a><br></li>
+<li><a href="http://en.wikipedia.org/wiki/Comparison_of_layout_engines_(XML)">Wikipedia comparison of the layout engines: XML support</a><br></li>
+<li><a href="http://en.wikipedia.org/wiki/Comparison_of_layout_engines_(Cascading_Style_Sheets)">Wikipedia comparison of the layout engines: CSS support</a><br></li>
+<li><a href="http://en.wikipedia.org/wiki/Comparison_of_layout_engines_(Document_Object_Model)">Wikipedia comparison of the layout engines: DOM support</a><br></li>
+<li><a href="http://en.wikipedia.org/wiki/Comparison_of_layout_engines_(HTML_5)">Wikipedia comparison of the layout engines: HTML5 support</a><br></li>
+<li><a href="http://en.wikipedia.org/wiki/Comparison_of_layout_engines_(ECMAScript)">Wikipedia comparison of the layout engines: ECMAScript support</a><br></li>
+<li><a href="http://en.wikipedia.org/wiki/Comparison_of_layout_engines_(Scalable_Vector_Graphics)">Wikipedia comparison of the layout engines: SVG support</a><br></li>
+<li><a href="http://en.wikipedia.org/wiki/Comparison_of_layout_engines_(Non-standard_HTML)">Wikipedia comparison of the layout engines: non standard HTML support</a><br></li>
+</ul>
+
+<h3> I want to port WebKit to a new platform </h3>
+
+<p>As a starting point, first check <a href="http://trac.webkit.org/wiki/SuccessfulPortHowTo">the successful port how to page</a>.</p>
+
+<p>Granted, it's not complete, so feel free to contribute. Try to find a port similar to what you are targeting and use it
+as a basis, instead of writing everything from scratch. While working on your port, you may find that you wished the page had 
+mentioned something. If so, please modify the page and add it.</p>
+
+<h3> How does bar work? </h3>
+
+<p>The best way to answer this is to use your debugger. Set a break point where you want to investigate and get a stack
+trace. Then, you will see which functions call your code.</p>
+
+<h2> Things to remember when you ask a question </h2>
+
+<ul>
+<li> We offer our help on a voluntary basis so you can't expect us to be
+100% at your disposal. Be patient. No need to insist on the urgency. Asking urgently
+for an answer usually does not get you the answer faster.</li>
+
+<li> We love to grow our community, and thus we like to help beginners. After all,
+every expert was a beginner at some point in his/her lifetime. However, nobody likes
+<strong>lazy</strong> beginners. Thus, if you face a problem, try to analyze and
+solve it yourself first <strong>before</strong> asking for help.</li>
+
+<li> WebKit is a big project with a huge code base, so you must be willing
+to spend your time and effort on learning the source code. Remember,
+you can not become a Grand Master just by skimming some chess learning
+books.</li>
+
+<li>Last but not least, there are often complaints that WebKit code
+is not easy to understand. Well, this is your chance to contribute! We
+have started some helping pages on this, just check out:
+<a href="http://trac.webkit.org/wiki/WikiStart#GettingAroundtheWebKitSourceCode">our wiki's page on how to get around the code</a></li>
+</ul>
+
+<p>Do not hesitate to fill the wiki page with new information which will help
+others to learn!</p>
+
+<?php
+include("footer.inc");
+?>

@@ -1,0 +1,6 @@
+Test that a video element collected in a named flow and laid out outside a region is properly displayed.
+
+The test passes if it does not hit an assert in debug builds.
+
+
+

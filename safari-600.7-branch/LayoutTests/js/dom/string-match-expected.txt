@@ -1,0 +1,17 @@
+String.match(…) test
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testMatch(/x/g, false) is ["x","x"]
+PASS testMatch(/x/g, true) threw exception TypeError: Attempted to assign to readonly property..
+PASS testMatch(/x/, false) is ["x"]
+PASS testMatch(/x/, true) is ["x"]
+PASS testMatch(/x/g, false); re.lastIndex is 0
+PASS testMatch(/x/g, true); re.lastIndex threw exception TypeError: Attempted to assign to readonly property..
+PASS testMatch(/x/, false); re.lastIndex is 3
+PASS testMatch(/x/, true); re.lastIndex is 3
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

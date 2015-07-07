@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<style>
+#test div {
+    height: 100px;
+    background-color: red;
+}
+</style>
+
+<p>
+  All boxes below should be 100px * 100px and green.
+</p>
+
+<div id="test">
+
+MIN
+<div style="width: 100px; width: -webkit-min(">unclosed min</div>
+<div style="width: 100px; width: -webkit-min( bob">unclosed min with garbage</div>
+<div style="width: 100px; width: -webkit-min( bob );">garbage</div>
+<div style="width: 100px; width: -webkit-min(20px,);">extra trailing comma</div>
+<div style="width: 100px; width: -webkit-min(,20px);">leading comma</div>
+<div style="width: 100px; width: -webkit-min(20px, bob);">trailing garbage</div>
+<div style="width: 100px; width: -webmit-min(20px, 10px + flim);">bad expression</div>
+<div style="width: 100px; width: -webkit-min(256px, 120);">mix length and number</div>
+<div style="width: 100px; width: -webkit-min(256, 120px);">mix number and length</div>
+<div style="width: 100px; width: -webkit-min(50%, 150);">mix percent and number</div>
+<div style="width: 100px; width: -webkit-min(150, 50%);">mix number and percent</div>
+
+MAX
+<div style="width: 100px; width: -webkit-max(">unclosed max</div>
+<div style="width: 100px; width: -webkit-max( bob">unclosed max with garbage</div>
+<div style="width: 100px; width: -webkit-max(256px, 120);">mix length and number</div>
+<div style="width: 100px; width: -webkit-max(256, 120px);">mix number and length</div>
+<div style="width: 100px; width: -webkit-max(50%, 150);">mix percent and number</div>
+<div style="width: 100px; width: -webkit-max(150, 50%);">mix number and percent</div>
+
+</div>
+
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var test = document.getElementById("test");
+for (var element = test.firstChild; element; element = element.nextSibling) {
+    var width = element.offsetWidth;
+    var error = [];
+    if (width != 100)
+        error.push("expected width of 100, but was " + width);
+    var height = element.offsetHeight;
+    if (height != 100)
+        error.push("expected height of 100, but was " + width);
+
+    if (error == "") {
+        element.style.backgroundColor = "green";
+        element.innerHTML += " => PASS";
+    } else {
+        element.innerHTML += " => FAIL: " + error.join(", ");
+    }
+}
+</script>

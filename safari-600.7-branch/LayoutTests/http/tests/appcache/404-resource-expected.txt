@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: Application Cache update failed, because http://127.0.0.1:8000/appcache/resources/does-not-exist.txt could not be fetched.
+Test that a missing explicit resource makes caching fail.
+
+Should say SUCCESS:
+
+SUCCESS
+

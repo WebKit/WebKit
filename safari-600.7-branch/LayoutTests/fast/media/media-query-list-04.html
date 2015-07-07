@@ -1,0 +1,75 @@
+<html>
+<head>
+<title>Test CSSOM View module: MediaQueryList interface</title>
+<script type="text/javascript" charset="utf-8">
+
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    }
+
+    function log(m) {
+        document.getElementById('results').innerHTML += m + '<br>';
+    }
+
+    function callback1(query) {
+        log("[1] - query " + query.media + " changed to " + (query.matches ? "true" : "false"));
+    }
+
+    function callback2(query) {
+        log("[2] - query " + query.media + " changed to " + (query.matches ? "true" : "false"));
+    }
+
+    function pageshow(evt)
+    {
+        if (!evt.persisted) {
+            // this will run only when the page is loaded for the first time.
+
+            windowedQuery = window.matchMedia("(-webkit-view-mode: windowed)");
+            floatingQuery = window.matchMedia("(-webkit-view-mode: floating)");
+            minimizedQuery = window.matchMedia("(-webkit-view-mode: minimized)");
+            maximizedQuery = window.matchMedia("(-webkit-view-mode: maximized)");
+
+            windowedQuery.addListener(callback1);
+            floatingQuery.addListener(callback1);
+            minimizedQuery.addListener(callback1);
+            maximizedQuery.addListener(callback1);
+
+            windowedQuery.addListener(callback2);
+            floatingQuery.addListener(callback2);
+            minimizedQuery.addListener(callback2);
+            maximizedQuery.addListener(callback2);
+
+            setTimeout('window.location = "data:text/html,<script>history.back()<" + "/script>"', 0);
+
+        } else {
+            // if this point is reached the page is comming from the page cache.
+
+            log("------------- minimized -------------");
+            testRunner.setViewModeMediaFeature("minimized");
+            log("------------- maximized -------------");
+            testRunner.setViewModeMediaFeature("maximized");
+            log("------------- windowed -------------");
+            testRunner.setViewModeMediaFeature("windowed");
+            log("------------- floating -------------");
+            testRunner.setViewModeMediaFeature("floating");
+
+            setTimeout(function() { if (window.testRunner) testRunner.notifyDone(); }, 0);
+
+        }
+    }
+
+    if (window.testRunner) {
+        testRunner.setViewModeMediaFeature("windowed");
+        window.onpageshow = pageshow;
+    }
+
+</script>
+</head>
+<body>
+    <p>Test the MediaQueryList interface: <a href="http://dev.w3.org/csswg/cssom-view/#the-mediaquerylist-interface" title="CSSOM View Module">http://dev.w3.org/csswg/cssom-view/#the-mediaquerylist-interface</a>.</p>
+    <p>Testing page cache</p>
+    <div id="results"></div>
+</body>
+</html>

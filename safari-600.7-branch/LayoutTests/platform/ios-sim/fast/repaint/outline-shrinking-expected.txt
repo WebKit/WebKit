@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x226
+  RenderBlock {HTML} at (0,0) size 800x226
+    RenderBody {BODY} at (8,16) size 784x202
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 108x19
+          text run at (0,0) width 108: "This is a test for "
+        RenderInline {I} at (0,0) size 763x39
+          RenderInline {A} at (0,0) size 354x19 [color=#0000EE]
+            RenderText {#text} at (107,0) size 354x19
+              text run at (107,0) width 354: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9388"
+          RenderText {#text} at (460,0) size 763x39
+            text run at (460,0) width 5: " "
+            text run at (464,0) width 299: "REGRESSION: outlines don't get erased when"
+            text run at (0,20) width 148: "removed in some cases"
+        RenderText {#text} at (147,20) size 5x19
+          text run at (147,20) width 5: "."
+      RenderBlock {P} at (0,56) size 784x20
+        RenderText {#text} at (0,0) size 328x19
+          text run at (0,0) width 328: "There should be a green square and no trace of red."
+      RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,102) size 100x100 [bgcolor=#008000]

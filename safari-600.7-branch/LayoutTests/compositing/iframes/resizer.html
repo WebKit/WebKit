@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<style>
+.container {
+     -webkit-transform: translateZ(0);
+     resize: both;
+}
+</style>
+<script>
+function test() {
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        document.getElementById('layers').innerHTML = window.internals.layerTreeAsText(document);
+    }
+}
+</script>
+<!-- There should be a layer for the iframe's scroll corner alongside the iframe's content's layer tree -->
+<body onload="test()">
+<iframe class="container" src="resources/composited-subframe.html"></iframe>
+<pre id="layers">Layer tree appears here in DRT.</pre>

@@ -1,0 +1,22 @@
+Test to make sure a blend mode creates a compositing layer. Test is successful of render tree shows compositing
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS content has compositing layers
+
+(GraphicsLayer
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (children 1
+        (GraphicsLayer
+          (position 8.00 80.00)
+          (bounds 160.00 90.00)
+        )
+      )
+    )
+  )
+)
+

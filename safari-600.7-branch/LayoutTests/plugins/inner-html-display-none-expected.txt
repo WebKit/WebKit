@@ -1,0 +1,4 @@
+ALERT: function testCallback() {
+    [native code]
+}
+

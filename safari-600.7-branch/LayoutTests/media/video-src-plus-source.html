@@ -1,0 +1,33 @@
+<html>
+<body>
+    <script src=video-test.js></script>
+
+    <script>
+        mediaElement.addEventListener('loadedmetadata', function() { 
+            failTest("'loadedmetadata' event fired" );
+        }, true);
+
+        waitForEvent('loadstart', function () { 
+            findMediaElement();
+            testExpected("relativeURL(video.currentSrc)", "content/bogus.mpeg");
+            consoleWrite("");
+        });
+
+        waitForEvent('error', function () { 
+            findMediaElement();
+            testExpected("relativeURL(video.currentSrc)", "content/bogus.mpeg");
+            testExpected("mediaElement.error.code", MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED);
+            setTimeout(endTest, 200) ;
+            consoleWrite("");
+        });
+    </script>
+
+    <video src=content/bogus.mpeg controls>
+        <source src=content/test.mp4>
+    </video>
+
+<p>Test that a &lt;source&gt; element is not used when a bogus 'src' attribute is present
+</p>
+
+</body>
+</html>

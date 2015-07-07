@@ -1,0 +1,31 @@
+<html>
+<head>
+    <meta http-equiv="Content-Security-Policy" content="media-src 'none'">
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+        function loaded() {
+            alert("FAIL");
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        function errored() {
+            alert("PASS");
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        function start() {
+            var track = document.querySelector('track');
+            track.track.mode = "hidden";
+            track.setAttribute('src', 'resources/track.vtt');
+        }
+    </script>
+</head>
+<body onload="start()">
+    <video>
+        <track kind="captions" onload="loaded()" onerror="errored()">
+    </video>
+</body>
+</html>

@@ -1,0 +1,3 @@
+Test for bug 13140: Crash after loading SVG fragment with XMLHttpRequest (Yosemite Map Geology Layer).
+
+PASS == did not crash.

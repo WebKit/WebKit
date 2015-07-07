@@ -1,0 +1,65 @@
+<html>
+<head>
+
+<style type="text/css" media="screen">
+  #main { background:blue; }
+</style>
+
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function injectStyleSheet()
+{
+    var styleSheet = "#main { color: red; -webkit-border-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAAiElEQVR42r2RsQrDMAxEBRdl8SDcX8lQPGg1GBI6lvz/h7QyRRXV0qUULwfvwZ1tenw5PxToRPWMC52eA9+WDnlh3HFQ/xBQl86NFYJqeGflkiogrOvVlIFhqURFVho3x1moGAa3deMs+LS30CAhBN5nNxeT5hbJ1zwmji2k+aF6NENIPf/hs54f0sZFUVAMigAAAABJRU5ErkJggg==) }  #iframeBody { background: red }";
+    if (window.testRunner)
+        window.testRunner.addUserStyleSheet(styleSheet, true);
+}
+
+function loadIframe()
+{
+    var iframe = document.createElement("iframe");
+    iframe.src = "resources/inject-stylesheet-iframe-data.html";
+    document.getElementById("main").appendChild(iframe);
+}
+
+function test()
+{
+    InspectorTest.evaluateInPage("injectStyleSheet()", init);
+
+    function init()
+    {
+        InspectorTest.selectNodeAndWaitForStylesWithComputed("main", step0);
+    }
+
+    function step0()
+    {
+        InspectorTest.addResult("Main frame style:");
+        InspectorTest.dumpSelectedElementStyles();
+        InspectorTest.evaluateInPage("loadIframe()");
+        InspectorTest.addConsoleSniffer(step1);
+    }
+
+    function step1()
+    {
+        InspectorTest.selectNodeAndWaitForStyles("iframeBody", step2);
+    }
+
+    function step2()
+    {
+        InspectorTest.addResult("iframe style:");
+        InspectorTest.dumpSelectedElementStyles();
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that injected user stylesheets are reflected in the Styles pane.
+</p>
+
+<div id="main"></div>
+</body>
+</html>

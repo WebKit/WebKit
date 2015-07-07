@@ -1,0 +1,34 @@
+<html>
+<body>
+<div id=result></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function log(message)
+{
+    document.getElementById("result").innerHTML += message + "<br>";
+}
+
+document.domain = "0.0.1";
+
+try {
+    new Worker("http://0.0.1/worker.js");
+    log("FAIL: No exception thrown when accessing a worker from another domain.");
+} catch (error) {
+    if (error.code == 18)
+        log("PASS: Got security error.");
+    else
+        log("FAIL: Got error code " + error.code + ". Expected error code 18.");
+}
+
+try {
+    new Worker("resources/non-existent.js");
+    log("PASS: No exception throw when accessing a same-origin URL after setting document.domain.");
+} catch (error) {
+    log("FAIL: Got error code " + error.code + ".");
+}
+
+</script>
+</body>
+</html>

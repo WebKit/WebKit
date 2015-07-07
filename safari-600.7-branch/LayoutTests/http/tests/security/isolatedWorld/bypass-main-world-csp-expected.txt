@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: Refused to load the image 'http://127.0.0.1:8000/security/resources/abe.png' because it violates the following Content Security Policy directive: "img-src 'none'".
+
+ALERT: BLOCKED in main world
+ALERT: LOADED in isolated world
+This test ensures that scripts run in isolated worlds aren't affected by the page's content security policy. Extensions, for example, should be able to load any resource they like.
+
+

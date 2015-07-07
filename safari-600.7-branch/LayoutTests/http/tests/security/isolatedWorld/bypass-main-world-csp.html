@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="img-src 'none'">
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    tests = 2;
+    window.addEventListener("message", function(message) {
+        tests -= 1;
+        test();
+    }, false);
+
+    function test() {
+        function setImgSrc(isolated) {
+            var img = document.createElement('img');
+            document.body.appendChild(img);
+            img.onload = function () {
+                alert('LOADED in ' + (isolated ? "isolated world" : "main world"));
+                window.postMessage("next", "*");
+            };
+            img.onerror = function () {
+                alert('BLOCKED in ' + (isolated ? "isolated world" : "main world"));
+                window.postMessage("next", "*");
+            };
+            img.src = "../resources/abe.png";
+        }
+
+        switch (tests) {
+            case 2:
+                setImgSrc(false);
+                break;
+            case 1:
+                testRunner.evaluateScriptInIsolatedWorld(1, String(eval("setImgSrc")) + "\nsetImgSrc(true);");
+                break;
+            case 0:
+                testRunner.notifyDone();
+                break;
+        }
+    }
+</script>
+</head>
+<body onload='test();'>
+    <p>
+        This test ensures that scripts run in isolated worlds aren't affected
+        by the page's content security policy. Extensions, for example, should
+        be able to load any resource they like.
+    </p>
+</body>
+</html>

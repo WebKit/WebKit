@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<style>
+.flexbox {
+    width: 100px;
+    height: 100px;
+    display: -webkit-flex;
+    background-color: #aaa;
+    position: relative;
+}
+.flexbox > div {
+    height: 110px;
+    width: 60px;
+    -webkit-flex: none;
+}
+.vertical > div {
+    width: 110px;
+    height: 60px;
+}
+.flexbox :nth-child(1) {
+    background-color: blue;
+}
+.flexbox :nth-child(2) {
+    background-color: green;
+}
+.ltr {
+    direction: ltr;
+}
+.rtl {
+    direction: rtl;
+}
+.horizontal-tb {
+    -webkit-writing-mode: horizontal-tb;
+}
+.horizontal-bt {
+    -webkit-writing-mode: horizontal-bt;
+}
+.vertical-rl {
+    -webkit-writing-mode: vertical-rl;
+}
+.vertical-lr {
+    -webkit-writing-mode: vertical-lr;
+}
+.row-reverse {
+    -webkit-flex-flow: row-reverse;
+}
+.column {
+    -webkit-flex-flow: column;
+}
+.column-reverse {
+    -webkit-flex-flow: column-reverse;
+}
+</style>
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.flexbox')">
+
+<div class="flexbox" style="-webkit-align-items: center; -webkit-justify-content: center;">
+    <div data-offset-x="-10" data-offset-y="-5"></div>
+    <div data-offset-x="50" data-offset-y="-5"></div>
+</div>
+
+<div class="flexbox row-reverse" style="-webkit-align-items: center; -webkit-justify-content: center;">
+    <div data-offset-x="50" data-offset-y="-5"></div>
+    <div data-offset-x="-10" data-offset-y="-5"></div>
+</div>
+
+<div class="flexbox column vertical" style="-webkit-align-items: center; -webkit-justify-content: center;">
+    <div data-offset-x="-5" data-offset-y="-10"></div>
+    <div data-offset-x="-5" data-offset-y="50"></div>
+</div>
+
+<div class="flexbox column-reverse vertical" style="-webkit-align-items: center; -webkit-justify-content: center;">
+    <div data-offset-x="-5" data-offset-y="50"></div>
+    <div data-offset-x="-5" data-offset-y="-10"></div>
+</div>
+
+<div class="flexbox" style="-webkit-align-items: center; -webkit-justify-content: space-around;">
+    <div data-offset-x="-10" data-offset-y="-5"></div>
+    <div data-offset-x="50" data-offset-y="-5"></div>
+</div>
+
+<div class="flexbox" style="-webkit-align-items: flex-start; -webkit-justify-content: flex-start;">
+    <div data-offset-x=0 data-offset-y=0></div>
+    <div data-offset-x=60 data-offset-y=0></div>
+</div>
+
+<div class="flexbox" style="-webkit-align-items: flex-start; -webkit-justify-content: space-between;">
+    <div data-offset-x=0 data-offset-y=0></div>
+    <div data-offset-x=60 data-offset-y=0></div>
+</div>
+
+<script>
+var writingModes = ['horizontal-tb', 'horizontal-bt', 'vertical-lr', 'vertical-rl'];
+var flexFlows = ['row', 'column', 'row-reverse', 'column-reverse'];
+var directions = ['ltr', 'rtl'];
+
+var verticalFirstChildExpected = 'data-offset-x="-5" data-offset-y="-10"';
+var verticalLastChildExpected = 'data-offset-x="-5" data-offset-y="50"';
+var horizontalFirstChildExpected = 'data-offset-x="-10" data-offset-y="-5"';
+var horizontalLastChildExpected = 'data-offset-x="50" data-offset-y="-5"';
+
+writingModes.forEach(function(writingMode) {
+    flexFlows.forEach(function(flexFlow) {
+        directions.forEach(function(direction) {
+            var flexboxClassName = writingMode + ' ' + direction + ' ' + flexFlow;
+
+            var title = document.createElement('div');
+            title.className = 'title';
+            title.innerHTML = flexboxClassName;
+            document.body.appendChild(title);
+
+            var isColumn = flexFlow.indexOf('column') != -1;
+            var isHorizontal = (writingMode.indexOf('horizontal') != -1) ? !isColumn : isColumn;
+            if (!isHorizontal)
+                flexboxClassName += ' vertical';
+
+            var isReverse;
+            switch (flexFlow) {
+                case 'row':
+                    isReverse = direction == 'rtl';
+                    break;
+                case 'row-reverse':
+                    isReverse = direction == 'ltr';
+                    break;
+                case 'column':
+                    isReverse = writingMode == 'vertical-rl' || writingMode == 'horizontal-bt';
+                    break;
+                case 'column-reverse':
+                    isReverse = writingMode == 'vertical-lr' || writingMode == 'horizontal-tb';
+                    break;
+            }
+
+            var firstChildExpected, lastChildExpected;
+            if (isHorizontal) {
+                firstChildExpected = isReverse ? horizontalLastChildExpected : horizontalFirstChildExpected;
+                lastChildExpected = isReverse ? horizontalFirstChildExpected : horizontalLastChildExpected;
+            } else {
+                firstChildExpected = isReverse ? verticalLastChildExpected : verticalFirstChildExpected;
+                lastChildExpected = isReverse ? verticalFirstChildExpected : verticalLastChildExpected;                
+            }
+
+            var container = document.createElement('div');
+            container.innerHTML = '<div class="flexbox ' + flexboxClassName + '" style="-webkit-align-items: center; -webkit-justify-content: center;">\n' +
+                '<div ' + firstChildExpected + '></div>\n' +
+                '<div ' + lastChildExpected + '></div>\n' +
+            '</div>';
+
+            document.body.appendChild(container);
+        })
+    })
+})
+</script>
+
+</body>
+</html>

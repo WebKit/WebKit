@@ -1,0 +1,10 @@
+Test for dragging operations of <input type=range>
+
+Dragging to edge should always set the value to min/max.
+FAIL input.value should be 0. Was 128.
+FAIL input.value should be 255. Was 128.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

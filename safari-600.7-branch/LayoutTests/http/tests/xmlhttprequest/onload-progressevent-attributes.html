@@ -1,0 +1,78 @@
+<html>
+<head>
+<title>Test case for bug 120828</title>
+</head>
+<body>
+<p> Test case for <a href="https://bugs.webkit.org/show_bug.cgi?id=120828"> bug 120828</a>: Correctly set XHR loadend attributes (loaded and total).</p>
+<p> Verify that load and loadend events have their ProgressEvent attributes (loaded, total and lengthComputable) correctly set.</p>
+<p id=console></p>
+<script type="text/javascript">
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var status = "PASS";
+var total = 0;
+var loaded = 0;
+
+function onProgressEvent(e)
+{
+    if (total != e.total || loaded != e.loaded)
+        fail("Event " + e.type + " total/loaded values not matching: " 
+            + "(" + e.loaded + " / " + e.total + "), expected (" + loaded + " / " + total + ")");
+}
+
+function onUnexpectedProgressEvent(e)
+{
+    fail("unexpected ProgressEvent: " + e.type);
+}
+
+function fail(msg)
+{
+    status = "FAILED: " + msg;
+    completeTest();
+    status = "";
+}
+
+function completeTest()
+{
+    log(status);
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function test() 
+{
+    var req = new XMLHttpRequest();
+    req.onreadystatechange = function(e) {
+        if (req.readyState == req.DONE) {
+            if (this.status == 200)
+                total = loaded = req.responseText.length;
+            else
+                fail("unexpected status: " + status);
+        }
+    }
+    req.onabort = onUnexpectedProgressEvent;
+    req.onerror = onUnexpectedProgressEvent;
+    req.onload = onProgressEvent;
+    req.onloadend = function(e) {
+        onProgressEvent(e);
+        completeTest();
+    }
+
+    req.open("GET", "resources/get.txt", true); 
+    req.send();
+}
+
+function log(message)
+{
+    var consoleElt = document.getElementById("console");
+    consoleElt.innerHTML += message + "<br/>";
+}
+
+test(); 
+
+</script>
+</body>
+</html>

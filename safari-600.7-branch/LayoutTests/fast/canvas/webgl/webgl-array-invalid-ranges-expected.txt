@@ -1,0 +1,84 @@
+Verifies that out-of-range parameters for creation, slicing and setting of WebGL arrays are caught
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS Construction of Int8Array with null buffer threw exception
+PASS Construction of Int8Array with out-of-range values threw exception
+PASS Construction of Int8Array with negative out-of-range values threw exception
+Testing subarray of Int8Array
+PASS array.length is 32 / typeSize
+PASS array.subarray(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
+PASS array.subarray(4, -2147483648).length is 0
+PASS Setting Int8Array from array with out-of-range offset was caught
+PASS Setting Int8Array from fake array with invalid length was caught
+PASS Setting Int8Array from Int8Array with out-of-range offset was caught
+PASS Construction of Uint8Array with null buffer threw exception
+PASS Construction of Uint8Array with out-of-range values threw exception
+PASS Construction of Uint8Array with negative out-of-range values threw exception
+Testing subarray of Uint8Array
+PASS array.length is 32 / typeSize
+PASS array.subarray(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
+PASS array.subarray(4, -2147483648).length is 0
+PASS Setting Uint8Array from array with out-of-range offset was caught
+PASS Setting Uint8Array from fake array with invalid length was caught
+PASS Setting Uint8Array from Uint8Array with out-of-range offset was caught
+PASS Construction of Int16Array with null buffer threw exception
+PASS Construction of Int16Array with out-of-range values threw exception
+PASS Construction of Int16Array with negative out-of-range values threw exception
+PASS Construction of huge Int16Array threw exception
+Testing subarray of Int16Array
+PASS array.length is 32 / typeSize
+PASS array.subarray(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
+PASS array.subarray(4, -2147483648).length is 0
+PASS Setting Int16Array from array with out-of-range offset was caught
+PASS Setting Int16Array from fake array with invalid length was caught
+PASS Setting Int16Array from Int16Array with out-of-range offset was caught
+PASS Construction of Uint16Array with null buffer threw exception
+PASS Construction of Uint16Array with out-of-range values threw exception
+PASS Construction of Uint16Array with negative out-of-range values threw exception
+PASS Construction of huge Uint16Array threw exception
+Testing subarray of Uint16Array
+PASS array.length is 32 / typeSize
+PASS array.subarray(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
+PASS array.subarray(4, -2147483648).length is 0
+PASS Setting Uint16Array from array with out-of-range offset was caught
+PASS Setting Uint16Array from fake array with invalid length was caught
+PASS Setting Uint16Array from Uint16Array with out-of-range offset was caught
+PASS Construction of Int32Array with null buffer threw exception
+PASS Construction of Int32Array with out-of-range values threw exception
+PASS Construction of Int32Array with negative out-of-range values threw exception
+PASS Construction of huge Int32Array threw exception
+Testing subarray of Int32Array
+PASS array.length is 32 / typeSize
+PASS array.subarray(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
+PASS array.subarray(4, -2147483648).length is 0
+PASS Setting Int32Array from array with out-of-range offset was caught
+PASS Setting Int32Array from fake array with invalid length was caught
+PASS Setting Int32Array from Int32Array with out-of-range offset was caught
+PASS Construction of Uint32Array with null buffer threw exception
+PASS Construction of Uint32Array with out-of-range values threw exception
+PASS Construction of Uint32Array with negative out-of-range values threw exception
+PASS Construction of huge Uint32Array threw exception
+Testing subarray of Uint32Array
+PASS array.length is 32 / typeSize
+PASS array.subarray(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
+PASS array.subarray(4, -2147483648).length is 0
+PASS Setting Uint32Array from array with out-of-range offset was caught
+PASS Setting Uint32Array from fake array with invalid length was caught
+PASS Setting Uint32Array from Uint32Array with out-of-range offset was caught
+PASS Construction of Float32Array with null buffer threw exception
+PASS Construction of Float32Array with out-of-range values threw exception
+PASS Construction of Float32Array with negative out-of-range values threw exception
+PASS Construction of huge Float32Array threw exception
+Testing subarray of Float32Array
+PASS array.length is 32 / typeSize
+PASS array.subarray(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
+PASS array.subarray(4, -2147483648).length is 0
+PASS Setting Float32Array from array with out-of-range offset was caught
+PASS Setting Float32Array from fake array with invalid length was caught
+PASS Setting Float32Array from Float32Array with out-of-range offset was caught
+PASS isNaN(floats[0]) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

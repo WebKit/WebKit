@@ -1,0 +1,50 @@
+<html>
+<head>
+    <script src=media-file.js></script>
+    <script>
+    var video;
+
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    function finish()
+    {
+        video.removeEventListener("seeked", finish);
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+
+    function playing()
+    {
+        video.removeEventListener("playing", playing);
+
+        // Ensure that the frame is always the same in pixel result.
+        video.addEventListener("seeked", finish);
+        video.pause();
+        video.currentTime = 0;
+    }
+
+    function canplaythrough()
+    {
+        video.removeEventListener("canplaythrough", canplaythrough);
+
+        video.src = findMediaFile("video", "content/test");
+        video.addEventListener("playing", playing);
+        video.play();
+    }
+
+    function test()
+    {
+        video = document.getElementsByTagName('video')[0];
+        video.addEventListener("canplaythrough", canplaythrough);
+        
+        video.src = findMediaFile("video", "content/counting");
+    }
+    </script>
+</head>
+<body onload="test()">
+<p>Making sure the controller looks ok after a second load().</p>
+<video controls></video>
+</body>
+</html>

@@ -1,0 +1,4 @@
+Tests that console.trace dumps stack trace with source URLs and line numbers.
+
+console.trace() console-trace.html:9b console-trace.html:9a console-trace.html:14
+

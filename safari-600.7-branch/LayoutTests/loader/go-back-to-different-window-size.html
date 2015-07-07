@@ -1,0 +1,43 @@
+<html>
+<script>
+
+// Navigation steps:
+// 1- loads this page
+// 2- resizes the window to (300, 300)
+// 3- loads a data URL that resizes the window to (1000, 1000) and navigates back
+// 4- loads this page which will restore the timer to check the window width to make sure it's > 300
+function verifyWindowSizeAfterNavigateBackToCachedPage() {
+    document.body.innerHTML = (window.innerWidth > 300) ? 'PASS' : 'FAIL';    
+    if (window.testRunner)
+      testRunner.notifyDone();
+}
+
+function navigateAwayAndBack() {
+    // Assigning to location does not create a history entry, so
+    // instead we simulate a link click.
+    var evt = document.createEvent("MouseEvents"); 
+    evt.initMouseEvent("click", true, true, window,
+      0, 0, 0, 0, 0, false, false, false, false, 0, null); 
+    document.getElementById('anchor').dispatchEvent(evt);
+    // Wait a long while so the verification is done after we have navigated back to the cached version of this page.
+    // This test makes use of the behavior where timers are restored on a cached page.
+    // We don't need to depend on this long timer when pageshow event is implemented for b/f cache (<rdar://problem/6440869>).
+    window.setTimeout("verifyWindowSizeAfterNavigateBackToCachedPage()", 1000);
+}
+
+function runTestStep() {
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+      testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    }
+    window.resizeTo(300, 300);
+    // Wait a bit before navigating away to make sure we have done layout due to the resizing.
+    window.setTimeout("navigateAwayAndBack()", 200);
+}
+
+</script>
+<body onload='runTestStep()' style="background: yellow">
+  <a id='anchor' href='data:text/html,<body onload="window.resizeTo(1000, 1000); history.back()"></body>'>go away, resize window, and come back</a>
+</body>
+</html>

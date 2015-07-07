@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            .region
+            {
+                -webkit-flow-from: no-flow;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Tests that changing a region element into a normal element makes the element's content available.</p>
+        <div class="region">
+            <div id="region_content">This text should be visible when the element is no longer a region.</div>
+        </div>
+        <script>
+            if (window.testRunner)
+                testRunner.dumpAsText();
+            var region = document.getElementsByClassName("region")[0];
+            // The element is a region without a connected flow, its content is not available.
+            var pass = region.innerText.length == 0;
+            // The element becomes a normal element, its content becomes available.
+            region.className = "";
+            pass &= region.innerText.length != 0;
+            document.write("<p>" + pass ? "PASS" : "FAIL" + "</p>");
+        </script>
+    </body>
+</html>

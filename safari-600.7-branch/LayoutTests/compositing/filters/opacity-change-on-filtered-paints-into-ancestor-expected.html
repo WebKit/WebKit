@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .container {
+            overflow: hidden;
+            position: absolute;
+            z-index: 1;
+            border: 1px solid black;
+        }
+        
+        .composited {
+          -webkit-transform: translateZ(0);
+        }
+        
+        .box {
+          width: 100px;
+          height: 100px;
+          margin: 10px;
+          background-color: blue;
+        }
+        
+        .filtered {
+            -webkit-filter: blur(2px);
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="filtered box"></div>
+        <div class="composited box"></div>
+    </div>
+</body>
+</html>

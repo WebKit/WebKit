@@ -1,0 +1,12 @@
+PASS endsWith(document.querySelector('base').href, 'foo/bar/') is true
+PASS endsWith(document.querySelector('base').href, 'foo/bar/foo/bar/') is false
+PASS document.querySelector('base').hasAttribute('href') is false
+PASS endsWith(document.querySelector('base').href, '/href-attribute-resolves-with-respect-to-document.html') is true
+PASS documentWithoutAView.querySelector('base').href is ""
+PASS documentWithoutAView.querySelector('base').href is "http://webkit.org/"
+PASS iframe.contentDocument.querySelector('base').href is ""
+PASS newWindow.document.querySelector('base').href is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

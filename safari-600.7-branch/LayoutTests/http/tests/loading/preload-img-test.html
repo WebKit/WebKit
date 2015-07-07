@@ -1,0 +1,56 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <script>
+  function CallCommand(cmd)
+  {
+       try {
+           var req = new XMLHttpRequest;
+           req.open("GET", "/resources/network-simulator.php?command=" + cmd, false);
+           req.send(null);
+           return req.responseText;
+       } catch (ex) {
+           return "";
+       }
+   }
+   
+   function test()
+   {
+       if (window.testRunner) {
+           testRunner.waitUntilDone();
+           testRunner.dumpAsText();
+       }
+   }
+
+   function checkAccessCount()
+   {
+       // Get the access count of resource:/loading/resources/preload-test.jpg. Should be 1.
+       var count = CallCommand("get-resource-count&path=/loading/resources/preload-test.jpg");
+       count = parseInt(count, 10);
+       if (count == 1)
+           checkNotifyDone();
+       else
+           img_error();
+   }
+
+   function img_error()
+   {
+       document.getElementById("outputPanel").innerHTML = "FAILED";
+       checkNotifyDone();
+   }
+
+   function checkNotifyDone() {
+       if (window.testRunner)
+           testRunner.notifyDone();
+   }
+   // Reset resource count   
+   CallCommand("reset-resource-count");
+  </script>
+  <script type="text/javascript" src="./resources/empty.js"></script>
+</head>
+<body onload="test()">
+  <img id ="test_image" src="/resources/network-simulator.php?command=increase-resource-count&path=/loading/resources/preload-test.jpg" onerror="img_error()" onload="setTimeout(checkAccessCount, 3000)">
+  <p>This test is to test whether preload image will require 2 more requests or not.</p>
+  <span id="outputPanel">PASSED</span>
+</body>
+</html>

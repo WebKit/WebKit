@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+ <style>
+    #content {
+        -webkit-flow-into: flow1;
+    }
+    
+    #first-box {
+        margin:50px 10% 0 10%;
+        position:relative;
+        height:400px;
+    }
+    
+    #region1, #region2 {
+        -webkit-flow-from: flow1;
+    }
+
+    #region1 {
+        width: 500px;
+        height: 50px;
+    }
+    
+    #region2 {
+        width: 320px;
+        height: 400px;
+    }
+    
+    .square {
+        width:31.25%;
+        height:20%;
+        position:absolute;
+    }
+    
+    .red { width:80px; height:80px; position:absolute; background-color:red; z-index:-1 }
+
+    #topleft { top:0; left:0; -webkit-writing-mode:vertical-rl; background-color:#00ff00;}
+    #topright { top:0; right:0; -webkit-writing-mode:horizontal-bt; background-color:#00dd00;}
+    #bottomleft { bottom:0; left:0; -webkit-writing-mode:vertical-lr; background-color:#00bb00;  }
+    #bottomright { bottom:0; right:0px; -webkit-writing-mode:horizontal-tb; background-color:#009900;}
+</style>
+</head>
+
+<body>
+You should see four 80x80 green squares below and no red should be visible.
+
+<div style="position:relative; width:550px;">
+
+<div id="content">
+    <div id="first-box">
+        <div class="square" id="topleft"></div>
+        <div class="square" id="topright"></div>
+        <div class="square" id="bottomleft"></div>
+        <div class="square" id="bottomright"></div>
+    </div>
+</div>
+
+<div id="container">
+    <div id="region1"></div>
+    <div id="region2"></div>
+    <div id="region3"></div>
+</div>
+
+<div class=red style="top:50px;left:32px;"></div>
+
+<div class=red style="top:370px;left:32px;"></div>
+
+<div class=red style="top:50px;right:262px;"></div>
+
+<div class=red style="top:370px;right:262px;"></div>
+</div>
+

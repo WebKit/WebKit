@@ -1,0 +1,13 @@
+Tests for language-specific results and language inheritance in speech buttons.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.getElementById("speechInputNone").value is "error: no result found for language ''"
+PASS document.getElementById("speechInputElement").value is "Pictures of the moon"
+PASS document.getElementById("speechInputInherited").value is "月の写真"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 
+

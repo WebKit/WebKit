@@ -1,0 +1,4 @@
+We should be able to delete the br and then the image.
+| <br>
+| "This is a line of text.
+"

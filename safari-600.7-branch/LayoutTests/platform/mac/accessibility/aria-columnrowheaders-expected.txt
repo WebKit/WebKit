@@ -1,0 +1,176 @@
+Placeholder content header 2 header 3
+obj1 obj2 obj3
+obj1 obj2 obj3
+This tests that ARIA rowheader and columnheader roles are identified correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+AXRole: AXCell
+AXSubrole: (null)
+AXRoleDescription: cell
+AXChildren: 
+AXHelp: 
+AXParent: 
+AXSize: NSSize: {124, 18}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: 
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: 
+AXEndTextMarker: 
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: 
+AXLanguage: 
+AXDOMIdentifier: test
+AXDOMClassList: 
+AXRowIndexRange: NSRange: {0, 1}
+AXColumnIndexRange: NSRange: {0, 1}
+AXColumnHeaderUIElements: 
+AXRowHeaderUIElements: 
+AXElementBusy: 0
+AXRequired: 0
+
+------------
+AXRole: AXCell
+AXSubrole: (null)
+AXRoleDescription: cell
+AXChildren: 
+AXHelp: 
+AXParent: 
+AXSize: NSSize: {54, 18}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: 
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: 
+AXEndTextMarker: 
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: 
+AXLanguage: 
+AXDOMIdentifier: 
+AXDOMClassList: 
+AXRowIndexRange: NSRange: {0, 1}
+AXColumnIndexRange: NSRange: {1, 1}
+AXColumnHeaderUIElements: 
+AXRowHeaderUIElements: 
+AXElementBusy: 0
+AXRequired: 0
+
+------------
+AXRole: AXCell
+AXSubrole: (null)
+AXRoleDescription: cell
+AXChildren: 
+AXHelp: 
+AXParent: 
+AXSize: NSSize: {54, 18}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: 
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: 
+AXEndTextMarker: 
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: 
+AXLanguage: 
+AXDOMIdentifier: 
+AXDOMClassList: 
+AXRowIndexRange: NSRange: {0, 1}
+AXColumnIndexRange: NSRange: {2, 1}
+AXColumnHeaderUIElements: 
+AXRowHeaderUIElements: 
+AXElementBusy: 0
+AXRequired: 0
+
+------------
+
+
+
+AXRole: AXCell
+AXSubrole: (null)
+AXRoleDescription: cell
+AXChildren: 
+AXHelp: 
+AXParent: 
+AXSize: NSSize: {28, 18}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: 
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: 
+AXEndTextMarker: 
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: 
+AXLanguage: 
+AXDOMIdentifier: obj1
+AXDOMClassList: 
+AXRowIndexRange: NSRange: {1, 1}
+AXColumnIndexRange: NSRange: {0, 1}
+AXColumnHeaderUIElements: 
+AXRowHeaderUIElements: 
+AXElementBusy: 0
+AXRequired: 0
+
+------------
+AXRole: AXCell
+AXSubrole: (null)
+AXRoleDescription: cell
+AXChildren: 
+AXHelp: 
+AXParent: 
+AXSize: NSSize: {28, 18}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: 
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: 
+AXEndTextMarker: 
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXTopLevelUIElement: 
+AXLanguage: 
+AXDOMIdentifier: 
+AXDOMClassList: 
+AXRowIndexRange: NSRange: {2, 1}
+AXColumnIndexRange: NSRange: {0, 1}
+AXColumnHeaderUIElements: 
+AXRowHeaderUIElements: 
+AXElementBusy: 0
+AXRequired: 0
+
+------------
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

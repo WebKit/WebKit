@@ -1,0 +1,19 @@
+1
+1
+1
+
+
+This test makes sure that a checkbox (ARIA or otherwise) returns its status through accessibilityValue
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS accessibilityController.focusedElement.iphoneValue is 'AXValue: 0'
+PASS accessibilityController.focusedElement.iphoneValue is 'AXValue: 1'
+PASS accessibilityController.focusedElement.iphoneValue is 'AXValue: 2'
+PASS accessibilityController.focusedElement.iphoneValue is 'AXValue: 1'
+PASS accessibilityController.focusedElement.iphoneValue is 'AXValue: 0'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

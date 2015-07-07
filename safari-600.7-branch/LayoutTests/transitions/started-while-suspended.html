@@ -1,0 +1,100 @@
+<title>Test that new transitions do not run while we are suspended</title>
+<style>
+#box {
+    position: relative;
+    left: 0px;
+    height: 100px;
+    width: 100px;
+    background-color: blue;
+    -webkit-transition: left 0.1s;
+}
+</style>
+<script>
+var box;
+
+function suspend()
+{
+    if (window.internals)
+        internals.suspendAnimations();
+}
+
+function resume()
+{
+    if (window.internals)
+        internals.resumeAnimations();
+}
+
+function transitionEnded(event)
+{
+    log("Transition ended on element with id: " + event.target.id);
+}
+
+function suspendAndContinue()
+{
+    log("*** Suspending Animations/Transitions");
+    suspend();
+    setTimeout(function() {
+        if (window.internals)
+            log("Transitions should be suspended: " + (window.internals.animationsAreSuspended() ? "PASS" : "FAIL"));
+        log("*** Setting left property to 200px. We should NOT see transition events.")
+        box.style.left = "200px";
+        setTimeout(function() {
+            endTest();
+        }, 200);
+    }, 100);
+}
+
+function resumeAndContinue()
+{
+}
+
+function endTest()
+{
+    log("*** Resuming Animations/Transitions");
+    resume();
+    if (window.internals)
+        log("Transitions should not be suspended: " + (window.internals.animationsAreSuspended() ? "FAIL" : "PASS"));
+
+    resume(); // Just in case.
+    log("*** Test finished");
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function startTest()
+{
+    log("*** Starting test.")
+
+    box = document.getElementById("box");
+    document.addEventListener("webkitTransitionEnd", transitionEnded, false);
+
+    if (window.internals)
+        log("Transitions should not be suspended: " + (window.internals.animationsAreSuspended() ? "FAIL" : "PASS"));
+
+    setTimeout(function() {
+        log("*** Setting left property to 100px. We should see transition events.")
+        box.style.left = "100px";
+        setTimeout(function() {
+            suspendAndContinue();
+        }, 200);
+    }, 50);
+}
+
+function log(message)
+{
+    var results = document.getElementById("results");
+    results.innerHTML = results.innerHTML + message + "<br>";
+}
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+window.addEventListener("load", startTest, false);
+
+</script>
+<p>This test sets the left property on the box below. It will only have reproducible output when run in the test system</p>
+<div id="box"></div>
+<div id="results">
+</div>

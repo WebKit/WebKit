@@ -1,0 +1,63 @@
+<html>
+<script src="../../../resources/js-test-pre.js"></script>
+<body>
+<iframe style="position:absolute; top:100px; left:100px;" src="./resources/emulated-touch-iframe2.html"></iframe>
+<p>Test touchend events are emulated in iframes correctly.</p>
+<div id="console"></div>
+<script type="text/javascript">
+
+var touchstartCount = 0;
+var touchmoveCount = 0;
+var EXPECTED_TOUCHSTART_COUNT = 1;
+var EXPECTED_TOUCHMOVE_COUNT = 1;
+var shouldBail;
+
+function testComplete()
+{
+    if (shouldBail)
+        return;
+
+    if (touchstartCount > EXPECTED_TOUCHSTART_COUNT) {
+        debug("touchstart fired for the top frame, too, but should only fire for the iframe!");
+        shouldBail = true;
+    }
+
+    if (!touchmoveCount)
+        debug("touchmove not fired for the iframe!");
+    else if (touchmoveCount > EXPECTED_TOUCHMOVE_COUNT)
+        debug("touchmove fired too many times!");
+
+    debug("touchend (test will time out if broken)");
+    window.internals.settings.setTouchEventEmulationEnabled(false);
+    window.testRunner.notifyDone();
+}
+
+function handleTouchmove()
+{
+    ++touchmoveCount;
+}
+
+function handleTouchstart()
+{
+    ++touchstartCount;
+}
+
+function runTest() {
+    if (window.eventSender && window.internals && window.internals.settings) {
+        window.eventSender.dragMode = false;
+        window.internals.settings.setTouchEventEmulationEnabled(true);
+
+        eventSender.mouseMoveTo(110, 110);
+        eventSender.mouseDown(0);
+        eventSender.mouseMoveTo(120, 130);
+        eventSender.mouseUp(0);
+    } else
+       debug('This test requires DRT.');
+}
+
+if (window.testRunner)
+    window.testRunner.waitUntilDone();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+
+This tests pageX and pageY coordinates on touch events and touches.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Mouse event: mousedown
+PASS lastEvent.pageX is 12
+PASS lastEvent.pageY is 15
+PASS lastEvent.screenX is 22
+PASS lastEvent.screenY is 25
+PASS lastEvent.clientX is 12
+PASS lastEvent.clientY is 15
+PASS lastEvent.type is "touchstart"
+PASS lastEvent.touches.length is 1
+PASS lastEvent.changedTouches.length is 1
+PASS lastEvent.targetTouches.length is 1
+PASS lastEvent.touches[0].target.id is "touchtarget"
+PASS lastEvent.touches[0].pageX is 12
+PASS lastEvent.touches[0].pageY is 15
+PASS lastEvent.touches[0].clientX is 12
+PASS lastEvent.touches[0].clientY is 15
+PASS lastEvent.touches[0].screenX is 22
+PASS lastEvent.touches[0].screenY is 25
+PASS lastEvent.pageX is 12
+PASS lastEvent.pageY is 15
+PASS lastEvent.type is "touchend"
+PASS lastEvent.touches.length is 0
+PASS lastEvent.changedTouches.length is 1
+PASS lastEvent.targetTouches.length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

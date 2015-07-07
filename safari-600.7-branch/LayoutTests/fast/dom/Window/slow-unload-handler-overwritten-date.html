@@ -1,0 +1,33 @@
+<html>
+<head>
+<script>
+
+if (testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+function done()
+{
+    document.getElementById("results").appendChild(document.createTextNode("PASS"));
+    if (testRunner)
+        testRunner.notifyDone();
+}
+
+function loaded() {
+    setTimeout("done()", 0);
+    document.getElementById("theiframe").outerHTML='';
+} 
+
+</script>
+</head>
+<body onload="setTimeout('loaded();', 0)">
+<p>
+    This is a test for <a href="https://bugs.webkit.org/show_bug.cgi?id=48621">bug 48621</a>:
+    <i>The V8 date extension cannot handle if Date is overwritten with non-Object.</i>
+    Succeeds if it does not crash.
+</p>
+<p id="results" class="pass"></p>
+<iframe id="theiframe" style="border: 0" src="resources/slow-unload-handler-overwritten-date1.html">
+</body>
+</html>

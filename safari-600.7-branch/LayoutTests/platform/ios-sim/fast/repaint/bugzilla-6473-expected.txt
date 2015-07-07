@@ -1,0 +1,36 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x172
+  RenderBlock {HTML} at (0,0) size 800x172
+    RenderBody {BODY} at (8,16) size 784x140
+      RenderBlock {P} at (0,0) size 784x20
+        RenderInline {B} at (0,0) size 63x19
+          RenderText {#text} at (0,0) size 63x19
+            text run at (0,0) width 63: "BUG ID:"
+        RenderText {#text} at (63,0) size 4x19
+          text run at (63,0) width 4: " "
+        RenderInline {A} at (0,0) size 119x19 [color=#0000EE]
+          RenderText {#text} at (67,0) size 119x19
+            text run at (67,0) width 119: "Bugzilla bug 6473"
+        RenderText {#text} at (186,0) size 489x19
+          text run at (186,0) width 489: " REGRESSION: Serious painting problems on new iLife and iWorks pages"
+      RenderBlock {P} at (0,36) size 784x26 [bgcolor=#98FB98]
+        RenderInline {B} at (0,0) size 90x19
+          RenderText {#text} at (3,3) size 90x19
+            text run at (3,3) width 90: "TEST PASS:"
+        RenderText {#text} at (93,3) size 441x19
+          text run at (93,3) width 4: " "
+          text run at (97,3) width 437: "A green rectangle containing the word SUCCESS will show below."
+      RenderBlock {P} at (0,78) size 784x26 [bgcolor=#FF3300]
+        RenderInline {B} at (0,0) size 89x19
+          RenderText {#text} at (3,3) size 89x19
+            text run at (3,3) width 89: "TEST FAIL:"
+        RenderText {#text} at (92,3) size 259x19
+          text run at (92,3) width 4: " "
+          text run at (96,3) width 255: "A green rectangle will not show below."
+      RenderBlock {DIV} at (0,120) size 784x20
+        RenderBlock {DIV} at (0,0) size 784x20
+layer at (8,136) size 784x20
+  RenderBlock (relative positioned) {P} at (0,0) size 784x20 [bgcolor=#00FF00]
+    RenderText {#text} at (0,0) size 70x19
+      text run at (0,0) width 70: "SUCCESS"

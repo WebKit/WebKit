@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 4: The XSS Auditor refused to execute a script in 'http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?clutter=,&q=%3cimg%20src=x%20onerror=%22[]&q2=alert(1)%22%3c' because its source code was found within the request. The auditor was enabled as the server sent neither an 'X-XSS-Protection' nor 'Content-Security-Policy' header.
+
+Test that the XSSAuditor catches the specific case where the IIS webserver resovles multiply occuring query parameters by concatenating them before passing the result to the application. Conceptually, its as if ?a=1&a=2 becomes ?a=1,2. The test passes if the XSSAuditor logs console messages and no alerts fire.

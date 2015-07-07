@@ -1,0 +1,35 @@
+<html>
+    <head>
+        <style type="text/css">
+            .region {
+                border:solid 1px red;
+            }
+            .redirectRegion {
+                border: solid 1px blue;
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+            .redirectRegion2 {
+                border:solid 1px green;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="region">PASS r0: content that goes in the region.</div>
+        <div class="redirectRegion">
+            <div>PASS r1: content in the region that has flow-into. 1.</div>
+            <div>PASS r1: (enclosed in a div) content in the region that has flow-into. 2. 
+                <b><br/>PASS r1: (b enclosed in the div above) content in the region that has flow-into. 3.</b>
+            </div>
+            <div>PASS r1: (enclosed in a div) content in the region that has flow-into. 4.</div>
+            <div>PASS r1: content in the region that has flow-into. 5.</div>
+            <svg class="redirectContent" xmlns="http://www.w3.org/2000/svg" version="1.1" height="70">
+                <text x="0" y="15">PASS: SVG text</text>
+                <text x="0" y="30">PASS: SVG text redirected to a flow without regions. only svg root elements are directly collected by a render flow thread.</text>
+                <text x="0" y="45">PASS: SVG text redirected to a flow with regions. only svg root elements are directly collected by a render flow thread.</text>
+            </svg>
+        </div>
+        <div class="redirectRegion2"><span>PASS r2: content that is already in a flow goes to another flow .</span></div>
+        <p><a href="https://bugs.webkit.org/show_bug.cgi?id=74144">Bug 74144</a> - [CSS Regions] Elements in a region should be assignable to a named flow</p>
+    </body>
+</html>

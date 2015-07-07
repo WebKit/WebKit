@@ -1,0 +1,10 @@
+Clicking middle of input type=range with padding should set the value to middle.
+
+FAIL input_ltr.value should be 25. Was 0.
+FAIL input_rtl.value should be 25. Was 0.
+FAIL input_vertical_ltr.value should be 25. Was 0.
+FAIL input_vertical_rtl.value should be 25. Was 0.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+   

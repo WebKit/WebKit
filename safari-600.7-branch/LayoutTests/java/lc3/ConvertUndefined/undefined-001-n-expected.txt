@@ -1,0 +1,7 @@
+LiveConnect 3.0 JavaScript to Java Data Type Conversion Preferred argument conversion:  undefined
+
+FAIL TEST_CLASS.ambiguous( void 0 ) should throw an exception. Was OBJECT.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

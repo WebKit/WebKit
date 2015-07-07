@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="forceStyleRecalc();repaintTest();">
+  <g style="-webkit-transform: translate(50px, 50px);">
+    <rect width="100" height="100" fill="green"/>
+  </g>
+
+  <g style="-webkit-transform: translate(250px, 35px) rotate(45deg);">
+    <rect width="100" height="100" fill="green"/>
+  </g>
+
+  <g style="-webkit-transform: translate(300px, 35px) skewX(35deg) skewY(35deg);">
+    <rect width="100" height="100" fill="green"/>
+  </g>
+
+  <g style="-webkit-transform: translate(50px, 250px) skewX(35deg);">
+    <rect width="100" height="100" fill="green"/>
+  </g>
+
+  <g style="-webkit-transform: translate(350px, 235px) skewY(35deg);">
+    <rect width="100" height="100" fill="green"/>
+  </g>
+
+  <defs>
+    <script>var zoomCount = 2;</script>
+    <script xlink:href="../../../fast/repaint/resources/text-based-repaint.js"/>
+    <script xlink:href="../resources/testPageZoom.js"/>
+  </defs>  
+</svg>

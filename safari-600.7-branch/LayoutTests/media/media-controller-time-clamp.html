@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+
+        <script>
+        var controller;
+        var video;
+
+        function start() {
+            video = document.getElementById('video');
+            run('controller = video.controller');
+            controller.addEventListener('canplaythrough', canplaythrough, true);
+            var src = findMediaFile('video', 'content/test');
+            video.src = src;
+        }
+        
+        function canplaythrough() {
+            consoleWrite("EVENT(canplaythrough)");
+            controller.removeEventListener('canplaythrough', canplaythrough, true);
+            controller.addEventListener('ended', ended, true);
+            // 0.05 is greater than one frame of this 25fps video.
+            run('controller.currentTime = controller.duration - 0.05');
+            run('video.play()');
+            run('controller.play()');
+        }
+        
+        function ended() { 
+            consoleWrite("EVENT(ended)");
+            testExpected("controller.currentTime <= controller.duration", true);
+            endTest();
+        }
+        </script>
+    </head>
+    <body onload="start()">
+        <video id="video" mediaGroup="group" controls></video>
+    </body>
+</html>

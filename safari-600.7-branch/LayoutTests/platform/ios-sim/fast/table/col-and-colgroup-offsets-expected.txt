@@ -1,0 +1,93 @@
+This test checks that offset{Left, Top, Width, Height} work for table columns and column groups.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+When borderCollapse == "separate"
+
+Tests for offsetLeft:
+PASS document.getElementById("productNo").parentNode.offsetLeft is document.getElementById("row1Cell1").offsetLeft
+PASS document.getElementById("productNo").offsetLeft is document.getElementById("row1Cell1").offsetLeft
+PASS document.getElementById("productName").offsetLeft is document.getElementById("row1Cell2").offsetLeft
+PASS document.getElementById("hasMAndHasNAndHasO").offsetLeft is document.getElementById("row1Cell3").offsetLeft
+PASS document.getElementById("hasMAndHasN").offsetLeft is document.getElementById("row1Cell3").offsetLeft
+PASS document.getElementById("hasO").offsetLeft is document.getElementById("row1Cell5").offsetLeft
+PASS document.getElementById("hasP").offsetLeft is document.getElementById("row1Cell6").offsetLeft
+PASS document.getElementById("columnThatShouldNotBeRendered").offsetLeft is 0
+
+Tests for offsetTop:
+FAIL document.getElementById("productNo").parentNode.offsetTop should be 26. Was 22.
+FAIL document.getElementById("productNo").offsetTop should be 26. Was 22.
+FAIL document.getElementById("productName").offsetTop should be 26. Was 22.
+FAIL document.getElementById("hasMAndHasNAndHasO").offsetTop should be 26. Was 22.
+FAIL document.getElementById("hasMAndHasN").offsetTop should be 26. Was 22.
+FAIL document.getElementById("hasO").offsetTop should be 26. Was 22.
+FAIL document.getElementById("hasP").offsetTop should be 26. Was 22.
+PASS document.getElementById("columnThatShouldNotBeRendered").offsetTop is 0
+
+Tests for offsetWidth:
+PASS document.getElementById("productNo").parentNode.offsetWidth is 185
+PASS document.getElementById("productNo").offsetWidth is 89
+PASS document.getElementById("productName").offsetWidth is 92
+PASS document.getElementById("hasMAndHasNAndHasO").offsetWidth is 159
+PASS document.getElementById("hasMAndHasN").offsetWidth is 105
+PASS document.getElementById("hasO").offsetWidth is 50
+PASS document.getElementById("hasP").offsetWidth is 47
+PASS document.getElementById("columnThatShouldNotBeRendered").offsetWidth is 0
+
+Tests for offsetHeight:
+FAIL document.getElementById("productNo").parentNode.offsetHeight should be 125. Was 133.
+FAIL document.getElementById("productNo").offsetHeight should be 125. Was 133.
+FAIL document.getElementById("productName").offsetHeight should be 125. Was 133.
+FAIL document.getElementById("hasMAndHasNAndHasO").offsetHeight should be 125. Was 133.
+FAIL document.getElementById("hasMAndHasN").offsetHeight should be 125. Was 133.
+FAIL document.getElementById("hasO").offsetHeight should be 125. Was 133.
+FAIL document.getElementById("hasP").offsetHeight should be 125. Was 133.
+PASS document.getElementById("columnThatShouldNotBeRendered").offsetHeight is 0
+
+When borderCollapse == "collapse"
+
+Tests for offsetLeft:
+PASS document.getElementById("productNo").parentNode.offsetLeft is document.getElementById("row1Cell1").offsetLeft
+PASS document.getElementById("productNo").offsetLeft is document.getElementById("row1Cell1").offsetLeft
+PASS document.getElementById("productName").offsetLeft is document.getElementById("row1Cell2").offsetLeft
+PASS document.getElementById("hasMAndHasNAndHasO").offsetLeft is document.getElementById("row1Cell3").offsetLeft
+PASS document.getElementById("hasMAndHasN").offsetLeft is document.getElementById("row1Cell3").offsetLeft
+PASS document.getElementById("hasO").offsetLeft is document.getElementById("row1Cell5").offsetLeft
+PASS document.getElementById("hasP").offsetLeft is document.getElementById("row1Cell6").offsetLeft
+PASS document.getElementById("columnThatShouldNotBeRendered").offsetLeft is 0
+
+Tests for offsetTop:
+PASS document.getElementById("productNo").parentNode.offsetTop is 21
+PASS document.getElementById("productNo").offsetTop is 21
+PASS document.getElementById("productName").offsetTop is 21
+PASS document.getElementById("hasMAndHasNAndHasO").offsetTop is 21
+PASS document.getElementById("hasMAndHasN").offsetTop is 21
+PASS document.getElementById("hasO").offsetTop is 21
+PASS document.getElementById("hasP").offsetTop is 21
+PASS document.getElementById("columnThatShouldNotBeRendered").offsetTop is 0
+
+Tests for offsetWidth:
+PASS document.getElementById("productNo").parentNode.offsetWidth is 177
+PASS document.getElementById("productNo").offsetWidth is 87
+PASS document.getElementById("productName").offsetWidth is 90
+PASS document.getElementById("hasMAndHasNAndHasO").offsetWidth is 145
+PASS document.getElementById("hasMAndHasN").offsetWidth is 97
+PASS document.getElementById("hasO").offsetWidth is 48
+PASS document.getElementById("hasP").offsetWidth is 45
+PASS document.getElementById("columnThatShouldNotBeRendered").offsetWidth is 0
+
+Tests for offsetHeight:
+PASS document.getElementById("productNo").parentNode.offsetHeight is 105
+PASS document.getElementById("productNo").offsetHeight is 105
+PASS document.getElementById("productName").offsetHeight is 105
+PASS document.getElementById("hasMAndHasNAndHasO").offsetHeight is 105
+PASS document.getElementById("hasMAndHasN").offsetHeight is 105
+PASS document.getElementById("hasO").offsetHeight is 105
+PASS document.getElementById("hasP").offsetHeight is 105
+PASS document.getElementById("columnThatShouldNotBeRendered").offsetHeight is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

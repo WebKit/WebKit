@@ -1,0 +1,16 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+main frame - willPerformClientRedirectToURL: resources/video-in-webarchive.webarchive 
+main frame - didFinishDocumentLoadForFrame
+main frame - didFinishLoadForFrame
+main frame - didStartProvisionalLoadForFrame
+main frame - didCancelClientRedirectForFrame
+main frame - didCommitLoadForFrame
+frame "<!--framePath //<!--frame0-->-->" - didStartProvisionalLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+frame "<!--framePath //<!--frame0-->-->" - didCommitLoadForFrame
+frame "<!--framePath //<!--frame0-->-->" - didFinishDocumentLoadForFrame
+frame "<!--framePath //<!--frame0-->-->" - didFailLoadWithError
+main frame - didFinishLoadForFrame
+frame "<!--framePath //<!--frame0-->-->" - didHandleOnloadEventsForFrame
+

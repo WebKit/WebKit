@@ -1,0 +1,37 @@
+<p>This tests to see if a mouse click inside an editable, focusable node focuses that node. Normally, we focus a node on mouse down, but to make it easier to drag selections containing editable pieces we delay focus until mouse up. The editable table cell should be focused and you should see a 'Success' message below.</p>
+<div id="div" contenteditable="true" onblur="handleBlur();"><table contenteditable="false" border="1"><tr><td>non-editable</td><td id="cell" contenteditable="true" onfocus="log('Success');">editable</td></tr></table></div>
+<div id="destination" contenteditable="true"><br></div>
+<ul id="console"></ul>
+<script>
+function log(str) {
+    var text = document.createTextNode(str);
+    var li = document.createElement("li");
+    var console = document.getElementById("console");
+    console.appendChild(li);
+    li.appendChild(text);
+}
+function handleBlur() {
+    blurred = true;
+}
+function runTest() {
+    var blurred = false;
+    if (!window.testRunner)
+        return;
+    var cell = document.getElementById("cell");
+    cell.addEventListener(handleBlur, "DOMBlurEvent");
+    var div = document.getElementById("div");
+    div.focus();
+    document.execCommand("SelectAll");
+
+    var x, y;
+    x = cell.offsetParent.offsetLeft + cell.offsetLeft + cell.offsetWidth / 2;
+    y = cell.offsetParent.offsetTop + cell.offsetTop + cell.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    if (blurred == true)
+        log("Error, focus changed too early.")
+    eventSender.mouseUp();
+}
+
+runTest();
+</script>

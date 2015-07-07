@@ -1,0 +1,11 @@
+Tests the basics of the SpeechRecognitionError interface
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 'webkitSpeechRecognitionError' in window is true
+PASS webkitSpeechRecognitionError == null is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

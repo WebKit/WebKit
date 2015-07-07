@@ -1,0 +1,63 @@
+<p>Tests that redirects between origins are never allowed, even when access control is involved.</p>
+<p>Per the spec, these test cases should be allowed, but cross-origin redirects are currently unsupported in WebCore.</p>
+
+<pre id="console"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(message)
+{
+    document.getElementById('console').appendChild(document.createTextNode(message + '\n'));
+}
+
+function runTest(url, expectSyncSuccess, expectAsyncSuccess)
+{
+    log("Testing " + url + " (sync)");
+    log("Expecting success: " + expectSyncSuccess);
+
+    var req = new XMLHttpRequest();
+    req.open("GET", url, false);
+
+    try {
+        req.send(null);
+        log((expectSyncSuccess ? "PASS" : "FAIL") + ": " + req.responseText);
+    } catch (ex) {
+        log((expectSyncSuccess ? "FAIL" : "PASS") + ": " + ex);
+    }
+    
+    log("Testing " + url + "(async)");
+    log("Expecting success: " + expectAsyncSuccess);
+
+    req = new XMLHttpRequest();
+    req.open("GET", url, true);
+    req.onload = function() {
+        log((expectAsyncSuccess ? "PASS" : "FAIL") + ": " + req.responseText);
+        nextTest();
+    }
+    req.onerror = function() {
+        log((expectAsyncSuccess ? "FAIL" : "PASS") + ": " + req.status);
+        nextTest();
+    }
+    req.send(null);
+}
+
+var tests = [
+    ["/resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi", false, false],
+    ["http://localhost:8000/resources/redirect.php?url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-basic-allow.cgi", false, false],
+    ["http://localhost:8000/resources/redirect.php?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi", false, false]
+]
+
+var currentTest = 0;
+
+function nextTest() {
+    if (currentTest < tests.length)
+        runTest.apply(null, tests[currentTest++]);
+    else if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+nextTest();
+</script>

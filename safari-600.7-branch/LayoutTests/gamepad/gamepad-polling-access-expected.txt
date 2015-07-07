@@ -1,0 +1,19 @@
+PASS navigator.webkitGetGamepads().length is 4
+PASS navigator.webkitGetGamepads()[0] is undefined.
+PASS navigator.webkitGetGamepads()[1] is undefined.
+PASS navigator.webkitGetGamepads()[2] is undefined.
+PASS navigator.webkitGetGamepads()[3] is undefined.
+PASS navigator.webkitGetGamepads()[0] is non-null.
+PASS navigator.webkitGetGamepads()[0] is undefined.
+PASS navigator.webkitGetGamepads()[0].id is 'MockStick 3000'
+PASS navigator.webkitGetGamepads()[0].buttons.length is 2
+PASS navigator.webkitGetGamepads()[0].axes.length is 2
+PASS navigator.webkitGetGamepads()[0].buttons[0] is 1.0
+PASS navigator.webkitGetGamepads()[0].buttons[1] is 0.0
+PASS navigator.webkitGetGamepads()[0].axes.length is 2
+PASS navigator.webkitGetGamepads()[0].axes[0] is 0.5
+PASS navigator.webkitGetGamepads()[0].axes[1] is -1.0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Typical polling access to gamepads contents.

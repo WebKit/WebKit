@@ -1,0 +1,314 @@
+This test checks that text-indent parses properly the properties from CSS3 Text.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test the initial value:
+PASS computedStyle.textIndent is '0px'
+PASS computedStyle.getPropertyValue('text-indent') is '0px'
+
+Value '10em':
+PASS e.style.textIndent is '10em'
+PASS e.style.getPropertyValue('text-indent') is '10em'
+PASS computedStyle.textIndent is '100px'
+PASS computedStyle.getPropertyValue('text-indent') is '100px'
+
+Value '20ex':
+PASS e.style.textIndent is '20ex'
+PASS e.style.getPropertyValue('text-indent') is '20ex'
+PASS computedStyle.textIndent is '200px'
+PASS computedStyle.getPropertyValue('text-indent') is '200px'
+
+Value '50%':
+PASS e.style.textIndent is '50%'
+PASS e.style.getPropertyValue('text-indent') is '50%'
+PASS computedStyle.textIndent is '50%'
+PASS computedStyle.getPropertyValue('text-indent') is '50%'
+
+Value 'calc(10px + 20px)':
+PASS e.style.textIndent is 'calc(30px)'
+PASS e.style.getPropertyValue('text-indent') is 'calc(30px)'
+PASS computedStyle.textIndent is '30px'
+PASS computedStyle.getPropertyValue('text-indent') is '30px'
+
+Value '10em -webkit-each-line':
+FAIL e.style.textIndent should be 10em -webkit-each-line. Was calc(30px).
+FAIL e.style.getPropertyValue('text-indent') should be 10em -webkit-each-line. Was calc(30px).
+FAIL computedStyle.textIndent should be 100px -webkit-each-line. Was 30px.
+FAIL computedStyle.getPropertyValue('text-indent') should be 100px -webkit-each-line. Was 30px.
+
+Value '-webkit-each-line 10em':
+FAIL e.style.textIndent should be -webkit-each-line 10em. Was calc(30px).
+FAIL e.style.getPropertyValue('text-indent') should be -webkit-each-line 10em. Was calc(30px).
+FAIL computedStyle.textIndent should be 100px -webkit-each-line. Was 30px.
+FAIL computedStyle.getPropertyValue('text-indent') should be 100px -webkit-each-line. Was 30px.
+
+Value '20ex -webkit-each-line':
+FAIL e.style.textIndent should be 20ex -webkit-each-line. Was calc(30px).
+FAIL e.style.getPropertyValue('text-indent') should be 20ex -webkit-each-line. Was calc(30px).
+FAIL computedStyle.textIndent should be 200px -webkit-each-line. Was 30px.
+FAIL computedStyle.getPropertyValue('text-indent') should be 200px -webkit-each-line. Was 30px.
+
+Value '-webkit-each-line 20ex':
+FAIL e.style.textIndent should be -webkit-each-line 20ex. Was calc(30px).
+FAIL e.style.getPropertyValue('text-indent') should be -webkit-each-line 20ex. Was calc(30px).
+FAIL computedStyle.textIndent should be 200px -webkit-each-line. Was 30px.
+FAIL computedStyle.getPropertyValue('text-indent') should be 200px -webkit-each-line. Was 30px.
+
+Value '30% -webkit-each-line':
+FAIL e.style.textIndent should be 30% -webkit-each-line. Was calc(30px).
+FAIL e.style.getPropertyValue('text-indent') should be 30% -webkit-each-line. Was calc(30px).
+FAIL computedStyle.textIndent should be 30% -webkit-each-line. Was 30px.
+FAIL computedStyle.getPropertyValue('text-indent') should be 30% -webkit-each-line. Was 30px.
+
+Value '-webkit-each-line 30%':
+FAIL e.style.textIndent should be -webkit-each-line 30%. Was calc(30px).
+FAIL e.style.getPropertyValue('text-indent') should be -webkit-each-line 30%. Was calc(30px).
+FAIL computedStyle.textIndent should be 30% -webkit-each-line. Was 30px.
+FAIL computedStyle.getPropertyValue('text-indent') should be 30% -webkit-each-line. Was 30px.
+
+Value 'calc(10px + 20px) -webkit-each-line':
+FAIL e.style.textIndent should be calc(30px) -webkit-each-line. Was calc(30px).
+FAIL e.style.getPropertyValue('text-indent') should be calc(30px) -webkit-each-line. Was calc(30px).
+FAIL computedStyle.textIndent should be 30px -webkit-each-line. Was 30px.
+FAIL computedStyle.getPropertyValue('text-indent') should be 30px -webkit-each-line. Was 30px.
+
+Value '-webkit-each-line calc(10px + 20px)':
+FAIL e.style.textIndent should be -webkit-each-line calc(30px). Was calc(30px).
+FAIL e.style.getPropertyValue('text-indent') should be -webkit-each-line calc(30px). Was calc(30px).
+FAIL computedStyle.textIndent should be 30px -webkit-each-line. Was 30px.
+FAIL computedStyle.getPropertyValue('text-indent') should be 30px -webkit-each-line. Was 30px.
+
+Value '10em -webkit-hanging':
+FAIL e.style.textIndent should be 10em -webkit-hanging. Was calc(30px).
+FAIL e.style.getPropertyValue('text-indent') should be 10em -webkit-hanging. Was calc(30px).
+FAIL computedStyle.textIndent should be 100px -webkit-hanging. Was 30px.
+FAIL computedStyle.getPropertyValue('text-indent') should be 100px -webkit-hanging. Was 30px.
+
+Value '-webkit-hanging 10em':
+FAIL e.style.textIndent should be -webkit-hanging 10em. Was calc(30px).
+FAIL e.style.getPropertyValue('text-indent') should be -webkit-hanging 10em. Was calc(30px).
+FAIL computedStyle.textIndent should be 100px -webkit-hanging. Was 30px.
+FAIL computedStyle.getPropertyValue('text-indent') should be 100px -webkit-hanging. Was 30px.
+
+Value '20ex -webkit-hanging':
+FAIL e.style.textIndent should be 20ex -webkit-hanging. Was calc(30px).
+FAIL e.style.getPropertyValue('text-indent') should be 20ex -webkit-hanging. Was calc(30px).
+FAIL computedStyle.textIndent should be 200px -webkit-hanging. Was 30px.
+FAIL computedStyle.getPropertyValue('text-indent') should be 200px -webkit-hanging. Was 30px.
+
+Value '-webkit-hanging 20ex':
+FAIL e.style.textIndent should be -webkit-hanging 20ex. Was calc(30px).
+FAIL e.style.getPropertyValue('text-indent') should be -webkit-hanging 20ex. Was calc(30px).
+FAIL computedStyle.textIndent should be 200px -webkit-hanging. Was 30px.
+FAIL computedStyle.getPropertyValue('text-indent') should be 200px -webkit-hanging. Was 30px.
+
+Value '30% -webkit-hanging':
+FAIL e.style.textIndent should be 30% -webkit-hanging. Was calc(30px).
+FAIL e.style.getPropertyValue('text-indent') should be 30% -webkit-hanging. Was calc(30px).
+FAIL computedStyle.textIndent should be 30% -webkit-hanging. Was 30px.
+FAIL computedStyle.getPropertyValue('text-indent') should be 30% -webkit-hanging. Was 30px.
+
+Value '-webkit-hanging 30%':
+FAIL e.style.textIndent should be -webkit-hanging 30%. Was calc(30px).
+FAIL e.style.getPropertyValue('text-indent') should be -webkit-hanging 30%. Was calc(30px).
+FAIL computedStyle.textIndent should be 30% -webkit-hanging. Was 30px.
+FAIL computedStyle.getPropertyValue('text-indent') should be 30% -webkit-hanging. Was 30px.
+
+Value 'calc(10px + 20px) -webkit-hanging':
+FAIL e.style.textIndent should be calc(30px) -webkit-hanging. Was calc(30px).
+FAIL e.style.getPropertyValue('text-indent') should be calc(30px) -webkit-hanging. Was calc(30px).
+FAIL computedStyle.textIndent should be 30px -webkit-hanging. Was 30px.
+FAIL computedStyle.getPropertyValue('text-indent') should be 30px -webkit-hanging. Was 30px.
+
+Value '-webkit-hanging calc(10px + 20px)':
+FAIL e.style.textIndent should be -webkit-hanging calc(30px). Was calc(30px).
+FAIL e.style.getPropertyValue('text-indent') should be -webkit-hanging calc(30px). Was calc(30px).
+FAIL computedStyle.textIndent should be 30px -webkit-hanging. Was 30px.
+FAIL computedStyle.getPropertyValue('text-indent') should be 30px -webkit-hanging. Was 30px.
+
+Value '10em -webkit-each-line -webkit-hanging':
+FAIL e.style.textIndent should be 10em -webkit-each-line -webkit-hanging. Was calc(30px).
+FAIL e.style.getPropertyValue('text-indent') should be 10em -webkit-each-line -webkit-hanging. Was calc(30px).
+FAIL computedStyle.textIndent should be 100px -webkit-each-line -webkit-hanging. Was 30px.
+FAIL computedStyle.getPropertyValue('text-indent') should be 100px -webkit-each-line -webkit-hanging. Was 30px.
+
+Value '-webkit-each-line 10em -webkit-hanging':
+FAIL e.style.textIndent should be -webkit-each-line 10em -webkit-hanging. Was calc(30px).
+FAIL e.style.getPropertyValue('text-indent') should be -webkit-each-line 10em -webkit-hanging. Was calc(30px).
+FAIL computedStyle.textIndent should be 100px -webkit-each-line -webkit-hanging. Was 30px.
+FAIL computedStyle.getPropertyValue('text-indent') should be 100px -webkit-each-line -webkit-hanging. Was 30px.
+
+Value '-webkit-each-line -webkit-hanging 10em':
+FAIL e.style.textIndent should be -webkit-each-line -webkit-hanging 10em. Was calc(30px).
+FAIL e.style.getPropertyValue('text-indent') should be -webkit-each-line -webkit-hanging 10em. Was calc(30px).
+FAIL computedStyle.textIndent should be 100px -webkit-each-line -webkit-hanging. Was 30px.
+FAIL computedStyle.getPropertyValue('text-indent') should be 100px -webkit-each-line -webkit-hanging. Was 30px.
+
+Value '10em -webkit-hanging -webkit-each-line':
+FAIL e.style.textIndent should be 10em -webkit-hanging -webkit-each-line. Was calc(30px).
+FAIL e.style.getPropertyValue('text-indent') should be 10em -webkit-hanging -webkit-each-line. Was calc(30px).
+FAIL computedStyle.textIndent should be 100px -webkit-each-line -webkit-hanging. Was 30px.
+FAIL computedStyle.getPropertyValue('text-indent') should be 100px -webkit-each-line -webkit-hanging. Was 30px.
+
+Value '-webkit-hanging 10em -webkit-each-line':
+FAIL e.style.textIndent should be -webkit-hanging 10em -webkit-each-line. Was calc(30px).
+FAIL e.style.getPropertyValue('text-indent') should be -webkit-hanging 10em -webkit-each-line. Was calc(30px).
+FAIL computedStyle.textIndent should be 100px -webkit-each-line -webkit-hanging. Was 30px.
+FAIL computedStyle.getPropertyValue('text-indent') should be 100px -webkit-each-line -webkit-hanging. Was 30px.
+
+Value '-webkit-hanging -webkit-each-line 10em':
+FAIL e.style.textIndent should be -webkit-hanging -webkit-each-line 10em. Was calc(30px).
+FAIL e.style.getPropertyValue('text-indent') should be -webkit-hanging -webkit-each-line 10em. Was calc(30px).
+FAIL computedStyle.textIndent should be 100px -webkit-each-line -webkit-hanging. Was 30px.
+FAIL computedStyle.getPropertyValue('text-indent') should be 100px -webkit-each-line -webkit-hanging. Was 30px.
+
+Value '30% -webkit-each-line -webkit-hanging':
+FAIL e.style.textIndent should be 30% -webkit-each-line -webkit-hanging. Was calc(30px).
+FAIL e.style.getPropertyValue('text-indent') should be 30% -webkit-each-line -webkit-hanging. Was calc(30px).
+FAIL computedStyle.textIndent should be 30% -webkit-each-line -webkit-hanging. Was 30px.
+FAIL computedStyle.getPropertyValue('text-indent') should be 30% -webkit-each-line -webkit-hanging. Was 30px.
+
+Value '-webkit-each-line 30% -webkit-hanging':
+FAIL e.style.textIndent should be -webkit-each-line 30% -webkit-hanging. Was calc(30px).
+FAIL e.style.getPropertyValue('text-indent') should be -webkit-each-line 30% -webkit-hanging. Was calc(30px).
+FAIL computedStyle.textIndent should be 30% -webkit-each-line -webkit-hanging. Was 30px.
+FAIL computedStyle.getPropertyValue('text-indent') should be 30% -webkit-each-line -webkit-hanging. Was 30px.
+
+Value '-webkit-each-line -webkit-hanging 30%':
+FAIL e.style.textIndent should be -webkit-each-line -webkit-hanging 30%. Was calc(30px).
+FAIL e.style.getPropertyValue('text-indent') should be -webkit-each-line -webkit-hanging 30%. Was calc(30px).
+FAIL computedStyle.textIndent should be 30% -webkit-each-line -webkit-hanging. Was 30px.
+FAIL computedStyle.getPropertyValue('text-indent') should be 30% -webkit-each-line -webkit-hanging. Was 30px.
+
+Value '30% -webkit-hanging -webkit-each-line':
+FAIL e.style.textIndent should be 30% -webkit-hanging -webkit-each-line. Was calc(30px).
+FAIL e.style.getPropertyValue('text-indent') should be 30% -webkit-hanging -webkit-each-line. Was calc(30px).
+FAIL computedStyle.textIndent should be 30% -webkit-each-line -webkit-hanging. Was 30px.
+FAIL computedStyle.getPropertyValue('text-indent') should be 30% -webkit-each-line -webkit-hanging. Was 30px.
+
+Value '-webkit-hanging 30% -webkit-each-line':
+FAIL e.style.textIndent should be -webkit-hanging 30% -webkit-each-line. Was calc(30px).
+FAIL e.style.getPropertyValue('text-indent') should be -webkit-hanging 30% -webkit-each-line. Was calc(30px).
+FAIL computedStyle.textIndent should be 30% -webkit-each-line -webkit-hanging. Was 30px.
+FAIL computedStyle.getPropertyValue('text-indent') should be 30% -webkit-each-line -webkit-hanging. Was 30px.
+
+Value '-webkit-hanging -webkit-each-line 30%':
+FAIL e.style.textIndent should be -webkit-hanging -webkit-each-line 30%. Was calc(30px).
+FAIL e.style.getPropertyValue('text-indent') should be -webkit-hanging -webkit-each-line 30%. Was calc(30px).
+FAIL computedStyle.textIndent should be 30% -webkit-each-line -webkit-hanging. Was 30px.
+FAIL computedStyle.getPropertyValue('text-indent') should be 30% -webkit-each-line -webkit-hanging. Was 30px.
+
+
+Invalid value test - '10m':
+PASS e.style.textIndent is '0px'
+PASS e.style.getPropertyValue('text-indent') is '0px'
+PASS computedStyle.textIndent is '0px'
+PASS computedStyle.getPropertyValue('text-indent') is '0px'
+
+Invalid value test - '10em 10em':
+PASS e.style.textIndent is '0px'
+PASS e.style.getPropertyValue('text-indent') is '0px'
+PASS computedStyle.textIndent is '0px'
+PASS computedStyle.getPropertyValue('text-indent') is '0px'
+
+Invalid value test - '10em -webkit-line':
+PASS e.style.textIndent is '0px'
+PASS e.style.getPropertyValue('text-indent') is '0px'
+PASS computedStyle.textIndent is '0px'
+PASS computedStyle.getPropertyValue('text-indent') is '0px'
+
+Invalid value test - '10em -webkit-hang':
+PASS e.style.textIndent is '0px'
+PASS e.style.getPropertyValue('text-indent') is '0px'
+PASS computedStyle.textIndent is '0px'
+PASS computedStyle.getPropertyValue('text-indent') is '0px'
+
+Invalid value test - '10m -webkit-each-line':
+PASS e.style.textIndent is '0px'
+PASS e.style.getPropertyValue('text-indent') is '0px'
+PASS computedStyle.textIndent is '0px'
+PASS computedStyle.getPropertyValue('text-indent') is '0px'
+
+Invalid value test - '-webkit-each-line 10m':
+PASS e.style.textIndent is '0px'
+PASS e.style.getPropertyValue('text-indent') is '0px'
+PASS computedStyle.textIndent is '0px'
+PASS computedStyle.getPropertyValue('text-indent') is '0px'
+
+Invalid value test - '10m -webkit-hangning':
+PASS e.style.textIndent is '0px'
+PASS e.style.getPropertyValue('text-indent') is '0px'
+PASS computedStyle.textIndent is '0px'
+PASS computedStyle.getPropertyValue('text-indent') is '0px'
+
+Invalid value test - '-webkit-hanging 10m':
+PASS e.style.textIndent is '0px'
+PASS e.style.getPropertyValue('text-indent') is '0px'
+PASS computedStyle.textIndent is '0px'
+PASS computedStyle.getPropertyValue('text-indent') is '0px'
+
+Invalid value test - '10m -webkit-each-line -webkit-hanging':
+PASS e.style.textIndent is '0px'
+PASS e.style.getPropertyValue('text-indent') is '0px'
+PASS computedStyle.textIndent is '0px'
+PASS computedStyle.getPropertyValue('text-indent') is '0px'
+
+Invalid value test - '-webkit-each-line':
+PASS e.style.textIndent is '0px'
+PASS e.style.getPropertyValue('text-indent') is '0px'
+PASS computedStyle.textIndent is '0px'
+PASS computedStyle.getPropertyValue('text-indent') is '0px'
+
+Invalid value test - '-webkit-hanging':
+PASS e.style.textIndent is '0px'
+PASS e.style.getPropertyValue('text-indent') is '0px'
+PASS computedStyle.textIndent is '0px'
+PASS computedStyle.getPropertyValue('text-indent') is '0px'
+
+Invalid value test - 'webkit-each-line -webkit-hanging':
+PASS e.style.textIndent is '0px'
+PASS e.style.getPropertyValue('text-indent') is '0px'
+PASS computedStyle.textIndent is '0px'
+PASS computedStyle.getPropertyValue('text-indent') is '0px'
+
+Invalid value test - '10em -webkit-each-line 10em':
+PASS e.style.textIndent is '0px'
+PASS e.style.getPropertyValue('text-indent') is '0px'
+PASS computedStyle.textIndent is '0px'
+PASS computedStyle.getPropertyValue('text-indent') is '0px'
+
+Invalid value test - '10em -webkit-hanging 10em':
+PASS e.style.textIndent is '0px'
+PASS e.style.getPropertyValue('text-indent') is '0px'
+PASS computedStyle.textIndent is '0px'
+PASS computedStyle.getPropertyValue('text-indent') is '0px'
+
+Invalid value test - '-webkit-each-line 10em -webkit-each-line':
+PASS e.style.textIndent is '0px'
+PASS e.style.getPropertyValue('text-indent') is '0px'
+PASS computedStyle.textIndent is '0px'
+PASS computedStyle.getPropertyValue('text-indent') is '0px'
+
+Invalid value test - '-webkit-hanging 10em -webkit-hanging':
+PASS e.style.textIndent is '0px'
+PASS e.style.getPropertyValue('text-indent') is '0px'
+PASS computedStyle.textIndent is '0px'
+PASS computedStyle.getPropertyValue('text-indent') is '0px'
+
+Invalid value test - '10em -webkit-line -webkit-hanging':
+PASS e.style.textIndent is '0px'
+PASS e.style.getPropertyValue('text-indent') is '0px'
+PASS computedStyle.textIndent is '0px'
+PASS computedStyle.getPropertyValue('text-indent') is '0px'
+
+Invalid value test - '10em -webkit-each-line -webkit-hang':
+PASS e.style.textIndent is '0px'
+PASS e.style.getPropertyValue('text-indent') is '0px'
+PASS computedStyle.textIndent is '0px'
+PASS computedStyle.getPropertyValue('text-indent') is '0px'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

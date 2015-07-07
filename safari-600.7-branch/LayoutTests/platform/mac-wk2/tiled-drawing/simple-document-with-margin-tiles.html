@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            width: 1200px;
+            height: 2000px;
+            /* The setBackgroundShouldExtendBeyondPage setting will only create margin tiles for documents
+               that have background images. */
+            background-image:url(resources/greenbox.png);
+            background-repeat:repeat;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function doTest()
+        {
+            if (window.internals) {
+                window.internals.settings.setBackgroundShouldExtendBeyondPage(true);
+                document.getElementById('layers').innerText = internals.layerTreeAsText(document,
+                    internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS | internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+            }
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+
+<body>
+<pre id="layers">Layer tree goes here</p>
+</body>
+</html>

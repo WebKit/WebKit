@@ -1,0 +1,31 @@
+<html>
+<head>
+    <script type="text/javascript">
+        function test() {
+            if (window.testRunner && window.internals) {
+                testRunner.dumpAsText();
+                internals.settings.setFrameFlatteningEnabled(true);
+            }
+
+            // Force synchronous layout.
+            document.body.offsetHeight;
+
+            document.getElementById("if").contentWindow.document.getElementById('in').focus();
+            document.getElementById("if").contentWindow.document.getElementById('p').style.top = "20px";
+        }
+    </script>
+</head>
+<body>
+    <style>body { background-color: green; }</style>
+    <p>This test passes if it does not crash <a href="https://bugs.webkit.org/show_bug.cgi?id=52449">https://bugs.webkit.org/show_bug.cgi?id=52449</a></p>
+
+    <p><iframe id="if" onload="test();" width="20%" height="20%" scrolling=auto src="data:text/html,
+    <html>
+    <body'>
+    <div style='position: absolute; width: 400px; height: 400px; left: 0; top: 0px;' id='p'><input id='in' value='abcd'></div>
+    </body></html>
+    ">
+</body>
+</html>
+
+

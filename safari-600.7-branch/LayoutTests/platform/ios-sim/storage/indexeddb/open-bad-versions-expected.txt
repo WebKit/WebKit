@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: line 17: TypeError: null is not an object (evaluating 'indexedDB.open')
+No crashes when opening and reloading with bad version numbers
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = String(window.location)
+FAIL Unexpected error: TypeError: null is not an object (evaluating 'indexedDB.open')
+FAIL successfullyParsed should be true. Was false.
+
+TEST COMPLETE
+

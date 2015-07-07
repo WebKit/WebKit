@@ -1,0 +1,35 @@
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script>
+function test()
+{
+    InspectorTest.importScript("../../../../inspector-protocol/resources/console-helper.js");
+    InspectorTest.sendCommand("Console.enable", {});
+
+    InspectorTest.eventHandler["Console.messageAdded"] = function(messageObject)
+    {
+        var simplifiedMessage = ConsoleHelper.simplifiedConsoleMessage(messageObject);
+        // FIXME The line and column values will be zeros until this fix:
+        // https://bugs.webkit.org/show_bug.cgi?id=125340
+        // After this probably we should update the expected.txt.
+        InspectorTest.log(simplifiedMessage.location);
+
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="startTest()">
+  <iframe id=foo></iframe>
+  <script>
+  function startTest()
+  {
+    var fooFrame = document.getElementById('foo');
+    var fooDoc = fooFrame.contentWindow.document;
+    fooDoc.write('<meta http-equiv="X-Frame-Options" content="deny"/>');
+    runTest();
+  }
+  </script>
+</body>
+</html>
