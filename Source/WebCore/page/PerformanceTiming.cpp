@@ -135,7 +135,7 @@ unsigned long long PerformanceTiming::domainLookupStart() const
     if (timing.domainLookupStart < 0)
         return fetchStart();
 
-    return resourceLoadTimeRelativeToAbsolute(timing.domainLookupStart);
+    return resourceLoadTimeRelativeToFetchStart(timing.domainLookupStart);
 }
 
 unsigned long long PerformanceTiming::domainLookupEnd() const
@@ -151,7 +151,7 @@ unsigned long long PerformanceTiming::domainLookupEnd() const
     if (timing.domainLookupEnd < 0)
         return domainLookupStart();
 
-    return resourceLoadTimeRelativeToAbsolute(timing.domainLookupEnd);
+    return resourceLoadTimeRelativeToFetchStart(timing.domainLookupEnd);
 }
 
 unsigned long long PerformanceTiming::connectStart() const
@@ -173,7 +173,7 @@ unsigned long long PerformanceTiming::connectStart() const
     if (timing.domainLookupEnd >= 0 && timing.domainLookupEnd > connectStart)
         connectStart = timing.domainLookupEnd;
 
-    return resourceLoadTimeRelativeToAbsolute(connectStart);
+    return resourceLoadTimeRelativeToFetchStart(connectStart);
 }
 
 unsigned long long PerformanceTiming::connectEnd() const
@@ -189,7 +189,7 @@ unsigned long long PerformanceTiming::connectEnd() const
     if (timing.connectEnd < 0)
         return connectStart();
 
-    return resourceLoadTimeRelativeToAbsolute(timing.connectEnd);
+    return resourceLoadTimeRelativeToFetchStart(timing.connectEnd);
 }
 
 unsigned long long PerformanceTiming::secureConnectionStart() const
@@ -203,7 +203,7 @@ unsigned long long PerformanceTiming::secureConnectionStart() const
     if (timing.secureConnectionStart < 0)
         return 0;
 
-    return resourceLoadTimeRelativeToAbsolute(timing.secureConnectionStart);
+    return resourceLoadTimeRelativeToFetchStart(timing.secureConnectionStart);
 }
 
 unsigned long long PerformanceTiming::requestStart() const
@@ -215,7 +215,7 @@ unsigned long long PerformanceTiming::requestStart() const
     const ResourceLoadTiming& timing = loader->response().resourceLoadTiming();
     
     ASSERT(timing.requestStart >= 0);
-    return resourceLoadTimeRelativeToAbsolute(timing.requestStart);
+    return resourceLoadTimeRelativeToFetchStart(timing.requestStart);
 }
 
 unsigned long long PerformanceTiming::responseStart() const
@@ -227,7 +227,7 @@ unsigned long long PerformanceTiming::responseStart() const
     const ResourceLoadTiming& timing = loader->response().resourceLoadTiming();
     
     ASSERT(timing.responseStart >= 0);
-    return resourceLoadTimeRelativeToAbsolute(timing.responseStart);
+    return resourceLoadTimeRelativeToFetchStart(timing.responseStart);
 }
 
 unsigned long long PerformanceTiming::responseEnd() const
@@ -331,10 +331,10 @@ DocumentLoadTiming* PerformanceTiming::documentLoadTiming() const
     return &loader->timing();
 }
 
-unsigned long long PerformanceTiming::resourceLoadTimeRelativeToAbsolute(int relativeMilliseconds) const
+unsigned long long PerformanceTiming::resourceLoadTimeRelativeToFetchStart(int relativeMilliseconds) const
 {
     ASSERT(relativeMilliseconds >= 0);
-    return navigationStart() + relativeMilliseconds;
+    return fetchStart() + relativeMilliseconds;
 }
 
 unsigned long long PerformanceTiming::monotonicTimeToIntegerMilliseconds(double monotonicSeconds) const

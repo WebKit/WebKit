@@ -1,3 +1,31 @@
+2015-06-10  Alex Christensen  <achristensen@webkit.org>
+
+        [Web Timing] Fix flaky test.
+        https://bugs.webkit.org/show_bug.cgi?id=145846
+
+        Reviewed by Alexey Proskuryakov.
+
+        The timing data is gathered in ResourceHandle::getConnectionTimingData as 
+        millisecond deltas from the fetch start time, not the navigation start time.
+        The difference between navigation and fetch start time is usually so small that 
+        it only caused one flaky test, but this should fix that flakiness. This patch 
+        corrects how the millisecond deltas are used.
+
+        * page/PerformanceTiming.cpp:
+        (WebCore::PerformanceTiming::domainLookupStart):
+        (WebCore::PerformanceTiming::domainLookupEnd):
+        (WebCore::PerformanceTiming::connectStart):
+        (WebCore::PerformanceTiming::connectEnd):
+        (WebCore::PerformanceTiming::secureConnectionStart):
+        (WebCore::PerformanceTiming::requestStart):
+        (WebCore::PerformanceTiming::responseStart):
+        (WebCore::PerformanceTiming::responseEnd):
+        (WebCore::PerformanceTiming::documentLoadTiming):
+        (WebCore::PerformanceTiming::resourceLoadTimeRelativeToFetchStart):
+        (WebCore::PerformanceTiming::monotonicTimeToIntegerMilliseconds):
+        (WebCore::PerformanceTiming::resourceLoadTimeRelativeToAbsolute): Deleted.
+        * page/PerformanceTiming.h:
+
 2015-06-09  Zalan Bujtas  <zalan@apple.com>
 
         Protect FrameView from being destroyed in Document::recalcStyle()
