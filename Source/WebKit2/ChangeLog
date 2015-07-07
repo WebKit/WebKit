@@ -1,3 +1,18 @@
+2015-07-07  Tim Horton  <timothy_horton@apple.com>
+
+        Occasional null deref in the CA callback in flushLayers()
+        https://bugs.webkit.org/show_bug.cgi?id=146700
+        <rdar://problem/21668754>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+        Make sure we keep the WebPage alive, and null-check the potentially null
+        WebCore objects (Page and Frame).
+
 2015-07-06  Matt Rajca  <mrajca@apple.com>
 
         Media Session: propagate metadata changes to UI clients

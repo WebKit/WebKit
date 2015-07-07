@@ -362,8 +362,12 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     visibleRect.intersect(m_scrolledExposedRect);
 
 #if (TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
-    [CATransaction addCommitHandler:^{
-        m_webPage.corePage()->inspectorController().didComposite(m_webPage.mainFrameView()->frame());
+    RefPtr<WebPage> retainedPage = &m_webPage;
+    [CATransaction addCommitHandler:[retainedPage] {
+        if (Page* corePage = retainedPage->corePage()) {
+            if (Frame* coreFrame = retainedPage->mainFrame())
+                corePage->inspectorController().didComposite(*coreFrame);
+        }
     } forPhase:kCATransactionPhasePostCommit];
 #endif
 
