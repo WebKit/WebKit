@@ -1,3 +1,10 @@
+2015-07-07  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, Fix non-Mac build after r186464.
+
+        * UIProcess/Network/CustomProtocols/soup/CustomProtocolManagerProxySoup.cpp:
+        (WebKit::CustomProtocolManagerProxy::~CustomProtocolManagerProxy):
+
 2015-07-06  Anders Carlsson  <andersca@apple.com>
 
         Make sure to remove message receivers before they are deallocated
