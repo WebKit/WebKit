@@ -452,8 +452,8 @@ HTMLElement* ApplyStyleCommand::splitAncestorsWithUnicodeBidi(Node* node, bool b
 {
     // We are allowed to leave the highest ancestor with unicode-bidi unsplit if it is unicode-bidi: embed and direction: allowedDirection.
     // In that case, we return the unsplit ancestor. Otherwise, we return 0.
-    Node* block = enclosingBlock(node);
-    if (!block)
+    Element* block = enclosingBlock(node);
+    if (!block || block == node)
         return 0;
 
     Node* highestAncestorWithUnicodeBidi = 0;
@@ -501,8 +501,8 @@ HTMLElement* ApplyStyleCommand::splitAncestorsWithUnicodeBidi(Node* node, bool b
 
 void ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsplitAncestor)
 {
-    Node* block = enclosingBlock(node);
-    if (!block)
+    Element* block = enclosingBlock(node);
+    if (!block || block == node)
         return;
 
     Node* parent = nullptr;

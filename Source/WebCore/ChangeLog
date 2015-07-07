@@ -1,3 +1,20 @@
+2015-07-06  Andreas Kling  <akling@apple.com>
+
+        Crash when setting text direction via MakeTextWritingDirection* editing commands.
+        <https://webkit.org/b/146665>
+        <rdar://problem/20835477>
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix two buggy clients of enclosingBlock(node) that would fail if the returned
+        element is the same as the node passed in.
+
+        Test: editing/style/change-text-direction-crash.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::splitAncestorsWithUnicodeBidi):
+        (WebCore::ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock):
+
 2015-07-06  Dean Jackson  <dino@apple.com>
 
         Memory corruption in WebGLRenderingContext::simulateVertexAttrib0

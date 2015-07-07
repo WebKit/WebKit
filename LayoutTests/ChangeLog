@@ -1,3 +1,16 @@
+2015-07-06  Andreas Kling  <akling@apple.com>
+
+        Crash when setting text direction via MakeTextWritingDirection* editing commands.
+        <https://webkit.org/b/146665>
+        <rdar://problem/20835477>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a test that covers some very simple MakeTextWritingDirection* command usage.
+
+        * editing/style/change-text-direction-crash-expected.txt: Added.
+        * editing/style/change-text-direction-crash.html: Added.
+
 2015-07-03  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r178097): HTMLSelectElement.add(option, undefined) prepends option to the list of options; should append to the end of the list of options
