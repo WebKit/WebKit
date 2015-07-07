@@ -93,6 +93,8 @@ static void getParserLocationForConsoleMessage(Document* document, String& url, 
         return;
 
     ScriptableDocumentParser* parser = document->scriptableDocumentParser();
+    if (!parser)
+        return;
 
     // When the parser waits for scripts, any messages must be coming from some other source, and are not related to the location of the script element that made the parser wait.
     if (!parser->shouldAssociateConsoleMessagesWithTextPosition())

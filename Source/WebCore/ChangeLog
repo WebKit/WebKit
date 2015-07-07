@@ -1,3 +1,18 @@
+2015-06-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Crash under WebCore::PageConsoleClient::addMessage attempting to log insecure content message in ImageDocument
+        https://bugs.webkit.org/show_bug.cgi?id=146096
+
+        Reviewed by Timothy Hatcher.
+
+        Was able to reproduce this using a user stylesheet with an http css font
+        on a pdf (ImageDocument) main document loaded over https. Was unable to
+        create a reliable test for this scenario.
+
+        * page/PageConsoleClient.cpp:
+        (WebCore::getParserLocationForConsoleMessage):
+        The scriptableDocumentParser could be null, such as in an ImageDocument.
+
 2015-06-19  Andy Estes  <aestes@apple.com>
 
         Various assertion failures occur when executing script in the midst of DOM insertion
