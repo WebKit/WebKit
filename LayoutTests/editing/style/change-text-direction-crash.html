@@ -1,0 +1,27 @@
+<html>
+<script src="../../resources/dump-as-markup.js"></script>
+<body>
+</body>
+<script>
+Markup.description("This test verifies that programmatically setting the text direction using editing commands doesn't crash.");
+
+function testCommand(command) {
+    document.body.innerHTML = '<div id="foo" contenteditable>foo<div><span id="bar">aתbc</span></div><div>baz</div></div>';
+
+    var range = document.createRange();
+    var barSpan = document.getElementById("bar");
+    range.setStartBefore(barSpan);
+    range.setEndAfter(barSpan.parentNode)
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+
+    window.testRunner.execCommand(command, false, true);
+    Markup.dump("foo", command);
+}
+
+testCommand("MakeTextWritingDirectionLeftToRight");
+testCommand("MakeTextWritingDirectionRightToLeft");
+testCommand("MakeTextWritingDirectionNatural");
+</script>
+</html>

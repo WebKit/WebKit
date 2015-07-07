@@ -1,3 +1,16 @@
+2015-07-06  Andreas Kling  <akling@apple.com>
+
+        Crash when setting text direction via MakeTextWritingDirection* editing commands.
+        <https://webkit.org/b/146665>
+        <rdar://problem/20835477>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a test that covers some very simple MakeTextWritingDirection* command usage.
+
+        * editing/style/change-text-direction-crash-expected.txt: Added.
+        * editing/style/change-text-direction-crash.html: Added.
+
 2015-07-06  Simon Fraser  <simon.fraser@apple.com>
 
         Revert use of SVG <mask> elements for -webkit-mask-image (r176798, r177494, r186180)
