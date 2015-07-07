@@ -1,3 +1,39 @@
+2015-06-18  Benjamin Poulain  <bpoulain@apple.com>
+
+        [CSS JIT][ARMv7] The pseudo element early exit trashes r6
+        https://bugs.webkit.org/show_bug.cgi?id=146078
+
+        Reviewed by Alex Christensen.
+
+        The pseudo element early failure runs before we generate the prologue.
+        The reason is that we can often exit immediately on function entry, before
+        we even touch any memory.
+
+        On ARMv7, we don't have many spare registers so the MacroAssembler
+        uses r6 as a scratch register and the client code is expected to save
+        it.
+
+        In the early failure case, we were not pushing r6 before using the MacroAssembler
+        and its value could be trashed.
+
+        This patch push the macro assembler registers separately from the prologue.
+
+        For restoring the registers, a new function generateFunctionEnding() encapsulate
+        the pop() and ret().
+
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::pushMacroAssemblerRegisters):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::popMacroAssemblerRegisters):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generatePrologue):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateEpilogue):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateSelectorChecker):
+
+        * cssjit/StackAllocator.h:
+        (WebCore::StackAllocator::operator=):
+        We have a new case for the stack allocator: some stack changes are conditional
+        at compile time instead of runtime. This is easy to deal with by overriding
+        the stack if a path is not taken at compile time.
+
 2015-06-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Crash under WebCore::DOMWindow::dispatchMessageEventWithOriginCheck attempting to log console message
