@@ -451,6 +451,7 @@ webkit.org/b/86914 webaudio/ [ Skip ]
 webkit.org/b/86914 fast/history/page-cache-closed-audiocontext.html [ Skip ]
 webkit.org/b/86914 fast/history/page-cache-running-audiocontext.html [ Skip ]
 webkit.org/b/86914 fast/history/page-cache-suspended-audiocontext.html [ Skip ]
+webkit.org/b/86914 media/W3C/audio [ Skip ]
 
 # ENABLE(DRAGGABLE_REGION) is disabled
 fast/css/draggable-region-parser.html [ Skip ]
@@ -745,9 +746,6 @@ fast/media [ Skip ]
 http/tests/media [ Skip ] 
 
 fast/layers/video-layer.html [ Skip ] # Skip until video control changes are done.
-
-# Web Audio is not supported on Windows
-media/W3C/audio [ Skip ]
 
 # Assertion failures
 webkit.org/b/48910 [ Debug ] http/tests/media/pdf-served-as-pdf.html [ Skip ]  # Crashing
@@ -3116,3 +3114,6 @@ fast/text/decorations-vertical-underline.html [ Skip ]
 # Test requires hardcoded font names, which I do not have for this port.
 fast/text/han-generic-font-families.html [ WontFix ]
 fast/text/hangul-generic-font-families.html [ WontFix ]
+
+# New test for Bug 144830 (r186388) always fails.
+http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html [ Failure ]
