@@ -1,3 +1,21 @@
+2015-06-25  Zalan Bujtas  <zalan@apple.com>
+
+        Do not send touch events to the slider's thumb when it does not have a renderer.
+        https://bugs.webkit.org/show_bug.cgi?id=146307
+        rdar://problem/21539399
+
+        Reviewed by Simon Fraser.
+
+        Bail out early if either the touch target or the renderer() is null.
+
+        Test: fast/events/touch/input-range-with-thumb-display-none-crash.html
+
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::findTouchWithIdentifier):
+        (WebCore::SliderThumbElement::handleTouchStart):
+        (WebCore::SliderThumbElement::handleTouchMove):
+        (WebCore::SliderThumbElement::handleTouchEndAndCancel):
+
 2015-06-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Empty gtk-font-name setting causes WebProcess crash rendering pages
