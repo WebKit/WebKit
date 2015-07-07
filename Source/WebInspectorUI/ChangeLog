@@ -1,3 +1,30 @@
+2015-07-07  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Pad ruler selection area by 1px in the Rendering Frames timeline overview
+        https://bugs.webkit.org/show_bug.cgi?id=146248
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/RenderingFrameTimelineOverview.js:
+        Enable duration pixel alignment.
+
+        * UserInterface/Views/TimelineOverview.css:
+        (.timeline-overview.frames > .timeline-ruler > .header > .divider):
+        (.timeline-overview.frames > .timeline-ruler > .selection-handle.right):
+        (.timeline-overview.frames > .timeline-ruler > .shaded-area.right):
+        Shift ruler elements 1 pixel to the right, so that selection boundaries and dividers are
+        positioned inside the gap between frame elements.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview):
+        (WebInspector.TimelineOverview.prototype.set secondsPerPixel):
+        (WebInspector.TimelineOverview.prototype.get pixelAlignDuration):
+        (WebInspector.TimelineOverview.prototype.set pixelAlignDuration):
+        (WebInspector.TimelineOverview.prototype._handleWheelEvent):
+        Added a property to force the overview graph to align duration units on the y-axis to pixel boundaries.
+        When enabled, frame elements are displayed in integer widths while zooming, preventing subpixel blurring
+        and maintaining a consistent 1 pixel gap between frames.
+
 2015-07-07  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Tabbing in the styles sidebar doesn't highlight the next section of text

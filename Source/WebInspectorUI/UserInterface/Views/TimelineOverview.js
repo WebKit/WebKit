@@ -33,7 +33,7 @@ WebInspector.TimelineOverview = function(identifier, timelineRecording, minimumD
     this._recording.addEventListener(WebInspector.TimelineRecording.Event.TimelineRemoved, this._timelineRemoved, this);
 
     this._element = document.createElement("div");
-    this._element.className = "timeline-overview";
+    this._element.classList.add("timeline-overview", identifier);
     this._element.addEventListener("wheel", this._handleWheelEvent.bind(this));
 
     this._graphsContainerElement = document.createElement("div");
@@ -72,6 +72,8 @@ WebInspector.TimelineOverview = function(identifier, timelineRecording, minimumD
     this._minimumDurationPerPixel = minimumDurationPerPixel;
     this._maximumDurationPerPixel = maximumDurationPerPixel;
     this._durationPerPixel = Math.min(this._maximumDurationPerPixel, Math.max(this._minimumDurationPerPixel, this._durationPerPixelSetting.value));
+    this._pixelAlignDuration = false;
+    this._mouseWheelDelta = 0;
     this._scrollStartTime = 0;
     this._cachedScrollContainerWidth = NaN;
 
@@ -145,10 +147,32 @@ WebInspector.TimelineOverview.prototype = {
         if (this._durationPerPixel === x)
             return;
 
+        if (this._pixelAlignDuration) {
+            x = 1 / Math.round(1 / x);
+            if (this._durationPerPixel === x)
+                return;
+        }
+
         this._durationPerPixel = x;
         this._durationPerPixelSetting.value = x;
 
         this._needsLayout();
+    },
+
+    get pixelAlignDuration()
+    {
+        return this._pixelAlignDuration;
+    },
+
+    set pixelAlignDuration(x)
+    {
+        if (this._pixelAlignDuration === x)
+            return;
+
+        this._mouseWheelDelta = 0;
+        this._pixelAlignDuration = x;
+        if (this._pixelAlignDuration)
+            this.secondsPerPixel = 1 / Math.round(1 / this._durationPerPixel);
     },
 
     get endTime()
@@ -245,6 +269,8 @@ WebInspector.TimelineOverview.prototype = {
     {
         for (var timelineOverviewGraph of this._timelineOverviewGraphsMap.values())
             timelineOverviewGraph.reset();
+
+        this._mouseWheelDelta = 0;
 
         this._resetSelection();
     },
@@ -397,8 +423,20 @@ WebInspector.TimelineOverview.prototype = {
         var mouseOffset = event.pageX - this._element.totalOffsetLeft;
         var mousePositionTime = this._scrollStartTime + (mouseOffset * this._durationPerPixel);
         var deviceDirection = event.webkitDirectionInvertedFromDevice ? 1 : -1;
+        var delta = event.deltaY * (this._durationPerPixel / WebInspector.TimelineOverview.ScrollDeltaDenominator) * deviceDirection;
 
-        this.secondsPerPixel += event.deltaY * (this._durationPerPixel / WebInspector.TimelineOverview.ScrollDeltaDenominator) * deviceDirection;
+        // Reset accumulated wheel delta when direction changes.
+        if (this._pixelAlignDuration && (delta < 0 && this._mouseWheelDelta >= 0 || delta >= 0 && this._mouseWheelDelta < 0))
+            this._mouseWheelDelta = 0;
+
+        var previousDurationPerPixel = this._durationPerPixel;
+        this._mouseWheelDelta += delta;
+        this.secondsPerPixel += this._mouseWheelDelta;
+
+        if (this._durationPerPixel === this._minimumDurationPerPixel && delta < 0 || this._durationPerPixel === this._maximumDurationPerPixel && delta >= 0)
+            this._mouseWheelDelta = 0;
+        else
+            this._mouseWheelDelta = previousDurationPerPixel + this._mouseWheelDelta - this._durationPerPixel;
 
         // Center the zoom around the mouse based on the remembered mouse position time.
         this.scrollStartTime = mousePositionTime - (mouseOffset * this._durationPerPixel);

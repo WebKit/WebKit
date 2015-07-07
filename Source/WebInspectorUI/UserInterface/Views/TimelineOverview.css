@@ -53,6 +53,19 @@
     right: 0;
 }
 
+.timeline-overview.frames > .timeline-ruler > .header > .divider {
+    -webkit-transform: translateX(0px);
+}
+
+.timeline-overview.frames > .timeline-ruler > .selection-handle.right {
+    -webkit-transform: translateX(5px);
+}
+
+.timeline-overview.frames > .timeline-ruler > .markers,
+.timeline-overview.frames > .timeline-ruler > .shaded-area.right {
+    -webkit-transform: translateX(1px);
+}
+
 .timeline-overview > .graphs-container {
     position: absolute;
     top: 29px;
