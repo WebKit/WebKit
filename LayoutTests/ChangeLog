@@ -1,3 +1,12 @@
+2015-07-07  Youenn Fablet  <youenn.fablet@crf.canon.fr>
+
+        [Streams API] Remove ReadableStreamStream.read() custom binding
+        https://bugs.webkit.org/show_bug.cgi?id=146643
+
+        Reviewed by Darin Adler.
+
+        * streams/reference-implementation/brand-checks-expected.txt:
+
 2015-07-06  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION: Slider thumb does not render properly (image tests with <input type="range">)

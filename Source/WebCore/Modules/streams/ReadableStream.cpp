@@ -94,7 +94,7 @@ void ReadableStream::releaseReader()
         m_closedPromise.value().resolve(nullptr);
 
     for (auto& request : m_readRequests)
-        request.endCallback();
+        request.resolveEnd();
 
     clearCallbacks();
     if (m_reader)
@@ -112,7 +112,7 @@ void ReadableStream::changeStateToErrored()
         m_closedPromise.value().reject(error);
 
     for (auto& request : m_readRequests)
-        request.failureCallback(error);
+        request.reject(error);
 
     clearCallbacks();
     if (m_reader)
@@ -236,25 +236,25 @@ void ReadableStream::closed(ClosedPromise&& promise)
     m_closedPromise = WTF::move(promise);
 }
 
-void ReadableStream::read(ReadSuccessCallback&& successCallback, ReadEndCallback&& endCallback, FailureCallback&& failureCallback)
+void ReadableStream::read(ReadPromise&& readPromise)
 {
     if (m_state == State::Closed) {
-        endCallback();
+        readPromise.resolveEnd();
         return;
     }
     if (m_state == State::Errored) {
-        failureCallback(error());
+        readPromise.reject(error());
         return;
     }
     if (hasValue()) {
-        successCallback(read());
+        readPromise.resolve(read());
         if (!m_closeRequested)
             pull();
         else if (!hasValue())
             close();
         return;
     }
-    m_readRequests.append({ WTF::move(successCallback), WTF::move(endCallback), WTF::move(failureCallback) });
+    m_readRequests.append(WTF::move(readPromise));
     pull();
 }
 
@@ -263,7 +263,7 @@ bool ReadableStream::resolveReadCallback(JSC::JSValue value)
     if (m_readRequests.isEmpty())
         return false;
 
-    m_readRequests.takeFirst().successCallback(value);
+    m_readRequests.takeFirst().resolve(value);
     return true;
 }
 

@@ -55,7 +55,7 @@ public:
 
     void cancel(JSC::JSValue, ReadableStream::CancelPromise&&);
     void closed(ReadableStream::ClosedPromise&&);
-    void read(ReadableStream::ReadSuccessCallback&&, ReadableStream::ReadEndCallback&&, ReadableStream::FailureCallback&&);
+    void read(ReadableStream::ReadPromise&&);
     void releaseLock(ExceptionCode&);
 
     void ref() { m_stream.ref(); }

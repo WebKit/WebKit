@@ -41,12 +41,11 @@ DeferredWrapper::DeferredWrapper(ExecState* exec, JSDOMGlobalObject* globalObjec
 {
 }
 
-JSObject* DeferredWrapper::promise() const
+JSDOMGlobalObject& DeferredWrapper::globalObject() const
 {
-    // FIXME: Remove this accessor once ReadableStreamReader custom binding does not need it.
-    ASSERT(m_deferred);
-    return m_deferred->promise();
-}
+    ASSERT(m_globalObject);
+    return *m_globalObject.get();
+} 
 
 void DeferredWrapper::callFunction(ExecState& exec, JSValue function, JSValue resolution)
 {

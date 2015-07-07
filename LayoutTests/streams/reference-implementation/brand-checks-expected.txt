@@ -5,8 +5,8 @@ FAIL ReadableStream.prototype.pipeThrough works generically on its this and its 
 PASS ReadableStreamReader enforces a brand check on its argument 
 FAIL ReadableStreamReader.prototype.closed enforces a brand check undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, getterName).get')
 PASS ReadableStreamReader.prototype.cancel enforces a brand check 
-FAIL ReadableStreamReader.prototype.read enforces a brand check Can only call ReadableStreamReader.read on instances of ReadableStreamReader
-FAIL ReadableStreamReader.prototype.read enforces a brand check Can only call ReadableStreamReader.read on instances of ReadableStreamReader
+PASS ReadableStreamReader.prototype.read enforces a brand check 
+PASS ReadableStreamReader.prototype.read enforces a brand check 
 PASS ReadableStreamReader.prototype.releaseLock enforces a brand check 
 PASS ReadableStreamController enforces a brand check on its argument 
 PASS ReadableStreamController can't be given a fully-constructed ReadableStream 

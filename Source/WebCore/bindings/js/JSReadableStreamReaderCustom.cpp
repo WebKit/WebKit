@@ -44,28 +44,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSReadableStreamReader::read(ExecState* exec)
-{
-    JSPromiseDeferred* promiseDeferred = JSPromiseDeferred::create(exec, globalObject());
-    DeferredWrapper wrapper(exec, globalObject(), promiseDeferred);
-
-    auto successCallback = [wrapper](JSValue value) mutable {
-        JSValue result = createIteratorResultObject(wrapper.promise()->globalObject()->globalExec(), value, false);
-        wrapper.resolve(result);
-    };
-    auto endCallback = [wrapper]() mutable {
-        JSValue result = createIteratorResultObject(wrapper.promise()->globalObject()->globalExec(), JSC::jsUndefined(), true);
-        wrapper.resolve(result);
-    };
-    auto failureCallback = [wrapper](JSValue value) mutable {
-        wrapper.reject(value);
-    };
-
-    impl().read(WTF::move(successCallback), WTF::move(endCallback), WTF::move(failureCallback));
-
-    return promiseDeferred->promise();
-}
-
 JSValue JSReadableStreamReader::closed(ExecState* exec) const
 {
     if (m_closedPromiseDeferred)

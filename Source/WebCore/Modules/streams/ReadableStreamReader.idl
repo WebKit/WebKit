@@ -33,7 +33,7 @@
     NoInterfaceObject,
     SkipVTableValidation
 ] interface ReadableStreamReader {
-    [Custom] Object read();
+    Promise read();
     Promise cancel([Default=Undefined] optional any reason);
     [RaisesException] void releaseLock();
 

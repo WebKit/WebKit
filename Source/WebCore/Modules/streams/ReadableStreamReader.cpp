@@ -55,13 +55,13 @@ void ReadableStreamReader::closed(ReadableStream::ClosedPromise&& promise)
     m_stream.closed(WTF::move(promise));
 }
 
-void ReadableStreamReader::read(ReadableStream::ReadSuccessCallback&& successCallback, ReadableStream::ReadEndCallback&& endCallback, ReadableStream::FailureCallback&& failureCallback)
+void ReadableStreamReader::read(ReadableStream::ReadPromise&& promise)
 {
     if (m_stream.isReadable() && m_stream.reader() != this) {
-        endCallback();
+        promise.resolveEnd();
         return;
     }
-    m_stream.read(WTF::move(successCallback), WTF::move(endCallback), WTF::move(failureCallback));
+    m_stream.read(WTF::move(promise));
 }
 
 void ReadableStreamReader::releaseLock(ExceptionCode& ec)

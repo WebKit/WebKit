@@ -35,6 +35,7 @@
 #include <heap/Weak.h>
 #include <heap/WeakInlines.h>
 #include <runtime/Error.h>
+#include <runtime/IteratorOperations.h>
 #include <runtime/JSArray.h>
 #include <runtime/JSArrayBuffer.h>
 #include <runtime/JSCJSValueInlines.h>
@@ -394,6 +395,21 @@ template<typename T> inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalO
 inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject*, const String& value)
 {
     return jsStringOrNull(exec, value);
+}
+
+inline JSC::JSValue toJSIterator(JSC::ExecState& state, JSDOMGlobalObject&, JSC::JSValue value)
+{
+    return createIteratorResultObject(&state, value, false);
+}
+
+template<typename T> inline JSC::JSValue toJSIterator(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const T& value)
+{
+    return createIteratorResultObject(&state, toJS(&state, &globalObject, value), false);
+}
+
+inline JSC::JSValue toJSIteratorEnd(JSC::ExecState& state)
+{
+    return createIteratorResultObject(&state, JSC::jsUndefined(), true);
 }
 
 template<typename T> struct JSValueTraits {
