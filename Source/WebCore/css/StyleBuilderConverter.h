@@ -49,7 +49,6 @@
 #include "StyleResolver.h"
 #include "StyleScrollSnapPoints.h"
 #include "TransformFunctions.h"
-#include "WebKitCSSResourceValue.h"
 #include <wtf/Optional.h>
 
 namespace WebCore {
@@ -1002,14 +1001,6 @@ inline Optional<FilterOperations> StyleBuilderConverter::convertFilterOperations
     if (styleResolver.createFilterOperations(value, operations))
         return operations;
     return Nullopt;
-}
-
-static inline WebKitCSSResourceValue* maskImageValueFromIterator(CSSValueList& maskImagesList, CSSValueList::iterator it)
-{
-    // May also be a CSSInitialValue.
-    if (it == maskImagesList.end() || !is<WebKitCSSResourceValue>(it->get()))
-        return nullptr;
-    return &downcast<WebKitCSSResourceValue>(it->get());
 }
 
 inline RefPtr<FontFeatureSettings> StyleBuilderConverter::convertFontFeatureSettings(StyleResolver&, CSSValue& value)

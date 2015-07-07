@@ -38,7 +38,7 @@ struct ResourceLoaderOptions;
 
 class CachedSVGDocumentReference : public CachedSVGDocumentClient {
 public:
-    CachedSVGDocumentReference(const String& url, CachedSVGDocumentClient* additionalDocumentClient = nullptr, bool canReuseResource = true);
+    CachedSVGDocumentReference(const String&);
 
     virtual ~CachedSVGDocumentReference();
 
@@ -51,8 +51,6 @@ private:
     String m_url;
     CachedResourceHandle<CachedSVGDocument> m_document;
     bool m_loadRequested;
-    CachedSVGDocumentClient* m_additionalDocumentClient;
-    bool m_canReuseResource;
 };
 
 };

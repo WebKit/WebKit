@@ -7105,15 +7105,6 @@
     <ClCompile Include="..\editing\win\EditorWin.cpp">
       <Filter>editing</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\graphics\MaskImageOperation.cpp">
-      <Filter>platform\graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\rendering\RenderLayerMaskImageInfo.cpp">
-      <Filter>rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\css\WebKitCSSResourceValue.cpp">
-      <Filter>css</Filter>
-    </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\WebCore\DerivedSources\JSEXTsRGB.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
@@ -14542,15 +14533,6 @@
     </ClInclude>
     <ClInclude Include="..\platform\graphics\avfoundation\MediaTimeAVFoundation.h">
       <Filter>platform\graphics\avfoundation</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\graphics\MaskImageOperation.h">
-      <Filter>platform\graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rendering\RenderLayerMaskImageInfo.h">
-      <Filter>rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\css\WebKitCSSResourceValue.h">
-      <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\JSEXTsRGB.h">
       <Filter>DerivedSources</Filter>

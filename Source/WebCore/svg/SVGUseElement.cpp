@@ -549,11 +549,8 @@ void SVGUseElement::updateExternalDocument()
         CachedResourceRequest request { ResourceRequest { externalDocumentURL }, options };
         request.setInitiator(this);
         m_externalDocument = document().cachedResourceLoader().requestSVGDocument(request);
-        if (m_externalDocument) {
-            // FIXME: Is it really OK for us to set this to false for a document that might be shared by another client?
-            m_externalDocument->setShouldCreateFrameForDocument(false); // No frame needed, we just want the elements.
+        if (m_externalDocument)
             m_externalDocument->addClient(this);
-        }
     }
 
     invalidateShadowTree();

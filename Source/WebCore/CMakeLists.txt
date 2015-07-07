@@ -1353,7 +1353,6 @@ set(WebCore_SOURCES
     css/WebKitCSSFilterValue.cpp
     css/WebKitCSSMatrix.cpp
     css/WebKitCSSRegionRule.cpp
-    css/WebKitCSSResourceValue.cpp
     css/WebKitCSSTransformValue.cpp
     css/WebKitCSSViewportRule.cpp
 
@@ -2163,7 +2162,6 @@ set(WebCore_SOURCES
     platform/graphics/IntRect.cpp
     platform/graphics/IntSize.cpp
     platform/graphics/LayoutRect.cpp
-    platform/graphics/MaskImageOperation.cpp
     platform/graphics/MediaPlayer.cpp
     platform/graphics/NamedImageGeneratedImage.cpp
     platform/graphics/Path.cpp
@@ -2373,7 +2371,6 @@ set(WebCore_SOURCES
     rendering/RenderLayerBacking.cpp
     rendering/RenderLayerCompositor.cpp
     rendering/RenderLayerFilterInfo.cpp
-    rendering/RenderLayerMaskImageInfo.cpp
     rendering/RenderLayerModelObject.cpp
     rendering/RenderLineBoxList.cpp
     rendering/RenderLineBreak.cpp

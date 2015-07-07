@@ -2322,13 +2322,8 @@
 		6B3480940EEF50D400AC1B41 /* NativeImagePtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B3480920EEF50D400AC1B41 /* NativeImagePtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6C4C96DE1AD4483500365A50 /* JSReadableStreamController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C4C96DA1AD4483500365A50 /* JSReadableStreamController.cpp */; };
 		6C4C96DF1AD4483500365A50 /* JSReadableStreamController.h in Headers */ = {isa = PBXBuildFile; fileRef = 6C4C96DB1AD4483500365A50 /* JSReadableStreamController.h */; };
-		6C568CB019DAFEA000430CA2 /* MaskImageOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C568CAE19DAFEA000430CA2 /* MaskImageOperation.cpp */; };
-		6C568CB119DAFEA000430CA2 /* MaskImageOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 6C568CAF19DAFEA000430CA2 /* MaskImageOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6C638895A96CCEE50C8C946C /* CachedResourceRequestInitiators.h in Headers */ = {isa = PBXBuildFile; fileRef = 6C638893A96CCEE50C8C946C /* CachedResourceRequestInitiators.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6C638896A96CCEE50C8C946C /* CachedResourceRequestInitiators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C638894A96CCEE50C8C946C /* CachedResourceRequestInitiators.cpp */; };
-		6C6CCAB019DC42B90043D5DB /* WebKitCSSResourceValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C6CCAAE19DC42B90043D5DB /* WebKitCSSResourceValue.cpp */; };
-		6C6CCAB119DC42B90043D5DB /* WebKitCSSResourceValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 6C6CCAAF19DC42B90043D5DB /* WebKitCSSResourceValue.h */; };
-		6CBFE4A519EBF2D400CA2F9D /* RenderLayerMaskImageInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 6CBFE4A319EBF2D400CA2F9D /* RenderLayerMaskImageInfo.h */; };
 		6CDDE8D01770BB220016E072 /* RegionOversetState.h in Headers */ = {isa = PBXBuildFile; fileRef = 6C70A81417707C49009A446E /* RegionOversetState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6E0E569B183BFFE600E0E8D5 /* FloatRoundedRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E0E5699183BFFE600E0E8D5 /* FloatRoundedRect.cpp */; };
 		6E0E569C183BFFE600E0E8D5 /* FloatRoundedRect.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E0E569A183BFFE600E0E8D5 /* FloatRoundedRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9602,14 +9597,9 @@
 		6B3480920EEF50D400AC1B41 /* NativeImagePtr.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NativeImagePtr.h; sourceTree = "<group>"; };
 		6C4C96DA1AD4483500365A50 /* JSReadableStreamController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSReadableStreamController.cpp; sourceTree = "<group>"; };
 		6C4C96DB1AD4483500365A50 /* JSReadableStreamController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSReadableStreamController.h; sourceTree = "<group>"; };
-		6C568CAE19DAFEA000430CA2 /* MaskImageOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MaskImageOperation.cpp; sourceTree = "<group>"; };
-		6C568CAF19DAFEA000430CA2 /* MaskImageOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MaskImageOperation.h; sourceTree = "<group>"; };
 		6C638893A96CCEE50C8C946C /* CachedResourceRequestInitiators.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedResourceRequestInitiators.h; sourceTree = "<group>"; };
 		6C638894A96CCEE50C8C946C /* CachedResourceRequestInitiators.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CachedResourceRequestInitiators.cpp; sourceTree = "<group>"; };
-		6C6CCAAE19DC42B90043D5DB /* WebKitCSSResourceValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSResourceValue.cpp; sourceTree = "<group>"; };
-		6C6CCAAF19DC42B90043D5DB /* WebKitCSSResourceValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSResourceValue.h; sourceTree = "<group>"; };
 		6C70A81417707C49009A446E /* RegionOversetState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegionOversetState.h; sourceTree = "<group>"; };
-		6CBFE4A319EBF2D400CA2F9D /* RenderLayerMaskImageInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderLayerMaskImageInfo.h; sourceTree = "<group>"; };
 		6E0E5699183BFFE600E0E8D5 /* FloatRoundedRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FloatRoundedRect.cpp; sourceTree = "<group>"; };
 		6E0E569A183BFFE600E0E8D5 /* FloatRoundedRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatRoundedRect.h; sourceTree = "<group>"; };
 		6E21C6BF1126338500A7BE02 /* GraphicsContext3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContext3D.cpp; sourceTree = "<group>"; };
@@ -20994,8 +20984,6 @@
 				141DC04C164834B900371E5A /* LayoutRect.cpp */,
 				141DC04D164834B900371E5A /* LayoutRect.h */,
 				141DC04E164834B900371E5A /* LayoutSize.h */,
-				6C568CAE19DAFEA000430CA2 /* MaskImageOperation.cpp */,
-				6C568CAF19DAFEA000430CA2 /* MaskImageOperation.h */,
 				07E3DFD01A9E786500764CA8 /* MediaPlaybackTarget.h */,
 				079216531AA560AA00A3C049 /* MediaPlaybackTargetClient.h */,
 				07F876831AD4A94500905849 /* MediaPlaybackTargetContext.h */,
@@ -22877,7 +22865,6 @@
 				0F580CF90F12DE9B0051D689 /* RenderLayerCompositor.h */,
 				50D10D971545F5760096D288 /* RenderLayerFilterInfo.cpp */,
 				50D10D981545F5760096D288 /* RenderLayerFilterInfo.h */,
-				6CBFE4A319EBF2D400CA2F9D /* RenderLayerMaskImageInfo.h */,
 				3C244FE5A375AC633F88BE6F /* RenderLayerModelObject.cpp */,
 				3C244FE4A375AC633F88BE6F /* RenderLayerModelObject.h */,
 				BC33FB1A0F30EE85002CDD7C /* RenderLineBoxList.cpp */,

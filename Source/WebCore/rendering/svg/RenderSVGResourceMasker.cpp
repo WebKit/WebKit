@@ -25,7 +25,6 @@
 #include "FloatPoint.h"
 #include "Image.h"
 #include "IntRect.h"
-#include "RenderBoxModelObject.h"
 #include "SVGRenderingContext.h"
 
 namespace WebCore {
@@ -54,9 +53,10 @@ void RenderSVGResourceMasker::removeClientFromCache(RenderElement& client, bool 
     markClientForInvalidation(client, markForInvalidation ? BoundariesInvalidation : ParentOnlyInvalidation);
 }
 
-bool RenderSVGResourceMasker::applySVGMask(RenderElement& renderer, GraphicsContext*& context, bool applyClip)
+bool RenderSVGResourceMasker::applyResource(RenderElement& renderer, const RenderStyle&, GraphicsContext*& context, unsigned short resourceMode)
 {
     ASSERT(context);
+    ASSERT_UNUSED(resourceMode, resourceMode == ApplyToDefaultMode);
 
     bool missingMaskerData = !m_masker.contains(&renderer);
     if (missingMaskerData)
@@ -80,16 +80,8 @@ bool RenderSVGResourceMasker::applySVGMask(RenderElement& renderer, GraphicsCont
     if (!maskerData->maskImage)
         return false;
 
-    if (applyClip)
-        SVGRenderingContext::clipToImageBuffer(context, absoluteTransform, repaintRect, maskerData->maskImage, missingMaskerData);
-
+    SVGRenderingContext::clipToImageBuffer(context, absoluteTransform, repaintRect, maskerData->maskImage, missingMaskerData);
     return true;
-}
-
-bool RenderSVGResourceMasker::applyResource(RenderElement& renderer, const RenderStyle&, GraphicsContext*& context, unsigned short resourceMode)
-{
-    ASSERT_UNUSED(resourceMode, resourceMode == ApplyToDefaultMode);
-    return applySVGMask(renderer, context, true);
 }
 
 bool RenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerData, ColorSpace colorSpace, RenderObject* object)
@@ -130,34 +122,6 @@ bool RenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerData, C
         maskerData->maskImage->convertToLuminanceMask();
 
     return true;
-}
-
-void RenderSVGResourceMasker::drawMaskForRenderer(RenderElement& renderer, const BackgroundImageGeometry& geometry, GraphicsContext* context, CompositeOperator compositeOp)
-{
-    if (context->paintingDisabled())
-        return;
-
-    if (!applySVGMask(renderer, context, false))
-        return;
-
-    MaskerData* maskerData = maskerDataForRenderer(renderer);
-    ASSERT(maskerData);
-
-    FloatRect oneTileRect;
-    FloatSize actualTileSize(geometry.tileSize().width() + geometry.spaceSize().width(), geometry.tileSize().height() + geometry.spaceSize().height());
-    oneTileRect.setX(geometry.destRect().x() + fmodf(fmodf(-geometry.relativePhase().width(), actualTileSize.width()) - actualTileSize.width(), actualTileSize.width()));
-    oneTileRect.setY(geometry.destRect().y() + fmodf(fmodf(-geometry.relativePhase().height(), actualTileSize.height()) - actualTileSize.height(), actualTileSize.height()));
-    oneTileRect.setSize(geometry.tileSize());
-    
-    FloatSize intrinsicTileSize = maskerData->maskImage->logicalSize();
-    FloatSize scale(geometry.tileSize().width() / intrinsicTileSize.width(), geometry.tileSize().height() / intrinsicTileSize.height());
-    
-    FloatRect visibleSrcRect;
-    visibleSrcRect.setX((geometry.destRect().x() - oneTileRect.x()) / scale.width());
-    visibleSrcRect.setY((geometry.destRect().y() - oneTileRect.y()) / scale.height());
-    visibleSrcRect.setWidth(geometry.destRect().width() / scale.width());
-    visibleSrcRect.setHeight(geometry.destRect().height() / scale.height());
-    context->drawImageBuffer(maskerData->maskImage.get(), ColorSpaceDeviceRGB, geometry.destRect(), visibleSrcRect, compositeOp);
 }
 
 void RenderSVGResourceMasker::calculateMaskContentRepaintRect()

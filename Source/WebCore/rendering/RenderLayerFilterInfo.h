@@ -37,6 +37,7 @@
 
 namespace WebCore {
 
+class CachedSVGDocument;
 class Element;
 
 class RenderLayer::FilterInfo final : private CachedSVGDocumentClient {

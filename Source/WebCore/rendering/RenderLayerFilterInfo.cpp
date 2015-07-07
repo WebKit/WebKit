@@ -32,6 +32,7 @@
 #include "RenderLayerFilterInfo.h"
 
 #include "CachedSVGDocument.h"
+#include "CachedSVGDocumentReference.h"
 #include "FilterEffectRenderer.h"
 #include "RenderSVGResourceFilter.h"
 #include <wtf/NeverDestroyed.h>

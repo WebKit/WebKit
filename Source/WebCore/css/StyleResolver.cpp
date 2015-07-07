@@ -133,7 +133,6 @@
 #include "VisitedLinkState.h"
 #include "WebKitCSSFilterValue.h"
 #include "WebKitCSSRegionRule.h"
-#include "WebKitCSSResourceValue.h"
 #include "WebKitCSSTransformValue.h"
 #include "WebKitFontFamilyNames.h"
 #include "XMLNames.h"
@@ -239,7 +238,6 @@ inline void StyleResolver::State::clear()
     m_regionForStyling = nullptr;
     m_pendingImageProperties.clear();
     m_filtersWithPendingSVGDocuments.clear();
-    m_maskImagesWithPendingSVGDocuments.clear();
     m_cssToLengthConversionData = CSSToLengthConversionData();
 }
 

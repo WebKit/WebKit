@@ -353,16 +353,31 @@ bool SVGImage::dataChanged(bool allDataReceived)
         m_loaderClient = std::make_unique<SVGFrameLoaderClient>(m_dataProtocolLoader);
         pageConfiguration.loaderClientForMainFrame = m_loaderClient.get();
 
-        bool canHaveScrollbars = false; // SVG Images will always synthesize a viewBox, if it's not available, and thus never see scrollbars.
-        bool transparent = true; // SVG Images are transparent.
-
         // FIXME: If this SVG ends up loading itself, we might leak the world.
         // The Cache code does not know about CachedImages holding Frames and
         // won't know to break the cycle.
         // This will become an issue when SVGImage will be able to load other
         // SVGImage objects, but we're safe now, because SVGImage can only be
         // loaded by a top-level document.
-        m_page = Page::createPageFromBuffer(pageConfiguration, data(), "image/svg+xml", canHaveScrollbars, transparent);
+        m_page = std::make_unique<Page>(pageConfiguration);
+        m_page->settings().setMediaEnabled(false);
+        m_page->settings().setScriptEnabled(false);
+        m_page->settings().setPluginsEnabled(false);
+
+        Frame& frame = m_page->mainFrame();
+        frame.setView(FrameView::create(frame));
+        frame.init();
+        FrameLoader& loader = frame.loader();
+        loader.forceSandboxFlags(SandboxAll);
+
+        frame.view()->setCanHaveScrollbars(false); // SVG Images will always synthesize a viewBox, if it's not available, and thus never see scrollbars.
+        frame.view()->setTransparent(true); // SVG Images are transparent.
+
+        ASSERT(loader.activeDocumentLoader()); // DocumentLoader should have been created by frame->init().
+        loader.activeDocumentLoader()->writer().setMIMEType("image/svg+xml");
+        loader.activeDocumentLoader()->writer().begin(URL()); // create the empty document
+        loader.activeDocumentLoader()->writer().addData(data()->data(), data()->size());
+        loader.activeDocumentLoader()->writer().end();
 
         // Set the intrinsic size before a container size is available.
         m_intrinsicSize = containerSize();

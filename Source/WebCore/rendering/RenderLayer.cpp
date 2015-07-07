@@ -89,7 +89,6 @@
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
 #include "RenderLayerFilterInfo.h"
-#include "RenderLayerMaskImageInfo.h"
 #include "RenderMarquee.h"
 #include "RenderMultiColumnFlowThread.h"
 #include "RenderNamedFlowFragment.h"
@@ -303,7 +302,6 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
     , m_layerListMutationAllowed(true)
 #endif
     , m_hasFilterInfo(false)
-    , m_hasMaskImageInfo(false)
 #if ENABLE(CSS_COMPOSITING)
     , m_blendMode(BlendModeNormal)
     , m_hasNotIsolatedCompositedBlendingDescendants(false)

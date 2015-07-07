@@ -117,7 +117,6 @@ class ViewStateChangeObserver;
 class VisitedLinkStore;
 
 typedef uint64_t LinkHash;
-class SharedBuffer;
 
 enum FindDirection { FindDirectionForward, FindDirectionBackward };
 
@@ -135,8 +134,6 @@ public:
     WEBCORE_EXPORT ~Page();
 
     WEBCORE_EXPORT uint64_t renderTreeSize() const;
-    
-    static std::unique_ptr<Page> createPageFromBuffer(PageConfiguration&, const SharedBuffer*, const String& mimeType, bool canHaveScrollbars, bool transparent);
 
     void setNeedsRecalcStyleInAllFrames();
 
