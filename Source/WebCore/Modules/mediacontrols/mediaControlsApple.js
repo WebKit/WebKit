@@ -836,7 +836,7 @@ Controller.prototype = {
     handlePanelTransitionEnd: function(event)
     {
         var opacity = window.getComputedStyle(this.controls.panel).opacity;
-        if (!parseInt(opacity) && !this.controlsAlwaysVisible() && this.video.controls) {
+        if (!parseInt(opacity) && !this.controlsAlwaysVisible() && (this.video.controls || this.isFullScreen())) {
             this.base.removeChild(this.controls.inlinePlaybackPlaceholder);
             this.base.removeChild(this.controls.panel);
         }
@@ -1346,7 +1346,7 @@ Controller.prototype = {
 
     setPlaying: function(isPlaying)
     {
-        if (!this.video.controls)
+        if (!this.video.controls && !this.isFullScreen())
             return;
 
         if (this.isPlaying === isPlaying)
@@ -1389,7 +1389,7 @@ Controller.prototype = {
     showControls: function()
     {
         this.updateShouldListenForPlaybackTargetAvailabilityEvent();
-        if (!this.video.controls)
+        if (!this.video.controls && !this.isFullScreen())
             return;
 
         this.updateForShowingControls();
