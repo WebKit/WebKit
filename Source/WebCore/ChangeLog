@@ -1,3 +1,17 @@
+2015-07-03  Mario Sanchez Prada  <mario@endlessm.com>
+
+        Crash on xLarge memory allocation using bmalloc on 32bit systems
+        https://bugs.webkit.org/show_bug.cgi?id=146440
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Disable the gcc's -ftree-sra optimization (automatically enabled
+        with -O1 and higher levels) for WebCore and 32bit Intel architectures,
+        as that causes the crash in bmalloc when allocating large amounts of
+        memory from the texture mapper's tiled backing store implementation.
+
+        * CMakeLists.txt: Pass -fno-free-sra to gcc on 32bit Intel architectures.
+
 2015-06-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r179168): Characters overlap after resizing the font on the copy-pasted Japanese text
