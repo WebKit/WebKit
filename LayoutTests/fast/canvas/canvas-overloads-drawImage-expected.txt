@@ -13,8 +13,8 @@ PASS ctx.drawImage(imageElement, 0, 0, 0, 0, 0) threw exception TypeError: Type 
 PASS ctx.drawImage(imageElement, 0, 0, 0, 0, 0, 0) threw exception TypeError: Type error.
 PASS ctx.drawImage(imageElement, 0, 0, 0, 0, 0, 0, 0) threw exception TypeError: Type error.
 PASS ctx.drawImage(imageElement, 0, 0, 0, 0, 0, 0, 0, 0) is undefined
-PASS ctx.drawImage(imageElement, 0, 0, 0, 0, 0, 0, 0, 0, 0) threw exception TypeError: Type error.
-PASS ctx.drawImage(imageElement, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) threw exception TypeError: Type error.
+PASS ctx.drawImage(imageElement, 0, 0, 0, 0, 0, 0, 0, 0, 0) is undefined
+PASS ctx.drawImage(imageElement, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) is undefined
 PASS ctx.drawImage(canvasElement) threw exception TypeError: Not enough arguments.
 PASS ctx.drawImage(canvasElement, 0) threw exception TypeError: Not enough arguments.
 PASS ctx.drawImage(canvasElement, 0, 0) is undefined
@@ -24,8 +24,8 @@ PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0) threw exception TypeError: Type
 PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0) threw exception TypeError: Type error.
 PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0) threw exception TypeError: Type error.
 PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0) threw exception Error: IndexSizeError: DOM Exception 1.
-PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0, 0) threw exception TypeError: Type error.
-PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) threw exception TypeError: Type error.
+PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0, 0) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) threw exception Error: IndexSizeError: DOM Exception 1.
 PASS successfullyParsed is true
 
 TEST COMPLETE

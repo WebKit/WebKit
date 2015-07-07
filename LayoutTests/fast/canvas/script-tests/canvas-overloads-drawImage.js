@@ -16,8 +16,8 @@ shouldThrow("ctx.drawImage(imageElement, 0, 0, 0, 0, 0)", "TypeError");
 shouldThrow("ctx.drawImage(imageElement, 0, 0, 0, 0, 0, 0)", "TypeError");
 shouldThrow("ctx.drawImage(imageElement, 0, 0, 0, 0, 0, 0, 0)", "TypeError");
 shouldBe("ctx.drawImage(imageElement, 0, 0, 0, 0, 0, 0, 0, 0)", "undefined");
-shouldThrow("ctx.drawImage(imageElement, 0, 0, 0, 0, 0, 0, 0, 0, 0)", "TypeError");
-shouldThrow("ctx.drawImage(imageElement, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)", "TypeError");
+shouldBe("ctx.drawImage(imageElement, 0, 0, 0, 0, 0, 0, 0, 0, 0)", "undefined");
+shouldBe("ctx.drawImage(imageElement, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)", "undefined");
 
 var canvasElement = document.createElement("canvas");
 shouldThrow("ctx.drawImage(canvasElement)", "TypeErrorNotEnoughArguments");
@@ -29,5 +29,5 @@ shouldThrow("ctx.drawImage(canvasElement, 0, 0, 0, 0, 0)", "TypeError");
 shouldThrow("ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0)", "TypeError");
 shouldThrow("ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0)", "TypeError");
 shouldThrow("ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0)", "'Error: IndexSizeError: DOM Exception 1'");
-shouldThrow("ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0, 0)", "TypeError");
-shouldThrow("ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)", "TypeError");
+shouldThrow("ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0, 0)", "'Error: IndexSizeError: DOM Exception 1'");
+shouldThrow("ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)", "'Error: IndexSizeError: DOM Exception 1'");
