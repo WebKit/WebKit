@@ -1,5 +1,12 @@
 2015-07-07  David Kilzer  <ddkilzer@apple.com>
 
+        El Capitan: Hangs caused by PDFs should be fixed
+
+        * platform/mac-wk1/TestExpectations: Remove skipped tests as the
+        PDF hangs should be fixed.
+
+2015-07-07  David Kilzer  <ddkilzer@apple.com>
+
         REGRESSION (r186391): css3/masking/mask-repeat-space-padding.html image-only failure on El Capitan WK1
 
         * platform/mac-wk1/TestExpectations: Mark as image-only failure:

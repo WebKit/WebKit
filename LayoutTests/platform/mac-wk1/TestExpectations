@@ -36,11 +36,6 @@ webkit.org/b/144127 compositing/scrolling/touch-scroll-to-clip.html [ Pass Failu
 
 webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 
-# <rdar://problem/21344582>
-[ ElCapitan+ ] fast/history/history-back-while-pdf-in-pagecache.html
-[ ElCapitan+ ] http/tests/loading/pdf-commit-load-callbacks.html
-[ ElCapitan+ ] platform/mac/fast/loader/non-html-load-event.html
-
 webkit.org/b/146622 [ Yosemite Debug ] webgl/1.0.2/conformance/more/functions/copyTexImage2DBadArgs.html [ Pass Failure ]
 
 ### END OF (1) Failures with bug reports
