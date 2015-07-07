@@ -1726,6 +1726,7 @@ void Document::recalcStyle(Style::Change change)
         return;
 
     FrameView& frameView = m_renderView->frameView();
+    Ref<FrameView> protect(frameView);
     if (frameView.isPainting())
         return;
     
