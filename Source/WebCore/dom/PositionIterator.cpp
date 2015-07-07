@@ -64,7 +64,7 @@ void PositionIterator::increment()
         return;
     }
 
-    if (!m_anchorNode->hasChildNodes() && m_offsetInAnchor < lastOffsetForEditing(m_anchorNode))
+    if (m_anchorNode->renderer() && !m_anchorNode->hasChildNodes() && m_offsetInAnchor < lastOffsetForEditing(m_anchorNode))
         m_offsetInAnchor = Position::uncheckedNextOffset(m_anchorNode, m_offsetInAnchor);
     else {
         m_nodeAfterPositionInAnchor = m_anchorNode;
@@ -96,7 +96,7 @@ void PositionIterator::decrement()
         m_anchorNode = m_anchorNode->lastChild();
         m_offsetInAnchor = m_anchorNode->hasChildNodes()? 0: lastOffsetForEditing(m_anchorNode);
     } else {
-        if (m_offsetInAnchor)
+        if (m_offsetInAnchor && m_anchorNode->renderer())
             m_offsetInAnchor = Position::uncheckedPreviousOffset(m_anchorNode, m_offsetInAnchor);
         else {
             m_nodeAfterPositionInAnchor = m_anchorNode;

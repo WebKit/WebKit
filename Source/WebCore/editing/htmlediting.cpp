@@ -215,12 +215,17 @@ Position nextCandidate(const Position& position)
 
 Position nextVisuallyDistinctCandidate(const Position& position)
 {
+    // FIXME: Use PositionIterator instead.
     Position p = position;
     Position downstreamStart = p.downstream();
     while (!p.atEndOfTree()) {
         p = p.next(Character);
         if (p.isCandidate() && p.downstream() != downstreamStart)
             return p;
+        if (auto* node = p.containerNode()) {
+            if (!node->renderer())
+                p = lastPositionInOrAfterNode(node);
+        }
     }
     return Position();
 }
@@ -238,12 +243,17 @@ Position previousCandidate(const Position& position)
 
 Position previousVisuallyDistinctCandidate(const Position& position)
 {
+    // FIXME: Use PositionIterator instead.
     Position p = position;
     Position downstreamStart = p.downstream();
     while (!p.atStartOfTree()) {
         p = p.previous(Character);
         if (p.isCandidate() && p.downstream() != downstreamStart)
             return p;
+        if (auto* node = p.containerNode()) {
+            if (!node->renderer())
+                p = firstPositionInOrBeforeNode(node);
+        }
     }
     return Position();
 }
