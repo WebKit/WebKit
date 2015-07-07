@@ -2643,11 +2643,8 @@ public:
 
         initCallFrame();
 
-        // Compile the pattern to the internal 'YarrOp' representation.
         opCompileBody(m_pattern.m_body);
 
-        // If we encountered anything we can't handle in the JIT code
-        // (e.g. backreferences) then return early.
         if (m_shouldFallBack) {
             jitObject.setFallBack(true);
             return;
@@ -2656,8 +2653,12 @@ public:
         generate();
         backtrack();
 
-        // Link & finalize the code.
-        LinkBuffer linkBuffer(*vm, *this, REGEXP_CODE_ID);
+        LinkBuffer linkBuffer(*vm, *this, REGEXP_CODE_ID, JITCompilationCanFail);
+        if (linkBuffer.didFailToAllocate()) {
+            jitObject.setFallBack(true);
+            return;
+        }
+
         m_backtrackingState.linkDataLabels(linkBuffer);
 
         if (compileMode == MatchOnly) {
