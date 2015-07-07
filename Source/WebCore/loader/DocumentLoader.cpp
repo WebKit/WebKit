@@ -103,7 +103,7 @@ static bool areAllLoadersPageCacheAcceptable(const ResourceLoaderMap& loaders)
         if (!handle)
             return false;
 
-        if (!loader->frameLoader())
+        if (!loader->frameLoader() || !loader->frameLoader()->frame().page())
             return false;
 
         CachedResource* cachedResource = MemoryCache::singleton().resourceForURL(handle->firstRequest().url(), loader->frameLoader()->frame().page()->sessionID());

@@ -1,3 +1,17 @@
+2015-06-24  Chris Dumez  <cdumez@apple.com>
+
+        Null dereference in DocumentLoader::areAllLoadersPageCacheAcceptable()
+        https://bugs.webkit.org/show_bug.cgi?id=146286
+        <rdar://problem/21523788>
+
+        Reviewed by Sam Weinig.
+
+        Add null check for the Page in areAllLoadersPageCacheAcceptable()
+        to fix this top crasher until I can investigate how this can happen.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::areAllLoadersPageCacheAcceptable):
+
 2015-06-30  Zalan Bujtas  <zalan@apple.com>
 
         Addressing post-review comments in r185916
