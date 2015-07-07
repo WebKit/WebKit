@@ -929,7 +929,12 @@ void WebVideoFullscreenInterfaceAVKit::setupFullscreen(PlatformLayer& videoLayer
     if (m_videoFullscreenModel)
         m_videoFullscreenModel->setVideoLayerFrame(videoRect);
 
+    // This method has been deprecated so ignore the warning until we port our code to the new API.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     m_playerViewController = adoptNS([allocAVPlayerViewControllerInstance() initWithVideoLayer:m_videoLayerContainer.get()]);
+#pragma clang diagnostic pop
+
     [m_playerViewController setShowsPlaybackControls:NO];
     [m_playerViewController setPlayerController:(AVPlayerController *)m_playerController.get()];
     [m_playerViewController setDelegate:m_playerController.get()];
