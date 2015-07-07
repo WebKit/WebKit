@@ -197,7 +197,7 @@ private:
     ArrayModes m_observedArrayModes;
 };
 
-typedef SegmentedVector<ArrayProfile, 4, 0> ArrayProfileVector;
+typedef SegmentedVector<ArrayProfile, 4> ArrayProfileVector;
 
 } // namespace JSC
 

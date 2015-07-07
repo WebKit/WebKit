@@ -1,3 +1,13 @@
+2015-06-16  Andreas Kling  <akling@apple.com>
+
+        Remove unused template parameter InlineCapacity from SegmentedVector.
+        <https://webkit.org/b/146044>
+
+        Reviewed by Anders Carlsson.
+
+        * bytecode/ArrayProfile.h:
+        * dfg/DFGCommonData.h:
+
 2015-06-01  Michael Saboff  <msaboff@apple.com>
 
         Crash in com.apple.WebKit.WebContent at com.apple.JavaScriptCore: JSC::revertCall + 24
