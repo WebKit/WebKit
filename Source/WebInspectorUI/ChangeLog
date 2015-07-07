@@ -1,5 +1,17 @@
 2015-07-07  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Tabbing in the styles sidebar doesn't highlight the next section of text
+        https://bugs.webkit.org/show_bug.cgi?id=146676
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._highlightNextNameOrValue): Modified the logic to only search the
+        remaining text after the current cursor position.
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._handleShiftTabKey): Now only searches for matches before the colon.
+
+2015-07-07  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Option+Click not jumping to resource
         https://bugs.webkit.org/show_bug.cgi?id=146498
 

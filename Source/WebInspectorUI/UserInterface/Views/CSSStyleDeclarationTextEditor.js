@@ -397,12 +397,14 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
     _highlightNextNameOrValue(codeMirror, cursor, text)
     {
-        var match = text.match(/(?:[^:;\s]\s*)+/g);
-        var firstMatch = text.indexOf(match[0]) + match[0].length;
-        var nextHead = cursor.ch < firstMatch ? text.indexOf(match[0]) : text.indexOf(match[1]);
-        var nextAnchor = cursor.ch < firstMatch ? firstMatch : text.indexOf(match[1]) + match[1].length;
+        var colonIndex = text.indexOf(":");
+        var substringIndex = colonIndex >= 0 && cursor.ch >= colonIndex ? colonIndex : 0;
 
-        codeMirror.setSelection({line: cursor.line, ch: nextHead}, {line: cursor.line, ch: nextAnchor});
+        var regExp = /(?:[^:;\s]\s*)+/g;
+        regExp.lastIndex = substringIndex;
+        var match = regExp.exec(text);
+
+        codeMirror.setSelection({line: cursor.line, ch: match.index}, {line: cursor.line, ch: match.index + match[0].length});
     }
 
     _handleMouseDown(event)
@@ -525,12 +527,8 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             return switchRule.call(this);
         }
 
-        var match = line.match(/(?:[^:;\s]\s*)+/g);
-        var lastMatch = line.indexOf(match.lastValue) + match.lastValue.length;
-        var prevHead = cursor.ch > lastMatch ? line.indexOf(match.lastValue) : line.indexOf(match[0]);
-        var prevAnchor = cursor.ch > lastMatch ? lastMatch : line.indexOf(match[0]) + match[0].length;
-
-        codeMirror.setSelection({line: cursor.line, ch: prevHead}, {line: cursor.line, ch: prevAnchor});
+        var match = /(?:[^:;\s]\s*)+/.exec(line);
+        codeMirror.setSelection({line: cursor.line, ch: match.index}, {line: cursor.line, ch: match.index + match[0].length});
     }
 
     _handleTabKey(codeMirror)
