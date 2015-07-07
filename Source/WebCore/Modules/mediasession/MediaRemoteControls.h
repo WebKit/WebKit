@@ -46,12 +46,6 @@ public:
     bool nextTrackEnabled() const { return m_nextTrackEnabled; }
     void setNextTrackEnabled(bool enabled) { m_nextTrackEnabled = enabled; }
 
-    bool seekForwardEnabled() const { return m_seekForwardEnabled; }
-    void setSeekForwardEnabled(bool enabled) { m_seekForwardEnabled = enabled; }
-
-    bool seekBackwardEnabled() const { return m_seekBackwardEnabled; }
-    void setSeekBackwardEnabled(bool enabled) { m_seekBackwardEnabled = enabled; }
-
     using RefCounted<MediaRemoteControls>::ref;
     using RefCounted<MediaRemoteControls>::deref;
 
@@ -67,8 +61,6 @@ private:
 
     bool m_previousTrackEnabled { false };
     bool m_nextTrackEnabled { false };
-    bool m_seekForwardEnabled { false };
-    bool m_seekBackwardEnabled { false };
 
     virtual void refEventTarget() override final { ref(); }
     virtual void derefEventTarget() override final { deref(); }
