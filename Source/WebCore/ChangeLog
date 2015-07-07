@@ -1,3 +1,14 @@
+2015-06-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Crash under WebCore::DOMWindow::dispatchMessageEventWithOriginCheck attempting to log console message
+        https://bugs.webkit.org/show_bug.cgi?id=146093
+
+        Reviewed by Timothy Hatcher.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::dispatchMessageEventWithOriginCheck):
+        The console could be null so null check its use.
+
 2015-06-17  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r173283-r173296): Amazon.com front page has no caret in the search field
