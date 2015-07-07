@@ -171,7 +171,6 @@ protected:
 #endif
         SVGColorClass,
         SVGPaintClass,
-        WebKitCSSResourceClass,
 
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
         AnimationTriggerScrollClass,
@@ -189,6 +188,7 @@ protected:
 #if ENABLE(CSS_GRID_LAYOUT)
         GridLineNamesClass,
 #endif
+        WebKitCSSResourceClass
 
         // Do not append non-list class types here.
     };

@@ -82,15 +82,6 @@ MaskImageOperation::MaskImageOperation()
 
 MaskImageOperation::~MaskImageOperation()
 {
-    setRenderLayerImageClient(nullptr);
-}
-
-bool MaskImageOperation::operator==(const MaskImageOperation& other) const
-{
-    if (m_url.length())
-        return (m_url == other.m_url && m_fragment == other.m_fragment && m_isExternalDocument == other.m_isExternalDocument);
-
-    return m_styleImage.get() == other.m_styleImage.get();
 }
 
 bool MaskImageOperation::isCSSValueNone() const

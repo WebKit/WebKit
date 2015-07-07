@@ -1,3 +1,55 @@
+2015-07-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Revert use of SVG <mask> elements for -webkit-mask-image (r176798, r177494, r186180)
+        https://bugs.webkit.org/show_bug.cgi?id=146653
+
+        Reviewed by Dean Jackson.
+
+        Fixes rdar://problem/21435233.
+
+        r177494 caused a number of regressions (bugs 141857, 146509, 146561), added new layering violations, and
+        was not being maintained, so revert it.
+
+        This patch reverts r177494.
+
+        * css3/masking/mask-base64-expected.html: Removed.
+        * css3/masking/mask-base64.html: Removed.
+        * css3/masking/mask-multiple-values-expected.html: Removed.
+        * css3/masking/mask-multiple-values.html: Removed.
+        * css3/masking/mask-repeat-space-padding-expected.html:
+        * css3/masking/mask-repeat-space-padding.html:
+        * css3/masking/mask-svg-clipped-fragmentId-expected.html: Removed.
+        * css3/masking/mask-svg-clipped-fragmentId.html: Removed.
+        * css3/masking/mask-svg-fragmentId-expected.html: Removed.
+        * css3/masking/mask-svg-fragmentId.html: Removed.
+        * css3/masking/mask-svg-inline-fragmentId-expected.html: Removed.
+        * css3/masking/mask-svg-inline-fragmentId.html: Removed.
+        * css3/masking/mask-svg-inline-invalid-fragmentId-expected.html: Removed.
+        * css3/masking/mask-svg-inline-invalid-fragmentId.html: Removed.
+        * css3/masking/mask-svg-invalid-fragmentId-expected.html: Removed.
+        * css3/masking/mask-svg-invalid-fragmentId.html: Removed.
+        * css3/masking/mask-svg-no-fragmentId-expected.html: Removed.
+        * css3/masking/mask-svg-no-fragmentId-tiled-expected.html: Removed.
+        * css3/masking/mask-svg-no-fragmentId-tiled.html: Removed.
+        * css3/masking/mask-svg-no-fragmentId.html: Removed.
+        * css3/masking/mask-svg-script-entire-svg-to-mask-expected.html: Removed.
+        * css3/masking/mask-svg-script-entire-svg-to-mask.html: Removed.
+        * css3/masking/mask-svg-script-mask-to-entire-svg-expected.html: Removed.
+        * css3/masking/mask-svg-script-mask-to-entire-svg.html: Removed.
+        * css3/masking/mask-svg-script-mask-to-none-expected.html: Removed.
+        * css3/masking/mask-svg-script-mask-to-none.html: Removed.
+        * css3/masking/mask-svg-script-mask-to-png-expected.html: Removed.
+        * css3/masking/mask-svg-script-mask-to-png.html: Removed.
+        * css3/masking/mask-svg-script-none-to-mask-expected.html: Removed.
+        * css3/masking/mask-svg-script-none-to-mask.html: Removed.
+        * css3/masking/mask-svg-script-none-to-png-expected.html: Removed.
+        * css3/masking/mask-svg-script-none-to-png.html: Removed.
+        * css3/masking/mask-svg-script-png-to-mask-expected.html: Removed.
+        * css3/masking/mask-svg-script-png-to-mask.html: Removed.
+        * css3/masking/mask-svg-script-png-to-none-expected.html: Removed.
+        * css3/masking/mask-svg-script-png-to-none.html: Removed.
+        * css3/masking/resources/masks.svg: Removed.
+
 2015-07-06  Daniel Bates  <dabates@apple.com>
 
         Isolated worlds should respect Content Security Policy; User Agent Shadow DOM

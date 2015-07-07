@@ -302,7 +302,6 @@ private:
 #endif
     
     void adjustStyleForInterCharacterRuby();
-    void adjustStyleForMaskImages();
     
     bool fastRejectSelector(const RuleData&) const;
 

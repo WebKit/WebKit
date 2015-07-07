@@ -2328,7 +2328,6 @@
 		6C638896A96CCEE50C8C946C /* CachedResourceRequestInitiators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C638894A96CCEE50C8C946C /* CachedResourceRequestInitiators.cpp */; };
 		6C6CCAB019DC42B90043D5DB /* WebKitCSSResourceValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C6CCAAE19DC42B90043D5DB /* WebKitCSSResourceValue.cpp */; };
 		6C6CCAB119DC42B90043D5DB /* WebKitCSSResourceValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 6C6CCAAF19DC42B90043D5DB /* WebKitCSSResourceValue.h */; };
-		6CBFE4A419EBF2D400CA2F9D /* RenderLayerMaskImageInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6CBFE4A219EBF2D400CA2F9D /* RenderLayerMaskImageInfo.cpp */; };
 		6CBFE4A519EBF2D400CA2F9D /* RenderLayerMaskImageInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 6CBFE4A319EBF2D400CA2F9D /* RenderLayerMaskImageInfo.h */; };
 		6CDDE8D01770BB220016E072 /* RegionOversetState.h in Headers */ = {isa = PBXBuildFile; fileRef = 6C70A81417707C49009A446E /* RegionOversetState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6E0E569B183BFFE600E0E8D5 /* FloatRoundedRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E0E5699183BFFE600E0E8D5 /* FloatRoundedRect.cpp */; };
@@ -9610,7 +9609,6 @@
 		6C6CCAAE19DC42B90043D5DB /* WebKitCSSResourceValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSResourceValue.cpp; sourceTree = "<group>"; };
 		6C6CCAAF19DC42B90043D5DB /* WebKitCSSResourceValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSResourceValue.h; sourceTree = "<group>"; };
 		6C70A81417707C49009A446E /* RegionOversetState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegionOversetState.h; sourceTree = "<group>"; };
-		6CBFE4A219EBF2D400CA2F9D /* RenderLayerMaskImageInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLayerMaskImageInfo.cpp; sourceTree = "<group>"; };
 		6CBFE4A319EBF2D400CA2F9D /* RenderLayerMaskImageInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderLayerMaskImageInfo.h; sourceTree = "<group>"; };
 		6E0E5699183BFFE600E0E8D5 /* FloatRoundedRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FloatRoundedRect.cpp; sourceTree = "<group>"; };
 		6E0E569A183BFFE600E0E8D5 /* FloatRoundedRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatRoundedRect.h; sourceTree = "<group>"; };
@@ -22879,7 +22877,6 @@
 				0F580CF90F12DE9B0051D689 /* RenderLayerCompositor.h */,
 				50D10D971545F5760096D288 /* RenderLayerFilterInfo.cpp */,
 				50D10D981545F5760096D288 /* RenderLayerFilterInfo.h */,
-				6CBFE4A219EBF2D400CA2F9D /* RenderLayerMaskImageInfo.cpp */,
 				6CBFE4A319EBF2D400CA2F9D /* RenderLayerMaskImageInfo.h */,
 				3C244FE5A375AC633F88BE6F /* RenderLayerModelObject.cpp */,
 				3C244FE4A375AC633F88BE6F /* RenderLayerModelObject.h */,
@@ -29809,7 +29806,6 @@
 				0F580D000F12DE9B0051D689 /* RenderLayerBacking.cpp in Sources */,
 				0F580CFE0F12DE9B0051D689 /* RenderLayerCompositor.cpp in Sources */,
 				50D10D991545F5760096D288 /* RenderLayerFilterInfo.cpp in Sources */,
-				6CBFE4A419EBF2D400CA2F9D /* RenderLayerMaskImageInfo.cpp in Sources */,
 				3C244FEBA375AC633F88BE6F /* RenderLayerModelObject.cpp in Sources */,
 				BC33FB1B0F30EE85002CDD7C /* RenderLineBoxList.cpp in Sources */,
 				BCEA4863097D93020094C9E4 /* RenderLineBreak.cpp in Sources */,

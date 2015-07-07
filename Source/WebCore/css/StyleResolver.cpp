@@ -1158,63 +1158,6 @@ void StyleResolver::adjustStyleForInterCharacterRuby()
         style->setWritingMode(LeftToRightWritingMode);
 }
 
-void StyleResolver::adjustStyleForMaskImages()
-{
-    // If we already have the same mask image objects loaded on the old style,
-    // use the old ones instead of loading new ones.
-    RenderStyle* newStyle = m_state.style();
-    RenderStyle* oldStyle = (m_state.element() ? m_state.element()->renderStyle() : nullptr);
-
-    if (newStyle && oldStyle) {
-        Vector<RefPtr<MaskImageOperation>> removedExternalResources;
-        
-        // Get all mask objects from the old style in a vector
-        // so we can remove them as we match them, making the following steps faster.
-        Vector<RefPtr<MaskImageOperation>> oldStyleMaskImages;
-        const FillLayer* oldMaskLayer = oldStyle->maskLayers();
-        while (oldMaskLayer) {
-            RefPtr<MaskImageOperation> oldMaskImage = oldMaskLayer->maskImage();
-            if (oldMaskImage.get())
-                oldStyleMaskImages.append(oldMaskImage);
-
-            oldMaskLayer = oldMaskLayer->next();
-        }
-
-        if (oldStyleMaskImages.isEmpty())
-            return;
-
-        // Try to match the new mask objects through the list from the old style.
-        // This should work perfectly and optimal when the list of masks remained
-        // the same and also work correctly (but slower) when they were reordered.
-        FillLayer* newMaskLayer = &newStyle->ensureMaskLayers();
-        int countOldStyleMaskImages = oldStyleMaskImages.size();
-        while (newMaskLayer && countOldStyleMaskImages) {
-            RefPtr<MaskImageOperation> newMaskImage = newMaskLayer->maskImage();
-            if (newMaskImage.get()) {
-                for (int i = 0; i < countOldStyleMaskImages; i++) {
-                    RefPtr<MaskImageOperation> oldMaskImage = oldStyleMaskImages[i];
-                    if (*oldMaskImage == *newMaskImage) {
-                        newMaskLayer->setMaskImage(oldMaskImage);
-                        if (newMaskImage->isExternalDocument())
-                            removedExternalResources.append(newMaskImage);
-
-                        oldStyleMaskImages.remove(i);
-                        countOldStyleMaskImages--;
-                        break;
-                    }
-                }
-            }
-
-            newMaskLayer = newMaskLayer->next();
-        }
-
-        Vector<RefPtr<MaskImageOperation>>& pendingResources = m_state.maskImagesWithPendingSVGDocuments();
-        pendingResources.removeAllMatching([&removedExternalResources] (const RefPtr<MaskImageOperation>& resource) {
-            return removedExternalResources.contains(resource);
-        });
-    }
-}
-
 void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& parentStyle, Element *e)
 {
     // Cache our original display.
@@ -1810,8 +1753,6 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
     // There are some CSS properties that affect the same RenderStyle values,
     // so to preserve behavior, we queue them up during cascade and flush here.
     cascade.applyDeferredProperties(*this);
-    
-    adjustStyleForMaskImages();
 
     // Start loading resources referenced by this style.
     loadPendingResources();
@@ -2239,13 +2180,7 @@ void StyleResolver::loadPendingSVGDocuments()
     // style is NULL. We don't know exactly why this happens. Our guess is
     // reentering styleForElement().
     ASSERT(state.style());
-    if (!state.style())
-        return;
-    
-    bool hasFilters = (state.style()->hasFilter() && !state.filtersWithPendingSVGDocuments().isEmpty());
-    bool hasMasks = (state.style()->hasMask() && !state.maskImagesWithPendingSVGDocuments().isEmpty());
-    
-    if (!hasFilters && !hasMasks)
+    if (!state.style() || !state.style()->hasFilter() || state.filtersWithPendingSVGDocuments().isEmpty())
         return;
 
     ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
@@ -2253,19 +2188,10 @@ void StyleResolver::loadPendingSVGDocuments()
 
     CachedResourceLoader& cachedResourceLoader = state.document().cachedResourceLoader();
     
-    if (hasFilters) {
-        for (auto& filterOperation : state.filtersWithPendingSVGDocuments())
-            filterOperation->getOrCreateCachedSVGDocumentReference()->load(cachedResourceLoader, options);
+    for (auto& filterOperation : state.filtersWithPendingSVGDocuments())
+        filterOperation->getOrCreateCachedSVGDocumentReference()->load(cachedResourceLoader, options);
 
-        state.filtersWithPendingSVGDocuments().clear();
-    }
-    
-    if (hasMasks) {
-        for (auto& maskImageOperation : state.maskImagesWithPendingSVGDocuments())
-            maskImageOperation->ensureCachedSVGDocumentReference()->load(cachedResourceLoader, options);
-
-        state.maskImagesWithPendingSVGDocuments().clear();
-    }
+    state.filtersWithPendingSVGDocuments().clear();
 }
 
 bool StyleResolver::createFilterOperations(CSSValue& inValue, FilterOperations& outOperations)
@@ -2528,10 +2454,9 @@ void StyleResolver::loadPendingImages()
         }
         case CSSPropertyWebkitMaskImage: {
             for (FillLayer* maskLayer = &m_state.style()->ensureMaskLayers(); maskLayer; maskLayer = maskLayer->next()) {
-                RefPtr<MaskImageOperation> maskImage = maskLayer->maskImage();
-                auto* styleImage = maskImage.get() ? maskImage->image() : nullptr;
+                auto* styleImage = maskLayer->image();
                 if (is<StylePendingImage>(styleImage))
-                    maskImage->setImage(loadPendingImage(downcast<StylePendingImage>(*styleImage)));
+                    maskLayer->setImage(loadPendingImage(downcast<StylePendingImage>(*styleImage)));
             }
             break;
         }

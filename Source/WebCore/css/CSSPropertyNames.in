@@ -538,7 +538,7 @@ justify-items [Initial=initialSelfAlignment, Converter=SelfOrDefaultAlignmentDat
 -webkit-mask-box-image-width [Custom=All]
 -webkit-mask-clip [FillLayerProperty, NameForMethods=Clip]
 -webkit-mask-composite [FillLayerProperty, NameForMethods=Composite]
--webkit-mask-image [Custom=Initial|Inherit, Converter=MaskImageOperations]
+-webkit-mask-image [FillLayerProperty, NameForMethods=Image]
 -webkit-mask-origin [FillLayerProperty, NameForMethods=Origin]
 -webkit-mask-position [Longhands=-webkit-mask-position-x|-webkit-mask-position-y]
 -webkit-mask-position-x [FillLayerProperty, NameForMethods=XPosition]

@@ -90,7 +90,6 @@
 #include "TextEncoding.h"
 #include "WebKitCSSFilterValue.h"
 #include "WebKitCSSRegionRule.h"
-#include "WebKitCSSResourceValue.h"
 #include "WebKitCSSTransformValue.h"
 #include <JavaScriptCore/Profile.h>
 #include <bitset>
@@ -4704,11 +4703,8 @@ bool CSSParser::parseFillProperty(CSSPropertyID propId, CSSPropertyID& propId1, 
                     }
                     break;
                 case CSSPropertyBackgroundImage:
-                    if (parseFillImage(*m_valueList, currValue))
-                        m_valueList->next();
-                    break;
                 case CSSPropertyWebkitMaskImage:
-                    if (parseMaskImage(*m_valueList, currValue))
+                    if (parseFillImage(*m_valueList, currValue))
                         m_valueList->next();
                     break;
                 case CSSPropertyWebkitBackgroundClip:
@@ -9909,30 +9905,6 @@ bool CSSParser::parseFilter(CSSParserValueList& valueList, RefPtr<CSSValue>& res
     result = list;
 
     return true;
-}
-
-bool CSSParser::parseMaskImage(CSSParserValueList& valueList, RefPtr<CSSValue>& outValue)
-{
-    outValue = nullptr;
-    CSSParserValue* value = valueList.current();
-    if (value->id == CSSValueNone) {
-        outValue = WebKitCSSResourceValue::create(cssValuePool().createIdentifierValue(CSSValueNone));
-        return outValue.get();
-    }
-
-    RefPtr<CSSValue> resourceValue;
-    if (value->unit == CSSPrimitiveValue::CSS_URI) {
-        if (protocolIs(value->string, "data"))
-            parseFillImage(valueList, resourceValue);
-        else
-            resourceValue = CSSPrimitiveValue::create(completeURL(value->string), CSSPrimitiveValue::CSS_URI);
-    } else
-        parseFillImage(valueList, resourceValue);
-
-    if (resourceValue)
-        outValue = WebKitCSSResourceValue::create(resourceValue);
-
-    return outValue.get();
 }
 
 #if ENABLE(CSS_REGIONS)

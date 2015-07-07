@@ -157,8 +157,6 @@ public:
     Vector<SourceSize> parseSizesAttribute(StringView);
     SourceSize sourceSize(std::unique_ptr<MediaQueryExp>&&, CSSParserValue&);
 
-    // FIXME: Maybe these two methods could be combined into one.
-    bool parseMaskImage(CSSParserValueList&, RefPtr<CSSValue>&);
     bool parseFillImage(CSSParserValueList&, RefPtr<CSSValue>&);
 
     enum FillPositionFlag { InvalidFillPosition = 0, AmbiguousFillPosition = 1, XFillPosition = 2, YFillPosition = 4 };

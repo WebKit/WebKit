@@ -104,7 +104,6 @@ public:
     static Optional<float> convertPerspective(StyleResolver&, CSSValue&);
     static Optional<Length> convertMarqueeIncrement(StyleResolver&, CSSValue&);
     static Optional<FilterOperations> convertFilterOperations(StyleResolver&, CSSValue&);
-    static Vector<RefPtr<MaskImageOperation>> convertMaskImageOperations(StyleResolver&, CSSValue&);
 #if PLATFORM(IOS)
     static bool convertTouchCallout(StyleResolver&, CSSValue&);
 #endif
@@ -1011,57 +1010,6 @@ static inline WebKitCSSResourceValue* maskImageValueFromIterator(CSSValueList& m
     if (it == maskImagesList.end() || !is<WebKitCSSResourceValue>(it->get()))
         return nullptr;
     return &downcast<WebKitCSSResourceValue>(it->get());
-}
-
-inline Vector<RefPtr<MaskImageOperation>> StyleBuilderConverter::convertMaskImageOperations(StyleResolver& styleResolver, CSSValue& value)
-{
-    Vector<RefPtr<MaskImageOperation>> operations;
-    RefPtr<WebKitCSSResourceValue> maskImageValue;
-    RefPtr<CSSValueList> maskImagesList;
-    CSSValueList::iterator listIterator;
-    if (is<WebKitCSSResourceValue>(value))
-        maskImageValue = &downcast<WebKitCSSResourceValue>(value);
-    else if (is<CSSValueList>(value)) {
-        maskImagesList = &downcast<CSSValueList>(value);
-        listIterator = maskImagesList->begin();
-        maskImageValue = maskImageValueFromIterator(*maskImagesList, listIterator);
-    }
-
-    while (maskImageValue.get()) {
-        RefPtr<CSSValue> maskInnerValue = maskImageValue->innerValue();
-
-        RefPtr<MaskImageOperation> newMaskImage;
-        if (is<CSSPrimitiveValue>(maskInnerValue.get())) {
-            RefPtr<CSSPrimitiveValue> primitiveValue = downcast<CSSPrimitiveValue>(maskInnerValue.get());
-            if (primitiveValue->isValueID() && primitiveValue->getValueID() == CSSValueNone)
-                newMaskImage = MaskImageOperation::create();
-            else {
-                String cssUrl = primitiveValue->getStringValue();
-                URL url = styleResolver.document().completeURL(cssUrl);
-
-                bool isExternalDocument = SVGURIReference::isExternalURIReference(cssUrl, styleResolver.document());
-                newMaskImage = MaskImageOperation::create(maskImageValue, cssUrl, url.fragmentIdentifier(), isExternalDocument, &styleResolver.document().cachedResourceLoader());
-                if (isExternalDocument)
-                    styleResolver.state().maskImagesWithPendingSVGDocuments().append(newMaskImage);
-            }
-        } else {
-            if (RefPtr<StyleImage> image = styleResolver.styleImage(CSSPropertyWebkitMaskImage, *maskInnerValue))
-                newMaskImage = MaskImageOperation::create(image);
-        }
-
-        // If we didn't get a valid value, use None so we keep the correct number and order of masks.
-        if (!newMaskImage)
-            newMaskImage = MaskImageOperation::create();
-
-        operations.append(newMaskImage);
-
-        if (maskImagesList)
-            maskImageValue = maskImageValueFromIterator(*maskImagesList, ++listIterator);
-        else
-            maskImageValue = nullptr;
-    }
-
-    return operations;
 }
 
 inline RefPtr<FontFeatureSettings> StyleBuilderConverter::convertFontFeatureSettings(StyleResolver&, CSSValue& value)
