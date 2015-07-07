@@ -258,7 +258,7 @@ JSDOMWindowShell* ScriptController::initScript(DOMWrapperWorld& world)
         if (shouldBypassMainWorldContentSecurityPolicy)
             windowShell->window()->setEvalEnabled(true);
         else
-            windowShell->window()->setEvalEnabled(m_frame.document()->contentSecurityPolicy()->allowEval(0, ContentSecurityPolicy::SuppressReport), m_frame.document()->contentSecurityPolicy()->evalDisabledErrorMessage());
+            windowShell->window()->setEvalEnabled(m_frame.document()->contentSecurityPolicy()->allowEval(0, shouldBypassMainWorldContentSecurityPolicy, ContentSecurityPolicy::SuppressReport), m_frame.document()->contentSecurityPolicy()->evalDisabledErrorMessage());
     }
 
     if (Page* page = m_frame.page()) {

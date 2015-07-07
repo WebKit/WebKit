@@ -122,7 +122,8 @@ bool DOMSecurityPolicy::allowsEval() const
     if (!isActive())
         return true;
 
-    return scriptExecutionContext()->contentSecurityPolicy()->allowEval(0, ContentSecurityPolicy::SuppressReport);
+    bool overrideContentSecurityPolicy = false;
+    return scriptExecutionContext()->contentSecurityPolicy()->allowEval(0, overrideContentSecurityPolicy, ContentSecurityPolicy::SuppressReport);
 }
 
 
