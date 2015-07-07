@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/resources/js-test-pre.js"></script>
+<script>
+description("A frame in provisional load stage should prevent page caching.");
+window.jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+
+    if (!window.sessionStorage.page_cache_provisional_load_test_started)
+        return;
+
+    delete window.sessionStorage.page_cache_provisional_load_test_started;
+
+    if (event.persisted)
+        testFailed("Page was restored from PageCache");
+    else
+        testPassed("Page was not restored from PageCache");
+
+    finishJSTest();
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide");
+}, false);
+
+function loadSubframeAndNavigateAway()
+{
+    // Force a back navigation back to this page.
+    window.sessionStorage.page_cache_provisional_load_test_started = true;
+    window.location.href = "resources/page-cache-helper-slow.html";
+
+    var testFrame = document.getElementById("testFrame");
+    testFrame.src = "http://127.0.0.1:8000/navigation/resources/slow-resource.pl?delay=100";
+
+    // If the page goes into the page cache and the frame keeps loading while in the cache,
+    // the following will cause crashes.
+    testFrame.onload = function() { document.getElementById("testFrame").remove(); };
+}
+
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        loadSubframeAndNavigateAway();
+    }, 0);
+}, false);
+
+</script>
+<iframe id="testFrame" src="about:blank"></iframe>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

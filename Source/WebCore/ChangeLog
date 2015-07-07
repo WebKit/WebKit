@@ -1,3 +1,39 @@
+2015-06-28  Chris Dumez  <cdumez@apple.com>
+
+        Crash: com.apple.WebKit.WebContent at com.apple.WebCore: WebCore::CachedFrameBase::restore + 333
+        https://bugs.webkit.org/show_bug.cgi?id=146388
+        <rdar://problem/21567343>
+
+        Reviewed by Darin Adler.
+
+        Pages that are currently loading are not supposed to go into the
+        PageCache. However, PageCache::canCache() only checks if the
+        FrameLoader's documentLoader is loading. If the subframe is in
+        provisional load stage, we would fail to detect that the frame is
+        actually loading because the FrameLoader active documentLoader would
+        be the provisional documentLoader, not the regular documentLoader.
+        Therefore, the page would get added to the PageCache and the frame
+        would keep loading while in the PageCache.
+
+        On http://www.audiusa.com/models, this is what was happening. It was
+        crashing because the subframe would finish loading while in the
+        PageCache, in which case we would fire the 'load' event and the
+        content 'load' event handler would then proceed to remove the iframe.
+        Upon restoring the PageCache entry, we would run into trouble as we
+        would have a CachedFrame whose Frame has been removed.
+
+        The solution proposed is to prevent page-caching if a subframe is in
+        provisional load stage.
+
+        Test: http/tests/navigation/page-cache-iframe-provisional-load.html
+
+        * history/PageCache.cpp:
+        (WebCore::logCanCacheFrameDecision):
+        (WebCore::PageCache::canCachePageContainingThisFrame):
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::provisionalLoadKey):
+        * page/DiagnosticLoggingKeys.h:
+
 2015-06-25  Zalan Bujtas  <zalan@apple.com>
 
         Do not send touch events to the slider's thumb when it does not have a renderer.

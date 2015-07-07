@@ -53,6 +53,11 @@ String DiagnosticLoggingKeys::pluginLoadingFailedKey()
     return ASCIILiteral("pluginFailedLoading");
 }
 
+String DiagnosticLoggingKeys::provisionalLoadKey()
+{
+    return ASCIILiteral("provisionalLoad");
+}
+
 String DiagnosticLoggingKeys::pageContainsPluginKey()
 {
     return ASCIILiteral("pageContainsPlugin");
