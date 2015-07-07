@@ -876,18 +876,20 @@ inline int floorToInt(LayoutUnit value)
     return value.floor();
 }
 
-inline float roundToDevicePixel(LayoutUnit value, const float pixelSnappingFactor, bool needsDirectionalRounding = false)
+inline float roundToDevicePixel(LayoutUnit value, float pixelSnappingFactor, bool needsDirectionalRounding = false)
 {
-    auto roundInternal = [&] (float valueToRound) { return roundf((valueToRound * pixelSnappingFactor) / kFixedPointDenominator) / pixelSnappingFactor; };
+    double valueToRound = value.toDouble();
+    if (needsDirectionalRounding)
+        valueToRound -= LayoutUnit::epsilon() / (2 * kFixedPointDenominator);
 
-    float adjustedValue = value.rawValue() - (needsDirectionalRounding ? LayoutUnit::epsilon() / 2.0f : 0);
-    if (adjustedValue >= 0)
-        return roundInternal(adjustedValue);
+    if (valueToRound >= 0)
+        return round(valueToRound * pixelSnappingFactor) / pixelSnappingFactor;
 
     // This adjusts directional rounding on negative halfway values. It produces the same direction for both negative and positive values.
+    // Instead of rounding negative halfway cases away from zero, we translate them to positive values before rounding.
     // It helps snapping relative negative coordinates to the same position as if they were positive absolute coordinates.
-    float translateOrigin = fabsf(adjustedValue - LayoutUnit::fromPixel(1));
-    return roundInternal(adjustedValue + (translateOrigin * kFixedPointDenominator)) - translateOrigin;
+    unsigned translateOrigin = -value.rawValue();
+    return (round((valueToRound + translateOrigin) * pixelSnappingFactor) / pixelSnappingFactor) - translateOrigin;
 }
 
 inline float floorToDevicePixel(LayoutUnit value, float pixelSnappingFactor)

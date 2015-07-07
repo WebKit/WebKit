@@ -1,3 +1,27 @@
+2015-06-30  Zalan Bujtas  <zalan@apple.com>
+
+        Addressing post-review comments in r185916
+
+        * platform/LayoutUnit.h:
+        (WebCore::roundToDevicePixel):
+
+2015-06-24  Zalan Bujtas  <zalan@apple.com>
+
+        Subpixel rendering: roundToDevicePixel() snaps to wrong value.
+        https://bugs.webkit.org/show_bug.cgi?id=146273
+        rdar://problem/18509840
+
+        Reviewed by Simon Fraser.
+
+        Due to the floating point approximate representation, we can't always produce
+        the correct snap value. This patch addresses the issue by removing redundant kFixedPointDenominator multiplication
+        and by changing the rounding in roundToDevicePixel() from float to double.
+
+        API test is added.
+
+        * platform/LayoutUnit.h:
+        (WebCore::roundToDevicePixel):
+
 2015-06-22  Simon Fraser  <simon.fraser@apple.com>
 
         ASSERT(!m_zOrderListsDirty) when mousing over web view with incremental rendering suppressed
