@@ -1,3 +1,14 @@
+2015-05-07  Philip Chimento  <philip.chimento@gmail.com>
+
+        [GTK] DrawingBuffer.h used outside of include guard
+        https://bugs.webkit.org/show_bug.cgi?id=144559
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/graphics/cairo/DrawingBufferCairo.cpp: A header was
+        improperly included outside of an include guard, causing a build
+        failure with a particular combination of options.
+
 2015-07-06  Andreas Kling  <akling@apple.com>
 
         Crash when setting text direction via MakeTextWritingDirection* editing commands.

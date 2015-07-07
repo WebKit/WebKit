@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
-#include "DrawingBuffer.h"
 
 #if USE(CAIRO) && (ENABLE(ACCELERATED_2D_CANVAS) || USE(3D_GRAPHICS))
+#include "DrawingBuffer.h"
 #include "Extensions3D.h"
 
 namespace WebCore {
