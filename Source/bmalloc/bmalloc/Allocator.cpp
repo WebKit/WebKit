@@ -166,7 +166,7 @@ void* Allocator::reallocate(void* object, size_t newSize)
             newSize = roundUpToMultipleOf<xLargeAlignment>(newSize);
             if (oldSize - newSize >= xLargeAlignment) {
                 lock.unlock();
-                vmDeallocate(static_cast<char*>(object) + oldSize, oldSize - newSize);
+                vmDeallocate(static_cast<char*>(object) + newSize, oldSize - newSize);
                 lock.lock();
 
                 range = Range(object, newSize);

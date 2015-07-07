@@ -1,3 +1,17 @@
+2015-07-01  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: realloc of an XLarge range can unmap adjacent VM ranges
+        https://bugs.webkit.org/show_bug.cgi?id=146535
+
+        Reviewed by Anders Carlsson.
+
+        This bug causes a crash when running fast/css/large-list-of-rules-crash.html
+        with the fix applied for https://bugs.webkit.org/show_bug.cgi?id=146519.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::reallocate): Start at object + newSize since starting
+        at object + oldSize means deleting the adjacent VM range.
+
 2015-05-26  Geoffrey Garen  <ggaren@apple.com>
 
         Integer overflow in XLarge allocation (due to unchecked roundUpToMultipleOf)
