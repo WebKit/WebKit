@@ -53,12 +53,12 @@ CachedSVGDocumentReference::~CachedSVGDocumentReference()
     }
 }
 
-void CachedSVGDocumentReference::load(CachedResourceLoader& loader)
+void CachedSVGDocumentReference::load(CachedResourceLoader& loader, const ResourceLoaderOptions& options)
 {
     if (m_loadRequested)
         return;
 
-    CachedResourceRequest request(ResourceRequest(loader.document()->completeURL(m_url)));
+    CachedResourceRequest request(ResourceRequest(loader.document()->completeURL(m_url)), options);
     request.setInitiator(cachedResourceRequestInitiators().css);
     if (m_acceptsAnyImageType)
         request.setAcceptOverride("image/*");

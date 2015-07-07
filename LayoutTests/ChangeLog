@@ -1,3 +1,81 @@
+2015-07-06  Daniel Bates  <dabates@apple.com>
+
+        Isolated worlds should respect Content Security Policy; User Agent Shadow DOM
+        should be exempt from Content Security Policy
+        https://bugs.webkit.org/show_bug.cgi?id=144830
+        <rdar://problem/18860261>
+
+        Reviewed by Geoffrey Garen.
+
+        Add tests to ensure that we exempt nodes in a user agent shadow tree from the Content Security Policy (CSP) of the page.
+
+        Updated test LayoutTests/http/tests/security/isolatedWorld/bypass-main-world-csp.html to ensure that
+        we do not bypass the CSP of the page for a script that executes in an isolated world and renamed the
+        file image-load-should-not-bypass-main-world-csp.html.
+
+        * http/tests/security/contentSecurityPolicy/resources/alert-pass-and-notify-done.js: Added.
+        * http/tests/security/contentSecurityPolicy/resources/wait-until-done.js: Added.
+        (alertAndDone):
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-css-background-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-css-background.html: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-css-cursor-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-css-cursor.html: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-css-filter-on-image-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-css-filter-on-image.html: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-css-webkit-image-set-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-css-webkit-image-set.html: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-embed-plugin-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-embed-plugin.html: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-external-script-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-external-script.html: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-iframe-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-iframe.html: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-image-after-redirect-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-image-after-redirect.html: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-image-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-image.html: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-inline-script-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-inline-script.html: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-inline-style-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-inline-style.html: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-inline-stylesheet-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-inline-stylesheet.html: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-object-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-object-plugin-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-object-plugin.html: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-object.html: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-svg-feimage-element-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-svg-feimage-element.html: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-svg-font-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-svg-font.html: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-svg-use-element-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-svg-use-element.html: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-track-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-track.html: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-video-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-video.html: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/block-loading-user-agent-image-from-non-user-agent-content-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/block-loading-user-agent-image-from-non-user-agent-content.html: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-blocked2-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-blocked2.html: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-blocked3-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-blocked3.html: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/resources/ABCFont.svg: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/resources/allow-inline-script.js: Added.
+        (window.onload):
+        (testPassed):
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/resources/floodGreenFilter.svg: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/video-controls-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/video-controls-allowed.html: Added.
+        * http/tests/security/isolatedWorld/image-load-should-not-bypass-main-world-csp-expected.txt: Renamed from LayoutTests/http/tests/security/isolatedWorld/bypass-main-world-csp-expected.txt.
+        * http/tests/security/isolatedWorld/image-load-should-not-bypass-main-world-csp.html: Renamed from LayoutTests/http/tests/security/isolatedWorld/bypass-main-world-csp.html.
+
 2015-07-06  Saam barati  <saambarati1@gmail.com>
 
         JSC's parser should follow the ES6 spec with respect to parsing Declarations

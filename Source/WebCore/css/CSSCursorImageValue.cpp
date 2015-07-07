@@ -130,11 +130,11 @@ bool CSSCursorImageValue::updateIfSVGCursorIsUsed(Element* element)
     return false;
 }
 
-StyleImage* CSSCursorImageValue::cachedImage(CachedResourceLoader& loader)
+StyleImage* CSSCursorImageValue::cachedImage(CachedResourceLoader& loader, const ResourceLoaderOptions& options)
 {
 #if ENABLE(CSS_IMAGE_SET)
     if (is<CSSImageSetValue>(m_imageValue.get()))
-        return downcast<CSSImageSetValue>(m_imageValue.get()).cachedImageSet(loader);
+        return downcast<CSSImageSetValue>(m_imageValue.get()).cachedImageSet(loader, options);
 #endif
 
     if (!m_accessedImage) {
@@ -148,7 +148,7 @@ StyleImage* CSSCursorImageValue::cachedImage(CachedResourceLoader& loader)
             if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(downcast<CSSImageValue>(m_imageValue.get()).url(), *loader.document())) {
                 detachPendingImage();
                 Ref<CSSImageValue> svgImageValue(CSSImageValue::create(cursorElement->href()));
-                StyleCachedImage* cachedImage = svgImageValue->cachedImage(loader);
+                StyleCachedImage* cachedImage = svgImageValue->cachedImage(loader, options);
                 m_image = cachedImage;
                 return cachedImage;
             }
@@ -156,7 +156,7 @@ StyleImage* CSSCursorImageValue::cachedImage(CachedResourceLoader& loader)
 
         if (is<CSSImageValue>(m_imageValue.get())) {
             detachPendingImage();
-            m_image = downcast<CSSImageValue>(m_imageValue.get()).cachedImage(loader);
+            m_image = downcast<CSSImageValue>(m_imageValue.get()).cachedImage(loader, options);
         }
     }
 

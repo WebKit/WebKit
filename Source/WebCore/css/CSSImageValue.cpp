@@ -94,11 +94,6 @@ StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader& loader, const
     return is<StyleCachedImage>(m_image.get()) ? downcast<StyleCachedImage>(m_image.get()) : nullptr;
 }
 
-StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader& loader)
-{
-    return cachedImage(loader, CachedResourceLoader::defaultCachedResourceOptions());
-}
-
 bool CSSImageValue::traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const
 {
     if (!is<StyleCachedImage>(m_image.get()))

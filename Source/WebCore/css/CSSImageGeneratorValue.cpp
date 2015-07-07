@@ -209,23 +209,23 @@ bool CSSImageGeneratorValue::knownToBeOpaque(const RenderElement* renderer) cons
     return false;
 }
 
-void CSSImageGeneratorValue::loadSubimages(CachedResourceLoader& cachedResourceLoader)
+void CSSImageGeneratorValue::loadSubimages(CachedResourceLoader& cachedResourceLoader, const ResourceLoaderOptions& options)
 {
     switch (classType()) {
     case CrossfadeClass:
-        downcast<CSSCrossfadeValue>(*this).loadSubimages(cachedResourceLoader);
+        downcast<CSSCrossfadeValue>(*this).loadSubimages(cachedResourceLoader, options);
         break;
     case CanvasClass:
-        downcast<CSSCanvasValue>(*this).loadSubimages(cachedResourceLoader);
+        downcast<CSSCanvasValue>(*this).loadSubimages(cachedResourceLoader, options);
         break;
     case FilterImageClass:
-        downcast<CSSFilterImageValue>(*this).loadSubimages(cachedResourceLoader);
+        downcast<CSSFilterImageValue>(*this).loadSubimages(cachedResourceLoader, options);
         break;
     case LinearGradientClass:
-        downcast<CSSLinearGradientValue>(*this).loadSubimages(cachedResourceLoader);
+        downcast<CSSLinearGradientValue>(*this).loadSubimages(cachedResourceLoader, options);
         break;
     case RadialGradientClass:
-        downcast<CSSRadialGradientValue>(*this).loadSubimages(cachedResourceLoader);
+        downcast<CSSRadialGradientValue>(*this).loadSubimages(cachedResourceLoader, options);
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -248,13 +248,13 @@ bool CSSImageGeneratorValue::subimageIsPending(CSSValue* value)
     return false;
 }
 
-CachedImage* CSSImageGeneratorValue::cachedImageForCSSValue(CSSValue* value, CachedResourceLoader& cachedResourceLoader)
+CachedImage* CSSImageGeneratorValue::cachedImageForCSSValue(CSSValue* value, CachedResourceLoader& cachedResourceLoader, const ResourceLoaderOptions& options)
 {
     if (!value)
         return nullptr;
 
     if (is<CSSImageValue>(*value)) {
-        StyleCachedImage* styleCachedImage = downcast<CSSImageValue>(*value).cachedImage(cachedResourceLoader);
+        StyleCachedImage* styleCachedImage = downcast<CSSImageValue>(*value).cachedImage(cachedResourceLoader, options);
         if (!styleCachedImage)
             return nullptr;
 
@@ -262,7 +262,7 @@ CachedImage* CSSImageGeneratorValue::cachedImageForCSSValue(CSSValue* value, Cac
     }
     
     if (is<CSSImageGeneratorValue>(*value)) {
-        downcast<CSSImageGeneratorValue>(*value).loadSubimages(cachedResourceLoader);
+        downcast<CSSImageGeneratorValue>(*value).loadSubimages(cachedResourceLoader, options);
         // FIXME: Handle CSSImageGeneratorValue (and thus cross-fades with gradients and canvas).
         return nullptr;
     }

@@ -322,9 +322,8 @@ StyleResolver::StyleResolver(Document& document, bool matchAuthorAndUserStyles)
 #if ENABLE(SVG_FONTS)
     if (m_document.svgExtensions()) {
         const HashSet<SVGFontFaceElement*>& svgFontFaceElements = m_document.svgExtensions()->svgFontFaceElements();
-        HashSet<SVGFontFaceElement*>::const_iterator end = svgFontFaceElements.end();
-        for (HashSet<SVGFontFaceElement*>::const_iterator it = svgFontFaceElements.begin(); it != end; ++it)
-            m_document.fontSelector().addFontFaceRule((*it)->fontFaceRule());
+        for (auto* svgFontFaceElement : svgFontFaceElements)
+            m_document.fontSelector().addFontFaceRule(svgFontFaceElement->fontFaceRule(), svgFontFaceElement->isInUserAgentShadowTree());
     }
 #endif
 
@@ -2249,18 +2248,21 @@ void StyleResolver::loadPendingSVGDocuments()
     if (!hasFilters && !hasMasks)
         return;
 
+    ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
+    options.setContentSecurityPolicyImposition(m_state.element() && m_state.element()->isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck);
+
     CachedResourceLoader& cachedResourceLoader = state.document().cachedResourceLoader();
     
     if (hasFilters) {
         for (auto& filterOperation : state.filtersWithPendingSVGDocuments())
-            filterOperation->getOrCreateCachedSVGDocumentReference()->load(cachedResourceLoader);
+            filterOperation->getOrCreateCachedSVGDocumentReference()->load(cachedResourceLoader, options);
 
         state.filtersWithPendingSVGDocuments().clear();
     }
     
     if (hasMasks) {
         for (auto& maskImageOperation : state.maskImagesWithPendingSVGDocuments())
-            maskImageOperation->ensureCachedSVGDocumentReference()->load(cachedResourceLoader);
+            maskImageOperation->ensureCachedSVGDocumentReference()->load(cachedResourceLoader, options);
 
         state.maskImagesWithPendingSVGDocuments().clear();
     }
@@ -2408,12 +2410,12 @@ PassRefPtr<StyleImage> StyleResolver::loadPendingImage(const StylePendingImage& 
         return imageValue->cachedImage(m_state.document().cachedResourceLoader(), options);
 
     if (auto imageGeneratorValue = pendingImage.cssImageGeneratorValue()) {
-        imageGeneratorValue->loadSubimages(m_state.document().cachedResourceLoader());
+        imageGeneratorValue->loadSubimages(m_state.document().cachedResourceLoader(), options);
         return StyleGeneratedImage::create(*imageGeneratorValue);
     }
 
     if (auto cursorImageValue = pendingImage.cssCursorImageValue())
-        return cursorImageValue->cachedImage(m_state.document().cachedResourceLoader());
+        return cursorImageValue->cachedImage(m_state.document().cachedResourceLoader(), options);
 
 #if ENABLE(CSS_IMAGE_SET)
     if (auto imageSetValue = pendingImage.cssImageSetValue())
@@ -2425,7 +2427,9 @@ PassRefPtr<StyleImage> StyleResolver::loadPendingImage(const StylePendingImage& 
 
 PassRefPtr<StyleImage> StyleResolver::loadPendingImage(const StylePendingImage& pendingImage)
 {
-    return loadPendingImage(pendingImage, CachedResourceLoader::defaultCachedResourceOptions());
+    ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
+    options.setContentSecurityPolicyImposition(m_state.element() && m_state.element()->isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck);
+    return loadPendingImage(pendingImage, options);
 }
 
 #if ENABLE(CSS_SHAPES)
@@ -2443,6 +2447,7 @@ void StyleResolver::loadPendingShapeImage(ShapeValue* shapeValue)
     ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
     options.setRequestOriginPolicy(PotentiallyCrossOriginEnabled);
     options.setAllowCredentials(DoNotAllowStoredCredentials);
+    options.setContentSecurityPolicyImposition(m_state.element() && m_state.element()->isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck);
 
     shapeValue->setImage(loadPendingImage(pendingImage, options));
 }

@@ -543,7 +543,10 @@ void SVGUseElement::updateExternalDocument()
     if (externalDocumentURL.isNull())
         m_externalDocument = nullptr;
     else {
-        CachedResourceRequest request { ResourceRequest { externalDocumentURL } };
+        ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
+        options.setContentSecurityPolicyImposition(isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck);
+
+        CachedResourceRequest request { ResourceRequest { externalDocumentURL }, options };
         request.setInitiator(this);
         m_externalDocument = document().cachedResourceLoader().requestSVGDocument(request);
         if (m_externalDocument) {
