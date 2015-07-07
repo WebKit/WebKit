@@ -1,3 +1,37 @@
+2015-07-06  Matt Rajca  <mrajca@apple.com>
+
+        Media Session: propagate metadata changes to UI clients
+        https://bugs.webkit.org/show_bug.cgi?id=146660
+
+        Reviewed by Tim Horton.
+
+        * CMakeLists.txt: Added WebMediaSessionMetadata and WKMediaSessionMetadata.
+        * Shared/API/APIObject.h: Added a media session metadata type.
+        * Shared/API/c/WKBase.h:
+        * Shared/WebMediaSessionMetadata.cpp: Added API adapter for WebCore::MediaSessionMetadata.
+        (WebKit::WebMediaSessionMetadata::create):
+        (WebKit::WebMediaSessionMetadata::WebMediaSessionMetadata):
+        (WebKit::WebMediaSessionMetadata::~WebMediaSessionMetadata):
+        * Shared/WebMediaSessionMetadata.h: Added API adapter for WebCore::MediaSessionMetadata.
+        (WebKit::WebMediaSessionMetadata::title):
+        (WebKit::WebMediaSessionMetadata::artist):
+        (WebKit::WebMediaSessionMetadata::album):
+        * UIProcess/API/APIUIClient.h: Added 'mediaSessionMetadataDidChange' interface.
+        (API::UIClient::mediaSessionMetadataDidChange):
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKMediaSessionMetadata.cpp: Added C wrapper for WebMediaSessionMetadata.
+        (WKMediaSessionMetadataGetTypeID):
+        (WKMediaSessionMetadataCopyTitle):
+        (WKMediaSessionMetadataCopyArtist):
+        (WKMediaSessionMetadataCopyAlbum):
+        * UIProcess/API/C/WKMediaSessionMetadata.h: Added C wrapper for WebMediaSessionMetadata.
+        * UIProcess/API/C/WKPage.cpp: Forward 'mediaSessionMetadataDidChange' to client.
+        (WKPageSetPageUIClient):
+        * UIProcess/API/C/WKPageUIClient.h: Added 'mediaSessionMetadataDidChange' callback.
+        * UIProcess/WebPageProxy.cpp: Forward 'mediaSessionMetadataDidChange' to UI client.
+        (WebKit::WebPageProxy::mediaSessionMetadataDidChange):
+        * WebKit2.xcodeproj/project.pbxproj: Added WebMediaSessionMetadata and WKMediaSessionMetadata.
+
 2015-07-07  Brady Eidson  <beidson@apple.com>
 
         HTTP Auth cached after disabling private browsing/reset.

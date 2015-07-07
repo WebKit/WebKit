@@ -80,6 +80,7 @@
 #endif
 
 #if ENABLE(MEDIA_SESSION)
+#include "WebMediaSessionMetadata.h"
 #include <WebCore/MediaEventTypes.h>
 #endif
 
@@ -1800,6 +1801,16 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
 
             m_client.didClickAutoFillButton(toAPI(&page), toAPI(userInfo), m_client.base.clientInfo);
         }
+
+#if ENABLE(MEDIA_SESSION)
+        virtual void mediaSessionMetadataDidChange(WebPageProxy& page, WebMediaSessionMetadata* metadata) override
+        {
+            if (!m_client.mediaSessionMetadataDidChange)
+                return;
+
+            m_client.mediaSessionMetadataDidChange(toAPI(&page), toAPI(metadata), m_client.base.clientInfo);
+        }
+#endif
     };
 
     toImpl(pageRef)->setUIClient(std::make_unique<UIClient>(wkClient));

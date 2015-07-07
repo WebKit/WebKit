@@ -57,6 +57,10 @@ class WebOpenPanelResultListenerProxy;
 class WebPageProxy;
 struct NavigationActionData;
 struct SecurityOriginData;
+
+#if ENABLE(MEDIA_SESSION)
+class WebMediaSessionMetadata;
+#endif
 }
 
 namespace API {
@@ -149,6 +153,10 @@ public:
     virtual void didCancelTrackingPotentialLongMousePress(WebKit::WebPageProxy*, API::Object*) { }
 
     virtual void isPlayingAudioDidChange(WebKit::WebPageProxy&) { }
+
+#if ENABLE(MEDIA_SESSION)
+    virtual void mediaSessionMetadataDidChange(WebKit::WebPageProxy&, WebKit::WebMediaSessionMetadata*) { }
+#endif
 
 #if PLATFORM(IOS)
     virtual RetainPtr<NSArray> actionsForElement(_WKActivatedElementInfo *, RetainPtr<NSArray> defaultActions) { return WTF::move(defaultActions); }

@@ -159,6 +159,11 @@
 #include <WebCore/WebMediaSessionManager.h>
 #endif
 
+#if ENABLE(MEDIA_SESSION)
+#include "WebMediaSessionMetadata.h"
+#include <WebCore/MediaSessionMetadata.h>
+#endif
+
 // This controls what strategy we use for mouse wheel coalescing.
 #define MERGE_WHEEL_EVENTS 1
 
@@ -5806,6 +5811,8 @@ void WebPageProxy::isPlayingMediaDidChange(MediaProducer::MediaStateFlags state)
 #if ENABLE(MEDIA_SESSION)
 void WebPageProxy::mediaSessionMetadataDidChange(const WebCore::MediaSessionMetadata& metadata)
 {
+    Ref<WebMediaSessionMetadata> webMetadata = WebMediaSessionMetadata::create(metadata);
+    m_uiClient->mediaSessionMetadataDidChange(*this, webMetadata.ptr());
 }
 #endif
 

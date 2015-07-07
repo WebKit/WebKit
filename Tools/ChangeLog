@@ -1,3 +1,14 @@
+2015-07-06  Matt Rajca  <mrajca@apple.com>
+
+        Media Session: propagate metadata changes to UI clients
+        https://bugs.webkit.org/show_bug.cgi?id=146660
+
+        Reviewed by Tim Horton.
+
+        * WebKitTestRunner/TestController.cpp: Build fixes for updated PageUIClient.
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::createWebViewWithOptions):
+
 2015-07-07  Brady Eidson  <beidson@apple.com>
 
         HTTP Auth cached after disabling private browsing/reset.

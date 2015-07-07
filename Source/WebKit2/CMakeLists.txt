@@ -251,6 +251,7 @@ set(WebKit2_SOURCES
     Shared/WebImage.cpp
     Shared/WebKeyboardEvent.cpp
     Shared/WebKit2Initialize.cpp
+    Shared/WebMediaSessionMetadata.cpp
     Shared/WebMemorySampler.cpp
     Shared/WebMouseEvent.cpp
     Shared/WebOpenPanelParameters.cpp
@@ -425,6 +426,7 @@ set(WebKit2_SOURCES
     UIProcess/API/C/WKInspector.cpp
     UIProcess/API/C/WKKeyValueStorageManager.cpp
     UIProcess/API/C/WKMediaCacheManager.cpp
+    UIProcess/API/C/WKMediaSessionMetadata.cpp
     UIProcess/API/C/WKNavigationActionRef.cpp
     UIProcess/API/C/WKNavigationDataRef.cpp
     UIProcess/API/C/WKNavigationRef.cpp
