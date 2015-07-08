@@ -1195,7 +1195,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     _private->page->settings().setMinimumFontSize([_private->preferences minimumFontSize]);
 
     // This is a workaround for <rdar://problem/21309911>.
-    _private->page->settings().setMetaRefreshEnabled([_private->preferences metaRefreshEnabled]);
+    _private->page->settings().setHttpEquivEnabled([_private->preferences httpEquivEnabled]);
 
     [self setGroupName:groupName];
 
@@ -2298,7 +2298,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     }
 
     settings.setPlugInSnapshottingEnabled([preferences plugInSnapshottingEnabled]);
-    settings.setMetaRefreshEnabled([preferences metaRefreshEnabled]);
+    settings.setHttpEquivEnabled([preferences httpEquivEnabled]);
 
     settings.setFixedPositionCreatesStackingContext(true);
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 10100

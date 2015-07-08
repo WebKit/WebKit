@@ -230,4 +230,4 @@ useImageDocumentForSubframePDF initial=false
 # as a means to pass data from the web-portion of their app to the native portion.
 allowNavigationToInvalidURL initial=false
 
-metaRefreshEnabled initial=true
+httpEquivEnabled initial=true
