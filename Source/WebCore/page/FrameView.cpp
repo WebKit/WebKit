@@ -3724,21 +3724,25 @@ FrameView* FrameView::parentFrameView() const
 
 bool FrameView::isInChildFrameWithFrameFlattening() const
 {
-    if (!parent() || !frame().ownerElement())
+    if (!frameFlatteningEnabled())
+        return false;
+
+    if (!parent())
+        return false;
+
+    HTMLFrameOwnerElement* ownerElement = frame().ownerElement();
+    if (!ownerElement)
+        return false;
+
+    if (!ownerElement->renderWidget())
         return false;
 
     // Frame flattening applies when the owner element is either in a frameset or
     // an iframe with flattening parameters.
-    if (is<HTMLIFrameElement>(*frame().ownerElement())) {
-        RenderIFrame& iframeRenderer = downcast<RenderIFrame>(*frame().ownerElement()->renderWidget());
-        if (iframeRenderer.flattenFrame())
-            return true;
-    }
+    if (is<HTMLIFrameElement>(*ownerElement))
+        return downcast<RenderIFrame>(*ownerElement->renderWidget()).flattenFrame();
 
-    if (!frameFlatteningEnabled())
-        return false;
-
-    if (is<HTMLFrameElement>(*frame().ownerElement()))
+    if (is<HTMLFrameElement>(*ownerElement))
         return true;
 
     return false;

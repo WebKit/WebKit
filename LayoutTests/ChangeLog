@@ -1,3 +1,20 @@
+2015-07-07  Zalan Bujtas  <zalan@apple.com>
+
+        Crash when parent iframe is set to display none and the child frame is mutated the same time.
+        https://bugs.webkit.org/show_bug.cgi?id=146699
+        rdar://problem/16207881
+
+        Reviewed by Andreas Kling.
+
+        When the parent iframe is set to display: none, we destroy the associated renderer (RenderIFrame).
+        However if the child frame is mutated the same time, during layout we try to access this RenderIFrame
+        to check whether it needs frame flattening.
+        This patch checks whether the parent render widget is still valid.
+
+        * fast/frames/crash-display-none-iframe-during-onbeforeload-expected.txt: Added.
+        * fast/frames/crash-display-none-iframe-during-onbeforeload.html: Added.
+        * fast/frames/resources/displaynone-this-during-object-beforeload.html: Added.
+
 2015-07-07  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Unreviewed test skip after r186476.
