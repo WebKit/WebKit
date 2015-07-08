@@ -1523,7 +1523,13 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             // 2) `_createTextMarkerForPropertyIfNeeded` relies on CSSProperty instances.
             var cssPropertiesMap = new Map();
             this._iterateOverProperties(false, function(cssProperty) {
-                cssPropertiesMap.set(cssProperty.text.replace(findWhitespace, ""), cssProperty);
+                cssProperty.__refreshedAfterBlur = false;
+
+                var propertyTextSansWhitespace = cssProperty.text.replace(findWhitespace, "");
+                var existingProperties = cssPropertiesMap.get(propertyTextSansWhitespace) || [];
+                existingProperties.push(cssProperty);
+
+                cssPropertiesMap.set(propertyTextSansWhitespace, existingProperties);
             });
 
             // Go through the Editor line by line and create TextMarker when a
@@ -1531,10 +1537,22 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             this._codeMirror.eachLine(function(lineHandler) {
                 var lineNumber = lineHandler.lineNo();
                 var lineContentSansWhitespace = lineHandler.text.replace(findWhitespace, "");
-                if (cssPropertiesMap.has(lineContentSansWhitespace)) {
+                var properties = cssPropertiesMap.get(lineContentSansWhitespace);
+
+                if (!properties)
+                    return;
+
+                for (var property of properties) {
+                    if (property.__refreshedAfterBlur)
+                        continue;
+
                     var from = {line: lineNumber, ch: 0};
                     var to = {line: lineNumber};
-                    this._createTextMarkerForPropertyIfNeeded(from, to, cssPropertiesMap.get(lineContentSansWhitespace));
+
+                    this._createTextMarkerForPropertyIfNeeded(from, to, property);
+                    property.__refreshedAfterBlur = true;
+
+                    break;
                 }
             }.bind(this));
 
