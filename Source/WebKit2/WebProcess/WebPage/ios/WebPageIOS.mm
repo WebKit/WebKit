@@ -2164,15 +2164,7 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
             if (element->renderer())
                 info.touchCalloutEnabled = element->renderer()->style().touchCalloutEnabled();
 
-            if (element == linkElement) {
-                RefPtr<Range> linkRange = rangeOfContents(*linkElement);
-                Vector<FloatQuad> quads;
-                linkRange->textQuads(quads);
-                FloatRect linkBoundingBox;
-                for (const auto& quad : quads)
-                    linkBoundingBox.unite(quad.enclosingBoundingBox());
-                info.bounds = IntRect(linkBoundingBox);
-            } else if (RenderElement* renderer = element->renderer()) {
+            if (RenderElement* renderer = element->renderer()) {
                 if (renderer->isRenderImage())
                     info.bounds = downcast<RenderImage>(*renderer).absoluteContentQuad().enclosingBoundingBox();
                 else
