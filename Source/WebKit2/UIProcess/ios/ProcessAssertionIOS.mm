@@ -28,7 +28,6 @@
 
 #if PLATFORM(IOS)
 
-#import "ApplicationStateTracker.h"
 #import "AssertionServicesSPI.h"
 #import <UIKit/UIApplication.h>
 #import <wtf/HashSet.h>
@@ -71,8 +70,6 @@ using WebKit::ProcessAssertionClient;
 
     _backgroundTask = UIBackgroundTaskInvalid;
 
-    WebKit::ApplicationStateTracker::singleton().addListener(self, @selector(_applicationWillEnterForeground), @selector(_applicationDidEnterBackground));
-
     return self;
 }
 
@@ -96,9 +93,7 @@ using WebKit::ProcessAssertionClient;
 
 - (void)_updateBackgroundTask
 {
-    bool shouldHoldTask = _needsToRunInBackgroundCount && WebKit::ApplicationStateTracker::singleton().isInBackground();
-
-    if (shouldHoldTask && _backgroundTask == UIBackgroundTaskInvalid) {
+    if (_needsToRunInBackgroundCount && _backgroundTask == UIBackgroundTaskInvalid) {
         _backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithName:@"com.apple.WebKit.ProcessAssertion" expirationHandler:^{
             NSLog(@"Background task expired while holding WebKit ProcessAssertion.");
             Vector<ProcessAssertionClient*> clientsToNotify;
@@ -110,20 +105,10 @@ using WebKit::ProcessAssertionClient;
         }];
     }
 
-    if (!shouldHoldTask && _backgroundTask != UIBackgroundTaskInvalid) {
+    if (!_needsToRunInBackgroundCount && _backgroundTask != UIBackgroundTaskInvalid) {
         [[UIApplication sharedApplication] endBackgroundTask:_backgroundTask];
         _backgroundTask = UIBackgroundTaskInvalid;
     }
-}
-
-- (void)_applicationWillEnterForeground
-{
-    [self _updateBackgroundTask];
-}
-
-- (void)_applicationDidEnterBackground
-{
-    [self _updateBackgroundTask];
 }
 
 - (void)incrementNeedsToRunInBackgroundCount
