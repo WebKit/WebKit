@@ -1,3 +1,28 @@
+2015-07-07  Andy Estes  <aestes@apple.com>
+
+        [iOS][WK2] Ignore synthetic clicks in subframes initiated on a previous page
+        https://bugs.webkit.org/show_bug.cgi?id=146712
+
+        Reviewed by Benjamin Poulain.
+
+        r178980 fixed an issue where, if a main frame navigation occurs in response to a touch event, a synthetic click
+        event could fire on the navigated-to page. This change extends this fix to apply to subframes.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::WebFrame):
+        * WebProcess/WebPage/WebFrame.h:
+        (WebKit::WebFrame::firstLayerTreeTransactionIDAfterDidCommitLoad):
+        (WebKit::WebFrame::setFirstLayerTreeTransactionIDAfterDidCommitLoad):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCommitLoad): Stored the next layer tree transaction ID, and called cancelPotentialTapInFrame(), for the committed frame.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleTap): Determined the first post-commit layer tree transaction ID from the tap target node's frame.
+        (WebKit::WebPage::commitPotentialTap): Ditto.
+        (WebKit::WebPage::cancelPotentialTap): Called cancelPotentialTapInFrame(), passing m_mainFrame.
+        (WebKit::WebPage::cancelPotentialTapInFrame): Taught to only cancel a potential tap whose target node is a descendant of the given frame.
+        (WebKit::WebPage::updateVisibleContentRects): Updated to use the main frame's first post-commit layer tree transaction ID.
+
 2015-07-08  Brady Eidson  <beidson@apple.com>
 
         Move PingLoaders to the NetworkingProcess.
