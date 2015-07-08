@@ -29,9 +29,16 @@
 
 #import <wtf/RetainPtr.h>
 
-@interface WKImagePreviewViewController : UIViewController
+@class _WKActivatedElementInfo;
+@class _WKElementAction;
 
-- (id)initWithCGImage:(RetainPtr<CGImageRef>)image;
+@interface WKImagePreviewViewController : UIViewController {
+@private
+    RetainPtr<NSArray> _imageActions;
+    RetainPtr<_WKActivatedElementInfo> _activatedElementInfo;
+}
+
+- (id)initWithCGImage:(RetainPtr<CGImageRef>)image defaultActions:(RetainPtr<NSArray>)actions elementInfo:(RetainPtr<_WKActivatedElementInfo>)elementInfo;
 @end
 
 #endif // PLATFORM(IOS)

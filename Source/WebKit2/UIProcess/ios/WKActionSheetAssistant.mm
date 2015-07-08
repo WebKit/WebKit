@@ -245,21 +245,9 @@ using namespace WebKit;
 
     const auto& positionInformation = [delegate positionInformationForActionSheetAssistant:self];
 
-    NSURL *targetURL = [NSURL URLWithString:positionInformation.url];
-    auto defaultActions = adoptNS([[NSMutableArray alloc] init]);
-    if (!positionInformation.url.isEmpty())
-        [defaultActions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeOpen]];
-#if HAVE(SAFARI_SERVICES_FRAMEWORK)
-    if ([getSSReadingListClass() supportsURL:targetURL])
-        [defaultActions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeAddToReadingList]];
-#endif
-    if (TCCAccessPreflight(getkTCCServicePhotos(), NULL) != kTCCAccessPreflightDenied)
-        [defaultActions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeSaveImage]];
-    if (!targetURL.scheme.length || [targetURL.scheme caseInsensitiveCompare:@"javascript"] != NSOrderedSame)
-        [defaultActions addObject:[_WKElementAction elementActionWithType:_WKElementActionTypeCopy]];
-
-    auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage
-        URL:targetURL location:positionInformation.point title:positionInformation.title rect:positionInformation.bounds image:positionInformation.image.get()]);
+    NSURL *targetURL = [NSURL _web_URLWithWTFString:positionInformation.url];
+    auto defaultActions = [self defaultActionsForImageSheet];
+    auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:targetURL location:positionInformation.point title:positionInformation.title rect:positionInformation.bounds image:positionInformation.image.get()]);
 
     RetainPtr<NSArray> actions = [delegate actionSheetAssistant:self decideActionsForElement:elementInfo.get() defaultActions:WTF::move(defaultActions)];
 
@@ -295,6 +283,30 @@ using namespace WebKit;
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeAddToReadingList assistant:self]];
 #endif
     if (![[targetURL scheme] length] || [[targetURL scheme] caseInsensitiveCompare:@"javascript"] != NSOrderedSame)
+        [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeCopy assistant:self]];
+
+    return defaultActions;
+}
+
+- (RetainPtr<NSArray>)defaultActionsForImageSheet
+{
+    auto delegate = _delegate.get();
+    if (!delegate)
+        return nil;
+
+    const auto& positionInformation = [delegate positionInformationForActionSheetAssistant:self];
+    NSURL *targetURL = [NSURL _web_URLWithWTFString:positionInformation.url];
+
+    auto defaultActions = adoptNS([[NSMutableArray alloc] init]);
+    if (!positionInformation.url.isEmpty())
+        [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeOpen assistant:self]];
+#if HAVE(SAFARI_SERVICES_FRAMEWORK)
+    if ([getSSReadingListClass() supportsURL:targetURL])
+        [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeAddToReadingList assistant:self]];
+#endif
+    if (TCCAccessPreflight(getkTCCServicePhotos(), NULL) != kTCCAccessPreflightDenied)
+        [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeSaveImage assistant:self]];
+    if (!targetURL.scheme.length || [targetURL.scheme caseInsensitiveCompare:@"javascript"] != NSOrderedSame)
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeCopy assistant:self]];
 
     return defaultActions;

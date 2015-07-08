@@ -63,6 +63,7 @@ struct InteractionInformationAtPosition;
 - (void)cleanupSheet;
 - (void)updateSheetPosition;
 - (RetainPtr<NSArray>)defaultActionsForLinkSheet;
+- (RetainPtr<NSArray>)defaultActionsForImageSheet;
 @end
 
 #endif // PLATFORM(IOS)

@@ -26,9 +26,14 @@
 #import "config.h"
 #import "WKImagePreviewViewController.h"
 
-#import <WebCore/IntSize.h>
-
 #if PLATFORM(IOS)
+
+#import <UIKitSPI.h>
+#import <WebCore/IntSize.h>
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/LinkPreviewDefines.h>
+#endif
+#import <_WKElementAction.h>
 
 @implementation WKImagePreviewViewController {
     RetainPtr<CGImageRef> _image;
@@ -42,7 +47,7 @@
     [self.view addSubview:_imageView.get()];
 }
 
-- (id)initWithCGImage:(RetainPtr<CGImageRef>)image
+- (id)initWithCGImage:(RetainPtr<CGImageRef>)image defaultActions:(RetainPtr<NSArray>)actions elementInfo:(RetainPtr<_WKActivatedElementInfo>)elementInfo
 {
     self = [super initWithNibName:nil bundle:nil];
     if (!self)
@@ -58,6 +63,9 @@
     CGSize imageSize = _scaleSizeWithinSize(CGSizeMake(CGImageGetWidth(_image.get()), CGImageGetHeight(_image.get())), screenSize);
     [_imageView setFrame:CGRectMake([_imageView frame].origin.x, [_imageView frame].origin.y, imageSize.width, imageSize.height)];
     [self setPreferredContentSize:imageSize];
+
+    _imageActions = actions;
+    _activatedElementInfo = elementInfo;
 
     return self;
 }
@@ -85,6 +93,10 @@ static CGSize _scaleSizeWithinSize(CGSize source, CGSize destination)
     
     return size;
 }
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKImagePreviewViewController.mm>
+#endif
 
 @end
 
