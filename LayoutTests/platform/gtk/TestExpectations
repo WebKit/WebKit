@@ -456,13 +456,7 @@ webkit.org/b/131347 fast/borders/hidpi-simple-hairline-border-painting.html [ Im
 webkit.org/b/131347 fast/hidpi/clip-text-in-hidpi.html [ Failure Pass Missing ]
 webkit.org/b/131347 fast/hidpi/image-set-background-dynamic.html [ Failure Pass Missing ]
 webkit.org/b/131347 fast/hidpi/image-set-border-image-dynamic.html [ Failure Pass Missing ]
-webkit.org/b/131347 fast/hidpi/image-srcset-change-dynamically-from-js-2x.html [ Failure ]
-webkit.org/b/131347 fast/hidpi/image-srcset-fraction-1.5x.html [ Failure ]
-webkit.org/b/131347 fast/hidpi/image-srcset-fraction.html [ Failure ]
-webkit.org/b/131347 fast/hidpi/image-srcset-invalid-inputs-except-one.html [ Failure ]
 webkit.org/b/131347 fast/hidpi/image-srcset-png-canvas.html [ ImageOnlyFailure Pass ]
-webkit.org/b/131347 fast/hidpi/image-srcset-simple-2x.html [ Failure ]
-webkit.org/b/131347 fast/hidpi/image-srcset-src-selection-2x.html [ Failure ]
 webkit.org/b/131347 fast/inline-block/hidpi-margin-top-with-subpixel-value-and-overflow-hidden.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/inline/hidpi-inline-selection-leaves-gap.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/inline/hidpi-inline-text-decoration-with-subpixel-value.html [ ImageOnlyFailure ]
@@ -608,6 +602,14 @@ webkit.org/b/146720 media/accessiblity-describes-video.html [ Failure ]
 webkit.org/b/146721 fast/forms/auto-fill-button/input-readonly-auto-fill-button.html [ ImageOnlyFailure ]
 
 webkit.org/b/146724 fast/text/word-break-keep-all.html [ ImageOnlyFailure ]
+
+# This tests fail since the upgrade of GTK to 3.16 and Cairo to 1.14 on the JHBuild
+webkit.org/b/146731 fast/backgrounds/hidpi-background-image-contain-cover-scale-needs-more-precision.html [ ImageOnlyFailure ]
+webkit.org/b/146731 fast/hidpi/filters-blur.html [ ImageOnlyFailure ]
+webkit.org/b/146731 fast/hidpi/filters-hue-rotate.html [ ImageOnlyFailure ]
+webkit.org/b/146731 fast/hidpi/filters-invert.html [ ImageOnlyFailure ]
+webkit.org/b/146731 fast/hidpi/filters-multiple.html [ ImageOnlyFailure ]
+webkit.org/b/146731 fast/hidpi/filters-reference.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
@@ -1366,6 +1368,11 @@ webkit.org/b/145171 fast/events/tabindex-focus-blur-all.html [ Timeout Pass ]
 
 webkit.org/b/145260 media/audio-playback-restriction-play.html  [ Timeout Pass ]
 
+# This tests timeout since the upgrade of GTK to 3.16 and Cairo to 1.14 on the JHBuild
+webkit.org/b/146731 fast/events/touch/tap-highlight-color.html [ Timeout ]
+webkit.org/b/146731 fast/events/touch/touch-scaled-scrolled.html [ Timeout ]
+webkit.org/b/146731 fast/events/touch/touch-stale-node-crash.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1715,9 +1722,6 @@ Bug(GTK) sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T6.
 # r65681 broke a couple GTK+ a11y tests
 webkit.org/b/44316 platform/gtk/accessibility/object-attributes.html [ Failure ]
 webkit.org/b/44316 platform/gtk/accessibility/title-and-alt.html [ Failure ]
-
-# Rounding color problems inside pixman
-webkit.org/b/49964 fast/canvas/canvas-fillPath-shadow.html [ Failure ]
 
 # Expose title direction in WebKit API
 webkit.org/b/58845 fast/dom/title-directionality.html [ Failure ]
@@ -2203,10 +2207,6 @@ webkit.org/b/133803 editing/undo/undo-deleteWord.html [ Failure ]
 # Difference invisible at the naked eye with Latin Modern Math.
 webkit.org/b/134153 mathml/presentation/mo-stacked-glyphs.html [ ImageOnlyFailure ]
 
-webkit.org/b/134756 fast/dom/HTMLImageElement/sizes/image-sizes-2x.html [ Failure ]
-webkit.org/b/134756 fast/dom/HTMLImageElement/sizes/image-sizes-js-change.html [ Failure ]
-webkit.org/b/134756 http/tests/loading/sizes/preload-image-sizes-2x.html [ Failure ]
-
 webkit.org/b/134976 media/media-controls-invalid-url.html [ Failure ]
 webkit.org/b/134976 media/video-fast-seek.html [ Failure ]
 
@@ -2376,9 +2376,7 @@ webkit.org/b/144690 editing/spelling/delete-into-misspelled-word.html [ Timeout 
 
 # Touch events not working
 webkit.org/b/144765 fast/events/touch/touch-slider.html [ Failure ]
-webkit.org/b/144765 fast/events/touch/touch-inside-iframe-scrolled.html [ Failure ]
 webkit.org/b/144765 fast/events/touch/touch-slider-no-js-touch-listener.html [ Failure ]
-webkit.org/b/144765 fast/events/touch/touch-inside-iframe.html [ Timeout ]
 
 webkit.org/b/144763 fast/events/scroll-in-scaled-page-with-overflow-hidden.html
 
