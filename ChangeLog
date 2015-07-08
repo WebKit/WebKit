@@ -1,3 +1,9 @@
+2015-07-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.8.4 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2015-05-28  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [CMake] Improve detection and usage of GL/GLES/EGL libraries.

@@ -1,4 +1,25 @@
 =================
+WebKitGTK+  2.8.4
+=================
+
+What's new in WebKitGTK+ 2.8.4?
+
+  - Make WebSQL work by using a default quota instead of always failing in openDatabase with
+    DOM Exception 18.
+  - Improve detection and usage of GL/GLES/EGL libraries.
+  - Fix a crash on memory allocation using bmalloc on 32bit systems.
+  - Fix DOCUMENT_VIEWER cache model to actually disable the memory cache.
+  - Fix a WebProcess crash after too many redirect error when there's an active NPAPI plugin.
+  - Fix a WebProcess crash when gtk-font-name setting is empty.
+  - Ensure Math.abs() doesn't return negative.
+  - Correctly restore accelerated compositing after a WebProcess crash.
+  - Respect X-Frame-Options headers when loading from application cache.
+  - Several crashes and rendering issues fixed.
+  - Fix the MIPS N64 detection.
+  - Fix several memory leaks.
+  - Translation updates: Catalan.
+
+=================
 WebKitGTK+  2.8.3
 =================
 
