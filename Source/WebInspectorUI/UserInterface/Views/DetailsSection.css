@@ -31,6 +31,7 @@
 
 .details-section .details-section {
     background-color: rgb(255, 255, 255);
+    border-color: hsla(0, 0%, 0%, 0.15);
 }
 
 .details-section .details-section:last-child {
@@ -153,7 +154,7 @@
 }
 
 .details-section > .content > .group:nth-child(even) {
-    background-color: rgb(233, 233, 233);
+    background-color: hsl(0, 0%, 97%);
 }
 
 .details-section > .content > .group:nth-child(even) > .row:matches(.simple:first-child > *, :not(.simple):first-child) {
@@ -269,4 +270,12 @@
 .details-section > .content .data-grid td.value-column > div {
     white-space: normal;
     word-break: break-all;
+}
+
+@media (-webkit-min-device-pixel-ratio: 2) {
+    .details-section,
+    .details-section .details-section:not(.collapsed) > .header,
+    .details-section > .content > .group {
+        border-width: 0.5px !important;
+    }
 }

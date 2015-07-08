@@ -36,7 +36,7 @@
 
 .sidebar > .panel.details.css-style .rules .label + .style-declaration-section {
     margin-top: 5px;
-    border-top: 1px solid rgb(179, 179, 179);
+    border-top: 1px solid hsla(0, 0%, 0%, 0.3);
 }
 
 .sidebar > .panel.details.css-style .rules .new-rule {
@@ -62,7 +62,7 @@
 
 .sidebar > .panel.details.css-style > .content.filter-in-progress .label.filter-matching-label {
     padding-bottom: 5px;
-    border-bottom: 1px solid rgb(179, 179, 179);
+    border-bottom: 1px solid hsla(0, 0%, 0%, 0.3);
 }
 
 .sidebar > .panel.details.css-style > .content.filter-in-progress .label:not(.filter-section-non-matching) + .label.filter-matching-label:not(.filter-section-non-matching) {
@@ -78,12 +78,12 @@
 }
 
 .sidebar > .panel.details.css-style > .content:not(.filter-in-progress) > .rules > .new-rule + .style-declaration-section {
-    border-top: 1px solid rgb(179, 179, 179);
+    border-top: 1px solid hsla(0, 0%, 0%, 0.3);
 }
 
 .sidebar > .panel.details.css-style > .content:not(.filter-in-progress) > .rules > .new-rule + .label {
     padding-top: 10px;
-    border-top: 1px solid rgb(179, 179, 179);
+    border-top: 1px solid hsla(0, 0%, 0%, 0.3);
 }
 
 .sidebar > .panel.details.css-style .rules .new-rule img {
@@ -128,4 +128,12 @@
     box-shadow: inset rgba(0, 0, 0, 0.2) 0 1px 0, rgba(255, 255, 255, 0.4) 0 1px 0;
     border-radius: 6px;
     padding: 5px 15px 6px;
+}
+
+@media (-webkit-min-device-pixel-ratio: 2) {
+    .sidebar > .panel.details.css-style > .content:not(.filter-in-progress) > .rules > .new-rule + .label,
+    .sidebar > .panel.details.css-style > .content.filter-in-progress .label.filter-matching-label,
+    .no-filter-results-message {
+        border-width: 0.5px !important;
+    }
 }

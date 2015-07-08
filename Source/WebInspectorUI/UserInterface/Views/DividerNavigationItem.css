@@ -31,3 +31,9 @@
     background-repeat: no-repeat;
     background-position: center;
 }
+
+@media (-webkit-min-device-pixel-ratio: 2) {
+    .navigation-bar .item.divider {
+        width: 0.5px;
+    }
+}

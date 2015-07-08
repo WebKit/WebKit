@@ -1,3 +1,31 @@
+2015-07-07  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Use "hairline" borders on retina screen
+        https://bugs.webkit.org/show_bug.cgi?id=146619
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CSSStyleDeclarationSection.css:
+        (.style-declaration-section):
+        (.style-declaration-section.locked):
+        (.style-declaration-section:not(.locked)):
+        (.style-declaration-section.last-in-group):
+        (.style-declaration-section + .style-declaration-section):
+        (.style-declaration-section.last-in-group + .style-declaration-section):
+        (@media (-webkit-min-device-pixel-ratio: 2)):
+        * UserInterface/Views/DetailsSection.css:
+        (.details-section .details-section):
+        (.details-section > .content > .group:nth-child(even)):
+        (@media (-webkit-min-device-pixel-ratio: 2)):
+        * UserInterface/Views/DividerNavigationItem.css:
+        (@media (-webkit-min-device-pixel-ratio: 2)):
+        * UserInterface/Views/RulesStyleDetailsPanel.css:
+        (.sidebar > .panel.details.css-style .rules .label + .style-declaration-section):
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress .label.filter-matching-label):
+        (.sidebar > .panel.details.css-style > .content:not(.filter-in-progress) > .rules > .new-rule + .style-declaration-section):
+        (.sidebar > .panel.details.css-style > .content:not(.filter-in-progress) > .rules > .new-rule + .label):
+        (@media (-webkit-min-device-pixel-ratio: 2)):
+
 2015-07-07  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Pressing tab on a comment in the styles sidebar doesn't highlight the comment
