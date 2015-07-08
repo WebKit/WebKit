@@ -485,12 +485,12 @@ void Storage::dispatchReadOperation(ReadOperation& readOperation)
     ASSERT(RunLoop::isMain());
     ASSERT(m_activeReadOperations.contains(&readOperation));
 
-    ioQueue().dispatch([this, &readOperation] {
+    bool shouldGetBodyBlob = !m_bodyFilter || m_bodyFilter->mayContain(readOperation.key.hash());
+
+    ioQueue().dispatch([this, &readOperation, shouldGetBodyBlob] {
         auto recordPath = recordPathForKey(readOperation.key);
 
         ++readOperation.activeCount;
-
-        bool shouldGetBodyBlob = !m_bodyFilter || m_bodyFilter->mayContain(readOperation.key.hash());
         if (shouldGetBodyBlob)
             ++readOperation.activeCount;
 
