@@ -64,6 +64,7 @@ private:
     virtual void externalOutputDeviceAvailableDidChange(bool) override;
 
     size_t find(WebMediaSessionManagerClient*, uint64_t);
+
     void configurePlaybackTargetClients();
     void configureNewClients();
     void configurePlaybackTargetMonitoring();
@@ -92,6 +93,7 @@ private:
     ConfigurationTasks m_taskFlags { NoTask };
     double m_currentWatchdogInterval { 0 };
     bool m_externalOutputDeviceAvailable { false };
+    bool m_targetChanged { false };
 };
 
 } // namespace WebCore

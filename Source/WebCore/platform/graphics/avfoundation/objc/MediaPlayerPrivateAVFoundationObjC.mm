@@ -2822,14 +2822,13 @@ void MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget(bool shou
 {
     m_shouldPlayToPlaybackTarget = shouldPlay;
 
+    AVOutputContext *newContext = shouldPlay ? m_outputContext.get() : nil;
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget(%p) - target = %p, shouldPlay = %s", this, newContext, boolString(shouldPlay));
+
     if (!m_avPlayer)
         return;
 
-    AVOutputContext *newContext = shouldPlay ? m_outputContext.get() : nil;
     RetainPtr<AVOutputContext> currentContext = m_avPlayer.get().outputContext;
-
-    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget(%p) - target = %p, shouldPlay = %s", this, newContext, boolString(shouldPlay));
-
     if ((!newContext && !currentContext.get()) || [currentContext.get() isEqual:newContext])
         return;
 

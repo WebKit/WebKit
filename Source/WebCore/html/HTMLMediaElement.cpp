@@ -4980,6 +4980,7 @@ void HTMLMediaElement::syncTextTrackBounds()
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 void HTMLMediaElement::webkitShowPlaybackTargetPicker()
 {
+    LOG(Media, "HTMLMediaElement::webkitShowPlaybackTargetPicker(%p)", this);
     m_mediaSession->showPlaybackTargetPicker(*this);
 }
 
@@ -5086,6 +5087,8 @@ bool HTMLMediaElement::isPlayingToWirelessPlaybackTarget() const
 
 void HTMLMediaElement::setShouldPlayToPlaybackTarget(bool shouldPlay)
 {
+    LOG(Media, "HTMLMediaElement::setShouldPlayToPlaybackTarget(%p) - shouldPlay = %s", this, boolString(shouldPlay));
+
     if (m_player)
         m_player->setShouldPlayToPlaybackTarget(shouldPlay);
 }
