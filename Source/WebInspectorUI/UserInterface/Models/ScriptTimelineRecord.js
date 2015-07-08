@@ -181,6 +181,9 @@ WebInspector.ScriptTimelineRecord.EventType.displayName = function(eventType, de
         nameMap.set("addsourcebuffer", "Add Source Buffer");
         nameMap.set("addstream", "Add Stream");
         nameMap.set("addtrack", "Add Track");
+        nameMap.set("animationend", "Animation End");
+        nameMap.set("animationiteration", "Animation Iteration");
+        nameMap.set("animationstart", "Animation Start");
         nameMap.set("audioend", "Audio End");
         nameMap.set("audioprocess", "Audio Process");
         nameMap.set("audiostart", "Audio Start");

@@ -1,3 +1,12 @@
+2015-07-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Improve names for unprefixed animation events
+        https://bugs.webkit.org/show_bug.cgi?id=146708
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/ScriptTimelineRecord.js:
+
 2015-07-07  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Timeline record bars are not white when the row is selected from the sidebar
