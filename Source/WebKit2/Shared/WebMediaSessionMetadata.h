@@ -42,6 +42,7 @@ public:
     String title() const { return m_metadata.title(); }
     String artist() const { return m_metadata.artist(); }
     String album() const { return m_metadata.album(); }
+    String artworkURL() const { return m_metadata.artworkURL().string(); }
 
 private:
     explicit WebMediaSessionMetadata(const WebCore::MediaSessionMetadata&);

@@ -41,6 +41,7 @@ WK_EXPORT WKTypeID WKMediaSessionMetadataGetTypeID();
 WK_EXPORT WKStringRef WKMediaSessionMetadataCopyTitle(WKMediaSessionMetadataRef metadata);
 WK_EXPORT WKStringRef WKMediaSessionMetadataCopyArtist(WKMediaSessionMetadataRef metadata);
 WK_EXPORT WKStringRef WKMediaSessionMetadataCopyAlbum(WKMediaSessionMetadataRef metadata);
+WK_EXPORT WKURLRef WKMediaSessionMetadataCopyArtworkURL(WKMediaSessionMetadataRef metadata);
 
 #ifdef __cplusplus
 }

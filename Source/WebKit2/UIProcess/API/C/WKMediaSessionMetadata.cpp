@@ -69,3 +69,13 @@ WKStringRef WKMediaSessionMetadataCopyAlbum(WKMediaSessionMetadataRef metadata)
     return nullptr;
 #endif
 }
+
+WKURLRef WKMediaSessionMetadataCopyArtworkURL(WKMediaSessionMetadataRef metadata)
+{
+#if ENABLE(MEDIA_SESSION)
+    return toCopiedURLAPI(toImpl(metadata)->artworkURL());
+#else
+    UNUSED_PARAM(metadata);
+    return nullptr;
+#endif
+}
