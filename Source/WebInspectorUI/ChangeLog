@@ -1,5 +1,24 @@
 2015-07-07  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Pressing tab on a comment in the styles sidebar doesn't highlight the comment
+        https://bugs.webkit.org/show_bug.cgi?id=146709
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.selectFirstProperty):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype.selectLastProperty):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._textAtCursorIsComment):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._highlightNextNameOrValue):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._handleMouseUp):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._handleEnterKey):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._insertNewlineAfterCurrentLine):
+        Determines if the text at the given cursor position in the given line is a comment.
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._handleShiftTabKey):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._handleTabKey):
+
+2015-07-07  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: spacebar should pause/resume timeline recording when timelines are open
         https://bugs.webkit.org/show_bug.cgi?id=143267
 

@@ -358,7 +358,9 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             this.clearSelection();
 
         var index = line.indexOf(":");
-        this._codeMirror.setSelection({line: 0, ch: 0}, {line: 0, ch: index < 0 ? trimmedLine.length : index});
+        var cursor = {line: 0, ch: 0};
+
+        this._codeMirror.setSelection(cursor, {line: 0, ch: index < 0 || this._textAtCursorIsComment(this._codeMirror, cursor) ? trimmedLine.length : index});
     }
 
     selectLastProperty()
@@ -367,8 +369,19 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         var lineText = this._codeMirror.getLine(line);
         var trimmedLine = lineText.trimRight();
 
-        var colon = /(?::\s*)/.exec(lineText);
-        this._codeMirror.setSelection({line, ch: colon ? colon.index + colon[0].length : 0}, {line, ch: trimmedLine.length - trimmedLine.endsWith(";")});
+        var lastAnchor;
+        var lastHead;
+
+        if (this._textAtCursorIsComment(this._codeMirror, {line, ch: line.length})) {
+            lastAnchor = 0;
+            lastHead = line.length;
+        } else {
+            var colon = /(?::\s*)/.exec(lineText);
+            lastAnchor = colon ? colon.index + colon[0].length : 0;
+            lastHead = trimmedLine.length - trimmedLine.endsWith(";");
+        }
+
+        this._codeMirror.setSelection({line, ch: lastAnchor}, {line, ch: lastHead});
     }
 
     // Protected
@@ -395,16 +408,33 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
     // Private
 
+    _textAtCursorIsComment(codeMirror, cursor)
+    {
+        var token = codeMirror.getTokenTypeAt(cursor);
+        return token && token.includes("comment");
+    }
+
     _highlightNextNameOrValue(codeMirror, cursor, text)
     {
-        var colonIndex = text.indexOf(":");
-        var substringIndex = colonIndex >= 0 && cursor.ch >= colonIndex ? colonIndex : 0;
+        var nextAnchor;
+        var nextHead;
 
-        var regExp = /(?:[^:;\s]\s*)+/g;
-        regExp.lastIndex = substringIndex;
-        var match = regExp.exec(text);
+        if (this._textAtCursorIsComment(codeMirror, cursor)) {
+            nextAnchor = 0;
+            nextHead = text.length;
+        } else {
+            var colonIndex = text.indexOf(":");
+            var substringIndex = colonIndex >= 0 && cursor.ch >= colonIndex ? colonIndex : 0;
 
-        codeMirror.setSelection({line: cursor.line, ch: match.index}, {line: cursor.line, ch: match.index + match[0].length});
+            var regExp = /(?:[^:;\s]\s*)+/g;
+            regExp.lastIndex = substringIndex;
+            var match = regExp.exec(text);
+
+            nextAnchor = match.index;
+            nextHead = nextAnchor + match[0].length;
+        }
+
+        codeMirror.setSelection({line: cursor.line, ch: nextAnchor}, {line: cursor.line, ch: nextHead});
     }
 
     _handleMouseDown(event)
@@ -435,8 +465,14 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         var cursor = this._codeMirror.coordsChar({left: event.x, top: event.y});
         var line = this._codeMirror.getLine(cursor.line);
 
-        if (this._mouseDownCursorPosition.line === cursor.line && this._mouseDownCursorPosition.ch === cursor.ch)
-            this._codeMirror.replaceRange(line.trimRight().endsWith(";") ? "\n" : ";\n", cursor);
+        if (this._mouseDownCursorPosition.line === cursor.line && this._mouseDownCursorPosition.ch === cursor.ch) {
+            var replacement = "\n";
+
+            if (!line.trimRight().endsWith(";") && !this._textAtCursorIsComment(this._codeMirror, cursor))
+                replacement = ";" + replacement;
+
+            this._codeMirror.replaceRange(replacement, cursor);
+        }
 
         this._mouseDownCursorPosition = null;
     }
@@ -469,7 +505,12 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             ++cursor.ch;
 
         if (cursor.ch === trimmedLine.length) {
-            codeMirror.replaceRange(hasEndingSemicolon ? "\n" : ";\n", cursor);
+            var replacement = "\n";
+
+            if (!hasEndingSemicolon && !this._textAtCursorIsComment(this._codeMirror, cursor))
+                replacement = ";" + replacement;
+
+            this._codeMirror.replaceRange(replacement, cursor);
             return;
         }
 
@@ -485,7 +526,12 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         cursor.ch = trimmedLine.length;
 
         if (cursor.ch) {
-            codeMirror.replaceRange(trimmedLine.endsWith(";") ? "\n" : ";\n", cursor);
+            var replacement = "\n";
+
+            if (!trimmedLine.endsWith(";") && !this._textAtCursorIsComment(this._codeMirror, cursor))
+                replacement = ";" + replacement;
+
+            this._codeMirror.replaceRange(replacement, cursor);
             return;
         }
 
@@ -507,15 +553,29 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         var cursor = codeMirror.getCursor();
         var line = codeMirror.getLine(cursor.line);
         var previousLine = codeMirror.getLine(cursor.line - 1);
-        var trimmedPreviousLine = previousLine ? previousLine.trimRight() : "";
 
         if (!line && !previousLine && !cursor.line)
             return switchRule.call(this);
 
-        if (cursor.ch === line.indexOf(":") || line.indexOf(":") < 0) {
+        var trimmedPreviousLine = previousLine ? previousLine.trimRight() : "";
+        var previousAnchor;
+        var previousHead;
+        var isComment = this._textAtCursorIsComment(codeMirror, cursor);
+
+        if (cursor.ch === line.indexOf(":") || line.indexOf(":") < 0 || isComment) {
             if (previousLine) {
-                var colon = /(?::\s*)/.exec(previousLine);
-                codeMirror.setSelection({line: cursor.line - 1, ch: colon ? colon.index + colon[0].length : 0}, {line: cursor.line - 1, ch: trimmedPreviousLine.length - trimmedPreviousLine.endsWith(";")});
+                --cursor.line;
+
+                if (this._textAtCursorIsComment(codeMirror, cursor)) {
+                    previousAnchor = 0;
+                    previousHead = trimmedPreviousLine.length;
+                } else {
+                    var colon = /(?::\s*)/.exec(previousLine);
+                    previousAnchor = colon ? colon.index + colon[0].length : 0;
+                    previousHead = trimmedPreviousLine.length - trimmedPreviousLine.endsWith(";");
+                }
+                
+                codeMirror.setSelection({line: cursor.line, ch: previousAnchor}, {line: cursor.line, ch: previousHead});
                 return;
             }
 
@@ -527,8 +587,16 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
             return switchRule.call(this);
         }
 
-        var match = /(?:[^:;\s]\s*)+/.exec(line);
-        codeMirror.setSelection({line: cursor.line, ch: match.index}, {line: cursor.line, ch: match.index + match[0].length});
+        if (isComment) {
+            previousAnchor = 0;
+            previousHead = line.length;
+        } else {
+            var match = /(?:[^:;\s]\s*)+/.exec(line);
+            previousAnchor = match.index;
+            previousHead = previousAnchor + match[0].length;
+        }
+
+        codeMirror.setSelection({line: cursor.line, ch: previousAnchor}, {line: cursor.line, ch: previousHead});
     }
 
     _handleTabKey(codeMirror)
@@ -578,7 +646,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
                 var replacement = "";
 
-                if (!hasEndingSemicolon)
+                if (!hasEndingSemicolon && !this._textAtCursorIsComment(codeMirror, cursor))
                     replacement += ";";
 
                 if (lastLine)
@@ -592,8 +660,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
                     return;
                 }
 
-                var colon = nextLine.indexOf(":");
-                codeMirror.setSelection({line: cursor.line + 1, ch: 0}, {line: cursor.line + 1, ch: colon < 0 ? trimmedNextLine.length : colon});
+                this._highlightNextNameOrValue(codeMirror, {line: cursor.line + 1, ch: 0}, nextLine);
             }.bind(this));
 
             return;
