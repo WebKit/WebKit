@@ -40,6 +40,9 @@ public:
     virtual void addAnimatedTypes(SVGAnimatedType*, SVGAnimatedType*) override;
     virtual void calculateAnimatedValue(float percentage, unsigned repeatCount, SVGAnimatedType*, SVGAnimatedType*, SVGAnimatedType*, SVGAnimatedType*) override;
     virtual float calculateDistance(const String& fromString, const String& toString) override;
+
+private:
+    void resetAnimValToBaseVal(const SVGElementAnimatedPropertyList&, SVGPathByteStream*);
 };
 
 } // namespace WebCore
