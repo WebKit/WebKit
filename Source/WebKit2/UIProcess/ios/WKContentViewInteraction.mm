@@ -2639,6 +2639,9 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     static const unsigned kWebDeleteForwardKey = 0xF728;
     static const unsigned kWebSpaceKey = 0x20;
 
+    if (!self.isFirstResponder)
+        return NO;
+
     if (!_page->editorState().isContentEditable && event.isTabKey)
         return NO;
 
