@@ -485,29 +485,28 @@ void Storage::dispatchReadOperation(ReadOperation& readOperation)
     ASSERT(RunLoop::isMain());
     ASSERT(m_activeReadOperations.contains(&readOperation));
 
-    auto recordPath = recordPathForKey(readOperation.key);
+    ioQueue().dispatch([this, &readOperation] {
+        auto recordPath = recordPathForKey(readOperation.key);
 
-    ++readOperation.activeCount;
-
-    bool shouldGetBodyBlob = !m_bodyFilter || m_bodyFilter->mayContain(readOperation.key.hash());
-    if (shouldGetBodyBlob)
         ++readOperation.activeCount;
 
-    RefPtr<IOChannel> channel = IOChannel::open(recordPath, IOChannel::Type::Read);
-    channel->read(0, std::numeric_limits<size_t>::max(), &ioQueue(), [this, &readOperation](const Data& fileData, int error) {
-        if (!error)
-            readRecord(readOperation, fileData);
-        finishReadOperation(readOperation);
-    });
+        bool shouldGetBodyBlob = !m_bodyFilter || m_bodyFilter->mayContain(readOperation.key.hash());
+        if (shouldGetBodyBlob)
+            ++readOperation.activeCount;
 
-    if (!shouldGetBodyBlob)
-        return;
+        auto channel = IOChannel::open(recordPath, IOChannel::Type::Read);
+        channel->read(0, std::numeric_limits<size_t>::max(), &ioQueue(), [this, &readOperation](const Data& fileData, int error) {
+            if (!error)
+                readRecord(readOperation, fileData);
+            finishReadOperation(readOperation);
+        });
 
-    // Read the body blob in parallel with the record read.
-    ioQueue().dispatch([this, &readOperation] {
-        auto bodyPath = bodyPathForKey(readOperation.key);
-        readOperation.resultBodyBlob = m_blobStorage.get(bodyPath);
-        finishReadOperation(readOperation);
+        if (shouldGetBodyBlob) {
+            // Read the body blob in parallel with the record read.
+            auto bodyPath = bodyPathForKey(readOperation.key);
+            readOperation.resultBodyBlob = m_blobStorage.get(bodyPath);
+            finishReadOperation(readOperation);
+        }
     });
 }
 

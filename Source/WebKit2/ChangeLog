@@ -1,3 +1,18 @@
+2015-07-08  Antti Koivisto  <antti@apple.com>
+
+        Network Cache: Don't open files in main thread
+        https://bugs.webkit.org/show_bug.cgi?id=146722
+
+        Reviewed by Chris Dumez.
+
+        While we use open() with O_NONBLOCK profiling indicates that we still may block up to 5ms under the syscall in some case.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::dispatchReadOperation):
+
+            Dispatch read operation to a concurrent queue.
+            With this we can also eliminate the separate dispatch() for body blob read.
+
 2015-07-08  Sungmann Cho  <sungmann.cho@navercorp.com>
 
         [Unix] Remove unused local variable from Connection::sendOutgoingMessage().
