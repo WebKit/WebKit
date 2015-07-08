@@ -66,6 +66,11 @@ WebInspector.TimelineView.prototype = {
         return null;
     },
 
+    get navigationSidebarTreeOutlineScopeBar()
+    {
+        return this._scopeBar;
+    },
+
     get timelineSidebarPanel()
     {
         return this._timelineSidebarPanel;

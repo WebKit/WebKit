@@ -31,11 +31,19 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
         this.contentBrowser = contentBrowser;
 
-        this._timelineEventsTitleBarElement = document.createElement("div");
-        this._timelineEventsTitleBarElement.classList.add(WebInspector.TimelineSidebarPanel.TitleBarStyleClass);
-        this._timelineEventsTitleBarElement.classList.add(WebInspector.TimelineSidebarPanel.TimelineEventsTitleBarStyleClass);
+        var timelineEventsTitleBarContainer = document.createElement("div");
+        timelineEventsTitleBarContainer.classList.add(WebInspector.TimelineSidebarPanel.TitleBarStyleClass);
+        timelineEventsTitleBarContainer.classList.add(WebInspector.TimelineSidebarPanel.TimelineEventsTitleBarStyleClass);
 
-        this.element.insertBefore(this._timelineEventsTitleBarElement, this.element.firstChild);
+        this._timelineEventsTitleBarElement = document.createElement("div");
+        this._timelineEventsTitleBarElement.classList.add(WebInspector.TimelineSidebarPanel.TitleBarTextStyleClass);
+        timelineEventsTitleBarContainer.appendChild(this._timelineEventsTitleBarElement);
+
+        this._timelineEventsTitleBarScopeContainer = document.createElement("div");
+        this._timelineEventsTitleBarScopeContainer.classList.add(WebInspector.TimelineSidebarPanel.TitleBarScopeBarStyleClass);
+        timelineEventsTitleBarContainer.appendChild(this._timelineEventsTitleBarScopeContainer);
+
+        this.element.insertBefore(timelineEventsTitleBarContainer, this.element.firstChild);
 
         this.contentTreeOutlineLabel = "";
 
@@ -297,6 +305,21 @@ WebInspector.TimelineSidebarPanel = class TimelineSidebarPanel extends WebInspec
 
         this._timelineEventsTitleBarElement.textContent = label;
         this.filterBar.placeholder = WebInspector.UIString("Filter %s").format(label);
+    }
+
+    get contentTreeOutlineScopeBar()
+    {
+        return this._timelineEventsTitleBarScopeContainer.children;
+    }
+
+    set contentTreeOutlineScopeBar(scopeBar)
+    {
+        this._timelineEventsTitleBarScopeContainer.removeChildren();
+
+        if (!scopeBar || !scopeBar.element)
+            return;
+
+        this._timelineEventsTitleBarScopeContainer.appendChild(scopeBar.element);
     }
 
     showTimelineOverview()
@@ -941,6 +964,8 @@ WebInspector.TimelineSidebarPanel.RecordGlyphRecordingStyleClass = "recording";
 WebInspector.TimelineSidebarPanel.RecordGlyphRecordingForcedStyleClass = "forced";
 WebInspector.TimelineSidebarPanel.RecordStatusStyleClass = "record-status";
 WebInspector.TimelineSidebarPanel.TitleBarStyleClass = "title-bar";
+WebInspector.TimelineSidebarPanel.TitleBarTextStyleClass = "title-bar-text";
+WebInspector.TimelineSidebarPanel.TitleBarScopeBarStyleClass = "title-bar-scope-bar";
 WebInspector.TimelineSidebarPanel.TimelinesTitleBarStyleClass = "timelines";
 WebInspector.TimelineSidebarPanel.TimelineEventsTitleBarStyleClass = "timeline-events";
 WebInspector.TimelineSidebarPanel.TimelinesContentContainerStyleClass = "timelines-content";

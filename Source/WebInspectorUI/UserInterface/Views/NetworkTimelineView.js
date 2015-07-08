@@ -47,6 +47,7 @@ WebInspector.NetworkTimelineView = function(timeline, extraArguments)
     }
 
     columns.type.scopeBar = WebInspector.TimelineDataGrid.createColumnScopeBar("network", typeToLabelMap);
+    this._scopeBar = columns.type.scopeBar;
 
     columns.method.title = WebInspector.UIString("Method");
     columns.method.width = "6%";

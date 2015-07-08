@@ -1,5 +1,39 @@
 2015-07-08  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Can't select last row in the timeline because it's covered by filter selector
+        https://bugs.webkit.org/show_bug.cgi?id=146603
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ScopeBar.js: Now adds a class to the scope bar if the default item is selected.
+        * UserInterface/Views/LayoutTimelineView.js:
+        * UserInterface/Views/NetworkTimelineView.js:
+        * UserInterface/Views/TimelineDataGrid.css:
+        (.data-grid.timeline > .navigation-bar-container): Deleted.
+        (.data-grid.timeline.has-non-default-filter > .navigation-bar-container): Deleted.
+        (.data-grid.timeline:hover > .navigation-bar-container): Deleted.
+        (.data-grid.timeline > .navigation-bar-container > .navigation-bar): Deleted.
+        (body.window-inactive .data-grid.timeline > .navigation-bar-container > .navigation-bar): Deleted.
+        * UserInterface/Views/TimelineDataGrid.js:
+        (WebInspector.TimelineDataGrid):
+        (WebInspector.TimelineDataGrid.createColumnScopeBar):
+        (WebInspector.TimelineDataGrid.prototype.updateLayout): Deleted.
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype._currentContentViewDidChange):
+        * UserInterface/Views/TimelineSidebarPanel.css:
+        (.sidebar > .panel.navigation.timeline > .title-bar.timeline-events):
+        (.sidebar > .panel.navigation.timeline > .title-bar.timeline-events > .title-bar-scope-bar):
+        (.sidebar > .panel.navigation.timeline > .title-bar.timeline-events > .title-bar-scope-bar > .default-item-selected > .multiple):
+        (.sidebar > .panel.navigation.timeline > .title-bar.timeline-events > .title-bar-scope-bar > .default-item-selected > .multiple path):
+        * UserInterface/Views/TimelineSidebarPanel.js:
+        (WebInspector.TimelineSidebarPanel.set contentTreeOutlineScopeBar):
+        Clears the title bar scope element and adds the given element as a child node.
+        * UserInterface/Views/TimelineView.js:
+        (WebInspector.TimelineView.prototype.get navigationSidebarTreeOutlineScopeBar):
+        Returns the scope bar element of the current object if it exists.
+
+2015-07-08  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Clicking style checkbox selects the property name while mouse down
         https://bugs.webkit.org/show_bug.cgi?id=146728
 

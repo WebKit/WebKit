@@ -332,6 +332,7 @@ WebInspector.TimelineRecordingContentView.prototype = {
         if (timelineView) {
             this._timelineSidebarPanel.contentTreeOutline = timelineView.navigationSidebarTreeOutline;
             this._timelineSidebarPanel.contentTreeOutlineLabel = timelineView.navigationSidebarTreeOutlineLabel;
+            this._timelineSidebarPanel.contentTreeOutlineScopeBar = timelineView.navigationSidebarTreeOutlineScopeBar;
 
             if (timelineView.representedObject.type === WebInspector.TimelineRecord.Type.RenderingFrame)
                 newTimelineOverview = this._renderingFrameTimelineOverview;

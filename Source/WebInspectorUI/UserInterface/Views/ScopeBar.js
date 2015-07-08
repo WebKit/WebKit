@@ -102,6 +102,8 @@ WebInspector.ScopeBar = class ScopeBar extends WebInspector.NavigationItem
 
         if (!this.selectedItems.length && this._defaultItem)
             this._defaultItem.selected = true;
+
+        this._element.classList.toggle("default-item-selected", this._defaultItem.selected);
     }
 
     _itemSelectionDidChange(event)
@@ -131,6 +133,7 @@ WebInspector.ScopeBar = class ScopeBar extends WebInspector.NavigationItem
         if (!this.selectedItems.length && this._defaultItem)
             this._defaultItem.selected = true;
 
+        this._element.classList.toggle("default-item-selected", this._defaultItem.selected);
         this.dispatchEventToListeners(WebInspector.ScopeBar.Event.SelectionChanged);
     }
 };

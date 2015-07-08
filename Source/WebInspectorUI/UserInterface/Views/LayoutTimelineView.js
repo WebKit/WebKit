@@ -45,6 +45,7 @@ WebInspector.LayoutTimelineView = function(timeline, extraArguments)
 
     columns.eventType.scopeBar = WebInspector.TimelineDataGrid.createColumnScopeBar("layout", typeToLabelMap);
     columns.eventType.hidden = true;
+    this._scopeBar = columns.eventType.scopeBar;
 
     columns.location.title = WebInspector.UIString("Initiator");
     columns.location.width = "25%";

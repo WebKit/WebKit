@@ -31,45 +31,6 @@ body.window-inactive .data-grid.timeline th {
     border-top-color: rgb(219, 219, 219);
 }
 
-.data-grid.timeline > .navigation-bar-container {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 32px;
-
-    z-index: 10;
-    pointer-events: none;
-    visibility: hidden;
-}
-
-.data-grid.timeline.has-non-default-filter > .navigation-bar-container {
-    visibility: visible;
-}
-
-.data-grid.timeline:hover > .navigation-bar-container {
-    pointer-events: all;
-    visibility: visible;
-}
-
-.data-grid.timeline > .navigation-bar-container > .navigation-bar {
-    position: absolute;
-    top: 4px;
-    left: 0;
-    right: 0;
-    height: 28px;
-
-    border-bottom: none;
-    border-top: 1px solid rgb(179, 179, 179);
-    box-shadow: none;
-
-    background-color: white;
-}
-
-body.window-inactive .data-grid.timeline > .navigation-bar-container > .navigation-bar {
-    border-top-color: rgb(219, 219, 219);
-}
-
 .timeline-data-grid-tree-outline {
     position: relative;
     padding: 0;

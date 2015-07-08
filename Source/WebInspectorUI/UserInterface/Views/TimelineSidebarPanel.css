@@ -136,9 +136,30 @@ body.window-inactive .sidebar > .panel.navigation.timeline > .title-bar {
 }
 
 .sidebar > .panel.navigation.timeline > .title-bar.timeline-events {
+    display: flex;
     height: 23px;
     border-top: 1px solid rgb(179, 179, 179);
     top: 166px;
+}
+
+.sidebar > .panel.navigation.timeline > .title-bar.timeline-events > .title-bar-scope-bar {
+    position: absolute;
+    top: 2px;
+    right: 0;
+    font-weight: normal;
+}
+
+.sidebar > .panel.navigation.timeline > .title-bar.timeline-events > .title-bar-scope-bar > .default-item-selected > .multiple {
+    background-color: transparent;
+    color: black;
+}
+
+.sidebar > .panel.navigation.timeline > .title-bar.timeline-events > .title-bar-scope-bar > .default-item-selected > .multiple svg .filled {
+    fill: black !important;
+}
+
+.sidebar > .panel.navigation.timeline > .title-bar.timeline-events > .title-bar-scope-bar > .default-item-selected > .multiple svg .stroked {
+    stroke: black !important;
 }
 
 body.window-inactive .sidebar > .panel.navigation.timeline > .title-bar.timeline-events {
