@@ -945,6 +945,12 @@ ShadowRoot* Node::containingShadowRoot() const
     return root.isShadowRoot() ? toShadowRoot(&root) : nullptr;
 }
 
+bool Node::isInUserAgentShadowTree() const
+{
+    auto* shadowRoot = containingShadowRoot();
+    return shadowRoot && shadowRoot->type() == ShadowRoot::UserAgentShadowRoot;
+}
+
 Node* Node::nonBoundaryShadowTreeRootNode()
 {
     ASSERT(!isShadowRoot());

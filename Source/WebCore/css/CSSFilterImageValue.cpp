@@ -62,8 +62,12 @@ String CSSFilterImageValue::customCSSText() const
 
 FloatSize CSSFilterImageValue::fixedSize(const RenderElement* renderer)
 {
+    // FIXME: Skip Content Security Policy check when filter is applied to an element in a user agent shadow tree.
+    // See <https://bugs.webkit.org/show_bug.cgi?id=146663>.
+    ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
+
     CachedResourceLoader* cachedResourceLoader = renderer->document().cachedResourceLoader();
-    CachedImage* cachedImage = cachedImageForCSSValue(m_imageValue.get(), cachedResourceLoader);
+    CachedImage* cachedImage = cachedImageForCSSValue(m_imageValue.get(), cachedResourceLoader, options);
 
     if (!cachedImage)
         return FloatSize();
@@ -81,11 +85,11 @@ bool CSSFilterImageValue::knownToBeOpaque(const RenderElement*) const
     return false;
 }
 
-void CSSFilterImageValue::loadSubimages(CachedResourceLoader* cachedResourceLoader)
+void CSSFilterImageValue::loadSubimages(CachedResourceLoader* cachedResourceLoader, const ResourceLoaderOptions& options)
 {
     CachedResourceHandle<CachedImage> oldCachedImage = m_cachedImage;
 
-    m_cachedImage = CSSImageGeneratorValue::cachedImageForCSSValue(m_imageValue.get(), cachedResourceLoader);
+    m_cachedImage = CSSImageGeneratorValue::cachedImageForCSSValue(m_imageValue.get(), cachedResourceLoader, options);
 
     if (m_cachedImage != oldCachedImage) {
         if (oldCachedImage)
@@ -102,8 +106,12 @@ PassRefPtr<Image> CSSFilterImageValue::image(RenderElement* renderer, const Floa
     if (size.isEmpty())
         return 0;
 
+    // FIXME: Skip Content Security Policy check when filter is applied to an element in a user agent shadow tree.
+    // See <https://bugs.webkit.org/show_bug.cgi?id=146663>.
+    ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
+
     CachedResourceLoader* cachedResourceLoader = renderer->document().cachedResourceLoader();
-    CachedImage* cachedImage = cachedImageForCSSValue(m_imageValue.get(), cachedResourceLoader);
+    CachedImage* cachedImage = cachedImageForCSSValue(m_imageValue.get(), cachedResourceLoader, options);
 
     if (!cachedImage)
         return Image::nullImage();

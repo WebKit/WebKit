@@ -117,6 +117,8 @@ void StyleRuleImport::requestStyleSheet()
         rootSheet = sheet;
     }
 
+    // FIXME: Skip Content Security Policy check when stylesheet is in a user agent shadow tree.
+    // See <https://bugs.webkit.org/show_bug.cgi?id=146663>.
     CachedResourceRequest request(ResourceRequest(absURL), m_parentStyleSheet->charset());
     request.setInitiator(cachedResourceRequestInitiators().css);
     if (m_cachedSheet)

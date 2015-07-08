@@ -48,13 +48,13 @@ CachedSVGDocumentReference::~CachedSVGDocumentReference()
         m_document->removeClient(this);
 }
 
-void CachedSVGDocumentReference::load(CachedResourceLoader* loader)
+void CachedSVGDocumentReference::load(CachedResourceLoader* loader, const ResourceLoaderOptions& options)
 {
     ASSERT(loader);
     if (m_loadRequested)
         return;
 
-    CachedResourceRequest request(ResourceRequest(loader->document()->completeURL(m_url)));
+    CachedResourceRequest request(ResourceRequest(loader->document()->completeURL(m_url)), options);
     request.setInitiator(cachedResourceRequestInitiators().css);
     m_document = loader->requestSVGDocument(request);
     if (m_document)

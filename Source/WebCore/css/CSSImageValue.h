@@ -40,7 +40,6 @@ public:
     ~CSSImageValue();
 
     StyleCachedImage* cachedImage(CachedResourceLoader*, const ResourceLoaderOptions&);
-    StyleCachedImage* cachedImage(CachedResourceLoader*);
     // Returns a StyleCachedImage if the image is cached already, otherwise a StylePendingImage.
     StyleImage* cachedOrPendingImage();
 

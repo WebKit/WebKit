@@ -45,7 +45,7 @@ public:
     FloatSize fixedSize(const RenderElement*);
 
     bool isPending() const { return false; }
-    void loadSubimages(CachedResourceLoader*) { }
+    void loadSubimages(CachedResourceLoader*, const ResourceLoaderOptions&) { }
 
     bool equals(const CSSCanvasValue&) const;
 
