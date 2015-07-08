@@ -1,3 +1,24 @@
+2015-07-07  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r183706): HTMLImageElement sometimes fails to register as document named item.
+        <https://webkit.org/b/146679>
+        <rdar://problem/21613839>
+
+        Reviewed by Antti Koivisto.
+
+        After r183706, Element::hasName() no longer returns outdated information when called
+        inside a parseAttribute() override. HTMLImageElement was relying on this to check
+        if it *used* to have a name attribute before the currently parsing one was set.
+
+        Since parseAttribute() only shows subclasses the new attribute value, I'm adding a
+        flag to HTMLImageElement that remembers whether we had a name attribute or not.
+
+        Test: fast/dom/HTMLImageElement/remove-img-with-name-from-document-crash.html
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseAttribute):
+        * html/HTMLImageElement.h:
+
 2015-05-28  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [CMake] Improve detection and usage of GL/GLES/EGL libraries.

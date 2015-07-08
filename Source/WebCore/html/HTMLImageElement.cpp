@@ -177,7 +177,7 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
     } else {
         if (name == nameAttr) {
             bool willHaveName = !value.isNull();
-            if (hasName() != willHaveName && inDocument() && is<HTMLDocument>(document())) {
+            if (m_hadNameBeforeAttributeChanged != willHaveName && inDocument() && is<HTMLDocument>(document())) {
                 HTMLDocument& document = downcast<HTMLDocument>(this->document());
                 const AtomicString& id = getIdAttribute();
                 if (!id.isEmpty() && id != getNameAttribute()) {
@@ -187,6 +187,7 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
                         document.removeDocumentNamedItem(*id.impl(), *this);
                 }
             }
+            m_hadNameBeforeAttributeChanged = willHaveName;
         }
         HTMLElement::parseAttribute(name, value);
     }

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<img id="foo">
+<script>
+
+description("This test verifies that removing a named HTMLImageElement from the document unregisters its mapping cleanly. It passes if it doesn't assert.");
+
+var imageElement = document.getElementById("foo");
+imageElement.setAttribute("name", "nameAttributeValue");
+
+debug("Looking up image element through document named item collection...");
+shouldBe("document.nameAttributeValue", "imageElement");
+
+debug("Removing it from the document...");
+imageElement.parentNode.removeChild(imageElement);
+shouldBe("imageElement.parentNode", "null");
+
+debug("Checking that named item mapping is gone...");
+shouldBe("document.nameAttributeValue", "undefined");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

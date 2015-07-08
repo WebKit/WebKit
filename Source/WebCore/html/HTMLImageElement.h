@@ -133,6 +133,7 @@ private:
     AtomicString m_lowercasedUsemap;
     float m_imageDevicePixelRatio;
     bool m_experimentalImageMenuEnabled;
+    bool m_hadNameBeforeAttributeChanged { false }; // FIXME: We only need this because parseAttribute() can't see the old value.
 
 #if ENABLE(SERVICE_CONTROLS)
     void updateImageControls();
