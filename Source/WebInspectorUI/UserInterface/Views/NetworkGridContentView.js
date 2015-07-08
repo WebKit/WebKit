@@ -31,7 +31,9 @@ WebInspector.NetworkGridContentView = function(representedObject, extraArguments
     WebInspector.ContentView.call(this, representedObject);
 
     this._networkSidebarPanel = extraArguments.networkSidebarPanel;
+
     this._contentTreeOutline = this._networkSidebarPanel.contentTreeOutline;
+    this._contentTreeOutline.onselect = this._treeElementSelected.bind(this);
 
     var columns = {domain: {}, type: {}, method: {}, scheme: {}, statusCode: {}, cached: {}, size: {}, transferSize: {}, requestSent: {}, latency: {}, duration: {}};
 
@@ -208,6 +210,21 @@ WebInspector.NetworkGridContentView.prototype = {
         if (!dataGridNode)
             return;
         dataGridNode.revealAndSelect();
+    },
+
+    _treeElementSelected: function(treeElement, selectedByUser)
+    {
+        this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
+
+        if (!this._networkSidebarPanel.canShowDifferentContentView())
+            return;
+
+        if (treeElement instanceof WebInspector.ResourceTreeElement) {
+            WebInspector.showRepresentedObject(treeElement.representedObject);
+            return;
+        }
+
+        console.error("Unknown tree element", treeElement);
     },
 
     _dataGridNodeSelected: function(event)

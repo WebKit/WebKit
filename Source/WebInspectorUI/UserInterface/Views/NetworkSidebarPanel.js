@@ -58,7 +58,6 @@ WebInspector.NetworkSidebarPanel = class NetworkSidebarPanel extends WebInspecto
 
         this._navigationBar.addNavigationItem(this._scopeBar);
 
-        this.contentTreeOutline.onselect = this._treeElementSelected.bind(this);
         this.contentTreeOutline.element.classList.add("network-grid");
         this.contentTreeOutline.element.classList.add(WebInspector.NavigationSidebarPanel.HideDisclosureButtonsStyleClassName);
 
@@ -82,6 +81,17 @@ WebInspector.NetworkSidebarPanel = class NetworkSidebarPanel extends WebInspecto
     showDefaultContentView()
     {
         this.contentBrowser.showContentView(this._networkGridView);
+    }
+
+    canShowDifferentContentView()
+    {
+        if (this._clickedTreeElementGoToArrow)
+            return true;
+
+        if (this.contentBrowser.currentContentView instanceof WebInspector.NetworkGridContentView)
+            return false;
+
+        return !this.restoringState || !this._restoredShowingNetworkGridContentView;
     }
 
     // Protected
@@ -198,30 +208,6 @@ WebInspector.NetworkSidebarPanel = class NetworkSidebarPanel extends WebInspecto
         this.showDefaultContentView();
 
         this.contentTreeOutline.processingSelectionChange = false;
-    }
-
-    _canShowDifferentContentView()
-    {
-        if (this._clickedTreeElementGoToArrow)
-            return true;
-
-        if (this.contentBrowser.currentContentView instanceof WebInspector.NetworkGridContentView)
-            return false;
-
-        return !this.restoringState || !this._restoredShowingNetworkGridContentView;
-    }
-
-    _treeElementSelected(treeElement, selectedByUser)
-    {
-        if (!this._canShowDifferentContentView())
-            return;
-
-        if (treeElement instanceof WebInspector.ResourceTreeElement) {
-            WebInspector.showRepresentedObject(treeElement.representedObject);
-            return;
-        }
-
-        console.error("Unknown tree element", treeElement);
     }
 
     _scopeBarSelectionDidChange(event)

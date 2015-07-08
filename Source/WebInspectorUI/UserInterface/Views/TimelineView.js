@@ -238,6 +238,8 @@ WebInspector.TimelineView.prototype = {
     {
         // Implemented by sub-classes if needed.
 
+        this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
+
         if (!this._timelineSidebarPanel.canShowDifferentContentView())
             return;
 

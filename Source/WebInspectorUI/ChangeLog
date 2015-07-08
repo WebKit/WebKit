@@ -1,3 +1,27 @@
+2015-07-08  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Details sidebar doesn't activate on first selected resource in Network tab
+        https://bugs.webkit.org/show_bug.cgi?id=146691
+
+        Make sure the SelectionPathComponentsDidChange event is dispatched when the tree elements are selected.
+        Selecting in the DataGrid selects the TreeElements, but onselect is not fired to avoid an inifinte loop.
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WebInspector.NetworkGridContentView): Hook up _treeElementSelected.
+        (WebInspector.NetworkGridContentView.prototype._treeElementSelected): Added. Moved from
+        NetworkSidebarPanel and added dispatch of SelectionPathComponentsDidChange event.
+
+        * UserInterface/Views/NetworkSidebarPanel.js:
+        (WebInspector.NetworkSidebarPanel): Removed _treeElementSelected.
+        (WebInspector.NetworkSidebarPanel.prototype.canShowDifferentContentView): Renamed from _canShowDifferentContentView.
+        (WebInspector.NetworkSidebarPanel.prototype._canShowDifferentContentView): Deleted.
+        (WebInspector.NetworkSidebarPanel.prototype._treeElementSelected): Moved to NetworkGridContentView.
+
+        * UserInterface/Views/TimelineView.js:
+        (WebInspector.TimelineView.prototype.treeElementSelected): Dispatch SelectionPathComponentsDidChange event.
+
 2015-07-08  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Confusingly crossed out properties in .sidebar > .panel.navigation.timeline > .title-bar
