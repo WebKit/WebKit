@@ -500,8 +500,7 @@ bool Connection::sendOutgoingMessage(std::unique_ptr<MessageEncoder> encoder)
 
     message.msg_iovlen = iovLength;
 
-    int bytesSent = 0;
-    while ((bytesSent = sendmsg(m_socketDescriptor, &message, 0)) == -1) {
+    while (sendmsg(m_socketDescriptor, &message, 0) == -1) {
         if (errno == EINTR)
             continue;
         if (errno == EAGAIN || errno == EWOULDBLOCK) {

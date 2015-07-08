@@ -1,3 +1,13 @@
+2015-07-08  Sungmann Cho  <sungmann.cho@navercorp.com>
+
+        [Unix] Remove unused local variable from Connection::sendOutgoingMessage().
+        https://bugs.webkit.org/show_bug.cgi?id=146713
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::sendOutgoingMessage):
+
 2015-07-07  Tim Horton  <timothy_horton@apple.com>
 
         Occasional null deref in the CA callback in flushLayers()
