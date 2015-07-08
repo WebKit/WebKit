@@ -1,3 +1,16 @@
+2015-07-08  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Don't allow page scroll when previewing a link or image.
+        https://bugs.webkit.org/show_bug.cgi?id=146741
+        rdar://problem/21733053
+
+        Reviewed by Beth Dakin.
+
+        Don't let preview gesture and scroll panning gesture or zooming gesture recognize at the same time.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView gestureRecognizer:canPreventGestureRecognizer:]):
+
 2015-07-08  Tim Horton  <timothy_horton@apple.com>
 
         Snapshots can be misplaced when custom swipe views are offset from the window origin
