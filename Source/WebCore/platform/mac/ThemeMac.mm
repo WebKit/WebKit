@@ -35,21 +35,22 @@
 #import <Carbon/Carbon.h>
 #import <wtf/StdLibExtras.h>
 
+// FIXME: Should move this to an NSButtonSPI.h header.
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-@interface NSButtonCell(Details)
+
+@interface NSButtonCell (Details)
 - (void)_setState:(NSInteger)value animated:(BOOL)animated;
 - (void)_setHighlighted:(BOOL)flag animated:(BOOL)animated;
 - (void)_renderCurrentAnimationFrameInContext:(CGContextRef)ctxt atLocation:(NSPoint)where;
 - (BOOL)_stateAnimationRunning;
 @end
+
 #endif
 
 static NSRect focusRingClipRect;
 static BOOL themeWindowHasKeyAppearance;
 
-@interface WebCoreThemeWindow : NSWindow {
-}
-
+@interface WebCoreThemeWindow : NSWindow
 @end
 
 @implementation WebCoreThemeWindow
@@ -73,8 +74,10 @@ static BOOL themeWindowHasKeyAppearance;
 
 - (NSWindow *)window
 {
-    static WebCoreThemeWindow *window = [[WebCoreThemeWindow alloc] init];
-
+    // Using defer:YES prevents us from wasting any window server resources for this window, since we're not actually
+    // going to draw into it. The other arguments match what you get when calling -[NSWindow init].
+    static WebCoreThemeWindow *window = [[WebCoreThemeWindow alloc] initWithContentRect:NSMakeRect(100, 100, 100, 100)
+        styleMask:NSTitledWindowMask backing:NSBackingStoreBuffered defer:YES];
     return window;
 }
 
@@ -111,6 +114,7 @@ static BOOL themeWindowHasKeyAppearance;
     // This tells AppKit to not use Layer-backed animation for control rendering.
     UNUSED_PARAM(subview);
 }
+
 @end
 
 @implementation NSFont (WebCoreTheme)
