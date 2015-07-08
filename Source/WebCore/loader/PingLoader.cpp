@@ -39,7 +39,9 @@
 #include "FrameLoaderClient.h"
 #include "HTTPHeaderNames.h"
 #include "InspectorInstrumentation.h"
+#include "LoaderStrategy.h"
 #include "Page.h"
+#include "PlatformStrategies.h"
 #include "ProgressTracker.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
@@ -64,7 +66,7 @@ void PingLoader::loadImage(Frame& frame, const URL& url)
         request.setHTTPReferrer(referrer);
     frame.loader().addExtraFieldsToSubresourceRequest(request);
 
-    createPingLoader(frame, request);
+    startPingLoad(frame, request);
 }
 
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/links.html#hyperlink-auditing
@@ -90,7 +92,7 @@ void PingLoader::sendPing(Frame& frame, const URL& pingURL, const URL& destinati
         }
     }
 
-    createPingLoader(frame, request);
+    startPingLoad(frame, request);
 }
 
 void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, PassRefPtr<FormData> report)
@@ -105,17 +107,10 @@ void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, PassRef
     if (!referrer.isEmpty())
         request.setHTTPReferrer(referrer);
 
-    createPingLoader(frame, request);
+    startPingLoad(frame, request);
 }
 
-void PingLoader::createPingLoader(Frame& frame, ResourceRequest& request)
-{
-    // No need to free the PingLoader object or manage it via a smart pointer - it will kill itself as soon as it receives a response.
-    new PingLoader(frame, request);
-}
-
-PingLoader::PingLoader(Frame& frame, ResourceRequest& request)
-    : m_timeout(*this, &PingLoader::timeoutTimerFired)
+void PingLoader::startPingLoad(Frame& frame, ResourceRequest& request)
 {
     unsigned long identifier = frame.page()->progress().createUniqueIdentifier();
     // FIXME: Why activeDocumentLoader? I would have expected documentLoader().
@@ -123,20 +118,11 @@ PingLoader::PingLoader(Frame& frame, ResourceRequest& request)
     // Document in the Frame, but the activeDocumentLoader will be associated
     // with the provisional DocumentLoader if there is a provisional
     // DocumentLoader.
-    m_shouldUseCredentialStorage = frame.loader().client().shouldUseCredentialStorage(frame.loader().activeDocumentLoader(), identifier);
-    m_handle = ResourceHandle::create(frame.loader().networkingContext(), request, this, false, false);
+    bool shouldUseCredentialStorage = frame.loader().client().shouldUseCredentialStorage(frame.loader().activeDocumentLoader(), identifier);
 
     InspectorInstrumentation::continueAfterPingLoader(frame, identifier, frame.loader().activeDocumentLoader(), request, ResourceResponse());
 
-    // If the server never responds, FrameLoader won't be able to cancel this load and
-    // we'll sit here waiting forever. Set a very generous timeout, just in case.
-    m_timeout.startOneShot(60000);
-}
-
-PingLoader::~PingLoader()
-{
-    if (m_handle)
-        m_handle->cancel();
+    platformStrategies()->loaderStrategy()->createPingHandle(frame.loader().networkingContext(), request, shouldUseCredentialStorage);
 }
 
 }
