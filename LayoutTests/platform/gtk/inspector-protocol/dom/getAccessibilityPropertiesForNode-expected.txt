@@ -404,13 +404,13 @@ Total elements to be tested: 65.
     pressed: false
     required: false
 
-<div role="button" tabindex="0" aria-pressed="true">FIXME: Pressed is false. Expected true. http://webkit.org/b/129830</div>
+<div role="button" tabindex="0" aria-pressed="true">Pressed.</div>
     exists: true
-    label: FIXME: Pressed is false. Expected true. http://webkit.org/b/129830
+    label: Pressed.
     role: 
     focused: false
     parentNodeId: exists
-    pressed: false
+    pressed: true
     required: false
 
 <div role="button" tabindex="0" aria-disabled="true">disabled</div>

@@ -1,3 +1,17 @@
+2015-07-08  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Unreviewed GTK gardening.
+
+        * platform/gtk/TestExpectations: Report and mark new failing tests.
+        * platform/gtk/editing/pasteboard/onpaste-text-html-expected.txt: Rebaseline after r186191.
+        * platform/gtk/fast/forms/auto-fill-button/input-auto-fill-button-expected.txt: Added. Rebaseline after r185166.
+        * platform/gtk/fast/images/gif-loop-count-expected.png: Removed. Remove unneded expected image result after 185310.
+        * platform/gtk/inspector-protocol/dom/getAccessibilityPropertiesForNode-expected.txt: Rebaseline after r185533.
+        * platform/gtk/media/media-controls-clone-expected.png: Rebaseline after r184932.
+        * platform/gtk/media/media-controls-clone-expected.txt: Rebaseline after r184932.
+        * platform/gtk/media/video-controls-rendering-expected.png: Rebaseline after r184932.
+        * platform/gtk/media/video-controls-rendering-expected.txt: Rebaseline after r184932.
+
 2015-07-07  Zalan Bujtas  <zalan@apple.com>
 
         Crash when parent iframe is set to display none and the child frame is mutated the same time.

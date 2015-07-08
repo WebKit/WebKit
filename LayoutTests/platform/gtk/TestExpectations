@@ -597,6 +597,18 @@ webkit.org/b/85958 fast/forms/file/file-input-capture.html [ Failure ]
 # CURSOR_VISIBILITY is not enabled in gtk
 webkit.org/b/107601 fullscreen/video-cursor-auto-hide.html [ Failure ]
 
+webkit.org/b/146718 accessibility/aria-hidden-false-works-in-subtrees.html [ Failure ]
+
+webkit.org/b/146719 accessibility/aria-roledescription.html [ Failure ]
+
+webkit.org/b/146720 http/tests/media/hls/hls-accessiblity-describes-video.html [ Failure ]
+webkit.org/b/146720 http/tests/media/hls/video-controller-getStartDate.html [ Failure ]
+webkit.org/b/146720 media/accessiblity-describes-video.html [ Failure ]
+
+webkit.org/b/146721 fast/forms/auto-fill-button/input-readonly-auto-fill-button.html [ ImageOnlyFailure ]
+
+webkit.org/b/146724 fast/text/word-break-keep-all.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
