@@ -1,3 +1,14 @@
+2015-07-08  David Kilzer  <ddkilzer@apple.com>
+
+        http/tests/security/XFrameOptions/x-frame-options-{cached,deny-delete-frame-in-load-event}.html crash on Windows Debug bots
+
+        <http://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html#showAllRuns=true&tests=http%2Ftests%2Fsecurity%2FXFrameOptions%2Fx-frame-options-cached.html>
+        <http://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html#showAllRuns=true&tests=http%2Ftests%2Fsecurity%2FXFrameOptions%2Fx-frame-options-deny-delete-frame-in-load-event.html>
+
+        * platform/win/TestExpectations: Mark tests as crashing:
+        - http/tests/security/XFrameOptions/x-frame-options-cached.html
+        - http/tests/security/XFrameOptions/x-frame-options-deny-delete-frame-in-load-event.html
+
 2015-07-08  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed GTK gardening.
