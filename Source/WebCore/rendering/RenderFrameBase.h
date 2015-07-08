@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class HTMLFrameElementBase;
+class RenderView;
 
 // Base class for RenderFrame and RenderIFrame
 class RenderFrameBase : public RenderWidget {
@@ -44,6 +45,8 @@ public:
     void layoutWithFlattening(bool fixedWidth, bool fixedHeight);
 
 private:
+    void peformLayoutWithFlattening(bool hasFixedWidth, bool hasFixedHeight);
+    RenderView* childRenderView() const;
     void widget() const = delete;
 };
 
