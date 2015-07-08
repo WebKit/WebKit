@@ -69,7 +69,7 @@ namespace WebCore {
 
 bool RenderElement::s_affectsParentBlock = false;
 bool RenderElement::s_noLongerAffectsParentBlock = false;
-    
+
 static HashMap<const RenderObject*, ControlStates*>& controlStatesRendererMap()
 {
     static NeverDestroyed<HashMap<const RenderObject*, ControlStates*>> map;
@@ -272,7 +272,7 @@ StyleDifference RenderElement::adjustStyleDifference(StyleDifference diff, unsig
         else if (diff < StyleDifferenceRecompositeLayer)
             diff = StyleDifferenceRecompositeLayer;
     }
-    
+
 #if ENABLE(CSS_FILTERS)
     if ((contextSensitiveProperties & ContextSensitivePropertyFilter) && hasLayer()) {
         RenderLayer* layer = toRenderLayerModelObject(this)->layer();
@@ -282,7 +282,7 @@ StyleDifference RenderElement::adjustStyleDifference(StyleDifference diff, unsig
             diff = StyleDifferenceRecompositeLayer;
     }
 #endif
-    
+
     // The answer to requiresLayer() for plugins, iframes, and canvas can change without the actual
     // style changing, since it depends on whether we decide to composite these elements. When the
     // layer status of one of these elements changes, we need to force a layout.
@@ -319,7 +319,7 @@ void RenderElement::updateFillImages(const FillLayer* oldLayers, const FillLayer
     // Optimize the common case
     if (oldLayers && !oldLayers->next() && newLayers && !newLayers->next() && (oldLayers->image() == newLayers->image()))
         return;
-    
+
     // Go through the new layers and addClients first, to avoid removing all clients of an image.
     for (const FillLayer* currNew = newLayers; currNew; currNew = currNew->next()) {
         if (currNew->image())
@@ -442,7 +442,7 @@ void RenderElement::setStyle(PassRef<RenderStyle> style)
     // Now that the layer (if any) has been updated, we need to adjust the diff again,
     // check whether we should layout now, and decide if we need to repaint.
     StyleDifference updatedDiff = adjustStyleDifference(diff, contextSensitiveProperties);
-    
+
     if (diff <= StyleDifferenceLayoutPositionedMovementOnly) {
         if (updatedDiff == StyleDifferenceLayout)
             setNeedsLayoutAndPrefWidthsRecalc();
@@ -577,6 +577,8 @@ void RenderElement::insertChildInternal(RenderObject* newChild, RenderObject* be
 
     if (AXObjectCache* cache = document().axObjectCache())
         cache->childrenChanged(this, newChild);
+    if (this->isRenderBlockFlow())
+        toRenderBlockFlow(*this).invalidateLineLayoutPath();
 }
 
 RenderObject* RenderElement::removeChildInternal(RenderObject& oldChild, NotifyChildrenType notifyChildren)
@@ -618,7 +620,7 @@ RenderObject* RenderElement::removeChildInternal(RenderObject& oldChild, NotifyC
     // WARNING: There should be no code running between willBeRemovedFromTree and the actual removal below.
     // This is needed to avoid race conditions where willBeRemovedFromTree would dirty the tree's structure
     // and the code running here would force an untimely rebuilding, leaving |oldChild| dangling.
-    
+
     RenderObject* nextSibling = oldChild.nextSibling();
 
     if (oldChild.previousSibling())
@@ -642,7 +644,7 @@ RenderObject* RenderElement::removeChildInternal(RenderObject& oldChild, NotifyC
 
     if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->childrenChanged(this);
-    
+
     return nextSibling;
 }
 
@@ -750,7 +752,7 @@ bool RenderElement::layerCreationAllowedForSubtree() const
             return false;
         parentRenderer = parentRenderer->parent();
     }
-    
+
     return true;
 }
 
@@ -919,7 +921,7 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
 
     if (!m_parent)
         return;
-    
+
     if (diff == StyleDifferenceLayout || diff == StyleDifferenceSimplifiedLayout) {
         RenderCounter::rendererStyleChanged(this, oldStyle, &m_style.get());
 
@@ -1419,7 +1421,7 @@ bool RenderElement::getLeadingCorner(FloatPoint& point) const
             return true;
         }
     }
-    
+
     // If the target doesn't have any children or siblings that could be used to calculate the scroll position, we must be
     // at the end of the document. Scroll to the bottom. FIXME: who said anything about scrolling?
     if (!o && document().view()) {
@@ -1475,7 +1477,7 @@ LayoutRect RenderElement::anchorRect() const
     FloatPoint leading, trailing;
     bool foundLeading = getLeadingCorner(leading);
     bool foundTrailing = getTrailingCorner(trailing);
-    
+
     // If we've found one corner, but not the other,
     // then we should just return a point at the corner that we did find.
     if (foundLeading != foundTrailing) {
@@ -1505,7 +1507,7 @@ const RenderElement* RenderElement::enclosingRendererWithTextDecoration(TextDeco
             return current;
         if (!current->isRenderInline() || current->isRubyText())
             return nullptr;
-        
+
         const RenderStyle& styleToUse = firstLine ? current->firstLineStyle() : current->style();
         if (styleToUse.textDecoration() & textDecoration)
             return current;
