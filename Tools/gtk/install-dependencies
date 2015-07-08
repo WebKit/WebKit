@@ -122,6 +122,7 @@ function installDependenciesWithApt {
         icon-naming-utils \
         libcroco3-dev \
         libegl1-mesa-dev \
+        libepoxy-dev \
         libgcrypt11-dev \
         libgpg-error-dev \
         libjson-glib-dev \
@@ -254,6 +255,7 @@ function installDependenciesWithPacman {
         gobject-introspection \
         icon-naming-utils \
         libcroco \
+        libepoxy \
         libgcrypt \
         libgpg-error \
         p11-kit \
@@ -369,6 +371,7 @@ function installFedoraDependencies {
         itstool \
         libXfont-devel \
         libcroco-devel \
+        libepoxy-devel \
         libgcrypt-devel \
         libgpg-error-devel \
         libp11-devel \

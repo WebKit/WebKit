@@ -1,3 +1,19 @@
+2015-07-08  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] [Wayland] Allow building and testing the Wayland target with the default JHBuild moduleset.
+        https://bugs.webkit.org/show_bug.cgi?id=146056
+
+        Reviewed by Martin Robinson.
+
+        * gtk/install-dependencies: libepoxy is now required for building GTK+.
+        * gtk/jhbuild-wayland.modules: Removed. Not longer needed.
+        * gtk/jhbuild.modules: Upgrade GTK+ (3.16.4) and required dependencies for building:
+        Cairo (1.14.2), Gdk-Pixbuf (2.30.8) and GLib (2.44.1).
+        * gtk/patches/cairo-1.12.8-add_disable-lto.patch: Removed. Not longer needed.
+        Cairo removed support for LTO on (1.14). Upstream commit: c7ff9bb.
+        * gtk/patches/gtk-3.6-do-not-shutdown-accessibility.patch: Removed. Not longer needed.
+        GTK+ merged this patch on GTK+-3.10. Upstream commit: 8d83d98.
+
 2015-07-06  Matt Rajca  <mrajca@apple.com>
 
         Media Session: propagate metadata changes to UI clients
