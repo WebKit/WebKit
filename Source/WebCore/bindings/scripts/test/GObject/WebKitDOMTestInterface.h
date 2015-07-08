@@ -99,15 +99,6 @@ WEBKIT_API WebKitDOMTestObj*
 webkit_dom_test_interface_implements_method2(WebKitDOMTestInterface* self, const gchar* strArg, WebKitDOMTestObj* objArg, GError** error);
 
 /**
- * webkit_dom_test_interface_implements_method4:
- * @self: A #WebKitDOMTestInterface
- *
- * Stability: Unstable
-**/
-WEBKIT_API void
-webkit_dom_test_interface_implements_method4(WebKitDOMTestInterface* self);
-
-/**
  * webkit_dom_test_interface_supplemental_method1:
  * @self: A #WebKitDOMTestInterface
  *
@@ -129,15 +120,6 @@ webkit_dom_test_interface_supplemental_method1(WebKitDOMTestInterface* self);
 **/
 WEBKIT_API WebKitDOMTestObj*
 webkit_dom_test_interface_supplemental_method2(WebKitDOMTestInterface* self, const gchar* strArg, WebKitDOMTestObj* objArg, GError** error);
-
-/**
- * webkit_dom_test_interface_supplemental_method4:
- * @self: A #WebKitDOMTestInterface
- *
- * Stability: Unstable
-**/
-WEBKIT_API void
-webkit_dom_test_interface_supplemental_method4(WebKitDOMTestInterface* self);
 
 /**
  * webkit_dom_test_interface_get_implements_str1:

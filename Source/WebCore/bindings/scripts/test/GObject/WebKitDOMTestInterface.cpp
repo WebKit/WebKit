@@ -289,26 +289,6 @@ WebKitDOMTestObj* webkit_dom_test_interface_implements_method2(WebKitDOMTestInte
 #endif /* ENABLE(Condition1) || ENABLE(Condition2) */
 }
 
-void webkit_dom_test_interface_implements_method4(WebKitDOMTestInterface* self)
-{
-#if ENABLE(Condition1) || ENABLE(Condition2)
-#if ENABLE(Condition22) || ENABLE(Condition23)
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_TEST_INTERFACE(self));
-    WebCore::TestInterface* item = WebKit::core(self);
-    item->implementsMethod4();
-#else
-    UNUSED_PARAM(self);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition22")
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition23")
-#endif /* ENABLE(Condition22) || ENABLE(Condition23) */
-#else
-    UNUSED_PARAM(self);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
-#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
-}
-
 void webkit_dom_test_interface_supplemental_method1(WebKitDOMTestInterface* self)
 {
 #if ENABLE(Condition1) || ENABLE(Condition2)
@@ -365,26 +345,6 @@ WebKitDOMTestObj* webkit_dom_test_interface_supplemental_method2(WebKitDOMTestIn
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
     return 0;
-#endif /* ENABLE(Condition1) || ENABLE(Condition2) */
-}
-
-void webkit_dom_test_interface_supplemental_method4(WebKitDOMTestInterface* self)
-{
-#if ENABLE(Condition1) || ENABLE(Condition2)
-#if ENABLE(Condition11) || ENABLE(Condition12)
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_TEST_INTERFACE(self));
-    WebCore::TestInterface* item = WebKit::core(self);
-    WebCore::TestSupplemental::supplementalMethod4(item);
-#else
-    UNUSED_PARAM(self);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition11")
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition12")
-#endif /* ENABLE(Condition11) || ENABLE(Condition12) */
-#else
-    UNUSED_PARAM(self);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
 #endif /* ENABLE(Condition1) || ENABLE(Condition2) */
 }
 

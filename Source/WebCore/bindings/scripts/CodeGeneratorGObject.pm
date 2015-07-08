@@ -287,6 +287,9 @@ sub SkipFunction {
     my $callWith = $function->signature->extendedAttributes->{"CallWith"};
     my $isUnsupportedCallWith = $codeGenerator->ExtendedAttributeContains($callWith, "ScriptArguments") || $codeGenerator->ExtendedAttributeContains($callWith, "CallStack");
 
+    # Static methods are unsupported
+    return 1 if $function->isStatic;
+
     if (($isCustomFunction || $isUnsupportedCallWith) &&
         $functionName ne "webkit_dom_node_replace_child" &&
         $functionName ne "webkit_dom_node_insert_before" &&

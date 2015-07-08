@@ -466,47 +466,6 @@ WEBKIT_API void
 webkit_dom_test_obj_conditional_method3(WebKitDOMTestObj* self);
 
 /**
- * webkit_dom_test_obj_class_method:
- * @self: A #WebKitDOMTestObj
- *
- * Stability: Unstable
-**/
-WEBKIT_API void
-webkit_dom_test_obj_class_method(WebKitDOMTestObj* self);
-
-/**
- * webkit_dom_test_obj_class_method_with_optional:
- * @self: A #WebKitDOMTestObj
- * @arg: A #glong
- *
- * Returns: A #glong
- *
- * Stability: Unstable
-**/
-WEBKIT_API glong
-webkit_dom_test_obj_class_method_with_optional(WebKitDOMTestObj* self, glong arg);
-
-/**
- * webkit_dom_test_obj_overloaded_method1:
- * @self: A #WebKitDOMTestObj
- * @arg: A #glong
- *
- * Stability: Unstable
-**/
-WEBKIT_API void
-webkit_dom_test_obj_overloaded_method1(WebKitDOMTestObj* self, glong arg);
-
-/**
- * webkit_dom_test_obj_overloaded_method1:
- * @self: A #WebKitDOMTestObj
- * @type: A #gchar
- *
- * Stability: Unstable
-**/
-WEBKIT_API void
-webkit_dom_test_obj_overloaded_method1(WebKitDOMTestObj* self, const gchar* type);
-
-/**
  * webkit_dom_test_obj_convert1:
  * @self: A #WebKitDOMTestObj
  * @value: A #WebKitDOMTestNode

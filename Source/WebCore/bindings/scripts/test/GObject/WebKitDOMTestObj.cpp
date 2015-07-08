@@ -1362,53 +1362,6 @@ void webkit_dom_test_obj_conditional_method3(WebKitDOMTestObj* self)
 #endif /* ENABLE(Condition1) || ENABLE(Condition2) */
 }
 
-void webkit_dom_test_obj_class_method(WebKitDOMTestObj* self)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
-    WebCore::TestObj* item = WebKit::core(self);
-    item->classMethod();
-}
-
-glong webkit_dom_test_obj_class_method_with_optional(WebKitDOMTestObj* self, glong arg)
-{
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
-    WebCore::TestObj* item = WebKit::core(self);
-    glong result = item->classMethodWithOptional(arg);
-    return result;
-}
-
-void webkit_dom_test_obj_overloaded_method1(WebKitDOMTestObj* self, glong arg)
-{
-#if ENABLE(Condition1)
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
-    WebCore::TestObj* item = WebKit::core(self);
-    item->overloadedMethod1(arg);
-#else
-    UNUSED_PARAM(self);
-    UNUSED_PARAM(arg);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
-#endif /* ENABLE(Condition1) */
-}
-
-void webkit_dom_test_obj_overloaded_method1(WebKitDOMTestObj* self, const gchar* type)
-{
-#if ENABLE(Condition1)
-    WebCore::JSMainThreadNullState state;
-    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
-    g_return_if_fail(type);
-    WebCore::TestObj* item = WebKit::core(self);
-    WTF::String convertedType = WTF::String::fromUTF8(type);
-    item->overloadedMethod1(convertedType);
-#else
-    UNUSED_PARAM(self);
-    UNUSED_PARAM(type);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
-#endif /* ENABLE(Condition1) */
-}
-
 void webkit_dom_test_obj_convert1(WebKitDOMTestObj* self, WebKitDOMTestNode* value)
 {
     WebCore::JSMainThreadNullState state;
