@@ -556,7 +556,7 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
             m_currentSwipeLiveLayers.append(layer);
         }
     } else {
-        swipeArea = FloatRect(FloatPoint(), m_webPageProxy.viewSize());
+        swipeArea = [rootContentLayer convertRect:CGRectMake(0, 0, m_webPageProxy.viewSize().width(), m_webPageProxy.viewSize().height()) toLayer:nil];
         topContentInset = m_webPageProxy.topContentInset();
         m_currentSwipeLiveLayers.append(rootContentLayer);
     }
@@ -579,7 +579,7 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
 
     [m_swipeLayer setBackgroundColor:backgroundColor.get()];
     [m_swipeLayer setAnchorPoint:CGPointZero];
-    [m_swipeLayer setFrame:swipeArea];
+    [m_swipeLayer setFrame:[snapshotLayerParent convertRect:swipeArea fromLayer:nil]];
     [m_swipeLayer setName:@"Gesture Swipe Root Layer"];
     [m_swipeLayer setGeometryFlipped:geometryIsFlippedToRoot];
     [m_swipeLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
@@ -596,7 +596,6 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
 
     if (m_webPageProxy.preferences().viewGestureDebuggingEnabled())
         applyDebuggingPropertiesToSwipeViews();
-
 
     CALayer *layerAdjacentToSnapshot = determineLayerAdjacentToSnapshotForParent(direction, snapshotLayerParent);
     if (direction == SwipeDirection::Back)

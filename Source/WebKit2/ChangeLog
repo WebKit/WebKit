@@ -1,3 +1,19 @@
+2015-07-08  Tim Horton  <timothy_horton@apple.com>
+
+        Snapshots can be misplaced when custom swipe views are offset from the window origin
+        https://bugs.webkit.org/show_bug.cgi?id=146744
+        <rdar://problem/20942120>
+
+        Reviewed by Dean Jackson.
+
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        Keep swipeArea in window coordinates; it was already in window coordinates
+        when using custom swipe views, but not in the non-custom case.
+
+        Convert from window coordinates to parent-of-m_swipeLayer coordinates when
+        determining m_swipeLayer's frame.
+
 2015-07-07  Andy Estes  <aestes@apple.com>
 
         [iOS][WK2] Ignore synthetic clicks in subframes initiated on a previous page
