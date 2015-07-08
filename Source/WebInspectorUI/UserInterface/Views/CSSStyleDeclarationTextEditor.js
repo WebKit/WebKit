@@ -446,13 +446,8 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         var line = this._codeMirror.getLine(cursor.line);
         var trimmedLine = line.trimRight();
 
-        if (!trimmedLine.trimLeft().length)
+        if (!trimmedLine.trimLeft().length || cursor.ch !== trimmedLine.length)
             return;
-
-        if (cursor.ch !== trimmedLine.length) {
-            this._highlightNextNameOrValue(this._codeMirror, cursor, line);
-            return;
-        }
 
         this._mouseDownCursorPosition = cursor;
     }
