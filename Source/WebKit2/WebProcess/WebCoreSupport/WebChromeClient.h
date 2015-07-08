@@ -295,6 +295,7 @@ private:
     virtual void setPageActivityState(WebCore::PageActivityState::Flags) override;
 
 #if ENABLE(MEDIA_SESSION)
+    virtual void hasMediaSessionWithActiveMediaElementsDidChange(bool) override;
     virtual void mediaSessionMetadataDidChange(const WebCore::MediaSessionMetadata&) override;
 #endif
 

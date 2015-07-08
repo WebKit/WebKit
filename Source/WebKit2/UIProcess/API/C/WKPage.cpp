@@ -2153,6 +2153,16 @@ void WKPageSetMuted(WKPageRef page, bool muted)
     toImpl(page)->setMuted(muted);
 }
 
+bool WKPageHasMediaSessionWithActiveMediaElements(WKPageRef page)
+{
+#if ENABLE(MEDIA_SESSION)
+    return toImpl(page)->hasMediaSessionWithActiveMediaElements();
+#else
+    UNUSED_PARAM(page);
+    return false;
+#endif
+}
+
 void WKPageHandleMediaEvent(WKPageRef page, WKMediaEventType wkEventType)
 {
 #if ENABLE(MEDIA_SESSION)

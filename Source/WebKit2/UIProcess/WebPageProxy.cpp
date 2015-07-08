@@ -5809,6 +5809,11 @@ void WebPageProxy::isPlayingMediaDidChange(MediaProducer::MediaStateFlags state)
 }
 
 #if ENABLE(MEDIA_SESSION)
+void WebPageProxy::hasMediaSessionWithActiveMediaElementsDidChange(bool state)
+{
+    m_hasMediaSessionWithActiveMediaElements = state;
+}
+
 void WebPageProxy::mediaSessionMetadataDidChange(const WebCore::MediaSessionMetadata& metadata)
 {
     Ref<WebMediaSessionMetadata> webMetadata = WebMediaSessionMetadata::create(metadata);

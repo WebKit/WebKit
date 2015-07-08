@@ -419,6 +419,7 @@ public:
     virtual void isPlayingMediaDidChange(MediaProducer::MediaStateFlags) { }
 
 #if ENABLE(MEDIA_SESSION)
+    virtual void hasMediaSessionWithActiveMediaElementsDidChange(bool) { }
     virtual void mediaSessionMetadataDidChange(const WebCore::MediaSessionMetadata&) { }
 #endif
 
