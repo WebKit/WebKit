@@ -1,3 +1,38 @@
+2015-07-08  Anders Carlsson  <andersca@apple.com>
+
+        Make ApplicationStateTracker be per view instead of being a singleton
+        https://bugs.webkit.org/show_bug.cgi?id=146737
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/ApplicationStateTracker.h:
+        Update to be per view instead of a singleton.
+
+        * UIProcess/ApplicationStateTracker.mm:
+        (WebKit::ApplicationStateTracker::ApplicationStateTracker):
+        Change to take a view + selectors.
+
+        (WebKit::ApplicationStateTracker::~ApplicationStateTracker):
+        Invalidate the state monitor and remove the listeners.
+
+        (WebKit::ApplicationStateTracker::applicationDidEnterBackground):
+        Just call the single background method.
+
+        (WebKit::ApplicationStateTracker::applicationWillEnterForeground):
+        Just call the single foreground method.
+
+        (WebKit::ApplicationStateTracker::singleton): Deleted.
+        (WebKit::ApplicationStateTracker::addListener): Deleted.
+        (WebKit::ApplicationStateTracker::invokeListeners): Deleted.
+        (WebKit::ApplicationStateTracker::pruneListeners): Deleted.
+
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _commonInitializationWithProcessPool:configuration:]):
+        Create the ApplicationStateTracker here.
+
+        (-[WKContentView isBackground]):
+        Get the ivar instead of the singleton.
+
 2015-07-08  Beth Dakin  <bdakin@apple.com>
 
         InteractionInformationAtPosition bounds seem wrong on many sites, affects 

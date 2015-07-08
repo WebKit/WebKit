@@ -53,6 +53,7 @@ typedef void(^BKSApplicationStateChangedHandler)(NSDictionary *userInfo);
 @property (nonatomic, copy) BKSApplicationStateChangedHandler handler;
 
 - (BKSApplicationState)mostElevatedApplicationStateForPID:(pid_t)pid;
+- (void)invalidate;
 
 @end
 

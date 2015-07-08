@@ -177,6 +177,8 @@ private:
     HistoricalVelocityData _historicalKinematicData;
 
     RetainPtr<NSUndoManager> _undoManager;
+
+    std::unique_ptr<ApplicationStateTracker> _applicationStateTracker;
 }
 
 - (instancetype)_commonInitializationWithProcessPool:(WebKit::WebProcessPool&)processPool configuration:(WebKit::WebPageConfiguration)webPageConfiguration
@@ -210,7 +212,7 @@ private:
 
     self.layer.hitTestsAsOpaque = YES;
 
-    ApplicationStateTracker::singleton().addListener(self, @selector(_applicationDidEnterBackground), @selector(_applicationWillEnterForeground));
+    _applicationStateTracker = std::make_unique<ApplicationStateTracker>(self, @selector(_applicationDidEnterBackground), @selector(_applicationWillEnterForeground));
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:[UIApplication sharedApplication]];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationDidBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:[UIApplication sharedApplication]];
@@ -305,7 +307,7 @@ private:
 
 - (BOOL)isBackground
 {
-    return ApplicationStateTracker::singleton().isInBackground();
+    return _applicationStateTracker->isInBackground();
 }
 
 - (void)_showInspectorHighlight:(const WebCore::Highlight&)highlight

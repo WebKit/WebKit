@@ -30,40 +30,36 @@
 
 #import "WeakObjCPtr.h"
 #import <wtf/Forward.h>
-#import <wtf/Vector.h>
+#import <wtf/WeakPtr.h>
+
+OBJC_CLASS BKSApplicationStateMonitor;
+OBJC_CLASS UIView;
 
 namespace WebKit {
 
 class ApplicationStateTracker {
-    friend NeverDestroyed<ApplicationStateTracker>;
-
 public:
-    static ApplicationStateTracker& singleton();
+    ApplicationStateTracker(UIView *, SEL didEnterBackgroundSelector, SEL willEnterForegroundSelector);
+    ~ApplicationStateTracker();
 
     bool isInBackground() const { return m_isInBackground; }
 
-    void addListener(id, SEL willEnterForegroundSelector, SEL didEnterBackgroundSelector);
-
 private:
-    ApplicationStateTracker();
-    ~ApplicationStateTracker() = delete;
-
     void applicationDidEnterBackground();
     void applicationWillEnterForeground();
 
-    struct Listener;
-
-    void invokeListeners(SEL Listener::*);
-    void pruneListeners();
+    WeakObjCPtr<UIView> m_view;
+    SEL m_didEnterBackgroundSelector;
+    SEL m_willEnterForegroundSelector;
 
     bool m_isInBackground;
 
-    struct Listener {
-        WeakObjCPtr<id> object;
-        SEL didEnterBackgroundSelector;
-        SEL willEnterForegroundSelector;
-    };
-    Vector<Listener> m_listeners;
+    WeakPtrFactory<ApplicationStateTracker> m_weakPtrFactory;
+
+    RetainPtr<BKSApplicationStateMonitor> m_applicationStateMonitor;
+
+    id m_didEnterBackgroundObserver;
+    id m_willEnterForegroundObserver;
 };
 
 }
