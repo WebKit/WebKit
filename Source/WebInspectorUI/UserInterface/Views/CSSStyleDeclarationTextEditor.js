@@ -479,7 +479,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
     _handleBeforeChange(codeMirror, change)
     {
-        if (change.origin !== "+delete" || this._completionController.isShowingCompletions())
+        if (change.origin !== "+delete" || (!change.to.line && !change.to.ch) || this._completionController.isShowingCompletions())
             return CodeMirror.Pass;
 
         var marks = codeMirror.findMarksAt(change.to);
