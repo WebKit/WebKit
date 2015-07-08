@@ -1,3 +1,56 @@
+2015-06-10  Chris Dumez  <cdumez@apple.com>
+
+        ASSERT_WITH_SECURITY_IMPLICATION in WebCore::DocumentOrderedMap::getElementById
+        https://bugs.webkit.org/show_bug.cgi?id=145857
+        <rdar://problem/16798440>
+
+        Reviewed by Darin Adler.
+
+        Make sure Node::insertedInto() gets called on the inserted node and its
+        descendants after its insertion into the tree but *before*
+        ContainerNode::childrenChanged() is called on the parent node. This is
+        needed so that the descendants know they've been inserted into the tree
+        (and their InDocumentFlag flag gets set) before the parent node does
+        anything with them in childrenChanged().
+
+        In the case of <rdar://problem/16798440>, executing HTMLScriptElement's
+        childrenChanged() after appending a child to a script element was causing
+        the script to be executed. The script would call getElementBy() which
+        would traverse the DOM tree and find a matching Element in the newly
+        inserted subtree. However, the matching Element's InDocumentFlag flag was
+        not set yet because the element's insertedInto() method has not been called
+        yet at this point. This would cause us to hit an assertion as
+        DocumentOrderedMap::getElementById() is only supposed to return elements
+        that are in a Document.
+
+        This patch is based on Blink r178976 by <esprehn@chromium.org>:
+        https://src.chromium.org/viewvc/blink?view=rev&revision=178976
+
+        Tests: fast/dom/script-getElementById-during-insertion.html
+               fast/dom/script-remove-child-id-map.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::notifyChildInserted):
+        (WebCore::ContainerNode::notifyChildRemoved):
+        (WebCore::ContainerNode::removeChildren):
+        (WebCore::ContainerNode::parserInsertBefore): Deleted.
+        (WebCore::ContainerNode::removeChild): Deleted.
+        (WebCore::ContainerNode::parserRemoveChild): Deleted.
+        (WebCore::ContainerNode::parserAppendChild): Deleted.
+        (WebCore::ContainerNode::childrenChanged): Deleted.
+        (WebCore::ContainerNode::setAttributeEventListener): Deleted.
+        (WebCore::ContainerNode::querySelector): Deleted.
+        * dom/ContainerNodeAlgorithms.cpp:
+        (WebCore::ChildNodeInsertionNotifier::notifyDescendantInsertedIntoDocument):
+        (WebCore::ChildNodeInsertionNotifier::notifyDescendantInsertedIntoTree):
+        * dom/ContainerNodeAlgorithms.h:
+        (WebCore::ChildNodeInsertionNotifier::notifyNodeInsertedIntoDocument):
+        (WebCore::ChildNodeInsertionNotifier::notifyNodeInsertedIntoTree):
+        (WebCore::ChildNodeInsertionNotifier::notify):
+        (WebCore::ChildNodeRemovalNotifier::notifyNodeRemovedFromDocument): Deleted.
+        * dom/Element.cpp:
+        (WebCore::Element::addShadowRoot):
+
 2015-07-08  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r186389. rdar://problem/21708243
