@@ -15233,7 +15233,9 @@
     <ClInclude Include="..\platform\graphics\win\PlatformDisplayWin.h">
       <Filter>platform\graphics\win</Filter>
     </ClInclude>
-    <ClInclude Include="..\platform\VNodeTracker.h" />
+    <ClInclude Include="..\platform\VNodeTracker.h">
+      <Filter>platform</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\css\CSSGrammar.y.in">
