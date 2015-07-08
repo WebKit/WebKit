@@ -49,9 +49,23 @@ ControllerIOS.prototype = {
     createBase: function() {
         Controller.prototype.createBase.call(this);
 
-        var startPlaybackButton = this.controls.startPlaybackButton = document.createElement('button');
+        var startPlaybackButton = this.controls.startPlaybackButton = document.createElement('div');
         startPlaybackButton.setAttribute('pseudo', '-webkit-media-controls-start-playback-button');
         startPlaybackButton.setAttribute('aria-label', this.UIString('Start Playback'));
+
+        var startPlaybackBackground = document.createElement('div');
+        startPlaybackBackground.setAttribute('pseudo', '-webkit-media-controls-start-playback-background');
+        startPlaybackBackground.classList.add('webkit-media-controls-start-playback-background');
+        startPlaybackButton.appendChild(startPlaybackBackground);
+
+        var startPlaybackTint = document.createElement('div');
+        startPlaybackTint.setAttribute('pseudo', '-webkit-media-controls-start-playback-tint');
+        startPlaybackButton.appendChild(startPlaybackTint);
+
+        var startPlaybackGlyph = document.createElement('div');
+        startPlaybackGlyph.setAttribute('pseudo', '-webkit-media-controls-start-playback-glyph');
+        startPlaybackGlyph.classList.add('webkit-media-controls-start-playback-glyph');
+        startPlaybackButton.appendChild(startPlaybackGlyph);
 
         this.listenFor(this.base, 'gesturestart', this.handleBaseGestureStart);
         this.listenFor(this.base, 'gesturechange', this.handleBaseGestureChange);
@@ -456,10 +470,13 @@ ControllerIOS.prototype = {
 
     handleStartPlaybackButtonTouchStart: function(event) {
         this.controls.startPlaybackButton.classList.add('active');
+        this.controls.startPlaybackButton.querySelector('.webkit-media-controls-start-playback-background').classList.add('active');
     },
 
     handleStartPlaybackButtonTouchEnd: function(event) {
         this.controls.startPlaybackButton.classList.remove('active');
+        this.controls.startPlaybackButton.querySelector('.webkit-media-controls-start-playback-background').classList.remove('active');
+
         if (this.video.error)
             return true;
 
@@ -516,6 +533,7 @@ ControllerIOS.prototype = {
     updateStatusDisplay: function(event)
     {
         this.controls.startPlaybackButton.classList.toggle(this.ClassNames.failed, this.video.error !== null);
+        this.controls.startPlaybackButton.querySelector(".webkit-media-controls-start-playback-glyph").classList.toggle(this.ClassNames.failed, this.video.error !== null);
         Controller.prototype.updateStatusDisplay.call(this, event);
     },
 
