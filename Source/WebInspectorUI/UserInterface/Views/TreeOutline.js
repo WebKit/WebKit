@@ -944,16 +944,16 @@ WebInspector.TreeElement = class TreeElement extends WebInspector.Object
             this.onreveal(this);
     }
 
-    revealed()
+    revealed(ignoreHidden)
     {
-        if (this.hidden)
+        if (!ignoreHidden && this.hidden)
             return false;
 
         var currentAncestor = this.parent;
         while (currentAncestor && !currentAncestor.root) {
             if (!currentAncestor.expanded)
                 return false;
-            if (currentAncestor.hidden)
+            if (!ignoreHidden && currentAncestor.hidden)
                 return false;
             currentAncestor = currentAncestor.parent;
         }
@@ -1038,15 +1038,17 @@ WebInspector.TreeElement = class TreeElement extends WebInspector.Object
     traverseNextTreeElement(skipUnrevealed, stayWithin, dontPopulate, info)
     {
         function shouldSkip(element) {
-            return skipUnrevealed && !element.revealed();
+            return skipUnrevealed && !element.revealed(true);
         }
 
         var depthChange = 0;
         var element = this;
+
+        if (!dontPopulate)
+            element.onpopulate();
+
         do {
-            if (element.hasChildren && element.expanded && !shouldSkip(element)) {
-                if (!dontPopulate)
-                    element.onpopulate();
+            if (element.hasChildren && element.children[0] && (!skipUnrevealed || element.expanded)) {
                 element = element.children[0];
                 depthChange += 1;
             } else {
@@ -1062,19 +1064,22 @@ WebInspector.TreeElement = class TreeElement extends WebInspector.Object
 
         if (info)
             info.depthChange = depthChange;
+
         return element;
     }
 
     traversePreviousTreeElement(skipUnrevealed, dontPopulate)
     {
         function shouldSkip(element) {
-            return skipUnrevealed && !element.revealed();
+            return skipUnrevealed && !element.revealed(true);
         }
 
         var element = this;
+
         do {
             if (element.previousSibling) {
                 element = element.previousSibling;
+
                 while (element && element.hasChildren && element.expanded && !shouldSkip(element)) {
                     if (!dontPopulate)
                         element.onpopulate();
