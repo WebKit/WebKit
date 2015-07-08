@@ -44,15 +44,17 @@ namespace ContentExtensions {
 typedef MutableRange<char, NFANodeIndexSet> NFANodeRange;
 typedef MutableRangeList<char, NFANodeIndexSet> NFANodeRangeList;
 typedef MutableRangeList<char, NFANodeIndexSet, 128> PreallocatedNFANodeRangeList;
+typedef Vector<uint32_t, 0, ContentExtensionsOverflowHandler> UniqueNodeList;
+typedef Vector<UniqueNodeList, 0, ContentExtensionsOverflowHandler> NFANodeClosures;
 
 // FIXME: set a better initial size.
 // FIXME: include the hash inside NodeIdSet.
 typedef NFANodeIndexSet NodeIdSet;
 
-static inline void epsilonClosureExcludingSelf(NFA& nfa, unsigned nodeId, Vector<unsigned>& output)
+static inline void epsilonClosureExcludingSelf(NFA& nfa, unsigned nodeId, UniqueNodeList& output)
 {
     NodeIdSet closure({ nodeId });
-    Vector<unsigned, 64> unprocessedNodes({ nodeId });
+    Vector<unsigned, 64, ContentExtensionsOverflowHandler> unprocessedNodes({ nodeId });
 
     do {
         unsigned unprocessedNodeId = unprocessedNodes.takeLast();
@@ -71,7 +73,7 @@ static inline void epsilonClosureExcludingSelf(NFA& nfa, unsigned nodeId, Vector
     output.shrinkToFit();
 }
 
-static void resolveEpsilonClosures(NFA& nfa, Vector<Vector<unsigned>>& nfaNodeClosures)
+static void resolveEpsilonClosures(NFA& nfa, NFANodeClosures& nfaNodeClosures)
 {
     unsigned nfaGraphSize = nfa.nodes.size();
     nfaNodeClosures.resize(nfaGraphSize);
@@ -85,10 +87,10 @@ static void resolveEpsilonClosures(NFA& nfa, Vector<Vector<unsigned>>& nfaNodeCl
     nfa.epsilonTransitionsTargets.clear();
 }
 
-static ALWAYS_INLINE void extendSetWithClosure(const Vector<Vector<unsigned>>& nfaNodeClosures, unsigned nodeId, NodeIdSet& set)
+static ALWAYS_INLINE void extendSetWithClosure(const NFANodeClosures& nfaNodeClosures, unsigned nodeId, NodeIdSet& set)
 {
     ASSERT(set.contains(nodeId));
-    const Vector<unsigned>& nodeClosure = nfaNodeClosures[nodeId];
+    const UniqueNodeList& nodeClosure = nfaNodeClosures[nodeId];
     if (!nodeClosure.isEmpty())
         set.add(nodeClosure.begin(), nodeClosure.end());
 }
@@ -110,6 +112,8 @@ struct UniqueNodeIdSetImpl {
 private:
     unsigned m_buffer[1];
 };
+
+typedef Vector<UniqueNodeIdSetImpl*, 128, ContentExtensionsOverflowHandler> UniqueNodeQueue;
 
 class UniqueNodeIdSet {
 public:
@@ -295,7 +299,7 @@ private:
 };
 
 struct DataConverterWithEpsilonClosure {
-    const Vector<Vector<unsigned>>& nfaNodeclosures;
+    const NFANodeClosures& nfaNodeclosures;
 
     template<typename Iterable>
     NFANodeIndexSet convert(const Iterable& iterable)
@@ -303,7 +307,7 @@ struct DataConverterWithEpsilonClosure {
         NFANodeIndexSet result;
         for (unsigned nodeId : iterable) {
             result.add(nodeId);
-            const Vector<unsigned>& nodeClosure = nfaNodeclosures[nodeId];
+            const UniqueNodeList& nodeClosure = nfaNodeclosures[nodeId];
             result.add(nodeClosure.begin(), nodeClosure.end());
         }
         return result;
@@ -315,14 +319,14 @@ struct DataConverterWithEpsilonClosure {
         for (unsigned nodeId : iterable) {
             auto addResult = destination.add(nodeId);
             if (addResult.isNewEntry) {
-                const Vector<unsigned>& nodeClosure = nfaNodeclosures[nodeId];
+                const UniqueNodeList& nodeClosure = nfaNodeclosures[nodeId];
                 destination.add(nodeClosure.begin(), nodeClosure.end());
             }
         }
     }
 };
 
-static inline void createCombinedTransition(PreallocatedNFANodeRangeList& combinedRangeList, const UniqueNodeIdSetImpl& sourceNodeSet, const NFA& immutableNFA, const Vector<Vector<unsigned>>& nfaNodeclosures)
+static inline void createCombinedTransition(PreallocatedNFANodeRangeList& combinedRangeList, const UniqueNodeIdSetImpl& sourceNodeSet, const NFA& immutableNFA, const NFANodeClosures& nfaNodeclosures)
 {
     combinedRangeList.clear();
 
@@ -336,7 +340,7 @@ static inline void createCombinedTransition(PreallocatedNFANodeRangeList& combin
     }
 }
 
-static ALWAYS_INLINE unsigned getOrCreateDFANode(const NodeIdSet& nfaNodeSet, const NFA& nfa, DFA& dfa, UniqueNodeIdSetTable& uniqueNodeIdSetTable, Vector<UniqueNodeIdSetImpl*>& unprocessedNodes)
+static ALWAYS_INLINE unsigned getOrCreateDFANode(const NodeIdSet& nfaNodeSet, const NFA& nfa, DFA& dfa, UniqueNodeIdSetTable& uniqueNodeIdSetTable, UniqueNodeQueue& unprocessedNodes)
 {
     NodeIdSetToUniqueNodeIdSetSource nodeIdSetToUniqueNodeIdSetSource(dfa, nfa, nfaNodeSet);
     auto uniqueNodeIdAddResult = uniqueNodeIdSetTable.add<NodeIdSetToUniqueNodeIdSetTranslator>(nodeIdSetToUniqueNodeIdSetSource);
@@ -348,7 +352,7 @@ static ALWAYS_INLINE unsigned getOrCreateDFANode(const NodeIdSet& nfaNodeSet, co
 
 DFA NFAToDFA::convert(NFA& nfa)
 {
-    Vector<Vector<unsigned>> nfaNodeClosures;
+    NFANodeClosures nfaNodeClosures;
     resolveEpsilonClosures(nfa, nfaNodeClosures);
 
     DFA dfa;
@@ -361,7 +365,7 @@ DFA NFAToDFA::convert(NFA& nfa)
     NodeIdSetToUniqueNodeIdSetSource initialNodeIdSetToUniqueNodeIdSetSource(dfa, nfa, initialSet);
     auto addResult = uniqueNodeIdSetTable.add<NodeIdSetToUniqueNodeIdSetTranslator>(initialNodeIdSetToUniqueNodeIdSetSource);
 
-    Vector<UniqueNodeIdSetImpl*> unprocessedNodes;
+    UniqueNodeQueue unprocessedNodes;
     unprocessedNodes.append(addResult.iterator->impl());
 
     PreallocatedNFANodeRangeList combinedRangeList;

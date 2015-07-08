@@ -179,7 +179,7 @@ private:
     const DFA& m_dfaB;
     DFA m_output;
     HashMap<uint64_t, uint32_t, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_nodeMapping;
-    Vector<uint64_t> m_unprocessedNodes;
+    Vector<uint64_t, 0, ContentExtensionsOverflowHandler> m_unprocessedNodes;
 };
 
 void DFACombiner::combineDFAs(unsigned minimumSize, std::function<void(DFA&&)> handler)

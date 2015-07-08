@@ -53,11 +53,11 @@ struct ImmutableNFANode {
 
 template <typename CharacterType, typename ActionType>
 struct ImmutableNFA {
-    Vector<ImmutableNFANode> nodes;
-    Vector<ImmutableRange<CharacterType>> transitions;
-    Vector<uint32_t> targets;
-    Vector<uint32_t> epsilonTransitionsTargets;
-    Vector<ActionType> actions;
+    Vector<ImmutableNFANode, 0, ContentExtensionsOverflowHandler> nodes;
+    Vector<ImmutableRange<CharacterType>, 0, ContentExtensionsOverflowHandler> transitions;
+    Vector<uint32_t, 0, ContentExtensionsOverflowHandler> targets;
+    Vector<uint32_t, 0, ContentExtensionsOverflowHandler> epsilonTransitionsTargets;
+    Vector<ActionType, 0, ContentExtensionsOverflowHandler> actions;
 
     struct ConstTargetIterator {
         const ImmutableNFA& immutableNFA;

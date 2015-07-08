@@ -215,7 +215,7 @@ public:
     }
 #endif
 
-    Vector<MutableRange<CharacterType, DataType>, inlineCapacity> m_ranges;
+    Vector<MutableRange<CharacterType, DataType>, inlineCapacity, ContentExtensionsOverflowHandler> m_ranges;
 private:
     void insertBetween(uint32_t& leftRangeIndex, uint32_t& rightRangeIndex, CharacterType first, CharacterType last, DataType&& data)
     {

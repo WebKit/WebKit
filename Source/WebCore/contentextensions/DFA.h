@@ -48,10 +48,10 @@ struct WEBCORE_EXPORT DFA {
     void debugPrintDot() const;
 #endif
 
-    Vector<DFANode> nodes;
-    Vector<uint64_t> actions;
-    Vector<CharRange> transitionRanges;
-    Vector<uint32_t> transitionDestinations;
+    Vector<DFANode, 0, ContentExtensionsOverflowHandler> nodes;
+    Vector<uint64_t, 0, ContentExtensionsOverflowHandler> actions;
+    Vector<CharRange, 0, ContentExtensionsOverflowHandler> transitionRanges;
+    Vector<uint32_t, 0, ContentExtensionsOverflowHandler> transitionDestinations;
     unsigned root { 0 };
 };
 

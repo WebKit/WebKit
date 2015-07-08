@@ -217,20 +217,20 @@ private:
     };
 
     // List of sets.
-    Vector<SetDescriptor, 0, UnsafeVectorOverflow> m_sets;
+    Vector<SetDescriptor, 0, ContentExtensionsOverflowHandler> m_sets;
 
     // All the element indices such that two elements of the same set never have a element of a different set between them.
-    Vector<unsigned, 0, UnsafeVectorOverflow> m_partitionedElements;
+    Vector<unsigned, 0, ContentExtensionsOverflowHandler> m_partitionedElements;
 
     // Map elementIndex->position in the partitionedElements.
-    Vector<unsigned, 0, UnsafeVectorOverflow> m_elementPositionInPartitionedNodes;
+    Vector<unsigned, 0, ContentExtensionsOverflowHandler> m_elementPositionInPartitionedNodes;
 
     // Map elementIndex->SetIndex.
-    Vector<unsigned, 0, UnsafeVectorOverflow> m_elementToSetMap;
+    Vector<unsigned, 0, ContentExtensionsOverflowHandler> m_elementToSetMap;
 
     // List of sets with any marked node. Each set can appear at most once.
     // FIXME: find a good inline size for this.
-    Vector<unsigned, 128, UnsafeVectorOverflow> m_setsMarkedInCurrentGeneration;
+    Vector<unsigned, 128, ContentExtensionsOverflowHandler> m_setsMarkedInCurrentGeneration;
 };
 
 class FullGraphPartition {
@@ -261,7 +261,7 @@ public:
         m_flattenedTransitionsStartOffsetPerNode.resize(dfa.nodes.size());
         memset(m_flattenedTransitionsStartOffsetPerNode.data(), 0, m_flattenedTransitionsStartOffsetPerNode.size() * sizeof(unsigned));
 
-        Vector<char, 0, UnsafeVectorOverflow> singularTransitionsFirsts;
+        Vector<char, 0, ContentExtensionsOverflowHandler> singularTransitionsFirsts;
         singularTransitionsFirsts.reserveInitialCapacity(singularTransitions.m_ranges.size());
         for (const auto& transition : singularTransitions)
             singularTransitionsFirsts.uncheckedAppend(transition.first);
@@ -379,9 +379,9 @@ private:
         }
     };
 
-    Vector<unsigned, 0, UnsafeVectorOverflow> m_flattenedTransitionsStartOffsetPerNode;
-    Vector<unsigned, 0, UnsafeVectorOverflow> m_flattenedTransitionsSizePerNode;
-    Vector<Transition, 0, UnsafeVectorOverflow> m_flattenedTransitions;
+    Vector<unsigned, 0, ContentExtensionsOverflowHandler> m_flattenedTransitionsStartOffsetPerNode;
+    Vector<unsigned, 0, ContentExtensionsOverflowHandler> m_flattenedTransitionsSizePerNode;
+    Vector<Transition, 0, ContentExtensionsOverflowHandler> m_flattenedTransitions;
 
     Partition m_nodePartition;
     Partition m_transitionPartition;

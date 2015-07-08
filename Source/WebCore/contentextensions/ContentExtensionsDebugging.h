@@ -26,6 +26,8 @@
 #ifndef ContentExtensionsDebugging_h
 #define ContentExtensionsDebugging_h
 
+#include <wtf/Vector.h>
+
 #if ENABLE(CONTENT_EXTENSIONS)
 
 #define CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING 0
@@ -34,6 +36,12 @@
 
 #define CONTENT_EXTENSIONS_MEMORY_REPORTING 0
 #define CONTENT_EXTENSIONS_PAGE_SIZE 16384
+
+#if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
+typedef CrashOnOverflow ContentExtensionsOverflowHandler;
+#else
+typedef UnsafeVectorOverflow ContentExtensionsOverflowHandler;
+#endif
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
 #define LOG_LARGE_STRUCTURES(name, size) if (size > 1000000) { dataLogF("NAME: %s SIZE %d\n", #name, (int)(size)); };
