@@ -1,3 +1,10 @@
+2015-07-08  David Kilzer  <ddkilzer@apple.com>
+
+        http/tests/xmlviewer/dumpAsText/svg.xml contains a typo that breaks the test with libxml2 v2.9.2
+
+        * http/tests/xmlviewer/dumpAsText/svg.xml: Add missing space to
+        <svg:svg> tag make this test work with libxml2 v2.9.2.
+
 2015-07-08  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Unreviewed GTK gardening after r186500.
