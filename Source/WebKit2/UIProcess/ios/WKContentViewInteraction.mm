@@ -3244,6 +3244,9 @@ static bool isAssistableInputType(InputType type)
     }
 
     if (canShowImagePreview) {
+        if (![uiDelegate respondsToSelector:@selector(_webView:commitPreviewedImageWithURL:)])
+            return nil;
+
         String absoluteImageURL = _positionInformation.imageURL;
         if (absoluteImageURL.isEmpty() || !(WebCore::protocolIsInHTTPFamily(absoluteImageURL) || WebCore::protocolIs(absoluteImageURL, "data")))
             return nil;
