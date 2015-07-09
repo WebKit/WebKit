@@ -928,7 +928,8 @@ WebInspector.DOMNodeStyles = class DOMNodeStyles extends WebInspector.Object
                         continue;
                     }
 
-                    effectiveProperty.overridden = true;
+                    if (!property.anonymous)
+                        effectiveProperty.overridden = true;
                 }
 
                 property.overridden = false;
