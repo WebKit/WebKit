@@ -533,6 +533,19 @@ WebInspector.Breakpoint = class Breakpoint extends WebInspector.Object
         delete this._popover;
     }
 
+    didDismissPopover(popover)
+    {
+        // Remove Evaluate and Probe actions that have no data.
+        var emptyActions = this._actions.filter(function(action) {
+            if (action.type !== WebInspector.BreakpointAction.Type.Evaluate && action.type !== WebInspector.BreakpointAction.Type.Probe)
+                return false;
+            return !(action.data && action.data.trim());
+        });
+
+        for (var action of emptyActions)
+            this.removeAction(action);
+    }
+
     _showEditBreakpointPopover(boundingClientRect)
     {
         var bounds = WebInspector.Rect.rectFromClientRect(boundingClientRect);

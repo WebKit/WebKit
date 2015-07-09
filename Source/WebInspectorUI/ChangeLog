@@ -1,5 +1,24 @@
 2015-07-09  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: New JavaScript/Probe breakpoint action disappears when clicking continue checkbox
+        https://bugs.webkit.org/show_bug.cgi?id=146688
+
+        Reviewed by Brian Burg.
+
+        Delay removal of empty Evaluate and Probe actions until after the breakpoint popover has been dismissed. This
+        will make the breakpoint editing experience less jarring, by preventing actions from disappearing when clicking
+        other controls in the popover.
+
+        * UserInterface/Models/Breakpoint.js:
+        (WebInspector.Breakpoint.prototype.didDismissPopover):
+        Clear empty Evaluate and Probe actions on popover dismissal.
+
+        * UserInterface/Views/BreakpointActionView.js:
+        (WebInspector.BreakpointActionView.prototype._codeMirrorBlurred):
+        Don't remove actions with empty data on CodeMirror blur.
+
+2015-07-09  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: new breakpoint action dialog should reuse same action type
         https://bugs.webkit.org/show_bug.cgi?id=137255
 
