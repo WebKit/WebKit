@@ -1,3 +1,16 @@
+2015-07-08  Brady Eidson  <beidson@apple.com>
+
+        Crash calling [WebView close] in didFinishLoadForFrame callback.
+        <rdar://problem/21690765> and https://bugs.webkit.org/show_bug.cgi?id=146773
+
+        Reviewed by David Kilzer.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        
+        * TestWebKitAPI/Tests/mac/WebViewCloseInsideDidFinishLoadForFrame.mm: Added.
+        (-[WebViewCloseFrameLoadDelegate webView:didFinishLoadForFrame:]):
+        (TestWebKitAPI::TEST):
+
 2015-07-08  Hyungwook Lee  <hyungwook.lee@navercorp.com>
 
         Fix ASSERTION FAILED: !m_pendingNavigationID in WebPage::reload().

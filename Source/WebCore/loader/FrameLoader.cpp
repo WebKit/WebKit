@@ -2280,8 +2280,13 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             if (AXObjectCache* cache = m_frame.document()->existingAXObjectCache())
                 cache->frameLoadingEventNotification(&m_frame, loadingEvent);
 
-            if (page && m_frame.isMainFrame())
-                page->mainFrame().diagnosticLoggingClient().logDiagnosticMessageWithResult(DiagnosticLoggingKeys::pageLoadedKey(), emptyString(), error.isNull() ? DiagnosticLoggingResultPass : DiagnosticLoggingResultFail, ShouldSample::Yes);
+            // The above calls to dispatchDidFinishLoad() might have detached the Frame
+            // from its Page and also might have caused Page to be deleted.
+            // Don't assume 'page' is still available to use.
+            if (m_frame.isMainFrame() && m_frame.page()) {
+                ASSERT(&m_frame.page()->mainFrame() == &m_frame);
+                m_frame.page()->mainFrame().diagnosticLoggingClient().logDiagnosticMessageWithResult(DiagnosticLoggingKeys::pageLoadedKey(), emptyString(), error.isNull() ? DiagnosticLoggingResultPass : DiagnosticLoggingResultFail, ShouldSample::Yes);
+            }
 
             return;
         }
