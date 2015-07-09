@@ -363,6 +363,7 @@ bool MediaPlayer::load(MediaStreamPrivate* mediaStream)
     ASSERT(mediaStream);
     m_mediaStream = mediaStream;
     m_keySystem = "";
+    m_contentMIMEType = "";
     m_contentMIMETypeWasInferredFromExtension = false;
     loadWithNextMediaEngine(0);
     return m_currentMediaEngine;
