@@ -971,6 +971,8 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
         _needsResetViewStateAfterCommitLoadForMainFrame = NO;
         [_scrollView setContentOffset:[self _adjustedContentOffset:CGPointZero]];
         [self _updateVisibleContentRects];
+        if (_observedRenderingProgressEvents & _WKRenderingProgressEventFirstPaint)
+            _navigationState->didFirstPaint();
     }
 
     bool isTransactionAfterPageRestore = layerTreeTransaction.transactionID() >= _firstTransactionIDAfterPageRestore;

@@ -73,6 +73,8 @@ public:
     void navigationGestureDidEnd(bool willNavigate, WebBackForwardListItem&);
     void willRecordNavigationSnapshot(WebBackForwardListItem&);
 
+    void didFirstPaint();
+
 private:
     class NavigationClient final : public API::NavigationClient {
     public:

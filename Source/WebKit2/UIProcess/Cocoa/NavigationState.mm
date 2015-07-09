@@ -224,6 +224,18 @@ void NavigationState::willRecordNavigationSnapshot(WebBackForwardListItem& item)
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate) _webView:m_webView willSnapshotBackForwardListItem:wrapper(item)];
 }
 
+void NavigationState::didFirstPaint()
+{
+    if (!m_navigationDelegateMethods.webViewRenderingProgressDidChange)
+        return;
+
+    auto navigationDelegate = m_navigationDelegate.get();
+    if (!navigationDelegate)
+        return;
+
+    [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate) _webView:m_webView renderingProgressDidChange:_WKRenderingProgressEventFirstPaint];
+}
+
 NavigationState::NavigationClient::NavigationClient(NavigationState& navigationState)
     : m_navigationState(navigationState)
 {
