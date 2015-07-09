@@ -1,3 +1,14 @@
+2015-07-08  Daniel Bates  <dabates@apple.com>
+
+        Attempt to fix the Apple Windows build after <https://trac.webkit.org/changeset/186566>
+        (https://bugs.webkit.org/show_bug.cgi?id=146591)
+
+        Update implementation of PluginView::create() to return a Ref<PluginView> object
+        instead of a PassRefPtr<PluginView> object.
+
+        * Plugins/PluginView.cpp:
+        (WebCore::PluginView::create):
+
 2015-07-07  Brady Eidson  <beidson@apple.com>
 
         HTTP Auth cached after disabling private browsing/reset.
