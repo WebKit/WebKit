@@ -296,6 +296,16 @@ void WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad()
     webPage->send(Messages::WebPageProxy::DidReceiveServerRedirectForProvisionalLoadForFrame(m_frame->frameID(), documentLoader.navigationID(), url, InjectedBundleUserMessageEncoder(userData.get())));
 }
 
+void WebFrameLoaderClient::dispatchDidChangeProvisionalURL()
+{
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    WebDocumentLoader& documentLoader = static_cast<WebDocumentLoader&>(*m_frame->coreFrame()->loader().provisionalDocumentLoader());
+    webPage->send(Messages::WebPageProxy::DidChangeProvisionalURLForFrame(m_frame->frameID(), documentLoader.navigationID(), documentLoader.url().string()));
+}
+
 void WebFrameLoaderClient::dispatchDidCancelClientRedirect()
 {
     WebPage* webPage = m_frame->page();

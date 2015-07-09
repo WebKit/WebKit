@@ -1,5 +1,44 @@
 2015-07-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r186591. rdar://problem/21716407
+
+    2015-07-09  David Kilzer  <ddkilzer@apple.com>
+
+            <rdar://problem/21716549> Donner: Safari URL And Javascript Prompt Origin Spoof Vulnerability
+
+            Merge r184151.
+
+            * UIProcess/FrameLoadState.h:
+            (WebKit::FrameLoadState::state):
+            (WebKit::FrameLoadState::url):
+            (WebKit::FrameLoadState::provisionalURL):
+            (WebKit::FrameLoadState::unreachableURL):
+            - Merge FrameLoadState getter methods from r183813.  Only
+              FrameLoadState::state() is used in this patch, but there may
+              be later patches that depend on these methods.
+
+        2015-05-11  Dan Bernstein  <mitz@apple.com>
+
+            WebKit2 part of <rdar://problem/20878075> Trying to navigate to an invalid URL loads about:blank, but -[WKWebView URL] returns the invalid URL
+
+            Reviewed by Alexey Proskuryakov.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::didChangeProvisionalURLForFrame): Added. Update internal state the
+            same way we update it for server redirects, but don’t make client callbacks. Clients
+            observing the URL property will see it change.
+            * UIProcess/WebPageProxy.h:
+
+            * UIProcess/WebPageProxy.messages.in: Added DidChangeProvisionalURLForFrame.
+
+            * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+            (WebKit::WebFrameLoaderClient::dispatchDidChangeProvisionalURL): Override this new
+            FrameLoaderClient function to send a DidChangeProvisionalURLForFrame message to the UI
+            process.
+            * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
+2015-07-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r186559. rdar://problem/21716363
 
     2015-07-08  Matthew Hanson  <matthew_hanson@apple.com>
