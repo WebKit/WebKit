@@ -1,3 +1,16 @@
+2015-07-09  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (r180248): Repro Crash: com.apple.WebKit.WebContent at com.apple.JavaScriptCore: JSC::createRangeError + 20
+        https://bugs.webkit.org/show_bug.cgi?id=146767
+
+        Reviewed by Geoffrey Garen.
+
+        New test that generates a call to a function that involves creating a huge
+        object literal that exceeds the available stack space.
+
+        * http/tests/misc/large-js-program-expected.txt: Added.
+        * http/tests/misc/large-js-program.php: Added.
+
 2015-07-02  Chris Fleizach  <cfleizach@apple.com>
 
         AX: <details> element should allow expand/close through AX API
