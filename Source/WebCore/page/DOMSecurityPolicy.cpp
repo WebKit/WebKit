@@ -54,7 +54,7 @@ bool isAllowedWithType(ScriptExecutionContext* context, const String& type)
         return true;
 
     bool overrideContentSecurityPolicy = false;
-    return (context->contentSecurityPolicy()->*allowWithType)(type, type, URL(), overrideContentSecurityPolicy, ContentSecurityPolicy::SuppressReport);
+    return (context->contentSecurityPolicy()->*allowWithType)(type, type, URL(), overrideContentSecurityPolicy, ContentSecurityPolicy::ReportingStatus::SuppressReport);
 }
 
 template<bool (ContentSecurityPolicy::*allowWithURL)(const URL&, bool overrideContentSecurityPolicy, ContentSecurityPolicy::ReportingStatus) const>
@@ -68,7 +68,7 @@ bool isAllowedWithURL(ScriptExecutionContext* context, const String& url)
         return false; // FIXME: Figure out how to throw a JavaScript error.
 
     bool overrideContentSecurityPolicy = false;
-    return (context->contentSecurityPolicy()->*allowWithURL)(parsedURL, overrideContentSecurityPolicy, ContentSecurityPolicy::SuppressReport);
+    return (context->contentSecurityPolicy()->*allowWithURL)(parsedURL, overrideContentSecurityPolicy, ContentSecurityPolicy::ReportingStatus::SuppressReport);
 }
 
 template<bool (ContentSecurityPolicy::*allowWithContext)(const String&, const WTF::OrdinalNumber&, bool overrideContentSecurityPolicy, ContentSecurityPolicy::ReportingStatus) const>
@@ -78,7 +78,7 @@ bool isAllowed(ScriptExecutionContext* context)
         return true;
 
     bool overrideContentSecurityPolicy = false;
-    return (context->contentSecurityPolicy()->*allowWithContext)(String(), WTF::OrdinalNumber::beforeFirst(), overrideContentSecurityPolicy, ContentSecurityPolicy::SuppressReport);
+    return (context->contentSecurityPolicy()->*allowWithContext)(String(), WTF::OrdinalNumber::beforeFirst(), overrideContentSecurityPolicy, ContentSecurityPolicy::ReportingStatus::SuppressReport);
 }
 
 } // namespace
@@ -123,7 +123,7 @@ bool DOMSecurityPolicy::allowsEval() const
         return true;
 
     bool overrideContentSecurityPolicy = false;
-    return scriptExecutionContext()->contentSecurityPolicy()->allowEval(0, overrideContentSecurityPolicy, ContentSecurityPolicy::SuppressReport);
+    return scriptExecutionContext()->contentSecurityPolicy()->allowEval(0, overrideContentSecurityPolicy, ContentSecurityPolicy::ReportingStatus::SuppressReport);
 }
 
 
