@@ -1,3 +1,42 @@
+2015-07-09  Anders Carlsson  <andersca@apple.com>
+
+        SafariViewController loads partial webpage or entirely blank webpage
+        https://bugs.webkit.org/show_bug.cgi?id=146815
+        rdar://problem/21734757
+
+        Reviewed by Dan Bernstein.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        Add _hostProcessIdentifier getter.
+
+        * UIProcess/ApplicationStateTracker.h:
+        Change ApplicationStateTracker to hold on to a WKContentView instead of a UIView.
+
+        * UIProcess/ApplicationStateTracker.mm:
+        (WebKit::applicationType):
+        Add a helper function that returns the type of application the web view is hosted by (regular
+        application, view service or extension).
+
+        (WebKit::ApplicationStateTracker::ApplicationStateTracker):
+        Register notifications and update m_isInBackground. For regular applications, just listen for UIApplication notifications.
+        For view services, walk the view controller hierarchy and find the service view controller and listen for notifications and use
+        BKS to find the background state of the host application. For extensions, just use BKSApplicationStateMonitor directly.
+
+        (WebKit::isViewService): Deleted.
+
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView willMoveToWindow:]):
+        If we're moving out of a window, null out the state tracker.
+
+        (-[WKContentView didMoveToWindow]):
+        If we moved to a window, create a new state tracker.
+
+        (-[WKContentView isBackground]):
+        Handle a null application state.
+
+        (-[WKContentView _commonInitializationWithProcessPool:configuration:]): Deleted.
+        Don't create the application state here.
+
 2015-07-09  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Report the first paint after committing a load as a rendering progress event

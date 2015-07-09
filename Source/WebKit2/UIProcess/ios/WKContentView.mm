@@ -212,8 +212,6 @@ private:
 
     self.layer.hitTestsAsOpaque = YES;
 
-    _applicationStateTracker = std::make_unique<ApplicationStateTracker>(self, @selector(_applicationDidEnterBackground), @selector(_applicationWillEnterForeground));
-
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:[UIApplication sharedApplication]];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationDidBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:[UIApplication sharedApplication]];
 
@@ -274,6 +272,11 @@ private:
         if (_webView._allowsLinkPreview)
             [self _unregisterPreviewInWindow:window];
 #endif
+
+        if (!newWindow) {
+            ASSERT(_applicationStateTracker);
+            _applicationStateTracker = nullptr;
+        }
     }
 
     if (newWindow) {
@@ -285,6 +288,15 @@ private:
 
         [self _updateForScreen:newWindow.screen];
     }
+}
+
+- (void)didMoveToWindow
+{
+    if (!self.window)
+        return;
+
+    ASSERT(!_applicationStateTracker);
+    _applicationStateTracker = std::make_unique<ApplicationStateTracker>(self, @selector(_applicationDidEnterBackground), @selector(_applicationWillEnterForeground));
 }
 
 - (WKBrowsingContextController *)browsingContextController
@@ -307,6 +319,9 @@ private:
 
 - (BOOL)isBackground
 {
+    if (!_applicationStateTracker)
+        return YES;
+
     return _applicationStateTracker->isInBackground();
 }
 

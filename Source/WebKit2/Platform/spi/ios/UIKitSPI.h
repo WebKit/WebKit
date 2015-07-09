@@ -57,6 +57,7 @@
 #import <UIKit/UITextInteractionAssistant_Private.h>
 #import <UIKit/UIViewControllerTransitioning_Private.h>
 #import <UIKit/UIViewController_Private.h>
+#import <UIKit/UIViewController_ViewService.h>
 #import <UIKit/UIView_Private.h>
 #import <UIKit/UIWKSelectionAssistant.h>
 #import <UIKit/UIWKTextInteractionAssistant.h>
@@ -317,6 +318,10 @@ typedef enum {
 @interface UIViewController (Details)
 + (UIViewController *)_viewControllerForFullScreenPresentationFromView:(UIView *)view;
 + (UIViewController *)viewControllerForView:(UIView *)view;
+@end
+
+@interface UIViewController (ViewService)
+- (pid_t)_hostProcessIdentifier;
 @end
 
 @protocol UIViewControllerContextTransitioningEx <UIViewControllerContextTransitioning>
