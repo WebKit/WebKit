@@ -79,24 +79,19 @@ public:
     class ContainingBlockInfo {
     public:
         ContainingBlockInfo()
-            : m_block(0)
-            , m_cache(0)
-            , m_hasFloatsOrFlowThreads(false)
+            : m_hasFloatsOrFlowThreads(false)
             , m_cachedLogicalLeftSelectionOffset(false)
             , m_cachedLogicalRightSelectionOffset(false)
         { }
 
-        void setBlock(RenderBlock* block, const LogicalSelectionOffsetCaches* cache)
+        void setBlock(RenderBlock* block, const LogicalSelectionOffsetCaches* cache, bool parentCacheHasFloatsOrFlowThreads = false)
         {
             m_block = block;
-            m_hasFloatsOrFlowThreads = m_hasFloatsOrFlowThreads || m_block->containsFloats() || m_block->flowThreadContainingBlock();
+            m_hasFloatsOrFlowThreads = parentCacheHasFloatsOrFlowThreads || m_hasFloatsOrFlowThreads || m_block->containsFloats() || m_block->flowThreadContainingBlock();
             m_cache = cache;
             m_cachedLogicalLeftSelectionOffset = false;
             m_cachedLogicalRightSelectionOffset = false;
         }
-
-        RenderBlock* block() const { return m_block; }
-        const LogicalSelectionOffsetCaches* cache() const { return m_cache; }
 
         LayoutUnit logicalLeftSelectionOffset(RenderBlock& rootBlock, LayoutUnit position) const
         {
@@ -120,9 +115,13 @@ public:
             return m_logicalRightSelectionOffset;
         }
 
+        RenderBlock* block() const { return m_block; }
+        const LogicalSelectionOffsetCaches* cache() const { return m_cache; }
+        bool hasFloatsOrFlowThreads() const { return m_hasFloatsOrFlowThreads; }
+
     private:
-        RenderBlock* m_block;
-        const LogicalSelectionOffsetCaches* m_cache;
+        RenderBlock* m_block { nullptr };
+        const LogicalSelectionOffsetCaches* m_cache { nullptr };
         bool m_hasFloatsOrFlowThreads : 1;
         mutable bool m_cachedLogicalLeftSelectionOffset : 1;
         mutable bool m_cachedLogicalRightSelectionOffset : 1;
@@ -151,12 +150,12 @@ public:
         , m_containingBlockForAbsolutePosition(cache.m_containingBlockForAbsolutePosition)
     {
         if (block.canContainFixedPositionObjects())
-            m_containingBlockForFixedPosition.setBlock(&block, &cache);
+            m_containingBlockForFixedPosition.setBlock(&block, &cache, cache.m_containingBlockForFixedPosition.hasFloatsOrFlowThreads());
 
         if (isContainingBlockCandidateForAbsolutelyPositionedObject(block) && !block.isRenderInline() && !block.isAnonymousBlock())
-            m_containingBlockForFixedPosition.setBlock(&block, &cache);
+            m_containingBlockForAbsolutePosition.setBlock(&block, &cache, cache.m_containingBlockForAbsolutePosition.hasFloatsOrFlowThreads());
 
-        m_containingBlockForInflowPosition.setBlock(&block, &cache);
+        m_containingBlockForInflowPosition.setBlock(&block, &cache, cache.m_containingBlockForInflowPosition.hasFloatsOrFlowThreads());
     }
 
     const ContainingBlockInfo& containingBlockInfo(RenderBlock& block) const
