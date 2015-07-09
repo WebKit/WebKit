@@ -129,20 +129,22 @@ const Vector<Element*>* TreeScope::getAllElementsById(const AtomicString& elemen
     return m_elementsById->getAllElementsById(*elementId.impl(), *this);
 }
 
-void TreeScope::addElementById(const AtomicStringImpl& elementId, Element& element)
+void TreeScope::addElementById(const AtomicStringImpl& elementId, Element& element, bool notifyObservers)
 {
     if (!m_elementsById)
         m_elementsById = std::make_unique<DocumentOrderedMap>();
     m_elementsById->add(elementId, element, *this);
-    m_idTargetObserverRegistry->notifyObservers(elementId);
+    if (notifyObservers)
+        m_idTargetObserverRegistry->notifyObservers(elementId);
 }
 
-void TreeScope::removeElementById(const AtomicStringImpl& elementId, Element& element)
+void TreeScope::removeElementById(const AtomicStringImpl& elementId, Element& element, bool notifyObservers)
 {
     if (!m_elementsById)
         return;
     m_elementsById->remove(elementId, element);
-    m_idTargetObserverRegistry->notifyObservers(elementId);
+    if (notifyObservers)
+        m_idTargetObserverRegistry->notifyObservers(elementId);
 }
 
 Element* TreeScope::getElementByName(const AtomicString& name) const

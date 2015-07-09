@@ -54,6 +54,7 @@
 #include "HTMLParserIdioms.h"
 #include "HTMLSelectElement.h"
 #include "HTMLTableRowsCollection.h"
+#include "IdTargetObserverRegistry.h"
 #include "InsertionPoint.h"
 #include "KeyboardEvent.h"
 #include "MutationObserverInterestGroup.h"
@@ -563,7 +564,7 @@ void Element::setHovered(bool flag)
         renderer()->theme().stateChanged(*renderer(), ControlStates::HoverState);
 }
 
-void Element::scrollIntoView(bool alignToTop) 
+void Element::scrollIntoView(bool alignToTop)
 {
     document().updateLayoutIgnorePendingStylesheets();
 
@@ -786,7 +787,7 @@ double Element::clientWidth()
     bool inQuirksMode = document().inQuirksMode();
     if ((!inQuirksMode && document().documentElement() == this) || (inQuirksMode && isHTMLElement() && document().body() == this))
         return adjustForAbsoluteZoom(renderView.frameView().layoutWidth(), renderView);
-    
+
     if (RenderBox* renderer = renderBox()) {
 #if ENABLE(SUBPIXEL_LAYOUT)
         LayoutUnit clientWidth = subpixelMetricsEnabled(renderer->document()) ? renderer->clientWidth() : LayoutUnit(renderer->pixelSnappedClientWidth());
@@ -963,7 +964,7 @@ IntRect Element::clientRect() const
         return document().view()->contentsToRootView(renderer->absoluteBoundingBoxRect());
     return IntRect();
 }
-    
+
 IntRect Element::screenRect() const
 {
     if (RenderObject* renderer = this->renderer())
@@ -1086,6 +1087,11 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ol
     bool shouldInvalidateStyle = false;
 
     if (name == HTMLNames::idAttr) {
+        if (!oldValue.isEmpty())
+            treeScope().idTargetObserverRegistry().notifyObservers(*oldValue.impl());
+        if (!newValue.isEmpty())
+            treeScope().idTargetObserverRegistry().notifyObservers(*newValue.impl());
+
         AtomicString oldId = elementData()->idForStyleResolution();
         AtomicString newId = makeIdForStyleResolution(newValue, document().inQuirksMode());
         if (newId != oldId) {
@@ -1581,7 +1587,7 @@ static void checkForSiblingStyleChanges(Element* parent, SiblingCheckType checkT
 {
     // :empty selector.
     checkForEmptyStyleChange(*parent);
-    
+
     if (parent->needsStyleRecalc() && parent->childrenAffectedByPositionalRules())
         return;
 
@@ -1923,7 +1929,7 @@ void Element::focus(bool restorePreviousSelection, FocusDirection direction)
 
     // If the stylesheets have already been loaded we can reliably check isFocusable.
     // If not, we continue and set the focused node on the focus controller below so
-    // that it can be updated soon after attach. 
+    // that it can be updated soon after attach.
     if (document().haveStylesheetsLoaded()) {
         document().updateLayoutIgnorePendingStylesheets();
         if (!isFocusable())
@@ -1950,7 +1956,7 @@ void Element::focus(bool restorePreviousSelection, FocusDirection direction)
         ensureElementRareData().setNeedsFocusAppearanceUpdateSoonAfterAttach(true);
         return;
     }
-        
+
     cancelFocusAppearanceUpdate();
 #if PLATFORM(IOS)
     // Focusing a form element triggers animation in UIKit to scroll to the right position.
@@ -1986,14 +1992,14 @@ void Element::updateFocusAppearance(bool /*restorePreviousSelection*/)
         Frame* frame = document().frame();
         if (!frame)
             return;
-        
+
         // When focusing an editable element in an iframe, don't reset the selection if it already contains a selection.
         if (this == frame->selection().selection().rootEditableElement())
             return;
 
         // FIXME: We should restore the previous selection if there is one.
         VisibleSelection newSelection = VisibleSelection(firstPositionInOrBeforeNode(this), DOWNSTREAM);
-        
+
         if (frame->selection().shouldChangeSelection(newSelection)) {
             frame->selection().setSelection(newSelection);
             frame->selection().revealSelection();
@@ -2686,7 +2692,7 @@ void Element::updateNameForDocument(HTMLDocument& document, const AtomicString& 
     }
 }
 
-inline void Element::updateId(const AtomicString& oldId, const AtomicString& newId)
+inline void Element::updateId(const AtomicString& oldId, const AtomicString& newId, NotifyObservers notifyObservers)
 {
     if (!isInTreeScope())
         return;
@@ -2694,7 +2700,7 @@ inline void Element::updateId(const AtomicString& oldId, const AtomicString& new
     if (oldId == newId)
         return;
 
-    updateIdForTreeScope(treeScope(), oldId, newId);
+    updateIdForTreeScope(treeScope(), oldId, newId, notifyObservers);
 
     if (!inDocument())
         return;
@@ -2703,15 +2709,15 @@ inline void Element::updateId(const AtomicString& oldId, const AtomicString& new
     updateIdForDocument(toHTMLDocument(document()), oldId, newId, UpdateHTMLDocumentNamedItemMapsOnlyIfDiffersFromNameAttribute);
 }
 
-void Element::updateIdForTreeScope(TreeScope& scope, const AtomicString& oldId, const AtomicString& newId)
+void Element::updateIdForTreeScope(TreeScope& scope, const AtomicString& oldId, const AtomicString& newId, NotifyObservers notifyObservers)
 {
     ASSERT(isInTreeScope());
     ASSERT(oldId != newId);
 
     if (!oldId.isEmpty())
-        scope.removeElementById(*oldId.impl(), *this);
+        scope.removeElementById(*oldId.impl(), *this, notifyObservers == NotifyObservers::Yes);
     if (!newId.isEmpty())
-        scope.addElementById(*newId.impl(), *this);
+        scope.addElementById(*newId.impl(), *this, notifyObservers == NotifyObservers::Yes);
 }
 
 void Element::updateIdForDocument(HTMLDocument& document, const AtomicString& oldId, const AtomicString& newId, HTMLDocumentNamedItemMapsUpdatingCondition condition)
@@ -2755,7 +2761,7 @@ void Element::updateLabel(TreeScope& scope, const AtomicString& oldForAttributeV
 void Element::willModifyAttribute(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue)
 {
     if (name == HTMLNames::idAttr)
-        updateId(oldValue, newValue);
+        updateId(oldValue, newValue, NotifyObservers::No); // Will notify observers after the attribute is actually changed.
     else if (name == HTMLNames::nameAttr)
         updateName(oldValue, newValue);
     else if (name == HTMLNames::forAttr && hasTagName(labelTag)) {
@@ -2973,7 +2979,7 @@ void Element::cloneAttributesFromElement(const Element& other)
     const AtomicString& newID = other.getIdAttribute();
 
     if (!oldID.isNull() || !newID.isNull())
-        updateId(oldID, newID);
+        updateId(oldID, newID, NotifyObservers::No); // Will notify observers after the attribute is actually changed.
 
     const AtomicString& oldName = getNameAttribute();
     const AtomicString& newName = other.getNameAttribute();
