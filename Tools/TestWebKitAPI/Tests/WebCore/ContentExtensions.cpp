@@ -576,7 +576,53 @@ TEST_F(ContentExtensionTest, DomainTriggers)
 
     // FIXME: Add and test domain-specific popup-only blocking (with layout tests).
 }
-    
+
+TEST_F(ContentExtensionTest, DomainTriggersAlongMergedActions)
+{
+    auto backend = makeBackend("[{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"url-filter\":\"test\\\\.html\"}},"
+        "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\\\\.html\", \"if-domain\":[\"webkit.org\"]}},"
+        "{\"action\":{\"type\":\"css-display-none\", \"selector\": \"*\"},\"trigger\":{\"url-filter\":\"trigger-on-scripts\\\\.html\",\"resource-type\":[\"script\"]}},"
+        "{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\"ignore-previous\",\"resource-type\":[\"image\"]}},"
+        "{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"url-filter\":\"except-this\"}}]");
+
+    testRequest(backend, mainDocumentRequest("http://webkit.org/test.htm"), { });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/test.html"), { ContentExtensions::ActionType::BlockLoad, ContentExtensions::ActionType::BlockCookies });
+    testRequest(backend, mainDocumentRequest("http://notwebkit.org/test.html"), { ContentExtensions::ActionType::BlockCookies });
+
+    testRequest(backend, mainDocumentRequest("http://notwebkit.org/trigger-on-scripts.html"), { });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/trigger-on-scripts.html"), { });
+    testRequest(backend, mainDocumentRequest("http://notwebkit.org/trigger-on-scripts.html", ResourceType::Script), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/trigger-on-scripts.html", ResourceType::Script), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(backend, mainDocumentRequest("http://notwebkit.org/trigger-on-scripts.html.test.html", ResourceType::Script), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockCookies });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/trigger-on-scripts.html.test.html", ResourceType::Script), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad, ContentExtensions::ActionType::BlockCookies });
+
+    testRequest(backend, mainDocumentRequest("http://notwebkit.org/ignore-previous-trigger-on-scripts.html"), { });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/ignore-previous-trigger-on-scripts.html"), { });
+    testRequest(backend, mainDocumentRequest("http://notwebkit.org/ignore-previous-trigger-on-scripts.html", ResourceType::Script), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/ignore-previous-trigger-on-scripts.html", ResourceType::Script), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(backend, mainDocumentRequest("http://notwebkit.org/ignore-previous-trigger-on-scripts.html.test.html", ResourceType::Script), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockCookies });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/ignore-previous-trigger-on-scripts.html.test.html", ResourceType::Script), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad, ContentExtensions::ActionType::BlockCookies });
+
+    testRequest(backend, mainDocumentRequest("http://notwebkit.org/ignore-previous-trigger-on-scripts.html", ResourceType::Image), { }, true);
+    testRequest(backend, mainDocumentRequest("http://webkit.org/ignore-previous-trigger-on-scripts.html", ResourceType::Image), { }, true);
+    testRequest(backend, mainDocumentRequest("http://notwebkit.org/ignore-previous-trigger-on-scripts.html.test.html", ResourceType::Image), { }, true);
+    testRequest(backend, mainDocumentRequest("http://webkit.org/ignore-previous-trigger-on-scripts.html.test.html", ResourceType::Image), { }, true);
+
+    testRequest(backend, mainDocumentRequest("http://notwebkit.org/except-this-ignore-previous-trigger-on-scripts.html"), { ContentExtensions::ActionType::BlockCookies });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/except-this-ignore-previous-trigger-on-scripts.html"), { ContentExtensions::ActionType::BlockCookies });
+    testRequest(backend, mainDocumentRequest("http://notwebkit.org/except-this-ignore-previous-trigger-on-scripts.html.test.html"), { ContentExtensions::ActionType::BlockCookies, ContentExtensions::ActionType::BlockCookies });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/except-this-ignore-previous-trigger-on-scripts.html.test.html"), { ContentExtensions::ActionType::BlockCookies, ContentExtensions::ActionType::BlockLoad, ContentExtensions::ActionType::BlockCookies });
+    testRequest(backend, mainDocumentRequest("http://notwebkit.org/except-this-ignore-previous-trigger-on-scripts.html", ResourceType::Image), { ContentExtensions::ActionType::BlockCookies }, true);
+    testRequest(backend, mainDocumentRequest("http://webkit.org/except-this-ignore-previous-trigger-on-scripts.html", ResourceType::Image), { ContentExtensions::ActionType::BlockCookies }, true);
+    testRequest(backend, mainDocumentRequest("http://notwebkit.org/except-this-ignore-previous-trigger-on-scripts.html.test.html", ResourceType::Image), { ContentExtensions::ActionType::BlockCookies }, true);
+    testRequest(backend, mainDocumentRequest("http://webkit.org/except-this-ignore-previous-trigger-on-scripts.html.test.html", ResourceType::Image), { ContentExtensions::ActionType::BlockCookies }, true);
+    testRequest(backend, mainDocumentRequest("http://notwebkit.org/except-this-ignore-previous-trigger-on-scripts.html", ResourceType::Script), { ContentExtensions::ActionType::BlockCookies, ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/except-this-ignore-previous-trigger-on-scripts.html", ResourceType::Script), { ContentExtensions::ActionType::BlockCookies, ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(backend, mainDocumentRequest("http://notwebkit.org/except-this-ignore-previous-trigger-on-scripts.html.test.html", ResourceType::Script), { ContentExtensions::ActionType::BlockCookies, ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockCookies });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/except-this-ignore-previous-trigger-on-scripts.html.test.html", ResourceType::Script), { ContentExtensions::ActionType::BlockCookies, ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad, ContentExtensions::ActionType::BlockCookies });
+
+}
+
 TEST_F(ContentExtensionTest, MultipleExtensions)
 {
     auto extension1 = InMemoryCompiledContentExtension::createFromFilter("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"block_load\"}}]");

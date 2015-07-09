@@ -1,3 +1,19 @@
+2015-07-08  Benjamin Poulain  <bpoulain@apple.com>
+
+        [Content Extensions] Fuse undistinguishable actions as much as possible
+        https://bugs.webkit.org/show_bug.cgi?id=146762
+
+        Reviewed by Alex Christensen.
+
+        Make sure the last CSS rule is not ignored.
+
+        * http/tests/contentextensions/css-display-none-after-ignore-previous-rules-expected.txt: Added.
+        * http/tests/contentextensions/css-display-none-after-ignore-previous-rules.html: Added.
+        * http/tests/contentextensions/css-display-none-after-ignore-previous-rules.html.json: Added.
+        * http/tests/contentextensions/single-css-display-none-expected.txt: Added.
+        * http/tests/contentextensions/single-css-display-none.html: Added.
+        * http/tests/contentextensions/single-css-display-none.html.json: Added.
+
 2015-07-08  Wenson Hsieh  <whsieh@berkeley.edu>
 
         Fix asynchronous function calls for scroll snap animation tests

@@ -69,56 +69,137 @@ static void serializeSelector(Vector<SerializedActionByte>& actions, const Strin
             actions.append(selector[i]);
     }
 }
-    
+
+struct PendingDisplayNoneActions {
+    Vector<String> selectors;
+    Vector<unsigned> clientLocations;
+};
+typedef HashMap<uint32_t, PendingDisplayNoneActions, DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> PendingDisplayNoneActionsMap;
+
+static void resolvePendingDisplayNoneActions(Vector<SerializedActionByte>& actions, Vector<unsigned>& actionLocations, PendingDisplayNoneActionsMap& pendingDisplayNoneActionsMap)
+{
+    for (auto& slot : pendingDisplayNoneActionsMap) {
+        PendingDisplayNoneActions& pendingActions = slot.value;
+
+        StringBuilder combinedSelectors;
+        for (unsigned i = 0; i < pendingActions.selectors.size(); ++i) {
+            if (i)
+                combinedSelectors.append(',');
+            combinedSelectors.append(pendingActions.selectors[i]);
+        }
+
+        unsigned actionLocation = actions.size();
+        serializeSelector(actions, combinedSelectors.toString());
+        for (unsigned clientLocation : pendingActions.clientLocations)
+            actionLocations[clientLocation] = actionLocation;
+    }
+    pendingDisplayNoneActionsMap.clear();
+}
+
 static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& ruleList, Vector<SerializedActionByte>& actions)
 {
     ASSERT(!actions.size());
-    
+
     Vector<unsigned> actionLocations;
-        
+
+    // Block and BlockCookies do not need to be distinguishable. The order in which they are executed it irrelevant
+    // since Block is a strict superset of BlockCookies.
+    // Similarily, Block is a superset of CSSDisplayNone, and BlockCookies is independent from CSSDisplayNone.
+    //
+    // The only distinguisher is "IgnorePreviousRules".
+    //
+    // The trigger's Flags do not need to be distinguishable either. The way we use them is filtering the actions
+    // based on the flag *after* matching.
+    //
+    // To reduce the number of unique actions, we keep track of the various action, indexed by their flag.
+    // We only need to create new ones when encountering a IgnorePreviousRules.
+    HashMap<uint32_t, uint32_t, DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> blockActionsMap;
+    HashMap<uint32_t, uint32_t, DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> blockCookiesActionsMap;
+    PendingDisplayNoneActionsMap cssDisplayNoneActionsMap;
+    HashMap<uint32_t, uint32_t, DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> ignorePreviousRuleActionsMap;
+
     for (unsigned ruleIndex = 0; ruleIndex < ruleList.size(); ++ruleIndex) {
         const ContentExtensionRule& rule = ruleList[ruleIndex];
-        
-        // Consolidate css selectors with identical triggers.
-        if (rule.action().type() == ActionType::CSSDisplayNoneSelector) {
-            StringBuilder selector;
-            selector.append(rule.action().stringArgument());
+        ActionType actionType = rule.action().type();
+
+        RELEASE_ASSERT(actionType == ActionType::CSSDisplayNoneSelector
+            || actionType == ActionType::BlockLoad
+            || actionType == ActionType::BlockCookies
+            || actionType == ActionType::IgnorePreviousRules);
+
+        if (actionType == ActionType::IgnorePreviousRules) {
+            resolvePendingDisplayNoneActions(actions, actionLocations, cssDisplayNoneActionsMap);
+
+            blockActionsMap.clear();
+            blockCookiesActionsMap.clear();
+            cssDisplayNoneActionsMap.clear();
+        } else
+            ignorePreviousRuleActionsMap.clear();
+
+        // Anything with domain is just pushed.
+        // We could try to merge domains but that case is not common in practice.
+        if (!rule.trigger().domains.isEmpty()) {
             actionLocations.append(actions.size());
-            for (unsigned i = ruleIndex + 1; i < ruleList.size(); i++) {
-                if (rule.trigger() == ruleList[i].trigger() && ruleList[i].action().type() == ActionType::CSSDisplayNoneSelector) {
-                    actionLocations.append(actions.size());
-                    ruleIndex++;
-                    selector.append(',');
-                    selector.append(ruleList[i].action().stringArgument());
-                } else
-                    break;
-            }
-            serializeSelector(actions, selector.toString());
-            continue;
-        }
-        
-        // Identical sequential actions should not be rewritten unless there are domains in the trigger.
-        // If there are domains in the trigger, we need to distinguish the actions by index to tell if we need to apply it
-        // by comparing the output of the filters with domains and the domain filters.
-        if (ruleIndex && rule.action() == ruleList[ruleIndex - 1].action() && rule.trigger().domains.isEmpty()) {
-            actionLocations.append(actionLocations[ruleIndex - 1]);
+
+            if (actionType == ActionType::CSSDisplayNoneSelector)
+                serializeSelector(actions, rule.action().stringArgument());
+            else
+                actions.append(static_cast<SerializedActionByte>(actionType));
             continue;
         }
 
-        actionLocations.append(actions.size());
-        switch (rule.action().type()) {
-        case ActionType::CSSDisplayNoneSelector:
+        ResourceFlags flags = rule.trigger().flags;
+        unsigned actionLocation = std::numeric_limits<unsigned>::max();
+
+        switch (actionType) {
         case ActionType::CSSDisplayNoneStyleSheet:
         case ActionType::InvalidAction:
             RELEASE_ASSERT_NOT_REACHED();
 
-        case ActionType::BlockLoad:
-        case ActionType::BlockCookies:
-        case ActionType::IgnorePreviousRules:
-            actions.append(static_cast<SerializedActionByte>(rule.action().type()));
+        case ActionType::IgnorePreviousRules: {
+            const auto existingAction = ignorePreviousRuleActionsMap.find(flags);
+            if (existingAction == ignorePreviousRuleActionsMap.end()) {
+                actionLocation = actions.size();
+                actions.append(static_cast<SerializedActionByte>(rule.action().type()));
+                ignorePreviousRuleActionsMap.set(flags, actionLocation);
+            } else
+                actionLocation = existingAction->value;
             break;
         }
+        case ActionType::CSSDisplayNoneSelector: {
+            const auto addResult = cssDisplayNoneActionsMap.add(flags, PendingDisplayNoneActions());
+            PendingDisplayNoneActions& pendingDisplayNoneActions = addResult.iterator->value;
+            pendingDisplayNoneActions.selectors.append(rule.action().stringArgument());
+            pendingDisplayNoneActions.clientLocations.append(actionLocations.size());
+
+            actionLocation = std::numeric_limits<unsigned>::max();
+            break;
+        }
+        case ActionType::BlockLoad: {
+            const auto existingAction = blockActionsMap.find(flags);
+            if (existingAction == blockActionsMap.end()) {
+                actionLocation = actions.size();
+                actions.append(static_cast<SerializedActionByte>(rule.action().type()));
+                blockActionsMap.set(flags, actionLocation);
+            } else
+                actionLocation = existingAction->value;
+            break;
+        }
+        case ActionType::BlockCookies: {
+            const auto existingAction = blockCookiesActionsMap.find(flags);
+            if (existingAction == blockCookiesActionsMap.end()) {
+                actionLocation = actions.size();
+                actions.append(static_cast<SerializedActionByte>(rule.action().type()));
+                blockCookiesActionsMap.set(flags, actionLocation);
+            } else
+                actionLocation = existingAction->value;
+            break;
+        }
+        }
+
+        actionLocations.append(actionLocation);
     }
+    resolvePendingDisplayNoneActions(actions, actionLocations, cssDisplayNoneActionsMap);
     return actionLocations;
 }
 

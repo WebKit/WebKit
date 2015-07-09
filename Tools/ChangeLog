@@ -1,3 +1,13 @@
+2015-07-08  Benjamin Poulain  <bpoulain@apple.com>
+
+        [Content Extensions] Fuse undistinguishable actions as much as possible
+        https://bugs.webkit.org/show_bug.cgi?id=146762
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        Test that combinations and flags still work as expected.
+
 2015-07-08  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] [Wayland] Allow building and testing the Wayland target with the default JHBuild moduleset.
