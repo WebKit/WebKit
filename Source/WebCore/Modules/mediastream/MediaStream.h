@@ -64,8 +64,8 @@ public:
     void removeTrack(MediaStreamTrack*);
     MediaStreamTrack* getTrackById(String);
 
-    Vector<RefPtr<MediaStreamTrack>> getAudioTracks() const;
-    Vector<RefPtr<MediaStreamTrack>> getVideoTracks() const;
+    Vector<RefPtr<MediaStreamTrack>> getAudioTracks() override final;
+    Vector<RefPtr<MediaStreamTrack>> getVideoTracks() override final;
     Vector<RefPtr<MediaStreamTrack>> getTracks() const;
 
     RefPtr<MediaStream> clone();

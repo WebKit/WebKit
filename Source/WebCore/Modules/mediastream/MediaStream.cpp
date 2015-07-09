@@ -140,12 +140,12 @@ MediaStreamTrack* MediaStream::getTrackById(String id)
     return nullptr;
 }
 
-Vector<RefPtr<MediaStreamTrack>> MediaStream::getAudioTracks() const
+Vector<RefPtr<MediaStreamTrack>> MediaStream::getAudioTracks()
 {
     return trackVectorForType(RealtimeMediaSource::Audio);
 }
 
-Vector<RefPtr<MediaStreamTrack>> MediaStream::getVideoTracks() const
+Vector<RefPtr<MediaStreamTrack>> MediaStream::getVideoTracks()
 {
     return trackVectorForType(RealtimeMediaSource::Video);
 }
