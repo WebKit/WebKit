@@ -98,7 +98,7 @@ NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters
         m_resourceSandboxExtensions.append(resourceSandboxExtension);
 
     ASSERT(RunLoop::isMain());
-
+    
     if (reply || parameters.shouldBufferResource)
         m_bufferedData = WebCore::SharedBuffer::create();
 
@@ -161,9 +161,12 @@ void NetworkResourceLoader::cleanup()
 
     // Tell the scheduler about this finished loader soon so it can start more network requests.
     NetworkProcess::shared().networkResourceLoadScheduler().scheduleRemoveLoader(this);
+
     if (m_handle) {
-        m_handle->setClient(nullptr);
-        m_handle = nullptr;
+        // Explicit deref() balanced by a ref() in NetworkResourceLoader::start()
+        // This might cause the NetworkResourceLoader to be destroyed and therefore we do it last.
+        m_handle = 0;
+        deref();
     }
 }
 
@@ -212,7 +215,7 @@ void NetworkResourceLoader::didReceiveBuffer(ResourceHandle* handle, PassRefPtr<
 
     // FIXME (NetworkProcess): For the memory cache we'll also need to cache the response data here.
     // Such buffering will need to be thread safe, as this callback is happening on a background thread.
-
+    
     m_bytesReceived += buffer->size();
     if (m_bufferedData)
         m_bufferedData->append(buffer.get());
