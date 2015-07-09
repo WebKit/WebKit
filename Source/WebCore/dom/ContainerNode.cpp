@@ -335,6 +335,11 @@ void ContainerNode::insertBeforeCommon(Node& nextChild, Node& newChild)
 
 void ContainerNode::notifyChildInserted(Node& child, ChildChangeSource source)
 {
+    ChildListMutationScope(*this).childAdded(child);
+
+    NodeVector postInsertionNotificationTargets;
+    ChildNodeInsertionNotifier(*this).notify(child, postInsertionNotificationTargets);
+
     ChildChange change;
     change.type = child.isElementNode() ? ElementInserted : child.isTextNode() ? TextInserted : NonContentsChildChanged;
     change.previousSiblingElement = ElementTraversal::previousSibling(&child);
@@ -342,10 +347,15 @@ void ContainerNode::notifyChildInserted(Node& child, ChildChangeSource source)
     change.source = source;
 
     childrenChanged(change);
+
+    for (auto& target : postInsertionNotificationTargets)
+        target->didNotifySubtreeInsertions(this);
 }
 
 void ContainerNode::notifyChildRemoved(Node& child, Node* previousSibling, Node* nextSibling, ChildChangeSource source)
 {
+    ChildNodeRemovalNotifier(*this).notify(child);
+
     ChildChange change;
     change.type = child.isElementNode() ? ElementRemoved : child.isTextNode() ? TextRemoved : NonContentsChildChanged;
     change.previousSiblingElement = (!previousSibling || previousSibling->isElementNode()) ? toElement(previousSibling) : ElementTraversal::previousSibling(previousSibling);
@@ -375,11 +385,7 @@ void ContainerNode::parserInsertBefore(PassRefPtr<Node> newChild, Node* nextChil
 
     newChild->updateAncestorConnectedSubframeCountForInsertion();
 
-    ChildListMutationScope(*this).childAdded(*newChild);
-
     notifyChildInserted(*newChild, ChildChangeSourceParser);
-
-    ChildNodeInsertionNotifier(*this).notify(*newChild);
 
     newChild->setNeedsStyleRecalc(ReconstructRenderTree);
 }
@@ -565,8 +571,6 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
         removeBetween(prev, next, child.get());
 
         notifyChildRemoved(child.get(), prev, next, ChildChangeSourceAPI);
-
-        ChildNodeRemovalNotifier(*this).notify(child.get());
     }
 
 
@@ -623,8 +627,6 @@ void ContainerNode::parserRemoveChild(Node& oldChild)
     removeBetween(prev, next, oldChild);
 
     notifyChildRemoved(oldChild, prev, next, ChildChangeSourceParser);
-
-    ChildNodeRemovalNotifier(*this).notify(oldChild);
 }
 
 // this differs from other remove functions because it forcibly removes all the children,
@@ -648,23 +650,18 @@ void ContainerNode::removeChildren()
     // and remove... e.g. stop loading frames, fire unload events.
     willRemoveChildren(*this);
 
-    NodeVector removedChildren;
     {
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
         {
             NoEventDispatchAssertion assertNoEventDispatch;
-            removedChildren.reserveInitialCapacity(childNodeCount());
             while (RefPtr<Node> n = m_firstChild) {
-                removedChildren.append(*m_firstChild);
                 removeBetween(0, m_firstChild->nextSibling(), *m_firstChild);
+                ChildNodeRemovalNotifier(*this).notify(*n);
             }
         }
 
         ChildChange change = { AllChildrenRemoved, nullptr, nullptr, ChildChangeSourceAPI };
         childrenChanged(change);
-        
-        for (size_t i = 0; i < removedChildren.size(); ++i)
-            ChildNodeRemovalNotifier(*this).notify(removedChildren[i].get());
     }
 
     if (document().svgExtensions()) {
@@ -754,11 +751,7 @@ void ContainerNode::parserAppendChild(PassRefPtr<Node> newChild)
 
     newChild->updateAncestorConnectedSubframeCountForInsertion();
 
-    ChildListMutationScope(*this).childAdded(*newChild);
-
     notifyChildInserted(*newChild, ChildChangeSourceParser);
-
-    ChildNodeInsertionNotifier(*this).notify(*newChild);
 
     newChild->setNeedsStyleRecalc(ReconstructRenderTree);
 }
@@ -999,11 +992,7 @@ void ContainerNode::updateTreeAfterInsertion(Node& child)
 {
     ASSERT(child.refCount());
 
-    ChildListMutationScope(*this).childAdded(child);
-
     notifyChildInserted(child, ChildChangeSourceAPI);
-
-    ChildNodeInsertionNotifier(*this).notify(child);
 
     child.setNeedsStyleRecalc(ReconstructRenderTree);
 
