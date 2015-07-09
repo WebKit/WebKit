@@ -1,5 +1,20 @@
 2015-07-09  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Rendering Frame segment colors should match those used in original Timelines graph
+        https://bugs.webkit.org/show_bug.cgi?id=146777
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/TimelineRecordFrame.css:
+        (.timeline-record-frame > .frame > .duration):
+        (.timeline-record-frame > .frame > .duration:last-child):
+        (.timeline-record-frame > .frame > .duration.rendering-frame-timeline-record-script):
+        (.timeline-record-frame > .frame > .duration.rendering-frame-timeline-record-layout):
+        (.timeline-record-frame > .frame > .duration.rendering-frame-timeline-record-paint):
+        Use same RGB values as TimelineRecordBar.
+
+2015-07-09  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: New JavaScript/Probe breakpoint action disappears when clicking continue checkbox
         https://bugs.webkit.org/show_bug.cgi?id=146688
 

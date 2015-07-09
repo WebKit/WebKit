@@ -51,22 +51,27 @@
     box-sizing: border-box;
 
     min-height: 3px;
-    background-color: rgb(221, 221, 221);
-    border-bottom: solid 1px rgb(245, 245, 245);
+    background-color: rgb(231, 231, 231);
+    border-style: solid solid none solid;
+    border-width: 1px;
+    border-color: rgb(211, 211, 211);
 }
 
 .timeline-record-frame > .frame > .duration:last-child {
-    border-bottom-style: none;
+    border-bottom-style: solid;
 }
 
 .timeline-record-frame > .frame > .duration.rendering-frame-timeline-record-script {
-    background-color: rgb(153, 113, 185);
+    background-color: rgb(190, 148, 233);
+    border-color: rgb(153, 113, 185);
 }
 
 .timeline-record-frame > .frame > .duration.rendering-frame-timeline-record-layout {
-    background-color: rgb(212, 108, 108);
+    background-color: rgb(234, 153, 153);
+    border-color: rgb(212, 108, 108);
 }
 
 .timeline-record-frame > .frame > .duration.rendering-frame-timeline-record-paint {
-    background-color: rgb(152, 188, 77);
+    background-color: rgb(176, 204, 105);
+    border-color: rgb(152, 188, 77);
 }
