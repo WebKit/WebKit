@@ -329,11 +329,11 @@ Vector<RefPtr<TrackSourceInfo>> AVCaptureDeviceManager::getSourcesInfo(const Str
 
         if (!devices[i].m_enabled)
             continue;
-
+        // FIXME: Change groupID from localizedName to something more meaningful
         if (devices[i].m_videoSource)
-            sourcesInfo.append(TrackSourceInfo::create(devices[i].m_videoSourceId, TrackSourceInfo::Video, device.localizedName));
+            sourcesInfo.append(TrackSourceInfo::create(devices[i].m_videoSourceId, TrackSourceInfo::Video, device.localizedName, device.localizedName, devices[i].m_captureDeviceID));
         if (devices[i].m_audioSource)
-            sourcesInfo.append(TrackSourceInfo::create(devices[i].m_audioSourceId, TrackSourceInfo::Audio, device.localizedName));
+            sourcesInfo.append(TrackSourceInfo::create(devices[i].m_audioSourceId, TrackSourceInfo::Audio, device.localizedName, device.localizedName, devices[i].m_captureDeviceID));
     }
     
     LOG(Media, "AVCaptureDeviceManager::getSourcesInfo(%p), found %d active devices", this, sourcesInfo.size());

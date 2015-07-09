@@ -10,7 +10,7 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE, INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
@@ -21,47 +21,34 @@
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
  */
 
-#ifndef MediaDeviceInfo_h
-#define MediaDeviceInfo_h
+#ifndef MediaDevicesPrivate_h
+#define MediaDevicesPrivate_h
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "ContextDestructionObserver.h"
-#include "ScriptWrappable.h"
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
+#include "AVCaptureDeviceManager.h"
+#include "MediaDeviceInfo.h"
+
+#include <wtf/Forward.h>
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class MediaDeviceInfo : public RefCounted<MediaDeviceInfo>, public ScriptWrappable, public ContextDestructionObserver {
+class MediaDevicesPrivate : public std::unique_ptr<MediaDevicesPrivate> {
 public:
-    static Ref<MediaDeviceInfo> create(ScriptExecutionContext*, const String&, const String&, const String&, const String&);
-    
-    
-    virtual ~MediaDeviceInfo() { }
-    
-    const String& label() const { return m_label; }
-    const String& deviceId() const { return m_deviceId; }
-    const String& groupId() const { return m_groupId; }
-    const String& kind() const { return m_kind; }
+    MediaDevicesPrivate();
 
-    static const AtomicString& audioInputType();
-    static const AtomicString& audioOutputType();
-    static const AtomicString& videoInputType();
+    virtual ~MediaDevicesPrivate() { }
 
-private:
-    MediaDeviceInfo(ScriptExecutionContext*, const String&, const String&, const String&, const String&);
-
-    const String m_label;
-    const String m_deviceId;
-    const String m_groupId;
-    const String m_kind;
+    virtual Vector<RefPtr<MediaDeviceInfo>> availableMediaDevices(ScriptExecutionContext&);
 };
 
 }
 
-#endif
+#endif // ENABLE(MEDIA_STREAM)
 
-#endif /* MediaDeviceInfo_h */
+#endif // MediaDevicesPrivate_h

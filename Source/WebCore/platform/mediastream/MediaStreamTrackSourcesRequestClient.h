@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include <wtf/PassRefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/AtomicString.h>
 
@@ -43,8 +44,15 @@ public:
         return adoptRef(new TrackSourceInfo(id, kind, label));
     }
 
+    static Ref<TrackSourceInfo> create(const AtomicString& id, SourceKind kind, const AtomicString& label, const AtomicString& groupId, const AtomicString& deviceId)
+    {
+        return adoptRef(*new TrackSourceInfo(id, kind, label, groupId, deviceId));
+    }
+
     const AtomicString& id() const { return m_id; }
     const AtomicString& label() const { return m_label; }
+    const AtomicString& groupId() const { return m_groupId; }
+    const AtomicString& deviceId() const { return m_deviceId; }
     SourceKind kind() const { return m_kind; }
 
 private:
@@ -54,10 +62,21 @@ private:
         , m_label(label)
     {
     }
-    
+
+    TrackSourceInfo(const AtomicString& id, SourceKind kind, const AtomicString& label, const AtomicString& groupId, const AtomicString& deviceId)
+        : m_id(id)
+        , m_kind(kind)
+        , m_label(label)
+        , m_groupId(groupId)
+        , m_deviceId(deviceId)
+    {
+    }
+
     AtomicString m_id;
     SourceKind m_kind;
     AtomicString m_label;
+    AtomicString m_groupId;
+    AtomicString m_deviceId;
 };
 
 class MediaStreamTrackSourcesRequestClient : public RefCounted<MediaStreamTrackSourcesRequestClient> {

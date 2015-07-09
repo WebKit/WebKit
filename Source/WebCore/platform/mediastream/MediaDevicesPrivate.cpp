@@ -10,7 +10,7 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE, INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
@@ -21,47 +21,37 @@
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
  */
 
-#ifndef MediaDeviceInfo_h
-#define MediaDeviceInfo_h
+#include "config.h"
+#include "MediaDevicesPrivate.h"
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "ContextDestructionObserver.h"
-#include "ScriptWrappable.h"
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
+#include "AVCaptureDeviceManager.h"
+#include "AVMediaCaptureSource.h"
+#include "MediaStreamTrackSourcesRequestClient.h"
 
 namespace WebCore {
 
-class MediaDeviceInfo : public RefCounted<MediaDeviceInfo>, public ScriptWrappable, public ContextDestructionObserver {
-public:
-    static Ref<MediaDeviceInfo> create(ScriptExecutionContext*, const String&, const String&, const String&, const String&);
-    
-    
-    virtual ~MediaDeviceInfo() { }
-    
-    const String& label() const { return m_label; }
-    const String& deviceId() const { return m_deviceId; }
-    const String& groupId() const { return m_groupId; }
-    const String& kind() const { return m_kind; }
+MediaDevicesPrivate::MediaDevicesPrivate()
+{
+}
 
-    static const AtomicString& audioInputType();
-    static const AtomicString& audioOutputType();
-    static const AtomicString& videoInputType();
-
-private:
-    MediaDeviceInfo(ScriptExecutionContext*, const String&, const String&, const String&, const String&);
-
-    const String m_label;
-    const String m_deviceId;
-    const String m_groupId;
-    const String m_kind;
-};
+Vector<RefPtr<MediaDeviceInfo>> MediaDevicesPrivate::availableMediaDevices(ScriptExecutionContext& context)
+{
+    Vector<RefPtr<TrackSourceInfo>> capturedDevices = AVCaptureDeviceManager::singleton().getSourcesInfo("");
+    Vector<RefPtr<MediaDeviceInfo>> mediaDevicesInfo;
+    for (auto device : capturedDevices) {
+        TrackSourceInfo* trackInfo = device.get();
+        String deviceType = trackInfo->kind() == TrackSourceInfo::SourceKind::Audio ? MediaDeviceInfo::audioInputType() : MediaDeviceInfo::videoInputType();
+        mediaDevicesInfo.append(MediaDeviceInfo::create(&context, trackInfo->label(), trackInfo->deviceId(), trackInfo->groupId(), deviceType));
+    }
+    
+    return mediaDevicesInfo;
+}
 
 }
 
 #endif
-
-#endif /* MediaDeviceInfo_h */

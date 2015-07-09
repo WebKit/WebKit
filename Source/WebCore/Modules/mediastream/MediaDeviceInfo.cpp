@@ -30,6 +30,7 @@
 
 #include "ContextDestructionObserver.h"
 #include "ScriptWrappable.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -45,6 +46,24 @@ MediaDeviceInfo::MediaDeviceInfo(ScriptExecutionContext* context, const String& 
     , m_groupId(groupId)
     , m_kind(kind)
 {
+}
+
+const AtomicString& MediaDeviceInfo::audioInputType()
+{
+    static NeverDestroyed<AtomicString> audioinput("audioinput");
+    return audioinput;
+}
+
+const AtomicString& MediaDeviceInfo::audioOutputType()
+{
+    static NeverDestroyed<AtomicString> audiooutput("audiooutput");
+    return audiooutput;
+}
+
+const AtomicString& MediaDeviceInfo::videoInputType()
+{
+    static NeverDestroyed<AtomicString> videoinput("videoinput");
+    return videoinput;
 }
 
 } // namespace WebCore
