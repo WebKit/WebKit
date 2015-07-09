@@ -2709,7 +2709,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setInteractiveFormValidationEnabled(store.getBoolValueForKey(WebPreferencesKey::interactiveFormValidationEnabledKey()));
     settings.setSpatialNavigationEnabled(store.getBoolValueForKey(WebPreferencesKey::spatialNavigationEnabledKey()));
 
-    settings.setMetaRefreshEnabled(store.getBoolValueForKey(WebPreferencesKey::metaRefreshEnabledKey()));
+    settings.setHttpEquivEnabled(store.getBoolValueForKey(WebPreferencesKey::httpEquivEnabledKey()));
 
 #if ENABLE(SQL_DATABASE)
     DatabaseManager::manager().setIsAvailable(store.getBoolValueForKey(WebPreferencesKey::databasesEnabledKey()));

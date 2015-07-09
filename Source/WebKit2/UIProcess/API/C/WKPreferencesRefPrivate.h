@@ -338,6 +338,10 @@ WK_EXPORT bool WKPreferencesGetGamepadsEnabled(WKPreferencesRef preferencesRef);
 WK_EXPORT void WKPreferencesSetMetaRefreshEnabled(WKPreferencesRef preferences, bool enabled);
 WK_EXPORT bool WKPreferencesGetMetaRefreshEnabled(WKPreferencesRef preferences);
 
+// Defaults to true.
+WK_EXPORT void WKPreferencesSetHTTPEquivEnabled(WKPreferencesRef preferences, bool enabled);
+WK_EXPORT bool WKPreferencesGetHTTPEquivEnabled(WKPreferencesRef preferences);
+
 #ifdef __cplusplus
 }
 #endif

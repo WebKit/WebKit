@@ -179,7 +179,7 @@
 #define WebKitDebugFullPageZoomPreferenceKey @"WebKitDebugFullPageZoomPreferenceKey"
 
 #define WebKitMinimumZoomFontSizePreferenceKey @"WebKitMinimumZoomFontSizePreferenceKey"
-#define WebKitMetaRefreshEnabledPreferenceKey @"WebKitMetaRefreshEnabled"
+#define WebKitHTTPEquivEnabledPreferenceKey @"WebKitHTTPEquivEnabled"
 
 #if TARGET_OS_IPHONE
 #define WebKitStandalonePreferenceKey @"WebKitStandalonePreferenceKey"
