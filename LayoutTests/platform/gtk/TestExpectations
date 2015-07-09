@@ -1592,9 +1592,6 @@ Bug(GTK) fast/media/view-mode-media-feature.html [ ImageOnlyFailure ]
 webkit.org/b/139357 fast/workers/worker-crash-with-invalid-location.html [ Skip ]
 webkit.org/b/139357 http/tests/media/video-accept-encoding.html [ Failure ]
 
-# PingLoader is still in WebProcess. As a result, this test fails and also fails to delete its cookie, breaking many other cookie tests.
-webkit.org/b/138688 http/tests/navigation/ping-cookie.html [ Skip ]
-
 # Appcache manifest is still downloaded in the WebProcess
 webkit.org/b/138736 http/tests/appcache/auth.html [ Skip ]
 

@@ -499,10 +499,6 @@ storage/domstorage/localstorage/private-browsing-affects-storage.html [ Skip ]
 storage/domstorage/sessionstorage/private-browsing-affects-storage.html [ Skip ]
 storage/websql/private-browsing-noread-nowrite.html [ Skip ]
 
-# FIXME: Needs bugzilla (<rdar://problem/12829991>)
-# PPT: PingLoader is still in WebProcess. As a result, this test fails and also fails to delete its cookie, breaking many other cookie tests.
-webkit.org/b/138688 http/tests/navigation/ping-cookie.html [ Skip ]
-
 # There is no network load scheduling or prioritization with NetworkProcess.
 webkit.org/b/123431 http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html [ Pass Failure ]
 webkit.org/b/123431 http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html [ Pass Failure ]

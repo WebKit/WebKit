@@ -646,7 +646,6 @@ http/tests/navigation/no-referrer-reset.html
 http/tests/navigation/no-referrer-same-window.html
 http/tests/navigation/no-referrer-subframe.html
 http/tests/navigation/no-referrer-target-blank.html
-http/tests/navigation/ping-cookie.html
 http/tests/navigation/ping-cross-origin-from-https.html
 http/tests/navigation/ping-cross-origin.html
 http/tests/navigation/ping-same-origin.html
