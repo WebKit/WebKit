@@ -1,3 +1,13 @@
+2015-07-08  Anders Carlsson  <andersca@apple.com>
+
+        WKSecurityOrigin.h has wrong availability info
+        https://bugs.webkit.org/show_bug.cgi?id=146761
+        rdar://problem/21735802
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKSecurityOrigin.h:
+
 2015-07-08  Andreas Kling  <akling@apple.com>
 
         [iOS] Scrolling is laggy when the keyboard is up and a form element is focused.
