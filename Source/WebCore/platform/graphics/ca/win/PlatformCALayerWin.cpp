@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2014-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #include "PlatformCAAnimationWin.h"
 #include "PlatformCALayerWinInternal.h"
 #include "TileController.h"
+#include "WebCoreHeaderDetection.h"
 #include <QuartzCore/CoreAnimationCF.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/CurrentTime.h>
@@ -135,6 +136,10 @@ PlatformCALayerWin::PlatformCALayerWin(LayerType layerType, PlatformLayer* layer
     }
 
     m_layer = adoptCF(CACFLayerCreate(toCACFLayerType(layerType)));
+
+#if HAVE(CACFLAYER_SETCONTENTSSCALE)
+    CACFLayerSetContentsScale(m_layer.get(), owner ? owner->platformCALayerDeviceScaleFactor() : 1.0f);
+#endif
 
     // Create the PlatformCALayerWinInternal object and point to it in the userdata.
     PlatformCALayerWinInternal* intern = new PlatformCALayerWinInternal(this);
@@ -582,11 +587,18 @@ void PlatformCALayerWin::setEdgeAntialiasingMask(unsigned mask)
 
 float PlatformCALayerWin::contentsScale() const
 {
-    return 1;
+#if HAVE(CACFLAYER_SETCONTENTSSCALE)
+    return CACFLayerGetContentsScale(m_layer.get());
+#else
+    return 1.0f;
+#endif
 }
 
-void PlatformCALayerWin::setContentsScale(float)
+void PlatformCALayerWin::setContentsScale(float scaleFactor)
 {
+#if HAVE(CACFLAYER_SETCONTENTSSCALE)
+    CACFLayerSetContentsScale(m_layer.get(), scaleFactor);
+#endif
 }
 
 float PlatformCALayerWin::cornerRadius() const

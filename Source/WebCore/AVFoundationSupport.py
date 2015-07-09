@@ -53,3 +53,7 @@ if lookFor("/include/AVFoundationCF/AVCFAsset.h"):
     regexp = re.compile("AVCFURLAssetIsPlayableExtendedMIMEType")
     if fileContains("/include/AVFoundationCF/AVCFAsset.h", regexp):
         print "#define HAVE_AVCFURL_PLAYABLE_MIMETYPE 1"
+if lookFor("/include/QuartzCore/CACFLayer.h"):
+    regexp = re.compile("CACFLayerSetContentsScale")
+    if fileContains("/include/QuartzCore/CACFLayer.h", regexp):
+        print "#define HAVE_CACFLAYER_SETCONTENTSSCALE 1"

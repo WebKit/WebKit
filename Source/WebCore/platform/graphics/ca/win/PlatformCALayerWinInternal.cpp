@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #include "TextRun.h"
 #include "TileController.h"
 #include "TiledBacking.h"
+#include "WebCoreHeaderDetection.h"
 #include <QuartzCore/CACFLayer.h>
 #include <wtf/MainThread.h>
 
@@ -60,6 +61,10 @@ PlatformCALayerWinInternal::PlatformCALayerWinInternal(PlatformCALayer* owner)
         // Tiled layers are placed in a child layer that is always the first child of the TiledLayer
         m_tileParent = adoptCF(CACFLayerCreate(kCACFLayer));
         CACFLayerInsertSublayer(m_owner->platformLayer(), m_tileParent.get(), 0);
+#if HAVE(CACFLAYER_SETCONTENTSSCALE)
+        CACFLayerSetContentsScale(m_tileParent.get(), CACFLayerGetContentsScale(m_owner->platformLayer()));
+#endif
+
         updateTiles();
     }
 }
@@ -420,6 +425,9 @@ void PlatformCALayerWinInternal::addTile()
     CACFLayerSetAnchorPoint(newLayer.get(), CGPointMake(0, 1));
     CACFLayerSetUserData(newLayer.get(), this);
     CACFLayerSetDisplayCallback(newLayer.get(), tileDisplayCallback);
+#if HAVE(CACFLAYER_SETCONTENTSSCALE)
+    CACFLayerSetContentsScale(newLayer.get(), CACFLayerGetContentsScale(m_tileParent.get()));
+#endif
 
     CFArrayRef sublayers = CACFLayerGetSublayers(m_tileParent.get());
     CACFLayerInsertSublayer(m_tileParent.get(), newLayer.get(), sublayers ? CFArrayGetCount(sublayers) : 0);
