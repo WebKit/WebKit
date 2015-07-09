@@ -31,11 +31,11 @@ InspectorTest.Shapes = {
         }
 
         function receivedHighlightObject(error, payload, wasThrown) {
-            console.assert(!error, "When evaluating code, received unexpected error:" + error);
-            console.assert(!error, "When evaluating code, an exception was thrown:" + wasThrown);
+            InspectorTest.assert(!error, "When evaluating code, received unexpected error:" + error);
+            InspectorTest.assert(!error, "When evaluating code, an exception was thrown:" + wasThrown);
 
             var data = JSON.parse(payload.value);
-            callback(data.elementInfo.shapeOutsideInfo);
+            callback(data[0].elementData.shapeOutsideData);
         }
     },
 

@@ -675,7 +675,7 @@ static RefPtr<Inspector::Protocol::OverlayTypes::ShapeOutsideData> buildObjectFo
 
             paths.marginShape.apply(&info, &appendPathSegment);
 
-            shapeObject->setMarginShape(shapePath.copyRef());
+            shapeObject->setMarginShape(marginShapePath.copyRef());
         }
     }
 
