@@ -82,7 +82,10 @@ void SVGFEImageElement::clearResourceReferences()
 
 void SVGFEImageElement::requestImageResource()
 {
-    CachedResourceRequest request(ResourceRequest(document().completeURL(href())));
+    ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
+    options.setContentSecurityPolicyImposition(isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck);
+
+    CachedResourceRequest request(ResourceRequest(document().completeURL(href())), options);
     request.setInitiator(this);
     m_cachedImage = document().cachedResourceLoader()->requestImage(request);
 

@@ -1,5 +1,216 @@
 2015-07-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r186521. rdar://problem/21707887
+
+    2015-07-08  Daniel Bates  <dabates@apple.com>
+
+            Merge r186388. rdar://problem/21708243
+
+        2015-07-06  Daniel Bates  <dabates@apple.com>
+
+                Isolated worlds should respect Content Security Policy; User Agent Shadow DOM
+                should be exempt from Content Security Policy
+                https://bugs.webkit.org/show_bug.cgi?id=144830
+                <rdar://problem/18860261>
+
+                Reviewed by Geoffrey Garen.
+
+                Make scripts that run in an isolated world be subject to the Content Security Policy (CSP) of the page
+                and exempt features implemented using a user agent shadow DOM. As a side effect of this change,
+                Safari Content Extensions will respect the CSP policy of the page when loading subresources (e.g. an image).
+
+                Tests: http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html
+                       http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-css-background.html
+                       http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-css-cursor.html
+                       http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-css-filter-on-image.html
+                       http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-css-webkit-image-set.html
+                       http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-embed-plugin.html
+                       http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-external-script.html
+                       http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-iframe.html
+                       http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-image-after-redirect.html
+                       http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-image.html
+                       http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-inline-script.html
+                       http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-inline-style.html
+                       http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-inline-stylesheet.html
+                       http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-object-plugin.html
+                       http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-object.html
+                       http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-svg-feimage-element.html
+                       http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-svg-font.html
+                       http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-svg-use-element.html
+                       http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-track.html
+                       http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-video.html
+                       http/tests/security/contentSecurityPolicy/userAgentShadowDOM/block-loading-user-agent-image-from-non-user-agent-content.html
+                       http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-allowed.html
+                       http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-blocked.html
+                       http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-blocked2.html
+                       http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-blocked3.html
+                       http/tests/security/contentSecurityPolicy/userAgentShadowDOM/video-controls-allowed.html
+                       http/tests/security/isolatedWorld/image-load-should-not-bypass-main-world-csp.html
+
+                * Modules/websockets/WebSocket.cpp:
+                (WebCore::WebSocket::connect): Pass shouldBypassMainWorldContentSecurityPolicy to ContentSecurityPolicy::allowConnectToSource().
+                * css/CSSCanvasValue.h:
+                (WebCore::CSSCanvasValue::loadSubimages): Modified to take argument ResourceLoaderOptions (unused).
+                * css/CSSCrossfadeValue.cpp:
+                (WebCore::CSSCrossfadeValue::fixedSize): Explicitly instantiate default ResourceLoaderOptions and pass
+                pass it when requesting a cached image. Added FIXME comment to skip Content Security Policy check when
+                the cross fade is applied to an element in a user agent shadow tree.
+                (WebCore::CSSCrossfadeValue::loadSubimages): Take a ResourceLoaderOptions as an argument and passes it
+                as appropriate.
+                (WebCore::CSSCrossfadeValue::image): Explicitly instantiate default ResourceLoaderOptions and pass it
+                when requesting a cached image. Added FIXME comment to skip Content Security Policy check when the cross
+                fade is applied to an element in a user agent shadow tree.
+                * css/CSSCrossfadeValue.h:
+                * css/CSSCursorImageValue.cpp:
+                (WebCore::CSSCursorImageValue::cachedImage): Take a ResourceLoaderOptions as an argument and passes it
+                as appropriate.
+                * css/CSSCursorImageValue.h:
+                * css/CSSFilterImageValue.cpp:
+                (WebCore::CSSFilterImageValue::fixedSize): Explicitly instantiate default ResourceLoaderOptions and pass
+                pass it when requesting a cached image. Added FIXME comment to skip Content Security Policy check when
+                the cross fade is applied to an element in a user agent shadow tree.
+                (WebCore::CSSFilterImageValue::loadSubimages): Take a ResourceLoaderOptions as an argument and passes it
+                as appropriate.
+                (WebCore::CSSFilterImageValue::loadSubimages): Explicitly instantiate default ResourceLoaderOptions and pass
+                pass it when requesting a cached image. Added FIXME comment to skip Content Security Policy check when
+                the cross fade is applied to an element in a user agent shadow tree.
+                (WebCore::CSSFilterImageValue::image):
+                * css/CSSFilterImageValue.h:
+                * css/CSSFontFaceSrcValue.cpp:
+                (WebCore::CSSFontFaceSrcValue::cachedFont): Take a boolean, isInitiatingElementInUserAgentShadowTree,
+                so as to determine the appropriate CSP imposition. In particular, we skip the CSP check when the initiating element
+                (e.g. SVG font-face element) is in a user agent shadow tree.
+                * css/CSSFontFaceSrcValue.h:
+                * css/CSSFontSelector.cpp:
+                (WebCore::CSSFontSelector::addFontFaceRule): Take a boolean, isInitiatingElementInUserAgentShadowTree, and passes
+                it as appropriate.
+                * css/CSSFontSelector.h:
+                * css/CSSGradientValue.h:
+                (WebCore::CSSGradientValue::loadSubimages): Take a ResourceLoaderOptions as an argument and passes it
+                as appropriate.
+                * css/CSSImageGeneratorValue.cpp:
+                (WebCore::CSSImageGeneratorValue::loadSubimages): Ditto.
+                (WebCore::CSSImageGeneratorValue::cachedImageForCSSValue): Ditto.
+                * css/CSSImageGeneratorValue.h:
+                * css/CSSImageSetValue.cpp:
+                (WebCore::CSSImageSetValue::cachedImageSet): Deleted.
+                * css/CSSImageSetValue.h:
+                * css/CSSImageValue.cpp:
+                (WebCore::CSSImageValue::cachedImage): Deleted.
+                * css/CSSImageValue.h:
+                * css/RuleSet.cpp:
+                (WebCore::RuleSet::addChildRules): Take a boolean, isInitiatingElementInUserAgentShadowTree, and passes
+                it as appropriate.
+                (WebCore::RuleSet::addRulesFromSheet): Added FIXME comment to skip Content Security Policy check when
+                when stylesheet is in a user agent shadow tree.
+                * css/RuleSet.h:
+                * css/StyleResolver.cpp:
+                (WebCore::StyleResolver::StyleResolver): Determine whether the SVG font-face element is in a user agent shadow tree
+                and pass the appropriate value when calling CSSFontSelector::addFontFaceRule(). Also, modernized code; used C++11 range
+                -based for-loop instead of const_iterator idiom.
+                (WebCore::StyleResolver::loadPendingSVGDocuments): Skip CSP check when requesting subresources as a byproduct of
+                resolving style for an element in a user agent shadow tree.
+                (WebCore::StyleResolver::loadPendingImage): Ditto.
+                (WebCore::StyleResolver::loadPendingShapeImage): Ditto.
+                * css/StyleRuleImport.cpp:
+                (WebCore::StyleRuleImport::requestStyleSheet): Added FIXME comment to skip Content Security Policy check when
+                when stylesheet is in a user agent shadow tree.
+                * dom/Element.h:
+                * dom/InlineStyleSheetOwner.cpp:
+                (WebCore::InlineStyleSheetOwner::createSheet): Skip CSP check for an inline <style> that is in a user agent shadow tree.
+                * dom/Node.cpp:
+                (WebCore::Node::isInUserAgentShadowTree): Added.
+                * dom/Node.h:
+                * dom/ScriptElement.cpp:
+                (WebCore::ScriptElement::requestScript): Skip CSP check for an external JavaScript script in a user agent shadow tree.
+                (WebCore::ScriptElement::executeScript): Skip CSP check for an inline JavaScript script that is in a user agent shadow tree.
+                * dom/StyledElement.cpp:
+                (WebCore::StyledElement::styleAttributeChanged): Skip CSP check when modifying the inline style of an element in a user
+                agent shadow tree.
+                * html/HTMLMediaElement.cpp:
+                (WebCore::HTMLMediaElement::isSafeToLoadURL): Skip CSP check for a <audio>, <video> in a user agent shadow tree.
+                (WebCore::HTMLMediaElement::outOfBandTrackSources): Ditto.
+                * html/HTMLTrackElement.cpp:
+                (WebCore::HTMLTrackElement::canLoadURL): Ditto.
+                * html/track/LoadableTextTrack.cpp:
+                (WebCore::LoadableTextTrack::loadTimerFired): Determine whether the <track> is in a user agent shadow tree
+                and pass the appropriate value when calling TextTrackLoader::load().
+                * loader/DocumentLoader.cpp:
+                (WebCore::DocumentLoader::startLoadingMainResource): Do CSP check when loading a resource by default.
+                * loader/ImageLoader.cpp:
+                (WebCore::ImageLoader::updateFromElement): Skip CSP check for an image that is in a user agent shadow tree.
+                * loader/MediaResourceLoader.cpp:
+                (WebCore::MediaResourceLoader::start): Instantiate ResourceLoaderOptions passing placeholder value ContentSecurityPolicyImposition::DoPolicyCheck.
+                This value does not affect the request because we do not check the Content Security Policy for raw resource requests.
+                * loader/NetscapePlugInStreamLoader.cpp:
+                (WebCore::NetscapePlugInStreamLoader::NetscapePlugInStreamLoader): Added FIXME comment to skip Content Security Policy check
+                when when associated plugin element is in a user agent shadow tree.
+                * loader/PolicyChecker.cpp:
+                (WebCore::PolicyChecker::checkNavigationPolicy): Skip CSP check for a <iframe> in a user agent shadow tree.
+                * loader/ResourceLoaderOptions.h: Defined enum class ContentSecurityPolicyImposition with explicit type uint8_t so
+                as to provide a hint to the compiler (for better packing) when it computes the memory layout for struct that
+                contains an instance of this class.
+                (WebCore::ResourceLoaderOptions::ResourceLoaderOptions): Added argument contentSecurityPolicyImposition.
+                (WebCore::ResourceLoaderOptions::contentSecurityPolicyImposition): Added.
+                (WebCore::ResourceLoaderOptions::setContentSecurityPolicyImposition): Added.
+                * loader/SubframeLoader.cpp:
+                (WebCore::SubframeLoader::pluginIsLoadable): Skip CSP check for a plugin element that is in a user agent shadow tree.
+                (WebCore::SubframeLoader::createJavaAppletWidget): Skip CSP check for an applet element that is in a user agent shadow tree.
+                * loader/TextTrackLoader.cpp:
+                (WebCore::TextTrackLoader::load): Take a boolean, isInitiatingElementInUserAgentShadowTree, and sets the appropriate
+                Content Security Policy imposition for the text track request.
+                * loader/TextTrackLoader.h:
+                * loader/cache/CachedResourceLoader.cpp:
+                (WebCore::CachedResourceLoader::requestUserCSSStyleSheet): Skip CSP check for a user-specified stylesheet.
+                (WebCore::CachedResourceLoader::canRequest): Only check the CSP of the page if specified in the resource loader options for the request.
+                (WebCore::CachedResourceLoader::defaultCachedResourceOptions): Add ContentSecurityPolicyImposition::DoPolicyCheck to the default
+                resource loader options so that do check the CSP policy of the page before performing a resource request by default.
+                * loader/cache/CachedSVGDocumentReference.cpp:
+                (WebCore::CachedSVGDocumentReference::load): Take a ResourceLoaderOptions as an argument and passes it as appropriate.
+                * loader/cache/CachedSVGDocumentReference.h:
+                * loader/icon/IconLoader.cpp:
+                (WebCore::IconLoader::startLoading): Instantiate ResourceLoaderOptions passing placeholder value ContentSecurityPolicyImposition::DoPolicyCheck.
+                This value does not affect the request because we do not check the Content Security Policy for raw resource requests.
+                * page/ContentSecurityPolicy.cpp:
+                (WebCore::ContentSecurityPolicy::allowJavaScriptURLs): Take an argument called overrideContentSecurityPolicy (defaults to false). When
+                overrideContentSecurityPolicy := true, this function unconditionally returns true.
+                (WebCore::ContentSecurityPolicy::allowInlineEventHandlers): Ditto.
+                (WebCore::ContentSecurityPolicy::allowInlineScript): Ditto.
+                (WebCore::ContentSecurityPolicy::allowInlineStyle): Ditto.
+                (WebCore::ContentSecurityPolicy::allowEval): Ditto.
+                (WebCore::ContentSecurityPolicy::allowPluginType): Ditto.
+                (WebCore::ContentSecurityPolicy::allowScriptFromSource): Ditto.
+                (WebCore::ContentSecurityPolicy::allowObjectFromSource): Ditto.
+                (WebCore::ContentSecurityPolicy::allowChildFrameFromSource): Ditto.
+                (WebCore::ContentSecurityPolicy::allowImageFromSource): Ditto.
+                (WebCore::ContentSecurityPolicy::allowStyleFromSource): Ditto.
+                (WebCore::ContentSecurityPolicy::allowFontFromSource): Ditto.
+                (WebCore::ContentSecurityPolicy::allowMediaFromSource): Ditto.
+                (WebCore::ContentSecurityPolicy::allowConnectToSource): Ditto.
+                (WebCore::ContentSecurityPolicy::allowFormAction): Ditto.
+                (WebCore::ContentSecurityPolicy::allowBaseURI): Ditto.
+                * page/ContentSecurityPolicy.h:
+                * page/DOMSecurityPolicy.cpp:
+                * page/EventSource.cpp:
+                (WebCore::EventSource::create): Pass shouldBypassMainWorldContentSecurityPolicy to ContentSecurityPolicy::allowConnectToSource().
+                * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+                (WebCore::WebCoreAVFResourceLoader::startLoading): Instantiate ResourceLoaderOptions passing placeholder value ContentSecurityPolicyImposition::DoPolicyCheck.
+                This value does not affect the request because we do not check the Content Security Policy for raw resource requests.
+                * svg/SVGFEImageElement.cpp:
+                (WebCore::SVGFEImageElement::requestImageResource): Skip CSP check for a SVG FEImage element in a user agent shadow tree.
+                * svg/SVGFontFaceUriElement.cpp:
+                (WebCore::SVGFontFaceUriElement::loadFont): Skip CSP check for a SVG font-face-uri element in a user agent shadow tree.
+                * svg/SVGUseElement.cpp:
+                (WebCore::SVGUseElement::updateExternalDocument): Skip CSP check for a SVG use element in a user agent shadow tree.
+                * testing/Internals.cpp:
+                (WebCore::Internals::ensureUserAgentShadowRoot): Added.
+                * testing/Internals.h:
+                * testing/Internals.idl: Added declaration for ensureUserAgentShadowRoot().
+                * xml/XMLHttpRequest.cpp:
+                (WebCore::XMLHttpRequest::open): Pass shouldBypassMainWorldContentSecurityPolicy to ContentSecurityPolicy::allowConnectToSource().
+
+2015-07-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r186516. rdar://problem/21707896
 
     2015-06-10  Chris Dumez  <cdumez@apple.com>

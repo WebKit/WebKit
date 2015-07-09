@@ -559,6 +559,15 @@ Node* Internals::ensureShadowRoot(Element* host, ExceptionCode& ec)
     return host->createShadowRoot(ec).get();
 }
 
+Node* Internals::ensureUserAgentShadowRoot(Element* host, ExceptionCode& ec)
+{
+    if (!host) {
+        ec = INVALID_ACCESS_ERR;
+        return nullptr;
+    }
+    return &host->ensureUserAgentShadowRoot();
+}
+
 Node* Internals::createShadowRoot(Element* host, ExceptionCode& ec)
 {
     if (!host) {

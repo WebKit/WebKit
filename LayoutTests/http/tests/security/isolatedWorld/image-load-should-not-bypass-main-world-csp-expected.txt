@@ -1,0 +1,18 @@
+CONSOLE MESSAGE: Refused to load the image 'http://127.0.0.1:8000/security/resources/abe.png' because it violates the following Content Security Policy directive: "img-src 'none'".
+
+ALERT: BLOCKED in main world
+<<<<<<< HEAD:LayoutTests/http/tests/security/isolatedWorld/bypass-main-world-csp-expected.txt
+ALERT: LOADED in isolated world
+This test ensures that scripts run in isolated worlds aren't affected by the page's content security policy. Extensions, for example, should be able to load any resource they like.
+=======
+CONSOLE MESSAGE: Refused to load the image 'http://127.0.0.1:8000/security/resources/abe.png' because it violates the following Content Security Policy directive: "img-src 'none'".
+
+ALERT: BLOCKED in isolated world
+CONSOLE MESSAGE: line 38: EvalError: Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: "script-src 'unsafe-inline'".
+
+ALERT: BLOCKED eval() in main world
+ALERT: Called eval() in isolated world
+This test ensures that scripts run in isolated worlds are affected by the page's content security policy. Extensions, for example, should not be able to load any resource they like.
+>>>>>>> 264add7... Isolated worlds should respect Content Security Policy; User Agent Shadow DOM:LayoutTests/http/tests/security/isolatedWorld/image-load-should-not-bypass-main-world-csp-expected.txt
+
+

@@ -83,6 +83,7 @@ public:
     PassRefPtr<CSSComputedStyleDeclaration> computedStyleIncludingVisitedInfo(Node*, ExceptionCode&) const;
 
     Node* ensureShadowRoot(Element* host, ExceptionCode&);
+    Node* ensureUserAgentShadowRoot(Element* host, ExceptionCode&);
     Node* createShadowRoot(Element* host, ExceptionCode&);
     Node* shadowRoot(Element* host, ExceptionCode&);
     String shadowRootType(const Node*, ExceptionCode&) const;

@@ -52,7 +52,7 @@ public:
     String customCSSText() const;
 
     bool updateIfSVGCursorIsUsed(Element*);
-    StyleImage* cachedImage(CachedResourceLoader*);
+    StyleImage* cachedImage(CachedResourceLoader*, const ResourceLoaderOptions&);
     StyleImage* cachedOrPendingImage(Document&);
 
     void removeReferencedElement(SVGElement*);

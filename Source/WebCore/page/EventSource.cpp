@@ -92,7 +92,7 @@ PassRefPtr<EventSource> EventSource::create(ScriptExecutionContext& context, con
         Document& document = toDocument(context);
         shouldBypassMainWorldContentSecurityPolicy = document.frame()->script().shouldBypassMainWorldContentSecurityPolicy();
     }
-    if (!shouldBypassMainWorldContentSecurityPolicy && !context.contentSecurityPolicy()->allowConnectToSource(fullURL)) {
+    if (!context.contentSecurityPolicy()->allowConnectToSource(fullURL, shouldBypassMainWorldContentSecurityPolicy)) {
         // FIXME: Should this be throwing an exception?
         ec = SECURITY_ERR;
         return 0;

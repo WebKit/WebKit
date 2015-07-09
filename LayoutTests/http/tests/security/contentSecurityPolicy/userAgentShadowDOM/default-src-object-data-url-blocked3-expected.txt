@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Refused to load the image 'http://localhost:8000/security/resources/abe.png' because it violates the following Content Security Policy directive: "default-src 'self'". Note that 'img-src' was not explicitly set, so 'default-src' is used as a fallback.
+
+ALERT: PASS
+This test passes if it doesn't alert FAIL and does alert PASS.  

@@ -248,7 +248,10 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
         if (isExternalReference) {
             URL url = document().completeURL(href());
             if (url.hasFragmentIdentifier()) {
-                CachedResourceRequest request(ResourceRequest(url.string()));
+                ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
+                options.setContentSecurityPolicyImposition(isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck);
+
+                CachedResourceRequest request(ResourceRequest(url.string()), options);
                 request.setInitiator(this);
                 setCachedDocument(document().cachedResourceLoader()->requestSVGDocument(request));
             }

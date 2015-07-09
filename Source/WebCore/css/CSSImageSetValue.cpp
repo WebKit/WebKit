@@ -133,11 +133,6 @@ StyleCachedImageSet* CSSImageSetValue::cachedImageSet(CachedResourceLoader* load
     return (m_imageSet && m_imageSet->isCachedImageSet()) ? toStyleCachedImageSet(m_imageSet.get()) : nullptr;
 }
 
-StyleCachedImageSet* CSSImageSetValue::cachedImageSet(CachedResourceLoader* loader)
-{
-    return cachedImageSet(loader, CachedResourceLoader::defaultCachedResourceOptions());
-}
-
 StyleImage* CSSImageSetValue::cachedOrPendingImageSet(Document& document)
 {
     if (!m_imageSet)

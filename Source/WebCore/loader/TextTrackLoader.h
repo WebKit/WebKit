@@ -60,7 +60,7 @@ public:
     TextTrackLoader(TextTrackLoaderClient&, ScriptExecutionContext*);
     virtual ~TextTrackLoader();
     
-    bool load(const URL&, const String& crossOriginMode);
+    bool load(const URL&, const String& crossOriginMode, bool isInitiatingElementInUserAgentShadowTree);
     void cancelLoad();
     void getNewCues(Vector<RefPtr<TextTrackCue>>& outputCues);
 #if ENABLE(WEBVTT_REGIONS)

@@ -96,10 +96,6 @@ StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader, const
     return (m_image && m_image->isCachedImage()) ? toStyleCachedImage(m_image.get()) : nullptr;
 }
 
-StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader)
-{
-    return cachedImage(loader, CachedResourceLoader::defaultCachedResourceOptions());
-}
 
 bool CSSImageValue::hasFailedOrCanceledSubresources() const
 {
