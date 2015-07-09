@@ -54,6 +54,26 @@
 
 namespace WebCore {
 
+struct FrameFlatteningLayoutDisallower {
+    FrameFlatteningLayoutDisallower(FrameView& frameView)
+        : m_frameView(frameView)
+        , m_disallowLayout(frameView.frame().settings().frameFlatteningEnabled())
+    {
+        if (m_disallowLayout)
+            m_frameView.startDisallowingLayout();
+    }
+
+    ~FrameFlatteningLayoutDisallower()
+    {
+        if (m_disallowLayout)
+            m_frameView.endDisallowingLayout();
+    }
+
+private:
+    FrameView& m_frameView;
+    bool m_disallowLayout { false };
+};
+
 struct SelectionIterator {
     RenderObject* m_current;
     Vector<RenderMultiColumnSpannerPlaceholder*> m_spannerStack;
@@ -176,6 +196,8 @@ bool RenderView::hitTest(const HitTestRequest& request, HitTestResult& result)
 
 bool RenderView::hitTest(const HitTestRequest& request, const HitTestLocation& location, HitTestResult& result)
 {
+    FrameFlatteningLayoutDisallower disallower(frameView());
+
     if (layer()->hitTest(request, location, result))
         return true;
 
