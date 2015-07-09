@@ -1264,6 +1264,7 @@ accessibility/svg-element-press.html [ Skip ]
 
 # Missing cellForColumnAndRow implementation in DRT
 webkit.org/b/143081 accessibility/table-cell-display-block.html [ Skip ]
+accessibility/aria-table-with-presentational-elements.html [ Skip ]
 
 # Accessibility tests for notifications that don't exist or aren't needed on Mac OS X (or Windows)
 accessibility/aria-checkbox-sends-notification.html [ Skip ]
