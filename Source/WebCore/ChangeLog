@@ -1,5 +1,47 @@
 2015-07-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r186571. rdar://problem/21716420
+
+    2015-07-08  Lucas Forschler  <lforschler@apple.com>
+
+            Merge r185392
+
+        2015-06-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+                feComposite filter does not clip the paint rect to its effect rect when the operator is 'in' or 'atop'
+                https://bugs.webkit.org/show_bug.cgi?id=137856
+
+                Reviewed by Darin Adler.
+
+                There was bug in calculating the absolutePaintRect of the feComposite filter
+                when the operator is equal to 'in' or 'atop'. The absolutePaintRect was set
+                to the absolutePaintRect of the background FilterEffect which is correct.
+                What was missing is clipping this rectangle to the maxEffectRect of the
+                filter which we do for other operators.
+
+                Tests: svg/filters/feComposite-background-rect-control-operators.svg
+
+                * platform/graphics/IntRect.h:
+                (WebCore::operator-=):
+                (WebCore::operator-): Add new operators to IntRect.
+
+                * platform/graphics/filters/FEComposite.cpp:
+                (WebCore::FEComposite::determineAbsolutePaintRect): Make sure the filter
+                absolutePaintRect is clipped to maxEffectRect for all operators.
+
+                (WebCore::FEComposite::platformApplySoftware): Code clean-up.
+
+                * platform/graphics/filters/FilterEffect.cpp:
+                (WebCore::FilterEffect::determineAbsolutePaintRect): Move the clipping
+                part to a separate function.
+
+                (WebCore::FilterEffect::clipAbsolutePaintRect): Clip the absolutePaintRect
+                to the maxEffectRect of the filter.
+
+                * platform/graphics/filters/FilterEffect.h:
+
+2015-07-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r186567. rdar://problem/21716428
 
     2015-07-08  Lucas Forschler  <lforschler@apple.com>

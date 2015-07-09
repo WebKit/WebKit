@@ -179,6 +179,8 @@ protected:
     // If a pre-multiplied image, check every pixel for validity and correct if necessary.
     void forceValidPreMultipliedPixels();
 
+    void clipAbsolutePaintRect();
+
 private:
     std::unique_ptr<ImageBuffer> m_imageBufferResult;
     RefPtr<Uint8ClampedArray> m_unmultipliedImageResult;

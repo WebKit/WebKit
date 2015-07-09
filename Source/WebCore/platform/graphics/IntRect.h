@@ -225,6 +225,18 @@ inline bool operator!=(const IntRect& a, const IntRect& b)
     return a.location() != b.location() || a.size() != b.size();
 }
 
+inline IntRect& operator-=(IntRect& r, const IntPoint& offset)
+{
+    r.move(-offset.x(), -offset.y());
+    return r;
+}
+
+inline IntRect operator-(const IntRect& r, const IntPoint& offset)
+{
+    IntRect t = r;
+    return t -= offset;
+}
+
 #if USE(CG)
 IntRect enclosingIntRect(const CGRect&);
 #endif
