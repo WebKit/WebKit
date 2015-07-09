@@ -45,6 +45,8 @@ public:
 private:
     friend class MediaSession;
 
+    bool hasActiveMediaElements() const;
+
     void addMediaSession(MediaSession&);
     void removeMediaSession(MediaSession&);
 

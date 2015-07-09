@@ -41,6 +41,16 @@ MediaSessionManager& MediaSessionManager::singleton()
     return manager;
 }
 
+bool MediaSessionManager::hasActiveMediaElements() const
+{
+    for (auto* session : m_sessions) {
+        if (session->hasActiveMediaElements())
+            return true;
+    }
+
+    return false;
+}
+
 void MediaSessionManager::addMediaSession(MediaSession& session)
 {
     m_sessions.add(&session);

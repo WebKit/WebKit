@@ -58,6 +58,7 @@ public:
     MediaRemoteControls* controls(bool& isNull);
 
     State currentState() const { return m_currentState; }
+    bool hasActiveMediaElements() const;
 
     void setMetadata(const Dictionary&);
 
@@ -87,9 +88,9 @@ private:
     void addMediaElement(HTMLMediaElement&);
     void removeMediaElement(HTMLMediaElement&);
 
+    void changeActiveMediaElements(std::function<void(void)>);
     void addActiveMediaElement(HTMLMediaElement&);
     bool isMediaElementActive(HTMLMediaElement&);
-    bool hasActiveMediaElements();
 
     void releaseInternal();
 

@@ -115,14 +115,33 @@ void MediaSession::removeMediaElement(HTMLMediaElement& element)
     ASSERT(m_participatingElements.contains(&element));
     m_participatingElements.remove(&element);
 
-    m_activeParticipatingElements.remove(&element);
+    changeActiveMediaElements([&]() {
+        m_activeParticipatingElements.remove(&element);
+    });
+
     if (m_iteratedActiveParticipatingElements)
         m_iteratedActiveParticipatingElements->remove(&element);
 }
 
+void MediaSession::changeActiveMediaElements(std::function<void(void)> worker)
+{
+    if (Page *page = m_document.page()) {
+        bool hadActiveMediaElements = MediaSessionManager::singleton().hasActiveMediaElements();
+
+        worker();
+
+        bool hasActiveMediaElements = MediaSessionManager::singleton().hasActiveMediaElements();
+        if (hadActiveMediaElements != hasActiveMediaElements)
+            page->chrome().client().hasMediaSessionWithActiveMediaElementsDidChange(hasActiveMediaElements);
+    } else
+        worker();
+}
+
 void MediaSession::addActiveMediaElement(HTMLMediaElement& element)
 {
-    m_activeParticipatingElements.add(&element);
+    changeActiveMediaElements([&]() {
+        m_activeParticipatingElements.add(&element);
+    });
 }
 
 bool MediaSession::isMediaElementActive(HTMLMediaElement& element)
@@ -130,7 +149,7 @@ bool MediaSession::isMediaElementActive(HTMLMediaElement& element)
     return m_activeParticipatingElements.contains(&element);
 }
 
-bool MediaSession::hasActiveMediaElements()
+bool MediaSession::hasActiveMediaElements() const
 {
     return !m_activeParticipatingElements.isEmpty();
 }
@@ -171,8 +190,10 @@ void MediaSession::releaseSession()
     // 1. Let media session be the current media session.
     // 2. Indefinitely pause all of media session's active participating media elements.
     // 3. Reset media session's active participating media elements to an empty list.
-    while (!m_activeParticipatingElements.isEmpty())
-        m_activeParticipatingElements.takeAny()->pause();
+    changeActiveMediaElements([&]() {
+        while (!m_activeParticipatingElements.isEmpty())
+            m_activeParticipatingElements.takeAny()->pause();
+    });
 
     // 4. Run the media session release algorithm for media session.
     releaseInternal();
