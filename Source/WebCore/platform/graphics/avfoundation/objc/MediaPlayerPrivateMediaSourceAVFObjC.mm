@@ -236,7 +236,10 @@ MediaPlayer::SupportsType MediaPlayerPrivateMediaSourceAVFObjC::supportsType(con
     // This engine does not support non-media-source sources.
     if (!parameters.isMediaSource)
         return MediaPlayer::IsNotSupported;
-
+#if ENABLE(MEDIA_STREAM)
+    if (parameters.isMediaStream)
+        return MediaPlayer::IsNotSupported;
+#endif
     if (!mimeTypeCache().contains(parameters.type))
         return MediaPlayer::IsNotSupported;
 
@@ -264,6 +267,11 @@ void MediaPlayerPrivateMediaSourceAVFObjC::load(const String& url, MediaSourcePr
     UNUSED_PARAM(url);
 
     m_mediaSourcePrivate = MediaSourcePrivateAVFObjC::create(this, client);
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::load(MediaStreamPrivate*)
+{
+    setNetworkState(MediaPlayer::FormatError);
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::cancelLoad()
