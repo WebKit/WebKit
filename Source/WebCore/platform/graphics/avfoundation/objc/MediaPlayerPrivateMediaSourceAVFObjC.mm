@@ -210,9 +210,9 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::isAvailable()
         && class_getInstanceMethod(getAVSampleBufferAudioRendererClass(), @selector(setMuted:));
 }
 
-static HashSet<String> mimeTypeCache()
+static const HashSet<String>& mimeTypeCache()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<String>, cache, ());
+    static NeverDestroyed<HashSet<String>> cache;
     static bool typeListInitialized = false;
 
     if (typeListInitialized)
@@ -221,7 +221,7 @@ static HashSet<String> mimeTypeCache()
 
     NSArray *types = [getAVURLAssetClass() audiovisualMIMETypes];
     for (NSString *mimeType in types)
-        cache.add(mimeType);
+        cache.get().add(mimeType);
     
     return cache;
 } 

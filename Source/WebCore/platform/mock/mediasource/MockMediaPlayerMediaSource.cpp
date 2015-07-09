@@ -33,6 +33,7 @@
 #include "MediaSourcePrivateClient.h"
 #include "MockMediaSourcePrivate.h"
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -44,15 +45,15 @@ void MockMediaPlayerMediaSource::registerMediaEngine(MediaEngineRegistrar regist
         supportsType, 0, 0, 0, 0);
 }
 
-static HashSet<String> mimeTypeCache()
+static const HashSet<String>& mimeTypeCache()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(HashSet<String>, cache, ());
+    static NeverDestroyed<HashSet<String>> cache;
     static bool isInitialized = false;
 
     if (!isInitialized) {
         isInitialized = true;
-        cache.add(ASCIILiteral("video/mock"));
-        cache.add(ASCIILiteral("audio/mock"));
+        cache.get().add(ASCIILiteral("video/mock"));
+        cache.get().add(ASCIILiteral("audio/mock"));
     }
 
     return cache;
