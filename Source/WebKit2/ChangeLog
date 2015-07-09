@@ -1,3 +1,18 @@
+2015-07-08  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL] When closing inspector window, EwkView is not released properly.
+        https://bugs.webkit.org/show_bug.cgi?id=146716
+
+        Reviewed by Gyuyoung Kim.
+
+        It's because inspector window could not be deleted by remaining reference
+        from inspector view(evas object). This patch deletes the inspector window
+        after finishing the evas object smart call.
+
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::destroyInspectorWindow):
+        (WebKit::WebInspectorProxy::platformDidClose):
+
 2015-07-08  Hyungwook Lee  <hyungwook.lee@navercorp.com>
 
         Fix ASSERTION FAILED: !m_pendingNavigationID in WebPage::reload().
