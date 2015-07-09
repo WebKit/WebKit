@@ -1,3 +1,16 @@
+2015-07-08  Hyungwook Lee  <hyungwook.lee@navercorp.com>
+
+        Fix ASSERTION FAILED: !m_pendingNavigationID in WebPage::reload().
+        https://bugs.webkit.org/show_bug.cgi?id=146546
+
+        Reviewed by Darin Adler.
+
+        We did't reset pendingNavigationID value when request url is empty.
+        Hence we need to ignore ASSERT check in this case.
+
+        * TestWebKitAPI/Tests/WebKit2/PageLoadBasic.cpp:
+        (TestWebKitAPI::TEST):
+
 2015-07-08  Benjamin Poulain  <bpoulain@apple.com>
 
         [Content Extensions] Fuse undistinguishable actions as much as possible
