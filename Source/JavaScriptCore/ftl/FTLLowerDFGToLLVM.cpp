@@ -8167,7 +8167,7 @@ private:
                 dataLog("        Available recoveries: ", listDump(m_availableRecoveries), "\n");
         }
         
-        if (Options::enableOSRExitFuzz()) {
+        if (doOSRExitFuzzing()) {
             LValue numberOfFuzzChecks = m_out.add(
                 m_out.load32(m_out.absolute(&g_numberOfOSRExitFuzzChecks)),
                 m_out.int32One);

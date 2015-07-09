@@ -46,6 +46,7 @@ JS_EXPORT_PRIVATE JSValue optimizeNextInvocation(ExecState*);
 
 JS_EXPORT_PRIVATE unsigned numberOfExceptionFuzzChecks();
 JS_EXPORT_PRIVATE unsigned numberOfExecutableAllocationFuzzChecks();
+JS_EXPORT_PRIVATE unsigned numberOfStaticOSRExitFuzzChecks();
 JS_EXPORT_PRIVATE unsigned numberOfOSRExitFuzzChecks();
 
 } // namespace JSC

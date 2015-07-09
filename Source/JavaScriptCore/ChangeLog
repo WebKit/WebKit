@@ -1,3 +1,36 @@
+2015-07-03  Filip Pizlo  <fpizlo@apple.com>
+
+        OSR exit fuzzing should allow us to select a static exit site
+        https://bugs.webkit.org/show_bug.cgi?id=146601
+
+        Reviewed by Geoffrey Garen.
+        
+        The original implementation of the fuzzer allows us to trigger an exit based on its index
+        in the dynamic sequence of exit sites encountered. But there are usually millions of
+        dynamically encountered exit sites, even if the program only has thousands of static exit
+        sites. That means that we would at best be able to do a random sampling of exits, and
+        those would be biased to the hottest exit sites.
+        
+        This change allows us to also select exit sites based on their index in the static
+        sequence of exit sites that the compiler compiled. Then, once that static exit site is
+        selected, we can select which dynamic exit at that exit site we should trigger. Since the
+        number of static exit sites is usually smallish (it's bounded by program size), we can do
+        an exhaustive search over all exit sites in most programs.
+
+        * dfg/DFGOSRExitFuzz.cpp:
+        (JSC::numberOfStaticOSRExitFuzzChecks):
+        (JSC::numberOfOSRExitFuzzChecks):
+        * dfg/DFGOSRExitFuzz.h:
+        (JSC::DFG::doOSRExitFuzzing):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitOSRExitFuzzCheck):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::appendOSRExit):
+        * jsc.cpp:
+        (jscmain):
+        * runtime/Options.h:
+        * runtime/TestRunnerUtils.h:
+
 2015-07-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fix grammar issue in TypeError attempting to change an unconfigurable property

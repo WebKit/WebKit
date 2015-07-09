@@ -1551,8 +1551,10 @@ int jscmain(int argc, char** argv)
             Options::fireExecutableAllocationFuzzAt() || Options::fireExecutableAllocationFuzzAtOrAfter();
         if (Options::enableExecutableAllocationFuzz() && (!fireAtEnabled || Options::verboseExecutableAllocationFuzz()))
             printf("JSC EXECUTABLE ALLOCATION FUZZ: encountered %u checks.\n", numberOfExecutableAllocationFuzzChecks());
-        if (Options::enableOSRExitFuzz())
-            printf("JSC OSR EXIT FUZZ: encountered %u checks.\n", numberOfOSRExitFuzzChecks());
+        if (Options::enableOSRExitFuzz()) {
+            printf("JSC OSR EXIT FUZZ: encountered %u static checks.\n", numberOfStaticOSRExitFuzzChecks());
+            printf("JSC OSR EXIT FUZZ: encountered %u dynamic checks.\n", numberOfOSRExitFuzzChecks());
+        }
 #endif
     }
     

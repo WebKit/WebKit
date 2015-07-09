@@ -310,6 +310,7 @@ typedef const char* optionString;
     v(bool, verboseExecutableAllocationFuzz, false, nullptr) \
     \
     v(bool, enableOSRExitFuzz, false, nullptr) \
+    v(unsigned, fireOSRExitFuzzAtStatic, 0, nullptr) \
     v(unsigned, fireOSRExitFuzzAt, 0, nullptr) \
     v(unsigned, fireOSRExitFuzzAtOrAfter, 0, nullptr) \
     \

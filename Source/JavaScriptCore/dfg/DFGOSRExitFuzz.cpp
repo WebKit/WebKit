@@ -30,9 +30,15 @@
 
 namespace JSC { namespace DFG {
 
+unsigned g_numberOfStaticOSRExitFuzzChecks;
 unsigned g_numberOfOSRExitFuzzChecks;
 
 } // namespace DFG
+
+unsigned numberOfStaticOSRExitFuzzChecks()
+{
+    return DFG::g_numberOfStaticOSRExitFuzzChecks;
+}
 
 unsigned numberOfOSRExitFuzzChecks()
 {

@@ -26,7 +26,23 @@
 #ifndef DFGOSRExitFuzz_h
 #define DFGOSRExitFuzz_h
 
+#include "Options.h"
+
 namespace JSC { namespace DFG {
+
+extern unsigned g_numberOfStaticOSRExitFuzzChecks;
+
+inline bool doOSRExitFuzzing()
+{
+    if (!Options::enableOSRExitFuzz())
+        return false;
+    
+    g_numberOfStaticOSRExitFuzzChecks++;
+    if (unsigned atStatic = Options::fireOSRExitFuzzAtStatic())
+        return atStatic == g_numberOfStaticOSRExitFuzzChecks;
+    
+    return true;
+}
 
 // DFG- and FTL-generated code will query this on every speculation.
 extern unsigned g_numberOfOSRExitFuzzChecks;

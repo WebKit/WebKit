@@ -159,7 +159,7 @@ void SpeculativeJIT::emitGetArgumentStart(CodeOrigin origin, GPRReg startGPR)
 
 MacroAssembler::Jump SpeculativeJIT::emitOSRExitFuzzCheck()
 {
-    if (!Options::enableOSRExitFuzz())
+    if (!doOSRExitFuzzing())
         return MacroAssembler::Jump();
     
     MacroAssembler::Jump result;
