@@ -418,7 +418,7 @@ WebInspector.CSSStyleDeclarationSection.prototype = {
 
         styleText += " {\n";
 
-        for (var property of this._style.properties) {
+        for (var property of this._style.visibleProperties) {
             styleText += "    ".repeat(numMediaQueries + 1) + property.text.trim();
 
             if (!styleText.endsWith(";"))

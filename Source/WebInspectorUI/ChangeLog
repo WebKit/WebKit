@@ -1,3 +1,14 @@
+2015-07-08  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Copy Rule in the context menu copies hidden properties in the rule
+        https://bugs.webkit.org/show_bug.cgi?id=146775
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection.prototype._generateCSSRuleString):
+        Now only uses properties from the rule's visibleProperties list.
+
 2015-07-08  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Add page weight and time back to the toolbar dashboard
