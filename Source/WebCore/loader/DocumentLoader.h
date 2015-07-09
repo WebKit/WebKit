@@ -448,6 +448,9 @@ namespace WebCore {
         HashMap<String, std::pair<String, uint32_t>> m_pendingContentExtensionDisplayNoneSelectors;
 #endif
 
+#ifndef NDEBUG
+        bool m_hasEverBeenAttached { false }
+#endif
     };
 
     inline void DocumentLoader::recordMemoryCacheLoadForFutureClientNotification(const ResourceRequest& request)

@@ -905,6 +905,10 @@ void DocumentLoader::attachToFrame(Frame& frame)
     m_frame = &frame;
     m_writer.setFrame(&frame);
     attachToFrame();
+
+#ifndef NDEBUG
+    m_hasEverBeenAttached = true;
+#endif
 }
 
 void DocumentLoader::attachToFrame()
@@ -914,7 +918,12 @@ void DocumentLoader::attachToFrame()
 
 void DocumentLoader::detachFromFrame()
 {
-    ASSERT(m_frame);
+#ifndef NDEBUG
+    if (m_hasEverBeenAttached)
+        ASSERT_WITH_MESSAGE(m_frame, "detachFromFrame() is being called on a DocumentLoader twice without an attachToFrame() inbetween");
+    else
+        ASSERT_WITH_MESSAGE(m_frame, "detachFromFrame() is being called on a DocumentLoader that has never attached to any Frame");
+#endif
     RefPtr<Frame> protectFrame(m_frame);
     Ref<DocumentLoader> protectLoader(*this);
 
