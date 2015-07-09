@@ -297,38 +297,30 @@ void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceRes
     ASSERT(m_resourceType != ResourceType::Invalid);
 #endif
 
-    if (!frameLoader()) {
-        didFail(cannotShowURLError());
-        return;
-    }
-
-    Page* page = frameLoader()->frame().page();
-    if (!page) {
-        didFail(cannotShowURLError());
-        return;
-    }
-
-    if (!m_documentLoader) {
-        didFail(cannotShowURLError());
-        return;
-    }
-
-#if ENABLE(CONTENT_EXTENSIONS)
-    auto* userContentController = page->userContentController();
-    if (userContentController)
-        userContentController->processContentExtensionRulesForLoad(*page, request, m_resourceType, *m_documentLoader);
-
-    if (request.isNull()) {
-        didFail(cannotShowURLError());
-        return;
-    }
-#endif
-
     // We need a resource identifier for all requests, even if FrameLoader is never going to see it (such as with CORS preflight requests).
     bool createdResourceIdentifier = false;
     if (!m_identifier) {
         m_identifier = m_frame->page()->progress().createUniqueIdentifier();
         createdResourceIdentifier = true;
+    }
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    if (frameLoader()) {
+        Page* page = frameLoader()->frame().page();
+        if (page && m_documentLoader) {
+            auto* userContentController = page->userContentController();
+            if (userContentController)
+                userContentController->processContentExtensionRulesForLoad(*page, request, m_resourceType, *m_documentLoader);
+        }
+    }
+#endif
+    
+    if (isPlugInStreamLoader())
+        documentLoader()->addPlugInStreamLoader(this);
+
+    if (request.isNull()) {
+        didFail(cannotShowURLError());
+        return;
     }
 
     if (m_options.sendLoadCallbacks() == SendCallbacks) {

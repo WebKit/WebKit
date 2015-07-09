@@ -1,3 +1,16 @@
+2015-07-09  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Prevent crashes with plugins.
+        https://bugs.webkit.org/show_bug.cgi?id=146705
+        rdar://problem/20855444
+
+        Reviewed by Brady Eidson.
+
+        * http/tests/contentextensions/plugin-doesnt-crash-expected.txt: Copied from http/tests/plugins/get-url-expected.txt.
+        * http/tests/contentextensions/plugin-doesnt-crash.html: Copied from http/tests/plugins/get-url.html.
+        * http/tests/contentextensions/plugin-doesnt-crash.html.json: Added.
+        * http/tests/contentextensions/resources/load-me-1.txt: Copied from http/tests/plugins/resources/load-me-1.txt.
+
 2015-07-09  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Skip canvas/philip/tests/2d.text.draw.fontface.notinpage.html

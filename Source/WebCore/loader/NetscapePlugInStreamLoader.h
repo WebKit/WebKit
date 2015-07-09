@@ -63,6 +63,7 @@ private:
     virtual void didFail(const ResourceError&) override;
 
     virtual void releaseResources() override;
+    virtual bool isPlugInStreamLoader() override { return true; }
 
     NetscapePlugInStreamLoader(Frame*, NetscapePlugInStreamLoaderClient*);
 
