@@ -533,9 +533,9 @@
                     continue;
                 }
 
-                // We're not interested in text within a CSS selector.
+                // We're not interested if the color value is not inside a keyword.
                 var tokenType = this.getTokenTypeAt(from);
-                if (tokenType && (tokenType.indexOf("builtin") !== -1 || tokenType.indexOf("tag") !== -1)) {
+                if (tokenType && !tokenType.includes("keyword")) {
                     match = colorRegex.exec(lineContent);
                     continue;
                 }

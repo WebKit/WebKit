@@ -1,3 +1,12 @@
+2015-07-08  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Color swatches show up in color names in comments
+        https://bugs.webkit.org/show_bug.cgi?id=146757
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CodeMirrorAdditions.js: Color markers now only appear if the color is in a keyword.
+
 2015-07-08  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Only record a timeline when the Timelines tab is showing
