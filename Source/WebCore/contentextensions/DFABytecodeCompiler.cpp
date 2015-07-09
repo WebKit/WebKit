@@ -52,6 +52,10 @@ inline void appendZeroes(Vector<DFABytecode>& bytecode, DFABytecodeJumpSize jump
     case DFABytecodeJumpSize::Int16:
         append<int16_t>(bytecode, 0); // This value will be set when linking.
         break;
+    case DFABytecodeJumpSize::Int24:
+        append<uint16_t>(bytecode, 0);
+        append<int8_t>(bytecode, 0); // These values will be set when linking.
+        break;
     case DFABytecodeJumpSize::Int32:
         append<int32_t>(bytecode, 0); // This value will be set when linking.
         break;
@@ -373,6 +377,11 @@ void DFABytecodeCompiler::compile()
         case Int16:
             RELEASE_ASSERT(distance == static_cast<int16_t>(distance));
             setBits<int16_t>(m_bytecode, linkRecord.jumpLocation, static_cast<int16_t>(distance));
+            break;
+        case Int24:
+            RELEASE_ASSERT(distance >= Int24Min && distance <= Int24Max);
+            setBits<uint16_t>(m_bytecode, linkRecord.jumpLocation, static_cast<uint16_t>(distance));
+            setBits<int8_t>(m_bytecode, linkRecord.jumpLocation + sizeof(int16_t), static_cast<int8_t>(distance >> 16));
             break;
         case Int32:
             setBits<int32_t>(m_bytecode, linkRecord.jumpLocation, distance);

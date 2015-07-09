@@ -83,8 +83,11 @@ typedef uint32_t DFAHeader;
 enum DFABytecodeJumpSize {
     Int8 = 0x10,
     Int16 = 0x20,
-    Int32 = 0x30,
+    Int24 = 0x30,
+    Int32 = 0x40,
 };
+const int32_t Int24Max = (1 << 23) - 1;
+const int32_t Int24Min = -(1 << 23);
 
 static inline DFABytecodeJumpSize smallestPossibleJumpSize(int32_t longestPossibleJump)
 {
@@ -92,6 +95,8 @@ static inline DFABytecodeJumpSize smallestPossibleJumpSize(int32_t longestPossib
         return Int8;
     if (longestPossibleJump <= std::numeric_limits<int16_t>::max() && longestPossibleJump >= std::numeric_limits<int16_t>::min())
         return Int16;
+    if (longestPossibleJump <= Int24Max && longestPossibleJump >= Int24Min)
+        return Int24;
     return Int32;
 }
     

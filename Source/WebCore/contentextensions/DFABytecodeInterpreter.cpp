@@ -54,6 +54,8 @@ static inline size_t jumpSizeInBytes(DFABytecodeJumpSize jumpSize)
         return sizeof(int8_t);
     case Int16:
         return sizeof(int16_t);
+    case Int24:
+        return sizeof(uint16_t) + sizeof(int8_t);
     case Int32:
         return sizeof(int32_t);
     default:
@@ -64,7 +66,7 @@ static inline size_t jumpSizeInBytes(DFABytecodeJumpSize jumpSize)
 static inline DFABytecodeJumpSize getJumpSize(const DFABytecode* bytecode, uint32_t bytecodeLength, uint32_t index)
 {
     DFABytecodeJumpSize jumpSize = static_cast<DFABytecodeJumpSize>(getBits<uint8_t>(bytecode, bytecodeLength, index) & DFABytecodeJumpSizeMask);
-    ASSERT(jumpSize == DFABytecodeJumpSize::Int32 || jumpSize == DFABytecodeJumpSize::Int16 || jumpSize == DFABytecodeJumpSize::Int8);
+    ASSERT(jumpSize == DFABytecodeJumpSize::Int32 || jumpSize == DFABytecodeJumpSize::Int24 || jumpSize == DFABytecodeJumpSize::Int16 || jumpSize == DFABytecodeJumpSize::Int8);
     return jumpSize;
 }
 
@@ -75,6 +77,8 @@ static inline int32_t getJumpDistance(const DFABytecode* bytecode, uint32_t byte
         return getBits<int8_t>(bytecode, bytecodeLength, index);
     case Int16:
         return getBits<int16_t>(bytecode, bytecodeLength, index);
+    case Int24:
+        return getBits<uint16_t>(bytecode, bytecodeLength, index) | (static_cast<int32_t>(getBits<int8_t>(bytecode, bytecodeLength, index + sizeof(uint16_t))) << 16);
     case Int32:
         return getBits<int32_t>(bytecode, bytecodeLength, index);
     default:
