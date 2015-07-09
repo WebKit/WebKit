@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,50 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FrameLoadState_h
-#define FrameLoadState_h
+#import "config.h"
+#import <WebKit/WKFoundation.h>
 
-#include <wtf/text/WTFString.h>
+#if WK_API_ENABLED
 
-namespace WebKit {
+#import "PlatformUtilities.h"
+#import "Test.h"
+#import <wtf/RetainPtr.h>
 
-class FrameLoadState {
-public:
-    FrameLoadState();
-    ~FrameLoadState();
+static bool isDone;
 
-    enum class State {
-        Provisional,
-        Committed,
-        Finished
-    };
+@interface ProvisionalURLChangeController : NSObject <WKNavigationDelegate>
+@end
 
-    void didStartProvisionalLoad(const String& url);
-    void didReceiveServerRedirectForProvisionalLoad(const String& url);
-    void didFailProvisionalLoad();
+@implementation ProvisionalURLChangeController
 
-    void didCommitLoad();
-    void didFinishLoad();
-    void didFailLoad();
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    isDone = true;
+}
 
-    void didSameDocumentNotification(const String&);
+@end
 
-    State state() const { return m_state; }
-    const String& url() const { return m_url; }
-    const String& provisionalURL() const { return m_provisionalURL; }
+TEST(WKWebView, ProvisionalURLChange)
+{
+    auto webView = adoptNS([[WKWebView alloc] init]);
+    auto controller = adoptNS([[ProvisionalURLChangeController alloc] init]);
+    [webView setNavigationDelegate:controller.get()];
 
-    void setUnreachableURL(const String&);
-    const String& unreachableURL() const { return m_unreachableURL; }
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,start"]]];
+    TestWebKitAPI::Util::run(&isDone);
+    isDone = false;
 
-    // FIXME: These should all be private, and FrameLoadState should
-    // provide state transition member functions.
-    State m_state;
-    String m_url;
-    String m_provisionalURL;
-    String m_unreachableURL;
-    String m_lastUnreachableURL;
-};
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://www.webkit.org!"]]];
+    TestWebKitAPI::Util::run(&isDone);
+    isDone = false;
 
-} // namespace WebKit
+    EXPECT_STREQ([webView URL].absoluteString.UTF8String, "about:blank");
+}
 
-#endif // FrameLoadState_h
+#endif

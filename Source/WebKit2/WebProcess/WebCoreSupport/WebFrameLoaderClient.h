@@ -80,6 +80,7 @@ private:
     
     virtual void dispatchDidHandleOnloadEvents() override;
     virtual void dispatchDidReceiveServerRedirectForProvisionalLoad() override;
+    virtual void dispatchDidChangeProvisionalURL() override;
     virtual void dispatchDidCancelClientRedirect() override;
     virtual void dispatchWillPerformClientRedirect(const WebCore::URL&, double interval, double fireDate) override;
     virtual void dispatchDidChangeLocationWithinPage() override;
