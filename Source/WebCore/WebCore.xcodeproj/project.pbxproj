@@ -644,6 +644,8 @@
 		15C77094100D3CA8005BA267 /* JSValidityState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15C77092100D3CA8005BA267 /* JSValidityState.cpp */; };
 		15C770A5100D41CD005BA267 /* DOMValidityState.mm in Sources */ = {isa = PBXBuildFile; fileRef = 15C770A3100D41CD005BA267 /* DOMValidityState.mm */; };
 		15C770A6100D41CD005BA267 /* DOMValidityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 15C770A4100D41CD005BA267 /* DOMValidityState.h */; };
+		15FCC9FC1B4DF7F200E72326 /* DOMURLMediaStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073794ED19EE364200E5A045 /* DOMURLMediaStream.cpp */; };
+		15FCC9FE1B4DF85E00E72326 /* DOMURLMediaStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 15FCC9FD1B4DF85600E72326 /* DOMURLMediaStream.h */; };
 		163E88F7118A39D200ED9231 /* SimpleFontDataCoreText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 163E88F5118A39D200ED9231 /* SimpleFontDataCoreText.cpp */; };
 		185BCF280F3279CE000EA262 /* ThreadTimers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 185BCF260F3279CE000EA262 /* ThreadTimers.cpp */; };
 		185BCF290F3279CE000EA262 /* ThreadTimers.h in Headers */ = {isa = PBXBuildFile; fileRef = 185BCF270F3279CE000EA262 /* ThreadTimers.h */; };
@@ -7758,6 +7760,7 @@
 		15C77092100D3CA8005BA267 /* JSValidityState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSValidityState.cpp; sourceTree = "<group>"; };
 		15C770A3100D41CD005BA267 /* DOMValidityState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMValidityState.mm; sourceTree = "<group>"; };
 		15C770A4100D41CD005BA267 /* DOMValidityState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMValidityState.h; sourceTree = "<group>"; };
+		15FCC9FD1B4DF85600E72326 /* DOMURLMediaStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMURLMediaStream.h; sourceTree = "<group>"; };
 		163E88F5118A39D200ED9231 /* SimpleFontDataCoreText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleFontDataCoreText.cpp; sourceTree = "<group>"; };
 		185BCF260F3279CE000EA262 /* ThreadTimers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadTimers.cpp; sourceTree = "<group>"; };
 		185BCF270F3279CE000EA262 /* ThreadTimers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadTimers.h; sourceTree = "<group>"; };
@@ -14680,6 +14683,7 @@
 				07C59B7417F7D09D000FBCBB /* CapabilityRange.h */,
 				07C59B7517F7D09D000FBCBB /* CapabilityRange.idl */,
 				073794ED19EE364200E5A045 /* DOMURLMediaStream.cpp */,
+				15FCC9FD1B4DF85600E72326 /* DOMURLMediaStream.h */,
 				073794EE19EE364200E5A045 /* DOMURLMediaStream.idl */,
 				0779BF0A18453168000B6AE7 /* HTMLMediaElementMediaStream.cpp */,
 				0779BF0B18453168000B6AE7 /* HTMLMediaElementMediaStream.h */,
@@ -27340,6 +27344,7 @@
 				1AB7FC710A8B92EC00D9D37B /* XPathFunctions.h in Headers */,
 				1A7629D60A07425100989F5B /* XPathGrammar.h in Headers */,
 				E1EC29A00BB04C6B00EA187B /* XPathNodeSet.h in Headers */,
+				15FCC9FE1B4DF85E00E72326 /* DOMURLMediaStream.h in Headers */,
 				1AB7FC760A8B92EC00D9D37B /* XPathNSResolver.h in Headers */,
 				1AB7FC790A8B92EC00D9D37B /* XPathParser.h in Headers */,
 				1AB7FC7B0A8B92EC00D9D37B /* XPathPath.h in Headers */,
@@ -29743,6 +29748,7 @@
 				419FAFAE1ABABD08005B828B /* ReadableStreamReader.cpp in Sources */,
 				FD31603B12B0267600C1A359 /* RealtimeAnalyser.cpp in Sources */,
 				4A4F65701AA997F100E38CDD /* RealtimeMediaSource.cpp in Sources */,
+				15FCC9FC1B4DF7F200E72326 /* DOMURLMediaStream.cpp in Sources */,
 				4A0FFAA11AAF5EA20062803B /* RealtimeMediaSourceCenter.cpp in Sources */,
 				4A0FFAA51AAF5EF60062803B /* RealtimeMediaSourceCenterMac.cpp in Sources */,
 				4A4F65731AA997F100E38CDD /* RealtimeMediaSourceStates.cpp in Sources */,

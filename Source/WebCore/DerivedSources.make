@@ -120,6 +120,7 @@ NON_SVG_BINDING_IDLS = \
 	$(WebCore)/Modules/mediastream/AllVideoCapabilities.idl \
 	$(WebCore)/Modules/mediastream/AllAudioCapabilities.idl \
     $(WebCore)/Modules/mediastream/CapabilityRange.idl \
+	$(WebCore)/Modules/mediastream/DOMURLMediaStream.idl \
     $(WebCore)/Modules/mediastream/HTMLMediaElementMediaStream.idl \
     $(WebCore)/Modules/mediastream/MediaSourceStates.idl \
     $(WebCore)/Modules/mediastream/MediaDeviceInfo.idl \
