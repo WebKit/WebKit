@@ -124,6 +124,7 @@
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/MainFrame.h>
 #include <WebCore/MemoryCache.h>
+#include <WebCore/MemoryPressureHandler.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageCache.h>
@@ -2815,6 +2816,8 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
 
         WebKitInitializeWebDatabasesIfNecessary();
         WebKitSetApplicationCachePathIfNecessary();
+
+        MemoryPressureHandler::singleton().install();
 
         didOneTimeInitialization = true;
      }

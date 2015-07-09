@@ -7255,6 +7255,9 @@
     <ClCompile Include="..\platform\graphics\PlatformDisplay.cpp">
       <Filter>platform\graphics</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\win\MemoryPressureHandlerWin.cpp">
+      <Filter>platform\win</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Modules\geolocation\Coordinates.h">

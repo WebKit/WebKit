@@ -1,3 +1,13 @@
+2015-07-09  Per Arne Vollan  <peavo@outlook.com>
+
+        [Win] Add memory pressure handler.
+        https://bugs.webkit.org/show_bug.cgi?id=146685
+
+        Reviewed by Brent Fulgham.
+
+        * WebView.cpp:
+        (WebView::initWithFrame): Install memory pressure handler.
+
 2015-07-08  Daniel Bates  <dabates@apple.com>
 
         Attempt to fix the Apple Windows build after <https://trac.webkit.org/changeset/186566>

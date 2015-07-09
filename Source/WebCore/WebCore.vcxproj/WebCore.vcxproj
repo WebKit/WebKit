@@ -8126,6 +8126,7 @@
     <ClCompile Include="..\platform\win\LanguageWin.cpp" />
     <ClCompile Include="..\platform\win\LocalizedStringsWin.cpp" />
     <ClCompile Include="..\platform\win\LoggingWin.cpp" />
+    <ClCompile Include="..\platform\win\MemoryPressureHandlerWin.cpp" />
     <ClCompile Include="..\platform\win\MIMETypeRegistryWin.cpp" />
     <ClCompile Include="..\platform\win\PasteboardWin.cpp" />
     <ClCompile Include="..\platform\win\PathWalker.cpp" />

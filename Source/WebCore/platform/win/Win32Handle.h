@@ -56,6 +56,7 @@ public:
     {
         clear();
         m_handle = handle;
+        return *this;
     }
 
 private:

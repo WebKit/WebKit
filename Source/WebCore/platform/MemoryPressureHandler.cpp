@@ -180,7 +180,7 @@ void MemoryPressureHandler::releaseMemory(Critical critical, Synchronous synchro
     }
 }
 
-#if !PLATFORM(COCOA) && !OS(LINUX)
+#if !PLATFORM(COCOA) && !OS(LINUX) && !PLATFORM(WIN)
 void MemoryPressureHandler::install() { }
 void MemoryPressureHandler::uninstall() { }
 void MemoryPressureHandler::holdOff(unsigned) { }
