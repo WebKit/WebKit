@@ -1,5 +1,24 @@
 2015-07-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r186560. rdar://problem/21716387
+
+    2015-07-08  Matthew Hanson  <matthew_hanson@apple.com>
+
+            Merge r184653. rdar://problem/21716528
+
+        2015-05-20  Antti Koivisto  <antti@apple.com>
+
+                Assertion failure in WebCore::BidiRun::BidiRun()
+                https://bugs.webkit.org/show_bug.cgi?id=145203
+                rdar://problem/20958973
+
+                Reviewed by Andreas Kling.
+
+                * fast/text/text-combine-crash-expected.txt: Added.
+                * fast/text/text-combine-crash.html: Added.
+
+2015-07-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r186557. rdar://problem/21716382
 
     2015-07-08  Matthew Hanson  <matthew_hanson@apple.com>
