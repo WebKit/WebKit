@@ -555,7 +555,7 @@ ArrayStorage* JSObject::enterDictionaryIndexingModeWhenArrayStorageAlreadyExists
         // This will always be a new entry in the map, so no need to check we can write,
         // and attributes are default so no need to set them.
         if (value)
-            map->add(this, i).iterator->value.set(vm, this, value);
+            map->add(this, i).iterator->value.set(vm, map, value);
     }
 
     DeferGC deferGC(vm.heap);
@@ -1693,12 +1693,13 @@ NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, JSValue g
 void JSObject::putIndexedDescriptor(ExecState* exec, SparseArrayEntry* entryInMap, const PropertyDescriptor& descriptor, PropertyDescriptor& oldDescriptor)
 {
     VM& vm = exec->vm();
+    auto map = m_butterfly->arrayStorage()->m_sparseMap.get();
 
     if (descriptor.isDataDescriptor()) {
         if (descriptor.value())
-            entryInMap->set(vm, this, descriptor.value());
+            entryInMap->set(vm, map, descriptor.value());
         else if (oldDescriptor.isAccessorDescriptor())
-            entryInMap->set(vm, this, jsUndefined());
+            entryInMap->set(vm, map, jsUndefined());
         entryInMap->attributes = descriptor.attributesOverridingCurrent(oldDescriptor) & ~Accessor;
         return;
     }
@@ -1721,7 +1722,7 @@ void JSObject::putIndexedDescriptor(ExecState* exec, SparseArrayEntry* entryInMa
         if (setter)
             accessor->setSetter(vm, setter);
 
-        entryInMap->set(vm, this, accessor);
+        entryInMap->set(vm, map, accessor);
         entryInMap->attributes = descriptor.attributesOverridingCurrent(oldDescriptor) & ~ReadOnly;
         return;
     }
