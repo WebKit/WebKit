@@ -1,3 +1,13 @@
+2015-07-09  Wenson Hsieh  <whsieh@berkeley.edu>
+
+        Rubber banding is broken when using a Mighty Mouse
+        https://bugs.webkit.org/show_bug.cgi?id=146693
+
+        Reviewed by Tim Horton.
+
+        * platform/mac-wk2/tiled-drawing/scrolling/stateless-scrolling-no-rubber-band-expected.txt: Added.
+        * platform/mac-wk2/tiled-drawing/scrolling/stateless-scrolling-no-rubber-band.html: Added.
+
 2015-07-09  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Fix shape-highlight layout tests

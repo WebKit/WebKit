@@ -325,8 +325,6 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
     // there is no need to dirty / recompute these lists.
     m_zOrderListsDirty = isStackingContainer();
 
-    ScrollableArea::setConstrainsScrollingToContentEdge(false);
-
     if (!renderer().firstChild()) {
         m_visibleContentStatusDirty = false;
         m_hasVisibleContent = renderer().style().visibility() == VISIBLE;

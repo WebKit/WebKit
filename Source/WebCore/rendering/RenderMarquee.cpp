@@ -63,6 +63,7 @@ RenderMarquee::RenderMarquee(RenderLayer* l)
     , m_start(0), m_end(0), m_speed(0), m_reset(false)
     , m_suspended(false), m_stopped(false), m_direction(MAUTO)
 {
+    l->setConstrainsScrollingToContentEdge(false);
 }
 
 RenderMarquee::~RenderMarquee()
