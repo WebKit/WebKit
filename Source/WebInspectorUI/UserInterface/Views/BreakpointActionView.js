@@ -113,7 +113,7 @@ WebInspector.BreakpointActionView = class BreakpointActionView extends WebInspec
 
     _appendActionButtonClicked(event)
     {
-        var newAction = this._action.breakpoint.createAction(WebInspector.Breakpoint.DefaultBreakpointActionType, this._action);
+        var newAction = this._action.breakpoint.createAction(this._action.type, this._action);
         this._delegate.breakpointActionViewAppendActionView(this, newAction);
     }
 

@@ -1,3 +1,14 @@
+2015-07-09  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: new breakpoint action dialog should reuse same action type
+        https://bugs.webkit.org/show_bug.cgi?id=137255
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/BreakpointActionView.js:
+        (WebInspector.BreakpointActionView.prototype._appendActionButtonClicked):
+        Use the view's action type instead of the default.
+
 2015-07-08  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Copy Rule in the context menu copies hidden properties in the rule
