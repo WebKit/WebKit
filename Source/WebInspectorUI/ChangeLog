@@ -1,5 +1,20 @@
 2015-07-08  Timothy Hatcher  <timothy@apple.com>
 
+        Web Inspector: Only record a timeline when the Timelines tab is showing
+        https://bugs.webkit.org/show_bug.cgi?id=146759
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype.get autoCaptureOnPageLoad):
+        (WebInspector.TimelineManager.prototype.set autoCaptureOnPageLoad):
+        (WebInspector.TimelineManager.prototype._startAutoCapturing):
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WebInspector.TimelineTabContentView.prototype.shown):
+        (WebInspector.TimelineTabContentView.prototype.hidden):
+
+2015-07-08  Timothy Hatcher  <timothy@apple.com>
+
         Web Inspector: Details sidebar doesn't activate on first selected resource in Network tab
         https://bugs.webkit.org/show_bug.cgi?id=146691
 

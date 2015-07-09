@@ -42,6 +42,20 @@ WebInspector.TimelineTabContentView.prototype = {
         return WebInspector.TimelineTabContentView.Type;
     },
 
+    shown: function()
+    {
+        WebInspector.ContentBrowserTabContentView.prototype.shown.call(this);
+
+        WebInspector.timelineManager.autoCaptureOnPageLoad = true;
+    },
+
+    hidden: function()
+    {
+        WebInspector.ContentBrowserTabContentView.prototype.hidden.call(this);
+
+        WebInspector.timelineManager.autoCaptureOnPageLoad = false;
+    },
+
     canShowRepresentedObject: function(representedObject)
     {
         if (representedObject instanceof WebInspector.TimelineRecording)

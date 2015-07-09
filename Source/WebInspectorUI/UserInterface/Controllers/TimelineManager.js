@@ -74,6 +74,16 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
         return this._recordings.slice();
     }
 
+    get autoCaptureOnPageLoad()
+    {
+        return this._autoCaptureOnPageLoad;
+    }
+
+    set autoCaptureOnPageLoad(autoCapture)
+    {
+        this._autoCaptureOnPageLoad = autoCapture;
+    }
+
     isCapturing()
     {
         return this._isCapturing;
@@ -504,6 +514,9 @@ WebInspector.TimelineManager = class TimelineManager extends WebInspector.Object
 
     _startAutoCapturing(event)
     {
+        if (!this._autoCaptureOnPageLoad)
+            return false;
+
         if (!event.target.isMainFrame() || (this._isCapturing && !this._autoCapturingMainResource))
             return false;
 
