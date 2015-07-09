@@ -1183,7 +1183,7 @@ Controller.prototype = {
         var dpr = window.devicePixelRatio;
         var width = this.timelineWidth * dpr;
         var height = this.timelineHeight * dpr;
-        
+
         if (!width || !height)
             return;
 
@@ -1191,31 +1191,34 @@ Controller.prototype = {
         var buffered = 0;
         for (var i = 0, end = this.video.buffered.length; i < end; ++i)
             buffered = Math.max(this.video.buffered.end(i), buffered);
-        
+
         buffered /= this.video.duration;
-        
+
         var ctx = document.getCSSCanvasContext('2d', this.timelineContextName, width, height);
-        
+
         width /= dpr;
         height /= dpr;
-        
+
         ctx.save();
         ctx.scale(dpr, dpr);
         ctx.clearRect(0, 0, width, height);
-        
+
         var timelineHeight = 3;
         var trackHeight = 1;
         var scrubberWidth = 3;
         var scrubberHeight = 15;
         var borderSize = 2;
         var scrubberPosition = Math.max(0, Math.min(width - scrubberWidth, Math.round(width * played)));
-        
+
         // Draw buffered section.
         ctx.save();
-        ctx.fillStyle = "rgb(30, 30, 30)";
+        if (this.isAudio())
+            ctx.fillStyle = "rgb(71, 71, 71)";
+        else
+            ctx.fillStyle = "rgb(30, 30, 30)";
         ctx.fillRect(1, 8, Math.round(width * buffered) - borderSize, trackHeight);
         ctx.restore();
-        
+
         // Draw timeline border.
         ctx.save();
         ctx.beginPath();
@@ -1223,20 +1226,26 @@ Controller.prototype = {
         this.addRoundedRect(ctx, scrubberPosition + 1, 8, width - scrubberPosition - borderSize , trackHeight, trackHeight / 2.0);
         ctx.closePath();
         ctx.clip("evenodd");
-        ctx.fillStyle = "rgb(30, 30, 30)";
+        if (this.isAudio())
+            ctx.fillStyle = "rgb(71, 71, 71)";
+        else
+            ctx.fillStyle = "rgb(30, 30, 30)";
         ctx.fillRect(0, 0, width, height);
         ctx.restore();
-        
+
         // Draw played section.
-        ctx.save(); 
+        ctx.save();
         ctx.beginPath();
         this.addRoundedRect(ctx, 0, 7, width, timelineHeight, timelineHeight / 2.0);
         ctx.closePath();
         ctx.clip();
-        ctx.fillStyle = "rgb(75, 75, 75)";
+        if (this.isAudio())
+            ctx.fillStyle = "rgb(116, 116, 116)";
+        else
+            ctx.fillStyle = "rgb(75, 75, 75)";
         ctx.fillRect(0, 0, width * played, height);
         ctx.restore();
-        
+
         // Draw the scrubber.
         ctx.save();
         ctx.clearRect(scrubberPosition - 1, 0, scrubberWidth + borderSize, height, 0);
@@ -1244,10 +1253,13 @@ Controller.prototype = {
         this.addRoundedRect(ctx, scrubberPosition, 1, scrubberWidth, scrubberHeight, 1);
         ctx.closePath();
         ctx.clip();
-        ctx.fillStyle = "rgb(140, 140, 140)";
+        if (this.isAudio())
+            ctx.fillStyle = "rgb(181, 181, 181)";
+        else
+            ctx.fillStyle = "rgb(140, 140, 140)";
         ctx.fillRect(0, 0, width, height);
         ctx.restore();
-        
+
         ctx.restore();
     },
 
@@ -1258,25 +1270,25 @@ Controller.prototype = {
 
         if (!width || !height)
             return;
-            
+
         var ctx = document.getCSSCanvasContext('2d', this.volumeContextName, width, height);
-        
+
         width /= dpr;
         height /= dpr;
-        
+
         ctx.save();
         ctx.scale(dpr, dpr);
         ctx.clearRect(0, 0, width, height);
-        
+
         var seekerPosition = this.controls.volume.value;
         var trackHeight = 1;
         var timelineHeight = 3;
         var scrubberRadius = 3.5;
         var scrubberDiameter = 2 * scrubberRadius;
         var borderSize = 2;
-        
+
         var scrubberPosition = Math.round(seekerPosition * (width - scrubberDiameter - borderSize));
-        
+
 
         // Draw portion of volume under slider thumb.
         ctx.save();
@@ -1287,7 +1299,7 @@ Controller.prototype = {
         ctx.fillStyle = "rgb(75, 75, 75)";
         ctx.fillRect(0, 0, width, height);
         ctx.restore();
-        
+
         // Draw portion of volume above slider thumb.
         ctx.save();
         ctx.beginPath();
@@ -1297,7 +1309,7 @@ Controller.prototype = {
         ctx.fillStyle = "rgb(30, 30, 30)";
         ctx.fillRect(0, 0, width, height);
         ctx.restore();
-        
+
         // Clear a hole in the slider for the scrubber.
         ctx.save();
         ctx.beginPath();
@@ -1306,7 +1318,7 @@ Controller.prototype = {
         ctx.clip();
         ctx.clearRect(0, 0, width, height);
         ctx.restore();
-        
+
         // Draw scrubber.
         ctx.save();
         ctx.beginPath();
@@ -1319,10 +1331,10 @@ Controller.prototype = {
             ctx.fillStyle = "rgb(140, 140, 140)";
         ctx.fillRect(0, 0, width, height);
         ctx.restore();
-        
+
         ctx.restore();
     },
-    
+
     formatTime: function(time)
     {
         if (isNaN(time))

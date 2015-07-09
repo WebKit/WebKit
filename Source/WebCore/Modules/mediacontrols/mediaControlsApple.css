@@ -73,13 +73,12 @@ audio::-webkit-media-controls-panel {
     position: relative;
     bottom: 0;
     width: 100%;
-    min-height: 45px;
-    height: 45px;
+    min-height: 25px;
+    height: 25px;
     line-height: 25px;
     -webkit-user-select: none;
     -webkit-user-drag: element;
     background-color: transparent;
-    padding-top: 20px;
 
     display: -webkit-flex;
     -webkit-flex-direction: row;
@@ -93,6 +92,9 @@ audio::-webkit-media-controls-panel {
 
 video::-webkit-media-controls-panel {
     opacity: 0;
+    padding-top: 20px;
+    min-height: 45px;
+    height: 45px;
 }
 
 video::-webkit-media-controls-panel.show,
@@ -108,13 +110,16 @@ audio::-webkit-media-controls-panel-background-container {
     left: 0;
     top: 0;
     width: 100%;
+}
+
+video::-webkit-media-controls-panel-background-container {
+    z-index: 0;
+}
+
+video::-webkit-media-controls-panel-background-container {
     min-height: 45px;
     height: 45px;
     -webkit-clip-path: inset(20px 0px 0px 0px);
-}
-
-audio::-webkit-media-controls-panel-background-container {
-    background-color: black;
 }
 
 video::-webkit-media-controls-panel-tint,
@@ -123,6 +128,10 @@ audio::-webkit-media-controls-panel-tint {
     left: 0;
     top: 0;
     width: 100%;
+    background-color: transparent;
+}
+
+video::-webkit-media-controls-panel-tint {
     min-height: 45px;
     height: 45px;
     background-color: rgb(41, 41, 41);
@@ -135,6 +144,12 @@ audio::-webkit-media-controls-panel-background {
     left: 0;
     top: 0;
     width: 100%;
+    min-height: 25px;
+    height: 25px;
+    background-color: rgb(41, 41, 41);
+}
+
+video::-webkit-media-controls-panel-background {
     min-height: 45px;
     height: 45px;
     background-color: rgba(30, 30, 30, 0.45);
@@ -153,8 +168,15 @@ audio::-webkit-media-controls-panel button {
     background-origin: content-box;
     background-repeat: no-repeat;
     background-position: center;
-    -webkit-transform: translateZ(0);
+}
+
+audio::-webkit-media-controls-panel button {
+    z-index: 0;
+}
+
+video::-webkit-media-controls-panel button {
     mix-blend-mode: plus-lighter;
+    -webkit-transform: translateZ(0);
 }
 
 video::-webkit-media-controls-panel button:focus,
@@ -217,7 +239,7 @@ audio::-webkit-media-controls-panel .volume-box {
     width: 63px;
     bottom: 5px;
     left: -25px;
-    
+
     -webkit-clip-path: inset(20px 20px 20px 20px round 4px 4px 0px 0px);
     background-color: transparent;
     overflow: hidden;
@@ -247,6 +269,10 @@ audio::-webkit-media-controls-volume-slider-container-background {
     border-bottom-right-radius: 4px;
     border-top-right-radius: 4px;
     background-color: rgba(30, 30, 30, 0.45);
+}
+
+video::-webkit-media-controls-volume-slider-container-background {
+    background-color: rgba(30, 30, 30, 0.45);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
 }
 
@@ -260,6 +286,9 @@ audio::-webkit-media-controls-volume-slider-container-tint {
     border-bottom-right-radius: 4px;
     border-top-right-radius: 4px;
     background-color: rgb(41, 41, 41);
+}
+
+video::-webkit-media-controls-volume-slider-container-tint {
     mix-blend-mode: lighten;
 }
 
@@ -290,6 +319,9 @@ video::-webkit-media-controls-volume-slider {
     background-repeat: no-repeat;
     -webkit-transform-origin: 0 0;
     -webkit-transform: rotate(-90deg) translateY(28px) translateX(-40px);
+}
+
+video::-webkit-media-controls-volume-slider {
     mix-blend-mode: plus-lighter;
 }
 
@@ -447,9 +479,8 @@ video::-webkit-media-controls-status-display,
 audio::-webkit-media-controls-status-display {
     cursor: default;
     overflow: hidden;
-    color: white;
-    opacity: .45;
-    mix-blend-mode: plus-lighter;
+    color: rgb(156, 156, 156);
+    opacity: 0.99;
 
     letter-spacing: normal;
     word-spacing: normal;
@@ -463,6 +494,13 @@ audio::-webkit-media-controls-status-display {
 
     -webkit-flex: 1 1 0;
 }
+
+video::-webkit-media-controls-status-display {
+    color: white;
+    opacity: .45;
+    mix-blend-mode: plus-lighter;
+}
+
 video::-webkit-media-controls-timeline,
 audio::-webkit-media-controls-timeline {
     -webkit-appearance: none !important;
@@ -472,16 +510,19 @@ audio::-webkit-media-controls-timeline {
     background-size: 100% 100% !important;
     background-repeat: no-repeat;
     background-color: transparent;
-    mix-blend-mode: plus-lighter;
-
 }
+
+video::-webkit-media-controls-timeline {
+    mix-blend-mode: plus-lighter;
+}
+
 video::-webkit-media-controls-timeline::-webkit-slider-thumb,
 audio::-webkit-media-controls-timeline::-webkit-slider-thumb {
     -webkit-appearance: none !important;
-    width:3px !important;
+    width: 3px !important;
     height: 15px !important;
 }
- 
+
 video::-webkit-media-controls-current-time-display,
 video::-webkit-media-controls-time-remaining-display,
 audio::-webkit-media-controls-current-time-display,
@@ -490,10 +531,8 @@ audio::-webkit-media-controls-time-remaining-display {
     -webkit-flex: 0 0 0;
     display: -webkit-flex;
     cursor: default;
-    overflow-y: hidden;
-    overflow-x: hidden;
-    color: white;
-    opacity: .45;
+    overflow: hidden;
+    color: rgb(156, 156, 156);
     letter-spacing: normal;
     word-spacing: normal;
     line-height: normal;
@@ -503,7 +542,13 @@ audio::-webkit-media-controls-time-remaining-display {
     position: relative;
     bottom: 0.5px;
     font-family: -apple-system-monospaced-numbers;
-    -webkit-text-size-adjust:none;
+    -webkit-text-size-adjust: none;
+}
+
+video::-webkit-media-controls-current-time-display,
+video::-webkit-media-controls-time-remaining-display {
+    color: white;
+    opacity: .45;
     mix-blend-mode: plus-lighter;
 }
 
@@ -702,7 +747,7 @@ video:-webkit-full-screen::-webkit-media-controls-volume-min-button {
 
 video:-webkit-full-screen::-webkit-media-controls-play-button {
     position: absolute;
-    
+
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 21 23" fill="rgba(255,255,255,0.45)"><path d="M 0,0 0,22 8,22 8,0 z"/><path d="M 13,0 13,22 21,22 21,0 z"/></svg>');
 
     width: 21px;
