@@ -144,10 +144,10 @@ bool SandboxExtension::HandleArray::decode(IPC::ArgumentDecoder& decoder, Sandbo
     return true;
 }
 
-PassRefPtr<SandboxExtension> SandboxExtension::create(const Handle& handle)
+RefPtr<SandboxExtension> SandboxExtension::create(const Handle& handle)
 {
     if (!handle.m_sandboxExtension)
-        return 0;
+        return nullptr;
 
     return adoptRef(new SandboxExtension(handle));
 }

@@ -58,7 +58,7 @@ struct PluginCreationParameters;
 
 class PluginProxy : public Plugin {
 public:
-    static PassRefPtr<PluginProxy> create(uint64_t pluginProcessToken, bool isRestartedProcess);
+    static Ref<PluginProxy> create(uint64_t pluginProcessToken, bool isRestartedProcess);
     ~PluginProxy();
 
     uint64_t pluginInstanceID() const { return m_pluginInstanceID; }

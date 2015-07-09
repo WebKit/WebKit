@@ -38,7 +38,7 @@ namespace WebKit {
 
 class InjectedBundleScriptWorld : public API::ObjectImpl<API::Object::Type::BundleScriptWorld> {
 public:
-    static PassRefPtr<InjectedBundleScriptWorld> create();
+    static Ref<InjectedBundleScriptWorld> create();
     static PassRefPtr<InjectedBundleScriptWorld> getOrCreate(WebCore::DOMWrapperWorld&);
     static InjectedBundleScriptWorld* normalWorld();
 

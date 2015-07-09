@@ -39,7 +39,7 @@ struct WebPopupItem;
 
 class WebPopupMenu : public WebCore::PopupMenu {
 public:
-    static PassRefPtr<WebPopupMenu> create(WebPage*, WebCore::PopupMenuClient*);
+    static Ref<WebPopupMenu> create(WebPage*, WebCore::PopupMenuClient*);
     ~WebPopupMenu();
 
     WebPage* page() { return m_page; }

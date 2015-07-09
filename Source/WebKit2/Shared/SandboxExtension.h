@@ -89,7 +89,7 @@ public:
 #endif
     };
     
-    static PassRefPtr<SandboxExtension> create(const Handle&);
+    static RefPtr<SandboxExtension> create(const Handle&);
     static bool createHandle(const String& path, Type type, Handle&);
     static bool createHandleForReadWriteDirectory(const String& path, Handle&); // Will attempt to create the directory.
     static String createHandleForTemporaryFile(const String& prefix, Type type, Handle&);
@@ -123,7 +123,7 @@ inline const SandboxExtension::Handle& SandboxExtension::HandleArray::operator[]
 inline SandboxExtension::Handle& SandboxExtension::HandleArray::operator[](size_t) { return m_emptyHandle; }
 inline void SandboxExtension::HandleArray::encode(IPC::ArgumentEncoder&) const { }
 inline bool SandboxExtension::HandleArray::decode(IPC::ArgumentDecoder&, HandleArray&) { return true; }
-inline PassRefPtr<SandboxExtension> SandboxExtension::create(const Handle&) { return 0; }
+inline RefPtr<SandboxExtension> SandboxExtension::create(const Handle&) { return nullptr; }
 inline bool SandboxExtension::createHandle(const String&, Type, Handle&) { return true; }
 inline bool SandboxExtension::createHandleForReadWriteDirectory(const String&, Handle&) { return true; }
 inline String SandboxExtension::createHandleForTemporaryFile(const String& /*prefix*/, Type, Handle&) {return String();}

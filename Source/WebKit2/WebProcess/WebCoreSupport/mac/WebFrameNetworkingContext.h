@@ -35,9 +35,9 @@ namespace WebKit {
 
 class WebFrameNetworkingContext : public WebCore::FrameNetworkingContext {
 public:
-    static PassRefPtr<WebFrameNetworkingContext> create(WebFrame* frame)
+    static Ref<WebFrameNetworkingContext> create(WebFrame* frame)
     {
-        return adoptRef(new WebFrameNetworkingContext(frame));
+        return adoptRef(*new WebFrameNetworkingContext(frame));
     }
 
     // FIXME: remove platform-specific code and use SessionTracker

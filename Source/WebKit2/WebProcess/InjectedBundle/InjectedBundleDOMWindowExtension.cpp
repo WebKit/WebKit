@@ -47,9 +47,9 @@ static ExtensionMap& allExtensions()
     return map;
 }
 
-PassRefPtr<InjectedBundleDOMWindowExtension> InjectedBundleDOMWindowExtension::create(WebFrame* frame, InjectedBundleScriptWorld* world)
+Ref<InjectedBundleDOMWindowExtension> InjectedBundleDOMWindowExtension::create(WebFrame* frame, InjectedBundleScriptWorld* world)
 {
-    return adoptRef(new InjectedBundleDOMWindowExtension(frame, world));
+    return adoptRef(*new InjectedBundleDOMWindowExtension(frame, world));
 }
 
 InjectedBundleDOMWindowExtension* InjectedBundleDOMWindowExtension::get(DOMWindowExtension* extension)

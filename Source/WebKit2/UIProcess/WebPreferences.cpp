@@ -37,9 +37,9 @@ namespace WebKit {
 // Instead of tracking private browsing state as a boolean preference, we should let the client provide storage sessions explicitly.
 static unsigned privateBrowsingPageCount;
 
-PassRefPtr<WebPreferences> WebPreferences::create(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix)
+Ref<WebPreferences> WebPreferences::create(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix)
 {
-    return adoptRef(new WebPreferences(identifier, keyPrefix, globalDebugKeyPrefix));
+    return adoptRef(*new WebPreferences(identifier, keyPrefix, globalDebugKeyPrefix));
 }
 
 PassRefPtr<WebPreferences> WebPreferences::createWithLegacyDefaults(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix)

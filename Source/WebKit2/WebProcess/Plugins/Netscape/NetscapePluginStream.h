@@ -48,9 +48,9 @@ class NetscapePlugin;
 
 class NetscapePluginStream : public RefCounted<NetscapePluginStream> {
 public:
-    static PassRefPtr<NetscapePluginStream> create(PassRefPtr<NetscapePlugin> plugin, uint64_t streamID, const String& requestURLString, bool sendNotification, void* notificationData)
+    static Ref<NetscapePluginStream> create(PassRefPtr<NetscapePlugin> plugin, uint64_t streamID, const String& requestURLString, bool sendNotification, void* notificationData)
     {
-        return adoptRef(new NetscapePluginStream(plugin, streamID, requestURLString, sendNotification, notificationData));
+        return adoptRef(*new NetscapePluginStream(plugin, streamID, requestURLString, sendNotification, notificationData));
     }
     ~NetscapePluginStream();
 

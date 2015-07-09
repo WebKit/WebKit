@@ -46,7 +46,7 @@ class StorageNamespaceImpl;
 
 class StorageAreaMap : public RefCounted<StorageAreaMap>, private IPC::MessageReceiver {
 public:
-    static PassRefPtr<StorageAreaMap> create(StorageNamespaceImpl*, Ref<WebCore::SecurityOrigin>&&);
+    static Ref<StorageAreaMap> create(StorageNamespaceImpl*, Ref<WebCore::SecurityOrigin>&&);
     ~StorageAreaMap();
 
     WebCore::StorageType storageType() const { return m_storageType; }

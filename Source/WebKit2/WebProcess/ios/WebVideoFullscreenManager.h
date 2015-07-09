@@ -106,7 +106,7 @@ private:
 
 class WebVideoFullscreenManager : public RefCounted<WebVideoFullscreenManager>, private IPC::MessageReceiver {
 public:
-    static PassRefPtr<WebVideoFullscreenManager> create(PassRefPtr<WebPage>);
+    static Ref<WebVideoFullscreenManager> create(PassRefPtr<WebPage>);
     virtual ~WebVideoFullscreenManager();
     
     void didReceiveMessage(IPC::Connection&, IPC::MessageDecoder&) override;

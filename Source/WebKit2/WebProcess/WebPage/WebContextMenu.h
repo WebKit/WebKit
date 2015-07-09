@@ -39,9 +39,9 @@ class WebPage;
 
 class WebContextMenu : public RefCounted<WebContextMenu> {
 public:
-    static PassRefPtr<WebContextMenu> create(WebPage* page) 
+    static Ref<WebContextMenu> create(WebPage* page) 
     {
-        return adoptRef(new WebContextMenu(page));
+        return adoptRef(*new WebContextMenu(page));
     }
     
     ~WebContextMenu();

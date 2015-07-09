@@ -53,9 +53,9 @@ static uint64_t generateStorageMapID()
     return ++storageMapID;
 }
 
-PassRefPtr<StorageAreaMap> StorageAreaMap::create(StorageNamespaceImpl* storageNamespace, Ref<WebCore::SecurityOrigin>&& securityOrigin)
+Ref<StorageAreaMap> StorageAreaMap::create(StorageNamespaceImpl* storageNamespace, Ref<WebCore::SecurityOrigin>&& securityOrigin)
 {
-    return adoptRef(new StorageAreaMap(storageNamespace, WTF::move(securityOrigin)));
+    return adoptRef(*new StorageAreaMap(storageNamespace, WTF::move(securityOrigin)));
 }
 
 StorageAreaMap::StorageAreaMap(StorageNamespaceImpl* storageNamespace, Ref<WebCore::SecurityOrigin>&& securityOrigin)

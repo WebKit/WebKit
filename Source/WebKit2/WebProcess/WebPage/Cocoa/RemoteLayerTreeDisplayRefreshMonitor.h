@@ -35,9 +35,9 @@ namespace WebKit {
 
 class RemoteLayerTreeDisplayRefreshMonitor : public WebCore::DisplayRefreshMonitor {
 public:
-    static PassRefPtr<RemoteLayerTreeDisplayRefreshMonitor> create(PlatformDisplayID displayID, RemoteLayerTreeDrawingArea& drawingArea)
+    static Ref<RemoteLayerTreeDisplayRefreshMonitor> create(PlatformDisplayID displayID, RemoteLayerTreeDrawingArea& drawingArea)
     {
-        return adoptRef(new RemoteLayerTreeDisplayRefreshMonitor(displayID, drawingArea));
+        return adoptRef(*new RemoteLayerTreeDisplayRefreshMonitor(displayID, drawingArea));
     }
     
     virtual ~RemoteLayerTreeDisplayRefreshMonitor();

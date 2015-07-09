@@ -60,7 +60,7 @@ bool InjectedBundlePageContextMenuClient::getCustomMenuFromDefaultItems(WebPage&
 
     WKArrayRef newMenuWK = nullptr;
     WKTypeRef userDataToPass = nullptr;
-    m_client.getContextMenuFromDefaultMenu(toAPI(&page), toAPI(InjectedBundleHitTestResult::create(hitTestResult).get()), toAPI(API::Array::create(WTF::move(defaultMenuItems)).ptr()), &newMenuWK, &userDataToPass, m_client.base.clientInfo);
+    m_client.getContextMenuFromDefaultMenu(toAPI(&page), toAPI(&InjectedBundleHitTestResult::create(hitTestResult).get()), toAPI(API::Array::create(WTF::move(defaultMenuItems)).ptr()), &newMenuWK, &userDataToPass, m_client.base.clientInfo);
     RefPtr<API::Array> array = adoptRef(toImpl(newMenuWK));
     userData = adoptRef(toImpl(userDataToPass));
     
@@ -89,7 +89,7 @@ void InjectedBundlePageContextMenuClient::prepareForImmediateAction(WebPage& pag
         return;
 
     WKTypeRef userDataToPass = nullptr;
-    m_client.prepareForActionMenu(toAPI(&page), toAPI(InjectedBundleHitTestResult::create(hitTestResult).get()), &userDataToPass, m_client.base.clientInfo);
+    m_client.prepareForActionMenu(toAPI(&page), toAPI(&InjectedBundleHitTestResult::create(hitTestResult).get()), &userDataToPass, m_client.base.clientInfo);
     userData = adoptRef(toImpl(userDataToPass));
 }
 

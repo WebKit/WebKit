@@ -151,9 +151,9 @@ void WebVideoFullscreenInterfaceContext::setExternalPlayback(bool enabled, Exter
 
 #pragma mark - WebVideoFullscreenManager
 
-PassRefPtr<WebVideoFullscreenManager> WebVideoFullscreenManager::create(PassRefPtr<WebPage> page)
+Ref<WebVideoFullscreenManager> WebVideoFullscreenManager::create(PassRefPtr<WebPage> page)
 {
-    return adoptRef(new WebVideoFullscreenManager(page));
+    return adoptRef(*new WebVideoFullscreenManager(page));
 }
 
 WebVideoFullscreenManager::WebVideoFullscreenManager(PassRefPtr<WebPage> page)

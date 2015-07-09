@@ -36,9 +36,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<PageBanner> PageBanner::create(CALayer *layer, int height, Client* client)
+Ref<PageBanner> PageBanner::create(CALayer *layer, int height, Client* client)
 {
-    return adoptRef(new PageBanner(layer, height, client));
+    return adoptRef(*new PageBanner(layer, height, client));
 }
 
 PageBanner::PageBanner(CALayer *layer, int height, Client* client)

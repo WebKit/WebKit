@@ -81,9 +81,9 @@ WebMouseEvent::Button InjectedBundleNavigationAction::mouseButtonForNavigationAc
 }
 
 
-PassRefPtr<InjectedBundleNavigationAction> InjectedBundleNavigationAction::create(WebFrame* frame, const NavigationAction& action, PassRefPtr<FormState> formState)
+Ref<InjectedBundleNavigationAction> InjectedBundleNavigationAction::create(WebFrame* frame, const NavigationAction& action, PassRefPtr<FormState> formState)
 {
-    return adoptRef(new InjectedBundleNavigationAction(frame, action, formState));
+    return adoptRef(*new InjectedBundleNavigationAction(frame, action, formState));
 }
 
 InjectedBundleNavigationAction::InjectedBundleNavigationAction(WebFrame* frame, const NavigationAction& navigationAction, PassRefPtr<FormState> prpFormState)

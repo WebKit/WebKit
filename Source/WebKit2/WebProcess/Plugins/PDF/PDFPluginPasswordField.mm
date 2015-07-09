@@ -42,9 +42,9 @@ using namespace HTMLNames;
 
 namespace WebKit {
 
-PassRefPtr<PDFPluginPasswordField> PDFPluginPasswordField::create(PDFLayerController *pdfLayerController, PDFPlugin* plugin)
+Ref<PDFPluginPasswordField> PDFPluginPasswordField::create(PDFLayerController *pdfLayerController, PDFPlugin* plugin)
 {
-    return adoptRef(new PDFPluginPasswordField(pdfLayerController, plugin));
+    return adoptRef(*new PDFPluginPasswordField(pdfLayerController, plugin));
 }
 
 PDFPluginPasswordField::~PDFPluginPasswordField()

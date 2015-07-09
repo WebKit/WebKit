@@ -43,9 +43,9 @@ class WebFrame;
 
 class WebQuickLookHandleClient final : public WebCore::QuickLookHandleClient {
 public:
-    static PassRefPtr<WebQuickLookHandleClient> create(const WebCore::QuickLookHandle& handle, uint64_t pageID)
+    static Ref<WebQuickLookHandleClient> create(const WebCore::QuickLookHandle& handle, uint64_t pageID)
     {
-        return adoptRef(new WebQuickLookHandleClient(handle, pageID));
+        return adoptRef(*new WebQuickLookHandleClient(handle, pageID));
     }
 
 private:

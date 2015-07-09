@@ -40,9 +40,9 @@ namespace WebKit {
 
 class ObjCObjectGraph : public API::ObjectImpl<API::Object::Type::ObjCObjectGraph> {
 public:
-    static PassRefPtr<ObjCObjectGraph> create(id rootObject)
+    static Ref<ObjCObjectGraph> create(id rootObject)
     {
-        return adoptRef(new ObjCObjectGraph(rootObject));
+        return adoptRef(*new ObjCObjectGraph(rootObject));
     }
 
     id rootObject() const { return m_rootObject.get(); }

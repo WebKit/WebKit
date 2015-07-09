@@ -33,9 +33,9 @@
 
 namespace WebKit {
 
-PassRefPtr<CompletionHandlerCallChecker> CompletionHandlerCallChecker::create(id delegate, SEL delegateMethodSelector)
+Ref<CompletionHandlerCallChecker> CompletionHandlerCallChecker::create(id delegate, SEL delegateMethodSelector)
 {
-    return adoptRef(new CompletionHandlerCallChecker(object_getClass(delegate), delegateMethodSelector));
+    return adoptRef(*new CompletionHandlerCallChecker(object_getClass(delegate), delegateMethodSelector));
 }
 
 CompletionHandlerCallChecker::CompletionHandlerCallChecker(Class delegateClass, SEL delegateMethodSelector)

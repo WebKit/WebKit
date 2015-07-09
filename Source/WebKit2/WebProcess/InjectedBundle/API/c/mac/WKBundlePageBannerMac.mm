@@ -102,7 +102,7 @@ WKBundlePageBannerRef WKBundlePageBannerCreateBannerWithCALayer(CALayer *layer, 
         return 0;
 
     auto clientImpl = std::make_unique<PageBannerClientImpl>(wkClient);
-    return toAPI(PageBanner::create(layer, height, clientImpl.release()).leakRef());
+    return toAPI(&PageBanner::create(layer, height, clientImpl.release()).leakRef());
 }
 
 CALayer * WKBundlePageBannerGetLayer(WKBundlePageBannerRef pageBanner)

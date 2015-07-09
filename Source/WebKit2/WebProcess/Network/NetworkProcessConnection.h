@@ -50,9 +50,9 @@ typedef uint64_t ResourceLoadIdentifier;
 
 class NetworkProcessConnection : public RefCounted<NetworkProcessConnection>, IPC::Connection::Client {
 public:
-    static PassRefPtr<NetworkProcessConnection> create(IPC::Connection::Identifier connectionIdentifier)
+    static Ref<NetworkProcessConnection> create(IPC::Connection::Identifier connectionIdentifier)
     {
-        return adoptRef(new NetworkProcessConnection(connectionIdentifier));
+        return adoptRef(*new NetworkProcessConnection(connectionIdentifier));
     }
     ~NetworkProcessConnection();
     

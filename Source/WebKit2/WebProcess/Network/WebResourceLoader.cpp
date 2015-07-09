@@ -45,9 +45,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<WebResourceLoader> WebResourceLoader::create(PassRefPtr<ResourceLoader> coreLoader)
+Ref<WebResourceLoader> WebResourceLoader::create(PassRefPtr<ResourceLoader> coreLoader)
 {
-    return adoptRef(new WebResourceLoader(coreLoader));
+    return adoptRef(*new WebResourceLoader(coreLoader));
 }
 
 WebResourceLoader::WebResourceLoader(PassRefPtr<WebCore::ResourceLoader> coreLoader)

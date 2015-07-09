@@ -69,9 +69,9 @@ static const String cssAlignmentValueForNSTextAlignment(NSTextAlignment alignmen
     return String();
 }
 
-PassRefPtr<PDFPluginTextAnnotation> PDFPluginTextAnnotation::create(PDFAnnotation *annotation, PDFLayerController *pdfLayerController, PDFPlugin* plugin)
+Ref<PDFPluginTextAnnotation> PDFPluginTextAnnotation::create(PDFAnnotation *annotation, PDFLayerController *pdfLayerController, PDFPlugin* plugin)
 {
-    return adoptRef(new PDFPluginTextAnnotation(annotation, pdfLayerController, plugin));
+    return adoptRef(*new PDFPluginTextAnnotation(annotation, pdfLayerController, plugin));
 }
 
 PDFPluginTextAnnotation::~PDFPluginTextAnnotation()

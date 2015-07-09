@@ -503,9 +503,9 @@ namespace WebKit {
 
 using namespace HTMLNames;
 
-PassRefPtr<PDFPlugin> PDFPlugin::create(WebFrame* frame)
+Ref<PDFPlugin> PDFPlugin::create(WebFrame* frame)
 {
-    return adoptRef(new PDFPlugin(frame));
+    return adoptRef(*new PDFPlugin(frame));
 }
 
 PDFPlugin::PDFPlugin(WebFrame* frame)

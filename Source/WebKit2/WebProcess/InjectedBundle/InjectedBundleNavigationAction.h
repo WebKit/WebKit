@@ -45,7 +45,7 @@ class WebFrame;
 
 class InjectedBundleNavigationAction : public API::ObjectImpl<API::Object::Type::BundleNavigationAction> {
 public:
-    static PassRefPtr<InjectedBundleNavigationAction> create(WebFrame*, const WebCore::NavigationAction&, PassRefPtr<WebCore::FormState>);
+    static Ref<InjectedBundleNavigationAction> create(WebFrame*, const WebCore::NavigationAction&, PassRefPtr<WebCore::FormState>);
 
     static WebEvent::Modifiers modifiersForNavigationAction(const WebCore::NavigationAction&);
     static WebMouseEvent::Button mouseButtonForNavigationAction(const WebCore::NavigationAction&);

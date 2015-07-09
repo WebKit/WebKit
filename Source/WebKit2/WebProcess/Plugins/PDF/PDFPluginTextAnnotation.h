@@ -42,7 +42,7 @@ namespace WebKit {
 
 class PDFPluginTextAnnotation : public PDFPluginAnnotation {
 public:
-    static PassRefPtr<PDFPluginTextAnnotation> create(PDFAnnotation *, PDFLayerController *, PDFPlugin*);
+    static Ref<PDFPluginTextAnnotation> create(PDFAnnotation *, PDFLayerController *, PDFPlugin*);
     virtual ~PDFPluginTextAnnotation();
 
     virtual void updateGeometry() override;

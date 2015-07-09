@@ -42,9 +42,9 @@ static HashMap<PageOverlay*, WebPageOverlay*>& overlayMap()
     return map;
 }
 
-PassRefPtr<WebPageOverlay> WebPageOverlay::create(std::unique_ptr<WebPageOverlay::Client> client, PageOverlay::OverlayType overlayType)
+Ref<WebPageOverlay> WebPageOverlay::create(std::unique_ptr<WebPageOverlay::Client> client, PageOverlay::OverlayType overlayType)
 {
-    return adoptRef(new WebPageOverlay(WTF::move(client), overlayType));
+    return adoptRef(*new WebPageOverlay(WTF::move(client), overlayType));
 }
 
 WebPageOverlay::WebPageOverlay(std::unique_ptr<WebPageOverlay::Client> client, PageOverlay::OverlayType overlayType)

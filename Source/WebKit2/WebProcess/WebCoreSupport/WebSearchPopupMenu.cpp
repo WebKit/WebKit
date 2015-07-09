@@ -32,9 +32,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<WebSearchPopupMenu> WebSearchPopupMenu::create(WebPage* page, PopupMenuClient* client)
+Ref<WebSearchPopupMenu> WebSearchPopupMenu::create(WebPage* page, PopupMenuClient* client)
 {
-    return adoptRef(new WebSearchPopupMenu(page, client));
+    return adoptRef(*new WebSearchPopupMenu(page, client));
 }
 
 WebSearchPopupMenu::WebSearchPopupMenu(WebPage* page, PopupMenuClient* client)

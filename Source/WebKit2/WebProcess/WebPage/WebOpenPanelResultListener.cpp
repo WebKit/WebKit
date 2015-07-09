@@ -30,9 +30,9 @@
 
 namespace WebKit {
 
-PassRefPtr<WebOpenPanelResultListener> WebOpenPanelResultListener::create(WebPage* page, PassRefPtr<WebCore::FileChooser> fileChooser)
+Ref<WebOpenPanelResultListener> WebOpenPanelResultListener::create(WebPage* page, PassRefPtr<WebCore::FileChooser> fileChooser)
 {
-    return adoptRef(new WebOpenPanelResultListener(page, fileChooser));
+    return adoptRef(*new WebOpenPanelResultListener(page, fileChooser));
 }
 
 WebOpenPanelResultListener::WebOpenPanelResultListener(WebPage* page, PassRefPtr<WebCore::FileChooser> fileChooser)

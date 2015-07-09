@@ -66,7 +66,7 @@ public:
         virtual Vector<String> copyAccessibilityAttributeNames(WebPageOverlay&, bool /* parameterizedNames */) { return Vector<String>(); }
     };
 
-    static PassRefPtr<WebPageOverlay> create(std::unique_ptr<Client>, WebCore::PageOverlay::OverlayType = WebCore::PageOverlay::OverlayType::View);
+    static Ref<WebPageOverlay> create(std::unique_ptr<Client>, WebCore::PageOverlay::OverlayType = WebCore::PageOverlay::OverlayType::View);
     static WebPageOverlay* fromCoreOverlay(WebCore::PageOverlay&);
     virtual ~WebPageOverlay();
 

@@ -34,7 +34,7 @@ class WebProcess;
 
 class WebConnectionToUIProcess : public WebConnection {
 public:
-    static PassRefPtr<WebConnectionToUIProcess> create(WebProcess*);
+    static Ref<WebConnectionToUIProcess> create(WebProcess*);
 
     void invalidate();
 

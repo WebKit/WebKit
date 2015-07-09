@@ -58,7 +58,7 @@ typedef uint64_t ResourceLoadIdentifier;
 
 class WebResourceLoader : public RefCounted<WebResourceLoader>, public IPC::MessageSender {
 public:
-    static PassRefPtr<WebResourceLoader> create(PassRefPtr<WebCore::ResourceLoader>);
+    static Ref<WebResourceLoader> create(PassRefPtr<WebCore::ResourceLoader>);
 
     ~WebResourceLoader();
 

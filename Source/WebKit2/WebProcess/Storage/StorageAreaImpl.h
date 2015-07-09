@@ -41,7 +41,7 @@ class StorageAreaMap;
 
 class StorageAreaImpl final : public WebCore::StorageArea {
 public:
-    static PassRefPtr<StorageAreaImpl> create(PassRefPtr<StorageAreaMap>);
+    static Ref<StorageAreaImpl> create(PassRefPtr<StorageAreaMap>);
     virtual ~StorageAreaImpl();
 
     uint64_t storageAreaID() const { return m_storageAreaID; }

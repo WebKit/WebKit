@@ -53,9 +53,9 @@ static const float minimumAttachedWidth = 750;
 
 namespace WebKit {
 
-PassRefPtr<WebInspector> WebInspector::create(WebPage* page)
+Ref<WebInspector> WebInspector::create(WebPage* page)
 {
-    return adoptRef(new WebInspector(page));
+    return adoptRef(*new WebInspector(page));
 }
 
 WebInspector::WebInspector(WebPage* page)

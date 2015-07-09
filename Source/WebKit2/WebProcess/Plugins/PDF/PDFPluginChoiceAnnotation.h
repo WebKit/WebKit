@@ -40,7 +40,7 @@ namespace WebKit {
 
 class PDFPluginChoiceAnnotation : public PDFPluginAnnotation {
 public:
-    static PassRefPtr<PDFPluginChoiceAnnotation> create(PDFAnnotation *, PDFLayerController *, PDFPlugin*);
+    static Ref<PDFPluginChoiceAnnotation> create(PDFAnnotation *, PDFLayerController *, PDFPlugin*);
 
     virtual void updateGeometry() override;
     virtual void commit() override;

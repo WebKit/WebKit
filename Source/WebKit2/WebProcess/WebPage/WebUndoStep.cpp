@@ -34,9 +34,9 @@ static uint64_t generateUndoStep()
     return uniqueEntryID++;
 }
 
-PassRefPtr<WebUndoStep> WebUndoStep::create(PassRefPtr<WebCore::UndoStep> step)
+Ref<WebUndoStep> WebUndoStep::create(PassRefPtr<WebCore::UndoStep> step)
 {
-    return adoptRef(new WebUndoStep(step, generateUndoStep()));
+    return adoptRef(*new WebUndoStep(step, generateUndoStep()));
 }
 
 WebUndoStep::~WebUndoStep()

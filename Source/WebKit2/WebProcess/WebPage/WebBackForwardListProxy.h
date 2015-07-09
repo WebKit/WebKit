@@ -36,7 +36,7 @@ class WebPage;
 
 class WebBackForwardListProxy : public WebCore::BackForwardClient {
 public: 
-    static PassRefPtr<WebBackForwardListProxy> create(WebPage* page) { return adoptRef(new WebBackForwardListProxy(page)); }
+    static Ref<WebBackForwardListProxy> create(WebPage* page) { return adoptRef(*new WebBackForwardListProxy(page)); }
 
     static WebCore::HistoryItem* itemForID(uint64_t);
     static uint64_t idForItem(WebCore::HistoryItem*);

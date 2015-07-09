@@ -34,7 +34,7 @@ namespace WebKit {
 
 class PDFPluginPasswordField : public PDFPluginTextAnnotation {
 public:
-    static PassRefPtr<PDFPluginPasswordField> create(PDFLayerController *, PDFPlugin*);
+    static Ref<PDFPluginPasswordField> create(PDFLayerController *, PDFPlugin*);
     virtual ~PDFPluginPasswordField();
 
     virtual void updateGeometry() override;

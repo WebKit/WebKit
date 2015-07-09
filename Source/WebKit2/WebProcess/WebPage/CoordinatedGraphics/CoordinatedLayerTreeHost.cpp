@@ -49,9 +49,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<CoordinatedLayerTreeHost> CoordinatedLayerTreeHost::create(WebPage* webPage)
+Ref<CoordinatedLayerTreeHost> CoordinatedLayerTreeHost::create(WebPage* webPage)
 {
-    return adoptRef(new CoordinatedLayerTreeHost(webPage));
+    return adoptRef(*new CoordinatedLayerTreeHost(webPage));
 }
 
 CoordinatedLayerTreeHost::~CoordinatedLayerTreeHost()

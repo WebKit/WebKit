@@ -41,7 +41,7 @@ class Download;
 
 class DownloadAuthenticationClient : public RefCounted<DownloadAuthenticationClient>, public WebCore::AuthenticationClient {
 public:
-    static PassRefPtr<DownloadAuthenticationClient> create(Download* download) { return adoptRef(new DownloadAuthenticationClient(download)); }
+    static Ref<DownloadAuthenticationClient> create(Download* download) { return adoptRef(*new DownloadAuthenticationClient(download)); }
 
     void detach() { m_download = 0; }
 

@@ -43,9 +43,9 @@ static WorldMap& allWorlds()
     return map;
 }
 
-PassRefPtr<InjectedBundleScriptWorld> InjectedBundleScriptWorld::create()
+Ref<InjectedBundleScriptWorld> InjectedBundleScriptWorld::create()
 {
-    return adoptRef(new InjectedBundleScriptWorld(ScriptController::createWorld()));
+    return adoptRef(*new InjectedBundleScriptWorld(ScriptController::createWorld()));
 }
 
 PassRefPtr<InjectedBundleScriptWorld> InjectedBundleScriptWorld::getOrCreate(DOMWrapperWorld& world)

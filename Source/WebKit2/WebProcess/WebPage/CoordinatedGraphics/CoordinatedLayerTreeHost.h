@@ -40,7 +40,7 @@ class WebPage;
 class CoordinatedLayerTreeHost : public LayerTreeHost, public WebCore::CompositingCoordinator::Client
 {
 public:
-    static PassRefPtr<CoordinatedLayerTreeHost> create(WebPage*);
+    static Ref<CoordinatedLayerTreeHost> create(WebPage*);
     virtual ~CoordinatedLayerTreeHost();
 
     virtual const LayerTreeContext& layerTreeContext() { return m_layerTreeContext; }

@@ -44,7 +44,7 @@ class WebPageProxy;
 
 class WebPreferences : public API::ObjectImpl<API::Object::Type::Preferences> {
 public:
-    static PassRefPtr<WebPreferences> create(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix);
+    static Ref<WebPreferences> create(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix);
     static PassRefPtr<WebPreferences> createWithLegacyDefaults(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix);
 
     explicit WebPreferences(const String& identifier, const String& keyPrefix, const String& globalDebugKeyPrefix);

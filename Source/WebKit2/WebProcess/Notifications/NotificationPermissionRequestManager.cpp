@@ -52,9 +52,9 @@ static uint64_t generateRequestID()
 }
 #endif
 
-PassRefPtr<NotificationPermissionRequestManager> NotificationPermissionRequestManager::create(WebPage* page)
+Ref<NotificationPermissionRequestManager> NotificationPermissionRequestManager::create(WebPage* page)
 {
-    return adoptRef(new NotificationPermissionRequestManager(page));
+    return adoptRef(*new NotificationPermissionRequestManager(page));
 }
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

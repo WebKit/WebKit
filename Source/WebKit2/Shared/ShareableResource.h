@@ -67,7 +67,7 @@ public:
     };
 
     // Create a shareable resource that uses malloced memory.
-    static PassRefPtr<ShareableResource> create(PassRefPtr<SharedMemory>, unsigned offset, unsigned size);
+    static Ref<ShareableResource> create(PassRefPtr<SharedMemory>, unsigned offset, unsigned size);
 
     // Create a shareable resource from a handle.
     static PassRefPtr<ShareableResource> map(const Handle&);

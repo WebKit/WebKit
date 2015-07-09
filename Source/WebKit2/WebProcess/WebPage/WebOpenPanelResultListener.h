@@ -39,7 +39,7 @@ class WebPage;
 
 class WebOpenPanelResultListener : public RefCounted<WebOpenPanelResultListener> {
 public:
-    static PassRefPtr<WebOpenPanelResultListener> create(WebPage*, PassRefPtr<WebCore::FileChooser>);
+    static Ref<WebOpenPanelResultListener> create(WebPage*, PassRefPtr<WebCore::FileChooser>);
     ~WebOpenPanelResultListener();
 
     void disconnectFromPage() { m_page = 0; }

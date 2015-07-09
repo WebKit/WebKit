@@ -28,7 +28,7 @@ namespace WebKit {
 
 class WebSearchPopupMenu : public WebCore::SearchPopupMenu {
 public:
-    static PassRefPtr<WebSearchPopupMenu> create(WebPage*, WebCore::PopupMenuClient*);
+    static Ref<WebSearchPopupMenu> create(WebPage*, WebCore::PopupMenuClient*);
 
     virtual WebCore::PopupMenu* popupMenu() override;
     virtual void saveRecentSearches(const WTF::AtomicString& name, const Vector<String>& searchItems) override;

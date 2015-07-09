@@ -47,9 +47,9 @@ class RemoteScrollingCoordinatorTransaction;
 
 class RemoteScrollingCoordinator : public WebCore::AsyncScrollingCoordinator, public IPC::MessageReceiver {
 public:
-    static PassRefPtr<RemoteScrollingCoordinator> create(WebPage* page)
+    static Ref<RemoteScrollingCoordinator> create(WebPage* page)
     {
-        return adoptRef(new RemoteScrollingCoordinator(page));
+        return adoptRef(*new RemoteScrollingCoordinator(page));
     }
 
     void buildTransaction(RemoteScrollingCoordinatorTransaction&);

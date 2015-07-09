@@ -49,7 +49,7 @@ class WebWheelEvent;
 
 class EventDispatcher : public IPC::Connection::WorkQueueMessageReceiver {
 public:
-    static PassRefPtr<EventDispatcher> create();
+    static Ref<EventDispatcher> create();
     ~EventDispatcher();
 
 #if ENABLE(ASYNC_SCROLLING)

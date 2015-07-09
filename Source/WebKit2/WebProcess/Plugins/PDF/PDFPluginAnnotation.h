@@ -79,9 +79,9 @@ private:
 
     class PDFPluginAnnotationEventListener : public WebCore::EventListener {
     public:
-        static PassRefPtr<PDFPluginAnnotationEventListener> create(PDFPluginAnnotation* annotation)
+        static Ref<PDFPluginAnnotationEventListener> create(PDFPluginAnnotation* annotation)
         {
-            return adoptRef(new PDFPluginAnnotationEventListener(annotation));
+            return adoptRef(*new PDFPluginAnnotationEventListener(annotation));
         }
 
         virtual bool operator==(const EventListener& listener) override { return this == &listener; }

@@ -43,7 +43,7 @@ class RemoteLayerTreeHost;
 
 class PlatformCAAnimationRemote final : public WebCore::PlatformCAAnimation {
 public:
-    static PassRefPtr<PlatformCAAnimation> create(AnimationType, const String& keyPath);
+    static Ref<PlatformCAAnimation> create(AnimationType, const String& keyPath);
 
     virtual ~PlatformCAAnimationRemote() { }
 

@@ -44,7 +44,7 @@ class PluginProcessConnection;
         
 class PluginProcessConnectionManager : public IPC::Connection::WorkQueueMessageReceiver {
 public:
-    static PassRefPtr<PluginProcessConnectionManager> create();
+    static Ref<PluginProcessConnectionManager> create();
     ~PluginProcessConnectionManager();
 
     void initializeConnection(IPC::Connection*);

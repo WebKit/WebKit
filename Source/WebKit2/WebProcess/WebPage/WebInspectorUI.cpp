@@ -44,9 +44,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<WebInspectorUI> WebInspectorUI::create(WebPage* page)
+Ref<WebInspectorUI> WebInspectorUI::create(WebPage* page)
 {
-    return adoptRef(new WebInspectorUI(page));
+    return adoptRef(*new WebInspectorUI(page));
 }
 
 WebInspectorUI::WebInspectorUI(WebPage* page)

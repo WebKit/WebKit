@@ -38,7 +38,7 @@ class WebPage;
 
 class WebInspectorUI : public API::ObjectImpl<API::Object::Type::BundleInspectorUI>, public IPC::Connection::Client, public WebCore::InspectorFrontendClient {
 public:
-    static PassRefPtr<WebInspectorUI> create(WebPage*);
+    static Ref<WebInspectorUI> create(WebPage*);
 
     WebPage* page() const { return m_page; }
 

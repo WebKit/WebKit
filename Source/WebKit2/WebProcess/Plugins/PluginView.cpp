@@ -82,9 +82,9 @@ static const auto pluginSnapshotTimerDelay = std::chrono::milliseconds { 1100 };
 
 class PluginView::URLRequest : public RefCounted<URLRequest> {
 public:
-    static PassRefPtr<PluginView::URLRequest> create(uint64_t requestID, const FrameLoadRequest& request, bool allowPopups)
+    static Ref<PluginView::URLRequest> create(uint64_t requestID, const FrameLoadRequest& request, bool allowPopups)
     {
-        return adoptRef(new URLRequest(requestID, request, allowPopups));
+        return adoptRef(*new URLRequest(requestID, request, allowPopups));
     }
 
     uint64_t requestID() const { return m_requestID; }
@@ -107,9 +107,9 @@ private:
 
 class PluginView::Stream : public RefCounted<PluginView::Stream>, NetscapePlugInStreamLoaderClient {
 public:
-    static PassRefPtr<Stream> create(PluginView* pluginView, uint64_t streamID, const ResourceRequest& request)
+    static Ref<Stream> create(PluginView* pluginView, uint64_t streamID, const ResourceRequest& request)
     {
-        return adoptRef(new Stream(pluginView, streamID, request));
+        return adoptRef(*new Stream(pluginView, streamID, request));
     }
     ~Stream();
 
@@ -271,9 +271,9 @@ static inline WebPage* webPage(HTMLPlugInElement* pluginElement)
     return webFrame->page();
 }
 
-PassRefPtr<PluginView> PluginView::create(PassRefPtr<HTMLPlugInElement> pluginElement, PassRefPtr<Plugin> plugin, const Plugin::Parameters& parameters)
+Ref<PluginView> PluginView::create(PassRefPtr<HTMLPlugInElement> pluginElement, PassRefPtr<Plugin> plugin, const Plugin::Parameters& parameters)
 {
-    return adoptRef(new PluginView(pluginElement, plugin, parameters));
+    return adoptRef(*new PluginView(pluginElement, plugin, parameters));
 }
 
 PluginView::PluginView(PassRefPtr<HTMLPlugInElement> pluginElement, PassRefPtr<Plugin> plugin, const Plugin::Parameters& parameters)

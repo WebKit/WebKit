@@ -68,7 +68,7 @@ class WebFrame;
 
 class PDFPlugin final : public Plugin, private WebCore::ScrollableArea {
 public:
-    static PassRefPtr<PDFPlugin> create(WebFrame*);
+    static Ref<PDFPlugin> create(WebFrame*);
     ~PDFPlugin();
 
     static WebCore::PluginInfo pluginInfo();

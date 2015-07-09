@@ -1,3 +1,155 @@
+2015-07-08  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Use Ref/RefPtr instead of PassRefPtr in WebKit2 - 2
+        https://bugs.webkit.org/show_bug.cgi?id=146591
+
+        Reviewed by Darin Adler.
+
+        Following patch in order to reduce use of PassRefPtr.
+
+        * Shared/BlobDataFileReferenceWithSandboxExtension.h:
+        * Shared/Cocoa/CompletionHandlerCallChecker.h:
+        * Shared/Cocoa/CompletionHandlerCallChecker.mm:
+        (WebKit::CompletionHandlerCallChecker::create):
+        * Shared/Downloads/DownloadAuthenticationClient.h:
+        (WebKit::DownloadAuthenticationClient::create):
+        * Shared/SandboxExtension.h:
+        * Shared/ShareableResource.cpp:
+        (WebKit::ShareableResource::create):
+        * Shared/ShareableResource.h:
+        * Shared/mac/ObjCObjectGraph.h:
+        (WebKit::ObjCObjectGraph::create):
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::SandboxExtension::create):
+        * UIProcess/API/Cocoa/WKProcessGroup.mm:
+        (getInjectedBundleInitializationUserData):
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::create):
+        * UIProcess/WebPreferences.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp:
+        (WKBundlePageOverlayCreate):
+        * WebProcess/InjectedBundle/API/c/mac/WKBundlePageBannerMac.mm:
+        (WKBundlePageBannerCreateBannerWithCALayer):
+        * WebProcess/InjectedBundle/InjectedBundleDOMWindowExtension.cpp:
+        (WebKit::InjectedBundleDOMWindowExtension::create):
+        * WebProcess/InjectedBundle/InjectedBundleDOMWindowExtension.h:
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp:
+        (WebKit::InjectedBundleHitTestResult::create):
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.h:
+        * WebProcess/InjectedBundle/InjectedBundleNavigationAction.cpp:
+        (WebKit::InjectedBundleNavigationAction::create):
+        * WebProcess/InjectedBundle/InjectedBundleNavigationAction.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp:
+        (WebKit::InjectedBundlePageContextMenuClient::getCustomMenuFromDefaultItems):
+        (WebKit::InjectedBundlePageContextMenuClient::prepareForImmediateAction):
+        * WebProcess/InjectedBundle/InjectedBundleScriptWorld.cpp:
+        (WebKit::InjectedBundleScriptWorld::create):
+        * WebProcess/InjectedBundle/InjectedBundleScriptWorld.h:
+        * WebProcess/Network/NetworkProcessConnection.h:
+        (WebKit::NetworkProcessConnection::create):
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::create):
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Notifications/NotificationPermissionRequestManager.cpp:
+        (WebKit::NotificationPermissionRequestManager::create):
+        * WebProcess/Notifications/NotificationPermissionRequestManager.h:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::create):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.h:
+        (WebKit::NetscapePluginStream::create):
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::create):
+        * WebProcess/Plugins/PDF/PDFPluginAnnotation.h:
+        (WebKit::PDFPluginAnnotation::PDFPluginAnnotationEventListener::create):
+        * WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.h:
+        * WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.mm:
+        (WebKit::PDFPluginChoiceAnnotation::create):
+        * WebProcess/Plugins/PDF/PDFPluginPasswordField.h:
+        * WebProcess/Plugins/PDF/PDFPluginPasswordField.mm:
+        (WebKit::PDFPluginPasswordField::create):
+        * WebProcess/Plugins/PDF/PDFPluginTextAnnotation.h:
+        * WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm:
+        (WebKit::PDFPluginTextAnnotation::create):
+        * WebProcess/Plugins/PluginProcessConnection.h:
+        (WebKit::PluginProcessConnection::create):
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp:
+        (WebKit::PluginProcessConnectionManager::create):
+        * WebProcess/Plugins/PluginProcessConnectionManager.h:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::create):
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::URLRequest::create):
+        (WebKit::PluginView::Stream::create):
+        (WebKit::PluginView::create):
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/Scrolling/RemoteScrollingCoordinator.h:
+        (WebKit::RemoteScrollingCoordinator::create):
+        * WebProcess/Storage/StorageAreaImpl.cpp:
+        (WebKit::StorageAreaImpl::create):
+        * WebProcess/Storage/StorageAreaImpl.h:
+        * WebProcess/Storage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::create):
+        * WebProcess/Storage/StorageAreaMap.h:
+        * WebProcess/WebConnectionToUIProcess.cpp:
+        (WebKit::WebConnectionToUIProcess::create):
+        * WebProcess/WebConnectionToUIProcess.h:
+        * WebProcess/WebCoreSupport/WebPopupMenu.cpp:
+        (WebKit::WebPopupMenu::create):
+        * WebProcess/WebCoreSupport/WebPopupMenu.h:
+        * WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp:
+        (WebKit::WebSearchPopupMenu::create):
+        * WebProcess/WebCoreSupport/WebSearchPopupMenu.h:
+        * WebProcess/WebCoreSupport/ios/WebQuickLookHandleClient.h:
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.h:
+        (WebKit::WebFrameNetworkingContext::create):
+        * WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.h:
+        (WebKit::WebFrameNetworkingContext::create):
+        * WebProcess/WebPage/Cocoa/RemoteLayerTreeDisplayRefreshMonitor.h:
+        (WebKit::RemoteLayerTreeDisplayRefreshMonitor::create):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::create):
+        * WebProcess/WebPage/CoordinatedGraphics/ThreadedCoordinatedLayerTreeHost.cpp:
+        (WebKit::ThreadedCoordinatedLayerTreeHost::create):
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::create):
+        * WebProcess/WebPage/EventDispatcher.h:
+        * WebProcess/WebPage/PageBanner.h:
+        * WebProcess/WebPage/WebBackForwardListProxy.h:
+        (WebKit::WebBackForwardListProxy::create):
+        * WebProcess/WebPage/WebContextMenu.h:
+        (WebKit::WebContextMenu::create):
+        * WebProcess/WebPage/WebDocumentLoader.h:
+        (WebKit::WebDocumentLoader::create):
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::create):
+        * WebProcess/WebPage/WebInspector.h:
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::create):
+        * WebProcess/WebPage/WebInspectorUI.h:
+        * WebProcess/WebPage/WebOpenPanelResultListener.cpp:
+        (WebKit::WebOpenPanelResultListener::create):
+        * WebProcess/WebPage/WebOpenPanelResultListener.h:
+        * WebProcess/WebPage/WebPageOverlay.cpp:
+        (WebKit::WebPageOverlay::create):
+        * WebProcess/WebPage/WebPageOverlay.h:
+        * WebProcess/WebPage/WebUndoStep.cpp:
+        (WebKit::WebUndoStep::create):
+        * WebProcess/WebPage/WebUndoStep.h:
+        * WebProcess/WebPage/mac/PageBannerMac.mm:
+        (WebKit::PageBanner::create):
+        * WebProcess/WebPage/mac/PlatformCAAnimationRemote.h:
+        * WebProcess/WebPage/mac/PlatformCAAnimationRemote.mm:
+        (WebKit::PlatformCAAnimationRemote::create):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::BackingStoreFlusher::create):
+        * WebProcess/ios/WebVideoFullscreenManager.h:
+        * WebProcess/ios/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenManager::create):
+
 2015-07-08  Anders Carlsson  <andersca@apple.com>
 
         WKSecurityOrigin.h has wrong availability info

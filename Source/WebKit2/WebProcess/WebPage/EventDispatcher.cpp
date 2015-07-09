@@ -47,9 +47,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<EventDispatcher> EventDispatcher::create()
+Ref<EventDispatcher> EventDispatcher::create()
 {
-    return adoptRef(new EventDispatcher);
+    return adoptRef(*new EventDispatcher);
 }
 
 EventDispatcher::EventDispatcher()

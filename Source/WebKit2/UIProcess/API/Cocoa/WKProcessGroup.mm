@@ -93,7 +93,7 @@ static WKTypeRef getInjectedBundleInitializationUserData(WKContextRef, const voi
     if ([delegate respondsToSelector:@selector(processGroupWillCreateConnectionToWebProcessPlugIn:)]) {
         RetainPtr<id> initializationUserData = [delegate processGroupWillCreateConnectionToWebProcessPlugIn:processGroup];
 
-        return toAPI(WebKit::ObjCObjectGraph::create(initializationUserData.get()).leakRef());
+        return toAPI(&WebKit::ObjCObjectGraph::create(initializationUserData.get()).leakRef());
     }
 
     return 0;

@@ -107,9 +107,9 @@ PassRefPtr<SharedBuffer> ShareableResource::Handle::tryWrapInSharedBuffer() cons
     return resource->wrapInSharedBuffer();
 }
 
-PassRefPtr<ShareableResource> ShareableResource::create(PassRefPtr<SharedMemory> sharedMemory, unsigned offset, unsigned size)
+Ref<ShareableResource> ShareableResource::create(PassRefPtr<SharedMemory> sharedMemory, unsigned offset, unsigned size)
 {
-    return adoptRef(new ShareableResource(sharedMemory, offset, size));
+    return adoptRef(*new ShareableResource(sharedMemory, offset, size));
 }
 
 PassRefPtr<ShareableResource> ShareableResource::map(const Handle& handle)

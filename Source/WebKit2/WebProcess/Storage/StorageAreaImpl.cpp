@@ -44,9 +44,9 @@ static uint64_t generateStorageAreaID()
     return ++storageAreaID;
 }
 
-PassRefPtr<StorageAreaImpl> StorageAreaImpl::create(PassRefPtr<StorageAreaMap> storageAreaMap)
+Ref<StorageAreaImpl> StorageAreaImpl::create(PassRefPtr<StorageAreaMap> storageAreaMap)
 {
-    return adoptRef(new StorageAreaImpl(storageAreaMap));
+    return adoptRef(*new StorageAreaImpl(storageAreaMap));
 }
 
 StorageAreaImpl::StorageAreaImpl(PassRefPtr<StorageAreaMap> storageAreaMap)

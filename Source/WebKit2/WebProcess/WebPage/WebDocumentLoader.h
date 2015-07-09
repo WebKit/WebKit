@@ -32,9 +32,9 @@ namespace WebKit {
 
 class WebDocumentLoader : public WebCore::DocumentLoader {
 public:
-    static PassRefPtr<WebDocumentLoader> create(const WebCore::ResourceRequest& request, const WebCore::SubstituteData& data)
+    static Ref<WebDocumentLoader> create(const WebCore::ResourceRequest& request, const WebCore::SubstituteData& data)
     {
-        return adoptRef(new WebDocumentLoader(request, data));
+        return adoptRef(*new WebDocumentLoader(request, data));
     }
 
     uint64_t navigationID() const { return m_navigationID; }

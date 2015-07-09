@@ -42,9 +42,9 @@
 
 namespace WebKit {
 
-PassRefPtr<PluginProcessConnectionManager> PluginProcessConnectionManager::create()
+Ref<PluginProcessConnectionManager> PluginProcessConnectionManager::create()
 {
-    return adoptRef(new PluginProcessConnectionManager);
+    return adoptRef(*new PluginProcessConnectionManager);
 }
 
 PluginProcessConnectionManager::PluginProcessConnectionManager()

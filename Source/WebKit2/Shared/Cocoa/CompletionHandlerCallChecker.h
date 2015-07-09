@@ -34,7 +34,7 @@ namespace WebKit {
 
 class CompletionHandlerCallChecker : public WTF::ThreadSafeRefCounted<CompletionHandlerCallChecker> {
 public:
-    static PassRefPtr<CompletionHandlerCallChecker> create(id delegate, SEL delegateMethodSelector);
+    static Ref<CompletionHandlerCallChecker> create(id delegate, SEL delegateMethodSelector);
 
     ~CompletionHandlerCallChecker();
 

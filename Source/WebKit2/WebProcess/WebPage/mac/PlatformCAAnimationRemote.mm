@@ -289,9 +289,9 @@ bool PlatformCAAnimationRemote::Properties::decode(IPC::ArgumentDecoder& decoder
     return true;
 }
     
-PassRefPtr<PlatformCAAnimation> PlatformCAAnimationRemote::create(PlatformCAAnimation::AnimationType type, const String& keyPath)
+Ref<PlatformCAAnimation> PlatformCAAnimationRemote::create(PlatformCAAnimation::AnimationType type, const String& keyPath)
 {
-    return adoptRef(new PlatformCAAnimationRemote(type, keyPath));
+    return adoptRef(*new PlatformCAAnimationRemote(type, keyPath));
 }
 
 PassRefPtr<PlatformCAAnimation> PlatformCAAnimationRemote::copy() const

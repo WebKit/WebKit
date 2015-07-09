@@ -61,7 +61,7 @@ public:
     };
 
 #if PLATFORM(MAC)
-    static PassRefPtr<PageBanner> create(CALayer *, int height, Client*);
+    static Ref<PageBanner> create(CALayer *, int height, Client*);
     CALayer *layer();
 #endif
 

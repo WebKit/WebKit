@@ -34,9 +34,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<WebPopupMenu> WebPopupMenu::create(WebPage* page, PopupMenuClient* client)
+Ref<WebPopupMenu> WebPopupMenu::create(WebPage* page, PopupMenuClient* client)
 {
-    return adoptRef(new WebPopupMenu(page, client));
+    return adoptRef(*new WebPopupMenu(page, client));
 }
 
 WebPopupMenu::WebPopupMenu(WebPage* page, PopupMenuClient* client)

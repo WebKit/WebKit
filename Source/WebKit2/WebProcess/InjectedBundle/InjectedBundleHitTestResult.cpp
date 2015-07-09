@@ -41,9 +41,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<InjectedBundleHitTestResult> InjectedBundleHitTestResult::create(const WebCore::HitTestResult& hitTestResult)
+Ref<InjectedBundleHitTestResult> InjectedBundleHitTestResult::create(const WebCore::HitTestResult& hitTestResult)
 {
-    return adoptRef(new InjectedBundleHitTestResult(hitTestResult));
+    return adoptRef(*new InjectedBundleHitTestResult(hitTestResult));
 }
 
 PassRefPtr<InjectedBundleNodeHandle> InjectedBundleHitTestResult::nodeHandle() const
