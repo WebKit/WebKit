@@ -1,3 +1,23 @@
+2015-07-08  Andreas Kling  <akling@apple.com>
+
+        [iOS] Scrolling is laggy when the keyboard is up and a form element is focused.
+        <https://webkit.org/b/146735>
+        <rdar://problem/21151033>
+
+        Reviewed by Enrica Casucci.
+
+        Every touch on the page causes us to call elementDidFocus(), since we may need to bring
+        up a keyboard if the node had previously been programmatically focused. This was causing
+        little lag spikes during scrolling every time you'd put your finger to the screen.
+
+        Have WebPage::elementDidFocus() return early if the node already has focus, and we've
+        started an input session in response to non-programmatic focus already.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::elementDidFocus):
+        (WebKit::WebPage::elementDidBlur):
+
 2015-07-08  Matt Rajca  <mrajca@apple.com>
 
         Media Session: indicate to clients whether a media session has active media elements

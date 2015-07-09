@@ -2440,8 +2440,12 @@ void WebPage::resetAssistedNodeForFrame(WebFrame* frame)
 
 void WebPage::elementDidFocus(WebCore::Node* node)
 {
+    if (m_assistedNode == node && m_hasFocusedDueToUserInteraction)
+        return;
+
     if (node->hasTagName(WebCore::HTMLNames::selectTag) || node->hasTagName(WebCore::HTMLNames::inputTag) || node->hasTagName(WebCore::HTMLNames::textareaTag) || node->hasEditableStyle()) {
         m_assistedNode = node;
+        m_hasFocusedDueToUserInteraction |= m_userIsInteracting;
         AssistedNodeInformation information;
         getAssistedNodeInformation(information);
         RefPtr<API::Object> userData;
@@ -2467,6 +2471,7 @@ void WebPage::elementDidBlur(WebCore::Node* node)
                 send(Messages::WebPageProxy::StopAssistingNode());
             m_hasPendingBlurNotification = false;
         });
+        m_hasFocusedDueToUserInteraction = false;
         m_assistedNode = nullptr;
     }
 }

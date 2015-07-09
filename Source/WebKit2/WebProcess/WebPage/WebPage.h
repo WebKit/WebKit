@@ -1336,6 +1336,7 @@ private:
     bool m_userHasChangedPageScaleFactor;
     bool m_hasStablePageScaleFactor;
     bool m_userIsInteracting;
+    bool m_hasFocusedDueToUserInteraction { false };
     bool m_hasPendingBlurNotification;
     bool m_useTestingViewportConfiguration;
     bool m_isInStableState;
