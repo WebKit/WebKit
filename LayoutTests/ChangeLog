@@ -1,3 +1,18 @@
+2015-07-08  Wenson Hsieh  <whsieh@berkeley.edu>
+
+        Fix asynchronous function calls for scroll snap animation tests
+        https://bugs.webkit.org/show_bug.cgi?id=146753
+
+        Reviewed by Brent Fulgham.
+
+        Fixes unintended use of setTimeout in several scroll snap tests.
+
+        * platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-iframe.html: Fixed asynchronous Javascript invocations.
+        * platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-borders.html: See above.
+        * platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-overflow.html: See above.
+        * platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-padding.html: See above.
+        * platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-rotated.html: See above.
+
 2015-07-08  Brady Eidson  <beidson@apple.com>
 
         Now that PingLoaders work in the NetworkProcess, re-enable http/tests/navigation/ping-cookie.html

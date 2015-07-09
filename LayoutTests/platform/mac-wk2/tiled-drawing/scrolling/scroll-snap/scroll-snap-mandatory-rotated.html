@@ -87,7 +87,7 @@
                 testPassed("div honored snap points.");
 
             if (targetLabel == 'horizontalTarget')
-                setTimeout(scrollGlideTest('verticalTarget'), 0);
+                setTimeout(function() { scrollGlideTest('verticalTarget') }, 0);
             else   
                 finishTest();
         }
@@ -136,7 +136,7 @@
             else
                 testFailed("div did not honor snap points. Expected " + expectedPosition + ", but got " + actualPosition);
 
-            setTimeout(scrollSnapTest(targetLabel), 0);
+            setTimeout(function() { scrollSnapTest(targetLabel) }, 0);
         }
 
         function scrollGlideTest(targetLabel)
@@ -181,7 +181,7 @@
                 testRunner.waitUntilDone();
 
                 eventSender.monitorWheelEvents();
-                setTimeout(scrollGlideTest('horizontalTarget'), 0);
+                setTimeout(function() { scrollGlideTest('horizontalTarget') }, 0);
             } else {
                 var messageLocationH = document.getElementById('itemH0');
                 var message = document.createElement('div');
