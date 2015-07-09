@@ -237,6 +237,7 @@ void FEComposite::determineAbsolutePaintRect()
         // For In and Atop the first effect just influences the result of
         // the second effect. So just use the absolute paint rect of the second effect here.
         setAbsolutePaintRect(inputEffect(1)->absolutePaintRect());
+        clipAbsolutePaintRect();
         return;
     case FECOMPOSITE_OPERATOR_ARITHMETIC:
         // Arithmetic may influnce the compele filter primitive region. So we can't
@@ -292,13 +293,11 @@ void FEComposite::platformApplySoftware()
         destinationRect.intersect(absolutePaintRect());
         if (destinationRect.isEmpty())
             break;
-        IntPoint destinationPoint(destinationRect.x() - absolutePaintRect().x(), destinationRect.y() - absolutePaintRect().y());
-        IntRect sourceRect(IntPoint(destinationRect.x() - in->absolutePaintRect().x(),
-                                    destinationRect.y() - in->absolutePaintRect().y()), destinationRect.size());
-        IntRect source2Rect(IntPoint(destinationRect.x() - in2->absolutePaintRect().x(),
-                                     destinationRect.y() - in2->absolutePaintRect().y()), destinationRect.size());
-        filterContext->drawImageBuffer(imageBuffer2, ColorSpaceDeviceRGB, IntRect(destinationPoint, source2Rect.size()), source2Rect);
-        filterContext->drawImageBuffer(imageBuffer, ColorSpaceDeviceRGB, IntRect(destinationPoint, sourceRect.size()), sourceRect, CompositeSourceIn);
+        IntRect adjustedDestinationRect = destinationRect - absolutePaintRect().location();
+        IntRect sourceRect = destinationRect - in->absolutePaintRect().location();
+        IntRect source2Rect = destinationRect - in2->absolutePaintRect().location();
+        filterContext->drawImageBuffer(imageBuffer2, ColorSpaceDeviceRGB, adjustedDestinationRect, source2Rect);
+        filterContext->drawImageBuffer(imageBuffer, ColorSpaceDeviceRGB, adjustedDestinationRect, sourceRect, CompositeSourceIn);
         break;
     }
     case FECOMPOSITE_OPERATOR_OUT:
