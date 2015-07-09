@@ -45,7 +45,7 @@ namespace WebCore {
 
 class MediaStreamTrackPrivate;
 
-class MediaStreamPrivateClient {
+class MediaStreamPrivateClient : public RefCounted<MediaStreamPrivateClient> {
 public:
     virtual ~MediaStreamPrivateClient() { }
 

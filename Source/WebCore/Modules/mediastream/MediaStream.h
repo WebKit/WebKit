@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-class MediaStream final : public RefCounted<MediaStream>, public URLRegistrable, public ScriptWrappable, public MediaStreamPrivateClient, public EventTargetWithInlineData, public ContextDestructionObserver, public MediaStreamTrack::Observer {
+class MediaStream final : public URLRegistrable, public ScriptWrappable, public MediaStreamPrivateClient, public EventTargetWithInlineData, public ContextDestructionObserver, public MediaStreamTrack::Observer {
 public:
     class Observer {
     public:
@@ -78,8 +78,8 @@ public:
     virtual EventTargetInterface eventTargetInterface() const final { return MediaStreamEventTargetInterfaceType; }
     virtual ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
 
-    using RefCounted<MediaStream>::ref;
-    using RefCounted<MediaStream>::deref;
+    using RefCounted<MediaStreamPrivateClient>::ref;
+    using RefCounted<MediaStreamPrivateClient>::deref;
 
     // URLRegistrable
     virtual URLRegistry& registry() const override;
