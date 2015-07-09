@@ -810,6 +810,14 @@ WebInspector.showStorageTab = function()
     this.tabBrowser.showTabForContentView(tabContentView);
 };
 
+WebInspector.showNetworkTab = function()
+{
+    var tabContentView = this.tabBrowser.bestTabContentViewForClass(WebInspector.NetworkTabContentView);
+    if (!tabContentView)
+        tabContentView = new WebInspector.NetworkTabContentView;
+    this.tabBrowser.showTabForContentView(tabContentView);
+};
+
 WebInspector.showTimelineTab = function()
 {
     var tabContentView = this.tabBrowser.bestTabContentViewForClass(WebInspector.TimelineTabContentView);

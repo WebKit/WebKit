@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-body.web .toolbar.collapsed .dashboard.default > .item.resourcesCount {
+body.web .toolbar.collapsed .dashboard.default > :matches(.resourcesSize, .time, .logs) {
     display: none;
 }
 
-body.javascript .toolbar .dashboard.default > .item.resourcesCount {
+body.javascript .toolbar .dashboard.default > :matches(.resourcesCount, .resourcesSize, .time) {
     display: none;
 }
 
@@ -51,6 +51,11 @@ body.javascript .toolbar .dashboard.default > .item.resourcesCount {
 
     border-radius: 4px;
     border: 1px solid transparent;
+}
+
+.toolbar .dashboard.default > .time,
+.toolbar .dashboard.default > .resourcesSize {
+    min-width: 70px;
 }
 
 .toolbar .dashboard.default > .item.enabled:hover {
@@ -101,8 +106,16 @@ body.javascript .toolbar .dashboard.default > .item.resourcesCount {
     content: url(../Images/Resources.svg);
 }
 
+.toolbar .dashboard.default > .time > img {
+    content: url(../Images/Time.svg);
+}
+
 .toolbar .dashboard.default > .logs > img {
     content: url(../Images/Logs.svg);
+}
+
+.toolbar .dashboard.default > .resourcesSize > img {
+    content: url(../Images/Weight.svg);
 }
 
 .toolbar .dashboard.default > .errors > img {

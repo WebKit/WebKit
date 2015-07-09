@@ -25,16 +25,25 @@
 
 .toolbar .dashboard-container {
     position: relative;
-    width: 36vw;
 
     border-radius: 4px;
     margin: 4px;
     overflow: hidden;
 }
 
+body.web .toolbar .dashboard-container {
+    width: 36vw;
+    min-width: 350px;
+}
+
+body.javascript .toolbar .dashboard-container {
+    width: 25vw;
+    min-width: 175px;
+}
 
 .toolbar.collapsed .dashboard-container {
-    width: 175px;
+    min-width: 175px !important;
+    width: 175px !important;
 }
 
 .toolbar.icon-and-label-vertical:matches(.small-size, .normal-size) .dashboard-container {

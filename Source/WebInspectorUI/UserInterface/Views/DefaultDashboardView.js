@@ -34,7 +34,15 @@ WebInspector.DefaultDashboardView = class DefaultDashboardView extends WebInspec
         this._items = {
             resourcesCount: {
                 tooltip: WebInspector.UIString("Total number of resources, click to show the Resources tab"),
-                handler: this._resourcesWasClicked
+                handler: this._resourcesItemWasClicked
+            },
+            resourcesSize: {
+                tooltip: WebInspector.UIString("Total size of all resources, click to show the Network Requests timeline"),
+                handler: this._networkItemWasClicked
+            },
+            time: {
+                tooltip: WebInspector.UIString("Time until the load event fired, click to show the Network Requests timeline"),
+                handler: this._timelineItemWasClicked
             },
             logs: {
                 tooltip: WebInspector.UIString("Console logs, click to show the Console tab"),
@@ -63,9 +71,17 @@ WebInspector.DefaultDashboardView = class DefaultDashboardView extends WebInspec
         for (var category of ["logs", "issues", "errors"])
             this._setConsoleItemValue(category, dashboard[category]);
 
+        var timeItem = this._items.time;
+        timeItem.text = dashboard.time ? Number.secondsToString(dashboard.time) : "\u2014";
+        this._setItemEnabled(timeItem, dashboard.time > 0);
+
         var countItem = this._items.resourcesCount;
         countItem.text = this._formatPossibleLargeNumber(dashboard.resourcesCount);
         this._setItemEnabled(countItem, dashboard.resourcesCount > 0);
+
+        var sizeItem = this._items.resourcesSize;
+        sizeItem.text = dashboard.resourcesSize ? Number.bytesToString(dashboard.resourcesSize, false) : "\u2014";
+        this._setItemEnabled(sizeItem, dashboard.resourcesSize > 0);
     }
 
     _formatPossibleLargeNumber(number)
@@ -109,9 +125,19 @@ WebInspector.DefaultDashboardView = class DefaultDashboardView extends WebInspec
             item.handler.call(this);
     }
 
-    _resourcesWasClicked()
+    _resourcesItemWasClicked()
     {
         WebInspector.showResourcesTab();
+    }
+
+    _networkItemWasClicked()
+    {
+        WebInspector.showNetworkTab();
+    }
+
+    _timelineItemWasClicked()
+    {
+        WebInspector.showTimelineTab();
     }
 
     _consoleItemWasClicked(scope)
