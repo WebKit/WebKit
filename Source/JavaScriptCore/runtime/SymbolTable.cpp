@@ -130,7 +130,10 @@ const SymbolTable::LocalToEntryVec& SymbolTable::localToEntry(const ConcurrentJI
 
 SymbolTableEntry* SymbolTable::entryFor(const ConcurrentJITLocker& locker, ScopeOffset offset)
 {
-    return localToEntry(locker)[offset.offset()];
+    auto& toEntryVector = localToEntry(locker);
+    if (offset.offset() >= toEntryVector.size())
+        return nullptr;
+    return toEntryVector[offset.offset()];
 }
 
 SymbolTable* SymbolTable::cloneScopePart(VM& vm)
