@@ -50,7 +50,8 @@ private:
 
     virtual bool isARIATreeGridRow() const override;
     virtual AccessibilityTable* parentTable() const override;
-}; 
+    virtual AccessibilityObject* parentObjectUnignored() const override;
+};
 
 } // namespace WebCore 
 

@@ -1,3 +1,13 @@
+2015-07-09  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: VoiceOver cannot get to any content in Yahoo Mail messages table
+        https://bugs.webkit.org/show_bug.cgi?id=146674
+
+        Reviewed by Darin Adler.
+
+        * accessibility/aria-table-with-presentational-elements-expected.txt: Added.
+        * accessibility/aria-table-with-presentational-elements.html: Added.
+
 2015-07-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fix grammar issue in TypeError attempting to change an unconfigurable property
