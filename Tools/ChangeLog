@@ -1,3 +1,14 @@
+2015-07-09  Timothy Horton  <timothy_horton@apple.com>
+
+        Increase MiniBrowser location bar maximum width
+        https://bugs.webkit.org/show_bug.cgi?id=146779
+
+        Reviewed by Simon Fraser.
+
+        * MiniBrowser/mac/BrowserWindow.xib:
+        Have an enormous maximum width on the location bar, so that it doesn't
+        stop expanding with the window at 800px.
+
 2015-07-08  Brady Eidson  <beidson@apple.com>
 
         Crash calling [WebView close] in didFinishLoadForFrame callback.
