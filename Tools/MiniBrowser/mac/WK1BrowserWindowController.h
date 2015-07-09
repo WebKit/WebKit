@@ -27,7 +27,7 @@
 
 @class WebView;
 
-@interface WK1BrowserWindowController : BrowserWindowController<BrowserController> {
+@interface WK1BrowserWindowController : BrowserWindowController {
     WebView *_webView;
 }
 

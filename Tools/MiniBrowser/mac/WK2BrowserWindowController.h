@@ -27,7 +27,7 @@
 
 #if WK_API_ENABLED
 
-@interface WK2BrowserWindowController : BrowserWindowController <BrowserController>
+@interface WK2BrowserWindowController : BrowserWindowController
 
 - (instancetype)initWithConfiguration:(WKWebViewConfiguration *)configuration;
 

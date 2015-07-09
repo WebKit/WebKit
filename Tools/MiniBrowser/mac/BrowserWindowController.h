@@ -25,7 +25,27 @@
 
 #import <Cocoa/Cocoa.h>
 
-@protocol BrowserController
+@interface BrowserWindowController : NSWindowController {
+    IBOutlet NSProgressIndicator *progressIndicator;
+    IBOutlet NSButton *reloadButton;
+    IBOutlet NSButton *backButton;
+    IBOutlet NSButton *forwardButton;
+    IBOutlet NSToolbar *toolbar;
+    IBOutlet NSTextField *urlText;
+    IBOutlet NSView *containerView;
+    IBOutlet NSButton *toggleUseShrinkToFitButton;
+    
+    IBOutlet NSWindow *findPanelWindow;
+
+    BOOL _zoomTextOnly;
+}
+
+- (void)loadURLString:(NSString *)urlString;
+- (NSString *)addProtocolIfNecessary:(NSString *)address;
+
+- (void)applicationTerminating;
+
+- (IBAction)openLocation:(id)sender;
 
 - (IBAction)fetch:(id)sender;
 - (IBAction)reload:(id)sender;
@@ -54,29 +74,7 @@
 
 - (void)didChangeSettings;
 
-@end
-
-@interface BrowserWindowController : NSWindowController {
-    IBOutlet NSProgressIndicator *progressIndicator;
-    IBOutlet NSButton *reloadButton;
-    IBOutlet NSButton *backButton;
-    IBOutlet NSButton *forwardButton;
-    IBOutlet NSToolbar *toolbar;
-    IBOutlet NSTextField *urlText;
-    IBOutlet NSView *containerView;
-    IBOutlet NSButton *toggleUseShrinkToFitButton;
-    
-    IBOutlet NSWindow *findPanelWindow;
-
-    BOOL _zoomTextOnly;
-}
-
-- (void)loadURLString:(NSString *)urlString;
-- (NSString *)addProtocolIfNecessary:(NSString *)address;
-
-- (void)applicationTerminating;
-
-- (IBAction)openLocation:(id)sender;
+- (NSURL *)currentURL;
 
 @end
 

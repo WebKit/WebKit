@@ -202,7 +202,7 @@ static WKWebViewConfiguration *defaultConfiguration()
     [self _updateNewWindowKeyEquivalents];
 
     // Let all of the BrowserWindowControllers know that a setting changed, so they can attempt to dynamically update.
-    for (BrowserWindowController<BrowserController> *browserWindowController in _browserWindowControllers)
+    for (BrowserWindowController *browserWindowController in _browserWindowControllers)
         [browserWindowController didChangeSettings];
 }
 

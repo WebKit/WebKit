@@ -70,4 +70,108 @@
     return [@"http://" stringByAppendingString:address];
 }
 
+- (IBAction)fetch:(id)sender
+{
+    [self doesNotRecognizeSelector:_cmd];
+}
+
+- (IBAction)reload:(id)sender
+{
+    [self doesNotRecognizeSelector:_cmd];
+}
+
+- (IBAction)forceRepaint:(id)sender
+{
+    [self doesNotRecognizeSelector:_cmd];
+}
+
+- (IBAction)goBack:(id)sender
+{
+    [self doesNotRecognizeSelector:_cmd];
+}
+
+- (IBAction)goForward:(id)sender
+{
+    [self doesNotRecognizeSelector:_cmd];
+}
+
+- (IBAction)showHideWebView:(id)sender
+{
+    [self doesNotRecognizeSelector:_cmd];
+}
+
+- (IBAction)removeReinsertWebView:(id)sender
+{
+    [self doesNotRecognizeSelector:_cmd];
+}
+
+- (IBAction)zoomIn:(id)sender
+{
+    [self doesNotRecognizeSelector:_cmd];
+}
+
+- (IBAction)zoomOut:(id)sender
+{
+    [self doesNotRecognizeSelector:_cmd];
+}
+
+- (IBAction)resetZoom:(id)sender
+{
+    [self doesNotRecognizeSelector:_cmd];
+}
+
+- (BOOL)canZoomIn
+{
+    [self doesNotRecognizeSelector:_cmd];
+    return NO;
+}
+
+- (BOOL)canZoomOut
+{
+    [self doesNotRecognizeSelector:_cmd];
+    return NO;
+}
+
+- (BOOL)canResetZoom
+{
+    [self doesNotRecognizeSelector:_cmd];
+    return NO;
+}
+
+- (IBAction)toggleZoomMode:(id)sender
+{
+    [self doesNotRecognizeSelector:_cmd];
+}
+
+- (IBAction)setScale:(id)sender
+{
+    [self doesNotRecognizeSelector:_cmd];
+}
+
+- (IBAction)toggleShrinkToFit:(id)sender
+{
+    [self doesNotRecognizeSelector:_cmd];
+}
+
+- (IBAction)dumpSourceToConsole:(id)sender
+{
+    [self doesNotRecognizeSelector:_cmd];
+}
+
+- (IBAction)find:(id)sender
+{
+    [self doesNotRecognizeSelector:_cmd];
+}
+
+- (void)didChangeSettings
+{
+    [self doesNotRecognizeSelector:_cmd];
+}
+
+- (NSURL *)currentURL
+{
+    [self doesNotRecognizeSelector:_cmd];
+    return nil;
+}
+
 @end

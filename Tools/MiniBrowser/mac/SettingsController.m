@@ -98,6 +98,7 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     _menu = [[NSMenu alloc] initWithTitle:@"Settings"];
 
     [self _addItemWithTitle:@"Use WebKit2 By Default" action:@selector(toggleUseWebKit2ByDefault:) indented:NO];
+    [self _addItemWithTitle:@"Set Default URL to Current URL" action:@selector(setDefaultURLToCurrentURL:) indented:NO];
 
     [_menu addItem:[NSMenuItem separatorItem]];
 
@@ -327,6 +328,18 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     if (customDefaultURL)
         return customDefaultURL;
     return defaultURL;
+}
+
+- (void)setDefaultURLToCurrentURL:(id)sender
+{
+    NSWindowController *windowController = [[NSApp keyWindow] windowController];
+    NSString *customDefaultURL = nil;
+
+    if ([windowController isKindOfClass:[BrowserWindowController class]])
+        customDefaultURL = [[(BrowserWindowController *)windowController currentURL] absoluteString];
+
+    if (customDefaultURL)
+        [[NSUserDefaults standardUserDefaults] setObject:customDefaultURL forKey:DefaultURLPreferenceKey];
 }
 
 @end

@@ -244,6 +244,11 @@
 {
 }
 
+- (NSURL *)currentURL
+{
+    return _webView.mainFrame.dataSource.request.URL;
+}
+
 - (void)didChangeSettings
 {
     SettingsController *settings = [SettingsController shared];
