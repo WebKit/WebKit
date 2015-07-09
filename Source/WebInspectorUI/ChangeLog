@@ -1,3 +1,20 @@
+2015-07-09  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Align slider knobs in the color picker
+        https://bugs.webkit.org/show_bug.cgi?id=146778
+
+        Also:
+        - Use half pixel borders on retina
+        - Remove one pixel white outline to match native OS X color picker more closely
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ColorPicker.css:
+        (.color-picker > .slider > img):
+        * UserInterface/Views/Slider.css:
+        (.slider):
+        (@media (-webkit-min-device-pixel-ratio: 2)):
+
 2015-07-09  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Rendering Frame segment colors should match those used in original Timelines graph

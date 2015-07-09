@@ -41,6 +41,11 @@
     -webkit-transform-origin: 0 0;
 }
 
+.color-picker > .slider > img {
+    left: -4px;
+    top: 0;
+}
+
 .color-picker > .brightness {
     left: 215px;
 }

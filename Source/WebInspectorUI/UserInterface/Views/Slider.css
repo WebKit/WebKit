@@ -26,8 +26,7 @@
 .slider {
     position: absolute;
     height: 11px;
-    outline: 1px solid rgb(148, 148, 148);
-    border: 1px solid white;
+    border: 1px solid hsl(0, 0%, 75%);
 }
 
 .slider > img {
@@ -41,4 +40,10 @@
 
 .slider > img.dragging {
     content: -webkit-image-set(url(../Images/SliderThumbPressed.png) 1x, url(../Images/SliderThumbPressed@2x.png) 2x);
+}
+
+@media (-webkit-min-device-pixel-ratio: 2) {
+    .slider {
+        border: 0.5px solid hsl(0, 0%, 50%);
+    }
 }
