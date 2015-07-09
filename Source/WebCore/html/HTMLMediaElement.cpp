@@ -4862,9 +4862,10 @@ const char* HTMLMediaElement::activeDOMObjectName() const
     return "HTMLMediaElement";
 }
 
-void HTMLMediaElement::stop()
+void HTMLMediaElement::stopWithoutDestroyingMediaPlayer()
 {
-    LOG(Media, "HTMLMediaElement::stop(%p)", this);
+    LOG(Media, "HTMLMediaElement::stopWithoutDestroyingMediaPlayer(%p)", this);
+
     if (m_videoFullscreenMode != VideoFullscreenModeNone)
         exitFullscreen();
     
@@ -4885,13 +4886,20 @@ void HTMLMediaElement::stop()
 
     m_asyncEventQueue.close();
 
+    updateSleepDisabling();
+}
+
+void HTMLMediaElement::stop()
+{
+    LOG(Media, "HTMLMediaElement::stop(%p)", this);
+
+    stopWithoutDestroyingMediaPlayer();
+
     // Once an active DOM object has been stopped it can not be restarted, so we can deallocate
     // the media player now. Note that userCancelledLoad will already called clearMediaPlayer
     // if the media was not fully loaded, but we need the same cleanup if the file was completely
     // loaded and calling it again won't cause any problems.
     clearMediaPlayer(EveryDelayedAction);
-
-    updateSleepDisabling();
 }
 
 void HTMLMediaElement::suspend(ReasonForSuspension why)
@@ -4901,7 +4909,7 @@ void HTMLMediaElement::suspend(ReasonForSuspension why)
     switch (why)
     {
         case PageCache:
-            stop();
+            stopWithoutDestroyingMediaPlayer();
             m_mediaSession->addBehaviorRestriction(MediaElementSession::RequirePageConsentToResumeMedia);
             break;
         case DocumentWillBePaused:

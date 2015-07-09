@@ -1,3 +1,18 @@
+2015-07-08  Andreas Kling  <akling@apple.com>
+
+        Videos on apple.com don't show up when restored from page cache.
+        <https://webkit.org/b/146766>
+        <rdar://problem/21712311>
+
+        Reviewed by Darin Adler.
+
+        Tweaked an existing media element page caching test to dump out the video height
+        after restoring from page cache. Failure to restore the video player would result
+        in incorrect geometry (it falls back to RenderReplaced's default 300x150.)
+
+        * media/restore-from-page-cache-expected.txt:
+        * media/restore-from-page-cache.html:
+
 2015-07-08  Benjamin Poulain  <bpoulain@apple.com>
 
         [Content Extensions] Fuse undistinguishable actions as much as possible

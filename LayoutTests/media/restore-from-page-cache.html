@@ -21,7 +21,13 @@
                     consoleWrite("*** Page returned from cache");
 
                     testExpected("loadCount", 1);
-                    
+
+                    // Dump the height of the video so we can verify that the player was restored.
+                    video = document.getElementsByTagName('video')[0];
+                    videoComputedStyle = getComputedStyle(video);
+                    testExpected("videoComputedStyle.width", "320px");
+                    testExpected("videoComputedStyle.height", "240px");
+
                     // schedule the test to end shortly, but wait long enough for the element to fire loading events
                     //  if that is going to happen
                     setTimeout(function() { if (window.testRunner) testRunner.notifyDone(); }, 200);

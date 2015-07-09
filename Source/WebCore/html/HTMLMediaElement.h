@@ -505,6 +505,7 @@ private:
     void suspend(ReasonForSuspension) override;
     void resume() override;
     void stop() override;
+    void stopWithoutDestroyingMediaPlayer();
     
     virtual void mediaVolumeDidChange() override;
 

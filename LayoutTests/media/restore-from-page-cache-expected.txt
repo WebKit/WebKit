@@ -7,4 +7,6 @@ EXPECTED (loadCount == '0') OK
 *** Page going into cache
 *** Page returned from cache
 EXPECTED (loadCount == '1') OK
+EXPECTED (videoComputedStyle.width == '320px') OK
+EXPECTED (videoComputedStyle.height == '240px') OK
 
