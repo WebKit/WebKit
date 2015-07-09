@@ -44,6 +44,7 @@
 #include "FrameView.h"
 #include "HTMLAreaElement.h"
 #include "HTMLCanvasElement.h"
+#include "HTMLDetailsElement.h"
 #include "HTMLFieldSetElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameElementBase.h"
@@ -1608,6 +1609,15 @@ unsigned AccessibilityNodeObject::hierarchicalLevel() const
     return level;
 }
 
+void AccessibilityNodeObject::setIsExpanded(bool expand)
+{
+    if (is<HTMLDetailsElement>(node())) {
+        HTMLDetailsElement* details = downcast<HTMLDetailsElement>(node());
+        if ((expand && !details->isOpen()) || (!expand && details->isOpen()))
+            details->toggleOpen();
+    }
+}
+    
 // When building the textUnderElement for an object, determine whether or not
 // we should include the inner text of this given descendant object or skip it.
 static bool shouldUseAccessibilityObjectInnerText(AccessibilityObject* obj, AccessibilityTextUnderElementMode mode)

@@ -1,3 +1,13 @@
+2015-07-02  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: <details> element should allow expand/close through AX API
+        https://bugs.webkit.org/show_bug.cgi?id=146549
+
+        Reviewed by Mario Sanchez Prada.
+
+        * platform/mac/accessibility/details-summary-expected.txt:
+        * platform/mac/accessibility/details-summary.html:
+
 2015-07-09  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Prevent crashes with plugins.

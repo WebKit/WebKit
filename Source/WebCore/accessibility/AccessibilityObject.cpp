@@ -2041,6 +2041,8 @@ bool AccessibilityObject::supportsPressAction() const
 {
     if (isButton())
         return true;
+    if (roleValue() == DetailsRole)
+        return true;
     
     Element* actionElement = this->actionElement();
     if (!actionElement)

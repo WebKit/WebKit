@@ -2800,6 +2800,9 @@ bool AccessibilityRenderObject::ariaRoleHasPresentationalChildren() const
 
 bool AccessibilityRenderObject::canSetExpandedAttribute() const
 {
+    if (roleValue() == DetailsRole)
+        return true;
+    
     // An object can be expanded if it aria-expanded is true or false.
     const AtomicString& ariaExpanded = getAttribute(aria_expandedAttr);
     return equalIgnoringCase(ariaExpanded, "true") || equalIgnoringCase(ariaExpanded, "false");

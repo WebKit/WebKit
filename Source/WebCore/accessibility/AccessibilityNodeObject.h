@@ -130,6 +130,7 @@ public:
     virtual void colorValue(int& r, int& g, int& b) const override;
     virtual String ariaLabeledByAttribute() const override;
     virtual bool hasAttributesRequiredForInclusion() const override final;
+    virtual void setIsExpanded(bool) override;
 
     virtual Element* actionElement() const override;
     Element* mouseButtonListener(MouseButtonListenerResultFilter = ExcludeBodyElement) const;

@@ -12,8 +12,15 @@ PASS details1.subrole is 'AXSubrole: AXDetails'
 PASS details1.isExpanded is true
 PASS details1.childAtIndex(0).role is 'AXRole: AXGroup'
 PASS details1.childAtIndex(0).subrole is 'AXSubrole: AXSummary'
+PASS details1.isAttributeSettable('AXExpanded') is true
+PASS details1.isExpanded is false
+PASS details1.isExpanded is false
+PASS details1.isExpanded is true
+PASS details1.isExpanded is true
 PASS details2.subrole is 'AXSubrole: AXDetails'
 PASS details2.isExpanded is false
+Received AXExpandedChanged notification 
+Received AXExpandedChanged notification 
 PASS successfullyParsed is true
 
 TEST COMPLETE
