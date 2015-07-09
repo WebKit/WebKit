@@ -1741,6 +1741,7 @@ webkit.org/b/140759 canvas/philip/tests/2d.path.arcTo.collinear.3.html
 webkit.org/b/140759 canvas/philip/tests/2d.shadow.enable.blur.html
 webkit.org/b/140759 canvas/philip/tests/2d.shadow.enable.x.html
 webkit.org/b/140759 canvas/philip/tests/2d.shadow.enable.y.html
+webkit.org/b/146795 canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ Pass Failure ]
 
 fast/canvas/canvas-gradient-addStop-error.html [ Failure ]
 fast/canvas/canvas-quadratic-same-endpoint.html [ Failure ]
