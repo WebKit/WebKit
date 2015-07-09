@@ -350,6 +350,10 @@ public:
 
     bool isInChildFrameWithFrameFlattening() const;
 
+    void startDisallowingLayout() { ++m_layoutDisallowed; }
+    void endDisallowingLayout() { ASSERT(m_layoutDisallowed > 0); --m_layoutDisallowed; }
+    bool layoutDisallowed() const { return m_layoutDisallowed; }
+
     static double currentPaintTimeStamp() { return sCurrentPaintTimeStamp; } // returns 0 if not painting
     
     void updateLayoutAndStyleIfNeededRecursive();
@@ -690,6 +694,7 @@ private:
 
     unsigned m_deferSetNeedsLayouts;
     bool m_setNeedsLayoutWasDeferred;
+    int m_layoutDisallowed { 0 };
 
     RefPtr<Node> m_nodeToDraw;
     PaintBehavior m_paintBehavior;
