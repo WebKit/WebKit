@@ -1,5 +1,24 @@
 2015-07-09  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Pseudo-element style ordering is wrong for pseudo-styles on unique selectors
+        https://bugs.webkit.org/show_bug.cgi?id=146804
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/CSSRule.js:
+        (WebInspector.CSSRule.prototype.selectorIsGreater):
+        Loops through the selectors in a rule to check if their specificity is greater than a given selector's specificity.
+        * UserInterface/Models/CSSSelector.js:
+        (WebInspector.CSSSelector.prototype.isGreaterThan):
+        Determines if the given selector's specificity is greater than this selector's specificity.
+        (WebInspector.CSSSelector):
+        * UserInterface/Views/RulesStyleDetailsPanel.js:
+        (WebInspector.RulesStyleDetailsPanel.prototype.refresh):
+        If the pseudo-element selector's specificity is greater than the current selector's
+        specificity, create the pseudo-element's section and add it before the current style.
+
+2015-07-09  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Special Logs to Console that do not have an expression should be styled differently, looks like code
         https://bugs.webkit.org/show_bug.cgi?id=143840
 

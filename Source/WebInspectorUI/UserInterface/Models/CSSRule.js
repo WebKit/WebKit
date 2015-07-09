@@ -182,6 +182,32 @@ WebInspector.CSSRule = class CSSRule extends WebInspector.Object
         return Object.shallowEqual(this._id, rule.id);
     }
 
+    selectorIsGreater(otherSelectors)
+    {
+        if (!otherSelectors || !otherSelectors.length)
+            return true;
+
+        var selectorIsGreater = true;
+
+        var selectors = this.matchedSelectors;
+        if (!selectors.length)
+            selectors = this._selectors;
+
+        for (var selector of selectors) {
+            for (var otherSelector of otherSelectors) {
+                if (selector.isGreaterThan(otherSelector))
+                    continue;
+
+                selectorIsGreater = false;
+            }
+
+            if (selectorIsGreater)
+                return true;
+        }
+
+        return false;
+    }
+
     // Protected
 
     get nodeStyles()

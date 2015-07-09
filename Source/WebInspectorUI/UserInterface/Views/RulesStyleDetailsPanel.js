@@ -179,7 +179,7 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
         var pseudoElementSelectors = [];
 
         for (var style of orderedPseudoStyles)
-            pseudoElementSelectors.push({ style, selectorText: style.ownerRule.selectorText.replace(/:{1,2}[\w-]+\s*/, " ").trimRight() });
+            pseudoElementSelectors.push({ style, selectorText: style.ownerRule.selectorText.replace(/:{1,2}[\w-]+\s*/g, " ").trimRight() });
 
         // Reverse the array to allow ensure that splicing the array will not mess with the order.
         if (pseudoElementSelectors.length)
@@ -263,12 +263,15 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
 
             this._ruleMediaAndInherticanceList.push(hasMediaOrInherited);
 
-            if (pseudoElementSelectors.length && style.ownerRule) {
+            var ownerRule = style.ownerRule;
+
+            if (pseudoElementSelectors.length && ownerRule) {
                 for (var j = pseudoElementSelectors.length - 1; j >= 0; --j) {
                     var pseudoElement = pseudoElementSelectors[j];
+                    var matchedSelectorText = ownerRule.matchedSelectorText;
 
-                    if (style.ownerRule.type === WebInspector.CSSRule.Type.UserAgent || style.inerhited
-                    || (pseudoElement.lastMatchingSelector && pseudoElement.lastMatchingSelector !== style.ownerRule.selectorText)) {
+                    if (ownerRule.type === WebInspector.CSSRule.Type.UserAgent || style.inerhited
+                    || (pseudoElement.lastMatchingSelector && pseudoElement.lastMatchingSelector !== matchedSelectorText)) {
                         appendStyleSection.call(this, pseudoElement.style);
                         pseudoElementSelectors.splice(j, 1);
                         this._ruleMediaAndInherticanceList.push(hasMediaOrInherited);
@@ -276,8 +279,8 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
                         continue;
                     }
 
-                    if (style.ownerRule.selectorText.includes(pseudoElement.selectorText))
-                        pseudoElement.lastMatchingSelector = style.ownerRule.selectorText;
+                    if (matchedSelectorText.includes(pseudoElement.selectorText) || !ownerRule.selectorIsGreater(pseudoElement.style.ownerRule.selectors))
+                        pseudoElement.lastMatchingSelector = matchedSelectorText;
                 }
             }
 
