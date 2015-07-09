@@ -1,5 +1,25 @@
 2015-07-08  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r183436. rdar://problem/21716524
+
+    2015-04-27  Daniel Bates  <dabates@apple.com>
+
+            Form control may be associated with the wrong HTML Form element after form id change
+            https://bugs.webkit.org/show_bug.cgi?id=133456
+            <rdar://problem/17095055>
+
+            Reviewed by Andy Estes.
+
+            Add tests to ensure that we associate the correct HTML Form element with a
+            <select> after changing the id of its associated HTML form element.
+
+            * fast/forms/change-form-id-to-be-unique-expected.txt: Added.
+            * fast/forms/change-form-id-to-be-unique-then-submit-form-expected.txt: Added.
+            * fast/forms/change-form-id-to-be-unique-then-submit-form.html: Added.
+            * fast/forms/change-form-id-to-be-unique.html: Added.
+
+2015-07-08  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r182829. rdar://problem/21716511
 
     2015-04-14  Chris Dumez  <cdumez@apple.com>
