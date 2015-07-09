@@ -521,7 +521,7 @@ bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
      
     if (descriptor.configurablePresent() && descriptor.configurable()) {
         if (throwException)
-            exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to configurable attribute of unconfigurable property.")));
+            exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change configurable attribute of unconfigurable property.")));
         return false;
     }
     if (descriptor.enumerablePresent() && descriptor.enumerable()) {

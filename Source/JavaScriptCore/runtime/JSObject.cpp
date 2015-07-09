@@ -2601,7 +2601,7 @@ bool JSObject::defineOwnNonIndexProperty(ExecState* exec, PropertyName propertyN
     if (!current.configurable()) {
         if (descriptor.configurable()) {
             if (throwException)
-                exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to configurable attribute of unconfigurable property.")));
+                exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change configurable attribute of unconfigurable property.")));
             return false;
         }
         if (descriptor.enumerablePresent() && descriptor.enumerable() != current.enumerable()) {

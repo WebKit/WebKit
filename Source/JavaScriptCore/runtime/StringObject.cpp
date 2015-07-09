@@ -93,7 +93,7 @@ bool StringObject::defineOwnProperty(JSObject* object, ExecState* exec, Property
         }
         if (descriptor.configurablePresent() && descriptor.configurable()) {
             if (throwException)
-                exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to configurable attribute of unconfigurable property.")));
+                exec->vm().throwException(exec, createTypeError(exec, ASCIILiteral("Attempting to change configurable attribute of unconfigurable property.")));
             return false;
         }
         if (descriptor.enumerablePresent() && descriptor.enumerable()) {

@@ -24,7 +24,7 @@ PASS Object.defineProperty({}) threw exception TypeError: Property description m
 PASS Object.defineProperty({}, 'foo') threw exception TypeError: Property description must be an object..
 PASS Object.defineProperty({}, 'foo', {get:undefined, value:true}).foo threw exception TypeError: Invalid property.  'value' present on property with getter or setter..
 PASS Object.defineProperty({get foo() { return true; } }, 'foo', {configurable:false}).foo is true
-PASS Object.defineProperty(createUnconfigurableProperty({}, 'foo'), 'foo', {configurable: true}) threw exception TypeError: Attempting to configurable attribute of unconfigurable property..
+PASS Object.defineProperty(createUnconfigurableProperty({}, 'foo'), 'foo', {configurable: true}) threw exception TypeError: Attempting to change configurable attribute of unconfigurable property..
 PASS Object.defineProperty(createUnconfigurableProperty({}, 'foo'), 'foo', {writable: true}) threw exception TypeError: Attempting to change writable attribute of unconfigurable property..
 PASS Object.defineProperty(createUnconfigurableProperty({}, 'foo'), 'foo', {enumerable: true}) threw exception TypeError: Attempting to change enumerable attribute of unconfigurable property..
 PASS Object.defineProperty(createUnconfigurableProperty({}, 'foo', false, true), 'foo', {enumerable: false}), 'foo' threw exception TypeError: Attempting to change enumerable attribute of unconfigurable property..
@@ -70,8 +70,8 @@ PASS var o = Object.defineProperty({}, 'foo', {get: function() { return 1; }, co
 PASS Object.defineProperty(Object.defineProperty({}, 'foo', {get: function() { return 1; }, configurable: true}), 'foo', {value:2}).foo is 2
 PASS Object.defineProperty(Object.defineProperty({}, 'foo', {get: function() { return 1; }, configurable: false}), 'foo', {value:2}).foo threw exception TypeError: Attempting to change access mechanism for an unconfigurable property..
 PASS var o = Object.defineProperty(Object.defineProperty({}, 'foo', {get: function() { return 1; }, configurable: true}), 'foo', {value:2}); o.foo = 3; o.foo is 2
-PASS Object.defineProperty(Object.defineProperty({}, 'foo', {value: 1}), 'foo', {value:2, configurable: true}) threw exception TypeError: Attempting to configurable attribute of unconfigurable property..
-PASS Object.defineProperty(Object.defineProperty([], 'foo', {value: 1}), 'foo', {value:2, configurable: true}) threw exception TypeError: Attempting to configurable attribute of unconfigurable property..
+PASS Object.defineProperty(Object.defineProperty({}, 'foo', {value: 1}), 'foo', {value:2, configurable: true}) threw exception TypeError: Attempting to change configurable attribute of unconfigurable property..
+PASS Object.defineProperty(Object.defineProperty([], 'foo', {value: 1}), 'foo', {value:2, configurable: true}) threw exception TypeError: Attempting to change configurable attribute of unconfigurable property..
 PASS var o = Object.defineProperty({}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}); o.foo is 42
 PASS var o = Object.defineProperty({}, 'foo', {get:function(){return 42;}, set:function(x){this.result = x;}}); o.foo = 42; o.result; is 42
 PASS var o = Object.defineProperty({}, 'foo', {get:undefined, set:function(x){this.result = x;}}); o.foo is undefined

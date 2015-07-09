@@ -1,3 +1,17 @@
+2015-07-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fix grammar issue in TypeError attempting to change an unconfigurable property
+        https://bugs.webkit.org/show_bug.cgi?id=146774
+
+        Reviewed by Brent Fulgham.
+
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::defineOwnProperty):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::defineOwnNonIndexProperty):
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::defineOwnProperty):
+
 2015-07-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove the unused HeapBlock.h
