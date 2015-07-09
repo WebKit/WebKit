@@ -59,8 +59,9 @@ namespace WebCore {
         PreventPreflight
     };
 
-    struct ThreadableLoaderOptions : public ResourceLoaderOptions {
+    struct ThreadableLoaderOptions : ResourceLoaderOptions {
         ThreadableLoaderOptions();
+        ThreadableLoaderOptions(const ResourceLoaderOptions&, PreflightPolicy, CrossOriginRequestPolicy, RefPtr<SecurityOrigin>&&, String&& initiator);
         ~ThreadableLoaderOptions();
 
         std::unique_ptr<ThreadableLoaderOptions> isolatedCopy() const;
