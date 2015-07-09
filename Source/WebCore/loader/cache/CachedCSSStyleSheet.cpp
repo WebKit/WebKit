@@ -77,17 +77,17 @@ String CachedCSSStyleSheet::encoding() const
 {
     return m_decoder->encoding().name();
 }
-    
-const String CachedCSSStyleSheet::sheetText(bool enforceMIMEType, bool* hasValidMIMEType) const 
-{ 
+
+const String CachedCSSStyleSheet::sheetText(bool* hasValidMIMEType) const
+{
     ASSERT(!isPurgeable());
 
-    if (!m_data || m_data->isEmpty() || !canUseSheet(enforceMIMEType, hasValidMIMEType))
+    if (!m_data || m_data->isEmpty() || !canUseSheet(hasValidMIMEType))
         return String();
-    
+
     if (!m_decodedSheetText.isNull())
         return m_decodedSheetText;
-    
+
     // Don't cache the decoded text, regenerating is cheap and it can use quite a bit of memory
     return m_decoder->decodeAndFlush(m_data->data(), m_data->size());
 }
@@ -115,13 +115,10 @@ void CachedCSSStyleSheet::checkNotify()
         c->setCSSStyleSheet(m_resourceRequest.url(), m_response.url(), m_decoder->encoding().name(), this);
 }
 
-bool CachedCSSStyleSheet::canUseSheet(bool enforceMIMEType, bool* hasValidMIMEType) const
+bool CachedCSSStyleSheet::canUseSheet(bool* hasValidMIMEType) const
 {
     if (errorOccurred())
         return false;
-        
-    if (!enforceMIMEType && !hasValidMIMEType)
-        return true;
 
     // This check exactly matches Firefox.  Note that we grab the Content-Type
     // header directly because we want to see what the value is BEFORE content
@@ -134,8 +131,6 @@ bool CachedCSSStyleSheet::canUseSheet(bool enforceMIMEType, bool* hasValidMIMETy
     bool typeOK = mimeType.isEmpty() || equalIgnoringCase(mimeType, "text/css") || equalIgnoringCase(mimeType, "application/x-unknown-content-type");
     if (hasValidMIMEType)
         *hasValidMIMEType = typeOK;
-    if (!enforceMIMEType)
-        return true;
     return typeOK;
 }
 
