@@ -263,7 +263,7 @@ WebInspector.ObjectPreviewView = class ObjectPreviewView extends WebInspector.Ob
             if (!isImpossible)
                 WebInspector.quickConsole.prompt.pushHistoryItem(text);
 
-            WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, this._remoteObject);
+            WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, this._remoteObject, isImpossible);
         }.bind(this));
 
         contextMenu.show();        

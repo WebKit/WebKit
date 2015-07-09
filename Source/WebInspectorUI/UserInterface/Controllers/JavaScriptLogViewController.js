@@ -119,11 +119,11 @@ WebInspector.JavaScriptLogViewController = class JavaScriptLogViewController ext
         consoleSession.element.scrollIntoView();
     }
 
-    appendImmediateExecutionWithResult(text, result)
+    appendImmediateExecutionWithResult(text, result, addSpecialUserLogClass)
     {
         console.assert(result instanceof WebInspector.RemoteObject);
 
-        var commandMessageView = new WebInspector.ConsoleCommandView(text);
+        var commandMessageView = new WebInspector.ConsoleCommandView(text, addSpecialUserLogClass ? "special-user-log" : null);
         this._appendConsoleMessageView(commandMessageView, true);
 
         function saveResultCallback(savedResultIndex)

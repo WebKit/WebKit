@@ -1,5 +1,29 @@
 2015-07-09  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Special Logs to Console that do not have an expression should be styled differently, looks like code
+        https://bugs.webkit.org/show_bug.cgi?id=143840
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/JavaScriptLogViewController.js:
+        (WebInspector.WebInspector.JavaScriptLogViewController.appendImmediateExecutionWithResult):
+        Now applies a class to special logs initiated by the user (log element, log object, etc).
+        * UserInterface/Views/ConsoleCommandView.js:
+        (WebInspector.ConsoleCommandView): Added className parameter.
+        * UserInterface/Views/ConsoleMessageView.css:
+        (.console-user-command.selected-element-log):
+        (.console-user-command.special-user-log > .console-message-text):
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WebInspector.DOMTreeOutline.prototype._populateContextMenu.logElement):
+        (WebInspector.DOMTreeOutline.prototype._populateContextMenu):
+        * UserInterface/Views/ObjectPreviewView.js:
+        (WebInspector.ObjectPreviewView.prototype._contextMenuHandler):
+        * UserInterface/Views/ObjectTreeBaseTreeElement.js:
+        (WebInspector.ObjectTreeBaseTreeElement.prototype._logSymbolProperty):
+        (WebInspector.ObjectTreeBaseTreeElement.prototype._logValue):
+
+2015-07-09  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Checkbox disappears when unchecking CSS background style
         https://bugs.webkit.org/show_bug.cgi?id=146776
 

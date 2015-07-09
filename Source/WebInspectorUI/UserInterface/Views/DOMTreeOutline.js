@@ -512,7 +512,7 @@ WebInspector.DOMTreeOutline = class DOMTreeOutline extends WebInspector.TreeOutl
                 if (!remoteObject)
                     return;
                 var text = WebInspector.UIString("Selected Element");
-                WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject);
+                WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, true);
             });
         }
 

@@ -29,6 +29,16 @@
     min-height: 21px;
 }
 
+.console-user-command.special-user-log > .console-message-text {
+    padding: 1px 6px;
+    border-radius: 3px;
+    border: 1px solid transparent;
+    background-color: rgb(34, 131, 246);
+    color: white;
+    font-size: 10px;
+    -webkit-user-select: none;
+}
+
 .console-message .repeat-count {
     display: inline-block;
     float: left;

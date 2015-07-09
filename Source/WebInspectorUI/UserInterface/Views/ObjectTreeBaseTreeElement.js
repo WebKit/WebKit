@@ -161,7 +161,7 @@ WebInspector.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends
             return;
 
         var text = WebInspector.UIString("Selected Symbol");
-        WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, symbol);
+        WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, symbol, true);
     }
 
     _logValue(value)
@@ -177,7 +177,7 @@ WebInspector.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends
         if (!isImpossible)
             WebInspector.quickConsole.prompt.pushHistoryItem(text);
 
-        WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, resolvedValue);
+        WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, resolvedValue, isImpossible);
     }
 
     _contextMenuHandler(event)

@@ -29,7 +29,7 @@
 
 WebInspector.ConsoleCommandView = class ConsoleCommandView extends WebInspector.Object
 {
-    constructor(commandText)
+    constructor(commandText, className)
     {
         super();
 
@@ -38,6 +38,9 @@ WebInspector.ConsoleCommandView = class ConsoleCommandView extends WebInspector.
         this._element = document.createElement("div");
         this._element.classList.add("console-user-command");
         this._element.setAttribute("data-labelprefix", WebInspector.UIString("Input: "));
+
+        if (className)
+            this._element.classList.add(className);
 
         this._formattedCommandElement = this._element.appendChild(document.createElement("span"));
         this._formattedCommandElement.classList.add("console-message-text");
