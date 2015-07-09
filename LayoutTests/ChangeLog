@@ -1,3 +1,19 @@
+2015-07-08  Daniel Bates  <dbates@webkit.org>
+
+        [EFL] vibration/navigator-vibration.html failed after r186265
+        https://bugs.webkit.org/show_bug.cgi?id=146770
+
+        Reviewed by Gyuyoung Kim.
+
+        Update test LayoutTests/vibration/navigator-vibration.html and its expected result.
+
+        Following <http://trac.webkit.org/changeset/186265> extra arguments passed
+        to a Web IDL overloaded function are ignored per section "Interface object Call? method"
+        of the Web IDL spec, <http://www.w3.org/TR/2012/CR-WebIDL-20120419/> (19 April 2012).
+
+        * vibration/navigator-vibration-expected.txt:
+        * vibration/navigator-vibration.html:
+
 2015-07-08  Andreas Kling  <akling@apple.com>
 
         Videos on apple.com don't show up when restored from page cache.

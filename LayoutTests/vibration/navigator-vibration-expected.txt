@@ -9,7 +9,7 @@ PASS navigator.vibrate(1); is true
 PASS navigator.vibrate([1, 2]); is true
 PASS navigator.vibrate([1, 2, 3]); is true
 PASS navigator.vibrate(); threw exception TypeError: Not enough arguments.
-PASS navigator.vibrate([1], [2]); threw exception TypeError: Type error.
+PASS navigator.vibrate([1], [2]); is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
