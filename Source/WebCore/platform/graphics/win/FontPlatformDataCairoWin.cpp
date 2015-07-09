@@ -77,7 +77,7 @@ FontPlatformData::FontPlatformData(GDIObject<HFONT> font, cairo_font_face_t* fon
    // We force antialiasing and disable hinting to provide consistent
    // typographic qualities for custom fonts on all platforms.
    cairo_font_options_set_hint_style(options, CAIRO_HINT_STYLE_NONE);
-   cairo_font_options_set_antialias(options, CAIRO_ANTIALIAS_GRAY);
+   cairo_font_options_set_antialias(options, CAIRO_ANTIALIAS_BEST);
 
     if (syntheticOblique()) {
         static const float syntheticObliqueSkew = -tanf(14 * acosf(0) / 90);
