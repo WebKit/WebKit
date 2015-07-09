@@ -52,6 +52,7 @@ static const ExtensionMap extensionMap [] = {
     { "png", "image/png" },
     { "rss", "application/rss+xml" },
     { "svg", "image/svg+xml" },
+    { "swf", "application/x-shockwave-flash" },
     { "text", "text/plain" },
     { "txt", "text/plain" },
     { "xbm", "image/x-xbitmap" },
