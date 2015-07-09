@@ -311,7 +311,7 @@ WebInspector.LogContentView.prototype = {
 
     _sessionStarted: function(event)
     {
-        if (WebInspector.logManager.clearLogOnReloadSetting.value) {
+        if (WebInspector.logManager.clearLogOnNavigateSetting.value) {
             this._reappendProvisionalMessages();
             return;
         }
@@ -389,9 +389,9 @@ WebInspector.LogContentView.prototype = {
         contextMenu.appendItem(WebInspector.UIString("Clear Log"), this._clearLog.bind(this));
         contextMenu.appendSeparator();
 
-        var clearLogOnReloadUIString = WebInspector.logManager.clearLogOnReloadSetting.value ? WebInspector.UIString("Keep Log on Reload") : WebInspector.UIString("Clear Log on Reload");
+        var clearLogOnReloadUIString = WebInspector.logManager.clearLogOnNavigateSetting.value ? WebInspector.UIString("Keep Log on Navigation") : WebInspector.UIString("Clear Log on Navigation");
 
-        contextMenu.appendItem(clearLogOnReloadUIString, this._toggleClearLogOnReloadSetting.bind(this));
+        contextMenu.appendItem(clearLogOnReloadUIString, this._toggleClearLogOnNavigateSetting.bind(this));
 
         contextMenu.show();
     },
@@ -679,9 +679,9 @@ WebInspector.LogContentView.prototype = {
         WebInspector.showConsoleTab();
     },
 
-    _toggleClearLogOnReloadSetting: function()
+    _toggleClearLogOnNavigateSetting: function()
     {
-        WebInspector.logManager.clearLogOnReloadSetting.value = !WebInspector.logManager.clearLogOnReloadSetting.value;
+        WebInspector.logManager.clearLogOnNavigateSetting.value = !WebInspector.logManager.clearLogOnNavigateSetting.value;
     },
 
     _clearLog: function()

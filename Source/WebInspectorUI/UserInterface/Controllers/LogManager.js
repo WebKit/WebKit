@@ -31,9 +31,9 @@ WebInspector.LogManager = class LogManager extends WebInspector.Object
         super();
 
         this._clearMessagesRequested = false;
-        this._isPageReload = false;
+        this._isNewPageOrReload = false;
 
-        this.clearLogOnReloadSetting = new WebInspector.Setting("clear-log-on-reload", true);
+        this.clearLogOnNavigateSetting = new WebInspector.Setting("clear-log-on-navigate", true);
 
         WebInspector.Frame.addEventListener(WebInspector.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
     }
@@ -74,14 +74,15 @@ WebInspector.LogManager = class LogManager extends WebInspector.Object
 
     _delayedMessagesCleared()
     {
-        if (this._isPageReload) {
-            this._isPageReload = false;
-            if (this.clearLogOnReloadSetting.value)
-                this.dispatchEventToListeners(WebInspector.LogManager.Event.Cleared);
-        } else {
-            // A frame navigated, console.clear() or command line clear() happened.
-            this.dispatchEventToListeners(WebInspector.LogManager.Event.Cleared);
+        if (this._isNewPageOrReload) {
+            this._isNewPageOrReload = false;
+
+            if (!this.clearLogOnNavigateSetting.value)
+                return;
         }
+
+        // A console.clear() or command line clear() happened.
+        this.dispatchEventToListeners(WebInspector.LogManager.Event.Cleared);
     }
 
     messageRepeatCountUpdated(count)
@@ -107,11 +108,10 @@ WebInspector.LogManager = class LogManager extends WebInspector.Object
         if (!event.target.isMainFrame())
             return;
 
-        if (event.data.oldMainResource.url === event.target.mainResource.url) {
-            this._isPageReload = true;
+        this._isNewPageOrReload = true;
+
+        if (event.data.oldMainResource.url === event.target.mainResource.url)
             this.dispatchEventToListeners(WebInspector.LogManager.Event.SessionStarted);
-        } else
-            this._isPageReload = false;
 
         WebInspector.ConsoleCommandResultMessage.clearMaximumSavedResultIndex();
     }

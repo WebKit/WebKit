@@ -1,5 +1,23 @@
 2015-07-09  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Don't clear the console when navigating to a different page
+        https://bugs.webkit.org/show_bug.cgi?id=142751
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Controllers/LogManager.js:
+        (WebInspector.LogManager): No longer distinguishes from page refreshes and page navigations for console clearing.
+        (WebInspector.LogManager.prototype._delayedMessagesCleared):
+        (WebInspector.LogManager.prototype._mainResourceDidChange):
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype._sessionStarted):
+        (WebInspector.LogContentView.prototype._handleContextMenuEvent): Changed context menu keep/clear log text.
+        (WebInspector.LogContentView.prototype._toggleClearLogOnNavigateSetting):
+        (WebInspector.LogContentView.prototype._toggleClearLogOnReloadSetting): Deleted.
+
+2015-07-09  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Pseudo-element style ordering is wrong for pseudo-styles on unique selectors
         https://bugs.webkit.org/show_bug.cgi?id=146804
 
