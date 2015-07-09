@@ -1,0 +1,3 @@
+Tests that showing Web Inspector on a page that has a stylesheet with an invalid MIME type does not crash.
+
+This test passes if it does not crash.
