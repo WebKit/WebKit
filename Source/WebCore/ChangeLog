@@ -1,5 +1,22 @@
 2015-07-08  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r183398. rdar://problem/21716555
+
+    2015-04-27  Darin Adler  <darin@apple.com>
+
+            Crashes under IDBDatabase::closeConnection
+            https://bugs.webkit.org/show_bug.cgi?id=141745
+
+            Reviewed by Alexey Proskuryakov.
+
+            * Modules/indexeddb/IDBDatabase.cpp:
+            (WebCore::IDBDatabase::~IDBDatabase): Do the work of close/closeConnection without
+            actually calling those functions.
+            (WebCore::IDBDatabase::closeConnection): Protect the database so it's not destroyed
+            in the middle of this function's execution.
+
+2015-07-08  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r182918. rdar://problem/21716544
 
     2015-04-16  Brady Eidson  <beidson@apple.com>
