@@ -1,5 +1,30 @@
 2015-07-09  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r186506. rdar://problem/21707927
+
+    2015-07-08  Matthew Hanson  <matthew_hanson@apple.com>
+
+            Merge r186380. rdar://problem/21708281
+
+        2015-07-06  Dean Jackson  <dino@apple.com>
+
+                Memory corruption in WebGLRenderingContext::simulateVertexAttrib0
+                https://bugs.webkit.org/show_bug.cgi?id=146652
+                <rdar://problem/21567767>
+
+                Reviewed by Brent Fulgham.
+
+                The expression "(numVertex + 1) * 4 * sizeof(GC3Dfloat)" could potentially
+                overflow. Make it use checked arithmetic.
+
+                I couldn't make a test case that reliably exercised this.
+
+                * html/canvas/WebGLRenderingContextBase.cpp:
+                (WebCore::WebGLRenderingContextBase::simulateVertexAttrib0): Used Checked<GC3Dsizeiptr>
+                for calculating the size of the buffer.
+
+2015-07-09  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r186505. rdar://problem/21707923
 
     2015-07-08  Matthew Hanson  <matthew_hanson@apple.com>
