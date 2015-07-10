@@ -1,3 +1,21 @@
+2015-07-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] pango should be included in the default jhbuild moduleset
+        https://bugs.webkit.org/show_bug.cgi?id=146683
+
+        Reviewed by Martin Robinson.
+
+        Recent releases of pango 1.36 use functions that are only provided by fontconfig 2.12 when
+        compiled against sufficiently-new versions of fontconfig. Since we depend on both pango and
+        fontconfig, and pango depends on fontconfig, we must either add pango to our jhbuild
+        moduleset or else upgrade fontconfig to a recent unstable release (knowing that we will have
+        the same problem again the next time pango wants to use a new fontconfig feature), or remove
+        fontconfig (which would make it hard to keep tests working). On the balance, adding pango is
+        best.
+
+        * gtk/jhbuild-optional.modules: Remove pango
+        * gtk/jhbuild.modules: Add pango and update to latest 1.36.8
+
 2015-07-09  Devin Rousso  <drousso@apple.com>
 
         Unreviewed.  Added myself as a committer.

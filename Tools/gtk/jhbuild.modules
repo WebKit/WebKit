@@ -151,6 +151,7 @@
       <dep package="cairo"/>
       <dep package="at-spi2-atk"/>
       <dep package="gdk-pixbuf"/>
+      <dep package="pango"/>
     </dependencies>
     <branch module="/pub/GNOME/sources/gtk+/3.16/gtk+-3.16.4.tar.xz" version="3.16.4"
             repo="ftp.gnome.org"
@@ -388,6 +389,21 @@
       <dep package="libnice"/>
      </dependencies>
     <branch repo="github.com" module="EricssonResearch/openwebrtc.git" checkoutdir="openwebrtc" tag="13516c7f79a0c48bb411464f7613d4b426c70f5b"/>
+  </autotools>
+
+  <!-- Dependencies listed below this point are not thought to affect test results, and are only
+       included because they themselves depend on other dependencies built by jhbuild. -->
+
+  <autotools id="pango" autogen-sh="configure"
+             autogenargs="--enable-cairo">
+    <dependencies>
+      <dep package="cairo"/>
+      <dep package="fontconfig"/>
+    </dependencies>
+    <branch module="/pub/GNOME/sources/pango/1.36/pango-1.36.8.tar.xz" version="1.36.8"
+            repo="ftp.gnome.org"
+            hash="sha256:18dbb51b8ae12bae0ab7a958e7cf3317c9acfc8a1e1103ec2f147164a0fc2d07">
+    </branch>
   </autotools>
 
 </moduleset>
