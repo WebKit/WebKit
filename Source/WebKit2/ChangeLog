@@ -1,3 +1,15 @@
+2015-07-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Crash when spell checker returns no guesses
+        https://bugs.webkit.org/show_bug.cgi?id=146805
+
+        Reviewed by Martin Robinson.
+
+        Properly handle ContextMenuItemTagNoGuessesFound in the switch statement.
+
+        * UIProcess/API/gtk/WebKitContextMenuActions.cpp:
+        (webkitContextMenuActionGetForContextMenuItem):
+
 2015-07-09  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Add 3 byte jump size.
