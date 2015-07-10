@@ -389,16 +389,17 @@ bool Options::setOption(const char* arg)
     // For each option, check if the specify arg is a match. If so, set the arg
     // if the value makes sense. Otherwise, move on to checking the next option.
 #define FOR_EACH_OPTION(type_, name_, defaultValue_, description_) \
-    if (!strncmp(arg, #name_, equalStr - arg)) {        \
-        type_ value;                                    \
-        value = (defaultValue_);                        \
-        bool success = parse(valueStr, value);          \
-        if (success) {                                  \
-            name_() = value;                            \
-            recomputeDependentOptions();                \
-            return true;                                \
-        }                                               \
-        return false;                                   \
+    if (strlen(#name_) == static_cast<size_t>(equalStr - arg)      \
+        && !strncmp(arg, #name_, equalStr - arg)) {                \
+        type_ value;                                               \
+        value = (defaultValue_);                                   \
+        bool success = parse(valueStr, value);                     \
+        if (success) {                                             \
+            name_() = value;                                       \
+            recomputeDependentOptions();                           \
+            return true;                                           \
+        }                                                          \
+        return false;                                              \
     }
 
     JSC_OPTIONS(FOR_EACH_OPTION)

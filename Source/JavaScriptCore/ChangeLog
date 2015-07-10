@@ -1,3 +1,17 @@
+2015-07-09  Filip Pizlo  <fpizlo@apple.com>
+
+        It should be possible to run the OSR exit fuzzer
+        https://bugs.webkit.org/show_bug.cgi?id=146814
+
+        Reviewed by Mark Lam.
+        
+        Fix a silly bug: the option matching was accidentally allowing a prefix match, which
+        always did the wrong thing for --fireOSRExitFuzzAt and --fireOSRExitFuzzAtStatic. Make
+        this an exact match instead.
+
+        * runtime/Options.cpp:
+        (JSC::Options::setOption):
+
 2015-07-09  Mark Lam  <mark.lam@apple.com>
 
         SymbolTable::entryFor() should do a bounds check before indexing into the localToEntry vector.
