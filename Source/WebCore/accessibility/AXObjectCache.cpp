@@ -281,11 +281,11 @@ static Ref<AccessibilityObject> createFromRenderer(RenderObject* renderer)
         return AccessibilityList::create(renderer);
 
     // aria tables
-    if (nodeHasRole(node, "grid") || nodeHasRole(node, "treegrid"))
+    if (nodeHasRole(node, "grid") || nodeHasRole(node, "treegrid") || nodeHasRole(node, "table"))
         return AccessibilityARIAGrid::create(renderer);
     if (nodeHasRole(node, "row"))
         return AccessibilityARIAGridRow::create(renderer);
-    if (nodeHasRole(node, "gridcell") || nodeHasRole(node, "columnheader") || nodeHasRole(node, "rowheader"))
+    if (nodeHasRole(node, "gridcell") || nodeHasRole(node, "cell") || nodeHasRole(node, "columnheader") || nodeHasRole(node, "rowheader"))
         return AccessibilityARIAGridCell::create(renderer);
 
 #if ENABLE(VIDEO)

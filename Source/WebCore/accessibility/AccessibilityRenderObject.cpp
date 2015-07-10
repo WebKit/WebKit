@@ -1692,7 +1692,7 @@ void AccessibilityRenderObject::setSelectedRows(AccessibilityChildrenVector& sel
 {
     // Setting selected only makes sense in trees and tables (and tree-tables).
     AccessibilityRole role = roleValue();
-    if (role != TreeRole && role != TreeGridRole && role != TableRole)
+    if (role != TreeRole && role != TreeGridRole && role != TableRole && role != GridRole)
         return;
     
     bool isMulti = isMultiSelectable();
@@ -2743,6 +2743,7 @@ bool AccessibilityRenderObject::inheritsPresentationalRole() const
         }
         possibleParentTagNames = &listItemParents.get();
         break;
+    case GridCellRole:
     case CellRole:
         if (tableCellParents.get().isEmpty())
             tableCellParents.get().add(tableTag);
@@ -3238,7 +3239,7 @@ void AccessibilityRenderObject::selectedChildren(AccessibilityChildrenVector& re
     AccessibilityRole role = roleValue();
     if (role == ListBoxRole) // native list boxes would be AccessibilityListBoxes, so only check for aria list boxes
         ariaListboxSelectedChildren(result);
-    else if (role == TreeRole || role == TreeGridRole || role == TableRole)
+    else if (role == TreeRole || role == TreeGridRole || role == TableRole || role == GridRole)
         ariaSelectedRows(result);
 }
 

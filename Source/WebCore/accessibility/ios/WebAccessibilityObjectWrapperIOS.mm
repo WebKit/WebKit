@@ -479,7 +479,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 - (AccessibilityObjectWrapper*)_accessibilityTableAncestor
 {
     for (AccessibilityObject* parent = m_object->parentObject(); parent != nil; parent = parent->parentObject()) {
-        if (parent->roleValue() == TableRole)
+        if (parent->roleValue() == TableRole || parent->roleValue() == GridRole)
             return parent->wrapper();   
     }
     
@@ -521,6 +521,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
             case ListRole:
                 traits |= [self _axContainedByListTrait];
                 break;
+            case GridRole:
             case TableRole:
                 traits |= [self _axContainedByTableTrait];
                 break;
@@ -731,6 +732,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         case FooterRole:
         case FormRole:
         case GridRole:
+        case GridCellRole:
         case GrowAreaRole:
         case HelpTagRole:
         case IgnoredRole:

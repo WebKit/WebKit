@@ -799,6 +799,7 @@ bool AccessibilityNodeObject::supportsRequiredAttribute() const
     case CheckBoxRole:
     case ComboBoxRole:
     case GridRole:
+    case GridCellRole:
     case IncrementorRole:
     case ListBoxRole:
     case PopUpButtonRole:
@@ -2061,6 +2062,7 @@ bool AccessibilityNodeObject::canSetSelectedAttribute() const
     // Elements that can be selected
     switch (roleValue()) {
     case CellRole:
+    case GridCellRole:
     case RadioButtonRole:
     case RowHeaderRole:
     case RowRole:

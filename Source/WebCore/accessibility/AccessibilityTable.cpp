@@ -585,6 +585,10 @@ AccessibilityRole AccessibilityTable::roleValue() const
 {
     if (!isExposableThroughAccessibility())
         return AccessibilityRenderObject::roleValue();
+    
+    AccessibilityRole ariaRole = ariaRoleAttribute();
+    if (ariaRole == GridRole || ariaRole == TreeGridRole)
+        return GridRole;
 
     return TableRole;
 }

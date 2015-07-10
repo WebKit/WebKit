@@ -875,9 +875,9 @@ div[role=form]
       AXRoleDescription: group
       
 div[role=grid]
-      AXRole: AXTable
+      AXRole: AXGrid
       AXSubrole: 
-      AXRoleDescription: table
+      AXRoleDescription: grid
       
 div[role=rowgroup]
       AXRole: 
@@ -1135,9 +1135,9 @@ div[role=treeitem]
       AXRoleDescription: outline row
       
 div[role=treegrid]
-      AXRole: AXTable
+      AXRole: AXGrid
       AXSubrole: 
-      AXRoleDescription: table
+      AXRoleDescription: grid
       
 div[role=rowgroup]
       AXRole: 

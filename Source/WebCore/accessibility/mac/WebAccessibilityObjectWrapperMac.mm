@@ -1928,6 +1928,7 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { ListBoxRole, NSAccessibilityListRole },
         { ListBoxOptionRole, NSAccessibilityStaticTextRole },
         { CellRole, NSAccessibilityCellRole },
+        { GridCellRole, NSAccessibilityCellRole },
         { TableHeaderContainerRole, NSAccessibilityGroupRole },
         { ColumnHeaderRole, NSAccessibilityCellRole },
         { RowHeaderRole, NSAccessibilityCellRole },

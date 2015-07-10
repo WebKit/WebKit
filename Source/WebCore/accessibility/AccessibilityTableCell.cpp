@@ -111,7 +111,7 @@ AccessibilityRole AccessibilityTableCell::determineAccessibilityRole()
     // role, falling back on the role to be used if we determine here that the element
     // should not be exposed as a cell. Thus if we already know it's a cell, return that.
     AccessibilityRole defaultRole = AccessibilityRenderObject::determineAccessibilityRole();
-    if (defaultRole == ColumnHeaderRole || defaultRole == RowHeaderRole || defaultRole == CellRole)
+    if (defaultRole == ColumnHeaderRole || defaultRole == RowHeaderRole || defaultRole == CellRole || defaultRole == GridCellRole)
         return defaultRole;
 
     if (!isTableCell())

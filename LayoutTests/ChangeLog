@@ -1,3 +1,20 @@
+2015-07-10  Nan Wang  <n_wang@apple.com>
+
+        Added tests for new role: table and cell.
+        https://bugs.webkit.org/show_bug.cgi?id=146011.
+
+        Reviewed by Chris Fleizach.
+
+        Added tests for table and cell role. Also modified other tests to fit the changes.
+
+        * accessibility/roles-computedRoleString-expected.txt:
+        * accessibility/roles-computedRoleString.html:
+        * accessibilit/roles-table-and-cell-expected.txt: Added.
+        * accessibility/roles-table-and-cell.html: Added.
+        * platform/mac/accessibility/aria-table-hierarchy-expected.txt:
+        * platform/mac/accessibility/aria-tables-expected.txt:
+        * platform/mac/accessibility/roles-exposed-expected.txt:
+
 2015-07-10  Daniel Bates  <dabates@apple.com>
 
         Serialized declaration for background-size/-webkit-mask-size should preserve identical
