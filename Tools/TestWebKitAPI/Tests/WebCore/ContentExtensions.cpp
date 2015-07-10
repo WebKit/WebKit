@@ -812,7 +812,7 @@ TEST_F(ContentExtensionTest, ResourceOrLoadTypeMatchingEverything)
     
 TEST_F(ContentExtensionTest, WideNFA)
 {
-    // Make an NFA with about 1400 nodes.
+    // Make an NFA with about 1400 nodes that won't be combined.
     StringBuilder ruleList;
     ruleList.append('[');
     for (char c1 = 'A'; c1 <= 'Z'; ++c1) {
@@ -822,12 +822,16 @@ TEST_F(ContentExtensionTest, WideNFA)
                     ruleList.append(',');
                 ruleList.append("{\"action\":{\"type\":\"");
                 
-                // Put an ignore-previous-rules near the middle.
-                if (c1 == 'L' && c2 == 'A' && c3 == 'A')
+                // Make every other rule ignore-previous-rules to not combine actions.
+                if (!((c1 + c2 + c3) % 2))
                     ruleList.append("ignore-previous-rules");
-                else
-                    ruleList.append("block");
-                
+                else {
+                    ruleList.append("css-display-none");
+                    ruleList.append("\",\"selector\":\"");
+                    ruleList.append(c1);
+                    ruleList.append(c2);
+                    ruleList.append(c3);
+                }
                 ruleList.append("\"},\"trigger\":{\"url-filter\":\".*");
                 ruleList.append(c1);
                 ruleList.append(c2);
@@ -840,11 +844,135 @@ TEST_F(ContentExtensionTest, WideNFA)
     
     auto backend = makeBackend(ruleList.toString().utf8().data());
 
-    testRequest(backend, mainDocumentRequest("http://webkit.org/AAA"), { ContentExtensions::ActionType::BlockLoad });
-    testRequest(backend, mainDocumentRequest("http://webkit.org/ZAA"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/AAA"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/YAA"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
+    testRequest(backend, mainDocumentRequest("http://webkit.org/ZAA"), { }, true);
     testRequest(backend, mainDocumentRequest("http://webkit.org/LAA/AAA"), { }, true);
-    testRequest(backend, mainDocumentRequest("http://webkit.org/LAA/MAA"), { ContentExtensions::ActionType::BlockLoad }, true);
+    testRequest(backend, mainDocumentRequest("http://webkit.org/LAA/MAA"), { ContentExtensions::ActionType::CSSDisplayNoneSelector }, true);
     testRequest(backend, mainDocumentRequest("http://webkit.org/"), { });
+}
+    
+#ifdef NDEBUG
+static void compareContents(const ContentExtensions::DFABytecodeInterpreter::Actions& a, const Vector<uint64_t>& b)
+{
+    EXPECT_EQ(a.size(), b.size());
+    for (unsigned i = 0; i < b.size(); ++i)
+        EXPECT_TRUE(a.contains(b[i]));
+}
+
+static uint64_t expectedIndex(char c, unsigned position)
+{
+    uint64_t index = c - 'A';
+    for (unsigned i = 1; i < position; ++i)
+        index *= (i == 1) ? ('C' - 'A' + 1) : ('Z' - 'A' + 1);
+    return index;
+}
+#endif
+
+TEST_F(ContentExtensionTest, LargeJumps)
+{
+// A large test like this is necessary to test 24 and 32 bit jumps, but it's so large it times out in debug builds.
+#ifdef NDEBUG
+    ContentExtensions::CombinedURLFilters combinedURLFilters;
+    ContentExtensions::URLFilterParser parser(combinedURLFilters);
+    
+    uint64_t patternId = 0;
+    for (char c1 = 'A'; c1 <= 'Z'; ++c1) {
+        for (char c2 = 'A'; c2 <= 'Z'; ++c2) {
+            for (char c3 = 'A'; c3 <= 'Z'; ++c3) {
+                for (char c4 = 'A'; c4 <= 'C'; ++c4) {
+                    StringBuilder pattern;
+                    pattern.append(c1);
+                    pattern.append(c2);
+                    pattern.append(c3);
+                    pattern.append(c4);
+                    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern(pattern.toString(), true, patternId++));
+                }
+            }
+        }
+    }
+    
+    Vector<ContentExtensions::NFA> nfas;
+    combinedURLFilters.processNFAs(std::numeric_limits<size_t>::max(), [&](ContentExtensions::NFA&& nfa) {
+        nfas.append(WTF::move(nfa));
+    });
+    EXPECT_EQ(nfas.size(), 1ull);
+    
+    Vector<ContentExtensions::DFA> dfas;
+    for (auto& nfa : nfas)
+        dfas.append(ContentExtensions::NFAToDFA::convert(nfa));
+    EXPECT_EQ(dfas.size(), 1ull);
+    
+    Vector<ContentExtensions::DFABytecode> combinedBytecode;
+    for (const auto& dfa : dfas) {
+        Vector<ContentExtensions::DFABytecode> bytecode;
+        ContentExtensions::DFABytecodeCompiler compiler(dfa, bytecode);
+        compiler.compile();
+        combinedBytecode.appendVector(bytecode);
+    }
+    
+    ContentExtensions::DFABytecodeInterpreter interpreter(&combinedBytecode[0], combinedBytecode.size());
+    
+    patternId = 0;
+    for (char c1 = 'A'; c1 <= 'Z'; ++c1) {
+        for (char c2 = 'A'; c2 <= 'Z'; ++c2) {
+            for (char c3 = 'A'; c3 <= 'Z'; ++c3) {
+                for (char c4 = 'A'; c4 <= 'C'; ++c4) {
+                    StringBuilder pattern;
+                    pattern.append(c1);
+                    pattern.append(c2);
+                    pattern.append(c3);
+                    // Test different jumping patterns distributed throughout the DFA:
+                    switch ((c1 + c2 + c3 + c4) % 4) {
+                    case 0:
+                        // This should not match.
+                        pattern.append('x');
+                        pattern.append(c4);
+                        break;
+                    case 1:
+                        // This should jump back to the root, then match.
+                        pattern.append('x');
+                        pattern.append(c1);
+                        pattern.append(c2);
+                        pattern.append(c3);
+                        pattern.append(c4);
+                        break;
+                    case 2:
+                        // This should match at the end of the string.
+                        pattern.append(c4);
+                        break;
+                    case 3:
+                        // This should match then jump back to the root.
+                        pattern.append(c4);
+                        pattern.append('x');
+                        break;
+                    }
+                    auto matches = interpreter.interpret(pattern.toString().utf8(), 0);
+                    switch ((c1 + c2 + c3 + c4) % 4) {
+                    case 0:
+                        compareContents(matches, { });
+                        break;
+                    case 1:
+                    case 2:
+                    case 3:
+                        compareContents(matches, {patternId});
+                        break;
+                    }
+                    patternId++;
+                }
+            }
+        }
+    }
+
+    compareContents(interpreter.interpret("CAAAAx", 0), {expectedIndex('C', 4), expectedIndex('A', 1)});
+    compareContents(interpreter.interpret("KAAAAx", 0), {expectedIndex('K', 4), expectedIndex('A', 1)});
+    compareContents(interpreter.interpret("AKAAAx", 0), {expectedIndex('K', 3), expectedIndex('K', 4)});
+    compareContents(interpreter.interpret("AKxAAAAx", 0), {expectedIndex('A', 1)});
+    compareContents(interpreter.interpret("AKAxAAAAx", 0), {expectedIndex('A', 1)});
+    compareContents(interpreter.interpret("AKAxZKAxZKZxAAAAx", 0), {expectedIndex('A', 1)});
+    compareContents(interpreter.interpret("ZAAAA", 0), {expectedIndex('Z', 4), expectedIndex('A', 1)});
+    compareContents(interpreter.interpret("ZZxZAAAB", 0), {expectedIndex('Z', 4), expectedIndex('B', 1)});
+#endif
 }
 
 TEST_F(ContentExtensionTest, DeepNFA)
