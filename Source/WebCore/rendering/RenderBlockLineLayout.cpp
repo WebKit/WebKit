@@ -71,13 +71,12 @@ static void determineDirectionality(TextDirection& dir, InlineIterator iter)
     }
 }
 
-inline BidiRun* createRun(int start, int end, RenderObject* obj, InlineBidiResolver& resolver)
+inline BidiRun* createRun(int start, int end, RenderObject& obj, InlineBidiResolver& resolver)
 {
-    ASSERT(obj);
-    return new BidiRun(start, end, *obj, resolver.context(), resolver.dir());
+    return new BidiRun(start, end, obj, resolver.context(), resolver.dir());
 }
 
-void RenderBlockFlow::appendRunsForObject(BidiRunList<BidiRun>& runs, int start, int end, RenderObject* obj, InlineBidiResolver& resolver)
+void RenderBlockFlow::appendRunsForObject(BidiRunList<BidiRun>* runs, int start, int end, RenderObject& obj, InlineBidiResolver& resolver)
 {
     if (start > end || shouldSkipCreatingRunsForObject(obj))
         return;
@@ -88,33 +87,34 @@ void RenderBlockFlow::appendRunsForObject(BidiRunList<BidiRun>& runs, int start,
     if (haveNextMidpoint)
         nextMidpoint = lineMidpointState.midpoints()[lineMidpointState.currentMidpoint()];
     if (lineMidpointState.betweenMidpoints()) {
-        if (!(haveNextMidpoint && nextMidpoint.renderer() == obj))
+        if (!haveNextMidpoint || (&obj != nextMidpoint.renderer()))
             return;
         // This is a new start point. Stop ignoring objects and
         // adjust our start.
-        lineMidpointState.setBetweenMidpoints(false);
         start = nextMidpoint.offset();
         lineMidpointState.incrementCurrentMidpoint();
-        if (start < end)
-            return appendRunsForObject(runs, start, end, obj, resolver);
+        if (start < end) {
+            appendRunsForObject(runs, start, end, obj, resolver);
+            return;
+        }
     } else {
-        if (!haveNextMidpoint || (obj != nextMidpoint.renderer())) {
-            runs.addRun(createRun(start, end, obj, resolver));
+        if (!haveNextMidpoint || (&obj != nextMidpoint.renderer())) {
+            if (runs)
+                runs->addRun(createRun(start, end, obj, resolver));
             return;
         }
 
         // An end midpoint has been encountered within our object. We need to append a run with our endpoint.
         if (static_cast<int>(nextMidpoint.offset() + 1) <= end) {
-            lineMidpointState.setBetweenMidpoints(true);
             lineMidpointState.incrementCurrentMidpoint();
             // The end of the line is before the object we're inspecting. Skip everything and return
             if (nextMidpoint.refersToEndOfPreviousNode())
                 return;
-            if (static_cast<int>(nextMidpoint.offset() + 1) > start)
-                runs.addRun(createRun(start, nextMidpoint.offset() + 1, obj, resolver));
+            if (static_cast<int>(nextMidpoint.offset() + 1) > start && runs)
+                runs->addRun(createRun(start, nextMidpoint.offset() + 1, obj, resolver));
             appendRunsForObject(runs, nextMidpoint.offset() + 1, end, obj, resolver);
-        } else
-           runs.addRun(createRun(start, end, obj, resolver));
+        } else if (runs)
+            runs->addRun(createRun(start, end, obj, resolver));
     }
 }
 
@@ -1011,13 +1011,23 @@ void RenderBlockFlow::appendFloatingObjectToLastLine(FloatingObject* floatingObj
     lastRootBox()->appendFloat(floatingObject->renderer());
 }
 
-static inline void setUpResolverToResumeInIsolate(InlineBidiResolver& resolver, RenderObject* root, RenderObject* startObject)
+static inline void notifyResolverToResumeInIsolate(InlineBidiResolver& resolver, RenderObject* root, RenderObject* startObject)
 {
     if (root != startObject) {
         RenderObject* parent = startObject->parent();
-        setUpResolverToResumeInIsolate(resolver, root, parent);
+        notifyResolverToResumeInIsolate(resolver, root, parent);
         notifyObserverEnteredObject(&resolver, startObject);
     }
+}
+
+static inline void setUpResolverToResumeInIsolate(InlineBidiResolver& resolver, InlineBidiResolver& topResolver, BidiRun* isolatedRun, RenderObject* root, RenderObject* startObject)
+{
+    // Set up m_midpointState
+    resolver.midpointState() = topResolver.midpointState();
+    resolver.midpointState().setCurrentMidpoint(topResolver.midpointForIsolatedRun(isolatedRun));
+
+    // Set up m_nestedIsolateCount
+    notifyResolverToResumeInIsolate(resolver, root, startObject);
 }
 
 // FIXME: BidiResolver should have this logic.
@@ -1056,7 +1066,7 @@ static inline void constructBidiRunsForSegment(InlineBidiResolver& topResolver, 
         }
         isolatedResolver.setStatus(BidiStatus(direction, isOverride(unicodeBidi)));
 
-        setUpResolverToResumeInIsolate(isolatedResolver, isolatedInline, &startObject);
+        setUpResolverToResumeInIsolate(isolatedResolver, topResolver, isolatedRun, isolatedInline, &startObject);
 
         // The starting position is the beginning of the first run within the isolate that was identified
         // during the earlier call to createBidiRunsForLine. This can be but is not necessarily the
@@ -1079,6 +1089,8 @@ static inline void constructBidiRunsForSegment(InlineBidiResolver& topResolver, 
         // to the top resolver's list for later processing.
         if (!isolatedResolver.isolatedRuns().isEmpty()) {
             topResolver.isolatedRuns().appendVector(isolatedResolver.isolatedRuns());
+            for (auto* run : isolatedResolver.isolatedRuns())
+                topResolver.setMidpointForIsolatedRun(run, isolatedResolver.midpointForIsolatedRun(run));
             isolatedResolver.isolatedRuns().clear();
             currentRoot = isolatedInline;
         }

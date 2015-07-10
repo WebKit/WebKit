@@ -25,6 +25,7 @@
 #include "BidiContext.h"
 #include "BidiRunList.h"
 #include "WritingMode.h"
+#include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
@@ -44,7 +45,6 @@ public:
     {
         m_numMidpoints = 0;
         m_currentMidpoint = 0;
-        m_betweenMidpoints = false;
     }
     
     void startIgnoringSpaces(const Iterator& midpoint)
@@ -69,12 +69,12 @@ public:
     }
 
     Vector<Iterator>& midpoints() { return m_midpoints; }
-    const unsigned& numMidpoints() const { return m_numMidpoints; }
-    const unsigned& currentMidpoint() const { return m_currentMidpoint; }
+    unsigned numMidpoints() const { return m_numMidpoints; }
+    unsigned currentMidpoint() const { return m_currentMidpoint; }
+    void setCurrentMidpoint(unsigned currentMidpoint) { m_currentMidpoint = currentMidpoint; }
     void incrementCurrentMidpoint() { ++m_currentMidpoint; }
-    void decreaseNumMidpoints() { --m_numMidpoints; }
-    const bool& betweenMidpoints() const { return m_betweenMidpoints; }
-    void setBetweenMidpoints(bool betweenMidpoint) { m_betweenMidpoints = betweenMidpoint; }
+    void decrementNumMidpoints() { --m_numMidpoints; }
+    bool betweenMidpoints() const { return m_currentMidpoint % 2; }
 private:
     // The goal is to reuse the line state across multiple
     // lines so we just keep an array around for midpoints and never clear it across multiple
@@ -82,7 +82,6 @@ private:
     Vector<Iterator> m_midpoints;
     unsigned m_numMidpoints;
     unsigned m_currentMidpoint;
-    bool m_betweenMidpoints;
 
     void addMidpoint(const Iterator& midpoint)
     {
@@ -263,6 +262,8 @@ public:
     void markCurrentRunEmpty() { m_emptyRun = true; }
 
     Vector<Run*>& isolatedRuns() { return m_isolatedRuns; }
+    void setMidpointForIsolatedRun(Run*, unsigned);
+    unsigned midpointForIsolatedRun(Run*);
 
 protected:
     // FIXME: Instead of InlineBidiResolvers subclassing this method, we should
@@ -290,6 +291,7 @@ protected:
 
     unsigned m_nestedIsolateCount;
     Vector<Run*> m_isolatedRuns;
+    HashMap<Run*, unsigned> m_midpointForIsolatedRun;
 
 private:
     void raiseExplicitEmbeddingLevel(UCharDirection from, UCharDirection to);
@@ -952,6 +954,19 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
     m_runs.setLogicallyLastRun(m_runs.lastRun());
     reorderRunsFromLevels();
     endOfLine = Iterator();
+}
+
+template <class Iterator, class Run>
+void BidiResolver<Iterator, Run>::setMidpointForIsolatedRun(Run* run, unsigned midpoint)
+{
+    ASSERT(!m_midpointForIsolatedRun.contains(run));
+    m_midpointForIsolatedRun.add(run, midpoint);
+}
+
+template<class Iterator, class Run>
+unsigned BidiResolver<Iterator, Run>::midpointForIsolatedRun(Run* run)
+{
+    return m_midpointForIsolatedRun.take(run);
 }
 
 } // namespace WebCore
