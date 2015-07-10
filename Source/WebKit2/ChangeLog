@@ -1,3 +1,27 @@
+2015-07-10  Zalan Bujtas  <zalan@apple.com>
+
+        Crash at WebCore::WebPage::innerFrameQuad.
+        https://bugs.webkit.org/show_bug.cgi?id=146843
+        rdar://problem/21501819
+
+        Reviewed by Andreas Kling.
+
+        We may end up with a null rootEditableElement() after calling Document::updateLayout().
+
+        Speculative fix. Not reproducible.
+
+        * WebProcess/WebPage/WebPage.h: Some const cleanup.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::innerFrameQuad): null check assistedNode.rootEditableElement()
+        (WebKit::constrainPoint):
+        (WebKit::WebPage::selectWithGesture):
+        (WebKit::WebPage::visiblePositionInFocusedNodeForPoint):
+        (WebKit::WebPage::selectPositionAtPoint):
+        (WebKit::WebPage::selectPositionAtBoundaryWithDirection):
+        (WebKit::WebPage::selectTextWithGranularityAtPoint):
+        (WebKit::WebPage::updateSelectionWithExtentPoint):
+        (WebKit::WebPage::getPositionInformation):
+
 2015-07-09  Jon Honeycutt  <jhoneycutt@apple.com>
 
         [iOS] Document picker has overlapping icons on iPad
