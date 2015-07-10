@@ -1,3 +1,32 @@
+2015-07-09  Daniel Bates  <dabates@apple.com>
+
+        Fetching Content Security Policy report URL should respect same origin policy
+        https://bugs.webkit.org/show_bug.cgi?id=146754
+        <rdar://problem/18860259>
+
+        Reviewed by Brady Eidson.
+
+        Inspired by Blink r149791 (by Mike West <mkwst@chromium.org>):
+        <https://src.chromium.org/viewvc/blink?revision=149791&view=revision>
+
+        Added additional tests for private browsing mode.
+
+        * http/tests/cookies/resources/setCookies.cgi:
+        * http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-enabled-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-enabled.html: Added.
+        * http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-toggled-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-toggled.html: Added.
+        * http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies.html: Added.
+        * http/tests/security/contentSecurityPolicy/report-same-origin-no-cookies-when-private-browsing-toggled-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/report-same-origin-no-cookies-when-private-browsing-toggled.html: Added.
+        * http/tests/security/contentSecurityPolicy/report-same-origin-with-cookies-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/report-same-origin-with-cookies-when-private-browsing-enabled-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/report-same-origin-with-cookies-when-private-browsing-enabled.html: Added.
+        * http/tests/security/contentSecurityPolicy/report-same-origin-with-cookies.html: Added.
+        * http/tests/security/contentSecurityPolicy/resources/save-report.php:
+        * platform/wk2/TestExpectations: Skip private browsing mode tests in WebKit2 until we fix <https://bugs.webkit.org/show_bug.cgi?id=115274>.
+
 2015-07-09  Wenson Hsieh  <whsieh@berkeley.edu>
 
         Rubber banding is broken when using a Mighty Mouse
