@@ -1,3 +1,12 @@
+2015-07-10  Josef Andersson  <josef.andersson@fripost.org>
+
+        Updated Swedish translation for WebKitGTK+
+        https://bugs.webkit.org/show_bug.cgi?id=146596
+
+        Reviewed by Carlos Garcia Campos.
+
+        * sv.po:
+
 2015-06-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Inhibit screen saver when playing full screen video
