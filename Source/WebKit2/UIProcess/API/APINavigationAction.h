@@ -38,16 +38,17 @@ class FrameInfo;
 
 class NavigationAction final : public ObjectImpl<Object::Type::NavigationAction> {
 public:
-    static Ref<NavigationAction> create(const WebKit::NavigationActionData& navigationActionData, API::FrameInfo* sourceFrame, API::FrameInfo* targetFrame, const WebCore::ResourceRequest& request, const WebCore::URL& originalURL)
+    static Ref<NavigationAction> create(const WebKit::NavigationActionData& navigationActionData, API::FrameInfo* sourceFrame, API::FrameInfo* targetFrame, const WebCore::ResourceRequest& request, const WebCore::URL& originalURL, bool shouldOpenAppLinks)
     {
-        return adoptRef(*new NavigationAction(navigationActionData, sourceFrame, targetFrame, request, originalURL));
+        return adoptRef(*new NavigationAction(navigationActionData, sourceFrame, targetFrame, request, originalURL, shouldOpenAppLinks));
     }
 
-    NavigationAction(const WebKit::NavigationActionData& navigationActionData, API::FrameInfo* sourceFrame, API::FrameInfo* targetFrame, const WebCore::ResourceRequest& request, const WebCore::URL& originalURL)
+    NavigationAction(const WebKit::NavigationActionData& navigationActionData, API::FrameInfo* sourceFrame, API::FrameInfo* targetFrame, const WebCore::ResourceRequest& request, const WebCore::URL& originalURL, bool shouldOpenAppLinks)
         : m_sourceFrame(sourceFrame)
         , m_targetFrame(targetFrame)
         , m_request(request)
         , m_originalURL(originalURL)
+        , m_shouldOpenAppLinks(shouldOpenAppLinks)
         , m_navigationActionData(navigationActionData)
     {
     }
@@ -63,7 +64,8 @@ public:
     WebKit::WebMouseEvent::Button mouseButton() const { return m_navigationActionData.mouseButton; }
     bool isProcessingUserGesture() const { return m_navigationActionData.isProcessingUserGesture; }
     bool canHandleRequest() const { return m_navigationActionData.canHandleRequest; }
-    bool shouldOpenExternalURLs() const { return m_navigationActionData.shouldOpenExternalURLs; }
+    bool shouldOpenExternalSchemes() const { return m_navigationActionData.shouldOpenExternalURLsPolicy == WebCore::ShouldOpenExternalURLsPolicy::ShouldAllow || m_navigationActionData.shouldOpenExternalURLsPolicy == WebCore::ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemes; }
+    bool shouldOpenAppLinks() const { return m_shouldOpenAppLinks && m_navigationActionData.shouldOpenExternalURLsPolicy == WebCore::ShouldOpenExternalURLsPolicy::ShouldAllow; }
 
 private:
     RefPtr<FrameInfo> m_sourceFrame;
@@ -71,6 +73,8 @@ private:
 
     WebCore::ResourceRequest m_request;
     WebCore::URL m_originalURL;
+
+    bool m_shouldOpenAppLinks;
 
     WebKit::NavigationActionData m_navigationActionData;
 };

@@ -33,6 +33,7 @@ extern "C" {
 #endif
 
 WK_EXPORT bool WKBundleNavigationActionGetShouldOpenExternalURLs(WKBundleNavigationActionRef);
+WK_EXPORT bool WKBundleNavigationActionGetShouldTryAppLinks(WKBundleNavigationActionRef);
 
 #ifdef __cplusplus
 }

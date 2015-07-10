@@ -248,16 +248,7 @@ NavigationState::NavigationClient::~NavigationClient()
 static void tryAppLink(RefPtr<API::NavigationAction> navigationAction, const String& currentMainFrameURL, std::function<void (bool)> completionHandler)
 {
 #if HAVE(APP_LINKS)
-    bool mainFrameNavigation = !navigationAction->targetFrame() || navigationAction->targetFrame()->isMainFrame();
-    bool shouldOpenExternalURLs = navigationAction->shouldOpenExternalURLs();
-    if (!mainFrameNavigation || !shouldOpenExternalURLs) {
-        completionHandler(false);
-        return;
-    }
-
-    // If the new URL is within the same origin as the current URL, do not try to open it externally.
-    URL currentURL = URL(ParsedURLString, currentMainFrameURL);
-    if (protocolHostAndPortAreEqual(currentURL, navigationAction->request().url())) {
+    if (!navigationAction->shouldOpenAppLinks()) {
         completionHandler(false);
         return;
     }

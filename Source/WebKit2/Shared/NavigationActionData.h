@@ -45,7 +45,7 @@ struct NavigationActionData {
     WebMouseEvent::Button mouseButton { WebMouseEvent::NoButton };
     bool isProcessingUserGesture { false };
     bool canHandleRequest { false };
-    bool shouldOpenExternalURLs { false };
+    WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy { WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow };
 };
 
 }

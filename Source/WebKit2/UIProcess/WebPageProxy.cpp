@@ -3255,7 +3255,9 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const Secur
         else if (originatingFrame)
             sourceFrameInfo = API::FrameInfo::create(*originatingFrame, originatingFrameSecurityOrigin.securityOrigin());
 
-        auto navigationAction = API::NavigationAction::create(navigationActionData, sourceFrameInfo.get(), destinationFrameInfo.get(), request, originalRequest.url());
+        bool shouldOpenAppLinks = (!destinationFrameInfo || destinationFrameInfo->isMainFrame()) && !protocolHostAndPortAreEqual(URL(ParsedURLString, m_mainFrame->url()), request.url());
+
+        auto navigationAction = API::NavigationAction::create(navigationActionData, sourceFrameInfo.get(), destinationFrameInfo.get(), request, originalRequest.url(), shouldOpenAppLinks);
 
         m_navigationClient->decidePolicyForNavigationAction(*this, navigationAction.get(), WTF::move(listener), m_process->transformHandlesToObjects(userData.object()).get());
     } else
@@ -3284,7 +3286,7 @@ void WebPageProxy::decidePolicyForNewWindowAction(uint64_t frameID, const Securi
         if (frame)
             sourceFrameInfo = API::FrameInfo::create(*frame, frameSecurityOrigin.securityOrigin());
 
-        auto navigationAction = API::NavigationAction::create(navigationActionData, sourceFrameInfo.get(), nullptr, request, request.url());
+        auto navigationAction = API::NavigationAction::create(navigationActionData, sourceFrameInfo.get(), nullptr, request, request.url(), true);
 
         m_navigationClient->decidePolicyForNavigationAction(*this, navigationAction.get(), WTF::move(listener), m_process->transformHandlesToObjects(userData.object()).get());
 

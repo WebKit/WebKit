@@ -73,6 +73,7 @@ enum class NavigationType {
 
 enum class ShouldOpenExternalURLsPolicy {
     ShouldNotAllow,
+    ShouldAllowExternalSchemes,
     ShouldAllow,
 };
 

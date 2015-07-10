@@ -57,6 +57,7 @@ public:
     InjectedBundleNodeHandle* formElement() const { return m_formElement.get(); }
 
     bool shouldOpenExternalURLs() const { return m_shouldOpenExternalURLs; }
+    bool shouldTryAppLinks() const { return m_shouldTryAppLinks; }
 
 private:
     InjectedBundleNavigationAction(WebFrame*, const WebCore::NavigationAction&, PassRefPtr<WebCore::FormState>);
@@ -67,6 +68,7 @@ private:
     RefPtr<InjectedBundleHitTestResult> m_hitTestResult;
     RefPtr<InjectedBundleNodeHandle> m_formElement;
     bool m_shouldOpenExternalURLs;
+    bool m_shouldTryAppLinks;
 };
 
 } // namespace WebKit

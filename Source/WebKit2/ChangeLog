@@ -1,3 +1,63 @@
+2015-07-09  Dan Bernstein  <mitz@apple.com>
+
+        WebKit2 part of Track and expose policies for external URL schemes and App Links separately
+        https://bugs.webkit.org/show_bug.cgi?id=146822
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/NavigationActionData.cpp:
+        (WebKit::NavigationActionData::encode):
+        (WebKit::NavigationActionData::decode):
+        * Shared/NavigationActionData.h:
+          Replaced the shouldOpenExternalURLsPolicy boolean member with a
+          shouldOpenExternalURLsPolicy member whose type is ShouldOpenExternalURLsPolicy, and
+          updated encoding and decoding:
+
+        * UIProcess/API/APINavigationAction.h:
+          Added shouldOpenAppLinks boolean to NavigationAction::create and the constructor. It
+          augments the policy in the NavigationActionData with a valude decided in the UI process.
+          Replaced shouldOpenExternalURLs() with shouldOpenExternalSchemes() and
+          shouldOpenAppLinks() which check the policy and the new m_shouldOpenAppLinks boolean.
+
+        * UIProcess/API/Cocoa/WKNavigationAction.mm:
+        (-[WKNavigationAction _shouldOpenExternalSchemes]): Getter for new property, calls through
+          to the NavigationAction.
+        (-[WKNavigationAction _shouldOpenAppLinks]): Ditto.
+        (-[WKNavigationAction _shouldOpenExternalURLs]): Now deprecated and returns the
+          _shouldOpenExternalSchemes value.
+        * UIProcess/API/Cocoa/WKNavigationActionPrivate.h: Declared new properties for the two
+          policies and deprecated old property.
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::tryAppLink): Changed to use NavigationAction::shouldOpenAppLinks, which
+          encapsulates logic that used to be here.
+
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::createNewPage): Allow App Links (if already allowed by policy).
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction): Moved logic from tryAppLink in
+          NavigationState.mm here and pass the result to NavigationAction::create.
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction): Allow App Links (if already allowed
+          by policy).
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::loadRequest): Changed the default policy to not allow App Links (but
+          still allow external schemes).
+
+        * WebProcess/InjectedBundle/API/c/WKBundleNavigationAction.cpp:
+        (WKBundleNavigationActionGetShouldTryAppLinks): Added this getter.
+        * WebProcess/InjectedBundle/API/c/WKBundleNavigationActionPrivate.h:
+
+        * WebProcess/InjectedBundle/InjectedBundleNavigationAction.cpp:
+        (WebKit::InjectedBundleNavigationAction::InjectedBundleNavigationAction):
+        * WebProcess/InjectedBundle/InjectedBundleNavigationAction.h:
+          Added m_shouldTryAppLinks boolean member, initialized from the policy. Updated the
+          initialization of m_shouldOpenExternalURLs to account for the new policy.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction): Pass the policy
+          in the navigation data.
+
 2015-07-09  Tim Horton  <timothy_horton@apple.com>
 
         Use CoreAnimation fences instead of synchronous IPC to synchronize resize

@@ -90,7 +90,8 @@ InjectedBundleNavigationAction::InjectedBundleNavigationAction(WebFrame* frame, 
     : m_navigationType(navigationAction.type())
     , m_modifiers(modifiersForNavigationAction(navigationAction))
     , m_mouseButton(WebMouseEvent::NoButton)
-    , m_shouldOpenExternalURLs(navigationAction.shouldOpenExternalURLsPolicy() == ShouldOpenExternalURLsPolicy::ShouldAllow)
+    , m_shouldOpenExternalURLs(navigationAction.shouldOpenExternalURLsPolicy() == ShouldOpenExternalURLsPolicy::ShouldAllow || navigationAction.shouldOpenExternalURLsPolicy() == ShouldOpenExternalURLsPolicy::ShouldAllowExternalSchemes)
+    , m_shouldTryAppLinks(navigationAction.shouldOpenExternalURLsPolicy() == ShouldOpenExternalURLsPolicy::ShouldAllow)
 {
     if (const MouseEvent* mouseEvent = mouseEventForNavigationAction(navigationAction)) {
         m_hitTestResult = InjectedBundleHitTestResult::create(frame->coreFrame()->eventHandler().hitTestResultAtPoint(mouseEvent->absoluteLocation()));

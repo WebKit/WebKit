@@ -32,7 +32,10 @@
 @property (nonatomic, readonly) NSURL *_originalURL;
 @property (nonatomic, readonly, getter=_isUserInitiated) BOOL _userInitiated;
 @property (nonatomic, readonly) BOOL _canHandleRequest;
-@property (nonatomic, readonly) BOOL _shouldOpenExternalURLs;
+@property (nonatomic, readonly) BOOL _shouldOpenExternalSchemes WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+@property (nonatomic, readonly) BOOL _shouldOpenAppLinks WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
+@property (nonatomic, readonly) BOOL _shouldOpenExternalURLs WK_DEPRECATED(WK_MAC_TBA, WK_MAC_TBA, WK_IOS_TBA, WK_IOS_TBA, "use _shouldOpenExternalSchemes and _shouldOpenAppLinks");
 
 @end
 

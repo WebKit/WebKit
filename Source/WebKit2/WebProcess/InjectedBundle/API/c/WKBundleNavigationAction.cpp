@@ -71,3 +71,8 @@ bool WKBundleNavigationActionGetShouldOpenExternalURLs(WKBundleNavigationActionR
 {
     return toImpl(navigationActionRef)->shouldOpenExternalURLs();
 }
+
+bool WKBundleNavigationActionGetShouldTryAppLinks(WKBundleNavigationActionRef navigationActionRef)
+{
+    return toImpl(navigationActionRef)->shouldTryAppLinks();
+}

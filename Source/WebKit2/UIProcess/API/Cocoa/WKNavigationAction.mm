@@ -172,9 +172,19 @@ static NSInteger toNSButtonNumber(WebKit::WebMouseEvent::Button mouseButton)
     return _navigationAction->canHandleRequest();
 }
 
+- (BOOL)_shouldOpenExternalSchemes
+{
+    return _navigationAction->shouldOpenExternalSchemes();
+}
+
+- (BOOL)_shouldOpenAppLinks
+{
+    return _navigationAction->shouldOpenAppLinks();
+}
+
 - (BOOL)_shouldOpenExternalURLs
 {
-    return _navigationAction->shouldOpenExternalURLs();
+    return [self _shouldOpenExternalSchemes];
 }
 
 @end
