@@ -449,7 +449,7 @@ namespace WebCore {
 #endif
 
 #ifndef NDEBUG
-        bool m_hasEverBeenAttached { false }
+        bool m_hasEverBeenAttached { false };
 #endif
     };
 
