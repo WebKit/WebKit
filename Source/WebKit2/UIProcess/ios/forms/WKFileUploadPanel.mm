@@ -603,9 +603,7 @@ static NSArray *UTIsForMIMETypes(NSArray *mimeTypes)
 - (void)documentMenu:(UIDocumentMenuViewController *)documentMenu didPickDocumentPicker:(UIDocumentPickerViewController *)documentPicker
 {
     documentPicker.delegate = self;
-    documentPicker.modalPresentationStyle = UIModalPresentationFullScreen;
-
-    [self _presentForCurrentInterfaceIdiom:documentPicker];
+    [self _presentFullscreenViewController:documentPicker animated:YES];
 }
 
 - (void)documentMenuWasCancelled:(UIDocumentMenuViewController *)documentMenu
