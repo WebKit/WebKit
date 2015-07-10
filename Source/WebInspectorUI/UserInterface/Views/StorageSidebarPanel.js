@@ -45,8 +45,8 @@ WebInspector.StorageSidebarPanel = class StorageSidebarPanel extends WebInspecto
             {identifier: "cookies", title: WebInspector.UIString("Cookies"), classes: [WebInspector.CookieStorageTreeElement]},
             {identifier: "database", title: WebInspector.UIString("Databases"), classes: [WebInspector.DatabaseHostTreeElement, WebInspector.DatabaseTableTreeElement, WebInspector.DatabaseTreeElement]},
             {identifier: "indexed-database", title: WebInspector.UIString("Indexed Databases"), classes: [WebInspector.IndexedDatabaseHostTreeElement, WebInspector.IndexedDatabaseObjectStoreTreeElement, WebInspector.IndexedDatabaseTreeElement]},
-            {identifier: "local-sotrage", title: WebInspector.UIString("Local Storage"), classes: [WebInspector.DOMStorageTreeElement], localStorage: true},
-            {identifier: "session-sotrage", title: WebInspector.UIString("Session Storage"), classes: [WebInspector.DOMStorageTreeElement], localStorage: false}];
+            {identifier: "local-storage", title: WebInspector.UIString("Local Storage"), classes: [WebInspector.DOMStorageTreeElement], localStorage: true},
+            {identifier: "session-storage", title: WebInspector.UIString("Session Storage"), classes: [WebInspector.DOMStorageTreeElement], localStorage: false}];
 
         storageTypes.sort(function(a, b) { return a.title.localeCompare(b.title); });
 

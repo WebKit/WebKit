@@ -1,3 +1,13 @@
+2015-07-10  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Storage tab should have a scope bar in the sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=146799
+
+        Fix a couple typos found post review.
+
+        * UserInterface/Views/StorageSidebarPanel.js:
+        (WebInspector.StorageSidebarPanel):
+
 2015-07-09  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Storage tab should have a scope bar in the sidebar
