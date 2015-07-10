@@ -33,6 +33,34 @@ WebInspector.StorageSidebarPanel = class StorageSidebarPanel extends WebInspecto
 
         this.filterBar.placeholder = WebInspector.UIString("Filter Storage List");
 
+        this._navigationBar = new WebInspector.NavigationBar;
+        this.element.appendChild(this._navigationBar.element);
+
+        var scopeItemPrefix = "storage-sidebar-";
+        var scopeBarItems = [];
+
+        scopeBarItems.push(new WebInspector.ScopeBarItem(scopeItemPrefix + "type-all", WebInspector.UIString("All Storage"), true));
+
+        var storageTypes = [{identifier: "application-cache", title: WebInspector.UIString("Application Cache"), classes: [WebInspector.ApplicationCacheFrameTreeElement, WebInspector.ApplicationCacheManifestTreeElement]},
+            {identifier: "cookies", title: WebInspector.UIString("Cookies"), classes: [WebInspector.CookieStorageTreeElement]},
+            {identifier: "database", title: WebInspector.UIString("Databases"), classes: [WebInspector.DatabaseHostTreeElement, WebInspector.DatabaseTableTreeElement, WebInspector.DatabaseTreeElement]},
+            {identifier: "indexed-database", title: WebInspector.UIString("Indexed Databases"), classes: [WebInspector.IndexedDatabaseHostTreeElement, WebInspector.IndexedDatabaseObjectStoreTreeElement, WebInspector.IndexedDatabaseTreeElement]},
+            {identifier: "local-sotrage", title: WebInspector.UIString("Local Storage"), classes: [WebInspector.DOMStorageTreeElement], localStorage: true},
+            {identifier: "session-sotrage", title: WebInspector.UIString("Session Storage"), classes: [WebInspector.DOMStorageTreeElement], localStorage: false}];
+
+        storageTypes.sort(function(a, b) { return a.title.localeCompare(b.title); });
+
+        for (var info of storageTypes) {
+            var scopeBarItem = new WebInspector.ScopeBarItem(scopeItemPrefix + info.identifier, info.title);
+            scopeBarItem.__storageTypeInfo = info;
+            scopeBarItems.push(scopeBarItem);
+        }
+
+        this._scopeBar = new WebInspector.ScopeBar("storage-sidebar-scope-bar", scopeBarItems, scopeBarItems[0], true);
+        this._scopeBar.addEventListener(WebInspector.ScopeBar.Event.SelectionChanged, this._scopeBarSelectionDidChange, this);
+
+        this._navigationBar.addNavigationItem(this._scopeBar);
+
         this._localStorageRootTreeElement = null;
         this._sessionStorageRootTreeElement = null;
 
@@ -89,6 +117,46 @@ WebInspector.StorageSidebarPanel = class StorageSidebarPanel extends WebInspecto
 
         WebInspector.storageManager.removeEventListener(null, null, this);
         WebInspector.applicationCacheManager.removeEventListener(null, null, this);
+    }
+
+    // Protected
+
+    hasCustomFilters()
+    {
+        console.assert(this._scopeBar.selectedItems.length === 1);
+        var selectedScopeBarItem = this._scopeBar.selectedItems[0];
+        return selectedScopeBarItem && !selectedScopeBarItem.exclusive;
+    }
+
+    matchTreeElementAgainstCustomFilters(treeElement, flags)
+    {
+        console.assert(this._scopeBar.selectedItems.length === 1);
+        var selectedScopeBarItem = this._scopeBar.selectedItems[0];
+
+        // Show everything if there is no selection or "All Storage" is selected (the exclusive item).
+        if (!selectedScopeBarItem || selectedScopeBarItem.exclusive)
+            return true;
+
+        // Folders are hidden on the first pass, but visible childen under the folder will force the folder visible again.
+        if (treeElement instanceof WebInspector.FolderTreeElement)
+            return false;
+
+        function match()
+        {
+            for (var constructor of selectedScopeBarItem.__storageTypeInfo.classes) {
+                if (constructor === WebInspector.DOMStorageTreeElement && treeElement instanceof constructor)
+                    return treeElement.representedObject.isLocalStorage() === selectedScopeBarItem.__storageTypeInfo.localStorage;
+                if (treeElement instanceof constructor)
+                    return true;
+            }
+
+            return false;
+        }
+
+        var matched = match();
+        if (matched)
+            flags.expandTreeElement = true;
+        return matched;
     }
 
     // Private
@@ -290,5 +358,10 @@ WebInspector.StorageSidebarPanel = class StorageSidebarPanel extends WebInspecto
         this._cookieStorageRootTreeElement = null;
         this._applicationCacheRootTreeElement = null;
         this._applicationCacheURLTreeElementMap = {};
+    }
+
+    _scopeBarSelectionDidChange(event)
+    {
+        this.updateFilter();
     }
 };
