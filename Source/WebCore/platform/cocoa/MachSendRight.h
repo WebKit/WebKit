@@ -36,7 +36,7 @@ public:
     WEBCORE_EXPORT static MachSendRight create(mach_port_t);
 
     MachSendRight() = default;
-    MachSendRight(MachSendRight&&);
+    WEBCORE_EXPORT MachSendRight(MachSendRight&&);
     WEBCORE_EXPORT ~MachSendRight();
 
     WEBCORE_EXPORT MachSendRight& operator=(MachSendRight&&);

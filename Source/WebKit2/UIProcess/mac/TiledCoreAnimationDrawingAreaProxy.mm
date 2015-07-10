@@ -34,6 +34,8 @@
 #import "LayerTreeContext.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
+#import <WebCore/MachSendRight.h>
+#import <WebCore/QuartzCoreSPI.h>
 
 using namespace IPC;
 using namespace WebCore;
@@ -70,6 +72,7 @@ void TiledCoreAnimationDrawingAreaProxy::sizeDidChange()
 
 void TiledCoreAnimationDrawingAreaProxy::waitForPossibleGeometryUpdate(std::chrono::milliseconds timeout)
 {
+#if !HAVE(COREANIMATION_FENCES)
     if (!m_isWaitingForDidUpdateGeometry)
         return;
 
@@ -77,6 +80,7 @@ void TiledCoreAnimationDrawingAreaProxy::waitForPossibleGeometryUpdate(std::chro
         return;
 
     m_webPageProxy.process().connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::DidUpdateGeometry>(m_webPageProxy.pageID(), timeout, InterruptWaitingIfSyncMessageArrives);
+#endif
 }
 
 void TiledCoreAnimationDrawingAreaProxy::colorSpaceDidChange()
@@ -146,12 +150,45 @@ void TiledCoreAnimationDrawingAreaProxy::willSendUpdateGeometry()
     m_isWaitingForDidUpdateGeometry = true;
 }
 
+MachSendRight TiledCoreAnimationDrawingAreaProxy::createFenceForGeometryUpdate()
+{
+#if HAVE(COREANIMATION_FENCES)
+    RetainPtr<CAContext> rootLayerContext = [asLayer(m_webPageProxy.acceleratedCompositingRootLayer()) context];
+    if (!rootLayerContext)
+        return MachSendRight();
+
+    // Don't fence if we have incoming synchronous messages, because we may not
+    // be able to reply to the message until the fence times out.
+    if (m_webPageProxy.process().connection()->hasIncomingSyncMessage())
+        return MachSendRight();
+
+    MachSendRight fencePort = MachSendRight::adopt([rootLayerContext createFencePort]);
+    [rootLayerContext setFencePort:fencePort.sendRight()];
+
+    // Invalidate the fence if a synchronous message arrives while it's installed,
+    // because we won't be able to reply during the fence-wait.
+    uint64_t callbackID = m_webPageProxy.process().connection()->installIncomingSyncMessageCallback([rootLayerContext] {
+        if ([rootLayerContext respondsToSelector:@selector(invalidateFences)])
+            [rootLayerContext invalidateFences];
+    });
+    RefPtr<WebPageProxy> retainedPage = &m_webPageProxy;
+    [CATransaction addCommitHandler:[callbackID, retainedPage] {
+        if (Connection* connection = retainedPage->process().connection())
+            connection->uninstallIncomingSyncMessageCallback(callbackID);
+    } forPhase:kCATransactionPhasePostCommit];
+
+    return fencePort;
+#else
+    return MachSendRight();
+#endif
+}
+
 void TiledCoreAnimationDrawingAreaProxy::sendUpdateGeometry()
 {
     ASSERT(!m_isWaitingForDidUpdateGeometry);
 
     willSendUpdateGeometry();
-    m_webPageProxy.process().send(Messages::DrawingArea::UpdateGeometry(m_size, IntSize(), true), m_webPageProxy.pageID());
+    m_webPageProxy.process().send(Messages::DrawingArea::UpdateGeometry(m_size, m_layerPosition, true, createFenceForGeometryUpdate()), m_webPageProxy.pageID());
 }
 
 void TiledCoreAnimationDrawingAreaProxy::adjustTransientZoom(double scale, FloatPoint origin)

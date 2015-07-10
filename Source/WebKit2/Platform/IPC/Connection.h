@@ -200,6 +200,10 @@ public:
     void setShouldBoostMainThreadOnSyncMessage(bool b) { m_shouldBoostMainThreadOnSyncMessage = b; }
 #endif
 
+    uint64_t installIncomingSyncMessageCallback(std::function<void ()>);
+    void uninstallIncomingSyncMessageCallback(uint64_t);
+    bool hasIncomingSyncMessage();
+
 private:
     Connection(Identifier, bool isServer, Client&);
     void platformInitialize(Identifier);
@@ -301,6 +305,11 @@ private:
     class SecondaryThreadPendingSyncReply;
     typedef HashMap<uint64_t, SecondaryThreadPendingSyncReply*> SecondaryThreadPendingSyncReplyMap;
     SecondaryThreadPendingSyncReplyMap m_secondaryThreadPendingSyncReplyMap;
+
+    std::mutex m_incomingSyncMessageCallbackMutex;
+    HashMap<uint64_t, std::function<void ()>> m_incomingSyncMessageCallbacks;
+    RefPtr<WorkQueue> m_incomingSyncMessageCallbackQueue;
+    uint64_t m_nextIncomingSyncMessageCallbackID { 0 };
 
 #if HAVE(QOS_CLASSES)
     pthread_t m_mainThread { 0 };

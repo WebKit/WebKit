@@ -1472,7 +1472,7 @@ void WebPage::scaleView(double scale)
 void WebPage::scaleViewAndUpdateGeometryFenced(double scale, IntSize viewSize, uint64_t callbackID)
 {
     scaleView(scale);
-    m_drawingArea->updateGeometry(viewSize, IntSize(), false);
+    m_drawingArea->updateGeometry(viewSize, IntSize(), false, MachSendRight());
     m_drawingArea->replyWithFenceAfterNextFlush(callbackID);
 }
 #endif

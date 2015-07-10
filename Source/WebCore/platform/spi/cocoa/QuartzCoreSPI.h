@@ -136,6 +136,14 @@ EXTERN_C void CARenderServerCaptureLayerWithTransform(mach_port_t serverPort, ui
 EXTERN_C void CARenderServerRenderLayerWithTransform(mach_port_t server_port, uint32_t client_id, uint64_t layer_id, IOSurfaceRef iosurface, int32_t ox, int32_t oy, const CATransform3D *matrix);
 #endif
 
+
+// FIXME: Move this into the APPLE_INTERNAL_SDK block once it's in an SDK.
+@interface CAContext (AdditionalDetails)
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
+- (void)invalidateFences;
+#endif
+@end
+
 EXTERN_C NSString * const kCATiledLayerRemoveImmediately;
 
 EXTERN_C NSString * const kCAFilterColorInvert;

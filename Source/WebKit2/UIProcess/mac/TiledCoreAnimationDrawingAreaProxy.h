@@ -61,6 +61,7 @@ private:
     virtual void intrinsicContentSizeDidChange(const WebCore::IntSize&) override;
 
     void sendUpdateGeometry();
+    WebCore::MachSendRight createFenceForGeometryUpdate();
 
     // Whether we're waiting for a DidUpdateGeometry message from the web process.
     bool m_isWaitingForDidUpdateGeometry;

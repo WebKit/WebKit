@@ -501,7 +501,7 @@ void TiledCoreAnimationDrawingArea::updateScrolledExposedRect()
     frameView->setExposedRect(m_scrolledExposedRect);
 }
 
-void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, const IntSize& layerPosition, bool flushSynchronously)
+void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, const IntSize& layerPosition, bool flushSynchronously, const WebCore::MachSendRight& fencePort)
 {
     m_inUpdateGeometry = true;
 
@@ -535,12 +535,19 @@ void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, cons
 
     if (flushSynchronously) {
         [CATransaction flush];
+#if !HAVE(COREANIMATION_FENCES)
+        // We can't synchronize here if we're using fences or we'll blow the fence every time (and we don't need to).
         [CATransaction synchronize];
+#endif
     }
 
     m_webPage.send(Messages::DrawingAreaProxy::DidUpdateGeometry());
 
     m_inUpdateGeometry = false;
+
+#if HAVE(COREANIMATION_FENCES)
+    m_layerHostingContext->setFencePort(fencePort.sendRight());
+#endif
 }
 
 void TiledCoreAnimationDrawingArea::setDeviceScaleFactor(float deviceScaleFactor)

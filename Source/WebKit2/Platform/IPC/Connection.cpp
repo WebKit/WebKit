@@ -669,6 +669,15 @@ void Connection::processIncomingMessage(std::unique_ptr<MessageDecoder> message)
     }
 #endif
 
+    if (message->isSyncMessage()) {
+        std::lock_guard<std::mutex> lock(m_incomingSyncMessageCallbackMutex);
+
+        for (auto& callback : m_incomingSyncMessageCallbacks.values())
+            m_incomingSyncMessageCallbackQueue->dispatch(callback);
+
+        m_incomingSyncMessageCallbacks.clear();
+    }
+
     // Check if this is a sync message or if it's a message that should be dispatched even when waiting for
     // a sync reply. If it is, and we're waiting for a sync reply this message needs to be dispatched.
     // If we don't we'll end up with a deadlock where both sync message senders are stuck waiting for a reply.
@@ -693,6 +702,38 @@ void Connection::processIncomingMessage(std::unique_ptr<MessageDecoder> message)
     }
 
     enqueueIncomingMessage(WTF::move(message));
+}
+
+uint64_t Connection::installIncomingSyncMessageCallback(std::function<void ()> callback)
+{
+    std::lock_guard<std::mutex> lock(m_incomingSyncMessageCallbackMutex);
+
+    m_nextIncomingSyncMessageCallbackID++;
+
+    if (!m_incomingSyncMessageCallbackQueue)
+        m_incomingSyncMessageCallbackQueue = WorkQueue::create("com.apple.WebKit.IPC.IncomingSyncMessageCallbackQueue");
+
+    m_incomingSyncMessageCallbacks.add(m_nextIncomingSyncMessageCallbackID, callback);
+
+    return m_nextIncomingSyncMessageCallbackID;
+}
+
+void Connection::uninstallIncomingSyncMessageCallback(uint64_t callbackID)
+{
+    std::lock_guard<std::mutex> lock(m_incomingSyncMessageCallbackMutex);
+    m_incomingSyncMessageCallbacks.remove(callbackID);
+}
+
+bool Connection::hasIncomingSyncMessage()
+{
+    std::lock_guard<std::mutex> lock(m_incomingMessagesMutex);
+
+    for (auto& message : m_incomingMessages) {
+        if (message->isSyncMessage())
+            return true;
+    }
+    
+    return false;
 }
 
 void Connection::postConnectionDidCloseOnConnectionWorkQueue()

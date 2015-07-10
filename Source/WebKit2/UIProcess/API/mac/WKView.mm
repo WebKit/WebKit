@@ -4407,12 +4407,16 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     return nsColor(color);
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-noreturn"
 // This method forces a drawing area geometry update, even if frame size updates are disabled.
 // The updated is performed asynchronously; we don't wait for the geometry update before returning.
 // The area drawn need not match the current frame size - if it differs it will be anchored to the
 // frame according to the current contentAnchor.
 - (void)forceAsyncDrawingAreaSizeUpdate:(NSSize)size
 {
+    // This SPI is only used on 10.9 and below, and is incompatible with the fence-based drawing area size synchronization in 10.10+.
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
     if (_data->_clipsToVisibleRect)
         [self _updateViewExposedRect];
     [self _setDrawingAreaSize:size];
@@ -4422,10 +4426,15 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     // the drawing area size such that the latest update is sent.
     if (DrawingAreaProxy* drawingArea = _data->_page->drawingArea())
         drawingArea->waitForPossibleGeometryUpdate(std::chrono::milliseconds::zero());
+#else
+    ASSERT_NOT_REACHED();
+#endif
 }
 
 - (void)waitForAsyncDrawingAreaSizeUpdate
 {
+    // This SPI is only used on 10.9 and below, and is incompatible with the fence-based drawing area size synchronization in 10.10+.
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1090
     if (DrawingAreaProxy* drawingArea = _data->_page->drawingArea()) {
         // If a geometry update is still pending then the action of receiving the
         // first geometry update may result in another update being scheduled -
@@ -4433,7 +4442,11 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         drawingArea->waitForPossibleGeometryUpdate(DrawingAreaProxy::didUpdateBackingStoreStateTimeout() / 2);
         drawingArea->waitForPossibleGeometryUpdate(DrawingAreaProxy::didUpdateBackingStoreStateTimeout() / 2);
     }
+#else
+    ASSERT_NOT_REACHED();
+#endif
 }
+#pragma clang diagnostic pop
 
 - (BOOL)isUsingUISideCompositing
 {

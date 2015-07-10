@@ -1,3 +1,68 @@
+2015-07-09  Tim Horton  <timothy_horton@apple.com>
+
+        Use CoreAnimation fences instead of synchronous IPC to synchronize resize
+        https://bugs.webkit.org/show_bug.cgi?id=146294
+        <rdar://problem/21090193>
+
+        Reviewed by Anders Carlsson.
+
+        Because of changes in underlying frameworks, we can no longer depend on
+        blocking the UI process main thread to be sufficient to synchronize
+        UI process CA commits with commits coming from the Web process.
+
+        Instead, we have to use CoreAnimation fences to perform this synchronization.
+        Instead of blocking inside waitForAndDispatchImmediately, we'll end up
+        blocking during the CA commit.
+
+        * Platform/mac/LayerHostingContext.mm:
+        Use HAVE(COREANIMATION_FENCES).
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::Connection):
+        (IPC::Connection::processIncomingMessage):
+        (IPC::Connection::installIncomingSyncMessageCallback):
+        (IPC::Connection::uninstallIncomingSyncMessageCallback):
+        Keep track of a set of incoming sync message callbacks, and fire them
+        (on another queue) when a sync message arrives.
+
+        (IPC::Connection::hasIncomingSyncMessage):
+        * Platform/IPC/Connection.h:
+        Add a way to check if there are any sync messages in the queue.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView forceAsyncDrawingAreaSizeUpdate:]):
+        (-[WKView waitForAsyncDrawingAreaSizeUpdate]):
+        These are no longer used; do nothing on 10.10+.
+
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::sendUpdateGeometry):
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::updateGeometry):
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::scaleViewAndUpdateGeometryFenced):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::updateGeometry):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        Add a MachSendRight parameter to UpdateGeometry, so that we can send along
+        a fence port with the geometry update if needed.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updateGeometry):
+        Apply the incoming fence so that geometry changes will be synchronized between processes.
+
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::waitForPossibleGeometryUpdate):
+        Don't wait for DidUpdateGeometry to come in if we're using fences to achieve the same thing.
+
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::sendUpdateGeometry):
+        Create and block us on a fence and send it along with the geometry update.
+        If a sync message is in the incoming message queue, don't create the fence;
+        if a sync message comes in at any point after we've installed the fence (but
+        before the relevant commit completes), invalidate the fence, so that we won't
+        end up temorarily deadlocked waiting for the fence timeout.
+
 2015-07-09  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Crash when spell checker returns no guesses
