@@ -1612,9 +1612,9 @@ unsigned AccessibilityNodeObject::hierarchicalLevel() const
 void AccessibilityNodeObject::setIsExpanded(bool expand)
 {
     if (is<HTMLDetailsElement>(node())) {
-        HTMLDetailsElement* details = downcast<HTMLDetailsElement>(node());
-        if ((expand && !details->isOpen()) || (!expand && details->isOpen()))
-            details->toggleOpen();
+        auto& details = downcast<HTMLDetailsElement>(*node());
+        if (expand != details.isOpen())
+            details.toggleOpen();
     }
 }
     
