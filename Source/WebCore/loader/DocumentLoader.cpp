@@ -901,6 +901,9 @@ void DocumentLoader::checkLoadComplete()
 
 void DocumentLoader::attachToFrame(Frame& frame)
 {
+    if (m_frame == &frame)
+        return;
+
     ASSERT(!m_frame);
     m_frame = &frame;
     m_writer.setFrame(&frame);
