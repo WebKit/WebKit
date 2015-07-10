@@ -153,6 +153,9 @@ void TiledCoreAnimationDrawingAreaProxy::willSendUpdateGeometry()
 MachSendRight TiledCoreAnimationDrawingAreaProxy::createFenceForGeometryUpdate()
 {
 #if HAVE(COREANIMATION_FENCES)
+    if (!m_webPageProxy.isValid())
+        return MachSendRight();
+
     RetainPtr<CAContext> rootLayerContext = [asLayer(m_webPageProxy.acceleratedCompositingRootLayer()) context];
     if (!rootLayerContext)
         return MachSendRight();
@@ -173,6 +176,8 @@ MachSendRight TiledCoreAnimationDrawingAreaProxy::createFenceForGeometryUpdate()
     });
     RefPtr<WebPageProxy> retainedPage = &m_webPageProxy;
     [CATransaction addCommitHandler:[callbackID, retainedPage] {
+        if (!retainedPage->isValid())
+            return;
         if (Connection* connection = retainedPage->process().connection())
             connection->uninstallIncomingSyncMessageCallback(callbackID);
     } forPhase:kCATransactionPhasePostCommit];
