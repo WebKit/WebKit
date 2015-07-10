@@ -630,6 +630,21 @@ ControllerIOS.prototype = {
         return Controller.prototype.controlsAlwaysVisible.call(this);
     },
 
+    // Due to the bad way we are faking inheritance here, in particular the extends method
+    // on Controller.prototype, we don't copy getters and setters from the prototype. This
+    // means we have to implement them again, here in the subclass.
+    // FIXME: Use ES6 classes!
+
+    get scrubbing()
+    {
+        return Object.getOwnPropertyDescriptor(Controller.prototype, "scrubbing").get.call(this);
+    },
+
+    set scrubbing(flag)
+    {
+        Object.getOwnPropertyDescriptor(Controller.prototype, "scrubbing").set.call(this, flag);
+    },
+
     get pageScaleFactor()
     {
         return this._pageScaleFactor;

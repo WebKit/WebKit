@@ -132,6 +132,12 @@ Controller.prototype = {
 
     extend: function(child)
     {
+        // This function doesn't actually do what we want it to. In particular it
+        // is not copying the getters and setters to the child class, since they are
+        // not enumerable. What we should do is use ES6 classes, or assign the __proto__
+        // directly.
+        // FIXME: Use ES6 classes.
+
         for (var property in this) {
             if (!child.hasOwnProperty(property))
                 child[property] = this[property];
