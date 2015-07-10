@@ -1,3 +1,20 @@
+2015-07-10  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Increase the QoS of some of our WorkQueues to match the one of our processes
+        https://bugs.webkit.org/show_bug.cgi?id=146855
+
+        Reviewed by Anders Carlsson.
+
+        Increase the QoS of some of our WorkQueues to match the one of our processes. For
+        e.g., even though the WebContent and the Networking processes have USER_UNITIATED
+        QoS, the IPC between them is using a WorkQueue with DEFAULT QoS. Similarly, the
+        WorkQueue used for network cache reads has DEFAULT QoS.
+
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::Storage):
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::Connection):
+
 2015-07-10  Zalan Bujtas  <zalan@apple.com>
 
         Crash at WebCore::WebPage::innerFrameQuad.
