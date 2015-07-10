@@ -1,3 +1,23 @@
+2015-07-10  Daniel Bates  <dabates@apple.com>
+
+        Serialized declaration for background-size/-webkit-mask-size should preserve identical
+        values instead of coalescing them
+        https://bugs.webkit.org/show_bug.cgi?id=143191
+        <rdar://problem/21759393>
+
+        Reviewed by Darin Adler.
+
+        Inspired by Blink r172548:
+        <http://src.chromium.org/viewvc/blink?view=revision&revision=172548>
+
+        Update tests and test results to ensure we serialize background-size, -webkit-mask-size
+        correctly when identical values are present in their declarations.
+
+        * fast/backgrounds/size/parsing-background-size-values-expected.txt:
+        * fast/backgrounds/size/resources/parsing-background-size-values.js:
+        * fast/masking/parsing-mask-expected.txt:
+        * fast/masking/parsing-mask.html:
+
 2015-07-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Bidi-Isolate inlines break layout with collapsed whitespace

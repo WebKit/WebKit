@@ -73,6 +73,7 @@ PASS innerStyle("-webkit-mask", "none padding-box border-box") is "none padding-
 PASS innerStyle("-webkit-mask", "none left top / auto") is "none 0% 0% / auto"
 PASS innerStyle("-webkit-mask", "none left top / auto auto") is "none 0% 0% / auto"
 PASS innerStyle("-webkit-mask", "none left top / 100%") is "none 0% 0% / 100%"
+PASS innerStyle("-webkit-mask", "none left top / 100% 100%") is "none 0% 0% / 100% 100%"
 PASS innerStyle("-webkit-mask", "none left top / 0%") is "none 0% 0% / 0%"
 PASS innerStyle("-webkit-mask", "none left top / auto 0%") is "none 0% 0% / auto 0%"
 PASS innerStyle("-webkit-mask", "none left top / cover") is "none 0% 0% / cover"

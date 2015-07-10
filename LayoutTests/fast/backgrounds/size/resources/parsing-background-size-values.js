@@ -13,8 +13,10 @@ function test(value)
 
 shouldBe('test("background-size: contain;")', '"contain"');
 shouldBe('test("background-size: cover;")', '"cover"');
-shouldBe('test("background-size: 100 100;")', '"100px"');
-shouldBe('test("background-size: 100px 100px;")', '"100px"');
+shouldBe('test("background-size: 100 100;")', '"100px 100px"');
+shouldBe('test("background-size: 100px 100px;")', '"100px 100px"');
+shouldBe('test("background-size: 100;")', '"100px"');
+shouldBe('test("background-size: 100px;")', '"100px"');
 shouldBe('test("background-size: auto 50px;")', '"auto 50px"');
 shouldBe('test("background-size: 50px auto;")', '"50px"');
 shouldBe('test("background-size: auto auto;")', '"auto"');
