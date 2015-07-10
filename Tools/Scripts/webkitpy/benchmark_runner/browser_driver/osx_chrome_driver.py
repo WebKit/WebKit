@@ -12,7 +12,7 @@ _log = logging.getLogger(__name__)
 
 
 class OSXChromeDriver(OSXBrowserDriver):
-    bundle_identifier = 'com.google.Chrome'
+    process_name = 'Google Chrome'
     browser_name = 'chrome'
 
     def launch_url(self, url, browser_build_path):
@@ -20,7 +20,7 @@ class OSXChromeDriver(OSXBrowserDriver):
 
 
 class OSXChromeCanaryDriver(OSXBrowserDriver):
-    bundle_identifier = 'com.google.Chrome.canary'
+    process_name = 'Google Chrome Canary'
     browser_name = 'chrome-canary'
 
     def launch_url(self, url, browser_build_path):

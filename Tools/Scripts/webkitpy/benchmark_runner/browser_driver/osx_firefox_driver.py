@@ -12,7 +12,7 @@ _log = logging.getLogger(__name__)
 
 
 class OSXFirefoxDriver(OSXBrowserDriver):
-    bundle_identifier = 'org.mozilla.firefox'
+    process_name = 'firefox'
     browser_name = 'firefox'
 
     def launch_url(self, url, browser_build_path):
@@ -20,7 +20,7 @@ class OSXFirefoxDriver(OSXBrowserDriver):
 
 
 class OSXFirefoxNightlyDriver(OSXBrowserDriver):
-    bundle_identifier = 'org.mozilla.nightly'
+    process_name = 'firefox'
     browser_name = 'firefox-nightly'
 
     def launch_url(self, url, browser_build_path):

@@ -1,3 +1,23 @@
+2015-07-09  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Quick fix for run_benchmark script that AppKit.NSRunningApplication does not work properly
+        https://bugs.webkit.org/show_bug.cgi?id=146820
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_browser_driver.py:
+        (OSXBrowserDriver):
+        (OSXBrowserDriver.close_browsers):
+        (OSXBrowserDriver._terminiate_processes):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_chrome_driver.py:
+        (OSXChromeDriver):
+        (OSXChromeCanaryDriver):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_firefox_driver.py:
+        (OSXFirefoxDriver):
+        (OSXFirefoxNightlyDriver):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py:
+        (OSXSafariDriver):
+
 2015-07-09  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] pango should be included in the default jhbuild moduleset

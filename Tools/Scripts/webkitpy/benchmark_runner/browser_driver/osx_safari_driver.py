@@ -14,7 +14,7 @@ _log = logging.getLogger(__name__)
 
 
 class OSXSafariDriver(OSXBrowserDriver):
-    bundle_identifier = 'com.apple.Safari'
+    process_name = 'Safari'
     browser_name = 'safari'
 
     def prepare_env(self, device_id):
