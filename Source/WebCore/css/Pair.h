@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Inc.
+ * Copyright (C) 2004, 2005, 2006, 2015 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -38,17 +38,17 @@ public:
     {
         return adoptRef(*new Pair);
     }
-    static Ref<Pair> create(PassRefPtr<CSSPrimitiveValue> first, PassRefPtr<CSSPrimitiveValue> second)
+    static Ref<Pair> create(RefPtr<CSSPrimitiveValue>&& first, RefPtr<CSSPrimitiveValue>&& second)
     {
-        return adoptRef(*new Pair(first, second));
+        return adoptRef(*new Pair(WTF::move(first), WTF::move(second)));
     }
     virtual ~Pair() { }
 
     CSSPrimitiveValue* first() const { return m_first.get(); }
     CSSPrimitiveValue* second() const { return m_second.get(); }
 
-    void setFirst(PassRefPtr<CSSPrimitiveValue> first) { m_first = first; }
-    void setSecond(PassRefPtr<CSSPrimitiveValue> second) { m_second = second; }
+    void setFirst(RefPtr<CSSPrimitiveValue>&& first) { m_first = WTF::move(first); }
+    void setSecond(RefPtr<CSSPrimitiveValue>&& second) { m_second = WTF::move(second); }
 
     String cssText() const
     {
@@ -59,9 +59,8 @@ public:
     bool equals(const Pair& other) const { return compareCSSValuePtr(m_first, other.m_first) && compareCSSValuePtr(m_second, other.m_second); }
 
 private:
-    Pair() : m_first(0), m_second(0) { }
-    Pair(PassRefPtr<CSSPrimitiveValue> first, PassRefPtr<CSSPrimitiveValue> second)
-        : m_first(first), m_second(second) { }
+    Pair() : m_first(nullptr), m_second(nullptr) { }
+    Pair(RefPtr<CSSPrimitiveValue>&& first, RefPtr<CSSPrimitiveValue>&& second) : m_first(WTF::move(first)), m_second(WTF::move(second)) { }
 
     static String generateCSSString(const String& first, const String& second)
     {
