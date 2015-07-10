@@ -968,6 +968,8 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
         keyCode = 0x02;
     else if ([character isEqualToString:@"e"])
         keyCode = 0x0E;
+    else if ([character isEqualToString:@"\x1b"])
+        keyCode = 0x1B;
 
     KeyMappingEntry table[] = {
         {0x2F, 0x41, '.', nil},

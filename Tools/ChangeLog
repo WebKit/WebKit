@@ -1,3 +1,28 @@
+2015-07-10  Brent Fulgham  <bfulgham@apple.com>
+
+        [Mac] Unable to dismiss context menu during test runs
+        https://bugs.webkit.org/show_bug.cgi?id=146836
+
+        Reviewed by Tim Horton.
+
+        Since Context Menus are modal, the test system would block on the displayed context menu,
+        causing tests to fail. Instead, we should do what WK1 was doing, which is to perform the
+        mouse click and generate the menu contents, but not ask AppKit to display it.
+
+        Drive-by fix: We did not handle 'escape' key presses. This is also fixed.
+
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (-[EventSendingController keyDown:withModifiers:withLocation:]): Handle the 'escape' character.
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::EventSendingController::mouseMoveTo): Keep track of the current mouse position.
+        (WTR::EventSendingController::contextClick): Don't emit an actual context menu invocation and then
+        copy the menu items. Instead, use WKBundlePageCopyContentMenuAtPointInWindow to do all the same
+        work without actually calling on AppKit to display the menu.
+        ask WebCore to do all the work EXCEPT displaying the menu.
+        * WebKitTestRunner/InjectedBundle/EventSendingController.h:
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::EventSenderProxy::keyDown): Handle the 'escape' character.
+
 2015-07-09  Filip Pizlo  <fpizlo@apple.com>
 
         It should be possible to run the OSR exit fuzzer

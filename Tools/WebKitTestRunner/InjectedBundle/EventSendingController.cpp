@@ -250,6 +250,8 @@ void EventSendingController::mouseMoveTo(int x, int y)
     WKRetainPtr<WKDoubleRef> yRef(AdoptWK, WKDoubleCreate(y));
     WKDictionarySetItem(EventSenderMessageBody.get(), yKey.get(), yRef.get());
 
+    m_position = WKPointMake(x, y);
+    
     WKBundlePagePostSynchronousMessage(InjectedBundle::singleton().page()->page(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
 }
 
@@ -473,11 +475,7 @@ JSValueRef EventSendingController::contextClick()
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(page);
     JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
 #if ENABLE(CONTEXT_MENUS)
-    // Do mouse context click.
-    mouseDown(2, 0);
-    mouseUp(2, 0);
-
-    WKRetainPtr<WKArrayRef> menuEntries = adoptWK(WKBundlePageCopyContextMenuItems(page));
+    WKRetainPtr<WKArrayRef> menuEntries = adoptWK(WKBundlePageCopyContextMenuAtPointInWindow(page, m_position));
     JSValueRef arrayResult = JSObjectMakeArray(context, 0, 0, 0);
     JSObjectRef arrayObj = JSValueToObject(context, arrayResult, 0);
     size_t entriesSize = WKArrayGetSize(menuEntries.get());

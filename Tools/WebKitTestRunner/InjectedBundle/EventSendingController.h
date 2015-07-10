@@ -85,6 +85,7 @@ public:
 
 private:
     EventSendingController();
+    WKPoint m_position;
 };
 
 } // namespace WTR
