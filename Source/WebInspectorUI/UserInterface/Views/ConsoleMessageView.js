@@ -314,12 +314,30 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
             });
         }
 
-        if (!callFrame)
-            return;
+        if (callFrame) {
+            var locationElement = new WebInspector.CallFrameView(callFrame);
+            locationElement.classList.add("console-message-location");
+            this._element.appendChild(locationElement);
 
-        var locationElement = new WebInspector.CallFrameView(callFrame);
-        locationElement.classList.add("console-message-location");
-        this._element.appendChild(locationElement);
+            return;
+        }
+
+        if (this._message.parameters.length === 1) {
+            var parameter = this._createRemoteObjectIfNeeded(this._message.parameters[0]);
+
+            parameter.findFunctionSourceCodeLocation().then(function(result) {
+                if (result === WebInspector.RemoteObject.SourceCodeLocationPromise.NoSourceFound || result === WebInspector.RemoteObject.SourceCodeLocationPromise.MissingObjectId)
+                    return;
+
+                var link = this._linkifyLocation(result.sourceCode.url, result.lineNumber, result.columnNumber);
+                link.classList.add("console-message-location");
+
+                if (this._element.hasChildNodes())
+                    this._element.insertBefore(link, this._element.firstChild);
+                else
+                    this._element.appendChild(link);
+            }.bind(this));
+        }
     }
 
     _appendExtraParameters()
@@ -369,21 +387,25 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
         }
     }
 
+    _createRemoteObjectIfNeeded(parameter)
+    {
+        // FIXME: Only pass RemoteObjects here so we can avoid this work.
+        if (parameter instanceof WebInspector.RemoteObject)
+            return parameter;
+
+        if (typeof parameter === "object")
+            return WebInspector.RemoteObject.fromPayload(parameter);
+
+        return WebInspector.RemoteObject.fromPrimitiveValue(parameter);
+    }
+
     _appendFormattedArguments(element, parameters)
     {
         if (!parameters.length)
             return;
 
-        // FIXME: Only pass RemoteObjects here so we can avoid this work.
-        for (var i = 0; i < parameters.length; ++i) {
-            if (parameters[i] instanceof WebInspector.RemoteObject)
-                continue;
-
-            if (typeof parameters[i] === "object")
-                parameters[i] = WebInspector.RemoteObject.fromPayload(parameters[i]);
-            else
-                parameters[i] = WebInspector.RemoteObject.fromPrimitiveValue(parameters[i]);
-        }
+        for (var i = 0; i < parameters.length; ++i)
+            parameters[i] = this._createRemoteObjectIfNeeded(parameters[i]);
 
         var builderElement = element.appendChild(document.createElement("span"));
         var shouldFormatWithStringSubstitution = WebInspector.RemoteObject.type(parameters[0]) === "string" && this._message.type !== WebInspector.ConsoleMessage.MessageType.Result;
@@ -619,10 +641,15 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
 
     _linkifyLocation(url, lineNumber, columnNumber)
     {
+        return WebInspector.linkifyLocation(url, lineNumber, columnNumber, "console-message-url");
+    }
+
+    _linkifyCallFrameLocation(url, lineNumber, columnNumber)
+    {
         // ConsoleMessage stack trace line numbers are one-based.
         lineNumber = lineNumber ? lineNumber - 1 : 0;
         columnNumber = columnNumber ? columnNumber - 1 : 0;
-        return WebInspector.linkifyLocation(url, lineNumber, columnNumber, "console-message-url");
+        return this._linkifyLocation(url, lineNumber, columnNumber);
     }
 
     _linkifyCallFrame(callFrame)
@@ -638,7 +665,7 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
             url = sourceCodeLocation.sourceCode && sourceCodeLocation.sourceCode.url || "";
         }
 
-        return this._linkifyLocation(url, lineNumber, columnNumber);
+        return this._linkifyCallFrameLocation(url, lineNumber, columnNumber);
     }
 
     _userProvidedColumnNames(columnNamesArgument)
