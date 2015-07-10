@@ -45,6 +45,7 @@ public:
 #ifndef GTK_API_VERSION_2
     ScrollbarThemeGtk();
 
+    using ScrollbarThemeComposite::thumbRect;
     IntRect thumbRect(Scrollbar&, const IntRect& unconstrainedTrackRect);
     bool paint(Scrollbar&, GraphicsContext&, const IntRect& damageRect);
     void paintScrollbarBackground(GraphicsContext&, Scrollbar&);
