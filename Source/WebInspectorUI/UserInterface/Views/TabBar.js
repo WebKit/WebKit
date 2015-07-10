@@ -31,7 +31,7 @@ WebInspector.TabBar = class TabBar extends WebInspector.Object
 
         this._element = element || document.createElement("div");
         this._element.classList.add("tab-bar");
-        this._element.tabIndex = 0;
+        this._element.setAttribute("role", "tablist");
 
         var topBorderElement = document.createElement("div");
         topBorderElement.classList.add("top-border");
