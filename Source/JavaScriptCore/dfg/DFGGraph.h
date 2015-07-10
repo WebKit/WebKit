@@ -186,9 +186,8 @@ public:
 
     void dethread();
     
-    FrozenValue* freezeFragile(JSValue value);
-    FrozenValue* freeze(JSValue value); // We use weak freezing by default. Shorthand for freezeFragile(value)->strengthenTo(WeakValue);
-    FrozenValue* freezeStrong(JSValue value); // Shorthand for freezeFragile(value)->strengthenTo(StrongValue).
+    FrozenValue* freeze(JSValue); // We use weak freezing by default.
+    FrozenValue* freezeStrong(JSValue); // Shorthand for freeze(value)->strengthenTo(StrongValue).
     
     void convertToConstant(Node* node, FrozenValue* value);
     void convertToConstant(Node* node, JSValue value);
@@ -800,8 +799,6 @@ public:
     
     NodeAllocator& m_allocator;
 
-    Operands<FrozenValue*> m_mustHandleValues;
-    
     Vector< RefPtr<BasicBlock> , 8> m_blocks;
     Vector<Edge, 16> m_varArgChildren;
 

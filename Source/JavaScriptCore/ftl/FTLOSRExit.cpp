@@ -61,6 +61,15 @@ CodeLocationJump OSRExit::codeLocationForRepatch(CodeBlock* ftlCodeBlock) const
         m_patchableCodeOffset);
 }
 
+void OSRExit::validateReferences(const TrackedReferences& trackedReferences)
+{
+    for (unsigned i = m_values.size(); i--;)
+        m_values[i].validateReferences(trackedReferences);
+    
+    for (ExitTimeObjectMaterialization* materialization : m_materializations)
+        materialization->validateReferences(trackedReferences);
+}
+
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)

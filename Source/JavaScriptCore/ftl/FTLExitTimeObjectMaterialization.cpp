@@ -70,6 +70,12 @@ void ExitTimeObjectMaterialization::dump(PrintStream& out) const
     out.print(RawPointer(this), ":", Graph::opName(m_type), "(", listDump(m_properties), ")");
 }
 
+void ExitTimeObjectMaterialization::validateReferences(const TrackedReferences& trackedReferences) const
+{
+    for (ExitPropertyValue value : m_properties)
+        value.validateReferences(trackedReferences);
+}
+
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)

@@ -41,14 +41,14 @@ class FrozenValue {
 public:
     FrozenValue()
         : m_structure(nullptr)
-        , m_strength(FragileValue)
+        , m_strength(WeakValue)
     {
     }
     
     FrozenValue(JSValue value)
         : m_value(value)
         , m_structure(nullptr)
-        , m_strength(FragileValue)
+        , m_strength(WeakValue)
     {
         RELEASE_ASSERT(!value || !value.isCell());
     }
@@ -60,7 +60,7 @@ public:
     {
         ASSERT((!!value && value.isCell()) == !!structure);
         ASSERT(!value || !value.isCell() || value.asCell()->classInfo() == structure->classInfo());
-        ASSERT(!!structure || (strength == FragileValue));
+        ASSERT(!!structure || (strength == WeakValue));
     }
     
     static FrozenValue* emptySingleton();
@@ -89,12 +89,9 @@ public:
             m_strength = merge(m_strength, strength);
     }
     
-    // The strength of the value itself. The structure should be viewed as fragile
-    // except if it is watched, in which case it's weak. Note that currently we
-    // watch all watchable structures indiscriminantly, and so we also mark them
-    // weakly. We could improve on this: any optimization that makes use of a
-    // structure could signal that it has done so, and we could avoid watching
-    // watchable structures that we had never marked in such a way.
+    bool pointsToHeap() const { return !!value() && value().isCell(); }
+    
+    // The strength of the value itself. The structure is almost always weak.
     ValueStrength strength() const { return m_strength; }
     
     void dumpInContext(PrintStream& out, DumpContext* context) const;
@@ -116,7 +113,7 @@ private:
         return FrozenValue(
             value,
             (!!value && value.isCell()) ? value.asCell()->structure() : nullptr,
-            FragileValue);
+            WeakValue);
     }
 
     JSValue m_value;

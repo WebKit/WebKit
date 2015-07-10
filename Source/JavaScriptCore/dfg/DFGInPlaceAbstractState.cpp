@@ -150,26 +150,6 @@ void InPlaceAbstractState::initialize()
             block->valuesAtHead.local(i).clear();
             block->valuesAtTail.local(i).clear();
         }
-        if (m_graph.m_form == SSA)
-            continue;
-        if (!block->isOSRTarget)
-            continue;
-        if (block->bytecodeBegin != m_graph.m_plan.osrEntryBytecodeIndex)
-            continue;
-        for (size_t i = 0; i < m_graph.m_mustHandleValues.size(); ++i) {
-            int operand = m_graph.m_mustHandleValues.operandForIndex(i);
-            Node* node = block->variablesAtHead.operand(operand);
-            if (!node)
-                continue;
-            AbstractValue source;
-            source.setOSREntryValue(m_graph, *m_graph.m_mustHandleValues[i]);
-            AbstractValue& target = block->valuesAtHead.operand(operand);
-            VariableAccessData* variable = node->variableAccessData();
-            FlushFormat format = variable->flushFormat();
-            target.merge(source);
-            target.fixTypeForRepresentation(m_graph, resultFor(format));
-        }
-        block->cfaShouldRevisit = true;
     }
     if (m_graph.m_form == SSA) {
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {

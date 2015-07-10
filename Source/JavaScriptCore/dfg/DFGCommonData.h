@@ -41,6 +41,7 @@ namespace JSC {
 
 class CodeBlock;
 class Identifier;
+class TrackedReferences;
 
 namespace DFG {
 
@@ -86,6 +87,8 @@ public:
     {
         return std::max(frameRegisterCount, requiredRegisterCountForExit);
     }
+    
+    void validateReferences(const TrackedReferences&);
 
     RefPtr<InlineCallFrameSet> inlineCallFrames;
     Vector<CodeOrigin, 0, UnsafeVectorOverflow> codeOrigins;

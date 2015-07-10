@@ -27,6 +27,7 @@
 #include "StructureSet.h"
 
 #include "DFGAbstractValue.h"
+#include "TrackedReferences.h"
 #include <wtf/CommaPrinter.h>
 
 namespace JSC {
@@ -94,6 +95,14 @@ void StructureSet::dumpInContext(PrintStream& out, DumpContext* context) const
 void StructureSet::dump(PrintStream& out) const
 {
     dumpInContext(out, nullptr);
+}
+
+void StructureSet::validateReferences(const TrackedReferences& trackedReferences) const
+{
+    forEach(
+        [&] (Structure* structure) {
+            trackedReferences.check(structure);
+        });
 }
 
 } // namespace JSC

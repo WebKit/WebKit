@@ -34,7 +34,11 @@
 #include "VirtualRegister.h"
 #include <wtf/PrintStream.h>
 
-namespace JSC { namespace FTL {
+namespace JSC {
+
+class TrackedReferences;
+
+namespace FTL {
 
 // This is like ValueRecovery, but respects the way that the FTL does OSR
 // exit: the live non-constant non-flushed values are passed as arguments
@@ -221,6 +225,8 @@ public:
 
     void dump(PrintStream&) const;
     void dumpInContext(PrintStream&, DumpContext*) const;
+    
+    void validateReferences(const TrackedReferences&) const;
     
 private:
     ExitValueKind m_kind;

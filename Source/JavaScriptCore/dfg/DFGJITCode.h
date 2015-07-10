@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +38,11 @@
 #include "JITCode.h"
 #include <wtf/SegmentedVector.h>
 
-namespace JSC { namespace DFG {
+namespace JSC {
+
+class TrackedReferences;
+
+namespace DFG {
 
 class JITCompiler;
 
@@ -106,6 +110,8 @@ public:
     void forceOptimizationSlowPathConcurrently(CodeBlock*);
     void setOptimizationThresholdBasedOnCompilationResult(CodeBlock*, CompilationResult);
 #endif // ENABLE(FTL_JIT)
+    
+    void validateReferences(const TrackedReferences&) override;
     
     void shrinkToFit();
     

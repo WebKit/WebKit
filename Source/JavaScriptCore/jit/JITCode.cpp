@@ -64,6 +64,10 @@ const char* JITCode::typeName(JITType jitType)
     }
 }
 
+void JITCode::validateReferences(const TrackedReferences&)
+{
+}
+
 JSValue JITCode::execute(VM* vm, ProtoCallFrame* protoCallFrame)
 {
     void* entryAddress;

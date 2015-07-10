@@ -34,7 +34,11 @@
 #include "DumpContext.h"
 #include "StructureSet.h"
 
-namespace JSC { namespace DFG {
+namespace JSC {
+
+class TrackedReferences;
+
+namespace DFG {
 
 class StructureAbstractValue {
 public:
@@ -213,6 +217,8 @@ public:
     
     bool overlaps(const StructureSet& other) const;
     bool overlaps(const StructureAbstractValue& other) const;
+    
+    void validateReferences(const TrackedReferences&) const;
     
 private:
     static const uintptr_t clobberedFlag = StructureSet::reservedFlag;

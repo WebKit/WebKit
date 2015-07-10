@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,29 +23,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "DFGValueStrength.h"
+#ifndef TrackedReferences_h
+#define TrackedReferences_h
 
-#if ENABLE(DFG_JIT)
+#include "JSCJSValue.h"
+#include "JSCell.h"
+#include <wtf/HashSet.h>
+#include <wtf/PrintStream.h>
 
-namespace WTF {
+namespace JSC {
 
-using namespace JSC::DFG;
+class TrackedReferences {
+public:
+    TrackedReferences();
+    ~TrackedReferences();
+    
+    void add(JSCell*);
+    void add(JSValue);
+    
+    void check(JSCell*) const;
+    void check(JSValue) const;
+    
+    void dump(PrintStream&) const;
+    
+private:
+    HashSet<JSCell*> m_references;
+};
 
-void printInternal(PrintStream& out, ValueStrength strength)
-{
-    switch (strength) {
-    case WeakValue:
-        out.print("Weak");
-        return;
-    case StrongValue:
-        out.print("Strong");
-        return;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-}
+} // namespace JSC
 
-} // namespace WTF
-
-#endif // ENABLE(DFG_JIT)
+#endif // TrackedReferences_h
 

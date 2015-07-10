@@ -30,6 +30,7 @@
 
 #include "CodeBlock.h"
 #include "JSCInlines.h"
+#include "TrackedReferences.h"
 
 namespace JSC { namespace DFG {
 
@@ -169,6 +170,18 @@ void JITCode::setOptimizationThresholdBasedOnCompilationResult(
     RELEASE_ASSERT_NOT_REACHED();
 }
 #endif // ENABLE(FTL_JIT)
+
+void JITCode::validateReferences(const TrackedReferences& trackedReferences)
+{
+    common.validateReferences(trackedReferences);
+    
+    for (OSREntryData& entry : osrEntry) {
+        for (unsigned i = entry.m_expectedValues.size(); i--;)
+            entry.m_expectedValues[i].validateReferences(trackedReferences);
+    }
+    
+    minifiedDFG.validateReferences(trackedReferences);
+}
 
 } } // namespace JSC::DFG
 

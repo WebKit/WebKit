@@ -386,6 +386,13 @@ void StructureAbstractValue::dump(PrintStream& out) const
     dumpInContext(out, 0);
 }
 
+void StructureAbstractValue::validateReferences(const TrackedReferences& trackedReferences) const
+{
+    if (isTop())
+        return;
+    m_set.validateReferences(trackedReferences);
+}
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

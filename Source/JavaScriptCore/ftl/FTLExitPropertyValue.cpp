@@ -40,6 +40,11 @@ void ExitPropertyValue::dump(PrintStream& out) const
     out.print(m_location, " => ", m_value);
 }
 
+void ExitPropertyValue::validateReferences(const TrackedReferences& trackedReferences) const
+{
+    m_value.validateReferences(trackedReferences);
+}
+
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)

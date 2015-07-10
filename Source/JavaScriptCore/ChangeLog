@@ -1,3 +1,198 @@
+2015-07-04  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG fragile frozen values are fundamentally broken
+        https://bugs.webkit.org/show_bug.cgi?id=146602
+
+        Reviewed by Mark Lam.
+        
+        This change gets rid of the FragileValue value strength, because it was fundamentally
+        broken.
+        
+        FragileValue was a value known to the compiler but not tracked by the GC in any way -
+        it wasn't marked and it wasn't weak. This was used to support AI bootstrap for OSR
+        must-handle values. The philosophy was that if the compiler did use the value for
+        optimization, it would have been strengthened to a weak value (or maybe even a strong
+        value, though we probably won't do that). But this was too much of a pipe dream. I've
+        found at least one case where the compiler did use the value, but never strengthened
+        it: it would happen if the value ended up in an OSR entry data expected value. Then if
+        we GCed, we might have killed the value, but OSR entry would still try to use it for
+        validation. That might have sort of just worked, but it's clearly shady.
+
+        The reason why we made must-handle values fragile and not weak is that most of the time
+        the values disappear from the abstract state: they are LUBed to a non-constant. If we
+        kept them around as weak, we'd have too many cases of the GC killing the code because
+        it thought that the value was somehow meaningful to the code when it was only used as a
+        temporary artifact of optimization.
+
+        So, it's true that it's very important for must-handle values not to automatically be
+        weak or strong. It's also true that the values are necessary for AI bootstrap because
+        we need to know what values OSR entry will require. But we shouldn't accomplish these
+        goals by having the compiler hold onto what are essentially dangling pointers.
+        
+        This implements a better solution: instead of having InPlaceAbstractState bootstrap the
+        AI with must-handle values at the beginning, we now widen the valuesAtHead of the
+        must-handle block after AI converges. This widening is done in CFAPhase. This allows us
+        to see if the must-handle values are necessary at all. In most cases, the widening
+        takes a non-constant abstract value and simply amends something to its type based on
+        the type of the must-handle value, and so the must-handle value never actually shows up
+        in either the IR or any abstract value. In the unlikely event that the value at head is
+        bottom, we freeze the must-handle value. This change removes FragileValue, and this
+        freezing uses WeakValue as the strength. That makes sense: since the abstract value was
+        bottom, the must-handle value becomes integral to the IR and so it makes no sense for
+        the GC to keep the resulting CodeBlock alive if that must-handle value dies. This will
+        sometimes happen for example if you have a very long-running loop whose pre-header
+        allocates some object, but that pre-header appears to always exit to the optimizing JIT
+        because it was only profiled once in the LLInt and that profiling appears insufficient
+        to the DFG. In that case, we'll effectively constant-fold the references to the object
+        inside the loop, which is both efficient (yay constant folding!) and necessary
+        (otherwise we wouldn't know what the type of the variable should have been).
+        
+        Testing and debugging this is complicated. So, this adds some new capabilities:
+        
+        - DFG IR dumps also dump all of the FrozenValues that point to the heap along with
+          their strengths, so that it's easy to see what GC objects the DFG feels are necessary
+          for the compilation.
+        
+        - DFG OSR entry preparation prints out the OSR entry data structures, so that it's easy
+          to see what GC pointers (and other things) are used for OSR entry validation. The
+          printouts are quite detailed, and should also help other kinds of OSR entry
+          debugging.
+        
+        - DFG::Plan now validates whether all of the GC pointers planted in the various JITCode
+          data structures are also properly registered as either weak or strong pointers in the
+          CodeBlock. This validation check previously failed due to fragile values ending up in
+          the OSR entry data structures, both in the newly added test (dead-osr-entry-value.js)
+          and in some pre-existing tests (like earley-boyer and 3d-raytrace).
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::stronglyVisitStrongReferences):
+        * bytecode/CodeOrigin.cpp:
+        (JSC::InlineCallFrame::visitAggregate):
+        * bytecode/Operands.h:
+        (JSC::Operands::operand):
+        (JSC::Operands::hasOperand):
+        * bytecode/StructureSet.cpp:
+        (JSC::StructureSet::dump):
+        (JSC::StructureSet::validateReferences):
+        * bytecode/StructureSet.h:
+        * bytecode/TrackedReferences.cpp: Added.
+        (JSC::TrackedReferences::TrackedReferences):
+        (JSC::TrackedReferences::~TrackedReferences):
+        (JSC::TrackedReferences::add):
+        (JSC::TrackedReferences::check):
+        (JSC::TrackedReferences::dump):
+        * bytecode/TrackedReferences.h: Added.
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::observeTransitions):
+        (JSC::DFG::AbstractValue::set):
+        (JSC::DFG::AbstractValue::fixTypeForRepresentation):
+        (JSC::DFG::AbstractValue::mergeOSREntryValue):
+        (JSC::DFG::AbstractValue::filter):
+        (JSC::DFG::AbstractValue::dumpInContext):
+        (JSC::DFG::AbstractValue::validateReferences):
+        (JSC::DFG::AbstractValue::setOSREntryValue): Deleted.
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::fullTop):
+        (JSC::DFG::AbstractValue::merge):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::run):
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::CommonData::invalidate):
+        (JSC::DFG::CommonData::validateReferences):
+        * dfg/DFGCommonData.h:
+        (JSC::DFG::CommonData::requiredRegisterCountForExecutionAndExit):
+        * dfg/DFGFrozenValue.h:
+        (JSC::DFG::FrozenValue::FrozenValue):
+        (JSC::DFG::FrozenValue::strengthenTo):
+        (JSC::DFG::FrozenValue::pointsToHeap):
+        (JSC::DFG::FrozenValue::strength):
+        (JSC::DFG::FrozenValue::freeze):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::Graph):
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::registerFrozenValues):
+        (JSC::DFG::Graph::visitChildren):
+        (JSC::DFG::Graph::freeze):
+        (JSC::DFG::Graph::freezeStrong):
+        (JSC::DFG::Graph::freezeFragile): Deleted.
+        * dfg/DFGGraph.h:
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::initialize):
+        * dfg/DFGJITCode.cpp:
+        (JSC::DFG::JITCode::setOptimizationThresholdBasedOnCompilationResult):
+        (JSC::DFG::JITCode::validateReferences):
+        * dfg/DFGJITCode.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::addressOfDoubleConstant):
+        (JSC::DFG::JITCompiler::noticeOSREntry):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::branchStructurePtr):
+        (JSC::DFG::JITCompiler::jitCode):
+        (JSC::DFG::JITCompiler::noticeOSREntry): Deleted.
+        * dfg/DFGMinifiedGraph.cpp: Added.
+        (JSC::DFG::MinifiedGraph::prepareAndShrink):
+        (JSC::DFG::MinifiedGraph::validateReferences):
+        * dfg/DFGMinifiedGraph.h:
+        (JSC::DFG::MinifiedGraph::append):
+        (JSC::DFG::MinifiedGraph::prepareAndShrink): Deleted.
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::OSREntryData::dumpInContext):
+        (JSC::DFG::OSREntryData::dump):
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSREntry.h:
+        (JSC::DFG::getOSREntryDataBytecodeIndex):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::finalizeWithoutNotifyingCallback):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::linkOSREntries):
+        (JSC::DFG::SpeculativeJIT::compileDoublePutByVal):
+        * dfg/DFGStructureAbstractValue.cpp:
+        (JSC::DFG::StructureAbstractValue::dump):
+        (JSC::DFG::StructureAbstractValue::validateReferences):
+        * dfg/DFGStructureAbstractValue.h:
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validate):
+        * dfg/DFGValueStrength.cpp:
+        (WTF::printInternal):
+        * dfg/DFGValueStrength.h:
+        (JSC::DFG::merge):
+        * ftl/FTLExitPropertyValue.cpp:
+        (JSC::FTL::ExitPropertyValue::dump):
+        (JSC::FTL::ExitPropertyValue::validateReferences):
+        * ftl/FTLExitPropertyValue.h:
+        * ftl/FTLExitTimeObjectMaterialization.cpp:
+        (JSC::FTL::ExitTimeObjectMaterialization::dump):
+        (JSC::FTL::ExitTimeObjectMaterialization::validateReferences):
+        * ftl/FTLExitTimeObjectMaterialization.h:
+        * ftl/FTLExitValue.cpp:
+        (JSC::FTL::ExitValue::dump):
+        (JSC::FTL::ExitValue::validateReferences):
+        * ftl/FTLExitValue.h:
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::dfgCommon):
+        (JSC::FTL::JITCode::validateReferences):
+        * ftl/FTLJITCode.h:
+        (JSC::FTL::JITCode::handles):
+        (JSC::FTL::JITCode::dataSections):
+        * ftl/FTLOSRExit.cpp:
+        (JSC::FTL::OSRExit::codeLocationForRepatch):
+        (JSC::FTL::OSRExit::validateReferences):
+        * ftl/FTLOSRExit.h:
+        (JSC::FTL::OSRExit::considerAddingAsFrequentExitSite):
+        * jit/JITCode.cpp:
+        (JSC::JITCode::typeName):
+        (JSC::JITCode::validateReferences):
+        (JSC::JITCode::execute):
+        * jit/JITCode.h:
+        (JSC::JITCode::start):
+        * tests/stress/dead-osr-entry-value.js: Added.
+        (foo):
+
 2015-07-09  Filip Pizlo  <fpizlo@apple.com>
 
         It should be possible to run the OSR exit fuzzer

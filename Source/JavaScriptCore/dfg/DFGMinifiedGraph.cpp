@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,28 +24,30 @@
  */
 
 #include "config.h"
-#include "DFGValueStrength.h"
+#include "DFGMinifiedGraph.h"
 
 #if ENABLE(DFG_JIT)
 
-namespace WTF {
+#include "JSCInlines.h"
+#include "TrackedReferences.h"
 
-using namespace JSC::DFG;
+namespace JSC { namespace DFG {
 
-void printInternal(PrintStream& out, ValueStrength strength)
+void MinifiedGraph::prepareAndShrink()
 {
-    switch (strength) {
-    case WeakValue:
-        out.print("Weak");
-        return;
-    case StrongValue:
-        out.print("Strong");
-        return;
-    }
-    RELEASE_ASSERT_NOT_REACHED();
+    std::sort(m_list.begin(), m_list.end(), MinifiedNode::compareByNodeIndex);
+    m_list.shrinkToFit();
 }
 
-} // namespace WTF
+void MinifiedGraph::validateReferences(const TrackedReferences& trackedReferences)
+{
+    for (MinifiedNode& node : m_list) {
+        if (node.hasConstant())
+            trackedReferences.check(node.constant());
+    }
+}
+
+} } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
 

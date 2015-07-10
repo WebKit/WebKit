@@ -46,6 +46,7 @@ class JITCode;
 }
 
 struct ProtoCallFrame;
+class TrackedReferences;
 class VM;
 
 class JITCode : public ThreadSafeRefCounted<JITCode> {
@@ -182,6 +183,8 @@ public:
     virtual DFG::JITCode* dfg();
     virtual FTL::JITCode* ftl();
     virtual FTL::ForOSREntryJITCode* ftlForOSREntry();
+    
+    virtual void validateReferences(const TrackedReferences&);
     
     JSValue execute(VM*, ProtoCallFrame*);
     

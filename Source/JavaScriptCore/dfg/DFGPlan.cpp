@@ -76,6 +76,7 @@
 #include "JSCInlines.h"
 #include "OperandsInlines.h"
 #include "ProfilerDatabase.h"
+#include "TrackedReferences.h"
 #include <wtf/CurrentTime.h>
 
 #if ENABLE(FTL_JIT)
@@ -535,6 +536,21 @@ CompilationResult Plan::finalizeWithoutNotifyingCallback()
         return CompilationFailed;
     
     reallyAdd(codeBlock->jitCode()->dfgCommon());
+    
+    if (validationEnabled()) {
+        TrackedReferences trackedReferences;
+        
+        for (WriteBarrier<JSCell>& reference : codeBlock->jitCode()->dfgCommon()->weakReferences)
+            trackedReferences.add(reference.get());
+        for (WriteBarrier<Structure>& reference : codeBlock->jitCode()->dfgCommon()->weakStructureReferences)
+            trackedReferences.add(reference.get());
+        for (WriteBarrier<Unknown>& constant : codeBlock->constants())
+            trackedReferences.add(constant.get());
+        
+        // Check that any other references that we have anywhere in the JITCode are also
+        // tracked either strongly or weakly.
+        codeBlock->jitCode()->validateReferences(trackedReferences);
+    }
     
     return CompilationSuccessful;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,11 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
-namespace JSC { namespace DFG {
+namespace JSC {
+
+class TrackedReferences;
+
+namespace DFG {
 
 class MinifiedGraph {
 public:
@@ -50,11 +54,9 @@ public:
         m_list.append(node);
     }
     
-    void prepareAndShrink()
-    {
-        std::sort(m_list.begin(), m_list.end(), MinifiedNode::compareByNodeIndex);
-        m_list.shrinkToFit();
-    }
+    void prepareAndShrink();
+    
+    void validateReferences(const TrackedReferences&);
     
 private:
     Vector<MinifiedNode> m_list;

@@ -39,7 +39,11 @@
 #include "DumpContext.h"
 #include "StructureSet.h"
 
-namespace JSC { namespace DFG {
+namespace JSC {
+
+class TrackedReferences;
+
+namespace DFG {
 
 class Graph;
 struct Node;
@@ -193,8 +197,6 @@ struct AbstractValue {
         return result;
     }
     
-    void setOSREntryValue(Graph&, const FrozenValue&);
-    
     void set(Graph&, const FrozenValue&, StructureClobberState);
     void set(Graph&, Structure*);
     void set(Graph&, const StructureSet&);
@@ -253,6 +255,8 @@ struct AbstractValue {
         ASSERT(result == (*this != oldMe));
         return result;
     }
+    
+    bool mergeOSREntryValue(Graph&, JSValue);
     
     void merge(SpeculatedType type)
     {
@@ -329,6 +333,8 @@ struct AbstractValue {
     
     void dumpInContext(PrintStream&, DumpContext*) const;
     void dump(PrintStream&) const;
+    
+    void validateReferences(const TrackedReferences&);
     
     // This is a proven constraint on the structures that this value can have right
     // now. The structure of the current value must belong to this set. The set may

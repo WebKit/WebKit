@@ -252,6 +252,10 @@ public:
                         VALIDATE((node), !variant.oldStructureForTransition()->dfgShouldWatch());
                     }
                     break;
+                case DoubleConstant:
+                case Int52Constant:
+                    VALIDATE((node), node->isNumberConstant());
+                    break;
                 default:
                     break;
                 }
