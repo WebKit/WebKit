@@ -1,3 +1,19 @@
+2015-07-10  Javier Fernandez  <jfernandez@igalia.com>
+
+        [CSS Grid Layout] Grid item's auto-margins are not applied correctly
+        https://bugs.webkit.org/show_bug.cgi?id=146581
+
+        Reviewed by Darin Adler.
+
+        Tests to verify auto-margins alignment works as expected with grid items.
+
+        * fast/css-grid-layout/grid-item-auto-margins-alignment-expected.txt: Added.
+        * fast/css-grid-layout/grid-item-auto-margins-alignment-vertical-lr-expected.txt: Added.
+        * fast/css-grid-layout/grid-item-auto-margins-alignment-vertical-lr.html: Added.
+        * fast/css-grid-layout/grid-item-auto-margins-alignment-vertical-rl-expected.txt: Added.
+        * fast/css-grid-layout/grid-item-auto-margins-alignment-vertical-rl.html: Added.
+        * fast/css-grid-layout/grid-item-auto-margins-alignment.html: Added.
+
 2015-07-10  Hunseop Jeong  <hs85.jeong@samsung.com>
 
         Fix typo in LayoutTests/platform/wk2/TestExpectation.

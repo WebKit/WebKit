@@ -434,6 +434,10 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
     if ((oldStyle && oldStyle->shapeOutside()) || style().shapeOutside())
         updateShapeOutsideInfoAfterStyleChange(style(), oldStyle);
 #endif
+
+#if ENABLE(CSS_GRID_LAYOUT)
+    updateGridAlignmentAfterStyleChange(oldStyle);
+#endif
 }
 
 #if ENABLE(CSS_SHAPES)
@@ -459,6 +463,24 @@ void RenderBox::updateShapeOutsideInfoAfterStyleChange(const RenderStyle& style,
 
     if (shapeOutside || shapeOutside != oldShapeOutside)
         markShapeOutsideDependentsForLayout();
+}
+#endif
+
+#if ENABLE(CSS_GRID_LAYOUT)
+void RenderBox::updateGridAlignmentAfterStyleChange(const RenderStyle* oldStyle)
+{
+    if (!oldStyle || !parent() || !parent()->isRenderGrid())
+        return;
+
+    // auto-margin prevents alignment properties to be applied, which affects specially
+    // to the stretching logic. We must detect and handling style changes like this.
+    bool isHorizontalGrid = parent()->isHorizontalWritingMode();
+    Length topOrLeft = isHorizontalGrid ? style().marginTop() : style().marginLeft();
+    Length bottomOrRight = isHorizontalGrid ? style().marginBottom() : style().marginRight();
+    Length oldTopOrLeft = isHorizontalGrid ? oldStyle->marginTop() : oldStyle->marginLeft();
+    Length oldBottomOrRight = isHorizontalGrid ? oldStyle->marginBottom() : oldStyle->marginRight();
+    if ((!topOrLeft.isAuto() && oldTopOrLeft.isAuto()) || (!bottomOrRight.isAuto() && oldBottomOrRight.isAuto()))
+        updateLogicalHeight();
 }
 #endif
 

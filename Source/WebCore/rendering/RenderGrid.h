@@ -136,6 +136,9 @@ private:
     LayoutUnit computeMarginLogicalHeightForChild(const RenderBox&) const;
     LayoutUnit availableAlignmentSpaceForChildBeforeStretching(LayoutUnit gridAreaBreadthForChild, const RenderBox&) const;
     void applyStretchAlignmentToChildIfNeeded(RenderBox&, LayoutUnit gridAreaBreadthForChild);
+    bool hasAutoMarginsInColumnAxis(const RenderBox&) const;
+    bool hasAutoMarginsInRowAxis(const RenderBox&) const;
+    void updateAutoMarginsInColumnAxisIfNeeded(RenderBox&, LayoutUnit gridAreaBreadthForChild);
 
 #ifndef NDEBUG
     bool tracksAreWiderThanMinTrackBreadth(GridTrackSizingDirection, const Vector<GridTrack>&);

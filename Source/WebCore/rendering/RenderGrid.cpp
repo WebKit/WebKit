@@ -1194,6 +1194,9 @@ void RenderGrid::layoutGridItems()
 
         child->layoutIfNeeded();
 
+        // We need pending layouts to be done in order to compute auto-margins properly.
+        updateAutoMarginsInColumnAxisIfNeeded(*child, overrideContainingBlockContentLogicalHeight);
+
         child->setLogicalLocation(findChildLogicalPosition(*child));
 
         // If the child moved, we have to repaint it as well as any floating/positioned
@@ -1319,6 +1322,55 @@ void RenderGrid::applyStretchAlignmentToChildIfNeeded(RenderBox& child, LayoutUn
     }
 }
 
+// FIXME: This logic is shared by RenderFlexibleBox, so it should be moved to RenderBox.
+bool RenderGrid::hasAutoMarginsInColumnAxis(const RenderBox& child) const
+{
+    if (isHorizontalWritingMode())
+        return child.style().marginTop().isAuto() || child.style().marginBottom().isAuto();
+    return child.style().marginLeft().isAuto() || child.style().marginRight().isAuto();
+}
+
+// FIXME: This logic is shared by RenderFlexibleBox, so it should be moved to RenderBox.
+bool RenderGrid::hasAutoMarginsInRowAxis(const RenderBox& child) const
+{
+    if (isHorizontalWritingMode())
+        return child.style().marginLeft().isAuto() || child.style().marginRight().isAuto();
+    return child.style().marginTop().isAuto() || child.style().marginBottom().isAuto();
+}
+
+// FIXME: This logic is shared by RenderFlexibleBox, so it should be moved to RenderBox.
+void RenderGrid::updateAutoMarginsInColumnAxisIfNeeded(RenderBox& child, LayoutUnit gridAreaBreadthForChild)
+{
+    ASSERT(!child.isOutOfFlowPositioned());
+
+    LayoutUnit availableAlignmentSpace = gridAreaBreadthForChild - child.logicalHeight();
+    if (availableAlignmentSpace <= 0)
+        return;
+
+    bool isHorizontal = isHorizontalWritingMode();
+    Length topOrLeft = isHorizontal ? child.style().marginTop() : child.style().marginLeft();
+    Length bottomOrRight = isHorizontal ? child.style().marginBottom() : child.style().marginRight();
+    if (topOrLeft.isAuto() && bottomOrRight.isAuto()) {
+        if (isHorizontal) {
+            child.setMarginTop(availableAlignmentSpace / 2);
+            child.setMarginBottom(availableAlignmentSpace / 2);
+        } else {
+            child.setMarginLeft(availableAlignmentSpace / 2);
+            child.setMarginRight(availableAlignmentSpace / 2);
+        }
+    } else if (topOrLeft.isAuto()) {
+        if (isHorizontal)
+            child.setMarginTop(availableAlignmentSpace);
+        else
+            child.setMarginLeft(availableAlignmentSpace);
+    } else if (bottomOrRight.isAuto()) {
+        if (isHorizontal)
+            child.setMarginBottom(availableAlignmentSpace);
+        else
+            child.setMarginRight(availableAlignmentSpace);
+    }
+}
+
 GridAxisPosition RenderGrid::columnAxisPositionForChild(const RenderBox& child) const
 {
     bool hasOrthogonalWritingMode = child.isHorizontalWritingMode() != isHorizontalWritingMode();
@@ -1414,7 +1466,8 @@ LayoutUnit RenderGrid::rowPositionForChild(const RenderBox& child) const
     const GridCoordinate& coordinate = cachedGridCoordinate(child);
     LayoutUnit startOfRow = m_rowPositions[coordinate.rows.resolvedInitialPosition.toInt()];
     LayoutUnit startPosition = startOfRow + marginBeforeForChild(child);
-
+    if (hasAutoMarginsInColumnAxis(child))
+        return startPosition;
     GridAxisPosition axisPosition = columnAxisPositionForChild(child);
     switch (axisPosition) {
     case GridAxisStart:
@@ -1437,7 +1490,8 @@ LayoutUnit RenderGrid::columnPositionForChild(const RenderBox& child) const
     const GridCoordinate& coordinate = cachedGridCoordinate(child);
     LayoutUnit startOfColumn = m_columnPositions[coordinate.columns.resolvedInitialPosition.toInt()];
     LayoutUnit startPosition = startOfColumn + marginStartForChild(child);
-
+    if (hasAutoMarginsInRowAxis(child))
+        return startPosition;
     GridAxisPosition axisPosition = rowAxisPositionForChild(child);
     switch (axisPosition) {
     case GridAxisStart:
