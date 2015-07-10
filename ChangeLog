@@ -1,3 +1,25 @@
+2015-07-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] ar warning when linking static libraries
+        https://bugs.webkit.org/show_bug.cgi?id=144988
+
+        Reviewed by Carlos Garcia Campos.
+
+        Do not use 'u' when calling ar. This argument conflicts with 'D' and is ignored if 'D' is
+        used, and 'D' is used by default if binutils is built with --enable-deterministic-archives.
+        Using 'u' with 'D' causes a warning to be printed when linking static libraries. At least
+        Fedora and Debian have recently both chosen to use --enable-deterministic-archives, so we
+        should either stop using 'u' or else add 'U' as well in order to disable deterministic
+        archives. Using 'U' should result in a somewhat faster build (at least when using the
+        Makefile generator), but it's unlikely that the difference is significant, so let's simply
+        remove 'u' until someone determines otherwise. This seems like a better option than adding
+        'U' so as not to foil distributions' attempts to perform deterministic builds. This also
+        aligns us with the behavior of upstream CMake (which has never used 'u'). This is a minor
+        behavior change on distributions that do not use --enable-deterministic-archives, notably
+        Arch and openSUSE.
+
+        * Source/cmake/OptionsCommon.cmake:
+
 2015-07-03  Emanuele Aina  <emanuele.aina@collabora.com>
 
         [GTK] Forcefully disable gtk-doc and gobject-introspection when crossbuilding
