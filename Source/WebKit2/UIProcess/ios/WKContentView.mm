@@ -494,14 +494,21 @@ private:
 - (void)_didCommitLayerTree:(const WebKit::RemoteLayerTreeTransaction&)layerTreeTransaction
 {
     CGSize contentsSize = layerTreeTransaction.contentsSize();
-    CGRect contentBounds = { CGPointZero, contentsSize };
-    CGRect oldBounds = [self bounds];
+    CGPoint scrollOrigin = -layerTreeTransaction.scrollOrigin();
+    CGRect contentBounds = { scrollOrigin, contentsSize };
 
-    BOOL boundsChanged = !CGRectEqualToRect(oldBounds, contentBounds);
+    BOOL boundsChanged = !CGRectEqualToRect([self bounds], contentBounds);
     if (boundsChanged)
         [self setBounds:contentBounds];
 
     [_webView _didCommitLayerTree:layerTreeTransaction];
+
+    if (_interactionViewsContainerView) {
+        FloatPoint scaledOrigin = layerTreeTransaction.scrollOrigin();
+        float scale = [[_webView scrollView] zoomScale];
+        scaledOrigin.scale(scale, scale);
+        [_interactionViewsContainerView setFrame:CGRectMake(scaledOrigin.x(), scaledOrigin.y(), 0, 0)];
+    }
     
     if (boundsChanged) {
         FloatRect fixedPositionRect = _page->computeCustomFixedPositionRect(_page->unobscuredContentRect(), [[_webView scrollView] zoomScale]);

@@ -81,7 +81,7 @@ struct PrintInfo;
 
 - (PassRefPtr<WebKit::ViewSnapshot>)_takeViewSnapshot;
 
-- (void)_scrollToContentOffset:(WebCore::FloatPoint)contentOffset;
+- (void)_scrollToContentOffset:(WebCore::FloatPoint)contentOffset scrollOrigin:(WebCore::IntPoint)scrollOrigin;
 - (BOOL)_scrollToRect:(WebCore::FloatRect)targetRect origin:(WebCore::FloatPoint)origin minimumScrollDistance:(float)minimumScrollDistance;
 - (void)_scrollByOffset:(WebCore::FloatPoint)offset;
 - (void)_zoomToFocusRect:(WebCore::FloatRect)focusedElementRect selectionRect:(WebCore::FloatRect)selectionRectInDocumentCoordinates fontSize:(float)fontSize minimumScale:(double)minimumScale maximumScale:(double)maximumScale allowScaling:(BOOL)allowScaling forceScroll:(BOOL)forceScroll;

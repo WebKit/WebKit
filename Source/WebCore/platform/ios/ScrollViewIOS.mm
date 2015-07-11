@@ -108,7 +108,7 @@ IntRect ScrollView::unobscuredContentRect(VisibleContentRectIncludesScrollbars) 
     }
 
     if (!m_unobscuredContentSize.isEmpty())
-        return IntRect(IntPoint(m_scrollOffset), roundedIntSize(m_unobscuredContentSize));
+        return IntRect(scrollOrigin() + m_scrollOffset, roundedIntSize(m_unobscuredContentSize));
 
     return unobscuredContentRectInternal();
 }

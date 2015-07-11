@@ -1,3 +1,71 @@
+2015-07-10  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Scrolling issues on horizontally scrollable RTL pages
+        https://bugs.webkit.org/show_bug.cgi?id=146872
+        rdar://problem/7569416
+
+        Reviewed by Sam Weinig.
+
+        Horizontally scrollable RTL pages in WebKit2 had a variety of issues: they had
+        a gap down the right edge, and unreachable content on the left side, focussing
+        form fields scrolled to the wrong location, and programmatic scrolls scrolled
+        to the wrong place.
+        
+        Fix by plumbing the WebCore notion of scrollOrigin through to the UI process,
+        and using it in various places. There are three main aspects to the patch:
+        
+        1. scroll origin is included in RemoteLayerTreeTransaction, and plumbed through
+           to -[WKWebView _scrollToContentOffset:] for correct programmatic scrolling,
+           including zooming to focused form elements. The WKContentView's boundsOrigin
+           is set to the scroll origin so that the view coordinates match document coordinates.
+        2. WebPageProxy::computeCustomFixedPositionRect() uses the actual documentRect()
+           rather than just conjuring up a rect with a zero origin, which makes position:fixed
+           work correctly.
+        3. _interactionViewsContainerView (which hosts tap highlights) is positioned to 
+           coincide with the origin of the documentRect (i.e. at the scroll origin, which
+           may not be top-left). This allows tap highlights to show in the correct location.
+        4. ScrollView::unobscuredContentRect() is fixed to take scroll origin into account;
+           if the returned rect is wrong, RenderLayer::hitTest() incorrectly clips the hit
+           testing area.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        (WebKit::RemoteLayerTreeTransaction::scrollOrigin):
+        (WebKit::RemoteLayerTreeTransaction::setScrollOrigin):
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::encode):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        (WebKit::RemoteLayerTreeTransaction::description): Dump some more info.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _scrollToContentOffset:scrollOrigin:]):
+        (-[WKWebView _scrollToContentOffset:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::requestScroll):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::requestScroll):
+        * UIProcess/CoordinatedGraphics/WebView.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestScroll):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::requestScroll):
+        (WebKit::PageClientImpl::documentRect):
+        (WebKit::PageClientImpl::contentsSize): Deleted.
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _didCommitLayerTree:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::computeCustomFixedPositionRect):
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::requestScroll):
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::willCommitLayerTree):
+
 2015-07-10  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Diagnostic logging messages are causing too much IPC

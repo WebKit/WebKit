@@ -97,7 +97,7 @@ public:
     // Tell the view to scroll scrollRect by scrollOffset.
     virtual void scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset) = 0;
     // Tell the view to scroll to the given position, and whether this was a programmatic scroll.
-    virtual void requestScroll(const WebCore::FloatPoint& scrollPosition, bool isProgrammaticScroll) = 0;
+    virtual void requestScroll(const WebCore::FloatPoint& scrollPosition, const WebCore::IntPoint& scrollOrigin, bool isProgrammaticScroll) = 0;
 
     // Return the size of the view the page is associated with.
     virtual WebCore::IntSize viewSize() = 0;
@@ -279,7 +279,7 @@ public:
     virtual void zoomToRect(WebCore::FloatRect, double minimumScale, double maximumScale) = 0;
     virtual void didChangeViewportMetaTagWidth(float) = 0;
     virtual double minimumZoomScale() const = 0;
-    virtual WebCore::FloatSize contentsSize() const = 0;
+    virtual WebCore::FloatRect documentRect() const = 0;
     virtual void overflowScrollViewWillStartPanGesture() = 0;
     virtual void overflowScrollViewDidScroll() = 0;
     virtual void overflowScrollWillStartScroll() = 0;

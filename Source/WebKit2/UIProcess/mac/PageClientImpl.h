@@ -61,7 +61,7 @@ private:
     virtual void displayView() override;
     virtual bool canScrollView() override;
     virtual void scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset) override;
-    virtual void requestScroll(const WebCore::FloatPoint& scrollPosition, bool isProgrammaticScroll) override;
+    virtual void requestScroll(const WebCore::FloatPoint& scrollPosition, const WebCore::IntPoint& scrollOrigin, bool isProgrammaticScroll) override;
 
     virtual WebCore::IntSize viewSize() override;
     virtual bool isViewWindowActive() override;

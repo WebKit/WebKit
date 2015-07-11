@@ -1275,9 +1275,9 @@ void WebPageProxy::scrollView(const IntRect& scrollRect, const IntSize& scrollOf
     m_pageClient.scrollView(scrollRect, scrollOffset);
 }
 
-void WebPageProxy::requestScroll(const FloatPoint& scrollPosition, bool isProgrammaticScroll)
+void WebPageProxy::requestScroll(const FloatPoint& scrollPosition, const IntPoint& scrollOrigin, bool isProgrammaticScroll)
 {
-    m_pageClient.requestScroll(scrollPosition, isProgrammaticScroll);
+    m_pageClient.requestScroll(scrollPosition, scrollOrigin, isProgrammaticScroll);
 }
 
 void WebPageProxy::setSuppressVisibilityUpdates(bool flag)
