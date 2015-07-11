@@ -1,3 +1,18 @@
+2015-07-10  Matthew Daiter  <mdaiter@apple.com>
+
+        Exposing webkitMediaStream as MediaStream
+        https://bugs.webkit.org/show_bug.cgi?id=146813
+        <rdar://problem/21754383>
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac-mavericks/js/dom/global-constructors-attributes-expected.txt:
+        Changed attributes from webkitMediaStream to MediaStream
+        * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt:
+        Ditto
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        Ditto
+
 2015-07-10  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION (r183133-r183138): Secondary clicking in whitespace selects preceding word

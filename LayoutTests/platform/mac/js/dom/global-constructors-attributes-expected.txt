@@ -793,6 +793,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'MediaList').hasOwnProperty('get') 
 PASS Object.getOwnPropertyDescriptor(global, 'MediaList').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'MediaList').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'MediaList').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'MediaStream').value is MediaStream
+PASS Object.getOwnPropertyDescriptor(global, 'MediaStream').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'MediaStream').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'MediaStream').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'MediaStream').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'MediaSource').value is MediaSource
 PASS Object.getOwnPropertyDescriptor(global, 'MediaSource').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'MediaSource').hasOwnProperty('set') is false
@@ -2098,11 +2103,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'webkitAudioPannerNode').hasOwnProp
 PASS Object.getOwnPropertyDescriptor(global, 'webkitAudioPannerNode').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'webkitAudioPannerNode').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'webkitAudioPannerNode').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'webkitMediaStream').value is webkitMediaStream
-PASS Object.getOwnPropertyDescriptor(global, 'webkitMediaStream').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'webkitMediaStream').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'webkitMediaStream').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'webkitMediaStream').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'webkitOfflineAudioContext').value is webkitOfflineAudioContext
 PASS Object.getOwnPropertyDescriptor(global, 'webkitOfflineAudioContext').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'webkitOfflineAudioContext').hasOwnProperty('set') is false
