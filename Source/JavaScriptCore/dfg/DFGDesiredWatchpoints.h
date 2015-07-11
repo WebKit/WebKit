@@ -33,10 +33,7 @@
 #include "InferredValue.h"
 #include "JSArrayBufferView.h"
 #include "Watchpoint.h"
-#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/Vector.h>
 
 namespace JSC { namespace DFG {
 
@@ -44,11 +41,11 @@ class Graph;
 
 template<typename T>
 struct GenericSetAdaptor {
-    static void add(CodeBlock*, T* set, Watchpoint* watchpoint)
+    static void add(CodeBlock*, T set, Watchpoint* watchpoint)
     {
         return set->add(watchpoint);
     }
-    static bool hasBeenInvalidated(T* set) { return set->hasBeenInvalidated(); }
+    static bool hasBeenInvalidated(T set) { return set->hasBeenInvalidated(); }
 };
 
 struct InferredValueAdaptor {
@@ -72,7 +69,7 @@ struct ArrayBufferViewWatchpointAdaptor {
 template<typename WatchpointSetType, typename Adaptor = GenericSetAdaptor<WatchpointSetType>>
 class GenericDesiredWatchpoints {
 #if !ASSERT_DISABLED
-    typedef HashMap<WatchpointSetType*, bool> StateMap;
+    typedef HashMap<WatchpointSetType, bool> StateMap;
 #endif
 public:
     GenericDesiredWatchpoints()
@@ -80,7 +77,7 @@ public:
     {
     }
     
-    void addLazily(WatchpointSetType* set)
+    void addLazily(const WatchpointSetType& set)
     {
         m_sets.add(set);
     }
@@ -89,33 +86,29 @@ public:
     {
         RELEASE_ASSERT(!m_reallyAdded);
         
-        typename HashSet<WatchpointSetType*>::iterator iter = m_sets.begin();
-        typename HashSet<WatchpointSetType*>::iterator end = m_sets.end();
-        for (; iter != end; ++iter)
-            Adaptor::add(codeBlock, *iter, common.watchpoints.add(codeBlock));
+        for (auto& set : m_sets)
+            Adaptor::add(codeBlock, set, common.watchpoints.add(codeBlock));
         
         m_reallyAdded = true;
     }
     
     bool areStillValid() const
     {
-        typename HashSet<WatchpointSetType*>::iterator iter = m_sets.begin();
-        typename HashSet<WatchpointSetType*>::iterator end = m_sets.end();
-        for (; iter != end; ++iter) {
-            if (Adaptor::hasBeenInvalidated(*iter))
+        for (auto& set : m_sets) {
+            if (Adaptor::hasBeenInvalidated(set))
                 return false;
         }
         
         return true;
     }
     
-    bool isWatched(WatchpointSetType* set) const
+    bool isWatched(const WatchpointSetType& set) const
     {
         return m_sets.contains(set);
     }
 
 private:
-    HashSet<WatchpointSetType*> m_sets;
+    HashSet<WatchpointSetType> m_sets;
     bool m_reallyAdded;
 };
 
@@ -153,10 +146,10 @@ public:
     }
     
 private:
-    GenericDesiredWatchpoints<WatchpointSet> m_sets;
-    GenericDesiredWatchpoints<InlineWatchpointSet> m_inlineSets;
-    GenericDesiredWatchpoints<InferredValue, InferredValueAdaptor> m_inferredValues;
-    GenericDesiredWatchpoints<JSArrayBufferView, ArrayBufferViewWatchpointAdaptor> m_bufferViews;
+    GenericDesiredWatchpoints<WatchpointSet*> m_sets;
+    GenericDesiredWatchpoints<InlineWatchpointSet*> m_inlineSets;
+    GenericDesiredWatchpoints<InferredValue*, InferredValueAdaptor> m_inferredValues;
+    GenericDesiredWatchpoints<JSArrayBufferView*, ArrayBufferViewWatchpointAdaptor> m_bufferViews;
 };
 
 } } // namespace JSC::DFG
