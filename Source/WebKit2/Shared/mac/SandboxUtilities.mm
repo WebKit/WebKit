@@ -23,12 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "SandboxUtilities.h"
+#import "config.h"
+#import "SandboxUtilities.h"
 
-#include <array>
-#include <sys/param.h>
-#include <wtf/text/WTFString.h>
+#import <WebCore/SecuritySPI.h>
+#import <array>
+#import <sys/param.h>
+#import <wtf/text/WTFString.h>
 
 #if __has_include(<sandbox/private.h>)
 #import <sandbox/private.h>
@@ -76,6 +77,22 @@ String pathForProcessContainer()
     sandbox_container_path_for_pid(getpid(), path.data(), path.size());
 
     return String::fromUTF8(path.data());
+}
+
+bool processHasEntitlement(NSString *entitlement)
+{
+    auto task = adoptCF(SecTaskCreateFromSelf(CFAllocatorGetDefault()));
+    if (!task)
+        return false;
+
+    auto value = adoptCF(SecTaskCopyValueForEntitlement(task.get(), (__bridge CFStringRef)entitlement, nullptr));
+    if (!value)
+        return false;
+
+    if (CFGetTypeID(value.get()) != CFBooleanGetTypeID())
+        return false;
+
+    return CFBooleanGetValue(static_cast<CFBooleanRef>(value.get()));
 }
 
 }

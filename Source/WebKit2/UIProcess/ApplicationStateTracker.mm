@@ -29,6 +29,7 @@
 #if PLATFORM(IOS)
 
 #import "AssertionServicesSPI.h"
+#import "SandboxUtilities.h"
 #import "UIKitSPI.h"
 #import "WKContentView.h"
 #import <WebCore/SecuritySPI.h>
@@ -41,21 +42,6 @@
 
 namespace WebKit {
 
-static bool hasEntitlement(NSString *entitlement)
-{
-    auto task = adoptCF(SecTaskCreateFromSelf(CFAllocatorGetDefault()));
-    if (!task)
-        return false;
-
-    auto value = adoptCF(SecTaskCopyValueForEntitlement(task.get(), (__bridge CFStringRef)entitlement, nullptr));
-    if (!value)
-        return false;
-
-    if (CFGetTypeID(value.get()) != CFBooleanGetTypeID())
-        return false;
-
-    return CFBooleanGetValue(static_cast<CFBooleanRef>(value.get()));
-}
 
 enum class ApplicationType {
     Application,
@@ -70,7 +56,7 @@ static ApplicationType applicationType(UIWindow *window)
     if (_UIApplicationIsExtension())
         return ApplicationType::Extension;
 
-    if (hasEntitlement(@"com.apple.UIKit.vends-view-services") && window._isHostedInAnotherProcess)
+    if (processHasEntitlement(@"com.apple.UIKit.vends-view-services") && window._isHostedInAnotherProcess)
         return ApplicationType::ViewService;
 
     return ApplicationType::Application;

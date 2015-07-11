@@ -1,3 +1,39 @@
+2015-07-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Update default link action sheets for app links
+        https://bugs.webkit.org/show_bug.cgi?id=146658
+        <rdar://problem/21221902>
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/mac/SandboxUtilities.h:
+        * Shared/mac/SandboxUtilities.mm: Renamed from Source/WebKit2/Shared/mac/SandboxUtilities.cpp.
+        (WebKit::processHasEntitlement):
+        * UIProcess/ApplicationStateTracker.mm:
+        (WebKit::applicationType):
+        (WebKit::hasEntitlement): Deleted.
+        * WebKit2.xcodeproj/project.pbxproj:
+        Share a helper for checking if the current process has an entitlement.
+
+        * UIProcess/API/Cocoa/_WKElementAction.h:
+        * UIProcess/API/Cocoa/_WKElementAction.mm:
+        (+[_WKElementAction _elementActionWithType:title:actionHandler:]):
+        (+[_WKElementAction _elementActionWithType:customTitle:assistant:]):
+        * UIProcess/API/Cocoa/_WKElementActionInternal.h:
+        Add an internal way to make an element action with a standard type and regular handler.
+        We use this for the new standard types that don't have a default implementation.
+
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (applicationHasAppLinkEntitlements):
+        (appLinkForURL):
+        Helpers checking access to app links and fetching app links.
+
+        (-[WKActionSheetAssistant _appendOpenActionsForURL:actions:]):
+        (-[WKActionSheetAssistant defaultActionsForLinkSheet]):
+        (-[WKActionSheetAssistant defaultActionsForImageSheet]):
+        Create "Open in Safari" and "Open in 'App'" default actions for AppLinks,
+        otherwise add the normal default "Open" action.
+
 2015-07-11  Enrica Casucci  <enrica@apple.com>
 
         Remove incorrect overriding of inputAssistantItem in WKContentView.
