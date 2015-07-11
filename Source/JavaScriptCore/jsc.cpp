@@ -28,6 +28,7 @@
 #include "CodeBlock.h"
 #include "Completion.h"
 #include "CopiedSpaceInlines.h"
+#include "DFGPlan.h"
 #include "Disassembler.h"
 #include "Exception.h"
 #include "ExceptionHelpers.h"
@@ -1556,6 +1557,13 @@ int jscmain(int argc, char** argv)
             printf("JSC OSR EXIT FUZZ: encountered %u dynamic checks.\n", numberOfOSRExitFuzzChecks());
         }
 #endif
+        auto compileTimeStats = DFG::Plan::compileTimeStats();
+        Vector<CString> compileTimeKeys;
+        for (auto& entry : compileTimeStats)
+            compileTimeKeys.append(entry.key);
+        std::sort(compileTimeKeys.begin(), compileTimeKeys.end());
+        for (CString key : compileTimeKeys)
+            printf("%40s: %.3lf ms\n", key.data(), compileTimeStats.get(key));
     }
     
     return result;

@@ -1,3 +1,33 @@
+2015-07-10  Filip Pizlo  <fpizlo@apple.com>
+
+        It should be easy to measure total compile times.
+        https://bugs.webkit.org/show_bug.cgi?id=146857
+
+        Reviewed by Sam Weinig.
+        
+        This gives DFG::Plan the ability to track total compile times, and return them in a map
+        of stats that jsc.cpp can display.
+        
+        I want to do some work to bring down DFG compile times. This will help me measure whether
+        I'm making a difference or not.
+
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::Plan):
+        (JSC::DFG::Plan::~Plan):
+        (JSC::DFG::Plan::computeCompileTimes):
+        (JSC::DFG::Plan::reportCompileTimes):
+        (JSC::DFG::Plan::compileInThread):
+        (JSC::DFG::Plan::compileInThreadImpl):
+        (JSC::DFG::Plan::cancel):
+        (JSC::DFG::Plan::compileTimeStats):
+        (JSC::DFG::dumpAndVerifyGraph): Deleted.
+        (JSC::DFG::profilerCompilationKindForMode): Deleted.
+        * dfg/DFGPlan.h:
+        (JSC::DFG::Plan::compileTimeStats):
+        * jsc.cpp:
+        (jscmain):
+        * runtime/Options.h:
+
 2015-07-04  Filip Pizlo  <fpizlo@apple.com>
 
         DFG fragile frozen values are fundamentally broken

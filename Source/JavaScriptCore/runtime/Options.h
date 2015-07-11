@@ -144,6 +144,7 @@ typedef const char* optionString;
     v(bool, verboseCompilationQueue, false, nullptr) \
     v(bool, reportCompileTimes, false, "dumps JS function signature and the time it took to compile") \
     v(bool, reportFTLCompileTimes, false, "dumps JS function signature and the time it took to FTL compile") \
+    v(bool, reportTotalCompileTimes, false, nullptr) \
     v(bool, verboseCFA, false, nullptr) \
     v(bool, verboseFTLToJSThunk, false, nullptr) \
     v(bool, verboseFTLFailure, false, nullptr) \
