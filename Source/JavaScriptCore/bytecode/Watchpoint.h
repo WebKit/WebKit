@@ -27,6 +27,8 @@
 #define Watchpoint_h
 
 #include <wtf/Atomics.h>
+#include <wtf/FastMalloc.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/PrintStream.h>
 #include <wtf/SentinelLinkedList.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -62,6 +64,8 @@ private:
 };
 
 class Watchpoint : public BasicRawSentinelNode<Watchpoint> {
+    WTF_MAKE_NONCOPYABLE(Watchpoint);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     Watchpoint()
     {

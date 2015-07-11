@@ -34,11 +34,6 @@ class CodeBlock;
 
 class CodeBlockJettisoningWatchpoint : public Watchpoint {
 public:
-    CodeBlockJettisoningWatchpoint()
-        : m_codeBlock(0)
-    {
-    }
-    
     CodeBlockJettisoningWatchpoint(CodeBlock* codeBlock)
         : m_codeBlock(codeBlock)
     {

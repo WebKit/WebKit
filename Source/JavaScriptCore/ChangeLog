@@ -1,5 +1,23 @@
 2015-07-10  Filip Pizlo  <fpizlo@apple.com>
 
+        Watchpoints should be allocated with FastMalloc
+        https://bugs.webkit.org/show_bug.cgi?id=146874
+
+        Reviewed by Dan Bernstein.
+        
+        This is in preparation for adding new subclasses of Watchpoint. While starting to do this
+        I realized that the way Watchpoints allocated themselves was unusual.
+
+        * bytecode/CodeBlockJettisoningWatchpoint.h:
+        (JSC::CodeBlockJettisoningWatchpoint::CodeBlockJettisoningWatchpoint): No need for the default constructor.
+        * bytecode/Watchpoint.h:
+        (JSC::Watchpoint::Watchpoint): This should be noncopyable and fast-allocated.
+        * dfg/DFGCommonData.h: Use a Bag<> instead of SegmentedVector<>. Bag means "malloc things but allow me to free them all at once", which is what we are doing here.
+        * dfg/DFGDesiredWatchpoints.h:
+        (JSC::DFG::GenericDesiredWatchpoints::reallyAdd): Use the Bag<> API rather than the very awkward SegmentedVector<> API.
+
+2015-07-10  Filip Pizlo  <fpizlo@apple.com>
+
         AI folding of IsObjectOrNull is broken for non-object types that may be null
         https://bugs.webkit.org/show_bug.cgi?id=146867
 

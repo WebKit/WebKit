@@ -91,10 +91,8 @@ public:
         
         typename HashSet<WatchpointSetType*>::iterator iter = m_sets.begin();
         typename HashSet<WatchpointSetType*>::iterator end = m_sets.end();
-        for (; iter != end; ++iter) {
-            common.watchpoints.append(CodeBlockJettisoningWatchpoint(codeBlock));
-            Adaptor::add(codeBlock, *iter, &common.watchpoints.last());
-        }
+        for (; iter != end; ++iter)
+            Adaptor::add(codeBlock, *iter, common.watchpoints.add(codeBlock));
         
         m_reallyAdded = true;
     }

@@ -97,7 +97,7 @@ public:
     Vector<WeakReferenceTransition> transitions;
     Vector<WriteBarrier<JSCell>> weakReferences;
     Vector<WriteBarrier<Structure>> weakStructureReferences;
-    SegmentedVector<CodeBlockJettisoningWatchpoint, 1> watchpoints;
+    Bag<CodeBlockJettisoningWatchpoint> watchpoints;
     Vector<JumpReplacement> jumpReplacements;
     
     RefPtr<Profiler::Compilation> compilation;
