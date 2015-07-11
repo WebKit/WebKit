@@ -49,17 +49,13 @@ editing/selection/4895428-1.html
 editing/selection/4895428-4.html
 editing/selection/5354455-1.html
 editing/selection/5354455-2.html
-editing/selection/button-right-click.html
 editing/selection/caret-after-keypress.html
 editing/selection/contains-boundaries.html
-editing/selection/context-menu-on-text.html
 editing/selection/doubleclick-beside-cr-span.html
 editing/selection/doubleclick-whitespace.html
 editing/selection/drag-to-contenteditable-iframe.html
-editing/selection/empty-cell-right-click.html
 editing/selection/mixed-editability-10.html
 editing/selection/select-out-of-editable.html
-editing/spelling/context-menu-suggestions.html
 editing/spelling/spellcheck-paste.html
 editing/spelling/spellcheck-paste-disabled.html
 editing/spelling/spellcheck-paste-continuous-disabled.html
@@ -68,11 +64,9 @@ fast/events/5056619.html
 fast/events/autoscroll-in-textfield.html
 fast/events/bogus-dropEffect-effectAllowed.html
 fast/events/content-changed-during-drop.html
-fast/events/context-no-deselect.html
-fast/events/context-onmousedown-event.html
-fast/events/contextmenu-scrolled-page-with-frame.html
 fast/events/continuous-platform-wheelevent-in-scrolling-div.html
 fast/events/crash-on-mutate-during-drop.html
+fast/events/context-onmousedown-event.html
 fast/events/drag-and-drop-dataTransfer-types-nocrash.html
 fast/events/drag-and-drop-fire-drag-dragover.html
 fast/events/drag-and-drop.html
@@ -89,7 +83,6 @@ fast/events/mouseup-from-button2.html
 fast/events/node-event-anchor-lock.html
 fast/events/ondragenter.html
 fast/events/right-click-focus.html
-fast/events/selectstart-prevent-selection-on-right-click.html
 fast/events/standalone-image-drag-to-editable.html
 fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html
 fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html
@@ -108,7 +101,6 @@ http/tests/local/drag-over-remote-content.html
 http/tests/misc/bubble-drag-events.html
 http/tests/security/drag-drop-same-unique-origin.html
 http/tests/security/drag-over-remote-content-iframe.html
-media/controls-right-click-on-timebar.html
 platform/mac/editing/pasteboard/dataTransfer-set-data-file-url.html
 platform/mac/editing/pasteboard/drag-selections-to-contenteditable.html
 platform/mac/fast/forms/listbox-scrollbar-hit-test.html
@@ -135,7 +127,6 @@ webkit.org/b/105616 editing/spelling/spelling-hasspellingmarker.html
 webkit.org/b/105616 editing/spelling/spelling-linebreak.html
 webkit.org/b/105616 editing/spelling/spelling-with-punctuation-selection.html
 webkit.org/b/105616 editing/spelling/spelling-with-whitespace-selection.html
-webkit.org/b/105616 editing/spelling/spellcheck-input-search-crash.html
 webkit.org/b/105616 editing/spelling/grammar.html
 webkit.org/b/105616 editing/spelling/markers.html
 webkit.org/b/105616 platform/mac/editing/spelling/autocorrection-delete.html [ Failure ]
@@ -248,18 +239,6 @@ webkit.org/b/139820 fast/frames/lots-of-objects.html [ Timeout ]
 webkit.org/b/139820 fast/frames/lots-of-iframes.html [ Timeout ]
 
 webkit.org/b/140217 http/tests/navigation/forward-and-cancel.html [ Pass Failure ]
-
-# These tests always time out.
-webkit.org/b/127473 editing/selection/context-menu-text-selection.html [ Skip ]
-webkit.org/b/127473 editing/selection/context-menu-text-selection-lookup.html [ Skip ]
-webkit.org/b/143380 fast/events/context-nodrag.html [ Skip ]
-
-# Flaky scroll-snap tests
-webkit.org/b/144811 platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-iframe.html [ Pass Timeout ]
-webkit.org/b/144811 platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-borders.html [ Pass Timeout ]
-webkit.org/b/144811 platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-overflow.html [ Pass Timeout ]
-webkit.org/b/144811 platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-padding.html [ Pass Timeout ]
-webkit.org/b/144811 platform/mac-wk2/tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-rotated.html [ Pass Timeout ]
 
 webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 
