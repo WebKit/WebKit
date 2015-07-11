@@ -101,6 +101,7 @@
 #include "WebUserContentControllerProxy.h"
 #include "WebsiteDataStore.h"
 #include <WebCore/BitmapImage.h>
+#include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/DragController.h>
 #include <WebCore/DragData.h>
 #include <WebCore/FloatRect.h>
@@ -114,7 +115,6 @@
 #include <WebCore/WindowFeatures.h>
 #include <stdio.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/RandomNumber.h>
 #include <wtf/text/StringView.h>
 
 #if ENABLE(ASYNC_SCROLLING)
@@ -4717,31 +4717,43 @@ void WebPageProxy::machSendRightCallback(const MachSendRight& sendRight, uint64_
 }
 #endif
 
-static bool shouldLogDiagnosticMessage(bool shouldSample)
-{
-    if (!shouldSample)
-        return true;
-    // Log 5% of messages when sampling.
-    static const double selectionProbability = 0.05;
-    return randomNumber() <= selectionProbability;
-}
-
 void WebPageProxy::logDiagnosticMessage(const String& message, const String& description, bool shouldSample)
 {
-    if (shouldLogDiagnosticMessage(shouldSample))
-        m_diagnosticLoggingClient->logDiagnosticMessage(this, message, description);
+    if (!DiagnosticLoggingClient::shouldLogAfterSampling(shouldSample ? ShouldSample::Yes : ShouldSample::No))
+        return;
+
+    logSampledDiagnosticMessage(message, description);
 }
 
 void WebPageProxy::logDiagnosticMessageWithResult(const String& message, const String& description, uint32_t result, bool shouldSample)
 {
-    if (shouldLogDiagnosticMessage(shouldSample))
-        m_diagnosticLoggingClient->logDiagnosticMessageWithResult(this, message, description, static_cast<WebCore::DiagnosticLoggingResultType>(result));
+    if (!DiagnosticLoggingClient::shouldLogAfterSampling(shouldSample ? ShouldSample::Yes : ShouldSample::No))
+        return;
+
+    logSampledDiagnosticMessageWithResult(message, description, static_cast<WebCore::DiagnosticLoggingResultType>(result));
 }
 
 void WebPageProxy::logDiagnosticMessageWithValue(const String& message, const String& description, const String& value, bool shouldSample)
 {
-    if (shouldLogDiagnosticMessage(shouldSample))
-        m_diagnosticLoggingClient->logDiagnosticMessageWithValue(this, message, description, value);
+    if (!DiagnosticLoggingClient::shouldLogAfterSampling(shouldSample ? ShouldSample::Yes : ShouldSample::No))
+        return;
+
+    logSampledDiagnosticMessageWithValue(message, description, value);
+}
+
+void WebPageProxy::logSampledDiagnosticMessage(const String& message, const String& description)
+{
+    m_diagnosticLoggingClient->logDiagnosticMessage(this, message, description);
+}
+
+void WebPageProxy::logSampledDiagnosticMessageWithResult(const String& message, const String& description, uint32_t result)
+{
+    m_diagnosticLoggingClient->logDiagnosticMessageWithResult(this, message, description, static_cast<WebCore::DiagnosticLoggingResultType>(result));
+}
+
+void WebPageProxy::logSampledDiagnosticMessageWithValue(const String& message, const String& description, const String& value)
+{
+    m_diagnosticLoggingClient->logDiagnosticMessageWithValue(this, message, description, value);
 }
 
 void WebPageProxy::rectForCharacterRangeCallback(const IntRect& rect, const EditingRange& actualRange, uint64_t callbackID)
