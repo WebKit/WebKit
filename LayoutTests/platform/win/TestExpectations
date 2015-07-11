@@ -2126,7 +2126,7 @@ webkit.org/b/140703 http/tests/security/XFrameOptions/x-frame-options-deny.html 
 webkit.org/b/140703 [ Debug ] http/tests/security/XFrameOptions/x-frame-options-deny-delete-frame-in-load-event.html [ Crash ]
 webkit.org/b/140703 http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html [ Failure ]
 webkit.org/b/140703 http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow.html [ Crash Failure ]
-webkit.org/b/140703 http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny.html [ Failure ]
+webkit.org/b/140703 http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny.html [ Crash Failure ]
 webkit.org/b/140703 http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag.html [ Crash Failure ]
 webkit.org/b/140703 http/tests/security/XFrameOptions/x-frame-options-invalid.html [ Failure ]
 webkit.org/b/140703 http/tests/security/XFrameOptions/x-frame-options-multiple-headers-conflict.html [ Failure ]
