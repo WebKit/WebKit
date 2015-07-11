@@ -1,3 +1,41 @@
+2015-07-10  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Use -apple-system instead of -webkit-system-font
+        https://bugs.webkit.org/show_bug.cgi?id=146860
+
+        Remove explicit uses of font-family where inhertance from the body is enough.
+        Change -webkit-system-font to -apple-system and use -apple-system-monospaced-numbers
+        for DataGrid and the toolbar dashboard.
+
+        Reviewed by Sam Weinig.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.css:
+        (.css-style-text-editor > .CodeMirror .CodeMirror-placeholder):
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid td):
+        * UserInterface/Views/DefaultDashboardView.css:
+        (.toolbar .dashboard.default > .item):
+        (.toolbar .dashboard.default > :matches(.time, .resourcesSize)):
+        (.toolbar .dashboard.default > .resourcesSize):
+        * UserInterface/Views/HierarchicalPathComponent.css:
+        (.hierarchical-path-component):
+        * UserInterface/Views/LogContentView.css:
+        (.console-messages):
+        * UserInterface/Views/Main.css:
+        (body):
+        * UserInterface/Views/ObjectTreeArrayIndexTreeElement.css:
+        (.object-tree-array-index .index-name):
+        * UserInterface/Views/ObjectTreePropertyTreeElement.css:
+        (.object-tree-property .prototype-name):
+        * UserInterface/Views/ObjectTreeView.css:
+        (.object-tree-outline li .empty-message):
+        * UserInterface/Views/RenderingFrameTimelineOverviewGraph.css:
+        (.timeline-overview-graph.rendering-frame > .divider > .label):
+        * UserInterface/Views/SourceCodeTextEditor.css:
+        (.source-code.text-editor > .CodeMirror .issue-widget > .text):
+        * UserInterface/Views/TypeTreeView.css:
+        (.type-tree):
+
 2015-07-10  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Add source links to functions logged in the console

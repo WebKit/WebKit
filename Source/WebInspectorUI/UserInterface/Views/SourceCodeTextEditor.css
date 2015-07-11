@@ -112,7 +112,7 @@
 }
 
 .source-code.text-editor > .CodeMirror .issue-widget > .text {
-    font-family: -webkit-system-font, sans-serif;
+    font-family: -apple-system, sans-serif;
 }
 
 .source-code.text-editor > .CodeMirror .issue-widget.inline > .text {
