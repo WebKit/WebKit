@@ -1,5 +1,43 @@
 2015-07-11  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Allow clients to opt-out of default app link link actions
+        https://bugs.webkit.org/show_bug.cgi?id=146883
+        <rdar://problem/21221902>
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::shouldIncludeAppLinkActionsForElement):
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::UIClient::shouldIncludeAppLinkActionsForElement):
+        Plumbing for a new delegate message to ask the client if they
+        would like app link actions or not. Default is yes.
+
+        * UIProcess/ios/WKActionSheetAssistant.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant showImageSheet]):
+        (-[WKActionSheetAssistant showLinkSheet]):
+        (-[WKActionSheetAssistant defaultActionsForLinkSheet:]):
+        (-[WKActionSheetAssistant defaultActionsForImageSheet:]):
+        Pass elementInfo into methods generating default actions.
+        
+        (-[WKActionSheetAssistant _appendOpenActionsForURL:actions:elementInfo:]):
+        When generating open actions, if the process has AppLink capabilities
+        ask the client if they want to include AppLink actions or fall back
+        to the basic Open action.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView actionSheetAssistant:shouldIncludeAppLinkActionsForElement:]):
+        (-[WKContentView previewViewControllerForPosition:inSourceView:]):
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView actionSheetAssistant:shouldIncludeAppLinkActionsForElement:]):
+        Assistant delegate implementations forward to the UIDelegate.
+
+2015-07-11  Joseph Pecoraro  <pecoraro@apple.com>
+
         Update default link action sheets for app links
         https://bugs.webkit.org/show_bug.cgi?id=146658
         <rdar://problem/21221902>
