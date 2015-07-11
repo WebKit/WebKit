@@ -1073,14 +1073,23 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
             this._codeMirror.markText(start, end, {className: "invalid"});
 
-            var valueReplacement = property.value.length ? WebInspector.UIString("The value '%s' is not supported for this property.\nClick to delete and open autocomplete.").format(property.value) : WebInspector.UIString("This property needs a value.\nClick to open autocomplete.");
+            if (/^(?:\d+)$/.test(property.value)) {
+                invalidMarkerInfo = {
+                    position: start,
+                    title: WebInspector.UIString("The value '%s' needs units.\nClick to add 'px' to the value.").format(property.value),
+                    correction: property.name + ": " + property.value + "px;",
+                    autocomplete: false
+                };
+            } else {
+                var valueReplacement = property.value.length ? WebInspector.UIString("The value '%s' is not supported for this property.\nClick to delete and open autocomplete.").format(property.value) : WebInspector.UIString("This property needs a value.\nClick to open autocomplete.");
 
-            invalidMarkerInfo = {
-                position: start,
-                title: valueReplacement,
-                correction: property.name + ": ",
-                autocomplete: true
-            };
+                invalidMarkerInfo = {
+                    position: start,
+                    title: valueReplacement,
+                    correction: property.name + ": ",
+                    autocomplete: true
+                };
+            }
         } else if (!instancesOfProperty.call(this, "-webkit-" + property.name) && WebInspector.CSSCompletions.cssNameCompletions.propertyRequiresWebkitPrefix(property.name)) {
             // The property is valid and exists in the rule while its prefixed version does not.
             invalidMarkerInfo = {
