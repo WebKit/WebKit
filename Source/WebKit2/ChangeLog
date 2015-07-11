@@ -1,3 +1,17 @@
+2015-07-11  Enrica Casucci  <enrica@apple.com>
+
+        Remove incorrect overriding of inputAssistantItem in WKContentView.
+        https://bugs.webkit.org/show_bug.cgi?id=146863
+        rdar://problem/21507154
+
+        Reviewed by Sam Weinig.
+
+        Correction to the patch in r186713.
+        We need to provide the inputAssistantItem from the responder.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView inputAccessoryView]):
+
 2015-07-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r186689 and r186710.

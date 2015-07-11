@@ -211,6 +211,12 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 + (BOOL)_addCompletion:(void(^)(BOOL))completion;
 @end
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
+@interface UIWebFormAccessory (StagingToRemove)
+- (id)initWithInputAssistantItem:(UITextInputAssistantItem *)inputAssistantItem;
+@end
+#endif
+
 @interface WKFormInputSession : NSObject <_WKFormInputSession>
 
 - (instancetype)initWithContentView:(WKContentView *)view userObject:(NSObject <NSSecureCoding> *)userObject;
@@ -1251,7 +1257,12 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 - (UIView *)inputAccessoryView
 {
     if (!_formAccessoryView) {
-        _formAccessoryView = adoptNS([[UIWebFormAccessory alloc] init]);
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
+        if ([UIWebFormAccessory instancesRespondToSelector:@selector(initWithInputAssistantItem:)])
+            _formAccessoryView = adoptNS([[UIWebFormAccessory alloc] initWithInputAssistantItem:[self inputAssistantItem]]);
+        else
+#endif
+            _formAccessoryView = adoptNS([[UIWebFormAccessory alloc] init]);
         [_formAccessoryView setDelegate:self];
     }
 
