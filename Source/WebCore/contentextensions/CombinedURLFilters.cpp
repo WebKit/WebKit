@@ -78,16 +78,16 @@ size_t CombinedURLFilters::memoryUsed() const
 #endif
     
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
-static String prefixTreeVertexToString(const PrefixTreeVertex& vertex, unsigned depth)
+static String prefixTreeVertexToString(const PrefixTreeVertex& vertex, const HashMap<const PrefixTreeVertex*, ActionList>& actions, unsigned depth)
 {
     StringBuilder builder;
     while (depth--)
         builder.append("  ");
     builder.append("vertex actions: ");
 
-    auto actionsSlot = m_actions.find(&vertex);
-    if (actionsSlot != m_actions.end()) {
-        for (auto action : *actionsSlot->value) {
+    auto actionsSlot = actions.find(&vertex);
+    if (actionsSlot != actions.end()) {
+        for (uint64_t action : actionsSlot->value) {
             builder.appendNumber(action);
             builder.append(',');
         }
@@ -96,9 +96,9 @@ static String prefixTreeVertexToString(const PrefixTreeVertex& vertex, unsigned 
     return builder.toString();
 }
 
-static void recursivePrint(const PrefixTreeVertex& vertex, unsigned depth)
+static void recursivePrint(const PrefixTreeVertex& vertex, const HashMap<const PrefixTreeVertex*, ActionList>& actions, unsigned depth)
 {
-    dataLogF("%s", prefixTreeVertexToString(vertex, depth).utf8().data());
+    dataLogF("%s", prefixTreeVertexToString(vertex, actions, depth).utf8().data());
     for (const auto& edge : vertex.edges) {
         StringBuilder builder;
         for (unsigned i = 0; i < depth * 2; ++i)
@@ -108,13 +108,13 @@ static void recursivePrint(const PrefixTreeVertex& vertex, unsigned depth)
         builder.append('\n');
         dataLogF("%s", builder.toString().utf8().data());
         ASSERT(edge.child);
-        recursivePrint(*edge.child.get(), depth + 1);
+        recursivePrint(*edge.child.get(), actions, depth + 1);
     }
 }
 
 void CombinedURLFilters::print() const
 {
-    recursivePrint(*m_prefixTreeRoot.get(), 0);
+    recursivePrint(*m_prefixTreeRoot.get(), m_actions, 0);
 }
 #endif
 

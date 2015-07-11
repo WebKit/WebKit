@@ -38,7 +38,7 @@
 #define CONTENT_EXTENSIONS_PAGE_SIZE 16384
 
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
-typedef CrashOnOverflow ContentExtensionsOverflowHandler;
+typedef WTF::CrashOnOverflow ContentExtensionsOverflowHandler;
 #else
 typedef UnsafeVectorOverflow ContentExtensionsOverflowHandler;
 #endif
