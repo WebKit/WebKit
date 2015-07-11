@@ -1,3 +1,20 @@
+2015-07-10  Enrica Casucci  <enrica@apple.com>
+
+        Remove incorrect overriding of inputAssistantItem in WKContentView.
+        https://bugs.webkit.org/show_bug.cgi?id=146863
+        rdar://problem/21507154
+
+        Reviewed by Dan Bernstein.
+
+        Removing implementation of inputAssistantItem and moving initialization
+        of formAccessoryView to inputAccessoryView to avoid interfering with
+        the keyboard handling of the assistant bar.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView inputAccessoryView]):
+        (-[WKContentView inputAssistantItem]): Deleted.
+        (-[WKContentView _inputAssistantItem]): Deleted.
+
 2015-07-10  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Scrolling issues on horizontally scrollable RTL pages
