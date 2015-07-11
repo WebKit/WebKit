@@ -39,10 +39,6 @@ public:
         Coalesce
     };
 
-    static Ref<Pair> create()
-    {
-        return adoptRef(*new Pair);
-    }
     static Ref<Pair> create(RefPtr<CSSPrimitiveValue>&& first, RefPtr<CSSPrimitiveValue>&& second)
     {
         return adoptRef(*new Pair(WTF::move(first), WTF::move(second)));
@@ -56,9 +52,6 @@ public:
     CSSPrimitiveValue* first() const { return m_first.get(); }
     CSSPrimitiveValue* second() const { return m_second.get(); }
 
-    void setFirst(RefPtr<CSSPrimitiveValue>&& first) { m_first = WTF::move(first); }
-    void setSecond(RefPtr<CSSPrimitiveValue>&& second) { m_second = WTF::move(second); }
-
     String cssText() const
     {
         String first = this->first()->cssText();
@@ -71,7 +64,6 @@ public:
     bool equals(const Pair& other) const { return compareCSSValuePtr(m_first, other.m_first) && compareCSSValuePtr(m_second, other.m_second); }
 
 private:
-    Pair() : m_first(nullptr), m_second(nullptr) { }
     Pair(RefPtr<CSSPrimitiveValue>&& first, RefPtr<CSSPrimitiveValue>&& second) : m_first(WTF::move(first)), m_second(WTF::move(second)) { }
     Pair(RefPtr<CSSPrimitiveValue>&& first, RefPtr<CSSPrimitiveValue>&& second, IdenticalValueEncoding encoding) : m_first(WTF::move(first)), m_second(WTF::move(second)), m_encoding(encoding) { }
 
