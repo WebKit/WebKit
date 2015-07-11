@@ -1,3 +1,17 @@
+2015-07-10  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (r183133-r183138): Secondary clicking in whitespace selects preceding word
+        https://bugs.webkit.org/show_bug.cgi?id=146695
+        <rdar://problem/21441466>
+
+        Reviewed by Tim Horton.
+
+        Add a new test that checks for correct mac selection behavior for editable and read-only
+        text fields.
+
+        * platform/mac/editing/selection/context-menu-select-editability-expected.txt: Added.
+        * platform/mac/editing/selection/context-menu-select-editability.html: Added.
+
 2015-07-10  Nan Wang  <n_wang@apple.com>
 
         Added tests for new role: table and cell.
