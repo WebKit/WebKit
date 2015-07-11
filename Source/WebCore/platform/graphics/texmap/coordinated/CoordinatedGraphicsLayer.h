@@ -62,6 +62,8 @@ public:
     explicit CoordinatedGraphicsLayer(Type, GraphicsLayerClient&);
     virtual ~CoordinatedGraphicsLayer();
 
+    PlatformLayerID primaryLayerID() const override { return id(); }
+
     // Reimplementations from GraphicsLayer.h.
     virtual bool setChildren(const Vector<GraphicsLayer*>&) override;
     virtual void addChild(GraphicsLayer*) override;
@@ -119,7 +121,7 @@ public:
     bool isScrollable() const { return !!m_scrollableArea; }
     void commitScrollOffset(const IntSize&);
 
-    CoordinatedLayerID id() const;
+    CoordinatedLayerID id() const { return m_id; }
 
     void setFixedToViewport(bool isFixed);
 

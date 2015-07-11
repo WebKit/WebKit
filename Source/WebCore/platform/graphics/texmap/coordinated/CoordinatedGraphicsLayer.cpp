@@ -537,11 +537,6 @@ void CoordinatedGraphicsLayer::setNeedsDisplayInRect(const FloatRect& rect, Shou
     addRepaintRect(rect);
 }
 
-CoordinatedLayerID CoordinatedGraphicsLayer::id() const
-{
-    return m_id;
-}
-
 void CoordinatedGraphicsLayer::setScrollableArea(ScrollableArea* scrollableArea)
 {
     bool oldScrollable = isScrollable();
