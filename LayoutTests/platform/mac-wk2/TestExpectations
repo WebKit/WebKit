@@ -242,6 +242,8 @@ webkit.org/b/140217 http/tests/navigation/forward-and-cancel.html [ Pass Failure
 
 webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 
+webkit.org/b/146876 [ Mavericks ] fast/frames/frame-limit.html [ Timeout ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 

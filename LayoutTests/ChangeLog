@@ -1,5 +1,14 @@
 2015-07-11  David Kilzer  <ddkilzer@apple.com>
 
+        REGRESSION (r186689?): fast/frames/frame-limit.html timeout on Mavericks {Release,Debug} WK2 bots
+
+        Fix tracked by: <http://webkit.org/b/146876>
+
+        * platform/mac-wk2/TestExpectations: Mark test as timing out:
+        - fast/frames/frame-limit.html
+
+2015-07-11  David Kilzer  <ddkilzer@apple.com>
+
         REGRESSION (r186697): Fix Yosemite, El Capitan test results for js/dom/global-constructors-attributes.html
 
         * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt:
