@@ -273,8 +273,8 @@ static LSAppLink *appLinkForURL(NSURL *url)
     const auto& positionInformation = [delegate positionInformationForActionSheetAssistant:self];
 
     NSURL *targetURL = [NSURL _web_URLWithWTFString:positionInformation.url];
-    auto defaultActions = [self defaultActionsForImageSheet];
     auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:targetURL location:positionInformation.point title:positionInformation.title rect:positionInformation.bounds image:positionInformation.image.get()]);
+    auto defaultActions = [self defaultActionsForImageSheet:elementInfo.get()];
 
     RetainPtr<NSArray> actions = [delegate actionSheetAssistant:self decideActionsForElement:elementInfo.get() defaultActions:WTF::move(defaultActions)];
 
@@ -291,10 +291,11 @@ static LSAppLink *appLinkForURL(NSURL *url)
         [self cleanupSheet];
 }
 
-- (void)_appendOpenActionsForURL:(NSURL *)url actions:(NSMutableArray *)defaultActions
+- (void)_appendOpenActionsForURL:(NSURL *)url actions:(NSMutableArray *)defaultActions elementInfo:(_WKActivatedElementInfo *)elementInfo
 {
 #if HAVE(APP_LINKS)
-    if (applicationHasAppLinkEntitlements()) {
+    ASSERT(_delegate);
+    if (applicationHasAppLinkEntitlements() && [_delegate.get() actionSheetAssistant:self shouldIncludeAppLinkActionsForElement:elementInfo]) {
         LSAppLink *appLink = appLinkForURL(url);
         if (appLink) {
             NSString *title = WEB_UI_STRING("Open in Safari", "Title for Open in Safari Link action button");
@@ -320,7 +321,7 @@ static LSAppLink *appLinkForURL(NSURL *url)
 #endif
 }
 
-- (RetainPtr<NSArray>)defaultActionsForLinkSheet
+- (RetainPtr<NSArray>)defaultActionsForLinkSheet:(_WKActivatedElementInfo *)elementInfo
 {
     auto delegate = _delegate.get();
     if (!delegate)
@@ -333,7 +334,7 @@ static LSAppLink *appLinkForURL(NSURL *url)
         return nil;
 
     auto defaultActions = adoptNS([[NSMutableArray alloc] init]);
-    [self _appendOpenActionsForURL:targetURL actions:defaultActions.get()];
+    [self _appendOpenActionsForURL:targetURL actions:defaultActions.get() elementInfo:elementInfo];
 
 #if HAVE(SAFARI_SERVICES_FRAMEWORK)
     if ([getSSReadingListClass() supportsURL:targetURL])
@@ -345,7 +346,7 @@ static LSAppLink *appLinkForURL(NSURL *url)
     return defaultActions;
 }
 
-- (RetainPtr<NSArray>)defaultActionsForImageSheet
+- (RetainPtr<NSArray>)defaultActionsForImageSheet:(_WKActivatedElementInfo *)elementInfo
 {
     auto delegate = _delegate.get();
     if (!delegate)
@@ -356,7 +357,7 @@ static LSAppLink *appLinkForURL(NSURL *url)
 
     auto defaultActions = adoptNS([[NSMutableArray alloc] init]);
     if (!positionInformation.url.isEmpty())
-        [self _appendOpenActionsForURL:targetURL actions:defaultActions.get()];
+        [self _appendOpenActionsForURL:targetURL actions:defaultActions.get() elementInfo:elementInfo];
 
 #if HAVE(SAFARI_SERVICES_FRAMEWORK)
     if ([getSSReadingListClass() supportsURL:targetURL])
@@ -385,9 +386,8 @@ static LSAppLink *appLinkForURL(NSURL *url)
     if (!targetURL)
         return;
 
-    auto defaultActions = [self defaultActionsForLinkSheet];
-    RetainPtr<_WKActivatedElementInfo> elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeLink
-        URL:targetURL location:positionInformation.point title:positionInformation.title rect:positionInformation.bounds image:positionInformation.image.get()]);
+    auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeLink URL:targetURL location:positionInformation.point title:positionInformation.title rect:positionInformation.bounds image:positionInformation.image.get()]);
+    auto defaultActions = [self defaultActionsForLinkSheet:elementInfo.get()];
 
     RetainPtr<NSArray> actions = [delegate actionSheetAssistant:self decideActionsForElement:elementInfo.get() defaultActions:WTF::move(defaultActions)];
 
