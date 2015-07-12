@@ -53,7 +53,8 @@ PassRefPtr<VisitedLinkProvider> VisitedLinkProvider::create()
 
 VisitedLinkProvider::~VisitedLinkProvider()
 {
-    ASSERT(m_processes.isEmpty());
+    for (auto& processAndCount : m_processes)
+        processAndCount.key->removeMessageReceiver(Messages::VisitedLinkProvider::messageReceiverName(), m_identifier);
 }
 
 VisitedLinkProvider::VisitedLinkProvider()

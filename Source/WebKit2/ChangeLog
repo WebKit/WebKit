@@ -1,5 +1,20 @@
 2015-07-09  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r184991. rdar://problem/21716545
+
+    2015-05-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Clean up VisitedLinkProvider teardown
+        https://bugs.webkit.org/show_bug.cgi?id=145450
+        rdar://problem/20244726
+
+        Reviewed by Brady Eidson.
+
+        * UIProcess/VisitedLinkProvider.cpp:
+        (WebKit::VisitedLinkProvider::~VisitedLinkProvider):
+
+2015-07-09  David Kilzer  <ddkilzer@apple.com>
+
         <rdar://problem/21716549> Donner: Safari URL And Javascript Prompt Origin Spoof Vulnerability
 
         Merge r184151.
