@@ -1,3 +1,13 @@
+2015-07-12  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r186720.
+
+    2015-07-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Unreviewed build fix, restrict APP_LINKS to just iOS.
+
+            * wtf/Platform.h:
+
 2015-07-10  Matthew Hanson  <matthew_hanson@apple.com>
 
         Disable non-shipping features.
