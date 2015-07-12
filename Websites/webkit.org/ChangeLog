@@ -1,3 +1,11 @@
+2015-07-11  Timothy Hatcher  <timothy@apple.com>
+
+        Add some images for a blog post.
+
+        * blog-files/inspector-elements-network-tabs.png: Added.
+        * blog-files/inspector-tab-bar.png: Added.
+        * blog-files/inspector-tab-icons.svg: Added.
+
 2015-06-30  Jonathan Davis  <jond@apple.com>
 
         Added WebKit feature status page to navigation.
