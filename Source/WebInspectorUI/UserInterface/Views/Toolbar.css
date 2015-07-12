@@ -198,3 +198,9 @@ body.unknown-mac.window-inactive .toolbar .dashboard-container {
         box-shadow: inset 0 0 1px 0 hsla(0, 0%, 0%, 0.1);
     }
 }
+
+@media (max-width: 539px) {
+    .toolbar .item.download {
+        display: none;
+    }
+}

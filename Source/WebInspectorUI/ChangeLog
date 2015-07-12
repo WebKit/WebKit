@@ -1,3 +1,13 @@
+2015-07-11  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Inspector should be able to be docked to the bottom of a narrow window
+        https://bugs.webkit.org/show_bug.cgi?id=146871
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/Toolbar.css:
+        (@media (max-width: 539px)): Hide download button to fit search field into the screen.
+
 2015-07-11  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Improve runtime of pseudo-element sidebar style ordering

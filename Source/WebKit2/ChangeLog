@@ -1,3 +1,15 @@
+2015-07-11  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Inspector should be able to be docked to the bottom of a narrow window
+        https://bugs.webkit.org/show_bug.cgi?id=146871
+
+        Reviewed by Timothy Hatcher.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformCanAttach):
+        * WebProcess/WebPage/WebInspector.cpp:
+
 2015-07-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Allow clients to opt-out of default app link link actions

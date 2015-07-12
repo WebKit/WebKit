@@ -49,7 +49,7 @@ using namespace WebCore;
 
 static const float minimumAttachedHeight = 250;
 static const float maximumAttachedHeightRatio = 0.75;
-static const float minimumAttachedWidth = 750;
+static const float minimumAttachedWidth = 500;
 
 namespace WebKit {
 

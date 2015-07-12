@@ -59,7 +59,7 @@ SOFT_LINK_STAGED_FRAMEWORK(WebInspectorUI, PrivateFrameworks, A)
 
 using namespace WebCore;
 
-static const CGFloat minimumWindowWidth = 750;
+static const CGFloat minimumWindowWidth = 500;
 static const CGFloat minimumWindowHeight = 400;
 static const CGFloat initialWindowWidth = 1000;
 static const CGFloat initialWindowHeight = 650;

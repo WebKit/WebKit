@@ -63,7 +63,7 @@ static const char* inspectorAttachedHeightSetting = "inspectorAttachedHeight";
 static const unsigned defaultAttachedHeight = 300;
 static const float minimumAttachedHeight = 250.0f;
 static const float maximumAttachedHeightRatio = 0.75f;
-static const float minimumAttachedWidth = 750.0f;
+static const float minimumAttachedWidth = 500.0f;
 static const float minimumAttachedInspectedWidth = 320.0f;
 
 class InspectorBackendDispatchTask {
