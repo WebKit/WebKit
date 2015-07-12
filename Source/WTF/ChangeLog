@@ -1,3 +1,9 @@
+2015-07-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed build fix, restrict APP_LINKS to just iOS.
+
+        * wtf/Platform.h:
+
 2015-07-09  Tim Horton  <timothy_horton@apple.com>
 
         Use CoreAnimation fences instead of synchronous IPC to synchronize resize
