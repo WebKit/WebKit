@@ -211,12 +211,6 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 + (BOOL)_addCompletion:(void(^)(BOOL))completion;
 @end
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
-@interface UIWebFormAccessory (StagingToRemove)
-- (UITextInputAssistantItem *)inputAssistantItem;
-@end
-#endif
-
 @interface WKFormInputSession : NSObject <_WKFormInputSession>
 
 - (instancetype)initWithContentView:(WKContentView *)view userObject:(NSObject <NSSecureCoding> *)userObject;
@@ -1256,32 +1250,16 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (UIView *)inputAccessoryView
 {
-    if (![self requiresAccessoryView])
-        return nil;
-
     if (!_formAccessoryView) {
         _formAccessoryView = adoptNS([[UIWebFormAccessory alloc] init]);
         [_formAccessoryView setDelegate:self];
     }
+
+    if (![self requiresAccessoryView])
+        return nil;
     
     return _formAccessoryView.get();
 }
-
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
-- (UITextInputAssistantItem *)inputAssistantItem
-{
-    if (!_formAccessoryView) {
-        _formAccessoryView = adoptNS([[UIWebFormAccessory alloc] init]);
-        [_formAccessoryView setDelegate:self];
-    }
-    return ([_formAccessoryView respondsToSelector:@selector(inputAssistantItem)]) ? [_formAccessoryView inputAssistantItem] : nil;
-}
-
-- (UITextInputAssistantItem *)_inputAssistantItem
-{
-    return [self inputAssistantItem];
-}
-#endif
 
 - (NSArray *)supportedPasteboardTypesForCurrentSelection
 {

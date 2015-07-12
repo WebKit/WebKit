@@ -1,3 +1,24 @@
+2015-07-12  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r186713.
+
+    2015-07-10  Enrica Casucci  <enrica@apple.com>
+
+            Remove incorrect overriding of inputAssistantItem in WKContentView.
+            https://bugs.webkit.org/show_bug.cgi?id=146863
+            rdar://problem/21507154
+
+            Reviewed by Dan Bernstein.
+
+            Removing implementation of inputAssistantItem and moving initialization
+            of formAccessoryView to inputAccessoryView to avoid interfering with
+            the keyboard handling of the assistant bar.
+
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView inputAccessoryView]):
+            (-[WKContentView inputAssistantItem]): Deleted.
+            (-[WKContentView _inputAssistantItem]): Deleted.
+
 2015-07-10  Matthew Hanson  <matthew_hanson@apple.com>
 
         Disable non-shipping features.
