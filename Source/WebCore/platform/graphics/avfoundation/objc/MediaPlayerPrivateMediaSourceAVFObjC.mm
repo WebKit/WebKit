@@ -269,10 +269,12 @@ void MediaPlayerPrivateMediaSourceAVFObjC::load(const String& url, MediaSourcePr
     m_mediaSourcePrivate = MediaSourcePrivateAVFObjC::create(this, client);
 }
 
+#if ENABLE(MEDIA_STREAM)
 void MediaPlayerPrivateMediaSourceAVFObjC::load(MediaStreamPrivate*)
 {
     setNetworkState(MediaPlayer::FormatError);
 }
+#endif
 
 void MediaPlayerPrivateMediaSourceAVFObjC::cancelLoad()
 {
