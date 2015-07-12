@@ -119,6 +119,19 @@ static inline void startReadableStreamAsync(ReadableStream& stream)
     });
 }
 
+JSC::JSValue ReadableEnqueuingStream<ReadableJSStreamValue>::read()
+{
+    ReadableJSStreamValue chunk = m_queue.takeFirst();
+    m_totalQueueSize -= chunk.size;
+    return chunk.value.get();
+}
+
+void ReadableEnqueuingStream<ReadableJSStreamValue>::enqueueChunk(ReadableJSStreamValue&& chunk)
+{
+    m_totalQueueSize += chunk.size;
+    m_queue.append(WTF::move(chunk));
+}
+
 void ReadableJSStream::doStart(ExecState& exec)
 {
     JSLockHolder lock(&exec);
@@ -136,9 +149,9 @@ void ReadableJSStream::doStart(ExecState& exec)
     thenPromise(exec, promise, createStartResultFulfilledFunction(exec, *this), m_errorFunction.get());
 }
 
-static inline JSFunction* createPullResultFulfilledFunction(ExecState& exec, ReadableJSStream& stream)
+static inline JSFunction* createPullResultFulfilledFunction(ExecState& exec, ReadableStream& stream)
 {
-    RefPtr<ReadableJSStream> protectedStream = &stream;
+    RefPtr<ReadableStream> protectedStream = &stream;
     return JSFunction::create(exec.vm(), exec.callee()->globalObject(), 0, String(), [protectedStream](ExecState*) {
         protectedStream->finishPulling();
         return JSValue::encode(jsUndefined());
@@ -164,9 +177,9 @@ bool ReadableJSStream::doPull()
     return !promise;
 }
 
-static JSFunction* createCancelResultFulfilledFunction(ExecState& exec, ReadableJSStream& stream)
+static JSFunction* createCancelResultFulfilledFunction(ExecState& exec, ReadableStream& stream)
 {
-    RefPtr<ReadableJSStream> protectedStream = &stream;
+    RefPtr<ReadableStream> protectedStream = &stream;
     return JSFunction::create(exec.vm(), exec.callee()->globalObject(), 1, String(), [protectedStream](ExecState*) {
         protectedStream->notifyCancelSucceeded();
         return JSValue::encode(jsUndefined());
@@ -247,8 +260,7 @@ RefPtr<ReadableJSStream> ReadableJSStream::create(JSC::ExecState& state, JSC::JS
 }
 
 ReadableJSStream::ReadableJSStream(ExecState& state, JSObject* source, double highWaterMark, JSFunction* sizeFunction)
-    : ReadableStream(*scriptExecutionContextFromExecState(&state))
-    , m_highWaterMark(highWaterMark)
+    : ReadableEnqueuingStream<ReadableJSStreamValue>(*scriptExecutionContextFromExecState(&state), highWaterMark)
 {
     m_source.set(state.vm(), source);
     // We do not take a Ref to the stream as this would cause a Ref cycle.
@@ -302,21 +314,6 @@ void ReadableJSStream::storeError(JSC::ExecState& exec, JSValue error)
     changeStateToErrored();
 }
 
-bool ReadableJSStream::hasValue() const
-{
-    return m_chunkQueue.size();
-}
-
-JSValue ReadableJSStream::read()
-{
-    ASSERT(hasValue());
-
-    Chunk chunk = m_chunkQueue.takeFirst();
-    m_totalQueueSize -= chunk.size;
-
-    return chunk.value.get();
-}
-
 void ReadableJSStream::enqueue(JSC::ExecState& state, JSC::JSValue chunk)
 {
     if (isErrored()) {
@@ -339,8 +336,7 @@ void ReadableJSStream::enqueue(JSC::ExecState& state, JSC::JSValue chunk)
     if (state.hadException())
         return;
 
-    m_chunkQueue.append({ JSC::Strong<JSC::Unknown>(state.vm(), chunk), size });
-    m_totalQueueSize += size;
+    enqueueChunk({ JSC::Strong<JSC::Unknown>(state.vm(), chunk), size });
 
     pull();
 }

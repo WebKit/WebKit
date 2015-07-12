@@ -105,6 +105,8 @@ void ReadableStream::changeStateToErrored()
 {
     if (m_state != State::Readable)
         return;
+
+    clearValues();
     m_state = State::Errored;
 
     JSC::JSValue error = this->error();
@@ -196,6 +198,8 @@ void ReadableStream::cancelNoCheck(JSC::JSValue reason, CancelPromise&& promise)
         return;
     }
     ASSERT(m_state == State::Readable);
+
+    clearValues();
 
     m_cancelPromise = WTF::move(promise);
 

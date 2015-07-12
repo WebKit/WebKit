@@ -33,7 +33,9 @@
 #if ENABLE(STREAMS_API)
 
 #include "ActiveDOMObject.h"
+#include "DOMRequestState.h"
 #include "JSDOMPromise.h"
+#include "ScriptState.h"
 #include "ScriptWrappable.h"
 #include <functional>
 #include <wtf/Deque.h>
@@ -113,6 +115,7 @@ private:
     void clearCallbacks();
     void close();
 
+    virtual void clearValues() = 0;
     virtual bool hasEnoughValues() const = 0;
     virtual bool hasValue() const = 0;
     virtual JSC::JSValue read() = 0;
@@ -133,6 +136,31 @@ private:
     bool m_closeRequested { false };
     State m_state { State::Readable };
 };
+
+// This class manages the queue and knows whether there is sufficient data in it.
+//   Subclasses should implement error storage, pulling and cancelling.
+template<typename ChunkType>
+class ReadableEnqueuingStream final : public ReadableStream {
+protected:
+    explicit ReadableEnqueuingStream(ScriptExecutionContext& context) : ReadableStream(context) { }
+
+    void enqueueChunk(ChunkType&& chunk) { m_queue.append(std::forward(chunk)); }
+
+private:
+    virtual void clearValues() override { m_queue.clear(); }
+    virtual bool hasEnoughValues() const override { return m_queue.size(); }
+    virtual bool hasValue() const override { return m_queue.size(); }
+    virtual JSC::JSValue read() override;
+
+    Deque<ChunkType> m_queue;
+};
+
+template<typename ChunkType>
+inline JSC::JSValue ReadableEnqueuingStream<ChunkType>::read()
+{
+    DOMRequestState state(scriptExecutionContext());
+    return toJS(state.exec(), toJSDOMGlobalObject(scriptExecutionContext(), state.exec()), m_queue.read());
+}
 
 }
 

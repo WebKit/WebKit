@@ -52,7 +52,34 @@ class ReadableStreamController;
 
 typedef int ExceptionCode;
 
-class ReadableJSStream: public ReadableStream {
+struct ReadableJSStreamValue {
+    JSC::Strong<JSC::Unknown> value;
+    double size;
+};
+
+template<> class ReadableEnqueuingStream<ReadableJSStreamValue> : public ReadableStream {
+public:
+    double desiredSize() const { return m_highWaterMark - m_totalQueueSize; }
+
+protected:
+    ReadableEnqueuingStream(ScriptExecutionContext& context, double highWaterMark)
+        : ReadableStream(context)
+        , m_highWaterMark(highWaterMark) { }
+
+    void enqueueChunk(ReadableJSStreamValue&&);
+
+private:
+    virtual void clearValues() override { m_queue.clear(); }
+    virtual bool hasEnoughValues() const override { return desiredSize() <= 0; }
+    virtual bool hasValue() const override { return m_queue.size(); }
+    virtual JSC::JSValue read() override;
+
+    Deque<ReadableJSStreamValue> m_queue;
+    double m_totalQueueSize { 0 };
+    double m_highWaterMark;
+};
+
+class ReadableJSStream final : public ReadableEnqueuingStream<ReadableJSStreamValue> {
 public:
     static RefPtr<ReadableJSStream> create(JSC::ExecState&, JSC::JSValue, const Dictionary&);
 
@@ -65,8 +92,6 @@ public:
     void enqueue(JSC::ExecState&, JSC::JSValue);
     void error(JSC::ExecState&, JSC::JSValue, ExceptionCode&);
 
-    double desiredSize() const { return m_highWaterMark - m_totalQueueSize; }
-
 private:
     ReadableJSStream(JSC::ExecState&, JSC::JSObject*, double, JSC::JSFunction*);
 
@@ -75,9 +100,6 @@ private:
     JSC::JSPromise* invoke(JSC::ExecState&, const char*, JSC::JSValue parameter);
     void storeException(JSC::ExecState&);
 
-    virtual bool hasEnoughValues() const override { return desiredSize() <= 0; }
-    virtual bool hasValue() const override;
-    virtual JSC::JSValue read() override;
     virtual bool doPull() override;
     virtual bool doCancel(JSC::JSValue) override;
 
@@ -89,16 +111,8 @@ private:
     // FIXME: we should consider not using JSC::Strong, see https://bugs.webkit.org/show_bug.cgi?id=146278
     JSC::Strong<JSC::Unknown> m_error;
     JSC::Strong<JSC::JSFunction> m_errorFunction;
+
     JSC::Strong<JSC::JSObject> m_source;
-
-    struct Chunk {
-        JSC::Strong<JSC::Unknown> value;
-        double size;
-    };
-    Deque<Chunk> m_chunkQueue;
-
-    double m_totalQueueSize { 0 };
-    double m_highWaterMark;
     JSC::Strong<JSC::JSFunction> m_sizeFunction;
 };
 
