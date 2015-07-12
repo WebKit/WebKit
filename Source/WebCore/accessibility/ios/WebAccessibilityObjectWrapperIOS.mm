@@ -362,8 +362,10 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     if (![self _prepareAccessibilityCall])
         return 0;
 
-    if ([self isAttachment] && [self attachmentView])
-        return [[self attachmentView] accessibilityElementCount];
+    if ([self isAttachment]) {
+        if (id attachmentView = [self attachmentView])
+            return [attachmentView accessibilityElementCount];
+    }
     
     return m_object->children().size();
 }
@@ -373,8 +375,10 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    if ([self isAttachment] && [self attachmentView])
-        return [[self attachmentView] accessibilityElementAtIndex:index];
+    if ([self isAttachment]) {
+        if (id attachmentView = [self attachmentView])
+            return [attachmentView accessibilityElementAtIndex:index];
+    }
     
     const auto& children = m_object->children();
     size_t elementIndex = static_cast<size_t>(index);
@@ -382,8 +386,10 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         return nil;
     
     AccessibilityObjectWrapper* wrapper = children[elementIndex]->wrapper();
-    if (children[elementIndex]->isAttachment())
-        return [wrapper attachmentView];
+    if (children[elementIndex]->isAttachment()) {
+        if (id attachmentView = [wrapper attachmentView])
+            return attachmentView;
+    }
 
     return wrapper;
 }
@@ -393,8 +399,10 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     if (![self _prepareAccessibilityCall])
         return NSNotFound;
     
-    if ([self isAttachment] && [self attachmentView])
-        return [[self attachmentView] indexOfAccessibilityElement:element];
+    if ([self isAttachment]) {
+        if (id attachmentView = [self attachmentView])
+            return [attachmentView indexOfAccessibilityElement:element];
+    }
     
     const auto& children = m_object->children();
     unsigned count = children.size();

@@ -1,3 +1,13 @@
+2015-07-12  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WEB: VoiceOver for iOS does not read <iframe> elements during linear (swipe) navigation.
+        https://bugs.webkit.org/show_bug.cgi?id=146861
+
+        Reviewed by Darin Adler.
+
+        * platform/ios-simulator/accessibility/iframe-access-expected.txt: Added.
+        * platform/ios-simulator/accessibility/iframe-access.html: Added.
+
 2015-07-11  Gyuyoung Kim  <gyuyoung.kim@chromium.org>
 
         [EFL] Unreviewed, EFL gardening on 12th Jul.
