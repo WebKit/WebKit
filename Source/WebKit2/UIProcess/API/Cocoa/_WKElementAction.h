@@ -41,6 +41,8 @@ typedef NS_ENUM(NSInteger, _WKElementActionType) {
     _WKElementActionTypeSaveImage,
 #if !defined(TARGET_OS_IOS) || TARGET_OS_IOS
     _WKElementActionTypeAddToReadingList,
+    _WKElementActionTypeOpenInDefaultBrowser WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA),
+    _WKElementActionTypeOpenInExternalApplication WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA),
 #endif
 } WK_ENUM_AVAILABLE(10_10, 8_0);
 

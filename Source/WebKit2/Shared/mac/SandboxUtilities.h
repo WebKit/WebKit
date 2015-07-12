@@ -26,8 +26,8 @@
 #ifndef SandboxUtilities_h
 #define SandboxUtilities_h
 
-#include <sys/types.h>
-#include <wtf/Forward.h>
+#import <sys/types.h>
+#import <wtf/Forward.h>
 
 namespace WebKit {
 
@@ -36,6 +36,8 @@ bool processHasContainer();
 
 // Returns an empty string if the process is not in a container.
 String pathForProcessContainer();
+
+bool processHasEntitlement(NSString *entitlement);
 
 }
 

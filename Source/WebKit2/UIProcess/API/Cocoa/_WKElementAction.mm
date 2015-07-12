@@ -90,25 +90,31 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
 }
 #endif
 
++ (instancetype)_elementActionWithType:(_WKElementActionType)type title:(NSString *)title actionHandler:(WKElementActionHandler)actionHandler
+{
+    WKElementActionHandlerInternal handler = ^(WKActionSheetAssistant *, _WKActivatedElementInfo *actionInfo) { actionHandler(actionInfo); };
+    return [[[self alloc] _initWithTitle:title actionHandler:handler type:type assistant:nil] autorelease];
+}
+
 + (instancetype)_elementActionWithType:(_WKElementActionType)type customTitle:(NSString *)customTitle assistant:(WKActionSheetAssistant *)assistant
 {
     NSString *title;
     WKElementActionHandlerInternal handler;
     switch (type) {
     case _WKElementActionTypeCopy:
-        title = WEB_UI_STRING_KEY("Copy", "Copy ActionSheet Link", "Title for Copy Link or Image action button");
+        title = WEB_UI_STRING_KEY("Copy", "Copy (ActionSheet)", "Title for Copy Link or Image action button");
         handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
             [assistant.delegate actionSheetAssistant:assistant performAction:WebKit::SheetAction::Copy];
         };
         break;
     case _WKElementActionTypeOpen:
-        title = WEB_UI_STRING_KEY("Open", "Open ActionSheet Link", "Title for Open Link action button");
+        title = WEB_UI_STRING("Open", "Title for Open Link action button");
         handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
             [assistant.delegate actionSheetAssistant:assistant openElementAtLocation:actionInfo._interactionLocation];
         };
         break;
     case _WKElementActionTypeSaveImage:
-        title = WEB_UI_STRING_KEY("Save Image", "Save Image", "Title for Save Image action button");
+        title = WEB_UI_STRING("Save Image", "Title for Save Image action button");
         handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
             [assistant.delegate actionSheetAssistant:assistant performAction:WebKit::SheetAction::SaveImage];
         };

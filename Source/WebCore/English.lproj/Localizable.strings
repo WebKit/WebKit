@@ -182,7 +182,7 @@
 "Copy" = "Copy";
 
 /* Title for Copy Link or Image action button */
-"Copy ActionSheet Link" = "Copy";
+"Copy (ActionSheet)" = "Copy";
 
 /* Copy Audio Address Location context menu item */
 "Copy Audio Address" = "Copy Audio Address";
@@ -371,7 +371,7 @@
 "Off" = "Off";
 
 /* Title for Open Link action button */
-"Open ActionSheet Link" = "Open";
+"Open" = "Open";
 
 /* Open Audio in New Window context menu item */
 "Open Audio in New Window" = "Open Audio in New Window";
@@ -390,6 +390,12 @@
 
 /* Open Video in New Window context menu item */
 "Open Video in New Window" = "Open Video in New Window";
+
+/* Title for Open in Safari Link action button */
+"Open in Safari" = "Open in Safari";
+
+/* Title for Open in External Application Link action button */
+"Open in “%@”" = "Open in “%@”";
 
 /* context menu item for PDF */
 "Open with %@" = "Open with %@";
