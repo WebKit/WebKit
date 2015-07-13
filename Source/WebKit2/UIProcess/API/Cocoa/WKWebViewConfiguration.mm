@@ -107,7 +107,7 @@ private:
     _allowsPictureInPictureMediaPlayback = YES;
 #endif
 
-#if ENABLE(WIRELESS_TARGET_PLAYBACK)
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
     _allowsAirPlayForMediaPlayback = YES;
 #endif
 
