@@ -109,9 +109,9 @@ private:
     void didFetchWebsiteData(uint64_t callbackID, const WebsiteData&);
     void didDeleteWebsiteData(uint64_t callbackID);
     void didDeleteWebsiteDataForOrigins(uint64_t callbackID);
-    void logDiagnosticMessage(uint64_t pageID, const String& message, const String& description, bool shouldSample);
-    void logDiagnosticMessageWithResult(uint64_t pageID, const String& message, const String& description, uint32_t result, bool shouldSample);
-    void logDiagnosticMessageWithValue(uint64_t pageID, const String& message, const String& description, const String& value, bool shouldSample);
+    void logSampledDiagnosticMessage(uint64_t pageID, const String& message, const String& description);
+    void logSampledDiagnosticMessageWithResult(uint64_t pageID, const String& message, const String& description, uint32_t result);
+    void logSampledDiagnosticMessageWithValue(uint64_t pageID, const String& message, const String& description, const String& value);
 
     // ProcessLauncher::Client
     virtual void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;

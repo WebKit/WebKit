@@ -28,6 +28,7 @@
 
 #include "DiagnosticLoggingResultType.h"
 #include <wtf/Forward.h>
+#include <wtf/RandomNumber.h>
 
 namespace WebCore {
 
@@ -41,9 +42,20 @@ public:
 
     virtual void mainFrameDestroyed() = 0;
 
+    static bool shouldLogAfterSampling(ShouldSample);
+
 protected:
     virtual ~DiagnosticLoggingClient() { }
 };
+
+inline bool DiagnosticLoggingClient::shouldLogAfterSampling(ShouldSample shouldSample)
+{
+    if (shouldSample == ShouldSample::No)
+        return true;
+
+    static const double selectionProbability = 0.05;
+    return randomNumber() <= selectionProbability;
+}
 
 }
 

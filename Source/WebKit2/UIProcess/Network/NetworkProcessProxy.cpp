@@ -285,7 +285,7 @@ void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Con
 #endif
 }
 
-void NetworkProcessProxy::logDiagnosticMessage(uint64_t pageID, const String& message, const String& description, bool shouldSample)
+void NetworkProcessProxy::logSampledDiagnosticMessage(uint64_t pageID, const String& message, const String& description)
 {
     WebPageProxy* page = WebProcessProxy::webPage(pageID);
     // FIXME: We do this null-check because by the time the decision to log is made, the page may be gone. We should refactor to avoid this,
@@ -293,10 +293,10 @@ void NetworkProcessProxy::logDiagnosticMessage(uint64_t pageID, const String& me
     if (!page)
         return;
 
-    page->logDiagnosticMessage(message, description, shouldSample);
+    page->logSampledDiagnosticMessage(message, description);
 }
 
-void NetworkProcessProxy::logDiagnosticMessageWithResult(uint64_t pageID, const String& message, const String& description, uint32_t result, bool shouldSample)
+void NetworkProcessProxy::logSampledDiagnosticMessageWithResult(uint64_t pageID, const String& message, const String& description, uint32_t result)
 {
     WebPageProxy* page = WebProcessProxy::webPage(pageID);
     // FIXME: We do this null-check because by the time the decision to log is made, the page may be gone. We should refactor to avoid this,
@@ -304,10 +304,10 @@ void NetworkProcessProxy::logDiagnosticMessageWithResult(uint64_t pageID, const 
     if (!page)
         return;
 
-    page->logDiagnosticMessageWithResult(message, description, result, shouldSample);
+    page->logSampledDiagnosticMessageWithResult(message, description, result);
 }
 
-void NetworkProcessProxy::logDiagnosticMessageWithValue(uint64_t pageID, const String& message, const String& description, const String& value, bool shouldSample)
+void NetworkProcessProxy::logSampledDiagnosticMessageWithValue(uint64_t pageID, const String& message, const String& description, const String& value)
 {
     WebPageProxy* page = WebProcessProxy::webPage(pageID);
     // FIXME: We do this null-check because by the time the decision to log is made, the page may be gone. We should refactor to avoid this,
@@ -315,7 +315,7 @@ void NetworkProcessProxy::logDiagnosticMessageWithValue(uint64_t pageID, const S
     if (!page)
         return;
 
-    page->logDiagnosticMessageWithValue(message, description, value, shouldSample);
+    page->logSampledDiagnosticMessageWithValue(message, description, value);
 }
 
 void NetworkProcessProxy::sendProcessWillSuspendImminently()
