@@ -69,7 +69,8 @@ protected:
     bool forceAsync() const { return m_forceAsync; }
 
     // Helper functions used by our parent classes.
-    void insertedInto(ContainerNode&);
+    bool shouldNotifySubtreeInsertions(ContainerNode&);
+    void didNotifySubtreeInsertions(ContainerNode*);
     void childrenChanged();
     void handleSourceAttribute(const String& sourceUrl);
     void handleAsyncAttribute();
