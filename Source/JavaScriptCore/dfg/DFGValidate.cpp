@@ -528,10 +528,40 @@ private:
                 case Phantom:
                     VALIDATE((node), !"bad node type for SSA");
                     break;
-                    
+
                 default:
                     // FIXME: Add more things here.
                     // https://bugs.webkit.org/show_bug.cgi?id=123471
+                    break;
+                }
+                switch (node->op()) {
+                case PhantomNewObject:
+                case PhantomNewFunction:
+                case PhantomCreateActivation:
+                case PhantomDirectArguments:
+                case PhantomClonedArguments:
+                case MovHint:
+                case Upsilon:
+                case ForwardVarargs:
+                case CallForwardVarargs:
+                case ConstructForwardVarargs:
+                case GetMyArgumentByVal:
+                    break;
+
+                case Check:
+                    // FIXME: This is probably not correct.
+                    break;
+
+                case PutHint:
+                    VALIDATE((node), node->child1()->isPhantomAllocation());
+                    break;
+
+                default:
+                    m_graph.doToChildren(
+                        node,
+                        [&] (const Edge& edge) {
+                            VALIDATE((node), !edge->isPhantomAllocation());
+                        });
                     break;
                 }
             }

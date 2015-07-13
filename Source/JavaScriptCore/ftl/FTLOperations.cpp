@@ -48,37 +48,30 @@ extern "C" JSCell* JIT_OPERATION operationNewObjectWithButterfly(ExecState* exec
     return JSFinalObject::create(exec, structure, butterfly);
 }
 
-extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
-    ExecState* exec, ExitTimeObjectMaterialization* materialization, EncodedJSValue* values)
+extern "C" void JIT_OPERATION operationPopulateObjectInOSR(
+    ExecState* exec, ExitTimeObjectMaterialization* materialization,
+    EncodedJSValue* encodedValue, EncodedJSValue* values)
 {
     VM& vm = exec->vm();
     CodeBlock* codeBlock = exec->codeBlock();
 
     // We cannot GC. We've got pointers in evil places.
+    // FIXME: We are not doing anything that can GC here, and this is
+    // probably unnecessary.
     DeferGCForAWhile deferGC(vm.heap);
-    
+
     switch (materialization->type()) {
     case PhantomNewObject: {
-        // First figure out what the structure is.
-        Structure* structure = nullptr;
-        for (unsigned i = materialization->properties().size(); i--;) {
-            const ExitPropertyValue& property = materialization->properties()[i];
-            if (property.location() != PromotedLocationDescriptor(StructurePLoc))
-                continue;
-        
-            structure = jsCast<Structure*>(JSValue::decode(values[i]));
-            break;
-        }
-        RELEASE_ASSERT(structure);
-    
-        // Let's create that object!
-        JSFinalObject* result = JSFinalObject::create(vm, structure);
-    
-        // Now figure out what the heck to populate the object with. Use getPropertiesConcurrently()
-        // because that happens to be lower-level and more convenient. It doesn't change the
-        // materialization of the property table. We want to have minimal visible effects on the
-        // system. Also, don't mind that this is O(n^2). It doesn't matter. We only get here from OSR
-        // exit.
+        JSFinalObject* object = jsCast<JSFinalObject*>(JSValue::decode(*encodedValue));
+        Structure* structure = object->structure();
+
+        // Figure out what the heck to populate the object with. Use
+        // getPropertiesConcurrently() because that happens to be
+        // lower-level and more convenient. It doesn't change the
+        // materialization of the property table. We want to have
+        // minimal visible effects on the system. Also, don't mind
+        // that this is O(n^2). It doesn't matter. We only get here
+        // from OSR exit.
         for (PropertyMapEntry entry : structure->getPropertiesConcurrently()) {
             for (unsigned i = materialization->properties().size(); i--;) {
                 const ExitPropertyValue& property = materialization->properties()[i];
@@ -86,11 +79,79 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
                     continue;
                 if (codeBlock->identifier(property.location().info()).impl() != entry.key)
                     continue;
-            
-                result->putDirect(vm, entry.offset, JSValue::decode(values[i]));
+
+                object->putDirect(vm, entry.offset, JSValue::decode(values[i]));
             }
         }
+        break;
+    }
+
+    case PhantomNewFunction:
+    case PhantomDirectArguments:
+    case PhantomClonedArguments:
+        // Those are completely handled by operationMaterializeObjectInOSR
+        break;
+
+    case PhantomCreateActivation: {
+        JSLexicalEnvironment* activation = jsCast<JSLexicalEnvironment*>(JSValue::decode(*encodedValue));
+
+        // Figure out what to populate the activation with
+        for (unsigned i = materialization->properties().size(); i--;) {
+            const ExitPropertyValue& property = materialization->properties()[i];
+            if (property.location().kind() != ClosureVarPLoc)
+                continue;
+
+            activation->variableAt(ScopeOffset(property.location().info())).set(exec->vm(), activation, JSValue::decode(values[i]));
+        }
+
+        break;
+    }
+
+
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+
+    }
+}
+
+extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
+    ExecState* exec, ExitTimeObjectMaterialization* materialization, EncodedJSValue* values)
+{
+    VM& vm = exec->vm();
+
+    // We cannot GC. We've got pointers in evil places.
+    DeferGCForAWhile deferGC(vm.heap);
     
+    switch (materialization->type()) {
+    case PhantomNewObject: {
+        // Figure out what the structure is
+        Structure* structure = nullptr;
+        for (unsigned i = materialization->properties().size(); i--;) {
+            const ExitPropertyValue& property = materialization->properties()[i];
+            if (property.location() != PromotedLocationDescriptor(StructurePLoc))
+                continue;
+
+            structure = jsCast<Structure*>(JSValue::decode(values[i]));
+            break;
+        }
+        RELEASE_ASSERT(structure);
+
+        JSFinalObject* result = JSFinalObject::create(vm, structure);
+
+        // The real values will be put subsequently by
+        // operationPopulateNewObjectInOSR. We can't fill them in
+        // now, because they may not be available yet (typically
+        // because we have a cyclic dependency graph).
+
+        // We put a dummy value here in order to avoid super-subtle
+        // GC-and-OSR-exit crashes in case we have a bug and some
+        // field is, for any reason, not filled later.
+        // We use a random-ish number instead of a sensible value like
+        // undefined to make possible bugs easier to track.
+        for (PropertyMapEntry entry : structure->getPropertiesConcurrently())
+            result->putDirect(vm, entry.offset, jsNumber(19723));
+
         return result;
     }
 
@@ -113,7 +174,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
     }
 
     case PhantomCreateActivation: {
-        // Figure out where the scope is
+        // Figure out what the scope and symbol table are
         JSScope* scope = nullptr;
         SymbolTable* table = nullptr;
         for (unsigned i = materialization->properties().size(); i--;) {
@@ -133,13 +194,17 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
         JSLexicalEnvironment* result = JSLexicalEnvironment::create(vm, structure, scope, table);
 
         RELEASE_ASSERT(materialization->properties().size() - 2 == table->scopeSize());
-        // Figure out what to populate the activation with
+
+        // The real values will be put subsequently by
+        // operationPopulateNewObjectInOSR. See the PhantomNewObject
+        // case for details.
         for (unsigned i = materialization->properties().size(); i--;) {
             const ExitPropertyValue& property = materialization->properties()[i];
             if (property.location().kind() != ClosureVarPLoc)
                 continue;
 
-            result->variableAt(ScopeOffset(property.location().info())).set(exec->vm(), result, JSValue::decode(values[i]));
+            result->variableAt(ScopeOffset(property.location().info())).set(
+                exec->vm(), result, jsNumber(29834));
         }
 
         if (validationEnabled()) {

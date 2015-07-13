@@ -38,8 +38,7 @@ void LazyNode::dump(PrintStream& out) const
         if (isNode())
             out.print("LazyNode:@", asNode()->index());
         else
-            out.print("LazyNode:FrozenValue:", Graph::opName(op()), ", ", pointerDump(asValue()));
-        out.print(")");
+            out.print("LazyNode:FrozenValue(", Graph::opName(op()), ", ", pointerDump(asValue()), ")");
     }
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,10 +32,10 @@ namespace JSC { namespace DFG {
 
 class Graph;
 
-// Sinks object allocations down to their uses. This will sink the allocations over OSR exits, by
-// replacing all stores to those objects with store hints so that OSR exit can materialize the
-// object. This may sink allocations past returns, creating control flow paths along which the
-// objects are not allocated at all. Replaces all uses of the objects' fields with SSA data flow.
+// Eliminates allocations allocations that are never used except
+// locally. This will insert phantom allocations and store hints so
+// that OSR exit can materialize the objects. Replaces all uses of the
+// objects' fields with SSA data flow. This phase is able to handle cyclic allocation graphs.
 
 bool performObjectAllocationSinking(Graph&);
 
@@ -44,4 +44,3 @@ bool performObjectAllocationSinking(Graph&);
 #endif // ENABLE(DFG_JIT)
 
 #endif // DFGObjectAllocationSinkingPhase_h
-

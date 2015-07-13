@@ -1,3 +1,82 @@
+2015-07-13  Basile Clement  <basile_clement@apple.com>
+
+        Object cycles should not prevent allocation elimination/sinking
+        https://bugs.webkit.org/show_bug.cgi?id=143073
+
+        Reviewed by Filip Pizlo.
+
+        This patch introduces a new allocation sinking phase that is able to
+        sink cycles, in DFGAllocationCycleSinkingPhase.cpp. This phase
+        supersedes the old allocation sinking phase in
+        DFGObjectAllocationSinkingPhase.cpp, as that previous phase was never
+        able to sink allocation cycles while the new phase sometimes can; see
+        DFGAllocationCycleSinkingPhase.cpp for details.
+
+        For now, the new sinking phase is kept behind a
+        JSC_enableAllocationCycleSinking flag that reverts to the old sinking
+        phase when false (i.e., by default). This also removes the old
+        JSC_enableObjectAllocationSinking flag. run-javascriptcore-tests
+        defaults to using the new sinking phase.
+
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::addStructureSet): Allow empty structure sets
+        * dfg/DFGLazyNode.cpp:
+        (JSC::DFG::LazyNode::dump): Prettier dump
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::cellOperand): Move to opInfo for MaterializeCreateActivation
+        (JSC::DFG::Node::hasStructureSet): Add MaterializeNewObject
+        (JSC::DFG::Node::objectMaterializationData): Move to opInfo2
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp: Remove unused header
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        (JSC::DFG::ObjectAllocationSinkingPhase::ObjectAllocationSinkingPhase): Deleted.
+        (JSC::DFG::ObjectAllocationSinkingPhase::run): Deleted.
+        (JSC::DFG::ObjectAllocationSinkingPhase::performSinking): Deleted.
+        (JSC::DFG::ObjectAllocationSinkingPhase::determineMaterializationPoints): Deleted.
+        (JSC::DFG::ObjectAllocationSinkingPhase::placeMaterializationPoints): Deleted.
+        (JSC::DFG::ObjectAllocationSinkingPhase::lowerNonReadingOperationsOnPhantomAllocations): Deleted.
+        (JSC::DFG::ObjectAllocationSinkingPhase::promoteSunkenFields): Deleted.
+        (JSC::DFG::ObjectAllocationSinkingPhase::resolve): Deleted.
+        (JSC::DFG::ObjectAllocationSinkingPhase::handleNode): Deleted.
+        (JSC::DFG::ObjectAllocationSinkingPhase::createMaterialize): Deleted.
+        (JSC::DFG::ObjectAllocationSinkingPhase::populateMaterialize): Deleted.
+        * dfg/DFGObjectAllocationSinkingPhase.h:
+        * dfg/DFGPromotedHeapLocation.h: Add a hash and a helper function to PromotedLocationDescriptor
+        (JSC::DFG::PromotedLocationDescriptor::PromotedLocationDescriptor):
+        (JSC::DFG::PromotedLocationDescriptor::operator bool):
+        (JSC::DFG::PromotedLocationDescriptor::neededForMaterialization):
+        (JSC::DFG::PromotedLocationDescriptorHash::hash):
+        (JSC::DFG::PromotedLocationDescriptorHash::equal):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validateSSA): Assert that most nodes never see a phantom allocation
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileMaterializeNewObject): Use the new structureSet() operand
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileMaterializeCreateActivation): Node has a new child
+        * ftl/FTLOSRExitCompiler.cpp: Handle materialization cycles
+        (JSC::FTL::compileStub):
+        * ftl/FTLOperations.cpp: Handle materialization cycles
+        (JSC::FTL::operationPopulateObjectInOSR):
+        (JSC::FTL::operationMaterializeObjectInOSR):
+        * ftl/FTLOperations.h: Handle materialization cycles
+        * tests/stress/correctly-sink-object-even-though-it-dies.js: Added.
+        (clobber):
+        (foo):
+        * tests/stress/eliminate-object-read-over-call.js: Added.
+        (clobber):
+        (foo):
+        * tests/stress/materialize-object-on-edge.js: Added.
+        (call):
+        (foo):
+        * tests/stress/object-sinking-stress.js: Added.
+        (foo):
+        * tests/stress/sink-object-cycle.js: Added.
+        (clobber):
+        (foo):
+        * tests/stress/sink-object-past-put.js: Added.
+        (clobber):
+        (foo):
+        * tests/stress/sinkable-new-object-in-loop.js: Added.
+        (foo):
+
 2015-07-13  Daniel Bates  <dabates@apple.com>
 
         Cleanup: Avoid extraneous increment and decrement of reference count of ScriptArguments in ConsoleClient

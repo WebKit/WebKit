@@ -1,3 +1,30 @@
+2015-07-13  Basile Clement  <basile_clement@apple.com>
+
+        Object cycles should not prevent allocation elimination/sinking
+        https://bugs.webkit.org/show_bug.cgi?id=143073
+
+        Reviewed by Filip Pizlo.
+
+        Add a few microbenchmarks that show performance improvement when
+        sinking or elimininating object cycles.
+
+        * js/regress/elidable-new-object-cycle-expected.txt: Added.
+        * js/regress/elidable-new-object-cycle.html: Added.
+        * js/regress/script-tests/elidable-new-object-cycle.js: Added.
+        (sumOfArithSeries):
+        (foo):
+        * js/regress/script-tests/sinkable-closure-cycle.js: Added.
+        (factorial.f):
+        (factorial):
+        * js/regress/script-tests/sinkable-new-object-cycle.js: Added.
+        (sumOfArithSeries):
+        (verify):
+        (foo):
+        * js/regress/sinkable-closure-cycle-expected.txt: Added.
+        * js/regress/sinkable-closure-cycle.html: Added.
+        * js/regress/sinkable-new-object-cycle-expected.txt: Added.
+        * js/regress/sinkable-new-object-cycle.html: Added.
+
 2015-07-13  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Skip failing table-related AX tests

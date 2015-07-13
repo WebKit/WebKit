@@ -5287,12 +5287,7 @@ private:
         for (unsigned i = 0; i < data.m_properties.size(); ++i)
             values.append(lowJSValue(m_graph.varArgChild(m_node, 1 + i)));
         
-        StructureSet set;
-        m_interpreter.phiChildren()->forAllTransitiveIncomingValues(
-            m_graph.varArgChild(m_node, 0).node(),
-            [&] (Node* incoming) {
-                set.add(incoming->castConstant<Structure*>());
-            });
+        const StructureSet& set = m_node->structureSet();
         
         Vector<LBasicBlock, 1> blocks(set.size());
         for (unsigned i = set.size(); i--;)
@@ -5391,10 +5386,11 @@ private:
 
         Vector<LValue, 8> values;
         for (unsigned i = 0; i < data.m_properties.size(); ++i)
-            values.append(lowJSValue(m_graph.varArgChild(m_node, 1 + i)));
+            values.append(lowJSValue(m_graph.varArgChild(m_node, 2 + i)));
 
-        LValue scope = lowCell(m_graph.varArgChild(m_node, 0));
+        LValue scope = lowCell(m_graph.varArgChild(m_node, 1));
         SymbolTable* table = m_node->castOperand<SymbolTable*>();
+        ASSERT(table == m_graph.varArgChild(m_node, 0)->castConstant<SymbolTable*>());
         Structure* structure = m_graph.globalObjectFor(m_node->origin.semantic)->activationStructure();
 
         LBasicBlock slowPath = FTL_NEW_BLOCK(m_out, ("MaterializeCreateActivation slow path"));

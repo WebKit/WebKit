@@ -40,6 +40,9 @@ JSCell* JIT_OPERATION operationNewObjectWithButterfly(ExecState*, Structure*) WT
 JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
     ExecState*, ExitTimeObjectMaterialization*, EncodedJSValue*) WTF_INTERNAL;
 
+void JIT_OPERATION operationPopulateObjectInOSR(
+    ExecState*, ExitTimeObjectMaterialization*, EncodedJSValue*, EncodedJSValue*) WTF_INTERNAL;
+
 } // extern "C"
 
 } } // namespace JSC::DFG
