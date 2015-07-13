@@ -473,6 +473,7 @@ public:
     void commitPotentialTap(uint64_t lastLayerTreeTranscationId);
     void commitPotentialTapFailed();
     void cancelPotentialTap();
+    void cancelPotentialTapInFrame(WebFrame&);
     void tapHighlightAtPosition(uint64_t requestID, const WebCore::FloatPoint&);
 
     void inspectorNodeSearchMovedToPosition(const WebCore::FloatPoint&);
@@ -1234,7 +1235,6 @@ private:
     WebCore::FloatPoint m_potentialTapLocation;
 
     WebCore::ViewportConfiguration m_viewportConfiguration;
-    uint64_t m_firstLayerTreeTransactionIDAfterDidCommitLoad;
     bool m_hasReceivedVisibleContentRectsAfterDidCommitLoad;
     bool m_scaleWasSetByUIProcess;
     bool m_userHasChangedPageScaleFactor;
