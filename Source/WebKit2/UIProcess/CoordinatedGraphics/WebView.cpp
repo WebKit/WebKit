@@ -304,7 +304,7 @@ void WebView::scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntS
     setViewNeedsDisplay(scrollRect);
 }
 
-void WebView::requestScroll(const WebCore::FloatPoint&, bool)
+void WebView::requestScroll(const WebCore::FloatPoint&, const WebCore::IntPoint&, bool)
 {
     notImplemented();
 }

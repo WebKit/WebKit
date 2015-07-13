@@ -154,10 +154,10 @@ void PageClientImpl::scrollView(const IntRect&, const IntSize&)
     ASSERT_NOT_REACHED();
 }
 
-void PageClientImpl::requestScroll(const FloatPoint& scrollPosition, bool isProgrammaticScroll)
+void PageClientImpl::requestScroll(const FloatPoint& scrollPosition, const IntPoint& scrollOrigin, bool isProgrammaticScroll)
 {
     UNUSED_PARAM(isProgrammaticScroll);
-    [m_webView _scrollToContentOffset:scrollPosition];
+    [m_webView _scrollToContentOffset:scrollPosition scrollOrigin:scrollOrigin];
 }
 
 IntSize PageClientImpl::viewSize()
@@ -278,9 +278,9 @@ double PageClientImpl::minimumZoomScale() const
     return 1;
 }
 
-WebCore::FloatSize PageClientImpl::contentsSize() const
+WebCore::FloatRect PageClientImpl::documentRect() const
 {
-    return FloatSize([m_contentView bounds].size);
+    return [m_contentView bounds];
 }
 
 void PageClientImpl::setCursor(const Cursor&)

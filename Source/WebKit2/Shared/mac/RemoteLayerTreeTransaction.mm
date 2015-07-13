@@ -516,6 +516,7 @@ void RemoteLayerTreeTransaction::encode(IPC::ArgumentEncoder& encoder) const
     encoder << m_layerIDsWithNewlyUnreachableBackingStore;
 
     encoder << m_contentsSize;
+    encoder << m_scrollOrigin;
 #if PLATFORM(MAC)
     encoder << m_scrollPosition;
 #endif
@@ -579,6 +580,9 @@ bool RemoteLayerTreeTransaction::decode(IPC::ArgumentDecoder& decoder, RemoteLay
     }
 
     if (!decoder.decode(result.m_contentsSize))
+        return false;
+
+    if (!decoder.decode(result.m_scrollOrigin))
         return false;
 
 #if PLATFORM(MAC)
@@ -1241,6 +1245,15 @@ void RemoteLayerTreeTransaction::dump() const
 CString RemoteLayerTreeTransaction::description() const
 {
     RemoteLayerTreeTextStream ts;
+
+    ts << "(";
+    dumpProperty(ts, "transactionID", m_transactionID);
+    dumpProperty(ts, "contentsSize", m_contentsSize);
+    if (m_scrollOrigin != IntPoint::zero())
+        dumpProperty(ts, "scrollOrigin", m_scrollOrigin);
+
+    if (m_pageScaleFactor != 1)
+        dumpProperty(ts, "pageScaleFactor", m_pageScaleFactor);
 
     ts << "(\n";
     ts.increaseIndent();
