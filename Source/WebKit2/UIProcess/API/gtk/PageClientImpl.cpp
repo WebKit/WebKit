@@ -84,11 +84,8 @@ void PageClientImpl::requestScroll(const WebCore::FloatPoint&, const WebCore::In
 
 WebCore::IntSize PageClientImpl::viewSize()
 {
-    if (!gtk_widget_get_realized(m_viewWidget))
-        return IntSize();
-    GtkAllocation allocation;
-    gtk_widget_get_allocation(m_viewWidget, &allocation);
-    return IntSize(allocation.width, allocation.height);
+    auto* drawingArea = static_cast<DrawingAreaProxyImpl*>(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_viewWidget))->drawingArea());
+    return drawingArea ? drawingArea->size() : IntSize();
 }
 
 bool PageClientImpl::isViewWindowActive()

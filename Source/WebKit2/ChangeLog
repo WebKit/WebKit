@@ -1,3 +1,33 @@
+2015-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Contents not correctly laid out when the web view is not realized
+        https://bugs.webkit.org/show_bug.cgi?id=142532
+
+        Reviewed by Darin Adler.
+
+        The problem is that we are not reporting any size until the web
+        view is realized, so any web view loaded in a separate tab in the
+        browser, will report 0x0 as the window.innerWidth,
+        window.innerHeight until the view is realized. Websites that use
+        the window.innerWidth/innerHeight during the page load to decide
+        how to lay out the contents will be rendered wrongly.
+        I haven't been able to reproduce this with unit tests, as this
+        requires the particular case of same window but different web
+        views using tabs for example.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::viewSize): Always report the drawing area
+        size to make usre it's in sync with the WebProcess page size.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseSizeAllocate): Remove the optimization of only
+        report the size when it has changed, since both the redirected
+        window and the drawing area already do that check. Also remove the
+        optimization of waiting until the view is mapped to report its
+        size, since that's often too late for websites using the window
+        size during load.
+        (webkitWebViewBaseMap): Never report size on map, it should have
+        already been reported by size-allocate.
+
 2015-07-11  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Inspector should be able to be docked to the bottom of a narrow window
