@@ -26,7 +26,7 @@
 require "pathname"
 require "shellwords"
 
-VERSION = "1.1-alpha4"
+VERSION = "1.1"
 DIRECTORY_NAME = "JetStream-#{VERSION}"
 
 CDJS_FILES = [
