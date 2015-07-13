@@ -175,7 +175,8 @@ public:
     // Updates the expire date on the cache entry file
     void finish();
 
-    bool passesAccessControlCheck(SecurityOrigin*);
+    bool passesAccessControlCheck(SecurityOrigin&);
+    bool passesSameOriginPolicyCheck(SecurityOrigin&);
 
     // Called by the cache if the object has been removed from the cache
     // while still being referenced. This means the object should delete itself
@@ -190,10 +191,12 @@ public:
 
     ResourceBuffer* resourceBuffer() const { ASSERT(!m_purgeableData); return m_data.get(); }
 
-    virtual void willSendRequest(ResourceRequest&, const ResourceResponse&) { m_requestedFromNetworkingLayer = true; }
+    virtual void willSendRequest(ResourceRequest&, const ResourceResponse&);
     virtual void responseReceived(const ResourceResponse&);
     void setResponse(const ResourceResponse& response) { m_response = response; }
     const ResourceResponse& response() const { return m_response; }
+    // This is the same as response() except after HTTP redirect to data: URL.
+    const ResourceResponse& responseForSameOriginPolicyChecks() const;
 
     bool canDelete() const { return !hasClients() && !m_loader && !m_preloadCount && !m_handleCount && !m_resourceToRevalidate && !m_proxyResource; }
     bool hasOneHandle() const { return m_handleCount == 1; }
@@ -299,6 +302,7 @@ protected:
     ResourceLoadPriority m_loadPriority;
 
     ResourceResponse m_response;
+    ResourceResponse m_redirectResponseForSameOriginPolicyChecks;
     double m_responseTimestamp;
 
     RefPtr<ResourceBuffer> m_data;
