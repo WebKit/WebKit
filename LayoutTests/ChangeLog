@@ -1,3 +1,10 @@
+2015-07-13  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Skip failing table-related AX tests
+        https://bugs.webkit.org/show_bug.cgi?id=146903
+
+        * platform/win/TestExpectations:
+
 2015-07-12  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WEB: VoiceOver for iOS does not read <iframe> elements during linear (swipe) navigation.
