@@ -1,5 +1,64 @@
 2015-07-09  David Kilzer  <ddkilzer@apple.com>
 
+        Make run-webkit-tests work with iOS Simulator iOS 8.x branch
+
+        Merge r179788, r179793.
+
+    2015-02-07  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] run-webkit-tests fails due to simulator devices from previous SDK installs being marked as unavailable
+        <http://webkit.org/b/141365>
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitpy/xcode/simulator.py:
+        (Simulator): Add unavailable_version_re precompiled regex.
+        (Simulator._parse_devices): Check for unavailable versions and
+        ignore them if found when parsing the output of
+        `xcrun simctl list`.
+        * Scripts/webkitpy/xcode/simulator_unittest.py:
+        (test_unavailable_devices): Add test with output from
+        `xcrun simctl list` with unavailable runtimes that fails before
+        the fix.
+
+    2015-02-07  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Make Simulator class testable
+        <http://webkit.org/b/141358>
+
+        Rubber-stamped by Darin Adler.
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo.xcode_simctl_list): Move `xcrun simctl list`
+        command to here from Simulator.refresh() in xcode/simulator.py
+        so that the output of the command can be mocked.
+
+        * Scripts/webkitpy/common/system/platforminfo_mock.py:
+        (MockPlatformInfo.__init__): Set self.expected_xcode_simctl_list
+        to None.
+        (MockPlatformInfo.xcode_simctl_list): Add method that returns
+        self.expected_xcode_simctl_list expectation.
+
+        * Scripts/webkitpy/xcode/simulator.py: Add missing copyright
+        and license header.
+        (Simulator.__init__): Add optional 'host' parameter to make it
+        possible to pass in a mock object for testing.  Set self._host
+        to 'host' parameter or create Host() object.
+        (Simulator.refresh): Call new PlatformInfo.xcode_simctl_list()
+        method.
+
+        * Scripts/webkitpy/xcode/simulator_unittest.py: Add unit test
+        for current code.
+        (SimulatorTest):
+        (SimulatorTest.setUp):
+        (SimulatorTest._set_expected_xcrun_simctl_list):
+        (SimulatorTest.test_simulator_device_types):
+        (test_invalid_device_types_header):
+        (test_invalid_runtimes_header):
+        (test_invalid_devices_header):
+
+2015-07-09  David Kilzer  <ddkilzer@apple.com>
+
         <rdar://problem/21716549> Donner: Safari URL And Javascript Prompt Origin Spoof Vulnerability
 
         Merge r184151.

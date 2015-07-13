@@ -31,6 +31,7 @@ class MockPlatformInfo(object):
     def __init__(self, os_name='mac', os_version='snowleopard'):
         self.os_name = os_name
         self.os_version = os_version
+        self.expected_xcode_simctl_list = None
 
     def is_mac(self):
         return self.os_name == 'mac'
@@ -55,3 +56,6 @@ class MockPlatformInfo(object):
 
     def terminal_width(self):
         return 80
+
+    def xcode_simctl_list(self):
+        return self.expected_xcode_simctl_list
