@@ -1,3 +1,12 @@
+2015-07-12  Timothy Hatcher  <timothy@apple.com>
+
+        Web Inspector: Add -apple-system-monospaced-numbers to font and font-family autocomplete
+        https://bugs.webkit.org/show_bug.cgi?id=146865
+
+        Reviewed by Daniel Bates.
+
+        * UserInterface/Models/CSSKeywordCompletions.js:
+
 2015-07-11  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Inspector should be able to be docked to the bottom of a narrow window
