@@ -1542,9 +1542,9 @@ void PluginView::setCookiesForURL(const String& urlString, const String& cookieS
 
 bool PluginView::getAuthenticationInfo(const ProtectionSpace& protectionSpace, String& username, String& password)
 {
-    Credential credential = CredentialStorage::get(protectionSpace);
+    Credential credential = CredentialStorage::defaultCredentialStorage().get(protectionSpace);
     if (credential.isEmpty())
-        credential = CredentialStorage::getFromPersistentStorage(protectionSpace);
+        credential = CredentialStorage::defaultCredentialStorage().getFromPersistentStorage(protectionSpace);
 
     if (!credential.hasPassword())
         return false;

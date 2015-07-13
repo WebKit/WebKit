@@ -83,6 +83,8 @@ WebSocketChannel::WebSocketChannel(Document* document, WebSocketChannelClient* c
     , m_outgoingFrameQueueStatus(OutgoingFrameQueueOpen)
     , m_blobLoaderStatus(BlobLoaderNotStarted)
 {
+    ASSERT(m_document);
+
     if (Page* page = m_document->page())
         m_identifier = page->progress().createUniqueIdentifier();
 
@@ -105,8 +107,13 @@ void WebSocketChannel::connect(const URL& url, const String& protocol)
         m_handshake->addExtensionProcessor(m_deflateFramer.createExtensionProcessor());
     if (m_identifier)
         InspectorInstrumentation::didCreateWebSocket(m_document, m_identifier, url, m_document->url(), protocol);
-    ref();
-    m_handle = SocketStreamHandle::create(m_handshake->url(), this);
+
+    if (Frame* frame = m_document->frame()) {
+        if (NetworkingContext* networkingContext = frame->loader().networkingContext()) {
+            ref();
+            m_handle = SocketStreamHandle::create(m_handshake->url(), this, *networkingContext);
+        }
+    }
 }
 
 String WebSocketChannel::subprotocol()

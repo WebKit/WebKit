@@ -338,13 +338,13 @@ static void applyAuthenticationToRequest(ResourceHandle* handle, ResourceRequest
 
     if (handle->shouldUseCredentialStorage()) {
         if (d->m_user.isEmpty() && d->m_pass.isEmpty())
-            d->m_initialCredential = CredentialStorage::get(request.url());
+            d->m_initialCredential = CredentialStorage::defaultCredentialStorage().get(request.url());
         else if (!redirect) {
             // If there is already a protection space known for the URL, update stored credentials
             // before sending a request. This makes it possible to implement logout by sending an
             // XMLHttpRequest with known incorrect credentials, and aborting it immediately (so that
             // an authentication dialog doesn't pop up).
-            CredentialStorage::set(Credential(d->m_user, d->m_pass, CredentialPersistenceNone), request.url());
+            CredentialStorage::defaultCredentialStorage().set(Credential(d->m_user, d->m_pass, CredentialPersistenceNone), request.url());
         }
     }
 
@@ -1092,17 +1092,17 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
             // The stored credential wasn't accepted, stop using it. There is a race condition
             // here, since a different credential might have already been stored by another
             // ResourceHandle, but the observable effect should be very minor, if any.
-            CredentialStorage::remove(challenge.protectionSpace());
+            CredentialStorage::defaultCredentialStorage().remove(challenge.protectionSpace());
         }
 
         if (!challenge.previousFailureCount()) {
-            Credential credential = CredentialStorage::get(challenge.protectionSpace());
+            Credential credential = CredentialStorage::defaultCredentialStorage().get(challenge.protectionSpace());
             if (!credential.isEmpty() && credential != d->m_initialCredential) {
                 ASSERT(credential.persistence() == CredentialPersistenceNone);
 
                 // Store the credential back, possibly adding it as a default for this directory.
                 if (isAuthenticationFailureStatusCode(challenge.failureResponse().httpStatusCode()))
-                    CredentialStorage::set(credential, challenge.protectionSpace(), challenge.failureResponse().url());
+                    CredentialStorage::defaultCredentialStorage().set(credential, challenge.protectionSpace(), challenge.failureResponse().url());
 
                 soup_auth_authenticate(challenge.soupAuth(), credential.user().utf8().data(), credential.password().utf8().data());
                 return;
@@ -1155,7 +1155,7 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
         // we place the credentials in the store even though libsoup will never fire the authenticate signal again for
         // this protection space.
         if (credential.persistence() == CredentialPersistenceForSession || credential.persistence() == CredentialPersistencePermanent)
-            CredentialStorage::set(credential, challenge.protectionSpace(), challenge.failureResponse().url());
+            CredentialStorage::defaultCredentialStorage().set(credential, challenge.protectionSpace(), challenge.failureResponse().url());
 
 #if PLATFORM(GTK)
         if (credential.persistence() == CredentialPersistencePermanent) {

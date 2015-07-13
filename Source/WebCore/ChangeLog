@@ -1,3 +1,75 @@
+2015-07-13  David Kilzer  <ddkilzer@apple.com>
+
+        Merge r186476. rdar://problem/21708269
+
+        * WebCore.exp.in: Add symbol to export list since WEBCORE_EXPORT
+        isn't available on the branch.
+
+    2015-07-07  Brady Eidson  <beidson@apple.com>
+
+        HTTP Auth cached after disabling private browsing/reset.
+        <rdar://problem/8293055> and https://bugs.webkit.org/show_bug.cgi?id=146654
+
+        Reviewed by Tim Horton.
+
+        Test: http/tests/security/private-browsing-http-auth.html
+
+        - Change most static CredentialStorage methods to be instance methods instead.
+        - Make a CredentialStorage objects be per-NetworkStorageSession.
+
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::WebSocketChannel):
+        (WebCore::WebSocketChannel::connect): Only start the web socket load if a networking
+          context is available.
+
+        * platform/network/CredentialStorage.cpp:
+        (WebCore::CredentialStorage::defaultCredentialStorage): Returns the credential storage
+          from the default NetworkStorageSession.
+        (WebCore::CredentialStorage::set):
+        (WebCore::CredentialStorage::get):
+        (WebCore::CredentialStorage::remove):
+        (WebCore::CredentialStorage::findDefaultProtectionSpaceForURL):
+        (WebCore::CredentialStorage::clearCredentials):
+        (WebCore::protectionSpaceToCredentialMap): Deleted.
+        (WebCore::originsWithCredentials): Deleted.
+        (WebCore::pathToDefaultProtectionSpaceMap): Deleted.
+        (WebCore::findDefaultProtectionSpaceForURL): Deleted.
+        (WebCore::CredentialStorage::setPrivateMode): Deleted. Was a no-op anyways.
+        * platform/network/CredentialStorage.h:
+        
+        * platform/network/NetworkStorageSession.h:
+        (WebCore::NetworkStorageSession::credentialStorage):
+        
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::createCFURLConnection):
+        (WebCore::ResourceHandle::willSendRequest):
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::receivedCredential):
+        
+        * platform/network/cf/SocketStreamHandle.h:
+        (WebCore::SocketStreamHandle::create):
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        (WebCore::SocketStreamHandle::SocketStreamHandle):
+        (WebCore::SocketStreamHandle::getStoredCONNECTProxyCredentials):
+        (WebCore::getStoredCONNECTProxyCredentials): Deleted.
+        
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::receivedCredential):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::applyAuthenticationToRequest):
+        
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::createNSURLConnection):
+        (WebCore::ResourceHandle::willSendRequest):
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::receivedCredential):
+        
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::applyAuthenticationToRequest):
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::receivedCredential):
+        
 2015-07-12  David Kilzer  <ddkilzer@apple.com>
 
         Merge r185769. rdar://problem/21727217

@@ -8268,6 +8268,19 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
     return result;
 }
 
+- (void)_clearCredentials
+{
+    Frame* frame = [self _mainCoreFrame];
+    if (!frame)
+        return;
+
+    NetworkingContext* networkingContext = frame->loader().networkingContext();
+    if (!networkingContext)
+        return;
+
+    networkingContext->storageSession().credentialStorage().clearCredentials();
+}
+
 - (BOOL)_needsOneShotDrawingSynchronization
 {
     return _private->needsOneShotDrawingSynchronization;

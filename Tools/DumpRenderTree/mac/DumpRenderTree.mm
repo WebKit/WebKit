@@ -1714,6 +1714,8 @@ static void resetWebViewToConsistentStateBeforeTesting()
     [[webView window] setAutodisplay:NO];
 #endif
     [webView setTracksRepaints:NO];
+
+    [WebCache clearCachedCredentials];
     
     resetWebPreferencesToConsistentValues();
 

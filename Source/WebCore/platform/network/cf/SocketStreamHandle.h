@@ -43,11 +43,13 @@ namespace WebCore {
 
 class AuthenticationChallenge;
 class Credential;
+class NetworkingContext;
+class ProtectionSpace;
 class SocketStreamHandleClient;
 
 class SocketStreamHandle : public ThreadSafeRefCounted<SocketStreamHandle>, public SocketStreamHandleBase, public AuthenticationClient {
 public:
-    static PassRefPtr<SocketStreamHandle> create(const URL& url, SocketStreamHandleClient* client) { return adoptRef(new SocketStreamHandle(url, client)); }
+    static PassRefPtr<SocketStreamHandle> create(const URL& url, SocketStreamHandleClient* client, NetworkingContext& networkingContext) { return adoptRef(new SocketStreamHandle(url, client, networkingContext)); }
 
     virtual ~SocketStreamHandle();
 
@@ -58,7 +60,7 @@ private:
     virtual int platformSend(const char* data, int length);
     virtual void platformClose();
 
-    SocketStreamHandle(const URL&, SocketStreamHandleClient*);
+    SocketStreamHandle(const URL&, SocketStreamHandleClient*, NetworkingContext&);
     void createStreams();
     void scheduleStreams();
     void chooseProxy();
@@ -84,6 +86,8 @@ private:
 
     void reportErrorToClient(CFErrorRef);
 
+    bool getStoredCONNECTProxyCredentials(const ProtectionSpace&, String& login, String& password);
+
     // No authentication for streams per se, but proxy may ask for credentials.
     virtual void receivedCredential(const AuthenticationChallenge&, const Credential&);
     virtual void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&);
@@ -108,6 +112,8 @@ private:
     RetainPtr<CFWriteStreamRef> m_writeStream;
 
     RetainPtr<CFURLRef> m_httpsURL; // ws(s): replaced with https:
+
+    Ref<NetworkingContext> m_networkingContext;
 };
 
 }  // namespace WebCore
