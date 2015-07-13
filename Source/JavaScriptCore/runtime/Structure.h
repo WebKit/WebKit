@@ -97,6 +97,31 @@ struct PropertyMapEntry {
     }
 };
 
+class StructureFireDetail : public FireDetail {
+public:
+    StructureFireDetail(const Structure* structure)
+        : m_structure(structure)
+    {
+    }
+    
+    virtual void dump(PrintStream& out) const override;
+
+private:
+    const Structure* m_structure;
+};
+
+class DeferredStructureTransitionWatchpointFire {
+    WTF_MAKE_NONCOPYABLE(DeferredStructureTransitionWatchpointFire);
+public:
+    JS_EXPORT_PRIVATE DeferredStructureTransitionWatchpointFire();
+    JS_EXPORT_PRIVATE ~DeferredStructureTransitionWatchpointFire();
+    
+    void add(const Structure*);
+    
+private:
+    const Structure* m_structure;
+};
+
 class Structure final : public JSCell {
 public:
     friend class StructureTransitionTable;
@@ -137,7 +162,7 @@ public:
 
     static void dumpStatistics();
 
-    JS_EXPORT_PRIVATE static Structure* addPropertyTransition(VM&, Structure*, PropertyName, unsigned attributes, PropertyOffset&, PutPropertySlot::Context = PutPropertySlot::UnknownContext);
+    JS_EXPORT_PRIVATE static Structure* addPropertyTransition(VM&, Structure*, PropertyName, unsigned attributes, PropertyOffset&, PutPropertySlot::Context = PutPropertySlot::UnknownContext, DeferredStructureTransitionWatchpointFire* = nullptr);
     static Structure* addPropertyTransitionToExistingStructureConcurrently(Structure*, UniquedStringImpl* uid, unsigned attributes, PropertyOffset&);
     JS_EXPORT_PRIVATE static Structure* addPropertyTransitionToExistingStructure(Structure*, PropertyName, unsigned attributes, PropertyOffset&);
     static Structure* removePropertyTransition(VM&, Structure*, PropertyName, PropertyOffset&);
@@ -402,7 +427,7 @@ public:
         m_transitionWatchpointSet.add(watchpoint);
     }
     
-    void didTransitionFromThisStructure() const;
+    void didTransitionFromThisStructure(DeferredStructureTransitionWatchpointFire* = nullptr) const;
     
     InlineWatchpointSet& transitionWatchpointSet() const
     {
@@ -483,9 +508,9 @@ private:
 
     JS_EXPORT_PRIVATE Structure(VM&, JSGlobalObject*, JSValue prototype, const TypeInfo&, const ClassInfo*, IndexingType, unsigned inlineCapacity);
     Structure(VM&);
-    Structure(VM&, Structure*);
+    Structure(VM&, Structure*, DeferredStructureTransitionWatchpointFire*);
 
-    static Structure* create(VM&, Structure*);
+    static Structure* create(VM&, Structure*, DeferredStructureTransitionWatchpointFire* = nullptr);
     
     static Structure* addPropertyTransitionToExistingStructureImpl(Structure*, UniquedStringImpl* uid, unsigned attributes, PropertyOffset&);
 

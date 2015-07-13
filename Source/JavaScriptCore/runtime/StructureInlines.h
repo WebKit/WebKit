@@ -49,10 +49,10 @@ inline Structure* Structure::createStructure(VM& vm)
     return structure;
 }
 
-inline Structure* Structure::create(VM& vm, Structure* structure)
+inline Structure* Structure::create(VM& vm, Structure* structure, DeferredStructureTransitionWatchpointFire* deferred)
 {
     ASSERT(vm.structureStructure);
-    Structure* newStructure = new (NotNull, allocateCell<Structure>(vm.heap)) Structure(vm, structure);
+    Structure* newStructure = new (NotNull, allocateCell<Structure>(vm.heap)) Structure(vm, structure, deferred);
     newStructure->finishCreation(vm);
     return newStructure;
 }

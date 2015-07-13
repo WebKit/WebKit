@@ -1,5 +1,61 @@
 2015-07-12  Filip Pizlo  <fpizlo@apple.com>
 
+        If Watchpoint::fire() looks at the state of the world, it should definitely see its set invalidated, and maybe it should see the object of interest in the transitioned-to state
+        https://bugs.webkit.org/show_bug.cgi?id=146897
+
+        Reviewed by Mark Lam.
+        
+        The idea is to eventually support adaptive watchpoints. An adaptive watchpoint will be
+        able to watch for a condition that is more fine-grained than any one watchpoint set. For
+        example, we might watch a singleton object to see if it ever acquires a property called
+        "foo". So long as it doesn't have such a property, we don't want to invalidate any code.
+        But if it gets that property, then we should deoptimize. Current watchpoints will
+        invalidate code as soon as any property is added (or deleted), because they will use the
+        transition watchpoint set of the singleton object's structure, and that fires anytime
+        there is any transition.
+        
+        An adaptive watchpoint would remember the singleton object, and when it got fired, it
+        would check if the object's new structure has the property "foo". If not, it would check
+        if the object's new structure is watchable (i.e. has a valid transition watchpoint set).
+        If the property is missing and the structure is watchable, it would add itself to the
+        watchpoint set of the new structure. Otherwise, it would deoptimize.
+        
+        There are two problems with this idea, and this patch fixes these problems. First, we
+        usually fire the transition watchpoint before we do the structure transition. This means
+        that if the fire() method looked at the singleton object's structure, it would see the old
+        structure, not the new one. It would have no way of knowing what the new structure is.
+        Second, inside the fire() method, the watchpoint set being invalidated still appears
+        valid, since we change the state after we fire all watchpoints.
+        
+        This patch addresses both issues. Now, in the most important case (addPropertyTransition),
+        we fire the watchpoint set after we have modified the object. This is accomplished using
+        a deferral scope called DeferredStructureTransitionWatchpointFire. In cases where there is
+        no deferral, the adaptive watchpoint will conservatively resort to deoptimization because
+        it would find that the singleton object's structure is no longer watchable. This is
+        because in the absence of deferral, the singleton object would still have the original
+        structure, but that structure's watchpoint set would now report itself as having been
+        invalidated.
+
+        * bytecode/Watchpoint.cpp:
+        (JSC::WatchpointSet::fireAllSlow): Change the state of the set before firing all watchpoints.
+        (JSC::WatchpointSet::fireAllWatchpoints):
+        * runtime/JSObject.h:
+        (JSC::JSObject::putDirectInternal): Use the deferral scope.
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure): Pass the deferral scope to didTransitionFromThisStructure.
+        (JSC::Structure::addPropertyTransition): Pass the deferral scope to create().
+        (JSC::StructureFireDetail::dump): This is no longer anonymous.
+        (JSC::DeferredStructureTransitionWatchpointFire::DeferredStructureTransitionWatchpointFire): Start with a null structure.
+        (JSC::DeferredStructureTransitionWatchpointFire::~DeferredStructureTransitionWatchpointFire): Fire the watchpoint if there is a structure.
+        (JSC::DeferredStructureTransitionWatchpointFire::add): Add a structure. Logically this is a list of deferred things, but we assert that there only will be one (happens to be true now).
+        (JSC::Structure::didTransitionFromThisStructure): Defer the watchpoint firing if there is a deferral scope.
+        * runtime/Structure.h:
+        (JSC::StructureFireDetail::StructureFireDetail): Move this to the header.
+        * runtime/StructureInlines.h:
+        (JSC::Structure::create): Pass the deferral scope to the constructor.
+
+2015-07-12  Filip Pizlo  <fpizlo@apple.com>
+
         Watchpoints should be removed from their owning WatchpointSet before they are fired
         https://bugs.webkit.org/show_bug.cgi?id=146895
 

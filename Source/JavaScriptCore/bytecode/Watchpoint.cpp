@@ -86,8 +86,8 @@ void WatchpointSet::fireAllSlow(const FireDetail& detail)
     ASSERT(state() == IsWatched);
     
     WTF::storeStoreFence();
+    m_state = IsInvalidated; // Do this first. Needed for adaptive watchpoints.
     fireAllWatchpoints(detail);
-    m_state = IsInvalidated;
     WTF::storeStoreFence();
 }
 
@@ -98,6 +98,10 @@ void WatchpointSet::fireAllSlow(const char* reason)
 
 void WatchpointSet::fireAllWatchpoints(const FireDetail& detail)
 {
+    // In case there are any adaptive watchpoints, we need to make sure that they see that this
+    // watchpoint has been already invalidated.
+    RELEASE_ASSERT(hasBeenInvalidated());
+    
     while (!m_set.isEmpty()) {
         Watchpoint* watchpoint = m_set.begin();
         ASSERT(watchpoint->isOnList());

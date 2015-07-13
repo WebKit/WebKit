@@ -1294,7 +1294,12 @@ inline bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSVal
     if ((mode == PutModePut) && !isExtensible())
         return false;
 
-    structure = Structure::addPropertyTransition(vm, structure, propertyName, attributes, offset, slot.context());
+    // We want the structure transition watchpoint to fire after this object has switched
+    // structure. This allows adaptive watchpoints to observe if the new structure is the one
+    // we want.
+    DeferredStructureTransitionWatchpointFire deferredWatchpointFire;
+    
+    structure = Structure::addPropertyTransition(vm, structure, propertyName, attributes, offset, slot.context(), &deferredWatchpointFire);
     
     validateOffset(offset);
     ASSERT(structure->isValidOffset(offset));
