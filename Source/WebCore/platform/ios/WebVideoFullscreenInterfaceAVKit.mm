@@ -751,6 +751,13 @@ WebVideoFullscreenInterfaceAVKit::WebVideoFullscreenInterfaceAVKit()
     [m_playerController setFullscreenInterface:this];
 }
 
+WebVideoFullscreenInterfaceAVKit::~WebVideoFullscreenInterfaceAVKit()
+{
+    WebAVPlayerController* playerController = m_playerController.get();
+    if (playerController && playerController.externalPlaybackActive)
+        setExternalPlayback(false, TargetTypeNone, "");
+}
+
 void WebVideoFullscreenInterfaceAVKit::resetMediaState()
 {
     if (!m_playerController) {

@@ -75,7 +75,7 @@ public:
     {
         return adoptRef(*new WebVideoFullscreenInterfaceAVKit());
     }
-    virtual ~WebVideoFullscreenInterfaceAVKit() { }
+    virtual ~WebVideoFullscreenInterfaceAVKit();
     WEBCORE_EXPORT void setWebVideoFullscreenModel(WebVideoFullscreenModel*);
     WEBCORE_EXPORT void setWebVideoFullscreenChangeObserver(WebVideoFullscreenChangeObserver*);
     
