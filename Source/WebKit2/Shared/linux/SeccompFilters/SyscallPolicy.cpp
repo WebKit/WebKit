@@ -142,6 +142,10 @@ void SyscallPolicy::addDefaultWebProcessPolicy(const WebProcessCreationParameter
     addDirectoryPermission(ASCIILiteral("/usr/lib64"), Read);
     addDirectoryPermission(ASCIILiteral("/usr/share"), Read);
 
+    // Support for alternative install prefixes, e.g. /usr/local.
+    addDirectoryPermission(ASCIILiteral(DATADIR), Read);
+    addDirectoryPermission(ASCIILiteral(LIBDIR), Read);
+
     // SSL Certificates.
     addDirectoryPermission(ASCIILiteral("/etc/ssl/certs"), Read);
 

@@ -1,3 +1,18 @@
+2015-07-13  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [Linux] SeccompFilters: handle alternate install prefixes
+        https://bugs.webkit.org/show_bug.cgi?id=140065
+
+        Reviewed by Žan Doberšek.
+
+        If the install prefix is something other than /usr, e.g. /usr/local or
+        ~/jhbuild/install, then we want to make sure to allow libraries and data
+        from that prefix.
+
+        * PlatformEfl.cmake:
+        * Shared/linux/SeccompFilters/SyscallPolicy.cpp:
+        (WebKit::SyscallPolicy::addDefaultWebProcessPolicy):
+
 2015-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Contents not correctly laid out when the web view is not realized
