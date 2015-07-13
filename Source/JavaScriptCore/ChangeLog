@@ -1,3 +1,20 @@
+2015-07-13  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r186777.
+
+    2015-07-13  Anders Carlsson  <andersca@apple.com>
+
+            Apps linked with a deployment target of iOS 7.x or earlier crash when using modern WebKit API
+            https://bugs.webkit.org/show_bug.cgi?id=146913
+            rdar://problem/21789252
+
+            Reviewed by Dan Bernstein.
+
+            Make a top-level symlink from /System/Library/PrivateFrameworks/JavaScriptCore.framework to
+            /System/Library/Frameworks/JavaScriptCore.framework.
+
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2015-07-12  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r186702.

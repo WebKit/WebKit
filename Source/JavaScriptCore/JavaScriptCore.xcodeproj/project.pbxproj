@@ -6664,6 +6664,7 @@
 				5D29D8BE0E9860B400C3D2D0 /* Check For Weak VTables and Externals */,
 				3713F014142905240036387F /* Check For Inappropriate Objective-C Class Names */,
 				A55DEAA416703DF7003DB841 /* Check For Inappropriate Macros in External Headers */,
+				1A02D9A81B34A882000D1522 /* Add Symlink in /System/Library/PrivateFrameworks */,
 			);
 			buildRules = (
 			);
@@ -6777,6 +6778,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nif [[ $ENABLE_FTL_JIT != \"ENABLE_FTL_JIT\" ]]\nthen\n    exit 0\nfi\n\nif [[ ${CONFIGURATION:=Debug} != \"Production\" ]]\nthen\n    # Copy the llvmForJSC library into the framework.\n    ditto \"${BUILT_PRODUCTS_DIR}/libllvmForJSC.dylib\" \"${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/Libraries/libllvmForJSC.dylib\"\nfi\n\nif [[ $PLATFORM_NAME != \"macosx\" ]]\nthen\n    exit 0\nfi\n\nif [ ! -e \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/Libraries\" ]\nthen\n    ln -fs \"Versions/Current/Libraries\" \"${BUILT_PRODUCTS_DIR}/${WRAPPER_NAME}/Libraries\"\nfi";
+		};
+		1A02D9A81B34A882000D1522 /* Add Symlink in /System/Library/PrivateFrameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Add Symlink in /System/Library/PrivateFrameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "if [[ ${PLATFORM_NAME} != \"iphoneos\" ]]; then\n    exit 0\nfi\n\nif [[ ! -d \"${INSTALL_ROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks\" ]]; then\n    mkdir -p \"${INSTALL_ROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks\"\nfi\n\nln -s -h -f ../Frameworks/JavaScriptCore.framework \"${INSTALL_ROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/JavaScriptCore.framework\"";
 		};
 		3713F014142905240036387F /* Check For Inappropriate Objective-C Class Names */ = {
 			isa = PBXShellScriptBuildPhase;
