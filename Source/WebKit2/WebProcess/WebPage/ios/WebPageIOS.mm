@@ -793,14 +793,14 @@ void WebPage::disableInspectorNodeSearch()
     send(Messages::WebPageProxy::DisableInspectorNodeSearch());
 }
 
-static FloatQuad innerFrameQuad(Frame* frame, Node* assistedNode)
+static FloatQuad innerFrameQuad(const Frame& frame, const Node& assistedNode)
 {
-    frame->document()->updateLayoutIgnorePendingStylesheets();
-    RenderObject* renderer;
-    if (assistedNode->hasTagName(HTMLNames::textareaTag) || assistedNode->hasTagName(HTMLNames::inputTag) || assistedNode->hasTagName(HTMLNames::selectTag))
-        renderer = assistedNode->renderer();
-    else
-        renderer = assistedNode->rootEditableElement()->renderer();
+    frame.document()->updateLayoutIgnorePendingStylesheets();
+    RenderElement* renderer = nullptr;
+    if (assistedNode.hasTagName(HTMLNames::textareaTag) || assistedNode.hasTagName(HTMLNames::inputTag) || assistedNode.hasTagName(HTMLNames::selectTag))
+        renderer = downcast<RenderElement>(assistedNode.renderer());
+    else if (Element* rootEditableElement = assistedNode.rootEditableElement())
+        renderer = rootEditableElement->renderer();
     
     if (!renderer)
         return FloatQuad();
@@ -815,9 +815,9 @@ static FloatQuad innerFrameQuad(Frame* frame, Node* assistedNode)
     return FloatQuad(boundingBox);
 }
 
-static IntPoint constrainPoint(const IntPoint& point, Frame* frame, Node* assistedNode)
+static IntPoint constrainPoint(const IntPoint& point, const Frame& frame, const Node& assistedNode)
 {
-    ASSERT(!assistedNode || &assistedNode->document() == frame->document());
+    ASSERT(&assistedNode.document() == frame.document());
     const int DEFAULT_CONSTRAIN_INSET = 2;
     IntRect innerFrame = innerFrameQuad(frame, assistedNode).enclosingBoundingBox();
     IntPoint constrainedPoint = point;
@@ -951,7 +951,7 @@ PassRefPtr<Range> WebPage::rangeForBlockAtPoint(const IntPoint& point)
 
 void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uint32_t gestureType, uint32_t gestureState, uint64_t callbackID)
 {
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    const Frame& frame = m_page->focusController().focusedOrMainFrame();
     VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point);
 
     if (position.isNull()) {
@@ -1690,16 +1690,16 @@ void WebPage::moveSelectionByOffset(int32_t offset, uint64_t callbackID)
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
-VisiblePosition WebPage::visiblePositionInFocusedNodeForPoint(Frame& frame, const IntPoint& point)
+VisiblePosition WebPage::visiblePositionInFocusedNodeForPoint(const Frame& frame, const IntPoint& point)
 {
     IntPoint adjustedPoint(frame.view()->rootViewToContents(point));
-    IntPoint constrainedPoint = m_assistedNode ? constrainPoint(adjustedPoint, &frame, m_assistedNode.get()) : adjustedPoint;
+    IntPoint constrainedPoint = m_assistedNode ? constrainPoint(adjustedPoint, frame, *m_assistedNode) : adjustedPoint;
     return frame.visiblePositionForPoint(constrainedPoint);
 }
 
 void WebPage::selectPositionAtPoint(const WebCore::IntPoint& point, uint64_t callbackID)
 {
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    const Frame& frame = m_page->focusController().focusedOrMainFrame();
     VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point);
     
     if (position.isNotNull())
@@ -1709,7 +1709,7 @@ void WebPage::selectPositionAtPoint(const WebCore::IntPoint& point, uint64_t cal
 
 void WebPage::selectPositionAtBoundaryWithDirection(const WebCore::IntPoint& point, uint32_t granularity, uint32_t direction, uint64_t callbackID)
 {
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    const Frame& frame = m_page->focusController().focusedOrMainFrame();
     VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point);
 
     if (position.isNotNull()) {
@@ -1736,7 +1736,7 @@ void WebPage::moveSelectionAtBoundaryWithDirection(uint32_t granularity, uint32_
 
 void WebPage::selectTextWithGranularityAtPoint(const WebCore::IntPoint& point, uint32_t granularity, uint64_t callbackID)
 {
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    const Frame& frame = m_page->focusController().focusedOrMainFrame();
     VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point);
 
     RefPtr<Range> range;
@@ -1769,7 +1769,7 @@ void WebPage::beginSelectionInDirection(uint32_t direction, uint64_t callbackID)
     
 void WebPage::updateSelectionWithExtentPoint(const WebCore::IntPoint& point, uint64_t callbackID)
 {
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    const Frame& frame = m_page->focusController().focusedOrMainFrame();
     VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point);
 
     if (position.isNull()) {
@@ -2113,13 +2113,13 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
     info.point = point;
     info.nodeAtPositionIsAssistedNode = (hitNode == m_assistedNode);
     if (m_assistedNode) {
-        Frame& frame = m_page->focusController().focusedOrMainFrame();
+        const Frame& frame = m_page->focusController().focusedOrMainFrame();
         if (frame.editor().hasComposition()) {
             const uint32_t kHitAreaWidth = 66;
             const uint32_t kHitAreaHeight = 66;
             FrameView& view = *frame.view();
             IntPoint adjustedPoint(view.rootViewToContents(point));
-            IntPoint constrainedPoint = m_assistedNode ? constrainPoint(adjustedPoint, &frame, m_assistedNode.get()) : adjustedPoint;
+            IntPoint constrainedPoint = m_assistedNode ? constrainPoint(adjustedPoint, frame, *m_assistedNode) : adjustedPoint;
             VisiblePosition position = frame.visiblePositionForPoint(constrainedPoint);
 
             RefPtr<Range> compositionRange = frame.editor().compositionRange();
