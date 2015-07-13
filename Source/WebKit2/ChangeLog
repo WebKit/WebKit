@@ -1,3 +1,13 @@
+2015-07-13  Dan Bernstein  <mitz@apple.com>
+
+        Removed now-unused SPI -[WKWebView _loadRequest:withOptions:].
+
+        Rubber-stamped by Anders Carlsson.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _loadRequest:withOptions:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2015-07-13  Anders Carlsson  <andersca@apple.com>
 
         Apps linked with a deployment target of iOS 7.x or earlier crash when using modern WebKit API

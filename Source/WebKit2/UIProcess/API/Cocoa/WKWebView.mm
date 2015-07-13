@@ -1871,11 +1871,6 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 @implementation WKWebView (WKPrivate)
 
-- (WKNavigation *)_loadRequest:(NSURLRequest *)request withOptions:(NSDictionary *)loadOptions
-{
-    return [self loadRequest:request];
-}
-
 - (BOOL)_isEditable
 {
     return _page->isEditable();
