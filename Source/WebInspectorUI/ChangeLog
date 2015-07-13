@@ -1,3 +1,14 @@
+2015-07-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Uncaught exception in inspector for some ConsoleMessages
+        https://bugs.webkit.org/show_bug.cgi?id=146919
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype._appendLocationLink):
+        The parameters list may not exist, so null check it before use.
+
 2015-07-13  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Use -apple-system-monospaced-numbers for line numbers

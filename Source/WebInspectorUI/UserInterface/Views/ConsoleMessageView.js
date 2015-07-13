@@ -322,7 +322,7 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
             return;
         }
 
-        if (this._message.parameters.length === 1) {
+        if (this._message.parameters && this._message.parameters.length === 1) {
             var parameter = this._createRemoteObjectIfNeeded(this._message.parameters[0]);
 
             parameter.findFunctionSourceCodeLocation().then(function(result) {
