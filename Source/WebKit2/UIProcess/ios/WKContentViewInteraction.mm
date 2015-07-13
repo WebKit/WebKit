@@ -3182,14 +3182,20 @@ static bool isAssistableInputType(InputType type)
 
 - (void)_registerPreviewInWindow:(UIWindow *)window
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [window.rootViewController registerPreviewSourceView:self previewingDelegate:self];
+#pragma clang diagnostic pop
     _previewGestureRecognizer = self.gestureRecognizers.lastObject;
     [_previewGestureRecognizer setDelegate:self];
 }
 
 - (void)_unregisterPreviewInWindow:(UIWindow *)window
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [window.rootViewController unregisterPreviewSourceView:self];
+#pragma clang diagnostic pop
     [_previewGestureRecognizer setDelegate:nil];
     _previewGestureRecognizer = nil;
 }

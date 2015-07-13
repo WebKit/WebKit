@@ -1,5 +1,13 @@
 2015-07-13  Dan Bernstein  <mitz@apple.com>
 
+        Fixed the build.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _registerPreviewInWindow:]):
+        (-[WKContentView _unregisterPreviewInWindow:]):
+
+2015-07-13  Dan Bernstein  <mitz@apple.com>
+
         Removed now-unused SPI -[WKWebView _loadRequest:withOptions:].
 
         Rubber-stamped by Anders Carlsson.
