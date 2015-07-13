@@ -1,5 +1,34 @@
 2015-07-13  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r186663. rdar://problem/21708241
+
+    2015-07-09  Daniel Bates  <dabates@apple.com>
+
+        Fetching Content Security Policy report URL should respect same origin policy
+        https://bugs.webkit.org/show_bug.cgi?id=146754
+        <rdar://problem/18860259>
+
+        Reviewed by Brady Eidson.
+
+        Inspired by Blink r149791 (by Mike West <mkwst@chromium.org>):
+        <https://src.chromium.org/viewvc/blink?revision=149791&view=revision>
+
+        As per <http://www.w3.org/TR/2015/CR-CSP2-20150219/#send-violation-reports>, fetching the
+        Content Security Policy report URL should include cookies if and only if the origin of
+        the protected resource is equal to the origin of the report URL.
+
+        Tests: http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-enabled.html
+               http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies-when-private-browsing-toggled.html
+               http/tests/security/contentSecurityPolicy/report-cross-origin-no-cookies.html
+               http/tests/security/contentSecurityPolicy/report-same-origin-no-cookies-when-private-browsing-toggled.html
+               http/tests/security/contentSecurityPolicy/report-same-origin-with-cookies-when-private-browsing-enabled.html
+               http/tests/security/contentSecurityPolicy/report-same-origin-with-cookies.html
+
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::sendViolationReport):
+
+2015-07-13  David Kilzer  <ddkilzer@apple.com>
+
         Merge r186530. rdar://problem/21708151
 
         * WebCore.exp.in: Export methods.
