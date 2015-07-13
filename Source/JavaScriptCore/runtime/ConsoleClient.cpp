@@ -146,10 +146,8 @@ void ConsoleClient::printConsoleMessage(MessageSource source, MessageType type, 
     WTFLogAlways("%s", builder.toString().utf8().data());
 }
 
-void ConsoleClient::printConsoleMessageWithArguments(MessageSource source, MessageType type, MessageLevel level, JSC::ExecState* exec, RefPtr<ScriptArguments>&& prpArguments)
+void ConsoleClient::printConsoleMessageWithArguments(MessageSource source, MessageType type, MessageLevel level, JSC::ExecState* exec, RefPtr<ScriptArguments>&& arguments)
 {
-    RefPtr<ScriptArguments> arguments = prpArguments;
-
     bool isTraceMessage = type == MessageType::Trace;
     size_t stackSize = isTraceMessage ? ScriptCallStack::maxCallStackSizeToCapture : 1;
     RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(exec, stackSize));
@@ -191,13 +189,12 @@ void ConsoleClient::printConsoleMessageWithArguments(MessageSource source, Messa
     }
 }
 
-void ConsoleClient::internalMessageWithTypeAndLevel(MessageType type, MessageLevel level, JSC::ExecState* exec, RefPtr<ScriptArguments>&& prpArguments, ArgumentRequirement argumentRequirement)
+void ConsoleClient::internalMessageWithTypeAndLevel(MessageType type, MessageLevel level, JSC::ExecState* exec, RefPtr<ScriptArguments>&& arguments, ArgumentRequirement argumentRequirement)
 {
-    RefPtr<ScriptArguments> arguments = prpArguments;
     if (argumentRequirement == ArgumentRequired && !arguments->argumentCount())
         return;
 
-    messageWithTypeAndLevel(type, level, exec, arguments.release());
+    messageWithTypeAndLevel(type, level, exec, WTF::move(arguments));
 }
 
 void ConsoleClient::logWithLevel(ExecState* exec, RefPtr<ScriptArguments>&& arguments, MessageLevel level)

@@ -1,3 +1,17 @@
+2015-07-13  Daniel Bates  <dabates@apple.com>
+
+        Cleanup: Avoid extraneous increment and decrement of reference count of ScriptArguments in ConsoleClient
+        https://bugs.webkit.org/show_bug.cgi?id=146920
+
+        Reviewed by Brian Burg.
+
+        Remove local variable RefPtr<ScriptArguments> and copy constructor call with an argument that
+        was initialized with an rvalue reference. The argument itself is an lvalue reference.
+
+        * runtime/ConsoleClient.cpp:
+        (JSC::ConsoleClient::printConsoleMessageWithArguments):
+        (JSC::ConsoleClient::internalMessageWithTypeAndLevel):
+
 2015-07-13  Anders Carlsson  <andersca@apple.com>
 
         Apps linked with a deployment target of iOS 7.x or earlier crash when using modern WebKit API
