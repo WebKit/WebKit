@@ -55,7 +55,7 @@
 #endif
 
 #if ENABLE(MEDIA_SESSION)
-#include "MediaEventTypes.h"
+#include "MediaSessionEvents.h"
 #endif
 
 namespace JSC {
@@ -442,6 +442,7 @@ public:
 
 #if ENABLE(MEDIA_SESSION)
     WEBCORE_EXPORT void handleMediaEvent(MediaEventType);
+    WEBCORE_EXPORT void handleMediaSessionInterruptionEvent(MediaSessionInterruptionEvent, MediaSessionInterruptingCategory);
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaEventTypes_h
-#define MediaEventTypes_h
+#ifndef MediaSessionEvents_h
+#define MediaSessionEvents_h
 
 #if ENABLE(MEDIA_SESSION)
 
@@ -36,8 +36,19 @@ enum MediaEventType {
     TrackPrevious
 };
 
+enum MediaSessionInterruptionEvent {
+    StartOfInterruption,
+    EndOfInterruption
+};
+
+enum MediaSessionInterruptingCategory {
+    Content,
+    Transient,
+    TransientSolo
+};
+
 }
 
 #endif
 
-#endif /* MediaEventTypes_h */
+#endif /* MediaSessionEvents_h */

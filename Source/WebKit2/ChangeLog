@@ -1,3 +1,21 @@
+2015-07-13  Matt Rajca  <mrajca@apple.com>
+
+        Media Session: add plumbing for delivering start/end-of-interruption events
+        https://bugs.webkit.org/show_bug.cgi?id=146837
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageHandleMediaSessionInterruptionEvent):
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleMediaSessionInterruptionEvent):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::handleMediaSessionInterruptionEvent):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2015-07-13  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] When choosing an initial viewport scale, take overflow on the <body> into account
