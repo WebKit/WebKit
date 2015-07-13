@@ -467,17 +467,17 @@ if (ENABLE_PLUGIN_PROCESS_GTK2)
     )
 endif ()
 
-# Wayland protocol extension.
-add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/WebKitGtkWaylandClientProtocol.c
-    DEPENDS ${WEBCORE_DIR}/platform/graphics/wayland/WebKitGtkWaylandClientProtocol.xml
-    COMMAND wayland-scanner server-header < ${WEBCORE_DIR}/platform/graphics/wayland/WebKitGtkWaylandClientProtocol.xml > ${DERIVED_SOURCES_WEBCORE_DIR}/WebKitGtkWaylandServerProtocol.h
-    COMMAND wayland-scanner client-header < ${WEBCORE_DIR}/platform/graphics/wayland/WebKitGtkWaylandClientProtocol.xml > ${DERIVED_SOURCES_WEBCORE_DIR}/WebKitGtkWaylandClientProtocol.h
-    COMMAND wayland-scanner code < ${WEBCORE_DIR}/platform/graphics/wayland/WebKitGtkWaylandClientProtocol.xml > ${DERIVED_SOURCES_WEBCORE_DIR}/WebKitGtkWaylandClientProtocol.c
-)
-
 if (ENABLE_WAYLAND_TARGET)
-    list(APPEND WebCorePlatformGTK_SOURCES
+    # Wayland protocol extension.
+    add_custom_command(
+        OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/WebKitGtkWaylandClientProtocol.c
+        DEPENDS ${WEBCORE_DIR}/platform/graphics/wayland/WebKitGtkWaylandClientProtocol.xml
+        COMMAND wayland-scanner server-header < ${WEBCORE_DIR}/platform/graphics/wayland/WebKitGtkWaylandClientProtocol.xml > ${DERIVED_SOURCES_WEBCORE_DIR}/WebKitGtkWaylandServerProtocol.h
+        COMMAND wayland-scanner client-header < ${WEBCORE_DIR}/platform/graphics/wayland/WebKitGtkWaylandClientProtocol.xml > ${DERIVED_SOURCES_WEBCORE_DIR}/WebKitGtkWaylandClientProtocol.h
+        COMMAND wayland-scanner code < ${WEBCORE_DIR}/platform/graphics/wayland/WebKitGtkWaylandClientProtocol.xml > ${DERIVED_SOURCES_WEBCORE_DIR}/WebKitGtkWaylandClientProtocol.c
+    )
+
+    list(APPEND WebCore_SOURCES
         platform/graphics/wayland/PlatformDisplayWayland.cpp
         platform/graphics/wayland/WaylandEventSource.cpp
         platform/graphics/wayland/WaylandSurface.cpp
