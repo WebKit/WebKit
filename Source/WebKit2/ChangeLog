@@ -1,3 +1,15 @@
+2015-07-13  Anders Carlsson  <andersca@apple.com>
+
+        Silverlight causes tabs to hang
+        https://bugs.webkit.org/show_bug.cgi?id=146912
+        rdar://problem/21686508
+
+        Reviewed by Sam Weinig.
+
+        Make sure to link production builds of the legacy plug-in process against the shim on 10.11 and newer.
+
+        * Configurations/PluginProcess.xcconfig:
+
 2015-07-13  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [Linux] SeccompFilters: handle alternate install prefixes
