@@ -1,5 +1,20 @@
 2015-07-13  David Kilzer  <ddkilzer@apple.com>
 
+        Merge r186542. rdar://problem/21708151
+
+    2015-07-08  Brady Eidson  <beidson@apple.com>
+
+        Now that PingLoaders work in the NetworkProcess, re-enable http/tests/navigation/ping-cookie.html
+        https://bugs.webkit.org/show_bug.cgi?id=146747
+
+        Reviewed by Tim Horton.
+
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
+2015-07-13  David Kilzer  <ddkilzer@apple.com>
+
         Merge r186476. rdar://problem/21708269
 
     2015-07-07  Brady Eidson  <beidson@apple.com>
