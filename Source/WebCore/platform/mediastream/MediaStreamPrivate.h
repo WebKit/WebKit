@@ -81,6 +81,7 @@ public:
     void removeTrack(MediaStreamTrackPrivate&, NotifyClientOption);
 
 private:
+    MediaStreamPrivate() { }
     MediaStreamPrivate(const String& id, const Vector<RefPtr<MediaStreamTrackPrivate>>&);
 
     MediaStreamPrivateClient* m_client;
