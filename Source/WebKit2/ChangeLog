@@ -1,5 +1,22 @@
 2015-07-12  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r186678.
+
+    2015-07-09  Jon Honeycutt  <jhoneycutt@apple.com>
+
+            [iOS] Document picker has overlapping icons on iPad
+            https://bugs.webkit.org/show_bug.cgi?id=146808
+            <rdar://problem/21251875>
+
+            Reviewed by Sam Weinig.
+
+            * UIProcess/ios/forms/WKFileUploadPanel.mm:
+            (-[WKFileUploadPanel documentMenu:didPickDocumentPicker:]):
+            Don't show this UI as a popover on iPad; the default is a full screen
+            form sheet.
+
+2015-07-12  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r186719.
 
     2015-07-11  Joseph Pecoraro  <pecoraro@apple.com>
