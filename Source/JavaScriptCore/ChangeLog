@@ -1,3 +1,25 @@
+2015-07-12  Filip Pizlo  <fpizlo@apple.com>
+
+        Watchpoints should be removed from their owning WatchpointSet before they are fired
+        https://bugs.webkit.org/show_bug.cgi?id=146895
+
+        Reviewed by Sam Weinig.
+        
+        This simplifies the WatchpointSet API by making it so that when Watchpoint::fire() is
+        called, the Watchpoint is no longer in the set. This means that you don't have to remember
+        to remove it from the set's list (currently we do that implicitly as part of whatever
+        any particular Watchpoint::fireInternal() does), and you can now write adaptive
+        watchpoints that re-add themselves to a different set if they determine that the thing
+        they are actually watching is still intact but now needs to be watched in a different way
+        (like watching for whether some singleton object has a property of some name).
+
+        * bytecode/Watchpoint.cpp:
+        (JSC::Watchpoint::~Watchpoint): Add a comment about why this is necessary.
+        (JSC::Watchpoint::fire): Make this out-of-line, private, and make it assert that we're no longer on the list.
+        (JSC::WatchpointSet::fireAllWatchpoints): Make this remove the watchpoint from the list before firing it.
+        * bytecode/Watchpoint.h:
+        (JSC::Watchpoint::fire): Deleted. I moved this to Watchpoint.cpp.
+
 2015-07-10  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::DesiredWatchpoints should accept WatchpointSetType's that aren't necessarily pointers
