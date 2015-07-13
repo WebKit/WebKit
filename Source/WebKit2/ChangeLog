@@ -1,3 +1,20 @@
+2015-07-13  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] When choosing an initial viewport scale, take overflow on the <body> into account
+        https://bugs.webkit.org/show_bug.cgi?id=146918
+        rdar://problem/9222837
+
+        Reviewed by Tim Horton.
+
+        Use as input to the viewport scaling algorithm a contents size from the FrameView
+        that takes overflow on the viewport renderer into account. This prevents unexpected
+        viewports scaling on pages that have content that overflows their expressed contents size,
+        but apply overflow to the <body>.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::mainFrameDidLayout): Use contentsSizeRespectingOverflow(),
+        rather than raw contentsSize(), to determine scaling.
+
 2015-07-13  Dan Bernstein  <mitz@apple.com>
 
         Fixed the build.
