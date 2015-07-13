@@ -77,7 +77,7 @@ public:
     void load(const String& url, MediaSourcePrivateClient*) override;
 #endif
 #if ENABLE(MEDIA_STREAM)
-    void load(MediaStreamPrivate*) override;
+    void load(MediaStreamPrivate&) override;
 #endif
     void commitLoad();
     void cancelLoad() override;

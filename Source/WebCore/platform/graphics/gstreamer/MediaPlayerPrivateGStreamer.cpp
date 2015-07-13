@@ -320,7 +320,7 @@ void MediaPlayerPrivateGStreamer::load(const String& url, MediaSourcePrivateClie
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-void MediaPlayerPrivateGStreamer::load(MediaStreamPrivate*)
+void MediaPlayerPrivateGStreamer::load(MediaStreamPrivate&)
 {
     notImplemented();
 }

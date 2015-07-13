@@ -270,7 +270,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::load(const String& url, MediaSourcePr
 }
 
 #if ENABLE(MEDIA_STREAM)
-void MediaPlayerPrivateMediaSourceAVFObjC::load(MediaStreamPrivate*)
+void MediaPlayerPrivateMediaSourceAVFObjC::load(MediaStreamPrivate&)
 {
     setNetworkState(MediaPlayer::FormatError);
 }
