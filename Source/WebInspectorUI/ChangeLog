@@ -1,3 +1,13 @@
+2015-07-13  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Use -apple-system-monospaced-numbers for line numbers
+        https://bugs.webkit.org/show_bug.cgi?id=146898
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CodeMirrorOverrides.css:
+        (.CodeMirror .CodeMirror-linenumber): Decrease font-size by 1px to make 4 digit numbers fit.
+
 2015-07-12  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Add -apple-system-monospaced-numbers to font and font-family autocomplete
