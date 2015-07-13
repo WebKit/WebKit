@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,6 +60,9 @@ struct OSREntryData {
     BitVector m_localsForcedMachineInt;
     Vector<OSREntryReshuffling> m_reshufflings;
     BitVector m_machineStackUsed;
+    
+    void dumpInContext(PrintStream&, DumpContext*) const;
+    void dump(PrintStream&) const;
 };
 
 inline unsigned getOSREntryDataBytecodeIndex(OSREntryData* osrEntryData)

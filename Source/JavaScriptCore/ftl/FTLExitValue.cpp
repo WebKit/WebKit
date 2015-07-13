@@ -30,6 +30,7 @@
 
 #include "FTLExitTimeObjectMaterialization.h"
 #include "JSCInlines.h"
+#include "TrackedReferences.h"
 
 namespace JSC { namespace FTL {
 
@@ -124,6 +125,12 @@ void ExitValue::dumpInContext(PrintStream& out, DumpContext* context) const
 void ExitValue::dump(PrintStream& out) const
 {
     dumpInContext(out, 0);
+}
+
+void ExitValue::validateReferences(const TrackedReferences& trackedReferences) const
+{
+    if (isConstant())
+        trackedReferences.check(constant());
 }
 
 } } // namespace JSC::FTL

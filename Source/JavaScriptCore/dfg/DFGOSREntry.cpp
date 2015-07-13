@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013, 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,8 +35,60 @@
 #include "JIT.h"
 #include "JSStackInlines.h"
 #include "JSCInlines.h"
+#include <wtf/CommaPrinter.h>
 
 namespace JSC { namespace DFG {
+
+void OSREntryData::dumpInContext(PrintStream& out, DumpContext* context) const
+{
+    out.print("bc#", m_bytecodeIndex, ", machine code offset = ", m_machineCodeOffset);
+    out.print(", stack rules = [");
+    
+    auto printOperand = [&] (VirtualRegister reg) {
+        out.print(inContext(m_expectedValues.operand(reg), context), " (");
+        VirtualRegister toReg;
+        bool overwritten = false;
+        for (OSREntryReshuffling reshuffling : m_reshufflings) {
+            if (reg == VirtualRegister(reshuffling.fromOffset)) {
+                toReg = VirtualRegister(reshuffling.toOffset);
+                break;
+            }
+            if (reg == VirtualRegister(reshuffling.toOffset))
+                overwritten = true;
+        }
+        if (!overwritten && !toReg.isValid())
+            toReg = reg;
+        if (toReg.isValid()) {
+            if (toReg.isLocal() && !m_machineStackUsed.get(toReg.toLocal()))
+                out.print("ignored");
+            else
+                out.print("maps to ", toReg);
+        } else
+            out.print("overwritten");
+        if (reg.isLocal() && m_localsForcedDouble.get(reg.toLocal()))
+            out.print(", forced double");
+        if (reg.isLocal() && m_localsForcedMachineInt.get(reg.toLocal()))
+            out.print(", forced machine int");
+        out.print(")");
+    };
+    
+    CommaPrinter comma;
+    for (size_t argumentIndex = m_expectedValues.numberOfArguments(); argumentIndex--;) {
+        out.print(comma, "arg", argumentIndex, ":");
+        printOperand(virtualRegisterForArgument(argumentIndex));
+    }
+    for (size_t localIndex = 0; localIndex < m_expectedValues.numberOfLocals(); ++localIndex) {
+        out.print(comma, "loc", localIndex, ":");
+        printOperand(virtualRegisterForLocal(localIndex));
+    }
+    
+    out.print("], machine stack used = ", m_machineStackUsed);
+}
+
+void OSREntryData::dump(PrintStream& out) const
+{
+    dumpInContext(out, nullptr);
+}
 
 void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIndex)
 {

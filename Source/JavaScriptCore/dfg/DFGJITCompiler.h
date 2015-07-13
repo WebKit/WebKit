@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -265,53 +265,7 @@ public:
 #endif
     }
 
-    void noticeOSREntry(BasicBlock& basicBlock, JITCompiler::Label blockHead, LinkBuffer& linkBuffer)
-    {
-        // OSR entry is not allowed into blocks deemed unreachable by control flow analysis.
-        if (!basicBlock.intersectionOfCFAHasVisited)
-            return;
-        
-        OSREntryData* entry = m_jitCode->appendOSREntryData(basicBlock.bytecodeBegin, linkBuffer.offsetOf(blockHead));
-        
-        entry->m_expectedValues = basicBlock.intersectionOfPastValuesAtHead;
-        
-        // Fix the expected values: in our protocol, a dead variable will have an expected
-        // value of (None, []). But the old JIT may stash some values there. So we really
-        // need (Top, TOP).
-        for (size_t argument = 0; argument < basicBlock.variablesAtHead.numberOfArguments(); ++argument) {
-            Node* node = basicBlock.variablesAtHead.argument(argument);
-            if (!node || !node->shouldGenerate())
-                entry->m_expectedValues.argument(argument).makeHeapTop();
-        }
-        for (size_t local = 0; local < basicBlock.variablesAtHead.numberOfLocals(); ++local) {
-            Node* node = basicBlock.variablesAtHead.local(local);
-            if (!node || !node->shouldGenerate())
-                entry->m_expectedValues.local(local).makeHeapTop();
-            else {
-                VariableAccessData* variable = node->variableAccessData();
-                entry->m_machineStackUsed.set(variable->machineLocal().toLocal());
-                
-                switch (variable->flushFormat()) {
-                case FlushedDouble:
-                    entry->m_localsForcedDouble.set(local);
-                    break;
-                case FlushedInt52:
-                    entry->m_localsForcedMachineInt.set(local);
-                    break;
-                default:
-                    break;
-                }
-                
-                if (variable->local() != variable->machineLocal()) {
-                    entry->m_reshufflings.append(
-                        OSREntryReshuffling(
-                            variable->local().offset(), variable->machineLocal().offset()));
-                }
-            }
-        }
-        
-        entry->m_reshufflings.shrinkToFit();
-    }
+    void noticeOSREntry(BasicBlock&, JITCompiler::Label blockHead, LinkBuffer&);
     
     RefPtr<JITCode> jitCode() { return m_jitCode; }
     

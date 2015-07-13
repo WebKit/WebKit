@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,12 +33,6 @@
 namespace JSC { namespace DFG {
 
 enum ValueStrength {
-    // The value is known to the DFG but no optimizations have been performed that require the
-    // value to be kept alive. All OSR entry values are fragile until we do some optimization that
-    // uses them, like actually constant folding a variable to that value. By convention we say
-    // that all non-cells are fragile.
-    FragileValue,
-    
     // The value has been used for optimization and it arose through inference. We don't want the
     // fact that we optimized the code to result in the GC keeping this value alive unnecessarily,
     // so we'd rather kill the code and recompile than keep the object alive longer.
@@ -52,18 +46,14 @@ enum ValueStrength {
 inline ValueStrength merge(ValueStrength a, ValueStrength b)
 {
     switch (a) {
-    case FragileValue:
-        return b;
     case WeakValue:
-        if (b == StrongValue)
-            return StrongValue;
-        return WeakValue;
+        return b;
     case StrongValue:
         return StrongValue;
     }
     RELEASE_ASSERT_NOT_REACHED();
 
-    return FragileValue;
+    return WeakValue;
 }
 
 } } // namespace JSC::DFG

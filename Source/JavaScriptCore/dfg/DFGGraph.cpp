@@ -62,7 +62,6 @@ Graph::Graph(VM& vm, Plan& plan, LongLivedState& longLivedState)
     , m_codeBlock(m_plan.codeBlock.get())
     , m_profiledBlock(m_codeBlock->alternative())
     , m_allocator(longLivedState.m_allocator)
-    , m_mustHandleValues(OperandsLike, plan.mustHandleValues)
     , m_nextMachineLocal(0)
     , m_fixpointState(BeforeFixpoint)
     , m_structureRegistrationState(HaveNotStartedRegistering)
@@ -72,9 +71,6 @@ Graph::Graph(VM& vm, Plan& plan, LongLivedState& longLivedState)
 {
     ASSERT(m_profiledBlock);
     
-    for (unsigned i = m_mustHandleValues.size(); i--;)
-        m_mustHandleValues[i] = freezeFragile(plan.mustHandleValues[i]);
-
     m_hasDebuggerEnabled = m_profiledBlock->globalObject()->hasDebugger()
         || Options::forceDebuggerBytecodeGeneration();
 }
@@ -527,6 +523,12 @@ void Graph::dump(PrintStream& out, DumpContext* context)
             break;
         } }
         out.print("\n");
+    }
+    
+    out.print("GC Values:\n");
+    for (FrozenValue* value : m_frozenValues) {
+        if (value->pointsToHeap())
+            out.print("    ", inContext(*value, &myContext), "\n");
     }
     
     if (!myContext.isEmpty()) {
@@ -1106,13 +1108,13 @@ void Graph::registerFrozenValues()
     m_codeBlock->constants().resize(0);
     m_codeBlock->constantsSourceCodeRepresentation().resize(0);
     for (FrozenValue* value : m_frozenValues) {
-        if (value->structure())
-            ASSERT(m_plan.weakReferences.contains(value->structure()));
+        if (!value->pointsToHeap())
+            continue;
+        
+        ASSERT(value->structure());
+        ASSERT(m_plan.weakReferences.contains(value->structure()));
         
         switch (value->strength()) {
-        case FragileValue: {
-            break;
-        }
         case WeakValue: {
             m_plan.weakReferences.addLazily(value->value().asCell());
             break;
@@ -1202,7 +1204,7 @@ void Graph::visitChildren(SlotVisitor& visitor)
     }
 }
 
-FrozenValue* Graph::freezeFragile(JSValue value)
+FrozenValue* Graph::freeze(JSValue value)
 {
     if (UNLIKELY(!value))
         return FrozenValue::emptySingleton();
@@ -1221,16 +1223,9 @@ FrozenValue* Graph::freezeFragile(JSValue value)
     return result.iterator->value = m_frozenValues.add(frozenValue);
 }
 
-FrozenValue* Graph::freeze(JSValue value)
-{
-    FrozenValue* result = freezeFragile(value);
-    result->strengthenTo(WeakValue);
-    return result;
-}
-
 FrozenValue* Graph::freezeStrong(JSValue value)
 {
-    FrozenValue* result = freezeFragile(value);
+    FrozenValue* result = freeze(value);
     result->strengthenTo(StrongValue);
     return result;
 }

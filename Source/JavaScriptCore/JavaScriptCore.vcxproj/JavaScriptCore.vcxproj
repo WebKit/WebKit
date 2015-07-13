@@ -351,6 +351,7 @@
     <ClCompile Include="..\bytecode\StructureStubClearingWatchpoint.cpp" />
     <ClCompile Include="..\bytecode\StructureStubInfo.cpp" />
     <ClCompile Include="..\bytecode\ToThisStatus.cpp" />
+    <ClCompile Include="..\bytecode\TrackedReferences.cpp" />
     <ClCompile Include="..\bytecode\UnlinkedCodeBlock.cpp" />
     <ClCompile Include="..\bytecode\UnlinkedInstructionStream.cpp" />
     <ClCompile Include="..\bytecode\ValueRecovery.cpp" />
@@ -431,6 +432,7 @@
     <ClCompile Include="..\dfg\DFGLongLivedState.cpp" />
     <ClCompile Include="..\dfg\DFGLoopPreHeaderCreationPhase.cpp" />
     <ClCompile Include="..\dfg\DFGMayExit.cpp" />
+    <ClCompile Include="..\dfg\DFGMinifiedGraph.cpp" />
     <ClCompile Include="..\dfg\DFGMinifiedNode.cpp" />
     <ClCompile Include="..\dfg\DFGMovHintRemovalPhase.cpp" />
     <ClCompile Include="..\dfg\DFGNaiveDominators.cpp" />
@@ -1012,6 +1014,7 @@
     <ClInclude Include="..\bytecode\StructureStubClearingWatchpoint.h" />
     <ClInclude Include="..\bytecode\StructureStubInfo.h" />
     <ClInclude Include="..\bytecode\ToThisStatus.h" />
+    <ClInclude Include="..\bytecode\TrackedReferences.h" />
     <ClInclude Include="..\bytecode\TypeLocation.h" />
     <ClInclude Include="..\bytecode\UnlinkedCodeBlock.h" />
     <ClInclude Include="..\bytecode\UnlinkedInstructionStream.h" />

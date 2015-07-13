@@ -33,7 +33,11 @@
 #include "FTLExitValue.h"
 #include <wtf/Noncopyable.h>
 
-namespace JSC { namespace FTL {
+namespace JSC {
+
+class TrackedReferences;
+
+namespace FTL {
 
 class ExitTimeObjectMaterialization {
     WTF_MAKE_NONCOPYABLE(ExitTimeObjectMaterialization)
@@ -52,6 +56,8 @@ public:
     void accountForLocalsOffset(int offset);
     
     void dump(PrintStream& out) const;
+    
+    void validateReferences(const TrackedReferences&) const;
     
 private:
     DFG::NodeType m_type;

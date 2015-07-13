@@ -1631,6 +1631,15 @@ void SpeculativeJIT::linkOSREntries(LinkBuffer& linkBuffer)
         m_jit.noticeOSREntry(*block, m_osrEntryHeads[osrEntryIndex++], linkBuffer);
     }
     ASSERT(osrEntryIndex == m_osrEntryHeads.size());
+    
+    if (verboseCompilationEnabled()) {
+        DumpContext dumpContext;
+        dataLog("OSR Entries:\n");
+        for (OSREntryData& entryData : m_jit.jitCode()->osrEntry)
+            dataLog("    ", inContext(entryData, &dumpContext), "\n");
+        if (!dumpContext.isEmpty())
+            dumpContext.dump(WTF::dataFile());
+    }
 }
 
 void SpeculativeJIT::compileDoublePutByVal(Node* node, SpeculateCellOperand& base, SpeculateStrictInt32Operand& property)

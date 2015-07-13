@@ -31,7 +31,11 @@
 #include "DFGPromotedHeapLocation.h"
 #include "FTLExitValue.h"
 
-namespace JSC { namespace FTL {
+namespace JSC {
+
+class TrackedReferences;
+
+namespace FTL {
 
 class ExitPropertyValue {
 public:
@@ -54,6 +58,8 @@ public:
     ExitPropertyValue withLocalsOffset(int offset) const;
     
     void dump(PrintStream& out) const;
+    
+    void validateReferences(const TrackedReferences&) const;
 
 private:
     DFG::PromotedLocationDescriptor m_location;

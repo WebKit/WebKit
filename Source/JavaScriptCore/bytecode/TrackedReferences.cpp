@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,28 +24,58 @@
  */
 
 #include "config.h"
-#include "DFGValueStrength.h"
+#include "TrackedReferences.h"
 
-#if ENABLE(DFG_JIT)
+#include "JSCInlines.h"
+#include <wtf/CommaPrinter.h>
 
-namespace WTF {
+namespace JSC {
 
-using namespace JSC::DFG;
-
-void printInternal(PrintStream& out, ValueStrength strength)
+TrackedReferences::TrackedReferences()
 {
-    switch (strength) {
-    case WeakValue:
-        out.print("Weak");
+}
+
+TrackedReferences::~TrackedReferences()
+{
+}
+
+void TrackedReferences::add(JSCell* cell)
+{
+    if (cell)
+        m_references.add(cell);
+}
+
+void TrackedReferences::add(JSValue value)
+{
+    if (value.isCell())
+        add(value.asCell());
+}
+
+void TrackedReferences::check(JSCell* cell) const
+{
+    if (!cell)
         return;
-    case StrongValue:
-        out.print("Strong");
+    
+    if (m_references.contains(cell))
         return;
-    }
+    
+    dataLog("Found untracked reference: ", RawPointer(cell), "\n");
+    dataLog("All tracked references: ", *this, "\n");
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-} // namespace WTF
+void TrackedReferences::check(JSValue value) const
+{
+    if (value.isCell())
+        check(value.asCell());
+}
 
-#endif // ENABLE(DFG_JIT)
+void TrackedReferences::dump(PrintStream& out) const
+{
+    CommaPrinter comma;
+    for (JSCell* cell : m_references)
+        out.print(comma, RawPointer(cell));
+}
+
+} // namespace JSC
 

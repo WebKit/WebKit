@@ -27,12 +27,14 @@
 #define StructureSet_h
 
 #include "ArrayProfile.h"
+#include "DumpContext.h"
 #include "SpeculatedType.h"
 #include "Structure.h"
-#include "DumpContext.h"
 #include <wtf/TinyPtrSet.h>
 
 namespace JSC {
+
+class TrackedReferences;
 
 namespace DFG {
 class StructureAbstractValue;
@@ -77,6 +79,8 @@ public:
     
     void dumpInContext(PrintStream&, DumpContext*) const;
     void dump(PrintStream&) const;
+    
+    void validateReferences(const TrackedReferences&) const;
 };
 
 } // namespace JSC
