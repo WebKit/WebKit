@@ -159,7 +159,7 @@ function PerfTestRuns(metric, platform) {
         'FrameRate': 'fps',
         'Runs': '/s',
         'Time': 'ms',
-        'Duration', 'ms',
+        'Duration': 'ms',
         'Malloc': 'B',
         'Heap': 'B',
         'Allocations': 'B',
