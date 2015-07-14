@@ -1,3 +1,26 @@
+2015-07-14  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: TimelineRuler minimum selection time range should be configurable
+        https://bugs.webkit.org/show_bug.cgi?id=146944
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/RenderingFrameTimelineOverview.js:
+        Set minimum selection to 1 frame.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WebInspector.TimelineOverview.prototype.set selectionDuration):
+        Use ruler's minimum duration.
+
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler):
+        (WebInspector.TimelineRuler.prototype.get minimumSelectionDuration):
+        (WebInspector.TimelineRuler.prototype.set minimumSelectionDuration):
+        (WebInspector.TimelineRuler.prototype._handleMouseUp):
+        (WebInspector.TimelineRuler.prototype._handleSelectionHandleMouseMove):
+        Added property for setting minimum selection duration. Default minimum duration is 0.01, which is
+        equal to the old hard-coded minimum selection time range.
+
 2015-07-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Uncaught exception in inspector for some ConsoleMessages

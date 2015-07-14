@@ -237,7 +237,7 @@ WebInspector.TimelineOverview.prototype = {
 
     set selectionDuration(x)
     {
-        x = Math.max(WebInspector.TimelineRuler.MinimumSelectionTimeRange, x);
+        x = Math.max(this._timelineRuler.minimumSelectionDuration, x);
 
         this._timelineRuler.selectionEndTime = this._timelineRuler.selectionStartTime + x;
     },
