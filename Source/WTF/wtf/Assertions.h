@@ -42,6 +42,7 @@
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <wtf/ExportMacros.h>
 
 #ifdef NDEBUG
 /* Disable ASSERT* macros in release mode. */

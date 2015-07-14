@@ -1,3 +1,14 @@
+2015-07-14  Anders Carlsson  <andersca@apple.com>
+
+        Assertions.h should include ExportMacros.h
+        https://bugs.webkit.org/show_bug.cgi?id=146948
+
+        Reviewed by Tim Horton.
+
+        Remove now unneeded WTF_EXPORT_PRIVATE define.
+
+        * DumpRenderTree/cg/ImageDiffCG.cpp:
+
 2015-07-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] [Wayland] Build by default the X11 and Wayland targets.

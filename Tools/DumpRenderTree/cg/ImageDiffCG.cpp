@@ -26,7 +26,6 @@
 
 // FIXME: We need to be able to include these defines from a config.h somewhere.
 #define JS_EXPORT_PRIVATE
-#define WTF_EXPORT_PRIVATE
 
 #include <stdio.h>
 #include <wtf/Platform.h>

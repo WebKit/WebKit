@@ -1,3 +1,14 @@
+2015-07-14  Anders Carlsson  <andersca@apple.com>
+
+        Assertions.h should include ExportMacros.h
+        https://bugs.webkit.org/show_bug.cgi?id=146948
+
+        Reviewed by Tim Horton.
+
+        Remove now unneeded WTF_EXPORT_PRIVATE define.
+
+        * API/JSBase.h:
+
 2015-07-14  Matthew Mirman  <mmirman@apple.com>
 
         Repatch. Makes compileArithSub in the DFG ensure that the constant is an int32.
