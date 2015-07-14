@@ -1,3 +1,18 @@
+2015-07-14  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r186809.
+        https://bugs.webkit.org/show_bug.cgi?id=146943
+
+        Caused about 190 layout test failures. (Requested by mlam_ on
+        #webkit).
+
+        Reverted changeset:
+
+        "REGRESSION (r177876): store.apple.com profile and cart icons
+        are missing"
+        https://bugs.webkit.org/show_bug.cgi?id=146894
+        http://trac.webkit.org/changeset/186809
+
 2015-07-14  David Kilzer  <ddkilzer@apple.com>
 
         http/tests/misc/large-js-program.php crashes in Release, times out in Debug, on Windows

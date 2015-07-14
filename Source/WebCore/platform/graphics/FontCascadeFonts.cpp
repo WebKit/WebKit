@@ -295,7 +295,8 @@ GlyphData FontCascadeFonts::glyphDataForVariant(UChar32 c, const FontDescription
         auto& fontRanges = realizeFallbackRangesAt(description, fallbackIndex++);
         if (fontRanges.isNull())
             break;
-        GlyphData data = fontRanges.glyphDataForCharacter(c);
+        auto* font = fontRanges.fontForCharacter(c);
+        GlyphData data = font ? font->glyphDataForCharacter(c) : GlyphData();
         if (data.font) {
             // The variantFont function should not normally return 0.
             // But if it does, we will just render the capital letter big.
@@ -312,11 +313,17 @@ GlyphData FontCascadeFonts::glyphDataForVariant(UChar32 c, const FontDescription
 
 GlyphData FontCascadeFonts::glyphDataForNormalVariant(UChar32 c, const FontDescription& description)
 {
-    for (unsigned fallbackIndex = 0; ; ++fallbackIndex) {
+    const unsigned pageNumber = c / GlyphPage::size;
+
+    for (unsigned fallbackIndex = 0; true; ++fallbackIndex) {
         auto& fontRanges = realizeFallbackRangesAt(description, fallbackIndex);
         if (fontRanges.isNull())
             break;
-        GlyphData data = fontRanges.glyphDataForCharacter(c);
+        auto* font = fontRanges.fontForCharacter(c);
+        auto* page = font ? font->glyphPage(pageNumber) : nullptr;
+        if (!page)
+            continue;
+        GlyphData data = page->glyphDataForCharacter(c);
         if (data.font) {
             if (data.font->platformData().orientation() == Vertical && !data.font->isTextOrientationFallback()) {
                 if (!FontCascade::isCJKIdeographOrSymbol(c))
@@ -332,6 +339,7 @@ GlyphData FontCascadeFonts::glyphDataForNormalVariant(UChar32 c, const FontDescr
                     return glyphDataForCJKCharacterWithoutSyntheticItalic(c, data);
 #endif
             }
+
             return data;
         }
     }
