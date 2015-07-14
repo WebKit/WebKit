@@ -1252,7 +1252,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             m_client.unfocus(toAPI(page), m_client.base.clientInfo);
         }
 
-        virtual void runJavaScriptAlert(WebPageProxy* page, const String& message, WebFrameProxy* frame, std::function<void ()> completionHandler) override
+        virtual void runJavaScriptAlert(WebPageProxy* page, const String& message, WebFrameProxy* frame, const WebKit::SecurityOriginData& securityOriginData, std::function<void ()> completionHandler) override
         {
             if (!m_client.runJavaScriptAlert) {
                 completionHandler();
@@ -1263,7 +1263,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             completionHandler();
         }
 
-        virtual void runJavaScriptConfirm(WebPageProxy* page, const String& message, WebFrameProxy* frame, std::function<void (bool)> completionHandler) override
+        virtual void runJavaScriptConfirm(WebPageProxy* page, const String& message, WebFrameProxy* frame, const WebKit::SecurityOriginData& securityOriginData, std::function<void (bool)> completionHandler) override
         {
             if (!m_client.runJavaScriptConfirm) {
                 completionHandler(false);
@@ -1274,7 +1274,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             completionHandler(result);
         }
 
-        virtual void runJavaScriptPrompt(WebPageProxy* page, const String& message, const String& defaultValue, WebFrameProxy* frame, std::function<void (const String&)> completionHandler) override
+        virtual void runJavaScriptPrompt(WebPageProxy* page, const String& message, const String& defaultValue, WebFrameProxy* frame, const WebKit::SecurityOriginData& securityOriginData, std::function<void (const String&)> completionHandler) override
         {
             if (!m_client.runJavaScriptPrompt) {
                 completionHandler(String());

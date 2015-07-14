@@ -29,13 +29,20 @@
 #if WK_API_ENABLED
 
 #import "WebFrameProxy.h"
+#import "_WKSecurityOrigin.h"
 #import <wtf/RetainPtr.h>
 
 @implementation WKFrameInfo {
     RetainPtr<NSURLRequest> _request;
+    RetainPtr<_WKSecurityOrigin> _securityOrigin;
 }
 
 - (instancetype)initWithWebFrameProxy:(WebKit::WebFrameProxy&)webFrameProxy
+{
+    return [self initWithWebFrameProxy:webFrameProxy securityOrigin:nil];
+}
+
+- (instancetype)initWithWebFrameProxy:(WebKit::WebFrameProxy&)webFrameProxy securityOrigin:(_WKSecurityOrigin *)securityOrigin
 {
     if (!(self = [super init]))
         return nil;
@@ -44,6 +51,8 @@
 
     // FIXME: This should use the full request of the frame, not just the URL.
     _request = [NSURLRequest requestWithURL:[NSURL URLWithString:webFrameProxy.url()]];
+
+    _securityOrigin = securityOrigin;
 
     return self;
 }
@@ -56,6 +65,11 @@
 - (NSURLRequest *)request
 {
     return _request.get();
+}
+
+- (_WKSecurityOrigin *)securityOrigin
+{
+    return _securityOrigin.get();
 }
 
 - (id)copyWithZone:(NSZone *)zone

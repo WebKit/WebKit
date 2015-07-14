@@ -35,12 +35,21 @@ namespace IPC {
     class ArgumentEncoder;
 }
 
+namespace WebCore {
+class Frame;
+class SecurityOrigin;
+}
+
 namespace WebKit {
 
 typedef GenericCallback<API::Array*> ArrayCallback;
+class WebFrame;
 
 struct SecurityOriginData {
     static SecurityOriginData fromSecurityOrigin(const WebCore::SecurityOrigin*);
+    static SecurityOriginData fromSecurityOrigin(const WebCore::SecurityOrigin&);
+    static SecurityOriginData fromFrame(WebFrame*);
+    static SecurityOriginData fromFrame(WebCore::Frame*);
     PassRefPtr<WebCore::SecurityOrigin> securityOrigin() const;
 
     void encode(IPC::ArgumentEncoder&) const;

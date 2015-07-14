@@ -31,9 +31,12 @@ namespace WebKit {
 class WebFrameProxy;
 }
 
+@class _WKSecurityOrigin;
+
 @interface WKFrameInfo ()
 
 - (instancetype)initWithWebFrameProxy:(WebKit::WebFrameProxy&)webFrameProxy;
+- (instancetype)initWithWebFrameProxy:(WebKit::WebFrameProxy&)webFrameProxy securityOrigin:(_WKSecurityOrigin *)securityOrigin;
 
 @end
 

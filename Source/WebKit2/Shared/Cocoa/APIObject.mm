@@ -143,7 +143,7 @@ void* Object::newObject(size_t size, Type type)
     case Type::Session:
         wrapper = [_WKWebsiteDataStore alloc];
         break;
-            
+
     case Type::String:
         wrapper = NSAllocateObject([WKNSString class], size, nullptr);
         break;
