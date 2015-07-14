@@ -152,6 +152,9 @@ enum class PreviewElementType {
     CGPoint _lastInteractionLocation;
 
     WebKit::WKSelectionDrawingInfo _lastSelectionDrawingInfo;
+#if HAVE(LINK_PREVIEW)
+    id <UIViewControllerPreviewing> _previewing;
+#endif
 
     BOOL _isEditable;
     BOOL _showingTextStyleOptions;
