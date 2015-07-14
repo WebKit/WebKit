@@ -1,3 +1,14 @@
+2015-07-14  Anders Carlsson  <andersca@apple.com>
+
+        Release assert under StyleResolver::loadPendingImages() caused by MemoryPressureHandler
+        https://bugs.webkit.org/show_bug.cgi?id=146940
+        rdar://problem/21605505
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::processWillSuspendImminently):
+
 2015-07-14  Sam Weinig  <sam@webkit.org>
 
         WebKit needs to serialize numeric values in NSError userInfo
