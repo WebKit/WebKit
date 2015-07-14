@@ -75,7 +75,6 @@ void InitWebCoreSystemInterface(void)
         INIT(HTTPRequestEnablePipelining);
 #if !PLATFORM(IOS)
         INIT(MeasureMediaUIPart);
-        INIT(PopupMenu);
         INIT(QTIncludeOnlyModernMediaFileTypes);
         INIT(QTMovieDisableComponent);
         INIT(QTMovieGetType);
