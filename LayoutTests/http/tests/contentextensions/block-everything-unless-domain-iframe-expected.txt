@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 15: The page loaded successfully.
+CONSOLE MESSAGE: line 3: This page should load.
+
+
+--------
+Frame: 'iframe'
+--------
+This page should load.

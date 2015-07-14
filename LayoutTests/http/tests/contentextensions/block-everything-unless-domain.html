@@ -1,0 +1,31 @@
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.setCanOpenWindows(true);
+    testRunner.setCloseRemainingWindowsWhenComplete(true);
+}
+
+var maxEventLoopRuns = 50;
+function helperLoaded () {
+    if (!maxEventLoopRuns) {
+        console.log("blocking load failed");
+        testRunner.notifyDone();
+    } else if (helper.location == "about:blank") {
+        console.log("successfully blocked load from localhost");
+        testRunner.notifyDone();
+    } else {
+        console.log(helper.location);
+        setTimeout(helperLoaded, 1);
+        maxEventLoopRuns--;
+    }
+}
+
+var helper = window.open("resources/block-everything-unless-domain-helper.html");
+if (helper)
+    helper.addEventListener('load', helperLoaded);
+else {
+    console.log("opening window failed");
+    testRunner.notifyDone();
+}
+</script>

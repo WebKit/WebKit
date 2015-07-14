@@ -1,3 +1,27 @@
+2015-07-14  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Fix if-domain and unless-domain when loading main documents.
+        https://bugs.webkit.org/show_bug.cgi?id=146868
+
+        Reviewed by Benjamin Poulain.
+
+        * http/tests/contentextensions/block-everything-if-domain-expected.txt: Added.
+        * http/tests/contentextensions/block-everything-if-domain.html: Added.
+        * http/tests/contentextensions/block-everything-if-domain.html.json: Added.
+        * http/tests/contentextensions/block-everything-unless-domain-expected.txt: Added.
+        * http/tests/contentextensions/block-everything-unless-domain-iframe-expected.txt: Added.
+        * http/tests/contentextensions/block-everything-unless-domain-iframe.html: Added.
+        * http/tests/contentextensions/block-everything-unless-domain-iframe.html.json: Added.
+        * http/tests/contentextensions/block-everything-unless-domain-redirect-expected.txt: Added.
+        * http/tests/contentextensions/block-everything-unless-domain-redirect.php: Added.
+        * http/tests/contentextensions/block-everything-unless-domain-redirect.php.json: Added.
+        * http/tests/contentextensions/block-everything-unless-domain.html: Added.
+        * http/tests/contentextensions/block-everything-unless-domain.html.json: Added.
+        * http/tests/contentextensions/main-resource-redirect-blocked-expected.txt:
+        * http/tests/contentextensions/resources/block-everything-unless-domain-helper.html: Added.
+        * http/tests/contentextensions/resources/should-load.html: Added.
+        * http/tests/contentextensions/resources/should-not-load.html: Added.
+
 2015-07-05  Sam Weinig  <sam@webkit.org>
 
         DOM4: prepend, append, before, after & replace

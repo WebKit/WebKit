@@ -167,10 +167,14 @@ void ContentExtensionsBackend::processContentExtensionRulesForLoad(ResourceReque
     Document* currentDocument = nullptr;
     URL mainDocumentURL;
 
-    if (initiatingDocumentLoader.frame()) {
-        currentDocument = initiatingDocumentLoader.frame()->document();
+    if (Frame* frame = initiatingDocumentLoader.frame()) {
+        currentDocument = frame->document();
 
-        if (Document* mainDocument = initiatingDocumentLoader.frame()->mainFrame().document())
+        if (initiatingDocumentLoader.isLoadingMainResource()
+            && frame->isMainFrame()
+            && resourceType == ResourceType::Document)
+            mainDocumentURL = request.url();
+        else if (Document* mainDocument = frame->mainFrame().document())
             mainDocumentURL = mainDocument->url();
     }
 
