@@ -28,15 +28,15 @@
 #include "AXObjectCache.h"
 #include "Attr.h"
 #include "BeforeLoadEvent.h"
-#include "ChildListMutationScope.h"
-#include "Chrome.h"
-#include "ChromeClient.h"
 #include "CSSParser.h"
 #include "CSSRule.h"
 #include "CSSSelector.h"
 #include "CSSSelectorList.h"
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
+#include "ChildListMutationScope.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "ContainerNodeAlgorithms.h"
 #include "ContextMenuController.h"
 #include "DOMImplementation.h"
@@ -58,6 +58,7 @@
 #include "KeyboardEvent.h"
 #include "Logging.h"
 #include "MutationEvent.h"
+#include "NodeOrString.h"
 #include "NodeRenderStyle.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
@@ -472,6 +473,96 @@ bool Node::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec)
         return false;
     }
     return downcast<ContainerNode>(*this).appendChild(newChild, ec);
+}
+
+static HashSet<RefPtr<Node>> nodeSetPreTransformedFromNodeOrStringVector(const Vector<NodeOrString>& nodeOrStringVector)
+{
+    HashSet<RefPtr<Node>> nodeSet;
+    for (auto& nodeOrString : nodeOrStringVector) {
+        switch (nodeOrString.type()) {
+        case NodeOrString::Type::String:
+            break;
+        case NodeOrString::Type::Node:
+            nodeSet.add(&nodeOrString.node());
+            break;
+        }
+    }
+
+    return nodeSet;
+}
+
+static RefPtr<Node> firstPrecedingSiblingNotInNodeSet(Node& context, const HashSet<RefPtr<Node>>& nodeSet)
+{
+    for (auto* sibling = context.previousSibling(); sibling; sibling = sibling->previousSibling()) {
+        if (!nodeSet.contains(sibling))
+            return sibling;
+    }
+    return nullptr;
+}
+
+static RefPtr<Node> firstFollowingSiblingNotInNodeSet(Node& context, const HashSet<RefPtr<Node>>& nodeSet)
+{
+    for (auto* sibling = context.nextSibling(); sibling; sibling = sibling->nextSibling()) {
+        if (!nodeSet.contains(sibling))
+            return sibling;
+    }
+    return nullptr;
+}
+
+void Node::before(Vector<NodeOrString>&& nodeOrStringVector, ExceptionCode& ec)
+{
+    RefPtr<ContainerNode> parent = parentNode();
+    if (!parent)
+        return;
+
+    auto nodeSet = nodeSetPreTransformedFromNodeOrStringVector(nodeOrStringVector);
+    auto viablePreviousSibling = firstPrecedingSiblingNotInNodeSet(*this, nodeSet);
+
+    auto node = convertNodesOrStringsIntoNode(*this, WTF::move(nodeOrStringVector), ec);
+    if (ec || !node)
+        return;
+
+    if (viablePreviousSibling)
+        viablePreviousSibling = viablePreviousSibling->nextSibling();
+    else
+        viablePreviousSibling = parent->firstChild();
+
+    parent->insertBefore(node.release(), viablePreviousSibling.get(), ec);
+}
+
+void Node::after(Vector<NodeOrString>&& nodeOrStringVector, ExceptionCode& ec)
+{
+    RefPtr<ContainerNode> parent = parentNode();
+    if (!parent)
+        return;
+
+    auto nodeSet = nodeSetPreTransformedFromNodeOrStringVector(nodeOrStringVector);
+    auto viableNextSibling = firstFollowingSiblingNotInNodeSet(*this, nodeSet);
+
+    auto node = convertNodesOrStringsIntoNode(*this, WTF::move(nodeOrStringVector), ec);
+    if (ec || !node)
+        return;
+
+    parent->insertBefore(node.release(), viableNextSibling.get(), ec);
+}
+
+void Node::replaceWith(Vector<NodeOrString>&& nodeOrStringVector, ExceptionCode& ec)
+{
+    RefPtr<ContainerNode> parent = parentNode();
+    if (!parent)
+        return;
+
+    auto nodeSet = nodeSetPreTransformedFromNodeOrStringVector(nodeOrStringVector);
+    auto viableNextSibling = firstFollowingSiblingNotInNodeSet(*this, nodeSet);
+
+    auto node = convertNodesOrStringsIntoNode(*this, WTF::move(nodeOrStringVector), ec);
+    if (ec || !node)
+        return;
+
+    if (parentNode() == parent)
+        parent->replaceChild(node.release(), this, ec);
+    else
+        parent->insertBefore(node.release(), viableNextSibling.get(), ec);
 }
 
 void Node::remove(ExceptionCode& ec)

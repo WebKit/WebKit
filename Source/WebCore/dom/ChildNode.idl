@@ -18,16 +18,14 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// DOM 4
+// https://dom.spec.whatwg.org/#childnode
 [
     NoInterfaceObject,
 ] interface ChildNode {
-    // readonly attribute Element? previousElementSibling;
-    // readonly attribute Element? nextElementSibling;
-
-    // void before((Node or DOMString)... nodes);
-    // void after((Node or DOMString)... nodes);
-    // void replace((Node or DOMString)... nodes);
-    [RaisesException] void remove();
+#if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
+    [Unscopeable, RaisesException, Custom] void before((Node or DOMString)... nodes);
+    [Unscopeable, RaisesException, Custom] void after((Node or DOMString)... nodes);
+    [Unscopeable, RaisesException, Custom] void replaceWith((Node or DOMString)... nodes);
+#endif
+    [Unscopeable, RaisesException] void remove();
 };
-

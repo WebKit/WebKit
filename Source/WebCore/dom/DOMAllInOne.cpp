@@ -111,6 +111,7 @@
 #include "NodeFilter.cpp"
 #include "NodeFilterCondition.cpp"
 #include "NodeIterator.cpp"
+#include "NodeOrString.cpp"
 #include "NodeRareData.cpp"
 #include "NodeRenderingTraversal.cpp"
 #include "NodeTraversal.cpp"

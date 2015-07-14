@@ -42,6 +42,7 @@
 #include "LabelsNodeList.h"
 #include "MutationEvent.h"
 #include "NameNodeList.h"
+#include "NodeOrString.h"
 #include "NodeRareData.h"
 #include "NodeRenderStyle.h"
 #include "RadioNodeList.h"
@@ -918,6 +919,24 @@ unsigned ContainerNode::childElementCount() const
 {
     auto children = childrenOfType<Element>(*this);
     return std::distance(children.begin(), children.end());
+}
+
+void ContainerNode::append(Vector<NodeOrString>&& nodeOrStringVector, ExceptionCode& ec)
+{
+    RefPtr<Node> node = convertNodesOrStringsIntoNode(*this, WTF::move(nodeOrStringVector), ec);
+    if (ec || !node)
+        return;
+
+    appendChild(node.release(), ec);
+}
+
+void ContainerNode::prepend(Vector<NodeOrString>&& nodeOrStringVector, ExceptionCode& ec)
+{
+    RefPtr<Node> node = convertNodesOrStringsIntoNode(*this, WTF::move(nodeOrStringVector), ec);
+    if (ec || !node)
+        return;
+
+    insertBefore(node.release(), firstChild(), ec);
 }
 
 Ref<HTMLCollection> ContainerNode::ensureCachedHTMLCollection(CollectionType type)

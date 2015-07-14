@@ -58,10 +58,11 @@ class IntRect;
 class KeyboardEvent;
 class MathMLQualifiedName;
 class NSResolver;
-class NamedNodeMap;
 class NameNodeList;
+class NamedNodeMap;
 class NodeList;
 class NodeListsNodeData;
+class NodeOrString;
 class NodeRareData;
 class QualifiedName;
 class RadioNodeList;
@@ -193,7 +194,6 @@ public:
     WEBCORE_EXPORT bool removeChild(Node* child, ExceptionCode&);
     WEBCORE_EXPORT bool appendChild(PassRefPtr<Node> newChild, ExceptionCode&);
 
-    WEBCORE_EXPORT void remove(ExceptionCode&);
     bool hasChildNodes() const { return firstChild(); }
 
     enum class CloningOperation {
@@ -226,6 +226,12 @@ public:
     // From the NonDocumentTypeChildNode - https://dom.spec.whatwg.org/#nondocumenttypechildnode
     Element* previousElementSibling() const;
     Element* nextElementSibling() const;
+
+    // From the ChildNode - https://dom.spec.whatwg.org/#childnode
+    void before(Vector<NodeOrString>&&, ExceptionCode&);
+    void after(Vector<NodeOrString>&&, ExceptionCode&);
+    void replaceWith(Vector<NodeOrString>&&, ExceptionCode&);
+    WEBCORE_EXPORT void remove(ExceptionCode&);
 
     // Other methods (not part of DOM)
 

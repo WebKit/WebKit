@@ -1,3 +1,21 @@
+2015-07-05  Sam Weinig  <sam@webkit.org>
+
+        DOM4: prepend, append, before, after & replace
+        https://bugs.webkit.org/show_bug.cgi?id=74648
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/ChildNode-after-expected.txt: Added.
+        * fast/dom/ChildNode-after.html: Added.
+        * fast/dom/ChildNode-before-expected.txt: Added.
+        * fast/dom/ChildNode-before.html: Added.
+        * fast/dom/ChildNode-replaceWith-expected.txt: Added.
+        * fast/dom/ChildNode-replaceWith.html: Added.
+        * fast/dom/ParentNode-append-expected.txt: Added.
+        * fast/dom/ParentNode-append.html: Added.
+        * fast/dom/ParentNode-prepend-expected.txt: Added.
+        * fast/dom/ParentNode-prepend.html: Added.
+
 2015-07-13  Basile Clement  <basile_clement@apple.com>
 
         Object cycles should not prevent allocation elimination/sinking

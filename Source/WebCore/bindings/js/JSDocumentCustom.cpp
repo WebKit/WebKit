@@ -28,11 +28,12 @@
 #include "JSDOMWindowCustom.h"
 #include "JSHTMLDocument.h"
 #include "JSLocation.h"
+#include "JSNodeOrString.h"
 #include "JSSVGDocument.h"
 #include "Location.h"
 #include "NodeTraversal.h"
-#include "ScriptController.h"
 #include "SVGDocument.h"
+#include "ScriptController.h"
 #include "TouchList.h"
 #include <wtf/GetPtr.h>
 
@@ -115,6 +116,24 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Document* documen
     }
 
     return wrapper;
+}
+
+JSValue JSDocument::prepend(ExecState* state)
+{
+    ExceptionCode ec = 0;
+    impl().prepend(toNodeOrStringVector(*state), ec);
+    setDOMException(state, ec);
+
+    return jsUndefined();
+}
+
+JSValue JSDocument::append(ExecState* state)
+{
+    ExceptionCode ec = 0;
+    impl().append(toNodeOrStringVector(*state), ec);
+    setDOMException(state, ec);
+
+    return jsUndefined();
 }
 
 #if ENABLE(TOUCH_EVENTS)

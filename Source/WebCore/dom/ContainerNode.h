@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class HTMLCollection;
+class NodeOrString;
 class QualifiedName;
 class RenderElement;
 
@@ -152,6 +153,8 @@ public:
     Element* firstElementChild() const;
     Element* lastElementChild() const;
     unsigned childElementCount() const;
+    void append(Vector<NodeOrString>&&, ExceptionCode&);
+    void prepend(Vector<NodeOrString>&&, ExceptionCode&);
 
 protected:
     explicit ContainerNode(Document&, ConstructionType = CreateContainer);
