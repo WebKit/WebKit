@@ -28,6 +28,7 @@
 
 #if ENABLE(SECCOMP_FILTERS)
 
+#include "PluginSearchPath.h"
 #include "WebProcessCreationParameters.h"
 #include <libgen.h>
 #include <string.h>
@@ -145,6 +146,10 @@ void SyscallPolicy::addDefaultWebProcessPolicy(const WebProcessCreationParameter
     // Support for alternative install prefixes, e.g. /usr/local.
     addDirectoryPermission(ASCIILiteral(DATADIR), Read);
     addDirectoryPermission(ASCIILiteral(LIBDIR), Read);
+
+    // Plugin search path
+    for (String& path : pluginsDirectories())
+        addDirectoryPermission(path, Read);
 
     // SSL Certificates.
     addDirectoryPermission(ASCIILiteral("/etc/ssl/certs"), Read);

@@ -55,6 +55,8 @@ list(APPEND WebKit2_SOURCES
 
     Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp
 
+    Shared/Plugins/unix/PluginSearchPath.cpp
+
     Shared/cairo/ShareableBitmapCairo.cpp
 
     Shared/gtk/ArgumentCodersGtk.cpp
@@ -470,6 +472,7 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/Shared/API/c/gtk"
     "${WEBKIT2_DIR}/Shared/Network/CustomProtocols/soup"
     "${WEBKIT2_DIR}/Shared/Downloads/soup"
+    "${WEBKIT2_DIR}/Shared/Plugins/unix"
     "${WEBKIT2_DIR}/Shared/gtk"
     "${WEBKIT2_DIR}/Shared/soup"
     "${WEBKIT2_DIR}/Shared/unix"
