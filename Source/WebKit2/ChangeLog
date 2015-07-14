@@ -1,3 +1,17 @@
+2015-07-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Add a runtime check for X11 display in webkitWebViewBaseExitAcceleratedCompositingMode()
+        https://bugs.webkit.org/show_bug.cgi?id=146711
+
+        Reviewed by Carlos Garcia Campos.
+
+        webkitWebViewBaseExitAcceleratedCompositingMode() is already guarded with
+        X11 build guards, but it should also do a runtime check that the program
+        is running under an X11 display before proceeding.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseDidRelaunchWebProcess):
+
 2015-07-13  Matt Rajca  <mrajca@apple.com>
 
         Media Session: add plumbing for delivering start/end-of-interruption events

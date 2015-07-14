@@ -1369,6 +1369,9 @@ void webkitWebViewBaseExitAcceleratedCompositingMode(WebKitWebViewBase* webkitWe
 void webkitWebViewBaseDidRelaunchWebProcess(WebKitWebViewBase* webkitWebViewBase)
 {
 #if PLATFORM(X11)
+    if (PlatformDisplay::sharedDisplay().type() != PlatformDisplay::Type::X11)
+        return;
+
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
     DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(priv->pageProxy->drawingArea());
     ASSERT(drawingArea);
