@@ -592,19 +592,20 @@ static void paintButton(ControlPart part, ControlStates* controlStates, Graphics
     } else if ([previousDefaultButtonCell isEqual:buttonCell])
         [window setDefaultButtonCell:nil];
 
+    FloatRect drawFromImageBufferRect(focusThickness, focusThickness, inflatedRect.width(), inflatedRect.height());
     if (shouldUseImageBuffer) {
-        [buttonCell drawWithFrame:CGRectMake(focusThickness, focusThickness, inflatedRect.width(), inflatedRect.height()) inView:view];
+        [buttonCell drawWithFrame:NSRect(drawFromImageBufferRect) inView:view];
         if (!(states & ControlStates::FocusState))
             context->drawImageBuffer(imageBuffer.get(), ColorSpaceDeviceRGB, inflatedRect.location() - FloatSize(focusThickness, focusThickness));
     } else
-        [buttonCell drawWithFrame:CGRect(inflatedRect) inView:view];
+        [buttonCell drawWithFrame:NSRect(inflatedRect) inView:view];
     
     if (states & ControlStates::FocusState) {
         if (shouldUseImageBuffer) {
-            drawCellFocusRing(buttonCell, CGRectMake(focusThickness, focusThickness, inflatedRect.width(), inflatedRect.height()), view);
+            drawCellFocusRing(buttonCell, NSRect(drawFromImageBufferRect), view);
             context->drawImageBuffer(imageBuffer.get(), ColorSpaceDeviceRGB, inflatedRect.location() - FloatSize(focusThickness, focusThickness));
         } else
-            drawCellFocusRing(buttonCell, inflatedRect, view);
+            drawCellFocusRing(buttonCell, NSRect(inflatedRect), view);
     }
     
     controlStates->setNeedsRepaint(false);
