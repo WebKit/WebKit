@@ -82,16 +82,17 @@ static bool canUseForText(const CharacterType* text, unsigned length, const Font
     }
     return true;
 }
-
+/*
 static bool canUseForText(const RenderText& textRenderer, const Font& font)
 {
     if (textRenderer.is8Bit())
         return canUseForText(textRenderer.characters8(), textRenderer.textLength(), font);
     return canUseForText(textRenderer.characters16(), textRenderer.textLength(), font);
 }
-
-bool canUseFor(const RenderBlockFlow& flow)
+*/
+bool canUseFor(const RenderBlockFlow&)
 {
+    return false; /*
     if (!flow.frame().settings().simpleLineLayoutEnabled())
         return false;
     if (!flow.firstChild())
@@ -211,6 +212,7 @@ bool canUseFor(const RenderBlockFlow& flow)
             return false;
     }
     return true;
+    */
 }
 
 static float computeLineLeft(ETextAlign textAlign, float availableWidth, float committedWidth, float logicalLeftOffset)
