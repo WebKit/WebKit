@@ -489,29 +489,11 @@ void InbandTextTrackPrivateAVF::processNativeSamples(CFArrayRef nativeSamples, c
     LOG(Media, "InbandTextTrackPrivateAVF::processNativeSamples - %li sample buffers at time %.2f\n", count, presentationTime.toDouble());
 
     for (CFIndex i = 0; i < count; i++) {
-
-        CMSampleBufferRef sampleBuffer = (CMSampleBufferRef)CFArrayGetValueAtIndex(nativeSamples, i);
-        if (!sampleBuffer)
+        RefPtr<ArrayBuffer> buffer;
+        MediaTime duration;
+        CMFormatDescriptionRef formatDescription;
+        if (!readNativeSampleBuffer(nativeSamples, i, buffer, duration, formatDescription))
             continue;
-
-        CMSampleTimingInfo timingInfo;
-        OSStatus status = CMSampleBufferGetSampleTimingInfo(sampleBuffer, i, &timingInfo);
-        if (status) {
-            LOG(Media, "InbandTextTrackPrivateAVF::processNativeSamples(%p) - CMSampleBufferGetSampleTimingInfo returned error %x for sample %li", this, static_cast<int>(status), i);
-            continue;
-        }
-
-        CMBlockBufferRef blockBuffer = CMSampleBufferGetDataBuffer(sampleBuffer);
-        size_t bufferLength = CMBlockBufferGetDataLength(blockBuffer);
-        if (bufferLength < ISOBox::boxHeaderSize()) {
-            LOG(Media, "InbandTextTrackPrivateAVF::processNativeSamples(%p) - ERROR: CMSampleBuffer size length unexpectedly small (%zu)!!", this, bufferLength);
-            continue;
-        }
-
-        m_sampleInputBuffer.resize(m_sampleInputBuffer.size() + bufferLength);
-        CMBlockBufferCopyDataBytes(blockBuffer, 0, bufferLength, m_sampleInputBuffer.data() + m_sampleInputBuffer.size() - bufferLength);
-
-        RefPtr<ArrayBuffer> buffer = ArrayBuffer::create(m_sampleInputBuffer.data(), m_sampleInputBuffer.size());
 
         String type = ISOBox::peekType(buffer.get());
         size_t boxLength = ISOBox::peekLength(buffer.get());
@@ -523,7 +505,7 @@ void InbandTextTrackPrivateAVF::processNativeSamples(CFArrayRef nativeSamples, c
         LOG(Media, "InbandTextTrackPrivateAVF::processNativeSamples(%p) - chunk type = '%s', size = %zu", this, type.utf8().data(), boxLength);
 
         if (type == ISOWebVTTCue::boxType()) {
-            ISOWebVTTCue cueData = ISOWebVTTCue(presentationTime, toMediaTime(timingInfo.duration), buffer.get());
+            ISOWebVTTCue cueData = ISOWebVTTCue(presentationTime, duration, buffer.get());
             LOG(Media, "    sample presentation time = %.2f, duration = %.2f", cueData.presentationTime().toDouble(), cueData.duration().toDouble());
             LOG(Media, "    id = \"%s\", settings = \"%s\", cue text = \"%s\"", cueData.id().utf8().data(), cueData.settings().utf8().data(), cueData.cueText().utf8().data());
             LOG(Media, "    sourceID = \"%s\", originalStartTime = \"%s\"", cueData.sourceID().utf8().data(), cueData.originalStartTime().utf8().data());
@@ -535,7 +517,6 @@ void InbandTextTrackPrivateAVF::processNativeSamples(CFArrayRef nativeSamples, c
             if (m_haveReportedVTTHeader)
                 break;
 
-            CMFormatDescriptionRef formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer);
             if (!formatDescription)
                 break;
 
@@ -568,6 +549,42 @@ void InbandTextTrackPrivateAVF::processNativeSamples(CFArrayRef nativeSamples, c
 
         m_sampleInputBuffer.remove(0, boxLength);
     }
+}
+
+bool InbandTextTrackPrivateAVF::readNativeSampleBuffer(CFArrayRef nativeSamples, CFIndex index, RefPtr<ArrayBuffer>& buffer, MediaTime& duration, CMFormatDescriptionRef& formatDescription)
+{
+#if OS(WINDOWS) && HAVE(AVCFPLAYERITEM_CALLBACK_VERSION_2)
+    return false;
+#else
+    CMSampleBufferRef const sampleBuffer = reinterpret_cast<CMSampleBufferRef>(const_cast<void*>(CFArrayGetValueAtIndex(nativeSamples, index)));
+    if (!sampleBuffer)
+        return false;
+
+    CMSampleTimingInfo timingInfo;
+    OSStatus status = CMSampleBufferGetSampleTimingInfo(sampleBuffer, index, &timingInfo);
+    if (status) {
+        LOG(Media, "InbandTextTrackPrivateAVF::readNativeSampleBuffer(%p) - CMSampleBufferGetSampleTimingInfo returned error %x for sample %li", this, static_cast<int>(status), index);
+        return false;
+    }
+
+    duration = toMediaTime(timingInfo.duration);
+
+    CMBlockBufferRef blockBuffer = CMSampleBufferGetDataBuffer(sampleBuffer);
+    size_t bufferLength = CMBlockBufferGetDataLength(blockBuffer);
+    if (bufferLength < ISOBox::boxHeaderSize()) {
+        LOG(Media, "InbandTextTrackPrivateAVF::readNativeSampleBuffer(%p) - ERROR: CMSampleBuffer size length unexpectedly small (%zu)!!", this, bufferLength);
+        return false;
+    }
+
+    m_sampleInputBuffer.resize(m_sampleInputBuffer.size() + bufferLength);
+    CMBlockBufferCopyDataBytes(blockBuffer, 0, bufferLength, m_sampleInputBuffer.data() + m_sampleInputBuffer.size() - bufferLength);
+
+    buffer = ArrayBuffer::create(m_sampleInputBuffer.data(), m_sampleInputBuffer.size());
+
+    formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer);
+
+    return true;
+#endif
 }
 
 } // namespace WebCore
