@@ -97,6 +97,7 @@ function installDependenciesWithApt {
         libxslt1-dev \
         libxt-dev \
         libxtst-dev \
+        libwayland-dev \
         ruby \
         xfonts-utils
 
@@ -230,7 +231,8 @@ function installDependenciesWithPacman {
         ninja \
         ruby \
         xorg-font-utils \
-        orc"
+        orc \
+        wayland"
 
     # These are dependencies necessary for running tests.
     # Note: apache-mod_bw is available in the AUR, but the main repos
@@ -330,6 +332,8 @@ function installFedoraDependencies {
         libsoup-devel \
 	libv4l-devel \
         libwebp-devel \
+        libwayland-client-devel \
+        libwayland-server-devel \
         libxslt-devel \
         mesa-libGL-devel \
         ninja-build \
