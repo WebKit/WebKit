@@ -1,3 +1,16 @@
+2015-07-14  Matthew Mirman  <mmirman@apple.com>
+
+        Unreviewed, rolling out r186805.
+
+        Made raytracer on octane 80% slower
+
+        Reverted changeset:
+
+        "Makes compileArithSub in the DFG ensure that the constant is
+        an int32."
+        https://bugs.webkit.org/show_bug.cgi?id=146910
+        http://trac.webkit.org/changeset/186805
+
 2015-07-13  Matthew Mirman  <mmirman@apple.com>
 
         Makes compileArithSub in the DFG ensure that the constant is an int32.
