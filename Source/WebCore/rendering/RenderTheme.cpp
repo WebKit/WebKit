@@ -277,9 +277,12 @@ bool RenderTheme::paint(const RenderObject& o, ControlStates* controlStates, con
 
     ControlPart part = o.style().appearance();
     IntRect integralSnappedRect = snappedIntRect(r);
-    FloatRect devicePixelSnappedRect = snapRectToDevicePixels(r, o.document().deviceScaleFactor());
+    float deviceScaleFactor = o.document().deviceScaleFactor();
+    FloatRect devicePixelSnappedRect = snapRectToDevicePixels(r, deviceScaleFactor);
 
 #if USE(NEW_THEME)
+    float pageScaleFactor = o.document().page() ? o.document().page()->pageScaleFactor() : 1.0f;
+    
     switch (part) {
     case CheckboxPart:
     case RadioPart:
@@ -289,7 +292,7 @@ bool RenderTheme::paint(const RenderObject& o, ControlStates* controlStates, con
     case ButtonPart:
     case InnerSpinButtonPart:
         updateControlStatesForRenderer(o, controlStates);
-        m_theme->paint(part, controlStates, const_cast<GraphicsContext*>(paintInfo.context), devicePixelSnappedRect, o.style().effectiveZoom(), &o.view().frameView());
+        m_theme->paint(part, controlStates, const_cast<GraphicsContext*>(paintInfo.context), devicePixelSnappedRect, o.style().effectiveZoom(), &o.view().frameView(), deviceScaleFactor, pageScaleFactor);
         return false;
     default:
         break;

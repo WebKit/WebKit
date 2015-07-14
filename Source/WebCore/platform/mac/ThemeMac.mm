@@ -29,6 +29,7 @@
 #import "AXObjectCache.h"
 #import "BlockExceptions.h"
 #import "GraphicsContext.h"
+#import "ImageBuffer.h"
 #import "LocalCurrentGraphicsContext.h"
 #import "ScrollView.h"
 #import "WebCoreSystemInterface.h"
@@ -530,7 +531,12 @@ static NSButtonCell *button(ControlPart part, const ControlStates* controlStates
     return cell;
 }
 
-static void paintButton(ControlPart part, ControlStates* controlStates, GraphicsContext* context, const FloatRect& zoomedRect, float zoomFactor, ScrollView* scrollView)
+static float buttonFocusRectOutlineWidth()
+{
+    return 3.0f;
+}
+    
+static void paintButton(ControlPart part, ControlStates* controlStates, GraphicsContext* context, const FloatRect& zoomedRect, float zoomFactor, ScrollView* scrollView, float deviceScaleFactor, float pageScaleFactor)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     
@@ -561,9 +567,19 @@ static void paintButton(ControlPart part, ControlStates* controlStates, Graphics
             context->scale(FloatSize(zoomFactor, zoomFactor));
             context->translate(-inflatedRect.x(), -inflatedRect.y());
         }
-    } 
-
-    LocalCurrentGraphicsContext localContext(context);
+    }
+    
+    bool shouldUseImageBuffer = pageScaleFactor != 1.0f || zoomFactor != 1.0f;
+    float focusThickness = buttonFocusRectOutlineWidth();
+    
+    std::unique_ptr<ImageBuffer> imageBuffer;
+    GraphicsContext* drawButtonContext = context;
+    if (shouldUseImageBuffer) {
+        imageBuffer = ImageBuffer::createCompatibleBuffer(inflatedRect.size() + 2 * FloatSize(focusThickness, focusThickness), deviceScaleFactor, ColorSpaceDeviceRGB, context, false);
+        drawButtonContext = imageBuffer->context();
+    }
+    LocalCurrentGraphicsContext localContext(drawButtonContext);
+    
     NSView *view = ThemeMac::ensuredView(scrollView, controlStates);
     NSWindow *window = [view window];
     NSButtonCell *previousDefaultButtonCell = [window defaultButtonCell];
@@ -576,12 +592,22 @@ static void paintButton(ControlPart part, ControlStates* controlStates, Graphics
     } else if ([previousDefaultButtonCell isEqual:buttonCell])
         [window setDefaultButtonCell:nil];
 
-    [buttonCell drawWithFrame:NSRect(inflatedRect) inView:view];
-    bool needsRepaint = false;
-    if (states & ControlStates::FocusState)
-        needsRepaint = drawCellFocusRing(buttonCell, inflatedRect, view);
-
-    controlStates->setNeedsRepaint(needsRepaint);
+    if (shouldUseImageBuffer) {
+        [buttonCell drawWithFrame:CGRectMake(focusThickness, focusThickness, inflatedRect.width(), inflatedRect.height()) inView:view];
+        if (!(states & ControlStates::FocusState))
+            context->drawImageBuffer(imageBuffer.get(), ColorSpaceDeviceRGB, inflatedRect.location() - FloatSize(focusThickness, focusThickness));
+    } else
+        [buttonCell drawWithFrame:CGRect(inflatedRect) inView:view];
+    
+    if (states & ControlStates::FocusState) {
+        if (shouldUseImageBuffer) {
+            drawCellFocusRing(buttonCell, CGRectMake(focusThickness, focusThickness, inflatedRect.width(), inflatedRect.height()), view);
+            context->drawImageBuffer(imageBuffer.get(), ColorSpaceDeviceRGB, inflatedRect.location() - FloatSize(focusThickness, focusThickness));
+        } else
+            drawCellFocusRing(buttonCell, inflatedRect, view);
+    }
+    
+    controlStates->setNeedsRepaint(false);
 
     [buttonCell setControlView:nil];
 
@@ -823,7 +849,7 @@ void ThemeMac::inflateControlPaintRect(ControlPart part, const ControlStates* st
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void ThemeMac::paint(ControlPart part, ControlStates* states, GraphicsContext* context, const FloatRect& zoomedRect, float zoomFactor, ScrollView* scrollView)
+void ThemeMac::paint(ControlPart part, ControlStates* states, GraphicsContext* context, const FloatRect& zoomedRect, float zoomFactor, ScrollView* scrollView, float deviceScaleFactor, float pageScaleFactor)
 {
     switch (part) {
         case CheckboxPart:
@@ -836,7 +862,7 @@ void ThemeMac::paint(ControlPart part, ControlStates* states, GraphicsContext* c
         case DefaultButtonPart:
         case ButtonPart:
         case SquareButtonPart:
-            paintButton(part, states, context, zoomedRect, zoomFactor, scrollView);
+            paintButton(part, states, context, zoomedRect, zoomFactor, scrollView, deviceScaleFactor, pageScaleFactor);
             break;
         case InnerSpinButtonPart:
             paintStepper(states, context, zoomedRect, zoomFactor, scrollView);
