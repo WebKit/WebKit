@@ -1,3 +1,15 @@
+2015-07-14  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=146909
+        Add actions for default link preview that uses SFSafariViewController.
+
+        Use the new private properties to prepare actions for the default link preview controller.
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView previewViewControllerForPosition:inSourceView:]):
+
 2015-07-14  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [Linux] SeccompFilters: whitelist source directory on all ports

@@ -3224,11 +3224,12 @@ static bool isAssistableInputType(InputType type)
     if (canShowLinkPreview) {
         _previewType = PreviewElementType::Link;
         NSURL *targetURL = [NSURL _web_URLWithWTFString:_positionInformation.url];
+        RetainPtr<_WKActivatedElementInfo> elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeLink URL:targetURL location:_positionInformation.point title:_positionInformation.title rect:_positionInformation.bounds image:_positionInformation.image.get()]);
+        RetainPtr<NSArray> actions = [_actionSheetAssistant defaultActionsForLinkSheet:elementInfo.get()];
         if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForURL:defaultActions:elementInfo:)]) {
             _highlightLongPressCanClick = NO;
-            RetainPtr<_WKActivatedElementInfo> elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeLink URL:targetURL location:_positionInformation.point title:_positionInformation.title rect:_positionInformation.bounds image:_positionInformation.image.get()]);
             _page->startInteractionWithElementAtPosition(_positionInformation.point);
-            return [uiDelegate _webView:_webView previewViewControllerForURL:targetURL defaultActions:[_actionSheetAssistant defaultActionsForLinkSheet:elementInfo.get()].get() elementInfo:elementInfo.get()];
+            return [uiDelegate _webView:_webView previewViewControllerForURL:targetURL defaultActions:actions.get() elementInfo:elementInfo.get()];
         }
 
         if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForURL:)]) {
@@ -3238,7 +3239,10 @@ static bool isAssistableInputType(InputType type)
 #if HAVE(SAFARI_SERVICES_FRAMEWORK)
         SFSafariViewController *previewViewController = [allocSFSafariViewControllerInstance() initWithURL:targetURL];
         previewViewController._showingLinkPreview = YES;
+        previewViewController._activatedElementInfo = elementInfo.get();
+        previewViewController._previewActions = actions.get();
         _highlightLongPressCanClick = NO;
+        _page->startInteractionWithElementAtPosition(_positionInformation.point);
         return [previewViewController autorelease];
 #else
         return nil;
