@@ -1,3 +1,17 @@
+2015-07-14  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [Linux] SeccompFilters: whitelist source directory on all ports
+        https://bugs.webkit.org/show_bug.cgi?id=140066
+
+        Reviewed by Žan Doberšek.
+
+        Move this from EFL to port-independent code.
+
+        * Shared/linux/SeccompFilters/SyscallPolicy.cpp:
+        (WebKit::SyscallPolicy::addDefaultWebProcessPolicy):
+        * WebProcess/efl/SeccompFiltersWebProcessEfl.cpp:
+        (WebKit::SeccompFiltersWebProcessEfl::platformInitialize):
+
 2015-07-14  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Add a runtime check for X11 display in webkitWebViewBaseExitAcceleratedCompositingMode()

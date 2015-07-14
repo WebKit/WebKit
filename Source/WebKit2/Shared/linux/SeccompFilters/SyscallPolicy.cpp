@@ -238,6 +238,17 @@ void SyscallPolicy::addDefaultWebProcessPolicy(const WebProcessCreationParameter
     // Needed by NVIDIA proprietary graphics driver
     if (homeDir)
         addDirectoryPermission(String::fromUTF8(homeDir) + "/.nv", ReadAndWrite);
+
+#if ENABLE(DEVELOPER_MODE) && defined(SOURCE_DIR)
+    // Developers using build-webkit expect some libraries to be loaded
+    // from the build root directory and they also need access to layout test
+    // files.
+    char* sourceDir = canonicalize_file_name(SOURCE_DIR);
+    if (sourceDir) {
+        addDirectoryPermission(String::fromUTF8(sourceDir), SyscallPolicy::ReadAndWrite);
+        free(sourceDir);
+    }
+#endif
 }
 
 } // namespace WebKit

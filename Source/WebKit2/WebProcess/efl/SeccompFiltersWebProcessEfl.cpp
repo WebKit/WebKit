@@ -55,18 +55,6 @@ void SeccompFiltersWebProcessEfl::platformInitialize()
     m_policy.addDirectoryPermission(ASCIILiteral("/sys/devices"), SyscallPolicy::Read);
     m_policy.addFilePermission(ASCIILiteral("/etc/udev/udev.conf"), SyscallPolicy::Read);
 
-#ifdef SOURCE_DIR
-    // Developers using build-webkit --efl expect some libraries to be loaded
-    // from the build root directory and they also need access to layout test
-    // files. The constant is defined only when jhbuild is detected, which is
-    // an indication of a development build.
-    char* sourceDir = canonicalize_file_name(SOURCE_DIR);
-    if (sourceDir) {
-        m_policy.addDirectoryPermission(String::fromUTF8(sourceDir), SyscallPolicy::ReadAndWrite);
-        free(sourceDir);
-    }
-#endif
-
     // Place where the theme and icons are installed.
     char* dataDir = canonicalize_file_name(DATA_DIR);
     if (dataDir) {
