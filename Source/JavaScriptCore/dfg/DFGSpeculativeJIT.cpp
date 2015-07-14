@@ -2989,7 +2989,7 @@ void SpeculativeJIT::compileArithSub(Node* node)
     case Int32Use: {
         ASSERT(!shouldCheckNegativeZero(node->arithMode()));
         
-        if (node->child2()->isNumberConstant()) {
+        if (node->child2()->isInt32Constant()) {
             SpeculateInt32Operand op1(this, node->child1());
             int32_t imm2 = node->child2()->asInt32();
             GPRTemporary result(this);
@@ -3006,7 +3006,7 @@ void SpeculativeJIT::compileArithSub(Node* node)
             return;
         }
             
-        if (node->child1()->isNumberConstant()) {
+        if (node->child1()->isInt32Constant()) {
             int32_t imm1 = node->child1()->asInt32();
             SpeculateInt32Operand op2(this, node->child2());
             GPRTemporary result(this);
