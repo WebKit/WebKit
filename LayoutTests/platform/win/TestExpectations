@@ -3126,3 +3126,7 @@ fast/text/hangul-generic-font-families.html [ WontFix ]
 
 # New test for Bug 144830 (r186388) always fails.
 http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html [ Failure ]
+
+# <rdar://problem/21816197> large-js-program.php crashes on Release, times out on Debug
+[ Debug ] http/tests/misc/large-js-program.php [ Slow ]
+[ Release ] http/tests/misc/large-js-program.php [ Crash ]

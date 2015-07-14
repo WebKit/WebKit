@@ -1,3 +1,13 @@
+2015-07-14  David Kilzer  <ddkilzer@apple.com>
+
+        http/tests/misc/large-js-program.php crashes in Release, times out in Debug, on Windows
+
+        Fix is tracked by <rdar://problem/21816197>.
+
+        * platform/win/TestExpectations: Mark test as crashing in
+        Release and timing out on Debug:
+        - http/tests/misc/large-js-program.php
+
 2015-07-14  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r177876): store.apple.com profile and cart icons are missing
