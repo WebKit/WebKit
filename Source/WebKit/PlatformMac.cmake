@@ -20,8 +20,10 @@ find_path(PDFKIT_INCLUDE_DIRECTORY PDFKit.h HINTS ${PDFKIT_FRAMEWORK}/Versions/*
 
 if ("${CURRENT_OSX_VERSION}" MATCHES "10.9")
 set(WEBKITSYSTEMINTERFACE_LIBRARY libWebKitSystemInterfaceMavericks.a)
-else ()
+else if ("${CURRENT_OSX_VERSION}" MATCHES "10.10")
 set(WEBKITSYSTEMINTERFACE_LIBRARY libWebKitSystemInterfaceYosemite.a)
+else ()
+set(WEBKITSYSTEMINTERFACE_LIBRARY libWebKitSystemInterfaceElCapitan.a)
 endif ()
 link_directories(../../WebKitLibraries)
 

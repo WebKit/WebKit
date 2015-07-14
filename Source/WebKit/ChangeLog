@@ -1,3 +1,12 @@
+2015-07-14  Lucas Forschler  <lforschler@apple.com>
+
+        Teach platformMac.cmake about El Capitan WKSI.
+        <rdar://problem/21822469>
+        
+        Reviewed by Alex Christensen.
+
+        * PlatformMac.cmake:
+
 2015-07-09  Per Arne Vollan  <peavo@outlook.com>
 
         [Win] Add memory pressure handler.
