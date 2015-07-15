@@ -30,6 +30,7 @@
 #include "ParserModes.h"
 #include "SourceCode.h"
 #include "Strong.h"
+#include "VariableEnvironment.h"
 #include "WeakRandom.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/Forward.h>
@@ -255,7 +256,7 @@ public:
     ~CodeCache();
 
     UnlinkedProgramCodeBlock* getProgramCodeBlock(VM&, ProgramExecutable*, const SourceCode&, JSParserBuiltinMode, JSParserStrictMode, DebuggerMode, ProfilerMode, ParserError&);
-    UnlinkedEvalCodeBlock* getEvalCodeBlock(VM&, EvalExecutable*, const SourceCode&, JSParserBuiltinMode, JSParserStrictMode, ThisTDZMode, DebuggerMode, ProfilerMode, ParserError&);
+    UnlinkedEvalCodeBlock* getEvalCodeBlock(VM&, EvalExecutable*, const SourceCode&, JSParserBuiltinMode, JSParserStrictMode, ThisTDZMode, DebuggerMode, ProfilerMode, ParserError&, const VariableEnvironment*);
     UnlinkedFunctionExecutable* getFunctionExecutableFromGlobalCode(VM&, const Identifier&, const SourceCode&, ParserError&);
 
     void clear()
@@ -265,7 +266,7 @@ public:
 
 private:
     template <class UnlinkedCodeBlockType, class ExecutableType> 
-    UnlinkedCodeBlockType* getGlobalCodeBlock(VM&, ExecutableType*, const SourceCode&, JSParserBuiltinMode, JSParserStrictMode, ThisTDZMode, DebuggerMode, ProfilerMode, ParserError&);
+    UnlinkedCodeBlockType* getGlobalCodeBlock(VM&, ExecutableType*, const SourceCode&, JSParserBuiltinMode, JSParserStrictMode, ThisTDZMode, DebuggerMode, ProfilerMode, ParserError&, const VariableEnvironment*);
 
     CodeCacheMap m_sourceCode;
 };

@@ -268,7 +268,7 @@ SLOW_PATH_DECL(slow_path_to_this)
 SLOW_PATH_DECL(slow_path_throw_tdz_error)
 {
     BEGIN();
-    THROW(createReferenceError(exec, "Cannot access uninitialized variable."));
+    THROW(createTDZError(exec));
 }
 
 SLOW_PATH_DECL(slow_path_not)
@@ -636,6 +636,18 @@ SLOW_PATH_DECL(slow_path_profile_type_clear_log)
     BEGIN();
     vm.typeProfilerLog()->processLogEntries(ASCIILiteral("LLInt log full."));
     END();
+}
+
+SLOW_PATH_DECL(slow_path_create_lexical_environment)
+{
+    BEGIN();
+    int scopeReg = pc[2].u.operand;
+    JSScope* currentScope = exec->uncheckedR(scopeReg).Register::scope();
+    SymbolTable* symbolTable = jsCast<SymbolTable*>(OP_C(3).jsValue());
+    JSValue initialValue = OP_C(4).jsValue();
+    ASSERT(initialValue == jsUndefined() || initialValue == jsTDZValue());
+    JSScope* newScope = JSLexicalEnvironment::create(vm, exec->lexicalGlobalObject(), currentScope, symbolTable, initialValue);
+    RETURN(newScope);
 }
 
 } // namespace JSC

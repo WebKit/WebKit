@@ -100,12 +100,13 @@ protected:
         Base::finishCreation(vm);
     }
     
-    void finishCreation(VM& vm)
+    void finishCreation(VM& vm, JSValue value)
     {
         finishCreationUninitialized(vm);
+        ASSERT(value == jsUndefined() || value == jsTDZValue());
         for (unsigned i = symbolTable()->scopeSize(); i--;) {
-            // Filling this with undefined is useful because that's what variables start out as.
-            variableAt(ScopeOffset(i)).setUndefined();
+            // Filling this with undefined/TDZEmptyValue is useful because that's what variables start out as.
+            variableAt(ScopeOffset(i)).setStartingValue(value);
         }
     }
 

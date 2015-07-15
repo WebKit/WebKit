@@ -3056,11 +3056,12 @@ private:
         LValue scope = lowCell(m_node->child1());
         SymbolTable* table = m_node->castOperand<SymbolTable*>();
         Structure* structure = m_graph.globalObjectFor(m_node->origin.semantic)->activationStructure();
-        
+        JSValue initializationValue = m_node->initializationValueForActivation();
+        ASSERT(initializationValue.isUndefined() || initializationValue == jsTDZValue());
         if (table->singletonScope()->isStillValid()) {
             LValue callResult = vmCall(
                 m_out.operation(operationCreateActivationDirect), m_callFrame, weakPointer(structure),
-                scope, weakPointer(table));
+                scope, weakPointer(table), m_out.constInt64(JSValue::encode(initializationValue)));
             setJSValue(callResult);
             return;
         }
@@ -3080,7 +3081,7 @@ private:
         
         for (unsigned i = 0; i < table->scopeSize(); ++i) {
             m_out.store64(
-                m_out.constInt64(JSValue::encode(jsUndefined())),
+                m_out.constInt64(JSValue::encode(initializationValue)),
                 fastObject, m_heaps.JSEnvironmentRecord_variables[i]);
         }
         
@@ -3090,7 +3091,7 @@ private:
         m_out.appendTo(slowPath, continuation);
         LValue callResult = vmCall(
             m_out.operation(operationCreateActivationDirect), m_callFrame, weakPointer(structure),
-            scope, weakPointer(table));
+            scope, weakPointer(table), m_out.constInt64(JSValue::encode(initializationValue)));
         ValueFromBlock slowResult = m_out.anchor(callResult);
         m_out.jump(continuation);
         
@@ -5409,9 +5410,14 @@ private:
         m_out.jump(continuation);
 
         m_out.appendTo(slowPath, continuation);
+        // We ensure allocation sinking explictly sets bottom values for all field members. 
+        // Therefore, it doesn't matter what JSValue we pass in as the initialization value
+        // because all fields will be overwritten.
+        // FIXME: It may be worth creating an operation that calls a constructor on JSLexicalEnvironment that 
+        // doesn't initialize every slot because we are guaranteed to do that here.
         LValue callResult = vmCall(
             m_out.operation(operationCreateActivationDirect), m_callFrame, weakPointer(structure),
-            scope, weakPointer(table));
+            scope, weakPointer(table), m_out.constInt64(JSValue::encode(jsUndefined())));
         ValueFromBlock slowResult =  m_out.anchor(callResult);
         m_out.jump(continuation);
 

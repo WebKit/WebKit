@@ -762,11 +762,13 @@ char* JIT_OPERATION operationNewFloat64ArrayWithOneArgument(
     return newTypedArrayWithOneArgument<JSFloat64Array>(exec, structure, encodedValue);
 }
 
-JSCell* JIT_OPERATION operationCreateActivationDirect(ExecState* exec, Structure* structure, JSScope* scope, SymbolTable* table)
+JSCell* JIT_OPERATION operationCreateActivationDirect(ExecState* exec, Structure* structure, JSScope* scope, SymbolTable* table, EncodedJSValue initialValueEncoded)
 {
+    JSValue initialValue = JSValue::decode(initialValueEncoded);
+    ASSERT(initialValue == jsUndefined() || initialValue == jsTDZValue());
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-    return JSLexicalEnvironment::create(vm, structure, scope, table);
+    return JSLexicalEnvironment::create(vm, structure, scope, table, initialValue);
 }
 
 JSCell* JIT_OPERATION operationCreateDirectArguments(ExecState* exec, Structure* structure, int32_t length, int32_t minCapacity)

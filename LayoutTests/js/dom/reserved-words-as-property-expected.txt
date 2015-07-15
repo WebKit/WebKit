@@ -1353,18 +1353,18 @@ PASS ({ let: 42 }.let === 42) is true
 PASS (function(){({ let: 42 }.let === 42)}); true is true
 PASS ({ get let(){}, set let(x){}, parsedOkay: 42 }.parsedOkay === 42) is true
 PASS (function(){({ get let(){}, set let(x){}, parsedOkay: 42 }.parsedOkay === 42)}); true is true
-PASS "use strict";var let; true threw exception SyntaxError: Cannot use the reserved word 'let' as a variable name in strict mode..
-PASS (function(){"use strict";var let; true}); true threw exception SyntaxError: Cannot use the reserved word 'let' as a variable name in strict mode..
-PASS "use strict";var let = 42; let === 42 threw exception SyntaxError: Cannot use the reserved word 'let' as a variable name in strict mode..
-PASS (function(){"use strict";var let = 42; let === 42}); true threw exception SyntaxError: Cannot use the reserved word 'let' as a variable name in strict mode..
-PASS "use strict";function g(let){ "use strict"; }; true threw exception SyntaxError: Cannot use the reserved word 'let' as a variable name in strict mode..
-PASS (function(){"use strict";function g(let){ "use strict"; }; true}); true threw exception SyntaxError: Cannot use the reserved word 'let' as a variable name in strict mode..
-PASS "use strict";/let/.test(function g(let){ "use strict"; }) threw exception SyntaxError: Cannot use the reserved word 'let' as a variable name in strict mode..
-PASS (function(){"use strict";/let/.test(function g(let){ "use strict"; })}); true threw exception SyntaxError: Cannot use the reserved word 'let' as a variable name in strict mode..
-PASS "use strict";try{}catch(let){}; true threw exception SyntaxError: Cannot use the reserved word 'let' as a catch variable name in strict mode..
-PASS (function(){"use strict";try{}catch(let){}; true}); true threw exception SyntaxError: Cannot use the reserved word 'let' as a catch variable name in strict mode..
-PASS "use strict";function let(){ "use strict"; }; true threw exception SyntaxError: Cannot use the reserved word 'let' as a function name in strict mode..
-PASS (function(){"use strict";function let(){ "use strict"; }; true}); true threw exception SyntaxError: Cannot use the reserved word 'let' as a function name in strict mode..
+PASS "use strict";var let; true threw exception SyntaxError: Cannot use the keyword 'let' as a variable name..
+PASS (function(){"use strict";var let; true}); true threw exception SyntaxError: Cannot use the keyword 'let' as a variable name..
+PASS "use strict";var let = 42; let === 42 threw exception SyntaxError: Cannot use the keyword 'let' as a variable name..
+PASS (function(){"use strict";var let = 42; let === 42}); true threw exception SyntaxError: Cannot use the keyword 'let' as a variable name..
+PASS "use strict";function g(let){ "use strict"; }; true threw exception SyntaxError: Cannot use the keyword 'let' as a variable name..
+PASS (function(){"use strict";function g(let){ "use strict"; }; true}); true threw exception SyntaxError: Cannot use the keyword 'let' as a variable name..
+PASS "use strict";/let/.test(function g(let){ "use strict"; }) threw exception SyntaxError: Cannot use the keyword 'let' as a variable name..
+PASS (function(){"use strict";/let/.test(function g(let){ "use strict"; })}); true threw exception SyntaxError: Cannot use the keyword 'let' as a variable name..
+PASS "use strict";try{}catch(let){}; true threw exception SyntaxError: Cannot use the keyword 'let' as a catch variable name..
+PASS (function(){"use strict";try{}catch(let){}; true}); true threw exception SyntaxError: Cannot use the keyword 'let' as a catch variable name..
+PASS "use strict";function let(){ "use strict"; }; true threw exception SyntaxError: Cannot use the keyword 'let' as a function name..
+PASS (function(){"use strict";function let(){ "use strict"; }; true}); true threw exception SyntaxError: Cannot use the keyword 'let' as a function name..
 PASS "use strict";({ "let": 42 }.let === 42) is true
 PASS (function(){"use strict";({ "let": 42 }.let === 42)}); true is true
 PASS "use strict";({ let: 42 }.let === 42) is true

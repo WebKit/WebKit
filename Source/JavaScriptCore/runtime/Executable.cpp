@@ -347,7 +347,7 @@ JSObject* ScriptExecutable::prepareForExecutionImpl(
 
 const ClassInfo EvalExecutable::s_info = { "EvalExecutable", &ScriptExecutable::s_info, 0, CREATE_METHOD_TABLE(EvalExecutable) };
 
-EvalExecutable* EvalExecutable::create(ExecState* exec, const SourceCode& source, bool isInStrictContext, ThisTDZMode thisTDZMode)
+EvalExecutable* EvalExecutable::create(ExecState* exec, const SourceCode& source, bool isInStrictContext, ThisTDZMode thisTDZMode, const VariableEnvironment* variablesUnderTDZ)
 {
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     if (!globalObject->evalEnabled()) {
@@ -358,7 +358,7 @@ EvalExecutable* EvalExecutable::create(ExecState* exec, const SourceCode& source
     EvalExecutable* executable = new (NotNull, allocateCell<EvalExecutable>(*exec->heap())) EvalExecutable(exec, source, isInStrictContext);
     executable->finishCreation(exec->vm());
 
-    UnlinkedEvalCodeBlock* unlinkedEvalCode = globalObject->createEvalCodeBlock(exec, executable, thisTDZMode);
+    UnlinkedEvalCodeBlock* unlinkedEvalCode = globalObject->createEvalCodeBlock(exec, executable, thisTDZMode, variablesUnderTDZ);
     if (!unlinkedEvalCode)
         return 0;
 
@@ -509,8 +509,6 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
 
     BatchedTransitionOptimizer optimizer(vm, globalObject);
 
-    const UnlinkedProgramCodeBlock::VariableDeclations& variableDeclarations = unlinkedCodeBlock->variableDeclarations();
-
     for (size_t i = 0, numberOfFunctions = unlinkedCodeBlock->numberOfFunctionDecls(); i < numberOfFunctions; ++i) {
         UnlinkedFunctionExecutable* unlinkedFunctionExecutable = unlinkedCodeBlock->functionDecl(i);
         ASSERT(!unlinkedFunctionExecutable->name().isEmpty());
@@ -522,11 +520,12 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
         }
     }
 
-    for (size_t i = 0; i < variableDeclarations.size(); ++i) {
-        if (variableDeclarations[i].second & DeclarationStacks::IsConstant)
-            globalObject->addConst(callFrame, variableDeclarations[i].first);
+    const VariableEnvironment& variableDeclarations = unlinkedCodeBlock->variableDeclarations();
+    for (auto& entry : variableDeclarations) {
+        if (entry.value.isConstant())
+            globalObject->addConst(callFrame, Identifier::fromUid(&vm, entry.key.get()));
         else
-            globalObject->addVar(callFrame, variableDeclarations[i].first);
+            globalObject->addVar(callFrame, Identifier::fromUid(&vm, entry.key.get()));
     }
     return 0;
 }

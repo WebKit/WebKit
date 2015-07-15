@@ -1287,15 +1287,15 @@ _llint_op_push_with_scope:
     dispatch(3)
 
 
-_llint_op_pop_scope:
-    traceExecution()
-    callSlowPath(_llint_slow_path_pop_scope)
-    dispatch(2)
-
-
 _llint_op_push_name_scope:
     traceExecution()
     callSlowPath(_llint_slow_path_push_name_scope)
+    dispatch(5)
+
+
+_llint_op_create_lexical_environment:
+    traceExecution()
+    callSlowPath(_slow_path_create_lexical_environment)
     dispatch(5)
 
 

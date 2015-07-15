@@ -32,6 +32,7 @@
 #include "CommonSlowPathsExceptions.h"
 #include "Error.h"
 #include "ErrorHandlingScope.h"
+#include "Exception.h"
 #include "ExceptionFuzz.h"
 #include "GetterSetter.h"
 #include "HostCallReturnValue.h"
@@ -486,18 +487,6 @@ LLINT_SLOW_PATH_DECL(stack_check)
     CommonSlowPaths::interpreterThrowInCaller(exec, createStackOverflowError(exec));
     pc = returnToThrowForThrownException(exec);
     LLINT_RETURN_TWO(pc, exec);
-}
-
-LLINT_SLOW_PATH_DECL(slow_path_create_lexical_environment)
-{
-    LLINT_BEGIN();
-#if LLINT_SLOW_PATH_TRACING
-    dataLogF("Creating an lexicalEnvironment, exec = %p!\n", exec);
-#endif
-    int scopeReg = pc[2].u.operand;
-    JSScope* scope = exec->uncheckedR(scopeReg).Register::scope();
-    JSLexicalEnvironment* lexicalEnvironment = JSLexicalEnvironment::create(vm, exec, scope, exec->codeBlock());
-    LLINT_RETURN(JSValue(lexicalEnvironment));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_new_object)
@@ -1286,15 +1275,6 @@ LLINT_SLOW_PATH_DECL(slow_path_push_with_scope)
     JSScope* currentScope = exec->uncheckedR(scopeReg).Register::scope();
     exec->uncheckedR(scopeReg) = JSWithScope::create(exec, o, currentScope);
     
-    LLINT_END();
-}
-
-LLINT_SLOW_PATH_DECL(slow_path_pop_scope)
-{
-    LLINT_BEGIN();
-    int scopeReg = pc[1].u.operand;
-    JSScope* scope = exec->uncheckedR(scopeReg).Register::scope();
-    exec->uncheckedR(scopeReg) = scope->next();
     LLINT_END();
 }
 

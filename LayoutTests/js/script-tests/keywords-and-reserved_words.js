@@ -104,10 +104,15 @@ shouldBe('classifyIdentifier("super")', '"keyword"');
 // Future Reserved Words, in strict mode only.
 shouldBe('classifyIdentifier("implements")', '"strict"');
 shouldBe('classifyIdentifier("interface")', '"strict"');
-shouldBe('classifyIdentifier("let")', '"strict"');
 shouldBe('classifyIdentifier("package")', '"strict"');
 shouldBe('classifyIdentifier("private")', '"strict"');
 shouldBe('classifyIdentifier("protected")', '"strict"');
 shouldBe('classifyIdentifier("public")', '"strict"');
 shouldBe('classifyIdentifier("static")', '"strict"');
 shouldBe('classifyIdentifier("yield")', '"strict"');
+
+// This is in a class of its own because it's treated as a keyword
+// in strict-mode and not a keyword in sloppy mode
+// (non-keyword in sloppy mode is temporary).
+shouldBeFalse('isKeyword("let")'); // "var let" is allowed but "let let" is not.
+shouldBeTrue('isStrictKeyword("let")');

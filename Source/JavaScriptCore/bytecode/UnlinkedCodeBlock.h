@@ -38,6 +38,7 @@
 #include "RegExp.h"
 #include "SpecialPointer.h"
 #include "SymbolTable.h"
+#include "VariableEnvironment.h"
 #include "VirtualRegister.h"
 
 #include <wtf/RefCountedArray.h>
@@ -107,10 +108,10 @@ public:
     typedef JSCell Base;
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    static UnlinkedFunctionExecutable* create(VM* vm, const SourceCode& source, FunctionBodyNode* node, UnlinkedFunctionKind unlinkedFunctionKind, RefPtr<SourceProvider>&& sourceOverride = nullptr)
+    static UnlinkedFunctionExecutable* create(VM* vm, const SourceCode& source, FunctionBodyNode* node, UnlinkedFunctionKind unlinkedFunctionKind, VariableEnvironment& parentScopeTDZVariables, RefPtr<SourceProvider>&& sourceOverride = nullptr)
     {
         UnlinkedFunctionExecutable* instance = new (NotNull, allocateCell<UnlinkedFunctionExecutable>(vm->heap))
-            UnlinkedFunctionExecutable(vm, vm->unlinkedFunctionExecutableStructure.get(), source, WTF::move(sourceOverride), node, unlinkedFunctionKind);
+            UnlinkedFunctionExecutable(vm, vm->unlinkedFunctionExecutableStructure.get(), source, WTF::move(sourceOverride), node, unlinkedFunctionKind, parentScopeTDZVariables);
         instance->finishCreation(*vm);
         return instance;
     }
@@ -170,9 +171,10 @@ public:
 
     bool isBuiltinFunction() const { return m_isBuiltinFunction; }
     bool isClassConstructorFunction() const { return constructorKind() != ConstructorKind::None; }
+    const VariableEnvironment* parentScopeTDZVariables() const { return &m_parentScopeTDZVariables; }
 
 private:
-    UnlinkedFunctionExecutable(VM*, Structure*, const SourceCode&, RefPtr<SourceProvider>&& sourceOverride, FunctionBodyNode*, UnlinkedFunctionKind);
+    UnlinkedFunctionExecutable(VM*, Structure*, const SourceCode&, RefPtr<SourceProvider>&& sourceOverride, FunctionBodyNode*, UnlinkedFunctionKind, VariableEnvironment&);
     WriteBarrier<UnlinkedFunctionCodeBlock> m_codeBlockForCall;
     WriteBarrier<UnlinkedFunctionCodeBlock> m_codeBlockForConstruct;
 
@@ -183,6 +185,7 @@ private:
     WriteBarrier<SymbolTable> m_symbolTableForConstruct;
     RefPtr<FunctionParameters> m_parameters;
     RefPtr<SourceProvider> m_sourceOverride;
+    VariableEnvironment m_parentScopeTDZVariables;
     unsigned m_firstLineOffset;
     unsigned m_lineCount;
     unsigned m_unlinkedFunctionNameStart;
@@ -423,6 +426,8 @@ public:
 
     SymbolTable* symbolTable() const { return m_symbolTable.get(); }
     void setSymbolTable(SymbolTable* table) { m_symbolTable.set(*m_vm, this, table); }
+    void setSymbolTableConstantIndex(int index) { m_symbolTableConstantIndex = index; }
+    int symbolTableConstantIndex() const { return m_symbolTableConstantIndex; }
 
     VM* vm() const { return m_vm; }
 
@@ -566,6 +571,7 @@ private:
     FunctionExpressionVector m_functionExprs;
 
     WriteBarrier<SymbolTable> m_symbolTable;
+    int m_symbolTableConstantIndex;
 
     Vector<unsigned> m_propertyAccessInstructions;
 
@@ -645,14 +651,8 @@ public:
 
     static void destroy(JSCell*);
 
-    void addVariableDeclaration(const Identifier& name, bool isConstant)
-    {
-        m_varDeclarations.append(std::make_pair(name, isConstant));
-    }
-
-    typedef Vector<std::pair<Identifier, bool>> VariableDeclations;
-
-    const VariableDeclations& variableDeclarations() const { return m_varDeclarations; }
+    void setVariableDeclarations(const VariableEnvironment& environment) { m_varDeclarations = environment; }
+    const VariableEnvironment& variableDeclarations() const { return m_varDeclarations; }
 
     static void visitChildren(JSCell*, SlotVisitor&);
 
@@ -662,7 +662,7 @@ private:
     {
     }
 
-    VariableDeclations m_varDeclarations;
+    VariableEnvironment m_varDeclarations;
 
 public:
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)

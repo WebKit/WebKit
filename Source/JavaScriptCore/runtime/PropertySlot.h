@@ -125,7 +125,6 @@ public:
 
     void setValue(JSObject* slotBase, unsigned attributes, JSValue value)
     {
-        ASSERT(value);
         m_data.value = JSValue::encode(value);
         m_attributes = attributes;
 

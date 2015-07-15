@@ -2903,8 +2903,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_check_tdz: {
-            Node* op = get(VirtualRegister(currentInstruction[1].u.operand));
-            addToGraph(CheckNotEmpty, op);
+            addToGraph(CheckNotEmpty, get(VirtualRegister(currentInstruction[1].u.operand)));
             NEXT_OPCODE(op_check_tdz);
         }
 
@@ -3728,13 +3727,25 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
             
         case op_create_lexical_environment: {
-            FrozenValue* symbolTable = m_graph.freezeStrong(m_graph.symbolTableFor(currentNodeOrigin().semantic));
-            Node* lexicalEnvironment = addToGraph(CreateActivation, OpInfo(symbolTable), get(VirtualRegister(currentInstruction[2].u.operand)));
+            VirtualRegister symbolTableRegister(currentInstruction[3].u.operand);
+            VirtualRegister initialValueRegister(currentInstruction[4].u.operand);
+            ASSERT(symbolTableRegister.isConstant() && initialValueRegister.isConstant());
+            FrozenValue* symbolTable = m_graph.freezeStrong(m_inlineStackTop->m_codeBlock->getConstant(symbolTableRegister.offset()));
+            FrozenValue* initialValue = m_graph.freezeStrong(m_inlineStackTop->m_codeBlock->getConstant(initialValueRegister.offset()));
+            Node* scope = get(VirtualRegister(currentInstruction[2].u.operand));
+            Node* lexicalEnvironment = addToGraph(CreateActivation, OpInfo(symbolTable), OpInfo(initialValue), scope);
             set(VirtualRegister(currentInstruction[1].u.operand), lexicalEnvironment);
-            set(VirtualRegister(currentInstruction[2].u.operand), lexicalEnvironment);
             NEXT_OPCODE(op_create_lexical_environment);
         }
-            
+
+        case op_get_parent_scope: {
+            Node* currentScope = get(VirtualRegister(currentInstruction[2].u.operand));
+            Node* newScope = addToGraph(SkipScope, currentScope);
+            set(VirtualRegister(currentInstruction[1].u.operand), newScope);
+            addToGraph(Phantom, currentScope);
+            NEXT_OPCODE(op_get_parent_scope);
+        }
+
         case op_get_scope: {
             // Help the later stages a bit by doing some small constant folding here. Note that this
             // only helps for the first basic block. It's extremely important not to constant fold

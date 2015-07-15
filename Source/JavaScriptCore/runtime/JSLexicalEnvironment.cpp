@@ -51,23 +51,8 @@ inline bool JSLexicalEnvironment::symbolTableGet(PropertyName propertyName, Prop
     if (!isValid(offset))
         return false;
 
-    slot.setValue(this, DontEnum, variableAt(offset).get());
-    return true;
-}
-
-inline bool JSLexicalEnvironment::symbolTableGet(PropertyName propertyName, PropertyDescriptor& descriptor)
-{
-    SymbolTableEntry entry = symbolTable()->inlineGet(propertyName.uid());
-    if (entry.isNull())
-        return false;
-
-    ScopeOffset offset = entry.scopeOffset();
-
-    // Defend against the inspector asking for a var after it has been optimized out.
-    if (!isValid(offset))
-        return false;
-
-    descriptor.setDescriptor(variableAt(offset).get(), entry.getAttributes());
+    JSValue result = variableAt(offset).get();
+    slot.setValue(this, DontEnum, result);
     return true;
 }
 

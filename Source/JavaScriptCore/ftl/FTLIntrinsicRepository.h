@@ -66,7 +66,7 @@ namespace JSC { namespace FTL {
     macro(C_JITOperation_EJssJss, functionType(intPtr, intPtr, intPtr, intPtr)) \
     macro(C_JITOperation_EJssJssJss, functionType(intPtr, intPtr, intPtr, intPtr, intPtr)) \
     macro(C_JITOperation_ESt, functionType(intPtr, intPtr, intPtr)) \
-    macro(C_JITOperation_EStJscSymtab, functionType(intPtr, intPtr, intPtr, intPtr, intPtr)) \
+    macro(C_JITOperation_EStJscSymtabJ, functionType(intPtr, intPtr, intPtr, intPtr, intPtr, intPtr)) \
     macro(C_JITOperation_EStRZJsf, functionType(intPtr, intPtr, intPtr, intPtr, int32, intPtr)) \
     macro(C_JITOperation_EStRZJsfL, functionType(intPtr, intPtr, intPtr, intPtr, int32, intPtr, intPtr)) \
     macro(C_JITOperation_EStZ, functionType(intPtr, intPtr, intPtr, int32)) \

@@ -720,12 +720,6 @@ _llint_op_enter:
     dispatch(1)
 
 
-_llint_op_create_lexical_environment:
-    traceExecution()
-    callSlowPath(_llint_slow_path_create_lexical_environment)
-    dispatch(3)
-
-
 _llint_op_get_scope:
     traceExecution()
     loadi Callee + PayloadOffset[cfr], t0
@@ -793,8 +787,9 @@ _llint_op_new_object:
 
 _llint_op_check_tdz:
     traceExecution()
-    loadpFromInstruction(1, t0)
-    bineq TagOffset[cfr, t0, 8], EmptyValueTag, .opNotTDZ
+    loadisFromInstruction(1, t0)
+    loadConstantOrVariableTag(t0, t1)
+    bineq t1, EmptyValueTag, .opNotTDZ
     callSlowPath(_slow_path_throw_tdz_error)
 
 .opNotTDZ:
@@ -2334,6 +2329,17 @@ _llint_op_put_to_arguments:
     storei t2, DirectArguments_storage + TagOffset[t0, t1, 8]
     storei t3, DirectArguments_storage + PayloadOffset[t0, t1, 8]
     dispatch(4)
+
+
+_llint_op_get_parent_scope:
+    traceExecution()
+    loadisFromInstruction(2, t0)
+    loadp PayloadOffset[cfr, t0, 8], t0
+    loadp JSScope::m_next[t0], t0
+    loadisFromInstruction(1, t1)
+    storei CellTag, TagOffset[cfr, t1, 8]
+    storei t0, PayloadOffset[cfr, t1, 8]
+    dispatch(3)
 
 
 _llint_op_profile_type:

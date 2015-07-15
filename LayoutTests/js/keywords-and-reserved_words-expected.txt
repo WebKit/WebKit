@@ -60,13 +60,14 @@ PASS classifyIdentifier("import") is "keyword"
 PASS classifyIdentifier("super") is "keyword"
 PASS classifyIdentifier("implements") is "strict"
 PASS classifyIdentifier("interface") is "strict"
-PASS classifyIdentifier("let") is "strict"
 PASS classifyIdentifier("package") is "strict"
 PASS classifyIdentifier("private") is "strict"
 PASS classifyIdentifier("protected") is "strict"
 PASS classifyIdentifier("public") is "strict"
 PASS classifyIdentifier("static") is "strict"
 PASS classifyIdentifier("yield") is "strict"
+PASS isKeyword("let") is false
+PASS isStrictKeyword("let") is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

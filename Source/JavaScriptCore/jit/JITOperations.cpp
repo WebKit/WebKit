@@ -1491,14 +1491,6 @@ EncodedJSValue JIT_OPERATION operationCheckHasInstance(ExecState* exec, EncodedJ
     return JSValue::encode(JSValue());
 }
 
-JSCell* JIT_OPERATION operationCreateActivation(ExecState* exec, JSScope* currentScope)
-{
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-    JSLexicalEnvironment* lexicalEnvironment = JSLexicalEnvironment::create(vm, exec, currentScope, exec->codeBlock());
-    return lexicalEnvironment;
-}
-
 }
 
 static bool canAccessArgumentIndexQuickly(JSObject& object, uint32_t index)

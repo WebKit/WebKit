@@ -634,10 +634,11 @@ namespace JSC {
     {
     }
 
-    inline AssignResolveNode::AssignResolveNode(const JSTokenLocation& location, const Identifier& ident, ExpressionNode* right)
+    inline AssignResolveNode::AssignResolveNode(const JSTokenLocation& location, const Identifier& ident, ExpressionNode* right, AssignmentContext assignmentContext)
         : ExpressionNode(location)
         , m_ident(ident)
         , m_right(right)
+        , m_assignmentContext(assignmentContext)
     {
     }
 
@@ -727,13 +728,19 @@ namespace JSC {
     {
     }
 
-    inline VarStatementNode::VarStatementNode(const JSTokenLocation& location, ExpressionNode* expr)
+    inline DeclarationStatement::DeclarationStatement(const JSTokenLocation& location, ExpressionNode* expr)
         : StatementNode(location)
         , m_expr(expr)
     {
     }
 
     inline EmptyVarExpression::EmptyVarExpression(const JSTokenLocation& location, const Identifier& ident)
+        : ExpressionNode(location)
+        , m_ident(ident)
+    {
+    }
+
+    inline EmptyLetExpression::EmptyLetExpression(const JSTokenLocation& location, const Identifier& ident)
         : ExpressionNode(location)
         , m_ident(ident)
     {
@@ -761,8 +768,9 @@ namespace JSC {
     {
     }
 
-    inline ForNode::ForNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, ExpressionNode* expr3, StatementNode* statement)
+    inline ForNode::ForNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, ExpressionNode* expr3, StatementNode* statement, VariableEnvironment& lexicalVariables)
         : StatementNode(location)
+        , VariableEnvironmentNode(lexicalVariables)
         , m_expr1(expr1)
         , m_expr2(expr2)
         , m_expr3(expr3)
@@ -894,8 +902,9 @@ namespace JSC {
     {
     }
 
-    inline SwitchNode::SwitchNode(const JSTokenLocation& location, ExpressionNode* expr, CaseBlockNode* block)
+    inline SwitchNode::SwitchNode(const JSTokenLocation& location, ExpressionNode* expr, CaseBlockNode* block, VariableEnvironment& lexicalVariables)
         : StatementNode(location)
+        , VariableEnvironmentNode(lexicalVariables)
         , m_expr(expr)
         , m_block(block)
     {
@@ -909,28 +918,30 @@ namespace JSC {
     {
     }
 
-    inline BlockNode::BlockNode(const JSTokenLocation& location, SourceElements* statements)
+    inline BlockNode::BlockNode(const JSTokenLocation& location, SourceElements* statements, VariableEnvironment& lexicalVariables)
         : StatementNode(location)
+        , VariableEnvironmentNode(lexicalVariables)
         , m_statements(statements)
     {
     }
 
-    inline EnumerationNode::EnumerationNode(const JSTokenLocation& location, ExpressionNode* l, ExpressionNode* expr, StatementNode* statement)
+    inline EnumerationNode::EnumerationNode(const JSTokenLocation& location, ExpressionNode* lexpr, ExpressionNode* expr, StatementNode* statement, VariableEnvironment& lexicalVariables)
         : StatementNode(location)
-        , m_lexpr(l)
+        , VariableEnvironmentNode(lexicalVariables)
+        , m_lexpr(lexpr)
         , m_expr(expr)
         , m_statement(statement)
     {
-        ASSERT(l);
+        ASSERT(lexpr);
     }
     
-    inline ForInNode::ForInNode(const JSTokenLocation& location, ExpressionNode* l, ExpressionNode* expr, StatementNode* statement)
-        : EnumerationNode(location, l, expr, statement)
+    inline ForInNode::ForInNode(const JSTokenLocation& location, ExpressionNode* lexpr, ExpressionNode* expr, StatementNode* statement, VariableEnvironment& lexicalVariables)
+        : EnumerationNode(location, lexpr, expr, statement, lexicalVariables)
     {
     }
     
-    inline ForOfNode::ForOfNode(const JSTokenLocation& location, ExpressionNode* l, ExpressionNode* expr, StatementNode* statement)
-        : EnumerationNode(location, l, expr, statement)
+    inline ForOfNode::ForOfNode(const JSTokenLocation& location, ExpressionNode* lexpr, ExpressionNode* expr, StatementNode* statement, VariableEnvironment& lexicalVariables)
+        : EnumerationNode(location, lexpr, expr, statement, lexicalVariables)
     {
     }
     
@@ -958,16 +969,17 @@ namespace JSC {
         return adoptRef(*new ObjectPatternNode);
     }
 
-    inline Ref<BindingNode> BindingNode::create(const Identifier& boundProperty, const JSTextPosition& start, const JSTextPosition& end)
+    inline Ref<BindingNode> BindingNode::create(const Identifier& boundProperty, const JSTextPosition& start, const JSTextPosition& end, AssignmentContext context)
     {
-        return adoptRef(*new BindingNode(boundProperty, start, end));
+        return adoptRef(*new BindingNode(boundProperty, start, end, context));
     }
     
-    inline BindingNode::BindingNode(const Identifier& boundProperty, const JSTextPosition& start, const JSTextPosition& end)
+    inline BindingNode::BindingNode(const Identifier& boundProperty, const JSTextPosition& start, const JSTextPosition& end, AssignmentContext context)
         : DestructuringPatternNode()
         , m_divotStart(start)
         , m_divotEnd(end)
         , m_boundProperty(boundProperty)
+        , m_bindingContext(context)
     {
     }
     

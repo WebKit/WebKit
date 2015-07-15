@@ -57,6 +57,7 @@ enum JSTokenType {
     FOR,
     NEW,
     VAR,
+    LET,
     CONSTTOKEN,
     CONTINUE,
     FUNCTION,

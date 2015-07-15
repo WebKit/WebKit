@@ -1,3 +1,29 @@
+2015-07-15  Saam barati  <saambarati1@gmail.com>
+
+        [ES6] implement block scoping to enable 'let'
+        https://bugs.webkit.org/show_bug.cgi?id=142944
+
+        Reviewed by Filip Pizlo.
+
+        * js/dom/reserved-words-as-property-expected.txt:
+        * js/keywords-and-reserved_words-expected.txt:
+        * js/let-syntax-expected.txt: Added.
+        * js/let-syntax.html: Added.
+        * js/reserved-words-strict-expected.txt:
+        * js/script-tests/keywords-and-reserved_words.js:
+        * js/script-tests/let-syntax.js: Added.
+        (truth):
+        (assert):
+        (hasSyntaxError):
+        (shouldHaveSyntaxError):
+        (shouldNotHaveSyntaxError):
+        (shouldHaveSyntaxErrorStrictOnly):
+        * js/script-tests/reserved-words-strict.js:
+        * js/script-tests/statement-list-item-syntax-errors.js:
+        (testSyntax):
+        (runTests):
+        * js/statement-list-item-syntax-errors-expected.txt:
+
 2015-07-15  Tim Horton  <timothy_horton@apple.com>
 
         Factor rect shrink-wrapping code out of RenderThemeMac for future reuse

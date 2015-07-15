@@ -86,7 +86,17 @@ bool DebuggerScope::getOwnPropertySlot(JSObject* object, ExecState* exec, Proper
     // does not presently need to distinguish between what's owned at each level in the
     // prototype chain. Hence, we'll invoke getPropertySlot() on the wrapped scope here
     // instead of getOwnPropertySlot().
-    return thisObject->getPropertySlot(exec, propertyName, slot);
+    bool result = thisObject->getPropertySlot(exec, propertyName, slot);
+    if (result && slot.isValue() && slot.getValue(exec, propertyName) == jsTDZValue()) {
+        // FIXME:
+        // We hit a scope property that has the TDZ empty value.
+        // Currently, we just lie to the inspector and claim that this property is undefined.
+        // This is not ideal and we should fix it.
+        // https://bugs.webkit.org/show_bug.cgi?id=144977
+        slot.setValue(slot.slotBase(), DontEnum, jsUndefined());
+        return true;
+    }
+    return result;
 }
 
 void DebuggerScope::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)

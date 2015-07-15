@@ -1004,11 +1004,20 @@ public:
         m_jit.setupArgumentsWithExecState(TrustedImmPtr(structure));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
-    JITCompiler::Call callOperation(C_JITOperation_EStJscSymtab operation, GPRReg result, Structure* structure, GPRReg scope, SymbolTable* table)
+
+#if USE(JSVALUE64)
+    JITCompiler::Call callOperation(C_JITOperation_EStJscSymtabJ operation, GPRReg result, Structure* structure, GPRReg scope, SymbolTable* table, TrustedImm64 initialValue)
     {
-        m_jit.setupArgumentsWithExecState(TrustedImmPtr(structure), scope, TrustedImmPtr(table));
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(structure), scope, TrustedImmPtr(table), initialValue);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
+#else
+    JITCompiler::Call callOperation(C_JITOperation_EStJscSymtabJ operation, GPRReg result, Structure* structure, GPRReg scope, SymbolTable* table, TrustedImm32 tag, TrustedImm32 payload)
+    {
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(structure), scope, TrustedImmPtr(table), payload, tag);
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
+#endif
     JITCompiler::Call callOperation(C_JITOperation_EStZ operation, GPRReg result, Structure* structure, unsigned knownLength)
     {
         m_jit.setupArgumentsWithExecState(TrustedImmPtr(structure), TrustedImm32(knownLength));

@@ -1135,12 +1135,18 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     } else {
         for (JSScope* node = scope; ; node = node->next()) {
             RELEASE_ASSERT(node);
-            if (node->isVariableObject()) {
-                ASSERT(!node->isNameScopeObject());
+            if (node->isGlobalObject()) {
                 variableObject = node;
                 break;
+            } 
+            if (JSLexicalEnvironment* lexicalEnvironment = jsDynamicCast<JSLexicalEnvironment*>(node)) {
+                if (!lexicalEnvironment->symbolTable()->correspondsToLexicalScope()) {
+                    variableObject = node;
+                    break;
+                }
             }
         }
+        ASSERT(!variableObject->isNameScopeObject());
     }
 
     JSObject* compileError = eval->prepareForExecution(callFrame, nullptr, scope, CodeForCall);

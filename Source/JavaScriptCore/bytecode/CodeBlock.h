@@ -664,8 +664,7 @@ public:
     StringJumpTable& addStringSwitchJumpTable() { createRareDataIfNecessary(); m_rareData->m_stringSwitchJumpTables.append(StringJumpTable()); return m_rareData->m_stringSwitchJumpTables.last(); }
     StringJumpTable& stringSwitchJumpTable(int tableIndex) { RELEASE_ASSERT(m_rareData); return m_rareData->m_stringSwitchJumpTables[tableIndex]; }
 
-
-    SymbolTable* symbolTable() const { return m_symbolTable.get(); }
+    SymbolTable* symbolTable() const { RELEASE_ASSERT(m_symbolTableConstantIndex); return jsCast<SymbolTable*>(getConstant(m_symbolTableConstantIndex)); }
 
     EvalCodeCache& evalCodeCache() { createRareDataIfNecessary(); return m_rareData->m_evalCodeCache; }
 
@@ -937,6 +936,12 @@ private:
         m_constantsSourceCodeRepresentation = constantsSourceCodeRepresentation;
     }
 
+    void replaceConstant(int index, JSValue value)
+    {
+        ASSERT(isConstantRegisterIndex(index) && static_cast<size_t>(index - FirstConstantRegisterIndex) < m_constantRegisters.size());
+        m_constantRegisters[index - FirstConstantRegisterIndex].set(m_globalObject->vm(), m_ownerExecutable.get(), value);
+    }
+
     void dumpBytecode(
         PrintStream&, ExecState*, const Instruction* begin, const Instruction*&,
         const StubInfoMap& = StubInfoMap(), const CallLinkInfoMap& = CallLinkInfoMap());
@@ -994,7 +999,7 @@ private:
     VM* m_vm;
 
     RefCountedArray<Instruction> m_instructions;
-    WriteBarrier<SymbolTable> m_symbolTable;
+    int m_symbolTableConstantIndex;
     VirtualRegister m_thisRegister;
     VirtualRegister m_scopeRegister;
     VirtualRegister m_lexicalEnvironmentRegister;

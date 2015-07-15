@@ -43,13 +43,13 @@ function testSyntax(asBlock, body, throwStatus) {
 }
 
 function runTests() {
-    // FIXME: This needs to consider 'let' in bug:
-    // https://bugs.webkit.org/show_bug.cgi?id=142944
     var bodies = [
         "class C {};",
         "class C extends (class A {}) {};",
         "const c = 40;",
-        "const c = 40, d = 50;"
+        "const c = 40, d = 50;",
+        "let c = 40;",
+        "let c = 40, d = 50;"
     ];
     for (var body of bodies) {
         testSyntax(true, body, NoneShouldThrow);

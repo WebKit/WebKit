@@ -660,6 +660,7 @@
     <ClCompile Include="..\parser\SourceCode.cpp" />
     <ClCompile Include="..\parser\SourceProvider.cpp" />
     <ClCompile Include="..\parser\SourceProviderCache.cpp" />
+    <ClCompile Include="..\parser\VariableEnvironment.cpp" />
     <ClCompile Include="..\profiler\LegacyProfiler.cpp" />
     <ClCompile Include="..\profiler\Profile.cpp" />
     <ClCompile Include="..\profiler\ProfileGenerator.cpp" />
@@ -1438,6 +1439,7 @@
     <ClInclude Include="..\parser\SourceProviderCache.h" />
     <ClInclude Include="..\parser\SourceProviderCacheItem.h" />
     <ClInclude Include="..\parser\SyntaxChecker.h" />
+    <ClInclude Include="..\parser\VariableEnvironment.h" />
     <ClInclude Include="..\profiler\CallIdentifier.h" />
     <ClInclude Include="..\profiler\LegacyProfiler.h" />
     <ClInclude Include="..\profiler\Profile.h" />

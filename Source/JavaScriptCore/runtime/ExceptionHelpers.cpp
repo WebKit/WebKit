@@ -267,6 +267,11 @@ JSObject* createErrorForInvalidGlobalAssignment(ExecState* exec, const String& p
     return createReferenceError(exec, makeString("Strict mode forbids implicit creation of global property '", propertyName, '\''));
 }
 
+JSObject* createTDZError(ExecState* exec)
+{
+    return createReferenceError(exec, "Cannot access uninitialized variable.");
+}
+
 JSObject* throwOutOfMemoryError(ExecState* exec)
 {
     return exec->vm().throwException(exec, createOutOfMemoryError(exec));

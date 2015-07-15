@@ -1,3 +1,599 @@
+2015-07-15  Saam barati  <saambarati1@gmail.com>
+
+        [ES6] implement block scoping to enable 'let'
+        https://bugs.webkit.org/show_bug.cgi?id=142944
+
+        Reviewed by Filip Pizlo.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::createExecutableInternal):
+        * bytecode/BytecodeList.json:
+        This patch adds a new opcode and removes op_pop_scope:
+        1) op_get_parent_scope returns the parent scope but doesn't 
+        implicitly write that scope into the scope register. op_pop_scope
+        is now reduced to op_get_parent_scope followed by op_mov.
+
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::stronglyVisitStrongReferences):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addStringSwitchJumpTable):
+        (JSC::CodeBlock::stringSwitchJumpTable):
+        (JSC::CodeBlock::symbolTable):
+        (JSC::CodeBlock::evalCodeCache):
+        (JSC::CodeBlock::setConstantRegisters):
+        (JSC::CodeBlock::replaceConstant):
+        op_put_to_scope for LocalClosureVar now takes as an argument
+        the constant index for the Symbol Table it will be putting into.
+        This argument is only used to communicate from the BytecodeGenerator
+        to CodeBlock linking time and it is not present in the linked bytecode.
+
+        op_put_to_scope for non LocalClosureVar takes, at the same index, an
+        argument that represents the local scope depth which it uses for
+        JSScope::abstractResolve to know how many scopes it needs to skip.
+        Again, this is not in the linked code.
+        op_get_from_scope and op_resolve_scope also take as an argument
+        the local scope depth to use in JSScope::abstractResolve. Again,
+        this is not used in the linked code.
+
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::tryGet):
+        (JSC::EvalCodeCache::getSlow):
+        (JSC::EvalCodeCache::clear):
+        (JSC::EvalCodeCache::isCacheable):
+        When direct eval is called and passed a scope that 
+        corresponds to a lexical scope, we can't safely cache 
+        that code because we won't be able to guarantee
+        that the cached code is always executed in the same scope.
+        Consider this example:
+        function foo() {
+            let x = 20;
+            eval("x;");
+            if (b) {
+                let x = 30;
+                if (b) {
+                    let y = 40;
+                    eval("x;")
+                }
+            }
+        }
+
+        We can't reuse resolution depth when linking get_from_scope in evals.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::generateFunctionCodeBlock):
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        (JSC::UnlinkedFunctionExecutable::parameterCount):
+        * bytecode/UnlinkedCodeBlock.h:
+        Unlinked functions now know the variables that were under TDZ in their parent
+        scope.
+
+        (JSC::UnlinkedCodeBlock::symbolTable):
+        (JSC::UnlinkedCodeBlock::setSymbolTable):
+        (JSC::UnlinkedCodeBlock::setSymbolTableConstantIndex):
+        (JSC::UnlinkedCodeBlock::symbolTableConstantIndex):
+        (JSC::UnlinkedCodeBlock::vm):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::~BytecodeGenerator):
+        (JSC::BytecodeGenerator::newRegister):
+        (JSC::BytecodeGenerator::reclaimFreeRegisters):
+        (JSC::BytecodeGenerator::newBlockScopeVariable):
+        (JSC::BytecodeGenerator::newTemporary):
+        (JSC::BytecodeGenerator::emitProfileType):
+        (JSC::BytecodeGenerator::emitLoadGlobalObject):
+        (JSC::BytecodeGenerator::pushLexicalScope):
+        (JSC::BytecodeGenerator::popLexicalScope):
+        (JSC::BytecodeGenerator::prepareLexicalScopeForNextForLoopIteration):
+        (JSC::BytecodeGenerator::variable):
+        (JSC::BytecodeGenerator::variablePerSymbolTable):
+        (JSC::BytecodeGenerator::variableForLocalEntry):
+        (JSC::BytecodeGenerator::createVariable):
+        (JSC::BytecodeGenerator::emitResolveScope):
+        (JSC::BytecodeGenerator::emitGetFromScope):
+        (JSC::BytecodeGenerator::emitPutToScope):
+        (JSC::BytecodeGenerator::initializeVariable):
+        (JSC::BytecodeGenerator::emitTDZCheck):
+        (JSC::BytecodeGenerator::needsTDZCheck):
+        (JSC::BytecodeGenerator::emitTDZCheckIfNecessary):
+        (JSC::BytecodeGenerator::liftTDZCheckIfPossible):
+        (JSC::BytecodeGenerator::getVariablesUnderTDZ):
+        (JSC::BytecodeGenerator::emitNewObject):
+        (JSC::BytecodeGenerator::emitPushWithScope):
+        (JSC::BytecodeGenerator::emitGetParentScope):
+        (JSC::BytecodeGenerator::emitPopScope):
+        (JSC::BytecodeGenerator::emitDebugHook):
+        (JSC::BytecodeGenerator::pushFinallyContext):
+        (JSC::BytecodeGenerator::pushIteratorCloseContext):
+        (JSC::BytecodeGenerator::emitComplexPopScopes):
+        (JSC::BytecodeGenerator::emitPopScopes):
+        (JSC::BytecodeGenerator::popTryAndEmitCatch):
+        (JSC::BytecodeGenerator::calculateTargetScopeDepthForExceptionHandler):
+        (JSC::BytecodeGenerator::currentScopeDepth):
+        (JSC::BytecodeGenerator::emitThrowReferenceError):
+        (JSC::BytecodeGenerator::emitPushCatchScope):
+        (JSC::BytecodeGenerator::beginSwitch):
+        (JSC::BytecodeGenerator::emitReadOnlyExceptionIfNeeded):
+        (JSC::BytecodeGenerator::emitEnumeration):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::Variable::Variable):
+        (JSC::Variable::isResolved):
+        (JSC::Variable::symbolTableConstantIndex):
+        (JSC::Variable::ident):
+        (JSC::BytecodeGenerator::ignoredResult):
+        (JSC::BytecodeGenerator::tempDestination):
+        (JSC::BytecodeGenerator::lastOpcodeID):
+        (JSC::BytecodeGenerator::makeFunction):
+        (JSC::BytecodeGenerator::symbolTable):
+        (JSC::BytecodeGenerator::shouldOptimizeLocals): Deleted.
+        (JSC::BytecodeGenerator::canOptimizeNonLocals): Deleted.
+        The heart of the changes in this patch are in the bytecode generator.
+        The bytecode generator now keeps a stack of tuples of 
+        {symbol table, scope register, flag indicating catch or with scope, symbol table index in constant pool}
+        that models the runtime scope stack. This symbol table stack is used
+        in resolving local variables.
+
+        Also, the bytecode generator handles pushing and popping of lexical scopes. 
+        This is relatively straight forward:
+        Captured 'let' variables end up in the JSLexicalEnvironment scope and non-captured
+        variables end up on the stack. Some trickiness is involved in generating
+        code for 'for' loops that have captured variables (I'm talking about variables in the loop
+        header, not the loop body). Each iteration of the for loop ends up with 
+        its own JSLexicalEnvironment. Static code must be generated in such a way 
+        to create this runtime behavior. This is done by emitting instructions to 
+        push and pop a lexical scope at the end of each loop and copying values
+        from the previous loop's scope into the new scope. This code must also
+        ensure that each loop iteration's scope refers to the same underlying 
+        SymbolTable so that no scope is accidentally mistaken as being a singleton scope.
+
+        When the debugger is enabled, all lexically defined variables will end up in the
+        JSLexicalEnvironment.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ResolveNode::emitBytecode):
+        (JSC::FunctionCallResolveNode::emitBytecode):
+        (JSC::PostfixNode::emitResolve):
+        (JSC::DeleteResolveNode::emitBytecode):
+        (JSC::TypeOfResolveNode::emitBytecode):
+        (JSC::PrefixNode::emitResolve):
+        (JSC::ReadModifyResolveNode::emitBytecode):
+        (JSC::AssignResolveNode::emitBytecode):
+        (JSC::BlockNode::emitBytecode):
+        (JSC::ExprStatementNode::emitBytecode):
+        (JSC::DeclarationStatement::emitBytecode):
+        (JSC::EmptyVarExpression::emitBytecode):
+        (JSC::EmptyLetExpression::emitBytecode):
+        (JSC::ForNode::emitBytecode):
+        (JSC::ForInNode::emitMultiLoopBytecode):
+        (JSC::ForOfNode::emitBytecode):
+        (JSC::SwitchNode::emitBytecode):
+        (JSC::BindingNode::bindValue):
+        (JSC::VarStatementNode::emitBytecode): Deleted.
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluate):
+        * debugger/DebuggerScope.cpp:
+        (JSC::DebuggerScope::getOwnPropertySlot):
+        (JSC::DebuggerScope::put):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::castConstant):
+        (JSC::DFG::Node::initializationValueForActivation):
+        (JSC::DFG::Node::containsMovHint):
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        CreateActivation nodes now have a second OpInfo that tracks the 
+        initial value that needs to be placed in the activation. This initial value 
+        is also used in allocation sinking to create proper bottom values for all 
+        scope variables.
+
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCreateActivation):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * ftl/FTLIntrinsicRepository.h:
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileCreateActivation):
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileMaterializeCreateActivation):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationMaterializeObjectInOSR):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::callOperation):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_push_with_scope):
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_create_lexical_environment):
+        (JSC::JIT::emit_op_get_parent_scope):
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_enter):
+        (JSC::JIT::emit_op_get_scope):
+        (JSC::JIT::emit_op_pop_scope): Deleted.
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_push_with_scope):
+        (JSC::JIT::emit_op_to_number):
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_create_lexical_environment):
+        (JSC::JIT::emit_op_get_parent_scope):
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_enter):
+        (JSC::JIT::emit_op_get_scope):
+        (JSC::JIT::emit_op_pop_scope): Deleted.
+        * jit/JITOperations.cpp:
+        (JSC::canAccessArgumentIndexQuickly):
+        * jit/JITOperations.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createSourceElements):
+        (JSC::ASTBuilder::funcDeclarations):
+        (JSC::ASTBuilder::features):
+        (JSC::ASTBuilder::numConstants):
+        (JSC::ASTBuilder::createConditionalExpr):
+        (JSC::ASTBuilder::createAssignResolve):
+        (JSC::ASTBuilder::createClassDeclStatement):
+        (JSC::ASTBuilder::createBlockStatement):
+        (JSC::ASTBuilder::createIfStatement):
+        (JSC::ASTBuilder::createForLoop):
+        (JSC::ASTBuilder::createForInLoop):
+        (JSC::ASTBuilder::createForOfLoop):
+        (JSC::ASTBuilder::isBindingNode):
+        (JSC::ASTBuilder::createEmptyStatement):
+        (JSC::ASTBuilder::createDeclarationStatement):
+        (JSC::ASTBuilder::createVarStatement):
+        (JSC::ASTBuilder::createLetStatement):
+        (JSC::ASTBuilder::createEmptyVarExpression):
+        (JSC::ASTBuilder::createEmptyLetExpression):
+        (JSC::ASTBuilder::createReturnStatement):
+        (JSC::ASTBuilder::createTryStatement):
+        (JSC::ASTBuilder::createSwitchStatement):
+        (JSC::ASTBuilder::appendStatement):
+        (JSC::ASTBuilder::createCommaExpr):
+        (JSC::ASTBuilder::appendObjectPatternEntry):
+        (JSC::ASTBuilder::createBindingLocation):
+        (JSC::ASTBuilder::setEndOffset):
+        (JSC::ASTBuilder::Scope::Scope):
+        (JSC::ASTBuilder::makeAssignNode):
+        (JSC::ASTBuilder::varDeclarations): Deleted.
+        (JSC::ASTBuilder::addVar): Deleted.
+        * parser/Keywords.table:
+        * parser/NodeConstructors.h:
+        (JSC::ReadModifyResolveNode::ReadModifyResolveNode):
+        (JSC::AssignResolveNode::AssignResolveNode):
+        (JSC::ExprStatementNode::ExprStatementNode):
+        (JSC::DeclarationStatement::DeclarationStatement):
+        (JSC::EmptyVarExpression::EmptyVarExpression):
+        (JSC::EmptyLetExpression::EmptyLetExpression):
+        (JSC::IfElseNode::IfElseNode):
+        (JSC::WhileNode::WhileNode):
+        (JSC::ForNode::ForNode):
+        (JSC::CaseBlockNode::CaseBlockNode):
+        (JSC::SwitchNode::SwitchNode):
+        (JSC::ConstDeclNode::ConstDeclNode):
+        (JSC::BlockNode::BlockNode):
+        (JSC::EnumerationNode::EnumerationNode):
+        (JSC::ForInNode::ForInNode):
+        (JSC::ForOfNode::ForOfNode):
+        (JSC::ObjectPatternNode::create):
+        (JSC::BindingNode::create):
+        (JSC::BindingNode::BindingNode):
+        (JSC::VarStatementNode::VarStatementNode): Deleted.
+        * parser/Nodes.cpp:
+        (JSC::ScopeNode::ScopeNode):
+        (JSC::ScopeNode::singleStatement):
+        (JSC::ProgramNode::ProgramNode):
+        (JSC::EvalNode::EvalNode):
+        (JSC::FunctionNode::FunctionNode):
+        (JSC::FunctionNode::finishParsing):
+        (JSC::VariableEnvironmentNode::VariableEnvironmentNode):
+        * parser/Nodes.h:
+        (JSC::VariableEnvironmentNode::VariableEnvironmentNode):
+        (JSC::VariableEnvironmentNode::lexicalVariables):
+        (JSC::ScopeNode::usesThis):
+        (JSC::ScopeNode::needsActivationForMoreThanVariables):
+        (JSC::ScopeNode::needsActivation):
+        (JSC::ScopeNode::hasCapturedVariables):
+        (JSC::ScopeNode::captures):
+        (JSC::ScopeNode::varDeclarations):
+        (JSC::ScopeNode::functionStack):
+        (JSC::ScopeNode::neededConstants):
+        (JSC::ProgramNode::startColumn):
+        (JSC::ProgramNode::endColumn):
+        (JSC::EvalNode::startColumn):
+        (JSC::EvalNode::endColumn):
+        (JSC::BindingNode::boundProperty):
+        (JSC::BindingNode::divotStart):
+        (JSC::BindingNode::divotEnd):
+        (JSC::ScopeNode::capturedVariableCount): Deleted.
+        (JSC::ScopeNode::capturedVariables): Deleted.
+        (JSC::ScopeNode::varStack): Deleted.
+        There is a new class called 'VariableEnvironmentNode' that has the
+        necessary fields to model a lexical scope. Multiple AST nodes now 
+        also inherit from VariableEnvironmentNode.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::didFinishParsing):
+        (JSC::Parser<LexerType>::parseStatementListItem):
+        (JSC::Parser<LexerType>::parseVariableDeclaration):
+        (JSC::Parser<LexerType>::parseWhileStatement):
+        (JSC::Parser<LexerType>::parseVariableDeclarationList):
+        (JSC::Parser<LexerType>::createBindingPattern):
+        (JSC::Parser<LexerType>::tryParseDestructuringPatternExpression):
+        (JSC::Parser<LexerType>::parseDestructuringPattern):
+        (JSC::Parser<LexerType>::parseConstDeclarationList):
+        (JSC::Parser<LexerType>::parseForStatement):
+        (JSC::Parser<LexerType>::parseBreakStatement):
+        (JSC::Parser<LexerType>::parseContinueStatement):
+        (JSC::Parser<LexerType>::parseSwitchStatement):
+        (JSC::Parser<LexerType>::parseTryStatement):
+        (JSC::Parser<LexerType>::parseBlockStatement):
+        (JSC::Parser<LexerType>::parseStatement):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::Parser<LexerType>::parseClassDeclaration):
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseExpressionOrLabelStatement):
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+        (JSC::Parser<LexerType>::parseGetterSetter):
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        (JSC::Parser<LexerType>::parseVarDeclaration): Deleted.
+        (JSC::Parser<LexerType>::parseVarDeclarationList): Deleted.
+        * parser/Parser.h:
+        (JSC::Scope::Scope):
+        (JSC::Scope::setIsFunction):
+        (JSC::Scope::isFunction):
+        (JSC::Scope::isFunctionBoundary):
+        (JSC::Scope::setIsLexicalScope):
+        (JSC::Scope::isLexicalScope):
+        (JSC::Scope::declaredVariables):
+        (JSC::Scope::finalizeLexicalEnvironment):
+        (JSC::Scope::computeLexicallyCapturedVariablesAndPurgeCandidates):
+        (JSC::Scope::declareCallee):
+        (JSC::Scope::declareVariable):
+        (JSC::Scope::declareLexicalVariable):
+        (JSC::Scope::hasDeclaredVariable):
+        (JSC::Scope::hasLexicallyDeclaredVariable):
+        (JSC::Scope::hasDeclaredParameter):
+        (JSC::Scope::declareWrite):
+        (JSC::Scope::preventAllVariableDeclarations):
+        (JSC::Scope::preventVarDeclarations):
+        (JSC::Scope::allowsVarDeclarations):
+        (JSC::Scope::allowsLexicalDeclarations):
+        (JSC::Scope::declareParameter):
+        (JSC::Scope::declareBoundParameter):
+        (JSC::Scope::useVariable):
+        (JSC::Scope::setNeedsFullActivation):
+        (JSC::Scope::needsFullActivation):
+        (JSC::Scope::hasDirectSuper):
+        (JSC::Scope::setNeedsSuperBinding):
+        (JSC::Scope::collectFreeVariables):
+        (JSC::Scope::getCapturedVars):
+        (JSC::Scope::copyCapturedVariablesToVector):
+        (JSC::Parser::AutoCleanupLexicalScope::AutoCleanupLexicalScope):
+        (JSC::Parser::AutoCleanupLexicalScope::~AutoCleanupLexicalScope):
+        (JSC::Parser::AutoCleanupLexicalScope::setIsValid):
+        (JSC::Parser::AutoCleanupLexicalScope::isValid):
+        (JSC::Parser::AutoCleanupLexicalScope::setPopped):
+        (JSC::Parser::AutoCleanupLexicalScope::scope):
+        (JSC::Parser::currentScope):
+        (JSC::Parser::pushScope):
+        (JSC::Parser::popScopeInternal):
+        (JSC::Parser::popScope):
+        (JSC::Parser::declareVariable):
+        (JSC::Parser::hasDeclaredVariable):
+        (JSC::Parser::hasDeclaredParameter):
+        (JSC::Parser::declareWrite):
+        (JSC::Parser::findCachedFunctionInfo):
+        (JSC::Parser::isFunctionBodyNode):
+        (JSC::Parser::continueIsValid):
+        (JSC::Parser::pushLabel):
+        (JSC::Parser::popLabel):
+        (JSC::Parser::getLabel):
+        (JSC::Parser::isLETMaskedAsIDENT):
+        (JSC::Parser<LexerType>::parse):
+        (JSC::Scope::preventNewDecls): Deleted.
+        (JSC::Scope::allowsNewDecls): Deleted.
+        (JSC::Scope::getCapturedVariables): Deleted.
+        There are basic parser changes that now allow for the 'let'
+        keyword. The trickiest change is how we will still treat 'let' 
+        as an identifier for sloppy-mode code sometimes. For example,
+        "var let = ..." is allowed but "let let" or "const let" is not.
+
+        The most significant change to the parser made for this patch
+        is appropriating the Scope struct to also also model a lexical 
+        scope. Changes were made in how we track captured variables to 
+        account for this. In general, I think some of this code could 
+        benefit from a slight refactoring to make things cleaner.
+
+        * parser/ParserTokens.h:
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createNewExpr):
+        (JSC::SyntaxChecker::createConditionalExpr):
+        (JSC::SyntaxChecker::createAssignResolve):
+        (JSC::SyntaxChecker::createEmptyVarExpression):
+        (JSC::SyntaxChecker::createEmptyLetExpression):
+        (JSC::SyntaxChecker::createClassExpr):
+        (JSC::SyntaxChecker::createClassDeclStatement):
+        (JSC::SyntaxChecker::createBlockStatement):
+        (JSC::SyntaxChecker::createExprStatement):
+        (JSC::SyntaxChecker::createIfStatement):
+        (JSC::SyntaxChecker::createForLoop):
+        (JSC::SyntaxChecker::createForInLoop):
+        (JSC::SyntaxChecker::createForOfLoop):
+        (JSC::SyntaxChecker::createEmptyStatement):
+        (JSC::SyntaxChecker::createVarStatement):
+        (JSC::SyntaxChecker::createLetStatement):
+        (JSC::SyntaxChecker::createReturnStatement):
+        (JSC::SyntaxChecker::createBreakStatement):
+        (JSC::SyntaxChecker::createContinueStatement):
+        (JSC::SyntaxChecker::createTryStatement):
+        (JSC::SyntaxChecker::createSwitchStatement):
+        (JSC::SyntaxChecker::createWhileStatement):
+        (JSC::SyntaxChecker::createWithStatement):
+        (JSC::SyntaxChecker::createDoWhileStatement):
+        (JSC::SyntaxChecker::createGetterOrSetterProperty):
+        (JSC::SyntaxChecker::appendStatement):
+        (JSC::SyntaxChecker::combineCommaNodes):
+        (JSC::SyntaxChecker::evalCount):
+        (JSC::SyntaxChecker::appendBinaryExpressionInfo):
+        (JSC::SyntaxChecker::operatorStackPop):
+        (JSC::SyntaxChecker::addVar): Deleted.
+        * parser/VariableEnvironment.cpp: Added.
+        (JSC::VariableEnvironment::markVariableAsCapturedIfDefined):
+        (JSC::VariableEnvironment::markVariableAsCaptured):
+        (JSC::VariableEnvironment::markAllVariablesAsCaptured):
+        (JSC::VariableEnvironment::hasCapturedVariables):
+        (JSC::VariableEnvironment::captures):
+        (JSC::VariableEnvironment::swap):
+        * parser/VariableEnvironment.h: Added.
+        (JSC::VariableEnvironmentEntry::isCaptured):
+        (JSC::VariableEnvironmentEntry::isConstant):
+        (JSC::VariableEnvironmentEntry::isVar):
+        (JSC::VariableEnvironmentEntry::isLet):
+        (JSC::VariableEnvironmentEntry::setIsCaptured):
+        (JSC::VariableEnvironmentEntry::setIsConstant):
+        (JSC::VariableEnvironmentEntry::setIsVar):
+        (JSC::VariableEnvironmentEntry::setIsLet):
+        (JSC::VariableEnvironmentEntry::clearIsVar):
+        (JSC::VariableEnvironment::begin):
+        (JSC::VariableEnvironment::end):
+        (JSC::VariableEnvironment::add):
+        (JSC::VariableEnvironment::size):
+        (JSC::VariableEnvironment::contains):
+        (JSC::VariableEnvironment::remove):
+        VariableEnvironment is a new class that keeps track
+        of the static environment in the parser and the bytecode generator.
+        VariableEnvironment behaves like SymbolTable but for the bytecode generator.
+        It keeps track of variable types, i.e, if a variable is a "var", "let", "const" 
+        and whether or not its captured.
+
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getGlobalCodeBlock):
+        (JSC::CodeCache::getProgramCodeBlock):
+        (JSC::CodeCache::getEvalCodeBlock):
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode):
+        * runtime/CodeCache.h:
+        (JSC::CodeCache::clear):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createErrorForInvalidGlobalAssignment):
+        (JSC::createTDZError):
+        (JSC::throwOutOfMemoryError):
+        * runtime/ExceptionHelpers.h:
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::create):
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+        * runtime/Executable.h:
+        * runtime/JSCJSValue.h:
+        (JSC::jsUndefined):
+        (JSC::jsTDZValue):
+        (JSC::jsBoolean):
+        * runtime/JSEnvironmentRecord.h:
+        (JSC::JSEnvironmentRecord::finishCreationUninitialized):
+        (JSC::JSEnvironmentRecord::finishCreation):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::createProgramCodeBlock):
+        (JSC::JSGlobalObject::createEvalCodeBlock):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::weakRandomInteger):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+        * runtime/JSLexicalEnvironment.cpp:
+        (JSC::JSLexicalEnvironment::symbolTableGet):
+        * runtime/JSLexicalEnvironment.h:
+        (JSC::JSLexicalEnvironment::create):
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::resolve):
+        (JSC::JSScope::abstractResolve):
+        (JSC::JSScope::collectVariablesUnderTDZ):
+        (JSC::JSScope::isLexicalScope):
+        (JSC::resolveModeName):
+        * runtime/JSScope.h:
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::setValue):
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTable::SymbolTable):
+        (JSC::SymbolTable::cloneScopePart):
+        * runtime/SymbolTable.h:
+        SymbolTable now uses an extra bit to know if it corresponds
+        to a "let"-like environment or not.
+
+        * runtime/WriteBarrier.h:
+        (JSC::WriteBarrierBase<Unknown>::get):
+        (JSC::WriteBarrierBase<Unknown>::clear):
+        (JSC::WriteBarrierBase<Unknown>::setUndefined):
+        (JSC::WriteBarrierBase<Unknown>::setStartingValue):
+        (JSC::WriteBarrierBase<Unknown>::isNumber):
+        (JSC::WriteBarrierBase<Unknown>::isObject):
+        (JSC::WriteBarrierBase<Unknown>::isNull):
+        * tests/stress/activation-sink-default-value-tdz-error.js: Added.
+        (shouldThrowTDZ):
+        (bar):
+        (foo.cap):
+        * tests/stress/activation-sink-osrexit-default-value-tdz-error.js: Added.
+        (shouldThrowTDZ):
+        (bar):
+        * tests/stress/lexical-let-and-with-statement.js: Added.
+        (truth):
+        (assert):
+        (.):
+        * tests/stress/lexical-let-exception-handling.js: Added.
+        (truth):
+        (assert):
+        (.):
+        * tests/stress/lexical-let-global-not-captured-variables.js: Added.
+        (truth):
+        (assert):
+        (foo):
+        (.let.capY):
+        * tests/stress/lexical-let-loop-semantics.js: Added.
+        (truth):
+        (assert):
+        (shouldThrowTDZ):
+        (.):
+        * tests/stress/lexical-let-not-strict-mode.js: Added.
+        (truth):
+        (assert):
+        (shouldThrowTDZ):
+        (.):
+        * tests/stress/lexical-let-semantics.js: Added.
+        (truth):
+        (assert):
+        (let.globalFunction):
+        (let.retGlobalNumberCaptured):
+        (let.setGlobalNumberCaptured):
+        (.):
+        * tests/stress/lexical-let-tdz.js: Added.
+        (truth):
+        (assert):
+        (shouldThrowTDZ):
+        (.):
+
 2015-07-15  Anders Carlsson  <andersca@apple.com>
 
         Make JavaScriptCore SPI headers used by WebCore SPI headers self-contained

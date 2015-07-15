@@ -47,23 +47,21 @@ public:
     static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetPropertyNames;
 
     static JSLexicalEnvironment* create(
-        VM& vm, Structure* structure, JSScope* currentScope, SymbolTable* symbolTable)
+        VM& vm, Structure* structure, JSScope* currentScope, SymbolTable* symbolTable, JSValue initialValue)
     {
         JSLexicalEnvironment* result = 
             new (
                 NotNull,
                 allocateCell<JSLexicalEnvironment>(vm.heap, allocationSize(symbolTable)))
             JSLexicalEnvironment(vm, structure, currentScope, symbolTable);
-        result->finishCreation(vm);
+        result->finishCreation(vm, initialValue);
         return result;
     }
-    
-    static JSLexicalEnvironment* create(VM& vm, CallFrame* callFrame, JSScope* currentScope, CodeBlock* codeBlock)
+
+    static JSLexicalEnvironment* create(VM& vm, JSGlobalObject* globalObject, JSScope* currentScope, SymbolTable* symbolTable, JSValue initialValue)
     {
-        JSGlobalObject* globalObject = callFrame->lexicalGlobalObject();
         Structure* structure = globalObject->activationStructure();
-        SymbolTable* symbolTable = codeBlock->symbolTable();
-        return create(vm, structure, currentScope, symbolTable);
+        return create(vm, structure, currentScope, symbolTable, initialValue);
     }
         
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
@@ -81,8 +79,6 @@ public:
 
 private:
     bool symbolTableGet(PropertyName, PropertySlot&);
-    bool symbolTableGet(PropertyName, PropertyDescriptor&);
-    bool symbolTableGet(PropertyName, PropertySlot&, bool& slotIsWriteable);
     bool symbolTablePut(ExecState*, PropertyName, JSValue, bool shouldThrow);
     bool symbolTablePutWithAttributes(VM&, PropertyName, JSValue, unsigned attributes);
 };

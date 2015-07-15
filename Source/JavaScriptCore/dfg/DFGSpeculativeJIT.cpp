@@ -4699,6 +4699,8 @@ void SpeculativeJIT::compileCreateActivation(Node* node)
         
     SpeculateCellOperand scope(this, node->child1());
     GPRReg scopeGPR = scope.gpr();
+    JSValue initializationValue = node->initializationValueForActivation();
+    ASSERT(initializationValue == jsUndefined() || initializationValue == jsTDZValue());
     
     if (table->singletonScope()->isStillValid()) {
         GPRFlushedCallResult result(this);
@@ -4706,7 +4708,13 @@ void SpeculativeJIT::compileCreateActivation(Node* node)
         
         flushRegisters();
         
-        callOperation(operationCreateActivationDirect, resultGPR, structure, scopeGPR, table);
+#if USE(JSVALUE64)
+        callOperation(operationCreateActivationDirect,
+            resultGPR, structure, scopeGPR, table, TrustedImm64(JSValue::encode(initializationValue)));
+#else
+        callOperation(operationCreateActivationDirect,
+            resultGPR, structure, scopeGPR, table, TrustedImm32(initializationValue.tag()), TrustedImm32(initializationValue.payload()));
+#endif
         cellResult(resultGPR, node);
         return;
     }
@@ -4730,17 +4738,23 @@ void SpeculativeJIT::compileCreateActivation(Node* node)
         TrustedImmPtr(table),
         JITCompiler::Address(resultGPR, JSLexicalEnvironment::offsetOfSymbolTable()));
         
-    // Must initialize all members to undefined.
+    // Must initialize all members to undefined or the TDZ empty value.
     for (unsigned i = 0; i < table->scopeSize(); ++i) {
         m_jit.storeTrustedValue(
-            jsUndefined(),
+            initializationValue,
             JITCompiler::Address(
                 resultGPR, JSLexicalEnvironment::offsetOfVariable(ScopeOffset(i))));
     }
 
+#if USE(JSVALUE64)
     addSlowPathGenerator(
         slowPathCall(
-            slowPath, this, operationCreateActivationDirect, resultGPR, structure, scopeGPR, table));
+            slowPath, this, operationCreateActivationDirect, resultGPR, structure, scopeGPR, table, TrustedImm64(JSValue::encode(initializationValue))));
+#else
+    addSlowPathGenerator(
+        slowPathCall(
+            slowPath, this, operationCreateActivationDirect, resultGPR, structure, scopeGPR, table, TrustedImm32(initializationValue.tag()), TrustedImm32(initializationValue.payload())));
+#endif
 
     cellResult(resultGPR, node);
 }

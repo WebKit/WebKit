@@ -27,6 +27,7 @@
 #define JSScope_h
 
 #include "JSObject.h"
+#include "VariableEnvironment.h"
 
 namespace JSC {
 
@@ -157,9 +158,13 @@ public:
     static JSObject* objectAtScope(JSScope*);
 
     static JSValue resolve(ExecState*, JSScope*, const Identifier&);
-    static ResolveOp abstractResolve(ExecState*, bool hasTopActivation, JSScope*, const Identifier&, GetOrPut, ResolveType);
+    static ResolveOp abstractResolve(ExecState*, size_t depthOffset, JSScope*, const Identifier&, GetOrPut, ResolveType);
+
+    static void collectVariablesUnderTDZ(JSScope*, VariableEnvironment& result);
 
     static void visitChildren(JSCell*, SlotVisitor&);
+
+    bool isLexicalScope();
 
     ScopeChainIterator begin();
     ScopeChainIterator end();

@@ -6,7 +6,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 SHOULD BE RESERVED:
 PASS isReserved('implements') is true
 PASS isReserved('interface') is true
-PASS isReserved('let') is true
 PASS isReserved('package') is true
 PASS isReserved('private') is true
 PASS isReserved('protected') is true

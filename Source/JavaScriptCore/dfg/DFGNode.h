@@ -720,6 +720,12 @@ struct Node {
         RELEASE_ASSERT(result);
         return result;
     }
+
+    JSValue initializationValueForActivation() const
+    {
+        ASSERT(op() == CreateActivation);
+        return bitwise_cast<FrozenValue*>(m_opInfo2)->value();
+    }
      
     bool containsMovHint()
     {

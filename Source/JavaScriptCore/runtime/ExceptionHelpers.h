@@ -41,6 +41,7 @@ JS_EXPORT_PRIVATE bool isTerminatedExecutionException(Exception*);
 JS_EXPORT_PRIVATE JSObject* createError(ExecState*, JSValue, const String&, ErrorInstance::SourceAppender);
 JS_EXPORT_PRIVATE JSObject* createStackOverflowError(ExecState*);
 JSObject* createUndefinedVariableError(ExecState*, const Identifier&);
+JSObject* createTDZError(ExecState*);
 JSObject* createNotAnObjectError(ExecState*, JSValue);
 JSObject* createInvalidFunctionApplyParameterError(ExecState*, JSValue);
 JSObject* createInvalidInParameterError(ExecState*, JSValue);

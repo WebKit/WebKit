@@ -36,6 +36,7 @@
 #include "SourceProvider.h"
 #include "SourceProviderCache.h"
 #include "SourceProviderCacheItem.h"
+#include "VariableEnvironment.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
@@ -97,6 +98,7 @@ enum FunctionParseMode {
 };
 enum DestructuringKind {
     DestructureToVariables,
+    DestructureToLexicalVariables,
     DestructureToParameters,
     DestructureToExpressions
 };
@@ -117,9 +119,11 @@ struct Scope {
         , m_needsFullActivation(false)
         , m_hasDirectSuper(false)
         , m_needsSuperBinding(false)
-        , m_allowsNewDecls(true)
+        , m_allowsVarDeclarations(true)
+        , m_allowsLexicalDeclarations(true)
         , m_strictMode(strictMode)
         , m_isFunction(isFunction)
+        , m_isLexicalScope(false)
         , m_isFunctionBoundary(false)
         , m_isValidStrictMode(true)
         , m_loopDepth(0)
@@ -134,9 +138,11 @@ struct Scope {
         , m_needsFullActivation(rhs.m_needsFullActivation)
         , m_hasDirectSuper(rhs.m_hasDirectSuper)
         , m_needsSuperBinding(rhs.m_needsSuperBinding)
-        , m_allowsNewDecls(rhs.m_allowsNewDecls)
+        , m_allowsVarDeclarations(rhs.m_allowsVarDeclarations)
+        , m_allowsLexicalDeclarations(rhs.m_allowsLexicalDeclarations)
         , m_strictMode(rhs.m_strictMode)
         , m_isFunction(rhs.m_isFunction)
+        , m_isLexicalScope(rhs.m_isLexicalScope)
         , m_isFunctionBoundary(rhs.m_isFunctionBoundary)
         , m_isValidStrictMode(rhs.m_isValidStrictMode)
         , m_loopDepth(rhs.m_loopDepth)
@@ -189,31 +195,106 @@ struct Scope {
     {
         m_isFunction = true;
         m_isFunctionBoundary = true;
+        setIsLexicalScope();
     }
-    bool isFunction() { return m_isFunction; }
-    bool isFunctionBoundary() { return m_isFunctionBoundary; }
+
+    bool isFunction() const { return m_isFunction; }
+    bool isFunctionBoundary() const { return m_isFunctionBoundary; }
+
+    void setIsLexicalScope() 
+    { 
+        m_isLexicalScope = true;
+        m_allowsLexicalDeclarations = true;
+    }
+    bool isLexicalScope() { return m_isLexicalScope; }
+
+    VariableEnvironment& declaredVariables() { return m_declaredVariables; }
+    VariableEnvironment& finalizeLexicalEnvironment() 
+    { 
+        if (m_usesEval || m_needsFullActivation)
+            m_lexicalVariables.markAllVariablesAsCaptured();
+        else
+            computeLexicallyCapturedVariablesAndPurgeCandidates();
+
+        return m_lexicalVariables;
+    }
+
+    void computeLexicallyCapturedVariablesAndPurgeCandidates()
+    {
+        // Because variables may be defined at any time in the range of a lexical scope, we must
+        // track lexical variables that might be captured. Then, when we're preparing to pop the top
+        // lexical scope off the stack, we should find which variables are truly captured, and which
+        // variable still may be captured in a parent scope.
+        if (m_lexicalVariables.size() && m_closedVariableCandidates.size()) {
+            auto end = m_closedVariableCandidates.end();
+            for (auto iter = m_closedVariableCandidates.begin(); iter != end; ++iter)
+                m_lexicalVariables.markVariableAsCapturedIfDefined(iter->get());
+        }
+
+        // We can now purge values from the captured candidates because they're captured in this scope.
+        {
+            for (auto entry : m_lexicalVariables) {
+                if (entry.value.isCaptured())
+                    m_closedVariableCandidates.remove(entry.key);
+            }
+        }
+    }
 
     void declareCallee(const Identifier* ident)
     {
-        m_declaredVariables.add(ident->impl());
+        auto addResult = m_declaredVariables.add(ident->impl());
+        // We want to track if callee is captured, but we don't want to act like it's a 'var'
+        // because that would cause the BytecodeGenerator to emit bad code.
+        addResult.iterator->value.clearIsVar();
     }
 
-    bool declareVariable(const Identifier* ident)
+    bool declareVariable(const Identifier* ident, bool isConstant = false)
     {
+        ASSERT(m_allowsVarDeclarations);
         bool isValidStrictMode = m_vm->propertyNames->eval != *ident && m_vm->propertyNames->arguments != *ident;
         m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
-        m_declaredVariables.add(ident->impl());
+        auto addResult = m_declaredVariables.add(ident->impl());
+        addResult.iterator->value.setIsVar();
+        if (isConstant)
+            addResult.iterator->value.setIsConstant();
+
         return isValidStrictMode;
+    }
+
+    bool declareLexicalVariable(const Identifier* ident)
+    {
+        ASSERT(m_allowsLexicalDeclarations);
+        bool isValidStrictMode = m_vm->propertyNames->eval != *ident && m_vm->propertyNames->arguments != *ident;
+        m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
+        auto addResult = m_lexicalVariables.add(ident->impl());
+        addResult.iterator->value.setIsLet();
+        bool successfulDeclaration = addResult.isNewEntry && isValidStrictMode;
+        return successfulDeclaration;
     }
 
     bool hasDeclaredVariable(const Identifier& ident)
     {
-        return m_declaredVariables.contains(ident.impl());
+        return hasDeclaredVariable(ident.impl());
+    }
+
+    bool hasDeclaredVariable(const RefPtr<UniquedStringImpl>& ident)
+    {
+        return m_declaredVariables.contains(ident.get());
+    }
+
+    bool hasLexicallyDeclaredVariable(const RefPtr<UniquedStringImpl>& ident) const
+    {
+        return m_lexicalVariables.contains(ident.get());
     }
     
-    bool hasDeclaredParameter(const Identifier& ident)
+    ALWAYS_INLINE bool hasDeclaredParameter(const Identifier& ident)
     {
-        return m_declaredParameters.contains(ident.impl()) || m_declaredVariables.contains(ident.impl());
+        return hasDeclaredParameter(ident.impl());
+    }
+
+    bool hasDeclaredParameter(const RefPtr<UniquedStringImpl>& ident)
+    {
+        return m_declaredParameters.contains(ident) || m_declaredVariables.contains(ident.get());
     }
     
     void declareWrite(const Identifier* ident)
@@ -222,13 +303,22 @@ struct Scope {
         m_writtenVariables.add(ident->impl());
     }
 
-    void preventNewDecls() { m_allowsNewDecls = false; }
-    bool allowsNewDecls() const { return m_allowsNewDecls; }
+    void preventAllVariableDeclarations()
+    {
+        m_allowsVarDeclarations = false; 
+        m_allowsLexicalDeclarations = false;
+    }
+    void preventVarDeclarations() { m_allowsVarDeclarations = false; }
+    bool allowsVarDeclarations() const { return m_allowsVarDeclarations; }
+    bool allowsLexicalDeclarations() const { return m_allowsLexicalDeclarations; }
 
     bool declareParameter(const Identifier* ident)
     {
+        ASSERT(m_allowsVarDeclarations);
         bool isArguments = m_vm->propertyNames->arguments == *ident;
-        bool isValidStrictMode = m_declaredVariables.add(ident->impl()).isNewEntry && m_vm->propertyNames->eval != *ident && !isArguments;
+        auto addResult = m_declaredVariables.add(ident->impl());
+        addResult.iterator->value.clearIsVar();
+        bool isValidStrictMode = addResult.isNewEntry && m_vm->propertyNames->eval != *ident && !isArguments;
         m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
         m_declaredParameters.add(ident->impl());
 
@@ -245,13 +335,14 @@ struct Scope {
     BindingResult declareBoundParameter(const Identifier* ident)
     {
         bool isArguments = m_vm->propertyNames->arguments == *ident;
-        bool newEntry = m_declaredVariables.add(ident->impl()).isNewEntry;
-        bool isValidStrictMode = newEntry && m_vm->propertyNames->eval != *ident && !isArguments;
+        auto addResult = m_declaredVariables.add(ident->impl());
+        addResult.iterator->value.setIsVar(); // Treat destructuring parameters as "var"s.
+        bool isValidStrictMode = addResult.isNewEntry && m_vm->propertyNames->eval != *ident && !isArguments;
         m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
     
         if (isArguments)
             m_shadowsArguments = true;
-        if (!newEntry)
+        if (!addResult.isNewEntry)
             return BindingFailed;
         return isValidStrictMode ? BindingSucceeded : StrictBindingFailed;
     }
@@ -268,6 +359,7 @@ struct Scope {
     }
 
     void setNeedsFullActivation() { m_needsFullActivation = true; }
+    bool needsFullActivation() const { return m_needsFullActivation; }
 
 #if ENABLE(ES6_CLASS_SYNTAX)
     bool hasDirectSuper() { return m_hasDirectSuper; }
@@ -283,38 +375,51 @@ struct Scope {
 #endif
     void setNeedsSuperBinding() { m_needsSuperBinding = true; }
 
-    bool collectFreeVariables(Scope* nestedScope, bool shouldTrackClosedVariables)
+    void collectFreeVariables(Scope* nestedScope, bool shouldTrackClosedVariables)
     {
         if (nestedScope->m_usesEval)
             m_usesEval = true;
-        IdentifierSet::iterator end = nestedScope->m_usedVariables.end();
-        for (IdentifierSet::iterator ptr = nestedScope->m_usedVariables.begin(); ptr != end; ++ptr) {
-            if (nestedScope->m_declaredVariables.contains(*ptr))
-                continue;
-            m_usedVariables.add(*ptr);
-            if (shouldTrackClosedVariables)
-                m_closedVariables.add(*ptr);
+
+        {
+            IdentifierSet::iterator end = nestedScope->m_usedVariables.end();
+            for (IdentifierSet::iterator ptr = nestedScope->m_usedVariables.begin(); ptr != end; ++ptr) {
+                if (nestedScope->m_declaredVariables.contains(*ptr) || nestedScope->m_lexicalVariables.contains(*ptr))
+                    continue;
+                m_usedVariables.add(*ptr);
+                // We don't want a declared variable that is used in an inner scope to be thought of as captured if
+                // that inner scope is both a lexical scope and not a function. Only inner functions and "catch" 
+                // statements can cause variables to be captured.
+                if (shouldTrackClosedVariables && (nestedScope->m_isFunctionBoundary || !nestedScope->m_isLexicalScope))
+                    m_closedVariableCandidates.add(*ptr);
+            }
         }
+        // Propagate closed variable candidates downwards within the same function.
+        // Cross function captures will be realized via m_usedVariables propagation.
+        if (shouldTrackClosedVariables && !nestedScope->m_isFunctionBoundary && nestedScope->m_closedVariableCandidates.size()) {
+            IdentifierSet::iterator end = nestedScope->m_closedVariableCandidates.end();
+            IdentifierSet::iterator begin = nestedScope->m_closedVariableCandidates.begin();
+            m_closedVariableCandidates.add(begin, end);
+        }
+
         if (nestedScope->m_writtenVariables.size()) {
             IdentifierSet::iterator end = nestedScope->m_writtenVariables.end();
             for (IdentifierSet::iterator ptr = nestedScope->m_writtenVariables.begin(); ptr != end; ++ptr) {
-                if (nestedScope->m_declaredVariables.contains(*ptr))
+                if (nestedScope->m_declaredVariables.contains(*ptr) || nestedScope->m_lexicalVariables.contains(*ptr))
                     continue;
                 m_writtenVariables.add(*ptr);
             }
         }
-
-        return true;
     }
-
-    void getCapturedVariables(IdentifierSet& capturedVariables, bool& modifiedParameter, bool& modifiedArguments)
+    
+    void getCapturedVars(IdentifierSet& capturedVariables, bool& modifiedParameter, bool& modifiedArguments)
     {
         if (m_needsFullActivation || m_usesEval) {
             modifiedParameter = true;
-            capturedVariables = m_declaredVariables;
+            for (auto& entry : m_declaredVariables)
+                capturedVariables.add(entry.key);
             return;
         }
-        for (IdentifierSet::iterator ptr = m_closedVariables.begin(); ptr != m_closedVariables.end(); ++ptr) {
+        for (IdentifierSet::iterator ptr = m_closedVariableCandidates.begin(); ptr != m_closedVariableCandidates.end(); ++ptr) {
             if (!m_declaredVariables.contains(*ptr))
                 continue;
             capturedVariables.add(*ptr);
@@ -343,7 +448,7 @@ struct Scope {
     {
         IdentifierSet::iterator end = capturedVariables.end();
         for (IdentifierSet::iterator it = capturedVariables.begin(); it != end; ++it) {
-            if (m_declaredVariables.contains(*it))
+            if (m_declaredVariables.contains(*it) || m_lexicalVariables.contains(*it))
                 continue;
             vector.append(*it);
         }
@@ -378,9 +483,11 @@ private:
     bool m_needsFullActivation : 1;
     bool m_hasDirectSuper : 1;
     bool m_needsSuperBinding : 1;
-    bool m_allowsNewDecls : 1;
+    bool m_allowsVarDeclarations : 1;
+    bool m_allowsLexicalDeclarations : 1;
     bool m_strictMode : 1;
     bool m_isFunction : 1;
+    bool m_isLexicalScope : 1;
     bool m_isFunctionBoundary : 1;
     bool m_isValidStrictMode : 1;
     int m_loopDepth;
@@ -389,9 +496,10 @@ private:
     typedef Vector<ScopeLabelInfo, 2> LabelStack;
     std::unique_ptr<LabelStack> m_labels;
     IdentifierSet m_declaredParameters;
-    IdentifierSet m_declaredVariables;
+    VariableEnvironment m_declaredVariables;
+    VariableEnvironment m_lexicalVariables;
     IdentifierSet m_usedVariables;
-    IdentifierSet m_closedVariables;
+    IdentifierSet m_closedVariableCandidates;
     IdentifierSet m_writtenVariables;
 };
 
@@ -479,6 +587,47 @@ private:
         Parser* m_parser;
     };
 
+    struct AutoCleanupLexicalScope {
+        // We can allocate this object on the stack without actually knowing beforehand if we're 
+        // going to create a new lexical scope. If we decide to create a new lexical scope, we
+        // can pass the scope into this obejct and it will take care of the cleanup for us if the parse fails.
+        // This is helpful if we may fail from syntax errors after creating a lexical scope conditionally.
+        AutoCleanupLexicalScope()
+            : m_scope(nullptr, UINT_MAX)
+            , m_parser(nullptr)
+        {
+        }
+
+        ~AutoCleanupLexicalScope()
+        {
+            // This should only ever be called if we fail from a syntax error. Otherwise
+            // it's the intention that a user of this class pops this scope manually on a 
+            // successful parse. 
+            if (isValid())
+                m_parser->popScope(*this, false);
+        }
+
+        void setIsValid(ScopeRef& scope, Parser* parser)
+        {
+            RELEASE_ASSERT(scope->isLexicalScope());
+            m_scope = scope;
+            m_parser = parser;
+        }
+
+        bool isValid() const { return !!m_parser; }
+
+        void setPopped()
+        {
+            m_parser = nullptr;
+        }
+
+        ScopeRef& scope() { return m_scope; }
+
+    private:
+        ScopeRef m_scope;
+        Parser* m_parser;
+    };
+
     ScopeRef currentScope()
     {
         return ScopeRef(&m_scopeStack, m_scopeStack.size() - 1);
@@ -496,53 +645,80 @@ private:
         return currentScope();
     }
     
-    bool popScopeInternal(ScopeRef& scope, bool shouldTrackClosedVariables)
+    void popScopeInternal(ScopeRef& scope, bool shouldTrackClosedVariables)
     {
         ASSERT_UNUSED(scope, scope.index() == m_scopeStack.size() - 1);
         ASSERT(m_scopeStack.size() > 1);
-        bool result = m_scopeStack[m_scopeStack.size() - 2].collectFreeVariables(&m_scopeStack.last(), shouldTrackClosedVariables);
+        m_scopeStack[m_scopeStack.size() - 2].collectFreeVariables(&m_scopeStack.last(), shouldTrackClosedVariables);
+        if (!m_scopeStack.last().isFunctionBoundary() && m_scopeStack.last().needsFullActivation())
+            m_scopeStack[m_scopeStack.size() - 2].setNeedsFullActivation();
         m_scopeStack.removeLast();
-        return result;
     }
     
-    bool popScope(ScopeRef& scope, bool shouldTrackClosedVariables)
+    ALWAYS_INLINE void popScope(ScopeRef& scope, bool shouldTrackClosedVariables)
     {
-        return popScopeInternal(scope, shouldTrackClosedVariables);
+        popScopeInternal(scope, shouldTrackClosedVariables);
     }
     
-    bool popScope(AutoPopScopeRef& scope, bool shouldTrackClosedVariables)
+    ALWAYS_INLINE void popScope(AutoPopScopeRef& scope, bool shouldTrackClosedVariables)
     {
         scope.setPopped();
-        return popScopeInternal(scope, shouldTrackClosedVariables);
+        popScopeInternal(scope, shouldTrackClosedVariables);
+    }
+
+    ALWAYS_INLINE void popScope(AutoCleanupLexicalScope& cleanupScope, bool shouldTrackClosedVariables)
+    {
+        RELEASE_ASSERT(cleanupScope.isValid());
+        ScopeRef& scope = cleanupScope.scope();
+        cleanupScope.setPopped();
+        popScopeInternal(scope, shouldTrackClosedVariables);
     }
     
-    bool declareVariable(const Identifier* ident)
+    enum class DeclarationType { VarDeclaration, LexicalDeclaration };
+    bool declareVariable(const Identifier* ident, typename Parser::DeclarationType type = DeclarationType::VarDeclaration, bool isConstant = false)
     {
         unsigned i = m_scopeStack.size() - 1;
         ASSERT(i < m_scopeStack.size());
-        while (!m_scopeStack[i].allowsNewDecls()) {
+
+        if (type == DeclarationType::VarDeclaration) {
+            while (!m_scopeStack[i].allowsVarDeclarations()) {
+                i--;
+                ASSERT(i < m_scopeStack.size());
+            }
+
+            return m_scopeStack[i].declareVariable(ident, isConstant);
+        }
+
+        ASSERT(type == DeclarationType::LexicalDeclaration);
+
+        // Lexical variables declared at a top level scope that shadow arguments or vars are not allowed.
+        if (m_statementDepth == 1 && (hasDeclaredParameter(*ident) || hasDeclaredVariable(*ident)))
+            return false;
+
+        while (!m_scopeStack[i].allowsLexicalDeclarations()) {
             i--;
             ASSERT(i < m_scopeStack.size());
         }
-        return m_scopeStack[i].declareVariable(ident);
+
+        return m_scopeStack[i].declareLexicalVariable(ident);
     }
     
     NEVER_INLINE bool hasDeclaredVariable(const Identifier& ident)
     {
         unsigned i = m_scopeStack.size() - 1;
         ASSERT(i < m_scopeStack.size());
-        while (!m_scopeStack[i].allowsNewDecls()) {
+        while (!m_scopeStack[i].allowsVarDeclarations()) {
             i--;
             ASSERT(i < m_scopeStack.size());
         }
         return m_scopeStack[i].hasDeclaredVariable(ident);
     }
-    
+
     NEVER_INLINE bool hasDeclaredParameter(const Identifier& ident)
     {
         unsigned i = m_scopeStack.size() - 1;
         ASSERT(i < m_scopeStack.size());
-        while (!m_scopeStack[i].allowsNewDecls()) {
+        while (!m_scopeStack[i].allowsVarDeclarations()) {
             i--;
             ASSERT(i < m_scopeStack.size());
         }
@@ -554,7 +730,7 @@ private:
         if (!m_syntaxAlreadyValidated || strictMode())
             m_scopeStack.last().declareWrite(ident);
     }
-    
+
     ScopeStack m_scopeStack;
     
     const SourceProviderCacheItem* findCachedFunctionInfo(int openBracePos) 
@@ -565,8 +741,7 @@ private:
     Parser();
     String parseInner();
 
-    void didFinishParsing(SourceElements*, DeclarationStacks::VarStack&, 
-        DeclarationStacks::FunctionStack&, CodeFeatures, int, IdentifierSet&, const Vector<RefPtr<UniquedStringImpl>>&&);
+    void didFinishParsing(SourceElements*, DeclarationStacks::FunctionStack&, VariableEnvironment&, CodeFeatures, int, const Vector<RefPtr<UniquedStringImpl>>&&);
 
     // Used to determine type of error to report.
     bool isFunctionBodyNode(ScopeNode*) { return false; }
@@ -753,7 +928,7 @@ private:
         return true;
     }
     void pushLabel(const Identifier* label, bool isLoop) { currentScope()->pushLabel(label, isLoop); }
-    void popLabel() { currentScope()->popLabel(); }
+    void popLabel(ScopeRef scope) { scope->popLabel(); }
     ScopeLabelInfo* getLabel(const Identifier* label)
     {
         ScopeRef current = currentScope();
@@ -766,6 +941,11 @@ private:
         return result;
     }
 
+    ALWAYS_INLINE bool isLETMaskedAsIDENT()
+    {
+        return match(LET) && !strictMode();
+    }
+
     template <class TreeBuilder> TreeSourceElements parseSourceElements(TreeBuilder&, SourceElementsMode, FunctionParseType);
     template <class TreeBuilder> TreeStatement parseStatementListItem(TreeBuilder&, const Identifier*& directive, unsigned* directiveLiteralLength);
     template <class TreeBuilder> TreeStatement parseStatement(TreeBuilder&, const Identifier*& directive, unsigned* directiveLiteralLength = 0);
@@ -773,7 +953,7 @@ private:
     template <class TreeBuilder> TreeStatement parseClassDeclaration(TreeBuilder&);
 #endif
     template <class TreeBuilder> TreeStatement parseFunctionDeclaration(TreeBuilder&);
-    template <class TreeBuilder> TreeStatement parseVarDeclaration(TreeBuilder&);
+    template <class TreeBuilder> TreeStatement parseVariableDeclaration(TreeBuilder&, DeclarationType);
     template <class TreeBuilder> TreeStatement parseConstDeclaration(TreeBuilder&);
     template <class TreeBuilder> TreeStatement parseDoWhileStatement(TreeBuilder&);
     template <class TreeBuilder> TreeStatement parseWhileStatement(TreeBuilder&);
@@ -810,7 +990,7 @@ private:
     template <class TreeBuilder> ALWAYS_INLINE TreeFunctionBody parseFunctionBody(TreeBuilder&, int functionKeywordStart, int functionNameStart, int parametersStart, ConstructorKind, FunctionParseType);
     template <class TreeBuilder> ALWAYS_INLINE TreeFormalParameterList parseFormalParameters(TreeBuilder&);
     enum VarDeclarationListContext { ForLoopContext, VarDeclarationContext };
-    template <class TreeBuilder> TreeExpression parseVarDeclarationList(TreeBuilder&, int& declarations, TreeDestructuringPattern& lastPattern, TreeExpression& lastInitializer, JSTextPosition& identStart, JSTextPosition& initStart, JSTextPosition& initEnd, VarDeclarationListContext);
+    template <class TreeBuilder> TreeExpression parseVariableDeclarationList(TreeBuilder&, int& declarations, TreeDestructuringPattern& lastPattern, TreeExpression& lastInitializer, JSTextPosition& identStart, JSTextPosition& initStart, JSTextPosition& initEnd, VarDeclarationListContext, DeclarationType);
     template <class TreeBuilder> NEVER_INLINE TreeConstDeclList parseConstDeclarationList(TreeBuilder&);
 
 #if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
@@ -818,9 +998,9 @@ private:
     template <class TreeBuilder> TreeExpression parseArrowFunctionExpression(TreeBuilder&);
 #endif
 
-    template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern createBindingPattern(TreeBuilder&, DestructuringKind, const Identifier&, int depth, JSToken);
-    template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern parseDestructuringPattern(TreeBuilder&, DestructuringKind, int depth = 0);
-    template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern tryParseDestructuringPatternExpression(TreeBuilder&);
+    template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern createBindingPattern(TreeBuilder&, DestructuringKind, const Identifier&, int depth, JSToken, AssignmentContext);
+    template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern parseDestructuringPattern(TreeBuilder&, DestructuringKind, AssignmentContext = AssignmentContext::DeclarationStatement, int depth = 0);
+    template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern tryParseDestructuringPatternExpression(TreeBuilder&, AssignmentContext);
     template <class TreeBuilder> NEVER_INLINE TreeExpression parseDefaultValueForDestructuringPattern(TreeBuilder&);
 
     template <class TreeBuilder> NEVER_INLINE bool parseFunctionInfo(TreeBuilder&, FunctionRequirements, FunctionParseMode, bool nameIsInContainingScope, ConstructorKind, SuperBinding, int functionKeywordStart, ParserFunctionInfo<TreeBuilder>&, FunctionParseType);
@@ -946,9 +1126,8 @@ private:
     bool m_parsingBuiltin;
     ConstructorKind m_defaultConstructorKind;
     ThisTDZMode m_thisTDZMode;
-    DeclarationStacks::VarStack m_varDeclarations;
+    VariableEnvironment m_varDeclarations;
     DeclarationStacks::FunctionStack m_funcDeclarations;
-    IdentifierSet m_capturedVariables;
     Vector<RefPtr<UniquedStringImpl>> m_closedVariables;
     CodeFeatures m_features;
     int m_numConstants;
@@ -1020,7 +1199,7 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error)
                                     m_sourceElements,
                                     m_varDeclarations,
                                     m_funcDeclarations,
-                                    m_capturedVariables,
+                                    currentScope()->finalizeLexicalEnvironment(),
                                     *m_source,
                                     m_features,
                                     m_numConstants);

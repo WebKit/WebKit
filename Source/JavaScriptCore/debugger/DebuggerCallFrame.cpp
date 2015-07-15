@@ -192,7 +192,11 @@ JSValue DebuggerCallFrame::evaluate(const String& script, NakedPtr<Exception>& e
     VM& vm = callFrame->vm();
     auto& codeBlock = *callFrame->codeBlock();
     ThisTDZMode thisTDZMode = codeBlock.unlinkedCodeBlock()->constructorKind() == ConstructorKind::Derived ? ThisTDZMode::AlwaysCheck : ThisTDZMode::CheckIfNeeded;
-    EvalExecutable* eval = EvalExecutable::create(callFrame, makeSource(script), codeBlock.isStrictMode(), thisTDZMode);
+
+    VariableEnvironment variablesUnderTDZ;
+    JSScope::collectVariablesUnderTDZ(scope()->jsScope(), variablesUnderTDZ);
+
+    EvalExecutable* eval = EvalExecutable::create(callFrame, makeSource(script), codeBlock.isStrictMode(), thisTDZMode, &variablesUnderTDZ);
     if (vm.exception()) {
         exception = vm.exception();
         vm.clearException();

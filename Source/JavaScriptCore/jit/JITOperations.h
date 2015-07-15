@@ -126,6 +126,7 @@ typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_ESsiJI)(ExecState*, Struct
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EZ)(ExecState*, int32_t);
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EZIcfZ)(ExecState*, int32_t, InlineCallFrame*, int32_t);
 typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EZZ)(ExecState*, int32_t, int32_t);
+typedef EncodedJSValue JIT_OPERATION (*J_JITOperation_EZSymtabJ)(ExecState*, int32_t, SymbolTable*, EncodedJSValue);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_E)(ExecState*);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EZ)(ExecState*, int32_t);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EC)(ExecState*, JSCell*);
@@ -148,7 +149,7 @@ typedef JSCell* JIT_OPERATION (*C_JITOperation_EL)(ExecState*, JSLexicalEnvironm
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EO)(ExecState*, JSObject*);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EOZ)(ExecState*, JSObject*, int32_t);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_ESt)(ExecState*, Structure*);
-typedef JSCell* JIT_OPERATION (*C_JITOperation_EStJscSymtab)(ExecState*, Structure*, JSScope*, SymbolTable*);
+typedef JSCell* JIT_OPERATION (*C_JITOperation_EStJscSymtabJ)(ExecState*, Structure*, JSScope*, SymbolTable*, EncodedJSValue);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EStRZJsfL)(ExecState*, Structure*, Register*, int32_t, JSFunction*, JSLexicalEnvironment*);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EStRZJsf)(ExecState*, Structure*, Register*, int32_t, JSFunction*);
 typedef JSCell* JIT_OPERATION (*C_JITOperation_EStZ)(ExecState*, Structure*, int32_t);
@@ -317,7 +318,6 @@ void JIT_OPERATION operationPopScope(ExecState*, int32_t) WTF_INTERNAL;
 void JIT_OPERATION operationProfileDidCall(ExecState*, EncodedJSValue) WTF_INTERNAL;
 void JIT_OPERATION operationProfileWillCall(ExecState*, EncodedJSValue) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationCheckHasInstance(ExecState*, EncodedJSValue, EncodedJSValue baseVal) WTF_INTERNAL;
-JSCell* JIT_OPERATION operationCreateActivation(ExecState*, JSScope* currentScope) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetByValDefault(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, ArrayProfile*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetByValGeneric(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, ArrayProfile*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetByValString(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript) WTF_INTERNAL;

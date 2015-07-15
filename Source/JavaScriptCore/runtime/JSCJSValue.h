@@ -489,6 +489,11 @@ inline JSValue jsUndefined()
     return JSValue(JSValue::JSUndefined);
 }
 
+inline JSValue jsTDZValue()
+{
+    return JSValue();
+}
+
 inline JSValue jsBoolean(bool b)
 {
     return b ? JSValue(JSValue::JSTrue) : JSValue(JSValue::JSFalse);

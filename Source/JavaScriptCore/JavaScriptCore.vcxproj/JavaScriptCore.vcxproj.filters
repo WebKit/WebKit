@@ -459,6 +459,9 @@
     <ClCompile Include="..\parser\SourceProviderCache.cpp">
       <Filter>parser</Filter>
     </ClCompile>
+    <ClCompile Include="..\parser\VariableEnvironment.cpp">
+      <Filter>parser</Filter>
+    </ClCompile>
     <ClCompile Include="..\profiler\LegacyProfiler.cpp">
       <Filter>profiler</Filter>
     </ClCompile>
@@ -2464,6 +2467,9 @@
       <Filter>parser</Filter>
     </ClInclude>
     <ClInclude Include="..\parser\SyntaxChecker.h">
+      <Filter>parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\parser\VariableEnvironment.h">
       <Filter>parser</Filter>
     </ClInclude>
     <ClInclude Include="..\profiler\CallIdentifier.h">

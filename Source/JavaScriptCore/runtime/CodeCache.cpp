@@ -76,7 +76,7 @@ template <> struct CacheTypes<UnlinkedEvalCodeBlock> {
 
 template <class UnlinkedCodeBlockType, class ExecutableType>
 UnlinkedCodeBlockType* CodeCache::getGlobalCodeBlock(VM& vm, ExecutableType* executable, const SourceCode& source, JSParserBuiltinMode builtinMode,
-    JSParserStrictMode strictMode, ThisTDZMode thisTDZMode, DebuggerMode debuggerMode, ProfilerMode profilerMode, ParserError& error)
+    JSParserStrictMode strictMode, ThisTDZMode thisTDZMode, DebuggerMode debuggerMode, ProfilerMode profilerMode, ParserError& error, const VariableEnvironment* variablesUnderTDZ)
 {
     SourceCodeKey key = SourceCodeKey(source, String(), CacheTypes<UnlinkedCodeBlockType>::codeType, builtinMode, strictMode, thisTDZMode);
     SourceCodeValue* cache = m_sourceCode.findCacheAndUpdateAge(key);
@@ -109,7 +109,7 @@ UnlinkedCodeBlockType* CodeCache::getGlobalCodeBlock(VM& vm, ExecutableType* exe
     UnlinkedCodeBlockType* unlinkedCodeBlock = UnlinkedCodeBlockType::create(&vm, executable->executableInfo());
     unlinkedCodeBlock->recordParse(rootNode->features(), rootNode->hasCapturedVariables(), rootNode->firstLine() - source.firstLine(), lineCount, unlinkedEndColumn);
 
-    auto generator = std::make_unique<BytecodeGenerator>(vm, rootNode.get(), unlinkedCodeBlock, debuggerMode, profilerMode);
+    auto generator = std::make_unique<BytecodeGenerator>(vm, rootNode.get(), unlinkedCodeBlock, debuggerMode, profilerMode, variablesUnderTDZ);
     error = generator->generate();
     if (error.isValid())
         return nullptr;
@@ -123,12 +123,13 @@ UnlinkedCodeBlockType* CodeCache::getGlobalCodeBlock(VM& vm, ExecutableType* exe
 
 UnlinkedProgramCodeBlock* CodeCache::getProgramCodeBlock(VM& vm, ProgramExecutable* executable, const SourceCode& source, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, DebuggerMode debuggerMode, ProfilerMode profilerMode, ParserError& error)
 {
-    return getGlobalCodeBlock<UnlinkedProgramCodeBlock>(vm, executable, source, builtinMode, strictMode, ThisTDZMode::CheckIfNeeded, debuggerMode, profilerMode, error);
+    VariableEnvironment emptyParentTDZVariables;
+    return getGlobalCodeBlock<UnlinkedProgramCodeBlock>(vm, executable, source, builtinMode, strictMode, ThisTDZMode::CheckIfNeeded, debuggerMode, profilerMode, error, &emptyParentTDZVariables);
 }
 
-UnlinkedEvalCodeBlock* CodeCache::getEvalCodeBlock(VM& vm, EvalExecutable* executable, const SourceCode& source, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, ThisTDZMode thisTDZMode, DebuggerMode debuggerMode, ProfilerMode profilerMode, ParserError& error)
+UnlinkedEvalCodeBlock* CodeCache::getEvalCodeBlock(VM& vm, EvalExecutable* executable, const SourceCode& source, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, ThisTDZMode thisTDZMode, DebuggerMode debuggerMode, ProfilerMode profilerMode, ParserError& error, const VariableEnvironment* variablesUnderTDZ)
 {
-    return getGlobalCodeBlock<UnlinkedEvalCodeBlock>(vm, executable, source, builtinMode, strictMode, thisTDZMode, debuggerMode, profilerMode, error);
+    return getGlobalCodeBlock<UnlinkedEvalCodeBlock>(vm, executable, source, builtinMode, strictMode, thisTDZMode, debuggerMode, profilerMode, error, variablesUnderTDZ);
 }
 
 // FIXME: There's no need to add the function's name to the key here. It's already in the source code.
@@ -171,7 +172,9 @@ UnlinkedFunctionExecutable* CodeCache::getFunctionExecutableFromGlobalCode(VM& v
         return nullptr;
     
     body->setEndPosition(positionBeforeLastNewline);
-    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&vm, source, body, UnlinkedNormalFunction);
+    // The Function constructor only has access to global variables, so no variables will be under TDZ.
+    VariableEnvironment emptyTDZVariables;
+    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&vm, source, body, UnlinkedNormalFunction, emptyTDZVariables);
     functionExecutable->m_nameValue.set(vm, functionExecutable, jsString(&vm, name.string()));
 
     m_sourceCode.addCache(key, SourceCodeValue(vm, functionExecutable, m_sourceCode.age()));

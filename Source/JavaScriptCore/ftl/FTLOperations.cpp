@@ -191,7 +191,10 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
             materialization->origin(), exec->codeBlock());
         Structure* structure = codeBlock->globalObject()->activationStructure();
 
-        JSLexicalEnvironment* result = JSLexicalEnvironment::create(vm, structure, scope, table);
+        // It doesn't matter what values we initialize as bottom values inside the activation constructor because
+        // activation sinking will set bottom values for each slot.
+        // FIXME: Slight optimization would be to create a constructor that doesn't initialize all slots.
+        JSLexicalEnvironment* result = JSLexicalEnvironment::create(vm, structure, scope, table, jsUndefined());
 
         RELEASE_ASSERT(materialization->properties().size() - 2 == table->scopeSize());
 

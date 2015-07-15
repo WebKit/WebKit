@@ -283,6 +283,12 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(WithProfileTag, J_JITOpera
     return appendCallWithExceptionCheckSetJSValueResultWithProfile(operation, dst);
 }
 
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(J_JITOperation_EPc operation, int dst, Instruction* bytecodePC)
+{
+    setupArgumentsWithExecState(TrustedImmPtr(bytecodePC));
+    return appendCallWithExceptionCheckSetJSValueResult(operation, dst);
+}
+
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(J_JITOperation_EZ operation, int dst, int32_t arg)
 {
     setupArgumentsWithExecState(TrustedImm32(arg));
@@ -479,6 +485,12 @@ ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(S_JITOperation_EJJ operati
 }
 
 ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(V_JITOperation_EZSymtabJ operation, int op1, SymbolTable* symbolTable, RegisterID regOp3)
+{
+    setupArgumentsWithExecState(TrustedImm32(op1), TrustedImmPtr(symbolTable), regOp3);
+    return appendCallWithExceptionCheck(operation);
+}
+
+ALWAYS_INLINE MacroAssembler::Call JIT::callOperation(J_JITOperation_EZSymtabJ operation, int op1, SymbolTable* symbolTable, RegisterID regOp3)
 {
     setupArgumentsWithExecState(TrustedImm32(op1), TrustedImmPtr(symbolTable), regOp3);
     return appendCallWithExceptionCheck(operation);

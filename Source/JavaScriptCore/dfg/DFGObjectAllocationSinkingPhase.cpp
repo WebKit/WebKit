@@ -862,11 +862,11 @@ private:
             {
                 SymbolTable* symbolTable = node->castOperand<SymbolTable*>();
                 ConcurrentJITLocker locker(symbolTable->m_lock);
-                LazyNode undefined(m_graph.freeze(jsUndefined()));
+                LazyNode initialValue(m_graph.freeze(node->initializationValueForActivation()));
                 for (auto iter = symbolTable->begin(locker), end = symbolTable->end(locker); iter != end; ++iter) {
                     writes.add(
                         PromotedLocationDescriptor(ClosureVarPLoc, iter->value.scopeOffset().offset()),
-                        undefined);
+                        initialValue);
                 }
             }
             break;

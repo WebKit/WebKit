@@ -170,14 +170,14 @@ JSValue JSScope::resolve(ExecState* exec, JSScope* scope, const Identifier& iden
     }
 }
 
-ResolveOp JSScope::abstractResolve(ExecState* exec, bool hasTopActivation, JSScope* scope, const Identifier& ident, GetOrPut getOrPut, ResolveType unlinkedType)
+ResolveOp JSScope::abstractResolve(ExecState* exec, size_t depthOffset, JSScope* scope, const Identifier& ident, GetOrPut getOrPut, ResolveType unlinkedType)
 {
     ResolveOp op(Dynamic, 0, 0, 0, 0, 0);
     if (unlinkedType == Dynamic)
         return op;
 
-    size_t depth = hasTopActivation ? 1 : 0;
     bool needsVarInjectionChecks = JSC::needsVarInjectionChecks(unlinkedType);
+    size_t depth = depthOffset;
     for (; scope; scope = scope->next()) {
         if (abstractAccess(exec, scope, ident, getOrPut, depth, needsVarInjectionChecks, op))
             break;
@@ -185,6 +185,28 @@ ResolveOp JSScope::abstractResolve(ExecState* exec, bool hasTopActivation, JSSco
     }
 
     return op;
+}
+
+void JSScope::collectVariablesUnderTDZ(JSScope* scope, VariableEnvironment& result)
+{
+    for (; scope; scope = scope->next()) {
+        if (!scope->isLexicalScope())
+            continue;
+        SymbolTable* symbolTable = jsCast<JSLexicalEnvironment*>(scope)->symbolTable();
+        ASSERT(symbolTable->correspondsToLexicalScope());
+        ConcurrentJITLocker locker(symbolTable->m_lock);
+        for (auto end = symbolTable->end(locker), iter = symbolTable->begin(locker); iter != end; ++iter)
+            result.add(iter->key);
+    }
+}
+
+bool JSScope::isLexicalScope()
+{
+    JSLexicalEnvironment* lexicalEnvironment = jsDynamicCast<JSLexicalEnvironment*>(this);
+    if (!lexicalEnvironment) // Global object does not hold any lexical variables so we can ignore it.
+        return false;
+
+    return lexicalEnvironment->symbolTable()->correspondsToLexicalScope();
 }
 
 const char* resolveModeName(ResolveMode mode)

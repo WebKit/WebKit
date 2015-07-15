@@ -607,12 +607,6 @@ _llint_op_enter:
     dispatch(1)
 
 
-_llint_op_create_lexical_environment:
-    traceExecution()
-    callSlowPath(_llint_slow_path_create_lexical_environment)
-    dispatch(3)
-
-
 _llint_op_get_scope:
     traceExecution()
     loadp Callee[cfr], t0
@@ -678,9 +672,9 @@ _llint_op_new_object:
 
 _llint_op_check_tdz:
     traceExecution()
-    loadpFromInstruction(1, t0)
-    loadq [cfr, t0, 8], t0
-    bqneq t0, ValueEmpty, .opNotTDZ
+    loadisFromInstruction(1, t0)
+    loadConstantOrVariable(t0, t1)
+    bqneq t1, ValueEmpty, .opNotTDZ
     callSlowPath(_slow_path_throw_tdz_error)
 
 .opNotTDZ:
@@ -2192,6 +2186,15 @@ _llint_op_put_to_arguments:
     loadConstantOrVariable(t3, t2)
     storeq t2, DirectArguments_storage[t0, t1, 8]
     dispatch(4)
+
+
+_llint_op_get_parent_scope:
+    traceExecution()
+    loadVariable(2, t0)
+    loadp JSScope::m_next[t0], t0
+    loadisFromInstruction(1, t1)
+    storeq t0, [cfr, t1, 8]
+    dispatch(3)
 
 
 _llint_op_profile_type:

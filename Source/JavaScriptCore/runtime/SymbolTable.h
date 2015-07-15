@@ -648,6 +648,8 @@ public:
 
     bool usesNonStrictEval() { return m_usesNonStrictEval; }
     void setUsesNonStrictEval(bool usesNonStrictEval) { m_usesNonStrictEval = usesNonStrictEval; }
+    ALWAYS_INLINE bool correspondsToLexicalScope() { return m_correspondsToLexicalScope; }
+    void setDoesCorrespondToLexicalScope() { m_correspondsToLexicalScope = true; }
 
     SymbolTable* cloneScopePart(VM&);
 
@@ -675,7 +677,8 @@ private:
     };
     std::unique_ptr<TypeProfilingRareData> m_typeProfilingRareData;
 
-    bool m_usesNonStrictEval;
+    bool m_usesNonStrictEval : 1;
+    bool m_correspondsToLexicalScope : 1;
     
     WriteBarrier<ScopedArgumentsTable> m_arguments;
     WriteBarrier<InferredValue> m_singletonScope;

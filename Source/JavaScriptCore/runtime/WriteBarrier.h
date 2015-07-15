@@ -145,6 +145,7 @@ public:
     }
     void clear() { m_value = JSValue::encode(JSValue()); }
     void setUndefined() { m_value = JSValue::encode(jsUndefined()); }
+    void setStartingValue(JSValue value) { m_value = JSValue::encode(value); }
     bool isNumber() const { return get().isNumber(); }
     bool isObject() const { return get().isObject(); }
     bool isNull() const { return get().isNull(); }

@@ -478,7 +478,6 @@ namespace JSC {
         void emit_op_div(Instruction*);
         void emit_op_end(Instruction*);
         void emit_op_enter(Instruction*);
-        void emit_op_create_lexical_environment(Instruction*);
         void emit_op_get_scope(Instruction*);
         void emit_op_eq(Instruction*);
         void emit_op_eq_null(Instruction*);
@@ -525,7 +524,6 @@ namespace JSC {
         void emit_op_new_regexp(Instruction*);
         void emit_op_not(Instruction*);
         void emit_op_nstricteq(Instruction*);
-        void emit_op_pop_scope(Instruction*);
         void emit_op_dec(Instruction*);
         void emit_op_inc(Instruction*);
         void emit_op_profile_did_call(Instruction*);
@@ -534,6 +532,8 @@ namespace JSC {
         void emit_op_profile_control_flow(Instruction*);
         void emit_op_push_name_scope(Instruction*);
         void emit_op_push_with_scope(Instruction*);
+        void emit_op_create_lexical_environment(Instruction*);
+        void emit_op_get_parent_scope(Instruction*);
         void emit_op_put_by_id(Instruction*);
         void emit_op_put_by_index(Instruction*);
         void emit_op_put_by_val(Instruction*);
@@ -714,6 +714,7 @@ namespace JSC {
 #endif
         MacroAssembler::Call callOperation(J_JITOperation_EP, int, void*);
         MacroAssembler::Call callOperation(WithProfileTag, J_JITOperation_EPc, int, Instruction*);
+        MacroAssembler::Call callOperation(J_JITOperation_EPc, int, Instruction*);
         MacroAssembler::Call callOperation(J_JITOperation_EZ, int, int32_t);
         MacroAssembler::Call callOperation(J_JITOperation_EZZ, int, int32_t, int32_t);
         MacroAssembler::Call callOperation(P_JITOperation_EJS, GPRReg, size_t);
@@ -729,6 +730,7 @@ namespace JSC {
         MacroAssembler::Call callOperation(V_JITOperation_ECICC, RegisterID, const Identifier*, RegisterID, RegisterID);
         MacroAssembler::Call callOperation(J_JITOperation_EE, RegisterID);
         MacroAssembler::Call callOperation(V_JITOperation_EZSymtabJ, int, SymbolTable*, RegisterID);
+        MacroAssembler::Call callOperation(J_JITOperation_EZSymtabJ, int, SymbolTable*, RegisterID);
         MacroAssembler::Call callOperation(V_JITOperation_EJ, RegisterID);
 #if USE(JSVALUE64)
         MacroAssembler::Call callOperationNoExceptionCheck(V_JITOperation_EJ, RegisterID);
