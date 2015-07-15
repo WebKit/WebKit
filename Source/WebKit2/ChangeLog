@@ -1,3 +1,16 @@
+2015-07-14  Ryuan Choi  <ryuan.choi@navercorp.com>
+
+        [CoordinatedGraphics] Possible wrong rendering with scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=146958
+
+        Reviewed by Gyuyoung Kim.
+
+        While r174261 fixing build break, there is some mistake that flushes contents layer
+        instead of overlay layer.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::didFlushRootLayer):
+
 2015-07-14  Dan Bernstein  <mitz@apple.com>
 
         Attempted build fixes.
