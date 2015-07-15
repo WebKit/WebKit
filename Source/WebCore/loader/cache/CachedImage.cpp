@@ -563,9 +563,9 @@ bool CachedImage::isOriginClean(SecurityOrigin* securityOrigin)
 {
     if (!image()->hasSingleSecurityOrigin())
         return false;
-    if (passesAccessControlCheck(securityOrigin))
+    if (passesAccessControlCheck(*securityOrigin))
         return true;
-    return !securityOrigin->taintsCanvas(response().url());
+    return !securityOrigin->taintsCanvas(responseForSameOriginPolicyChecks().url());
 }
 
 bool CachedImage::mustRevalidateDueToCacheHeaders(CachePolicy policy) const
