@@ -31,6 +31,7 @@
 #import "WebView.h"
 #import "WebViewInternal.h"
 #import <WebCore/ApplicationCacheStorage.h>
+#import <WebCore/CredentialStorage.h>
 #import <WebCore/CrossOriginPreflightResultCache.h>
 #import <WebCore/MemoryCache.h>
 #import <runtime/InitializeThreading.h>
@@ -41,7 +42,6 @@
 #import "MemoryMeasure.h"
 #import "WebFrameInternal.h"
 #import <WebCore/CachedImage.h>
-#import <WebCore/CredentialStorage.h>
 #import <WebCore/Frame.h>
 #import <WebCore/PageCache.h>
 #import <WebCore/WebCoreThreadRun.h>
@@ -189,11 +189,6 @@
     }
 }
 
-+ (void)clearCachedCredentials
-{
-    WebCore::CredentialStorage::clearCredentials();
-}
-
 + (bool)addImageToCache:(CGImageRef)image forURL:(NSURL *)url
 {
     return [WebCache addImageToCache:image forURL:url forFrame:nil];
@@ -255,6 +250,12 @@
 + (BOOL)isDisabled
 {
     return WebCore::memoryCache()->disabled();
+}
+
++ (void)clearCachedCredentials
+{
+    [WebView _makeAllWebViewsPerformSelector:@selector(_clearCredentials)];
+    WebCore::CredentialStorage::defaultCredentialStorage().clearCredentials();
 }
 
 @end

@@ -1,5 +1,23 @@
 2015-07-15  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r186763. rdar://problem/21707917
+
+    2015-07-13  David Kilzer  <ddkilzer@apple.com>
+
+            Merge r186476. rdar://problem/21708269
+
+        2015-07-07  Brady Eidson  <beidson@apple.com>
+
+            HTTP Auth cached after disabling private browsing/reset.
+            <rdar://problem/8293055> and https://bugs.webkit.org/show_bug.cgi?id=146654
+
+            Reviewed by Tim Horton.
+
+            * WebProcess/Plugins/PluginView.cpp:
+            (WebKit::PluginView::getAuthenticationInfo):
+
+2015-07-15  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r186804. rdar://problem/21716368
 
     2015-07-14  Lucas Forschler  <lforschler@apple.com>

@@ -1,5 +1,26 @@
 2015-07-15  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r186763. rdar://problem/21707917
+
+    2015-07-13  David Kilzer  <ddkilzer@apple.com>
+
+            Merge r186476. rdar://problem/21708269
+
+        2015-07-07  Brady Eidson  <beidson@apple.com>
+
+            HTTP Auth cached after disabling private browsing/reset.
+            <rdar://problem/8293055> and https://bugs.webkit.org/show_bug.cgi?id=146654
+
+            Reviewed by Tim Horton.
+
+            * http/tests/security/private-browsing-http-auth-expected.txt: Added.
+            * http/tests/security/private-browsing-http-auth.html: Added.
+            * http/tests/security/resources/auth-echo.php: Added.
+            * http/tests/security/resources/basic-auth.php: Added.
+            * platform/wk2/TestExpectations:
+
+2015-07-15  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r186744. rdar://problem/21716371
 
     2015-07-12  David Kilzer  <ddkilzer@apple.com>

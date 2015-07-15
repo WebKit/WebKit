@@ -1,3 +1,21 @@
+2015-07-15  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r186763. rdar://problem/21707917
+
+    2015-07-13  David Kilzer  <ddkilzer@apple.com>
+
+            Merge r186476. rdar://problem/21708269
+
+        2015-07-07  Brady Eidson  <beidson@apple.com>
+
+            HTTP Auth cached after disabling private browsing/reset.
+            <rdar://problem/8293055> and https://bugs.webkit.org/show_bug.cgi?id=146654
+
+            Reviewed by Tim Horton.
+
+            * WebDownloadCFNet.cpp:
+            (WebDownload::didReceiveAuthenticationChallenge):
+
 2015-02-11  Brent Fulgham  <bfulgham@apple.com>
 
         Merge r179993. <rdar://problem/19813975>
