@@ -1,3 +1,9 @@
+2015-07-14  Dan Bernstein  <mitz@apple.com>
+
+        Attempted build fixes.
+
+        * Platform/spi/ios/SafariServicesSPI.h:
+
 2015-07-14  Anders Carlsson  <andersca@apple.com>
 
         Remove wkPopupMenu from WebCoreSystemInterface; it's not called from WebCore
