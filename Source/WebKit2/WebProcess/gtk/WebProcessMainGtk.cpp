@@ -56,7 +56,7 @@ public:
 #endif
         gtk_init(nullptr, nullptr);
 
-        bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
+        bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR);
         bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
 
         SoupNetworkSession::defaultSession().setSSLPolicy(SoupNetworkSession::SSLUseSystemCAFile);

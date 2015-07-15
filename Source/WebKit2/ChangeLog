@@ -1,5 +1,17 @@
 2015-07-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [GTK] Rename PACKAGE_LOCALE_DIR to LOCALEDIR
+        https://bugs.webkit.org/show_bug.cgi?id=146975
+
+        Reviewed by Martin Robinson.
+
+        * PlatformGTK.cmake:
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkit_web_context_class_init):
+        * WebProcess/gtk/WebProcessMainGtk.cpp:
+
+2015-07-15  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] Rename LIBEXECDIR to PKGLIBEXECDIR
         https://bugs.webkit.org/show_bug.cgi?id=140070
 
