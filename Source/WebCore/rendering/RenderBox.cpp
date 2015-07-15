@@ -43,6 +43,7 @@
 #include "HTMLTextAreaElement.h"
 #include "HitTestResult.h"
 #include "InlineElementBox.h"
+#include "MainFrame.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderBoxRegionInfo.h"
@@ -5003,6 +5004,9 @@ const RenderBox* RenderBox::findEnclosingScrollableContainer() const
         if (candidate.hasOverflowClip())
             return &candidate;
     }
+    // If all parent elements are not overflow scrollable, check the body.
+    if (document().body() && frame().mainFrame().view() && frame().mainFrame().view()->isScrollable())
+        return document().body()->renderBox();
     
     return nullptr;
 }

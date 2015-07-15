@@ -2887,29 +2887,40 @@ String Internals::scrollSnapOffsets(Element* element, ExceptionCode& ec)
         return String();
 
     RenderBox& box = *element->renderBox();
-    if (!box.canBeScrolledAndHasScrollableArea()) {
-        ec = INVALID_ACCESS_ERR;
-        return String();
+    ScrollableArea* scrollableArea;
+    
+    if (box.isBody()) {
+        FrameView* frameView = box.frame().mainFrame().view();
+        if (!frameView || !frameView->isScrollable()) {
+            ec = INVALID_ACCESS_ERR;
+            return String();
+        }
+        scrollableArea = frameView;
+        
+    } else {
+        if (!box.canBeScrolledAndHasScrollableArea()) {
+            ec = INVALID_ACCESS_ERR;
+            return String();
+        }
+        scrollableArea = box.layer();
     }
 
-    if (!box.layer())
+    if (!scrollableArea)
         return String();
-    
-    ScrollableArea& scrollableArea = *box.layer();
     
     StringBuilder result;
 
-    if (scrollableArea.horizontalSnapOffsets()) {
+    if (scrollableArea->horizontalSnapOffsets()) {
         result.append("horizontal = ");
-        appendOffsets(result, *scrollableArea.horizontalSnapOffsets());
+        appendOffsets(result, *scrollableArea->horizontalSnapOffsets());
     }
 
-    if (scrollableArea.verticalSnapOffsets()) {
+    if (scrollableArea->verticalSnapOffsets()) {
         if (result.length())
             result.append(", ");
 
         result.append("vertical = ");
-        appendOffsets(result, *scrollableArea.verticalSnapOffsets());
+        appendOffsets(result, *scrollableArea->verticalSnapOffsets());
     }
 
     return result.toString();

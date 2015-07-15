@@ -429,7 +429,7 @@ public:
     // to rubber-band, which the main frame might be allowed to do even if there is no content to scroll to. In that case,
     // callers use Scrollability::ScrollableOrRubberbandable.
     enum class Scrollability { Scrollable, ScrollableOrRubberbandable };
-    bool isScrollable(Scrollability definitionOfScrollable = Scrollability::Scrollable);
+    WEBCORE_EXPORT bool isScrollable(Scrollability definitionOfScrollable = Scrollability::Scrollable);
 
     virtual bool isScrollableOrRubberbandable() override;
     virtual bool hasScrollableOrRubberbandableAncestor() override;
