@@ -27,6 +27,9 @@
 
 #import <WebCore/SoftLinking.h>
 
+@class _WKActivatedElementInfo;
+@class _WKElementAction;
+
 #if USE(APPLE_INTERNAL_SDK)
 
 @interface SFSafariViewController (WKBuildFix)
