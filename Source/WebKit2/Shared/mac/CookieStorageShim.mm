@@ -47,6 +47,7 @@ typedef const struct _CFURLRequest* CFURLRequestRef;
 
 SOFT_LINK_FRAMEWORK(CFNetwork)
 SOFT_LINK(CFNetwork, CFURLRequestGetURL, CFURLRef, (CFURLRequestRef request), (request))
+SOFT_LINK(CFNetwork, CFURLRequestShouldHandleHTTPCookies, Boolean, (CFURLRequestRef request), (request))
 
 using namespace WebCore;
 
@@ -108,6 +109,8 @@ void CookieStorageShim::initialize()
 @implementation WKNSURLSessionLocal
 - (CFDictionaryRef)_copyCookiesForRequestUsingAllAppropriateStorageSemantics:(CFURLRequestRef) request
 {
+    if (!CFURLRequestShouldHandleHTTPCookies(request))
+        return nullptr;
     return WebKit::webKitCookieStorageCopyRequestHeaderFieldsForURL(nullptr, CFURLRequestGetURL(request));
 }
 
@@ -116,6 +119,11 @@ using CompletionHandlerBlock = void(^)(CFDictionaryRef);
 {
     if (!completionHandler)
         return;
+
+    if (![[task currentRequest] HTTPShouldHandleCookies]) {
+        completionHandler(nullptr);
+        return;
+    }
 
     RetainPtr<NSURLSessionTask> strongTask = task;
     CompletionHandlerBlock completionHandlerCopy = [completionHandler copy];

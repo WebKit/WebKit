@@ -1,3 +1,19 @@
+2015-07-15  Daniel Bates  <dabates@apple.com>
+
+        [Mac][WK2] Videos should only have access to cookies when -[NSURLRequest HTTPShouldHandleCookies] is YES
+        https://bugs.webkit.org/show_bug.cgi?id=146763
+        <rdar://problem/21736994>
+
+        Reviewed by Darin Adler.
+
+        We should only fetch cookies from the Network process when -[NSURLRequest HTTPShouldHandleCookies] is YES.
+        This makes us more closely match the behavior of the CFNetwork implementation of
+        -[__NSURLSessionLocal {_copyCookiesForRequestUsingAllAppropriateStorageSemantics, _getCookieHeadersForTask:completionHandler}].
+
+        * Shared/mac/CookieStorageShim.mm:
+        (-[WKNSURLSessionLocal _copyCookiesForRequestUsingAllAppropriateStorageSemantics:]):
+        (-[WKNSURLSessionLocal _getCookieHeadersForTask:completionHandler:]):
+
 2015-07-14  Enrica Casucci  <enrica@apple.com>
 
         [iOS] Add support for updateSelectionWithExtentPoint:withBoundary.
