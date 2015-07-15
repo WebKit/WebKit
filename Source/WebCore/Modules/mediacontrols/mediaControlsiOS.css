@@ -607,12 +607,12 @@ audio::-webkit-media-controls-wireless-playback-status {
     top: 0px;
     width: 100%;
     height: 100%;
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 131 90"><g fill="none" stroke="rgb(146,146,146)" stroke-width="4"><rect x="2" y="2" width="127" height="76"/><line x1="30" y1="88" x2="101" y2="88"/></g></svg>');
-    background-color: black;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 131 90"><g fill="none" stroke="-apple-system-gray" stroke-width="4"><rect x="2" y="2" width="127" height="76"/><line x1="30" y1="88" x2="101" y2="88"/></g></svg>');
+    background-color: rgb(51, 51, 53);
     background-repeat: no-repeat;
     background-position: 50% calc(.5 * (100% - 25px) - 21pt);
     background-size: 131px auto;
-    color: rgb(145,145,145);
+    color: -apple-system-gray;
     font: -apple-system;
     font-weight: 400;
     vertical-align: text-bottom;
@@ -639,7 +639,7 @@ audio::-webkit-media-controls-wireless-playback-text-top {
     font-size: 12pt;
     text-align: center;
     margin: 0px;
-    color: rgb(255,255,255);
+    color: -apple-system-gray;
 }
 
 video::-webkit-media-controls-wireless-playback-text-bottom,
@@ -678,10 +678,9 @@ audio::-webkit-media-controls-wireless-playback-text-bottom.small {
 video::-webkit-media-controls-wireless-playback-status.picture-in-picture,
 audio::-webkit-media-controls-wireless-playback-status.picture-in-picture
 {
-    background-color: #ccc;
     background-size: 304px auto;
     background-position: 50% calc(.5 * (100% - 25px));
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 304 150"><g fill="none" stroke="#8e8e93" stroke-width="3"><path d="m 172,106 -81,0 c -3.5,0 -6,-2.5 -6,-6 l 0,-89 c 0,-3.5 2.5,-6 6,-6 l 122,0 c 3.5,0 6,2.5 6,6 l 0,57" /><path d="m 233,119 -53,0 c -3,0 -3,-0 -3,-3 l 0,-40 c 0,-3 0,-3 3,-3 l 53,0 c 3,0 3,0 3,3 l 0,40 c 0,3 0,3 -3,3 z" /></g></svg>');
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 304 150"><g fill="none" stroke="-apple-system-gray" stroke-width="3"><path d="m 172,106 -81,0 c -3.5,0 -6,-2.5 -6,-6 l 0,-89 c 0,-3.5 2.5,-6 6,-6 l 122,0 c 3.5,0 6,2.5 6,6 l 0,57" /><path d="m 233,119 -53,0 c -3,0 -3,-0 -3,-3 l 0,-40 c 0,-3 0,-3 3,-3 l 53,0 c 3,0 3,0 3,3 l 0,40 c 0,3 0,3 -3,3 z" /></g></svg>');
 }
 
 video::-webkit-media-controls-wireless-playback-text-top.picture-in-picture,
