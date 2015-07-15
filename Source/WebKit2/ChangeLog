@@ -1,3 +1,9 @@
+2015-07-15  Dan Bernstein  <mitz@apple.com>
+
+        Fixed build fix.
+
+        * Platform/spi/ios/SafariServicesSPI.h:
+
 2015-07-14  Ryuan Choi  <ryuan.choi@navercorp.com>
 
         [CoordinatedGraphics] Possible wrong rendering with scrolling

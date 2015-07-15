@@ -32,14 +32,14 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+#import <SafariServices/SFSafariViewControllerPrivate.h>
+
 @interface SFSafariViewController (WKBuildFix)
 
 @property (nonatomic, setter=_setPreviewActions:) NSArray<_WKElementAction *> *_previewActions;
 @property (nonatomic, setter=_setActivatedElementInfo:) _WKActivatedElementInfo *_activatedElementInfo;
 
 @end
-
-#import <SafariServices/SFSafariViewControllerPrivate.h>
 
 #else
 
