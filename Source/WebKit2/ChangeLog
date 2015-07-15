@@ -1,5 +1,17 @@
 2015-07-15  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r186838. rdar://problem/21716363
+
+    2015-07-15  David Kilzer  <ddkilzer@apple.com>
+
+            REGRESSION (r186559): Follow-up fix to merge r183861 for <rdar://problem/21716677>
+
+            * NetworkProcess/NetworkResourceLoader.cpp:
+            (WebKit::NetworkResourceLoader::cleanup): Restore call to
+            deref() so we don't leak the NetworkResourceLoader.
+
+2015-07-15  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r186559. rdar://problem/21716363
 
     2015-07-08  Matthew Hanson  <matthew_hanson@apple.com>

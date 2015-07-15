@@ -162,8 +162,11 @@ void NetworkResourceLoader::cleanup()
     // Tell the scheduler about this finished loader soon so it can start more network requests.
     NetworkProcess::shared().networkResourceLoadScheduler().scheduleRemoveLoader(this);
     if (m_handle) {
+        // Explicit deref() balanced by a ref() in NetworkResourceLoader::start()
+        // This might cause the NetworkResourceLoader to be destroyed and therefore we do it last.
         m_handle->setClient(nullptr);
         m_handle = nullptr;
+        deref();
     }
 }
 
