@@ -43,6 +43,7 @@ private:
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) override;
     virtual InsertionNotificationRequest insertedInto(ContainerNode&) override;
+    virtual void didNotifySubtreeInsertions(ContainerNode*) override;
     virtual void childrenChanged(const ChildChange&) override;
 
     virtual void svgAttributeChanged(const QualifiedName&) override;
