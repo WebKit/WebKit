@@ -48,12 +48,12 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
     SelectObject(dc, fontData->platformData().hfont());
 
     WORD localGlyphBuffer[GlyphPage::size * 2];
-    DWORD result = GetGlyphIndices(dc, buffer, bufferLength, localGlyphBuffer, 0);
+    DWORD result = GetGlyphIndices(dc, buffer, bufferLength, localGlyphBuffer, GGI_MARK_NONEXISTING_GLYPHS);
     bool success = result != GDI_ERROR && static_cast<unsigned>(result) == bufferLength;
     if (success) {
         for (unsigned i = 0; i < length; i++) {
             Glyph glyph = localGlyphBuffer[i];
-            if (!glyph)
+            if (glyph == 0xffff)
                 setGlyphDataForIndex(offset + i, 0, 0);
             else {
                 setGlyphDataForIndex(offset + i, glyph, fontData);
