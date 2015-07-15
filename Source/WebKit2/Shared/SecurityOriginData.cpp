@@ -28,13 +28,21 @@
 
 #include "APIArray.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebFrame.h"
 #include "WebSecurityOrigin.h"
+#include <WebCore/Document.h>
+#include <WebCore/Frame.h>
 #include <wtf/text/CString.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
+SecurityOriginData SecurityOriginData::fromSecurityOrigin(const SecurityOrigin& securityOrigin)
+{
+    return fromSecurityOrigin(&securityOrigin);
+}
+    
 SecurityOriginData SecurityOriginData::fromSecurityOrigin(const SecurityOrigin* securityOrigin)
 {
     SecurityOriginData securityOriginData;
@@ -44,6 +52,30 @@ SecurityOriginData SecurityOriginData::fromSecurityOrigin(const SecurityOrigin* 
     securityOriginData.port = securityOrigin->port();
 
     return securityOriginData;
+}
+
+SecurityOriginData SecurityOriginData::fromFrame(WebFrame* frame)
+{
+    if (!frame)
+        return SecurityOriginData();
+    
+    return SecurityOriginData::fromFrame(frame->coreFrame());
+}
+
+SecurityOriginData SecurityOriginData::fromFrame(Frame* frame)
+{
+    if (!frame)
+        return SecurityOriginData();
+    
+    Document* document = frame->document();
+    if (!document)
+        return SecurityOriginData();
+
+    SecurityOrigin* origin = document->securityOrigin();
+    if (!origin)
+        return SecurityOriginData();
+    
+    return SecurityOriginData::fromSecurityOrigin(*origin);
 }
 
 PassRefPtr<SecurityOrigin> SecurityOriginData::securityOrigin() const
