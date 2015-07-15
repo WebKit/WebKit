@@ -1,3 +1,17 @@
+2015-07-15  David Kilzer  <ddkilzer@apple.com>
+
+        http/tests/misc/large-js-program.php crashes slowly in Debug builds on Windows
+
+        Fix is tracked by <rdar://problem/21816197>.
+
+        After r186813, the test was found to also crash in Debug builds
+        on Windows; it just needed more time to do so:
+
+        <https://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html#showAllRuns=true&tests=http%2Ftests%2Fmisc%2Flarge-js-program.php>
+
+        * platform/win/TestExpectations: Mark test as slow and crashing:
+        - http/tests/misc/large-js-program.php
+
 2015-07-14  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r177876): store.apple.com profile and cart icons are missing
