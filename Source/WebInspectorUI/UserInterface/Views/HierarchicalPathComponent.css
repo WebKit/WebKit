@@ -30,6 +30,7 @@
     min-width: 32px;
 
     font-size: 11px;
+    font-family: -apple-system, sans-serif;
 }
 
 .hierarchical-path-component.show-selector-arrows {

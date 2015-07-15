@@ -1,3 +1,13 @@
+2015-07-14  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r186698): Web Inspector: Frame selector is monospace again
+        https://bugs.webkit.org/show_bug.cgi?id=146954
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/HierarchicalPathComponent.css:
+        (.hierarchical-path-component):
+
 2015-07-14  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: TimelineRuler minimum selection time range should be configurable
