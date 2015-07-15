@@ -1,3 +1,23 @@
+2015-07-15  ChangSeok Oh  <changseok.oh@collabora.com>
+
+        [GTK] Accelerated compositing is enabled by MiniBrowser in Wayland
+        https://bugs.webkit.org/show_bug.cgi?id=146827
+
+        Reviewed by Žan Doberšek.
+
+        WebKit2Gtk+ does not currently support accelerated compositing. For the reason,
+        we forcedly disable it in webkitWebViewBaseCreateWebPage. However, when we launch
+        MiniBrowser in wayland, the unsupported feature is re-enabled since the existing
+        setting is overwritten by a newly created one. Here the default value for
+        accelerated compositing is true. We can fix this by moving the code disabling
+        accelerated composition to WebPreferences::platformInitializeStore() so that
+        we make sure the accelerated compositing is always disabled for wayland.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseCreateWebPage): Deleted.
+        * UIProcess/gtk/WebPreferencesGtk.cpp:
+        (WebKit::WebPreferences::platformInitializeStore):
+
 2015-07-15  Dan Bernstein  <mitz@apple.com>
 
         Fixed build fix.

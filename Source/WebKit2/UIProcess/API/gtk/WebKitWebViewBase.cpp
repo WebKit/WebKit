@@ -1073,14 +1073,6 @@ static void deviceScaleFactorChanged(WebKitWebViewBase* webkitWebViewBase)
 void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WebProcessPool* context, WebPageConfiguration&& configuration)
 {
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
-
-#if PLATFORM(WAYLAND)
-    // FIXME: Accelerated compositing under Wayland is not yet supported.
-    // https://bugs.webkit.org/show_bug.cgi?id=115803
-    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland)
-        configuration.preferences->setAcceleratedCompositingEnabled(false);
-#endif
-
     priv->pageProxy = context->createWebPage(*priv->pageClient, WTF::move(configuration));
     priv->pageProxy->initializeWebPage();
 
