@@ -63,16 +63,16 @@ class SCMDetector(object):
         return scm_system
 
     def detect_scm_system(self, path, patch_directories=None):
-        absolute_path = self._filesystem.abspath(path)
+        real_path = self._filesystem.realpath(path)
 
         if patch_directories == []:
             patch_directories = None
 
-        if SVN.in_working_directory(absolute_path, executive=self._executive):
-            return SVN(cwd=absolute_path, patch_directories=patch_directories, filesystem=self._filesystem, executive=self._executive)
+        if SVN.in_working_directory(real_path, executive=self._executive):
+            return SVN(cwd=real_path, patch_directories=patch_directories, filesystem=self._filesystem, executive=self._executive)
 
-        if Git.in_working_directory(absolute_path, executive=self._executive):
-            return Git(cwd=absolute_path, patch_directories=patch_directories, filesystem=self._filesystem, executive=self._executive)
+        if Git.in_working_directory(real_path, executive=self._executive):
+            return Git(cwd=real_path, patch_directories=patch_directories, filesystem=self._filesystem, executive=self._executive)
 
         return None
 

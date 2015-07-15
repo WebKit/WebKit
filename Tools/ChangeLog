@@ -1,3 +1,50 @@
+2015-07-15  Dean Johnson  <dean_johnson@apple.com>
+
+        Many test failures in scm_unittest.py
+        https://bugs.webkit.org/show_bug.cgi?id=143967
+
+        Reviewed by Daniel Bates. 
+
+        * Scripts/webkitpy/common/checkout/scm/detection.py:
+        (SCMDetector.detect_scm_system): Paths with symlinks are now resolved to
+        absolute canonical file paths. Two mutually exclusive issues cause this
+        to be a problem.
+            1) Python's os.path.relpath() function does not return correct relative
+            paths between two filepaths that point to the same file, if symlinks are
+            involved.
+                On Mac, /tmp points to /private/tmp
+                ex. os.path.relpath('/tmp', '/private/tmp')
+                    returns '../../tmp'
+            What we want is actually just '.'
+            2) Git does not allow file paths to trace outside of
+            the Git repository. This means that if you have a repository in
+            /tmp and you refer to that repository when invoking a git command as
+            ../tmp, Git will produce errors about working outside of the repository.
+        * Scripts/webkitpy/common/checkout/scm/git.py: Over time Git has changed
+        its default behavior and such, needed to be updated.
+        (Git.changed_files): '--' was added into the command so that patch_directories
+        were taken as positional arguments.
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py: Changed tests and setup 
+        in the GitSVNTest class to more closely emulate the version of Git that the tests
+        assumed a system had. Also fixed a small side-effect from the absolute canonical
+        path fix in SCMDetector.detect_scm_system
+        (SVNTestRepository.setup): A relative filepath was previously passed as the
+        checkout root to SCMDetector.detect_scm_system, but is now cleaned to
+        an absolute canonical path before being passed in. The failing test
+        was a "sanity check" that the svn.checkout_root and scm.checkout_root
+        were the same.
+        (GitSVNTest._setup_git_checkout):
+            1) Added "--prefix ''" option to `git clone` since Git changed its default
+            behavior in version 2.0.
+            2) The branch master was renamed to trunk to more closely emulate what
+            tests expected when they were written. 
+        (GitSVNTest.test_changed_files_local_plus_working_copy): Two of the three
+        original tests failed because the tests expected the trunk branch
+        to produce its parent's commit, whereas Git merely provides the HEAD commit
+        for a given branch (trunk in this case). Based on other tests written
+        in the same commit, it appears these tests were failing from the point they
+        were written.
+
 2015-07-14  Anders Carlsson  <andersca@apple.com>
 
         Assertions.h should include ExportMacros.h

@@ -185,7 +185,7 @@ class SVNTestRepository(object):
         if not cached_svn_repo_path:
             cached_svn_repo_path = cls._setup_mock_repo()
 
-        test_object.temp_directory = tempfile.mkdtemp(suffix="svn_test")
+        test_object.temp_directory = os.path.realpath(tempfile.mkdtemp(suffix="svn_test"))
         test_object.svn_repo_path = os.path.join(test_object.temp_directory, "repo")
         test_object.svn_repo_url = "file://%s" % test_object.svn_repo_path
         test_object.svn_checkout_path = os.path.join(test_object.temp_directory, "checkout")
@@ -1035,8 +1035,9 @@ class GitSVNTest(SCMTest):
     def _setup_git_checkout(self):
         self.git_checkout_path = tempfile.mkdtemp(suffix="git_test_checkout")
         # --quiet doesn't make git svn silent, so we use run_silent to redirect output
-        run_silent(['git', 'svn', 'clone', '-T', 'trunk', self.svn_repo_url, self.git_checkout_path])
+        run_silent(['git', 'svn', 'clone', '-T', 'trunk', '--prefix', '', self.svn_repo_url, self.git_checkout_path])
         os.chdir(self.git_checkout_path)
+        run_silent(['git', 'branch', '-m', 'trunk'])
 
     def _tear_down_git_checkout(self):
         # Change back to a valid directory so that later calls to os.getcwd() do not fail.
@@ -1406,12 +1407,21 @@ class GitSVNTest(SCMTest):
         self.assertIn('test_file_commit2', files)
 
         # working copy should *not* be in the list.
-        files = self.scm.changed_files('trunk..')
+        files = self.scm.changed_files('trunk..')  # git diff trunk..HEAD
+        self.assertNotIn('test_file_commit1', files)
+        self.assertNotIn('test_file_commit2', files)
+
+        files = self.scm.changed_files('trunk^..')  # git diff trunk^..HEAD
         self.assertIn('test_file_commit1', files)
         self.assertNotIn('test_file_commit2', files)
 
         # working copy *should* be in the list.
-        files = self.scm.changed_files('trunk....')
+        # .... is a hack for working copy changes to be included
+        files = self.scm.changed_files('trunk....')  # git diff trunk
+        self.assertNotIn('test_file_commit1', files)
+        self.assertIn('test_file_commit2', files)
+
+        files = self.scm.changed_files('trunk^....')  # git diff trunk^
         self.assertIn('test_file_commit1', files)
         self.assertIn('test_file_commit2', files)
 
