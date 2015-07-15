@@ -246,7 +246,7 @@ void Pasteboard::read(PasteboardWebContentReader& reader)
 
 NSArray* Pasteboard::supportedPasteboardTypes()
 {
-    return @[(id)WebArchivePboardType, (id)kUTTypeHTML, (id)kUTTypePNG, (id)kUTTypeTIFF, (id)kUTTypeJPEG, (id)kUTTypeGIF, (id)kUTTypeURL, (id)kUTTypeText, (id)kUTTypeRTFD, (id)kUTTypeRTF];
+    return @[(id)WebArchivePboardType, (id)kUTTypeRTFD, (id)kUTTypeRTF, (id)kUTTypeHTML, (id)kUTTypePNG, (id)kUTTypeTIFF, (id)kUTTypeJPEG, (id)kUTTypeGIF, (id)kUTTypeURL, (id)kUTTypeText];
 }
 
 bool Pasteboard::hasData()
