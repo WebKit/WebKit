@@ -26,6 +26,7 @@
 #ifndef Disassembler_h
 #define Disassembler_h
 
+#include "JSExportMacros.h"
 #include <functional>
 #include <wtf/PrintStream.h>
 #include <wtf/text/CString.h>

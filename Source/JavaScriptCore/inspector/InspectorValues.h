@@ -32,6 +32,7 @@
 #ifndef InspectorValues_h
 #define InspectorValues_h
 
+#include "JSExportMacros.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>

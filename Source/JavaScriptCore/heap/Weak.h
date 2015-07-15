@@ -26,6 +26,7 @@
 #ifndef Weak_h
 #define Weak_h
 
+#include "JSExportMacros.h"
 #include <cstddef>
 #include <wtf/Noncopyable.h>
 

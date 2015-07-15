@@ -1,3 +1,16 @@
+2015-07-15  Anders Carlsson  <andersca@apple.com>
+
+        Make JavaScriptCore SPI headers used by WebCore SPI headers self-contained
+        https://bugs.webkit.org/show_bug.cgi?id=146978
+
+        Reviewed by Dan Bernstein.
+
+        * debugger/DebuggerPrimitives.h:
+        * disassembler/Disassembler.h:
+        * heap/Weak.h:
+        * inspector/InspectorValues.h:
+        * runtime/JSCJSValue.h:
+
 2015-07-14  Anders Carlsson  <andersca@apple.com>
 
         Assertions.h should include ExportMacros.h

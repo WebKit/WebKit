@@ -26,6 +26,8 @@
 #ifndef DebuggerPrimitives_h
 #define DebuggerPrimitives_h
 
+#include <stddef.h>
+
 namespace JSC {
 
 typedef size_t SourceID;
