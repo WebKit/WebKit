@@ -925,9 +925,11 @@ InlineBox* RenderInline::culledInlineFirstLineBox() const
             
         // We want to get the margin box in the inline direction, and then use our font ascent/descent in the block
         // direction (aligned to the root box's baseline).
-        if (curr->isBox())
-            return toRenderBox(curr)->inlineBoxWrapper();
-        if (curr->isLineBreak()) {
+        if (curr->isBox()) {
+            const RenderBox* renderBox = toRenderBox(curr);
+            if (renderBox->inlineBoxWrapper())
+                return renderBox->inlineBoxWrapper();
+        } else if (curr->isLineBreak()) {
             RenderLineBreak* renderBR = toRenderLineBreak(curr);
             if (renderBR->inlineBoxWrapper())
                 return renderBR->inlineBoxWrapper();
@@ -953,9 +955,11 @@ InlineBox* RenderInline::culledInlineLastLineBox() const
             
         // We want to get the margin box in the inline direction, and then use our font ascent/descent in the block
         // direction (aligned to the root box's baseline).
-        if (curr->isBox())
-            return toRenderBox(curr)->inlineBoxWrapper();
-        if (curr->isLineBreak()) {
+        if (curr->isBox()) {
+            const RenderBox* renderBox = toRenderBox(curr);
+            if (renderBox->inlineBoxWrapper())
+                return renderBox->inlineBoxWrapper();
+        } else if (curr->isLineBreak()) {
             RenderLineBreak* renderBR = toRenderLineBreak(curr);
             if (renderBR->inlineBoxWrapper())
                 return renderBR->inlineBoxWrapper();
