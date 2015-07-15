@@ -2043,6 +2043,16 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     });
 }
 
+- (void)updateSelectionWithExtentPoint:(CGPoint)point withBoundary:(UITextGranularity)granularity completionHandler:(void (^)(BOOL selectionEndIsMoving))completionHandler
+{
+    UIWKSelectionWithDirectionCompletionHandler selectionHandler = [completionHandler copy];
+    
+    _page->updateSelectionWithExtentPointAndBoundary(WebCore::IntPoint(point), toWKTextGranularity(granularity), [selectionHandler](bool endIsMoving, WebKit::CallbackBase::Error error) {
+        selectionHandler(endIsMoving);
+        [selectionHandler release];
+    });
+}
+
 - (UTF32Char)_characterBeforeCaretSelection
 {
     return _page->editorState().postLayoutData().characterBeforeSelection;

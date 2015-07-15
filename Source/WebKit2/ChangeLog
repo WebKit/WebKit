@@ -1,3 +1,31 @@
+2015-07-14  Enrica Casucci  <enrica@apple.com>
+
+        [iOS] Add support for updateSelectionWithExtentPoint:withBoundary.
+        https://bugs.webkit.org/show_bug.cgi?id=146951
+        rdar://problem/20864286
+
+        Reviewed by Tim Horton.
+
+        Add implementation for new method used by text selection
+        engine on iOS. The new function modifies the selection near the given point
+        and snaps it at the boundary of the specified granularity.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView updateSelectionWithExtentPoint:completionHandler:]):
+        (-[WKContentView updateSelectionWithExtentPoint:withBoundary:completionHandler:]):
+        (-[WKContentView _characterBeforeCaretSelection]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::updateSelectionWithExtentPoint):
+        (WebKit::WebPageProxy::updateSelectionWithExtentPointAndBoundary):
+        (WebKit::WebPageProxy::requestDictationContext):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::rangeForGranularityAtPoint):
+        (WebKit::WebPage::selectTextWithGranularityAtPoint):
+        (WebKit::WebPage::updateSelectionWithExtentPointAndBoundary):
+
 2015-07-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [Linux] SeccompBrokerClient should cache arbitrary file descriptors

@@ -1734,9 +1734,8 @@ void WebPage::moveSelectionAtBoundaryWithDirection(uint32_t granularity, uint32_
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
-void WebPage::selectTextWithGranularityAtPoint(const WebCore::IntPoint& point, uint32_t granularity, uint64_t callbackID)
+PassRefPtr<Range> WebPage::rangeForGranularityAtPoint(const Frame& frame, const WebCore::IntPoint& point, uint32_t granularity)
 {
-    const Frame& frame = m_page->focusController().focusedOrMainFrame();
     VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point);
 
     RefPtr<Range> range;
@@ -1756,8 +1755,17 @@ void WebPage::selectTextWithGranularityAtPoint(const WebCore::IntPoint& point, u
     default:
         break;
     }
+    return range;
+}
+
+void WebPage::selectTextWithGranularityAtPoint(const WebCore::IntPoint& point, uint32_t granularity, uint64_t callbackID)
+{
+    const Frame& frame = m_page->focusController().focusedOrMainFrame();
+    RefPtr<Range> range = rangeForGranularityAtPoint(frame, point, granularity);
+
     if (range)
         frame.selection().setSelectedRange(range.get(), UPSTREAM, true);
+    m_initialSelection = range;
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
@@ -1766,7 +1774,36 @@ void WebPage::beginSelectionInDirection(uint32_t direction, uint64_t callbackID)
     m_selectionAnchor = (static_cast<SelectionDirection>(direction) == DirectionLeft) ? Start : End;
     send(Messages::WebPageProxy::UnsignedCallback(m_selectionAnchor == Start, callbackID));
 }
+
+void WebPage::updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint& point, uint32_t granularity, uint64_t callbackID)
+{
+    const Frame& frame = m_page->focusController().focusedOrMainFrame();
+    VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point);
+    RefPtr<Range> newRange = rangeForGranularityAtPoint(frame, point, granularity);
     
+    if (position.isNull() || !m_initialSelection || !newRange) {
+        send(Messages::WebPageProxy::UnsignedCallback(false, callbackID));
+        return;
+    }
+    
+    RefPtr<Range> range;
+    VisiblePosition selectionStart = m_initialSelection->startPosition();
+    VisiblePosition selectionEnd = m_initialSelection->endPosition();
+
+    if (position > m_initialSelection->endPosition())
+        selectionEnd = newRange->endPosition();
+    else if (position < m_initialSelection->startPosition())
+        selectionStart = newRange->startPosition();
+    
+    if (selectionStart.isNotNull() && selectionEnd.isNotNull())
+        range = Range::create(*frame.document(), selectionStart, selectionEnd);
+    
+    if (range)
+        frame.selection().setSelectedRange(range.get(), UPSTREAM, true);
+    
+    send(Messages::WebPageProxy::UnsignedCallback(selectionStart == m_initialSelection->startPosition(), callbackID));
+}
+
 void WebPage::updateSelectionWithExtentPoint(const WebCore::IntPoint& point, uint64_t callbackID)
 {
     const Frame& frame = m_page->focusController().focusedOrMainFrame();

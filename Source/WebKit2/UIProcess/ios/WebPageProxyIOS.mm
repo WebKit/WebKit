@@ -496,6 +496,18 @@ void WebPageProxy::updateSelectionWithExtentPoint(const WebCore::IntPoint point,
     
 }
 
+void WebPageProxy::updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint point, WebCore::TextGranularity granularity, std::function<void(uint64_t, CallbackBase::Error)> callbackFunction)
+{
+    if (!isValid()) {
+        callbackFunction(0, CallbackBase::Error::Unknown);
+        return;
+    }
+    
+    uint64_t callbackID = m_callbacks.put(WTF::move(callbackFunction), m_process->throttler().backgroundActivityToken());
+    m_process->send(Messages::WebPage::UpdateSelectionWithExtentPointAndBoundary(point, granularity, callbackID), m_pageID);
+    
+}
+
 void WebPageProxy::requestDictationContext(std::function<void (const String&, const String&, const String&, CallbackBase::Error)> callbackFunction)
 {
     if (!isValid()) {

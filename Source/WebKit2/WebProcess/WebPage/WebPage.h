@@ -509,6 +509,7 @@ public:
     void selectPositionAtPoint(const WebCore::IntPoint&, uint64_t callbackID);
     void beginSelectionInDirection(uint32_t direction, uint64_t callbackID);
     void updateSelectionWithExtentPoint(const WebCore::IntPoint&, uint64_t callbackID);
+    void updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint&, uint32_t granularity, uint64_t callbackID);
 
     void elementDidFocus(WebCore::Node*);
     void elementDidBlur(WebCore::Node*);
@@ -929,6 +930,7 @@ private:
     void sendTapHighlightForNodeIfNecessary(uint64_t requestID, WebCore::Node*);
     void resetTextAutosizingBeforeLayoutIfNeeded(const WebCore::FloatSize& oldSize, const WebCore::FloatSize& newSize);
     WebCore::VisiblePosition visiblePositionInFocusedNodeForPoint(const WebCore::Frame&, const WebCore::IntPoint&);
+    PassRefPtr<WebCore::Range> rangeForGranularityAtPoint(const WebCore::Frame&, const WebCore::IntPoint&, uint32_t granularity);
     void volatilityTimerFired();
 #endif
 #if !PLATFORM(COCOA)
@@ -1346,6 +1348,7 @@ private:
     WebCore::FloatSize m_screenSize;
     WebCore::FloatSize m_availableScreenSize;
     RefPtr<WebCore::Range> m_currentBlockSelection;
+    RefPtr<WebCore::Range> m_initialSelection;
     WebCore::IntSize m_blockSelectionDesiredSize;
     WebCore::FloatSize m_maximumUnobscuredSize;
     int32_t m_deviceOrientation;
