@@ -55,6 +55,11 @@ void MediaPlaybackTargetPicker::stopMonitoringPlaybackTargets()
     ASSERT_NOT_REACHED();
 }
 
+void MediaPlaybackTargetPicker::invalidatePlaybackTargets()
+{
+    ASSERT_NOT_REACHED();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET)

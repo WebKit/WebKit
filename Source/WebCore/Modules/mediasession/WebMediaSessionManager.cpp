@@ -245,6 +245,9 @@ void WebMediaSessionManager::configureNewClients()
 
 void WebMediaSessionManager::configurePlaybackTargetClients()
 {
+    if (m_clientState.isEmpty())
+        return;
+
     size_t indexOfClientThatRequestedPicker = notFound;
     size_t indexOfLastClientToRequestPicker = notFound;
     size_t indexOfClientWillPlayToTarget = notFound;
@@ -269,6 +272,8 @@ void WebMediaSessionManager::configurePlaybackTargetClients()
         indexOfClientWillPlayToTarget = indexOfClientThatRequestedPicker;
     if (indexOfClientWillPlayToTarget == notFound && indexOfLastClientToRequestPicker != notFound)
         indexOfClientWillPlayToTarget = indexOfLastClientToRequestPicker;
+    if (indexOfClientWillPlayToTarget == notFound && haveActiveRoute)
+        indexOfClientWillPlayToTarget = 0;
 
     LOG(Media, "WebMediaSessionManager::configurePlaybackTargetClients - indexOfClientWillPlayToTarget = %zu", indexOfClientWillPlayToTarget);
 
@@ -288,7 +293,6 @@ void WebMediaSessionManager::configurePlaybackTargetClients()
 
     if (haveActiveRoute && indexOfClientWillPlayToTarget != notFound) {
         auto& state = m_clientState[indexOfClientWillPlayToTarget];
-
         if (!flagsAreSet(state->flags, MediaProducer::IsPlayingToExternalDevice))
             state->client.setShouldPlayToPlaybackTarget(state->contextId, true);
     }
@@ -410,7 +414,7 @@ void WebMediaSessionManager::watchdogTimerFired()
     if (!m_playbackTarget)
         return;
 
-    targetPicker().stopMonitoringPlaybackTargets();
+    targetPicker().invalidatePlaybackTargets();
 }
 
 } // namespace WebCore
