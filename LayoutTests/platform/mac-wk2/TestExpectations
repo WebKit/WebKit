@@ -655,10 +655,6 @@ http/tests/security/cross-origin-worker-indexeddb.html [ Skip ]
 # testRunner.setAlwaysAcceptCookies does not work with NetworkProcess
 [ Mavericks ] http/tests/cookies/third-party-cookie-relaxing.html [ Skip ]
 
-# <rdar://problem/12829991>
-# PPT: PingLoader is still in WebProcess. As a result, this test fails and also fails to delete its cookie, breaking many other cookie tests.
-[ Mavericks ] http/tests/navigation/ping-cookie.html [ Skip ]
-
 # <rdar://problem/13751647> PPT: Status text not passed over IPC
 [ Mavericks ] http/tests/xmlhttprequest/web-apps/012.html [ Failure ]
 [ Mavericks ] http/tests/xmlhttprequest/web-apps/013.html [ Failure ]
