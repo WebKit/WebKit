@@ -28,6 +28,7 @@
 #ifndef Path_h
 #define Path_h
 
+#include "FloatRect.h"
 #include "WindRule.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
@@ -56,7 +57,6 @@ namespace WebCore {
 
     class AffineTransform;
     class FloatPoint;
-    class FloatRect;
     class FloatRoundedRect;
     class FloatSize;
     class GraphicsContext;
@@ -144,7 +144,7 @@ namespace WebCore {
         // meaning Path::platformPath() can return null.
         PlatformPathPtr platformPath() const { return m_path; }
         // ensurePlatformPath() will allocate a PlatformPath if it has not yet been and will never return null.
-        PlatformPathPtr ensurePlatformPath();
+        WEBCORE_EXPORT PlatformPathPtr ensurePlatformPath();
 
         WEBCORE_EXPORT void apply(void* info, PathApplierFunction) const;
         void transform(const AffineTransform&);

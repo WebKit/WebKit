@@ -1124,6 +1124,9 @@
 		2D4F96F61A1ECC240098BF88 /* TextIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D4F96F21A1ECC240098BF88 /* TextIndicator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D4F96F71A1ECC240098BF88 /* TextIndicatorWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D4F96F31A1ECC240098BF88 /* TextIndicatorWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D4F96F81A1ECC240098BF88 /* TextIndicatorWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D4F96F41A1ECC240098BF88 /* TextIndicatorWindow.mm */; };
+		2D5002F81B56D7810020AAF7 /* DOMPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D5002F71B56D7810020AAF7 /* DOMPath.cpp */; };
+		2D5002FB1B56D7990020AAF7 /* PathUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D5002F91B56D7990020AAF7 /* PathUtilities.cpp */; };
+		2D5002FC1B56D7990020AAF7 /* PathUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5002FA1B56D7990020AAF7 /* PathUtilities.h */; };
 		2D58D8551A15F65F00A5F726 /* DataDetection.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D58D8531A15F65F00A5F726 /* DataDetection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D58D8561A15F65F00A5F726 /* DataDetection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D58D8541A15F65F00A5F726 /* DataDetection.mm */; };
 		2D59F1BF1A0044C6001F3D29 /* DataDetectorsSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D59F1BE1A0044C6001F3D29 /* DataDetectorsSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8301,6 +8304,9 @@
 		2D4F96F21A1ECC240098BF88 /* TextIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextIndicator.h; sourceTree = "<group>"; };
 		2D4F96F31A1ECC240098BF88 /* TextIndicatorWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextIndicatorWindow.h; sourceTree = "<group>"; };
 		2D4F96F41A1ECC240098BF88 /* TextIndicatorWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TextIndicatorWindow.mm; sourceTree = "<group>"; };
+		2D5002F71B56D7810020AAF7 /* DOMPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMPath.cpp; sourceTree = "<group>"; };
+		2D5002F91B56D7990020AAF7 /* PathUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PathUtilities.cpp; sourceTree = "<group>"; };
+		2D5002FA1B56D7990020AAF7 /* PathUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PathUtilities.h; sourceTree = "<group>"; };
 		2D58D8531A15F65F00A5F726 /* DataDetection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataDetection.h; sourceTree = "<group>"; };
 		2D58D8541A15F65F00A5F726 /* DataDetection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataDetection.mm; sourceTree = "<group>"; };
 		2D59F1BE1A0044C6001F3D29 /* DataDetectorsSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataDetectorsSPI.h; sourceTree = "<group>"; };
@@ -16178,6 +16184,7 @@
 				49484FBE102CF23C00187DD3 /* CanvasRenderingContext2D.idl */,
 				49484FBF102CF23C00187DD3 /* CanvasStyle.cpp */,
 				49484FC0102CF23C00187DD3 /* CanvasStyle.h */,
+				2D5002F71B56D7810020AAF7 /* DOMPath.cpp */,
 				FB91392016AE4B0B001FE682 /* DOMPath.h */,
 				FB91392116AE4B0B001FE682 /* DOMPath.idl */,
 				724ED3291A3A7E5400F5F13C /* EXTBlendMinMax.cpp */,
@@ -21029,6 +21036,8 @@
 				B27535530B053814002CE64F /* Path.h */,
 				A88DD4880B4629B000C02990 /* PathTraversalState.cpp */,
 				A88DD4860B4629A300C02990 /* PathTraversalState.h */,
+				2D5002F91B56D7990020AAF7 /* PathUtilities.cpp */,
+				2D5002FA1B56D7990020AAF7 /* PathUtilities.h */,
 				A8FA6E5C0E4CFDED00D5CF49 /* Pattern.cpp */,
 				A8FA6E5B0E4CFDED00D5CF49 /* Pattern.h */,
 				0562F9601573F88F0031CA16 /* PlatformLayer.h */,
@@ -24145,6 +24154,7 @@
 				065AD4F70B0C2EDA005A2B1D /* ContextMenuController.h in Headers */,
 				06027CAD0B1CBFC000884B2D /* ContextMenuItem.h in Headers */,
 				7ADE722610CBBB9B006B3B3A /* ContextMenuProvider.h in Headers */,
+				2D5002FC1B56D7990020AAF7 /* PathUtilities.h in Headers */,
 				759CB837192DA9190012BC64 /* ControlStates.h in Headers */,
 				FD31602912B0267600C1A359 /* ConvolverNode.h in Headers */,
 				D8B6152F1032495100C8554A /* Cookie.h in Headers */,
@@ -29739,6 +29749,7 @@
 				297BE3DA16C043D8003316BD /* PlatformSpeechSynthesizer.cpp in Sources */,
 				AA12DF491743DF83004DAFDF /* PlatformSpeechSynthesizerIOS.mm in Sources */,
 				297BE3D816C03CCE003316BD /* PlatformSpeechSynthesizerMac.mm in Sources */,
+				2D5002FB1B56D7990020AAF7 /* PathUtilities.cpp in Sources */,
 				1AD8F81C11CAB9E900E93E54 /* PlatformStrategies.cpp in Sources */,
 				074E82BA18A69F0E007EF54C /* PlatformTimeRanges.cpp in Sources */,
 				A9C6E4F30D745E48006442E9 /* PluginData.cpp in Sources */,
@@ -30512,6 +30523,7 @@
 				7AF9B20518CFB2DF00C64BEF /* VTTRegionList.cpp in Sources */,
 				7A93868518DCC14500B8263D /* VTTScanner.cpp in Sources */,
 				A14832B1187F61E100DA63A6 /* WAKAppKitStubs.m in Sources */,
+				2D5002F81B56D7810020AAF7 /* DOMPath.cpp in Sources */,
 				A14832B3187F629100DA63A6 /* WAKClipView.m in Sources */,
 				A14832B5187F62FC00DA63A6 /* WAKResponder.m in Sources */,
 				A14832B7187F636C00DA63A6 /* WAKScrollView.mm in Sources */,

@@ -44,6 +44,7 @@ namespace WebCore {
 class AudioContext;
 class ClientRect;
 class ClientRectList;
+class DOMPath;
 class DOMStringList;
 class DOMWindow;
 class Document;
@@ -413,6 +414,8 @@ public:
 #if ENABLE(CSS_SCROLL_SNAP)
     String scrollSnapOffsets(Element*, ExceptionCode&);
 #endif
+
+    PassRefPtr<DOMPath> pathWithShrinkWrappedRects(Vector<double>, ExceptionCode&);
 
 private:
     explicit Internals(Document*);

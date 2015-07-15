@@ -1742,6 +1742,7 @@ set(WebCore_SOURCES
     html/canvas/CanvasRenderingContext.cpp
     html/canvas/CanvasRenderingContext2D.cpp
     html/canvas/CanvasStyle.cpp
+    html/canvas/DOMPath.cpp
     html/canvas/EXTBlendMinMax.cpp
     html/canvas/EXTFragDepth.cpp
     html/canvas/EXTShaderTextureLOD.cpp
@@ -2171,6 +2172,7 @@ set(WebCore_SOURCES
     platform/graphics/NamedImageGeneratedImage.cpp
     platform/graphics/Path.cpp
     platform/graphics/PathTraversalState.cpp
+    platform/graphics/PathUtilities.cpp
     platform/graphics/Pattern.cpp
     platform/graphics/PlatformTimeRanges.cpp
     platform/graphics/Region.cpp

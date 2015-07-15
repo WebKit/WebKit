@@ -375,4 +375,6 @@ enum ResourceLoadPriority {
 #if defined(ENABLE_CSS_SCROLL_SNAP) && ENABLE_CSS_SCROLL_SNAP
     [RaisesException] DOMString scrollSnapOffsets(Element element);
 #endif
+
+    [RaisesException] DOMPath pathWithShrinkWrappedRects(sequence<double> rectComponents);
 };

@@ -39,6 +39,7 @@
 #include "ClientRectList.h"
 #include "ContentDistributor.h"
 #include "Cursor.h"
+#include "DOMPath.h"
 #include "DOMStringList.h"
 #include "DOMWindow.h"
 #include "Document.h"
@@ -87,6 +88,7 @@
 #include "Page.h"
 #include "PageCache.h"
 #include "PageOverlay.h"
+#include "PathUtilities.h"
 #include "PlatformMediaSessionManager.h"
 #include "PrintContext.h"
 #include "PseudoElement.h"
@@ -2917,6 +2919,30 @@ String Internals::scrollSnapOffsets(Element* element, ExceptionCode& ec)
 bool Internals::testPreloaderSettingViewport()
 {
     return testPreloadScannerViewportSupport(contextDocument());
+}
+
+PassRefPtr<DOMPath> Internals::pathWithShrinkWrappedRects(Vector<double> rectComponents, ExceptionCode& ec)
+{
+    if (rectComponents.size() % 4) {
+        ec = INVALID_ACCESS_ERR;
+        return nullptr;
+    }
+
+    Vector<FloatRect> rects;
+    while (!rectComponents.isEmpty()) {
+        double height = rectComponents.takeLast();
+        double width = rectComponents.takeLast();
+        double y = rectComponents.takeLast();
+        double x = rectComponents.takeLast();
+
+        rects.append(FloatRect(x, y, width, height));
+    }
+
+    rects.reverse();
+
+    // FIXME: radius should be a parameter instead of fixed as 8.
+    Path path = PathUtilities::pathWithShrinkWrappedRects(rects, 8);
+    return DOMPath::create(path);
 }
 
 }

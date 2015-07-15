@@ -1,3 +1,17 @@
+2015-07-15  Tim Horton  <timothy_horton@apple.com>
+
+        Factor rect shrink-wrapping code out of RenderThemeMac for future reuse
+        https://bugs.webkit.org/show_bug.cgi?id=146973
+        <rdar://problem/21643094>
+
+        Reviewed by Anders Carlsson.
+
+        * fast/shrink-wrap/rect-shrink-wrap-expected.png: Added.
+        * fast/shrink-wrap/rect-shrink-wrap-expected.txt: Added.
+        * fast/shrink-wrap/rect-shrink-wrap.html: Added.
+        Add a test of both working and broken (indicated by comments in the test)
+        shrink-wrapping cases.
+
 2015-07-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Negative scroll snap repeat values cause web process to hang indefinitely
