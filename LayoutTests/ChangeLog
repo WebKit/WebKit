@@ -1,3 +1,19 @@
+2015-07-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Negative scroll snap repeat values cause web process to hang indefinitely
+        https://bugs.webkit.org/show_bug.cgi?id=146953
+
+        Reviewed by Simon Fraser.
+
+        The first test case checks that setting -scroll-snap-points-x or -y to a negative value
+        will not cause the web process to hang. The second test case (in a similar vein) checks
+        that tiny subpixel snap repeats generate a reasonable number of snap offsets.
+
+        * css3/scroll-snap/scroll-snap-negative-repeat-expected.txt: Added.
+        * css3/scroll-snap/scroll-snap-negative-repeat.html: Added.
+        * css3/scroll-snap/scroll-snap-subpixel-repeat-expected.txt: Added.
+        * css3/scroll-snap/scroll-snap-subpixel-repeat.html: Added.
+
 2015-07-15  David Kilzer  <ddkilzer@apple.com>
 
         http/tests/misc/large-js-program.php crashes slowly in Debug builds on Windows

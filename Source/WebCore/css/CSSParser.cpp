@@ -3397,7 +3397,7 @@ bool CSSParser::parseNonElementSnapPoints(CSSPropertyID propId, bool important)
             && value->function->args->size() == 1
             && equalIgnoringCase(value->function->name, "repeat(")) {
             ValueWithCalculation argumentWithCalculation(*value->function->args.get()->current());
-            if (validateUnit(argumentWithCalculation, FLength | FPercent)) {
+            if (validateUnit(argumentWithCalculation, FLength | FPercent | FNonNeg)) {
                 values->append(cssValuePool().createValue(LengthRepeat::create(createPrimitiveNumericValue(argumentWithCalculation))));
                 m_valueList->next();
                 if (m_valueList->current())
