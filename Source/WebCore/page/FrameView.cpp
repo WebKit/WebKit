@@ -416,6 +416,7 @@ void FrameView::invalidateRect(const IntRect& rect)
 
 void FrameView::setFrameRect(const IntRect& newRect)
 {
+    Ref<FrameView> protect(*this);
     IntRect oldRect = frameRect();
     if (newRect == oldRect)
         return;
@@ -2841,7 +2842,8 @@ void FrameView::updateEmbeddedObject(RenderEmbeddedObject& embeddedObject)
     if (!weakRenderer)
         return;
 
-    embeddedObject.updateWidgetPosition();
+    auto ignoreWidgetState = embeddedObject.updateWidgetPosition();
+    UNUSED_PARAM(ignoreWidgetState);
 }
 
 bool FrameView::updateEmbeddedObjects()
@@ -4554,8 +4556,10 @@ void FrameView::updateWidgetPositions()
     auto protectedWidgets = collectAndProtectWidgets(m_widgetsInRenderTree);
 
     for (unsigned i = 0, size = protectedWidgets.size(); i < size; ++i) {
-        if (RenderWidget* renderWidget = RenderWidget::find(protectedWidgets[i].get()))
-            renderWidget->updateWidgetPosition();
+        if (RenderWidget* renderWidget = RenderWidget::find(protectedWidgets[i].get())) {
+            auto ignoreWidgetState = renderWidget->updateWidgetPosition();
+            UNUSED_PARAM(ignoreWidgetState);
+        }
     }
 }
 

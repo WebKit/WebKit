@@ -1,3 +1,51 @@
+2015-07-14  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r186533. rdar://problem/21533137
+
+    2015-07-08  Lucas Forschler  <lforschler@apple.com>
+
+            Merge change for rdar://problem/21533232
+
+        2015-07-08  Zalan Bujtas  <zalan@apple.com>
+
+                Do not crash when the descendant frame tree is destroyed during layout.
+                https://bugs.webkit.org/show_bug.cgi?id=144540
+                rdar://problem/20793184
+
+                Reviewed by Andreas Kling.
+
+                Widget::setFrameRect(), through WebHTMLView layout, could trigger a style recalc, which in turn
+                could initiate an onBeforeLoad callback.
+                If javascript happens to destroy the current iframe in the onBeforeLoad callback, we lose the descendant
+                render tree, including the child FrameView (the iframe element's view). However the RenderIFrame
+                object stays protected until after the layout is done. (see protectRenderWidgetUntilLayoutIsDone())
+
+                Climbing back on the callstack, we need to make sure that
+                1. the root widget of the descendant render tree (FrameView) stays valid as long as it is needed.
+                2. RenderFrameBase::layoutWithFlattening() can handle the case when the associated widget (child FrameView) is set to nullptr.
+                (see RenderWidget::willBeDestroyed() -> setWidget(nullptr))
+
+                (and later, when layout is finished this (RenderIFrame) object gets destroyed too.)
+
+                Covered by fast/frames/flattening/crash-remove-iframe-during-object-beforeload.html.
+
+                * page/FrameView.cpp:
+                (WebCore::FrameView::setFrameRect):
+                (WebCore::FrameView::updateEmbeddedObject):
+                (WebCore::FrameView::updateWidgetPositions):
+                * platform/ScrollView.cpp:
+                (WebCore::ScrollView::setFrameRect):
+                * platform/mac/WidgetMac.mm:
+                (WebCore::Widget::setFrameRect):
+                * rendering/RenderFrameBase.cpp:
+                (WebCore::RenderFrameBase::layoutWithFlattening):
+                (WebCore::RenderFrameBase::childRenderView):
+                (WebCore::RenderFrameBase::peformLayoutWithFlattening):
+                * rendering/RenderFrameBase.h:
+                * rendering/RenderWidget.cpp:
+                (WebCore::RenderWidget::updateWidgetPosition):
+                * rendering/RenderWidget.h:
+
 2015-07-15  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r186781. rdar://problem/21708063

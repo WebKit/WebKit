@@ -54,24 +54,37 @@ inline bool shouldExpandFrame(LayoutUnit width, LayoutUnit height, bool hasFixed
 
 void RenderFrameBase::layoutWithFlattening(bool hasFixedWidth, bool hasFixedHeight)
 {
+    peformLayoutWithFlattening(hasFixedWidth, hasFixedHeight);
+
+    clearNeedsLayout();
+}
+
+RenderView* RenderFrameBase::childRenderView() const
+{
+    if (!childView())
+        return nullptr;
+    return childView()->renderView();
+}
+
+void RenderFrameBase::peformLayoutWithFlattening(bool hasFixedWidth, bool hasFixedHeight)
+{
     FrameView* childFrameView = childView();
     RenderView* childRoot = childFrameView ? childFrameView->frame().contentRenderer() : 0;
 
-    if (!childRoot || !shouldExpandFrame(width(), height(), hasFixedWidth, hasFixedHeight)) {
-        updateWidgetPosition();
-        if (childFrameView)
-            childFrameView->layout();
-        clearNeedsLayout();
-        return;
+    if (!childRenderView() || !shouldExpandFrame(width(), height(), hasFixedWidth, hasFixedHeight)) {
+        if (updateWidgetPosition() == ChildWidgetState::ChildWidgetIsDestroyed)
+            return;
+        childView()->layout();
     }
 
     // need to update to calculate min/max correctly
-    updateWidgetPosition();
+    if (updateWidgetPosition() == ChildWidgetState::ChildWidgetIsDestroyed)
+        return;
 
-    // if scrollbars are off, and the width or height are fixed
+    // if scrollbars are off, and the width or height are fixedRenderView* childRoot = childView() ? childView()->frame().contentRenderer() : 0;
+
     // we obey them and do not expand. With frame flattening
     // no subframe much ever become scrollable.
-
     bool isScrollable = frameOwnerElement().scrollingMode() != ScrollbarAlwaysOff;
 
     // consider iframe inset border
@@ -80,25 +93,27 @@ void RenderFrameBase::layoutWithFlattening(bool hasFixedWidth, bool hasFixedHeig
 
     // make sure minimum preferred width is enforced
     if (isScrollable || !hasFixedWidth) {
-        setWidth(std::max(width(), childRoot->minPreferredLogicalWidth() + hBorder));
+        ASSERT(childRenderView());
+        setWidth(std::max(width(), childRenderView()->minPreferredLogicalWidth() + hBorder));
         // update again to pass the new width to the child frame
-        updateWidgetPosition();
+        if (updateWidgetPosition() == ChildWidgetState::ChildWidgetIsDestroyed)
+            return;
         childFrameView->layout();
     }
 
+    ASSERT(childView());
     // expand the frame by setting frame height = content height
     if (isScrollable || !hasFixedHeight || childRoot->isFrameSet())
         setHeight(std::max<LayoutUnit>(height(), childFrameView->contentsHeight() + vBorder));
     if (isScrollable || !hasFixedWidth || childRoot->isFrameSet())
         setWidth(std::max<LayoutUnit>(width(), childFrameView->contentsWidth() + hBorder));
 
-    updateWidgetPosition();
+    if (updateWidgetPosition() == ChildWidgetState::ChildWidgetIsDestroyed)
+        return;
 
     ASSERT(!childFrameView->layoutPending());
-    ASSERT(!childRoot->needsLayout());
-    ASSERT(!childRoot->firstChild() || !childRoot->firstChild()->firstChildSlow() || !childRoot->firstChild()->firstChildSlow()->needsLayout());
-
-    clearNeedsLayout();
+    ASSERT(!childRenderView()->needsLayout()); 
+    ASSERT(!childRenderView()->firstChild() || !childRenderView()->firstChild()->firstChildSlow() || !childRenderView()->firstChild()->firstChildSlow()->needsLayout());
 }
 
 }

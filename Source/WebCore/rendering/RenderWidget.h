@@ -67,7 +67,8 @@ public:
 
     static RenderWidget* find(const Widget*);
 
-    void updateWidgetPosition();
+    enum class ChildWidgetState { ChildWidgetIsValid, ChildWidgetIsDestroyed };
+    ChildWidgetState updateWidgetPosition() WARN_UNUSED_RETURN;
     IntRect windowClipRect() const;
 
     bool requiresAcceleratedCompositing() const;
