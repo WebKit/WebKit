@@ -1,3 +1,18 @@
+2015-07-15  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Rename LIBEXECDIR to PKGLIBEXECDIR
+        https://bugs.webkit.org/show_bug.cgi?id=140070
+
+        Reviewed by Martin Robinson.
+
+        The path that's currently stored in LIBEXECDIR is one level lower than
+        the real LIBEXECDIR, which we are going to need. Introduce PKGLIBEXECDIR
+        so that we can use LIBEXECDIR for the real LIBEXECDIR in the future.
+
+        * PlatformGTK.cmake:
+        * Shared/gtk/ProcessExecutablePathGtk.cpp:
+        (WebKit::findWebKitProcess):
+
 2015-07-15  Daniel Bates  <dabates@apple.com>
 
         [Mac][WK2] Videos should only have access to cookies when -[NSURLRequest HTTPShouldHandleCookies] is YES

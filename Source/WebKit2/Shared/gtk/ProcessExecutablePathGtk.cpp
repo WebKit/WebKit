@@ -66,7 +66,7 @@ static String findWebKitProcess(const char* processName)
     }
 #endif
 
-    return pathByAppendingComponent(filenameToString(LIBEXECDIR), processName);
+    return pathByAppendingComponent(filenameToString(PKGLIBEXECDIR), processName);
 }
 
 String executablePathOfWebProcess()
