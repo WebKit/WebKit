@@ -26,7 +26,12 @@
 #ifndef IntSize_h
 #define IntSize_h
 
+#include "PlatformExportMacros.h"
 #include <algorithm>
+
+#if PLATFORM(MAC) && defined __OBJC__
+#import <Foundation/NSGeometry.h>
+#endif
 
 #if USE(CG)
 typedef struct CGSize CGSize;
