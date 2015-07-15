@@ -1,5 +1,53 @@
 2015-07-15  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r186781. rdar://problem/21708063
+
+    2015-07-13  David Kilzer  <ddkilzer@apple.com>
+
+            Merge r186530. rdar://problem/21708151
+
+            * WebCore.exp.in: Export methods.
+
+        2015-07-08  Brady Eidson  <beidson@apple.com>
+
+            Move PingLoaders to the NetworkingProcess.
+            <rdar://problem/18860263> and https://bugs.webkit.org/show_bug.cgi?id=146710
+
+            Reviewed by Tim Horton.
+
+            No new tests.
+            There's no current solution for communicating back to a page that a ping load has reached its target.
+            Until we have such a solution, any attempt at a layout test will be fragile at best.
+
+            * WebCore.xcodeproj/project.pbxproj:
+
+            * loader/LoaderStrategy.cpp:
+            (WebCore::LoaderStrategy::createPingHandle): Default implementation is create the PingHandle directly.
+            * loader/LoaderStrategy.h:
+
+            PingLoader becomes a static class for now that crafts the ResourceRequest then passes it off
+            to the LoaderStrategy:
+            * loader/PingLoader.cpp:
+            (WebCore::PingLoader::loadImage):
+            (WebCore::PingLoader::sendPing):
+            (WebCore::PingLoader::sendViolationReport):
+            (WebCore::PingLoader::startPingLoad):
+            (WebCore::PingLoader::createPingLoader): Deleted.
+            (WebCore::PingLoader::PingLoader): Deleted.
+            (WebCore::PingLoader::~PingLoader): Deleted.
+            * loader/PingLoader.h:
+            (WebCore::PingLoader::timeoutTimerFired): Deleted.
+
+            PingHandle does what PingLoader used to - It's a basic ResourceHandleClient that simply waits
+            for any response/completion/failure and then deletes itself.
+            * platform/network/PingHandle.h: Added.
+            (WebCore::PingHandle::PingHandle):
+            (WebCore::PingHandle::usesAsyncCallbacks):
+            (WebCore::PingHandle::timeoutTimerFired):
+            (WebCore::PingHandle::~PingHandle):
+
+2015-07-15  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r186763. rdar://problem/21707917
 
     2015-07-13  David Kilzer  <ddkilzer@apple.com>

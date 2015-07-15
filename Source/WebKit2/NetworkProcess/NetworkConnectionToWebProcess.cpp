@@ -37,6 +37,7 @@
 #include "NetworkResourceLoaderMessages.h"
 #include "RemoteNetworkingContext.h"
 #include "SessionTracker.h"
+#include <WebCore/PingHandle.h>
 #include <WebCore/PlatformCookieJar.h>
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
@@ -121,6 +122,14 @@ void NetworkConnectionToWebProcess::performSynchronousLoad(const NetworkResource
     RefPtr<NetworkResourceLoader> loader = NetworkResourceLoader::create(loadParameters, this, reply);
     m_networkResourceLoaders.add(loadParameters.identifier, loader);
     NetworkProcess::shared().networkResourceLoadScheduler().scheduleLoader(loader.get());
+}
+
+void NetworkConnectionToWebProcess::loadPing(const NetworkResourceLoadParameters& loadParameters)
+{
+    RefPtr<NetworkingContext> context = RemoteNetworkingContext::create(loadParameters.sessionID, loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect);
+
+    // PingHandle manages its own lifetime, deleting itself when its purpose has been fulfilled.
+    new PingHandle(context.get(), loadParameters.request, loadParameters.allowStoredCredentials == AllowStoredCredentials, PingHandle::UsesAsyncCallbacks::Yes);
 }
 
 void NetworkConnectionToWebProcess::removeLoadIdentifier(ResourceLoadIdentifier identifier)

@@ -1959,6 +1959,7 @@
 		51AF503616F100F60095B2E8 /* ResourceLoaderTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 51AF503516F100F60095B2E8 /* ResourceLoaderTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51B07A441823248B00AA8D1A /* IDBPendingDeleteCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 51B07A431823248B00AA8D1A /* IDBPendingDeleteCall.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51B2417B0D931F3F00E83F5C /* LegacyWebArchiveMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51B2417A0D931F3F00E83F5C /* LegacyWebArchiveMac.mm */; };
+		51B454EA1B4DAE7D0085EAA6 /* PingHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 51B454E91B4DAE7D0085EAA6 /* PingHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51B58FD4195A964D002990B0 /* PlatformGamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = 515E5FEF195101470086CA5E /* PlatformGamepad.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51BE37E00DAEE00E001085FC /* StorageArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BE37DE0DAEE00E001085FC /* StorageArea.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51C0AA390F2AA10A001648C2 /* CachedFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 51C0AA380F2AA10A001648C2 /* CachedFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9090,6 +9091,7 @@
 		51AF503516F100F60095B2E8 /* ResourceLoaderTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoaderTypes.h; sourceTree = "<group>"; };
 		51B07A431823248B00AA8D1A /* IDBPendingDeleteCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBPendingDeleteCall.h; sourceTree = "<group>"; };
 		51B2417A0D931F3F00E83F5C /* LegacyWebArchiveMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LegacyWebArchiveMac.mm; sourceTree = "<group>"; };
+		51B454E91B4DAE7D0085EAA6 /* PingHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PingHandle.h; sourceTree = "<group>"; };
 		51BE37DE0DAEE00E001085FC /* StorageArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageArea.h; sourceTree = "<group>"; };
 		51C0AA380F2AA10A001648C2 /* CachedFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedFrame.h; sourceTree = "<group>"; };
 		51C0AA400F2AA15E001648C2 /* CachedFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = CachedFrame.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -16442,6 +16444,7 @@
 				E13EF3421684ECF40034C83F /* NetworkStorageSession.h */,
 				447958021643B47B001E0A7F /* ParsedContentType.cpp */,
 				447958031643B47B001E0A7F /* ParsedContentType.h */,
+				51B454E91B4DAE7D0085EAA6 /* PingHandle.h */,
 				37BAAE571980D1DD005DFE71 /* ProtectionSpace.h */,
 				514C765F0CE923A1007EF3CD /* ProtectionSpaceBase.cpp */,
 				514C76600CE923A1007EF3CD /* ProtectionSpaceBase.h */,
@@ -24801,6 +24804,7 @@
 				FDF7E9C413AC21DB00A51EAC /* JSAudioBufferCallback.h in Headers */,
 				FDA15EA012B03EE1003A583A /* JSAudioBufferSourceNode.h in Headers */,
 				FDA15EA612B03EE1003A583A /* JSAudioContext.h in Headers */,
+				51B454EA1B4DAE7D0085EAA6 /* PingHandle.h in Headers */,
 				FDA15EA812B03EE1003A583A /* JSAudioDestinationNode.h in Headers */,
 				FDA15EAE12B03EE1003A583A /* JSAudioListener.h in Headers */,
 				FDA15EB012B03EE1003A583A /* JSAudioNode.h in Headers */,

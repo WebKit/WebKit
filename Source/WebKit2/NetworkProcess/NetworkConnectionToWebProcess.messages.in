@@ -26,6 +26,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 
     ScheduleResourceLoad(WebKit::NetworkResourceLoadParameters resourceLoadParameters)
     PerformSynchronousLoad(WebKit::NetworkResourceLoadParameters resourceLoadParameters) -> (WebCore::ResourceError error, WebCore::ResourceResponse response, Vector<char> data) Delayed
+    LoadPing(WebKit::NetworkResourceLoadParameters resourceLoadParameters)
     RemoveLoadIdentifier(uint64_t resourceLoadIdentifier)
     SetDefersLoading(uint64_t resourceLoadIdentifier, bool defers)
     

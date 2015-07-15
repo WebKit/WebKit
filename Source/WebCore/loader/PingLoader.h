@@ -32,48 +32,23 @@
 #ifndef PingLoader_h
 #define PingLoader_h
 
-#include "ResourceHandleClient.h"
-#include "Timer.h"
-#include <wtf/Noncopyable.h>
-#include <wtf/RefPtr.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
 class FormData;
 class Frame;
 class URL;
-class ResourceError;
-class ResourceHandle;
-class ResourceResponse;
+class ResourceRequest;
 
-// This class triggers asynchronous loads independent of Frame staying alive (i.e., auditing pingbacks).
-// Since nothing depends on resources loaded through this class, we just want
-// to allow the load to live long enough to ensure the message was actually sent.
-// Therefore, as soon as a callback is received from the ResourceHandle, this class 
-// will cancel the load and delete itself.
-class PingLoader : private ResourceHandleClient {
-    WTF_MAKE_NONCOPYABLE(PingLoader); WTF_MAKE_FAST_ALLOCATED;
+class PingLoader {
 public:
     static void loadImage(Frame&, const URL&);
     static void sendPing(Frame&, const URL& pingURL, const URL& destinationURL);
     static void sendViolationReport(Frame&, const URL& reportURL, PassRefPtr<FormData> report);
 
-    virtual ~PingLoader();
-
 private:
-    static void createPingLoader(Frame&, ResourceRequest&);
-    PingLoader(Frame&, ResourceRequest&);
-
-    virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&) override { delete this; }
-    virtual void didReceiveData(ResourceHandle*, const char*, unsigned, int) override { delete this; }
-    virtual void didFinishLoading(ResourceHandle*, double) override { delete this; }
-    virtual void didFail(ResourceHandle*, const ResourceError&) override { delete this; }
-    virtual bool shouldUseCredentialStorage(ResourceHandle*)  override { return m_shouldUseCredentialStorage; }
-    void timeoutTimerFired(Timer&) { delete this; }
-
-    RefPtr<ResourceHandle> m_handle;
-    Timer m_timeout;
-    bool m_shouldUseCredentialStorage;
+    static void startPingLoad(Frame&, ResourceRequest&);
 };
 
 }
