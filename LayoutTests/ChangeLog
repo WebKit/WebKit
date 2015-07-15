@@ -1,3 +1,20 @@
+2015-07-15  Dean Jackson  <dino@apple.com>
+
+        Tag WebGL layers with sRGB colorspace
+        https://bugs.webkit.org/show_bug.cgi?id=146986
+        <rdar://problem/21758704>
+
+        Reviewed by Simon Fraser.
+
+        Add a test that embeds a WebGL canvas inside a solid div. Since both
+        have the same color, the canvas should seemlessly disappear into
+        the surrounding div.
+
+        * fast/canvas/webgl/match-page-color-space-expected.html: Added.
+        * fast/canvas/webgl/match-page-color-space.html: Added.
+        * platform/mac-mavericks/TestExpectations: Skip this test.
+        * platform/mac-yosemite/TestExpectations: Added. Skip this test.
+
 2015-07-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Scroll snapping to elements is broken for main frame scrolling
