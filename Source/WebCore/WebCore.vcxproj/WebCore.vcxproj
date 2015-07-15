@@ -6664,6 +6664,7 @@
     <ClCompile Include="..\html\canvas\ANGLEInstancedArrays.cpp" />
     <ClCompile Include="..\html\canvas\CanvasContextAttributes.cpp" />
     <ClCompile Include="..\html\canvas\CanvasPathMethods.cpp" />
+    <ClCompile Include="..\html\canvas\DOMPath.cpp" />
     <ClCompile Include="..\html\canvas\EXTShaderTextureLOD.cpp" />
     <ClCompile Include="..\html\canvas\EXTsRGB.cpp" />
     <ClCompile Include="..\html\canvas\EXTBlendMinMax.cpp" />
@@ -7654,6 +7655,7 @@
     <ClCompile Include="..\platform\graphics\opengl\GraphicsContext3DOpenGLCommon.cpp" />
     <ClCompile Include="..\platform\graphics\opengl\GraphicsContext3DOpenGLES.cpp" />
     <ClCompile Include="..\platform\graphics\opengl\TemporaryOpenGLSetting.cpp" />
+    <ClCompile Include="..\platform\graphics\PathUtilities.cpp" />
     <ClCompile Include="..\platform\graphics\PlatformDisplay.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -19639,6 +19641,7 @@
     <ClInclude Include="..\html\canvas\ANGLEInstancedArrays.h" />
     <ClInclude Include="..\html\canvas\CanvasContextAttributes.h" />
     <ClInclude Include="..\html\canvas\CanvasPathMethods.h" />
+    <ClInclude Include="..\html\canvas\DOMPath.h" />
     <ClInclude Include="..\html\canvas\EXTShaderTextureLOD.h" />
     <ClInclude Include="..\html\canvas\EXTsRGB.h" />
     <ClInclude Include="..\html\canvas\EXTFragDepth.h" />
@@ -20120,6 +20123,7 @@
     <ClInclude Include="..\platform\graphics\opengl\GLDefs.h" />
     <ClInclude Include="..\platform\graphics\opengl\GLPlatformContext.h" />
     <ClInclude Include="..\platform\graphics\opengl\GLPlatformSurface.h" />
+    <ClInclude Include="..\platform\graphics\PathUtilities.h" />
     <ClInclude Include="..\platform\graphics\PlatformDisplay.h" />
     <ClInclude Include="..\platform\graphics\texmap\BitmapTexture.h" />
     <ClInclude Include="..\platform\graphics\texmap\BitmapTextureGL.h" />
