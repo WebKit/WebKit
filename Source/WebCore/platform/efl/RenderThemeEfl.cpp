@@ -93,6 +93,10 @@ static const char* toEdjeGroup(FormType type)
         "webkit/widget/checkbox",
         "webkit/widget/combo",
         "webkit/widget/progressbar",
+        "webkit/widget/scrollbar/horizontal_thumb",
+        "webkit/widget/scrollbar/horizontal_background",
+        "webkit/widget/scrollbar/vertical_thumb",
+        "webkit/widget/scrollbar/vertical_background",
         "webkit/widget/search/field",
         "webkit/widget/search/results_button",
         "webkit/widget/search/results_decoration",
@@ -361,6 +365,29 @@ bool RenderThemeEfl::paintThemePart(const RenderObject& object, FormType type, c
     evas_render(ecore_evas_get(entry->canvas()));
 
     cairo_t* cairo = info.context->platformContext()->cr();
+    ASSERT(cairo);
+
+    cairo_save(cairo);
+    cairo_set_source_surface(cairo, entry->surface(), rect.x(), rect.y());
+    cairo_paint_with_alpha(cairo, 1.0);
+    cairo_restore(cairo);
+
+    return false;
+}
+
+bool RenderThemeEfl::paintThemePart(const GraphicsContext& context, FormType type, const IntRect& rect)
+{
+    loadThemeIfNeeded();
+    _ASSERT_ON_RELEASE_RETURN_VAL(edje(), false, "Could not paint native HTML part due to missing theme.");
+
+    ThemePartCacheEntry* entry = getThemePartFromCache(type, rect.size());
+    ASSERT(entry);
+
+    edje_object_calc_force(entry->edje());
+    edje_object_message_signal_process(entry->edje());
+    evas_render(ecore_evas_get(entry->canvas()));
+
+    cairo_t* cairo = context.platformContext()->cr();
     ASSERT(cairo);
 
     cairo_save(cairo);

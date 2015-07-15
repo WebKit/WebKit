@@ -97,7 +97,6 @@ list(APPEND WebCore_SOURCES
     platform/efl/PlatformScreenEfl.cpp
     platform/efl/PlatformWheelEventEfl.cpp
     platform/efl/RenderThemeEfl.cpp
-    platform/efl/ScrollbarEfl.cpp
     platform/efl/ScrollbarThemeEfl.cpp
     platform/efl/SharedTimerEfl.cpp
     platform/efl/SoundEfl.cpp

@@ -43,12 +43,10 @@
 
 namespace WebCore {
 
-#if !PLATFORM(EFL)
 PassRefPtr<Scrollbar> Scrollbar::createNativeScrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize size)
 {
     return adoptRef(new Scrollbar(scrollableArea, orientation, size));
 }
-#endif
 
 int Scrollbar::maxOverlapBetweenPages()
 {

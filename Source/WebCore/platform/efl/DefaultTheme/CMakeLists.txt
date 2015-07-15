@@ -52,10 +52,10 @@ macro(GENERATE_THEME _target_name _name _option)
             widget/radio/img_radio_on.png
             widget/radio/radio.edc
             widget/scrollbar/scrollbar.edc
-            widget/scrollbar/scrollbar_h.png
-            widget/scrollbar/scrollbar_knob_h.png
-            widget/scrollbar/scrollbar_knob_v.png
-            widget/scrollbar/scrollbar_v.png
+            widget/scrollbar/scrollbar_bg_horizontal.png
+            widget/scrollbar/scrollbar_bg_vertical.png
+            widget/scrollbar/scrollbar_thumb_horizontal.png
+            widget/scrollbar/scrollbar_thumb_vertical.png
             widget/search/cancel/cancel_normal_button2.png
             widget/search/cancel/cancel_normal_button.png
             widget/search/cancel/search_cancel.edc

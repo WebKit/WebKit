@@ -45,6 +45,10 @@ enum FormType { // KEEP IN SYNC WITH edjeGroupFromFormType()
     CheckBox,
     ComboBox,
     ProgressBar,
+    ScrollbarHorizontalThumb,
+    ScrollbarHorizontalTrackBackground,
+    ScrollbarVerticalThumb,
+    ScrollbarVerticalTrackBackground,
     SearchField,
     SearchFieldResultsButton,
     SearchFieldResultsDecoration,
@@ -175,6 +179,8 @@ public:
 
     void setThemePath(const String&);
     String themePath() const;
+
+    bool paintThemePart(const GraphicsContext&, FormType, const IntRect&);
 
 protected:
     static float defaultFontSize;

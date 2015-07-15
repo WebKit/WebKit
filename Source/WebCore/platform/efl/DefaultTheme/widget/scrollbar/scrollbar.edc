@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2008,2009 INdT - Instituto Nokia de Tecnologia
+    Copyright (C) 2015 Samsung Electronics. All rights reserved.
 
     This file is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -17,245 +18,112 @@
     Boston, MA 02110-1301, USA.
 */
 
-group {
-    name: "scrollbar.vertical";
+   group {
+      name: "webkit/widget/scrollbar/vertical_thumb";
+      min: 0 0;  /* if > 0, this is the minimum size that will be allocated.
+                  * If wants to draw on top, just overflow using edje's rel1/rel2
+                  */
 
-    min: 0 0;  /* if > 0, this is the minimum size that will be allocated.
-                * If wants to draw on top, just overflow usign edje's rel1/rel2
-                */
+      images {
+         image: "widget/scrollbar/scrollbar_thumb_vertical.png" COMP;
+      }
 
-    images {
-        image: "widget/scrollbar/scrollbar_v.png" COMP;
-        image: "widget/scrollbar/scrollbar_knob_v.png" COMP;
-    }
-
-    script {
-        public hide_timer;
-
-        public hide_timer_cb(val) {
-            run_program(PROGRAM:"hide");
-            return 0;
-        }
-
-        public hide_timer_stop() {
-            new id = get_int(hide_timer);
-            if (id <= 0)
-                return;
-
-            cancel_timer(id);
-            set_int(hide_timer, 0);
-        }
-
-        public hide_timer_start() {
-            set_int(hide_timer, timer(1.0, "hide_timer_cb", 0));
-        }
-
-        public message(Msg_Type:type, id, ...) {
-            if ((id == 0) && (type == MSG_FLOAT_SET)) {
-                new Float:vy, Float:sy;
-
-                vy = getfarg(2);
-                sy = getfarg(3);
-
-                if (vy >= 0.0) {
-                    set_drag_size(PART:"img.knob", 1.0, sy);
-                    set_drag(PART:"img.knob", 0.0, vy);
-                    run_program(PROGRAM:"show");
-                } else
-                    run_program(PROGRAM:"hide");
-
-                hide_timer_stop();
-                hide_timer_start();
-            }
-        }
-
-        public update_drag_pos() {
-            new Float:x, Float:y;
-            get_drag(PART:"img.knob", x, y);
-            send_message(MSG_FLOAT, 1, y);
-        }
-    }
-
-    parts {
+      parts {
          part {
-            name: "rect.base";
+            name: "vertical.rect.base";
             type: RECT;
             description {
+               state: "default" 0.0;
+               min: 8 0;
+               max: 8 999999;
+               align: 1.0 0.5;
+               color: 255 255 255 0;
+            }
+         }
+
+         part {
+            name: "vertical.thumb";
+            type: IMAGE;
+            description {
+               state: "default" 0.0;
+               min: 8 2;
+               max: 8 999999;
+               align: 0.5 0.5;
+               rel1 {to: "vertical.thumb.area"; relative: 0 0;}
+               rel2 {to: "vertical.thumb.area"; relative: 1 1;}
+               image {
+                  normal: "widget/scrollbar/scrollbar_thumb_vertical.png";
+                  middle: SOLID;
+               }
+            }
+         }
+
+         part {
+            name: "vertical.thumb.area";
+            type: RECT;
+            description {
+               state: "default" 0.0;
+               min: 8 2;
+               max: 8 999999;
+               align: 0.5 0.5;
+               color: 255 0 0 0;
+            }
+         }
+      }
+   }
+
+   group {
+      name: "webkit/widget/scrollbar/vertical_background";
+      min: 0 0;  /* if > 0, this is the minimum size that will be allocated.
+                  * If wants to draw on top, just overflow using edje's rel1/rel2
+                  */
+
+      images {
+         image: "widget/scrollbar/scrollbar_bg_vertical.png" COMP;
+      }
+
+      parts {
+         part {
+            name: "vertical.rect.base";
+            type: RECT;
+            description {
+               state: "default" 0.0;
                min: 10 0;
                max: 10 999999;
                align: 1.0 0.5;
-               state: "default" 0.0;
                color: 255 255 255 0;
             }
          }
 
          part {
-            name: "rect.clipper";
-            type: RECT;
-            description {
-               state: "default" 0.0;
-               color: 255 255 255 255;
-               rel1.to: "rect.base";
-               rel2.to: "rect.base";
-            }
-            description {
-               state: "hidden" 0.0;
-               color: 255 255 255 64;
-               rel1.to: "rect.base";
-               rel2.to: "rect.base";
-            }
-         }
-
-         part {
-            name: "img.scrollbar";
+            name: "vertical.background";
             type: IMAGE;
-            mouse_events: 0;
-            clip_to: "rect.clipper";
             description {
                state: "default" 0.0;
-               min: 1 30;
-               max: 1 999999;
+               min: 10 0;
+               max: 10 999999;
                align: 0.5 0.5;
-               image {
-                  normal: "widget/scrollbar/scrollbar_v.png";
-                  border: 0 0 15 15;
-                  middle: SOLID;
-               }
-               rel1.to: "rect.base";
-               rel2.to: "rect.base";
+               rel1 {to: "vertical.rect.base"; relative: 0 0;}
+               rel2 {to: "vertical.rect.base"; relative: 1 1;}
+               image.normal: "widget/scrollbar/scrollbar_bg_vertical.png";
             }
          }
+      }
+   }
 
+   group {
+      name: "webkit/widget/scrollbar/horizontal_thumb";
+       min: 0 0;  /* if > 0, this is the minimum size that will be allocated.
+                   * If wants to draw on top, just overflow using edje's rel1/rel2
+                   */
+
+      images {
+         image: "widget/scrollbar/scrollbar_thumb_horizontal.png" COMP;
+      }
+
+      parts {
          part {
-            name: "rect.knobarea";
-            type: RECT;
-            description {
-               state: "default" 0.0;
-               color: 255 255 255 0;
-               min: 5 5;
-               max: 5 999999;
-               align: 0.5 0.5;
-               rel1.to: "rect.base";
-               rel2.to: "rect.base";
-            }
-         }
-
-         part {
-            name: "img.knob";
-            type: IMAGE;
-            mouse_events: 1;
-            clip_to: "rect.clipper";
-            dragable {
-                x: 0 0 0;
-                y: 1 1 0;
-                confine: "rect.knobarea";
-            }
-            description {
-               state: "default" 0.0;
-               min: 5 5;
-               max: 5 999999;
-               align: 0.5 0.5;
-               image {
-                  normal: "widget/scrollbar/scrollbar_knob_v.png";
-                  border: 3 3 3 3;
-                  middle: SOLID;
-               }
-            }
-         }
-    }
-    programs {
-        program {
-           name: "load";
-           signal: "load";
-           action: STATE_SET "hidden" 0.0;
-           target: "rect.clipper";
-        }
-        program {
-           name: "hide";
-           action: STATE_SET "hidden" 0.0;
-           transition: ACCELERATE 0.5;
-           target: "rect.clipper";
-        }
-
-        program {
-           name: "show";
-           action: STATE_SET "default" 0.0;
-           target: "rect.clipper";
-        }
-
-        program {
-           name: "dragged";
-           signal: "drag";
-           source: "img.knob";
-           script {
-              update_drag_pos();
-           }
-        }
-    }
-}
-
-group {
-    name: "scrollbar.horizontal";
-
-    min: 0 0;  /* if > 0, this is the minimum size that will be allocated.
-                * If wants to draw on top, just overflow usign edje's rel1/rel2
-                */
-
-    images {
-        image: "widget/scrollbar/scrollbar_h.png" COMP;
-        image: "widget/scrollbar/scrollbar_knob_h.png" COMP;
-    }
-
-    script {
-        public hide_timer;
-
-        public hide_timer_cb(val) {
-            run_program(PROGRAM:"hide");
-            return 0;
-        }
-
-        public hide_timer_stop() {
-            new id = get_int(hide_timer);
-            if (id <= 0)
-                return;
-
-            cancel_timer(id);
-            set_int(hide_timer, 0);
-        }
-
-        public hide_timer_start() {
-            set_int(hide_timer, timer(1.0, "hide_timer_cb", 0));
-        }
-
-        public message(Msg_Type:type, id, ...) {
-            if ((id == 0) && (type == MSG_FLOAT_SET)) {
-                new Float:vx, Float:sx;
-
-                vx = getfarg(2);
-                sx = getfarg(3);
-
-                if (vx >= 0.0) {
-                    set_drag_size(PART:"img.knob", sx, 1.0);
-                    set_drag(PART:"img.knob", vx, 0.0);
-                    run_program(PROGRAM:"show");
-                } else
-                    run_program(PROGRAM:"hide");
-
-                hide_timer_stop();
-                hide_timer_start();
-            }
-        }
-
-        public update_drag_pos() {
-            new Float:x, Float:y;
-            get_drag(PART:"img.knob", x, y);
-            send_message(MSG_FLOAT, 1, x);
-        }
-    }
-
-    parts {
-         part {
-            name: "rect.base";
+            name: "horizontal.rect.base";
             type: RECT;
             description {
                state: "default" 0.0;
@@ -267,106 +135,71 @@ group {
          }
 
          part {
-            name: "rect.clipper";
-            type: RECT;
-            description {
-               state: "default" 0.0;
-               color: 255 255 255 255;
-               rel1.to: "rect.base";
-               rel2.to: "rect.base";
-            }
-            description {
-               state: "hidden" 0.0;
-               color: 255 255 255 64;
-               rel1.to: "rect.base";
-               rel2.to: "rect.base";
-            }
-         }
-
-         part {
-            name: "img.scrollbar";
+            name: "horizontal.thumb";
             type: IMAGE;
-            mouse_events: 0;
-            clip_to: "rect.clipper";
             description {
                state: "default" 0.0;
-               min: 30 1;
-               max: 999999 1;
+               min: 2 8;
+               max: 999999 8;
                align: 0.5 0.5;
+               rel1 {to: "horizontal.rect.base"; relative: 0 0;}
+               rel2 {to: "horizontal.rect.base"; relative: 1 1;}
                image {
-                  normal: "widget/scrollbar/scrollbar_h.png";
-                  border: 15 15 0 0;
+                  normal: "widget/scrollbar/scrollbar_thumb_horizontal.png";
                   middle: SOLID;
                }
-               rel1.to: "rect.base";
-               rel2.to: "rect.base";
-           }
+            }
          }
 
-
          part {
-            name: "rect.knobarea";
+            name: "horizontal.thumb.area";
             type: RECT;
             description {
                state: "default" 0.0;
+               min: 2 8;
+               max: 999999 8;
+               align: 0.5 0.5;
+               color: 255 0 0 0;
+            }
+         }
+      }
+   }
+
+   group {
+      name: "webkit/widget/scrollbar/horizontal_background";
+      min: 0 0;  /* if > 0, this is the minimum size that will be allocated.
+                  * If wants to draw on top, just overflow using edje's rel1/rel2
+                  */
+
+      images {
+         image: "widget/scrollbar/scrollbar_bg_horizontal.png" COMP;
+      }
+
+      parts {
+         part {
+            name: "horizontal.rect.base";
+            type: RECT;
+            description {
+               state: "default" 0.0;
+               min: 0 10;
+               max: 999999 10;
+               align: 0.5 1.0;
                color: 255 255 255 0;
-               min: 5 5;
-               max: 999999 5;
-               align: 0.5 0.5;
-               rel1.to: "rect.base";
-               rel2.to: "rect.base";
             }
          }
 
          part {
-            name: "img.knob";
+            name: "horizontal.background";
             type: IMAGE;
-            mouse_events: 1;
-            clip_to: "rect.clipper";
-            dragable {
-                x: 1 1 0;
-                y: 0 0 0;
-                confine: "rect.knobarea";
-            }
             description {
                state: "default" 0.0;
-               min: 5 5;
-               max: 999999 5;
-               image {
-                  normal: "widget/scrollbar/scrollbar_knob_h.png";
-                  border: 3 3 3 3;
-                  middle: SOLID;
-               }
+               min: 0 10;
+               max: 99999 10;
+               align: 0.5 0.5;
+               rel1 {to: "horizontal.rect.base"; relative: 0 0;}
+               rel2 {to: "horizontal.rect.base"; relative: 1 1;}
+               image.normal: "widget/scrollbar/scrollbar_bg_horizontal.png";
             }
          }
-    }
-    programs {
-        program {
-           name: "load";
-           signal: "load";
-           action: STATE_SET "hidden" 0.0;
-           target: "rect.clipper";
-        }
-        program {
-           name: "hide";
-           action: STATE_SET "hidden" 0.0;
-           transition: ACCELERATE 0.5;
-           target: "rect.clipper";
-        }
-
-        program {
-           name: "show";
-           action: STATE_SET "default" 0.0;
-           target: "rect.clipper";
-        }
-
-        program {
-           name: "dragged";
-           signal: "drag";
-           source: "img.knob";
-           script {
-              update_drag_pos();
-           }
-        }
-    }
-}
+      }
+   }

@@ -29,12 +29,107 @@
 #include "config.h"
 #include "ScrollbarThemeEfl.h"
 
+#include "FrameView.h"
+#include "NotImplemented.h"
+#include "Page.h"
+#include "RenderThemeEfl.h"
+
+#include <wtf/NeverDestroyed.h>
+
 namespace WebCore {
 
 ScrollbarTheme* ScrollbarTheme::nativeTheme()
 {
     static ScrollbarThemeEfl theme;
     return &theme;
+}
+
+static const int defaultThickness = 10;
+static const int scrollbarThumbMin = 2;
+
+typedef HashSet<Scrollbar*> ScrollbarMap;
+static ScrollbarMap& scrollbarMap()
+{
+    static NeverDestroyed<ScrollbarMap> map;
+    return map;
+}
+
+ScrollbarThemeEfl::~ScrollbarThemeEfl()
+{
+}
+
+int ScrollbarThemeEfl::scrollbarThickness(ScrollbarControlSize)
+{
+    return defaultThickness;
+}
+
+bool ScrollbarThemeEfl::hasThumb(Scrollbar& scrollbar)
+{
+    return thumbLength(scrollbar) > 0;
+}
+
+IntRect ScrollbarThemeEfl::backButtonRect(Scrollbar&, ScrollbarPart, bool)
+{
+    notImplemented();
+    return IntRect();
+}
+
+IntRect ScrollbarThemeEfl::forwardButtonRect(Scrollbar&, ScrollbarPart, bool)
+{
+    notImplemented();
+    return IntRect();
+}
+
+IntRect ScrollbarThemeEfl::trackRect(Scrollbar& scrollbar, bool)
+{
+    return scrollbar.frameRect();
+}
+
+int ScrollbarThemeEfl::minimumThumbLength(Scrollbar&)
+{
+    return scrollbarThumbMin;
+}
+
+void ScrollbarThemeEfl::paintTrackBackground(GraphicsContext& context, Scrollbar& scrollbar, const IntRect& rect)
+{
+    loadThemeIfNeeded(scrollbar);
+    m_theme->paintThemePart(context, (scrollbar.orientation() == HorizontalScrollbar) ? ScrollbarHorizontalTrackBackground : ScrollbarVerticalTrackBackground, rect);
+}
+
+void ScrollbarThemeEfl::paintThumb(GraphicsContext& context, Scrollbar& scrollbar, const IntRect& thumbRect)
+{
+    loadThemeIfNeeded(scrollbar);
+    m_theme->paintThemePart(context, (scrollbar.orientation() == HorizontalScrollbar) ? ScrollbarHorizontalThumb : ScrollbarVerticalThumb, thumbRect);
+}
+
+void ScrollbarThemeEfl::registerScrollbar(Scrollbar& scrollbar)
+{
+    scrollbar.setEnabled(true);
+    scrollbarMap().add(&scrollbar);
+}
+
+void ScrollbarThemeEfl::unregisterScrollbar(Scrollbar& scrollbar)
+{
+    scrollbarMap().remove(&scrollbar);
+}
+
+void ScrollbarThemeEfl::loadThemeIfNeeded(Scrollbar& scrollbar)
+{
+    if (m_theme)
+        return;
+
+    ScrollView* view = scrollbar.parent();
+    if (!view)
+        return;
+
+    if (!is<FrameView>(view))
+        return;
+
+    Page* page = downcast<FrameView>(view)->frame().page();
+    if (!page)
+        return;
+
+    m_theme = static_cast<RenderThemeEfl*>(&page->theme());
 }
 
 }
