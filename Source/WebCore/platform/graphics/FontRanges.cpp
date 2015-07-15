@@ -46,13 +46,21 @@ FontRanges::~FontRanges()
 {
 }
 
-const Font* FontRanges::fontForCharacter(UChar32 c) const
+GlyphData FontRanges::glyphDataForCharacter(UChar32 character) const
 {
     for (auto& range : m_ranges) {
-        if (range.from() <= c && c <= range.to())
-            return &range.font();
+        if (range.from() <= character && character <= range.to()) {
+            auto glyphData = range.font().glyphDataForCharacter(character);
+            if (glyphData.glyph)
+                return glyphData;
+        }
     }
-    return nullptr;
+    return GlyphData();
+}
+
+const Font* FontRanges::fontForCharacter(UChar32 character) const
+{
+    return glyphDataForCharacter(character).font;
 }
 
 const Font& FontRanges::fontForFirstRange() const

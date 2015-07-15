@@ -62,6 +62,7 @@ public:
     unsigned size() const { return m_ranges.size(); }
     const Range& rangeAt(unsigned i) const { return m_ranges[i]; }
 
+    GlyphData glyphDataForCharacter(UChar32) const;
     WEBCORE_EXPORT const Font* fontForCharacter(UChar32) const;
     WEBCORE_EXPORT const Font& fontForFirstRange() const;
     bool isLoading() const;
