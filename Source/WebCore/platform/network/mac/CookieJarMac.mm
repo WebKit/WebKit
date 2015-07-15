@@ -118,7 +118,18 @@ void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstPar
     String cookieString = cookieStr.contains('=') ? cookieStr : cookieStr + "=";
 
     NSURL *cookieURL = url;
-    RetainPtr<NSArray> filteredCookies = filterCookies([NSHTTPCookie cookiesWithResponseHeaderFields:[NSDictionary dictionaryWithObject:cookieString forKey:@"Set-Cookie"] forURL:cookieURL]);
+    NSDictionary *headerFields = [NSDictionary dictionaryWithObject:cookieString forKey:@"Set-Cookie"];
+
+    NSArray *unfilteredCookies;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundeclared-selector"
+    if ([[NSHTTPCookie class] respondsToSelector:@selector(_parsedCookiesWithResponseHeaderFields:forURL:)])
+        unfilteredCookies = [NSHTTPCookie performSelector:@selector(_parsedCookiesWithResponseHeaderFields:forURL:) withObject:headerFields withObject:cookieURL];
+#pragma clang diagnostic pop
+    else
+        unfilteredCookies = [NSHTTPCookie cookiesWithResponseHeaderFields:headerFields forURL:cookieURL];
+
+    RetainPtr<NSArray> filteredCookies = filterCookies(unfilteredCookies);
     ASSERT([filteredCookies.get() count] <= 1);
 
     wkSetHTTPCookiesForURL(session.cookieStorage().get(), filteredCookies.get(), cookieURL, firstParty);
