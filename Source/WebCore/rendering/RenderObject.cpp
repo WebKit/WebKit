@@ -53,6 +53,7 @@
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
+#include "RenderMultiColumnFlowThread.h"
 #include "RenderNamedFlowFragment.h"
 #include "RenderNamedFlowThread.h" 
 #include "RenderSVGResourceContainer.h"
@@ -1554,9 +1555,17 @@ Color RenderObject::selectionEmphasisMarkColor() const
 SelectionSubtreeRoot& RenderObject::selectionRoot() const
 {
     RenderFlowThread* flowThread = flowThreadContainingBlock();
-    if (flowThread && flowThread->isRenderNamedFlowThread())
-        return *toRenderNamedFlowThread(flowThread);
+    if (!flowThread)
+        return view();
 
+    if (flowThread->isRenderNamedFlowThread())
+        return *toRenderNamedFlowThread(flowThread);
+    if (flowThread->isRenderMultiColumnFlowThread()) {
+        if (!flowThread->containingBlock())
+            return view();
+        return flowThread->containingBlock()->selectionRoot();
+    }
+    ASSERT_NOT_REACHED();
     return view();
 }
 
