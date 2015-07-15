@@ -46,7 +46,6 @@
 #endif
 
 static const size_t messageMaxSize = 4096;
-static const char onlineCPUCountPath[] = "/sys/devices/system/cpu/online";
 
 namespace WebKit {
 
@@ -57,15 +56,19 @@ public:
 
     void dispatch(Syscall*) const;
 
-    bool handleIfOpeningOnlineCPUCount(mcontext_t*) const;
+    bool handleIfOpeningCachedFile(mcontext_t*) const;
 
 private:
     SeccompBrokerClient(int socket);
 
+    void cacheFile(const char* path);
+
     int m_socket;
-    int m_onlineCPUCountFd;
 
     mutable Mutex m_socketLock;
+
+    // Maps files that may be read by malloc() to open file descriptors.
+    HashMap<String, int> m_fileDescriptorCache;
 };
 
 static ssize_t sendMessage(int socket, void* data, size_t size, int fd = -1)
@@ -142,7 +145,7 @@ static void SIGSYSHandler(int signal, siginfo_t* info, void* data)
 
     SeccompBrokerClient* client = &SeccompBrokerClient::singleton();
 
-    if (client->handleIfOpeningOnlineCPUCount(&ucontext->uc_mcontext))
+    if (client->handleIfOpeningCachedFile(&ucontext->uc_mcontext))
         return;
 
     // createFromContext might return a nullptr if it is able to resolve the
@@ -183,15 +186,18 @@ SeccompBrokerClient& SeccompBrokerClient::singleton(int socket)
 
 SeccompBrokerClient::SeccompBrokerClient(int socket)
     : m_socket(socket)
-    , m_onlineCPUCountFd(open(onlineCPUCountPath, O_RDONLY))
 {
-    ASSERT(m_socket >= 0 && m_onlineCPUCountFd >= 0);
+    ASSERT(m_socket >= 0);
+
+    cacheFile("/proc/sys/vm/overcommit_memory");
+    cacheFile("/sys/devices/system/cpu/online");
 }
 
 SeccompBrokerClient::~SeccompBrokerClient()
 {
+    for (int fd : m_fileDescriptorCache.values())
+        close(fd);
     close(m_socket);
-    close(m_onlineCPUCountFd);
 }
 
 void SeccompBrokerClient::dispatch(Syscall* syscall) const
@@ -227,23 +233,33 @@ void SeccompBrokerClient::dispatch(Syscall* syscall) const
     syscall->setResult(result.get());
 }
 
-bool SeccompBrokerClient::handleIfOpeningOnlineCPUCount(mcontext_t* context) const
+bool SeccompBrokerClient::handleIfOpeningCachedFile(mcontext_t* context) const
 {
     if (context->gregs[REG_SYSCALL] != __NR_open)
         return false;
 
     const char *path = reinterpret_cast<char*>(context->gregs[REG_ARG0]);
-    if (strcmp(onlineCPUCountPath, path))
+
+    auto iter = m_fileDescriptorCache.find(path);
+    if (iter == m_fileDescriptorCache.end())
         return false;
 
     // Malloc will eventually check the number of online CPUs (i.e being
     // scheduled) present on the system by opening a special file. If it does
     // that in the middle of the SIGSYS signal handler, it might trigger a
-    // recursive attempt of proxying the open() syscall to the broker.
-    // Because of that, we cache this resource.
-    context->gregs[REG_SYSCALL] = dup(m_onlineCPUCountFd);
+    // recursive attempt of proxying the open() syscall to the broker. The same
+    // problem occurs if malloc() checks the memory overcommit policy. Because
+    // of that, we cache these resources.
+    context->gregs[REG_SYSCALL] = dup(iter->value);
 
     return true;
+}
+
+void SeccompBrokerClient::cacheFile(const char* path)
+{
+    int fd = open(path, O_RDONLY);
+    ASSERT(fd >= 0);
+    m_fileDescriptorCache.set(path, fd);
 }
 
 void SeccompBroker::launchProcess(SeccompFilters* filters, const SyscallPolicy& policy)

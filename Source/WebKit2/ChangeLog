@@ -1,3 +1,24 @@
+2015-07-15  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [Linux] SeccompBrokerClient should cache arbitrary file descriptors
+        https://bugs.webkit.org/show_bug.cgi?id=140068
+
+        Reviewed by Žan Doberšek.
+
+        If malloc() attempts to open /proc/sys/vm/overcommit_memory in a SIGSYS
+        signal handler, the SeccompBroker will attempt to recursively broker the
+        open() syscall. Generalize the existing code that already handles the
+        similar case where malloc() opens /sys/devices/system/cpu/online to
+        handle this situation as well.
+
+        * Shared/linux/SeccompFilters/SeccompBroker.cpp:
+        (WebKit::SIGSYSHandler):
+        (WebKit::SeccompBrokerClient::SeccompBrokerClient):
+        (WebKit::SeccompBrokerClient::~SeccompBrokerClient):
+        (WebKit::SeccompBrokerClient::handleIfOpeningCachedFile):
+        (WebKit::SeccompBrokerClient::cacheFile):
+        (WebKit::SeccompBrokerClient::handleIfOpeningOnlineCPUCount): Deleted.
+
 2015-07-15  ChangSeok Oh  <changseok.oh@collabora.com>
 
         [GTK] Accelerated compositing is enabled by MiniBrowser in Wayland
