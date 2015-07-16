@@ -1,3 +1,76 @@
+2015-07-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Maintain consistent COM Interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=146983
+        <rdar://problem/21822278>
+
+        Reviewed by Dean Jackson.
+
+        Update DumpRenderTree and WinLauncher to use the properly
+        versioned COM interface objects.
+
+        * DumpRenderTree/win/AccessibilityControllerWin.cpp:
+        (AccessibilityController::rootElement):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebPreferencesToConsistentValues):
+        (resetWebViewToConsistentStateBeforeTesting):
+        (runTest):
+        (createWebViewAndOffscreenWindow):
+        * DumpRenderTree/win/EditingDelegate.cpp:
+        (EditingDelegate::QueryInterface):
+        (EditingDelegate::shouldEndEditingInDOMRange):
+        (EditingDelegate::shouldInsertNode):
+        * DumpRenderTree/win/EditingDelegate.h:
+        * DumpRenderTree/win/EventSender.cpp:
+        (scalePageByCallback):
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        (FrameLoadDelegate::didCommitLoadForFrame):
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::callShouldCloseOnWebView):
+        (TestRunner::applicationCacheDiskUsageForOrigin):
+        (TestRunner::clearApplicationCacheForOrigin):
+        (TestRunner::setDefersLoading):
+        (TestRunner::setDomainRelaxationForbiddenForURLScheme):
+        (TestRunner::setTabKeyCyclesThroughElements):
+        (TestRunner::setValueForUser):
+        (TestRunner::dispatchPendingLoadRequests):
+        (TestRunner::setWindowIsKey):
+        (TestRunner::execCommand):
+        (TestRunner::addOriginAccessWhitelistEntry):
+        (TestRunner::removeOriginAccessWhitelistEntry):
+        (TestRunner::addUserScript):
+        (TestRunner::addUserStyleSheet):
+        (TestRunner::showWebInspector):
+        (TestRunner::closeWebInspector):
+        (TestRunner::evaluateInWebInspector):
+        (TestRunner::setSerializeHTTPLoads):
+        * DumpRenderTree/win/TextInputControllerWin.cpp:
+        (TextInputController::setMarkedText):
+        (TextInputController::hasMarkedText):
+        (TextInputController::unmarkText):
+        (TextInputController::markedRange):
+        (TextInputController::insertText):
+        (TextInputController::firstRectForCharacterRange):
+        (TextInputController::selectedRange):
+        * DumpRenderTree/win/UIDelegate.h:
+        (UIDelegate::unused2):
+        (UIDelegate::unused3):
+        (UIDelegate::webViewScrolled):
+        (UIDelegate::webViewShouldInterruptJavaScript):
+        (UIDelegate::webViewReceivedFocus):
+        (UIDelegate::unused4): Deleted.
+        * TestWebKitAPI/Tests/WebKit/win/WebViewDestruction.cpp:
+        (TestWebKitAPI::WebViewDestructionWithHostWindow::SetUp):
+        * WinLauncher/PageLoadTestClient.cpp:
+        (PageLoadTestClient::didStartProvisionalLoad):
+        * WinLauncher/WinLauncher.cpp:
+        (WinLauncher::init):
+        * WinLauncher/WinLauncher.h:
+        * WinLauncher/WinLauncherWebHost.cpp:
+        (WinLauncherWebHost::didFinishLoadForFrame):
+        (WinLauncherWebHost::didFirstLayoutInFrame):
+        * WinLauncher/WinLauncherWebHost.h:
+
 2015-07-15  Dean Johnson  <dean_johnson@apple.com>
 
         Many test failures in scm_unittest.py

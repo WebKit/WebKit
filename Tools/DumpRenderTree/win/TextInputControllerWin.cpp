@@ -44,7 +44,7 @@ void TextInputController::setMarkedText(JSStringRef text, unsigned int from, uns
     if (FAILED(frame->webView(&webView)))
         return;
 
-    COMPtr<IWebViewPrivate> viewPrivate;
+    COMPtr<IWebViewPrivate2> viewPrivate;
     if (FAILED(webView->QueryInterface(&viewPrivate)))
         return;
 
@@ -59,7 +59,7 @@ bool TextInputController::hasMarkedText()
     if (FAILED(frame->webView(&webView)))
         return false;
 
-    COMPtr<IWebViewPrivate> viewPrivate;
+    COMPtr<IWebViewPrivate2> viewPrivate;
     if (FAILED(webView->QueryInterface(&viewPrivate)))
         return false;
 
@@ -74,7 +74,7 @@ void TextInputController::unmarkText()
     if (FAILED(frame->webView(&webView)))
         return;
 
-    COMPtr<IWebViewPrivate> viewPrivate;
+    COMPtr<IWebViewPrivate2> viewPrivate;
     if (FAILED(webView->QueryInterface(&viewPrivate)))
         return;
 
@@ -91,7 +91,7 @@ vector<int> TextInputController::markedRange()
     if (FAILED(frame->webView(&webView)))
         return result;
 
-    COMPtr<IWebViewPrivate> viewPrivate;
+    COMPtr<IWebViewPrivate2> viewPrivate;
     if (FAILED(webView->QueryInterface(&viewPrivate)))
         return result;
 
@@ -112,7 +112,7 @@ void TextInputController::insertText(JSStringRef text)
     if (FAILED(frame->webView(&webView)))
         return;
 
-    COMPtr<IWebViewPrivate> viewPrivate;
+    COMPtr<IWebViewPrivate2> viewPrivate;
     if (FAILED(webView->QueryInterface(&viewPrivate)))
         return;
  
@@ -130,7 +130,7 @@ vector<int> TextInputController::firstRectForCharacterRange(unsigned int start, 
     if (FAILED(frame->webView(&webView)))
         return result;
 
-    COMPtr<IWebViewPrivate> viewPrivate;
+    COMPtr<IWebViewPrivate2> viewPrivate;
     if (FAILED(webView->QueryInterface(&viewPrivate)))
         return result;
 
@@ -155,7 +155,7 @@ vector<int> TextInputController::selectedRange()
     if (FAILED(frame->webView(&webView)))
         return result;
 
-    COMPtr<IWebViewPrivate> viewPrivate;
+    COMPtr<IWebViewPrivate2> viewPrivate;
     if (FAILED(webView->QueryInterface(&viewPrivate)))
         return result;
 

@@ -194,13 +194,13 @@ void WebPreferences::initializeDefaultSettings()
 
     CFMutableDictionaryRef defaults = CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 
-    CFDictionaryAddValue(defaults, CFSTR(WebKitStandardFontPreferenceKey), CFSTR("Times New Roman"));
+    CFDictionaryAddValue(defaults, CFSTR(WebKitStandardFontPreferenceKey), CFSTR("Segoe UI"));
     CFDictionaryAddValue(defaults, CFSTR(WebKitFixedFontPreferenceKey), CFSTR("Courier New"));
     CFDictionaryAddValue(defaults, CFSTR(WebKitSerifFontPreferenceKey), CFSTR("Times New Roman"));
     CFDictionaryAddValue(defaults, CFSTR(WebKitSansSerifFontPreferenceKey), CFSTR("Arial"));
     CFDictionaryAddValue(defaults, CFSTR(WebKitCursiveFontPreferenceKey), CFSTR("Comic Sans MS"));
     CFDictionaryAddValue(defaults, CFSTR(WebKitFantasyFontPreferenceKey), CFSTR("Comic Sans MS"));
-    CFDictionaryAddValue(defaults, CFSTR(WebKitPictographFontPreferenceKey), CFSTR("Times New Roman"));
+    CFDictionaryAddValue(defaults, CFSTR(WebKitPictographFontPreferenceKey), CFSTR("Segoe UI Symbol"));
     CFDictionaryAddValue(defaults, CFSTR(WebKitMinimumFontSizePreferenceKey), CFSTR("0"));
     CFDictionaryAddValue(defaults, CFSTR(WebKitMinimumLogicalFontSizePreferenceKey), CFSTR("9"));
     CFDictionaryAddValue(defaults, CFSTR(WebKitDefaultFontSizePreferenceKey), CFSTR("16"));
@@ -530,6 +530,8 @@ HRESULT STDMETHODCALLTYPE WebPreferences::QueryInterface(REFIID riid, void** ppv
         *ppvObject = static_cast<IWebPreferences*>(this);
     else if (IsEqualGUID(riid, IID_IWebPreferencesPrivate))
         *ppvObject = static_cast<IWebPreferencesPrivate*>(this);
+    else if (IsEqualGUID(riid, IID_IWebPreferencesPrivate2))
+        *ppvObject = static_cast<IWebPreferencesPrivate2*>(this);
     else if (IsEqualGUID(riid, CLSID_WebPreferences))
         *ppvObject = this;
     else
@@ -1293,6 +1295,18 @@ HRESULT WebPreferences::setMockScrollbarsEnabled(BOOL enabled)
     return S_OK;
 }
 
+// These two methods are no-ops, and only retained to keep
+// the Interface consistent. DO NOT USE THEM.
+HRESULT WebPreferences::screenFontSubstitutionEnabled(BOOL*)
+{
+    return S_OK;
+}
+
+HRESULT WebPreferences::setScreenFontSubstitutionEnabled(BOOL)
+{
+    return S_OK;
+}
+
 HRESULT STDMETHODCALLTYPE WebPreferences::hyperlinkAuditingEnabled(
     /* [in] */ BOOL* enabled)
 {
@@ -1412,6 +1426,18 @@ HRESULT WebPreferences::unused4()
     return E_FAIL;
 }
 
+// These two methods are no-ops, and only retained to keep
+// the Interface consistent. DO NOT USE THEM.
+HRESULT WebPreferences::shouldPaintNativeControls(BOOL*)
+{
+    return S_OK;
+}
+
+HRESULT WebPreferences::setShouldPaintNativeControls(BOOL)
+{
+    return S_OK;
+}
+
 HRESULT WebPreferences::setDeveloperExtrasEnabled(BOOL enabled)
 {
     setBoolValue(WebKitDeveloperExtrasEnabledPreferenceKey, enabled);
@@ -1462,6 +1488,8 @@ HRESULT STDMETHODCALLTYPE WebPreferences::authorAndUserStylesEnabled(BOOL* enabl
     return S_OK;
 }
 
+// These two methods are no-ops, and only retained to keep
+// the Interface consistent. DO NOT USE THEM.
 HRESULT WebPreferences::inApplicationChromeMode(BOOL*)
 {
     return S_OK;

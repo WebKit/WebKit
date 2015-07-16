@@ -142,16 +142,20 @@ ULONG WinLauncherWebHost::Release()
 typedef _com_ptr_t<_com_IIID<IDOMDocument, &__uuidof(IDOMDocument)>> IDOMDocumentPtr;
 typedef _com_ptr_t<_com_IIID<IDOMElement, &__uuidof(IDOMElement)>> IDOMElementPtr;
 typedef _com_ptr_t<_com_IIID<IDOMEventTarget, &__uuidof(IDOMEventTarget)>> IDOMEventTargetPtr;
+typedef _com_ptr_t<_com_IIID<IWebFrame2, &__uuidof(IWebFrame2)>> IWebFrame2Ptr;
 
 HRESULT WinLauncherWebHost::didFinishLoadForFrame(IWebView* webView, IWebFrame* frame)
 {
     if (!frame || !webView)
         return E_POINTER;
 
-    BOOL mainFrame;
-    if (SUCCEEDED(frame->isMainFrame(&mainFrame))) {
-        if (mainFrame)
-            m_client->pageLoadTestClient().didFinishLoad();
+    IWebFrame2Ptr frame2;
+    if (SUCCEEDED(frame->QueryInterface(&frame2.GetInterfacePtr()))) {
+        BOOL mainFrame = FALSE;
+        if (frame2 && SUCCEEDED(frame2->isMainFrame(&mainFrame))) {
+            if (mainFrame)
+                m_client->pageLoadTestClient().didFinishLoad();
+        }
     }
 
     IDOMDocumentPtr doc;
@@ -221,8 +225,15 @@ HRESULT WinLauncherWebHost::didHandleOnloadEventsForFrame(IWebView* sender, IWeb
 
 HRESULT WinLauncherWebHost::didFirstLayoutInFrame(IWebView*, IWebFrame* frame)
 {
+    if (!frame)
+        return E_POINTER;
+
+    IWebFrame2Ptr frame2;
+    if (FAILED(frame->QueryInterface(&frame2.GetInterfacePtr())))
+        return S_OK;
+
     BOOL mainFrame;
-    if (SUCCEEDED(frame->isMainFrame(&mainFrame))) {
+    if (frame2 && SUCCEEDED(frame2->isMainFrame(&mainFrame))) {
         if (mainFrame)
             m_client->pageLoadTestClient().didFirstLayoutForMainFrame();
     }

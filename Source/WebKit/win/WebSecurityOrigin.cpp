@@ -63,9 +63,11 @@ HRESULT WebSecurityOrigin::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
     if (IsEqualGUID(riid, IID_IUnknown))
-        *ppvObject = static_cast<IWebSecurityOrigin*>(this);
+        *ppvObject = static_cast<IWebSecurityOrigin2*>(this);
     else if (IsEqualGUID(riid, IID_IWebSecurityOrigin))
         *ppvObject = static_cast<IWebSecurityOrigin*>(this);
+    else if (IsEqualGUID(riid, IID_IWebSecurityOrigin2))
+        *ppvObject = static_cast<IWebSecurityOrigin2*>(this);
     else if (IsEqualGUID(riid, __uuidof(this)))
         *ppvObject = this;
     else
@@ -146,6 +148,8 @@ HRESULT WebSecurityOrigin::setQuota(/* [in] */ unsigned long long quota)
 
     return S_OK;
 }
+
+// IWebSecurityOrigin2 --------------------------------------------------------------
 
 HRESULT WebSecurityOrigin::initWithURL(/* [in] */ BSTR urlBstr)
 {

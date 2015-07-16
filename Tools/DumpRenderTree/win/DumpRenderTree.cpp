@@ -782,7 +782,7 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
     static _bstr_t sansSerifFamily(TEXT("Arial"));
     static _bstr_t cursiveFamily(TEXT("Comic Sans MS")); // Not actually cursive, but it's what IE and Firefox use.
     static _bstr_t fantasyFamily(TEXT("Times New Roman"));
-    static _bstr_t pictographFamily(TEXT("Times New Roman"));
+    static _bstr_t pictographFamily(TEXT("Segoe UI Symbol"));
 #endif
 
     prefsPrivate->setAllowUniversalAccessFromFileURLs(TRUE);
@@ -818,7 +818,9 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
     prefsPrivate->setJavaScriptCanAccessClipboard(TRUE);
     prefsPrivate->setOfflineWebApplicationCacheEnabled(TRUE);
     prefsPrivate->setDeveloperExtrasEnabled(FALSE);
-    prefsPrivate->setJavaScriptRuntimeFlags(WebKitJavaScriptRuntimeFlagsAllEnabled);
+    COMPtr<IWebPreferencesPrivate2> prefsPrivate2(Query, preferences);
+    if (prefsPrivate2)
+        prefsPrivate2->setJavaScriptRuntimeFlags(WebKitJavaScriptRuntimeFlagsAllEnabled);
     // Set JS experiments enabled: YES
     preferences->setLoadsImagesAutomatically(TRUE);
     prefsPrivate->setLoadsSiteIconsIgnoringImageLoadingPreference(FALSE);
@@ -886,7 +888,7 @@ static void resetWebViewToConsistentStateBeforeTesting()
         webIBActions->resetPageZoom(0);
     }
 
-    COMPtr<IWebViewPrivate> webViewPrivate(Query, webView);
+    COMPtr<IWebViewPrivate2> webViewPrivate(Query, webView);
     if (webViewPrivate)
         webViewPrivate->setTabKeyCyclesThroughElements(TRUE);
 
@@ -1082,7 +1084,7 @@ static void runTest(const string& inputLine)
 
     COMPtr<IWebView> webView;
     if (SUCCEEDED(frame->webView(&webView))) {
-        COMPtr<IWebViewPrivate> viewPrivate;
+        COMPtr<IWebViewPrivate2> viewPrivate;
         if (SUCCEEDED(webView->QueryInterface(&viewPrivate))) {
             if (shouldLogHistoryDelegates(pathOrURL.c_str())) {
                 ::gTestRunner->setDumpHistoryDelegateCallbacks(true);            
@@ -1224,7 +1226,7 @@ IWebView* createWebViewAndOffscreenWindow(HWND* webViewWindow)
     if (FAILED(webView->initWithFrame(clientRect, 0, groupName)))
         return nullptr;
 
-    COMPtr<IWebViewPrivate> viewPrivate;
+    COMPtr<IWebViewPrivate2> viewPrivate;
     if (FAILED(webView->QueryInterface(&viewPrivate)))
         return nullptr;
 

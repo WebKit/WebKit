@@ -107,7 +107,7 @@ HRESULT DefaultPolicyDelegate::decidePolicyForNavigationAction(IWebView* webView
         var.ChangeType(VT_I4, nullptr);
         navType = V_I4(&var);
     }
-    COMPtr<IWebViewPrivate> wvPrivate(Query, webView);
+    COMPtr<IWebViewPrivate2> wvPrivate(Query, webView);
     if (wvPrivate) {
         BOOL canHandleRequest = FALSE;
         if (SUCCEEDED(wvPrivate->canHandleRequest(request, &canHandleRequest)) && canHandleRequest)

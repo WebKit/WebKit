@@ -169,7 +169,7 @@ library WebKit
         interface IWebViewUndoableEditing;
         interface IWebViewEditingActions;
         interface IWebNotificationObserver;
-        interface IWebViewPrivate;
+        interface IWebViewPrivate2;
     }
 
     [uuid(66827ec1-3aef-4241-bac5-f776b44f030f)]

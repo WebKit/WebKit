@@ -2594,6 +2594,8 @@ HRESULT STDMETHODCALLTYPE WebView::QueryInterface(REFIID riid, void** ppvObject)
         *ppvObject = static_cast<IWebView*>(this);
     else if (IsEqualGUID(riid, IID_IWebViewPrivate))
         *ppvObject = static_cast<IWebViewPrivate*>(this);
+    else if (IsEqualGUID(riid, IID_IWebViewPrivate2))
+        *ppvObject = static_cast<IWebViewPrivate2*>(this);
     else if (IsEqualGUID(riid, IID_IWebIBActions))
         *ppvObject = static_cast<IWebIBActions*>(this);
     else if (IsEqualGUID(riid, IID_IWebViewCSS))
@@ -4859,7 +4861,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     settings.setShouldDisplayTextDescriptions(enabled);
 #endif
 
-    COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
+    COMPtr<IWebPreferencesPrivate2> prefsPrivate(Query, preferences);
     if (prefsPrivate) {
         hr = prefsPrivate->localStorageDatabasePath(&str);
         if (FAILED(hr))
@@ -7141,6 +7143,7 @@ HRESULT STDMETHODCALLTYPE WebView::selectedRangeForTesting(/* [out] */ UINT* loc
     return S_OK;
 }
 
+// IWebViewPrivate2
 HRESULT WebView::setLoadResourcesSerially(BOOL serialize)
 {
     WebPlatformStrategies::initialize();

@@ -60,8 +60,12 @@ void PageLoadTestClient::pageLoadStartedAtTime(CFAbsoluteTime startTime)
 
 void PageLoadTestClient::didStartProvisionalLoad(IWebFrame& frame)
 {
-    BOOL mainFrame;
-    if (FAILED(frame.isMainFrame(&mainFrame)))
+    _com_ptr_t<_com_IIID<IWebFrame2, &__uuidof(IWebFrame2)>> frame2;
+    if (FAILED(frame.QueryInterface(&frame2.GetInterfacePtr())))
+        return;
+
+    BOOL mainFrame = FALSE;
+    if (frame2 && FAILED(frame2->isMainFrame(&mainFrame)))
         return;
 
     if (mainFrame) {
