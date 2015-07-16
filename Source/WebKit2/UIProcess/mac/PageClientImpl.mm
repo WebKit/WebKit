@@ -838,12 +838,12 @@ WebCore::WebMediaSessionManager& PageClientImpl::mediaSessionManager()
 
 void PageClientImpl::refView()
 {
-    [m_wkView retain];
+    CFRetain(m_wkView);
 }
 
 void PageClientImpl::derefView()
 {
-    [m_wkView release];
+    CFRelease(m_wkView);
 }
 
 } // namespace WebKit

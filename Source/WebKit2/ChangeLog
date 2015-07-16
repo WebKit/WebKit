@@ -1,3 +1,14 @@
+2015-07-16  Brady Eidson  <beidson@apple.com>
+
+        Review feedback followup for:
+        REGRESSION(r186088): Crash under WebKit::WebPageProxy::didFailLoadForFrame
+        <rdar://problem/21692212> and https://bugs.webkit.org/show_bug.cgi?id=146988
+
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::refView): CFRetain instead of Obj-C retain.
+        (WebKit::PageClientImpl::derefView): CFRelease instead of Obj-C release.
+
+
 2015-07-16  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [Linux] Seccomp: fix -Wmismatched-tags
