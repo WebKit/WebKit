@@ -1,3 +1,15 @@
+2015-07-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix disappearing position:fixed elements in fixed layout mode
+        https://bugs.webkit.org/show_bug.cgi?id=147019
+
+        Reviewed by Tim Horton.
+        
+        Test with four fixed elements in fixed layout mode.
+
+        * compositing/fixed-with-fixed-layout-expected.txt: Added.
+        * compositing/fixed-with-fixed-layout.html: Added.
+
 2015-07-16  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, roll out http://trac.webkit.org/changeset/186903. It broke the build.

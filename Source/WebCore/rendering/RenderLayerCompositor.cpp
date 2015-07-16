@@ -2739,7 +2739,12 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderLayerModelObjec
     }
 
     // Fixed position elements that are invisible in the current view don't get their own layer.
-    LayoutRect viewBounds = m_renderView.frameView().viewportConstrainedVisibleContentRect();
+    // FIXME: We shouldn't have to check useFixedLayout() here; one of the viewport rects needs to give the correct answer.
+    LayoutRect viewBounds;
+    if (m_renderView.frameView().useFixedLayout())
+        viewBounds = m_renderView.unscaledDocumentRect();
+    else
+        viewBounds = m_renderView.frameView().viewportConstrainedVisibleContentRect();
     LayoutRect layerBounds = layer.calculateLayerBounds(&layer, LayoutSize(), RenderLayer::UseLocalClipRectIfPossible | RenderLayer::IncludeLayerFilterOutsets | RenderLayer::UseFragmentBoxesExcludingCompositing
         | RenderLayer::ExcludeHiddenDescendants | RenderLayer::DontConstrainForMask | RenderLayer::IncludeCompositedDescendants);
     // Map to m_renderView to ignore page scale.
