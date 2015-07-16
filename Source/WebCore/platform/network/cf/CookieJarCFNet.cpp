@@ -115,11 +115,13 @@ static RetainPtr<CFArrayRef> copyCookiesForURLWithFirstPartyURL(const NetworkSto
 
 static CFArrayRef createCookies(CFDictionaryRef headerFields, CFURLRef url)
 {
-#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000)
-    return _CFHTTPParsedCookiesWithResponseHeaderFields(kCFAllocatorDefault, headerFields, url);
-#else
+    // FIXME: There's a bug in this new CFNetwork SPI tracked by rdar://problem/21861167.
+    // Once that bug is resolved, restore this conditional:
+//#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000)
+//    return _CFHTTPParsedCookiesWithResponseHeaderFields(kCFAllocatorDefault, headerFields, url);
+//#else
+
     return CFHTTPCookieCreateWithResponseHeaderFields(kCFAllocatorDefault, headerFields, url);
-#endif
 }
 
 void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, const String& value)
