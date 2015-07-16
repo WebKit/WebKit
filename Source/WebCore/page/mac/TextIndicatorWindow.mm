@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "CoreGraphicsSPI.h"
+#import "GeometryUtilities.h"
 #import "GraphicsContext.h"
 #import "QuartzCoreSPI.h"
 #import "TextIndicator.h"
@@ -91,6 +92,38 @@ using namespace WebCore;
 
 @synthesize fadingOut = _fadingOut;
 
+static FloatRect outsetIndicatorRectIncludingShadow(const FloatRect rect)
+{
+    FloatRect outsetRect = rect;
+    outsetRect.inflateX(dropShadowBlurRadius + horizontalBorder);
+    outsetRect.inflateY(dropShadowBlurRadius + verticalBorder);
+    return outsetRect;
+}
+
+static bool textIndicatorsForTextRectsOverlap(const Vector<FloatRect>& textRects)
+{
+    size_t count = textRects.size();
+    if (count <= 1)
+        return false;
+
+    Vector<FloatRect> indicatorRects;
+    indicatorRects.reserveInitialCapacity(count);
+
+    for (size_t i = 0; i < count; ++i) {
+        FloatRect indicatorRect = outsetIndicatorRectIncludingShadow(textRects[i]);
+
+        for (size_t j = indicatorRects.size(); j; ) {
+            --j;
+            if (indicatorRect.intersects(indicatorRects[j]))
+                return true;
+        }
+
+        indicatorRects.uncheckedAppend(indicatorRect);
+    }
+
+    return false;
+}
+
 - (instancetype)initWithFrame:(NSRect)frame textIndicator:(PassRefPtr<TextIndicator>)textIndicator margin:(NSSize)margin offset:(NSPoint)offset
 {
     if (!(self = [super initWithFrame:frame]))
@@ -120,7 +153,13 @@ using namespace WebCore;
     RetainPtr<CGColorRef> gradientDarkColor = [NSColor colorWithDeviceRed:.929 green:.8 blue:0 alpha:1].CGColor;
     RetainPtr<CGColorRef> gradientLightColor = [NSColor colorWithDeviceRed:.949 green:.937 blue:0 alpha:1].CGColor;
 
-    for (const auto& textRect : _textIndicator->textRectsInBoundingRectCoordinates()) {
+    Vector<FloatRect> textRectsInBoundingRectCoordinates = _textIndicator->textRectsInBoundingRectCoordinates();
+    if (textIndicatorsForTextRectsOverlap(textRectsInBoundingRectCoordinates)) {
+        textRectsInBoundingRectCoordinates[0] = unionRect(textRectsInBoundingRectCoordinates);
+        textRectsInBoundingRectCoordinates.shrink(1);
+    }
+
+    for (const auto& textRect : textRectsInBoundingRectCoordinates) {
         FloatRect offsetTextRect = textRect;
         offsetTextRect.move(offset.x, offset.y);
 
