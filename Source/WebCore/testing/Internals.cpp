@@ -2357,16 +2357,6 @@ PassRefPtr<SerializedScriptValue> Internals::deserializeBuffer(PassRefPtr<ArrayB
     return SerializedScriptValue::adopt(bytes);
 }
 
-bool Internals::isFromCurrentWorld(Deprecated::ScriptValue value) const
-{
-    ASSERT(!value.hasNoValue());
-    
-    JSC::ExecState* exec = contextDocument()->vm().topCallFrame;
-    if (!value.isObject() || &worldForDOMObject(value.jsValue().getObject()) == &currentWorld(exec))
-        return true;
-    return false;
-}
-
 void Internals::setUsesOverlayScrollbars(bool enabled)
 {
     WebCore::Settings::setUsesOverlayScrollbars(enabled);

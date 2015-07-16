@@ -13,11 +13,8 @@ PASS new CustomEvent('eventType', { detail: 10 }).detail is 10
 PASS new CustomEvent('eventType', { detail: 'string' }).detail is 'string'
 PASS new CustomEvent('eventType', { detail: detailObject }).detail is detailObject
 PASS new CustomEvent('eventType', { detail: document }).detail is document
-PASS new CustomEvent('eventType', { detail: undefined }).detail is undefined
-PASS new CustomEvent('eventType', { detail: null }).detail is null
 PASS new CustomEvent('eventType', { get detail() { return true; } }).detail is true
 PASS new CustomEvent('eventType', { get detail() { throw 'Custom Error'; } }) threw exception Custom Error.
-PASS event.detail is detailObject
 PASS successfullyParsed is true
 
 TEST COMPLETE

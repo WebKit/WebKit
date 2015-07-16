@@ -31,23 +31,11 @@ shouldBe("new CustomEvent('eventType', { detail: detailObject }).detail", "detai
 // Detail is a DOM object
 shouldBe("new CustomEvent('eventType', { detail: document }).detail", "document");
 
-// Detail is undefined.
-shouldBe("new CustomEvent('eventType', { detail: undefined }).detail", "undefined");
-
-// Detail is null.
-shouldBe("new CustomEvent('eventType', { detail: null }).detail", "null");
-
 // Detail is a getter.
 shouldBe("new CustomEvent('eventType', { get detail() { return true; } }).detail", "true");
 
 // Detail throws an exeception.
 shouldThrow("new CustomEvent('eventType', { get detail() { throw 'Custom Error'; } })");
-
-// try initCustomEvent
-var event = document.createEvent('CustomEvent');
-event.initCustomEvent('eventType', true, false, detailObject);
-shouldBe("event.detail", "detailObject");
-
 </script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>

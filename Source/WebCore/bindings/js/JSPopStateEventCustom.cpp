@@ -49,29 +49,14 @@ static const JSValue& cacheState(ExecState* exec, JSPopStateEvent* event, const 
 JSValue JSPopStateEvent::state(ExecState* exec) const
 {
     JSValue cachedValue = m_state.get();
-    if (!cachedValue.isEmpty()) {
-        // We cannot use a cached object if we are in a different world than the one it was created in.
-        if (!cachedValue.isObject() || &worldForDOMObject(cachedValue.getObject()) == &currentWorld(exec))
-            return cachedValue;
-        ASSERT_NOT_REACHED();
-    }
+    if (!cachedValue.isEmpty())
+        return cachedValue;
 
     PopStateEvent& event = impl();
 
-    if (!event.state().hasNoValue()) {
-        // We need to make sure a PopStateEvent does not leak objects in its state property across isolated DOM worlds.
-        // Ideally, we would check that the worlds have different privileges but that's not possible yet.
-        JSValue state = event.state().jsValue();
-        if (state.isObject() && &worldForDOMObject(state.getObject()) != &currentWorld(exec)) {
-            if (RefPtr<SerializedScriptValue> serializedValue = event.trySerializeState(exec))
-                state = serializedValue->deserialize(exec, globalObject(), nullptr);
-            else
-                state = jsNull();
-        }
-        
-        return cacheState(exec, const_cast<JSPopStateEvent*>(this), state);
-    }
-    
+    if (!event.state().hasNoValue())
+        return cacheState(exec, const_cast<JSPopStateEvent*>(this), event.state().jsValue());
+
     History* history = event.history();
     if (!history || !event.serializedState())
         return cacheState(exec, const_cast<JSPopStateEvent*>(this), jsNull());

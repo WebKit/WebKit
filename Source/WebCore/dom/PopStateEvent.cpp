@@ -29,6 +29,7 @@
 
 #include "EventNames.h"
 #include "History.h"
+#include "SerializedScriptValue.h"
 #include <runtime/JSCInlines.h>
 
 namespace WebCore {
@@ -76,18 +77,6 @@ Ref<PopStateEvent> PopStateEvent::create(PassRefPtr<SerializedScriptValue> seria
 Ref<PopStateEvent> PopStateEvent::create(const AtomicString& type, const PopStateEventInit& initializer)
 {
     return adoptRef(*new PopStateEvent(type, initializer));
-}
-
-RefPtr<SerializedScriptValue> PopStateEvent::trySerializeState(JSC::ExecState* exec)
-{
-    ASSERT(!m_state.hasNoValue());
-    
-    if (!m_serializedState && !m_triedToSerialize) {
-        m_serializedState = SerializedScriptValue::create(exec, m_state.jsValue(), nullptr, nullptr, NonThrowing);
-        m_triedToSerialize = true;
-    }
-    
-    return m_serializedState;
 }
 
 EventInterface PopStateEvent::eventInterface() const

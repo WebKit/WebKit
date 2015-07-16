@@ -311,8 +311,6 @@ enum ResourceLoadPriority {
     SerializedScriptValue deserializeBuffer(ArrayBuffer buffer);
     ArrayBuffer serializeObject(SerializedScriptValue obj);
 
-    boolean isFromCurrentWorld(any obj);
-
     void setUsesOverlayScrollbars(boolean enabled);
 
     void forceReload(boolean endToEnd);

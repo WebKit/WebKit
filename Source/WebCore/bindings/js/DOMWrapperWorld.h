@@ -74,11 +74,6 @@ inline DOMWrapperWorld& currentWorld(JSC::ExecState* exec)
     return JSC::jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->world();
 }
 
-inline DOMWrapperWorld& worldForDOMObject(JSC::JSObject* object)
-{
-    return JSC::jsCast<JSDOMGlobalObject*>(object->globalObject())->world();
-}
-    
 } // namespace WebCore
 
 #endif // DOMWrapperWorld_h

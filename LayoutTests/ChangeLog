@@ -1,3 +1,14 @@
+2015-07-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, roll out http://trac.webkit.org/changeset/186903. It broke the build.
+
+        * fast/events/constructors/custom-event-constructor-expected.txt:
+        * fast/events/constructors/custom-event-constructor.html:
+        * fast/events/event-leak-objects-expected.txt:
+        * fast/events/event-leak-objects.html:
+        * fast/events/event-properties-gc-expected.txt:
+        * fast/events/event-properties-gc.html:
+
 2015-07-16  Tim Horton  <timothy_horton@apple.com>
 
         Rebaseline test for Windows.

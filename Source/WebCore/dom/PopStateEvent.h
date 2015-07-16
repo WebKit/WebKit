@@ -28,7 +28,6 @@
 #define PopStateEvent_h
 
 #include "Event.h"
-#include "SerializedScriptValue.h"
 #include <bindings/ScriptValue.h>
 
 namespace WebCore {
@@ -49,10 +48,7 @@ public:
     static Ref<PopStateEvent> create(PassRefPtr<SerializedScriptValue>, PassRefPtr<History>);
     static Ref<PopStateEvent> create(const AtomicString&, const PopStateEventInit&);
 
-    PassRefPtr<SerializedScriptValue> serializedState() const { ASSERT(m_serializedState); return m_serializedState; }
-    
-    RefPtr<SerializedScriptValue> trySerializeState(JSC::ExecState*);
-    
+    PassRefPtr<SerializedScriptValue> serializedState() const { return m_serializedState; }
     const Deprecated::ScriptValue& state() const { return m_state; }
     History* history() const { return m_history.get(); }
 
@@ -65,7 +61,6 @@ private:
 
     Deprecated::ScriptValue m_state;
     RefPtr<SerializedScriptValue> m_serializedState;
-    bool m_triedToSerialize { false };
     RefPtr<History> m_history;
 };
 

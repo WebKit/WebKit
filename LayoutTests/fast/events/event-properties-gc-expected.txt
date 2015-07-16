@@ -1,7 +1,0 @@
-PASS event[prop] is "foo"
-PASS event[prop] is "foo"
-PASS event[prop] is "foo"
-PASS successfullyParsed is true
-
-TEST COMPLETE
-
