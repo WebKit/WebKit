@@ -28,13 +28,16 @@
 
 #if ENABLE(MEDIA_SESSION)
 
+#include "MediaSessionInterruptionProvider.h"
 #include <wtf/HashSet.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
 class MediaSession;
 
-class MediaSessionManager {
+class MediaSessionManager : public MediaSessionInterruptionProviderClient {
+    friend class NeverDestroyed<MediaSessionManager>;
 public:
     static MediaSessionManager& singleton();
 
@@ -42,14 +45,20 @@ public:
     void skipToNextTrack();
     void skipToPreviousTrack();
 
+    void didReceiveStartOfInterruptionNotification(MediaSessionInterruptingCategory) override;
+    void didReceiveEndOfInterruptionNotification(MediaSessionInterruptingCategory) override;
+
 private:
     friend class MediaSession;
+
+    MediaSessionManager();
 
     bool hasActiveMediaElements() const;
 
     void addMediaSession(MediaSession&);
     void removeMediaSession(MediaSession&);
 
+    RefPtr<MediaSessionInterruptionProvider> m_interruptionProvider;
     HashSet<MediaSession*> m_sessions;
 };
 
