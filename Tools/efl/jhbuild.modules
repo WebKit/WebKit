@@ -302,9 +302,9 @@
   </autotools>
 
   <autotools id="libseccomp" autogen-sh="configure">
-      <branch module="seccomp/libseccomp/releases/download/v2.2.1/libseccomp-2.2.1.tar.gz" version="2.2.1"
+      <branch module="seccomp/libseccomp/releases/download/v2.2.3/libseccomp-2.2.3.tar.gz" version="2.2.3"
           repo="github.com"
-          hash="sha256:0ba1789f54786c644af54cdffc9fd0dd0a8bb2b2ee153933f658855d2851a740">
+          hash="sha256:d9b400b703cab7bb04b84b9b6e52076a630b673819d7541757bcc16467b6d49e">
       </branch>
   </autotools>
 
