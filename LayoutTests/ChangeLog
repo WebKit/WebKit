@@ -1,3 +1,12 @@
+2015-07-16  David Kilzer  <ddkilzer@apple.com>
+
+        Mark fast/canvas/canvas-too-large-to-draw.html as crashing on El Capitan
+
+        Fix is tracked by <rdar://problem/21857102>.
+
+        * platform/mac/TestExpectations: Mark test as crashing:
+        - fast/canvas/canvas-too-large-to-draw.html
+
 2015-07-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: update $$() to return an Array
