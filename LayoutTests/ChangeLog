@@ -1,3 +1,10 @@
+2015-07-16  Tim Horton  <timothy_horton@apple.com>
+
+        Rebaseline test for Windows.
+
+        * platform/win/fast/shrink-wrap: Added.
+        * platform/win/fast/shrink-wrap/rect-shrink-wrap-expected.txt: Added.
+
 2015-07-16  Keith Miller  <keith_miller@apple.com>
 
         Remove leak of objects between isolated worlds on custom events, message events, and pop state events.
