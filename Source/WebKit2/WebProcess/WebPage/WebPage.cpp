@@ -4043,11 +4043,6 @@ void WebPage::handleMediaEvent(uint32_t eventType)
 {
     m_page->handleMediaEvent(static_cast<MediaEventType>(eventType));
 }
-
-void WebPage::handleMediaSessionInterruptionEvent(uint32_t event, uint32_t category)
-{
-    m_page->handleMediaSessionInterruptionEvent(static_cast<MediaSessionInterruptionEvent>(event), static_cast<MediaSessionInterruptingCategory>(category));
-}
 #endif
 
 void WebPage::setMayStartMediaWhenInWindow(bool mayStartMedia)

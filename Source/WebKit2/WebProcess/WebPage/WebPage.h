@@ -744,7 +744,6 @@ public:
 
 #if ENABLE(MEDIA_SESSION)
     void handleMediaEvent(uint32_t /* WebCore::MediaEventType */);
-    void handleMediaSessionInterruptionEvent(uint32_t /* WebCore::MediaSessionInterruptionEvent */, uint32_t /* WebCore::MediaSessionInterruptingCategory */);
 #endif
 
     void updateMainFrameScrollOffsetPinning();

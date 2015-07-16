@@ -1,3 +1,21 @@
+2015-07-16  Matt Rajca  <mrajca@apple.com>
+
+        Media Session: remove plumbing for delivering start/end-of-interruption events
+        https://bugs.webkit.org/show_bug.cgi?id=147005
+
+        Reviewed by Eric Carlson.
+
+        Instead of receiving interruptions through WebKit, we will provide platform-specific implementations in WebCore
+        so the same behavior is available to all clients.
+
+        * UIProcess/API/C/WKPage.cpp:
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2015-07-16  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         REGRESSION(r186464): [SOUP] ASSERTION FAILED: !m_messageReceiverMapCount when closing any tab

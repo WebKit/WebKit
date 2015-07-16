@@ -3878,14 +3878,6 @@ void WebPageProxy::handleMediaEvent(MediaEventType eventType)
     
     m_process->send(Messages::WebPage::HandleMediaEvent(eventType), m_pageID);
 }
-
-void WebPageProxy::handleMediaSessionInterruptionEvent(MediaSessionInterruptionEvent event, MediaSessionInterruptingCategory category)
-{
-    if (!isValid())
-        return;
-
-    m_process->send(Messages::WebPage::HandleMediaSessionInterruptionEvent(event, category), m_pageID);
-}
 #endif
 
 void WebPageProxy::setMayStartMediaWhenInWindow(bool mayStartMedia)

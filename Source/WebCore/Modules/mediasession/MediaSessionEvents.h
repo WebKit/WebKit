@@ -36,17 +36,6 @@ enum MediaEventType {
     TrackPrevious
 };
 
-enum MediaSessionInterruptionEvent {
-    StartOfInterruption,
-    EndOfInterruption
-};
-
-enum MediaSessionInterruptingCategory {
-    Content,
-    Transient,
-    TransientSolo
-};
-
 }
 
 #endif

@@ -315,7 +315,6 @@ messages -> WebPage LegacyReceiver {
 
 #if ENABLE(MEDIA_SESSION)
     HandleMediaEvent(uint32_t eventType)
-    HandleMediaSessionInterruptionEvent(uint32_t event, uint32_t interruptingCategory)
 #endif
 
     // FIXME: This a dummy message, to avoid breaking the build for platforms that don't require

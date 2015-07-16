@@ -57,7 +57,6 @@
 #include "MediaCanStartListener.h"
 #include "Navigator.h"
 #include "NetworkStateNotifier.h"
-#include "NotImplemented.h"
 #include "PageCache.h"
 #include "PageConfiguration.h"
 #include "PageConsoleClient.h"
@@ -1224,11 +1223,6 @@ void Page::handleMediaEvent(MediaEventType eventType)
         MediaSessionManager::singleton().skipToPreviousTrack();
         break;
     }
-}
-
-void Page::handleMediaSessionInterruptionEvent(MediaSessionInterruptionEvent event, MediaSessionInterruptingCategory category)
-{
-    notImplemented();
 }
 #endif
 

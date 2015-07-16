@@ -118,22 +118,8 @@ enum {
 };
 typedef uint32_t WKMediaEventType;
 
-enum {
-    kWKMediaSessionInterruptingCategoryContent,
-    kWKMediaSessionInterruptingCategoryTransient,
-    kWKMediaSessionInterruptingCategoryTransientSolo
-};
-typedef uint32_t WKMediaSessionInterruptingCategory;
-
-enum {
-    kWKMediaSessionInterruptionEventStartOfInterruption,
-    kWKMediaSessionInterruptionEventEndOfInterruption
-};
-typedef uint32_t WKMediaSessionInterruptionEvent;
-
 WK_EXPORT bool WKPageHasMediaSessionWithActiveMediaElements(WKPageRef page);
 WK_EXPORT void WKPageHandleMediaEvent(WKPageRef page, WKMediaEventType event);
-WK_EXPORT void WKPageHandleMediaSessionInterruptionEvent(WKPageRef page, WKMediaSessionInterruptionEvent event, WKMediaSessionInterruptingCategory category);
 
 WK_EXPORT void WKPageLoadURLWithShouldOpenExternalURLsPolicy(WKPageRef page, WKURLRef url, bool shouldOpenExternalURLs);
 

@@ -2189,56 +2189,6 @@ void WKPageHandleMediaEvent(WKPageRef page, WKMediaEventType wkEventType)
 #endif
 }
 
-#if ENABLE(MEDIA_SESSION)
-// NOTE: The values in the WKMediaSessionInterruptingCategory enum must stay in sync with those in WebCore::MediaSessionInterruptingCategory.
-COMPILE_ASSERT(MediaSessionInterruptingCategory::Content == static_cast<MediaSessionInterruptingCategory>(kWKMediaSessionInterruptingCategoryContent), MediaSessionInterruptingCategoryEnumContent_Is_Wrong_Should_Be_kWKMediaSessionInterruptingCategoryContent);
-COMPILE_ASSERT(MediaSessionInterruptingCategory::Transient == static_cast<MediaSessionInterruptingCategory>(kWKMediaSessionInterruptingCategoryTransient), MediaSessionInterruptingCategoryEnumTransient_Is_Wrong_Should_Be_kWKMediaSessionInterruptingCategoryTransient);
-COMPILE_ASSERT(MediaSessionInterruptingCategory::TransientSolo == static_cast<MediaSessionInterruptingCategory>(kWKMediaSessionInterruptingCategoryTransientSolo), MediaSessionInterruptingCategoryEnumTransientSolo_Is_Wrong_Should_Be_kWKMediaSessionInterruptingCategoryTransientSolo);
-
-COMPILE_ASSERT(MediaSessionInterruptionEvent::StartOfInterruption == static_cast<MediaSessionInterruptionEvent>(kWKMediaSessionInterruptionEventStartOfInterruption), MediaSessionInterruptionEventEnumStartOfInterruption_Is_Wrong_Should_Be_kWKMediaSessionInterruptionEventStartOfInterruption);
-COMPILE_ASSERT(MediaSessionInterruptionEvent::EndOfInterruption == static_cast<MediaSessionInterruptionEvent>(kWKMediaSessionInterruptionEventEndOfInterruption), MediaSessionInterruptionEventEnumEndOfInterruption_Is_Wrong_Should_Be_kWKMediaSessionInterruptionEventEndOfInterruption);
-#endif
-
-void WKPageHandleMediaSessionInterruptionEvent(WKPageRef page, WKMediaSessionInterruptionEvent wkEvent, WKMediaSessionInterruptingCategory wkCategory)
-{
-#if ENABLE(MEDIA_SESSION)
-    MediaSessionInterruptingCategory category;
-
-    switch (wkCategory) {
-    case kWKMediaSessionInterruptingCategoryContent:
-        category = MediaSessionInterruptingCategory::Content;
-        break;
-    case kWKMediaSessionInterruptingCategoryTransient:
-        category = MediaSessionInterruptingCategory::Transient;
-        break;
-    case kWKMediaSessionInterruptingCategoryTransientSolo:
-        category = MediaSessionInterruptingCategory::TransientSolo;
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-    }
-
-    MediaSessionInterruptionEvent event;
-
-    switch (wkEvent) {
-    case kWKMediaSessionInterruptionEventStartOfInterruption:
-        event = MediaSessionInterruptionEvent::StartOfInterruption;
-        break;
-    case kWKMediaSessionInterruptionEventEndOfInterruption:
-        event = MediaSessionInterruptionEvent::EndOfInterruption;
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-    }
-
-    toImpl(page)->handleMediaSessionInterruptionEvent(event, category);
-#else
-    UNUSED_PARAM(page);
-    UNUSED_PARAM(wkEvent);
-    UNUSED_PARAM(wkCategory);
-#endif
-}
-
 void WKPagePostMessageToInjectedBundle(WKPageRef pageRef, WKStringRef messageNameRef, WKTypeRef messageBodyRef)
 {
     toImpl(pageRef)->postMessageToInjectedBundle(toImpl(messageNameRef)->string(), toImpl(messageBodyRef));
