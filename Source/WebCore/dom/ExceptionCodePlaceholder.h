@@ -31,6 +31,7 @@
 #ifndef ExceptionCodePlaceholder_h
 #define ExceptionCodePlaceholder_h
 
+#include "PlatformExportMacros.h"
 #include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
 

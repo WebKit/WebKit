@@ -31,6 +31,7 @@
 #ifndef ApplicationCacheHost_h
 #define ApplicationCacheHost_h
 
+#include "PlatformExportMacros.h"
 #include "URL.h"
 #include <wtf/Deque.h>
 #include <wtf/PassRefPtr.h>

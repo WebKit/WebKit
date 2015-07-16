@@ -27,6 +27,8 @@
 #ifndef ContextDestructionObserver_h
 #define ContextDestructionObserver_h
 
+#include "PlatformExportMacros.h"
+
 namespace WebCore {
 
 class ScriptExecutionContext;

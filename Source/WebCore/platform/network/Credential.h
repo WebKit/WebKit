@@ -26,6 +26,8 @@
 #ifndef Credential_h
 #define Credential_h
 
+#include <wtf/Platform.h>
+
 #if PLATFORM(COCOA)
 #include "CredentialCocoa.h"
 #else

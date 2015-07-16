@@ -30,6 +30,7 @@
 
 #include "ContentExtensionsDebugging.h"
 #include "DFANode.h"
+#include "PlatformExportMacros.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {

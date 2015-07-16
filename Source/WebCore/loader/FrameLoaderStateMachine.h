@@ -29,6 +29,7 @@
 #ifndef FrameLoaderStateMachine_h
 #define FrameLoaderStateMachine_h
 
+#include "PlatformExportMacros.h"
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {

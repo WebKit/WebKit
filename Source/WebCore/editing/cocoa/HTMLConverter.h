@@ -26,6 +26,8 @@
 #ifndef HTMLConverter_h
 #define HTMLConverter_h
 
+#include "PlatformExportMacros.h"
+
 OBJC_CLASS NSAttributedString;
 
 namespace WebCore {

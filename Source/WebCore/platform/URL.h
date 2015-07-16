@@ -26,6 +26,7 @@
 #ifndef URL_h
 #define URL_h
 
+#include "PlatformExportMacros.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>

@@ -25,7 +25,7 @@
 #ifndef AuthenticationMac_h
 #define AuthenticationMac_h
 
-#ifdef __OBJC__
+#import "PlatformExportMacros.h"
 
 @class NSURLAuthenticationChallenge;
 
@@ -38,6 +38,5 @@ WEBCORE_EXPORT NSURLAuthenticationChallenge *mac(const AuthenticationChallenge&)
 WEBCORE_EXPORT AuthenticationChallenge core(NSURLAuthenticationChallenge *);
 
 }
-#endif // __OBJC__
 
 #endif // AuthenticationMac_h

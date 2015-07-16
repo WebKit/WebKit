@@ -27,6 +27,8 @@
 #ifndef AudioTrack_h
 #define AudioTrack_h
 
+#include "PlatformExportMacros.h"
+
 #if ENABLE(VIDEO_TRACK)
 
 #include "AudioTrackPrivate.h"

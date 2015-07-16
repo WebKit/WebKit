@@ -27,6 +27,7 @@
 #ifndef ResourceHandleClient_h
 #define ResourceHandleClient_h
 
+#include "PlatformExportMacros.h"
 #include <wtf/PassRefPtr.h>
 
 #if USE(CFNETWORK)

@@ -25,6 +25,8 @@
 #ifndef Animation_h
 #define Animation_h
 
+#include "PlatformExportMacros.h"
+
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
 #include "AnimationTrigger.h"
 #endif

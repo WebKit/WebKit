@@ -26,6 +26,7 @@
 #ifndef AudioHardwareListener_h
 #define AudioHardwareListener_h
 
+#include "PlatformExportMacros.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 

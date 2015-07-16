@@ -26,6 +26,7 @@
 #ifndef DeviceOrientationData_h
 #define DeviceOrientationData_h
 
+#include "PlatformExportMacros.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 

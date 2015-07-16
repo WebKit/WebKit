@@ -26,6 +26,7 @@
 #ifndef CachedResourceHandle_h
 #define CachedResourceHandle_h
 
+#include "PlatformExportMacros.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
