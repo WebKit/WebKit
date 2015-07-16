@@ -1,3 +1,15 @@
+2015-07-15  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] 64-bit Build Failure
+        https://bugs.webkit.org/show_bug.cgi?id=146989
+
+        Reviewed by Mark Lam.
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState): Add missing
+        declaration for 64-bit type on 4-argument register machines (like
+        Windows).
+
 2015-07-15  Saam barati  <saambarati1@gmail.com>
 
         [ES6] implement block scoping to enable 'let'
