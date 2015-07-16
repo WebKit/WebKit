@@ -102,6 +102,21 @@ CGColorSpaceRef LayerHostingContext::colorSpace() const
     return [m_context colorSpace];
 }
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+void LayerHostingContext::setColorMatchUntaggedContent(bool colorMatchUntaggedContent)
+{
+    if ([m_context respondsToSelector:@selector(setColorMatchUntaggedContent:)])
+        [m_context setColorMatchUntaggedContent:colorMatchUntaggedContent];
+}
+
+bool LayerHostingContext::colorMatchUntaggedContent() const
+{
+    if ([m_context respondsToSelector:@selector(colorMatchUntaggedContent)])
+        return [m_context colorMatchUntaggedContent];
+    return false;
+}
+#endif
+
 #if HAVE(COREANIMATION_FENCES)
 void LayerHostingContext::setFencePort(mach_port_t fencePort)
 {
