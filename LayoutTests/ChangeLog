@@ -1,3 +1,21 @@
+2015-07-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: update $$() to return an Array
+        https://bugs.webkit.org/show_bug.cgi?id=146964
+
+        Reviewed by Brian Burg.
+
+        * inspector/console/command-line-api-expected.txt: Added.
+        * inspector/console/command-line-api.html: Added.
+        Add back a command line api test.
+
+        * platform/efl/inspector/console/command-line-api-expected.txt: Removed.
+        * platform/mac/inspector/console/command-line-api-expected.txt: Removed.
+        Remove old platform expected results for the old version of this test.
+
+        * platform/win/TestExpectations:
+        Speculatively skipping on Windows since other inspector/console tests are skipped.
+
 2015-07-15  Dean Jackson  <dino@apple.com>
 
         Tag WebGL layers with sRGB colorspace

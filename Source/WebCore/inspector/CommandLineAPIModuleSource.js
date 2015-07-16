@@ -163,7 +163,7 @@ CommandLineAPIImpl.prototype = {
         if (selector && selector[0] !== "#") {
             result = inspectedWindow.document.getElementById(selector);
             if (result) {
-                inspectedWindow.console.warn("The console function $() has changed from $=getElementById(id) to $=querySelector(selector). You might try $(\"#%s\")", selector );
+                inspectedWindow.console.warn("The console function $() has changed from $=getElementById(id) to $=querySelector(selector). You might try $(\"#%s\")", selector);
                 return null;
             }
         }
@@ -177,8 +177,8 @@ CommandLineAPIImpl.prototype = {
     $$: function (selector, start)
     {
         if (this._canQuerySelectorOnNode(start))
-            return start.querySelectorAll(selector);
-        return inspectedWindow.document.querySelectorAll(selector);
+            return slice(start.querySelectorAll(selector));
+        return slice(inspectedWindow.document.querySelectorAll(selector));
     },
 
     /**
@@ -187,7 +187,7 @@ CommandLineAPIImpl.prototype = {
      */
     _canQuerySelectorOnNode: function(node)
     {
-        return !!node && InjectedScriptHost.type(node) === "node" && (node.nodeType === Node.ELEMENT_NODE || node.nodeType === Node.DOCUMENT_NODE || node.nodeType === Node.DOCUMENT_FRAGMENT_NODE);
+        return !!node && InjectedScriptHost.subtype(node) === "node" && (node.nodeType === Node.ELEMENT_NODE || node.nodeType === Node.DOCUMENT_NODE || node.nodeType === Node.DOCUMENT_FRAGMENT_NODE);
     },
 
     /**

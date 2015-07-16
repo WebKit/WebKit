@@ -1,0 +1,35 @@
+CONSOLE MESSAGE: line 27: The console function $() has changed from $=getElementById(id) to $=querySelector(selector). You might try $("#%s")
+Tests that command line api works.
+
+
+STEP: String(keys([3,4]))
+0,1
+
+STEP: String(values([3,4]))
+3,4
+
+STEP: String($0)
+[object HTMLParagraphElement]
+
+STEP: String($('foo'))
+CONSOLE: The console function $() has changed from $=getElementById(id) to $=querySelector(selector). You might try $("#%s")
+null
+
+STEP: String($('#foo'))
+[object HTMLParagraphElement]
+
+STEP: String($('#foo', document.body))
+[object HTMLParagraphElement]
+
+STEP: String($('#foo', 'non-node'))
+[object HTMLParagraphElement]
+
+STEP: String($('#foo', $('#bar')))
+null
+
+STEP: String($$('p'))
+[object HTMLParagraphElement],[object HTMLParagraphElement]
+
+STEP: String($$('p', document.body))
+[object HTMLParagraphElement],[object HTMLParagraphElement]
+

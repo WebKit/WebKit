@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script>
+function test()
+{
+    var currentStepIndex = 0;
+    var steps = [
+        "String(keys([3,4]))",
+        "String(values([3,4]))",
+        "String($0)",
+        "String($('foo'))",
+        "String($('#foo'))",
+        "String($('#foo', document.body))",
+        "String($('#foo', 'non-node'))",
+        "String($('#foo', $('#bar')))",
+        "String($$('p'))",
+        "String($$('p', document.body))",
+    ];
+
+    var consoleMessage = null;
+
+    function runSteps()
+    {
+        for (var step of steps) {
+            WebInspector.runtimeManager.evaluateInInspectedWindow(step, "test", true, true, false, false, false, function(result, wasThrown) {
+                InspectorTest.log("\nSTEP: " + steps[currentStepIndex]);
+                if (consoleMessage) {
+                    InspectorTest.log("CONSOLE: " + consoleMessage.messageText);
+                    consoleMessage = null;
+                }
+                InspectorTest.log(result.description);
+
+                if (++currentStepIndex >= steps.length)
+                    InspectorTest.completeTest();
+            });
+        }
+    }
+
+    // Detect console warning for $('foo').
+    WebInspector.logManager.addEventListener(WebInspector.LogManager.Event.MessageAdded, function(event) {
+        consoleMessage = event.data.message;
+        InspectorTest.assert(consoleMessage instanceof WebInspector.ConsoleMessage);
+    });
+
+    // Select div#foo for $0.
+    WebInspector.domTreeManager.requestDocument(function(documentNode) {
+        WebInspector.domTreeManager.querySelector(documentNode.id, "#foo", function(contentNodeId) {
+            if (contentNodeId) {
+                ConsoleAgent.addInspectedNode(contentNodeId);
+                runSteps();
+            } else {
+                InspectorTest.log("FAIL: DOM node not found.");
+                InspectorTest.completeTest();
+            }
+        });
+    });
+}
+</script>
+</head>
+<body onload="runTest();">
+    <p id="foo">Tests that command line api works.</p>
+    <p id="bar"></p>
+</body>
+</html>

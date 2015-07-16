@@ -2376,6 +2376,7 @@ webkit.org/b/128979 [ Release ] inspector-protocol/dom/getAccessibilityPropertie
 inspector-protocol/debugger/removeBreakpoint.html [ Skip ] # Crashing
 inspector-protocol/debugger/searchInContent-linebreaks.html [ Pass Crash ] # Flaky
 
+webkit.org/b/143548 inspector/console/command-line-api.html [ Skip ] # Timeout
 webkit.org/b/143548 inspector/console/console-api.html [ Skip ] # Timeout
 webkit.org/b/143548 inspector/console/console-table.html [ Skip ] # Timeout
 
