@@ -782,6 +782,8 @@ WebInspector.TimelineRuler.prototype = {
 
         var currentMousePosition = event.pageX - this._element.totalOffsetLeft;
         var currentTime = this.startTime + (currentMousePosition * this.secondsPerPixel);
+        if (this.snapInterval)
+            currentTime = this._snapValue(currentTime);
 
         if (event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
             // Resize the selection on both sides when the Option keys is held down.
