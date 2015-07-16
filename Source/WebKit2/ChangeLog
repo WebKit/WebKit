@@ -1,3 +1,14 @@
+2015-07-16  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [Linux] Seccomp: fix -Wmismatched-tags
+        https://bugs.webkit.org/show_bug.cgi?id=146990
+
+        Reviewed by Žan Doberšek.
+
+        WebProcessCreationParameters is a struct nowadays, not a class, so declare it appropriately.
+
+        * Shared/linux/SeccompFilters/SyscallPolicy.h:
+
 2015-07-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r185415): [GTK] Browsers crash when an input method is enabled

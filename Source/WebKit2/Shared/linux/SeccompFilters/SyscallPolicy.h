@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-class WebProcessCreationParameters;
+struct WebProcessCreationParameters;
 
 class SyscallPolicy {
 public:
