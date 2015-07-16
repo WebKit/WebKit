@@ -1,5 +1,13 @@
 2015-07-15  Brent Fulgham  <bfulgham@apple.com>
 
+        [Win] Fix armv7 build.
+
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::setupArgumentsWithExecState): The 64-bit argument
+        version of poke is not available on armv7 builds.
+
+2015-07-15  Brent Fulgham  <bfulgham@apple.com>
+
         [Win] 64-bit Build Failure
         https://bugs.webkit.org/show_bug.cgi?id=146989
 

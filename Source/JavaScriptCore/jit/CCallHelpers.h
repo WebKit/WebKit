@@ -1534,11 +1534,13 @@ public:
         setupArgumentsWithExecState(arg1, arg2, arg3);
     }
 
+#if CPU(X86_64)
     ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImmPtr arg1, GPRReg arg2, TrustedImmPtr arg3, TrustedImm64 arg4)
     {
         poke(arg4, POKE_ARGUMENT_OFFSET);
         setupArgumentsWithExecState(arg1, arg2, arg3);
     }
+#endif
 
     ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImmPtr arg1, GPRReg arg2, TrustedImm32 arg3, TrustedImmPtr arg4)
     {
