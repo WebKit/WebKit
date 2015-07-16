@@ -39,6 +39,7 @@ CustomProtocolManagerProxy::CustomProtocolManagerProxy(ChildProcessProxy* childP
 
 CustomProtocolManagerProxy::~CustomProtocolManagerProxy()
 {
+    m_childProcessProxy->removeMessageReceiver(Messages::CustomProtocolManagerProxy::messageReceiverName());
 }
 
 void CustomProtocolManagerProxy::startLoading(uint64_t customProtocolID, const WebCore::ResourceRequest& request)
