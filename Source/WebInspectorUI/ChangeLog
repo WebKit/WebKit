@@ -1,3 +1,13 @@
+2015-07-16  Andres Gomez  <agomez@igalia.com>
+
+        [GTK] Web Inspector: Add new composite record icon for the GTK+ port
+        https://bugs.webkit.org/show_bug.cgi?id=146998
+
+        Reviewed by Martin Robinson.
+
+        * UserInterface/Images/gtk/TimelineRecordComposite.svg: Added.
+        New composite record icon.
+
 2015-07-15  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Resizing TimelineRuler selection on both sides doesn't work with snapping enabled
