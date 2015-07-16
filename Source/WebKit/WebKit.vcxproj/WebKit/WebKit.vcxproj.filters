@@ -296,7 +296,6 @@
     <ClCompile Include="..\..\win\WebCoreSupport\AcceleratedCompositingContext.cpp">
       <Filter>WebCoreSupport</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\win\WebCoreSupport\WebVisitedLinkStore.cpp" />
     <ClCompile Include="..\..\win\WebApplicationCache.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -338,6 +337,9 @@
     </ClCompile>
     <ClCompile Include="..\..\WebCoreSupport\WebViewGroup.cpp">
       <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\win\WebCoreSupport\WebVisitedLinkStore.cpp">
+      <Filter>WebCoreSupport</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
