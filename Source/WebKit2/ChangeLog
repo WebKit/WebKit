@@ -1,3 +1,82 @@
+2015-07-15  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION(r186088): Crash under WebKit::WebPageProxy::didFailLoadForFrame
+        <rdar://problem/21692212> and https://bugs.webkit.org/show_bug.cgi?id=146988
+
+        Reviewed by Sam Weinig.
+
+        When a loader delegate callback results in the WKView getting deallocated, then the PageClient
+        is also destroyed.
+
+        WebPageProxy then (often) turns around and uses the PageClient anyways.
+
+        Tried to write a TestWebKitAPI test for this, but only didFailLoadForFrame appears to obviously 
+        be vulnerable, and there seems to be no way to reproduce that failure case under TestWebKitAPI.
+
+        * UIProcess/PageClient.h: Add ref/derefView.
+
+        * UIProcess/API/gtk/PageClientImpl.h: Stub them out.
+        * UIProcess/efl/WebViewEfl.h: Stub them out.
+
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::refView): [m_wkView retain]
+        (WebKit::PageClientImpl::derefView): [m_wkView release]
+
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::refView): Retain all 3 views.
+        (WebKit::PageClientImpl::derefView): Release all 3 views.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::PageClientProtector::PageClientProtector): Calls refView() on the PageClient.
+        (WebKit::PageClientProtector::~PageClientProtector): Calls derefView() on the PageClient.
+        (WebKit::WebPageProxy::didChangeBackForwardList): All methods that make m_loaderClient or
+          m_pageClient callouts get a protector at their head.
+        (WebKit::WebPageProxy::willGoToBackForwardListItem):
+        (WebKit::WebPageProxy::shouldKeepCurrentBackForwardListItemInList):
+        (WebKit::WebPageProxy::findPlugin):
+        (WebKit::WebPageProxy::didCreateMainFrame):
+        (WebKit::WebPageProxy::didCreateSubframe):
+        (WebKit::WebPageProxy::didStartProgress):
+        (WebKit::WebPageProxy::didChangeProgress):
+        (WebKit::WebPageProxy::didFinishProgress):
+        (WebKit::WebPageProxy::didDestroyNavigation):
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didChangeProvisionalURLForFrame):
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::didFinishDocumentLoadForFrame):
+        (WebKit::WebPageProxy::didFinishLoadForFrame):
+        (WebKit::WebPageProxy::didFailLoadForFrame):
+        (WebKit::WebPageProxy::didSameDocumentNavigationForFrame):
+        (WebKit::WebPageProxy::didReceiveTitleForFrame):
+        (WebKit::WebPageProxy::didFirstLayoutForFrame):
+        (WebKit::WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame):
+        (WebKit::WebPageProxy::didLayoutForCustomContentProvider):
+        (WebKit::WebPageProxy::didLayout):
+        (WebKit::WebPageProxy::didRemoveFrameFromHierarchy):
+        (WebKit::WebPageProxy::didDisplayInsecureContentForFrame):
+        (WebKit::WebPageProxy::didRunInsecureContentForFrame):
+        (WebKit::WebPageProxy::didDetectXSSForFrame):
+        (WebKit::WebPageProxy::frameDidBecomeFrameSet):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+        (WebKit::WebPageProxy::decidePolicyForResponse):
+        (WebKit::WebPageProxy::decidePolicyForResponseSync):
+        (WebKit::WebPageProxy::unableToImplementPolicy):
+        (WebKit::WebPageProxy::didNavigateWithNavigationData):
+        (WebKit::WebPageProxy::didPerformClientRedirect):
+        (WebKit::WebPageProxy::didPerformServerRedirect):
+        (WebKit::WebPageProxy::didUpdateHistoryTitle):
+        (WebKit::WebPageProxy::wrapCryptoKey):
+        (WebKit::WebPageProxy::unwrapCryptoKey):
+        (WebKit::WebPageProxy::navigationGestureDidBegin):
+        (WebKit::WebPageProxy::navigationGestureWillEnd):
+        (WebKit::WebPageProxy::navigationGestureDidEnd):
+        (WebKit::WebPageProxy::willRecordNavigationSnapshot):
+
 2015-07-15  Sam Weinig  <sam@webkit.org>
 
         Color match plug-ins

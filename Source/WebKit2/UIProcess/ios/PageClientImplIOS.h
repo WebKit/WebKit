@@ -186,6 +186,9 @@ private:
 
     virtual void didChangeBackgroundColor() override;
 
+    virtual void refView() override;
+    virtual void derefView() override;
+
     WKContentView *m_contentView;
     WKWebView *m_webView;
     WKView *m_wkView;

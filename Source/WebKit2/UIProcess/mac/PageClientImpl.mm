@@ -836,6 +836,16 @@ WebCore::WebMediaSessionManager& PageClientImpl::mediaSessionManager()
 }
 #endif
 
+void PageClientImpl::refView()
+{
+    [m_wkView retain];
+}
+
+void PageClientImpl::derefView()
+{
+    [m_wkView release];
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)
