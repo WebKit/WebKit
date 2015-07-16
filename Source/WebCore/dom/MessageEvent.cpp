@@ -118,6 +118,8 @@ void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bo
 
     m_dataType = DataTypeScriptValue;
     m_dataAsScriptValue = data;
+    m_dataAsSerializedScriptValue = nullptr;
+    m_triedToSerialize = false;
     m_origin = origin;
     m_lastEventId = lastEventId;
     m_source = source;
@@ -137,6 +139,18 @@ void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bo
     m_lastEventId = lastEventId;
     m_source = source;
     m_ports = WTF::move(ports);
+}
+    
+RefPtr<SerializedScriptValue> MessageEvent::trySerializeData(JSC::ExecState* exec)
+{
+    ASSERT(!m_dataAsScriptValue.hasNoValue());
+    
+    if (!m_dataAsSerializedScriptValue && !m_triedToSerialize) {
+        m_dataAsSerializedScriptValue = SerializedScriptValue::create(exec, m_dataAsScriptValue.jsValue(), nullptr, nullptr, NonThrowing);
+        m_triedToSerialize = true;
+    }
+    
+    return m_dataAsSerializedScriptValue;
 }
 
 // FIXME: Remove this when we have custom ObjC binding support.

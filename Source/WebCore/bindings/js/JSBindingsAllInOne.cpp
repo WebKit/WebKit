@@ -45,6 +45,7 @@
 #include "JSCharacterDataCustom.cpp"
 #include "JSCommandLineAPIHostCustom.cpp"
 #include "JSCryptoCustom.cpp"
+#include "JSCustomEventCustom.cpp"
 #include "JSCustomSQLStatementErrorCallback.cpp"
 #include "JSCustomXPathNSResolver.cpp"
 #include "JSDOMBinding.cpp"
