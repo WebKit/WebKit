@@ -638,12 +638,12 @@ public:
     }
 
     Vector(const Vector&);
-    template<size_t otherCapacity, typename otherOverflowBehaviour>
-    explicit Vector(const Vector<T, otherCapacity, otherOverflowBehaviour>&);
+    template<size_t otherCapacity, typename otherOverflowBehaviour, size_t otherMinimumCapacity>
+    explicit Vector(const Vector<T, otherCapacity, otherOverflowBehaviour, otherMinimumCapacity>&);
 
     Vector& operator=(const Vector&);
-    template<size_t otherCapacity, typename otherOverflowBehaviour>
-    Vector& operator=(const Vector<T, otherCapacity, otherOverflowBehaviour>&);
+    template<size_t otherCapacity, typename otherOverflowBehaviour, size_t otherMinimumCapacity>
+    Vector& operator=(const Vector<T, otherCapacity, otherOverflowBehaviour, otherMinimumCapacity>&);
 
     Vector(Vector&&);
     Vector& operator=(Vector&&);
@@ -819,8 +819,8 @@ Vector<T, inlineCapacity, OverflowHandler, minCapacity>::Vector(const Vector& ot
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
-template<size_t otherCapacity, typename otherOverflowBehaviour>
-Vector<T, inlineCapacity, OverflowHandler, minCapacity>::Vector(const Vector<T, otherCapacity, otherOverflowBehaviour>& other)
+template<size_t otherCapacity, typename otherOverflowBehaviour, size_t otherMinimumCapacity>
+Vector<T, inlineCapacity, OverflowHandler, minCapacity>::Vector(const Vector<T, otherCapacity, otherOverflowBehaviour, otherMinimumCapacity>& other)
     : Base(other.capacity(), other.size())
 {
     asanSetInitialBufferSizeTo(other.size());
@@ -855,8 +855,8 @@ Vector<T, inlineCapacity, OverflowHandler, minCapacity>& Vector<T, inlineCapacit
 inline bool typelessPointersAreEqual(const void* a, const void* b) { return a == b; }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
-template<size_t otherCapacity, typename otherOverflowBehaviour>
-Vector<T, inlineCapacity, OverflowHandler, minCapacity>& Vector<T, inlineCapacity, OverflowHandler, minCapacity>::operator=(const Vector<T, otherCapacity, otherOverflowBehaviour>& other)
+template<size_t otherCapacity, typename otherOverflowBehaviour, size_t otherMinimumCapacity>
+Vector<T, inlineCapacity, OverflowHandler, minCapacity>& Vector<T, inlineCapacity, OverflowHandler, minCapacity>::operator=(const Vector<T, otherCapacity, otherOverflowBehaviour, otherMinimumCapacity>& other)
 {
     // If the inline capacities match, we should call the more specific
     // template.  If the inline capacities don't match, the two objects

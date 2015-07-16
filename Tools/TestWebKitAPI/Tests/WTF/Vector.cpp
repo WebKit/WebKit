@@ -95,6 +95,103 @@ TEST(WTF_Vector, InitializerList)
     EXPECT_EQ(4, vector[3]);
 }
 
+TEST(WTF_Vector, InitializeFromOtherInitialCapacity)
+{
+    Vector<int, 3> vector = { 1, 3, 2, 4 };
+    Vector<int, 5> vectorCopy(vector);
+    EXPECT_EQ(4U, vector.size());
+    EXPECT_EQ(4U, vectorCopy.size());
+    EXPECT_EQ(5U, vectorCopy.capacity());
+
+    EXPECT_EQ(1, vectorCopy[0]);
+    EXPECT_EQ(3, vectorCopy[1]);
+    EXPECT_EQ(2, vectorCopy[2]);
+    EXPECT_EQ(4, vectorCopy[3]);
+}
+
+TEST(WTF_Vector, CopyFromOtherInitialCapacity)
+{
+    Vector<int, 3> vector = { 1, 3, 2, 4 };
+    Vector<int, 5> vectorCopy { 0 };
+    EXPECT_EQ(4U, vector.size());
+    EXPECT_EQ(1U, vectorCopy.size());
+
+    vectorCopy = vector;
+
+    EXPECT_EQ(4U, vector.size());
+    EXPECT_EQ(4U, vectorCopy.size());
+    EXPECT_EQ(5U, vectorCopy.capacity());
+
+    EXPECT_EQ(1, vectorCopy[0]);
+    EXPECT_EQ(3, vectorCopy[1]);
+    EXPECT_EQ(2, vectorCopy[2]);
+    EXPECT_EQ(4, vectorCopy[3]);
+}
+
+TEST(WTF_Vector, InitializeFromOtherOverflowBehavior)
+{
+    Vector<int, 7, WTF::CrashOnOverflow> vector = { 4, 3, 2, 1 };
+    Vector<int, 7, UnsafeVectorOverflow> vectorCopy(vector);
+    EXPECT_EQ(4U, vector.size());
+    EXPECT_EQ(4U, vectorCopy.size());
+
+    EXPECT_EQ(4, vectorCopy[0]);
+    EXPECT_EQ(3, vectorCopy[1]);
+    EXPECT_EQ(2, vectorCopy[2]);
+    EXPECT_EQ(1, vectorCopy[3]);
+}
+
+TEST(WTF_Vector, CopyFromOtherOverflowBehavior)
+{
+    Vector<int, 7, WTF::CrashOnOverflow> vector = { 4, 3, 2, 1 };
+    Vector<int, 7, UnsafeVectorOverflow> vectorCopy = { 0, 0, 0 };
+
+    EXPECT_EQ(4U, vector.size());
+    EXPECT_EQ(3U, vectorCopy.size());
+
+    vectorCopy = vector;
+
+    EXPECT_EQ(4U, vector.size());
+    EXPECT_EQ(4U, vectorCopy.size());
+
+    EXPECT_EQ(4, vectorCopy[0]);
+    EXPECT_EQ(3, vectorCopy[1]);
+    EXPECT_EQ(2, vectorCopy[2]);
+    EXPECT_EQ(1, vectorCopy[3]);
+}
+
+TEST(WTF_Vector, InitializeFromOtherMinCapacity)
+{
+    Vector<int, 7, WTF::CrashOnOverflow, 1> vector = { 3, 4, 2, 1 };
+    Vector<int, 7, WTF::CrashOnOverflow, 50> vectorCopy(vector);
+    EXPECT_EQ(4U, vector.size());
+    EXPECT_EQ(4U, vectorCopy.size());
+
+    EXPECT_EQ(3, vectorCopy[0]);
+    EXPECT_EQ(4, vectorCopy[1]);
+    EXPECT_EQ(2, vectorCopy[2]);
+    EXPECT_EQ(1, vectorCopy[3]);
+}
+
+TEST(WTF_Vector, CopyFromOtherMinCapacity)
+{
+    Vector<int, 7, WTF::CrashOnOverflow, 1> vector = { 3, 4, 2, 1 };
+    Vector<int, 7, WTF::CrashOnOverflow, 50> vectorCopy;
+
+    EXPECT_EQ(4U, vector.size());
+    EXPECT_EQ(0U, vectorCopy.size());
+
+    vectorCopy = vector;
+
+    EXPECT_EQ(4U, vector.size());
+    EXPECT_EQ(4U, vectorCopy.size());
+
+    EXPECT_EQ(3, vectorCopy[0]);
+    EXPECT_EQ(4, vectorCopy[1]);
+    EXPECT_EQ(2, vectorCopy[2]);
+    EXPECT_EQ(1, vectorCopy[3]);
+}
+
 TEST(WTF_Vector, Reverse)
 {
     Vector<int> intVector;

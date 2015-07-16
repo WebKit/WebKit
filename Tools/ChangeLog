@@ -1,3 +1,14 @@
+2015-07-16  Benjamin Poulain  <bpoulain@apple.com>
+
+        [Content extensions] Combine suffixes when generating NFAs
+        https://bugs.webkit.org/show_bug.cgi?id=146961
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::compareContents):
+        * TestWebKitAPI/Tests/WebCore/DFAMinimizer.cpp:
+
 2015-07-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Input method filter is always enabled when the view is focused

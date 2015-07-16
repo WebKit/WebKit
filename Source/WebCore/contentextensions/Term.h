@@ -83,7 +83,8 @@ public:
 
     void quantify(const AtomQuantifier&);
 
-    ImmutableCharNFANodeBuilder generateGraph(NFA&, ImmutableCharNFANodeBuilder& start, const ActionList& finalActions) const;
+    ImmutableCharNFANodeBuilder generateGraph(NFA&, ImmutableCharNFANodeBuilder& source, const ActionList& finalActions) const;
+    void generateGraph(NFA&, ImmutableCharNFANodeBuilder& source, uint32_t destination) const;
 
     bool isEndOfLineAssertion() const;
 
@@ -118,7 +119,8 @@ private:
     // The return value can be false for a group equivalent to a universal transition.
     bool isUniversalTransition() const;
 
-    ImmutableCharNFANodeBuilder generateSubgraphForAtom(NFA&, ImmutableCharNFANodeBuilder& source) const;
+    void generateSubgraphForAtom(NFA&, ImmutableCharNFANodeBuilder& source, const ImmutableCharNFANodeBuilder& destination) const;
+    void generateSubgraphForAtom(NFA&, ImmutableCharNFANodeBuilder& source, uint32_t destination) const;
 
     void destroy();
 
@@ -377,50 +379,52 @@ inline void Term::quantify(const AtomQuantifier& quantifier)
     m_quantifier = quantifier;
 }
 
-inline ImmutableCharNFANodeBuilder Term::generateGraph(NFA& nfa, ImmutableCharNFANodeBuilder& start, const ActionList& finalActions) const
+inline ImmutableCharNFANodeBuilder Term::generateGraph(NFA& nfa, ImmutableCharNFANodeBuilder& source, const ActionList& finalActions) const
+{
+    ImmutableCharNFANodeBuilder newEnd(nfa);
+    generateGraph(nfa, source, newEnd.nodeId());
+    newEnd.setActions(finalActions.begin(), finalActions.end());
+    return newEnd;
+}
+
+inline void Term::generateGraph(NFA& nfa, ImmutableCharNFANodeBuilder& source, uint32_t destination) const
 {
     ASSERT(isValid());
 
-    ImmutableCharNFANodeBuilder newEnd;
-
     switch (m_quantifier) {
     case AtomQuantifier::One: {
-        newEnd = generateSubgraphForAtom(nfa, start);
+        generateSubgraphForAtom(nfa, source, destination);
         break;
     }
     case AtomQuantifier::ZeroOrOne: {
-        newEnd = generateSubgraphForAtom(nfa, start);
-        start.addEpsilonTransition(newEnd);
+        generateSubgraphForAtom(nfa, source, destination);
+        source.addEpsilonTransition(destination);
         break;
     }
     case AtomQuantifier::ZeroOrMore: {
         ImmutableCharNFANodeBuilder repeatStart(nfa);
-        start.addEpsilonTransition(repeatStart);
+        source.addEpsilonTransition(repeatStart);
 
-        ImmutableCharNFANodeBuilder repeatEnd = generateSubgraphForAtom(nfa, repeatStart);
+        ImmutableCharNFANodeBuilder repeatEnd(nfa);
+        generateSubgraphForAtom(nfa, repeatStart, repeatEnd);
         repeatEnd.addEpsilonTransition(repeatStart);
 
-        ImmutableCharNFANodeBuilder kleenEnd(nfa);
-        repeatEnd.addEpsilonTransition(kleenEnd);
-        start.addEpsilonTransition(kleenEnd);
-        newEnd = WTF::move(kleenEnd);
+        repeatEnd.addEpsilonTransition(destination);
+        source.addEpsilonTransition(destination);
         break;
     }
     case AtomQuantifier::OneOrMore: {
         ImmutableCharNFANodeBuilder repeatStart(nfa);
-        start.addEpsilonTransition(repeatStart);
+        source.addEpsilonTransition(repeatStart);
 
-        ImmutableCharNFANodeBuilder repeatEnd = generateSubgraphForAtom(nfa, repeatStart);
+        ImmutableCharNFANodeBuilder repeatEnd(nfa);
+        generateSubgraphForAtom(nfa, repeatStart, repeatEnd);
         repeatEnd.addEpsilonTransition(repeatStart);
 
-        ImmutableCharNFANodeBuilder afterRepeat(nfa);
-        repeatEnd.addEpsilonTransition(afterRepeat);
-        newEnd = WTF::move(afterRepeat);
+        repeatEnd.addEpsilonTransition(destination);
         break;
     }
     }
-    newEnd.setActions(finalActions.begin(), finalActions.end());
-    return newEnd;
 }
 
 inline bool Term::isEndOfLineAssertion() const
@@ -582,14 +586,19 @@ inline bool Term::isUniversalTransition() const
     return false;
 }
 
-inline ImmutableCharNFANodeBuilder Term::generateSubgraphForAtom(NFA& nfa, ImmutableCharNFANodeBuilder& source) const
+inline void Term::generateSubgraphForAtom(NFA& nfa, ImmutableCharNFANodeBuilder& source, const ImmutableCharNFANodeBuilder& destination) const
+{
+    generateSubgraphForAtom(nfa, source, destination.nodeId());
+}
+
+inline void Term::generateSubgraphForAtom(NFA& nfa, ImmutableCharNFANodeBuilder& source, uint32_t destination) const
 {
     switch (m_termType) {
     case TermType::Empty:
         ASSERT_NOT_REACHED();
-        return ImmutableCharNFANodeBuilder();
+        source.addEpsilonTransition(destination);
+        break;
     case TermType::CharacterSet: {
-        ImmutableCharNFANodeBuilder newNode(nfa);
         if (!m_atomData.characterSet.inverted()) {
             UChar i = 0;
             while (true) {
@@ -602,7 +611,7 @@ inline ImmutableCharNFANodeBuilder Term::generateSubgraphForAtom(NFA& nfa, Immut
                 ++i;
                 while (i < 128 && m_atomData.characterSet.get(i))
                     ++i;
-                source.addTransition(start, i - 1, newNode);
+                source.addTransition(start, i - 1, destination);
             }
         } else {
             UChar i = 1;
@@ -616,27 +625,32 @@ inline ImmutableCharNFANodeBuilder Term::generateSubgraphForAtom(NFA& nfa, Immut
                 ++i;
                 while (i < 128 && !m_atomData.characterSet.get(i))
                     ++i;
-                source.addTransition(start, i - 1, newNode);
+                source.addTransition(start, i - 1, destination);
             }
         }
-        return newNode;
+        break;
     }
     case TermType::Group: {
         if (m_atomData.group.terms.isEmpty()) {
             // FIXME: any kind of empty term could be avoided in the parser. This case should turned into an assertion.
-            ImmutableCharNFANodeBuilder newNode(nfa);
-            source.addEpsilonTransition(newNode);
-            return newNode;
+            source.addEpsilonTransition(destination);
+            return;
+        }
+
+        if (m_atomData.group.terms.size() == 1) {
+            m_atomData.group.terms.first().generateGraph(nfa, source, destination);
+            return;
         }
 
         ImmutableCharNFANodeBuilder lastTarget = m_atomData.group.terms.first().generateGraph(nfa, source, ActionList());
-        for (unsigned i = 1; i < m_atomData.group.terms.size(); ++i) {
+        for (unsigned i = 1; i < m_atomData.group.terms.size() - 1; ++i) {
             const Term& currentTerm = m_atomData.group.terms[i];
             ImmutableCharNFANodeBuilder newNode = currentTerm.generateGraph(nfa, lastTarget, ActionList());
             lastTarget = WTF::move(newNode);
         }
-
-        return lastTarget;
+        const Term& lastTerm = m_atomData.group.terms.last();
+        lastTerm.generateGraph(nfa, lastTarget, destination);
+        break;
     }
     }
 }

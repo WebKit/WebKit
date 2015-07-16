@@ -52,9 +52,6 @@ public:
     {
         m_nodeId = m_immutableNFA->nodes.size();
         m_immutableNFA->nodes.append(ImmutableNFANode());
-#if !ASSERT_DISABLED
-        m_isDisconnected = true;
-#endif
     }
 
     ImmutableNFANodeBuilder(ImmutableNFANodeBuilder&& other)
@@ -64,23 +61,26 @@ public:
         , m_actions(WTF::move(other.m_actions))
         , m_nodeId(other.m_nodeId)
         , m_finalized(other.m_finalized)
-#if !ASSERT_DISABLED
-        , m_isDisconnected(other.m_isDisconnected)
-#endif
     {
         other.m_immutableNFA = nullptr;
         other.m_finalized = true;
-#if !ASSERT_DISABLED
-        other.m_isDisconnected = false;
-#endif
     }
 
     ~ImmutableNFANodeBuilder()
     {
-        ASSERT_WITH_MESSAGE(!m_isDisconnected, "This nodes is not connected to anything and is not reached by any other node.");
-
         if (!m_finalized)
             finalize();
+    }
+
+    bool isValid() const
+    {
+        return !!m_immutableNFA;
+    }
+
+    uint32_t nodeId() const
+    {
+        ASSERT(isValid());
+        return m_nodeId;
     }
 
     struct TrivialRange {
@@ -108,15 +108,10 @@ public:
         bool isEnd;
     };
 
-    void addTransition(CharacterType first, CharacterType last, const ImmutableNFANodeBuilder& target)
+    void addTransition(CharacterType first, CharacterType last, uint32_t targetNodeId)
     {
         ASSERT(!m_finalized);
         ASSERT(m_immutableNFA);
-        ASSERT(m_immutableNFA == target.m_immutableNFA);
-#if !ASSERT_DISABLED
-        m_isDisconnected = false;
-        target.m_isDisconnected = false;
-#endif
 
         struct Converter {
             TargetSet convert(uint32_t target)
@@ -130,19 +125,20 @@ public:
         };
         
         Converter converter;
-        m_ranges.extend(FakeRangeIterator { { first, last }, target.m_nodeId, false }, FakeRangeIterator { { 0, 0 }, target.m_nodeId, true }, converter);
+        m_ranges.extend(FakeRangeIterator { { first, last }, targetNodeId, false }, FakeRangeIterator { { 0, 0 }, targetNodeId, true }, converter);
     }
 
     void addEpsilonTransition(const ImmutableNFANodeBuilder& target)
     {
+        ASSERT(m_immutableNFA == target.m_immutableNFA);
+        addEpsilonTransition(target.m_nodeId);
+    }
+
+    void addEpsilonTransition(uint32_t targetNodeId)
+    {
         ASSERT(!m_finalized);
         ASSERT(m_immutableNFA);
-        ASSERT(m_immutableNFA == target.m_immutableNFA);
-#if !ASSERT_DISABLED
-        m_isDisconnected = false;
-        target.m_isDisconnected = false;
-#endif
-        m_epsilonTransitionTargets.add(target.m_nodeId);
+        m_epsilonTransitionTargets.add(targetNodeId);
     }
 
     template<typename ActionIterator>
@@ -168,10 +164,6 @@ public:
 
         other.m_immutableNFA = nullptr;
         other.m_finalized = true;
-#if !ASSERT_DISABLED
-        m_isDisconnected = other.m_isDisconnected;
-        other.m_isDisconnected = false;
-#endif
         return *this;
     }
 
@@ -230,9 +222,6 @@ private:
     HashSet<ActionType, WTF::IntHash<ActionType>, WTF::UnsignedWithZeroKeyHashTraits<ActionType>> m_actions;
     uint32_t m_nodeId;
     bool m_finalized { true };
-#if !ASSERT_DISABLED
-    mutable bool m_isDisconnected { false };
-#endif
 };
 
 }
