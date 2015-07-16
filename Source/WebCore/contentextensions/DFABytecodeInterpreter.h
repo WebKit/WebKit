@@ -50,6 +50,7 @@ public:
     typedef HashSet<uint64_t, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> Actions;
     
     Actions interpret(const CString&, uint16_t flags);
+    Actions interpretWithDomains(const CString&, uint16_t flags, const DFABytecodeInterpreter::Actions& domainActions);
     Actions actionsForDefaultStylesheetFromDFARoot();
 
 private:
@@ -57,6 +58,7 @@ private:
     void interpretTestFlagsAndAppendAction(unsigned& programCounter, uint16_t flags, Actions&, bool ifDomain);
     const DFABytecode* m_bytecode;
     const unsigned m_bytecodeLength;
+    const DFABytecodeInterpreter::Actions* m_domainActions { nullptr };
 };
 
 } // namespace ContentExtensions

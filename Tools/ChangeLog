@@ -1,3 +1,14 @@
+2015-07-16  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Cache domain actions
+        https://bugs.webkit.org/show_bug.cgi?id=146817
+
+        Reviewed by Benjamin Poulain.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::TEST_F):
+        Test if-domain and unless-domain with multiple load types.
+
 2015-07-16  Benjamin Poulain  <bpoulain@apple.com>
 
         [Content extensions] Combine suffixes when generating NFAs

@@ -1204,6 +1204,38 @@ TEST_F(ContentExtensionTest, MatchesEverything)
         "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\".*\"}}]");
     EXPECT_EQ(nullptr, backend5.globalDisplayNoneStyleSheet(ASCIILiteral("testFilter")));
     testRequest(backend5, mainDocumentRequest("http://webkit.org"), { ContentExtensions::ActionType::CSSDisplayNoneSelector }, true);
+    
+    auto backend6 = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"if-domain\":[\"webkit.org\",\"*w3c.org\"],\"resource-type\":[\"document\",\"script\"]}},"
+        "{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\"ignore\",\"if-domain\":[\"*webkit.org\",\"w3c.org\"]}},"
+        "{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"url-filter\":\".*\",\"unless-domain\":[\"webkit.org\",\"whatwg.org\"],\"resource-type\":[\"script\",\"image\"],\"load-type\":[\"third-party\"]}}]");
+    EXPECT_EQ(nullptr, backend6.globalDisplayNoneStyleSheet(ASCIILiteral("testFilter")));
+    testRequest(backend6, mainDocumentRequest("http://webkit.org"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend6, mainDocumentRequest("http://w3c.org"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend6, mainDocumentRequest("http://whatwg.org"), { });
+    testRequest(backend6, mainDocumentRequest("http://sub.webkit.org"), { });
+    testRequest(backend6, mainDocumentRequest("http://sub.w3c.org"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend6, mainDocumentRequest("http://sub.whatwg.org"), { });
+    testRequest(backend6, mainDocumentRequest("http://webkit.org/ignore"), { }, true);
+    testRequest(backend6, mainDocumentRequest("http://w3c.org/ignore"), { }, true);
+    testRequest(backend6, mainDocumentRequest("http://whatwg.org/ignore"), { });
+    testRequest(backend6, mainDocumentRequest("http://sub.webkit.org/ignore"), { }, true);
+    testRequest(backend6, mainDocumentRequest("http://sub.w3c.org/ignore"), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend6, mainDocumentRequest("http://sub.whatwg.org/ignore"), { });
+    testRequest(backend6, subResourceRequest("http://example.com/image.png", "http://webkit.org/", ResourceType::Image), { });
+    testRequest(backend6, subResourceRequest("http://example.com/image.png", "http://w3c.org/", ResourceType::Image), { ContentExtensions::ActionType::BlockCookies });
+    testRequest(backend6, subResourceRequest("http://example.com/doc.html", "http://webkit.org/", ResourceType::Document), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend6, subResourceRequest("http://example.com/script.js", "http://webkit.org/", ResourceType::Script), { ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend6, subResourceRequest("http://example.com/script.js", "http://w3c.org/", ResourceType::Script), { ContentExtensions::ActionType::BlockCookies, ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend6, subResourceRequest("http://example.com/script.js", "http://example.com/", ResourceType::Script), { });
+    testRequest(backend6, subResourceRequest("http://example.com/ignore/image.png", "http://webkit.org/", ResourceType::Image), { }, true);
+    testRequest(backend6, subResourceRequest("http://example.com/ignore/image.png", "http://example.com/", ResourceType::Image), { });
+    testRequest(backend6, subResourceRequest("http://example.com/ignore/image.png", "http://example.org/", ResourceType::Image), { ContentExtensions::ActionType::BlockCookies });
+    testRequest(backend6, subResourceRequest("http://example.com/doc.html", "http://example.org/", ResourceType::Document), { });
+    testRequest(backend6, subResourceRequest("http://example.com/", "http://example.com/", ResourceType::Font), { });
+    testRequest(backend6, subResourceRequest("http://example.com/ignore", "http://webkit.org/", ResourceType::Image), { }, true);
+    testRequest(backend6, subResourceRequest("http://example.com/ignore", "http://webkit.org/", ResourceType::Font), { }, true);
+    testRequest(backend6, subResourceRequest("http://example.com/", "http://example.com/", ResourceType::Script), { });
+    testRequest(backend6, subResourceRequest("http://example.com/ignore", "http://example.com/", ResourceType::Script), { });
 }
     
 TEST_F(ContentExtensionTest, InvalidJSON)

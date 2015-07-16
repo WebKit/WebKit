@@ -32,6 +32,7 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
+#include "DFABytecodeInterpreter.h"
 #include "StyleSheetContents.h"
 
 namespace WebCore {
@@ -47,6 +48,7 @@ public:
     const String& identifier() const { return m_identifier; }
     const CompiledContentExtension& compiledExtension() const { return m_compiledExtension.get(); }
     StyleSheetContents* globalDisplayNoneStyleSheet();
+    const DFABytecodeInterpreter::Actions& cachedDomainActions(const String& domain);
 
 private:
     ContentExtension(const String& identifier, Ref<CompiledContentExtension>&&);
@@ -55,6 +57,9 @@ private:
     Ref<CompiledContentExtension> m_compiledExtension;
     RefPtr<StyleSheetContents> m_globalDisplayNoneStyleSheet;
     bool m_parsedGlobalDisplayNoneStyleSheet;
+    
+    String m_cachedDomain;
+    DFABytecodeInterpreter::Actions m_cachedDomainActions;
 };
 
 } // namespace ContentExtensions

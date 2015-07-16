@@ -90,47 +90,22 @@ Vector<Action> ContentExtensionsBackend::actionsForResourceLoad(const ResourceLo
         const CompiledContentExtension& compiledExtension = contentExtension->compiledExtension();
         
         DFABytecodeInterpreter withoutDomainsInterpreter(compiledExtension.filtersWithoutDomainsBytecode(), compiledExtension.filtersWithoutDomainsBytecodeLength());
-        DFABytecodeInterpreter::Actions triggeredActions = withoutDomainsInterpreter.interpret(urlCString, flags);
+        DFABytecodeInterpreter::Actions withoutDomainsActions = withoutDomainsInterpreter.interpret(urlCString, flags);
         
-        // Check to see if there are any actions triggered with if- or unless-domain and check the domain if there are.
         DFABytecodeInterpreter withDomainsInterpreter(compiledExtension.filtersWithDomainsBytecode(), compiledExtension.filtersWithDomainsBytecodeLength());
-        
-        DFABytecodeInterpreter::Actions withDomainsPossibleActions = withDomainsInterpreter.interpret(urlCString, flags);
-        if (!withDomainsPossibleActions.isEmpty()) {
-            DFABytecodeInterpreter domainsInterpreter(compiledExtension.domainFiltersBytecode(), compiledExtension.domainFiltersBytecodeLength());
-            DFABytecodeInterpreter::Actions domainsActions = domainsInterpreter.interpret(resourceLoadInfo.mainDocumentURL.host().utf8(), flags);
-            
-            DFABytecodeInterpreter::Actions ifDomainActions;
-            DFABytecodeInterpreter::Actions unlessDomainActions;
-            for (uint64_t action : domainsActions) {
-                if (action & IfDomainFlag)
-                    ifDomainActions.add(action);
-                else
-                    unlessDomainActions.add(action);
-            }
-            
-            for (uint64_t action : withDomainsPossibleActions) {
-                if (ifDomainActions.contains(action)) {
-                    // If an if-domain trigger matches, add the action.
-                    ASSERT(action & IfDomainFlag);
-                    triggeredActions.add(action & ~IfDomainFlag);
-                } else if (!(action & IfDomainFlag) && !unlessDomainActions.contains(action)) {
-                    // If this action did not need an if-domain, it must have been an unless-domain rule.
-                    // Add the action unless it matched an unless-domain trigger.
-                    triggeredActions.add(action);
-                }
-            }
-        }
+        DFABytecodeInterpreter::Actions withDomainsActions = withDomainsInterpreter.interpretWithDomains(urlCString, flags, contentExtension->cachedDomainActions(resourceLoadInfo.mainDocumentURL.host()));
         
         const SerializedActionByte* actions = compiledExtension.actions();
         const unsigned actionsLength = compiledExtension.actionsLength();
         
         bool sawIgnorePreviousRules = false;
-        if (!triggeredActions.isEmpty()) {
-            Vector<unsigned> actionLocations;
-            actionLocations.reserveInitialCapacity(triggeredActions.size());
-            for (auto actionLocation : triggeredActions)
-                actionLocations.append(static_cast<unsigned>(actionLocation));
+        if (!withoutDomainsActions.isEmpty() || !withDomainsActions.isEmpty()) {
+            Vector<uint32_t> actionLocations;
+            actionLocations.reserveInitialCapacity(withoutDomainsActions.size() + withDomainsActions.size());
+            for (uint64_t actionLocation : withoutDomainsActions)
+                actionLocations.uncheckedAppend(static_cast<uint32_t>(actionLocation));
+            for (uint64_t actionLocation : withDomainsActions)
+                actionLocations.uncheckedAppend(static_cast<uint32_t>(actionLocation));
             std::sort(actionLocations.begin(), actionLocations.end());
 
             // Add actions in reverse order to properly deal with IgnorePreviousRules.
