@@ -135,8 +135,8 @@ private:
 
     virtual void didChangeBackgroundColor() override;
 
-    virtual void refView() override { };
-    virtual void derefView() override { };
+    virtual void refView() override;
+    virtual void derefView() override;
 
     // Members of PageClientImpl class
     GtkWidget* m_viewWidget;

@@ -431,4 +431,14 @@ void PageClientImpl::didChangeBackgroundColor()
 {
 }
 
+void PageClientImpl::refView()
+{
+    g_object_ref(m_viewWidget);
+}
+
+void PageClientImpl::derefView()
+{
+    g_object_unref(m_viewWidget);
+}
+
 } // namespace WebKit
