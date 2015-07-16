@@ -1,3 +1,18 @@
+2015-07-13  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS] Expose contentsSizeRespectingOverflow() via WebView so UIWebView can use it
+        https://bugs.webkit.org/show_bug.cgi?id=146924
+        WebKit part of rdar://problem/21802456
+
+        Reviewed by Tim Horton.
+
+        Expose the FrameView's contentsSizeRespectingOverflow() via WebView, for use
+        by UIKit.
+
+        * WebView/WebView.mm:
+        (-[WebView _contentsSizeRespectingOverflow]):
+        * WebView/WebViewPrivate.h:
+
 2015-07-14  Anders Carlsson  <andersca@apple.com>
 
         Remove wkPopupMenu from WebCoreSystemInterface; it's not called from WebCore

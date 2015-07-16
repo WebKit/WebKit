@@ -442,6 +442,7 @@ Could be worth adding to the API.
 - (DOMCSSStyleDeclaration *)styleAtSelectionStart;
 
 - (NSUInteger)_renderTreeSize;
+- (NSSize)_contentsSizeRespectingOverflow;
 
 /*!
  * @method _handleMemoryWarning
