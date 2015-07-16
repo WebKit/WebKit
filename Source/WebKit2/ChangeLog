@@ -1,3 +1,29 @@
+2015-07-16  Tim Horton  <timothy_horton@apple.com>
+
+        Add shrink-wrapped link highlights
+        https://bugs.webkit.org/show_bug.cgi?id=147021
+        <rdar://problem/21643094>
+
+        Reviewed by Enrica Casucci.
+
+        * Shared/InteractionInformationAtPosition.cpp:
+        (WebKit::InteractionInformationAtPosition::encode):
+        (WebKit::InteractionInformationAtPosition::decode):
+        * Shared/InteractionInformationAtPosition.h:
+        Add a TextIndicator to InteractionInformationAtPosition.
+        Make use of some new C++ features.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView willPresentPreviewViewController:forPosition:inSourceView:]):
+        (-[WKContentView didDismissPreviewViewController:committing:]):
+        Make use of the TextIndicator (if we have one) to show a shrink-wrapped
+        snapshot of the link.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+        Build a TextIndicator for the link if possible.
+
 2015-07-16  Matt Rajca  <mrajca@apple.com>
 
         Media Session: remove plumbing for delivering start/end-of-interruption events

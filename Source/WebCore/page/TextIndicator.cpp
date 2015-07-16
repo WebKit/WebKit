@@ -47,7 +47,7 @@ Ref<TextIndicator> TextIndicator::create(const TextIndicatorData& data)
     return adoptRef(*new TextIndicator(data));
 }
 
-RefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range, TextIndicatorPresentationTransition presentationTransition)
+RefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range, TextIndicatorPresentationTransition presentationTransition, unsigned margin)
 {
     Frame* frame = range.startContainer()->document().frame();
 
@@ -57,7 +57,7 @@ RefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range, TextInd
     VisibleSelection oldSelection = frame->selection().selection();
     frame->selection().setSelection(range);
 
-    RefPtr<TextIndicator> indicator = TextIndicator::createWithSelectionInFrame(*frame, presentationTransition);
+    RefPtr<TextIndicator> indicator = TextIndicator::createWithSelectionInFrame(*frame, presentationTransition, margin);
 
     frame->selection().setSelection(oldSelection);
 
@@ -90,24 +90,8 @@ static RefPtr<Image> snapshotSelectionWithHighlight(Frame& frame)
     return snapshot->copyImage(CopyBackingStore, Unscaled);
 }
 
-RefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(Frame& frame, TextIndicatorPresentationTransition presentationTransition)
+RefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(Frame& frame, TextIndicatorPresentationTransition presentationTransition, unsigned margin)
 {
-    IntRect selectionRect = enclosingIntRect(frame.selection().selectionBounds());
-    std::unique_ptr<ImageBuffer> indicatorBuffer = snapshotSelection(frame, SnapshotOptionsForceBlackText);
-    if (!indicatorBuffer)
-        return nullptr;
-    RefPtr<Image> indicatorBitmap = indicatorBuffer->copyImage(CopyBackingStore, Unscaled);
-    if (!indicatorBitmap)
-        return nullptr;
-
-    RefPtr<Image> indicatorBitmapWithHighlight;
-    if (presentationTransition == TextIndicatorPresentationTransition::BounceAndCrossfade)
-        indicatorBitmapWithHighlight = snapshotSelectionWithHighlight(frame);
-
-    // Store the selection rect in window coordinates, to be used subsequently
-    // to determine if the indicator and selection still precisely overlap.
-    IntRect selectionRectInRootViewCoordinates = frame.view()->contentsToRootView(selectionRect);
-
     Vector<FloatRect> textRects;
     frame.selection().getClippedVisibleTextRectangles(textRects);
 
@@ -115,9 +99,15 @@ RefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(Frame& frame, Te
     // rect when the selection spans multiple lines; the indicator doesn't actually
     // care where the selection highlight goes, just where the text actually is.
     FloatRect textBoundingRectInRootViewCoordinates;
+    FloatRect textBoundingRectInDocumentCoordinates;
     Vector<FloatRect> textRectsInRootViewCoordinates;
     for (const FloatRect& textRect : textRects) {
-        FloatRect textRectInRootViewCoordinates = frame.view()->contentsToRootView(enclosingIntRect(textRect));
+        FloatRect textRectInDocumentCoordinatesIncludingMargin = textRect;
+        textRectInDocumentCoordinatesIncludingMargin.inflate(margin);
+
+        textBoundingRectInDocumentCoordinates.unite(textRectInDocumentCoordinatesIncludingMargin);
+
+        FloatRect textRectInRootViewCoordinates = frame.view()->contentsToRootView(enclosingIntRect(textRectInDocumentCoordinatesIncludingMargin));
         textRectsInRootViewCoordinates.append(textRectInRootViewCoordinates);
         textBoundingRectInRootViewCoordinates.unite(textRectInRootViewCoordinates);
     }
@@ -128,8 +118,29 @@ RefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(Frame& frame, Te
         textRectsInBoundingRectCoordinates.append(rect);
     }
 
+    // FIXME: We should have TextIndicator options instead of this being platform-specific.
+#if PLATFORM(IOS)
+    SnapshotOptions snapshotOptions = SnapshotOptionsNone;
+#else
+    SnapshotOptions snapshotOptions = SnapshotOptionsForceBlackText | SnapshotOptionsPaintSelectionOnly;
+#endif
+
+    std::unique_ptr<ImageBuffer> indicatorBuffer = snapshotFrameRect(frame, enclosingIntRect(textBoundingRectInDocumentCoordinates), snapshotOptions);
+    if (!indicatorBuffer)
+        return nullptr;
+    RefPtr<Image> indicatorBitmap = indicatorBuffer->copyImage(CopyBackingStore, Unscaled);
+    if (!indicatorBitmap)
+        return nullptr;
+
+    RefPtr<Image> indicatorBitmapWithHighlight;
+    if (presentationTransition == TextIndicatorPresentationTransition::BounceAndCrossfade)
+        indicatorBitmapWithHighlight = snapshotSelectionWithHighlight(frame);
+
     TextIndicatorData data;
-    data.selectionRectInRootViewCoordinates = selectionRectInRootViewCoordinates;
+
+    // Store the selection rect in window coordinates, to be used subsequently
+    // to determine if the indicator and selection still precisely overlap.
+    data.selectionRectInRootViewCoordinates = frame.view()->contentsToRootView(enclosingIntRect(frame.selection().selectionBounds()));
     data.textBoundingRectInRootViewCoordinates = textBoundingRectInRootViewCoordinates;
     data.textRectsInBoundingRectCoordinates = textRectsInBoundingRectCoordinates;
     data.contentImageScaleFactor = frame.page()->deviceScaleFactor();

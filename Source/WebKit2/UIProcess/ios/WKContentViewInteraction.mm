@@ -62,8 +62,11 @@
 #import <WebCore/CoreGraphicsSPI.h>
 #import <WebCore/FloatQuad.h>
 #import <WebCore/Pasteboard.h>
+#import <WebCore/Path.h>
+#import <WebCore/PathUtilities.h>
 #import <WebCore/Scrollbar.h>
 #import <WebCore/SoftLinking.h>
+#import <WebCore/TextIndicator.h>
 #import <WebCore/WebEvent.h>
 #import <WebKit/WebSelectionRect.h> // FIXME: WK2 should not include WebKit headers!
 #import <WebKitSystemInterfaceIOS.h>
@@ -3315,7 +3318,31 @@ static bool isAssistableInputType(InputType type)
     [self _removeDefaultGestureRecognizers];
 
     [self _cancelInteraction];
-    [[viewController presentationController] setSourceRect:_positionInformation.bounds];
+
+    [_previewIndicatorView removeFromSuperview];
+
+    RefPtr<Image> image = _positionInformation.linkIndicator.contentImage;
+    if (!image) {
+        [[viewController presentationController] setSourceRect:_positionInformation.bounds];
+        [[viewController presentationController] setSourceView:self];
+        return;
+    }
+
+    RetainPtr<UIImage> indicatorImage = adoptNS([[UIImage alloc] initWithCGImage:image->getCGImageRef()]);
+    _previewIndicatorView = adoptNS([[UIImageView alloc] initWithImage:indicatorImage.get()]);
+
+    float deviceScaleFactor = _page->deviceScaleFactor();
+    const float cornerRadiusInPoints = 5;
+    Path path = PathUtilities::pathWithShrinkWrappedRects(_positionInformation.linkIndicator.textRectsInBoundingRectCoordinates, cornerRadiusInPoints * deviceScaleFactor);
+    RetainPtr<CAShapeLayer> maskLayer = adoptNS([[CAShapeLayer alloc] init]);
+    [maskLayer setPath:path.ensurePlatformPath()];
+
+    [_previewIndicatorView layer].mask = maskLayer.get();
+    [_previewIndicatorView setFrame:_positionInformation.linkIndicator.textBoundingRectInRootViewCoordinates];
+    [self addSubview:_previewIndicatorView.get()];
+
+    [[viewController presentationController] setSourceRect:[_previewIndicatorView bounds]];
+    [[viewController presentationController] setSourceView:_previewIndicatorView.get()];
 }
 
 - (void)didDismissPreviewViewController:(UIViewController *)viewController committing:(BOOL)committing
@@ -3326,6 +3353,9 @@ static bool isAssistableInputType(InputType type)
     id<WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
     if ([uiDelegate respondsToSelector:@selector(_webView:didDismissPreviewViewController:)])
         [uiDelegate _webView:_webView didDismissPreviewViewController:viewController];
+
+    [_previewIndicatorView removeFromSuperview];
+    _previewIndicatorView = nil;
 }
 
 @end

@@ -88,6 +88,7 @@
 #import <WebCore/RenderView.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/StyleProperties.h>
+#import <WebCore/TextIndicator.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/WKContentObservation.h>
@@ -2192,6 +2193,15 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
                     // Ensure that the image contains at most 600K pixels, so that it is not too big.
                     if (RefPtr<WebImage> snapshot = snapshotNode(*element, SnapshotOptionsShareable, 600 * 1024))
                         info.image = snapshot->bitmap();
+
+                    RefPtr<Range> linkRange = rangeOfContents(*linkElement);
+                    if (linkRange) {
+                        float deviceScaleFactor = corePage()->deviceScaleFactor();
+                        const float marginInPoints = 4;
+                        RefPtr<TextIndicator> textIndicator = TextIndicator::createWithRange(*linkRange, TextIndicatorPresentationTransition::FadeIn, marginInPoints * deviceScaleFactor);
+                        if (textIndicator)
+                            info.linkIndicator = textIndicator->data();
+                    }
                 } else if (element->renderer() && element->renderer()->isRenderImage()) {
                     auto& renderImage = downcast<RenderImage>(*(element->renderer()));
                     if (renderImage.cachedImage() && !renderImage.cachedImage()->errorOccurred()) {
