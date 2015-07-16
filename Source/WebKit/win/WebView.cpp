@@ -130,6 +130,7 @@
 #include <WebCore/PageCache.h>
 #include <WebCore/PageConfiguration.h>
 #include <WebCore/PageGroup.h>
+#include <WebCore/PathUtilities.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/PlatformWheelEvent.h>
@@ -6680,6 +6681,11 @@ HRESULT WebView::unused4()
 HRESULT WebView::unused5()
 {
     ASSERT_NOT_REACHED();
+
+    // The following line works around a linker issue in MSVC. unused5 should never be called,
+    // and this code does nothing more than force the symbol to be included in WebKit dll.
+    (void)WebCore::PathUtilities::pathWithShrinkWrappedRects(Vector<FloatRect>(), 0);
+
     return E_FAIL;
 }
 

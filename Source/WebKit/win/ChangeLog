@@ -1,3 +1,11 @@
+2015-07-16  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Gross workaround to fix build after r186858.
+
+        * WebView.cpp:
+        (WebView::unused5): Force export of WebCore symbol through
+        WebKit.dll.
+
 2015-07-15  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Maintain consistent COM Interfaces
