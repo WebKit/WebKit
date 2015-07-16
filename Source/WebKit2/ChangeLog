@@ -1,3 +1,37 @@
+2015-07-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Input method filter is always enabled when the view is focused
+        https://bugs.webkit.org/show_bug.cgi?id=146965
+
+        Reviewed by Martin Robinson.
+
+        It should only be enabled when the view is focused and there's an
+        editable element focused. In r138544, when input methods were
+        implemented, the message SetInputMethodState was added, but it was
+        never used. Instead, the notifyFocusIn method of the IM filter
+        enables the input method unconditionally. We should actually use
+        the SetInputMethodState message to enable/disable input methods
+        when editable elements are focused/unfocused.
+
+        * UIProcess/gtk/InputMethodFilter.cpp:
+        (WebKit::InputMethodFilter::setEnabled): Call notifyFocusedIn/Out
+        when inputs methods are enabled/disabled instead of notifying the
+        IM context directly.
+        (WebKit::InputMethodFilter::setCursorRect): Do not update the
+        cursor position if input methods are didabled.
+        (WebKit::InputMethodFilter::notifyFocusedIn): Do nothing when
+        input methods are disabled. Do not enable input methods
+        uncontionally here.
+        (WebKit::InputMethodFilter::notifyFocusedOut): Do not disable
+        input methods uncontionally here.
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::setInputMethodState): Call
+        WebPage::setInputMethodState() for GTK platform.
+        * WebProcess/WebPage/WebPage.h: Add setInputMethodState() for GTK platform.
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::setInputMethodState): Update input method state
+        and send SetInputMethodState message to the UI process if state changed.
+
 2015-07-15  Brady Eidson  <beidson@apple.com>
 
         REGRESSION(r186088): Crash under WebKit::WebPageProxy::didFailLoadForFrame

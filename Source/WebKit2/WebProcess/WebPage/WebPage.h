@@ -897,6 +897,10 @@ public:
     void postMessage(const String& messageName, API::Object* messageBody);
     void postSynchronousMessage(const String& messageName, API::Object* messageBody, RefPtr<API::Object>& returnData);
 
+#if PLATFORM(GTK)
+    void setInputMethodState(bool);
+#endif
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 
@@ -1388,6 +1392,10 @@ private:
     bool m_mainFrameProgressCompleted;
     bool m_shouldDispatchFakeMouseMoveEvents;
     bool m_isEditorStateMissingPostLayoutData { false };
+
+#if PLATFORM(GTK)
+    bool m_inputMethodEnabled { false };
+#endif
 };
 
 } // namespace WebKit

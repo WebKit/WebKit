@@ -522,9 +522,14 @@ void WebEditorClient::willSetInputMethodState()
 {
 }
 
-void WebEditorClient::setInputMethodState(bool)
+void WebEditorClient::setInputMethodState(bool enabled)
 {
+#if PLATFORM(GTK)
+    m_page->setInputMethodState(enabled);
+#else
     notImplemented();
+    UNUSED_PARAM(enabled);
+#endif
 }
 
 bool WebEditorClient::supportsGlobalSelection()

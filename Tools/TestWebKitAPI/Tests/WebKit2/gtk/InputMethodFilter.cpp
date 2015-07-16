@@ -47,8 +47,7 @@ public:
         gtk_widget_show(m_testWindow);
         gtk_im_context_set_client_window(context(), gtk_widget_get_window(m_testWindow));
 
-        // Focus in is necessary to activate the default input method in the multicontext.
-        notifyFocusedIn();
+        setEnabled(true);
     }
 
     ~TestInputMethodFilter()

@@ -176,4 +176,13 @@ void WebPage::getCenterForZoomGesture(const IntPoint& centerInViewCoordinates, I
 }
 #endif
 
+void WebPage::setInputMethodState(bool enabled)
+{
+    if (m_inputMethodEnabled == enabled)
+        return;
+
+    m_inputMethodEnabled = enabled;
+    send(Messages::WebPageProxy::SetInputMethodState(enabled));
+}
+
 } // namespace WebKit
