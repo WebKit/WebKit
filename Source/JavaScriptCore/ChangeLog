@@ -1,3 +1,10 @@
+2015-07-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix build for newer LLVMs.
+
+        * llvm/LLVMHeaders.h:
+        * llvm/library/LLVMExports.cpp:
+
 2015-07-16  Mark Lam  <mark.lam@apple.com>
 
         RegExp::match() should set m_state to ByteCode if compilation fails.
