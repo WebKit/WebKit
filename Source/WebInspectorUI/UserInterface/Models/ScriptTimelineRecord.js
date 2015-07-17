@@ -73,6 +73,13 @@ WebInspector.ScriptTimelineRecord = class ScriptTimelineRecord extends WebInspec
         if (this._profile || !this._profilePayload)
             return;
 
+        // FIXME: <https://webkit.org/b/147029> Web Inspector: Better share objects generated from timeline events (Records)
+        if (this._profilePayload.__profile) {
+            this._profile = this._profilePayload.__profile;
+            this._profilePayload = undefined;
+            return;
+        }
+
         var payload = this._profilePayload;
         this._profilePayload = undefined;
 
@@ -144,7 +151,7 @@ WebInspector.ScriptTimelineRecord = class ScriptTimelineRecord extends WebInspec
             }
         }
 
-        this._profile = new WebInspector.Profile(rootNodes);
+        this._profile = payload.__profile = new WebInspector.Profile(rootNodes);
     }
 };
 
