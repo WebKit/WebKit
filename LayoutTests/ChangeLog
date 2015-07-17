@@ -1,3 +1,17 @@
+2015-07-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, rename test file from promise-resolve-non-dom.js to promise-resolve-in-non-dom.js
+        https://bugs.webkit.org/show_bug.cgi?id=146828
+
+        This is the simple follow up patch.
+        When executing the JSC stress tests, script-tests's file name and the expectation file name should be equal.
+
+        * js/promise-resolve-in-non-dom.html:
+        * js/script-tests/promise-resolve-in-non-dom.js: Renamed from LayoutTests/js/script-tests/promise-resolve-non-dom.js.
+        (value.then):
+        * js/script-tests/promise-resolve-non-dom.js:
+        (value.then): Deleted.
+
 2015-07-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Video posters disappear once media has loaded
