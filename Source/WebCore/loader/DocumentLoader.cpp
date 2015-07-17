@@ -836,8 +836,10 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
 
     for (auto& pendingStyleSheet : m_pendingNamedContentExtensionStyleSheets)
         styleSheetCollection.maybeAddContentExtensionSheet(pendingStyleSheet.key, *pendingStyleSheet.value);
-    for (auto& pendingSelector : m_pendingContentExtensionDisplayNoneSelectors)
-        styleSheetCollection.addDisplayNoneSelector(pendingSelector.key, pendingSelector.value.first, pendingSelector.value.second);
+    for (auto& pendingSelectorEntry : m_pendingContentExtensionDisplayNoneSelectors) {
+        for (const auto& pendingSelector : pendingSelectorEntry.value)
+            styleSheetCollection.addDisplayNoneSelector(pendingSelectorEntry.key, pendingSelector.first, pendingSelector.second);
+    }
 
     m_pendingNamedContentExtensionStyleSheets.clear();
     m_pendingContentExtensionDisplayNoneSelectors.clear();
@@ -1588,7 +1590,8 @@ void DocumentLoader::addPendingContentExtensionSheet(const String& identifier, S
 void DocumentLoader::addPendingContentExtensionDisplayNoneSelector(const String& identifier, const String& selector, uint32_t selectorID)
 {
     ASSERT(!m_gotFirstByte);
-    m_pendingContentExtensionDisplayNoneSelectors.set(identifier, std::make_pair(selector, selectorID));
+    auto addResult = m_pendingContentExtensionDisplayNoneSelectors.add(identifier, Vector<std::pair<String, uint32_t>>());
+    addResult.iterator->value.append(std::make_pair(selector, selectorID));
 }
 #endif
 

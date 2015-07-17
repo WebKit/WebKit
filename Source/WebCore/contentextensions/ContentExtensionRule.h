@@ -51,12 +51,21 @@ struct Trigger {
         IfDomain,
         UnlessDomain,
     } domainCondition { DomainCondition::None };
-    
+
     ~Trigger()
     {
         ASSERT(domains.isEmpty() == (domainCondition == DomainCondition::None));
     }
-    
+
+    bool isEmpty() const
+    {
+        return urlFilter.isEmpty()
+            && !urlFilterIsCaseSensitive
+            && !flags
+            && domains.isEmpty()
+            && domainCondition == DomainCondition::None;
+    }
+
     bool operator==(const Trigger& other) const
     {
         return urlFilter == other.urlFilter
@@ -66,7 +75,58 @@ struct Trigger {
             && domainCondition == other.domainCondition;
     }
 };
-    
+
+struct TriggerHash {
+    static unsigned hash(const Trigger& trigger)
+    {
+        unsigned hash = trigger.urlFilterIsCaseSensitive ? 10619863 : 40960001;
+        if (!trigger.urlFilter.isNull())
+            hash ^= StringHash::hash(trigger.urlFilter);
+        hash = WTF::pairIntHash(hash, DefaultHash<ResourceFlags>::Hash::hash(trigger.flags));
+
+        for (const String& domain : trigger.domains)
+            hash ^= StringHash::hash(domain);
+
+        if (trigger.domainCondition == Trigger::DomainCondition::IfDomain)
+            hash |= 1 << 16;
+        else if (trigger.domainCondition == Trigger::DomainCondition::IfDomain)
+            hash |= 1 << 31;
+        return hash;
+    }
+
+    static bool equal(const Trigger& a, const Trigger& b)
+    {
+        return a == b;
+    }
+
+    static const bool safeToCompareToEmptyOrDeleted = false;
+};
+
+struct TriggerHashTraits : public WTF::CustomHashTraits<Trigger> {
+    static const bool emptyValueIsZero = false;
+    static const bool hasIsEmptyValueFunction = true;
+
+    static void constructDeletedValue(Trigger& trigger)
+    {
+        new (NotNull, std::addressof(trigger.urlFilter)) String(WTF::HashTableDeletedValue);
+    }
+
+    static bool isDeletedValue(const Trigger& trigger)
+    {
+        return trigger.urlFilter.isHashTableDeletedValue();
+    }
+
+    static Trigger emptyValue()
+    {
+        return Trigger();
+    }
+
+    static bool isEmptyValue(const Trigger& trigger)
+    {
+        return trigger.isEmpty();
+    }
+};
+
 struct Action {
     Action()
         : m_type(ActionType::InvalidAction)

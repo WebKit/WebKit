@@ -156,7 +156,6 @@ void ContentExtensionsBackend::processContentExtensionRulesForLoad(ResourceReque
     ResourceLoadInfo resourceLoadInfo = { request.url(), mainDocumentURL, resourceType };
     Vector<ContentExtensions::Action> actions = actionsForResourceLoad(resourceLoadInfo);
 
-    StringBuilder css;
     bool willBlockLoad = false;
     for (const auto& action : actions) {
         switch (action.type()) {

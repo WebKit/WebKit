@@ -445,7 +445,7 @@ namespace WebCore {
 
 #if ENABLE(CONTENT_EXTENSIONS)
         HashMap<String, RefPtr<StyleSheetContents>> m_pendingNamedContentExtensionStyleSheets;
-        HashMap<String, std::pair<String, uint32_t>> m_pendingContentExtensionDisplayNoneSelectors;
+        HashMap<String, Vector<std::pair<String, uint32_t>>> m_pendingContentExtensionDisplayNoneSelectors;
 #endif
 
 #ifndef NDEBUG
