@@ -1,5 +1,22 @@
 2015-07-16  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r186812. rdar://problem/21818117
+
+    2015-07-14  Sam Weinig  <sam@webkit.org>
+
+            WebKit needs to serialize numeric values in NSError userInfo
+            <rdar://problem/21818117>
+            https://bugs.webkit.org/show_bug.cgi?id=146936
+
+            Reviewed by Anders Carlsson.
+
+            * Shared/mac/WebCoreArgumentCodersMac.mm:
+            (IPC::ArgumentCoder<ResourceError>::encodePlatformData):
+            Encode userInfo values that are NSNumbers in addition to NSStrings and NSURLs. Decoding
+            is already handled.
+
+2015-07-16  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r186786. rdar://problem/9222837
 
     2015-07-13  Simon Fraser  <simon.fraser@apple.com>
