@@ -90,6 +90,9 @@ private:
     virtual void didFinishLoadForMainFrame() override final { }
     virtual void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) override final { }
 
+    virtual void refView() override final { }
+    virtual void derefView() override final { }
+
 private:
     EwkView* m_ewkView;
     bool m_hasRequestedFullScreen;

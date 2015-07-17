@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
  * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
@@ -133,6 +134,9 @@ private:
     virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled) override;
 
     virtual void didChangeBackgroundColor() override;
+
+    virtual void refView() override { };
+    virtual void derefView() override { };
 
     // Members of PageClientImpl class
     GtkWidget* m_viewWidget;

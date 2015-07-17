@@ -326,6 +326,8 @@ public:
     virtual WebCore::WebMediaSessionManager& mediaSessionManager() = 0;
 #endif
 
+    virtual void refView() = 0;
+    virtual void derefView() = 0;
 };
 
 } // namespace WebKit

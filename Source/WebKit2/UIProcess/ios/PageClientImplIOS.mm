@@ -739,6 +739,20 @@ void PageClientImpl::didChangeBackgroundColor()
     [m_webView _updateScrollViewBackground];
 }
 
+void PageClientImpl::refView()
+{
+    [m_contentView retain];
+    [m_webView retain];
+    [m_wkView retain];
+}
+
+void PageClientImpl::derefView()
+{
+    [m_contentView release];
+    [m_webView release];
+    [m_wkView release];
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS)

@@ -216,6 +216,9 @@ private:
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     virtual WebCore::WebMediaSessionManager& mediaSessionManager() override;
 #endif
+
+    virtual void refView() override;
+    virtual void derefView() override;
 };
 
 } // namespace WebKit
