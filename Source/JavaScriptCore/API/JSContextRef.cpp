@@ -59,14 +59,7 @@ static const int32_t webkitFirstVersionWithConcurrentGlobalContexts = 0x2100500;
 
 using namespace JSC;
 
-static RuntimeFlags javaScriptRuntimeFlags(const JSGlobalObject* globalObject)
-{
-    RuntimeFlags runtimeFlags = JSGlobalObject::javaScriptRuntimeFlags(globalObject);
-    runtimeFlags.setPromiseDisabled(true);
-    return runtimeFlags;
-}
-
-const GlobalObjectMethodTable JSC::javaScriptCoreAPIGlobalObjectMethodTable = { &JSGlobalObject::allowsAccessFrom, &JSGlobalObject::supportsProfiling, &JSGlobalObject::supportsRichSourceInfo, &JSGlobalObject::shouldInterruptScript, &javaScriptRuntimeFlags, nullptr, &JSGlobalObject::shouldInterruptScriptBeforeTimeout };
+const GlobalObjectMethodTable JSC::javaScriptCoreAPIGlobalObjectMethodTable = { &JSGlobalObject::allowsAccessFrom, &JSGlobalObject::supportsProfiling, &JSGlobalObject::supportsRichSourceInfo, &JSGlobalObject::shouldInterruptScript, &JSGlobalObject::javaScriptRuntimeFlags, nullptr, &JSGlobalObject::shouldInterruptScriptBeforeTimeout };
 
 // From the API's perspective, a context group remains alive iff
 //     (a) it has been JSContextGroupRetained

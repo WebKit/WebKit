@@ -157,7 +157,7 @@ namespace JSC {
 
 const ClassInfo JSGlobalObject::s_info = { "GlobalObject", &Base::s_info, &globalObjectTable, CREATE_METHOD_TABLE(JSGlobalObject) };
 
-const GlobalObjectMethodTable JSGlobalObject::s_globalObjectMethodTable = { &allowsAccessFrom, &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript, &javaScriptRuntimeFlags, 0, &shouldInterruptScriptBeforeTimeout };
+const GlobalObjectMethodTable JSGlobalObject::s_globalObjectMethodTable = { &allowsAccessFrom, &supportsProfiling, &supportsRichSourceInfo, &shouldInterruptScript, &javaScriptRuntimeFlags, nullptr, &shouldInterruptScriptBeforeTimeout };
 
 /* Source for JSGlobalObject.lut.h
 @begin globalObjectTable
@@ -990,10 +990,12 @@ void JSGlobalObject::setName(const String& name)
 
 void JSGlobalObject::queueMicrotask(PassRefPtr<Microtask> task)
 {
-    if (globalObjectMethodTable()->queueTaskToEventLoop)
+    if (globalObjectMethodTable()->queueTaskToEventLoop) {
         globalObjectMethodTable()->queueTaskToEventLoop(this, task);
-    else
-        WTFLogAlways("ERROR: Event loop not supported.");
+        return;
+    }
+
+    vm().queueMicrotask(this, task);
 }
 
 } // namespace JSC

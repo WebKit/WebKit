@@ -1401,6 +1401,7 @@ static void runInteractive(GlobalObject* globalObject)
             printf("%s\n", returnValue.toString(globalObject->globalExec())->value(globalObject->globalExec()).utf8().data());
 
         globalObject->globalExec()->clearException();
+        globalObject->vm().drainMicrotasks();
     }
     printf("\n");
 }

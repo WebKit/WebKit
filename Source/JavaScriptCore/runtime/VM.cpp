@@ -824,6 +824,22 @@ void VM::dumpTypeProfilerData()
     typeProfiler()->dumpTypeProfilerData(*this);
 }
 
+void VM::queueMicrotask(JSGlobalObject* globalObject, PassRefPtr<Microtask> task)
+{
+    m_microtaskQueue.append(std::make_unique<QueuedTask>(*this, globalObject, task));
+}
+
+void VM::drainMicrotasks()
+{
+    while (!m_microtaskQueue.isEmpty())
+        m_microtaskQueue.takeFirst()->run();
+}
+
+void QueuedTask::run()
+{
+    m_microtask->run(m_globalObject->globalExec());
+}
+
 void sanitizeStackForVM(VM* vm)
 {
     logSanitizeStack(vm);

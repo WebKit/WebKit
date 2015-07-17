@@ -540,9 +540,16 @@ static void testObjectiveCAPIMain()
 
     @autoreleasepool {
         JSContext *context = [[JSContext alloc] init];
-        checkResult(@"Promise is not exposed", [context[@"Promise"] isUndefined]);
+        checkResult(@"Promise is exposed", ![context[@"Promise"] isUndefined]);
         JSValue *result = [context evaluateScript:@"typeof Promise"];
-        checkResult(@"typeof Promise is 'undefined'", result.isString && [result isEqualToObject:@"undefined"]);
+        checkResult(@"typeof Promise is 'function'", result.isString && [result isEqualToObject:@"function"]);
+    }
+
+    @autoreleasepool {
+        JSVirtualMachine* vm = [[JSVirtualMachine alloc] init];
+        JSContext* context = [[JSContext alloc] initWithVirtualMachine:vm];
+        [context evaluateScript:@"result = 0; Promise.resolve(42).then(function (value) { result = value; });"];
+        checkResult(@"Microtask is drained", [context[@"result"]  isEqualToObject:@42]);
     }
 
     @autoreleasepool {

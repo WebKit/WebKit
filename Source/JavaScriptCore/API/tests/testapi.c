@@ -1854,21 +1854,43 @@ int main(int argc, char* argv[])
         JSObjectRef globalObject = JSContextGetGlobalObject(context);
         {
             JSStringRef promiseProperty = JSStringCreateWithUTF8CString("Promise");
-            ASSERT(!JSObjectHasProperty(context, globalObject, promiseProperty));
+            ASSERT(JSObjectHasProperty(context, globalObject, promiseProperty));
             JSStringRelease(promiseProperty);
         }
         {
             JSStringRef script = JSStringCreateWithUTF8CString("typeof Promise");
-            JSStringRef undefined = JSStringCreateWithUTF8CString("undefined");
+            JSStringRef function = JSStringCreateWithUTF8CString("function");
             JSValueRef value = JSEvaluateScript(context, script, NULL, NULL, 1, NULL);
             ASSERT(JSValueIsString(context, value));
             JSStringRef valueAsString = JSValueToStringCopy(context, value, NULL);
-            ASSERT(JSStringIsEqual(valueAsString, undefined));
+            ASSERT(JSStringIsEqual(valueAsString, function));
             JSStringRelease(valueAsString);
-            JSStringRelease(undefined);
+            JSStringRelease(function);
             JSStringRelease(script);
         }
-        printf("PASS: Promise is not exposed under JSContext API.\n");
+        printf("PASS: Promise is exposed under JSContext API.\n");
+    }
+
+    // Check microtasks.
+    {
+        JSGlobalContextRef context = JSGlobalContextCreateInGroup(NULL, NULL);
+        {
+            JSObjectRef globalObject = JSContextGetGlobalObject(context);
+            JSValueRef exception;
+            JSStringRef code = JSStringCreateWithUTF8CString("result = 0; Promise.resolve(42).then(function (value) { result = value; });");
+            JSStringRef file = JSStringCreateWithUTF8CString("");
+            assertTrue(JSEvaluateScript(context, code, globalObject, file, 1, &exception), "An exception should not be thrown");
+            JSStringRelease(code);
+            JSStringRelease(file);
+
+            JSStringRef resultProperty = JSStringCreateWithUTF8CString("result");
+            ASSERT(JSObjectHasProperty(context, globalObject, resultProperty));
+
+            JSValueRef resultValue = JSObjectGetProperty(context, globalObject, resultProperty, &exception);
+            assertEqualsAsNumber(resultValue, 42);
+            JSStringRelease(resultProperty);
+        }
+        JSGlobalContextRelease(context);
     }
 
 #if OS(DARWIN)

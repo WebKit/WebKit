@@ -1,3 +1,7 @@
 wasPostTestScriptParsed = true;
 
-finishJSTest();
+if (this.jsTestIsAsync) {
+    if (this.wasFinishJSTestCalled)
+        finishJSTest();
+} else
+    finishJSTest();
