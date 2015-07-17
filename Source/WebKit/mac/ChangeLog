@@ -1,5 +1,21 @@
 2015-07-16  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r186919. rdar://problem/21834578
+
+    2015-07-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: [Mac] Save dialog not working when inspector is docked
+            https://bugs.webkit.org/show_bug.cgi?id=146991
+
+            Reviewed by Sam Weinig.
+
+            * WebCoreSupport/WebInspectorClient.mm:
+            (WebInspectorFrontendClient::save):
+            (-[WebInspectorWindowController webView:runOpenPanelForFileButtonWithResultListener:allowMultipleFiles:]):
+            When the window is nil (docked) use a non-window version of running the dialog.
+
+2015-07-16  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r186909. rdar://problem/21802456
 
     2015-07-13  Simon Fraser  <simon.fraser@apple.com>

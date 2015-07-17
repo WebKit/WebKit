@@ -234,8 +234,7 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
 
     WKRetain(listener);
 
-    // If the inspector is detached, then openPanel will be window-modal; otherwise, openPanel is opened in a new window.
-    [openPanel beginSheetModalForWindow:webInspectorProxy->inspectorWindow() completionHandler:^(NSInteger result) {
+    auto completionHandler = ^(NSInteger result) {
         if (result == NSFileHandlingPanelOKButton) {
             WKMutableArrayRef fileURLs = WKMutableArrayCreate();
 
@@ -252,7 +251,12 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
             WKOpenPanelResultListenerCancel(listener);
 
         WKRelease(listener);
-    }];
+    };
+
+    if (webInspectorProxy->inspectorWindow())
+        [openPanel beginSheetModalForWindow:webInspectorProxy->inspectorWindow() completionHandler:completionHandler];
+    else
+        completionHandler([openPanel runModal]);
 }
 
 void WebInspectorProxy::attachmentViewDidChange(NSView *oldView, NSView *newView)
@@ -618,12 +622,17 @@ void WebInspectorProxy::platformSave(const String& suggestedURL, const String& c
     panel.nameFieldStringValue = platformURL.lastPathComponent;
     panel.directoryURL = [platformURL URLByDeletingLastPathComponent];
 
-    [panel beginSheetModalForWindow:m_inspectorWindow.get() completionHandler:^(NSInteger result) {
+    auto completionHandler = ^(NSInteger result) {
         if (result == NSFileHandlingPanelCancelButton)
             return;
         ASSERT(result == NSFileHandlingPanelOKButton);
         saveToURL(panel.URL);
-    }];
+    };
+
+    if (m_inspectorWindow)
+        [panel beginSheetModalForWindow:m_inspectorWindow.get() completionHandler:completionHandler];
+    else
+        completionHandler([panel runModal]);
 }
 
 void WebInspectorProxy::platformAppend(const String& suggestedURL, const String& content)
