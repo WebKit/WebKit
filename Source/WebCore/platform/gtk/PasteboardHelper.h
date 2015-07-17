@@ -25,18 +25,19 @@
 #ifndef PasteboardHelper_h
 #define PasteboardHelper_h
 
-#include <glib-object.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
+#include <wtf/glib/GRefPtr.h>
 
 namespace WebCore {
 
 class DataObjectGtk;
 
 class PasteboardHelper {
+    WTF_MAKE_NONCOPYABLE(PasteboardHelper);
 public:
-    PasteboardHelper();
-    virtual ~PasteboardHelper();
-    static PasteboardHelper* defaultPasteboardHelper();
+    static PasteboardHelper& singleton();
 
     enum SmartPasteInclusion { IncludeSmartPaste, DoNotIncludeSmartPaste };
 
@@ -52,7 +53,12 @@ public:
     bool clipboardContentSupportsSmartReplace(GtkClipboard*);
 
 private:
-    GtkTargetList* m_targetList;
+    PasteboardHelper();
+    ~PasteboardHelper() = delete;
+
+    GRefPtr<GtkTargetList> m_targetList;
+
+    friend class WTF::NeverDestroyed<PasteboardHelper>;
 };
 
 }

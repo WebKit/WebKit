@@ -1,3 +1,21 @@
+2015-07-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Cleanup PasteboardHelper
+        https://bugs.webkit.org/show_bug.cgi?id=147035
+
+        Reviewed by Žan Doberšek.
+
+        Use PasteboardHelper::singleton() instead of
+        PasteboardHelper::defaultPasteboardHelper().
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseConstructed):
+        * UIProcess/gtk/DragAndDropHandler.cpp:
+        (WebKit::DragAndDropHandler::startDrag):
+        (WebKit::DragAndDropHandler::fillDragData):
+        (WebKit::DragAndDropHandler::dataObjectForDropData):
+        (WebKit::DragAndDropHandler::requestDragData):
+
 2015-07-16  Matt Baker  <mattbaker@apple.com>
 
         [Mac] Web Inspector toolbar can be covered by the Safari tab bar when docked to the right
