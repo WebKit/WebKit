@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,10 +30,13 @@
 #include "InbandTextTrackPrivateAVCF.h"
 
 #include "FloatConversion.h"
+#include "ISOVTTCue.h"
 #include "InbandTextTrackPrivate.h"
 #include "InbandTextTrackPrivateAVF.h"
 #include "Logging.h"
+#include "MediaTimeAVFoundation.h"
 #include "SoftLinking.h"
+#include <JavaScriptCore/ArrayBuffer.h>
 
 #include <AVFoundationCF/AVCFPlayerItemLegibleOutput.h>
 #include <AVFoundationCF/AVFoundationCF.h>
@@ -182,6 +185,29 @@ AtomicString InbandTextTrackPrivateAVCF::language() const
 bool InbandTextTrackPrivateAVCF::isDefault() const
 {
     return false;
+}
+
+bool InbandTextTrackPrivateAVCF::readNativeSampleBuffer(CFArrayRef nativeSamples, CFIndex index, RefPtr<ArrayBuffer>& buffer, MediaTime& duration, CMFormatDescriptionRef& formatDescription)
+{
+    const AVCFPlayerItemLegibleOutputSample* sampleBuffer = reinterpret_cast<const AVCFPlayerItemLegibleOutputSample*>(CFArrayGetValueAtIndex(nativeSamples, index));
+    if (!sampleBuffer)
+        return false;
+
+    duration = toMediaTime(sampleBuffer->duration);
+    formatDescription = sampleBuffer->formatDescription;
+
+    size_t bufferLength = CFDataGetLength(sampleBuffer->buffer);
+    if (bufferLength < ISOBox::boxHeaderSize()) {
+        LOG(Media, "InbandTextTrackPrivateLegacyAVCF::readNativeSampleBuffer(%p) - ERROR: CFBuffer size length unexpectedly small (%zu)!!", this, bufferLength);
+        return false;
+    }
+
+    m_sampleInputBuffer.resize(m_sampleInputBuffer.size() + bufferLength);
+    CFDataGetBytes(sampleBuffer->buffer, CFRangeMake(0, bufferLength), reinterpret_cast<UInt8*>(m_sampleInputBuffer.data()) + m_sampleInputBuffer.size() - bufferLength);
+
+    buffer = ArrayBuffer::create(m_sampleInputBuffer.data(), m_sampleInputBuffer.size());
+
+    return true;
 }
 
 } // namespace WebCore
