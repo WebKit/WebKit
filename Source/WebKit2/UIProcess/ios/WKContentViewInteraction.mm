@@ -218,6 +218,8 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 @interface UIWebFormAccessory (StagingToRemove)
 - (id)initWithInputAssistantItem:(UITextInputAssistantItem *)inputAssistantItem;
 @end
+
+@protocol UISelectionInteractionAssistant;
 #endif
 
 @interface WKFormInputSession : NSObject <_WKFormInputSession>
@@ -2544,6 +2546,14 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     return _webSelectionAssistant.get();
 }
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
+- (id<UISelectionInteractionAssistant>)selectionInteractionAssistant
+{
+    if ([_webSelectionAssistant conformsToProtocol:@protocol(UISelectionInteractionAssistant)])
+        return (id<UISelectionInteractionAssistant>)_webSelectionAssistant.get();
+    return nil;
+}
+#endif
 
 // NSRange support.  Would like to deprecate to the extent possible, although some support
 // (i.e. selectionRange) has shipped as API.

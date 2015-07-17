@@ -1,3 +1,17 @@
+2015-07-17  Enrica Casucci  <enrica@apple.com>
+
+        [iOS] Implement selectionInteractionAssistant accessor.
+        https://bugs.webkit.org/show_bug.cgi?id=147054
+        rdar://problem/20864286
+
+        Reviewed by Tim Horton.
+
+        One more change to adopt the new selection interaction
+        model on iOS.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView selectionInteractionAssistant]):
+
 2015-07-17  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION (r186964): Crash in WebKit2.CloseFromWithinCreatePage
