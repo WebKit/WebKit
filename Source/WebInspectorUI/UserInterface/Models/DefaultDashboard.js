@@ -223,6 +223,11 @@ WebInspector.DefaultDashboard = class DefaultDashboard extends WebInspector.Obje
         this._stopUpdatingTime();
     }
 
+    _resourceSizeDidChange(event)
+    {
+        this.resourcesSize += event.target.size - event.data.previousSize;
+    }
+
     _consoleMessageAdded(event)
     {
         var message = event.data.message;
