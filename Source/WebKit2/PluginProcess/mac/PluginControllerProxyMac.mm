@@ -35,6 +35,7 @@
 #import "PluginProxyMessages.h"
 #import "WebProcessConnection.h"
 #import <QuartzCore/QuartzCore.h>
+#import <WebCore/GraphicsContextCG.h>
 
 using namespace WebCore;
 
@@ -138,6 +139,11 @@ void PluginControllerProxy::updateLayerHostingContext(LayerHostingMode layerHost
             break;
 #endif
     }
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+    m_layerHostingContext->setColorSpace(sRGBColorSpaceRef());
+    m_layerHostingContext->setColorMatchUntaggedContent(true);
+#endif
 
     m_layerHostingContext->setRootLayer(platformLayer);
 }
