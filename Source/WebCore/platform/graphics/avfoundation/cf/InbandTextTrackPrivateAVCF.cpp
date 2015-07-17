@@ -189,6 +189,7 @@ bool InbandTextTrackPrivateAVCF::isDefault() const
 
 bool InbandTextTrackPrivateAVCF::readNativeSampleBuffer(CFArrayRef nativeSamples, CFIndex index, RefPtr<ArrayBuffer>& buffer, MediaTime& duration, CMFormatDescriptionRef& formatDescription)
 {
+#if HAVE(AVCFPLAYERITEM_CALLBACK_VERSION_2)
     const AVCFPlayerItemLegibleOutputSample* sampleBuffer = reinterpret_cast<const AVCFPlayerItemLegibleOutputSample*>(CFArrayGetValueAtIndex(nativeSamples, index));
     if (!sampleBuffer)
         return false;
@@ -208,6 +209,9 @@ bool InbandTextTrackPrivateAVCF::readNativeSampleBuffer(CFArrayRef nativeSamples
     buffer = ArrayBuffer::create(m_sampleInputBuffer.data(), m_sampleInputBuffer.size());
 
     return true;
+#else
+    return InbandTextTrackPrivateAVF::readNativeSampleBuffer(nativeSamples, index, buffer, duration, formatDescription);
+#endif
 }
 
 } // namespace WebCore
