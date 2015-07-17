@@ -37,13 +37,8 @@
 #include <wtf/HashSet.h>
 
 #if PLATFORM(IOS)
-#ifdef __OBJC__
-@class WAKScrollView;
-@class WAKView;
-#else
-class WAKScrollView;
-class WAKView;
-#endif
+OBJC_CLASS WAKScrollView;
+OBJC_CLASS WAKView;
 
 #ifndef NSScrollView
 #define NSScrollView WAKScrollView
@@ -55,6 +50,7 @@ class WAKView;
 #endif // PLATFORM(IOS)
 
 #if PLATFORM(COCOA) && defined __OBJC__
+@class NSScrollView;
 @protocol WebCoreFrameScrollView;
 #endif
 
