@@ -289,22 +289,16 @@ void RegExp::compile(VM* vm, Yarr::YarrCharSize charSize)
 #if ENABLE(YARR_JIT)
     if (!pattern.m_containsBackreferences && !pattern.containsUnsignedLengthPattern() && vm->canUseRegExpJIT()) {
         Yarr::jitCompile(pattern, charSize, vm, m_regExpJITCode);
-#if ENABLE(YARR_JIT_DEBUG)
-        if (!m_regExpJITCode.isFallBack())
-            m_state = JITCode;
-        else
-            m_state = ByteCode;
-#else
         if (!m_regExpJITCode.isFallBack()) {
             m_state = JITCode;
             return;
         }
-#endif
     }
 #else
     UNUSED_PARAM(charSize);
 #endif
 
+    m_state = ByteCode;
     m_regExpBytecode = Yarr::byteCompile(pattern, &vm->m_regExpAllocator);
 }
 
@@ -414,22 +408,16 @@ void RegExp::compileMatchOnly(VM* vm, Yarr::YarrCharSize charSize)
 #if ENABLE(YARR_JIT)
     if (!pattern.m_containsBackreferences && !pattern.containsUnsignedLengthPattern() && vm->canUseRegExpJIT()) {
         Yarr::jitCompile(pattern, charSize, vm, m_regExpJITCode, Yarr::MatchOnly);
-#if ENABLE(YARR_JIT_DEBUG)
-        if (!m_regExpJITCode.isFallBack())
-            m_state = JITCode;
-        else
-            m_state = ByteCode;
-#else
         if (!m_regExpJITCode.isFallBack()) {
             m_state = JITCode;
             return;
         }
-#endif
     }
 #else
     UNUSED_PARAM(charSize);
 #endif
 
+    m_state = ByteCode;
     m_regExpBytecode = Yarr::byteCompile(pattern, &vm->m_regExpAllocator);
 }
 

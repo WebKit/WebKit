@@ -1,3 +1,31 @@
+2015-07-16  Mark Lam  <mark.lam@apple.com>
+
+        RegExp::match() should set m_state to ByteCode if compilation fails.
+        https://bugs.webkit.org/show_bug.cgi?id=147023
+
+        Reviewed by Michael Saboff.
+
+        A RegExp has a YarrCodeBlock that has 4 MacroAssemblerCodeRefs for compiled code.
+        If one of these compilations succeeds, RegExp::m_state will be set to JITCode.
+        Subsequently, if RegExp tries to compile another one of these but fails, m_state
+        will be left untouched i.e. it still says JITCode.  As a result, when
+        RegExp::match() later tries to execute the non-existant compiled code, it will
+        crash.
+
+        The fix is to downgrade m_state to ByteCode if RegExp ever fails to compile.
+        This failure should be rare.  We'll do the minimal work here to fix the issue and
+        keep an eye on the perf bots.  If perf regresses, we can do some optimization work then.
+
+        This issue is difficult to test for since it either requires a low memory condition
+        to trigger a failed RegExp compilation at the right moment, or for the RegExp to
+        succeed compilation in the MatchedOnly mode but fail in IncludeSubpatterns mode.
+        Instead, I manually tested it by instrumenting RegExp::compile() to fail once in every
+        10 compilation attempts.
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::compile):
+        (JSC::RegExp::compileMatchOnly):
+
 2015-07-15  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Fix armv7 build.
