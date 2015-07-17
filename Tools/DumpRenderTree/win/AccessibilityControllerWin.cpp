@@ -152,7 +152,7 @@ AccessibilityUIElement AccessibilityController::rootElement()
     if (FAILED(frame->webView(&view)))
         return 0;
 
-    COMPtr<IWebViewPrivate> viewPrivate(Query, view);
+    COMPtr<IWebViewPrivate2> viewPrivate(Query, view);
     if (!viewPrivate)
         return 0;
 

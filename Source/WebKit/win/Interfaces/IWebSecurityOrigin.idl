@@ -47,6 +47,10 @@ interface IWebSecurityOrigin : IUnknown
 
     HRESULT quota([out, retval] unsigned long long* result);
     HRESULT setQuota([in] unsigned long long quota);
+}
 
+[ uuid(54F73208-4E1D-4BED-BE25-4E076C0AAAD8) ]
+interface IWebSecurityOrigin2 : IWebSecurityOrigin
+{
     HRESULT initWithURL([in] BSTR);
 }

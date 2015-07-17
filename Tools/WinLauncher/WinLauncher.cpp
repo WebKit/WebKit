@@ -65,7 +65,7 @@ HRESULT WinLauncher::init()
     if (FAILED(hr))
         return hr;
 
-    hr = m_webView->QueryInterface(IID_IWebViewPrivate, reinterpret_cast<void**>(&m_webViewPrivate.GetInterfacePtr()));
+    hr = m_webView->QueryInterface(IID_IWebViewPrivate2, reinterpret_cast<void**>(&m_webViewPrivate.GetInterfacePtr()));
     if (FAILED(hr))
         return hr;
 

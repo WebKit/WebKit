@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -113,7 +113,7 @@ interface IWebEditingDelegate : IUnknown
     /*
         - (BOOL)webView:(WebView *)webView shouldInsertNode:(DOMNode *)node replacingDOMRange:(DOMRange *)range givenAction:(WebViewInsertAction)action;
     */
-    HRESULT shouldInsertNode([in] IWebView* webView, [in] IDOMNode* node, [in] IDOMRange* range, [in] WebViewInsertAction action, [out, retval] BOOL* result);
+    HRESULT shouldInsertNode([in] IWebView* webView, [in] IDOMNode* node, [in] IDOMRange* range, [in] WebViewInsertAction action);
 
     /*
         - (BOOL)webView:(WebView *)webView shouldInsertText:(NSString *)text replacingDOMRange:(DOMRange *)range givenAction:(WebViewInsertAction)action;
@@ -187,4 +187,15 @@ interface IWebEditingDelegate : IUnknown
     HRESULT sharedSpellCheckerExists([out, retval] BOOL* exists);
     HRESULT preflightChosenSpellServer();
     HRESULT updateGrammar();
+}
+
+[
+    uuid(9973D190-3346-4CAA-AB76-F070CAB0B59B)
+]
+interface IWebEditingDelegate2 : IWebEditingDelegate
+{
+    /*
+    - (BOOL)webView:(WebView *)webView shouldInsertNode:(DOMNode *)node replacingDOMRange:(DOMRange *)range givenAction:(WebViewInsertAction)action;
+    */
+    HRESULT shouldInsertNode([in] IWebView* webView, [in] IDOMNode* node, [in] IDOMRange* range, [in] WebViewInsertAction action, [out, retval] BOOL* result);
 }

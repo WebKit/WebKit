@@ -299,8 +299,11 @@ bool WebEditorClient::shouldInsertNode(Node* node, Range* insertingRange, Editor
         return true;
 
     BOOL shouldInsert = FALSE;
-    if (FAILED(editingDelegate->shouldInsertNode(m_webView, insertDOMNode.get(), insertingDOMRange.get(), static_cast<WebViewInsertAction>(givenAction), &shouldInsert)))
-        return true;
+    COMPtr<IWebEditingDelegate2> editingDelegate2(Query, editingDelegate);
+    if (editingDelegate2) {
+        if (FAILED(editingDelegate2->shouldInsertNode(m_webView, insertDOMNode.get(), insertingDOMRange.get(), static_cast<WebViewInsertAction>(givenAction), &shouldInsert)))
+            return true;
+    }
 
     return shouldInsert;
 }

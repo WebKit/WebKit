@@ -52,9 +52,11 @@ HRESULT EditingDelegate::QueryInterface(REFIID riid, void** ppvObject)
 {
     *ppvObject = 0;
     if (IsEqualGUID(riid, IID_IUnknown))
-        *ppvObject = static_cast<IWebEditingDelegate*>(this);
+        *ppvObject = static_cast<IWebEditingDelegate2*>(this);
     else if (IsEqualGUID(riid, IID_IWebEditingDelegate))
         *ppvObject = static_cast<IWebEditingDelegate*>(this);
+    else if (IsEqualGUID(riid, IID_IWebEditingDelegate2))
+        *ppvObject = static_cast<IWebEditingDelegate2*>(this);
     else if (IsEqualGUID(riid, IID_IWebNotificationObserver))
         *ppvObject = static_cast<IWebNotificationObserver*>(this);
     else
@@ -150,6 +152,14 @@ HRESULT EditingDelegate::shouldEndEditingInDOMRange(IWebView* /*webView*/, IDOMR
     return S_OK;
 }
 
+// IWebEditingDelegate
+HRESULT EditingDelegate::shouldInsertNode(IWebView* webView, IDOMNode* node, IDOMRange* range, WebViewInsertAction action)
+{
+    BOOL ignore;
+    return shouldInsertNode(webView, node, range, action, &ignore);
+}
+
+// IWebEditingDelegate2
 HRESULT EditingDelegate::shouldInsertNode(IWebView* /*webView*/, IDOMNode* node, IDOMRange* range, WebViewInsertAction action, BOOL* result)
 {
     static const char* insertActionString[] = {

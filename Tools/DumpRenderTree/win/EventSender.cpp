@@ -760,7 +760,7 @@ static JSValueRef scalePageByCallback(JSContextRef context, JSObjectRef function
     if (FAILED(frame->webView(&webView)))
         return JSValueMakeUndefined(context);
 
-    COMPtr<IWebViewPrivate> webViewPrivate;
+    COMPtr<IWebViewPrivate2> webViewPrivate;
     if (FAILED(webView->QueryInterface(&webViewPrivate)))
         return JSValueMakeUndefined(context);
 

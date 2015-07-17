@@ -79,7 +79,7 @@ interface IDropTargetHelper;
 
 class WebView 
     : public IWebView
-    , public IWebViewPrivate
+    , public IWebViewPrivate2
     , public IWebIBActions
     , public IWebViewCSS
     , public IWebViewEditing
@@ -609,7 +609,6 @@ public:
         /* [in] */ IWebNotification *notification);
 
     // IWebViewPrivate
-
     virtual HRESULT STDMETHODCALLTYPE MIMETypeForExtension(
         /* [in] */ BSTR extension,
         /* [retval][out] */ BSTR *mimeType);
@@ -841,6 +840,10 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setUsesLayeredWindow(BOOL);
     virtual HRESULT STDMETHODCALLTYPE usesLayeredWindow(BOOL*);
 
+    // IWebViewPrivate2
+    HRESULT STDMETHODCALLTYPE setLoadResourcesSerially(BOOL);
+    HRESULT STDMETHODCALLTYPE scaleWebView(double scale, POINT origin);
+    HRESULT STDMETHODCALLTYPE dispatchPendingLoadRequests();
     virtual HRESULT STDMETHODCALLTYPE setCustomBackingScaleFactor(double);
     virtual HRESULT STDMETHODCALLTYPE backingScaleFactor(double*);
 
@@ -1022,10 +1025,6 @@ private:
 
     bool m_shouldInvertColors;
     void setShouldInvertColors(bool);
-
-    HRESULT STDMETHODCALLTYPE setLoadResourcesSerially(BOOL);
-    HRESULT STDMETHODCALLTYPE scaleWebView(double scale, POINT origin);
-    HRESULT STDMETHODCALLTYPE dispatchPendingLoadRequests();
 
     float deviceScaleFactor() const;
 

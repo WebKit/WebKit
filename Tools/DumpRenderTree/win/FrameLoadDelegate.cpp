@@ -163,7 +163,7 @@ HRESULT FrameLoadDelegate::didCommitLoadForFrame(IWebView* webView, IWebFrame* f
     if (!done && gTestRunner->dumpFrameLoadCallbacks())
         printf("%s - didCommitLoadForFrame\n", descriptionSuitableForTestResult(frame).c_str());
 
-    COMPtr<IWebViewPrivate> webViewPrivate;
+    COMPtr<IWebViewPrivate2> webViewPrivate;
     HRESULT hr = webView->QueryInterface(&webViewPrivate);
     if (FAILED(hr))
         return hr;

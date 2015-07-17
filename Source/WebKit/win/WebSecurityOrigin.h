@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,7 @@
 #include "WebKit.h"
 #include <WebCore/SecurityOrigin.h>
 
-class DECLSPEC_UUID("6EB8D98F-2723-4472-88D3-5936F9D6E631") WebSecurityOrigin : public IWebSecurityOrigin {
+class DECLSPEC_UUID("6EB8D98F-2723-4472-88D3-5936F9D6E631") WebSecurityOrigin : public IWebSecurityOrigin2 {
 public:
     // WebSecurityOrigin
     static WebSecurityOrigin* createInstance(WebCore::SecurityOrigin* origin);
@@ -67,6 +67,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setQuota( 
         /* [in] */ unsigned long long quota);
 
+    // IWebSecurityOrigin2
     virtual HRESULT STDMETHODCALLTYPE initWithURL(/*[in]*/ BSTR);
 
 private:

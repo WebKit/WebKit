@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2015 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,7 @@
 #include <WebCore/BString.h>
 #include <wtf/RetainPtr.h>
 
-class WebPreferences : public IWebPreferences, public IWebPreferencesPrivate {
+class WebPreferences : public IWebPreferences, public IWebPreferencesPrivate2 {
 public:
     static WebPreferences* createInstance();
 protected:
@@ -150,12 +150,6 @@ public:
     
     virtual HRESULT STDMETHODCALLTYPE setJavaScriptEnabled( 
         /* [in] */ BOOL enabled);
-
-    virtual HRESULT STDMETHODCALLTYPE javaScriptRuntimeFlags(
-        /* [retval][out] */ unsigned*);
-
-    virtual HRESULT STDMETHODCALLTYPE setJavaScriptRuntimeFlags(
-        /* [in] */ unsigned);
 
     virtual HRESULT STDMETHODCALLTYPE javaScriptCanOpenWindowsAutomatically( 
         /* [retval][out] */ BOOL* enabled);
@@ -377,6 +371,11 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setExperimentalNotificationsEnabled(
         /* [in] */ BOOL enabled);
 
+    // These two methods are no-ops, and only retained to keep
+    // the Interface consistent. DO NOT USE THEM.
+    virtual HRESULT STDMETHODCALLTYPE setShouldPaintNativeControls(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE shouldPaintNativeControls(BOOL*);
+
     virtual HRESULT STDMETHODCALLTYPE setZoomsTextOnly( 
     /* [retval][out] */ BOOL zoomsTextOnly);
 
@@ -480,8 +479,17 @@ public:
     virtual HRESULT STDMETHODCALLTYPE mockScrollbarsEnabled(BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setMockScrollbarsEnabled(BOOL);
 
+    // These two methods are no-ops, and only retained to keep
+    // the Interface consistent. DO NOT USE THEM.
+    virtual HRESULT STDMETHODCALLTYPE screenFontSubstitutionEnabled(BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setScreenFontSubstitutionEnabled(BOOL);
+
     virtual HRESULT STDMETHODCALLTYPE isInheritURIQueryComponentEnabled(BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setEnableInheritURIQueryComponent(BOOL);
+
+    // IWebPreferencesPrivate2
+    virtual HRESULT STDMETHODCALLTYPE javaScriptRuntimeFlags(unsigned*);
+    virtual HRESULT STDMETHODCALLTYPE setJavaScriptRuntimeFlags(unsigned);
 
     // WebPreferences
 

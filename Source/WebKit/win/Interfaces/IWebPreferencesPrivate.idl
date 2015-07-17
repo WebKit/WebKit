@@ -64,6 +64,11 @@ interface IWebPreferencesPrivate : IUnknown
     HRESULT localStorageDatabasePath([out, retval] BSTR* location);
     HRESULT setLocalStorageDatabasePath([in] BSTR location);
 
+    // These two methods are no-ops, and only retained to keep
+    // the Interface consistent. DO NOT USE THEM.
+    HRESULT setShouldPaintNativeControls([in] BOOL shouldPaint);
+    HRESULT shouldPaintNativeControls([out, retval] BOOL* enabled);
+
     HRESULT setDatabasesEnabled([in] BOOL enabled);
     HRESULT databasesEnabled([out, retval] BOOL *enabled);
 
@@ -116,9 +121,6 @@ interface IWebPreferencesPrivate : IUnknown
     HRESULT javaScriptCanAccessClipboard([out, retval] BOOL *enabled);
     HRESULT setJavaScriptCanAccessClipboard([in] BOOL enabled);
 
-    HRESULT javaScriptRuntimeFlags([out, retval] unsigned* flags);
-    HRESULT setJavaScriptRuntimeFlags([in] unsigned flags);
-
     HRESULT isDNSPrefetchingEnabled([out, retval] BOOL *enabled);
     HRESULT setDNSPrefetchingEnabled([in] BOOL enabled);
 
@@ -152,6 +154,18 @@ interface IWebPreferencesPrivate : IUnknown
     HRESULT mockScrollbarsEnabled([out, retval] BOOL* enabled);
     HRESULT setMockScrollbarsEnabled([in] BOOL enabled);
 
+    // These two methods are no-ops, and only retained to keep
+    // the Interface consistent. DO NOT USE THEM.
+    HRESULT screenFontSubstitutionEnabled([out, retval] BOOL* enabled);
+    HRESULT setScreenFontSubstitutionEnabled([in] BOOL enabled);
+
     HRESULT isInheritURIQueryComponentEnabled([out, retval] BOOL* enabled);
     HRESULT setEnableInheritURIQueryComponent([in] BOOL enabled);
+}
+
+[ uuid(0E1DDB80-6B38-4ABC-A252-B58A83EB6D8C) ]
+interface IWebPreferencesPrivate2 : IWebPreferencesPrivate
+{
+    HRESULT javaScriptRuntimeFlags([out, retval] unsigned* flags);
+    HRESULT setJavaScriptRuntimeFlags([in] unsigned flags);
 }

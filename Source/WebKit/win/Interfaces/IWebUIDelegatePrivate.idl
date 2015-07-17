@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,7 +54,9 @@ interface IWebUIDelegatePrivate : IUnknown
     HRESULT unused2();
     HRESULT webViewScrolled([in] IWebView* sender);
     HRESULT webViewAddMessageToConsole([in] IWebView* sender, [in] BSTR message, [in] int lineNumber, [in] BSTR url, [in] BOOL isError);
-    HRESULT unused3();
+    // The following method is a no-op and is only here to maintain
+    // Interface compatibility. DO NOT USE.
+    HRESULT webViewShouldInterruptJavaScript([in] IWebView* sender, [out, retval] BOOL* result);
     HRESULT webViewReceivedFocus([in] IWebView* sender);
     HRESULT webViewLostFocus([in] IWebView* sender, [in] HWND loseFocusToHWnd);
     HRESULT doDragDrop([in] IWebView* sender, [in] IDataObject* dataObject, [in] IDropSource* dropSource, [in] DWORD okEffect, [out, retval] DWORD* performedEffect);
@@ -62,7 +64,7 @@ interface IWebUIDelegatePrivate : IUnknown
     HRESULT webViewPainted([in] IWebView* sender);
     HRESULT exceededDatabaseQuota([in] IWebView* sender, [in] IWebFrame* frame, [in] IWebSecurityOrigin* origin, [in] BSTR databaseIdentifier);
     HRESULT embeddedViewWithArguments([in] IWebView* sender, [in] IWebFrame* frame, [in] IPropertyBag* arguments, [out, retval] IWebEmbeddedView** view);
-    HRESULT unused4();
+    HRESULT unused3();
     HRESULT webViewClosing([in] IWebView* sender);
     HRESULT webViewSetCursor([in] IWebView* sender, [in] HCURSOR cursor);
     HRESULT webViewDidInvalidate([in] IWebView* sender);
