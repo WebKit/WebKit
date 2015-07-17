@@ -1,3 +1,21 @@
+2015-07-16  Mark Lam  <mark.lam@apple.com>
+
+        Remove leak of objects between isolated worlds on custom events, message events, and pop state events.
+        https://bugs.webkit.org/show_bug.cgi?id=118884
+
+        Reviewed by Filip Pizlo and Mark Lam.
+        Patch by Keith Miller  <keith_miller@apple.com>.
+
+        These tests ensure ensure objects are not leaked across isolated worlds and that those properties are not prematurely
+        garbage collected.
+
+        * fast/events/constructors/custom-event-constructor-expected.txt:
+        * fast/events/constructors/custom-event-constructor.html:
+        * fast/events/event-leak-objects-expected.txt: Added.
+        * fast/events/event-leak-objects.html: Added.
+        * fast/events/event-properties-gc-expected.txt: Added.
+        * fast/events/event-properties-gc.html: Added.
+
 2015-07-16  Simon Fraser  <simon.fraser@apple.com>
 
         Fix disappearing position:fixed elements in fixed layout mode

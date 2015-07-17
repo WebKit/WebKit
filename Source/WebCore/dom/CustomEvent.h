@@ -57,14 +57,16 @@ public:
     virtual EventInterface eventInterface() const override;
 
     const Deprecated::ScriptValue& detail() const { return m_detail; }
-    PassRefPtr<SerializedScriptValue> serializedScriptValue() { return m_serializedScriptValue; }
+    
+    RefPtr<SerializedScriptValue> trySerializeDetail(JSC::ExecState*);
 
 private:
     CustomEvent();
     CustomEvent(const AtomicString& type, const CustomEventInit& initializer);
 
     Deprecated::ScriptValue m_detail;
-    RefPtr<SerializedScriptValue> m_serializedScriptValue;
+    RefPtr<SerializedScriptValue> m_serializedDetail;
+    bool m_triedToSerialize { false };
 };
 
 } // namespace WebCore

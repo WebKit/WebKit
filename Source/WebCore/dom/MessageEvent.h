@@ -114,6 +114,8 @@ public:
     Blob* dataAsBlob() const { ASSERT(m_dataType == DataTypeBlob); return m_dataAsBlob.get(); }
     ArrayBuffer* dataAsArrayBuffer() const { ASSERT(m_dataType == DataTypeArrayBuffer); return m_dataAsArrayBuffer.get(); }
 
+    RefPtr<SerializedScriptValue> trySerializeData(JSC::ExecState*);
+    
 private:
     MessageEvent();
     MessageEvent(const AtomicString&, const MessageEventInit&);
@@ -127,6 +129,7 @@ private:
     DataType m_dataType;
     Deprecated::ScriptValue m_dataAsScriptValue;
     RefPtr<SerializedScriptValue> m_dataAsSerializedScriptValue;
+    bool m_triedToSerialize { false };
     String m_dataAsString;
     RefPtr<Blob> m_dataAsBlob;
     RefPtr<ArrayBuffer> m_dataAsArrayBuffer;
