@@ -1,0 +1,1 @@
+CONSOLE MESSAGE: Content blocker prevented frame displaying http://localhost/contentextensions/resources/should-not-load.html from loading a resource from http://localhost/contentextensions/resources/should-not-load.html
