@@ -4,7 +4,7 @@ To run this test manually, load it in the browser then load the WebInspector and
 
 Profile title: Built-in function calls an anonymous function
 Thread_1 (no file) (line 0:0)
-   startTest built-in-function-calls-anonymous.html (line 11:1)
+   startTest built-in-function-calls-anonymous.html (line 10:19)
       Array (no file) (line 0:0)
       map (no file) (line 0:0)
          Object (no file) (line 0:0)
@@ -12,8 +12,8 @@ Thread_1 (no file) (line 0:0)
             toInteger (no file) (line 0:0)
                Number (no file) (line 0:0)
                (anonymous function) (no file) (line 0:0)
-         myFunction built-in-function-calls-anonymous.html (line 14:45)
-            arrayOperatorFunction profiler-test-JS-resources.js (line 25:46)
-      endTest profiler-test-JS-resources.js (line 1:20)
+         myFunction built-in-function-calls-anonymous.html (line 14:30)
+            arrayOperatorFunction profiler-test-JS-resources.js (line 25:31)
+      endTest profiler-test-JS-resources.js (line 1:17)
 
 

@@ -475,7 +475,7 @@ JSObject* ProgramExecutable::checkSyntax(ExecState* exec)
     VM* vm = &exec->vm();
     JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
     std::unique_ptr<ProgramNode> programNode = parse<ProgramNode>(
-        vm, m_source, 0, Identifier(), JSParserBuiltinMode::NotBuiltin, 
+        vm, m_source, Identifier(), JSParserBuiltinMode::NotBuiltin, 
         JSParserStrictMode::NotStrict, JSParserCodeType::Program, error);
     if (programNode)
         return 0;

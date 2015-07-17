@@ -40,15 +40,14 @@ struct SourceProviderCacheItemCreationParameters {
     unsigned lastTockenEndOffset;
     unsigned lastTockenLineStartOffset;
     unsigned endFunctionOffset;
+    unsigned parameterCount;
     bool needsFullActivation;
     bool usesEval;
     bool strictMode;
     Vector<RefPtr<UniquedStringImpl>> usedVariables;
     Vector<RefPtr<UniquedStringImpl>> writtenVariables;
-#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
     bool isBodyArrowExpression { false };
     JSTokenType tokenType { CLOSEBRACE };
-#endif
 };
 
 #if COMPILER(MSVC)
@@ -65,11 +64,7 @@ public:
     JSToken endFunctionToken() const 
     {
         JSToken token;
-#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
         token.m_type = isBodyArrowExpression ? tokenType : CLOSEBRACE;
-#else
-        token.m_type = CLOSEBRACE;
-#endif
         token.m_data.offset = lastTockenStartOffset;
         token.m_location.startOffset = lastTockenStartOffset;
         token.m_location.endOffset = lastTockenEndOffset;
@@ -87,6 +82,7 @@ public:
     unsigned lastTockenLine : 31;
     unsigned lastTockenStartOffset : 31;
     unsigned lastTockenEndOffset: 31;
+    unsigned parameterCount;
     
     bool usesEval : 1;
 
@@ -98,10 +94,8 @@ public:
 
     UniquedStringImpl** usedVariables() const { return const_cast<UniquedStringImpl**>(m_variables); }
     UniquedStringImpl** writtenVariables() const { return const_cast<UniquedStringImpl**>(&m_variables[usedVariablesCount]); }
-#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
     bool isBodyArrowExpression;
     JSTokenType tokenType;
-#endif
 
 private:
     SourceProviderCacheItem(const SourceProviderCacheItemCreationParameters&);
@@ -130,15 +124,14 @@ inline SourceProviderCacheItem::SourceProviderCacheItem(const SourceProviderCach
     , lastTockenLine(parameters.lastTockenLine)
     , lastTockenStartOffset(parameters.lastTockenStartOffset)
     , lastTockenEndOffset(parameters.lastTockenEndOffset)
+    , parameterCount(parameters.parameterCount)
     , usesEval(parameters.usesEval)
     , strictMode(parameters.strictMode)
     , lastTockenLineStartOffset(parameters.lastTockenLineStartOffset)
     , usedVariablesCount(parameters.usedVariables.size())
     , writtenVariablesCount(parameters.writtenVariables.size())
-#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
     , isBodyArrowExpression(parameters.isBodyArrowExpression)
     , tokenType(parameters.tokenType)
-#endif
 {
     unsigned j = 0;
     for (unsigned i = 0; i < usedVariablesCount; ++i, ++j) {

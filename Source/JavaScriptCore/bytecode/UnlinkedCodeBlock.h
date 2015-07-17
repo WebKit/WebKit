@@ -49,7 +49,6 @@ namespace JSC {
 class Debugger;
 class FunctionBodyNode;
 class FunctionExecutable;
-class FunctionParameters;
 class JSScope;
 class ParserError;
 class ScriptExecutable;
@@ -123,7 +122,8 @@ public:
     {
         return (kind == CodeForCall) ? m_symbolTableForCall.get() : m_symbolTableForConstruct.get();
     }
-    size_t parameterCount() const;
+    unsigned parameterCount() const { return m_parameterCount; };
+    FunctionParseMode parseMode() const { return m_parseMode; };
     bool isInStrictContext() const { return m_isInStrictContext; }
     FunctionMode functionMode() const { return static_cast<FunctionMode>(m_functionMode); }
     ConstructorKind constructorKind() const { return static_cast<ConstructorKind>(m_constructorKind); }
@@ -155,8 +155,6 @@ public:
         m_codeBlockForConstruct.clear();
     }
 
-    FunctionParameters* parameters() { return m_parameters.get(); }
-
     void recordParse(CodeFeatures features, bool hasCapturedVariables)
     {
         m_features = features;
@@ -183,7 +181,6 @@ private:
     WriteBarrier<JSString> m_nameValue;
     WriteBarrier<SymbolTable> m_symbolTableForCall;
     WriteBarrier<SymbolTable> m_symbolTableForConstruct;
-    RefPtr<FunctionParameters> m_parameters;
     RefPtr<SourceProvider> m_sourceOverride;
     VariableEnvironment m_parentScopeTDZVariables;
     unsigned m_firstLineOffset;
@@ -196,6 +193,8 @@ private:
     unsigned m_parametersStartOffset;
     unsigned m_typeProfilingStartOffset;
     unsigned m_typeProfilingEndOffset;
+    unsigned m_parameterCount;
+    FunctionParseMode m_parseMode;
 
     CodeFeatures m_features;
 

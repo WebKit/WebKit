@@ -4,15 +4,15 @@ To run this test manually, load it in the browser then load the WebInspector and
 
 Profile title: Anonymous function calles eval
 Thread_1 (no file) (line 0:0)
-   startTest anonymous-function-calls-eval.html (line 11:1)
-      variableThatPointsToAnAnonymousFunction anonymous-function-calls-eval.html (line 14:62)
+   startTest anonymous-function-calls-eval.html (line 10:19)
+      variableThatPointsToAnAnonymousFunction anonymous-function-calls-eval.html (line 14:59)
          eval (no file) (line 0:0)
             (program) (no file) (line 1:1)
-               insertNewText profiler-test-JS-resources.js (line 17:26)
+               insertNewText profiler-test-JS-resources.js (line 17:23)
                   createElement (no file) (line 0:0)
                   createTextNode (no file) (line 0:0)
                   appendChild (no file) (line 0:0)
                   getElementById (no file) (line 0:0)
-      endTest profiler-test-JS-resources.js (line 1:20)
+      endTest profiler-test-JS-resources.js (line 1:17)
 
 

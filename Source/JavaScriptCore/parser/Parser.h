@@ -81,21 +81,9 @@ class SourceCode;
 COMPILE_ASSERT(LastUntaggedToken < 64, LessThan64UntaggedTokens);
 
 enum SourceElementsMode { CheckForStrictMode, DontCheckForStrictMode };
-#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
 enum FunctionParseType { StandardFunctionParseType, ArrowFunctionParseType };
-#else
-enum FunctionParseType { StandardFunctionParseType};
-#endif
+enum FunctionBodyType { ArrowFunctionBodyExpression, ArrowFunctionBodyBlock, StandardFunctionBodyBlock };
 enum FunctionRequirements { FunctionNoRequirements, FunctionNeedsName };
-enum FunctionParseMode {
-    FunctionMode,
-    GetterMode,
-    SetterMode,
-    MethodMode,
-#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
-    ArrowFunctionMode
-#endif
-};
 enum DestructuringKind {
     DestructureToVariables,
     DestructureToLexicalVariables,
@@ -537,13 +525,12 @@ class Parser {
 
 public:
     Parser(
-        VM*, const SourceCode&, FunctionParameters*, const Identifier&, 
-        JSParserBuiltinMode, JSParserStrictMode, JSParserCodeType,
+        VM*, const SourceCode&, JSParserBuiltinMode, JSParserStrictMode, JSParserCodeType, 
         ConstructorKind defaultConstructorKind = ConstructorKind::None, ThisTDZMode = ThisTDZMode::CheckIfNeeded);
     ~Parser();
 
     template <class ParsedNode>
-    std::unique_ptr<ParsedNode> parse(ParserError&);
+    std::unique_ptr<ParsedNode> parse(ParserError&, const Identifier&, FunctionParseMode);
 
     JSTextPosition positionBeforeLastNewline() const { return m_lexer->positionBeforeLastNewline(); }
     JSTokenLocation locationBeforeLastToken() const { return m_lexer->lastTokenLocation(); }
@@ -739,7 +726,7 @@ private:
     }
 
     Parser();
-    String parseInner();
+    String parseInner(const Identifier&, FunctionParseMode);
 
     void didFinishParsing(SourceElements*, DeclarationStacks::FunctionStack&, VariableEnvironment&, CodeFeatures, int, const Vector<RefPtr<UniquedStringImpl>>&&);
 
@@ -796,7 +783,6 @@ private:
         return m_token.m_type == IDENT && *m_token.m_data.ident == m_vm->propertyNames->of;
     }
     
-#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
     ALWAYS_INLINE bool isEndOfArrowFunction()
     {
         return match(SEMICOLON) || match(COMMA) || match(CLOSEPAREN) || match(CLOSEBRACE) || match(CLOSEBRACKET) || match(EOFTOK) || m_lexer->prevTerminator();
@@ -804,6 +790,7 @@ private:
     
     ALWAYS_INLINE bool isArrowFunctionParamters()
     {
+#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
         bool isArrowFunction = false;
         
         if (match(EOFTOK))
@@ -834,8 +821,10 @@ private:
         restoreSavePoint(saveArrowFunctionPoint);
         
         return isArrowFunction;
-    }
+#else
+        return false;
 #endif
+    }
     
     ALWAYS_INLINE unsigned tokenStart()
     {
@@ -946,7 +935,7 @@ private:
         return match(LET) && !strictMode();
     }
 
-    template <class TreeBuilder> TreeSourceElements parseSourceElements(TreeBuilder&, SourceElementsMode, FunctionParseType);
+    template <class TreeBuilder> TreeSourceElements parseSourceElements(TreeBuilder&, SourceElementsMode);
     template <class TreeBuilder> TreeStatement parseStatementListItem(TreeBuilder&, const Identifier*& directive, unsigned* directiveLiteralLength);
     template <class TreeBuilder> TreeStatement parseStatement(TreeBuilder&, const Identifier*& directive, unsigned* directiveLiteralLength = 0);
 #if ENABLE(ES6_CLASS_SYNTAX)
@@ -987,17 +976,13 @@ private:
     template <class TreeBuilder> TreeProperty parseProperty(TreeBuilder&, bool strict);
     template <class TreeBuilder> TreeExpression parsePropertyMethod(TreeBuilder& context, const Identifier* methodName);
     template <class TreeBuilder> TreeProperty parseGetterSetter(TreeBuilder&, bool strict, PropertyNode::Type, unsigned getterOrSetterStartOffset, ConstructorKind = ConstructorKind::None, SuperBinding = SuperBinding::NotNeeded);
-    template <class TreeBuilder> ALWAYS_INLINE TreeFunctionBody parseFunctionBody(TreeBuilder&, int functionKeywordStart, int functionNameStart, int parametersStart, ConstructorKind, FunctionParseType);
-    template <class TreeBuilder> ALWAYS_INLINE TreeFormalParameterList parseFormalParameters(TreeBuilder&);
+    template <class TreeBuilder> ALWAYS_INLINE TreeFunctionBody parseFunctionBody(TreeBuilder&, const JSTokenLocation&, int, int functionKeywordStart, int functionNameStart, int parametersStart, ConstructorKind, FunctionBodyType, unsigned, FunctionParseMode);
+    template <class TreeBuilder> ALWAYS_INLINE bool parseFormalParameters(TreeBuilder&, TreeFormalParameterList, unsigned&);
     enum VarDeclarationListContext { ForLoopContext, VarDeclarationContext };
     template <class TreeBuilder> TreeExpression parseVariableDeclarationList(TreeBuilder&, int& declarations, TreeDestructuringPattern& lastPattern, TreeExpression& lastInitializer, JSTextPosition& identStart, JSTextPosition& initStart, JSTextPosition& initEnd, VarDeclarationListContext, DeclarationType);
     template <class TreeBuilder> NEVER_INLINE TreeConstDeclList parseConstDeclarationList(TreeBuilder&);
-
-#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
-    template <class TreeBuilder> TreeStatement parseArrowFunctionSingleExpressionBody(TreeBuilder&, FunctionParseType);
+    template <class TreeBuilder> TreeSourceElements parseArrowFunctionSingleExpressionBodySourceElements(TreeBuilder&);
     template <class TreeBuilder> TreeExpression parseArrowFunctionExpression(TreeBuilder&);
-#endif
-
     template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern createBindingPattern(TreeBuilder&, DestructuringKind, const Identifier&, int depth, JSToken, AssignmentContext);
     template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern parseDestructuringPattern(TreeBuilder&, DestructuringKind, AssignmentContext = AssignmentContext::DeclarationStatement, int depth = 0);
     template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern tryParseDestructuringPatternExpression(TreeBuilder&, AssignmentContext);
@@ -1030,13 +1015,10 @@ private:
         return allowAutomaticSemicolon();
     }
     
-
-#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
     void setEndOfStatement()
     {
         m_lexer->setTokenPosition(&m_token);
     }
-#endif
 
     bool canRecurse()
     {
@@ -1108,6 +1090,7 @@ private:
     const SourceCode* m_source;
     ParserArena m_parserArena;
     std::unique_ptr<LexerType> m_lexer;
+    FunctionParameters* m_parameters { nullptr };
     
     bool m_hasStackOverflow;
     String m_errorMessage;
@@ -1153,13 +1136,13 @@ private:
 
 template <typename LexerType>
 template <class ParsedNode>
-std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error)
+std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const Identifier& calleeName, FunctionParseMode parseMode)
 {
     int errLine;
     String errMsg;
 
     if (ParsedNode::scopeIsFunction)
-        m_lexer->setIsReparsing();
+        m_lexer->setIsReparsingFunction();
 
     m_sourceElements = 0;
 
@@ -1170,7 +1153,7 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error)
     ASSERT(m_source->startColumn() > 0);
     unsigned startColumn = m_source->startColumn() - 1;
 
-    String parseError = parseInner();
+    String parseError = parseInner(calleeName, parseMode);
 
     int lineNumber = m_lexer->lineNumber();
     bool lexError = m_lexer->sawError();
@@ -1200,6 +1183,7 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error)
                                     m_varDeclarations,
                                     m_funcDeclarations,
                                     currentScope()->finalizeLexicalEnvironment(),
+                                    m_parameters,
                                     *m_source,
                                     m_features,
                                     m_numConstants);
@@ -1233,18 +1217,19 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error)
 
 template <class ParsedNode>
 std::unique_ptr<ParsedNode> parse(
-    VM* vm, const SourceCode& source, FunctionParameters* parameters,
+    VM* vm, const SourceCode& source,
     const Identifier& name, JSParserBuiltinMode builtinMode,
     JSParserStrictMode strictMode, JSParserCodeType codeType,
-    ParserError& error, JSTextPosition* positionBeforeLastNewline = 0,
-    ConstructorKind defaultConstructorKind = ConstructorKind::None, ThisTDZMode thisTDZMode = ThisTDZMode::CheckIfNeeded)
+    ParserError& error, JSTextPosition* positionBeforeLastNewline = nullptr,
+    FunctionParseMode parseMode = NotAFunctionMode, ConstructorKind defaultConstructorKind = ConstructorKind::None, 
+    ThisTDZMode thisTDZMode = ThisTDZMode::CheckIfNeeded)
 {
     SamplingRegion samplingRegion("Parsing");
 
     ASSERT(!source.provider()->source().isNull());
     if (source.provider()->source().is8Bit()) {
-        Parser<Lexer<LChar>> parser(vm, source, parameters, name, builtinMode, strictMode, codeType, defaultConstructorKind, thisTDZMode);
-        std::unique_ptr<ParsedNode> result = parser.parse<ParsedNode>(error);
+        Parser<Lexer<LChar>> parser(vm, source, builtinMode, strictMode, codeType, defaultConstructorKind, thisTDZMode);
+        std::unique_ptr<ParsedNode> result = parser.parse<ParsedNode>(error, name, parseMode);
         if (positionBeforeLastNewline)
             *positionBeforeLastNewline = parser.positionBeforeLastNewline();
         if (builtinMode == JSParserBuiltinMode::Builtin) {
@@ -1256,8 +1241,8 @@ std::unique_ptr<ParsedNode> parse(
         return result;
     }
     ASSERT_WITH_MESSAGE(defaultConstructorKind == ConstructorKind::None, "BuiltinExecutables::createDefaultConstructor should always use a 8-bit string");
-    Parser<Lexer<UChar>> parser(vm, source, parameters, name, builtinMode, strictMode, codeType, defaultConstructorKind, thisTDZMode);
-    std::unique_ptr<ParsedNode> result = parser.parse<ParsedNode>(error);
+    Parser<Lexer<UChar>> parser(vm, source, builtinMode, strictMode, codeType, defaultConstructorKind, thisTDZMode);
+    std::unique_ptr<ParsedNode> result = parser.parse<ParsedNode>(error, name, parseMode);
     if (positionBeforeLastNewline)
         *positionBeforeLastNewline = parser.positionBeforeLastNewline();
     return result;

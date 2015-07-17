@@ -4,20 +4,20 @@ To run this test manually, load it in the browser then load the WebInspector and
 
 Profile title: Multiple and different scoped calls to the same anonymous function
 Thread_1 (no file) (line 0:0)
-   startTest multiple-and-different-scoped-anonymous-function-calls.html (line 11:1)
-      anonymousFunction profiler-test-JS-resources.js (line 29:37)
-         insertNewText profiler-test-JS-resources.js (line 17:26)
+   startTest multiple-and-different-scoped-anonymous-function-calls.html (line 10:19)
+      anonymousFunction profiler-test-JS-resources.js (line 29:34)
+         insertNewText profiler-test-JS-resources.js (line 17:23)
             createElement (no file) (line 0:0)
             createTextNode (no file) (line 0:0)
             appendChild (no file) (line 0:0)
             getElementById (no file) (line 0:0)
-      intermediaryFunction profiler-test-JS-resources.js (line 33:1)
-         anonymousFunction profiler-test-JS-resources.js (line 29:37)
-            insertNewText profiler-test-JS-resources.js (line 17:26)
+      intermediaryFunction profiler-test-JS-resources.js (line 32:30)
+         anonymousFunction profiler-test-JS-resources.js (line 29:34)
+            insertNewText profiler-test-JS-resources.js (line 17:23)
                createElement (no file) (line 0:0)
                createTextNode (no file) (line 0:0)
                appendChild (no file) (line 0:0)
                getElementById (no file) (line 0:0)
-      endTest profiler-test-JS-resources.js (line 1:20)
+      endTest profiler-test-JS-resources.js (line 1:17)
 
 

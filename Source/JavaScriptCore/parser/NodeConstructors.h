@@ -828,34 +828,22 @@ namespace JSC {
     {
     }
 
-    inline ParameterNode::ParameterNode(PassRefPtr<DestructuringPatternNode> pattern)
-        : m_pattern(pattern)
-        , m_next(0)
+    inline FunctionParameters::FunctionParameters()
     {
-        ASSERT(m_pattern);
     }
 
-    inline ParameterNode::ParameterNode(ParameterNode* previous, PassRefPtr<DestructuringPatternNode> pattern)
-        : m_pattern(pattern)
-        , m_next(0)
-    {
-        previous->m_next = this;
-        ASSERT(m_pattern);
-        ASSERT(previous->m_pattern);
-    }
-
-    inline FuncExprNode::FuncExprNode(const JSTokenLocation& location, const Identifier& ident, FunctionBodyNode* body, const SourceCode& source, ParameterNode* parameter)
+    inline FuncExprNode::FuncExprNode(const JSTokenLocation& location, const Identifier& ident, FunctionBodyNode* body, const SourceCode& source)
         : ExpressionNode(location)
         , m_body(body)
     {
-        m_body->finishParsing(source, parameter, ident, FunctionExpression);
+        m_body->finishParsing(source, ident, FunctionExpression);
     }
 
-    inline FuncDeclNode::FuncDeclNode(const JSTokenLocation& location, const Identifier& ident, FunctionBodyNode* body, const SourceCode& source, ParameterNode* parameter)
+    inline FuncDeclNode::FuncDeclNode(const JSTokenLocation& location, const Identifier& ident, FunctionBodyNode* body, const SourceCode& source)
         : StatementNode(location)
         , m_body(body)
     {
-        m_body->finishParsing(source, parameter, ident, FunctionDeclaration);
+        m_body->finishParsing(source, ident, FunctionDeclaration);
     }
 
 #if ENABLE(ES6_CLASS_SYNTAX)
@@ -954,24 +942,9 @@ namespace JSC {
     {
     }
     
-    inline Ref<ArrayPatternNode> ArrayPatternNode::create()
-    {
-        return adoptRef(*new ArrayPatternNode);
-    }
-    
     inline ObjectPatternNode::ObjectPatternNode()
         : DestructuringPatternNode()
     {
-    }
-    
-    inline Ref<ObjectPatternNode> ObjectPatternNode::create()
-    {
-        return adoptRef(*new ObjectPatternNode);
-    }
-
-    inline Ref<BindingNode> BindingNode::create(const Identifier& boundProperty, const JSTextPosition& start, const JSTextPosition& end, AssignmentContext context)
-    {
-        return adoptRef(*new BindingNode(boundProperty, start, end, context));
     }
     
     inline BindingNode::BindingNode(const Identifier& boundProperty, const JSTextPosition& start, const JSTextPosition& end, AssignmentContext context)
@@ -983,7 +956,7 @@ namespace JSC {
     {
     }
     
-    inline DestructuringAssignmentNode::DestructuringAssignmentNode(const JSTokenLocation& location, PassRefPtr<DestructuringPatternNode> bindings, ExpressionNode* initializer)
+    inline DestructuringAssignmentNode::DestructuringAssignmentNode(const JSTokenLocation& location, DestructuringPatternNode* bindings, ExpressionNode* initializer)
         : ExpressionNode(location)
         , m_bindings(bindings)
         , m_initializer(initializer)

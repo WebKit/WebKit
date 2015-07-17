@@ -94,8 +94,8 @@ UnlinkedCodeBlockType* CodeCache::getGlobalCodeBlock(VM& vm, ExecutableType* exe
 
     typedef typename CacheTypes<UnlinkedCodeBlockType>::RootNode RootNode;
     std::unique_ptr<RootNode> rootNode = parse<RootNode>(
-        &vm, source, 0, Identifier(), builtinMode, strictMode, 
-        JSParserCodeType::Program, error, 0, ConstructorKind::None, thisTDZMode);
+        &vm, source, Identifier(), builtinMode, strictMode, 
+        JSParserCodeType::Program, error, nullptr, FunctionParseMode::NotAFunctionMode, ConstructorKind::None, thisTDZMode);
     if (!rootNode)
         return nullptr;
 
@@ -145,7 +145,7 @@ UnlinkedFunctionExecutable* CodeCache::getFunctionExecutableFromGlobalCode(VM& v
 
     JSTextPosition positionBeforeLastNewline;
     std::unique_ptr<ProgramNode> program = parse<ProgramNode>(
-        &vm, source, 0, Identifier(), JSParserBuiltinMode::NotBuiltin, 
+        &vm, source, Identifier(), JSParserBuiltinMode::NotBuiltin, 
         JSParserStrictMode::NotStrict, JSParserCodeType::Program, 
         error, &positionBeforeLastNewline);
     if (!program) {

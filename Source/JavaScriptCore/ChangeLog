@@ -1,3 +1,212 @@
+2015-07-17  Saam barati  <saambarati1@gmail.com>
+
+        Function parameters should be parsed in the same parser arena as the function body
+        https://bugs.webkit.org/show_bug.cgi?id=145995
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch changes how functions are parsed in JSC. A function's
+        parameters are now parsed in the same arena as the function itself.
+        This allows us to arena allocate all destructuring AST nodes and
+        the FunctionParameters node. This will help make implementing ES6
+        default parameter values sane.
+
+        A source code that represents a function now includes the text of the function's 
+        parameters. The starting offset is at the opening parenthesis of the parameter
+        list or at the starting character of the identifier for arrow functions that
+        have single arguments and don't start with parenthesis.
+
+        For example:
+
+        "function (param1, param2) { ... }"
+                                   ^
+                                   | This offset used to be the starting offset of a function's SourceCode
+                  ^
+                  | This is the new starting offset for a function's SourceCode.
+
+        This requires us to change how some offsets are calculated
+        and also requires us to report some different line numbers for internal
+        metrics that use a SourceCode's starting line and column numbers.
+
+        This patch also does a bit of cleanup with regards to how
+        functions are parsed in general (especially arrow functions).
+        It removes some unnecessary #ifdefs and the likes for arrow
+        to make things clearer and more deliberate.
+
+        * API/JSScriptRef.cpp:
+        (parseScript):
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::createExecutableInternal):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::generateFunctionCodeBlock):
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        (JSC::UnlinkedFunctionExecutable::visitChildren):
+        (JSC::UnlinkedFunctionExecutable::parameterCount): Deleted.
+        * bytecode/UnlinkedCodeBlock.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::DestructuringAssignmentNode::emitBytecode):
+        (JSC::assignDefaultValueIfUndefined):
+        (JSC::ArrayPatternNode::collectBoundIdentifiers):
+        (JSC::DestructuringPatternNode::~DestructuringPatternNode): Deleted.
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createClassExpr):
+        (JSC::ASTBuilder::createFunctionExpr):
+        (JSC::ASTBuilder::createFunctionBody):
+        (JSC::ASTBuilder::createArrowFunctionExpr):
+        (JSC::ASTBuilder::createGetterOrSetterProperty):
+        (JSC::ASTBuilder::createElementList):
+        (JSC::ASTBuilder::createFormalParameterList):
+        (JSC::ASTBuilder::appendParameter):
+        (JSC::ASTBuilder::createClause):
+        (JSC::ASTBuilder::createClauseList):
+        (JSC::ASTBuilder::createFuncDeclStatement):
+        (JSC::ASTBuilder::createForInLoop):
+        (JSC::ASTBuilder::createForOfLoop):
+        (JSC::ASTBuilder::isResolve):
+        (JSC::ASTBuilder::createDestructuringAssignment):
+        (JSC::ASTBuilder::createArrayPattern):
+        (JSC::ASTBuilder::appendArrayPatternSkipEntry):
+        (JSC::ASTBuilder::appendArrayPatternEntry):
+        (JSC::ASTBuilder::appendArrayPatternRestEntry):
+        (JSC::ASTBuilder::finishArrayPattern):
+        (JSC::ASTBuilder::createObjectPattern):
+        (JSC::ASTBuilder::appendObjectPatternEntry):
+        (JSC::ASTBuilder::createBindingLocation):
+        (JSC::ASTBuilder::setEndOffset):
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::Lexer):
+        (JSC::Lexer<T>::nextTokenIsColon):
+        (JSC::Lexer<T>::setTokenPosition):
+        (JSC::Lexer<T>::lex):
+        (JSC::Lexer<T>::clear):
+        * parser/Lexer.h:
+        (JSC::Lexer::setIsReparsingFunction):
+        (JSC::Lexer::isReparsingFunction):
+        (JSC::Lexer::lineNumber):
+        (JSC::Lexer::setIsReparsing): Deleted.
+        (JSC::Lexer::isReparsing): Deleted.
+        * parser/NodeConstructors.h:
+        (JSC::TryNode::TryNode):
+        (JSC::FunctionParameters::FunctionParameters):
+        (JSC::FuncExprNode::FuncExprNode):
+        (JSC::FuncDeclNode::FuncDeclNode):
+        (JSC::ArrayPatternNode::ArrayPatternNode):
+        (JSC::ObjectPatternNode::ObjectPatternNode):
+        (JSC::BindingNode::BindingNode):
+        (JSC::DestructuringAssignmentNode::DestructuringAssignmentNode):
+        (JSC::ParameterNode::ParameterNode): Deleted.
+        (JSC::ArrayPatternNode::create): Deleted.
+        (JSC::ObjectPatternNode::create): Deleted.
+        (JSC::BindingNode::create): Deleted.
+        * parser/Nodes.cpp:
+        (JSC::ProgramNode::ProgramNode):
+        (JSC::EvalNode::EvalNode):
+        (JSC::FunctionBodyNode::FunctionBodyNode):
+        (JSC::FunctionBodyNode::finishParsing):
+        (JSC::FunctionNode::FunctionNode):
+        (JSC::FunctionNode::finishParsing):
+        (JSC::FunctionParameters::create): Deleted.
+        (JSC::FunctionParameters::FunctionParameters): Deleted.
+        (JSC::FunctionParameters::~FunctionParameters): Deleted.
+        * parser/Nodes.h:
+        (JSC::ProgramNode::startColumn):
+        (JSC::ProgramNode::endColumn):
+        (JSC::EvalNode::startColumn):
+        (JSC::EvalNode::endColumn):
+        (JSC::FunctionParameters::size):
+        (JSC::FunctionParameters::at):
+        (JSC::FunctionParameters::append):
+        (JSC::FuncExprNode::body):
+        (JSC::DestructuringPatternNode::~DestructuringPatternNode):
+        (JSC::DestructuringPatternNode::isBindingNode):
+        (JSC::DestructuringPatternNode::emitDirectBinding):
+        (JSC::ArrayPatternNode::appendIndex):
+        (JSC::ObjectPatternNode::appendEntry):
+        (JSC::BindingNode::boundProperty):
+        (JSC::BindingNode::divotStart):
+        (JSC::BindingNode::divotEnd):
+        (JSC::DestructuringAssignmentNode::bindings):
+        (JSC::FuncDeclNode::body):
+        (JSC::ParameterNode::pattern): Deleted.
+        (JSC::ParameterNode::nextParam): Deleted.
+        (JSC::FunctionParameters::patterns): Deleted.
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::Parser):
+        (JSC::Parser<LexerType>::~Parser):
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::allowAutomaticSemicolon):
+        (JSC::Parser<LexerType>::parseSourceElements):
+        (JSC::Parser<LexerType>::createBindingPattern):
+        (JSC::Parser<LexerType>::parseArrowFunctionSingleExpressionBodySourceElements):
+        (JSC::Parser<LexerType>::tryParseDestructuringPatternExpression):
+        (JSC::Parser<LexerType>::parseSwitchClauses):
+        (JSC::Parser<LexerType>::parseSwitchDefaultClause):
+        (JSC::Parser<LexerType>::parseBlockStatement):
+        (JSC::Parser<LexerType>::parseStatement):
+        (JSC::Parser<LexerType>::parseFormalParameters):
+        (JSC::Parser<LexerType>::parseFunctionBody):
+        (JSC::stringForFunctionMode):
+        (JSC::Parser<LexerType>::parseFunctionParameters):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::Parser<LexerType>::parseFunctionDeclaration):
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        (JSC::Parser<LexerType>::parseArrowFunctionExpression):
+        (JSC::operatorString):
+        (JSC::Parser<LexerType>::parseArrowFunctionSingleExpressionBody): Deleted.
+        * parser/Parser.h:
+        (JSC::Parser::positionBeforeLastNewline):
+        (JSC::Parser::locationBeforeLastToken):
+        (JSC::Parser::findCachedFunctionInfo):
+        (JSC::Parser::isofToken):
+        (JSC::Parser::isEndOfArrowFunction):
+        (JSC::Parser::isArrowFunctionParamters):
+        (JSC::Parser::tokenStart):
+        (JSC::Parser::isLETMaskedAsIDENT):
+        (JSC::Parser::autoSemiColon):
+        (JSC::Parser::setEndOfStatement):
+        (JSC::Parser::canRecurse):
+        (JSC::Parser<LexerType>::parse):
+        (JSC::parse):
+        * parser/ParserFunctionInfo.h:
+        * parser/ParserModes.h:
+        (JSC::functionNameIsInScope):
+        * parser/SourceCode.h:
+        (JSC::makeSource):
+        (JSC::SourceCode::subExpression):
+        (JSC::SourceCode::subArrowExpression): Deleted.
+        * parser/SourceProviderCache.h:
+        (JSC::SourceProviderCache::get):
+        * parser/SourceProviderCacheItem.h:
+        (JSC::SourceProviderCacheItem::endFunctionToken):
+        (JSC::SourceProviderCacheItem::usedVariables):
+        (JSC::SourceProviderCacheItem::writtenVariables):
+        (JSC::SourceProviderCacheItem::SourceProviderCacheItem):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::SyntaxChecker):
+        (JSC::SyntaxChecker::createClassExpr):
+        (JSC::SyntaxChecker::createFunctionExpr):
+        (JSC::SyntaxChecker::createFunctionBody):
+        (JSC::SyntaxChecker::createArrowFunctionExpr):
+        (JSC::SyntaxChecker::setFunctionNameStart):
+        (JSC::SyntaxChecker::createArguments):
+        (JSC::SyntaxChecker::createPropertyList):
+        (JSC::SyntaxChecker::createElementList):
+        (JSC::SyntaxChecker::createFormalParameterList):
+        (JSC::SyntaxChecker::appendParameter):
+        (JSC::SyntaxChecker::createClause):
+        (JSC::SyntaxChecker::createClauseList):
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getGlobalCodeBlock):
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode):
+        * runtime/Completion.cpp:
+        (JSC::checkSyntax):
+        * runtime/Executable.cpp:
+        (JSC::ProgramExecutable::checkSyntax):
+        * tests/controlFlowProfiler/conditional-expression.js:
+        (testConditionalFunctionCall):
+
 2015-07-16  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix build for newer LLVMs.

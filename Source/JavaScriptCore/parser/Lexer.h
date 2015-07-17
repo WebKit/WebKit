@@ -84,12 +84,10 @@ public:
 
     // Functions to set up parsing.
     void setCode(const SourceCode&, ParserArena*);
-    void setIsReparsing() { m_isReparsing = true; }
-    bool isReparsing() const { return m_isReparsing; }
+    void setIsReparsingFunction() { m_isReparsingFunction = true; }
+    bool isReparsingFunction() const { return m_isReparsingFunction; }
 
-#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
     void setTokenPosition(JSToken* tokenRecord);
-#endif
     JSTokenType lex(JSToken*, unsigned, bool strictMode);
     bool nextTokenIsColon();
     int lineNumber() const { return m_lineNumber; }
@@ -224,7 +222,7 @@ private:
     const T* m_lineStart;
     JSTextPosition m_positionBeforeLastNewline;
     JSTokenLocation m_lastTockenLocation;
-    bool m_isReparsing;
+    bool m_isReparsingFunction;
     bool m_atLineStart;
     bool m_error;
     String m_lexErrorMessage;

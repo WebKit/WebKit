@@ -60,15 +60,15 @@ static UnlinkedFunctionCodeBlock* generateFunctionCodeBlock(
     JSParserBuiltinMode builtinMode = executable->isBuiltinFunction() ? JSParserBuiltinMode::Builtin : JSParserBuiltinMode::NotBuiltin;
     JSParserStrictMode strictMode = executable->isInStrictContext() ? JSParserStrictMode::Strict : JSParserStrictMode::NotStrict;
     std::unique_ptr<FunctionNode> function = parse<FunctionNode>(
-        &vm, source, executable->parameters(), executable->name(), builtinMode,
-        strictMode, JSParserCodeType::Function, error, 0);
+        &vm, source, executable->name(), builtinMode, strictMode, 
+        JSParserCodeType::Function, error, nullptr, executable->parseMode());
 
     if (!function) {
         ASSERT(error.isValid());
         return nullptr;
     }
 
-    function->finishParsing(executable->parameters(), executable->name(), executable->functionMode());
+    function->finishParsing(executable->name(), executable->functionMode());
     executable->recordParse(function->features(), function->hasCapturedVariables());
     
     UnlinkedFunctionCodeBlock* result = UnlinkedFunctionCodeBlock::create(&vm, FunctionCode,
@@ -84,7 +84,6 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
     : Base(*vm, structure)
     , m_name(node->ident())
     , m_inferredName(node->inferredName())
-    , m_parameters(node->parameters())
     , m_sourceOverride(WTF::move(sourceOverride))
     , m_firstLineOffset(node->firstLine() - source.firstLine())
     , m_lineCount(node->lastLine() - node->firstLine())
@@ -96,6 +95,8 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
     , m_parametersStartOffset(node->parametersStart())
     , m_typeProfilingStartOffset(node->functionKeywordStart())
     , m_typeProfilingEndOffset(node->startStartOffset() + node->source().length() - 1)
+    , m_parameterCount(node->parameterCount())
+    , m_parseMode(node->parseMode())
     , m_features(0)
     , m_isInStrictContext(node->isInStrictContext())
     , m_hasCapturedVariables(false)
@@ -105,11 +106,6 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
 {
     ASSERT(m_constructorKind == static_cast<unsigned>(node->constructorKind()));
     m_parentScopeTDZVariables.swap(parentScopeTDZVariables);
-}
-
-size_t UnlinkedFunctionExecutable::parameterCount() const
-{
-    return m_parameters->size();
 }
 
 void UnlinkedFunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)

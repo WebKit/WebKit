@@ -3189,10 +3189,6 @@ RegisterID* DestructuringAssignmentNode::emitBytecode(BytecodeGenerator& generat
     return generator.moveToDestinationIfNeeded(dst, initializer.get());
 }
 
-DestructuringPatternNode::~DestructuringPatternNode()
-{
-}
-
 static void assignDefaultValueIfUndefined(BytecodeGenerator& generator, RegisterID* maybeUndefined, ExpressionNode* defaultValue)
 {
     ASSERT(defaultValue);
@@ -3350,7 +3346,7 @@ void ArrayPatternNode::toString(StringBuilder& builder) const
 void ArrayPatternNode::collectBoundIdentifiers(Vector<Identifier>& identifiers) const
 {
     for (size_t i = 0; i < m_targetPatterns.size(); i++) {
-        if (DestructuringPatternNode* node = m_targetPatterns[i].pattern.get())
+        if (DestructuringPatternNode* node = m_targetPatterns[i].pattern)
             node->collectBoundIdentifiers(identifiers);
     }
 }

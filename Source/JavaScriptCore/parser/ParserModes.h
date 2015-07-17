@@ -44,6 +44,15 @@ enum DebuggerMode { DebuggerOff, DebuggerOn };
 
 enum FunctionMode { FunctionExpression, FunctionDeclaration };
 
+enum FunctionParseMode {
+    NormalFunctionMode,
+    GetterMode,
+    SetterMode,
+    MethodMode,
+    NotAFunctionMode,
+    ArrowFunctionMode
+};
+
 inline bool functionNameIsInScope(const Identifier& name, FunctionMode functionMode)
 {
     if (name.isNull())

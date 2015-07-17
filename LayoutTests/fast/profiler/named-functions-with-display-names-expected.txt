@@ -4,13 +4,13 @@ To run this test manually, load it in the browser then load the WebInspector and
 
 Profile title: Named functions with display names
 Thread_1 (no file) (line 0:0)
-   startTest named-functions-with-display-names.html (line 54:1)
-      0 iterations function named-functions-with-display-names.html (line 11:1)
-      1 iteration function named-functions-with-display-names.html (line 18:1)
-      2 iterations function named-functions-with-display-names.html (line 25:1)
-      20 iterations function named-functions-with-display-names.html (line 32:1)
-      1000 iterations function named-functions-with-display-names.html (line 39:1)
-      bogusDisplayNameFunction named-functions-with-display-names.html (line 47:1)
-      endTest profiler-test-JS-resources.js (line 1:20)
+   startTest named-functions-with-display-names.html (line 53:19)
+      0 iterations function named-functions-with-display-names.html (line 10:19)
+      1 iteration function named-functions-with-display-names.html (line 17:19)
+      2 iterations function named-functions-with-display-names.html (line 24:19)
+      20 iterations function named-functions-with-display-names.html (line 31:20)
+      1000 iterations function named-functions-with-display-names.html (line 38:22)
+      bogusDisplayNameFunction named-functions-with-display-names.html (line 46:34)
+      endTest profiler-test-JS-resources.js (line 1:17)
 
 

@@ -24,17 +24,17 @@ function testConditionalFunctionCall(x, y) {
         : bar()
 }
 testConditionalFunctionCall(false, false);
-checkBasicBlock(testConditionalFunctionCall, "x", ShouldHaveExecuted);
+checkBasicBlock(testConditionalFunctionCall, "x ?", ShouldHaveExecuted);
 checkBasicBlock(testConditionalFunctionCall, "? y", ShouldHaveExecuted);
 checkBasicBlock(testConditionalFunctionCall, "bar", ShouldHaveExecuted);
 checkBasicBlock(testConditionalFunctionCall, ": bar", ShouldHaveExecuted);
-checkBasicBlock(testConditionalFunctionCall, "y", ShouldNotHaveExecuted);
+checkBasicBlock(testConditionalFunctionCall, "y ?", ShouldNotHaveExecuted);
 checkBasicBlock(testConditionalFunctionCall, "? foo", ShouldNotHaveExecuted);
 checkBasicBlock(testConditionalFunctionCall, "foo", ShouldNotHaveExecuted);
 checkBasicBlock(testConditionalFunctionCall, "baz", ShouldNotHaveExecuted);
 
 testConditionalFunctionCall(true, false);
-checkBasicBlock(testConditionalFunctionCall, "y", ShouldHaveExecuted);
+checkBasicBlock(testConditionalFunctionCall, "y ?", ShouldHaveExecuted);
 checkBasicBlock(testConditionalFunctionCall, "? foo", ShouldHaveExecuted);
 checkBasicBlock(testConditionalFunctionCall, ": baz", ShouldHaveExecuted);
 checkBasicBlock(testConditionalFunctionCall, "baz", ShouldHaveExecuted);
