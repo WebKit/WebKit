@@ -1,3 +1,32 @@
+2015-07-17  Dan Bernstein  <mitz@apple.com>
+
+        WebKit2 part of <rdar://problem/21803781> The external URL policy is not reported correctly in navigation actions that create new windows
+        https://bugs.webkit.org/show_bug.cgi?id=147040
+
+        Reviewed by Dean Jackson.
+
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::createNewPage): Disallow App Links if the new page is for the
+        same protocol, host and port as the main frame of this page.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction): Disallow App Links if
+        m_shouldSuppressAppLinksInNextNavigationPolicyDecision is set, and reset it. See below for
+        when we set it.
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction): Disallow App Links if the new window
+        is for the same protocol, host and port as the main frame of this page.
+        (WebKit::WebPageProxy::createNewPage): Make the new page disallow App Links in the first
+        policy decision if it is for the same protocol, host and port as the main frame of this
+        page.
+        * UIProcess/WebPageProxy.h: Added m_shouldSuppressAppLinksInNextNavigationPolicyDecision
+        member variable.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createWindow): Pass the shouldOpenExternalURLsPolicy.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction): Ditto.
+
 2015-07-17  Tim Horton  <timothy_horton@apple.com>
 
         iOS TextIndicators include text that is not supposed to be indicated

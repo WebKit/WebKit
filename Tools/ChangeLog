@@ -1,3 +1,17 @@
+2015-07-17  Dan Bernstein  <mitz@apple.com>
+
+        Tests for <rdar://problem/21803781> The external URL policy is not reported correctly in navigation actions that create new windows
+        https://bugs.webkit.org/show_bug.cgi?id=147040
+
+        Reviewed by Dean Jackson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/ShouldOpenExternalURLsInNewWindowActions.mm: Added.
+        (-[ShouldOpenExternalURLsInNewWindowActionsController webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (-[ShouldOpenExternalURLsInNewWindowActionsController webView:didFinishNavigation:]):
+        (-[ShouldOpenExternalURLsInNewWindowActionsController webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:]):
+        (TEST):
+
 2015-07-16  Dean Johnson  <dean_johnson@apple.com>
 
         webkit-patch uses incorrect credentials from keychain to login until account lockout
