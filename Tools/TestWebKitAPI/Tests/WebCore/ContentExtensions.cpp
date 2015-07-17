@@ -922,6 +922,36 @@ TEST_F(ContentExtensionTest, TrailingTermsCarryingNoData)
     testRequest(backend, mainDocumentRequest("https://webkit.org/catso"), { });
 }
 
+TEST_F(ContentExtensionTest, UselessTermsMatchingEverythingAreEliminated)
+{
+    ContentExtensions::CombinedURLFilters combinedURLFilters;
+    ContentExtensions::URLFilterParser parser(combinedURLFilters);
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern(".*web", false, 0));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("(.*)web", false, 0));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("(.)*web", false, 0));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("(.+)*web", false, 0));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("(.?)*web", false, 0));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("(.+)?web", false, 0));
+    EXPECT_EQ(ContentExtensions::URLFilterParser::ParseStatus::Ok, parser.addPattern("(.?)+web", false, 0));
+
+    Vector<ContentExtensions::NFA> nfas = createNFAs(combinedURLFilters);
+    EXPECT_EQ(1ul, nfas.size());
+    EXPECT_EQ(7ul, nfas.first().nodes.size());
+
+    ContentExtensions::DFA dfa = ContentExtensions::NFAToDFA::convert(nfas.first());
+    Vector<ContentExtensions::DFABytecode> bytecode;
+    ContentExtensions::DFABytecodeCompiler compiler(dfa, bytecode);
+    compiler.compile();
+    ContentExtensions::DFABytecodeInterpreter interpreter(bytecode.data(), bytecode.size());
+    compareContents(interpreter.interpret("eb", 0), { });
+    compareContents(interpreter.interpret("we", 0), { });
+    compareContents(interpreter.interpret("weeb", 0), { });
+    compareContents(interpreter.interpret("web", 0), { 0 });
+    compareContents(interpreter.interpret("wweb", 0), { 0 });
+    compareContents(interpreter.interpret("wwebb", 0), { 0 });
+    compareContents(interpreter.interpret("http://theweb.com/", 0), { 0 });
+}
+
 TEST_F(ContentExtensionTest, LoadType)
 {
     auto backend = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"load-type\":[\"third-party\"]}},"

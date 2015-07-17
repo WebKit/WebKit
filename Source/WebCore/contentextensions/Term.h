@@ -579,7 +579,7 @@ inline bool Term::isUniversalTransition() const
         break;
     case TermType::CharacterSet:
         return (m_atomData.characterSet.inverted() && !m_atomData.characterSet.bitCount())
-            || (!m_atomData.characterSet.inverted() && m_atomData.characterSet.bitCount() == 128);
+            || (!m_atomData.characterSet.inverted() && m_atomData.characterSet.bitCount() == 127 && !m_atomData.characterSet.get(0));
     case TermType::Group:
         return m_atomData.group.terms.size() == 1 && m_atomData.group.terms.first().isUniversalTransition();
     }

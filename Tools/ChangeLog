@@ -1,3 +1,14 @@
+2015-07-17  Benjamin Poulain  <bpoulain@apple.com>
+
+        [Content Extensions] Term::isUniversalTransition() incorrectly expects the end-of-line assertion in character sets
+        https://bugs.webkit.org/show_bug.cgi?id=147032
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        Test that the useless terms are eliminated by counting
+        the number of NFA nodes generated.
+
 2015-07-17  Dan Bernstein  <mitz@apple.com>
 
         Tests for <rdar://problem/21803781> The external URL policy is not reported correctly in navigation actions that create new windows
