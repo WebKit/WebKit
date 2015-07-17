@@ -1048,10 +1048,10 @@ Ref<RenderStyle> StyleResolver::defaultStyleForElement()
 {
     m_state.setStyle(RenderStyle::create());
     // Make sure our fonts are initialized if we don't inherit them from our parent style.
-    if (Settings* settings = documentSettings()) {
-        initializeFontStyle(settings);
+    initializeFontStyle(documentSettings());
+    if (documentSettings())
         m_state.style()->fontCascade().update(&document().fontSelector());
-    } else
+    else
         m_state.style()->fontCascade().update(nullptr);
 
     return m_state.takeStyle();
@@ -2035,7 +2035,8 @@ void StyleResolver::checkForGenericFamilyChange(RenderStyle* style, RenderStyle*
 void StyleResolver::initializeFontStyle(Settings* settings)
 {
     FontDescription fontDescription;
-    fontDescription.setRenderingMode(settings->fontRenderingMode());
+    if (settings)
+        fontDescription.setRenderingMode(settings->fontRenderingMode());
     fontDescription.setOneFamily(standardFamily);
     fontDescription.setKeywordSizeFromIdentifier(CSSValueMedium);
     setFontSize(fontDescription, Style::fontSizeForKeyword(CSSValueMedium, false, document()));

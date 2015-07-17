@@ -1,3 +1,14 @@
+2015-07-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        style.fontFamily accessor crashes on unstyled node created from DOMParser().parseFromString()
+        https://bugs.webkit.org/show_bug.cgi?id=147026
+        <rdar://problem/21864487>
+
+        Reviewed by Andreas Kling.
+
+        * fast/text/crash-font-family-parsed-expected.txt: Added.
+        * fast/text/crash-font-family-parsed.html: Added.
+
 2015-07-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, rename test file from promise-resolve-non-dom.js to promise-resolve-in-non-dom.js
