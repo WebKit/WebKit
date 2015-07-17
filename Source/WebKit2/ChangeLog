@@ -1,3 +1,15 @@
+2015-07-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: [Mac] Save dialog not working when inspector is docked
+        https://bugs.webkit.org/show_bug.cgi?id=146991
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::runOpenPanel):
+        (WebKit::WebInspectorProxy::platformSave):
+        When the window is nil (docked) use a non-window version of running the dialog.
+
 2015-07-16  Tim Horton  <timothy_horton@apple.com>
 
         Add shrink-wrapped link highlights

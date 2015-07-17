@@ -347,12 +347,18 @@ void WebInspectorFrontendClient::save(const String& suggestedURL, const String& 
     panel.nameFieldStringValue = platformURL.lastPathComponent;
     panel.directoryURL = [platformURL URLByDeletingLastPathComponent];
 
-    [panel beginSheetModalForWindow:[[m_windowController webView] window] completionHandler:^(NSInteger result) {
+    auto completionHandler = ^(NSInteger result) {
         if (result == NSFileHandlingPanelCancelButton)
             return;
         ASSERT(result == NSFileHandlingPanelOKButton);
         saveToURL(panel.URL);
-    }];
+    };
+
+    NSWindow *window = [[m_windowController webView] window];
+    if (window)
+        [panel beginSheetModalForWindow:window completionHandler:completionHandler];
+    else
+        completionHandler([panel runModal]);
 }
 
 void WebInspectorFrontendClient::append(const String& suggestedURL, const String& content)
@@ -704,7 +710,7 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
     panel.canChooseFiles = YES;
     panel.allowsMultipleSelection = allowMultipleFiles;
 
-    [panel beginSheetModalForWindow:_webView.window completionHandler:^(NSInteger result) {
+    auto completionHandler = ^(NSInteger result) {
         if (result == NSFileHandlingPanelCancelButton) {
             [resultListener cancel];
             return;
@@ -713,11 +719,16 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
 
         NSArray *URLs = panel.URLs;
         NSMutableArray *filenames = [NSMutableArray arrayWithCapacity:URLs.count];
-        for (NSURL *URL in URLs) {
+        for (NSURL *URL in URLs)
             [filenames addObject:URL.path];
-        }
+
         [resultListener chooseFilenames:filenames];
-    }];
+    };
+
+    if (_webView.window)
+        [panel beginSheetModalForWindow:_webView.window completionHandler:completionHandler];
+    else
+        completionHandler([panel runModal]);
 }
 
 - (void)webView:(WebView *)sender frame:(WebFrame *)frame exceededDatabaseQuotaForSecurityOrigin:(WebSecurityOrigin *)origin database:(NSString *)databaseIdentifier
