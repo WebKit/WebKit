@@ -45,6 +45,7 @@ enum {
     SnapshotOptionsPaintSelectionOnly = 1 << 1,
     SnapshotOptionsInViewCoordinates = 1 << 2,
     SnapshotOptionsForceBlackText = 1 << 3,
+    SnapshotOptionsPaintSelectionAndBackgroundsOnly = 1 << 4,
 };
 typedef unsigned SnapshotOptions;
 

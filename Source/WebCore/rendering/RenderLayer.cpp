@@ -4275,7 +4275,8 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
     if (localPaintingInfo.overlapTestRequests && isSelfPaintingLayer)
         performOverlapTests(*localPaintingInfo.overlapTestRequests, localPaintingInfo.rootLayer, this);
 
-    bool selectionOnly  = localPaintingInfo.paintBehavior & PaintBehaviorSelectionOnly;
+    bool selectionAndBackgroundsOnly = localPaintingInfo.paintBehavior & PaintBehaviorSelectionAndBackgroundsOnly;
+    bool selectionOnly = localPaintingInfo.paintBehavior & PaintBehaviorSelectionOnly;
     
     PaintBehavior paintBehavior = PaintBehaviorNormal;
     if (localPaintFlags & PaintLayerPaintingSkipRootBackground)
@@ -4314,7 +4315,7 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
     if (isPaintingCompositedForeground) {
         if (shouldPaintContent)
             paintForegroundForFragments(layerFragments, context, transparencyLayerContext, paintingInfo.paintDirtyRect, haveTransparency,
-                localPaintingInfo, paintBehavior, subtreePaintRootForRenderer, selectionOnly);
+                localPaintingInfo, paintBehavior, subtreePaintRootForRenderer, selectionOnly || selectionAndBackgroundsOnly);
     }
 
     if (shouldPaintOutline)
@@ -4346,7 +4347,7 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
     // Make sure that we now use the original transparency context.
     ASSERT(transparencyLayerContext == context);
 
-    if (shouldPaintContent && !selectionOnly) {
+    if (shouldPaintContent && !(selectionOnly || selectionAndBackgroundsOnly)) {
         if (shouldPaintMask(paintingInfo.paintBehavior, localPaintFlags)) {
             // Paint the mask for the fragments.
             paintMaskForFragments(layerFragments, context, localPaintingInfo, subtreePaintRootForRenderer);
