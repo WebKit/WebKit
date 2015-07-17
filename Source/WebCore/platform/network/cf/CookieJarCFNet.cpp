@@ -28,6 +28,7 @@
 
 #if USE(CFNETWORK)
 
+#include "CFNetworkSPI.h"
 #include "Cookie.h"
 #include "URL.h"
 #include "NetworkStorageSession.h"
@@ -112,6 +113,15 @@ static RetainPtr<CFArrayRef> copyCookiesForURLWithFirstPartyURL(const NetworkSto
 #endif
 }
 
+static CFArrayRef createCookies(CFDictionaryRef headerFields, CFURLRef url)
+{
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000)
+    return _CFHTTPParsedCookiesWithResponseHeaderFields(kCFAllocatorDefault, headerFields, url);
+#else
+    return CFHTTPCookieCreateWithResponseHeaderFields(kCFAllocatorDefault, headerFields, url);
+#endif
+}
+
 void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, const String& value)
 {
     // <rdar://problem/5632883> CFHTTPCookieStorage stores an empty cookie, which would be sent as "Cookie: =".
@@ -130,10 +140,8 @@ void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstPar
         (const void**)&s_setCookieKeyCF, (const void**)&cookieStringCF, 1,
         &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
-    RetainPtr<CFArrayRef> cookiesCF = adoptCF(CFHTTPCookieCreateWithResponseHeaderFields(kCFAllocatorDefault,
-        headerFieldsCF.get(), urlCF.get()));
-
-    CFHTTPCookieStorageSetCookies(session.cookieStorage().get(), filterCookies(cookiesCF.get()).get(), urlCF.get(), firstPartyForCookiesCF.get());
+    RetainPtr<CFArrayRef> unfilteredCookies = adoptCF(createCookies(headerFieldsCF.get(), urlCF.get()));
+    CFHTTPCookieStorageSetCookies(session.cookieStorage().get(), filterCookies(unfilteredCookies.get()).get(), urlCF.get(), firstPartyForCookiesCF.get());
 }
 
 String cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
