@@ -1242,6 +1242,14 @@ void WebProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend shou
 
 void WebProcess::processWillSuspendImminently(bool& handled)
 {
+    if (parentProcessConnection()->inSendSync()) {
+        // Avoid reentrency bugs such as rdar://problem/21605505 by just bailing
+        // if we get an incoming ProcessWillSuspendImminently message when waiting for a
+        // reply to a sync message.
+        // FIXME: ProcessWillSuspendImminently should not be a sync message.
+        return;
+    }
+
     supplement<WebDatabaseManager>()->closeAllDatabases();
     actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend::No);
     handled = true;
