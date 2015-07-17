@@ -151,18 +151,8 @@ static const unsigned webViewCloseTimeout = 60;
     static_cast<WebInspectorProxy*>(_inspectorProxy)->windowFullScreenDidChange();
 }
 
-- (void)ignoreNextInspectedViewFrameDidChange
-{
-    _ignoreNextInspectedViewFrameDidChange = YES;
-}
-
 - (void)inspectedViewFrameDidChange:(NSNotification *)notification
 {
-    if (_ignoreNextInspectedViewFrameDidChange) {
-        _ignoreNextInspectedViewFrameDidChange = NO;
-        return;
-    }
-
     // Resizing the views while inside this notification can lead to bad results when entering
     // or exiting full screen. To avoid that we need to perform the work after a delay. We only
     // depend on this for enforcing the height constraints, so a small delay isn't terrible. Most
@@ -729,8 +719,6 @@ void WebInspectorProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
 
     if (NSEqualRects([m_inspectorView frame], inspectorFrame) && NSEqualRects([inspectedView frame], inspectedViewFrame))
         return;
-
-    [m_inspectorProxyObjCAdapter ignoreNextInspectedViewFrameDidChange];
 
     // Disable screen updates to make sure the layers for both views resize in sync.
     [[m_inspectorView window] disableScreenUpdatesUntilFlush];
