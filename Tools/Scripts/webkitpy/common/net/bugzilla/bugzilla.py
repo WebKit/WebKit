@@ -527,7 +527,7 @@ class Bugzilla(object):
         attempts = 0
         while not self.authenticated:
             attempts += 1
-            username, password = credentials.read_credentials()
+            username, password = credentials.read_credentials(use_stored_credentials=attempts == 1)
 
             _log.info("Logging in as %s..." % username)
             self.browser.open(config_urls.bug_server_url +

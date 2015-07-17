@@ -1,3 +1,42 @@
+2015-07-16  Dean Johnson  <dean_johnson@apple.com>
+
+        webkit-patch uses incorrect credentials from keychain to login until account lockout
+        https://bugs.webkit.org/show_bug.cgi?id=146923
+
+        Reviewed by Daniel Bates.
+
+        When `webkit-patch upload` asks for login credentials for bugs.webkit.org, if you
+        provide incorrect credentials then ask for them to be saved to the keychain
+        webkit-patch will then use those incorrect credentials until 5 total attempts
+        have been made to log in. This will lock the user out of Bugzilla for a
+        half hour.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (Bugzilla.authenticate): Added argument to read_credentials() that
+        passes in whether or not to use stored credentials.
+        * Scripts/webkitpy/common/net/credentials.py:
+        (Credentials.read_credentials): Added optional argument 'use_stored_credentials'
+        that specifies whether or not to use credentials stored on the system. If it
+        does, we do not auto-fill credentials since either the credentials caused
+        the failure, or they weren't used in the first place so there is no reason
+        to try and use them again if a failure happened.
+        * Scripts/webkitpy/common/net/credentials_unittest.py: Added unit test for newly added
+        use_stored_credentials argument.
+        (test_do_not_use_stored_credentials): Added unit test to make sure functions that
+        retrieve username/password information from the local system (environment, Git, keychain,
+        keyring) are never called. It also tests that we get back our mocked username and password.
+        (test_do_not_use_stored_credentials.MockKeyring): Mock keyring
+        (test_do_not_use_stored_credentials.MockKeyring.get_password): Assert this is never called.
+        (test_do_not_use_stored_credentials.FakeCredentials): Mock credentials
+        (test_do_not_use_stored_credentials.FakeCredentials._credentials_from_keychain): Assert this
+        is never called.
+        (test_do_not_use_stored_credentials.FakeCredentials._credentials_from_environment): Ditto
+        (test_do_not_use_stored_credentials.FakeCredentials._offer_to_store_credentials_in_keyring): Ditto
+        (test_do_not_use_stored_credentials.FakeUser): Mock the User class
+        (test_do_not_use_stored_credentials.FakeUser.prompt): Returns a username to assert against.
+        (test_do_not_use_stored_credentials.FakeUser.prompt_password): Returns a password to assert
+        against.
+
 2015-07-16  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Unreviewed, remove my redundant email information.

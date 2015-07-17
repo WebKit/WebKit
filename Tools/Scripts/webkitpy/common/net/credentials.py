@@ -136,19 +136,21 @@ class Credentials(object):
         except:
             pass
 
-    def read_credentials(self, user=User):
-        username, password = self._credentials_from_environment()
-        # FIXME: We don't currently support pulling the username from one
-        # source and the password from a separate source.
-        if not username or not password:
-            username, password = self._credentials_from_git()
-        if not username or not password:
-            username, password = self._credentials_from_keychain(username)
+    def read_credentials(self, user=User, use_stored_credentials=True):
+        username, password = None, None
+        if use_stored_credentials:
+            username, password = self._credentials_from_environment()
+            # FIXME: We don't currently support pulling the username from one
+            # source and the password from a separate source.
+            if not username or not password:
+                username, password = self._credentials_from_git()
+            if not username or not password:
+                username, password = self._credentials_from_keychain(username)
 
         if not username:
             username = user.prompt("%s login: " % self.host)
 
-        if username and not password and self._keyring:
+        if username and not password and self._keyring and use_stored_credentials:
             try:
                 password = self._keyring.get_password(self.host, username)
             except:
