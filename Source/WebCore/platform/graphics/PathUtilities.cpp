@@ -29,220 +29,228 @@
 
 #include "FloatPoint.h"
 #include "FloatRect.h"
+#include "GeometryUtilities.h"
 #include <math.h>
 
 namespace WebCore {
 
-static void addShrinkWrapRightCorner(Path& path, const FloatRect* fromRect, const FloatRect* toRect, float radius)
-{
-    FloatSize horizontalRadius(radius, 0);
-    FloatSize verticalRadius(0, radius);
+class FloatPointGraph {
+    WTF_MAKE_NONCOPYABLE(FloatPointGraph);
+public:
+    FloatPointGraph() { }
 
-    if (!fromRect) {
-        // For the first (top) rect:
+    class Node : public FloatPoint {
+        WTF_MAKE_NONCOPYABLE(Node);
+    public:
+        Node(FloatPoint point)
+            : FloatPoint(point)
+        { }
 
-        path.moveTo(toRect->minXMinYCorner() + horizontalRadius);
-
-        // Across the top, towards the right.
-        path.addLineTo(toRect->maxXMinYCorner() - horizontalRadius);
-
-        // Arc the top corner.
-        path.addArcTo(toRect->maxXMinYCorner(), toRect->maxXMinYCorner() + verticalRadius, radius);
-    } else if (!toRect) {
-        // For the last rect:
-
-        // Down the right.
-        path.addLineTo(fromRect->maxXMaxYCorner() - verticalRadius);
-
-        // Arc the bottom corner.
-        path.addArcTo(fromRect->maxXMaxYCorner(), fromRect->maxXMaxYCorner() - horizontalRadius, radius);
-    } else {
-        // For middle rects:
-
-        float rightEdgeDifference = toRect->maxX() - fromRect->maxX();
-
-        // Skip over rects with equal edges, because we can't make
-        // sensible curves between them.
-        if (fabsf(rightEdgeDifference) < std::numeric_limits<float>::epsilon())
-            return;
-
-        if (rightEdgeDifference < 0) {
-            float effectiveY = std::max(toRect->y(), fromRect->maxY());
-            FloatPoint toRectMaxXMinYCorner = FloatPoint(toRect->maxX(), effectiveY);
-
-            // Down the right.
-            path.addLineTo(FloatPoint(fromRect->maxX(), effectiveY) - verticalRadius);
-
-            // Arc the outer corner.
-            path.addArcTo(FloatPoint(fromRect->maxX(), effectiveY), FloatPoint(fromRect->maxX(), effectiveY) - horizontalRadius, radius);
-
-            // Across the bottom, towards the left.
-            path.addLineTo(toRectMaxXMinYCorner + horizontalRadius);
-
-            // Arc the inner corner.
-            path.addArcTo(toRectMaxXMinYCorner, toRectMaxXMinYCorner + verticalRadius, radius);
-        } else {
-            float effectiveY = std::min(toRect->y(), fromRect->maxY());
-            FloatPoint toRectMaxXMinYCorner = FloatPoint(toRect->maxX(), effectiveY);
-
-            // Down the right.
-            path.addLineTo(FloatPoint(fromRect->maxX(), effectiveY) - verticalRadius);
-
-            // Arc the inner corner.
-            path.addArcTo(FloatPoint(fromRect->maxX(), effectiveY), FloatPoint(fromRect->maxX(), effectiveY) + horizontalRadius, radius);
-
-            // Across the bottom, towards the right.
-            path.addLineTo(toRectMaxXMinYCorner - horizontalRadius);
-
-            // Arc the outer corner.
-            path.addArcTo(toRectMaxXMinYCorner, toRectMaxXMinYCorner + verticalRadius, radius);
+        const Vector<Node*>& nextPoints() const { return m_nextPoints; }
+        void addNextPoint(Node* node)
+        {
+            if (!m_nextPoints.contains(node))
+                m_nextPoints.append(node);
         }
+
+        bool isVisited() const { return m_visited; }
+        void visit() { m_visited = true; }
+
+        void reset() { m_visited = false; m_nextPoints.clear(); }
+
+    private:
+        Vector<Node*> m_nextPoints;
+        bool m_visited { false };
+    };
+
+    typedef std::pair<Node*, Node*> Edge;
+    typedef Vector<Edge> Polygon;
+
+    Node* findOrCreateNode(FloatPoint);
+
+    void reset()
+    {
+        for (auto& node : m_allNodes)
+            node->reset();
     }
+
+private:
+    Vector<std::unique_ptr<Node>> m_allNodes;
+};
+
+FloatPointGraph::Node* FloatPointGraph::findOrCreateNode(FloatPoint point)
+{
+    for (auto& testNode : m_allNodes) {
+        if (areEssentiallyEqual(*testNode, point))
+            return testNode.get();
+    }
+
+    m_allNodes.append(std::make_unique<FloatPointGraph::Node>(point));
+    return m_allNodes.last().get();
 }
 
-static void addShrinkWrapLeftCorner(Path& path, const FloatRect* fromRect, const FloatRect* toRect, float radius)
+static bool findLineSegmentIntersection(const FloatPointGraph::Edge& edgeA, const FloatPointGraph::Edge& edgeB, FloatPoint& intersectionPoint)
 {
-    FloatSize horizontalRadius(radius, 0);
-    FloatSize verticalRadius(0, radius);
+    if (!findIntersection(*edgeA.first, *edgeA.second, *edgeB.first, *edgeB.second, intersectionPoint))
+        return false;
 
-    if (!fromRect) {
-        // For the first (bottom) rect:
+    FloatPoint edgeAVec(*edgeA.second - *edgeA.first);
+    FloatPoint edgeBVec(*edgeB.second - *edgeB.first);
 
-        // Across the bottom, towards the left.
-        path.addLineTo(toRect->minXMaxYCorner() + horizontalRadius);
+    float dotA = edgeAVec.dot(toFloatPoint(intersectionPoint - *edgeA.first));
+    if (dotA < 0 || dotA > edgeAVec.lengthSquared())
+        return false;
 
-        // Arc the bottom corner.
-        path.addArcTo(toRect->minXMaxYCorner(), toRect->minXMaxYCorner() - verticalRadius, radius);
+    float dotB = edgeBVec.dot(toFloatPoint(intersectionPoint - *edgeB.first));
+    if (dotB < 0 || dotB > edgeBVec.lengthSquared())
+        return false;
 
-    } else if (!toRect) {
-        // For the last (top) rect:
+    return true;
+}
 
-        // Up the left.
-        path.addLineTo(fromRect->minXMinYCorner() + verticalRadius);
+static bool addIntersectionPoints(Vector<FloatPointGraph::Polygon>& polys, FloatPointGraph& graph)
+{
+    bool foundAnyIntersections = false;
 
-        // Arc the top corner.
-        path.addArcTo(fromRect->minXMinYCorner(), fromRect->minXMinYCorner() + horizontalRadius, radius);
-    } else {
-        // For middle rects:
-        float leftEdgeDifference = fromRect->x() - toRect->x();
+    Vector<FloatPointGraph::Edge> allEdges;
+    for (auto& poly : polys)
+        allEdges.appendVector(poly);
 
-        // Skip over rects with equal edges, because we can't make
-        // sensible curves between them.
-        if (fabsf(leftEdgeDifference) < std::numeric_limits<float>::epsilon())
-            return;
+    for (const FloatPointGraph::Edge& edgeA : allEdges) {
+        Vector<FloatPointGraph::Node*> intersectionPoints({edgeA.first, edgeA.second});
 
-        if (leftEdgeDifference < 0) {
-            float effectiveY = std::min(toRect->maxY(), fromRect->y());
-            FloatPoint toRectMinXMaxYCorner = FloatPoint(toRect->x(), effectiveY);
+        for (const FloatPointGraph::Edge& edgeB : allEdges) {
+            if (&edgeA == &edgeB)
+                continue;
 
-            // Up the right.
-            path.addLineTo(FloatPoint(fromRect->x(), effectiveY) + verticalRadius);
-
-            // Arc the inner corner.
-            path.addArcTo(FloatPoint(fromRect->x(), effectiveY), FloatPoint(fromRect->x(), effectiveY) + horizontalRadius, radius);
-
-            // Across the bottom, towards the right.
-            path.addLineTo(toRectMinXMaxYCorner - horizontalRadius);
-
-            // Arc the outer corner.
-            path.addArcTo(toRectMinXMaxYCorner, toRectMinXMaxYCorner - verticalRadius, radius);
-        } else {
-            float effectiveY = std::max(toRect->maxY(), fromRect->y());
-            FloatPoint toRectMinXMaxYCorner = FloatPoint(toRect->x(), effectiveY);
-
-            // Up the right.
-            path.addLineTo(FloatPoint(fromRect->x(), effectiveY) + verticalRadius);
-
-            // Arc the outer corner.
-            path.addArcTo(FloatPoint(fromRect->x(), effectiveY), FloatPoint(fromRect->x(), effectiveY) - horizontalRadius, radius);
-
-            // Across the bottom, towards the left.
-            path.addLineTo(toRectMinXMaxYCorner + horizontalRadius);
-
-            // Arc the inner corner.
-            path.addArcTo(toRectMinXMaxYCorner, toRectMinXMaxYCorner - verticalRadius, radius);
+            FloatPoint intersectionPoint;
+            if (!findLineSegmentIntersection(edgeA, edgeB, intersectionPoint))
+                continue;
+            foundAnyIntersections = true;
+            intersectionPoints.append(graph.findOrCreateNode(intersectionPoint));
         }
-    }
-}
 
-static void addShrinkWrappedPathForRects(Path& path, Vector<FloatRect>& rects, float radius)
-{
-    size_t rectCount = rects.size();
+        std::sort(intersectionPoints.begin(), intersectionPoints.end(), [edgeA] (FloatPointGraph::Node* a, FloatPointGraph::Node* b) {
+            return FloatPoint(*edgeA.first - *b).lengthSquared() > FloatPoint(*edgeA.first - *a).lengthSquared();
+        });
 
-    std::sort(rects.begin(), rects.end(), [](FloatRect a, FloatRect b) { return b.y() > a.y(); });
-
-    for (size_t i = 0; i <= rectCount; ++i)
-        addShrinkWrapRightCorner(path, i ? &rects[i - 1] : nullptr, i < rectCount ? &rects[i] : nullptr, radius);
-
-    for (size_t i = 0; i <= rectCount; ++i) {
-        size_t reverseIndex = rectCount - i;
-        addShrinkWrapLeftCorner(path, reverseIndex < rectCount ? &rects[reverseIndex] : nullptr, reverseIndex ? &rects[reverseIndex - 1] : nullptr, radius);
+        for (unsigned pointIndex = 1; pointIndex < intersectionPoints.size(); pointIndex++)
+            intersectionPoints[pointIndex - 1]->addNextPoint(intersectionPoints[pointIndex]);
     }
 
-    path.closeSubpath();
+    return foundAnyIntersections;
 }
 
-static bool rectsIntersectOrTouch(const FloatRect& a, const FloatRect& b)
+static FloatPointGraph::Polygon walkGraphAndExtractPolygon(FloatPointGraph::Node* startNode)
 {
-    return !a.isEmpty() && !b.isEmpty()
-        && a.x() <= b.maxX() && b.x() <= a.maxX()
-        && a.y() <= b.maxY() && b.y() <= a.maxY();
+    FloatPointGraph::Polygon outPoly;
+
+    FloatPointGraph::Node* currentNode = startNode;
+    FloatPointGraph::Node* previousNode = startNode;
+
+    do {
+        currentNode->visit();
+
+        FloatPoint currentVec(*previousNode - *currentNode);
+        currentVec.normalize();
+
+        // Walk the graph, at each node choosing the next non-visited
+        // point with the greatest internal angle.
+        FloatPointGraph::Node* nextNode = nullptr;
+        float nextNodeAngle = 0;
+        for (auto potentialNextNode : currentNode->nextPoints()) {
+            if (potentialNextNode == currentNode)
+                continue;
+
+            // If we can get back to the start, we should, ignoring the fact that we already visited it.
+            // Otherwise we'll head inside the shape.
+            if (potentialNextNode == startNode) {
+                nextNode = startNode;
+                break;
+            }
+
+            if (potentialNextNode->isVisited())
+                continue;
+
+            FloatPoint nextVec(*potentialNextNode - *currentNode);
+            nextVec.normalize();
+
+            float angle = acos(nextVec.dot(currentVec));
+            float crossZ = nextVec.x() * currentVec.y() - nextVec.y() * currentVec.x();
+
+            if (crossZ < 0)
+                angle = (2 * M_PI) - angle;
+
+            if (!nextNode || angle > nextNodeAngle) {
+                nextNode = potentialNextNode;
+                nextNodeAngle = angle;
+            }
+        }
+
+        // If we don't end up at a node adjacent to the starting node,
+        // something went wrong (there's probably a hole in the shape),
+        // so bail out. We'll use a bounding box instead.
+        if (!nextNode)
+            return FloatPointGraph::Polygon();
+
+        outPoly.append(std::make_pair(currentNode, nextNode));
+
+        previousNode = currentNode;
+        currentNode = nextNode;
+    } while (currentNode != startNode);
+
+    return outPoly;
 }
 
-static Vector<FloatRect>* findSetContainingRect(Vector<Vector<FloatRect>>& sets, FloatRect rect)
+static FloatPointGraph::Node* findUnvisitedPolygonStartPoint(Vector<FloatPointGraph::Polygon>& polys)
 {
-    for (auto& set : sets) {
-        if (set.contains(rect))
-            return &set;
+    for (auto& poly : polys) {
+        for (auto& edge : poly) {
+            if (edge.first->isVisited() || edge.second->isVisited())
+                goto nextPolygon;
+        }
+
+        // FIXME: We should make sure we find an outside edge to start with.
+        return poly[0].first;
+    nextPolygon:
+        continue;
     }
-
     return nullptr;
 }
 
-static Vector<Vector<FloatRect>> contiguousRectGroupsFromRects(const Vector<FloatRect>& rects)
+static Vector<FloatPointGraph::Polygon> unitePolygons(Vector<FloatPointGraph::Polygon>& polys, FloatPointGraph& graph)
 {
-    Vector<std::pair<FloatRect, FloatRect>> intersections;
-    Vector<FloatRect> soloRects = rects;
+    graph.reset();
 
-    for (auto& rectA : rects) {
-        for (auto& rectB : rects) {
-            if (rectA == rectB)
-                continue;
+    // There are no intersections, so the polygons are disjoint (we already removed wholly-contained rects in an earlier step).
+    if (!addIntersectionPoints(polys, graph))
+        return polys;
 
-            if (rectsIntersectOrTouch(rectA, rectB)) {
-                intersections.append(std::make_pair(rectA, rectB));
-                soloRects.removeAllMatching([rectA, rectB](FloatRect q) { return q == rectA || q == rectB; });
-            }
-        }
+    Vector<FloatPointGraph::Polygon> unitedPolygons;
+
+    while (FloatPointGraph::Node* startNode = findUnvisitedPolygonStartPoint(polys)) {
+        FloatPointGraph::Polygon unitedPolygon = walkGraphAndExtractPolygon(startNode);
+        if (unitedPolygon.isEmpty())
+            return Vector<FloatPointGraph::Polygon>();
+        unitedPolygons.append(unitedPolygon);
     }
 
-    Vector<Vector<FloatRect>> rectSets;
+    return unitedPolygons;
+}
 
-    for (auto& intersectingPair : intersections) {
-        if (Vector<FloatRect>* rectContainingFirst = findSetContainingRect(rectSets, intersectingPair.first)) {
-            if (!rectContainingFirst->contains(intersectingPair.second))
-                rectContainingFirst->append(intersectingPair.second);
-            continue;
-        }
+static FloatPointGraph::Polygon edgesForRect(FloatRect rect, FloatPointGraph& graph)
+{
+    auto minMin = graph.findOrCreateNode(rect.minXMinYCorner());
+    auto minMax = graph.findOrCreateNode(rect.minXMaxYCorner());
+    auto maxMax = graph.findOrCreateNode(rect.maxXMaxYCorner());
+    auto maxMin = graph.findOrCreateNode(rect.maxXMinYCorner());
 
-        if (Vector<FloatRect>* rectContainingSecond = findSetContainingRect(rectSets, intersectingPair.second)) {
-            if (!rectContainingSecond->contains(intersectingPair.first))
-                rectContainingSecond->append(intersectingPair.first);
-            continue;
-        }
-
-        // We didn't find a set including either of our rects, so start a new one.
-        rectSets.append(Vector<FloatRect>({intersectingPair.first, intersectingPair.second}));
-
-        continue;
-    }
-
-    for (auto& rect : soloRects) {
-        ASSERT(!findSetContainingRect(rectSets, rect));
-        rectSets.append(Vector<FloatRect>({rect}));
-    }
-
-    return rectSets;
+    return FloatPointGraph::Polygon({
+        std::make_pair(minMin, maxMin),
+        std::make_pair(maxMin, maxMax),
+        std::make_pair(maxMax, minMax),
+        std::make_pair(minMax, minMin)
+    });
 }
 
 Path PathUtilities::pathWithShrinkWrappedRects(const Vector<FloatRect>& rects, float radius)
@@ -252,11 +260,74 @@ Path PathUtilities::pathWithShrinkWrappedRects(const Vector<FloatRect>& rects, f
     if (rects.isEmpty())
         return path;
 
-    Vector<Vector<FloatRect>> rectSets = contiguousRectGroupsFromRects(rects);
+    if (rects.size() > 20) {
+        path.addRoundedRect(unionRect(rects), FloatSize(radius, radius));
+        return path;
+    }
 
-    for (auto& set : rectSets)
-        addShrinkWrappedPathForRects(path, set, radius);
-    
+    Vector<FloatRect> sortedRects = rects;
+
+    std::sort(sortedRects.begin(), sortedRects.end(), [](FloatRect a, FloatRect b) { return b.y() > a.y(); });
+
+    FloatPointGraph graph;
+    Vector<FloatPointGraph::Polygon> rectPolygons;
+    rectPolygons.reserveInitialCapacity(sortedRects.size());
+
+    for (auto& rect : sortedRects) {
+        bool isContained = false;
+        for (auto& otherRect : sortedRects) {
+            if (&rect == &otherRect)
+                continue;
+            if (otherRect.contains(rect)) {
+                isContained = true;
+                break;
+            }
+        }
+
+        if (!isContained)
+            rectPolygons.append(edgesForRect(rect, graph));
+    }
+
+    Vector<FloatPointGraph::Polygon> polys = unitePolygons(rectPolygons, graph);
+
+    if (polys.isEmpty()) {
+        path.addRoundedRect(unionRect(sortedRects), FloatSize(radius, radius));
+        return path;
+    }
+
+    for (auto& poly : polys) {
+        for (unsigned i = 0; i < poly.size(); i++) {
+            FloatPointGraph::Edge& toEdge = poly[i];
+            // Connect the first edge to the last.
+            FloatPointGraph::Edge& fromEdge = (i > 0) ? poly[i - 1] : poly[poly.size() - 1];
+
+            FloatPoint fromEdgeVec = toFloatPoint(*fromEdge.second - *fromEdge.first);
+            FloatPoint toEdgeVec = toFloatPoint(*toEdge.second - *toEdge.first);
+
+            // Clamp the radius to no more than half the length of either adjacent edge,
+            // because we want a smooth curve and don't want unequal radii.
+            float clampedRadius = std::min(radius, fabsf(fromEdgeVec.x() ? fromEdgeVec.x() : fromEdgeVec.y()) / 2);
+            clampedRadius = std::min(clampedRadius, fabsf(toEdgeVec.x() ? toEdgeVec.x() : toEdgeVec.y()) / 2);
+
+            FloatPoint fromEdgeNorm = fromEdgeVec;
+            fromEdgeNorm.normalize();
+            FloatPoint toEdgeNorm = toEdgeVec;
+            toEdgeNorm.normalize();
+
+            // Project the radius along the incoming and outgoing edge.
+            FloatSize fromOffset = clampedRadius * toFloatSize(fromEdgeNorm);
+            FloatSize toOffset = clampedRadius * toFloatSize(toEdgeNorm);
+
+            if (!i)
+                path.moveTo(*fromEdge.second - fromOffset);
+            else
+                path.addLineTo(*fromEdge.second - fromOffset);
+            path.addArcTo(*fromEdge.second, *toEdge.first + toOffset, clampedRadius);
+        }
+
+        path.closeSubpath();
+    }
+
     return path;
 }
 

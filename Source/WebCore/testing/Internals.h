@@ -417,7 +417,7 @@ public:
     String scrollSnapOffsets(Element*, ExceptionCode&);
 #endif
 
-    PassRefPtr<DOMPath> pathWithShrinkWrappedRects(Vector<double>, ExceptionCode&);
+    PassRefPtr<DOMPath> pathWithShrinkWrappedRects(Vector<double> rectComponents, double radius, ExceptionCode&);
 
 private:
     explicit Internals(Document*);

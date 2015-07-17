@@ -378,5 +378,5 @@ enum ResourceLoadPriority {
     [RaisesException] DOMString scrollSnapOffsets(Element element);
 #endif
 
-    [RaisesException] DOMPath pathWithShrinkWrappedRects(sequence<double> rectComponents);
+    [RaisesException] DOMPath pathWithShrinkWrappedRects(sequence<double> rectComponents, double radius);
 };

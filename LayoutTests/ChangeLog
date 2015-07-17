@@ -1,3 +1,20 @@
+2015-07-17  Tim Horton  <timothy_horton@apple.com>
+
+        Improve rect shrink-wrapping algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=147037
+        <rdar://problem/21643094>
+
+        Reviewed by Simon Fraser.
+
+        * fast/shrink-wrap/rect-shrink-wrap-expected.png:
+        * fast/shrink-wrap/rect-shrink-wrap.html:
+        Add a radius parameter to testRects, defaulting to 8.
+
+        Add an offset parameter to testRects, making it easier to slide
+        the rect sets around.
+
+        Add some more test cases.
+
 2015-07-17  Nan Wang  <n_wang@apple.com>
 
         AX: iframe within table cell is inaccessible to VoiceOver

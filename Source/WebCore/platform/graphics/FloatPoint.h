@@ -254,6 +254,11 @@ inline FloatPoint toFloatPoint(const FloatSize& a)
     return FloatPoint(a.width(), a.height());
 }
 
+inline bool areEssentiallyEqual(const FloatPoint& a, const FloatPoint& b)
+{
+    return WTF::areEssentiallyEqual(a.x(), b.x()) && WTF::areEssentiallyEqual(a.y(), b.y());
+}
+
 }
 
 #endif
