@@ -30,13 +30,15 @@
 #import "WebGLLayer.h"
 
 #import "GraphicsContext3D.h"
+#import "GraphicsContextCG.h"
 #import "GraphicsLayer.h"
+#import <wtf/FastMalloc.h>
+#import <wtf/RetainPtr.h>
+
 #if !PLATFORM(IOS)
 #import <OpenGL/OpenGL.h>
 #import <OpenGL/gl.h>
 #endif
-#import <wtf/FastMalloc.h>
-#import <wtf/RetainPtr.h>
 
 using namespace WebCore;
 
@@ -49,8 +51,11 @@ using namespace WebCore;
     _context = context;
     self = [super init];
     _devicePixelRatio = context->getContextAttributes().devicePixelRatio;
-#if !PLATFORM(IOS)
+#if PLATFORM(MAC)
     self.contentsScale = _devicePixelRatio;
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+    self.colorspace = sRGBColorSpaceRef();
+#endif
 #endif
     return self;
 }
@@ -59,7 +64,7 @@ using namespace WebCore;
 -(CGLPixelFormatObj)copyCGLPixelFormatForDisplayMask:(uint32_t)mask
 {
     // FIXME: The mask param tells you which display (on a multi-display system)
-    // is to be used. But since we are now getting the pixel format from the 
+    // is to be used. But since we are now getting the pixel format from the
     // Canvas CGL context, we don't use it. This seems to do the right thing on
     // one multi-display system. But there may be cases where this is not the case.
     // If needed we will have to set the display mask in the Canvas CGLContext and
@@ -98,7 +103,7 @@ using namespace WebCore;
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, _context->platformTexture());
-    
+
     glBegin(GL_TRIANGLE_FAN);
         glTexCoord2f(0, 0);
         glVertex2f(-1, -1);
@@ -109,7 +114,7 @@ using namespace WebCore;
         glTexCoord2f(0, 1);
         glVertex2f(-1, 1);
     glEnd();
-    
+
     glBindTexture(GL_TEXTURE_2D, 0);
     glDisable(GL_TEXTURE_2D);
 
@@ -139,7 +144,7 @@ static void freeData(void *, const void *data, size_t /* size */)
         imageColorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
 
     CGRect layerBounds = CGRectIntegral([self bounds]);
-    
+
     size_t width = layerBounds.size.width * _devicePixelRatio;
     size_t height = layerBounds.size.height * _devicePixelRatio;
 

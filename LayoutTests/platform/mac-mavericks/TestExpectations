@@ -18,3 +18,6 @@ platform/mac/fast/ruby/ruby-expansion-cjk.html [ Skip ]
 platform/mac/fast/ruby/ruby-expansion-cjk-2.html [ Skip ]
 platform/mac/fast/ruby/ruby-expansion-cjk-3.html [ Skip ]
 platform/mac/fast/ruby/ruby-expansion-cjk-4.html [ Skip ]
+
+# Colorspaces on CA OpenGL layers not available in Mavericks and Yosemite
+fast/canvas/webgl/match-page-color-space.html [ Skip ]
