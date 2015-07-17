@@ -1,3 +1,14 @@
+2015-07-17  Nan Wang  <n_wang@apple.com>
+
+        AX: iframe within table cell is inaccessible to VoiceOver
+        https://bugs.webkit.org/show_bug.cgi?id=147001
+        <rdar://problem/21106945>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/iframe-within-cell-expected.txt: Added.
+        * accessibility/iframe-within-cell.html: Added.
+
 2015-07-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
         style.fontFamily accessor crashes on unstyled node created from DOMParser().parseFromString()
