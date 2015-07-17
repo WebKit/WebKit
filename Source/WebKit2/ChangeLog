@@ -1,3 +1,19 @@
+2015-07-16  Matt Baker  <mattbaker@apple.com>
+
+        [Mac] Web Inspector toolbar can be covered by the Safari tab bar when docked to the right
+        https://bugs.webkit.org/show_bug.cgi?id=146994
+
+        Reviewed by Timothy Hatcher.
+
+        WebInspectorProxy contained logic which ignored the next frame change notification from the inspected view,
+        whenever it updated the frames of both the Inspector view and inspected view. This patch removes that logic,
+        as it prevented the Inspector's frame from being adjusted after changes to the browser's top content inset.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (-[WKWebInspectorProxyObjCAdapter ignoreNextInspectedViewFrameDidChange]): Deleted.
+        (-[WKWebInspectorProxyObjCAdapter inspectedViewFrameDidChange:]): Deleted.
+        (WebKit::WebInspectorProxy::inspectedViewFrameDidChange): Deleted.
+
 2015-07-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: [Mac] Save dialog not working when inspector is docked
