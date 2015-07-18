@@ -399,7 +399,6 @@
     <ClCompile Include="..\dfg\DFGDesiredTransitions.cpp" />
     <ClCompile Include="..\dfg\DFGDesiredWatchpoints.cpp" />
     <ClCompile Include="..\dfg\DFGDesiredWeakReferences.cpp" />
-    <ClCompile Include="..\dfg\DFGDesiredWriteBarriers.cpp" />
     <ClCompile Include="..\dfg\DFGDisassembler.cpp" />
     <ClCompile Include="..\dfg\DFGDoesGC.cpp" />
     <ClCompile Include="..\dfg\DFGDominators.cpp" />
@@ -1086,7 +1085,6 @@
     <ClInclude Include="..\dfg\DFGDesiredTransitions.h" />
     <ClInclude Include="..\dfg\DFGDesiredWatchpoints.h" />
     <ClInclude Include="..\dfg\DFGDesiredWeakReferences.h" />
-    <ClInclude Include="..\dfg\DFGDesiredWriteBarriers.h" />
     <ClInclude Include="..\dfg\DFGDisassembler.h" />
     <ClInclude Include="..\dfg\DFGDoesGC.h" />
     <ClInclude Include="..\dfg\DFGDominators.h" />

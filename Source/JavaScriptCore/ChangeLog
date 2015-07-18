@@ -1,3 +1,33 @@
+2015-07-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Remove DFG::DesiredWriteBarriers because it's just a very difficult way of saying "please barrier the machine code block owner"
+        https://bugs.webkit.org/show_bug.cgi?id=147030
+
+        Reviewed by Andreas Kling.
+        
+        All of the users of DesiredWriteBarriers were just using it to request that Plan
+        finalization executes a barrier on codeBlock->ownerExecutable. Indeed, that's the only
+        owning cell in the heap that compilation affects. So, we might as well just have Plan
+        unconditionally execute that barrier and then we don't need DesiredWriteBarriers at
+        all.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGDesiredWriteBarriers.cpp: Removed.
+        * dfg/DFGDesiredWriteBarriers.h: Removed.
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::registerFrozenValues):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::reallyAdd):
+        (JSC::DFG::Plan::notifyCompiling):
+        (JSC::DFG::Plan::finalizeWithoutNotifyingCallback):
+        (JSC::DFG::Plan::checkLivenessAndVisitChildren):
+        (JSC::DFG::Plan::cancel):
+        * dfg/DFGPlan.h:
+
 2015-07-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Integrate automatic microtask draining into JSC framework and re-enable Promise

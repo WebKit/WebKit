@@ -529,7 +529,6 @@ void Plan::reallyAdd(CommonData* commonData)
     identifiers.reallyAdd(vm, commonData);
     weakReferences.reallyAdd(vm, commonData);
     transitions.reallyAdd(vm, commonData);
-    writeBarriers.trigger(vm);
 }
 
 void Plan::notifyCompiling()
@@ -550,6 +549,9 @@ void Plan::notifyReady()
 
 CompilationResult Plan::finalizeWithoutNotifyingCallback()
 {
+    // We will establish new references from the code block to things. So, we need a barrier.
+    vm.heap.writeBarrier(codeBlock->ownerExecutable());
+    
     if (!isStillValid())
         return CompilationInvalidated;
 
@@ -605,7 +607,6 @@ void Plan::checkLivenessAndVisitChildren(SlotVisitor& visitor, CodeBlockSet& cod
     codeBlocks.mark(profiledDFGCodeBlock.get());
     
     weakReferences.visitChildren(visitor);
-    writeBarriers.visitChildren(visitor);
     transitions.visitChildren(visitor);
 }
 
@@ -633,7 +634,6 @@ void Plan::cancel()
     watchpoints = DesiredWatchpoints();
     identifiers = DesiredIdentifiers();
     weakReferences = DesiredWeakReferences();
-    writeBarriers = DesiredWriteBarriers();
     transitions = DesiredTransitions();
     callback = nullptr;
     stage = Cancelled;

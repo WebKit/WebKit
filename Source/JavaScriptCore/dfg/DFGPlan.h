@@ -33,7 +33,6 @@
 #include "DFGDesiredTransitions.h"
 #include "DFGDesiredWatchpoints.h"
 #include "DFGDesiredWeakReferences.h"
-#include "DFGDesiredWriteBarriers.h"
 #include "DFGFinalizer.h"
 #include "DeferredCompilationCallback.h"
 #include "Operands.h"
@@ -94,7 +93,6 @@ struct Plan : public ThreadSafeRefCounted<Plan> {
     DesiredWatchpoints watchpoints;
     DesiredIdentifiers identifiers;
     DesiredWeakReferences weakReferences;
-    DesiredWriteBarriers writeBarriers;
     DesiredTransitions transitions;
     
     bool willTryToTierUp;

@@ -1121,13 +1121,8 @@ void Graph::registerFrozenValues()
         }
         case StrongValue: {
             unsigned constantIndex = m_codeBlock->addConstantLazily();
-            initializeLazyWriteBarrierForConstant(
-                m_plan.writeBarriers,
-                m_codeBlock->constants()[constantIndex],
-                m_codeBlock,
-                constantIndex,
-                m_codeBlock->ownerExecutable(),
-                value->value());
+            // We already have a barrier on the code block.
+            m_codeBlock->constants()[constantIndex].setWithoutWriteBarrier(value->value());
             break;
         } }
     }
