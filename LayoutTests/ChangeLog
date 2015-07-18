@@ -1,5 +1,14 @@
 2015-07-18  David Kilzer  <ddkilzer@apple.com>
 
+        REGRESSION (r186858): GTK and EFL ports don't composite <canvas> elements
+
+        See also r186905 for Windows.
+
+        * platform/efl/fast/shrink-wrap/rect-shrink-wrap-expected.txt: Added.
+        * platform/gtk/fast/shrink-wrap/rect-shrink-wrap-expected.txt: Added.
+
+2015-07-18  David Kilzer  <ddkilzer@apple.com>
+
         REGRESSION (r186982): http/tests/contentdispositionattachmentsandbox/form-submission-disabled.html and loader/meta-refresh-disabled.html fail
 
         Part of:
