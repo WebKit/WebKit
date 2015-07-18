@@ -1,0 +1,23 @@
+<script>
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+  }
+</script>
+<style>
+  div { -webkit-flow-into: content-flow; }
+  * { -webkit-flow-into: thread; }
+</style>
+<body onload="shuffle()"><p>PASS if no assert or crash.</p><div>content</div>foobar</body>
+<script>
+  document.execCommand("SelectAll");
+</script>
+<script>
+function shuffle() {
+  var element = document.getElementsByTagName("div")[0];
+  element.parentNode.removeChild(element);
+  document.body.offsetTop;
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+</script>

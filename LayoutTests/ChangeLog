@@ -1,3 +1,20 @@
+2015-07-17  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r169105): Do not assign a renderer to multiple selection subtrees.
+        https://bugs.webkit.org/show_bug.cgi?id=147038
+        rdar://problem/21819351
+
+        Reviewed by David Kilzer.
+
+        A renderer should never be assigned to multiple selection subtrees. (Currently RenderObject maintains the last selection state.)
+        RenderView::applySubtreeSelection() loops from the start to the end of the selection to find renderers that are inside the selection.
+        However, in case of regions (when multiple selection roots are present) traversing the renderer tree by calling RenderObject::nextInPreOrder() could
+        end up going across selection roots.
+        This patch ensures that we assign renderers to a specific selection only when the current selection root and the renderer's selection root match.
+
+        * fast/regions/crash-when-renderer-is-in-multiple-selection-subtrees2-expected.txt: Added.
+        * fast/regions/crash-when-renderer-is-in-multiple-selection-subtrees2.html: Added.
+
 2015-07-17  Andy Estes  <aestes@apple.com>
 
         [iOS] Further tighten the sandbox around pages fetched with Content-Disposition: attachment
