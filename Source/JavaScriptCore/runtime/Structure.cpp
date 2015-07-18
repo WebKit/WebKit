@@ -171,6 +171,7 @@ Structure::Structure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, co
     setDidTransition(false);
     setStaticFunctionsReified(false);
     setHasRareData(false);
+    setTransitionWatchpointIsLikelyToBeFired(false);
  
     ASSERT(inlineCapacity <= JSFinalObject::maxInlineCapacity());
     ASSERT(static_cast<PropertyOffset>(inlineCapacity) < firstOutOfLineOffset);
@@ -201,6 +202,7 @@ Structure::Structure(VM& vm)
     setDidTransition(false);
     setStaticFunctionsReified(false);
     setHasRareData(false);
+    setTransitionWatchpointIsLikelyToBeFired(false);
  
     TypeInfo typeInfo = TypeInfo(CellType, StructureFlags);
     m_blob = StructureIDBlob(vm.heap.structureIDTable().allocateID(this), 0, typeInfo);
@@ -239,6 +241,10 @@ Structure::Structure(VM& vm, Structure* previous, DeferredStructureTransitionWat
     setPreviousID(vm, previous);
 
     previous->didTransitionFromThisStructure(deferred);
+    
+    // Copy this bit now, in case previous was being watched.
+    setTransitionWatchpointIsLikelyToBeFired(previous->transitionWatchpointIsLikelyToBeFired());
+
     if (previous->m_globalObject)
         m_globalObject.set(vm, this, previous->m_globalObject.get());
     ASSERT(hasReadOnlyOrGetterSetterPropertiesExcludingProto() || !m_classInfo->hasStaticSetterOrReadonlyProperties());
@@ -495,6 +501,7 @@ Structure* Structure::toDictionaryTransition(VM& vm, Structure* structure, Dicti
     transition->m_offset = structure->m_offset;
     transition->setDictionaryKind(kind);
     transition->pin();
+    transition->setTransitionWatchpointIsLikelyToBeFired(true);
 
     transition->checkOffsetConsistency();
     return transition;
@@ -975,6 +982,12 @@ void DeferredStructureTransitionWatchpointFire::add(const Structure* structure)
 
 void Structure::didTransitionFromThisStructure(DeferredStructureTransitionWatchpointFire* deferred) const
 {
+    // If the structure is being watched, and this is the kind of structure that the DFG would
+    // like to watch, then make sure to note for all future versions of this structure that it's
+    // unwise to watch it.
+    if (m_transitionWatchpointSet.isBeingWatched())
+        const_cast<Structure*>(this)->setTransitionWatchpointIsLikelyToBeFired(true);
+    
     if (deferred)
         deferred->add(this);
     else

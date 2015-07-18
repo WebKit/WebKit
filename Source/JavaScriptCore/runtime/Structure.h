@@ -413,6 +413,13 @@ public:
         // watching it. We should come up with a comprehensive story for not watching things that
         // aren't profitable to watch.
         // https://bugs.webkit.org/show_bug.cgi?id=133625
+        
+        // - We don't watch Structures that either decided not to be watched, or whose predecessors
+        //   decided not to be watched. This happens either when a transition is fired while being
+        //   watched, or if a dictionary transition occurs.
+        if (transitionWatchpointIsLikelyToBeFired())
+            return false;
+        
         return true;
     }
     
@@ -502,6 +509,7 @@ public:
     DEFINE_BITFIELD(bool, hasBeenFlattenedBefore, HasBeenFlattenedBefore, 1, 24);
     DEFINE_BITFIELD(bool, hasCustomGetterSetterProperties, HasCustomGetterSetterProperties, 1, 25);
     DEFINE_BITFIELD(bool, didWatchInternalProperties, DidWatchInternalProperties, 1, 26);
+    DEFINE_BITFIELD(bool, transitionWatchpointIsLikelyToBeFired, TransitionWatchpointIsLikelyToBeFired, 1, 27);
 
 private:
     friend class LLIntOffsetsExtractor;

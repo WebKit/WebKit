@@ -188,6 +188,11 @@ public:
         invalidate(StringFireDetail(reason));
     }
     
+    bool isBeingWatched() const
+    {
+        return m_setIsNotEmpty;
+    }
+    
     int8_t* addressOfState() { return &m_state; }
     int8_t* addressOfSetIsNotEmpty() { return &m_setIsNotEmpty; }
     
@@ -329,6 +334,13 @@ public:
     void touch(const char* reason)
     {
         touch(StringFireDetail(reason));
+    }
+    
+    bool isBeingWatched() const
+    {
+        if (isFat())
+            return fat()->isBeingWatched();
+        return false;
     }
     
 private:
