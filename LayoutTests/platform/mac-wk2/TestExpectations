@@ -244,6 +244,8 @@ webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 
 webkit.org/b/147075 [ Release Yosemite ] http/tests/cache/disk-cache/disk-cache-disable.html [ Pass Failure ]
 
+webkit.org/b/143548 [ Debug Yosemite ] inspector/console/command-line-api.html [ Slow ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 

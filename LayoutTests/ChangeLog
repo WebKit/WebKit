@@ -1,5 +1,15 @@
 2015-07-18  David Kilzer  <ddkilzer@apple.com>
 
+        inspector/console/command-line-api.html is slow on Debug Yosemite WK2
+
+        <http://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html#showAllRuns=true&tests=inspector%2Fconsole%2Fcommand-line-api.html>
+
+        * platform/mac-wk2/TestExpectations: Mark test as slow on Debug
+        Yosemite WK2:
+        - inspector/console/command-line-api.html
+
+2015-07-18  David Kilzer  <ddkilzer@apple.com>
+
         http/tests/cache/disk-cache/disk-cache-disable.html is flaky on Release Yosemite WK2
 
         <http://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html#showAllRuns=true&tests=http%2Ftests%2Fcache%2Fdisk-cache%2Fdisk-cache-disable.html>
