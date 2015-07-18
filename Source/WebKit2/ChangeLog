@@ -1,3 +1,31 @@
+2015-07-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Scroll position jumps when scrolling scaling pages down in split view
+        https://bugs.webkit.org/show_bug.cgi?id=147072
+        rdar://problem/21769577
+
+        Reviewed by Sam Weinig.
+        
+        When apple.com/music is in Split View at a reduced scale, scrolling the page
+        can cause unwanted scroll jumps. This happened because we'd enter
+        TiledCoreAnimationDrawingArea::scaleViewToFitDocumentIfNeeded() with a pending
+        layout, so run the autosizing logic. When scrolled near the bottom, the unconstrained
+        layout resulted in a shorter document, which truncated the scroll position. The
+        scaled layout then restored the longer document, but it also restored that
+        truncated scroll position.
+        
+        Forcing a layout is sufficient to fix the bug for this page, and doing a single
+        layout (which will happen anyway) is preferable to running the autosize logic
+        if layout happens to be dirty.
+
+        I was not able to make a test to reproduce the problem. Entering
+        scaleViewToFitDocumentIfNeeded() with pending layout was triggerable
+        using a transform transition, but I was not able to reproduce incorrect
+        scroll position restoration.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::scaleViewToFitDocumentIfNeeded):
+
 2015-07-17  Andy Estes  <aestes@apple.com>
 
         [iOS] Further tighten the sandbox around pages fetched with Content-Disposition: attachment
