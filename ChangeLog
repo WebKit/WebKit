@@ -1,3 +1,19 @@
+2015-07-17  Ting-Wei Lan  <lantw44@gmail.com>
+
+        Bring back the GNU ar check to create thin archives on non-Linux systems
+        https://bugs.webkit.org/show_bug.cgi?id=146681
+
+        Reviewed by Martin Robinson.
+
+        We already use GNU ar thin archive feature to save time and disk space
+        on creating static archives, but it is only enabled on Linux. Without
+        this feature, the debug build of WebCore can be larger than 4 GiB,
+        which can cause error because GNU ar format uses 32-bit integer to
+        store offsets in the symbol table. This patch is similar to
+        https://bugs.webkit.org/show_bug.cgi?id=128596.
+
+        * Source/cmake/OptionsCommon.cmake:
+
 2015-07-14  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] [Wayland] Build by default the X11 and Wayland targets.
