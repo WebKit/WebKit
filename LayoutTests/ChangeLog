@@ -1,3 +1,16 @@
+2015-07-18  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r186982): http/tests/contentdispositionattachmentsandbox/form-submission-disabled.html and loader/meta-refresh-disabled.html fail
+
+        Part of:
+        <https://bugs.webkit.org/show_bug.cgi?id=147044>
+        <rdar://problem/21567820>
+
+        * http/tests/contentdispositionattachmentsandbox/form-submission-disabled-expected.txt:
+        - Fix line number of console message.
+        * loader/meta-refresh-disabled-expected.txt:
+        - Add newly expected console message.
+
 2015-07-17  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r169105): Do not assign a renderer to multiple selection subtrees.
