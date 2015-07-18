@@ -1047,6 +1047,10 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #if USE(GLIB)
     [self _scheduleGlibContextIterations];
 #endif
+
+#if PLATFORM(IOS)
+    _private->page->settings().setContentDispositionAttachmentSandboxEnabled(true);
+#endif
 }
 
 - (id)_initWithFrame:(NSRect)f frameName:(NSString *)frameName groupName:(NSString *)groupName

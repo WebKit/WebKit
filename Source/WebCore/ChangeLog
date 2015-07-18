@@ -1,3 +1,40 @@
+2015-07-17  Andy Estes  <aestes@apple.com>
+
+        Merge r186982. rdar://problem/21709404
+
+    2015-07-17  Andy Estes  <aestes@apple.com>
+
+        [iOS] Further tighten the sandbox around pages fetched with Content-Disposition: attachment
+        https://bugs.webkit.org/show_bug.cgi?id=147044
+        rdar://problem/21567820
+
+        Reviewed by Brady Eidson.
+
+        In addition to placing resources fetched with 'Content-Disposition: attachment' in a unique origin,
+        this change does the following:
+
+        - Switches the sandbox type from SandboxOrigin to SandboxAll, which enforces the same restrictions as <iframe sandbox>.
+        - Disables processing of <meta http-equiv> elements.
+        - Disables loading of cross-origin subframes.
+
+        Tests: http/tests/contentdispositionattachmentsandbox/cross-origin-frames-disabled.html
+               http/tests/contentdispositionattachmentsandbox/form-submission-disabled.html
+               http/tests/contentdispositionattachmentsandbox/http-equiv-disabled.html
+               http/tests/contentdispositionattachmentsandbox/plugins-disabled.html
+               http/tests/contentdispositionattachmentsandbox/scripts-disabled.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv): Switched to calling Document::httpEquivPolicy(). Logged an error to the console for policies other than Enabled.
+        (WebCore::Document::initSecurityContext): Switched sandbox enforcement from SandboxOrigin to SandboxAll.
+        (WebCore::Document::httpEquivPolicy): Returned a HttpEquivPolicy based on shouldEnforceContentDispositionAttachmentSandbox() and Settings::httpEquivEnabled().
+        (WebCore::Document::shouldEnforceContentDispositionAttachmentSandbox): Returned true if Settings::contentDispositionAttachmentSandboxEnabled()
+        and the document was fetched as an attachment.
+        * dom/Document.h:
+        * loader/cache/CachedResourceLoader.cpp: 
+        (WebCore::CachedResourceLoader::canRequest): When requesting a subframe main resource when the parent frame enforces an attachment sandbox,
+        only continue if the parent frame's SecurityOrigin allows the request.
+        * page/Settings.in: Added contentDispositionAttachmentSandboxEnabled with an initial value of false.
+
 2015-07-13  David Kilzer  <ddkilzer@apple.com>
 
         Merge r186663. rdar://problem/21708241
