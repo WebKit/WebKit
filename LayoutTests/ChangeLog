@@ -1,3 +1,18 @@
+2015-07-17  Zalan Bujtas  <zalan@apple.com>
+
+        (display: block)input range's thumb disappears when moved.
+        https://bugs.webkit.org/show_bug.cgi?id=146896
+        <rdar://problem/21787807>
+
+        Reviewed by Simon Fraser.
+
+        Since the thumb is positioned after the layout for the input (shadow) subtree is finished, the repaint rects
+        issued during the layout will not cover the re-positioned thumb.
+        We need to issue a repaint soon after the thumb is re-positioned.
+
+        * fast/repaint/block-inputrange-repaint-expected.txt: Added.
+        * fast/repaint/block-inputrange-repaint.html: Added.
+
 2015-07-17  Tim Horton  <timothy_horton@apple.com>
 
         Improve rect shrink-wrapping algorithm
