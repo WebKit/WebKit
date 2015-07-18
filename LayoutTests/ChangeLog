@@ -1,3 +1,27 @@
+2015-07-17  Andy Estes  <aestes@apple.com>
+
+        [iOS] Further tighten the sandbox around pages fetched with Content-Disposition: attachment
+        https://bugs.webkit.org/show_bug.cgi?id=147044
+        rdar://problem/21567820
+
+        Reviewed by Brady Eidson.
+
+        * http/tests/contentdispositionattachmentsandbox/cross-origin-frames-disabled-expected.txt: Added.
+        * http/tests/contentdispositionattachmentsandbox/cross-origin-frames-disabled.html: Added.
+        * http/tests/contentdispositionattachmentsandbox/form-submission-disabled-expected.txt: Added.
+        * http/tests/contentdispositionattachmentsandbox/form-submission-disabled.html: Added.
+        * http/tests/contentdispositionattachmentsandbox/http-equiv-disabled-expected.txt: Added.
+        * http/tests/contentdispositionattachmentsandbox/http-equiv-disabled.html: Added.
+        * http/tests/contentdispositionattachmentsandbox/plugins-disabled-expected.html: Added.
+        * http/tests/contentdispositionattachmentsandbox/plugins-disabled.html: Added.
+        * http/tests/contentdispositionattachmentsandbox/resources/cross-origin-frames-frame.php: Added.
+        * http/tests/contentdispositionattachmentsandbox/resources/form-submission-frame.php: Added.
+        * http/tests/contentdispositionattachmentsandbox/resources/http-equiv-frame.php: Added.
+        * http/tests/contentdispositionattachmentsandbox/resources/plugins-frame.php: Added.
+        * http/tests/contentdispositionattachmentsandbox/resources/scripts-frame.php: Added.
+        * http/tests/contentdispositionattachmentsandbox/scripts-disabled-expected.txt: Added.
+        * http/tests/contentdispositionattachmentsandbox/scripts-disabled.html: Added.
+
 2015-07-17  Zalan Bujtas  <zalan@apple.com>
 
         (display: block)input range's thumb disappears when moved.

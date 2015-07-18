@@ -1326,7 +1326,7 @@ WKBundlePagePolicyAction InjectedBundlePage::decidePolicyForNewWindowAction(WKBu
 
 WKBundlePagePolicyAction InjectedBundlePage::decidePolicyForResponse(WKBundlePageRef page, WKBundleFrameRef, WKURLResponseRef response, WKURLRequestRef, WKTypeRef*)
 {
-    if (WKURLResponseIsAttachment(response)) {
+    if (InjectedBundle::singleton().testRunner()->isPolicyDelegateEnabled() && WKURLResponseIsAttachment(response)) {
         StringBuilder stringBuilder;
         WKRetainPtr<WKStringRef> filename = adoptWK(WKURLResponseCopySuggestedFilename(response));
         stringBuilder.appendLiteral("Policy delegate: resource is an attachment, suggested file name \'");

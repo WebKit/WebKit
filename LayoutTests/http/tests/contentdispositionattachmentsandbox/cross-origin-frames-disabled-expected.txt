@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Unsafe attempt to load URL data:text/html,FAIL.
+This test verifies that cross-origin frames are disabled when 'Content-Disposition: attachment' sandboxing is enabled. A security error will be logged to the console if the test passes.
+
+

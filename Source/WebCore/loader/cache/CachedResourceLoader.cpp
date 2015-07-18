@@ -373,6 +373,13 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
     // any URL.
     switch (type) {
     case CachedResource::MainResource:
+        if (HTMLFrameOwnerElement* ownerElement = frame() ? frame()->ownerElement() : nullptr) {
+            if (ownerElement->document().shouldEnforceContentDispositionAttachmentSandbox() && !ownerElement->document().securityOrigin()->canRequest(url)) {
+                printAccessDeniedMessage(url);
+                return false;
+            }
+        }
+        FALLTHROUGH;
     case CachedResource::ImageResource:
     case CachedResource::CSSStyleSheet:
     case CachedResource::Script:

@@ -519,6 +519,10 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
         scaleView(parameters.viewScaleFactor);
 
     m_page->setUserContentExtensionsEnabled(parameters.userContentExtensionsEnabled);
+
+#if PLATFORM(IOS)
+    m_page->settings().setContentDispositionAttachmentSandboxEnabled(true);
+#endif
 }
 
 void WebPage::reinitializeWebPage(const WebPageCreationParameters& parameters)
