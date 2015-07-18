@@ -2198,7 +2198,7 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
                     if (linkRange) {
                         float deviceScaleFactor = corePage()->deviceScaleFactor();
                         const float marginInPoints = 4;
-                        RefPtr<TextIndicator> textIndicator = TextIndicator::createWithRange(*linkRange, TextIndicatorPresentationTransition::FadeIn, marginInPoints * deviceScaleFactor);
+                        RefPtr<TextIndicator> textIndicator = TextIndicator::createWithRange(*linkRange, TextIndicatorPresentationTransition::None, marginInPoints * deviceScaleFactor);
                         if (textIndicator)
                             info.linkIndicator = textIndicator->data();
                     }

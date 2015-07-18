@@ -260,7 +260,8 @@ public:
 
     WEBCORE_EXPORT FloatRect selectionBounds(bool clipToVisibleContent = true) const;
 
-    WEBCORE_EXPORT void getClippedVisibleTextRectangles(Vector<FloatRect>&) const;
+    enum class TextRectangleHeight { TextHeight, SelectionHeight };
+    WEBCORE_EXPORT void getClippedVisibleTextRectangles(Vector<FloatRect>&, TextRectangleHeight = TextRectangleHeight::SelectionHeight) const;
 
     WEBCORE_EXPORT HTMLFormElement* currentForm() const;
 

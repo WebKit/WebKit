@@ -1,3 +1,15 @@
+2015-07-17  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS] TextIndicator has a large forehead when line-height > 1
+        https://bugs.webkit.org/show_bug.cgi?id=147058
+        <rdar://problem/21643094>
+
+        Reviewed by Dean Jackson.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+        Apply a review comment that I left myself and then forgot about.
+
 2015-07-17  Enrica Casucci  <enrica@apple.com>
 
         [iOS] Implement selectionInteractionAssistant accessor.

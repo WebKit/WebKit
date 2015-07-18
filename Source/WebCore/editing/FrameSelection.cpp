@@ -2075,7 +2075,7 @@ FloatRect FrameSelection::selectionBounds(bool clipToVisibleContent) const
     return clipToVisibleContent ? intersection(selectionRect, view->visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect)) : selectionRect;
 }
 
-void FrameSelection::getClippedVisibleTextRectangles(Vector<FloatRect>& rectangles) const
+void FrameSelection::getClippedVisibleTextRectangles(Vector<FloatRect>& rectangles, TextRectangleHeight textRectHeight) const
 {
     RenderView* root = m_frame->contentRenderer();
     if (!root)
@@ -2084,7 +2084,7 @@ void FrameSelection::getClippedVisibleTextRectangles(Vector<FloatRect>& rectangl
     FloatRect visibleContentRect = m_frame->view()->visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
 
     Vector<FloatQuad> quads;
-    toNormalizedRange()->textQuads(quads, true);
+    toNormalizedRange()->textQuads(quads, textRectHeight == TextRectangleHeight::SelectionHeight);
 
     size_t size = quads.size();
     for (size_t i = 0; i < size; ++i) {
