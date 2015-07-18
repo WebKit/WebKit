@@ -522,8 +522,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         instructions().append(0);
     }
 
-    if (m_lexicalEnvironmentRegister)
-        pushScopedControlFlowContext();
     m_symbolTableStack.append(SymbolTableStackEntry{ Strong<SymbolTable>(*m_vm, m_symbolTable), m_lexicalEnvironmentRegister, false, symbolTableConstantIndex });
     m_TDZStack.append(std::make_pair(*parentScopeTDZVariables, false));
 }
@@ -629,7 +627,7 @@ LabelScopePtr BytecodeGenerator::newLabelScope(LabelScope::Type type, const Iden
         m_labelScopes.removeLast();
 
     // Allocate new label scope.
-    LabelScope scope(type, name, labelScopeDepth(), newLabel(), type == LabelScope::Loop ? newLabel() : PassRefPtr<Label>()); // Only loops have continue targets.
+    LabelScope scope(type, name, scopeDepth(), newLabel(), type == LabelScope::Loop ? newLabel() : PassRefPtr<Label>()); // Only loops have continue targets.
     m_labelScopes.append(scope);
     return LabelScopePtr(m_labelScopes, m_labelScopes.size() - 1);
 }
@@ -1212,7 +1210,7 @@ void BytecodeGenerator::emitProfileType(RegisterID* registerToProfile, ProfileTy
     // The format of this instruction is: op_profile_type regToProfile, TypeLocation*, flag, identifier?, resolveType?
     emitOpcode(op_profile_type);
     instructions().append(registerToProfile->index());
-    instructions().append(localScopeDepth());
+    instructions().append(currentScopeDepth());
     instructions().append(flag);
     instructions().append(identifier ? addConstant(*identifier) : 0);
     instructions().append(resolveType());
@@ -1320,8 +1318,6 @@ void BytecodeGenerator::pushLexicalScope(VariableEnvironmentNode* node, bool can
         instructions().append(addConstantValue(jsTDZValue())->index());
 
         emitMove(scopeRegister(), newScope);
-
-        pushScopedControlFlowContext();
     }
 
     m_symbolTableStack.append(SymbolTableStackEntry{ symbolTable, newScope, false, symbolTableConstantIndex });
@@ -1369,8 +1365,8 @@ void BytecodeGenerator::popLexicalScope(VariableEnvironmentNode* node)
 
     if (hasCapturedVariables) {
         RELEASE_ASSERT(stackEntry.m_scope);
-        emitPopScope(scopeRegister(), stackEntry.m_scope);
-        popScopedControlFlowContext();
+        RefPtr<RegisterID> parentScope = emitGetParentScope(newTemporary(), scopeRegister());
+        emitMove(scopeRegister(), parentScope.get());
         stackEntry.m_scope->deref();
     }
 
@@ -1427,7 +1423,7 @@ void BytecodeGenerator::prepareLexicalScopeForNextForLoopIteration(VariableEnvir
     // as the previous scope because the loop body is compiled under
     // the assumption that the scope's register index is constant even
     // though the value in that register will change on each loop iteration.
-    RefPtr<RegisterID> parentScope = emitGetParentScope(newTemporary(), loopScope);
+    RefPtr<RegisterID> parentScope = emitGetParentScope(newTemporary(), scopeRegister());
     emitMove(scopeRegister(), parentScope.get());
 
     emitOpcode(op_create_lexical_environment);
@@ -1576,11 +1572,8 @@ void BytecodeGenerator::emitCheckHasInstance(RegisterID* dst, RegisterID* value,
 // will start with this ResolveType and compute the least upper bound including intercepting scopes.
 ResolveType BytecodeGenerator::resolveType()
 {
-    for (unsigned i = m_symbolTableStack.size(); i--; ) {
-        if (m_symbolTableStack[i].m_isWithOrCatch)
-            return Dynamic;
-    }
-
+    if (m_localScopeDepth)
+        return Dynamic;
     if (m_symbolTable && m_symbolTable->usesNonStrictEval())
         return GlobalPropertyWithVarInjectionChecks;
     return GlobalProperty;
@@ -1639,7 +1632,7 @@ RegisterID* BytecodeGenerator::emitResolveScope(RegisterID* dst, const Variable&
         instructions().append(scopeRegister()->index());
         instructions().append(addConstant(variable.ident()));
         instructions().append(resolveType());
-        instructions().append(localScopeDepth());
+        instructions().append(currentScopeDepth());
         instructions().append(0);
         return dst;
     }
@@ -1673,7 +1666,7 @@ RegisterID* BytecodeGenerator::emitGetFromScope(RegisterID* dst, RegisterID* sco
         instructions().append(scope->index());
         instructions().append(addConstant(variable.ident()));
         instructions().append(ResolveModeAndType(resolveMode, variable.offset().isScope() ? LocalClosureVar : resolveType()).operand());
-        instructions().append(localScopeDepth());
+        instructions().append(currentScopeDepth());
         instructions().append(variable.offset().isScope() ? variable.offset().scopeOffset().offset() : 0);
         instructions().append(profile);
         return dst;
@@ -1713,7 +1706,7 @@ RegisterID* BytecodeGenerator::emitPutToScope(RegisterID* scope, const Variable&
         } else {
             ASSERT(resolveType() != LocalClosureVar);
             instructions().append(ResolveModeAndType(resolveMode, resolveType()).operand());
-            instructions().append(localScopeDepth());
+            instructions().append(currentScopeDepth());
         }
         instructions().append(!!offset ? offset.offset() : 0);
         return value;
@@ -2481,7 +2474,10 @@ void BytecodeGenerator::emitGetScope()
 
 RegisterID* BytecodeGenerator::emitPushWithScope(RegisterID* dst, RegisterID* scope)
 {
-    pushScopedControlFlowContext();
+    ControlFlowContext context;
+    context.isFinallyBlock = false;
+    m_scopeContextStack.append(context);
+    m_localScopeDepth++;
 
     RegisterID* result = emitUnaryOp(op_push_with_scope, dst, scope);
     m_symbolTableStack.append(SymbolTableStackEntry{ Strong<SymbolTable>(), nullptr, true, 0 });
@@ -2496,16 +2492,16 @@ RegisterID* BytecodeGenerator::emitGetParentScope(RegisterID* dst, RegisterID* s
     return dst;
 }
 
-void BytecodeGenerator::emitPopScope(RegisterID* dst, RegisterID* scope)
+void BytecodeGenerator::emitPopScope(RegisterID* srcDst)
 {
-    RefPtr<RegisterID> parentScope = emitGetParentScope(newTemporary(), scope);
-    emitMove(dst, parentScope.get());
-}
+    ASSERT(m_scopeContextStack.size());
+    ASSERT(!m_scopeContextStack.last().isFinallyBlock);
 
-void BytecodeGenerator::emitPopWithOrCatchScope(RegisterID* srcDst)
-{
-    emitPopScope(srcDst, srcDst);
-    popScopedControlFlowContext();
+    RefPtr<RegisterID> parentScope = emitGetParentScope(newTemporary(), srcDst);
+    emitMove(srcDst, parentScope.get());
+
+    m_scopeContextStack.removeLast();
+    m_localScopeDepth--;
     SymbolTableStackEntry stackEntry = m_symbolTableStack.takeLast();
     RELEASE_ASSERT(stackEntry.m_isWithOrCatch);
 }
@@ -2819,9 +2815,9 @@ void BytecodeGenerator::emitComplexPopScopes(RegisterID* scope, ControlFlowConte
 
 void BytecodeGenerator::emitPopScopes(RegisterID* scope, int targetScopeDepth)
 {
-    ASSERT(labelScopeDepth() - targetScopeDepth >= 0);
+    ASSERT(scopeDepth() - targetScopeDepth >= 0);
 
-    size_t scopeDelta = labelScopeDepth() - targetScopeDepth;
+    size_t scopeDelta = scopeDepth() - targetScopeDepth;
     ASSERT(scopeDelta <= m_scopeContextStack.size());
     if (!scopeDelta)
         return;
@@ -2880,10 +2876,16 @@ void BytecodeGenerator::popTryAndEmitCatch(TryData* tryData, RegisterID* excepti
 
 int BytecodeGenerator::calculateTargetScopeDepthForExceptionHandler() const
 {
-    int depth = localScopeDepth();
+    int depth = m_localScopeDepth;
+
+    for (unsigned i = m_symbolTableStack.size(); i--; ) {
+        RegisterID* scope = m_symbolTableStack[i].m_scope;
+        if (scope)
+            depth++;
+    }
 
     // Currently, we're maintaing compatibility with how things are done and letting the exception handling
-    // code take into consideration the base activation of the function. There is no reason we shouldn't
+    // code take into consideration the base activation of the function. There is no reason we shouldn't 
     // be able to calculate the exact depth here and let the exception handler not worry if there is a base
     // activation or not.
     if (m_lexicalEnvironmentRegister)
@@ -2893,14 +2895,16 @@ int BytecodeGenerator::calculateTargetScopeDepthForExceptionHandler() const
     return depth;
 }
 
-int BytecodeGenerator::localScopeDepth() const
+int BytecodeGenerator::currentScopeDepth() const
 {
-    return m_localScopeDepth;
-}
-
-int BytecodeGenerator::labelScopeDepth() const
-{ 
-    return localScopeDepth() + m_finallyDepth;
+    // This is the current number of JSScope descendents that would be allocated
+    // in this function/program if this code were running.
+    int depth = 0;
+    for (unsigned i = m_symbolTableStack.size(); i--; ) {
+        if (m_symbolTableStack[i].m_scope || m_symbolTableStack[i].m_isWithOrCatch)
+            depth++;
+    }
+    return depth;
 }
 
 void BytecodeGenerator::emitThrowReferenceError(const String& message)
@@ -2926,25 +2930,12 @@ void BytecodeGenerator::emitPushFunctionNameScope(RegisterID* dst, const Identif
     instructions().append(JSNameScope::FunctionNameScope);
 }
 
-void BytecodeGenerator::pushScopedControlFlowContext()
+void BytecodeGenerator::emitPushCatchScope(RegisterID* dst, const Identifier& property, RegisterID* value, unsigned attributes)
 {
     ControlFlowContext context;
     context.isFinallyBlock = false;
     m_scopeContextStack.append(context);
     m_localScopeDepth++;
-}
-
-void BytecodeGenerator::popScopedControlFlowContext()
-{
-    ASSERT(m_scopeContextStack.size());
-    ASSERT(!m_scopeContextStack.last().isFinallyBlock);
-    m_scopeContextStack.removeLast();
-    m_localScopeDepth--;
-}
-
-void BytecodeGenerator::emitPushCatchScope(RegisterID* dst, const Identifier& property, RegisterID* value, unsigned attributes)
-{
-    pushScopedControlFlowContext();
 
     emitOpcode(op_push_name_scope);
     instructions().append(dst->index());

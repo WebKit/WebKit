@@ -1,3 +1,17 @@
+2015-07-18  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r186996.
+        https://bugs.webkit.org/show_bug.cgi?id=147070
+
+        Broke JSC tests (Requested by smfr on #webkit).
+
+        Reverted changeset:
+
+        "lexical scoping is broken with respect to "break" and
+        "continue""
+        https://bugs.webkit.org/show_bug.cgi?id=147063
+        http://trac.webkit.org/changeset/186996
+
 2015-07-18  Saam barati  <saambarati1@gmail.com>
 
         lexical scoping is broken with respect to "break" and "continue"

@@ -585,12 +585,12 @@ namespace JSC {
 
         void emitGetScope();
         RegisterID* emitPushWithScope(RegisterID* dst, RegisterID* scope);
-        void emitPopScope(RegisterID* dst, RegisterID* scope);
-        void emitPopWithOrCatchScope(RegisterID* srcDst);
+        void emitPopScope(RegisterID* srcDst);
         RegisterID* emitGetParentScope(RegisterID* dst, RegisterID* scope);
 
         void emitDebugHook(DebugHookID, unsigned line, unsigned charOffset, unsigned lineStart);
 
+        int scopeDepth() { return m_localScopeDepth + m_finallyDepth; }
         bool hasFinaliser() { return m_finallyDepth != 0; }
 
         void pushFinallyContext(StatementNode* finallyBlock);
@@ -624,7 +624,6 @@ namespace JSC {
         void pushLexicalScope(VariableEnvironmentNode*, bool canOptimizeTDZChecks, RegisterID** constantSymbolTableResult = nullptr);
         void popLexicalScope(VariableEnvironmentNode*);
         void prepareLexicalScopeForNextForLoopIteration(VariableEnvironmentNode*, RegisterID* loopSymbolTable);
-        int labelScopeDepth() const;
 
     private:
         void reclaimFreeRegisters();
@@ -762,9 +761,7 @@ namespace JSC {
         const CodeType m_codeType;
 
         int calculateTargetScopeDepthForExceptionHandler() const;
-        int localScopeDepth() const;
-        void pushScopedControlFlowContext();
-        void popScopedControlFlowContext();
+        int currentScopeDepth() const;
 
         Vector<ControlFlowContext, 0, UnsafeVectorOverflow> m_scopeContextStack;
         Vector<SwitchInfo> m_switchContextStack;
