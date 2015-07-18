@@ -1,5 +1,15 @@
 2015-07-18  David Kilzer  <ddkilzer@apple.com>
 
+        http/tests/cache/disk-cache/disk-cache-disable.html is flaky on Release Yosemite WK2
+
+        <http://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html#showAllRuns=true&tests=http%2Ftests%2Fcache%2Fdisk-cache%2Fdisk-cache-disable.html>
+
+        * platform/mac-wk2/TestExpectations: Mark test as flaky on
+        Release Yosemite WK2:
+        - http/tests/cache/disk-cache/disk-cache-disable.html
+
+2015-07-18  David Kilzer  <ddkilzer@apple.com>
+
         media/restore-from-page-cache.html is flaky on Debug Mavericks
 
         <https://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html#showAllRuns=true&tests=media%2Frestore-from-page-cache.html>
