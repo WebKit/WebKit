@@ -16,12 +16,15 @@
   window.internals.startTrackingRepaints();
   document.getElementById("moveme").value = 100;
   document.body.offsetHeight;
-  if (window.internals) {
-    repaintRects = window.internals.repaintRectsAsText();
-    window.internals.stopTrackingRepaints();
-    shouldNotBe("repaintRects.indexOf('495 8 15 15')", "-1");
+  function repaintTest() {
+    if (window.internals) {
+      repaintRects = window.internals.repaintRectsAsText();
+      window.internals.stopTrackingRepaints();
+      shouldNotBe("repaintRects.indexOf('495 8 15 15')", "-1");
+    }
     finishJSTest();
   }
+  setTimeout(repaintTest, 0);
 </script>
 </body>
 <script src="../../resources/js-test-post.js"></script>

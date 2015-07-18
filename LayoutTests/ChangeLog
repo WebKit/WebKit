@@ -1,5 +1,14 @@
 2015-07-18  David Kilzer  <ddkilzer@apple.com>
 
+        REGRESSION (r186981): fast/repaint/block-inputrange-repaint.html is starting out life as flaky
+
+        <https://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html#showAllRuns=true&tests=fast%2Frepaint%2Fblock-inputrange-repaint.html>
+
+        * fast/repaint/block-inputrange-repaint.html:
+        - Use setTimeout() to give WebKit time to repaint.
+
+2015-07-18  David Kilzer  <ddkilzer@apple.com>
+
         REGRESSION (r186905,r186992): Incorrect results for platform/{gtk,efl,win}/fast/shrink-wrap/rect-shrink-wrap-expected.txt
 
         * platform/efl/fast/shrink-wrap/rect-shrink-wrap-expected.txt:
