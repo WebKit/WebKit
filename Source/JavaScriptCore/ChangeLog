@@ -1,3 +1,58 @@
+2015-07-18  Saam barati  <saambarati1@gmail.com>
+
+        lexical scoping is broken with respect to "break" and "continue"
+        https://bugs.webkit.org/show_bug.cgi?id=147063
+
+        Reviewed by Filip Pizlo.
+
+        Bug #142944 which introduced "let" and lexical scoping
+        didn't properly hook into the bytecode generator's machinery
+        for calculating scope depth deltas for "break" and "continue". This
+        resulted in the bytecode generator popping an incorrect number
+        of scopes when lexical scopes were involved.
+
+        This patch fixes this problem and generalizes this machinery a bit.
+        This patch also renames old functions in a sensible way that is more
+        coherent in a world with lexical scoping.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::newLabelScope):
+        (JSC::BytecodeGenerator::emitProfileType):
+        (JSC::BytecodeGenerator::pushLexicalScope):
+        (JSC::BytecodeGenerator::popLexicalScope):
+        (JSC::BytecodeGenerator::prepareLexicalScopeForNextForLoopIteration):
+        (JSC::BytecodeGenerator::resolveType):
+        (JSC::BytecodeGenerator::emitResolveScope):
+        (JSC::BytecodeGenerator::emitGetFromScope):
+        (JSC::BytecodeGenerator::emitPutToScope):
+        (JSC::BytecodeGenerator::emitPushWithScope):
+        (JSC::BytecodeGenerator::emitGetParentScope):
+        (JSC::BytecodeGenerator::emitPopScope):
+        (JSC::BytecodeGenerator::emitPopWithOrCatchScope):
+        (JSC::BytecodeGenerator::emitPopScopes):
+        (JSC::BytecodeGenerator::calculateTargetScopeDepthForExceptionHandler):
+        (JSC::BytecodeGenerator::localScopeDepth):
+        (JSC::BytecodeGenerator::labelScopeDepth):
+        (JSC::BytecodeGenerator::emitThrowReferenceError):
+        (JSC::BytecodeGenerator::emitPushFunctionNameScope):
+        (JSC::BytecodeGenerator::pushScopedControlFlowContext):
+        (JSC::BytecodeGenerator::popScopedControlFlowContext):
+        (JSC::BytecodeGenerator::emitPushCatchScope):
+        (JSC::BytecodeGenerator::currentScopeDepth): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::hasFinaliser):
+        (JSC::BytecodeGenerator::scopeDepth): Deleted.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ContinueNode::trivialTarget):
+        (JSC::BreakNode::trivialTarget):
+        (JSC::ReturnNode::emitBytecode):
+        (JSC::WithNode::emitBytecode):
+        (JSC::TryNode::emitBytecode):
+        * tests/stress/lexical-scoping-break-continue.js: Added.
+        (assert):
+        (.):
+
 2015-07-17  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should have some obvious mitigations against watching structures that are unprofitable to watch
