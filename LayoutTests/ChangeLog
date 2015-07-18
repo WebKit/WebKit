@@ -1,3 +1,15 @@
+2015-07-18  David Kilzer  <ddkilzer@apple.com>
+
+        media/restore-from-page-cache.html is flaky on Debug Mavericks
+
+        <https://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html#showAllRuns=true&tests=media%2Frestore-from-page-cache.html>
+
+        When the test fails, the computed width and height is
+        300px × 150px instead of the expected 320px × 240px.
+
+        * platform/mac/TestExpectations: Mark test as flaky on Debug Mavericks:
+        - media/restore-from-page-cache.html
+
 2015-07-18  Zalan Bujtas  <zalan@apple.com>
 
         [Win] Skip input range repaint test.
