@@ -3130,3 +3130,6 @@ http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html [ 
 
 # <rdar://problem/21816197> large-js-program.php crashes (crashes slower on Debug)
 http/tests/misc/large-js-program.php [ Slow Crash ]
+
+# Slider thumb widget painting
+fast/repaint/block-inputrange-repaint.html [ Pass Failure ]
