@@ -1,5 +1,14 @@
 2015-07-18  David Kilzer  <ddkilzer@apple.com>
 
+        REGRESSION (r186905,r186992): Incorrect results for platform/{gtk,efl,win}/fast/shrink-wrap/rect-shrink-wrap-expected.txt
+
+        * platform/efl/fast/shrink-wrap/rect-shrink-wrap-expected.txt:
+        * platform/gtk/fast/shrink-wrap/rect-shrink-wrap-expected.txt:
+        * platform/win/fast/shrink-wrap/rect-shrink-wrap-expected.txt:
+        - Update to correct expected results.
+
+2015-07-18  David Kilzer  <ddkilzer@apple.com>
+
         REGRESSION (r186858): GTK and EFL ports don't composite <canvas> elements
 
         See also r186905 for Windows.
