@@ -182,12 +182,18 @@ bool Path::strokeContains(StrokeStyleApplier* applier, const FloatPoint& point) 
 
 void Path::translate(const FloatSize& size)
 {
-    CGAffineTransform translation = CGAffineTransformMake(1, 0, 0, 1, size.width(), size.height());
-    CGMutablePathRef newPath = CGPathCreateMutable();
-    // FIXME: This is potentially wasteful to allocate an empty path only to create a transformed copy.
-    CGPathAddPath(newPath, &translation, ensurePlatformPath());
+    transform(AffineTransform(1, 0, 0, 1, size.width(), size.height()));
+}
+
+void Path::transform(const AffineTransform& transform)
+{
+    if (transform.isIdentity() || isEmpty())
+        return;
+
+    CGAffineTransform transformCG = transform;
+    CGMutablePathRef path = CGPathCreateMutableCopyByTransformingPath(m_path, &transformCG);
     CGPathRelease(m_path);
-    m_path = newPath;
+    m_path = path;
 }
 
 FloatRect Path::boundingRect() const
@@ -195,8 +201,7 @@ FloatRect Path::boundingRect() const
     if (isNull())
         return CGRectZero;
 
-    // CGPathGetBoundingBox includes the path's control points, CGPathGetPathBoundingBox
-    // does not, but only exists on 10.6 and above.
+    // CGPathGetBoundingBox includes the path's control points, CGPathGetPathBoundingBox does not.
 
     CGRect bound = CGPathGetPathBoundingBox(m_path);
     return CGRectIsNull(bound) ? CGRectZero : bound;
@@ -407,18 +412,6 @@ void Path::apply(void* info, PathApplierFunction function) const
     pinfo.info = info;
     pinfo.function = function;
     CGPathApply(m_path, &pinfo, CGPathApplierToPathApplier);
-}
-
-void Path::transform(const AffineTransform& transform)
-{
-    if (transform.isIdentity() || isEmpty())
-        return;
-
-    CGMutablePathRef path = CGPathCreateMutable();
-    CGAffineTransform transformCG = transform;
-    CGPathAddPath(path, &transformCG, m_path);
-    CGPathRelease(m_path);
-    m_path = path;
 }
 
 }
