@@ -56,6 +56,7 @@ class InspectorFrontendChannelDummy;
 class InspectorFrontendClientDummy;
 class InternalSettings;
 class MallocStatistics;
+class MediaSession;
 class MemoryInfo;
 class Node;
 class Page;
@@ -390,6 +391,12 @@ public:
     void setMediaElementRestrictions(HTMLMediaElement*, const String& restrictions, ExceptionCode&);
     void postRemoteControlCommand(const String&, ExceptionCode&);
     bool elementIsBlockingDisplaySleep(Element*) const;
+#endif
+
+#if ENABLE(MEDIA_SESSION)
+    void sendMediaSessionStartOfInterruptionNotification(const String&);
+    void sendMediaSessionEndOfInterruptionNotification(const String&);
+    String mediaSessionCurrentState(MediaSession*) const;
 #endif
 
 #if ENABLE(WEB_AUDIO)

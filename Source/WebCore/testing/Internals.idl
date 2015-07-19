@@ -45,6 +45,12 @@ enum ResourceLoadPriority {
     "ResourceLoadPriorityVeryHigh"
 };
 
+enum MediaSessionInterruptingCategory {
+    "content",
+    "transient",
+    "transient-solo"
+};
+
 [
     NoInterfaceObject,
 ] interface Internals {
@@ -351,6 +357,9 @@ enum ResourceLoadPriority {
 
     [Conditional=VIDEO] void beginMediaSessionInterruption();
     [Conditional=VIDEO] void endMediaSessionInterruption(DOMString flags);
+    [Conditional=MEDIA_SESSION] void sendMediaSessionStartOfInterruptionNotification(MediaSessionInterruptingCategory category);
+    [Conditional=MEDIA_SESSION] void sendMediaSessionEndOfInterruptionNotification(MediaSessionInterruptingCategory category);
+    [Conditional=MEDIA_SESSION] DOMString mediaSessionCurrentState(MediaSession session);
     [Conditional=VIDEO] void applicationWillEnterForeground();
     [Conditional=VIDEO] void applicationWillEnterBackground();
     [Conditional=VIDEO, RaisesException] void setMediaSessionRestrictions(DOMString mediaType, DOMString restrictions);

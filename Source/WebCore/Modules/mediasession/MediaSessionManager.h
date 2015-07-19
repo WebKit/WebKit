@@ -39,14 +39,14 @@ class MediaSession;
 class MediaSessionManager : public MediaSessionInterruptionProviderClient {
     friend class NeverDestroyed<MediaSessionManager>;
 public:
-    static MediaSessionManager& singleton();
+    WEBCORE_EXPORT static MediaSessionManager& singleton();
 
     void togglePlayback();
     void skipToNextTrack();
     void skipToPreviousTrack();
 
-    void didReceiveStartOfInterruptionNotification(MediaSessionInterruptingCategory) override;
-    void didReceiveEndOfInterruptionNotification(MediaSessionInterruptingCategory) override;
+    WEBCORE_EXPORT void didReceiveStartOfInterruptionNotification(MediaSessionInterruptingCategory) override;
+    WEBCORE_EXPORT void didReceiveEndOfInterruptionNotification(MediaSessionInterruptingCategory) override;
 
 private:
     friend class MediaSession;

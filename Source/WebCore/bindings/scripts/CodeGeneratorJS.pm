@@ -246,6 +246,7 @@ my %classesNeedingWebCoreExport = (
     "JSFile" => 1,
     "JSHTMLElement" => 1,
     "JSHTMLMediaElement" => 1,
+    "JSMediaSession" => 1,
     "JSNode" => 1,
     "JSNotification" => 1,
     "JSRange" => 1,
