@@ -207,7 +207,7 @@ protected:
     std::unique_ptr<WebFramePolicyListenerPrivate> m_policyListenerPrivate;
 
 private:
-    PassRefPtr<WebCore::Frame> createFrame(const WebCore::URL&, const WTF::String& name, WebCore::HTMLFrameOwnerElement*, const WTF::String& referrer);
+    RefPtr<WebCore::Frame> createFrame(const WebCore::URL&, const WTF::String& name, WebCore::HTMLFrameOwnerElement*, const WTF::String& referrer);
     WebHistory* webHistory() const;
 
     WebFrame* m_webFrame;

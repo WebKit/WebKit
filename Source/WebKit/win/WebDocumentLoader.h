@@ -31,7 +31,7 @@ using namespace WebCore;
 class WebDocumentLoader : public DocumentLoader
 {
 public:
-    static PassRefPtr<WebDocumentLoader> create(const ResourceRequest&, const SubstituteData&);
+    static Ref<WebDocumentLoader> create(const ResourceRequest&, const SubstituteData&);
 
     ~WebDocumentLoader();
 

@@ -953,7 +953,7 @@ Ref<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const ResourceReq
 {
     Ref<WebDocumentLoader> loader = WebDocumentLoader::create(request, substituteData);
 
-    COMPtr<WebDataSource> dataSource(AdoptCOM, WebDataSource::createInstance(loader.get()));
+    COMPtr<WebDataSource> dataSource(AdoptCOM, WebDataSource::createInstance(loader.ptr()));
 
     loader->setDataSource(dataSource.get());
     return WTF::move(loader);
@@ -1046,16 +1046,16 @@ bool WebFrameLoaderClient::canCachePage() const
     return true;
 }
 
-PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const URL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
+RefPtr<Frame> WebFrameLoaderClient::createFrame(const URL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
                             const String& referrer, bool /*allowsScrolling*/, int /*marginWidth*/, int /*marginHeight*/)
 {
     RefPtr<Frame> result = createFrame(url, name, ownerElement, referrer);
     if (!result)
-        return 0;
-    return result.release();
+        return nullptr;
+    return result;
 }
 
-PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const URL& URL, const String& name, HTMLFrameOwnerElement* ownerElement, const String& referrer)
+RefPtr<Frame> WebFrameLoaderClient::createFrame(const URL& URL, const String& name, HTMLFrameOwnerElement* ownerElement, const String& referrer)
 {
     Frame* coreFrame = core(m_webFrame);
     ASSERT(coreFrame);
@@ -1072,9 +1072,9 @@ PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const URL& URL, const String
 
     // The frame's onload handler may have removed it from the document.
     if (!childFrame->tree().parent())
-        return 0;
+        return nullptr;
 
-    return childFrame.release();
+    return childFrame;
 }
 
 ObjectContentType WebFrameLoaderClient::objectContentType(const URL& url, const String& mimeTypeIn, bool shouldPreferPlugInsForImages)
@@ -1164,7 +1164,7 @@ void WebFrameLoaderClient::dispatchDidFailToStartPlugin(const PluginView* plugin
     resourceLoadDelegate->plugInFailedWithError(webView, error.get(), getWebDataSource(frame->loader().documentLoader()));
 }
 
-PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& pluginSize, HTMLPlugInElement* element, const URL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
+RefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& pluginSize, HTMLPlugInElement* element, const URL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
     WebView* webView = m_webFrame->webView();
 
@@ -1209,7 +1209,7 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& pluginSize,
 
     dispatchDidFailToStartPlugin(pluginView.get());
 
-    return 0;
+    return nullptr;
 }
 
 void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
