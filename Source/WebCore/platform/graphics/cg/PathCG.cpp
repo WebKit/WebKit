@@ -191,7 +191,12 @@ void Path::transform(const AffineTransform& transform)
         return;
 
     CGAffineTransform transformCG = transform;
+#if PLATFORM(WIN)
+    CGMutablePathRef path = CGPathCreateMutable();
+    CGPathAddPath(path, &transformCG, m_path);
+#else
     CGMutablePathRef path = CGPathCreateMutableCopyByTransformingPath(m_path, &transformCG);
+#endif
     CGPathRelease(m_path);
     m_path = path;
 }
