@@ -371,13 +371,21 @@ static CGFloat viewScaleForMenuItemTag(NSInteger tag)
     preferences._visibleDebugOverlayRegions = visibleOverlayRegions;
 }
 
+- (void)updateTitle:(NSString *)title
+{
+    if (!title)
+        title = _webView.URL.lastPathComponent;
+    
+    self.window.title = [NSString stringWithFormat:@"%@%@ [WK2 %d]", _isPrivateBrowsingWindow ? @"🙈 " : @"", title, _webView._webProcessIdentifier];
+}
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     if (context != keyValueObservingContext || object != _webView)
         return;
 
     if ([keyPath isEqualToString:@"title"])
-        self.window.title = [NSString stringWithFormat:@"%@%@ [WK2 %d]", _isPrivateBrowsingWindow ? @"🙈 " : @"", _webView.title, _webView._webProcessIdentifier];
+        [self updateTitle:_webView.title];
     else if ([keyPath isEqualToString:@"URL"])
         [self updateTextFieldFromURL:_webView.URL];
 }
@@ -516,6 +524,7 @@ static NSSet *dataTypes()
 - (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation
 {
     LOG(@"didCommitNavigation: %@", navigation);
+    [self updateTitle:nil];
 }
 
 - (void)webView:(WKWebView *)webView didFinishLoadingNavigation:(WKNavigation *)navigation
