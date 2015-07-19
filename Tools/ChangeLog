@@ -1,5 +1,16 @@
 2015-07-19  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [GTK] Enable seccomp filter API tests
+        https://bugs.webkit.org/show_bug.cgi?id=140071
+
+        Reviewed by Žan Doberšek.
+
+        These tests will now be run by the run-gtk-tests script.
+
+        * TestWebKitAPI/PlatformGTK.cmake:
+
+2015-07-19  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] Add seccomp filters support
         https://bugs.webkit.org/show_bug.cgi?id=110014
 
