@@ -1,5 +1,13 @@
 2015-07-19  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Unreviewed, placate -Wmismatched-tags after r187011
+
+        It's basically bug #146990 again. Oops.
+
+        * WebProcess/gtk/SeccompFiltersWebProcessGtk.h:
+
+2015-07-19  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] Add seccomp filters support
         https://bugs.webkit.org/show_bug.cgi?id=110014
 

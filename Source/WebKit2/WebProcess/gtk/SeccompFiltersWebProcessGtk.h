@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-class WebProcessCreationParameters;
+struct WebProcessCreationParameters;
 
 class SeccompFiltersWebProcessGtk : public SeccompFilters {
 public:
