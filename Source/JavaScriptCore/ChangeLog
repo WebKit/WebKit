@@ -1,3 +1,21 @@
+2015-07-19  Saam barati  <saambarati1@gmail.com>
+
+        Parser::parseFunctionInfo hits RELEASE_ASSERT for Arrow Functions
+        https://bugs.webkit.org/show_bug.cgi?id=147090
+
+        Reviewed by Yusuke Suzuki.
+
+        ArrowFunction's have there ParserFunctionInfo "name" field to 
+        be a non-null pointer. This is obviously allowed and valid except we 
+        had a RELEASE_ASSERT that claimed otherwise. This is a mistake. 
+
+        Note: ArrowFunction's will never actually have a function name;
+        there ParserFunctionInfo "name" field will be the empty string. 
+        This is not be mistaken with the name field being a null pointer.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+
 2015-07-18  Saam barati  <saambarati1@gmail.com>
 
         [ES6] Add support for block scope const
