@@ -238,16 +238,16 @@ bool PluginProxy::supportsSnapshotting() const
     return isSupported;
 }
 
-PassRefPtr<ShareableBitmap> PluginProxy::snapshot()
+RefPtr<ShareableBitmap> PluginProxy::snapshot()
 {
     ShareableBitmap::Handle snapshotStoreHandle;
     m_connection->connection()->sendSync(Messages::PluginControllerProxy::Snapshot(), Messages::PluginControllerProxy::Snapshot::Reply(snapshotStoreHandle), m_pluginInstanceID);
 
     if (snapshotStoreHandle.isNull())
-        return 0;
+        return nullptr;
 
     RefPtr<ShareableBitmap> snapshotBuffer = ShareableBitmap::create(snapshotStoreHandle);
-    return snapshotBuffer.release();
+    return snapshotBuffer;
 }
 
 bool PluginProxy::isTransparent()
@@ -716,9 +716,9 @@ IntPoint PluginProxy::convertToRootView(const IntPoint& point) const
     return m_pluginToRootViewTransform.mapPoint(point);
 }
 
-PassRefPtr<WebCore::SharedBuffer> PluginProxy::liveResourceData() const
+RefPtr<WebCore::SharedBuffer> PluginProxy::liveResourceData() const
 {
-    return 0;
+    return nullptr;
 }
 
 #if PLATFORM(COCOA)

@@ -1,3 +1,107 @@
+2015-07-18  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Reduce PassRefPtr in WebKit2 - 3
+        https://bugs.webkit.org/show_bug.cgi?id=146995
+
+        Reviewed by Daniel Bates.
+
+        To remove PassRefPtr, this patch reduces use of PassRefPtr in WebKit2.
+        Because some uses depend on WebCore, WebCore, WK1 ports are modified as well.
+
+        * DatabaseProcess/DatabaseProcess.cpp:
+        (WebKit::DatabaseProcess::getOrCreateUniqueIDBDatabase):
+        * DatabaseProcess/DatabaseProcess.h:
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::takeInitializationReply):
+        * PluginProcess/PluginControllerProxy.h:
+        * Shared/CoordinatedGraphics/CoordinatedBackingStore.cpp:
+        (WebKit::CoordinatedBackingStore::texture):
+        * Shared/CoordinatedGraphics/CoordinatedBackingStore.h:
+        (WebKit::CoordinatedBackingStore::create):
+        * Shared/CoordinatedGraphics/WebCoordinatedSurface.cpp:
+        (WebKit::WebCoordinatedSurface::create):
+        (WebKit::WebCoordinatedSurface::createWithSurface):
+        * Shared/CoordinatedGraphics/WebCoordinatedSurface.h:
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::webCryptoMasterKey):
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::webCryptoMasterKey):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient):
+        (WKPageSetPageNavigationClient):
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::createPopupMenuProxy):
+        (WebKit::PageClientImpl::createContextMenuProxy):
+        (WebKit::PageClientImpl::createColorPicker):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/Authentication/WebCredential.h:
+        * UIProcess/Authentication/WebProtectionSpace.h:
+        * UIProcess/AutoCorrectionCallback.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::webCryptoMasterKey):
+        * UIProcess/CoordinatedGraphics/WebView.cpp:
+        (WebKit::WebView::createPopupMenuProxy):
+        (WebKit::WebView::createContextMenuProxy):
+        (WebKit::WebView::createColorPicker):
+        * UIProcess/CoordinatedGraphics/WebView.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/efl/WebViewEfl.cpp:
+        (WebKit::WebViewEfl::createPopupMenuProxy):
+        (WebKit::WebViewEfl::createContextMenuProxy):
+        (WebKit::WebViewEfl::createColorPicker):
+        * UIProcess/efl/WebViewEfl.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::createPopupMenuProxy):
+        (WebKit::PageClientImpl::createContextMenuProxy):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::dataSelectionForPasteboard):
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::createPopupMenuProxy):
+        (WebKit::PageClientImpl::createContextMenuProxy):
+        (WebKit::PageClientImpl::createColorPicker):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::dataSelectionForPasteboard):
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::scheduleSubresourceLoad):
+        (WebKit::WebResourceLoadScheduler::schedulePluginStreamLoad):
+        * WebProcess/Network/WebResourceLoadScheduler.h:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::fromNPP):
+        (WebKit::NetscapePlugin::snapshot):
+        (WebKit::NetscapePlugin::liveResourceData):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Plugin.h:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::snapshot):
+        (WebKit::PluginProxy::liveResourceData):
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Storage/StorageNamespaceImpl.cpp:
+        (WebKit::StorageNamespaceImpl::storageArea):
+        (WebKit::StorageNamespaceImpl::copy):
+        * WebProcess/Storage/StorageNamespaceImpl.h:
+        * WebProcess/WebCoreSupport/SessionStateConversion.cpp:
+        (WebKit::toHistoryItem):
+        * WebProcess/WebCoreSupport/SessionStateConversion.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createPopupMenu):
+        (WebKit::WebChromeClient::createSearchPopupMenu):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createDocumentLoader):
+        (WebKit::WebFrameLoaderClient::createFrame):
+        (WebKit::WebFrameLoaderClient::createPlugin):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::create):
+        (WebKit::WebPage::createDocumentLoader):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::lookupTextAtLocation):
+
 2015-07-18  Simon Fraser  <simon.fraser@apple.com>
 
         Scroll position jumps when scrolling scaling pages down in split view

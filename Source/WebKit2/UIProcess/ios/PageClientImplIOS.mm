@@ -441,16 +441,16 @@ void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent& nativeWebtouc
 }
 #endif
 
-PassRefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy*)
+RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy*)
 {
     notImplemented();
-    return 0;
+    return nullptr;
 }
 
-PassRefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy*)
+RefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy*)
 {
     notImplemented();
-    return 0;
+    return nullptr;
 }
 
 void PageClientImpl::setTextIndicator(Ref<TextIndicator> textIndicator, TextIndicatorLifetime)

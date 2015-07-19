@@ -670,7 +670,7 @@ void NavigationState::NavigationClient::processDidCrash(WebKit::WebPageProxy& pa
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webViewWebProcessDidCrash:m_navigationState.m_webView];
 }
 
-PassRefPtr<API::Data> NavigationState::NavigationClient::webCryptoMasterKey(WebKit::WebPageProxy&)
+RefPtr<API::Data> NavigationState::NavigationClient::webCryptoMasterKey(WebKit::WebPageProxy&)
 {
     if (!m_navigationState.m_navigationDelegateMethods.webCryptoMasterKeyForWebView)
         return nullptr;

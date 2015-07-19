@@ -97,9 +97,9 @@ void PluginControllerProxy::setInitializationReply(PassRefPtr<Messages::WebProce
     m_initializationReply = reply;
 }
 
-PassRefPtr<Messages::WebProcessConnection::CreatePlugin::DelayedReply> PluginControllerProxy::takeInitializationReply()
+RefPtr<Messages::WebProcessConnection::CreatePlugin::DelayedReply> PluginControllerProxy::takeInitializationReply()
 {
-    return m_initializationReply.release();
+    return m_initializationReply;
 }
 
 bool PluginControllerProxy::initialize(const PluginCreationParameters& creationParameters)

@@ -780,12 +780,12 @@ bool WebChromeClient::hasOpenedPopup() const
     return false;
 }
 
-PassRefPtr<PopupMenu> WebChromeClient::createPopupMenu(PopupMenuClient* client) const
+RefPtr<PopupMenu> WebChromeClient::createPopupMenu(PopupMenuClient* client) const
 {
     return adoptRef(new PopupMenuWin(client));
 }
 
-PassRefPtr<SearchPopupMenu> WebChromeClient::createSearchPopupMenu(PopupMenuClient* client) const
+RefPtr<SearchPopupMenu> WebChromeClient::createSearchPopupMenu(PopupMenuClient* client) const
 {
     return adoptRef(new SearchPopupMenuWin(client));
 }

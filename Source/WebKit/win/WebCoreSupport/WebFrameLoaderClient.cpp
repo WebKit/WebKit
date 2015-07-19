@@ -949,14 +949,14 @@ void WebFrameLoaderClient::prepareForDataSourceReplacement()
     notImplemented();
 }
 
-PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)
+Ref<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)
 {
-    RefPtr<WebDocumentLoader> loader = WebDocumentLoader::create(request, substituteData);
+    Ref<WebDocumentLoader> loader = WebDocumentLoader::create(request, substituteData);
 
     COMPtr<WebDataSource> dataSource(AdoptCOM, WebDataSource::createInstance(loader.get()));
 
     loader->setDataSource(dataSource.get());
-    return loader.release();
+    return WTF::move(loader);
 }
 
 void WebFrameLoaderClient::setTitle(const StringWithDirection& title, const URL& url)

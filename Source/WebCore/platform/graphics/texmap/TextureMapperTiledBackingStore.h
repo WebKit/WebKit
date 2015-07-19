@@ -37,7 +37,7 @@ public:
     static PassRefPtr<TextureMapperTiledBackingStore> create() { return adoptRef(new TextureMapperTiledBackingStore); }
     virtual ~TextureMapperTiledBackingStore() { }
 
-    virtual PassRefPtr<BitmapTexture> texture() const override;
+    virtual RefPtr<BitmapTexture> texture() const override;
     virtual void paintToTextureMapper(TextureMapper*, const FloatRect&, const TransformationMatrix&, float) override;
     virtual void drawBorder(TextureMapper*, const Color&, float borderWidth, const FloatRect&, const TransformationMatrix&) override;
     virtual void drawRepaintCounter(TextureMapper*, int repaintCount, const Color&, const FloatRect&, const TransformationMatrix&) override;

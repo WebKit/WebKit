@@ -135,7 +135,7 @@ public:
     virtual bool supportsSnapshotting() const = 0;
 
     // Tells the plug-in to draw itself into a bitmap, and return that.
-    virtual PassRefPtr<ShareableBitmap> snapshot() = 0;
+    virtual RefPtr<ShareableBitmap> snapshot() = 0;
 
 #if PLATFORM(COCOA)
     // If a plug-in is using the Core Animation drawing model, this returns its plug-in layer.
@@ -283,7 +283,7 @@ public:
 
     virtual bool shouldAlwaysAutoStart() const { return false; }
 
-    virtual PassRefPtr<WebCore::SharedBuffer> liveResourceData() const = 0;
+    virtual RefPtr<WebCore::SharedBuffer> liveResourceData() const = 0;
 
     virtual bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) = 0;
 

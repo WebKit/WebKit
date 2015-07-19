@@ -249,12 +249,12 @@ bool WebChromeClientIOS::selectItemAlignmentFollowsMenuWritingDirection()
     return true;
 }
 
-PassRefPtr<WebCore::PopupMenu> WebChromeClientIOS::createPopupMenu(WebCore::PopupMenuClient* client) const
+RefPtr<WebCore::PopupMenu> WebChromeClientIOS::createPopupMenu(WebCore::PopupMenuClient* client) const
 {
     return adoptRef(new PopupMenuIOS(client));
 }
 
-PassRefPtr<WebCore::SearchPopupMenu> WebChromeClientIOS::createSearchPopupMenu(WebCore::PopupMenuClient* client) const
+RefPtr<WebCore::SearchPopupMenu> WebChromeClientIOS::createSearchPopupMenu(WebCore::PopupMenuClient* client) const
 {
     return adoptRef(new SearchPopupMenuIOS(client));
 }

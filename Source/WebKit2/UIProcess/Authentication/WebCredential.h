@@ -29,7 +29,6 @@
 #include "APIObject.h"
 #include "APIString.h"
 #include <WebCore/Credential.h>
-#include <wtf/PassRefPtr.h>
 
 namespace WebKit {
 

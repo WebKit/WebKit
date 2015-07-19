@@ -112,7 +112,7 @@ ResourceLoadScheduler::~ResourceLoadScheduler()
 {
 }
 
-PassRefPtr<SubresourceLoader> ResourceLoadScheduler::scheduleSubresourceLoad(Frame* frame, CachedResource* resource, const ResourceRequest& request, const ResourceLoaderOptions& options)
+RefPtr<SubresourceLoader> ResourceLoadScheduler::scheduleSubresourceLoad(Frame* frame, CachedResource* resource, const ResourceRequest& request, const ResourceLoaderOptions& options)
 {
     RefPtr<SubresourceLoader> loader = SubresourceLoader::create(frame, resource, request, options);
     if (loader)
@@ -126,12 +126,12 @@ PassRefPtr<SubresourceLoader> ResourceLoadScheduler::scheduleSubresourceLoad(Fra
     if (!loader || loader->reachedTerminalState())
         return nullptr;
 #endif
-    return loader.release();
+    return loader;
 }
 
-PassRefPtr<NetscapePlugInStreamLoader> ResourceLoadScheduler::schedulePluginStreamLoad(Frame* frame, NetscapePlugInStreamLoaderClient* client, const ResourceRequest& request)
+RefPtr<NetscapePlugInStreamLoader> ResourceLoadScheduler::schedulePluginStreamLoad(Frame* frame, NetscapePlugInStreamLoaderClient* client, const ResourceRequest& request)
 {
-    PassRefPtr<NetscapePlugInStreamLoader> loader = NetscapePlugInStreamLoader::create(frame, client, request);
+    RefPtr<NetscapePlugInStreamLoader> loader = NetscapePlugInStreamLoader::create(frame, client, request);
     if (loader)
         scheduleLoad(loader.get());
     return loader;

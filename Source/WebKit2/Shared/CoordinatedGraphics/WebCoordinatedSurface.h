@@ -61,10 +61,10 @@ public:
     };
 
     // Create a new WebCoordinatedSurface, and allocate either a GraphicsSurface or a ShareableBitmap as backing.
-    static PassRefPtr<WebCoordinatedSurface> create(const WebCore::IntSize&, Flags);
+    static RefPtr<WebCoordinatedSurface> create(const WebCore::IntSize&, Flags);
 
     // Create a shareable surface from a handle.
-    static PassRefPtr<WebCoordinatedSurface> create(const Handle&);
+    static RefPtr<WebCoordinatedSurface> create(const Handle&);
 
     // Create a handle.
     bool createHandle(Handle&);
@@ -87,7 +87,7 @@ private:
 #if USE(GRAPHICS_SURFACE)
     WebCoordinatedSurface(const WebCore::IntSize&, Flags, PassRefPtr<WebCore::GraphicsSurface>);
     // Create a shareable bitmap backed by a graphics surface.
-    static PassRefPtr<WebCoordinatedSurface> createWithSurface(const WebCore::IntSize&, Flags);
+    static RefPtr<WebCoordinatedSurface> createWithSurface(const WebCore::IntSize&, Flags);
     // Create a WebCoordinatedSurface referencing an existing GraphicsSurface.
     static Ref<WebCoordinatedSurface> create(const WebCore::IntSize&, Flags, PassRefPtr<WebCore::GraphicsSurface>);
 

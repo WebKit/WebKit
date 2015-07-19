@@ -163,7 +163,7 @@ private:
     virtual void didFinishLoad() override;
     virtual void prepareForDataSourceReplacement() override;
     
-    virtual PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&) override;
+    virtual Ref<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&) override;
     virtual void updateCachedDocumentLoader(WebCore::DocumentLoader&) override;
 
     virtual void setTitle(const WebCore::StringWithDirection&, const WebCore::URL&) override;
@@ -185,10 +185,10 @@ private:
     virtual bool canCachePage() const override;
     virtual void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&) override;
 
-    virtual PassRefPtr<WebCore::Frame> createFrame(const WebCore::URL& url, const String& name, WebCore::HTMLFrameOwnerElement* ownerElement,
+    virtual RefPtr<WebCore::Frame> createFrame(const WebCore::URL&, const String& name, WebCore::HTMLFrameOwnerElement*,
                                           const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight) override;
     
-    virtual PassRefPtr<WebCore::Widget> createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement*, const WebCore::URL&, const Vector<String>&, const Vector<String>&, const String&, bool loadManually) override;
+    virtual RefPtr<WebCore::Widget> createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement*, const WebCore::URL&, const Vector<String>&, const Vector<String>&, const String&, bool loadManually) override;
     virtual void recreatePlugin(WebCore::Widget*) override;
     virtual void redirectDataToPlugin(WebCore::Widget* pluginWidget) override;
     

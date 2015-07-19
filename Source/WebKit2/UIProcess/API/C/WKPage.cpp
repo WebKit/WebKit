@@ -1150,7 +1150,7 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
                 m_client.willGoToBackForwardListItem(toAPI(&page), toAPI(item), toAPI(userData), m_client.base.clientInfo);
         }
 
-        virtual PassRefPtr<API::Data> webCryptoMasterKey(WebPageProxy& page) override
+        virtual RefPtr<API::Data> webCryptoMasterKey(WebPageProxy& page) override
         {
             return page.process().processPool().client().copyWebCryptoMasterKey(&page.process().processPool());
         }
@@ -1931,7 +1931,7 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
             m_client.webProcessDidCrash(toAPI(&page), m_client.base.clientInfo);
         }
 
-        virtual PassRefPtr<API::Data> webCryptoMasterKey(WebPageProxy& page) override
+        virtual RefPtr<API::Data> webCryptoMasterKey(WebPageProxy& page) override
         {
             if (!m_client.copyWebCryptoMasterKey)
                 return nullptr;

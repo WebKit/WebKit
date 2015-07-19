@@ -94,7 +94,7 @@ SubresourceLoader::~SubresourceLoader()
 #endif
 }
 
-PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, CachedResource* resource, const ResourceRequest& request, const ResourceLoaderOptions& options)
+RefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, CachedResource* resource, const ResourceRequest& request, const ResourceLoaderOptions& options)
 {
     RefPtr<SubresourceLoader> subloader(adoptRef(new SubresourceLoader(frame, resource, options)));
 #if PLATFORM(IOS)
@@ -108,7 +108,7 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, CachedReso
 #endif
     if (!subloader->init(request))
         return nullptr;
-    return subloader.release();
+    return subloader;
 }
     
 #if PLATFORM(IOS)

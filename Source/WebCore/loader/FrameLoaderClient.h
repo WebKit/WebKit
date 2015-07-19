@@ -250,7 +250,7 @@ namespace WebCore {
         virtual void didFinishLoad() = 0;
         virtual void prepareForDataSourceReplacement() = 0;
 
-        virtual PassRefPtr<DocumentLoader> createDocumentLoader(const ResourceRequest&, const SubstituteData&) = 0;
+        virtual Ref<DocumentLoader> createDocumentLoader(const ResourceRequest&, const SubstituteData&) = 0;
         virtual void updateCachedDocumentLoader(DocumentLoader&) = 0;
         virtual void setTitle(const StringWithDirection&, const URL&) = 0;
 
@@ -271,8 +271,8 @@ namespace WebCore {
         virtual bool canCachePage() const = 0;
         virtual void convertMainResourceLoadToDownload(DocumentLoader*, const ResourceRequest&, const ResourceResponse&) = 0;
 
-        virtual PassRefPtr<Frame> createFrame(const URL& url, const String& name, HTMLFrameOwnerElement* ownerElement, const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight) = 0;
-        virtual PassRefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement*, const URL&, const Vector<String>&, const Vector<String>&, const String&, bool loadManually) = 0;
+        virtual RefPtr<Frame> createFrame(const URL&, const String& name, HTMLFrameOwnerElement*, const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight) = 0;
+        virtual RefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement*, const URL&, const Vector<String>&, const Vector<String>&, const String&, bool loadManually) = 0;
         virtual void recreatePlugin(Widget*) = 0;
         virtual void redirectDataToPlugin(Widget* pluginWidget) = 0;
 

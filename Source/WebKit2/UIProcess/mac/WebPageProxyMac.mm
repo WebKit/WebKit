@@ -368,17 +368,17 @@ String WebPageProxy::stringSelectionForPasteboard()
     return value;
 }
 
-PassRefPtr<WebCore::SharedBuffer> WebPageProxy::dataSelectionForPasteboard(const String& pasteboardType)
+RefPtr<WebCore::SharedBuffer> WebPageProxy::dataSelectionForPasteboard(const String& pasteboardType)
 {
     if (!isValid())
-        return 0;
+        return nullptr;
     SharedMemory::Handle handle;
     uint64_t size = 0;
     const auto messageTimeout = std::chrono::seconds(20);
     process().sendSync(Messages::WebPage::GetDataSelectionForPasteboard(pasteboardType),
                                                 Messages::WebPage::GetDataSelectionForPasteboard::Reply(handle, size), m_pageID, messageTimeout);
     if (handle.isNull())
-        return 0;
+        return nullptr;
     RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
     return SharedBuffer::create(static_cast<unsigned char *>(sharedMemoryBuffer->data()), size);
 }

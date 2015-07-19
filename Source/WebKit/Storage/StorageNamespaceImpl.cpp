@@ -85,7 +85,7 @@ StorageNamespaceImpl::~StorageNamespaceImpl()
         close();
 }
 
-PassRefPtr<StorageNamespace> StorageNamespaceImpl::copy(Page*)
+RefPtr<StorageNamespace> StorageNamespaceImpl::copy(Page*)
 {
     ASSERT(isMainThread());
     ASSERT(!m_isShutdown);
@@ -96,10 +96,10 @@ PassRefPtr<StorageNamespace> StorageNamespaceImpl::copy(Page*)
     StorageAreaMap::iterator end = m_storageAreaMap.end();
     for (StorageAreaMap::iterator i = m_storageAreaMap.begin(); i != end; ++i)
         newNamespace->m_storageAreaMap.set(i->key, i->value->copy());
-    return newNamespace.release();
+    return newNamespace;
 }
 
-PassRefPtr<StorageArea> StorageNamespaceImpl::storageArea(PassRefPtr<SecurityOrigin> prpOrigin)
+RefPtr<StorageArea> StorageNamespaceImpl::storageArea(PassRefPtr<SecurityOrigin> prpOrigin)
 {
     ASSERT(isMainThread());
     ASSERT(!m_isShutdown);
@@ -107,11 +107,11 @@ PassRefPtr<StorageArea> StorageNamespaceImpl::storageArea(PassRefPtr<SecurityOri
     RefPtr<SecurityOrigin> origin = prpOrigin;
     RefPtr<StorageAreaImpl> storageArea;
     if ((storageArea = m_storageAreaMap.get(origin)))
-        return storageArea.release();
+        return storageArea;
 
     storageArea = StorageAreaImpl::create(m_storageType, origin, m_syncManager, m_quota);
     m_storageAreaMap.set(origin.release(), storageArea);
-    return storageArea.release();
+    return storageArea;
 }
 
 void StorageNamespaceImpl::close()

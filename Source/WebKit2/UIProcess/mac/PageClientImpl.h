@@ -120,11 +120,11 @@ private:
 
     virtual void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) override;
 
-    virtual PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy*) override;
-    virtual PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*) override;
+    virtual RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy*) override;
+    virtual RefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*) override;
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    virtual PassRefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& initialColor, const WebCore::IntRect&) override;
+    virtual RefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& initialColor, const WebCore::IntRect&) override;
 #endif
 
     virtual void setTextIndicator(Ref<WebCore::TextIndicator>, WebCore::TextIndicatorLifetime = WebCore::TextIndicatorLifetime::Permanent) override;

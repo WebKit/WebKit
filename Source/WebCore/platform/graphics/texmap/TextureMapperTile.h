@@ -34,7 +34,7 @@ class GraphicsLayer;
 
 class TextureMapperTile {
 public:
-    inline PassRefPtr<BitmapTexture> texture() const { return m_texture; }
+    inline RefPtr<BitmapTexture> texture() const { return m_texture; }
     inline FloatRect rect() const { return m_rect; }
     inline void setTexture(BitmapTexture* texture) { m_texture = texture; }
     inline void setRect(const FloatRect& rect) { m_rect = rect; }

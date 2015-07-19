@@ -118,7 +118,7 @@ private:
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRectInWindowCoordinates) override { }
     virtual void updateControlTints(WebCore::GraphicsContext*) override;
     virtual bool supportsSnapshotting() const override { return true; }
-    virtual PassRefPtr<ShareableBitmap> snapshot() override;
+    virtual RefPtr<ShareableBitmap> snapshot() override;
     virtual PlatformLayer* pluginLayer() override;
     virtual bool isTransparent() override { return false; }
     virtual bool wantsWheelEvents() override { return true; }
@@ -159,7 +159,7 @@ private:
     virtual void privateBrowsingStateChanged(bool) override { }
     virtual bool getFormValue(String& formValue) override { return false; }
     virtual bool handleScroll(WebCore::ScrollDirection, WebCore::ScrollGranularity) override;
-    virtual PassRefPtr<WebCore::SharedBuffer> liveResourceData() const override;
+    virtual RefPtr<WebCore::SharedBuffer> liveResourceData() const override;
 
     virtual bool isBeingAsynchronouslyInitialized() const override { return false; }
 

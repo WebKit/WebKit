@@ -150,7 +150,7 @@ void TextureMapperTiledBackingStore::updateContents(TextureMapper* textureMapper
         tile.updateContents(textureMapper, sourceLayer, dirtyRect, updateContentsFlag);
 }
 
-PassRefPtr<BitmapTexture> TextureMapperTiledBackingStore::texture() const
+RefPtr<BitmapTexture> TextureMapperTiledBackingStore::texture() const
 {
     for (const auto& tile : m_tiles) {
         if (auto texture = tile.texture())

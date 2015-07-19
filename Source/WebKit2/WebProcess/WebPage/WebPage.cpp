@@ -241,14 +241,14 @@ private:
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, webPageCounter, ("WebPage"));
 
-PassRefPtr<WebPage> WebPage::create(uint64_t pageID, const WebPageCreationParameters& parameters)
+Ref<WebPage> WebPage::create(uint64_t pageID, const WebPageCreationParameters& parameters)
 {
-    RefPtr<WebPage> page = adoptRef(new WebPage(pageID, parameters));
+    Ref<WebPage> page = adoptRef(*new WebPage(pageID, parameters));
 
     if (page->pageGroup()->isVisibleToInjectedBundle() && WebProcess::singleton().injectedBundle())
-        WebProcess::singleton().injectedBundle()->didCreatePage(page.get());
+        WebProcess::singleton().injectedBundle()->didCreatePage(page.ptr());
 
-    return page.release();
+    return page;
 }
 
 WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
@@ -4908,16 +4908,16 @@ void WebPage::setScrollbarOverlayStyle(WTF::Optional<uint32_t> scrollbarStyle)
     m_page->mainFrame().view()->recalculateScrollbarOverlayStyle();
 }
 
-PassRefPtr<DocumentLoader> WebPage::createDocumentLoader(Frame& frame, const ResourceRequest& request, const SubstituteData& substituteData)
+Ref<DocumentLoader> WebPage::createDocumentLoader(Frame& frame, const ResourceRequest& request, const SubstituteData& substituteData)
 {
-    RefPtr<WebDocumentLoader> documentLoader = WebDocumentLoader::create(request, substituteData);
+    Ref<WebDocumentLoader> documentLoader = WebDocumentLoader::create(request, substituteData);
 
     if (m_pendingNavigationID && frame.isMainFrame()) {
         documentLoader->setNavigationID(m_pendingNavigationID);
         m_pendingNavigationID = 0;
     }
 
-    return documentLoader.release();
+    return WTF::move(documentLoader);
 }
 
 void WebPage::updateCachedDocumentLoader(WebDocumentLoader& documentLoader, Frame& frame)

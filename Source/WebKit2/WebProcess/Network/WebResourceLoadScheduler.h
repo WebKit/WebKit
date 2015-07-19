@@ -45,8 +45,8 @@ public:
     WebResourceLoadScheduler();
     virtual ~WebResourceLoadScheduler();
     
-    virtual PassRefPtr<WebCore::SubresourceLoader> scheduleSubresourceLoad(WebCore::Frame*, WebCore::CachedResource*, const WebCore::ResourceRequest&, const WebCore::ResourceLoaderOptions&) override;
-    virtual PassRefPtr<WebCore::NetscapePlugInStreamLoader> schedulePluginStreamLoad(WebCore::Frame*, WebCore::NetscapePlugInStreamLoaderClient*, const WebCore::ResourceRequest&) override;
+    virtual RefPtr<WebCore::SubresourceLoader> scheduleSubresourceLoad(WebCore::Frame*, WebCore::CachedResource*, const WebCore::ResourceRequest&, const WebCore::ResourceLoaderOptions&) override;
+    virtual RefPtr<WebCore::NetscapePlugInStreamLoader> schedulePluginStreamLoad(WebCore::Frame*, WebCore::NetscapePlugInStreamLoaderClient*, const WebCore::ResourceRequest&) override;
     
     virtual void remove(WebCore::ResourceLoader*) override;
     virtual void setDefersLoading(WebCore::ResourceLoader*, bool) override;

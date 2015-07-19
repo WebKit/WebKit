@@ -76,7 +76,7 @@ public:
     bool isInitializing() const { return m_isInitializing; }
     
     void setInitializationReply(PassRefPtr<Messages::WebProcessConnection::CreatePlugin::DelayedReply>);
-    PassRefPtr<Messages::WebProcessConnection::CreatePlugin::DelayedReply> takeInitializationReply();
+    RefPtr<Messages::WebProcessConnection::CreatePlugin::DelayedReply> takeInitializationReply();
 
 private:
     void startPaintTimer();

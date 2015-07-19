@@ -30,7 +30,6 @@
 #include "GenericCallback.h"
 #include "WKAPICast.h"
 #include <wtf/HashMap.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebKit {

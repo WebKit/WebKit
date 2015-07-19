@@ -1243,7 +1243,7 @@ void WebFrameLoaderClient::prepareForDataSourceReplacement()
     notImplemented();
 }
 
-PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)
+Ref<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)
 {
     return m_frame->page()->createDocumentLoader(*m_frame->coreFrame(), request, substituteData);
 }
@@ -1375,7 +1375,7 @@ void WebFrameLoaderClient::convertMainResourceLoadToDownload(DocumentLoader *doc
     m_frame->convertMainResourceLoadToDownload(documentLoader, request, response);
 }
 
-PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const URL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
+RefPtr<Frame> WebFrameLoaderClient::createFrame(const URL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
                                                     const String& referrer, bool /*allowsScrolling*/, int /*marginWidth*/, int /*marginHeight*/)
 {
     WebPage* webPage = m_frame->page();
@@ -1384,25 +1384,25 @@ PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const URL& url, const String
 
     Frame* coreSubframe = subframe->coreFrame();
     if (!coreSubframe)
-        return 0;
+        return nullptr;
 
     // The creation of the frame may have run arbitrary JavaScript that removed it from the page already.
     if (!coreSubframe->page())
-        return 0;
+        return nullptr;
 
     m_frame->coreFrame()->loader().loadURLIntoChildFrame(url, referrer, coreSubframe);
 
     // The frame's onload handler may have removed it from the document.
     if (!subframe->coreFrame())
-        return 0;
+        return nullptr;
     ASSERT(subframe->coreFrame() == coreSubframe);
     if (!coreSubframe->tree().parent())
-        return 0;
+        return nullptr;
 
     return coreSubframe;
 }
 
-PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugInElement* pluginElement, const URL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
+RefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugInElement* pluginElement, const URL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
     ASSERT(paramNames.size() == paramValues.size());
     ASSERT(m_frame->page());
@@ -1421,12 +1421,12 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugIn
 #if ENABLE(NETSCAPE_PLUGIN_API)
     RefPtr<Plugin> plugin = m_frame->page()->createPlugin(m_frame, pluginElement, parameters, parameters.mimeType);
     if (!plugin)
-        return 0;
+        return nullptr;
 
     return PluginView::create(pluginElement, plugin.release(), parameters);
 #else
     UNUSED_PARAM(pluginElement);
-    return 0;
+    return nullptr;
 #endif
 }
 

@@ -37,7 +37,7 @@ void TextureMapperSurfaceBackingStore::swapBuffersIfNeeded(uint32_t)
         m_graphicsSurface->swapBuffers();
 }
 
-PassRefPtr<BitmapTexture> TextureMapperSurfaceBackingStore::texture() const
+RefPtr<BitmapTexture> TextureMapperSurfaceBackingStore::texture() const
 {
     // FIXME: Instead of just returning an empty texture, we should wrap the texture contents into a BitmapTexture.
     RefPtr<BitmapTexture> emptyTexture;

@@ -84,7 +84,7 @@ public:
     // FIXME: This function should not be part of this client.
     virtual void processDidCrash(WebKit::WebPageProxy&) { }
 
-    virtual PassRefPtr<Data> webCryptoMasterKey(WebKit::WebPageProxy&) { return nullptr; }
+    virtual RefPtr<Data> webCryptoMasterKey(WebKit::WebPageProxy&) { return nullptr; }
 
 #if USE(QUICK_LOOK)
     virtual void didStartLoadForQuickLookDocumentInMainFrame(const WTF::String& fileName, const WTF::String& uti) { }

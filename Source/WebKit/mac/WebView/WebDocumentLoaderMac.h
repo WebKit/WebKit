@@ -39,9 +39,9 @@ namespace WebCore {
 
 class WebDocumentLoaderMac : public WebCore::DocumentLoader {
 public:
-    static PassRefPtr<WebDocumentLoaderMac> create(const WebCore::ResourceRequest& request, const WebCore::SubstituteData& data)
+    static Ref<WebDocumentLoaderMac> create(const WebCore::ResourceRequest& request, const WebCore::SubstituteData& data)
     {
-        return adoptRef(new WebDocumentLoaderMac(request, data));
+        return adoptRef(*new WebDocumentLoaderMac(request, data));
     }
 
     void setDataSource(WebDataSource *, WebView*);

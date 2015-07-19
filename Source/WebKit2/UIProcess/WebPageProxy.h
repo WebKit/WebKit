@@ -730,7 +730,7 @@ public:
     void registerUIProcessAccessibilityTokens(const IPC::DataReference& elemenToken, const IPC::DataReference& windowToken);
     bool readSelectionFromPasteboard(const String& pasteboardName);
     String stringSelectionForPasteboard();
-    PassRefPtr<WebCore::SharedBuffer> dataSelectionForPasteboard(const String& pasteboardType);
+    RefPtr<WebCore::SharedBuffer> dataSelectionForPasteboard(const String& pasteboardType);
     void makeFirstResponder();
 
     ColorSpaceData colorSpace();

@@ -1186,7 +1186,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
     send(Messages::WebPageProxy::DidPerformImmediateActionHitTest(immediateActionResult, immediateActionHitTestPreventsDefault, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
-PassRefPtr<WebCore::Range> WebPage::lookupTextAtLocation(FloatPoint locationInViewCoordinates, NSDictionary **options)
+RefPtr<WebCore::Range> WebPage::lookupTextAtLocation(FloatPoint locationInViewCoordinates, NSDictionary **options)
 {
     MainFrame& mainFrame = corePage()->mainFrame();
     if (!mainFrame.view() || !mainFrame.view()->renderView())

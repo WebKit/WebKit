@@ -1152,7 +1152,7 @@ void PDFPlugin::paintControlForLayerInContext(CALayer *layer, CGContextRef conte
     scrollbar->paint(&graphicsContext, scrollbar->frameRect());
 }
 
-PassRefPtr<ShareableBitmap> PDFPlugin::snapshot()
+RefPtr<ShareableBitmap> PDFPlugin::snapshot()
 {
     if (size().isEmpty())
         return nullptr;
@@ -1169,7 +1169,7 @@ PassRefPtr<ShareableBitmap> PDFPlugin::snapshot()
 
     [m_pdfLayerController snapshotInContext:context->platformContext()];
 
-    return bitmap.release();
+    return bitmap;
 }
 
 PlatformLayer* PDFPlugin::pluginLayer()
@@ -1635,12 +1635,12 @@ void PDFPlugin::notifyDisplayModeChanged(int)
     updateScrollbars();
 }
 
-PassRefPtr<SharedBuffer> PDFPlugin::liveResourceData() const
+RefPtr<SharedBuffer> PDFPlugin::liveResourceData() const
 {
     NSData *pdfData = liveData();
 
     if (!pdfData)
-        return 0;
+        return nullptr;
 
     return SharedBuffer::wrapNSData(pdfData);
 }

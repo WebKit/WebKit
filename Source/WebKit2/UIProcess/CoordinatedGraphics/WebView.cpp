@@ -430,23 +430,23 @@ void WebView::doneWithTouchEvent(const NativeWebTouchEvent& event, bool wasEvent
 }
 #endif
 
-PassRefPtr<WebPopupMenuProxy> WebView::createPopupMenuProxy(WebPageProxy*)
+RefPtr<WebPopupMenuProxy> WebView::createPopupMenuProxy(WebPageProxy*)
 {
     notImplemented();
-    return 0;
+    return nullptr;
 }
 
-PassRefPtr<WebContextMenuProxy> WebView::createContextMenuProxy(WebPageProxy*)
+RefPtr<WebContextMenuProxy> WebView::createContextMenuProxy(WebPageProxy*)
 {
     notImplemented();
-    return 0;
+    return nullptr;
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
-PassRefPtr<WebColorPicker> WebView::createColorPicker(WebPageProxy*, const WebCore::Color&, const WebCore::IntRect&)
+RefPtr<WebColorPicker> WebView::createColorPicker(WebPageProxy*, const WebCore::Color&, const WebCore::IntRect&)
 {
     notImplemented();
-    return 0;
+    return nullptr;
 }
 #endif
 

@@ -69,7 +69,7 @@ bool WebCoordinatedSurface::Handle::decode(IPC::ArgumentDecoder& decoder, Handle
     return true;
 }
 
-PassRefPtr<WebCoordinatedSurface> WebCoordinatedSurface::create(const IntSize& size, CoordinatedSurface::Flags flags)
+RefPtr<WebCoordinatedSurface> WebCoordinatedSurface::create(const IntSize& size, CoordinatedSurface::Flags flags)
 {
     RefPtr<WebCoordinatedSurface> surface;
 #if USE(GRAPHICS_SURFACE)
@@ -79,11 +79,11 @@ PassRefPtr<WebCoordinatedSurface> WebCoordinatedSurface::create(const IntSize& s
     if (!surface)
         surface = create(size, flags, ShareableBitmap::createShareable(size, (flags & SupportsAlpha) ? ShareableBitmap::SupportsAlpha : ShareableBitmap::NoFlags));
 
-    return surface.release();
+    return surface;
 }
 
 #if USE(GRAPHICS_SURFACE)
-PassRefPtr<WebCoordinatedSurface> WebCoordinatedSurface::createWithSurface(const IntSize& size, CoordinatedSurface::Flags flags)
+RefPtr<WebCoordinatedSurface> WebCoordinatedSurface::createWithSurface(const IntSize& size, CoordinatedSurface::Flags flags)
 {
     GraphicsSurface::Flags surfaceFlags =
         GraphicsSurface::SupportsSoftwareWrite
@@ -97,7 +97,7 @@ PassRefPtr<WebCoordinatedSurface> WebCoordinatedSurface::createWithSurface(const
     // In that case, this function would return null and allow falling back to ShareableBitmap.
     RefPtr<GraphicsSurface> surface = GraphicsSurface::create(size, surfaceFlags);
     if (!surface)
-        return 0;
+        return nullptr;
 
     ASSERT(surface);
     return adoptRef(new WebCoordinatedSurface(size, flags, surface.release()));
@@ -146,7 +146,7 @@ WebCoordinatedSurface::~WebCoordinatedSurface()
 {
 }
 
-PassRefPtr<WebCoordinatedSurface> WebCoordinatedSurface::create(const Handle& handle)
+RefPtr<WebCoordinatedSurface> WebCoordinatedSurface::create(const Handle& handle)
 {
 #if USE(GRAPHICS_SURFACE)
     if (handle.graphicsSurfaceToken().isValid()) {
@@ -161,7 +161,7 @@ PassRefPtr<WebCoordinatedSurface> WebCoordinatedSurface::create(const Handle& ha
 
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(handle.m_bitmapHandle);
     if (!bitmap)
-        return 0;
+        return nullptr;
 
     return create(handle.m_size, handle.m_flags, bitmap.release());
 }

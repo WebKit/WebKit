@@ -206,17 +206,17 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool 
     gtk_main_do_event(event.nativeEvent());
 }
 
-PassRefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy* page)
+RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy* page)
 {
     return WebPopupMenuProxyGtk::create(m_viewWidget, page);
 }
 
-PassRefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy* page)
+RefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy* page)
 {
     return WebContextMenuProxyGtk::create(m_viewWidget, page);
 }
 
-PassRefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy* page, const WebCore::Color& color, const WebCore::IntRect& rect)
+RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy* page, const WebCore::Color& color, const WebCore::IntRect& rect)
 {
     if (WEBKIT_IS_WEB_VIEW(m_viewWidget))
         return WebKitColorChooser::create(*page, color, rect);

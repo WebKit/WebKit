@@ -842,7 +842,7 @@ bool WebChromeClient::hasOpenedPopup() const
     return false;
 }
 
-PassRefPtr<WebCore::PopupMenu> WebChromeClient::createPopupMenu(WebCore::PopupMenuClient* client) const
+RefPtr<WebCore::PopupMenu> WebChromeClient::createPopupMenu(WebCore::PopupMenuClient* client) const
 {
 #if !PLATFORM(IOS)
     return adoptRef(new PopupMenuMac(client));
@@ -851,7 +851,7 @@ PassRefPtr<WebCore::PopupMenu> WebChromeClient::createPopupMenu(WebCore::PopupMe
 #endif
 }
 
-PassRefPtr<WebCore::SearchPopupMenu> WebChromeClient::createSearchPopupMenu(WebCore::PopupMenuClient* client) const
+RefPtr<WebCore::SearchPopupMenu> WebChromeClient::createSearchPopupMenu(WebCore::PopupMenuClient* client) const
 {
 #if !PLATFORM(IOS)
     return adoptRef(new SearchPopupMenuMac(client));

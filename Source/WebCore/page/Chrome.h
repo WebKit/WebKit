@@ -173,8 +173,8 @@ public:
     bool selectItemWritingDirectionIsNatural();
     bool selectItemAlignmentFollowsMenuWritingDirection();
     bool hasOpenedPopup() const;
-    PassRefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const;
-    PassRefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const;
+    RefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const;
+    RefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const;
 
 #if PLATFORM(IOS)
     // FIXME: Can we come up with a better name for this setter?

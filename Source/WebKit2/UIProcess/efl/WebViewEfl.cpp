@@ -88,13 +88,13 @@ void WebViewEfl::paintToCairoSurface(cairo_surface_t* surface)
     scene->paintToGraphicsContext(&context, m_page->pageExtendedBackgroundColor(), m_page->drawsBackground());
 }
 
-PassRefPtr<WebPopupMenuProxy> WebViewEfl::createPopupMenuProxy(WebPageProxy* page)
+RefPtr<WebPopupMenuProxy> WebViewEfl::createPopupMenuProxy(WebPageProxy* page)
 {
     return WebPopupMenuListenerEfl::create(page);
 }
 
 #if ENABLE(CONTEXT_MENUS)
-PassRefPtr<WebContextMenuProxy> WebViewEfl::createContextMenuProxy(WebPageProxy* page)
+RefPtr<WebContextMenuProxy> WebViewEfl::createContextMenuProxy(WebPageProxy* page)
 {
     return WebContextMenuProxyEfl::create(m_ewkView, page);
 }
@@ -212,7 +212,7 @@ void WebViewEfl::initializeColorPickerClient(const WKColorPickerClientBase* clie
     m_colorPickerClient.initialize(client);
 }
 
-PassRefPtr<WebColorPicker> WebViewEfl::createColorPicker(WebPageProxy* page, const WebCore::Color& color, const WebCore::IntRect&)
+RefPtr<WebColorPicker> WebViewEfl::createColorPicker(WebPageProxy* page, const WebCore::Color& color, const WebCore::IntRect&)
 {
     return WebColorPickerEfl::create(this, page, color);
 }

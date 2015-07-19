@@ -185,12 +185,12 @@ static void applyFrameState(HistoryItem& historyItem, const FrameState& frameSta
     }
 }
 
-PassRefPtr<HistoryItem> toHistoryItem(const PageState& pageState)
+Ref<HistoryItem> toHistoryItem(const PageState& pageState)
 {
-    RefPtr<HistoryItem> historyItem = HistoryItem::create(pageState.mainFrameState.urlString, pageState.title);
-    applyFrameState(*historyItem, pageState.mainFrameState);
+    Ref<HistoryItem> historyItem = HistoryItem::create(pageState.mainFrameState.urlString, pageState.title);
+    applyFrameState(historyItem, pageState.mainFrameState);
 
-    return historyItem.release();
+    return historyItem;
 }
 
 } // namespace WebKit

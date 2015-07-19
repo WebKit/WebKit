@@ -487,18 +487,18 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool 
     [m_wkView _doneWithKeyEvent:event.nativeEvent() eventWasHandled:eventWasHandled];
 }
 
-PassRefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy* page)
+RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy* page)
 {
     return WebPopupMenuProxyMac::create(m_wkView, page);
 }
 
-PassRefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy* page)
+RefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy* page)
 {
     return WebContextMenuProxyMac::create(m_wkView, page);
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
-PassRefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy* page, const WebCore::Color& initialColor,  const WebCore::IntRect& rect)
+RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy* page, const WebCore::Color& initialColor,  const WebCore::IntRect& rect)
 {
     return WebColorPickerMac::create(page, initialColor, rect, wkView());
 }

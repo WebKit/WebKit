@@ -37,7 +37,7 @@ namespace WebKit {
 struct PageState;
 
 PageState toPageState(const WebCore::HistoryItem&);
-PassRefPtr<WebCore::HistoryItem> toHistoryItem(const PageState&);
+Ref<WebCore::HistoryItem> toHistoryItem(const PageState&);
 
 } // namespace WebKit
 

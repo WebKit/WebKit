@@ -189,8 +189,8 @@ public:
     virtual bool selectItemWritingDirectionIsNatural() override;
     virtual bool selectItemAlignmentFollowsMenuWritingDirection() override;
     virtual bool hasOpenedPopup() const override;
-    virtual PassRefPtr<WebCore::PopupMenu> createPopupMenu(WebCore::PopupMenuClient*) const override;
-    virtual PassRefPtr<WebCore::SearchPopupMenu> createSearchPopupMenu(WebCore::PopupMenuClient*) const override;
+    virtual RefPtr<WebCore::PopupMenu> createPopupMenu(WebCore::PopupMenuClient*) const override;
+    virtual RefPtr<WebCore::SearchPopupMenu> createSearchPopupMenu(WebCore::PopupMenuClient*) const override;
 
     virtual void wheelEventHandlersChanged(bool) override { }
 

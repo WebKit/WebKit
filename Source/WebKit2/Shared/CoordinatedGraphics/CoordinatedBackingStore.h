@@ -61,9 +61,9 @@ public:
     void removeTile(uint32_t tileID);
     void removeAllTiles();
     void updateTile(uint32_t tileID, const WebCore::IntRect&, const WebCore::IntRect&, PassRefPtr<WebCore::CoordinatedSurface>, const WebCore::IntPoint&);
-    static PassRefPtr<CoordinatedBackingStore> create() { return adoptRef(new CoordinatedBackingStore); }
+    static Ref<CoordinatedBackingStore> create() { return adoptRef(*new CoordinatedBackingStore); }
     void commitTileOperations(WebCore::TextureMapper*);
-    PassRefPtr<WebCore::BitmapTexture> texture() const;
+    RefPtr<WebCore::BitmapTexture> texture() const;
     void setSize(const WebCore::FloatSize&);
     virtual void paintToTextureMapper(WebCore::TextureMapper*, const WebCore::FloatRect&, const WebCore::TransformationMatrix&, float);
     virtual void drawBorder(WebCore::TextureMapper*, const WebCore::Color&, float borderWidth, const WebCore::FloatRect&, const WebCore::TransformationMatrix&) override;

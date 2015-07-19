@@ -191,7 +191,7 @@ class WebTouchEvent;
 
 class WebPage : public API::ObjectImpl<API::Object::Type::BundlePage>, public IPC::MessageReceiver, public IPC::MessageSender {
 public:
-    static PassRefPtr<WebPage> create(uint64_t pageID, const WebPageCreationParameters&);
+    static Ref<WebPage> create(uint64_t pageID, const WebPageCreationParameters&);
     virtual ~WebPage();
 
     void reinitializeWebPage(const WebPageCreationParameters&);
@@ -872,7 +872,7 @@ public:
     WTF::Optional<WebCore::ScrollbarOverlayStyle> scrollbarOverlayStyle() { return m_scrollbarOverlayStyle; }
     void setScrollbarOverlayStyle(WTF::Optional<uint32_t /* WebCore::ScrollbarOverlayStyle */> scrollbarStyle);
 
-    PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(WebCore::Frame&, const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
+    Ref<WebCore::DocumentLoader> createDocumentLoader(WebCore::Frame&, const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
     void updateCachedDocumentLoader(WebDocumentLoader&, WebCore::Frame&);
 
     void getBytecodeProfile(uint64_t callbackID);
@@ -1121,7 +1121,7 @@ private:
 
 #if PLATFORM(MAC)
     void performImmediateActionHitTestAtLocation(WebCore::FloatPoint);
-    PassRefPtr<WebCore::Range> lookupTextAtLocation(WebCore::FloatPoint, NSDictionary **options);
+    RefPtr<WebCore::Range> lookupTextAtLocation(WebCore::FloatPoint, NSDictionary **options);
     void immediateActionDidUpdate();
     void immediateActionDidCancel();
     void immediateActionDidComplete();

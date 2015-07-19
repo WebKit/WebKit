@@ -28,7 +28,6 @@
 
 #include "APIObject.h"
 #include <WebCore/ProtectionSpace.h>
-#include <wtf/PassRefPtr.h>
 
 namespace WebKit {
 

@@ -1,3 +1,17 @@
+2015-07-18  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Reduce PassRefPtr in WebKit2 - 3
+        https://bugs.webkit.org/show_bug.cgi?id=146995
+
+        Reviewed by Daniel Bates.
+
+        To remove PassRefPtr, this patch reduces use of PassRefPtr in WebKit2.
+        Because some uses depend on WebCore, WebCore, WK1 ports are modified as well.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::createDocumentLoader):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+
 2015-07-16  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Gross workaround to fix build after r186858.

@@ -375,8 +375,8 @@ public:
     virtual bool selectItemAlignmentFollowsMenuWritingDirection() = 0;
     // Checks if there is an opened popup, called by RenderMenuList::showPopup().
     virtual bool hasOpenedPopup() const = 0;
-    virtual PassRefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const = 0;
-    virtual PassRefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const = 0;
+    virtual RefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const = 0;
+    virtual RefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const = 0;
 
     virtual void postAccessibilityNotification(AccessibilityObject*, AXObjectCache::AXNotification) { }
 

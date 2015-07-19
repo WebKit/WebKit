@@ -79,7 +79,7 @@ private:
     virtual void destroy() override;
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect) override;
     virtual bool supportsSnapshotting() const override;
-    virtual PassRefPtr<ShareableBitmap> snapshot() override;
+    virtual RefPtr<ShareableBitmap> snapshot() override;
 #if PLATFORM(COCOA)
     virtual PlatformLayer* pluginLayer() override;
 #endif
@@ -139,7 +139,7 @@ private:
 
     virtual WebCore::IntPoint convertToRootView(const WebCore::IntPoint&) const override;
 
-    virtual PassRefPtr<WebCore::SharedBuffer> liveResourceData() const override;
+    virtual RefPtr<WebCore::SharedBuffer> liveResourceData() const override;
     virtual bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) override { return false; }
 
     String getSelectionString() const override { return String(); }

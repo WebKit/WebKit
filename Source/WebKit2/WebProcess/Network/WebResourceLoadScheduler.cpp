@@ -67,20 +67,20 @@ WebResourceLoadScheduler::~WebResourceLoadScheduler()
 {
 }
 
-PassRefPtr<SubresourceLoader> WebResourceLoadScheduler::scheduleSubresourceLoad(Frame* frame, CachedResource* resource, const ResourceRequest& request, const ResourceLoaderOptions& options)
+RefPtr<SubresourceLoader> WebResourceLoadScheduler::scheduleSubresourceLoad(Frame* frame, CachedResource* resource, const ResourceRequest& request, const ResourceLoaderOptions& options)
 {
     RefPtr<SubresourceLoader> loader = SubresourceLoader::create(frame, resource, request, options);
     if (loader)
         scheduleLoad(loader.get(), resource, frame->document()->referrerPolicy() == ReferrerPolicyDefault);
-    return loader.release();
+    return loader;
 }
 
-PassRefPtr<NetscapePlugInStreamLoader> WebResourceLoadScheduler::schedulePluginStreamLoad(Frame* frame, NetscapePlugInStreamLoaderClient* client, const ResourceRequest& request)
+RefPtr<NetscapePlugInStreamLoader> WebResourceLoadScheduler::schedulePluginStreamLoad(Frame* frame, NetscapePlugInStreamLoaderClient* client, const ResourceRequest& request)
 {
     RefPtr<NetscapePlugInStreamLoader> loader = NetscapePlugInStreamLoader::create(frame, client, request);
     if (loader)
         scheduleLoad(loader.get(), 0, frame->document()->referrerPolicy() == ReferrerPolicyDefault);
-    return loader.release();
+    return loader;
 }
 
 static std::chrono::milliseconds maximumBufferingTime(CachedResource* resource)

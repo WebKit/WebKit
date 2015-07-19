@@ -57,7 +57,7 @@ public:
     void initializeColorPickerClient(const WKColorPickerClientBase*);
 
     WebColorPickerClient& colorPickerClient() { return m_colorPickerClient; }
-    virtual PassRefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color&, const WebCore::IntRect&) override;
+    virtual RefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color&, const WebCore::IntRect&) override;
 #endif
 
     void setViewBackgroundColor(const WebCore::Color&);
@@ -66,12 +66,12 @@ private:
     WebViewEfl(WebProcessPool*, WebPageGroup*);
 
     void setCursor(const WebCore::Cursor&) override;
-    PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy*) override;
+    RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy*) override;
     void updateTextInputState() override;
     void handleDownloadRequest(DownloadProxy*) override;
 
 #if ENABLE(CONTEXT_MENUS)
-    PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*) override;
+    RefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*) override;
 #endif
 
 #if ENABLE(FULLSCREEN_API)

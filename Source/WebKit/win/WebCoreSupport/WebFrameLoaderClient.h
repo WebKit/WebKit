@@ -151,7 +151,7 @@ public:
 
     virtual WTF::String userAgent(const WebCore::URL&) override;
 
-    virtual PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
+    virtual Ref<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
     virtual void updateCachedDocumentLoader(WebCore::DocumentLoader&) override { }
 
     virtual void setTitle(const WebCore::StringWithDirection&, const WebCore::URL&);
@@ -180,9 +180,9 @@ public:
 
     virtual bool canCachePage() const;
 
-    virtual PassRefPtr<WebCore::Frame> createFrame(const WebCore::URL& url, const WTF::String& name, WebCore::HTMLFrameOwnerElement* ownerElement,
+    virtual RefPtr<WebCore::Frame> createFrame(const WebCore::URL&, const WTF::String& name, WebCore::HTMLFrameOwnerElement*,
         const WTF::String& referrer, bool allowsScrolling, int marginWidth, int marginHeight) override;
-    virtual PassRefPtr<WebCore::Widget> createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement*, const WebCore::URL&, const Vector<WTF::String>&, const Vector<WTF::String>&, const WTF::String&, bool loadManually) override;
+    virtual RefPtr<WebCore::Widget> createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement*, const WebCore::URL&, const Vector<WTF::String>&, const Vector<WTF::String>&, const WTF::String&, bool loadManually) override;
     virtual void recreatePlugin(WebCore::Widget*) override { }
     virtual void redirectDataToPlugin(WebCore::Widget* pluginWidget) override;
 

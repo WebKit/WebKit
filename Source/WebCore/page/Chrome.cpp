@@ -548,13 +548,13 @@ bool Chrome::hasOpenedPopup() const
     return m_client.hasOpenedPopup();
 }
 
-PassRefPtr<PopupMenu> Chrome::createPopupMenu(PopupMenuClient* client) const
+RefPtr<PopupMenu> Chrome::createPopupMenu(PopupMenuClient* client) const
 {
     notifyPopupOpeningObservers();
     return m_client.createPopupMenu(client);
 }
 
-PassRefPtr<SearchPopupMenu> Chrome::createSearchPopupMenu(PopupMenuClient* client) const
+RefPtr<SearchPopupMenu> Chrome::createSearchPopupMenu(PopupMenuClient* client) const
 {
     notifyPopupOpeningObservers();
     return m_client.createSearchPopupMenu(client);

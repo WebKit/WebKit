@@ -64,7 +64,7 @@ public:
     static RefPtr<NetscapePlugin> create(PassRefPtr<NetscapePluginModule>);
     virtual ~NetscapePlugin();
 
-    static PassRefPtr<NetscapePlugin> fromNPP(NPP);
+    static RefPtr<NetscapePlugin> fromNPP(NPP);
 
     // In-process NetscapePlugins don't support asynchronous initialization.
     virtual bool isBeingAsynchronouslyInitialized() const override { return false; }
@@ -188,7 +188,7 @@ private:
     virtual bool initialize(const Parameters&) override;
     virtual void destroy() override;
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect) override;
-    virtual PassRefPtr<ShareableBitmap> snapshot() override;
+    virtual RefPtr<ShareableBitmap> snapshot() override;
 #if PLATFORM(COCOA)
     virtual PlatformLayer* pluginLayer() override;
 #endif
@@ -264,7 +264,7 @@ private:
     // converted (if the transformation matrix isn't invertible).
     bool convertFromRootView(const WebCore::IntPoint& pointInRootViewCoordinates, WebCore::IntPoint& pointInPluginCoordinates);
 
-    virtual PassRefPtr<WebCore::SharedBuffer> liveResourceData() const override;
+    virtual RefPtr<WebCore::SharedBuffer> liveResourceData() const override;
 
     virtual bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) override { return false; }
 

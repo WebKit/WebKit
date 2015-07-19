@@ -95,7 +95,7 @@ void DatabaseProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::StringRefe
     RunLoop::current().stop();
 }
 
-PassRefPtr<UniqueIDBDatabase> DatabaseProcess::getOrCreateUniqueIDBDatabase(const UniqueIDBDatabaseIdentifier& identifier)
+RefPtr<UniqueIDBDatabase> DatabaseProcess::getOrCreateUniqueIDBDatabase(const UniqueIDBDatabaseIdentifier& identifier)
 {
     auto addResult = m_idbDatabases.add(identifier, nullptr);
 
@@ -104,7 +104,7 @@ PassRefPtr<UniqueIDBDatabase> DatabaseProcess::getOrCreateUniqueIDBDatabase(cons
 
     RefPtr<UniqueIDBDatabase> database = UniqueIDBDatabase::create(identifier);
     addResult.iterator->value = database.get();
-    return database.release();
+    return database;
 }
 
 void DatabaseProcess::removeUniqueIDBDatabase(const UniqueIDBDatabase& database)

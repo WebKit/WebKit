@@ -112,10 +112,10 @@ NetscapePlugin::~NetscapePlugin()
     m_pluginModule->decrementLoadCount();
 }
 
-PassRefPtr<NetscapePlugin> NetscapePlugin::fromNPP(NPP npp)
+RefPtr<NetscapePlugin> NetscapePlugin::fromNPP(NPP npp)
 {
     if (!npp)
-        return 0;
+        return nullptr;
 
     return static_cast<NetscapePlugin*>(npp->ndata);
 }
@@ -709,10 +709,10 @@ void NetscapePlugin::paint(GraphicsContext* context, const IntRect& dirtyRect)
     platformPaint(context, dirtyRect);
 }
 
-PassRefPtr<ShareableBitmap> NetscapePlugin::snapshot()
+RefPtr<ShareableBitmap> NetscapePlugin::snapshot()
 {
     if (!supportsSnapshotting() || m_pluginSize.isEmpty())
-        return 0;
+        return nullptr;
 
     ASSERT(m_isStarted);
 
@@ -728,7 +728,7 @@ PassRefPtr<ShareableBitmap> NetscapePlugin::snapshot()
 
     platformPaint(context.get(), IntRect(IntPoint(), m_pluginSize), true);
 
-    return bitmap.release();
+    return bitmap;
 }
 
 bool NetscapePlugin::isTransparent()
@@ -1064,9 +1064,9 @@ bool NetscapePlugin::supportsSnapshotting() const
     return false;
 }
 
-PassRefPtr<WebCore::SharedBuffer> NetscapePlugin::liveResourceData() const
+RefPtr<WebCore::SharedBuffer> NetscapePlugin::liveResourceData() const
 {
-    return 0;
+    return nullptr;
 }
 
 IntPoint NetscapePlugin::convertToRootView(const IntPoint& pointInPluginCoordinates) const

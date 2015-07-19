@@ -40,8 +40,8 @@ class StorageArea;
 class StorageNamespace : public RefCounted<StorageNamespace> {
 public:
     virtual ~StorageNamespace() { }
-    virtual PassRefPtr<StorageArea> storageArea(PassRefPtr<SecurityOrigin>) = 0;
-    virtual PassRefPtr<StorageNamespace> copy(Page* newPage) = 0;
+    virtual RefPtr<StorageArea> storageArea(PassRefPtr<SecurityOrigin>) = 0;
+    virtual RefPtr<StorageNamespace> copy(Page* newPage) = 0;
 };
 
 } // namespace WebCore
