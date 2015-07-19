@@ -993,6 +993,7 @@ webkit.org/b/136708 media/media-fullscreen-not-in-document.html
 webkit.org/b/140639 http/tests/media/video-play-waiting.html [ Pass Timeout ]
 
 # ENABLE(MEDIA_SESSION) is disabled
+media/session/content-interruptions.html
 media/session/controls-existence.html
 media/session/default-session.html
 

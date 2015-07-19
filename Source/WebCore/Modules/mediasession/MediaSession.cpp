@@ -252,6 +252,16 @@ void MediaSession::handleUnduckInterruption()
     m_currentState = State::Active;
 }
 
+void MediaSession::handleIndefinitePauseInterruption()
+{
+    safelyIterateActiveMediaElements([](HTMLMediaElement* element) {
+        element->pause();
+    });
+
+    m_activeParticipatingElements.clear();
+    m_currentState = State::Idle;
+}
+
 void MediaSession::handlePauseInterruption()
 {
     m_currentState = State::Interrupted;

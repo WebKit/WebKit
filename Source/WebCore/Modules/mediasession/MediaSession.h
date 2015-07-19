@@ -77,6 +77,7 @@ public:
     bool invoke();
 
     void handleDuckInterruption();
+    void handleIndefinitePauseInterruption();
     void handlePauseInterruption();
     void handleUnduckInterruption();
     void handleUnpauseInterruption();

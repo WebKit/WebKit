@@ -113,8 +113,14 @@ void MediaSessionManager::didReceiveStartOfInterruptionNotification(MediaSession
         //    If this interruption has no known media session category, let interrupting media session category be Default.
 
         // 3. Run these substeps:
-        if (interruptingCategory == MediaSessionInterruptingCategory::Transient) {
-            // - If interrupting media session category is Transient
+        if (interruptingCategory == MediaSessionInterruptingCategory::Content) {
+            // -  If interrupting media session category is Content:
+            //    If media session's current media session type is Default or Content then indefinitely pause all of media
+            //    session's active audio-producing participants and set media session's current state to idle.
+            if (session->kindEnum() == MediaSession::Kind::Default || session->kindEnum() == MediaSession::Kind::Content)
+                session->handleIndefinitePauseInterruption();
+        } else if (interruptingCategory == MediaSessionInterruptingCategory::Transient) {
+            // - If interrupting media session category is Transient:
             //   If media session's current media session type is Default or Content then duck all of media session's active
             //   audio-producing participants and set media session's current state to interrupted.
             if (session->kindEnum() == MediaSession::Kind::Default || session->kindEnum() == MediaSession::Kind::Content)
