@@ -28,18 +28,27 @@
 
 #if ENABLE(MEDIA_SESSION) && PLATFORM(MAC)
 
-#include "NotImplemented.h"
+#include <CoreFoundation/CoreFoundation.h>
 
 namespace WebCore {
 
+static const CFStringRef callDidBeginRingingNotification = CFSTR("CallDidBeginRinging");
+
+static void callDidBeginRinging(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
+{
+    ASSERT_ARG(observer, observer);
+    MediaSessionInterruptionProvider* provider = (MediaSessionInterruptionProvider*)observer;
+    provider->client().didReceiveStartOfInterruptionNotification(MediaSessionInterruptingCategory::Transient);
+}
+
 void MediaSessionInterruptionProviderMac::beginListeningForInterruptions()
 {
-    notImplemented();
+    CFNotificationCenterAddObserver(CFNotificationCenterGetDistributedCenter(), this, callDidBeginRinging, callDidBeginRingingNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
 }
 
 void MediaSessionInterruptionProviderMac::stopListeningForInterruptions()
 {
-    notImplemented();
+    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDistributedCenter(), this, callDidBeginRingingNotification, nullptr);
 }
 
 } // namespace WebCore
