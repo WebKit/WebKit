@@ -98,7 +98,7 @@ ClonedArguments* ClonedArguments::createWithInlineFrame(ExecState* myFrame, Exec
         break;
     } }
     
-    result->putDirect(vm, vm.propertyNames->length, jsNumber(length));
+    result->putDirect(vm, vm.propertyNames->length, jsNumber(length), DontEnum);
     
     return result;
 }
@@ -118,7 +118,7 @@ ClonedArguments* ClonedArguments::createByCopyingFrom(
     for (unsigned i = length; i--;)
         result->putDirectIndex(exec, i, argumentStart[i].jsValue());
     
-    result->putDirect(vm, vm.propertyNames->length, jsNumber(length));
+    result->putDirect(vm, vm.propertyNames->length, jsNumber(length), DontEnum);
     return result;
 }
 

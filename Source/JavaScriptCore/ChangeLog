@@ -1,3 +1,20 @@
+2015-07-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        In strict mode, `Object.keys(arguments)` includes "length"
+        https://bugs.webkit.org/show_bug.cgi?id=147071
+
+        Reviewed by Darin Adler.
+
+        ClonedAguments didn't set the "length" with DontEnum.
+
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::createWithInlineFrame):
+        (JSC::ClonedArguments::createByCopyingFrom):
+        * tests/stress/arguments-length-always-dont-enum.js: Added.
+        (shouldBe):
+        (argsSloppy):
+        (argsStrict):
+
 2015-07-19  Jordan Harband  <ljharb@gmail.com>
 
         new Date(NaN).toJSON() must return null instead of throwing a TypeError
