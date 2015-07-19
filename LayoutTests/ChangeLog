@@ -1,3 +1,13 @@
+2015-07-19  Jordan Harband  <ljharb@gmail.com>
+
+        new Date(NaN).toJSON() must return null instead of throwing a TypeError
+        https://bugs.webkit.org/show_bug.cgi?id=141115
+
+        Reviewed by Yusuke Suzuki.
+
+        * js/dom/JSON-stringify-expected.txt:
+        * js/resources/JSON-stringify.js:
+
 2015-07-19  Saam barati  <saambarati1@gmail.com>
 
         Parser::parseFunctionInfo hits RELEASE_ASSERT for Arrow Functions

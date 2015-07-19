@@ -97,6 +97,10 @@ function (jsonObject){
     }
 PASS tests[i](nativeJSON) threw exception An exception.
 function (jsonObject){
+        return jsonObject.stringify(new Date(NaN));
+    }
+PASS tests[i](nativeJSON) is tests[i].expected
+function (jsonObject){
         var d = new Date(0);
         d.toISOString = null;
         return jsonObject.stringify(d);
