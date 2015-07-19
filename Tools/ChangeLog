@@ -1,3 +1,14 @@
+2015-07-19  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Add seccomp filters support
+        https://bugs.webkit.org/show_bug.cgi?id=110014
+
+        Reviewed by Žan Doberšek.
+
+        Add libseccomp to jhbuild modulesets.
+
+        * gtk/jhbuild.modules:
+
 2015-07-18  Simon Fraser  <simon.fraser@apple.com>
 
         MiniBrowser window title is just "Window" when page has no <title>

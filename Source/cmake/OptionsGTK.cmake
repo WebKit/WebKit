@@ -338,6 +338,13 @@ if (ENABLE_PLUGIN_PROCESS_GTK2)
     find_package(GDK2 2.24.10 REQUIRED)
 endif ()
 
+if (ENABLE_SECCOMP_FILTERS)
+    find_package(LibSeccomp)
+    if (NOT PC_LIBSECCOMP_FOUND)
+        message(FATAL_ERROR "libseccomp is required for ENABLE_SECCOMP_FILTERS")
+    endif ()
+endif ()
+
 if (ENABLE_SPELLCHECK)
     find_package(Enchant)
     if (NOT PC_ENCHANT_FOUND)

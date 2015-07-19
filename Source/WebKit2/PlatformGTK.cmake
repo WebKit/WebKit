@@ -15,9 +15,12 @@ configure_file(webkit2gtk-web-extension.pc.in ${WebKit2WebExtension_PKGCONFIG_FI
 
 add_definitions(-DBUILDING_WEBKIT)
 add_definitions(-DWEBKIT2_COMPILATION)
+
+add_definitions(-DLIBEXECDIR="${CMAKE_INSTALL_FULL_LIBEXECDIR}")
 add_definitions(-DPKGLIBEXECDIR="${LIBEXEC_INSTALL_DIR}")
 add_definitions(-DLOCALEDIR="${CMAKE_INSTALL_FULL_LOCALEDIR}")
 add_definitions(-DLIBDIR="${LIB_INSTALL_DIR}")
+add_definitions(-DDATADIR="${CMAKE_INSTALL_FULL_DATADIR}")
 
 set(WebKit2_USE_PREFIX_HEADER ON)
 
@@ -340,6 +343,8 @@ list(APPEND WebKit2_SOURCES
     WebProcess/WebPage/gtk/WebPageGtk.cpp
     WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp
 
+    WebProcess/gtk/SeccompFiltersWebProcessGtk.cpp
+    WebProcess/gtk/SeccompFiltersWebProcessGtk.h
     WebProcess/gtk/WebGtkExtensionManager.cpp
     WebProcess/gtk/WebGtkInjectedBundleMain.cpp
     WebProcess/gtk/WebProcessMainGtk.cpp
@@ -474,6 +479,8 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/Shared/Downloads/soup"
     "${WEBKIT2_DIR}/Shared/Plugins/unix"
     "${WEBKIT2_DIR}/Shared/gtk"
+    "${WEBKIT2_DIR}/Shared/linux"
+    "${WEBKIT2_DIR}/Shared/linux/SeccompFilters"
     "${WEBKIT2_DIR}/Shared/soup"
     "${WEBKIT2_DIR}/Shared/unix"
     "${WEBKIT2_DIR}/UIProcess/API/C/cairo"
@@ -556,6 +563,21 @@ if (LIBNOTIFY_FOUND)
 list(APPEND WebKit2_LIBRARIES
     ${LIBNOTIFY_LIBRARIES}
 )
+endif ()
+
+if (ENABLE_SECCOMP_FILTERS)
+    list(APPEND WebKit2_LIBRARIES
+        ${LIBSECCOMP_LIBRARIES}
+    )
+    list(APPEND WebKit2_INCLUDE_DIRECTORIES
+        ${LIBSECCOMP_INCLUDE_DIRS}
+    )
+
+    # If building with WebKit jhbuild (not GNOME jhbuild), add the root build
+    # directory to the filesystem access policy.
+    if (DEVELOPER_MODE AND IS_DIRECTORY ${CMAKE_SOURCE_DIR}/WebKitBuild/DependenciesGTK)
+        add_definitions(-DSOURCE_DIR=\"${CMAKE_SOURCE_DIR}\")
+    endif ()
 endif ()
 
 ADD_WHOLE_ARCHIVE_TO_LIBRARIES(WebKit2_LIBRARIES)

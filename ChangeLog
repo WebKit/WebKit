@@ -1,3 +1,14 @@
+2015-07-19  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Add seccomp filters support
+        https://bugs.webkit.org/show_bug.cgi?id=110014
+
+        Reviewed by Žan Doberšek.
+
+        Find needed compiler and linker flags for libseccomp.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2015-07-17  Ting-Wei Lan  <lantw44@gmail.com>
 
         Bring back the GNU ar check to create thin archives on non-Linux systems

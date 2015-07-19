@@ -29,6 +29,8 @@
 
 #if PLATFORM(EFL)
 #include "SeccompFiltersWebProcessEfl.h"
+#elif PLATFORM(GTK)
+#include "SeccompFiltersWebProcessGtk.h"
 #endif
 
 #include "CertificateInfo.h"
@@ -127,6 +129,8 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
     {
 #if PLATFORM(EFL)
         SeccompFiltersWebProcessEfl seccompFilters(parameters);
+#elif PLATFORM(GTK)
+        SeccompFiltersWebProcessGtk seccompFilters(parameters);
 #endif
         seccompFilters.initialize();
     }

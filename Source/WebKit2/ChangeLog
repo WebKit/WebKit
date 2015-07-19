@@ -1,3 +1,21 @@
+2015-07-19  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Add seccomp filters support
+        https://bugs.webkit.org/show_bug.cgi?id=110014
+
+        Reviewed by Žan Doberšek.
+
+        Allow building with ENABLE_SECCOMP_FILTERS=ON. Based on work by Thiago Marcos P. Santos.
+
+        * PlatformGTK.cmake: Support ENABLE_SECCOMP_FILTERS build option.
+        * WebProcess/gtk/SeccompFiltersWebProcessGtk.cpp: Added.
+        (WebKit::SeccompFiltersWebProcessGtk::SeccompFiltersWebProcessGtk):
+        (WebKit::SeccompFiltersWebProcessGtk::platformInitialize):
+        * WebProcess/gtk/SeccompFiltersWebProcessGtk.h: Added.
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess): Initialize default
+        GTK+ web process seccomp filters.
+
 2015-07-18  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Reduce PassRefPtr in WebKit2 - 3
