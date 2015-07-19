@@ -1369,17 +1369,6 @@ macro storePropertyAtVariableOffset(propertyOffsetAsInt, objectAndStorage, tag, 
 end
 
 
-_llint_op_init_global_const:
-    traceExecution()
-    writeBarrierOnGlobalObject(2)
-    loadi 8[PC], t1
-    loadi 4[PC], t0
-    loadConstantOrVariable(t1, t2, t3)
-    storei t2, TagOffset[t0]
-    storei t3, PayloadOffset[t0]
-    dispatch(5)
-
-
 # We only do monomorphic get_by_id caching for now, and we do not modify the
 # opcode. We do, however, allow for the cache to change anytime if fails, since
 # ping-ponging is free. At best we get lucky and the get_by_id will continue

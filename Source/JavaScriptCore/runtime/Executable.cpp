@@ -522,10 +522,8 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
 
     const VariableEnvironment& variableDeclarations = unlinkedCodeBlock->variableDeclarations();
     for (auto& entry : variableDeclarations) {
-        if (entry.value.isConstant())
-            globalObject->addConst(callFrame, Identifier::fromUid(&vm, entry.key.get()));
-        else
-            globalObject->addVar(callFrame, Identifier::fromUid(&vm, entry.key.get()));
+        ASSERT(entry.value.isVar());
+        globalObject->addVar(callFrame, Identifier::fromUid(&vm, entry.key.get()));
     }
     return 0;
 }

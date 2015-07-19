@@ -285,9 +285,6 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_put_getter_by_id)
         DEFINE_OP(op_put_setter_by_id)
         DEFINE_OP(op_put_getter_setter)
-        case op_init_global_const_nop:
-            NEXT_OPCODE(op_init_global_const_nop);
-        DEFINE_OP(op_init_global_const)
 
         DEFINE_OP(op_ret)
         DEFINE_OP(op_rshift)

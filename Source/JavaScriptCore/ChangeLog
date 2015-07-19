@@ -1,5 +1,207 @@
 2015-07-18  Saam barati  <saambarati1@gmail.com>
 
+        [ES6] Add support for block scope const
+        https://bugs.webkit.org/show_bug.cgi?id=31813
+
+        Reviewed by Filip Pizlo.
+
+        'const' is now implemented in an ES6 spec compliant manner.
+        'const' variables are always block scoped and always live
+        either on the stack or in a JSLexicalEnvironment. 'const'
+        variables never live on the global object.
+
+        Inside the BytecodeGenerator, when assigning to a stack
+        'const' variable or a LocalClosureVar 'const' variable,
+        we will emit code that just throws a type error.
+        When assigning to a ClosureVar const variable, CodeBlock linking
+        will ensure that we perform a dynamic lookup of that variable so
+        that put_to_scope's slow path throws a type error.
+
+        The old 'const' implementation has been removed in this patch.
+
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::pushLexicalScope):
+        (JSC::BytecodeGenerator::prepareLexicalScopeForNextForLoopIteration):
+        (JSC::BytecodeGenerator::variable):
+        (JSC::BytecodeGenerator::variableForLocalEntry):
+        (JSC::BytecodeGenerator::createVariable):
+        (JSC::BytecodeGenerator::emitResolveScope):
+        (JSC::BytecodeGenerator::emitInstanceOf):
+        (JSC::BytecodeGenerator::emitGetById):
+        (JSC::BytecodeGenerator::isArgumentNumber):
+        (JSC::BytecodeGenerator::emitReadOnlyExceptionIfNeeded):
+        (JSC::BytecodeGenerator::emitEnumeration):
+        (JSC::BytecodeGenerator::variablePerSymbolTable): Deleted.
+        (JSC::BytecodeGenerator::emitInitGlobalConst): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::Variable::Variable):
+        (JSC::Variable::isReadOnly):
+        (JSC::Variable::isSpecial):
+        (JSC::Variable::isConst):
+        (JSC::BytecodeGenerator::thisRegister):
+        (JSC::BytecodeGenerator::emitTypeOf):
+        (JSC::BytecodeGenerator::emitIn):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PostfixNode::emitResolve):
+        (JSC::PrefixNode::emitResolve):
+        (JSC::ReadModifyResolveNode::emitBytecode):
+        (JSC::AssignResolveNode::emitBytecode):
+        (JSC::CommaNode::emitBytecode):
+        (JSC::BindingNode::bindValue):
+        (JSC::ConstDeclNode::emitCodeSingle): Deleted.
+        (JSC::ConstDeclNode::emitBytecode): Deleted.
+        (JSC::ConstStatementNode::emitBytecode): Deleted.
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_put_to_arguments):
+        (JSC::JIT::emit_op_init_global_const): Deleted.
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_put_to_arguments):
+        (JSC::JIT::emit_op_init_global_const): Deleted.
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createDeclarationStatement):
+        (JSC::ASTBuilder::createEmptyVarExpression):
+        (JSC::ASTBuilder::createDebugger):
+        (JSC::ASTBuilder::appendStatement):
+        (JSC::ASTBuilder::createVarStatement): Deleted.
+        (JSC::ASTBuilder::createLetStatement): Deleted.
+        (JSC::ASTBuilder::createConstStatement): Deleted.
+        (JSC::ASTBuilder::appendConstDecl): Deleted.
+        * parser/NodeConstructors.h:
+        (JSC::CommaNode::CommaNode):
+        (JSC::SourceElements::SourceElements):
+        (JSC::SwitchNode::SwitchNode):
+        (JSC::BlockNode::BlockNode):
+        (JSC::ConstStatementNode::ConstStatementNode): Deleted.
+        (JSC::ConstDeclNode::ConstDeclNode): Deleted.
+        * parser/Nodes.h:
+        (JSC::ConstDeclNode::hasInitializer): Deleted.
+        (JSC::ConstDeclNode::ident): Deleted.
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseStatementListItem):
+        (JSC::Parser<LexerType>::parseVariableDeclaration):
+        (JSC::Parser<LexerType>::parseWhileStatement):
+        (JSC::Parser<LexerType>::parseVariableDeclarationList):
+        (JSC::Parser<LexerType>::createBindingPattern):
+        (JSC::Parser<LexerType>::parseDestructuringPattern):
+        (JSC::Parser<LexerType>::parseDefaultValueForDestructuringPattern):
+        (JSC::Parser<LexerType>::parseForStatement):
+        (JSC::Parser<LexerType>::parseTryStatement):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::Parser<LexerType>::parseFunctionDeclaration):
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseConstDeclaration): Deleted.
+        (JSC::Parser<LexerType>::parseConstDeclarationList): Deleted.
+        * parser/Parser.h:
+        (JSC::isEvalNode):
+        (JSC::isEvalNode<EvalNode>):
+        (JSC::isArguments):
+        (JSC::isEval):
+        (JSC::isEvalOrArgumentsIdentifier):
+        (JSC::Scope::Scope):
+        (JSC::Scope::declareCallee):
+        (JSC::Scope::declareVariable):
+        (JSC::Scope::declareLexicalVariable):
+        (JSC::Scope::hasDeclaredVariable):
+        (JSC::Scope::allowsVarDeclarations):
+        (JSC::Scope::allowsLexicalDeclarations):
+        (JSC::Scope::declareParameter):
+        (JSC::Scope::declareBoundParameter):
+        (JSC::Parser::destructuringKindFromDeclarationType):
+        (JSC::Parser::assignmentContextFromDeclarationType):
+        (JSC::Parser::isEvalOrArguments):
+        (JSC::Parser::currentScope):
+        (JSC::Parser::popScope):
+        (JSC::Parser::declareVariable):
+        (JSC::Parser::hasDeclaredVariable):
+        (JSC::Parser::setStrictMode):
+        (JSC::Parser::strictMode):
+        (JSC::Parser::isValidStrictMode):
+        (JSC::Parser::declareParameter):
+        (JSC::Parser::declareBoundParameter):
+        (JSC::Parser::breakIsValid):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createForInLoop):
+        (JSC::SyntaxChecker::createForOfLoop):
+        (JSC::SyntaxChecker::createEmptyStatement):
+        (JSC::SyntaxChecker::createDeclarationStatement):
+        (JSC::SyntaxChecker::createReturnStatement):
+        (JSC::SyntaxChecker::createBreakStatement):
+        (JSC::SyntaxChecker::createVarStatement): Deleted.
+        (JSC::SyntaxChecker::createLetStatement): Deleted.
+        * parser/VariableEnvironment.h:
+        (JSC::VariableEnvironmentEntry::isCaptured):
+        (JSC::VariableEnvironmentEntry::isConst):
+        (JSC::VariableEnvironmentEntry::isVar):
+        (JSC::VariableEnvironmentEntry::isLet):
+        (JSC::VariableEnvironmentEntry::setIsCaptured):
+        (JSC::VariableEnvironmentEntry::setIsConst):
+        (JSC::VariableEnvironmentEntry::setIsVar):
+        (JSC::VariableEnvironmentEntry::setIsLet):
+        (JSC::VariableEnvironmentEntry::isConstant): Deleted.
+        (JSC::VariableEnvironmentEntry::setIsConstant): Deleted.
+        * runtime/Executable.cpp:
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::defineOwnProperty):
+        (JSC::JSGlobalObject::addGlobalVar):
+        (JSC::JSGlobalObject::addFunction):
+        (JSC::lastInPrototypeChain):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::finishCreation):
+        (JSC::JSGlobalObject::addVar):
+        (JSC::JSGlobalObject::addConst): Deleted.
+        * runtime/JSLexicalEnvironment.cpp:
+        (JSC::JSLexicalEnvironment::symbolTablePut):
+        * tests/stress/const-and-with-statement.js: Added.
+        (truth):
+        (assert):
+        (shouldThrowInvalidConstAssignment):
+        (.):
+        * tests/stress/const-exception-handling.js: Added.
+        (truth):
+        (assert):
+        (.):
+        * tests/stress/const-loop-semantics.js: Added.
+        (truth):
+        (assert):
+        (shouldThrowInvalidConstAssignment):
+        (.):
+        * tests/stress/const-not-strict-mode.js: Added.
+        (truth):
+        (assert):
+        (shouldThrowTDZ):
+        (.):
+        * tests/stress/const-semantics.js: Added.
+        (truth):
+        (assert):
+        (shouldThrowInvalidConstAssignment):
+        (.):
+        * tests/stress/const-tdz.js: Added.
+        (truth):
+        (assert):
+        (shouldThrowTDZ):
+        (.):
+
+2015-07-18  Saam barati  <saambarati1@gmail.com>
+
         lexical scoping is broken with respect to "break" and "continue"
         https://bugs.webkit.org/show_bug.cgi?id=147063
 

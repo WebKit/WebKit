@@ -23,4 +23,4 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-const WebInspector = {}; // Namespace
+var WebInspector = {}; // Namespace

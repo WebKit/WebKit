@@ -278,14 +278,14 @@ function testArray(array, prefix, expected, sectionName)
     }
 }
 
-const nonHTMLElement = document.createElementNS("foo", "foo");
-const element = document.documentElement;
-const bodyElement = document.body;
-const audioElement = document.createElement("video");
-const framesetElement = document.createElement("frameset");
-const inputElement = document.createElement("input");
-const videoElement = document.createElement("video");
-const rectElement = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+var nonHTMLElement = document.createElementNS("foo", "foo");
+var element = document.documentElement;
+var bodyElement = document.body;
+var audioElement = document.createElement("video");
+var framesetElement = document.createElement("frameset");
+var inputElement = document.createElement("input");
+var videoElement = document.createElement("video");
+var rectElement = document.createElementNS("http://www.w3.org/2000/svg", "rect");
 
 testArray(windowEvents, "testScriptAttribute(window", "window", "Event names we expect to be able to set on the window object");
 testArray(arrayDifference(allEventNames, windowEvents), "testScriptAttribute(window", "none", "Event names we expect not to be able to set on the window object");

@@ -3,8 +3,7 @@ Tests that declaring a const variable without initializing has the correct behav
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS f is undefined
-PASS f is undefined
+PASS const f threw exception SyntaxError: Unexpected end of script.
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -540,7 +540,6 @@ namespace JSC {
         void emit_op_put_getter_by_id(Instruction*);
         void emit_op_put_setter_by_id(Instruction*);
         void emit_op_put_getter_setter(Instruction*);
-        void emit_op_init_global_const(Instruction*);
         void emit_op_ret(Instruction*);
         void emit_op_rshift(Instruction*);
         void emit_op_strcat(Instruction*);

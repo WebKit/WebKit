@@ -21,11 +21,11 @@ Function parameters:
 
 */
 
-const usePauseAPI = true;
-const dontUsePauseAPI = false;
+var usePauseAPI = true;
+var dontUsePauseAPI = false;
 
-const shouldBeTransitioning = true;
-const shouldNotBeTransitioning = false;
+var shouldBeTransitioning = true;
+var shouldNotBeTransitioning = false;
 
 function roundNumber(num, decimalPlaces)
 {

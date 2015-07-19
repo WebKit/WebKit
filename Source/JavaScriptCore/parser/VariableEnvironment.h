@@ -35,12 +35,12 @@ namespace JSC {
 struct VariableEnvironmentEntry {
 public:
     ALWAYS_INLINE bool isCaptured() const { return m_bits & IsCaptured; }
-    ALWAYS_INLINE bool isConstant() const { return m_bits & IsConstant; }
+    ALWAYS_INLINE bool isConst() const { return m_bits & IsConst; }
     ALWAYS_INLINE bool isVar() const { return m_bits & IsVar; }
     ALWAYS_INLINE bool isLet() const { return m_bits & IsLet; }
 
     ALWAYS_INLINE void setIsCaptured() { m_bits |= IsCaptured; }
-    ALWAYS_INLINE void setIsConstant() { m_bits |= IsConstant; }
+    ALWAYS_INLINE void setIsConst() { m_bits |= IsConst; }
     ALWAYS_INLINE void setIsVar() { m_bits |= IsVar; }
     ALWAYS_INLINE void setIsLet() { m_bits |= IsLet; }
 
@@ -49,7 +49,7 @@ public:
 private:
     enum Traits {
         IsCaptured = 1 << 0,
-        IsConstant = 1 << 1,
+        IsConst = 1 << 1,
         IsVar = 1 << 2,
         IsLet = 1 << 3
     };

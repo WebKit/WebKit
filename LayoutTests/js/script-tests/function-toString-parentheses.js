@@ -201,8 +201,8 @@ shouldBe("compileAndSerializeLeftmostTest('var a = 1, b = 2, c = 3')", "'var a =
 
 shouldBe("compileAndSerializeLeftmostTest('const a = 1')", "'const a = 1'");
 shouldBe("compileAndSerializeLeftmostTest('const a = (1, 2)')", "'const a = (1, 2)'");
-shouldBe("compileAndSerializeLeftmostTest('const a, b = 1')", "'const a, b = 1'");
-shouldBe("compileAndSerializeLeftmostTest('const a = 1, b')", "'const a = 1, b'");
+shouldBe("compileAndSerializeLeftmostTest('const a = 10, b = 1')", "'const a = 10, b = 1'");
+shouldBe("compileAndSerializeLeftmostTest('const a = 1, b = 2')", "'const a = 1, b = 2'");
 shouldBe("compileAndSerializeLeftmostTest('const a = 1, b = 1')", "'const a = 1, b = 1'");
 shouldBe("compileAndSerializeLeftmostTest('const a = (1, 2), b = 1')", "'const a = (1, 2), b = 1'");
 shouldBe("compileAndSerializeLeftmostTest('const a = 1, b = (1, 2)')", "'const a = 1, b = (1, 2)'");

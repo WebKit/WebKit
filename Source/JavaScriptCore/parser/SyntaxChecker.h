@@ -127,7 +127,6 @@ public:
     typedef int Statement;
     typedef int ClauseList;
     typedef int Clause;
-    typedef int ConstDeclList;
     typedef int BinaryOperand;
     typedef int DestructuringPattern;
     typedef DestructuringPattern ArrayPattern;
@@ -236,8 +235,7 @@ public:
     int createForInLoop(const JSTokenLocation&, int, int, int, int, int, int, int, int, VariableEnvironment&) { return StatementResult; }
     int createForOfLoop(const JSTokenLocation&, int, int, int, int, int, int, int, int, VariableEnvironment&) { return StatementResult; }
     int createEmptyStatement(const JSTokenLocation&) { return StatementResult; }
-    int createVarStatement(const JSTokenLocation&, int, int, int) { return StatementResult; }
-    int createLetStatement(const JSTokenLocation&, int, int, int) { return StatementResult; }
+    int createDeclarationStatement(const JSTokenLocation&, int, int, int) { return StatementResult; }
     int createReturnStatement(const JSTokenLocation&, int, int, int) { return StatementResult; }
     int createBreakStatement(const JSTokenLocation&, int, int) { return StatementResult; }
     int createBreakStatement(const JSTokenLocation&, const Identifier*, int, int) { return StatementResult; }

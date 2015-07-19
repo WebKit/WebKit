@@ -67,7 +67,6 @@ class SourceCode;
 #define TreeSourceElements typename TreeBuilder::SourceElements
 #define TreeClause typename TreeBuilder::Clause
 #define TreeClauseList typename TreeBuilder::ClauseList
-#define TreeConstDeclList typename TreeBuilder::ConstDeclList
 #define TreeArguments typename TreeBuilder::Arguments
 #define TreeArgumentsList typename TreeBuilder::ArgumentsList
 #define TreeFunctionBody typename TreeBuilder::FunctionBody
@@ -84,12 +83,29 @@ enum SourceElementsMode { CheckForStrictMode, DontCheckForStrictMode };
 enum FunctionParseType { StandardFunctionParseType, ArrowFunctionParseType };
 enum FunctionBodyType { ArrowFunctionBodyExpression, ArrowFunctionBodyBlock, StandardFunctionBodyBlock };
 enum FunctionRequirements { FunctionNoRequirements, FunctionNeedsName };
+
 enum DestructuringKind {
     DestructureToVariables,
-    DestructureToLexicalVariables,
+    DestructureToLet,
+    DestructureToConst,
     DestructureToParameters,
     DestructureToExpressions
 };
+
+enum class DeclarationType { 
+    VarDeclaration, 
+    LetDeclaration,
+    ConstDeclaration
+};
+
+enum DeclarationResult {
+    Valid = 0,
+    InvalidStrictMode = 1 << 0,
+    InvalidDuplicateDeclaration = 1 << 1
+};
+
+typedef uint8_t DeclarationResultMask;
+
 
 template <typename T> inline bool isEvalNode() { return false; }
 template <> inline bool isEvalNode<EvalNode>() { return true; }
@@ -98,6 +114,19 @@ struct ScopeLabelInfo {
     UniquedStringImpl* uid;
     bool isLoop;
 };
+
+ALWAYS_INLINE static bool isArguments(const VM* vm, const Identifier* ident)
+{
+    return vm->propertyNames->arguments == *ident;
+}
+ALWAYS_INLINE static bool isEval(const VM* vm, const Identifier* ident)
+{
+    return vm->propertyNames->eval == *ident;
+}
+ALWAYS_INLINE static bool isEvalOrArgumentsIdentifier(const VM* vm, const Identifier* ident)
+{
+    return isEval(vm, ident) || isArguments(vm, ident);
+}
 
 struct Scope {
     Scope(const VM* vm, bool isFunction, bool strictMode)
@@ -236,28 +265,37 @@ struct Scope {
         addResult.iterator->value.clearIsVar();
     }
 
-    bool declareVariable(const Identifier* ident, bool isConstant = false)
+    DeclarationResultMask declareVariable(const Identifier* ident)
     {
         ASSERT(m_allowsVarDeclarations);
-        bool isValidStrictMode = m_vm->propertyNames->eval != *ident && m_vm->propertyNames->arguments != *ident;
+        DeclarationResultMask result = DeclarationResult::Valid;
+        bool isValidStrictMode = !isEvalOrArgumentsIdentifier(m_vm, ident);
         m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
         auto addResult = m_declaredVariables.add(ident->impl());
         addResult.iterator->value.setIsVar();
-        if (isConstant)
-            addResult.iterator->value.setIsConstant();
-
-        return isValidStrictMode;
+        if (!isValidStrictMode)
+            result |= DeclarationResult::InvalidStrictMode;
+        return result;
     }
 
-    bool declareLexicalVariable(const Identifier* ident)
+    DeclarationResultMask declareLexicalVariable(const Identifier* ident, bool isConstant)
     {
         ASSERT(m_allowsLexicalDeclarations);
-        bool isValidStrictMode = m_vm->propertyNames->eval != *ident && m_vm->propertyNames->arguments != *ident;
+        DeclarationResultMask result = DeclarationResult::Valid;
+        bool isValidStrictMode = !isEvalOrArgumentsIdentifier(m_vm, ident);
         m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
         auto addResult = m_lexicalVariables.add(ident->impl());
-        addResult.iterator->value.setIsLet();
-        bool successfulDeclaration = addResult.isNewEntry && isValidStrictMode;
-        return successfulDeclaration;
+        if (isConstant)
+            addResult.iterator->value.setIsConst();
+        else
+            addResult.iterator->value.setIsLet();
+
+        if (!addResult.isNewEntry)
+            result |= DeclarationResult::InvalidDuplicateDeclaration;
+        if (!isValidStrictMode)
+            result |= DeclarationResult::InvalidStrictMode;
+
+        return result;
     }
 
     bool hasDeclaredVariable(const Identifier& ident)
@@ -300,19 +338,22 @@ struct Scope {
     bool allowsVarDeclarations() const { return m_allowsVarDeclarations; }
     bool allowsLexicalDeclarations() const { return m_allowsLexicalDeclarations; }
 
-    bool declareParameter(const Identifier* ident)
+    DeclarationResultMask declareParameter(const Identifier* ident)
     {
         ASSERT(m_allowsVarDeclarations);
-        bool isArguments = m_vm->propertyNames->arguments == *ident;
+        DeclarationResultMask result = DeclarationResult::Valid;
+        bool isArgumentsIdent = isArguments(m_vm, ident);
         auto addResult = m_declaredVariables.add(ident->impl());
         addResult.iterator->value.clearIsVar();
-        bool isValidStrictMode = addResult.isNewEntry && m_vm->propertyNames->eval != *ident && !isArguments;
+        bool isValidStrictMode = addResult.isNewEntry && m_vm->propertyNames->eval != *ident && !isArgumentsIdent;
         m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
         m_declaredParameters.add(ident->impl());
-
-        if (isArguments)
+        if (!isValidStrictMode)
+            result |= DeclarationResult::InvalidStrictMode;
+        if (isArgumentsIdent)
             m_shadowsArguments = true;
-        return isValidStrictMode;
+
+        return result;
     }
     
     enum BindingResult {
@@ -322,13 +363,13 @@ struct Scope {
     };
     BindingResult declareBoundParameter(const Identifier* ident)
     {
-        bool isArguments = m_vm->propertyNames->arguments == *ident;
+        bool isArgumentsIdent = isArguments(m_vm, ident);
         auto addResult = m_declaredVariables.add(ident->impl());
         addResult.iterator->value.setIsVar(); // Treat destructuring parameters as "var"s.
-        bool isValidStrictMode = addResult.isNewEntry && m_vm->propertyNames->eval != *ident && !isArguments;
+        bool isValidStrictMode = addResult.isNewEntry && !isEval(m_vm, ident) && !isArgumentsIdent;
         m_isValidStrictMode = m_isValidStrictMode && isValidStrictMode;
     
-        if (isArguments)
+        if (isArgumentsIdent)
             m_shadowsArguments = true;
         if (!addResult.isNewEntry)
             return BindingFailed;
@@ -615,6 +656,33 @@ private:
         Parser* m_parser;
     };
 
+    ALWAYS_INLINE DestructuringKind destructuringKindFromDeclarationType(DeclarationType type)
+    {
+        switch (type) {
+        case DeclarationType::VarDeclaration:
+            return DestructureToVariables;
+        case DeclarationType::LetDeclaration:
+            return DestructureToLet;
+        case DeclarationType::ConstDeclaration:
+            return DestructureToConst;
+        }
+
+        RELEASE_ASSERT_NOT_REACHED();
+        return DestructureToVariables;
+    }
+
+    ALWAYS_INLINE AssignmentContext assignmentContextFromDeclarationType(DeclarationType type)
+    {
+        switch (type) {
+        case DeclarationType::ConstDeclaration:
+            return AssignmentContext::ConstDeclarationStatement;
+        default:
+            return AssignmentContext::DeclarationStatement;
+        }
+    }
+
+    ALWAYS_INLINE bool isEvalOrArguments(const Identifier* ident) { return isEvalOrArgumentsIdentifier(m_vm, ident); }
+
     ScopeRef currentScope()
     {
         return ScopeRef(&m_scopeStack, m_scopeStack.size() - 1);
@@ -661,8 +729,7 @@ private:
         popScopeInternal(scope, shouldTrackClosedVariables);
     }
     
-    enum class DeclarationType { VarDeclaration, LexicalDeclaration };
-    bool declareVariable(const Identifier* ident, typename Parser::DeclarationType type = DeclarationType::VarDeclaration, bool isConstant = false)
+    DeclarationResultMask declareVariable(const Identifier* ident, DeclarationType type = DeclarationType::VarDeclaration)
     {
         unsigned i = m_scopeStack.size() - 1;
         ASSERT(i < m_scopeStack.size());
@@ -673,21 +740,21 @@ private:
                 ASSERT(i < m_scopeStack.size());
             }
 
-            return m_scopeStack[i].declareVariable(ident, isConstant);
+            return m_scopeStack[i].declareVariable(ident);
         }
 
-        ASSERT(type == DeclarationType::LexicalDeclaration);
+        ASSERT(type == DeclarationType::LetDeclaration || type == DeclarationType::ConstDeclaration);
 
         // Lexical variables declared at a top level scope that shadow arguments or vars are not allowed.
         if (m_statementDepth == 1 && (hasDeclaredParameter(*ident) || hasDeclaredVariable(*ident)))
-            return false;
+            return DeclarationResult::InvalidDuplicateDeclaration;
 
         while (!m_scopeStack[i].allowsLexicalDeclarations()) {
             i--;
             ASSERT(i < m_scopeStack.size());
         }
 
-        return m_scopeStack[i].declareLexicalVariable(ident);
+        return m_scopeStack[i].declareLexicalVariable(ident, type == DeclarationType::ConstDeclaration);
     }
     
     NEVER_INLINE bool hasDeclaredVariable(const Identifier& ident)
@@ -894,7 +961,7 @@ private:
     void setStrictMode() { currentScope()->setStrictMode(); }
     bool strictMode() { return currentScope()->strictMode(); }
     bool isValidStrictMode() { return currentScope()->isValidStrictMode(); }
-    bool declareParameter(const Identifier* ident) { return currentScope()->declareParameter(ident); }
+    DeclarationResultMask declareParameter(const Identifier* ident) { return currentScope()->declareParameter(ident); }
     Scope::BindingResult declareBoundParameter(const Identifier* ident) { return currentScope()->declareBoundParameter(ident); }
     bool breakIsValid()
     {
@@ -943,7 +1010,6 @@ private:
 #endif
     template <class TreeBuilder> TreeStatement parseFunctionDeclaration(TreeBuilder&);
     template <class TreeBuilder> TreeStatement parseVariableDeclaration(TreeBuilder&, DeclarationType);
-    template <class TreeBuilder> TreeStatement parseConstDeclaration(TreeBuilder&);
     template <class TreeBuilder> TreeStatement parseDoWhileStatement(TreeBuilder&);
     template <class TreeBuilder> TreeStatement parseWhileStatement(TreeBuilder&);
     template <class TreeBuilder> TreeStatement parseForStatement(TreeBuilder&);
@@ -979,8 +1045,7 @@ private:
     template <class TreeBuilder> ALWAYS_INLINE TreeFunctionBody parseFunctionBody(TreeBuilder&, const JSTokenLocation&, int, int functionKeywordStart, int functionNameStart, int parametersStart, ConstructorKind, FunctionBodyType, unsigned, FunctionParseMode);
     template <class TreeBuilder> ALWAYS_INLINE bool parseFormalParameters(TreeBuilder&, TreeFormalParameterList, unsigned&);
     enum VarDeclarationListContext { ForLoopContext, VarDeclarationContext };
-    template <class TreeBuilder> TreeExpression parseVariableDeclarationList(TreeBuilder&, int& declarations, TreeDestructuringPattern& lastPattern, TreeExpression& lastInitializer, JSTextPosition& identStart, JSTextPosition& initStart, JSTextPosition& initEnd, VarDeclarationListContext, DeclarationType);
-    template <class TreeBuilder> NEVER_INLINE TreeConstDeclList parseConstDeclarationList(TreeBuilder&);
+    template <class TreeBuilder> TreeExpression parseVariableDeclarationList(TreeBuilder&, int& declarations, TreeDestructuringPattern& lastPattern, TreeExpression& lastInitializer, JSTextPosition& identStart, JSTextPosition& initStart, JSTextPosition& initEnd, VarDeclarationListContext, DeclarationType, bool& forLoopConstDoesNotHaveInitializer);
     template <class TreeBuilder> TreeSourceElements parseArrowFunctionSingleExpressionBodySourceElements(TreeBuilder&);
     template <class TreeBuilder> TreeExpression parseArrowFunctionExpression(TreeBuilder&);
     template <class TreeBuilder> NEVER_INLINE TreeDestructuringPattern createBindingPattern(TreeBuilder&, DestructuringKind, const Identifier&, int depth, JSToken, AssignmentContext);

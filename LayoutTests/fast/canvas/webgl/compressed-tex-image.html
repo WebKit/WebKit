@@ -22,12 +22,12 @@ var wtu = WebGLTestUtils;
 var canvas = document.createElement("canvas");
 var gl = wtu.create3DContext(canvas);
 
-const  COMPRESSED_RGB_S3TC_DXT1_EXT        = 0x83F0;
-const  COMPRESSED_RGBA_S3TC_DXT1_EXT       = 0x83F1;
-const  COMPRESSED_RGBA_S3TC_DXT5_EXT       = 0x83F3;
-const  ETC1_RGB8_OES                       = 0x8D64;
-const  COMPRESSED_RGB_PVRTC_4BPPV1_IMG     = 0x8C00;
-const  COMPRESSED_RGBA_PVRTC_4BPPV1_IMG    = 0x8C02;
+var  COMPRESSED_RGB_S3TC_DXT1_EXT        = 0x83F0;
+var  COMPRESSED_RGBA_S3TC_DXT1_EXT       = 0x83F1;
+var  COMPRESSED_RGBA_S3TC_DXT5_EXT       = 0x83F3;
+var  ETC1_RGB8_OES                       = 0x8D64;
+var  COMPRESSED_RGB_PVRTC_4BPPV1_IMG     = 0x8C00;
+var  COMPRESSED_RGBA_PVRTC_4BPPV1_IMG    = 0x8C02;
 
 if (!gl) {
   testFailed("context does not exist");

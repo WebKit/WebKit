@@ -1,3 +1,16 @@
+2015-07-18  Saam barati  <saambarati1@gmail.com>
+
+        [ES6] Add support for block scope const
+        https://bugs.webkit.org/show_bug.cgi?id=31813
+
+        Reviewed by Filip Pizlo.
+
+        "const" variables do not live on the global object and are only
+        accessible within the "Program" they're defined in. Therefore,
+        the WebInspector global must be defined as "var" and not "const".
+
+        * UserInterface/Base/WebInspector.js:
+
 2015-07-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: REGRESSION (r186218) ScriptTimelineRecord attempts to access null property

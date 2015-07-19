@@ -23,7 +23,6 @@
 #define JSGlobalObject_h
 
 #include "ArrayAllocationProfile.h"
-#include "ConstantMode.h"
 #include "JSArray.h"
 #include "JSArrayBufferPrototype.h"
 #include "JSClassRef.h"
@@ -357,7 +356,7 @@ protected:
         setGlobalThis(vm, thisValue);
     }
 
-    void addGlobalVar(const Identifier&, ConstantMode);
+    void addGlobalVar(const Identifier&);
 
 public:
     JS_EXPORT_PRIVATE ~JSGlobalObject();
@@ -382,12 +381,7 @@ public:
     void addVar(ExecState* exec, const Identifier& propertyName)
     {
         if (!hasProperty(exec, propertyName))
-            addGlobalVar(propertyName, IsVariable);
-    }
-    void addConst(ExecState* exec, const Identifier& propertyName)
-    {
-        if (!hasProperty(exec, propertyName))
-            addGlobalVar(propertyName, IsConstant);
+            addGlobalVar(propertyName);
     }
     void addFunction(ExecState*, const Identifier&);
 

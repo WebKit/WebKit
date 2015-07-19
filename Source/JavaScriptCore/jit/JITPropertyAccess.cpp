@@ -828,14 +828,6 @@ void JIT::emit_op_put_to_arguments(Instruction* currentInstruction)
     store64(regT1, Address(regT0, DirectArguments::storageOffset() + index * sizeof(WriteBarrier<Unknown>)));
 }
 
-void JIT::emit_op_init_global_const(Instruction* currentInstruction)
-{
-    JSGlobalObject* globalObject = m_codeBlock->globalObject();
-    emitWriteBarrier(globalObject, currentInstruction[2].u.operand, ShouldFilterValue);
-    emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);
-    store64(regT0, currentInstruction[1].u.variablePointer);
-}
-
 #endif // USE(JSVALUE64)
 
 #if USE(JSVALUE64)

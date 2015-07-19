@@ -134,7 +134,7 @@ PASS access_after_delete_extra_5(1, 2, 3, 4, 5) is 5
 PASS argumentsParam(true) is true
 PASS argumentsFunctionConstructorParam(true) is true
 PASS argumentsVarUndefined() is '[object Arguments]'
-PASS argumentsConstUndefined() is '[object Arguments]'
+PASS argumentsConst() is '20'
 PASS argumentCalleeInException() is argumentCalleeInException
 PASS shadowedArgumentsApply([true]) is true
 PASS shadowedArgumentsLength([]) is 0

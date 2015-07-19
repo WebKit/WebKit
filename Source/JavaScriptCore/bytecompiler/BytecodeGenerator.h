@@ -194,6 +194,7 @@ namespace JSC {
             , m_attributes(0)
             , m_kind(NormalVariable)
             , m_symbolTableConstantIndex(0) // This is meaningless here for this kind of Variable.
+            , m_isLexicallyScoped(false)
         {
         }
         
@@ -203,16 +204,18 @@ namespace JSC {
             , m_attributes(0)
             , m_kind(NormalVariable) // This is somewhat meaningless here for this kind of Variable.
             , m_symbolTableConstantIndex(0) // This is meaningless here for this kind of Variable.
+            , m_isLexicallyScoped(false)
         {
         }
 
-        Variable(const Identifier& ident, VarOffset offset, RegisterID* local, unsigned attributes, VariableKind kind, int symbolTableConstantIndex)
+        Variable(const Identifier& ident, VarOffset offset, RegisterID* local, unsigned attributes, VariableKind kind, int symbolTableConstantIndex, bool isLexicallyScoped)
             : m_ident(ident)
             , m_offset(offset)
             , m_local(local)
             , m_attributes(attributes)
             , m_kind(kind)
             , m_symbolTableConstantIndex(symbolTableConstantIndex)
+            , m_isLexicallyScoped(isLexicallyScoped)
         {
         }
 
@@ -230,6 +233,7 @@ namespace JSC {
 
         bool isReadOnly() const { return m_attributes & ReadOnly; }
         bool isSpecial() const { return m_kind != NormalVariable; }
+        bool isConst() const { return isReadOnly() && m_isLexicallyScoped; }
 
     private:
         Identifier m_ident;
@@ -238,6 +242,7 @@ namespace JSC {
         unsigned m_attributes;
         VariableKind m_kind;
         int m_symbolTableConstantIndex;
+        bool m_isLexicallyScoped;
     };
 
     struct TryRange {
@@ -286,11 +291,8 @@ namespace JSC {
 
         Variable variable(const Identifier&);
         
-        // Ignores the possibility of intervening scopes.
-        Variable variablePerSymbolTable(const Identifier&);
-        
         enum ExistingVariableMode { VerifyExisting, IgnoreExisting };
-        void createVariable(const Identifier&, VarKind, ConstantMode, ExistingVariableMode = VerifyExisting); // Creates the variable, or asserts that the already-created variable is sufficiently compatible.
+        void createVariable(const Identifier&, VarKind, ExistingVariableMode = VerifyExisting); // Creates the variable, or asserts that the already-created variable is sufficiently compatible.
         
         // Returns the register storing "this"
         RegisterID* thisRegister() { return &m_thisRegister; }
@@ -488,8 +490,6 @@ namespace JSC {
         RegisterID* emitTypeOf(RegisterID* dst, RegisterID* src) { return emitUnaryOp(op_typeof, dst, src); }
         RegisterID* emitIn(RegisterID* dst, RegisterID* property, RegisterID* base) { return emitBinaryOp(op_in, dst, property, base, OperandTypes()); }
 
-        RegisterID* emitInitGlobalConst(const Identifier&, RegisterID* value);
-
         RegisterID* emitGetById(RegisterID* dst, RegisterID* base, const Identifier& property);
         RegisterID* emitPutById(RegisterID* base, const Identifier& property, RegisterID* value);
         RegisterID* emitDirectPutById(RegisterID* base, const Identifier& property, RegisterID* value, PropertyNode::PutType);
@@ -564,7 +564,7 @@ namespace JSC {
         RegisterID* emitIteratorNext(RegisterID* dst, RegisterID* iterator, const ThrowableExpressionData* node);
         void emitIteratorClose(RegisterID* iterator, const ThrowableExpressionData* node);
 
-        void emitReadOnlyExceptionIfNeeded();
+        bool emitReadOnlyExceptionIfNeeded(const Variable&);
 
         // Start a try block. 'start' must have been emitted.
         TryData* pushTry(Label* start);
@@ -628,7 +628,7 @@ namespace JSC {
 
     private:
         void reclaimFreeRegisters();
-        Variable variableForLocalEntry(const Identifier&, const SymbolTableEntry&, int);
+        Variable variableForLocalEntry(const Identifier&, const SymbolTableEntry&, int symbolTableConstantIndex, bool isLexicallyScoped);
 
         void emitOpcode(OpcodeID);
         UnlinkedArrayAllocationProfile newArrayAllocationProfile();

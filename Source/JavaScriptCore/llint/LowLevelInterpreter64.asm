@@ -1236,16 +1236,6 @@ macro storePropertyAtVariableOffset(propertyOffsetAsInt, objectAndStorage, value
     storeq value, (firstOutOfLineOffset - 2) * 8[objectAndStorage, propertyOffsetAsInt, 8]
 end
 
-_llint_op_init_global_const:
-    traceExecution()
-    writeBarrierOnGlobalObject(2)
-    loadisFromInstruction(2, t1)
-    loadpFromInstruction(1, t0)
-    loadConstantOrVariable(t1, t2)
-    storeq t2, [t0]
-    dispatch(5)
-
-
 macro getById(getPropertyStorage)
     traceExecution()
     # We only do monomorphic get_by_id caching for now, and we do not modify the

@@ -190,10 +190,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
         m_functionsToInitialize.append(std::make_pair(function, GlobalFunctionVariable));
     }
     if (Options::validateBytecode()) {
-        for (auto& entry : programNode->varDeclarations()) {
-            // FIXME: When supporting ES6 spec compliant const, this should only check isVar().
-            RELEASE_ASSERT(entry.value.isVar() || entry.value.isConstant());
-        }
+        for (auto& entry : programNode->varDeclarations())
+            RELEASE_ASSERT(entry.value.isVar());
     }
     codeBlock->setVariableDeclarations(programNode->varDeclarations());
 }
@@ -411,20 +409,18 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     
     // Now declare all variables.
     for (const Identifier& ident : boundParameterProperties)
-        createVariable(ident, varKind(ident.impl()), IsVariable);
+        createVariable(ident, varKind(ident.impl()));
     for (FunctionBodyNode* function : functionNode->functionStack()) {
         const Identifier& ident = function->ident();
-        createVariable(ident, varKind(ident.impl()), IsVariable);
+        createVariable(ident, varKind(ident.impl()));
         m_functionsToInitialize.append(std::make_pair(function, NormalFunctionVariable));
     }
     for (auto& entry : functionNode->varDeclarations()) {
-        if (!entry.value.isVar())
+        ASSERT(!entry.value.isLet() && !entry.value.isConst());
+        if (!entry.value.isVar()) // This is either a parameter or callee.
             continue;
-        ConstantMode constantMode = modeForIsConstant(entry.value.isConstant());
         // Variables named "arguments" are never const.
-        if (Identifier::fromUid(m_vm, entry.key.get()) == propertyNames().arguments)
-            constantMode = IsVariable;
-        createVariable(Identifier::fromUid(m_vm, entry.key.get()), varKind(entry.key.get()), constantMode, IgnoreExisting);
+        createVariable(Identifier::fromUid(m_vm, entry.key.get()), varKind(entry.key.get()), IgnoreExisting);
     }
     
     // There are some variables that need to be preinitialized to something other than Undefined:
@@ -500,7 +496,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         
         if (!haveParameterNamedArguments) {
             createVariable(
-                propertyNames().arguments, varKind(propertyNames().arguments.impl()), IsVariable);
+                propertyNames().arguments, varKind(propertyNames().arguments.impl()));
             m_needToInitializeArguments = true;
         }
     }
@@ -559,7 +555,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
     Vector<Identifier, 0, UnsafeVectorOverflow> variables;
     variables.reserveCapacity(numVariables);
     for (auto& entry : varDeclarations) {
-        ASSERT(entry.value.isVar() || entry.value.isConstant()); // FIXME: When supporting ES6 spec compliant const, this should only check isVar().
+        ASSERT(entry.value.isVar());
         ASSERT(entry.key->isAtomic() || entry.key->isSymbol());
         variables.append(Identifier::fromUid(m_vm, entry.key.get()));
     }
@@ -1281,7 +1277,8 @@ void BytecodeGenerator::pushLexicalScope(VariableEnvironmentNode* node, bool can
     {
         ConcurrentJITLocker locker(symbolTable->m_lock);
         for (auto entry : environment) {
-            ASSERT(entry.value.isLet() && !entry.value.isVar());
+            ASSERT(entry.value.isLet() || entry.value.isConst());
+            ASSERT(!entry.value.isVar());
             SymbolTableEntry symbolTableEntry = symbolTable->get(locker, entry.key.get());
             ASSERT(symbolTableEntry.isNull());
 
@@ -1296,8 +1293,8 @@ void BytecodeGenerator::pushLexicalScope(VariableEnvironmentNode* node, bool can
                 local->ref();
                 varOffset = VarOffset(local->virtualRegister());
             }
-            // FIXME: Make this work with 'const' variables: https://bugs.webkit.org/show_bug.cgi?id=31813 
-            SymbolTableEntry newEntry(varOffset, 0);
+
+            SymbolTableEntry newEntry(varOffset, entry.value.isConst() ? ReadOnly : 0);
             symbolTable->add(locker, entry.key.get(), newEntry);
         }
     }
@@ -1416,7 +1413,7 @@ void BytecodeGenerator::prepareLexicalScopeForNextForLoopIteration(VariableEnvir
 
             RegisterID* transitionValue = newBlockScopeVariable();
             transitionValue->ref();
-            emitGetFromScope(transitionValue, loopScope, variableForLocalEntry(identifier, ptr->value, loopSymbolTable->index()), DoNotThrowIfNotFound);
+            emitGetFromScope(transitionValue, loopScope, variableForLocalEntry(identifier, ptr->value, loopSymbolTable->index(), true), DoNotThrowIfNotFound);
             activationValuesToCopyOver.uncheckedAppend(std::make_pair(transitionValue, identifier));
         }
     }
@@ -1445,7 +1442,7 @@ void BytecodeGenerator::prepareLexicalScopeForNextForLoopIteration(VariableEnvir
             SymbolTableEntry entry = symbolTable->get(locker, identifier.impl());
             RELEASE_ASSERT(!entry.isNull());
             RegisterID* transitionValue = pair.first;
-            emitPutToScope(loopScope, variableForLocalEntry(identifier, entry, loopSymbolTable->index()), transitionValue, DoNotThrowIfNotFound);
+            emitPutToScope(loopScope, variableForLocalEntry(identifier, entry, loopSymbolTable->index(), true), transitionValue, DoNotThrowIfNotFound);
             transitionValue->deref();
         }
     }
@@ -1454,9 +1451,8 @@ void BytecodeGenerator::prepareLexicalScopeForNextForLoopIteration(VariableEnvir
 Variable BytecodeGenerator::variable(const Identifier& property)
 {
     if (property == propertyNames().thisIdentifier) {
-        return Variable(
-            property, VarOffset(thisRegister()->virtualRegister()), thisRegister(),
-            ReadOnly, Variable::SpecialVariable, 0);
+        return Variable(property, VarOffset(thisRegister()->virtualRegister()), thisRegister(),
+            ReadOnly, Variable::SpecialVariable, 0, false);
     }
     
     // We can optimize lookups if the lexical variable is found before a "with" or "catch"
@@ -1487,25 +1483,14 @@ Variable BytecodeGenerator::variable(const Identifier& property)
         if (symbolTableEntry.isNull())
             continue;
         
-        return variableForLocalEntry(property, symbolTableEntry, stackEntry.m_symbolTableConstantIndex);
+        return variableForLocalEntry(property, symbolTableEntry, stackEntry.m_symbolTableConstantIndex, symbolTable->correspondsToLexicalScope());
     }
 
     return Variable(property);
 }
 
-Variable BytecodeGenerator::variablePerSymbolTable(const Identifier& property)
-{
-    RELEASE_ASSERT(m_symbolTableStack.size());
-    SymbolTableStackEntry& baseActivationEntry = m_symbolTableStack.first();
-    SymbolTableEntry entry = baseActivationEntry.m_symbolTable->get(property.impl());
-    if (entry.isNull())
-        return Variable(property);
-    
-    return variableForLocalEntry(property, entry, baseActivationEntry.m_symbolTableConstantIndex);
-}
-
 Variable BytecodeGenerator::variableForLocalEntry(
-    const Identifier& property, const SymbolTableEntry& entry, int symbolTableConstantIndex)
+    const Identifier& property, const SymbolTableEntry& entry, int symbolTableConstantIndex, bool isLexicallyScoped)
 {
     VarOffset offset = entry.varOffset();
     
@@ -1515,12 +1500,11 @@ Variable BytecodeGenerator::variableForLocalEntry(
     else
         local = nullptr;
     
-    return Variable(property, offset, local, entry.getAttributes(), Variable::NormalVariable, symbolTableConstantIndex);
+    return Variable(property, offset, local, entry.getAttributes(), Variable::NormalVariable, symbolTableConstantIndex, isLexicallyScoped);
 }
 
 void BytecodeGenerator::createVariable(
-    const Identifier& property, VarKind varKind, ConstantMode constantMode,
-    ExistingVariableMode existingVariableMode)
+    const Identifier& property, VarKind varKind, ExistingVariableMode existingVariableMode)
 {
     ASSERT(property != propertyNames().thisIdentifier);
     ConcurrentJITLocker locker(symbolTable().m_lock);
@@ -1536,10 +1520,10 @@ void BytecodeGenerator::createVariable(
         VarOffset offset = entry.varOffset();
         
         // We can't change our minds about whether it's captured.
-        if (offset.kind() != varKind || constantMode != entry.constantMode()) {
+        if (offset.kind() != varKind) {
             dataLog(
-                "Trying to add variable called ", property, " as ", varKind, "/", constantMode,
-                " but it was already added as ", offset, "/", entry.constantMode(), ".\n");
+                "Trying to add variable called ", property, " as ", varKind,
+                " but it was already added as ", offset, ".\n");
             RELEASE_ASSERT_NOT_REACHED();
         }
 
@@ -1553,7 +1537,7 @@ void BytecodeGenerator::createVariable(
         ASSERT(varKind == VarKind::Stack);
         varOffset = VarOffset(virtualRegisterForLocal(m_calleeRegisters.size()));
     }
-    SymbolTableEntry newEntry(varOffset, constantMode == IsConstant ? ReadOnly : 0);
+    SymbolTableEntry newEntry(varOffset, 0);
     symbolTable().add(locker, property.impl(), newEntry);
     
     if (varKind == VarKind::Stack) {
@@ -1606,18 +1590,12 @@ RegisterID* BytecodeGenerator::emitResolveScope(RegisterID* dst, const Variable&
             SymbolTableStackEntry& stackEntry = m_symbolTableStack[i];
             // We should not resolve a variable to VarKind::Scope if a "with" or "catch" scope lies in between the current
             // scope and the resolved scope.
-            // We'd like to say: RELEASE_ASSERT(!stackEntry.m_isWithOrCatch);
-            // But, our current implementation 'const' is a pile of crap and uses variablePerSymbolTable
-            // which recklessly ignores the scope stack.
-            // FIXME: When implementing const the proper way ensure we add this assert in.
-            // https://bugs.webkit.org/show_bug.cgi?id=143654
-            if (stackEntry.m_isWithOrCatch)
-                continue;
+            RELEASE_ASSERT(!stackEntry.m_isWithOrCatch);
 
             if (stackEntry.m_symbolTable->get(variable.ident().impl()).isNull())
                 continue;
             
-            RegisterID* scope = stackEntry.m_scope; 
+            RegisterID* scope = stackEntry.m_scope;
             RELEASE_ASSERT(scope);
             return scope;
         }
@@ -1736,17 +1714,6 @@ RegisterID* BytecodeGenerator::emitInstanceOf(RegisterID* dst, RegisterID* value
     instructions().append(value->index());
     instructions().append(basePrototype->index());
     return dst;
-}
-
-RegisterID* BytecodeGenerator::emitInitGlobalConst(const Identifier& identifier, RegisterID* value)
-{
-    ASSERT(m_codeType == GlobalCode);
-    emitOpcode(op_init_global_const_nop);
-    instructions().append(0);
-    instructions().append(value->index());
-    instructions().append(0);
-    instructions().append(addConstant(identifier));
-    return value;
 }
 
 RegisterID* BytecodeGenerator::emitGetById(RegisterID* dst, RegisterID* base, const Identifier& property)
@@ -3085,13 +3052,15 @@ bool BytecodeGenerator::isArgumentNumber(const Identifier& ident, int argumentNu
     return registerID->index() == CallFrame::argumentOffset(argumentNumber);
 }
 
-void BytecodeGenerator::emitReadOnlyExceptionIfNeeded()
+bool BytecodeGenerator::emitReadOnlyExceptionIfNeeded(const Variable& variable)
 {
-    if (!isStrictMode())
-        return;
-    emitOpcode(op_throw_static_error);
-    instructions().append(addConstantValue(addStringConstant(Identifier::fromString(m_vm, StrictModeReadonlyPropertyWriteError)))->index());
-    instructions().append(false);
+    if (isStrictMode() || variable.isConst()) {
+        emitOpcode(op_throw_static_error);
+        instructions().append(addConstantValue(addStringConstant(Identifier::fromString(m_vm, StrictModeReadonlyPropertyWriteError)))->index());
+        instructions().append(false);
+        return true;
+    }
+    return false;
 }
     
 void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, ExpressionNode* subjectNode, const std::function<void(BytecodeGenerator&, RegisterID*)>& callBack, VariableEnvironmentNode* forLoopNode, RegisterID* forLoopSymbolTable)

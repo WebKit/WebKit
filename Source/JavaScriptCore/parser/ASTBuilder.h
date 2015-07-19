@@ -116,7 +116,6 @@ public:
     typedef StatementNode* Statement;
     typedef ClauseListNode* ClauseList;
     typedef CaseClauseNode* Clause;
-    typedef ConstDeclNode* ConstDeclList;
     typedef std::pair<ExpressionNode*, BinaryOpInfo> BinaryOperand;
     typedef DestructuringPatternNode* DestructuringPattern;
     typedef ArrayPatternNode* ArrayPattern;
@@ -515,16 +514,6 @@ public:
         return result;
     }
 
-    StatementNode* createVarStatement(const JSTokenLocation& location, ExpressionNode* expr, int start, int end)
-    {
-        return createDeclarationStatement(location, expr, start, end);
-    }
-
-    StatementNode* createLetStatement(const JSTokenLocation& location, ExpressionNode* expr, int start, int end)
-    {
-        return createDeclarationStatement(location, expr, start, end);
-    }
-
     ExpressionNode* createEmptyVarExpression(const JSTokenLocation& location, const Identifier& identifier)
     {
         return new (m_parserArena) EmptyVarExpression(location, identifier);
@@ -620,21 +609,6 @@ public:
         return result;
     }
     
-    StatementNode* createConstStatement(const JSTokenLocation& location, ConstDeclNode* decls, int startLine, int endLine)
-    {
-        ConstStatementNode* result = new (m_parserArena) ConstStatementNode(location, decls);
-        result->setLoc(startLine, endLine, location.startOffset, location.lineStartOffset);
-        return result;
-    }
-
-    ConstDeclNode* appendConstDecl(const JSTokenLocation& location, ConstDeclNode* tail, const Identifier* name, ExpressionNode* initializer)
-    {
-        ConstDeclNode* result = new (m_parserArena) ConstDeclNode(location, *name, initializer);
-        if (tail)
-            tail->m_next = result;
-        return result;
-    }
-
     void appendStatement(JSC::SourceElements* elements, JSC::StatementNode* statement)
     {
         elements->append(statement);

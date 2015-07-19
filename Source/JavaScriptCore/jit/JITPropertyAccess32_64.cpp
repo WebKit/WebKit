@@ -861,21 +861,6 @@ void JIT::emit_op_put_to_arguments(Instruction* currentInstruction)
     store32(regT2, Address(regT0, DirectArguments::storageOffset() + index * sizeof(WriteBarrier<Unknown>) + PayloadOffset));
 }
 
-void JIT::emit_op_init_global_const(Instruction* currentInstruction)
-{
-    WriteBarrier<Unknown>* variablePointer = currentInstruction[1].u.variablePointer;
-    int value = currentInstruction[2].u.operand;
-
-    JSGlobalObject* globalObject = m_codeBlock->globalObject();
-
-    emitWriteBarrier(globalObject, value, ShouldFilterValue);
-
-    emitLoad(value, regT1, regT0);
-    
-    store32(regT1, variablePointer->tagPointer());
-    store32(regT0, variablePointer->payloadPointer());
-}
-
 } // namespace JSC
 
 #endif // USE(JSVALUE32_64)

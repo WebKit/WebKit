@@ -1052,23 +1052,6 @@ void CodeBlock::dumpBytecode(
             printBinaryOp(out, exec, location, it, "in");
             break;
         }
-        case op_init_global_const_nop: {
-            printLocationAndOp(out, exec, location, it, "init_global_const_nop");
-            it++;
-            it++;
-            it++;
-            it++;
-            break;
-        }
-        case op_init_global_const: {
-            WriteBarrier<Unknown>* variablePointer = (++it)->u.variablePointer;
-            int r0 = (++it)->u.operand;
-            printLocationAndOp(out, exec, location, it, "init_global_const");
-            out.printf("g%d(%p), %s", m_globalObject->findVariableIndex(variablePointer).offset(), variablePointer, registerName(r0).data());
-            it++;
-            it++;
-            break;
-        }
         case op_get_by_id:
         case op_get_by_id_out_of_line:
         case op_get_array_length: {
@@ -1978,18 +1961,6 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
         case op_get_by_id_out_of_line:
         case op_get_array_length:
             CRASH();
-
-        case op_init_global_const_nop: {
-            ASSERT(codeType() == GlobalCode);
-            Identifier ident = identifier(pc[4].u.operand);
-            SymbolTableEntry entry = m_globalObject->symbolTable()->get(ident.impl());
-            if (entry.isNull())
-                break;
-
-            instructions[i + 0] = vm()->interpreter->getOpcode(op_init_global_const);
-            instructions[i + 1] = &m_globalObject->variableAt(entry.varOffset().scopeOffset());
-            break;
-        }
 
         case op_resolve_scope: {
             const Identifier& ident = identifier(pc[3].u.operand);

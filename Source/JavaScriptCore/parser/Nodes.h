@@ -90,7 +90,11 @@ namespace JSC {
         SwitchType switchType;
     };
 
-    enum class AssignmentContext { DeclarationStatement, AssignmentExpression };
+    enum class AssignmentContext { 
+        DeclarationStatement, 
+        ConstDeclarationStatement, 
+        AssignmentExpression 
+    };
 
     class ParserArenaFreeable {
     public:
@@ -1254,36 +1258,6 @@ namespace JSC {
         CommaNode* m_next;
     };
     
-    class ConstDeclNode : public ExpressionNode {
-    public:
-        ConstDeclNode(const JSTokenLocation&, const Identifier&, ExpressionNode*);
-
-        bool hasInitializer() const { return m_init; }
-        const Identifier& ident() { return m_ident; }
-
-    private:
-        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
-        virtual RegisterID* emitCodeSingle(BytecodeGenerator&);
-
-        const Identifier& m_ident;
-
-    public:
-        ConstDeclNode* m_next;
-
-    private:
-        ExpressionNode* m_init;
-    };
-
-    class ConstStatementNode : public StatementNode {
-    public:
-        ConstStatementNode(const JSTokenLocation&, ConstDeclNode* next);
-
-    private:
-        virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
-
-        ConstDeclNode* m_next;
-    };
-
     class SourceElements final : public ParserArenaFreeable {
     public:
         SourceElements();
@@ -1956,11 +1930,6 @@ namespace JSC {
     struct ArgumentList {
         ArgumentListNode* head;
         ArgumentListNode* tail;
-    };
-
-    struct ConstDeclList {
-        ConstDeclNode* head;
-        ConstDeclNode* tail;
     };
 
     struct ClauseList {

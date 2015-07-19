@@ -570,7 +570,7 @@ bool JSGlobalObject::defineOwnProperty(JSObject* object, ExecState* exec, Proper
     return Base::defineOwnProperty(thisObject, exec, propertyName, descriptor, shouldThrow);
 }
 
-void JSGlobalObject::addGlobalVar(const Identifier& ident, ConstantMode constantMode)
+void JSGlobalObject::addGlobalVar(const Identifier& ident)
 {
     ConcurrentJITLocker locker(symbolTable()->m_lock);
     SymbolTableEntry entry = symbolTable()->get(locker, ident.impl());
@@ -578,11 +578,8 @@ void JSGlobalObject::addGlobalVar(const Identifier& ident, ConstantMode constant
         return;
     
     ScopeOffset offset = symbolTable()->takeNextScopeOffset(locker);
-    SymbolTableEntry newEntry(VarOffset(offset), (constantMode == IsConstant) ? ReadOnly : 0);
-    if (constantMode == IsVariable)
-        newEntry.prepareToWatch();
-    else
-        newEntry.disableWatching();
+    SymbolTableEntry newEntry(VarOffset(offset), 0);
+    newEntry.prepareToWatch();
     symbolTable()->add(locker, ident.impl(), newEntry);
     
     ScopeOffset offsetForAssert = addVariables(1);
@@ -593,7 +590,7 @@ void JSGlobalObject::addFunction(ExecState* exec, const Identifier& propertyName
 {
     VM& vm = exec->vm();
     removeDirect(vm, propertyName); // Newly declared functions overwrite existing properties.
-    addGlobalVar(propertyName, IsVariable);
+    addGlobalVar(propertyName);
 }
 
 static inline JSObject* lastInPrototypeChain(JSObject* object)

@@ -116,8 +116,6 @@ void computeUsesForBytecodeOffset(
     case op_get_enumerable_length:
     case op_new_func_exp:
     case op_to_index_string:
-    case op_init_global_const_nop:
-    case op_init_global_const:
     case op_push_name_scope:
     case op_push_with_scope:
     case op_create_lexical_environment:
@@ -240,8 +238,6 @@ void computeDefsForBytecodeOffset(CodeBlock* codeBlock, unsigned bytecodeOffset,
     OpcodeID opcodeID = interpreter->getOpcodeID(instruction->u.opcode);
     switch (opcodeID) {
     // These don't define anything.
-    case op_init_global_const:
-    case op_init_global_const_nop:
     case op_put_to_scope:
     case op_end:
     case op_profile_will_call:

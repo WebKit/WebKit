@@ -3152,20 +3152,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_put_by_id);
         }
 
-        case op_init_global_const_nop: {
-            NEXT_OPCODE(op_init_global_const_nop);
-        }
-
-        case op_init_global_const: {
-            Node* value = get(VirtualRegister(currentInstruction[2].u.operand));
-            JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
-            addToGraph(
-                PutGlobalVar,
-                OpInfo(globalObject->assertVariableIsInThisObject(currentInstruction[1].u.variablePointer)),
-                weakJSConstant(globalObject), value);
-            NEXT_OPCODE(op_init_global_const);
-        }
-
         case op_profile_type: {
             Node* valueToProfile = get(VirtualRegister(currentInstruction[1].u.operand));
             addToGraph(ProfileType, OpInfo(currentInstruction[2].u.location), valueToProfile);

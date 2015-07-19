@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Unexpected token '='. Expected an identifier name in const declaration.
+CONSOLE MESSAGE: line 76: SyntaxError: Unexpected token '='. Expected a parameter pattern or a ')' in parameter list.
 S7.5.3_A1.6
 
 PASS Expected parsing failure

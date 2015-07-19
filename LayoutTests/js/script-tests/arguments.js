@@ -551,12 +551,12 @@ function argumentsVarUndefined()
 }
 shouldBe("argumentsVarUndefined()", "'[object Arguments]'");
 
-function argumentsConstUndefined()
+function argumentsConst()
 {
-    const arguments;
+    const arguments = 20;
     return String(arguments);
 }
-shouldBe("argumentsConstUndefined()", "'[object Arguments]'");
+shouldBe("argumentsConst()", "'20'");
 
 function argumentCalleeInException() {
     try {

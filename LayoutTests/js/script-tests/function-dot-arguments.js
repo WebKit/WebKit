@@ -120,7 +120,7 @@ function assignConstInitTest2()
         return assignConstInitTest2.arguments;
     }
 
-    const a, arguments = true;
+    const a = 5, arguments = true;
     return g();
 }
 shouldBe("assignConstInitTest2().toString()", "'[object Arguments]'");

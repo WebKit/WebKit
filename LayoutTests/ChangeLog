@@ -1,3 +1,83 @@
+2015-07-18  Saam barati  <saambarati1@gmail.com>
+
+        [ES6] Add support for block scope const
+        https://bugs.webkit.org/show_bug.cgi?id=31813
+
+        Reviewed by Filip Pizlo.
+
+        "const" variables do not live on the global object. They
+        are only available in the "Program" (read: JavaScript file or
+        script tag) that they're defined in. Tests have been updated
+        accordingly to switch the "const" variables assumed to be globals
+        into "var"s. "var" declared variables in the top level scope
+        of a program do live on the global object.
+
+        * fast/canvas/webgl/compressed-tex-image.html:
+        * fast/dom/event-handler-attributes.html:
+        * fast/forms/listbox-visible-size.html:
+        * js/arguments-expected.txt:
+        * js/arrowfunction-syntax-errors-expected.txt:
+        * js/const-expected.txt:
+        * js/const-without-initializer-expected.txt:
+        * js/constant-count-expected.txt:
+        * js/dom/inc-const-valueOf-expected.txt:
+        * js/dom/script-tests/inc-const-valueOf.js:
+        (testPreIncConstVarWithAssign):
+        * js/function-toString-parentheses-expected.txt:
+        * js/kde/const-expected.txt:
+        * js/kde/resources/const.js:
+        * js/parser-syntax-check-expected.txt:
+        * js/script-tests/arguments.js:
+        (argumentsVarUndefined):
+        (argumentsConst):
+        (argumentCalleeInException):
+        (argumentsConstUndefined): Deleted.
+        * js/script-tests/class-syntax-declaration.js:
+        (A):
+        * js/script-tests/class-syntax-expression.js:
+        * js/script-tests/const-without-initializer.js:
+        * js/script-tests/const.js:
+        (shouldThrowInvalidConstAssignment):
+        (assert):
+        (f):
+        (tryCatch1):
+        (tryCatch2):
+        (with1):
+        (with2):
+        (.):
+        * js/script-tests/constant-count.js:
+        (f):
+        * js/script-tests/function-dot-arguments.js:
+        (assignConstInitTest2.g):
+        (assignConstInitTest2):
+        * js/script-tests/function-toString-parentheses.js:
+        * js/script-tests/parser-syntax-check.js:
+        * sputnik/Conformance/07_Lexical_Conventions/7.5_Tokens/7.5.3_Future_Reserved_Words/S7.5.3_A1.6-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A3.1_T7-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A3.1_T8-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A3.1_T9-expected.txt:
+        * sputnik/Conformance/08_Types/8.4_The_String_Type/S8.4_A13_T3-expected.txt:
+        * sputnik/Conformance/08_Types/8.4_The_String_Type/S8.4_A14_T3-expected.txt:
+        * sputnik/Conformance/12_Statement/12.2_Variable_Statement/S12.2_A8_T1-expected.txt:
+        * sputnik/Conformance/12_Statement/12.2_Variable_Statement/S12.2_A8_T2-expected.txt:
+        * sputnik/Conformance/12_Statement/12.2_Variable_Statement/S12.2_A8_T3-expected.txt:
+        * sputnik/Conformance/12_Statement/12.2_Variable_Statement/S12.2_A8_T4-expected.txt:
+        * sputnik/Conformance/12_Statement/12.2_Variable_Statement/S12.2_A8_T6-expected.txt:
+        * sputnik/Conformance/12_Statement/12.2_Variable_Statement/S12.2_A8_T7-expected.txt:
+        * sputnik/Conformance/12_Statement/12.2_Variable_Statement/S12.2_A8_T8-expected.txt:
+        * transforms/3d/hit-testing/composited-hit-test.html:
+        * transforms/3d/hit-testing/coplanar-with-camera.html:
+        * transforms/3d/hit-testing/hover-rotated-negative-z.html:
+        * transforms/3d/hit-testing/hover-rotated-with-children-negative-z.html:
+        * transforms/3d/hit-testing/negative-zoffset-hit-test.html:
+        * transforms/3d/hit-testing/overlapping-layers-hit-test.html:
+        * transforms/3d/hit-testing/perspective-clipped.html:
+        * transforms/3d/hit-testing/rotated-hit-test-with-child.html:
+        * transforms/3d/hit-testing/rotated-hit-test.html:
+        * transforms/3d/hit-testing/rotated-hit-test2.html:
+        * transitions/resources/transition-test-helpers.js:
+        (roundNumber):
+
 2015-07-18  David Kilzer  <ddkilzer@apple.com>
 
         inspector/console/command-line-api.html is slow on Debug Yosemite WK2

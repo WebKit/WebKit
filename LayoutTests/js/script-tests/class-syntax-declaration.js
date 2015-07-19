@@ -2,9 +2,9 @@
 description('Tests for ES6 class syntax declarations');
 
 var constructorCallCount = 0;
-const staticMethodValue = [1];
-const instanceMethodValue = [2];
-const getterValue = [3];
+var staticMethodValue = [1];
+var instanceMethodValue = [2];
+var getterValue = [3];
 var setterValue = undefined;
 class A {
     constructor() { constructorCallCount++; }

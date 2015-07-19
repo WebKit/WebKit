@@ -70,7 +70,7 @@ inline bool JSLexicalEnvironment::symbolTablePut(ExecState* exec, PropertyName p
             return false;
         ASSERT(!iter->value.isNull());
         if (iter->value.isReadOnly()) {
-            if (shouldThrow)
+            if (shouldThrow || isLexicalScope())
                 throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
             return true;
         }

@@ -49,8 +49,8 @@ function testPreIncConstVarWithAssign()
     return okay;
 }
 
-shouldBeTrue('testPostIncConstVarWithIgnoredResult()');
-shouldBeTrue('testPreIncConstVarWithIgnoredResult()');
-shouldBeTrue('testPreIncConstVarWithAssign()');
+shouldThrow('testPostIncConstVarWithIgnoredResult()');
+shouldThrow('testPreIncConstVarWithIgnoredResult()');
+shouldBeTrue('testPreIncConstVarWithAssign() instanceof TypeError');
 
 successfullyParsed = true;
