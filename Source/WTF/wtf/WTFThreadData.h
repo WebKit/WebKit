@@ -83,7 +83,11 @@ public:
         // We need to always get a fresh StackBounds from the OS due to how fibers work.
         // See https://bugs.webkit.org/show_bug.cgi?id=102411
 #if OS(WINDOWS)
-        m_stackBounds = StackBounds::currentThreadStackBounds();
+        void* currentFiber = GetCurrentFiber();
+        if (currentFiber != m_lastFiber) {
+            m_stackBounds = StackBounds::currentThreadStackBounds();
+            m_lastFiber = currentFiber;
+        }
 #endif
         return m_stackBounds;
     }
@@ -128,6 +132,9 @@ private:
 #endif
     void* m_savedStackPointerAtVMEntry;
     void* m_savedLastStackTop;
+#if OS(WINDOWS)
+    void* m_lastFiber;
+#endif
 
 #if USE(PTHREAD_GETSPECIFIC_DIRECT)
     static const pthread_key_t directKey = __PTK_FRAMEWORK_JAVASCRIPTCORE_KEY1;

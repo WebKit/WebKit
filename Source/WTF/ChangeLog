@@ -1,3 +1,18 @@
+2015-07-20  Per Arne Vollan  <peavo@outlook.com>
+
+        JavaScriptCore performance is very bad on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=146448
+
+        Reviewed by Mark Lam.
+
+        Updating the stack bounds is time consuming.
+        Only update the stack bounds when a new fiber is running.
+
+        * wtf/WTFThreadData.cpp:
+        (WTF::WTFThreadData::WTFThreadData):
+        * wtf/WTFThreadData.h:
+        (WTF::WTFThreadData::stack):
+
 2015-07-20  Julien Brianceau  <julien.brianceau@gmail.com>
 
         Use isnan from std namespace in Stopwatch.h.

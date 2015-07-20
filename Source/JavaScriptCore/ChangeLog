@@ -1,3 +1,32 @@
+2015-07-20  Per Arne Vollan  <peavo@outlook.com>
+
+        JavaScriptCore performance is very bad on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=146448
+
+        Reviewed by Mark Lam.
+
+        Profiling shows that std::this_thread::get_id() is slow on Windows.
+        Use WTF::currentThread() instead, which calls GetCurrentThreadId().
+        This is faster on Windows. The issue has been reported to Microsoft,
+        https://connect.microsoft.com/VisualStudio/feedback/details/1558211.
+
+        * runtime/JSLock.cpp:
+        (JSC::JSLockHolder::~JSLockHolder):
+        (JSC::JSLock::JSLock):
+        (JSC::JSLock::willDestroyVM):
+        (JSC::JSLock::setExclusiveThread):
+        (JSC::JSLock::lock):
+        (JSC::JSLock::unlock):
+        (JSC::JSLock::currentThreadIsHoldingLock):
+        * runtime/JSLock.h:
+        (JSC::JSLock::vm):
+        (JSC::JSLock::hasExclusiveThread):
+        (JSC::JSLock::exclusiveThread):
+        * runtime/VM.h:
+        (JSC::VM::hasExclusiveThread):
+        (JSC::VM::exclusiveThread):
+        (JSC::VM::setExclusiveThread):
+
 2015-07-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         In strict mode, `Object.keys(arguments)` includes "length"

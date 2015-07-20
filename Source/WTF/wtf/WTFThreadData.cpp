@@ -50,6 +50,9 @@ WTFThreadData::WTFThreadData()
 #endif
     , m_savedStackPointerAtVMEntry(0)
     , m_savedLastStackTop(stack().origin())
+#if OS(WINDOWS)
+    , m_lastFiber(nullptr)
+#endif
 {
     AtomicStringTable::create(*this);
     m_currentAtomicStringTable = m_defaultAtomicStringTable;
