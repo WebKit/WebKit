@@ -292,7 +292,7 @@ namespace JSC {
         Variable variable(const Identifier&);
         
         enum ExistingVariableMode { VerifyExisting, IgnoreExisting };
-        void createVariable(const Identifier&, VarKind, ExistingVariableMode = VerifyExisting); // Creates the variable, or asserts that the already-created variable is sufficiently compatible.
+        void createVariable(const Identifier&, VarKind, SymbolTable*, ExistingVariableMode = VerifyExisting); // Creates the variable, or asserts that the already-created variable is sufficiently compatible.
         
         // Returns the register storing "this"
         RegisterID* thisRegister() { return &m_thisRegister; }
@@ -715,8 +715,6 @@ namespace JSC {
 
         Vector<UnlinkedInstruction, 0, UnsafeVectorOverflow>& instructions() { return m_instructions; }
 
-        SymbolTable& symbolTable() { return *m_symbolTable; }
-
         RegisterID* emitThrowExpressionTooDeepException();
 
     private:
@@ -725,7 +723,6 @@ namespace JSC {
         bool m_shouldEmitDebugHooks;
         bool m_shouldEmitProfileHooks;
 
-        SymbolTable* m_symbolTable { nullptr };
         struct SymbolTableStackEntry {
             Strong<SymbolTable> m_symbolTable;
             RegisterID* m_scope;
@@ -803,6 +800,7 @@ namespace JSC {
         bool m_usesExceptions { false };
         bool m_expressionTooDeep { false };
         bool m_isBuiltinFunction { false };
+        bool m_usesNonStrictEval { false };
     };
 
 }

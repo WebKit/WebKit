@@ -118,10 +118,6 @@ public:
     const Identifier& name() const { return m_name; }
     const Identifier& inferredName() const { return m_inferredName; }
     JSString* nameValue() const { return m_nameValue.get(); }
-    SymbolTable* symbolTable(CodeSpecializationKind kind)
-    {
-        return (kind == CodeForCall) ? m_symbolTableForCall.get() : m_symbolTableForConstruct.get();
-    }
     unsigned parameterCount() const { return m_parameterCount; };
     FunctionParseMode parseMode() const { return m_parseMode; };
     bool isInStrictContext() const { return m_isInStrictContext; }
@@ -149,8 +145,6 @@ public:
 
     void clearCodeForRecompilation()
     {
-        m_symbolTableForCall.clear();
-        m_symbolTableForConstruct.clear();
         m_codeBlockForCall.clear();
         m_codeBlockForConstruct.clear();
     }
@@ -179,8 +173,6 @@ private:
     Identifier m_name;
     Identifier m_inferredName;
     WriteBarrier<JSString> m_nameValue;
-    WriteBarrier<SymbolTable> m_symbolTableForCall;
-    WriteBarrier<SymbolTable> m_symbolTableForConstruct;
     RefPtr<SourceProvider> m_sourceOverride;
     VariableEnvironment m_parentScopeTDZVariables;
     unsigned m_firstLineOffset;
@@ -423,8 +415,6 @@ public:
     void addExceptionHandler(const UnlinkedHandlerInfo& handler) { createRareDataIfNecessary(); return m_rareData->m_exceptionHandlers.append(handler); }
     UnlinkedHandlerInfo& exceptionHandler(int index) { ASSERT(m_rareData); return m_rareData->m_exceptionHandlers[index]; }
 
-    SymbolTable* symbolTable() const { return m_symbolTable.get(); }
-    void setSymbolTable(SymbolTable* table) { m_symbolTable.set(*m_vm, this, table); }
     void setSymbolTableConstantIndex(int index) { m_symbolTableConstantIndex = index; }
     int symbolTableConstantIndex() const { return m_symbolTableConstantIndex; }
 
@@ -570,7 +560,7 @@ private:
     FunctionExpressionVector m_functionExprs;
 
     WriteBarrier<SymbolTable> m_symbolTable;
-    int m_symbolTableConstantIndex;
+    int m_symbolTableConstantIndex { 0 };
 
     Vector<unsigned> m_propertyAccessInstructions;
 

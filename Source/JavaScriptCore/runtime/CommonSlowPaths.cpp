@@ -215,7 +215,7 @@ SLOW_PATH_DECL(slow_path_create_scoped_arguments)
 {
     BEGIN();
     JSLexicalEnvironment* scope = jsCast<JSLexicalEnvironment*>(OP(2).jsValue());
-    ScopedArgumentsTable* table = exec->codeBlock()->symbolTable()->arguments();
+    ScopedArgumentsTable* table = scope->symbolTable()->arguments();
     RETURN(ScopedArguments::createByCopying(exec, table, scope));
 }
 

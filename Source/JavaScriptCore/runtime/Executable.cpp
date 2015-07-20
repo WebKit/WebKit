@@ -572,11 +572,6 @@ void FunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_singletonFunction);
 }
 
-SymbolTable* FunctionExecutable::symbolTable(CodeSpecializationKind kind)
-{
-    return codeBlockFor(kind)->symbolTable();
-}
-
 void FunctionExecutable::clearUnlinkedCodeForRecompilation()
 {
     m_unlinkedExecutable->clearCodeForRecompilation();

@@ -1,3 +1,74 @@
+2015-07-20  Saam barati  <saambarati1@gmail.com>
+
+        "let" scoping introduced incoherent story about symbol table cloning
+        https://bugs.webkit.org/show_bug.cgi?id=147046
+
+        Reviewed by Filip Pizlo.
+
+        This patch now establishes a clear set of rules for how SymbolTables
+        are owned by CodeBlock. Every SymbolTable that is used by a bytecode
+        instruction must live in CodeBlock's constant register pool. When CodeBlock
+        is being linked, it ensures that every SymbolTable in the constant pool is cloned. 
+        This leaves no room for an un-cloned symbol table to be used by a bytecode instruction. 
+        Some instructions may refer to SymbolTable's indirectly through a JSLexicalEnvironment. 
+        This is fine, all JSLexicalEnvironment's are allocated with references to cloned symbol tables.
+
+        Another goal of this patch is to remove the notion that a SymbolTable is 1 to 1 
+        with a CodeBlock. With lexical scoping, this view of the world is no longer
+        correct. This patch begins to remove this assumption by making CodeBlock's
+        symbolTable() getter method private. There is still one place where we need
+        to purge our codebase of this assumption and that is the type profiler. It 
+        has not been updated for lexical scoping. After it is updated in 
+        https://bugs.webkit.org/show_bug.cgi?id=145438
+        we will be able to remove CodeBlock's symbolTable() getter entirely.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::nameForRegister):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addStringSwitchJumpTable):
+        (JSC::CodeBlock::stringSwitchJumpTable):
+        (JSC::CodeBlock::evalCodeCache):
+        (JSC::CodeBlock::symbolTable):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedFunctionExecutable::visitChildren):
+        (JSC::UnlinkedFunctionExecutable::link):
+        (JSC::UnlinkedFunctionExecutable::codeBlockFor):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::addExceptionHandler):
+        (JSC::UnlinkedCodeBlock::exceptionHandler):
+        (JSC::UnlinkedCodeBlock::setSymbolTableConstantIndex):
+        (JSC::UnlinkedCodeBlock::symbolTableConstantIndex):
+        (JSC::UnlinkedCodeBlock::symbolTable): Deleted.
+        (JSC::UnlinkedCodeBlock::setSymbolTable): Deleted.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::pushLexicalScope):
+        (JSC::BytecodeGenerator::variableForLocalEntry):
+        (JSC::BytecodeGenerator::createVariable):
+        (JSC::BytecodeGenerator::resolveType):
+        (JSC::BytecodeGenerator::emitResolveScope):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::thisRegister):
+        (JSC::BytecodeGenerator::instructions):
+        (JSC::BytecodeGenerator::symbolTable): Deleted.
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::baselineCodeBlockFor):
+        (JSC::DFG::Graph::isStrictModeFor):
+        (JSC::DFG::Graph::symbolTableFor): Deleted.
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::baselineCodeBlock):
+        (JSC::AssemblyHelpers::argumentsStart):
+        (JSC::AssemblyHelpers::symbolTableFor): Deleted.
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::visitChildren):
+        (JSC::FunctionExecutable::clearUnlinkedCodeForRecompilation):
+        (JSC::FunctionExecutable::symbolTable): Deleted.
+        * runtime/Executable.h:
+
 2015-07-18  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(186691): OSR entry is broken on loop headers that have no live variables

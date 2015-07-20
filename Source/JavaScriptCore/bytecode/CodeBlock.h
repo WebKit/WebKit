@@ -664,8 +664,6 @@ public:
     StringJumpTable& addStringSwitchJumpTable() { createRareDataIfNecessary(); m_rareData->m_stringSwitchJumpTables.append(StringJumpTable()); return m_rareData->m_stringSwitchJumpTables.last(); }
     StringJumpTable& stringSwitchJumpTable(int tableIndex) { RELEASE_ASSERT(m_rareData); return m_rareData->m_stringSwitchJumpTables[tableIndex]; }
 
-    SymbolTable* symbolTable() const { RELEASE_ASSERT(m_symbolTableConstantIndex); return jsCast<SymbolTable*>(getConstant(m_symbolTableConstantIndex)); }
-
     EvalCodeCache& evalCodeCache() { createRareDataIfNecessary(); return m_rareData->m_evalCodeCache; }
 
     enum ShrinkMode {
@@ -918,6 +916,15 @@ protected:
 private:
     friend class CodeBlockSet;
     
+    SymbolTable* symbolTable() const 
+    { 
+        // FIXME: Get rid of this function once the type profiler has a notion of what
+        // symbol table it's reading from.
+        // https://bugs.webkit.org/show_bug.cgi?id=145438
+        RELEASE_ASSERT(m_symbolTableConstantIndex); 
+        return jsCast<SymbolTable*>(getConstant(m_symbolTableConstantIndex));
+    }
+
     CodeBlock* specialOSREntryBlockOrNull();
     
     void noticeIncomingCall(ExecState* callerFrame);

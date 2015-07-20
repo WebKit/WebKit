@@ -155,9 +155,6 @@ ParserError BytecodeGenerator::generate()
 
     m_codeBlock->shrinkToFit();
 
-    if (m_codeBlock->symbolTable() && !m_codeBlock->vm()->typeProfiler())
-        m_codeBlock->setSymbolTable(m_codeBlock->symbolTable()->cloneScopePart(*m_codeBlock->vm()));
-
     if (m_expressionTooDeep)
         return ParserError(ParserError::OutOfMemory);
     return ParserError(ParserError::ErrorNone);
@@ -199,12 +196,12 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
 BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, UnlinkedFunctionCodeBlock* codeBlock, DebuggerMode debuggerMode, ProfilerMode profilerMode, const VariableEnvironment* parentScopeTDZVariables)
     : m_shouldEmitDebugHooks(Options::forceDebuggerBytecodeGeneration() || debuggerMode == DebuggerOn)
     , m_shouldEmitProfileHooks(Options::forceProfilerBytecodeGeneration() || profilerMode == ProfilerOn)
-    , m_symbolTable(codeBlock->symbolTable())
     , m_scopeNode(functionNode)
     , m_codeBlock(vm, codeBlock)
     , m_codeType(FunctionCode)
     , m_vm(&vm)
     , m_isBuiltinFunction(codeBlock->isBuiltinFunction())
+    , m_usesNonStrictEval(codeBlock->usesEval() && !codeBlock->isStrictMode())
 {
     for (auto& constantRegister : m_linkTimeConstantRegisters)
         constantRegister = nullptr;
@@ -212,7 +209,11 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     if (m_isBuiltinFunction)
         m_shouldEmitDebugHooks = false;
     
-    m_symbolTable->setUsesNonStrictEval(codeBlock->usesEval() && !codeBlock->isStrictMode());
+    SymbolTable* functionSymbolTable = SymbolTable::create(*m_vm);
+    functionSymbolTable->setUsesNonStrictEval(m_usesNonStrictEval);
+    int symbolTableConstantIndex = addConstantValue(functionSymbolTable)->index();
+    m_codeBlock->setSymbolTableConstantIndex(symbolTableConstantIndex);
+
     Vector<Identifier> boundParameterProperties;
     FunctionParameters& parameters = *functionNode->parameters();
     for (size_t i = 0; i < parameters.size(); i++) {
@@ -262,8 +263,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         emitPushFunctionNameScope(m_scopeRegister, functionNode->ident(), &m_calleeRegister, ReadOnly | DontDelete);
     }
     
-    int symbolTableConstantIndex = addConstantValue(m_symbolTable)->index();
-    m_codeBlock->setSymbolTableConstantIndex(symbolTableConstantIndex);
     if (shouldCaptureSomeOfTheThings) {
         m_lexicalEnvironmentRegister = addVar();
         m_codeBlock->setActivationRegister(m_lexicalEnvironmentRegister->virtualRegister());
@@ -327,15 +326,15 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         // activation.
         
         if (capturesAnyArgumentByName) {
-            m_symbolTable->setArgumentsLength(vm, parameters.size());
+            functionSymbolTable->setArgumentsLength(vm, parameters.size());
             
             // For each parameter, we have two possibilities:
             // Either it's a binding node with no function overlap, in which case it gets a name
             // in the symbol table - or it just gets space reserved in the symbol table. Either
             // way we lift the value into the scope.
             for (unsigned i = 0; i < parameters.size(); ++i) {
-                ScopeOffset offset = m_symbolTable->takeNextScopeOffset();
-                m_symbolTable->setArgumentOffset(vm, i, offset);
+                ScopeOffset offset = functionSymbolTable->takeNextScopeOffset();
+                functionSymbolTable->setArgumentOffset(vm, i, offset);
                 if (UniquedStringImpl* name = visibleNameForParameter(parameters.at(i))) {
                     VarOffset varOffset(offset);
                     SymbolTableEntry entry(varOffset);
@@ -344,7 +343,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
                     // parameters when "arguments" is in play is unlikely to be super profitable.
                     // So, we just disable it.
                     entry.disableWatching();
-                    m_symbolTable->set(name, entry);
+                    functionSymbolTable->set(name, entry);
                 }
                 emitOpcode(op_put_to_scope);
                 instructions().append(m_lexicalEnvironmentRegister->index());
@@ -365,7 +364,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
             // that the symbol table knows that this is happening.
             for (unsigned i = 0; i < parameters.size(); ++i) {
                 if (UniquedStringImpl* name = visibleNameForParameter(parameters.at(i)))
-                    m_symbolTable->set(name, SymbolTableEntry(VarOffset(DirectArgumentsOffset(i))));
+                    functionSymbolTable->set(name, SymbolTableEntry(VarOffset(DirectArgumentsOffset(i))));
             }
             
             emitOpcode(op_create_direct_arguments);
@@ -382,14 +381,14 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
             if (!captures(name)) {
                 // This is the easy case - just tell the symbol table about the argument. It will
                 // be accessed directly.
-                m_symbolTable->set(name, SymbolTableEntry(VarOffset(virtualRegisterForArgument(1 + i))));
+                functionSymbolTable->set(name, SymbolTableEntry(VarOffset(virtualRegisterForArgument(1 + i))));
                 continue;
             }
             
-            ScopeOffset offset = m_symbolTable->takeNextScopeOffset();
+            ScopeOffset offset = functionSymbolTable->takeNextScopeOffset();
             const Identifier& ident =
                 static_cast<const BindingNode*>(parameters.at(i))->boundProperty();
-            m_symbolTable->set(name, SymbolTableEntry(VarOffset(offset)));
+            functionSymbolTable->set(name, SymbolTableEntry(VarOffset(offset)));
             
             emitOpcode(op_put_to_scope);
             instructions().append(m_lexicalEnvironmentRegister->index());
@@ -409,10 +408,10 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     
     // Now declare all variables.
     for (const Identifier& ident : boundParameterProperties)
-        createVariable(ident, varKind(ident.impl()));
+        createVariable(ident, varKind(ident.impl()), functionSymbolTable);
     for (FunctionBodyNode* function : functionNode->functionStack()) {
         const Identifier& ident = function->ident();
-        createVariable(ident, varKind(ident.impl()));
+        createVariable(ident, varKind(ident.impl()), functionSymbolTable);
         m_functionsToInitialize.append(std::make_pair(function, NormalFunctionVariable));
     }
     for (auto& entry : functionNode->varDeclarations()) {
@@ -420,7 +419,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         if (!entry.value.isVar()) // This is either a parameter or callee.
             continue;
         // Variables named "arguments" are never const.
-        createVariable(Identifier::fromUid(m_vm, entry.key.get()), varKind(entry.key.get()), IgnoreExisting);
+        createVariable(Identifier::fromUid(m_vm, entry.key.get()), varKind(entry.key.get()), functionSymbolTable, IgnoreExisting);
     }
     
     // There are some variables that need to be preinitialized to something other than Undefined:
@@ -449,13 +448,13 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     // to do this because we can just check if it's in the symbol table.
     if (functionNameIsInScope(functionNode->ident(), functionNode->functionMode())
         && !functionNameScopeIsDynamic(codeBlock->usesEval(), codeBlock->isStrictMode())
-        && m_symbolTable->get(functionNode->ident().impl()).isNull()) {
+        && functionSymbolTable->get(functionNode->ident().impl()).isNull()) {
         if (captures(functionNode->ident().impl())) {
             ScopeOffset offset;
             {
-                ConcurrentJITLocker locker(m_symbolTable->m_lock);
-                offset = m_symbolTable->takeNextScopeOffset(locker);
-                m_symbolTable->add(
+                ConcurrentJITLocker locker(functionSymbolTable->m_lock);
+                offset = functionSymbolTable->takeNextScopeOffset(locker);
+                functionSymbolTable->add(
                     locker, functionNode->ident().impl(),
                     SymbolTableEntry(VarOffset(offset), ReadOnly));
             }
@@ -468,7 +467,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
             instructions().append(symbolTableConstantIndex);
             instructions().append(offset.offset());
         } else {
-            m_symbolTable->add(
+            functionSymbolTable->add(
                 functionNode->ident().impl(),
                 SymbolTableEntry(VarOffset(m_calleeRegister.virtualRegister()), ReadOnly));
         }
@@ -496,7 +495,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         
         if (!haveParameterNamedArguments) {
             createVariable(
-                propertyNames().arguments, varKind(propertyNames().arguments.impl()));
+                propertyNames().arguments, varKind(propertyNames().arguments.impl()), functionSymbolTable);
             m_needToInitializeArguments = true;
         }
     }
@@ -520,27 +519,24 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
 
     if (m_lexicalEnvironmentRegister)
         pushScopedControlFlowContext();
-    m_symbolTableStack.append(SymbolTableStackEntry{ Strong<SymbolTable>(*m_vm, m_symbolTable), m_lexicalEnvironmentRegister, false, symbolTableConstantIndex });
+    m_symbolTableStack.append(SymbolTableStackEntry{ Strong<SymbolTable>(*m_vm, functionSymbolTable), m_lexicalEnvironmentRegister, false, symbolTableConstantIndex });
     m_TDZStack.append(std::make_pair(*parentScopeTDZVariables, false));
 }
 
 BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCodeBlock* codeBlock, DebuggerMode debuggerMode, ProfilerMode profilerMode, const VariableEnvironment* parentScopeTDZVariables)
     : m_shouldEmitDebugHooks(Options::forceDebuggerBytecodeGeneration() || debuggerMode == DebuggerOn)
     , m_shouldEmitProfileHooks(Options::forceProfilerBytecodeGeneration() || profilerMode == ProfilerOn)
-    , m_symbolTable(codeBlock->symbolTable())
     , m_scopeNode(evalNode)
     , m_codeBlock(vm, codeBlock)
     , m_thisRegister(CallFrame::thisArgumentOffset())
     , m_codeType(EvalCode)
     , m_vm(&vm)
+    , m_usesNonStrictEval(codeBlock->usesEval() && !codeBlock->isStrictMode())
 {
     for (auto& constantRegister : m_linkTimeConstantRegisters)
         constantRegister = nullptr;
 
-    m_symbolTable->setUsesNonStrictEval(codeBlock->usesEval() && !codeBlock->isStrictMode());
     m_codeBlock->setNumParameters(1);
-    int symbolTableConstantIndex = addConstantValue(m_symbolTable)->index();
-    m_codeBlock->setSymbolTableConstantIndex(symbolTableConstantIndex);
 
     emitOpcode(op_enter);
 
@@ -1305,7 +1301,7 @@ void BytecodeGenerator::pushLexicalScope(VariableEnvironmentNode* node, bool can
         newScope = newBlockScopeVariable();
         newScope->ref();
 
-        RegisterID* constantSymbolTable = addConstantValue(symbolTable->cloneScopePart(*m_vm));
+        RegisterID* constantSymbolTable = addConstantValue(!m_codeBlock->vm()->typeProfiler() ? symbolTable->cloneScopePart(*m_vm) : symbolTable.get());
         symbolTableConstantIndex = constantSymbolTable->index();
         if (constantSymbolTableResult)
             *constantSymbolTableResult = constantSymbolTable;
@@ -1504,11 +1500,11 @@ Variable BytecodeGenerator::variableForLocalEntry(
 }
 
 void BytecodeGenerator::createVariable(
-    const Identifier& property, VarKind varKind, ExistingVariableMode existingVariableMode)
+    const Identifier& property, VarKind varKind, SymbolTable* symbolTable, ExistingVariableMode existingVariableMode)
 {
     ASSERT(property != propertyNames().thisIdentifier);
-    ConcurrentJITLocker locker(symbolTable().m_lock);
-    SymbolTableEntry entry = symbolTable().get(locker, property.impl());
+    ConcurrentJITLocker locker(symbolTable->m_lock);
+    SymbolTableEntry entry = symbolTable->get(locker, property.impl());
     
     if (!entry.isNull()) {
         if (existingVariableMode == IgnoreExisting)
@@ -1532,13 +1528,13 @@ void BytecodeGenerator::createVariable(
     
     VarOffset varOffset;
     if (varKind == VarKind::Scope)
-        varOffset = VarOffset(symbolTable().takeNextScopeOffset(locker));
+        varOffset = VarOffset(symbolTable->takeNextScopeOffset(locker));
     else {
         ASSERT(varKind == VarKind::Stack);
         varOffset = VarOffset(virtualRegisterForLocal(m_calleeRegisters.size()));
     }
     SymbolTableEntry newEntry(varOffset, 0);
-    symbolTable().add(locker, property.impl(), newEntry);
+    symbolTable->add(locker, property.impl(), newEntry);
     
     if (varKind == VarKind::Stack) {
         RegisterID* local = addVar();
@@ -1565,7 +1561,7 @@ ResolveType BytecodeGenerator::resolveType()
             return Dynamic;
     }
 
-    if (m_symbolTable && m_symbolTable->usesNonStrictEval())
+    if (m_usesNonStrictEval)
         return GlobalPropertyWithVarInjectionChecks;
     return GlobalProperty;
 }
@@ -1605,8 +1601,6 @@ RegisterID* BytecodeGenerator::emitResolveScope(RegisterID* dst, const Variable&
         
     case VarKind::Invalid:
         // Indicates non-local resolution.
-        
-        ASSERT(!m_symbolTable || !m_symbolTable->contains(variable.ident().impl()) || resolveType() == Dynamic);
         
         m_codeBlock->addPropertyAccessInstruction(instructions().size());
         

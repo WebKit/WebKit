@@ -886,11 +886,6 @@ public:
         return m_baselineCodeBlock;
     }
     
-    SymbolTable* symbolTableFor(const CodeOrigin& codeOrigin)
-    {
-        return baselineCodeBlockFor(codeOrigin)->symbolTable();
-    }
-
     static VirtualRegister argumentsStart(InlineCallFrame* inlineCallFrame)
     {
         if (!inlineCallFrame)

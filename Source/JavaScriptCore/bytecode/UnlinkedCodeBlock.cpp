@@ -116,8 +116,6 @@ void UnlinkedFunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visito
     visitor.append(&thisObject->m_codeBlockForCall);
     visitor.append(&thisObject->m_codeBlockForConstruct);
     visitor.append(&thisObject->m_nameValue);
-    visitor.append(&thisObject->m_symbolTableForCall);
-    visitor.append(&thisObject->m_symbolTableForConstruct);
 }
 
 FunctionExecutable* UnlinkedFunctionExecutable::link(VM& vm, const SourceCode& ownerSource, int overrideLineNumber)
@@ -209,11 +207,9 @@ UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::codeBlockFor(
     switch (specializationKind) {
     case CodeForCall:
         m_codeBlockForCall.set(vm, this, result);
-        m_symbolTableForCall.set(vm, this, result->symbolTable());
         break;
     case CodeForConstruct:
         m_codeBlockForConstruct.set(vm, this, result);
-        m_symbolTableForConstruct.set(vm, this, result->symbolTable());
         break;
     }
     return result;
