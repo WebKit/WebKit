@@ -1,5 +1,13 @@
 2015-07-20  Per Arne Vollan  <peavo@outlook.com>
 
+        Unreviewed debug build fix after r187020.
+
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::addCurrentThread):
+        VM::exclusiveThread() has changed return type to ThreadIdentifier.
+
+2015-07-20  Per Arne Vollan  <peavo@outlook.com>
+
         JavaScriptCore performance is very bad on Windows
         https://bugs.webkit.org/show_bug.cgi?id=146448
 
