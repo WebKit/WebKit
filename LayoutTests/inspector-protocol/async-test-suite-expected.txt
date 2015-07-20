@@ -1,0 +1,34 @@
+PASS: instantiating AsyncTestSuite requires name argument.
+PASS: instantiating AsyncTestSuite requires string name argument.
+PASS: should not be able to add empty test case.
+PASS: should not be able to add non-object test case.
+PASS: test case should require string name.
+PASS: test case should require test function.
+PASS: should not be able to run empty test suite.
+Running test suite: AsyncTestSuite.RunTwiceSuite
+PASS: should not be able to run a test suite twice.
+Running test case: DummyTest0
+Running test suite: AsyncTestSuite.SequentialExecution
+PASS: AsyncTestSuite.RunTestCases() should return a Promise.
+Running test case: DummyTest1
+Running test case: DummyTest2
+Running test case: DummyTest3
+Running test case: FailingTest4
+EXCEPTION: [object Object]
+PASS: Promise from sequentialExecutionSuite.runTestCases() should reject when a test case fails.
+PASS: Promise from sequentialExecutionSuite.runTestCases() should reject without altering its result value.
+PASS: sequentialExecutionSuite should have executed four tests.
+PASS: sequentialExecutionSuite should have passed three tests.
+PASS: sequentialExecutionSuite should have failed 1 test.
+PASS: sequentialExecutionSuite should have skipped zero tests.
+Running test suite: AsyncTestSuite.AbortOnFailure
+Running test case: PassingTest5
+Running test case: FailingTest6
+EXCEPTION: {"token":666}
+PASS: Promise from abortOnFailureSuite.runTestCases() should reject when a test case fails.
+PASS: Promise from abortOnFailureSuite.runTestCases() should reject without altering its result value.
+PASS: abortOnFailureSuite should have executed two tests.
+PASS: abortOnFailureSuite should have passed one test.
+PASS: abortOnFailureSuite should have failed one test.
+PASS: abortOnFailureSuite should have skipped one test.
+

@@ -1,3 +1,51 @@
+2015-07-20  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: start using Promises to handle asynchronous steps in protocol tests
+        https://bugs.webkit.org/show_bug.cgi?id=147096
+
+        Reviewed by Joseph Pecoraro.
+
+        Existing protocol tests use lots of reinvented wheels to run
+        multiple asynchronous tests. This patch begins consolidation of
+        these redundant wheels, using a tiny test framework based on
+        promises.
+
+        The first change is to introduce InspectorTest.awaitCommand,
+        which returns a promise that is fulfilled or rejected if the command
+        succeeds or fails. This is the building block for writing protocol
+        tests with promises.
+
+        The second change is the introduction of InspectorTest.AsyncTestSuite.
+        This properly chains together multiple asynchronous test methods
+        using the promise interface. A synchronous version is also added.
+
+        To demonstrate how async tests can be written using this new approach,
+        this patch converts existing protocol test. Test coverage for the
+        new frameworks also demonstrates their use.
+
+        * http/tests/inspector-protocol/resources/InspectorTest.js:
+        (InspectorTest.sendCommand):
+        (InspectorTest.awaitCommand):
+        (InspectorTest.sendMessage):
+        (InspectorFrontendAPI.dispatchMessageAsync):
+        (InspectorTest.AsyncTestSuite): Add tests for this micro framework.
+        (InspectorTest.AsyncTestSuite.prototype.get passCount):
+        (InspectorTest.AsyncTestSuite.prototype.get skipCount):
+        (InspectorTest.AsyncTestSuite.prototype.addTestCase):
+        (InspectorTest.AsyncTestSuite.prototype.runTestCasesAndFinish.finish):
+        (InspectorTest.AsyncTestSuite.prototype.runTestCasesAndFinish):
+        (InspectorTest.AsyncTestSuite.prototype.runTestCases):
+        (InspectorTest.SyncTestSuite): Add tests for this micro framework.
+        (InspectorTest.SyncTestSuite.prototype.get passCount):
+        (InspectorTest.SyncTestSuite.prototype.get skipCount):
+        (InspectorTest.SyncTestSuite.prototype.addTestCase):
+        (InspectorTest.SyncTestSuite.prototype.runTestCasesAndFinish):
+        (InspectorTest.SyncTestSuite.prototype.runTestCases):
+        (InspectorTest.log):
+        (InspectorTest.assert):
+        * inspector-protocol/runtime/getProperties-expected.txt:
+        * inspector-protocol/runtime/getProperties.html: Rewrite.
+
 2015-07-20  Andreas Kling  <akling@apple.com>
 
         Improve behavior of media elements in page cache.
