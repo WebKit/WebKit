@@ -1731,7 +1731,8 @@ PassRefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize&
 
     auto graphicsContext = snapshot->bitmap()->createGraphicsContext();
 
-    Color backgroundColor = coreFrame->settings().backgroundShouldExtendBeyondPage() ? frameView->documentBackgroundColor() : frameView->baseBackgroundColor();
+    Color documentBackgroundColor = frameView->documentBackgroundColor();
+    Color backgroundColor = (coreFrame->settings().backgroundShouldExtendBeyondPage() && documentBackgroundColor.isValid()) ? documentBackgroundColor : frameView->baseBackgroundColor();
     graphicsContext->fillRect(IntRect(IntPoint(), bitmapSize), backgroundColor, ColorSpaceDeviceRGB);
 
     if (!(options & SnapshotOptionsExcludeDeviceScaleFactor)) {
