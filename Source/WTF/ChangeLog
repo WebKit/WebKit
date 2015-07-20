@@ -1,3 +1,16 @@
+2015-07-20  Julien Brianceau  <julien.brianceau@gmail.com>
+
+        Use isnan from std namespace in Stopwatch.h.
+        https://bugs.webkit.org/show_bug.cgi?id=146911
+
+        Reviewed by Žan Doberšek.
+
+        * wtf/Stopwatch.h:
+        (WTF::Stopwatch::isActive):
+        (WTF::Stopwatch::start):
+        (WTF::Stopwatch::stop):
+        (WTF::Stopwatch::elapsedTime):
+
 2015-07-16  Benjamin Poulain  <bpoulain@apple.com>
 
         [Content extensions] Combine suffixes when generating NFAs
