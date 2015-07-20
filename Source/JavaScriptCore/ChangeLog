@@ -1,3 +1,28 @@
+2015-07-20  Mark Lam  <mark.lam@apple.com>
+
+        Rollout r187020 and r187021: breaks JSC API tests on debug builds.
+        https://bugs.webkit.org/show_bug.cgi?id=147110
+
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::addCurrentThread):
+        * runtime/JSLock.cpp:
+        (JSC::JSLockHolder::~JSLockHolder):
+        (JSC::JSLock::JSLock):
+        (JSC::JSLock::willDestroyVM):
+        (JSC::JSLock::setExclusiveThread):
+        (JSC::JSLock::lock):
+        (JSC::JSLock::unlock):
+        (JSC::JSLock::currentThreadIsHoldingLock):
+        (JSC::JSLock::dropAllLocks):
+        * runtime/JSLock.h:
+        (JSC::JSLock::vm):
+        (JSC::JSLock::hasExclusiveThread):
+        (JSC::JSLock::exclusiveThread):
+        * runtime/VM.h:
+        (JSC::VM::hasExclusiveThread):
+        (JSC::VM::exclusiveThread):
+        (JSC::VM::setExclusiveThread):
+
 2015-07-20  Per Arne Vollan  <peavo@outlook.com>
 
         Unreviewed debug build fix after r187020.

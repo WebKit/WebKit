@@ -499,8 +499,8 @@ public:
 #endif
 
     bool hasExclusiveThread() const { return m_apiLock->hasExclusiveThread(); }
-    ThreadIdentifier exclusiveThread() const { return m_apiLock->exclusiveThread(); }
-    void setExclusiveThread(ThreadIdentifier threadId) { m_apiLock->setExclusiveThread(threadId); }
+    std::thread::id exclusiveThread() const { return m_apiLock->exclusiveThread(); }
+    void setExclusiveThread(std::thread::id threadId) { m_apiLock->setExclusiveThread(threadId); }
 
     JS_EXPORT_PRIVATE void resetDateCache();
 

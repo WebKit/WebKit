@@ -26,6 +26,7 @@
 #include "JSGlobalObject.h"
 #include "JSObject.h"
 #include "JSCInlines.h"
+#include <thread>
 
 namespace JSC {
 
@@ -77,7 +78,7 @@ JSLockHolder::~JSLockHolder()
 }
 
 JSLock::JSLock(VM* vm)
-    : m_ownerThreadID(0)
+    : m_ownerThreadID(std::thread::id())
     , m_lockCount(0)
     , m_lockDropDepth(0)
     , m_hasExclusiveThread(false)
@@ -96,10 +97,10 @@ void JSLock::willDestroyVM(VM* vm)
     m_vm = nullptr;
 }
 
-void JSLock::setExclusiveThread(ThreadIdentifier threadId)
+void JSLock::setExclusiveThread(std::thread::id threadId)
 {
-    RELEASE_ASSERT(!m_lockCount && !m_ownerThreadID);
-    m_hasExclusiveThread = !!threadId;
+    RELEASE_ASSERT(!m_lockCount && m_ownerThreadID == std::thread::id());
+    m_hasExclusiveThread = (threadId != std::thread::id());
     m_ownerThreadID = threadId;
 }
 
@@ -118,7 +119,7 @@ void JSLock::lock(intptr_t lockCount)
 
     if (!m_hasExclusiveThread) {
         m_lock.lock();
-        m_ownerThreadID = currentThread();
+        m_ownerThreadID = std::this_thread::get_id();
     }
     ASSERT(!m_lockCount);
     m_lockCount = lockCount;
@@ -166,7 +167,7 @@ void JSLock::unlock(intptr_t unlockCount)
     if (!m_lockCount) {
 
         if (!m_hasExclusiveThread) {
-            m_ownerThreadID = 0;
+            m_ownerThreadID = std::thread::id();
             m_lock.unlock();
         }
     }
@@ -199,17 +200,17 @@ void JSLock::unlock(ExecState* exec)
 
 bool JSLock::currentThreadIsHoldingLock()
 {
-    ASSERT(!m_hasExclusiveThread || (exclusiveThread() == currentThread()));
+    ASSERT(!m_hasExclusiveThread || (exclusiveThread() == std::this_thread::get_id()));
     if (m_hasExclusiveThread)
         return !!m_lockCount;
-    return m_ownerThreadID == currentThread();
+    return m_ownerThreadID == std::this_thread::get_id();
 }
 
 // This function returns the number of locks that were dropped.
 unsigned JSLock::dropAllLocks(DropAllLocks* dropper)
 {
     if (m_hasExclusiveThread) {
-        ASSERT(exclusiveThread() == currentThread());
+        ASSERT(exclusiveThread() == std::this_thread::get_id());
         return 0;
     }
 

@@ -1,3 +1,13 @@
+2015-07-20  Mark Lam  <mark.lam@apple.com>
+
+        Rollout r187020 and r187021: breaks JSC API tests on debug builds.
+        https://bugs.webkit.org/show_bug.cgi?id=147110
+
+        * wtf/WTFThreadData.cpp:
+        (WTF::WTFThreadData::WTFThreadData):
+        * wtf/WTFThreadData.h:
+        (WTF::WTFThreadData::stack):
+
 2015-07-20  Alex Christensen  <achristensen@webkit.org>
 
         Resurrect CMake build on Windows.

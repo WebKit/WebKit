@@ -203,7 +203,7 @@ VM& JSDOMWindowBase::commonVM()
         ScriptController::initializeThreading();
         vm = &VM::createLeaked(LargeHeap).leakRef();
 #if !PLATFORM(IOS)
-        vm->setExclusiveThread(currentThread());
+        vm->setExclusiveThread(std::this_thread::get_id());
 #else
         vm->heap.setFullActivityCallback(WebSafeFullGCActivityCallback::create(&vm->heap));
 #if ENABLE(GGC)

@@ -284,7 +284,7 @@ inline bool MachineThreads::Thread::operator==(const PlatformThread& other) cons
 
 void MachineThreads::addCurrentThread()
 {
-    ASSERT(!m_heap->vm()->hasExclusiveThread() || m_heap->vm()->exclusiveThread() == currentThread());
+    ASSERT(!m_heap->vm()->hasExclusiveThread() || m_heap->vm()->exclusiveThread() == std::this_thread::get_id());
 
     if (threadSpecificGet(m_threadSpecific)) {
         ASSERT(threadSpecificGet(m_threadSpecific) == this);
