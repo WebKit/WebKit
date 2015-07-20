@@ -1,3 +1,20 @@
+2015-07-16  Anders Carlsson  <andersca@apple.com>
+
+        WebsiteDataStore operations need to grab background assertions
+        https://bugs.webkit.org/show_bug.cgi?id=147015
+        rdar://problem/21799011
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::fetchWebsiteData):
+        (WebKit::NetworkProcessProxy::deleteWebsiteData):
+        (WebKit::NetworkProcessProxy::deleteWebsiteDataForOrigins):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::fetchWebsiteData):
+        (WebKit::WebProcessProxy::deleteWebsiteData):
+        (WebKit::WebProcessProxy::deleteWebsiteDataForOrigins):
+
 2015-07-19  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, placate -Wmismatched-tags after r187011
