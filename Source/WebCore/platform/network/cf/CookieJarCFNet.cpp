@@ -120,11 +120,7 @@ static RetainPtr<CFArrayRef> copyCookiesForURLWithFirstPartyURL(const NetworkSto
 
 static CFArrayRef createCookies(CFDictionaryRef headerFields, CFURLRef url)
 {
-#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000)
     return _CFHTTPParsedCookiesWithResponseHeaderFields(kCFAllocatorDefault, headerFields, url);
-#else
-    return CFHTTPCookieCreateWithResponseHeaderFields(kCFAllocatorDefault, headerFields, url);
-#endif
 }
 
 void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, const String& value)
