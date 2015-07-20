@@ -23,7 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(VIDEO)
+#import <wtf/Platform.h>
+
+#if PLATFORM(MAC) && ENABLE(VIDEO)
 
 #import <AppKit/NSWindowController.h>
 #import <AppKit/NSScreen.h>
@@ -67,4 +69,4 @@ WEBCORE_EXPORT @interface WebVideoFullscreenController : NSWindowController {
 
 @end
 
-#endif // ENABLE(VIDEO)
+#endif
