@@ -55,6 +55,9 @@ bool getSVGPathSegAtLengthFromSVGPathByteStream(SVGPathByteStream*, float length
 bool getTotalLengthOfSVGPathByteStream(SVGPathByteStream*, float& totalLength);
 bool getPointAtLengthOfSVGPathByteStream(SVGPathByteStream*, float length, SVGPoint&);
 
+// Path -> String
+WEBCORE_EXPORT bool buildStringFromPath(const Path&, String&);
+
 } // namespace WebCore
 
 #endif // SVGPathUtilities_h

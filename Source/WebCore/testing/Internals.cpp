@@ -2982,11 +2982,11 @@ bool Internals::testPreloaderSettingViewport()
     return testPreloadScannerViewportSupport(contextDocument());
 }
 
-PassRefPtr<DOMPath> Internals::pathWithShrinkWrappedRects(Vector<double> rectComponents, double radius, ExceptionCode& ec)
+String Internals::pathStringWithShrinkWrappedRects(Vector<double> rectComponents, double radius, ExceptionCode& ec)
 {
     if (rectComponents.size() % 4) {
         ec = INVALID_ACCESS_ERR;
-        return nullptr;
+        return String();
     }
 
     Vector<FloatRect> rects;
@@ -3002,7 +3002,11 @@ PassRefPtr<DOMPath> Internals::pathWithShrinkWrappedRects(Vector<double> rectCom
     rects.reverse();
 
     Path path = PathUtilities::pathWithShrinkWrappedRects(rects, radius);
-    return DOMPath::create(path);
+
+    String pathString;
+    buildStringFromPath(path, pathString);
+
+    return pathString;
 }
 
 }

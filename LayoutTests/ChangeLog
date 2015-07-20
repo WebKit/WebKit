@@ -1,3 +1,16 @@
+2015-07-19  Tim Horton  <timothy_horton@apple.com>
+
+        Make shrink-wrapping test a ref-test instead of pixel-test
+        https://bugs.webkit.org/show_bug.cgi?id=147081
+
+        Reviewed by Sam Weinig.
+
+        * fast/shrink-wrap/rect-shrink-wrap-expected.html: Added.
+        * fast/shrink-wrap/rect-shrink-wrap-expected.png: Removed.
+        * fast/shrink-wrap/rect-shrink-wrap-expected.txt: Removed.
+        * fast/shrink-wrap/rect-shrink-wrap.html:
+        SVG all the things.
+
 2015-07-19  Jordan Harband  <ljharb@gmail.com>
 
         new Date(NaN).toJSON() must return null instead of throwing a TypeError

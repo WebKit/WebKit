@@ -1,43 +1,39 @@
 <script>
 
-function testRects(offset, rects, radius) {
-    if (!window.internals)
+if (!window.internals)
         document.write("This test must be run in a test runner.")
 
+function testRects(offset, rects, radius) {
     if (radius == undefined)
         radius = 8;
 
-    var concatRects = [];
-    for (var i in rects)
-        Array.prototype.push.apply(concatRects, rects[i]);
+    var gElement = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    gElement.setAttribute("transform", "translate(" + offset[0] + ", " + offset[1] + ")");
+    document.getElementById("paths").appendChild(gElement);
 
-    var path = undefined;
-    if (window.internals)
-        path = window.internals.pathWithShrinkWrappedRects(concatRects, radius);
+    for (var i in rects) {
+        var rectElement = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        rectElement.setAttribute("x", rects[i][0]);
+        rectElement.setAttribute("y", rects[i][1]);
+        rectElement.setAttribute("width", rects[i][2]);
+        rectElement.setAttribute("height", rects[i][3]);
+        rectElement.setAttribute("fill", "rgba(0, 0, 0, 0.2)");
+        rectElement.setAttribute("stroke", "rgba(0, 0, 0, 0.5)");
+        gElement.appendChild(rectElement);
+    }
 
-    var canvas = document.getElementById("shrink");
-    var ctx = canvas.getContext("2d");
-
-    ctx.save();
-
-    ctx.translate.apply(ctx, offset);
-
-    ctx.fillStyle = "rgba(0,0,0,0.2)";
-
-    for (var i in rects)
-        ctx.fillRect.apply(ctx, rects[i]);
-
-    ctx.strokeStyle = "rgba(0,0,0,0.5)";
-    ctx.lineWidth = 1;
-    for (var i in rects)
-        ctx.strokeRect.apply(ctx, rects[i]);
-
-    ctx.strokeStyle = "blue";
-    ctx.lineWidth = 3;
-    if (path)
-        ctx.stroke(path);
-
-    ctx.restore();
+    if (window.internals) {
+        var concatRects = [];
+        for (var i in rects)
+            Array.prototype.push.apply(concatRects, rects[i]);
+        var pathString = window.internals.pathStringWithShrinkWrappedRects(concatRects, radius);
+        var pathElement = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        pathElement.setAttribute("d", pathString)
+        pathElement.setAttribute("fill", "none");
+        pathElement.setAttribute("stroke", "blue");
+        pathElement.setAttribute("stroke-width", "3");
+        gElement.appendChild(pathElement);
+    }
 }
 
 window.onload = function () {
@@ -243,4 +239,4 @@ body {
 }
 </style>
 
-<canvas id="shrink" width="800" height="600"></canvas>
+<svg id="paths" width="800" height="600"></svg>

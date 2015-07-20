@@ -387,5 +387,5 @@ enum MediaSessionInterruptingCategory {
     [RaisesException] DOMString scrollSnapOffsets(Element element);
 #endif
 
-    [RaisesException] DOMPath pathWithShrinkWrappedRects(sequence<double> rectComponents, double radius);
+    [RaisesException] DOMString pathStringWithShrinkWrappedRects(sequence<double> rectComponents, double radius);
 };
