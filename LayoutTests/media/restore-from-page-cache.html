@@ -33,15 +33,31 @@
                     setTimeout(function() { if (window.testRunner) testRunner.notifyDone(); }, 200);
                 }
             }
-                
+
+            function pagehide()
+            {
+                // Have the video element generate some events that need to be suspended.
+                // We use multiple events to verify that they fire in the correct order.
+                consoleWrite("*** Changing playbackRate just before going into cache, to schedule a ratechange event.");
+                document.getElementsByTagName("video")[0].playbackRate = 2; 
+                consoleWrite("*** Changing volume just before going into cache, to schedule a volumechange event.");
+                document.getElementsByTagName("video")[0].volume = 0.5; 
+            }
+
             function canplaythrough() 
             {
                 testExpected("loadCount", 0);
                 if (!loadCount) {
+                    video = document.getElementsByTagName('video')[0];
                     consoleWrite("*** Page going into cache");
                     setTimeout('window.location = "data:text/html,<script>history.back()<" + "/script>"', 0);
                 }
                 ++loadCount;
+            }
+
+            function propertyChangeCallback(evt)
+            {
+                consoleWrite("*** " + evt.type +  " event fired. This should happen AFTER returning from cache.");
             }
 
             function setup()
@@ -52,9 +68,13 @@
                 waitForEvent('canplaythrough', canplaythrough);
                 
                 video.src = mediaFile;
+
+                video.onratechange = propertyChangeCallback;
+                video.onvolumechange = propertyChangeCallback;
             }
 
             window.onpageshow = pageshow;
+            window.onpagehide = pagehide;
         </script>
     </head>
     <body>

@@ -42,11 +42,14 @@ public:
     explicit GenericEventQueue(EventTarget&);
     ~GenericEventQueue();
 
-    bool enqueueEvent(PassRefPtr<Event>);
+    void enqueueEvent(PassRefPtr<Event>);
     void close();
 
     void cancelAllEvents();
     bool hasPendingEvents() const;
+
+    void suspend();
+    void resume();
 
 private:
     static Timer& sharedTimer();
@@ -59,6 +62,7 @@ private:
     Deque<RefPtr<Event>> m_pendingEvents;
     WeakPtrFactory<GenericEventQueue> m_weakPtrFactory;
     bool m_isClosed;
+    bool m_isSuspended { false };
 };
 
 }

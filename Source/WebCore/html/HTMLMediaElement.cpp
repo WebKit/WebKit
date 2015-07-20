@@ -4890,9 +4890,6 @@ void HTMLMediaElement::stopWithoutDestroyingMediaPlayer()
         renderer()->updateFromElement();
     
     stopPeriodicTimers();
-    cancelPendingEventsAndCallbacks();
-
-    m_asyncEventQueue.close();
 
     updateSleepDisabling();
 }
@@ -4902,6 +4899,8 @@ void HTMLMediaElement::stop()
     LOG(Media, "HTMLMediaElement::stop(%p)", this);
 
     stopWithoutDestroyingMediaPlayer();
+
+    m_asyncEventQueue.close();
 
     // Once an active DOM object has been stopped it can not be restarted, so we can deallocate
     // the media player now. Note that userCancelledLoad will already called clearMediaPlayer
@@ -4918,6 +4917,8 @@ void HTMLMediaElement::suspend(ReasonForSuspension why)
     {
         case PageCache:
             stopWithoutDestroyingMediaPlayer();
+            m_asyncEventQueue.suspend();
+            setShouldBufferData(false);
             m_mediaSession->addBehaviorRestriction(MediaElementSession::RequirePageConsentToResumeMedia);
             break;
         case DocumentWillBePaused:
@@ -4934,6 +4935,10 @@ void HTMLMediaElement::resume()
     LOG(Media, "HTMLMediaElement::resume(%p)", this);
 
     m_inActiveDocument = true;
+
+    m_asyncEventQueue.resume();
+
+    setShouldBufferData(true);
 
     if (!m_mediaSession->pageAllowsPlaybackAfterResuming(*this))
         document().addMediaCanStartListener(this);

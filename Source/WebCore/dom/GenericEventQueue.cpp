@@ -45,20 +45,22 @@ GenericEventQueue::~GenericEventQueue()
 {
 }
 
-bool GenericEventQueue::enqueueEvent(PassRefPtr<Event> event)
+void GenericEventQueue::enqueueEvent(PassRefPtr<Event> event)
 {
     if (m_isClosed)
-        return false;
+        return;
 
     if (event->target() == &m_owner)
         event->setTarget(0);
 
     m_pendingEvents.append(event);
+
+    if (m_isSuspended)
+        return;
+
     pendingQueues().append(m_weakPtrFactory.createWeakPtr());
     if (!sharedTimer().isActive())
         sharedTimer().startOneShot(0);
-
-    return true;
 }
 
 Timer& GenericEventQueue::sharedTimer()
@@ -118,6 +120,28 @@ void GenericEventQueue::cancelAllEvents()
 bool GenericEventQueue::hasPendingEvents() const
 {
     return !m_pendingEvents.isEmpty();
+}
+
+void GenericEventQueue::suspend()
+{
+    ASSERT(!m_isSuspended);
+    m_isSuspended = true;
+    m_weakPtrFactory.revokeAll();
+}
+
+void GenericEventQueue::resume()
+{
+    ASSERT(m_isSuspended);
+    m_isSuspended = false;
+
+    if (m_pendingEvents.isEmpty())
+        return;
+
+    for (unsigned i = 0; i < m_pendingEvents.size(); ++i)
+        pendingQueues().append(m_weakPtrFactory.createWeakPtr());
+
+    if (!sharedTimer().isActive())
+        sharedTimer().startOneShot(0);
 }
 
 }

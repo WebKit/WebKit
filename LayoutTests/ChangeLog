@@ -1,3 +1,16 @@
+2015-07-20  Andreas Kling  <akling@apple.com>
+
+        Improve behavior of media elements in page cache.
+        <https://webkit.org/b/147020>
+        <rdar://problem/21712311>
+
+        Reviewed by Chris Dumez.
+
+        Add some coverage for suspend/resume of queued events on cached media elements.
+
+        * media/restore-from-page-cache-expected.txt:
+        * media/restore-from-page-cache.html:
+
 2015-07-19  Tim Horton  <timothy_horton@apple.com>
 
         Make shrink-wrapping test a ref-test instead of pixel-test
