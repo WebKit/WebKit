@@ -233,6 +233,9 @@
     <Link />
     <ClCompile />
     <Link />
+    <Link>
+      <OptimizeReferences>false</OptimizeReferences>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Link />
@@ -283,6 +286,11 @@
     <Link />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Link>
+      <EnableCOMDATFolding>false</EnableCOMDATFolding>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|x64'">
     <Link>
       <EnableCOMDATFolding>false</EnableCOMDATFolding>
     </Link>

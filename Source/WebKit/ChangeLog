@@ -1,3 +1,16 @@
+2015-07-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Certain Debug builds can take close to 3 hours to link
+        https://bugs.webkit.org/show_bug.cgi?id=147114
+        <rdar://problem/21882777>
+
+        Reviewed by Tim Horton.
+
+        Correct the 64-bit DebugSuffix link target to match the 32-bit version.
+
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj: Turn off the REF and ICF
+        flags for the 64-bit DebugSuffix link target.
+
 2015-07-20  Alex Christensen  <achristensen@webkit.org>
 
         Resurrect CMake build on Windows.
