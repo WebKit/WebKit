@@ -1,3 +1,20 @@
+2015-07-20  Antti Koivisto  <antti@apple.com>
+
+        NSURLCache fallback does not work on iOS due to sandboxing
+        https://bugs.webkit.org/show_bug.cgi?id=146314
+        <rdar://problem/21433691>
+
+        Reviewed by Anders Carlsson.
+
+        This broke with earlier cache path computation changes.
+
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+
+            NSURLCache path is relative to the container cache path so "." is sufficient.
+            This puts the cache files under
+            <container>/Library/Caches/com.apple.WebKit.Networking/
+
 2015-07-20  Jeremy Jones  <jeremyj@apple.com>
 
         Adopt AVPlayerLayerView
