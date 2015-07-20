@@ -89,7 +89,7 @@ macro(ADD_WK2_TEST test_name)
 endmacro()
 
 ADD_WK2_TEST_WEB_EXTENSION(WebExtensionTest WebExtensionTest.cpp)
-ADD_WK2_TEST_WEB_EXTENSION(WebProcessTest DOMNodeTest.cpp DOMNodeFilterTest.cpp DOMXPathNSResolverTest.cpp FrameTest.cpp WebProcessTest.cpp)
+ADD_WK2_TEST_WEB_EXTENSION(WebProcessTest DOMNodeTest.cpp DOMNodeFilterTest.cpp DOMXPathNSResolverTest.cpp FrameTest.cpp WebProcessTest.cpp EditorTest.cpp)
 
 ADD_WK2_TEST(InspectorTestServer InspectorTestServer.cpp)
 ADD_WK2_TEST(TestAuthentication TestAuthentication.cpp)
@@ -119,6 +119,7 @@ ADD_WK2_TEST(TestWebViewEditor TestWebViewEditor.cpp)
 ADD_WK2_TEST(TestWebKitWebContext TestWebKitWebContext.cpp)
 ADD_WK2_TEST(TestWebKitWebView TestWebKitWebView.cpp)
 ADD_WK2_TEST(TestWebKitUserContentManager TestWebKitUserContentManager.cpp)
+ADD_WK2_TEST(TestEditor TestEditor.cpp)
 
 if (ATSPI_FOUND)
     ADD_WK2_TEST(AccessibilityTestServer AccessibilityTestServer.cpp)

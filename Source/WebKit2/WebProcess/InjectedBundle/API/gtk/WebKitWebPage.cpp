@@ -36,6 +36,7 @@
 #include "WebKitScriptWorldPrivate.h"
 #include "WebKitURIRequestPrivate.h"
 #include "WebKitURIResponsePrivate.h"
+#include "WebKitWebEditorPrivate.h"
 #include "WebKitWebHitTestResultPrivate.h"
 #include "WebKitWebPagePrivate.h"
 #include "WebProcess.h"
@@ -70,6 +71,8 @@ struct _WebKitWebPagePrivate {
     WebPage* webPage;
 
     CString uri;
+
+    GRefPtr<WebKitWebEditor> webEditor;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -394,6 +397,11 @@ static void webkit_web_page_class_init(WebKitWebPageClass* klass)
         WEBKIT_TYPE_WEB_HIT_TEST_RESULT);
 }
 
+WebPage* webkitWebPageGetPage(WebKitWebPage *webPage)
+{
+    return webPage->priv->webPage;
+}
+
 WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
 {
     WebKitWebPage* page = WEBKIT_WEB_PAGE(g_object_new(WEBKIT_TYPE_WEB_PAGE, NULL));
@@ -574,4 +582,24 @@ WebKitFrame* webkit_web_page_get_main_frame(WebKitWebPage* webPage)
     g_return_val_if_fail(WEBKIT_IS_WEB_PAGE(webPage), 0);
 
     return webkitFrameGetOrCreate(webPage->priv->webPage->mainWebFrame());
+}
+
+/**
+ * webkit_web_page_get_editor:
+ * @web_page: a #WebKitWebPage
+ *
+ * Gets the #WebKitWebEditor of a #WebKitWebPage.
+ *
+ * Returns: (transfer none): the #WebKitWebEditor
+ *
+ * Since: 2.10
+ */
+WebKitWebEditor* webkit_web_page_get_editor(WebKitWebPage* webPage)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_PAGE(webPage), nullptr);
+
+    if (!webPage->priv->webEditor)
+        webPage->priv->webEditor = adoptGRef(webkitWebEditorCreate(webPage));
+
+    return webPage->priv->webEditor.get();
 }

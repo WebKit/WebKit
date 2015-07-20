@@ -27,6 +27,7 @@
 #include <glib-object.h>
 #include <webkit2/WebKitDefines.h>
 #include <webkit2/WebKitFrame.h>
+#include <webkit2/WebKitWebEditor.h>
 #include <webkitdom/webkitdom.h>
 
 G_BEGIN_DECLS
@@ -41,6 +42,9 @@ G_BEGIN_DECLS
 typedef struct _WebKitWebPage        WebKitWebPage;
 typedef struct _WebKitWebPageClass   WebKitWebPageClass;
 typedef struct _WebKitWebPagePrivate WebKitWebPagePrivate;
+
+/* Forward declarations */
+typedef struct _WebKitWebEditor      WebKitWebEditor;
 
 struct _WebKitWebPage {
     GObject parent;
@@ -66,6 +70,9 @@ webkit_web_page_get_uri          (WebKitWebPage *web_page);
 
 WEBKIT_API WebKitFrame *
 webkit_web_page_get_main_frame   (WebKitWebPage *web_page);
+
+WEBKIT_API WebKitWebEditor *
+webkit_web_page_get_editor       (WebKitWebPage *web_page);
 
 G_END_DECLS
 

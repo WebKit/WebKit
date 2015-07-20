@@ -1,3 +1,29 @@
+2015-07-20  Tomas Popela  <tpopela@redhat.com>
+
+        [GTK] Add selection-changed signal to the WebKit2 API
+        https://bugs.webkit.org/show_bug.cgi?id=137116
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add a new object WebKitWebEditor where the editing capabilities of a
+        WebPage will be grouped and exposed. Add the selection-changed signal
+        there (we used the same name as in WK1 API).
+
+        * PlatformGTK.cmake:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebEditor.cpp: Added.
+        (didChangeSelection):
+        (webkitWebEditorCreate):
+        (webkit_web_editor_get_page):
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebEditor.h: Added.
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebEditorPrivate.h: Added.
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+        (webkitWebPageGetPage):
+        (webkit_web_page_get_editor):
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.h:
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPagePrivate.h:
+        * WebProcess/InjectedBundle/API/gtk/webkit-web-extension.h:
+
 2015-07-16  Anders Carlsson  <andersca@apple.com>
 
         WebsiteDataStore operations need to grab background assertions

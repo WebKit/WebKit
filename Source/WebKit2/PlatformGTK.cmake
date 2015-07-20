@@ -314,6 +314,7 @@ list(APPEND WebKit2_SOURCES
 
     WebProcess/InjectedBundle/API/gtk/WebKitFrame.cpp
     WebProcess/InjectedBundle/API/gtk/WebKitScriptWorld.cpp
+    WebProcess/InjectedBundle/API/gtk/WebKitWebEditor.cpp
     WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.cpp
     WebProcess/InjectedBundle/API/gtk/WebKitWebHitTestResult.cpp
     WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp
@@ -418,6 +419,7 @@ set(WebKit2GTK_INSTALLED_HEADERS
 set(WebKit2WebExtension_INSTALLED_HEADERS
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitFrame.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitScriptWorld.h
+    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitWebEditor.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitWebHitTestResult.h
     ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/WebKitWebPage.h

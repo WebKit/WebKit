@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2015 Red Hat Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,15 +17,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitWebPagePrivate_h
-#define WebKitWebPagePrivate_h
+#ifndef WebKitWebEditorPrivate_h
+#define WebKitWebEditorPrivate_h
 
-#include "APIDictionary.h"
+#include "WebKitWebEditor.h"
 #include "WebKitWebPage.h"
-#include "WebPage.h"
 
-WebKitWebPage* webkitWebPageCreate(WebKit::WebPage*);
-void webkitWebPageDidReceiveMessage(WebKitWebPage*, const String& messageName, API::Dictionary& message);
-WebKit::WebPage* webkitWebPageGetPage(WebKitWebPage*);
+WebKitWebEditor* webkitWebEditorCreate(WebKitWebPage*);
 
-#endif // WebKitWebPagePrivate_h
+#endif // WebKitWebEditor_h
