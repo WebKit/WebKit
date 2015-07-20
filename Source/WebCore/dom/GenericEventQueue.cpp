@@ -131,7 +131,9 @@ void GenericEventQueue::suspend()
 
 void GenericEventQueue::resume()
 {
-    ASSERT(m_isSuspended);
+    if (!m_isSuspended)
+        return;
+
     m_isSuspended = false;
 
     if (m_pendingEvents.isEmpty())
