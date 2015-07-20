@@ -320,16 +320,11 @@ void SeccompBroker::initialize()
 
 NO_RETURN void SeccompBroker::runLoop(int socket)
 {
-#ifndef NDEBUG
-    int i = STDERR_FILENO + 1;
-#else
-    int i = 0;
-#endif
-    // Close all inherited file descriptors other
-    // than the socket to the sandboxed process.
-    for (; i < FD_SETSIZE; ++i)
+    // Close unnecessary inherited file descriptors.
+    for (int i = STDERR_FILENO + 1; i < FD_SETSIZE; ++i) {
         if (i != socket)
             close(i);
+    }
 
     while (true) {
         char buffer[messageMaxSize];

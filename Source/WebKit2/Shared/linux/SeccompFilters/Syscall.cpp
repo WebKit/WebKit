@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Intel Corporation. All rights reserved.
+ * Copyright (C) 2015 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,9 +33,46 @@
 #include "OpenSyscall.h"
 #include "SigactionSyscall.h"
 #include "SigprocmaskSyscall.h"
+#include <limits>
 #include <seccomp.h>
+#include <string.h>
+#include <unistd.h>
 
 namespace WebKit {
+
+// The redundant "constexpr const" is to placate Clang's -Wwritable-strings.
+static constexpr const char* const message = "Blocked unexpected syscall: ";
+
+// Since "sprintf" is not signal-safe, reimplement %d here. Based on code from
+// http://outflux.net/teach-seccomp by Will Drewry and Kees Cook, released under
+// the Chromium BSD license.
+static void writeUnsignedInt(char* buf, unsigned val)
+{
+    int width = 0;
+    unsigned tens;
+
+    if (!val) {
+        strcpy(buf, "0");
+        return;
+    }
+    for (tens = val; tens; tens /= 10)
+        ++width;
+    buf[width] = '\0';
+    for (tens = val; tens; tens /= 10)
+        buf[--width] = '0' + (tens % 10);
+}
+
+static void reportUnexpectedSyscall(int syscall)
+{
+    char buf[128];
+#if defined(__has_builtin) && __has_builtin(__builtin_strlen)
+    static_assert(__builtin_strlen(message) + std::numeric_limits<int>::digits10 + 1 < sizeof(buf), "Buffer too small");
+#endif
+    strcpy(buf, message);
+    writeUnsignedInt(buf + strlen(buf), syscall);
+    strcat(buf, "\n");
+    write(STDERR_FILENO, buf, strlen(buf));
+}
 
 std::unique_ptr<Syscall> Syscall::createFromContext(ucontext_t* ucontext)
 {
@@ -54,7 +92,8 @@ std::unique_ptr<Syscall> Syscall::createFromContext(ucontext_t* ucontext)
     case __NR_rt_sigaction:
         return SigactionSyscall::createFromContext(mcontext);
     default:
-        CRASH();
+        reportUnexpectedSyscall(mcontext->gregs[REG_SYSCALL]);
+        ASSERT_NOT_REACHED();
     }
 
     return nullptr;

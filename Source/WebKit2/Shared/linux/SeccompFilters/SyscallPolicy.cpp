@@ -97,7 +97,13 @@ bool SyscallPolicy::hasPermissionForPath(const char* path, Permission permission
     free(basePath);
     free(canonicalPath);
 
-    return (permission & policy->value) == permission;
+    if ((permission & policy->value) == permission)
+        return true;
+
+    // Don't warn if the file doesn't exist at all.
+    if (!access(path, F_OK) || errno != ENOENT)
+        fprintf(stderr, "Blocked impermissible %s access to %s\n", SyscallPolicy::permissionToString(permission), path);
+    return false;
 }
 
 void SyscallPolicy::addFilePermission(const String& path, Permission permission)
@@ -254,6 +260,23 @@ void SyscallPolicy::addDefaultWebProcessPolicy(const WebProcessCreationParameter
         free(sourceDir);
     }
 #endif
+}
+
+const char* SyscallPolicy::permissionToString(Permission permission)
+{
+    switch (permission) {
+    case Read:
+        return "read";
+    case Write:
+        return "write";
+    case ReadAndWrite:
+        return "read/write";
+    case NotAllowed:
+        return "disallowed";
+    }
+
+    ASSERT_NOT_REACHED();
+    return "unknown action";
 }
 
 } // namespace WebKit

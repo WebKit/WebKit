@@ -52,6 +52,8 @@ public:
 
     void addDefaultWebProcessPolicy(const WebProcessCreationParameters&);
 
+    static const char* permissionToString(Permission);
+
 private:
     typedef HashMap<String, int> PermissionMap;
     PermissionMap m_filePermission;

@@ -1,3 +1,25 @@
+2015-07-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [Seccomp] Should be easier to debug blocked syscalls
+        https://bugs.webkit.org/show_bug.cgi?id=142980
+
+        These should be printed even when not running in debug mode. There is no
+        value in hiding errors from release build users.
+
+        Reviewed by Žan Doberšek.
+
+        * Shared/linux/SeccompFilters/SeccompBroker.cpp:
+        (WebKit::SeccompBroker::runLoop): Don't close stderr et. al. in release builds.
+        * Shared/linux/SeccompFilters/Syscall.cpp:
+        (WebKit::write_uint): Added.
+        (WebKit::reportUnexpectedSyscall): Added.
+        (WebKit::Syscall::createFromContext): Call reportUnexpectedSyscall. Also, no need to crash
+        here in release builds.
+        * Shared/linux/SeccompFilters/SyscallPolicy.cpp:
+        (WebKit::SyscallPolicy::hasPermissionForPath): Print a warning when access is denied.
+        (WebKit::SyscallPolicy::permissionToString): Added.
+        * Shared/linux/SeccompFilters/SyscallPolicy.h: Add permissionToString.
+
 2015-07-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix the !ENABLE(VIDEO) build after r186396
