@@ -1887,7 +1887,8 @@ void WebPageProxy::findPlugin(const String& mimeType, uint32_t processType, cons
         pluginProcessSandboxPolicy = PluginProcessSandboxPolicyUnsandboxed;
         break;
 
-    case PluginModuleBlocked:
+    case PluginModuleBlockedForSecurity:
+    case PluginModuleBlockedForCompatibility:
         pluginProcessToken = 0;
         return;
     }

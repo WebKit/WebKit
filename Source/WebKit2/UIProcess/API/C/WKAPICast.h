@@ -469,8 +469,10 @@ inline WKPluginLoadPolicy toWKPluginLoadPolicy(PluginModuleLoadPolicy pluginModu
         return kWKPluginLoadPolicyLoadNormally;
     case PluginModuleLoadUnsandboxed:
         return kWKPluginLoadPolicyLoadUnsandboxed;
-    case PluginModuleBlocked:
+    case PluginModuleBlockedForSecurity:
         return kWKPluginLoadPolicyBlocked;
+    case PluginModuleBlockedForCompatibility:
+        return kWKPluginLoadPolicyBlockedForCompatibility;
     }
     
     ASSERT_NOT_REACHED();
@@ -502,13 +504,15 @@ inline PluginModuleLoadPolicy toPluginModuleLoadPolicy(WKPluginLoadPolicy plugin
     case kWKPluginLoadPolicyLoadNormally:
         return PluginModuleLoadNormally;
     case kWKPluginLoadPolicyBlocked:
-        return PluginModuleBlocked;
+        return PluginModuleBlockedForSecurity;
+    case kWKPluginLoadPolicyBlockedForCompatibility:
+        return PluginModuleBlockedForCompatibility;
     case kWKPluginLoadPolicyLoadUnsandboxed:
         return PluginModuleLoadUnsandboxed;
     }
     
     ASSERT_NOT_REACHED();
-    return PluginModuleBlocked;
+    return PluginModuleBlockedForSecurity;
 }
 
 inline WebCore::PluginLoadClientPolicy toPluginLoadClientPolicy(WKPluginLoadClientPolicy pluginLoadClientPolicy)
