@@ -1,3 +1,24 @@
+2015-07-18  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION(186691): OSR entry is broken on loop headers that have no live variables
+        https://bugs.webkit.org/show_bug.cgi?id=147074
+        rdar://problem/21869970
+
+        Reviewed by Michael Saboff.
+        
+        The OSR entry must-handle block/value widening introduced in r186691 would cause the
+        CFA to reexecute if it caused any live local variables to change value. But this fails
+        if the must-handle block has no live local variables, and the entry block otherwise
+        appears to be unreachable.
+        
+        This fixes the bug by having the change detection include whether the block hadn't been
+        visited in addition to whether any local variable values got widened.
+        
+        This is a ~4% speed-up on SunSpider in browser.
+
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::run):
+
 2015-07-20  Mark Lam  <mark.lam@apple.com>
 
         Rollout r187020 and r187021: breaks JSC API tests on debug builds.
