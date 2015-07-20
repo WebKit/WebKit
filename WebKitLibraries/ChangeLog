@@ -1,3 +1,14 @@
+2015-07-20  Gordon Sheridan  <gordon_sheridan@apple.com>
+
+        WKSI support for blocking a plug-in for non-security reasons.
+        https://bugs.webkit.org/show_bug.cgi?id=145009
+
+        Reviewed by Anders Carlsson.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceMavericks.a:
+        * libWebKitSystemInterfaceYosemite.a:
+
 2015-07-02  Daniel Bates  <dabates@apple.com>
 
         [iOS] Add WebKitSystemInterface for iOS 8.4
