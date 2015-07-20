@@ -58,11 +58,13 @@ set(DumpRenderTree_INCLUDE_DIRECTORIES
     ${JAVASCRIPTCORE_DIR}/profiler
     ${JAVASCRIPTCORE_DIR}/runtime
     ${JAVASCRIPTCORE_DIR}/ForwardingHeaders
+    ${DERIVED_SOURCES_DIR}/ForwardingHeaders
     ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}
     ${TOOLS_DIR}/DumpRenderTree
     ${WTF_DIR}
     ${CMAKE_SOURCE_DIR}/Source
     ${CMAKE_BINARY_DIR}
+    ${DERIVED_SOURCES_DIR}
     ${DERIVED_SOURCES_WEBCORE_DIR}
     ${WEBCORE_DIR}/bindings/js
     ${WEBCORE_DIR}/testing/js

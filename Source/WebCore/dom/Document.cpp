@@ -633,7 +633,9 @@ Document::~Document()
     if (m_cachedResourceLoader->document() == this)
         m_cachedResourceLoader->setDocument(nullptr);
 
+#if ENABLE(VIDEO)
     PlatformMediaSessionManager::sharedManager().stopAllMediaPlaybackForDocument(this);
+#endif
     
     // We must call clearRareData() here since a Document class inherits TreeScope
     // as well as Node. See a comment on TreeScope.h for the reason.

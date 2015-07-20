@@ -1,3 +1,12 @@
+2015-07-20  Alex Christensen  <achristensen@webkit.org>
+
+        Resurrect CMake build on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=147083
+
+        Reviewed by Gyuyoung Kim.
+
+        * wtf/PlatformWin.cmake:
+
 2015-07-20  Per Arne Vollan  <peavo@outlook.com>
 
         JavaScriptCore performance is very bad on Windows

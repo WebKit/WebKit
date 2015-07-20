@@ -28,6 +28,7 @@
 #include "ClientRect.h"
 #include "ClientRectList.h"
 #include "DocumentFragment.h"
+#include "Event.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLElement.h"

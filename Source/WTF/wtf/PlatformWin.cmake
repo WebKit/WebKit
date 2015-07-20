@@ -4,8 +4,6 @@ list(APPEND WTF_SOURCES
     text/cf/StringImplCF.cpp
     text/cf/StringViewCF.cpp
 
-    threads/win/BinarySemaphoreWin.cpp
-
     win/MainThreadWin.cpp
     win/RunLoopWin.cpp
     win/WTFDLL.cpp

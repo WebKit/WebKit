@@ -3,6 +3,7 @@ set(WinLauncher_INCLUDE_DIRECTORIES
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKit"
     "${DERIVED_SOURCES_DIR}"
+    "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces"
     "${WTF_DIR}"
     "${CMAKE_SOURCE_DIR}"
     "${CMAKE_SOURCE_DIR}/Source"
@@ -14,6 +15,7 @@ set(WinLauncher_SOURCES
     PageLoadTestClient.cpp
     PrintWebUIDelegate.cpp
     ResourceLoadDelegate.cpp
+    WebDownloadDelegate.cpp
     WinLauncher.cpp
     WinLauncherWebHost.cpp
     WinMain.cpp

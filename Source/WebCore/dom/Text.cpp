@@ -22,6 +22,7 @@
 #include "config.h"
 #include "Text.h"
 
+#include "Event.h"
 #include "RenderCombineText.h"
 #include "RenderSVGInlineText.h"
 #include "RenderText.h"

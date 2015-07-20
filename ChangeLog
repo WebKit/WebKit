@@ -1,3 +1,14 @@
+2015-07-20  Alex Christensen  <achristensen@webkit.org>
+
+        Resurrect CMake build on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=147083
+
+        Reviewed by Gyuyoung Kim.
+
+        * Source/cmake/OptionsCommon.cmake:
+        * Source/cmake/OptionsWindows.cmake:
+        Change features to get it to compile.  Still not a complete feature set.
+
 2015-07-19  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Add seccomp filters support

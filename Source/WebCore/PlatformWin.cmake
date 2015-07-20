@@ -21,6 +21,9 @@ list(APPEND WebCore_SOURCES
     platform/Cursor.cpp
     platform/LocalizedStrings.cpp
     platform/PlatformStrategies.cpp
+    platform/VNodeTracker.cpp
+
+    platform/audio/PlatformMediaSessionManager.cpp
 
     platform/graphics/opentype/OpenTypeUtilities.cpp
 
@@ -48,6 +51,7 @@ list(APPEND WebCore_SOURCES
     platform/win/LanguageWin.cpp
     platform/win/LocalizedStringsWin.cpp
     platform/win/LoggingWin.cpp
+    platform/win/MemoryPressureHandlerWin.cpp
     platform/win/MIMETypeRegistryWin.cpp
     platform/win/PasteboardWin.cpp
     platform/win/PlatformMouseEventWin.cpp

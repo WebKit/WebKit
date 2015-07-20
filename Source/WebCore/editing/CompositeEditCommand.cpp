@@ -37,6 +37,7 @@
 #include "Editor.h"
 #include "EditorInsertAction.h"
 #include "ElementTraversal.h"
+#include "Event.h"
 #include "ExceptionCodePlaceholder.h"
 #include "Frame.h"
 #include "HTMLDivElement.h"
