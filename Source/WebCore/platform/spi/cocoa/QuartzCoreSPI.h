@@ -32,6 +32,7 @@
 #include <QuartzCore/CARenderServer.h>
 
 #ifdef __OBJC__
+#import <QuartzCore/CALayerHost.h>
 #import <QuartzCore/CALayerPrivate.h>
 
 // FIXME: As a workaround for <rdar://problem/18985152>, we conditionally enclose the following
@@ -134,6 +135,12 @@ typedef enum {
 + (void)addCommitHandler:(void(^)(void))block forPhase:(CATransactionPhase)phase;
 @end
 #endif
+
+@interface CALayerHost : CALayer
+@property uint32_t contextId;
+@property BOOL inheritsSecurity;
+@end
+
 #endif // __OBJC__
 
 #endif

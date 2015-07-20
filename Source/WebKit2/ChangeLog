@@ -1,3 +1,40 @@
+2015-07-20  Jeremy Jones  <jeremyj@apple.com>
+
+        Adopt AVPlayerLayerView
+        https://bugs.webkit.org/show_bug.cgi?id=146862
+
+        Reviewed by Simon Fraser.
+
+        The CALayerHost is replaced with WebLayerHostView to be compatible with UIView animations.
+        videoLayerFrame and videoLayerGravity no longer need to be stored because they are stored
+        where they are used in the interface. Some animation is improved in the conversion.
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.h:
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (+[WebLayerHostView layerClass]): Add class WebLayerHostView.
+        (-[WebLayerHostView contextID]):
+        (-[WebLayerHostView setContextID:]):
+        (-[WebLayerHostView layerHost]):
+        (WebKit::WebVideoFullscreenManagerProxy::invalidate): layer -> view
+        (WebKit::WebVideoFullscreenManagerProxy::setupFullscreenWithID):
+        Apply the hostingDeviceScaleFactor transform to -sublayerTransform instead of to
+        -transform. This more directly inverts the tranform WebProcess and allows -transform
+        to be used for animation in the UIProcess. This is important because UIView's actions
+        animate -transform, but not -sublayerTrasform.
+
+        (WebKit::WebVideoFullscreenManagerProxy::didCleanupFullscreen): layer -> view
+        (WebKit::WebVideoFullscreenModelContext::setVideoLayerFrame): Deleted.
+        (WebKit::WebVideoFullscreenModelContext::videoLayerFrame): Deleted.
+        (WebKit::WebVideoFullscreenModelContext::setVideoLayerGravity): Deleted.
+        (WebKit::WebVideoFullscreenModelContext::videoLayerGravity): Deleted.
+        * WebProcess/ios/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenManager::enterVideoFullscreenForVideoElement):
+        Set initial video layer frame to fix start point of animation.
+
+        (WebKit::WebVideoFullscreenManager::didSetupFullscreen):
+        dispatch_async allows the CATransaction to complete before continuing with the animation.
+        This prevents a flash during animation.
+
 2015-07-20  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r174287): Flash of black when opening a new web view or navigating to a new page

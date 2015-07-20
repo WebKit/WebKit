@@ -232,9 +232,13 @@ void WebVideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoEle
     RefPtr<WebVideoFullscreenInterfaceContext> interface;
     std::tie(model, interface) = ensureModelAndInterface(contextId);
 
+    FloatRect clientRect = clientRectForElement(&videoElement);
+    FloatRect videoLayerFrame = FloatRect(0, 0, clientRect.width(), clientRect.height());
+    
     interface->setTargetIsFullscreen(true);
     interface->setFullscreenMode(mode);
     model->setVideoElement(&videoElement);
+    model->setVideoLayerFrame(videoLayerFrame);
 
     if (interface->isAnimating())
         return;
@@ -428,7 +432,10 @@ void WebVideoFullscreenManager::didSetupFullscreen(uint64_t contextId)
 
     [CATransaction commit];
 
-    m_page->send(Messages::WebVideoFullscreenManagerProxy::EnterFullscreen(contextId), m_page->pageID());
+    RefPtr<WebVideoFullscreenManager> strongThis(this);
+    dispatch_async(dispatch_get_main_queue(), [strongThis, this, contextId] {
+        m_page->send(Messages::WebVideoFullscreenManagerProxy::EnterFullscreen(contextId), m_page->pageID());
+    });
 }
     
 void WebVideoFullscreenManager::didEnterFullscreen(uint64_t contextId)

@@ -34,9 +34,12 @@
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <AVKit/AVPlayerController.h>
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wobjc-property-no-attribute"
+#import <AVKit/AVPlayerLayerView.h>
+#pragma clang diagnostic pop
 #import <AVKit/AVPlayerViewController_Private.h>
 #import <AVKit/AVPlayerViewController_WebKitOnly.h>
-#import <AVKit/AVVideoLayer.h>
 
 #else
 
@@ -58,17 +61,17 @@ typedef NS_ENUM(NSInteger, AVPlayerControllerExternalPlaybackType) {
 @property (NS_NONATOMIC_IOSONLY, readonly) AVPlayerControllerStatus status;
 @end
 
-@protocol AVVideoLayer
-typedef NS_ENUM(NSInteger, AVVideoLayerGravity) {
-    AVVideoLayerGravityInvalid = 0,
-    AVVideoLayerGravityResizeAspect = 1,
-    AVVideoLayerGravityResizeAspectFill = 2,
-    AVVideoLayerGravityResize = 3,
-};
-- (void)setPlayerController:(AVPlayerController *)playerController;
-@property (nonatomic) AVVideoLayerGravity videoLayerGravity;
-@property (nonatomic) CGRect videoRect;
-@property (nonatomic, readonly, getter=isReadyForDisplay) BOOL readyForDisplay;
+@class AVPlayerLayer;
+
+@interface AVPictureInPicturePlayerLayerView : UIView
+@property (nonatomic, readonly) AVPlayerLayer *playerLayer;
+@end
+
+@interface AVPlayerLayerView : UIView
+@property (nonatomic, readonly) AVPlayerLayer *playerLayer;
+@property (nonatomic, readonly) AVPictureInPicturePlayerLayerView *pictureInPicturePlayerLayerView;
+- (void)startRoutingVideoToPictureInPicturePlayerLayerView;
+- (void)stopRoutingVideoToPictureInPicturePlayerLayerView;
 @end
 
 @protocol AVPlayerViewControllerDelegate <NSObject>
@@ -85,15 +88,15 @@ typedef NS_ENUM(NSInteger, AVPlayerViewControllerExitFullScreenReason) {
 @end
 
 @interface AVPlayerViewController (Details)
-- (instancetype)initWithVideoLayer:(CALayer <AVVideoLayer> *)videoLayer;
+- (instancetype)initWithPlayerLayerView:(AVPlayerLayerView *)playerLayerView;
 - (void)enterFullScreenAnimated:(BOOL)animated completionHandler:(void (^)(BOOL success, NSError *))completionHandler;
 - (void)exitFullScreenAnimated:(BOOL)animated completionHandler:(void (^)(BOOL success, NSError *))completionHandler;
 
 - (BOOL)isPictureInPicturePossible;
 - (void)startPictureInPicture;
 - (void)stopPictureInPicture;
-- (void)setAllowsPictureInPicturePlayback:(BOOL)allow;
 
+@property (nonatomic) BOOL allowsPictureInPicturePlayback;
 @property (nonatomic, strong) AVPlayerController *playerController;
 @property (nonatomic, weak) id <AVPlayerViewControllerDelegate> delegate;
 @end
