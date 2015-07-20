@@ -26,6 +26,10 @@
 #ifndef MobileGestaltSPI_h
 #define MobileGestaltSPI_h
 
+#import <wtf/Platform.h>
+
+#if PLATFORM(IOS)
+
 #include <CoreFoundation/CoreFoundation.h>
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -44,6 +48,8 @@ EXTERN_C CFTypeRef MGCopyAnswer(CFStringRef question, CFDictionaryRef options);
 
 #ifndef MGGetBoolAnswer
 EXTERN_C bool MGGetBoolAnswer(CFStringRef question);
+#endif
+
 #endif
 
 #endif // MobileGestaltSPI_h

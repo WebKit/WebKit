@@ -23,6 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <wtf/Platform.h>
+
+#if PLATFORM(IOS)
+
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
@@ -70,5 +74,7 @@ typedef NSInteger MPRouteDiscoveryMode;
 - (id)initWithType:(MPAVItemType)avItemType;
 - (void)showWithValidInterfaceOrientationMaskBlock:(UIInterfaceOrientationMask (^)(void))block completionHandler:(void (^)())completionHandler;
 @end
+
+#endif
 
 #endif
