@@ -1,3 +1,13 @@
+2015-07-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix the !ENABLE(VIDEO) build after r186396
+        https://bugs.webkit.org/show_bug.cgi?id=147116
+
+        Reviewed by Brent Fulgham.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didClose):
+
 2015-07-20  Tomas Popela  <tpopela@redhat.com>
 
         [GTK] Add selection-changed signal to the WebKit2 API
