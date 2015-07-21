@@ -1,3 +1,18 @@
+2015-07-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: console.assert(false, "Message") message is not visible in console
+        https://bugs.webkit.org/show_bug.cgi?id=147130
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype._appendMessageTextAndArguments):
+        We were forgetting to assign the result of args.concat back into args.
+        In re-addressing this, improve the formatting of output if there is
+        a string message or not as the second argument to console.assert(), as
+        that is the common usage.
+
 2015-07-18  Saam barati  <saambarati1@gmail.com>
 
         [ES6] Add support for block scope const
