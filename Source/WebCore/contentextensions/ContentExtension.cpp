@@ -75,6 +75,21 @@ StyleSheetContents* ContentExtension::globalDisplayNoneStyleSheet()
     return m_globalDisplayNoneStyleSheet.get();
 }
 
+const DFABytecodeInterpreter::Actions& ContentExtension::cachedDomainActions(const String& domain)
+{
+    if (m_cachedDomain != domain) {
+        DFABytecodeInterpreter interpreter(m_compiledExtension->domainFiltersBytecode(), m_compiledExtension->domainFiltersBytecodeLength());
+        const uint16_t allLoadTypesAndResourceTypes = LoadTypeMask | ResourceTypeMask;
+        auto domainActions = interpreter.interpret(domain.utf8(), allLoadTypesAndResourceTypes);
+        
+        m_cachedDomainActions.clear();
+        for (uint64_t action : domainActions)
+            m_cachedDomainActions.add(action);
+        m_cachedDomain = domain;
+    }
+    return m_cachedDomainActions;
+}
+    
 } // namespace ContentExtensions
 } // namespace WebCore
 
