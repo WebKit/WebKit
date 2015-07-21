@@ -1,3 +1,18 @@
+2015-07-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION (r172417, r184065): Multiple rendering issues with fixed attached background-image
+        https://bugs.webkit.org/show_bug.cgi?id=147049
+        <rdar://problem/21110936>
+
+        Reviewed by Simon Fraser.
+        
+        fixedLayoutSize background-image rendering for root and non-root elements.
+
+        * platform/mac-wk2/tiled-drawing/fixed-layout-size-fixed-attachment-cover-expected.html: Added.
+        * platform/mac-wk2/tiled-drawing/fixed-layout-size-fixed-attachment-cover.html: Added.
+        * platform/mac-wk2/tiled-drawing/fixed-layout-size-fixed-attachment-local-expected.html: Added.
+        * platform/mac-wk2/tiled-drawing/fixed-layout-size-fixed-attachment-local.html: Added.
+
 2015-07-21  Sungmann Cho  <sungmann.cho@navercorp.com>
 
         Make PluginProxy::handleMouseEvent() asynchronous.
