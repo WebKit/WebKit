@@ -60,11 +60,11 @@
 
 .toolbar .item.button > .label {
     text-align: center;
-    color: rgb(80, 80, 80);
+    color: hsl(0, 0%, 31%);
 }
 
 .toolbar.label-only .item.activate.button.activated > .label {
-    color: rgb(35, 125, 195);
+    color: hsl(206, 69%, 45%);
 }
 
 .toolbar.icon-and-label-horizontal .item.button > .label {

@@ -83,12 +83,12 @@ body.mac-platform.legacy .timeline-overview > .graphs-container {
 }
 
 .timeline-overview > .graphs-container > .timeline-overview-graph:nth-child(even) {
-    background-color: rgb(247, 247, 247);
+    background-color: hsl(0, 0%, 96%);
     background-clip: padding-box;
 }
 
 .timeline-overview > .graphs-container > .timeline-overview-graph:not(:first-child) {
-    border-top: 1px solid rgba(0, 0, 0, 0.09);
+    border-top: 1px solid hsla(0, 0%, 0%, 0.09);
 }
 
 .timeline-overview > .scroll-container > .scroll-width-sizer {

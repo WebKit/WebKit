@@ -31,7 +31,7 @@
 }
 
 .item > .status > .status-button > svg .filled {
-    fill: rgb(128, 128, 128);
+    fill: hsl(0, 0%, 50%);
 }
 
 :matches(:focus, .force-focus) .item.selected > .status > .status-button > svg .filled {
@@ -39,7 +39,7 @@
 }
 
 .item > .status > .status-button > svg .stroked {
-    stroke: rgb(128, 128, 128);
+    stroke: hsl(0, 0%, 50%);
 }
 
 :matches(:focus, .force-focus) .item.selected > .status > .status-button > svg .stroked {

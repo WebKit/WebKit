@@ -25,12 +25,12 @@
 
 .details-section {
     font-size: 10px;
-    background-color: rgb(242, 242, 242);
-    border-bottom: 1px solid rgb(179, 179, 179);
+    background-color: hsl(0, 0%, 94%);
+    border-bottom: 1px solid hsl(0, 0%, 70%);
 }
 
 .details-section .details-section {
-    background-color: rgb(255, 255, 255);
+    background-color: hsl(0, 0%, 100%);
     border-color: hsla(0, 0%, 0%, 0.15);
 }
 
@@ -39,7 +39,7 @@
 }
 
 .details-section .details-section:first-child {
-    border-top: 1px solid rgb(179, 179, 179);
+    border-top: 1px solid hsl(0, 0%, 70%);
 }
 
 .details-section > .header {
@@ -47,8 +47,8 @@
     top: -1px;
     height: 23px;
 
-    background-color: rgb(242, 242, 242);
-    color: rgb(57, 57, 57);
+    background-color: hsl(0, 0%, 94%);
+    color: hsl(0, 0%, 22%);
 
     white-space: nowrap;
     overflow: hidden;
@@ -65,18 +65,18 @@
 
 .details-section .details-section > .header {
     top: 21px;
-    background-color: rgb(255, 255, 255);
+    background-color: hsl(0, 0%, 100%);
 
     /* Ensure these headers are displayed below the parent header but above scrollbars. */
     z-index: 100;
 }
 
 .details-section .details-section:not(.collapsed) > .header {
-    border-bottom: 1px solid rgb(222, 222, 222);
+    border-bottom: 1px solid hsl(0, 0%, 87%);
 }
 
 .details-section.computed-style-properties:not(.collapsed) > .header {
-    background-color: rgb(255, 255, 255);
+    background-color: hsl(0, 0%, 100%);
 }
 
 .details-section > .header::before {
@@ -109,7 +109,7 @@
 .details-section > .header > label {
     float: right;
     font-size: 10px;
-    color: rgba(0, 0, 0, 0.6);
+    color: hsla(0, 0%, 0%, 0.6);
     text-align: right;
 }
 
@@ -146,7 +146,7 @@
 
 .details-section > .content > .group {
     display: table-row-group;
-    border-bottom: 1px solid rgb(179, 179, 179);
+    border-bottom: 1px solid hsl(0, 0%, 70%);
 }
 
 .details-section > .content > .group:last-child {
@@ -158,7 +158,7 @@
 }
 
 .details-section > .content > .group:nth-child(even) > .row:matches(.simple:first-child > *, :not(.simple):first-child) {
-    border-top: 1px solid rgb(179, 179, 179);
+    border-top: 1px solid hsl(0, 0%, 70%);
 }
 
 .details-section > .content > .group > .row.simple {
@@ -201,7 +201,7 @@
 }
 
 .details-section > .content > .group > .row.simple > .label {
-    color: rgb(51, 51, 51);
+    color: hsl(0, 0%, 20%);
 
     text-align: right;
 
@@ -258,7 +258,7 @@
 }
 
 .details-section > .content .data-grid tr:nth-child(odd) {
-    background-color: rgb(243, 246, 250);
+    background-color: hsl(214, 41%, 96%);
 }
 
 .details-section > .content .data-grid td.value-column {

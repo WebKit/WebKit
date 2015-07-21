@@ -26,7 +26,7 @@
 .sidebar {
     position: relative;
 
-    background-color: rgb(242, 242, 242);
+    background-color: hsl(0, 0%, 94%);
 }
 
 .sidebar.collapsed {
@@ -77,17 +77,17 @@
 }
 
 .sidebar.left {
-    border-right: 1px solid rgb(179, 179, 179);
+    border-right: 1px solid hsl(0, 0%, 70%);
 }
 
 .sidebar.right {
-    border-left: 1px solid rgb(179, 179, 179);
+    border-left: 1px solid hsl(0, 0%, 70%);
 }
 
 body.window-inactive .sidebar.left {
-    border-right-color: rgb(219, 219, 219);
+    border-right-color: hsl(0, 0%, 85%);
 }
 
 body.window-inactive .sidebar.right {
-    border-left-color: rgb(219, 219, 219);
+    border-left-color: hsl(0, 0%, 85%);
 }

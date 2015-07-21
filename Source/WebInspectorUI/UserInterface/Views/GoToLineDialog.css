@@ -33,9 +33,9 @@
     -webkit-transform: translate(-50%, -50%);
     padding: 3px;
     border-radius: 5px;
-    background-color: rgba(232, 232, 232, 0.95);
-    border: 1px rgb(218, 218, 218) solid;
-    box-shadow: 1px 5px 20px 3px rgba(0, 0, 0, 0.33);
+    background-color: hsla(0, 0%, 90%, 0.95);
+    border: 1px hsl(0, 0%, 85%) solid;
+    box-shadow: 1px 5px 20px 3px hsla(0, 0%, 0%, 0.33);
 }
 
 .go-to-line-dialog > div {
@@ -43,7 +43,7 @@
     height: 100%;
     border-radius: 4px;
     background-color: white;
-    border: 1px rgb(206, 206, 206) solid;
+    border: 1px hsl(0, 0%, 80%) solid;
 }
 
 .go-to-line-dialog > div > input {
@@ -53,13 +53,13 @@
     border: none;
     background-color: transparent;
     font-size: 20px;
-    color: rgb(12, 12, 12);
+    color: hsl(0, 0%, 4%);
     padding: 0 0 1px 5px;
     outline: none;
 }
 
 .go-to-line-dialog > div > input::-webkit-input-placeholder {
-    color: rgb(133, 133, 133);
+    color: hsl(0, 0%, 52%);
 }
 
 .go-to-line-dialog > div > img {
@@ -70,13 +70,13 @@
     border-radius: 9px;
     width: 18px;
     height: 18px;
-    background-color: rgb(188, 188, 188);
+    background-color: hsl(0, 0%, 73%);
     display: none;
     content: url(../Images/CloseWhite.svg);
 }
 
 .go-to-line-dialog > div > img:active {
-    background-color: rgb(140, 140, 140);
+    background-color: hsl(0, 0%, 54%);
 }
 
 .go-to-line-dialog.non-empty > div > img {

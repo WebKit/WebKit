@@ -36,10 +36,10 @@
 }
 
 .object-preview .name {
-    color: rgb(136, 19, 145);
+    color: hsl(295, 76%, 32%);
 }
 
 .object-preview > .size {
     font-style: normal;
-    color: rgba(0, 0, 0, 0.33);
+    color: hsla(0, 0%, 0%, 0.33);
 }

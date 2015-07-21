@@ -42,7 +42,7 @@
 }
 
 .CodeMirror .CodeMirror-selected {
-    background-color: rgb(212, 212, 212);
+    background-color: hsl(0, 0%, 83%);
 }
 
 .CodeMirror.CodeMirror-focused .CodeMirror-selected {
@@ -55,26 +55,26 @@
 
 .CodeMirror .CodeMirror-lines .CodeMirror-matchingbracket {
     color: inherit;
-    background-color: rgba(100, 130, 235, 0.2);
-    border-bottom: 1px dotted rgb(20, 20, 235);
+    background-color: hsla(226, 77%, 65%, 0.2);
+    border-bottom: 1px dotted hsl(240, 84%, 50%);
 }
 
 .CodeMirror .CodeMirror-lines .CodeMirror-nonmatchingbracket {
     color: inherit;
-    background-color: rgba(235, 30, 20, 0.2);
-    border-bottom: 1px dotted rgb(235, 30, 20);
+    background-color: hsla(2, 84%, 50%, 0.2);
+    border-bottom: 1px dotted hsl(2, 84%, 50%);
 }
 
 .CodeMirror .CodeMirror-gutters {
-    background-color: rgb(247, 247, 247);
-    border-right: 1px solid rgb(231, 231, 231);
+    background-color: hsl(0, 0%, 96%);
+    border-right: 1px solid hsl(0, 0%, 90%);
 }
 
 .CodeMirror .CodeMirror-linenumber {
     padding: 0 2px;
     min-width: 22px;
 
-    color: rgb(146, 146, 146);
+    color: hsl(0, 0%, 57%);
 
     font: 8px/13px -apple-system-monospaced-numbers, Menlo, Monaco, monospace;
     text-align: right;

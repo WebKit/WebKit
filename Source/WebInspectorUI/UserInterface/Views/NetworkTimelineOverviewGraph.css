@@ -41,5 +41,5 @@
 }
 
 .timeline-overview-graph.network:nth-child(even) > .graph-row > .timeline-record-bar > .segment:not(.inactive) {
-    box-shadow: rgb(247, 247, 247) 1px 0 0;
+    box-shadow: hsl(0, 0%, 96%) 1px 0 0;
 }

@@ -58,19 +58,19 @@ body {
 }
 
 body.docked.bottom {
-    border-top: 1px solid rgb(200, 200, 200);
+    border-top: 1px solid hsl(0, 0%, 78%);
 }
 
 body.docked.right {
-    border-left: 1px solid rgb(179, 179, 179);
+    border-left: 1px solid hsl(0, 0%, 70%);
 }
 
 body.window-inactive.docked.bottom {
-    border-top-color: rgb(219, 219, 219);
+    border-top-color: hsl(0, 0%, 85%);
 }
 
 body.window-inactive.docked.right {
-    border-left-color: rgb(219, 219, 219);
+    border-left-color: hsl(0, 0%, 85%);
 }
 
 #docked-resizer {
@@ -141,17 +141,17 @@ body.docked.right #navigation-sidebar.collapsed > .resizer {
 }
 
 #split-content-browser {
-    border-top: 1px solid rgb(179, 179, 179);
+    border-top: 1px solid hsl(0, 0%, 70%);
 }
 
 body.window-inactive #split-content-browser {
-    border-top-color: rgb(219, 219, 219);
+    border-top-color: hsl(0, 0%, 85%);
 }
 
 #split-content-browser > .navigation-bar {
     cursor: row-resize;
 
-    background-color: rgb(242, 242, 242);
+    background-color: hsl(0, 0%, 94%);
 }
 
 #split-content-browser > .navigation-bar .item:not(.flexible-space) {
@@ -165,7 +165,7 @@ body.window-inactive #split-content-browser {
 }
 
 #split-content-browser .hierarchical-path-component.log-icon .title {
-    color: rgba(0, 0, 0, 0.75);
+    color: hsla(0, 0%, 0%, 0.75);
 }
 
 #split-content-browser .hierarchical-path-component.log-icon select {
@@ -199,12 +199,12 @@ body.window-inactive #split-content-browser {
     font-size: 18px;
     font-weight: bold;
 
-    color: rgb(75%, 75%, 75%);
+    color: hsl(0, 0%, 74%);
     background-color: white;
 }
 
 .message-text-view.error {
-    color: rgb(224, 16, 16);
+    color: hsl(0, 86%, 47%);
 }
 
 .message-text-view.error::before {
@@ -221,7 +221,7 @@ body.window-inactive #split-content-browser {
 }
 
 .go-to-link {
-    color: rgb(85, 85, 85);
+    color: hsl(0, 0%, 33%);
     text-decoration: underline;
     cursor: pointer;
 }
@@ -294,17 +294,17 @@ body.window-inactive #split-content-browser {
 }
 
 .value-with-clarification .clarification {
-    color: #666;
+    color: hsl(0, 0%, 40%);
 }
 
 .bouncy-highlight {
     position: absolute;
     z-index: 100;
 
-    box-shadow: inset rgb(250, 232, 140) 0 -1px 0, rgba(211, 197, 96, 1) 0 1px 1px, rgba(0, 0, 0, 0.33) 0 1px 2px 1px;
+    box-shadow: inset hsl(50, 91%, 76%) 0 -1px 0, hsl(52, 56%, 60%) 0 1px 1px, hsla(0, 0%, 0%, 0.33) 0 1px 2px 1px;
     text-shadow: white 0 0 2px;
 
-    background: linear-gradient(to bottom, rgb(250, 237, 108), rgb(242, 220, 100));
+    background: linear-gradient(to bottom, hsl(54, 93%, 70%), hsl(50, 84%, 67%));
     border-radius: 7px;
 
     padding: 2px 4px;

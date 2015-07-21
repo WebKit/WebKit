@@ -35,18 +35,18 @@
 
 .cm-s-default .cm-comment,
 .syntax-highlighted :matches(.css-comment, .javascript-comment, .html-comment) {
-    color: rgb(0, 116, 0);
+    color: hsl(119, 100%, 22%);
 }
 
 .cm-s-default :matches(.cm-tag, .cm-bracket, .cm-atom, .cm-keyword, .cm-m-javascript.cm-builtin),
 .cm-s-default .cm-m-css:matches(.cm-atom, .cm-meta, .cm-variable-3, .cm-property),
 .syntax-highlighted :matches(.css-keyword, .css-tag, .css-at-rule, .css-important, .javascript-keyword, .html-tag) {
-    color: rgb(170, 13, 145);
+    color: hsl(309, 85%, 35%);
 }
 
 .cm-s-default :matches(.cm-number, .cm-atom.cm-hex-color),
 .syntax-highlighted :matches(.css-number, .javascript-number) {
-    color: rgb(28, 0, 207);
+    color: hsl(248, 100%, 40%);
 }
 
 .cm-s-default :matches(.cm-def, .cm-operator, .cm-variable, .cm-variable-2),
@@ -57,21 +57,21 @@
 
 .cm-s-default .cm-string,
 .syntax-highlighted :matches(.css-string, .javascript-string, .javascript-regexp, .html-attribute-value) {
-    color: rgb(196, 26, 22);
+    color: hsl(1, 79%, 42%);
 }
 
 .cm-s-default .cm-m-xml.cm-meta,
 .syntax-highlighted :matches(.html-doctype, .html-processing-instruction) {
-    color: rgb(192, 192, 192);
+    color: hsl(0, 0%, 75%);
 }
 
 .cm-s-default .cm-m-xml.cm-attribute,
 .syntax-highlighted .html-attribute-name {
-    color: rgb(131, 108, 40);
+    color: hsl(44, 53%, 33%);
 }
 
 .syntax-highlighted a {
-    color: rgb(14, 14, 255);
+    color: hsl(240, 100%, 52%);
 }
 
 .cm-s-default .cm-link,
@@ -87,12 +87,12 @@
 
 .supports-find-banner.showing-find-banner.syntax-highlighted .search-result,
 .supports-find-banner.showing-find-banner .syntax-highlighted .search-result {
-    background-color: rgba(235, 215, 38, 0.2);
-    border-bottom: 1px solid rgb(237, 202, 71);
+    background-color: hsla(53, 83%, 53%, 0.2);
+    border-bottom: 1px solid hsl(47, 82%, 60%);
 }
 
 .cm-s-default .basic-block-has-not-executed {
-    color: rgb(153, 153, 153);
+    color: hsl(0, 0%, 60%);
 }
 
 .cm-s-default .basic-block-has-not-executed.cm-comment {
@@ -101,19 +101,19 @@
 
 .cm-s-default .basic-block-has-not-executed:matches(.cm-tag, .cm-bracket, .cm-atom, .cm-keyword, .cm-m-javascript.cm-builtin),
 .cm-s-default .basic-block-has-not-executed.cm-m-css:matches(.cm-atom, .cm-meta, .cm-variable-3, .cm-property) {
-    color: rgb(196, 164, 191);
+    color: hsl(309, 21%, 70%);
 }
 
 .cm-s-default .basic-block-has-not-executed:matches(.cm-number, .cm-atom.cm-hex-color) {
-    color: rgb(180, 172, 229);
+    color: hsl(248, 52%, 78%);
 }
 
 .cm-s-default .basic-block-has-not-executed.cm-string {
-    color: rgb(204, 154, 153);
+    color: hsl(1, 33%, 70%);
 }
 
 .cm-s-default .basic-block-has-not-executed.cm-m-xml.cm-meta {
-    color: rgb(210, 210, 210);
+    color: hsl(0, 0%, 82%);
 }
 
 .cm-s-default .basic-block-has-not-executed.cm-m-xml.cm-attribute {

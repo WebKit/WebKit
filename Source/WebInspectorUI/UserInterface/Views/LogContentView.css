@@ -81,7 +81,7 @@
 }
 
 .console-item {
-    border-top: 1px solid rgb(240, 240, 240);
+    border-top: 1px solid hsl(0, 0%, 94%);
 }
 
 .console-error-level:not(.filtered-out, .filtered-out-by-search),
@@ -165,16 +165,16 @@
 }
 
 .console-session + .console-session {
-    border-top: 3px dashed rgb(240, 240, 240);
+    border-top: 3px dashed hsl(0, 0%, 94%);
 }
 
 .console-messages a {
-    color: rgb(33%, 33%, 33%);
+    color: hsl(0, 0%, 32%);
     cursor: pointer;
 }
 
 .console-messages a:hover {
-    color: rgb(15%, 15%, 15%);
+    color: hsl(0, 0%, 14%);
 }
 
 .console-messages .data-grid {
@@ -187,7 +187,7 @@
 
 .search-bar.log-search-bar > input[type="search"] {
     width: 150px;
-    border: 1px solid rgba(0, 0, 0, 0.35);
+    border: 1px solid hsla(0, 0%, 0%, 0.35);
     padding-left: 4px;
 }
 
@@ -197,12 +197,12 @@
 
 .search-in-progress .console-item:not(.filtered-out-by-search) .highlighted {
     color: black;
-    background-color: rgba(235, 215, 38, 0.2);
-    border-bottom: 1px solid rgb(237, 202, 71);
+    background-color: hsla(53, 83%, 53%, 0.2);
+    border-bottom: 1px solid hsl(47, 82%, 60%);
 }
 
 .search-in-progress .console-item:not(.filtered-out-by-search) .highlighted.selected {
-    background-color: rgba(235, 215, 38, 0.75);
+    background-color: hsla(53, 83%, 53%, 0.75);
 }
 
 /* @media reader currently blocked by: http://webkit.org/b/118096 */

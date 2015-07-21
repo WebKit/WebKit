@@ -24,7 +24,7 @@
  */
 
 .find-banner {
-    border-bottom: 1px solid rgb(179, 179, 179);
+    border-bottom: 1px solid hsl(0, 0%, 70%);
 
     position: absolute;
     top: -22px;
@@ -45,7 +45,7 @@
 }
 
 body.window-inactive .find-banner {
-    border-bottom-color: rgb(219, 219, 219);
+    border-bottom-color: hsl(0, 0%, 85%);
 }
 
 .find-banner.showing {
@@ -88,7 +88,7 @@ body.window-inactive .find-banner {
 
     outline: none;
 
-    border: 1px solid rgb(146, 146, 146);
+    border: 1px solid hsl(0, 0%, 57%);
     border-radius: 4px;
     background-color: white;
 }
@@ -102,7 +102,7 @@ body.window-inactive .find-banner {
     -webkit-appearance: none;
 
     border-radius: 4px;
-    border: 1px solid rgb(146, 146, 146);
+    border: 1px solid hsl(0, 0%, 57%);
 
     background-color: white;
     background-image: none;
@@ -130,13 +130,13 @@ body.window-inactive .find-banner {
 }
 
 .find-banner > button:active:not(:disabled) {
-    border: 1px solid rgb(141, 141, 141);
-    background-image: linear-gradient(to bottom, rgb(200, 200, 200), rgb(218, 218, 218));
-    box-shadow: rgba(255, 255, 255, 0.33) 0 1px 0, inset rgb(165, 165, 165) 0 1px 1px;
+    border: 1px solid hsl(0, 0%, 55%);
+    background-image: linear-gradient(to bottom, hsl(0, 0%, 78%), hsl(0, 0%, 85%));
+    box-shadow: hsla(0, 0%, 100%, 0.33) 0 1px 0, inset hsl(0, 0%, 64%) 0 1px 1px;
 }
 
 .find-banner > button:disabled {
-    border: 1px solid rgb(195, 195, 195);
+    border: 1px solid hsl(0, 0%, 76%);
     background-image: none;
 }
 

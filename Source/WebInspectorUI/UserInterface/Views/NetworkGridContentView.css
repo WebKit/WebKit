@@ -41,6 +41,6 @@
 }
 
 .content-view.network-grid > .data-grid table.data {
-    background-image: linear-gradient(to bottom, white, white 50%, rgb(243, 243, 243) 50%, rgb(243, 243, 243));
+    background-image: linear-gradient(to bottom, white, white 50%, hsl(0, 0%, 95%) 50%, hsl(0, 0%, 95%));
     background-size: 100% 40px;
 }

@@ -25,8 +25,8 @@
 
 .editing {
     -webkit-user-select: text;
-    box-shadow: rgba(0, 0, 0, .5) 3px 3px 4px;
-    outline: 1px solid rgb(66%, 66%, 66%) !important;
+    box-shadow: hsla(0, 0%, 0%, 0.5) 3px 3px 4px;
+    outline: 1px solid hsl(0, 0%, 65%) !important;
     background-color: white;
     -webkit-user-modify: read-write-plaintext-only;
     text-overflow: clip !important;

@@ -30,9 +30,9 @@
 
     position: relative;
 
-    border-bottom: 1px solid rgb(168, 168, 168);
+    border-bottom: 1px solid hsl(0, 0%, 65%);
 
-    background-image: linear-gradient(to bottom, rgb(199, 199, 199), rgb(184, 184, 184));
+    background-image: linear-gradient(to bottom, hsl(0, 0%, 78%), hsl(0, 0%, 72%));
     background-size: 100% 200%;
 
     height: 26px;
@@ -44,10 +44,10 @@
 }
 
 body.window-inactive .tab-bar {
-    border-bottom-color: rgb(219, 219, 219);
+    border-bottom-color: hsl(0, 0%, 85%);
 
     background-image: none !important;
-    background-color: rgb(236, 236, 236) !important;
+    background-color: hsl(0, 0%, 92%) !important;
 }
 
 .tab-bar > .top-border {
@@ -57,13 +57,13 @@ body.window-inactive .tab-bar {
     right: 0;
     height: 1px;
 
-    background-color: rgb(168, 168, 168);
+    background-color: hsl(0, 0%, 65%);
 
     z-index: 0;
 }
 
 body.window-inactive .tab-bar > .top-border {
-    background-color: rgb(219, 219, 219);
+    background-color: hsl(0, 0%, 85%);
 }
 
 .tab-bar > .item {
@@ -81,10 +81,10 @@ body.window-inactive .tab-bar > .top-border {
     min-width: 30px;
     overflow: hidden;
 
-    background-image: linear-gradient(to bottom, rgb(199, 199, 199), rgb(184, 184, 184));
+    background-image: linear-gradient(to bottom, hsl(0, 0%, 78%), hsl(0, 0%, 72%));
     background-size: 100% 200%;
 
-    border-top: 1px solid rgb(168, 168, 168);
+    border-top: 1px solid hsl(0, 0%, 65%);
 
     height: 100%;
     line-height: 15px;
@@ -98,7 +98,7 @@ body.window-inactive .tab-bar > .top-border {
 
 .tab-bar > :nth-child(n + 2 of .item),
 .tab-bar.dragging-tab > .item.selected {
-    border-left: 1px solid rgb(168, 168, 168);
+    border-left: 1px solid hsl(0, 0%, 65%);
 }
 
 .tab-bar > .item.pinned {
@@ -108,35 +108,35 @@ body.window-inactive .tab-bar > .top-border {
 }
 
 .tab-bar > .item:not(.disabled).selected {
-    border-top-color: rgb(190, 190, 190);
-    background-image: linear-gradient(to bottom, rgb(222, 222, 222), rgb(211, 211, 211));
+    border-top-color: hsl(0, 0%, 74%);
+    background-image: linear-gradient(to bottom, hsl(0, 0%, 87%), hsl(0, 0%, 82%));
     background-size: 100% 100%;
 }
 
 .tab-bar:not(.animating) > .item:not(.selected, .disabled):hover,
 .tab-bar > .item.new-tab-button:not(.disabled):hover {
     background-position: 0 100%;
-    border-top-color: rgb(152, 152, 152);
-    border-left-color: rgb(152, 152, 152);
+    border-top-color: hsl(0, 0%, 59%);
+    border-left-color: hsl(0, 0%, 59%);
 }
 
 .tab-bar:not(.animating) > .item:not(.selected, .disabled):hover + .item {
-    border-left-color: rgb(152, 152, 152);
+    border-left-color: hsl(0, 0%, 59%);
 }
 
 body.window-inactive .tab-bar > .item {
-    border-left-color: rgb(219, 219, 219) !important;
-    border-top-color: rgb(219, 219, 219) !important;
+    border-left-color: hsl(0, 0%, 85%) !important;
+    border-top-color: hsl(0, 0%, 85%) !important;
 
     background-image: none !important;
-    background-color: rgb(236, 236, 236) !important;
+    background-color: hsl(0, 0%, 92%) !important;
 
     transition: none;
 }
 
 body.window-inactive .tab-bar > .item.selected {
     background-image: none !important;
-    background-color: rgb(246, 246, 246) !important;
+    background-color: hsl(0, 0%, 96%) !important;
 }
 
 .tab-bar > .item > .close {
@@ -170,7 +170,7 @@ body:not(.window-inactive) .tab-bar:not(.single-tab) > .item:not(.hide-close-but
 }
 
 .tab-bar > .item > .close:hover {
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: hsla(0, 0%, 0%, 0.2);
 }
 
 .tab-bar > .item > .close:active {
@@ -214,7 +214,7 @@ body:not(.window-inactive) .tab-bar:not(.single-tab) > .item:not(.hide-close-but
 .tab-bar > .item > .title {
     margin-left: 6px;
 
-    color: rgba(0, 0, 0, 0.55);
+    color: hsla(0, 0%, 0%, 0.55);
 
     display: flex;
 
@@ -231,11 +231,11 @@ body:not(.window-inactive) .tab-bar:not(.single-tab) > .item:not(.hide-close-but
 }
 
 .tab-bar:not(.animating) > .item:not(.selected):hover > .title {
-    color: rgba(0, 0, 0, 0.6);
+    color: hsla(0, 0%, 0%, 0.6);
 }
 
 .tab-bar > .item.selected > .title {
-    color: rgba(0, 0, 0, 0.7);
+    color: hsla(0, 0%, 0%, 0.7);
 }
 
 .tab-bar.collapsed > .item {
@@ -295,13 +295,13 @@ body:not(.window-inactive) .tab-bar:not(.single-tab) > .item:not(.hide-close-but
 .tab-bar.dragging-tab > .item.selected,
 .tab-bar.static-layout:not(.animating.inserting-tab):not(.dragging-tab) > .item:nth-last-child(1 of :not(.pinned)),
 .tab-bar.animating.closing-tab > .item.selected {
-    border-right: 1px solid rgb(168, 168, 168);
+    border-right: 1px solid hsl(0, 0%, 65%);
 }
 
 body.window-inactive .tab-bar.dragging-tab > .item.selected,
 body.window-inactive .tab-bar.static-layout:not(.animating.inserting-tab):not(.dragging-tab) > .item:nth-last-child(1 of :not(.pinned)),
 body.window-inactive .tab-bar.animating.closing-tab > .item.selected {
-    border-right-color: rgb(219, 219, 219) !important;
+    border-right-color: hsl(0, 0%, 85%) !important;
 }
 
 .tab-bar.dragging-tab > .item.selected {

@@ -29,7 +29,7 @@
 }
 
 .data-grid .highlight {
-    background-color: rgb(255, 230, 179);
+    background-color: hsl(40, 100%, 85%);
 }
 
 .data-grid tr.selected .highlight {
@@ -58,7 +58,7 @@
 }
 
 .data-grid.inline {
-    border: 1px solid rgb(179, 179, 179);
+    border: 1px solid hsl(0, 0%, 70%);
 }
 
 .data-grid.no-header > table.header {
@@ -75,7 +75,7 @@
 
     background-color: white;
 
-    border-bottom: 1px solid rgb(179, 179, 179);
+    border-bottom: 1px solid hsl(0, 0%, 70%);
 
     font-weight: normal;
 
@@ -87,23 +87,23 @@
 }
 
 body.window-inactive .data-grid th {
-    border-bottom-color: rgb(219, 219, 219);
+    border-bottom-color: hsl(0, 0%, 85%);
 }
 
 .data-grid :matches(th, td):not(:last-child) {
-    border-right: 1px solid rgb(179, 179, 179);
+    border-right: 1px solid hsl(0, 0%, 70%);
 }
 
 body.window-inactive .data-grid :matches(th, td):not(:last-child) {
-    border-right-color: rgb(219, 219, 219);
+    border-right-color: hsl(0, 0%, 85%);
 }
 
 .data-grid th.sortable:active {
-    background-color: rgb(179, 179, 179);
+    background-color: hsl(0, 0%, 70%);
 }
 
 .data-grid th:matches(.sort-ascending, .sort-descending) {
-    background-color: rgb(230, 230, 230);
+    background-color: hsl(0, 0%, 90%);
 }
 
 .data-grid tr.filler {
@@ -124,7 +124,7 @@ body.window-inactive .data-grid :matches(th, td):not(:last-child) {
     bottom: 0;
     height: 100%;
     border-top: 0 none transparent;
-    background-image: linear-gradient(to bottom, white, white 50%, rgb(243, 246, 250) 50%, rgb(243, 246, 250));
+    background-image: linear-gradient(to bottom, white, white 50%, hsl(214, 41%, 96%) 50%, hsl(214, 41%, 96%));
     background-size: 100% 42px;
     table-layout: fixed;
 }
@@ -152,7 +152,7 @@ body.window-inactive .data-grid :matches(th, td):not(:last-child) {
 }
 
 .data-grid:matches(:focus, .force-focus) tr.selected td:not(:last-child) {
-    border-right-color: rgb(0, 102, 204);
+    border-right-color: hsl(210, 100%, 40%);
 }
 
 .data-grid :matches(th, td) > div {
@@ -248,12 +248,12 @@ body.window-inactive .data-grid :matches(th, td):not(:last-child) {
 }
 
 .data-grid tr.selected {
-    background-color: rgb(212, 212, 212) !important;
+    background-color: hsl(0, 0%, 83%) !important;
     color: inherit !important;
 }
 
 .data-grid:matches(:focus, .force-focus) tr.selected {
-    background-color: rgb(0, 128, 252) !important;
+    background-color: hsl(209, 100%, 49%) !important;
     color: white !important;
 }
 
@@ -262,7 +262,7 @@ body.window-inactive .data-grid :matches(th, td):not(:last-child) {
 }
 
 .data-grid td .subtitle {
-    color: rgba(0, 0, 0, 0.7);
+    color: hsla(0, 0%, 0%, 0.7);
 }
 
 .data-grid td .subtitle::before {
@@ -270,11 +270,11 @@ body.window-inactive .data-grid :matches(th, td):not(:last-child) {
 }
 
 .data-grid:matches(:focus, .force-focus) tr.selected td .subtitle {
-    color: rgba(255, 255, 255, 0.9);
+    color: hsla(0, 0%, 100%, 0.9);
 }
 
 .data-grid td.error {
-    color: rgb(224, 16, 16);
+    color: hsl(0, 86%, 47%);
 }
 
 .data-grid tr.selected td.error {

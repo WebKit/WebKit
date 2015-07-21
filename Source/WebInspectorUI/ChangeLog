@@ -1,3 +1,406 @@
+2015-07-21  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Convert all colors from RGB to HSL color scheme
+        https://bugs.webkit.org/show_bug.cgi?id=147143
+
+        HSL color scheme is more human friendly than RGB.
+
+        RGB -> HSL
+        RGB hex (e.g. #bada55 and #456) -> HSL
+        RGBA -> HSLA
+        Named colors (white, black, lightgoldenrodyellow) are unchanged        
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/CodeMirrorGradientEditingController.css:
+        (.gradient-editing-controller > label > input):
+        * UserInterface/Views/BoxModelDetailsSectionRow.css:
+        (.details-section .row.box-model .position):
+        (.details-section .row.box-model .margin):
+        (.details-section .row.box-model .margin.active):
+        (.details-section .row.box-model .border):
+        (.details-section .row.box-model .border.active):
+        (.details-section .row.box-model .padding):
+        (.details-section .row.box-model .padding.active):
+        (.details-section .row.box-model .content):
+        (.details-section .row.box-model .content.active):
+        * UserInterface/Views/Breakpoint.css:
+        (.popover .edit-breakpoint-popover-content > table > tr > th):
+        * UserInterface/Views/BreakpointActionView.css:
+        (.breakpoint-action-remove-button):
+        (.breakpoint-action-append-button):
+        (.breakpoint-action-block-body):
+        (.breakpoint-action-eval-editor):
+        * UserInterface/Views/BreakpointTreeElement.css:
+        (.breakpoint-generic-line-icon .icon > span):
+        (.data-updated.breakpoint-generic-line-icon .icon > span):
+        * UserInterface/Views/ButtonNavigationItem.css:
+        (.navigation-bar .item.button.text-only):
+        (.navigation-bar .item.button.suppress-emboss > .glyph):
+        * UserInterface/Views/ButtonToolbarItem.css:
+        (.toolbar .item.button > .label):
+        (.toolbar.label-only .item.activate.button.activated > .label):
+        * UserInterface/Views/CSSStyleDeclarationSection.css:
+        (.style-declaration-section > .header > .selector):
+        (.style-declaration-section > .header > .origin):
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.css:
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .css-style-declaration-property:matches(.disabled, .invalid, .other-vendor, .not-inherited, .overridden)):
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .css-style-declaration-property.invalid):
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .editing-line .css-style-declaration-property:matches(.disabled, .other-vendor, .not-inherited, .overridden)):
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .color-swatch):
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .color-swatch > span):
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .color-swatch:hover > span):
+        (.css-style-text-editor > .CodeMirror .CodeMirror-lines .color-swatch:active > span):
+        (.css-style-text-editor > .CodeMirror .cm-link):
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.css-style > .content > .pseudo-classes):
+        (.sidebar > .panel.details.css-style > .content > .pseudo-classes > .group > label):
+        (.sidebar > .panel.details.css-style > .content.has-filter-bar + .filter-bar):
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress .filter-matching):
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress .style-declaration-section:not(.filter-section-has-label)):
+        * UserInterface/Views/ChartDetailsSectionRow.css:
+        (.details-section > .content > .group > .row.chart > .title):
+        (.details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > .label > .color-swatch):
+        (.details-section > .content > .group > .row.chart > .chart-content > .legend > .legend-item > .label):
+        * UserInterface/Views/CodeMirrorOverrides.css:
+        (.CodeMirror .CodeMirror-selected):
+        (.CodeMirror .CodeMirror-lines .CodeMirror-matchingbracket):
+        (.CodeMirror .CodeMirror-lines .CodeMirror-nonmatchingbracket):
+        (.CodeMirror .CodeMirror-gutters):
+        (.CodeMirror .CodeMirror-linenumber):
+        * UserInterface/Views/CompletionSuggestionsView.css:
+        (.completion-suggestions):
+        (.completion-suggestions-container > .item:active):
+        * UserInterface/Views/ConsoleMessageView.css:
+        (.console-user-command.special-user-log > .console-message-text):
+        (.console-message .repeat-count):
+        (.console-message-preview-divider):
+        (.console-message-enclosed):
+        (.console-user-command > .console-message-text):
+        (.console-saved-variable):
+        * UserInterface/Views/DOMStorageContentView.css:
+        (.content-view.dom-storage > .data-grid tr.missing-value td.value-column):
+        (.content-view.dom-storage > .data-grid:focus tr.selected.missing-value td.value-column):
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.dom-tree-outline li.hovered:not(.selected) .selection):
+        (.dom-tree-outline li.selected .selection):
+        (.dom-tree-outline li.elements-drag-over .selection):
+        (.dom-tree-outline:focus li.selected .selection):
+        (.showing-find-banner .dom-tree-outline .search-highlight):
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid .highlight):
+        (.data-grid.inline):
+        (.data-grid th):
+        (body.window-inactive .data-grid th):
+        (.data-grid :matches(th, td):not(:last-child)):
+        (body.window-inactive .data-grid :matches(th, td):not(:last-child)):
+        (.data-grid th.sortable:active):
+        (.data-grid th:matches(.sort-ascending, .sort-descending)):
+        (.data-grid table.data):
+        (.data-grid:matches(:focus, .force-focus) tr.selected td:not(:last-child)):
+        (.data-grid tr.selected):
+        (.data-grid:matches(:focus, .force-focus) tr.selected):
+        (.data-grid td .subtitle):
+        (.data-grid:matches(:focus, .force-focus) tr.selected td .subtitle):
+        (.data-grid td.error):
+        * UserInterface/Views/DatabaseContentView.css:
+        (.storage-view .storage-table-error):
+        (.database-user-query):
+        (.database-query-text):
+        * UserInterface/Views/DebuggerDashboardView.css:
+        (.toolbar .dashboard.debugger):
+        (.dashboard.debugger .navigation-bar .item.button > .glyph):
+        (.dashboard.debugger > .divider):
+        (.dashboard.debugger > .location .function-name):
+        (.dashboard.debugger > .location .go-to-link):
+        * UserInterface/Views/DebuggerSidebarPanel.css:
+        (.sidebar > .panel.navigation.debugger.paused .details-section.scripts):
+        * UserInterface/Views/DefaultDashboardView.css:
+        (.toolbar .dashboard.default > .item.enabled:hover):
+        (.toolbar .dashboard.default > .item.enabled:active):
+        (.toolbar .dashboard.default > .item > div):
+        (.toolbar .dashboard.default > .item.enabled > div):
+        (.toolbar .dashboard.default > .item.enabled:hover > div):
+        (.toolbar .dashboard.default > .errors.enabled > div):
+        (.toolbar .dashboard.default > .errors.enabled:hover > div):
+        (.toolbar .dashboard.default > .issues.enabled > div):
+        (.toolbar .dashboard.default > .issues.enabled:hover > div):
+        * UserInterface/Views/DetailsSection.css:
+        (.details-section):
+        (.details-section .details-section):
+        (.details-section .details-section:first-child):
+        (.details-section > .header):
+        (.details-section .details-section > .header):
+        (.details-section .details-section:not(.collapsed) > .header):
+        (.details-section.computed-style-properties:not(.collapsed) > .header):
+        (.details-section > .header > label):
+        (.details-section > .content > .group):
+        (.details-section > .content > .group:nth-child(even) > .row:matches(.simple:first-child > *, :not(.simple):first-child)):
+        (.details-section > .content > .group > .row.simple > .label):
+        (.details-section > .content .data-grid tr:nth-child(odd)):
+        * UserInterface/Views/DividerNavigationItem.css:
+        (.navigation-bar .item.divider):
+        * UserInterface/Views/Editing.css:
+        (.editing):
+        * UserInterface/Views/FilterBar.css:
+        (.filter-bar):
+        (.filter-bar > input[type="search"]):
+        (.filter-bar > input[type="search"]::-webkit-input-placeholder):
+        * UserInterface/Views/FindBanner.css:
+        (.find-banner):
+        (body.window-inactive .find-banner):
+        (.find-banner > input[type="search"]):
+        (.find-banner > button):
+        (.find-banner > button:active:not(:disabled)):
+        (.find-banner > button:disabled):
+        * UserInterface/Views/FormattedValue.css:
+        (:matches(.formatted-array, .formatted-map, .formatted-set, .formatted-weakmap, .formatted-weakset) > .size):
+        (.formatted-number):
+        (.formatted-boolean):
+        (.formatted-string):
+        (.formatted-regexp):
+        (.formatted-symbol):
+        (.formatted-null, .formatted-undefined):
+        * UserInterface/Views/GoToLineDialog.css:
+        (.go-to-line-dialog):
+        (.go-to-line-dialog > div):
+        (.go-to-line-dialog > div > input):
+        (.go-to-line-dialog > div > input::-webkit-input-placeholder):
+        (.go-to-line-dialog > div > img):
+        (.go-to-line-dialog > div > img:active):
+        * UserInterface/Views/GradientSlider.css:
+        (.gradient-slider):
+        (.gradient-slider-knob > div):
+        * UserInterface/Views/HierarchicalPathComponent.css:
+        (.hierarchical-path-component > .title):
+        * UserInterface/Views/HoverMenu.css:
+        (.hover-menu > svg > :matches(path, rect)):
+        * UserInterface/Views/ImageResourceContentView.css:
+        (.content-view.resource.image):
+        * UserInterface/Views/IndexedDatabaseObjectStoreContentView.css:
+        (.content-view.indexed-database-object-store > .data-grid table.data tr:nth-child(odd)):
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.css:
+        (.panel.details.layer-tree .name-column :matches(.pseudo-element, .reflection)):
+        (.panel.details.layer-tree tr.selected .name-column :matches(.pseudo-element, .reflection)):
+        (.panel.details.layer-tree .bottom-bar):
+        * UserInterface/Views/LogContentView.css:
+        (.console-item):
+        (.console-session + .console-session):
+        (.console-messages a):
+        (.console-messages a:hover):
+        (.search-bar.log-search-bar > input[type="search"]):
+        (.search-in-progress .console-item:not(.filtered-out-by-search) .highlighted):
+        (.search-in-progress .console-item:not(.filtered-out-by-search) .highlighted.selected):
+        * UserInterface/Views/Main.css:
+        (body.docked.bottom):
+        (body.docked.right):
+        (body.window-inactive.docked.bottom):
+        (body.window-inactive.docked.right):
+        (#split-content-browser):
+        (body.window-inactive #split-content-browser):
+        (#split-content-browser > .navigation-bar):
+        (#split-content-browser .hierarchical-path-component.log-icon .title):
+        (.message-text-view):
+        (.message-text-view.error):
+        (.go-to-link):
+        (.value-with-clarification .clarification):
+        (.bouncy-highlight):
+        * UserInterface/Views/NavigationBar.css:
+        (.navigation-bar):
+        (body.window-inactive .navigation-bar):
+        * UserInterface/Views/NavigationSidebarPanel.css:
+        (.sidebar > .panel.navigation > .overflow-shadow):
+        (body.window-inactive .sidebar > .panel.navigation > .overflow-shadow):
+        (.sidebar > .panel.navigation > .empty-content-placeholder > .message):
+        (.navigation-sidebar-panel-content-tree-outline .item.selected):
+        (.navigation-sidebar-panel-content-tree-outline:matches(:focus, .force-focus) .item.selected):
+        (body.window-inactive .navigation-sidebar-panel-content-tree-outline .item.selected):
+        (.navigation-sidebar-panel-content-tree-outline .item .highlighted):
+        (.navigation-sidebar-panel-content-tree-outline .item .subtitle):
+        (.navigation-sidebar-panel-content-tree-outline:matches(:focus, .force-focus) .item.selected .subtitle):
+        * UserInterface/Views/NetworkGridContentView.css:
+        (.content-view.network-grid > .data-grid table.data):
+        * UserInterface/Views/NetworkSidebarPanel.css:
+        (.sidebar > .panel.navigation.network > .title-bar):
+        (body.window-inactive .sidebar > .panel.navigation.network > .title-bar):
+        (.sidebar > .panel.navigation.network.network-grid-content-view-showing > .content > .navigation-sidebar-panel-content-tree-outline):
+        * UserInterface/Views/NetworkTimelineOverviewGraph.css:
+        (.timeline-overview-graph.network:nth-child(even) > .graph-row > .timeline-record-bar > .segment:not(.inactive)):
+        * UserInterface/Views/NewTabContentView.css:
+        (.new-tab.tab.content-view):
+        (.new-tab.tab.content-view > .tab-item > .box):
+        * UserInterface/Views/ObjectPreviewView.css:
+        (.object-preview .name):
+        (.object-preview > .size):
+        * UserInterface/Views/ObjectTreeView.css:
+        (.object-tree-outline li .empty-message):
+        * UserInterface/Views/OverviewTimelineView.css:
+        (.timeline-view.overview > .timeline-ruler > .header):
+        (body.window-inactive .timeline-view.overview > .timeline-ruler > .header):
+        (.timeline-view.overview > .data-grid tr.parent:not(.expanded).selected td.graph-column .timeline-record-bar:not(.has-inactive-segment) > .segment):
+        (.timeline-view.overview > .data-grid:focus tr.parent:not(.expanded).selected td.graph-column .timeline-record-bar:not(.has-inactive-segment) > .segment):
+        (.timeline-view.overview > .data-grid tr.parent:not(.expanded).selected td.graph-column .timeline-record-bar.has-inactive-segment > .segment:not(.inactive)):
+        (.timeline-view.overview > .data-grid:focus tr.parent:not(.expanded).selected td.graph-column .timeline-record-bar.has-inactive-segment > .segment:not(.inactive)):
+        * UserInterface/Views/ProbeSetDataGrid.css:
+        (.details-section.probe-set .data-grid tr.past-value td):
+        (.details-section.probe-set .data-grid > td.unknown-value):
+        (@-webkit-keyframes blink-frame-highlight):
+        (100%):
+        (.details-section.probe-set .data-grid tr.separator):
+        (@-webkit-keyframes blink-probe-frame):
+        * UserInterface/Views/QuickConsole.css:
+        (.quick-console):
+        (body.window-inactive .quick-console):
+        (.quick-console.showing-log):
+        * UserInterface/Views/RadioButtonNavigationItem.css:
+        (.navigation-bar .item.radio.button.text-only:hover):
+        (.navigation-bar .item.radio.button.text-only.selected):
+        (.navigation-bar .item.radio.button.text-only:active):
+        (.navigation-bar .item.radio.button.text-only.selected:active):
+        * UserInterface/Views/RenderingFrameTimelineOverviewGraph.css:
+        (.timeline-overview-graph.rendering-frame > .divider):
+        (.timeline-overview-graph.rendering-frame > .divider > .label):
+        * UserInterface/Views/ReplayDashboardView.css:
+        (.toolbar .dashboard.replay):
+        * UserInterface/Views/ResourceTreeElement.css:
+        (.item.resource.failed):
+        (.item.resource.failed .subtitle):
+        * UserInterface/Views/RulesStyleDetailsPanel.css:
+        (.sidebar > .panel.details.css-style .rules .label):
+        (.sidebar > .panel.details.css-style > .content.filter-in-progress > .rules.filter-non-matching > .no-filter-results > .no-filter-results-message):
+        * UserInterface/Views/ScopeBar.css:
+        (.scope-bar > li):
+        (.scope-bar > li:hover):
+        (.scope-bar > li.selected):
+        (.scope-bar > li:active):
+        (.scope-bar > li.selected:active):
+        * UserInterface/Views/SearchBar.css:
+        (.search-bar > input[type="search"]):
+        (.search-bar > input[type="search"]::-webkit-input-placeholder):
+        * UserInterface/Views/SearchSidebarPanel.css:
+        (.sidebar > .panel.navigation.search > .search-bar):
+        * UserInterface/Views/Sidebar.css:
+        (.sidebar):
+        (.sidebar.left):
+        (.sidebar.right):
+        (body.window-inactive .sidebar.left):
+        (body.window-inactive .sidebar.right):
+        * UserInterface/Views/SourceCodeTextEditor.css:
+        (.source-code.text-editor > .CodeMirror .warning):
+        (.source-code.text-editor > .CodeMirror .error):
+        (.source-code.text-editor > .CodeMirror .issue-widget.warning):
+        (.source-code.text-editor > .CodeMirror .issue-widget.inline.warning):
+        (.source-code.text-editor > .CodeMirror .issue-widget.inline.warning > .arrow):
+        (.source-code.text-editor > .CodeMirror .issue-widget.error):
+        (.source-code.text-editor > .CodeMirror .issue-widget.inline.error):
+        (.source-code.text-editor > .CodeMirror .issue-widget.inline.error > .arrow):
+        (.popover .debugger-popover-content > .body):
+        * UserInterface/Views/SyntaxHighlightingDefaultTheme.css:
+        (.syntax-highlighted :matches(.css-comment, .javascript-comment, .html-comment)):
+        (.syntax-highlighted :matches(.css-keyword, .css-tag, .css-at-rule, .css-important, .javascript-keyword, .html-tag)):
+        (.syntax-highlighted :matches(.css-number, .javascript-number)):
+        (.syntax-highlighted :matches(.css-string, .javascript-string, .javascript-regexp, .html-attribute-value)):
+        (.syntax-highlighted :matches(.html-doctype, .html-processing-instruction)):
+        (.syntax-highlighted .html-attribute-name):
+        (.syntax-highlighted a):
+        (.supports-find-banner.showing-find-banner .syntax-highlighted .search-result):
+        (.cm-s-default .basic-block-has-not-executed):
+        (.cm-s-default .basic-block-has-not-executed.cm-m-css:matches(.cm-atom, .cm-meta, .cm-variable-3, .cm-property)):
+        (.cm-s-default .basic-block-has-not-executed:matches(.cm-number, .cm-atom.cm-hex-color)):
+        (.cm-s-default .basic-block-has-not-executed.cm-string):
+        (.cm-s-default .basic-block-has-not-executed.cm-m-xml.cm-meta):
+        * UserInterface/Views/TabBar.css:
+        (.tab-bar):
+        (body.window-inactive .tab-bar):
+        (.tab-bar > .top-border):
+        (body.window-inactive .tab-bar > .top-border):
+        (.tab-bar > .item):
+        (.tab-bar.dragging-tab > .item.selected):
+        (.tab-bar > .item:not(.disabled).selected):
+        (.tab-bar > .item.new-tab-button:not(.disabled):hover):
+        (.tab-bar:not(.animating) > .item:not(.selected, .disabled):hover + .item):
+        (body.window-inactive .tab-bar > .item):
+        (body.window-inactive .tab-bar > .item.selected):
+        (.tab-bar > .item > .close:hover):
+        (.tab-bar > .item > .title):
+        (.tab-bar:not(.animating) > .item:not(.selected):hover > .title):
+        (.tab-bar > .item.selected > .title):
+        (.tab-bar.animating.closing-tab > .item.selected):
+        (body.window-inactive .tab-bar.animating.closing-tab > .item.selected):
+        * UserInterface/Views/TextEditor.css:
+        (.text-editor > .CodeMirror .execution-line):
+        (.text-editor > .CodeMirror .hovered-expression-highlight):
+        (to):
+        * UserInterface/Views/TimelineDataGrid.css:
+        (.data-grid.timeline th):
+        (body.window-inactive .data-grid.timeline th):
+        (.timeline-data-grid-tree-outline .item:hover):
+        (.timeline-data-grid-tree-outline .item .subtitle):
+        * UserInterface/Views/TimelineOverview.css:
+        (.timeline-overview > .graphs-container > .timeline-overview-graph:nth-child(even)):
+        (.timeline-overview > .graphs-container > .timeline-overview-graph:not(:first-child)):
+        * UserInterface/Views/TimelineRecordBar.css:
+        (.timeline-record-bar > .segment):
+        (:matches(:focus, .force-focus) .selected .timeline-record-bar > .segment.inactive):
+        (:matches(:focus, .force-focus) .selected .timeline-record-bar.has-inactive-segment > .segment:not(.inactive)):
+        (.timeline-record-bar.timeline-record-type-network > .segment):
+        (.timeline-record-bar.timeline-record-type-network > .segment.inactive):
+        (.timeline-record-bar.timeline-record-type-layout > .segment):
+        (.timeline-record-bar.timeline-record-type-layout.layout-timeline-record-composite > .segment):
+        (.timeline-record-bar.timeline-record-type-script > .segment):
+        * UserInterface/Views/TimelineRecordFrame.css:
+        (.timeline-record-frame):
+        (.timeline-record-frame > .frame > .duration):
+        (.timeline-record-frame > .frame > .duration.rendering-frame-timeline-record-script):
+        (.timeline-record-frame > .frame > .duration.rendering-frame-timeline-record-layout):
+        (.timeline-record-frame > .frame > .duration.rendering-frame-timeline-record-paint):
+        * UserInterface/Views/TimelineRecordingContentView.css:
+        (.content-view.timeline-recording > .content-view-container > .timeline-view > .data-grid table.data):
+        * UserInterface/Views/TimelineRuler.css:
+        (.timeline-ruler > .header):
+        (body.window-inactive .timeline-ruler > .header):
+        (.timeline-ruler > .header > .divider):
+        (body.window-inactive .timeline-ruler > .header > .divider):
+        (.timeline-ruler > .header > .divider > .label):
+        (.timeline-ruler > .markers > .divider):
+        (.timeline-ruler > .markers > .marker):
+        (.timeline-ruler > .markers > .marker.load-event):
+        (.timeline-ruler > .markers > .marker.dom-content-event):
+        (.timeline-ruler > .markers > .marker.timestamp):
+        (.timeline-ruler > .selection-handle):
+        (.timeline-ruler > .shaded-area):
+        * UserInterface/Views/TimelineSidebarPanel.css:
+        (.sidebar > .panel.navigation.timeline > .status-bar):
+        (body.window-inactive .sidebar > .panel.navigation.timeline > .status-bar):
+        (.sidebar > .panel.navigation.timeline > .status-bar > .record-status):
+        (.sidebar > .panel.navigation.timeline > .title-bar):
+        (body.window-inactive .sidebar > .panel.navigation.timeline > .title-bar):
+        (.sidebar > .panel.navigation.timeline > .title-bar.timeline-events):
+        (body.window-inactive .sidebar > .panel.navigation.timeline > .title-bar.timeline-events):
+        (.sidebar > .panel.navigation.timeline > .timelines-content li.item:not(.selected):nth-child(even)):
+        (.sidebar > .panel.navigation.timeline > .timelines-content li.item:not(.selected):not(:first-child)):
+        (.sidebar > .panel.navigation.timeline > .timelines-content li.item.selected + li.item):
+        (body.window-inactive .sidebar > .panel.navigation.timeline > .timelines-content li.item.selected + li.item):
+        (.sidebar > .panel.navigation.timeline > .timelines-content :focus li.item.selected + li.item):
+        * UserInterface/Views/TimelineView.css:
+        (.panel.navigation.timeline.timeline-recording-content-view-showing > .content > .navigation-sidebar-panel-content-tree-outline):
+        * UserInterface/Views/Toolbar.css:
+        (.toolbar):
+        (body.window-inactive .toolbar):
+        * UserInterface/Views/TreeElementStatusButton.css:
+        (.item > .status > .status-button > svg .filled):
+        (.item > .status > .status-button > svg .stroked):
+        * UserInterface/Views/TypeTokenView.css:
+        (.type-token-function, .type-token-boolean):
+        (.type-token-number):
+        (.type-token-string):
+        (.type-token-symbol):
+        (.type-token-default):
+        (.type-token-empty):
+        (.type-token-many):
+        * UserInterface/Views/TypeTreeView.css:
+        (.type-tree-outline li .empty-message):
+
 2015-07-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: console.assert(false, "Message") message is not visible in console

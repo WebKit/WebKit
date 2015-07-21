@@ -24,11 +24,11 @@
  */
 
 .data-grid.timeline th {
-    border-top: 1px solid rgb(179, 179, 179);
+    border-top: 1px solid hsl(0, 0%, 70%);
 }
 
 body.window-inactive .data-grid.timeline th {
-    border-top-color: rgb(219, 219, 219);
+    border-top-color: hsl(0, 0%, 85%);
 }
 
 .timeline-data-grid-tree-outline {
@@ -65,11 +65,11 @@ body.window-inactive .data-grid.timeline th {
 .timeline-data-grid-tree-outline .item:hover {
     color: white;
     border-radius: 4px;
-    box-shadow: inset rgb(87, 152, 206) 0 1px 0;
-    background: linear-gradient(to bottom, rgb(110, 167, 216), rgb(36, 114, 181));
+    box-shadow: inset hsl(207, 54%, 57%) 0 1px 0;
+    background: linear-gradient(to bottom, hsl(207, 57%, 63%), hsl(207, 66%, 42%));
     background-origin: padding-box;
     background-clip: padding-box;
-    text-shadow: rgb(51, 88, 123) 0 1px 0;
+    text-shadow: hsl(209, 41%, 34%) 0 1px 0;
     -webkit-text-stroke: 0.4px;
 }
 
@@ -90,7 +90,7 @@ body.window-inactive .data-grid.timeline th {
 
 .timeline-data-grid-tree-outline .item .subtitle {
     font-size: 9px;
-    color: rgba(0, 0, 0, 0.7);
+    color: hsla(0, 0%, 0%, 0.7);
 }
 
 .timeline-data-grid-tree-outline .item:hover .subtitle {

@@ -24,14 +24,14 @@
  */
 
 .details-section.probe-set .data-grid tr.past-value td {
-    background-color: rgba(100, 100, 100, 0.2);
+    background-color: hsla(0, 0%, 39%, 0.2);
     font-style: italic;
-    color: #777;
+    color: hsl(0, 0%, 46%);
 }
 
 .details-section.probe-set .data-grid > td.unknown-value {
-    background-color: rgba(230, 230, 230, 0.8);
-    background-image: repeating-linear-gradient(-45deg, transparent, transparent 7px, rgba(255, 255, 255, .5) 7px, rgba(255, 255, 255, .5) 14px);
+    background-color: hsla(0, 0%, 90%, 0.8);
+    background-image: repeating-linear-gradient(-45deg, transparent, transparent 7px, hsla(0, 0%, 100%, 0.5) 7px, hsla(0, 0%, 100%, 0.5) 14px);
 }
 
 .details-section.probe-set .data-grid tr.revealed.highlighted {
@@ -43,20 +43,20 @@
 
 @-webkit-keyframes blink-frame-highlight {
     0% {
-        background-color: rgba(144, 111, 199, 0.8);
+        background-color: hsla(262, 44%, 60%, 0.8);
     }
 
     100% {
-        background-color: rgba(144, 111, 199, 0);
+        background-color: hsla(262, 44%, 60%, 0);
     }
 }
 
 .details-section.probe-set .data-grid tr.separator {
-    border-bottom: 3px solid #555;
+    border-bottom: 3px solid hsl(0, 0%, 33%);
 }
 
 .details-section.probe-set .data-grid tr.separator {
-    border-bottom: 2px solid #666;
+    border-bottom: 2px solid hsl(0, 0%, 40%);
 }
 
 .details-section.probe-set .data-grid > tr.data-updated {
@@ -66,11 +66,11 @@
 
 @-webkit-keyframes blink-probe-frame {
     0% {
-        background-color: rgba(144, 111, 199, 1);
+        background-color: hsl(262, 44%, 60%);
     }
 
     100% {
-        background-color: rgba(144, 111, 199, 0);
+        background-color: hsla(262, 44%, 60%, 0);
     }
 }
 

@@ -60,11 +60,11 @@ body.javascript .toolbar .dashboard.default > :matches(.resourcesCount, .resourc
 }
 
 .toolbar .dashboard.default > .item.enabled:hover {
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    border: 1px solid hsla(0, 0%, 0%, 0.1);
 }
 
 .toolbar .dashboard.default > .item.enabled:active {
-    border: 1px solid rgba(0, 0, 0, 0.2);
+    border: 1px solid hsla(0, 0%, 0%, 0.2);
 }
 
 .toolbar .dashboard.default > .item > * {
@@ -91,16 +91,16 @@ body.javascript .toolbar .dashboard.default > :matches(.resourcesCount, .resourc
     display: flex;
     flex: 1;
 
-    color: rgba(0, 0, 0, 0.2);
+    color: hsla(0, 0%, 0%, 0.2);
     padding-left: 2px;
 }
 
 .toolbar .dashboard.default > .item.enabled > div {
-    color: rgba(0, 0, 0, 0.7);
+    color: hsla(0, 0%, 0%, 0.7);
 }
 
 .toolbar .dashboard.default > .item.enabled:hover > div {
-    color: rgba(0, 0, 0, 0.85);
+    color: hsla(0, 0%, 0%, 0.85);
 }
 
 .toolbar .dashboard.default > .resourcesCount > img {
@@ -133,11 +133,11 @@ body.javascript .toolbar .dashboard.default > :matches(.resourcesCount, .resourc
 }
 
 .toolbar .dashboard.default > .errors.enabled > div {
-    color: rgba(201, 55, 57, 0.9);
+    color: hsla(359, 57%, 50%, 0.9);
 }
 
 .toolbar .dashboard.default > .errors.enabled:hover > div {
-    color: rgb(201, 55, 57);
+    color: hsl(359, 57%, 50%);
 }
 
 .toolbar .dashboard.default > .issues > img {
@@ -154,11 +154,11 @@ body.javascript .toolbar .dashboard.default > :matches(.resourcesCount, .resourc
 }
 
 .toolbar .dashboard.default > .issues.enabled > div {
-    color: rgba(224, 164, 4, 0.9);
+    color: hsla(43, 96%, 44%, 0.9);
 }
 
 .toolbar .dashboard.default > .issues.enabled:hover > div {
-    color: rgb(224, 164, 4);
+    color: hsl(43, 96%, 44%);
 }
 
 /* Styles for the pulsing animated state of console items */

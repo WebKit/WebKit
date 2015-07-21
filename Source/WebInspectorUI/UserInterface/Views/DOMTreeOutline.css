@@ -44,7 +44,7 @@
     left: 3px;
     right: 3px;
 
-    background-color: rgba(0, 128, 252, 0.1);
+    background-color: hsla(209, 100%, 49%, 0.1);
     border-radius: 5px;
 }
 
@@ -59,17 +59,17 @@
 
 .dom-tree-outline li.selected .selection {
     display: block;
-    background-color: rgb(212, 212, 212);
+    background-color: hsl(0, 0%, 83%);
 }
 
 .dom-tree-outline li.elements-drag-over .selection {
     display: block;
     margin-top: -2px;
-    border-top: 2px solid rgb(0, 128, 252);
+    border-top: 2px solid hsl(209, 100%, 49%);
 }
 
 .dom-tree-outline:focus li.selected .selection {
-    background-color: rgb(0, 128, 252);
+    background-color: hsl(209, 100%, 49%);
 }
 
 .dom-tree-outline li.selected > span::after {
@@ -156,8 +156,8 @@
 
 .showing-find-banner .dom-tree-outline .search-highlight {
     color: black;
-    background-color: rgba(235, 215, 38, 0.2);
-    border-bottom: 1px solid rgb(237, 202, 71);
+    background-color: hsla(53, 83%, 53%, 0.2);
+    border-bottom: 1px solid hsl(47, 82%, 60%);
 }
 
 .webkit-html-fragment.shadow {
