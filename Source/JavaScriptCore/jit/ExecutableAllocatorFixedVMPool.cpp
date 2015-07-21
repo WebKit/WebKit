@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,9 +60,14 @@ public:
     FixedVMPoolExecutableAllocator()
         : MetaAllocator(jitAllocationGranule) // round up all allocations to 32 bytes
     {
-        m_reservation = PageReservation::reserveWithGuardPages(fixedExecutableMemoryPoolSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
+        size_t reservationSize;
+        if (Options::jitMemoryReservationSize())
+            reservationSize = Options::jitMemoryReservationSize();
+        else
+            reservationSize = fixedExecutableMemoryPoolSize;
+        m_reservation = PageReservation::reserveWithGuardPages(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
         if (m_reservation) {
-            ASSERT(m_reservation.size() == fixedExecutableMemoryPoolSize);
+            ASSERT(m_reservation.size() == reservationSize);
             addFreshFreeSpace(m_reservation.base(), m_reservation.size());
             
             startOfFixedExecutableMemoryPool = reinterpret_cast<uintptr_t>(m_reservation.base());
@@ -148,12 +153,14 @@ double ExecutableAllocator::memoryPressureMultiplier(size_t addedMemoryUsage)
     MetaAllocator::Statistics statistics = allocator->currentStatistics();
     ASSERT(statistics.bytesAllocated <= statistics.bytesReserved);
     size_t bytesAllocated = statistics.bytesAllocated + addedMemoryUsage;
-    if (bytesAllocated >= statistics.bytesReserved)
-        bytesAllocated = statistics.bytesReserved;
+    size_t bytesAvailable = static_cast<size_t>(
+        statistics.bytesReserved * (1 - executablePoolReservationFraction));
+    if (bytesAllocated >= bytesAvailable)
+        bytesAllocated = bytesAvailable;
     double result = 1.0;
-    size_t divisor = statistics.bytesReserved - bytesAllocated;
+    size_t divisor = bytesAvailable - bytesAllocated;
     if (divisor)
-        result = static_cast<double>(statistics.bytesReserved) / divisor;
+        result = static_cast<double>(bytesAvailable) / divisor;
     if (result < 1.0)
         result = 1.0;
     return result;
@@ -169,6 +176,16 @@ RefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(VM&, size_t sizeInB
     if (effort == JITCompilationCanFail
         && doExecutableAllocationFuzzingIfEnabled() == PretendToFailExecutableAllocation)
         return nullptr;
+    
+    if (effort == JITCompilationCanFail) {
+        // Don't allow allocations if we are down to reserve.
+        MetaAllocator::Statistics statistics = allocator->currentStatistics();
+        size_t bytesAllocated = statistics.bytesAllocated + sizeInBytes;
+        size_t bytesAvailable = static_cast<size_t>(
+            statistics.bytesReserved * (1 - executablePoolReservationFraction));
+        if (bytesAllocated > bytesAvailable)
+            return nullptr;
+    }
     
     RefPtr<ExecutableMemoryHandle> result = allocator->allocate(sizeInBytes, ownerUID);
     if (!result) {

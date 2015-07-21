@@ -1,3 +1,37 @@
+2015-07-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Fixed VM pool allocation should have a reserve for allocations that cannot fail
+        https://bugs.webkit.org/show_bug.cgi?id=147154
+        rdar://problem/21847618
+
+        Reviewed by Geoffrey Garen.
+        
+        This adds the notion of a JIT pool reserve fraction. Some fraction, currently 1/4, of
+        the JIT pool is reserved for allocations that cannot fail. It makes sense to make this
+        a fraction rather than a constant because each allocation that can fail may cause some
+        number of allocations that cannot fail (for example, the OSR exit thunks that we
+        compile when we exit from some CodeBlock cannot fail).
+        
+        I've tested this by adding a test mode where we artificially limit the JIT pool size.
+        Prior to the fix, we had >20 failures. Now we have none.
+
+        * heap/GCLogging.cpp:
+        (WTF::printInternal): I needed a dump method on Options members when debugging this.
+        * heap/GCLogging.h:
+        * jit/ExecutableAllocator.h: Raise the ARM64 limit to 32MB because 16MB is cutting it too close.
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolExecutableAllocator::FixedVMPoolExecutableAllocator): Add the ability to artificially limit JIT pool size for testing.
+        (JSC::ExecutableAllocator::memoryPressureMultiplier): Implement the reserve when computing memory pressure for JIT tier-up heuristics.
+        (JSC::ExecutableAllocator::allocate): Implement the reserve when allocating can-fail things.
+        * jsc.cpp: Rewire some options parsing so that CommandLine happens before we create the JIT pool.
+        (main):
+        (CommandLine::parseArguments):
+        (jscmain):
+        * runtime/Options.cpp: 
+        (JSC::OptionRange::dump): I needed a dump method on Options members when debugging this.
+        (JSC::Options::initialize): This can now be called more than once.
+        * runtime/Options.h:
+
 2015-07-21  Saam barati  <saambarati1@gmail.com>
 
         ObjectPatternNode's entry should use "const Identifier&" instead of "Identifier"

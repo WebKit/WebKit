@@ -30,6 +30,7 @@
 #include <algorithm>
 #include <limits>
 #include <math.h>
+#include <mutex>
 #include <stdlib.h>
 #include <string.h>
 #include <wtf/DataLog.h>
@@ -201,6 +202,11 @@ bool OptionRange::isInRange(unsigned count)
     return m_state == Normal ? false : true;
 }
 
+void OptionRange::dump(PrintStream& out) const
+{
+    out.print(m_rangeString);
+}
+
 Options::Entry Options::s_options[Options::numberOfOptions];
 Options::Entry Options::s_defaultOptions[Options::numberOfOptions];
 
@@ -318,60 +324,66 @@ static void recomputeDependentOptions()
 
 void Options::initialize()
 {
-    // Initialize each of the options with their default values:
-#define FOR_EACH_OPTION(type_, name_, defaultValue_, description_) \
-    name_() = defaultValue_; \
-    name_##Default() = defaultValue_;
-    JSC_OPTIONS(FOR_EACH_OPTION)
+    static std::once_flag initializeOptionsOnceFlag;
+    
+    std::call_once(
+        initializeOptionsOnceFlag,
+        [] {
+            // Initialize each of the options with their default values:
+#define FOR_EACH_OPTION(type_, name_, defaultValue_, description_)      \
+            name_() = defaultValue_;                                    \
+            name_##Default() = defaultValue_;
+            JSC_OPTIONS(FOR_EACH_OPTION)
 #undef FOR_EACH_OPTION
     
-    // It *probably* makes sense for other platforms to enable this.
+                // It *probably* makes sense for other platforms to enable this.
 #if PLATFORM(IOS) && CPU(ARM64)
-    enableLLVMFastISel() = true;
+                enableLLVMFastISel() = true;
 #endif
         
-    // Allow environment vars to override options if applicable.
-    // The evn var should be the name of the option prefixed with
-    // "JSC_".
-#define FOR_EACH_OPTION(type_, name_, defaultValue_, description_) \
-    overrideOptionWithHeuristic(name_(), "JSC_" #name_);
-    JSC_OPTIONS(FOR_EACH_OPTION)
+            // Allow environment vars to override options if applicable.
+            // The evn var should be the name of the option prefixed with
+            // "JSC_".
+#define FOR_EACH_OPTION(type_, name_, defaultValue_, description_)      \
+            overrideOptionWithHeuristic(name_(), "JSC_" #name_);
+            JSC_OPTIONS(FOR_EACH_OPTION)
 #undef FOR_EACH_OPTION
 
 #if 0
-    ; // Deconfuse editors that do auto indentation
+                ; // Deconfuse editors that do auto indentation
 #endif
     
-    recomputeDependentOptions();
+            recomputeDependentOptions();
 
-    // Do range checks where needed and make corrections to the options:
-    ASSERT(Options::thresholdForOptimizeAfterLongWarmUp() >= Options::thresholdForOptimizeAfterWarmUp());
-    ASSERT(Options::thresholdForOptimizeAfterWarmUp() >= Options::thresholdForOptimizeSoon());
-    ASSERT(Options::thresholdForOptimizeAfterWarmUp() >= 0);
+            // Do range checks where needed and make corrections to the options:
+            ASSERT(Options::thresholdForOptimizeAfterLongWarmUp() >= Options::thresholdForOptimizeAfterWarmUp());
+            ASSERT(Options::thresholdForOptimizeAfterWarmUp() >= Options::thresholdForOptimizeSoon());
+            ASSERT(Options::thresholdForOptimizeAfterWarmUp() >= 0);
 
-    if (Options::showOptions()) {
-        DumpLevel level = static_cast<DumpLevel>(Options::showOptions());
-        if (level > DumpLevel::Verbose)
-            level = DumpLevel::Verbose;
+            if (Options::showOptions()) {
+                DumpLevel level = static_cast<DumpLevel>(Options::showOptions());
+                if (level > DumpLevel::Verbose)
+                    level = DumpLevel::Verbose;
 
-        const char* title = nullptr;
-        switch (level) {
-        case DumpLevel::None:
-            break;
-        case DumpLevel::Overridden:
-            title = "Overridden JSC options:";
-            break;
-        case DumpLevel::All:
-            title = "All JSC options:";
-            break;
-        case DumpLevel::Verbose:
-            title = "All JSC options with descriptions:";
-            break;
-        }
-        dumpAllOptions(level, title);
-    }
+                const char* title = nullptr;
+                switch (level) {
+                case DumpLevel::None:
+                    break;
+                case DumpLevel::Overridden:
+                    title = "Overridden JSC options:";
+                    break;
+                case DumpLevel::All:
+                    title = "All JSC options:";
+                    break;
+                case DumpLevel::Verbose:
+                    title = "All JSC options with descriptions:";
+                    break;
+                }
+                dumpAllOptions(level, title);
+            }
 
-    ensureOptionsAreCoherent();
+            ensureOptionsAreCoherent();
+        });
 }
 
 // Parses a single command line option in the format "<optionName>=<value>"

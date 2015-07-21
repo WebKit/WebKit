@@ -30,6 +30,7 @@
 #include "JSExportMacros.h"
 #include <stdint.h>
 #include <stdio.h>
+#include <wtf/PrintStream.h>
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {
@@ -80,6 +81,8 @@ public:
     bool init(const char*);
     bool isInRange(unsigned);
     const char* rangeString() const { return (m_state > InitError) ? m_rangeString : "<null>"; }
+    
+    void dump(PrintStream& out) const;
 
 private:
     RangeState m_state;
@@ -106,6 +109,7 @@ typedef const char* optionString;
     v(unsigned, errorModeReservedZoneSize, 64 * KB, nullptr) \
     \
     v(bool, crashIfCantAllocateJITMemory, false, nullptr) \
+    v(unsigned, jitMemoryReservationSize, 0, nullptr) \
     \
     v(bool, forceDFGCodeBlockLiveness, false, nullptr) \
     v(bool, forceICFailure, false, nullptr) \
@@ -350,7 +354,7 @@ public:
         gcLogLevelType,
     };
 
-    static void initialize();
+    JS_EXPORT_PRIVATE static void initialize();
 
     // Parses a single command line option in the format "<optionName>=<value>"
     // (no spaces allowed) and set the specified option if appropriate.

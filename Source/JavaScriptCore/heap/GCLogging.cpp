@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include "HeapIterationScope.h"
 #include "JSCell.h"
 #include "JSCellInlines.h"
+#include <wtf/PrintStream.h>
 
 namespace JSC {
 
@@ -113,3 +114,26 @@ void GCLogging::dumpObjectGraph(Heap* heap)
 }
 
 } // namespace JSC
+
+namespace WTF {
+
+void printInternal(PrintStream& out, JSC::GCLogging::Level level)
+{
+    switch (level) {
+    case JSC::GCLogging::Level::None:
+        out.print("None");
+        return;
+    case JSC::GCLogging::Level::Basic:
+        out.print("Basic");
+        return;
+    case JSC::GCLogging::Level::Verbose:
+        out.print("Verbose");
+        return;
+    default:
+        out.print("Level=", level - JSC::GCLogging::Level::None);
+        return;
+    }
+}
+
+} // namespace WTF
+
