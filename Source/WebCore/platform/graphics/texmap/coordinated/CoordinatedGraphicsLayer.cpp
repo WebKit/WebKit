@@ -460,19 +460,12 @@ void CoordinatedGraphicsLayer::setShowRepaintCounter(bool show)
 
 void CoordinatedGraphicsLayer::setContentsToImage(Image* image)
 {
-    NativeImagePtr newNativeImagePtr = image ? image->nativeImageForCurrentFrame() : 0;
-    if (newNativeImagePtr) {
-        // This code makes the assumption that pointer equality on a NativeImagePtr is a valid way to tell if the image is changed.
-        // This assumption is true in Qt, GTK and EFL.
-        if (newNativeImagePtr == m_compositedNativeImagePtr)
-            return;
+    NativeImagePtr nativeImagePtr = image ? image->nativeImageForCurrentFrame() : nullptr;
+    if (m_compositedImage == image && m_compositedNativeImagePtr == nativeImagePtr)
+        return;
 
-        m_compositedImage = image;
-        m_compositedNativeImagePtr = newNativeImagePtr;
-    } else {
-        m_compositedImage = nullptr;
-        m_compositedNativeImagePtr = nullptr;
-    }
+    m_compositedImage = image;
+    m_compositedNativeImagePtr = nativeImagePtr;
 
     GraphicsLayer::setContentsToImage(image);
     didChangeImageBacking();
