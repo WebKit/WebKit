@@ -53,7 +53,7 @@ namespace WebCore {
     M(Gamepad) \
     M(History) \
     M(IconDatabase) \
-    M(LiveConnect) \
+    M(Layout) \
     M(Loading) \
     M(Media) \
     M(MediaSource) \

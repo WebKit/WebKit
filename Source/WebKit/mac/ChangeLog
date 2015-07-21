@@ -1,3 +1,16 @@
+2015-07-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a logging channel for Layout, remove the LiveConnect channel
+        https://bugs.webkit.org/show_bug.cgi?id=147170
+
+        Reviewed by Zalan Bujtas.
+
+        Add a layout logging channel to WebCore, and remove the LiveConnect channel.
+
+        * Misc/WebKitLogging.h:
+        * Plugins/WebNetscapePluginPackage.mm:
+        (-[WebNetscapePluginPackage _tryLoad]): Deleted.
+
 2015-07-21  Brady Eidson  <beidson@apple.com>
 
         Fix WebPreferences infinite recursion introduced in r186232.

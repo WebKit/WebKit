@@ -53,7 +53,6 @@ extern "C" {
     M(FormDelegate) \
     M(History) \
     M(IconDatabase) \
-    M(LiveConnect) \
     M(Loading) \
     M(PageCache) \
     M(PluginEvents) \

@@ -614,6 +614,8 @@ void FrameView::adjustViewSize()
     const IntSize& size = rect.size();
     ScrollView::setScrollOrigin(IntPoint(-rect.x(), -rect.y()), !frame().document()->printing(), size == contentsSize());
 
+    LOG(Layout, "FrameView %p adjustViewSize: unscaled document size changed to %dx%d (scaled to %dx%d)", this, renderView->unscaledDocumentRect().width(), renderView->unscaledDocumentRect().height(), size.width(), size.height());
+
     setContentsSize(size);
 }
 
@@ -1146,6 +1148,8 @@ inline void FrameView::forceLayoutParentViewIfNeeded()
     if (svgRoot.everHadLayout() && !svgRoot.needsLayout())
         return;
 
+    LOG(Layout, "FrameView %p forceLayoutParentViewIfNeeded scheduling layout on parent FrameView %p", this, &ownerRenderer->view().frameView());
+
     // If the embedded SVG document appears the first time, the ownerRenderer has already finished
     // layout without knowing about the existence of the embedded SVG document, because RenderReplaced
     // embeddedContentBox() returns nullptr, as long as the embedded document isn't loaded yet. Before
@@ -1160,11 +1164,16 @@ inline void FrameView::forceLayoutParentViewIfNeeded()
 
 void FrameView::layout(bool allowSubtree)
 {
-    if (isInLayout())
+    LOG(Layout, "FrameView %p (%dx%d) layout, main frameview %d, allowSubtree=%d", this, size().width(), size().height(), frame().isMainFrame(), allowSubtree);
+    if (isInLayout()) {
+        LOG(Layout, "  in layout, bailing");
         return;
+    }
 
-    if (layoutDisallowed())
+    if (layoutDisallowed()) {
+        LOG(Layout, "  layout is disallowed, bailing");
         return;
+    }
 
     // Protect the view from being deleted during layout (in recalcStyle).
     Ref<FrameView> protect(*this);
@@ -1180,6 +1189,7 @@ void FrameView::layout(bool allowSubtree)
 
     if (inChildFrameLayoutWithFrameFlattening) {
         startLayoutAtMainFrameViewIfNeeded(allowSubtree);
+        LOG(Layout, "  frame flattening, starting from root");
         RenderElement* root = m_layoutRoot ? m_layoutRoot : frame().document()->renderView();
         if (!root || !root->needsLayout())
             return;
@@ -1231,6 +1241,7 @@ void FrameView::layout(bool allowSubtree)
         // Viewport-dependent media queries may cause us to need completely different style information.
         StyleResolver* styleResolver = document.styleResolverIfExists();
         if (!styleResolver || styleResolver->hasMediaQueriesAffectedByViewportChange()) {
+            LOG(Layout, "  hasMediaQueriesAffectedByViewportChange, enqueueing style recalc");
             document.styleResolverChanged(DeferRecalcStyle);
             // FIXME: This instrumentation event is not strictly accurate since cached media query results do not persist across StyleResolver rebuilds.
             InspectorInstrumentation::mediaQueryResultChanged(document);
@@ -1325,6 +1336,7 @@ void FrameView::layout(bool allowSubtree)
             m_size = layoutSize();
 
             if (oldSize != m_size) {
+                LOG(Layout, "  layout size changed from %.3fx%.3f to %.3fx%.3f", oldSize.width().toFloat(), oldSize.height().toFloat(), m_size.width().toFloat(), m_size.height().toFloat());
                 m_needsFullRepaint = true;
                 if (!m_firstLayout) {
                     RenderBox* rootRenderer = document.documentElement() ? document.documentElement()->renderBox() : nullptr;
@@ -3014,6 +3026,8 @@ void FrameView::flushAnyPendingPostLayoutTasks()
 
 void FrameView::performPostLayoutTasks()
 {
+    LOG(Layout, "FrameView %p performPostLayoutTasks", this);
+
     // FIXME: We should not run any JavaScript code in this function.
 
     m_postLayoutTasksTimer.stop();
@@ -3162,6 +3176,8 @@ void FrameView::autoSizeIfEnabled()
 
     if (m_inAutoSize)
         return;
+
+    LOG(Layout, "FrameView %p autoSizeIfEnabled", this);
 
     TemporaryChange<bool> changeInAutoSize(m_inAutoSize, true);
 

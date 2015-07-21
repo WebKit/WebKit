@@ -259,11 +259,6 @@ using namespace WebCore;
     pluginSize = pluginFuncs.size;
     pluginVersion = pluginFuncs.version;
 
-    if (pluginFuncs.javaClass)
-        LOG(LiveConnect, "%@:  mach-o entry point for NPP_GetJavaClass = %p", (NSString *)[self pluginInfo].name, pluginFuncs.javaClass);
-    else
-        LOG(LiveConnect, "%@:  no entry point for NPP_GetJavaClass", (NSString *)[self pluginInfo].name);
-
 #if !LOG_DISABLED
     currentTime = CFAbsoluteTimeGetCurrent();
     duration = currentTime - start;
