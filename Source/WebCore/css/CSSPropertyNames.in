@@ -117,6 +117,7 @@ text-rendering [Inherited, FontProperty, NameForMethods=TextRenderingMode]
 #endif
 -webkit-writing-mode [Inherited, Custom=Value]
 -epub-writing-mode = -webkit-writing-mode
+-webkit-text-zoom [Inherited, Custom=Value]
 zoom [Custom=All]
 font-synthesis [Inherited, FontProperty, Converter=FontSynthesis]
 

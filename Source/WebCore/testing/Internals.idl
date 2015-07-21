@@ -253,6 +253,7 @@ enum MediaSessionInterruptingCategory {
 
     [RaisesException] void setPageScaleFactor(unrestricted float scaleFactor, long x, long y);
     [RaisesException] void setPageZoomFactor(unrestricted float zoomFactor);
+    [RaisesException] void setTextZoomFactor(unrestricted float zoomFactor);
 
     [RaisesException] void setUseFixedLayout(boolean useFixedLayout);
     [RaisesException] void setFixedLayoutSize(long width, long height);

@@ -1,3 +1,14 @@
+2015-07-21  David Hyatt  <hyatt@apple.com>
+
+        Need a way to ignore text-zoom in a Web page.
+        https://bugs.webkit.org/show_bug.cgi?id=27092
+        rdar://problem/7037987
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/text-zoom-reset-expected.html: Added.
+        * fast/text/text-zoom-reset.html: Added.
+
 2015-07-20  Nan Wang  <n_wang@apple.com>
 
         AX: Selection change as a result of focusing an element may cause Safari to crash

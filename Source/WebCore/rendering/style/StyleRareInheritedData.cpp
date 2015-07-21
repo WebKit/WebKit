@@ -113,6 +113,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , m_textDecorationSkip(RenderStyle::initialTextDecorationSkip())
     , m_textUnderlinePosition(RenderStyle::initialTextUnderlinePosition())
     , m_rubyPosition(RenderStyle::initialRubyPosition())
+    , m_textZoom(RenderStyle::initialTextZoom())
 #if PLATFORM(IOS)
     , touchCalloutEnabled(RenderStyle::initialTouchCalloutEnabled())
 #endif
@@ -194,6 +195,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , m_textDecorationSkip(o.m_textDecorationSkip)
     , m_textUnderlinePosition(o.m_textUnderlinePosition)
     , m_rubyPosition(o.m_rubyPosition)
+    , m_textZoom(o.m_textZoom)
 #if PLATFORM(IOS)
     , touchCalloutEnabled(o.touchCalloutEnabled)
 #endif
@@ -321,6 +323,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && m_textDecorationSkip == o.m_textDecorationSkip
         && m_textUnderlinePosition == o.m_textUnderlinePosition
         && m_rubyPosition == o.m_rubyPosition
+        && m_textZoom == o.m_textZoom
         && m_lineSnap == o.m_lineSnap
         && m_lineAlign == o.m_lineAlign
 #if ENABLE(CSS_TRAILING_WORD)

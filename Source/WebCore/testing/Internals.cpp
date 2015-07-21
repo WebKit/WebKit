@@ -2012,6 +2012,17 @@ void Internals::setPageZoomFactor(float zoomFactor, ExceptionCode& ec)
     frame->setPageZoomFactor(zoomFactor);
 }
 
+void Internals::setTextZoomFactor(float zoomFactor, ExceptionCode& ec)
+{
+    Document* document = contextDocument();
+    if (!document || !document->frame()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+    Frame* frame = document->frame();
+    frame->setTextZoomFactor(zoomFactor);
+}
+
 void Internals::setUseFixedLayout(bool useFixedLayout, ExceptionCode& ec)
 {
     Document* document = contextDocument();

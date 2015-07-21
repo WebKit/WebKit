@@ -95,7 +95,8 @@ float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize
     float zoomFactor = 1.0f;
     if (!useSVGZoomRules) {
         zoomFactor = style->effectiveZoom();
-        if (Frame* frame = document.frame())
+        Frame* frame = document.frame();
+        if (frame && style->textZoom() != TextZoomReset)
             zoomFactor *= frame->textZoomFactor();
     }
     return computedFontSizeFromSpecifiedSize(specifiedSize, isAbsoluteSize, zoomFactor, useSVGZoomRules ? DoNotApplyMinimumFontSize : UseSmartMinimumForFontFize, document.settings());

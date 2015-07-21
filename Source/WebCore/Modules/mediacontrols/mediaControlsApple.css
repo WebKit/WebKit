@@ -87,6 +87,8 @@ audio::-webkit-media-controls-panel {
     direction: ltr;
 
     transition: opacity 0.25s linear;
+    
+    -webkit-text-zoom: reset
 }
 
 video::-webkit-media-controls-panel {

@@ -1991,7 +1991,7 @@ void StyleResolver::checkForZoomChange(RenderStyle* style, RenderStyle* parentSt
     if (!parentStyle)
         return;
     
-    if (style->effectiveZoom() == parentStyle->effectiveZoom())
+    if (style->effectiveZoom() == parentStyle->effectiveZoom() && style->textZoom() == parentStyle->textZoom())
         return;
 
     const FontDescription& childFont = style->fontDescription();

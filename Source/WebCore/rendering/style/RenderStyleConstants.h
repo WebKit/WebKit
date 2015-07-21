@@ -465,6 +465,10 @@ enum TextUnderlinePosition {
     TextUnderlinePositionAuto = 0x1, TextUnderlinePositionAlphabetic = 0x2, TextUnderlinePositionUnder = 0x4
 };
 
+enum TextZoom {
+    TextZoomNormal, TextZoomReset
+};
+
 enum EPageBreak {
     PBAUTO, PBALWAYS, PBAVOID
 };
