@@ -925,9 +925,24 @@ void WebProcessProxy::didCancelProcessSuspension()
     m_throttler.didCancelProcessSuspension();
 }
 
+#if ENABLE(NETWORK_PROCESS)
+void WebProcessProxy::reinstateNetworkProcessAssertionState(NetworkProcessProxy& newNetworkProcessProxy)
+{
+    ASSERT(!m_backgroundTokenForNetworkProcess || !m_foregroundTokenForNetworkProcess);
+
+    // The network process crashed; take new tokens for the new network process.
+    if (m_backgroundTokenForNetworkProcess)
+        m_backgroundTokenForNetworkProcess = newNetworkProcessProxy.throttler().backgroundActivityToken();
+    else if (m_foregroundTokenForNetworkProcess)
+        m_foregroundTokenForNetworkProcess = newNetworkProcessProxy.throttler().foregroundActivityToken();
+}
+#endif
+
 void WebProcessProxy::didSetAssertionState(AssertionState state)
 {
 #if PLATFORM(IOS) && ENABLE(NETWORK_PROCESS)
+    ASSERT(!m_backgroundTokenForNetworkProcess || !m_foregroundTokenForNetworkProcess);
+
     switch (state) {
     case AssertionState::Suspended:
         m_foregroundTokenForNetworkProcess = nullptr;
@@ -950,6 +965,8 @@ void WebProcessProxy::didSetAssertionState(AssertionState state)
             page->processWillBecomeForeground();
         break;
     }
+
+    ASSERT(!m_backgroundTokenForNetworkProcess || !m_foregroundTokenForNetworkProcess);
 #else
     UNUSED_PARAM(state);
 #endif

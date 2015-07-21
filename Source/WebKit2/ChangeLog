@@ -1,5 +1,40 @@
 2015-07-21  Daniel Bates  <dabates@apple.com>
 
+        WTFCrash() in WebKit::WebProcess::networkConnection()
+        https://bugs.webkit.org/show_bug.cgi?id=147112
+        <rdar://problem/18477459>
+
+        Reviewed by Gavin Barraclough.
+
+        Fixes an issue where a newly launched network process may be jetsam'd because it has not
+        taken a process assertion between the time it was launched and the time when a web process
+        makes use of it.
+
+        Initially a network process does not have a process assertion. A process assertion is taken
+        (if one has not been taken) for the network process when a process assertion is taken for at
+        least one web process. When the network process crashes a WebProcess may ultimately launch a
+        new network process in WebProcess::networkConnection(). The new network process may be jetsam'd
+        immediately when the system is under some measure pressure because it has a low jetsam priority,
+        0 (since it does not have a process assertion and higher priority implies that a process is less
+        likely to be jetsam'd). And the logic in WebProcess::networkConnection() explicitly calls
+        CRASH() if the newly launched network process crashes immediately. Towards preventing the newly
+        launched network process from being jetsam'd we should obtain a process assertion for it.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::WebProcessPool): Initialize m_didNetworkProcessCrash to false.
+        (WebKit::WebProcessPool::ensureNetworkProcess): If the network process crashed (m_didNetworkProcessCrash == true)
+        then tell each process in the pool to reinstate their network activity token for the new network process.
+        (WebKit::WebProcessPool::networkProcessCrashed): Set m_didNetworkProcessCrash to true when the
+        network process crashed.
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::reinstateNetworkProcessAssertionState): Added.
+        (WebKit::WebProcessProxy::didSetAssertionState): Add assert to ensure we never have both
+        a background- and foreground- activity token for the network process.
+        * UIProcess/WebProcessProxy.h:
+
+2015-07-21  Daniel Bates  <dabates@apple.com>
+
         ASSERT(m_suspendMessageCount >= 0) fails in ProcessThrottler::didCancelProcessSuspension()
         when WebContent process crashes; Network process may never voluntarily suspend
         https://bugs.webkit.org/show_bug.cgi?id=147122

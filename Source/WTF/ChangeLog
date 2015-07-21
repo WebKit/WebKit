@@ -1,3 +1,18 @@
+2015-07-21  Daniel Bates  <dabates@apple.com>
+
+        WTFCrash() in WebKit::WebProcess::networkConnection()
+        https://bugs.webkit.org/show_bug.cgi?id=147112
+        <rdar://problem/18477459>
+
+        Reviewed by Gavin Barraclough.
+
+        Add explicit boolean conversion function and remove overload of operator! to support
+        checking whether an activity token is valid more directly than using the overloaded operator!.
+
+        * wtf/RefCounter.h:
+        (WTF::RefCounter::Token::operator bool): Added.
+        (WTF::RefCounter::Token::operator!): Deleted.
+
 2015-07-20  Mark Lam  <mark.lam@apple.com>
 
         Rollout r187020 and r187021: breaks JSC API tests on debug builds.
