@@ -5018,6 +5018,9 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 #if ENABLE(GEOLOCATION)
     m_geolocationPermissionRequestManager.invalidateRequests();
 #endif
+#if ENABLE(MEDIA_STREAM)
+    m_userMediaPermissionRequestManager.invalidateRequests();
+#endif
 
     m_notificationPermissionRequestManager.invalidateRequests();
 

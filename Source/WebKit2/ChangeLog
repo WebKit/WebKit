@@ -1,3 +1,14 @@
+2015-07-21  Matthew Daiter  <mdaiter@apple.com>
+
+        Make sure to invalidate requests for user media after webpage reset
+        https://bugs.webkit.org/show_bug.cgi?id=147155
+        <rdar://problem/21924174>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::resetState): Added user media reset
+
 2015-07-21  Tim Horton  <timothy_horton@apple.com>
 
         [iOS] Avoid using a TextIndicator if there are non-text things to indicate
