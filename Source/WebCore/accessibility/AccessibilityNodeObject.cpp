@@ -1612,11 +1612,15 @@ unsigned AccessibilityNodeObject::hierarchicalLevel() const
 
 void AccessibilityNodeObject::setIsExpanded(bool expand)
 {
+#if ENABLE(DETAILS_ELEMENT)
     if (is<HTMLDetailsElement>(node())) {
         auto& details = downcast<HTMLDetailsElement>(*node());
         if (expand != details.isOpen())
             details.toggleOpen();
     }
+#else
+    UNUSED_PARAM(expand);
+#endif
 }
     
 // When building the textUnderElement for an object, determine whether or not
