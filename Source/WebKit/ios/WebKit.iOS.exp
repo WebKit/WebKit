@@ -5,6 +5,7 @@
 .objc_class_name_WebPluginController
 .objc_class_name_WebSelectionRect
 _WebDatabaseOriginsDidChangeNotification
+_WebKitCreatePathWithShrinkWrappedRects
 _WebKitGetLastLineBreakInBuffer
 _WebKitGetMinimumZoomFontSize
 _WebKitInitialize
