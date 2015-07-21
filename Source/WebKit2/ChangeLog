@@ -1,3 +1,18 @@
+2015-07-21  Andreas Kling  <akling@apple.com>
+
+        API::Session should clean up its storage in the network process when destroyed.
+        <https://webkit.org/b/147139>
+        <rdar://problem/21838764>
+
+        Reviewed by Anders Carlsson.
+
+        Have ~Session() send a DestroyPrivateBrowsingSession message to all networking processes
+        for ephemeral sessions. This plugs a NetworkStorageSession leak that could retain a large
+        CFNetwork object graph.
+
+        * UIProcess/API/APISession.cpp:
+        (API::Session::~Session):
+
 2015-07-21  Sungmann Cho  <sungmann.cho@navercorp.com>
 
         Make PluginProxy::handleMouseEvent() asynchronous.
