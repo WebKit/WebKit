@@ -40,6 +40,7 @@ using namespace HTMLNames;
 
 inline HTMLSourceElement::HTMLSourceElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
+    , ActiveDOMObject(&document)
     , m_errorEventTimer(*this, &HTMLSourceElement::errorEventTimerFired)
 {
     LOG(Media, "HTMLSourceElement::HTMLSourceElement - %p", this);
@@ -48,7 +49,9 @@ inline HTMLSourceElement::HTMLSourceElement(const QualifiedName& tagName, Docume
 
 Ref<HTMLSourceElement> HTMLSourceElement::create(const QualifiedName& tagName, Document& document)
 {
-    return adoptRef(*new HTMLSourceElement(tagName, document));
+    Ref<HTMLSourceElement> sourceElement = adoptRef(*new HTMLSourceElement(tagName, document));
+    sourceElement->suspendIfNeeded();
+    return sourceElement;
 }
 
 Node::InsertionNotificationRequest HTMLSourceElement::insertedInto(ContainerNode& insertionPoint)
@@ -119,6 +122,37 @@ void HTMLSourceElement::errorEventTimerFired()
 bool HTMLSourceElement::isURLAttribute(const Attribute& attribute) const
 {
     return attribute.name() == srcAttr || HTMLElement::isURLAttribute(attribute);
+}
+
+const char* HTMLSourceElement::activeDOMObjectName() const
+{
+    return "HTMLSourceElement";
+}
+
+bool HTMLSourceElement::canSuspendForPageCache() const
+{
+    return true;
+}
+
+void HTMLSourceElement::suspend(ReasonForSuspension why)
+{
+    if (why == PageCache) {
+        m_shouldRescheduleErrorEventOnResume = m_errorEventTimer.isActive();
+        m_errorEventTimer.stop();
+    }
+}
+
+void HTMLSourceElement::resume()
+{
+    if (m_shouldRescheduleErrorEventOnResume) {
+        m_errorEventTimer.startOneShot(0);
+        m_shouldRescheduleErrorEventOnResume = false;
+    }
+}
+
+void HTMLSourceElement::stop()
+{
+    cancelPendingErrorEvent();
 }
 
 }

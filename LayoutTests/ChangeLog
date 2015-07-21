@@ -1,5 +1,22 @@
 2015-07-20  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r187031. rdar://problem/21712311
+
+    2015-07-20  Andreas Kling  <akling@apple.com>
+
+            Improve behavior of media elements in page cache.
+            <https://webkit.org/b/147020>
+            <rdar://problem/21712311>
+
+            Reviewed by Chris Dumez.
+
+            Add some coverage for suspend/resume of queued events on cached media elements.
+
+            * media/restore-from-page-cache-expected.txt:
+            * media/restore-from-page-cache.html:
+
+2015-07-20  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r186988. rdar://problem/21567820
 
     2015-07-18  David Kilzer  <ddkilzer@apple.com>
