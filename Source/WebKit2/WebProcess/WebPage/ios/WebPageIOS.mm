@@ -63,6 +63,7 @@
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/HTMLElementTypeHelpers.h>
 #import <WebCore/HTMLFormElement.h>
+#import <WebCore/HTMLImageElement.h>
 #import <WebCore/HTMLInputElement.h>
 #import <WebCore/HTMLOptGroupElement.h>
 #import <WebCore/HTMLOptionElement.h>
@@ -2143,6 +2144,19 @@ static Element* containingLinkElement(Element* element)
     return nullptr;
 }
 
+static bool shouldUseTextIndicatorForLink(Element& element)
+{
+    if (element.renderer() && !element.renderer()->isInline())
+        return false;
+
+    for (auto& child : descendantsOfType<Element>(element)) {
+        if (child.renderer() && !child.renderer()->isInline())
+            return false;
+    }
+
+    return true;
+}
+
 void WebPage::getPositionInformation(const IntPoint& point, InteractionInformationAtPosition& info)
 {
     FloatPoint adjustedPoint;
@@ -2194,13 +2208,15 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
                     if (RefPtr<WebImage> snapshot = snapshotNode(*element, SnapshotOptionsShareable, 600 * 1024))
                         info.image = snapshot->bitmap();
 
-                    RefPtr<Range> linkRange = rangeOfContents(*linkElement);
-                    if (linkRange) {
-                        float deviceScaleFactor = corePage()->deviceScaleFactor();
-                        const float marginInPoints = 4;
-                        RefPtr<TextIndicator> textIndicator = TextIndicator::createWithRange(*linkRange, TextIndicatorPresentationTransition::None, marginInPoints * deviceScaleFactor);
-                        if (textIndicator)
-                            info.linkIndicator = textIndicator->data();
+                    if (shouldUseTextIndicatorForLink(*linkElement)) {
+                        RefPtr<Range> linkRange = rangeOfContents(*linkElement);
+                        if (linkRange) {
+                            float deviceScaleFactor = corePage()->deviceScaleFactor();
+                            const float marginInPoints = 4;
+                            RefPtr<TextIndicator> textIndicator = TextIndicator::createWithRange(*linkRange, TextIndicatorPresentationTransition::None, marginInPoints * deviceScaleFactor);
+                            if (textIndicator)
+                                info.linkIndicator = textIndicator->data();
+                        }
                     }
                 } else if (element->renderer() && element->renderer()->isRenderImage()) {
                     auto& renderImage = downcast<RenderImage>(*(element->renderer()));

@@ -3331,9 +3331,14 @@ static bool isAssistableInputType(InputType type)
 
     [_previewIndicatorView removeFromSuperview];
 
+    float deviceScaleFactor = _page->deviceScaleFactor();
+
     RefPtr<Image> image = _positionInformation.linkIndicator.contentImage;
     if (!image) {
-        [[viewController presentationController] setSourceRect:_positionInformation.bounds];
+        IntRect sourceRect = _positionInformation.bounds;
+        const float marginInPoints = 4;
+        sourceRect.inflate(marginInPoints * deviceScaleFactor);
+        [[viewController presentationController] setSourceRect:sourceRect];
         [[viewController presentationController] setSourceView:self];
         return;
     }
@@ -3341,7 +3346,6 @@ static bool isAssistableInputType(InputType type)
     RetainPtr<UIImage> indicatorImage = adoptNS([[UIImage alloc] initWithCGImage:image->getCGImageRef()]);
     _previewIndicatorView = adoptNS([[UIImageView alloc] initWithImage:indicatorImage.get()]);
 
-    float deviceScaleFactor = _page->deviceScaleFactor();
     const float cornerRadiusInPoints = 5;
     Path path = PathUtilities::pathWithShrinkWrappedRects(_positionInformation.linkIndicator.textRectsInBoundingRectCoordinates, cornerRadiusInPoints * deviceScaleFactor);
     RetainPtr<CAShapeLayer> maskLayer = adoptNS([[CAShapeLayer alloc] init]);
