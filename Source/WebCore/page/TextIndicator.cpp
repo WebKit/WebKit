@@ -40,51 +40,7 @@
 
 using namespace WebCore;
 
-// These should match the values in TextIndicatorWindow.
-// FIXME: Ideally these would only be in one place.
-#if ENABLE(LEGACY_TEXT_INDICATOR_STYLE)
-const float horizontalBorder = 3;
-const float verticalBorder = 1;
-const float dropShadowBlurRadius = 1.5;
-#else
-const float horizontalBorder = 2;
-const float verticalBorder = 1;
-const float dropShadowBlurRadius = 12;
-#endif
-
 namespace WebCore {
-
-static FloatRect outsetIndicatorRectIncludingShadow(const FloatRect rect)
-{
-    FloatRect outsetRect = rect;
-    outsetRect.inflateX(dropShadowBlurRadius + horizontalBorder);
-    outsetRect.inflateY(dropShadowBlurRadius + verticalBorder);
-    return outsetRect;
-}
-
-static bool textIndicatorsForTextRectsOverlap(const Vector<FloatRect>& textRects)
-{
-    size_t count = textRects.size();
-    if (count <= 1)
-        return false;
-
-    Vector<FloatRect> indicatorRects;
-    indicatorRects.reserveInitialCapacity(count);
-
-    for (size_t i = 0; i < count; ++i) {
-        FloatRect indicatorRect = outsetIndicatorRectIncludingShadow(textRects[i]);
-
-        for (size_t j = indicatorRects.size(); j; ) {
-            --j;
-            if (indicatorRect.intersects(indicatorRects[j]))
-                return true;
-        }
-
-        indicatorRects.uncheckedAppend(indicatorRect);
-    }
-
-    return false;
-}
 
 Ref<TextIndicator> TextIndicator::create(const TextIndicatorData& data)
 {
@@ -189,11 +145,6 @@ TextIndicator::TextIndicator(const TextIndicatorData& data)
     : m_data(data)
 {
     ASSERT(m_data.contentImageScaleFactor != 1 || m_data.contentImage->size() == enclosingIntRect(m_data.selectionRectInRootViewCoordinates).size());
-
-    if (textIndicatorsForTextRectsOverlap(m_data.textRectsInBoundingRectCoordinates)) {
-        m_data.textRectsInBoundingRectCoordinates[0] = unionRect(m_data.textRectsInBoundingRectCoordinates);
-        m_data.textRectsInBoundingRectCoordinates.shrink(1);
-    }
 }
 
 TextIndicator::~TextIndicator()
