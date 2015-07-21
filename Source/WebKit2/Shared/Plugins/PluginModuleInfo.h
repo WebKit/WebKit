@@ -43,7 +43,8 @@ enum PluginModuleLoadPolicy {
 
     // The plug-in should be blocked from being instantiated.
     // Note that the plug-in will still be seen by e.g. navigator.plugins
-    PluginModuleBlocked,
+    PluginModuleBlockedForSecurity,
+    PluginModuleBlockedForCompatibility,
 };
 
 struct PluginModuleInfo {

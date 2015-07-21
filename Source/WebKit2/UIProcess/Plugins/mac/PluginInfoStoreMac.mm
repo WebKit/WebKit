@@ -75,7 +75,8 @@ bool PluginInfoStore::getPluginInfo(const String& pluginPath, PluginModuleInfo& 
 
 static bool shouldBlockPlugin(const PluginModuleInfo& plugin)
 {
-    return PluginInfoStore::defaultLoadPolicyForPlugin(plugin) == PluginModuleBlocked;
+    PluginModuleLoadPolicy loadPolicy = PluginInfoStore::defaultLoadPolicyForPlugin(plugin);
+    return (loadPolicy == PluginModuleBlockedForSecurity) || (loadPolicy == PluginModuleBlockedForCompatibility);
 }
 
 bool PluginInfoStore::shouldUsePlugin(Vector<PluginModuleInfo>& alreadyLoadedPlugins, const PluginModuleInfo& plugin)
@@ -107,12 +108,27 @@ bool PluginInfoStore::shouldUsePlugin(Vector<PluginModuleInfo>& alreadyLoadedPlu
     return true;
 }
 
+inline PluginModuleLoadPolicy WKPlugInModuleLoadPolicyToPluginModuleLoadPolicy(WKPlugInModuleLoadPolicy wksiPolicy)
+{
+
+    switch (wksiPolicy) {
+        case WKPlugInModuleLoadPolicyLoadNormally:
+            return PluginModuleLoadNormally;
+        case WKPlugInModuleLoadPolicyLoadUnsandboxed:
+            return PluginModuleLoadUnsandboxed;
+        case WKPlugInModuleLoadPolicyBlockedForSecurity:
+            return PluginModuleBlockedForSecurity;
+        case WKPlugInModuleLoadPolicyBlockedForCompatibility:
+            return PluginModuleBlockedForCompatibility;
+    }
+
+    ASSERT_NOT_REACHED();
+    return PluginModuleBlockedForSecurity;
+}
+
 PluginModuleLoadPolicy PluginInfoStore::defaultLoadPolicyForPlugin(const PluginModuleInfo& plugin)
 {
-    if (WKShouldBlockPlugin(plugin.bundleIdentifier, plugin.versionString))
-        return PluginModuleBlocked;
-
-    return PluginModuleLoadNormally;
+    return WKPlugInModuleLoadPolicyToPluginModuleLoadPolicy(WKLoadPolicyForPluginVersion(plugin.bundleIdentifier, plugin.versionString));
 }
 
 PluginModuleInfo PluginInfoStore::findPluginWithBundleIdentifier(const String& bundleIdentifier)
