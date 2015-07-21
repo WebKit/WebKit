@@ -409,6 +409,16 @@ void AccessibilityTable::addChildren()
     AccessibilityObject* headerContainerObject = headerContainer();
     if (headerContainerObject && !headerContainerObject->accessibilityIsIgnored())
         m_children.append(headerContainerObject);
+
+    // Sometimes the cell gets the wrong role initially because it is created before the parent
+    // determines whether it is an accessibility table. Iterate all the cells and allow them to
+    // update their roles now that the table knows its status.
+    // see bug: https://bugs.webkit.org/show_bug.cgi?id=147001
+    for (const auto& row : m_rows) {
+        for (const auto& cell : row->children())
+            cell->updateAccessibilityRole();
+    }
+
 }
 
 void AccessibilityTable::addChildrenFromSection(RenderTableSection* tableSection, unsigned& maxColumnCount)
