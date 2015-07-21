@@ -1036,14 +1036,15 @@ bool ResourceHandle::start()
 RefPtr<ResourceHandle> ResourceHandle::releaseForDownload(ResourceHandleClient* downloadClient)
 {
     // We don't adopt the ref, as it will be released by cleanupSoupRequestOperation, which should always run.
-    RefPtr<ResourceHandle> newHandle = new ResourceHandle(d->m_context.get(), firstRequest(), nullptr, d->m_defersLoading, d->m_shouldContentSniff);
+    ResourceHandle* newHandle = new ResourceHandle(d->m_context.get(), firstRequest(), nullptr, d->m_defersLoading, d->m_shouldContentSniff);
+    newHandle->relaxAdoptionRequirement();
     std::swap(d, newHandle->d);
 
     g_signal_handlers_disconnect_matched(newHandle->d->m_soupMessage.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
-    g_object_set_data(G_OBJECT(newHandle->d->m_soupMessage.get()), "handle", newHandle.get());
+    g_object_set_data(G_OBJECT(newHandle->d->m_soupMessage.get()), "handle", newHandle);
 
     newHandle->d->m_client = downloadClient;
-    continueAfterDidReceiveResponse(newHandle.get());
+    continueAfterDidReceiveResponse(newHandle);
 
     return newHandle;
 }
@@ -1366,15 +1367,13 @@ static void readCallback(GObject*, GAsyncResult* asyncResult, gpointer data)
 
 void ResourceHandle::continueWillSendRequest(const ResourceRequest& request)
 {
-    ASSERT(client());
-    ASSERT(client()->usesAsyncCallbacks());
+    ASSERT(!client() || client()->usesAsyncCallbacks());
     continueAfterWillSendRequest(this, request);
 }
 
 void ResourceHandle::continueDidReceiveResponse()
 {
-    ASSERT(client());
-    ASSERT(client()->usesAsyncCallbacks());
+    ASSERT(!client() || client()->usesAsyncCallbacks());
     continueAfterDidReceiveResponse(this);
 }
 
