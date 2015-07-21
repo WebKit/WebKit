@@ -280,6 +280,8 @@ void TiledCoreAnimationDrawingArea::scaleViewToFitDocumentIfNeeded()
     if (!m_shouldScaleViewToFitDocument)
         return;
 
+    m_webPage.layoutIfNeeded();
+
     int viewWidth = m_webPage.size().width();
     bool documentWidthChangedOrInvalidated = m_webPage.mainFrame()->view()->needsLayout() || (m_lastDocumentSizeForScaleToFit.width() != m_webPage.mainFrameView()->renderView()->unscaledDocumentRect().width());
     bool viewWidthChanged = m_lastViewSizeForScaleToFit.width() != viewWidth;
