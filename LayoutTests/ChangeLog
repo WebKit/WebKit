@@ -1,3 +1,14 @@
+2015-07-20  Nan Wang  <n_wang@apple.com>
+
+        AX: Selection change as a result of focusing an element may cause Safari to crash
+        https://bugs.webkit.org/show_bug.cgi?id=147052
+        <rdar://problem/21778212>
+
+        Reviewed by Chris Fleizach.
+
+        * platform/mac/accessibility/focus-crash-expected.txt: Added.
+        * platform/mac/accessibility/focus-crash.html: Added.
+
 2015-07-20  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: start using Promises to handle asynchronous steps in protocol tests
