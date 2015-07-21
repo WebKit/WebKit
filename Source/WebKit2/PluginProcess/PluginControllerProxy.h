@@ -134,7 +134,7 @@ private:
     void manualStreamDidReceiveData(const IPC::DataReference& data);
     void manualStreamDidFinishLoading();
     void manualStreamDidFail(bool wasCancelled);
-    void handleMouseEvent(const WebMouseEvent&, PassRefPtr<Messages::PluginControllerProxy::HandleMouseEvent::DelayedReply>);
+    void handleMouseEvent(const WebMouseEvent&);
     void handleWheelEvent(const WebWheelEvent&, bool& handled);
     void handleMouseEnterEvent(const WebMouseEvent&, bool& handled);
     void handleMouseLeaveEvent(const WebMouseEvent&, bool& handled);

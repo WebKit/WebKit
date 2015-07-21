@@ -366,11 +366,8 @@ bool PluginProxy::handleMouseEvent(const WebMouseEvent& mouseEvent)
     if (m_waitingOnAsynchronousInitialization)
         return false;
 
-    bool handled = false;
-    if (!m_connection->connection()->sendSync(Messages::PluginControllerProxy::HandleMouseEvent(mouseEvent), Messages::PluginControllerProxy::HandleMouseEvent::Reply(handled), m_pluginInstanceID))
-        return false;
-
-    return handled;
+    m_connection->connection()->send(Messages::PluginControllerProxy::HandleMouseEvent(mouseEvent), m_pluginInstanceID);
+    return true;
 }
 
 bool PluginProxy::handleWheelEvent(const WebWheelEvent& wheelEvent)

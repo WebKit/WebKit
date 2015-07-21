@@ -63,7 +63,7 @@ messages -> PluginControllerProxy LegacyReceiver {
     ManualStreamDidFail(bool wasCancelled)
 
     # Sent when a mouse event (that isn't a mouse enter/leave event or a wheel event) should be processed.
-    HandleMouseEvent(WebKit::WebMouseEvent mouseEvent) -> (bool handled) Delayed
+    HandleMouseEvent(WebKit::WebMouseEvent mouseEvent)
     
     # Sent when a mouse wheel event should be processed.
     HandleWheelEvent(WebKit::WebWheelEvent wheelEvent) -> (bool handled)

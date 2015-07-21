@@ -1,3 +1,20 @@
+2015-07-21  Sungmann Cho  <sungmann.cho@navercorp.com>
+
+        Make PluginProxy::handleMouseEvent() asynchronous.
+        https://bugs.webkit.org/show_bug.cgi?id=146142
+
+        Reviewed by Anders Carlsson.
+
+        PluginProxy::handleMouseEvent() forwards the generated mouse event to PluginControllerProxy
+        using a synchronous message, but the recipient always reply immediately with the same value("true")
+        even before handling the received message. So I think PluginProxy::handleMouseEvent() is perfectly
+        OK to process its messages asynchronously.
+
+        platform/mac-wk2/plugins/mouse-events-expected.txt was introduced by webkit.org/b/116665 to avoid
+        flakey tests, but from now on we can share the common expectations.
+
+        * platform/mac-wk2/plugins/mouse-events-expected.txt: Removed.
+
 2015-07-21  David Hyatt  <hyatt@apple.com>
 
         Need a way to ignore text-zoom in a Web page.
