@@ -185,6 +185,16 @@ static RegisterID* emitSuperBaseForCallee(BytecodeGenerator& generator)
     return generator.emitGetById(generator.newTemporary(), homeObject.get(), generator.propertyNames().underscoreProto);
 }
 
+// ------------------------------ NewTargetNode ----------------------------------
+
+RegisterID* NewTargetNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+{
+    if (dst == generator.ignoredResult())
+        return nullptr;
+
+    return generator.moveToDestinationIfNeeded(dst, generator.newTarget());
+}
+
 // ------------------------------ ResolveNode ----------------------------------
 
 bool ResolveNode::isPure(BytecodeGenerator& generator) const

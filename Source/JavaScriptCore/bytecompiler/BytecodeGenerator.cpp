@@ -500,10 +500,10 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         }
     }
     
+    m_newTargetRegister = addVar();
     if (isConstructor()) {
+        emitMove(m_newTargetRegister, &m_thisRegister);
         if (constructorKind() == ConstructorKind::Derived) {
-            m_newTargetRegister = addVar();
-            emitMove(m_newTargetRegister, &m_thisRegister);
             emitMoveEmptyValue(&m_thisRegister);
         } else
             emitCreateThis(&m_thisRegister);

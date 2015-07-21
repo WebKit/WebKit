@@ -170,6 +170,11 @@ namespace JSC {
     {
     }
 
+    inline NewTargetNode::NewTargetNode(const JSTokenLocation& location)
+        : ExpressionNode(location)
+    {
+    }
+
     inline ResolveNode::ResolveNode(const JSTokenLocation& location, const Identifier& ident, const JSTextPosition& start)
         : ExpressionNode(location)
         , m_ident(ident)

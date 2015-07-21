@@ -177,6 +177,10 @@ public:
     {
         return new (m_parserArena) SuperNode(location);
     }
+    ExpressionNode* newTargetExpr(const JSTokenLocation location)
+    {
+        return new (m_parserArena) NewTargetNode(location);
+    }
     ExpressionNode* createResolve(const JSTokenLocation& location, const Identifier* ident, const JSTextPosition& start)
     {
         if (m_vm->propertyNames->arguments == *ident)

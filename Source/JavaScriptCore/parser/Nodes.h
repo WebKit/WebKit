@@ -547,6 +547,14 @@ namespace JSC {
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
     };
 
+    class NewTargetNode final : public ExpressionNode {
+    public:
+        NewTargetNode(const JSTokenLocation&);
+
+    private:
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+    };
+
     class ResolveNode : public ExpressionNode {
     public:
         ResolveNode(const JSTokenLocation&, const Identifier&, const JSTextPosition& start);

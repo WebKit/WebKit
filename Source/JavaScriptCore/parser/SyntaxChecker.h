@@ -74,7 +74,7 @@ public:
         ThisExpr, NullExpr, BoolExpr, RegExpExpr, ObjectLiteralExpr,
         FunctionExpr, ClassExpr, SuperExpr, BracketExpr, DotExpr, CallExpr,
         NewExpr, PreExpr, PostExpr, UnaryExpr, BinaryExpr,
-        ConditionalExpr, AssignmentExpr, TypeofExpr,
+        ConditionalExpr, AssignmentExpr, TypeofExpr, NewTargetExpr,
         DeleteExpr, ArrayLiteralExpr, BindingDestructuring,
         ArrayDestructuring, ObjectDestructuring, SourceElementsResult,
         FunctionBodyResult, SpreadExpr, ArgumentsResult,
@@ -154,6 +154,7 @@ public:
     ExpressionType createVoid(const JSTokenLocation&, ExpressionType) { return UnaryExpr; }
     ExpressionType thisExpr(const JSTokenLocation&, ThisTDZMode) { return ThisExpr; }
     ExpressionType superExpr(const JSTokenLocation&) { return SuperExpr; }
+    ExpressionType newTargetExpr(const JSTokenLocation&) { return NewTargetExpr; }
     ExpressionType createResolve(const JSTokenLocation&, const Identifier*, int) { return ResolveExpr; }
     ExpressionType createObjectLiteral(const JSTokenLocation&) { return ObjectLiteralExpr; }
     ExpressionType createObjectLiteral(const JSTokenLocation&, int) { return ObjectLiteralExpr; }

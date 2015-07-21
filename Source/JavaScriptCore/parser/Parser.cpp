@@ -2883,11 +2883,28 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
     bool baseIsSuper = false;
 #endif
 
+    bool baseIsNewTarget = false;
+    if (newCount && match(DOT)) {
+        next();
+        if (match(IDENT)) {
+            const Identifier* ident = m_token.m_data.ident;
+            if (m_vm->propertyNames->target == *ident) {
+                semanticFailIfFalse(currentScope()->isFunction(), "new.target is only valid inside functions");
+                baseIsNewTarget = true;
+                base = context.newTargetExpr(location);
+                newCount--;
+                next();
+            } else
+                failWithMessage("\"new.\" can only followed with target");
+        } else
+            failDueToUnexpectedToken();
+    }
+
     if (baseIsSuper) {
         base = context.superExpr(location);
         next();
         currentScope()->setNeedsSuperBinding();
-    } else
+    } else if (!baseIsNewTarget)
         base = parsePrimaryExpression(context);
 
     failIfFalse(base, "Cannot parse base expression");
