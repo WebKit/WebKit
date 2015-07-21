@@ -258,7 +258,7 @@ static void pageDidDrawToImage(const ShareableBitmap::Handle& imageHandle, IPCCa
 
     ASSERT(firstPage > 0);
     ASSERT(firstPage <= lastPage);
-    LOG(View, "WKPrintingView requesting PDF data for pages %u...%u", firstPage, lastPage);
+    LOG(Printing, "WKPrintingView requesting PDF data for pages %u...%u", firstPage, lastPage);
 
     PrintInfo printInfo([_printOperation printInfo]);
     // Return to printing mode if we're already back to screen (e.g. due to window resizing).
@@ -317,7 +317,7 @@ static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, d
         NSRect newFrameSize = NSMakeRect(0, 0, 
             ceil(lastPrintingPageRect.maxX() * view->_totalScaleFactorForPrinting), 
             ceil(lastPrintingPageRect.maxY() * view->_totalScaleFactorForPrinting));
-        LOG(View, "WKPrintingView setting frame size to x:%g y:%g width:%g height:%g", newFrameSize.origin.x, newFrameSize.origin.y, newFrameSize.size.width, newFrameSize.size.height);
+        LOG(Printing, "WKPrintingView setting frame size to x:%g y:%g width:%g height:%g", newFrameSize.origin.x, newFrameSize.origin.y, newFrameSize.size.width, newFrameSize.size.height);
         [view setFrame:newFrameSize];
 
         if ([view _isPrintingPreview]) {
@@ -374,7 +374,7 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
 
 - (BOOL)knowsPageRange:(NSRangePointer)range
 {
-    LOG(View, "-[WKPrintingView %p knowsPageRange:], %s, %s", self, [self _hasPageRects] ? "print data is available" : "print data is not available yet", RunLoop::isMain() ? "on main thread" : "on secondary thread");
+    LOG(Printing, "-[WKPrintingView %p knowsPageRange:], %s, %s", self, [self _hasPageRects] ? "print data is available" : "print data is not available yet", RunLoop::isMain() ? "on main thread" : "on secondary thread");
     ASSERT(_printOperation == [NSPrintOperation currentOperation]);
 
     // Assuming that once we switch to printing from a secondary thread, we don't go back.
@@ -522,7 +522,7 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
 
 - (void)drawRect:(NSRect)nsRect
 {
-    LOG(View, "WKPrintingView %p printing rect x:%g, y:%g, width:%g, height:%g%s", self, nsRect.origin.x, nsRect.origin.y, nsRect.size.width, nsRect.size.height, [self _isPrintingPreview] ? " for preview" : "");
+    LOG(Printing, "WKPrintingView %p printing rect x:%g, y:%g, width:%g, height:%g%s", self, nsRect.origin.x, nsRect.origin.y, nsRect.size.width, nsRect.size.height, [self _isPrintingPreview] ? " for preview" : "");
 
     ASSERT(_printOperation == [NSPrintOperation currentOperation]);
 
@@ -606,7 +606,7 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
 {
     ASSERT(_printOperation == [NSPrintOperation currentOperation]);
     if (![self _hasPageRects]) {
-        LOG(View, "-[WKPrintingView %p rectForPage:%d] - data is not yet available", self, (int)page);
+        LOG(Printing, "-[WKPrintingView %p rectForPage:%d] - data is not yet available", self, (int)page);
         if (!_webFrame->page()) {
             // We may have not told AppKit how many pages there are, so it will try to print until a null rect is returned.
             return NSMakeRect(0, 0, 0, 0);
@@ -625,7 +625,7 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
 
     IntRect rect = _printingPageRects[page - 1];
     rect.scale(_totalScaleFactorForPrinting);
-    LOG(View, "-[WKPrintingView %p rectForPage:%d] -> x %d, y %d, width %d, height %d", self, (int)page, rect.x(), rect.y(), rect.width(), rect.height());
+    LOG(Printing, "-[WKPrintingView %p rectForPage:%d] -> x %d, y %d, width %d, height %d", self, (int)page, rect.x(), rect.y(), rect.width(), rect.height());
     return rect;
 }
 
@@ -644,7 +644,7 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
     if (isForcingPreviewUpdate)
         return;
 
-    LOG(View, "-[WKPrintingView %p beginDocument]", self);
+    LOG(Printing, "-[WKPrintingView %p beginDocument]", self);
 
     [super beginDocument];
 
@@ -659,7 +659,7 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
     if (isForcingPreviewUpdate)
         return;
 
-    LOG(View, "-[WKPrintingView %p endDocument] - clearing cached data", self);
+    LOG(Printing, "-[WKPrintingView %p endDocument] - clearing cached data", self);
 
     // Both existing data and pending responses are now obsolete.
     _printingPageRects.clear();

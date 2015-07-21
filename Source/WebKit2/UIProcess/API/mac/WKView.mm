@@ -2812,7 +2812,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
 - (void)drawRect:(NSRect)rect
 {
-    LOG(View, "drawRect: x:%g, y:%g, width:%g, height:%g", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+    LOG(Printing, "drawRect: x:%g, y:%g, width:%g, height:%g", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
     _data->_page->endPrinting();
 }
 
@@ -4002,7 +4002,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 
 - (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(WKFrameRef)frameRef
 {
-    LOG(View, "Creating an NSPrintOperation for frame '%s'", toImpl(frameRef)->url().utf8().data());
+    LOG(Printing, "Creating an NSPrintOperation for frame '%s'", toImpl(frameRef)->url().utf8().data());
 
     // FIXME: If the frame cannot be printed (e.g. if it contains an encrypted PDF that disallows
     // printing), this function should return nil.

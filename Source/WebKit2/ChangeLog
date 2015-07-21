@@ -1,3 +1,26 @@
+2015-07-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename the 'View' log channel to 'Printing'
+        https://bugs.webkit.org/show_bug.cgi?id=147172
+
+        Reviewed by Zalan Bujtas.
+
+        "View" was a terrible name for a log channel that was all about printing.
+        Sort the log channels.
+
+        * Platform/Logging.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView drawRect:]):
+        (-[WKView printOperationWithPrintInfo:forFrame:]):
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView _preparePDFDataForPrintingOnSecondaryThread]):
+        (pageDidComputePageRects):
+        (-[WKPrintingView knowsPageRange:]):
+        (-[WKPrintingView drawRect:]):
+        (-[WKPrintingView rectForPage:]):
+        (-[WKPrintingView beginDocument]):
+        (-[WKPrintingView endDocument]):
+
 2015-07-21  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] Menu drop down such as on nike.com does not stay
