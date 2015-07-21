@@ -135,14 +135,9 @@ WebInspector.DefaultDashboard = class DefaultDashboard extends WebInspector.Obje
         if (!event.target.isMainFrame())
             return;
 
+        this._time = 0;
         this._resourcesCount = 1;
         this._resourcesSize = WebInspector.frameResourceManager.mainFrame.mainResource.size || 0;
-
-        // Only update the time if we are recording the timeline.
-        if (!WebInspector.timelineManager.isCapturing()) {
-            this._time = 0;
-            return;
-        }
 
         // We should only track resource sizes on fresh loads.
         if (this._waitingForFirstMainResourceToStartTrackingSize) {
@@ -168,6 +163,11 @@ WebInspector.DefaultDashboard = class DefaultDashboard extends WebInspector.Obje
     _frameWasAdded(event)
     {
         ++this.resourcesCount;
+    }
+
+    _resourceSizeDidChange(event)
+    {
+        this.resourcesSize += event.target.size - event.data.previousSize;
     }
 
     _startUpdatingTime()
@@ -221,11 +221,6 @@ WebInspector.DefaultDashboard = class DefaultDashboard extends WebInspector.Obje
         this.time = mainFrameLoadEventTime - mainFrameStartTime;
 
         this._stopUpdatingTime();
-    }
-
-    _resourceSizeDidChange(event)
-    {
-        this.resourcesSize += event.target.size - event.data.previousSize;
     }
 
     _consoleMessageAdded(event)

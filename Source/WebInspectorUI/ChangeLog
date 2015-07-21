@@ -1,3 +1,19 @@
+2015-07-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Total download size doesn't update soon after loading
+        https://bugs.webkit.org/show_bug.cgi?id=147161
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/DefaultDashboard.js:
+        (WebInspector.DefaultDashboard.prototype._mainResourceDidChange):
+        Previously autorecording would always have made us start capturing,
+        however we only autorecord if users are on the Timeline tab. Just
+        reset the time always, a navigation happened and start the timer.
+
+        (WebInspector.DefaultDashboard.prototype._resourceSizeDidChange):
+        Move to a better location within the file.
+
 2015-07-21  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Convert all colors from RGB to HSL color scheme
