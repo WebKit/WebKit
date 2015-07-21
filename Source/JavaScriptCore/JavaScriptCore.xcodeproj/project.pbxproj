@@ -214,8 +214,6 @@
 		0F2B670B17B6B5AB00A7AE3F /* TypedArrayType.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2B66DD17B6B5AB00A7AE3F /* TypedArrayType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F2B9CE219D0BA7D00B1D1B5 /* DFGAvailabilityMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F2B9CD619D0BA7D00B1D1B5 /* DFGAvailabilityMap.cpp */; };
 		0F2B9CE319D0BA7D00B1D1B5 /* DFGAvailabilityMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2B9CD719D0BA7D00B1D1B5 /* DFGAvailabilityMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F2B9CE419D0BA7D00B1D1B5 /* DFGInsertOSRHintsForUpdate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F2B9CD819D0BA7D00B1D1B5 /* DFGInsertOSRHintsForUpdate.cpp */; };
-		0F2B9CE519D0BA7D00B1D1B5 /* DFGInsertOSRHintsForUpdate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2B9CD919D0BA7D00B1D1B5 /* DFGInsertOSRHintsForUpdate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F2B9CE619D0BA7D00B1D1B5 /* DFGObjectAllocationSinkingPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F2B9CDA19D0BA7D00B1D1B5 /* DFGObjectAllocationSinkingPhase.cpp */; };
 		0F2B9CE719D0BA7D00B1D1B5 /* DFGObjectAllocationSinkingPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2B9CDB19D0BA7D00B1D1B5 /* DFGObjectAllocationSinkingPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F2B9CE819D0BA7D00B1D1B5 /* DFGObjectMaterializationData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F2B9CDC19D0BA7D00B1D1B5 /* DFGObjectMaterializationData.cpp */; };
@@ -1960,8 +1958,6 @@
 		0F2B66DD17B6B5AB00A7AE3F /* TypedArrayType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypedArrayType.h; sourceTree = "<group>"; };
 		0F2B9CD619D0BA7D00B1D1B5 /* DFGAvailabilityMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGAvailabilityMap.cpp; path = dfg/DFGAvailabilityMap.cpp; sourceTree = "<group>"; };
 		0F2B9CD719D0BA7D00B1D1B5 /* DFGAvailabilityMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGAvailabilityMap.h; path = dfg/DFGAvailabilityMap.h; sourceTree = "<group>"; };
-		0F2B9CD819D0BA7D00B1D1B5 /* DFGInsertOSRHintsForUpdate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGInsertOSRHintsForUpdate.cpp; path = dfg/DFGInsertOSRHintsForUpdate.cpp; sourceTree = "<group>"; };
-		0F2B9CD919D0BA7D00B1D1B5 /* DFGInsertOSRHintsForUpdate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGInsertOSRHintsForUpdate.h; path = dfg/DFGInsertOSRHintsForUpdate.h; sourceTree = "<group>"; };
 		0F2B9CDA19D0BA7D00B1D1B5 /* DFGObjectAllocationSinkingPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGObjectAllocationSinkingPhase.cpp; path = dfg/DFGObjectAllocationSinkingPhase.cpp; sourceTree = "<group>"; };
 		0F2B9CDB19D0BA7D00B1D1B5 /* DFGObjectAllocationSinkingPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGObjectAllocationSinkingPhase.h; path = dfg/DFGObjectAllocationSinkingPhase.h; sourceTree = "<group>"; };
 		0F2B9CDC19D0BA7D00B1D1B5 /* DFGObjectMaterializationData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGObjectMaterializationData.cpp; path = dfg/DFGObjectMaterializationData.cpp; sourceTree = "<group>"; };
@@ -4977,8 +4973,6 @@
 				A704D90017A0BAA8006BA554 /* DFGInPlaceAbstractState.cpp */,
 				A704D90117A0BAA8006BA554 /* DFGInPlaceAbstractState.h */,
 				0F2BDC1F151E803800CD8910 /* DFGInsertionSet.h */,
-				0F2B9CD819D0BA7D00B1D1B5 /* DFGInsertOSRHintsForUpdate.cpp */,
-				0F2B9CD919D0BA7D00B1D1B5 /* DFGInsertOSRHintsForUpdate.h */,
 				0F300B7918AB1B1400A6D72E /* DFGIntegerCheckCombiningPhase.cpp */,
 				0F300B7A18AB1B1400A6D72E /* DFGIntegerCheckCombiningPhase.h */,
 				0F898F2F1B27689F0083A33C /* DFGIntegerRangeOptimizationPhase.cpp */,
@@ -5773,7 +5767,6 @@
 				2A68295B1875F80500B6C3E2 /* CopyWriteBarrier.h in Headers */,
 				5DE6E5B30E1728EC00180407 /* create_hash_table in Headers */,
 				0F426A4B1460CD6E00131F8F /* DataFormat.h in Headers */,
-				0F2B9CE519D0BA7D00B1D1B5 /* DFGInsertOSRHintsForUpdate.h in Headers */,
 				0F2B66DF17B6B5AB00A7AE3F /* DataView.h in Headers */,
 				BCD2034A0E17135E002C7E82 /* DateConstructor.h in Headers */,
 				41359CF30FDD89AD00206180 /* DateConversion.h in Headers */,
@@ -7065,7 +7058,6 @@
 				1429D8DD0ED2205B00B89619 /* CallFrame.cpp in Sources */,
 				0F0B83B014BCF71600885B4F /* CallLinkInfo.cpp in Sources */,
 				0F93329D14CA7DC30085F3C6 /* CallLinkStatus.cpp in Sources */,
-				0F2B9CE419D0BA7D00B1D1B5 /* DFGInsertOSRHintsForUpdate.cpp in Sources */,
 				969A07960ED1D3AE00F1F681 /* CodeBlock.cpp in Sources */,
 				0F8F94401667633000D61971 /* CodeBlockHash.cpp in Sources */,
 				0FC97F33182020D7002C9B26 /* CodeBlockJettisoningWatchpoint.cpp in Sources */,

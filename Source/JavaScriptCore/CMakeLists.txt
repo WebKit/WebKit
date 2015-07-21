@@ -178,7 +178,6 @@ set(JavaScriptCore_SOURCES
     dfg/DFGGraphSafepoint.cpp
     dfg/DFGHeapLocation.cpp
     dfg/DFGInPlaceAbstractState.cpp
-    dfg/DFGInsertOSRHintsForUpdate.cpp
     dfg/DFGIntegerCheckCombiningPhase.cpp
     dfg/DFGIntegerRangeOptimizationPhase.cpp
     dfg/DFGInvalidationPointInjectionPhase.cpp

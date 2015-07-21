@@ -536,12 +536,12 @@ public:
         return !(*this == other);
     }
 
-    const HashMap<Node*, Allocation> allocations() const
+    const HashMap<Node*, Allocation>& allocations() const
     {
         return m_allocations;
     }
 
-    const HashMap<Node*, Node*> pointers() const
+    const HashMap<Node*, Node*>& pointers() const
     {
         return m_pointers;
     }

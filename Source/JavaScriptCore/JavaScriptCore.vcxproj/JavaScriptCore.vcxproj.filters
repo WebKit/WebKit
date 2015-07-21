@@ -1716,9 +1716,6 @@
     <ClCompile Include="..\dfg\DFGBlockWorklist.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
-    <ClCompile Include="..\dfg\DFGInsertOSRHintsForUpdate.cpp">
-      <Filter>dfg</Filter>
-    </ClCompile>
     <ClCompile Include="..\dfg\DFGNaiveDominators.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
@@ -4206,9 +4203,6 @@
       <Filter>dfg</Filter>
     </ClInclude>
     <ClInclude Include="..\dfg\DFGBlockWorklist.h">
-      <Filter>dfg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\dfg\DFGInsertOSRHintsForUpdate.h">
       <Filter>dfg</Filter>
     </ClInclude>
     <ClInclude Include="..\dfg\DFGNaiveDominators.h">

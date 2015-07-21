@@ -416,7 +416,6 @@
     <ClCompile Include="..\dfg\DFGGraphSafepoint.cpp" />
     <ClCompile Include="..\dfg\DFGHeapLocation.cpp" />
     <ClCompile Include="..\dfg\DFGInPlaceAbstractState.cpp" />
-    <ClCompile Include="..\dfg\DFGInsertOSRHintsForUpdate.cpp" />
     <ClCompile Include="..\dfg\DFGIntegerCheckCombiningPhase.cpp" />
     <ClCompile Include="..\dfg\DFGIntegerRangeOptimizationPhase.cpp" />
     <ClCompile Include="..\dfg\DFGInvalidationPointInjectionPhase.cpp" />
@@ -1110,7 +1109,6 @@
     <ClInclude Include="..\dfg\DFGGraphSafepoint.h" />
     <ClInclude Include="..\dfg\DFGHeapLocation.h" />
     <ClInclude Include="..\dfg\DFGInPlaceAbstractState.h" />
-    <ClInclude Include="..\dfg\DFGInsertOSRHintsForUpdate.h" />
     <ClInclude Include="..\dfg\DFGInsertionSet.h" />
     <ClInclude Include="..\dfg\DFGIntegerCheckCombiningPhase.h" />
     <ClInclude Include="..\dfg\DFGIntegerRangeOptimizationPhase.h" />
