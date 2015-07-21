@@ -27,6 +27,7 @@
 #include "TextIndicator.h"
 
 #include "Document.h"
+#include "Editor.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "FrameSnapshotting.h"
@@ -54,6 +55,11 @@ RefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range, TextInd
     if (!frame)
         return nullptr;
 
+#if PLATFORM(IOS)
+    frame->editor().setIgnoreCompositionSelectionChange(true);
+    frame->selection().setUpdateAppearanceEnabled(true);
+#endif
+
     VisibleSelection oldSelection = frame->selection().selection();
     frame->selection().setSelection(range);
 
@@ -63,7 +69,12 @@ RefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range, TextInd
 
     if (indicator)
         indicator->setWantsMargin(!areRangesEqual(&range, oldSelection.toNormalizedRange().get()));
-    
+
+#if PLATFORM(IOS)
+    frame->editor().setIgnoreCompositionSelectionChange(false);
+    frame->selection().setUpdateAppearanceEnabled(false);
+#endif
+
     return indicator.release();
 }
 
@@ -120,7 +131,7 @@ RefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(Frame& frame, Te
 
     // FIXME: We should have TextIndicator options instead of this being platform-specific.
 #if PLATFORM(IOS)
-    SnapshotOptions snapshotOptions = SnapshotOptionsNone;
+    SnapshotOptions snapshotOptions = SnapshotOptionsPaintSelectionAndBackgroundsOnly;
 #else
     SnapshotOptions snapshotOptions = SnapshotOptionsForceBlackText | SnapshotOptionsPaintSelectionOnly;
 #endif

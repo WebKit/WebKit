@@ -87,6 +87,8 @@ std::unique_ptr<ImageBuffer> snapshotFrameRect(Frame& frame, const IntRect& imag
         paintBehavior |= PaintBehaviorForceBlackText;
     if (options & SnapshotOptionsPaintSelectionOnly)
         paintBehavior |= PaintBehaviorSelectionOnly;
+    if (options & SnapshotOptionsPaintSelectionAndBackgroundsOnly)
+        paintBehavior |= PaintBehaviorSelectionAndBackgroundsOnly;
 
     // Other paint behaviors are set by paintContentsForSnapshot.
     frame.view()->setPaintBehavior(paintBehavior);
