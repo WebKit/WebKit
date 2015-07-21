@@ -1069,7 +1069,12 @@ void AudioContext::pageMutedStateDidChange()
 
 void AudioContext::isPlayingAudioDidChange()
 {
-    document()->updateIsPlayingMedia();
+    // Make sure to call Document::updateIsPlayingMedia() on the main thread, since
+    // we could be on the audio I/O thread here and the call into WebCore could block.
+    RefPtr<AudioContext> strongThis(this);
+    callOnMainThread([strongThis] {
+        strongThis->document()->updateIsPlayingMedia();
+    });
 }
 
 void AudioContext::fireCompletionEvent()
