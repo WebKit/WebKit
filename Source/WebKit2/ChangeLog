@@ -1,5 +1,26 @@
 2015-07-20  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r187023. rdar://problem/21799011
+
+    2015-07-16  Anders Carlsson  <andersca@apple.com>
+
+            WebsiteDataStore operations need to grab background assertions
+            https://bugs.webkit.org/show_bug.cgi?id=147015
+            rdar://problem/21799011
+
+            Reviewed by Sam Weinig.
+
+            * UIProcess/Network/NetworkProcessProxy.cpp:
+            (WebKit::NetworkProcessProxy::fetchWebsiteData):
+            (WebKit::NetworkProcessProxy::deleteWebsiteData):
+            (WebKit::NetworkProcessProxy::deleteWebsiteDataForOrigins):
+            * UIProcess/WebProcessProxy.cpp:
+            (WebKit::WebProcessProxy::fetchWebsiteData):
+            (WebKit::WebProcessProxy::deleteWebsiteData):
+            (WebKit::WebProcessProxy::deleteWebsiteDataForOrigins):
+
+2015-07-20  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r187001. rdar://problem/21769577
 
     2015-07-18  Simon Fraser  <simon.fraser@apple.com>

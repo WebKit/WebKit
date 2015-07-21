@@ -125,7 +125,11 @@ void NetworkProcessProxy::fetchWebsiteData(SessionID sessionID, WebsiteDataTypes
     ASSERT(canSendMessage());
 
     uint64_t callbackID = generateCallbackID();
-    m_pendingFetchWebsiteDataCallbacks.add(callbackID, WTF::move(completionHandler));
+    auto token = throttler().backgroundActivityToken();
+
+    m_pendingFetchWebsiteDataCallbacks.add(callbackID, [token, completionHandler](WebsiteData websiteData) {
+        completionHandler(WTF::move(websiteData));
+    });
 
     send(Messages::WebProcess::FetchWebsiteData(sessionID, dataTypes, callbackID), 0);
 }
@@ -133,8 +137,11 @@ void NetworkProcessProxy::fetchWebsiteData(SessionID sessionID, WebsiteDataTypes
 void NetworkProcessProxy::deleteWebsiteData(WebCore::SessionID sessionID, WebsiteDataTypes dataTypes, std::chrono::system_clock::time_point modifiedSince,  std::function<void ()> completionHandler)
 {
     auto callbackID = generateCallbackID();
+    auto token = throttler().backgroundActivityToken();
 
-    m_pendingDeleteWebsiteDataCallbacks.add(callbackID, WTF::move(completionHandler));
+    m_pendingDeleteWebsiteDataCallbacks.add(callbackID, [token, completionHandler] {
+        completionHandler();
+    });
     send(Messages::NetworkProcess::DeleteWebsiteData(sessionID, dataTypes, modifiedSince, callbackID), 0);
 }
 
@@ -143,7 +150,11 @@ void NetworkProcessProxy::deleteWebsiteDataForOrigins(SessionID sessionID, Websi
     ASSERT(canSendMessage());
 
     uint64_t callbackID = generateCallbackID();
-    m_pendingDeleteWebsiteDataForOriginsCallbacks.add(callbackID, WTF::move(completionHandler));
+    auto token = throttler().backgroundActivityToken();
+
+    m_pendingDeleteWebsiteDataForOriginsCallbacks.add(callbackID, [token, completionHandler] {
+        completionHandler();
+    });
 
     Vector<SecurityOriginData> originData;
     for (auto& origin : origins)
