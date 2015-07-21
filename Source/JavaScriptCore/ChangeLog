@@ -1,3 +1,18 @@
+2015-07-21  Saam barati  <saambarati1@gmail.com>
+
+        DestructuringPatternNode and DestructuringAssignmentNode should be ParserArenaFreeable
+        https://bugs.webkit.org/show_bug.cgi?id=147140
+
+        Reviewed by Geoffrey Garen.
+
+        The descendants of DestructuringPatternNode that need destruction also
+        inherit from ParserArenaDeletable.
+
+        * parser/Nodes.h:
+        (JSC::DestructuringPatternNode::~DestructuringPatternNode):
+        (JSC::ObjectPatternNode::appendEntry):
+        (JSC::DestructuringAssignmentNode::bindings):
+
 2015-07-21  Keith Miller  <keith_miller@apple.com>
 
         Add support for the new.target syntax.

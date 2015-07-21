@@ -763,27 +763,27 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
             if (match(CLOSEBRACE))
                 break;
 
-            Identifier propertyName;
+            const Identifier* propertyName = nullptr;
             TreeDestructuringPattern innerPattern = 0;
             JSTokenLocation location = m_token.m_location;
             if (match(IDENT) || isLETMaskedAsIDENT()) {
                 failIfTrue(match(LET) && (kind == DestructureToLet || kind == DestructureToConst), "Can't use 'let' as an identifier name for a LexicalDeclaration");
-                propertyName = *m_token.m_data.ident;
+                propertyName = m_token.m_data.ident;
                 JSToken identifierToken = m_token;
                 next();
                 if (consume(COLON))
                     innerPattern = parseDestructuringPattern(context, kind, bindingContext, depth + 1);
                 else
-                    innerPattern = createBindingPattern(context, kind, propertyName, depth, identifierToken, bindingContext);
+                    innerPattern = createBindingPattern(context, kind, *propertyName, depth, identifierToken, bindingContext);
             } else {
                 JSTokenType tokenType = m_token.m_type;
                 switch (m_token.m_type) {
                 case DOUBLE:
                 case INTEGER:
-                    propertyName = Identifier::from(m_vm, m_token.m_data.doubleValue);
+                    propertyName = &m_parserArena.identifierArena().makeNumericIdentifier(const_cast<VM*>(m_vm), m_token.m_data.doubleValue);
                     break;
                 case STRING:
-                    propertyName = *m_token.m_data.ident;
+                    propertyName = m_token.m_data.ident;
                     wasString = true;
                     break;
                 default:
@@ -792,16 +792,16 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
                             return 0;
                         failWithMessage("Expected a property name");
                     }
-                    propertyName = *m_token.m_data.ident;
+                    propertyName = m_token.m_data.ident;
                     break;
                 }
                 next();
                 if (!consume(COLON)) {
                     if (kind == DestructureToExpressions)
                         return 0;
-                    semanticFailIfTrue(tokenType == RESERVED, "Cannot use abbreviated destructuring syntax for reserved name '", propertyName.impl(), "'");
-                    semanticFailIfTrue(tokenType == RESERVED_IF_STRICT, "Cannot use abbreviated destructuring syntax for reserved name '", propertyName.impl(), "' in strict mode");
-                    semanticFailIfTrue(tokenType & KeywordTokenFlag, "Cannot use abbreviated destructuring syntax for keyword '", propertyName.impl(), "'");
+                    semanticFailIfTrue(tokenType == RESERVED, "Cannot use abbreviated destructuring syntax for reserved name '", propertyName->impl(), "'");
+                    semanticFailIfTrue(tokenType == RESERVED_IF_STRICT, "Cannot use abbreviated destructuring syntax for reserved name '", propertyName->impl(), "' in strict mode");
+                    semanticFailIfTrue(tokenType & KeywordTokenFlag, "Cannot use abbreviated destructuring syntax for keyword '", propertyName->impl(), "'");
                     
                     failWithMessage("Expected a ':' prior to a named destructuring property");
                 }
@@ -812,7 +812,8 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
             failIfFalse(innerPattern, "Cannot parse this destructuring pattern");
             TreeExpression defaultValue = parseDefaultValueForDestructuringPattern(context);
             failIfTrue(kind == DestructureToParameters && defaultValue, "Default values in destructuring parameters are currently not supported");
-            context.appendObjectPatternEntry(objectPattern, location, wasString, propertyName, innerPattern, defaultValue);
+            ASSERT(propertyName);
+            context.appendObjectPatternEntry(objectPattern, location, wasString, *propertyName, innerPattern, defaultValue);
         } while (consume(COMMA));
 
         if (kind == DestructureToExpressions && !match(CLOSEBRACE))
