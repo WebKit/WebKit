@@ -26,32 +26,23 @@
 #ifndef InteractionInformationAtPosition_h
 #define InteractionInformationAtPosition_h
 
+#if PLATFORM(IOS)
+
 #include "ArgumentCoders.h"
 #include "ShareableBitmap.h"
 #include <WebCore/IntPoint.h>
-#include <wtf/text/WTFString.h>
-
-#if PLATFORM(IOS)
 #include <WebCore/SelectionRect.h>
-#endif
+#include <WebCore/TextIndicator.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-#if PLATFORM(IOS)
 struct InteractionInformationAtPosition {
-    InteractionInformationAtPosition()
-        : nodeAtPositionIsAssistedNode(false)
-        , isSelectable(false)
-        , isNearMarkedText(false)
-        , touchCalloutEnabled(true)
-    {
-    }
-
     WebCore::IntPoint point;
-    bool nodeAtPositionIsAssistedNode;
-    bool isSelectable;
-    bool isNearMarkedText;
-    bool touchCalloutEnabled;
+    bool nodeAtPositionIsAssistedNode { false };
+    bool isSelectable { false };
+    bool isNearMarkedText { false };
+    bool touchCalloutEnabled { true };
     String clickableElementName;
     String url;
     String imageURL;
@@ -59,11 +50,14 @@ struct InteractionInformationAtPosition {
     WebCore::IntRect bounds;
     RefPtr<ShareableBitmap> image;
 
+    WebCore::TextIndicatorData linkIndicator;
+
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, InteractionInformationAtPosition&);
 };
-#endif
 
 }
+
+#endif // PLATFORM(IOS)
 
 #endif // InteractionInformationAtPosition_h

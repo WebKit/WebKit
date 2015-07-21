@@ -156,6 +156,8 @@ enum class PreviewElementType {
     id <UIViewControllerPreviewing> _previewing;
 #endif
 
+    RetainPtr<UIImageView> _previewIndicatorView;
+
     BOOL _isEditable;
     BOOL _showingTextStyleOptions;
     BOOL _hasValidPositionInformation;
