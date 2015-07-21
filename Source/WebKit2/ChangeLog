@@ -1,3 +1,20 @@
+2015-07-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Facebook in tiled fullscreen is slow
+        https://bugs.webkit.org/show_bug.cgi?id=147134
+        rdar://problem/21823349
+
+        Reviewed by Tim Horton.
+        
+        TiledCoreAnimationDrawingArea::scaleViewToFitDocumentIfNeeded() could cause a page to toggle
+        between two fixed layout sizes differing by a pixel, because of rounding. This would cause
+        lots of extra layouts and painting.
+        
+        This happened because the the fixed layout size was computed using ceil(m_webPage.size().width() / viewScale)
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::scaleViewToFitDocumentIfNeeded):
+
 2015-07-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Fix crash due to RemoteLayerTreeDisplayRefreshMonitor outliving RemoteLayerTreeDrawingArea
