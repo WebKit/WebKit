@@ -102,7 +102,6 @@ protected:
     virtual Color platformTapHighlightColor() const override { return 0x4D1A1A1A; }
 #endif
 
-    virtual bool shouldShowPlaceholderWhenFocused() const override;
     virtual bool shouldHaveSpinButton(HTMLInputElement&) const override;
     virtual bool shouldHaveCapsLockIndicator(HTMLInputElement&) const override;
 

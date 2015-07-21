@@ -175,7 +175,6 @@ public:
 #if ENABLE(VIDEO_TRACK)
     virtual bool supportsClosedCaptioning() const override { return true; }
 #endif
-    virtual bool shouldShowPlaceholderWhenFocused() const override { return true; }
 
     void setThemePath(const String&);
     String themePath() const;

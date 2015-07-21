@@ -150,10 +150,7 @@ bool HTMLTextFormControlElement::placeholderShouldBeVisible() const
 {
     // This function is used by the style resolver to match the :placeholder-shown pseudo class.
     // Since it is used for styling, it must not use any value depending on the style.
-    return supportsPlaceholder()
-        && isEmptyValue()
-        && !isPlaceholderEmpty()
-        && (document().focusedElement() != this || (document().page()->theme().shouldShowPlaceholderWhenFocused()));
+    return supportsPlaceholder() && isEmptyValue() && !isPlaceholderEmpty();
 }
 
 void HTMLTextFormControlElement::updatePlaceholderVisibility()

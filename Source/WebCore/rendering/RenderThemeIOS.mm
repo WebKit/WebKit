@@ -1073,11 +1073,6 @@ Color RenderThemeIOS::platformInactiveSelectionBackgroundColor() const
     return Color::transparent;
 }
 
-bool RenderThemeIOS::shouldShowPlaceholderWhenFocused() const
-{
-    return true;
-}
-
 bool RenderThemeIOS::shouldHaveSpinButton(HTMLInputElement&) const
 {
     return false;

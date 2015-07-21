@@ -134,8 +134,6 @@ public:
     virtual bool paintMeter(const RenderObject&, const PaintInfo&, const IntRect&) override;
 #endif
 
-    virtual bool shouldShowPlaceholderWhenFocused() const override { return true; }
-
 private:
     enum ControlSubPart {
         None,

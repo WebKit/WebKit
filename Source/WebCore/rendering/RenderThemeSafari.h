@@ -140,8 +140,6 @@ protected:
     virtual bool paintMeter(const RenderObject&, const PaintInfo&, const IntRect&) override;
 #endif
 
-    virtual bool shouldShowPlaceholderWhenFocused() const { return true; }
-
 private:
     RenderThemeSafari();
     virtual ~RenderThemeSafari();

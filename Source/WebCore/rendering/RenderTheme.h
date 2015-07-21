@@ -228,7 +228,6 @@ public:
     void paintSliderTicks(const RenderObject&, const PaintInfo&, const IntRect&);
 #endif
 
-    virtual bool shouldShowPlaceholderWhenFocused() const { return false; }
     virtual bool shouldHaveSpinButton(HTMLInputElement&) const;
     virtual bool shouldHaveCapsLockIndicator(HTMLInputElement&) const;
 

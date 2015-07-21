@@ -1936,11 +1936,6 @@ void RenderThemeMac::adjustSliderThumbSize(RenderStyle& style, Element*) const
     }
 }
 
-bool RenderThemeMac::shouldShowPlaceholderWhenFocused() const
-{
-    return true;
-}
-
 bool RenderThemeMac::shouldHaveCapsLockIndicator(HTMLInputElement& element) const
 {
     return element.isPasswordField();
