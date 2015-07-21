@@ -1,5 +1,22 @@
 2015-07-20  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r187039. rdar://problem/21474317
+
+    2015-07-20  Tim Horton  <timothy_horton@apple.com>
+
+            REGRESSION (r174287): Flash of black when opening a new web view or navigating to a new page
+            https://bugs.webkit.org/show_bug.cgi?id=147127
+            <rdar://problem/21474317>
+
+            Reviewed by Simon Fraser.
+
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::snapshotAtSize):
+            Avoid using an invalid documentBackgroundColor, fall back to baseBackgroundColor
+            like we did before r174287.
+
+2015-07-20  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r187047. rdar://problem/20860410
 
     2015-07-20  Gordon Sheridan  <gordon_sheridan@apple.com>
