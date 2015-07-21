@@ -1,5 +1,15 @@
 2015-07-20  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r187072. rdar://problem/21582858
+
+    2015-07-20  Simon Fraser  <simon.fraser@apple.com>
+
+            Fix the iOS build.
+
+            * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+
+2015-07-20  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r187050. rdar://problem/21582858
 
     2015-07-20  Wenson Hsieh  <wenson_hsieh@apple.com>
