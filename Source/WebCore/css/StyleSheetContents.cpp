@@ -236,7 +236,11 @@ bool StyleSheetContents::wrapperInsertRule(PassRefPtr<StyleRuleBase> rule, unsig
     if (is<StyleRuleImport>(*rule))
         return false;
     childVectorIndex -= m_importRules.size();
- 
+
+    // If the number of selectors would overflow RuleData, we drop the operation.
+    if (is<StyleRule>(*rule) && downcast<StyleRule>(*rule).selectorList().componentCount() > RuleData::maximumSelectorComponentCount)
+        return false;
+
     m_childRules.insert(childVectorIndex, rule);
     return true;
 }
