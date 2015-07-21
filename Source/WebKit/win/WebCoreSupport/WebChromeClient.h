@@ -160,6 +160,10 @@ public:
     virtual void exitFullScreenForElement(WebCore::Element*);
 #endif
 
+#if ENABLE(TOUCH_EVENTS)
+    virtual void needTouchEvents(bool) override { }
+#endif
+
     virtual void wheelEventHandlersChanged(bool) override { }
 
     WebView* webView() { return m_webView; }

@@ -1,3 +1,12 @@
+2015-07-21  Sungmann Cho  <sungmann.cho@navercorp.com>
+
+        [Win] Add needTouchEvents() stub to WebChromeClient.h for a successful build with ENABLE_TOUCH_EVENTS=ON
+        https://bugs.webkit.org/show_bug.cgi?id=147141
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebChromeClient.h:
+
 2015-07-21  Per Arne Vollan  <peavo@outlook.com>
 
         WinLauncher does not start on WinXP.
