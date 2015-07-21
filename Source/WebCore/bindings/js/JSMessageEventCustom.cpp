@@ -46,8 +46,12 @@ namespace WebCore {
 
 JSValue JSMessageEvent::data(ExecState* exec) const
 {
-    if (JSValue cachedValue = m_data.get())
-        return cachedValue;
+    if (JSValue cachedValue = m_data.get()) {
+        // We cannot use a cached object if we are in a different world than the one it was created in.
+        if (!cachedValue.isObject() || &worldForDOMObject(cachedValue.getObject()) == &currentWorld(exec))
+            return cachedValue;
+        ASSERT_NOT_REACHED();
+    }
 
     MessageEvent& event = impl();
     JSValue result;
@@ -56,8 +60,19 @@ JSValue JSMessageEvent::data(ExecState* exec) const
         Deprecated::ScriptValue scriptValue = event.dataAsScriptValue();
         if (scriptValue.hasNoValue())
             result = jsNull();
-        else
-            result = scriptValue.jsValue();
+        else {
+            JSValue dataValue = scriptValue.jsValue();
+            // We need to make sure MessageEvents do not leak objects in their state property across isolated DOM worlds.
+            // Ideally, we would check that the worlds have different privileges but that's not possible yet.
+            if (dataValue.isObject() && &worldForDOMObject(dataValue.getObject()) != &currentWorld(exec)) {
+                RefPtr<SerializedScriptValue> serializedValue = event.trySerializeData(exec);
+                if (serializedValue)
+                    result = serializedValue->deserialize(exec, globalObject(), nullptr);
+                else
+                    result = jsNull();
+            } else
+                result = dataValue;
+        }
         break;
     }
 
