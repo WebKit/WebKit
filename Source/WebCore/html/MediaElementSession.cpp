@@ -382,7 +382,7 @@ void MediaElementSession::mediaEngineUpdated(const HTMLMediaElement& element)
 bool MediaElementSession::allowsPictureInPicture(const HTMLMediaElement& element) const
 {
     Settings* settings = element.document().settings();
-    return settings && settings->allowsPictureInPictureMediaPlayback();
+    return settings && settings->allowsPictureInPictureMediaPlayback() && !element.webkitCurrentPlaybackTargetIsWireless();
 }
 
 #if ENABLE(MEDIA_SOURCE)
