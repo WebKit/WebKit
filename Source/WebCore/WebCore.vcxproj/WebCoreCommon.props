@@ -7,7 +7,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <PreprocessorDefinitions>DISABLE_3D_TRANSFORMS;WEBCORE_CONTEXT_MENUS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DISABLE_3D_TRANSFORMS;WEBCORE_CONTEXT_MENUS;PSAPI_VERSION=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>WebCorePrefix.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>WebCorePrefix.h;ICUVersion.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
