@@ -104,7 +104,16 @@ static RefPtr<Image> snapshotSelectionWithHighlight(Frame& frame)
 RefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(Frame& frame, TextIndicatorPresentationTransition presentationTransition, unsigned margin)
 {
     Vector<FloatRect> textRects;
-    frame.selection().getClippedVisibleTextRectangles(textRects);
+
+    // On iOS, we don't need to expand the TextIndicator to cover the whole selection height.
+    // FIXME: Ideally, on Mac, there are times when we don't need to (if we don't have a selection),
+    // and using TextHeight would provide a more sensible appearance.
+#if PLATFORM(IOS)
+    FrameSelection::TextRectangleHeight textRectHeight = FrameSelection::TextRectangleHeight::TextHeight;
+#else
+    FrameSelection::TextRectangleHeight textRectHeight = FrameSelection::TextRectangleHeight::SelectionHeight;
+#endif
+    frame.selection().getClippedVisibleTextRectangles(textRects, textRectHeight);
 
     // The bounding rect of all the text rects can be different than the selection
     // rect when the selection spans multiple lines; the indicator doesn't actually
@@ -166,7 +175,6 @@ RefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(Frame& frame, Te
 TextIndicator::TextIndicator(const TextIndicatorData& data)
     : m_data(data)
 {
-    ASSERT(m_data.contentImageScaleFactor != 1 || m_data.contentImage->size() == enclosingIntRect(m_data.selectionRectInRootViewCoordinates).size());
 }
 
 TextIndicator::~TextIndicator()
