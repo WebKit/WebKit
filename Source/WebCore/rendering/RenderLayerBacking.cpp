@@ -634,7 +634,7 @@ bool RenderLayerBacking::updateConfiguration()
 #endif
     }
 #if ENABLE(VIDEO)
-    else if (renderer().isVideo()) {
+    else if (is<RenderVideo>(renderer()) && downcast<RenderVideo>(renderer()).shouldDisplayVideo()) {
         HTMLMediaElement* mediaElement = downcast<HTMLMediaElement>(renderer().element());
         m_graphicsLayer->setContentsToPlatformLayer(mediaElement->platformLayer(), GraphicsLayer::ContentsLayerForMedia);
     }
