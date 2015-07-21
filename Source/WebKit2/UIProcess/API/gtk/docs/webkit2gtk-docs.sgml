@@ -29,6 +29,7 @@
     <xi:include href="xml/WebKitNavigationPolicyDecision.xml"/>
     <xi:include href="xml/WebKitResponsePolicyDecision.xml"/>
     <xi:include href="xml/WebKitHitTestResult.xml"/>
+    <xi:include href="xml/WebKitEditorState.xml"/>
     <xi:include href="xml/WebKitPrintOperation.xml"/>
     <xi:include href="xml/WebKitWebResource.xml"/>
     <xi:include href="xml/WebKitError.xml"/>

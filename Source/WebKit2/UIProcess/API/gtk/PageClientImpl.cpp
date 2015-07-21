@@ -36,8 +36,8 @@
 #include "WebContextMenuProxyGtk.h"
 #include "WebEventFactory.h"
 #include "WebKitColorChooser.h"
-#include "WebKitWebView.h"
 #include "WebKitWebViewBasePrivate.h"
+#include "WebKitWebViewPrivate.h"
 #include "WebPageProxy.h"
 #include "WebPopupMenuProxyGtk.h"
 #include "WebProcessPool.h"
@@ -263,9 +263,11 @@ void PageClientImpl::preferencesDidChange()
     notImplemented();
 }
 
-void PageClientImpl::updateTextInputState()
+void PageClientImpl::selectionDidChange()
 {
     webkitWebViewBaseUpdateTextInputState(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
+    if (WEBKIT_IS_WEB_VIEW(m_viewWidget))
+        webkitWebViewSelectionDidChange(WEBKIT_WEB_VIEW(m_viewWidget));
 }
 
 #if ENABLE(DRAG_SUPPORT)

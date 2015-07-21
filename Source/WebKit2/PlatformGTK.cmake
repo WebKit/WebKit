@@ -139,6 +139,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/WebKitDownloadClient.h
     UIProcess/API/gtk/WebKitDownloadPrivate.h
     UIProcess/API/gtk/WebKitEditingCommands.h
+    UIProcess/API/gtk/WebKitEditorState.cpp
     UIProcess/API/gtk/WebKitError.cpp
     UIProcess/API/gtk/WebKitError.h
     UIProcess/API/gtk/WebKitFaviconDatabase.cpp
@@ -378,6 +379,7 @@ set(WebKit2GTK_INSTALLED_HEADERS
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitDefines.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitDownload.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitEditingCommands.h
+    ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitEditorState.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitError.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitFaviconDatabase.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitFileChooserRequest.h

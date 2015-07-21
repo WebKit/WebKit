@@ -73,7 +73,7 @@ void WebPageProxy::editorStateChanged(const EditorState& editorState)
     
     if (editorState.shouldIgnoreCompositionSelectionChange)
         return;
-    m_pageClient.updateTextInputState();
+    m_pageClient.selectionDidChange();
 }
 
 #if PLUGIN_ARCHITECTURE(X11)

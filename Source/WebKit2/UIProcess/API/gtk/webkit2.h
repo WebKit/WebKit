@@ -38,6 +38,7 @@
 #include <webkit2/WebKitDefines.h>
 #include <webkit2/WebKitDownload.h>
 #include <webkit2/WebKitEditingCommands.h>
+#include <webkit2/WebKitEditorState.h>
 #include <webkit2/WebKitEnumTypes.h>
 #include <webkit2/WebKitError.h>
 #include <webkit2/WebKitFaviconDatabase.h>

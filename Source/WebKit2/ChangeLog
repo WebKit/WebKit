@@ -1,3 +1,60 @@
+2015-07-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to be notified about editor state changes
+        https://bugs.webkit.org/show_bug.cgi?id=145875
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add WebKitEditorState object, that is created on demand by the
+        WebKitWebView and can be used to get the typing attributes of the
+        editor at the current position or selection.
+
+        * PlatformGTK.cmake:
+        * Shared/EditorState.cpp: Use part of the PostLayoutData struct
+        for the GTK port too.
+        (WebKit::EditorState::encode): Encode PostLayoutData for GTK and
+        remove our custom cursorRect.
+        (WebKit::EditorState::decode): Decode PostLayoutData for GTK and
+        remove our custom cursorRect.
+        (WebKit::EditorState::PostLayoutData::encode): Reorder it to
+        reduce the amonut of ifdefs.
+        (WebKit::EditorState::PostLayoutData::decode): Ditto.
+        * Shared/EditorState.h: Add AttributeStrikeThrough to
+        TypingAttributes enum.
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::selectionDidChange): Rename
+        updateTextInputState() to selectionDidChange() and also notify the
+        WebKitWebView.
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/gtk/WebKitEditorState.cpp: Added.
+        (webkitEditorStateGetProperty):
+        (webkit_editor_state_class_init):
+        (webkitEditorStateSetTypingAttributes):
+        (webkitEditorStateCreate):
+        (webkitEditorStateChanged):
+        (webkit_editor_state_get_typing_attributes):
+        * UIProcess/API/gtk/WebKitEditorState.h: Added.
+        * UIProcess/API/gtk/WebKitEditorStatePrivate.h: Added.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewSelectionDidChange): Notify the WebKitEditorState if
+        it has already been created.
+        (webkit_web_view_get_editor_state): Ensure a WebKitEditorState and
+        return it.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseUpdateTextInputState): Get the caret cursor rect
+        from PostLayoutData.
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0.types: Add webkit_editor_state_get_type.
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Add new section for WebKitEditorState.
+        * UIProcess/API/gtk/webkit2.h: Include WebKitEditorState.h.
+        * UIProcess/PageClient.h:
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::editorStateChanged): Call PageClientImpl::selectionDidChange().
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::platformEditorState): Add typing attributes to EditorState.
+
 2015-07-20  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the iOS build.

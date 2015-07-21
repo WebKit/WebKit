@@ -53,6 +53,10 @@ struct _BrowserWindow {
     GtkWidget *forwardItem;
     GtkWidget *zoomInItem;
     GtkWidget *zoomOutItem;
+    GtkWidget *boldItem;
+    GtkWidget *italicItem;
+    GtkWidget *underlineItem;
+    GtkWidget *strikethroughItem;
     GtkWidget *statusLabel;
     GtkWidget *settingsDialog;
     WebKitWebView *webView;
@@ -696,6 +700,21 @@ static void editingCommandCallback(GtkWidget*widget, BrowserWindow *window)
     webkit_web_view_execute_editing_command(window->webView, gtk_widget_get_name(widget));
 }
 
+static void browserWindowEditingCommandToggleButtonSetActive(BrowserWindow *window, GtkWidget *button, gboolean active)
+{
+    g_signal_handlers_block_by_func(button, G_CALLBACK(editingCommandCallback), window);
+    gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(button), active);
+    g_signal_handlers_unblock_by_func(button, G_CALLBACK(editingCommandCallback), window);
+}
+
+static void typingAttributesChanged(WebKitEditorState *editorState, GParamSpec *spec, BrowserWindow *window)
+{
+    unsigned typingAttributes = webkit_editor_state_get_typing_attributes(editorState);
+    browserWindowEditingCommandToggleButtonSetActive(window, window->boldItem, typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_BOLD);
+    browserWindowEditingCommandToggleButtonSetActive(window, window->italicItem, typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_ITALIC);
+    browserWindowEditingCommandToggleButtonSetActive(window, window->underlineItem, typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_UNDERLINE);
+    browserWindowEditingCommandToggleButtonSetActive(window, window->strikethroughItem, typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_STRIKETHROUGH);
+}
 
 static void browserWindowFinalize(GObject *gObject)
 {
@@ -755,18 +774,21 @@ static void browserWindowSetupEditorToolbar(BrowserWindow *window)
     gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_BOTH_HORIZ);
 
     GtkToolItem *item = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_BOLD);
+    window->boldItem = item;
     gtk_widget_set_name(GTK_WIDGET(item), "Bold");
     g_signal_connect(G_OBJECT(item), "toggled", G_CALLBACK(editingCommandCallback), window);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
 
     item = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_ITALIC);
+    window->italicItem = item;
     gtk_widget_set_name(GTK_WIDGET(item), "Italic");
     g_signal_connect(G_OBJECT(item), "toggled", G_CALLBACK(editingCommandCallback), window);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
 
     item = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_UNDERLINE);
+    window->underlineItem = item;
     gtk_widget_set_name(GTK_WIDGET(item), "Underline");
     g_signal_connect(G_OBJECT(item), "toggled", G_CALLBACK(editingCommandCallback), window);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
@@ -774,6 +796,7 @@ static void browserWindowSetupEditorToolbar(BrowserWindow *window)
 
     item = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_STRIKETHROUGH);
     gtk_widget_set_name(GTK_WIDGET(item), "Strikethrough");
+    window->strikethroughItem = item;
     g_signal_connect(G_OBJECT(item), "toggled", G_CALLBACK(editingCommandCallback), window);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
@@ -1004,8 +1027,10 @@ static void browserWindowConstructed(GObject *gObject)
     BrowserWindow *window = BROWSER_WINDOW(gObject);
 
     browserWindowUpdateZoomActions(window);
-    if (webkit_web_view_is_editable(window->webView))
+    if (webkit_web_view_is_editable(window->webView)) {
         browserWindowSetupEditorToolbar(window);
+        g_signal_connect(webkit_web_view_get_editor_state(window->webView), "notify::typing-attributes", G_CALLBACK(typingAttributesChanged), window);
+    }
 
     g_signal_connect(window->webView, "notify::uri", G_CALLBACK(webViewURIChanged), window);
     g_signal_connect(window->webView, "notify::estimated-load-progress", G_CALLBACK(webViewLoadProgressChanged), window);

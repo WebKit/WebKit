@@ -33,6 +33,7 @@
 #include <webkit2/WebKitBackForwardList.h>
 #include <webkit2/WebKitDefines.h>
 #include <webkit2/WebKitColorChooserRequest.h>
+#include <webkit2/WebKitEditorState.h>
 #include <webkit2/WebKitFileChooserRequest.h>
 #include <webkit2/WebKitFindController.h>
 #include <webkit2/WebKitFormSubmissionRequest.h>
@@ -492,6 +493,9 @@ webkit_web_view_is_editable                          (WebKitWebView             
 WEBKIT_API void
 webkit_web_view_set_editable                         (WebKitWebView             *web_view,
                                                       gboolean                  editable);
+
+WEBKIT_API WebKitEditorState *
+webkit_web_view_get_editor_state                     (WebKitWebView             *web_view);
 
 G_END_DECLS
 

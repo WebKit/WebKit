@@ -62,5 +62,6 @@ bool webkitWebViewEmitShowNotification(WebKitWebView*, WebKitNotification*);
 bool webkitWebViewEmitRunColorChooser(WebKitWebView*, WebKitColorChooserRequest*);
 void webkitWebViewWebProcessCrashed(WebKitWebView*);
 void webkitWebViewIsPlayingAudioChanged(WebKitWebView*);
+void webkitWebViewSelectionDidChange(WebKitWebView*);
 
 #endif // WebKitWebViewPrivate_h

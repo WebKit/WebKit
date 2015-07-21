@@ -35,6 +35,7 @@
 #include "WebKitContextMenuItemPrivate.h"
 #include "WebKitContextMenuPrivate.h"
 #include "WebKitDownloadPrivate.h"
+#include "WebKitEditorStatePrivate.h"
 #include "WebKitEnumTypes.h"
 #include "WebKitError.h"
 #include "WebKitFaviconDatabasePrivate.h"
@@ -185,6 +186,7 @@ struct _WebKitWebViewPrivate {
     GRefPtr<WebKitUserContentManager> userContentManager;
     GRefPtr<WebKitWebContext> context;
     GRefPtr<WebKitWindowProperties> windowProperties;
+    GRefPtr<WebKitEditorState> editorState;
 
     GRefPtr<GMainLoop> modalLoop;
 
@@ -2135,6 +2137,14 @@ bool webkitWebViewEmitRunColorChooser(WebKitWebView* webView, WebKitColorChooser
     return handled;
 }
 
+void webkitWebViewSelectionDidChange(WebKitWebView* webView)
+{
+    if (!webView->priv->editorState)
+        return;
+
+    webkitEditorStateChanged(webView->priv->editorState.get(), getPage(webView)->editorState());
+}
+
 /**
  * webkit_web_view_new:
  *
@@ -3648,4 +3658,24 @@ void webkit_web_view_set_editable(WebKitWebView* webView, gboolean editable)
     getPage(webView)->setEditable(editable);
 
     g_object_notify(G_OBJECT(webView), "editable");
+}
+
+/**
+ * webkit_web_view_get_editor_state:
+ * @web_view: a #WebKitWebView
+ *
+ * Gets the web editor state of @web_view.
+ *
+ * Returns: (transfer none): the #WebKitEditorState of the view
+ *
+ * Since: 2.10
+ */
+WebKitEditorState* webkit_web_view_get_editor_state(WebKitWebView *webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
+
+    if (!webView->priv->editorState)
+        webView->priv->editorState = adoptGRef(webkitEditorStateCreate(getPage(webView)->editorState()));
+
+    return webView->priv->editorState.get();
 }

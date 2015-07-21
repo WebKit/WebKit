@@ -1,3 +1,24 @@
+2015-07-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to be notified about editor state changes
+        https://bugs.webkit.org/show_bug.cgi?id=145875
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Update the typing attributes toggle buttons state according to the
+        editor state in MiniBrowser, and add a test case to the
+        WebViewEditor unit tests.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (browserWindowEditingCommandToggleButtonSetActive):
+        (typingAttributesChanged):
+        (browserWindowSetupEditorToolbar):
+        (browserWindowConstructed):
+        (browser_window_init):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebViewEditor.cpp:
+        (testWebViewEditorEditorStateTypingAttributes):
+        (beforeAll):
+
 2015-07-20  Tomas Popela  <tpopela@redhat.com>
 
         [GTK] Add selection-changed signal to the WebKit2 API

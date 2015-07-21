@@ -40,7 +40,8 @@ enum TypingAttributes {
     AttributeNone = 0,
     AttributeBold = 1,
     AttributeItalics = 2,
-    AttributeUnderline = 4
+    AttributeUnderline = 4,
+    AttributeStrikeThrough = 8
 };
 
 struct EditorState {
@@ -59,20 +60,24 @@ struct EditorState {
     WebCore::IntRect firstMarkedRect;
     WebCore::IntRect lastMarkedRect;
     String markedText;
+#endif
 
+#if PLATFORM(IOS) || PLATFORM(GTK)
     struct PostLayoutData {
+        uint32_t typingAttributes { AttributeNone };
+        WebCore::IntRect caretRectAtStart;
+#if PLATFORM(IOS)
+        WebCore::IntRect caretRectAtEnd;
         WebCore::IntRect selectionClipRect;
         Vector<WebCore::SelectionRect> selectionRects;
-        WebCore::IntRect caretRectAtStart;
-        WebCore::IntRect caretRectAtEnd;
         String wordAtSelection;
         uint64_t selectedTextLength { 0 };
         UChar32 characterAfterSelection { 0 };
         UChar32 characterBeforeSelection { 0 };
         UChar32 twoCharacterBeforeSelection { 0 };
-        uint32_t typingAttributes { AttributeNone };
         bool isReplaceAllowed { false };
         bool hasContent { false };
+#endif
 
         void encode(IPC::ArgumentEncoder&) const;
         static bool decode(IPC::ArgumentDecoder&, PostLayoutData&);
@@ -80,22 +85,18 @@ struct EditorState {
 
     const PostLayoutData& postLayoutData() const;
     PostLayoutData& postLayoutData();
-#endif
-
-#if PLATFORM(GTK)
-    WebCore::IntRect cursorRect;
-#endif
+#endif // PLATFORM(IOS) || PLATFORM(GTK)
 
     void encode(IPC::ArgumentEncoder&) const;
     static bool decode(IPC::ArgumentDecoder&, EditorState&);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(GTK)
 private:
     PostLayoutData m_postLayoutData;
 #endif
 };
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(GTK)
 inline auto EditorState::postLayoutData() -> PostLayoutData&
 {
     ASSERT_WITH_MESSAGE(!isMissingPostLayoutData, "Attempt to access post layout data before receiving it");

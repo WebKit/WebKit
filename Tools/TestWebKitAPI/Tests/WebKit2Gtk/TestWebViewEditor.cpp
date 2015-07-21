@@ -32,6 +32,7 @@ public:
         : m_clipboard(gtk_clipboard_get(GDK_SELECTION_CLIPBOARD))
         , m_canExecuteEditingCommand(false)
         , m_triesCount(0)
+        , m_editorState(nullptr)
     {
         gtk_clipboard_clear(m_clipboard);
     }
@@ -85,12 +86,41 @@ public:
         g_timeout_add(kClipboardWaitTimeout, reinterpret_cast<GSourceFunc>(waitForClipboardText), this);
         g_main_loop_run(m_mainLoop);
 
-        return gtk_clipboard_wait_for_text (m_clipboard);
+        return gtk_clipboard_wait_for_text(m_clipboard);
+    }
+
+    WebKitEditorState* editorState()
+    {
+        if (m_editorState)
+            return m_editorState;
+
+        m_editorState = webkit_web_view_get_editor_state(m_webView);
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_editorState));
+        return m_editorState;
+    }
+
+    static void quitMainLoopInCallback(EditorTest* test)
+    {
+        g_main_loop_quit(test->m_mainLoop);
+    }
+
+    unsigned typingAttributes()
+    {
+        return webkit_editor_state_get_typing_attributes(editorState());
+    }
+
+    unsigned waitUntilTypingAttributesChanged()
+    {
+        unsigned long handlerID = g_signal_connect_swapped(editorState(), "notify::typing-attributes", G_CALLBACK(quitMainLoopInCallback), this);
+        g_main_loop_run(m_mainLoop);
+        g_signal_handler_disconnect(m_editorState, handlerID);
+        return typingAttributes();
     }
 
     GtkClipboard* m_clipboard;
     bool m_canExecuteEditingCommand;
     size_t m_triesCount;
+    WebKitEditorState* m_editorState;
 };
 
 static const char* selectedSpanHTMLFormat =
@@ -255,6 +285,122 @@ static void testWebViewEditorEditable(EditorTest* test, gconstpointer)
     loadContentsAndTryToCutSelection(test, false);
 }
 
+static void testWebViewEditorEditorStateTypingAttributes(EditorTest* test, gconstpointer)
+{
+    static const char* typingAttributesHTML =
+        "<html><body>"
+        "normal <b>bold </b><i>italic </i><u>underline </u><strike>strike </strike>"
+        "<b><i>boldanditalic </i></b>"
+        "</body></html>";
+
+    test->loadHtml(typingAttributesHTML, nullptr);
+    test->waitUntilLoadFinished();
+    test->setEditable(true);
+
+    unsigned typingAttributes = test->typingAttributes();
+    g_assert_cmpuint(typingAttributes, ==, WEBKIT_EDITOR_TYPING_ATTRIBUTE_NONE);
+
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveWordForward");
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveForward");
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveForward");
+    typingAttributes = test->waitUntilTypingAttributesChanged();
+    g_assert(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_BOLD);
+    g_assert(!(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_ITALIC));
+    g_assert(!(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_UNDERLINE));
+    g_assert(!(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_STRIKETHROUGH));
+
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveWordForward");
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveForward");
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveForward");
+    typingAttributes = test->waitUntilTypingAttributesChanged();
+    g_assert(!(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_BOLD));
+    g_assert(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_ITALIC);
+    g_assert(!(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_UNDERLINE));
+    g_assert(!(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_STRIKETHROUGH));
+
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveWordForward");
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveForward");
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveForward");
+    typingAttributes = test->waitUntilTypingAttributesChanged();
+    g_assert(!(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_BOLD));
+    g_assert(!(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_ITALIC));
+    g_assert(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_UNDERLINE);
+    g_assert(!(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_STRIKETHROUGH));
+
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveWordForward");
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveForward");
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveForward");
+    typingAttributes = test->waitUntilTypingAttributesChanged();
+    g_assert(!(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_BOLD));
+    g_assert(!(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_ITALIC));
+    g_assert(!(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_UNDERLINE));
+    g_assert(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_STRIKETHROUGH);
+
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveWordForward");
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveForward");
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveForward");
+    typingAttributes = test->waitUntilTypingAttributesChanged();
+    g_assert(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_BOLD);
+    g_assert(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_ITALIC);
+    g_assert(!(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_UNDERLINE));
+    g_assert(!(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_STRIKETHROUGH));
+
+    // Selections.
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveToBeginningOfDocument");
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveWordForwardAndModifySelection");
+    typingAttributes = test->waitUntilTypingAttributesChanged();
+    g_assert_cmpuint(typingAttributes, ==, WEBKIT_EDITOR_TYPING_ATTRIBUTE_NONE);
+
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveForward");
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveForward");
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveWordForwardAndModifySelection");
+    typingAttributes = test->waitUntilTypingAttributesChanged();
+    g_assert(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_BOLD);
+    g_assert(!(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_ITALIC));
+    g_assert(!(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_UNDERLINE));
+    g_assert(!(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_STRIKETHROUGH));
+
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveForward");
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveForward");
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveWordForwardAndModifySelection");
+    typingAttributes = test->waitUntilTypingAttributesChanged();
+    g_assert(!(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_BOLD));
+    g_assert(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_ITALIC);
+    g_assert(!(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_UNDERLINE));
+    g_assert(!(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_STRIKETHROUGH));
+
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveForward");
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveForward");
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveWordForwardAndModifySelection");
+    typingAttributes = test->waitUntilTypingAttributesChanged();
+    g_assert(!(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_BOLD));
+    g_assert(!(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_ITALIC));
+    g_assert(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_UNDERLINE);
+    g_assert(!(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_STRIKETHROUGH));
+
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveForward");
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveForward");
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveWordForwardAndModifySelection");
+    typingAttributes = test->waitUntilTypingAttributesChanged();
+    g_assert(!(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_BOLD));
+    g_assert(!(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_ITALIC));
+    g_assert(!(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_UNDERLINE));
+    g_assert(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_STRIKETHROUGH);
+
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveForward");
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveForward");
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveWordForwardAndModifySelection");
+    typingAttributes = test->waitUntilTypingAttributesChanged();
+    g_assert(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_BOLD);
+    g_assert(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_ITALIC);
+    g_assert(!(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_UNDERLINE));
+    g_assert(!(typingAttributes & WEBKIT_EDITOR_TYPING_ATTRIBUTE_STRIKETHROUGH));
+
+    webkit_web_view_execute_editing_command(test->m_webView, "SelectAll");
+    typingAttributes = test->waitUntilTypingAttributesChanged();
+    g_assert_cmpuint(typingAttributes, ==, WEBKIT_EDITOR_TYPING_ATTRIBUTE_NONE);
+}
+
 void beforeAll()
 {
     EditorTest::add("WebKitWebView", "editable/editable", testWebViewEditorEditable);
@@ -262,6 +408,7 @@ void beforeAll()
     EditorTest::add("WebKitWebView", "cut-copy-paste/editable", testWebViewEditorCutCopyPasteEditable);
     EditorTest::add("WebKitWebView", "select-all/non-editable", testWebViewEditorSelectAllNonEditable);
     EditorTest::add("WebKitWebView", "select-all/editable", testWebViewEditorSelectAllEditable);
+    EditorTest::add("WebKitWebView", "editor-state/typing-attributes", testWebViewEditorEditorStateTypingAttributes);
 }
 
 void afterAll()

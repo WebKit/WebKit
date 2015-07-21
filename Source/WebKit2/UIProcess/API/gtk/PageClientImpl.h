@@ -90,7 +90,7 @@ private:
     virtual void setTextIndicator(Ref<WebCore::TextIndicator>, WebCore::TextIndicatorLifetime = WebCore::TextIndicatorLifetime::Permanent) override;
     virtual void clearTextIndicator(WebCore::TextIndicatorDismissalAnimation = WebCore::TextIndicatorDismissalAnimation::FadeOut) override;
     virtual void setTextIndicatorAnimationProgress(float) override;
-    virtual void updateTextInputState() override;
+    virtual void selectionDidChange() override;
 #if ENABLE(DRAG_SUPPORT)
     virtual void startDrag(const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage) override;
 #endif

@@ -145,9 +145,9 @@ public:
     virtual void didFindZoomableArea(const WebCore::IntPoint&, const WebCore::IntRect&) = 0;
 #endif
 
-#if PLATFORM(EFL) || PLATFORM(GTK)
+#if PLATFORM(EFL)
     virtual void updateTextInputState() = 0;
-#endif // PLATFORM(EFL) || PLATOFRM(GTK)
+#endif // PLATFORM(EFL)
 
     virtual void handleDownloadRequest(DownloadProxy*) = 0;
 
@@ -179,6 +179,9 @@ public:
     virtual LayerOrView *acceleratedCompositingRootLayer() const = 0;
     virtual PassRefPtr<ViewSnapshot> takeViewSnapshot() = 0;
     virtual void wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&) = 0;
+#endif
+
+#if PLATFORM(COCOA) || PLATFORM(GTK)
     virtual void selectionDidChange() = 0;
 #endif
 
