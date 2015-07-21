@@ -7258,6 +7258,17 @@
     <ClCompile Include="..\platform\win\MemoryPressureHandlerWin.cpp">
       <Filter>platform\win</Filter>
     </ClCompile>
+    <ClCompile Include="..\dom\NodeOrString.cpp" />
+    <ClCompile Include="..\bindings\js\JSCharacterDataCustom.cpp" />
+    <ClCompile Include="..\bindings\js\JSDocumentFragmentCustom.cpp" />
+    <ClCompile Include="..\bindings\js\JSDocumentTypeCustom.cpp" />
+    <ClCompile Include="..\bindings\js\JSNodeOrString.cpp" />
+    <ClCompile Include="..\html\canvas\DOMPath.cpp">
+      <Filter>html\canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\PathUtilities.cpp">
+      <Filter>platform\graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Modules\geolocation\Coordinates.h">
@@ -15238,6 +15249,14 @@
     </ClInclude>
     <ClInclude Include="..\platform\VNodeTracker.h">
       <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dom\NodeOrString.h" />
+    <ClInclude Include="..\bindings\js\JSNodeOrString.h" />
+    <ClInclude Include="..\html\canvas\DOMPath.h">
+      <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\PathUtilities.h">
+      <Filter>platform\graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
