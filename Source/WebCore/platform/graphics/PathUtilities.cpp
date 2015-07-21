@@ -31,6 +31,7 @@
 #include "FloatRect.h"
 #include "GeometryUtilities.h"
 #include <math.h>
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
