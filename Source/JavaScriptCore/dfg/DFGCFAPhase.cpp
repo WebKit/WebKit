@@ -107,7 +107,7 @@ public:
                         m_graph, resultFor(node->variableAccessData()->flushFormat()));
                 }
                 
-                if (changed) {
+                if (changed || !block->cfaHasVisited) {
                     m_changed = true;
                     block->cfaShouldRevisit = true;
                 }
