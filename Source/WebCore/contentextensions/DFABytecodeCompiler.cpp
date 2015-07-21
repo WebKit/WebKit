@@ -198,27 +198,56 @@ unsigned DFABytecodeCompiler::compiledNodeMaxBytecodeSize(uint32_t index)
     return size;
 }
 
-Vector<DFABytecodeCompiler::Range> DFABytecodeCompiler::ranges(const DFANode& node)
+DFABytecodeCompiler::JumpTable DFABytecodeCompiler::extractJumpTable(Vector<DFABytecodeCompiler::Range>& ranges, unsigned firstRange, unsigned lastRange)
 {
+    ASSERT(lastRange > firstRange);
+    ASSERT(lastRange < ranges.size());
+
+    JumpTable jumpTable;
+    jumpTable.min = ranges[firstRange].min;
+    jumpTable.max = ranges[lastRange].max;
+    jumpTable.caseSensitive = ranges[lastRange].caseSensitive;
+
+    unsigned size = lastRange - firstRange + 1;
+    jumpTable.destinations.reserveInitialCapacity(size);
+    for (unsigned i = firstRange; i <= lastRange; ++i) {
+        const Range& range = ranges[i];
+
+        ASSERT(range.caseSensitive == jumpTable.caseSensitive);
+        ASSERT(range.min == range.max);
+        ASSERT(range.min >= jumpTable.min);
+        ASSERT(range.min <= jumpTable.max);
+
+        jumpTable.destinations.append(range.destination);
+    }
+
+    ranges.remove(firstRange, size);
+
+    return jumpTable;
+}
+
+DFABytecodeCompiler::Transitions DFABytecodeCompiler::transitions(const DFANode& node)
+{
+    Transitions transitions;
+
     uint32_t destinations[128];
     memset(destinations, 0xff, sizeof(destinations));
     const uint32_t noDestination = std::numeric_limits<uint32_t>::max();
 
-    bool canUseFallbackTransition = node.canUseFallbackTransition(m_dfa);
-    uint32_t fallbackTransitionTarget = std::numeric_limits<uint32_t>::max();
-    if (canUseFallbackTransition)
-        fallbackTransitionTarget = node.bestFallbackTarget(m_dfa);
+    transitions.useFallbackTransition = node.canUseFallbackTransition(m_dfa);
+    if (transitions.useFallbackTransition)
+        transitions.fallbackTransitionTarget = node.bestFallbackTarget(m_dfa);
 
     for (const auto& transition : node.transitions(m_dfa)) {
         uint32_t targetNodeIndex = transition.target();
-        if (canUseFallbackTransition && fallbackTransitionTarget == targetNodeIndex)
+        if (transitions.useFallbackTransition && transitions.fallbackTransitionTarget == targetNodeIndex)
             continue;
 
         for (uint16_t i = transition.range().first; i <= transition.range().last; ++i)
             destinations[i] = targetNodeIndex;
     }
 
-    Vector<Range> ranges;
+    Vector<Range>& ranges = transitions.ranges;
     uint8_t rangeMin;
     bool hasRangeMin = false;
     for (uint8_t i = 0; i < 128; i++) {
@@ -268,7 +297,43 @@ Vector<DFABytecodeCompiler::Range> DFABytecodeCompiler::ranges(const DFANode& no
         ranges.append(Range(rangeMin, 127, destinations[rangeMin], true));
     }
 
-    return ranges;
+    Vector<JumpTable>& jumpTables = transitions.jumpTables;
+    unsigned rangePosition = 0;
+    unsigned baseRangePosition = std::numeric_limits<unsigned>::max();
+    Range* baseRange = nullptr;
+    while (rangePosition < ranges.size()) {
+        auto& range = ranges[rangePosition];
+        if (baseRange) {
+            if (range.min != range.max
+                || baseRange->caseSensitive != range.caseSensitive
+                || ranges[rangePosition - 1].max + 1 != range.min) {
+                if (rangePosition - baseRangePosition > 1) {
+                    jumpTables.append(extractJumpTable(ranges, baseRangePosition, rangePosition - 1));
+                    rangePosition = baseRangePosition;
+                }
+                baseRangePosition = std::numeric_limits<unsigned>::max();
+                baseRange = nullptr;
+            }
+        } else {
+            if (range.min == range.max) {
+                baseRangePosition = rangePosition;
+                baseRange = &range;
+            }
+        }
+        ++rangePosition;
+    }
+
+    if (baseRange && ranges.size() - baseRangePosition > 1)
+        jumpTables.append(extractJumpTable(ranges, baseRangePosition, ranges.size() - 1));
+
+    return transitions;
+}
+
+unsigned DFABytecodeCompiler::checkForJumpTableMaxBytecodeSize(const JumpTable& jumpTable)
+{
+    unsigned baselineSize = sizeof(DFABytecodeInstruction::CheckValueRangeCaseInsensitive) + 2 * sizeof(uint8_t);
+    unsigned targetsSize = (jumpTable.max - jumpTable.min + 1) * sizeof(uint32_t);
+    return baselineSize + targetsSize;
 }
     
 unsigned DFABytecodeCompiler::checkForRangeMaxBytecodeSize(const Range& range)
@@ -276,6 +341,35 @@ unsigned DFABytecodeCompiler::checkForRangeMaxBytecodeSize(const Range& range)
     if (range.min == range.max)
         return sizeof(DFABytecodeInstruction::CheckValueCaseInsensitive) + sizeof(uint8_t) + sizeof(uint32_t);
     return sizeof(DFABytecodeInstruction::CheckValueRangeCaseInsensitive) + 2 * sizeof(uint8_t) + sizeof(uint32_t);
+}
+
+void DFABytecodeCompiler::compileJumpTable(uint32_t nodeIndex, const JumpTable& jumpTable)
+{
+    unsigned startSize = m_bytecode.size();
+    ASSERT_WITH_MESSAGE(jumpTable.max < 128, "The DFA engine only supports the ASCII alphabet.");
+    ASSERT(jumpTable.min <= jumpTable.max);
+
+    uint32_t instructionLocation = m_bytecode.size();
+    DFABytecodeJumpSize jumpSize = Int8;
+    for (uint32_t destinationNodeIndex : jumpTable.destinations) {
+        int32_t longestPossibleJumpDistance = longestPossibleJump(instructionLocation, nodeIndex, destinationNodeIndex);
+        DFABytecodeJumpSize localJumpSize = smallestPossibleJumpSize(longestPossibleJumpDistance);
+        jumpSize = std::max(jumpSize, localJumpSize);
+    }
+
+    DFABytecodeInstruction instruction = jumpTable.caseSensitive ? DFABytecodeInstruction::JumpTableCaseSensitive : DFABytecodeInstruction::JumpTableCaseInsensitive;
+    append<uint8_t>(m_bytecode, static_cast<uint8_t>(instruction) | jumpSize);
+    append<uint8_t>(m_bytecode, jumpTable.min);
+    append<uint8_t>(m_bytecode, jumpTable.max);
+
+    for (uint32_t destinationNodeIndex : jumpTable.destinations) {
+        int32_t longestPossibleJumpDistance = longestPossibleJump(instructionLocation, nodeIndex, destinationNodeIndex);
+        uint32_t jumpLocation = m_bytecode.size();
+        m_linkRecords.append(LinkRecord({jumpSize, longestPossibleJumpDistance, instructionLocation, jumpLocation, destinationNodeIndex}));
+        appendZeroes(m_bytecode, jumpSize);
+    }
+
+    ASSERT_UNUSED(startSize, m_bytecode.size() - startSize <= checkForJumpTableMaxBytecodeSize(jumpTable));
 }
 
 void DFABytecodeCompiler::compileCheckForRange(uint32_t nodeIndex, const Range& range)
@@ -295,9 +389,12 @@ void DFABytecodeCompiler::compileCheckForRange(uint32_t nodeIndex, const Range& 
 unsigned DFABytecodeCompiler::nodeTransitionsMaxBytecodeSize(const DFANode& node)
 {
     unsigned size = 0;
-    for (const auto& range : ranges(node))
+    Transitions nodeTransitions = transitions(node);
+    for (const auto& jumpTable : nodeTransitions.jumpTables)
+        size += checkForJumpTableMaxBytecodeSize(jumpTable);
+    for (const auto& range : nodeTransitions.ranges)
         size += checkForRangeMaxBytecodeSize(range);
-    if (node.canUseFallbackTransition(m_dfa))
+    if (nodeTransitions.useFallbackTransition)
         size += sizeof(DFABytecodeInstruction::Jump) + sizeof(uint32_t);
     else
         size += instructionSizeWithArguments(DFABytecodeInstruction::Terminate);
@@ -308,11 +405,14 @@ void DFABytecodeCompiler::compileNodeTransitions(uint32_t nodeIndex)
 {
     const DFANode& node = m_dfa.nodes[nodeIndex];
     unsigned startSize = m_bytecode.size();
-    
-    for (const auto& range : ranges(node))
+
+    Transitions nodeTransitions = transitions(node);
+    for (const auto& jumpTable : nodeTransitions.jumpTables)
+        compileJumpTable(nodeIndex, jumpTable);
+    for (const auto& range : nodeTransitions.ranges)
         compileCheckForRange(nodeIndex, range);
-    if (node.canUseFallbackTransition(m_dfa))
-        emitJump(nodeIndex, node.bestFallbackTarget(m_dfa));
+    if (nodeTransitions.useFallbackTransition)
+        emitJump(nodeIndex, nodeTransitions.fallbackTransitionTarget);
     else
         emitTerminate();
 

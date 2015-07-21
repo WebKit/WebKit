@@ -45,30 +45,38 @@ enum class DFABytecodeInstruction : uint8_t {
     CheckValueCaseInsensitive = 0x0,
     CheckValueCaseSensitive = 0x1,
 
+    // Jump table if the input value is within a certain range.
+    // The lower value (1 byte).
+    // The higher value (1 byte).
+    // The distance to jump if the value is in the range
+    // for every character in the range (1-4 bytes, signed).
+    JumpTableCaseInsensitive = 0x2,
+    JumpTableCaseSensitive = 0x3,
+
     // Jump to an offset if the input value is within a certain range.
     // The lower value (1 byte).
     // The higher value (1 byte).
     // The distance to jump if the value is in the range (1-4 bytes, signed).
-    CheckValueRangeCaseInsensitive = 0x2,
-    CheckValueRangeCaseSensitive = 0x3,
+    CheckValueRangeCaseInsensitive = 0x4,
+    CheckValueRangeCaseSensitive = 0x5,
 
     // AppendAction has one argument:
     // The action to append (4 bytes).
-    AppendAction = 0x4,
-    AppendActionWithIfDomain = 0x5,
+    AppendAction = 0x6,
+    AppendActionWithIfDomain = 0x7,
     
     // TestFlagsAndAppendAction has two arguments:
     // The flags to check before appending (2 bytes).
     // The action to append (4 bytes).
-    TestFlagsAndAppendAction = 0x6,
-    TestFlagsAndAppendActionWithIfDomain = 0x7,
+    TestFlagsAndAppendAction = 0x8,
+    TestFlagsAndAppendActionWithIfDomain = 0x9,
 
     // Terminate has no arguments.
-    Terminate = 0x8,
+    Terminate = 0xA,
 
     // Jump has one argument:
     // The distance to jump (1-4 bytes, signed).
-    Jump = 0x9,
+    Jump = 0xB,
 };
 
 // The last four bits contain the instruction type.
@@ -104,6 +112,8 @@ static inline size_t instructionSizeWithArguments(DFABytecodeInstruction instruc
     switch (instruction) {
     case DFABytecodeInstruction::CheckValueCaseSensitive:
     case DFABytecodeInstruction::CheckValueCaseInsensitive:
+    case DFABytecodeInstruction::JumpTableCaseInsensitive:
+    case DFABytecodeInstruction::JumpTableCaseSensitive:
     case DFABytecodeInstruction::CheckValueRangeCaseSensitive:
     case DFABytecodeInstruction::CheckValueRangeCaseInsensitive:
     case DFABytecodeInstruction::Jump:

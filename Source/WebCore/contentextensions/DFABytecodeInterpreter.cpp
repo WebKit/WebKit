@@ -126,6 +126,25 @@ void DFABytecodeInterpreter::interpretTestFlagsAndAppendAction(uint32_t& program
     ASSERT(instructionSizeWithArguments(DFABytecodeInstruction::TestFlagsAndAppendAction) == instructionSizeWithArguments(DFABytecodeInstruction::TestFlagsAndAppendActionWithIfDomain));
 }
 
+template<bool caseSensitive>
+inline void DFABytecodeInterpreter::interpetJumpTable(const char* url, uint32_t& urlIndex, uint32_t& programCounter, bool& urlIndexIsAfterEndOfString)
+{
+    DFABytecodeJumpSize jumpSize = getJumpSize(m_bytecode, m_bytecodeLength, programCounter);
+
+    char character = caseSensitive ? url[urlIndex] : toASCIILower(url[urlIndex]);
+    uint8_t firstCharacter = getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecodeInstruction));
+    uint8_t lastCharacter = getBits<uint8_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecodeInstruction) + sizeof(uint8_t));
+    if (character >= firstCharacter && character <= lastCharacter) {
+        uint32_t startOffset = programCounter + sizeof(DFABytecodeInstruction) + 2 * sizeof(uint8_t);
+        uint32_t jumpLocation = startOffset + (character - firstCharacter) * jumpSizeInBytes(jumpSize);
+        programCounter += getJumpDistance(m_bytecode, m_bytecodeLength, jumpLocation, jumpSize);
+        if (!character)
+            urlIndexIsAfterEndOfString = true;
+        urlIndex++; // This represents an edge in the DFA.
+    } else
+        programCounter += sizeof(DFABytecodeInstruction) + 2 * sizeof(uint8_t) + jumpSizeInBytes(jumpSize) * (lastCharacter - firstCharacter + 1);
+}
+
 DFABytecodeInterpreter::Actions DFABytecodeInterpreter::actionsMatchingEverything()
 {
     Actions actions;
@@ -245,6 +264,19 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString&
                     programCounter += sizeof(DFABytecodeInstruction) + sizeof(uint8_t) + jumpSizeInBytes(jumpSize);
                 break;
             }
+
+            case DFABytecodeInstruction::JumpTableCaseInsensitive:
+                if (urlIndexIsAfterEndOfString)
+                    goto nextDFA;
+
+                interpetJumpTable<false>(url, urlIndex, programCounter, urlIndexIsAfterEndOfString);
+                break;
+            case DFABytecodeInstruction::JumpTableCaseSensitive:
+                if (urlIndexIsAfterEndOfString)
+                    goto nextDFA;
+
+                interpetJumpTable<true>(url, urlIndex, programCounter, urlIndexIsAfterEndOfString);
+                break;
                     
             case DFABytecodeInstruction::CheckValueRangeCaseSensitive: {
                 if (urlIndexIsAfterEndOfString)

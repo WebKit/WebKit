@@ -62,13 +62,34 @@ private:
         uint32_t destination;
         bool caseSensitive;
     };
-    Vector<Range> ranges(const DFANode&);
+    struct JumpTable {
+        ~JumpTable()
+        {
+            ASSERT(min + destinations.size() == max + 1);
+            ASSERT(min == max || destinations.size() > 1);
+        }
+
+        uint8_t min { 0 };
+        uint8_t max { 0 };
+        bool caseSensitive { true };
+        Vector<uint32_t> destinations;
+    };
+    struct Transitions {
+        Vector<JumpTable> jumpTables;
+        Vector<Range> ranges;
+        bool useFallbackTransition { false };
+        uint32_t fallbackTransitionTarget { std::numeric_limits<uint32_t>::max() };
+    };
+    JumpTable extractJumpTable(Vector<Range>&, unsigned first, unsigned last);
+    Transitions transitions(const DFANode&);
     
     unsigned compiledNodeMaxBytecodeSize(uint32_t index);
     void compileNode(uint32_t index, bool root);
     unsigned nodeTransitionsMaxBytecodeSize(const DFANode&);
     void compileNodeTransitions(uint32_t nodeIndex);
+    unsigned checkForJumpTableMaxBytecodeSize(const JumpTable&);
     unsigned checkForRangeMaxBytecodeSize(const Range&);
+    void compileJumpTable(uint32_t nodeIndex, const JumpTable&);
     void compileCheckForRange(uint32_t nodeIndex, const Range&);
     int32_t longestPossibleJump(uint32_t jumpLocation, uint32_t sourceNodeIndex, uint32_t destinationNodeIndex);
 

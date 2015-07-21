@@ -1,3 +1,12 @@
+2015-07-21  Benjamin Poulain  <benjamin@webkit.org>
+
+        [Content Extensions] Use a jump table when consecutive transitions have different targets
+        https://bugs.webkit.org/show_bug.cgi?id=147099
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/APIUserContentExtensionStore.h:
+
 2015-07-21  Daniel Bates  <dabates@apple.com>
 
         Fix the build following <https://trac.webkit.org/changeset/187129>
