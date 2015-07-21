@@ -1293,3 +1293,40 @@ http/tests/security/contentSecurityPolicy/media-src-allowed.html [ Skip ]
 
 [ Yosemite ] fast/canvas/webgl/oes-texture-half-float-linear.html [ Pass Failure ]
 
+# These features have been disabled on the branch.
+
+# ENABLE_ATTACHMENT_ELEMENT
+editing/pasteboard/copy-paste-attachment.html [ Skip ]
+fast/attachment [ Skip ]
+
+# ENABLE_CSS_ANIMATIONS_LEVEL_2
+animations/trigger-computed-style.html [ Skip ]
+animations/trigger-container-scroll-boundaries.html [ Skip ]
+animations/trigger-container-scroll-empty.html [ Skip ]
+animations/trigger-container-scroll-simple.html [ Skip ]
+animations/trigger-parsing.html [ Skip ]
+
+# ENABLE_CSS_GRID_LAYOUT
+fast/css-grid-layout [ Skip ]
+ietestcenter/css3/grid/grid-items-003.htm [ Skip ]
+ietestcenter/css3/grid/grid-items-002.htm [ Skip ]
+ietestcenter/css3/grid/grid-column-002.htm [ Skip ]
+
+# ENABLE_INPUT_TYPE_COLOR
+accessibility/color-well.html [ Skip ]
+fast/forms/color [ Skip ]
+
+# ENABLE_WILL_REVEAL_EDGE_EVENTS
+fast/events/will-reveal-edge-on-div.html [ Skip ]
+fast/events/will-reveal-edges-body-attributes.html [ Skip ]
+fast/events/will-reveal-edges-event-listeners.html [ Skip ]
+fast/events/will-reveal-edges-window-attributes.html [ Skip ]
+
+# ENABLE_NAVIGATOR_HWCONCURRENCY
+fast/dom/navigator-hardwareConcurrency.html [ Skip ]
+
+# ENABLE_INDIE_UI
+indieui [ Skip ]
+
+# ENABLE_STREAMS_API
+streams
