@@ -53,6 +53,7 @@ public:
     virtual void showPlaybackTargetPicker(const FloatRect&, bool checkActiveRoute);
     virtual void startingMonitoringPlaybackTargets();
     virtual void stopMonitoringPlaybackTargets();
+    virtual void invalidatePlaybackTargets();
 
 protected:
     explicit MediaPlaybackTargetPicker(Client&);

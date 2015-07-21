@@ -188,6 +188,12 @@ void MediaPlaybackTargetPickerMac::startingMonitoringPlaybackTargets()
 void MediaPlaybackTargetPickerMac::stopMonitoringPlaybackTargets()
 {
     LOG(Media, "MediaPlaybackTargetPickerMac::stopMonitoringPlaybackTargets");
+    // Nothing to do, AirPlay takes care of this automatically.
+}
+
+void MediaPlaybackTargetPickerMac::invalidatePlaybackTargets()
+{
+    LOG(Media, "MediaPlaybackTargetPickerMac::invalidatePlaybackTargets");
 
     if (m_outputDeviceMenuController) {
         [m_outputDeviceMenuController removeObserver:m_outputDeviceMenuControllerDelegate.get() forKeyPath:externalOutputDeviceAvailableKeyName];
