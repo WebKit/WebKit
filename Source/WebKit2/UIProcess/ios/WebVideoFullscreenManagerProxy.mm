@@ -35,8 +35,33 @@
 #import "WebVideoFullscreenManagerMessages.h"
 #import "WebVideoFullscreenManagerProxyMessages.h"
 #import <QuartzCore/CoreAnimation.h>
+#import <WebCore/QuartzCoreSPI.h>
 #import <WebCore/TimeRanges.h>
 #import <WebKitSystemInterface.h>
+
+@interface WebLayerHostView : UIView
+@property (nonatomic, assign) uint32_t contextID;
+@end
+
+@implementation WebLayerHostView
+
++ (Class)layerClass {
+    return [CALayerHost class];
+}
+
+- (uint32_t)contextID {
+    return [[self layerHost] contextId];
+}
+
+- (void)setContextID:(uint32_t)contextID {
+    [[self layerHost] setContextId:contextID];
+}
+
+- (CALayerHost *)layerHost {
+    return (CALayerHost *)[self layer];
+}
+
+@end
 
 using namespace WebCore;
 
@@ -139,26 +164,14 @@ void WebVideoFullscreenModelContext::requestExitFullscreen()
 
 void WebVideoFullscreenModelContext::setVideoLayerFrame(WebCore::FloatRect frame)
 {
-    m_videoLayerFrame = frame;
     if (m_manager)
         m_manager->setVideoLayerFrame(m_contextId, frame);
 }
 
-WebCore::FloatRect WebVideoFullscreenModelContext::videoLayerFrame() const
-{
-    return m_videoLayerFrame;
-}
-
 void WebVideoFullscreenModelContext::setVideoLayerGravity(WebCore::WebVideoFullscreenModel::VideoGravity gravity)
 {
-    m_videoLayerGravity = gravity;
     if (m_manager)
         m_manager->setVideoLayerGravity(m_contextId, gravity);
-}
-
-WebCore::WebVideoFullscreenModel::VideoGravity WebVideoFullscreenModelContext::videoLayerGravity() const
-{
-    return m_videoLayerGravity;
 }
 
 void WebVideoFullscreenModelContext::selectAudioMediaOption(uint64_t optionId)
@@ -240,8 +253,8 @@ void WebVideoFullscreenManagerProxy::invalidate()
         std::tie(model, interface) = tuple;
 
         interface->invalidate();
-        [model->layerHost() removeFromSuperlayer];
-        model->setLayerHost(nullptr);
+        [model->layerHostView() removeFromSuperview];
+        model->setLayerHostView(nullptr);
     }
 
     m_contextMap.clear();
@@ -310,16 +323,17 @@ void WebVideoFullscreenManagerProxy::setupFullscreenWithID(uint64_t contextId, u
 
     std::tie(model, interface) = ensureModelAndInterface(contextId);
 
-    model->setInitialVideoLayerFrame(initialRect);
-    model->setLayerHost(WKMakeRenderLayer(videoLayerID));
+    RetainPtr<WebLayerHostView> view = adoptNS([[WebLayerHostView alloc] init]);
+    [view setContextID:videoLayerID];
+    model->setLayerHostView(view);
     if (hostingDeviceScaleFactor != 1) {
         // Invert the scale transform added in the WebProcess to fix <rdar://problem/18316542>.
         float inverseScale = 1 / hostingDeviceScaleFactor;
-        [model->layerHost() setTransform:CATransform3DMakeScale(inverseScale, inverseScale, 1)];
+        [[model->layerHostView() layer] setSublayerTransform:CATransform3DMakeScale(inverseScale, inverseScale, 1)];
     }
 
     UIView *parentView = downcast<RemoteLayerTreeDrawingAreaProxy>(*m_page->drawingArea()).remoteLayerTreeHost().rootLayer();
-    interface->setupFullscreen(*model->layerHost(), initialRect, parentView, videoFullscreenMode, allowsPictureInPicture);
+    interface->setupFullscreen(*model->layerHostView(), initialRect, parentView, videoFullscreenMode, allowsPictureInPicture);
 }
 
 void WebVideoFullscreenManagerProxy::resetMediaState(uint64_t contextId)
@@ -502,8 +516,8 @@ void WebVideoFullscreenManagerProxy::didCleanupFullscreen(uint64_t contextId)
     auto& model = ensureModel(contextId);
 
     [CATransaction flush];
-    [model.layerHost() removeFromSuperlayer];
-    model.setLayerHost(nullptr);
+    [model.layerHostView() removeFromSuperview];
+    model.setLayerHostView(nullptr);
     m_page->send(Messages::WebVideoFullscreenManager::DidCleanupFullscreen(contextId), m_page->pageID());
 
     m_contextMap.remove(contextId);

@@ -30,12 +30,17 @@
 #import "WebVideoFullscreenControllerAVKit.h"
 
 #import "Logging.h"
+#import "QuartzCoreSPI.h"
+#import "SoftLinking.h"
 #import "TimeRanges.h"
 #import "WebVideoFullscreenInterfaceAVKit.h"
 #import "WebVideoFullscreenModelVideoElement.h"
 #import <QuartzCore/CoreAnimation.h>
 #import <WebCore/HTMLVideoElement.h>
 #import <WebCore/WebCoreThreadRun.h>
+
+SOFT_LINK_FRAMEWORK(UIKit)
+SOFT_LINK_CLASS(UIKit, UIView)
 
 using namespace WebCore;
 
@@ -129,9 +134,7 @@ private:
     virtual void endScanning() override;
     virtual void requestExitFullscreen() override;
     virtual void setVideoLayerFrame(FloatRect) override;
-    virtual FloatRect videoLayerFrame() const override { return m_frame; }
     virtual void setVideoLayerGravity(WebVideoFullscreenModel::VideoGravity) override;
-    virtual VideoGravity videoLayerGravity() const override { return m_gravity; }
     virtual void selectAudioMediaOption(uint64_t index) override;
     virtual void selectLegibleMediaOption(uint64_t index) override;
     virtual void fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenMode) override;
@@ -139,10 +142,8 @@ private:
     RefPtr<WebVideoFullscreenInterfaceAVKit> m_interface;
     RefPtr<WebVideoFullscreenModelVideoElement> m_model;
     RefPtr<HTMLVideoElement> m_videoElement;
-    RetainPtr<PlatformLayer> m_videoFullscreenLayer;
+    RetainPtr<UIView> m_videoFullscreenView;
     RetainPtr<WebVideoFullscreenController> m_controller;
-    FloatRect m_frame;
-    VideoGravity m_gravity;
 };
 
 #pragma mark WebVideoFullscreenChangeObserver
@@ -151,8 +152,9 @@ void WebVideoFullscreenControllerContext::didSetupFullscreen()
 {
     ASSERT(isUIThread());
     RefPtr<WebVideoFullscreenControllerContext> strongThis(this);
-    WebThreadRun([strongThis, this] {
-        m_model->setVideoFullscreenLayer(m_videoFullscreenLayer.get());
+    RetainPtr<CALayer> videoFullscreenLayer = [m_videoFullscreenView layer];
+    WebThreadRun([strongThis, this, videoFullscreenLayer] {
+        m_model->setVideoFullscreenLayer(videoFullscreenLayer.get());
         dispatch_async(dispatch_get_main_queue(), [strongThis, this] {
             m_interface->enterFullscreen();
         });
@@ -177,6 +179,7 @@ void WebVideoFullscreenControllerContext::didCleanupFullscreen()
     m_interface->setWebVideoFullscreenModel(nullptr);
     m_interface->setWebVideoFullscreenChangeObserver(nullptr);
     m_interface = nullptr;
+    m_videoFullscreenView = nil;
     
     RefPtr<WebVideoFullscreenControllerContext> strongThis(this);
     WebThreadRun([strongThis, this] {
@@ -185,7 +188,6 @@ void WebVideoFullscreenControllerContext::didCleanupFullscreen()
         m_model->setVideoElement(nullptr);
         m_model = nullptr;
         m_videoElement = nullptr;
-        m_videoFullscreenLayer = nil;
         
         [m_controller didFinishFullscreen:this];
     });
@@ -450,18 +452,25 @@ void WebVideoFullscreenControllerContext::requestExitFullscreen()
 void WebVideoFullscreenControllerContext::setVideoLayerFrame(FloatRect frame)
 {
     ASSERT(isUIThread());
-    m_frame = frame;
     RefPtr<WebVideoFullscreenControllerContext> strongThis(this);
-    WebThreadRun([strongThis, this, frame] {
+    RetainPtr<CALayer> videoFullscreenLayer = [m_videoFullscreenView layer];
+
+    mach_port_name_t fencePort = [[videoFullscreenLayer context] createFencePort];
+    
+    WebThreadRun([strongThis, this, frame, fencePort, videoFullscreenLayer] {
+        [CATransaction begin];
+        [CATransaction setAnimationDuration:0];
         if (m_model)
             m_model->setVideoLayerFrame(frame);
+        [[videoFullscreenLayer context] setFencePort:fencePort];
+        mach_port_deallocate(mach_task_self(), fencePort);
+        [CATransaction commit];
     });
 }
 
 void WebVideoFullscreenControllerContext::setVideoLayerGravity(WebVideoFullscreenModel::VideoGravity videoGravity)
 {
     ASSERT(isUIThread());
-    m_gravity = videoGravity;
     RefPtr<WebVideoFullscreenControllerContext> strongThis(this);
     WebThreadRun([strongThis, this, videoGravity] {
         if (m_model)
@@ -510,19 +519,19 @@ void WebVideoFullscreenControllerContext::setUpFullscreen(HTMLVideoElement& vide
     m_interface = WebVideoFullscreenInterfaceAVKit::create();
     m_interface->setWebVideoFullscreenChangeObserver(this);
     m_interface->setWebVideoFullscreenModel(this);
+    m_videoFullscreenView = adoptNS([[getUIViewClass() alloc] init]);
     
     RefPtr<WebVideoFullscreenControllerContext> strongThis(this);
     WebThreadRun([strongThis, this, viewRef, mode] {
         m_model = WebVideoFullscreenModelVideoElement::create();
         m_model->setWebVideoFullscreenInterface(this);
         m_model->setVideoElement(m_videoElement.get());
-        m_videoFullscreenLayer = [CALayer layer];
         
         bool allowsPictureInPicture = m_videoElement->mediaSession().allowsPictureInPicture(*m_videoElement.get());
         IntRect videoElementClientRect = m_videoElement->clientRect();
         
         dispatch_async(dispatch_get_main_queue(), [strongThis, this, videoElementClientRect, viewRef, mode, allowsPictureInPicture] {
-            m_interface->setupFullscreen(*m_videoFullscreenLayer.get(), videoElementClientRect, viewRef.get(), mode, allowsPictureInPicture);
+            m_interface->setupFullscreen(*m_videoFullscreenView.get(), videoElementClientRect, viewRef.get(), mode, allowsPictureInPicture);
         });
     });
 }

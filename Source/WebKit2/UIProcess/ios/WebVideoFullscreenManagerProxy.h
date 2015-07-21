@@ -53,10 +53,8 @@ public:
 
     void invalidate() { m_manager = nullptr; }
 
-    PlatformLayer* layerHost() const { return m_layerHost.get(); }
-    void setLayerHost(RetainPtr<PlatformLayer>&& layerHost) { m_layerHost = WTF::move(layerHost); }
-
-    void setInitialVideoLayerFrame(WebCore::FloatRect frame) { m_videoLayerFrame = frame; }
+    UIView *layerHostView() const { return m_layerHostView.get(); }
+    void setLayerHostView(RetainPtr<UIView>&& layerHostView) { m_layerHostView = WTF::move(layerHostView); }
 
 private:
     WebVideoFullscreenModelContext(WebVideoFullscreenManagerProxy& manager, uint64_t contextId)
@@ -78,9 +76,7 @@ private:
     virtual void endScanning() override;
     virtual void requestExitFullscreen() override;
     virtual void setVideoLayerFrame(WebCore::FloatRect) override;
-    virtual WebCore::FloatRect videoLayerFrame() const override;
     virtual void setVideoLayerGravity(VideoGravity) override;
-    virtual VideoGravity videoLayerGravity() const override;
     virtual void selectAudioMediaOption(uint64_t) override;
     virtual void selectLegibleMediaOption(uint64_t) override;
     virtual void fullscreenModeChanged(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) override;
@@ -94,9 +90,7 @@ private:
 
     WebVideoFullscreenManagerProxy* m_manager;
     uint64_t m_contextId;
-    RetainPtr<PlatformLayer> m_layerHost;
-    WebCore::FloatRect m_videoLayerFrame;
-    VideoGravity m_videoLayerGravity { VideoGravityResize };
+    RetainPtr<UIView *> m_layerHostView;
 };
 
 class WebVideoFullscreenManagerProxy : public RefCounted<WebVideoFullscreenManagerProxy>, private IPC::MessageReceiver {
