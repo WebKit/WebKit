@@ -1187,6 +1187,15 @@ void FrameLoader::loadFrameRequest(const FrameLoadRequest& request, Event* event
     }
 }
 
+static ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicyToApply(Frame& sourceFrame, ShouldOpenExternalURLsPolicy propagatedPolicy)
+{
+    if (!sourceFrame.isMainFrame())
+        return ShouldOpenExternalURLsPolicy::ShouldNotAllow;
+    if (ScriptController::processingUserGesture())
+        return ShouldOpenExternalURLsPolicy::ShouldAllow;
+    return propagatedPolicy;
+}
+
 void FrameLoader::loadURL(const FrameLoadRequest& frameLoadRequest, const String& referrer, FrameLoadType newLoadType, Event* event, PassRefPtr<FormState> prpFormState)
 {
     if (m_inStopAllLoaders)
@@ -1233,6 +1242,7 @@ void FrameLoader::loadURL(const FrameLoadRequest& frameLoadRequest, const String
     NavigationAction action(request, newLoadType, isFormSubmission, event, frameLoadRequest.shouldOpenExternalURLsPolicy());
 
     if (!targetFrame && !frameName.isEmpty()) {
+        action = action.copyWithShouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicyToApply(m_frame, frameLoadRequest.shouldOpenExternalURLsPolicy()));
         policyChecker().checkNewWindowPolicy(action, request, formState.release(), frameName, [this, allowNavigationToInvalidURL, openerPolicy](const ResourceRequest& request, PassRefPtr<FormState> formState, const String& frameName, const NavigationAction& action, bool shouldContinue) {
             continueLoadAfterNewWindowPolicy(request, formState, frameName, action, shouldContinue, allowNavigationToInvalidURL, openerPolicy);
         });
@@ -3457,12 +3467,7 @@ void FrameLoader::clearTestingOverrides()
 
 void FrameLoader::applyShouldOpenExternalURLsPolicyToNewDocumentLoader(DocumentLoader& documentLoader, ShouldOpenExternalURLsPolicy propagatedPolicy)
 {
-    if (!m_frame.isMainFrame())
-        documentLoader.setShouldOpenExternalURLsPolicy(ShouldOpenExternalURLsPolicy::ShouldNotAllow);
-    else if (ScriptController::processingUserGesture())
-        documentLoader.setShouldOpenExternalURLsPolicy(ShouldOpenExternalURLsPolicy::ShouldAllow);
-    else
-        documentLoader.setShouldOpenExternalURLsPolicy(propagatedPolicy);
+    documentLoader.setShouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicyToApply(m_frame, propagatedPolicy));
 }
 
 bool FrameLoaderClient::hasHTMLView() const
@@ -3504,7 +3509,8 @@ RefPtr<Frame> createWindow(Frame& openerFrame, Frame& lookupFrame, const FrameLo
     if (!oldPage)
         return nullptr;
 
-    Page* page = oldPage->chrome().createWindow(&openerFrame, requestWithReferrer, features, NavigationAction(requestWithReferrer.resourceRequest()));
+    ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicyToApply(openerFrame, request.shouldOpenExternalURLsPolicy());
+    Page* page = oldPage->chrome().createWindow(&openerFrame, requestWithReferrer, features, NavigationAction(requestWithReferrer.resourceRequest(), shouldOpenExternalURLsPolicy));
     if (!page)
         return nullptr;
 

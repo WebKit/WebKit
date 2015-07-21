@@ -1,0 +1,211 @@
+/*
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+
+#if PLATFORM(MAC)
+
+#import "PlatformUtilities.h"
+#import <WebKit/WKNavigationActionPrivate.h>
+#import <wtf/RetainPtr.h>
+
+#if WK_API_ENABLED
+
+static bool createdWebView;
+static bool decidedPolicy;
+static bool finishedNavigation;
+static RetainPtr<WKNavigationAction> action;
+static RetainPtr<WKWebView> newWebView;
+
+@interface ShouldOpenExternalURLsInNewWindowActionsController : NSObject <WKNavigationDelegate, WKUIDelegate>
+@end
+
+@implementation ShouldOpenExternalURLsInNewWindowActionsController
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
+{
+    decisionHandler(webView == newWebView.get() ? WKNavigationActionPolicyCancel : WKNavigationActionPolicyAllow);
+
+    action = navigationAction;
+    decidedPolicy = true;
+}
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    finishedNavigation = true;
+}
+
+- (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
+{
+    action = navigationAction;
+    newWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+
+    createdWebView = true;
+    return newWebView.get();
+}
+
+@end
+
+TEST(WebKit2, ShouldOpenExternalURLsInWindowOpen)
+{
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    auto window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
+    [[window contentView] addSubview:webView.get()];
+
+    auto controller = adoptNS([[ShouldOpenExternalURLsInNewWindowActionsController alloc] init]);
+    [webView setNavigationDelegate:controller.get()];
+    [webView setUIDelegate:controller.get()];
+
+    [webView loadHTMLString:@"<body onclick=\"window.open('http://webkit.org/destination')\">" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+    TestWebKitAPI::Util::run(&finishedNavigation);
+    finishedNavigation = false;
+
+    NSPoint clickPoint = NSMakePoint(100, 100);
+
+    [[webView hitTest:clickPoint] mouseDown:[NSEvent mouseEventWithType:NSLeftMouseDown location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
+    [[webView hitTest:clickPoint] mouseUp:[NSEvent mouseEventWithType:NSLeftMouseUp location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
+    TestWebKitAPI::Util::run(&createdWebView);
+    createdWebView = false;
+
+    // User-initiated window.open to the same scheme, host and port should allow external schemes but not App Links.
+    ASSERT_TRUE([action _shouldOpenExternalSchemes]);
+    ASSERT_FALSE([action _shouldOpenAppLinks]);
+
+    decidedPolicy = false;
+    [newWebView setNavigationDelegate:controller.get()];
+    TestWebKitAPI::Util::run(&decidedPolicy);
+    decidedPolicy = false;
+
+    // User-initiated window.open to the same scheme, host and port should allow external schemes but not App Links.
+    ASSERT_TRUE([action _shouldOpenExternalSchemes]);
+    ASSERT_FALSE([action _shouldOpenAppLinks]);
+
+    [webView loadHTMLString:@"<body onclick=\"window.open('https://webkit.org/destination')\">" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+    TestWebKitAPI::Util::run(&finishedNavigation);
+    finishedNavigation = false;
+
+    [[webView hitTest:clickPoint] mouseDown:[NSEvent mouseEventWithType:NSLeftMouseDown location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
+    [[webView hitTest:clickPoint] mouseUp:[NSEvent mouseEventWithType:NSLeftMouseUp location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
+    TestWebKitAPI::Util::run(&createdWebView);
+    createdWebView = false;
+
+    // User-initiated window.open to different scheme, host or port should allow external schemes and App Links.
+    ASSERT_TRUE([action _shouldOpenExternalSchemes]);
+    ASSERT_TRUE([action _shouldOpenAppLinks]);
+
+    decidedPolicy = false;
+    [newWebView setNavigationDelegate:controller.get()];
+    TestWebKitAPI::Util::run(&decidedPolicy);
+    decidedPolicy = false;
+
+    // User-initiated window.open to different scheme, host or port should allow external schemes and App Links.
+    ASSERT_TRUE([action _shouldOpenExternalSchemes]);
+    ASSERT_TRUE([action _shouldOpenAppLinks]);
+
+    newWebView = nullptr;
+    action = nullptr;
+}
+
+TEST(WebKit2, ShouldOpenExternalURLsInTargetedLink)
+{
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    auto window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);
+    [[window contentView] addSubview:webView.get()];
+
+    auto controller = adoptNS([[ShouldOpenExternalURLsInNewWindowActionsController alloc] init]);
+    [webView setNavigationDelegate:controller.get()];
+    [webView setUIDelegate:controller.get()];
+
+    [webView loadHTMLString:@"<a style=\"display: block; height: 100%\" href=\"destination.html\" target=\"_blank\">" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+    TestWebKitAPI::Util::run(&finishedNavigation);
+    finishedNavigation = false;
+
+    NSPoint clickPoint = NSMakePoint(100, 100);
+
+    decidedPolicy = false;
+    [[webView hitTest:clickPoint] mouseDown:[NSEvent mouseEventWithType:NSLeftMouseDown location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
+    [[webView hitTest:clickPoint] mouseUp:[NSEvent mouseEventWithType:NSLeftMouseUp location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
+    TestWebKitAPI::Util::run(&decidedPolicy);
+    decidedPolicy = false;
+
+    // User-initiated targeted navigation to the same scheme, host and port should allow external schemes but not App Links.
+    ASSERT_TRUE([action _shouldOpenExternalSchemes]);
+    ASSERT_FALSE([action _shouldOpenAppLinks]);
+
+    TestWebKitAPI::Util::run(&createdWebView);
+    createdWebView = false;
+
+    // User-initiated targeted navigation to the same scheme, host and port should allow external schemes but not App Links.
+    ASSERT_TRUE([action _shouldOpenExternalSchemes]);
+    ASSERT_FALSE([action _shouldOpenAppLinks]);
+
+    decidedPolicy = false;
+    [newWebView setNavigationDelegate:controller.get()];
+    TestWebKitAPI::Util::run(&decidedPolicy);
+    decidedPolicy = false;
+
+    // User-initiated targeted navigation to the same scheme, host and port should allow external schemes but not App Links.
+    ASSERT_TRUE([action _shouldOpenExternalSchemes]);
+    ASSERT_FALSE([action _shouldOpenAppLinks]);
+
+    [webView loadHTMLString:@"<a style=\"display: block; height: 100%\" href=\"https://webkit.org/destination.html\" target=\"_blank\">" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+    TestWebKitAPI::Util::run(&finishedNavigation);
+    finishedNavigation = false;
+
+    decidedPolicy = false;
+    [[webView hitTest:clickPoint] mouseDown:[NSEvent mouseEventWithType:NSLeftMouseDown location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
+    [[webView hitTest:clickPoint] mouseUp:[NSEvent mouseEventWithType:NSLeftMouseUp location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
+    TestWebKitAPI::Util::run(&decidedPolicy);
+    decidedPolicy = false;
+
+    // User-initiated targeted navigation to different scheme, host or port should allow external schemes and App Links.
+    ASSERT_TRUE([action _shouldOpenExternalSchemes]);
+    ASSERT_TRUE([action _shouldOpenAppLinks]);
+
+    TestWebKitAPI::Util::run(&createdWebView);
+    createdWebView = false;
+
+    // User-initiated targeted navigation to different scheme, host or port should allow external schemes and App Links.
+    ASSERT_TRUE([action _shouldOpenExternalSchemes]);
+    ASSERT_TRUE([action _shouldOpenAppLinks]);
+
+    decidedPolicy = false;
+    [newWebView setNavigationDelegate:controller.get()];
+    TestWebKitAPI::Util::run(&decidedPolicy);
+    decidedPolicy = false;
+
+    // User-initiated targeted navigation to different scheme, host or port should allow external schemes and App Links.
+    ASSERT_TRUE([action _shouldOpenExternalSchemes]);
+    ASSERT_TRUE([action _shouldOpenAppLinks]);
+
+    newWebView = nullptr;
+    action = nullptr;
+}
+
+#endif
+
+#endif
