@@ -74,7 +74,7 @@ struct PendingDisplayNoneActions {
     Vector<String> selectors;
     Vector<unsigned> clientLocations;
 };
-typedef HashMap<uint32_t, PendingDisplayNoneActions, DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> PendingDisplayNoneActionsMap;
+typedef HashMap<Trigger, PendingDisplayNoneActions, TriggerHash, TriggerHashTraits> PendingDisplayNoneActionsMap;
 
 static void resolvePendingDisplayNoneActions(Vector<SerializedActionByte>& actions, Vector<unsigned>& actionLocations, PendingDisplayNoneActionsMap& pendingDisplayNoneActionsMap)
 {
@@ -167,7 +167,7 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
             break;
         }
         case ActionType::CSSDisplayNoneSelector: {
-            const auto addResult = cssDisplayNoneActionsMap.add(flags, PendingDisplayNoneActions());
+            const auto addResult = cssDisplayNoneActionsMap.add(rule.trigger(), PendingDisplayNoneActions());
             PendingDisplayNoneActions& pendingDisplayNoneActions = addResult.iterator->value;
             pendingDisplayNoneActions.selectors.append(rule.action().stringArgument());
             pendingDisplayNoneActions.clientLocations.append(actionLocations.size());
