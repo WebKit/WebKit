@@ -2932,7 +2932,7 @@ bool Internals::testPreloaderSettingViewport()
     return testPreloadScannerViewportSupport(contextDocument());
 }
 
-PassRefPtr<DOMPath> Internals::pathWithShrinkWrappedRects(Vector<double> rectComponents, ExceptionCode& ec)
+PassRefPtr<DOMPath> Internals::pathWithShrinkWrappedRects(Vector<double> rectComponents, double radius, ExceptionCode& ec)
 {
     if (rectComponents.size() % 4) {
         ec = INVALID_ACCESS_ERR;
@@ -2951,8 +2951,7 @@ PassRefPtr<DOMPath> Internals::pathWithShrinkWrappedRects(Vector<double> rectCom
 
     rects.reverse();
 
-    // FIXME: radius should be a parameter instead of fixed as 8.
-    Path path = PathUtilities::pathWithShrinkWrappedRects(rects, 8);
+    Path path = PathUtilities::pathWithShrinkWrappedRects(rects, radius);
     return DOMPath::create(path);
 }
 
