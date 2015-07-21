@@ -19,8 +19,8 @@ layer at (0,0) size 785x6752
         RenderText {#text} at (0,0) size 303x18
           text run at (0,0) width 303: "Font: Helvetica Neue Weight: 100 Style: normal"
       RenderBlock {DIV} at (0,162) size 769x18
-        RenderText {#text} at (0,0) size 303x18
-          text run at (0,0) width 303: "Font: Helvetica Neue Weight: 200 Style: normal"
+        RenderText {#text} at (0,0) size 315x18
+          text run at (0,0) width 315: "Font: Helvetica Neue Weight: 200 Style: normal"
       RenderBlock {DIV} at (0,180) size 769x18
         RenderText {#text} at (0,0) size 325x18
           text run at (0,0) width 325: "Font: Helvetica Neue Weight: 300 Style: normal"
@@ -289,8 +289,8 @@ layer at (0,0) size 785x6752
         RenderText {#text} at (0,0) size 287x18
           text run at (0,0) width 287: "Font: Helvetica Neue Weight: 100 Style: italic"
       RenderBlock {DIV} at (0,1838) size 769x18
-        RenderText {#text} at (0,0) size 287x18
-          text run at (0,0) width 287: "Font: Helvetica Neue Weight: 200 Style: italic"
+        RenderText {#text} at (0,0) size 299x18
+          text run at (0,0) width 299: "Font: Helvetica Neue Weight: 200 Style: italic"
       RenderBlock {DIV} at (0,1856) size 769x18
         RenderText {#text} at (0,0) size 308x18
           text run at (0,0) width 308: "Font: Helvetica Neue Weight: 300 Style: italic"
