@@ -61,6 +61,8 @@ int WebKitGetLastLineBreakInBuffer(UChar *characters, int position, int length);
 
 const char *WebKitPlatformSystemRootDirectory(void);
 
+CGPathRef WebKitCreatePathWithShrinkWrappedRects(NSArray* cgRects, CGFloat radius);
+
 #ifdef __cplusplus
 }
 #endif
