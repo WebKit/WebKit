@@ -69,7 +69,6 @@ public:
     void setProcessSuppressionEnabled(bool);
 #endif
 
-    void didCancelProcessSuspension();
     void processReadyToSuspend();
 
     void setIsHoldingLockedFiles(bool);

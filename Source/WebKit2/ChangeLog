@@ -1,3 +1,30 @@
+2015-07-21  Daniel Bates  <dabates@apple.com>
+
+        ASSERT(m_suspendMessageCount >= 0) fails in ProcessThrottler::didCancelProcessSuspension()
+        when WebContent process crashes; Network process may never voluntarily suspend
+        https://bugs.webkit.org/show_bug.cgi?id=147122
+        <rdar://problem/21906759>
+
+        Reviewed by Chris Dumez.
+
+        Fixes an issue where the network process may never voluntarily release its process assertion.
+
+        Currently the network process always sends both a ProcessReadyToSuspend and CancelPrepareToSuspend
+        message in response to receiving a PrepareToSuspend message and CancelPrepareToSuspend message,
+        respectively. The process throttler expects to receive either a ProcessReadyToSuspend message
+        or a CancelPrepareToSuspend message (and not both) in response to sending the message sequence
+        PrepareToSuspend, CancelPrepareToSuspend. When a process throttler receives both messages in
+        response to this sequence then its internal message count becomes imbalanced and it will
+        never release the process assertion it manages. One user interaction that can cause such an
+        imbalance, in the process throttler held by NetworkProcessProxy, is switching tabs.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::cancelPrepareToSuspend): Do not send message NetworkProcessProxy::DidCancelProcessSuspension. 
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didCancelProcessSuspension): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in: Remove message NetworkProcessProxy::DidCancelProcessSuspension.
+
 2015-07-21  Matthew Daiter  <mdaiter@apple.com>
 
         Make sure to invalidate requests for user media after webpage reset

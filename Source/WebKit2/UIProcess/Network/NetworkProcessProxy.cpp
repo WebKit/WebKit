@@ -351,11 +351,6 @@ void NetworkProcessProxy::sendCancelPrepareToSuspend()
         send(Messages::NetworkProcess::CancelPrepareToSuspend(), 0);
 }
 
-void NetworkProcessProxy::didCancelProcessSuspension()
-{
-    m_throttler.didCancelProcessSuspension();
-}
-
 void NetworkProcessProxy::sendProcessDidResume()
 {
     if (canSendMessage())

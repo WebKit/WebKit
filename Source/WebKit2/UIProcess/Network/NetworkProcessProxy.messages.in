@@ -32,7 +32,6 @@ messages -> NetworkProcessProxy LegacyReceiver {
     DidDeleteWebsiteDataForOrigins(uint64_t callbackID)
 
     ProcessReadyToSuspend()
-    DidCancelProcessSuspension()
     SetIsHoldingLockedFiles(bool isHoldingLockedFiles)
 
     # Diagnostic messages logging
