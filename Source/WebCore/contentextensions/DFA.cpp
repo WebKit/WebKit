@@ -147,6 +147,7 @@ void DFA::debugPrintDot() const
                 dataLogF("%llu", actions[actionIndex]);
             }
         }
+        dataLogF("]");
 
         if (!actions.isEmpty())
             dataLogF(" [shape=doublecircle]");
