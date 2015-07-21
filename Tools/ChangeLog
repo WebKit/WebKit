@@ -1,5 +1,20 @@
 2015-07-20  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r186910. rdar://problem/21863296
+
+    2015-07-16  Benjamin Poulain  <bpoulain@apple.com>
+
+            [Content extensions] Combine suffixes when generating NFAs
+            https://bugs.webkit.org/show_bug.cgi?id=146961
+
+            Reviewed by Alex Christensen.
+
+            * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+            (TestWebKitAPI::compareContents):
+            * TestWebKitAPI/Tests/WebCore/DFAMinimizer.cpp:
+
+2015-07-20  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r186982. rdar://problem/21567820
 
     2015-07-17  Andy Estes  <aestes@apple.com>
