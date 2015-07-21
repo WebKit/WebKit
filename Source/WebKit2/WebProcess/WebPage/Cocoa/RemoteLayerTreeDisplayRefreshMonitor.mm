@@ -36,22 +36,23 @@ namespace WebKit {
 
 RemoteLayerTreeDisplayRefreshMonitor::RemoteLayerTreeDisplayRefreshMonitor(PlatformDisplayID displayID, RemoteLayerTreeDrawingArea& drawingArea)
     : DisplayRefreshMonitor(displayID)
-    , m_drawingArea(drawingArea)
+    , m_drawingArea(drawingArea.createWeakPtr())
 {
 }
 
 RemoteLayerTreeDisplayRefreshMonitor::~RemoteLayerTreeDisplayRefreshMonitor()
 {
-    m_drawingArea.willDestroyDisplayRefreshMonitor(this);
+    if (m_drawingArea)
+        m_drawingArea->willDestroyDisplayRefreshMonitor(this);
 }
 
 bool RemoteLayerTreeDisplayRefreshMonitor::requestRefreshCallback()
 {
-    if (!isActive())
+    if (!m_drawingArea || !isActive())
         return false;
 
     if (!isScheduled())
-        static_cast<DrawingArea&>(m_drawingArea).scheduleCompositingLayerFlush();
+        static_cast<DrawingArea&>(*m_drawingArea.get()).scheduleCompositingLayerFlush();
 
     setIsActive(true);
     setIsScheduled(true);

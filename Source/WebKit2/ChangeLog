@@ -1,3 +1,28 @@
+2015-07-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Fix crash due to RemoteLayerTreeDisplayRefreshMonitor outliving RemoteLayerTreeDrawingArea
+        https://bugs.webkit.org/show_bug.cgi?id=147124
+        <rdar://problem/21582858>
+
+        Reviewed by Simon Fraser.
+
+        Refactors RemoteLayerTreeDisplayRefreshMonitor to use a weak pointer rather than a reference
+        to its RemoteLayerTreeDrawingArea, since the drawing area may be deallocated before the monitor
+        in some rare cases. This rarely caused pages using requestAnimationFrame to crash on iOS. However,
+        this should not be the case: logically, a RemoteLayerTreeDrawingArea should always outlive its
+        refresh monitors. Refer to https://bugs.webkit.org/show_bug.cgi?id=147128 for more details.
+
+        * WebProcess/WebPage/Cocoa/RemoteLayerTreeDisplayRefreshMonitor.h:
+        * WebProcess/WebPage/Cocoa/RemoteLayerTreeDisplayRefreshMonitor.mm:
+        (WebKit::RemoteLayerTreeDisplayRefreshMonitor::RemoteLayerTreeDisplayRefreshMonitor):
+        (WebKit::RemoteLayerTreeDisplayRefreshMonitor::~RemoteLayerTreeDisplayRefreshMonitor): On destruction, checks
+            first to see whether or not the drawing area has been deallocated before telling it to update its monitors.
+        (WebKit::RemoteLayerTreeDisplayRefreshMonitor::requestRefreshCallback):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        (WebKit::RemoteLayerTreeDrawingArea::createWeakPtr): Creates and returns a new weak pointer to itself.
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea):
+
 2015-07-20  Alex Christensen  <achristensen@webkit.org>
 
         [Content Extensions] Cache actions with domains that match everything

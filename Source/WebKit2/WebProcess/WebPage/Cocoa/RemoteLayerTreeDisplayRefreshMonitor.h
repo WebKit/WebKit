@@ -49,7 +49,7 @@ public:
 private:
     explicit RemoteLayerTreeDisplayRefreshMonitor(PlatformDisplayID, RemoteLayerTreeDrawingArea&);
 
-    RemoteLayerTreeDrawingArea& m_drawingArea;
+    WeakPtr<RemoteLayerTreeDrawingArea> m_drawingArea;
 };
 
 }
