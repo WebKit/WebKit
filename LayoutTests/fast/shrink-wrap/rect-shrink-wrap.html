@@ -1,0 +1,154 @@
+<script>
+
+function testRects(rects) {
+    if (!window.internals)
+        document.write("This test must be run in a test runner.")
+
+    var concatRects = [];
+    for (var i in rects)
+        Array.prototype.push.apply(concatRects, rects[i]);
+
+    var path = undefined;
+    if (window.internals)
+        path = window.internals.pathWithShrinkWrappedRects(concatRects);
+
+    var canvas = document.getElementById("shrink");
+    var ctx = canvas.getContext("2d");
+
+    ctx.fillStyle = "rgba(0,0,0,0.2)";
+
+    for (var i in rects)
+        ctx.fillRect.apply(ctx, rects[i]);
+
+    ctx.strokeStyle = "rgba(0,0,0,0.5)";
+    ctx.lineWidth = 1;
+    for (var i in rects)
+        ctx.strokeRect.apply(ctx, rects[i]);
+
+    ctx.strokeStyle = "blue";
+    ctx.lineWidth = 3;
+    if (path)
+        ctx.stroke(path);
+}
+
+window.onload = function () {
+    // Right and left aligned, touching:
+
+    testRects([
+        [20, 20, 50, 20],
+        [20, 40, 35, 20],
+        [20, 60, 20, 20]]);
+
+    testRects([
+        [20, 90, 20, 20],
+        [20, 110, 35, 20],
+        [20, 130, 50, 20]]);
+
+    testRects([
+        [80, 20, 50, 20],
+        [95, 40, 35, 20],
+        [110, 60, 20, 20]]);
+
+    testRects([
+        [110, 90, 20, 20],
+        [95, 110, 35, 20],
+        [80, 130, 50, 20]]);
+
+    // Center aligned, touching:
+
+    testRects([
+        [170, 20, 100, 40],
+        [190, 60, 60, 40],
+        [205, 100, 30, 40]]);
+
+    testRects([
+        [305, 20, 30, 40],
+        [290, 60, 60, 40],
+        [270, 100, 100, 40]]);
+
+    testRects([
+        [370, 20, 100, 40],
+        [405, 60, 30, 40],
+        [390, 100, 60, 40]]);
+
+    // Other:
+
+    testRects([
+        [20, 200, 40, 40],
+        [40, 220, 40, 40],
+        [60, 240, 40, 40]]);
+
+    testRects([
+        [120, 200, 40, 40],
+        [120, 240, 40, 40],
+        [120, 280, 40, 40]]);
+
+    // Non-touching:
+
+    testRects([
+        [180, 200, 40, 60],
+        [180, 280, 40, 40]]);
+
+    // Combination of touching and non-touching:
+
+    testRects([
+        [280, 200, 30, 40],
+        [280, 280, 50, 40],
+        [340, 200, 40, 40],
+        [360, 240, 80, 40],
+        [380, 280, 40, 40],
+        [430, 200, 40, 20],
+        [450, 215, 40, 20],
+        [470, 230, 40, 20]]);
+
+    // Incorrectly sorted:
+
+    testRects([
+        [20, 380, 40, 40],
+        [40, 360, 40, 40],
+        [60, 340, 40, 40]]);
+
+    // Broken:
+
+    testRects([
+        [600+100, 90, 20, 20],
+        [600+95, 110, 35, 20],
+        [600+80, 130, 50, 20]]);
+
+    testRects([
+        [230+340, 20, 40, 40],
+        [230+360, 60, 65, 40],
+        [230+380, 100, 40, 40]]);
+
+    // These should fallback to a rounded bounding rect:
+
+    testRects([
+        [600+100, 190, 20, 20],
+        [600+95, 210, 35, 20],
+        [600+80, 210, 50, 20]]);
+
+    testRects([
+        [600+0, 250, 40, 40],
+        [600+40, 250, 40, 40],
+        [600+80, 250, 40, 40]]);
+
+    testRects([
+        [600, 300, 20, 40],
+        [600+20, 320, 20, 40],
+        [600, 340, 20, 40]]);
+
+    testRects([
+        [700, 300, 20, 40],
+        [700+20, 320, 20, 40],
+        [700+40, 300, 20, 40]]);
+}
+
+</script>
+
+<style>
+body {
+    margin: 0;
+}
+</style>
+
+<canvas id="shrink" width="800" height="600"></canvas>

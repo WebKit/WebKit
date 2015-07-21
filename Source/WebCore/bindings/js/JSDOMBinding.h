@@ -507,6 +507,14 @@ template<> struct NativeValueTraits<float> {
     }
 };
 
+template<> struct NativeValueTraits<double> {
+    static inline bool nativeValue(JSC::ExecState* exec, JSC::JSValue jsValue, double& indexedValue)
+    {
+        indexedValue = jsValue.toNumber(exec);
+        return !exec->hadException();
+    }
+};
+
 template<typename T, typename JST> Vector<RefPtr<T>> toRefPtrNativeArray(JSC::ExecState* exec, JSC::JSValue value, T* (*toT)(JSC::JSValue value))
 {
     if (!isJSArray(value))

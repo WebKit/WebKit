@@ -35,9 +35,11 @@
 
 namespace WebCore {
 
-class DOMPath final : public RefCounted<DOMPath>, public CanvasPathMethods {
+class WEBCORE_EXPORT DOMPath final : public RefCounted<DOMPath>, public CanvasPathMethods {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    WEBCORE_EXPORT virtual ~DOMPath();
+
     static Ref<DOMPath> create() { return adoptRef(*new DOMPath); }
     static Ref<DOMPath> create(const Path& path) { return adoptRef(*new DOMPath(path)); }
     static Ref<DOMPath> create(const DOMPath* path) { return create(path->path()); }
