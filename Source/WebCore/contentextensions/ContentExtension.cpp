@@ -133,7 +133,6 @@ void ContentExtension::populateDomainCacheIfNeeded(const String& domain)
             if (!!(action & IfDomainFlag) == m_cachedDomainActions.contains(action))
                 m_cachedUniversalDomainActions.append(static_cast<uint32_t>(action));
         }
-        m_cachedDomainActions.shrinkToFit();
         m_cachedUniversalDomainActions.shrinkToFit();
         m_cachedDomain = domain;
     }
