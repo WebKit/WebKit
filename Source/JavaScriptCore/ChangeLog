@@ -1,3 +1,12 @@
+2015-07-21  Saam barati  <saambarati1@gmail.com>
+
+        ObjectPatternNode's entry should use "const Identifier&" instead of "Identifier"
+        https://bugs.webkit.org/show_bug.cgi?id=147156
+
+        Reviewed by Andreas Kling.
+
+        * parser/Nodes.h:
+
 2015-07-21  Basile Clement  <basile_clement@apple.com>
 
         Object allocation sinking phase is performing needless HashMap copies

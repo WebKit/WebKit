@@ -1806,7 +1806,7 @@ namespace JSC {
         virtual void bindValue(BytecodeGenerator&, RegisterID*) const override;
         virtual void toString(StringBuilder&) const override;
         struct Entry {
-            Identifier propertyName;
+            const Identifier& propertyName;
             bool wasString;
             DestructuringPatternNode* pattern;
             ExpressionNode* defaultValue;
