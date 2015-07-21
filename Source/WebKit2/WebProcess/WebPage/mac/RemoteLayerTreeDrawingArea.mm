@@ -72,6 +72,7 @@ RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage& webPage, const W
     , m_currentTransactionID(0)
     , m_contentLayer(nullptr)
     , m_viewOverlayRootLayer(nullptr)
+    , m_weakPtrFactory(this)
 {
     webPage.corePage()->settings().setForceCompositingMode(true);
 #if PLATFORM(IOS)

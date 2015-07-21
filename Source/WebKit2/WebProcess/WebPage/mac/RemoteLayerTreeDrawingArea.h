@@ -56,6 +56,8 @@ public:
 
     uint64_t nextTransactionID() const { return m_currentTransactionID + 1; }
 
+    WeakPtr<RemoteLayerTreeDrawingArea> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+    
 private:
     // DrawingArea
     virtual void setNeedsDisplay() override;
@@ -166,6 +168,8 @@ private:
 
     WebCore::GraphicsLayer* m_contentLayer;
     WebCore::GraphicsLayer* m_viewOverlayRootLayer;
+    
+    WeakPtrFactory<RemoteLayerTreeDrawingArea> m_weakPtrFactory;
 };
 
 } // namespace WebKit
