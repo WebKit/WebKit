@@ -618,22 +618,24 @@ double AnimationBase::progress(double scale, double offset, const TimingFunction
     if (preActive())
         return 0;
 
+    if (postActive() || !m_animation->duration())
+        return 1.0;
+
     double elapsedTime = getElapsedTime();
 
     double duration = m_animation->duration();
     if (m_animation->iterationCount() > 0)
         duration *= m_animation->iterationCount();
 
-    if (postActive() || !m_animation->duration())
-        return 1.0;
+    if (fillingForwards())
+        elapsedTime = duration;
+
+    double fractionalTime = this->fractionalTime(scale, elapsedTime, offset);
 
     if (m_animation->iterationCount() > 0 && elapsedTime >= duration) {
-        const int integralIterationCount = static_cast<int>(m_animation->iterationCount());
-        const bool iterationCountHasFractional = m_animation->iterationCount() - integralIterationCount;
-        return (integralIterationCount % 2 || iterationCountHasFractional) ? 1.0 : 0.0;
+        if (WTF::isIntegral(fractionalTime))
+            return fractionalTime;
     }
-
-    const double fractionalTime = this->fractionalTime(scale, elapsedTime, offset);
 
     if (!timingFunction)
         timingFunction = m_animation->timingFunction().get();
@@ -740,7 +742,7 @@ double AnimationBase::getElapsedTime() const
         return m_pauseTime - m_startTime;
     if (m_startTime <= 0)
         return 0;
-    if (postActive())
+    if (postActive() || fillingForwards())
         return 1;
 
     return beginAnimationUpdateTime() - m_startTime;

@@ -106,8 +106,15 @@ void KeyframeAnimation::fetchIntervalEndpointsForProperty(CSSPropertyID property
     if (prevIndex == -1)
         prevIndex = 0;
 
-    if (nextIndex == -1)
-        nextIndex = m_keyframes.size() - 1;
+    if (nextIndex == -1) {
+        int lastIndex = m_keyframes.size() - 1;
+        if (prevIndex == lastIndex)
+            nextIndex = 0;
+        else
+            nextIndex = lastIndex;
+    }
+
+    ASSERT(prevIndex != nextIndex);
 
     const KeyframeValue& prevKeyframe = m_keyframes[prevIndex];
     const KeyframeValue& nextKeyframe = m_keyframes[nextIndex];

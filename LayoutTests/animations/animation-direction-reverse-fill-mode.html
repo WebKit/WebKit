@@ -10,7 +10,7 @@
       height: 100px;
       width: 100px;
       -webkit-animation-delay: 0.1s;
-      -webkit-animation-duration: 2s;
+      -webkit-animation-duration: 0.5s;
       -webkit-animation-timing-function: linear;
       -webkit-animation-name: anim;
       -webkit-animation-direction: reverse;
@@ -36,7 +36,7 @@
       -webkit-animation-fill-mode: both;
     }
     #e {
-      background-color: #999;
+      background-color: gray;
       -webkit-animation-fill-mode: both;
       -webkit-animation-iteration-count: 2;
       -webkit-animation-direction: alternate-reverse;
@@ -50,8 +50,8 @@
     const expectedValues = [
       {id: "a", start: 100, end: 100},
       {id: "b", start: 300, end: 100},
-      {id: "c", start: 100, end: 300},
-      {id: "d", start: 300, end: 300},
+      {id: "c", start: 100, end: 200},
+      {id: "d", start: 300, end: 200},
       {id: "e", start: 300, end: 300}
     ];
     var result = "";
