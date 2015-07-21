@@ -96,15 +96,13 @@ static inline bool matchesDomain(uint64_t actionAndFlags, const DFABytecodeInter
 void DFABytecodeInterpreter::interpretAppendAction(uint32_t& programCounter, Actions& actions, bool ifDomain)
 {
     ASSERT(getInstruction(m_bytecode, m_bytecodeLength, programCounter) == DFABytecodeInstruction::AppendAction
-        || getInstruction(m_bytecode, m_bytecodeLength, programCounter) == DFABytecodeInstruction::AppendActionWithIfDomain
-        || getInstruction(m_bytecode, m_bytecodeLength, programCounter) == DFABytecodeInstruction::AppendActionDefaultStylesheet);
+        || getInstruction(m_bytecode, m_bytecodeLength, programCounter) == DFABytecodeInstruction::AppendActionWithIfDomain);
     uint64_t action = (ifDomain ? IfDomainFlag : 0) | static_cast<uint64_t>(getBits<uint32_t>(m_bytecode, m_bytecodeLength, programCounter + sizeof(DFABytecodeInstruction)));
     if (!m_domainActions || matchesDomain(action, *m_domainActions))
         actions.add(action);
     
     programCounter += instructionSizeWithArguments(DFABytecodeInstruction::AppendAction);
     ASSERT(instructionSizeWithArguments(DFABytecodeInstruction::AppendAction) == instructionSizeWithArguments(DFABytecodeInstruction::AppendActionWithIfDomain));
-    ASSERT(instructionSizeWithArguments(DFABytecodeInstruction::AppendAction) == instructionSizeWithArguments(DFABytecodeInstruction::AppendActionDefaultStylesheet));
 }
 
 void DFABytecodeInterpreter::interpretTestFlagsAndAppendAction(uint32_t& programCounter, uint16_t flags, Actions& actions, bool ifDomain)
@@ -128,7 +126,7 @@ void DFABytecodeInterpreter::interpretTestFlagsAndAppendAction(uint32_t& program
     ASSERT(instructionSizeWithArguments(DFABytecodeInstruction::TestFlagsAndAppendAction) == instructionSizeWithArguments(DFABytecodeInstruction::TestFlagsAndAppendActionWithIfDomain));
 }
 
-DFABytecodeInterpreter::Actions DFABytecodeInterpreter::actionsForDefaultStylesheetFromDFARoot()
+DFABytecodeInterpreter::Actions DFABytecodeInterpreter::actionsMatchingEverything()
 {
     Actions actions;
 
@@ -138,19 +136,16 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::actionsForDefaultStylesh
 
     while (programCounter < dfaBytecodeLength) {
         DFABytecodeInstruction instruction = getInstruction(m_bytecode, m_bytecodeLength, programCounter);
-        if (instruction == DFABytecodeInstruction::AppendActionDefaultStylesheet)
+        if (instruction == DFABytecodeInstruction::AppendAction)
             interpretAppendAction(programCounter, actions, false);
-        else if (instruction == DFABytecodeInstruction::AppendAction)
-            programCounter += instructionSizeWithArguments(DFABytecodeInstruction::AppendAction);
+        else if (instruction == DFABytecodeInstruction::AppendActionWithIfDomain)
+            interpretAppendAction(programCounter, actions, true);
         else if (instruction == DFABytecodeInstruction::TestFlagsAndAppendAction)
             programCounter += instructionSizeWithArguments(DFABytecodeInstruction::TestFlagsAndAppendAction);
-        else {
-            // actionsForDefaultStylesheetFromDFARoot should only be called on the DFA without domains,
-            // which should never have any actions with if-domain.
-            ASSERT(instruction != DFABytecodeInstruction::TestFlagsAndAppendActionWithIfDomain);
-            ASSERT(instruction != DFABytecodeInstruction::AppendActionWithIfDomain);
+        else if (instruction == DFABytecodeInstruction::TestFlagsAndAppendActionWithIfDomain)
+            programCounter += instructionSizeWithArguments(DFABytecodeInstruction::TestFlagsAndAppendActionWithIfDomain);
+        else
             break;
-        }
     }
     return actions;
 }
@@ -179,16 +174,18 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString&
         uint32_t dfaBytecodeLength = getBits<uint32_t>(m_bytecode, m_bytecodeLength, programCounter);
         programCounter += sizeof(uint32_t);
 
-        // Skip the default stylesheet actions on the DFA root. These are accessed via actionsForDefaultStylesheetFromDFARoot.
+        // Skip the actions without flags on the DFA root. These are accessed via actionsMatchingEverything.
         if (!dfaStart) {
             while (programCounter < dfaBytecodeLength) {
                 DFABytecodeInstruction instruction = getInstruction(m_bytecode, m_bytecodeLength, programCounter);
-                if (instruction == DFABytecodeInstruction::AppendActionDefaultStylesheet)
-                    programCounter += instructionSizeWithArguments(DFABytecodeInstruction::AppendActionDefaultStylesheet);
-                else if (instruction == DFABytecodeInstruction::AppendAction)
-                    interpretAppendAction(programCounter, actions, false);
+                if (instruction == DFABytecodeInstruction::AppendAction)
+                    programCounter += instructionSizeWithArguments(DFABytecodeInstruction::AppendAction);
+                else if (instruction == DFABytecodeInstruction::AppendActionWithIfDomain)
+                    programCounter += instructionSizeWithArguments(DFABytecodeInstruction::AppendActionWithIfDomain);
                 else if (instruction == DFABytecodeInstruction::TestFlagsAndAppendAction)
                     interpretTestFlagsAndAppendAction(programCounter, flags, actions, false);
+                else if (instruction == DFABytecodeInstruction::TestFlagsAndAppendActionWithIfDomain)
+                    interpretTestFlagsAndAppendAction(programCounter, flags, actions, true);
                 else
                     break;
             }
@@ -196,7 +193,9 @@ DFABytecodeInterpreter::Actions DFABytecodeInterpreter::interpret(const CString&
                 return actions;
         } else {
             ASSERT_WITH_MESSAGE(getInstruction(m_bytecode, m_bytecodeLength, programCounter) != DFABytecodeInstruction::AppendAction
-                && getInstruction(m_bytecode, m_bytecodeLength, programCounter) != DFABytecodeInstruction::TestFlagsAndAppendAction,
+                && getInstruction(m_bytecode, m_bytecodeLength, programCounter) != DFABytecodeInstruction::AppendActionWithIfDomain
+                && getInstruction(m_bytecode, m_bytecodeLength, programCounter) != DFABytecodeInstruction::TestFlagsAndAppendAction
+                && getInstruction(m_bytecode, m_bytecodeLength, programCounter) != DFABytecodeInstruction::TestFlagsAndAppendActionWithIfDomain,
                 "Triggers that match everything should only be in the first DFA.");
         }
         

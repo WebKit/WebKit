@@ -157,7 +157,9 @@ struct Action {
             && m_stringArgument == other.m_stringArgument;
     }
 
-    static Action deserialize(const SerializedActionByte* actions, const unsigned actionsLength, uint32_t location);
+    static Action deserialize(const SerializedActionByte* actions, const uint32_t actionsLength, uint32_t location);
+    static ActionType deserializeType(const SerializedActionByte* actions, const uint32_t actionsLength, uint32_t location);
+    static uint32_t serializedLength(const SerializedActionByte* actions, const uint32_t actionsLength, uint32_t location);
 
     void setExtensionIdentifier(const String& extensionIdentifier) { m_extensionIdentifier = extensionIdentifier; }
     const String& extensionIdentifier() const { return m_extensionIdentifier; }

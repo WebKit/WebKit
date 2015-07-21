@@ -55,21 +55,20 @@ enum class DFABytecodeInstruction : uint8_t {
     // AppendAction has one argument:
     // The action to append (4 bytes).
     AppendAction = 0x4,
-    AppendActionDefaultStylesheet = 0x5,
-    AppendActionWithIfDomain = 0x6,
+    AppendActionWithIfDomain = 0x5,
     
     // TestFlagsAndAppendAction has two arguments:
     // The flags to check before appending (2 bytes).
     // The action to append (4 bytes).
-    TestFlagsAndAppendAction = 0x7,
-    TestFlagsAndAppendActionWithIfDomain = 0x8,
+    TestFlagsAndAppendAction = 0x6,
+    TestFlagsAndAppendActionWithIfDomain = 0x7,
 
     // Terminate has no arguments.
-    Terminate = 0x9,
+    Terminate = 0x8,
 
     // Jump has one argument:
     // The distance to jump (1-4 bytes, signed).
-    Jump = 0xA,
+    Jump = 0x9,
 };
 
 // The last four bits contain the instruction type.
@@ -110,7 +109,6 @@ static inline size_t instructionSizeWithArguments(DFABytecodeInstruction instruc
     case DFABytecodeInstruction::Jump:
         RELEASE_ASSERT_NOT_REACHED(); // Variable instruction size.
     case DFABytecodeInstruction::AppendAction:
-    case DFABytecodeInstruction::AppendActionDefaultStylesheet:
     case DFABytecodeInstruction::AppendActionWithIfDomain:
         return sizeof(DFABytecodeInstruction) + sizeof(uint32_t);
     case DFABytecodeInstruction::TestFlagsAndAppendAction:

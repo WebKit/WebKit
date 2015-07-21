@@ -51,7 +51,7 @@ public:
     
     Actions interpret(const CString&, uint16_t flags);
     Actions interpretWithDomains(const CString&, uint16_t flags, const DFABytecodeInterpreter::Actions& domainActions);
-    Actions actionsForDefaultStylesheetFromDFARoot();
+    Actions actionsMatchingEverything();
 
 private:
     void interpretAppendAction(unsigned& programCounter, Actions&, bool ifDomain);

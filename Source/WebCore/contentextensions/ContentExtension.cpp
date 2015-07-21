@@ -44,38 +44,79 @@ RefPtr<ContentExtension> ContentExtension::create(const String& identifier, Ref<
 ContentExtension::ContentExtension(const String& identifier, Ref<CompiledContentExtension>&& compiledExtension)
     : m_identifier(identifier)
     , m_compiledExtension(WTF::move(compiledExtension))
-    , m_parsedGlobalDisplayNoneStyleSheet(false)
 {
+    DFABytecodeInterpreter withoutDomains(m_compiledExtension->filtersWithoutDomainsBytecode(), m_compiledExtension->filtersWithoutDomainsBytecodeLength());
+    DFABytecodeInterpreter withDomains(m_compiledExtension->filtersWithDomainsBytecode(), m_compiledExtension->filtersWithDomainsBytecodeLength());
+    for (uint64_t action : withoutDomains.actionsMatchingEverything()) {
+        ASSERT(static_cast<uint32_t>(action) == action);
+        m_universalActionsWithoutDomains.append(static_cast<uint32_t>(action));
+    }
+    for (uint64_t action : withDomains.actionsMatchingEverything()) {
+        ASSERT((action & ~IfDomainFlag) == static_cast<uint32_t>(action));
+        m_universalActionsWithDomains.append(action);
+    }
+    
+    compileGlobalDisplayNoneStyleSheet();
+    m_universalActionsWithoutDomains.shrinkToFit();
+    m_universalActionsWithDomains.shrinkToFit();
 }
 
+uint32_t ContentExtension::findFirstIgnorePreviousRules() const
+{
+    auto* actions = m_compiledExtension->actions();
+    uint32_t actionsLength = m_compiledExtension->actionsLength();
+    uint32_t currentActionIndex = 0;
+    while (currentActionIndex < actionsLength) {
+        if (Action::deserializeType(actions, actionsLength, currentActionIndex) == ActionType::IgnorePreviousRules)
+            return currentActionIndex;
+        currentActionIndex += Action::serializedLength(actions, actionsLength, currentActionIndex);
+    }
+    return std::numeric_limits<uint32_t>::max();
+}
+    
 StyleSheetContents* ContentExtension::globalDisplayNoneStyleSheet()
 {
-    if (m_parsedGlobalDisplayNoneStyleSheet)
-        return m_globalDisplayNoneStyleSheet.get();
+    return m_globalDisplayNoneStyleSheet.get();
+}
 
-    m_parsedGlobalDisplayNoneStyleSheet = true;
+void ContentExtension::compileGlobalDisplayNoneStyleSheet()
+{
+    uint32_t firstIgnorePreviousRules = findFirstIgnorePreviousRules();
+    
+    auto* actions = m_compiledExtension->actions();
+    uint32_t actionsLength = m_compiledExtension->actionsLength();
 
-    Vector<String> selectors = m_compiledExtension->globalDisplayNoneSelectors();
-    if (selectors.isEmpty())
-        return nullptr;
-
+    auto inGlobalDisplayNoneStyleSheet = [&](const uint32_t location)
+    {
+        return location < firstIgnorePreviousRules && Action::deserializeType(actions, actionsLength, location) == ActionType::CSSDisplayNoneSelector;
+    };
+    
     StringBuilder css;
-    for (auto& selector : selectors) {
-        css.append(selector);
-        css.append("{");
-        css.append(ContentExtensionsBackend::displayNoneCSSRule());
-        css.append("}");
+    for (uint32_t universalActionLocation : m_universalActionsWithoutDomains) {
+        if (inGlobalDisplayNoneStyleSheet(universalActionLocation)) {
+            if (!css.isEmpty())
+                css.append(',');
+            Action action = Action::deserialize(actions, actionsLength, universalActionLocation);
+            ASSERT(action.type() == ActionType::CSSDisplayNoneSelector);
+            css.append(action.stringArgument());
+        }
     }
+    if (css.isEmpty())
+        return;
+    css.append("{");
+    css.append(ContentExtensionsBackend::displayNoneCSSRule());
+    css.append("}");
 
     m_globalDisplayNoneStyleSheet = StyleSheetContents::create();
     m_globalDisplayNoneStyleSheet->setIsUserStyleSheet(true);
     if (!m_globalDisplayNoneStyleSheet->parseString(css.toString()))
         m_globalDisplayNoneStyleSheet = nullptr;
 
-    return m_globalDisplayNoneStyleSheet.get();
+    // These actions don't need to be applied individually any more. They will all be applied to every page as a precompiled style sheet.
+    m_universalActionsWithoutDomains.removeAllMatching(inGlobalDisplayNoneStyleSheet);
 }
 
-const DFABytecodeInterpreter::Actions& ContentExtension::cachedDomainActions(const String& domain)
+void ContentExtension::populateDomainCacheIfNeeded(const String& domain)
 {
     if (m_cachedDomain != domain) {
         DFABytecodeInterpreter interpreter(m_compiledExtension->domainFiltersBytecode(), m_compiledExtension->domainFiltersBytecodeLength());
@@ -85,9 +126,29 @@ const DFABytecodeInterpreter::Actions& ContentExtension::cachedDomainActions(con
         m_cachedDomainActions.clear();
         for (uint64_t action : domainActions)
             m_cachedDomainActions.add(action);
+        
+        m_cachedUniversalDomainActions.clear();
+        for (uint64_t action : m_universalActionsWithDomains) {
+            ASSERT_WITH_MESSAGE((action & ~IfDomainFlag) == static_cast<uint32_t>(action), "Universal actions with domains should not have flags.");
+            if (!!(action & IfDomainFlag) == m_cachedDomainActions.contains(action))
+                m_cachedUniversalDomainActions.append(static_cast<uint32_t>(action));
+        }
+        m_cachedDomainActions.shrinkToFit();
+        m_cachedUniversalDomainActions.shrinkToFit();
         m_cachedDomain = domain;
     }
+}
+
+const DFABytecodeInterpreter::Actions& ContentExtension::cachedDomainActions(const String& domain)
+{
+    populateDomainCacheIfNeeded(domain);
     return m_cachedDomainActions;
+}
+
+const Vector<uint32_t>& ContentExtension::universalActionsWithDomains(const String& domain)
+{
+    populateDomainCacheIfNeeded(domain);
+    return m_cachedUniversalDomainActions;
 }
     
 } // namespace ContentExtensions

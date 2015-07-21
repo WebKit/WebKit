@@ -1,3 +1,12 @@
+2015-07-20  Alex Christensen  <achristensen@webkit.org>
+
+        [Content Extensions] Cache actions with domains that match everything
+        https://bugs.webkit.org/show_bug.cgi?id=147050
+
+        Reviewed by Benjamin Poulain.
+
+        * UIProcess/API/APIUserContentExtensionStore.h:
+
 2015-07-20  Gordon Sheridan  <gordon_sheridan@apple.com>
 
         Support blocking a plug-in for non-security reasons

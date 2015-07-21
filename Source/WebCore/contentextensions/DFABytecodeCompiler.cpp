@@ -81,7 +81,6 @@ void DFABytecodeCompiler::emitAppendAction(uint64_t action)
 {
     // High bits are used to store flags. See compileRuleList.
     if (action & ActionFlagMask) {
-        ASSERT(!(action & DisplayNoneStyleSheetFlag));
         if (action & IfDomainFlag)
             append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::TestFlagsAndAppendActionWithIfDomain);
         else
@@ -89,10 +88,7 @@ void DFABytecodeCompiler::emitAppendAction(uint64_t action)
         append<uint16_t>(m_bytecode, static_cast<uint16_t>(action >> 32));
         append<uint32_t>(m_bytecode, static_cast<uint32_t>(action));
     } else {
-        if (action & DisplayNoneStyleSheetFlag) {
-            RELEASE_ASSERT(!(action & IfDomainFlag));
-            append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::AppendActionDefaultStylesheet);
-        } else if (action & IfDomainFlag)
+        if (action & IfDomainFlag)
             append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::AppendActionWithIfDomain);
         else
             append<DFABytecodeInstruction>(m_bytecode, DFABytecodeInstruction::AppendAction);

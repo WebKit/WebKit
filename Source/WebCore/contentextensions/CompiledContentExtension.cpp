@@ -35,24 +35,6 @@ namespace ContentExtensions {
 CompiledContentExtension::~CompiledContentExtension()
 {
 }
-
-Vector<String> CompiledContentExtension::globalDisplayNoneSelectors()
-{
-    DFABytecodeInterpreter interpreter(filtersWithoutDomainsBytecode(), filtersWithoutDomainsBytecodeLength());
-    DFABytecodeInterpreter::Actions actionLocations = interpreter.actionsForDefaultStylesheetFromDFARoot();
-    
-    Vector<Action> globalActions;
-    for (uint64_t actionLocation : actionLocations)
-        globalActions.append(Action::deserialize(actions(), actionsLength(), static_cast<unsigned>(actionLocation)));
-    
-    Vector<String> selectors;
-    for (Action& action : globalActions) {
-        if (action.type() == ActionType::CSSDisplayNoneSelector)
-            selectors.append(action.stringArgument());
-    }
-    
-    return selectors;
-}
     
 } // namespace ContentExtensions
 } // namespace WebCore

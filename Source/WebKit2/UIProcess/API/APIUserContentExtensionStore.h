@@ -51,7 +51,7 @@ public:
     
     // This should be incremented every time a functional change is made to the bytecode, file format, etc.
     // to prevent crashing while loading old data.
-    const static uint32_t CurrentContentExtensionFileVersion = 5;
+    const static uint32_t CurrentContentExtensionFileVersion = 6;
 
     static UserContentExtensionStore& defaultStore();
     static Ref<UserContentExtensionStore> storeWithPath(const WTF::String& storePath);

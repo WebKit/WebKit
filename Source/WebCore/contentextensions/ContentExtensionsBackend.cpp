@@ -92,20 +92,27 @@ Vector<Action> ContentExtensionsBackend::actionsForResourceLoad(const ResourceLo
         DFABytecodeInterpreter withoutDomainsInterpreter(compiledExtension.filtersWithoutDomainsBytecode(), compiledExtension.filtersWithoutDomainsBytecodeLength());
         DFABytecodeInterpreter::Actions withoutDomainsActions = withoutDomainsInterpreter.interpret(urlCString, flags);
         
+        String domain = resourceLoadInfo.mainDocumentURL.host();
         DFABytecodeInterpreter withDomainsInterpreter(compiledExtension.filtersWithDomainsBytecode(), compiledExtension.filtersWithDomainsBytecodeLength());
-        DFABytecodeInterpreter::Actions withDomainsActions = withDomainsInterpreter.interpretWithDomains(urlCString, flags, contentExtension->cachedDomainActions(resourceLoadInfo.mainDocumentURL.host()));
+        DFABytecodeInterpreter::Actions withDomainsActions = withDomainsInterpreter.interpretWithDomains(urlCString, flags, contentExtension->cachedDomainActions(domain));
         
         const SerializedActionByte* actions = compiledExtension.actions();
         const unsigned actionsLength = compiledExtension.actionsLength();
         
         bool sawIgnorePreviousRules = false;
-        if (!withoutDomainsActions.isEmpty() || !withDomainsActions.isEmpty()) {
+        const Vector<uint32_t>& universalWithDomains = contentExtension->universalActionsWithDomains(domain);
+        const Vector<uint32_t>& universalWithoutDomains = contentExtension->universalActionsWithoutDomains();
+        if (!withoutDomainsActions.isEmpty() || !withDomainsActions.isEmpty() || !universalWithDomains.isEmpty() || !universalWithoutDomains.isEmpty()) {
             Vector<uint32_t> actionLocations;
-            actionLocations.reserveInitialCapacity(withoutDomainsActions.size() + withDomainsActions.size());
+            actionLocations.reserveInitialCapacity(withoutDomainsActions.size() + withDomainsActions.size() + universalWithoutDomains.size() + universalWithDomains.size());
             for (uint64_t actionLocation : withoutDomainsActions)
                 actionLocations.uncheckedAppend(static_cast<uint32_t>(actionLocation));
             for (uint64_t actionLocation : withDomainsActions)
                 actionLocations.uncheckedAppend(static_cast<uint32_t>(actionLocation));
+            for (uint32_t actionLocation : universalWithoutDomains)
+                actionLocations.uncheckedAppend(actionLocation);
+            for (uint32_t actionLocation : universalWithDomains)
+                actionLocations.uncheckedAppend(actionLocation);
             std::sort(actionLocations.begin(), actionLocations.end());
 
             // Add actions in reverse order to properly deal with IgnorePreviousRules.
@@ -126,7 +133,7 @@ Vector<Action> ContentExtensionsBackend::actionsForResourceLoad(const ResourceLo
     }
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     double addedTimeEnd = monotonicallyIncreasingTime();
-    WTFLogAlways("Time added: %f microseconds %s", (addedTimeEnd - addedTimeStart) * 1.0e6, resourceLoadInfo.resourceURL.string().utf8().data());
+    dataLogF("Time added: %f microseconds %s \n", (addedTimeEnd - addedTimeStart) * 1.0e6, resourceLoadInfo.resourceURL.string().utf8().data());
 #endif
     return finalActions;
 }
