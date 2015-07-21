@@ -959,8 +959,22 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
     [_scrollView setMinimumZoomScale:layerTreeTransaction.minimumScaleFactor()];
     [_scrollView setMaximumZoomScale:layerTreeTransaction.maximumScaleFactor()];
     [_scrollView setZoomEnabled:layerTreeTransaction.allowsUserScaling()];
-    if (!layerTreeTransaction.scaleWasSetByUIProcess() && ![_scrollView isZooming] && ![_scrollView isZoomBouncing] && ![_scrollView _isAnimatingZoom])
-        [_scrollView setZoomScale:layerTreeTransaction.pageScaleFactor()];
+    if (!layerTreeTransaction.scaleWasSetByUIProcess() && ![_scrollView isZooming] && ![_scrollView isZoomBouncing] && ![_scrollView _isAnimatingZoom]) {
+        float newPageScaleFactor = layerTreeTransaction.pageScaleFactor();
+
+        if (!areEssentiallyEqualAsFloat(contentZoomScale(self), newPageScaleFactor)) {
+            // FIXME: We need to handle stick to bottom.
+            WebCore::FloatRect oldUnobscuredContentRect = _page->unobscuredContentRect();
+            if (!oldUnobscuredContentRect.isEmpty() && oldUnobscuredContentRect.y() < 1) {
+                CGFloat relativeHorizontalPosition = oldUnobscuredContentRect.x() / oldUnobscuredContentRect.width();
+                CGPoint newTopLeft = [self _adjustedContentOffset: { relativeHorizontalPosition * newContentSize.width, 0 }];
+                CGSize scrollViewSize = [_scrollView bounds].size;
+                CGSize rectToZoomSize = CGSizeMake(scrollViewSize.width * newPageScaleFactor, scrollViewSize.height * newPageScaleFactor);
+                [_scrollView zoomToRect: { newTopLeft, rectToZoomSize } animated:NO];
+            } else
+                [_scrollView setZoomScale:newPageScaleFactor];
+        }
+    }
 
     [self _updateScrollViewBackground];
 

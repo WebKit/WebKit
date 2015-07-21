@@ -1,3 +1,21 @@
+2015-07-21  Zalan Bujtas  <zalan@apple.com>
+
+        [iOS] Menu drop down such as on nike.com does not stay
+        https://bugs.webkit.org/show_bug.cgi?id=147047
+        rdar://problem/21046961
+
+        Reviewed by Benjamin Poulain.
+
+        This is a workaround for unintended scrolling while scaling.
+        (Based on Benjamin Poulain's WIP patch for webkit.org/b/136904)
+
+        In certain cases when scaling would result in moving the scrollview (which would trigger
+        a scroll event on WebCore side), zoomRect is called instead of setZoomScale to ensure
+        that the scroll position stays intact.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLayerTree:]):
+
 2015-07-21  Daniel Bates  <dabates@apple.com>
 
         WTFCrash() in WebKit::WebProcess::networkConnection()
