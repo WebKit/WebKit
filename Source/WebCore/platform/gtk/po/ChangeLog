@@ -1,3 +1,10 @@
+2015-07-22  Josef Andersson  <josef.andersson@fripost.org>
+
+        [l10n] Updated Swedish translation
+        https://bugs.webkit.org/show_bug.cgi?id=147190
+
+        * sv.po:
+
 2015-07-10  Josef Andersson  <josef.andersson@fripost.org>
 
         Updated Swedish translation for WebKitGTK+

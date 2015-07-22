@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: webkitgtk+\n"
 "Report-Msgid-Bugs-To: https://bugs.webkit.org\n"
-"POT-Creation-Date: 2015-07-03 00:13+0000\n"
-"PO-Revision-Date: 2015-06-07 10:21+0100\n"
+"POT-Creation-Date: 2015-07-21 12:08+0000\n"
+"PO-Revision-Date: 2015-07-21 11:11+0100\n"
 "Last-Translator: Josef Andersson <josef.andersson@fripost.org>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -35,7 +35,7 @@ msgstr "Raminläsning stördes"
 
 #: ../ErrorsGtk.cpp:57
 msgid "Content with the specified MIME type cannot be shown"
-msgstr "Innehåll med den specifierade MIME-typen kan inte visas"
+msgstr "Innehåll med den angivna MIME-typen kan inte visas"
 
 #: ../ErrorsGtk.cpp:63
 msgid "File does not exist"
@@ -558,11 +558,11 @@ msgstr "för lång"
 
 #: ../LocalizedStringsGtk.cpp:759
 msgid "range underflow"
-msgstr "intervallunderskridning"
+msgstr "intervallunderspill"
 
 #: ../LocalizedStringsGtk.cpp:764
 msgid "range overflow"
-msgstr "intervallöverskridning"
+msgstr "intervallöverspill"
 
 #: ../LocalizedStringsGtk.cpp:769
 msgid "step mismatch"
@@ -575,7 +575,7 @@ msgstr "Oacceptabelt TLS-certifikat"
 #: ../LocalizedStringsGtk.cpp:791
 msgctxt "Closed Captions"
 msgid "Menu section heading for closed captions"
-msgstr "Menuavsnittsrubrik för undertexter"
+msgstr "Menyavsnittsrubrik för undertexter"
 
 #: ../LocalizedStringsGtk.cpp:796
 msgctxt "Menu section heading for subtitles"
@@ -780,7 +780,7 @@ msgstr "Kontext"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:153
 msgid "Flags with the context of the WebKitHitTestResult"
-msgstr "Flaggor med kontextet för WebKitHitTestResult"
+msgstr "Flaggor med kontexten för WebKitHitTestResult"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:166
 msgid "Link URI"
@@ -804,7 +804,7 @@ msgstr "Länketikett"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:193
 msgid "The link label"
-msgstr "Länktetiketten"
+msgstr "Länketiketten"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:205
 msgid "Image URI"
@@ -880,7 +880,7 @@ msgstr "Webbvyn som kommer att skrivas ut"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:159
 msgid "Print Settings"
-msgstr "Utskriftsinställnngar"
+msgstr "Utskriftsinställningar"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:160
 msgid "The initial print settings for the print operation"
@@ -1027,8 +1027,8 @@ msgstr "Teckensnittsfamiljen monospace"
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:693
 msgid "The font family used as the default for content using monospace font."
 msgstr ""
-"Standardfamiljen för teckensnitt som används för innehåll med teckensnittet "
-"monospace."
+"Standardfamiljen för teckensnitt som används för innehåll med monospace-"
+"teckensnitt."
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:705
 msgid "Serif font family"
@@ -1067,7 +1067,7 @@ msgstr "Teckensnittsfamiljen fantasy"
 msgid "The font family used as the default for content using fantasy font."
 msgstr ""
 "Teckensnittsfamilj att använda som standard för innehåll som använder "
-"teckensnittet fantasy."
+"fantasy-teckensnitt."
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:757
 msgid "Pictograph font family"
@@ -1077,7 +1077,7 @@ msgstr "Teckensnittsfamilj för Pictograph"
 msgid "The font family used as the default for content using pictograph font."
 msgstr ""
 "Teckensnittsfamilj att använda som standard för innehåll som använder "
-"teckensnittet pictograph."
+"pictograph-teckensnitt."
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:771
 msgid "Default font size"
@@ -1240,19 +1240,19 @@ msgstr "Huruvida mediauppspelning tillåter inline"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1055
 msgid "Draw compositing indicators"
-msgstr "Visa indikatorer för composting-indikatorer"
+msgstr "Rita ut kompositionsindikatorer"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1056
 msgid "Whether to draw compositing borders and repaint counters"
-msgstr "Huruvida utritning av composting-ramar och rita om räknare"
+msgstr "Huruvida utritning av kompositionsramar och omritning av räknare ska ske"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1075
 msgid "Enable Site Specific Quirks"
-msgstr "Aktivera sitespecifika speciallösningar"
+msgstr "Aktivera webbplatsspecifika speciallösningar"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1076
 msgid "Enables the site-specific compatibility workarounds"
-msgstr "Aktiverar webbplatsspecifika speciallösningar kompatibilitet"
+msgstr "Aktiverar webbplatsspecifika speciallösningar för kompatibilitet"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1096
 msgid "Enable page cache"
@@ -1329,7 +1329,7 @@ msgstr "Huruvida filåtkomst tillåts från fil-URL:ar."
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp:95
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:105
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:110
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:910
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:912
 msgid "URI"
 msgstr "URI"
 
@@ -1406,8 +1406,8 @@ msgid ""
 "Whether the inspector can be attached to the same window that contains the "
 "inspected view"
 msgstr ""
-"Huruvida inspektören kan fästas vid samma fönster som innehåller vyn "
-"inspekterade"
+"Huruvida inspektören kan fästas vid samma fönster som innehåller den "
+"inspekterade vyn"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:111
 msgid "The current active URI of the resource"
@@ -1417,33 +1417,31 @@ msgstr "Aktuell aktiv URI för resursen"
 msgid "The response of the resource"
 msgstr "Resursens svar"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebViewBase.cpp:1168
-#, fuzzy
-#| msgid "Play movie in fullscreen mode"
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebViewBase.cpp:1138
 msgid "Website running in fullscreen mode"
-msgstr "Spela film i helskärmsläge"
+msgstr "Webbplats körs i helskärmsläge"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:557
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:559
 msgid "Select Files"
 msgstr "Välj filer"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:557
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:559
 msgid "Select File"
 msgstr "Välj fil"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:800
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:802
 msgid "Web Context"
 msgstr "Webbkontext"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:801
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:803
 msgid "The web context for the view"
-msgstr "Webbkontextet för vyn"
+msgstr "Webbkontexten för vyn"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:818
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:820
 msgid "Related WebView"
 msgstr "Relaterad WebView"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:819
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:821
 msgid ""
 "The related WebKitWebView used when creating the view to share the same web "
 "process"
@@ -1451,83 +1449,83 @@ msgstr ""
 "Den relaterade WebKitWebView som används vid skapandet av vyn för att dela "
 "samma webbprocess"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:835
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:837
 msgid "WebView settings"
 msgstr "WebView-inställningar"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:836
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:838
 msgid "The WebKitSettings of the view"
 msgstr "WebKitSettings för vyn"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:852
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:854
 msgid "WebView user content manager"
 msgstr "WebView hanterare för användarinnehåll"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:853
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:855
 msgid "The WebKitUserContentManager of the view"
 msgstr "WebKitUserContentManager för vyn"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:866
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:868
 msgid "Title"
 msgstr "Titel"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:867
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:869
 msgid "Main frame document title"
 msgstr "Dokumenttitel för huvudram"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:885
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:887
 msgid "Estimated Load Progress"
 msgstr "Förväntad inläsningsprocess"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:886
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:888
 msgid "An estimate of the percent completion for a document load"
 msgstr "Estimat av den färdiga procenten för en dokumentinläsning"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:898
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:900
 msgid "Favicon"
 msgstr "Favicon"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:899
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:901
 msgid "The favicon associated to the view, if any"
 msgstr "Favicon associerad med vyn, om någon"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:911
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:913
 msgid "The current active URI of the view"
 msgstr "Aktuell aktiv URI för vyn"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:926
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:928
 msgid "Zoom level"
 msgstr "Zoomnivå"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:927
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:929
 msgid "The zoom level of the view content"
 msgstr "Zoomnivån för vyinnehållet"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:946
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:948
 msgid "Is Loading"
 msgstr "Läses in"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:947
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:949
 msgid "Whether the view is loading a page"
 msgstr "Huruvida vyn läser in en sida"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:967
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:969
 msgid "Whether the view is playing audio"
 msgstr "Huruvida vyn spelar ljud"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:984
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:986
 msgid "Editable"
-msgstr "Redigeringsbar"
+msgstr "Redigerbar"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:985
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:987
 msgid "Whether the content can be modified by the user."
 msgstr "Huruvida innehållet kan ändras av användaren."
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:2983
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:2993
 msgid "An exception was raised in JavaScript"
 msgstr "Ett undantag kastades i JavaScript"
 
-#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:3440
+#: ../../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:3450
 msgid "There was an error creating the snapshot"
 msgstr "Ett fel uppstod vid skapandet av ögonblicksbilden"
 
@@ -1585,7 +1583,7 @@ msgstr "Ändringsbar storlek"
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:288
 msgid "Whether the window can be resized."
-msgstr "Huruvida fönstret kan storlekändras."
+msgstr "Huruvida fönstret kan storleksändras."
 
 #: ../../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:300
 msgid "Fullscreen"
