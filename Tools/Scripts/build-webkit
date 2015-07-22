@@ -258,16 +258,20 @@ for my $dir (@projects) {
         }
         $result = buildXCodeProject($projectPath, $clean, @local_options, @ARGV);
     } elsif (isAppleWinWebKit() || isWinCairo()) {
-        if ($project eq "WebKit") {
+        if (isWinCairo()) {
+            chdirWebKit();
+            generateBuildSystemFromCMakeProject("WinCairo");
+            $result = buildVisualStudioProject("WebKitBuild/" . configuration() . "/WebKit.sln", $clean);
+        } else {
             my $webkitSolutionPath = "WebKit.vcxproj/WebKit.sln";
             $result = buildVisualStudioProject($webkitSolutionPath, $clean);
+        }
+        if (usingVisualStudioExpress()) {
+            # Visual Studio Express is so lame it can't stdout build failures.
+            # So we find its logs and dump them to the console ourselves.
             my $vsConfiguration = configuration();
-            if (usingVisualStudioExpress()) {
-                # Visual Studio Express is so lame it can't stdout build failures.
-                # So we find its logs and dump them to the console ourselves.
-                open(my $OUTPUT_HANDLE, '<', "$baseProductDir/$vsConfiguration/BuildOutput.htm") or die "Could not open build log file at $baseProductDir/$vsConfiguration/BuildOutput.htm";
-                print while (<$OUTPUT_HANDLE>);
-            }
+            open(my $OUTPUT_HANDLE, '<', "$baseProductDir/$vsConfiguration/BuildOutput.htm") or die "Could not open build log file at $baseProductDir/$vsConfiguration/BuildOutput.htm";
+            print while (<$OUTPUT_HANDLE>);
         }
     }
     # Various build* calls above may change the CWD.
