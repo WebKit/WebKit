@@ -1,3 +1,13 @@
+2015-07-22  Mark Dittmer  <mark.s.dittmer@gmail.com>
+
+        New test: Object.create(window).location will trigger a crash when toJSDOMWindow() returns NULL on an object that have the JS DOM Window in its prototype chain.
+        https://bugs.webkit.org/show_bug.cgi?id=146785
+
+        Reviewed by Mark Lam.
+
+        * js/property-of-window-as-prototype-expected.txt:
+        * js/property-of-window-as-prototype.html:
+
 2015-07-21  Alexey Proskuryakov  <ap@apple.com>
 
         Update Mac test results for libxml2 v2.9.2.

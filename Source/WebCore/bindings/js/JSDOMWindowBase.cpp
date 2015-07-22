@@ -248,11 +248,15 @@ JSDOMWindow* toJSDOMWindow(JSValue value)
 {
     if (!value.isObject())
         return 0;
-    const ClassInfo* classInfo = asObject(value)->classInfo();
-    if (classInfo == JSDOMWindow::info())
-        return jsCast<JSDOMWindow*>(asObject(value));
-    if (classInfo == JSDOMWindowShell::info())
-        return jsCast<JSDOMWindowShell*>(asObject(value))->window();
+    while (!value.isNull()) {
+        JSObject* object = asObject(value);
+        const ClassInfo* classInfo = object->classInfo();
+        if (classInfo == JSDOMWindow::info())
+            return jsCast<JSDOMWindow*>(object);
+        if (classInfo == JSDOMWindowShell::info())
+            return jsCast<JSDOMWindowShell*>(object)->window();
+        value = object->prototype();
+    }
     return 0;
 }
 
