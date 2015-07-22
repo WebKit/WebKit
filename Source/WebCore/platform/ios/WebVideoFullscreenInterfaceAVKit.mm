@@ -682,10 +682,11 @@ static WebVideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullS
     
     [CATransaction begin];
     [CATransaction setAnimationDuration:0];
+    [CATransaction setDisableActions:YES];
     
-    [(UIView *)[_videoSublayer delegate] setTransform:CGAffineTransformIdentity];
     self.modelVideoLayerFrame = [self bounds];
     [_avPlayerController delegate]->setVideoLayerFrame(self.modelVideoLayerFrame);
+    [(UIView *)[_videoSublayer delegate] setTransform:CGAffineTransformIdentity];
     
     [CATransaction commit];
 }
