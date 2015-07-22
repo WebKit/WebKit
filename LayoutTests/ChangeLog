@@ -1,3 +1,41 @@
+2015-07-21  Alexey Proskuryakov  <ap@apple.com>
+
+        Update Mac test results for libxml2 v2.9.2.
+
+        These results will probably become cross-platform eventually, but for now it's just Mac.
+
+        * platform/mac-yosemite/fast/dom/adopt-attribute-crash-expected.txt: Copied from LayoutTests/fast/dom/adopt-attribute-crash-expected.txt.
+        * platform/mac-yosemite/fast/parser: Added.
+        * platform/mac-yosemite/fast/parser/xml-colon-entity-expected.txt: Copied from LayoutTests/fast/parser/xml-colon-entity-expected.txt.
+        * platform/mac-yosemite/fast/parser/xml-declaration-missing-ending-mark-expected.txt: Copied from LayoutTests/fast/parser/xml-declaration-missing-ending-mark-expected.txt.
+        * platform/mac-yosemite/fast/xsl: Added.
+        * platform/mac-yosemite/fast/xsl/xslt-extra-content-at-end-expected.png: Copied from LayoutTests/platform/mac/fast/xsl/xslt-extra-content-at-end-expected.png.
+        * platform/mac-yosemite/fast/xsl/xslt-extra-content-at-end-expected.txt: Copied from LayoutTests/platform/mac/fast/xsl/xslt-extra-content-at-end-expected.txt.
+        * platform/mac-yosemite/fast/xsl/xslt-missing-namespace-in-xslt-expected.png: Copied from LayoutTests/platform/mac/fast/xsl/xslt-missing-namespace-in-xslt-expected.png.
+        * platform/mac-yosemite/fast/xsl/xslt-missing-namespace-in-xslt-expected.txt: Copied from LayoutTests/platform/mac/fast/xsl/xslt-missing-namespace-in-xslt-expected.txt.
+        * platform/mac-yosemite/svg/custom: Added.
+        * platform/mac-yosemite/svg/custom/bug78807-expected.txt: Copied from LayoutTests/svg/custom/bug78807-expected.txt.
+        * platform/mac-yosemite/svg/custom/missing-xlink-expected.png: Copied from LayoutTests/platform/mac/svg/custom/missing-xlink-expected.png.
+        * platform/mac-yosemite/svg/custom/missing-xlink-expected.txt: Copied from LayoutTests/platform/mac/svg/custom/missing-xlink-expected.txt.
+        * platform/mac-yosemite/svg/custom/path-bad-data-expected.png: Copied from LayoutTests/platform/mac/svg/custom/path-bad-data-expected.png.
+        * platform/mac-yosemite/svg/custom/path-bad-data-expected.txt: Copied from LayoutTests/platform/mac/svg/custom/path-bad-data-expected.txt.
+        * platform/mac-yosemite/svg/custom/use-font-face-crash-expected.png: Copied from LayoutTests/platform/mac/svg/custom/use-font-face-crash-expected.png.
+        * platform/mac-yosemite/svg/custom/use-font-face-crash-expected.txt: Copied from LayoutTests/platform/mac/svg/custom/use-font-face-crash-expected.txt.
+        * platform/mac/fast/dom/adopt-attribute-crash-expected.txt: Added.
+        * platform/mac/fast/parser/xml-colon-entity-expected.txt: Added.
+        * platform/mac/fast/parser/xml-declaration-missing-ending-mark-expected.txt: Added.
+        * platform/mac/fast/xsl/xslt-extra-content-at-end-expected.png:
+        * platform/mac/fast/xsl/xslt-extra-content-at-end-expected.txt:
+        * platform/mac/fast/xsl/xslt-missing-namespace-in-xslt-expected.png:
+        * platform/mac/fast/xsl/xslt-missing-namespace-in-xslt-expected.txt:
+        * platform/mac/svg/custom/bug78807-expected.txt: Added.
+        * platform/mac/svg/custom/missing-xlink-expected.png:
+        * platform/mac/svg/custom/missing-xlink-expected.txt:
+        * platform/mac/svg/custom/path-bad-data-expected.png:
+        * platform/mac/svg/custom/path-bad-data-expected.txt:
+        * platform/mac/svg/custom/use-font-face-crash-expected.png:
+        * platform/mac/svg/custom/use-font-face-crash-expected.txt:
+
 2015-07-21  Benjamin Poulain  <benjamin@webkit.org>
 
         [Content Extensions] Use a jump table when consecutive transitions have different targets
