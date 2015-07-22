@@ -67,6 +67,10 @@ Usage: $programName [options] [suite or test prefixes]
   --[no-]build          Build (or do not build) unit tests prior to running (default: $buildDefault)
   --root=               Path to the pre-built root containing TestWebKitAPI
   --show-leaks          Show leaks in the output
+
+Platform options:
+  --ios-simulator       Run tests in the iOS Simulator
+
 @{[ sharedCommandLineOptionsUsage(indent => 2, switchWidth => 21) ]}
 Examples
 

@@ -1,3 +1,11 @@
+2015-07-22  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Add --ios-simulator to run-api-tests --help.
+
+        Rubber-stamped by Dan Bates.
+
+        * Scripts/run-api-tests:
+
 2015-07-22  Jason Marcell  <jmarcell@apple.com>
 
         Remove hardcoded "internal" from Buildbot.prototype._normalizeQueueInfo.
