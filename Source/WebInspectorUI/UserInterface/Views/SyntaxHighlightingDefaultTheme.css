@@ -56,8 +56,13 @@
 }
 
 .cm-s-default .cm-string,
-.syntax-highlighted :matches(.css-string, .javascript-string, .javascript-regexp, .html-attribute-value) {
+.syntax-highlighted :matches(.css-string, .javascript-string, .html-attribute-value) {
     color: hsl(1, 79%, 42%);
+}
+
+.cm-s-default .cm-string-2,
+.syntax-highlighted .javascript-regexp {
+    color: hsl(20, 100%, 44%);
 }
 
 .cm-s-default .cm-m-xml.cm-meta,
