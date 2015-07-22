@@ -106,18 +106,29 @@ bool SyscallPolicy::hasPermissionForPath(const char* path, Permission permission
     return false;
 }
 
+static String canonicalizeFileName(const String& path)
+{
+    char* canonicalizedPath = canonicalize_file_name(path.utf8().data());
+    if (canonicalizedPath) {
+        String result = String::fromUTF8(canonicalizedPath);
+        free(canonicalizedPath);
+        return result;
+    }
+    return path;
+}
+
 void SyscallPolicy::addFilePermission(const String& path, Permission permission)
 {
     ASSERT(!path.isEmpty() && path.startsWith('/')  && !path.endsWith('/') && !path.contains("//"));
 
-    m_filePermission.set(path, permission);
+    m_filePermission.set(canonicalizeFileName(path), permission);
 }
 
 void SyscallPolicy::addDirectoryPermission(const String& path, Permission permission)
 {
     ASSERT(path.startsWith('/') && !path.contains("//") && (path.length() == 1 || !path.endsWith('/')));
 
-    m_directoryPermission.set(path, permission);
+    m_directoryPermission.set(canonicalizeFileName(path), permission);
 }
 
 void SyscallPolicy::addDefaultWebProcessPolicy(const WebProcessCreationParameters& parameters)
