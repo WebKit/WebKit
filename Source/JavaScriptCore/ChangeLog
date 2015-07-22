@@ -1,3 +1,16 @@
+2015-07-22  Filip Pizlo  <fpizlo@apple.com>
+
+        Fixed pool allocation should always be aligned
+        https://bugs.webkit.org/show_bug.cgi?id=147201
+
+        Reviewed by Simon Fraser.
+        
+        Passing an unaligned size to the allocator can cause asserts or even worse things. The
+        Options reservation value isn't going to be aligned.
+
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolExecutableAllocator::FixedVMPoolExecutableAllocator):
+
 2015-07-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         Enable STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE for GCC
