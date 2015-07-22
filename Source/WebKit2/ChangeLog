@@ -1,3 +1,9 @@
+2015-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.9.4 release.
+
+        * gtk/NEWS: Add release notes for 2.9.4.
+
 2015-07-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: [Mac] "Open Image In New Window" context menu item does nothing on an image
