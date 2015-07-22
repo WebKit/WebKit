@@ -1,3 +1,19 @@
+2015-07-22  Brent Fulgham  <bfulgham@apple.com>
+
+        Add some images needed for an upcoming blog post.
+
+        * blog-files/backdrop-filters: Added.
+        * blog-files/backdrop-filters/Screen_OSX_Yosemite_Finder-iCloud-WaterBg_1x.jpg: Added.
+        * blog-files/backdrop-filters/Screen_OSX_Yosemite_Finder-iCloud-WaterBg_2x.jpg: Added.
+        * blog-files/backdrop-filters/Screen_V_iOS8_ControlCenter_BlueGradient_1x.jpg: Added.
+        * blog-files/backdrop-filters/Screen_V_iOS8_ControlCenter_BlueGradient_2x.jpg: Added.
+        * blog-files/backdrop-filters/backdrop_correct_1x.jpg: Added.
+        * blog-files/backdrop-filters/backdrop_correct_2x.jpg: Added.
+        * blog-files/backdrop-filters/backdrop_invert_1x.jpg: Added.
+        * blog-files/backdrop-filters/backdrop_invert_2x.jpg: Added.
+        * blog-files/backdrop-filters/backdrop_mixed_1x.jpg: Added.
+        * blog-files/backdrop-filters/backdrop_mixed_2x.jpg: Added.
+
 2015-07-11  Timothy Hatcher  <timothy@apple.com>
 
         Add some images for a blog post.
