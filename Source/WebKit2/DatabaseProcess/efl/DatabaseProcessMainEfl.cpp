@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Igalia S.L.
+ * Copyright (C) 2015 Naver Corp. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,11 +24,30 @@
  */
 
 #include "config.h"
+#include "DatabaseProcess.h"
+
+#if ENABLE(DATABASE_PROCESS)
+
+#include "ChildProcessMain.h"
 #include "DatabaseProcessMainUnix.h"
 
-using namespace WebKit;
+using namespace WebCore;
 
-int main(int argc, char** argv)
+namespace WebKit {
+
+class DatabaseProcessMain final: public ChildProcessMainBase {
+public:
+    bool platformInitialize() override
+    {
+        return true;
+    }
+};
+
+int DatabaseProcessMainUnix(int argc, char** argv)
 {
-    return DatabaseProcessMainUnix(argc, argv);
+    return ChildProcessMain<DatabaseProcess, DatabaseProcessMain>(argc, argv);
 }
+
+} // namespace WebKit
+
+#endif // ENABLE(DATABASE_PROCESS)

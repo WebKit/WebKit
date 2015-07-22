@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Igalia S.L.
+ * Copyright (C) 2015 Naver Corp. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,11 +24,16 @@
  */
 
 #include "config.h"
-#include "DatabaseProcessMainUnix.h"
+#include "DatabaseProcessProxy.h"
 
-using namespace WebKit;
+#if ENABLE(DATABASE_PROCESS)
 
-int main(int argc, char** argv)
+namespace WebKit {
+
+void DatabaseProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions&)
 {
-    return DatabaseProcessMainUnix(argc, argv);
 }
+
+} // namespace WebKit
+
+#endif // ENABLE(DATABASE_PROCESS)

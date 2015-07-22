@@ -62,9 +62,9 @@ list(APPEND WebKit2_SOURCES
 
     Shared/cairo/ShareableBitmapCairo.cpp
 
+    Shared/glib/KeyedDecoder.cpp
+    Shared/glib/KeyedEncoder.cpp
     Shared/gtk/ArgumentCodersGtk.cpp
-    Shared/gtk/KeyedDecoder.cpp
-    Shared/gtk/KeyedEncoder.cpp
     Shared/gtk/NativeContextMenuItemGtk.cpp
     Shared/gtk/NativeWebKeyboardEventGtk.cpp
     Shared/gtk/NativeWebMouseEventGtk.cpp
@@ -483,6 +483,7 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/Shared/Network/CustomProtocols/soup"
     "${WEBKIT2_DIR}/Shared/Downloads/soup"
     "${WEBKIT2_DIR}/Shared/Plugins/unix"
+    "${WEBKIT2_DIR}/Shared/glib"
     "${WEBKIT2_DIR}/Shared/gtk"
     "${WEBKIT2_DIR}/Shared/linux"
     "${WEBKIT2_DIR}/Shared/linux/SeccompFilters"

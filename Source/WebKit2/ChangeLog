@@ -1,3 +1,60 @@
+2015-07-22  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL] Support indexeddb for WK2
+        https://bugs.webkit.org/show_bug.cgi?id=145867
+
+        Reviewed by Csaba Osztrogonác.
+
+        Add stub implementation for indexeddb. Move KeyedDecoder and KeyedEncoder from gtk to glib
+        in order to share it between GTK and EFL ports.
+
+        * DatabaseProcess/EntryPoint/unix/DatabaseProcessMain.cpp:
+        * DatabaseProcess/efl/DatabaseProcessMainEfl.cpp: Copied from Source/WebKit2/DatabaseProcess/EntryPoint/unix/DatabaseProcessMain.cpp.
+        (WebKit::DatabaseProcessMainUnix):
+        * PlatformEfl.cmake:
+        * PlatformGTK.cmake:
+        * Shared/glib/KeyedDecoder.cpp: Renamed from Source/WebKit2/Shared/gtk/KeyedDecoder.cpp.
+        (WebKit::KeyedDecoder::KeyedDecoder):
+        (WebKit::KeyedDecoder::~KeyedDecoder):
+        (WebKit::KeyedDecoder::dictionaryFromGVariant):
+        (WebKit::KeyedDecoder::decodeBytes):
+        (WebKit::KeyedDecoder::decodeSimpleValue):
+        (WebKit::KeyedDecoder::decodeBool):
+        (WebKit::KeyedDecoder::decodeUInt32):
+        (WebKit::KeyedDecoder::decodeInt32):
+        (WebKit::KeyedDecoder::decodeInt64):
+        (WebKit::KeyedDecoder::decodeFloat):
+        (WebKit::KeyedDecoder::decodeDouble):
+        (WebKit::KeyedDecoder::decodeString):
+        (WebKit::KeyedDecoder::beginObject):
+        (WebKit::KeyedDecoder::endObject):
+        (WebKit::KeyedDecoder::beginArray):
+        (WebKit::KeyedDecoder::beginArrayElement):
+        (WebKit::KeyedDecoder::endArrayElement):
+        (WebKit::KeyedDecoder::endArray):
+        * Shared/glib/KeyedDecoder.h: Renamed from Source/WebKit2/Shared/gtk/KeyedDecoder.h.
+        * Shared/glib/KeyedEncoder.cpp: Renamed from Source/WebKit2/Shared/gtk/KeyedEncoder.cpp.
+        (WebKit::KeyedEncoder::KeyedEncoder):
+        (WebKit::KeyedEncoder::~KeyedEncoder):
+        (WebKit::KeyedEncoder::encodeBytes):
+        (WebKit::KeyedEncoder::encodeBool):
+        (WebKit::KeyedEncoder::encodeUInt32):
+        (WebKit::KeyedEncoder::encodeInt32):
+        (WebKit::KeyedEncoder::encodeInt64):
+        (WebKit::KeyedEncoder::encodeFloat):
+        (WebKit::KeyedEncoder::encodeDouble):
+        (WebKit::KeyedEncoder::encodeString):
+        (WebKit::KeyedEncoder::beginObject):
+        (WebKit::KeyedEncoder::endObject):
+        (WebKit::KeyedEncoder::beginArray):
+        (WebKit::KeyedEncoder::beginArrayElement):
+        (WebKit::KeyedEncoder::endArrayElement):
+        (WebKit::KeyedEncoder::endArray):
+        (WebKit::KeyedEncoder::finishEncoding):
+        * Shared/glib/KeyedEncoder.h: Renamed from Source/WebKit2/Shared/gtk/KeyedEncoder.h.
+        * UIProcess/Databases/efl/DatabaseProcessProxyEfl.cpp: Copied from Source/WebKit2/DatabaseProcess/EntryPoint/unix/DatabaseProcessMain.cpp.
+        (WebKit::DatabaseProcessProxy::platformGetLaunchOptions):
+
 2015-07-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [Seccomp] Canonicalize filesystem path when whitelisting it

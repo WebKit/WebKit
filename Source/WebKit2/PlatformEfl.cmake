@@ -1,4 +1,6 @@
 list(APPEND WebKit2_SOURCES
+    DatabaseProcess/efl/DatabaseProcessMainEfl.cpp
+
     NetworkProcess/efl/NetworkProcessMainEfl.cpp
 
     NetworkProcess/soup/NetworkProcessSoup.cpp
@@ -44,6 +46,9 @@ list(APPEND WebKit2_SOURCES
     Shared/efl/NativeWebWheelEventEfl.cpp
     Shared/efl/ProcessExecutablePathEfl.cpp
     Shared/efl/WebEventFactory.cpp
+
+    Shared/glib/KeyedDecoder.cpp
+    Shared/glib/KeyedEncoder.cpp
 
     Shared/linux/WebMemorySamplerLinux.cpp
 
@@ -123,6 +128,8 @@ list(APPEND WebKit2_SOURCES
     UIProcess/CoordinatedGraphics/WebPageProxyCoordinatedGraphics.cpp
     UIProcess/CoordinatedGraphics/WebView.cpp
     UIProcess/CoordinatedGraphics/WebViewClient.cpp
+
+    UIProcess/Databases/efl/DatabaseProcessProxyEfl.cpp
 
     UIProcess/InspectorServer/efl/WebInspectorServerEfl.cpp
 
@@ -231,6 +238,7 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/x11"
     "${WEBCORE_DIR}/platform/network/soup"
     "${WEBCORE_DIR}/platform/text/enchant"
+    "${WEBKIT2_DIR}/DatabaseProcess/unix"
     "${WEBKIT2_DIR}/NetworkProcess/efl"
     "${WEBKIT2_DIR}/NetworkProcess/unix"
     "${WEBKIT2_DIR}/Platform/efl"
@@ -261,6 +269,8 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/WebProcess/WebPage/CoordinatedGraphics"
     "${WTF_DIR}/wtf/efl"
     "${WTF_DIR}/wtf/glib"
+    "${WTF_DIR}"
+    "${WEBKIT2_DIR}"
 )
 
 list(APPEND WebKit2_SYSTEM_INCLUDE_DIRECTORIES
@@ -315,6 +325,10 @@ list(APPEND WebProcess_SOURCES
 
 list(APPEND NetworkProcess_SOURCES
     NetworkProcess/EntryPoint/unix/NetworkProcessMain.cpp
+)
+
+list(APPEND DatabaseProcess_SOURCES
+    DatabaseProcess/EntryPoint/unix/DatabaseProcessMain.cpp
 )
 
 list(APPEND WebProcess_LIBRARIES
