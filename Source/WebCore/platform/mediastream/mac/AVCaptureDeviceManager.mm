@@ -413,6 +413,41 @@ RefPtr<RealtimeMediaSource> AVCaptureDeviceManager::bestSourceForTypeAndConstrai
     return 0;
 }
 
+RefPtr<RealtimeMediaSource> AVCaptureDeviceManager::sourceWithUID(String &deviceUID, RealtimeMediaSource::Type type, MediaConstraints* constraints)
+{
+    if (!isAvailable())
+        return 0;
+    
+    Vector<CaptureDevice>& devices = captureDeviceList();
+    for (auto captureDevice : devices) {
+        if (!captureDevice.m_enabled)
+            continue;
+
+        if (captureDevice.m_captureDeviceID != deviceUID)
+            continue;
+        if (constraints) {
+            String invalidConstraints;
+            AVCaptureDeviceManager::singleton().verifyConstraintsForMediaType(type, constraints, invalidConstraints);
+            if (!invalidConstraints.isEmpty())
+                continue;
+        }
+        
+        AVCaptureDeviceType *device = [AVCaptureDevice deviceWithUniqueID:captureDevice.m_captureDeviceID];
+        ASSERT(device);
+        if (type == RealtimeMediaSource::Type::Audio && !captureDevice.m_audioSourceId.isEmpty()) {
+            captureDevice.m_audioSource = AVAudioCaptureSource::create(device, captureDevice.m_audioSourceId, constraints);
+            return captureDevice.m_audioSource;
+        }
+        if (type == RealtimeMediaSource::Type::Video && !captureDevice.m_videoSourceId.isEmpty()) {
+            captureDevice.m_videoSource = AVVideoCaptureSource::create(device, captureDevice.m_videoSourceId, constraints);
+            return captureDevice.m_videoSource;
+        }
+    }
+    
+    return nullptr;
+
+}
+
 void AVCaptureDeviceManager::registerForDeviceNotifications()
 {
     [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get() selector:@selector(deviceConnected:) name:AVCaptureDeviceWasConnectedNotification object:nil];
