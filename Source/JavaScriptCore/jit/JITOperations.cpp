@@ -1978,12 +1978,11 @@ void JIT_OPERATION operationVMHandleException(ExecState* exec)
 // testing.
 void JIT_OPERATION operationExceptionFuzz()
 {
-    // This probably "just works" for GCC also, but I haven't tried.
-#if COMPILER(CLANG)
+#if COMPILER(GCC)
     ExecState* exec = static_cast<ExecState*>(__builtin_frame_address(1));
     void* returnPC = __builtin_return_address(0);
     doExceptionFuzzing(exec, "JITOperations", returnPC);
-#endif // COMPILER(CLANG)
+#endif // COMPILER(GCC)
 }
 
 EncodedJSValue JIT_OPERATION operationHasGenericProperty(ExecState* exec, EncodedJSValue encodedBaseValue, JSCell* propertyName)
