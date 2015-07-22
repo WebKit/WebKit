@@ -1,3 +1,43 @@
+2015-07-22  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS] Adjust the preview architecture
+        https://bugs.webkit.org/show_bug.cgi?id=147203
+        <rdar://problem/21945775>
+
+        Reviewed by Beth Dakin.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setAllowsLinkPreview:]): Deleted.
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView willMoveToWindow:]): Deleted.
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView cleanupInteraction]):
+        (-[WKContentView _registerPreview]):
+        (-[WKContentView _unregisterPreview]):
+        (-[WKContentView _interactionShouldBeginFromPreviewItemController:forPosition:]):
+        (-[WKContentView _dataForPreviewItemController:atPosition:type:]):
+        (-[WKContentView _presentationRectForPreviewItemController:]):
+        (-[WKContentView _presentedViewControllerForPreviewItemController:]):
+        (-[WKContentView _previewItemController:commitPreview:]):
+        (-[WKContentView _previewItemController:willPresentPreview:forPosition:inSourceView:]):
+        (-[WKContentView _previewItemController:didDismissPreview:committing:]):
+        (-[WKContentView _presentationSnapshotForPreviewItemController:]):
+        (-[WKContentView _presentationRectsForPreviewItemController:]):
+        (-[WKContentView gestureRecognizerShouldBegin:]): Deleted.
+        (-[WKContentView _registerPreviewInWindow:]): Deleted.
+        (-[WKContentView _unregisterPreviewInWindow:]): Deleted.
+        (-[WKContentView previewViewControllerForPosition:inSourceView:]): Deleted.
+        (-[WKContentView commitPreviewViewController:]): Deleted.
+        (-[WKContentView willPresentPreviewViewController:forPosition:inSourceView:]): Deleted.
+        (-[WKContentView didDismissPreviewViewController:committing:]): Deleted.
+        Register and unregister in setup/cleanupInteraction instead of when moving between windows.
+        Implement 'shouldBegin' instead of interacting directly with the recognizer.
+        Make use of system enums instead of our own.
+        Let UIPreviewItemController handle shrink-wrapping and the indicator view.
+
 2015-07-22  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [EFL] Support indexeddb for WK2

@@ -2998,12 +2998,6 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
         return;
 
     _allowsLinkPreview = allowsLinkPreview;
-#if HAVE(LINK_PREVIEW)
-    if (_allowsLinkPreview)
-        [_contentView _registerPreviewInWindow:[_contentView window]];
-    else
-        [_contentView _unregisterPreviewInWindow:[_contentView window]];
-#endif
 }
 
 #else

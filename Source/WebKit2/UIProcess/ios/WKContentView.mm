@@ -268,10 +268,6 @@ private:
 
     if (window) {
         [defaultCenter removeObserver:self name:UIWindowDidMoveToScreenNotification object:window];
-#if HAVE(LINK_PREVIEW)
-        if (_webView._allowsLinkPreview)
-            [self _unregisterPreviewInWindow:window];
-#endif
 
         if (!newWindow) {
             ASSERT(_applicationStateTracker);
@@ -281,10 +277,6 @@ private:
 
     if (newWindow) {
         [defaultCenter addObserver:self selector:@selector(_windowDidMoveToScreenNotification:) name:UIWindowDidMoveToScreenNotification object:newWindow];
-#if HAVE(LINK_PREVIEW)
-        if (_webView._allowsLinkPreview)
-            [self _registerPreviewInWindow:newWindow];
-#endif
 
         [self _updateForScreen:newWindow.screen];
     }

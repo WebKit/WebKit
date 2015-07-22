@@ -94,12 +94,6 @@ struct WKAutoCorrectionData {
     UIWKAutocorrectionContextHandler autocorrectionContextHandler;
 };
 
-enum class PreviewElementType {
-    None = 0,
-    Link,
-    Image
-};
-
 }
 
 @interface WKContentView () {
@@ -127,7 +121,7 @@ enum class PreviewElementType {
     RetainPtr<WKFormInputSession> _formInputSession;
     RetainPtr<WKFileUploadPanel> _fileUploadPanel;
     RetainPtr<UIGestureRecognizer> _previewGestureRecognizer;
-    WebKit::PreviewElementType _previewType;
+    RetainPtr<UIPreviewItemController> _previewItemController;
 
     std::unique_ptr<WebKit::SmartMagnificationController> _smartMagnificationController;
 
@@ -152,11 +146,6 @@ enum class PreviewElementType {
     CGPoint _lastInteractionLocation;
 
     WebKit::WKSelectionDrawingInfo _lastSelectionDrawingInfo;
-#if HAVE(LINK_PREVIEW)
-    id <UIViewControllerPreviewing> _previewing;
-#endif
-
-    RetainPtr<UIImageView> _previewIndicatorView;
 
     BOOL _isEditable;
     BOOL _showingTextStyleOptions;
@@ -218,10 +207,10 @@ enum class PreviewElementType {
 @end
 
 #if HAVE(LINK_PREVIEW)
-@interface WKContentView (WKInteractionPreview) <UIViewControllerPreviewingDelegate>
+@interface WKContentView (WKInteractionPreview) <UIPreviewItemDelegate>
 
-- (void)_registerPreviewInWindow:(UIWindow *)window;
-- (void)_unregisterPreviewInWindow:(UIWindow *)window;
+- (void)_registerPreview;
+- (void)_unregisterPreview;
 @end
 #endif
 

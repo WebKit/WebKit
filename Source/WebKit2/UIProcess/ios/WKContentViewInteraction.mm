@@ -341,6 +341,8 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     [_longPressGestureRecognizer setDelegate:self];
     [self addGestureRecognizer:_longPressGestureRecognizer.get()];
 
+    [self _registerPreview];
+
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_resetShowingTextStyle:) name:UIMenuControllerDidHideMenuNotification object:nil];
     _showingTextStyleOptions = NO;
 
@@ -396,6 +398,7 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
         _inspectorNodeSearchGestureRecognizer = nil;
     }
 
+    [self _unregisterPreview];
     if (_fileUploadPanel) {
         [_fileUploadPanel setDelegate:nil];
         [_fileUploadPanel dismiss];
@@ -963,16 +966,6 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
             // Prevent the gesture if there is no action for the node.
             return [self _actionForLongPress] != nil;
         }
-    }
-
-    if (gestureRecognizer == _previewGestureRecognizer) {
-        [self ensurePositionInformationIsUpToDate:point];
-        if (_positionInformation.clickableElementName != "A" && _positionInformation.clickableElementName != "IMG")
-            return NO;
-
-        String absoluteLinkURL = _positionInformation.url;
-        if (_positionInformation.clickableElementName == "A" && (absoluteLinkURL.isEmpty() || !WebCore::protocolIsInHTTPFamily(absoluteLinkURL)))
-            return NO;
     }
 
     return YES;
@@ -3203,49 +3196,109 @@ static bool isAssistableInputType(InputType type)
 
 @implementation WKContentView (WKInteractionPreview)
 
-- (void)_registerPreviewInWindow:(UIWindow *)window
+- (void)_registerPreview
 {
-    _previewing = [[window.rootViewController registerForPreviewingWithSourceView:self] retain];
-    _previewing.delegate = self;
-    _previewGestureRecognizer = _previewing.presentationGestureRecognizer;
-    [_previewGestureRecognizer setDelegate:self];
+    _previewItemController = adoptNS([[UIPreviewItemController alloc] initWithView:self]);
+    [_previewItemController setDelegate:self];
+    _previewGestureRecognizer = _previewItemController.get().presentationGestureRecognizer;
 }
 
-- (void)_unregisterPreviewInWindow:(UIWindow *)window
+- (void)_unregisterPreview
 {
-    [window.rootViewController unregisterPreviewing:_previewing];
-    _previewing.delegate = nil;
-    [_previewGestureRecognizer setDelegate:nil];
+    [_previewItemController setDelegate:nil];
     _previewGestureRecognizer = nil;
-    [_previewing release];
-    _previewing = nil;
+    _previewItemController = nil;
 }
 
-- (UIViewController *)previewViewControllerForPosition:(CGPoint)position inSourceView:(UIView *)sourceView
+- (BOOL)_interactionShouldBeginFromPreviewItemController:(UIPreviewItemController *)controller forPosition:(CGPoint)position
 {
-    ASSERT(self == sourceView);
+    [self ensurePositionInformationIsUpToDate:position];
+    if (_positionInformation.clickableElementName != "A" && _positionInformation.clickableElementName != "IMG")
+        return NO;
+    
+    String absoluteLinkURL = _positionInformation.url;
+    if (_positionInformation.clickableElementName == "A") {
+        if (absoluteLinkURL.isEmpty())
+            return NO;
+        if (WebCore::protocolIsInHTTPFamily(absoluteLinkURL))
+            return YES;
+        NSURL *targetURL = [NSURL _web_URLWithWTFString:_positionInformation.url];
+        if ([[getDDDetectionControllerClass() tapAndHoldSchemes] containsObject:[targetURL scheme]])
+            return YES;
+        return NO;
+    }
+    return YES;
+}
 
-    _previewType = PreviewElementType::None;
+- (NSDictionary *)_dataForPreviewItemController:(UIPreviewItemController *)controller atPosition:(CGPoint)position type:(UIPreviewItemType *)type
+{
+    *type = UIPreviewItemTypeNone;
 
-    BOOL canShowImagePreview = _positionInformation.clickableElementName == "IMG";
+    id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
+    BOOL supportsImagePreview = [uiDelegate respondsToSelector:@selector(_webView:commitPreviewedImageWithURL:)];
+    BOOL canShowImagePreview = _positionInformation.clickableElementName == "IMG" && supportsImagePreview;
     BOOL canShowLinkPreview = _positionInformation.clickableElementName == "A" || canShowImagePreview;
+    BOOL useImageURLForLink = NO;
+
+    if (canShowImagePreview && _positionInformation.isAnimatedImage) {
+        canShowImagePreview = NO;
+        canShowLinkPreview = YES;
+        useImageURLForLink = YES;
+    }
 
     if (!canShowLinkPreview && !canShowImagePreview)
         return nil;
 
     String absoluteLinkURL = _positionInformation.url;
-    if (absoluteLinkURL.isEmpty() || !WebCore::protocolIsInHTTPFamily(absoluteLinkURL)) {
+    if (!useImageURLForLink && (absoluteLinkURL.isEmpty() || !WebCore::protocolIsInHTTPFamily(absoluteLinkURL))) {
         if (canShowLinkPreview && !canShowImagePreview)
             return nil;
         canShowLinkPreview = NO;
     }
 
+    NSMutableDictionary *dataForPreview = [[[NSMutableDictionary alloc] init] autorelease];
+    if (canShowLinkPreview) {
+        *type = UIPreviewItemTypeLink;
+        if (useImageURLForLink)
+            dataForPreview[UIPreviewDataLink] = [NSURL _web_URLWithWTFString:_positionInformation.imageURL];
+        else
+            dataForPreview[UIPreviewDataLink] = [NSURL _web_URLWithWTFString:_positionInformation.url];
+    }
+    if (canShowImagePreview) {
+        *type = UIPreviewItemTypeImage;
+        dataForPreview[UIPreviewDataLink] = [NSURL _web_URLWithWTFString:_positionInformation.imageURL];
+    }
+    
+    return dataForPreview;
+}
+
+- (CGRect)_presentationRectForPreviewItemController:(UIPreviewItemController *)controller
+{
+    return _positionInformation.bounds;
+}
+
+- (UIViewController *)_presentedViewControllerForPreviewItemController:(UIPreviewItemController *)controller
+{
     id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
 
-    if (canShowLinkPreview) {
-        _previewType = PreviewElementType::Link;
-        NSURL *targetURL = [NSURL _web_URLWithWTFString:_positionInformation.url];
+    NSURL *targetURL = controller.previewData[UIPreviewDataLink];
+    URL coreTargetURL = targetURL;
+    bool isValidURLForImagePreview = !coreTargetURL.isEmpty() && (WebCore::protocolIsInHTTPFamily(coreTargetURL) || WebCore::protocolIs(coreTargetURL, "data"));
+
+    if ([_previewItemController type] == UIPreviewItemTypeLink) {
+        // Treat animated images like a link preview
+        if (isValidURLForImagePreview && _positionInformation.isAnimatedImage) {
+            RetainPtr<_WKActivatedElementInfo> animatedImageElementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:targetURL location:_positionInformation.point title:_positionInformation.title rect:_positionInformation.bounds image:_positionInformation.image.get()]);
+
+            if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForAnimatedImageAtURL:defaultActions:elementInfo:imageSize:)]) {
+                RetainPtr<NSArray> actions = [_actionSheetAssistant defaultActionsForImageSheet:animatedImageElementInfo.get()];
+                _highlightLongPressCanClick = NO;
+                return [uiDelegate _webView:_webView previewViewControllerForAnimatedImageAtURL:targetURL defaultActions:actions.get() elementInfo:animatedImageElementInfo.get() imageSize:_positionInformation.image->size()];
+            }
+        }
+
         RetainPtr<_WKActivatedElementInfo> elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeLink URL:targetURL location:_positionInformation.point title:_positionInformation.title rect:_positionInformation.bounds image:_positionInformation.image.get()]);
+
         RetainPtr<NSArray> actions = [_actionSheetAssistant defaultActionsForLinkSheet:elementInfo.get()];
         if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForURL:defaultActions:elementInfo:)]) {
             _highlightLongPressCanClick = NO;
@@ -3257,42 +3310,16 @@ static bool isAssistableInputType(InputType type)
             _highlightLongPressCanClick = NO;
             return [uiDelegate _webView:_webView previewViewControllerForURL:targetURL];
         }
-#if HAVE(SAFARI_SERVICES_FRAMEWORK)
-        SFSafariViewController *previewViewController = [allocSFSafariViewControllerInstance() initWithURL:targetURL];
-        previewViewController._showingLinkPreview = YES;
-        previewViewController._activatedElementInfo = elementInfo.get();
-        previewViewController._previewActions = actions.get();
-        _highlightLongPressCanClick = NO;
-        _page->startInteractionWithElementAtPosition(_positionInformation.point);
-        return [previewViewController autorelease];
-#else
         return nil;
-#endif
     }
 
-    if (canShowImagePreview) {
-        if (![uiDelegate respondsToSelector:@selector(_webView:commitPreviewedImageWithURL:)])
+    if ([_previewItemController type] == UIPreviewItemTypeImage) {
+        if (!isValidURLForImagePreview)
             return nil;
 
-        String absoluteImageURL = _positionInformation.imageURL;
-        if (absoluteImageURL.isEmpty() || !(WebCore::protocolIsInHTTPFamily(absoluteImageURL) || WebCore::protocolIs(absoluteImageURL, "data")))
-            return nil;
-
-        NSURL *targetURL = [NSURL _web_URLWithWTFString:_positionInformation.imageURL];
         RetainPtr<_WKActivatedElementInfo> elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:targetURL location:_positionInformation.point title:_positionInformation.title rect:_positionInformation.bounds image:_positionInformation.image.get()]);
         _page->startInteractionWithElementAtPosition(_positionInformation.point);
 
-        // Treat animated images like a link preview
-        if (_positionInformation.isAnimatedImage) {
-            if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForAnimatedImageAtURL:defaultActions:elementInfo:imageSize:)]) {
-                _previewType = PreviewElementType::Link;
-                RetainPtr<NSArray> actions = [_actionSheetAssistant defaultActionsForImageSheet:elementInfo.get()];
-                _highlightLongPressCanClick = NO;
-                return [uiDelegate _webView:_webView previewViewControllerForAnimatedImageAtURL:targetURL defaultActions:actions.get() elementInfo:elementInfo.get() imageSize:_positionInformation.image->size()];
-            }
-        }
-
-        _previewType = PreviewElementType::Image;
         if ([uiDelegate respondsToSelector:@selector(_webView:willPreviewImageWithURL:)])
             [uiDelegate _webView:_webView willPreviewImageWithURL:targetURL];
         return [[[WKImagePreviewViewController alloc] initWithCGImage:_positionInformation.image->makeCGImageCopy() defaultActions:[_actionSheetAssistant defaultActionsForImageSheet:elementInfo.get()] elementInfo:elementInfo] autorelease];
@@ -3301,10 +3328,10 @@ static bool isAssistableInputType(InputType type)
     return nil;
 }
 
-- (void)commitPreviewViewController:(UIViewController *)viewController
+- (void)_previewItemController:(UIPreviewItemController *)controller commitPreview:(UIViewController *)viewController
 {
     id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
-    if (_previewType == PreviewElementType::Image) {
+    if ([_previewItemController type] == UIPreviewItemTypeImage) {
         if ([uiDelegate respondsToSelector:@selector(_webView:commitPreviewedImageWithURL:)]) {
             String absoluteImageURL = _positionInformation.imageURL;
             if (absoluteImageURL.isEmpty() || !(WebCore::protocolIsInHTTPFamily(absoluteImageURL) || WebCore::protocolIs(absoluteImageURL, "data")))
@@ -3320,58 +3347,16 @@ static bool isAssistableInputType(InputType type)
         return;
     }
 
-#if HAVE(SAFARI_SERVICES_FRAMEWORK)
-    if (![viewController isKindOfClass:getSFSafariViewControllerClass()])
-        return;
-
-    SFSafariViewController *safariViewController = (SFSafariViewController *)viewController;
-    safariViewController._showingLinkPreview = NO;
-
-    viewController.transitioningDelegate = nil;
-    viewController.modalPresentationStyle = UIModalPresentationFullScreen;
-
-    UIViewController *presentingViewController = viewController.presentingViewController ?: self.window.rootViewController;
-    [presentingViewController presentViewController:viewController animated:NO completion:nil];
-#endif
 }
 
-- (void)willPresentPreviewViewController:(UIViewController *)viewController forPosition:(CGPoint)position inSourceView:(UIView *)sourceView
+- (void)_previewItemController:(UIPreviewItemController *)controller willPresentPreview:(UIViewController *)viewController forPosition:(CGPoint)position inSourceView:(UIView *)sourceView
 {
     [self _removeDefaultGestureRecognizers];
 
     [self _cancelInteraction];
-
-    [_previewIndicatorView removeFromSuperview];
-
-    float deviceScaleFactor = _page->deviceScaleFactor();
-
-    RefPtr<Image> image = _positionInformation.linkIndicator.contentImage;
-    if (!image) {
-        IntRect sourceRect = _positionInformation.bounds;
-        const float marginInPoints = 4;
-        sourceRect.inflate(marginInPoints * deviceScaleFactor);
-        [[viewController presentationController] setSourceRect:sourceRect];
-        [[viewController presentationController] setSourceView:self];
-        return;
-    }
-
-    RetainPtr<UIImage> indicatorImage = adoptNS([[UIImage alloc] initWithCGImage:image->getCGImageRef()]);
-    _previewIndicatorView = adoptNS([[UIImageView alloc] initWithImage:indicatorImage.get()]);
-
-    const float cornerRadiusInPoints = 5;
-    Path path = PathUtilities::pathWithShrinkWrappedRects(_positionInformation.linkIndicator.textRectsInBoundingRectCoordinates, cornerRadiusInPoints * deviceScaleFactor);
-    RetainPtr<CAShapeLayer> maskLayer = adoptNS([[CAShapeLayer alloc] init]);
-    [maskLayer setPath:path.ensurePlatformPath()];
-
-    [_previewIndicatorView layer].mask = maskLayer.get();
-    [_previewIndicatorView setFrame:_positionInformation.linkIndicator.textBoundingRectInRootViewCoordinates];
-    [self addSubview:_previewIndicatorView.get()];
-
-    [[viewController presentationController] setSourceRect:[_previewIndicatorView bounds]];
-    [[viewController presentationController] setSourceView:_previewIndicatorView.get()];
 }
 
-- (void)didDismissPreviewViewController:(UIViewController *)viewController committing:(BOOL)committing
+- (void)_previewItemController:(UIPreviewItemController *)controller didDismissPreview:(UIViewController *)viewController committing:(BOOL)committing
 {
     [self _addDefaultGestureRecognizers];
     _page->stopInteraction();
@@ -3379,9 +3364,34 @@ static bool isAssistableInputType(InputType type)
     id<WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
     if ([uiDelegate respondsToSelector:@selector(_webView:didDismissPreviewViewController:)])
         [uiDelegate _webView:_webView didDismissPreviewViewController:viewController];
+}
 
-    [_previewIndicatorView removeFromSuperview];
-    _previewIndicatorView = nil;
+- (UIImage *)_presentationSnapshotForPreviewItemController:(UIPreviewItemController *)controller
+{
+    if (!_positionInformation.linkIndicator.contentImage)
+        return nullptr;
+    return [[[UIImage alloc] initWithCGImage:_positionInformation.linkIndicator.contentImage->getCGImageRef()] autorelease];
+}
+
+- (NSArray *)_presentationRectsForPreviewItemController:(UIPreviewItemController *)controller
+{
+    RetainPtr<NSMutableArray> rectArray = adoptNS([[NSMutableArray alloc] init]);
+
+    if (_positionInformation.linkIndicator.contentImage) {
+        FloatPoint origin = _positionInformation.linkIndicator.textBoundingRectInRootViewCoordinates.location();
+        for (FloatRect& rect : _positionInformation.linkIndicator.textRectsInBoundingRectCoordinates) {
+            CGRect cgRect = rect;
+            cgRect.origin.x += origin.x();
+            cgRect.origin.y += origin.y();
+            [rectArray addObject:[NSValue valueWithCGRect:cgRect]];
+        }
+    } else {
+        const float marginInPx = 4 * _page->deviceScaleFactor();
+        CGRect cgRect = CGRectInset(_positionInformation.bounds, -marginInPx, -marginInPx);
+        [rectArray addObject:[NSValue valueWithCGRect:cgRect]];
+    }
+
+    return rectArray.autorelease();
 }
 
 @end
