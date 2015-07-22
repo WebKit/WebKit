@@ -1,3 +1,10 @@
+2015-07-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix some warnings when generating GTK+ HTML API docs.
+
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Add
+        WebKitWebsiteDataManager and WebKitWebEditor.
+
 2015-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.9.4 release.

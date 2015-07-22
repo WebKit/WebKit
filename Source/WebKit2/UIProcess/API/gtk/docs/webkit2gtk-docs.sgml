@@ -50,6 +50,7 @@
     <xi:include href="xml/WebKitUserContent.xml"/>
     <xi:include href="xml/WebKitNotification.xml"/>
     <xi:include href="xml/WebKitNotificationPermissionRequest.xml"/>
+    <xi:include href="xml/WebKitWebsiteDataManager.xml"/>
   </chapter>
 
   <chapter>
@@ -59,6 +60,7 @@
     <xi:include href="xml/WebKitFrame.xml"/>
     <xi:include href="xml/WebKitScriptWorld.xml"/>
     <xi:include href="xml/WebKitWebHitTestResult.xml"/>
+    <xi:include href="xml/WebKitWebEditor.xml"/>
   </chapter>
 
   <index id="index-all">
