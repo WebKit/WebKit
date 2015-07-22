@@ -50,6 +50,7 @@ namespace WebKit {
     M(Plugins) \
     M(Printing) \
     M(RemoteLayerTree) \
+    M(Resize) \
     M(SessionState) \
     M(StorageAPI) \
     M(TextInput) \

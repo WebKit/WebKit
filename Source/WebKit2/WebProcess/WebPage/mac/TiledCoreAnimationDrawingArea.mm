@@ -32,6 +32,7 @@
 #import "DrawingAreaProxyMessages.h"
 #import "LayerHostingContext.h"
 #import "LayerTreeContext.h"
+#import "Logging.h"
 #import "ViewGestureControllerMessages.h"
 #import "WebFrame.h"
 #import "WebPage.h"
@@ -280,6 +281,7 @@ void TiledCoreAnimationDrawingArea::scaleViewToFitDocumentIfNeeded()
     if (!m_shouldScaleViewToFitDocument)
         return;
 
+    LOG(Resize, "TiledCoreAnimationDrawingArea %p scaleViewToFitDocumentIfNeeded", this);
     m_webPage.layoutIfNeeded();
 
     int viewWidth = m_webPage.size().width();
@@ -287,6 +289,8 @@ void TiledCoreAnimationDrawingArea::scaleViewToFitDocumentIfNeeded()
 
     bool documentWidthChanged = m_lastDocumentSizeForScaleToFit.width() != documentWidth;
     bool viewWidthChanged = m_lastViewSizeForScaleToFit.width() != viewWidth;
+
+    LOG(Resize, "  documentWidthChanged=%d, viewWidthChanged=%d", documentWidthChanged, viewWidthChanged);
 
     if (!documentWidthChanged && !viewWidthChanged)
         return;
@@ -307,8 +311,13 @@ void TiledCoreAnimationDrawingArea::scaleViewToFitDocumentIfNeeded()
         IntSize fixedLayoutSize(documentWidth, std::ceil((m_webPage.size().height() - m_webPage.corePage()->topContentInset()) / viewScale));
         m_webPage.setFixedLayoutSize(fixedLayoutSize);
         m_webPage.scaleView(viewScale);
+
+        LOG(Resize, "  using fixed layout at %dx%d. document width %d unchanged, scaled to %.4f to fit view width %d", fixedLayoutSize.width(), fixedLayoutSize.height(), documentWidth, viewScale, viewWidth);
         return;
     }
+
+
+    LOG(Resize, "  doing unconstrained layout");
 
     // Lay out at the view size.
     m_webPage.setUseFixedLayout(false);
@@ -321,6 +330,8 @@ void TiledCoreAnimationDrawingArea::scaleViewToFitDocumentIfNeeded()
     documentWidth = documentSize.width();
 
     float viewScale = 1;
+
+    LOG(Resize, "  unscaled document size %dx%d. need to scale down: %d", documentSize.width(), documentSize.height(), documentWidth && documentWidth < maximumDocumentWidthForScaling && viewWidth < documentWidth);
 
     // Avoid scaling down documents that don't fit in a certain width, to allow
     // sites that want horizontal scrollbars to continue to have them.
@@ -335,6 +346,8 @@ void TiledCoreAnimationDrawingArea::scaleViewToFitDocumentIfNeeded()
         }
         IntSize fixedLayoutSize(documentWidth, std::ceil((m_webPage.size().height() - m_webPage.corePage()->topContentInset()) / viewScale));
         m_webPage.setFixedLayoutSize(fixedLayoutSize);
+
+        LOG(Resize, "  using fixed layout at %dx%d. document width %d, scaled to %.4f to fit view width %d", fixedLayoutSize.width(), fixedLayoutSize.height(), documentWidth, viewScale, viewWidth);
     }
 
     m_webPage.scaleView(viewScale);
