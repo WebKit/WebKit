@@ -524,12 +524,6 @@ String insecurePluginVersionText()
     return String();
 }
 
-String inactivePluginText()
-{
-    notImplemented();
-    return String();
-}
-
 String multipleFileUploadText(unsigned numberOfFiles)
 {
     // FIXME: If this file gets localized, this should really be localized as one string with a wildcard for the number.
@@ -786,11 +780,6 @@ String validationMessageBadInputForNumberText()
 }
 
 #if ENABLE(VIDEO_TRACK)
-String textTrackClosedCaptionsText()
-{
-    return String::fromUTF8(C_("Closed Captions", "Menu section heading for closed captions"));
-}
-
 String textTrackSubtitlesText()
 {
     return String::fromUTF8(C_("Menu section heading for subtitles", "Subtitles"));
