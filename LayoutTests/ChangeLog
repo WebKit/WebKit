@@ -1,3 +1,14 @@
+2015-07-22  Dean Jackson  <dino@apple.com>
+
+        Out of bounds in WebGLRenderingContext::simulateVertexAttrib0
+        https://bugs.webkit.org/show_bug.cgi?id=147176
+        <rdar://problem/21567767>
+
+        Reviewed by Oliver Hunt.
+
+        * fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays-expected.txt: Added.
+        * fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays.html: Added.
+
 2015-07-22  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: AppCache manifest 404 doesn't produce errors in console, manifest resource request always loading indicator
