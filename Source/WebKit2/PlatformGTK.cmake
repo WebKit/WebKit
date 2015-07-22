@@ -83,6 +83,7 @@ list(APPEND WebKit2_SOURCES
     Shared/linux/SeccompFilters/SigprocmaskSyscall.cpp
     Shared/linux/SeccompFilters/Syscall.cpp
     Shared/linux/SeccompFilters/SyscallPolicy.cpp
+    Shared/linux/SeccompFilters/XDGBaseDirectoryGLib.cpp
 
     Shared/soup/WebCoreArgumentCodersSoup.cpp
 
