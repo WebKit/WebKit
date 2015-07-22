@@ -195,6 +195,7 @@
 #include <oleacc.h>
 #include <wchar.h>
 #include <windowsx.h>
+#include <winuser.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>

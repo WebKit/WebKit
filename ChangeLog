@@ -1,3 +1,16 @@
+2015-07-22  Alex Christensen  <achristensen@webkit.org>
+
+        Fix quirks in CMake build on Mac and Windows
+        https://bugs.webkit.org/show_bug.cgi?id=147174
+
+        Reviewed by Gyuyoung Kim.
+
+        * CMakeLists.txt:
+        * Source/cmake/OptionsWindows.cmake:
+        Added options I removed in r187022. They are indeed needed.
+        * Source/cmake/WebKitFS.cmake:
+        Make the DerivedSources/WebKit directory.
+
 2015-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.9.4 release.

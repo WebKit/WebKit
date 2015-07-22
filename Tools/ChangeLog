@@ -1,3 +1,15 @@
+2015-07-22  Alex Christensen  <achristensen@webkit.org>
+
+        Fix quirks in CMake build on Mac and Windows
+        https://bugs.webkit.org/show_bug.cgi?id=147174
+
+        Reviewed by Gyuyoung Kim.
+
+        * CMakeLists.txt:
+        Don't build DumpRenderTree with CMake for now (until we get that working).
+        * WinLauncher/CMakeLists.txt:
+        Renamed WinLauncherLauncher to WinLauncher and WinLauncher to WinLauncherLib to match the Visual Studio build.
+
 2015-07-22  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [check-webkit-style] .lut.h files shouldn't raise a sorting issue

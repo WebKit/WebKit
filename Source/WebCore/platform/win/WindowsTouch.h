@@ -71,6 +71,9 @@
 #define GC_PRESSANDTAP 0x00000001
 #define GC_ROLLOVER GC_PRESSANDTAP
 
+// When building with CMake, we have the correct WINVER, so we do not need these definitions to soft link with user32.dll.
+#if !defined(BUILDING_WITH_CMAKE)
+
 // GESTUREINFO struct definition
 typedef struct tagGESTUREINFO {
     UINT cbSize;                    // size, in bytes, of this structure (including variable length Args field)
@@ -108,5 +111,7 @@ typedef struct tagGESTURENOTIFYSTRUCT {
 } GESTURENOTIFYSTRUCT, *PGESTURENOTIFYSTRUCT;
 
 DECLARE_HANDLE(HGESTUREINFO);
+
+#endif
 
 #endif
