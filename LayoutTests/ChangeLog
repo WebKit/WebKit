@@ -1,3 +1,17 @@
+2015-07-22  Jinyoung Hur  <hur.ims@navercorp.com>
+
+        [WinCairo] SVG path not rendered with all-zero dasharray
+        https://bugs.webkit.org/show_bug.cgi?id=146997
+
+        Reviewed by Martin Robinson.
+
+        Canvas 2D context and SVG stroke tests with all-zero dash array are added.
+
+        * fast/canvas/canvas-lineDash-expected.txt:
+        * fast/canvas/script-tests/canvas-lineDash.js:
+        * svg/custom/zero-dasharray.html: Added
+        * svg/custom/zero-dasharray-expected.html: Added
+
 2015-07-22  Mark Dittmer  <mark.s.dittmer@gmail.com>
 
         New test: Object.create(window).location will trigger a crash when toJSDOMWindow() returns NULL on an object that have the JS DOM Window in its prototype chain.

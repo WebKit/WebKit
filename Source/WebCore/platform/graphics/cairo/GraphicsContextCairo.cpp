@@ -896,9 +896,21 @@ void GraphicsContext::setLineCap(LineCap lineCap)
     cairo_set_line_cap(platformContext()->cr(), cairoCap);
 }
 
+static inline bool isDashArrayAllZero(const DashArray& dashes)
+{
+    for (auto& dash : dashes) {
+        if (dash)
+            return false;
+    }
+    return true;
+}
+
 void GraphicsContext::setLineDash(const DashArray& dashes, float dashOffset)
 {
-    cairo_set_dash(platformContext()->cr(), dashes.data(), dashes.size(), dashOffset);
+    if (isDashArrayAllZero(dashes))
+        cairo_set_dash(platformContext()->cr(), 0, 0, 0);
+    else
+        cairo_set_dash(platformContext()->cr(), dashes.data(), dashes.size(), dashOffset);
 }
 
 void GraphicsContext::setLineJoin(LineJoin lineJoin)

@@ -104,3 +104,18 @@ pixelShouldBe(105, 40, [0, 255, 0, 255]);
 pixelShouldBe(90, 35, [0, 0, 0, 0]);
 pixelShouldBe(90, 25, [0, 255, 0, 255]);
 
+// Verify all-zero dash rendering.
+ctx.setLineDash([0, 0]);
+ctx.lineDashOffset = 0;
+ctx.lineWidth = 4; // To make the test immune to plaform anti-aliasing discrepancies.
+ctx.strokeStyle = '#00FF00';
+ctx.strokeRect(130.5, 10.5, 30, 30);
+
+pixelShouldBe(145, 10, [0, 255, 0, 255]);
+pixelShouldBe(155, 10, [0, 255, 0, 255]);
+pixelShouldBe(160, 25, [0, 255, 0, 255]);
+pixelShouldBe(160, 35, [0, 255, 0, 255]);
+pixelShouldBe(145, 40, [0, 255, 0, 255]);
+pixelShouldBe(135, 40, [0, 255, 0, 255]);
+pixelShouldBe(130, 25, [0, 255, 0, 255]);
+pixelShouldBe(130, 15, [0, 255, 0, 255]);
