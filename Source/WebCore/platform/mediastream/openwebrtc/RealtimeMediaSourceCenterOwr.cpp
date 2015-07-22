@@ -168,7 +168,7 @@ void RealtimeMediaSourceCenterOwr::mediaSourcesAvailable(GList* sources)
     }
 
     // TODO: Make sure contraints are actually validated by checking source types.
-    m_client->constraintsValidated();
+    m_client->constraintsValidated(Vector<RefPtr<RealtimeMediaSource>>(), Vector<RefPtr<RealtimeMediaSource>>());
 }
 
 PassRefPtr<RealtimeMediaSource> RealtimeMediaSourceCenterOwr::firstSource(RealtimeMediaSource::Type type)

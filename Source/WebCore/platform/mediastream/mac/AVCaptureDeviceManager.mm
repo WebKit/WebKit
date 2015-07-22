@@ -378,39 +378,39 @@ bool AVCaptureDeviceManager::verifyConstraintsForMediaType(RealtimeMediaSource::
     return true;
 }
 
-RefPtr<RealtimeMediaSource> AVCaptureDeviceManager::bestSourceForTypeAndConstraints(RealtimeMediaSource::Type type, PassRefPtr<MediaConstraints> constraints)
+Vector<RefPtr<RealtimeMediaSource>> AVCaptureDeviceManager::bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type type, PassRefPtr<MediaConstraints> constraints)
 {
+    Vector<RefPtr<RealtimeMediaSource>> bestSourcesList;
+    
     if (!isAvailable())
-        return 0;
+        return bestSourcesList;
 
-    Vector<CaptureDevice>& devices = captureDeviceList();
-    size_t count = devices.size();
-    for (size_t i = 0; i < count; ++i) {
-        if (!devices[i].m_enabled)
+    for (auto& captureDevice : captureDeviceList()) {
+        if (!captureDevice.m_enabled)
             continue;
 
         // FIXME: consider the constraints when choosing among multiple devices. For now just select the first available
         // device of the appropriate type.
-        if (type == RealtimeMediaSource::Audio && !devices[i].m_audioSourceId.isEmpty()) {
-            if (!devices[i].m_audioSource) {
-                AVCaptureDeviceType *device = [AVCaptureDevice deviceWithUniqueID:devices[i].m_captureDeviceID];
+        if (type == RealtimeMediaSource::Audio && !captureDevice.m_audioSourceId.isEmpty()) {
+            if (!captureDevice.m_audioSource) {
+                AVCaptureDeviceType *device = [AVCaptureDevice deviceWithUniqueID:captureDevice.m_captureDeviceID];
                 ASSERT(device);
-                devices[i].m_audioSource = AVAudioCaptureSource::create(device, devices[i].m_audioSourceId, constraints);
+                captureDevice.m_audioSource = AVAudioCaptureSource::create(device, captureDevice.m_audioSourceId, constraints);
             }
-            return devices[i].m_audioSource;
+            bestSourcesList.append(captureDevice.m_audioSource);
         }
 
-        if (type == RealtimeMediaSource::Video && !devices[i].m_videoSourceId.isEmpty()) {
-            if (!devices[i].m_videoSource) {
-                AVCaptureDeviceType *device = [AVCaptureDevice deviceWithUniqueID:devices[i].m_captureDeviceID];
+        if (type == RealtimeMediaSource::Video && !captureDevice.m_videoSourceId.isEmpty()) {
+            if (!captureDevice.m_videoSource) {
+                AVCaptureDeviceType *device = [AVCaptureDevice deviceWithUniqueID:captureDevice.m_captureDeviceID];
                 ASSERT(device);
-                devices[i].m_videoSource = AVVideoCaptureSource::create(device, devices[i].m_videoSourceId, constraints);
+                captureDevice.m_videoSource = AVVideoCaptureSource::create(device, captureDevice.m_videoSourceId, constraints);
             }
-            return devices[i].m_videoSource;
+            bestSourcesList.append(captureDevice.m_videoSource);
         }
     }
 
-    return 0;
+    return bestSourcesList;
 }
 
 RefPtr<RealtimeMediaSource> AVCaptureDeviceManager::sourceWithUID(String &deviceUID, RealtimeMediaSource::Type type, MediaConstraints* constraints)

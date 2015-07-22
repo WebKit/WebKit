@@ -149,7 +149,7 @@ void MockRealtimeMediaSourceCenter::validateRequestConstraints(PassRefPtr<MediaS
         }
     }
 
-    client->constraintsValidated();
+    client->constraintsValidated(Vector<RefPtr<RealtimeMediaSource>>(), Vector<RefPtr<RealtimeMediaSource>>());
 }
 
 void MockRealtimeMediaSourceCenter::createMediaStream(PassRefPtr<MediaStreamCreationClient> prpQueryClient, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints)

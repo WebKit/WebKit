@@ -79,10 +79,11 @@ void RealtimeMediaSourceCenterMac::validateRequestConstraints(PassRefPtr<MediaSt
             return;
         }
     }
-
-    client->constraintsValidated();
+    Vector<RefPtr<RealtimeMediaSource>> bestVideoSources = AVCaptureDeviceManager::singleton().bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type::Video, videoConstraints);
+    Vector<RefPtr<RealtimeMediaSource>> bestAudioSources = AVCaptureDeviceManager::singleton().bestSourcesForTypeAndConstraints(RealtimeMediaSource::Type::Audio, audioConstraints);
+    client->constraintsValidated(bestVideoSources, bestAudioSources);
 }
-    
+
 void RealtimeMediaSourceCenterMac::createMediaStream(PassRefPtr<MediaStreamCreationClient> prpQueryClient, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints)
 {
     RefPtr<MediaStreamCreationClient> client = prpQueryClient;
@@ -99,8 +100,9 @@ void RealtimeMediaSourceCenterMac::createMediaStream(PassRefPtr<MediaStreamCreat
             client->failedToCreateStreamWithConstraintsError(invalidConstraint);
             return;
         }
-        
-        RefPtr<RealtimeMediaSource> audioSource = AVCaptureDeviceManager::singleton().bestSourceForTypeAndConstraints(RealtimeMediaSource::Audio, audioConstraints.get());
+        // FIXME: Consider the constraints when choosing among multiple devices. For now just select the first available
+        // device of the appropriate type.
+        RefPtr<RealtimeMediaSource> audioSource = AVCaptureDeviceManager::singleton().bestSourcesForTypeAndConstraints(RealtimeMediaSource::Audio, audioConstraints.get()).at(0);
         ASSERT(audioSource);
         
         audioSources.append(audioSource.release());
@@ -113,8 +115,9 @@ void RealtimeMediaSourceCenterMac::createMediaStream(PassRefPtr<MediaStreamCreat
             client->failedToCreateStreamWithConstraintsError(invalidConstraint);
             return;
         }
-        
-        RefPtr<RealtimeMediaSource> videoSource = AVCaptureDeviceManager::singleton().bestSourceForTypeAndConstraints(RealtimeMediaSource::Video, videoConstraints.get());
+        // FIXME: Consider the constraints when choosing among multiple devices. For now just select the first available
+        // device of the appropriate type.
+        RefPtr<RealtimeMediaSource> videoSource = AVCaptureDeviceManager::singleton().bestSourcesForTypeAndConstraints(RealtimeMediaSource::Video, videoConstraints.get()).at(0);
         ASSERT(videoSource);
         
         videoSources.append(videoSource.release());

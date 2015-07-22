@@ -69,12 +69,15 @@ public:
 
     bool requiresAudio() const { return m_audioConstraints; }
     bool requiresVideo() const { return m_videoConstraints; }
+    
+    const Vector<String>& videoDeviceUIDs() const { return m_videoDeviceUIDs; }
+    const Vector<String>& audioDeviceUIDs() const { return m_audioDeviceUIDs; }
 
 private:
     UserMediaRequest(ScriptExecutionContext*, UserMediaController*, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints, MediaDevices::Promise&&);
 
     // MediaStreamCreationClient
-    virtual void constraintsValidated() override final;
+    virtual void constraintsValidated(const Vector<RefPtr<RealtimeMediaSource>>&, const Vector<RefPtr<RealtimeMediaSource>>&) override final;
     virtual void constraintsInvalid(const String& constraintName) override final;
     virtual void didCreateStream(PassRefPtr<MediaStreamPrivate>) override final;
     virtual void failedToCreateStreamWithConstraintsError(const String& constraintName) override final;
@@ -86,6 +89,9 @@ private:
     RefPtr<MediaConstraints> m_audioConstraints;
     RefPtr<MediaConstraints> m_videoConstraints;
 
+    Vector<String> m_videoDeviceUIDs;
+    Vector<String> m_audioDeviceUIDs;
+    
     UserMediaController* m_controller;
 
     MediaDevices::Promise m_promise;

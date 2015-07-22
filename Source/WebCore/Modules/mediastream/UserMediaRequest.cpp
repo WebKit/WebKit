@@ -121,8 +121,12 @@ void UserMediaRequest::start()
     RealtimeMediaSourceCenter::singleton().validateRequestConstraints(this, m_audioConstraints, m_videoConstraints);
 }
 
-void UserMediaRequest::constraintsValidated()
+void UserMediaRequest::constraintsValidated(const Vector<RefPtr<RealtimeMediaSource>>& videoTracks, const Vector<RefPtr<RealtimeMediaSource>>& audioTracks)
 {
+    for (auto& audioTrack : audioTracks)
+        m_audioDeviceUIDs.append(audioTrack->id());
+    for (auto& videoTrack : videoTracks)
+        m_videoDeviceUIDs.append(videoTrack->id());
     RefPtr<UserMediaRequest> protectedThis(this);
     callOnMainThread([protectedThis] {
         // 2 - The constraints are valid, ask the user for access to media.
