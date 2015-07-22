@@ -32,7 +32,7 @@ namespace TestWebKitAPI {
 static bool testDone;
 static std::unique_ptr<PlatformWebView> openedWebView;
 
-static void runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void* clientInfo)
+static void runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, WKSecurityOriginRef, const void* clientInfo)
 {
     // FIXME: Check that the alert text matches the storage.
     testDone = true;
@@ -44,10 +44,10 @@ static WKPageRef createNewPage(WKPageRef page, WKURLRequestRef urlRequest, WKDic
 
     openedWebView = std::make_unique<PlatformWebView>(page);
 
-    WKPageUIClientV1 uiClient;
+    WKPageUIClientV4 uiClient;
     memset(&uiClient, 0, sizeof(uiClient));
 
-    uiClient.base.version = 5;
+    uiClient.base.version = 4;
     uiClient.runJavaScriptAlert = runJavaScriptAlert;
     WKPageSetPageUIClient(openedWebView->page(), &uiClient.base);
 
@@ -63,10 +63,10 @@ TEST(WebKit2, CloseFromWithinCreatePage)
 
     PlatformWebView webView(context.get());
 
-    WKPageUIClientV1 uiClient;
+    WKPageUIClientV4 uiClient;
     memset(&uiClient, 0, sizeof(uiClient));
 
-    uiClient.base.version = 5;
+    uiClient.base.version = 4;
     uiClient.createNewPage = createNewPage;
     uiClient.runJavaScriptAlert = runJavaScriptAlert;
     WKPageSetPageUIClient(webView.page(), &uiClient.base);

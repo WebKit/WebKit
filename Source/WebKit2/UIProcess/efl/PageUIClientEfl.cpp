@@ -60,9 +60,9 @@ PageUIClientEfl::PageUIClientEfl(EwkView* view)
     uiClient.takeFocus = takeFocus;
     uiClient.focus = focus;
     uiClient.unfocus = unfocus;
-    uiClient.runJavaScriptAlert = runJavaScriptAlert;
-    uiClient.runJavaScriptConfirm = runJavaScriptConfirm;
-    uiClient.runJavaScriptPrompt = runJavaScriptPrompt;
+    uiClient.runJavaScriptAlert_deprecatedForUseWithV0 = runJavaScriptAlert;
+    uiClient.runJavaScriptConfirm_deprecatedForUseWithV0 = runJavaScriptConfirm;
+    uiClient.runJavaScriptPrompt_deprecatedForUseWithV0 = runJavaScriptPrompt;
     uiClient.toolbarsAreVisible = toolbarsAreVisible;
     uiClient.setToolbarsAreVisible = setToolbarsAreVisible;
     uiClient.menuBarIsVisible = menuBarIsVisible;

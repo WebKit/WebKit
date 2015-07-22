@@ -41,6 +41,7 @@
 #include "NavigationActionData.h"
 #include "PluginInformation.h"
 #include "PrintInfo.h"
+#include "SecurityOriginData.h"
 #include "WKAPICast.h"
 #include "WKPagePolicyClientInternal.h"
 #include "WKPluginInformation.h"
@@ -74,7 +75,7 @@ template<> struct ClientTraits<WKPagePolicyClientBase> {
 };
 
 template<> struct ClientTraits<WKPageUIClientBase> {
-    typedef std::tuple<WKPageUIClientV0, WKPageUIClientV1, WKPageUIClientV2, WKPageUIClientV3> Versions;
+    typedef std::tuple<WKPageUIClientV0, WKPageUIClientV1, WKPageUIClientV2, WKPageUIClientV3, WKPageUIClientV4> Versions;
 };
 
 }
@@ -1254,34 +1255,51 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
 
         virtual void runJavaScriptAlert(WebPageProxy* page, const String& message, WebFrameProxy* frame, const WebKit::SecurityOriginData& securityOriginData, std::function<void ()> completionHandler) override
         {
-            if (!m_client.runJavaScriptAlert) {
+            if (!m_client.runJavaScriptAlert && !m_client.runJavaScriptAlert_deprecatedForUseWithV0) {
                 completionHandler();
                 return;
             }
 
-            m_client.runJavaScriptAlert(toAPI(page), toAPI(message.impl()), toAPI(frame), m_client.base.clientInfo);
+            if (m_client.runJavaScriptAlert) {
+                RefPtr<WebSecurityOrigin> securityOrigin = WebSecurityOrigin::create(securityOriginData.protocol, securityOriginData.host, securityOriginData.port);
+                m_client.runJavaScriptAlert(toAPI(page), toAPI(message.impl()), toAPI(frame), toAPI(securityOrigin.get()), m_client.base.clientInfo);
+            } else
+                m_client.runJavaScriptAlert_deprecatedForUseWithV0(toAPI(page), toAPI(message.impl()), toAPI(frame), m_client.base.clientInfo);
+
             completionHandler();
         }
 
         virtual void runJavaScriptConfirm(WebPageProxy* page, const String& message, WebFrameProxy* frame, const WebKit::SecurityOriginData& securityOriginData, std::function<void (bool)> completionHandler) override
         {
-            if (!m_client.runJavaScriptConfirm) {
+            if (!m_client.runJavaScriptConfirm && !m_client.runJavaScriptConfirm_deprecatedForUseWithV0) {
                 completionHandler(false);
                 return;
             }
 
-            bool result = m_client.runJavaScriptConfirm(toAPI(page), toAPI(message.impl()), toAPI(frame), m_client.base.clientInfo);
+            bool result;
+            if (m_client.runJavaScriptConfirm) {
+                RefPtr<WebSecurityOrigin> securityOrigin = WebSecurityOrigin::create(securityOriginData.protocol, securityOriginData.host, securityOriginData.port);
+                result = m_client.runJavaScriptConfirm(toAPI(page), toAPI(message.impl()), toAPI(frame), toAPI(securityOrigin.get()), m_client.base.clientInfo);
+            } else
+                result = m_client.runJavaScriptConfirm_deprecatedForUseWithV0(toAPI(page), toAPI(message.impl()), toAPI(frame), m_client.base.clientInfo);
+
             completionHandler(result);
         }
 
         virtual void runJavaScriptPrompt(WebPageProxy* page, const String& message, const String& defaultValue, WebFrameProxy* frame, const WebKit::SecurityOriginData& securityOriginData, std::function<void (const String&)> completionHandler) override
         {
-            if (!m_client.runJavaScriptPrompt) {
+            if (!m_client.runJavaScriptPrompt && !m_client.runJavaScriptPrompt_deprecatedForUseWithV0) {
                 completionHandler(String());
                 return;
             }
 
-            RefPtr<API::String> string = adoptRef(toImpl(m_client.runJavaScriptPrompt(toAPI(page), toAPI(message.impl()), toAPI(defaultValue.impl()), toAPI(frame), m_client.base.clientInfo)));
+            RefPtr<API::String> string;
+            if (m_client.runJavaScriptPrompt) {
+                RefPtr<WebSecurityOrigin> securityOrigin = WebSecurityOrigin::create(securityOriginData.protocol, securityOriginData.host, securityOriginData.port);
+                string = adoptRef(toImpl(m_client.runJavaScriptPrompt(toAPI(page), toAPI(message.impl()), toAPI(defaultValue.impl()), toAPI(frame), toAPI(securityOrigin.get()), m_client.base.clientInfo)));
+            } else
+                string = adoptRef(toImpl(m_client.runJavaScriptPrompt_deprecatedForUseWithV0(toAPI(page), toAPI(message.impl()), toAPI(defaultValue.impl()), toAPI(frame), m_client.base.clientInfo)));
+
             if (!string) {
                 completionHandler(String());
                 return;

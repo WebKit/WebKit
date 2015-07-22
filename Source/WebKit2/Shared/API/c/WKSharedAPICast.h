@@ -44,6 +44,7 @@
 #include "WKPageLoadTypes.h"
 #include "WKPageLoadTypesPrivate.h"
 #include "WKPageVisibilityTypes.h"
+#include "WKSecurityOrigin.h"
 #include "WKUserContentInjectedFrames.h"
 #include "WKUserScriptInjectionTime.h"
 #include "WebEvent.h"
