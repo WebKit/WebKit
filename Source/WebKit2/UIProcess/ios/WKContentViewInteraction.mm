@@ -3277,12 +3277,24 @@ static bool isAssistableInputType(InputType type)
         String absoluteImageURL = _positionInformation.imageURL;
         if (absoluteImageURL.isEmpty() || !(WebCore::protocolIsInHTTPFamily(absoluteImageURL) || WebCore::protocolIs(absoluteImageURL, "data")))
             return nil;
-        _previewType = PreviewElementType::Image;
+
         NSURL *targetURL = [NSURL _web_URLWithWTFString:_positionInformation.imageURL];
-        if ([uiDelegate respondsToSelector:@selector(_webView:willPreviewImageWithURL:)])
-            [uiDelegate _webView:_webView willPreviewImageWithURL:targetURL];
         RetainPtr<_WKActivatedElementInfo> elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:targetURL location:_positionInformation.point title:_positionInformation.title rect:_positionInformation.bounds image:_positionInformation.image.get()]);
         _page->startInteractionWithElementAtPosition(_positionInformation.point);
+
+        // Treat animated images like a link preview
+        if (_positionInformation.isAnimatedImage) {
+            if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForAnimatedImageAtURL:defaultActions:elementInfo:imageSize:)]) {
+                _previewType = PreviewElementType::Link;
+                RetainPtr<NSArray> actions = [_actionSheetAssistant defaultActionsForImageSheet:elementInfo.get()];
+                _highlightLongPressCanClick = NO;
+                return [uiDelegate _webView:_webView previewViewControllerForAnimatedImageAtURL:targetURL defaultActions:actions.get() elementInfo:elementInfo.get() imageSize:_positionInformation.image->size()];
+            }
+        }
+
+        _previewType = PreviewElementType::Image;
+        if ([uiDelegate respondsToSelector:@selector(_webView:willPreviewImageWithURL:)])
+            [uiDelegate _webView:_webView willPreviewImageWithURL:targetURL];
         return [[[WKImagePreviewViewController alloc] initWithCGImage:_positionInformation.image->makeCGImageCopy() defaultActions:[_actionSheetAssistant defaultActionsForImageSheet:elementInfo.get()] elementInfo:elementInfo] autorelease];
     }
 

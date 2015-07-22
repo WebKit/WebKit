@@ -2223,6 +2223,7 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
                     if (renderImage.cachedImage() && !renderImage.cachedImage()->errorOccurred()) {
                         info.imageURL = [(NSURL *)element->document().completeURL(renderImage.cachedImage()->url()) absoluteString];
                         if (Image* image = renderImage.cachedImage()->imageForRenderer(&renderImage)) {
+                            info.isAnimatedImage = image->isAnimated();
                             FloatSize screenSizeInPixels = screenSize();
                             screenSizeInPixels.scale(corePage()->deviceScaleFactor());
                             FloatSize scaledSize = largestRectWithAspectRatioInsideRect(image->size().width() / image->size().height(), FloatRect(0, 0, screenSizeInPixels.width(), screenSizeInPixels.height())).size();

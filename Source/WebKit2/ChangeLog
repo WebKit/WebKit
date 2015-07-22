@@ -1,3 +1,30 @@
+2015-07-22  Beth Dakin  <bdakin@apple.com>
+
+        Animated images should animate in previews
+        https://bugs.webkit.org/show_bug.cgi?id=147173
+        -and corresponding-
+        rdar://problem/21637698
+
+        Reviewed by Dan Bernstein.
+
+        InteractionInformationAtPosition needs to know if it’s an animated image.
+        * Shared/InteractionInformationAtPosition.cpp:
+        (WebKit::InteractionInformationAtPosition::encode):
+        (WebKit::InteractionInformationAtPosition::decode):
+        * Shared/InteractionInformationAtPosition.h:
+
+        New delegate method to create a link preview view controller for animated 
+        images.
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+
+        Treat animated images more like link previews.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView previewViewControllerForPosition:inSourceView:]):
+
+        Set info.isAnimatedImage
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+
 2015-07-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [Seccomp Filters] Add helpers to get XDG base directory locations
