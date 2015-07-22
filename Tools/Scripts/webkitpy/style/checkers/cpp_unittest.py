@@ -2699,6 +2699,11 @@ class OrderOfIncludesTest(CppStyleTestBase):
                                          '#include <assert.h>\n',
                                          '')
 
+        self.assert_language_rules_check('foo.h',
+                                         '#include "bar.h"\n'
+                                         '#include "array.lut.h"\n',
+                                         '')
+
     def test_check_alphabetical_include_order_errors_reported_for_both_lines(self):
         # If one of the two lines of out of order headers are filtered, the error should be
         # reported on the other line.

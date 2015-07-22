@@ -3024,7 +3024,7 @@ def check_include_line(filename, file_extension, clean_lines, line_number, inclu
 
     # Check to make sure all headers besides config.h and the primary header are
     # alphabetically sorted.
-    if not error_message and header_type == _OTHER_HEADER:
+    if not error_message and header_type == _OTHER_HEADER and not search(r'\A#include.*\.lut\.h', line):
         previous_line_number = line_number - 1
         previous_line = clean_lines.lines[previous_line_number]
         previous_match = _RE_PATTERN_INCLUDE.search(previous_line)

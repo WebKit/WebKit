@@ -1,3 +1,15 @@
+2015-07-22  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [check-webkit-style] .lut.h files shouldn't raise a sorting issue
+        https://bugs.webkit.org/show_bug.cgi?id=147146
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_include_line): Avoid checking previous lines if it it is a lut.h include.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (OrderOfIncludesTest.test_check_alphabetical_include_order): Added test.
+
 2015-07-21  Filip Pizlo  <fpizlo@apple.com>
 
         Fixed VM pool allocation should have a reserve for allocations that cannot fail
