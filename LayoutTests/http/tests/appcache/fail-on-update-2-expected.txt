@@ -1,1 +1,2 @@
+CONSOLE MESSAGE: Application Cache manifest could not be fetched, because the manifest had a 404 response.
 SUCCESS: No crash.
