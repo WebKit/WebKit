@@ -1631,6 +1631,7 @@ void RenderThemeMac::setSearchCellState(const RenderObject& o, const IntRect&)
 {
     NSSearchFieldCell* search = this->search();
 
+    [search setPlaceholderString:@""];
     [search setControlSize:controlSizeForFont(o.style())];
 
     // Update the various states we respond to.
