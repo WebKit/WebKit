@@ -1,3 +1,17 @@
+2015-07-22  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [EFL][WK2] EWK2ContextTestMultipleProcesses.ewk_context_network_process_model fails to pass
+        https://bugs.webkit.org/show_bug.cgi?id=142967
+
+        Reviewed by Csaba Osztrogonác.
+
+        Though processIdentifier() can return 0 when a page is not closed, ewk_context_network_process_model has
+        not been considered process id can be 0. This patch adds a protection logic which doesn't test when process
+        id is 0 at the moment.
+
+        * UIProcess/API/efl/tests/test_ewk2_context.cpp:
+        (TEST_F):
+
 2015-07-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix some warnings when generating GTK+ HTML API docs.

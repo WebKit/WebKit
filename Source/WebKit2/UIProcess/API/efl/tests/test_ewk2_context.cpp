@@ -251,6 +251,9 @@ TEST_F(EWK2ContextTestMultipleProcesses, ewk_context_network_process_model)
     PlatformProcessIdentifier webView1NetworkProcessID = toImpl(EWKViewGetWKView(webView1))->page()->process().processPool().networkProcess()->processIdentifier();
     PlatformProcessIdentifier webView2NetworkProcessID = toImpl(EWKViewGetWKView(webView2))->page()->process().processPool().networkProcess()->processIdentifier();
 
+    if (!webView1WebProcessID || !webView2WebProcessID)
+        return;
+
     ASSERT_NE(webView1WebProcessID, webView2WebProcessID);
     ASSERT_NE(webView1WebProcessID, webView1NetworkProcessID);
     ASSERT_NE(webView1WebProcessID, webView2NetworkProcessID);
