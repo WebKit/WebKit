@@ -283,11 +283,13 @@ namespace WebCore {
             ASSERT(m_relation == relation);
         }
 
+#if ENABLE_CSS_SELECTORS_LEVEL4
         void setDescendantUseDoubleChildSyntax()
         {
             ASSERT(relation() == Descendant);
             m_descendantDoubleChildSyntax = true;
         }
+#endif
 
         Match match() const { return static_cast<Match>(m_match); }
         void setMatch(Match match)
@@ -315,7 +317,9 @@ namespace WebCore {
         unsigned m_hasNameWithCase       : 1;
         unsigned m_isForPage             : 1;
         unsigned m_tagIsForNamespaceRule : 1;
+#if ENABLE(CSS_SELECTORS_LEVEL4)
         unsigned m_descendantDoubleChildSyntax : 1;
+#endif
         unsigned m_caseInsensitiveAttributeValueMatching : 1;
 
         unsigned simpleSelectorSpecificityForPage() const;
@@ -455,7 +459,9 @@ inline CSSSelector::CSSSelector()
     , m_hasNameWithCase(false)
     , m_isForPage(false)
     , m_tagIsForNamespaceRule(false)
+#if ENABLE(CSS_SELECTORS_LEVEL4)
     , m_descendantDoubleChildSyntax(false)
+#endif
     , m_caseInsensitiveAttributeValueMatching(false)
 {
 }
@@ -471,7 +477,9 @@ inline CSSSelector::CSSSelector(const CSSSelector& o)
     , m_hasNameWithCase(o.m_hasNameWithCase)
     , m_isForPage(o.m_isForPage)
     , m_tagIsForNamespaceRule(o.m_tagIsForNamespaceRule)
+#if ENABLE(CSS_SELECTORS_LEVEL4)
     , m_descendantDoubleChildSyntax(o.m_descendantDoubleChildSyntax)
+#endif
     , m_caseInsensitiveAttributeValueMatching(o.m_caseInsensitiveAttributeValueMatching)
 {
     if (o.m_hasRareData) {
