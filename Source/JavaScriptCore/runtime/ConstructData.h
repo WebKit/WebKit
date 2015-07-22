@@ -56,7 +56,12 @@ union ConstructData {
     } js;
 };
 
-JS_EXPORT_PRIVATE JSObject* construct(ExecState*, JSValue constructor, ConstructType, const ConstructData&, const ArgList&);
+JS_EXPORT_PRIVATE JSObject* construct(ExecState*, JSValue constructor, ConstructType, const ConstructData&, const ArgList&, JSValue newTarget);
+
+ALWAYS_INLINE JSObject* construct(ExecState* exec, JSValue constructorObject, ConstructType constructType, const ConstructData& constructData, const ArgList& args)
+{
+    return construct(exec, constructorObject, constructType, constructData, args, constructorObject);
+}
 
 } // namespace JSC
 

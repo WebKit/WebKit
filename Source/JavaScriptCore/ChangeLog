@@ -1,3 +1,30 @@
+2015-07-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Add newTarget accessor to JS constructor written in C++
+        https://bugs.webkit.org/show_bug.cgi?id=147160
+
+        Reviewed by Geoffrey Garen.
+
+        This patch adds `ExecState#newTarget()` which returns `new.target` defined in ECMA262 6th.
+        It enables some C++ constructors (like Intl.XXX constructors) to leverage this to complete
+        its implementation.
+
+        When the constructor is called, |this| in the arguments is used for storing new.target instead.
+        So by adding the accessor for |this|, JS constructor written in C++ can access new.target.
+
+        And at the same time, this patch extends the existing `construct` to accept new.target value.
+        It is corresponding to the spec's Construct abstract operation.
+
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::newTarget):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeConstruct):
+        * interpreter/Interpreter.h:
+        * runtime/ConstructData.cpp:
+        (JSC::construct):
+        * runtime/ConstructData.h:
+        (JSC::construct):
+
 2015-07-21  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix a lot of tests. Need to initialize WTF threading sooner.

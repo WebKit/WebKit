@@ -34,10 +34,10 @@
 
 namespace JSC {
 
-JSObject* construct(ExecState* exec, JSValue constructorObject, ConstructType constructType, const ConstructData& constructData, const ArgList& args)
+JSObject* construct(ExecState* exec, JSValue constructorObject, ConstructType constructType, const ConstructData& constructData, const ArgList& args, JSValue newTarget)
 {
     ASSERT(constructType == ConstructTypeJS || constructType == ConstructTypeHost);
-    return exec->interpreter()->executeConstruct(exec, asObject(constructorObject), constructType, constructData, args);
+    return exec->interpreter()->executeConstruct(exec, asObject(constructorObject), constructType, constructData, args, newTarget);
 }
 
 } // namespace JSC

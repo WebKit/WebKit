@@ -251,6 +251,10 @@ namespace JSC  {
         JSValue thisValue() { return this[thisArgumentOffset()].jsValue(); }
         void setThisValue(JSValue value) { this[thisArgumentOffset()] = value; }
 
+        // Under the constructor implemented in C++, thisValue holds the newTarget instead of the automatically constructed value.
+        // The result of this function is only effective under the "construct" context.
+        JSValue newTarget() { return thisValue(); }
+
         JSValue argumentAfterCapture(size_t argument);
 
         static int offsetFor(size_t argumentCountIncludingThis) { return argumentCountIncludingThis + JSStack::ThisArgument - 1; }
