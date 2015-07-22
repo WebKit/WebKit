@@ -1,5 +1,18 @@
 2015-07-21  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: console.log("%d", 0) or console.log("%d", "str") show nothing, expected Number or NaN
+        https://bugs.webkit.org/show_bug.cgi?id=147163
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype._formatWithSubstitutionString.append):
+        When appending the result for a substitution formatter, don't check against a
+        falsey value, check against undefined. This will allow falsely values like
+        0 and NaN to be output as expected.
+
+2015-07-21  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Total download size doesn't update soon after loading
         https://bugs.webkit.org/show_bug.cgi?id=147161
 
