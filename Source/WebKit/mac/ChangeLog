@@ -1,3 +1,14 @@
+2015-07-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: [Mac] "Open Image In New Window" context menu item does nothing on an image
+        https://bugs.webkit.org/show_bug.cgi?id=147175
+
+        Reviewed by Timothy Hatcher.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController webView:contextMenuItemsForElement:defaultMenuItems:]):
+        Remove default context menus that won't work in the inspector page.
+
 2015-07-21  Simon Fraser  <simon.fraser@apple.com>
 
         Add a logging channel for Layout, remove the LiveConnect channel

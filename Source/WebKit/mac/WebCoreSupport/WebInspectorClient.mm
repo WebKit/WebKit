@@ -40,7 +40,7 @@
 #import "WebPolicyDelegate.h"
 #import "WebQuotaManager.h"
 #import "WebSecurityOriginPrivate.h"
-#import "WebUIDelegate.h"
+#import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
 #import <algorithm>
 #import <bindings/ScriptValue.h>
@@ -735,6 +735,28 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
 {
     id <WebQuotaManager> databaseQuotaManager = origin.databaseQuotaManager;
     databaseQuotaManager.quota = std::max<unsigned long long>(5 * 1024 * 1024, databaseQuotaManager.usage * 1.25);
+}
+
+- (NSArray *)webView:(WebView *)sender contextMenuItemsForElement:(NSDictionary *)element defaultMenuItems:(NSArray *)defaultMenuItems
+{
+    NSMutableArray *menuItems = [[NSMutableArray alloc] init];
+
+    for (NSMenuItem *item in defaultMenuItems) {
+        switch (item.tag) {
+        case WebMenuItemTagOpenLinkInNewWindow:
+        case WebMenuItemTagOpenImageInNewWindow:
+        case WebMenuItemTagOpenFrameInNewWindow:
+        case WebMenuItemTagOpenMediaInNewWindow:
+        case WebMenuItemTagDownloadLinkToDisk:
+        case WebMenuItemTagDownloadImageToDisk:
+            break;
+        default:
+            [menuItems addObject:item];
+            break;
+        }
+    }
+
+    return [menuItems autorelease];
 }
 
 // MARK: -
