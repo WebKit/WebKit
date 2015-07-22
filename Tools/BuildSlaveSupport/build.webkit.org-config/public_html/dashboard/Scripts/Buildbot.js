@@ -102,7 +102,8 @@ Buildbot.prototype = {
 
     _normalizeQueueInfo: function(queueInfo)
     {
-        queueInfo.branch = queueInfo.branch || { openSource: "trunk", internal: "trunk" };
+        if (!queueInfo.combinedQueues)
+            queueInfo.branch = queueInfo.branch || this.defaultBranches;
         queueInfo.debug = queueInfo.debug || false;
         queueInfo.builder = queueInfo.builder || false;
         queueInfo.tester = queueInfo.tester || false;

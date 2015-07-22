@@ -75,6 +75,11 @@ WebKitBuildbot.prototype = {
     __proto__: Buildbot.prototype,
     performanceDashboardURL:  "https://perf.webkit.org",
 
+    get defaultBranches()
+    {
+        return { openSource: "trunk" };
+    },
+
     layoutTestResultsDirectoryURLForIteration: function(iteration)
     {
         return this.baseURL + "results/" + encodeURIComponent(iteration.queue.id) + "/" + encodeURIComponent("r" + iteration.openSourceRevision + " (" + iteration.id + ")");

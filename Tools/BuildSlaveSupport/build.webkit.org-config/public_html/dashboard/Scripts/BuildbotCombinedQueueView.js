@@ -25,10 +25,22 @@
 
 BuildbotCombinedQueueView = function(queue)
 {
-    for (var i = 1, end = queue.combinedQueues.length; i < end; ++i) {
+    console.assert(queue.branch === undefined);
+    var indexOfFirstQueueWithRepository = {};
+    for (var i = 0, end = queue.combinedQueues.length; i < end; ++i) {
         console.assert(queue.combinedQueues[0].buildbot === queue.combinedQueues[i].buildbot);
-        console.assert(queue.combinedQueues[0].branch.openSource === queue.combinedQueues[i].branch.openSource);
-        console.assert(queue.combinedQueues[0].branch.internal === queue.combinedQueues[i].branch.internal);
+        var branches = queue.combinedQueues[i].branch;
+        for (var repository in branches) {
+            var indexOfFirstQueue = indexOfFirstQueueWithRepository[repository];
+            if (indexOfFirstQueue === undefined) {
+                indexOfFirstQueueWithRepository[repository] = i;
+                continue;
+            }
+            var message = queue.id + ": combinedQueues[" + i + "].branch[" + repository + "]";
+            message += " === combinedQueues[" + indexOfFirstQueue + "].branch[" + repository + "]";
+            console.assert(queue.combinedQueues[i].branch[repository]
+                === queue.combinedQueues[indexOfFirstQueue].branch[repository], message);
+        }
     }
 
     BuildbotQueueView.call(this, queue.combinedQueues);

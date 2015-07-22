@@ -1,3 +1,26 @@
+2015-07-22  Jason Marcell  <jmarcell@apple.com>
+
+        Remove hardcoded "internal" from Buildbot.prototype._normalizeQueueInfo.
+        https://bugs.webkit.org/show_bug.cgi?id=147043
+
+        Reviewed by Daniel Bates and Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Buildbot.js:
+        (Buildbot.prototype._normalizeQueueInfo):
+        The _normalizeQueueInfo method now calls the defaultBranches getter instead of using hardcoded values
+        in cases where the queue.branch property is not set and the queue is not a combined queue.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotCombinedQueueView.js:
+        (BuildbotCombinedQueueView):
+        Ensuring uniformity of repository branches within a combined queue.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot.prototype.get defaultBranches):
+        Added; provides a WebKit-specific implementation that sets the queue.branches dictionary to have a
+        single entry for "openSource" as the default set of branches. Note that we intentionally omitted a
+        base class implementation of the defaultBranches getter so as to cause a JavaScript TypeError when a
+        sub-queue of a combined queue does not specify property branch and the derived Buildbot class does not
+        implement defaultBranches so that a person can either update the definition of the sub-queue or
+        implement defaultBranches in the derived Buildbot class they are using.
+
 2015-07-22  Alex Christensen  <achristensen@webkit.org>
 
         Switch WinCairo build to use CMake.
