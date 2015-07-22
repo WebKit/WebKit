@@ -2565,7 +2565,7 @@ static bool needsScreenFontsEnabledQuirk()
 
 - (BOOL)metaRefreshEnabled
 {
-    return [self metaRefreshEnabled];
+    return [self httpEquivEnabled];
 }
 
 - (void)setHTTPEquivEnabled:(BOOL)enabled
