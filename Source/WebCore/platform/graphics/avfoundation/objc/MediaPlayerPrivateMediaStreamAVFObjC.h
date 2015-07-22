@@ -81,7 +81,7 @@ private:
     void load(const String&, MediaSourcePrivateClient*) override { };
 #endif
 #if ENABLE(MEDIA_STREAM)
-    void load(MediaStreamPrivate*) override;
+    void load(MediaStreamPrivate&) override;
 #endif
     void cancelLoad() override;
 
@@ -151,6 +151,7 @@ private:
     WeakPtrFactory<MediaPlayerPrivateMediaStreamAVFObjC> m_weakPtrFactory;
     RefPtr<MediaStreamPrivateAVFObjC> m_MediaStreamPrivate;
     RetainPtr<AVAsset> m_asset;
+    RetainPtr<AVCaptureVideoPreviewLayer> m_previewLayer;
     RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
     Vector<RetainPtr<AVSampleBufferAudioRenderer>> m_sampleBufferAudioRenderers;
     RetainPtr<AVSampleBufferRenderSynchronizer> m_synchronizer;

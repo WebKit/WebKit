@@ -78,6 +78,7 @@ MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC(Media
     , m_seekCompleted(true)
     , m_loadingProgressed(false)
 {
+
 }
 
 MediaPlayerPrivateMediaStreamAVFObjC::~MediaPlayerPrivateMediaStreamAVFObjC()
@@ -132,24 +133,21 @@ MediaPlayer::SupportsType MediaPlayerPrivateMediaStreamAVFObjC::supportsType(con
 #pragma mark -
 #pragma mark MediaPlayerPrivateInterface Overrides
 
-void MediaPlayerPrivateMediaStreamAVFObjC::load(MediaStreamPrivate* client)
+void MediaPlayerPrivateMediaStreamAVFObjC::load(MediaStreamPrivate& client)
 {
-    m_MediaStreamPrivate = MediaStreamPrivateAVFObjC::create(this, client->client());
-    for (auto track : m_MediaStreamPrivate->client()->getVideoTracks()) {
-        client->addTrack(&track->privateTrack(), MediaStreamPrivate::NotifyClientOption::DontNotify);
-        client->client()->didAddTrackToPrivate(track->privateTrack());
-        if (track->readyState() == "live") {
+    m_MediaStreamPrivate = MediaStreamPrivateAVFObjC::create(*this, *client.client());
+    for (auto track : client.tracks()) {
+        m_MediaStreamPrivate->addTrack(WTF::move(track), MediaStreamPrivate::NotifyClientOption::DontNotify);
+        m_MediaStreamPrivate->client()->didAddTrackToPrivate(*track);
+        if (!track->ended()) {
             track->source()->startProducingData();
             track->setEnabled(true);
         }
     }
-    for (auto track : m_MediaStreamPrivate->client()->getAudioTracks()) {
-        client->addTrack(&track->privateTrack(), MediaStreamPrivate::NotifyClientOption::DontNotify);
-        client->client()->didAddTrackToPrivate(track->privateTrack());
-        if (track->readyState() == "live") {
-            track->source()->startProducingData();
-            track->setEnabled(true);
-        }
+    m_previewLayer = nullptr;
+    for (auto track : m_MediaStreamPrivate->tracks()) {
+        if (track->type() == RealtimeMediaSource::Type::Video)
+            m_previewLayer = static_cast<AVVideoCaptureSource*>(track->source())->previewLayer();
     }
     m_player->client().mediaPlayerRenderingModeChanged(m_player);
 }
@@ -172,14 +170,9 @@ PlatformMedia MediaPlayerPrivateMediaStreamAVFObjC::platformMedia() const
 
 PlatformLayer* MediaPlayerPrivateMediaStreamAVFObjC::platformLayer() const
 {
-    if (!m_MediaStreamPrivate)
-        return MediaPlayerPrivateInterface::platformLayer();
-    for (auto track : m_MediaStreamPrivate->client()->getVideoTracks()) {
-        // FIXME(146858): Just grab the first webcam for now, we can manage more later
-        AVVideoCaptureSource* capture = (AVVideoCaptureSource*)track->source();
-        return (PlatformLayer*)[getAVCaptureVideoPreviewLayerClass() layerWithSession:capture->session()];
-    }
-    return MediaPlayerPrivateInterface::platformLayer();
+    if (!m_previewLayer)
+        return nullptr;
+    return static_cast<PlatformLayer*>(m_previewLayer);
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::play()
@@ -198,9 +191,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::playInternal()
     if (shouldBePlaying())
         [m_synchronizer setRate:m_rate];
 
-    for (auto track : m_MediaStreamPrivate->client()->getVideoTracks())
-        track->source()->startProducingData();
-    for (auto track : m_MediaStreamPrivate->client()->getAudioTracks())
+    for (auto track : m_MediaStreamPrivate->tracks())
         track->source()->startProducingData();
 }
 
@@ -218,9 +209,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::pauseInternal()
 {
     m_playing = false;
 
-    for (auto track : m_MediaStreamPrivate->client()->getVideoTracks())
-        track->source()->stopProducingData();
-    for (auto track : m_MediaStreamPrivate->client()->getAudioTracks())
+    for (auto track : m_MediaStreamPrivate->tracks())
         track->source()->stopProducingData();
 }
 
@@ -241,20 +230,24 @@ bool MediaPlayerPrivateMediaStreamAVFObjC::supportsScanning() const
 
 void MediaPlayerPrivateMediaStreamAVFObjC::setMuted(bool muted)
 {
-    for (auto track : m_MediaStreamPrivate->client()->getAudioTracks())
-        track->source()->setMuted(muted);
+    for (auto track : m_MediaStreamPrivate->tracks()) {
+        if (track->type() == RealtimeMediaSource::Type::Audio)
+            track->source()->setMuted(muted);
+    }
 }
 
 FloatSize MediaPlayerPrivateMediaStreamAVFObjC::naturalSize() const
 {
-    FloatSize floatSize;
-    for (auto track : m_MediaStreamPrivate->client()->getVideoTracks()) {
-        AVVideoCaptureSource* source = (AVVideoCaptureSource*)track->source();
-        if (!source->stopped() && track->enabled()) {
-            if (source->width() > floatSize.width())
-                floatSize.setWidth(source->width());
-            if (source->height() > floatSize.height())
-                floatSize.setHeight(source->height());
+    FloatSize floatSize(0, 0);
+    for (auto track : m_MediaStreamPrivate->tracks()) {
+        if (track->type() == RealtimeMediaSource::Type::Video) {
+            AVVideoCaptureSource* source = (AVVideoCaptureSource*)track->source();
+            if (!source->stopped() && track->enabled()) {
+                if (source->width() > floatSize.width())
+                    floatSize.setWidth(source->width());
+                if (source->height() > floatSize.height())
+                    floatSize.setHeight(source->height());
+            }
         }
     }
     return floatSize;
@@ -262,12 +255,20 @@ FloatSize MediaPlayerPrivateMediaStreamAVFObjC::naturalSize() const
 
 bool MediaPlayerPrivateMediaStreamAVFObjC::hasVideo() const
 {
-    return !m_MediaStreamPrivate->client()->getVideoTracks().isEmpty();
+    for (auto track : m_MediaStreamPrivate->tracks()) {
+        if (track->type() == RealtimeMediaSource::Type::Video)
+            return true;
+    }
+    return false;
 }
 
 bool MediaPlayerPrivateMediaStreamAVFObjC::hasAudio() const
 {
-    return !m_MediaStreamPrivate->client()->getAudioTracks().isEmpty();
+    for (auto track : m_MediaStreamPrivate->tracks()) {
+        if (track->type() == RealtimeMediaSource::Type::Audio)
+            return true;
+    }
+    return false;
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::setVisible(bool)
@@ -282,10 +283,8 @@ MediaTime MediaPlayerPrivateMediaStreamAVFObjC::durationMediaTime() const
 
 MediaTime MediaPlayerPrivateMediaStreamAVFObjC::currentMediaTime() const
 {
-    MediaTime synchronizerTime = toMediaTime(CMTimebaseGetTime([m_synchronizer timebase]));
-    if (synchronizerTime < MediaTime::zeroTime())
-        return MediaTime::zeroTime();
-    return synchronizerTime;
+    // FIXME(147125): Must implement this later
+    return MediaTime::zeroTime();
 }
 
 bool MediaPlayerPrivateMediaStreamAVFObjC::seeking() const

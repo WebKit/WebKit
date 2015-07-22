@@ -53,8 +53,6 @@ public:
     virtual void activeStatusChanged() = 0;
     virtual void didAddTrackToPrivate(MediaStreamTrackPrivate&) = 0;
     virtual void didRemoveTrackFromPrivate(MediaStreamTrackPrivate&) = 0;
-    virtual Vector<RefPtr<MediaStreamTrack>> getVideoTracks() = 0;
-    virtual Vector<RefPtr<MediaStreamTrack>> getAudioTracks() = 0;
 };
 
 class MediaStreamPrivate : public RefCounted<MediaStreamPrivate> {
