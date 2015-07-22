@@ -71,6 +71,10 @@ ThreadIdentifier ThreadIdentifierData::identifier()
 void ThreadIdentifierData::initialize(ThreadIdentifier id)
 {
     ASSERT(!identifier());
+    // Ideally we'd have this as a release assert everywhere, but that would hurt performane.
+    // Having this release assert here means that we will catch "didn't call
+    // WTF::initializeThreading() soon enough" bugs in release mode.
+    RELEASE_ASSERT(m_key != PTHREAD_KEYS_MAX);
     pthread_setspecific(m_key, new ThreadIdentifierData(id));
 }
 
