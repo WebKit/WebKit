@@ -448,6 +448,8 @@ public:
 
     void layoutSizeChanged();
 
+    void allowsMediaDocumentInlinePlaybackChanged();
+
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool);
     virtual ~HTMLMediaElement();

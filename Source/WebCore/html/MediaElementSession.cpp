@@ -344,6 +344,10 @@ MediaPlayer::Preload MediaElementSession::effectivePreloadForElement(const HTMLM
 
 bool MediaElementSession::requiresFullscreenForVideoPlayback(const HTMLMediaElement& element) const
 {
+    Page* page = element.document().page();
+    if (element.document().isMediaDocument() && !element.document().ownerElement() && page && page->allowsMediaDocumentInlinePlayback())
+        return false;
+
     if (!PlatformMediaSessionManager::sharedManager().sessionRestrictsInlineVideoPlayback(*this))
         return false;
 

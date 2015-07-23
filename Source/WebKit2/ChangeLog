@@ -1,3 +1,27 @@
+2015-07-21  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Add an explicit API to allow media documents to (temporarily) play inline
+        https://bugs.webkit.org/show_bug.cgi?id=147181
+
+        Reviewed by Beth Dakin.
+
+        Add a WKWebView(Private) API which allows MediaDocuments loaded by the view to play their contents inline, regardless
+        of whether inline playback is restricted on the current device.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setRequiresUserActionForMediaPlayback:]): Added. Pass through to WebPageProxy.
+        (-[WKWebView _allowsMediaDocumentInlinePlayback]): Ditto.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::allowsMediaDocumentInlinePlayback): Simple getter.
+        (WebKit::WebPageProxy::setAllowsMediaDocumentInlinePlayback): Set, and conditionally pass the new value to WebPage.
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setAllowsMediaDocumentInlinePlayback): Set, and conditionally notify WebCore page of the change.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::allowsMediaDocumentInlinePlayback): Simple getter.
+        * WebProcess/WebPage/WebPage.messages.in: Add new messages.
+
 2015-07-23  Beth Dakin  <bdakin@apple.com>
 
         Should not allow previews of 1x1 images

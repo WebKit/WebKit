@@ -3009,6 +3009,11 @@ WebVideoFullscreenManager* WebPage::videoFullscreenManager()
         m_videoFullscreenManager = WebVideoFullscreenManager::create(this);
     return m_videoFullscreenManager.get();
 }
+
+void WebPage::setAllowsMediaDocumentInlinePlayback(bool allows)
+{
+    m_page->setAllowsMediaDocumentInlinePlayback(allows);
+}
 #endif
 
 #if ENABLE(FULLSCREEN_API)

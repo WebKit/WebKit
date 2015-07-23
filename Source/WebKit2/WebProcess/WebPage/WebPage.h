@@ -236,6 +236,8 @@ public:
 
 #if PLATFORM(IOS)
     WebVideoFullscreenManager* videoFullscreenManager();
+    void setAllowsMediaDocumentInlinePlayback(bool);
+    bool allowsMediaDocumentInlinePlayback() const { return m_allowsMediaDocumentInlinePlayback; }
 #endif
 
 #if ENABLE(FULLSCREEN_API)
@@ -1258,6 +1260,7 @@ private:
     RefPtr<WebInspectorUI> m_inspectorUI;
 #if PLATFORM(IOS)
     RefPtr<WebVideoFullscreenManager> m_videoFullscreenManager;
+    bool m_allowsMediaDocumentInlinePlayback { false };
 #endif
 #if ENABLE(FULLSCREEN_API)
     RefPtr<WebFullScreenManager> m_fullScreenManager;
