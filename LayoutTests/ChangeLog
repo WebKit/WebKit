@@ -1,3 +1,19 @@
+2015-07-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Layer z-ordering is incorrect when scrolling on page witih position:fixed
+        https://bugs.webkit.org/show_bug.cgi?id=147220
+        rdar://problem/15849697&21929247
+
+        Reviewed by Dean Jackson.
+
+        Tests that reveal the overlap area by creating lots of small layers, and dumping
+        the layer tree.
+
+        * compositing/layer-creation/fixed-overlap-extent-expected.txt: Added.
+        * compositing/layer-creation/fixed-overlap-extent-rtl-expected.txt: Added.
+        * compositing/layer-creation/fixed-overlap-extent-rtl.html: Added.
+        * compositing/layer-creation/fixed-overlap-extent.html: Added.
+
 2015-07-23  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: rewrite inspector-protocol/console tests to use new testing patterns

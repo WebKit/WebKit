@@ -1165,6 +1165,14 @@ RenderLayer* RenderLayerCompositor::enclosingNonStackingClippingLayer(const Rend
     return nullptr;
 }
 
+#if PLATFORM(IOS)
+// FIXME: Share with RenderView.
+static inline LayoutSize fixedPositionOffset(const FrameView& frameView)
+{
+    return frameView.useCustomFixedPositionLayoutRect() ? (frameView.customFixedPositionLayoutRect().location() - LayoutPoint()) : frameView.scrollOffset();
+}
+#endif
+
 void RenderLayerCompositor::computeExtent(const OverlapMap& overlapMap, const RenderLayer& layer, OverlapExtent& extent) const
 {
     if (extent.extentComputed)
@@ -1183,6 +1191,34 @@ void RenderLayerCompositor::computeExtent(const OverlapMap& overlapMap, const Re
     // Empty rects never intersect, but we need them to for the purposes of overlap testing.
     if (extent.bounds.isEmpty())
         extent.bounds.setSize(LayoutSize(1, 1));
+
+
+    RenderLayerModelObject& renderer = layer.renderer();
+    if (renderer.isOutOfFlowPositioned() && renderer.style().position() == FixedPosition && renderer.container() == &m_renderView) {
+        // Because fixed elements get moved around without re-computing overlap, we have to compute an overlap
+        // rect that covers all the locations that the fixed element could move to.
+        // FIXME: need to handle sticky too.
+        LayoutRect viewportRect;
+        if (m_renderView.frameView().useFixedLayout())
+            viewportRect = m_renderView.unscaledDocumentRect();
+        else
+            viewportRect = m_renderView.frameView().viewportConstrainedVisibleContentRect();
+
+#if PLATFORM(IOS)
+        LayoutSize scrollPosition = fixedPositionOffset(m_renderView.frameView());
+#else
+        LayoutSize scrollPosition = m_renderView.frameView().scrollOffsetForFixedPosition();
+#endif
+
+        LayoutPoint minimumScrollPosition = m_renderView.frameView().minimumScrollPosition();
+        LayoutPoint maximumScrollPosition = m_renderView.frameView().maximumScrollPosition();
+        
+        LayoutSize topLeftExpansion = scrollPosition - toLayoutSize(minimumScrollPosition);
+        LayoutSize bottomRightExpansion = toLayoutSize(maximumScrollPosition) - scrollPosition;
+
+        extent.bounds.setLocation(extent.bounds.location() - topLeftExpansion);
+        extent.bounds.setSize(extent.bounds.size() + topLeftExpansion + bottomRightExpansion);
+    }
 
     extent.extentComputed = true;
 }
@@ -2853,6 +2889,8 @@ bool RenderLayerCompositor::needsFixedRootBackgroundLayer(const RenderLayer& lay
     if (m_renderView.frameView().frame().settings().fixedBackgroundsPaintRelativeToDocument())
         return false;
 
+    LOG(Compositing, "RenderLayerCompositor %p needsFixedRootBackgroundLayer returning %d", this, supportsFixedRootBackgroundCompositing() && m_renderView.rootBackgroundIsEntirelyFixed());
+
     return supportsFixedRootBackgroundCompositing() && m_renderView.rootBackgroundIsEntirelyFixed();
 }
 
@@ -3204,6 +3242,8 @@ void RenderLayerCompositor::rootBackgroundTransparencyChanged()
         return;
 
     bool isTransparent = viewHasTransparentBackground();
+
+    LOG(Compositing, "RenderLayerCompositor %p rootBackgroundTransparencyChanged. isTransparent=%d, changed=%d", this, isTransparent, m_viewBackgroundIsTransparent == isTransparent);
     if (m_viewBackgroundIsTransparent == isTransparent)
         return;
 
