@@ -247,6 +247,11 @@ typedef enum {
 - (void)_handleKeyUIEvent:(UIEvent *)event;
 @end
 
+@class CADisplay;
+@interface UIScreen (Details)
+- (CADisplay *)_display;
+@end
+
 @interface UIScrollView (Details)
 - (void)_stopScrollingAndZoomingAnimations;
 - (void)_zoomToCenter:(CGPoint)center scale:(CGFloat)scale duration:(CFTimeInterval)duration force:(BOOL)force;
