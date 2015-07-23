@@ -1,3 +1,18 @@
+2015-07-23  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r187189.
+
+    2015-07-23  Dean Jackson  <dino@apple.com>
+
+            Out of bounds in WebGLRenderingContext::simulateVertexAttrib0
+            https://bugs.webkit.org/show_bug.cgi?id=147176
+            <rdar://problem/21567767>
+
+            Reviewed by Oliver Hunt.
+
+            * fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays-expected.txt: Added.
+            * fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays.html: Added.
+
 2015-07-23  Anders Carlsson  <andersca@apple.com>
 
         Skip a couple of region selection tests.
