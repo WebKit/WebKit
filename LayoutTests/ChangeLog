@@ -1,3 +1,49 @@
+2015-07-23  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: rewrite inspector-protocol/console tests to use new testing patterns
+        https://bugs.webkit.org/show_bug.cgi?id=147231
+
+        Reviewed by Joseph Pecoraro.
+
+        Restructure existing protocol tests for Console.messageAdded to use Promises and
+        modern event listener test interfaces. Add some new functionality to make it easier
+        install multiple protocol event listeners without clobbering.
+
+        This test also splits warnings-errors.html into two tests, one to cover CSS parser
+        warnings and one for JavaScript parser and runtime errors.
+
+        * http/tests/inspector-protocol/resources/InspectorTest.js:
+        (InspectorTest.sendCommand): Support arguments packaged in an object. This style is preferable
+        in tests because it is very explicit about what functionality and messages are covered.
+
+        (InspectorTest.awaitEvent): Added. This is a single-shot event listener that resolves a
+        promise when the desired protocol event is dispatched.
+
+        (InspectorTest.addEventListener): Reimplemented, based on code from WebInspector.Object.
+        Allows multiple listeners to be registered for a single protocol event.
+
+        (InspectorTest.AsyncTestSuite.prototype.runTestCases):
+        (InspectorTest.AsyncTestSuite):
+        (InspectorTest.SyncTestSuite.prototype.runTestCases):
+        (InspectorTest.SyncTestSuite):
+        (InspectorTest.log): Improve the formatting of test suite/test case output.
+
+        (InspectorFrontendAPI.dispatchMessageAsync): Dispatch to an array of listeners if available.
+        (InspectorTest.importScript): Clarify that this method performs a synchronous load.
+        (.InspectorTest.eventHandler.eventName): Deleted.
+        * inspector-protocol/async-test-suite-expected.txt: Rebaseline whitespace.
+        * inspector-protocol/sync-test-suite-expected.txt: Rebaseline whitespace.
+        * inspector-protocol/console/console-message-expected.txt:
+        * inspector-protocol/console/console-message.html:
+        * inspector-protocol/console/css-source-locations-expected.txt: Added.
+        * inspector-protocol/console/css-source-locations.html: Added.
+        * inspector-protocol/console/js-source-locations-expected.txt: Added.
+        * inspector-protocol/console/js-source-locations.html: Added.
+        * inspector-protocol/console/warnings-errors-expected.txt: Removed.
+        * inspector-protocol/console/warnings-errors.html: Removed.
+        * inspector-protocol/runtime/getProperties-expected.txt: Rebaseline whitespace.
+
+
 2015-07-23  Alexey Proskuryakov  <ap@apple.com>
 
         Windows test result gardening after Mac libxml changes.

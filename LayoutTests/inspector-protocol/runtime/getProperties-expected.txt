@@ -1,10 +1,12 @@
-Running test suite: Runtime.getProperties
-Running test case: CheckPropertiesOfWrapperObject
+
+== Running test suite: Runtime.getProperties
+-- Running test case: CheckPropertiesOfWrapperObject
 Evaluating expression: (function(){var r = Object(5); r.foo = 'cat';return r;})()
 Properties:
   __proto__ object Number
   foo string cat
-Running test case: CheckPropertiesOfArray
+
+-- Running test case: CheckPropertiesOfArray
 Evaluating expression: ['red', 'green', 'blue']
 Properties:
   __proto__ object Array
@@ -12,7 +14,8 @@ Properties:
   1 string green
   2 string blue
   length number 3
-Running test case: CheckPropertiesOfBoundConstructor
+
+-- Running test case: CheckPropertiesOfBoundConstructor
 Evaluating expression: Number.bind({}, 5)
 Properties:
   __proto__ function function () {

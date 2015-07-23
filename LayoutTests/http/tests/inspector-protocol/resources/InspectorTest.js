@@ -29,12 +29,18 @@ InspectorTest = {};
 InspectorTest._dispatchTable = [];
 InspectorTest._requestId = -1;
 InspectorTest.eventHandler = {};
+InspectorTest.logCount = 0;
 
 InspectorTest.dumpInspectorProtocolMessages = false;
 InspectorTest.forceSyncDebugLogging = false;
 
-InspectorTest.sendCommand = function(method, params, handler)
+InspectorTest.sendCommand = function(methodOrObject, params, handler)
 {
+    // Allow new-style arguments object, as in awaitCommand.
+    var method = methodOrObject;
+    if (typeof methodOrObject === "object")
+        var {method, params, handler} = methodOrObject;
+
     this._dispatchTable[++this._requestId] = handler;
     var messageObject = {method, params, "id": this._requestId};
     this.sendMessage(messageObject);
@@ -50,6 +56,46 @@ InspectorTest.awaitCommand = function(args)
         var messageObject = {method, params, "id": this._requestId};
         this.sendMessage(messageObject);
     }.bind(this));
+}
+
+InspectorTest.awaitEvent = function(args)
+{
+    var {event} = args;
+    if (typeof event !== "string")
+        throw new Error("Event must be a string.");
+
+    return new Promise(function(resolve, reject) {
+        InspectorTest.eventHandler[event] = function(message) {
+            InspectorTest.eventHandler[event] = undefined;
+            resolve(message);
+        }
+    });
+}
+
+InspectorTest.addEventListener = function(eventTypeOrObject, listener)
+{
+    var event = eventTypeOrObject;
+    if (typeof eventTypeOrObject === "object")
+        var {event, listener} = eventTypeOrObject;
+
+    if (typeof event !== "string")
+        throw new Error("Event name must be a string.");
+
+    if (typeof listener !== "function")
+        throw new Error("Event listener must be callable.");
+
+    // Convert to an array of listeners.
+    var listeners = InspectorTest.eventHandler[event];
+    if (!listeners)
+        listeners = InspectorTest.eventHandler[event] = [];
+    else if (typeof listeners === "function")
+        listeners = InspectorTest.eventHandler[event] = [listeners];
+
+    // Prevent registering multiple times.
+    if (listeners.includes(listener))
+        throw new Error("Cannot register the same listener more than once.");
+
+    listeners.push(listener);
 }
 
 InspectorTest.sendMessage = function(messageObject)
@@ -87,9 +133,13 @@ InspectorFrontendAPI.dispatchMessageAsync = function(messageObject)
         if (!handler)
             return;
 
-        if (typeof handler == "function")
+        if (typeof handler === "function")
             handler(messageObject);
-        else if (typeof handler === "object") {
+        else if (handler instanceof Array) {
+            handler.map(function(listener) {
+                listener.call(null, messageObject);
+            });
+        } else if (typeof handler === "object") {
             var {resolve, reject} = handler;
             if ("error" in messageObject)
                 reject(messageObject.error.message);
@@ -97,32 +147,6 @@ InspectorFrontendAPI.dispatchMessageAsync = function(messageObject)
                 resolve(messageObject.result);
         }
     }
-}
-
-/**
-* Registers an event handler for messages coming from the InspectorBackend.
-* If multiple callbacks are registered for the same event, it will chain the execution.
-* @param {string} event name
-* @param {function} handler to be executed
-* @param {boolean} execute the handler before all other handlers
-*/
-InspectorTest.addEventListener = function(eventName, callback, capture)
-{
-    if (!InspectorTest.eventHandler[eventName]) {
-        InspectorTest.eventHandler[eventName] = callback;
-        return;
-    }
-    var firstHandler = InspectorTest.eventHandler[eventName];
-    var secondHandler = callback;
-    if (capture) {
-        // Swap firstHandler with the new callback, so that we execute the callback first.
-        [firstHandler, secondHandler] = [secondHandler, firstHandler];
-    }
-    InspectorTest.eventHandler[eventName] = function(messageObject)
-    {
-        firstHandler(messageObject);
-        secondHandler(messageObject);
-    };
 }
 
 InspectorTest.AsyncTestSuite = class AsyncTestSuite {
@@ -186,12 +210,19 @@ InspectorTest.AsyncTestSuite = class AsyncTestSuite {
 
         this._startedRunning = true;
 
-        InspectorTest.log("Running test suite: " + this.name);
+        InspectorTest.log("");
+        InspectorTest.log("== Running test suite: " + this.name);
 
+        // Avoid adding newlines if nothing was logged.
+        var priorLogCount = InspectorTest.logCount;
         var suite = this;
-        var result = this.testcases.reduce(function(chain, testcase) {
+        var result = this.testcases.reduce(function(chain, testcase, i) {
             return chain.then(function() {
-                InspectorTest.log("Running test case: " + testcase.name);
+                if (i > 0 && priorLogCount + 1 < InspectorTest.logCount)
+                    InspectorTest.log("");
+
+                priorLogCount = InspectorTest.logCount;
+                InspectorTest.log("-- Running test case: " + testcase.name);
                 suite.runCount++;
                 return new Promise(testcase.test);
             });
@@ -206,7 +237,7 @@ InspectorTest.AsyncTestSuite = class AsyncTestSuite {
             if (typeof message !== "string")
                 message = JSON.stringify(message);
 
-            InspectorTest.log("EXCEPTION: " + message);
+            InspectorTest.log("!! EXCEPTION: " + message);
             throw e; // Reject this promise by re-throwing the error.
         });
     }
@@ -267,11 +298,19 @@ InspectorTest.SyncTestSuite = class SyncTestSuite {
 
         this._startedRunning = true;
 
-        InspectorTest.log("Running test suite: " + this.name);
+        InspectorTest.log("");
+        InspectorTest.log("== Running test suite: " + this.name);
 
+        var priorLogCount = InspectorTest.logCount;
         var suite = this;
-        for (var testcase of this.testcases) {
-            InspectorTest.log("Running test case: " + testcase.name);
+        for (var i = 0; i < this.testcases.length; i++) {
+            var testcase = this.testcases[i];
+            if (i > 0 && priorLogCount + 1 < InspectorTest.logCount)
+                InspectorTest.log("");
+
+            priorLogCount = InspectorTest.logCount;
+
+            InspectorTest.log("-- Running test case: " + testcase.name);
             suite.runCount++;
             try {
                 var result = testcase.test.call(null);
@@ -290,7 +329,7 @@ InspectorTest.SyncTestSuite = class SyncTestSuite {
                 if (typeof message !== "string")
                     message = JSON.stringify(message);
 
-                InspectorTest.log("EXCEPTION: " + message);
+                InspectorTest.log("!! EXCEPTION: " + message);
                 return false;
             }
         }
@@ -302,6 +341,8 @@ InspectorTest.SyncTestSuite = class SyncTestSuite {
 // Logs a message to test document.
 InspectorTest.log = function(message)
 {
+    ++InspectorTest.logCount;
+
     if (this.forceSyncDebugLogging)
         this.debugLog(message);
     else
@@ -341,7 +382,8 @@ InspectorTest.checkForError = function(responseObject)
 InspectorTest.importScript = function(scriptName)
 {
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", scriptName, false);
+    var isAsyncRequest = false;
+    xhr.open("GET", scriptName, isAsyncRequest);
     xhr.send(null);
     if (xhr.status !== 0 && xhr.status !== 200)
         throw new Error("Invalid script URL: " + scriptName);

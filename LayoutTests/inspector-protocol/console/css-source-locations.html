@@ -1,0 +1,48 @@
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<link rel="stylesheet" href="../resources/errors.css">
+  <style>    div { * color: red; }</style>
+<style>div { * color: red; }
+div { * color: red; }
+   div {
+       *
+       color:
+       red;
+   }
+</style>
+<script>
+function test()
+{
+    InspectorTest.importScript("../../../../inspector-protocol/resources/console-helper.js");
+
+    var consoleMessageCount = 0;
+    const expectedConsoleMessageCount = 7;
+
+    // Due to the difficulty of testing inline style tags in a test case, this test
+    // is a reference test that contains serialized Console.messageAdded event data.
+    InspectorTest.addEventListener({
+        event: "Console.messageAdded",
+        listener: function(messageObject) {
+            var simplifiedMessage = ConsoleHelper.simplifiedConsoleMessage(messageObject);
+            InspectorTest.log(JSON.stringify(simplifiedMessage));
+
+            if (++consoleMessageCount === expectedConsoleMessageCount)
+                InspectorTest.completeTest();
+        }
+    });
+
+    // Start the test.
+    InspectorTest.sendCommand({
+        method: "Console.enable",
+        params: {}
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>
+Tests that CSS parser warnings from inline style tags and external stylesheets are sent to the console with correct line and column information.<br>
+</p>
+</body>
+</html>

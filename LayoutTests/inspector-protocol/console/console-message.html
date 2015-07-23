@@ -5,7 +5,7 @@
 function generateSimpleConsoleMessages()
 {
     console.log("log");
-    console.info("info"); // Alias of log.
+    console.info("info");
     console.warn("warn");
     console.error("error");
     console.debug("debug");
@@ -13,28 +13,126 @@ function generateSimpleConsoleMessages()
 
 function test()
 {
+    var suite = new InspectorTest.AsyncTestSuite("Console.MessagesFromCommandLineAPI");
+
+    addConsoleTestCase({
+        name: "ConsoleLogString",
+        description: "Test `console.log(\"log\")`",
+        expression: 'console.log("log");',
+        expected: {
+            source: 'console-api',
+            level: 'log',
+            text: 'log',
+            parameters: ['string']
+        }
+    });
+
+    addConsoleTestCase({
+        name: "ConsoleInfoString",
+        description: "Test `console.info(\"info\")`",
+        expression: 'console.info("info");',
+        expected: {
+            source: 'console-api',
+            level: 'info',
+            text: 'info',
+            parameters: ['string']
+        }
+    });
+
+    addConsoleTestCase({
+        name: "ConsoleWarnString",
+        description: "Test `console.warn(\"warn\")`",
+        expression: 'console.warn("warn");',
+        expected: {
+            source: 'console-api',
+            level: 'warning',
+            text: 'warn',
+            parameters: ['string']
+        }
+    });
+
+    addConsoleTestCase({
+        name: "ConsoleErrorString",
+        description: "Test `console.error(\"error\")`",
+        expression: 'console.error("error");',
+        expected: {
+            source: 'console-api',
+            level: 'error',
+            text: 'error',
+            parameters: ['string']
+        }
+    });
+
+    addConsoleTestCase({
+        name: "ConsoleDebugString",
+        description: "Test `console.debug(\"debug\")`",
+        expression: 'console.debug("debug");',
+        expected: {
+            source: 'console-api',
+            level: 'debug',
+            text: 'debug',
+            parameters: ['string']
+        }
+    });
+
+    // Set up the console prior to running the test suite.
     InspectorTest.importScript("../../../../inspector-protocol/resources/console-helper.js");
 
-    InspectorTest.sendCommand("Console.enable", {});
-    InspectorTest.sendCommand("Runtime.evaluate", {expression: "generateSimpleConsoleMessages()"});
+    InspectorTest.awaitCommand({
+        method: "Console.enable",
+        params: {}
+    })
+    .then(function() {
+        suite.runTestCasesAndFinish();
+    })
+    .catch(fatalError);
 
-    var consoleMessageCount = 0;
-    const expectedConsoleMessages = 5;
+    function fatalError(e) {
+        InspectorTest.log("Test failed with fatal error: " + JSON.stringify(e));
+        InspectorTest.completeTest();
+    }
 
-    InspectorTest.eventHandler["Console.messageAdded"] = function(messageObject)
-    {
-        var simplifiedMessage = ConsoleHelper.simplifiedConsoleMessage(messageObject);
-        InspectorTest.log(JSON.stringify(simplifiedMessage));
+    function addConsoleTestCase(args) {
+        var {name, description, expression, expected} = args;
+        suite.addTestCase({
+            name,
+            description,
+            test: function(resolve, reject) {
+                InspectorTest.awaitEvent({
+                    event: "Console.messageAdded",
+                })
+                .then(function(messageObject) {
+                    var consoleMessage = messageObject.params.message;
+                    var {source, level, text, parameters} = consoleMessage;
+                    InspectorTest.assert(source === expected.source, "ConsoleMessage type should be '" + expected.source + "'.");
+                    InspectorTest.assert(level === expected.level, "ConsoleMessage level should be '" + expected.level + "'.");
+                    InspectorTest.assert(text === expected.text, "ConsoleMessage text should be '" + expected.text + "'.");
 
-        if (++consoleMessageCount === expectedConsoleMessages)
-            InspectorTest.completeTest();
+                    InspectorTest.assert(parameters.length === expected.parameters.length, "ConsoleMessage parameters.length === " + expected.parameters.length);
+                    for (var i = 0; i < parameters.length; ++i) {
+                        var expectedType = expected.parameters[i];
+                        InspectorTest.assert(parameters[i].type === expectedType, "ConsoleMessage parameter " + i + " should have type '" + expectedType + "'.");
+                    }
+                    resolve();
+                })
+                .catch(reject);
+
+                // Cause a messageAdded event to be generated.
+                InspectorTest.log("Evaluating expression: " + expression);
+                InspectorTest.sendCommand({
+                    method: "Runtime.evaluate",
+                    params: {expression}
+                });
+            }
+        });
     }
 }
 </script>
 </head>
 <body onload="runTest()">
 <p>
-Tests that console log messages make it to the frontend and have expected source, type, and levels.<br>
+Tests that <code>console.log</code> and related APIs cause <code>Console.messageAdded</code> events to be generated with correct source, type, level, and parameter types.
+<br>
 </p>
 </body>
 </html>

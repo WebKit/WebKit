@@ -1,0 +1,43 @@
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script src="../resources/errors.js" type="text/javascript" charset="utf-8"></script>
+  <script>   [].x.x   </script>
+<script>
+console.warn("warn 1"); console.error("error 1");
+   console.error("error 2");
+</script>
+<script>
+function test()
+{
+    InspectorTest.importScript("../../../../inspector-protocol/resources/console-helper.js");
+
+    var consoleMessageCount = 0;
+    const expectedConsoleMessageCount = 8;
+
+    // Due to the difficulty of testing inline script tags in a test case, this test
+    // is a reference test that contains serialized Console.messageAdded event data.
+    InspectorTest.addEventListener({
+        event: "Console.messageAdded",
+        listener: function(messageObject) {
+            var simplifiedMessage = ConsoleHelper.simplifiedConsoleMessage(messageObject);
+            InspectorTest.log(JSON.stringify(simplifiedMessage));
+
+            if (++consoleMessageCount === expectedConsoleMessageCount)
+                InspectorTest.completeTest();
+        }
+    });
+
+    InspectorTest.sendCommand({
+        method: "Console.enable",
+        params: {}
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>
+Tests that JavaScript errors and warnings from inline script tags and external files are sent to the console with correct line and column information.<br>
+</p>
+</body>
+</html>
