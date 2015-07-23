@@ -258,12 +258,12 @@ for my $dir (@projects) {
         }
         $result = buildXCodeProject($projectPath, $clean, @local_options, @ARGV);
     } elsif (isAppleWinWebKit() || isWinCairo()) {
+        chdirWebKit();
         if (isWinCairo()) {
-            chdirWebKit();
             generateBuildSystemFromCMakeProject("WinCairo");
             $result = buildVisualStudioProject("WebKitBuild/" . configuration() . "/WebKit.sln", $clean);
         } else {
-            my $webkitSolutionPath = "WebKit.vcxproj/WebKit.sln";
+            my $webkitSolutionPath = "Source/WebKit/WebKit.vcxproj/WebKit.sln";
             $result = buildVisualStudioProject($webkitSolutionPath, $clean);
         }
         if (usingVisualStudioExpress()) {

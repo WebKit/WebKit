@@ -1,3 +1,10 @@
+2015-07-23  Alex Christensen  <achristensen@webkit.org>
+
+        [Win] Unreviewed build fix after r187169.
+
+        * Scripts/build-webkit:
+        Correctly find WebKit.sln.
+
 2015-07-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to allow executing editing commands that require an argument
