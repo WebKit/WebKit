@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,7 +45,7 @@ public:
     ~DesiredIdentifiers();
     
     unsigned numberOfIdentifiers();
-    void addLazily(UniquedStringImpl*);
+    unsigned ensure(UniquedStringImpl*);
     
     UniquedStringImpl* at(unsigned index) const;
     
@@ -56,6 +56,8 @@ public:
 private:
     CodeBlock* m_codeBlock;
     Vector<UniquedStringImpl*> m_addedIdentifiers;
+    HashMap<UniquedStringImpl*, unsigned> m_identifierNumberForName;
+    bool m_didProcessIdentifiers;
 };
 
 } } // namespace JSC::DFG

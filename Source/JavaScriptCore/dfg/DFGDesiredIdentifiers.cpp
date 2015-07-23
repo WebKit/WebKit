@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,11 +35,13 @@ namespace JSC { namespace DFG {
 
 DesiredIdentifiers::DesiredIdentifiers()
     : m_codeBlock(nullptr)
+    , m_didProcessIdentifiers(false)
 {
 }
 
 DesiredIdentifiers::DesiredIdentifiers(CodeBlock* codeBlock)
     : m_codeBlock(codeBlock)
+    , m_didProcessIdentifiers(false)
 {
 }
 
@@ -52,9 +54,23 @@ unsigned DesiredIdentifiers::numberOfIdentifiers()
     return m_codeBlock->numberOfIdentifiers() + m_addedIdentifiers.size();
 }
 
-void DesiredIdentifiers::addLazily(UniquedStringImpl* rep)
+unsigned DesiredIdentifiers::ensure(UniquedStringImpl* rep)
 {
-    m_addedIdentifiers.append(rep);
+    if (!m_didProcessIdentifiers) {
+        // Do this now instead of the constructor so that we don't pay the price on the main
+        // thread. Also, not all compilations need to call ensure().
+        for (unsigned index = m_codeBlock->numberOfIdentifiers(); index--;)
+            m_identifierNumberForName.add(m_codeBlock->identifier(index).impl(), index);
+        m_didProcessIdentifiers = true;
+    }
+
+    auto addResult = m_identifierNumberForName.add(rep, numberOfIdentifiers());
+    unsigned result = addResult.iterator->value;
+    if (addResult.isNewEntry) {
+        m_addedIdentifiers.append(rep);
+        ASSERT(at(result) == rep);
+    }
+    return result;
 }
 
 UniquedStringImpl* DesiredIdentifiers::at(unsigned index) const

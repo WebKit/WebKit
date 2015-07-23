@@ -1,5 +1,39 @@
 2015-07-22  Filip Pizlo  <fpizlo@apple.com>
 
+        Simplify DFG::DesiredIdentifiers and make it possible to turn a UniquedStringImpl* into an identifierNumber at any time
+        https://bugs.webkit.org/show_bug.cgi?id=147218
+
+        Reviewed by Sam Weinig.
+        
+        I want to be able to take a UniquedStringImpl* and turn it into an identifierNumber at
+        various points in my work on https://bugs.webkit.org/show_bug.cgi?id=146929. Currently,
+        most Nodes that deal with identifiers use identifierNumbers and you can only create an
+        identifierNumber in BytecodeGenerator. DFG::ByteCodeParser does sort of have the
+        ability to create new identifierNumbers when inlining - it takes the inlined code's
+        identifiers and either gives them new numbers or reuses numbers from the enclosing
+        code.
+        
+        This patch takes that basic functionality and puts it in
+        DFG::DesiredIdentifiers::ensure(). Anyone can call this at any time to turn a
+        UniquedStringImpl* into an identifierNumber. This data structure is already used by
+        Plan to properly install any newly created identifier table entries into the CodeBlock.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::noticeArgumentsUse):
+        (JSC::DFG::ByteCodeParser::linkBlocks):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::buildOperandMapsIfNecessary): Deleted.
+        * dfg/DFGDesiredIdentifiers.cpp:
+        (JSC::DFG::DesiredIdentifiers::DesiredIdentifiers):
+        (JSC::DFG::DesiredIdentifiers::numberOfIdentifiers):
+        (JSC::DFG::DesiredIdentifiers::ensure):
+        (JSC::DFG::DesiredIdentifiers::at):
+        (JSC::DFG::DesiredIdentifiers::addLazily): Deleted.
+        * dfg/DFGDesiredIdentifiers.h:
+
+2015-07-22  Filip Pizlo  <fpizlo@apple.com>
+
         Simplify things like CompareEq(@x,@x)
         https://bugs.webkit.org/show_bug.cgi?id=145850
 
