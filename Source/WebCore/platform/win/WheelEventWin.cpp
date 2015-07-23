@@ -28,6 +28,8 @@
 
 #include "FloatPoint.h"
 #include "FloatSize.h"
+#include "GDIUtilities.h"
+#include "HWndDC.h"
 #include <windows.h>
 #include <windowsx.h>
 
@@ -40,13 +42,18 @@ static IntPoint positionForEvent(HWND hWnd, LPARAM lParam)
 {
     POINT point = {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
     ScreenToClient(hWnd, &point);
-    return point;
+    IntPoint logicalPoint(point);
+    float inverseScaleFactor = 1.0f / deviceScaleFactorForWindow(hWnd);
+    logicalPoint.scale(inverseScaleFactor, inverseScaleFactor);
+    return logicalPoint;
 }
 
 static IntPoint globalPositionForEvent(HWND hWnd, LPARAM lParam)
 {
-    POINT point = {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
-    return point;
+    IntPoint logicalPoint(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+    float inverseScaleFactor = 1.0f / deviceScaleFactorForWindow(hWnd);
+    logicalPoint.scale(inverseScaleFactor, inverseScaleFactor);
+    return logicalPoint;
 }
 
 static int horizontalScrollChars()
@@ -77,11 +84,14 @@ PlatformWheelEvent::PlatformWheelEvent(HWND hWnd, const FloatSize& delta, const 
 
     // Global Position is just x, y location of event
     POINT point = {location.x(), location.y()};
+    float inverseScaleFactor = 1.0f / deviceScaleFactorForWindow(hWnd);
     m_globalPosition = point;
+    m_globalPosition.scale(inverseScaleFactor, inverseScaleFactor);
 
     // Position needs to be translated to our client
     ScreenToClient(hWnd, &point);
     m_position = point;
+    m_position.scale(inverseScaleFactor, inverseScaleFactor);
 }
 
 PlatformWheelEvent::PlatformWheelEvent(HWND hWnd, WPARAM wParam, LPARAM lParam, bool isMouseHWheel)
@@ -90,6 +100,8 @@ PlatformWheelEvent::PlatformWheelEvent(HWND hWnd, WPARAM wParam, LPARAM lParam, 
     , m_globalPosition(globalPositionForEvent(hWnd, lParam))
     , m_directionInvertedFromDevice(false)
 {
+    float scaleFactor = deviceScaleFactorForWindow(hWnd);
+
     // How many pixels should we scroll per line?  Gecko uses the height of the
     // current line, which means scroll distance changes as you go through the
     // page or go to different pages.  IE 7 is ~50 px/line, although the value
@@ -97,8 +109,8 @@ PlatformWheelEvent::PlatformWheelEvent(HWND hWnd, WPARAM wParam, LPARAM lParam, 
     // smoothing algorithm on scrolling, it can get away with slightly larger
     // scroll values without feeling jerky.  Here we use 100 px per three lines
     // (the default scroll amount on Windows is three lines per wheel tick).
-    static const float cScrollbarPixelsPerLine = 100.0f / 3.0f;
-    float delta = GET_WHEEL_DELTA_WPARAM(wParam) / static_cast<float>(WHEEL_DELTA);
+    static const float cScrollbarPixelsPerLine = scaleFactor * 100.0f / 3.0f;
+    float delta = GET_WHEEL_DELTA_WPARAM(wParam) / (scaleFactor * static_cast<float>(WHEEL_DELTA));
     if (isMouseHWheel) {
         // Windows is <-- -/+ -->, WebKit wants <-- +/- -->, so we negate
         // |delta| after saving the original value on the wheel tick member.

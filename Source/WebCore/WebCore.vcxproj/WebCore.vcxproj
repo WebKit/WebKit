@@ -8122,6 +8122,7 @@
     <ClCompile Include="..\platform\win\EventLoopWin.cpp" />
     <ClCompile Include="..\platform\win\FileSystemWin.cpp" />
     <ClCompile Include="..\platform\win\GDIObjectCounter.cpp" />
+    <ClCompile Include="..\platform\win\GDIUtilities.cpp" />
     <ClCompile Include="..\platform\win\ImportedFunctionsEnumerator.cpp" />
     <ClCompile Include="..\platform\win\ImportedModulesEnumerator.cpp" />
     <ClCompile Include="..\platform\win\KeyEventWin.cpp" />
@@ -20235,6 +20236,7 @@
     <ClInclude Include="..\platform\win\DefWndProcWindowClass.h" />
     <ClInclude Include="..\platform\win\DelayLoadedModulesEnumerator.h" />
     <ClInclude Include="..\platform\win\GDIObjectCounter.h" />
+    <ClInclude Include="..\platform\win\GDIUtilities.h" />
     <ClInclude Include="..\platform\win\HWndDC.h" />
     <ClInclude Include="..\platform\win\ImportedFunctionsEnumerator.h" />
     <ClInclude Include="..\platform\win\ImportedModulesEnumerator.h" />

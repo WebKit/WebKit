@@ -512,9 +512,6 @@ void PlatformCALayerWinInternal::drawTile(CACFLayerRef tile, CGContextRef contex
 
     CGContextSaveGState(context);
 
-    // Transform context to be at the origin of the parent layer
-    CGContextTranslateCTM(context, -tilePosition.x, -tilePosition.y);
-
     // Set the context clipping rectangle to the current tile
     CGContextClipToRect(context, CGRectMake(tilePosition.x, tilePosition.y, tileBounds.size.width, tileBounds.size.height));
 

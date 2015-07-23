@@ -988,6 +988,9 @@ public:
     /* [out, retval] */ RECT* resultRect);
 
     HRESULT STDMETHODCALLTYPE selectedRangeForTesting(/* [out] */ UINT* location, /* [out] */ UINT* length);
+
+    float deviceScaleFactor() const;
+
 private:
     void setZoomMultiplier(float multiplier, bool isTextOnly);
     float zoomMultiplier(bool isTextOnly);
@@ -1000,6 +1003,7 @@ private:
     bool active();
 
     void sizeChanged(const WebCore::IntSize&);
+    bool dpiChanged(float, const WebCore::IntSize&);
 
     enum WindowsToPaint { PaintWebViewOnly, PaintWebViewAndChildren };
     void paintIntoBackingStore(WebCore::FrameView*, HDC bitmapDC, const WebCore::IntRect& dirtyRect, WindowsToPaint);
@@ -1025,8 +1029,6 @@ private:
 
     bool m_shouldInvertColors;
     void setShouldInvertColors(bool);
-
-    float deviceScaleFactor() const;
 
 protected:
     static bool registerWebViewWindowClass();

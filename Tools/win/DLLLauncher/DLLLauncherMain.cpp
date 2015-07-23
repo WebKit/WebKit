@@ -193,6 +193,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpstrCm
     _set_FMA3_enable(0);
 #endif
 
+    BOOL didIt = SetProcessDPIAware();
+    _ASSERT(didIt);
+
 #ifdef _CRTDBG_MAP_ALLOC
     _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDERR);
     _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);

@@ -7269,6 +7269,9 @@
     <ClCompile Include="..\platform\graphics\PathUtilities.cpp">
       <Filter>platform\graphics</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\win\GDIUtilities.cpp">
+      <Filter>platform\graphics\win</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Modules\geolocation\Coordinates.h">
@@ -15257,6 +15260,9 @@
     </ClInclude>
     <ClInclude Include="..\platform\graphics\PathUtilities.h">
       <Filter>platform\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\win\GDIUtilities.h">
+      <Filter>platform\graphics\win</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

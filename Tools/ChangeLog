@@ -1,3 +1,28 @@
+2015-07-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Implement proper High DPI support features
+        https://bugs.webkit.org/show_bug.cgi?id=146335
+        <rdar://problem/21558269>
+
+        Reviewed by Alex Christensen.
+
+        Update WinLauncher to take device scaling factor into account.
+
+        * WinLauncher/Common.cpp:
+        (resizeSubViews): Make sure toolbars and URL bar are properly sized and using
+        a valid font.
+        (computeFullDesktopFrame): Handle high DPI desktops.
+        (WndProc): Make comments more precise.
+        * WinLauncher/WinLauncher.cpp:
+        (WinLauncher::init): Determine device scale factor at launch.
+        (WinLauncher::updateDeviceScaleFactor): Added.
+        * WinLauncher/WinLauncher.h:
+        * WinLauncher/WinLauncherWebHost.h: Use C++11 initialization.
+        * WinLauncher/WinMain.cpp: Size interface based on scaling factor.
+        (wWinMain): Ditto.
+        * win/DLLLauncher/DLLLauncherMain.cpp:
+        (wWinMain): Tell Windows we understand high DPI.
+
 2015-07-23  Alex Christensen  <achristensen@webkit.org>
 
         [Win] Unreviewed build fix after r187169.
