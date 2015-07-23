@@ -1,3 +1,11 @@
+2015-07-22  Timothy Horton  <timothy_horton@apple.com>
+
+        Fix the build
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView cleanupInteraction]):
+
 2015-07-22  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r187196.
