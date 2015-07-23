@@ -1,5 +1,11 @@
 2015-07-23  Tim Horton  <timothy_horton@apple.com>
 
+        Remove files that were meant to be removed in r173929
+
+        * WebProcess/WebPage/mac/WebInspectorMac.mm: Removed.
+
+2015-07-23  Tim Horton  <timothy_horton@apple.com>
+
         Remove files that were meant to be removed in r168213
 
         * UIProcess/API/Cocoa/WKErrorRecoveryAttempting.h: Removed.
