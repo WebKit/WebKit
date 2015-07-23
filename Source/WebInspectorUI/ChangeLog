@@ -1,3 +1,16 @@
+2015-07-22  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Timeline's Current Time does not jump forward to new start time when starting a new recording, causes timeline to appear delayed and broken
+        https://bugs.webkit.org/show_bug.cgi?id=147204
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype._recordingTimesUpdated):
+        We were skipping a timeline, but it might have a new event record with
+        a new start time. This ensures we get an updated current time which makes
+        sense, and we jump forward to that time in the main timeline.
+
 2015-07-22  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: TimelineRuler shouldn't dispatch selection changed event unless it actually changes
