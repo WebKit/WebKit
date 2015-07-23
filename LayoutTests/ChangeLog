@@ -1,5 +1,17 @@
 2015-07-23  Alexey Proskuryakov  <ap@apple.com>
 
+        Merge r187194.
+
+    2015-07-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            [El Capitan] Test Gardening
+
+            Unreviewed.
+
+            * platform/mac/fast/text/ligature-subdivision-expected.txt:
+
+2015-07-23  Alexey Proskuryakov  <ap@apple.com>
+
         Merge r187126.
 
     2015-07-21  Myles C. Maxfield  <mmaxfield@apple.com>
