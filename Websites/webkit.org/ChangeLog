@@ -1,3 +1,13 @@
+2015-07-23  Brent Fulgham  <bfulgham@apple.com>
+
+        Adjust image sizes to avoid page scaling.
+
+        * blog-files/backdrop-filters/Screen_OSX_Yosemite_Finder-iCloud-WaterBg_1x.jpg:
+        * blog-files/backdrop-filters/Screen_OSX_Yosemite_Finder-iCloud-WaterBg_2x.jpg:
+        * blog-files/backdrop-filters/Screen_V_iOS8_ControlCenter_BlueGradient_1x.jpg:
+        * blog-files/backdrop-filters/Screen_V_iOS8_ControlCenter_BlueGradient_2x.jpg:
+        * blog-files/backdrop-filters/backdrop_mixed_2x.jpg:
+
 2015-07-22  Brent Fulgham  <bfulgham@apple.com>
 
         Add some images needed for an upcoming blog post.
