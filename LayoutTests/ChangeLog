@@ -1,3 +1,13 @@
+2015-07-23  Brady Eidson  <beidson@apple.com>
+
+        Crash in WebPlatformStrategies::createPingHandle - Deref a null NetworkingContext.
+        <rdar://problem/21949735> and https://bugs.webkit.org/show_bug.cgi?id=147227
+
+        Reviewed by Alexey Proskuryakov.
+
+        * http/tests/security/contentSecurityPolicy/user-style-sheet-font-crasher-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/user-style-sheet-font-crasher.html: Added.
+
 2015-07-23  Michael Saboff  <msaboff@apple.com>
 
         Application cache abort() tests are flaky

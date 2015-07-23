@@ -1,3 +1,13 @@
+2015-07-23  Brady Eidson  <beidson@apple.com>
+
+        Crash in WebPlatformStrategies::createPingHandle - Deref a null NetworkingContext.
+        <rdar://problem/21949735> and https://bugs.webkit.org/show_bug.cgi?id=147227
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::createPingHandle): Skip it if there's a null NetworkingContext.
+
 2015-07-23  Tim Horton  <timothy_horton@apple.com>
 
         Remove some files that should have been removed with WebKit2 Windows
