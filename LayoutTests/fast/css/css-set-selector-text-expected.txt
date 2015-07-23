@@ -64,11 +64,11 @@ PASS setThenReadSelectorText(':root') is ':root'
 PASS setThenReadSelectorText(':target') is ':target'
 PASS setThenReadSelectorText(':visited') is ':visited'
 
-PASS setThenReadSelectorText(':dir(a)') is ':dir(a)'
+FAIL setThenReadSelectorText(':dir(a)') should be :dir(a). Was _foo.
 PASS setThenReadSelectorText(':lang("a")') is ':lang("a")'
 PASS setThenReadSelectorText(':lang(a)') is ':lang("a")'
 PASS setThenReadSelectorText(':not(a)') is ':not(a)'
-PASS setThenReadSelectorText(':role(a)') is ':role(a)'
+FAIL setThenReadSelectorText(':role(a)') should be :role(a). Was _foo.
 PASS setThenReadSelectorText(':-webkit-any(a, b, p)') is ':-webkit-any(a, b, p)'
 
 PASS setThenReadSelectorText('::after') is '::after'

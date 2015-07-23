@@ -114,12 +114,6 @@ PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "
 PASS element.style.justifyItems is "initial"
 PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "start"
 
-Test the value 'initial' for grid containers
-PASS element.style.justifyItems is "left safe"
-PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "left safe"
-PASS element.style.justifyItems is "initial"
-PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "stretch"
-
 Test the value 'initial' for flex containers
 PASS element.style.justifyItems is "right true"
 PASS window.getComputedStyle(element, '').getPropertyValue('justify-items') is "right true"

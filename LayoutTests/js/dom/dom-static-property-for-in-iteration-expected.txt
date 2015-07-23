@@ -64,7 +64,6 @@ PASS a["outerHTML"] is <a id="foo" href="bar">nerget</a>
 PASS a["className"] is 
 PASS a["classList"] is 
 PASS a["dataset"] is [object DOMStringMap]
-PASS a["uiactions"] is 
 PASS a["webkitRegionOverset"] is undefined
 PASS a["previousElementSibling"] is [object HTMLDivElement]
 PASS a["nextElementSibling"] is [object HTMLScriptElement]

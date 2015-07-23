@@ -1,5 +1,32 @@
 2015-07-23  Alexey Proskuryakov  <ap@apple.com>
 
+        More test updates for features that are disabled on this branch.
+
+        * css3/parse-align-content-expected.txt:
+        * css3/parse-align-items-expected.txt:
+        * css3/parse-align-self-expected.txt:
+        * css3/parse-justify-content-expected.txt:
+        * fast/css/css-selector-text-expected.txt:
+        * fast/css/css-set-selector-text-expected.txt:
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/css/parse-justify-items-expected.txt:
+        * fast/css/parse-justify-items.html:
+        * fast/css/read-only-read-write-input-basics-expected.html:
+        * fast/css/read-only-read-write-input-basics.html:
+        * fast/dom/navigator-detached-no-crash-expected.txt:
+        * fast/selectors/read-only-read-write-input-basics-expected.txt:
+        * js/dom/dom-static-property-for-in-iteration-expected.txt:
+        * platform/mac-mavericks/accessibility/roles-exposed-expected.txt:
+        * platform/mac-mavericks/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/TestExpectations:
+        * platform/mac/accessibility/roles-exposed-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
+2015-07-23  Alexey Proskuryakov  <ap@apple.com>
+
         Merge r187194.
 
     2015-07-22  Myles C. Maxfield  <mmaxfield@apple.com>

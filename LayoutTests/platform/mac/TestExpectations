@@ -1308,9 +1308,8 @@ animations/trigger-parsing.html [ Skip ]
 
 # ENABLE_CSS_GRID_LAYOUT
 fast/css-grid-layout [ Skip ]
-ietestcenter/css3/grid/grid-items-003.htm [ Skip ]
-ietestcenter/css3/grid/grid-items-002.htm [ Skip ]
-ietestcenter/css3/grid/grid-column-002.htm [ Skip ]
+ietestcenter/css3/grid [ Skip ]
+fast/events/key-events-in-editable-gridbox.html [ Skip ]
 
 # ENABLE_INPUT_TYPE_COLOR
 accessibility/color-well.html [ Skip ]

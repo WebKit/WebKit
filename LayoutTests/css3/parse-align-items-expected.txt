@@ -110,7 +110,7 @@ Test the value 'initial' for grid containers
 PASS element.style.webkitAlignItems is "left safe"
 PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "left safe"
 PASS element.style.webkitAlignItems is "initial"
-PASS window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') is "stretch"
+FAIL window.getComputedStyle(element, '').getPropertyValue('-webkit-align-items') should be stretch. Was start.
 
 Test the value 'initial' for flex containers
 PASS element.style.webkitAlignItems is "right true"

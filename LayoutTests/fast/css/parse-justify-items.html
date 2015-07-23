@@ -299,11 +299,6 @@ element.style.display = "";
 checkInitialValues(element, "justifyItems", "justify-items", "center", "start");
 
 debug("");
-debug("Test the value 'initial' for grid containers");
-element.style.display = "-webkit-grid";
-checkInitialValues(element, "justifyItems", "justify-items", "left safe", "stretch");
-
-debug("");
 debug("Test the value 'initial' for flex containers");
 element.style.display = "-webkit-flex";
 checkInitialValues(element, "justifyItems", "justify-items", "right true", "stretch");

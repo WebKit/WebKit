@@ -57,7 +57,7 @@ PASS window.getComputedStyle(element, '').getPropertyValue('align-content') is "
 PASS element.style.alignContent is "auto"
 PASS window.getComputedStyle(element, '').getPropertyValue('align-content') is "stretch"
 PASS element.style.alignContent is "auto"
-PASS window.getComputedStyle(element, '').getPropertyValue('align-content') is "start"
+FAIL window.getComputedStyle(element, '').getPropertyValue('align-content') should be start. Was stretch.
 PASS element.style.alignContent is "flex-end"
 PASS window.getComputedStyle(element, '').getPropertyValue('align-content') is "flex-end"
 

@@ -57,7 +57,7 @@ PASS window.getComputedStyle(element, '').getPropertyValue('justify-content') is
 PASS element.style.justifyContent is "auto"
 PASS window.getComputedStyle(element, '').getPropertyValue('justify-content') is "stretch"
 PASS element.style.justifyContent is "auto"
-PASS window.getComputedStyle(element, '').getPropertyValue('justify-content') is "start"
+FAIL window.getComputedStyle(element, '').getPropertyValue('justify-content') should be start. Was stretch.
 PASS element.style.justifyContent is "flex-end"
 PASS window.getComputedStyle(element, '').getPropertyValue('justify-content') is "flex-end"
 
