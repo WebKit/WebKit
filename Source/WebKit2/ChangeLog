@@ -1,5 +1,13 @@
 2015-07-23  Tim Horton  <timothy_horton@apple.com>
 
+        Remove files that were meant to be removed in r168229
+
+        * UIProcess/API/Cocoa/WKSession.h: Removed.
+        * UIProcess/API/Cocoa/WKSession.mm: Removed.
+        * UIProcess/API/Cocoa/WKSessionInternal.h: Removed.
+
+2015-07-23  Tim Horton  <timothy_horton@apple.com>
+
         Remove files that were meant to be removed in r165014
 
         * WebProcess/WebPage/mac/WKAccessibilityWebPageObject.h: Removed.
