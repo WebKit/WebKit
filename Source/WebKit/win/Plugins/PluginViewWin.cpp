@@ -95,7 +95,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-const LPCWSTR kWebPluginViewdowClassName = L"WebPluginView";
+const LPCWSTR kWebPluginViewClassName = L"WebPluginView";
 const LPCWSTR kWebPluginViewProperty = L"WebPluginViewProperty";
 
 // The code used to hook BeginPaint/EndPaint originally came from
@@ -253,7 +253,7 @@ static bool registerPluginView()
     wcex.hCursor        = LoadCursor(0, IDC_ARROW);
     wcex.hbrBackground  = (HBRUSH)COLOR_WINDOW;
     wcex.lpszMenuName   = 0;
-    wcex.lpszClassName  = kWebPluginViewdowClassName;
+    wcex.lpszClassName  = kWebPluginViewClassName;
 
     return !!RegisterClassEx(&wcex);
 }
@@ -875,7 +875,7 @@ bool PluginView::platformStart()
             flags |= WS_VISIBLE;
 
         HWND parentWindowHandle = windowHandleForPageClient(m_parentFrame->view()->hostWindow()->platformPageClient());
-        HWND window = ::CreateWindowEx(0, kWebPluginViewdowClassName, 0, flags,
+        HWND window = ::CreateWindowEx(0, kWebPluginViewClassName, 0, flags,
                                        0, 0, 0, 0, parentWindowHandle, 0, WebCore::instanceHandle(), 0);
 
         setPlatformWidget(window);
