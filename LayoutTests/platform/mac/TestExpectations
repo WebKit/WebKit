@@ -1507,3 +1507,18 @@ webkit.org/b/144303 platform/mac/fast/text/multiple-codeunit-vertical-upright.ht
 
 platform/mac/fast/text/vertical-no-sideways.html [ Pass Failure ]
 fast/canvas/image-potential-subsample.html [ Pass Failure ]
+
+# <rdar://problem/21963954> REGRESSION (r186612): Selection in regions seems broken
+fast/regions/selection-in-overflow.html [ ImageOnlyFailure ]
+fast/regions/selection-in-text-after-overflow-hit-testing.html [ ImageOnlyFailure ]
+fast/regions/selection/selecting-text-ignoring-region-horiz-bt.html [ ImageOnlyFailure ]
+fast/regions/selection/selecting-text-ignoring-region-vert-lr.html [ ImageOnlyFailure ]
+fast/regions/selection/selecting-text-ignoring-region-vert-rl.html [ ImageOnlyFailure ]
+fast/regions/selection/selecting-text-ignoring-region.html [ ImageOnlyFailure ]
+fast/regions/selection/selecting-text-in-2-regions-horiz-bt.html [ ImageOnlyFailure ]
+fast/regions/selection/selecting-text-in-2-regions-vert-lr.html [ ImageOnlyFailure ]
+fast/regions/selection/selecting-text-in-2-regions-vert-rl.html [ ImageOnlyFailure ]
+fast/regions/selection/selecting-text-in-2-regions.html [ ImageOnlyFailure ]
+fast/regions/selection/selecting-text-including-region.html [ ImageOnlyFailure ]
+fast/regions/selection/selecting-text-through-different-region-flows-2.html [ ImageOnlyFailure ]
+fast/regions/selection/selection-direction.html [ ImageOnlyFailure ]

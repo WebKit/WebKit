@@ -1,3 +1,9 @@
+2015-07-23  Anders Carlsson  <andersca@apple.com>
+
+        Skip a couple of region selection tests.
+
+        * platform/mac/TestExpectations:
+
 2015-07-15  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r186763. rdar://problem/21707917
