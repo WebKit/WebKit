@@ -1,5 +1,12 @@
 2015-07-23  Timothy Hatcher  <timothy@apple.com>
 
+        Change some images for a blog post.
+
+        * blog-files/inspector-elements-tab.png:
+        * blog-files/inspector-network-tab.png:
+
+2015-07-23  Timothy Hatcher  <timothy@apple.com>
+
         Add and change some images for a blog post.
 
         * blog-files/inspector-elements-network-tabs.png: Removed.
