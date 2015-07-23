@@ -1,5 +1,15 @@
 2015-07-23  Brent Fulgham  <bfulgham@apple.com>
 
+        Correct rest of the images to match.
+
+        * blog-files/backdrop-filters/backdrop_correct_1x.jpg:
+        * blog-files/backdrop-filters/backdrop_correct_2x.jpg:
+        * blog-files/backdrop-filters/backdrop_invert_1x.jpg:
+        * blog-files/backdrop-filters/backdrop_invert_2x.jpg:
+        * blog-files/backdrop-filters/backdrop_mixed_1x.jpg:
+
+2015-07-23  Brent Fulgham  <bfulgham@apple.com>
+
         Adjust image sizes to avoid page scaling.
 
         * blog-files/backdrop-filters/Screen_OSX_Yosemite_Finder-iCloud-WaterBg_1x.jpg:
