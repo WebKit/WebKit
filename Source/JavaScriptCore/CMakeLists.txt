@@ -26,6 +26,7 @@ set(JavaScriptCore_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/replay"
     "${JAVASCRIPTCORE_DIR}/runtime"
     "${JAVASCRIPTCORE_DIR}/tools"
+    "${JAVASCRIPTCORE_DIR}/wasm"
     "${JAVASCRIPTCORE_DIR}/yarr"
     "${WTF_DIR}"
     "${DERIVED_SOURCES_DIR}"
@@ -408,6 +409,8 @@ set(JavaScriptCore_SOURCES
     tools/FunctionOverrides.cpp
     tools/JSDollarVM.cpp
     tools/JSDollarVMPrototype.cpp
+
+    wasm/JSWASMModule.cpp
 
     yarr/RegularExpression.cpp
     yarr/YarrCanonicalizeUCS2.cpp
