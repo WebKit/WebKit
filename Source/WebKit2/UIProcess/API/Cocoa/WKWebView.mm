@@ -2465,6 +2465,13 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     return NO;
 }
 
+- (BOOL)_isDisplayingStandaloneMediaDocument
+{
+    if (auto* mainFrame = _page->mainFrame())
+        return mainFrame->isDisplayingStandaloneMediaDocument();
+    return NO;
+}
+
 - (BOOL)_isShowingNavigationGestureSnapshot
 {
     return _page->isShowingNavigationGestureSnapshot();

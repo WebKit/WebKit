@@ -1,3 +1,20 @@
+2015-07-23  Jer Noble  <jer.noble@apple.com>
+
+        [WK2] Add a WKWebView property for whether the view is displaying a media document
+        https://bugs.webkit.org/show_bug.cgi?id=147233
+
+        Reviewed by Beth Dakin.
+
+        Add a _isDisplayingStandaloneMediaDocument property, which queries the frame for whether
+        the current MIME type is one which our media engines support.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _isDisplayingStandaloneMediaDocument]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::isDisplayingStandaloneMediaDocument):
+        * UIProcess/WebFrameProxy.h:
+
 2015-07-21  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Add an explicit API to allow media documents to (temporarily) play inline

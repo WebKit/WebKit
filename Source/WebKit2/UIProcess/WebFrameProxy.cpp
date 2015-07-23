@@ -110,6 +110,11 @@ bool WebFrameProxy::isDisplayingStandaloneImageDocument() const
     return Image::supportsType(m_MIMEType);
 }
 
+bool WebFrameProxy::isDisplayingStandaloneMediaDocument() const
+{
+    return MIMETypeRegistry::isSupportedMediaMIMEType(m_MIMEType);
+}
+
 bool WebFrameProxy::isDisplayingMarkupDocument() const
 {
     // FIXME: This check should be moved to somewhere in WebCore.
