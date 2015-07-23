@@ -1042,8 +1042,7 @@ void HTMLMediaElement::prepareForLoad()
         setShouldDelayLoadEvent(true);
 
 #if PLATFORM(IOS)
-    Settings* settings = document().settings();
-    if (effectivePreload != MediaPlayer::None && settings && settings->mediaDataLoadsAutomatically())
+    if (effectivePreload != MediaPlayer::None && m_mediaSession->allowsAutomaticMediaDataLoading(*this))
         prepareToPlay();
 #endif
 

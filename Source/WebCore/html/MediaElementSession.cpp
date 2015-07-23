@@ -78,6 +78,13 @@ static String restrictionName(MediaElementSession::BehaviorRestrictions restrict
 }
 #endif
 
+static bool pageExplicitlyAllowsElementToAutoplayInline(const HTMLMediaElement& element)
+{
+    Document& document = element.document();
+    Page* page = document.page();
+    return document.isMediaDocument() && !document.ownerElement() && page && page->allowsMediaDocumentInlinePlayback();
+}
+
 MediaElementSession::MediaElementSession(PlatformMediaSessionClient& client)
     : PlatformMediaSession(client)
     , m_restrictions(NoRestrictions)
@@ -119,6 +126,9 @@ void MediaElementSession::removeBehaviorRestriction(BehaviorRestrictions restric
 
 bool MediaElementSession::playbackPermitted(const HTMLMediaElement& element) const
 {
+    if (pageExplicitlyAllowsElementToAutoplayInline(element))
+        return true;
+
     if (m_restrictions & RequireUserGestureForRateChange && !ScriptController::processingUserGesture()) {
         LOG(Media, "MediaElementSession::playbackPermitted - returning FALSE");
         return false;
@@ -331,6 +341,9 @@ MediaPlayer::Preload MediaElementSession::effectivePreloadForElement(const HTMLM
     PlatformMediaSessionManager::SessionRestrictions restrictions = PlatformMediaSessionManager::sharedManager().restrictions(mediaType());
     MediaPlayer::Preload preload = element.preloadValue();
 
+    if (pageExplicitlyAllowsElementToAutoplayInline(element))
+        return preload;
+
     if ((restrictions & PlatformMediaSessionManager::MetadataPreloadingNotPermitted) == PlatformMediaSessionManager::MetadataPreloadingNotPermitted)
         return MediaPlayer::None;
 
@@ -344,8 +357,7 @@ MediaPlayer::Preload MediaElementSession::effectivePreloadForElement(const HTMLM
 
 bool MediaElementSession::requiresFullscreenForVideoPlayback(const HTMLMediaElement& element) const
 {
-    Page* page = element.document().page();
-    if (element.document().isMediaDocument() && !element.document().ownerElement() && page && page->allowsMediaDocumentInlinePlayback())
+    if (pageExplicitlyAllowsElementToAutoplayInline(element))
         return false;
 
     if (!PlatformMediaSessionManager::sharedManager().sessionRestrictsInlineVideoPlayback(*this))
@@ -364,6 +376,18 @@ bool MediaElementSession::requiresFullscreenForVideoPlayback(const HTMLMediaElem
 #endif
 
     return true;
+}
+
+bool MediaElementSession::allowsAutomaticMediaDataLoading(const HTMLMediaElement& element) const
+{
+    if (pageExplicitlyAllowsElementToAutoplayInline(element))
+        return true;
+
+    Settings* settings = element.document().settings();
+    if (settings && settings->mediaDataLoadsAutomatically())
+        return true;
+
+    return false;
 }
 
 void MediaElementSession::mediaEngineUpdated(const HTMLMediaElement& element)
