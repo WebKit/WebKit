@@ -1,0 +1,10 @@
+Testing that timeline start and stop events have timestamps and are ordered reasonably.
+
+PASS: 1st CapturingStarted had startTime
+PASS: 1st CapturingStopped had endTime
+PASS: 1st CapturingStopped had endTime > 1st CapturingStarted
+PASS: 2nd CapturingStarted had startTime > 1st CapturingStarted
+PASS: 2nd CapturingStarted had startTime > 1st CapturingStopped
+PASS: 2nd CapturingStopped had endTime > 1st CapturingStopped
+PASS: 2nd CapturingStopped had endTime > 2nd CapturingStarted
+

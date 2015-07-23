@@ -185,7 +185,7 @@ void InspectorTimelineAgent::internalStart(const int* maxCallStackDepth)
 #endif
 
     if (m_frontendDispatcher)
-        m_frontendDispatcher->recordingStarted();
+        m_frontendDispatcher->recordingStarted(timestamp());
 }
 
 void InspectorTimelineAgent::internalStop()
@@ -214,7 +214,7 @@ void InspectorTimelineAgent::internalStop()
     m_startedComposite = false;
 
     if (m_frontendDispatcher)
-        m_frontendDispatcher->recordingStopped();
+        m_frontendDispatcher->recordingStopped(timestamp());
 }
 
 double InspectorTimelineAgent::timestamp()

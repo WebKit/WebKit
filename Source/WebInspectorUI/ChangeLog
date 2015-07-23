@@ -1,5 +1,33 @@
 2015-07-22  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Timeline should immediately start moving play head when starting a new recording
+        https://bugs.webkit.org/show_bug.cgi?id=147210
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Protocol/TimelineObserver.js:
+        (WebInspector.TimelineObserver.prototype.recordingStarted):
+        (WebInspector.TimelineObserver.prototype.recordingStopped):
+        Pass on the new timestamps.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype.capturingStarted):
+        (WebInspector.TimelineManager.prototype.capturingStopped):
+        Pass on the new timestamps in the events.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype._capturingStarted):
+        Pass on the new timestamp from the event as it can be used to update the currentTime.
+
+        (WebInspector.TimelineRecordingContentView.prototype._startUpdatingCurrentTime):
+        If provided a startTime we can use that as the new currentTime. Otherwise fallback
+        to determining a good currentTime from the next incoming record for legacy backends.
+
+        (WebInspector.TimelineRecordingContentView.prototype._recordingTimesUpdated):
+        Update the comment, as there is now a solution but this is required for legacy backends.
+
+2015-07-22  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Timeline's Current Time does not jump forward to new start time when starting a new recording, causes timeline to appear delayed and broken
         https://bugs.webkit.org/show_bug.cgi?id=147204
 

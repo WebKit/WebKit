@@ -1,3 +1,13 @@
+2015-07-22  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Timeline should immediately start moving play head when starting a new recording
+        https://bugs.webkit.org/show_bug.cgi?id=147210
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/protocol/Timeline.json:
+        Add timestamps to recordingStarted and recordingStopped events.
+
 2015-07-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Introducing construct ability into JS executables
