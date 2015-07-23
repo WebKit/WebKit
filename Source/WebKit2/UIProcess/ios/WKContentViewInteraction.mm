@@ -2649,10 +2649,9 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     static const unsigned kWebDeleteForwardKey = 0xF728;
     static const unsigned kWebSpaceKey = 0x20;
 
-    if (!self.isFirstResponder)
-        return NO;
+    BOOL contentEditable = _page->editorState().isContentEditable;
 
-    if (!_page->editorState().isContentEditable && event.isTabKey)
+    if (!contentEditable && event.isTabKey)
         return NO;
 
     BOOL shift = event.modifierFlags & WebEventFlagMaskShift;
@@ -2701,15 +2700,18 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
     switch ([characters characterAtIndex:0]) {
     case kWebBackspaceKey:
     case kWebDeleteKey:
-        // FIXME: remove deleteFromInput once UIKit adopts deleteFromInputWithFlags
-        if ([keyboard respondsToSelector:@selector(deleteFromInputWithFlags:)])
-            [keyboard deleteFromInputWithFlags:event.keyboardFlags];
-        else
-            [keyboard deleteFromInput];
-        return YES;
+        if (contentEditable) {
+            // FIXME: remove deleteFromInput once UIKit adopts deleteFromInputWithFlags
+            if ([keyboard respondsToSelector:@selector(deleteFromInputWithFlags:)])
+                [keyboard deleteFromInputWithFlags:event.keyboardFlags];
+            else
+                [keyboard deleteFromInput];
+            return YES;
+        }
+        break;
 
     case kWebSpaceKey:
-        if (!_page->editorState().isContentEditable) {
+        if (!contentEditable) {
             [_webView _scrollByOffset:FloatPoint(0, shift ? -_page->unobscuredContentRect().height() : _page->unobscuredContentRect().height())];
             return YES;
         }
@@ -2721,7 +2723,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
 
     case kWebEnterKey:
     case kWebReturnKey:
-        if (isCharEvent) {
+        if (contentEditable && isCharEvent) {
             // Map \r from HW keyboard to \n to match the behavior of the soft keyboard.
             [keyboard addInputString:@"\n" withFlags:0];
             return YES;
@@ -2733,7 +2735,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
         return YES;
 
     default:
-        if (isCharEvent) {
+        if (contentEditable && isCharEvent) {
             [keyboard addInputString:event.characters withFlags:event.keyboardFlags];
             return YES;
         }

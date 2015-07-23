@@ -1,3 +1,15 @@
+2015-07-23  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/21910578> Second pass at [iOS] Keyboard shortcuts that take focus away from the web view end up typing a letter into the newly focused field
+        https://bugs.webkit.org/show_bug.cgi?id=146732
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _interpretKeyEvent:isCharEvent:]): Rather than checking if the view is
+        first responder, which it might still be when the Web Content processes invokes this
+        callback, check if we are in editable content before forwarding the event to the keyboard.
+
 2015-07-23  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix after r187251; rename flag -> allows.
