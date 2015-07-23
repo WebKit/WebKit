@@ -41,6 +41,7 @@ public:
     virtual ~MediaDocument();
 
     void mediaElementSawUnsupportedTracks();
+    void mediaElementNaturalSizeChanged(const IntSize&);
     String outgoingReferrer() const { return m_outgoingReferrer; }
 
 private:

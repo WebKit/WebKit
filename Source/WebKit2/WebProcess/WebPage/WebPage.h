@@ -902,6 +902,10 @@ public:
     void setInputMethodState(bool);
 #endif
 
+#if ENABLE(VIDEO)
+    void mediaDocumentNaturalSizeChanged(const WebCore::IntSize&);
+#endif
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 

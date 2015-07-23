@@ -1881,6 +1881,15 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 }
 #endif // PLATFORM(MAC)
 
+#if ENABLE(VIDEO)
+- (void)_mediaDocumentNaturalSizeChanged:(NSSize)newSize
+{
+    id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([self UIDelegate]);
+    if ([uiDelegate respondsToSelector:@selector(_webView:mediaDocumentNaturalSizeChanged:)])
+        [uiDelegate _webView:self mediaDocumentNaturalSizeChanged:newSize];
+}
+#endif
+
 @end
 
 @implementation WKWebView (WKPrivate)

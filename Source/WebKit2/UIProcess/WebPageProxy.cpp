@@ -6014,6 +6014,13 @@ void WebPageProxy::installViewStateChangeCompletionHandler(void (^completionHand
 }
 #endif
 
+#if ENABLE(VIDEO)
+void WebPageProxy::mediaDocumentNaturalSizeChanged(const WebCore::IntSize& newSize)
+{
+    m_uiClient->mediaDocumentNaturalSizeChanged(newSize);
+}
+#endif
+
 void WebPageProxy::setShouldDispatchFakeMouseMoveEvents(bool shouldDispatchFakeMouseMoveEvents)
 {
     m_process->send(Messages::WebPage::SetShouldDispatchFakeMouseMoveEvents(shouldDispatchFakeMouseMoveEvents), m_pageID);

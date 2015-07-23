@@ -449,6 +449,10 @@ public:
     virtual void playbackTargetPickerClientStateDidChange(uint64_t /*contextId*/, MediaProducer::MediaStateFlags) { }
 #endif
 
+#if ENABLE(VIDEO)
+    virtual void mediaDocumentNaturalSizeChanged(const WebCore::IntSize&) { }
+#endif
+
 protected:
     virtual ~ChromeClient() { }
 };

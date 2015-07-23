@@ -2115,6 +2115,9 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
         if (renderer())
             renderer()->updateFromElement();
 
+        if (is<MediaDocument>(document()))
+            downcast<MediaDocument>(document()).mediaElementNaturalSizeChanged(expandedIntSize(m_player->naturalSize()));
+
         logMediaLoadRequest(document().page(), m_player->engineDescription(), String(), true);
     }
 
@@ -4385,6 +4388,9 @@ void HTMLMediaElement::mediaPlayerRepaint(MediaPlayer*)
 void HTMLMediaElement::mediaPlayerSizeChanged(MediaPlayer*)
 {
     LOG(Media, "HTMLMediaElement::mediaPlayerSizeChanged(%p)", this);
+
+    if (is<MediaDocument>(document()) && m_player)
+        downcast<MediaDocument>(document()).mediaElementNaturalSizeChanged(expandedIntSize(m_player->naturalSize()));
 
     beginProcessingMediaPlayerCallback();
     if (renderer())

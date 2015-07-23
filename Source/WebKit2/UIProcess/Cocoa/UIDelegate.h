@@ -76,6 +76,9 @@ private:
         virtual RetainPtr<NSArray> actionsForElement(_WKActivatedElementInfo *, RetainPtr<NSArray> defaultActions) override;
         virtual void didNotHandleTapAsClick(const WebCore::IntPoint&) override;
 #endif
+#if ENABLE(VIDEO)
+        virtual void mediaDocumentNaturalSizeChanged(const WebCore::IntSize&) override;
+#endif
 
         UIDelegate& m_uiDelegate;
     };
@@ -102,6 +105,9 @@ private:
 #endif
         bool webViewActionsForElementDefaultActions : 1;
         bool webViewDidNotHandleTapAsClickAtPoint : 1;
+#endif
+#if ENABLE(VIDEO)
+        bool webViewMediaDocumentNaturalSizeChanged : 1;
 #endif
     } m_delegateMethods;
 };

@@ -1158,5 +1158,11 @@ void WebChromeClient::playbackTargetPickerClientStateDidChange(uint64_t contextI
 }
 #endif
 
+#if ENABLE(VIDEO)
+void WebChromeClient::mediaDocumentNaturalSizeChanged(const WebCore::IntSize& newSize)
+{
+    m_page->mediaDocumentNaturalSizeChanged(newSize);
+}
+#endif
 
 } // namespace WebKit

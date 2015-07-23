@@ -1,3 +1,43 @@
+2015-07-21  Jer Noble  <jer.noble@apple.com>
+
+        Notify the UI delegate when a MediaDocument's natural size changes
+        https://bugs.webkit.org/show_bug.cgi?id=147182
+
+        Reviewed by Simon Fraser.
+
+        Pipe notifications of media document natural size changes up from the chrome client, through
+        to the UIProcess,  through the page client, through the WKWebView, to the UIDelegate.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::mediaDocumentNaturalSizeChanged):
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _mediaDocumentNaturalSizeChanged:]):
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::UIClient::mediaDocumentNaturalSizeChanged):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::mediaDocumentNaturalSizeChanged):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::mediaDocumentNaturalSizeChanged):
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::mediaDocumentNaturalSizeChanged):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::mediaDocumentNaturalSizeChanged):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::mediaDocumentNaturalSizeChanged):
+        * WebProcess/WebPage/WebPage.h:
+        * UIProcess/API/gtk/PageClientImpl.h: Add default, empty implementation of new pure-virtual method.
+        * UIProcess/efl/WebViewEfl.h: Ditto.
+
 2015-07-23  Enrica Casucci  <enrica@apple.com>
 
         Removing one incorrect annotation from the previous change.
