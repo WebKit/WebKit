@@ -1,5 +1,16 @@
 2015-07-23  Timothy Hatcher  <timothy@apple.com>
 
+        Change some images for a blog post and add 2x images.
+
+        * blog-files/inspector-elements-tab-2x.png: Added.
+        * blog-files/inspector-elements-tab.png: Updated.
+        * blog-files/inspector-network-tab-2x.png: Added.
+        * blog-files/inspector-network-tab.png: Updated.
+        * blog-files/inspector-tab-bar-2x.png: Added.
+        * blog-files/inspector-tab-bar.png: Updated.
+
+2015-07-23  Timothy Hatcher  <timothy@apple.com>
+
         Change some images for a blog post.
 
         * blog-files/inspector-elements-tab.png:
