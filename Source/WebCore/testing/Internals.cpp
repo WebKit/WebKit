@@ -2809,6 +2809,12 @@ String Internals::mediaSessionCurrentState(MediaSession* session) const
         return "idle";
     }
 }
+
+double Internals::mediaElementPlayerVolume(HTMLMediaElement* element) const
+{
+    ASSERT_ARG(element, element);
+    return element->playerVolume();
+}
 #endif // ENABLE(MEDIA_SESSION)
 
 #if ENABLE(WEB_AUDIO)
