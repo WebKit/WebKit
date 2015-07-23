@@ -1,3 +1,19 @@
+2015-07-23  Beth Dakin  <bdakin@apple.com>
+
+        Should not allow previews of 1x1 images
+        https://bugs.webkit.org/show_bug.cgi?id=147237
+        -and corresponding-
+        rdar://problem/21968460
+
+        Reviewed by Tim Horton.
+
+        1x1 images are used on some sites to cover actual images, which leads to a 
+        misleading preview experience. There is not any reason why you would really 
+        want to preview an image this small nor any reason to believe that the 
+        preview would result in anything useful.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+
 2015-07-23  Brady Eidson  <beidson@apple.com>
 
         Crash in WebPlatformStrategies::createPingHandle - Deref a null NetworkingContext.

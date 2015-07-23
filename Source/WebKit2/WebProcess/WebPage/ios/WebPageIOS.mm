@@ -2221,17 +2221,19 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
                 } else if (element->renderer() && element->renderer()->isRenderImage()) {
                     auto& renderImage = downcast<RenderImage>(*(element->renderer()));
                     if (renderImage.cachedImage() && !renderImage.cachedImage()->errorOccurred()) {
-                        info.imageURL = [(NSURL *)element->document().completeURL(renderImage.cachedImage()->url()) absoluteString];
                         if (Image* image = renderImage.cachedImage()->imageForRenderer(&renderImage)) {
-                            info.isAnimatedImage = image->isAnimated();
-                            FloatSize screenSizeInPixels = screenSize();
-                            screenSizeInPixels.scale(corePage()->deviceScaleFactor());
-                            FloatSize scaledSize = largestRectWithAspectRatioInsideRect(image->size().width() / image->size().height(), FloatRect(0, 0, screenSizeInPixels.width(), screenSizeInPixels.height())).size();
-                            FloatSize bitmapSize = scaledSize.width() < image->size().width() ? scaledSize : image->size();
-                            if (RefPtr<ShareableBitmap> sharedBitmap = ShareableBitmap::createShareable(IntSize(bitmapSize), ShareableBitmap::SupportsAlpha)) {
-                                auto graphicsContext = sharedBitmap->createGraphicsContext();
-                                graphicsContext->drawImage(image, ColorSpaceDeviceRGB, FloatRect(0, 0, bitmapSize.width(), bitmapSize.height()));
-                                info.image = sharedBitmap;
+                            if (image->width() > 1 && image->height() > 1) {
+                                info.imageURL = [(NSURL *)element->document().completeURL(renderImage.cachedImage()->url()) absoluteString];
+                                info.isAnimatedImage = image->isAnimated();
+                                FloatSize screenSizeInPixels = screenSize();
+                                screenSizeInPixels.scale(corePage()->deviceScaleFactor());
+                                FloatSize scaledSize = largestRectWithAspectRatioInsideRect(image->size().width() / image->size().height(), FloatRect(0, 0, screenSizeInPixels.width(), screenSizeInPixels.height())).size();
+                                FloatSize bitmapSize = scaledSize.width() < image->size().width() ? scaledSize : image->size();
+                                if (RefPtr<ShareableBitmap> sharedBitmap = ShareableBitmap::createShareable(IntSize(bitmapSize), ShareableBitmap::SupportsAlpha)) {
+                                    auto graphicsContext = sharedBitmap->createGraphicsContext();
+                                    graphicsContext->drawImage(image, ColorSpaceDeviceRGB, FloatRect(0, 0, bitmapSize.width(), bitmapSize.height()));
+                                    info.image = sharedBitmap;
+                                }
                             }
                         }
                     }
