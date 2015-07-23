@@ -121,7 +121,9 @@ struct WKAutoCorrectionData {
     RetainPtr<WKFormInputSession> _formInputSession;
     RetainPtr<WKFileUploadPanel> _fileUploadPanel;
     RetainPtr<UIGestureRecognizer> _previewGestureRecognizer;
+#if HAVE(LINK_PREVIEW)
     RetainPtr<UIPreviewItemController> _previewItemController;
+#endif
 
     std::unique_ptr<WebKit::SmartMagnificationController> _smartMagnificationController;
 
