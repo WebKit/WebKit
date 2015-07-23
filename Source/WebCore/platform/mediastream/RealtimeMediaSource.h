@@ -74,6 +74,9 @@ public:
 
     virtual const String& name() const { return m_name; }
     virtual void setName(const String& name) { m_name = name; }
+    
+    virtual unsigned fitnessScore() const { return m_fitnessScore; }
+    virtual void setFitnessScore(const unsigned fitnessScore) { m_fitnessScore = fitnessScore; }
 
     virtual RefPtr<RealtimeMediaSourceCapabilities> capabilities() const = 0;
     virtual const RealtimeMediaSourceStates& states() = 0;
@@ -113,6 +116,8 @@ private:
     bool m_muted;
     bool m_readonly;
     bool m_remote;
+    
+    unsigned m_fitnessScore;
 };
 
 } // namespace WebCore

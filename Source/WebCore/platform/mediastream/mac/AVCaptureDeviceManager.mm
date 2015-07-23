@@ -384,6 +384,13 @@ Vector<RefPtr<RealtimeMediaSource>> AVCaptureDeviceManager::bestSourcesForTypeAn
     
     if (!isAvailable())
         return bestSourcesList;
+    
+    struct {
+        bool operator()(RefPtr<RealtimeMediaSource> a, RefPtr<RealtimeMediaSource> b)
+        {
+            return a->fitnessScore() < b->fitnessScore();
+        }
+    } sortBasedOffFitnessScore;
 
     for (auto& captureDevice : captureDeviceList()) {
         if (!captureDevice.m_enabled)
@@ -409,7 +416,7 @@ Vector<RefPtr<RealtimeMediaSource>> AVCaptureDeviceManager::bestSourcesForTypeAn
             bestSourcesList.append(captureDevice.m_videoSource);
         }
     }
-
+    std::sort(bestSourcesList.begin(), bestSourcesList.end(), sortBasedOffFitnessScore);
     return bestSourcesList;
 }
 
