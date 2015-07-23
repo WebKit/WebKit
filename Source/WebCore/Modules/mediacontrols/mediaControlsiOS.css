@@ -175,6 +175,10 @@ video::-webkit-media-controls-panel.paused {
     opacity: 1;
 }
 
+video::-webkit-media-controls-panel.picture-in-picture {
+    pointer-events: none;
+}
+
 video::-webkit-media-controls-rewind-button,
 audio::-webkit-media-controls-rewind-button,
 video::-webkit-media-controls-panel .mute-box,
