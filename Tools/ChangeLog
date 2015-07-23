@@ -1,3 +1,16 @@
+2015-07-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unregistering and re-registering a user message handler does not work
+        https://bugs.webkit.org/show_bug.cgi?id=138142
+
+        Reviewed by Martin Robinson.
+
+        This has probably been fixed in r184846, enable the test case
+        blocked on it.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitUserContentManager.cpp:
+        (testUserContentManagerScriptMessageReceived):
+
 2015-07-22  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Add ENABLE_WEBASSEMBLY feature flag for WebAssembly

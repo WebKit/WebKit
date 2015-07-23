@@ -328,19 +328,14 @@ static void testUserContentManagerScriptMessageReceived(UserScriptMessageTest* t
     // Unregistering a handler and re-registering again under the same name should work.
     test->unregisterHandler("msg");
 
-    // FIXME: Enable after https://bugs.webkit.org/show_bug.cgi?id=138142 gets fixed.
-#if 0
     javascriptResult = test->runJavaScriptAndWaitUntilFinished("window.webkit.messageHandlers.msg.postMessage('42');", &error.outPtr());
     g_assert(!javascriptResult);
     g_assert(error.get());
 
     // Re-registering a handler that has been unregistered must work
     g_assert(test->registerHandler("msg"));
-    message = test->postMessageAndWaitUntilReceived("msg", "'handler: msg'");
-    valueString.reset(WebViewTest::javascriptResultToCString(message));
-    webkit_javascript_result_unref(message);
+    valueString.reset(WebViewTest::javascriptResultToCString(test->postMessageAndWaitUntilReceived("msg", "'handler: msg'")));
     g_assert_cmpstr(valueString.get(), ==, "handler: msg");
-#endif
 
     test->unregisterHandler("anotherHandler");
 }
