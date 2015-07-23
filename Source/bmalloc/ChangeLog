@@ -1,3 +1,18 @@
+2015-07-23  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: Shrink the super chunk size (again)
+        https://bugs.webkit.org/show_bug.cgi?id=147240
+
+        Reviewed by Andreas Kling.
+
+        Shrinking to 8MB reduced VM exhaustion crashes but did not eliminate them.
+        Let's try 4MB.
+
+        (My previous comment was that the maximum fast object was 2MB. But it
+        was 4MB! Now it's 2MB for realsies.)
+
+        * bmalloc/Sizes.h:
+
 2015-07-03  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] Update some build settings as recommended by Xcode 7
