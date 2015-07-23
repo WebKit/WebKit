@@ -1,3 +1,12 @@
+2015-07-23  Timothy Hatcher  <timothy@apple.com>
+
+        Add and change some images for a blog post.
+
+        * blog-files/inspector-elements-network-tabs.png: Removed.
+        * blog-files/inspector-elements-tab.png: Added.
+        * blog-files/inspector-network-tab.png: Added.
+        * blog-files/inspector-tab-bar.png:
+
 2015-07-23  Brent Fulgham  <bfulgham@apple.com>
 
         Correct rest of the images to match.
