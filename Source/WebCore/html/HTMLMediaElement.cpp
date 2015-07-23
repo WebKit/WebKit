@@ -4652,6 +4652,11 @@ void HTMLMediaElement::updateVolume()
             shouldMute = m_mediaController->muted() || (page && page->isMuted());
         }
 
+#if ENABLE(MEDIA_SESSION)
+        if (m_shouldDuck)
+            volumeMultiplier *= 0.25;
+#endif
+
         m_player->setMuted(shouldMute);
         m_player->setVolume(m_volume * volumeMultiplier);
     }
@@ -6532,6 +6537,15 @@ void HTMLMediaElement::setSessionInternal(MediaSession& session)
     m_session = &session;
     session.addMediaElement(*this);
     m_kind = session.kind();
+}
+
+void HTMLMediaElement::setShouldDuck(bool duck)
+{
+    if (m_shouldDuck == duck)
+        return;
+
+    m_shouldDuck = duck;
+    updateVolume();
 }
 
 #endif

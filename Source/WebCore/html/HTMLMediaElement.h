@@ -427,6 +427,8 @@ public:
 
     MediaSession* session() const;
     void setSession(MediaSession*);
+
+    void setShouldDuck(bool);
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
@@ -822,6 +824,7 @@ private:
 #if ENABLE(MEDIA_SESSION)
     String m_kind;
     RefPtr<MediaSession> m_session;
+    bool m_shouldDuck { false };
 #endif
 
 #if ENABLE(MEDIA_SOURCE)

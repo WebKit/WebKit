@@ -240,14 +240,16 @@ bool MediaSession::invoke()
 
 void MediaSession::handleDuckInterruption()
 {
-    // FIXME: Duck media elements.
+    for (auto* element : m_activeParticipatingElements)
+        element->setShouldDuck(true);
 
     m_currentState = State::Interrupted;
 }
 
 void MediaSession::handleUnduckInterruption()
 {
-    // FIXME: Unduck media elements.
+    for (auto* element : m_activeParticipatingElements)
+        element->setShouldDuck(false);
 
     m_currentState = State::Active;
 }
