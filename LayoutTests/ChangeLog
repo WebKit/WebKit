@@ -1,3 +1,19 @@
+2015-07-23  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Add a function to CSSCompletions to get a list of supported system fonts
+        https://bugs.webkit.org/show_bug.cgi?id=147009
+
+        Reviewed by Joseph Pecoraro.
+
+        Skip the get-system-fonts test until it is implemented.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/win/TestExpectations:
+
+        Added the get-system-fonts test that returns the list of system fonts.
+        * inspector/css/get-system-fonts-expected.html:
+        * inspector/css/get-system-fonts.html:
+
 2015-07-23  Brady Eidson  <beidson@apple.com>
 
         Crash in WebPlatformStrategies::createPingHandle - Deref a null NetworkingContext.

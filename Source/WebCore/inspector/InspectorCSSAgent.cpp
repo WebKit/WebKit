@@ -36,6 +36,7 @@
 #include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
 #include "ExceptionCodePlaceholder.h"
+#include "FontCache.h"
 #include "HTMLHeadElement.h"
 #include "HTMLStyleElement.h"
 #include "InspectorDOMAgent.h"
@@ -706,6 +707,17 @@ void InspectorCSSAgent::getSupportedCSSProperties(ErrorString&, RefPtr<Inspector
         properties->addItem(WTF::move(property));
     }
     cssProperties = WTF::move(properties);
+}
+
+void InspectorCSSAgent::getSupportedSystemFontFamilyNames(ErrorString&, RefPtr<Inspector::Protocol::Array<String>>& fontFamilyNames)
+{
+    auto families = Inspector::Protocol::Array<String>::create();
+
+    Vector<String> systemFontFamilies = FontCache::singleton().systemFontFamilies();
+    for (const auto& familyName : systemFontFamilies)
+        families->addItem(familyName);
+
+    fontFamilyNames = WTF::move(families);
 }
 
 void InspectorCSSAgent::forcePseudoState(ErrorString& errorString, int nodeId, const InspectorArray& forcedPseudoClasses)

@@ -69,7 +69,7 @@ WebInspector.loaded = function()
     ConsoleAgent.enable();
 
     // Perform one-time tasks.
-    WebInspector.CSSCompletions.requestCSSNameCompletions();
+    WebInspector.CSSCompletions.requestCSSCompletions();
 
     // Global settings.
     this.showShadowDOMSetting = new WebInspector.Setting("show-shadow-dom", true);

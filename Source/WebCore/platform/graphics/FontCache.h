@@ -110,10 +110,9 @@ class FontCache {
 public:
     WEBCORE_EXPORT static FontCache& singleton();
 
-    // This method is implemented by the platform.
+    // These methods are implemented by the platform.
     RefPtr<Font> systemFallbackForCharacters(const FontDescription&, const Font* originalFontData, bool isPlatformFont, const UChar* characters, unsigned length);
-
-    // Also implemented by the platform.
+    Vector<String> systemFontFamilies();
     void platformInit();
 
 #if PLATFORM(IOS)

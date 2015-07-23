@@ -2359,6 +2359,8 @@ inspector/dom/content-node-region-info.html [ Crash Pass Failure Timeout ]
 inspector/css/selector-specificity.html [ Skip ]
 inspector/css/pseudo-element-matches.html [ Skip ]
 
+webkit.org/b/147017 inspector/css/get-system-fonts.html [ Skip ]
+
 # Inspector Protocol
 webkit.org/b/140510 inspector-protocol/debugger/terminate-dedicated-worker-while-paused.html [ Skip ]  # Crashing
 inspector-protocol/debugger/pause-on-assert.html [ Skip ]
