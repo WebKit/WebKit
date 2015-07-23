@@ -3995,7 +3995,7 @@ void WebPageProxy::setAllowsMediaDocumentInlinePlayback(bool allows)
         return;
     m_allowsMediaDocumentInlinePlayback = allows;
 
-    m_process->send(Messages::WebPage::SetAllowsMediaDocumentInlinePlayback(flag), m_pageID);
+    m_process->send(Messages::WebPage::SetAllowsMediaDocumentInlinePlayback(allows), m_pageID);
 }
 #endif
 

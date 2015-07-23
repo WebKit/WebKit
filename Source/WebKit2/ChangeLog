@@ -1,3 +1,11 @@
+2015-07-23  Alex Christensen  <achristensen@webkit.org>
+
+        [iOS] Unreviewed build fix after r187251.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setAllowsMediaDocumentInlinePlayback):
+        Use the correct name for the boolean to pass along to SetAllowsMediaDocumentInlinePlayback.
+
 2015-07-23  Enrica Casucci  <enrica@apple.com>
 
         One more iOS build fix.
