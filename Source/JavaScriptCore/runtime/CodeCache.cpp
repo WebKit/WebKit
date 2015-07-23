@@ -174,7 +174,7 @@ UnlinkedFunctionExecutable* CodeCache::getFunctionExecutableFromGlobalCode(VM& v
     body->setEndPosition(positionBeforeLastNewline);
     // The Function constructor only has access to global variables, so no variables will be under TDZ.
     VariableEnvironment emptyTDZVariables;
-    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&vm, source, body, UnlinkedNormalFunction, emptyTDZVariables);
+    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&vm, source, body, UnlinkedNormalFunction, ConstructAbility::CanConstruct, emptyTDZVariables);
     functionExecutable->m_nameValue.set(vm, functionExecutable, jsString(&vm, name.string()));
 
     m_sourceCode.addCache(key, SourceCodeValue(vm, functionExecutable, m_sourceCode.age()));

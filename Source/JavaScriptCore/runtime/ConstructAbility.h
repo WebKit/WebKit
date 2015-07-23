@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
+ * Copyright (C) 2015 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function symbolIterator()
-{
-    'use strict';
-    return this;
+#ifndef ConstructAbility_h
+#define ConstructAbility_h
+
+namespace JSC {
+
+enum class ConstructAbility : unsigned {
+    CanConstruct,
+    CannotConstruct,
+};
+
 }
+
+#endif // ConstructAbility_h

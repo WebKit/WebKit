@@ -1487,6 +1487,7 @@
     <ClInclude Include="..\runtime\ConsolePrototype.h" />
     <ClInclude Include="..\runtime\ConsoleTypes.h" />
     <ClInclude Include="..\runtime\ConstantMode.h" />
+    <ClInclude Include="..\runtime\ConstructAbility.h" />
     <ClInclude Include="..\runtime\ConstructData.h" />
     <ClInclude Include="..\runtime\ControlFlowProfiler.h" />
     <ClInclude Include="..\runtime\CustomGetterSetter.h" />

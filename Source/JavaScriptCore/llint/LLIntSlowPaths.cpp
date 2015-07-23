@@ -1104,7 +1104,7 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
     else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
 
-        if (!isCall(kind) && functionExecutable->isBuiltinFunction())
+        if (!isCall(kind) && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct)
             LLINT_CALL_THROW(exec, createNotAConstructorError(exec, callee));
 
         JSObject* error = functionExecutable->prepareForExecution(execCallee, callee, scope, kind);

@@ -2592,6 +2592,9 @@
     <ClInclude Include="..\runtime\ConsoleTypes.h">
       <Filter>runtime</Filter>
     </ClInclude>
+    <ClInclude Include="..\runtime\ConstructAbility.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
     <ClInclude Include="..\runtime\ConstructData.h">
       <Filter>runtime</Filter>
     </ClInclude>

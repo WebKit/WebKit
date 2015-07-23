@@ -52,15 +52,15 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createDefaultConstructor(Constru
     case ConstructorKind::None:
         break;
     case ConstructorKind::Base:
-        return createExecutableInternal(makeSource(baseConstructorCode), name, constructorKind);
+        return createExecutableInternal(makeSource(baseConstructorCode), name, constructorKind, ConstructAbility::CanConstruct);
     case ConstructorKind::Derived:
-        return createExecutableInternal(makeSource(derivedConstructorCode), name, constructorKind);
+        return createExecutableInternal(makeSource(derivedConstructorCode), name, constructorKind, ConstructAbility::CanConstruct);
     }
     ASSERT_NOT_REACHED();
     return nullptr;
 }
 
-UnlinkedFunctionExecutable* BuiltinExecutables::createExecutableInternal(const SourceCode& source, const Identifier& name, ConstructorKind constructorKind)
+UnlinkedFunctionExecutable* BuiltinExecutables::createExecutableInternal(const SourceCode& source, const Identifier& name, ConstructorKind constructorKind, ConstructAbility constructAbility)
 {
     JSTextPosition positionBeforeLastNewline;
     ParserError error;
@@ -103,7 +103,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutableInternal(const S
     }
     body->overrideName(name);
     VariableEnvironment dummyTDZVariables;
-    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&m_vm, source, body, kind, dummyTDZVariables, WTF::move(sourceOverride));
+    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&m_vm, source, body, kind, constructAbility, dummyTDZVariables, WTF::move(sourceOverride));
     functionExecutable->m_nameValue.set(m_vm, functionExecutable, jsString(&m_vm, name.string()));
     return functionExecutable;
 }
@@ -117,7 +117,7 @@ void BuiltinExecutables::finalize(Handle<Unknown>, void* context)
 UnlinkedFunctionExecutable* BuiltinExecutables::name##Executable() \
 {\
     if (!m_##name##Executable)\
-        m_##name##Executable = Weak<UnlinkedFunctionExecutable>(createBuiltinExecutable(m_##name##Source, m_vm.propertyNames->builtinNames().functionName##PublicName()), this, &m_##name##Executable);\
+        m_##name##Executable = Weak<UnlinkedFunctionExecutable>(createBuiltinExecutable(m_##name##Source, m_vm.propertyNames->builtinNames().functionName##PublicName(), s_##name##ConstructAbility), this, &m_##name##Executable);\
     return m_##name##Executable.get();\
 }
 JSC_FOREACH_BUILTIN(DEFINE_BUILTIN_EXECUTABLES)

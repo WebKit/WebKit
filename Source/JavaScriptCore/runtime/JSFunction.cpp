@@ -552,14 +552,16 @@ ConstructType JSFunction::getConstructData(JSCell* cell, ConstructData& construc
 {
     JSFunction* thisObject = jsCast<JSFunction*>(cell);
 
-    if (thisObject->isBuiltinFunction())
-        return ConstructTypeNone;
-
     if (thisObject->isHostFunction()) {
         constructData.native.function = thisObject->nativeConstructor();
         return ConstructTypeHost;
     }
-    constructData.js.functionExecutable = thisObject->jsExecutable();
+
+    FunctionExecutable* functionExecutable = thisObject->jsExecutable();
+    if (functionExecutable->constructAbility() == ConstructAbility::CannotConstruct)
+        return ConstructTypeNone;
+
+    constructData.js.functionExecutable = functionExecutable;
     constructData.js.scope = thisObject->scope();
     return ConstructTypeJS;
 }

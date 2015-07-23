@@ -1,3 +1,85 @@
+2015-07-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Introducing construct ability into JS executables
+        https://bugs.webkit.org/show_bug.cgi?id=147183
+
+        Reviewed by Geoffrey Garen.
+
+        Decouple the construct ability from the builtin functions.
+        Currently, all builtin functions are not constructors after r182995.
+        In that patch, when the given function is builtin JS function, we recognize it as the non-constructor function.
+
+        But, we need to relax it to implement some constructors in builtins JS.
+        By decoupling the construct ability from whether the function is builtin or not, we can provide
+
+        1. constructors written in builtin JS
+        2. non-constructors in normal JS functions
+
+        (1) is needed for Promise constructor.
+        And (2) is needed for method functions and arrow functions.
+
+        This patch introduces ConstructAbility into the unlinked function executables.
+        It holds whether the given JS function has the construct ability or not.
+        By leveraging this, this patch disables the construct ability of the method definitions, setters, getters and arrow functions.
+
+        And at the same time, this patch introduces the annotation for constructor in builtin JS.
+        We can define the function as follows,
+
+            constructor Promise(executor)
+            {
+                ...
+            }
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::createDefaultConstructor):
+        (JSC::BuiltinExecutables::createExecutableInternal):
+        * builtins/BuiltinExecutables.h:
+        * builtins/Iterator.prototype.js:
+        (symbolIterator):
+        (SymbolIterator): Deleted.
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        * bytecode/UnlinkedCodeBlock.h:
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::makeFunction):
+        * generate-js-builtins:
+        (getCopyright):
+        (Function):
+        (Function.__init__):
+        (Function.mangleName):
+        (getFunctions):
+        (mangleName): Deleted.
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setUpCall):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseClass):
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode):
+        * runtime/CommonIdentifiers.h:
+        * runtime/ConstructAbility.h: Copied from Source/JavaScriptCore/builtins/Iterator.prototype.js.
+        * runtime/Executable.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getConstructData):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * tests/stress/non-constructors.js: Added.
+        (shouldThrow):
+        (.prototype.method):
+        (.prototype.get getter):
+        (.prototype.set setter):
+        (.method):
+        (.get shouldThrow):
+        (.set shouldThrow):
+        (set var.test.get getter):
+        (set var.test.set setter):
+        (set var.test.normal):
+        (.set var):
+        (.set new):
+
 2015-07-22  Csaba Osztrogonác  <ossy@webkit.org>
 
         [JSC] Enable exception fuzzing for GCC too

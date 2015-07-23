@@ -57,11 +57,11 @@ private:
 
     VM& m_vm;
 
-    UnlinkedFunctionExecutable* createBuiltinExecutable(const SourceCode& code, const Identifier& name)
+    UnlinkedFunctionExecutable* createBuiltinExecutable(const SourceCode& code, const Identifier& name, ConstructAbility constructAbility)
     {
-        return createExecutableInternal(code, name, ConstructorKind::None);
+        return createExecutableInternal(code, name, ConstructorKind::None, constructAbility);
     }
-    UnlinkedFunctionExecutable* createExecutableInternal(const SourceCode&, const Identifier&, ConstructorKind);
+    UnlinkedFunctionExecutable* createExecutableInternal(const SourceCode&, const Identifier&, ConstructorKind, ConstructAbility);
 
 #define DECLARE_BUILTIN_SOURCE_MEMBERS(name, functionName, length)\
     SourceCode m_##name##Source; \
