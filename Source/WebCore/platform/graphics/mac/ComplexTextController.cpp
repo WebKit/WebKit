@@ -678,20 +678,22 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                 if (advance.width)
                     advance.width += m_font.letterSpacing();
 
-                bool lastCharacter = static_cast<unsigned>(characterIndex + 1) == complexTextRun.stringLength() || (U16_IS_LEAD(ch) && static_cast<unsigned>(characterIndex + 2) == complexTextRun.stringLength() && U16_IS_TRAIL(*(cp + characterIndex + 1)));
+                unsigned characterIndexInRun = characterIndex + complexTextRun.stringLocation();
+                bool isFirstCharacter = !(characterIndex + complexTextRun.stringLocation());
+                bool isLastCharacter = static_cast<unsigned>(characterIndexInRun + 1) == m_run.length() || (U16_IS_LEAD(ch) && static_cast<unsigned>(characterIndexInRun + 2) == m_run.length() && U16_IS_TRAIL(*(cp + characterIndex + 1)));
 
                 bool forceLeadingExpansion = false; // On the left, regardless of m_run.ltr()
                 bool forceTrailingExpansion = false; // On the right, regardless of m_run.ltr()
                 bool forbidLeadingExpansion = false;
                 bool forbidTrailingExpansion = false;
                 if (runForcesLeadingExpansion)
-                    forceLeadingExpansion = m_run.ltr() ? !characterIndex : lastCharacter;
+                    forceLeadingExpansion = m_run.ltr() ? isFirstCharacter : isLastCharacter;
                 if (runForcesTrailingExpansion)
-                    forceTrailingExpansion = m_run.ltr() ? lastCharacter : !characterIndex;
+                    forceTrailingExpansion = m_run.ltr() ? isLastCharacter : isFirstCharacter;
                 if (runForbidsLeadingExpansion)
-                    forbidLeadingExpansion = m_run.ltr() ? !characterIndex : lastCharacter;
+                    forbidLeadingExpansion = m_run.ltr() ? isFirstCharacter : isLastCharacter;
                 if (runForbidsTrailingExpansion)
-                    forbidTrailingExpansion = m_run.ltr() ? lastCharacter : !characterIndex;
+                    forbidTrailingExpansion = m_run.ltr() ? isLastCharacter : isFirstCharacter;
                 // Handle justification and word-spacing.
                 bool ideograph = FontCascade::isCJKIdeographOrSymbol(ch);
                 if (treatAsSpace || ideograph || forceLeadingExpansion || forceTrailingExpansion) {

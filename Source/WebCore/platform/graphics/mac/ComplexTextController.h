@@ -149,7 +149,13 @@ private:
     Vector<String> m_stringsFor8BitRuns;
     Vector<UChar, 256> m_smallCapsBuffer;
 
-    // Retain lines rather than their runs for better performance.
+    // There is a 3-level hierarchy here. At the top, we are interested in m_run.string(). We partition that string
+    // into Lines, each of which is a sequence of characters which should use the same Font. Core Text then partitions
+    // the Line into ComplexTextRuns.
+    // ComplexTextRun::stringLocation() and ComplexTextRun::stringLength() refer to the offset and length of the Line
+    // relative to m_run.string(). ComplexTextRun::indexAt() returns to the offset of a codepoint relative to
+    // its Line. ComplexTextRun::glyphs() and ComplexTextRun::advances() refer to glyphs relative to the ComplexTextRun.
+    // The length of the entire TextRun is m_run.length()
     Vector<RetainPtr<CTLineRef>> m_coreTextLines;
     Vector<RefPtr<ComplexTextRun>, 16> m_complexTextRuns;
     Vector<CGSize, 256> m_adjustedAdvances;
