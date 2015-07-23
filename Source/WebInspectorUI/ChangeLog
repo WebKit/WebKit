@@ -1,3 +1,17 @@
+2015-07-22  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION (Safari 7): Pseudo element rules are not labelled with media queries in Styles panel
+        https://bugs.webkit.org/show_bug.cgi?id=147207
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/RulesStyleDetailsPanel.js:
+        (WebInspector.RulesStyleDetailsPanel.prototype.refresh.insertMediaOrInheritanceLabel):
+        (WebInspector.RulesStyleDetailsPanel.prototype.refresh.insertAllMatchingPseudoStyles):
+        Now inserts pseudo-styles based on whether their selector specificity is greater than
+        the previous style's selector specificity.
+        (WebInspector.RulesStyleDetailsPanel.prototype.refresh):
+
 2015-07-22  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Change syntax highlighting color for regular expressions to make them more readable
