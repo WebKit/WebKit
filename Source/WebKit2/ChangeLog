@@ -1,5 +1,13 @@
 2015-07-23  Enrica Casucci  <enrica@apple.com>
 
+        Removing one incorrect annotation from the previous change.
+
+        Unreviewed.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+
+2015-07-23  Enrica Casucci  <enrica@apple.com>
+
         [iOS] Add another preview delegate for didDismissPreview.
         https://bugs.webkit.org/show_bug.cgi?id=147241
         rdar://problem/21664211
