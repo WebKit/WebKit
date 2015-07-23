@@ -1,5 +1,11 @@
 2015-07-23  Alexey Proskuryakov  <ap@apple.com>
 
+        More test gardening.
+
+        * platform/mac/TestExpectations:
+
+2015-07-23  Alexey Proskuryakov  <ap@apple.com>
+
         More test updates for features that are disabled on this branch.
 
         * css3/parse-align-content-expected.txt:

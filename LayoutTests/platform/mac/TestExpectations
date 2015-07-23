@@ -1297,6 +1297,8 @@ http/tests/security/contentSecurityPolicy/media-src-allowed.html [ Skip ]
 
 # ENABLE_ATTACHMENT_ELEMENT
 editing/pasteboard/copy-paste-attachment.html [ Skip ]
+editing/pasteboard/drag-and-drop-attachment-contenteditable.html [ Skip ]
+editing/pasteboard/drag-files-to-editable-element.html [ Skip ]
 fast/attachment [ Skip ]
 
 # ENABLE_CSS_ANIMATIONS_LEVEL_2
@@ -1328,4 +1330,8 @@ fast/dom/navigator-hardwareConcurrency.html [ Skip ]
 indieui [ Skip ]
 
 # ENABLE_STREAMS_API
-streams
+streams [ Skip ]
+
+# <rdar://problem/21964590> Hits ASSERT_NOT_REACHED in RenderFlexibleBox::alignChildren,
+# possibly due to GRID_LAYOUT being disabled.
+[ Debug ] css3/parse-align-self.html [ Skip ]
