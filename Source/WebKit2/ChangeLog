@@ -1,3 +1,12 @@
+2015-07-23  Enrica Casucci  <enrica@apple.com>
+
+        One more iOS build fix.
+
+        Unreviewed.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+
 2015-07-23  Matthew Daiter  <mdaiter@apple.com>
 
         Bridged passing lists of devices between the UIProcess and the WebProcess

@@ -44,10 +44,6 @@
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/LinkPreviewDefines.h>
-#endif
-
 namespace WebCore {
 class Color;
 class FloatQuad;
