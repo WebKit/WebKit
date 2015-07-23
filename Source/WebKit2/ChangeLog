@@ -1,3 +1,11 @@
+2015-07-23  Enrica Casucci  <enrica@apple.com>
+
+        iOS build fix after http://trac.webkit.org/changeset/187238.
+
+        Unreviewed.
+
+        * Platform/spi/ios/UIKitSPI.h:
+
 2015-07-23  Jer Noble  <jer.noble@apple.com>
 
         [WK2] Add a WKWebView property for whether the view is displaying a media document
