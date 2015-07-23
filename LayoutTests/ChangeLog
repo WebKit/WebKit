@@ -1,3 +1,15 @@
+2015-07-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Coordinates-based snap offsets don't update correctly when container is scrolled
+        https://bugs.webkit.org/show_bug.cgi?id=147215
+
+        Reviewed by Brent Fulgham.
+
+        Tests that snap offsets update properly on scrolled containers.
+
+        * css3/scroll-snap/scroll-snap-coordinate-overflow-resize-expected.txt: Added.
+        * css3/scroll-snap/scroll-snap-coordinate-overflow-resize.html: Added.
+
 2015-07-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [El Capitan] Test Gardening
