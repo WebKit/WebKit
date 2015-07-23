@@ -51,6 +51,8 @@ WebInspector.TimelineRuler = function()
     this._allowsTimeRangeSelection = false;
     this._minimumSelectionDuration = 0.01;
     this._formatLabelCallback = null;
+    this._suppressNextTimeRangeSelectionChangedEvent = false;
+    this._timeRangeSelectionChanged = false;
 
     this._markerElementMap = new Map;
 };
@@ -616,8 +618,7 @@ WebInspector.TimelineRuler.prototype = {
             this._element.appendChild(this._rightSelectionHandleElement);
         }
 
-        if (this._timeRangeSelectionChanged)
-            this._dispatchTimeRangeSelectionChangedEvent();
+        this._dispatchTimeRangeSelectionChangedEvent();
     },
 
     _formatDividerLabelText: function(value)
@@ -638,10 +639,15 @@ WebInspector.TimelineRuler.prototype = {
 
     _dispatchTimeRangeSelectionChangedEvent: function()
     {
-        delete this._timeRangeSelectionChanged;
-
-        if (this._suppressTimeRangeSelectionChangedEvent)
+        if (!this._timeRangeSelectionChanged)
             return;
+
+        if (this._suppressNextTimeRangeSelectionChangedEvent) {
+            this._suppressNextTimeRangeSelectionChangedEvent = false;
+            return;
+        }
+
+        this._timeRangeSelectionChanged = false;
 
         this.dispatchEventToListeners(WebInspector.TimelineRuler.Event.TimeRangeSelectionChanged);
     },
@@ -658,7 +664,6 @@ WebInspector.TimelineRuler.prototype = {
             return;
 
         this._selectionIsMove = event.target === this._selectionDragElement;
-        this._suppressTimeRangeSelectionChangedEvent = !this._selectionIsMove;
         this._rulerBoundingClientRect = this._element.getBoundingClientRect();
 
         if (this._selectionIsMove) {
@@ -683,6 +688,8 @@ WebInspector.TimelineRuler.prototype = {
     _handleMouseMove: function(event)
     {
         console.assert(event.button === 0);
+
+        this._suppressNextTimeRangeSelectionChangedEvent = !this._selectionIsMove;
 
         if (this._selectionIsMove) {
             var currentMousePosition = Math.max(this._moveSelectionMaximumLeftOffset, Math.min(this._moveSelectionMaximumRightOffset, event.pageX));
@@ -735,8 +742,6 @@ WebInspector.TimelineRuler.prototype = {
                 this.selectionEndTime = this.selectionStartTime + this.minimumSelectionDuration;
             }
         }
-
-        delete this._suppressTimeRangeSelectionChangedEvent;
 
         this._dispatchTimeRangeSelectionChangedEvent();
 

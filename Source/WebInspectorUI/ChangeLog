@@ -1,3 +1,23 @@
+2015-07-22  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: TimelineRuler shouldn't dispatch selection changed event unless it actually changes
+        https://bugs.webkit.org/show_bug.cgi?id=147219
+
+        Reviewed by Timothy Hatcher.
+
+        Moved to a "suppress next" model for suppressing dispatch of TimelineRuler's selection changed event. The
+        ruler's _timeRangeSelectionChanged flag is now reset only when an event is finally dispatched.
+
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler):
+        (WebInspector.TimelineRuler.prototype._updateSelection):
+        (WebInspector.TimelineRuler.prototype._dispatchTimeRangeSelectionChangedEvent):
+        Check for this._timeRangeSelectionChanged moved into dispatch function.
+        (WebInspector.TimelineRuler.prototype._handleMouseDown):
+        (WebInspector.TimelineRuler.prototype._handleMouseMove):
+        (WebInspector.TimelineRuler.prototype._handleMouseUp):
+        We now suppress the next dispatch only, rather than a toggle.
+
 2015-07-22  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION (Safari 7): Pseudo element rules are not labelled with media queries in Styles panel
