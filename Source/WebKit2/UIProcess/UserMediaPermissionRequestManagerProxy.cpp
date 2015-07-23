@@ -38,9 +38,9 @@ void UserMediaPermissionRequestManagerProxy::invalidateRequests()
     m_pendingRequests.clear();
 }
 
-PassRefPtr<UserMediaPermissionRequestProxy> UserMediaPermissionRequestManagerProxy::createRequest(uint64_t userMediaID, bool requiresAudio, bool requiresVideo)
+PassRefPtr<UserMediaPermissionRequestProxy> UserMediaPermissionRequestManagerProxy::createRequest(uint64_t userMediaID, bool requiresAudio, bool requiresVideo, const Vector<String>& deviceUIDsVideo, const Vector<String>& deviceUIDsAudio)
 {
-    RefPtr<UserMediaPermissionRequestProxy> request = UserMediaPermissionRequestProxy::create(*this, userMediaID, requiresAudio, requiresVideo);
+    RefPtr<UserMediaPermissionRequestProxy> request = UserMediaPermissionRequestProxy::create(*this, userMediaID, requiresAudio, requiresVideo, deviceUIDsVideo, deviceUIDsAudio);
     m_pendingRequests.add(userMediaID, request.get());
     return request.release();
 }
@@ -54,7 +54,8 @@ void UserMediaPermissionRequestManagerProxy::didReceiveUserMediaPermissionDecisi
         return;
 
 #if ENABLE(MEDIA_STREAM)
-    m_page.process().send(Messages::WebPage::DidReceiveUserMediaPermissionDecision(userMediaID, allowed), m_page.pageID());
+    // FIXME(147062): Need to add in the support for Safari to pass strings given from user's decision on what piece of media to open
+    m_page.process().send(Messages::WebPage::DidReceiveUserMediaPermissionDecision(userMediaID, allowed, "", ""), m_page.pageID());
 #else
     UNUSED_PARAM(allowed);
 #endif

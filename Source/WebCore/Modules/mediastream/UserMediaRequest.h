@@ -73,6 +73,8 @@ public:
     const Vector<String>& videoDeviceUIDs() const { return m_videoDeviceUIDs; }
     const Vector<String>& audioDeviceUIDs() const { return m_audioDeviceUIDs; }
 
+    const Vector<String>& deviceUIDsVideo() const { return m_deviceUIDsVideo; }
+    const Vector<String>& deviceUIDsAudio() const { return m_deviceUIDsAudio; }
 private:
     UserMediaRequest(ScriptExecutionContext*, UserMediaController*, PassRefPtr<MediaConstraints> audioConstraints, PassRefPtr<MediaConstraints> videoConstraints, MediaDevices::Promise&&);
 
@@ -88,6 +90,9 @@ private:
     
     RefPtr<MediaConstraints> m_audioConstraints;
     RefPtr<MediaConstraints> m_videoConstraints;
+    
+    Vector<String> m_deviceUIDsVideo;
+    Vector<String> m_deviceUIDsAudio;
 
     Vector<String> m_videoDeviceUIDs;
     Vector<String> m_audioDeviceUIDs;

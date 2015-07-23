@@ -1,3 +1,35 @@
+2015-07-23  Matthew Daiter  <mdaiter@apple.com>
+
+        Bridged passing lists of devices between the UIProcess and the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=147056
+        <rdar://problem/21883094>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp: Modified file
+        to reflect changes made to the header in the .messages.in file
+        (WebKit::UserMediaPermissionRequestManagerProxy::createRequest): Ditto
+        (WebKit::UserMediaPermissionRequestManagerProxy::didReceiveUserMediaPermissionDecision):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h: Ditto
+        * UIProcess/UserMediaPermissionRequestProxy.cpp: Ditto
+        (WebKit::UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy):
+        * UIProcess/UserMediaPermissionRequestProxy.h:
+        (WebKit::UserMediaPermissionRequestProxy::create):
+        (WebKit::UserMediaPermissionRequestProxy::deviceUIDsVideo):
+        (WebKit::UserMediaPermissionRequestProxy::deviceUIDsAudio):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestUserMediaPermissionForFrame):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in: Changed heading
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        (WebKit::UserMediaPermissionRequestManager::startRequest):
+        (WebKit::UserMediaPermissionRequestManager::didReceiveUserMediaPermissionDecision):
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didReceiveUserMediaPermissionDecision):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: Changed heading
+
 2015-07-23  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Adopt the new _previewItemControllerDidCancelPreview delegate method.

@@ -21,6 +21,8 @@
 
 #include "APIObject.h"
 #include <wtf/PassRefPtr.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
@@ -28,9 +30,9 @@ class UserMediaPermissionRequestManagerProxy;
 
 class UserMediaPermissionRequestProxy : public API::ObjectImpl<API::Object::Type::UserMediaPermissionRequest> {
 public:
-    static PassRefPtr<UserMediaPermissionRequestProxy> create(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID, bool requiresAudio, bool requiresVideo)
+    static PassRefPtr<UserMediaPermissionRequestProxy> create(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID, bool requiresAudio, bool requiresVideo, const Vector<String>& deviceUIDsVideo, const Vector<String>& deviceUIDsAudio)
     {
-        return adoptRef(new UserMediaPermissionRequestProxy(manager, userMediaID, requiresAudio, requiresVideo));
+        return adoptRef(new UserMediaPermissionRequestProxy(manager, userMediaID, requiresAudio, requiresVideo, deviceUIDsVideo, deviceUIDsAudio));
     }
 
     void allow();
@@ -40,14 +42,19 @@ public:
 
     bool requiresAudio() const { return m_requiresAudio; }
     bool requiresVideo() const { return m_requiresVideo; }
+    
+    const Vector<String>& deviceUIDsVideo() const { return m_deviceUIDsVideo; }
+    const Vector<String>& deviceUIDsAudio() const { return m_deviceUIDsAudio; }
 
 private:
-    UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy&, uint64_t userMediaID, bool requiresAudio, bool requiresVideo);
+    UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy&, uint64_t userMediaID, bool requiresAudio, bool requiresVideo, const Vector<String>& deviceUIDsVideo, const Vector<String>& deviceUIDsAudio);
 
     UserMediaPermissionRequestManagerProxy& m_manager;
     uint64_t m_userMediaID;
     bool m_requiresAudio;
     bool m_requiresVideo;
+    Vector<String> m_deviceUIDsVideo;
+    Vector<String> m_deviceUIDsAudio;
 };
 
 } // namespace WebKit

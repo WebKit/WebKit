@@ -24,11 +24,13 @@
 
 namespace WebKit {
 
-UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID, bool requiresAudio, bool requiresVideo)
+UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy& manager, uint64_t userMediaID, bool requiresAudio, bool requiresVideo, const Vector<String>& deviceUIDsVideo, const Vector<String>& deviceUIDsAudio)
     : m_manager(manager)
     , m_userMediaID(userMediaID)
     , m_requiresAudio(requiresAudio)
     , m_requiresVideo(requiresVideo)
+    , m_deviceUIDsVideo(deviceUIDsVideo)
+    , m_deviceUIDsAudio(deviceUIDsAudio)
 {
 }
 
