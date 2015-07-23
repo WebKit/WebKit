@@ -61,6 +61,7 @@ WebInspector.TimelineRuler.MinimumLeftDividerSpacing = 48;
 WebInspector.TimelineRuler.MinimumDividerSpacing = 64;
 
 WebInspector.TimelineRuler.AllowsTimeRangeSelectionStyleClassName = "allows-time-range-selection";
+WebInspector.TimelineRuler.CreatingSelectionStyleClassName = "creating-selection";
 WebInspector.TimelineRuler.DividerElementStyleClassName = "divider";
 WebInspector.TimelineRuler.DividerLabelElementStyleClassName = "label";
 
@@ -719,6 +720,9 @@ WebInspector.TimelineRuler.prototype = {
 
             this.selectionStartTime = Math.max(this.startTime, this.startTime + (Math.min(currentMousePosition, this._mouseDownPosition) * this.secondsPerPixel));
             this.selectionEndTime = Math.min(this.startTime + (Math.max(currentMousePosition, this._mouseDownPosition) * this.secondsPerPixel), this.endTime);
+
+            // Turn on col-resize cursor style once dragging begins, rather than on the initial mouse down.
+            this._element.classList.add(WebInspector.TimelineRuler.CreatingSelectionStyleClassName);
         }
 
         this._updateSelection(this._element.clientWidth, this.duration);
@@ -731,15 +735,19 @@ WebInspector.TimelineRuler.prototype = {
     {
         console.assert(event.button === 0);
 
-        if (!this._selectionIsMove && this.selectionEndTime - this.selectionStartTime < this.minimumSelectionDuration) {
-            // The section is smaller than allowed, grow in the direction of the drag to meet the minumum.
-            var currentMousePosition = event.pageX - this._rulerBoundingClientRect.left;
-            if (currentMousePosition > this._mouseDownPosition) {
-                this.selectionEndTime = Math.min(this.selectionStartTime + this.minimumSelectionDuration, this.endTime);
-                this.selectionStartTime = this.selectionEndTime - this.minimumSelectionDuration;
-            } else {
-                this.selectionStartTime = Math.max(this.startTime, this.selectionEndTime - this.minimumSelectionDuration);
-                this.selectionEndTime = this.selectionStartTime + this.minimumSelectionDuration;
+        if (!this._selectionIsMove) {
+            this._element.classList.remove(WebInspector.TimelineRuler.CreatingSelectionStyleClassName);
+
+            if (this.selectionEndTime - this.selectionStartTime < this.minimumSelectionDuration) {
+                // The section is smaller than allowed, grow in the direction of the drag to meet the minumum.
+                var currentMousePosition = event.pageX - this._rulerBoundingClientRect.left;
+                if (currentMousePosition > this._mouseDownPosition) {
+                    this.selectionEndTime = Math.min(this.selectionStartTime + this.minimumSelectionDuration, this.endTime);
+                    this.selectionStartTime = this.selectionEndTime - this.minimumSelectionDuration;
+                } else {
+                    this.selectionStartTime = Math.max(this.startTime, this.selectionEndTime - this.minimumSelectionDuration);
+                    this.selectionEndTime = this.selectionStartTime + this.minimumSelectionDuration;
+                }
             }
         }
 

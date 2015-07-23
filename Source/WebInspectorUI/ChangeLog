@@ -1,3 +1,19 @@
+2015-07-23  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: wrong cursor shown when selecting time interval from timeline overview
+        https://bugs.webkit.org/show_bug.cgi?id=147094
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineRuler.css:
+        (.timeline-ruler.allows-time-range-selection.creating-selection):
+        New cursor style for entire ruler element.
+
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler.prototype._handleMouseMove):
+        (WebInspector.TimelineRuler.prototype._handleMouseUp):
+        Toggle cursor style when dragging to create a new selection in the overview.
+
 2015-07-22  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Timeline should immediately start moving play head when starting a new recording

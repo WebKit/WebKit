@@ -33,6 +33,10 @@
     pointer-events: all;
 }
 
+.timeline-ruler.allows-time-range-selection.creating-selection {
+    cursor: col-resize;
+}
+
 .timeline-ruler > * {
     pointer-events: none;
 }
