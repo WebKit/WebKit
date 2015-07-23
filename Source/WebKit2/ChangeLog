@@ -1,3 +1,10 @@
+2015-07-23  Tim Horton  <timothy_horton@apple.com>
+
+        Remove files that were meant to be removed in r165014
+
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObject.h: Removed.
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObject.mm: Removed.
+
 2015-07-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to allow executing editing commands that require an argument
