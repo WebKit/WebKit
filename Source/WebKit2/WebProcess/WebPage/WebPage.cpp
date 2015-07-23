@@ -2147,9 +2147,9 @@ void WebPage::validateCommand(const String& commandName, uint64_t callbackID)
     send(Messages::WebPageProxy::ValidateCommandCallback(commandName, isEnabled, state, callbackID));
 }
 
-void WebPage::executeEditCommand(const String& commandName)
+void WebPage::executeEditCommand(const String& commandName, const String& argument)
 {
-    executeEditingCommand(commandName, String());
+    executeEditingCommand(commandName, argument);
 }
 
 void WebPage::restoreSession(const Vector<BackForwardListItemState>& itemStates)

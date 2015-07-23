@@ -1,5 +1,25 @@
 2015-07-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Add API to allow executing editing commands that require an argument
+        https://bugs.webkit.org/show_bug.cgi?id=146781
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add buttons to insert image/link to the MiniBrowser edit toolbar,
+        and test cases for insert image/link commands too.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (insertImageCommandCallback):
+        (insertLinkCommandCallback):
+        (browserWindowSetupEditorToolbar):
+        (browserWindowConstructed):
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestWebViewEditor.cpp:
+        (testWebViewEditorInsertImage):
+        (testWebViewEditorCreateLink):
+        (beforeAll):
+
+2015-07-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unregistering and re-registering a user message handler does not work
         https://bugs.webkit.org/show_bug.cgi?id=138142
 

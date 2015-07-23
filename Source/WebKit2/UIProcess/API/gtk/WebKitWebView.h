@@ -391,6 +391,11 @@ WEBKIT_API void
 webkit_web_view_execute_editing_command              (WebKitWebView             *web_view,
                                                       const gchar               *command);
 
+WEBKIT_API void
+webkit_web_view_execute_editing_command_with_argument(WebKitWebView             *web_view,
+                                                      const char                *command,
+                                                      const char                *argument);
+
 WEBKIT_API WebKitFindController *
 webkit_web_view_get_find_controller                  (WebKitWebView             *web_view);
 

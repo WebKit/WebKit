@@ -1,3 +1,34 @@
+2015-07-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to allow executing editing commands that require an argument
+        https://bugs.webkit.org/show_bug.cgi?id=146781
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Commands like InsertImage or CreateLink receive an argument, but
+        we only have webkit_web_view_execute_editing_command() that
+        doesn't receive any argument. This patch adds
+        webkit_web_view_execute_editing_command_with_argument() for those
+        commands. It also adds WEBKIT_EDITING_COMMAND_INSERT_IMAGE and
+        WEBKIT_EDITING_COMMAND_CREATE_LINK to the predefined editing commands.
+
+        * UIProcess/API/gtk/WebKitEditingCommands.h: Add
+        WEBKIT_EDITING_COMMAND_INSERT_IMAGE and WEBKIT_EDITING_COMMAND_CREATE_LINK.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_execute_editing_command_with_argument):
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt: Add new symbols.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::executeEditCommand): Pass also the argument
+        to the message.
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::executeEditCommand): Add the argument parameter
+        to the message handler.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: Add argument parameter
+        to ExecuteEditCommand message.
+
 2015-07-22  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Add ENABLE_WEBASSEMBLY feature flag for WebAssembly

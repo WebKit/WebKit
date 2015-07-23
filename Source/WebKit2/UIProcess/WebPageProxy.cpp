@@ -1547,7 +1547,7 @@ void WebPageProxy::setMaintainsInactiveSelection(bool newValue)
     m_maintainsInactiveSelection = newValue;
 }
     
-void WebPageProxy::executeEditCommand(const String& commandName)
+void WebPageProxy::executeEditCommand(const String& commandName, const String& argument)
 {
     static NeverDestroyed<String> ignoreSpellingCommandName(ASCIILiteral("ignoreSpelling"));
 
@@ -1557,7 +1557,7 @@ void WebPageProxy::executeEditCommand(const String& commandName)
     if (commandName == ignoreSpellingCommandName)
         ++m_pendingLearnOrIgnoreWordMessageCount;
 
-    m_process->send(Messages::WebPage::ExecuteEditCommand(commandName), m_pageID);
+    m_process->send(Messages::WebPage::ExecuteEditCommand(commandName, argument), m_pageID);
 }
 
 void WebPageProxy::setEditable(bool editable)

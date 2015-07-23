@@ -2945,6 +2945,27 @@ void webkit_web_view_execute_editing_command(WebKitWebView* webView, const char*
 }
 
 /**
+ * webkit_web_view_execute_editing_command_with_argument:
+ * @web_view: a #WebKitWebView
+ * @command: the command to execute
+ * @argument: the command argument
+ *
+ * Request to execute the given @command with @argument for @web_view. You can use
+ * webkit_web_view_can_execute_editing_command() to check whether
+ * it's possible to execute the command.
+ *
+ * Since: 2.10
+ */
+void webkit_web_view_execute_editing_command_with_argument(WebKitWebView* webView, const char* command, const char* argument)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(command);
+    g_return_if_fail(argument);
+
+    getPage(webView)->executeEditCommand(String::fromUTF8(command), String::fromUTF8(argument));
+}
+
+/**
  * webkit_web_view_get_find_controller:
  * @web_view: the #WebKitWebView
  *

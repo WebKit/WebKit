@@ -94,6 +94,31 @@ G_BEGIN_DECLS
  */
 #define WEBKIT_EDITING_COMMAND_REDO "Redo"
 
+/**
+ * WEBKIT_EDITING_COMMAND_INSERT_IMAGE:
+ *
+ * The insert image command. Creates an image element that is inserted at
+ * the current cursor position. It receives an URI as argument,
+ * that is used as the image source. This command should be executed with
+ * webkit_web_view_execute_editing_command_with_argument().
+ *
+ * Since: 2.10
+ */
+#define WEBKIT_EDITING_COMMAND_INSERT_IMAGE "InsertImage"
+
+/**
+ * WEBKIT_EDITING_COMMAND_CREATE_LINK:
+ *
+ * The create link command. Creates a link elment thst is inserted at
+ * the current cursor position. If there's a selection, the selected text
+ * will be used as the link text, otherwise the URL itself will be used.
+ * It receives the link URL as argument. This command should be executed
+ * with webkit_web_view_execute_editing_command_with_argument()
+ *
+ * Since: 2.10
+ */
+#define WEBKIT_EDITING_COMMAND_CREATE_LINK "CreateLink"
+
 G_END_DECLS
 
 #endif

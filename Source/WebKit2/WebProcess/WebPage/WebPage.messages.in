@@ -187,7 +187,7 @@ messages -> WebPage LegacyReceiver {
 
     SetEditable(bool editable)
     ValidateCommand(String name, uint64_t callbackID)
-    ExecuteEditCommand(String name)
+    ExecuteEditCommand(String name, String argument)
 
     DidRemoveEditCommand(uint64_t commandID)
     ReapplyEditCommand(uint64_t commandID)

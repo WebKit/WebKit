@@ -401,6 +401,58 @@ static void testWebViewEditorEditorStateTypingAttributes(EditorTest* test, gcons
     g_assert_cmpuint(typingAttributes, ==, WEBKIT_EDITOR_TYPING_ATTRIBUTE_NONE);
 }
 
+static void testWebViewEditorInsertImage(EditorTest* test, gconstpointer)
+{
+    test->loadHtml("<html><body></body></html>", "file:///");
+    test->waitUntilLoadFinished();
+    test->setEditable(true);
+
+    GUniquePtr<char> imagePath(g_build_filename(Test::getResourcesDir().data(), "blank.ico", nullptr));
+    GUniquePtr<char> imageURI(g_filename_to_uri(imagePath.get(), nullptr, nullptr));
+    webkit_web_view_execute_editing_command_with_argument(test->m_webView, WEBKIT_EDITING_COMMAND_INSERT_IMAGE, imageURI.get());
+    GUniqueOutPtr<GError> error;
+    WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('IMG')[0].src", &error.outPtr());
+    g_assert(javascriptResult);
+    g_assert(!error);
+    GUniquePtr<char> resultString(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(resultString.get(), ==, imageURI.get());
+}
+
+static void testWebViewEditorCreateLink(EditorTest* test, gconstpointer)
+{
+    test->loadHtml("<html><body onload=\"document.getSelection().selectAllChildren(document.body);\">webkitgtk.org</body></html>", nullptr);
+    test->waitUntilLoadFinished();
+    test->setEditable(true);
+
+    static const char* webkitGTKURL = "http://www.webkitgtk.org/";
+    webkit_web_view_execute_editing_command_with_argument(test->m_webView, WEBKIT_EDITING_COMMAND_CREATE_LINK, webkitGTKURL);
+    GUniqueOutPtr<GError> error;
+    WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('A')[0].href;", &error.outPtr());
+    g_assert(javascriptResult);
+    g_assert(!error);
+    GUniquePtr<char> resultString(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(resultString.get(), ==, webkitGTKURL);
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('A')[0].innerText;", &error.outPtr());
+    g_assert(javascriptResult);
+    g_assert(!error);
+    resultString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(resultString.get(), ==, "webkitgtk.org");
+
+    // When there isn't text selected, the URL is used as link text.
+    webkit_web_view_execute_editing_command(test->m_webView, "MoveToEndOfLine");
+    webkit_web_view_execute_editing_command_with_argument(test->m_webView, WEBKIT_EDITING_COMMAND_CREATE_LINK, webkitGTKURL);
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('A')[1].href;", &error.outPtr());
+    g_assert(javascriptResult);
+    g_assert(!error);
+    resultString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(resultString.get(), ==, webkitGTKURL);
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementsByTagName('A')[1].innerText;", &error.outPtr());
+    g_assert(javascriptResult);
+    g_assert(!error);
+    resultString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(resultString.get(), ==, webkitGTKURL);
+}
+
 void beforeAll()
 {
     EditorTest::add("WebKitWebView", "editable/editable", testWebViewEditorEditable);
@@ -409,6 +461,8 @@ void beforeAll()
     EditorTest::add("WebKitWebView", "select-all/non-editable", testWebViewEditorSelectAllNonEditable);
     EditorTest::add("WebKitWebView", "select-all/editable", testWebViewEditorSelectAllEditable);
     EditorTest::add("WebKitWebView", "editor-state/typing-attributes", testWebViewEditorEditorStateTypingAttributes);
+    EditorTest::add("WebKitWebView", "insert/image", testWebViewEditorInsertImage);
+    EditorTest::add("WebKitWebView", "insert/link", testWebViewEditorCreateLink);
 }
 
 void afterAll()

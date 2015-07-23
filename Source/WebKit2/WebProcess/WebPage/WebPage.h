@@ -970,7 +970,7 @@ private:
     void updateIsInWindow(bool isInitialState = false);
     void setViewState(WebCore::ViewState::Flags, bool wantsDidUpdateViewState, const Vector<uint64_t>& callbackIDs);
     void validateCommand(const String&, uint64_t);
-    void executeEditCommand(const String&);
+    void executeEditCommand(const String&, const String&);
     void setEditable(bool);
 
     void updateUserActivity();

@@ -1996,7 +1996,7 @@ void WebPage::applyAutocorrection(const String& correction, const String& origin
 
 void WebPage::executeEditCommandWithCallback(const String& commandName, uint64_t callbackID)
 {
-    executeEditCommand(commandName);
+    executeEditCommand(commandName, String());
     if (commandName == "toggleBold" || commandName == "toggleItalic" || commandName == "toggleUnderline")
         send(Messages::WebPageProxy::EditorStateChanged(editorState()));
     send(Messages::WebPageProxy::VoidCallback(callbackID));
