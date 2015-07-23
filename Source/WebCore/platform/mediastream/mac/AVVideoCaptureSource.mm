@@ -45,6 +45,7 @@ typedef AVCaptureDevice AVCaptureDeviceType;
 typedef AVCaptureDeviceInput AVCaptureDeviceInputType;
 typedef AVCaptureOutput AVCaptureOutputType;
 typedef AVCaptureVideoDataOutput AVCaptureVideoDataOutputType;
+typedef AVCaptureVideoPreviewLayer AVCaptureVideoPreviewLayerType;
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 
@@ -53,12 +54,14 @@ SOFT_LINK_CLASS(AVFoundation, AVCaptureDevice)
 SOFT_LINK_CLASS(AVFoundation, AVCaptureDeviceInput)
 SOFT_LINK_CLASS(AVFoundation, AVCaptureOutput)
 SOFT_LINK_CLASS(AVFoundation, AVCaptureVideoDataOutput)
+SOFT_LINK_CLASS(AVFoundation, AVCaptureVideoPreviewLayer)
 
 #define AVCaptureConnection getAVCaptureConnectionClass()
 #define AVCaptureDevice getAVCaptureDeviceClass()
 #define AVCaptureDeviceInput getAVCaptureDeviceInputClass()
 #define AVCaptureOutput getAVCaptureOutputClass()
 #define AVCaptureVideoDataOutput getAVCaptureVideoDataOutputClass()
+#define AVCaptureVideoPreviewLayer getAVCaptureVideoPreviewLayerClass()
 
 SOFT_LINK_POINTER(AVFoundation, AVMediaTypeAudio, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVMediaTypeVideo, NSString *)
@@ -217,6 +220,8 @@ void AVVideoCaptureSource::setupCaptureSession()
         [session() addOutput:videoOutput.get()];
     
     m_videoConnection = adoptNS([videoOutput.get() connectionWithMediaType:AVMediaTypeVideo]);
+    
+    m_videoPreviewLayer = adoptNS([[AVCaptureVideoPreviewLayer alloc] initWithSession:session()]);
 }
 
 void AVVideoCaptureSource::calculateFramerate(CMSampleBufferRef sampleBuffer)
