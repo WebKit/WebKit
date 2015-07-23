@@ -1,3 +1,21 @@
+2015-07-22  Filip Pizlo  <fpizlo@apple.com>
+
+        Simplify things like CompareEq(@x,@x)
+        https://bugs.webkit.org/show_bug.cgi?id=145850
+
+        Reviewed by Sam Weinig.
+        
+        This simplifies x==x to true, except in cases where x might be a double (in which case this
+        might still be false if x is NaN).
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * tests/stress/nan-equal-untyped.js: Added.
+        (foo):
+        (test):
+        * tests/stress/nan-equal.js: Added.
+        (foo):
+
 2015-07-22  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Timeline should immediately start moving play head when starting a new recording

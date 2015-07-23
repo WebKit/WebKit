@@ -1189,6 +1189,34 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             }
         }
         
+        if (node->child1() == node->child2()) {
+            if (node->isBinaryUseKind(Int32Use) ||
+                node->isBinaryUseKind(Int52RepUse) ||
+                node->isBinaryUseKind(StringUse) ||
+                node->isBinaryUseKind(BooleanUse) ||
+                node->isBinaryUseKind(StringIdentUse) ||
+                node->isBinaryUseKind(ObjectUse) ||
+                node->isBinaryUseKind(ObjectUse, ObjectOrOtherUse) ||
+                node->isBinaryUseKind(ObjectOrOtherUse, ObjectUse)) {
+                switch (node->op()) {
+                case CompareLess:
+                case CompareGreater:
+                    setConstant(node, jsBoolean(false));
+                    break;
+                case CompareLessEq:
+                case CompareGreaterEq:
+                case CompareEq:
+                case CompareEqConstant:
+                    setConstant(node, jsBoolean(true));
+                    break;
+                default:
+                    DFG_CRASH(m_graph, node, "Unexpected node type");
+                    break;
+                }
+                break;
+            }
+        }
+        
         forNode(node).setType(SpecBoolean);
         break;
     }
@@ -1221,6 +1249,24 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         }
         
+        if (node->child1() == node->child2()) {
+            if (node->isBinaryUseKind(BooleanUse) ||
+                node->isBinaryUseKind(Int32Use) ||
+                node->isBinaryUseKind(Int52RepUse) ||
+                node->isBinaryUseKind(StringUse) ||
+                node->isBinaryUseKind(StringIdentUse) ||
+                node->isBinaryUseKind(ObjectUse) ||
+                node->isBinaryUseKind(MiscUse, UntypedUse) ||
+                node->isBinaryUseKind(UntypedUse, MiscUse) ||
+                node->isBinaryUseKind(StringIdentUse, NotStringVarUse) ||
+                node->isBinaryUseKind(NotStringVarUse, StringIdentUse) ||
+                node->isBinaryUseKind(StringUse, UntypedUse) ||
+                node->isBinaryUseKind(UntypedUse, StringUse)) {
+                setConstant(node, jsBoolean(true));
+                break;
+            }
+        }
+
         forNode(node).setType(SpecBoolean);
         break;
     }
