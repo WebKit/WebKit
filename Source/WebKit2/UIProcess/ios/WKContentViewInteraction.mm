@@ -3368,7 +3368,9 @@ static bool isAssistableInputType(InputType type)
     _page->stopInteraction();
 
     id<WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([_webView UIDelegate]);
-    if ([uiDelegate respondsToSelector:@selector(_webView:didDismissPreviewViewController:)])
+    if ([uiDelegate respondsToSelector:@selector(_webView:didDismissPreviewViewController:committing:)])
+        [uiDelegate _webView:_webView didDismissPreviewViewController:viewController committing:committing];
+    else if ([uiDelegate respondsToSelector:@selector(_webView:didDismissPreviewViewController:)])
         [uiDelegate _webView:_webView didDismissPreviewViewController:viewController];
 }
 
