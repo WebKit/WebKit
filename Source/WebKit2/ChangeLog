@@ -1,3 +1,15 @@
+2015-07-22  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS] Adjust the preview architecture
+        https://bugs.webkit.org/show_bug.cgi?id=147203
+        <rdar://problem/21945775>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _dataForPreviewItemController:atPosition:type:]):
+        Link previews should win over image previews if both are possible.
+
 2015-07-22  James Savage  <james.savage@apple.com>
 
         Use updated CoreAnimation snapshot SPI.

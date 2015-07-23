@@ -3263,8 +3263,7 @@ static bool isAssistableInputType(InputType type)
             dataForPreview[UIPreviewDataLink] = [NSURL _web_URLWithWTFString:_positionInformation.imageURL];
         else
             dataForPreview[UIPreviewDataLink] = [NSURL _web_URLWithWTFString:_positionInformation.url];
-    }
-    if (canShowImagePreview) {
+    } else if (canShowImagePreview) {
         *type = UIPreviewItemTypeImage;
         dataForPreview[UIPreviewDataLink] = [NSURL _web_URLWithWTFString:_positionInformation.imageURL];
     }
