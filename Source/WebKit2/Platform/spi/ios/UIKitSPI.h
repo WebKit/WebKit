@@ -48,7 +48,6 @@
 #import <UIKit/UIPickerContentView_Private.h>
 #import <UIKit/UIPickerView_Private.h>
 #import <UIKit/UIPresentationController_Private.h>
-#import <UIKit/UIPreviewItemController.h>
 #import <UIKit/UIResponder_Private.h>
 #import <UIKit/UIScrollView_Private.h>
 #import <UIKit/UIStringDrawing_Private.h>
@@ -74,6 +73,10 @@
 #import <UIKit/_UIHighlightView.h>
 #import <UIKit/_UINavigationInteractiveTransition.h>
 #import <UIKit/_UINavigationParallaxTransition.h>
+
+#if HAVE(LINK_PREVIEWS)
+#import <UIKit/UIPreviewItemController.h>
+#endif
 
 // FIXME: Unconditionally include this file when a new SDK is available. <rdar://problem/20150072>
 #if defined(__has_include) && __has_include(<UIKit/UIDocumentMenuViewController_Private.h>)

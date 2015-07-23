@@ -1,3 +1,9 @@
+2015-07-23  Timothy Horton  <timothy_horton@apple.com>
+
+        Fix the build
+
+        * Platform/spi/ios/UIKitSPI.h:
+
 2015-07-23  Tim Horton  <timothy_horton@apple.com>
 
         Remove files that were meant to be removed in r173929
