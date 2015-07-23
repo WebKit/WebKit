@@ -1,3 +1,16 @@
+2015-07-22  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r187196.
+        https://bugs.webkit.org/show_bug.cgi?id=147213
+
+        broke all the iOS builds (Requested by thorton on #webkit).
+
+        Reverted changeset:
+
+        "Use updated CoreAnimation snapshot SPI."
+        https://bugs.webkit.org/show_bug.cgi?id=147197
+        http://trac.webkit.org/changeset/187196
+
 2015-07-22  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build
