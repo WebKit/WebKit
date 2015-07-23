@@ -1,3 +1,12 @@
+2015-07-23  Alexey Proskuryakov  <ap@apple.com>
+
+        Windows test result gardening after Mac libxml changes.
+
+        * platform/win/fast/dom/adopt-attribute-crash-expected.txt: Added.
+        * platform/win/fast/parser/xml-colon-entity-expected.txt: Added.
+        * platform/win/fast/parser/xml-declaration-missing-ending-mark-expected.txt: Added.
+        * platform/win/svg/custom/bug78807-expected.txt: Added.
+
 2015-07-19  Matt Rajca  <mrajca@apple.com>
 
         Media Session: add support for ducking media elements
