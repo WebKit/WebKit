@@ -1,3 +1,14 @@
+2015-07-24  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r187139. rdar://problem/21847618
+
+    2015-07-21  Filip Pizlo  <fpizlo@apple.com>
+
+            Unreviewed, fix a lot of tests. Need to initialize WTF threading sooner.
+
+            * jsc.cpp:
+            (main):
+
 2015-07-23  Lucas Forschler  <lforschler@apple.com>
 
         Merge r187125
