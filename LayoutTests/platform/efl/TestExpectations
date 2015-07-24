@@ -2080,15 +2080,6 @@ webkit.org/b/136406 compositing/tiling/huge-layer-with-layer-children.html [ Fai
 webkit.org/b/136406 compositing/tiling/tiled-layer-resize.html [ Failure ]
 webkit.org/b/136406 compositing/visibility/visibility-image-layers-dynamic.html [ Failure ]
 
-# Started failing since r167808
-webkit.org/b/141496 fast/multicol/client-rects-spanners-complex.html [ Failure ]
-webkit.org/b/141496 fast/multicol/client-rects-spanners.html [ Failure ]
-webkit.org/b/141496 fast/multicol/client-rects.html [ Failure ]
-webkit.org/b/141496 fast/multicol/layers-split-across-columns.html [ Failure ]
-webkit.org/b/141496 fast/multicol/newmulticol/client-rects.html [ Failure ]
-webkit.org/b/141496 fast/multicol/pagination/LeftToRight-tb-hittest.html [ Failure ]
-webkit.org/b/141496 fast/multicol/pagination/RightToLeft-rl-hittest.html [ Failure ]
-
 # Started failing since r179055
 webkit.org/b/141497 fast/media/mq-any-hover-matchMedia.html [ Failure ]
 webkit.org/b/141497 fast/media/mq-any-hover-styling.html [ Failure ]
