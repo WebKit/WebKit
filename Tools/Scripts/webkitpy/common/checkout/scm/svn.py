@@ -273,9 +273,10 @@ class SVN(SCM, SVNRepository):
         elif changed_files == None:
             changed_files = []
         script_path = self._filesystem.join(self.checkout_root, "Tools", "Scripts", "svn-create-patch")
-        return self.run([script_path, "--no-style"] + changed_files,
-            cwd=self.checkout_root, return_stderr=False,
-            decode_output=False)
+        return self.fix_changelog_patch(
+                self.run([script_path, "--no-style"] + changed_files,
+                    cwd=self.checkout_root, return_stderr=False,
+                    decode_output=False))
 
     def committer_email_for_revision(self, revision):
         return self._run_svn(["propget", "svn:author", "--revprop", "-r", revision]).rstrip()

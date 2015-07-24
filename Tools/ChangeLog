@@ -1,3 +1,33 @@
+2015-07-24  Basile Clement  <basile_clement@apple.com>
+
+        Call fixChangeLogPatch when generating patches from webkit-patch
+        https://bugs.webkit.org/show_bug.cgi?id=147248
+
+        Reviewed by Geoffrey Garen.
+
+        When two consecutive patches are from the same author, diff tools
+        create wrong-looking diffs for ChangeLog files where the apparent added
+        author is actually the previous patch's author line, making it awkward
+        to read - and things only get worse when committing a patch and a
+        followup fix for the same bug shortly after.
+
+        We have a perl function in VCSUtils.pm, fixChangeLogPatch, to corrects
+        this, which we use in perl scripts (svn-create-patch et al). But it is
+        not used by webkit-patch, which is a python script, and thus creates
+        "bad" diffs.
+
+        In the long term, we should probably port fixChangeLogPatch to python -
+        but in the short term, let's make webkit-patch call perl to run
+        fixChangeLogPatch. We are already making various external calls there
+        anyway.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git.create_patch):
+        * Scripts/webkitpy/common/checkout/scm/scm.py:
+        (SCM.fix_changelog_patch):
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        (SVN.create_patch):
+
 2015-07-24  Dean Johnson  <dean_johnson@apple.com>
 
         commit-queue flags in webkit-patch are confusing

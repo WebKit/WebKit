@@ -77,6 +77,12 @@ class SCM:
                            return_stderr=return_stderr,
                            decode_output=decode_output)
 
+    def fix_changelog_patch(self, diff):
+        return self.run(
+                ['perl', '-e', 'use VCSUtils; print(fixChangeLogPatch(join("", <STDIN>))->{"patch"});'],
+                cwd=self._filesystem.join(self.checkout_root, 'Tools', 'Scripts'),
+                input=diff, decode_output=False)
+
     # SCM always returns repository relative path, but sometimes we need
     # absolute paths to pass to rm, etc.
     def absolute_path(self, repository_relative_path):
