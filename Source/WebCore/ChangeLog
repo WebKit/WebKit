@@ -1,5 +1,38 @@
 2015-07-24  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r187271. rdar://problem/21929247
+
+    2015-07-22  Simon Fraser  <simon.fraser@apple.com>
+
+            Layer z-ordering is incorrect when scrolling on page witih position:fixed
+            https://bugs.webkit.org/show_bug.cgi?id=147220
+            rdar://problem/15849697&21929247
+
+            Reviewed by Dean Jackson.
+
+            Overlap testing for compositing uses the currently laid out position of fixed
+            elements, without taking into account the fact that async scrolling can move
+            them around, and possibly under other non-composited elements. This manifested
+            as position:fixed elements moving over other elements on some pages when
+            scrolling, when they should have moved behind.
+
+            Fix by expanding the overlap map entry for position:fixed elements to create
+            an rect for the area they cover at all scroll locations, taking min and max
+            scroll offsets into account.
+
+            Also add a couple more LOG(Compositing) statements.
+
+            Tests: compositing/layer-creation/fixed-overlap-extent-rtl.html
+                   compositing/layer-creation/fixed-overlap-extent.html
+
+            * rendering/RenderLayerCompositor.cpp:
+            (WebCore::fixedPositionOffset):
+            (WebCore::RenderLayerCompositor::computeExtent):
+            (WebCore::RenderLayerCompositor::needsFixedRootBackgroundLayer):
+            (WebCore::RenderLayerCompositor::rootBackgroundTransparencyChanged):
+
+2015-07-24  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r187219. rdar://problem/21032083
 
     2015-07-23  Timothy Horton  <timothy_horton@apple.com>
