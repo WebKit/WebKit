@@ -758,6 +758,10 @@ def runFTLNoCJITNoAccessInlining
     run("ftl-no-cjit-no-access-inlining", "--enableAccessInlining=false", *(FTL_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
 end
 
+def runFTLNoCJITSmallPool
+    run("ftl-no-cjit-small-pool", "--jitMemoryReservationSize=50000", *(FTL_OPTIONS + NO_CJIT_OPTIONS)) if $enableFTL
+end
+
 def defaultRun
     runDefault
     runAlwaysTriggerCopyPhase
@@ -771,6 +775,7 @@ def defaultRun
         runFTLNoCJITNoInlineValidate
         runFTLEager
         runFTLEagerNoCJITValidate
+        runFTLNoCJITSmallPool
     end
 end
 
