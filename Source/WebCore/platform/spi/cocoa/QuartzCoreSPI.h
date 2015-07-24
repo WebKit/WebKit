@@ -32,9 +32,12 @@
 #include <QuartzCore/CARenderServer.h>
 
 #ifdef __OBJC__
-#import <QuartzCore/CADisplay.h>
 #import <QuartzCore/CALayerHost.h>
 #import <QuartzCore/CALayerPrivate.h>
+
+#if PLATFORM(IOS)
+#import <QuartzCore/CADisplay.h>
+#endif
 
 // FIXME: As a workaround for <rdar://problem/18985152>, we conditionally enclose the following
 // headers in an extern "C" linkage block to make it suitable for Objective-C++ use. Once this

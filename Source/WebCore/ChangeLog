@@ -1,5 +1,15 @@
 2015-07-24  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r187216. rdar://problem/21032083
+
+    2015-07-22  Tim Horton  <timothy_horton@apple.com>
+
+            Try to fix the build
+
+            * platform/spi/cocoa/QuartzCoreSPI.h:
+
+2015-07-24  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r187215. rdar://problem/21032083
 
     2015-07-22  James Savage  <james.savage@apple.com>
