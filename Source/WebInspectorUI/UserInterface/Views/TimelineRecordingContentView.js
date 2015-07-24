@@ -514,10 +514,6 @@ WebInspector.TimelineRecordingContentView.prototype = {
         // We might want to have the backend send a "start" record to get current time moving.
 
         for (var timeline of this._recording.timelines.values()) {
-            // The rendering frame timeline doesn't use a time axis.
-            if (timeline.type === WebInspector.TimelineRecord.Type.RenderingFrame)
-                continue;
-
             var lastRecord = timeline.records.lastValue;
             if (!lastRecord)
                 continue;
