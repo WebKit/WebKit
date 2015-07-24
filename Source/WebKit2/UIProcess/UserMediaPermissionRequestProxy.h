@@ -40,8 +40,10 @@ public:
     void deny();
 
     void invalidate();
-    
+
+#if ENABLE(MEDIA_STREAM)
     const String& getDeviceNameForUID(const String&, WebCore::RealtimeMediaSource::Type);
+#endif
 
     bool requiresAudio() const { return m_requiresAudio; }
     bool requiresVideo() const { return m_requiresVideo; }

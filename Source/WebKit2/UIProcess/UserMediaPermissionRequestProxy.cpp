@@ -51,10 +51,12 @@ void UserMediaPermissionRequestProxy::invalidate()
     m_manager.invalidateRequests();
 }
 
+#if ENABLE(MEDIA_STREAM)
 const String& UserMediaPermissionRequestProxy::getDeviceNameForUID(const String& UID, WebCore::RealtimeMediaSource::Type type)
 {
     return WebCore::RealtimeMediaSourceCenter::singleton().sourceWithUID(UID, type, nullptr)->label();
 }
+#endif
 
 } // namespace WebKit
 
