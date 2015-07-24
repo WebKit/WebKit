@@ -1,5 +1,21 @@
 2015-07-24  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r187288. rdar://problem/21929532
+
+    2015-07-23  Dan Bernstein  <mitz@apple.com>
+
+            <rdar://problem/21929532> REGRESSION (r184026): Safari AutoFill with Contact info for phone number is broken
+            https://bugs.webkit.org/show_bug.cgi?id=147249
+
+            Reviewed by Sam Weinig.
+
+            * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+            (encodeObject): Use encodeString only for strings that encode as NSString or
+            NSMutableString. It can’t encode arbitrary NSString subclasses.
+            (decodeObject): Use decodeString for NSMutableString as well.
+
+2015-07-24  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r187286. rdar://problem/21953359
 
     2015-07-23  Zalan Bujtas  <zalan@apple.com>
