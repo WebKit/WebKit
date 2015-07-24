@@ -2175,7 +2175,6 @@ webkit.org/b/142763 fast/images/animated-gif-window-resizing.html [ Timeout ]
 webkit.org/b/143364 fast/fixed-layout [ Skip ]
 
 webkit.org/b/131044 media/audio-controls-rendering.html [ Failure ]
-webkit.org/b/131044 media/controls-right-click-on-timebar.html [ Failure ]
 webkit.org/b/131044 media/controls-strict.html [ Failure ]
 webkit.org/b/131044 media/controls-without-preload.html [ Failure ]
 webkit.org/b/131044 media/media-controls-invalid-url.html [ Failure ]
@@ -2216,7 +2215,6 @@ compositing/tiling/transform-origin-tiled.html [ Failure ]
 webkit.org/b/144737 inspector-protocol [ Skip ]
 webkit.org/b/144737 http/tests/inspector-protocol [ Skip ]
 
-webkit.org/b/145632 fast/animation/request-animation-frame-throttle-subframe-display-none.html [ Timeout ]
 webkit.org/b/145632 fast/animation/request-animation-frame-throttle-subframe.html [ Timeout ]
 
 # Below tests are failed since efl buildbot disable USE_NATIVE_XDISPLAY.
@@ -2235,7 +2233,6 @@ fast/text/midword-break-before-surrogate-pair-2.html [ Failure ]
 fast/text/simple-line-layout-text-stroke-width.html [ Failure ]
 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Failure ]
 http/tests/local/link-stylesheet-load-order-preload.html [ Failure ]
-http/tests/local/link-stylesheet-load-order.html [ Failure ]
 http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html [ Failure ]
 http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Failure ]
 js/dom/global-constructors-attributes-idb.html [ Failure ]
@@ -2270,10 +2267,7 @@ mathml/presentation/mo-stretchy-vertical-bar.html [ ImageOnlyFailure ]
 mathml/presentation/scripts-font-size.html [ ImageOnlyFailure ]
 mathml/presentation/style-color-sqrt.html [ ImageOnlyFailure ]
 animations/trigger-container-scroll-empty.html [ Failure ]
-accessibility/math-multiscript-attributes.html [ Failure ]
 accessibility/transformed-element.html [ Failure ]
-
-webkit.org/b/146139 fast/css/named-images.html [ Missing ]
 
 webkit.org/b/146233 fast/forms/listbox-visible-size.html [ Failure ]
 

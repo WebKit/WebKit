@@ -1,5 +1,11 @@
 2015-07-24  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [EFL] Unreviewed gardening, unskip now passing tests.
+
+        * platform/efl/TestExpectations:
+
+2015-07-24  Csaba Osztrogonác  <ossy@webkit.org>
+
         [EFL] Unreviewed gardening. Updated since MEDIA_STREAM is enabled.
 
         * platform/efl/js/dom/constructor-length-expected.txt:
