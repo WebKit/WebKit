@@ -1,5 +1,17 @@
 2015-07-24  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r187212. rdar://problem/21945775
+
+    2015-07-22  Timothy Horton  <timothy_horton@apple.com>
+
+            Fix the build
+
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView setupInteraction]):
+            (-[WKContentView cleanupInteraction]):
+
+2015-07-24  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r187199. rdar://problem/21945775
 
     2015-07-22  Tim Horton  <timothy_horton@apple.com>

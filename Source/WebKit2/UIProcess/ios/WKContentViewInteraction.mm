@@ -341,7 +341,9 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
     [_longPressGestureRecognizer setDelegate:self];
     [self addGestureRecognizer:_longPressGestureRecognizer.get()];
 
+#if HAVE(LINK_PREVIEW)
     [self _registerPreview];
+#endif
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_resetShowingTextStyle:) name:UIMenuControllerDidHideMenuNotification object:nil];
     _showingTextStyleOptions = NO;
@@ -398,7 +400,10 @@ static UIWebSelectionMode toUIWebSelectionMode(WKSelectionGranularity granularit
         _inspectorNodeSearchGestureRecognizer = nil;
     }
 
+#if HAVE(LINK_PREVIEW)
     [self _unregisterPreview];
+#endif
+
     if (_fileUploadPanel) {
         [_fileUploadPanel setDelegate:nil];
         [_fileUploadPanel dismiss];
