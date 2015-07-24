@@ -947,7 +947,7 @@ void Structure::getPropertyNamesFromStructure(VM& vm, PropertyNameArray& propert
     for (PropertyTable::iterator iter = propertyTable()->begin(); iter != end; ++iter) {
         ASSERT(hasNonEnumerableProperties() || !(iter->attributes & DontEnum));
         if (!(iter->attributes & DontEnum) || mode.includeDontEnumProperties()) {
-            if (iter->key->isSymbol() && !mode.includeSymbolProperties())
+            if (iter->key->isSymbol() && !propertyNames.includeSymbolProperties())
                 continue;
             if (knownUnique)
                 propertyNames.addKnownUnique(iter->key);

@@ -78,16 +78,19 @@ template<typename Type>
 void GenericArguments<Type>::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& array, EnumerationMode mode)
 {
     Type* thisObject = jsCast<Type*>(object);
-    
-    for (unsigned i = 0; i < thisObject->internalLength(); ++i) {
-        if (!thisObject->canAccessIndexQuickly(i))
-            continue;
-        array.add(Identifier::from(exec, i));
+
+    if (array.includeStringProperties()) {
+        for (unsigned i = 0; i < thisObject->internalLength(); ++i) {
+            if (!thisObject->canAccessIndexQuickly(i))
+                continue;
+            array.add(Identifier::from(exec, i));
+        }
     }
+
     if (mode.includeDontEnumProperties() && !thisObject->overrodeThings()) {
         array.add(exec->propertyNames().length);
         array.add(exec->propertyNames().callee);
-        if (mode.includeSymbolProperties())
+        if (array.includeSymbolProperties())
             array.add(exec->propertyNames().iteratorSymbol);
     }
     Base::getOwnPropertyNames(thisObject, exec, array, mode);

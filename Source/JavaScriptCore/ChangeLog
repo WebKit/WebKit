@@ -1,3 +1,103 @@
+2015-07-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Object.getOwnPropertySymbols on large list takes very long
+        https://bugs.webkit.org/show_bug.cgi?id=146137
+
+        Reviewed by Mark Lam.
+
+        Before this patch, Object.getOwnPropertySymbols collects all the names including strings.
+        And after it's done, filter the names to only retrieve the symbols.
+        But it's so time consuming if the given object is a large non-holed array since it has
+        many indexed properties and all the indexes have to be converted to uniqued_strings and
+        added to the collection of property names (though they may not be of the requested type
+        and will be filtered out later)
+
+        This patch introduces PropertyNameMode.
+        We leverage this mode in 2 places.
+
+        1. PropertyNameArray side
+        It is set in PropertyNameArray and it filters the incoming added identifiers based on the mode.
+        It ensures that PropertyNameArray doesn't become so large in the pathological case.
+        And it ensures that non-expected typed keys by the filter (Symbols or Strings) are never added
+        to the property name array collections.
+        However it does not solve the whole problem because the huge array still incurs the many
+        "indexed property to uniqued string" conversion and the large iteration before adding the keys
+        to the property name array.
+
+        2. getOwnPropertyNames side
+        So we can use the PropertyNameMode in the caller side (getOwnPropertyNames) as a **hint**.
+        When the large iteration may occur, the caller side can use the PropertyNameMode as a hint to
+        avoid the iteration.
+        But we cannot exclusively rely on these caller side checks because it would require that we
+        exhaustively add the checks to all custom implementations of getOwnPropertyNames as well.
+        This process requires manual inspection of many pieces of code, and is error prone. Instead,
+        we only apply the caller side check in a few strategic places where it is known to yield
+        performance benefits; and we rely on the filter in PropertyNameArray::add() to reject the wrong
+        types of properties for all other calls to PropertyNameArray::add().
+
+        In this patch, there's a concept in use that is not clear just from reading the code, and hence
+        should be documented here. When selecting the PropertyNameMode for the PropertyNameArray to be
+        instantiated, we apply the following logic:
+
+        1. Only JavaScriptCore code is aware of ES6 Symbols.
+        We can assume that pre-existing external code that interfaces JSC are only looking for string named properties. This includes:
+            a. WebCore bindings
+            b. Serializer bindings
+            c. NPAPI bindings
+            d. Objective C bindings
+        2. In JSC, code that compute object storage space needs to iterate both Symbol and String named properties. Hence, use PropertyNameMode::Both.
+        3. In JSC, ES6 APIs that work with Symbols should use PropertyNameMode::Symbols.
+        4. In JSC, ES6 APIs that work with String named properties should use PropertyNameMode::Strings.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectCopyPropertyNames):
+        * bindings/ScriptValue.cpp:
+        (Deprecated::jsToInspectorValue):
+        * bytecode/ObjectAllocationProfile.h:
+        (JSC::ObjectAllocationProfile::possibleDefaultPropertyCount):
+        * runtime/EnumerationMode.h:
+        (JSC::EnumerationMode::EnumerationMode):
+        (JSC::EnumerationMode::includeSymbolProperties): Deleted.
+        * runtime/GenericArgumentsInlines.h:
+        (JSC::GenericArguments<Type>::getOwnPropertyNames):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::getOwnPropertyNames):
+        * runtime/JSLexicalEnvironment.cpp:
+        (JSC::JSLexicalEnvironment::getOwnNonIndexPropertyNames):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Stringifier):
+        (JSC::Stringifier::Holder::appendNextProperty):
+        (JSC::Walker::walk):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertyNames):
+        * runtime/JSPropertyNameEnumerator.cpp:
+        (JSC::JSPropertyNameEnumerator::create):
+        * runtime/JSPropertyNameEnumerator.h:
+        (JSC::propertyNameEnumerator):
+        * runtime/JSSymbolTableObject.cpp:
+        (JSC::JSSymbolTableObject::getOwnNonIndexPropertyNames):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorGetOwnPropertyNames):
+        (JSC::objectConstructorGetOwnPropertySymbols):
+        (JSC::objectConstructorKeys):
+        (JSC::defineProperties):
+        (JSC::objectConstructorSeal):
+        (JSC::objectConstructorFreeze):
+        (JSC::objectConstructorIsSealed):
+        (JSC::objectConstructorIsFrozen):
+        * runtime/PropertyNameArray.h:
+        (JSC::PropertyNameArray::PropertyNameArray):
+        (JSC::PropertyNameArray::mode):
+        (JSC::PropertyNameArray::addKnownUnique):
+        (JSC::PropertyNameArray::add):
+        (JSC::PropertyNameArray::isUidMatchedToTypeMode):
+        (JSC::PropertyNameArray::includeSymbolProperties):
+        (JSC::PropertyNameArray::includeStringProperties):
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::getOwnPropertyNames):
+        * runtime/Structure.cpp:
+        (JSC::Structure::getPropertyNamesFromStructure):
+
 2015-07-24  Saam barati  <saambarati1@gmail.com>
 
         [ES6] Add support for default parameters

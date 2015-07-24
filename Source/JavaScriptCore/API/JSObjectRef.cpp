@@ -622,7 +622,7 @@ JSPropertyNameArrayRef JSObjectCopyPropertyNames(JSContextRef ctx, JSObjectRef o
 
     JSObject* jsObject = toJS(object);
     JSPropertyNameArrayRef propertyNames = new OpaqueJSPropertyNameArray(vm);
-    PropertyNameArray array(vm);
+    PropertyNameArray array(vm, PropertyNameMode::Strings);
     jsObject->methodTable()->getPropertyNames(jsObject, exec, array, EnumerationMode());
 
     size_t size = array.size();

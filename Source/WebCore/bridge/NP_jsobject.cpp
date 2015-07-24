@@ -445,7 +445,7 @@ bool _NPN_Enumerate(NPP, NPObject* o, NPIdentifier** identifier, uint32_t* count
         
         ExecState* exec = rootObject->globalObject()->globalExec();
         JSLockHolder lock(exec);
-        PropertyNameArray propertyNames(exec);
+        PropertyNameArray propertyNames(exec, PropertyNameMode::Strings);
 
         obj->imp->methodTable()->getPropertyNames(obj->imp, exec, propertyNames, EnumerationMode());
         unsigned size = static_cast<unsigned>(propertyNames.size());

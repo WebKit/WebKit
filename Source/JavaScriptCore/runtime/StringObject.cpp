@@ -146,9 +146,11 @@ bool StringObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned
 void StringObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     StringObject* thisObject = jsCast<StringObject*>(object);
-    int size = thisObject->internalValue()->length();
-    for (int i = 0; i < size; ++i)
-        propertyNames.add(Identifier::from(exec, i));
+    if (propertyNames.includeStringProperties()) {
+        int size = thisObject->internalValue()->length();
+        for (int i = 0; i < size; ++i)
+            propertyNames.add(Identifier::from(exec, i));
+    }
     if (mode.includeDontEnumProperties())
         propertyNames.add(exec->propertyNames().length);
     return JSObject::getOwnPropertyNames(thisObject, exec, propertyNames, mode);

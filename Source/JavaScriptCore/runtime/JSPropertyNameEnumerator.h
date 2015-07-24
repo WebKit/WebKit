@@ -115,7 +115,7 @@ inline JSPropertyNameEnumerator* propertyNameEnumerator(ExecState* exec, JSObjec
 
     uint32_t numberStructureProperties = 0;
 
-    PropertyNameArray propertyNames(exec);
+    PropertyNameArray propertyNames(exec, PropertyNameMode::Strings);
 
     if (structure->canAccessPropertiesQuickly() && indexedLength == base->getArrayLength()) {
         base->methodTable(vm)->getStructurePropertyNames(base, exec, propertyNames, EnumerationMode());

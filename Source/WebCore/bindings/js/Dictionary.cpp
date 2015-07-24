@@ -62,7 +62,7 @@ bool Dictionary::getOwnPropertiesAsStringHashMap(HashMap<String, String>& map) c
     JSObject* object =  m_dictionary.initializerObject();
     ExecState* exec = m_dictionary.execState();
 
-    PropertyNameArray propertyNames(exec);
+    PropertyNameArray propertyNames(exec, PropertyNameMode::Strings);
     JSObject::getOwnPropertyNames(object, exec, propertyNames, EnumerationMode());
     for (PropertyNameArray::const_iterator it = propertyNames.begin(); it != propertyNames.end(); ++it) {
         String stringKey = it->string();
@@ -87,7 +87,7 @@ bool Dictionary::getOwnPropertyNames(Vector<String>& names) const
     JSObject* object =  m_dictionary.initializerObject();
     ExecState* exec = m_dictionary.execState();
 
-    PropertyNameArray propertyNames(exec);
+    PropertyNameArray propertyNames(exec, PropertyNameMode::Strings);
     JSObject::getOwnPropertyNames(object, exec, propertyNames, EnumerationMode());
     for (PropertyNameArray::const_iterator it = propertyNames.begin(); it != propertyNames.end(); ++it) {
         String stringKey = it->string();

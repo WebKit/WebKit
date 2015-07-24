@@ -423,9 +423,11 @@ void JSGenericTypedArrayView<Adaptor>::getOwnPropertyNames(
     JSObject* object, ExecState* exec, PropertyNameArray& array, EnumerationMode mode)
 {
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(object);
-    
-    for (unsigned i = 0; i < thisObject->m_length; ++i)
-        array.add(Identifier::from(exec, i));
+
+    if (array.includeStringProperties()) {
+        for (unsigned i = 0; i < thisObject->m_length; ++i)
+            array.add(Identifier::from(exec, i));
+    }
     
     return Base::getOwnPropertyNames(object, exec, array, mode);
 }

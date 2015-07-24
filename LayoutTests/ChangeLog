@@ -1,3 +1,15 @@
+2015-07-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Object.getOwnPropertySymbols on large list takes very long
+        https://bugs.webkit.org/show_bug.cgi?id=146137
+
+        Reviewed by Mark Lam.
+
+        * js/regress/object-get-own-property-symbols-on-large-array-expected.txt: Added.
+        * js/regress/object-get-own-property-symbols-on-large-array.html: Added.
+        * js/regress/script-tests/object-get-own-property-symbols-on-large-array.js: Added.
+        (trial):
+
 2015-07-24  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Editing non-inspector-stylesheet rule selectors fails after the first change

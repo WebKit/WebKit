@@ -36,7 +36,7 @@ const ClassInfo JSPropertyNameEnumerator::s_info = { "JSPropertyNameEnumerator",
 JSPropertyNameEnumerator* JSPropertyNameEnumerator::create(VM& vm)
 {
     if (!vm.emptyPropertyNameEnumerator.get()) {
-        PropertyNameArray propertyNames(&vm);
+        PropertyNameArray propertyNames(&vm, PropertyNameMode::Strings);
         vm.emptyPropertyNameEnumerator = Strong<JSCell>(vm, create(vm, 0, 0, 0, propertyNames));
     }
     return jsCast<JSPropertyNameEnumerator*>(vm.emptyPropertyNameEnumerator.get());

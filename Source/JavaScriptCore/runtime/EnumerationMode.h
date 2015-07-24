@@ -28,6 +28,12 @@
 
 namespace JSC {
 
+enum class PropertyNameMode {
+    Symbols = 1 << 0,
+    Strings = 1 << 1,
+    Both = Symbols | Strings,
+};
+
 enum class DontEnumPropertiesMode {
     Include,
     Exclude
@@ -45,16 +51,14 @@ enum class JSObjectPropertiesMode {
 
 class EnumerationMode {
 public:
-    EnumerationMode(DontEnumPropertiesMode dontEnumPropertiesMode = DontEnumPropertiesMode::Exclude, SymbolPropertiesMode symbolPropertiesMode = SymbolPropertiesMode::Exclude, JSObjectPropertiesMode jsObjectPropertiesMode = JSObjectPropertiesMode::Include)
+    EnumerationMode(DontEnumPropertiesMode dontEnumPropertiesMode = DontEnumPropertiesMode::Exclude, JSObjectPropertiesMode jsObjectPropertiesMode = JSObjectPropertiesMode::Include)
         : m_dontEnumPropertiesMode(dontEnumPropertiesMode)
-        , m_symbolPropertiesMode(symbolPropertiesMode)
         , m_jsObjectPropertiesMode(jsObjectPropertiesMode)
     {
     }
 
     EnumerationMode(const EnumerationMode& mode, JSObjectPropertiesMode jsObjectPropertiesMode)
         : m_dontEnumPropertiesMode(mode.m_dontEnumPropertiesMode)
-        , m_symbolPropertiesMode(mode.m_symbolPropertiesMode)
         , m_jsObjectPropertiesMode(jsObjectPropertiesMode)
     {
     }
@@ -66,11 +70,6 @@ public:
         return m_dontEnumPropertiesMode == DontEnumPropertiesMode::Include;
     }
 
-    bool includeSymbolProperties()
-    {
-        return m_symbolPropertiesMode == SymbolPropertiesMode::Include;
-    }
-
     bool includeJSObjectProperties()
     {
         return m_jsObjectPropertiesMode == JSObjectPropertiesMode::Include;
@@ -78,7 +77,6 @@ public:
 
 private:
     DontEnumPropertiesMode m_dontEnumPropertiesMode;
-    SymbolPropertiesMode m_symbolPropertiesMode;
     JSObjectPropertiesMode m_jsObjectPropertiesMode;
 };
 
