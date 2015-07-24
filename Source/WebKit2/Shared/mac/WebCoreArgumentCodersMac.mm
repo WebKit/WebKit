@@ -191,16 +191,8 @@ bool ArgumentCoder<CertificateInfo>::decode(ArgumentDecoder& decoder, Certificat
     return true;
 }
 
-void ArgumentCoder<ResourceError>::encodePlatformData(ArgumentEncoder& encoder, const ResourceError& resourceError)
+static void encodeNSError(ArgumentEncoder& encoder, NSError *nsError)
 {
-    bool errorIsNull = resourceError.isNull();
-    encoder << errorIsNull;
-
-    if (errorIsNull)
-        return;
-
-    NSError *nsError = resourceError.nsError();
-
     String domain = [nsError domain];
     encoder << domain;
 
@@ -242,19 +234,29 @@ void ArgumentCoder<ResourceError>::encodePlatformData(ArgumentEncoder& encoder, 
     }
     ASSERT(!peerCertificateChain || [peerCertificateChain isKindOfClass:[NSArray class]]);
     encoder << CertificateInfo((CFArrayRef)peerCertificateChain);
+
+    if (id underlyingError = [userInfo objectForKey:NSUnderlyingErrorKey]) {
+        ASSERT([underlyingError isKindOfClass:[NSError class]]);
+        encoder << true;
+        encodeNSError(encoder, underlyingError);
+    } else
+        encoder << false;
 }
 
-bool ArgumentCoder<ResourceError>::decodePlatformData(ArgumentDecoder& decoder, ResourceError& resourceError)
+void ArgumentCoder<ResourceError>::encodePlatformData(ArgumentEncoder& encoder, const ResourceError& resourceError)
 {
-    bool errorIsNull;
-    if (!decoder.decode(errorIsNull))
-        return false;
-    
-    if (errorIsNull) {
-        resourceError = ResourceError();
-        return true;
-    }
+    bool errorIsNull = resourceError.isNull();
+    encoder << errorIsNull;
 
+    if (errorIsNull)
+        return;
+
+    NSError *nsError = resourceError.nsError();
+    encodeNSError(encoder, nsError);
+}
+
+static bool decodeNSError(ArgumentDecoder& decoder, RetainPtr<NSError>& nsError)
+{
     String domain;
     if (!decoder.decode(domain))
         return false;
@@ -276,7 +278,37 @@ bool ArgumentCoder<ResourceError>::decodePlatformData(ArgumentDecoder& decoder, 
         CFDictionarySetValue((CFMutableDictionaryRef)userInfo.get(), CFSTR("NSErrorPeerCertificateChainKey"), (CFArrayRef)certificate.certificateChain());
     }
 
-    RetainPtr<NSError> nsError = adoptNS([[NSError alloc] initWithDomain:domain code:code userInfo:(NSDictionary *)userInfo.get()]);
+    bool hasUnderlyingError = false;
+    if (!decoder.decode(hasUnderlyingError))
+        return false;
+
+    if (hasUnderlyingError) {
+        RetainPtr<NSError> underlyingNSError;
+        if (!decodeNSError(decoder, underlyingNSError))
+            return false;
+
+        userInfo = adoptCF(CFDictionaryCreateMutableCopy(kCFAllocatorDefault, CFDictionaryGetCount(userInfo.get()) + 1, userInfo.get()));
+        CFDictionarySetValue((CFMutableDictionaryRef)userInfo.get(), NSUnderlyingErrorKey, underlyingNSError.get());
+    }
+
+    nsError = adoptNS([[NSError alloc] initWithDomain:domain code:code userInfo:(NSDictionary *)userInfo.get()]);
+    return true;
+}
+
+bool ArgumentCoder<ResourceError>::decodePlatformData(ArgumentDecoder& decoder, ResourceError& resourceError)
+{
+    bool errorIsNull;
+    if (!decoder.decode(errorIsNull))
+        return false;
+    
+    if (errorIsNull) {
+        resourceError = ResourceError();
+        return true;
+    }
+    
+    RetainPtr<NSError> nsError;
+    if (!decodeNSError(decoder, nsError))
+        return false;
 
     resourceError = ResourceError(nsError.get());
     return true;
