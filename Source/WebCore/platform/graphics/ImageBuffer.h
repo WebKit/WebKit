@@ -92,6 +92,8 @@ public:
     const IntSize& internalSize() const { return m_size; }
     const IntSize& logicalSize() const { return m_logicalSize; }
 
+    float resolutionScale() const { return m_resolutionScale; }
+
     WEBCORE_EXPORT GraphicsContext* context() const;
 
     WEBCORE_EXPORT RefPtr<Image> copyImage(BackingStoreCopy = CopyBackingStore, ScaleBehavior = Scaled) const;
