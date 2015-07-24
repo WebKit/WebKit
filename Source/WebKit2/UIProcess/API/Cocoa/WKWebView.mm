@@ -967,10 +967,11 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
             WebCore::FloatRect oldUnobscuredContentRect = _page->unobscuredContentRect();
             if (!oldUnobscuredContentRect.isEmpty() && oldUnobscuredContentRect.y() < 1) {
                 CGFloat relativeHorizontalPosition = oldUnobscuredContentRect.x() / oldUnobscuredContentRect.width();
-                CGPoint newTopLeft = [self _adjustedContentOffset: { relativeHorizontalPosition * newContentSize.width, 0 }];
+                CGPoint newTopLeft = { relativeHorizontalPosition * newContentSize.width, 0 };
                 CGSize scrollViewSize = [_scrollView bounds].size;
-                CGSize rectToZoomSize = CGSizeMake(scrollViewSize.width * newPageScaleFactor, scrollViewSize.height * newPageScaleFactor);
+                CGSize rectToZoomSize = CGSizeMake(scrollViewSize.width / newPageScaleFactor, scrollViewSize.height / newPageScaleFactor);
                 [_scrollView zoomToRect: { newTopLeft, rectToZoomSize } animated:NO];
+                ASSERT(areEssentiallyEqualAsFloat(newPageScaleFactor, contentZoomScale(self)));
             } else
                 [_scrollView setZoomScale:newPageScaleFactor];
         }

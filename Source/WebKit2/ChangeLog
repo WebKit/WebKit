@@ -1,3 +1,17 @@
+2015-07-23  Zalan Bujtas  <zalan@apple.com>
+
+        [iOS] REGRESSION (187131): Loading CuteOverload zooms in to the top left corner.
+        https://bugs.webkit.org/show_bug.cgi?id=147251
+        rdar://problem/21953359
+
+        Calling zoomToRect() should result in essentially the same zoom scale as if we
+        called setZoomScale with the new page scale factor.
+ 
+        Reviewed by Benjamin Poulain.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLayerTree:]):
+
 2015-07-23  Matthew Daiter  <mdaiter@apple.com>
 
         Linking WebKit2 to be able to grab media sources from a UID
