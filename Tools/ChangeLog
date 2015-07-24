@@ -1,3 +1,13 @@
+2015-07-24  Dean Johnson  <dean_johnson@apple.com>
+
+        commit-queue flags in webkit-patch are confusing
+        https://bugs.webkit.org/show_bug.cgi?id=88694
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitpy/tool/steps/options.py:
+        (Options): Updated help string to be more descriptive.
+
 2015-07-23  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Implement proper High DPI support features
