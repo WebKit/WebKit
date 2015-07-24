@@ -1,5 +1,17 @@
 2015-07-24  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r187268. rdar://problem/21664211
+
+    2015-07-23  Enrica Casucci  <enrica@apple.com>
+
+            Removing one incorrect annotation from the previous change.
+
+            Unreviewed.
+
+            * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+
+2015-07-24  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r187288. rdar://problem/21929532
 
     2015-07-23  Dan Bernstein  <mitz@apple.com>
