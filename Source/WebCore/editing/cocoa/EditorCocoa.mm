@@ -36,6 +36,7 @@
 #import "RenderStyle.h"
 #import "SoftLinking.h"
 #import "Text.h"
+#import "htmlediting.h"
 
 namespace WebCore {
 
@@ -47,7 +48,7 @@ RenderStyle* Editor::styleForSelectionStart(Frame* frame, Node *&nodeToRemove)
     if (frame->selection().isNone())
         return nullptr;
 
-    Position position = frame->selection().selection().visibleStart().deepEquivalent();
+    Position position = adjustedSelectionStartForStyleComputation(frame->selection().selection());
     if (!position.isCandidate() || position.isNull())
         return nullptr;
 

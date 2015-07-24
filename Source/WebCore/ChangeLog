@@ -1,5 +1,24 @@
 2015-07-23  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r187130
+
+    2015-07-21  Jon Honeycutt  <jhoneycutt@apple.com>
+
+            [iOS] Keyboard bold/italic/underline keys don't highlight after being
+            tapped to style a selection
+            https://bugs.webkit.org/show_bug.cgi?id=147164
+            <rdar://problem/21630806>
+
+            Reviewed by Ryosuke Niwa.
+
+            * editing/cocoa/EditorCocoa.mm:
+            (WebCore::Editor::styleForSelectionStart):
+            Use adjustedSelectionStartForStyleComputation(), which will ensure that
+            we're at the start of the selected node, not at the end of the node
+            before the selection.
+
+2015-07-23  Lucas Forschler  <lforschler@apple.com>
+
         Merge r187116
 
     2015-07-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
