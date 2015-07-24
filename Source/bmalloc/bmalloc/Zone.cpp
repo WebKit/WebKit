@@ -28,10 +28,10 @@
 
 namespace bmalloc {
 
-template<typename T> static void remoteRead(task_t task, memory_reader_t reader, vm_address_t pointer, T& result)
+template<typename T> static void remoteRead(task_t task, memory_reader_t reader, vm_address_t remotePointer, T& result)
 {
     void* tmp;
-    (*reader)(task, pointer, sizeof(T), &tmp);
+    (*reader)(task, remotePointer, sizeof(T), &tmp);
     memcpy(&result, tmp, sizeof(T));
 }
 
@@ -79,9 +79,7 @@ static size_t size(malloc_zone_t*, const void*)
 // This function runs inside the leaks process.
 static kern_return_t enumerator(task_t task, void* context, unsigned type_mask, vm_address_t zone_address, memory_reader_t reader, vm_range_recorder_t recorder)
 {
-    Zone remoteZone;
-    remoteRead(task, reader, zone_address, remoteZone);
-    
+    Zone remoteZone(task, reader, zone_address);
     for (auto* superChunk : remoteZone.superChunks()) {
         vm_range_t range = { reinterpret_cast<vm_address_t>(superChunk), superChunkSize };
 
@@ -116,6 +114,11 @@ Zone::Zone()
     malloc_zone_t::introspect = &bmalloc::introspect;
     malloc_zone_t::version = 4;
     malloc_zone_register(this);
+}
+
+Zone::Zone(task_t task, memory_reader_t reader, vm_address_t remotePointer)
+{
+    remoteRead(task, reader, remotePointer, *this);
 }
 
 } // namespace bmalloc

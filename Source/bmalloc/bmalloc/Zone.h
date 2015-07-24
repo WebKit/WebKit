@@ -39,6 +39,7 @@ public:
     static const size_t capacity = 2048;
 
     Zone();
+    Zone(task_t, memory_reader_t, vm_address_t);
 
     void addSuperChunk(SuperChunk*);
     FixedVector<SuperChunk*, capacity>& superChunks() { return m_superChunks; }

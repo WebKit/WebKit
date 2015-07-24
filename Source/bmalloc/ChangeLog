@@ -1,3 +1,23 @@
+2015-07-24  Geoffrey Garen  <ggaren@apple.com>
+
+        JavaScriptCore bmalloc should not register its malloc zone more than once
+        https://bugs.webkit.org/show_bug.cgi?id=147273
+
+        Reviewed by Andreas Kling.
+
+        This was a goof: The Zone constructor, by virtue of running automatically,
+        was registering a Zone inside the analysis process.
+
+        * bmalloc/Zone.cpp:
+        (bmalloc::remoteRead): Clarify that the pointer is remote.
+
+        (bmalloc::enumerator):
+        (bmalloc::Zone::Zone):
+        * bmalloc/Zone.h: Separate the normal constructor and the remote constructor.
+        The remote constructor skips zone registration since its goal is not
+        to register a zone in the current process or do any allocation but rather
+        to mirror the bytes of the zone from the target process.
+
 2015-07-23  Geoffrey Garen  <ggaren@apple.com>
 
         bmalloc: Shrink the super chunk size (again)
