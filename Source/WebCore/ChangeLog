@@ -1,5 +1,32 @@
 2015-07-24  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r187189. rdar://problem/21567767
+
+    2015-07-22  Dean Jackson  <dino@apple.com>
+
+            Out of bounds in WebGLRenderingContext::simulateVertexAttrib0
+            https://bugs.webkit.org/show_bug.cgi?id=147176
+            <rdar://problem/21567767>
+
+            Reviewed by Oliver Hunt.
+
+            Test: fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays.html
+
+            Add overflow checking for the drawing calls, specifically the way
+            they may simulate vertexAttrib0.
+
+            * html/canvas/WebGLRenderingContextBase.cpp:
+            (WebCore::WebGLRenderingContextBase::validateDrawArrays): Call new validation method.
+            (WebCore::WebGLRenderingContextBase::validateDrawElements): Ditto.
+            (WebCore::WebGLRenderingContextBase::validateSimulatedVertexAttrib0): New method that
+            validates the parameters used to create the simulated attribute.
+            (WebCore::WebGLRenderingContextBase::simulateVertexAttrib0): No need to do overflow
+            checking here now that the validation method does it for us.
+            (WebCore::WebGLRenderingContextBase::validateVertexAttributes): Deleted.
+            * html/canvas/WebGLRenderingContextBase.h: Add new validation method.
+
+2015-07-24  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r187173. rdar://problem/21637698
 
     2015-07-22  Beth Dakin  <bdakin@apple.com>
