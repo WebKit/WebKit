@@ -190,6 +190,7 @@ void RenderSliderContainer::layout()
     else
         thumbLocation.setX(thumbLocation.x() - offset);
     thumb->setLocation(thumbLocation);
+    thumb->repaint();
 }
 
 // --------------------------------
