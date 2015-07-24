@@ -30,8 +30,16 @@ namespace bmalloc {
 
 template<typename T> static void remoteRead(task_t task, memory_reader_t reader, vm_address_t remotePointer, T& result)
 {
-    void* tmp;
-    (*reader)(task, remotePointer, sizeof(T), &tmp);
+    void* tmp = nullptr;
+    kern_return_t error = reader(task, remotePointer, sizeof(T), &tmp);
+
+    // This read sometimes fails for unknown reasons (<rdar://problem/14093757>).
+    // Avoid a crash by skipping the memcpy when this happens.
+    if (error || !tmp) {
+        fprintf(stderr, "bmalloc: error reading remote process: 0x%x\n", error);
+        return;
+    }
+
     memcpy(&result, tmp, sizeof(T));
 }
 
