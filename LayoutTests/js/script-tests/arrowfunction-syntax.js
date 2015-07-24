@@ -1,3 +1,5 @@
+//@ skip
+
 description("Tests for ES6 arrow function calling");
 
 var af0 = v => v + 1;

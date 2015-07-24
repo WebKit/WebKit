@@ -1,3 +1,5 @@
+//@ skip
+
 description("Tests for ES6 arrow function endings");
 
 var afEOL = x=>x+1

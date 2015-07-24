@@ -529,3 +529,14 @@ webkit.org/b/146434 fast/dom/HTMLImageElement/sizes [ Skip ]
 # Intl is not enabled yet
 js/intl.html [ Skip ]
 
+# Arrow functions are not implemented in a semantically correct way.
+# <rdar://problem/21953865>
+js/arrowfunction-asparamter-1.html [ Skip ]
+js/arrowfunction-asparamter-2.html [ Skip ]
+js/arrowfunction-associativity-1.html [ Skip ]
+js/arrowfunction-associativity-2.html [ Skip ]
+js/arrowfunction-block-1.html [ Skip ]
+js/arrowfunction-block-2.html [ Skip ]
+js/arrowfunction-syntax-endings.html [ Skip ]
+js/arrowfunction-syntax-errors.html [ Skip ]
+js/arrowfunction-syntax.html [ Skip ]

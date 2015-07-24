@@ -1,3 +1,5 @@
+//@ skip
+
 description('Tests for ES6 arrow function declaration body as block');
 
 debug('f = () => {}');

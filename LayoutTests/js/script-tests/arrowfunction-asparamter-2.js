@@ -1,3 +1,5 @@
+//@ skip
+
 description('Tests for ES6 arrow function, passing arrow function as the paramter');
 
 var f = function (cl, paramter) { return cl(paramter); };
