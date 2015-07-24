@@ -28,13 +28,13 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "JSObject.h"
+#include "JSDestructibleObject.h"
 
 namespace JSC {
 
-class JSWASMModule : public JSNonFinalObject {
+class JSWASMModule : public JSDestructibleObject {
 public:
-    typedef JSNonFinalObject Base;
+    typedef JSDestructibleObject Base;
 
     static JSWASMModule* create(VM& vm, Structure* structure)
     {
