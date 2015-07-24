@@ -1022,6 +1022,10 @@ void WebVideoFullscreenInterfaceAVKit::setExternalPlayback(bool enabled, Externa
 - (BOOL)_isHostedInAnotherProcess;
 @end
 
+@interface UIViewController ()
+@property (nonatomic, assign, setter=_setIgnoreAppSupportedOrientations:) BOOL _ignoreAppSupportedOrientations;
+@end
+
 void WebVideoFullscreenInterfaceAVKit::setupFullscreen(UIView& videoView, const WebCore::IntRect& initialRect, UIView* parentView, HTMLMediaElementEnums::VideoFullscreenMode mode, bool allowsPictureInPicturePlayback)
 {
     ASSERT(mode != HTMLMediaElementEnums::VideoFullscreenModeNone);
@@ -1040,6 +1044,7 @@ void WebVideoFullscreenInterfaceAVKit::setupFullscreen(UIView& videoView, const 
         [m_window setBackgroundColor:[getUIColorClass() clearColor]];
         m_viewController = adoptNS([allocUIViewControllerInstance() init]);
         [[m_viewController view] setFrame:[m_window bounds]];
+        [m_viewController _setIgnoreAppSupportedOrientations:YES];
         [m_window setRootViewController:m_viewController.get()];
         [m_window makeKeyAndVisible];
     }
