@@ -48,6 +48,7 @@
 #import <UIKit/UIPickerContentView_Private.h>
 #import <UIKit/UIPickerView_Private.h>
 #import <UIKit/UIPresentationController_Private.h>
+#import <UIKit/UIPreviewItemController.h>
 #import <UIKit/UIResponder_Private.h>
 #import <UIKit/UIScrollView_Private.h>
 #import <UIKit/UIStringDrawing_Private.h>
