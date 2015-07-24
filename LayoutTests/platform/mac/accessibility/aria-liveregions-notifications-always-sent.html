@@ -13,23 +13,18 @@ Test
 <div id="console"></div>
 
 <script>
+    var jsTestIsAsync = true;
 
     description("This tests that ARIA live region notifications are sent even when an assistive technology is not accessing them directly on each update.");
 
     if (window.accessibilityController) {
-        window.testRunner.waitUntilDone();
 
-        document.getElementById("liveregion").focus();
-        liveRegion = window.accessibilityController.focusedElement;
+        liveRegion = accessibilityController.accessibleElementById("liveregion");
 
         var liveRegionChangeCount = 0;
         function ariaCallback(notification) {
            if (notification == "AXLiveRegionChanged") {
                liveRegionChangeCount++;
-               if (liveRegionChangeCount == 3) {
-                   liveRegion.removeNotificationListener();
-                   window.testRunner.notifyDone();
-               }
            }
         }
         var addedNotification = liveRegion.addNotificationListener(ariaCallback);
@@ -37,9 +32,31 @@ Test
 
         // this should trigger our live region callback for a new element.
         for (var k = 0; k < 3; k++) {
-           var textNode = document.createTextNode("test" + k);
-           document.getElementById("liveregion").appendChild(textNode);
+            // AXLiveRegionsChanged notifications are sent after a delay, so in order to ensure we 
+            // get an notification for each operation we should avoid coalescing which can occur
+            doSetTimeout(k);
         }
+
+        // add a short delay to check after all the operations if we have exactly three notificaitons
+        setTimeout("finishTest()", 200);
+    }
+
+    function doSetTimeout(k) {
+        setTimeout(function() {
+            operation(k);
+        }, k * 30);
+    }
+
+    function operation(k) {
+        var textNode = document.createTextNode("test" + k);
+        document.getElementById("liveregion").appendChild(textNode);
+    }
+    
+    function finishTest() {
+        // We should get a total of three live region changes.
+        liveRegion.removeNotificationListener();
+        shouldBeTrue("liveRegionChangeCount == 3");
+        finishJSTest();
     }
 
 </script>

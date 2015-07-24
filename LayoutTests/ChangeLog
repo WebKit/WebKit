@@ -1,3 +1,18 @@
+2015-07-23  Nan Wang  <n_wang@apple.com>
+
+        AX: AccessibilityNodeObject::childrenChanged() generates too many AXLiveRegionChanged notifications
+        https://bugs.webkit.org/show_bug.cgi?id=147211
+        <rdar://problem/19908029>
+
+        Reviewed by Chris Fleizach.
+
+        * platform/mac/accessibility/aria-liveregions-notifications-always-sent-expected.txt:
+        * platform/mac/accessibility/aria-liveregions-notifications-always-sent.html:
+        * platform/mac/accessibility/aria-liveregions-notifications-expected.txt:
+        * platform/mac/accessibility/aria-liveregions-notifications.html:
+        * platform/mac/accessibility/aria-multiple-liveregions-notification-expected.txt: Added.
+        * platform/mac/accessibility/aria-multiple-liveregions-notification.html: Added.
+
 2015-07-22  Simon Fraser  <simon.fraser@apple.com>
 
         Layer z-ordering is incorrect when scrolling on page witih position:fixed
