@@ -39,11 +39,6 @@ enum class DontEnumPropertiesMode {
     Exclude
 };
 
-enum class SymbolPropertiesMode {
-    Include,
-    Exclude
-};
-
 enum class JSObjectPropertiesMode {
     Include,
     Exclude

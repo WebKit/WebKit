@@ -30,27 +30,14 @@ function assign(target/*[*/, /*...*/sources/*] */) {
         throw new @TypeError("can't convert " + target + " to object");
 
     var objTarget = @Object(target);
-    var s, nextSource, from, i, keys, nextKey, desc;
-    for (s = 1; s < arguments.length; ++s) {
-        nextSource = arguments[s];
+    for (var s = 1, argumentsLength = arguments.length; s < argumentsLength; ++s) {
+        var nextSource = arguments[s];
         if (nextSource != null) {
-            from = @Object(nextSource);
-            // TODO: replace @objectKeys + @objectGetOwnPropertySymbols with single @OwnPropertyKeys c++ operation
-            keys = @objectKeys(from);
-            for (i = 0; i < keys.length; ++i) {
-                nextKey = keys[i];
-                desc = @objectGetOwnPropertyDescriptor(from, nextKey);
-                if (typeof desc !== "undefined" && desc.enumerable) {
-                    objTarget[nextKey] = from[nextKey];
-                }
-            }
-            keys = @objectGetOwnPropertySymbols(from);
-            for (i = 0; i < keys.length; ++i) {
-                nextKey = keys[i];
-                desc = @objectGetOwnPropertyDescriptor(from, nextKey);
-                if (typeof desc !== "undefined" && desc.enumerable) {
-                    objTarget[nextKey] = from[nextKey];
-                }
+            var from = @Object(nextSource);
+            var keys = @ownEnumerablePropertyKeys(from);
+            for (var i = 0, keysLength = keys.length; i < keysLength; ++i) {
+                var nextKey = keys[i];
+                objTarget[nextKey] = from[nextKey];
             }
         }
     }

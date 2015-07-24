@@ -1,5 +1,38 @@
 2015-07-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Avoid 2 times name iteration in Object.assign
+        https://bugs.webkit.org/show_bug.cgi?id=147268
+
+        Reviewed by Geoffrey Garen.
+
+        Object.assign calls Object.getOwnPropertyNames & Object.getOwnPropertySymbols to collect all the names.
+        But exposing the private API that collects both at the same time makes the API efficient when the given Object has so many non-indexed properties.
+        Since Object.assign is so generic API (some form of utility API), the form of the given Object is not expected.
+        So the taken object may have so many non-indexed properties.
+
+        In this patch, we introduce `ownEnumerablePropertyKeys` private function.
+        It is minor changed version of `[[OwnPropertyKeys]]` in the ES6 spec;
+        It only includes enumerable properties.
+
+        By filtering out the non-enumerable properties in the exposed private function,
+        we avoid calling @objectGetOwnPropertyDescriptor for each property at the same time.
+
+        * builtins/ObjectConstructor.js:
+        (assign):
+        * runtime/CommonIdentifiers.h:
+        * runtime/EnumerationMode.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ownEnumerablePropertyKeys):
+        * runtime/ObjectConstructor.h:
+        * tests/stress/object-assign-enumerable.js: Added.
+        (shouldBe):
+        * tests/stress/object-assign-order.js: Added.
+        (shouldBe):
+
+2015-07-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Remove runtime flags for symbols
         https://bugs.webkit.org/show_bug.cgi?id=147246
 

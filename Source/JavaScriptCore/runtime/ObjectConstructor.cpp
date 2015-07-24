@@ -293,6 +293,33 @@ EncodedJSValue JSC_HOST_CALL objectConstructorKeys(ExecState* exec)
     return JSValue::encode(keys);
 }
 
+EncodedJSValue JSC_HOST_CALL ownEnumerablePropertyKeys(ExecState* exec)
+{
+    JSObject* object = exec->argument(0).toObject(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsNull());
+    PropertyNameArray properties(exec, PropertyNameMode::Both);
+    object->methodTable(exec->vm())->getOwnPropertyNames(object, exec, properties, EnumerationMode());
+
+    JSArray* keys = constructEmptyArray(exec, 0);
+    Vector<Identifier, 16> propertySymbols;
+    size_t numProperties = properties.size();
+    for (size_t i = 0; i < numProperties; i++) {
+        const auto& identifier = properties[i];
+        if (identifier.isSymbol()) {
+            if (!exec->propertyNames().isPrivateName(identifier))
+                propertySymbols.append(identifier);
+        } else
+            keys->push(exec, jsOwnedString(exec, identifier.string()));
+    }
+
+    // To ensure the order defined in the spec (9.1.12), we append symbols at the last elements of keys.
+    for (const auto& identifier : propertySymbols)
+        keys->push(exec, Symbol::create(exec->vm(), static_cast<SymbolImpl&>(*identifier.impl())));
+
+    return JSValue::encode(keys);
+}
+
 // ES5 8.10.5 ToPropertyDescriptor
 static bool toPropertyDescriptor(ExecState* exec, JSValue in, PropertyDescriptor& desc)
 {

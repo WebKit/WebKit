@@ -270,9 +270,7 @@
     macro(deferred) \
     macro(countdownHolder) \
     macro(Object) \
-    macro(objectKeys) \
-    macro(objectGetOwnPropertyDescriptor) \
-    macro(objectGetOwnPropertySymbols) \
+    macro(ownEnumerablePropertyKeys) \
     macro(Number) \
     macro(Array) \
     macro(String) \
