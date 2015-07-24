@@ -32,6 +32,7 @@
 #include <QuartzCore/CARenderServer.h>
 
 #ifdef __OBJC__
+#import <QuartzCore/CADisplay.h>
 #import <QuartzCore/CALayerHost.h>
 #import <QuartzCore/CALayerPrivate.h>
 
@@ -149,7 +150,7 @@ EXTERN_C void CARenderServerCaptureLayerWithTransform(mach_port_t serverPort, ui
                                                       uint32_t slotId, int32_t ox, int32_t oy, const CATransform3D *);
 
 #if USE(IOSURFACE)
-EXTERN_C void CARenderServerRenderLayerWithTransform(mach_port_t server_port, uint32_t client_id, uint64_t layer_id, IOSurfaceRef iosurface, int32_t ox, int32_t oy, const CATransform3D *matrix);
+EXTERN_C void CARenderServerRenderDisplayLayerWithTransformAndTimeOffset(mach_port_t server_port, CFStringRef display_name, uint32_t client_id, uint64_t layer_id, IOSurfaceRef iosurface, int32_t ox, int32_t oy, const CATransform3D *matrix, CFTimeInterval offset);
 #endif
 
 
