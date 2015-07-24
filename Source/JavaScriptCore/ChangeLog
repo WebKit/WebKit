@@ -1,3 +1,16 @@
+2015-07-24  Mark Lam  <mark.lam@apple.com>
+
+        Add WASM files to vcxproj files.
+        https://bugs.webkit.org/show_bug.cgi?id=147264
+
+        Reviewed by Geoffrey Garen.
+
+        This is a follow up to http://trac.webkit.org/changeset/187254 where WASM files
+        were introduced but were not able to be added to the vcxproj files yet.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+
 2015-07-23  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::safeToExecute() is wrong for MultiGetByOffset, doesn't consider the structures of the prototypes that get loaded from
