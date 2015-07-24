@@ -1,3 +1,9 @@
+2015-07-24  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] Unreviewed gardening. Updated since MEDIA_STREAM is enabled.
+
+        * platform/efl/js/dom/constructor-length-expected.txt:
+
 2015-07-23  Nan Wang  <n_wang@apple.com>
 
         AX: AccessibilityNodeObject::childrenChanged() generates too many AXLiveRegionChanged notifications
