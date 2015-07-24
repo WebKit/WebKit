@@ -1,5 +1,18 @@
 2015-07-23  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r187113
+
+    2015-07-21  Tim Horton  <timothy_horton@apple.com>
+
+            Expose shrink-wrapping as UIKit support SPI
+            https://bugs.webkit.org/show_bug.cgi?id=147148
+            <rdar://problem/21920008>
+
+            * WebKit.iOS.exp:
+            Also export.
+
+2015-07-23  Lucas Forschler  <lforschler@apple.com>
+
         Merge r187107
 
     2015-07-21  Tim Horton  <timothy_horton@apple.com>
