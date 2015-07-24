@@ -94,6 +94,21 @@
         "category": "webapps"
     },
     {
+        "name": "Web Components",
+        "status": {
+            "status": "No active development"
+        },
+        "url": "http://www.w3.org/wiki/WebComponents/",
+        "keywords": ["web components", "shadow dom", "html imports", "custom element", "template element"],
+        "category": "webapps",
+        "description": "A collection of technologies to improve modularization of DOM subtrees.",
+        "contact": {
+            "name": "Jon Davis",
+            "twitter": "@jonathandavis",
+            "email": "web-evangelist@apple.com"
+        }
+    },
+    {
         "name": "WebGL",
         "status": {
             "status": "In Development",
@@ -212,6 +227,20 @@
         }
     },
     {
+        "name": "Custom Elements",
+        "status": {
+            "status": "No active development"
+        },
+        "url": "http://w3c.github.io/webcomponents/spec/custom/",
+        "specification": "Web Components",
+        "description": "Define a custom HTML tag and associate it with an ES6 class.",
+        "contact": {
+            "name": "Jon Davis",
+            "twitter": "@jonathandavis",
+            "email": "web-evangelist@apple.com"
+        }
+    },
+    {
         "name": "Element.closest()",
         "status": {
             "status": "Done",
@@ -246,6 +275,21 @@
         },
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=142836",
         "description": "Provide the events necessary to handle force click events in the page, overriding the default behavior."
+    },
+    {
+        "name": "HTML imports",
+        "status": {
+            "status": "No active development"
+        },
+        "url": "http://w3c.github.io/webcomponents/spec/imports/",
+        "specification": "Web Components",
+        "description": "Includes resusable HTML documents in other HTML documents.",
+        "comment": "There are concerns about the disconnect between this specification and ES6 Modules. WebKit has no intent to support the current specification.",
+        "contact": {
+            "name": "Jon Davis",
+            "twitter": "@jonathandavis",
+            "email": "web-evangelist@apple.com"
+        }
     },
     {
         "name": "Initial Letter",
@@ -326,6 +370,20 @@
         "comment": "The ReadableStream and ReadableStreamReader interfaces are available but not functional."
     },
     {
+        "name": "Shadow DOM",
+        "status": {
+            "status": "No active development"
+        },
+        "url": "http://w3c.github.io/webcomponents/spec/shadow/",
+        "specification": "Web Components",
+        "description": "Functional encapsulation of HTML, CSS and JavaScript for Web Components.",
+        "contact": {
+            "name": "Jon Davis",
+            "twitter": "@jonathandavis",
+            "email": "web-evangelist@apple.com"
+        }
+    },
+    {
         "name": "Shape outside for floats",
         "status": {
             "status": "In Development",
@@ -377,6 +435,18 @@
             "twitter": "@yoavweiss",
             "email": "yoav@yoav.ws"
         }
+    },
+    {
+        "name": "Template Element",
+        "status": {
+            "status": "Done",
+            "enabled-by-default": true
+        },
+        "url": "http://www.w3.org/TR/html5/scripting-1.html#the-template-element",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=124637",
+        "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template",
+        "specification": "Web Components",
+        "description": "Declares HTML fragments that can be cloned and inserted into the document by a script."
     }
     ]
 }
