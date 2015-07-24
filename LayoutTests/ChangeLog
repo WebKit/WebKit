@@ -1,5 +1,14 @@
 2015-07-24  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [EFL] many fast tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=145835
+
+        Unreviewed gardening. These tests aren't flakey now, let's unskip them.
+
+        * platform/efl/TestExpectations:
+
+2015-07-24  Csaba Osztrogonác  <ossy@webkit.org>
+
         [EFL] Multi-column tests have been failed since r167808
         https://bugs.webkit.org/show_bug.cgi?id=141496
 
