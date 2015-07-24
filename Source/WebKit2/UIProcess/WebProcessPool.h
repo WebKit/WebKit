@@ -498,6 +498,7 @@ private:
 
 #if ENABLE(NETWORK_PROCESS)
     bool m_canHandleHTTPSServerTrustEvaluation;
+    bool m_didNetworkProcessCrash;
     RefPtr<NetworkProcessProxy> m_networkProcess;
 #endif
 
