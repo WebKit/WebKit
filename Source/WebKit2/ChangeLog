@@ -1,3 +1,21 @@
+2015-07-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r187100): [GTK] ASSERTION FAILED: Attempt to access post layout data before receiving it when typing backspace
+        https://bugs.webkit.org/show_bug.cgi?id=147196
+
+        Reviewed by Žan Doberšek.
+
+        Do not try to use the PostLayoutData from EditorState when
+        isMissingPostLayoutData is true. That happens when there's a
+        layout pending, and EditorStateChanged is sent again after that
+        layout with the post layout data. So we can just return early and
+        wait until the second message.
+
+        * UIProcess/API/gtk/WebKitEditorState.cpp:
+        (webkitEditorStateChanged):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseUpdateTextInputState):
+
 2015-07-23  Alex Christensen  <achristensen@webkit.org>
 
         Fix 32-bit build after r187272.
