@@ -20,6 +20,7 @@
 #define UserMediaPermissionRequestProxy_h
 
 #include "APIObject.h"
+#include <WebCore/RealtimeMediaSource.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -39,6 +40,8 @@ public:
     void deny();
 
     void invalidate();
+    
+    const String& getDeviceNameForUID(const String&, WebCore::RealtimeMediaSource::Type);
 
     bool requiresAudio() const { return m_requiresAudio; }
     bool requiresVideo() const { return m_requiresVideo; }

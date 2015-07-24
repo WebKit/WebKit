@@ -20,6 +20,8 @@
 #include "UserMediaPermissionRequestProxy.h"
 
 #include "UserMediaPermissionRequestManagerProxy.h"
+#include <WebCore/MediaStreamTrackSourcesRequestClient.h>
+#include <WebCore/RealtimeMediaSourceCenter.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebKit {
@@ -47,6 +49,11 @@ void UserMediaPermissionRequestProxy::deny()
 void UserMediaPermissionRequestProxy::invalidate()
 {
     m_manager.invalidateRequests();
+}
+
+const String& UserMediaPermissionRequestProxy::getDeviceNameForUID(const String& UID, WebCore::RealtimeMediaSource::Type type)
+{
+    return WebCore::RealtimeMediaSourceCenter::singleton().sourceWithUID(UID, type, nullptr)->label();
 }
 
 } // namespace WebKit

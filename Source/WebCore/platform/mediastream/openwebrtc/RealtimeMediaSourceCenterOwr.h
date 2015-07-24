@@ -46,6 +46,7 @@ namespace WebCore {
 class MediaStreamPrivate;
 class RealtimeMediaSource;
 class MediaStreamSourcesQueryClient;
+class TrackSourceInfo;
 
 class RealtimeMediaSourceCenterOwr final : public RealtimeMediaSourceCenter {
 public:
@@ -57,6 +58,7 @@ public:
     bool getMediaStreamTrackSources(PassRefPtr<MediaStreamTrackSourcesRequestClient>) override;
 
     void mediaSourcesAvailable(GList* sources);
+    RefPtr<TrackSourceInfo> sourceWithUID(const String&, RealtimeMediaSource::Type, MediaConstraints*) override;
 
 private:
     PassRefPtr<RealtimeMediaSource> firstSource(RealtimeMediaSource::Type);

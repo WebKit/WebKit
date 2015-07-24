@@ -136,6 +136,14 @@ bool RealtimeMediaSourceCenterMac::getMediaStreamTrackSources(PassRefPtr<MediaSt
     return true;
 }
 
+RefPtr<TrackSourceInfo> RealtimeMediaSourceCenterMac::sourceWithUID(const String& UID, RealtimeMediaSource::Type type, MediaConstraints* constraints)
+{
+    RefPtr<RealtimeMediaSource> mediaSource = AVCaptureDeviceManager::singleton().sourceWithUID(UID, type, constraints);
+    if (!mediaSource)
+        return nullptr;
+    return TrackSourceInfo::create(mediaSource->id(), mediaSource->type() == RealtimeMediaSource::Type::Video ? TrackSourceInfo::SourceKind::Video : TrackSourceInfo::SourceKind::Audio, mediaSource->name());
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

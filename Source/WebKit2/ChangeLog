@@ -1,3 +1,15 @@
+2015-07-23  Matthew Daiter  <mdaiter@apple.com>
+
+        Linking WebKit2 to be able to grab media sources from a UID
+        https://bugs.webkit.org/show_bug.cgi?id=147202
+        <rdar://problem/21947608>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/UserMediaPermissionRequestProxy.cpp:
+        (WebKit::UserMediaPermissionRequestProxy::getDeviceNameForUID):
+        * UIProcess/UserMediaPermissionRequestProxy.h:
+
 2015-07-23  Alex Christensen  <achristensen@webkit.org>
 
         Remove compile and runtime flags for promises.

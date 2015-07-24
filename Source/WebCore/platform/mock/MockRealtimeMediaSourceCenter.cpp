@@ -212,6 +212,15 @@ bool MockRealtimeMediaSourceCenter::getMediaStreamTrackSources(PassRefPtr<MediaS
     return true;
 }
 
+RefPtr<TrackSourceInfo> MockRealtimeMediaSourceCenter::sourceWithUID(const String& UID, RealtimeMediaSource::Type, MediaConstraints*)
+{
+    for (auto& source : mockSourceMap()) {
+        if (source.value->id() == UID)
+            return TrackSourceInfo::create(source.value->id(), source.value->type() == RealtimeMediaSource::Video ? TrackSourceInfo::Video : TrackSourceInfo::Audio, source.value->name());
+    }
+    return nullptr;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

@@ -420,7 +420,7 @@ Vector<RefPtr<RealtimeMediaSource>> AVCaptureDeviceManager::bestSourcesForTypeAn
     return bestSourcesList;
 }
 
-RefPtr<RealtimeMediaSource> AVCaptureDeviceManager::sourceWithUID(String &deviceUID, RealtimeMediaSource::Type type, MediaConstraints* constraints)
+RefPtr<RealtimeMediaSource> AVCaptureDeviceManager::sourceWithUID(const String& deviceUID, RealtimeMediaSource::Type type, MediaConstraints* constraints)
 {
     if (!isAvailable())
         return 0;
