@@ -241,9 +241,14 @@ JSDOMWindowShell* ScriptController::initScript(DOMWrapperWorld& world)
 
     windowShell->window()->updateDocument();
 
-    if (m_frame.document())
-        windowShell->window()->setEvalEnabled(m_frame.document()->contentSecurityPolicy()->allowEval(0, ContentSecurityPolicy::SuppressReport), m_frame.document()->contentSecurityPolicy()->evalDisabledErrorMessage());
-
+    if (m_frame.document()) {
+        bool shouldBypassMainWorldContentSecurityPolicy = !world.isNormal();
+        if (shouldBypassMainWorldContentSecurityPolicy)
+            windowShell->window()->setEvalEnabled(true);
+        else
+            windowShell->window()->setEvalEnabled(m_frame.document()->contentSecurityPolicy()->allowEval(0, shouldBypassMainWorldContentSecurityPolicy, ContentSecurityPolicy::SuppressReport), m_frame.document()->contentSecurityPolicy()->evalDisabledErrorMessage());
+    }
+    
     if (Page* page = m_frame.page()) {
         attachDebugger(windowShell, page->debugger());
         windowShell->window()->setProfileGroup(page->group().identifier());
