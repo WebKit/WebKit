@@ -588,6 +588,7 @@ ControllerIOS.prototype = {
 
         switch (presentationMode) {
             case 'inline':
+                this.controls.panel.classList.remove(this.ClassNames.pictureInPicture);
                 this.controls.panelContainer.classList.remove(this.ClassNames.pictureInPicture);
                 this.controls.inlinePlaybackPlaceholder.classList.add(this.ClassNames.hidden);
                 this.controls.inlinePlaybackPlaceholder.classList.remove(this.ClassNames.pictureInPicture);
@@ -597,6 +598,7 @@ ControllerIOS.prototype = {
                 this.controls.pictureInPictureButton.classList.remove(this.ClassNames.returnFromPictureInPicture);
                 break;
             case 'picture-in-picture':
+                this.controls.panel.classList.add(this.ClassNames.pictureInPicture);
                 this.controls.panelContainer.classList.add(this.ClassNames.pictureInPicture);
                 this.controls.inlinePlaybackPlaceholder.classList.add(this.ClassNames.pictureInPicture);
                 this.controls.inlinePlaybackPlaceholder.classList.remove(this.ClassNames.hidden);
@@ -609,6 +611,7 @@ ControllerIOS.prototype = {
                 this.controls.pictureInPictureButton.classList.add(this.ClassNames.returnFromPictureInPicture);
                 break;
             default:
+                this.controls.panel.classList.remove(this.ClassNames.pictureInPicture);
                 this.controls.panelContainer.classList.remove(this.ClassNames.pictureInPicture);
                 this.controls.inlinePlaybackPlaceholder.classList.remove(this.ClassNames.pictureInPicture);
                 this.controls.inlinePlaybackPlaceholderTextTop.classList.remove(this.ClassNames.pictureInPicture);

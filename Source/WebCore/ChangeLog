@@ -1,5 +1,26 @@
 2015-07-24  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r187203. rdar://problem/21012688
+
+    2015-07-22  Dean Jackson  <dino@apple.com>
+
+            Video controls, though hidden, are still interactive when in PiP
+            https://bugs.webkit.org/show_bug.cgi?id=147216
+            <rdar://problem/21012688>
+
+            Reviewed by Simon Fraser.
+
+            Explicitly add the PiP class to the controls container so that
+            we can hang a pointer-events: none off it.
+
+            * Modules/mediacontrols/mediaControlsiOS.css:
+            (video::-webkit-media-controls-panel.picture-in-picture): Add a pointer-events: none.
+            * Modules/mediacontrols/mediaControlsiOS.js:
+            (ControllerIOS.prototype.handlePresentationModeChange): Add/remove a PiP class
+            to the controls panel when necessary.
+
+2015-07-24  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r187189. rdar://problem/21567767
 
     2015-07-22  Dean Jackson  <dino@apple.com>
