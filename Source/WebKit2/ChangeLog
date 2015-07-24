@@ -1,3 +1,24 @@
+2015-07-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Recode.net gets into a continual resize loop in split fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=147266
+        rdar://problem/21409047
+
+        Reviewed by Tim Horton.
+        
+        In split fullscreen, we use fixed layout and scale to shrink pages down to
+        fit a given width. This is re-evaluated every time the document width changes.
+        However some pages, like recode.net, end up continually resizing because
+        when laid out unconstrained they use a narrower width than when laid out with
+        a fixed layout size. In fixed layout, they actually use more width than the fixed
+        layout size.
+        
+        Detect and break this cycle by just not re-scaling when we've done one fixed layout,
+        and the document is now taking more width than the fixed layout width.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::scaleViewToFitDocumentIfNeeded):
+
 2015-07-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GStreamer] Crashes during plugin installation
