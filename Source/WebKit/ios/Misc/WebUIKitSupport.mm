@@ -27,18 +27,18 @@
 
 #import "WebUIKitSupport.h"
 
-#import <WebCore/break_lines.h>
-#import <WebCore/ResourceRequest.h>
-#import <WebCore/TextBreakIterator.h>
-#import <WebCore/WebCoreSystemInterface.h>
-#import <WebCore/WebCoreThreadSystemInterface.h>
 #import "WebDatabaseManagerInternal.h"
 #import "WebKitSystemInterface.h"
 #import "WebLocalizableStrings.h"
 #import "WebPlatformStrategies.h"
 #import "WebSystemInterface.h"
 #import "WebViewPrivate.h"
-
+#import <WebCore/PathUtilities.h>
+#import <WebCore/ResourceRequest.h>
+#import <WebCore/TextBreakIterator.h>
+#import <WebCore/WebCoreSystemInterface.h>
+#import <WebCore/WebCoreThreadSystemInterface.h>
+#import <WebCore/break_lines.h>
 
 #import <runtime/InitializeThreading.h>
 
@@ -171,6 +171,25 @@ void endBackgroundTask(WebBackgroundTaskIdentifier taskIdentifier)
     if (!endBackgroundTaskBlock)
         return;
     endBackgroundTaskBlock(taskIdentifier);
+}
+
+CGPathRef WebKitCreatePathWithShrinkWrappedRects(NSArray* cgRects, CGFloat radius)
+{
+    Vector<FloatRect> rects;
+    rects.reserveInitialCapacity([cgRects count]);
+
+    const char* cgRectEncodedString = @encode(CGRect);
+
+    for (NSValue *rectValue in cgRects) {
+        CGRect cgRect;
+        [rectValue getValue:&cgRect];
+
+        if (strcmp(cgRectEncodedString, rectValue.objCType))
+            return nullptr;
+        rects.append(cgRect);
+    }
+
+    return CGPathRetain(PathUtilities::pathWithShrinkWrappedRects(rects, radius).platformPath());
 }
 
 #endif // PLATFORM(IOS)
