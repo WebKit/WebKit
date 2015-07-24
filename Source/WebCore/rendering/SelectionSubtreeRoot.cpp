@@ -71,22 +71,15 @@ void SelectionSubtreeRoot::adjustForVisibleSelection(Document& document)
     m_selectionEnd = nullptr;
     m_selectionEndPos = -1;
 
-    if (startPos.isNull() || endPos.isNull())
-        return;
-
-    if (selection.visibleStart() == selection.visibleEnd())
-        return;
-
-    if (startPos.deprecatedNode()->renderer()->flowThreadContainingBlock() != endPos.deprecatedNode()->renderer()->flowThreadContainingBlock())
-        return;
-
-    if (&startPos.deprecatedNode()->renderer()->selectionRoot() != this)
-        return;
-
-    m_selectionStart = startPos.deprecatedNode()->renderer();
-    m_selectionStartPos = startPos.deprecatedEditingOffset();
-    m_selectionEnd = endPos.deprecatedNode()->renderer();
-    m_selectionEndPos = endPos.deprecatedEditingOffset();
+    if (startPos.isNotNull()
+        && endPos.isNotNull()
+        && selection.visibleStart() != selection.visibleEnd()
+        && startPos.deprecatedNode()->renderer()->flowThreadContainingBlock() == endPos.deprecatedNode()->renderer()->flowThreadContainingBlock()) {
+        m_selectionStart = startPos.deprecatedNode()->renderer();
+        m_selectionStartPos = startPos.deprecatedEditingOffset();
+        m_selectionEnd = endPos.deprecatedNode()->renderer();
+        m_selectionEndPos = endPos.deprecatedEditingOffset();
+    }
 }
 
 } // namespace WebCore
