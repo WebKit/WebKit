@@ -450,4 +450,8 @@ messages -> WebPageProxy {
 
     UseFixedLayoutDidChange(bool useFixedLayout)
     FixedLayoutSizeDidChange(WebCore::IntSize fixedLayoutSize)
+
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+    RequestInstallMissingMediaPlugins(String details)
+#endif
 }

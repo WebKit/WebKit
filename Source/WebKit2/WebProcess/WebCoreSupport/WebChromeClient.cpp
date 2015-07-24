@@ -1163,6 +1163,13 @@ void WebChromeClient::mediaDocumentNaturalSizeChanged(const WebCore::IntSize& ne
 {
     m_page->mediaDocumentNaturalSizeChanged(newSize);
 }
+
+#if USE(GSTREAMER)
+void WebChromeClient::requestInstallMissingMediaPlugins(const String& details, WebCore::MediaPlayerRequestInstallMissingPluginsCallback& callback)
+{
+    m_page->requestInstallMissingMediaPlugins(details, callback);
+}
 #endif
+#endif // ENABLE(VIDEO)
 
 } // namespace WebKit

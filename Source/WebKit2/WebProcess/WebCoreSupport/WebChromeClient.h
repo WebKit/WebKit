@@ -325,6 +325,9 @@ private:
 
 #if ENABLE(VIDEO)
     virtual void mediaDocumentNaturalSizeChanged(const WebCore::IntSize&) override;
+#if USE(GSTREAMER)
+    virtual void requestInstallMissingMediaPlugins(const String&, WebCore::MediaPlayerRequestInstallMissingPluginsCallback&) override;
+#endif
 #endif
 
     String m_cachedToolTip;

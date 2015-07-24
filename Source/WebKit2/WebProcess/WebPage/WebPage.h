@@ -139,6 +139,10 @@ struct Highlight;
 struct KeypressCommand;
 struct MediaPlaybackTargetContext;
 struct TextCheckingResult;
+
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+class MediaPlayerRequestInstallMissingPluginsCallback;
+#endif
 }
 
 namespace WebKit {
@@ -904,6 +908,9 @@ public:
 
 #if ENABLE(VIDEO)
     void mediaDocumentNaturalSizeChanged(const WebCore::IntSize&);
+#if USE(GSTREAMER)
+    void requestInstallMissingMediaPlugins(const String& details, WebCore::MediaPlayerRequestInstallMissingPluginsCallback&);
+#endif
 #endif
 
 private:
@@ -1153,6 +1160,10 @@ private:
 
     void pageStoppedScrolling();
 
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+    void didEndRequestInstallMissingMediaPlugins(uint32_t result);
+#endif
+
     uint64_t m_pageID;
 
     std::unique_ptr<WebCore::Page> m_page;
@@ -1401,6 +1412,10 @@ private:
 
 #if PLATFORM(GTK)
     bool m_inputMethodEnabled { false };
+#endif
+
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+    RefPtr<WebCore::MediaPlayerRequestInstallMissingPluginsCallback> m_installMediaPluginsCallback;
 #endif
 };
 

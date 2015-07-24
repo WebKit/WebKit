@@ -31,6 +31,7 @@
 #include "URL.h"
 #include "MIMETypeRegistry.h"
 #include "MediaPlayer.h"
+#include "MediaPlayerRequestInstallMissingPluginsCallback.h"
 #include "NotImplemented.h"
 #include "SecurityOrigin.h"
 #include "TimeRanges.h"
@@ -123,12 +124,6 @@ static GstFlowReturn mediaPlayerPrivateNewTextSampleCallback(GObject*, MediaPlay
 }
 #endif
 
-static void mediaPlayerPrivatePluginInstallerResultFunction(GstInstallPluginsReturn result, gpointer userData)
-{
-    MediaPlayerPrivateGStreamer* player = reinterpret_cast<MediaPlayerPrivateGStreamer*>(userData);
-    player->handlePluginInstallerResult(result);
-}
-
 void MediaPlayerPrivateGStreamer::setAudioStreamProperties(GObject* object)
 {
     if (g_strcmp0(G_OBJECT_TYPE_NAME(object), "GstPulseSink"))
@@ -216,7 +211,6 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     , m_audioSourceProvider(std::make_unique<AudioSourceProviderGStreamer>())
 #endif
     , m_requestedState(GST_STATE_VOID_PENDING)
-    , m_missingPlugins(false)
 {
 }
 
@@ -245,6 +239,10 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
             reinterpret_cast<gpointer>(setAudioStreamPropertiesCallback), this);
 
     m_readyTimerHandler.cancel();
+    if (m_missingPluginsCallback) {
+        m_missingPluginsCallback->invalidate();
+        m_missingPluginsCallback = nullptr;
+    }
 
     if (m_pipeline) {
         GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
@@ -934,7 +932,7 @@ gboolean MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
     case GST_MESSAGE_ERROR:
         if (m_resetPipeline)
             break;
-        if (m_missingPlugins)
+        if (m_missingPluginsCallback)
             break;
         gst_message_parse_error(message, &err.outPtr(), &debug.outPtr());
         ERROR_MEDIA_MESSAGE("Error %d: %s (url=%s)", err->code, err->message, m_url.string().utf8().data());
@@ -1029,11 +1027,18 @@ gboolean MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         break;
     case GST_MESSAGE_ELEMENT:
         if (gst_is_missing_plugin_message(message)) {
-            gchar* detail = gst_missing_plugin_message_get_installer_detail(message);
-            gchar* detailArray[2] = {detail, 0};
-            GstInstallPluginsReturn result = gst_install_plugins_async(detailArray, 0, mediaPlayerPrivatePluginInstallerResultFunction, this);
-            m_missingPlugins = result == GST_INSTALL_PLUGINS_STARTED_OK;
-            g_free(detail);
+            GUniquePtr<char> detail(gst_missing_plugin_message_get_installer_detail(message));
+            if (gst_install_plugins_supported()) {
+                m_missingPluginsCallback = MediaPlayerRequestInstallMissingPluginsCallback::create([this](uint32_t result) {
+                    m_missingPluginsCallback = nullptr;
+                    if (result != GST_INSTALL_PLUGINS_SUCCESS)
+                        return;
+
+                    changePipelineState(GST_STATE_READY);
+                    changePipelineState(GST_STATE_PAUSED);
+                });
+                m_player->client().requestInstallMissingPlugins(String::fromUTF8(detail.get()), *m_missingPluginsCallback);
+            }
         }
 #if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
         else {
@@ -1056,15 +1061,6 @@ gboolean MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         break;
     }
     return TRUE;
-}
-
-void MediaPlayerPrivateGStreamer::handlePluginInstallerResult(GstInstallPluginsReturn result)
-{
-    m_missingPlugins = false;
-    if (result == GST_INSTALL_PLUGINS_SUCCESS) {
-        changePipelineState(GST_STATE_READY);
-        changePipelineState(GST_STATE_PAUSED);
-    }
 }
 
 void MediaPlayerPrivateGStreamer::processBufferingStats(GstMessage* message)

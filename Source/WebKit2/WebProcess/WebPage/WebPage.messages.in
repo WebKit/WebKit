@@ -435,4 +435,8 @@ messages -> WebPage LegacyReceiver {
     ClearWheelEventTestTrigger()
     SetShouldScaleViewToFitDocument(bool shouldScaleViewToFitDocument)
     SetUserContentExtensionsEnabled(bool userContentExtensionsEnabled)
+
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+    DidEndRequestInstallMissingMediaPlugins(uint32_t result)
+#endif
 }
