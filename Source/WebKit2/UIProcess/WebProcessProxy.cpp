@@ -928,6 +928,7 @@ void WebProcessProxy::didCancelProcessSuspension()
 #if ENABLE(NETWORK_PROCESS)
 void WebProcessProxy::reinstateNetworkProcessAssertionState(NetworkProcessProxy& newNetworkProcessProxy)
 {
+#if PLATFORM(IOS)
     ASSERT(!m_backgroundTokenForNetworkProcess || !m_foregroundTokenForNetworkProcess);
 
     // The network process crashed; take new tokens for the new network process.
@@ -935,6 +936,9 @@ void WebProcessProxy::reinstateNetworkProcessAssertionState(NetworkProcessProxy&
         m_backgroundTokenForNetworkProcess = newNetworkProcessProxy.throttler().backgroundActivityToken();
     else if (m_foregroundTokenForNetworkProcess)
         m_foregroundTokenForNetworkProcess = newNetworkProcessProxy.throttler().foregroundActivityToken();
+#else
+    UNUSED_PARAM(newNetworkProcessProxy);
+#endif
 }
 #endif
 

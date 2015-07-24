@@ -1,3 +1,16 @@
+2015-07-24  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r187136
+
+    2015-07-21  Daniel Bates  <dabates@apple.com>
+
+            Fix the build following <https://trac.webkit.org/changeset/187129>
+            (https://bugs.webkit.org/show_bug.cgi?id=147112)
+
+            * UIProcess/WebProcessProxy.cpp:
+            (WebKit::WebProcessProxy::reinstateNetworkProcessAssertionState): Guard implementation with PLATFORM(IOS)
+            since this logic is specific to the iOS port.
+
 2015-07-23  Lucas Forschler  <lforschler@apple.com>
 
         Merge r187129
