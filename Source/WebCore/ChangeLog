@@ -1,3 +1,30 @@
+2015-07-24  Anders Carlsson  <andersca@apple.com>
+
+        Fix fallout from merging changes for
+        <rdar://problem/21707887> CSP doesn't prevent image loading of <object> when page contains <video controls> and ENABLE(MEDIA_CONTROLS_SCRIPT) is enabled
+
+        Reviewed by Alexey Proskuryakov.
+
+        Tweaked http/tests/security/isolatedWorld/image-load-should-not-bypass-main-world-csp.html so that
+        it will test allowing evals in non-main worlds.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::initScript):
+        Due to ContentSecurityPolicy::allowEval being modified on ToT, we'd always end up passing true for
+        the overrideContentSecurityPolicy parameter (since the ContentSecurityPolicy::SuppressReport parameter
+        was incorrectly treated as a boolean).
+        Fix this by merging part of the fix for bug 141316.
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::defaultCachedResourceOptions):
+        The correct ContentSecurityPolicyImposition should be DoPolicyCheck. This was the case on ToT but for
+        some reason it was changed to SkipPolicyCheck when the patch was merged.
+
+        * page/DOMSecurityPolicy.cpp:
+        (WebCore::DOMSecurityPolicy::allowsEval):
+        Pass false for overrideContentSecurityPolicy.
+
+
 2015-07-23  Babak Shafiei  <bshafiei@apple.com>
 
         Roll out r185838.

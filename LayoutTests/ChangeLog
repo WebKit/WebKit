@@ -1,3 +1,23 @@
+2015-07-24  Anders Carlsson  <andersca@apple.com>
+
+        Fix fallout from merging changes for
+        <rdar://problem/21707887> CSP doesn't prevent image loading of <object> when page contains <video controls> and ENABLE(MEDIA_CONTROLS_SCRIPT) is enabled
+
+        Reviewed by Alexey Proskuryakov.
+
+        * http/tests/security/contentSecurityPolicy/resources/track.vtt:
+        Replace this with a track.vtt from ToT which is actually a valid .vtt file that will parse properly.
+
+        * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-object.html:
+        Tweak this test so it will work on the branch - setting object.data in order to force an object's URL to be loaded
+        when it's already got a renderer only works on ToT, so do it before appending the object element.
+
+        * http/tests/security/isolatedWorld/image-load-should-not-bypass-main-world-csp-expected.txt:
+        Copy the test result from ToT and get rid of the merge conflict.
+
+        * http/tests/security/isolatedWorld/image-load-should-not-bypass-main-world-csp.html:
+        Copy the test from ToT which also gives us a test for allowing eval in non-main script worlds.
+
 2015-07-23  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r187248.

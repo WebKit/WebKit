@@ -20,7 +20,6 @@ function runTest()
 
     var userAgentShadowRoot = internals.ensureUserAgentShadowRoot(document.getElementById("shadow-host"));
     var object = document.createElement("object");
-    userAgentShadowRoot.appendChild(object);
 
     object.type = "text/html";
     object.onload = function () { 
@@ -28,6 +27,8 @@ function runTest()
         // The content document of the HTML object will call testRunner.notifyDone().
     }
     object.data = "http://localhost:8000/resources/notify-done.html";
+    
+    userAgentShadowRoot.appendChild(object);
 }
 
 runTest();
