@@ -1,3 +1,24 @@
+2015-07-24  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Connect UserScript and UserStyleSheet through WebView.
+        https://bugs.webkit.org/show_bug.cgi?id=147279
+        <rdar://problem/21990767>
+
+        Reviewed by Dean Jackson.
+
+        * Interfaces/IWebViewPrivate.idl: Add updated API for 'addUserScriptToGroup' and
+        'addUserStyleSheetToGroup'
+        * WebView.cpp:
+        (WebView::addUserScriptToGroup): Add implementation.
+        (toStringVector): Added helper function.
+        (WebView::addUserStyleSheetToGroup): Add implementation.
+        (WebView::removeUserScriptFromGroup): Ditto.
+        (WebView::removeUserStyleSheetFromGroup): Ditto.
+        (WebView::removeUserScriptsFromGroup): Ditto.
+        (WebView::removeUserStyleSheetsFromGroup): Ditto.
+        (WebView::removeAllUserContentFromGroup): Ditto.
+        * WebView.h:
+
 2015-07-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Remove runtime flags for symbols

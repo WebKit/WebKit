@@ -997,7 +997,9 @@ void TestRunner::addUserScript(JSStringRef source, bool runAtStart, bool allFram
     if (FAILED(WebKitCreateInstance(__uuidof(WebScriptWorld), 0, __uuidof(world), reinterpret_cast<void**>(&world))))
         return;
 
-    webView->addUserScriptToGroup(_bstr_t(L"org.webkit.DumpRenderTree").GetBSTR(), world.get(), bstrT(source).GetBSTR(), 0, 0, 0, 0, 0, runAtStart ? WebInjectAtDocumentStart : WebInjectAtDocumentEnd);
+    webView->addUserScriptToGroup(_bstr_t(L"org.webkit.DumpRenderTree").GetBSTR(), world.get(), bstrT(source).GetBSTR(),
+        nullptr, 0, nullptr, 0, nullptr, runAtStart ? WebInjectAtDocumentStart : WebInjectAtDocumentEnd,
+        allFrames ? WebInjectInAllFrames : WebInjectInTopFrameOnly);
 }
 
 void TestRunner::addUserStyleSheet(JSStringRef source, bool allFrames)
@@ -1010,7 +1012,8 @@ void TestRunner::addUserStyleSheet(JSStringRef source, bool allFrames)
     if (FAILED(WebKitCreateInstance(__uuidof(WebScriptWorld), 0, __uuidof(world), reinterpret_cast<void**>(&world))))
         return;
 
-    webView->addUserStyleSheetToGroup(_bstr_t(L"org.webkit.DumpRenderTree").GetBSTR(), world.get(), bstrT(source).GetBSTR(), 0, 0, 0, 0, 0);
+    webView->addUserStyleSheetToGroup(_bstr_t(L"org.webkit.DumpRenderTree").GetBSTR(), world.get(), bstrT(source).GetBSTR(),
+        nullptr, 0, nullptr, 0, nullptr, allFrames ? WebInjectInAllFrames : WebInjectInTopFrameOnly);
 }
 
 void TestRunner::setDeveloperExtrasEnabled(bool enabled)

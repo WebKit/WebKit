@@ -157,6 +157,8 @@
 #include <WebCore/Settings.h>
 #include <WebCore/SystemInfo.h>
 #include <WebCore/UserContentController.h>
+#include <WebCore/UserScript.h>
+#include <WebCore/UserStyleSheet.h>
 #include <WebCore/WindowMessageBroadcaster.h>
 #include <WebCore/WindowsTouch.h>
 #include <bindings/ScriptValue.h>
@@ -6518,34 +6520,141 @@ HRESULT WebView::addUserScriptToGroup(BSTR groupName, IWebScriptWorld* iWorld, B
                                       unsigned blacklistCount, BSTR* blacklist,
                                       WebUserScriptInjectionTime injectionTime)
 {
-    return E_NOTIMPL;
+    return addUserScriptToGroup(groupName, iWorld, source, url, whitelistCount, whitelist, blacklistCount, blacklist, injectionTime, WebInjectInAllFrames);
+}
+
+static Vector<String> toStringVector(BSTR* entries, unsigned count)
+{
+    Vector<String> entriesVector;
+    if (!entries || !count)
+        return entriesVector;
+
+    for (unsigned i = 0; i < count; ++i)
+        entriesVector.append(toString(entries[i]));
+
+    return entriesVector;
+}
+
+HRESULT WebView::addUserScriptToGroup(BSTR groupName, IWebScriptWorld* iWorld, BSTR source, BSTR url,
+    unsigned whitelistCount, BSTR* whitelist, unsigned blacklistCount, BSTR* blacklist,
+    WebUserScriptInjectionTime injectionTime, WebUserContentInjectedFrames injectedFrames)
+{
+    String group = toString(groupName);
+    if (group.isEmpty())
+        return E_FAIL;
+
+    auto viewGroup = WebViewGroup::getOrCreate(group, String());
+    if (!viewGroup)
+        return E_FAIL;
+
+    if (!iWorld)
+        return E_POINTER;
+
+    WebScriptWorld* world = reinterpret_cast<WebScriptWorld*>(iWorld);
+    auto userScript = std::make_unique<UserScript>(source, toURL(url), toStringVector(whitelist, whitelistCount),
+        toStringVector(blacklist, blacklistCount), injectionTime == WebInjectAtDocumentStart ? InjectAtDocumentStart : InjectAtDocumentEnd,
+        injectedFrames == WebInjectInAllFrames ? InjectInAllFrames : InjectInTopFrameOnly);
+    viewGroup->userContentController().addUserScript(world->world(), WTF::move(userScript));
+    return S_OK;
 }
 
 HRESULT WebView::addUserStyleSheetToGroup(BSTR groupName, IWebScriptWorld* iWorld, BSTR source, BSTR url,
-                                          unsigned whitelistCount, BSTR* whitelist,
-                                          unsigned blacklistCount, BSTR* blacklist)
+    unsigned whitelistCount, BSTR* whitelist, unsigned blacklistCount, BSTR* blacklist)
 {
-    return E_NOTIMPL;
+    return addUserStyleSheetToGroup(groupName, iWorld, source, url, whitelistCount, whitelist, blacklistCount, blacklist, WebInjectInAllFrames);
+}
+
+HRESULT WebView::addUserStyleSheetToGroup(BSTR groupName, IWebScriptWorld* iWorld, BSTR source, BSTR url,
+    unsigned whitelistCount, BSTR* whitelist, unsigned blacklistCount, BSTR* blacklist, WebUserContentInjectedFrames injectedFrames)
+{
+    String group = toString(groupName);
+    if (group.isEmpty())
+        return E_FAIL;
+
+    auto viewGroup = WebViewGroup::getOrCreate(group, String());
+    if (!viewGroup)
+        return E_FAIL;
+
+    if (!iWorld)
+        return E_POINTER;
+
+    WebScriptWorld* world = reinterpret_cast<WebScriptWorld*>(iWorld);
+    auto styleSheet = std::make_unique<UserStyleSheet>(source, toURL(url), toStringVector(whitelist, whitelistCount), toStringVector(blacklist, blacklistCount),
+        injectedFrames == WebInjectInAllFrames ? InjectInAllFrames : InjectInTopFrameOnly, UserStyleUserLevel);
+    viewGroup->userContentController().addUserStyleSheet(world->world(), WTF::move(styleSheet), InjectInExistingDocuments);
+    return S_OK;
 }
 
 HRESULT WebView::removeUserScriptFromGroup(BSTR groupName, IWebScriptWorld* iWorld, BSTR url)
 {
-    return E_NOTIMPL;
+    String group = toString(groupName);
+    if (group.isEmpty())
+        return E_FAIL;
+
+    auto viewGroup = WebViewGroup::get(group);
+    if (!viewGroup)
+        return S_OK;
+
+    if (!iWorld)
+        return E_POINTER;
+
+    WebScriptWorld* world = reinterpret_cast<WebScriptWorld*>(iWorld);
+    viewGroup->userContentController().removeUserScript(world->world(), toURL(url));
+    return S_OK;
 }
 
 HRESULT WebView::removeUserStyleSheetFromGroup(BSTR groupName, IWebScriptWorld* iWorld, BSTR url)
 {
-    return E_NOTIMPL;
+    String group = toString(groupName);
+    if (group.isEmpty())
+        return E_FAIL;
+
+    auto viewGroup = WebViewGroup::get(group);
+    if (!viewGroup)
+        return S_OK;
+
+    if (!iWorld)
+        return E_POINTER;
+
+    WebScriptWorld* world = reinterpret_cast<WebScriptWorld*>(iWorld);
+    viewGroup->userContentController().removeUserStyleSheet(world->world(), toURL(url));
+    return S_OK;
 }
 
 HRESULT WebView::removeUserScriptsFromGroup(BSTR groupName, IWebScriptWorld* iWorld)
 {
-    return E_NOTIMPL;
+    String group = toString(groupName);
+    if (group.isEmpty())
+        return E_FAIL;
+
+    auto viewGroup = WebViewGroup::get(group);
+    if (!viewGroup)
+        return S_OK;
+
+    if (!iWorld)
+        return E_POINTER;
+
+    WebScriptWorld* world = reinterpret_cast<WebScriptWorld*>(iWorld);
+    viewGroup->userContentController().removeUserScripts(world->world());
+    return S_OK;
 }
 
 HRESULT WebView::removeUserStyleSheetsFromGroup(BSTR groupName, IWebScriptWorld* iWorld)
 {
-    return E_NOTIMPL;
+    String group = toString(groupName);
+    if (group.isEmpty())
+        return E_FAIL;
+
+    auto viewGroup = WebViewGroup::get(group);
+    if (!viewGroup)
+        return S_OK;
+
+    if (!iWorld)
+        return E_POINTER;
+
+    WebScriptWorld* world = reinterpret_cast<WebScriptWorld*>(iWorld);
+    viewGroup->userContentController().removeUserStyleSheets(world->world());
+    return S_OK;
 }
 
 HRESULT WebView::removeAllUserContentFromGroup(BSTR groupName)

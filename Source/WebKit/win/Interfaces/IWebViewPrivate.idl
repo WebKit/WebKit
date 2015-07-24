@@ -50,6 +50,11 @@ typedef enum {
     WebInjectAtDocumentEnd,
 } WebUserScriptInjectionTime;
 
+typedef enum {
+    WebInjectInAllFrames = 0,
+    WebInjectInTopFrameOnly,
+} WebUserContentInjectedFrames;
+
 [
     object,
     oleautomation,
@@ -304,4 +309,14 @@ interface IWebViewPrivate2 : IWebViewPrivate
 
     HRESULT setCustomBackingScaleFactor([in] double);
     HRESULT backingScaleFactor([out] double*);
+
+    HRESULT addUserScriptToGroup([in] BSTR groupName, [in] IWebScriptWorld*, [in] BSTR source, [in] BSTR url,
+        [in] unsigned whitelistCount, [in, size_is(whitelistCount)] BSTR* whitelist,
+        [in] unsigned blacklistCount, [in, size_is(blacklistCount)] BSTR* blacklist,
+        [in] WebUserScriptInjectionTime injectionTime, [in] WebUserContentInjectedFrames injectedFrames);
+
+    HRESULT addUserStyleSheetToGroup([in] BSTR groupName, [in] IWebScriptWorld*, [in] BSTR source, [in] BSTR url,
+        [in] unsigned whitelistCount, [in, size_is(whitelistCount)] BSTR* whitelist,
+        [in] unsigned blacklistCount, [in, size_is(blacklistCount)] BSTR* blacklist,
+        [in] WebUserContentInjectedFrames injectedFrames);
 }
