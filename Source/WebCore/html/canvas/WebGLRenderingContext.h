@@ -759,6 +759,7 @@ private:
     // Helpers for simulating vertexAttrib0
     void initVertexAttrib0();
     bool simulateVertexAttrib0(GC3Dsizei numVertex);
+    bool validateSimulatedVertexAttrib0(GC3Dsizei numVertex);
     void restoreStatesAfterVertexAttrib0Simulation();
 
     void dispatchContextLostEvent(Timer*);

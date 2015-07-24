@@ -1,3 +1,19 @@
+2015-07-24  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge patch for r187189.
+
+    2015-07-24  Dean Jackson  <dino@apple.com>
+
+            The merge of r187189 made changes to a file that doesn't
+            yet exist in this branch. Move the code to the right place.
+
+            * html/canvas/WebGLRenderingContext.cpp:
+            (WebCore::WebGLRenderingContext::validateDrawArrays): Call into validateSimulatedVertexAttrib0.
+            (WebCore::WebGLRenderingContext::validateDrawElements): Ditto.
+            (WebCore::WebGLRenderingContext::validateSimulatedVertexAttrib0): Copy from the existing code.
+            (WebCore::WebGLRenderingContext::simulateVertexAttrib0): Ditto.
+            * html/canvas/WebGLRenderingContext.h:
+
 2015-07-24  Anders Carlsson  <andersca@apple.com>
 
         Fix fallout from merging changes for
