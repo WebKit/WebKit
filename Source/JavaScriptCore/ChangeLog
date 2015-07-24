@@ -1,3 +1,14 @@
+2015-07-24  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Remove JS Promise constructor unused piece of code
+        https://bugs.webkit.org/show_bug.cgi?id=147262
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::constructPromise): Deleted.
+        * runtime/JSPromiseConstructor.h: Removed JSC::constructPromise.
+
 2015-07-24  Mark Lam  <mark.lam@apple.com>
 
         Add WASM files to vcxproj files.

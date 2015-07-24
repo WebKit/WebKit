@@ -119,18 +119,4 @@ bool JSPromiseConstructor::getOwnPropertySlot(JSObject* object, ExecState* exec,
     return getStaticFunctionSlot<InternalFunction>(exec, promiseConstructorTable, jsCast<JSPromiseConstructor*>(object), propertyName, slot);
 }
 
-JSPromise* constructPromise(ExecState* exec, JSGlobalObject* globalObject, JSFunction* resolver)
-{
-    JSPromiseConstructor* promiseConstructor = globalObject->promiseConstructor();
-
-    ConstructData constructData;
-    ConstructType constructType = getConstructData(promiseConstructor, constructData);
-    ASSERT(constructType != ConstructTypeNone);
-
-    MarkedArgumentBuffer arguments;
-    arguments.append(resolver);
-
-    return jsCast<JSPromise*>(construct(exec, promiseConstructor, constructType, constructData, arguments));
-}
-
 } // namespace JSC

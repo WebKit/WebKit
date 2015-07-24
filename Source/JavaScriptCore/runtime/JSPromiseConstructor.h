@@ -53,8 +53,6 @@ private:
     static bool getOwnPropertySlot(JSObject*, ExecState*, PropertyName, PropertySlot&);
 };
 
-JSPromise* constructPromise(ExecState*, JSGlobalObject*, JSFunction*);
-
 } // namespace JSC
 
 #endif // JSPromiseConstructor_h
