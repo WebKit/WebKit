@@ -1,5 +1,23 @@
 2015-07-23  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r186977
+
+    2015-07-17  Enrica Casucci  <enrica@apple.com>
+
+            [iOS] Implement selectionInteractionAssistant accessor.
+            https://bugs.webkit.org/show_bug.cgi?id=147054
+            rdar://problem/20864286
+
+            Reviewed by Tim Horton.
+
+            One more change to adopt the new selection interaction
+            model on iOS.
+
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView selectionInteractionAssistant]):
+
+2015-07-23  Lucas Forschler  <lforschler@apple.com>
+
         Merge r186806
 
     2015-07-14  Yongjun Zhang  <yongjun_zhang@apple.com>
