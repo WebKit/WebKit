@@ -839,7 +839,9 @@ WebCore::WebMediaSessionManager& PageClientImpl::mediaSessionManager()
 #if ENABLE(VIDEO)
 void PageClientImpl::mediaDocumentNaturalSizeChanged(const IntSize& newSize)
 {
+#if WK_API_ENABLED
     [m_webView _mediaDocumentNaturalSizeChanged:newSize];
+#endif
 }
 #endif
 

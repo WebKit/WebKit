@@ -1,3 +1,11 @@
+2015-07-23  Alex Christensen  <achristensen@webkit.org>
+
+        Fix 32-bit build after r187272.
+
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::mediaDocumentNaturalSizeChanged):
+        Added some WK_API_ENABLED.
+
 2015-07-23  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/21929532> REGRESSION (r184026): Safari AutoFill with Contact info for phone number is broken
