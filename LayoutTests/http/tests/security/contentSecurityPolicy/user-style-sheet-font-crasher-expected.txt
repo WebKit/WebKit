@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: Refused to load the font 'http://127.0.0.1:8000/security/contentSecurityPolicy/example_font.woff' because it violates the following Content Security Policy directive: "font-src http://webkit.org".
+
+CONSOLE MESSAGE: Refused to load the font 'http://127.0.0.1:8000/security/contentSecurityPolicy/example_font.woff' because it violates the following Content Security Policy directive: "font-src http://webkit.org".
+
+The iframe below triggers a violation report creating the initial empty document. It should not crash the web process.
+
