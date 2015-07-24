@@ -101,17 +101,16 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
             return;
         }
 #endif
+        String nsURLCacheDirectory = m_diskCacheDirectory;
 #if PLATFORM(IOS)
-        [NSURLCache setSharedURLCache:adoptNS([[NSURLCache alloc]
-            _initWithMemoryCapacity:parameters.nsURLCacheMemoryCapacity
-            diskCapacity:parameters.nsURLCacheDiskCapacity
-            relativePath:parameters.uiProcessBundleIdentifier]).get()];
-#else
+        // NSURLCache path is relative to network process cache directory.
+        // This puts cache files under <container>/Library/Caches/com.apple.WebKit.Networking/
+        nsURLCacheDirectory = ".";
+#endif
         [NSURLCache setSharedURLCache:adoptNS([[NSURLCache alloc]
             initWithMemoryCapacity:parameters.nsURLCacheMemoryCapacity
             diskCapacity:parameters.nsURLCacheDiskCapacity
-            diskPath:parameters.diskCacheDirectory]).get()];
-#endif
+            diskPath:nsURLCacheDirectory]).get()];
     }
 
     RetainPtr<CFURLCacheRef> cache = adoptCF(CFURLCacheCopySharedURLCache());
