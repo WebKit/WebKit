@@ -1,3 +1,62 @@
+2015-07-23  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::safeToExecute() is wrong for MultiGetByOffset, doesn't consider the structures of the prototypes that get loaded from
+        https://bugs.webkit.org/show_bug.cgi?id=147250
+
+        Reviewed by Geoffrey Garen.
+        
+        This fixes a nasty - but currently benign - bug in DFG::safeToExecute(). That function
+        will tell you if hoisting a node to some point is safe in the sense that the node will
+        not crash the VM if it executes at that point. A node may be unsafe to execute if we
+        cannot prove that at that point, the memory it is loading is not garbage. This is a
+        necessarily loose notion - for example it's OK to hoist a load if we haven't proved
+        that the load makes semantic sense at that point, since anyway the place where the node
+        did get used will still be guarded by any such semantic checks. But because we may also
+        hoist uses of the load, we need to make sure that it doesn't produce a garbage value.
+        Also, we need to ensure that the load won't trap. Hence safeToExecute() returns true
+        anytime we can be sure that a node will not produce a garbage result (i.e. a malformed
+        JSValue or object pointer) and will not trap when executed at the point in question.
+        
+        The bug is that this verification isn't performed for the loads from prototypes inside
+        MultiGetByOffset. DFG::ByteCodeParser will guard MultiGetByOffset with CheckStructure's
+        on the prototypes. So, hypothetically, you might end up hoisting a MultiGetByOffset
+        above those structure checks, which would mean that we might load a value from a memory
+        location without knowing that the location is valid. It might then return the value
+        loaded.
+        
+        This never happens in practice. Those structure checks are more hoistable that the
+        MultiGetByOffset, since they read a strict subset of the MultiGetByOffset's abstract
+        heap reads. Also, we hoist in program order. So, those CheckStructure's will always be
+        hoisted before the MultiGetByOffset gets hoisted.
+        
+        But we should fix this anyway. DFG::safeToExecute() has a clear definition of what a
+        "true" return means for IR transformations, and it fails in satisfying that definition
+        for MultiGetByOffset.
+        
+        There are various approaches we can use for making this safe. I considered two:
+        
+        1) Have MultiGetByOffset refer to the prototypes it is loading from in IR, so that we
+           can check if it's safe to load from them.
+        
+        2) Turn off MultiGetByOffset hoisting when it will emit loads from prototypes, and the
+           prototype structure isn't being watched.
+        
+        I ended up using (2), because it will be the most natural solution once I finish
+        https://bugs.webkit.org/show_bug.cgi?id=146929. Already now, it's somewhat more natural
+        than (1) since that requires more extensive IR changes. Also, (2) will give us what we
+        want in *most* cases: we will usually watch the prototype structure, and we will
+        usually constant-fold loads from prototypes. Both of these usually-true things would
+        have to become false for MultiGetByOffset hoisting to be disabled by this change.
+        
+        This change also adds my attempt at a test, though it's not really a test of this bug.
+        This bug is currently benign. But, the test does at least trigger the logic to run,
+        which is better than nothing.
+
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * tests/stress/multi-get-by-offset-hoist-around-structure-check.js: Added.
+        (foo):
+
 2015-07-23  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Implement WebAssembly modules

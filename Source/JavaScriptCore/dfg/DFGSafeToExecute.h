@@ -99,8 +99,15 @@ private:
 
 // Determines if it's safe to execute a node within the given abstract state. This may
 // return false conservatively. If it returns true, then you can hoist the given node
-// up to the given point and expect that it will not crash. This doesn't guarantee that
-// the node will produce the result you wanted other than not crashing.
+// up to the given point and expect that it will not crash. It also guarantees that the
+// node will not produce a malformed JSValue or object pointer when executed in the
+// given state. But this doesn't guarantee that the node will produce the result you
+// wanted. For example, you may have a GetByOffset from a prototype that only makes
+// semantic sense if you've also checked that some nearer prototype doesn't also have
+// a property of the same name. This could still return true even if that check hadn't
+// been performed in the given abstract state. That's fine though: the load can still
+// safely execute before that check, so long as that check continues to guard any
+// user-observable things done to the loaded value.
 template<typename AbstractStateType>
 bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
 {
@@ -255,7 +262,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case CheckInBounds:
     case ConstantStoragePointer:
     case Check:
-    case MultiGetByOffset:
     case MultiPutByOffset:
     case ValueRep:
     case DoubleRep:
@@ -333,6 +339,48 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
         return true;
     }
         
+    case MultiGetByOffset: {
+        // We can't always guarantee that the MultiGetByOffset is safe to execute if it
+        // contains loads from prototypes. We know that it won't load from those prototypes if
+        // we watch the mutability of the properties being loaded. So, here we try to
+        // constant-fold prototype loads, and if that fails, we claim that we cannot hoist. We
+        // also know that a load is safe to execute if we are watching the prototype's
+        // structure.
+        for (const GetByIdVariant& variant : node->multiGetByOffsetData().variants) {
+            if (!variant.alternateBase()) {
+                // It's not a prototype load.
+                continue;
+            }
+            
+            JSValue base = variant.alternateBase();
+            FrozenValue* frozen = graph.freeze(base);
+            if (state.structureClobberState() == StructuresAreWatched
+                && frozen->structure()->dfgShouldWatch()
+                && frozen->structure()->isValidOffset(variant.offset())) {
+                // We're already watching that it's safe to load from this.
+                continue;
+            }
+            
+            JSValue constantResult = graph.tryGetConstantProperty(
+                variant.alternateBase(), variant.baseStructure(), variant.offset());
+            if (!constantResult) {
+                // Couldn't constant-fold a prototype load. Therefore, we shouldn't hoist
+                // because the safety of the load depends on structure checks on the prototype,
+                // and we're too cheap to verify that here.
+                return false;
+            }
+            
+            // Otherwise, we will either:
+            // - Not load from the prototype because constant folding will succeed in the
+            //   backend, or
+            // - Emit invalid code that fails watchpoint checks. This could happen if the
+            //   property becomes mutable after this point, since we already set the watchpoint
+            //   above. This case is OK since the code will fail watchpoint checks and never
+            //   get installed.
+        }
+        return true;
+    }
+
     case LastNodeType:
         RELEASE_ASSERT_NOT_REACHED();
         return false;
