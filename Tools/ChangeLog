@@ -1,3 +1,64 @@
+2015-07-24  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: scrollable elements do not allow 3-finger swipe
+        https://bugs.webkit.org/show_bug.cgi?id=141893
+
+        Reviewed by Mario Sanchez Prada.
+
+        Support global notification listeners for iOS code.
+        Fix an issue in DRT where the dictionary of data was not being passed back to the layout test for the notication callback.
+        Implement scrollUp/Down/Left/Right.
+
+        * DumpRenderTree/AccessibilityController.h:
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (increaseTextSelectionCallback):
+        (scrollPageUpCallback):
+        (scrollPageDownCallback):
+        (scrollPageLeftCallback):
+        (scrollPageRightCallback):
+        (decreaseTextSelectionCallback):
+        (getElementTextLengthCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/ios/AccessibilityControllerIOS.mm:
+        (AccessibilityController::~AccessibilityController):
+        (AccessibilityController::elementAtPoint):
+        (AccessibilityController::addNotificationListener):
+        (AccessibilityController::platformResetToConsistentState):
+        (AccessibilityController::removeNotificationListener):
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::AccessibilityUIElement):
+        (AccessibilityUIElement::subrole):
+        (AccessibilityUIElement::scrollPageUp):
+        (AccessibilityUIElement::scrollPageDown):
+        (AccessibilityUIElement::scrollPageLeft):
+        (AccessibilityUIElement::scrollPageRight):
+        (AccessibilityUIElement::roleDescription):
+        * DumpRenderTree/mac/AccessibilityNotificationHandler.mm:
+        (-[AccessibilityNotificationHandler _notificationReceived:]):
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.h:
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::linkedElement):
+        (WTR::AccessibilityUIElement::headerElementAtIndex):
+        (WTR::AccessibilityUIElement::assistiveTechnologySimulatedFocus):
+        (WTR::AccessibilityUIElement::scrollPageUp):
+        (WTR::AccessibilityUIElement::scrollPageDown):
+        (WTR::AccessibilityUIElement::scrollPageLeft):
+        (WTR::AccessibilityUIElement::scrollPageRight):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityControllerIOS.mm:
+        (WTR::AccessibilityController::addNotificationListener):
+        (WTR::AccessibilityController::removeNotificationListener):
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::AccessibilityUIElement):
+        (WTR::AccessibilityUIElement::assistiveTechnologySimulatedFocus):
+        (WTR::AccessibilityUIElement::scrollPageUp):
+        (WTR::AccessibilityUIElement::scrollPageDown):
+        (WTR::AccessibilityUIElement::scrollPageLeft):
+        (WTR::AccessibilityUIElement::scrollPageRight):
+        (WTR::AccessibilityUIElement::increaseTextSelection):
+
 2015-07-24  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Activate CSP_NEXT and Connect UserScript and UserStyleSheet through WebView.

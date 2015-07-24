@@ -221,6 +221,11 @@ public:
     void increaseTextSelection();
     void decreaseTextSelection();
     AccessibilityUIElement linkedElement();
+    
+    bool scrollPageUp();
+    bool scrollPageDown();
+    bool scrollPageLeft();
+    bool scrollPageRight();
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(EFL)

@@ -1149,54 +1149,36 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (![self _prepareAccessibilityCall])
         return NO;
     
-    ScrollView* scrollView = m_object->scrollViewAncestor();
-    if (!scrollView)
-        return NO;
-    
-    IntPoint scrollPosition = scrollView->scrollPosition();
-    IntPoint newScrollPosition = scrollPosition;
-    IntSize scrollSize = scrollView->contentsSize();
-    IntRect scrollVisibleRect = scrollView->visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
+    AccessibilityObject::ScrollByPageDirection scrollDirection;
     switch (direction) {
-    case UIAccessibilityScrollDirectionRight: {
-        int scrollAmount = scrollVisibleRect.size().width();
-        int newX = scrollPosition.x() - scrollAmount;
-        newScrollPosition.setX(std::max(newX, 0));
+    case UIAccessibilityScrollDirectionRight:
+        scrollDirection = AccessibilityObject::ScrollByPageDirection::Right;
         break;
-    }
-    case UIAccessibilityScrollDirectionLeft: {
-        int scrollAmount = scrollVisibleRect.size().width();
-        int newX = scrollAmount + scrollPosition.x();
-        int maxX = scrollSize.width() - scrollAmount;
-        newScrollPosition.setX(std::min(newX, maxX));
+    case UIAccessibilityScrollDirectionLeft:
+        scrollDirection = AccessibilityObject::ScrollByPageDirection::Left;
         break;
-    }
-    case UIAccessibilityScrollDirectionUp: {
-        int scrollAmount = scrollVisibleRect.size().height();
-        int newY = scrollPosition.y() - scrollAmount;
-        newScrollPosition.setY(std::max(newY, 0));
+    case UIAccessibilityScrollDirectionUp:
+        scrollDirection = AccessibilityObject::ScrollByPageDirection::Up;
         break;
-    }
-    case UIAccessibilityScrollDirectionDown: {
-        int scrollAmount = scrollVisibleRect.size().height();
-        int newY = scrollAmount + scrollPosition.y();
-        int maxY = scrollSize.height() - scrollAmount;
-        newScrollPosition.setY(std::min(newY, maxY));
+    case UIAccessibilityScrollDirectionDown:
+        scrollDirection = AccessibilityObject::ScrollByPageDirection::Down;
         break;
-    }
     default:
-        break;
+        return NO;
     }
+
+    BOOL result = m_object->scrollByPage(scrollDirection);
     
-    if (newScrollPosition != scrollPosition) {
-        scrollView->setScrollPosition(newScrollPosition);
-        m_object->document()->updateLayoutIgnorePendingStylesheets();
+    if (result) {
+        [self postScrollStatusChangeNotification];
+
+        CGPoint scrollPos = [self _accessibilityScrollPosition];
+        NSString *testString = [NSString stringWithFormat:@"AXScroll [position: %.2f %.2f]", scrollPos.x, scrollPos.y];
+        [self accessibilityPostedNotification:@"AXScrollByPage" userInfo:@{ @"status" : testString }];
     }
-    
-    [self postScrollStatusChangeNotification];
     
     // This means that this object handled the scroll and no other ancestor should attempt scrolling.
-    return YES;
+    return result;
 }
 
 - (CGPoint)convertPointToScreenSpace:(FloatPoint &)point
@@ -1625,10 +1607,7 @@ static RenderObject* rendererForView(WAKView* view)
     if (![self _prepareAccessibilityCall])
         return CGPointZero;
     
-    ScrollView* scrollView = m_object->scrollViewAncestor();
-    if (!scrollView)
-        return CGPointZero;
-    return scrollView->scrollPosition();
+    return m_object->scrollPosition();
 }
 
 - (CGSize)_accessibilityScrollSize
@@ -1636,10 +1615,7 @@ static RenderObject* rendererForView(WAKView* view)
     if (![self _prepareAccessibilityCall])
         return CGSizeZero;
     
-    ScrollView* scrollView = m_object->scrollViewAncestor();
-    if (!scrollView)
-        return CGSizeZero;
-    return scrollView->contentsSize();
+    return m_object->scrollContentsSize();
 }
 
 - (CGRect)_accessibilityScrollVisibleRect
@@ -1647,10 +1623,7 @@ static RenderObject* rendererForView(WAKView* view)
     if (![self _prepareAccessibilityCall])
         return CGRectZero;
     
-    ScrollView* scrollView = m_object->scrollViewAncestor();
-    if (!scrollView)
-        return CGRectZero;
-    return scrollView->visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
+    return m_object->scrollVisibleContentRect();
 }
 
 - (void)accessibilityElementDidBecomeFocused

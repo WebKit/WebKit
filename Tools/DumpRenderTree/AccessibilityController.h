@@ -93,7 +93,7 @@ private:
     HashMap<PlatformUIElement, JSObjectRef> m_notificationListeners;
 #endif
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(IOS)
     RetainPtr<NotificationHandler> m_globalNotificationHandler;
 #endif
 

@@ -170,6 +170,10 @@ interface AccessibilityUIElement {
 
     void scrollToMakeVisible();
     void takeFocus();
+    boolean scrollPageDown();
+    boolean scrollPageUp();
+    boolean scrollPageLeft();
+    boolean scrollPageRight();
 
     // Text markers.
     AccessibilityTextMarkerRange lineTextMarkerRangeForTextMarker(AccessibilityTextMarker textMarker);

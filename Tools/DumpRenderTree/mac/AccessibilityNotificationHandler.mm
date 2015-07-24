@@ -166,7 +166,6 @@ static JSValueRef makeObjectRefForDictionary(JSContextRef context, NSDictionary 
         return;
 
     NSDictionary *userInfo = [[notification userInfo] objectForKey:@"userInfo"];
-
     JSValueRef notificationNameArgument = JSValueMakeString([mainFrame globalContext], adopt([notificationName createJSStringRef]).get());
     JSValueRef userInfoArgument = makeObjectRefForDictionary([mainFrame globalContext], userInfo);
     if (m_platformElement) {
@@ -181,7 +180,7 @@ static JSValueRef makeObjectRefForDictionary(JSContextRef context, NSDictionary 
         arguments[0] = AccessibilityUIElement::makeJSAccessibilityUIElement([mainFrame globalContext], AccessibilityUIElement([notification object]));
         arguments[1] = notificationNameArgument;
         arguments[2] = userInfoArgument;
-        JSObjectCallAsFunction([mainFrame globalContext], m_notificationFunctionCallback, 0, 2, arguments, 0);
+        JSObjectCallAsFunction([mainFrame globalContext], m_notificationFunctionCallback, 0, 3, arguments, 0);
     }
 }
 

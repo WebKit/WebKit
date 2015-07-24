@@ -2529,6 +2529,102 @@ void AccessibilityObject::scrollToGlobalPoint(const IntPoint& globalPoint) const
         }
     }
 }
+    
+void AccessibilityObject::scrollAreaAndAncestor(std::pair<ScrollableArea*, AccessibilityObject*>& scrollers) const
+{
+    // Search up the parent chain until we find the first one that's scrollable.
+    scrollers.first = nullptr;
+    for (scrollers.second = parentObject(); scrollers.second; scrollers.second = scrollers.second->parentObject()) {
+        if ((scrollers.first = scrollers.second->getScrollableAreaIfScrollable()))
+            break;
+    }
+}
+    
+ScrollableArea* AccessibilityObject::scrollableAreaAncestor() const
+{
+    std::pair<ScrollableArea*, AccessibilityObject*> scrollers;
+    scrollAreaAndAncestor(scrollers);
+    return scrollers.first;
+}
+    
+IntPoint AccessibilityObject::scrollPosition() const
+{
+    if (auto scroller = scrollableAreaAncestor())
+        return scroller->scrollPosition();
+
+    return IntPoint();
+}
+
+IntRect AccessibilityObject::scrollVisibleContentRect() const
+{
+    if (auto scroller = scrollableAreaAncestor())
+        return scroller->visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
+    
+    return IntRect();
+}
+    
+IntSize AccessibilityObject::scrollContentsSize() const
+{
+    if (auto scroller = scrollableAreaAncestor())
+        return scroller->contentsSize();
+
+    return IntSize();
+}
+    
+bool AccessibilityObject::scrollByPage(ScrollByPageDirection direction) const
+{
+    std::pair<ScrollableArea*, AccessibilityObject*> scrollers;
+    scrollAreaAndAncestor(scrollers);
+    ScrollableArea* scrollableArea = scrollers.first;
+    AccessibilityObject* scrollParent = scrollers.second;
+    
+    if (!scrollableArea)
+        return false;
+    
+    IntPoint scrollPosition = scrollableArea->scrollPosition();
+    IntPoint newScrollPosition = scrollPosition;
+    IntSize scrollSize = scrollableArea->contentsSize();
+    IntRect scrollVisibleRect = scrollableArea->visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
+    switch (direction) {
+    case Right: {
+        int scrollAmount = scrollVisibleRect.size().width();
+        int newX = scrollPosition.x() - scrollAmount;
+        newScrollPosition.setX(std::max(newX, 0));
+        break;
+    }
+    case Left: {
+        int scrollAmount = scrollVisibleRect.size().width();
+        int newX = scrollAmount + scrollPosition.x();
+        int maxX = scrollSize.width() - scrollAmount;
+        newScrollPosition.setX(std::min(newX, maxX));
+        break;
+    }
+    case Up: {
+        int scrollAmount = scrollVisibleRect.size().height();
+        int newY = scrollPosition.y() - scrollAmount;
+        newScrollPosition.setY(std::max(newY, 0));
+        break;
+    }
+    case Down: {
+        int scrollAmount = scrollVisibleRect.size().height();
+        int newY = scrollAmount + scrollPosition.y();
+        int maxY = scrollSize.height() - scrollAmount;
+        newScrollPosition.setY(std::min(newY, maxY));
+        break;
+    }
+    default:
+        break;
+    }
+    
+    if (newScrollPosition != scrollPosition) {
+        scrollParent->scrollTo(newScrollPosition);
+        document()->updateLayoutIgnorePendingStylesheets();
+        return true;
+    }
+    
+    return false;
+}
+
 
 bool AccessibilityObject::lastKnownIsIgnoredValue()
 {

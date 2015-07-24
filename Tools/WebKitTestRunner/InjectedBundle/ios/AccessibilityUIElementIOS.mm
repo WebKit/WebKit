@@ -109,6 +109,7 @@ static JSStringRef concatenateAttributeAndValue(NSString* attribute, NSString* v
     
 AccessibilityUIElement::AccessibilityUIElement(PlatformUIElement element)
     : m_element(element)
+    , m_notificationHandler(0)
 {
     // FIXME: ap@webkit.org says ObjC objects need to be CFRetained/CFRelease to be GC-compliant on the mac.
     [m_element retain];
@@ -117,6 +118,7 @@ AccessibilityUIElement::AccessibilityUIElement(PlatformUIElement element)
 AccessibilityUIElement::AccessibilityUIElement(const AccessibilityUIElement& other)
     : JSWrappable()
     , m_element(other.m_element)
+    , m_notificationHandler(0)
 {
     [m_element retain];
 }
@@ -754,6 +756,25 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::documentURI()
 void AccessibilityUIElement::assistiveTechnologySimulatedFocus()
 {
     [m_element accessibilityElementDidBecomeFocused];
+}
+    
+bool AccessibilityUIElement::scrollPageUp()
+{
+    return [m_element accessibilityScroll:UIAccessibilityScrollDirectionUp];
+}
+
+bool AccessibilityUIElement::scrollPageDown()
+{
+    return [m_element accessibilityScroll:UIAccessibilityScrollDirectionDown];
+}
+bool AccessibilityUIElement::scrollPageLeft()
+{
+    return [m_element accessibilityScroll:UIAccessibilityScrollDirectionLeft];
+}
+
+bool AccessibilityUIElement::scrollPageRight()
+{
+    return [m_element accessibilityScroll:UIAccessibilityScrollDirectionRight];
 }
 
 void AccessibilityUIElement::increaseTextSelection()

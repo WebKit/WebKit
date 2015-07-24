@@ -28,6 +28,7 @@
 #import "AccessibilityController.h"
 
 #import "AccessibilityCommonMac.h"
+#import "AccessibilityNotificationHandler.h"
 #import "AccessibilityUIElement.h"
 #import <Foundation/Foundation.h>
 #import <WebKit/WebFramePrivate.h>
@@ -43,6 +44,8 @@ AccessibilityController::AccessibilityController()
 
 AccessibilityController::~AccessibilityController()
 {
+    // ResetToConsistentState should have cleared this already.
+    ASSERT(!m_globalNotificationHandler);
 }
 
 AccessibilityUIElement AccessibilityController::elementAtPoint(int x, int y)
@@ -116,11 +119,23 @@ void AccessibilityController::setLogAccessibilityEvents(bool)
 
 bool AccessibilityController::addNotificationListener(JSObjectRef functionCallback)
 {
-    return false;
+    if (!functionCallback)
+        return false;
+    
+    // Mac programmers should not be adding more than one global notification listener.
+    // Other platforms may be different.
+    if (m_globalNotificationHandler)
+        return false;
+    m_globalNotificationHandler = [[AccessibilityNotificationHandler alloc] init];
+    [m_globalNotificationHandler.get() setCallback:functionCallback];
+    [m_globalNotificationHandler.get() startObserving];
+    
+    return true;
 }
 
 void AccessibilityController::platformResetToConsistentState()
 {
+    m_globalNotificationHandler.clear();
 }
 
 void AccessibilityController::removeNotificationListener()
