@@ -1,3 +1,15 @@
+2015-07-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        CSS "content" property is missing in getComputedStyles
+        https://bugs.webkit.org/show_bug.cgi?id=147255
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/css/getComputedStyle/resources/property-names.js:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2015-07-24  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] many fast tests are flaky

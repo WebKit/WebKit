@@ -168,6 +168,7 @@ var propertiesToTest = {
     "color-interpolation": true,
     "color-interpolation-filters": true,
     "color-rendering": true,
+    "content": true,
     "cursor": true,
     "direction": true,
     "display": true,

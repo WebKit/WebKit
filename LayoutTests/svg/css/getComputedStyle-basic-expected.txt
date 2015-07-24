@@ -72,6 +72,8 @@ rect: style.getPropertyValue(clip) : auto
 rect: style.getPropertyCSSValue(clip) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(color) : rgb(0, 0, 0)
 rect: style.getPropertyCSSValue(color) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(content) : 
+rect: style.getPropertyCSSValue(content) : [object CSSValueList]
 rect: style.getPropertyValue(cursor) : auto
 rect: style.getPropertyCSSValue(cursor) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(direction) : ltr
@@ -594,6 +596,8 @@ g: style.getPropertyValue(clip) : auto
 g: style.getPropertyCSSValue(clip) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(color) : rgb(0, 0, 0)
 g: style.getPropertyCSSValue(color) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(content) : 
+g: style.getPropertyCSSValue(content) : [object CSSValueList]
 g: style.getPropertyValue(cursor) : auto
 g: style.getPropertyCSSValue(cursor) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(direction) : ltr

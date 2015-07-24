@@ -144,6 +144,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyClear,
     CSSPropertyClip,
     CSSPropertyColor,
+    CSSPropertyContent,
     CSSPropertyCursor,
     CSSPropertyDirection,
     CSSPropertyDisplay,

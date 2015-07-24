@@ -36,6 +36,7 @@ caption-side: top
 clear: none
 clip: auto
 color: rgb(0, 0, 0)
+content: 
 cursor: auto
 direction: ltr
 display: block
