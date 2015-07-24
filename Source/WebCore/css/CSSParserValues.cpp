@@ -336,7 +336,7 @@ void CSSParserSelector::appendTagHistory(CSSParserSelectorCombinator relation, s
     case CSSParserSelectorCombinator::DescendantSpace:
         selectorRelation = CSSSelector::Descendant;
         break;
-#if ENABLE_CSS_SELECTORS_LEVEL4
+#if ENABLE(CSS_SELECTORS_LEVEL4)
     case CSSParserSelectorCombinator::DescendantDoubleChild:
         selectorRelation = CSSSelector::Descendant;
         break;
@@ -350,7 +350,7 @@ void CSSParserSelector::appendTagHistory(CSSParserSelectorCombinator relation, s
     }
     end->setRelation(selectorRelation);
 
-#if ENABLE_CSS_SELECTORS_LEVEL4
+#if ENABLE(CSS_SELECTORS_LEVEL4)
     if (relation == CSSParserSelectorCombinator::DescendantDoubleChild)
         end->setDescendantUseDoubleChildSyntax();
 #endif

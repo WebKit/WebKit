@@ -283,7 +283,7 @@ namespace WebCore {
             ASSERT(m_relation == relation);
         }
 
-#if ENABLE_CSS_SELECTORS_LEVEL4
+#if ENABLE(CSS_SELECTORS_LEVEL4)
         void setDescendantUseDoubleChildSyntax()
         {
             ASSERT(relation() == Descendant);

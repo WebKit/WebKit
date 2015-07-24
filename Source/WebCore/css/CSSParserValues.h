@@ -181,7 +181,7 @@ public:
 enum class CSSParserSelectorCombinator {
     Child,
     DescendantSpace,
-#if ENABLE_CSS_SELECTORS_LEVEL4
+#if ENABLE(CSS_SELECTORS_LEVEL4)
     DescendantDoubleChild,
 #endif
     DirectAdjacent,
@@ -238,7 +238,7 @@ public:
     void prependTagSelector(const QualifiedName&, bool tagIsForNamespaceRule = false);
 
 private:
-#if ENABLE_CSS_SELECTORS_LEVEL4
+#if ENABLE(CSS_SELECTORS_LEVEL4)
     void setDescendantUseDoubleChildSyntax() { m_selector->setDescendantUseDoubleChildSyntax(); }
 #endif
 
