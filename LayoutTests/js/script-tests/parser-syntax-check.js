@@ -526,6 +526,20 @@ invalid("({get [x](){}})")
 invalid("({set [x](){}})")
 invalid("({set [x](x){}})")
 invalid("({[...x]: 1})")
+invalid("function f({a, a}) {}");
+invalid("function f({a}, a) {}");
+invalid("function f([b, b]) {}");
+invalid("function f([b], b) {}");
+invalid("function f({a: {b}}, b) {}");
+valid("function f(a, b = 20) {}");
+valid("function f(a = 20, b = a) {}");
+valid("function f({a = 20} = {a: 40}, b = a) {}");
+valid("function f([a,b,c] = [1,2,3]) {}");
+invalid("function f(a, a=20) {}");
+invalid("function f({a} = 20, a=20) {}");
+invalid("function f([a,b,a] = [1,2,3]) {}");
+invalid("function f([a,b,c] = [1,2,3], a) {}");
+invalid("function f([a,b,c] = [1,2,3], {a}) {}");
 valid("( function(){ return this || eval('this'); }().x = 'y' )");
 invalid("function(){ return this || eval('this'); }().x = 'y'");
 invalid("1 % +");

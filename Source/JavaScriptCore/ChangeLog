@@ -1,3 +1,89 @@
+2015-07-24  Saam barati  <saambarati1@gmail.com>
+
+        [ES6] Add support for default parameters
+        https://bugs.webkit.org/show_bug.cgi?id=38409
+
+        Reviewed by Filip Pizlo.
+
+        This patch implements ES6 default parameters according to the ES6
+        specification. This patch builds off the components introduced with 
+        "let" scoping and parsing function parameters in the same parser
+        arena as the function itself. "let" scoping allows functions with default 
+        parameter values to place their parameters under the TDZ. Parsing function
+        parameters in the same parser arena allows the FunctionParameters AST node
+        refer to ExpressionNodes.
+
+        The most subtle part of this patch is how we allocate lexical environments
+        when functions have default parameter values. If a function has default
+        parameter values then there must be a separate lexical environment for
+        its parameters. Then, the function's "var" lexical environment must have
+        the parameter lexical environment as its parent. The BytecodeGenerator
+        takes great care to not allocate the "var" lexical environment before its
+        really needed.
+
+        The "arguments" object for a function with default parameters will never be 
+        a mapped arugments object. It will always be a cloned arugments object.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::~BytecodeGenerator):
+        (JSC::BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeStack):
+        (JSC::BytecodeGenerator::initializeNextParameter):
+        (JSC::BytecodeGenerator::initializeVarLexicalEnvironment):
+        (JSC::BytecodeGenerator::visibleNameForParameter):
+        (JSC::BytecodeGenerator::emitLoadGlobalObject):
+        (JSC::BytecodeGenerator::pushLexicalScopeInternal):
+        (JSC::BytecodeGenerator::pushLexicalScope):
+        (JSC::BytecodeGenerator::popLexicalScope):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::lastOpcodeID):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::FunctionNode::emitBytecode):
+        * jit/JITOperations.cpp:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createElementList):
+        (JSC::ASTBuilder::createFormalParameterList):
+        (JSC::ASTBuilder::appendParameter):
+        (JSC::ASTBuilder::createClause):
+        (JSC::ASTBuilder::createClauseList):
+        * parser/Nodes.h:
+        (JSC::FunctionParameters::size):
+        (JSC::FunctionParameters::at):
+        (JSC::FunctionParameters::hasDefaultParameterValues):
+        (JSC::FunctionParameters::append):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseVariableDeclarationList):
+        (JSC::Parser<LexerType>::createBindingPattern):
+        (JSC::Parser<LexerType>::tryParseDestructuringPatternExpression):
+        (JSC::Parser<LexerType>::parseDestructuringPattern):
+        (JSC::Parser<LexerType>::parseFormalParameters):
+        (JSC::Parser<LexerType>::parseFunctionParameters):
+        * parser/Parser.h:
+        (JSC::Scope::declareParameter):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createElementList):
+        (JSC::SyntaxChecker::createFormalParameterList):
+        (JSC::SyntaxChecker::appendParameter):
+        (JSC::SyntaxChecker::createClause):
+        (JSC::SyntaxChecker::createClauseList):
+        * tests/stress/es6-default-parameters.js: Added.
+        (assert):
+        (shouldThrow):
+        (shouldThrowSyntaxError):
+        (shouldThrowTDZ):
+        (basic):
+        (basicFunctionCaptureInDefault.basicFunctionCaptureInDefault.basicCaptured):
+        (basicCaptured.basicCaptured.tricky):
+        (strict):
+        (playground):
+        (scoping):
+        (augmentsArguments1):
+        (augmentsArguments2):
+        (augmentsArguments3):
+        (augmentsArguments4):
+        (augmentsArguments5):
+
 2015-07-24  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Remove JS Promise constructor unused piece of code

@@ -687,10 +687,7 @@ void JIT_OPERATION operationDirectPutByValGeneric(ExecState* exec, EncodedJSValu
 
 EncodedJSValue JIT_OPERATION operationCallEval(ExecState* exec, ExecState* execCallee)
 {
-
-    ASSERT_UNUSED(exec, exec->codeBlock()->codeType() != FunctionCode
-        || !exec->codeBlock()->needsActivation()
-        || exec->hasActivation());
+    UNUSED_PARAM(exec);
 
     execCallee->setCodeBlock(0);
 

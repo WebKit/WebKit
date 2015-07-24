@@ -33,11 +33,6 @@ PASS 30,30
 PASS 120,120
 PASS 3628800,3628800
 PASS 1,1
-PASS true,true
-PASS true,true
-PASS true,true
-PASS true,true
-PASS true,true
 PASS successfullyParsed is true
 
 TEST COMPLETE

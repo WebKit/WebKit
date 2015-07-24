@@ -621,6 +621,9 @@ namespace JSC {
 
         OpcodeID lastOpcodeID() const { return m_lastOpcodeID; }
 
+    private:
+        void pushLexicalScopeInternal(VariableEnvironment&, bool canOptimizeTDZChecks, RegisterID** constantSymbolTableResult);
+    public:
         void pushLexicalScope(VariableEnvironmentNode*, bool canOptimizeTDZChecks, RegisterID** constantSymbolTableResult = nullptr);
         void popLexicalScope(VariableEnvironmentNode*);
         void prepareLexicalScopeForNextForLoopIteration(VariableEnvironmentNode*, RegisterID* loopSymbolTable);
@@ -715,6 +718,9 @@ namespace JSC {
         RegisterID* emitConstructVarargs(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, RegisterID* profileHookRegister, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
         RegisterID* emitCallVarargs(OpcodeID, RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, RegisterID* profileHookRegister, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
 
+        void initializeVarLexicalEnvironment(int symbolTableConstantIndex);
+        void initializeDefaultParameterValuesAndSetupFunctionScopeStack(FunctionParameters&, FunctionNode*, SymbolTable*, int symbolTableConstantIndex, const std::function<bool (UniquedStringImpl*)>& captures);
+
     public:
         JSString* addStringConstant(const Identifier&);
         JSTemplateRegistryKey* addTemplateRegistryKeyConstant(const TemplateRegistryKey&);
@@ -773,7 +779,6 @@ namespace JSC {
         Vector<SwitchInfo> m_switchContextStack;
         Vector<std::unique_ptr<ForInContext>> m_forInContextStack;
         Vector<TryContext> m_tryContextStack;
-        Vector<std::pair<RefPtr<RegisterID>, const DestructuringPatternNode*>> m_destructuringParameters;
         enum FunctionVariableType : uint8_t { NormalFunctionVariable, GlobalFunctionVariable };
         Vector<std::pair<FunctionBodyNode*, FunctionVariableType>> m_functionsToInitialize;
         bool m_needToInitializeArguments { false };

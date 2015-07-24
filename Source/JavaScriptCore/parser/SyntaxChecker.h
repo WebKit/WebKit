@@ -219,7 +219,7 @@ public:
     int createElementList(int, int) { return ElementsListResult; }
     int createElementList(int, int, int) { return ElementsListResult; }
     int createFormalParameterList() { return FormalParameterListResult; }
-    void appendParameter(int, DestructuringPattern) { }
+    void appendParameter(int, DestructuringPattern, int) { }
     int createClause(int, int) { return ClauseResult; }
     int createClauseList(int) { return ClauseListResult; }
     int createClauseList(int, int) { return ClauseListResult; }

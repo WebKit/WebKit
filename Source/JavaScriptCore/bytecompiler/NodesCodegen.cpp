@@ -3019,9 +3019,9 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
     if (generator.vm()->typeProfiler()) {
         for (size_t i = 0; i < m_parameters->size(); i++) {
             // FIXME: Handle Destructuring assignments into arguments.
-            if (!m_parameters->at(i)->isBindingNode())
+            if (!m_parameters->at(i).first->isBindingNode())
                 continue;
-            BindingNode* parameter = static_cast<BindingNode*>(m_parameters->at(i));
+            BindingNode* parameter = static_cast<BindingNode*>(m_parameters->at(i).first);
             RegisterID reg(CallFrame::argumentOffset(i));
             generator.emitProfileType(&reg, ProfileTypeBytecodeFunctionArgument, nullptr);
             generator.emitTypeProfilerExpressionInfo(parameter->divotStart(), parameter->divotEnd());

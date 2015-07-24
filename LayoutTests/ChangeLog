@@ -1,3 +1,16 @@
+2015-07-24  Saam barati  <saambarati1@gmail.com>
+
+        [ES6] Add support for default parameters
+        https://bugs.webkit.org/show_bug.cgi?id=38409
+
+        Reviewed by Filip Pizlo.
+
+        * js/destructuring-assignment-default-values-expected.txt:
+        * js/parser-syntax-check-expected.txt:
+        * js/script-tests/destructuring-assignment-default-values.js:
+        (shouldThrow): Deleted.
+        * js/script-tests/parser-syntax-check.js:
+
 2015-07-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         CSS "content" property is missing in getComputedStyles

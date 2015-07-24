@@ -105,21 +105,3 @@ function test8(x) {
 assert(test8(5).p, 120);
 assert(test8(10).p, 3628800);
 assert(test8(0).p, 1);
-
-// FIXME: When we support default values in function parameters, we should remove this test.
-function shouldThrow(str) {
-    var thrown = false;
-    try {
-        eval(str);
-    } catch(e) {
-        thrown = true;
-    }
-
-    assert(true, thrown);
-}
-
-shouldThrow("(function({x = 40}) {})");
-shouldThrow("(function({y}, {x = 40}) {}");
-shouldThrow("(function([y], [x = 40]) {})");
-shouldThrow("(function({y}, {x: {z = 50}}) {})");
-shouldThrow("(function({y}, {x: [z = 50]}) {})");
