@@ -1,5 +1,26 @@
 2015-07-24  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r187170. rdar://problem/21901076
+
+    2015-07-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Search fields render placeholder text improperly.
+            https://bugs.webkit.org/show_bug.cgi?id=147192
+            <rdar://problem/21901076>
+
+            Reviewed by Alexey Proskuryakov.
+
+            Due to changes in the way AppKit renders search inputs, we must now explicitly
+            set the placeholder text of a search input rendered using the Mac theme to be
+            an empty string when rendering the search input box (not including the actual
+            placeholder text).
+
+            * rendering/RenderThemeMac.mm:
+            (WebCore::RenderThemeMac::setSearchCellState): Force the placeholder text of
+                the NSSearchFieldCell for the Mac theme to be an empty string.
+
+2015-07-24  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r187144. rdar://problem/21931728
 
     2015-07-21  Dean Jackson  <dino@apple.com>
