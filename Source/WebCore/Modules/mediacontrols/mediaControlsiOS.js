@@ -674,12 +674,20 @@ ControllerIOS.prototype = {
         if (this.controls.startPlaybackButton)
             this.controls.startPlaybackButton.style.webkitTransform = scaleTransform;
         if (this.controls.panel) {
-            var bottomAligment = -2 * scaleValue;
-            this.controls.panel.style.bottom = bottomAligment + "px";
-            this.controls.panel.style.paddingBottom = -(newScaleFactor * bottomAligment) + "px";
-            this.controls.panel.style.width = Math.round(newScaleFactor * 100) + "%";
-            this.controls.panel.style.webkitTransform = scaleTransform;
-
+            if (scaleValue > 1) {
+                this.controls.panel.style.width = "100%";
+                this.controls.panel.style.zoom = scaleValue;
+                this.controls.panel.style.webkitTransform = "scale(1)";
+                this.controls.timelineBox.style.webkitTextSizeAdjust = (100 * scaleValue) + "%";
+            } else {
+                var bottomAligment = -2 * scaleValue;
+                this.controls.panel.style.bottom = bottomAligment + "px";
+                this.controls.panel.style.paddingBottom = -(newScaleFactor * bottomAligment) + "px";
+                this.controls.panel.style.width = Math.round(newScaleFactor * 100) + "%";
+                this.controls.panel.style.webkitTransform = scaleTransform;
+                this.controls.timelineBox.style.webkitTextSizeAdjust = "auto";
+                this.controls.panel.style.zoom = 1;
+            }
             this.controls.panelBackground.style.height = (50 * scaleValue) + "px";
 
             this.setNeedsTimelineMetricsUpdate();

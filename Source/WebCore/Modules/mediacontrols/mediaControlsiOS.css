@@ -478,6 +478,7 @@ audio::-webkit-media-controls-timeline-container {
     position: relative;
     padding: 0;
     -webkit-order: 2;
+    -webkit-text-size-adjust: auto;
 }
 
 audio::-webkit-media-controls-timeline-container {
