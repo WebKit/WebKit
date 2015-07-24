@@ -102,6 +102,15 @@ extern "C" {
 - (void)setNeedsDisplayInRect:(CGRect)rect levelOfDetail:(int)levelOfDetail options:(NSDictionary *)dictionary;
 @end
 
+#if PLATFORM(IOS)
+@interface CADisplay : NSObject
+@end
+
+@interface CADisplay ()
+@property (nonatomic, readonly) NSString *name;
+@end
+#endif
+
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
 @interface CAOpenGLLayer (Details)
 @property CGColorSpaceRef colorspace;
