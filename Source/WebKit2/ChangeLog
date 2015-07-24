@@ -1,3 +1,21 @@
+2015-07-24  Anders Carlsson  <andersca@apple.com>
+
+        Networking process crash in NetworkConnectionToWebProcess::convertMainResourceLoadToDownload while attempting to download a blob
+        https://bugs.webkit.org/show_bug.cgi?id=147276
+        rdar://problem/21423353
+
+        Reviewed by Andreas Kling.
+
+        We currently don't support downloading blobs, so for now just bail if we encounter a null loader inside
+        convertMainResourceLoadToDownload (which happens when trying to download a blob URL).
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didCleanupResourceLoader):
+        Rewrite the assertion to be more clear - it's fine to do an extra hash lookup in debug builds.
+
+        (WebKit::NetworkConnectionToWebProcess::convertMainResourceLoadToDownload):
+        Bail if loader is null.
+
 2015-07-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Remove runtime flags for symbols
