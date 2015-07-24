@@ -178,6 +178,8 @@ public:
     virtual ImageOrientation orientationForCurrentFrame() override { return frameOrientationAtIndex(currentFrame()); }
 
     virtual bool currentFrameKnownToBeOpaque() override;
+
+    virtual bool isAnimated() override { return m_frameCount > 1; }
     
     bool canAnimate();
 

@@ -85,6 +85,8 @@ public:
     virtual bool isPDFDocumentImage() const { return false; }
     virtual bool currentFrameKnownToBeOpaque() = 0;
 
+    virtual bool isAnimated() { return false; }
+
     // Derived classes should override this if they can assure that 
     // the image contains only resources from its own security origin.
     virtual bool hasSingleSecurityOrigin() const { return false; }
