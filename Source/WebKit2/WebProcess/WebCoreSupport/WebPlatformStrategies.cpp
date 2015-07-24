@@ -251,6 +251,11 @@ void WebPlatformStrategies::loadResourceSynchronously(NetworkingContext* context
 
 void WebPlatformStrategies::createPingHandle(NetworkingContext* networkingContext, ResourceRequest& request, bool shouldUseCredentialStorage)
 {
+    // It's possible that call to createPingHandle might be made during initial empty Document creation before a NetworkingContext exists.
+    // It is not clear that we should send ping loads during that process anyways.
+    if (!networkingContext)
+        return;
+
     auto& webProcess = WebProcess::singleton();
     if (!webProcess.usesNetworkProcess()) {
         LoaderStrategy::createPingHandle(networkingContext, request, shouldUseCredentialStorage);
