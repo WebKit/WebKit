@@ -61,7 +61,7 @@ WebInspector.TimelineRuler.MinimumLeftDividerSpacing = 48;
 WebInspector.TimelineRuler.MinimumDividerSpacing = 64;
 
 WebInspector.TimelineRuler.AllowsTimeRangeSelectionStyleClassName = "allows-time-range-selection";
-WebInspector.TimelineRuler.CreatingSelectionStyleClassName = "creating-selection";
+WebInspector.TimelineRuler.ResizingSelectionStyleClassName = "resizing-selection";
 WebInspector.TimelineRuler.DividerElementStyleClassName = "divider";
 WebInspector.TimelineRuler.DividerLabelElementStyleClassName = "label";
 
@@ -722,7 +722,7 @@ WebInspector.TimelineRuler.prototype = {
             this.selectionEndTime = Math.min(this.startTime + (Math.max(currentMousePosition, this._mouseDownPosition) * this.secondsPerPixel), this.endTime);
 
             // Turn on col-resize cursor style once dragging begins, rather than on the initial mouse down.
-            this._element.classList.add(WebInspector.TimelineRuler.CreatingSelectionStyleClassName);
+            this._element.classList.add(WebInspector.TimelineRuler.ResizingSelectionStyleClassName);
         }
 
         this._updateSelection(this._element.clientWidth, this.duration);
@@ -736,7 +736,7 @@ WebInspector.TimelineRuler.prototype = {
         console.assert(event.button === 0);
 
         if (!this._selectionIsMove) {
-            this._element.classList.remove(WebInspector.TimelineRuler.CreatingSelectionStyleClassName);
+            this._element.classList.remove(WebInspector.TimelineRuler.ResizingSelectionStyleClassName);
 
             if (this.selectionEndTime - this.selectionStartTime < this.minimumSelectionDuration) {
                 // The section is smaller than allowed, grow in the direction of the drag to meet the minumum.
@@ -785,6 +785,8 @@ WebInspector.TimelineRuler.prototype = {
         document.addEventListener("mousemove", this._selectionHandleMouseMoveEventListener);
         document.addEventListener("mouseup", this._selectionHandleMouseUpEventListener);
 
+        this._element.classList.add(WebInspector.TimelineRuler.ResizingSelectionStyleClassName);
+
         event.preventDefault();
         event.stopPropagation();
     },
@@ -826,6 +828,8 @@ WebInspector.TimelineRuler.prototype = {
     _handleSelectionHandleMouseUp: function(event)
     {
         console.assert(event.button === 0);
+
+        this._element.classList.remove(WebInspector.TimelineRuler.ResizingSelectionStyleClassName);
 
         document.removeEventListener("mousemove", this._selectionHandleMouseMoveEventListener);
         document.removeEventListener("mouseup", this._selectionHandleMouseUpEventListener);
