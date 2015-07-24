@@ -32,9 +32,7 @@ namespace JSC {
 
 // macro(name, isEnabledFlag)
 #define JSC_RUNTIME_FLAG(macro) \
-    macro(SymbolDisabled, false)\
-    macro(PromiseDisabled, false)
-
+    macro(SymbolDisabled, false)
 
 class RuntimeFlags {
 private:

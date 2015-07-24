@@ -62,13 +62,11 @@ JSCallbackObject<Parent>::JSCallbackObject(ExecState* exec, Structure* structure
 {
 }
 
-extern const GlobalObjectMethodTable javaScriptCoreAPIGlobalObjectMethodTable;
-
 // Global object constructor.
 // FIXME: Move this into a separate JSGlobalCallbackObject class derived from this one.
 template <class Parent>
 JSCallbackObject<Parent>::JSCallbackObject(VM& vm, JSClassRef jsClass, Structure* structure)
-    : Parent(vm, structure, &javaScriptCoreAPIGlobalObjectMethodTable)
+    : Parent(vm, structure)
     , m_callbackObjectData(std::make_unique<JSCallbackObjectData>(nullptr, jsClass))
 {
 }

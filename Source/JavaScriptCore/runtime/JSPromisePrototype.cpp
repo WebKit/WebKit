@@ -26,8 +26,6 @@
 #include "config.h"
 #include "JSPromisePrototype.h"
 
-#if ENABLE(PROMISES)
-
 #include "Error.h"
 #include "JSCBuiltins.h"
 #include "JSCJSValueInlines.h"
@@ -85,5 +83,3 @@ bool JSPromisePrototype::getOwnPropertySlot(JSObject* object, ExecState* exec, P
 }
 
 } // namespace JSC
-
-#endif // ENABLE(PROMISES)

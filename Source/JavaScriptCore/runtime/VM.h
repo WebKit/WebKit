@@ -294,9 +294,7 @@ public:
     Strong<Structure> inferredValueStructure;
     Strong<Structure> functionRareDataStructure;
     Strong<Structure> exceptionStructure;
-#if ENABLE(PROMISES)
     Strong<Structure> promiseDeferredStructure;
-#endif
     Strong<JSCell> iterationTerminator;
     Strong<JSCell> emptyPropertyNameEnumerator;
 

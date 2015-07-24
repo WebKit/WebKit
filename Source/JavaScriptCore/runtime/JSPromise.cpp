@@ -26,8 +26,6 @@
 #include "config.h"
 #include "JSPromise.h"
 
-#if ENABLE(PROMISES)
-
 #include "Error.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"
@@ -79,5 +77,3 @@ JSValue JSPromise::result(VM& vm) const
 }
 
 } // namespace JSC
-
-#endif // ENABLE(PROMISES)

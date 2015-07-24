@@ -26,8 +26,6 @@
 #ifndef JSDOMPromise_h
 #define JSDOMPromise_h
 
-#if ENABLE(PROMISES)
-
 #include "JSDOMBinding.h"
 #include <heap/StrongInlines.h>
 #include <runtime/JSPromiseDeferred.h>
@@ -293,7 +291,5 @@ inline void DOMPromiseIteratorWithCallback<Value, Error>::reject(const Error& er
 }
 
 }
-
-#endif // ENABLE(PROMISES)
 
 #endif // JSDOMPromise_h

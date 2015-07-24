@@ -33,7 +33,6 @@ import "ocidl.idl";
 
 typedef enum WebKitJavaScriptRuntimeFlags {
     WebKitJavaScriptRuntimeFlagsSymbolDisabled = 1,  // 1u << 0
-    WebKitJavaScriptRuntimeFlagsPromiseDisabled = 2,  // 1u << 1
     WebKitJavaScriptRuntimeFlagsAllEnabled = 0
 } WebKitJavaScriptRuntimeFlags;
 

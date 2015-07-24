@@ -26,8 +26,6 @@
 #include "config.h"
 #include "JSPromiseDeferred.h"
 
-#if ENABLE(PROMISES)
-
 #include "BuiltinNames.h"
 #include "Error.h"
 #include "Exception.h"
@@ -95,5 +93,3 @@ void JSPromiseDeferred::visitChildren(JSCell* cell, SlotVisitor& visitor)
 }
 
 } // namespace JSC
-
-#endif // ENABLE(PROMISES)

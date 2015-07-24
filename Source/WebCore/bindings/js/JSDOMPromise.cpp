@@ -26,8 +26,6 @@
 #include "config.h"
 #include "JSDOMPromise.h"
 
-#if ENABLE(PROMISES)
-
 #include "ExceptionCode.h"
 #include <runtime/Exception.h>
 
@@ -74,5 +72,3 @@ void rejectPromiseWithExceptionIfAny(JSC::ExecState& state, JSDOMGlobalObject& g
 }
 
 }
-
-#endif // ENABLE(PROMISES)

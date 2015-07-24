@@ -44,7 +44,6 @@ typedef NS_OPTIONS(NSUInteger, _WKDebugOverlayRegions) {
 
 typedef NS_OPTIONS(NSUInteger, _WKJavaScriptRuntimeFlags) {
     _WKJavaScriptRuntimeFlagsSymbolDisabled = 1 << 0,
-    _WKJavaScriptRuntimeFlagsPromiseDisabled = 1 << 1,
     _WKJavaScriptRuntimeFlagsAllEnabled = 0
 } WK_ENUM_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 

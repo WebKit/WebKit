@@ -1,3 +1,61 @@
+2015-07-23  Alex Christensen  <achristensen@webkit.org>
+
+        Remove compile and runtime flags for promises.
+        https://bugs.webkit.org/show_bug.cgi?id=147244
+
+        Reviewed by Yusuke Suzuki.
+
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::JSCallbackObject):
+        * API/JSContextRef.cpp:
+        (JSGlobalContextCreateInGroup):
+        * Configurations/FeatureDefines.xcconfig:
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::getInternalProperties):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::create):
+        (JSC::JSGlobalObject::syntaxErrorConstructor):
+        (JSC::JSGlobalObject::typeErrorConstructor):
+        (JSC::JSGlobalObject::URIErrorConstructor):
+        (JSC::JSGlobalObject::promiseConstructor):
+        (JSC::JSGlobalObject::nullGetterFunction):
+        (JSC::JSGlobalObject::nullSetterFunction):
+        (JSC::JSGlobalObject::applyFunction):
+        (JSC::JSGlobalObject::definePropertyFunction):
+        (JSC::JSGlobalObject::arrayProtoValuesFunction):
+        (JSC::JSGlobalObject::initializePromiseFunction):
+        (JSC::JSGlobalObject::newPromiseDeferredFunction):
+        (JSC::JSGlobalObject::throwTypeErrorGetterSetter):
+        (JSC::JSGlobalObject::regExpPrototype):
+        (JSC::JSGlobalObject::errorPrototype):
+        (JSC::JSGlobalObject::iteratorPrototype):
+        (JSC::JSGlobalObject::promisePrototype):
+        (JSC::JSGlobalObject::debuggerScopeStructure):
+        (JSC::JSGlobalObject::withScopeStructure):
+        (JSC::JSGlobalObject::iteratorResultStructure):
+        (JSC::JSGlobalObject::iteratorResultStructureOffset):
+        (JSC::JSGlobalObject::regExpMatchesArrayStructure):
+        (JSC::JSGlobalObject::promiseStructure):
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::result):
+        * runtime/JSPromise.h:
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::constructPromise):
+        * runtime/JSPromiseConstructor.h:
+        * runtime/JSPromiseDeferred.cpp:
+        (JSC::JSPromiseDeferred::visitChildren):
+        * runtime/JSPromiseDeferred.h:
+        * runtime/JSPromisePrototype.cpp:
+        (JSC::JSPromisePrototype::getOwnPropertySlot):
+        * runtime/JSPromisePrototype.h:
+        * runtime/RuntimeFlags.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2015-07-23  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Implement WebAssembly modules

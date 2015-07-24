@@ -35,7 +35,6 @@
 #include "JSGlobalObject.h"
 #include "JSObject.h"
 #include "JSCInlines.h"
-#include "RuntimeFlags.h"
 #include "SourceProvider.h"
 #include "StackVisitor.h"
 #include <wtf/text/StringBuilder.h>
@@ -58,8 +57,6 @@ static const int32_t webkitFirstVersionWithConcurrentGlobalContexts = 0x2100500;
 #endif
 
 using namespace JSC;
-
-const GlobalObjectMethodTable JSC::javaScriptCoreAPIGlobalObjectMethodTable = { &JSGlobalObject::allowsAccessFrom, &JSGlobalObject::supportsProfiling, &JSGlobalObject::supportsRichSourceInfo, &JSGlobalObject::shouldInterruptScript, &JSGlobalObject::javaScriptRuntimeFlags, nullptr, &JSGlobalObject::shouldInterruptScriptBeforeTimeout };
 
 // From the API's perspective, a context group remains alive iff
 //     (a) it has been JSContextGroupRetained
@@ -154,7 +151,7 @@ JSGlobalContextRef JSGlobalContextCreateInGroup(JSContextGroupRef group, JSClass
     JSLockHolder locker(vm.get());
 
     if (!globalObjectClass) {
-        JSGlobalObject* globalObject = JSGlobalObject::create(*vm, JSGlobalObject::createStructure(*vm, jsNull()), &javaScriptCoreAPIGlobalObjectMethodTable);
+        JSGlobalObject* globalObject = JSGlobalObject::create(*vm, JSGlobalObject::createStructure(*vm, jsNull()));
 #if ENABLE(REMOTE_INSPECTOR)
         if (JSRemoteInspectorGetInspectionEnabledByDefault())
             globalObject->setRemoteDebuggingEnabled(true);

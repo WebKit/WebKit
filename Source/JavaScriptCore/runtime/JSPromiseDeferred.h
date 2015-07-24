@@ -26,8 +26,6 @@
 #ifndef JSPromiseDeferred_h
 #define JSPromiseDeferred_h
 
-#if ENABLE(PROMISES)
-
 #include "JSCell.h"
 #include "Structure.h"
 
@@ -63,7 +61,5 @@ private:
 };
 
 } // namespace JSC
-
-#endif // ENABLE(PROMISES)
 
 #endif // JSPromiseDeferred_h

@@ -26,8 +26,6 @@
 #ifndef JSPromiseConstructor_h
 #define JSPromiseConstructor_h
 
-#if ENABLE(PROMISES)
-
 #include "InternalFunction.h"
 
 namespace JSC {
@@ -58,7 +56,5 @@ private:
 JSPromise* constructPromise(ExecState*, JSGlobalObject*, JSFunction*);
 
 } // namespace JSC
-
-#endif // ENABLE(PROMISES)
 
 #endif // JSPromiseConstructor_h

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "JSPromiseConstructor.h"
 
-#if ENABLE(PROMISES)
-
 #include "Error.h"
 #include "Exception.h"
 #include "IteratorOperations.h"
@@ -136,5 +134,3 @@ JSPromise* constructPromise(ExecState* exec, JSGlobalObject* globalObject, JSFun
 }
 
 } // namespace JSC
-
-#endif // ENABLE(PROMISES)
