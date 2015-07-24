@@ -1115,13 +1115,32 @@ BackgroundImageGeometry RenderBoxModelObject::calculateBackgroundImageGeometry(c
             viewportRect = view().unscaledDocumentRect();
         else {
             FrameView& frameView = view().frameView();
-            viewportRect.setSize(frameView.unscaledVisibleContentSizeIncludingObscuredArea());
-            topContentInset = frameView.topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset);
+            bool useFixedLayout = frameView.useFixedLayout() && !frameView.fixedLayoutSize().isEmpty();
 
-            if (fixedBackgroundPaintsInLocalCoordinates())
-                viewportRect.setLocation(LayoutPoint(0, -topContentInset));
-            else
+            if (useFixedLayout) {
+                // Use the fixedLayoutSize() when useFixedLayout() because the rendering will scale
+                // down the frameView to to fit in the current viewport.
+                viewportRect.setSize(frameView.fixedLayoutSize());
+            } else
+                viewportRect.setSize(frameView.unscaledVisibleContentSizeIncludingObscuredArea());
+
+            if (fixedBackgroundPaintsInLocalCoordinates()) {
+                if (!useFixedLayout) {
+                    // Shifting location up by topContentInset is needed for layout tests which expect
+                    // layout to be shifted down when calling window.internals.setTopContentInset().
+                    topContentInset = frameView.topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset);
+                    viewportRect.setLocation(LayoutPoint(0, -topContentInset));
+                }
+            } else if (useFixedLayout || frameView.frameScaleFactor() != 1) {
+                // scrollOffsetForFixedPosition() is adjusted for page scale and it does not include
+                // topContentInset so do not add it to the calculation below.
+                viewportRect.setLocation(toLayoutPoint(frameView.scrollOffsetForFixedPosition()));
+            } else {
+                // documentScrollOffsetRelativeToViewOrigin() includes -topContentInset in its height
+                // so we need to account for that in calculating the phase size
+                topContentInset = frameView.topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset);
                 viewportRect.setLocation(toLayoutPoint(frameView.documentScrollOffsetRelativeToViewOrigin()));
+            }
 
             top += topContentInset;
         }
