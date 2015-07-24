@@ -39,6 +39,7 @@
 #include "ImageBuffer.h"
 #include "Page.h"
 #include "RenderObject.h"
+#include "Settings.h"
 
 namespace WebCore {
 
@@ -93,7 +94,12 @@ std::unique_ptr<ImageBuffer> snapshotFrameRect(Frame& frame, const IntRect& imag
     // Other paint behaviors are set by paintContentsForSnapshot.
     frame.view()->setPaintBehavior(paintBehavior);
 
-    std::unique_ptr<ImageBuffer> buffer = ImageBuffer::create(imageRect.size(), frame.page()->deviceScaleFactor(), ColorSpaceDeviceRGB);
+    float scaleFactor = frame.page()->deviceScaleFactor();
+
+    if (frame.settings().delegatesPageScaling())
+        scaleFactor *= frame.page()->pageScaleFactor();
+
+    std::unique_ptr<ImageBuffer> buffer = ImageBuffer::create(imageRect.size(), scaleFactor, ColorSpaceDeviceRGB);
     if (!buffer)
         return nullptr;
     buffer->context()->translate(-imageRect.x(), -imageRect.y());

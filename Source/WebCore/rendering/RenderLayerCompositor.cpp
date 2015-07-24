@@ -1233,12 +1233,9 @@ void RenderLayerCompositor::addToOverlapMap(OverlapMap& overlapMap, const Render
     LayoutRect clipRect = layer.backgroundClipRect(RenderLayer::ClipRectsContext(&rootRenderLayer(), AbsoluteClipRects)).rect(); // FIXME: Incorrect for CSS regions.
 
     // On iOS, pageScaleFactor() is not applied by RenderView, so we should not scale here.
-    // FIXME: Set Settings::delegatesPageScaling to true for iOS.
-#if !PLATFORM(IOS)
     const Settings& settings = m_renderView.frameView().frame().settings();
     if (!settings.delegatesPageScaling())
         clipRect.scale(pageScaleFactor());
-#endif
     clipRect.intersect(extent.bounds);
     overlapMap.add(clipRect);
 }
