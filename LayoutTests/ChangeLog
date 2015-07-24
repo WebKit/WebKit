@@ -1,5 +1,17 @@
 2015-07-24  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge patch for r187189.
+
+    2015-07-24  Dean Jackson  <dino@apple.com>
+
+            The merge of r187189 made changes to a file that doesn't
+            yet exist in this branch. Move the code to the right place.
+
+            * fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays-expected.txt: Slightly different
+            test result on this branch.
+
+2015-07-24  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r187359.
 
     2015-07-24  Anders Carlsson  <andersca@apple.com>
