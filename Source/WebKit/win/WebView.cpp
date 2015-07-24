@@ -365,7 +365,9 @@ const LPCWSTR kWebViewWindowClassName = L"WebViewWindowClass";
 
 const int WM_XP_THEMECHANGED = 0x031A;
 const int WM_VISTA_MOUSEHWHEEL = 0x020E;
+#ifndef WM_DPICHANGED
 const int WM_DPICHANGED = 0x02E0;
+#endif
 
 static const int maxToolTipWidth = 250;
 
