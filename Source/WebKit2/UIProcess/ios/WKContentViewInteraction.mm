@@ -3388,6 +3388,11 @@ static bool isAssistableInputType(InputType type)
     return rectArray.autorelease();
 }
 
+- (void)_previewItemControllerDidCancelPreview:(UIPreviewItemController *)controller
+{
+    _highlightLongPressCanClick = NO;
+}
+
 @end
 
 #endif
