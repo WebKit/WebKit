@@ -1,3 +1,12 @@
+2015-07-24  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove the unused GCC workaround - std::is_trivially_destructible
+        https://bugs.webkit.org/show_bug.cgi?id=147226
+
+        Reviewed by Darin Adler.
+
+        * wtf/StdLibExtras.h:
+
 2015-07-23  Alex Christensen  <achristensen@webkit.org>
 
         Remove compile and runtime flags for promises.
