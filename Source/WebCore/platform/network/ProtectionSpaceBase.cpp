@@ -100,6 +100,24 @@ bool ProtectionSpaceBase::receivesCredentialSecurely() const
             m_authenticationScheme == ProtectionSpaceAuthenticationSchemeHTTPDigest); 
 }
 
+bool ProtectionSpaceBase::isPasswordBased() const
+{
+    switch (m_authenticationScheme) {
+    case ProtectionSpaceAuthenticationSchemeDefault:
+    case ProtectionSpaceAuthenticationSchemeHTTPBasic:
+    case ProtectionSpaceAuthenticationSchemeHTTPDigest:
+    case ProtectionSpaceAuthenticationSchemeHTMLForm:
+    case ProtectionSpaceAuthenticationSchemeNTLM:
+    case ProtectionSpaceAuthenticationSchemeNegotiate:
+        return true;
+    case ProtectionSpaceAuthenticationSchemeClientCertificateRequested:
+    case ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested:
+    case ProtectionSpaceAuthenticationSchemeUnknown:
+        return false;
+    }
+}
+
+
 bool ProtectionSpaceBase::compare(const ProtectionSpace& a, const ProtectionSpace& b)
 {
     if (a.host() != b.host())
