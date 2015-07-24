@@ -1,5 +1,14 @@
 2015-07-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Remove runtime flags for symbols
+        https://bugs.webkit.org/show_bug.cgi?id=147246
+
+        Reviewed by Alex Christensen.
+
+        * WebView/WebPreferencesPrivate.h:
+
+2015-07-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Object.getOwnPropertySymbols on large list takes very long
         https://bugs.webkit.org/show_bug.cgi?id=146137
 

@@ -119,21 +119,19 @@ void ArrayPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_BUILTIN_FUNCTION("includes", arrayPrototypeIncludesCodeGenerator, DontEnum);
     JSC_BUILTIN_FUNCTION("copyWithin", arrayPrototypeCopyWithinCodeGenerator, DontEnum);
     
-    if (!globalObject->runtimeFlags().isSymbolDisabled()) {
-        JSObject* unscopables = constructEmptyObject(globalObject->globalExec(), globalObject->nullPrototypeObjectStructure());
-        const char* unscopableNames[] = {
-            "copyWithin",
-            "entries",
-            "fill",
-            "find",
-            "findIndex",
-            "keys",
-            "values"
-        };
-        for (const char* unscopableName : unscopableNames)
-            unscopables->putDirect(vm, Identifier::fromString(&vm, unscopableName), jsBoolean(true));
-        putDirectWithoutTransition(vm, vm.propertyNames->unscopablesSymbol, unscopables, DontEnum | ReadOnly);
-    }
+    JSObject* unscopables = constructEmptyObject(globalObject->globalExec(), globalObject->nullPrototypeObjectStructure());
+    const char* unscopableNames[] = {
+        "copyWithin",
+        "entries",
+        "fill",
+        "find",
+        "findIndex",
+        "keys",
+        "values"
+    };
+    for (const char* unscopableName : unscopableNames)
+        unscopables->putDirect(vm, Identifier::fromString(&vm, unscopableName), jsBoolean(true));
+    putDirectWithoutTransition(vm, vm.propertyNames->unscopablesSymbol, unscopables, DontEnum | ReadOnly);
 }
 
 // ------------------------------ Array Functions ----------------------------
