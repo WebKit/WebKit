@@ -115,6 +115,8 @@ bool ProtectionSpaceBase::isPasswordBased() const
     case ProtectionSpaceAuthenticationSchemeUnknown:
         return false;
     }
+
+    return true;
 }
 
 
