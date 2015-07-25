@@ -542,6 +542,47 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 
 #endif // PLATFORM(IOS)
 
+@end
+
+@implementation DOMNode (DOMNodeExtensionsPendingPublic)
+
+#if !PLATFORM(IOS)
+- (NSImage *)renderedImage
+{
+    // FIXME: Could we move this function to WebCore::Node and autogenerate?
+    WebCore::Node* node = core(self);
+    WebCore::Frame* frame = node->document().frame();
+    if (!frame)
+        return nil;
+    return createDragImageForNode(*frame, *node).autorelease();
+}
+#endif
+
+- (NSArray *)textRects
+{
+    core(self)->document().updateLayoutIgnorePendingStylesheets();
+    if (!core(self)->renderer())
+        return nil;
+    Vector<WebCore::IntRect> rects;
+    core(self)->textRects(rects);
+    return kit(rects);
+}
+
+@end
+
+@implementation DOMNode (WebPrivate)
+
++ (id)_nodeFromJSWrapper:(JSObjectRef)jsWrapper
+{
+    JSObject* object = toJS(jsWrapper);
+
+    if (!object->inherits(JSNode::info()))
+        return nil;
+
+    WebCore::Node& node = jsCast<JSNode*>(object)->impl();
+    return kit(&node);
+}
+
 - (void)getPreviewSnapshotImage:(CGImageRef*)cgImage andRects:(NSArray **)rects
 {
     if (!cgImage || !rects)
@@ -582,47 +623,6 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     }
 
     *rects = rectArray.autorelease();
-}
-
-@end
-
-@implementation DOMNode (DOMNodeExtensionsPendingPublic)
-
-#if !PLATFORM(IOS)
-- (NSImage *)renderedImage
-{
-    // FIXME: Could we move this function to WebCore::Node and autogenerate?
-    WebCore::Node* node = core(self);
-    WebCore::Frame* frame = node->document().frame();
-    if (!frame)
-        return nil;
-    return createDragImageForNode(*frame, *node).autorelease();
-}
-#endif
-
-- (NSArray *)textRects
-{
-    core(self)->document().updateLayoutIgnorePendingStylesheets();
-    if (!core(self)->renderer())
-        return nil;
-    Vector<WebCore::IntRect> rects;
-    core(self)->textRects(rects);
-    return kit(rects);
-}
-
-@end
-
-@implementation DOMNode (WebPrivate)
-
-+ (id)_nodeFromJSWrapper:(JSObjectRef)jsWrapper
-{
-    JSObject* object = toJS(jsWrapper);
-
-    if (!object->inherits(JSNode::info()))
-        return nil;
-
-    WebCore::Node& node = jsCast<JSNode*>(object)->impl();
-    return kit(&node);
 }
 
 @end

@@ -40,6 +40,7 @@
 
 @interface DOMNode (WebPrivate)
 + (id)_nodeFromJSWrapper:(JSObjectRef)jsWrapper;
+- (void)getPreviewSnapshotImage:(CGImageRef*)cgImage andRects:(NSArray **)rects;
 @end
 
 // FIXME: this should be removed as soon as all internal Apple uses of it have been replaced with

@@ -109,8 +109,6 @@ typedef struct _WKQuad {
 - (DOMNode *)nextFocusNode;
 - (DOMNode *)previousFocusNode;
 #endif
-
-- (void)getPreviewSnapshotImage:(CGImageRef*)cgImage andRects:(NSArray **)rects;
 @end
 
 @interface DOMElement (DOMElementAppKitExtensions)
