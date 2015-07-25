@@ -999,7 +999,7 @@ void PlatformCALayer::setAnchorPointOnMainThread(FloatPoint3D value)
     });
 }
 
-void PlatformCALayer::setTileSize(const IntSize& tileSize)
+void PlatformCALayer::setTileSize(const IntSize&)
 {
     if (m_layerType != LayerTypeWebTiledLayer)
         return;
