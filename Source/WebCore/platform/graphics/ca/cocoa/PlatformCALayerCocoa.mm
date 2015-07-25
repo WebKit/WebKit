@@ -56,7 +56,6 @@
 #import "WAKWindow.h"
 #import "WKGraphics.h"
 #import "WebCoreThread.h"
-#import "WebTiledLayer.h"
 #else
 #import "ThemeMac.h"
 #endif
@@ -1004,10 +1003,6 @@ void PlatformCALayer::setTileSize(const IntSize& tileSize)
 {
     if (m_layerType != LayerTypeWebTiledLayer)
         return;
-
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [static_cast<WebTiledLayer*>(m_layer.get()) setTileSize:tileSize];
-    END_BLOCK_OBJC_EXCEPTIONS
 }
 #endif // PLATFORM(IOS)
 
