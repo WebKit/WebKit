@@ -459,6 +459,7 @@ private:
     virtual PlatformSample platformSample() override;
     virtual void dump(PrintStream&) const override;
     virtual void offsetTimestampsBy(const MediaTime&) override;
+    virtual void setTimestamps(const MediaTime&, const MediaTime&) override;
 
     RetainPtr<CMSampleBufferRef> m_sample;
     AtomicString m_id;
@@ -522,6 +523,29 @@ void MediaSampleAVFObjC::offsetTimestampsBy(const MediaTime& offset)
     for (auto& timing : timingInfoArray) {
         timing.presentationTimeStamp = toCMTime(toMediaTime(timing.presentationTimeStamp) + offset);
         timing.decodeTimeStamp = toCMTime(toMediaTime(timing.decodeTimeStamp) + offset);
+    }
+
+    CMSampleBufferRef newSample;
+    if (noErr != CMSampleBufferCreateCopyWithNewTiming(kCFAllocatorDefault, m_sample.get(), itemCount, timingInfoArray.data(), &newSample))
+        return;
+
+    m_sample = adoptCF(newSample);
+}
+
+void MediaSampleAVFObjC::setTimestamps(const WTF::MediaTime &presentationTimestamp, const WTF::MediaTime &decodeTimestamp)
+{
+    CMItemCount itemCount = 0;
+    if (noErr != CMSampleBufferGetSampleTimingInfoArray(m_sample.get(), 0, nullptr, &itemCount))
+        return;
+
+    Vector<CMSampleTimingInfo> timingInfoArray;
+    timingInfoArray.grow(itemCount);
+    if (noErr != CMSampleBufferGetSampleTimingInfoArray(m_sample.get(), itemCount, timingInfoArray.data(), nullptr))
+        return;
+
+    for (auto& timing : timingInfoArray) {
+        timing.presentationTimeStamp = toCMTime(presentationTimestamp);
+        timing.decodeTimeStamp = toCMTime(decodeTimestamp);
     }
 
     CMSampleBufferRef newSample;

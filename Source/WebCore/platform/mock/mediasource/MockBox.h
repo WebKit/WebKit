@@ -135,6 +135,11 @@ public:
         m_presentationTimestamp += offset;
         m_decodeTimestamp += offset;
     }
+    void setTimestamps(const MediaTime& presentationTimestamp, const MediaTime& decodeTimestamp)
+    {
+        m_presentationTimestamp = presentationTimestamp;
+        m_decodeTimestamp = decodeTimestamp;
+    }
 
     enum {
         IsSync = 1 << 0,

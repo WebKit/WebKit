@@ -355,6 +355,7 @@ enum MediaSessionInterruptingCategory {
 
     [Conditional=MEDIA_SOURCE] void initializeMockMediaSource();
     [Conditional=MEDIA_SOURCE] DOMString[] bufferedSamplesForTrackID(SourceBuffer buffer, DOMString trackID);
+    [Conditional=MEDIA_SOURCE] void setShouldGenerateTimestamps(SourceBuffer buffer, boolean flag);
 
     [Conditional=VIDEO] void beginMediaSessionInterruption();
     [Conditional=VIDEO] void endMediaSessionInterruption(DOMString flags);

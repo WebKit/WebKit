@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-sequence-timestamps</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+    var samples;
+    var bufferedSamples;
+    
+    var audio;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function runTest()
+    {
+        audio = document.getElementsByTagName('audio')[0];
+
+        source = new MediaSource();
+        waitForEventOn(source, 'sourceopen', sourceOpen);
+        run('audio.src = URL.createObjectURL(source)');
+    }
+
+    function sourceOpen()
+    {
+        run('sourceBuffer = source.addSourceBuffer("audio/mock; codecs=mock")');
+        run('sourceBuffer.mode = "sequence"');
+        internals.setShouldGenerateTimestamps(sourceBuffer, true);
+        waitForEventOn(sourceBuffer, 'updateend', loadSamples, false, true);
+        initSegment = makeAInit(8, [makeATrack(1, 'mock', TRACK_KIND.AUDIO)]);
+        run('sourceBuffer.appendBuffer(initSegment)');
+    }
+
+    function loadSamples()
+    {
+        // In "sequence" mode, the samples' timestamps are not used
+        samples = concatenateSamples([
+            makeASample(0, 0, 1, 1, SAMPLE_FLAG.SYNC, 0),
+            makeASample(2, 2, 1, 1, SAMPLE_FLAG.NONE, 0),
+            makeASample(4, 4, 1, 1, SAMPLE_FLAG.NONE, 0),
+            makeASample(6, 6, 1, 1, SAMPLE_FLAG.SYNC, 0),
+            makeASample(8, 8, 1, 1, SAMPLE_FLAG.NONE, 0),
+            makeASample(10, 10, 1, 1, SAMPLE_FLAG.NONE, 0),
+        ]);
+        waitForEventOn(sourceBuffer, 'updateend', samplesAdded, false, true);
+        run('sourceBuffer.appendBuffer(samples)');
+    }
+
+    function samplesAdded()
+    {
+        bufferedSamples = internals.bufferedSamplesForTrackID(sourceBuffer, 1);
+        testExpected("bufferedSamples.length", 6);
+        bufferedSamples.forEach(consoleWrite);
+
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <audio></audio>
+</body>

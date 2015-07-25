@@ -64,6 +64,7 @@ private:
     virtual FloatSize presentationSize() const override { return FloatSize(); }
     virtual void dump(PrintStream&) const override;
     virtual void offsetTimestampsBy(const MediaTime& offset) override { m_box.offsetTimestampsBy(offset); }
+    virtual void setTimestamps(const MediaTime& presentationTimestamp, const MediaTime& decodeTimestamp) override { m_box.setTimestamps(presentationTimestamp, decodeTimestamp); }
 
     unsigned generation() const { return m_box.generation(); }
 

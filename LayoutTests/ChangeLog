@@ -1,3 +1,13 @@
+2015-07-24  Sajid Anwar  <sajidanwar94@gmail.com>
+
+        [MSE] Incorrect sample timestamps when using "sequence" mode
+        https://bugs.webkit.org/show_bug.cgi?id=147252
+
+        Reviewed by Jer Noble.
+
+        * media/media-source/media-source-sequence-timestamps-expected.txt: Added.
+        * media/media-source/media-source-sequence-timestamps.html: Added.
+
 2015-07-24  Chris Fleizach  <cfleizach@apple.com>
 
         AX: scrollable elements do not allow 3-finger swipe

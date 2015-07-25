@@ -1382,7 +1382,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
         MediaTime frameDuration = sample->duration();
 
         // 1.3 If mode equals "sequence" and group start timestamp is set, then run the following steps:
-        if (m_mode == sequenceKeyword()) {
+        if (m_mode == sequenceKeyword() && m_groupStartTimestamp.isValid()) {
             // 1.3.1 Set timestampOffset equal to group start timestamp - presentation timestamp.
             m_timestampOffset = m_groupStartTimestamp;
 
@@ -1447,8 +1447,11 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(SourceBufferPrivate*, Pas
             continue;
         }
 
-        if (m_timestampOffset) {
-            // Reflect the new timestamps back into the sample.
+        if (m_mode == sequenceKeyword()) {
+            // Use the generated timestamps instead of the sample's timestamps.
+            sample->setTimestamps(presentationTimestamp, decodeTimestamp);
+        } else if (m_timestampOffset) {
+            // Reflect the timestamp offset into the sample.
             sample->offsetTimestampsBy(m_timestampOffset);
         }
 
