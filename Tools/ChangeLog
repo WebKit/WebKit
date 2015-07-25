@@ -1,3 +1,9 @@
+2015-07-24  Hyungwook Lee  <hyungwook.lee@navercorp.com>
+
+        Unreviewed, updated my nick name in contributors.json
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2015-07-24  Chris Fleizach  <cfleizach@apple.com>
 
         AX: scrollable elements do not allow 3-finger swipe
