@@ -274,7 +274,6 @@ list(APPEND WebCore_SOURCES
     platform/mac/PlatformEventFactoryMac.mm
     platform/mac/PlatformPasteboardMac.mm
     platform/mac/PlatformScreenMac.mm
-    platform/mac/PlatformSpeechSynthesisMac.mm
     platform/mac/PlatformSpeechSynthesizerMac.mm
     platform/mac/PublicSuffixMac.mm
     platform/mac/SSLKeyGeneratorMac.cpp
