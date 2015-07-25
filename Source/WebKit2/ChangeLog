@@ -1,3 +1,10 @@
+2015-07-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        iOS 8 build fix attempt after r187215.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:]): Deleted.
+
 2015-07-24  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Don't create UIWebFormAccessory if we don't require accessory view.
