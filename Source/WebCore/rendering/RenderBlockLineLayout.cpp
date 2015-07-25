@@ -416,8 +416,7 @@ static void updateLogicalWidthForRightAlignedBlock(bool isLeftToRightDirection, 
             totalLogicalWidth -= trailingSpaceRun->box()->logicalWidth();
             trailingSpaceRun->box()->setLogicalWidth(0);
         }
-        if (totalLogicalWidth < availableLogicalWidth)
-            logicalLeft += availableLogicalWidth - totalLogicalWidth;
+        logicalLeft += std::max(0.f, availableLogicalWidth - totalLogicalWidth);
         return;
     }
 
@@ -1991,7 +1990,7 @@ void RenderBlockFlow::checkLinesForTextOverflow()
     // Determine the width of the ellipsis using the current font.
     // FIXME: CSS3 says this is configurable, also need to use 0x002E (FULL STOP) if horizontal ellipsis is "not renderable"
     const FontCascade& font = style().fontCascade();
-    DEPRECATED_DEFINE_STATIC_LOCAL(AtomicString, ellipsisStr, (&horizontalEllipsis, 1));
+    static NeverDestroyed<AtomicString> ellipsisStr(&horizontalEllipsis, 1);
     const FontCascade& firstLineFont = firstLineStyle().fontCascade();
     float firstLineEllipsisWidth = firstLineFont.width(constructTextRun(this, firstLineFont, &horizontalEllipsis, 1, firstLineStyle()));
     float ellipsisWidth = (font == firstLineFont) ? firstLineEllipsisWidth : font.width(constructTextRun(this, font, &horizontalEllipsis, 1, style()));
@@ -2019,8 +2018,8 @@ void RenderBlockFlow::checkLinesForTextOverflow()
                 float totalLogicalWidth = curr->placeEllipsis(ellipsisStr, ltr, blockLeftEdge, blockRightEdge, width);
 
                 float logicalLeft = 0; // We are only interested in the delta from the base position.
-                float truncatedWidth = logicalRightOffsetForLine(curr->lineTop(), firstLine);
-                updateLogicalWidthForAlignment(textAlign, curr, 0, logicalLeft, totalLogicalWidth, truncatedWidth, 0);
+                float truncatedWidth = availableLogicalWidthForLine(curr->lineTop(), firstLine);
+                updateLogicalWidthForAlignment(textAlign, curr, nullptr, logicalLeft, totalLogicalWidth, truncatedWidth, 0);
                 if (ltr)
                     curr->adjustLogicalPosition(logicalLeft, 0);
                 else
