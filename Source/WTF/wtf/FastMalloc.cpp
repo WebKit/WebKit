@@ -37,6 +37,7 @@
 #include <windows.h>
 #else
 #include <pthread.h>
+#include <sys/resource.h>
 #endif
 
 #if OS(DARWIN)
@@ -261,8 +262,27 @@ void releaseFastMallocFreeMemory()
 
 FastMallocStatistics fastMallocStatistics()
 {
-    // FIXME: This is incorrect; needs an implementation or to be removed.
-    FastMallocStatistics statistics = { 0, 0, 0 };
+
+    // FIXME: Can bmalloc itself report the stats instead of relying on the OS?
+    FastMallocStatistics statistics;
+    statistics.freeListBytes = 0;
+    statistics.reservedVMBytes = 0;
+
+#if OS(WINDOWS)
+    PROCESS_MEMORY_COUNTERS resourceUsage;
+    GetProcessMemoryInfo(GetCurrentProcess(), &resourceUsage, sizeof(resourceUsage));
+    statistics.committedVMBytes = resourceUsage.PeakWorkingSetSize;
+#else
+    struct rusage resourceUsage;
+    getrusage(RUSAGE_SELF, &resourceUsage);
+
+#if OS(DARWIN)
+    statistics.committedVMBytes = resourceUsage.ru_maxrss;
+#else
+    statistics.committedVMBytes = resourceUsage.ru_maxrss * 1024;
+#endif // OS(DARWIN)
+
+#endif // OS(WINDOWS)
     return statistics;
 }
 

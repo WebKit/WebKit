@@ -1,3 +1,21 @@
+2015-07-25  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        REGRESSION (bmalloc): WebKit performance tests don't report memory stats.
+        https://bugs.webkit.org/show_bug.cgi?id=141247
+
+        Reviewed by Geoffrey Garen.
+
+        Meanwhile a better way of getting memory stats with bmalloc is not found
+        (see bug 136592), we can report as memory stats the resident set size
+        information that the operating system provides to us.
+
+        This at least should be good enough to get back the memory stats on the
+        performance tests and being able to track down memory usage regressions
+        at https://perf.webkit.org
+
+        * wtf/FastMalloc.cpp:
+        (WTF::fastMallocStatistics): Report maxrss data as committedVMBytes.
+
 2015-07-24  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove the unused GCC workaround - std::is_trivially_destructible
