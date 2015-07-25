@@ -50,6 +50,7 @@
 #import "Range.h"
 #import "RenderImage.h"
 #import "ScriptController.h"
+#import "TextIndicator.h"
 #import "WebScriptObjectPrivate.h"
 #import <JavaScriptCore/APICast.h>
 #import <wtf/HashMap.h>
@@ -540,6 +541,48 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 }
 
 #endif // PLATFORM(IOS)
+
+- (void)getPreviewSnapshotImage:(CGImageRef*)cgImage andRects:(NSArray **)rects
+{
+    if (!cgImage || !rects)
+        return;
+
+    *cgImage = nullptr;
+    *rects = nullptr;
+
+    Node* coreNode = core(self);
+
+    Ref<Range> range = rangeOfContents(*coreNode);
+
+    float deviceScaleFactor = coreNode->document().deviceScaleFactor();
+    const float margin = 4 * deviceScaleFactor;
+    RefPtr<TextIndicator> textIndicator = TextIndicator::createWithRange(range, TextIndicatorPresentationTransition::None, margin);
+
+    if (!textIndicator)
+        return;
+
+    if (Image* image = textIndicator->contentImage())
+        *cgImage = (CGImageRef)CFAutorelease(CGImageRetain(image->getCGImageRef()));
+
+    RetainPtr<NSMutableArray> rectArray = adoptNS([[NSMutableArray alloc] init]);
+
+    if (*cgImage) {
+        FloatPoint origin = textIndicator->textBoundingRectInRootViewCoordinates().location();
+        for (const FloatRect& rect : textIndicator->textRectsInBoundingRectCoordinates()) {
+            CGRect cgRect = rect;
+            cgRect.origin.x += origin.x();
+            cgRect.origin.y += origin.y();
+            cgRect = coreNode->document().frame()->view()->contentsToWindow(enclosingIntRect(cgRect));
+            [rectArray addObject:[NSValue value:&cgRect withObjCType:@encode(CGRect)]];
+        }
+    } else {
+        CGRect cgRect = CGRectInset(range->boundingRect(), -margin, -margin);
+        cgRect = coreNode->document().frame()->view()->contentsToWindow(enclosingIntRect(cgRect));
+        [rectArray addObject:[NSValue value:&cgRect withObjCType:@encode(CGRect)]];
+    }
+
+    *rects = rectArray.autorelease();
+}
 
 @end
 
