@@ -1,3 +1,10 @@
+2015-07-24  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Test results gardening.
+
+        * platform/win/TestExpectations:
+        * platform/win/js/dom/global-constructors-attributes-expected.txt:
+
 2015-07-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
         text-overflow: ellipsis is broken by text-align: right and padding-left
