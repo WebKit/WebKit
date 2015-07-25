@@ -1882,6 +1882,15 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 }
 #endif // PLATFORM(MAC)
 
+#if ENABLE(VIDEO)
+- (void)_mediaDocumentNaturalSizeChanged:(NSSize)newSize
+{
+    id <WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([self UIDelegate]);
+    if ([uiDelegate respondsToSelector:@selector(_webView:mediaDocumentNaturalSizeChanged:)])
+        [uiDelegate _webView:self mediaDocumentNaturalSizeChanged:newSize];
+}
+#endif
+
 @end
 
 @implementation WKWebView (WKPrivate)
@@ -2471,6 +2480,13 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     return NO;
 }
 
+- (BOOL)_isDisplayingStandaloneMediaDocument
+{
+    if (auto* mainFrame = _page->mainFrame())
+        return mainFrame->isDisplayingStandaloneMediaDocument();
+    return NO;
+}
+
 - (BOOL)_isShowingNavigationGestureSnapshot
 {
     return _page->isShowingNavigationGestureSnapshot();
@@ -2587,6 +2603,24 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
         return scrollPerfData->data();
 #endif
     return nil;
+}
+
+#pragma mark media playback restrictions
+
+- (BOOL)_allowsMediaDocumentInlinePlayback
+{
+#if PLATFORM(IOS)
+    return _page->allowsMediaDocumentInlinePlayback();
+#else
+    return NO;
+#endif
+}
+
+- (void)_setAllowsMediaDocumentInlinePlayback:(BOOL)flag
+{
+#if PLATFORM(IOS)
+    _page->setAllowsMediaDocumentInlinePlayback(flag);
+#endif
 }
 
 #pragma mark iOS-specific methods

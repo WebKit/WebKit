@@ -135,8 +135,12 @@ private:
 
     virtual void didChangeBackgroundColor() override;
 
-    virtual void refView() override { };
-    virtual void derefView() override { };
+#if ENABLE(VIDEO)
+    virtual void mediaDocumentNaturalSizeChanged(const WebCore::IntSize&) override { }
+#endif
+
+    virtual void refView() override;
+    virtual void derefView() override;
 
     // Members of PageClientImpl class
     GtkWidget* m_viewWidget;

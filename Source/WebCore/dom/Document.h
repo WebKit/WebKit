@@ -1014,6 +1014,12 @@ public:
     void registerForVisibilityStateChangedCallbacks(Element*);
     void unregisterForVisibilityStateChangedCallbacks(Element*);
 
+#if ENABLE(VIDEO)
+    void registerForAllowsMediaDocumentInlinePlaybackChangedCallbacks(HTMLMediaElement&);
+    void unregisterForAllowsMediaDocumentInlinePlaybackChangedCallbacks(HTMLMediaElement&);
+    void allowsMediaDocumentInlinePlaybackChanged();
+#endif
+
     WEBCORE_EXPORT void setShouldCreateRenderers(bool);
     bool shouldCreateRenderers();
 
@@ -1550,6 +1556,9 @@ private:
 #endif
 
     HashSet<Element*> m_visibilityStateCallbackElements;
+#if ENABLE(VIDEO)
+    HashSet<HTMLMediaElement*> m_allowsMediaDocumentInlinePlaybackElements;
+#endif
 
     HashMap<StringImpl*, Element*, CaseFoldingHash> m_elementsByAccessKey;
     bool m_accessKeyMapValid;

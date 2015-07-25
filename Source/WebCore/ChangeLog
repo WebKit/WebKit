@@ -1,3 +1,69 @@
+2015-07-24  Jer Noble  <jer.noble@apple.com>
+
+        Merge r187251, r187252, r187262, r187263, r187272, r187289. rdar://problem/20689512
+
+    2015-07-21  Jer Noble  <jer.noble@apple.com>
+
+            Notify the UI delegate when a MediaDocument's natural size changes
+            https://bugs.webkit.org/show_bug.cgi?id=147182
+
+            Reviewed by Simon Fraser.
+
+            Notify the MediaDocument that it's underlying media element has changed its natural size, either when
+            the media engine notifies us that the size changed, or when the ready state progresses to HAVE_METADATA.
+
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::setReadyState): Notify the media document.
+            (WebCore::HTMLMediaElement::mediaPlayerSizeChanged): Ditto.
+            * html/MediaDocument.cpp:
+            (WebCore::MediaDocument::mediaElementNaturalSizeChanged): Pass to the chrome client.
+            * html/MediaDocument.h:
+            * page/ChromeClient.h:
+
+    2015-07-23  Jer Noble  <jer.noble@apple.com>
+
+            Relax media playback restrictions if the allowsMediaDocumentInlinePlayback property is set.
+            https://bugs.webkit.org/show_bug.cgi?id=147234
+
+            Reviewed by Darin Adler.
+
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::prepareForLoad): Moved restriction check into MediaElementSession.
+            * html/MediaElementSession.cpp:
+            (WebCore::MediaElementSession::playbackPermitted): Check if is a top-level media document and if
+                allowsMediaDocumentInilnePlayback is set, and return early.
+            (WebCore::MediaElementSession::effectivePreloadForElement): Ditto.
+            (WebCore::MediaElementSession::allowsAutomaticMediaDataLoading): Ditto.
+            * html/MediaElementSession.h:
+
+    2015-07-21  Jer Noble  <jer.noble@apple.com>
+
+            [iOS] Add an explicit API to allow media documents to (temporarily) play inline
+            https://bugs.webkit.org/show_bug.cgi?id=147181
+
+            Reviewed by Beth Dakin.
+
+            Add listeners for the new allowsMediaDocumentInlinePlayback API. When this value becomes
+            NO, force any playing MediaDocuments to enter fullscreen mode.
+
+            * dom/Document.cpp:
+            (WebCore::Document::registerForAllowsMediaDocumentInlinePlaybackChangedCallbacks): Added registration method.
+            (WebCore::Document::unregisterForAllowsMediaDocumentInlinePlaybackChangedCallbacks): Added deregistration method.
+            (WebCore::Document::allowsMediaDocumentInlinePlaybackChanged): Notify all listeners.
+            * dom/Document.h:
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::registerWithDocument): Listen for allowsMediaDocumentInlinePlayback changes.
+            (WebCore::HTMLMediaElement::unregisterWithDocument): Stop listening to same.
+            (WebCore::HTMLMediaElement::allowsMediaDocumentInlinePlaybackChanged): Enter fullscreen mode if the value
+                changes to false during playback.
+            * html/HTMLMediaElement.h:
+            * html/MediaElementSession.cpp:
+            (WebCore::MediaElementSession::requiresFullscreenForVideoPlayback): Early true if the override value is set.
+            * page/Page.cpp:
+            (WebCore::Page::setAllowsMediaDocumentInlinePlayback): Notify all documents of the changed value.
+            * page/Page.h:
+            (WebCore::Page::allowsMediaDocumentInlinePlayback): Simple getter.
+
 2015-07-24  Lucas Forschler  <lforschler@apple.com>
 
         Merge r187149

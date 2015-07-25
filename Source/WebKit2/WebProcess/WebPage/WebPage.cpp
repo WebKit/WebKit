@@ -3009,6 +3009,11 @@ WebVideoFullscreenManager* WebPage::videoFullscreenManager()
         m_videoFullscreenManager = WebVideoFullscreenManager::create(this);
     return m_videoFullscreenManager.get();
 }
+
+void WebPage::setAllowsMediaDocumentInlinePlayback(bool allows)
+{
+    m_page->setAllowsMediaDocumentInlinePlayback(allows);
+}
 #endif
 
 #if ENABLE(FULLSCREEN_API)
@@ -5025,5 +5030,12 @@ void WebPage::setUserContentExtensionsEnabled(bool userContentExtensionsEnabled)
 
     m_page->setUserContentExtensionsEnabled(userContentExtensionsEnabled);
 }
+
+#if ENABLE(VIDEO)
+void WebPage::mediaDocumentNaturalSizeChanged(const IntSize& newSize)
+{
+    send(Messages::WebPageProxy::MediaDocumentNaturalSizeChanged(newSize));
+}
+#endif
 
 } // namespace WebKit

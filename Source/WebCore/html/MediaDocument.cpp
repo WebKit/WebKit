@@ -28,6 +28,8 @@
 #if ENABLE(VIDEO)
 #include "MediaDocument.h"
 
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "DocumentLoader.h"
 #include "EventNames.h"
 #include "ExceptionCodePlaceholder.h"
@@ -257,6 +259,18 @@ void MediaDocument::replaceMediaElementTimerFired()
 
         videoElement->parentNode()->replaceChild(&embedElement, videoElement, IGNORE_EXCEPTION);
     }
+}
+
+void MediaDocument::mediaElementNaturalSizeChanged(const IntSize& newSize)
+{
+    if (ownerElement())
+        return;
+
+    if (newSize.isZero())
+        return;
+
+    if (page())
+        page()->chrome().client().mediaDocumentNaturalSizeChanged(newSize);
 }
 
 }

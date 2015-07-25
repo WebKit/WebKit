@@ -1736,4 +1736,20 @@ WheelEventTestTrigger& Page::ensureTestTrigger()
     return *m_testTrigger;
 }
 
+#if ENABLE(VIDEO)
+void Page::setAllowsMediaDocumentInlinePlayback(bool flag)
+{
+    if (m_allowsMediaDocumentInlinePlayback == flag)
+        return;
+    m_allowsMediaDocumentInlinePlayback = flag;
+
+    Vector<Ref<Document>> documents;
+    for (Frame* frame = m_mainFrame.get(); frame; frame = frame->tree().traverseNext())
+        documents.append(*frame->document());
+
+    for (auto& document : documents)
+        document->allowsMediaDocumentInlinePlaybackChanged();
+}
+#endif
+
 } // namespace WebCore

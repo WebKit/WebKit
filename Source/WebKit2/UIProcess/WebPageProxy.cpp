@@ -3983,6 +3983,20 @@ RefPtr<WebVideoFullscreenManagerProxy> WebPageProxy::videoFullscreenManager()
 {
     return m_videoFullscreenManager;
 }
+
+bool WebPageProxy::allowsMediaDocumentInlinePlayback() const
+{
+    return m_allowsMediaDocumentInlinePlayback;
+}
+
+void WebPageProxy::setAllowsMediaDocumentInlinePlayback(bool allows)
+{
+    if (m_allowsMediaDocumentInlinePlayback == allows)
+        return;
+    m_allowsMediaDocumentInlinePlayback = allows;
+
+    m_process->send(Messages::WebPage::SetAllowsMediaDocumentInlinePlayback(allows), m_pageID);
+}
 #endif
 
 // BackForwardList
@@ -5994,6 +6008,13 @@ void WebPageProxy::installViewStateChangeCompletionHandler(void (^completionHand
     }, m_process->throttler().backgroundActivityToken());
     uint64_t callbackID = m_callbacks.put(voidCallback.release());
     m_nextViewStateChangeCallbacks.append(callbackID);
+}
+#endif
+
+#if ENABLE(VIDEO)
+void WebPageProxy::mediaDocumentNaturalSizeChanged(const WebCore::IntSize& newSize)
+{
+    m_uiClient->mediaDocumentNaturalSizeChanged(newSize);
 }
 #endif
 

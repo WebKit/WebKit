@@ -97,6 +97,7 @@ public:
     bool canShowMIMEType(const String& mimeType) const;
 
     bool isDisplayingStandaloneImageDocument() const;
+    bool isDisplayingStandaloneMediaDocument() const;
     bool isDisplayingMarkupDocument() const;
     bool isDisplayingPDFDocument() const;
 

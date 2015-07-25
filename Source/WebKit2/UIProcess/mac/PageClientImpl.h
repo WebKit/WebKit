@@ -203,6 +203,10 @@ private:
 
     virtual void didChangeBackgroundColor() override;
 
+#if ENABLE(VIDEO)
+    virtual void mediaDocumentNaturalSizeChanged(const WebCore::IntSize&) override;
+#endif
+
     WKView *m_wkView;
     WKWebView *m_webView;
     RetainPtr<WKEditorUndoTargetObjC> m_undoTarget;

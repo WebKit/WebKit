@@ -1,3 +1,111 @@
+2015-07-24  Jer Noble  <jer.noble@apple.com>
+
+        Merge r187251, r187252, r187262, r187263, r187272, r187289. rdar://problem/20689512
+
+    2015-07-23  Alex Christensen  <achristensen@webkit.org>
+
+            Fix 32-bit build after r187272.
+
+            * UIProcess/mac/PageClientImpl.mm:
+            (WebKit::PageClientImpl::mediaDocumentNaturalSizeChanged):
+            Added some WK_API_ENABLED.
+
+    2015-07-23  Alex Christensen  <achristensen@webkit.org>
+
+            [iOS] Unreviewed build fix after r187251.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::setAllowsMediaDocumentInlinePlayback):
+            Use the correct name for the boolean to pass along to SetAllowsMediaDocumentInlinePlayback.
+
+    2015-07-21  Jer Noble  <jer.noble@apple.com>
+
+            Notify the UI delegate when a MediaDocument's natural size changes
+            https://bugs.webkit.org/show_bug.cgi?id=147182
+
+            Reviewed by Simon Fraser.
+
+            Pipe notifications of media document natural size changes up from the chrome client, through
+            to the UIProcess,  through the page client, through the WKWebView, to the UIDelegate.
+
+            * UIProcess/API/APIUIClient.h:
+            (API::UIClient::mediaDocumentNaturalSizeChanged):
+            * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _mediaDocumentNaturalSizeChanged:]):
+            * UIProcess/API/Cocoa/WKWebViewInternal.h:
+            * UIProcess/Cocoa/UIDelegate.h:
+            * UIProcess/Cocoa/UIDelegate.mm:
+            (WebKit::UIDelegate::setDelegate):
+            (WebKit::UIDelegate::UIClient::mediaDocumentNaturalSizeChanged):
+            * UIProcess/PageClient.h:
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::mediaDocumentNaturalSizeChanged):
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/WebPageProxy.messages.in:
+            * UIProcess/ios/PageClientImplIOS.h:
+            * UIProcess/ios/PageClientImplIOS.mm:
+            (WebKit::PageClientImpl::mediaDocumentNaturalSizeChanged):
+            * UIProcess/mac/PageClientImpl.h:
+            * UIProcess/mac/PageClientImpl.mm:
+            (WebKit::PageClientImpl::mediaDocumentNaturalSizeChanged):
+            * WebProcess/WebCoreSupport/WebChromeClient.h:
+            * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+            (WebKit::WebChromeClient::mediaDocumentNaturalSizeChanged):
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::mediaDocumentNaturalSizeChanged):
+            * WebProcess/WebPage/WebPage.h:
+            * UIProcess/API/gtk/PageClientImpl.h: Add default, empty implementation of new pure-virtual method.
+            * UIProcess/efl/WebViewEfl.h: Ditto.
+
+    2015-07-23  Jer Noble  <jer.noble@apple.com>
+
+            Unreviewed build fix after r187251; rename flag -> allows.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::setAllowsMediaDocumentInlinePlayback):
+
+    2015-07-23  Jer Noble  <jer.noble@apple.com>
+
+            [WK2] Add a WKWebView property for whether the view is displaying a media document
+            https://bugs.webkit.org/show_bug.cgi?id=147233
+
+            Reviewed by Beth Dakin.
+
+            Add a _isDisplayingStandaloneMediaDocument property, which queries the frame for whether
+            the current MIME type is one which our media engines support.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _isDisplayingStandaloneMediaDocument]):
+            * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+            * UIProcess/WebFrameProxy.cpp:
+            (WebKit::WebFrameProxy::isDisplayingStandaloneMediaDocument):
+            * UIProcess/WebFrameProxy.h:
+
+    2015-07-21  Jer Noble  <jer.noble@apple.com>
+
+            [iOS] Add an explicit API to allow media documents to (temporarily) play inline
+            https://bugs.webkit.org/show_bug.cgi?id=147181
+
+            Reviewed by Beth Dakin.
+
+            Add a WKWebView(Private) API which allows MediaDocuments loaded by the view to play their contents inline, regardless
+            of whether inline playback is restricted on the current device.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _setRequiresUserActionForMediaPlayback:]): Added. Pass through to WebPageProxy.
+            (-[WKWebView _allowsMediaDocumentInlinePlayback]): Ditto.
+            * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::allowsMediaDocumentInlinePlayback): Simple getter.
+            (WebKit::WebPageProxy::setAllowsMediaDocumentInlinePlayback): Set, and conditionally pass the new value to WebPage.
+            * UIProcess/WebPageProxy.h:
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::setAllowsMediaDocumentInlinePlayback): Set, and conditionally notify WebCore page of the change.
+            * WebProcess/WebPage/WebPage.h:
+            (WebKit::WebPage::allowsMediaDocumentInlinePlayback): Simple getter.
+            * WebProcess/WebPage/WebPage.messages.in: Add new messages.
+
 2015-07-24  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r187268. rdar://problem/21664211
