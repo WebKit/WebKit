@@ -1,3 +1,16 @@
+2015-07-24  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Don't create UIWebFormAccessory if we don't require accessory view.
+        https://bugs.webkit.org/show_bug.cgi?id=147283
+
+        Don't try to intialize _formAccessoryView if requiresAccessoryView returns false since we don't
+        need it yet.
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView inputAccessoryView]):
+
 2015-07-24  Anders Carlsson  <andersca@apple.com>
 
         WKWebsiteDataStore remove methods don't properly delete cookies

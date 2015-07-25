@@ -1259,6 +1259,9 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (UIView *)inputAccessoryView
 {
+    if (![self requiresAccessoryView])
+        return nil;
+
     if (!_formAccessoryView) {
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
         if ([UIWebFormAccessory instancesRespondToSelector:@selector(initWithInputAssistantItem:)])
@@ -1269,9 +1272,6 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
         [_formAccessoryView setDelegate:self];
     }
 
-    if (![self requiresAccessoryView])
-        return nil;
-    
     return _formAccessoryView.get();
 }
 
