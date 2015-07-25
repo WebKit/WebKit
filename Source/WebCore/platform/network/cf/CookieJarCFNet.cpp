@@ -225,29 +225,16 @@ void getHostnamesWithCookies(const NetworkStorageSession& session, HashSet<Strin
     }
 }
 
-void deleteCookiesForHostname(const NetworkStorageSession& session, const String& hostname)
-{
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = session.cookieStorage();
-
-    RetainPtr<CFArrayRef> cookiesCF = adoptCF(CFHTTPCookieStorageCopyCookies(cookieStorage.get()));
-    if (!cookiesCF)
-        return;
-
-    CFIndex count = CFArrayGetCount(cookiesCF.get());
-    for (CFIndex i = count - 1; i >=0; i--) {
-        CFHTTPCookieRef cookie = static_cast<CFHTTPCookieRef>(const_cast<void *>(CFArrayGetValueAtIndex(cookiesCF.get(), i)));
-        RetainPtr<CFStringRef> domain = cookieDomain(cookie);
-        if (String(domain.get()) == hostname)
-            CFHTTPCookieStorageDeleteCookie(cookieStorage.get(), cookie);
-    }
-}
-
 void deleteAllCookies(const NetworkStorageSession& session)
 {
     CFHTTPCookieStorageDeleteAllCookies(session.cookieStorage().get());
 }
 
 #if PLATFORM(WIN)
+void deleteCookiesForHostnames(const NetworkStorageSession& session, const Vector<String>& hostnames)
+{
+}
+
 void deleteAllCookiesModifiedSince(const NetworkStorageSession&, std::chrono::system_clock::time_point)
 {
 }

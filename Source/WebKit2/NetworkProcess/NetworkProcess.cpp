@@ -417,10 +417,8 @@ static void clearDiskCacheEntries(const Vector<SecurityOriginData>& origins, std
 void NetworkProcess::deleteWebsiteDataForOrigins(SessionID sessionID, uint64_t websiteDataTypes, const Vector<SecurityOriginData>& origins, const Vector<String>& cookieHostNames, uint64_t callbackID)
 {
     if (websiteDataTypes & WebsiteDataTypeCookies) {
-        if (auto* networkStorageSession = SessionTracker::session(sessionID)) {
-            for (const auto& cookieHostName : cookieHostNames)
-                deleteCookiesForHostname(*networkStorageSession, cookieHostName);
-        }
+        if (auto* networkStorageSession = SessionTracker::session(sessionID))
+            deleteCookiesForHostnames(*networkStorageSession, cookieHostNames);
     }
 
     auto completionHandler = [this, callbackID] {

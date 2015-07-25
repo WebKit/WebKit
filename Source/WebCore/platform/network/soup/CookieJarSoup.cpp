@@ -203,16 +203,18 @@ void getHostnamesWithCookies(const NetworkStorageSession& session, HashSet<Strin
     }
 }
 
-void deleteCookiesForHostname(const NetworkStorageSession& session, const String& hostname)
+void deleteCookiesForHostnames(const NetworkStorageSession& session, const Vector<String>& hostnames)
 {
-    CString hostNameString = hostname.utf8();
-    SoupCookieJar* cookieJar = cookieJarForSession(session);
-    GUniquePtr<GSList> cookies(soup_cookie_jar_all_cookies(cookieJar));
-    for (GSList* item = cookies.get(); item; item = g_slist_next(item)) {
-        SoupCookie* cookie = static_cast<SoupCookie*>(item->data);
-        if (soup_cookie_domain_matches(cookie, hostNameString.data()))
-            soup_cookie_jar_delete_cookie(cookieJar, cookie);
-        soup_cookie_free(cookie);
+    for (const auto& hostname : hostnames) {
+        CString hostNameString = hostname.utf8();
+        SoupCookieJar* cookieJar = cookieJarForSession(session);
+        GUniquePtr<GSList> cookies(soup_cookie_jar_all_cookies(cookieJar));
+        for (GSList* item = cookies.get(); item; item = g_slist_next(item)) {
+            SoupCookie* cookie = static_cast<SoupCookie*>(item->data);
+            if (soup_cookie_domain_matches(cookie, hostNameString.data()))
+                soup_cookie_jar_delete_cookie(cookieJar, cookie);
+            soup_cookie_free(cookie);
+        }
     }
 }
 

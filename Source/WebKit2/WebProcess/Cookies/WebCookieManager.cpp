@@ -70,7 +70,7 @@ void WebCookieManager::getHostnamesWithCookies(uint64_t callbackID)
 
 void WebCookieManager::deleteCookiesForHostname(const String& hostname)
 {
-    WebCore::deleteCookiesForHostname(NetworkStorageSession::defaultStorageSession(), hostname);
+    WebCore::deleteCookiesForHostnames(NetworkStorageSession::defaultStorageSession(), { hostname });
 }
 
 void WebCookieManager::deleteAllCookies()

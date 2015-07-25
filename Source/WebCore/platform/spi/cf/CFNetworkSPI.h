@@ -128,13 +128,16 @@ EXTERN_C CFArrayRef _CFHTTPParsedCookiesWithResponseHeaderFields(CFAllocatorRef 
 #endif
 
 #if defined(__OBJC__)
+
 #if !USE(APPLE_INTERNAL_SDK) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1090)
 @interface NSHTTPCookieStorage (Details)
 - (void)removeCookiesSinceDate:(NSDate *)date;
 - (id)_initWithCFHTTPCookieStorage:(CFHTTPCookieStorageRef)cfStorage;
 - (CFHTTPCookieStorageRef)_cookieStorage;
+- (void)_saveCookies;
 @end
 #endif
+
 // FIXME: Move +_setSharedHTTPCookieStorage: into the above section under !USE(APPLE_INTERNAL_SDK) when possible (soon).
 #if (TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
 @interface NSHTTPCookieStorage (Details)

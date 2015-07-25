@@ -198,23 +198,6 @@ void getHostnamesWithCookies(const NetworkStorageSession& session, HashSet<Strin
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void deleteCookiesForHostname(const NetworkStorageSession& session, const String& hostname)
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = session.cookieStorage();
-    NSArray *cookies = wkHTTPCookies(cookieStorage.get());
-    if (!cookies)
-        return;
-    
-    for (NSHTTPCookie* cookie in cookies) {
-        if (hostname == String([cookie domain]))
-            wkDeleteHTTPCookie(cookieStorage.get(), cookie);
-    }
-    
-    END_BLOCK_OBJC_EXCEPTIONS;
-}
-
 void deleteAllCookies(const NetworkStorageSession& session)
 {
     wkDeleteAllHTTPCookies(session.cookieStorage().get());
@@ -235,6 +218,30 @@ static NSHTTPCookieStorage *cookieStorage(const NetworkStorageSession& session)
     return [[[NSHTTPCookieStorage alloc] _initWithCFHTTPCookieStorage:cookieStorage.get()] autorelease];
 }
 
+void deleteCookiesForHostnames(const NetworkStorageSession& session, const Vector<String>& hostnames)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = session.cookieStorage();
+    NSArray *cookies = wkHTTPCookies(cookieStorage.get());
+    if (!cookies)
+        return;
+
+    HashMap<String, RetainPtr<NSHTTPCookie>> cookiesByDomain;
+    for (NSHTTPCookie* cookie in cookies)
+        cookiesByDomain.set(cookie.domain, cookie);
+
+    for (const auto& hostname : hostnames) {
+        if (NSHTTPCookie *cookie = cookiesByDomain.get(hostname).get())
+            wkDeleteHTTPCookie(cookieStorage.get(), cookie);
+    }
+
+    [WebCore::cookieStorage(session) _saveCookies];
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+
 void deleteAllCookiesModifiedSince(const NetworkStorageSession& session, std::chrono::system_clock::time_point timePoint)
 {
     if (![NSHTTPCookieStorage instancesRespondToSelector:@selector(removeCookiesSinceDate:)])
@@ -243,7 +250,10 @@ void deleteAllCookiesModifiedSince(const NetworkStorageSession& session, std::ch
     NSTimeInterval timeInterval = std::chrono::duration_cast<std::chrono::duration<double>>(timePoint.time_since_epoch()).count();
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:timeInterval];
 
-    [cookieStorage(session) removeCookiesSinceDate:date];
+    NSHTTPCookieStorage *storage = cookieStorage(session);
+
+    [storage removeCookiesSinceDate:date];
+    [storage _saveCookies];
 }
 
 }

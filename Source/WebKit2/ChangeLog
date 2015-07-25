@@ -1,5 +1,21 @@
 2015-07-24  Anders Carlsson  <andersca@apple.com>
 
+        WKWebsiteDataStore remove methods don't properly delete cookies
+        https://bugs.webkit.org/show_bug.cgi?id=147282
+        rdar://problem/21948230
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        Call deleteCookiesForHostnames instead of iterating over each hostname.
+
+        * WebProcess/Cookies/WebCookieManager.cpp:
+        (WebKit::WebCookieManager::deleteCookiesForHostname):
+        Call deleteCookiesForHostnames.
+
+2015-07-24  Anders Carlsson  <andersca@apple.com>
+
         Networking process crash in NetworkConnectionToWebProcess::convertMainResourceLoadToDownload while attempting to download a blob
         https://bugs.webkit.org/show_bug.cgi?id=147276
         rdar://problem/21423353
