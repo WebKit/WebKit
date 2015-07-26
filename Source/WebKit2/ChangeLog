@@ -1,3 +1,10 @@
+2015-07-26  Dan Bernstein  <mitz@apple.com>
+
+        Suppressed an Xcode 7 warning about including a nib in an iOS build product.
+
+        * Configurations/BaseLegacyProcess.xcconfig: Exclude xib files on iOS.
+        * Configurations/BaseXPCService.xcconfig: Ditto.
+
 2015-07-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         iOS 8 build fix attempt after r187215.
