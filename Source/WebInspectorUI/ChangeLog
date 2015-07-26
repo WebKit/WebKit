@@ -1,5 +1,17 @@
 2015-07-25  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Fix color declaration for not-executed comments
+        https://bugs.webkit.org/show_bug.cgi?id=147305
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/SyntaxHighlightingDefaultTheme.css:
+        (.cm-s-default .basic-block-has-not-executed.cm-comment):
+        This was an RGB color mispelled as HSL. Replace "hsl" with "rgb"
+        and convert it to HSL.
+
+2015-07-25  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Start using Node.prototype.replaceWith
         https://bugs.webkit.org/show_bug.cgi?id=147303
 
