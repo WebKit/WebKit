@@ -193,7 +193,7 @@ WebInspector.Popover = class Popover extends WebInspector.Object
                 this._element.classList.remove(this._cssClassNameForEdge());
 
             // Add the content in place of the wrapper to get the raw metrics.
-            this._element.replaceChild(this._content, this._container);
+            this._container.replaceWith(this._content);
 
             // Get the ideal size for the popover to fit its content.
             var popoverBounds = this._element.getBoundingClientRect();
@@ -280,7 +280,7 @@ WebInspector.Popover = class Popover extends WebInspector.Object
         // Wrap the content in the container so that it's located correctly.
         if (this._contentNeedsUpdate) {
             this._container.textContent = "";
-            this._element.replaceChild(this._container, this._content);
+            this._content.replaceWith(this._container);
             this._container.appendChild(this._content);
         }
 
