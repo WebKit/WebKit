@@ -1,5 +1,26 @@
 2015-07-25  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Start using Node.prototype.remove
+        https://bugs.webkit.org/show_bug.cgi?id=147304
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.elementDragStart):
+        (WebInspector.elementDragEnd):
+        (WebInspector.revertDomChanges):
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype._updateSearchHighlight.updateEntryHide):
+        (WebInspector.DOMTreeElement.prototype._updateSearchHighlight):
+        (WebInspector.DOMTreeElement.prototype.remove.removeNodeCallback):
+        (WebInspector.DOMTreeElement.prototype.remove):
+        * UserInterface/Views/Resizer.js:
+        (WebInspector.Resizer.prototype._resizerMouseDown):
+        (WebInspector.Resizer.prototype._resizerMouseUp):
+        (WebInspector.Resizer):
+
+2015-07-25  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Fix color declaration for not-executed comments
         https://bugs.webkit.org/show_bug.cgi?id=147305
 
