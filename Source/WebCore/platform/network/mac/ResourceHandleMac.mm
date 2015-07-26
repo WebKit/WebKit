@@ -632,11 +632,7 @@ void ResourceHandle::didCancelAuthenticationChallenge(const AuthenticationChalle
 bool ResourceHandle::canAuthenticateAgainstProtectionSpace(const ProtectionSpace& protectionSpace)
 {
     if (client()->usesAsyncCallbacks()) {
-        // FIXME: This check for client() being null makes no sense.
-        if (client())
-            client()->canAuthenticateAgainstProtectionSpaceAsync(this, protectionSpace);
-        else
-            continueCanAuthenticateAgainstProtectionSpace(false);
+        client()->canAuthenticateAgainstProtectionSpaceAsync(this, protectionSpace);
         return false; // Ignored by caller.
     } else
         return client() && client()->canAuthenticateAgainstProtectionSpace(this, protectionSpace);
