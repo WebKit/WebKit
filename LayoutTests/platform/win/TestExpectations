@@ -2380,6 +2380,8 @@ webkit.org/b/143548 inspector/console/command-line-api.html [ Skip ] # Timeout
 webkit.org/b/143548 inspector/console/console-api.html [ Skip ] # Timeout
 webkit.org/b/143548 inspector/console/console-table.html [ Skip ] # Timeout
 
+webkit.org/b/147229 inspector/css/modify-rule-selector.html [ Skip ] # Timeout
+
 ################################################################################
 #################        End Inspector Issues               ####################
 ################################################################################
