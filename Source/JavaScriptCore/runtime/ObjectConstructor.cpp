@@ -626,8 +626,9 @@ JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode pro
     case PropertyNameMode::Strings: {
         size_t numProperties = properties.size();
         for (size_t i = 0; i < numProperties; i++) {
+            const auto& identifier = properties[i];
             ASSERT(!identifier.isSymbol());
-            keys->push(exec, jsOwnedString(exec, properties[i].string()));
+            keys->push(exec, jsOwnedString(exec, identifier.string()));
         }
         break;
     }
