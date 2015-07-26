@@ -1,3 +1,68 @@
+2015-07-25  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Start using Node.prototype.append
+        https://bugs.webkit.org/show_bug.cgi?id=147301
+
+        Convert all instances of element.appendChild(document.createTextNode(aString))
+        to element.append(aString).
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/DOMUtilities.js:
+        * UserInterface/Base/Main.js:
+        (WebInspector.linkifyLocation):
+        (WebInspector.linkifyStringAsFragmentWithCustomLinkifier):
+        * UserInterface/Models/Breakpoint.js:
+        (WebInspector.Breakpoint.prototype._editBreakpointPopoverContentElement):
+        * UserInterface/Views/BoxModelDetailsSectionRow.js:
+        (WebInspector.BoxModelDetailsSectionRow.prototype._updateMetrics):
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection.prototype.refresh):
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.js:
+        (WebInspector.CSSStyleDetailsSidebarPanel):
+        * UserInterface/Views/ChartDetailsSectionRow.js:
+        (WebInspector.ChartDetailsSectionRow.prototype._createLegendItem):
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WebInspector.ConsoleMessageView.prototype._appendMessageTextAndArguments):
+        (WebInspector.ConsoleMessageView.prototype._appendFormattedArguments):
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype._refreshAccessibility.accessibilityPropertiesCallback):
+        (WebInspector.DOMNodeDetailsSidebarPanel.prototype._refreshAccessibility):
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype._insertInLastAttributePosition):
+        (WebInspector.DOMTreeElement.prototype._buildAttributeDOM):
+        (WebInspector.DOMTreeElement.prototype._buildTagDOM):
+        (WebInspector.DOMTreeElement.prototype._nodeTitleInfo):
+        defaultElement variable is unused, remove it.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGridNode.prototype.createCell.get if):
+        (WebInspector.DataGridNode.prototype.createCell):
+        * UserInterface/Views/DebuggerDashboardView.js:
+        (WebInspector.DebuggerDashboardView.prototype._rebuildLocation):
+        * UserInterface/Views/EventListenerSectionGroup.js:
+        (WebInspector.EventListenerSectionGroup.prototype._functionTextOrLink):
+        (WebInspector.EventListenerSectionGroup):
+        * UserInterface/Views/FormattedValue.js:
+        (WebInspector.FormattedValue.createLinkifiedElementString):
+        (WebInspector.FormattedValue.createElementForNodePreview):
+        * UserInterface/Views/ObjectPreviewView.js:
+        (WebInspector.ObjectPreviewView.prototype._appendEntryPreviews):
+        (WebInspector.ObjectPreviewView.prototype._appendPropertyPreviews):
+        * UserInterface/Views/ResourceDetailsSidebarPanel.js:
+        (WebInspector.ResourceDetailsSidebarPanel.prototype._refreshRequestDataSection):
+        (WebInspector.ResourceDetailsSidebarPanel):
+        * UserInterface/Views/RulesStyleDetailsPanel.js:
+        (WebInspector.RulesStyleDetailsPanel.prototype.refresh.addNewRuleButton):
+        (WebInspector.RulesStyleDetailsPanel.prototype.refresh.insertMediaOrInheritanceLabel):
+        * UserInterface/Views/SearchResultTreeElement.js:
+        (WebInspector.SearchResultTreeElement.truncateAndHighlightTitle):
+        * UserInterface/Views/SyntaxHighlightingSupport.js:
+        (.appendText):
+        (WebInspector.syntaxHighlightStringAsDocumentFragment):
+        * UserInterface/Views/TimelineDataGridNode.js:
+        (WebInspector.TimelineDataGridNode.prototype.createCellContent):
+
 2015-07-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add custom parameter lists for new DOM append/prepend/before/after/replaceWith methods

@@ -1814,7 +1814,7 @@ WebInspector.linkifyLocation = function(url, lineNumber, columnNumber, className
         anchor.lineNumber = lineNumber;
         if (className)
             anchor.className = className;
-        anchor.appendChild(document.createTextNode(WebInspector.displayNameForURL(url) + ":" + lineNumber));
+        anchor.append(WebInspector.displayNameForURL(url) + ":" + lineNumber);
         return anchor;
     }
 
@@ -1883,7 +1883,7 @@ WebInspector.linkifyStringAsFragmentWithCustomLinkifier = function(string, linki
         linkString = linkString[0];
         var linkIndex = string.indexOf(linkString);
         var nonLink = string.substring(0, linkIndex);
-        container.appendChild(document.createTextNode(nonLink));
+        container.append(nonLink);
 
         var title = linkString;
         var realURL = (linkString.startsWith("www.") ? "http://" + linkString : linkString);
@@ -1897,7 +1897,7 @@ WebInspector.linkifyStringAsFragmentWithCustomLinkifier = function(string, linki
     }
 
     if (string)
-        container.appendChild(document.createTextNode(string));
+        container.append(string);
 
     return container;
 };

@@ -124,8 +124,7 @@ WebInspector.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WebIn
 
         var labelElement = document.createElement("div");
         labelElement.className = "label";
-        labelElement.appendChild(colorSwatchElement);
-        labelElement.appendChild(document.createTextNode(item.label));
+        labelElement.append(colorSwatchElement, item.label);
 
         var valueElement = document.createElement("div");
         valueElement.className = "value";

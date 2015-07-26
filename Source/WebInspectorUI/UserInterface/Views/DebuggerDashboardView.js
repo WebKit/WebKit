@@ -84,7 +84,7 @@ WebInspector.DebuggerDashboardView = class DebuggerDashboardView extends WebInsp
         iconElement.appendChild(iconImageElement);
 
         var nameElement = document.createElement("div");
-        nameElement.appendChild(document.createTextNode(functionName));
+        nameElement.append(functionName);
         nameElement.classList.add("function-name");
         this._locationElement.appendChild(nameElement);
 

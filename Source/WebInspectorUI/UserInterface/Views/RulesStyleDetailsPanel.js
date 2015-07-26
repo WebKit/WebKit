@@ -170,8 +170,7 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
                 newRuleButton.className = "new-rule";
                 newRuleButton.addEventListener("click", this._newRuleClicked.bind(this));
 
-                newRuleButton.appendChild(document.createElement("img"));
-                newRuleButton.appendChild(document.createTextNode(WebInspector.UIString("New Rule")));
+                newRuleButton.append(document.createElement("img"), WebInspector.UIString("New Rule"));
 
                 newDOMFragment.appendChild(newRuleButton);
             }
@@ -217,13 +216,10 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
 
                     var mediaLabel = document.createElement("div");
                     mediaLabel.className = "label";
-                    mediaLabel.appendChild(prefixElement);
-                    mediaLabel.appendChild(document.createTextNode(media.text));
+                    mediaLabel.append(prefixElement, media.text);
 
-                    if (media.sourceCodeLocation) {
-                        mediaLabel.appendChild(document.createTextNode(" \u2014 "));
-                        mediaLabel.appendChild(WebInspector.createSourceCodeLocationLink(media.sourceCodeLocation, true));
-                    }
+                    if (media.sourceCodeLocation)
+                        mediaLabel.append(" \u2014 ", WebInspector.createSourceCodeLocationLink(media.sourceCodeLocation, true));
 
                     newDOMFragment.appendChild(mediaLabel);
 
@@ -240,8 +236,7 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
 
                     var mediaLabel = document.createElement("div");
                     mediaLabel.className = "label";
-                    mediaLabel.appendChild(prefixElement);
-                    mediaLabel.appendChild(document.createTextNode("all"));
+                    mediaLabel.append(prefixElement, "all");
 
                     newDOMFragment.appendChild(mediaLabel);
                     hasMediaOrInherited.push(mediaLabel);

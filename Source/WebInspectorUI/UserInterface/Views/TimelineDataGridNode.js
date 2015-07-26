@@ -187,7 +187,7 @@ WebInspector.TimelineDataGridNode.prototype = {
                     // Show the function name and icon.
                     cell.classList.add(WebInspector.CallFrameView.FunctionIconStyleClassName);
 
-                    fragment.appendChild(document.createTextNode(functionName));
+                    fragment.append(functionName);
 
                     var subtitleElement = document.createElement("span");
                     subtitleElement.className = WebInspector.LayoutTimelineDataGridNode.SubtitleStyleClassName;
@@ -201,9 +201,8 @@ WebInspector.TimelineDataGridNode.prototype = {
 
             var icon = document.createElement("div");
             icon.className = WebInspector.LayoutTimelineDataGridNode.IconStyleClassName;
-            fragment.appendChild(icon);
 
-            fragment.appendChild(document.createTextNode(functionName));
+            fragment.append(icon, functionName);
 
             return fragment;
         }

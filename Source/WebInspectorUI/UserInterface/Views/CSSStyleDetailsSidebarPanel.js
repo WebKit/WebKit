@@ -56,7 +56,7 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
                 this._forcedPseudoClassCheckboxes[pseudoClass] = checkboxElement;
 
                 labelElement.appendChild(checkboxElement);
-                labelElement.appendChild(document.createTextNode(label));
+                labelElement.append(label);
 
                 if (!groupElement || groupElement.children.length === 2) {
                     groupElement = document.createElement("div");

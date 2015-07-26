@@ -32,7 +32,7 @@ WebInspector.syntaxHighlightStringAsDocumentFragment = function(string, mimeType
     function appendText(text, style)
     {
         if (!style) {
-            resultFragment.appendChild(document.createTextNode(text));
+            resultFragment.append(text);
             return;
         }
 

@@ -216,10 +216,7 @@ WebInspector.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends
             if (name === "content") {
                 var widthElement = createContentAreaWidthElement.call(this, style);
                 var heightElement = createContentAreaHeightElement.call(this, style);
-
-                boxElement.appendChild(widthElement);
-                boxElement.appendChild(document.createTextNode(" \u00D7 "));
-                boxElement.appendChild(heightElement);
+                boxElement.append(widthElement, " \u00D7 ", heightElement);
             } else {
                 var suffix = (name === "border" ? "-width" : "");
 

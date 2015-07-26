@@ -562,9 +562,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         else {
             var nodeName = tag.textContent.match(/^<(.*?)>$/)[1];
             tag.textContent = "";
-            tag.appendChild(document.createTextNode("<" + nodeName));
-            tag.appendChild(node);
-            tag.appendChild(document.createTextNode(">"));
+            tag.append("<" + nodeName, node, ">");
         }
 
         this.updateSelection();
@@ -1045,7 +1043,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         attrNameElement.textContent = name;
 
         if (hasText)
-            attrSpanElement.appendChild(document.createTextNode("=\u200B\""));
+            attrSpanElement.append("=\u200B\"");
 
         if (name === "src" || name === "href") {
             var baseURL = node.ownerDocument ? node.ownerDocument.documentURL : null;
@@ -1073,7 +1071,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         }
 
         if (hasText)
-            attrSpanElement.appendChild(document.createTextNode("\""));
+            attrSpanElement.append("\"");
     }
 
     _buildTagDOM(parentElement, tagName, isClosingTag, isDistinctTreeElement)
@@ -1085,19 +1083,19 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         if (node.isInShadowTree())
             classes.push("shadow");
         var tagElement = parentElement.createChild("span", classes.join(" "));
-        tagElement.appendChild(document.createTextNode("<"));
+        tagElement.append("<");
         var tagNameElement = tagElement.createChild("span", isClosingTag ? "" : "html-tag-name");
         tagNameElement.textContent = (isClosingTag ? "/" : "") + tagName;
         if (!isClosingTag && node.hasAttributes()) {
             var attributes = node.attributes();
             for (var i = 0; i < attributes.length; ++i) {
                 var attr = attributes[i];
-                tagElement.appendChild(document.createTextNode(" "));
+                tagElement.append(" ");
                 this._buildAttributeDOM(tagElement, attr.name, attr.value, node);
             }
         }
-        tagElement.appendChild(document.createTextNode(">"));
-        parentElement.appendChild(document.createTextNode("\u200B"));
+        tagElement.append(">");
+        parentElement.append("\u200B");
     }
 
     _nodeTitleInfo()
@@ -1144,7 +1142,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
                     if (this.hasChildren) {
                         var textNodeElement = info.titleDOM.createChild("span", "html-text-node");
                         textNodeElement.textContent = "\u2026";
-                        info.titleDOM.appendChild(document.createTextNode("\u200B"));
+                        info.titleDOM.append("\u200B");
                     }
                     this._buildTagDOM(info.titleDOM, tagName, true, false);
                 }
@@ -1163,7 +1161,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
                     else
                         textNodeElement.textContent = textChild.nodeValue();
 
-                    info.titleDOM.appendChild(document.createTextNode("\u200B"));
+                    info.titleDOM.append("\u200B");
 
                     this._buildTagDOM(info.titleDOM, tagName, true, false);
                     info.hasChildren = false;
@@ -1178,37 +1176,37 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
                     var newNode = info.titleDOM.createChild("span", "html-text-node large");
                     newNode.appendChild(WebInspector.syntaxHighlightStringAsDocumentFragment(trimedNodeValue(), "text/css"));
                 } else {
-                    info.titleDOM.appendChild(document.createTextNode("\""));
+                    info.titleDOM.append("\"");
                     var textNodeElement = info.titleDOM.createChild("span", "html-text-node");
                     textNodeElement.textContent = node.nodeValue();
-                    info.titleDOM.appendChild(document.createTextNode("\""));
+                    info.titleDOM.append("\"");
                 }
                 break;
 
             case Node.COMMENT_NODE:
                 var commentElement = info.titleDOM.createChild("span", "html-comment");
-                commentElement.appendChild(document.createTextNode("<!--" + node.nodeValue() + "-->"));
+                commentElement.append("<!--" + node.nodeValue() + "-->");
                 break;
 
             case Node.DOCUMENT_TYPE_NODE:
                 var docTypeElement = info.titleDOM.createChild("span", "html-doctype");
-                docTypeElement.appendChild(document.createTextNode("<!DOCTYPE " + node.nodeName()));
+                docTypeElement.append("<!DOCTYPE " + node.nodeName());
                 if (node.publicId) {
-                    docTypeElement.appendChild(document.createTextNode(" PUBLIC \"" + node.publicId + "\""));
+                    docTypeElement.append(" PUBLIC \"" + node.publicId + "\"");
                     if (node.systemId)
-                        docTypeElement.appendChild(document.createTextNode(" \"" + node.systemId + "\""));
+                        docTypeElement.append(" \"" + node.systemId + "\"");
                 } else if (node.systemId)
-                    docTypeElement.appendChild(document.createTextNode(" SYSTEM \"" + node.systemId + "\""));
+                    docTypeElement.append(" SYSTEM \"" + node.systemId + "\"");
 
                 if (node.internalSubset)
-                    docTypeElement.appendChild(document.createTextNode(" [" + node.internalSubset + "]"));
+                    docTypeElement.append(" [" + node.internalSubset + "]");
 
-                docTypeElement.appendChild(document.createTextNode(">"));
+                docTypeElement.append(">");
                 break;
 
             case Node.CDATA_SECTION_NODE:
                 var cdataElement = info.titleDOM.createChild("span", "html-text-node");
-                cdataElement.appendChild(document.createTextNode("<![CDATA[" + node.nodeValue() + "]]>"));
+                cdataElement.append("<![CDATA[" + node.nodeValue() + "]]>");
                 break;
 
             case Node.PROCESSING_INSTRUCTION_NODE:
@@ -1216,11 +1214,11 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
                 var data = node.nodeValue();
                 var dataString = data.length ? " " + data : "";
                 var title = "<?" + node.nodeNameInCorrectCase() + dataString + "?>";
-                processingInstructionElement.appendChild(document.createTextNode(title));
+                processingInstructionElement.append(title);
                 break;
 
             default:
-                var defaultElement = info.titleDOM.appendChild(document.createTextNode(node.nodeNameInCorrectCase().collapseWhitespace()));
+                info.titleDOM.append(node.nodeNameInCorrectCase().collapseWhitespace());
         }
 
         return info;

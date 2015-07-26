@@ -416,10 +416,10 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
                         liveRegionStatusNode = document.createElement("div");
                         liveRegionStatusNode.className = "value-with-clarification";
                         liveRegionStatusNode.setAttribute("role", "text");
-                        liveRegionStatusNode.appendChild(document.createTextNode(liveRegionStatus));
+                        liveRegionStatusNode.append(liveRegionStatus);
                         var clarificationNode = document.createElement("div");
                         clarificationNode.className = "clarification";
-                        clarificationNode.appendChild(document.createTextNode(WebInspector.UIString("Region announced in its entirety.")));
+                        clarificationNode.append(WebInspector.UIString("Region announced in its entirety."));
                         liveRegionStatusNode.appendChild(clarificationNode);
                     }
                 }

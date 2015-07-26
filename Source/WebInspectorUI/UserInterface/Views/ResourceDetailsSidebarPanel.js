@@ -459,7 +459,7 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
 
         var dataValue = document.createDocumentFragment();
 
-        dataValue.appendChild(document.createTextNode(sizeValue));
+        dataValue.append(sizeValue);
 
         var goToButton = dataValue.appendChild(WebInspector.createGoToArrowButton());
         goToButton.addEventListener("click", this._goToRequestDataClicked.bind(this));

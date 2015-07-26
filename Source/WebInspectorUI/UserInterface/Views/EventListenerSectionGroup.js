@@ -95,8 +95,7 @@ WebInspector.EventListenerSectionGroup = class EventListenerSectionGroup extends
             return linkElement;
 
         var fragment = document.createDocumentFragment();
-        fragment.appendChild(linkElement);
-        fragment.appendChild(document.createTextNode(functionName));
+        fragment.append(linkElement, functionName);
         return fragment;
     }
 };

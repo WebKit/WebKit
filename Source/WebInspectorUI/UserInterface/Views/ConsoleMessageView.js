@@ -228,7 +228,7 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
             switch (this._message.type) {
             case WebInspector.ConsoleMessage.MessageType.Trace:
                 // FIXME: We should use a better string then console.trace.
-                element.appendChild(document.createTextNode("console.trace()"));
+                element.append("console.trace()");
                 break;
 
             case WebInspector.ConsoleMessage.MessageType.Assert:
@@ -256,7 +256,7 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
             case WebInspector.ConsoleMessage.MessageType.StartGroup:
             case WebInspector.ConsoleMessage.MessageType.StartGroupCollapsed:
                 var groupName = this._message.messageText || WebInspector.UIString("Group");
-                element.appendChild(document.createTextNode(groupName));
+                element.append(groupName);
                 this._extraParameters = null;
                 break;
 
@@ -430,7 +430,7 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
             this._extraParameters = parameters;
         } else {
             var defaultMessage = WebInspector.UIString("No message");
-            builderElement.appendChild(document.createTextNode(defaultMessage));
+            builderElement.append(defaultMessage);
         }
 
         // Trailing parameters.
@@ -459,7 +459,7 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
                     this._extraParameters = null;
             } else {
                 // Multiple objects. Show an indicator.
-                builderElement.appendChild(document.createTextNode(" "));
+                builderElement.append(" ");
                 var enclosedElement = builderElement.appendChild(document.createElement("span"));
                 enclosedElement.classList.add("console-message-enclosed");
                 enclosedElement.textContent = "(" + parameters.length + ")";

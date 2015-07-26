@@ -178,7 +178,7 @@ WebInspector.CSSStyleDeclarationSection.prototype = {
         this._originElement.removeChildren();
         this._selectorElements = [];
 
-        this._originElement.appendChild(document.createTextNode(" \u2014 "));
+        this._originElement.append(" \u2014 ");
 
         function appendSelector(selector, matched)
         {
@@ -231,7 +231,7 @@ WebInspector.CSSStyleDeclarationSection.prototype = {
                 for (var i = 0; i < selectors.length; ++i) {
                     appendSelector.call(this, selectors[i], alwaysMatch || matchedSelectorIndices.includes(i));
                     if (i < selectors.length - 1)
-                        this._selectorElement.appendChild(document.createTextNode(", "));
+                        this._selectorElement.append(", ");
                 }
             } else
                 appendSelectorTextKnownToMatch.call(this, this._style.ownerRule.selectorText);
@@ -261,19 +261,19 @@ WebInspector.CSSStyleDeclarationSection.prototype = {
 
                 console.assert(originString);
                 if (originString)
-                    this._originElement.appendChild(document.createTextNode(originString));
+                    this._originElement.append(originString);
             }
 
             break;
 
         case WebInspector.CSSStyleDeclaration.Type.Inline:
             appendSelectorTextKnownToMatch.call(this, WebInspector.displayNameForNode(this._style.node));
-            this._originElement.appendChild(document.createTextNode(WebInspector.UIString("Style Attribute")));
+            this._originElement.append(WebInspector.UIString("Style Attribute"));
             break;
 
         case WebInspector.CSSStyleDeclaration.Type.Attribute:
             appendSelectorTextKnownToMatch.call(this, WebInspector.displayNameForNode(this._style.node));
-            this._originElement.appendChild(document.createTextNode(WebInspector.UIString("HTML Attributes")));
+            this._originElement.append(WebInspector.UIString("HTML Attributes"));
             break;
         }
     },
