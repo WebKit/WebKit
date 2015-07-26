@@ -49,6 +49,7 @@
     macro(Promise) \
     macro(RangeError) \
     macro(ReferenceError) \
+    macro(Reflect) \
     macro(RegExp) \
     macro(Set)\
     macro(SetIterator)\

@@ -1,3 +1,37 @@
+2015-07-25  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Add Reflect namespace and add Reflect.deleteProperty
+        https://bugs.webkit.org/show_bug.cgi?id=147287
+
+        Reviewed by Sam Weinig.
+
+        This patch just creates the namespace for ES6 Reflect APIs.
+        And add template files to implement the actual code.
+
+        Not to keep the JS generated properties C array empty,
+        we added one small method, Reflect.deleteProperty in this patch.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/ReflectObject.js: Added.
+        (deleteProperty):
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/ReflectObject.cpp: Added.
+        (JSC::ReflectObject::ReflectObject):
+        (JSC::ReflectObject::finishCreation):
+        (JSC::ReflectObject::getOwnPropertySlot):
+        * runtime/ReflectObject.h: Added.
+        (JSC::ReflectObject::create):
+        (JSC::ReflectObject::createStructure):
+        * tests/stress/reflect-delete-property.js: Added.
+        (shouldBe):
+        (shouldThrow):
+
 2015-07-24  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Avoid 2 times name iteration in Object.assign

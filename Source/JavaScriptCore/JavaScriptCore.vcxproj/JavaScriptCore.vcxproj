@@ -809,6 +809,7 @@
     <ClCompile Include="..\runtime\PropertySlot.cpp" />
     <ClCompile Include="..\runtime\PropertyTable.cpp" />
     <ClCompile Include="..\runtime\PrototypeMap.cpp" />
+    <ClCompile Include="..\runtime\ReflectObject.cpp" />
     <ClCompile Include="..\runtime\RegExp.cpp" />
     <ClCompile Include="..\runtime\RegExpCache.cpp" />
     <ClCompile Include="..\runtime\RegExpCachedResult.cpp" />
@@ -902,6 +903,7 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\NumberConstructor.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\NumberPrototype.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\ObjectConstructor.lut.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\ReflectObject.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\RegExpConstructor.lut.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\RegExpJitTables.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj$(PlatformArchitecture)\$(ProjectName)\DerivedSources\RegExpPrototype.lut.h" />
@@ -1651,6 +1653,7 @@
     <ClInclude Include="..\runtime\PrototypeMap.h" />
     <ClInclude Include="..\runtime\PutDirectIndexMode.h" />
     <ClInclude Include="..\runtime\PutPropertySlot.h" />
+    <ClInclude Include="..\runtime\ReflectObject.h" />
     <ClInclude Include="..\runtime\RegExp.h" />
     <ClInclude Include="..\runtime\RegExpCache.h" />
     <ClInclude Include="..\runtime\RegExpCachedResult.h" />
