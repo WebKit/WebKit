@@ -23,13 +23,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+function apply(target, thisArgument, argumentsList)
+{
+    "use strict";
+
+    if (typeof target !== "function")
+        throw new @TypeError("Reflect.apply requires the first argument be a function");
+
+    if (!@isObject(argumentsList))
+        throw new @TypeError("Reflect.apply requires the third argument be an object");
+
+    return target.@apply(thisArgument, argumentsList);
+}
+
 function deleteProperty(target, propertyKey)
 {
     // Intentionally keep the code the sloppy mode to suppress the TypeError
     // raised by the delete operator under the strict mode.
 
     if (!@isObject(target))
-        throw new @TypeError("Reflect.deleteProperty requires the first argument be a object");
+        throw new @TypeError("Reflect.deleteProperty requires the first argument be an object");
 
     return delete target[propertyKey];
 }

@@ -1,3 +1,29 @@
+2015-07-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement Reflect.apply
+        https://bugs.webkit.org/show_bug.cgi?id=147306
+
+        Reviewed by Sam Weinig.
+
+        Implement Reflect.apply.
+        The large part of this can be implemented by the @apply builtin annotation.
+        The only thing which is different from the Funciton.prototype.apply is the third parameter,
+        "argumentsList" is needed to be an object.
+
+        * builtins/ReflectObject.js:
+        (apply):
+        (deleteProperty):
+        * runtime/ReflectObject.cpp:
+        * tests/stress/reflect-apply.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (get shouldThrow):
+        (.get shouldThrow):
+        (get var.array.get length):
+        (get var.array.get 0):
+        (.get var):
+        * tests/stress/reflect-delete-property.js:
+
 2015-07-25  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Add Reflect namespace and add Reflect.deleteProperty

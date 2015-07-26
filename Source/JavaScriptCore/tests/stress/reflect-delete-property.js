@@ -20,7 +20,7 @@ shouldBe(Reflect.deleteProperty.length, 2);
 
 shouldThrow(() => {
     Reflect.deleteProperty("hello", 42);
-}, `TypeError: Reflect.deleteProperty requires the first argument be a object`);
+}, `TypeError: Reflect.deleteProperty requires the first argument be an object`);
 
 var object = { hello: 42 };
 shouldBe(object.hello, 42);
@@ -49,7 +49,7 @@ var toPropertyKey = {
 
 shouldThrow(() => {
     Reflect.deleteProperty("hello", toPropertyKey);
-}, `TypeError: Reflect.deleteProperty requires the first argument be a object`);
+}, `TypeError: Reflect.deleteProperty requires the first argument be an object`);
 
 shouldThrow(() => {
     Reflect.deleteProperty({}, toPropertyKey);

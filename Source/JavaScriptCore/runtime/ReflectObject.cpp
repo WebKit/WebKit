@@ -39,7 +39,8 @@ const ClassInfo ReflectObject::s_info = { "Reflect", &Base::s_info, &reflectObje
 
 /* Source for ReflectObject.lut.h
 @begin reflectObjectTable
-    deleteProperty  reflectObjectGet DontEnum|Function 2
+    apply           reflectObjectApply          DontEnum|Function 3
+    deleteProperty  reflectObjectDeleteProperty DontEnum|Function 2
 @end
 */
 
