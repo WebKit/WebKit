@@ -36,6 +36,12 @@ static EncodedJSValue JSC_HOST_CALL reflectObjectOwnKeys(ExecState*);
 
 }
 
+namespace JSC {
+
+static EncodedJSValue JSC_HOST_CALL reflectObjectIsExtensible(ExecState*);
+
+}
+
 #include "ReflectObject.lut.h"
 
 namespace JSC {
@@ -48,6 +54,7 @@ const ClassInfo ReflectObject::s_info = { "Reflect", &Base::s_info, &reflectObje
 @begin reflectObjectTable
     apply           reflectObjectApply          DontEnum|Function 3
     deleteProperty  reflectObjectDeleteProperty DontEnum|Function 2
+    isExtensible    reflectObjectIsExtensible   DontEnum|Function 1
     ownKeys         reflectObjectOwnKeys        DontEnum|Function 1
 @end
 */
@@ -69,6 +76,14 @@ bool ReflectObject::getOwnPropertySlot(JSObject* object, ExecState* exec, Proper
 }
 
 // ------------------------------ Functions --------------------------------
+
+EncodedJSValue JSC_HOST_CALL reflectObjectIsExtensible(ExecState* exec)
+{
+    JSValue target = exec->argument(0);
+    if (!target.isObject())
+        return JSValue::encode(throwTypeError(exec, ASCIILiteral("Reflect.isExtensible requires the first argument be an object")));
+    return JSValue::encode(jsBoolean(asObject(target)->isExtensible()));
+}
 
 EncodedJSValue JSC_HOST_CALL reflectObjectOwnKeys(ExecState* exec)
 {
