@@ -1,5 +1,11 @@
 2015-07-25  Alexey Proskuryakov  <ap@apple.com>
 
+        Updating an expectation to actually work (it's a reftest, so it needs ImageOnlyFailure).
+
+        * platform/mac/TestExpectations:
+
+2015-07-25  Alexey Proskuryakov  <ap@apple.com>
+
         Update test results after r187346 ('>>' descendant combinator).
 
         * fast/css/css-selector-text-expected.txt:

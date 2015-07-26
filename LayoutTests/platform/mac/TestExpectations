@@ -1336,7 +1336,7 @@ indieui [ Skip ]
 streams [ Skip ]
 
 # ENABLE_CSS_SELECTORS_LEVEL4
-fast/css/descendant-combinator-doubled-child-syntax-styling.html [ Failure ]
+fast/css/descendant-combinator-doubled-child-syntax-styling.html [ ImageOnlyFailure ]
 
 # <rdar://problem/21964590> Hits ASSERT_NOT_REACHED in RenderFlexibleBox::alignChildren,
 # possibly due to GRID_LAYOUT being disabled.
