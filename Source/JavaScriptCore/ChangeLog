@@ -1,3 +1,29 @@
+2015-07-25  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement Reflect.ownKeys
+        https://bugs.webkit.org/show_bug.cgi?id=147307
+
+        Reviewed by Sam Weinig.
+
+        This patch implements Reflect.ownKeys.
+        In this patch, we refactor the existing code to list up own keys in the object.
+        Such code is used by Object.getOwnPropertyNames, Object.getOwnPropertyKeys, Object.keys and @ownEnumerableKeys.
+        We factor out the listing up own keys as ownPropertyKeys function and also use it in Reflect.ownKeys.
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorGetOwnPropertyNames):
+        (JSC::objectConstructorGetOwnPropertySymbols):
+        (JSC::objectConstructorKeys):
+        (JSC::ownEnumerablePropertyKeys):
+        (JSC::ownPropertyKeys):
+        * runtime/ObjectConstructor.h:
+        * runtime/ReflectObject.cpp:
+        (JSC::reflectObjectOwnKeys):
+        * tests/stress/reflect-own-keys.js: Added.
+        (shouldBe):
+        (shouldThrow):
+        (shouldBeArray):
+
 2015-07-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement Reflect.apply

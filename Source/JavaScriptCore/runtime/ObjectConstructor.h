@@ -91,6 +91,7 @@ inline JSObject* constructEmptyObject(ExecState* exec)
 }
 
 JSObject* objectConstructorFreeze(ExecState*, JSObject*);
+JSArray* ownPropertyKeys(ExecState*, JSObject*, PropertyNameMode, DontEnumPropertiesMode);
 
 } // namespace JSC
 
