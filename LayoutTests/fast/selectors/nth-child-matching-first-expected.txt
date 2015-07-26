@@ -4,97 +4,97 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Testing ":nth-child(1)"
-PASS document.querySelectorAll('#test-root >> :nth-child(1)').length is 1
-PASS document.querySelectorAll('#test-root >> :nth-child(1)')[0].id is "testcase1"
-PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+FAIL document.querySelectorAll('#test-root >> :nth-child(1)').length should be 1. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll('#test-root >> :nth-child(1)')[0].id should be testcase1. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor should be rgb(10, 100, 200). Was rgb(255, 0, 0).
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
 
 Testing ":nth-child(+1)"
-PASS document.querySelectorAll('#test-root >> :nth-child(+1)').length is 1
-PASS document.querySelectorAll('#test-root >> :nth-child(+1)')[0].id is "testcase1"
-PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+FAIL document.querySelectorAll('#test-root >> :nth-child(+1)').length should be 1. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll('#test-root >> :nth-child(+1)')[0].id should be testcase1. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor should be rgb(10, 100, 200). Was rgb(255, 0, 0).
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
 
 Testing ":nth-child(-n+1)"
-PASS document.querySelectorAll('#test-root >> :nth-child(-n+1)').length is 1
-PASS document.querySelectorAll('#test-root >> :nth-child(-n+1)')[0].id is "testcase1"
-PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+FAIL document.querySelectorAll('#test-root >> :nth-child(-n+1)').length should be 1. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll('#test-root >> :nth-child(-n+1)')[0].id should be testcase1. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor should be rgb(10, 100, 200). Was rgb(255, 0, 0).
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
 
 Testing ":nth-child(-2n+1)"
-PASS document.querySelectorAll('#test-root >> :nth-child(-2n+1)').length is 1
-PASS document.querySelectorAll('#test-root >> :nth-child(-2n+1)')[0].id is "testcase1"
-PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+FAIL document.querySelectorAll('#test-root >> :nth-child(-2n+1)').length should be 1. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll('#test-root >> :nth-child(-2n+1)')[0].id should be testcase1. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor should be rgb(10, 100, 200). Was rgb(255, 0, 0).
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
 
 Testing ":nth-child(-3n+1)"
-PASS document.querySelectorAll('#test-root >> :nth-child(-3n+1)').length is 1
-PASS document.querySelectorAll('#test-root >> :nth-child(-3n+1)')[0].id is "testcase1"
-PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+FAIL document.querySelectorAll('#test-root >> :nth-child(-3n+1)').length should be 1. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll('#test-root >> :nth-child(-3n+1)')[0].id should be testcase1. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor should be rgb(10, 100, 200). Was rgb(255, 0, 0).
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
 
 Testing ":nth-child(odd):nth-child(1):nth-child(2n+1)"
-PASS document.querySelectorAll('#test-root >> :nth-child(odd):nth-child(1):nth-child(2n+1)').length is 1
-PASS document.querySelectorAll('#test-root >> :nth-child(odd):nth-child(1):nth-child(2n+1)')[0].id is "testcase1"
-PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+FAIL document.querySelectorAll('#test-root >> :nth-child(odd):nth-child(1):nth-child(2n+1)').length should be 1. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll('#test-root >> :nth-child(odd):nth-child(1):nth-child(2n+1)')[0].id should be testcase1. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor should be rgb(10, 100, 200). Was rgb(255, 0, 0).
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
 
 Testing ":nth-child(odd):nth-child(+1):nth-child(2n+1)"
-PASS document.querySelectorAll('#test-root >> :nth-child(odd):nth-child(+1):nth-child(2n+1)').length is 1
-PASS document.querySelectorAll('#test-root >> :nth-child(odd):nth-child(+1):nth-child(2n+1)')[0].id is "testcase1"
-PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+FAIL document.querySelectorAll('#test-root >> :nth-child(odd):nth-child(+1):nth-child(2n+1)').length should be 1. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll('#test-root >> :nth-child(odd):nth-child(+1):nth-child(2n+1)')[0].id should be testcase1. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor should be rgb(10, 100, 200). Was rgb(255, 0, 0).
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
 
 Testing ":nth-child(odd):nth-child(-n+1):nth-child(2n+1)"
-PASS document.querySelectorAll('#test-root >> :nth-child(odd):nth-child(-n+1):nth-child(2n+1)').length is 1
-PASS document.querySelectorAll('#test-root >> :nth-child(odd):nth-child(-n+1):nth-child(2n+1)')[0].id is "testcase1"
-PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+FAIL document.querySelectorAll('#test-root >> :nth-child(odd):nth-child(-n+1):nth-child(2n+1)').length should be 1. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll('#test-root >> :nth-child(odd):nth-child(-n+1):nth-child(2n+1)')[0].id should be testcase1. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor should be rgb(10, 100, 200). Was rgb(255, 0, 0).
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
 
 Testing ":nth-child(odd):nth-child(-2n+1):nth-child(2n+1)"
-PASS document.querySelectorAll('#test-root >> :nth-child(odd):nth-child(-2n+1):nth-child(2n+1)').length is 1
-PASS document.querySelectorAll('#test-root >> :nth-child(odd):nth-child(-2n+1):nth-child(2n+1)')[0].id is "testcase1"
-PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+FAIL document.querySelectorAll('#test-root >> :nth-child(odd):nth-child(-2n+1):nth-child(2n+1)').length should be 1. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll('#test-root >> :nth-child(odd):nth-child(-2n+1):nth-child(2n+1)')[0].id should be testcase1. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor should be rgb(10, 100, 200). Was rgb(255, 0, 0).
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
 
 Testing ":nth-child(odd):nth-child(-3n+1):nth-child(2n+1)"
-PASS document.querySelectorAll('#test-root >> :nth-child(odd):nth-child(-3n+1):nth-child(2n+1)').length is 1
-PASS document.querySelectorAll('#test-root >> :nth-child(odd):nth-child(-3n+1):nth-child(2n+1)')[0].id is "testcase1"
-PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
+FAIL document.querySelectorAll('#test-root >> :nth-child(odd):nth-child(-3n+1):nth-child(2n+1)').length should be 1. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll('#test-root >> :nth-child(odd):nth-child(-3n+1):nth-child(2n+1)')[0].id should be testcase1. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor should be rgb(10, 100, 200). Was rgb(255, 0, 0).
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
 
 Testing ":nth-child(-n-1)"
-PASS document.querySelectorAll('#test-root >> :nth-child(-n-1)').length is 0
+FAIL document.querySelectorAll('#test-root >> :nth-child(-n-1)').length should be 0. Threw exception Error: SyntaxError: DOM Exception 12
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(255, 0, 0)"
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(255, 0, 0)"
@@ -102,30 +102,30 @@ PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundCo
 PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(255, 0, 0)"
 
 Testing ":nth-child(n+1)"
-PASS document.querySelectorAll('#test-root >> :nth-child(n+1)').length is 5
-PASS document.querySelectorAll('#test-root >> :nth-child(n+1)')[0].id is "testcase1"
-PASS document.querySelectorAll('#test-root >> :nth-child(n+1)')[1].id is "testcase2"
-PASS document.querySelectorAll('#test-root >> :nth-child(n+1)')[2].id is "testcase3"
-PASS document.querySelectorAll('#test-root >> :nth-child(n+1)')[3].id is "testcase4"
-PASS document.querySelectorAll('#test-root >> :nth-child(n+1)')[4].id is "testcase5"
-PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
-PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(10, 100, 200)"
-PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(10, 100, 200)"
-PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(10, 100, 200)"
-PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(10, 100, 200)"
+FAIL document.querySelectorAll('#test-root >> :nth-child(n+1)').length should be 5. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll('#test-root >> :nth-child(n+1)')[0].id should be testcase1. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll('#test-root >> :nth-child(n+1)')[1].id should be testcase2. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll('#test-root >> :nth-child(n+1)')[2].id should be testcase3. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll('#test-root >> :nth-child(n+1)')[3].id should be testcase4. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll('#test-root >> :nth-child(n+1)')[4].id should be testcase5. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor should be rgb(10, 100, 200). Was rgb(255, 0, 0).
+FAIL getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor should be rgb(10, 100, 200). Was rgb(255, 0, 0).
+FAIL getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor should be rgb(10, 100, 200). Was rgb(255, 0, 0).
+FAIL getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor should be rgb(10, 100, 200). Was rgb(255, 0, 0).
+FAIL getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor should be rgb(10, 100, 200). Was rgb(255, 0, 0).
 
 Testing ":nth-child(n-1)"
-PASS document.querySelectorAll('#test-root >> :nth-child(n-1)').length is 5
-PASS document.querySelectorAll('#test-root >> :nth-child(n-1)')[0].id is "testcase1"
-PASS document.querySelectorAll('#test-root >> :nth-child(n-1)')[1].id is "testcase2"
-PASS document.querySelectorAll('#test-root >> :nth-child(n-1)')[2].id is "testcase3"
-PASS document.querySelectorAll('#test-root >> :nth-child(n-1)')[3].id is "testcase4"
-PASS document.querySelectorAll('#test-root >> :nth-child(n-1)')[4].id is "testcase5"
-PASS getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor is "rgb(10, 100, 200)"
-PASS getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor is "rgb(10, 100, 200)"
-PASS getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor is "rgb(10, 100, 200)"
-PASS getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor is "rgb(10, 100, 200)"
-PASS getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor is "rgb(10, 100, 200)"
+FAIL document.querySelectorAll('#test-root >> :nth-child(n-1)').length should be 5. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll('#test-root >> :nth-child(n-1)')[0].id should be testcase1. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll('#test-root >> :nth-child(n-1)')[1].id should be testcase2. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll('#test-root >> :nth-child(n-1)')[2].id should be testcase3. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll('#test-root >> :nth-child(n-1)')[3].id should be testcase4. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll('#test-root >> :nth-child(n-1)')[4].id should be testcase5. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL getComputedStyle(document.querySelectorAll("#test-root *")[0]).backgroundColor should be rgb(10, 100, 200). Was rgb(255, 0, 0).
+FAIL getComputedStyle(document.querySelectorAll("#test-root *")[1]).backgroundColor should be rgb(10, 100, 200). Was rgb(255, 0, 0).
+FAIL getComputedStyle(document.querySelectorAll("#test-root *")[2]).backgroundColor should be rgb(10, 100, 200). Was rgb(255, 0, 0).
+FAIL getComputedStyle(document.querySelectorAll("#test-root *")[3]).backgroundColor should be rgb(10, 100, 200). Was rgb(255, 0, 0).
+FAIL getComputedStyle(document.querySelectorAll("#test-root *")[4]).backgroundColor should be rgb(10, 100, 200). Was rgb(255, 0, 0).
 
 PASS successfullyParsed is true
 

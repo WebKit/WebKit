@@ -3,17 +3,17 @@ Test using the descendant combinator with the double-child syntax ">>" in Elemen
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS document.getElementById("target1").closest("body >> target").id is "target1"
-PASS document.getElementById("target2").closest("body >> target").id is "target2"
-PASS document.getElementById("target1").closest("body >> container").id is "container2"
-PASS document.getElementById("target2").closest("body >> container").id is "container3"
-PASS document.getElementById("target1").closest("container >> container").id is "container2"
-PASS document.getElementById("target2").closest("container >> container").id is "container3"
-PASS document.getElementById("target1").closest("target >> container") is null
-PASS document.getElementById("target2").closest("target >> container") is null
-PASS document.getElementById("container1").closest("target >> container") is null
-PASS document.getElementById("container2").closest("target >> container") is null
-PASS document.getElementById("container3").closest("target >> container") is null
+FAIL document.getElementById("target1").closest("body >> target").id should be target1. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.getElementById("target2").closest("body >> target").id should be target2. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.getElementById("target1").closest("body >> container").id should be container2. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.getElementById("target2").closest("body >> container").id should be container3. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.getElementById("target1").closest("container >> container").id should be container2. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.getElementById("target2").closest("container >> container").id should be container3. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.getElementById("target1").closest("target >> container") should be null. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.getElementById("target2").closest("target >> container") should be null. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.getElementById("container1").closest("target >> container") should be null. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.getElementById("container2").closest("target >> container") should be null. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.getElementById("container3").closest("target >> container") should be null. Threw exception Error: SyntaxError: DOM Exception 12
 PASS successfullyParsed is true
 
 TEST COMPLETE

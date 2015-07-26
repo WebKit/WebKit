@@ -3,13 +3,13 @@ This test verify that invalid case-insenstivie attribute value matching (e.g. [f
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS getComputedStyle(document.getElementById('target')).color is "rgb(0, 255, 0)"
-PASS getComputedStyle(document.getElementById('target')).backgroundColor is "rgb(255, 0, 0)"
-PASS document.getElementById('style-container').sheet.cssRules.length is 2
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(#notthere >> div, #target)"
-PASS document.getElementById('style-container').sheet.cssRules[0].cssText is ":matches(#notthere >> div, #target) { background-color: red; }"
-PASS document.getElementById('style-container').sheet.cssRules[1].selectorText is ":matches(#notthere >> foobar, #target)"
-PASS document.getElementById('style-container').sheet.cssRules[1].cssText is ":matches(#notthere >> foobar, #target) { color: lime; }"
+FAIL getComputedStyle(document.getElementById('target')).color should be rgb(0, 255, 0). Was rgb(0, 0, 0).
+FAIL getComputedStyle(document.getElementById('target')).backgroundColor should be rgb(255, 0, 0). Was rgba(0, 0, 0, 0).
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 2. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :matches(#notthere >> div, #target). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules[0].cssText should be :matches(#notthere >> div, #target) { background-color: red; }. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].cssText')
+FAIL document.getElementById('style-container').sheet.cssRules[1].selectorText should be :matches(#notthere >> foobar, #target). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[1].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules[1].cssText should be :matches(#notthere >> foobar, #target) { color: lime; }. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[1].cssText')
 PASS successfullyParsed is true
 
 TEST COMPLETE

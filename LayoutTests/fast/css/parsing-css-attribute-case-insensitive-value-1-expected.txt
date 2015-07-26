@@ -16,18 +16,18 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo=\"bar\" i]"
-PASS document.querySelector("foo >> bar [foo=bar i]") did not throw exception.
-PASS document.querySelector("foo >> bar [*|foo=bar i]") did not throw exception.
-PASS document.querySelector("foo >> bar [|foo=bar i]") did not throw exception.
-PASS document.querySelector("foo >> bar [WebKit|foo=bar i]") threw exception Error: NamespaceError: DOM Exception 14.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [*|foo=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [WebKit|foo=\"bar\" i]"
+FAIL document.querySelector("foo >> bar [foo=bar i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.querySelector("foo >> bar [*|foo=bar i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.querySelector("foo >> bar [|foo=bar i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector("foo >> bar [WebKit|foo=bar i]") threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [foo="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [foo="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [*|foo="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [WebKit|foo="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
 PASS document.querySelector(":nth-child(2n+1 of [foo=bar i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [*|foo=bar i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [|foo=bar i])") did not throw exception.
@@ -88,18 +88,18 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo=\"bar\" i]"
-PASS document.querySelector("foo >> bar [foo=\"bar\" i]") did not throw exception.
-PASS document.querySelector("foo >> bar [*|foo=\"bar\" i]") did not throw exception.
-PASS document.querySelector("foo >> bar [|foo=\"bar\" i]") did not throw exception.
-PASS document.querySelector("foo >> bar [WebKit|foo=\"bar\" i]") threw exception Error: NamespaceError: DOM Exception 14.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [*|foo=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [WebKit|foo=\"bar\" i]"
+FAIL document.querySelector("foo >> bar [foo=\"bar\" i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.querySelector("foo >> bar [*|foo=\"bar\" i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.querySelector("foo >> bar [|foo=\"bar\" i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector("foo >> bar [WebKit|foo=\"bar\" i]") threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [foo="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [foo="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [*|foo="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [WebKit|foo="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
 PASS document.querySelector(":nth-child(2n+1 of [foo=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [*|foo=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [|foo=\"bar\" i])") did not throw exception.
@@ -160,18 +160,18 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo~=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo~=\"bar\" i]"
-PASS document.querySelector("foo >> bar [foo~=bar i]") did not throw exception.
-PASS document.querySelector("foo >> bar [*|foo~=bar i]") did not throw exception.
-PASS document.querySelector("foo >> bar [|foo~=bar i]") did not throw exception.
-PASS document.querySelector("foo >> bar [WebKit|foo~=bar i]") threw exception Error: NamespaceError: DOM Exception 14.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo~=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo~=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [*|foo~=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [WebKit|foo~=\"bar\" i]"
+FAIL document.querySelector("foo >> bar [foo~=bar i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.querySelector("foo >> bar [*|foo~=bar i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.querySelector("foo >> bar [|foo~=bar i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector("foo >> bar [WebKit|foo~=bar i]") threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [foo~="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [foo~="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [*|foo~="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [WebKit|foo~="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
 PASS document.querySelector(":nth-child(2n+1 of [foo~=bar i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [*|foo~=bar i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [|foo~=bar i])") did not throw exception.
@@ -232,18 +232,18 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo~=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo~=\"bar\" i]"
-PASS document.querySelector("foo >> bar [foo~=\"bar\" i]") did not throw exception.
-PASS document.querySelector("foo >> bar [*|foo~=\"bar\" i]") did not throw exception.
-PASS document.querySelector("foo >> bar [|foo~=\"bar\" i]") did not throw exception.
-PASS document.querySelector("foo >> bar [WebKit|foo~=\"bar\" i]") threw exception Error: NamespaceError: DOM Exception 14.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo~=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo~=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [*|foo~=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [WebKit|foo~=\"bar\" i]"
+FAIL document.querySelector("foo >> bar [foo~=\"bar\" i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.querySelector("foo >> bar [*|foo~=\"bar\" i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.querySelector("foo >> bar [|foo~=\"bar\" i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector("foo >> bar [WebKit|foo~=\"bar\" i]") threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [foo~="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [foo~="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [*|foo~="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [WebKit|foo~="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
 PASS document.querySelector(":nth-child(2n+1 of [foo~=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [*|foo~=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [|foo~=\"bar\" i])") did not throw exception.
@@ -304,18 +304,18 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo|=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo|=\"bar\" i]"
-PASS document.querySelector("foo >> bar [foo|=bar i]") did not throw exception.
-PASS document.querySelector("foo >> bar [*|foo|=bar i]") did not throw exception.
-PASS document.querySelector("foo >> bar [|foo|=bar i]") did not throw exception.
-PASS document.querySelector("foo >> bar [WebKit|foo|=bar i]") threw exception Error: NamespaceError: DOM Exception 14.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo|=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo|=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [*|foo|=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [WebKit|foo|=\"bar\" i]"
+FAIL document.querySelector("foo >> bar [foo|=bar i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.querySelector("foo >> bar [*|foo|=bar i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.querySelector("foo >> bar [|foo|=bar i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector("foo >> bar [WebKit|foo|=bar i]") threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [foo|="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [foo|="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [*|foo|="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [WebKit|foo|="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
 PASS document.querySelector(":nth-child(2n+1 of [foo|=bar i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [*|foo|=bar i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [|foo|=bar i])") did not throw exception.
@@ -376,18 +376,18 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo|=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo|=\"bar\" i]"
-PASS document.querySelector("foo >> bar [foo|=\"bar\" i]") did not throw exception.
-PASS document.querySelector("foo >> bar [*|foo|=\"bar\" i]") did not throw exception.
-PASS document.querySelector("foo >> bar [|foo|=\"bar\" i]") did not throw exception.
-PASS document.querySelector("foo >> bar [WebKit|foo|=\"bar\" i]") threw exception Error: NamespaceError: DOM Exception 14.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo|=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo|=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [*|foo|=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [WebKit|foo|=\"bar\" i]"
+FAIL document.querySelector("foo >> bar [foo|=\"bar\" i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.querySelector("foo >> bar [*|foo|=\"bar\" i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.querySelector("foo >> bar [|foo|=\"bar\" i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector("foo >> bar [WebKit|foo|=\"bar\" i]") threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [foo|="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [foo|="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [*|foo|="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [WebKit|foo|="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
 PASS document.querySelector(":nth-child(2n+1 of [foo|=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [*|foo|=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [|foo|=\"bar\" i])") did not throw exception.
@@ -448,18 +448,18 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo^=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo^=\"bar\" i]"
-PASS document.querySelector("foo >> bar [foo^=bar i]") did not throw exception.
-PASS document.querySelector("foo >> bar [*|foo^=bar i]") did not throw exception.
-PASS document.querySelector("foo >> bar [|foo^=bar i]") did not throw exception.
-PASS document.querySelector("foo >> bar [WebKit|foo^=bar i]") threw exception Error: NamespaceError: DOM Exception 14.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo^=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo^=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [*|foo^=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [WebKit|foo^=\"bar\" i]"
+FAIL document.querySelector("foo >> bar [foo^=bar i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.querySelector("foo >> bar [*|foo^=bar i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.querySelector("foo >> bar [|foo^=bar i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector("foo >> bar [WebKit|foo^=bar i]") threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [foo^="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [foo^="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [*|foo^="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [WebKit|foo^="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
 PASS document.querySelector(":nth-child(2n+1 of [foo^=bar i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [*|foo^=bar i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [|foo^=bar i])") did not throw exception.
@@ -520,18 +520,18 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo^=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo^=\"bar\" i]"
-PASS document.querySelector("foo >> bar [foo^=\"bar\" i]") did not throw exception.
-PASS document.querySelector("foo >> bar [*|foo^=\"bar\" i]") did not throw exception.
-PASS document.querySelector("foo >> bar [|foo^=\"bar\" i]") did not throw exception.
-PASS document.querySelector("foo >> bar [WebKit|foo^=\"bar\" i]") threw exception Error: NamespaceError: DOM Exception 14.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo^=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo^=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [*|foo^=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [WebKit|foo^=\"bar\" i]"
+FAIL document.querySelector("foo >> bar [foo^=\"bar\" i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.querySelector("foo >> bar [*|foo^=\"bar\" i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.querySelector("foo >> bar [|foo^=\"bar\" i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector("foo >> bar [WebKit|foo^=\"bar\" i]") threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [foo^="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [foo^="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [*|foo^="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [WebKit|foo^="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
 PASS document.querySelector(":nth-child(2n+1 of [foo^=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [*|foo^=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [|foo^=\"bar\" i])") did not throw exception.
@@ -592,18 +592,18 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo$=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo$=\"bar\" i]"
-PASS document.querySelector("foo >> bar [foo$=bar i]") did not throw exception.
-PASS document.querySelector("foo >> bar [*|foo$=bar i]") did not throw exception.
-PASS document.querySelector("foo >> bar [|foo$=bar i]") did not throw exception.
-PASS document.querySelector("foo >> bar [WebKit|foo$=bar i]") threw exception Error: NamespaceError: DOM Exception 14.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo$=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo$=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [*|foo$=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [WebKit|foo$=\"bar\" i]"
+FAIL document.querySelector("foo >> bar [foo$=bar i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.querySelector("foo >> bar [*|foo$=bar i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.querySelector("foo >> bar [|foo$=bar i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector("foo >> bar [WebKit|foo$=bar i]") threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [foo$="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [foo$="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [*|foo$="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [WebKit|foo$="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
 PASS document.querySelector(":nth-child(2n+1 of [foo$=bar i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [*|foo$=bar i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [|foo$=bar i])") did not throw exception.
@@ -664,18 +664,18 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo$=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo$=\"bar\" i]"
-PASS document.querySelector("foo >> bar [foo$=\"bar\" i]") did not throw exception.
-PASS document.querySelector("foo >> bar [*|foo$=\"bar\" i]") did not throw exception.
-PASS document.querySelector("foo >> bar [|foo$=\"bar\" i]") did not throw exception.
-PASS document.querySelector("foo >> bar [WebKit|foo$=\"bar\" i]") threw exception Error: NamespaceError: DOM Exception 14.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo$=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo$=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [*|foo$=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [WebKit|foo$=\"bar\" i]"
+FAIL document.querySelector("foo >> bar [foo$=\"bar\" i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.querySelector("foo >> bar [*|foo$=\"bar\" i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.querySelector("foo >> bar [|foo$=\"bar\" i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector("foo >> bar [WebKit|foo$=\"bar\" i]") threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [foo$="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [foo$="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [*|foo$="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [WebKit|foo$="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
 PASS document.querySelector(":nth-child(2n+1 of [foo$=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [*|foo$=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [|foo$=\"bar\" i])") did not throw exception.
@@ -736,18 +736,18 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo*=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo*=\"bar\" i]"
-PASS document.querySelector("foo >> bar [foo*=bar i]") did not throw exception.
-PASS document.querySelector("foo >> bar [*|foo*=bar i]") did not throw exception.
-PASS document.querySelector("foo >> bar [|foo*=bar i]") did not throw exception.
-PASS document.querySelector("foo >> bar [WebKit|foo*=bar i]") threw exception Error: NamespaceError: DOM Exception 14.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo*=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo*=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [*|foo*=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [WebKit|foo*=\"bar\" i]"
+FAIL document.querySelector("foo >> bar [foo*=bar i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.querySelector("foo >> bar [*|foo*=bar i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.querySelector("foo >> bar [|foo*=bar i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector("foo >> bar [WebKit|foo*=bar i]") threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [foo*="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [foo*="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [*|foo*="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [WebKit|foo*="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
 PASS document.querySelector(":nth-child(2n+1 of [foo*=bar i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [*|foo*=bar i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [|foo*=bar i])") did not throw exception.
@@ -808,18 +808,18 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo*=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[WebKit|foo*=\"bar\" i]"
-PASS document.querySelector("foo >> bar [foo*=\"bar\" i]") did not throw exception.
-PASS document.querySelector("foo >> bar [*|foo*=\"bar\" i]") did not throw exception.
-PASS document.querySelector("foo >> bar [|foo*=\"bar\" i]") did not throw exception.
-PASS document.querySelector("foo >> bar [WebKit|foo*=\"bar\" i]") threw exception Error: NamespaceError: DOM Exception 14.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo*=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo*=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [*|foo*=\"bar\" i]"
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [WebKit|foo*=\"bar\" i]"
+FAIL document.querySelector("foo >> bar [foo*=\"bar\" i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.querySelector("foo >> bar [*|foo*=\"bar\" i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.querySelector("foo >> bar [|foo*=\"bar\" i]") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+PASS document.querySelector("foo >> bar [WebKit|foo*=\"bar\" i]") threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [foo*="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [foo*="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [*|foo*="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be foo >> bar [WebKit|foo*="bar" i]. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
 PASS document.querySelector(":nth-child(2n+1 of [foo*=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [*|foo*=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [|foo*=\"bar\" i])") did not throw exception.

@@ -4,142 +4,142 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Valid selectors.
-PASS document.querySelector("ul >> li") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "ul >> li"
-PASS document.querySelector(":nth-child(2n+1 of ul >> li)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of ul >> li)"
-PASS document.querySelector(":nth-last-child(2n+1 of ul >> li)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of ul >> li)"
-PASS document.querySelector(":matches(foo, ul >> li, bar)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, ul >> li, bar)"
-PASS document.querySelector(":not(ul >> li)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(ul >> li)"
-PASS document.querySelector("div >> ul >> li") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "div >> ul >> li"
-PASS document.querySelector(":nth-child(2n+1 of div >> ul >> li)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of div >> ul >> li)"
-PASS document.querySelector(":nth-last-child(2n+1 of div >> ul >> li)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of div >> ul >> li)"
-PASS document.querySelector(":matches(foo, div >> ul >> li, bar)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, div >> ul >> li, bar)"
-PASS document.querySelector(":not(div >> ul >> li)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(div >> ul >> li)"
-PASS document.querySelector("div >> ul li") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "div >> ul li"
-PASS document.querySelector(":nth-child(2n+1 of div >> ul li)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of div >> ul li)"
-PASS document.querySelector(":nth-last-child(2n+1 of div >> ul li)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of div >> ul li)"
-PASS document.querySelector(":matches(foo, div >> ul li, bar)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, div >> ul li, bar)"
-PASS document.querySelector(":not(div >> ul li)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(div >> ul li)"
-PASS document.querySelector("div ul >> li") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "div ul >> li"
-PASS document.querySelector(":nth-child(2n+1 of div ul >> li)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of div ul >> li)"
-PASS document.querySelector(":nth-last-child(2n+1 of div ul >> li)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of div ul >> li)"
-PASS document.querySelector(":matches(foo, div ul >> li, bar)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, div ul >> li, bar)"
-PASS document.querySelector(":not(div ul >> li)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(div ul >> li)"
-PASS document.querySelector("div ul >> li + li") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "div ul >> li + li"
-PASS document.querySelector(":nth-child(2n+1 of div ul >> li + li)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of div ul >> li + li)"
-PASS document.querySelector(":nth-last-child(2n+1 of div ul >> li + li)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of div ul >> li + li)"
-PASS document.querySelector(":matches(foo, div ul >> li + li, bar)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, div ul >> li + li, bar)"
-PASS document.querySelector(":not(div ul >> li + li)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(div ul >> li + li)"
-PASS document.querySelector("div ul >> li ~ li") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "div ul >> li ~ li"
-PASS document.querySelector(":nth-child(2n+1 of div ul >> li ~ li)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of div ul >> li ~ li)"
-PASS document.querySelector(":nth-last-child(2n+1 of div ul >> li ~ li)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of div ul >> li ~ li)"
-PASS document.querySelector(":matches(foo, div ul >> li ~ li, bar)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, div ul >> li ~ li, bar)"
-PASS document.querySelector(":not(div ul >> li ~ li)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(div ul >> li ~ li)"
-PASS document.querySelector("div > ul >> li ~ li") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "div > ul >> li ~ li"
-PASS document.querySelector(":nth-child(2n+1 of div > ul >> li ~ li)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-child(2n+1 of div > ul >> li ~ li)"
-PASS document.querySelector(":nth-last-child(2n+1 of div > ul >> li ~ li)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":nth-last-child(2n+1 of div > ul >> li ~ li)"
-PASS document.querySelector(":matches(foo, div > ul >> li ~ li, bar)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":matches(foo, div > ul >> li ~ li, bar)"
-PASS document.querySelector(":not(div > ul >> li ~ li)") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is ":not(div > ul >> li ~ li)"
+FAIL document.querySelector("ul >> li") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be ul >> li. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":nth-child(2n+1 of ul >> li)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :nth-child(2n+1 of ul >> li). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":nth-last-child(2n+1 of ul >> li)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :nth-last-child(2n+1 of ul >> li). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":matches(foo, ul >> li, bar)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :matches(foo, ul >> li, bar). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(ul >> li)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(ul >> li). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector("div >> ul >> li") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be div >> ul >> li. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":nth-child(2n+1 of div >> ul >> li)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :nth-child(2n+1 of div >> ul >> li). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":nth-last-child(2n+1 of div >> ul >> li)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :nth-last-child(2n+1 of div >> ul >> li). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":matches(foo, div >> ul >> li, bar)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :matches(foo, div >> ul >> li, bar). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(div >> ul >> li)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(div >> ul >> li). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector("div >> ul li") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be div >> ul li. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":nth-child(2n+1 of div >> ul li)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :nth-child(2n+1 of div >> ul li). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":nth-last-child(2n+1 of div >> ul li)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :nth-last-child(2n+1 of div >> ul li). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":matches(foo, div >> ul li, bar)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :matches(foo, div >> ul li, bar). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(div >> ul li)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(div >> ul li). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector("div ul >> li") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be div ul >> li. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":nth-child(2n+1 of div ul >> li)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :nth-child(2n+1 of div ul >> li). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":nth-last-child(2n+1 of div ul >> li)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :nth-last-child(2n+1 of div ul >> li). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":matches(foo, div ul >> li, bar)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :matches(foo, div ul >> li, bar). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(div ul >> li)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(div ul >> li). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector("div ul >> li + li") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be div ul >> li + li. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":nth-child(2n+1 of div ul >> li + li)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :nth-child(2n+1 of div ul >> li + li). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":nth-last-child(2n+1 of div ul >> li + li)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :nth-last-child(2n+1 of div ul >> li + li). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":matches(foo, div ul >> li + li, bar)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :matches(foo, div ul >> li + li, bar). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(div ul >> li + li)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(div ul >> li + li). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector("div ul >> li ~ li") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be div ul >> li ~ li. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":nth-child(2n+1 of div ul >> li ~ li)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :nth-child(2n+1 of div ul >> li ~ li). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":nth-last-child(2n+1 of div ul >> li ~ li)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :nth-last-child(2n+1 of div ul >> li ~ li). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":matches(foo, div ul >> li ~ li, bar)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :matches(foo, div ul >> li ~ li, bar). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(div ul >> li ~ li)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(div ul >> li ~ li). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector("div > ul >> li ~ li") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be div > ul >> li ~ li. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":nth-child(2n+1 of div > ul >> li ~ li)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :nth-child(2n+1 of div > ul >> li ~ li). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":nth-last-child(2n+1 of div > ul >> li ~ li)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :nth-last-child(2n+1 of div > ul >> li ~ li). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":matches(foo, div > ul >> li ~ li, bar)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :matches(foo, div > ul >> li ~ li, bar). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector(":not(div > ul >> li ~ li)") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be :not(div > ul >> li ~ li). Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
 Serialization selectors.
-PASS document.querySelector("ul >> li") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "ul >> li"
-PASS document.querySelector("ul	>> li") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "ul >> li"
-PASS document.querySelector("ul >>	li") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "ul >> li"
-PASS document.querySelector("ul	>>	li") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "ul >> li"
-PASS document.querySelector("ul>> li") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "ul >> li"
-PASS document.querySelector("ul >>li") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "ul >> li"
-PASS document.querySelector("ul>>li") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "ul >> li"
-PASS document.querySelector("ul    >> li") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "ul >> li"
-PASS document.querySelector("ul >>    li") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "ul >> li"
-PASS document.querySelector("ul    >>    li") did not throw exception.
-PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "ul >> li"
+FAIL document.querySelector("ul >> li") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be ul >> li. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector("ul	>> li") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be ul >> li. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector("ul >>	li") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be ul >> li. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector("ul	>>	li") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be ul >> li. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector("ul>> li") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be ul >> li. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector("ul >>li") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be ul >> li. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector("ul>>li") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be ul >> li. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector("ul    >> li") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be ul >> li. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector("ul >>    li") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be ul >> li. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
+FAIL document.querySelector("ul    >>    li") should not throw exception. Threw exception Error: SyntaxError: DOM Exception 12.
+FAIL document.getElementById('style-container').sheet.cssRules.length should be 1. Was 0.
+FAIL document.getElementById('style-container').sheet.cssRules[0].selectorText should be ul >> li. Threw exception TypeError: undefined is not an object (evaluating 'document.getElementById('style-container').sheet.cssRules[0].selectorText')
 Invalid selectors.
 PASS document.querySelector("ul > > li") threw exception Error: SyntaxError: DOM Exception 12.
 PASS document.getElementById('style-container').sheet.cssRules.length is 0

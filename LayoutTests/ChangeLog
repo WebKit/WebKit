@@ -1,3 +1,22 @@
+2015-07-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Update test results after r187346 ('>>' descendant combinator).
+
+        * fast/css/css-selector-text-expected.txt:
+        * fast/css/css-set-selector-text-expected.txt:
+        * fast/css/parsing-css-attribute-case-insensitive-value-1-expected.txt:
+        * fast/css/parsing-css-attribute-case-insensitive-value-4-expected.txt:
+        * fast/css/parsing-css-descendant-combinator-doubled-child-syntax-expected.txt:
+        * fast/selectors/case-insensitive-attribute-register-requirement-2-expected.txt:
+        * fast/selectors/element-closest-descendant-combinator-doubled-child-syntax-expected.txt:
+        * fast/selectors/element-matches-attribute-ascii-case-insensitive-html-expected.txt:
+        * fast/selectors/element-matches-descendant-combinator-doubled-child-syntax-expected.txt:
+        * fast/selectors/nth-child-matching-first-expected.txt:
+        * fast/selectors/nth-last-child-matching-first-expected.txt:
+        * fast/selectors/querySelector-attribute-ascii-case-insensitive-html-expected.txt:
+        * fast/selectors/querySelector-descendant-combinator-doubled-child-syntax-expected.txt:
+        * platform/mac/TestExpectations:
+
 2015-07-24  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r187271. rdar://problem/21929247

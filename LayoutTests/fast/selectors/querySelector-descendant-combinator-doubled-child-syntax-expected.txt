@@ -3,25 +3,25 @@ Test using the descendant combinator with the double-child syntax ">>" in queryS
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS document.querySelectorAll("body >> target").length is 2
-PASS document.querySelectorAll("body >> target")[0].id is "target1"
-PASS document.querySelectorAll("body >> target")[1].id is "target2"
-PASS document.querySelectorAll("target >> container").length is 0
-PASS document.querySelectorAll("container >> target").length is 2
-PASS document.querySelectorAll("container >> target")[0].id is "target1"
-PASS document.querySelectorAll("container >> target")[1].id is "target2"
-PASS document.querySelectorAll("container >> container").length is 2
-PASS document.querySelectorAll("container >> container")[0].id is "container2"
-PASS document.querySelectorAll("container >> container")[1].id is "container3"
-PASS document.querySelectorAll("body >> container").length is 3
-PASS document.querySelectorAll("body >> container")[0].id is "container1"
-PASS document.querySelectorAll("body >> container")[1].id is "container2"
-PASS document.querySelectorAll("body >> container")[2].id is "container3"
-PASS document.querySelectorAll("container >> *").length is 4
-PASS document.querySelectorAll("container >> *")[0].id is "container2"
-PASS document.querySelectorAll("container >> *")[1].id is "target1"
-PASS document.querySelectorAll("container >> *")[2].id is "container3"
-PASS document.querySelectorAll("container >> *")[3].id is "target2"
+FAIL document.querySelectorAll("body >> target").length should be 2. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll("body >> target")[0].id should be target1. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll("body >> target")[1].id should be target2. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll("target >> container").length should be 0. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll("container >> target").length should be 2. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll("container >> target")[0].id should be target1. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll("container >> target")[1].id should be target2. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll("container >> container").length should be 2. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll("container >> container")[0].id should be container2. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll("container >> container")[1].id should be container3. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll("body >> container").length should be 3. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll("body >> container")[0].id should be container1. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll("body >> container")[1].id should be container2. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll("body >> container")[2].id should be container3. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll("container >> *").length should be 4. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll("container >> *")[0].id should be container2. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll("container >> *")[1].id should be target1. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll("container >> *")[2].id should be container3. Threw exception Error: SyntaxError: DOM Exception 12
+FAIL document.querySelectorAll("container >> *")[3].id should be target2. Threw exception Error: SyntaxError: DOM Exception 12
 PASS successfullyParsed is true
 
 TEST COMPLETE
