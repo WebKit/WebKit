@@ -1,3 +1,45 @@
+2015-07-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        SparseValueMap check is skipped when the butterfly's vectorLength is larger than the access-requested index
+        https://bugs.webkit.org/show_bug.cgi?id=147265
+
+        Reviewed by Geoffrey Garen.
+
+        JSObject's vector holds the indexed values and we leverage it to represent stored values and holes.
+        By checking that the given index is in-bound of the vector's length, we can look up the property fast.
+        And for the sparse array, we have also the separated SparseValueMap to hold the pairs.
+        And we need to take care that the length of the vector should not overlap the indices stored in the SparseValueMap.
+
+        The vector only holds the pure JS values to avoid additional checking for accessors when looking up the value
+        from the vector. To achieve this, we also store the accessors (and attributed properties) to SparseValueMap
+        even the index is less than MIN_SPARSE_ARRAY_INDEX.
+
+        As a result, if the length of the vector overlaps the indices of the accessors stored in the SparseValueMap,
+        we accidentally skip the phase looking up from the SparseValueMap. Instead, we just load from the vector and
+        if the loaded value is an array hole, we decide the given object does not have the value for the given index.
+
+        This patch fixes the problem.
+        When defining the attributed value that index is smaller than the length of the vector, we throw away the vector
+        and change the object to DictionaryIndexingMode. Since we can assume that indexed accessors rarely exist in
+        practice, we expect this does not hurt the performance while keeping the fast property access system without
+        checking the sparse map.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putDirectIndexBeyondVectorLength):
+        * tests/stress/sparse-map-non-overlapping.js: Added.
+        (shouldBe):
+        (testing):
+        (object.get 1000):
+        * tests/stress/sparse-map-non-skip-getter-overriding.js: Added.
+        (shouldBe):
+        (obj.get 1):
+        (testing):
+        * tests/stress/sparse-map-non-skip.js: Added.
+        (shouldBe):
+        (testing):
+        (testing2):
+        (.get for):
+
 2015-07-27  Saam barati  <saambarati1@gmail.com>
 
         Reduce execution time for "let" and "const" tests

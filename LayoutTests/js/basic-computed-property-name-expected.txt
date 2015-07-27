@@ -45,9 +45,9 @@ PASS (function(){'use strict';return ({[a]: false, 0: true}[0])})() is true
 PASS ({get '0'(){ return false; }, [a]: true}[0]) is true
 PASS 'use strict';({get '0'(){ return false; }, [a]: true}[0]) is true
 PASS (function(){'use strict';return ({get '0'(){ return false; }, [a]: true}[0])})() is true
-PASS ({[a]: true, get '0'(){ return false; }}[0]) is true
-PASS 'use strict';({[a]: true, get '0'(){ return false; }}[0]) is true
-PASS (function(){'use strict';return ({[a]: true, get '0'(){ return false; }}[0])})() is true
+PASS ({[a]: false, get '0'(){ return true; }}[0]) is true
+PASS 'use strict';({[a]: false, get '0'(){ return true; }}[0]) is true
+PASS (function(){'use strict';return ({[a]: false, get '0'(){ return true; }}[0])})() is true
 PASS ({__proto__: {get '0'(){ return false; }}, [a]: true}[0]) is true
 PASS 'use strict';({__proto__: {get '0'(){ return false; }}, [a]: true}[0]) is true
 PASS (function(){'use strict';return ({__proto__: {get '0'(){ return false; }}, [a]: true}[0])})() is true

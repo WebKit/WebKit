@@ -1,3 +1,18 @@
+2015-07-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        SparseValueMap check is skipped when the butterfly's vectorLength is larger than the access-requested index
+        https://bugs.webkit.org/show_bug.cgi?id=147265
+
+        Reviewed by Geoffrey Garen.
+
+        The previous test "basic-computed-property-name.js" has the issue[1] and
+        the issue is fixed by this patch.
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=142943
+
+        * js/basic-computed-property-name-expected.txt:
+        * js/script-tests/basic-computed-property-name.js:
+
 2015-07-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Crash happens when calling removeEventListener for an SVG element which has an instance inside a <defs> element of shadow tree

@@ -25,7 +25,7 @@ runTest("{[a+1]: true}[1]")
 runTest("{0: false, [a]: true}[0]")
 runTest("{[a]: false, 0: true}[0]")
 runTest("{get '0'(){ return false; }, [a]: true}[0]")
-runTest("{[a]: true, get '0'(){ return false; }}[0]")
+runTest("{[a]: false, get '0'(){ return true; }}[0]")
 runTest("{__proto__: {get '0'(){ return false; }}, [a]: true}[0]")
 
 function runTestThrow(test)
