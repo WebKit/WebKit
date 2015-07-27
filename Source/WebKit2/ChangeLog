@@ -1,3 +1,18 @@
+2015-07-26  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][iOS] WebContent process main thread should have fixed priority
+        https://bugs.webkit.org/show_bug.cgi?id=147313
+        <rdar://problem/22003112>
+
+        Reviewed by Darin Adler.
+
+        WebContent process main thread should have fixed priority on iOS 9.
+        Priority decay regresses PLT and fixing the main thread's priority
+        gives up a ~3% progression on warm PLT (tested on iPhone 5s).
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2015-07-26  Dan Bernstein  <mitz@apple.com>
 
         Suppressed an Xcode 7 warning about including a nib in an iOS build product.
