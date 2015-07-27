@@ -90,7 +90,7 @@ EncodedJSValue JSC_HOST_CALL reflectObjectOwnKeys(ExecState* exec)
     JSValue target = exec->argument(0);
     if (!target.isObject())
         return JSValue::encode(throwTypeError(exec, ASCIILiteral("Reflect.ownKeys requires the first argument be an object")));
-    return JSValue::encode(ownPropertyKeys(exec, jsCast<JSObject*>(target), PropertyNameMode::Both, DontEnumPropertiesMode::Include));
+    return JSValue::encode(ownPropertyKeys(exec, jsCast<JSObject*>(target), PropertyNameMode::StringsAndSymbols, DontEnumPropertiesMode::Include));
 }
 
 } // namespace JSC

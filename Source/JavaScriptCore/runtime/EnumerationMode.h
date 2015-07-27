@@ -31,7 +31,7 @@ namespace JSC {
 enum class PropertyNameMode {
     Symbols = 1 << 0,
     Strings = 1 << 1,
-    Both = Symbols | Strings,
+    StringsAndSymbols = Symbols | Strings,
 };
 
 enum class DontEnumPropertiesMode {

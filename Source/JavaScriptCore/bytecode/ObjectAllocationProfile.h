@@ -127,7 +127,7 @@ private:
             return 0;
 
         size_t count = 0;
-        PropertyNameArray propertyNameArray(&vm, PropertyNameMode::Both);
+        PropertyNameArray propertyNameArray(&vm, PropertyNameMode::StringsAndSymbols);
         prototype->structure()->getPropertyNamesFromStructure(vm, propertyNameArray, EnumerationMode());
         PropertyNameArrayData::PropertyNameVector& propertyNameVector = propertyNameArray.data()->propertyNameVector();
         for (size_t i = 0; i < propertyNameVector.size(); ++i) {
