@@ -1302,3 +1302,13 @@ http/tests/security/contentSecurityPolicy/media-src-allowed.html [ Skip ]
 
 webkit.org/b/147299 platform/mac/accessibility/aria-liveregions-notifications-always-sent.html [ Pass Failure ]
 webkit.org/b/147299 platform/mac/accessibility/aria-liveregions-notifications.html [ Pass Failure ]
+
+# rdar://problem/22014672
+[ ElCapitan+ ] imported/w3c/canvas/2d.composite.uncovered.fill.destination-atop.html [ Pass Failure ]
+[ ElCapitan+ ] imported/w3c/canvas/2d.composite.uncovered.fill.destination-in.html [ Pass Failure ]
+[ ElCapitan+ ] imported/w3c/canvas/2d.composite.uncovered.fill.source-in.html [ Pass Failure ]
+[ ElCapitan+ ] imported/w3c/canvas/2d.composite.uncovered.fill.source-out.html [ Pass Failure ]
+[ ElCapitan+ ] imported/w3c/canvas/2d.composite.uncovered.pattern.destination-atop.html [ Pass Failure ]
+[ ElCapitan+ ] imported/w3c/canvas/2d.composite.uncovered.pattern.destination-in.html [ Pass Failure ]
+[ ElCapitan+ ] imported/w3c/canvas/2d.composite.uncovered.pattern.source-in.html [ Pass Failure ]
+[ ElCapitan+ ] imported/w3c/canvas/2d.composite.uncovered.pattern.source-out.html [ Pass Failure ]
