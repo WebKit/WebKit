@@ -1,3 +1,24 @@
+2015-07-27  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [Seccomp] Set appropriate filters when trapping syscalls by default
+        https://bugs.webkit.org/show_bug.cgi?id=142983
+
+        If we trap syscalls by default, we must not set separate filters to trap
+        anything here, since it will fail causing us to crash.
+
+        But also, there are some things we must allow unconditionally even when
+        trapping by default. sigreturn, obviously. Also, let's whitelist brk
+        here instead of in platform-specific code.
+
+        Reviewed by Žan Doberšek.
+
+        * Shared/linux/SeccompFilters/SeccompBroker.cpp:
+        (WebKit::SeccompBroker::launchProcess): Don't trap sigprocmask or sigaction unless allow is
+        the default action. Also, allow sigreturn and brk is allow is not the default.
+        * Shared/linux/SeccompFilters/SeccompFilters.cpp: Added
+        (WebKit::SeccompFilters::defaultAction):
+        * Shared/linux/SeccompFilters/SeccompFilters.h: Added defaultAction
+
 2015-07-27  Matthew Daiter  <mdaiter@apple.com>
 
         Renamed duplicate vectors inside UserMediaPermissionRequestProxy

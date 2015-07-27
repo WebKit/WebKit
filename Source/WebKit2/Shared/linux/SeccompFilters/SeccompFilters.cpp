@@ -96,6 +96,23 @@ void SeccompFilters::initialize()
     m_initialized = true;
 }
 
+SeccompFilters::Action SeccompFilters::defaultAction() const
+{
+    uint32_t value;
+    if (seccomp_attr_get(m_context, SCMP_FLTATR_ACT_DEFAULT, &value) == -1)
+        CRASH();
+
+    Action result = static_cast<Action>(value);
+    switch (result) {
+    case Allow:
+    case Kill:
+    case Trap:
+        return result;
+    }
+
+    CRASH();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(SECCOMP_FILTERS)

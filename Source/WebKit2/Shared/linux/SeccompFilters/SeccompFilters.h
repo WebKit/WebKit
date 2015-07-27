@@ -59,6 +59,8 @@ public:
 
     void initialize();
 
+    Action defaultAction() const;
+
 private:
     virtual void platformInitialize() { }
 

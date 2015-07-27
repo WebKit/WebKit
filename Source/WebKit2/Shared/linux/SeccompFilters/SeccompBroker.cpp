@@ -268,27 +268,39 @@ void SeccompBroker::launchProcess(SeccompFilters* filters, const SyscallPolicy& 
     if (initialized)
         return;
 
-    // The sigprocmask filters bellow are needed to trap sigprocmask()
-    // so we can prevent the running processes from blocking SIGSYS.
-    filters->addRule("sigprocmask", SeccompFilters::Trap,
-        0, SeccompFilters::Equal, SIG_BLOCK,
-        1, SeccompFilters::NotEqual, 0);
-    filters->addRule("sigprocmask", SeccompFilters::Trap,
-        0, SeccompFilters::Equal, SIG_SETMASK,
-        1, SeccompFilters::NotEqual, 0);
-    filters->addRule("rt_sigprocmask", SeccompFilters::Trap,
-        0, SeccompFilters::Equal, SIG_BLOCK,
-        1, SeccompFilters::NotEqual, 0);
-    filters->addRule("rt_sigprocmask", SeccompFilters::Trap,
-        0, SeccompFilters::Equal, SIG_SETMASK,
-        1, SeccompFilters::NotEqual, 0);
+    if (filters->defaultAction() == SeccompFilters::Allow) {
+        // The sigprocmask filters bellow are needed to trap sigprocmask()
+        // so we can prevent the running processes from blocking SIGSYS.
+        filters->addRule("sigprocmask", SeccompFilters::Trap,
+            0, SeccompFilters::Equal, SIG_BLOCK,
+            1, SeccompFilters::NotEqual, 0);
+        filters->addRule("sigprocmask", SeccompFilters::Trap,
+            0, SeccompFilters::Equal, SIG_SETMASK,
+            1, SeccompFilters::NotEqual, 0);
+        filters->addRule("rt_sigprocmask", SeccompFilters::Trap,
+            0, SeccompFilters::Equal, SIG_BLOCK,
+            1, SeccompFilters::NotEqual, 0);
+        filters->addRule("rt_sigprocmask", SeccompFilters::Trap,
+            0, SeccompFilters::Equal, SIG_SETMASK,
+            1, SeccompFilters::NotEqual, 0);
 
-    // The sigaction filters bellow are needed to trap sigaction()
-    // so we can prevent the running processes from handling SIGSYS.
-    filters->addRule("sigaction", SeccompFilters::Trap,
-        0, SeccompFilters::Equal, SIGSYS);
-    filters->addRule("rt_sigaction", SeccompFilters::Trap,
-        0, SeccompFilters::Equal, SIGSYS);
+        // The sigaction filters bellow are needed to trap sigaction()
+        // so we can prevent the running processes from handling SIGSYS.
+        filters->addRule("sigaction", SeccompFilters::Trap,
+            0, SeccompFilters::Equal, SIGSYS);
+        filters->addRule("rt_sigaction", SeccompFilters::Trap,
+            0, SeccompFilters::Equal, SIGSYS);
+    }
+
+    if (filters->defaultAction() != SeccompFilters::Allow) {
+        // Needed for the SIGSYS handler to work.
+        filters->addRule("sigreturn", SeccompFilters::Allow);
+        filters->addRule("rt_sigreturn", SeccompFilters::Allow);
+
+        // Needed by malloc and free. We must never trap a syscall inside either
+        // because we need them in our SIGSYS handler and they are nonreentrant.
+        filters->addRule("brk", SeccompFilters::Allow);
+    }
 
     SeccompBroker seccompBroker;
     seccompBroker.setSyscallPolicy(policy);
