@@ -1,3 +1,13 @@
+2015-07-27  Saam barati  <saambarati1@gmail.com>
+
+        Added a comment explaining that all "addVar()"s should happen before
+        emitting bytecode for a function's default parameter expressions
+
+        Rubber Stamped by Mark Lam.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+
 2015-07-26  Sam Weinig  <sam@webkit.org>
 
         Add missing builtin files to the JavaScriptCore Xcode project
