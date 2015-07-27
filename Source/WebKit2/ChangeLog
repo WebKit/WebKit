@@ -1,3 +1,20 @@
+2015-07-26  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r187178.
+
+    2015-07-21  Simon Fraser  <simon.fraser@apple.com>
+
+            Add logging for TiledCoreAnimationDrawingArea resizing
+            https://bugs.webkit.org/show_bug.cgi?id=147180
+
+            Reviewed by Tim Horton.
+
+            Add a "Resize" log channel for WebKit2, and use it to log data in scaleViewToFitDocumentIfNeeded().
+
+            * Platform/Logging.h:
+            * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+            (WebKit::TiledCoreAnimationDrawingArea::scaleViewToFitDocumentIfNeeded):
+
 2015-07-24  Jer Noble  <jer.noble@apple.com>
 
         Merge r187251, r187252, r187262, r187263, r187272, r187289. rdar://problem/20689512
