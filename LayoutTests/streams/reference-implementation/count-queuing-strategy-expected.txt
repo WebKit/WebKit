@@ -1,6 +1,8 @@
 
 PASS Can construct a CountQueuingStrategy with a valid high water mark 
 PASS Can construct a CountQueuingStrategy with any value as its high water mark 
+PASS CountQueuingStrategy constructor behaves as expected with wrong arguments 
+PASS CountQueuingStrategy size behaves as expected with wrong arguments 
 PASS CountQueuingStrategy instances have the correct properties 
 PASS Can construct a readable stream with a valid CountQueuingStrategy 
 PASS Correctly governs the return value of a ReadableStream's enqueue function (HWM = 0) 
