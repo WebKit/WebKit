@@ -25,7 +25,8 @@ noInline(shouldThrowTDZ);
 
 // Test cases
 
-const NUM_LOOPS = 10000;
+const NUM_LOOPS = 1000;
+const SHORT_LOOPS = 100;
 
 ;(function() {
 function foo() {
@@ -211,7 +212,7 @@ function baz() {
     const x = 20;
 }
 
-for (var i = 0; i < NUM_LOOPS; i++) {
+for (var i = 0; i < SHORT_LOOPS; i++) {
     shouldThrowTDZ(foo);
     shouldThrowTDZ(bar);
     shouldThrowTDZ(baz);
@@ -244,7 +245,7 @@ function foo() {
     }
 }
 
-for (var i = 0; i < NUM_LOOPS; i++) {
+for (var i = 0; i < SHORT_LOOPS; i++) {
     shouldThrowTDZ(foo);
 }
 })();

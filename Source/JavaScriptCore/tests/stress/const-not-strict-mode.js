@@ -25,7 +25,7 @@ noInline(shouldThrowTDZ);
 // Tests
 
 
-const NUM_LOOPS = 10000;
+const NUM_LOOPS = 1000;
 
 ;(function() {
 function foo() {

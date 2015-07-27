@@ -33,7 +33,7 @@ function bar() {
     function capX() { return x; }
 }
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < 1000; i++) {
     shouldThrowTDZ(foo);
     shouldThrowTDZ(bar);
 }
@@ -119,7 +119,7 @@ function baz() {
     }
 }
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < 100; i++) {
     foo();
     bar();
     baz();

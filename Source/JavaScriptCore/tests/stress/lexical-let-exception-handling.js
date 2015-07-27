@@ -11,6 +11,8 @@ function assert(cond) {
 }
 noInline(assert);
 
+const NUM_LOOPS = 100;
+
 ;(function () {
 
 function foo() {
@@ -70,7 +72,7 @@ function foo() {
     }
 }
 
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     assert(foo() === 24);
 }
 
@@ -140,7 +142,7 @@ function foo() {
     }
 }
 
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     assert(foo() === 24);
 }
 
@@ -193,7 +195,7 @@ function foo() {
     }
 }
 
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     assert(foo() === 40);
 }
 

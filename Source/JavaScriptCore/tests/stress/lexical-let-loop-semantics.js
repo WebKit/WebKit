@@ -11,6 +11,9 @@ function assert(cond) {
 }
 noInline(assert);
 
+const NUM_LOOPS = 1000;
+const SHORT_LOOPS = 100;
+
 function shouldThrowTDZ(func) {
     var hasThrown = false;
     try {
@@ -96,7 +99,7 @@ noInline(shouldThrowTDZ);
         assert(p === 20);
     }
 
-    for (var i = 0; i < 1000; i++) {
+    for (var i = 0; i < NUM_LOOPS; i++) {
         foo();
         bar();
     }
@@ -112,7 +115,7 @@ noInline(shouldThrowTDZ);
         }
         shouldThrowTDZ(function() { return idx; });
     }
-    for (var i = 0; i < 1000; i++) {
+    for (var i = 0; i < NUM_LOOPS; i++) {
         foo();
     }
 })();
@@ -132,7 +135,7 @@ noInline(shouldThrowTDZ);
         }
         shouldThrowTDZ(function() { return j; });
     }
-    for (var i = 0; i < 1000; i++) {
+    for (var i = 0; i < NUM_LOOPS; i++) {
         foo();
         bar();
     }
@@ -168,7 +171,7 @@ noInline(shouldThrowTDZ);
         }
     }
 
-    for (var i = 0; i < 1000; i++) {
+    for (var i = 0; i < NUM_LOOPS; i++) {
         foo();
         bar();
     }
@@ -187,7 +190,7 @@ noInline(shouldThrowTDZ);
         }
     }
 
-    for (var i = 0; i < 1000; i++) {
+    for (var i = 0; i < NUM_LOOPS; i++) {
         foo();
     }
 })();
@@ -198,7 +201,7 @@ noInline(shouldThrowTDZ);
         let thing = {};
         for (let thing = thing; !thing; ) {}
     }
-    for (var i = 0; i < 1000; i++) {
+    for (var i = 0; i < NUM_LOOPS; i++) {
         shouldThrowTDZ(foo);
     }
 })();
@@ -210,7 +213,7 @@ noInline(shouldThrowTDZ);
         for (let thing = eval("thing"); !truth(); ) {}
     }
 
-    for (var i = 0; i < 1000; i++) {
+    for (var i = 0; i < SHORT_LOOPS; i++) {
         shouldThrowTDZ(foo);
     }
 })();
@@ -233,7 +236,7 @@ noInline(shouldThrowTDZ);
         let thing = {hello: "world"}
         for (let thing in eval("thing")) {}
     }
-    for (var i = 0; i < 1000; i++) {
+    for (var i = 0; i < SHORT_LOOPS; i++) {
         shouldThrowTDZ(foo);
         shouldThrowTDZ(bar);
         shouldThrowTDZ(baz);
@@ -274,7 +277,7 @@ noInline(shouldThrowTDZ);
         }
         return thing;
     }
-    for (var i = 0; i < 1000; i++) {
+    for (var i = 0; i < NUM_LOOPS; i++) {
         shouldThrowTDZ(foo);
         shouldThrowTDZ(bar);
         shouldThrowTDZ(baz);
@@ -328,7 +331,7 @@ noInline(shouldThrowTDZ);
         }
         return thing;
     }
-    for (var i = 0; i < 1000; i++) {
+    for (var i = 0; i < SHORT_LOOPS; i++) {
         shouldThrowTDZ(foo);
         shouldThrowTDZ(bar);
         shouldThrowTDZ(baz);
@@ -354,7 +357,7 @@ noInline(shouldThrowTDZ);
         for (let x in (x=2, obj)) { x; }
     }
 
-    for (var i = 0; i < 1000; i++) {
+    for (var i = 0; i < SHORT_LOOPS; i++) {
         shouldThrowTDZ(foo);
         shouldThrowTDZ(bar);
     }

@@ -13,6 +13,7 @@ noInline(assert);
 
 // ========== tests below ===========
 
+const NUM_LOOPS = 1000;
 
 let globalLet = "helloWorld";
 assert(globalLet === "helloWorld");
@@ -45,7 +46,7 @@ assert(retGlobalNumberCaptured() === retGlobalNumberCaptured);
 assert(globalNumberCaptured === retGlobalNumberCaptured);
 
 var arrOfFuncs = [];
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     let globalLet = "inner";
     assert(globalLet === "inner");
     let inner = i;
@@ -96,7 +97,7 @@ function foo() {
     return x;
 }
 
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     assert(foo() === 200);
 }
 })();
@@ -115,7 +116,7 @@ function foo(i) {
     arr[arr.length - 1] = function() { return oldFunc() + num; }
 }
 
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     foo(i);
 }
 
@@ -141,7 +142,7 @@ function foo() {
     assert(y === 40);
 }
 
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     foo();
 }
 })();
@@ -164,7 +165,7 @@ function foo() {
     assert(y === 40);
 }
 
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     foo();
 }
 })();
@@ -188,7 +189,7 @@ function foo() {
     assert(y === 40);
 }
 
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     foo();
 }
 })();
@@ -213,7 +214,7 @@ function foo() {
     assert(y === 40);
 }
 
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     foo();
 }
 })();
@@ -237,7 +238,7 @@ function foo() {
     assert(y === 40);
 }
 
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     foo();
 }
 })();
@@ -263,7 +264,7 @@ function bar() {
     assert(z === undefined);
 }
 
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     foo();
     bar();
 }
@@ -282,7 +283,7 @@ function foo() {
     function cap() { return x; }
 }
 
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     foo();
 }
 })();
@@ -300,7 +301,7 @@ function foo() {
     assert(cap() === 40);
 }
 
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     foo();
 }
 
@@ -318,7 +319,7 @@ function foo() {
     assert(y === 25);
 }
 
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     foo();
 }
 })();
@@ -347,7 +348,7 @@ function foo() {
     assert(y === 50);
 }
 
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     foo();
 }
 })();
@@ -374,7 +375,7 @@ function foo(x) {
     return result;
 }
 
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     assert(foo(10) === 41);
 }
 
@@ -403,7 +404,7 @@ function foo(x) {
     return result;
 }
 
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     assert(foo(10)() === 41);
 }
 

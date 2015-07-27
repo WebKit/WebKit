@@ -70,7 +70,7 @@ noInline(assert);
     }
     noInline(baz);
 
-    for (let i = 0; i < 1000; i++) {
+    for (let i = 0; i < 100; i++) {
         foo();
         bar();
         baz();

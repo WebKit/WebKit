@@ -23,6 +23,9 @@ function shouldThrowTDZ(func) {
 }
 noInline(shouldThrowTDZ);
 
+const NUM_LOOPS = 1000;
+const SHORT_LOOPS = 100;
+
 
 ;(function() {
 function foo() {
@@ -38,7 +41,7 @@ function baz() {
 function jaz() {
     let {x: prop, y: prop2} = {x: 20, y: prop};
 }
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     shouldThrowTDZ(foo);
     shouldThrowTDZ(bar);
     shouldThrowTDZ(baz);
@@ -59,7 +62,7 @@ function bar() {
     function captureX() { return x; }
 }
 
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     shouldThrowTDZ(foo);
     shouldThrowTDZ(bar);
 }
@@ -76,7 +79,7 @@ function foo() {
     let x = 20;
 }
 
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     shouldThrowTDZ(foo);
 }
 })();
@@ -95,7 +98,7 @@ function foo() {
     let y;
 }
 
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     shouldThrowTDZ(foo);
 }
 })();
@@ -116,7 +119,7 @@ function foo() {
     let tdz = 20;
 }
 
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     shouldThrowTDZ(foo);
 }
 })();
@@ -135,7 +138,7 @@ function foo() {
     let tdz = 20;
 }
 
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     shouldThrowTDZ(foo);
 }
 })();
@@ -147,7 +150,7 @@ function foo() {
     let x = 20;
 }
 
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     shouldThrowTDZ(foo);
 }
 })();
@@ -165,7 +168,7 @@ function bar() {
     function captureX() { return x; }
 }
 
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     shouldThrowTDZ(foo);
     shouldThrowTDZ(bar);
 }
@@ -186,7 +189,7 @@ function foo() {
     let x;
 }
 
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     shouldThrowTDZ(foo);
 }
 })();
@@ -209,7 +212,7 @@ function baz() {
     let x = 20;
 }
 
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     shouldThrowTDZ(foo);
     shouldThrowTDZ(bar);
     shouldThrowTDZ(baz);
@@ -224,7 +227,7 @@ function foo() {
     let x = 20;
 }
 
-for (var i = 0; i < 1; i++) {
+for (var i = 0; i < SHORT_LOOPS; i++) {
     shouldThrowTDZ(foo);
 }
 })();
@@ -242,7 +245,7 @@ function foo() {
     }
 }
 
-for (var i = 0; i < 1; i++) {
+for (var i = 0; i < SHORT_LOOPS; i++) {
     shouldThrowTDZ(foo);
 }
 })();
@@ -261,7 +264,7 @@ function bar() {
     let x = function() { return 20; };
 }
 
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     shouldThrowTDZ(foo);
     shouldThrowTDZ(bar);
 }
@@ -281,7 +284,7 @@ function bar() {
     let x = function() { return 20; };
 }
 
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     shouldThrowTDZ(foo);
     shouldThrowTDZ(bar);
 }
@@ -323,7 +326,7 @@ function jaz() {
     let x = 30;
 }
 
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < SHORT_LOOPS; i++) {
     shouldThrowTDZ(foo);
     shouldThrowTDZ(bar);
     shouldThrowTDZ(baz);
@@ -395,7 +398,7 @@ function baz(x) {
     return result;
 }
 
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     shouldThrowTDZ(function() { foo(20); });
     shouldThrowTDZ(function() { bar(20); });
     shouldThrowTDZ(function() { baz(20); });
@@ -459,7 +462,7 @@ function jaz() {
     let y;
 }
 
-for (var i = 0; i < 1000; i++) {
+for (var i = 0; i < NUM_LOOPS; i++) {
     shouldThrowTDZ(foo);
     shouldThrowTDZ(boo);
     shouldThrowTDZ(bar);
