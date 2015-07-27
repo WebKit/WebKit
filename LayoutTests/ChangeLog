@@ -1,3 +1,22 @@
+2015-07-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Win] Test gardening after r187380.
+        https://bugs.webkit.org/show_bug.cgi?id=121902
+
+        Unreviewed.
+
+        * platform/win/TestExpectations:
+        * platform/win/fast/css/text-overflow-ellipsis-text-align-center-expected.png:
+        * platform/win/fast/css/text-overflow-ellipsis-text-align-center-expected.txt:
+        * platform/win/fast/css/text-overflow-ellipsis-text-align-left-expected.png:
+        * platform/win/fast/css/text-overflow-ellipsis-text-align-left-expected.txt:
+        * platform/win/fast/css/text-overflow-ellipsis-text-align-right-expected.png:
+        * platform/win/fast/css/text-overflow-ellipsis-text-align-right-expected.txt:
+        * platform/win/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.png:
+        * platform/win/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.txt:
+        * platform/win/fast/css/vertical-text-overflow-ellipsis-text-align-right-expected.png:
+        * platform/win/fast/css/vertical-text-overflow-ellipsis-text-align-right-expected.txt:
+
 2015-07-27  Alexey Proskuryakov  <ap@apple.com>
 
         Test result gardening for El Capitan.
