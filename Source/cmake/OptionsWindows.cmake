@@ -12,7 +12,12 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_SYSTEM_MALLOC PUBLIC ON)
 WEBKIT_OPTION_END()
 
 include_directories("$ENV{WEBKIT_LIBRARIES}/include")
-link_directories("$ENV{WEBKIT_LIBRARIES}/lib$(PlatformArchitecture)")
+if (${MSVC_CXX_ARCHITECTURE_ID} STREQUAL "X86")
+    link_directories("$ENV{WEBKIT_LIBRARIES}/lib32")
+else ()
+    link_directories("$ENV{WEBKIT_LIBRARIES}/lib64")
+endif ()
+
 if (MSVC)
     add_definitions(
         /wd4018 /wd4068 /wd4099 /wd4100 /wd4127 /wd4138 /wd4146 /wd4180 /wd4189 /wd4201 /wd4244 /wd4251 /wd4267 /wd4275 /wd4288
@@ -20,11 +25,13 @@ if (MSVC)
         /wd4706 /wd4800 /wd4819 /wd4951 /wd4952 /wd4996 /wd6011 /wd6031 /wd6211 /wd6246 /wd6255 /wd6387
         /MP
     )
-    string(REGEX REPLACE "/EH[a-z]+" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}) # Disable C++ exceptions
-    string(REGEX REPLACE "/GR" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}) # Disable RTTI
+    if (NOT ${CMAKE_CXX_FLAGS} STREQUAL "")
+        string(REGEX REPLACE "/EH[a-z]+" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}) # Disable C++ exceptions
+        string(REGEX REPLACE "/GR" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}) # Disable RTTI
+    endif ()
 endif ()
 
 set(PORT Win)
 set(JavaScriptCore_LIBRARY_TYPE SHARED)
 set(WTF_LIBRARY_TYPE SHARED)
-set(ICU_LIBRARIES libicuuc$(DebugSuffix) libicuin$(DebugSuffix))
+set(ICU_LIBRARIES libicuuc libicuin)

@@ -25,6 +25,10 @@
 
 #include "WebKitDLL.h"
 
+#if USE(CG)
+#include <CoreGraphics/CoreGraphics.h>
+#endif
+
 #include "ForEachCoClass.h"
 #include "resource.h"
 #include "WebKit.h"

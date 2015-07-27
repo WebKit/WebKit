@@ -1,3 +1,16 @@
+2015-07-27  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards building AppleWin with CMake
+        https://bugs.webkit.org/show_bug.cgi?id=147325
+
+        Reviewed by Martin Robinson.
+
+        * WebError.cpp:
+        * WebKitDLL.cpp:
+        * WebPreferences.cpp:
+        * WebURLResponse.cpp:
+        Fix some include quirks.
+
 2015-07-27  Per Arne Vollan  <peavo@outlook.com>
 
         [Curl] Crash in CurlDownload::didReceiveHeader when downloading file.

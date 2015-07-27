@@ -275,7 +275,6 @@ set(WEBKIT_IDL_DEPENDENCIES
     win/Interfaces/IWebBackForwardList.idl
     win/Interfaces/IWebBackForwardListPrivate.idl
     win/Interfaces/IWebCache.idl
-    win/Interfaces/IWebCookieManager.idl
     win/Interfaces/IWebCoreStatistics.idl
     win/Interfaces/IWebDataSource.idl
     win/Interfaces/IWebDatabaseManager.idl
@@ -311,7 +310,6 @@ set(WEBKIT_IDL_DEPENDENCIES
     win/Interfaces/IWebMutableURLRequest.idl
     win/Interfaces/IWebMutableURLRequestPrivate.idl
     win/Interfaces/IWebNavigationData.idl
-    win/Interfaces/IWebNetworkConfiguration.idl
     win/Interfaces/IWebNotification.idl
     win/Interfaces/IWebNotificationCenter.idl
     win/Interfaces/IWebNotificationObserver.idl
@@ -325,8 +323,6 @@ set(WEBKIT_IDL_DEPENDENCIES
     win/Interfaces/IWebResourceLoadDelegatePrivate2.idl
     win/Interfaces/IWebScriptObject.idl
     win/Interfaces/IWebScriptWorld.idl
-    win/Interfaces/IWebScrollBarDelegatePrivate.idl
-    win/Interfaces/IWebScrollBarPrivate.idl
     win/Interfaces/IWebSecurityOrigin.idl
     win/Interfaces/IWebSerializedJSValue.idl
     win/Interfaces/IWebSerializedJSValuePrivate.idl
@@ -413,6 +409,7 @@ set(CMAKE_CXX_STANDARD_LIBRARIES "")
 # If this directory isn't created before midl runs and attempts to output WebKit.tlb,
 # It fails with an unusual error - midl failed - failed to save all changes
 file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces)
 
 set(WebKit_FORWARDING_HEADERS
     "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces/WebKit.h"

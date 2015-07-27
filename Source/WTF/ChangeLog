@@ -1,3 +1,13 @@
+2015-07-27  Alex Christensen  <achristensen@webkit.org>
+
+        Progress towards building AppleWin with CMake
+        https://bugs.webkit.org/show_bug.cgi?id=147325
+
+        Reviewed by Martin Robinson.
+
+        * wtf/PlatformWin.cmake:
+        Link with CoreFoundation.lib.
+
 2015-07-25  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         REGRESSION (bmalloc): WebKit performance tests don't report memory stats.

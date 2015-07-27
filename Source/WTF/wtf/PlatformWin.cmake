@@ -19,6 +19,10 @@ if (${WTF_PLATFORM_WIN_CAIRO})
     list(APPEND WTF_LIBRARIES
         cflite
     )
+else ()
+    list(APPEND WTF_LIBRARIES
+        CoreFoundation
+    )
 endif ()
 
 list(APPEND WTF_HEADERS

@@ -29,6 +29,10 @@
 
 #include <WebCore/BString.h>
 
+#if USE(CG)
+#include <CoreGraphics/CoreGraphics.h>
+#endif
+
 #if USE(CFNETWORK)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
