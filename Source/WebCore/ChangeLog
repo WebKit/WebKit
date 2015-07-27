@@ -1,3 +1,23 @@
+2015-07-26  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r187244.
+
+    2015-07-23  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            REGRESSION(r182236): Justified Arabic text does not expand
+            https://bugs.webkit.org/show_bug.cgi?id=147217
+
+            Reviewed by Simon Fraser.
+
+            When I was writing r182236, I got confused between the levels of the string hierarchy in ComplexTextController.
+            I've added a comment in the header which should make it easier to get it right.
+
+            Test: fast/text/international/arabic-justify.html
+
+            * platform/graphics/mac/ComplexTextController.cpp:
+            (WebCore::ComplexTextController::adjustGlyphsAndAdvances):
+            * platform/graphics/mac/ComplexTextController.h:
+
 2015-07-24  Jer Noble  <jer.noble@apple.com>
 
         Merge r187251, r187252, r187262, r187263, r187272, r187289. rdar://problem/20689512
