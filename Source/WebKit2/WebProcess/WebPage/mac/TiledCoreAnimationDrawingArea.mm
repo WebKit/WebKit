@@ -301,21 +301,28 @@ void TiledCoreAnimationDrawingArea::scaleViewToFitDocumentIfNeeded()
 
     // Our current understanding of the document width is still up to date, and we're in scaling mode.
     // Update the viewScale without doing an extra layout to re-determine the document width.
-    if (m_isScalingViewToFitDocument && !documentWidthChanged) {
-        m_lastViewSizeForScaleToFit = m_webPage.size();
-        float viewScale = (float)viewWidth / (float)m_lastDocumentSizeForScaleToFit.width();
-        if (viewScale < minimumViewScale) {
-            viewScale = minimumViewScale;
-            documentWidth = std::ceil(viewWidth / viewScale);
+    if (m_isScalingViewToFitDocument) {
+        if (!documentWidthChanged) {
+            m_lastViewSizeForScaleToFit = m_webPage.size();
+            float viewScale = (float)viewWidth / (float)m_lastDocumentSizeForScaleToFit.width();
+            if (viewScale < minimumViewScale) {
+                viewScale = minimumViewScale;
+                documentWidth = std::ceil(viewWidth / viewScale);
+            }
+            IntSize fixedLayoutSize(documentWidth, std::ceil((m_webPage.size().height() - m_webPage.corePage()->topContentInset()) / viewScale));
+            m_webPage.setFixedLayoutSize(fixedLayoutSize);
+            m_webPage.scaleView(viewScale);
+
+            LOG(Resize, "  using fixed layout at %dx%d. document width %d unchanged, scaled to %.4f to fit view width %d", fixedLayoutSize.width(), fixedLayoutSize.height(), documentWidth, viewScale, viewWidth);
+            return;
         }
-        IntSize fixedLayoutSize(documentWidth, std::ceil((m_webPage.size().height() - m_webPage.corePage()->topContentInset()) / viewScale));
-        m_webPage.setFixedLayoutSize(fixedLayoutSize);
-        m_webPage.scaleView(viewScale);
-
-        LOG(Resize, "  using fixed layout at %dx%d. document width %d unchanged, scaled to %.4f to fit view width %d", fixedLayoutSize.width(), fixedLayoutSize.height(), documentWidth, viewScale, viewWidth);
-        return;
+    
+        IntSize fixedLayoutSize = m_webPage.fixedLayoutSize();
+        if (documentWidth > fixedLayoutSize.width()) {
+            LOG(Resize, "  page laid out wider than fixed layout width. Not attempting to re-scale");
+            return;
+        }
     }
-
 
     LOG(Resize, "  doing unconstrained layout");
 
