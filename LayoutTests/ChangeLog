@@ -1,5 +1,11 @@
 2015-07-27  Alexey Proskuryakov  <ap@apple.com>
 
+        More test expectations for rdar://problem/22014672
+
+        * platform/mac/TestExpectations:
+
+2015-07-27  Alexey Proskuryakov  <ap@apple.com>
+
         Add test expectations for rdar://problem/22014672
 
         * platform/mac/TestExpectations:
