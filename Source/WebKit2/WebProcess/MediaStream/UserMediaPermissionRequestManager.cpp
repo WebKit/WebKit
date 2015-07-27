@@ -63,7 +63,7 @@ void UserMediaPermissionRequestManager::startRequest(UserMediaRequest& request)
     ASSERT(webFrame);
 
     SecurityOrigin* origin = request.securityOrigin();
-    m_page.send(Messages::WebPageProxy::RequestUserMediaPermissionForFrame(requestID, webFrame->frameID(), origin->databaseIdentifier(), request.requiresAudio(), request.requiresVideo(), request.deviceUIDsVideo(), request.deviceUIDsAudio()));
+    m_page.send(Messages::WebPageProxy::RequestUserMediaPermissionForFrame(requestID, webFrame->frameID(), origin->databaseIdentifier(), request.requiresAudio(), request.requiresVideo(), request.videoDeviceUIDs(), request.audioDeviceUIDs()));
 }
 
 void UserMediaPermissionRequestManager::cancelRequest(UserMediaRequest& request)

@@ -48,8 +48,8 @@ public:
     bool requiresAudio() const { return m_requiresAudio; }
     bool requiresVideo() const { return m_requiresVideo; }
     
-    const Vector<String>& deviceUIDsVideo() const { return m_deviceUIDsVideo; }
-    const Vector<String>& deviceUIDsAudio() const { return m_deviceUIDsAudio; }
+    const Vector<String>& videoDeviceUIDs() const { return m_videoDeviceUIDs; }
+    const Vector<String>& audioDeviceUIDs() const { return m_audiodeviceUIDs; }
 
 private:
     UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy&, uint64_t userMediaID, bool requiresAudio, bool requiresVideo, const Vector<String>& deviceUIDsVideo, const Vector<String>& deviceUIDsAudio);
@@ -58,8 +58,8 @@ private:
     uint64_t m_userMediaID;
     bool m_requiresAudio;
     bool m_requiresVideo;
-    Vector<String> m_deviceUIDsVideo;
-    Vector<String> m_deviceUIDsAudio;
+    Vector<String> m_videoDeviceUIDs;
+    Vector<String> m_audiodeviceUIDs;
 };
 
 } // namespace WebKit

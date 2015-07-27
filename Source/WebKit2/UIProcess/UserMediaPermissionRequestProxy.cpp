@@ -31,8 +31,8 @@ UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy(UserMediaPermis
     , m_userMediaID(userMediaID)
     , m_requiresAudio(requiresAudio)
     , m_requiresVideo(requiresVideo)
-    , m_deviceUIDsVideo(deviceUIDsVideo)
-    , m_deviceUIDsAudio(deviceUIDsAudio)
+    , m_videoDeviceUIDs(deviceUIDsVideo)
+    , m_audiodeviceUIDs(deviceUIDsAudio)
 {
 }
 

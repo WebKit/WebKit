@@ -1,3 +1,21 @@
+2015-07-27  Matthew Daiter  <mdaiter@apple.com>
+
+        Renamed duplicate vectors inside UserMediaPermissionRequestProxy
+        https://bugs.webkit.org/show_bug.cgi?id=147321
+        <rdar://problem/22011290>
+
+        Reviewed by Eric Carlson.
+
+        * UIProcess/UserMediaPermissionRequestProxy.cpp:
+        (WebKit::UserMediaPermissionRequestProxy::UserMediaPermissionRequestProxy):
+        * UIProcess/UserMediaPermissionRequestProxy.h:
+        (WebKit::UserMediaPermissionRequestProxy::videoDeviceUIDs):
+        (WebKit::UserMediaPermissionRequestProxy::audioDeviceUIDs):
+        (WebKit::UserMediaPermissionRequestProxy::deviceUIDsVideo): Deleted.
+        (WebKit::UserMediaPermissionRequestProxy::deviceUIDsAudio): Deleted.
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        (WebKit::UserMediaPermissionRequestManager::startRequest):
+
 2015-07-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Pass a GstInstallPluginsContext to gst_install_plugins_async
