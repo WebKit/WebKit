@@ -1264,7 +1264,7 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
             if (!self.parent)
                 return;
 
-            self.remove();
+            parentElement.removeChild(self);
             parentElement.adjustCollapsedRange();
         }
 
