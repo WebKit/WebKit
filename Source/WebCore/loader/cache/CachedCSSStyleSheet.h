@@ -41,13 +41,13 @@ namespace WebCore {
         CachedCSSStyleSheet(const ResourceRequest&, const String& charset, SessionID);
         virtual ~CachedCSSStyleSheet();
 
-        const String sheetText(bool* hasValidMIMEType = nullptr) const;
+        const String sheetText(bool enforceMIMEType = true, bool* hasValidMIMEType = 0) const;
 
         PassRefPtr<StyleSheetContents> restoreParsedStyleSheet(const CSSParserContext&);
         void saveParsedStyleSheet(PassRef<StyleSheetContents>);
 
     private:
-        bool canUseSheet(bool* hasValidMIMEType) const;
+        bool canUseSheet(bool enforceMIMEType, bool* hasValidMIMEType) const;
         virtual PurgePriority purgePriority() const override { return PurgeLast; }
         virtual bool mayTryReplaceEncodedData() const override { return true; }
 
