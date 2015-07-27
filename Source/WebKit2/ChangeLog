@@ -1,3 +1,19 @@
+2015-07-27  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS] Long press or link click can sometimes trigger during/after a preview
+        https://bugs.webkit.org/show_bug.cgi?id=147338
+        <rdar://problem/22020770>
+
+        Reviewed by Enrica Casucci.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _longPressRecognized:]):
+        Bail if we're previewing.
+
+        (-[WKContentView _dataForPreviewItemController:atPosition:type:]):
+        (-[WKContentView _presentedViewControllerForPreviewItemController:]):
+        Always avoid allowing clicks and start interaction when previewing a link.
+
 2015-07-27  Andreas Kling  <akling@apple.com>
 
         [iOS] Occasional crashes in WebPage::elementDidBlur()'s async block.
