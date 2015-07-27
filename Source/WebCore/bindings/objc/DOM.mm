@@ -595,8 +595,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
 
     Ref<Range> range = rangeOfContents(*coreNode);
 
-    float deviceScaleFactor = coreNode->document().deviceScaleFactor();
-    const float margin = 4 * deviceScaleFactor;
+    const float margin = 4;
     RefPtr<TextIndicator> textIndicator = TextIndicator::createWithRange(range, TextIndicatorPresentationTransition::None, margin);
 
     if (!textIndicator)
