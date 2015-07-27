@@ -97,6 +97,10 @@ private:
     virtual void refView() override final { }
     virtual void derefView() override final { }
 
+#if USE(GSTREAMER)
+    virtual GUniquePtr<GstInstallPluginsContext> createGstInstallPluginsContext() override final { return nullptr; };
+#endif
+
 private:
     EwkView* m_ewkView;
     bool m_hasRequestedFullScreen;

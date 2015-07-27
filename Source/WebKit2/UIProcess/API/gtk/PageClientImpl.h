@@ -142,6 +142,8 @@ private:
     virtual void refView() override;
     virtual void derefView() override;
 
+    virtual GUniquePtr<GstInstallPluginsContext> createGstInstallPluginsContext() override;
+
     // Members of PageClientImpl class
     GtkWidget* m_viewWidget;
     DefaultUndoController m_undoController;
