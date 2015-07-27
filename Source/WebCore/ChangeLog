@@ -1,5 +1,31 @@
 2015-07-27  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r187367.
+
+    2015-07-24  Alexey Proskuryakov  <ap@apple.com>
+
+            [Cocoa] Clean up server trust handling in ResourceHandle.
+            https://bugs.webkit.org/show_bug.cgi?id=147277
+            rdar://problem/21394410
+
+            Reviewed by Brady Eidson.
+
+            * platform/network/ProtectionSpaceBase.h: (WebCore::ProtectionSpaceBase::isPasswordBased):
+            * platform/network/ProtectionSpaceBase.cpp: (WebCore::ProtectionSpaceBase::isPasswordBased):
+            Added. This is somewhat weak, as authentication schemes could change, but I couldn't find
+            any better way.
+
+            * platform/network/ResourceHandle.h:
+            * platform/network/cf/ResourceHandleCFNet.cpp:
+            (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+            (WebCore::ResourceHandle::tryHandlePasswordBasedAuthentication):
+            * platform/network/mac/ResourceHandleMac.mm:
+            (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+            (WebCore::ResourceHandle::tryHandlePasswordBasedAuthentication):
+            Factored out password handling, and made sure to not try that for server trust.
+
+2015-07-27  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r187366.
 
     2015-07-24  Zalan Bujtas  <zalan@apple.com>

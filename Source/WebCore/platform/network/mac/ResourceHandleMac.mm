@@ -542,42 +542,8 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
         return;
     }
 
-    if (!d->m_user.isNull() && !d->m_pass.isNull()) {
-        NSURLCredential *credential = [[NSURLCredential alloc] initWithUser:d->m_user
-                                                                   password:d->m_pass
-                                                                persistence:NSURLCredentialPersistenceForSession];
-        d->m_currentMacChallenge = challenge.nsURLAuthenticationChallenge();
-        d->m_currentWebChallenge = challenge;
-        receivedCredential(challenge, Credential(credential));
-        [credential release];
-        // FIXME: Per the specification, the user shouldn't be asked for credentials if there were incorrect ones provided explicitly.
-        d->m_user = String();
-        d->m_pass = String();
+    if (tryHandlePasswordBasedAuthentication(challenge))
         return;
-    }
-
-    // FIXME: Do not use the sync version of shouldUseCredentialStorage when the client returns true from usesAsyncCallbacks.
-    if (!client() || client()->shouldUseCredentialStorage(this)) {
-        if (!d->m_initialCredential.isEmpty() || challenge.previousFailureCount()) {
-            // The stored credential wasn't accepted, stop using it.
-            // There is a race condition here, since a different credential might have already been stored by another ResourceHandle,
-            // but the observable effect should be very minor, if any.
-            d->m_context->storageSession().credentialStorage().remove(challenge.protectionSpace());
-        }
-
-        if (!challenge.previousFailureCount()) {
-            Credential credential = d->m_context->storageSession().credentialStorage().get(challenge.protectionSpace());
-            if (!credential.isEmpty() && credential != d->m_initialCredential) {
-                ASSERT(credential.persistence() == CredentialPersistenceNone);
-                if (challenge.failureResponse().httpStatusCode() == 401) {
-                    // Store the credential back, possibly adding it as a default for this directory.
-                    d->m_context->storageSession().credentialStorage().set(credential, challenge.protectionSpace(), challenge.failureResponse().url());
-                }
-                [challenge.sender() useCredential:credential.nsCredential() forAuthenticationChallenge:mac(challenge)];
-                return;
-            }
-        }
-    }
 
 #if PLATFORM(IOS)
     // If the challenge is for a proxy protection space, look for default credentials in
@@ -601,6 +567,55 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
     // because typing the same credentials several times is annoying.
     if (client())
         client()->didReceiveAuthenticationChallenge(this, d->m_currentWebChallenge);
+    else {
+        clearAuthentication();
+        [challenge.sender() performDefaultHandlingForAuthenticationChallenge:challenge.nsURLAuthenticationChallenge()];
+    }
+}
+
+bool ResourceHandle::tryHandlePasswordBasedAuthentication(const AuthenticationChallenge& challenge)
+{
+    if (!challenge.protectionSpace().isPasswordBased())
+        return false;
+
+    if (!d->m_user.isNull() && !d->m_pass.isNull()) {
+        NSURLCredential *credential = [[NSURLCredential alloc] initWithUser:d->m_user
+                                                                   password:d->m_pass
+                                                                persistence:NSURLCredentialPersistenceForSession];
+        d->m_currentMacChallenge = challenge.nsURLAuthenticationChallenge();
+        d->m_currentWebChallenge = challenge;
+        receivedCredential(challenge, Credential(credential));
+        [credential release];
+        // FIXME: Per the specification, the user shouldn't be asked for credentials if there were incorrect ones provided explicitly.
+        d->m_user = String();
+        d->m_pass = String();
+        return true;
+    }
+
+    // FIXME: Do not use the sync version of shouldUseCredentialStorage when the client returns true from usesAsyncCallbacks.
+    if (!client() || client()->shouldUseCredentialStorage(this)) {
+        if (!d->m_initialCredential.isEmpty() || challenge.previousFailureCount()) {
+            // The stored credential wasn't accepted, stop using it.
+            // There is a race condition here, since a different credential might have already been stored by another ResourceHandle,
+            // but the observable effect should be very minor, if any.
+            d->m_context->storageSession().credentialStorage().remove(challenge.protectionSpace());
+        }
+
+        if (!challenge.previousFailureCount()) {
+            Credential credential = d->m_context->storageSession().credentialStorage().get(challenge.protectionSpace());
+            if (!credential.isEmpty() && credential != d->m_initialCredential) {
+                ASSERT(credential.persistence() == CredentialPersistenceNone);
+                if (challenge.failureResponse().httpStatusCode() == 401) {
+                    // Store the credential back, possibly adding it as a default for this directory.
+                    d->m_context->storageSession().credentialStorage().set(credential, challenge.protectionSpace(), challenge.failureResponse().url());
+                }
+                [challenge.sender() useCredential:credential.nsCredential() forAuthenticationChallenge:mac(challenge)];
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 void ResourceHandle::didCancelAuthenticationChallenge(const AuthenticationChallenge& challenge)
@@ -617,6 +632,7 @@ void ResourceHandle::didCancelAuthenticationChallenge(const AuthenticationChalle
 bool ResourceHandle::canAuthenticateAgainstProtectionSpace(const ProtectionSpace& protectionSpace)
 {
     if (client()->usesAsyncCallbacks()) {
+        // FIXME: This check for client() being null makes no sense.
         if (client())
             client()->canAuthenticateAgainstProtectionSpaceAsync(this, protectionSpace);
         else
