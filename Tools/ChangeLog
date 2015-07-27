@@ -1,3 +1,20 @@
+2015-07-24  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Test for bug #147164 "[iOS] Keyboard bold/italic/underline keys don't
+        highlight after being tapped to style a selection"
+        https://bugs.webkit.org/show_bug.cgi?id=147278
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+
+        * TestWebKitAPI/Tests/mac/WordBoundaryTypingAttributes.mm: Added.
+        (-[WordBoundaryTypingAttributesController webView:didFinishLoadForFrame:]):
+        (TestWebKitAPI::TEST):
+        Load a page with the string "Hello, world!", then select "world" and
+        underline it. Test that the typing attributes for the current selection
+        include the underline attribute.
+
 2015-07-24  Hyungwook Lee  <hyungwook.lee@navercorp.com>
 
         Unreviewed, updated my nick name in contributors.json
