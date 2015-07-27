@@ -1,5 +1,17 @@
 2015-07-27  Alexey Proskuryakov  <ap@apple.com>
 
+        Test result gardening for El Capitan.
+
+        * platform/mac-yosemite/fast/text/international/bold-bengali-expected.png: Copied from LayoutTests/platform/mac/fast/text/international/bold-bengali-expected.png.
+        * platform/mac-yosemite/fast/text/international/bold-bengali-expected.txt: Copied from LayoutTests/platform/mac/fast/text/international/bold-bengali-expected.txt.
+        * platform/mac/fast/text/font-weights-zh-expected.txt:
+        * platform/mac/fast/text/international/bold-bengali-expected.png:
+        * platform/mac/fast/text/international/bold-bengali-expected.txt:
+        * platform/mac/fast/text/international/danda-space-expected.png:
+        * platform/mac/fast/text/international/danda-space-expected.txt:
+
+2015-07-27  Alexey Proskuryakov  <ap@apple.com>
+
         More test expectations for rdar://problem/22014672
 
         * platform/mac/TestExpectations:
