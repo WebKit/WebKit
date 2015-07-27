@@ -185,8 +185,7 @@ public:
         return false;
     }
 
-    // FIXME: rename this using the "lists match" terminology.
-    bool isTransformFunctionListValid() const { return m_transformFunctionListValid; }
+    bool transformFunctionListsMatch() const { return m_transformFunctionListsMatch; }
     bool filterFunctionListsMatch() const { return m_filterFunctionListsMatch; }
 #if ENABLE(FILTERS_LEVEL_2)
     bool backdropFilterFunctionListsMatch() const { return m_backdropFilterFunctionListsMatch; }
@@ -256,7 +255,7 @@ protected:
 
     AnimationState m_animationState { AnimationState::New };
     bool m_isAccelerated { false };
-    bool m_transformFunctionListValid { false };
+    bool m_transformFunctionListsMatch { false };
     bool m_filterFunctionListsMatch { false };
 #if ENABLE(FILTERS_LEVEL_2)
     bool m_backdropFilterFunctionListsMatch { false };

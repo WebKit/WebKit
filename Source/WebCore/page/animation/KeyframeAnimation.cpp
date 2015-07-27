@@ -230,7 +230,7 @@ bool KeyframeAnimation::computeExtentOfTransformAnimation(LayoutRect& bounds) co
         LayoutRect keyframeBounds = bounds;
         
         bool canCompute;
-        if (isTransformFunctionListValid())
+        if (transformFunctionListsMatch())
             canCompute = computeTransformedExtentViaTransformList(rendererBox, *keyframe.style(), keyframeBounds);
         else
             canCompute = computeTransformedExtentViaMatrix(rendererBox, *keyframe.style(), keyframeBounds);
@@ -364,7 +364,7 @@ bool KeyframeAnimation::affectsProperty(CSSPropertyID property) const
 
 void KeyframeAnimation::validateTransformFunctionList()
 {
-    m_transformFunctionListValid = false;
+    m_transformFunctionListsMatch = false;
     
     if (m_keyframes.size() < 2 || !m_keyframes.containsProperty(CSSPropertyTransform))
         return;
@@ -399,8 +399,7 @@ void KeyframeAnimation::validateTransformFunctionList()
             return;
     }
 
-    // Keyframes are valid
-    m_transformFunctionListValid = true;
+    m_transformFunctionListsMatch = true;
 }
 
 void KeyframeAnimation::checkForMatchingFilterFunctionLists()

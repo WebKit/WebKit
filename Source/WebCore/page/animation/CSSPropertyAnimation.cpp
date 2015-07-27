@@ -116,7 +116,7 @@ static inline std::unique_ptr<ShadowData> blendFunc(const AnimationBase* anim, c
 
 static inline TransformOperations blendFunc(const AnimationBase* animation, const TransformOperations& from, const TransformOperations& to, double progress)
 {
-    if (animation->isTransformFunctionListValid())
+    if (animation->transformFunctionListsMatch())
         return to.blendByMatchingOperations(from, progress);
     return to.blendByUsingMatrixInterpolation(from, progress, is<RenderBox>(*animation->renderer()) ? downcast<RenderBox>(*animation->renderer()).borderBoxRect().size() : LayoutSize());
 }

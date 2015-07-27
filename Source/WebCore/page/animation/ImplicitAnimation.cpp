@@ -118,7 +118,7 @@ bool ImplicitAnimation::computeExtentOfTransformAnimation(LayoutRect& bounds) co
     LayoutRect startBounds = bounds;
     LayoutRect endBounds = bounds;
 
-    if (isTransformFunctionListValid()) {
+    if (transformFunctionListsMatch()) {
         if (!computeTransformedExtentViaTransformList(rendererBox, *m_fromStyle, startBounds))
             return false;
 
@@ -260,7 +260,7 @@ void ImplicitAnimation::blendPropertyValueInStyle(CSSPropertyID prop, RenderStyl
 
 void ImplicitAnimation::validateTransformFunctionList()
 {
-    m_transformFunctionListValid = false;
+    m_transformFunctionListsMatch = false;
     
     if (!m_fromStyle || !m_toStyle)
         return;
@@ -279,7 +279,7 @@ void ImplicitAnimation::validateTransformFunctionList()
         return;
 
     // Transform lists match.
-    m_transformFunctionListValid = true;
+    m_transformFunctionListsMatch = true;
 }
 
 static bool filterOperationsMatch(const FilterOperations* fromOperations, const FilterOperations& toOperations)
