@@ -1,3 +1,13 @@
+2015-07-26  Sam Weinig  <sam@webkit.org>
+
+        Add missing builtin files to the JavaScriptCore Xcode project
+        https://bugs.webkit.org/show_bug.cgi?id=147312
+
+        Reviewed by Darin Adler.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Add missing files.
+
 2015-07-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement Reflect.isExtensible
