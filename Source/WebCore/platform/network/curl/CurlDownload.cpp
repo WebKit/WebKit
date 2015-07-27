@@ -209,17 +209,19 @@ void CurlDownloadManager::downloadThread(void* data)
         CURLcode err = curl_easy_getinfo(msg->easy_handle, CURLINFO_PRIVATE, &download);
 
         if (msg->msg == CURLMSG_DONE) {
-            if (msg->data.result == CURLE_OK)
-                callOnMainThread([download] {
-                    if (download)
+            if (download) {
+                if (msg->data.result == CURLE_OK) {
+                    callOnMainThread([download] {
                         download->didFinish();
-                });
-            else
-                callOnMainThread([download] {
-                    if (download)
+                        download->deref(); // This matches the ref() in CurlDownload::start().
+                    });
+                } else {
+                    callOnMainThread([download] {
                         download->didFail();
-                });
-
+                        download->deref(); // This matches the ref() in CurlDownload::start().
+                    });
+                }
+            }
             downloadManager->removeFromCurl(msg->easy_handle);
         }
 
@@ -232,12 +234,12 @@ void CurlDownloadManager::downloadThread(void* data)
 CurlDownloadManager CurlDownload::m_downloadManager;
 
 CurlDownload::CurlDownload()
-: m_curlHandle(0)
-, m_customHeaders(0)
-, m_url(0)
-, m_tempHandle(invalidPlatformFileHandle)
-, m_deletesFileUponFailure(false)
-, m_listener(0)
+    : m_curlHandle(nullptr)
+    , m_customHeaders(nullptr)
+    , m_url(nullptr)
+    , m_tempHandle(invalidPlatformFileHandle)
+    , m_deletesFileUponFailure(false)
+    , m_listener(nullptr)
 {
 }
 
@@ -304,6 +306,7 @@ void CurlDownload::init(CurlDownloadListener* listener, ResourceHandle*, const R
 
 bool CurlDownload::start()
 {
+    ref(); // CurlDownloadManager::downloadThread will call deref when the download has finished.
     return m_downloadManager.add(m_curlHandle);
 }
 
@@ -397,19 +400,31 @@ void CurlDownload::didReceiveHeader(const String& header)
         if (httpCode >= 200 && httpCode < 300) {
             const char* url = 0;
             err = curl_easy_getinfo(m_curlHandle, CURLINFO_EFFECTIVE_URL, &url);
-            m_response.setURL(URL(ParsedURLString, url));
 
-            m_response.setMimeType(extractMIMETypeFromMediaType(m_response.httpHeaderField(HTTPHeaderName::ContentType)));
-            m_response.setTextEncodingName(extractCharsetFromMediaType(m_response.httpHeaderField(HTTPHeaderName::ContentType)));
+            String strUrl(url);
+            StringCapture capturedUrl(strUrl);
 
-            callOnMainThread([this] {
+            RefPtr<CurlDownload> protectedDownload(this);
+
+            callOnMainThread([this, capturedUrl, protectedDownload] {
+                m_response.setURL(URL(ParsedURLString, capturedUrl.string()));
+
+                m_response.setMimeType(extractMIMETypeFromMediaType(m_response.httpHeaderField(HTTPHeaderName::ContentType)));
+                m_response.setTextEncodingName(extractCharsetFromMediaType(m_response.httpHeaderField(HTTPHeaderName::ContentType)));
+
                 didReceiveResponse();
             });
         }
     } else {
-        int splitPos = header.find(":");
-        if (splitPos != -1)
-            m_response.setHTTPHeaderField(header.left(splitPos), header.substring(splitPos+1).stripWhiteSpace());
+        StringCapture capturedHeader(header);
+
+        RefPtr<CurlDownload> protectedDownload(this);
+
+        callOnMainThread([this, capturedHeader, protectedDownload] {
+            int splitPos = capturedHeader.string().find(":");
+            if (splitPos != -1)
+                m_response.setHTTPHeaderField(capturedHeader.string().left(splitPos), capturedHeader.string().substring(splitPos + 1).stripWhiteSpace());
+        });
     }
 }
 
@@ -417,7 +432,9 @@ void CurlDownload::didReceiveData(void* data, int size)
 {
     MutexLocker locker(m_mutex);
 
-    callOnMainThread([this, size] {
+    RefPtr<CurlDownload> protectedDownload(this);
+
+    callOnMainThread([this, size, protectedDownload] {
         didReceiveDataOfLength(size);
     });
 

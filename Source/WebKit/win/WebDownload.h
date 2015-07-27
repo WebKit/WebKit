@@ -141,7 +141,7 @@ protected:
 #if USE(CFNETWORK)
     RetainPtr<CFURLDownloadRef> m_download;
 #elif USE(CURL)
-    WebCore::CurlDownload m_download;
+    RefPtr<WebCore::CurlDownload> m_download;
 #endif
     COMPtr<IWebMutableURLRequest> m_request;
     COMPtr<IWebDownloadDelegate> m_delegate;

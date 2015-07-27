@@ -63,7 +63,8 @@ void WebDownload::init(ResourceHandle* handle, const ResourceRequest& request, c
 
     m_delegate = delegate;
 
-    m_download.init(this, handle, request, response);
+    m_download = adoptRef(new CurlDownload());
+    m_download->init(this, handle, request, response);
 
     start();
 }
@@ -72,7 +73,8 @@ void WebDownload::init(const URL& url, IWebDownloadDelegate* delegate)
 {
     m_delegate = delegate;
 
-    m_download.init(this, url);
+    m_download = adoptRef(new CurlDownload());
+    m_download->init(this, url);
 }
 
 // IWebDownload -------------------------------------------------------------------
@@ -101,7 +103,10 @@ HRESULT STDMETHODCALLTYPE WebDownload::initToResumeWithBundle(
 
 HRESULT STDMETHODCALLTYPE WebDownload::start()
 {
-    if (!m_download.start())
+    if (!m_download)
+        return E_FAIL;
+
+    if (!m_download->start())
         return E_FAIL;
 
     if (m_delegate)
@@ -112,8 +117,14 @@ HRESULT STDMETHODCALLTYPE WebDownload::start()
 
 HRESULT STDMETHODCALLTYPE WebDownload::cancel()
 {
-    if (!m_download.cancel())
+    if (!m_download)
         return E_FAIL;
+
+    if (!m_download->cancel())
+        return E_FAIL;
+
+    m_download->setListener(nullptr);
+    m_download = nullptr;
 
     return S_OK;
 }
@@ -127,14 +138,20 @@ HRESULT STDMETHODCALLTYPE WebDownload::cancelForResume()
 HRESULT STDMETHODCALLTYPE WebDownload::deletesFileUponFailure(
         /* [out, retval] */ BOOL* result)
 {
-    *result = m_download.deletesFileUponFailure() ? TRUE : FALSE;
+    if (!m_download)
+        return E_FAIL;
+
+    *result = m_download->deletesFileUponFailure() ? TRUE : FALSE;
     return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebDownload::setDeletesFileUponFailure(
         /* [in] */ BOOL deletesFileUponFailure)
 {
-    m_download.setDeletesFileUponFailure(deletesFileUponFailure);
+    if (!m_download)
+        return E_FAIL;
+
+    m_download->setDeletesFileUponFailure(deletesFileUponFailure);
     return S_OK;
 }
 
@@ -142,9 +159,12 @@ HRESULT STDMETHODCALLTYPE WebDownload::setDestination(
         /* [in] */ BSTR path, 
         /* [in] */ BOOL allowOverwrite)
 {
+    if (!m_download)
+        return E_FAIL;
+
     size_t len = wcslen(path);
     m_destination = String(path, len);
-    m_download.setDestination(m_destination);
+    m_download->setDestination(m_destination);
     return S_OK;
 }
 
@@ -177,7 +197,7 @@ void WebDownload::didReceiveResponse()
     COMPtr<WebDownload> protect = this;
 
     if (m_delegate) {
-        ResourceResponse response = m_download.getResponse();
+        ResourceResponse response = m_download->getResponse();
         COMPtr<WebURLResponse> webResponse(AdoptCOM, WebURLResponse::createInstance(response));
         m_delegate->didReceiveResponse(this, webResponse.get());
 

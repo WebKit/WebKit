@@ -85,13 +85,15 @@ public:
     virtual void didFail() { }
 };
 
-class CurlDownload {
+class CurlDownload : public ThreadSafeRefCounted<CurlDownload> {
 public:
     CurlDownload();
     ~CurlDownload();
 
     void init(CurlDownloadListener*, const WebCore::URL&);
     void init(CurlDownloadListener*, ResourceHandle*, const ResourceRequest&, const ResourceResponse&);
+
+    void setListener(CurlDownloadListener* listener) { m_listener = listener; }
 
     bool start();
     bool cancel();
