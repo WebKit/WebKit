@@ -332,6 +332,26 @@ static JSValueRef increaseTextSelectionCallback(JSContextRef context, JSObjectRe
     return JSValueMakeUndefined(context);
 }
 
+static JSValueRef scrollPageUpCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    return JSValueMakeBoolean(context, toAXElement(thisObject)->scrollPageUp());
+}
+
+static JSValueRef scrollPageDownCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    return JSValueMakeBoolean(context, toAXElement(thisObject)->scrollPageDown());
+}
+
+static JSValueRef scrollPageLeftCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    return JSValueMakeBoolean(context, toAXElement(thisObject)->scrollPageLeft());
+}
+
+static JSValueRef scrollPageRightCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    return JSValueMakeBoolean(context, toAXElement(thisObject)->scrollPageRight());
+}
+
 static JSValueRef decreaseTextSelectionCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     toAXElement(thisObject)->decreaseTextSelection();
@@ -1327,6 +1347,8 @@ static JSValueRef getElementTextLengthCallback(JSContextRef context, JSObjectRef
     return JSValueMakeNumber(context, toAXElement(thisObject)->elementTextLength());
 }
 
+
+
 #endif // PLATFORM(IOS)
 
 #if PLATFORM(MAC) && !PLATFORM(IOS)
@@ -1691,6 +1713,10 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "elementsForRange", elementsForRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "increaseTextSelection", increaseTextSelectionCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "decreaseTextSelection", decreaseTextSelectionCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "scrollPageUp", scrollPageUpCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "scrollPageDown", scrollPageDownCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "scrollPageLeft", scrollPageLeftCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "scrollPageRight", scrollPageRightCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "assistiveTechnologySimulatedFocus", assistiveTechnologySimulatedFocusCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
 #endif
         { 0, 0, 0 }

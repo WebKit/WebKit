@@ -1,3 +1,17 @@
+2015-07-27  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r187371.
+
+    2015-07-24  Chris Fleizach  <cfleizach@apple.com>
+
+            AX: scrollable elements do not allow 3-finger swipe
+            https://bugs.webkit.org/show_bug.cgi?id=141893
+
+            Reviewed by Mario Sanchez Prada.
+
+            * platform/ios-simulator/accessibility/scroll-in-overflow-div-expected.txt: Added.
+            * platform/ios-simulator/accessibility/scroll-in-overflow-div.html: Added.
+
 2015-07-25  Alexey Proskuryakov  <ap@apple.com>
 
         Updating an expectation to actually work (it's a reftest, so it needs ImageOnlyFailure).

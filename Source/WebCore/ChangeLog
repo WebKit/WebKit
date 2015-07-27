@@ -1,5 +1,36 @@
 2015-07-27  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r187371.
+
+    2015-07-24  Chris Fleizach  <cfleizach@apple.com>
+
+            AX: scrollable elements do not allow 3-finger swipe
+            https://bugs.webkit.org/show_bug.cgi?id=141893
+
+            Reviewed by Mario Sanchez Prada.
+
+            To allow iOS Accessibility to perform by-page scrolling in overflow areas, we move
+            that scrolling code into AccessibilityObject and then iterate all the possible ScrollableAreas,
+            rather than just finding the parents that are ScrollViews. 
+
+            Test: platform/ios-simulator/accessibility/scroll-in-overflow-div.html
+
+            * accessibility/AccessibilityObject.cpp:
+            (WebCore::AccessibilityObject::scrollAreaAndAncestor):
+            (WebCore::AccessibilityObject::scrollPosition):
+            (WebCore::AccessibilityObject::scrollVisibleContentRect):
+            (WebCore::AccessibilityObject::scrollContentsSize):
+            (WebCore::AccessibilityObject::scrollByPage):
+            * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+            (-[WebAccessibilityObjectWrapper accessibilityScroll:]):
+            (-[WebAccessibilityObjectWrapper convertPointToScreenSpace:]):
+            (-[WebAccessibilityObjectWrapper _accessibilityScrollPosition]):
+            (-[WebAccessibilityObjectWrapper _accessibilityScrollSize]):
+            (-[WebAccessibilityObjectWrapper _accessibilityScrollVisibleRect]):
+            (-[WebAccessibilityObjectWrapper accessibilityElementDidBecomeFocused]):
+
+2015-07-27  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r187367.
 
     2015-07-24  Alexey Proskuryakov  <ap@apple.com>

@@ -66,6 +66,10 @@ void AccessibilityUIElement::decreaseTextSelection() { }
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::linkedElement() { return nullptr; }
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::headerElementAtIndex(unsigned) { return nullptr; }
 void AccessibilityUIElement::assistiveTechnologySimulatedFocus() { return; }
+bool AccessibilityUIElement::scrollPageUp() { return false; }
+bool AccessibilityUIElement::scrollPageDown() { return false; }
+bool AccessibilityUIElement::scrollPageLeft() { return false; }
+bool AccessibilityUIElement::scrollPageRight() { return false; }
 #endif
     
 // Unsupported methods on various platforms. As they're implemented on other platforms this list should be modified.

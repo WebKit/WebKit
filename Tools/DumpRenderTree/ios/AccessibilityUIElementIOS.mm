@@ -45,12 +45,15 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 
 AccessibilityUIElement::AccessibilityUIElement(PlatformUIElement element)
     : m_element(element)
+    , m_notificationHandler(0)
 {
     [m_element retain];
 }
 
 AccessibilityUIElement::AccessibilityUIElement(const AccessibilityUIElement& other)
     : m_element(other.m_element)
+    , m_notificationHandler(0)
+
 {
     [m_element retain];
 }
@@ -452,6 +455,25 @@ JSStringRef AccessibilityUIElement::role()
 JSStringRef AccessibilityUIElement::subrole()
 {
     return JSStringCreateWithCharacters(0, 0);
+}
+
+bool AccessibilityUIElement::scrollPageUp()
+{
+    return [m_element accessibilityScroll:UIAccessibilityScrollDirectionUp];
+}
+
+bool AccessibilityUIElement::scrollPageDown()
+{
+    return [m_element accessibilityScroll:UIAccessibilityScrollDirectionDown];
+}
+bool AccessibilityUIElement::scrollPageLeft()
+{
+    return [m_element accessibilityScroll:UIAccessibilityScrollDirectionLeft];
+}
+
+bool AccessibilityUIElement::scrollPageRight()
+{
+    return [m_element accessibilityScroll:UIAccessibilityScrollDirectionRight];
 }
 
 JSStringRef AccessibilityUIElement::roleDescription()

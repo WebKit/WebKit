@@ -41,7 +41,18 @@ namespace WTR {
 
 bool AccessibilityController::addNotificationListener(JSValueRef functionCallback)
 {
-    return false;
+    if (!functionCallback)
+        return false;
+    
+    // Mac programmers should not be adding more than one global notification listener.
+    // Other platforms may be different.
+    if (m_globalNotificationHandler)
+        return false;
+    m_globalNotificationHandler = [[AccessibilityNotificationHandler alloc] init];
+    [m_globalNotificationHandler.get() setCallback:functionCallback];
+    [m_globalNotificationHandler.get() startObserving];
+    
+    return true;
 }
 
 bool AccessibilityController::removeNotificationListener()
