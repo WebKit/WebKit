@@ -652,6 +652,10 @@ bool InspectorStyleSheet::setRuleSelector(const InspectorCSSId& id, const String
         return false;
     }
 
+    // If the stylesheet is already mutated at this point, that must mean that our data has been modified
+    // elsewhere. This should never happen as ensureParsedDataReady would return false in that case.
+    ASSERT(!styleSheetMutated());
+
     rule->setSelectorText(selector);
     RefPtr<CSSRuleSourceData> sourceData = ruleSourceDataFor(&rule->style());
     if (!sourceData) {
@@ -662,6 +666,7 @@ bool InspectorStyleSheet::setRuleSelector(const InspectorCSSId& id, const String
     String sheetText = m_parsedStyleSheet->text();
     sheetText.replace(sourceData->ruleHeaderRange.start, sourceData->ruleHeaderRange.length(), selector);
     m_parsedStyleSheet->setText(sheetText);
+    m_pageStyleSheet->clearHadRulesMutation();
     fireStyleSheetChanged();
     return true;
 }

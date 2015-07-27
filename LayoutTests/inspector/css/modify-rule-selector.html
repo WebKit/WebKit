@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .foo {}
+</style>
+<script type="text/javascript" src="../../http/tests/inspector/inspector-test.js"></script>
+<script>
+function test() {
+    var nodeStyles;
+    var selectors = ["span.foo", "body > .foo"];
+    var index = 0;
+
+    function modifyRuleSelector(selector) {
+        if (!nodeStyles.matchedRules.length) {
+            InspectorTest.log("ERROR: missing matched rules");
+            InspectorTest.completeTest();
+            return;
+        }
+
+        var rule = nodeStyles.matchedRules[0];
+        CSSAgent.setRuleSelector(rule.id, selector, function(error, payload) {
+            if (error) {
+                InspectorTest.log("ERROR: " + error);
+                InspectorTest.completeTest();
+                return;
+            }
+
+            var newSelector = payload.selectorList.text;
+            InspectorTest.log("\nSelector before mutation: " + rule.selectorText);
+            InspectorTest.log("Selector after mutation: " + newSelector);
+            InspectorTest.assert(newSelector === selector, "FAIL: Selector " + newSelector + " should be updated to " + selector + ".");
+
+            nodeStyles.refresh();
+        });
+    }
+
+    // Every time the nodeStyles refreshes, attempt to change the selector
+    // of the first rule to the next selector in the list.
+    function onStylesRefreshed()
+    {
+        if (index >= selectors.length) {
+            InspectorTest.completeTest();
+            return;
+        }
+
+        modifyRuleSelector(selectors[index]);
+        ++index;
+    }
+
+    WebInspector.domTreeManager.requestDocument(function(documentNode) {
+        if (!documentNode) {
+            InspectorTest.log("ERROR: document not found.");
+            InspectorTest.completeTest();
+            return;
+        }
+
+        WebInspector.domTreeManager.querySelector(documentNode.id, ".foo", function(contentNodeId) {
+            if (!contentNodeId) {
+                InspectorTest.log("ERROR: DOM node not found.");
+                InspectorTest.completeTest();
+                return;
+            }
+
+            var domNode = WebInspector.domTreeManager.nodeForId(contentNodeId);
+            nodeStyles = WebInspector.cssStyleManager.stylesForNode(domNode);
+
+            nodeStyles.addEventListener(WebInspector.DOMNodeStyles.Event.Refreshed, onStylesRefreshed, this);
+            if (!nodeStyles.needsRefresh)
+                onStylesRefreshed();
+        });
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that selectors are able to be modified more than once.</p>
+
+    <span class="foo"></span>
+</body>
+</html>
