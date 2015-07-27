@@ -52,6 +52,7 @@ ControllerIOS.prototype = {
         var startPlaybackButton = this.controls.startPlaybackButton = document.createElement('div');
         startPlaybackButton.setAttribute('pseudo', '-webkit-media-controls-start-playback-button');
         startPlaybackButton.setAttribute('aria-label', this.UIString('Start Playback'));
+        startPlaybackButton.setAttribute('role', 'button');
 
         var startPlaybackBackground = document.createElement('div');
         startPlaybackBackground.setAttribute('pseudo', '-webkit-media-controls-start-playback-background');
