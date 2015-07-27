@@ -1,5 +1,28 @@
 2015-07-27  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r187366.
+
+    2015-07-24  Zalan Bujtas  <zalan@apple.com>
+
+            [iOS]: Inline video controls are blurry on scaled-down pages on non-retina devices.
+            https://bugs.webkit.org/show_bug.cgi?id=147272
+            rdar://problem/21429111
+
+            Reviewed by Simon Fraser.
+
+            Blurry inline video controls are the result of transform scaling up the content when the page
+            is zoomed out (page scale > 1).
+            This patch addresses the blurriness by switching to css zoom when the content is being scaled up.
+            While transform scale is a paint time operation, css zoom triggers layout and the content is getting
+            painted on a non-scaled graphics context.
+
+            * Modules/mediacontrols/mediaControlsiOS.css:
+            (audio::-webkit-media-controls-timeline-container):
+            * Modules/mediacontrols/mediaControlsiOS.js:
+            (ControllerIOS.prototype.set pageScaleFactor):
+
+2015-07-27  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r187358.
 
     2015-07-24  Alexey Proskuryakov  <ap@apple.com>
