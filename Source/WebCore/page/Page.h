@@ -461,7 +461,7 @@ public:
     bool expectsWheelEventTriggers() const { return !!m_testTrigger; }
 
 #if ENABLE(VIDEO)
-    WEBCORE_EXPORT bool allowsMediaDocumentInlinePlayback() const { return m_allowsMediaDocumentInlinePlayback; }
+    bool allowsMediaDocumentInlinePlayback() const { return m_allowsMediaDocumentInlinePlayback; }
     WEBCORE_EXPORT void setAllowsMediaDocumentInlinePlayback(bool);
 #endif
 

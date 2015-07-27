@@ -1,3 +1,17 @@
+2015-07-27  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r187358.
+
+    2015-07-24  Alexey Proskuryakov  <ap@apple.com>
+
+            Remove WEBCORE_EXPORT from Page::allowsMediaDocumentInlinePlayback()
+            https://bugs.webkit.org/show_bug.cgi?id=147260
+
+            Reviewed by Daniel Bates.
+
+            * page/Page.h:
+            (WebCore::Page::allowsMediaDocumentInlinePlayback):
+
 2015-07-26  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r187244.
