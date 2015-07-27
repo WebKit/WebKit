@@ -1,3 +1,17 @@
+2015-07-27  Andreas Kling  <akling@apple.com>
+
+        [iOS] Occasional crashes in WebPage::elementDidBlur()'s async block.
+        <https://webkit.org/b/147281>
+        <rdar://problem/21701858>
+
+        Reviewed by Anders Carlsson.
+
+        Protect the WebPage object until the dispatch_async block has finished.
+        I have no way to repro this, but there's evidence of some crashing here.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::elementDidBlur):
+
 2015-07-27  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [Seccomp] Set appropriate filters when trapping syscalls by default

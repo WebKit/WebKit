@@ -2532,10 +2532,11 @@ void WebPage::elementDidBlur(WebCore::Node* node)
 {
     if (m_assistedNode == node) {
         m_hasPendingBlurNotification = true;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (m_hasPendingBlurNotification)
-                send(Messages::WebPageProxy::StopAssistingNode());
-            m_hasPendingBlurNotification = false;
+        RefPtr<WebPage> protectedThis(this);
+        dispatch_async(dispatch_get_main_queue(), [protectedThis] {
+            if (protectedThis->m_hasPendingBlurNotification)
+                protectedThis->send(Messages::WebPageProxy::StopAssistingNode());
+            protectedThis->m_hasPendingBlurNotification = false;
         });
         m_hasFocusedDueToUserInteraction = false;
         m_assistedNode = nullptr;
