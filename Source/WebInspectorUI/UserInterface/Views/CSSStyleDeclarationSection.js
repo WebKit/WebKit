@@ -48,9 +48,10 @@ WebInspector.CSSStyleDeclarationSection = function(delegate, style)
     this._selectorElement = document.createElement("span");
     this._selectorElement.className = "selector";
     this._selectorElement.setAttribute("spellcheck", "false");
-    this._selectorElement.addEventListener("mouseover", this._highlightNodesWithSelector.bind(this));
-    this._selectorElement.addEventListener("mouseout", this._hideHighlightOnNodesWithSelector.bind(this));
+    this._selectorElement.addEventListener("mouseover", this._handleMouseOver.bind(this));
+    this._selectorElement.addEventListener("mouseout", this._handleMouseOut.bind(this));
     this._selectorElement.addEventListener("keydown", this._handleKeyDown.bind(this));
+    this._selectorElement.addEventListener("keyup", this._handleKeyUp.bind(this));
     this._headerElement.appendChild(this._selectorElement);
 
     this._originElement = document.createElement("span");
@@ -384,6 +385,18 @@ WebInspector.CSSStyleDeclarationSection.prototype = {
 
     // Private
 
+    get _currentSelectorText()
+    {
+        if (!this._style.ownerRule)
+            return;
+
+        var selectorText = this._selectorElement.textContent;
+        if (!selectorText || !selectorText.length)
+            selectorText = this._style.ownerRule.selectorText;
+
+        return selectorText.trim();
+    },
+
     _handleContextMenuEvent: function(event)
     {
         if (window.getSelection().toString().length)
@@ -444,33 +457,35 @@ WebInspector.CSSStyleDeclarationSection.prototype = {
 
     _highlightNodesWithSelector: function()
     {
-        var highlightConfig = {
-            borderColor: {r: 255, g: 229, b: 153, a: 0.66},
-            contentColor: {r: 111, g: 168, b: 220, a: 0.66},
-            marginColor: {r: 246, g: 178, b: 107, a: 0.66},
-            paddingColor: {r: 147, g: 196, b: 125, a: 0.66},
-            showInfo: true
-        };
-
         if (!this._style.ownerRule) {
-            // COMPATIBILITY (iOS 6): Order of parameters changed in iOS 7.
-            DOMAgent.highlightNode.invoke({nodeId: this._style.node.id, highlightConfig});
+            WebInspector.domTreeManager.highlightDOMNode(this._style.node.id);
             return;
         }
 
-        if (DOMAgent.highlightSelector)
-            DOMAgent.highlightSelector(highlightConfig, this._style.ownerRule.selectorText, this._style.node.ownerDocument.frameIdentifier);
+        WebInspector.domTreeManager.highlightSelector(this._currentSelectorText, this._style.node.ownerDocument.frameIdentifier);
     },
 
-    _hideHighlightOnNodesWithSelector: function()
+    _hideDOMNodeHighlight: function()
     {
-        DOMAgent.hideHighlight();
+        WebInspector.domTreeManager.hideDOMNodeHighlight();
+    },
+
+    _handleMouseOver: function(event)
+    {
+        this._highlightNodesWithSelector();
+    },
+
+    _handleMouseOut: function(event)
+    {
+        this._hideDOMNodeHighlight();
     },
 
     _handleKeyDown: function(event)
     {
-        if (event.keyCode !== 9)
+        if (event.keyCode !== 9) {
+            this._highlightNodesWithSelector();
             return;
+        }
 
         if (event.shiftKey && this._delegate && typeof this._delegate.cssStyleDeclarationSectionEditorPreviousRule === "function") {
             event.preventDefault();
@@ -484,6 +499,11 @@ WebInspector.CSSStyleDeclarationSection.prototype = {
             this._propertiesTextEditor.selectFirstProperty();
             return;
         }
+    },
+
+    _handleKeyUp: function(event)
+    {
+        this._highlightNodesWithSelector();
     },
 
     _commitSelector: function(mutations)
