@@ -64,8 +64,9 @@ NetworkConnectionToWebProcess::~NetworkConnectionToWebProcess()
 
 void NetworkConnectionToWebProcess::didCleanupResourceLoader(NetworkResourceLoader& loader)
 {
-    RefPtr<NetworkResourceLoader> removedLoader = m_networkResourceLoaders.take(loader.identifier());
-    ASSERT(removedLoader == &loader);
+    ASSERT(m_networkResourceLoaders.get(loader.identifier()) == &loader);
+
+    m_networkResourceLoaders.remove(loader.identifier());
 }
     
 void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connection, IPC::MessageDecoder& decoder)
@@ -186,6 +187,11 @@ void NetworkConnectionToWebProcess::convertMainResourceLoadToDownload(uint64_t m
     }
 
     NetworkResourceLoader* loader = m_networkResourceLoaders.get(mainResourceLoadIdentifier);
+    if (!loader) {
+        // If we're trying to download a blob here loader can be null.
+        return;
+    }
+
     networkProcess.downloadManager().convertHandleToDownload(downloadID, loader->handle(), request, response);
 
     // Unblock the URL connection operation queue.
