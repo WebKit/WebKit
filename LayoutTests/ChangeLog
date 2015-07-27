@@ -1,3 +1,17 @@
+2015-07-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Crash happens when calling removeEventListener for an SVG element which has an instance inside a <defs> element of shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=147290
+
+        Reviewed by Simon Fraser.
+
+        Make sure we do not crash when when calling removeEventListener() for an
+        element which is cloned under a disallowed parent inside the shadow tree
+        of another <use> element.
+
+        * svg/custom/remove-event-listener-shadow-disallowed-element-expected.txt: Added.
+        * svg/custom/remove-event-listener-shadow-disallowed-element.svg: Added.
+
 2015-07-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Win] Test gardening after r187380.
