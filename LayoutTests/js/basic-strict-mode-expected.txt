@@ -187,12 +187,12 @@ PASS (function f(arg){'use strict'; var descriptor = Object.getOwnPropertyDescri
 PASS 'use strict'; (function f() { for(var i in this); })(); true; is true
 PASS 'use strict'̻ threw exception SyntaxError: Invalid character '\u0827'.
 PASS (function(){'use strict'̻}) threw exception SyntaxError: Invalid character '\u0827'.
-PASS 'use strict'5.f threw exception SyntaxError: At least one digit must occur after a decimal point.
-PASS (function(){'use strict'5.f}) threw exception SyntaxError: At least one digit must occur after a decimal point.
+PASS 'use strict'5.f threw exception SyntaxError: No identifiers allowed directly after numeric literal.
+PASS (function(){'use strict'5.f}) threw exception SyntaxError: No identifiers allowed directly after numeric literal.
 PASS 'use strict';̻ threw exception SyntaxError: Invalid character '\u0827'.
 PASS (function(){'use strict';̻}) threw exception SyntaxError: Invalid character '\u0827'.
-PASS 'use strict';5.f threw exception SyntaxError: At least one digit must occur after a decimal point.
-PASS (function(){'use strict';5.f}) threw exception SyntaxError: At least one digit must occur after a decimal point.
+PASS 'use strict';5.f threw exception SyntaxError: No identifiers allowed directly after numeric literal.
+PASS (function(){'use strict';5.f}) threw exception SyntaxError: No identifiers allowed directly after numeric literal.
 PASS 'use strict';1-(eval=1); threw exception SyntaxError: Cannot modify 'eval' in strict mode..
 PASS (function(){'use strict';1-(eval=1);}) threw exception SyntaxError: Cannot modify 'eval' in strict mode..
 PASS 'use strict';arguments=1; threw exception SyntaxError: Cannot modify 'arguments' in strict mode..

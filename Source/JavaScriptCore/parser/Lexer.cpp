@@ -2128,9 +2128,8 @@ inNumberAfterDecimalPoint:
                 token = tokenTypeForIntegerLikeToken(tokenData->doubleValue);
         }
 
-        // No identifiers allowed directly after numeric literal, e.g. "3in" is bad.
         if (UNLIKELY(isIdentStart(m_current))) {
-            m_lexErrorMessage = ASCIILiteral("At least one digit must occur after a decimal point");
+            m_lexErrorMessage = ASCIILiteral("No identifiers allowed directly after numeric literal");
             token = atEnd() ? UNTERMINATED_NUMERIC_LITERAL_ERRORTOK : INVALID_NUMERIC_LITERAL_ERRORTOK;
             goto returnError;
         }

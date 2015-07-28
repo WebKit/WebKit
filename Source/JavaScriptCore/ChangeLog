@@ -1,5 +1,20 @@
 2015-07-28  Basile Clement  <basile_clement@apple.com>
 
+        Misleading error message: "At least one digit must occur after a decimal point"
+        https://bugs.webkit.org/show_bug.cgi?id=146238
+
+        Reviewed by Geoffrey Garen.
+
+        Interestingly, we had a comment explaining what this error message was
+        about that is much clearer than the error message itself. This patch
+        simply replaces the error message with the explanation from the
+        comment.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::lex):
+
+2015-07-28  Basile Clement  <basile_clement@apple.com>
+
         Simplify call linking
         https://bugs.webkit.org/show_bug.cgi?id=147363
 

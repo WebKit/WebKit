@@ -1,3 +1,14 @@
+2015-07-28  Basile Clement  <basile_clement@apple.com>
+
+        Misleading error message: "At least one digit must occur after a decimal point"
+        https://bugs.webkit.org/show_bug.cgi?id=146238
+
+        Reviewed by Geoffrey Garen.
+
+        The expected error message in this test has changed.
+
+        * js/basic-strict-mode-expected.txt:
+
 2015-07-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Crash happens when calling removeEventListener for an SVG element which has an instance inside a <defs> element of shadow tree
