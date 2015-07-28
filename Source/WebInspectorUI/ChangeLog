@@ -1,5 +1,19 @@
 2015-07-27  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Record button in Timelines view is clipped on non-retina. Hovering over the dot draws it correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=147346
+
+        Reviewed by Joseph Pecoraro.
+
+        Since the hovered button isn't clipped (-webkit-filter is applied in that case), add a filter that
+        doesn't alter the button's appearance to the non-hovered selector.
+
+        * UserInterface/Views/TimelineSidebarPanel.css:
+        (.sidebar > .panel.navigation.timeline > .status-bar > .record-glyph):
+        Added brightness 100% filter to non-hovered selector.
+
+2015-07-27  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Clicking a frame in the Rendering Frames timeline should select the corresponding grid row
         https://bugs.webkit.org/show_bug.cgi?id=147013
 
