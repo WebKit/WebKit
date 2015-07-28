@@ -1,3 +1,35 @@
+2015-07-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use fastMalloc instead of g_slice
+        https://bugs.webkit.org/show_bug.cgi?id=147357
+
+        Reviewed by Sergio Villar Senin.
+
+        The use of g_slice is no longer encouraged by glib developers.
+
+        * UIProcess/API/gtk/WebKitCredential.cpp:
+        (webkitCredentialCreate):
+        (webkit_credential_free):
+        * UIProcess/API/gtk/WebKitJavascriptResult.cpp:
+        (webkitJavascriptResultCreate):
+        (webkit_javascript_result_unref):
+        * UIProcess/API/gtk/WebKitMimeInfo.cpp:
+        (webkitMimeInfoCreate):
+        (webkit_mime_info_unref):
+        * UIProcess/API/gtk/WebKitNavigationAction.cpp:
+        (webkitNavigationActionCreate):
+        (webkit_navigation_action_copy):
+        (webkit_navigation_action_free):
+        * UIProcess/API/gtk/WebKitPrivate.h:
+        * UIProcess/API/gtk/WebKitScriptDialog.cpp:
+        (webkitScriptDialogCopy):
+        (webkitScriptDialogFree):
+        * UIProcess/API/gtk/WebKitUserContent.cpp:
+        (webkit_user_style_sheet_unref):
+        (webkit_user_style_sheet_new):
+        (webkit_user_script_unref):
+        (webkit_user_script_new):
+
 2015-07-27  Dan Bernstein  <mitz@apple.com>
 
         [iOS] REGRESSION (r187376): Form editing buttons are missing from the Shortcut Bar

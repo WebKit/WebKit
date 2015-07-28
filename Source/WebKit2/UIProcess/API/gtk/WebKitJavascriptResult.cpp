@@ -44,7 +44,7 @@ G_DEFINE_BOXED_TYPE(WebKitJavascriptResult, webkit_javascript_result, webkit_jav
 
 WebKitJavascriptResult* webkitJavascriptResultCreate(WebKitWebView* webView, WebCore::SerializedScriptValue& serializedScriptValue)
 {
-    WebKitJavascriptResult* result = g_slice_new(WebKitJavascriptResult);
+    WebKitJavascriptResult* result = static_cast<WebKitJavascriptResult*>(fastMalloc(sizeof(WebKitJavascriptResult)));
     new (result) WebKitJavascriptResult(webView, serializedScriptValue);
     return result;
 }
@@ -77,7 +77,7 @@ void webkit_javascript_result_unref(WebKitJavascriptResult* javascriptResult)
 {
     if (g_atomic_int_dec_and_test(&javascriptResult->referenceCount)) {
         javascriptResult->~WebKitJavascriptResult();
-        g_slice_free(WebKitJavascriptResult, javascriptResult);
+        fastFree(javascriptResult);
     }
 }
 

@@ -30,7 +30,7 @@ G_DEFINE_BOXED_TYPE(WebKitNavigationAction, webkit_navigation_action, webkit_nav
 
 WebKitNavigationAction* webkitNavigationActionCreate(WebKitURIRequest* request, const NavigationActionData& navigationActionData)
 {
-    WebKitNavigationAction* navigation = g_slice_new0(WebKitNavigationAction);
+    WebKitNavigationAction* navigation = static_cast<WebKitNavigationAction*>(fastZeroedMalloc(sizeof(WebKitNavigationAction)));
     new (navigation) WebKitNavigationAction(request, navigationActionData);
     return navigation;
 }
@@ -49,7 +49,7 @@ WebKitNavigationAction* webkit_navigation_action_copy(WebKitNavigationAction* na
 {
     g_return_val_if_fail(navigation, nullptr);
 
-    WebKitNavigationAction* copy = g_slice_new0(WebKitNavigationAction);
+    WebKitNavigationAction* copy = static_cast<WebKitNavigationAction*>(fastZeroedMalloc(sizeof(WebKitNavigationAction)));
     new (copy) WebKitNavigationAction(navigation);
     return copy;
 }
@@ -67,7 +67,7 @@ void webkit_navigation_action_free(WebKitNavigationAction* navigation)
     g_return_if_fail(navigation);
 
     navigation->~WebKitNavigationAction();
-    g_slice_free(WebKitNavigationAction, navigation);
+    fastFree(navigation);
 }
 
 /**

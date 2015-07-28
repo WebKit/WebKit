@@ -53,14 +53,14 @@
 #define WEBKIT_DEFINE_ASYNC_DATA_STRUCT(structName) \
 static structName* create##structName() \
 { \
-    structName* data = g_slice_new0(structName); \
+    structName* data = static_cast<structName*>(fastZeroedMalloc(sizeof(structName))); \
     new (data) structName(); \
     return data; \
 } \
 static void destroy##structName(structName* data) \
 { \
     data->~structName(); \
-    g_slice_free(structName, data); \
+    fastFree(data); \
 }
 
 #define WEBKIT_DEFINE_TYPE(TypeName, type_name, TYPE_PARENT) _WEBKIT_DEFINE_TYPE_EXTENDED(TypeName, type_name, TYPE_PARENT, 0, { })
