@@ -1,3 +1,18 @@
+2015-07-28  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r187490.
+
+    2015-07-28  Brady Eidson  <beidson@apple.com>
+
+            Handle null CFArrayRef returning from _CFHTTPParsedCookiesWithResponseHeaderFields.
+            <rdar://problem/21995928> and https://bugs.webkit.org/show_bug.cgi?id=147365
+
+            Reviewed by Alexey Proskuryakov.
+
+            * platform/network/cf/CookieJarCFNet.cpp:
+            (WebCore::filterCookies): ASSERT the input is not null.
+            (WebCore::createCookies): Always return a CFArrayRef, even if it's empty.
+
 2015-07-27  Babak Shafiei  <bshafiei@apple.com>
 
         Roll out r180020.
