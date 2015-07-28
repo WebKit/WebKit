@@ -215,10 +215,6 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 @end
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
-@interface UIWebFormAccessory (StagingToRemove)
-- (id)initWithInputAssistantItem:(UITextInputAssistantItem *)inputAssistantItem;
-@end
-
 @protocol UISelectionInteractionAssistant;
 #endif
 
@@ -818,6 +814,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius)
               allowScaling:(_assistedNodeInformation.allowsUserScaling && !UICurrentUserInterfaceIdiomIsPad())
                forceScroll:[self requiresAccessoryView]];
     _didAccessoryTabInitiateFocus = NO;
+    [self _ensureFormAccessoryView];
     [self _updateAccessory];
 }
 
@@ -1262,22 +1259,25 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     }
 }
 
+- (void)_ensureFormAccessoryView
+{
+    if (_formAccessoryView)
+        return;
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
+    _formAccessoryView = adoptNS([[UIWebFormAccessory alloc] initWithInputAssistantItem:self.inputAssistantItem]);
+#else
+    _formAccessoryView = adoptNS([[UIWebFormAccessory alloc] init]);
+#endif
+    [_formAccessoryView setDelegate:self];
+}
+
 - (UIView *)inputAccessoryView
 {
     if (![self requiresAccessoryView])
         return nil;
 
-    if (!_formAccessoryView) {
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
-        if ([UIWebFormAccessory instancesRespondToSelector:@selector(initWithInputAssistantItem:)])
-            _formAccessoryView = adoptNS([[UIWebFormAccessory alloc] initWithInputAssistantItem:[self inputAssistantItem]]);
-        else
-#endif
-            _formAccessoryView = adoptNS([[UIWebFormAccessory alloc] init]);
-        [_formAccessoryView setDelegate:self];
-    }
-
-    return _formAccessoryView.get();
+    return self.formAccessoryView;
 }
 
 - (NSArray *)supportedPasteboardTypesForCurrentSelection
@@ -2972,6 +2972,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebAutocapitalizeType
 
 - (UIWebFormAccessory *)formAccessoryView
 {
+    [self _ensureFormAccessoryView];
     return _formAccessoryView.get();
 }
 
