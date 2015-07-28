@@ -1,3 +1,14 @@
+2015-07-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] Crash when encountering characters whose natural font is one we can't look up
+        https://bugs.webkit.org/show_bug.cgi?id=147377
+        <rdar://problem/22022011>
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/crash-complex-unknown-font-expected.html: Added.
+        * fast/text/crash-complex-unknown-font.html: Added.
+
 2015-07-28  Chris Dumez  <cdumez@apple.com>
 
         Tests introduced in r187489 are flaky
