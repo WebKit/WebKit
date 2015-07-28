@@ -1,5 +1,29 @@
 2015-07-27  Tim Horton  <timothy_horton@apple.com>
 
+        First in-window viewStateChange synchronously blocks despite not previously being in-window
+        https://bugs.webkit.org/show_bug.cgi?id=147344
+        <rdar://problem/22021772>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateViewState):
+        (WebKit::WebPageProxy::dispatchViewStateChange):
+        The whole point of m_viewWasEverInWindow was so that we would not
+        synchronously wait when a view was added to a window for the first time,
+        only all subsequent times.
+
+        However, since m_viewWasEverInWindow was being set *before* being
+        checked in dispatchViewStateChange, we were always blocking. This is
+        a huge waste of main-thread time, because there's no reason to wait
+        for the first paint if you've never seen the view before (and shouldn't
+        expect it to have content).
+
+        Instead, set the flag after dispatching a view state change, so it becomes
+        "have we ever sent a view state with IsInWindow set" instead.
+
+2015-07-27  Tim Horton  <timothy_horton@apple.com>
+
         [iOS] Long press or link click can sometimes trigger during/after a preview
         https://bugs.webkit.org/show_bug.cgi?id=147338
         <rdar://problem/22020770>
