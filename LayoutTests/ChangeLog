@@ -1,3 +1,14 @@
+2015-07-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Rolling out r187463, because it caused memory corruption on multiple tests.
+
+        Original bug:
+        Crash happens when calling removeEventListener for an SVG element which has an instance inside a <defs> element of shadow tree
+        https://bugs.webkit.org/show_bug.cgi?id=147290
+
+        * svg/custom/remove-event-listener-shadow-disallowed-element-expected.txt: Removed.
+        * svg/custom/remove-event-listener-shadow-disallowed-element.svg: Removed.
+
 2015-07-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         SparseValueMap check is skipped when the butterfly's vectorLength is larger than the access-requested index
