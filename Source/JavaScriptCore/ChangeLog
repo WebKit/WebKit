@@ -1,3 +1,13 @@
+2015-07-27  Alex Christensen  <achristensen@webkit.org>
+
+        Use Ninja on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=147228
+
+        Reviewed by Martin Robinson.
+
+        * CMakeLists.txt:
+        Set the working directory when generating LowLevelInterpreterWin.asm to put LowLevelInterpreterWin.asm.sym in the right place.
+
 2015-07-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         SparseValueMap check is skipped when the butterfly's vectorLength is larger than the access-requested index

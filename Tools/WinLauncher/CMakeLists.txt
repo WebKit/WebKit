@@ -46,6 +46,7 @@ include_directories(${WinLauncher_INCLUDE_DIRECTORIES})
 add_library(WinLauncherLib SHARED ${WinLauncher_SOURCES})
 target_link_libraries(WinLauncherLib ${WinLauncher_LIBRARIES})
 set_target_properties(WinLauncherLib PROPERTIES FOLDER "Tools")
+set_target_properties(WinLauncherLib PROPERTIES OUTPUT_NAME "WinLauncher")
 
 add_executable(WinLauncher WIN32 ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp WinLauncher.vcxproj/WinLauncher.rc)
 target_link_libraries(WinLauncher shlwapi)

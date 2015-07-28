@@ -1,5 +1,15 @@
 2015-07-27  Alex Christensen  <achristensen@webkit.org>
 
+        Use Ninja on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=147228
+
+        Reviewed by Martin Robinson.
+
+        * WebView.h:
+        Add more #if USE(CA) to protect the CACFLayer code.
+
+2015-07-27  Alex Christensen  <achristensen@webkit.org>
+
         Progress towards building AppleWin with CMake
         https://bugs.webkit.org/show_bug.cgi?id=147325
 

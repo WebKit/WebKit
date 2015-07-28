@@ -31,7 +31,6 @@
 #include "WebKit.h"
 #include "WebFrame.h"
 #include "WebPreferences.h"
-#include <WebCore/CACFLayerTreeHostClient.h>
 #include <WebCore/COMPtr.h>
 #include <WebCore/DragActions.h>
 #include <WebCore/GraphicsLayer.h>
@@ -42,6 +41,10 @@
 #include <WebCore/WindowMessageListener.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
+
+#if USE(CA)
+#include <WebCore/CACFLayerTreeHostClient.h>
+#endif
 
 #if ENABLE(FULLSCREEN_API)
 #include <WebCore/FullScreenControllerClient.h>
@@ -89,7 +92,9 @@ class WebView
     , public IDropTarget
     , WebCore::WindowMessageListener
     , WebCore::GraphicsLayerClient
+#if USE(CA)
     , WebCore::CACFLayerTreeHostClient
+#endif
 #if ENABLE(FULLSCREEN_API)
     , WebCore::FullScreenControllerClient
 #endif

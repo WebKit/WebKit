@@ -1,3 +1,15 @@
+2015-07-27  Alex Christensen  <achristensen@webkit.org>
+
+        Use Ninja on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=147228
+
+        Reviewed by Martin Robinson.
+
+        * WinLauncher/CMakeLists.txt:
+        WinLauncherLib must make WinLauncher.dll, not WinLauncherLib.dll.
+        * Scripts/build-webkit:
+        Use Ninja to build WinCairo by default, but fall back to Visual Studio if Ninja is not on the system.
+
 2015-07-24  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Test for bug #147164 "[iOS] Keyboard bold/italic/underline keys don't

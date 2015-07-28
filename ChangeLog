@@ -1,5 +1,16 @@
 2015-07-27  Alex Christensen  <achristensen@webkit.org>
 
+        Use Ninja on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=147228
+
+        Reviewed by Martin Robinson.
+
+        * Source/cmake/OptionsWindows.cmake:
+        Only use /MP when using generated Visual Studio solution files to build.
+        It makes compiling parallel in MSVC, but Ninja doesn't like it.
+
+2015-07-27  Alex Christensen  <achristensen@webkit.org>
+
         Progress towards building AppleWin with CMake
         https://bugs.webkit.org/show_bug.cgi?id=147325
 

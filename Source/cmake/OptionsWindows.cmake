@@ -23,8 +23,10 @@ if (MSVC)
         /wd4018 /wd4068 /wd4099 /wd4100 /wd4127 /wd4138 /wd4146 /wd4180 /wd4189 /wd4201 /wd4244 /wd4251 /wd4267 /wd4275 /wd4288
         /wd4291 /wd4305 /wd4309 /wd4344 /wd4355 /wd4389 /wd4396 /wd4481 /wd4503 /wd4505 /wd4510 /wd4512 /wd4530 /wd4610 /wd4702
         /wd4706 /wd4800 /wd4819 /wd4951 /wd4952 /wd4996 /wd6011 /wd6031 /wd6211 /wd6246 /wd6255 /wd6387
-        /MP
     )
+    if (NOT ${CMAKE_GENERATOR} MATCHES "Ninja")
+        add_definitions(/MP)
+    endif ()
     if (NOT ${CMAKE_CXX_FLAGS} STREQUAL "")
         string(REGEX REPLACE "/EH[a-z]+" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}) # Disable C++ exceptions
         string(REGEX REPLACE "/GR" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}) # Disable RTTI
