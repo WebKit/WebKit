@@ -408,23 +408,23 @@ void Path::apply(void* info, PathApplierFunction function) const
         case CAIRO_PATH_MOVE_TO:
             pelement.type = PathElementMoveToPoint;
             pelement.points[0] = FloatPoint(data[1].point.x,data[1].point.y);
-            function(info, &pelement);
+            function(info, pelement);
             break;
         case CAIRO_PATH_LINE_TO:
             pelement.type = PathElementAddLineToPoint;
             pelement.points[0] = FloatPoint(data[1].point.x,data[1].point.y);
-            function(info, &pelement);
+            function(info, pelement);
             break;
         case CAIRO_PATH_CURVE_TO:
             pelement.type = PathElementAddCurveToPoint;
             pelement.points[0] = FloatPoint(data[1].point.x,data[1].point.y);
             pelement.points[1] = FloatPoint(data[2].point.x,data[2].point.y);
             pelement.points[2] = FloatPoint(data[3].point.x,data[3].point.y);
-            function(info, &pelement);
+            function(info, pelement);
             break;
         case CAIRO_PATH_CLOSE_PATH:
             pelement.type = PathElementCloseSubpath;
-            function(info, &pelement);
+            function(info, pelement);
             break;
         }
     }
