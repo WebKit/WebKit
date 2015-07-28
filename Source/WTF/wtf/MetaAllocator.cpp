@@ -113,6 +113,11 @@ void MetaAllocatorHandle::shrink(size_t newSizeInBytes)
     m_sizeInBytes = newSizeInBytes;
 }
 
+void MetaAllocatorHandle::dump(PrintStream& out) const
+{
+    out.print(RawPointer(start()), "...", RawPointer(end()));
+}
+
 MetaAllocator::MetaAllocator(size_t allocationGranule, size_t pageSize)
     : m_allocationGranule(allocationGranule)
     , m_pageSize(pageSize)

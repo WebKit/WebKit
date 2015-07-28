@@ -1,3 +1,14 @@
+2015-07-27  Filip Pizlo  <fpizlo@apple.com>
+
+        Add logging when executable code gets deallocated
+        https://bugs.webkit.org/show_bug.cgi?id=147355
+
+        Reviewed by Mark Lam.
+
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocatorHandle::dump): It's useful to be able to dump these.
+        * wtf/MetaAllocatorHandle.h:
+
 2015-07-28  Benjamin Poulain  <bpoulain@apple.com>
 
         Speed up StringBuilder::appendQuotedJSONString()

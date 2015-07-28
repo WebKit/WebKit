@@ -1,5 +1,17 @@
 2015-07-27  Filip Pizlo  <fpizlo@apple.com>
 
+        Add logging when executable code gets deallocated
+        https://bugs.webkit.org/show_bug.cgi?id=147355
+
+        Reviewed by Mark Lam.
+
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::~JITCode): Print something when this is freed.
+        * jit/JITCode.cpp:
+        (JSC::JITCodeWithCodeRef::~JITCodeWithCodeRef): Print something when this is freed.
+
+2015-07-27  Filip Pizlo  <fpizlo@apple.com>
+
         DFG::safeToExecute() cases for GetByOffset/PutByOffset don't handle clobbered structure abstract values correctly
         https://bugs.webkit.org/show_bug.cgi?id=147354
 

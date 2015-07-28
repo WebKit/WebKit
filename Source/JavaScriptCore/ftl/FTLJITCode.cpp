@@ -28,6 +28,8 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "FTLState.h"
+
 namespace JSC { namespace FTL {
 
 JITCode::JITCode()
@@ -37,6 +39,15 @@ JITCode::JITCode()
 
 JITCode::~JITCode()
 {
+    if (FTL::shouldShowDisassembly()) {
+        dataLog("Destroying FTL JIT code at ");
+        CommaPrinter comma;
+        for (auto& handle : m_handles)
+            dataLog(comma, pointerDump(handle.get()));
+        dataLog(comma, pointerDump(m_arityCheckEntrypoint.executableMemory()));
+        dataLog(comma, pointerDump(m_exitThunks.executableMemory()));
+        dataLog("\n");
+    }
 }
 
 void JITCode::initializeExitThunks(CodeRef exitThunks)
