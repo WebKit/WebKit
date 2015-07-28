@@ -601,7 +601,6 @@ public:
     bool isVariableObject() const;
     bool isStaticScopeObject() const;
     bool isNameScopeObject() const;
-    bool isCatchScopeObject() const;
     bool isFunctionNameScopeObject() const;
     bool isActivationObject() const;
     bool isErrorInstance() const;

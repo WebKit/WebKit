@@ -38,7 +38,6 @@ public:
     static const unsigned StructureFlags = Base::StructureFlags| OverridesGetOwnPropertySlot;
 
     enum Type {
-        CatchScope,
         FunctionNameScope
     };
 

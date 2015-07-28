@@ -578,7 +578,7 @@ void BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeSta
         }
         
         // This implements step 25 of section 9.2.12.
-        pushLexicalScopeInternal(environment, true, nullptr);
+        pushLexicalScopeInternal(environment, true, nullptr, TDZRequirement::UnderTDZ, ScopeType::LetConstScope);
 
         RefPtr<RegisterID> temp = newTemporary();
         for (unsigned i = 0; i < parameters.size(); i++) {
@@ -1357,7 +1357,13 @@ RegisterID* BytecodeGenerator::emitLoadGlobalObject(RegisterID* dst)
     return m_globalObjectRegister;
 }
 
-void BytecodeGenerator::pushLexicalScopeInternal(VariableEnvironment& environment, bool canOptimizeTDZChecks, RegisterID** constantSymbolTableResult)
+void BytecodeGenerator::pushLexicalScope(VariableEnvironmentNode* node, bool canOptimizeTDZChecks, RegisterID** constantSymbolTableResult)
+{
+    VariableEnvironment& environment = node->lexicalVariables();
+    pushLexicalScopeInternal(environment, canOptimizeTDZChecks, constantSymbolTableResult, TDZRequirement::UnderTDZ, ScopeType::LetConstScope);
+}
+
+void BytecodeGenerator::pushLexicalScopeInternal(VariableEnvironment& environment, bool canOptimizeTDZChecks, RegisterID** constantSymbolTableResult, TDZRequirement tdzRequirement, ScopeType scopeType)
 {
     if (!environment.size())
         return;
@@ -1366,11 +1372,19 @@ void BytecodeGenerator::pushLexicalScopeInternal(VariableEnvironment& environmen
         environment.markAllVariablesAsCaptured();
 
     Strong<SymbolTable> symbolTable(*m_vm, SymbolTable::create(*m_vm));
-    symbolTable->setDoesCorrespondToLexicalScope();
+    switch (scopeType) {
+    case ScopeType::CatchScope:
+        symbolTable->setScopeType(SymbolTable::ScopeType::CatchScope);
+        break;
+    case ScopeType::LetConstScope:
+        symbolTable->setScopeType(SymbolTable::ScopeType::LexicalScope);
+        break;
+    }
+
     bool hasCapturedVariables = false;
     {
         ConcurrentJITLocker locker(symbolTable->m_lock);
-        for (auto entry : environment) {
+        for (auto& entry : environment) {
             ASSERT(entry.value.isLet() || entry.value.isConst());
             ASSERT(!entry.value.isVar());
             SymbolTableEntry symbolTableEntry = symbolTable->get(locker, entry.key.get());
@@ -1408,7 +1422,7 @@ void BytecodeGenerator::pushLexicalScopeInternal(VariableEnvironment& environmen
         instructions().append(newScope->index());
         instructions().append(scopeRegister()->index());
         instructions().append(constantSymbolTable->index());
-        instructions().append(addConstantValue(jsTDZValue())->index());
+        instructions().append(addConstantValue(tdzRequirement == TDZRequirement::UnderTDZ ? jsTDZValue() : jsUndefined())->index());
 
         emitMove(scopeRegister(), newScope);
 
@@ -1416,31 +1430,34 @@ void BytecodeGenerator::pushLexicalScopeInternal(VariableEnvironment& environmen
     }
 
     m_symbolTableStack.append(SymbolTableStackEntry{ symbolTable, newScope, false, symbolTableConstantIndex });
-    m_TDZStack.append(std::make_pair(environment, canOptimizeTDZChecks));
-    // Prefill stack variables with the TDZ empty value.
-    // Scope variables will be initialized to the TDZ empty value when JSLexicalEnvironment is allocated.
-    for (auto entry : environment) {
-        SymbolTableEntry symbolTableEntry = symbolTable->get(entry.key.get());
-        ASSERT(!symbolTableEntry.isNull());
-        VarOffset offset = symbolTableEntry.varOffset();
-        if (offset.isScope()) {
-            ASSERT(newScope);
-            continue;
-        }
-        ASSERT(offset.isStack());
-        emitMoveEmptyValue(&registerFor(offset.stackOffset()));
-    }
-}
+    if (tdzRequirement == TDZRequirement::UnderTDZ)
+        m_TDZStack.append(std::make_pair(environment, canOptimizeTDZChecks));
 
-void BytecodeGenerator::pushLexicalScope(VariableEnvironmentNode* node, bool canOptimizeTDZChecks, RegisterID** constantSymbolTableResult)
-{
-    VariableEnvironment& environment = node->lexicalVariables();
-    pushLexicalScopeInternal(environment, canOptimizeTDZChecks, constantSymbolTableResult);
+    if (tdzRequirement == TDZRequirement::UnderTDZ) {
+        // Prefill stack variables with the TDZ empty value.
+        // Scope variables will be initialized to the TDZ empty value when JSLexicalEnvironment is allocated.
+        for (auto& entry : environment) {
+            SymbolTableEntry symbolTableEntry = symbolTable->get(entry.key.get());
+            ASSERT(!symbolTableEntry.isNull());
+            VarOffset offset = symbolTableEntry.varOffset();
+            if (offset.isScope()) {
+                ASSERT(newScope);
+                continue;
+            }
+            ASSERT(offset.isStack());
+            emitMoveEmptyValue(&registerFor(offset.stackOffset()));
+        }
+    }
 }
 
 void BytecodeGenerator::popLexicalScope(VariableEnvironmentNode* node)
 {
     VariableEnvironment& environment = node->lexicalVariables();
+    popLexicalScopeInternal(environment, TDZRequirement::UnderTDZ);
+}
+
+void BytecodeGenerator::popLexicalScopeInternal(VariableEnvironment& environment, TDZRequirement tdzRequirement)
+{
     if (!environment.size())
         return;
 
@@ -1451,7 +1468,7 @@ void BytecodeGenerator::popLexicalScope(VariableEnvironmentNode* node)
     Strong<SymbolTable> symbolTable = stackEntry.m_symbolTable;
     ConcurrentJITLocker locker(symbolTable->m_lock);
     bool hasCapturedVariables = false;
-    for (auto entry : environment) {
+    for (auto& entry : environment) {
         if (entry.value.isCaptured()) {
             hasCapturedVariables = true;
             continue;
@@ -1471,7 +1488,8 @@ void BytecodeGenerator::popLexicalScope(VariableEnvironmentNode* node)
         stackEntry.m_scope->deref();
     }
 
-    m_TDZStack.removeLast();
+    if (tdzRequirement == TDZRequirement::UnderTDZ)
+        m_TDZStack.removeLast();
 }
 
 void BytecodeGenerator::prepareLexicalScopeForNextForLoopIteration(VariableEnvironmentNode* node, RegisterID* loopSymbolTable)
@@ -1576,14 +1594,14 @@ Variable BytecodeGenerator::variable(const Identifier& property)
     // }
     for (unsigned i = m_symbolTableStack.size(); i--; ) {
         SymbolTableStackEntry& stackEntry = m_symbolTableStack[i];
-        if (stackEntry.m_isWithOrCatch)
+        if (stackEntry.m_isWithScope)
             return Variable(property);
         Strong<SymbolTable>& symbolTable = stackEntry.m_symbolTable;
         SymbolTableEntry symbolTableEntry = symbolTable->get(property.impl());
         if (symbolTableEntry.isNull())
             continue;
         
-        return variableForLocalEntry(property, symbolTableEntry, stackEntry.m_symbolTableConstantIndex, symbolTable->correspondsToLexicalScope());
+        return variableForLocalEntry(property, symbolTableEntry, stackEntry.m_symbolTableConstantIndex, symbolTable->scopeType() == SymbolTable::ScopeType::LexicalScope);
     }
 
     return Variable(property);
@@ -1661,7 +1679,7 @@ void BytecodeGenerator::emitCheckHasInstance(RegisterID* dst, RegisterID* value,
 ResolveType BytecodeGenerator::resolveType()
 {
     for (unsigned i = m_symbolTableStack.size(); i--; ) {
-        if (m_symbolTableStack[i].m_isWithOrCatch)
+        if (m_symbolTableStack[i].m_isWithScope)
             return Dynamic;
     }
 
@@ -1688,9 +1706,9 @@ RegisterID* BytecodeGenerator::emitResolveScope(RegisterID* dst, const Variable&
         // that code sensible and obviate the need for us to do bad things.
         for (unsigned i = m_symbolTableStack.size(); i--; ) {
             SymbolTableStackEntry& stackEntry = m_symbolTableStack[i];
-            // We should not resolve a variable to VarKind::Scope if a "with" or "catch" scope lies in between the current
+            // We should not resolve a variable to VarKind::Scope if a "with" scope lies in between the current
             // scope and the resolved scope.
-            RELEASE_ASSERT(!stackEntry.m_isWithOrCatch);
+            RELEASE_ASSERT(!stackEntry.m_isWithScope);
 
             if (stackEntry.m_symbolTable->get(variable.ident().impl()).isNull())
                 continue;
@@ -2567,12 +2585,12 @@ void BytecodeGenerator::emitPopScope(RegisterID* dst, RegisterID* scope)
     emitMove(dst, parentScope.get());
 }
 
-void BytecodeGenerator::emitPopWithOrCatchScope(RegisterID* srcDst)
+void BytecodeGenerator::emitPopWithScope(RegisterID* srcDst)
 {
     emitPopScope(srcDst, srcDst);
     popScopedControlFlowContext();
     SymbolTableStackEntry stackEntry = m_symbolTableStack.takeLast();
-    RELEASE_ASSERT(stackEntry.m_isWithOrCatch);
+    RELEASE_ASSERT(stackEntry.m_isWithScope);
 }
 
 void BytecodeGenerator::emitDebugHook(DebugHookID debugHookID, unsigned line, unsigned charOffset, unsigned lineStart)
@@ -3007,17 +3025,19 @@ void BytecodeGenerator::popScopedControlFlowContext()
     m_localScopeDepth--;
 }
 
-void BytecodeGenerator::emitPushCatchScope(RegisterID* dst, const Identifier& property, RegisterID* value, unsigned attributes)
+void BytecodeGenerator::emitPushCatchScope(const Identifier& property, RegisterID* exceptionValue, VariableEnvironment& environment)
 {
-    pushScopedControlFlowContext();
+    RELEASE_ASSERT(environment.contains(property.impl()));
+    pushLexicalScopeInternal(environment, true, nullptr, TDZRequirement::NotUnderTDZ, ScopeType::CatchScope);
+    Variable exceptionVar = variable(property);
+    RELEASE_ASSERT(exceptionVar.isResolved());
+    RefPtr<RegisterID> scope = emitResolveScope(nullptr, exceptionVar);
+    emitPutToScope(scope.get(), exceptionVar, exceptionValue, ThrowIfNotFound);
+}
 
-    emitOpcode(op_push_name_scope);
-    instructions().append(dst->index());
-    instructions().append(value->index());
-    instructions().append(addConstantValue(SymbolTable::createNameScopeTable(*vm(), property, attributes))->index());
-    instructions().append(JSNameScope::CatchScope);
-
-    m_symbolTableStack.append(SymbolTableStackEntry{ Strong<SymbolTable>(), nullptr, true, 0 });
+void BytecodeGenerator::emitPopCatchScope(VariableEnvironment& environment) 
+{
+    popLexicalScopeInternal(environment, TDZRequirement::NotUnderTDZ);
 }
 
 void BytecodeGenerator::beginSwitch(RegisterID* scrutineeRegister, SwitchInfo::SwitchType type)

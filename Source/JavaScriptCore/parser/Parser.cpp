@@ -1261,9 +1261,8 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseTryStatement(
     tryBlock = parseBlockStatement(context);
     failIfFalse(tryBlock, "Cannot parse the body of try block");
     int lastLine = m_lastTokenEndPosition.line;
-    
+    VariableEnvironment catchEnvironment; 
     if (match(CATCH)) {
-        currentScope()->setNeedsFullActivation();
         next();
         
         handleProductionOrFail(OPENPAREN, "(", "start", "'catch' target");
@@ -1274,12 +1273,15 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseTryStatement(
         ident = m_token.m_data.ident;
         next();
         AutoPopScopeRef catchScope(this, pushScope());
-        failIfTrueIfStrict(declareVariable(ident) & DeclarationResult::InvalidStrictMode, "Cannot declare a catch variable named '", ident->impl(), "' in strict mode");
-        catchScope->preventAllVariableDeclarations();
+        catchScope->setIsLexicalScope();
+        catchScope->preventVarDeclarations();
+        failIfTrueIfStrict(catchScope->declareLexicalVariable(ident, false) & DeclarationResult::InvalidStrictMode, "Cannot declare a catch variable named '", ident->impl(), "' in strict mode");
         handleProductionOrFail(CLOSEPAREN, ")", "end", "'catch' target");
         matchOrFail(OPENBRACE, "Expected exception handler to be a block statement");
         catchBlock = parseBlockStatement(context);
         failIfFalse(catchBlock, "Unable to parse 'catch' block");
+        catchEnvironment = catchScope->finalizeLexicalEnvironment();
+        RELEASE_ASSERT(catchEnvironment.size() == 1 && catchEnvironment.contains(ident->impl()));
         popScope(catchScope, TreeBuilder::NeedsFreeVariableInfo);
     }
     
@@ -1290,7 +1292,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseTryStatement(
         failIfFalse(finallyBlock, "Cannot parse finally body");
     }
     failIfFalse(catchBlock || finallyBlock, "Try statements must have at least a catch or finally block");
-    return context.createTryStatement(location, tryBlock, ident, catchBlock, finallyBlock, firstLine, lastLine);
+    return context.createTryStatement(location, tryBlock, ident, catchBlock, finallyBlock, firstLine, lastLine, catchEnvironment);
 }
 
 template <typename LexerType>

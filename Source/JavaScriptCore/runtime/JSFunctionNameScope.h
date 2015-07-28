@@ -38,7 +38,7 @@ private:
     friend class JSNameScope;
     
     JSFunctionNameScope(VM& vm, JSGlobalObject* globalObject, JSScope* next, SymbolTable* symbolTable)
-        : Base(vm, globalObject->catchScopeStructure(), next, symbolTable)
+        : Base(vm, globalObject->functionNameScopeStructure(), next, symbolTable)
     {
     }
     

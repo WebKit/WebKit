@@ -188,17 +188,29 @@ const NUM_LOOPS = 1000;
     function taz() {
         const x = 20;
         shouldThrowInvalidConstAssignment(function() { x = 20; });
+        assert(x === 20);
         shouldThrowInvalidConstAssignment(function() { x += 20; });
+        assert(x === 20);
         shouldThrowInvalidConstAssignment(function() { x -= 20; });
+        assert(x === 20);
         shouldThrowInvalidConstAssignment(function() { x *= 20; });
+        assert(x === 20);
         shouldThrowInvalidConstAssignment(function() { x /= 20; });
+        assert(x === 20);
         shouldThrowInvalidConstAssignment(function() { x >>= 20; });
+        assert(x === 20);
         shouldThrowInvalidConstAssignment(function() { x <<= 20; });
+        assert(x === 20);
         shouldThrowInvalidConstAssignment(function() { x ^= 20; });
+        assert(x === 20);
         shouldThrowInvalidConstAssignment(function() { x++; });
+        assert(x === 20);
         shouldThrowInvalidConstAssignment(function() { x--; });
+        assert(x === 20);
         shouldThrowInvalidConstAssignment(function() { ++x; });
+        assert(x === 20);
         shouldThrowInvalidConstAssignment(function() { --x; });
+        assert(x === 20);
     }
     function jaz() {
         const x = 20;

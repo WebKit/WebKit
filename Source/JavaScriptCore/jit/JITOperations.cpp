@@ -44,7 +44,6 @@
 #include "JIT.h"
 #include "JITToDFGDeferredCompilationCallback.h"
 #include "JSCInlines.h"
-#include "JSCatchScope.h"
 #include "JSFunctionNameScope.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSLexicalEnvironment.h"
@@ -1363,11 +1362,6 @@ void JIT_OPERATION operationPutGetterSetter(ExecState* exec, JSCell* object, Ide
     baseObj->putDirectAccessor(exec, *identifier, accessor, Accessor);
 }
 #endif
-
-void JIT_OPERATION operationPushCatchScope(ExecState* exec, int32_t dst, SymbolTable* symbolTable, EncodedJSValue encodedValue)
-{
-    pushNameScope<JSCatchScope>(exec, dst, symbolTable, encodedValue);
-}
 
 void JIT_OPERATION operationPushFunctionNameScope(ExecState* exec, int32_t dst, SymbolTable* symbolTable, EncodedJSValue encodedValue)
 {

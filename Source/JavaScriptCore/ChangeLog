@@ -1,3 +1,127 @@
+2015-07-28  Saam barati  <saambarati1@gmail.com>
+
+        Implement catch scope using lexical scoping constructs introduced with "let" scoping patch
+        https://bugs.webkit.org/show_bug.cgi?id=146979
+
+        Reviewed by Geoffrey Garen.
+
+        Now that BytecodeGenerator has a notion of local scope depth,
+        we can easily implement a catch scope that doesn't claim that
+        all variables are dynamically scoped. This means that functions
+        that use try/catch can have local variable resolution. This also
+        means that all functions that use try/catch don't have all
+        their variables marked as being captured.
+
+        Catch scopes now behave like a "let" scope (sans the TDZ logic) with a 
+        single variable. Catch scopes are now just JSLexicalEnvironments and the 
+        symbol table backing the catch scope knows that it corresponds to a catch scope.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::isCacheable):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::initializeDefaultParameterValuesAndSetupFunctionScopeStack):
+        (JSC::BytecodeGenerator::emitLoadGlobalObject):
+        (JSC::BytecodeGenerator::pushLexicalScope):
+        (JSC::BytecodeGenerator::pushLexicalScopeInternal):
+        (JSC::BytecodeGenerator::popLexicalScope):
+        (JSC::BytecodeGenerator::popLexicalScopeInternal):
+        (JSC::BytecodeGenerator::prepareLexicalScopeForNextForLoopIteration):
+        (JSC::BytecodeGenerator::variable):
+        (JSC::BytecodeGenerator::resolveType):
+        (JSC::BytecodeGenerator::emitResolveScope):
+        (JSC::BytecodeGenerator::emitPopScope):
+        (JSC::BytecodeGenerator::emitPopWithScope):
+        (JSC::BytecodeGenerator::emitDebugHook):
+        (JSC::BytecodeGenerator::popScopedControlFlowContext):
+        (JSC::BytecodeGenerator::emitPushCatchScope):
+        (JSC::BytecodeGenerator::emitPopCatchScope):
+        (JSC::BytecodeGenerator::beginSwitch):
+        (JSC::BytecodeGenerator::emitPopWithOrCatchScope): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::lastOpcodeID):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::AssignResolveNode::emitBytecode):
+        (JSC::WithNode::emitBytecode):
+        (JSC::TryNode::emitBytecode):
+        * debugger/DebuggerScope.cpp:
+        (JSC::DebuggerScope::isCatchScope):
+        (JSC::DebuggerScope::isFunctionNameScope):
+        (JSC::DebuggerScope::isFunctionOrEvalScope):
+        (JSC::DebuggerScope::caughtValue):
+        * debugger/DebuggerScope.h:
+        * inspector/ScriptDebugServer.cpp:
+        (Inspector::ScriptDebugServer::exceptionOrCaughtValue):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_push_name_scope):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_push_name_scope):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createContinueStatement):
+        (JSC::ASTBuilder::createTryStatement):
+        * parser/NodeConstructors.h:
+        (JSC::ThrowNode::ThrowNode):
+        (JSC::TryNode::TryNode):
+        (JSC::FunctionParameters::FunctionParameters):
+        * parser/Nodes.h:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseTryStatement):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createBreakStatement):
+        (JSC::SyntaxChecker::createContinueStatement):
+        (JSC::SyntaxChecker::createTryStatement):
+        (JSC::SyntaxChecker::createSwitchStatement):
+        (JSC::SyntaxChecker::createWhileStatement):
+        (JSC::SyntaxChecker::createWithStatement):
+        * runtime/JSCatchScope.cpp:
+        * runtime/JSCatchScope.h:
+        (JSC::JSCatchScope::JSCatchScope): Deleted.
+        (JSC::JSCatchScope::create): Deleted.
+        (JSC::JSCatchScope::createStructure): Deleted.
+        * runtime/JSFunctionNameScope.h:
+        (JSC::JSFunctionNameScope::JSFunctionNameScope):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::withScopeStructure):
+        (JSC::JSGlobalObject::strictEvalActivationStructure):
+        (JSC::JSGlobalObject::activationStructure):
+        (JSC::JSGlobalObject::functionNameScopeStructure):
+        (JSC::JSGlobalObject::directArgumentsStructure):
+        (JSC::JSGlobalObject::scopedArgumentsStructure):
+        (JSC::JSGlobalObject::catchScopeStructure): Deleted.
+        * runtime/JSNameScope.cpp:
+        (JSC::JSNameScope::create):
+        (JSC::JSNameScope::toThis):
+        * runtime/JSNameScope.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::toThis):
+        (JSC::JSObject::isFunctionNameScopeObject):
+        (JSC::JSObject::isCatchScopeObject): Deleted.
+        * runtime/JSObject.h:
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::collectVariablesUnderTDZ):
+        (JSC::JSScope::isLexicalScope):
+        (JSC::JSScope::isCatchScope):
+        (JSC::resolveModeName):
+        * runtime/JSScope.h:
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTable::SymbolTable):
+        (JSC::SymbolTable::cloneScopePart):
+        * runtime/SymbolTable.h:
+        * tests/stress/const-semantics.js:
+        (.):
+
 2015-07-28  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::ArgumentsEliminationPhase has a redundant check for inserting CheckInBounds when converting GetByVal to GetStack in the inline non-varargs case

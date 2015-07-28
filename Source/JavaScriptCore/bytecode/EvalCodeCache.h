@@ -81,7 +81,8 @@ namespace JSC {
             return !inStrictContext 
                 && evalSource.length() < Options::maximumEvalCacheableSourceLength() 
                 && scope->begin()->isVariableObject()
-                && !scope->isLexicalScope();
+                && !scope->isLexicalScope()
+                && !scope->isCatchScope();
         }
         static const int maxCacheEntries = 64;
 

@@ -1140,7 +1140,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
                 break;
             } 
             if (JSLexicalEnvironment* lexicalEnvironment = jsDynamicCast<JSLexicalEnvironment*>(node)) {
-                if (!lexicalEnvironment->symbolTable()->correspondsToLexicalScope()) {
+                if (lexicalEnvironment->symbolTable()->scopeType() == SymbolTable::ScopeType::VarScope) {
                     variableObject = node;
                     break;
                 }

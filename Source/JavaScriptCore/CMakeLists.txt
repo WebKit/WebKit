@@ -490,7 +490,6 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/JSBoundFunction.cpp
     runtime/JSCJSValue.cpp
     runtime/JSCallee.cpp
-    runtime/JSCatchScope.cpp
     runtime/JSCell.cpp
     runtime/JSConsole.cpp
     runtime/JSDataView.cpp

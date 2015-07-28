@@ -1858,8 +1858,8 @@ RegisterID* AssignResolveNode::emitBytecode(BytecodeGenerator& generator, Regist
             generator.emitTDZCheckIfNecessary(var, local, nullptr);
 
         if (var.isReadOnly() && m_assignmentContext != AssignmentContext::ConstDeclarationStatement) {
+            result = generator.emitNode(dst, m_right); // Execute side effects first.
             generator.emitReadOnlyExceptionIfNeeded(var);
-            result = generator.emitNode(dst, m_right);
         } else if (var.isSpecial() || generator.vm()->typeProfiler()) {
             RefPtr<RegisterID> tempDst = generator.tempDestination(dst);
             generator.emitNode(tempDst.get(), m_right);
@@ -1888,9 +1888,10 @@ RegisterID* AssignResolveNode::emitBytecode(BytecodeGenerator& generator, Regist
         dst = 0;
     RefPtr<RegisterID> result = generator.emitNode(dst, m_right);
     if (var.isReadOnly() && m_assignmentContext != AssignmentContext::ConstDeclarationStatement) {
+        RegisterID* result = generator.emitNode(dst, m_right); // Execute side effects first.
         bool threwException = generator.emitReadOnlyExceptionIfNeeded(var);
         if (threwException)
-            return generator.emitNode(dst, m_right);
+            return result;
     }
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
     RegisterID* returnResult = generator.emitPutToScope(scope.get(), var, result.get(), generator.isStrictMode() ? ThrowIfNotFound : DoNotThrowIfNotFound);
@@ -2683,7 +2684,7 @@ void WithNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     generator.emitExpressionInfo(m_divot, m_divot - m_expressionLength, m_divot);
     generator.emitPushWithScope(generator.scopeRegister(), scope.get());
     generator.emitNode(dst, m_statement);
-    generator.emitPopWithOrCatchScope(generator.scopeRegister());
+    generator.emitPopWithScope(generator.scopeRegister());
 }
 
 // ------------------------------ CaseClauseNode --------------------------------
@@ -2933,10 +2934,10 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
             tryData = generator.pushTry(here.get());
         }
 
-        generator.emitPushCatchScope(generator.scopeRegister(), m_thrownValueIdent, thrownValueRegister.get(), DontDelete);
+        generator.emitPushCatchScope(m_thrownValueIdent, thrownValueRegister.get(), m_catchEnvironment);
         generator.emitProfileControlFlow(m_tryBlock->endOffset() + 1);
         generator.emitNode(dst, m_catchBlock);
-        generator.emitPopWithOrCatchScope(generator.scopeRegister());
+        generator.emitPopCatchScope(m_catchEnvironment);
         generator.emitLabel(catchEndLabel.get());
     }
 

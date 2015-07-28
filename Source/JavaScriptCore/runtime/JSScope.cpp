@@ -193,7 +193,7 @@ void JSScope::collectVariablesUnderTDZ(JSScope* scope, VariableEnvironment& resu
         if (!scope->isLexicalScope())
             continue;
         SymbolTable* symbolTable = jsCast<JSLexicalEnvironment*>(scope)->symbolTable();
-        ASSERT(symbolTable->correspondsToLexicalScope());
+        ASSERT(symbolTable->scopeType() == SymbolTable::ScopeType::LexicalScope);
         ConcurrentJITLocker locker(symbolTable->m_lock);
         for (auto end = symbolTable->end(locker), iter = symbolTable->begin(locker); iter != end; ++iter)
             result.add(iter->key);
@@ -206,8 +206,17 @@ bool JSScope::isLexicalScope()
     if (!lexicalEnvironment) // Global object does not hold any lexical variables so we can ignore it.
         return false;
 
-    return lexicalEnvironment->symbolTable()->correspondsToLexicalScope();
+    return lexicalEnvironment->symbolTable()->scopeType() == SymbolTable::ScopeType::LexicalScope;
 }
+
+bool JSScope::isCatchScope()
+{
+    JSLexicalEnvironment* lexicalEnvironment = jsDynamicCast<JSLexicalEnvironment*>(this);
+    if (!lexicalEnvironment)
+        return false;
+    return lexicalEnvironment->symbolTable()->scopeType() == SymbolTable::ScopeType::CatchScope;
+}
+
 
 const char* resolveModeName(ResolveMode mode)
 {

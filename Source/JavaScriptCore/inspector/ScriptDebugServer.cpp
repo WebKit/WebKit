@@ -340,7 +340,7 @@ Deprecated::ScriptValue ScriptDebugServer::exceptionOrCaughtValue(JSC::ExecState
     while (debuggerCallFrame) {
         DebuggerScope* scope = debuggerCallFrame->scope();
         if (scope->isCatchScope())
-            return Deprecated::ScriptValue(state->vm(), scope->caughtValue());
+            return Deprecated::ScriptValue(state->vm(), scope->caughtValue(state));
         debuggerCallFrame = debuggerCallFrame->callerFrame();
     }
 

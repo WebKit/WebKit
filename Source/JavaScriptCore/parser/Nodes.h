@@ -1513,7 +1513,7 @@ namespace JSC {
 
     class TryNode : public StatementNode {
     public:
-        TryNode(const JSTokenLocation&, StatementNode* tryBlock, const Identifier& exceptionIdent, StatementNode* catchBlock, StatementNode* finallyBlock);
+        TryNode(const JSTokenLocation&, StatementNode* tryBlock, const Identifier& exceptionIdent, StatementNode* catchBlock, VariableEnvironment& catchEnvironment, StatementNode* finallyBlock);
 
     private:
         virtual void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
@@ -1522,6 +1522,7 @@ namespace JSC {
         const Identifier& m_thrownValueIdent;
         StatementNode* m_catchBlock;
         StatementNode* m_finallyBlock;
+        VariableEnvironment m_catchEnvironment;
     };
 
     class ScopeNode : public StatementNode, public ParserArenaRoot, public VariableEnvironmentNode {

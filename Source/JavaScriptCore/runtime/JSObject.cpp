@@ -35,7 +35,6 @@
 #include "Executable.h"
 #include "GetterSetter.h"
 #include "IndexingHeaderInlines.h"
-#include "JSCatchScope.h"
 #include "JSFunction.h"
 #include "JSFunctionNameScope.h"
 #include "JSGlobalObject.h"
@@ -1600,11 +1599,6 @@ JSString* JSObject::toString(ExecState* exec) const
 JSValue JSObject::toThis(JSCell* cell, ExecState*, ECMAMode)
 {
     return jsCast<JSObject*>(cell);
-}
-
-bool JSObject::isCatchScopeObject() const
-{
-    return inherits(JSCatchScope::info());
 }
 
 bool JSObject::isFunctionNameScopeObject() const

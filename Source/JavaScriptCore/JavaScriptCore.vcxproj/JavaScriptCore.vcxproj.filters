@@ -1771,7 +1771,6 @@
     <ClCompile Include="..\dfg\DFGPutStackSinkingPhase.cpp" />
     <ClCompile Include="..\ftl\FTLJSCallBase.cpp" />
     <ClCompile Include="..\ftl\FTLJSCallVarargs.cpp" />
-    <ClCompile Include="..\runtime\JSCatchScope.cpp" />
     <ClCompile Include="..\runtime\JSFunctionNameScope.cpp" />
     <ClCompile Include="..\jit\ExecutableAllocatorFixedVMPool.cpp">
       <Filter>jit</Filter>
@@ -4272,7 +4271,6 @@
     <ClInclude Include="..\dfg\DFGPutStackSinkingPhase.h" />
     <ClInclude Include="..\ftl\FTLJSCallBase.h" />
     <ClInclude Include="..\ftl\FTLJSCallVarargs.h" />
-    <ClInclude Include="..\runtime\JSCatchScope.h" />
     <ClInclude Include="..\runtime\JSFunctionNameScope.h" />
     <ClInclude Include="..\runtime\MathCommon.h" />
     <ClInclude Include="..\bytecode\BytecodeKills.h" />

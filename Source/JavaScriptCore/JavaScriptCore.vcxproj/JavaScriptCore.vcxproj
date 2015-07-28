@@ -745,7 +745,6 @@
     <ClCompile Include="..\runtime\JSBoundFunction.cpp" />
     <ClCompile Include="..\runtime\JSCJSValue.cpp" />
     <ClCompile Include="..\runtime\JSCallee.cpp" />
-    <ClCompile Include="..\runtime\JSCatchScope.cpp" />
     <ClCompile Include="..\runtime\JSCell.cpp" />
     <ClCompile Include="..\runtime\JSConsole.cpp" />
     <ClCompile Include="..\runtime\JSDataView.cpp" />
@@ -1557,7 +1556,6 @@
     <ClInclude Include="..\runtime\JSCJSValue.h" />
     <ClInclude Include="..\runtime\JSCJSValueInlines.h" />
     <ClInclude Include="..\runtime\JSCallee.h" />
-    <ClInclude Include="..\runtime\JSCatchScope.h" />
     <ClInclude Include="..\runtime\JSCell.h" />
     <ClInclude Include="..\runtime\JSConsole.h" />
     <ClInclude Include="..\runtime\JSDataView.h" />

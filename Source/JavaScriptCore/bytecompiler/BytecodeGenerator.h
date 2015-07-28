@@ -581,12 +581,13 @@ namespace JSC {
         void emitThrowTypeError(const String& message);
 
         void emitPushFunctionNameScope(RegisterID* dst, const Identifier& property, RegisterID* value, unsigned attributes);
-        void emitPushCatchScope(RegisterID* dst, const Identifier& property, RegisterID* value, unsigned attributes);
+        void emitPushCatchScope(const Identifier& property, RegisterID* exceptionValue, VariableEnvironment&);
+        void emitPopCatchScope(VariableEnvironment&);
 
         void emitGetScope();
         RegisterID* emitPushWithScope(RegisterID* dst, RegisterID* scope);
         void emitPopScope(RegisterID* dst, RegisterID* scope);
-        void emitPopWithOrCatchScope(RegisterID* srcDst);
+        void emitPopWithScope(RegisterID* srcDst);
         RegisterID* emitGetParentScope(RegisterID* dst, RegisterID* scope);
 
         void emitDebugHook(DebugHookID, unsigned line, unsigned charOffset, unsigned lineStart);
@@ -622,7 +623,10 @@ namespace JSC {
         OpcodeID lastOpcodeID() const { return m_lastOpcodeID; }
 
     private:
-        void pushLexicalScopeInternal(VariableEnvironment&, bool canOptimizeTDZChecks, RegisterID** constantSymbolTableResult);
+        enum class TDZRequirement { UnderTDZ, NotUnderTDZ };
+        enum class ScopeType { CatchScope, LetConstScope };
+        void pushLexicalScopeInternal(VariableEnvironment&, bool canOptimizeTDZChecks, RegisterID** constantSymbolTableResult, TDZRequirement, ScopeType);
+        void popLexicalScopeInternal(VariableEnvironment&, TDZRequirement);
     public:
         void pushLexicalScope(VariableEnvironmentNode*, bool canOptimizeTDZChecks, RegisterID** constantSymbolTableResult = nullptr);
         void popLexicalScope(VariableEnvironmentNode*);
@@ -738,7 +742,7 @@ namespace JSC {
         struct SymbolTableStackEntry {
             Strong<SymbolTable> m_symbolTable;
             RegisterID* m_scope;
-            bool m_isWithOrCatch;
+            bool m_isWithScope;
             int m_symbolTableConstantIndex;
         };
         Vector<SymbolTableStackEntry> m_symbolTableStack;

@@ -91,7 +91,7 @@ public:
     bool isGlobalScope() const;
     bool isFunctionOrEvalScope() const;
 
-    JSValue caughtValue() const;
+    JSValue caughtValue(ExecState*) const;
 
 private:
     JS_EXPORT_PRIVATE DebuggerScope(VM&, JSScope*);

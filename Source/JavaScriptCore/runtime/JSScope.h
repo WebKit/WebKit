@@ -165,6 +165,7 @@ public:
     static void visitChildren(JSCell*, SlotVisitor&);
 
     bool isLexicalScope();
+    bool isCatchScope();
 
     ScopeChainIterator begin();
     ScopeChainIterator end();

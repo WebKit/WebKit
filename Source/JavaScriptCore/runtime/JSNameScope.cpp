@@ -28,7 +28,6 @@
 
 #include "Error.h"
 #include "JSCInlines.h"
-#include "JSCatchScope.h"
 #include "JSFunctionNameScope.h"
 
 namespace JSC {
@@ -37,14 +36,8 @@ const ClassInfo JSNameScope::s_info = { "NameScope", &Base::s_info, 0, CREATE_ME
 
 JSNameScope* JSNameScope::create(VM& vm, JSGlobalObject* globalObject, JSScope* currentScope, SymbolTable* symbolTable, JSValue value, Type type)
 {
-    switch (type) {
-    case CatchScope:
-        return JSCatchScope::create(vm, globalObject, currentScope, symbolTable, value);
-    case FunctionNameScope:
-        return JSFunctionNameScope::create(vm, globalObject, currentScope, symbolTable, value);
-    }
-    RELEASE_ASSERT_NOT_REACHED();
-    return nullptr;
+    RELEASE_ASSERT(type == FunctionNameScope);
+    return JSFunctionNameScope::create(vm, globalObject, currentScope, symbolTable, value);
 }
 
 JSValue JSNameScope::toThis(JSCell*, ExecState* exec, ECMAMode ecmaMode)
