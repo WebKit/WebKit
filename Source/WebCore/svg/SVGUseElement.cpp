@@ -329,8 +329,11 @@ static void removeDisallowedElementsFromSubtree(SVGElement& subtree)
         }
         ++it;
     }
-    for (auto* element : disallowedElements)
+    for (auto* element : disallowedElements) {
+        for (auto& descendant : descendantsOfType<SVGElement>(*element))
+            descendant.setCorrespondingElement(nullptr);
         element->parentNode()->removeChild(element);
+    }
 }
 
 static void associateClonesWithOriginals(SVGElement& clone, SVGElement& original)
