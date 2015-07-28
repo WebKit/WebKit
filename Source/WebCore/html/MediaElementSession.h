@@ -112,7 +112,7 @@ private:
     virtual void setShouldPlayToPlaybackTarget(bool) override;
 #endif
 #if PLATFORM(IOS)
-    bool requiresPlaybackTargetRouteMonitoring() const override { return m_hasPlaybackTargetAvailabilityListeners; }
+    bool requiresPlaybackTargetRouteMonitoring() const override;
 #endif
 
     BehaviorRestrictions m_restrictions;
