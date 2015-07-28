@@ -3,6 +3,11 @@
 <head>
 <title>Same-origin CSS</title>
 
+<script>
+// Prune memory cache to make sure we don't use a cached parsed stylesheet, in which case
+// the console warning would not be shown and the test would be flaky.
+internals.pruneMemoryCacheToSize(0);
+</script>
 <script src="/w3c/resources/testharness.js"></script>
 <script src="/w3c/resources/testharnessreport.js"></script>
 

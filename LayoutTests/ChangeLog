@@ -1,5 +1,44 @@
 2015-07-28  Chris Dumez  <cdumez@apple.com>
 
+        Tests introduced in r187489 are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=147327
+
+        Rubber-stamped by Benjamin Poulain.
+
+        Tests introduced in r187489 are flaky, they sometimes print the console
+        message, sometimes not. The reason is that we sometimes use a cached
+        parsed stylesheet and we do not print the warning in this case. To fix
+        the flakiness, we now clear the memory cache at the beginning of each
+        test to make sure we download and parse the stylesheets.
+
+        * http/tests/security/cross-origin-css-1.html:
+        * http/tests/security/cross-origin-css-2.html:
+        * http/tests/security/cross-origin-css-3.html:
+        * http/tests/security/cross-origin-css-4.html:
+        * http/tests/security/cross-origin-css-5.html:
+        * http/tests/security/cross-origin-css-6.html:
+        * http/tests/security/cross-origin-css-7.html:
+        * http/tests/security/cross-origin-css-8.html:
+        * http/tests/security/cross-origin-css-in-quirks-1.html:
+        * http/tests/security/cross-origin-css-in-quirks-2.html:
+        * http/tests/security/cross-origin-css-in-quirks-3.html:
+        * http/tests/security/cross-origin-css-in-quirks-4.html:
+        * http/tests/security/cross-origin-css-in-quirks-5.html:
+        * http/tests/security/cross-origin-css-in-quirks-6.html:
+        * http/tests/security/cross-origin-css-in-quirks-7.html:
+        * http/tests/security/cross-origin-css-in-quirks-8.html:
+        * http/tests/security/same-origin-css-1.html:
+        * http/tests/security/same-origin-css-2.html:
+        * http/tests/security/same-origin-css-3.html:
+        * http/tests/security/same-origin-css-4.html:
+        * http/tests/security/same-origin-css-5.html:
+        * http/tests/security/same-origin-css-6.html:
+        * http/tests/security/same-origin-css-7.html:
+        * http/tests/security/same-origin-css-8.html:
+        * http/tests/security/same-origin-css-in-quirks.html:
+
+2015-07-28  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, fix wrong test baseline landed in r187489.
 
         * http/tests/security/same-origin-css-4-expected.txt:
