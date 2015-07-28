@@ -1,3 +1,13 @@
+2015-07-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Include <template> node content in DOM Tree
+        https://bugs.webkit.org/show_bug.cgi?id=147335
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/dom/template-content-expected.txt: Added.
+        * inspector/dom/template-content.html: Added.
+
 2015-07-28  Basile Clement  <basile_clement@apple.com>
 
         Misleading error message: "At least one digit must occur after a decimal point"

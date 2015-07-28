@@ -289,12 +289,14 @@ WebInspector.DOMTreeManager = class DOMTreeManager extends WebInspector.Object
         for (var i = 0; node.children && i < node.children.length; ++i)
             this._unbind(node.children[i]);
 
+        if (node.templateContent())
+            this._unbind(node.templateContent());
+
         var pseudoElements = node.pseudoElements();
         for (var pseudoElement of pseudoElements)
             this._unbind(pseudoElement);
 
         // FIXME: Handle shadow roots.
-        // FIXME: Handle template content.
     }
 
     get restoreSelectedNodeIsAllowed()
