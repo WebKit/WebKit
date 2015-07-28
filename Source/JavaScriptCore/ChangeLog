@@ -1,3 +1,31 @@
+2015-07-27  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::safeToExecute() cases for GetByOffset/PutByOffset don't handle clobbered structure abstract values correctly
+        https://bugs.webkit.org/show_bug.cgi?id=147354
+
+        Reviewed by Michael Saboff.
+
+        If m_structure.isClobbered(), it means that we had a side effect that clobbered
+        the abstract value but it may recover back to its original value at the next
+        invalidation point. Since the invalidation point hasn't been reached yet, we need
+        to conservatively treat the clobbered state as if it was top. At the invalidation
+        point, the clobbered set will return back to being unclobbered.
+
+        In addition to fixing the bug, this introduces isInfinite(), which should be used
+        in places where it's tempting to just use isTop().
+
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute): Fix the bug.
+        * dfg/DFGStructureAbstractValue.cpp:
+        (JSC::DFG::StructureAbstractValue::contains): Switch to using isInfinite().
+        (JSC::DFG::StructureAbstractValue::isSubsetOf): Switch to using isInfinite().
+        (JSC::DFG::StructureAbstractValue::isSupersetOf): Switch to using isInfinite().
+        (JSC::DFG::StructureAbstractValue::overlaps): Switch to using isInfinite().
+        * dfg/DFGStructureAbstractValue.h:
+        (JSC::DFG::StructureAbstractValue::isFinite): New convenience method.
+        (JSC::DFG::StructureAbstractValue::isInfinite): New convenience method.
+        (JSC::DFG::StructureAbstractValue::onlyStructure): Switch to using isInfinite().
+
 2015-07-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Implement Reflect.enumerate

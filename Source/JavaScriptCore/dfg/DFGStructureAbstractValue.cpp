@@ -289,7 +289,7 @@ bool StructureAbstractValue::contains(Structure* structure) const
 {
     SAMPLE("StructureAbstractValue contains");
 
-    if (isTop() || isClobbered())
+    if (isInfinite())
         return true;
     
     return m_set.contains(structure);
@@ -299,7 +299,7 @@ bool StructureAbstractValue::isSubsetOf(const StructureSet& other) const
 {
     SAMPLE("StructureAbstractValue isSubsetOf set");
 
-    if (isTop() || isClobbered())
+    if (isInfinite())
         return false;
     
     return m_set.isSubsetOf(other);
@@ -332,7 +332,7 @@ bool StructureAbstractValue::isSupersetOf(const StructureSet& other) const
 {
     SAMPLE("StructureAbstractValue isSupersetOf set");
 
-    if (isTop() || isClobbered())
+    if (isInfinite())
         return true;
     
     return m_set.isSupersetOf(other);
@@ -342,7 +342,7 @@ bool StructureAbstractValue::overlaps(const StructureSet& other) const
 {
     SAMPLE("StructureAbstractValue overlaps set");
 
-    if (isTop() || isClobbered())
+    if (isInfinite())
         return true;
     
     return m_set.overlaps(other);
@@ -352,7 +352,7 @@ bool StructureAbstractValue::overlaps(const StructureAbstractValue& other) const
 {
     SAMPLE("StructureAbstractValue overlaps value");
 
-    if (other.isTop() || other.isClobbered())
+    if (other.isInfinite())
         return true;
     
     return overlaps(other.m_set);

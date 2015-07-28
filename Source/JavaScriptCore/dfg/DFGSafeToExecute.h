@@ -329,7 +329,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case GetGetterSetterByOffset:
     case PutByOffset: {
         StructureAbstractValue& value = state.forNode(node->child1()).m_structure;
-        if (value.isTop())
+        if (value.isInfinite())
             return false;
         PropertyOffset offset = node->storageAccessData().offset;
         for (unsigned i = value.size(); i--;) {
