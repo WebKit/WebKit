@@ -1,3 +1,21 @@
+2015-07-27  Andreas Kling  <akling@apple.com>
+
+        WebsiteDataStore should clean up its storage in the network process when destroyed.
+        <https://webkit.org/b/147349>
+        <rdar://problem/21838764>
+
+        Reviewed by Darin Adler.
+
+        Have ~WebsiteDataStore() send a DestroyPrivateBrowsingSession message to all networking processes
+        for ephemeral sessions. This plugs a NetworkStorageSession leak that could retain a large
+        CFNetwork object graph.
+
+        This complements r187115 which did the same for network process storage owned by
+        API::Session objects.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::~WebsiteDataStore):
+
 2015-07-27  Tim Horton  <timothy_horton@apple.com>
 
         First in-window viewStateChange synchronously blocks despite not previously being in-window

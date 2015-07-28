@@ -28,6 +28,7 @@
 
 #include "APIProcessPoolConfiguration.h"
 #include "APIWebsiteDataRecord.h"
+#include "NetworkProcessMessages.h"
 #include "StorageManager.h"
 #include "WebProcessPool.h"
 #include "WebsiteData.h"
@@ -92,6 +93,13 @@ WebsiteDataStore::WebsiteDataStore(WebCore::SessionID sessionID)
 WebsiteDataStore::~WebsiteDataStore()
 {
     platformDestroy();
+
+#if ENABLE(NETWORK_PROCESS)
+    if (m_sessionID.isEphemeral()) {
+        for (auto& processPool : WebProcessPool::allProcessPools())
+            processPool->sendToNetworkingProcess(Messages::NetworkProcess::DestroyPrivateBrowsingSession(m_sessionID));
+    }
+#endif
 }
 
 void WebsiteDataStore::cloneSessionData(WebPageProxy& sourcePage, WebPageProxy& newPage)
