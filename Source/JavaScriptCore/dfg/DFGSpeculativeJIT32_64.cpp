@@ -4580,6 +4580,8 @@ void SpeculativeJIT::compile(Node* node)
         GPRReg scratch2GPR = scratch2.gpr();
         GPRReg scratch3GPR = scratch3.gpr();
 
+        JITCompiler::Jump isTDZValue = m_jit.branch32(JITCompiler::Equal, value.tagGPR(), TrustedImm32(JSValue::EmptyValueTag));
+
         // Load the TypeProfilerLog into Scratch2.
         TypeProfilerLog* cachedTypeProfilerLog = m_jit.vm()->typeProfilerLog();
         m_jit.move(TrustedImmPtr(cachedTypeProfilerLog), scratch2GPR);
@@ -4611,6 +4613,8 @@ void SpeculativeJIT::compile(Node* node)
         MacroAssembler::Jump clearLog = m_jit.branchPtr(MacroAssembler::Equal, scratch1GPR, TrustedImmPtr(cachedTypeProfilerLog->logEndPtr()));
         addSlowPathGenerator(
             slowPathCall(clearLog, this, operationProcessTypeProfilerLogDFG, NoResult));
+
+        isTDZValue.link(&m_jit);
 
         noResult(node);
         break;

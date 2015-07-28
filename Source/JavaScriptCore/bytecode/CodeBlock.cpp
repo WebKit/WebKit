@@ -1694,8 +1694,6 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
     ASSERT(m_heap->isDeferred());
     ASSERT(m_scopeRegister.isLocal());
 
-    m_symbolTableConstantIndex = other.m_symbolTableConstantIndex;
-
     setNumParameters(other.numParameters());
     optimizeAfterWarmUp();
     jitAfterWarmUp();
@@ -1767,7 +1765,6 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     }
 
     HashSet<int, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int>> clonedConstantSymbolTables;
-    m_symbolTableConstantIndex = unlinkedCodeBlock->symbolTableConstantIndex();
     {
         HashSet<SymbolTable*> clonedSymbolTables;
         for (unsigned i = 0; i < m_constantRegisters.size(); i++) {
@@ -2059,17 +2056,16 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             VirtualRegister profileRegister(pc[1].u.operand);
             ProfileTypeBytecodeFlag flag = static_cast<ProfileTypeBytecodeFlag>(pc[3].u.operand);
             SymbolTable* symbolTable = nullptr;
-            int localScopeDepth = pc[2].u.operand;
 
             switch (flag) {
-            case ProfileTypeBytecodePutToScope:
-            case ProfileTypeBytecodeGetFromScope: {
+            case ProfileTypeBytecodeClosureVar: {
                 const Identifier& ident = identifier(pc[4].u.operand);
+                int localScopeDepth = pc[2].u.operand;
                 ResolveType type = static_cast<ResolveType>(pc[5].u.operand);
-                ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), localScopeDepth, scope, ident, (flag == ProfileTypeBytecodeGetFromScope ? Get : Put), type);
+                // Even though type profiling may be profiling either a Get or a Put, we can always claim a Get because
+                // we're abstractly "read"ing from a JSScope.
+                ResolveOp op = JSScope::abstractResolve(m_globalObject->globalExec(), localScopeDepth, scope, ident, Get, type);
 
-                // FIXME: handle other values for op.type here, and also consider what to do when we can't statically determine the globalID
-                // https://bugs.webkit.org/show_bug.cgi?id=135184
                 if (op.type == ClosureVar)
                     symbolTable = op.lexicalEnvironment->symbolTable();
                 else if (op.type == GlobalVar)
@@ -2086,32 +2082,16 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
 
                 break;
             }
-            case ProfileTypeBytecodePutToLocalScope:
-            case ProfileTypeBytecodeGetFromLocalScope: {
-                if (!m_symbolTableConstantIndex) {
-                    globalVariableID = TypeProfilerNoGlobalIDExists;
-                    break;
-                }
+            case ProfileTypeBytecodeLocallyResolved: {
+                int symbolTableIndex = pc[2].u.operand;
+                RELEASE_ASSERT(clonedConstantSymbolTables.contains(symbolTableIndex));
+                SymbolTable* symbolTable = jsCast<SymbolTable*>(getConstant(symbolTableIndex));
                 const Identifier& ident = identifier(pc[4].u.operand);
-                symbolTable = this->symbolTable();
                 ConcurrentJITLocker locker(symbolTable->m_lock);
                 // If our parent scope was created while profiling was disabled, it will not have prepared for profiling yet.
-                symbolTable->prepareForTypeProfiling(locker);
                 globalVariableID = symbolTable->uniqueIDForVariable(locker, ident.impl(), *vm());
                 globalTypeSet = symbolTable->globalTypeSetForVariable(locker, ident.impl(), *vm());
 
-                break;
-            }
-
-            case ProfileTypeBytecodeHasGlobalID: {
-                if (!m_symbolTableConstantIndex) {
-                    globalVariableID = TypeProfilerNoGlobalIDExists;
-                    break;
-                }
-                symbolTable = this->symbolTable();
-                ConcurrentJITLocker locker(symbolTable->m_lock);
-                globalVariableID = symbolTable->uniqueIDForOffset(locker, VarOffset(profileRegister), *vm());
-                globalTypeSet = symbolTable->globalTypeSetForOffset(locker, VarOffset(profileRegister), *vm());
                 break;
             }
             case ProfileTypeBytecodeDoesNotHaveGlobalID: 

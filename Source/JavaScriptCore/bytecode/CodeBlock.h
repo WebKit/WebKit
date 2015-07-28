@@ -916,15 +916,6 @@ protected:
 private:
     friend class CodeBlockSet;
     
-    SymbolTable* symbolTable() const 
-    { 
-        // FIXME: Get rid of this function once the type profiler has a notion of what
-        // symbol table it's reading from.
-        // https://bugs.webkit.org/show_bug.cgi?id=145438
-        RELEASE_ASSERT(m_symbolTableConstantIndex); 
-        return jsCast<SymbolTable*>(getConstant(m_symbolTableConstantIndex));
-    }
-
     CodeBlock* specialOSREntryBlockOrNull();
     
     void noticeIncomingCall(ExecState* callerFrame);
@@ -1006,7 +997,6 @@ private:
     VM* m_vm;
 
     RefCountedArray<Instruction> m_instructions;
-    int m_symbolTableConstantIndex;
     VirtualRegister m_thisRegister;
     VirtualRegister m_scopeRegister;
     VirtualRegister m_lexicalEnvironmentRegister;

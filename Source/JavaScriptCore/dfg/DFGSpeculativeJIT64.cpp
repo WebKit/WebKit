@@ -4609,6 +4609,8 @@ void SpeculativeJIT::compile(Node* node)
 
         MacroAssembler::JumpList jumpToEnd;
 
+        jumpToEnd.append(m_jit.branchTest64(JITCompiler::Zero, valueGPR));
+
         TypeLocation* cachedTypeLocation = node->typeLocation();
         // Compile in a predictive type check, if possible, to see if we can skip writing to the log.
         // These typechecks are inlined to match those of the 64-bit JSValue type checks.

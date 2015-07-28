@@ -207,7 +207,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     SymbolTable* functionSymbolTable = SymbolTable::create(*m_vm);
     functionSymbolTable->setUsesNonStrictEval(m_usesNonStrictEval);
     int symbolTableConstantIndex = addConstantValue(functionSymbolTable)->index();
-    m_codeBlock->setSymbolTableConstantIndex(symbolTableConstantIndex);
 
     Vector<Identifier> boundParameterProperties;
     FunctionParameters& parameters = *functionNode->parameters(); 
@@ -1180,9 +1179,6 @@ RegisterID* BytecodeGenerator::emitMove(RegisterID* dst, RegisterID* src)
     instructions().append(dst->index());
     instructions().append(src->index());
 
-    if (!dst->isTemporary() && vm()->typeProfiler())
-        emitProfileType(dst, ProfileTypeBytecodeHasGlobalID, nullptr);
-
     return dst;
 }
 
@@ -1289,24 +1285,85 @@ RegisterID* BytecodeGenerator::emitEqualityOp(OpcodeID opcodeID, RegisterID* dst
 
 void BytecodeGenerator::emitTypeProfilerExpressionInfo(const JSTextPosition& startDivot, const JSTextPosition& endDivot)
 {
+    ASSERT(vm()->typeProfiler());
+
     unsigned start = startDivot.offset; // Ranges are inclusive of their endpoints, AND 0 indexed.
     unsigned end = endDivot.offset - 1; // End Ranges already go one past the inclusive range, so subtract 1.
     unsigned instructionOffset = instructions().size() - 1;
     m_codeBlock->addTypeProfilerExpressionInfo(instructionOffset, start, end);
 }
 
-void BytecodeGenerator::emitProfileType(RegisterID* registerToProfile, ProfileTypeBytecodeFlag flag, const Identifier* identifier)
+void BytecodeGenerator::emitProfileType(RegisterID* registerToProfile, ProfileTypeBytecodeFlag flag)
 {
-    if (flag == ProfileTypeBytecodeGetFromScope || flag == ProfileTypeBytecodePutToScope)
-        RELEASE_ASSERT(identifier);
+    if (!vm()->typeProfiler())
+        return;
+
+    if (!registerToProfile)
+        return;
+
+    emitOpcode(op_profile_type);
+    instructions().append(registerToProfile->index());
+    instructions().append(0);
+    instructions().append(flag);
+    instructions().append(0);
+    instructions().append(resolveType());
+
+    // Don't emit expression info for this version of profile type. This generally means
+    // we're profiling information for something that isn't in the actual text of a JavaScript
+    // program. For example, implicit return undefined from a function call.
+}
+
+void BytecodeGenerator::emitProfileType(RegisterID* registerToProfile, const JSTextPosition& startDivot, const JSTextPosition& endDivot)
+{
+    emitProfileType(registerToProfile, ProfileTypeBytecodeDoesNotHaveGlobalID, startDivot, endDivot);
+}
+
+void BytecodeGenerator::emitProfileType(RegisterID* registerToProfile, ProfileTypeBytecodeFlag flag, const JSTextPosition& startDivot, const JSTextPosition& endDivot)
+{
+    if (!vm()->typeProfiler())
+        return;
+
+    if (!registerToProfile)
+        return;
 
     // The format of this instruction is: op_profile_type regToProfile, TypeLocation*, flag, identifier?, resolveType?
     emitOpcode(op_profile_type);
     instructions().append(registerToProfile->index());
-    instructions().append(localScopeDepth());
+    instructions().append(0);
     instructions().append(flag);
-    instructions().append(identifier ? addConstant(*identifier) : 0);
+    instructions().append(0);
     instructions().append(resolveType());
+
+    emitTypeProfilerExpressionInfo(startDivot, endDivot);
+}
+
+void BytecodeGenerator::emitProfileType(RegisterID* registerToProfile, const Variable& var, const JSTextPosition& startDivot, const JSTextPosition& endDivot)
+{
+    if (!vm()->typeProfiler())
+        return;
+
+    if (!registerToProfile)
+        return;
+
+    ProfileTypeBytecodeFlag flag;
+    int symbolTableOrScopeDepth;
+    if (var.local() || var.offset().isScope()) {
+        flag = ProfileTypeBytecodeLocallyResolved;
+        symbolTableOrScopeDepth = var.symbolTableConstantIndex();
+    } else {
+        flag = ProfileTypeBytecodeClosureVar;
+        symbolTableOrScopeDepth = localScopeDepth();
+    }
+
+    // The format of this instruction is: op_profile_type regToProfile, TypeLocation*, flag, identifier?, resolveType?
+    emitOpcode(op_profile_type);
+    instructions().append(registerToProfile->index());
+    instructions().append(symbolTableOrScopeDepth);
+    instructions().append(flag);
+    instructions().append(addConstant(var.ident()));
+    instructions().append(resolveType());
+
+    emitTypeProfilerExpressionInfo(startDivot, endDivot);
 }
 
 void BytecodeGenerator::emitProfileControlFlow(int textOffset)
@@ -1408,13 +1465,20 @@ void BytecodeGenerator::pushLexicalScopeInternal(VariableEnvironment& environmen
     }
 
     RegisterID* newScope = nullptr;
+    RegisterID* constantSymbolTable = nullptr;
     int symbolTableConstantIndex = 0;
+    if (vm()->typeProfiler()) {
+        constantSymbolTable = addConstantValue(symbolTable.get());
+        symbolTableConstantIndex = constantSymbolTable->index();
+    }
     if (hasCapturedVariables) {
         newScope = newBlockScopeVariable();
         newScope->ref();
-
-        RegisterID* constantSymbolTable = addConstantValue(!m_codeBlock->vm()->typeProfiler() ? symbolTable->cloneScopePart(*m_vm) : symbolTable.get());
-        symbolTableConstantIndex = constantSymbolTable->index();
+        if (!constantSymbolTable) {
+            ASSERT(!vm()->typeProfiler());
+            constantSymbolTable = addConstantValue(symbolTable->cloneScopePart(*m_vm));
+            symbolTableConstantIndex = constantSymbolTable->index();
+        }
         if (constantSymbolTableResult)
             *constantSymbolTableResult = constantSymbolTable;
 

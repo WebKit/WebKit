@@ -2200,6 +2200,7 @@ _llint_op_profile_type:
     loadisFromInstruction(1, t3)
     loadConstantOrVariable(t3, t0)
 
+    bqeq t0, ValueEmpty, .opProfileTypeDone
     # Store the JSValue onto the log entry.
     storeq t0, TypeProfilerLog::LogEntry::value[t2]
     

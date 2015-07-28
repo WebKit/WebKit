@@ -418,9 +418,6 @@ public:
     void addExceptionHandler(const UnlinkedHandlerInfo& handler) { createRareDataIfNecessary(); return m_rareData->m_exceptionHandlers.append(handler); }
     UnlinkedHandlerInfo& exceptionHandler(int index) { ASSERT(m_rareData); return m_rareData->m_exceptionHandlers[index]; }
 
-    void setSymbolTableConstantIndex(int index) { m_symbolTableConstantIndex = index; }
-    int symbolTableConstantIndex() const { return m_symbolTableConstantIndex; }
-
     VM* vm() const { return m_vm; }
 
     UnlinkedArrayProfile addArrayProfile() { return m_arrayProfileCount++; }
@@ -563,7 +560,6 @@ private:
     FunctionExpressionVector m_functionExprs;
 
     WriteBarrier<SymbolTable> m_symbolTable;
-    int m_symbolTableConstantIndex { 0 };
 
     Vector<unsigned> m_propertyAccessInstructions;
 
