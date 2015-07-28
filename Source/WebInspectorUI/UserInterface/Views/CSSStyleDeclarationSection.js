@@ -106,6 +106,7 @@ WebInspector.CSSStyleDeclarationSection = function(delegate, style)
     if (!style.editable)
         this._element.classList.add(WebInspector.CSSStyleDeclarationSection.LockedStyleClassName);
     else if (style.ownerRule) {
+        this._style.ownerRule.addEventListener(WebInspector.CSSRule.Event.SelectorChanged, this._markSelector.bind(this));
         this._commitSelectorKeyboardShortcut = new WebInspector.KeyboardShortcut(null, WebInspector.KeyboardShortcut.Key.Enter, this._commitSelector.bind(this), this._selectorElement);
         this._selectorElement.addEventListener("blur", this._commitSelector.bind(this));
     } else
@@ -125,6 +126,7 @@ WebInspector.CSSStyleDeclarationSection = function(delegate, style)
 
 WebInspector.CSSStyleDeclarationSection.LockedStyleClassName = "locked";
 WebInspector.CSSStyleDeclarationSection.SelectorLockedStyleClassName = "selector-locked";
+WebInspector.CSSStyleDeclarationSection.SelectorInvalidClassName = "invalid-selector";
 WebInspector.CSSStyleDeclarationSection.LastInGroupStyleClassName = "last-in-group";
 WebInspector.CSSStyleDeclarationSection.MatchedSelectorElementStyleClassName = "matched";
 
@@ -450,6 +452,9 @@ WebInspector.CSSStyleDeclarationSection.prototype = {
 
     _toggleRuleOnOff: function()
     {
+        if (this._hasInvalidSelector)
+            return;
+
         this._ruleDisabled = this._ruleDisabled ? !this._propertiesTextEditor.uncommentAllProperties() : this._propertiesTextEditor.commentAllProperties();
         this._iconElement.title = this._ruleDisabled ? WebInspector.UIString("Uncomment All Properties") : WebInspector.UIString("Comment All Properties");
         this._element.classList.toggle("rule-disabled", this._ruleDisabled);
@@ -520,6 +525,28 @@ WebInspector.CSSStyleDeclarationSection.prototype = {
         }
 
         this._style.ownerRule.selectorText = newSelectorText;
+    },
+
+    _markSelector: function(event)
+    {
+        var valid = event && event.data && event.data.valid;
+        this._element.classList.toggle(WebInspector.CSSStyleDeclarationSection.SelectorInvalidClassName, !valid);
+        if (valid) {
+            this._iconElement.title = this._ruleDisabled ? WebInspector.UIString("Uncomment All Properties") : WebInspector.UIString("Comment All Properties");
+            this._selectorElement.title = null;
+            this.refresh();
+            return;
+        }
+
+        this._iconElement.title = WebInspector.UIString("The selector '%s' is invalid.").format(this._selectorElement.textContent.trim());
+        this._selectorElement.title = WebInspector.UIString("Using the previous selector '%s'.").format(this._style.ownerRule.selectorText);
+        for (var i = 0; i < this._selectorElement.children.length; ++i)
+            this._selectorElement.children[i].title = null;
+    },
+
+    get _hasInvalidSelector()
+    {
+        return this._element.classList.contains(WebInspector.CSSStyleDeclarationSection.SelectorInvalidClassName);
     }
 };
 

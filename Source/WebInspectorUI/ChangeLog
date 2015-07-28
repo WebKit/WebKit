@@ -1,3 +1,42 @@
+2015-07-28  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Invalid selectors can be applied to the stylesheet
+        https://bugs.webkit.org/show_bug.cgi?id=147230
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Models/CSSRule.js:
+        (WebInspector.CSSRule.prototype.set selectorText):
+        Fires an event with data stating if the newly applied selector was valid or not.
+        (WebInspector.CSSRule.prototype._selectorRejected):
+        (WebInspector.CSSRule.prototype._selectorResolved):
+        (WebInspector.CSSRule):
+
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WebInspector.DOMNodeStyles.prototype.changeRuleSelector.ruleSelectorChanged):
+        (WebInspector.DOMNodeStyles.prototype.changeRuleSelector):
+        Now returns a promise that will reject if CSSAgent.setRuleSelector has an
+        error, such as if the selector is invalid, and resolve otherwise.
+
+        * UserInterface/Views/CSSStyleDeclarationSection.css:
+        (.style-declaration-section:not(.invalid-selector) > .header > .icon.toggle-able:hover):
+        (.style-declaration-section:not(.invalid-selector).rule-disabled > .header > .icon):
+        (.style-declaration-section.invalid-selector > .header > .icon):
+        (.style-declaration-section.invalid-selector > .header > .selector > *):
+        (.style-declaration-section > .header > .icon.toggle-able:hover): Deleted.
+        (.style-declaration-section.rule-disabled > .header > .icon): Deleted.
+
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection):
+        (WebInspector.CSSStyleDeclarationSection.prototype._toggleRuleOnOff):
+        Only allow rule toggling if the selector is valid.
+        (WebInspector.CSSStyleDeclarationSection.prototype._markSelector):
+        If the new selector is valid, refresh the section. Otherwise, apply a class
+        to the section element that marks the selector as being invalid.
+        (WebInspector.CSSStyleDeclarationSection.prototype.get _hasInvalidSelector):
+
 2015-07-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Show Pseudo Elements in DOM Tree

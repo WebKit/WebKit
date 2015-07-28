@@ -115,10 +115,12 @@ WebInspector.CSSRule = class CSSRule extends WebInspector.Object
         if (!this.editable)
             return;
 
-        if (this._selectorText === selectorText)
+        if (this._selectorText === selectorText) {
+            this._selectorResolved(true);
             return;
+        }
 
-        this._nodeStyles.changeRuleSelector(this, selectorText);
+        this._nodeStyles.changeRuleSelector(this, selectorText).then(this._selectorResolved.bind(this), this._selectorRejected.bind(this));
     }
 
     get selectors()
@@ -229,10 +231,21 @@ WebInspector.CSSRule = class CSSRule extends WebInspector.Object
 
         return specificSelector;
     }
+
+    _selectorRejected(error)
+    {
+        this.dispatchEventToListeners(WebInspector.CSSRule.Event.SelectorChanged, {valid: !error});
+    }
+
+    _selectorResolved(rulePayload)
+    {
+        this.dispatchEventToListeners(WebInspector.CSSRule.Event.SelectorChanged, {valid: !!rulePayload});
+    }
 };
 
 WebInspector.CSSRule.Event = {
-    Changed: "css-rule-changed"
+    Changed: "css-rule-changed",
+    SelectorChanged: "css-rule-invalid-selector"
 };
 
 WebInspector.CSSRule.Type = {
