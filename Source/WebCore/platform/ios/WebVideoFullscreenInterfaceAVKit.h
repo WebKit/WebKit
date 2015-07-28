@@ -90,7 +90,8 @@ public:
     WEBCORE_EXPORT virtual void setAudioMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex) override;
     WEBCORE_EXPORT virtual void setLegibleMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex) override;
     WEBCORE_EXPORT virtual void setExternalPlayback(bool enabled, ExternalPlaybackTargetType, WTF::String localizedDeviceName) override;
-    
+    WEBCORE_EXPORT virtual void setWirelessVideoPlaybackDisabled(bool) override;
+
     WEBCORE_EXPORT virtual void setupFullscreen(UIView&, const IntRect& initialRect, UIView *, HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicturePlayback);
     WEBCORE_EXPORT virtual void enterFullscreen();
     WEBCORE_EXPORT virtual void exitFullscreen(const IntRect& finalRect);
@@ -112,6 +113,7 @@ public:
     bool allowsPictureInPicturePlayback() const { return m_allowsPictureInPicturePlayback; }
     WEBCORE_EXPORT bool mayAutomaticallyShowVideoPictureInPicture() const;
     void fullscreenMayReturnToInline(std::function<void(bool)> callback);
+    bool wirelessVideoPlaybackDisabled() const;
 
     void willStartPictureInPicture();
     void didStartPictureInPicture();
@@ -148,6 +150,7 @@ protected:
     bool m_exitRequested { false };
     bool m_exitCompleted { false };
     bool m_enterRequested { false };
+    bool m_wirelessVideoPlaybackDisabled { true };
 
     void doEnterFullscreen();
 };

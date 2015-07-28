@@ -92,6 +92,7 @@ private:
     virtual void setAudioMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex) override;
     virtual void setLegibleMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex) override;
     virtual void setExternalPlayback(bool enabled, ExternalPlaybackTargetType, WTF::String localizedDeviceName) override;
+    virtual void setWirelessVideoPlaybackDisabled(bool) override;
 
     WebVideoFullscreenInterfaceContext(WebVideoFullscreenManager&, uint64_t contextId);
 
@@ -139,6 +140,7 @@ protected:
     void setAudioMediaSelectionOptions(uint64_t contextId, const Vector<String>& options, uint64_t selectedIndex);
     void setLegibleMediaSelectionOptions(uint64_t contextId, const Vector<String>& options, uint64_t selectedIndex);
     void setExternalPlayback(uint64_t contextId, bool enabled, WebCore::WebVideoFullscreenInterface::ExternalPlaybackTargetType, String localizedDeviceName);
+    void setWirelessVideoPlaybackDisabled(uint64_t contextId, bool);
 
     // Messages from WebVideoFullscreenManagerProxy
     void play(uint64_t contextId);

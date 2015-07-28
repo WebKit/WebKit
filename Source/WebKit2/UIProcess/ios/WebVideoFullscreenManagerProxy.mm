@@ -393,6 +393,11 @@ void WebVideoFullscreenManagerProxy::setExternalPlaybackProperties(uint64_t cont
     ensureInterface(contextId).setExternalPlayback(enabled, type, localizedDeviceName);
 }
 
+void WebVideoFullscreenManagerProxy::setWirelessVideoPlaybackDisabled(uint64_t contextId, bool disabled)
+{
+    ensureInterface(contextId).setWirelessVideoPlaybackDisabled(disabled);
+}
+
 void WebVideoFullscreenManagerProxy::setDuration(uint64_t contextId, double duration)
 {
     ensureInterface(contextId).setDuration(duration);

@@ -127,6 +127,7 @@ private:
     void setAudioMediaSelectionOptions(uint64_t contextId, Vector<String> options, uint64_t selectedIndex);
     void setLegibleMediaSelectionOptions(uint64_t contextId, Vector<String> options, uint64_t selectedIndex);
     void setExternalPlaybackProperties(uint64_t contextId, bool enabled, uint32_t targetType, String localizedDeviceName);
+    void setWirelessVideoPlaybackDisabled(uint64_t contextId, bool);
     void setDuration(uint64_t contextId, double duration);
     void setRate(uint64_t contextId, bool isPlaying, double rate);
     void enterFullscreen(uint64_t contextId);

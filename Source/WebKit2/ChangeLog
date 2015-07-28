@@ -1,3 +1,19 @@
+2015-07-28  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Notify fullscreen controller in UIProcess whether external playback is allowed
+        https://bugs.webkit.org/show_bug.cgi?id=147343
+
+        Reviewed by Brady Eidson.
+
+        Pass the boolean property wirelessVideoPlaybackDisabled across the UIProcess/WebProcess boundary.
+
+        * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+        (WebKit::WebVideoFullscreenManagerProxy::setWirelessVideoPlaybackDisabled):
+        * WebProcess/ios/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenInterfaceContext::setWirelessVideoPlaybackDisabled):
+        (WebKit::WebVideoFullscreenManager::WebVideoFullscreenManager):
+        (WebKit::WebVideoFullscreenManager::setWirelessVideoPlaybackDisabled):
+
 2015-07-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use fastMalloc instead of g_slice

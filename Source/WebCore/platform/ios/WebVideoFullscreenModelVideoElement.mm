@@ -69,8 +69,10 @@ void WebVideoFullscreenModelVideoElement::setWebVideoFullscreenInterface(WebVide
 
     if (m_videoFullscreenInterface) {
         m_videoFullscreenInterface->resetMediaState();
-        if (m_videoElement)
+        if (m_videoElement) {
             m_videoFullscreenInterface->setVideoDimensions(true, m_videoElement->videoWidth(), m_videoElement->videoHeight());
+            m_videoFullscreenInterface->setWirelessVideoPlaybackDisabled(m_videoElement->mediaSession().wirelessVideoPlaybackDisabled(*m_videoElement));
+        }
     }
 }
 
@@ -102,8 +104,10 @@ void WebVideoFullscreenModelVideoElement::setVideoElement(HTMLVideoElement* vide
 
     updateForEventName(eventNameAll());
 
-    if (m_videoFullscreenInterface)
+    if (m_videoFullscreenInterface) {
         m_videoFullscreenInterface->setVideoDimensions(true, videoElement->videoWidth(), videoElement->videoHeight());
+        m_videoFullscreenInterface->setWirelessVideoPlaybackDisabled(m_videoElement->mediaSession().wirelessVideoPlaybackDisabled(*m_videoElement));
+    }
 }
 
 void WebVideoFullscreenModelVideoElement::handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event* event)
@@ -164,6 +168,7 @@ void WebVideoFullscreenModelVideoElement::updateForEventName(const WTF::AtomicSt
             localizedDeviceName = m_videoElement->mediaControlsHost()->externalDeviceDisplayName();
         }
         m_videoFullscreenInterface->setExternalPlayback(enabled, targetType, localizedDeviceName);
+        m_videoFullscreenInterface->setWirelessVideoPlaybackDisabled(m_videoElement->mediaSession().wirelessVideoPlaybackDisabled(*m_videoElement));
     }
 }
 

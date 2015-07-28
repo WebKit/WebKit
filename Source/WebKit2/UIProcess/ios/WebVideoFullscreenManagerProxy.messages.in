@@ -31,6 +31,7 @@ messages -> WebVideoFullscreenManagerProxy {
     SetAudioMediaSelectionOptions(uint64_t contextId, Vector<String> options, uint64_t selectedIndex)
     SetLegibleMediaSelectionOptions(uint64_t contextId, Vector<String> options, uint64_t selectedIndex)
     SetExternalPlaybackProperties(uint64_t contextId, bool enabled, uint32_t targetType, String localizedDeviceName)
+    SetWirelessVideoPlaybackDisabled(uint64_t contextId, bool disabled)
     SetDuration(uint64_t contextId, double duration)
     SetRate(uint64_t contextId, bool isPlaying, double rate)
     SetupFullscreenWithID(uint64_t contextId, uint32_t videoLayerID, WebCore::IntRect initialRect, float hostingScaleFactor, WebCore::HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool allowsPictureInPicture)

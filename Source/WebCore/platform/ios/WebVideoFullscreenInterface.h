@@ -55,6 +55,7 @@ public:
     virtual void setAudioMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex) = 0;
     virtual void setLegibleMediaSelectionOptions(const Vector<WTF::String>& options, uint64_t selectedIndex) = 0;
     virtual void setExternalPlayback(bool enabled, ExternalPlaybackTargetType, WTF::String localizedDeviceName) = 0;
+    virtual void setWirelessVideoPlaybackDisabled(bool) = 0;
 };
 
 }
