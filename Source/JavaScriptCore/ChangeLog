@@ -1,3 +1,24 @@
+2015-07-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [ES6] Implement Reflect.preventExtensions
+        https://bugs.webkit.org/show_bug.cgi?id=147331
+
+        Reviewed by Sam Weinig.
+
+        Implement Reflect.preventExtensions.
+        This is different from Object.preventExensions.
+
+        1. When preventExtensions is called onto the non-object, it raises the TypeError.
+        2. Reflect.preventExtensions does not raise the TypeError when the preventExtensions operation is failed.
+
+        For the (2) case, since there is no Proxy implementation currently, Reflect.preventExtensions always succeed.
+
+        * runtime/ReflectObject.cpp:
+        (JSC::reflectObjectPreventExtensions):
+        * tests/stress/reflect-prevent-extensions.js: Added.
+        (shouldBe):
+        (shouldThrow):
+
 2015-07-27  Alex Christensen  <achristensen@webkit.org>
 
         Use Ninja on Windows.

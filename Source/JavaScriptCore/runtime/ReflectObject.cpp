@@ -32,13 +32,9 @@
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL reflectObjectOwnKeys(ExecState*);
-
-}
-
-namespace JSC {
-
 static EncodedJSValue JSC_HOST_CALL reflectObjectIsExtensible(ExecState*);
+static EncodedJSValue JSC_HOST_CALL reflectObjectOwnKeys(ExecState*);
+static EncodedJSValue JSC_HOST_CALL reflectObjectPreventExtensions(ExecState*);
 
 }
 
@@ -52,10 +48,11 @@ const ClassInfo ReflectObject::s_info = { "Reflect", &Base::s_info, &reflectObje
 
 /* Source for ReflectObject.lut.h
 @begin reflectObjectTable
-    apply           reflectObjectApply          DontEnum|Function 3
-    deleteProperty  reflectObjectDeleteProperty DontEnum|Function 2
-    isExtensible    reflectObjectIsExtensible   DontEnum|Function 1
-    ownKeys         reflectObjectOwnKeys        DontEnum|Function 1
+    apply             reflectObjectApply             DontEnum|Function 3
+    deleteProperty    reflectObjectDeleteProperty    DontEnum|Function 2
+    isExtensible      reflectObjectIsExtensible      DontEnum|Function 1
+    ownKeys           reflectObjectOwnKeys           DontEnum|Function 1
+    preventExtensions reflectObjectPreventExtensions DontEnum|Function 1
 @end
 */
 
@@ -91,6 +88,15 @@ EncodedJSValue JSC_HOST_CALL reflectObjectOwnKeys(ExecState* exec)
     if (!target.isObject())
         return JSValue::encode(throwTypeError(exec, ASCIILiteral("Reflect.ownKeys requires the first argument be an object")));
     return JSValue::encode(ownPropertyKeys(exec, jsCast<JSObject*>(target), PropertyNameMode::StringsAndSymbols, DontEnumPropertiesMode::Include));
+}
+
+EncodedJSValue JSC_HOST_CALL reflectObjectPreventExtensions(ExecState* exec)
+{
+    JSValue target = exec->argument(0);
+    if (!target.isObject())
+        return JSValue::encode(throwTypeError(exec, ASCIILiteral("Reflect.preventExtensions requires the first argument be an object")));
+    asObject(target)->preventExtensions(exec->vm());
+    return JSValue::encode(jsBoolean(true));
 }
 
 } // namespace JSC
