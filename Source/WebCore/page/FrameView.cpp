@@ -1213,7 +1213,7 @@ void FrameView::layout(bool allowSubtree)
     AnimationUpdateBlock animationUpdateBlock(&frame().animation());
     
     if (!allowSubtree && m_layoutRoot) {
-        m_layoutRoot->markContainingBlocksForLayout(false);
+        m_layoutRoot->markContainingBlocksForLayout(ScheduleRelayout::No);
         m_layoutRoot = nullptr;
     }
 
@@ -2550,7 +2550,7 @@ void FrameView::scheduleRelayout()
     ASSERT(frame().view() == this);
 
     if (m_layoutRoot) {
-        m_layoutRoot->markContainingBlocksForLayout(false);
+        m_layoutRoot->markContainingBlocksForLayout(ScheduleRelayout::No);
         m_layoutRoot = nullptr;
     }
     if (!m_layoutSchedulingEnabled)
@@ -2600,7 +2600,7 @@ void FrameView::scheduleRelayoutOfSubtree(RenderElement& newRelayoutRoot)
     ASSERT(frame().view() == this);
 
     if (renderView.needsLayout()) {
-        newRelayoutRoot.markContainingBlocksForLayout(false);
+        newRelayoutRoot.markContainingBlocksForLayout(ScheduleRelayout::No);
         return;
     }
 
@@ -2619,21 +2619,21 @@ void FrameView::scheduleRelayoutOfSubtree(RenderElement& newRelayoutRoot)
 
     if (!m_layoutRoot) {
         // Just relayout the subtree.
-        newRelayoutRoot.markContainingBlocksForLayout(false);
+        newRelayoutRoot.markContainingBlocksForLayout(ScheduleRelayout::No);
         InspectorInstrumentation::didInvalidateLayout(frame());
         return;
     }
 
     if (isObjectAncestorContainerOf(m_layoutRoot, &newRelayoutRoot)) {
         // Keep the current root.
-        newRelayoutRoot.markContainingBlocksForLayout(false, m_layoutRoot);
+        newRelayoutRoot.markContainingBlocksForLayout(ScheduleRelayout::No, m_layoutRoot);
         ASSERT(!m_layoutRoot->container() || !m_layoutRoot->container()->needsLayout());
         return;
     }
 
     if (isObjectAncestorContainerOf(&newRelayoutRoot, m_layoutRoot)) {
         // Re-root at newRelayoutRoot.
-        m_layoutRoot->markContainingBlocksForLayout(false, &newRelayoutRoot);
+        m_layoutRoot->markContainingBlocksForLayout(ScheduleRelayout::No, &newRelayoutRoot);
         m_layoutRoot = &newRelayoutRoot;
         ASSERT(!m_layoutRoot->container() || !m_layoutRoot->container()->needsLayout());
         InspectorInstrumentation::didInvalidateLayout(frame());
@@ -2641,9 +2641,9 @@ void FrameView::scheduleRelayoutOfSubtree(RenderElement& newRelayoutRoot)
     }
 
     // Just do a full relayout.
-    m_layoutRoot->markContainingBlocksForLayout(false);
+    m_layoutRoot->markContainingBlocksForLayout(ScheduleRelayout::No);
     m_layoutRoot = nullptr;
-    newRelayoutRoot.markContainingBlocksForLayout(false);
+    newRelayoutRoot.markContainingBlocksForLayout(ScheduleRelayout::No);
     InspectorInstrumentation::didInvalidateLayout(frame());
 }
 

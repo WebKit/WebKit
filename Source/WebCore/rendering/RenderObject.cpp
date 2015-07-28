@@ -580,9 +580,9 @@ static void scheduleRelayoutForSubtree(RenderElement& renderer)
     downcast<RenderView>(renderer).frameView().scheduleRelayout();
 }
 
-void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout, RenderElement* newRoot)
+void RenderObject::markContainingBlocksForLayout(ScheduleRelayout scheduleRelayout, RenderElement* newRoot)
 {
-    ASSERT(!scheduleRelayout || !newRoot);
+    ASSERT(scheduleRelayout == ScheduleRelayout::No || !newRoot);
     ASSERT(!isSetNeedsLayoutForbidden());
 
     auto ancestor = container();
@@ -626,14 +626,14 @@ void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout, RenderEl
         if (ancestor == newRoot)
             return;
 
-        if (scheduleRelayout && objectIsRelayoutBoundary(ancestor))
+        if (scheduleRelayout == ScheduleRelayout::Yes && objectIsRelayoutBoundary(ancestor))
             break;
 
         hasOutOfFlowPosition = ancestor->style().hasOutOfFlowPosition();
         ancestor = container;
     }
 
-    if (scheduleRelayout && ancestor)
+    if (scheduleRelayout == ScheduleRelayout::Yes && ancestor)
         scheduleRelayoutForSubtree(*ancestor);
 }
 

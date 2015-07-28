@@ -105,6 +105,8 @@ enum MarkingBehavior {
     MarkContainingBlockChain,
 };
 
+enum class ScheduleRelayout { No, Yes };
+
 enum MapCoordinatesMode {
     IsFixed             = 1 << 0,
     UseTransforms       = 1 << 1,
@@ -590,7 +592,7 @@ public:
 
     RenderBoxModelObject* offsetParent() const;
 
-    void markContainingBlocksForLayout(bool scheduleRelayout = true, RenderElement* newRoot = nullptr);
+    void markContainingBlocksForLayout(ScheduleRelayout = ScheduleRelayout::Yes, RenderElement* newRoot = nullptr);
     void setNeedsLayout(MarkingBehavior = MarkContainingBlockChain);
     void clearNeedsLayout();
     void setPreferredLogicalWidthsDirty(bool, MarkingBehavior = MarkContainingBlockChain);
