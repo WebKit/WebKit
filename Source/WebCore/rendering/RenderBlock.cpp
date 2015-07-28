@@ -1293,69 +1293,73 @@ LayoutUnit RenderBlock::marginIntrinsicLogicalWidthForChild(RenderBox& child) co
     return margin;
 }
 
+void RenderBlock::layoutPositionedObject(RenderBox& r, bool relayoutChildren, bool fixedPositionObjectsOnly)
+{
+    estimateRegionRangeForBoxChild(r);
+
+    // A fixed position element with an absolute positioned ancestor has no way of knowing if the latter has changed position. So
+    // if this is a fixed position element, mark it for layout if it has an abspos ancestor and needs to move with that ancestor, i.e. 
+    // it has static position.
+    markFixedPositionObjectForLayoutIfNeeded(r);
+    if (fixedPositionObjectsOnly) {
+        r.layoutIfNeeded();
+        return;
+    }
+
+    // When a non-positioned block element moves, it may have positioned children that are implicitly positioned relative to the
+    // non-positioned block.  Rather than trying to detect all of these movement cases, we just always lay out positioned
+    // objects that are positioned implicitly like this.  Such objects are rare, and so in typical DHTML menu usage (where everything is
+    // positioned explicitly) this should not incur a performance penalty.
+    if (relayoutChildren || (r.style().hasStaticBlockPosition(isHorizontalWritingMode()) && r.parent() != this))
+        r.setChildNeedsLayout(MarkOnlyThis);
+        
+    // If relayoutChildren is set and the child has percentage padding or an embedded content box, we also need to invalidate the childs pref widths.
+    if (relayoutChildren && r.needsPreferredWidthsRecalculation())
+        r.setPreferredLogicalWidthsDirty(true, MarkOnlyThis);
+    
+    r.markForPaginationRelayoutIfNeeded();
+    
+    // We don't have to do a full layout.  We just have to update our position. Try that first. If we have shrink-to-fit width
+    // and we hit the available width constraint, the layoutIfNeeded() will catch it and do a full layout.
+    if (r.needsPositionedMovementLayoutOnly() && r.tryLayoutDoingPositionedMovementOnly())
+        r.clearNeedsLayout();
+        
+    // If we are paginated or in a line grid, compute a vertical position for our object now.
+    // If it's wrong we'll lay out again.
+    LayoutUnit oldLogicalTop = 0;
+    bool needsBlockDirectionLocationSetBeforeLayout = r.needsLayout() && view().layoutState()->needsBlockDirectionLocationSetBeforeLayout();
+    if (needsBlockDirectionLocationSetBeforeLayout) {
+        if (isHorizontalWritingMode() == r.isHorizontalWritingMode())
+            r.updateLogicalHeight();
+        else
+            r.updateLogicalWidth();
+        oldLogicalTop = logicalTopForChild(r);
+    }
+
+    r.layoutIfNeeded();
+
+    // Lay out again if our estimate was wrong.
+    if (needsBlockDirectionLocationSetBeforeLayout && logicalTopForChild(r) != oldLogicalTop) {
+        r.setChildNeedsLayout(MarkOnlyThis);
+        r.layoutIfNeeded();
+    }
+
+    if (updateRegionRangeForBoxChild(r)) {
+        r.setNeedsLayout(MarkOnlyThis);
+        r.layoutIfNeeded();
+    }
+}
+
 void RenderBlock::layoutPositionedObjects(bool relayoutChildren, bool fixedPositionObjectsOnly)
 {
     TrackedRendererListHashSet* positionedDescendants = positionedObjects();
     if (!positionedDescendants)
         return;
-
-    for (auto it = positionedDescendants->begin(), end = positionedDescendants->end(); it != end; ++it) {
-        RenderBox& r = **it;
-        
-        estimateRegionRangeForBoxChild(r);
-
-        // A fixed position element with an absolute positioned ancestor has no way of knowing if the latter has changed position. So
-        // if this is a fixed position element, mark it for layout if it has an abspos ancestor and needs to move with that ancestor, i.e. 
-        // it has static position.
-        markFixedPositionObjectForLayoutIfNeeded(r);
-        if (fixedPositionObjectsOnly) {
-            r.layoutIfNeeded();
-            continue;
-        }
-
-        // When a non-positioned block element moves, it may have positioned children that are implicitly positioned relative to the
-        // non-positioned block.  Rather than trying to detect all of these movement cases, we just always lay out positioned
-        // objects that are positioned implicitly like this.  Such objects are rare, and so in typical DHTML menu usage (where everything is
-        // positioned explicitly) this should not incur a performance penalty.
-        if (relayoutChildren || (r.style().hasStaticBlockPosition(isHorizontalWritingMode()) && r.parent() != this))
-            r.setChildNeedsLayout(MarkOnlyThis);
-            
-        // If relayoutChildren is set and the child has percentage padding or an embedded content box, we also need to invalidate the childs pref widths.
-        if (relayoutChildren && r.needsPreferredWidthsRecalculation())
-            r.setPreferredLogicalWidthsDirty(true, MarkOnlyThis);
-        
-        r.markForPaginationRelayoutIfNeeded();
-        
-        // We don't have to do a full layout.  We just have to update our position. Try that first. If we have shrink-to-fit width
-        // and we hit the available width constraint, the layoutIfNeeded() will catch it and do a full layout.
-        if (r.needsPositionedMovementLayoutOnly() && r.tryLayoutDoingPositionedMovementOnly())
-            r.clearNeedsLayout();
-            
-        // If we are paginated or in a line grid, compute a vertical position for our object now.
-        // If it's wrong we'll lay out again.
-        LayoutUnit oldLogicalTop = 0;
-        bool needsBlockDirectionLocationSetBeforeLayout = r.needsLayout() && view().layoutState()->needsBlockDirectionLocationSetBeforeLayout();
-        if (needsBlockDirectionLocationSetBeforeLayout) {
-            if (isHorizontalWritingMode() == r.isHorizontalWritingMode())
-                r.updateLogicalHeight();
-            else
-                r.updateLogicalWidth();
-            oldLogicalTop = logicalTopForChild(r);
-        }
-
-        r.layoutIfNeeded();
-
-        // Lay out again if our estimate was wrong.
-        if (needsBlockDirectionLocationSetBeforeLayout && logicalTopForChild(r) != oldLogicalTop) {
-            r.setChildNeedsLayout(MarkOnlyThis);
-            r.layoutIfNeeded();
-        }
-
-        if (updateRegionRangeForBoxChild(r)) {
-            r.setNeedsLayout(MarkOnlyThis);
-            r.layoutIfNeeded();
-        }
-    }
+    
+    // Do not cache positionedDescendants->end() in a local variable, since |positionedDescendants| can be mutated
+    // as it is walked. We always need to fetch the new end() value dynamically.
+    for (auto it = positionedDescendants->begin(); it != positionedDescendants->end(); ++it)
+        layoutPositionedObject(**it, relayoutChildren, fixedPositionObjectsOnly);
 }
 
 void RenderBlock::markPositionedObjectsForLayout()
@@ -2086,7 +2090,7 @@ RenderBlock* RenderBlock::blockBeforeWithinSelectionRoot(LayoutSize& offset) con
     return beforeBlock;
 }
 
-void RenderBlock::insertIntoTrackedRendererMaps(RenderBox& descendant, TrackedDescendantsMap*& descendantsMap, TrackedContainerMap*& containerMap)
+void RenderBlock::insertIntoTrackedRendererMaps(RenderBox& descendant, TrackedDescendantsMap*& descendantsMap, TrackedContainerMap*& containerMap, bool forceNewEntry)
 {
     if (!descendantsMap) {
         descendantsMap = new TrackedDescendantsMap;
@@ -2098,6 +2102,12 @@ void RenderBlock::insertIntoTrackedRendererMaps(RenderBox& descendant, TrackedDe
         descendantSet = new TrackedRendererListHashSet;
         descendantsMap->set(this, std::unique_ptr<TrackedRendererListHashSet>(descendantSet));
     }
+    
+    if (forceNewEntry) {
+        descendantSet->remove(&descendant);
+        containerMap->remove(&descendant);
+    }
+    
     bool added = descendantSet->add(&descendant).isNewEntry;
     if (!added) {
         ASSERT(containerMap->get(&descendant));
@@ -2109,7 +2119,7 @@ void RenderBlock::insertIntoTrackedRendererMaps(RenderBox& descendant, TrackedDe
     if (!containerSet) {
         containerSet = new HashSet<RenderBlock*>;
         containerMap->set(&descendant, std::unique_ptr<HashSet<RenderBlock*>>(containerSet));
-    }
+    }    
     ASSERT(!containerSet->contains(this));
     containerSet->add(this);
 }
@@ -2157,7 +2167,7 @@ void RenderBlock::insertPositionedObject(RenderBox& o)
     if (o.isRenderFlowThread())
         return;
     
-    insertIntoTrackedRendererMaps(o, gPositionedDescendantsMap, gPositionedContainerMap);
+    insertIntoTrackedRendererMaps(o, gPositionedDescendantsMap, gPositionedContainerMap, isRenderView());
 }
 
 void RenderBlock::removePositionedObject(RenderBox& o)

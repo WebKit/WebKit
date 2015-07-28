@@ -1,3 +1,13 @@
+2015-07-27  David Hyatt  <hyatt@apple.com>
+
+        ASSERTION FAILED: !currBox->needsLayout() loading bing maps (and apple.com/music and nytimes)
+        https://bugs.webkit.org/show_bug.cgi?id=93891
+
+        Reviewed by Simon Fraser.
+
+        * fast/dynamic/position-fixed-to-absolute-with-positioned-child-crash-expected.txt: Added.
+        * fast/dynamic/position-fixed-to-absolute-with-positioned-child-crash.html: Added.
+
 2015-07-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Show Pseudo Elements in DOM Tree
