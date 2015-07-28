@@ -34,8 +34,13 @@ WebInspector.DOMTreeElementPathComponent = class DOMTreeElementPathComponent ext
 
         switch (node.nodeType()) {
         case Node.ELEMENT_NODE:
-            className = WebInspector.DOMTreeElementPathComponent.DOMElementIconStyleClassName;
-            title = WebInspector.displayNameForNode(node);
+            if (node.isPseudoElement()) {
+                className = WebInspector.DOMTreeElementPathComponent.DOMPseudoElementIconStyleClassName;
+                title = "::" + node.pseudoType();
+            } else {
+                className = WebInspector.DOMTreeElementPathComponent.DOMElementIconStyleClassName;
+                title = WebInspector.displayNameForNode(node);
+            }
             break;
 
         case Node.TEXT_NODE:
@@ -129,6 +134,7 @@ WebInspector.DOMTreeElementPathComponent = class DOMTreeElementPathComponent ext
 };
 
 WebInspector.DOMTreeElementPathComponent.DOMElementIconStyleClassName = "dom-element-icon";
+WebInspector.DOMTreeElementPathComponent.DOMPseudoElementIconStyleClassName = "dom-pseudo-element-icon";
 WebInspector.DOMTreeElementPathComponent.DOMTextNodeIconStyleClassName = "dom-text-node-icon";
 WebInspector.DOMTreeElementPathComponent.DOMCommentIconStyleClassName = "dom-comment-icon";
 WebInspector.DOMTreeElementPathComponent.DOMDocumentTypeIconStyleClassName = "dom-document-type-icon";

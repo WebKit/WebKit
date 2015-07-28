@@ -208,6 +208,20 @@ void InspectorInstrumentation::willPopShadowRootImpl(InstrumentingAgents& instru
         domAgent->willPopShadowRoot(host, root);
 }
 
+void InspectorInstrumentation::pseudoElementCreatedImpl(InstrumentingAgents& instrumentingAgents, PseudoElement& pseudoElement)
+{
+    if (InspectorDOMAgent* domAgent = instrumentingAgents.inspectorDOMAgent())
+        domAgent->pseudoElementCreated(pseudoElement);
+}
+
+void InspectorInstrumentation::pseudoElementDestroyedImpl(InstrumentingAgents& instrumentingAgents, PseudoElement& pseudoElement)
+{
+    if (InspectorDOMAgent* domAgent = instrumentingAgents.inspectorDOMAgent())
+        domAgent->pseudoElementDestroyed(pseudoElement);
+    if (InspectorLayerTreeAgent* layerTreeAgent = instrumentingAgents.inspectorLayerTreeAgent())
+        layerTreeAgent->pseudoElementDestroyed(pseudoElement);
+}
+
 void InspectorInstrumentation::didCreateNamedFlowImpl(InstrumentingAgents& instrumentingAgents, Document* document, WebKitNamedFlow& namedFlow)
 {
     if (!document)
@@ -1272,12 +1286,6 @@ void InspectorInstrumentation::renderLayerDestroyedImpl(InstrumentingAgents& ins
 {
     if (InspectorLayerTreeAgent* layerTreeAgent = instrumentingAgents.inspectorLayerTreeAgent())
         layerTreeAgent->renderLayerDestroyed(renderLayer);
-}
-
-void InspectorInstrumentation::pseudoElementDestroyedImpl(InstrumentingAgents& instrumentingAgents, PseudoElement& pseudoElement)
-{
-    if (InspectorLayerTreeAgent* layerTreeAgent = instrumentingAgents.inspectorLayerTreeAgent())
-        layerTreeAgent->pseudoElementDestroyed(pseudoElement);
 }
 
 } // namespace WebCore

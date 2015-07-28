@@ -67,7 +67,13 @@ PseudoElement::PseudoElement(Element& host, PseudoId pseudoId)
 PseudoElement::~PseudoElement()
 {
     ASSERT(!m_hostElement);
+}
+
+void PseudoElement::clearHostElement()
+{
     InspectorInstrumentation::pseudoElementDestroyed(document().page(), *this);
+
+    m_hostElement = nullptr;
 }
 
 RefPtr<RenderStyle> PseudoElement::customStyleForRenderer(RenderStyle& parentStyle)

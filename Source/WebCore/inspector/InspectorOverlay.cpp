@@ -41,6 +41,7 @@
 #include "Page.h"
 #include "PageConfiguration.h"
 #include "PolygonShape.h"
+#include "PseudoElement.h"
 #include "RectangleShape.h"
 #include "RenderBoxModelObject.h"
 #include "RenderElement.h"
@@ -686,17 +687,24 @@ static RefPtr<Inspector::Protocol::OverlayTypes::ElementData> buildObjectForElem
     if (!is<Element>(node) || !node->document().frame())
         return nullptr;
 
-    Element& element = downcast<Element>(*node);
-    bool isXHTML = element.document().isXHTMLDocument();
+    Element* effectiveElement = downcast<Element>(node);
+    if (node->isPseudoElement()) {
+        Element* hostElement = downcast<PseudoElement>(*node).hostElement();
+        if (!hostElement)
+            return nullptr;
+        effectiveElement = hostElement;
+    }
 
+    Element& element = *effectiveElement;
+    bool isXHTML = element.document().isXHTMLDocument();
     auto elementData = Inspector::Protocol::OverlayTypes::ElementData::create()
         .setTagName(isXHTML ? element.nodeName() : element.nodeName().lower())
         .setIdValue(element.getIdAttribute())
         .release();
 
-    HashSet<AtomicString> usedClassNames;
+    StringBuilder classNames;
     if (element.hasClass() && is<StyledElement>(element)) {
-        StringBuilder classNames;
+        HashSet<AtomicString> usedClassNames;
         const SpaceSplitString& classNamesString = downcast<StyledElement>(element).classNames();
         size_t classNameCount = classNamesString.size();
         for (size_t i = 0; i < classNameCount; ++i) {
@@ -707,8 +715,15 @@ static RefPtr<Inspector::Protocol::OverlayTypes::ElementData> buildObjectForElem
             classNames.append('.');
             classNames.append(className);
         }
-        elementData->setClassName(classNames.toString());
     }
+    if (node->isPseudoElement()) {
+        if (node->pseudoId() == BEFORE)
+            classNames.appendLiteral("::before");
+        else if (node->pseudoId() == AFTER)
+            classNames.appendLiteral("::after");
+    }
+    if (!classNames.isEmpty())
+        elementData->setClassName(classNames.toString());
 
     RenderElement* renderer = element.renderer();
     if (!renderer)

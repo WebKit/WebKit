@@ -1,3 +1,15 @@
+2015-07-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Show Pseudo Elements in DOM Tree
+        https://bugs.webkit.org/show_bug.cgi?id=139612
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/protocol/DOM.json:
+        Add new properties to DOMNode if it is a pseudo element or if it has
+        pseudo element children. Add new events for if a pseudo element is
+        added or removed dynamically to an existing DOMNode.
+
 2015-07-27  Filip Pizlo  <fpizlo@apple.com>
 
         Add logging when executable code gets deallocated

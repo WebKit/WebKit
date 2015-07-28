@@ -157,12 +157,20 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
 
     addEventListeners()
     {
-        this.domNode.addEventListener(WebInspector.DOMNode.Event.EnabledPseudoClassesChanged, this._updatePseudoClassCheckboxes, this);
+        var effectiveDOMNode = this.domNode.isPseudoElement() ? this.domNode.parentNode : this.domNode;
+        if (!effectiveDOMNode)
+            return;
+
+        effectiveDOMNode.addEventListener(WebInspector.DOMNode.Event.EnabledPseudoClassesChanged, this._updatePseudoClassCheckboxes, this);
     }
 
     removeEventListeners()
     {
-        this.domNode.removeEventListener(null, null, this);
+        var effectiveDOMNode = this.domNode.isPseudoElement() ? this.domNode.parentNode : this.domNode;
+        if (!effectiveDOMNode)
+            return;
+
+        effectiveDOMNode.removeEventListener(null, null, this);
     }
 
     // Private
@@ -235,7 +243,9 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
         if (!this.domNode)
             return;
 
-        this.domNode.setPseudoClassEnabled(pseudoClass, event.target.checked);
+        var effectiveDOMNode = this.domNode.isPseudoElement() ? this.domNode.parentNode : this.domNode;
+
+        effectiveDOMNode.setPseudoClassEnabled(pseudoClass, event.target.checked);
     }
 
     _updatePseudoClassCheckboxes()
@@ -243,7 +253,9 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
         if (!this.domNode)
             return;
 
-        var enabledPseudoClasses = this.domNode.enabledPseudoClasses;
+        var effectiveDOMNode = this.domNode.isPseudoElement() ? this.domNode.parentNode : this.domNode;
+
+        var enabledPseudoClasses = effectiveDOMNode.enabledPseudoClasses;
 
         for (var pseudoClass in this._forcedPseudoClassCheckboxes) {
             var checkboxElement = this._forcedPseudoClassCheckboxes[pseudoClass];

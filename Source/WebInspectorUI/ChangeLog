@@ -1,3 +1,85 @@
+2015-07-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Show Pseudo Elements in DOM Tree
+        https://bugs.webkit.org/show_bug.cgi?id=139612
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/DOMTreeManager.js:
+        (WebInspector.DOMTreeManager.prototype._pseudoElementAdded):
+        Hook up the new pseudo element DOMNode to the parent.
+
+        (WebInspector.DOMTreeManager.prototype._pseudoElementRemoved):
+        Unhook the pseudo element from its parent.
+
+        (WebInspector.DOMTreeManager.prototype._unbind):
+        When unbinding, unbind any pseudo element children we may have had.
+
+        * UserInterface/Models/DOMNode.js:
+        (WebInspector.DOMNode.prototype.isPseudoElement):
+        (WebInspector.DOMNode.prototype.pseudoType):
+        (WebInspector.DOMNode.prototype.hasPseudoElements):
+        (WebInspector.DOMNode.prototype.pseudoElements):
+        New state of a DOMNode may include pseudo elements.
+
+        (WebInspector.DOMNode.prototype.appropriateSelectorFor):
+        A selector for this node includes the selector for the node above it.
+
+        * UserInterface/Protocol/DOMObserver.js:
+        (WebInspector.DOMObserver.prototype.pseudoElementAdded):
+        (WebInspector.DOMObserver.prototype.pseudoElementRemoved):
+        Pass the message on to DOMTreeManager.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype.get editable):
+        Pseudo element nodes are not editable.
+
+        (WebInspector.DOMTreeElement.prototype.showChildNode):
+        (WebInspector.DOMTreeElement.prototype.onpopulate):
+        (WebInspector.DOMTreeElement.prototype.updateChildren):
+        (WebInspector.DOMTreeElement.prototype._nodeTitleInfo):
+        (WebInspector.DOMTreeElement.prototype._singleTextChild):
+        (WebInspector.DOMTreeElement.prototype._hasVisibleChildren):
+        (WebInspector.DOMTreeElement.prototype._visibleChildren):
+        (WebInspector.DOMTreeElement.prototype._updateChildren):
+        (WebInspector.DOMTreeElement.prototype.adjustCollapsedRange):
+        (WebInspector.DOMTreeElement.prototype.handleLoadAllChildren):
+        A DOMTreeElement's children are no longer 1-to-1 to DOMNode's children.
+        Instead a DOMNode may have a before/after pseudo element child that
+        are not included in the children list. Update parts of DOMTreeElement
+        to respect this list of visible children.
+
+        * UserInterface/Views/DOMTreeElementPathComponent.js:
+        (WebInspector.DOMTreeElementPathComponent):
+        * UserInterface/Views/PathComponentIcons.css:
+        (.dom-pseudo-element-icon .icon):
+        Styling for the path component when a pseudo element is selected.
+
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.dom-tree-outline .html-pseudo-element):
+        (.dom-tree-outline .html-fragment.shadow):
+        (.webkit-html-fragment.shadow): Deleted.
+        Styles for pseudo elements in the DOM tree.
+
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WebInspector.DOMTreeOutline.prototype._hideElement):
+        Make the hide element selector hide the host element.
+
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.js:
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype.addEventListeners):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype.removeEventListeners):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._forcedPseudoClassCheckboxChanged):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._updatePseudoClassCheckboxes):
+        Pseudo class changes won't happen on pseudo elements, but will
+        happen on their host element, so listen to and make pseudo class
+        changes to the host element.
+
+        * UserInterface/Views/RulesStyleDetailsPanel.css:
+        (.sidebar > .panel.details.css-style .rules > *:first-child:matches(.new-rule)):
+        Since a pseudo element does not have a style attribute,
+        give some margin in the style sidebar above the "New Rule"
+        button so it looks better.
+
 2015-07-27  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Record button in Timelines view is clipped on non-retina. Hovering over the dot draws it correctly.
