@@ -1,3 +1,105 @@
+2015-07-27  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Clicking a frame in the Rendering Frames timeline should select the corresponding grid row
+        https://bugs.webkit.org/show_bug.cgi?id=147013
+
+        Reviewed by Timothy Hatcher.
+
+        Added ability to select (or highlight) a particular frame by clicking in the overview graph. A tick mark
+        appears above the selected frame inside the ruler, and the frame element's background color changes to a light
+        blue vertical highlight. Frame selection is synced across the timeline view's data grid, overview graph, and
+        navigation bar path components.
+
+        A few behaviors:
+           - Clicking a frame outside the current ruler selection selects the frame.
+           - Clicking the selected frame will deselect it.
+           - Resizing the ruler selection to exclude the selected frame will deselect it.
+
+        * UserInterface/Views/DataGrid.js:
+        (WebInspector.DataGridNode.prototype.select):
+        No need to generate two SelectedNodeChanged events when selecting a node causes
+        the currently selected node to be deselected.
+
+        * UserInterface/Views/LayoutTimelineOverviewGraph.js:
+        (WebInspector.LayoutTimelineOverviewGraph):
+        * UserInterface/Views/NetworkTimelineOverviewGraph.js:
+        (WebInspector.NetworkTimelineOverviewGraph):
+        * UserInterface/Views/ScriptTimelineOverviewGraph.js:
+        (WebInspector.ScriptTimelineOverviewGraph): Set TimelineOverview during construction.
+        Set TimelineOverview during construction.
+
+        * UserInterface/Views/RenderingFrameTimelineOverviewGraph.css:
+        (.timeline-overview-graph.rendering-frame > .frame-marker):
+        (body.window-inactive .timeline-overview-graph.rendering-frame > .frame-marker):
+        Added styles for selected frame marker.
+
+        * UserInterface/Views/RenderingFrameTimelineOverviewGraph.js:
+        (WebInspector.RenderingFrameTimelineOverviewGraph):
+        Set TimelineOverview during construction.
+        (WebInspector.RenderingFrameTimelineOverviewGraph.prototype._mouseClicked):
+        Added frame marker element and frame selection via mouse click.
+
+        * UserInterface/Views/RenderingFrameTimelineView.js:
+        (WebInspector.RenderingFrameTimelineView.prototype.treeElementDeselected):
+        Deselect grid node when frame is deselected from the overview graph.
+        (WebInspector.RenderingFrameTimelineView.prototype.filterDidChange): Deleted.
+        Removed unnecessary override.
+
+        * UserInterface/Views/TimelineOverview.js:
+        Added selectRecord method and RecordSelected event.
+        (WebInspector.TimelineOverview):
+        (WebInspector.TimelineOverview.prototype._timelineRulerMouseDown):
+        (WebInspector.TimelineOverview.prototype._timelineRulerMouseClicked):
+        Since timeline ruler specifies pointer-events: all, click events must be forwarded to the
+        underlying overview graph. Click events following changes to the ruler's selection are ignored.
+
+        (WebInspector.TimelineOverview.prototype._timeRangeSelectionChanged):
+        (WebInspector.TimelineOverview.prototype._recordSelected):
+        Forward RecordSelected events from child graphs to clients of the overview.
+
+        * UserInterface/Views/TimelineOverviewGraph.js:
+        Added RecordSelected event.
+        (WebInspector.TimelineOverviewGraph):
+        (WebInspector.TimelineOverviewGraph.prototype.get visible):
+        (WebInspector.TimelineOverviewGraph.prototype.get selectedRecord):
+        (WebInspector.TimelineOverviewGraph.prototype.set selectedRecord):
+        Added property for selecting a record in the graph. Derived graph types can implement record selection
+        and choose how to style the selected record.
+        (WebInspector.TimelineOverviewGraph.prototype.updateLayout):
+        (WebInspector.TimelineOverviewGraph.prototype.needsLayout):
+        Update frame marker during an animation frame.
+        (WebInspector.TimelineOverviewGraph.prototype.dispatchSelectedRecordChangedEvent):
+        Dispatch wrapper to simplify things.
+        (WebInspector.TimelineOverviewGraph.prototype.updateSelectedRecord):
+        (WebInspector.TimelineOverviewGraph.prototype._needsSelectedRecordLayout.update):
+        (WebInspector.TimelineOverviewGraph.prototype._needsSelectedRecordLayout):
+        Inform derived overview graph to optionally style the selected record.
+        (WebInspector.TimelineOverviewGraph.prototype.set timelineOverview): Deleted.
+        No longer needed. TimelineOverview set during construction.
+
+        * UserInterface/Views/TimelineRecordFrame.css:
+        (.timeline-record-frame):
+        (.timeline-record-frame.tall):
+        Limit the "fade out" effect to frames that are >= 95% of the graph height, otherwise the
+        gradient mask is noticeable when selecting a shorter frame.
+        (.timeline-record-frame.selected):
+        (body.window-inactive .timeline-record-frame.selected):
+        (.timeline-record-frame.selected > .frame):
+        Added highlight (and dimmed inactive highlight) for selected frame element.
+
+        * UserInterface/Views/TimelineRecordFrame.js:
+        (WebInspector.TimelineRecordFrame.prototype.get selected):
+        (WebInspector.TimelineRecordFrame.prototype.set selected):
+        Added property for setting selected style.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView):
+        (WebInspector.TimelineRecordingContentView.prototype._contentViewSelectionPathComponentDidChange):
+        Select record in overview in response to changing navigation path.
+        (WebInspector.TimelineRecordingContentView.prototype._recordSelected.get console):
+        (WebInspector.TimelineRecordingContentView.prototype._recordSelected):
+        Update selected tree element in response to changing record selection in the overview graph.
+
 2015-07-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Revert change to DOMTreeElement.prototype.remove

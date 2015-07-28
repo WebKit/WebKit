@@ -46,3 +46,18 @@
 
     color: hsl(0, 0%, 60%);
 }
+
+.timeline-overview-graph.rendering-frame > .frame-marker {
+    position: absolute;
+    display: block;
+    height: 3px;
+    top: -5px;
+
+    background: -webkit-linear-gradient(left, hsl(210, 100%, 49%), hsl(210, 100%, 49%)) no-repeat 1px 0;
+
+    pointer-events: none;
+}
+
+body.window-inactive .timeline-overview-graph.rendering-frame > .frame-marker {
+    background-image: -webkit-linear-gradient(left, hsl(0, 0%, 60%), hsl(0, 0%, 60%));
+}

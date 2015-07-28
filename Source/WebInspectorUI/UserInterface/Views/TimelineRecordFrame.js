@@ -63,6 +63,19 @@ WebInspector.TimelineRecordFrame.prototype = {
         this._record = record;
     },
 
+    get selected()
+    {
+        return this._element.classList.contains("selected");
+    },
+
+    set selected(x)
+    {
+        if (this.selected === x)
+            return;
+
+        this._element.classList.toggle("selected");
+    },
+
     refresh(graphDataSource)
     {
         if (!this._record)
@@ -235,7 +248,13 @@ WebInspector.TimelineRecordFrame.prototype = {
             this._record.__displayData.graphHeightSeconds = graphDataSource.graphHeightSeconds;
         }
 
-        this._updateElementPosition(frameElement, this._record.__displayData.frameDuration / graphDataSource.graphHeightSeconds, "height");
+        var frameHeight = this._record.__displayData.frameDuration / graphDataSource.graphHeightSeconds;
+        if (frameHeight >= 0.95)
+            this._element.classList.add("tall");
+        else
+            this._element.classList.remove("tall");
+
+        this._updateElementPosition(frameElement, frameHeight, "height");
 
         for (var segment of this._record.__displayData.segments) {
             var element = document.createElement("div");

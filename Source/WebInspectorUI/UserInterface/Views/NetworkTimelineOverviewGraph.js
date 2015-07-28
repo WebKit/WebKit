@@ -24,9 +24,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.NetworkTimelineOverviewGraph = function(timeline)
+WebInspector.NetworkTimelineOverviewGraph = function(timeline, timelineOverview)
 {
-    WebInspector.TimelineOverviewGraph.call(this, timeline);
+    WebInspector.TimelineOverviewGraph.call(this, timeline, timelineOverview);
 
     this.element.classList.add("network");
 

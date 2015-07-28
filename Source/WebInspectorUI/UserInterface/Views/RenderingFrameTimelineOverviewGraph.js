@@ -23,16 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.RenderingFrameTimelineOverviewGraph = function(timeline)
+WebInspector.RenderingFrameTimelineOverviewGraph = function(timeline, timelineOverview)
 {
-    WebInspector.TimelineOverviewGraph.call(this, timeline);
+    WebInspector.TimelineOverviewGraph.call(this, timeline, timelineOverview);
 
     this.element.classList.add(WebInspector.RenderingFrameTimelineOverviewGraph.StyleClassName);
+    this.element.addEventListener("click", this._mouseClicked.bind(this));
 
     this._renderingFrameTimeline = timeline;
     this._renderingFrameTimeline.addEventListener(WebInspector.Timeline.Event.RecordAdded, this._timelineRecordAdded, this);
 
+    this._selectedFrameMarker = document.createElement("div");
+    this._selectedFrameMarker.className = "frame-marker";
+
     this._timelineRecordFrames = [];
+    this._selectedTimelineRecordFrame = null;
     this._graphHeightSeconds = NaN;
     this._framesPerSecondDividerMap = new Map;
 
@@ -69,6 +74,8 @@ WebInspector.RenderingFrameTimelineOverviewGraph.prototype = {
         WebInspector.TimelineOverviewGraph.prototype.reset.call(this);
 
         this.element.removeChildren();
+
+        this.selectedRecord = null;
 
         this._framesPerSecondDividerMap.clear();
     },
@@ -107,6 +114,34 @@ WebInspector.RenderingFrameTimelineOverviewGraph.prototype = {
         }
 
         this._updateDividers();
+        this._updateFrameMarker();
+    },
+
+    // Protected
+
+    updateSelectedRecord()
+    {
+        if (!this.selectedRecord) {
+            this._updateFrameMarker();
+            return;
+        }
+
+        const visibleDuration = this.timelineOverview.visibleDuration;
+        const frameIndex = this.selectedRecord.frameIndex;
+
+        // Reveal a newly selected record if it's outside the visible range.
+        if (frameIndex < Math.ceil(this.timelineOverview.scrollStartTime) || frameIndex >= this.timelineOverview.scrollStartTime + visibleDuration) {
+            var scrollStartTime = frameIndex;
+            if (!this._selectedTimelineRecordFrame || Math.abs(this._selectedTimelineRecordFrame.record.frameIndex - this.selectedRecord.frameIndex) > 1) {
+                scrollStartTime -= Math.floor(visibleDuration / 2);
+                scrollStartTime = Math.max(Math.min(scrollStartTime, this.timelineOverview.endTime), this.timelineOverview.startTime);
+            }
+
+            this.timelineOverview.scrollStartTime = scrollStartTime;
+            return;
+        }
+
+        this._updateFrameMarker();
     },
 
     // Private
@@ -154,13 +189,65 @@ WebInspector.RenderingFrameTimelineOverviewGraph.prototype = {
         createDividerAtPosition.call(this, 30);
     },
 
-    _updateElementPosition(element, newPosition, property)
+    _updateFrameMarker()
     {
-        newPosition *= 100;
-        newPosition = newPosition.toFixed(2);
+        if (this._selectedTimelineRecordFrame) {
+            this._selectedTimelineRecordFrame.selected = false;
+            this._selectedTimelineRecordFrame = null;
+        }
 
-        var currentPosition = parseFloat(element.style[property]).toFixed(2);
-        if (currentPosition !== newPosition)
-            element.style[property] = newPosition + "%";
+        if (!this.selectedRecord) {
+            if (this._selectedFrameMarker.parentElement)
+                this.element.removeChild(this._selectedFrameMarker);
+
+            this.dispatchSelectedRecordChangedEvent();
+            return;
+        }
+
+        var frameWidth = (1 / this.timelineOverview.secondsPerPixel);
+        this._selectedFrameMarker.style.width = frameWidth + "px";
+
+        var markerLeftPosition = this.selectedRecord.frameIndex - this.startTime;
+        this._selectedFrameMarker.style.left = ((markerLeftPosition / this.timelineOverview.visibleDuration) * 100).toFixed(2) + "%";
+
+        if (!this._selectedFrameMarker.parentElement)
+            this.element.appendChild(this._selectedFrameMarker);
+
+        // Find and update the selected frame element.
+        var index = this._timelineRecordFrames.binaryIndexOf(this.selectedRecord, function(record, frame) {
+            return frame.record ? record.frameIndex - frame.record.frameIndex : -1;
+        });
+
+        console.assert(index >= 0 && index < this._timelineRecordFrames.length, "Selected record not within visible graph duration.", this.selectedRecord);
+        if (index < 0 || index >= this._timelineRecordFrames.length)
+            return;
+
+        this._selectedTimelineRecordFrame = this._timelineRecordFrames[index];
+        this._selectedTimelineRecordFrame.selected = true;
+
+        this.dispatchSelectedRecordChangedEvent();
+    },
+
+    _mouseClicked: function(event)
+    {
+        var position = event.pageX - this.element.getBoundingClientRect().left;
+        var frameIndex = Math.floor(position * this.timelineOverview.secondsPerPixel + this.startTime);
+        if (frameIndex < 0 || frameIndex >= this._renderingFrameTimeline.records.length)
+            return;
+
+        var newSelectedRecord = this._renderingFrameTimeline.records[frameIndex];
+        // Clicking the selected frame causes it to be deselected.
+        if (this.selectedRecord === newSelectedRecord)
+            newSelectedRecord = null;
+
+        if (frameIndex >= this.timelineOverview.selectionStartTime && frameIndex < this.timelineOverview.selectionStartTime + this.timelineOverview.selectionDuration) {
+            this.selectedRecord = newSelectedRecord;
+            return;
+        }
+
+        // Clicking a frame outside the current ruler selection changes the selection to include the frame.
+        this.selectedRecord = newSelectedRecord;
+        this.timelineOverview.selectionStartTime = frameIndex;
+        this.timelineOverview.selectionDuration = 1;
     }
 };

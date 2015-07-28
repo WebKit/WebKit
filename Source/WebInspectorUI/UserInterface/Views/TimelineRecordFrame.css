@@ -31,7 +31,9 @@
     width: 4px;
 
     overflow: hidden;
+}
 
+.timeline-record-frame.tall {
     -webkit-mask-image: -webkit-linear-gradient(hsla(0, 0%, 0%, 0), hsla(0, 0%, 0%, 1) 10%);
 }
 
@@ -45,6 +47,18 @@
     padding-left: 1px;
 
     box-sizing: border-box;
+}
+
+.timeline-record-frame.selected {
+    background: -webkit-linear-gradient(left, hsl(210, 98%, 96%), hsl(210, 98%, 96%)) no-repeat 1px -1px;
+}
+
+body.window-inactive .timeline-record-frame.selected {
+    background: -webkit-linear-gradient(left, hsl(0, 0%, 96%), hsl(0, 0%, 96%)) no-repeat 1px -1px;
+}
+
+.timeline-record-frame.selected > .frame {
+    box-shadow: 0 -1px 0 white;
 }
 
 .timeline-record-frame > .frame > .duration {

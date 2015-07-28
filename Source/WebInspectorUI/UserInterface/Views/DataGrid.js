@@ -1725,7 +1725,7 @@ WebInspector.DataGridNode.prototype = {
             return;
 
         if (this.dataGrid.selectedNode)
-            this.dataGrid.selectedNode.deselect();
+            this.dataGrid.selectedNode.deselect(true);
 
         this._selected = true;
         this.dataGrid.selectedNode = this;

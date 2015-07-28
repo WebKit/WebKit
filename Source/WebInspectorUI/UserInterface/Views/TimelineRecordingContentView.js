@@ -41,6 +41,7 @@ WebInspector.TimelineRecordingContentView = function(recording, extraArguments)
 
     this._renderingFrameTimelineOverview = new WebInspector.RenderingFrameTimelineOverview(this._recording);
     this._renderingFrameTimelineOverview.addEventListener(WebInspector.TimelineOverview.Event.TimeRangeSelectionChanged, this._timeRangeSelectionChanged, this);
+    this._renderingFrameTimelineOverview.addEventListener(WebInspector.TimelineOverview.Event.RecordSelected, this._recordSelected, this);
 
     this._currentTimelineOverview = this._linearTimelineOverview;
     this.element.appendChild(this._currentTimelineOverview.element);
@@ -367,7 +368,15 @@ WebInspector.TimelineRecordingContentView.prototype = {
     {
         if (event.target !== this._contentViewContainer.currentContentView)
             return;
+
         this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
+
+        if (this.currentTimelineView === this._overviewTimelineView)
+            return;
+
+        var recordPathComponent = this.selectionPathComponents.find(function(element) { return element.representedObject instanceof WebInspector.TimelineRecord; });
+        var record = recordPathComponent ? recordPathComponent.representedObject : null;
+        this._currentTimelineOverview.selectRecord(event.target.representedObject, record);
     },
 
     _contentViewSupplementalRepresentedObjectsDidChange: function(event)
@@ -663,6 +672,32 @@ WebInspector.TimelineRecordingContentView.prototype = {
             if (selectedTreeElement && selectedTreeElement.hidden !== selectionWasHidden)
                 this.dispatchEventToListeners(WebInspector.ContentView.Event.SelectionPathComponentsDidChange);
         }.bind(this));
+    },
+
+    _recordSelected: function(event)
+    {
+        var timelineView = this._timelineViewMap.get(event.data.timeline);
+        console.assert(timelineView === this.currentTimelineView, timelineView);
+        if (timelineView !== this.currentTimelineView)
+            return;
+
+        var selectedTreeElement = this.currentTimelineView.navigationSidebarTreeOutline.selectedTreeElement;
+        if (!event.data.record) {
+            if (selectedTreeElement)
+                selectedTreeElement.deselect();
+            return;
+        }
+
+        var treeElement = this.currentTimelineView.navigationSidebarTreeOutline.findTreeElement(event.data.record);
+        console.assert(treeElement, "Timeline view has no tree element for record selected in timeline overview.", timelineView, event.data.record);
+        if (!treeElement)
+            return;
+
+        // Don't select the record's tree element if one of it's children is already selected.
+        if (selectedTreeElement && selectedTreeElement.hasAncestor(treeElement))
+            return;
+
+        treeElement.revealAndSelect(false, false, false, true);
     },
 
     _updateFrameSelection: function()
