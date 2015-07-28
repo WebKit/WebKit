@@ -41,6 +41,7 @@ namespace ContentExtensions {
 struct WEBCORE_EXPORT DFA {
     static DFA empty();
 
+    void shrinkToFit();
     void minimize();
     unsigned graphSize() const;
     size_t memoryUsed() const;

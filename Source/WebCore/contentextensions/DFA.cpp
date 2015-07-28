@@ -51,6 +51,14 @@ size_t DFA::memoryUsed() const
         + nodes.capacity() * sizeof(DFANode);
 }
 
+void DFA::shrinkToFit()
+{
+    nodes.shrinkToFit();
+    actions.shrinkToFit();
+    transitionRanges.shrinkToFit();
+    transitionDestinations.shrinkToFit();
+}
+
 void DFA::minimize()
 {
     DFAMinimizer::minimize(*this);

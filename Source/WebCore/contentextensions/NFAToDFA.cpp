@@ -387,6 +387,7 @@ DFA NFAToDFA::convert(NFA& nfa)
         dfaSourceNode.setTransitions(transitionsStart, static_cast<uint8_t>(transitionsLength));
     } while (!unprocessedNodes.isEmpty());
 
+    dfa.shrinkToFit();
     return dfa;
 }
 
