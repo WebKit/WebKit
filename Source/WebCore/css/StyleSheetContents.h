@@ -40,6 +40,7 @@ class Document;
 class Node;
 class StyleRuleBase;
 class StyleRuleImport;
+class SecurityOrigin;
 
 class StyleSheetContents : public RefCounted<StyleSheetContents> {
 public:
@@ -62,7 +63,7 @@ public:
 
     const AtomicString& determineNamespace(const AtomicString& prefix);
 
-    void parseAuthorStyleSheet(const CachedCSSStyleSheet*);
+    void parseAuthorStyleSheet(const CachedCSSStyleSheet*, const SecurityOrigin*);
     WEBCORE_EXPORT bool parseString(const String&);
     bool parseStringAtPosition(const String&, const TextPosition&, bool createdByParser);
 

@@ -1,0 +1,4 @@
+
+PASS Testing same-origin and MIME behavior for CSS. 
+PASS xorigincss2.css should be loaded. 
+

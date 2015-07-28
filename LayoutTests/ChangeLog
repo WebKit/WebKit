@@ -1,3 +1,61 @@
+2015-07-28  Chris Dumez  <cdumez@apple.com>
+
+        Allow lax MIME type parsing for same-origin CSS in quirks mode.
+        https://bugs.webkit.org/show_bug.cgi?id=147327
+        <rdar://problem/22010303>
+
+        Reviewed by Zalan Bujtas.
+
+        Add layout test coverage for MIME type parsing for same-origin CSS in
+        quirks mode and not.
+
+        * http/tests/inspector/css/bad-mime-type-expected.txt:
+        * http/tests/mime/standard-mode-does-not-load-stylesheet-with-text-plain-and-css-extension-expected.txt:
+        * http/tests/mime/standard-mode-does-not-load-stylesheet-with-text-plain-expected.txt:
+        * http/tests/misc/css-accept-any-type-expected.txt: Removed.
+        * http/tests/misc/css-accept-any-type.html: Removed.
+        * http/tests/misc/css-reject-any-type-in-strict-mode-expected.txt:
+        * http/tests/security/cross-origin-css-1-expected.txt:
+        * http/tests/security/cross-origin-css-2-expected.txt:
+        * http/tests/security/cross-origin-css-4-expected.txt:
+        * http/tests/security/cross-origin-css-5-expected.txt:
+        * http/tests/security/cross-origin-css-7-expected.txt:
+        * http/tests/security/cross-origin-css-in-quirks-1-expected.txt: Copied from LayoutTests/http/tests/security/cross-origin-css-1-expected.txt.
+        * http/tests/security/cross-origin-css-in-quirks-1.html: Added.
+        * http/tests/security/cross-origin-css-in-quirks-2-expected.txt: Copied from LayoutTests/http/tests/security/cross-origin-css-2-expected.txt.
+        * http/tests/security/cross-origin-css-in-quirks-2.html: Added.
+        * http/tests/security/cross-origin-css-in-quirks-3-expected.txt: Added.
+        * http/tests/security/cross-origin-css-in-quirks-3.html: Added.
+        * http/tests/security/cross-origin-css-in-quirks-4-expected.txt: Added.
+        * http/tests/security/cross-origin-css-in-quirks-4.html: Added.
+        * http/tests/security/cross-origin-css-in-quirks-5-expected.txt: Copied from LayoutTests/http/tests/security/cross-origin-css-5-expected.txt.
+        * http/tests/security/cross-origin-css-in-quirks-5.html: Added.
+        * http/tests/security/cross-origin-css-in-quirks-6-expected.txt: Added.
+        * http/tests/security/cross-origin-css-in-quirks-6.html: Added.
+        * http/tests/security/cross-origin-css-in-quirks-7-expected.txt: Added.
+        * http/tests/security/cross-origin-css-in-quirks-7.html: Added.
+        * http/tests/security/cross-origin-css-in-quirks-8-expected.txt: Added.
+        * http/tests/security/cross-origin-css-in-quirks-8.html: Added.
+        * http/tests/security/same-origin-css-1-expected.txt: Added.
+        * http/tests/security/same-origin-css-1.html: Added.
+        * http/tests/security/same-origin-css-2-expected.txt: Added.
+        * http/tests/security/same-origin-css-2.html: Added.
+        * http/tests/security/same-origin-css-3-expected.txt: Added.
+        * http/tests/security/same-origin-css-3.html: Added.
+        * http/tests/security/same-origin-css-4-expected.txt: Added.
+        * http/tests/security/same-origin-css-4.html: Added.
+        * http/tests/security/same-origin-css-5-expected.txt: Added.
+        * http/tests/security/same-origin-css-5.html: Added.
+        * http/tests/security/same-origin-css-6-expected.txt: Added.
+        * http/tests/security/same-origin-css-6.html: Added.
+        * http/tests/security/same-origin-css-7-expected.txt: Copied from LayoutTests/http/tests/security/cross-origin-css-7-expected.txt.
+        * http/tests/security/same-origin-css-7.html: Added.
+        * http/tests/security/same-origin-css-8-expected.txt: Added.
+        * http/tests/security/same-origin-css-8.html: Added.
+        * http/tests/security/same-origin-css-in-quirks-expected.txt: Added.
+        * http/tests/security/same-origin-css-in-quirks.html: Added.
+        * platform/mac/http/tests/misc/acid3-expected.txt:
+
 2015-07-28  Alexey Proskuryakov  <ap@apple.com>
 
         Rolling out r187463, because it caused memory corruption on multiple tests.

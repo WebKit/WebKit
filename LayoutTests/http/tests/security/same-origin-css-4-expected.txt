@@ -1,0 +1,4 @@
+
+PASS Testing same-origin and MIME behavior for CSS. 
+PASS xorigincss3.html should not be loaded, even though it is same-origin 
+
