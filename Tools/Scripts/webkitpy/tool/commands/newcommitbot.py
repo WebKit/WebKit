@@ -70,7 +70,6 @@ class NewCommitBot(AbstractQueue, StepSequenceErrorHandler):
     # AbstractQueue methods
 
     def begin_work_queue(self):
-        AbstractQueue.begin_work_queue(self)
         self._last_svn_revision = int(self._tool.scm().head_svn_revision())
         self._irc_bot = IRCBot(self.name, self._tool, Agent(self._tool, self), self._commands)
         self._tool.ensure_irc_connected(self._irc_bot.irc_delegate())
