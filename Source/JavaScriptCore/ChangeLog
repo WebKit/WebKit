@@ -1,5 +1,41 @@
 2015-07-28  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG::ArgumentsEliminationPhase has a redundant check for inserting CheckInBounds when converting GetByVal to GetStack in the inline non-varargs case
+        https://bugs.webkit.org/show_bug.cgi?id=147373
+
+        Reviewed by Mark Lam.
+
+        The code was doing a check for "index >= inlineCallFrame->arguments.size() - 1" in code where
+        safeToGetStack is true and we aren't in varargs context, but in a non-varargs context,
+        safeToGetStack can only be true if "index < inlineCallFrame->arguments.size() - 1".
+
+        When converting a GetByVal to GetStack, there are three possibilities:
+
+        1) Impossible to convert. This can happen if the GetByVal is out-of-bounds of the things we
+           know to have stored to the stack. For example, if we inline a function that does
+           "arguments[42]" at a call that passes no arguments.
+
+        2) Possible to convert, but we cannot prove statically that the GetByVal was in bounds. This
+           can happen for "arguments[42]" with no inline call frame (since we don't know statically
+           how many arguments we will be passed) or in a varargs call frame.
+
+        3) Possible to convert, and we know statically that the GetByVal is in bounds. This can
+           happen for "arguments[42]" if we have an inline call frame, and it's not a varargs call
+           frame, and we know that the caller passed 42 or more arguments.
+
+        The way the phase handles this is it first determines that we're not in case (1). This is
+        called safeToGetStack. safeToGetStack is true if we have case (2) or (3). For inline call
+        frames that have no varargs, this means that safeToGetStack is true exactly when the GetByVal
+        is in-bounds (i.e. case (3)).
+
+        But the phase was again doing a check for whether the index is in-bounds for non-varargs
+        inline call frames even when safeToGetStack was true. That check is redundant and should be
+        eliminated, since it makes the code confusing.
+
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+
+2015-07-28  Filip Pizlo  <fpizlo@apple.com>
+
         DFG::PutStackSinkingPhase should be more aggressive about its "no GetStack until put" rule
         https://bugs.webkit.org/show_bug.cgi?id=147371
 

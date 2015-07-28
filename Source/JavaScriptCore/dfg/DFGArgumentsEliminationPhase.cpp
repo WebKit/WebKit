@@ -452,8 +452,7 @@ private:
                                 arg += inlineCallFrame->stackOffset;
                             data = m_graph.m_stackAccessData.add(arg, FlushedJSValue);
                             
-                            if (!inlineCallFrame || inlineCallFrame->isVarargs()
-                                || index >= inlineCallFrame->arguments.size() - 1) {
+                            if (!inlineCallFrame || inlineCallFrame->isVarargs()) {
                                 insertionSet.insertNode(
                                     nodeIndex, SpecNone, CheckInBounds, node->origin,
                                     node->child2(), Edge(getArrayLength(candidate), Int32Use));
