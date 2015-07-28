@@ -1,3 +1,9 @@
+2015-07-28  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix wrong test baseline landed in r187489.
+
+        * http/tests/security/same-origin-css-4-expected.txt:
+
 2015-07-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Include <template> node content in DOM Tree
