@@ -1,3 +1,15 @@
+2015-07-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [Freetype] Always allow font matching for strong aliases
+        https://bugs.webkit.org/show_bug.cgi?id=147057
+
+        Reviewed by Martin Robinson.
+
+        * platform/gtk/fonts/font-family-fallback-ignores-weak-aliases-expected.html: Added.
+        * platform/gtk/fonts/font-family-fallback-ignores-weak-aliases.html: Added.
+        * platform/gtk/fonts/font-family-fallback-respects-strong-aliases-expected.html: Added.
+        * platform/gtk/fonts/font-family-fallback-respects-strong-aliases.html: Added.
+
 2015-07-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Crash when encountering characters whose natural font is one we can't look up
