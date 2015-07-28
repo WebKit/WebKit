@@ -27,11 +27,13 @@
 #include "ReflectObject.h"
 
 #include "JSCInlines.h"
+#include "JSPropertyNameIterator.h"
 #include "Lookup.h"
 #include "ObjectConstructor.h"
 
 namespace JSC {
 
+static EncodedJSValue JSC_HOST_CALL reflectObjectEnumerate(ExecState*);
 static EncodedJSValue JSC_HOST_CALL reflectObjectIsExtensible(ExecState*);
 static EncodedJSValue JSC_HOST_CALL reflectObjectOwnKeys(ExecState*);
 static EncodedJSValue JSC_HOST_CALL reflectObjectPreventExtensions(ExecState*);
@@ -50,6 +52,7 @@ const ClassInfo ReflectObject::s_info = { "Reflect", &Base::s_info, &reflectObje
 @begin reflectObjectTable
     apply             reflectObjectApply             DontEnum|Function 3
     deleteProperty    reflectObjectDeleteProperty    DontEnum|Function 2
+    enumerate         reflectObjectEnumerate         DontEnum|Function 1
     isExtensible      reflectObjectIsExtensible      DontEnum|Function 1
     ownKeys           reflectObjectOwnKeys           DontEnum|Function 1
     preventExtensions reflectObjectPreventExtensions DontEnum|Function 1
@@ -73,6 +76,14 @@ bool ReflectObject::getOwnPropertySlot(JSObject* object, ExecState* exec, Proper
 }
 
 // ------------------------------ Functions --------------------------------
+
+EncodedJSValue JSC_HOST_CALL reflectObjectEnumerate(ExecState* exec)
+{
+    JSValue target = exec->argument(0);
+    if (!target.isObject())
+        return JSValue::encode(throwTypeError(exec, ASCIILiteral("Reflect.enumerate requires the first argument be an object")));
+    return JSValue::encode(JSPropertyNameIterator::create(exec, exec->lexicalGlobalObject()->propertyNameIteratorStructure(), asObject(target)));
+}
 
 EncodedJSValue JSC_HOST_CALL reflectObjectIsExtensible(ExecState* exec)
 {

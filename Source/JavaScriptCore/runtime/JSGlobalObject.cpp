@@ -85,6 +85,7 @@
 #include "JSPromise.h"
 #include "JSPromiseConstructor.h"
 #include "JSPromisePrototype.h"
+#include "JSPropertyNameIterator.h"
 #include "JSSet.h"
 #include "JSSetIterator.h"
 #include "JSStringIterator.h"
@@ -359,6 +360,7 @@ m_ ## lowerName ## Prototype.set(vm, this, capitalName##Prototype::create(vm, th
 m_ ## properName ## Structure.set(vm, this, instanceType::createStructure(vm, this, m_ ## lowerName ## Prototype.get()));
     
     FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(CREATE_PROTOTYPE_FOR_DERIVED_ITERATOR_TYPE)
+    m_propertyNameIteratorStructure.set(vm, this, JSPropertyNameIterator::createStructure(vm, this, m_iteratorPrototype.get()));
     
 #undef CREATE_PROTOTYPE_FOR_DERIVED_ITERATOR_TYPE
 
@@ -784,6 +786,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_callbackConstructorStructure);
     visitor.append(&thisObject->m_callbackFunctionStructure);
     visitor.append(&thisObject->m_callbackObjectStructure);
+    visitor.append(&thisObject->m_propertyNameIteratorStructure);
 #if JSC_OBJC_API_ENABLED
     visitor.append(&thisObject->m_objcCallbackFunctionStructure);
     visitor.append(&thisObject->m_objcWrapperObjectStructure);

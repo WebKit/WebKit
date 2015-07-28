@@ -696,6 +696,9 @@
     <ClCompile Include="..\runtime\JSPropertyNameEnumerator.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\JSPropertyNameIterator.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
     <ClCompile Include="..\runtime\JSProxy.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
@@ -2758,6 +2761,9 @@
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\JSPropertyNameEnumerator.h">
+      <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\runtime\JSPropertyNameIterator.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\JSProxy.h">

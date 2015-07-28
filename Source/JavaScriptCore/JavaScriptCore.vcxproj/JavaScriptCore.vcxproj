@@ -768,6 +768,7 @@
     <ClCompile Include="..\runtime\JSPromiseDeferred.cpp" />
     <ClCompile Include="..\runtime\JSPromisePrototype.cpp" />
     <ClCompile Include="..\runtime\JSPropertyNameEnumerator.cpp" />
+    <ClCompile Include="..\runtime\JSPropertyNameIterator.cpp" />
     <ClCompile Include="..\runtime\JSProxy.cpp" />
     <ClCompile Include="..\runtime\JSScope.cpp" />
     <ClCompile Include="..\runtime\JSSegmentedVariableObject.cpp" />
@@ -1592,6 +1593,7 @@
     <ClInclude Include="..\runtime\JSPromiseDeferred.h" />
     <ClInclude Include="..\runtime\JSPromisePrototype.h" />
     <ClInclude Include="..\runtime\JSPropertyNameEnumerator.h" />
+    <ClInclude Include="..\runtime\JSPropertyNameIterator.h" />
     <ClInclude Include="..\runtime\JSProxy.h" />
     <ClInclude Include="..\runtime\JSScope.h" />
     <ClInclude Include="..\runtime\JSSegmentedVariableObject.h" />

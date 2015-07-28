@@ -225,6 +225,7 @@ protected:
     WriteBarrier<Structure> m_callbackConstructorStructure;
     WriteBarrier<Structure> m_callbackFunctionStructure;
     WriteBarrier<Structure> m_callbackObjectStructure;
+    WriteBarrier<Structure> m_propertyNameIteratorStructure;
 #if JSC_OBJC_API_ENABLED
     WriteBarrier<Structure> m_objcCallbackFunctionStructure;
     WriteBarrier<Structure> m_objcWrapperObjectStructure;
@@ -451,6 +452,7 @@ public:
     Structure* callbackConstructorStructure() const { return m_callbackConstructorStructure.get(); }
     Structure* callbackFunctionStructure() const { return m_callbackFunctionStructure.get(); }
     Structure* callbackObjectStructure() const { return m_callbackObjectStructure.get(); }
+    Structure* propertyNameIteratorStructure() const { return m_propertyNameIteratorStructure.get(); }
 #if JSC_OBJC_API_ENABLED
     Structure* objcCallbackFunctionStructure() const { return m_objcCallbackFunctionStructure.get(); }
     Structure* objcWrapperObjectStructure() const { return m_objcWrapperObjectStructure.get(); }
