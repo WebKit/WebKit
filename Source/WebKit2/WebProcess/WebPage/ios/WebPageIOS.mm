@@ -2252,6 +2252,11 @@ void WebPage::getPositionInformation(const IntPoint& point, InteractionInformati
                     info.bounds = downcast<RenderImage>(*renderer).absoluteContentQuad().enclosingBoundingBox();
                 else
                     info.bounds = renderer->absoluteBoundingBoxRect();
+
+                if (!renderer->document().frame()->isMainFrame()) {
+                    FrameView *view = renderer->document().frame()->view();
+                    info.bounds = view->contentsToRootView(info.bounds);
+                }
             }
         }
     }

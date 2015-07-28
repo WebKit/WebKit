@@ -1,3 +1,16 @@
+2015-07-28  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Bounds in InteractionInformationAtPosition should be always in main frame coordinate space.
+        https://bugs.webkit.org/show_bug.cgi?id=147372
+
+        When we prepare the bounds for InteractionInformationAtPosition, we should convert the rect to
+        main frame space since WKContent in UIProcess expects it to be in the web view space.
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation): Convert the bounding rect to main frame space if the element is inside a sub-frame.
+
 2015-07-27  Simon Fraser  <simon.fraser@apple.com>
 
         PathApplierFunction should take a reference to a PathElement
