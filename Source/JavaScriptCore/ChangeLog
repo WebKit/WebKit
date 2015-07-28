@@ -1,3 +1,30 @@
+2015-07-28  Basile Clement  <basile_clement@apple.com>
+
+        stress/math-pow-with-constants.js fails in cloop
+        https://bugs.webkit.org/show_bug.cgi?id=147167
+
+        Reviewed by Geoffrey Garen.
+
+        Baseline JIT, DFG and FTL are using a fast exponentiation fast path
+        when computing Math.pow() with an integer exponent that is not taken in
+        the LLInt (or the DFG abstract interpreter). This leads to the result
+        of pow changing depending on the compilation tier or the fact that
+        constant propagation kicks in, which is undesirable.
+
+        This patch adds the fast path to the slow operationMathPow in order to
+        maintain an illusion of consistency.
+
+        * runtime/MathCommon.cpp:
+        (JSC::operationMathPow):
+        * tests/stress/math-pow-coherency.js: Added.
+        (pow42):
+        (build42AsDouble.opaqueAdd):
+        (build42AsDouble):
+        (powDouble42):
+        (clobber):
+        (pow42NoConstantFolding):
+        (powDouble42NoConstantFolding):
+
 2015-07-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Show Pseudo Elements in DOM Tree
