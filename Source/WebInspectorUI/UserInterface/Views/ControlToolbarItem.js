@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ControlToolbarItem = function(identifier, toolTip, image, imageWidth, imageHeight)
+WebInspector.ControlToolbarItem = class ControlToolbarItem extends WebInspector.ButtonNavigationItem
 {
-    WebInspector.ButtonNavigationItem.call(this, identifier, toolTip, image, imageWidth, imageHeight, false);
+    constructor(identifier, toolTip, image, imageWidth, imageHeight)
+    {
+        super(identifier, toolTip, image, imageWidth, imageHeight, false);
+    }
+
+    // Protected
+
+    get additionalClassNames()
+    {
+        return ["control"];
+    }
 };
-
-WebInspector.ControlToolbarItem.StyleClassName = "control";
-
-WebInspector.ControlToolbarItem.prototype = {
-    constructor: WebInspector.ControlToolbarItem,
-
-    // Private
-
-    _additionalClassNames: [WebInspector.ControlToolbarItem.StyleClassName],
-};
-
-WebInspector.ControlToolbarItem.prototype.__proto__ = WebInspector.ButtonNavigationItem.prototype;

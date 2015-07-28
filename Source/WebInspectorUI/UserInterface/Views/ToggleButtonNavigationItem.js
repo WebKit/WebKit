@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ToggleButtonNavigationItem = function(identifier, defaultToolTip, alternateToolTip, defaultImage, alternateImage, imageWidth, imageHeight, suppressEmboss) {
-    WebInspector.ButtonNavigationItem.call(this, identifier, defaultToolTip, defaultImage, imageWidth, imageHeight, suppressEmboss);
+WebInspector.ToggleButtonNavigationItem = class ToggleButtonNavigationItem extends WebInspector.ButtonNavigationItem
+{
+    constructor(identifier, defaultToolTip, alternateToolTip, defaultImage, alternateImage, imageWidth, imageHeight, suppressEmboss)
+    {
+        super(identifier, defaultToolTip, defaultImage, imageWidth, imageHeight, suppressEmboss);
 
-    this._toggled = false;
-    this._defaultImage = defaultImage;
-    this._alternateImage = alternateImage;
-    this._defaultToolTip = defaultToolTip;
-    this._alternateToolTip = alternateToolTip || defaultToolTip;
-};
+        // The image isn't cacheable because it dynamically changes and the same canvas identifier is reused.
+        // FIXME: We could try overriding _canvasIdentifier() to return different identifiers. If we did that
+        // we would also need to override generateStyleText() to use the different identifiers.
+        this._imageCacheable = false;
 
-WebInspector.ToggleButtonNavigationItem.StyleClassName = "toggle";
-
-WebInspector.ToggleButtonNavigationItem.prototype = {
-    constructor: WebInspector.ToggleButtonNavigationItem,
+        this._toggled = false;
+        this._defaultImage = defaultImage;
+        this._alternateImage = alternateImage;
+        this._defaultToolTip = defaultToolTip;
+        this._alternateToolTip = alternateToolTip || defaultToolTip;
+    }
 
     // Public
 
     get defaultToolTip()
     {
         return this._defaultToolTip;
-    },
+    }
 
     get alternateToolTip()
     {
         return this._alternateToolTip;
-    },
+    }
 
     set alternateToolTip(toolTip)
     {
@@ -56,17 +59,17 @@ WebInspector.ToggleButtonNavigationItem.prototype = {
 
         if (this._toggled)
             this.toolTip = this._alternateToolTip;
-    },
+    }
 
     get defaultImage()
     {
         return this._defaultImage;
-    },
+    }
 
     get alternateImage()
     {
         return this._alternateImage;
-    },
+    }
 
     set alternateImage(image)
     {
@@ -74,12 +77,12 @@ WebInspector.ToggleButtonNavigationItem.prototype = {
 
         if (this._toggled)
             this.image = this._alternateImage;
-    },
+    }
 
     get toggled()
     {
         return this._toggled;
-    },
+    }
 
     set toggled(flag)
     {
@@ -97,16 +100,12 @@ WebInspector.ToggleButtonNavigationItem.prototype = {
             this.toolTip = this._defaultToolTip;
             this.image = this._defaultImage;
         }
-    },
+    }
 
-    // Private
+    // Protected
 
-    _additionalClassNames: [WebInspector.ToggleButtonNavigationItem.StyleClassName, WebInspector.ButtonNavigationItem.StyleClassName],
-
-    // The image isn't cacheable because it dynamically changes and the same canvas identifier is reused.
-    // FIXME: We could try overriding _canvasIdentifier() to return different identifiers. If we did that
-    // we would also need to override generateStyleText() to use the different identifiers.
-    _imageCacheable: false
+    get additionalClassNames()
+    {
+        return ["toggle", "button"];
+    }
 };
-
-WebInspector.ToggleButtonNavigationItem.prototype.__proto__ = WebInspector.ButtonNavigationItem.prototype;

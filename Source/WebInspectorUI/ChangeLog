@@ -1,3 +1,52 @@
+2015-07-28  Brian J. Burg  <burg@cs.washington.edu>
+
+        Web Inspector: Convert NavigationItem subclasses to ES6
+        https://bugs.webkit.org/show_bug.cgi?id=147364
+
+        Reviewed by Timothy Hatcher.
+
+        Convert remaining NavigationItem subclasses to use ES6 class.
+
+        Also promote the _additionalClassNames to be a protected getter,
+        and inline the style class names that are only used in one place.
+
+        Mechanical changes are elided from the changelog.
+
+        * UserInterface/Views/ActivateButtonNavigationItem.js:
+        (WebInspector.ActivateButtonNavigationItem):
+        (WebInspector.ActivateButtonNavigationItem.prototype.get additionalClassNames):
+        * UserInterface/Views/ActivateButtonToolbarItem.js:
+        (WebInspector.ActivateButtonToolbarItem):
+        * UserInterface/Views/ButtonNavigationItem.js:
+        (WebInspector.ButtonNavigationItem):
+        (WebInspector.ButtonNavigationItem.prototype.get additionalClassNames):
+        * UserInterface/Views/ButtonToolbarItem.js:
+        (WebInspector.ButtonToolbarItem):
+        * UserInterface/Views/ControlToolbarItem.js:
+        (WebInspector.ControlToolbarItem):
+        (WebInspector.ControlToolbarItem.prototype.get additionalClassNames):
+        * UserInterface/Views/DividerNavigationItem.js:
+        (WebInspector.DividerNavigationItem):
+        (WebInspector.DividerNavigationItem.prototype.get additionalClassNames):
+        * UserInterface/Views/FlexibleSpaceNavigationItem.js:
+        (WebInspector.FlexibleSpaceNavigationItem):
+        (WebInspector.FlexibleSpaceNavigationItem.prototype.get additionalClassNames):
+        * UserInterface/Views/HierarchicalPathNavigationItem.js:
+        (WebInspector.HierarchicalPathNavigationItem.prototype.get additionalClassNames):
+        (WebInspector.HierarchicalPathNavigationItem.prototype.get _additionalClassNames): Deleted.
+        * UserInterface/Views/NavigationItem.js:
+        (WebInspector.NavigationItem):
+        (WebInspector.NavigationItem.prototype.get _classNames):
+        * UserInterface/Views/RadioButtonNavigationItem.js:
+        (WebInspector.RadioButtonNavigationItem):
+        (WebInspector.RadioButtonNavigationItem.prototype.get additionalClassNames):
+        * UserInterface/Views/ToggleButtonNavigationItem.js:
+        (WebInspector.ToggleButtonNavigationItem):
+        (WebInspector.ToggleButtonNavigationItem.prototype.get additionalClassNames):
+        * UserInterface/Views/ToggleControlToolbarItem.js:
+        (WebInspector.ToggleControlToolbarItem):
+        (WebInspector.ToggleControlToolbarItem.prototype.get additionalClassNames):
+
 2015-07-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Include <template> node content in DOM Tree

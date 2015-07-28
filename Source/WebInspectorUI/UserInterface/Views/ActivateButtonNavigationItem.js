@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,37 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ActivateButtonNavigationItem = function(identifier, defaultToolTip, activatedToolTip, image, imageWidth, imageHeight, suppressEmboss, role)
+WebInspector.ActivateButtonNavigationItem = class ActivateButtonNavigationItem extends WebInspector.ButtonNavigationItem
 {
-    WebInspector.ButtonNavigationItem.call(this, identifier, defaultToolTip, image, imageWidth, imageHeight, suppressEmboss, role);
+    constructor(identifier, defaultToolTip, activatedToolTip, image, imageWidth, imageHeight, suppressEmboss, role)
+    {
+        super(identifier, defaultToolTip, image, imageWidth, imageHeight, suppressEmboss, role);
 
-    this._defaultToolTip = defaultToolTip;
-    this._activatedToolTip = activatedToolTip || defaultToolTip;
-    this._role = role;
-};
-
-WebInspector.ActivateButtonNavigationItem.StyleClassName = "activate";
-WebInspector.ActivateButtonNavigationItem.ActivatedStyleClassName = "activated";
-
-WebInspector.ActivateButtonNavigationItem.prototype = {
-    constructor: WebInspector.ActivateButtonNavigationItem,
+        this._defaultToolTip = defaultToolTip;
+        this._activatedToolTip = activatedToolTip || defaultToolTip;
+        this._role = role;
+    }
 
     // Public
 
     get defaultToolTip()
     {
         return this._defaultToolTip;
-    },
+    }
 
     get activatedToolTip()
     {
         return this._activatedToolTip;
-    },
+    }
 
     get activated()
     {
         return this.element.classList.contains(WebInspector.ActivateButtonNavigationItem.ActivatedStyleClassName);
-    },
+    }
 
     set activated(flag)
     {
@@ -68,9 +64,9 @@ WebInspector.ActivateButtonNavigationItem.prototype = {
             if (this._role === "tab")
                 this.element.removeAttribute("aria-selected");
         }
-    },
+    }
 
-    generateStyleText: function(parentSelector)
+    generateStyleText(parentSelector)
     {
         var classNames = this._classNames.join(".");
 
@@ -93,11 +89,14 @@ WebInspector.ActivateButtonNavigationItem.prototype = {
         }
 
         return styleText;
-    },
+    }
 
-    // Private
+    // Protected
 
-    _additionalClassNames: [WebInspector.ActivateButtonNavigationItem.StyleClassName, WebInspector.ButtonNavigationItem.StyleClassName]
+    get additionalClassNames()
+    {
+        return ["activate", "button"];
+    }
 };
 
-WebInspector.ActivateButtonNavigationItem.prototype.__proto__ = WebInspector.ButtonNavigationItem.prototype;
+WebInspector.ActivateButtonNavigationItem.ActivatedStyleClassName = "activated";

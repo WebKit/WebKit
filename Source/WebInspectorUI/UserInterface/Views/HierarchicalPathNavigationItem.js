@@ -219,8 +219,7 @@ WebInspector.HierarchicalPathNavigationItem = class HierarchicalPathNavigationIt
 
     // Protected
 
-    // FIXME: Should not be prefixed with an underscore.
-    get _additionalClassNames()
+    get additionalClassNames()
     {
         return ["hierarchical-path"];
     }

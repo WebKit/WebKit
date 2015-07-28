@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ActivateButtonToolbarItem = function(identifier, defaultToolTip, activatedToolTip, label, image, suppressEmboss, role)
+WebInspector.ActivateButtonToolbarItem = class ActivateButtonToolbarItem extends WebInspector.ActivateButtonNavigationItem
 {
-    WebInspector.ActivateButtonNavigationItem.call(this, identifier, defaultToolTip, activatedToolTip, image, 32, 32, suppressEmboss, role);
+    constructor(identifier, defaultToolTip, activatedToolTip, label, image, suppressEmboss, role)
+    {
+        super(identifier, defaultToolTip, activatedToolTip, image, 32, 32, suppressEmboss, role);
 
-    if (typeof label === "string") {
-        this._labelElement = document.createElement("div");
-        this._labelElement.className = WebInspector.ButtonToolbarItem.LabelStyleClassName;
-        this._element.appendChild(this._labelElement);
+        if (typeof label === "string") {
+            this._labelElement = document.createElement("div");
+            this._labelElement.className = WebInspector.ButtonToolbarItem.LabelStyleClassName;
+            this._element.appendChild(this._labelElement);
 
-        this.label = label;
+            this.label = label;
+        }
     }
-};
-
-WebInspector.ActivateButtonToolbarItem.prototype = {
-    constructor: WebInspector.ActivateButtonToolbarItem,
 
     // Public
 
     get label()
     {
         return this._labelElement.textContent;
-    },
+    }
 
     set label(newLabel)
     {
@@ -55,5 +54,3 @@ WebInspector.ActivateButtonToolbarItem.prototype = {
         this._labelElement.textContent = newLabel;
     }
 };
-
-WebInspector.ActivateButtonToolbarItem.prototype.__proto__ = WebInspector.ActivateButtonNavigationItem.prototype;
