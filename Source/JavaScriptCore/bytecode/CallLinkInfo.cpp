@@ -55,10 +55,7 @@ void CallLinkInfo::unlink(RepatchBuffer& repatchBuffer)
         return;
     }
     
-    unlinkFor(
-        repatchBuffer, *this,
-        (m_callType == Construct || m_callType == ConstructVarargs)? CodeForConstruct : CodeForCall,
-        m_isFTL ? MustPreserveRegisters : RegisterPreservationNotRequired);
+    unlinkFor(repatchBuffer, *this);
 
     // It will be on a list if the callee has a code block.
     if (isOnList())
@@ -102,12 +99,6 @@ void CallLinkInfo::visitWeak(RepatchBuffer& repatchBuffer)
         handleSpecificCallee(lastSeenCallee());
         clearLastSeenCallee();
     }
-}
-
-CallLinkInfo& CallLinkInfo::dummy()
-{
-    static NeverDestroyed<CallLinkInfo> dummy;
-    return dummy;
 }
 
 } // namespace JSC

@@ -57,7 +57,7 @@ public:
     }
     
     CallLinkInfo()
-        : m_isFTL(false)
+        : m_registerPreservationMode(static_cast<unsigned>(RegisterPreservationNotRequired))
         , m_hasSeenShouldRepatch(false)
         , m_hasSeenClosure(false)
         , m_clearedByGC(false)
@@ -84,6 +84,11 @@ public:
         return specializationKindFor(static_cast<CallType>(m_callType));
     }
 
+    RegisterPreservationMode registerPreservationMode() const
+    {
+        return static_cast<RegisterPreservationMode>(m_registerPreservationMode);
+    }
+
     bool isLinked() { return m_stub || m_callee; }
     void unlink(RepatchBuffer&);
 
@@ -106,7 +111,7 @@ public:
         CodeLocationNearCall callReturnLocation, CodeLocationDataLabelPtr hotPathBegin,
         CodeLocationNearCall hotPathOther, unsigned calleeGPR)
     {
-        m_isFTL = true;
+        m_registerPreservationMode = static_cast<unsigned>(MustPreserveRegisters);
         m_callType = callType;
         m_codeOrigin = codeOrigin;
         m_callReturnLocation = callReturnLocation;
@@ -176,6 +181,21 @@ public:
     PolymorphicCallStubRoutine* stub()
     {
         return m_stub.get();
+    }
+
+    void setSlowStub(PassRefPtr<JITStubRoutine> newSlowStub)
+    {
+        m_slowStub = newSlowStub;
+    }
+
+    void clearSlowStub()
+    {
+        m_slowStub = nullptr;
+    }
+
+    JITStubRoutine* slowStub()
+    {
+        return m_slowStub.get();
     }
 
     bool seenOnce()
@@ -260,8 +280,6 @@ public:
 
     void visitWeak(RepatchBuffer&);
 
-    static CallLinkInfo& dummy();
-
 private:
     CodeLocationNearCall m_callReturnLocation;
     CodeLocationDataLabelPtr m_hotPathBegin;
@@ -269,7 +287,8 @@ private:
     JITWriteBarrier<JSFunction> m_callee;
     WriteBarrier<JSFunction> m_lastSeenCallee;
     RefPtr<PolymorphicCallStubRoutine> m_stub;
-    bool m_isFTL : 1;
+    RefPtr<JITStubRoutine> m_slowStub;
+    unsigned m_registerPreservationMode : 1; // Real type is RegisterPreservationMode
     bool m_hasSeenShouldRepatch : 1;
     bool m_hasSeenClosure : 1;
     bool m_clearedByGC : 1;

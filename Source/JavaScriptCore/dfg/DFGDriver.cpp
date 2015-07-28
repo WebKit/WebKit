@@ -81,19 +81,8 @@ static CompilationResult compileImpl(
     // make sure that all JIT code generation does finalization on the main thread.
     vm.getCTIStub(osrExitGenerationThunkGenerator);
     vm.getCTIStub(throwExceptionFromCallSlowPathGenerator);
-    if (mode == DFGMode) {
-        vm.getCTIStub(linkCallThunkGenerator);
-        vm.getCTIStub(linkConstructThunkGenerator);
-        vm.getCTIStub(linkPolymorphicCallThunkGenerator);
-        vm.getCTIStub(virtualCallThunkGenerator);
-        vm.getCTIStub(virtualConstructThunkGenerator);
-    } else {
-        vm.getCTIStub(linkCallThatPreservesRegsThunkGenerator);
-        vm.getCTIStub(linkConstructThatPreservesRegsThunkGenerator);
-        vm.getCTIStub(linkPolymorphicCallThatPreservesRegsThunkGenerator);
-        vm.getCTIStub(virtualCallThatPreservesRegsThunkGenerator);
-        vm.getCTIStub(virtualConstructThatPreservesRegsThunkGenerator);
-    }
+    vm.getCTIStub(linkCallThunkGenerator);
+    vm.getCTIStub(linkPolymorphicCallThunkGenerator);
     
     if (vm.typeProfiler())
         vm.typeProfilerLog()->processLogEntries(ASCIILiteral("Preparing for DFG compilation."));

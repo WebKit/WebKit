@@ -244,10 +244,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     for (unsigned i = 0; i < m_jsCalls.size(); ++i) {
         JSCallRecord& record = m_jsCalls[i];
         CallLinkInfo& info = *record.m_info;
-        ThunkGenerator generator = linkThunkGeneratorFor(
-            info.specializationKind(),
-            RegisterPreservationNotRequired);
-        linkBuffer.link(record.m_slowCall, FunctionPtr(m_vm->getCTIStub(generator).code().executableAddress()));
+        linkBuffer.link(record.m_slowCall, FunctionPtr(m_vm->getCTIStub(linkCallThunkGenerator).code().executableAddress()));
         info.setCallLocations(linkBuffer.locationOfNearCall(record.m_slowCall),
             linkBuffer.locationOf(record.m_targetToCheck),
             linkBuffer.locationOfNearCall(record.m_fastCall));

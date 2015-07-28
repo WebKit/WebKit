@@ -586,10 +586,8 @@ static bool generateByIdStub(
             patchBuffer.locationOf(addressOfLinkFunctionCheck),
             patchBuffer.locationOfNearCall(fastPathCall));
 
-        ThunkGenerator generator = linkThunkGeneratorFor(
-            CodeForCall, RegisterPreservationNotRequired);
         patchBuffer.link(
-            slowPathCall, CodeLocationLabel(vm->getCTIStub(generator).code()));
+            slowPathCall, CodeLocationLabel(vm->getCTIStub(linkCallThunkGenerator).code()));
     }
     
     MacroAssemblerCodeRef code = FINALIZE_CODE_FOR(
@@ -1601,23 +1599,29 @@ void repatchIn(
 }
 
 static void linkSlowFor(
-    RepatchBuffer& repatchBuffer, VM* vm, CallLinkInfo& callLinkInfo, ThunkGenerator generator)
+    RepatchBuffer& repatchBuffer, VM*, CallLinkInfo& callLinkInfo, MacroAssemblerCodeRef codeRef)
 {
     repatchBuffer.relink(
-        callLinkInfo.callReturnLocation(), vm->getCTIStub(generator).code());
+        callLinkInfo.callReturnLocation(), codeRef.code());
 }
 
 static void linkSlowFor(
-    RepatchBuffer& repatchBuffer, VM* vm, CallLinkInfo& callLinkInfo,
-    CodeSpecializationKind kind, RegisterPreservationMode registers)
+    RepatchBuffer& repatchBuffer, VM* vm, CallLinkInfo& callLinkInfo, ThunkGenerator generator)
 {
-    linkSlowFor(repatchBuffer, vm, callLinkInfo, virtualThunkGeneratorFor(kind, registers));
+    linkSlowFor(repatchBuffer, vm, callLinkInfo, vm->getCTIStub(generator));
+}
+
+static void linkSlowFor(
+    RepatchBuffer& repatchBuffer, VM* vm, CallLinkInfo& callLinkInfo)
+{
+    MacroAssemblerCodeRef virtualThunk = virtualThunkFor(vm, callLinkInfo);
+    linkSlowFor(repatchBuffer, vm, callLinkInfo, virtualThunk);
+    callLinkInfo.setSlowStub(createJITStubRoutine(virtualThunk, *vm, nullptr, true));
 }
 
 void linkFor(
     ExecState* exec, CallLinkInfo& callLinkInfo, CodeBlock* calleeCodeBlock,
-    JSFunction* callee, MacroAssemblerCodePtr codePtr, CodeSpecializationKind kind,
-    RegisterPreservationMode registers)
+    JSFunction* callee, MacroAssemblerCodePtr codePtr)
 {
     ASSERT(!callLinkInfo.stub());
     
@@ -1637,61 +1641,55 @@ void linkFor(
     if (calleeCodeBlock)
         calleeCodeBlock->linkIncomingCall(exec->callerFrame(), &callLinkInfo);
     
-    if (kind == CodeForCall) {
+    if (callLinkInfo.specializationKind() == CodeForCall) {
         linkSlowFor(
-            repatchBuffer, vm, callLinkInfo, linkPolymorphicCallThunkGeneratorFor(registers));
+            repatchBuffer, vm, callLinkInfo, linkPolymorphicCallThunkGenerator);
         return;
     }
     
-    ASSERT(kind == CodeForConstruct);
-    linkSlowFor(repatchBuffer, vm, callLinkInfo, CodeForConstruct, registers);
+    ASSERT(callLinkInfo.specializationKind() == CodeForConstruct);
+    linkSlowFor(repatchBuffer, vm, callLinkInfo);
 }
 
 void linkSlowFor(
-    ExecState* exec, CallLinkInfo& callLinkInfo, CodeSpecializationKind kind,
-    RegisterPreservationMode registers)
+    ExecState* exec, CallLinkInfo& callLinkInfo)
 {
     CodeBlock* callerCodeBlock = exec->callerFrame()->codeBlock();
     VM* vm = callerCodeBlock->vm();
     
     RepatchBuffer repatchBuffer(callerCodeBlock);
     
-    linkSlowFor(repatchBuffer, vm, callLinkInfo, kind, registers);
+    linkSlowFor(repatchBuffer, vm, callLinkInfo);
 }
 
 static void revertCall(
-    RepatchBuffer& repatchBuffer, VM* vm, CallLinkInfo& callLinkInfo, ThunkGenerator generator)
+    RepatchBuffer& repatchBuffer, VM* vm, CallLinkInfo& callLinkInfo, MacroAssemblerCodeRef codeRef)
 {
     repatchBuffer.revertJumpReplacementToBranchPtrWithPatch(
         RepatchBuffer::startOfBranchPtrWithPatchOnRegister(callLinkInfo.hotPathBegin()),
         static_cast<MacroAssembler::RegisterID>(callLinkInfo.calleeGPR()), 0);
-    linkSlowFor(repatchBuffer, vm, callLinkInfo, generator);
+    linkSlowFor(repatchBuffer, vm, callLinkInfo, codeRef);
     callLinkInfo.clearSeen();
     callLinkInfo.clearCallee();
     callLinkInfo.clearStub();
+    callLinkInfo.clearSlowStub();
     if (callLinkInfo.isOnList())
         callLinkInfo.remove();
 }
 
 void unlinkFor(
-    RepatchBuffer& repatchBuffer, CallLinkInfo& callLinkInfo,
-    CodeSpecializationKind kind, RegisterPreservationMode registers)
+    RepatchBuffer& repatchBuffer, CallLinkInfo& callLinkInfo)
 {
     if (Options::showDisassembly())
         dataLog("Unlinking call from ", callLinkInfo.callReturnLocation(), " in request from ", pointerDump(repatchBuffer.codeBlock()), "\n");
     
-    revertCall(
-        repatchBuffer, repatchBuffer.codeBlock()->vm(), callLinkInfo,
-        linkThunkGeneratorFor(kind, registers));
+    VM* vm = repatchBuffer.codeBlock()->vm();
+    revertCall(repatchBuffer, vm, callLinkInfo, vm->getCTIStub(linkCallThunkGenerator));
 }
 
 void linkVirtualFor(
-    ExecState* exec, CallLinkInfo& callLinkInfo,
-    CodeSpecializationKind kind, RegisterPreservationMode registers)
+    ExecState* exec, CallLinkInfo& callLinkInfo)
 {
-    // FIXME: We could generate a virtual call stub here. This would lead to faster virtual calls
-    // by eliminating the branch prediction bottleneck inside the shared virtual call thunk.
-    
     CodeBlock* callerCodeBlock = exec->callerFrame()->codeBlock();
     VM* vm = callerCodeBlock->vm();
     
@@ -1699,7 +1697,9 @@ void linkVirtualFor(
         dataLog("Linking virtual call at ", *callerCodeBlock, " ", exec->callerFrame()->codeOrigin(), "\n");
     
     RepatchBuffer repatchBuffer(callerCodeBlock);
-    revertCall(repatchBuffer, vm, callLinkInfo, virtualThunkGeneratorFor(kind, registers));
+    MacroAssemblerCodeRef virtualThunk = virtualThunkFor(vm, callLinkInfo);
+    revertCall(repatchBuffer, vm, callLinkInfo, virtualThunk);
+    callLinkInfo.setSlowStub(createJITStubRoutine(virtualThunk, *vm, nullptr, true));
 }
 
 namespace {
@@ -1710,13 +1710,12 @@ struct CallToCodePtr {
 } // annonymous namespace
 
 void linkPolymorphicCall(
-    ExecState* exec, CallLinkInfo& callLinkInfo, CallVariant newVariant,
-    RegisterPreservationMode registers)
+    ExecState* exec, CallLinkInfo& callLinkInfo, CallVariant newVariant)
 {
     // Currently we can't do anything for non-function callees.
     // https://bugs.webkit.org/show_bug.cgi?id=140685
     if (!newVariant || !newVariant.executable()) {
-        linkVirtualFor(exec, callLinkInfo, CodeForCall, registers);
+        linkVirtualFor(exec, callLinkInfo);
         return;
     }
     
@@ -1759,7 +1758,7 @@ void linkPolymorphicCall(
             // If we cannot handle a callee, assume that it's better for this whole thing to be a
             // virtual call.
             if (exec->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()) || callLinkInfo.callType() == CallLinkInfo::CallVarargs || callLinkInfo.callType() == CallLinkInfo::ConstructVarargs) {
-                linkVirtualFor(exec, callLinkInfo, CodeForCall, registers);
+                linkVirtualFor(exec, callLinkInfo);
                 return;
             }
         }
@@ -1774,7 +1773,7 @@ void linkPolymorphicCall(
     else
         maxPolymorphicCallVariantListSize = Options::maxPolymorphicCallVariantListSize();
     if (list.size() > maxPolymorphicCallVariantListSize) {
-        linkVirtualFor(exec, callLinkInfo, CodeForCall, registers);
+        linkVirtualFor(exec, callLinkInfo);
         return;
     }
     
@@ -1874,7 +1873,7 @@ void linkPolymorphicCall(
         ASSERT(variant.executable()->hasJITCodeForCall());
         MacroAssemblerCodePtr codePtr =
             variant.executable()->generatedJITCodeForCall()->addressForCall(
-                *vm, variant.executable(), ArityCheckNotRequired, registers);
+                *vm, variant.executable(), ArityCheckNotRequired, callLinkInfo.registerPreservationMode());
         
         if (fastCounts) {
             stubJit.add32(
@@ -1900,7 +1899,7 @@ void linkPolymorphicCall(
         
     LinkBuffer patchBuffer(*vm, stubJit, callerCodeBlock, JITCompilationCanFail);
     if (patchBuffer.didFailToAllocate()) {
-        linkVirtualFor(exec, callLinkInfo, CodeForCall, registers);
+        linkVirtualFor(exec, callLinkInfo);
         return;
     }
     
@@ -1913,7 +1912,7 @@ void linkPolymorphicCall(
         patchBuffer.link(done, callLinkInfo.callReturnLocation().labelAtOffset(0));
     else
         patchBuffer.link(done, callLinkInfo.hotPathOther().labelAtOffset(0));
-    patchBuffer.link(slow, CodeLocationLabel(vm->getCTIStub(linkPolymorphicCallThunkGeneratorFor(registers)).code()));
+    patchBuffer.link(slow, CodeLocationLabel(vm->getCTIStub(linkPolymorphicCallThunkGenerator).code()));
     
     RefPtr<PolymorphicCallStubRoutine> stubRoutine = adoptRef(new PolymorphicCallStubRoutine(
         FINALIZE_CODE_FOR(
@@ -1929,8 +1928,10 @@ void linkPolymorphicCall(
     repatchBuffer.replaceWithJump(
         RepatchBuffer::startOfBranchPtrWithPatchOnRegister(callLinkInfo.hotPathBegin()),
         CodeLocationLabel(stubRoutine->code().code()));
-    // This is weird. The original slow path should no longer be reachable.
-    linkSlowFor(repatchBuffer, vm, callLinkInfo, CodeForCall, registers);
+    // The original slow path is unreachable on 64-bits, but still
+    // reachable on 32-bits since a non-cell callee will always
+    // trigger the slow path
+    linkSlowFor(repatchBuffer, vm, callLinkInfo);
     
     // If there had been a previous stub routine, that one will die as soon as the GC runs and sees
     // that it's no longer on stack.

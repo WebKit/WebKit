@@ -752,12 +752,11 @@ static void* handleHostCall(ExecState* execCallee, JSValue callee, CodeSpecializ
     return vm->getCTIStub(throwExceptionFromCallSlowPathGenerator).code().executableAddress();
 }
 
-inline char* linkFor(
-    ExecState* execCallee, CallLinkInfo* callLinkInfo, CodeSpecializationKind kind,
-    RegisterPreservationMode registers)
+char* JIT_OPERATION operationLinkCall(ExecState* execCallee, CallLinkInfo* callLinkInfo)
 {
     ExecState* exec = execCallee->callerFrame();
     VM* vm = &exec->vm();
+    CodeSpecializationKind kind = callLinkInfo->specializationKind();
     NativeCallFrameTracer tracer(vm, exec);
     
     JSValue calleeAsValue = execCallee->calleeAsValue();
@@ -776,7 +775,7 @@ inline char* linkFor(
     MacroAssemblerCodePtr codePtr;
     CodeBlock* codeBlock = 0;
     if (executable->isHostFunction())
-        codePtr = executable->entrypointFor(*vm, kind, MustCheckArity, registers);
+        codePtr = executable->entrypointFor(*vm, kind, MustCheckArity, callLinkInfo->registerPreservationMode());
     else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
 
@@ -796,42 +795,22 @@ inline char* linkFor(
             arity = MustCheckArity;
         else
             arity = ArityCheckNotRequired;
-        codePtr = functionExecutable->entrypointFor(*vm, kind, arity, registers);
+        codePtr = functionExecutable->entrypointFor(*vm, kind, arity, callLinkInfo->registerPreservationMode());
     }
     if (!callLinkInfo->seenOnce())
         callLinkInfo->setSeen();
     else
-        linkFor(execCallee, *callLinkInfo, codeBlock, callee, codePtr, kind, registers);
+        linkFor(execCallee, *callLinkInfo, codeBlock, callee, codePtr);
     
     return reinterpret_cast<char*>(codePtr.executableAddress());
 }
 
-char* JIT_OPERATION operationLinkCall(ExecState* execCallee, CallLinkInfo* callLinkInfo)
-{
-    return linkFor(execCallee, callLinkInfo, CodeForCall, RegisterPreservationNotRequired);
-}
-
-char* JIT_OPERATION operationLinkConstruct(ExecState* execCallee, CallLinkInfo* callLinkInfo)
-{
-    return linkFor(execCallee, callLinkInfo, CodeForConstruct, RegisterPreservationNotRequired);
-}
-
-char* JIT_OPERATION operationLinkCallThatPreservesRegs(ExecState* execCallee, CallLinkInfo* callLinkInfo)
-{
-    return linkFor(execCallee, callLinkInfo, CodeForCall, MustPreserveRegisters);
-}
-
-char* JIT_OPERATION operationLinkConstructThatPreservesRegs(ExecState* execCallee, CallLinkInfo* callLinkInfo)
-{
-    return linkFor(execCallee, callLinkInfo, CodeForConstruct, MustPreserveRegisters);
-}
-
 inline char* virtualForWithFunction(
-    ExecState* execCallee, CodeSpecializationKind kind, RegisterPreservationMode registers,
-    JSCell*& calleeAsFunctionCell)
+    ExecState* execCallee, CallLinkInfo* callLinkInfo, JSCell*& calleeAsFunctionCell)
 {
     ExecState* exec = execCallee->callerFrame();
     VM* vm = &exec->vm();
+    CodeSpecializationKind kind = callLinkInfo->specializationKind();
     NativeCallFrameTracer tracer(vm, exec);
 
     JSValue calleeAsValue = execCallee->calleeAsValue();
@@ -857,54 +836,24 @@ inline char* virtualForWithFunction(
         }
     }
     return reinterpret_cast<char*>(executable->entrypointFor(
-        *vm, kind, MustCheckArity, registers).executableAddress());
-}
-
-inline char* virtualFor(
-    ExecState* execCallee, CodeSpecializationKind kind, RegisterPreservationMode registers)
-{
-    JSCell* calleeAsFunctionCellIgnored;
-    return virtualForWithFunction(execCallee, kind, registers, calleeAsFunctionCellIgnored);
+        *vm, kind, MustCheckArity, callLinkInfo->registerPreservationMode()).executableAddress());
 }
 
 char* JIT_OPERATION operationLinkPolymorphicCall(ExecState* execCallee, CallLinkInfo* callLinkInfo)
 {
+    ASSERT(callLinkInfo->specializationKind() == CodeForCall);
     JSCell* calleeAsFunctionCell;
-    char* result = virtualForWithFunction(execCallee, CodeForCall, RegisterPreservationNotRequired, calleeAsFunctionCell);
+    char* result = virtualForWithFunction(execCallee, callLinkInfo, calleeAsFunctionCell);
 
-    linkPolymorphicCall(execCallee, *callLinkInfo, CallVariant(calleeAsFunctionCell), RegisterPreservationNotRequired);
+    linkPolymorphicCall(execCallee, *callLinkInfo, CallVariant(calleeAsFunctionCell));
     
     return result;
 }
 
-char* JIT_OPERATION operationVirtualCall(ExecState* execCallee, CallLinkInfo*)
-{    
-    return virtualFor(execCallee, CodeForCall, RegisterPreservationNotRequired);
-}
-
-char* JIT_OPERATION operationVirtualConstruct(ExecState* execCallee, CallLinkInfo*)
+char* JIT_OPERATION operationVirtualCall(ExecState* execCallee, CallLinkInfo* callLinkInfo)
 {
-    return virtualFor(execCallee, CodeForConstruct, RegisterPreservationNotRequired);
-}
-
-char* JIT_OPERATION operationLinkPolymorphicCallThatPreservesRegs(ExecState* execCallee, CallLinkInfo* callLinkInfo)
-{
-    JSCell* calleeAsFunctionCell;
-    char* result = virtualForWithFunction(execCallee, CodeForCall, MustPreserveRegisters, calleeAsFunctionCell);
-
-    linkPolymorphicCall(execCallee, *callLinkInfo, CallVariant(calleeAsFunctionCell), MustPreserveRegisters);
-    
-    return result;
-}
-
-char* JIT_OPERATION operationVirtualCallThatPreservesRegs(ExecState* execCallee, CallLinkInfo*)
-{    
-    return virtualFor(execCallee, CodeForCall, MustPreserveRegisters);
-}
-
-char* JIT_OPERATION operationVirtualConstructThatPreservesRegs(ExecState* execCallee, CallLinkInfo*)
-{
-    return virtualFor(execCallee, CodeForConstruct, MustPreserveRegisters);
+    JSCell* calleeAsFunctionCellIgnored;
+    return virtualForWithFunction(execCallee, callLinkInfo, calleeAsFunctionCellIgnored);
 }
 
 size_t JIT_OPERATION operationCompareLess(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)

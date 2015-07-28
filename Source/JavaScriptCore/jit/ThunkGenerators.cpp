@@ -99,8 +99,7 @@ static void slowPathFor(
     jit.jump(GPRInfo::returnValueGPR);
 }
 
-static MacroAssemblerCodeRef linkForThunkGenerator(
-    VM* vm, CodeSpecializationKind kind, RegisterPreservationMode registers)
+MacroAssemblerCodeRef linkCallThunkGenerator(VM* vm)
 {
     // The return address is on the stack or in the link register. We will hence
     // save the return address to the call frame while we make a C++ function call
@@ -110,59 +109,25 @@ static MacroAssemblerCodeRef linkForThunkGenerator(
     
     CCallHelpers jit(vm);
     
-    slowPathFor(jit, vm, operationLinkFor(kind, registers));
+    slowPathFor(jit, vm, operationLinkCall);
     
     LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
-    return FINALIZE_CODE(
-        patchBuffer,
-        ("Link %s%s slow path thunk", kind == CodeForCall ? "call" : "construct", registers == MustPreserveRegisters ? " that preserves registers" : ""));
-}
-
-MacroAssemblerCodeRef linkCallThunkGenerator(VM* vm)
-{
-    return linkForThunkGenerator(vm, CodeForCall, RegisterPreservationNotRequired);
-}
-
-MacroAssemblerCodeRef linkConstructThunkGenerator(VM* vm)
-{
-    return linkForThunkGenerator(vm, CodeForConstruct, RegisterPreservationNotRequired);
-}
-
-MacroAssemblerCodeRef linkCallThatPreservesRegsThunkGenerator(VM* vm)
-{
-    return linkForThunkGenerator(vm, CodeForCall, MustPreserveRegisters);
-}
-
-MacroAssemblerCodeRef linkConstructThatPreservesRegsThunkGenerator(VM* vm)
-{
-    return linkForThunkGenerator(vm, CodeForConstruct, MustPreserveRegisters);
-}
-
-static MacroAssemblerCodeRef linkPolymorphicCallForThunkGenerator(
-    VM* vm, RegisterPreservationMode registers)
-{
-    CCallHelpers jit(vm);
-    
-    slowPathFor(jit, vm, operationLinkPolymorphicCallFor(registers));
-    
-    LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
-    return FINALIZE_CODE(patchBuffer, ("Link polymorphic call %s slow path thunk", registers == MustPreserveRegisters ? " that preserves registers" : ""));
+    return FINALIZE_CODE(patchBuffer, ("Link call slow path thunk"));
 }
 
 // For closure optimizations, we only include calls, since if you're using closures for
 // object construction then you're going to lose big time anyway.
 MacroAssemblerCodeRef linkPolymorphicCallThunkGenerator(VM* vm)
 {
-    return linkPolymorphicCallForThunkGenerator(vm, RegisterPreservationNotRequired);
+    CCallHelpers jit(vm);
+    
+    slowPathFor(jit, vm, operationLinkPolymorphicCall);
+    
+    LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
+    return FINALIZE_CODE(patchBuffer, ("Link polymorphic call slow path thunk"));
 }
 
-MacroAssemblerCodeRef linkPolymorphicCallThatPreservesRegsThunkGenerator(VM* vm)
-{
-    return linkPolymorphicCallForThunkGenerator(vm, MustPreserveRegisters);
-}
-
-static MacroAssemblerCodeRef virtualForThunkGenerator(
-    VM* vm, CodeSpecializationKind kind, RegisterPreservationMode registers)
+MacroAssemblerCodeRef virtualThunkFor(VM* vm, CallLinkInfo& callLinkInfo)
 {
     // The callee is in regT0 (for JSVALUE32_64, the tag is in regT1).
     // The return address is on the stack, or in the link register. We will hence
@@ -208,7 +173,8 @@ static MacroAssemblerCodeRef virtualForThunkGenerator(
         GPRInfo::regT4);
     jit.loadPtr(
         CCallHelpers::Address(
-            GPRInfo::regT4, ExecutableBase::offsetOfJITCodeWithArityCheckFor(kind, registers)),
+            GPRInfo::regT4, ExecutableBase::offsetOfJITCodeWithArityCheckFor(
+                callLinkInfo.specializationKind(), callLinkInfo.registerPreservationMode())),
         GPRInfo::regT4);
     slowCase.append(jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::regT4));
     
@@ -223,32 +189,15 @@ static MacroAssemblerCodeRef virtualForThunkGenerator(
     
     // Here we don't know anything, so revert to the full slow path.
     
-    slowPathFor(jit, vm, operationVirtualFor(kind, registers));
+    slowPathFor(jit, vm, operationVirtualCall);
     
     LinkBuffer patchBuffer(*vm, jit, GLOBAL_THUNK_ID);
     return FINALIZE_CODE(
         patchBuffer,
-        ("Virtual %s%s slow path thunk", kind == CodeForCall ? "call" : "construct", registers == MustPreserveRegisters ? " that preserves registers" : ""));
-}
-
-MacroAssemblerCodeRef virtualCallThunkGenerator(VM* vm)
-{
-    return virtualForThunkGenerator(vm, CodeForCall, RegisterPreservationNotRequired);
-}
-
-MacroAssemblerCodeRef virtualConstructThunkGenerator(VM* vm)
-{
-    return virtualForThunkGenerator(vm, CodeForConstruct, RegisterPreservationNotRequired);
-}
-
-MacroAssemblerCodeRef virtualCallThatPreservesRegsThunkGenerator(VM* vm)
-{
-    return virtualForThunkGenerator(vm, CodeForCall, MustPreserveRegisters);
-}
-
-MacroAssemblerCodeRef virtualConstructThatPreservesRegsThunkGenerator(VM* vm)
-{
-    return virtualForThunkGenerator(vm, CodeForConstruct, MustPreserveRegisters);
+        ("Virtual %s%s slow path thunk at CodePtr(%p)",
+        callLinkInfo.specializationKind() == CodeForCall ? "call" : "construct",
+        callLinkInfo.registerPreservationMode() == MustPreserveRegisters ? " that preserves registers" : "",
+        callLinkInfo.callReturnLocation().dataLocation()));
 }
 
 enum ThunkEntryType { EnterViaCall, EnterViaJump };

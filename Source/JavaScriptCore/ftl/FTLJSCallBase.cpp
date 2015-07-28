@@ -69,11 +69,8 @@ void JSCallBase::emit(CCallHelpers& jit)
 
 void JSCallBase::link(VM& vm, LinkBuffer& linkBuffer)
 {
-    ThunkGenerator generator = linkThunkGeneratorFor(
-        CallLinkInfo::specializationKindFor(m_type), MustPreserveRegisters);
-    
     linkBuffer.link(
-        m_slowCall, FunctionPtr(vm.getCTIStub(generator).code().executableAddress()));
+        m_slowCall, FunctionPtr(vm.getCTIStub(linkCallThunkGenerator).code().executableAddress()));
 
     m_callLinkInfo->setUpCallFromFTL(m_type, m_origin, linkBuffer.locationOfNearCall(m_slowCall),
         linkBuffer.locationOf(m_targetToCheck), linkBuffer.locationOfNearCall(m_fastCall),

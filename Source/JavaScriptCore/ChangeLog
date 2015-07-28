@@ -1,5 +1,86 @@
 2015-07-28  Basile Clement  <basile_clement@apple.com>
 
+        Simplify call linking
+        https://bugs.webkit.org/show_bug.cgi?id=147363
+
+        Reviewed by Filip Pizlo.
+
+        Previously, we were passing both the CallLinkInfo and a
+        (CodeSpecializationKind, RegisterPreservationMode) pair to the
+        different call linking slow paths. However, the CallLinkInfo already
+        has all of that information, and we don't gain anything by having them
+        in additional static parameters - except possibly a very small
+        performance gain in presence of inlining. However since those are
+        already slow paths, this performance loss (if it exists) will not be
+        visible in practice.
+
+        This patch removes the various specialized thunks and JIT operations
+        for regular and polymorphic call linking with a single thunk and
+        operation for each case. Moreover, it removes the four specialized
+        virtual call thunks and operations with one virtual call thunk for each
+        call link info, allowing for better branch prediction by the CPU and
+        fixing a pre-existing FIXME.
+
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::unlink):
+        (JSC::CallLinkInfo::dummy): Deleted.
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::CallLinkInfo):
+        (JSC::CallLinkInfo::registerPreservationMode):
+        (JSC::CallLinkInfo::setUpCallFromFTL):
+        (JSC::CallLinkInfo::setSlowStub):
+        (JSC::CallLinkInfo::clearSlowStub):
+        (JSC::CallLinkInfo::slowStub):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * ftl/FTLJSCallBase.cpp:
+        (JSC::FTL::JSCallBase::link):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileCallEvalSlowCase):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        (JSC::operationLinkFor): Deleted.
+        (JSC::operationVirtualFor): Deleted.
+        (JSC::operationLinkPolymorphicCallFor): Deleted.
+        * jit/Repatch.cpp:
+        (JSC::generateByIdStub):
+        (JSC::linkSlowFor):
+        (JSC::linkFor):
+        (JSC::revertCall):
+        (JSC::unlinkFor):
+        (JSC::linkVirtualFor):
+        (JSC::linkPolymorphicCall):
+        * jit/Repatch.h:
+        * jit/ThunkGenerators.cpp:
+        (JSC::linkCallThunkGenerator):
+        (JSC::linkPolymorphicCallThunkGenerator):
+        (JSC::virtualThunkFor):
+        (JSC::linkForThunkGenerator): Deleted.
+        (JSC::linkConstructThunkGenerator): Deleted.
+        (JSC::linkCallThatPreservesRegsThunkGenerator): Deleted.
+        (JSC::linkConstructThatPreservesRegsThunkGenerator): Deleted.
+        (JSC::linkPolymorphicCallForThunkGenerator): Deleted.
+        (JSC::linkPolymorphicCallThatPreservesRegsThunkGenerator): Deleted.
+        (JSC::virtualForThunkGenerator): Deleted.
+        (JSC::virtualCallThunkGenerator): Deleted.
+        (JSC::virtualConstructThunkGenerator): Deleted.
+        (JSC::virtualCallThatPreservesRegsThunkGenerator): Deleted.
+        (JSC::virtualConstructThatPreservesRegsThunkGenerator): Deleted.
+        * jit/ThunkGenerators.h:
+        (JSC::linkThunkGeneratorFor): Deleted.
+        (JSC::linkPolymorphicCallThunkGeneratorFor): Deleted.
+        (JSC::virtualThunkGeneratorFor): Deleted.
+
+2015-07-28  Basile Clement  <basile_clement@apple.com>
+
         stress/math-pow-with-constants.js fails in cloop
         https://bugs.webkit.org/show_bug.cgi?id=147167
 
