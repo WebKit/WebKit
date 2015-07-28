@@ -88,6 +88,21 @@
         "category": "html"
     },
     {
+        "name": "Service Workers",
+        "status": {
+            "status": "No active development"
+        },
+        "url": "http://www.w3.org/TR/2015/WD-service-workers-20150625/",
+        "keywords": ["service workers"],
+        "category": "webapps",
+        "description": "A method for browsers to run JavaScript in the background to handle network requests and manage cached responses. Service Workers offers a replacement for Application Cache.",
+        "contact": {
+            "name": "Jon Davis",
+            "twitter": "@jonathandavis",
+            "email": "web-evangelist@apple.com"
+        }
+    },
+    {
         "name": "Streams",
         "url": "https://streams.spec.whatwg.org",
         "keywords": ["streams api"],
@@ -117,6 +132,21 @@
         "url": "https://www.khronos.org/registry/webgl/specs/1.0/",
         "keywords": ["webgl"],
         "category": "html"
+    },
+    {
+        "name": "WebRTC",
+        "status": {
+            "status": "No active development"
+        },
+        "url": "http://www.w3.org/TR/webrtc/",
+        "keywords": ["webrtc"],
+        "category": "webapps",
+        "description": "An API to facilitate real-time communication for browser-to-browser applications.",
+        "contact": {
+            "name": "Jon Davis",
+            "twitter": "@jonathandavis",
+            "email": "web-evangelist@apple.com"
+        }
     }
     ],
 
