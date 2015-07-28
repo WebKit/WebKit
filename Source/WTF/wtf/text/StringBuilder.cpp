@@ -365,7 +365,9 @@ template <typename OutputCharacterType, typename InputCharacterType>
 static void appendQuotedJSONStringInternal(OutputCharacterType*& output, const InputCharacterType* input, unsigned length)
 {
     for (const InputCharacterType* end = input + length; input != end; ++input) {
-        if (*input > 0x1F && *input != '"' && *input != '\\') {
+        if (LIKELY(*input > 0x1F)) {
+            if (*input == '"' || *input == '\\')
+                *output++ = '\\';
             *output++ = *input;
             continue;
         }
@@ -389,14 +391,6 @@ static void appendQuotedJSONStringInternal(OutputCharacterType*& output, const I
         case '\b':
             *output++ = '\\';
             *output++ = 'b';
-            break;
-        case '"':
-            *output++ = '\\';
-            *output++ = '"';
-            break;
-        case '\\':
-            *output++ = '\\';
-            *output++ = '\\';
             break;
         default:
             ASSERT((*input & 0xFF00) == 0);
