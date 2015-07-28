@@ -1,3 +1,30 @@
+2015-07-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [iOS] REGRESSION(r168075): Fullscreen web video doesn't pause on screen lock
+        https://bugs.webkit.org/show_bug.cgi?id=147269
+
+        Reviewed by Andreas Kling.
+
+        Media elements should pause when the application is going to EnterBackground
+        under lock regardless whether it is in full screen or not.
+
+        * Platform/spi/ios/UIKitSPI.h: Forward declare [UIApplication isSuspendedUnderLock].
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::applicationDidEnterBackground):
+        [UIApp isSuspendedUnderLock] can only be called in the UIProcess. We need
+        to call it here and pass it to the WebPage in the WebProcess as part of the
+        ApplicationDidEnterBackground message.
+        
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: Add the new parameter:
+        'isSuspendedUnderLock' to the ApplicationDidEnterBackground message.
+        
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::applicationDidEnterBackground): On iOS, the WebPage needs
+        to notify the MediaSessionManagerIOS that it received the message 
+        ApplicationDidEnterBackground.
+
 2015-07-28  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Bounds in InteractionInformationAtPosition should be always in main frame coordinate space.

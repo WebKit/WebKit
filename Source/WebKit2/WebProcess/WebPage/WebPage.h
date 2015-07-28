@@ -804,7 +804,7 @@ public:
     bool scaleWasSetByUIProcess() const { return m_scaleWasSetByUIProcess; }
     void willStartUserTriggeredZooming();
     void applicationWillResignActive();
-    void applicationDidEnterBackground();
+    void applicationDidEnterBackground(bool isSuspendedUnderLock);
     void applicationWillEnterForeground();
     void applicationDidBecomeActive();
     void zoomToRect(WebCore::FloatRect, double minimumScale, double maximumScale);

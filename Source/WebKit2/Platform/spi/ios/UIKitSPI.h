@@ -101,6 +101,7 @@
 - (UIInterfaceOrientation)interfaceOrientation;
 - (void)_cancelAllTouches;
 - (CGFloat)statusBarHeight;
+- (BOOL)isSuspendedUnderLock;
 @end
 
 typedef NS_ENUM(NSInteger, UIDatePickerPrivateMode)  {

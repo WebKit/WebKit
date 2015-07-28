@@ -89,7 +89,7 @@ messages -> WebPage LegacyReceiver {
     SetAssistedNodeValueAsNumber(double value)
     SetAssistedNodeSelectedIndex(uint32_t index, bool allowMultipleSelection)
     ApplicationWillResignActive()
-    ApplicationDidEnterBackground()
+    ApplicationDidEnterBackground(bool isSuspendedUnderLock)
     ApplicationWillEnterForeground()
     ApplicationDidBecomeActive()
     ContentSizeCategoryDidChange(String contentSizeCategory)

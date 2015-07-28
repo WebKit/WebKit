@@ -36,6 +36,7 @@
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeDrawingAreaProxyMessages.h"
 #import "RemoteLayerTreeTransaction.h"
+#import "UIKitSPI.h"
 #import "UserData.h"
 #import "ViewUpdateDispatcherMessages.h"
 #import "WKBrowsingContextControllerInternal.h"
@@ -606,7 +607,8 @@ void WebPageProxy::didUpdateBlockSelectionWithTouch(uint32_t touch, uint32_t fla
 
 void WebPageProxy::applicationDidEnterBackground()
 {
-    m_process->send(Messages::WebPage::ApplicationDidEnterBackground(), m_pageID);
+    bool isSuspendedUnderLock = [UIApp isSuspendedUnderLock];
+    m_process->send(Messages::WebPage::ApplicationDidEnterBackground(isSuspendedUnderLock), m_pageID);
 }
 
 void WebPageProxy::applicationWillEnterForeground()

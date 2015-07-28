@@ -79,11 +79,16 @@ public:
         NoFlags = 0,
         MayResumePlaying = 1 << 0,
     };
+
+    void doInterruption();
+    bool shouldDoInterruption(InterruptionType);
     void beginInterruption(InterruptionType);
+    void forceInterruption(InterruptionType);
     void endInterruption(EndInterruptionFlags);
 
     void applicationWillEnterForeground() const;
     void applicationWillEnterBackground() const;
+    void applicationDidEnterBackground(bool isSuspendedUnderLock) const;
 
     bool clientWillBeginPlayback();
     bool clientWillPausePlayback();

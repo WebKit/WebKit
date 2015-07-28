@@ -283,6 +283,20 @@ void PlatformMediaSessionManager::applicationWillEnterBackground() const
     }
 }
 
+void PlatformMediaSessionManager::applicationDidEnterBackground(bool isSuspendedUnderLock) const
+{
+    LOG(Media, "PlatformMediaSessionManager::applicationDidEnterBackground");
+
+    if (!isSuspendedUnderLock)
+        return;
+
+    Vector<PlatformMediaSession*> sessions = m_sessions;
+    for (auto* session : sessions) {
+        if (m_restrictions[session->mediaType()] & BackgroundProcessPlaybackRestricted)
+            session->forceInterruption(PlatformMediaSession::EnteringBackground);
+    }
+}
+
 void PlatformMediaSessionManager::applicationWillEnterForeground() const
 {
     LOG(Media, "PlatformMediaSessionManager::applicationWillEnterForeground");
