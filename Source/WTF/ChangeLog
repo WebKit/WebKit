@@ -1,3 +1,10 @@
+2015-07-28  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix Windows build.
+
+        * wtf/MetaAllocatorHandle.h:
+        (WTF::MetaAllocatorHandle::key):
+
 2015-07-27  Filip Pizlo  <fpizlo@apple.com>
 
         Add logging when executable code gets deallocated

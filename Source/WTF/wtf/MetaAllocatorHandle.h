@@ -104,7 +104,7 @@ public:
         return m_start;
     }
 
-    void dump(PrintStream& out) const;
+    WTF_EXPORT_PRIVATE void dump(PrintStream& out) const;
     
 private:
     friend class MetaAllocator;
