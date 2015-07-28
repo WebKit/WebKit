@@ -172,7 +172,8 @@ WebInspector.LogContentView.prototype = {
             ++this._nestingLevel;
             break;
         case WebInspector.ConsoleMessage.MessageType.EndGroup:
-            --this._nestingLevel;
+            if (this._nestingLevel > 0)
+                --this._nestingLevel;
             break;
         }
 

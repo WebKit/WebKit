@@ -1,3 +1,13 @@
+2015-07-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: console.groupEnd causes negative indent when no group is active
+        https://bugs.webkit.org/show_bug.cgi?id=147375
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype.didAppendConsoleMessageView):
+
 2015-07-28  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: Convert NavigationItem subclasses to ES6
