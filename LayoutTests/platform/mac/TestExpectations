@@ -1507,3 +1507,7 @@ webkit.org/b/144303 platform/mac/fast/text/multiple-codeunit-vertical-upright.ht
 
 platform/mac/fast/text/vertical-no-sideways.html [ Pass Failure ]
 fast/canvas/image-potential-subsample.html [ Pass Failure ]
+
+# Mixed content is not blocked by default.
+http/tests/security/mixedContent/websocket/insecure-websocket-in-iframe.html [ Skip ]
+http/tests/security/mixedContent/websocket/insecure-websocket-in-main-frame.html [ Skip ]

@@ -1,3 +1,9 @@
+2015-07-28  Anders Carlsson  <andersca@apple.com>
+
+        Skip two mixed content tests that don't make sense since we don't disable mixed content access by default.
+
+        * platform/mac/TestExpectations:
+
 2015-07-27  Babak Shafiei  <bshafiei@apple.com>
 
         Roll out r180020.
