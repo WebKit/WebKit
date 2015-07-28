@@ -38,9 +38,9 @@ class CachedCSSStyleSheet;
 class CachedResource;
 class Document;
 class Node;
+class SecurityOrigin;
 class StyleRuleBase;
 class StyleRuleImport;
-class SecurityOrigin;
 
 class StyleSheetContents : public RefCounted<StyleSheetContents> {
 public:
