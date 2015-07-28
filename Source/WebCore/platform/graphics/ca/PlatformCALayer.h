@@ -243,7 +243,6 @@ public:
     void setBoundsOnMainThread(CGRect);
     void setPositionOnMainThread(CGPoint);
     void setAnchorPointOnMainThread(FloatPoint3D);
-    void setTileSize(const IntSize&);
 #endif
 
     virtual PassRefPtr<PlatformCALayer> createCompatibleLayer(LayerType, PlatformCALayerClient*) const = 0;
