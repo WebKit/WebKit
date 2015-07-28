@@ -373,33 +373,33 @@ bool ArgumentCoder<IntSize>::decode(ArgumentDecoder& decoder, IntSize& intSize)
     return SimpleArgumentCoder<IntSize>::decode(decoder, intSize);
 }
 
-static void pathPointCountApplierFunction(void* info, const PathElement*)
+static void pathPointCountApplierFunction(void* info, const PathElement&)
 {
     uint64_t* pointCount = static_cast<uint64_t*>(info);
     ++*pointCount;
 }
 
-static void pathEncodeApplierFunction(void* info, const PathElement* element)
+static void pathEncodeApplierFunction(void* info, const PathElement& element)
 {
     ArgumentEncoder& encoder = *static_cast<ArgumentEncoder*>(info);
 
-    encoder.encodeEnum(element->type);
+    encoder.encodeEnum(element.type);
 
-    switch (element->type) {
+    switch (element.type) {
     case PathElementMoveToPoint: // The points member will contain 1 value.
-        encoder << element->points[0];
+        encoder << element.points[0];
         break;
     case PathElementAddLineToPoint: // The points member will contain 1 value.
-        encoder << element->points[0];
+        encoder << element.points[0];
         break;
     case PathElementAddQuadCurveToPoint: // The points member will contain 2 values.
-        encoder << element->points[0];
-        encoder << element->points[1];
+        encoder << element.points[0];
+        encoder << element.points[1];
         break;
     case PathElementAddCurveToPoint: // The points member will contain 3 values.
-        encoder << element->points[0];
-        encoder << element->points[1];
-        encoder << element->points[2];
+        encoder << element.points[0];
+        encoder << element.points[1];
+        encoder << element.points[2];
         break;
     case PathElementCloseSubpath: // The points member will contain no values.
         break;

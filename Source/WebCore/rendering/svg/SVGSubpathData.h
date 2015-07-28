@@ -36,35 +36,35 @@ public:
         m_movePoint.set(0, 0);
     }
 
-    static void updateFromPathElement(void* info, const PathElement* element)
+    static void updateFromPathElement(void* info, const PathElement& element)
     {
         SVGSubpathData* subpathFinder = static_cast<SVGSubpathData*>(info);
-        switch (element->type) {
+        switch (element.type) {
         case PathElementMoveToPoint:
             if (subpathFinder->m_pathIsZeroLength && !subpathFinder->m_haveSeenMoveOnly)
                 subpathFinder->m_zeroLengthSubpathLocations.append(subpathFinder->m_lastPoint);
-            subpathFinder->m_lastPoint = subpathFinder->m_movePoint = element->points[0];
+            subpathFinder->m_lastPoint = subpathFinder->m_movePoint = element.points[0];
             subpathFinder->m_haveSeenMoveOnly = true;
             subpathFinder->m_pathIsZeroLength = true;
             break;
         case PathElementAddLineToPoint:
-            if (subpathFinder->m_lastPoint != element->points[0]) {
+            if (subpathFinder->m_lastPoint != element.points[0]) {
                 subpathFinder->m_pathIsZeroLength = false;
-                subpathFinder->m_lastPoint = element->points[0];
+                subpathFinder->m_lastPoint = element.points[0];
             }
             subpathFinder->m_haveSeenMoveOnly = false;
             break;
         case PathElementAddQuadCurveToPoint:
-            if (subpathFinder->m_lastPoint != element->points[0] || element->points[0] != element->points[1]) {
+            if (subpathFinder->m_lastPoint != element.points[0] || element.points[0] != element.points[1]) {
                 subpathFinder->m_pathIsZeroLength = false;
-                subpathFinder->m_lastPoint = element->points[1];
+                subpathFinder->m_lastPoint = element.points[1];
             }
             subpathFinder->m_haveSeenMoveOnly = false;
             break;
         case PathElementAddCurveToPoint:
-            if (subpathFinder->m_lastPoint != element->points[0] || element->points[0] != element->points[1] || element->points[1] != element->points[2]) {
+            if (subpathFinder->m_lastPoint != element.points[0] || element.points[0] != element.points[1] || element.points[1] != element.points[2]) {
                 subpathFinder->m_pathIsZeroLength = false;
-                subpathFinder->m_lastPoint = element->points[2];
+                subpathFinder->m_lastPoint = element.points[2];
             }
             subpathFinder->m_haveSeenMoveOnly = false;
             break;

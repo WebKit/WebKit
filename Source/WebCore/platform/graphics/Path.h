@@ -80,7 +80,7 @@ namespace WebCore {
         FloatPoint* points;
     };
 
-    typedef void (*PathApplierFunction)(void* info, const PathElement*);
+    typedef void (*PathApplierFunction)(void* info, const PathElement&);
 
     class Path {
         WTF_MAKE_FAST_ALLOCATED;

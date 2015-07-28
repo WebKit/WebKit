@@ -174,27 +174,27 @@ static void updateX(GlyphIterationState& state, float x)
 // pseudo-contour and the vertical center of the underline found in GlyphIterationState::centerOfLine.
 // It keeps track of the leftmost and rightmost intersection in  GlyphIterationState::minX and 
 // GlyphIterationState::maxX.
-static void findPathIntersections(void* stateAsVoidPointer, const PathElement* element)
+static void findPathIntersections(void* stateAsVoidPointer, const PathElement& element)
 {
     auto& state = *static_cast<GlyphIterationState*>(stateAsVoidPointer);
     bool doIntersection = false;
     FloatPoint point = FloatPoint();
-    switch (element->type) {
+    switch (element.type) {
     case PathElementMoveToPoint:
-        state.startingPoint = element->points[0];
-        state.currentPoint = element->points[0];
+        state.startingPoint = element.points[0];
+        state.currentPoint = element.points[0];
         break;
     case PathElementAddLineToPoint:
         doIntersection = true;
-        point = element->points[0];
+        point = element.points[0];
         break;
     case PathElementAddQuadCurveToPoint:
         doIntersection = true;
-        point = element->points[1];
+        point = element.points[1];
         break;
     case PathElementAddCurveToPoint:
         doIntersection = true;
-        point = element->points[2];
+        point = element.points[2];
         break;
     case PathElementCloseSubpath:
         doIntersection = true;

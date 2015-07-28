@@ -1,3 +1,16 @@
+2015-07-27  Simon Fraser  <simon.fraser@apple.com>
+
+        PathApplierFunction should take a reference to a PathElement
+        https://bugs.webkit.org/show_bug.cgi?id=147337
+
+        Reviewed by Dan Bates.
+
+        Convert PathApplierFunction to take a const PathElement&, since it can never be null.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::pathPointCountApplierFunction):
+        (IPC::pathEncodeApplierFunction):
+
 2015-07-28  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Notify fullscreen controller in UIProcess whether external playback is allowed

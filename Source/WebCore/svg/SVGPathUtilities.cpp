@@ -331,22 +331,22 @@ bool getPointAtLengthOfSVGPathByteStream(SVGPathByteStream* stream, float length
     return ok;
 }
 
-static void pathIteratorForBuildingString(void* info, const PathElement* pathElement)
+static void pathIteratorForBuildingString(void* info, const PathElement& pathElement)
 {
     SVGPathConsumer* consumer = static_cast<SVGPathConsumer*>(info);
 
-    switch (pathElement->type) {
+    switch (pathElement.type) {
     case PathElementMoveToPoint:
-        consumer->moveTo(pathElement->points[0], false, AbsoluteCoordinates);
+        consumer->moveTo(pathElement.points[0], false, AbsoluteCoordinates);
         break;
     case PathElementAddLineToPoint:
-        consumer->lineTo(pathElement->points[0], AbsoluteCoordinates);
+        consumer->lineTo(pathElement.points[0], AbsoluteCoordinates);
         break;
     case PathElementAddQuadCurveToPoint:
-        consumer->curveToQuadratic(pathElement->points[0], pathElement->points[1], AbsoluteCoordinates);
+        consumer->curveToQuadratic(pathElement.points[0], pathElement.points[1], AbsoluteCoordinates);
         break;
     case PathElementAddCurveToPoint:
-        consumer->curveToCubic(pathElement->points[0], pathElement->points[1], pathElement->points[2], AbsoluteCoordinates);
+        consumer->curveToCubic(pathElement.points[0], pathElement.points[1], pathElement.points[2], AbsoluteCoordinates);
         break;
     case PathElementCloseSubpath:
         consumer->closePath();

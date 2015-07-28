@@ -380,7 +380,7 @@ struct PathApplierInfo {
     PathApplierFunction function;
 };
 
-static void CGPathApplierToPathApplier(void *info, const CGPathElement *element)
+static void CGPathApplierToPathApplier(void *info, const CGPathElement* element)
 {
     PathApplierInfo* pinfo = (PathApplierInfo*)info;
     FloatPoint points[3];
@@ -405,7 +405,7 @@ static void CGPathApplierToPathApplier(void *info, const CGPathElement *element)
     case kCGPathElementCloseSubpath:
         break;
     }
-    pinfo->function(pinfo->info, &pelement);
+    pinfo->function(pinfo->info, pelement);
 }
 
 void Path::apply(void* info, PathApplierFunction function) const

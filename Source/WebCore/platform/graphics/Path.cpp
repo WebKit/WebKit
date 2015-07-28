@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-static void pathLengthApplierFunction(void* info, const PathElement* element)
+static void pathLengthApplierFunction(void* info, const PathElement& element)
 {
     PathTraversalState& traversalState = *static_cast<PathTraversalState*>(info);
     traversalState.processPathElement(element);

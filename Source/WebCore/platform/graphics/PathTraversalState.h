@@ -44,7 +44,7 @@ public:
 
 public:
     bool processPathElement(PathElementType, const FloatPoint*);
-    bool processPathElement(const PathElement* element) { return processPathElement(element->type, element->points); }
+    bool processPathElement(const PathElement& element) { return processPathElement(element.type, element.points); }
 
     Action action() const { return m_action; }
     void setAction(Action action) { m_action = action; }

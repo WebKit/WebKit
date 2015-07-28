@@ -609,26 +609,26 @@ static void appendPathCommandAndPoints(PathApplyInfo& info, const String& comman
 }
 
 // Used as a functor for Shape::apply, which has not been cleaned up to use modern C++.
-static void appendPathSegment(void* info, const PathElement* pathElement)
+static void appendPathSegment(void* info, const PathElement& pathElement)
 {
     PathApplyInfo& pathApplyInfo = *static_cast<PathApplyInfo*>(info);
     FloatPoint point;
-    switch (pathElement->type) {
+    switch (pathElement.type) {
     // The points member will contain 1 value.
     case PathElementMoveToPoint:
-        appendPathCommandAndPoints(pathApplyInfo, ASCIILiteral("M"), pathElement->points, 1);
+        appendPathCommandAndPoints(pathApplyInfo, ASCIILiteral("M"), pathElement.points, 1);
         break;
     // The points member will contain 1 value.
     case PathElementAddLineToPoint:
-        appendPathCommandAndPoints(pathApplyInfo, ASCIILiteral("L"), pathElement->points, 1);
+        appendPathCommandAndPoints(pathApplyInfo, ASCIILiteral("L"), pathElement.points, 1);
         break;
     // The points member will contain 3 values.
     case PathElementAddCurveToPoint:
-        appendPathCommandAndPoints(pathApplyInfo, ASCIILiteral("C"), pathElement->points, 3);
+        appendPathCommandAndPoints(pathApplyInfo, ASCIILiteral("C"), pathElement.points, 3);
         break;
     // The points member will contain 2 values.
     case PathElementAddQuadCurveToPoint:
-        appendPathCommandAndPoints(pathApplyInfo, ASCIILiteral("Q"), pathElement->points, 2);
+        appendPathCommandAndPoints(pathApplyInfo, ASCIILiteral("Q"), pathElement.points, 2);
         break;
     // The points member will contain no values.
     case PathElementCloseSubpath:
