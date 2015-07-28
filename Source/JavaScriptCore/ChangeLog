@@ -1,3 +1,19 @@
+2015-07-28  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::PutStackSinkingPhase should be more aggressive about its "no GetStack until put" rule
+        https://bugs.webkit.org/show_bug.cgi?id=147371
+
+        Reviewed by Mark Lam.
+
+        Two fixes:
+
+        - Make ConflictingFlush really mean that you can't load from the stack slot. This means not
+          using ConflictingFlush for arguments.
+
+        - Assert that a GetStack never sees ConflictingFlush.
+
+        * dfg/DFGPutStackSinkingPhase.cpp:
+
 2015-07-28  Basile Clement  <basile_clement@apple.com>
 
         Misleading error message: "At least one digit must occur after a decimal point"
