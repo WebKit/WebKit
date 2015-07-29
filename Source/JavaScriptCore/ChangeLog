@@ -1,5 +1,54 @@
 2015-07-29  Basile Clement  <basile_clement@apple.com>
 
+        Remove native call inlining
+        https://bugs.webkit.org/show_bug.cgi?id=147417
+
+        Rubber Stamped by Filip Pizlo.
+
+        * CMakeLists.txt:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects): Deleted.
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleCall): Deleted.
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize): Deleted.
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC): Deleted.
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode): Deleted.
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction): Deleted.
+        (JSC::DFG::Node::hasCellOperand): Deleted.
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate): Deleted.
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute): Deleted.
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile): Deleted.
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile): Deleted.
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile): Deleted.
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::lower): Deleted.
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNode): Deleted.
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileNativeCallOrConstruct): Deleted.
+        (JSC::FTL::DFG::LowerDFGToLLVM::getFunctionBySymbol): Deleted.
+        (JSC::FTL::DFG::LowerDFGToLLVM::getModuleByPathForSymbol): Deleted.
+        (JSC::FTL::DFG::LowerDFGToLLVM::didOverflowStack): Deleted.
+        * ftl/FTLState.cpp:
+        (JSC::FTL::State::State): Deleted.
+        * ftl/FTLState.h:
+        * runtime/BundlePath.cpp: Removed.
+        (JSC::bundlePath): Deleted.
+        * runtime/JSDataViewPrototype.cpp:
+        (JSC::getData):
+        (JSC::setData):
+        * runtime/Options.h:
+
+2015-07-29  Basile Clement  <basile_clement@apple.com>
+
         Unreviewed, skipping a test that is too complex for its own good
         https://bugs.webkit.org/show_bug.cgi?id=147167
 

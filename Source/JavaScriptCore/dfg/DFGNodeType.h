@@ -239,8 +239,6 @@ namespace JSC { namespace DFG {
     macro(CallForwardVarargs, NodeResultJS | NodeMustGenerate) \
     macro(ConstructVarargs, NodeResultJS | NodeMustGenerate) \
     macro(ConstructForwardVarargs, NodeResultJS | NodeMustGenerate) \
-    macro(NativeCall, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
-    macro(NativeConstruct, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     \
     /* Allocations. */\
     macro(NewObject, NodeResultJS) \

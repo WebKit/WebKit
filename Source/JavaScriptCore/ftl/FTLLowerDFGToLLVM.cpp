@@ -56,10 +56,6 @@
 #include <unordered_set>
 #include <wtf/ProcessID.h>
 
-#if ENABLE(FTL_NATIVE_CALL_INLINING)
-#include "BundlePath.h"
-#endif
-
 namespace JSC { namespace FTL {
 
 using namespace DFG;
@@ -157,29 +153,6 @@ public:
         createPhiVariables();
 
         auto preOrder = m_graph.blocksInPreOrder();
-
-        int maxNumberOfArguments = -1;
-        for (BasicBlock* block : preOrder) {
-            for (unsigned nodeIndex = block->size(); nodeIndex--; ) {
-                Node* node = block->at(nodeIndex);
-                switch (node->op()) {
-                case NativeCall:
-                case NativeConstruct: {
-                    int numArgs = node->numChildren();
-                    if (numArgs > maxNumberOfArguments)
-                        maxNumberOfArguments = numArgs;
-                    break;
-                }
-                default:
-                    break;
-                }
-            }
-        }
-        
-        if (maxNumberOfArguments >= 0) {
-            m_execState = m_out.alloca(arrayType(m_out.int64, JSStack::CallFrameHeaderSize + maxNumberOfArguments));
-            m_execStorage = m_out.ptrToInt(m_execState, m_out.intPtr);        
-        }
 
         LValue capturedAlloca = m_out.alloca(arrayType(m_out.int64, m_graph.m_nextMachineLocal));
         
@@ -757,12 +730,6 @@ private:
         case ForwardVarargs:
             compileForwardVarargs();
             break;
-#if ENABLE(FTL_NATIVE_CALL_INLINING)
-        case NativeCall:
-        case NativeConstruct:
-            compileNativeCallOrConstruct();
-            break;
-#endif
         case Jump:
             compileJump();
             break;
@@ -4271,53 +4238,6 @@ private:
     {
         setBoolean(m_out.bitNot(boolify(m_node->child1())));
     }
-#if ENABLE(FTL_NATIVE_CALL_INLINING)
-    void compileNativeCallOrConstruct() 
-    {
-        int numPassedArgs = m_node->numChildren() - 1;
-        int numArgs = numPassedArgs;
-
-        JSFunction* knownFunction = m_node->castOperand<JSFunction*>();
-        NativeFunction function = knownFunction->nativeFunction();
-
-        Dl_info info;
-        if (!dladdr((void*)function, &info))
-            ASSERT(false); // if we couldn't find the native function this doesn't bode well.
-
-        LValue callee = getFunctionBySymbol(info.dli_sname);
-
-        bool notInlinable;
-        if ((notInlinable = !callee))
-            callee = m_out.operation(function);
-
-        m_out.storePtr(m_callFrame, m_execStorage, m_heaps.CallFrame_callerFrame);
-        m_out.storePtr(constNull(m_out.intPtr), addressFor(m_execStorage, JSStack::CodeBlock));
-        m_out.storePtr(weakPointer(knownFunction), addressFor(m_execStorage, JSStack::Callee));
-
-        m_out.store64(m_out.constInt64(numArgs), addressFor(m_execStorage, JSStack::ArgumentCount));
-
-        for (int i = 0; i < numPassedArgs; ++i) {
-            m_out.storePtr(lowJSValue(m_graph.varArgChild(m_node, 1 + i)),
-                addressFor(m_execStorage, JSStack::ThisArgument, i * sizeof(Register)));
-        }
-
-        LValue calleeCallFrame = m_out.address(m_execState, m_heaps.CallFrame_callerFrame).value();
-        m_out.storePtr(m_out.ptrToInt(calleeCallFrame, m_out.intPtr), m_out.absolute(&vm().topCallFrame));
-
-        LType typeCalleeArg;
-        getParamTypes(getElementType(typeOf(callee)), &typeCalleeArg);
-
-        LValue argument = notInlinable 
-            ? m_out.ptrToInt(calleeCallFrame, typeCalleeArg) 
-            : m_out.bitCast(calleeCallFrame, typeCalleeArg);
-        LValue call = vmCall(callee, argument);
-
-        if (verboseCompilationEnabled())
-            dataLog("Native calling: ", info.dli_sname, "\n");
-
-        setJSValue(call);
-    }
-#endif
 
     void compileCallOrConstruct()
     {
@@ -5448,123 +5368,6 @@ private:
         setJSValue(activation);
     }
 
-#if ENABLE(FTL_NATIVE_CALL_INLINING)
-    LValue getFunctionBySymbol(const CString symbol)
-    {
-        if (!m_ftlState.symbolTable.contains(symbol)) 
-            return nullptr;
-        if (!getModuleByPathForSymbol(m_ftlState.symbolTable.get(symbol), symbol))
-            return nullptr;
-        return getNamedFunction(m_ftlState.module, symbol.data());
-    }
-
-    bool getModuleByPathForSymbol(const CString path, const CString symbol)
-    {
-        if (m_ftlState.nativeLoadedLibraries.contains(path)) {
-            LValue function = getNamedFunction(m_ftlState.module, symbol.data());
-            if (!isInlinableSize(function)) {
-                // We had no choice but to compile this function, but don't try to inline it ever again.
-                m_ftlState.symbolTable.remove(symbol);
-                return false;
-            }
-            return true;
-        }
-
-        LMemoryBuffer memBuf;
-        
-        ASSERT(isX86() || isARM64());
-
-#if PLATFORM(EFL)
-        const CString actualPath = toCString(bundlePath().data(), "/runtime/", path.data());
-#else
-        const CString actualPath = toCString(bundlePath().data(), 
-            isX86() ? "/Resources/Runtime/x86_64/" : "/Resources/Runtime/arm64/",
-            path.data());
-#endif
-
-        char* outMsg;
-        
-        if (createMemoryBufferWithContentsOfFile(actualPath.data(), &memBuf, &outMsg)) {
-            if (Options::verboseFTLFailure())
-                dataLog("Failed to load module at ", actualPath, "\n for symbol ", symbol, "\nERROR: ", outMsg, "\n");
-            disposeMessage(outMsg);
-            return false;
-        }
-
-        LModule module;
-
-        if (parseBitcodeInContext(m_ftlState.context, memBuf, &module, &outMsg)) {
-            if (Options::verboseFTLFailure())
-                dataLog("Failed to parse module at ", actualPath, "\n for symbol ", symbol, "\nERROR: ", outMsg, "\n");
-            disposeMemoryBuffer(memBuf);
-            disposeMessage(outMsg);
-            return false;
-        }
-
-        disposeMemoryBuffer(memBuf);
-
-        if (LValue function = getNamedFunction(m_ftlState.module, symbol.data())) {
-            if (!isInlinableSize(function)) {
-                m_ftlState.symbolTable.remove(symbol);
-                disposeModule(module);
-                return false;
-            }
-        }
-
-        Vector<CString> namedFunctions;
-        for (LValue function = getFirstFunction(module); function; function = getNextFunction(function)) {
-            CString functionName(getValueName(function));
-            namedFunctions.append(functionName);
-            
-            for (LBasicBlock basicBlock = getFirstBasicBlock(function); basicBlock; basicBlock = getNextBasicBlock(basicBlock)) {
-                for (LValue instruction = getFirstInstruction(basicBlock); instruction; instruction = getNextInstruction(instruction)) {
-                    setMetadata(instruction, m_tbaaKind, nullptr);
-                    setMetadata(instruction, m_tbaaStructKind, nullptr);
-                }
-            }
-        }
-
-        Vector<CString> namedGlobals;
-        for (LValue global = getFirstGlobal(module); global; global = getNextGlobal(global)) {
-            CString globalName(getValueName(global));
-            namedGlobals.append(globalName);
-        }
-
-        if (linkModules(m_ftlState.module, module, LLVMLinkerDestroySource, &outMsg)) {
-            if (Options::verboseFTLFailure())
-                dataLog("Failed to link module at ", actualPath, "\n for symbol ", symbol, "\nERROR: ", outMsg, "\n");
-            disposeMessage(outMsg);
-            return false;
-        }
-        
-        for (CString* symbol = namedFunctions.begin(); symbol != namedFunctions.end(); ++symbol) {
-            LValue function = getNamedFunction(m_ftlState.module, symbol->data());
-            LLVMLinkage linkage = getLinkage(function);
-            if (linkage != LLVMInternalLinkage && linkage != LLVMPrivateLinkage)
-                setVisibility(function, LLVMHiddenVisibility);
-            if (!isDeclaration(function)) {
-                setLinkage(function, LLVMPrivateLinkage);
-                setLinkage(function, LLVMAvailableExternallyLinkage);
-
-                if (ASSERT_DISABLED)
-                    removeFunctionAttr(function, LLVMStackProtectAttribute);
-            }
-        }
-
-        for (CString* symbol = namedGlobals.begin(); symbol != namedGlobals.end(); ++symbol) {
-            LValue global = getNamedGlobal(m_ftlState.module, symbol->data());
-            LLVMLinkage linkage = getLinkage(global);
-            if (linkage != LLVMInternalLinkage && linkage != LLVMPrivateLinkage)
-                setVisibility(global, LLVMHiddenVisibility);
-            if (!isDeclaration(global))
-                setLinkage(global, LLVMPrivateLinkage);
-        }
-
-        m_ftlState.nativeLoadedLibraries.add(path);
-        return true;
-    }
-#endif
-
     bool isInlinableSize(LValue function)
     {
         size_t instructionCount = 0;
@@ -5600,8 +5403,6 @@ private:
                 case PutById:
                 case Call:
                 case Construct:
-                case NativeCall:
-                case NativeConstruct:
                     return m_out.below(
                         m_callFrame,
                         m_out.loadPtr(
@@ -8658,8 +8459,6 @@ private:
     LBasicBlock m_handleExceptions;
     HashMap<BasicBlock*, LBasicBlock> m_blocks;
     
-    LValue m_execState;
-    LValue m_execStorage;
     LValue m_callFrame;
     LValue m_captured;
     LValue m_tagTypeNumber;

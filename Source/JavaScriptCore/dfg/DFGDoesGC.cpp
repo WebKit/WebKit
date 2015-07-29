@@ -123,8 +123,6 @@ bool doesGC(Graph& graph, Node* node)
     case LoadVarargs:
     case CallForwardVarargs:
     case ConstructForwardVarargs:
-    case NativeCall:
-    case NativeConstruct:
     case Breakpoint:
     case ProfileWillCall:
     case ProfileDidCall:

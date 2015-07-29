@@ -434,7 +434,6 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/BooleanConstructor.cpp
     runtime/BooleanObject.cpp
     runtime/BooleanPrototype.cpp
-    runtime/BundlePath.cpp
     runtime/CallData.cpp
     runtime/ClonedArguments.cpp
     runtime/CodeCache.cpp
@@ -808,43 +807,6 @@ if (ENABLE_FTL_JIT)
         DEPENDS ${LLVM_STATIC_LIBRARIES}
         COMMAND ${CMAKE_COMMAND} -E touch ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/WebKitLLVMLibraryToken.h
         VERBATIM)
-
-    if (ENABLE_FTL_NATIVE_CALL_INLINING)
-        function(JOIN VALUES GLUE OUTPUT)
-            string(REPLACE ";" "${GLUE}" _TMP_STR "${VALUES}")
-            set(${OUTPUT} "${_TMP_STR}" PARENT_SCOPE)
-        endfunction()
-
-        JOIN("${JavaScriptCore_INCLUDE_DIRECTORIES}" " -I" JSC_INCLUDES)
-
-        set(LLVM_BITCODE_FILES)
-
-        foreach (_file ${JavaScriptCore_RUNTIME_SOURCES})
-            get_filename_component(_name ${_file} NAME_WE)
-            add_custom_command(
-                OUTPUT ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/runtime/${_name}.bc
-                COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/create-llvm-ir-from-source-file.py ${_file} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} ${CLANG_EXE} "${JSC_INCLUDES}"
-                WORKING_DIRECTORY "${JAVASCRIPTCORE_DIR}"
-                VERBATIM)
-
-            ADD_SOURCE_DEPENDENCIES(${CMAKE_CURRENT_SOURCE_DIR}/ftl/FTLState.cpp ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/runtime/${_name}.bc)
-            list(APPEND LLVM_BITCODE_FILES
-                ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/runtime/${_name}.bc
-            )
-        endforeach ()
-
-        get_filename_component(LLVM_BINS ${LLVM_CONFIG_EXE} PATH)
-
-        add_custom_command(
-            OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InlineRuntimeSymbolTable.h
-            MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/create-symbol-table-index.py
-            DEPENDS ${LLVM_BITCODE_FILES}
-            COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/create-symbol-table-index.py ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} ${JAVASCRIPTCORE_DIR} ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR} ${LLVM_BINS}
-            WORKING_DIRECTORY "${JAVASCRIPTCORE_DIR}"
-            VERBATIM)
-
-        ADD_SOURCE_DEPENDENCIES(${CMAKE_CURRENT_SOURCE_DIR}/ftl/FTLState.cpp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InlineRuntimeSymbolTable.h)
-    endif ()
 
     WEBKIT_WRAP_SOURCELIST(${llvmForJSC_SOURCES})
     add_library(llvmForJSC SHARED ${llvmForJSC_SOURCES} ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/WebKitLLVMLibraryToken.h)

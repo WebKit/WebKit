@@ -292,10 +292,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case ForwardVarargs:
         return true;
 
-    case NativeCall:
-    case NativeConstruct:
-        return false; // TODO: add a check for already checked.  https://bugs.webkit.org/show_bug.cgi?id=133769
-
     case BottomValue:
         // If in doubt, assume that this isn't safe to execute, just because we have no way of
         // compiling this node.

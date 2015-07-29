@@ -131,8 +131,6 @@ inline CapabilityLevel canCompile(Node* node)
     case ConstructVarargs:
     case ConstructForwardVarargs:
     case LoadVarargs:
-    case NativeCall:
-    case NativeConstruct:
     case ValueToInt32:
     case Branch:
     case LogicalNot:

@@ -199,8 +199,6 @@ private:
         case ConstructVarargs:
         case CallForwardVarargs:
         case ConstructForwardVarargs:
-        case NativeCall:
-        case NativeConstruct:
         case GetGlobalVar:
         case GetClosureVar:
         case GetFromArguments: {

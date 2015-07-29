@@ -1285,8 +1285,6 @@ private:
         case ConstructForwardVarargs:
         case LoadVarargs:
         case ProfileControlFlow:
-        case NativeCall:
-        case NativeConstruct:
         case NewObject:
         case NewArrayBuffer:
         case NewRegexp:

@@ -784,17 +784,6 @@
 #define ENABLE_FTL_JIT 0
 #endif
 
-#if !defined(ENABLE_FTL_NATIVE_CALL_INLINING)
-#define ENABLE_FTL_NATIVE_CALL_INLINING 0
-#endif
-
-/* Used to make GCC's optimization not throw away a symbol that we would need for native inlining */
-#if ENABLE(FTL_NATIVE_CALL_INLINING) && COMPILER(GCC) && !COMPILER(CLANG)
-#define ATTR_USED __attribute__ ((used))
-#else
-#define ATTR_USED
-#endif
-
 /* Generational collector for JSC */
 #if !defined(ENABLE_GGC)
 #if CPU(X86_64) || CPU(X86) || CPU(ARM64) || CPU(ARM)

@@ -1252,8 +1252,6 @@ struct Node {
         case CallVarargs:
         case ConstructVarargs:
         case CallForwardVarargs:
-        case NativeCall:
-        case NativeConstruct:
         case GetByOffset:
         case MultiGetByOffset:
         case GetClosureVar:
@@ -1285,8 +1283,6 @@ struct Node {
     {
         switch (op()) {
         case CheckCell:
-        case NativeConstruct:
-        case NativeCall:
         case NewFunction:
         case CreateActivation:
         case MaterializeCreateActivation:

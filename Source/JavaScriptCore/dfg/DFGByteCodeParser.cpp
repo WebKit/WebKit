@@ -1066,25 +1066,6 @@ void ByteCodeParser::handleCall(
         return;
     }
     
-#if ENABLE(FTL_NATIVE_CALL_INLINING)
-    if (isFTL(m_graph.m_plan.mode) && Options::optimizeNativeCalls() && callLinkStatus.size() == 1 && !callLinkStatus.couldTakeSlowPath()) {
-        CallVariant callee = callLinkStatus[0];
-        JSFunction* function = callee.function();
-        CodeSpecializationKind specializationKind = InlineCallFrame::specializationKindFor(kind);
-        if (function && function->isHostFunction()) {
-            emitFunctionChecks(callee, callTarget, virtualRegisterForArgument(0, registerOffset));
-            callOpInfo = OpInfo(m_graph.freeze(function));
-
-            if (op == Call)
-                op = NativeCall;
-            else {
-                ASSERT(op == Construct);
-                op = NativeConstruct;
-            }
-        }
-    }
-#endif
-    
     addCall(result, op, callOpInfo, callTarget, argumentCountIncludingThis, registerOffset, prediction);
 }
 

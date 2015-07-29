@@ -2319,8 +2319,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             
     case Call:
     case Construct:
-    case NativeCall:
-    case NativeConstruct:
     case CallVarargs:
     case CallForwardVarargs:
     case ConstructVarargs:

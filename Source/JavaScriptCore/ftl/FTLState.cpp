@@ -35,10 +35,6 @@
 #include <llvm/InitializeLLVM.h>
 #include <stdio.h>
 
-#if ENABLE(FTL_NATIVE_CALL_INLINING)
-#include "InlineRuntimeSymbolTable.h"
-#endif
-
 namespace JSC { namespace FTL {
 
 using namespace DFG;
@@ -56,14 +52,6 @@ State::State(Graph& graph)
     , unwindDataSection(0)
     , unwindDataSectionSize(0)
 {
-
-#if ENABLE(FTL_NATIVE_CALL_INLINING)
-#define SYMBOL_TABLE_ADD(symbol, file) \
-    symbolTable.fastAdd(symbol, file);
-    FOR_EACH_LIBRARY_SYMBOL(SYMBOL_TABLE_ADD)
-#undef SYMBOL_TABLE_ADD
-#endif
-    
     switch (graph.m_plan.mode) {
     case FTLMode: {
         jitCode = adoptRef(new JITCode());

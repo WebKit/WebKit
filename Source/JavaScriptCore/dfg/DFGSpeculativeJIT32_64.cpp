@@ -4686,8 +4686,6 @@ void SpeculativeJIT::compile(Node* node)
     case ArithIMul:
     case MultiGetByOffset:
     case MultiPutByOffset:
-    case NativeCall:
-    case NativeConstruct:
     case CheckBadCell:
     case BottomValue:
     case PhantomNewObject:

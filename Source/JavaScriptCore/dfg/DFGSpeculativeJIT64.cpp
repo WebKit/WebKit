@@ -4748,8 +4748,6 @@ void SpeculativeJIT::compile(Node* node)
         break;
 #endif // ENABLE(FTL_JIT)
 
-    case NativeCall:
-    case NativeConstruct:    
     case LastNodeType:
     case Phi:
     case Upsilon:
