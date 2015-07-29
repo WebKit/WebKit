@@ -40,7 +40,7 @@
 
 using namespace WebKit;
 
-static inline EwkExtension* toEwkExtendion(const void* clientInfo)
+static inline EwkExtension* toEwkExtension(const void* clientInfo)
 {
     return const_cast<EwkExtension*>(static_cast<const EwkExtension*>(clientInfo));
 }
@@ -74,7 +74,7 @@ void EwkExtension::remove(Ewk_Extension_Client* client)
 
 void EwkExtension::didCreatePage(WKBundleRef, WKBundlePageRef wkPage, const void* clientInfo)
 {
-    EwkExtension* self = toEwkExtendion(clientInfo);
+    EwkExtension* self = toEwkExtension(clientInfo);
     WebPage* page = toImpl(wkPage);
 
     auto ewkPage = std::make_unique<EwkPage>(page);
@@ -88,7 +88,7 @@ void EwkExtension::didCreatePage(WKBundleRef, WKBundlePageRef wkPage, const void
 
 void EwkExtension::willDestroyPage(WKBundleRef, WKBundlePageRef wkPage, const void* clientInfo)
 {
-    EwkExtension* self = toEwkExtendion(clientInfo);
+    EwkExtension* self = toEwkExtension(clientInfo);
     WebPage* page = toImpl(wkPage);
 
     for (auto& it : self->m_clients) {
@@ -100,7 +100,7 @@ void EwkExtension::willDestroyPage(WKBundleRef, WKBundlePageRef wkPage, const vo
 
 void EwkExtension::didReceiveMessage(WKBundleRef, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo)
 {
-    EwkExtension* self = toEwkExtendion(clientInfo);
+    EwkExtension* self = toEwkExtension(clientInfo);
     CString name = toImpl(messageName)->string().utf8();
     Eina_Value* value = nullptr;
 
