@@ -42,16 +42,6 @@
 #include <dispatch/dispatch.h>
 #endif
 
-#if USE(ACCELERATE)
-struct ScanlineData {
-    vImagePixelCount scanlineWidth;
-    unsigned char* srcData;
-    size_t srcRowBytes;
-    unsigned char* destData;
-    size_t destRowBytes;
-};
-#endif
-
 // CA uses ARGB32 for textures and ARGB32 -> ARGB32 resampling is optimized.
 #define USE_ARGB32 PLATFORM(IOS)
 
@@ -66,47 +56,41 @@ ImageBufferData::~ImageBufferData()
 }
 
 #if USE(ACCELERATE)
-
 #if USE_ARGB32 || USE(IOSURFACE_CANVAS_BACKING_STORE)
-static void convertScanline(void* data, size_t tileNumber, bool premultiply)
+static void premultiplyBufferData(const vImage_Buffer& src, const vImage_Buffer& dest)
 {
-    ScanlineData* scanlineData = static_cast<ScanlineData*>(data);
+    ASSERT(src->data);
+    ASSERT(dest->data);
 
-    vImage_Buffer src;
-    src.data = scanlineData->srcData + tileNumber * scanlineData->srcRowBytes;
-    src.height = 1;
-    src.width = scanlineData->scanlineWidth;
-    src.rowBytes = scanlineData->srcRowBytes;
-
-    vImage_Buffer dest;
-    dest.data = scanlineData->destData + tileNumber * scanlineData->destRowBytes;
-    dest.height = 1;
-    dest.width = scanlineData->scanlineWidth;
-    dest.rowBytes = scanlineData->destRowBytes;
-
-    if (premultiply) {
-        if (kvImageNoError != vImagePremultiplyData_RGBA8888(&src, &dest, kvImageDoNotTile))
-            return;
-    } else {
-        if (kvImageNoError != vImageUnpremultiplyData_RGBA8888(&src, &dest, kvImageDoNotTile))
-            return;
-    }
+    if (kvImageNoError != vImagePremultiplyData_RGBA8888(&src, &dest, kvImageNoFlags))
+        return;
 
     // Swap channels 1 and 3, to convert BGRA<->RGBA. IOSurfaces are BGRA, ImageData expects RGBA.
     const uint8_t map[4] = { 2, 1, 0, 3 };
-    vImagePermuteChannels_ARGB8888(&dest, &dest, map, kvImageDoNotTile);
+    vImagePermuteChannels_ARGB8888(&dest, &dest, map, kvImageNoFlags);
 }
 
-static void unpremultitplyScanline(void* data, size_t tileNumber)
+static void unpremultiplyBufferData(const vImage_Buffer& src, const vImage_Buffer& dest)
 {
-    convertScanline(data, tileNumber, false);
+    ASSERT(src->data);
+    ASSERT(dest->data);
+
+    if (kvImageNoError != vImageUnpremultiplyData_RGBA8888(&src, &dest, kvImageNoFlags))
+        return;
+
+    // Swap channels 1 and 3, to convert BGRA<->RGBA. IOSurfaces are BGRA, ImageData expects RGBA.
+    const uint8_t map[4] = { 2, 1, 0, 3 };
+    vImagePermuteChannels_ARGB8888(&dest, &dest, map, kvImageNoFlags);
+}
+#endif // USE_ARGB32 || USE(IOSURFACE_CANVAS_BACKING_STORE)
+
+static void affineWarpBufferData(const vImage_Buffer& src, const vImage_Buffer& dest, float scale)
+{
+    vImage_AffineTransform scaleTransform = { scale, 0, 0, scale, 0, 0 }; // FIXME: Add subpixel translation.
+    Pixel_8888 backgroundColor;
+    vImageAffineWarp_ARGB8888(&src, &dest, 0, &scaleTransform, backgroundColor, kvImageEdgeExtend);
 }
 
-static void premultitplyScanline(void* data, size_t tileNumber)
-{
-    convertScanline(data, tileNumber, true);
-}
-#endif // USE(IOSURFACE_CANVAS_BACKING_STORE)
 #endif // USE(ACCELERATE)
 
 RefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, const IntSize& size, bool accelerateRendering, bool unmultiplied, float resolutionScale) const
@@ -167,41 +151,34 @@ RefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, const In
     if (!accelerateRendering) {
         srcBytesPerRow = bytesPerRow.unsafeGet();
         srcRows = reinterpret_cast<unsigned char*>(data) + originy * srcBytesPerRow + originx * 4;
-        
+
 #if USE(ACCELERATE)
         if (unmultiplied) {
-#if USE_ARGB32
-            ScanlineData scanlineData;
-            scanlineData.scanlineWidth = destw.unsafeGet();
-            scanlineData.srcData = srcRows;
-            scanlineData.srcRowBytes = srcBytesPerRow;
-            scanlineData.destData = destRows;
-            scanlineData.destRowBytes = destBytesPerRow;
 
-            dispatch_apply_f(desth.unsafeGet(), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), &scanlineData, unpremultitplyScanline);
-#else
             vImage_Buffer src;
-            src.height = height.unsafeGet();
             src.width = width.unsafeGet();
+            src.height = height.unsafeGet();
             src.rowBytes = srcBytesPerRow;
             src.data = srcRows;
-            
-            vImage_Buffer dst;
-            dst.height = desth.unsafeGet();
-            dst.width = destw.unsafeGet();
-            dst.rowBytes = destBytesPerRow;
-            dst.data = destRows;
 
+            vImage_Buffer dest;
+            dest.width = destw.unsafeGet();
+            dest.height = desth.unsafeGet();
+            dest.rowBytes = destBytesPerRow;
+            dest.data = destRows;
+
+#if USE_ARGB32
+            unpremultiplyBufferData(src, dest);
+#else
             if (resolutionScale != 1) {
-                vImage_AffineTransform scaleTransform = { 1 / resolutionScale, 0, 0, 1 / resolutionScale, 0, 0 }; // FIXME: Add subpixel translation.
-                Pixel_8888 backgroundColor;
-                vImageAffineWarp_ARGB8888(&src, &dst, 0, &scaleTransform, backgroundColor, kvImageEdgeExtend);
+                affineWarpBufferData(src, dest, 1 / resolutionScale);
                 // The unpremultiplying will be done in-place.
-                src = dst;
+                src = dest;
             }
 
-            vImageUnpremultiplyData_RGBA8888(&src, &dst, kvImageNoFlags);
+            vImageUnpremultiplyData_RGBA8888(&src, &dest, kvImageNoFlags);
 #endif
+
             return result;
         }
 #endif
@@ -279,42 +256,28 @@ RefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, const In
         srcRows = static_cast<unsigned char*>(IOSurfaceGetBaseAddress(surfaceRef)) + originy * srcBytesPerRow + originx * 4;
 
 #if USE(ACCELERATE)
+
         vImage_Buffer src;
-        src.height = height.unsafeGet();
         src.width = width.unsafeGet();
+        src.height = height.unsafeGet();
         src.rowBytes = srcBytesPerRow;
         src.data = srcRows;
 
         vImage_Buffer dest;
-        dest.height = desth.unsafeGet();
         dest.width = destw.unsafeGet();
+        dest.height = desth.unsafeGet();
         dest.rowBytes = destBytesPerRow;
         dest.data = destRows;
 
         if (resolutionScale != 1) {
-            vImage_AffineTransform scaleTransform = { 1 / resolutionScale, 0, 0, 1 / resolutionScale, 0, 0 }; // FIXME: Add subpixel translation.
-            Pixel_8888 backgroundColor;
-            vImageAffineWarp_ARGB8888(&src, &dest, 0, &scaleTransform, backgroundColor, kvImageEdgeExtend);
+            affineWarpBufferData(src, dest, 1 / resolutionScale);
             // The unpremultiplying and channel-swapping will be done in-place.
-            if (unmultiplied) {
-                srcRows = destRows;
-                width = destw;
-                height = desth;
-                srcBytesPerRow = destBytesPerRow;
-            } else
-                src = dest;
+            src = dest;
         }
 
-        if (unmultiplied) {
-            ScanlineData scanlineData;
-            scanlineData.scanlineWidth = destw.unsafeGet();
-            scanlineData.srcData = srcRows;
-            scanlineData.srcRowBytes = srcBytesPerRow;
-            scanlineData.destData = destRows;
-            scanlineData.destRowBytes = destBytesPerRow;
-
-            dispatch_apply_f(desth.unsafeGet(), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), &scanlineData, unpremultitplyScanline);
-        } else {
+        if (unmultiplied)
+            unpremultiplyBufferData(src, dest);
+        else {
             // Swap pixel channels from BGRA to RGBA.
             const uint8_t map[4] = { 2, 1, 0, 3 };
             vImagePermuteChannels_ARGB8888(&src, &dest, map, kvImageNoFlags);
@@ -431,41 +394,32 @@ void ImageBufferData::putData(Uint8ClampedArray*& source, const IntSize& sourceS
     if (!accelerateRendering) {
         destBytesPerRow = bytesPerRow.unsafeGet();
         destRows = reinterpret_cast<unsigned char*>(data) + (desty * destBytesPerRow + destx * 4).unsafeGet();
-        
-#if  USE(ACCELERATE)
-        if (unmultiplied) {
-#if USE_ARGB32
-            // FIXME: Are scanlineData.scanlineWidth and the number of iterations specified to dispatch_apply_f() correct?
-            ScanlineData scanlineData;
-            scanlineData.scanlineWidth = width.unsafeGet();
-            scanlineData.srcData = srcRows;
-            scanlineData.srcRowBytes = srcBytesPerRow;
-            scanlineData.destData = destRows;
-            scanlineData.destRowBytes = destBytesPerRow;
 
-            dispatch_apply_f(height.unsafeGet(), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), &scanlineData, premultitplyScanline);
-#else
+#if USE(ACCELERATE)
+        if (unmultiplied) {
+
             vImage_Buffer src;
-            src.height = height.unsafeGet();
             src.width = width.unsafeGet();
+            src.height = height.unsafeGet();
             src.rowBytes = srcBytesPerRow;
             src.data = srcRows;
-            
-            vImage_Buffer dst;
-            dst.height = desth.unsafeGet();
-            dst.width = destw.unsafeGet();
-            dst.rowBytes = destBytesPerRow;
-            dst.data = destRows;
 
+            vImage_Buffer dest;
+            dest.width = destw.unsafeGet();
+            dest.height = desth.unsafeGet();
+            dest.rowBytes = destBytesPerRow;
+            dest.data = destRows;
+
+#if USE_ARGB32
+            unpremultiplyBufferData(src, dest);
+#else
             if (resolutionScale != 1) {
-                vImage_AffineTransform scaleTransform = { resolutionScale, 0, 0, resolutionScale, 0, 0 }; // FIXME: Add subpixel translation.
-                Pixel_8888 backgroundColor;
-                vImageAffineWarp_ARGB8888(&src, &dst, 0, &scaleTransform, backgroundColor, kvImageEdgeExtend);
+                affineWarpBufferData(src, dest, resolutionScale);
                 // The premultiplying will be done in-place.
-                src = dst;
+                src = dest;
             }
 
-            vImagePremultiplyData_RGBA8888(&src, &dst, kvImageNoFlags);
+            vImagePremultiplyData_RGBA8888(&src, &dest, kvImageNoFlags);
 #endif
             return;
         }
@@ -479,6 +433,7 @@ void ImageBufferData::putData(Uint8ClampedArray*& source, const IntSize& sourceS
             if (!unmultiplied)
                 return;
 
+            // The premultiplying will be done in-place.
             srcRows = destRows;
             srcBytesPerRow = destBytesPerRow;
             width = destw;
@@ -524,41 +479,26 @@ void ImageBufferData::putData(Uint8ClampedArray*& source, const IntSize& sourceS
 
 #if USE(ACCELERATE)
         vImage_Buffer src;
-        src.height = height.unsafeGet();
         src.width = width.unsafeGet();
+        src.height = height.unsafeGet();
         src.rowBytes = srcBytesPerRow;
         src.data = srcRows;
 
         vImage_Buffer dest;
-        dest.height = desth.unsafeGet();
         dest.width = destw.unsafeGet();
+        dest.height = desth.unsafeGet();
         dest.rowBytes = destBytesPerRow;
         dest.data = destRows;
 
         if (resolutionScale != 1) {
-            vImage_AffineTransform scaleTransform = { resolutionScale, 0, 0, resolutionScale, 0, 0 }; // FIXME: Add subpixel translation.
-            Pixel_8888 backgroundColor;
-            vImageAffineWarp_ARGB8888(&src, &dest, 0, &scaleTransform, backgroundColor, kvImageEdgeExtend);
+            affineWarpBufferData(src, dest, resolutionScale);
             // The unpremultiplying and channel-swapping will be done in-place.
-            if (unmultiplied) {
-                srcRows = destRows;
-                width = destw;
-                height = desth;
-                srcBytesPerRow = destBytesPerRow;
-            } else
-                src = dest;
+            src = dest;
         }
 
-        if (unmultiplied) {
-            ScanlineData scanlineData;
-            scanlineData.scanlineWidth = width.unsafeGet();
-            scanlineData.srcData = srcRows;
-            scanlineData.srcRowBytes = srcBytesPerRow;
-            scanlineData.destData = destRows;
-            scanlineData.destRowBytes = destBytesPerRow;
-
-            dispatch_apply_f(height.unsafeGet(), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), &scanlineData, premultitplyScanline);
-        } else {
+        if (unmultiplied)
+            premultiplyBufferData(src, dest);
+        else {
             // Swap pixel channels from RGBA to BGRA.
             const uint8_t map[4] = { 2, 1, 0, 3 };
             vImagePermuteChannels_ARGB8888(&src, &dest, map, kvImageNoFlags);
