@@ -59,8 +59,8 @@ ImageBufferData::~ImageBufferData()
 #if USE_ARGB32 || USE(IOSURFACE_CANVAS_BACKING_STORE)
 static void premultiplyBufferData(const vImage_Buffer& src, const vImage_Buffer& dest)
 {
-    ASSERT(src->data);
-    ASSERT(dest->data);
+    ASSERT(src.data);
+    ASSERT(dest.data);
 
     if (kvImageNoError != vImagePremultiplyData_RGBA8888(&src, &dest, kvImageNoFlags))
         return;
@@ -72,8 +72,8 @@ static void premultiplyBufferData(const vImage_Buffer& src, const vImage_Buffer&
 
 static void unpremultiplyBufferData(const vImage_Buffer& src, const vImage_Buffer& dest)
 {
-    ASSERT(src->data);
-    ASSERT(dest->data);
+    ASSERT(src.data);
+    ASSERT(dest.data);
 
     if (kvImageNoError != vImageUnpremultiplyData_RGBA8888(&src, &dest, kvImageNoFlags))
         return;
