@@ -131,6 +131,8 @@ public:
     bool waitingForStartTime() const { return m_animationState == AnimationState::StartWaitResponse; }
     bool waitingForStyleAvailable() const { return m_animationState == AnimationState::StartWaitStyleAvailable; }
 
+    bool isAccelerated() const { return m_isAccelerated; }
+
     virtual double timeToNextService();
 
     double progress(double scale = 1, double offset = 0, const TimingFunction* = nullptr) const;
@@ -230,7 +232,6 @@ protected:
 
     void goIntoEndingOrLoopingState();
 
-    bool isAccelerated() const { return m_isAccelerated; }
     AnimationState state() const { return m_animationState; }
 
     static void setNeedsStyleRecalc(Element*);
