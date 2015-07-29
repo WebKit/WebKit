@@ -42,6 +42,7 @@
 #include <UIKit/UIAccessibility.h>
 
 #if __has_include(<AXRuntime/AXNotificationConstants.h>)
+#include <AXRuntime/AXDefines.h>
 #include <AXRuntime/AXNotificationConstants.h>
 #else
 #define kAXPidStatusChangedNotification 0
