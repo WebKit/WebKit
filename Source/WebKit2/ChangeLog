@@ -1,3 +1,19 @@
+2015-07-29  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [Seccomp] Further improvements to default web process policy
+        https://bugs.webkit.org/show_bug.cgi?id=142987
+
+        Provide various helper functions to allow more flexible construction of
+        filesystem access policies.
+
+        Reviewed by Žan Doberšek.
+
+        Improve the policy. Also, remove ifdefs to reduce potential for breakage in non-default
+        configurations.
+
+        * Shared/linux/SeccompFilters/SyscallPolicy.cpp:
+        (WebKit::SyscallPolicy::addDefaultWebProcessPolicy):
+
 2015-07-29  Chris Dumez  <cdumez@apple.com>
 
         Avoid unnecessarily constructing PlatformMediaSessionManager on Document destruction
