@@ -1471,7 +1471,9 @@ void DocumentLoader::startLoadingMainResource()
 
 void DocumentLoader::cancelPolicyCheckIfNeeded()
 {
-    if (m_waitingForContentPolicy && frameLoader())
+    RELEASE_ASSERT(frameLoader());
+
+    if (m_waitingForContentPolicy)
         frameLoader()->policyChecker().cancelCheck();
 
     m_waitingForContentPolicy = false;
