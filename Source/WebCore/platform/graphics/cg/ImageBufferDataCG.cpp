@@ -57,19 +57,6 @@ ImageBufferData::~ImageBufferData()
 
 #if USE(ACCELERATE)
 #if USE_ARGB32 || USE(IOSURFACE_CANVAS_BACKING_STORE)
-static void premultiplyBufferData(const vImage_Buffer& src, const vImage_Buffer& dest)
-{
-    ASSERT(src.data);
-    ASSERT(dest.data);
-
-    if (kvImageNoError != vImagePremultiplyData_RGBA8888(&src, &dest, kvImageNoFlags))
-        return;
-
-    // Swap channels 1 and 3, to convert BGRA<->RGBA. IOSurfaces are BGRA, ImageData expects RGBA.
-    const uint8_t map[4] = { 2, 1, 0, 3 };
-    vImagePermuteChannels_ARGB8888(&dest, &dest, map, kvImageNoFlags);
-}
-
 static void unpremultiplyBufferData(const vImage_Buffer& src, const vImage_Buffer& dest)
 {
     ASSERT(src.data);
@@ -82,15 +69,31 @@ static void unpremultiplyBufferData(const vImage_Buffer& src, const vImage_Buffe
     const uint8_t map[4] = { 2, 1, 0, 3 };
     vImagePermuteChannels_ARGB8888(&dest, &dest, map, kvImageNoFlags);
 }
+
+#if !PLATFORM(IOS_SIMULATOR)
+static void premultiplyBufferData(const vImage_Buffer& src, const vImage_Buffer& dest)
+{
+    ASSERT(src.data);
+    ASSERT(dest.data);
+
+    if (kvImageNoError != vImagePremultiplyData_RGBA8888(&src, &dest, kvImageNoFlags))
+        return;
+
+    // Swap channels 1 and 3, to convert BGRA<->RGBA. IOSurfaces are BGRA, ImageData expects RGBA.
+    const uint8_t map[4] = { 2, 1, 0, 3 };
+    vImagePermuteChannels_ARGB8888(&dest, &dest, map, kvImageNoFlags);
+}
+#endif // !PLATFORM(IOS_SIMULATOR)
 #endif // USE_ARGB32 || USE(IOSURFACE_CANVAS_BACKING_STORE)
 
+#if !PLATFORM(IOS_SIMULATOR)
 static void affineWarpBufferData(const vImage_Buffer& src, const vImage_Buffer& dest, float scale)
 {
     vImage_AffineTransform scaleTransform = { scale, 0, 0, scale, 0, 0 }; // FIXME: Add subpixel translation.
     Pixel_8888 backgroundColor;
     vImageAffineWarp_ARGB8888(&src, &dest, 0, &scaleTransform, backgroundColor, kvImageEdgeExtend);
 }
-
+#endif // !PLATFORM(IOS_SIMULATOR)
 #endif // USE(ACCELERATE)
 
 RefPtr<Uint8ClampedArray> ImageBufferData::getData(const IntRect& rect, const IntSize& size, bool accelerateRendering, bool unmultiplied, float resolutionScale) const
