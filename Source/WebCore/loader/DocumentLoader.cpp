@@ -652,6 +652,7 @@ void DocumentLoader::responseReceived(CachedResource* resource, const ResourceRe
     }
 
     ASSERT(!m_waitingForContentPolicy);
+    ASSERT(frameLoader());
     m_waitingForContentPolicy = true;
 
     // Always show content with valid substitute data.
@@ -950,6 +951,8 @@ void DocumentLoader::detachFromFrame()
 
     m_applicationCacheHost->setDOMApplicationCache(nullptr);
 
+    cancelPolicyCheckIfNeeded();
+
     // Even though we ASSERT at the top of this method that we have an m_frame, we're seeing crashes where m_frame is null.
     // This means either that a DocumentLoader is detaching twice, or is detaching before ever having attached.
     // Until we figure out how that is happening, null check m_frame before dereferencing it here.
@@ -958,8 +961,6 @@ void DocumentLoader::detachFromFrame()
         InspectorInstrumentation::loaderDetachedFromFrame(*m_frame, *this);
 
     m_frame = nullptr;
-    // The call to stopLoading() above should have canceled any pending content policy check.
-    ASSERT_WITH_MESSAGE(!m_waitingForContentPolicy, "The content policy callback needs a valid frame.");
 }
 
 void DocumentLoader::clearMainResourceLoader()
@@ -1468,17 +1469,22 @@ void DocumentLoader::startLoadingMainResource()
     setRequest(request);
 }
 
+void DocumentLoader::cancelPolicyCheckIfNeeded()
+{
+    if (m_waitingForContentPolicy && frameLoader())
+        frameLoader()->policyChecker().cancelCheck();
+
+    m_waitingForContentPolicy = false;
+}
+
 void DocumentLoader::cancelMainResourceLoad(const ResourceError& resourceError)
 {
     Ref<DocumentLoader> protect(*this);
     ResourceError error = resourceError.isNull() ? frameLoader()->cancelledError(m_request) : resourceError;
 
     m_dataLoadTimer.stop();
-    if (m_waitingForContentPolicy) {
-        frameLoader()->policyChecker().cancelCheck();
-        ASSERT(m_waitingForContentPolicy);
-        m_waitingForContentPolicy = false;
-    }
+
+    cancelPolicyCheckIfNeeded();
 
     if (mainResourceLoader())
         mainResourceLoader()->cancel(error);
