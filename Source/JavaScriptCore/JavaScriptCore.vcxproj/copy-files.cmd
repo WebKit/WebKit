@@ -56,6 +56,7 @@ for %%d in (
     profiler
     replay
     runtime
+    wasm
     yarr
 ) do (
     @xcopy /y /d ..\%%d\*.h "%PrivateHeadersDirectory%" >NUL
