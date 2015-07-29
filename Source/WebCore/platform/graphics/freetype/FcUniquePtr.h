@@ -41,6 +41,13 @@ struct FcPtrDeleter {
 template<typename T>
 using FcUniquePtr = std::unique_ptr<T, FcPtrDeleter<T>>;
 
+template<> struct FcPtrDeleter<FcCharSet> {
+    void operator()(FcCharSet* ptr) const
+    {
+        FcCharSetDestroy(ptr);
+    }
+};
+
 template<> struct FcPtrDeleter<FcFontSet> {
     void operator()(FcFontSet* ptr) const
     {
