@@ -39,6 +39,14 @@
 
 #if PLATFORM(IOS)
 #include "ProcessAssertion.h"
+#include <UIKit/UIAccessibility.h>
+
+#if __has_include(<AXRuntime/AXNotificationConstants.h>)
+#include <AXRuntime/AXNotificationConstants.h>
+#else
+#define kAXPidStatusChangedNotification 0
+#endif
+
 #endif
 
 #if __has_include(<HIServices/AccessibilityPriv.h>)
@@ -600,20 +608,27 @@ bool Connection::kill()
     return false;
 }
     
+static void AccessibilityProcessSuspendedNotification(bool suspended)
+{
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+    _AXUIElementNotifyProcessSuspendStatus(suspended ? AXSuspendStatusSuspended : AXSuspendStatusRunning);
+#elif PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000
+    UIAccessibilityPostNotification(kAXPidStatusChangedNotification, @{ @"pid" : @(getpid()), @"suspended" : @(suspended) });
+#else
+    UNUSED_PARAM(suspended);
+#endif
+}
+    
 void Connection::willSendSyncMessage(unsigned flags)
 {
-#if !TARGET_OS_IPHONE && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     if ((flags & InformPlatformProcessWillSuspend) && WebCore::AXObjectCache::accessibilityEnabled())
-        _AXUIElementNotifyProcessSuspendStatus(AXSuspendStatusSuspended);
-#endif
+        AccessibilityProcessSuspendedNotification(true);
 }
 
 void Connection::didReceiveSyncReply(unsigned flags)
 {
-#if !TARGET_OS_IPHONE && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     if ((flags & InformPlatformProcessWillSuspend) && WebCore::AXObjectCache::accessibilityEnabled())
-        _AXUIElementNotifyProcessSuspendStatus(AXSuspendStatusRunning);
-#endif
+        AccessibilityProcessSuspendedNotification(false);
 }
 
 pid_t Connection::remoteProcessID() const
