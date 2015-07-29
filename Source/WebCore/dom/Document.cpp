@@ -634,7 +634,8 @@ Document::~Document()
         m_cachedResourceLoader->setDocument(nullptr);
 
 #if ENABLE(VIDEO)
-    PlatformMediaSessionManager::sharedManager().stopAllMediaPlaybackForDocument(this);
+    if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
+        platformMediaSessionManager->stopAllMediaPlaybackForDocument(this);
 #endif
     
     // We must call clearRareData() here since a Document class inherits TreeScope

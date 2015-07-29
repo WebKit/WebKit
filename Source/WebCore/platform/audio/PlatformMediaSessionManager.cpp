@@ -37,10 +37,18 @@
 namespace WebCore {
 
 #if !PLATFORM(IOS)
+static PlatformMediaSessionManager* platformMediaSessionManager = nullptr;
+
 PlatformMediaSessionManager& PlatformMediaSessionManager::sharedManager()
 {
-    DEPRECATED_DEFINE_STATIC_LOCAL(PlatformMediaSessionManager, manager, ());
-    return manager;
+    if (!platformMediaSessionManager)
+        platformMediaSessionManager = new PlatformMediaSessionManager;
+    return *platformMediaSessionManager;
+}
+
+PlatformMediaSessionManager* PlatformMediaSessionManager::sharedManagerIfExists()
+{
+    return platformMediaSessionManager;
 }
 #endif
 

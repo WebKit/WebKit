@@ -1,3 +1,17 @@
+2015-07-29  Chris Dumez  <cdumez@apple.com>
+
+        Avoid unnecessarily constructing PlatformMediaSessionManager on Document destruction
+        https://bugs.webkit.org/show_bug.cgi?id=147398
+
+        Reviewed by Jer Noble.
+
+        Only call PlatformMediaSessionManager::stopAllMediaPlaybackForProcess() in
+        destructors if an PlatformMediaSessionManager instance already exists, to 
+        avoid constructing one unecessarily at that point.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didClose):
+
 2015-07-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to set the maximum number of web processes per WebKitWebContext

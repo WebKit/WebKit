@@ -661,7 +661,8 @@ void WebProcess::didClose(IPC::Connection&)
 
 #if ENABLE(VIDEO)
     // FIXME(146657): This explicit media stop command should not be necessary
-    PlatformMediaSessionManager::sharedManager().stopAllMediaPlaybackForProcess();
+    if (auto* platformMediaSessionManager = PlatformMediaSessionManager::sharedManagerIfExists())
+        platformMediaSessionManager->stopAllMediaPlaybackForProcess();
 #endif
 
     // The UI process closed this connection, shut down.

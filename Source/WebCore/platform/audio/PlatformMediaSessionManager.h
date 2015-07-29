@@ -44,6 +44,7 @@ class RemoteCommandListener;
 class PlatformMediaSessionManager : private RemoteCommandListenerClient, private SystemSleepListener::Client, private AudioHardwareListener::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    WEBCORE_EXPORT static PlatformMediaSessionManager* sharedManagerIfExists();
     WEBCORE_EXPORT static PlatformMediaSessionManager& sharedManager();
     virtual ~PlatformMediaSessionManager() { }
 
