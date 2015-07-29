@@ -1,3 +1,23 @@
+2015-07-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Fix empty space in popup menus when first item is selected
+        https://bugs.webkit.org/show_bug.cgi?id=147358
+
+        Reviewed by Martin Robinson.
+
+        It happens when one of the first elements are selected, because we
+        try to center the current selection on the combo element. When the
+        menu is large enough to make the element centered we need to leave
+        empty space at the beginning. This can be fixed by not scrolling
+        to center the selected item when it's above the combo
+        element. This ensure the selected item will always be visible,
+        even if it's not centered. If the selected item is already
+        centered or below the combo element, the behaviour doesn't change
+        and we scroll to center it.
+
+        * UIProcess/gtk/WebPopupMenuProxyGtk.cpp:
+        (WebKit::WebPopupMenuProxyGtk::showPopupMenu):
+
 2015-07-28  Jincheol Jo  <jincheol.jo@navercorp.com>
 
         [EFL] Fix typos in ewk_extension.cpp

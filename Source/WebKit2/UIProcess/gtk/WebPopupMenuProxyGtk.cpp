@@ -136,7 +136,7 @@ void WebPopupMenuProxyGtk::showPopupMenu(const IntRect& rect, TextDirection, dou
             IntPoint* menuPosition = static_cast<IntPoint*>(userData);
             *x = menuPosition->x();
             *y = menuPosition->y();
-            *pushIn = TRUE;
+            *pushIn = menuPosition->y() < 0;
         }, &menuPosition, nullptr, event && event->type == GDK_BUTTON_PRESS ? event->button.button : 1,
         event ? gdk_event_get_time(event) : GDK_CURRENT_TIME);
 
