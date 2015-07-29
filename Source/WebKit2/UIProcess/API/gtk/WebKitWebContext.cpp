@@ -1158,7 +1158,7 @@ void webkit_web_context_allow_tls_certificate_for_host(WebKitWebContext* context
  * the rest of the WebViews in the application will still function
  * normally.
  *
- * This method **must be called before any other functions**,
+ * This method **must be called before any web process has been created**,
  * as early as possible in your application. Calling it later will make
  * your application crash.
  *
@@ -1193,6 +1193,47 @@ WebKitProcessModel webkit_web_context_get_process_model(WebKitWebContext* contex
     g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS);
 
     return toWebKitProcessModel(context->priv->context->processModel());
+}
+
+/**
+ * webkit_web_context_set_web_process_count_limit:
+ * @context: the #WebKitWebContext
+ * @limit: the maximum number of web processes
+ *
+ * Sets the maximum number of web processes that can be created at the same time for the @context.
+ * The default value is 0 and means no limit.
+ *
+ * This method **must be called before any web process has been created**,
+ * as early as possible in your application. Calling it later will make
+ * your application crash.
+ *
+ * Since: 2.10
+ */
+void webkit_web_context_set_web_process_count_limit(WebKitWebContext* context, guint limit)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
+
+    if (limit == context->priv->context->configuration().maximumProcessCount())
+        return;
+
+    context->priv->context->setMaximumNumberOfProcesses(limit);
+}
+
+/**
+ * webkit_web_context_get_web_process_count_limit:
+ * @context: the #WebKitWebContext
+ *
+ * Gets the maximum number of web processes that can be created at the same time for the @context.
+ *
+ * Returns: the maximum limit of web processes, or 0 if there isn't a limit.
+ *
+ * Since: 2.10
+ */
+guint webkit_web_context_get_web_process_count_limit(WebKitWebContext* context)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), 0);
+
+    return context->priv->context->configuration().maximumProcessCount();
 }
 
 WebKitDownload* webkitWebContextGetOrCreateDownload(DownloadProxy* downloadProxy)

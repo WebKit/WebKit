@@ -1,5 +1,18 @@
 2015-07-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Add API to set the maximum number of web processes per WebKitWebContext
+        https://bugs.webkit.org/show_bug.cgi?id=147108
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkit_web_context_set_web_process_count_limit):
+        (webkit_web_context_get_web_process_count_limit):
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+
+2015-07-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Fix empty space in popup menus when first item is selected
         https://bugs.webkit.org/show_bug.cgi?id=147358
 

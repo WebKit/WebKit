@@ -162,6 +162,13 @@ WEBKIT_API WebKitCacheModel
 webkit_web_context_get_cache_model                  (WebKitWebContext              *context);
 
 WEBKIT_API void
+webkit_web_context_set_web_process_count_limit      (WebKitWebContext              *context,
+                                                     guint                          limit);
+
+WEBKIT_API guint
+webkit_web_context_get_web_process_count_limit      (WebKitWebContext              *context);
+
+WEBKIT_API void
 webkit_web_context_clear_cache                      (WebKitWebContext              *context);
 
 WEBKIT_API WebKitDownload *

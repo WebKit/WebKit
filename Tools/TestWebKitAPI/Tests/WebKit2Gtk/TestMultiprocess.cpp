@@ -240,6 +240,22 @@ static void testMultiprocessWebViewCreateReadyClose(UIClientMultiprocessTest* te
     g_assert_cmpuint(test->m_initializeWebExtensionsSignalCount, ==, 1);
 }
 
+static void testWebProcessLimit(MultiprocessTest* test, gconstpointer)
+{
+    g_assert_cmpuint(webkit_web_context_get_web_process_count_limit(test->m_webContext.get()), ==, 0);
+
+    webkit_web_context_set_web_process_count_limit(test->m_webContext.get(), 1);
+    g_assert_cmpuint(webkit_web_context_get_web_process_count_limit(test->m_webContext.get()), ==, 1);
+
+    // Create two web views but there should be only one web process.
+    for (unsigned i = 0; i < numViews; i++) {
+        test->loadWebViewAndWaitUntilLoaded(i);
+        g_assert(WEBKIT_IS_WEB_VIEW(test->m_webViews[i].get()));
+    }
+
+    g_assert_cmpuint(test->m_initializeWebExtensionsSignalCount, ==, 1);
+}
+
 void beforeAll()
 {
     // Check that default setting is the one stated in the documentation
@@ -259,6 +275,7 @@ void beforeAll()
 
     MultiprocessTest::add("WebKitWebContext", "process-per-web-view", testProcessPerWebView);
     UIClientMultiprocessTest::add("WebKitWebView", "multiprocess-create-ready-close", testMultiprocessWebViewCreateReadyClose);
+    MultiprocessTest::add("WebKitWebContext", "web-process-limit", testWebProcessLimit);
 }
 
 void afterAll()
