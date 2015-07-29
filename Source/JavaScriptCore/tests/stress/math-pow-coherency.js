@@ -1,3 +1,5 @@
+//@ skip
+
 // This test checks that the pow function returns coherent results:
 // (a) Across different compilation tiers
 // (b) With integer exponents represented as int32 or as double

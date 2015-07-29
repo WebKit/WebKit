@@ -1,3 +1,10 @@
+2015-07-29  Basile Clement  <basile_clement@apple.com>
+
+        Unreviewed, skipping a test that is too complex for its own good
+        https://bugs.webkit.org/show_bug.cgi?id=147167
+
+        * tests/stress/math-pow-coherency.js:
+
 2015-07-29  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Implement WebAssembly module parser
