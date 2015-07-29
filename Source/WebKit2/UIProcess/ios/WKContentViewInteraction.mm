@@ -3225,6 +3225,9 @@ static bool isAssistableInputType(InputType type)
 
 - (BOOL)_interactionShouldBeginFromPreviewItemController:(UIPreviewItemController *)controller forPosition:(CGPoint)position
 {
+    if (!_highlightLongPressCanClick)
+        return NO;
+
     [self ensurePositionInformationIsUpToDate:position];
     if (_positionInformation.clickableElementName != "A" && _positionInformation.clickableElementName != "IMG")
         return NO;

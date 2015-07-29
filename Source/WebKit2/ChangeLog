@@ -1,3 +1,17 @@
+2015-07-29  Enrica Casucci  <enrica@apple.com>
+
+        Preview should not start if touch handler prevents default.
+        https://bugs.webkit.org/show_bug.cgi?id=147423
+        rdar://problem/22061043
+
+        Reviewed by Tim Horton.
+
+        We need to check if _highlightLongPressCanClick has not been reset before
+        we allow the preview. It can be reset by a touch handler preventing default.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _interactionShouldBeginFromPreviewItemController:forPosition:]):
+
 2015-07-29  Chris Fleizach  <cfleizach@apple.com>
 
         AX: iOS: VoiceOver hangs indefinitely when an JS alert appears
