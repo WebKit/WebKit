@@ -1,3 +1,20 @@
+2015-07-29  Zalan Bujtas  <zalan@apple.com>
+
+        Remove the spanner placeholder from m_spannerMap when the placeholder object
+        gets transferred to a descendant flow.
+        https://bugs.webkit.org/show_bug.cgi?id=147380
+        rdar://problem/21981078
+
+        Reviewed by David Hyatt.
+
+        Before r180328, the spanner placeholder was removed from m_spannerMap through
+        RenderMultiColumnFlowThread::removeFlowChildInfo() by calling flowThreadRelativeWillBeRemoved()
+        when the placeholder renderer got transferred to the descendant flow.
+        Now we just remove it from the map when the renderer is being detached.
+
+        * fast/multicol/newmulticol/spanner-crash-with-embedded-columns-expected.txt: Added.
+        * fast/multicol/newmulticol/spanner-crash-with-embedded-columns.html: Added.
+
 2015-07-29  Brady Eidson  <beidson@apple.com>
 
         Crash calling webSocket.close() from onError handler for blocked web socket.
