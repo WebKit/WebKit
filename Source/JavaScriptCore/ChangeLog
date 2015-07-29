@@ -1,3 +1,14 @@
+2015-07-28  Benjamin Poulain  <bpoulain@apple.com>
+
+        Speed up the Stringifier::toJSON() fast case
+        https://bugs.webkit.org/show_bug.cgi?id=147383
+
+        Reviewed by Andreas Kling.
+
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::toJSON):
+        (JSC::Stringifier::toJSONImpl):
+
 2015-07-28  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Implement WebAssembly module parser
