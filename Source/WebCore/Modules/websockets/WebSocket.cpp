@@ -284,12 +284,13 @@ void WebSocket::connect(const String& url, const Vector<String>& protocols, Exce
         if (!document.frame()->loader().mixedContentChecker().canRunInsecureContent(document.securityOrigin(), m_url)) {
             // Balanced by the call to ActiveDOMObject::unsetPendingActivity() in WebSocket::stop().
             ActiveDOMObject::setPendingActivity(this);
+
             // We must block this connection. Instead of throwing an exception, we indicate this
             // using the error event. But since this code executes as part of the WebSocket's
             // constructor, we have to wait until the constructor has completed before firing the
             // event; otherwise, users can't connect to the event.
             RunLoop::main().dispatch([this]() {
-                dispatchEvent(Event::create(eventNames().errorEvent, false, false));
+                dispatchOrQueueErrorEvent();
                 stop();
             });
             return;
@@ -587,7 +588,7 @@ void WebSocket::didReceiveMessageError()
     LOG(Network, "WebSocket %p didReceiveErrorMessage()", this);
     m_state = CLOSED;
     ASSERT(scriptExecutionContext());
-    dispatchOrQueueEvent(Event::create(eventNames().errorEvent, false, false));
+    dispatchOrQueueErrorEvent();
 }
 
 void WebSocket::didUpdateBufferedAmount(unsigned long bufferedAmount)
@@ -636,6 +637,15 @@ size_t WebSocket::getFramingOverhead(size_t payloadSize)
     else if (payloadSize >= minimumPayloadSizeWithTwoByteExtendedPayloadLength)
         overhead += 2;
     return overhead;
+}
+
+void WebSocket::dispatchOrQueueErrorEvent()
+{
+    if (m_dispatchedErrorEvent)
+        return;
+
+    m_dispatchedErrorEvent = true;
+    dispatchOrQueueEvent(Event::create(eventNames().errorEvent, false, false));
 }
 
 void WebSocket::dispatchOrQueueEvent(Ref<Event>&& event)

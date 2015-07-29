@@ -2,6 +2,8 @@
 <script>
 window.jsTestIsAsync = true;
 
+var ws;
+
 function onSocketOpened() {
     alert("WebSocket connection opened.");
     finishJSTest();
@@ -9,6 +11,7 @@ function onSocketOpened() {
 
 function onSocketError() {
     alert("WebSocket connection failed.");
+    ws.close();
     finishJSTest();
 }
 
@@ -18,7 +21,7 @@ function onSocketClosed() {
 }
 
 try {
-    var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/echo");
+    ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/echo");
     ws.onopen = onSocketOpened;
     ws.onerror = onSocketError;
     ws.onclose = onSocketClosed;

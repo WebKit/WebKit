@@ -1,3 +1,14 @@
+2015-07-29  Brady Eidson  <beidson@apple.com>
+
+        Crash calling webSocket.close() from onError handler for blocked web socket.
+        <rdar://problem/21771620> and https://bugs.webkit.org/show_bug.cgi?id=147411
+
+        Reviewed by Tim Horton.
+
+        * http/tests/security/mixedContent/resources/frame-with-insecure-websocket.html: Add a call to webSocket.close() inside the onError handler.
+        * http/tests/security/mixedContent/websocket/insecure-websocket-in-iframe-expected.txt:
+        * http/tests/security/mixedContent/websocket/insecure-websocket-in-main-frame-expected.txt:
+
 2015-07-19  Matt Rajca  <mrajca@apple.com>
 
         Media Session: test 'Transient Solo' interruptions
