@@ -274,7 +274,7 @@ bool ResourceHandle::start()
         }
     }
 
-    if (client() && client()->usesAsyncCallbacks()) {
+    if (d->m_usesAsyncCallbacks) {
         ASSERT(!scheduled);
         [connection() setDelegateQueue:operationQueueForAsyncClients()];
         scheduled = true;
@@ -351,7 +351,7 @@ id ResourceHandle::makeDelegate(bool shouldUseCredentialStorage)
     ASSERT(!d->m_delegate);
 
     id <NSURLConnectionDelegate> delegate;
-    if (client() && client()->usesAsyncCallbacks()) {
+    if (d->m_usesAsyncCallbacks) {
         if (shouldUseCredentialStorage)
             delegate = [[WebCoreResourceHandleAsOperationQueueDelegate alloc] initWithHandle:this];
         else
@@ -488,7 +488,7 @@ void ResourceHandle::willSendRequest(ResourceRequest& request, const ResourceRes
         }
     }
 
-    if (client()->usesAsyncCallbacks()) {
+    if (d->m_usesAsyncCallbacks) {
         client()->willSendRequestAsync(this, request, redirectResponse);
     } else {
         Ref<ResourceHandle> protect(*this);
@@ -502,8 +502,7 @@ void ResourceHandle::willSendRequest(ResourceRequest& request, const ResourceRes
 
 void ResourceHandle::continueWillSendRequest(const ResourceRequest& request)
 {
-    ASSERT(client());
-    ASSERT(client()->usesAsyncCallbacks());
+    ASSERT(d->m_usesAsyncCallbacks);
 
     // Client call may not preserve the session, especially if the request is sent over IPC.
     ResourceRequest newRequest = request;
@@ -514,15 +513,14 @@ void ResourceHandle::continueWillSendRequest(const ResourceRequest& request)
 
 void ResourceHandle::continueDidReceiveResponse()
 {
-    ASSERT(client());
-    ASSERT(client()->usesAsyncCallbacks());
+    ASSERT(d->m_usesAsyncCallbacks);
 
     [delegate() continueDidReceiveResponse];
 }
 
 bool ResourceHandle::shouldUseCredentialStorage()
 {
-    ASSERT(!client()->usesAsyncCallbacks());
+    ASSERT(!d->m_usesAsyncCallbacks);
     return client() && client()->shouldUseCredentialStorage(this);
 }
 
@@ -631,17 +629,21 @@ void ResourceHandle::didCancelAuthenticationChallenge(const AuthenticationChalle
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 bool ResourceHandle::canAuthenticateAgainstProtectionSpace(const ProtectionSpace& protectionSpace)
 {
-    if (client()->usesAsyncCallbacks()) {
-        client()->canAuthenticateAgainstProtectionSpaceAsync(this, protectionSpace);
+    ResourceHandleClient* client = this->client();
+    if (d->m_usesAsyncCallbacks) {
+        if (client)
+            client->canAuthenticateAgainstProtectionSpaceAsync(this, protectionSpace);
+        else
+            continueCanAuthenticateAgainstProtectionSpace(false);
         return false; // Ignored by caller.
-    } else
-        return client() && client()->canAuthenticateAgainstProtectionSpace(this, protectionSpace);
+    }
+
+    return client && client->canAuthenticateAgainstProtectionSpace(this, protectionSpace);
 }
 
 void ResourceHandle::continueCanAuthenticateAgainstProtectionSpace(bool result)
 {
-    ASSERT(client());
-    ASSERT(client()->usesAsyncCallbacks());
+    ASSERT(d->m_usesAsyncCallbacks);
 
     [(id)delegate() continueCanAuthenticateAgainstProtectionSpace:result];
 }
@@ -728,8 +730,7 @@ void ResourceHandle::receivedChallengeRejection(const AuthenticationChallenge& c
 
 void ResourceHandle::continueWillCacheResponse(NSCachedURLResponse *response)
 {
-    ASSERT(client());
-    ASSERT(client()->usesAsyncCallbacks());
+    ASSERT(d->m_usesAsyncCallbacks);
 
     [(id)delegate() continueWillCacheResponse:response];
 }

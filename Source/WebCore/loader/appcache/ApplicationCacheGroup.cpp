@@ -324,7 +324,7 @@ void ApplicationCacheGroup::stopLoading()
         ASSERT(!m_currentHandle);
 
         ASSERT(m_manifestHandle->client() == this);
-        m_manifestHandle->setClient(0);
+        m_manifestHandle->clearClient();
 
         m_manifestHandle->cancel();
         m_manifestHandle = nullptr;
@@ -335,7 +335,7 @@ void ApplicationCacheGroup::stopLoading()
         ASSERT(m_cacheBeingUpdated);
 
         ASSERT(m_currentHandle->client() == this);
-        m_currentHandle->setClient(0);
+        m_currentHandle->clearClient();
 
         m_currentHandle->cancel();
         m_currentHandle = nullptr;

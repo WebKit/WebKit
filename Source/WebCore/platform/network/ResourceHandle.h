@@ -200,7 +200,7 @@ public:
 
     // The client may be 0, in which case no callbacks will be made.
     ResourceHandleClient* client() const;
-    WEBCORE_EXPORT void setClient(ResourceHandleClient*);
+    WEBCORE_EXPORT void clearClient();
 
     // Called in response to ResourceHandleClient::willSendRequestAsync().
     WEBCORE_EXPORT void continueWillSendRequest(const ResourceRequest&);
@@ -249,6 +249,8 @@ public:
 
 protected:
     ResourceHandle(NetworkingContext*, const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff);
+
+    bool usesAsyncCallbacks() const;
 
 private:
     enum FailureType {

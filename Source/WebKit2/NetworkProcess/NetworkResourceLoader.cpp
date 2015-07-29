@@ -205,7 +205,7 @@ void NetworkResourceLoader::cleanup()
     invalidateSandboxExtensions();
 
     if (m_handle) {
-        m_handle->setClient(nullptr);
+        m_handle->clearClient();
         m_handle = nullptr;
     }
 

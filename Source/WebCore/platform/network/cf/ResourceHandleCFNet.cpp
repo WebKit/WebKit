@@ -219,7 +219,7 @@ void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool
     CFRelease(streamProperties);
 
 #if PLATFORM(COCOA)
-    if (client() && client()->usesAsyncCallbacks())
+    if (d->m_usesAsyncCallbacks)
         d->m_connectionDelegate = adoptRef(new ResourceHandleCFURLConnectionDelegateWithOperationQueue(this));
     else
         d->m_connectionDelegate = adoptRef(new SynchronousResourceHandleCFURLConnectionDelegate(this));
@@ -304,7 +304,7 @@ void ResourceHandle::willSendRequest(ResourceRequest& request, const ResourceRes
     }
 
     Ref<ResourceHandle> protect(*this);
-    if (client()->usesAsyncCallbacks())
+    if (d->m_usesAsyncCallbacks)
         client()->willSendRequestAsync(this, request, redirectResponse);
     else {
         client()->willSendRequest(this, request, redirectResponse);
@@ -322,7 +322,7 @@ bool ResourceHandle::shouldUseCredentialStorage()
 {
     LOG(Network, "CFNet - shouldUseCredentialStorage()");
     if (ResourceHandleClient* client = this->client()) {
-        ASSERT(!client->usesAsyncCallbacks());
+        ASSERT(!d->m_usesAsyncCallbacks);
         return client->shouldUseCredentialStorage(this);
     }
     return false;
@@ -418,13 +418,16 @@ bool ResourceHandle::tryHandlePasswordBasedAuthentication(const AuthenticationCh
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 bool ResourceHandle::canAuthenticateAgainstProtectionSpace(const ProtectionSpace& protectionSpace)
 {
-    if (ResourceHandleClient* client = this->client()) {
-        if (client->usesAsyncCallbacks())
+    ResourceHandleClient* client = this->client();
+    if (d->m_usesAsyncCallbacks) {
+        if (client)
             client->canAuthenticateAgainstProtectionSpaceAsync(this, protectionSpace);
         else
-            return client->canAuthenticateAgainstProtectionSpace(this, protectionSpace);
+            continueCanAuthenticateAgainstProtectionSpace(false);
+        return false; // Ignored by caller.
     }
-    return false;
+
+    return client && client->canAuthenticateAgainstProtectionSpace(this, protectionSpace);
 }
 #endif
 

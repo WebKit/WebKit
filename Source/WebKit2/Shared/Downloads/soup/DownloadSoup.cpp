@@ -255,7 +255,7 @@ void Download::cancel()
 void Download::platformInvalidate()
 {
     if (m_resourceHandle) {
-        m_resourceHandle->setClient(0);
+        m_resourceHandle->clearClient();
         m_resourceHandle->cancel();
         m_resourceHandle = nullptr;
     }

@@ -594,7 +594,7 @@ void BlobResourceHandle::notifyResponseOnSuccess()
     // BlobResourceHandle cannot be used with downloading, and doesn't even wait for continueDidReceiveResponse.
     // It's currently client's responsibility to know that didReceiveResponseAsync cannot be used to convert a
     // load into a download or blobs.
-    if (client()->usesAsyncCallbacks())
+    if (usesAsyncCallbacks())
         client()->didReceiveResponseAsync(this, response);
     else
         client()->didReceiveResponse(this, response);
@@ -626,7 +626,7 @@ void BlobResourceHandle::notifyResponseOnError()
 
     // Note that we don't wait for continueDidReceiveResponse when using didReceiveResponseAsync.
     // This is not formally correct, but the client has to be a no-op anyway, because blobs can't be downloaded.
-    if (client()->usesAsyncCallbacks())
+    if (usesAsyncCallbacks())
         client()->didReceiveResponseAsync(this, response);
     else
         client()->didReceiveResponse(this, response);
