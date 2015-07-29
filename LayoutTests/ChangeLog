@@ -1,3 +1,10 @@
+2015-07-29  Basile Clement  <basile_clement@apple.com>
+
+        Unreviewed, remove a .orig file.
+        https://bugs.webkit.org/show_bug.cgi?id=113610
+
+        * fast/css-intrinsic-dimensions/height-property-value.html.orig: Removed.
+
 2015-07-28  Benjamin Poulain  <bpoulain@apple.com>
 
         Speed up the Stringifier::toJSON() fast case
