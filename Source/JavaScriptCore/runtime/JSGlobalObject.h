@@ -243,6 +243,9 @@ protected:
     WriteBarrier<Structure> m_iteratorResultStructure;
     WriteBarrier<Structure> m_regExpMatchesArrayStructure;
     WriteBarrier<Structure> m_promiseStructure;
+#if ENABLE(WEBASSEMBLY)
+    WriteBarrier<Structure> m_wasmModuleStructure;
+#endif
 
 #define DEFINE_STORAGE_FOR_SIMPLE_TYPE(capitalName, lowerName, properName, instanceType, jsName) \
     WriteBarrier<capitalName ## Prototype> m_ ## lowerName ## Prototype; \
@@ -475,6 +478,9 @@ public:
     static ptrdiff_t iteratorResultStructureOffset() { return OBJECT_OFFSETOF(JSGlobalObject, m_iteratorResultStructure); }
     Structure* regExpMatchesArrayStructure() const { return m_regExpMatchesArrayStructure.get(); }
     Structure* promiseStructure() const { return m_promiseStructure.get(); }
+#if ENABLE(WEBASSEMBLY)
+    Structure* wasmModuleStructure() const { return m_wasmModuleStructure.get(); }
+#endif
 
     JS_EXPORT_PRIVATE void setRemoteDebuggingEnabled(bool);
     JS_EXPORT_PRIVATE bool remoteDebuggingEnabled() const;

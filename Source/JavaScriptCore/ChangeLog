@@ -1,3 +1,43 @@
+2015-07-29  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Implement WebAssembly module parser
+        https://bugs.webkit.org/show_bug.cgi?id=147293
+
+        Reviewed by Mark Lam.
+
+        Reupload the patch, since r187539 should fix the "Cannot open include file:
+        'JSWASMModule.h'" issue in the Windows build.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionLoadWebAssembly):
+        * parser/SourceProvider.h:
+        (JSC::WebAssemblySourceProvider::create):
+        (JSC::WebAssemblySourceProvider::data):
+        (JSC::WebAssemblySourceProvider::WebAssemblySourceProvider):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::wasmModuleStructure):
+        * wasm/WASMMagicNumber.h: Added.
+        * wasm/WASMModuleParser.cpp: Added.
+        (JSC::WASMModuleParser::WASMModuleParser):
+        (JSC::WASMModuleParser::parse):
+        (JSC::WASMModuleParser::parseModule):
+        (JSC::parseWebAssembly):
+        * wasm/WASMModuleParser.h: Added.
+        * wasm/WASMReader.cpp: Added.
+        (JSC::WASMReader::readUnsignedInt32):
+        (JSC::WASMReader::readFloat):
+        (JSC::WASMReader::readDouble):
+        * wasm/WASMReader.h: Added.
+        (JSC::WASMReader::WASMReader):
+
 2015-07-29  Basile Clement  <basile_clement@apple.com>
 
         Unreviewed, lower the number of test iterations to prevent timing out on Debug builds

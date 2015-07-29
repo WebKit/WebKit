@@ -94,6 +94,37 @@ namespace JSC {
         String m_source;
     };
     
+#if ENABLE(WEBASSEMBLY)
+    class WebAssemblySourceProvider : public SourceProvider {
+    public:
+        static Ref<WebAssemblySourceProvider> create(const Vector<uint8_t>& data, const String& url)
+        {
+            return adoptRef(*new WebAssemblySourceProvider(data, url));
+        }
+
+        virtual const String& source() const override
+        {
+            return m_source;
+        }
+
+        const Vector<uint8_t>& data() const
+        {
+            return m_data;
+        }
+
+    private:
+        WebAssemblySourceProvider(const Vector<uint8_t>& data, const String& url)
+            : SourceProvider(url, TextPosition::minimumPosition())
+            , m_source("[WebAssembly source]")
+            , m_data(data)
+        {
+        }
+
+        String m_source;
+        Vector<uint8_t> m_data;
+    };
+#endif
+
 } // namespace JSC
 
 #endif // SourceProvider_h
