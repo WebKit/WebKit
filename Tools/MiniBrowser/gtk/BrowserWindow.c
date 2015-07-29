@@ -814,21 +814,21 @@ static void browserWindowSetupEditorToolbar(BrowserWindow *window)
     gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_BOTH_HORIZ);
 
     GtkToolItem *item = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_BOLD);
-    window->boldItem = item;
+    window->boldItem = GTK_WIDGET(item);
     gtk_widget_set_name(GTK_WIDGET(item), "Bold");
     g_signal_connect(G_OBJECT(item), "toggled", G_CALLBACK(editingCommandCallback), window);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
 
     item = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_ITALIC);
-    window->italicItem = item;
+    window->italicItem = GTK_WIDGET(item);
     gtk_widget_set_name(GTK_WIDGET(item), "Italic");
     g_signal_connect(G_OBJECT(item), "toggled", G_CALLBACK(editingCommandCallback), window);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
 
     item = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_UNDERLINE);
-    window->underlineItem = item;
+    window->underlineItem = GTK_WIDGET(item);
     gtk_widget_set_name(GTK_WIDGET(item), "Underline");
     g_signal_connect(G_OBJECT(item), "toggled", G_CALLBACK(editingCommandCallback), window);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
@@ -836,7 +836,7 @@ static void browserWindowSetupEditorToolbar(BrowserWindow *window)
 
     item = gtk_toggle_tool_button_new_from_stock(GTK_STOCK_STRIKETHROUGH);
     gtk_widget_set_name(GTK_WIDGET(item), "Strikethrough");
-    window->strikethroughItem = item;
+    window->strikethroughItem = GTK_WIDGET(item);
     g_signal_connect(G_OBJECT(item), "toggled", G_CALLBACK(editingCommandCallback), window);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
     gtk_widget_show(GTK_WIDGET(item));
