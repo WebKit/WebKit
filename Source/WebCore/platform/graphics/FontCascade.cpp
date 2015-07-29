@@ -196,7 +196,7 @@ bool FontCascade::operator==(const FontCascade& other) const
 
 struct FontCascadeCacheKey {
     // This part of the key is shared with the lower level FontCache (caching FontData objects).
-    FontDescriptionFontDataCacheKey fontDescriptionCacheKey;
+    FontDescriptionKey fontDescriptionKey;
     Vector<AtomicString, 3> families;
     unsigned fontSelectorId;
     unsigned fontSelectorVersion;
@@ -218,7 +218,7 @@ typedef HashMap<unsigned, std::unique_ptr<FontCascadeCacheEntry>, AlreadyHashed>
 
 static bool operator==(const FontCascadeCacheKey& a, const FontCascadeCacheKey& b)
 {
-    if (a.fontDescriptionCacheKey != b.fontDescriptionCacheKey)
+    if (a.fontDescriptionKey != b.fontDescriptionKey)
         return false;
     if (a.fontSelectorId != b.fontSelectorId || a.fontSelectorVersion != b.fontSelectorVersion || a.fontSelectorFlags != b.fontSelectorFlags)
         return false;
@@ -256,7 +256,7 @@ static unsigned makeFontSelectorFlags(const FontDescription& description)
 static FontCascadeCacheKey makeFontCascadeCacheKey(const FontDescription& description, FontSelector* fontSelector)
 {
     FontCascadeCacheKey key;
-    key.fontDescriptionCacheKey = FontDescriptionFontDataCacheKey(description);
+    key.fontDescriptionKey = FontDescriptionKey(description);
     for (unsigned i = 0; i < description.familyCount(); ++i)
         key.families.append(description.familyAt(i));
     key.fontSelectorId = fontSelector ? fontSelector->uniqueId() : 0;
@@ -270,7 +270,7 @@ static unsigned computeFontCascadeCacheHash(const FontCascadeCacheKey& key)
     Vector<unsigned, 7> hashCodes;
     hashCodes.reserveInitialCapacity(4 + key.families.size());
 
-    hashCodes.uncheckedAppend(key.fontDescriptionCacheKey.computeHash());
+    hashCodes.uncheckedAppend(key.fontDescriptionKey.computeHash());
     hashCodes.uncheckedAppend(key.fontSelectorId);
     hashCodes.uncheckedAppend(key.fontSelectorVersion);
     hashCodes.uncheckedAppend(key.fontSelectorFlags);

@@ -113,7 +113,7 @@ FontRanges CSSSegmentedFontFace::fontRanges(const FontDescription& fontDescripti
         return FontRanges();
 
     FontTraitsMask desiredTraitsMask = fontDescription.traitsMask();
-    // FIXME: Unify this function with FontDescriptionFontDataCacheKey in FontCache.h (Or just use the regular FontCache instead of this)
+    // FIXME: Unify this function with FontDescriptionKey in FontCache.h (Or just use the regular FontCache instead of this)
     unsigned hashKey = ((fontDescription.computedPixelSize() + 1) << (FontTraitsMaskWidth + FontWidthVariantWidth + FontSynthesisWidth + 1))
         | (fontDescription.fontSynthesis() << (FontTraitsMaskWidth + FontWidthVariantWidth + 1))
         | ((fontDescription.orientation() == Vertical ? 1 : 0) << (FontTraitsMaskWidth + FontWidthVariantWidth))

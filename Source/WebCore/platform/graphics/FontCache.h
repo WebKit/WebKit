@@ -66,13 +66,13 @@ typedef IMLangFontLink IMLangFontLinkType;
 #endif
 
 // This key contains the FontDescription fields other than family that matter when fetching FontDatas (platform fonts).
-struct FontDescriptionFontDataCacheKey {
-    explicit FontDescriptionFontDataCacheKey(unsigned size = 0)
+struct FontDescriptionKey {
+    explicit FontDescriptionKey(unsigned size = 0)
         : size(size)
         , weight(0)
         , flags(0)
     { }
-    FontDescriptionFontDataCacheKey(const FontDescription& description)
+    FontDescriptionKey(const FontDescription& description)
         : size(description.computedPixelSize())
         , weight(description.weight())
         , flags(makeFlagKey(description))
@@ -86,17 +86,17 @@ struct FontDescriptionFontDataCacheKey {
             | static_cast<unsigned>(description.italic()) << 1
             | static_cast<unsigned>(description.renderingMode());
     }
-    bool operator==(const FontDescriptionFontDataCacheKey& other) const
+    bool operator==(const FontDescriptionKey& other) const
     {
         return size == other.size && weight == other.weight && flags == other.flags;
     }
-    bool operator!=(const FontDescriptionFontDataCacheKey& other) const
+    bool operator!=(const FontDescriptionKey& other) const
     {
         return !(*this == other);
     }
     inline unsigned computeHash() const
     {
-        return StringHasher::hashMemory<sizeof(FontDescriptionFontDataCacheKey)>(this);
+        return StringHasher::hashMemory<sizeof(FontDescriptionKey)>(this);
     }
     unsigned size;
     unsigned weight;
