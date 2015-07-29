@@ -32,98 +32,98 @@ namespace WTF {
 
 template<> void refIfNotNull(cairo_t* ptr)
 {
-    if (LIKELY(ptr != 0))
+    if (LIKELY(ptr))
         cairo_reference(ptr);
 }
 
 template<> void derefIfNotNull(cairo_t* ptr)
 {
-    if (LIKELY(ptr != 0))
+    if (LIKELY(ptr))
         cairo_destroy(ptr);
 }
 
 template<> void refIfNotNull(cairo_surface_t* ptr)
 {
-    if (LIKELY(ptr != 0))
+    if (LIKELY(ptr))
         cairo_surface_reference(ptr);
 }
 
 template<> void derefIfNotNull(cairo_surface_t* ptr)
 {
-    if (LIKELY(ptr != 0))
+    if (LIKELY(ptr))
         cairo_surface_destroy(ptr);
 }
 
 template<> void refIfNotNull(cairo_font_face_t* ptr)
 {
-    if (LIKELY(ptr != 0))
+    if (LIKELY(ptr))
         cairo_font_face_reference(ptr);
 }
 
 template<> void derefIfNotNull(cairo_font_face_t* ptr)
 {
-    if (LIKELY(ptr != 0))
+    if (LIKELY(ptr))
         cairo_font_face_destroy(ptr);
 }
 
 template<> void refIfNotNull(cairo_scaled_font_t* ptr)
 {
-    if (LIKELY(ptr != 0))
+    if (LIKELY(ptr))
         cairo_scaled_font_reference(ptr);
 }
 
 template<> void derefIfNotNull(cairo_scaled_font_t* ptr)
 {
-    if (LIKELY(ptr != 0))
+    if (LIKELY(ptr))
         cairo_scaled_font_destroy(ptr);
 }
 
 template<> void refIfNotNull(cairo_pattern_t* ptr)
 {
-    if (LIKELY(ptr != 0))
+    if (LIKELY(ptr))
         cairo_pattern_reference(ptr);
 }
 
 template<> void derefIfNotNull(cairo_pattern_t* ptr)
 {
-    if (LIKELY(ptr != 0))
+    if (LIKELY(ptr))
         cairo_pattern_destroy(ptr);
 }
 
 template<> void refIfNotNull(cairo_region_t* ptr)
 {
-    if (LIKELY(ptr != 0))
+    if (LIKELY(ptr))
         cairo_region_reference(ptr);
 }
 
 template<> void derefIfNotNull(cairo_region_t* ptr)
 {
-    if (LIKELY(ptr != 0))
+    if (LIKELY(ptr))
         cairo_region_destroy(ptr);
 }
 
 #if USE(FREETYPE)
 template<> void refIfNotNull(FcPattern* ptr)
 {
-    if (LIKELY(ptr != 0))
+    if (LIKELY(ptr))
         FcPatternReference(ptr);
 }
 
 template<> void derefIfNotNull(FcPattern* ptr)
 {
-    if (LIKELY(ptr != 0))
+    if (LIKELY(ptr))
         FcPatternDestroy(ptr);
 }
 
 template<> void refIfNotNull(FcConfig* ptr)
 {
-    if (LIKELY(ptr != nullptr))
+    if (LIKELY(ptr))
         FcConfigReference(ptr);
 }
 
 template<> void derefIfNotNull(FcConfig* ptr)
 {
-    if (LIKELY(ptr != nullptr))
+    if (LIKELY(ptr))
         FcConfigDestroy(ptr);
 }
 #endif
