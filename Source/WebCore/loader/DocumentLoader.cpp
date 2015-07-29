@@ -1473,10 +1473,10 @@ void DocumentLoader::cancelPolicyCheckIfNeeded()
 {
     RELEASE_ASSERT(frameLoader());
 
-    if (m_waitingForContentPolicy)
+    if (m_waitingForContentPolicy) {
         frameLoader()->policyChecker().cancelCheck();
-
-    m_waitingForContentPolicy = false;
+        m_waitingForContentPolicy = false;
+    }
 }
 
 void DocumentLoader::cancelMainResourceLoad(const ResourceError& resourceError)
