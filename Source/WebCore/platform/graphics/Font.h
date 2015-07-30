@@ -267,7 +267,9 @@ private:
     Glyph m_zeroWidthSpaceGlyph;
 
     struct DerivedFontData {
+#if !COMPILER(MSVC)
         WTF_MAKE_FAST_ALLOCATED;
+#endif
     public:
         explicit DerivedFontData(bool custom)
             : forCustomFont(custom)

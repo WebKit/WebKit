@@ -106,7 +106,9 @@ private:
     };
 
     class RequestCountTracker {
+#if !COMPILER(MSVC)
         WTF_MAKE_FAST_ALLOCATED;
+#endif
     public:
         RequestCountTracker(CachedResourceLoader&, CachedResource*);
         ~RequestCountTracker();

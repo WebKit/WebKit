@@ -41,7 +41,9 @@ class CachedSVGDocument;
 class Element;
 
 class RenderLayer::FilterInfo final : private CachedSVGDocumentClient {
+#if !COMPILER(MSVC)
     WTF_MAKE_FAST_ALLOCATED;
+#endif
 public:
     static FilterInfo& get(RenderLayer&);
     static FilterInfo* getIfExists(const RenderLayer&);

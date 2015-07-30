@@ -348,7 +348,9 @@ private:
 };
 
 class CachedResource::Callback {
+#if !COMPILER(MSVC)
     WTF_MAKE_FAST_ALLOCATED;
+#endif
 public:
     Callback(CachedResource&, CachedResourceClient&);
 
