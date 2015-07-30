@@ -1,5 +1,20 @@
 2015-07-30  Anders Carlsson  <andersca@apple.com>
 
+        Add support for window.open to WK1BrowserWindowController
+        https://bugs.webkit.org/show_bug.cgi?id=147474
+
+        Reviewed by Dan Bernstein.
+
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController awakeFromNib]):
+        Set javaScriptCanOpenWindowsAutomatically to YES. 
+        If this becomes a nuisance, we can always add a menu item to toggle this.
+
+        (-[WK1BrowserWindowController webView:createWebViewWithRequest:]):
+        Implement this UI delegate method.
+
+2015-07-30  Anders Carlsson  <andersca@apple.com>
+
         Undo stray commit.
 
         * MiniBrowser/mac/WK1BrowserWindowController.m:
