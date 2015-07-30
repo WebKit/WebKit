@@ -46,6 +46,7 @@
 namespace WebCore {
 
 class TextLayout {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static bool isNeeded(RenderText& text, const FontCascade& font)
     {
