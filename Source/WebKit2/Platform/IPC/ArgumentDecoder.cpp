@@ -46,7 +46,7 @@ ArgumentDecoder::ArgumentDecoder(const uint8_t* buffer, size_t bufferSize, Vecto
 ArgumentDecoder::~ArgumentDecoder()
 {
     ASSERT(m_buffer);
-    free(m_buffer);
+    fastFree(m_buffer);
     // FIXME: We need to dispose of the mach ports in cases of failure.
 }
 
@@ -61,7 +61,7 @@ static inline uint8_t* roundUpToAlignment(uint8_t* ptr, unsigned alignment)
 
 void ArgumentDecoder::initialize(const uint8_t* buffer, size_t bufferSize)
 {
-    m_buffer = static_cast<uint8_t*>(malloc(bufferSize));
+    m_buffer = static_cast<uint8_t*>(fastMalloc(bufferSize));
 
     ASSERT(!(reinterpret_cast<uintptr_t>(m_buffer) % alignof(uint64_t)));
 
