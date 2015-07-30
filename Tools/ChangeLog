@@ -1,3 +1,11 @@
+2015-07-30  Anders Carlsson  <andersca@apple.com>
+
+        Undo stray commit.
+
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController awakeFromNib]):
+        (-[WK1BrowserWindowController webView:createWebViewWithRequest:]):
+
 2015-07-29  Dean Jackson  <dino@apple.com>
 
         Don't use (Details) when exposing SPI
