@@ -13,6 +13,11 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
 list(APPEND WebCore_SOURCES
     editing/SmartReplaceCF.cpp
 
+    loader/cf/ResourceLoaderCFNet.cpp
+
+    page/win/FrameCGWin.cpp
+
+    platform/cf/CFURLExtras.cpp
     platform/cf/URLCF.cpp
 
     platform/graphics/ca/GraphicsLayerCA.cpp
@@ -71,12 +76,16 @@ list(APPEND WebCore_SOURCES
     platform/network/cf/FormDataStreamCFNet.cpp
     platform/network/cf/LoaderRunLoopCF.cpp
     platform/network/cf/NetworkStorageSessionCFNet.cpp
+    platform/network/cf/ProtectionSpaceCFNet.cpp
     platform/network/cf/ProxyServerCFNet.cpp
     platform/network/cf/ResourceErrorCF.cpp
     platform/network/cf/ResourceHandleCFNet.cpp
+    platform/network/cf/ResourceHandleCFURLConnectionDelegate.cpp
     platform/network/cf/ResourceRequestCFNet.cpp
     platform/network/cf/ResourceResponseCFNet.cpp
     platform/network/cf/SocketStreamHandleCFNet.cpp
+    platform/network/cf/SynchronousLoaderClientCFNet.cpp
+    platform/network/cf/SynchronousResourceHandleCFURLConnectionDelegate.cpp
 
     platform/win/DragImageCGWin.cpp
 )
@@ -91,4 +100,31 @@ list(APPEND WebCore_FORWARDING_HEADERS_DIRECTORIES
 
     platform/spi/cf
     platform/spi/cg
+)
+
+list(APPEND WebCore_LIBRARIES
+    ASL
+    AVFoundationCF
+    CFNetwork
+    CoreAudioToolbox
+    CoreFoundation
+    CoreGraphics
+    CoreMedia
+    CoreText
+    CoreVideo
+    MediaAccessibility
+    MediaToolbox
+    QuartzCore
+    SQLite3
+    SafariTheme
+    WebKitQuartzCoreAdditions
+    icuin
+    icuuc
+    libdispatch
+    libexslt
+    libicuin
+    libicuuc
+    libxml2
+    libxslt
+    zdll
 )

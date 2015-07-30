@@ -1,3 +1,13 @@
+2015-07-30  Alex Christensen  <achristensen@webkit.org>
+
+        Build AppleWin port with CMake
+        https://bugs.webkit.org/show_bug.cgi?id=147385
+
+        Reviewed by Martin Robinson.
+
+        * PlatformWin.cmake:
+        Added missing source files and libraries.
+
 2015-07-27  Alex Christensen  <achristensen@webkit.org>
 
         Use Ninja on Windows.

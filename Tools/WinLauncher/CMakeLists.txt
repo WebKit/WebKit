@@ -25,7 +25,6 @@ set(WinLauncher_SOURCES
 )
 
 set(WinLauncher_LIBRARIES
-    CFLite
     DbgHelp
     WTF
     WebKit
@@ -36,6 +35,17 @@ set(WinLauncher_LIBRARIES
     shlwapi
 )
 
+if (WTF_PLATFORM_WIN_CAIRO)
+    list(APPEND WinLauncher_LIBRARIES
+        CFLite
+    )
+else ()
+    list(APPEND WinLauncher_LIBRARIES
+        CoreFoundation
+    )
+endif ()
+
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ENTRY:wWinMainCRTStartup")
 
 if (${WTF_PLATFORM_WIN_CAIRO})

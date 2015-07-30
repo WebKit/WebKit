@@ -14,6 +14,14 @@ if (${WTF_PLATFORM_WIN_CAIRO})
         libeay32.lib
         ssleay32.lib
     )
+else ()
+    list(APPEND WebKit_SOURCES_Classes
+        win/WebDownloadCFNet.cpp
+        win/WebURLAuthenticationChallengeSenderCFNet.cpp
+    )
+    list(APPEND WebKit_LIBRARIES
+        WebKitSystemInterface
+    )
 endif ()
 
 list(APPEND WebKit_INCLUDE_DIRECTORIES
@@ -396,8 +404,15 @@ add_library(WebKitGUID STATIC
 set_target_properties(WebKitGUID PROPERTIES FOLDER "WebKit")
 
 list(APPEND WebKit_LIBRARIES
+    Comctl32
+    Comsupp
+    Crypt32
+    Iphlpapi
+    Rpcrt4
+    Shlwapi
+    Usp10
+    Version
     WebKitGUID
-    comsupp.lib
 )
 
 # We need the webkit libraries to come before the system default libraries to prevent symbol conflicts with uuid.lib.
@@ -406,7 +421,7 @@ string(REPLACE " " "\;" CXX_LIBS ${CMAKE_CXX_STANDARD_LIBRARIES})
 list(APPEND WebKit_LIBRARIES ${CXX_LIBS})
 set(CMAKE_CXX_STANDARD_LIBRARIES "")
 
-set(CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} "/NODEFAULTLIB:LIBCMT")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
 
 # If this directory isn't created before midl runs and attempts to output WebKit.tlb,
 # It fails with an unusual error - midl failed - failed to save all changes

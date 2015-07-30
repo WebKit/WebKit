@@ -32,7 +32,6 @@ list(APPEND WebCore_SOURCES
 
     platform/cf/win/CertificateCFWin.cpp
 
-    platform/graphics/FontPlatformData.cpp
     platform/graphics/GLContext.cpp
     platform/graphics/GraphicsLayer.cpp
     platform/graphics/ImageSource.cpp
@@ -76,7 +75,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/FontCacheWin.cpp
     platform/graphics/win/FontCustomPlatformDataCairo.cpp
     platform/graphics/win/FontPlatformDataCairoWin.cpp
-    platform/graphics/win/FontPlatformDataWin.cpp
     platform/graphics/win/FontWin.cpp
     platform/graphics/win/FullScreenController.cpp
     platform/graphics/win/GlyphPageTreeNodeCairoWin.cpp
@@ -148,11 +146,6 @@ list(APPEND WebCore_SOURCES
     rendering/RenderLayerCompositor.cpp
     rendering/RenderThemeSafari.cpp
     rendering/RenderThemeWin.cpp
-)
-
-list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
-    ${WEBCORE_DIR}/css/themeWin.css
-    ${WEBCORE_DIR}/css/themeWinQuirks.css
 )
 
 list(APPEND WebCore_LIBRARIES

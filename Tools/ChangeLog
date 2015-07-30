@@ -1,3 +1,13 @@
+2015-07-30  Alex Christensen  <achristensen@webkit.org>
+
+        Build AppleWin port with CMake
+        https://bugs.webkit.org/show_bug.cgi?id=147385
+
+        Reviewed by Martin Robinson.
+
+        * WinLauncher/CMakeLists.txt:
+        Link to CoreFoundation.lib and added /NODEFAULTLIB:LIBCMT to get it to link successfully.
+
 2015-07-29  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         Implement basic types for ECMAScript Internationalization API

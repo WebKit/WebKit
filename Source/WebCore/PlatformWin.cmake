@@ -10,12 +10,17 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/plugins/win"
 )
 
+enable_language(ASM_MASM)
 list(APPEND WebCore_SOURCES
+    accessibility/win/AXObjectCacheWin.cpp
     accessibility/win/AccessibilityObjectWin.cpp
+    accessibility/win/AccessibilityObjectWrapperWin.cpp
 
     editing/win/EditorWin.cpp
 
     html/HTMLSelectElementWin.cpp
+
+    loader/archive/cf/LegacyWebArchive.cpp
 
     page/win/DragControllerWin.cpp
     page/win/EventHandlerWin.cpp
@@ -28,9 +33,19 @@ list(APPEND WebCore_SOURCES
 
     platform/audio/PlatformMediaSessionManager.cpp
 
+    platform/cf/FileSystemCF.cpp
+    platform/cf/SharedBufferCF.cpp
+
+    platform/cf/win/CertificateCFWin.cpp
+
+    platform/graphics/FontPlatformData.cpp
+    platform/graphics/WOFFFileFormat.cpp
+
     platform/graphics/opentype/OpenTypeUtilities.cpp
 
     platform/graphics/win/DIBPixelData.cpp
+    platform/graphics/win/FontCacheWin.cpp
+    platform/graphics/win/FontPlatformDataWin.cpp
     platform/graphics/win/FontWin.cpp
     platform/graphics/win/GraphicsContextWin.cpp
     platform/graphics/win/IconWin.cpp
@@ -39,8 +54,15 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/IntRectWin.cpp
     platform/graphics/win/IntSizeWin.cpp
     platform/graphics/win/SimpleFontDataWin.cpp
+    platform/graphics/win/TransformationMatrixWin.cpp
+    platform/graphics/win/UniscribeController.cpp
 
+    platform/network/win/DownloadBundleWin.cpp
     platform/network/win/NetworkStateNotifierWin.cpp
+
+    platform/text/LocaleNone.cpp
+
+    platform/text/win/TextBreakIteratorInternalICUWin.cpp
 
     platform/win/BString.cpp
     platform/win/BitmapInfo.cpp
@@ -61,6 +83,7 @@ list(APPEND WebCore_SOURCES
     platform/win/MemoryPressureHandlerWin.cpp
     platform/win/MIMETypeRegistryWin.cpp
     platform/win/PasteboardWin.cpp
+    platform/win/PathWalker.cpp
     platform/win/PlatformMouseEventWin.cpp
     platform/win/PlatformScreenWin.cpp
     platform/win/PopupMenuWin.cpp
@@ -70,11 +93,22 @@ list(APPEND WebCore_SOURCES
     platform/win/SharedBufferWin.cpp
     platform/win/SharedTimerWin.cpp
     platform/win/SoundWin.cpp
+    platform/win/StructuredExceptionHandlerSuppressor.cpp
     platform/win/SystemInfo.cpp
     platform/win/WCDataObject.cpp
+    platform/win/WebCoreBundleWin.cpp
     platform/win/WebCoreInstanceHandle.cpp
+    platform/win/WebCoreTextRenderer.cpp
     platform/win/WheelEventWin.cpp
     platform/win/WidgetWin.cpp
+    platform/win/WindowMessageBroadcaster.cpp
+
+    rendering/RenderThemeWin.cpp
+)
+
+list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
+    ${WEBCORE_DIR}/css/themeWin.css
+    ${WEBCORE_DIR}/css/themeWinQuirks.css
 )
 
 list(APPEND WebCore_SOURCES
