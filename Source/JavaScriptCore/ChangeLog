@@ -1,3 +1,15 @@
+2015-07-30  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Add the "wasm" directory to the Additional Include Directories for jsc.exe
+        https://bugs.webkit.org/show_bug.cgi?id=147443
+
+        Reviewed by Mark Lam.
+
+        This patch should fix the "..\..\jsc.cpp(46): fatal error C1083:
+        Cannot open include file: 'JSWASMModule.h'" error in the Windows build.
+
+        * JavaScriptCore.vcxproj/jsc/jscCommon.props:
+
 2015-07-30  Chris Dumez  <cdumez@apple.com>
 
         Mark more classes as fast allocated
