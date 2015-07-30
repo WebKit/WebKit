@@ -33,6 +33,8 @@
 namespace WebCore {
 
 static const CFStringRef callDidBeginRingingNotification = CFSTR("CallDidBeginRinging");
+static const CFStringRef callDidEndRingingNotification = CFSTR("CallDidEndRinging");
+static const CFStringRef callDidConnectNotification = CFSTR("CallDidConnect");
 
 static void callDidBeginRinging(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
 {
@@ -41,14 +43,33 @@ static void callDidBeginRinging(CFNotificationCenterRef, void* observer, CFStrin
     provider->client().didReceiveStartOfInterruptionNotification(MediaSessionInterruptingCategory::Transient);
 }
 
+static void callDidEndRinging(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
+{
+    ASSERT_ARG(observer, observer);
+    MediaSessionInterruptionProviderMac* provider = (MediaSessionInterruptionProviderMac*)observer;
+    provider->client().didReceiveEndOfInterruptionNotification(MediaSessionInterruptingCategory::Transient);
+}
+
+static void callDidConnect(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
+{
+    ASSERT_ARG(observer, observer);
+    MediaSessionInterruptionProviderMac* provider = (MediaSessionInterruptionProviderMac*)observer;
+    MediaSessionInterruptionProviderClient& client = provider->client();
+    client.didReceiveEndOfInterruptionNotification(MediaSessionInterruptingCategory::Transient);
+    client.didReceiveStartOfInterruptionNotification(MediaSessionInterruptingCategory::Content);
+}
+
 void MediaSessionInterruptionProviderMac::beginListeningForInterruptions()
 {
-    CFNotificationCenterAddObserver(CFNotificationCenterGetDistributedCenter(), this, callDidBeginRinging, callDidBeginRingingNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
+    CFNotificationCenterRef notificationCenter = CFNotificationCenterGetDistributedCenter();
+    CFNotificationCenterAddObserver(notificationCenter, this, callDidBeginRinging, callDidBeginRingingNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
+    CFNotificationCenterAddObserver(notificationCenter, this, callDidEndRinging, callDidEndRingingNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
+    CFNotificationCenterAddObserver(notificationCenter, this, callDidConnect, callDidConnectNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
 }
 
 void MediaSessionInterruptionProviderMac::stopListeningForInterruptions()
 {
-    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDistributedCenter(), this, callDidBeginRingingNotification, nullptr);
+    CFNotificationCenterRemoveEveryObserver(CFNotificationCenterGetDistributedCenter(), this);
 }
 
 } // namespace WebCore
