@@ -41,9 +41,9 @@ class MediaSessionManager : public MediaSessionInterruptionProviderClient {
 public:
     WEBCORE_EXPORT static MediaSessionManager& singleton();
 
-    void togglePlayback();
-    void skipToNextTrack();
-    void skipToPreviousTrack();
+    WEBCORE_EXPORT void togglePlayback();
+    WEBCORE_EXPORT void skipToNextTrack();
+    WEBCORE_EXPORT void skipToPreviousTrack();
 
     WEBCORE_EXPORT void didReceiveStartOfInterruptionNotification(MediaSessionInterruptingCategory) override;
     WEBCORE_EXPORT void didReceiveEndOfInterruptionNotification(MediaSessionInterruptingCategory) override;

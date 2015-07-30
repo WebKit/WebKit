@@ -2821,6 +2821,18 @@ double Internals::mediaElementPlayerVolume(HTMLMediaElement* element) const
     ASSERT_ARG(element, element);
     return element->playerVolume();
 }
+
+void Internals::sendMediaControlEvent(const String& event)
+{
+    if (event == "play-pause")
+        MediaSessionManager::singleton().togglePlayback();
+    else if (event == "next-track")
+        MediaSessionManager::singleton().skipToNextTrack();
+    else if (event == "previous-track")
+        MediaSessionManager::singleton().skipToPreviousTrack();
+    else
+        ASSERT_NOT_REACHED();
+}
 #endif // ENABLE(MEDIA_SESSION)
 
 #if ENABLE(WEB_AUDIO)

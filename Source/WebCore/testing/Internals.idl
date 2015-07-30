@@ -51,6 +51,12 @@ enum MediaSessionInterruptingCategory {
     "transient-solo"
 };
 
+enum MediaControlEvent {
+    "play-pause",
+    "next-track",
+    "previous-track"
+};
+
 [
     NoInterfaceObject,
 ] interface Internals {
@@ -363,6 +369,7 @@ enum MediaSessionInterruptingCategory {
     [Conditional=MEDIA_SESSION] void sendMediaSessionEndOfInterruptionNotification(MediaSessionInterruptingCategory category);
     [Conditional=MEDIA_SESSION] DOMString mediaSessionCurrentState(MediaSession session);
     [Conditional=MEDIA_SESSION] double mediaElementPlayerVolume(HTMLMediaElement element);
+    [Conditional=MEDIA_SESSION] void sendMediaControlEvent(MediaControlEvent event);
     [Conditional=VIDEO] void applicationWillEnterForeground();
     [Conditional=VIDEO] void applicationWillEnterBackground();
     [Conditional=VIDEO, RaisesException] void setMediaSessionRestrictions(DOMString mediaType, DOMString restrictions);

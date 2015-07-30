@@ -400,6 +400,7 @@ public:
     void sendMediaSessionEndOfInterruptionNotification(const String&);
     String mediaSessionCurrentState(MediaSession*) const;
     double mediaElementPlayerVolume(HTMLMediaElement*) const;
+    void sendMediaControlEvent(const String&);
 #endif
 
 #if ENABLE(WEB_AUDIO)
