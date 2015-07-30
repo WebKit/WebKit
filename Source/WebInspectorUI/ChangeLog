@@ -1,3 +1,15 @@
+2015-07-29  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: " = $0" text in the Elements panel should anti-aliased
+        https://bugs.webkit.org/show_bug.cgi?id=147432
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/DOMTreeOutline.css:
+        (.dom-tree-outline li.selected > span::after):
+        (.dom-tree-outline:focus li.selected > span::after):
+        Decrease the opacity just slightly to make " = $0" more distinct from DOM nodes.
+
 2015-07-29  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Allow record filtering by frame duration in Rendering Frames timeline
