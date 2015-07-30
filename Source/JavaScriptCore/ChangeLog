@@ -1,3 +1,27 @@
+2015-07-29  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::ArgumentsEliminationPhase should emit a PutStack for all of the GetStacks that the ByteCodeParser emitted
+        https://bugs.webkit.org/show_bug.cgi?id=147433
+        rdar://problem/21668986
+
+        Reviewed by Mark Lam.
+
+        Ideally, the ByteCodeParser would only emit SetArgument nodes for named arguments.  But
+        currently that's not what it does - it emits a SetArgument for every argument that a varargs
+        call may pass.  Each SetArgument gets turned into a GetStack.  This means that if
+        ArgumentsEliminationPhase optimizes away PutStacks for those varargs arguments that didn't
+        get passed or used, we get degenerate IR where we have a GetStack of something that didn't
+        have a PutStack.
+
+        This fixes the bug by removing the code to optimize away PutStacks in
+        ArgumentsEliminationPhase.
+
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * tests/stress/varargs-inlining-underflow.js: Added.
+        (baz):
+        (bar):
+        (foo):
+
 2015-07-29  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         Implement basic types for ECMAScript Internationalization API

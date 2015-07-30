@@ -516,11 +516,12 @@ private:
                                 value = insertionSet.insertNode(
                                     nodeIndex, SpecNone, GetStack, node->origin, OpInfo(data));
                             } else {
-                                // Check if this an element that we must initialize.
-                                if (storeIndex >= varargsData->mandatoryMinimum) {
-                                    // It's not. We're done.
-                                    break;
-                                }
+                                // FIXME: We shouldn't have to store anything if
+                                // storeIndex >= varargsData->mandatoryMinimum, but we will still
+                                // have GetStacks in that range. So if we don't do the stores, we'll
+                                // have degenerate IR: we'll have GetStacks of something that didn't
+                                // have PutStacks.
+                                // https://bugs.webkit.org/show_bug.cgi?id=147434
                                 
                                 if (!undefined) {
                                     undefined = insertionSet.insertConstant(
