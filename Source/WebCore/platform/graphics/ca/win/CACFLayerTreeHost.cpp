@@ -29,7 +29,6 @@
 #include "CACFLayerTreeHostClient.h"
 #include "DefWndProcWindowClass.h"
 #include "LayerChangesFlusher.h"
-#include "LegacyCACFLayerTreeHost.h"
 #include "PlatformCALayerWin.h"
 #include "WKCACFViewLayerTreeHost.h"
 #include "WebCoreInstanceHandle.h"
@@ -113,8 +112,6 @@ PassRefPtr<CACFLayerTreeHost> CACFLayerTreeHost::create()
     if (!acceleratedCompositingAvailable())
         return 0;
     RefPtr<CACFLayerTreeHost> host = WKCACFViewLayerTreeHost::create();
-    if (!host)
-        host = LegacyCACFLayerTreeHost::create();
     host->initialize();
     return host.release();
 }

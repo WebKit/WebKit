@@ -8773,12 +8773,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\platform\graphics\ca\win\LegacyCACFLayerTreeHost.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\platform\graphics\ca\win\PlatformCAAnimationWin.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|x64'">true</ExcludedFromBuild>
@@ -20529,7 +20523,6 @@
     <CustomBuildStep Include="..\platform\graphics\ca\win\CACFLayerTreeHost.h" />
     <ClInclude Include="..\platform\graphics\ca\win\CACFLayerTreeHostClient.h" />
     <CustomBuildStep Include="..\platform\graphics\ca\win\LayerChangesFlusher.h" />
-    <ClInclude Include="..\platform\graphics\ca\win\LegacyCACFLayerTreeHost.h" />
     <ClInclude Include="..\platform\graphics\ca\win\PlatformCALayerWinInternal.h" />
     <ClInclude Include="..\platform\graphics\ca\win\WKCACFViewLayerTreeHost.h" />
     <ClInclude Include="..\platform\graphics\avfoundation\MediaPlayerPrivateAVFoundation.h" />
