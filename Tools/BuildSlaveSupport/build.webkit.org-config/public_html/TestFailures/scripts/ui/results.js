@@ -207,7 +207,7 @@ ui.results.FlakinessData = base.extends('iframe', {
         // Check for null event.origin so that the unittests can get past this point.
         // FIXME: Is this safe? In practice, there's no meaningful harm that can come from
         // a malicious page sending us heightChanged commands, so it doesn't really matter.
-        if (event.origin !== 'null' && event.origin != 'https://webkit-test-results.appspot.com') {
+        if (event.origin !== 'null' && event.origin != 'https://webkit-test-results.webkit.org') {
             console.log('Invalid origin: ' + event.origin);
             return;
         }

@@ -1,3 +1,30 @@
+2015-07-30  Aakash Jain  <aakash_jain@apple.com>
+
+        Replace Google App Engine with AppScale
+        https://bugs.webkit.org/show_bug.cgi?id=147178
+
+        Reviewed by Daniel Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunWebKitTests):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/garden-o-matic.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/builders_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/results.js:
+        (.):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BubbleQueueServer.js:
+        (BubbleQueueServer):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitTestHistory.js:
+        (TestHistory):
+        * BuildSlaveSupport/build.webkit.org-config/templates/root.html:
+        * QueueStatusServer/app.yaml: We must explicitly define threadsafe property when using the Python 2.7 runtime. We set threadsafe to be false because the status server code was written to be run in AppEngine's CGI environment and AppEngine's CGI programming model handles requests serially per section "Concurrent Requests and WSGI" of <https://cloud.google.com/appengine/docs/python/python25/migrate27>.
+        * TestResultServer/app.yaml: Ditto
+        * Scripts/webkitpy/common/config/urls.py:
+        * TestResultServer/main.py:
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        * TestResultServer/static-dashboards/loader.js:
+
 2015-07-30  Joonghun Park  <jh718.park@samsung.com>
 
         [EFL] Enable IndexedDB based on DatabaseProcess

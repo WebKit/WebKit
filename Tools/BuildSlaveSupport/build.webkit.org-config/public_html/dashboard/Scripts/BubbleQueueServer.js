@@ -38,7 +38,7 @@ BubbleQueueServer = function()
 
     BaseObject.call(this);
 
-    this.baseURL = "https://webkit-queues.appspot.com/";
+    this.baseURL = "https://webkit-queues.webkit.org/";
     this.queues = {};
 
     for (var id in queueInfo)

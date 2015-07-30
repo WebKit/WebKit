@@ -72,8 +72,8 @@ var TESTS_KEY = 'tests';
 var ONE_DAY_SECONDS = 60 * 60 * 24;
 var ONE_WEEK_SECONDS = ONE_DAY_SECONDS * 7;
 
-// These should match the testtype uploaded to webkit-test-results.appspot.com.
-// See http://webkit-test-results.appspot.com/testfile.
+// These should match the testtype uploaded to webkit-test-results.webkit.org.
+// See http://webkit-test-results.webkit.org/testfile.
 var TEST_TYPES = [
     'layout-tests'
 ];

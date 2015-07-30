@@ -25,7 +25,7 @@
 
 TestHistory = function()
 {
-    this._baseURL = "https://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html";
+    this._baseURL = "https://webkit-test-results.webkit.org/dashboards/flakiness_dashboard.html";
 };
 
 BaseObject.addConstructorFunctions(TestHistory);

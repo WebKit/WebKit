@@ -1,6 +1,7 @@
 application: webkit-test-results
 version: 182606
-runtime: python
+runtime: python27
+threadsafe: false
 api_version: 1
 
 handlers:
