@@ -117,7 +117,6 @@ bool ScrollingCoordinatorCoordinatedGraphics::requestScrollPositionUpdate(FrameV
     if (!frameView.delegatesScrolling())
         return false;
 
-    frameView.setFixedVisibleContentRect(IntRect(scrollPosition, frameView.visibleContentRect().size()));
     frameView.hostWindow()->delegatedScrollRequested(scrollPosition);
     return true;
 }
