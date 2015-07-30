@@ -30,25 +30,34 @@
 
 #include "FloatRect.h"
 #include "WindRule.h"
+#include <functional>
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 
 #if USE(CG)
+
 #include <wtf/RetainPtr.h>
 #include <CoreGraphics/CGPath.h>
 typedef struct CGPath PlatformPath;
+
 #elif USE(CAIRO)
+
 namespace WebCore {
 class CairoPath;
 }
 typedef WebCore::CairoPath PlatformPath;
+
 #elif USE(WINGDI)
+
 namespace WebCore {
     class PlatformPath;
 }
 typedef WebCore::PlatformPath PlatformPath;
+
 #else
+
 typedef void PlatformPath;
+
 #endif
 
 typedef PlatformPath* PlatformPathPtr;
@@ -80,7 +89,7 @@ namespace WebCore {
         FloatPoint* points;
     };
 
-    typedef void (*PathApplierFunction)(void* info, const PathElement&);
+    typedef std::function<void (const PathElement&)> PathApplierFunction;
 
     class Path {
         WTF_MAKE_FAST_ALLOCATED;
@@ -146,7 +155,7 @@ namespace WebCore {
         // ensurePlatformPath() will allocate a PlatformPath if it has not yet been and will never return null.
         WEBCORE_EXPORT PlatformPathPtr ensurePlatformPath();
 
-        WEBCORE_EXPORT void apply(void* info, PathApplierFunction) const;
+        WEBCORE_EXPORT void apply(PathApplierFunction) const;
         void transform(const AffineTransform&);
 
         void addBeziersForRoundedRect(const FloatRect&, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius);

@@ -373,16 +373,8 @@ bool ArgumentCoder<IntSize>::decode(ArgumentDecoder& decoder, IntSize& intSize)
     return SimpleArgumentCoder<IntSize>::decode(decoder, intSize);
 }
 
-static void pathPointCountApplierFunction(void* info, const PathElement&)
+static void pathEncodeApplierFunction(ArgumentEncoder& encoder, const PathElement& element)
 {
-    uint64_t* pointCount = static_cast<uint64_t*>(info);
-    ++*pointCount;
-}
-
-static void pathEncodeApplierFunction(void* info, const PathElement& element)
-{
-    ArgumentEncoder& encoder = *static_cast<ArgumentEncoder*>(info);
-
     encoder.encodeEnum(element.type);
 
     switch (element.type) {
@@ -409,11 +401,15 @@ static void pathEncodeApplierFunction(void* info, const PathElement& element)
 void ArgumentCoder<Path>::encode(ArgumentEncoder& encoder, const Path& path)
 {
     uint64_t numPoints = 0;
-    path.apply(&numPoints, pathPointCountApplierFunction);
+    path.apply([&numPoints](const PathElement&) {
+        ++numPoints;
+    });
 
     encoder << numPoints;
 
-    path.apply(&encoder, pathEncodeApplierFunction);
+    path.apply([&encoder](const PathElement& pathElement) {
+        pathEncodeApplierFunction(encoder, pathElement);
+    });
 }
 
 bool ArgumentCoder<Path>::decode(ArgumentDecoder& decoder, Path& path)

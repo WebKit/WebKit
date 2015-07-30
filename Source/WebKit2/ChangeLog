@@ -1,3 +1,17 @@
+2015-07-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Convert Path applier to use std::function
+        https://bugs.webkit.org/show_bug.cgi?id=147368
+
+        Reviewed by Sam Weinig.
+
+        Use std::function for Path::apply().
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::pathEncodeApplierFunction):
+        (IPC::ArgumentCoder<Path>::encode):
+        (IPC::pathPointCountApplierFunction): Deleted.
+
 2015-07-30  Joonghun Park  <jh718.park@samsung.com>
 
         [EFL] Enable IndexedDB based on DatabaseProcess

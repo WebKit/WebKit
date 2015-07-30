@@ -476,7 +476,9 @@ void RenderSVGShape::processMarkerPositions()
     ASSERT(m_path);
 
     SVGMarkerData markerData(m_markerPositions);
-    m_path->apply(&markerData, SVGMarkerData::updateFromPathElement);
+    m_path->apply([&markerData](const PathElement& pathElement) {
+        SVGMarkerData::updateFromPathElement(markerData, pathElement);
+    });
     markerData.pathIsDone();
 }
 

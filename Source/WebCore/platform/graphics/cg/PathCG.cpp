@@ -375,14 +375,9 @@ FloatPoint Path::currentPoint() const
     return CGPathGetCurrentPoint(m_path);
 }
 
-struct PathApplierInfo {
-    void* info;
-    PathApplierFunction function;
-};
-
 static void CGPathApplierToPathApplier(void *info, const CGPathElement* element)
 {
-    PathApplierInfo* pinfo = (PathApplierInfo*)info;
+    PathApplierFunction function = *(PathApplierFunction*)info;
     FloatPoint points[3];
     PathElement pelement;
     pelement.type = (PathElementType)element->type;
@@ -405,18 +400,15 @@ static void CGPathApplierToPathApplier(void *info, const CGPathElement* element)
     case kCGPathElementCloseSubpath:
         break;
     }
-    pinfo->function(pinfo->info, pelement);
+    function(pelement);
 }
 
-void Path::apply(void* info, PathApplierFunction function) const
+void Path::apply(PathApplierFunction function) const
 {
     if (isNull())
         return;
 
-    PathApplierInfo pinfo;
-    pinfo.info = info;
-    pinfo.function = function;
-    CGPathApply(m_path, &pinfo, CGPathApplierToPathApplier);
+    CGPathApply(m_path, &function, CGPathApplierToPathApplier);
 }
 
 }

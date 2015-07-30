@@ -247,11 +247,10 @@ struct PathConversionInfo {
     CGMutablePathRef path;
 };
 
-static void ConvertPathToScreenSpaceFunction(void* info, const PathElement& element)
+static void convertPathToScreenSpaceFunction(PathConversionInfo& conversion, const PathElement& element)
 {
-    PathConversionInfo* conversion = (PathConversionInfo*)info;
-    WebAccessibilityObjectWrapperBase *wrapper = conversion->wrapper;
-    CGMutablePathRef newPath = conversion->path;
+    WebAccessibilityObjectWrapperBase *wrapper = conversion.wrapper;
+    CGMutablePathRef newPath = conversion.path;
     switch (element.type) {
     case PathElementMoveToPoint:
     {
@@ -291,7 +290,9 @@ static void ConvertPathToScreenSpaceFunction(void* info, const PathElement& elem
 - (CGPathRef)convertPathToScreenSpace:(Path &)path
 {
     PathConversionInfo conversion = { self, CGPathCreateMutable() };
-    path.apply(&conversion, ConvertPathToScreenSpaceFunction);    
+    path.apply([&conversion](const PathElement& pathElement) {
+        convertPathToScreenSpaceFunction(conversion, pathElement);
+    });
     return (CGPathRef)[(id)conversion.path autorelease];
 }
 

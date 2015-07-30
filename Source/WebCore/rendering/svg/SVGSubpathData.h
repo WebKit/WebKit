@@ -29,51 +29,46 @@ class SVGSubpathData {
 public:
     SVGSubpathData(Vector<FloatPoint>& zeroLengthSubpathLocations)
         : m_zeroLengthSubpathLocations(zeroLengthSubpathLocations)
-        , m_haveSeenMoveOnly(true)
-        , m_pathIsZeroLength(true)
     {
-        m_lastPoint.set(0, 0);
-        m_movePoint.set(0, 0);
     }
 
-    static void updateFromPathElement(void* info, const PathElement& element)
+    static void updateFromPathElement(SVGSubpathData& subpathFinder, const PathElement& element)
     {
-        SVGSubpathData* subpathFinder = static_cast<SVGSubpathData*>(info);
         switch (element.type) {
         case PathElementMoveToPoint:
-            if (subpathFinder->m_pathIsZeroLength && !subpathFinder->m_haveSeenMoveOnly)
-                subpathFinder->m_zeroLengthSubpathLocations.append(subpathFinder->m_lastPoint);
-            subpathFinder->m_lastPoint = subpathFinder->m_movePoint = element.points[0];
-            subpathFinder->m_haveSeenMoveOnly = true;
-            subpathFinder->m_pathIsZeroLength = true;
+            if (subpathFinder.m_pathIsZeroLength && !subpathFinder.m_haveSeenMoveOnly)
+                subpathFinder.m_zeroLengthSubpathLocations.append(subpathFinder.m_lastPoint);
+            subpathFinder.m_lastPoint = subpathFinder.m_movePoint = element.points[0];
+            subpathFinder.m_haveSeenMoveOnly = true;
+            subpathFinder.m_pathIsZeroLength = true;
             break;
         case PathElementAddLineToPoint:
-            if (subpathFinder->m_lastPoint != element.points[0]) {
-                subpathFinder->m_pathIsZeroLength = false;
-                subpathFinder->m_lastPoint = element.points[0];
+            if (subpathFinder.m_lastPoint != element.points[0]) {
+                subpathFinder.m_pathIsZeroLength = false;
+                subpathFinder.m_lastPoint = element.points[0];
             }
-            subpathFinder->m_haveSeenMoveOnly = false;
+            subpathFinder.m_haveSeenMoveOnly = false;
             break;
         case PathElementAddQuadCurveToPoint:
-            if (subpathFinder->m_lastPoint != element.points[0] || element.points[0] != element.points[1]) {
-                subpathFinder->m_pathIsZeroLength = false;
-                subpathFinder->m_lastPoint = element.points[1];
+            if (subpathFinder.m_lastPoint != element.points[0] || element.points[0] != element.points[1]) {
+                subpathFinder.m_pathIsZeroLength = false;
+                subpathFinder.m_lastPoint = element.points[1];
             }
-            subpathFinder->m_haveSeenMoveOnly = false;
+            subpathFinder.m_haveSeenMoveOnly = false;
             break;
         case PathElementAddCurveToPoint:
-            if (subpathFinder->m_lastPoint != element.points[0] || element.points[0] != element.points[1] || element.points[1] != element.points[2]) {
-                subpathFinder->m_pathIsZeroLength = false;
-                subpathFinder->m_lastPoint = element.points[2];
+            if (subpathFinder.m_lastPoint != element.points[0] || element.points[0] != element.points[1] || element.points[1] != element.points[2]) {
+                subpathFinder.m_pathIsZeroLength = false;
+                subpathFinder.m_lastPoint = element.points[2];
             }
-            subpathFinder->m_haveSeenMoveOnly = false;
+            subpathFinder.m_haveSeenMoveOnly = false;
             break;
         case PathElementCloseSubpath:
-            if (subpathFinder->m_pathIsZeroLength)
-                subpathFinder->m_zeroLengthSubpathLocations.append(subpathFinder->m_lastPoint);
-            subpathFinder->m_haveSeenMoveOnly = true; // This is an implicit move for the next element
-            subpathFinder->m_pathIsZeroLength = true; // A new sub-path also starts here
-            subpathFinder->m_lastPoint = subpathFinder->m_movePoint;
+            if (subpathFinder.m_pathIsZeroLength)
+                subpathFinder.m_zeroLengthSubpathLocations.append(subpathFinder.m_lastPoint);
+            subpathFinder.m_haveSeenMoveOnly = true; // This is an implicit move for the next element
+            subpathFinder.m_pathIsZeroLength = true; // A new sub-path also starts here
+            subpathFinder.m_lastPoint = subpathFinder.m_movePoint;
             break;
         }
     }
@@ -88,8 +83,8 @@ private:
     Vector<FloatPoint>& m_zeroLengthSubpathLocations;
     FloatPoint m_lastPoint;
     FloatPoint m_movePoint;
-    bool m_haveSeenMoveOnly;
-    bool m_pathIsZeroLength;
+    bool m_haveSeenMoveOnly { false };
+    bool m_pathIsZeroLength { false };
 };
 
 }

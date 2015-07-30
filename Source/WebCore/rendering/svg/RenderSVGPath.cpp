@@ -155,7 +155,9 @@ void RenderSVGPath::updateZeroLengthSubpaths()
         return;
 
     SVGSubpathData subpathData(m_zeroLengthLinecapLocations);
-    path().apply(&subpathData, SVGSubpathData::updateFromPathElement);
+    path().apply([&subpathData](const PathElement& pathElement) {
+        SVGSubpathData::updateFromPathElement(subpathData, pathElement);
+    });
     subpathData.pathIsDone();
 }
 

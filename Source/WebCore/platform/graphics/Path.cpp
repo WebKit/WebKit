@@ -39,23 +39,25 @@
 
 namespace WebCore {
 
-static void pathLengthApplierFunction(void* info, const PathElement& element)
-{
-    PathTraversalState& traversalState = *static_cast<PathTraversalState*>(info);
-    traversalState.processPathElement(element);
-}
-
 float Path::length() const
 {
     PathTraversalState traversalState(PathTraversalState::Action::TotalLength);
-    apply(&traversalState, pathLengthApplierFunction);
+
+    apply([&traversalState](const PathElement& element) {
+        traversalState.processPathElement(element);
+    });
+
     return traversalState.totalLength();
 }
 
 PathTraversalState Path::traversalStateAtLength(float length, bool& success) const
 {
     PathTraversalState traversalState(PathTraversalState::Action::VectorAtLength, length);
-    apply(&traversalState, pathLengthApplierFunction);
+
+    apply([&traversalState](const PathElement& element) {
+        traversalState.processPathElement(element);
+    });
+
     success = traversalState.success();
     return traversalState;
 }

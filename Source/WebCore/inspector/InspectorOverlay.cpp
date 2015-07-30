@@ -609,10 +609,8 @@ static void appendPathCommandAndPoints(PathApplyInfo& info, const String& comman
     }
 }
 
-// Used as a functor for Shape::apply, which has not been cleaned up to use modern C++.
-static void appendPathSegment(void* info, const PathElement& pathElement)
+static void appendPathSegment(PathApplyInfo& pathApplyInfo, const PathElement& pathElement)
 {
-    PathApplyInfo& pathApplyInfo = *static_cast<PathApplyInfo*>(info);
     FloatPoint point;
     switch (pathElement.type) {
     // The points member will contain 1 value.
@@ -664,7 +662,9 @@ static RefPtr<Inspector::Protocol::OverlayTypes::ShapeOutsideData> buildObjectFo
         info.renderer = renderer;
         info.shapeOutsideInfo = shapeOutsideInfo;
 
-        paths.shape.apply(&info, &appendPathSegment);
+        paths.shape.apply([&info](const PathElement& pathElement) {
+            appendPathSegment(info, pathElement);
+        });
 
         shapeObject->setShape(shapePath.copyRef());
 
@@ -672,7 +672,9 @@ static RefPtr<Inspector::Protocol::OverlayTypes::ShapeOutsideData> buildObjectFo
             auto marginShapePath = Inspector::Protocol::OverlayTypes::DisplayPath::create();
             info.pathArray = &marginShapePath.get();
 
-            paths.marginShape.apply(&info, &appendPathSegment);
+            paths.marginShape.apply([&info](const PathElement& pathElement) {
+                appendPathSegment(info, pathElement);
+            });
 
             shapeObject->setMarginShape(marginShapePath.copyRef());
         }

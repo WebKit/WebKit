@@ -331,25 +331,23 @@ bool getPointAtLengthOfSVGPathByteStream(SVGPathByteStream* stream, float length
     return ok;
 }
 
-static void pathIteratorForBuildingString(void* info, const PathElement& pathElement)
+static void pathIteratorForBuildingString(SVGPathConsumer& consumer, const PathElement& pathElement)
 {
-    SVGPathConsumer* consumer = static_cast<SVGPathConsumer*>(info);
-
     switch (pathElement.type) {
     case PathElementMoveToPoint:
-        consumer->moveTo(pathElement.points[0], false, AbsoluteCoordinates);
+        consumer.moveTo(pathElement.points[0], false, AbsoluteCoordinates);
         break;
     case PathElementAddLineToPoint:
-        consumer->lineTo(pathElement.points[0], AbsoluteCoordinates);
+        consumer.lineTo(pathElement.points[0], AbsoluteCoordinates);
         break;
     case PathElementAddQuadCurveToPoint:
-        consumer->curveToQuadratic(pathElement.points[0], pathElement.points[1], AbsoluteCoordinates);
+        consumer.curveToQuadratic(pathElement.points[0], pathElement.points[1], AbsoluteCoordinates);
         break;
     case PathElementAddCurveToPoint:
-        consumer->curveToCubic(pathElement.points[0], pathElement.points[1], pathElement.points[2], AbsoluteCoordinates);
+        consumer.curveToCubic(pathElement.points[0], pathElement.points[1], pathElement.points[2], AbsoluteCoordinates);
         break;
     case PathElementCloseSubpath:
-        consumer->closePath();
+        consumer.closePath();
         break;
 
     default:
@@ -364,7 +362,9 @@ bool buildStringFromPath(const Path& path, String& string)
     // a path, only apply a function to all path elements at once.
 
     SVGPathStringBuilder* builder = globalSVGPathStringBuilder();
-    path.apply(builder, &pathIteratorForBuildingString);
+    path.apply([builder](const PathElement& pathElement) {
+        pathIteratorForBuildingString(*builder, pathElement);
+    });
     string = builder->result();
     static_cast<SVGPathConsumer*>(builder)->cleanup();
 

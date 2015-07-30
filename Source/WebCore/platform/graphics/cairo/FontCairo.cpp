@@ -174,9 +174,8 @@ static void updateX(GlyphIterationState& state, float x)
 // pseudo-contour and the vertical center of the underline found in GlyphIterationState::centerOfLine.
 // It keeps track of the leftmost and rightmost intersection in  GlyphIterationState::minX and 
 // GlyphIterationState::maxX.
-static void findPathIntersections(void* stateAsVoidPointer, const PathElement& element)
+static void findPathIntersections(GlyphIterationState& state, const PathElement& element)
 {
-    auto& state = *static_cast<GlyphIterationState*>(stateAsVoidPointer);
     bool doIntersection = false;
     FloatPoint point = FloatPoint();
     switch (element.type) {
@@ -337,7 +336,9 @@ DashArray FontCascade::dashesForIntersectionsWithRect(const TextRun& run, const 
         switch (translator->underlineType()) {
         case GlyphToPathTranslator::GlyphUnderlineType::SkipDescenders: {
             Path path = translator->path();
-            path.apply(&info, &findPathIntersections);
+            path.apply([&info](const PathElement& pathElement) {
+                findPathIntersections(info, pathElement);
+            });
             if (info.minX < info.maxX) {
                 result.append(info.minX - lineExtents.x());
                 result.append(info.maxX - lineExtents.x());

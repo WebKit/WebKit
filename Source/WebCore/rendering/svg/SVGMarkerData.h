@@ -54,22 +54,20 @@ public:
     {
     }
 
-    static void updateFromPathElement(void* info, const PathElement& element)
+    static void updateFromPathElement(SVGMarkerData& markerData, const PathElement& element)
     {
-        SVGMarkerData* markerData = static_cast<SVGMarkerData*>(info);
-
         // First update the outslope for the previous element.
-        markerData->updateOutslope(element.points[0]);
+        markerData.updateOutslope(element.points[0]);
 
         // Record the marker for the previous element.
-        if (markerData->m_elementIndex > 0) {
-            SVGMarkerType markerType = markerData->m_elementIndex == 1 ? StartMarker : MidMarker;
-            markerData->m_positions.append(MarkerPosition(markerType, markerData->m_origin, markerData->currentAngle(markerType)));
+        if (markerData.m_elementIndex > 0) {
+            SVGMarkerType markerType = markerData.m_elementIndex == 1 ? StartMarker : MidMarker;
+            markerData.m_positions.append(MarkerPosition(markerType, markerData.m_origin, markerData.currentAngle(markerType)));
         }
 
         // Update our marker data for this element.
-        markerData->updateMarkerDataForPathElement(element);
-        ++markerData->m_elementIndex;
+        markerData.updateMarkerDataForPathElement(element);
+        ++markerData.m_elementIndex;
     }
 
     void pathIsDone()
