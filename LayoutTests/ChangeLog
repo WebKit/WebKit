@@ -1,5 +1,16 @@
 2015-07-29  Matt Rajca  <mrajca@apple.com>
 
+        Media Session: test Play/Pause media control events delivered to non-Content media sessions
+        https://bugs.webkit.org/show_bug.cgi?id=147414
+
+        Reviewed by Eric Carlson.
+
+        * media/session/play-pause-media-events-in-non-content-sessions-expected.txt: Added.
+        * media/session/play-pause-media-events-in-non-content-sessions.html: Added.
+        * platform/mac/TestExpectations: Media Session support is disabled by default.
+
+2015-07-29  Matt Rajca  <mrajca@apple.com>
+
         Media Session: test Play/Pause media control events delivered to Content media sessions
         https://bugs.webkit.org/show_bug.cgi?id=147413
 
