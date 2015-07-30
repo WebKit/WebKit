@@ -70,6 +70,8 @@ public:
     void setAcceptLanguages(const Vector<String>&);
 
 private:
+    friend class NeverDestroyed<SoupNetworkSession>;
+
     SoupNetworkSession(SoupCookieJar*);
     SoupNetworkSession(SoupSession*);
 

@@ -37,6 +37,7 @@
 #include "ResourceHandle.h"
 #include <glib/gstdio.h>
 #include <libsoup/soup.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -51,7 +52,7 @@ inline static void soupLogPrinter(SoupLogger*, SoupLoggerLogLevel, char directio
 
 SoupNetworkSession& SoupNetworkSession::defaultSession()
 {
-    static SoupNetworkSession networkSession(soupCookieJar());
+    static NeverDestroyed<SoupNetworkSession> networkSession(soupCookieJar());
     return networkSession;
 }
 
