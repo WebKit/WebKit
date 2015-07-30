@@ -77,6 +77,7 @@ static const char* boolString(bool val)
 }
 #endif
 
+static const double DefaultWatchdogTimerInterval = 1;
 
 @class WebAVMediaSelectionOption;
 
@@ -870,6 +871,7 @@ static Class getWebAVPlayerLayerViewClass()
 
 WebVideoFullscreenInterfaceAVKit::WebVideoFullscreenInterfaceAVKit()
     : m_playerController(adoptNS([[WebAVPlayerController alloc] init]))
+    , m_watchdogTimer(*this, &WebVideoFullscreenInterfaceAVKit::watchdogTimerFired)
 {
     [m_playerController setFullscreenInterface:this];
 }
@@ -1145,6 +1147,8 @@ void WebVideoFullscreenInterfaceAVKit::enterFullscreenStandard()
 
 void WebVideoFullscreenInterfaceAVKit::exitFullscreen(const WebCore::IntRect& finalRect)
 {
+    m_watchdogTimer.stop();
+
     m_exitRequested = true;
     if (m_exitCompleted) {
         if (m_fullscreenChangeObserver)
@@ -1379,9 +1383,20 @@ bool WebVideoFullscreenInterfaceAVKit::shouldExitFullscreenWithReason(WebVideoFu
     if (reason == ExitFullScreenReason::DoneButtonTapped || reason == ExitFullScreenReason::RemoteControlStopEventReceived)
         m_videoFullscreenModel->pause();
     
+
     m_videoFullscreenModel->requestExitFullscreen();
-    
+
+    if (!m_watchdogTimer.isActive())
+        m_watchdogTimer.startOneShot(DefaultWatchdogTimerInterval);
+
     return false;
+}
+
+NO_RETURN_DUE_TO_ASSERT void WebVideoFullscreenInterfaceAVKit::watchdogTimerFired()
+{
+    LOG(Fullscreen, "WebVideoFullscreenInterfaceAVKit::watchdogTimerFired(%p) - no exit fullscreen response in %gs; forcing exit", this);
+    ASSERT_NOT_REACHED();
+    exitFullscreen(IntRect());
 }
 
 void WebVideoFullscreenInterfaceAVKit::setMode(HTMLMediaElementEnums::VideoFullscreenMode mode)

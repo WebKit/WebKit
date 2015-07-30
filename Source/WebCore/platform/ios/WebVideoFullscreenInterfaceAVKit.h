@@ -32,6 +32,7 @@
 #include <WebCore/EventListener.h>
 #include <WebCore/HTMLMediaElementEnums.h>
 #include <WebCore/PlatformLayer.h>
+#include <WebCore/Timer.h>
 #include <WebCore/WebVideoFullscreenInterface.h>
 #include <functional>
 #include <objc/objc.h>
@@ -132,6 +133,7 @@ protected:
     void beginSession();
     void enterPictureInPicture();
     void enterFullscreenStandard();
+    void watchdogTimerFired();
 
     RetainPtr<WebAVPlayerController> m_playerController;
     RetainPtr<AVPlayerViewController> m_playerViewController;
@@ -146,6 +148,7 @@ protected:
     RetainPtr<WebAVPlayerLayerView> m_playerLayerView;
     HTMLMediaElementEnums::VideoFullscreenMode m_mode { HTMLMediaElementEnums::VideoFullscreenModeNone };
     std::function<void(bool)> m_prepareToInlineCallback;
+    Timer m_watchdogTimer;
     bool m_allowsPictureInPicturePlayback { false };
     bool m_exitRequested { false };
     bool m_exitCompleted { false };
