@@ -56,6 +56,8 @@ public:
     WEBCORE_EXPORT bool isDone() const;
 
 private:
+    virtual bool init(const ResourceRequest&) override;
+
     virtual void didReceiveResponse(const ResourceResponse&) override;
     virtual void didReceiveData(const char*, unsigned, long long encodedDataLength, DataPayloadType) override;
     virtual void didReceiveBuffer(PassRefPtr<SharedBuffer>, long long encodedDataLength, DataPayloadType) override;
@@ -63,7 +65,6 @@ private:
     virtual void didFail(const ResourceError&) override;
 
     virtual void releaseResources() override;
-    virtual bool isPlugInStreamLoader() override { return true; }
 
     NetscapePlugInStreamLoader(Frame*, NetscapePlugInStreamLoaderClient*);
 
@@ -72,7 +73,10 @@ private:
 
     void didReceiveDataOrBuffer(const char*, int, PassRefPtr<SharedBuffer>, long long encodedDataLength, DataPayloadType);
 
+    void notifyDone();
+
     NetscapePlugInStreamLoaderClient* m_client;
+    bool m_isInitialized { false };
 };
 
 }

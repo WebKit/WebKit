@@ -1,3 +1,16 @@
+2015-07-30  Anders Carlsson  <andersca@apple.com>
+
+        Assertion failure when a plug-in loads a resource that redirects somewhere
+        https://bugs.webkit.org/show_bug.cgi?id=147469
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add a test.
+
+        * http/tests/plugins/get-url-redirect-expected.txt: Added.
+        * http/tests/plugins/get-url-redirect.html: Added.
+        * http/tests/plugins/resources/redirection-response.php: Added.
+
 2015-07-29  Matt Rajca  <mrajca@apple.com>
 
         Media Session: test Play/Pause media control events delivered to non-Content media sessions
