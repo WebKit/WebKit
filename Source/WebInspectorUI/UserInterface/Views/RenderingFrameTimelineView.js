@@ -100,7 +100,7 @@ WebInspector.RenderingFrameTimelineView.displayNameForDurationFilter = function(
         case WebInspector.RenderingFrameTimelineView.DurationFilter.OverFifteenMilliseconds:
             return WebInspector.UIString("Over 15 ms");
         default:
-            console.error("Unknown tab type", tabType);
+            console.error("Unknown filter type", filter);
     }
 
     return null;

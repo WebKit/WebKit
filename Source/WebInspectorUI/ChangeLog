@@ -1,3 +1,13 @@
+2015-07-30  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Fix typo in frame duration filtering console.assert message
+        https://bugs.webkit.org/show_bug.cgi?id=147458
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        * UserInterface/Views/RenderingFrameTimelineView.js:
+        (WebInspector.RenderingFrameTimelineView.displayNameForDurationFilter):
+
 2015-07-30  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Regression: %c is broken for console.group
