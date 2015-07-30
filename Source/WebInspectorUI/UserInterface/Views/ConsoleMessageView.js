@@ -255,8 +255,8 @@ WebInspector.ConsoleMessageView = class ConsoleMessageView extends WebInspector.
 
             case WebInspector.ConsoleMessage.MessageType.StartGroup:
             case WebInspector.ConsoleMessage.MessageType.StartGroupCollapsed:
-                var groupName = this._message.messageText || WebInspector.UIString("Group");
-                element.append(groupName);
+                var args = this._message.parameters || [this._message.messageText || WebInspector.UIString("Group")];
+                this._formatWithSubstitutionString(args, element);
                 this._extraParameters = null;
                 break;
 
