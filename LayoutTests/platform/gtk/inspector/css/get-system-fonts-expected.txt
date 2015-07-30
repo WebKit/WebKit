@@ -1,7 +1,7 @@
 This test ensures that the inspector can enumerate system font families, and checks for the existance of common fonts.
 
-Includes Arial
-Includes Times
-Missing DejaVu Sans
-Missing Liberation Serif
+Missing Arial
+Missing Times
+Includes DejaVu Sans
+Includes Liberation Serif
 

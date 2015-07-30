@@ -98,10 +98,34 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
     return fontForPlatformData(alternateFontData);
 }
 
+static Vector<String> patternToFamilies(FcPattern& pattern)
+{
+    char* patternChars = reinterpret_cast<char*>(FcPatternFormat(&pattern, reinterpret_cast<const FcChar8*>("%{family}")));
+    String patternString = String::fromUTF8(patternChars);
+    free(patternChars);
+
+    Vector<String> results;
+    patternString.split(',', results);
+    return results;
+}
+
 Vector<String> FontCache::systemFontFamilies()
 {
-    // FIXME: <https://webkit.org/b/147018> Web Inspector: [Freetype] Allow inspector to retrieve a list of system fonts
+    RefPtr<FcPattern> scalablesOnlyPattern = adoptRef(FcPatternCreate());
+    FcPatternAddBool(scalablesOnlyPattern.get(), FC_SCALABLE, FcTrue);
+
+    FcUniquePtr<FcObjectSet> familiesOnly(FcObjectSetBuild(FC_FAMILY, nullptr));
+    FcUniquePtr<FcFontSet> fontSet(FcFontList(nullptr, scalablesOnlyPattern.get(), familiesOnly.get()));
+
     Vector<String> fontFamilies;
+    for (int i = 0; i < fontSet->nfont; i++) {
+        FcPattern* pattern = fontSet->fonts[i];
+        FcChar8* family = nullptr;
+        FcPatternGetString(pattern, FC_FAMILY, 0, &family);
+        if (family)
+            fontFamilies.appendVector(patternToFamilies(*pattern));
+    }
+
     return fontFamilies;
 }
 
@@ -277,16 +301,7 @@ static Vector<String> strongAliasesForFamily(const String& family)
         }
     }
 
-    // Take the resulting pattern and remove everything but the families.
-    minimal = adoptRef(FcPatternFilter(pattern.get(), familiesOnly.get()));
-    // Convert the pattern to a string, and cut out the non-family junk that gets added to the end.
-    char* patternChars = reinterpret_cast<char*>(FcPatternFormat(pattern.get(), reinterpret_cast<const FcChar8*>("%{family}")));
-    String patternString = String::fromUTF8(patternChars);
-    free(patternChars);
-
-    Vector<String> results;
-    patternString.split(',', results);
-    return results;
+    return patternToFamilies(*pattern);
 }
 
 static bool areStronglyAliased(const String& familyA, const String& familyB)

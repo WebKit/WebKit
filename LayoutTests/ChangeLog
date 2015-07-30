@@ -1,3 +1,15 @@
+2015-07-30  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Web Inspector: [Freetype] Allow inspector to retrieve a list of system fonts
+        https://bugs.webkit.org/show_bug.cgi?id=147018
+
+        Reviewed by Carlos Garcia Campos.
+
+        * inspector/css/get-system-fonts-expected.txt: Expect some free fonts to be missing....
+        * inspector/css/get-system-fonts.html: Check for some free fonts.
+        * platform/gtk/TestExpectations: Unskip the test.
+        * platform/gtk/inspector/css/get-system-fonts-expected.txt: Added.
+
 2015-07-30  Nan Wang  <n_wang@apple.com>
 
         AX: VoiceOver unable to access content in malformed trees
