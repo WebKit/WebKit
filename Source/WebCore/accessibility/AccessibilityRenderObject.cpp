@@ -2497,7 +2497,9 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (!m_renderer)
         return UnknownRole;
 
-    if ((m_ariaRole = determineAriaRoleAttribute()) != UnknownRole)
+    // Sometimes we need to ignore the attribute role. Like if a tree is malformed,
+    // we want to ignore the treeitem's attribute role.
+    if ((m_ariaRole = determineAriaRoleAttribute()) != UnknownRole && !shouldIgnoreAttributeRole())
         return m_ariaRole;
     
     Node* node = m_renderer->node();

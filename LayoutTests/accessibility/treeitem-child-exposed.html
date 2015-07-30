@@ -26,9 +26,9 @@
     description("This tests if a treeitem contains an element other than static text, it should be exposed");
 
     if (window.accessibilityController) {
-    	// tree should only have 2 child, since only treeitem or static text can be a tree's child
+    	// tree should only have 3 child, since malformed tree should also be accessible.
         var tree = accessibilityController.accessibleElementById("tree");
-        shouldBe("tree.childrenCount", "2");
+        shouldBe("tree.childrenCount", "3");
         
         // input filed in treeitem1 should be exposed
         var inputField = accessibilityController.accessibleElementById("input1");

@@ -772,6 +772,8 @@ public:
     virtual void addChildren() { }
     virtual void addChild(AccessibilityObject*) { }
     virtual void insertChild(AccessibilityObject*, unsigned) { }
+
+    virtual bool shouldIgnoreAttributeRole() const { return false; }
     
     virtual bool canHaveChildren() const { return true; }
     virtual bool hasChildren() const { return m_haveChildren; }

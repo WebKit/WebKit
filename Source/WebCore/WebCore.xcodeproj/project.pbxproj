@@ -4397,6 +4397,10 @@
 		A8EA800E0A19516E00A8EF5F /* MediaList.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA80060A19516E00A8EF5F /* MediaList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8FA6E5D0E4CFDED00D5CF49 /* Pattern.h in Headers */ = {isa = PBXBuildFile; fileRef = A8FA6E5B0E4CFDED00D5CF49 /* Pattern.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8FA6E5E0E4CFDED00D5CF49 /* Pattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8FA6E5C0E4CFDED00D5CF49 /* Pattern.cpp */; };
+		A91C9FBE1B6586DE00AFFD54 /* AccessibilityTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A91C9FBC1B6586DE00AFFD54 /* AccessibilityTree.cpp */; };
+		A91C9FBF1B6586DE00AFFD54 /* AccessibilityTree.h in Headers */ = {isa = PBXBuildFile; fileRef = A91C9FBD1B6586DE00AFFD54 /* AccessibilityTree.h */; };
+		A91C9FC21B659A6700AFFD54 /* AccessibilityTreeItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A91C9FC01B659A6700AFFD54 /* AccessibilityTreeItem.cpp */; };
+		A91C9FC31B659A6700AFFD54 /* AccessibilityTreeItem.h in Headers */ = {isa = PBXBuildFile; fileRef = A91C9FC11B659A6700AFFD54 /* AccessibilityTreeItem.h */; };
 		A9C6E4E30D745E05006442E9 /* DOMMimeType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A9C6E4E10D745E05006442E9 /* DOMMimeType.cpp */; };
 		A9C6E4E40D745E05006442E9 /* DOMMimeType.h in Headers */ = {isa = PBXBuildFile; fileRef = A9C6E4E20D745E05006442E9 /* DOMMimeType.h */; };
 		A9C6E4E70D745E18006442E9 /* DOMMimeTypeArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A9C6E4E50D745E18006442E9 /* DOMMimeTypeArray.cpp */; };
@@ -11792,6 +11796,10 @@
 		A8EA80060A19516E00A8EF5F /* MediaList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MediaList.h; sourceTree = "<group>"; };
 		A8FA6E5B0E4CFDED00D5CF49 /* Pattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pattern.h; sourceTree = "<group>"; };
 		A8FA6E5C0E4CFDED00D5CF49 /* Pattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Pattern.cpp; sourceTree = "<group>"; };
+		A91C9FBC1B6586DE00AFFD54 /* AccessibilityTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityTree.cpp; sourceTree = "<group>"; };
+		A91C9FBD1B6586DE00AFFD54 /* AccessibilityTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityTree.h; sourceTree = "<group>"; };
+		A91C9FC01B659A6700AFFD54 /* AccessibilityTreeItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityTreeItem.cpp; sourceTree = "<group>"; };
+		A91C9FC11B659A6700AFFD54 /* AccessibilityTreeItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityTreeItem.h; sourceTree = "<group>"; };
 		A9C6E4E10D745E05006442E9 /* DOMMimeType.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DOMMimeType.cpp; sourceTree = "<group>"; };
 		A9C6E4E20D745E05006442E9 /* DOMMimeType.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMMimeType.h; sourceTree = "<group>"; };
 		A9C6E4E50D745E18006442E9 /* DOMMimeTypeArray.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DOMMimeTypeArray.cpp; sourceTree = "<group>"; };
@@ -15780,6 +15788,10 @@
 				29A8121D0FBB9C1D00510293 /* AccessibilityImageMapLink.h */,
 				2981CAA1131822EC00D12F2A /* AccessibilityList.cpp */,
 				29A8120E0FBB9C1D00510293 /* AccessibilityList.h */,
+				A91C9FBC1B6586DE00AFFD54 /* AccessibilityTree.cpp */,
+				A91C9FBD1B6586DE00AFFD54 /* AccessibilityTree.h */,
+				A91C9FC01B659A6700AFFD54 /* AccessibilityTreeItem.cpp */,
+				A91C9FC11B659A6700AFFD54 /* AccessibilityTreeItem.h */,
 				2981CAA2131822EC00D12F2A /* AccessibilityListBox.cpp */,
 				29A812250FBB9C1D00510293 /* AccessibilityListBox.h */,
 				2981CAA3131822EC00D12F2A /* AccessibilityListBoxOption.cpp */,
@@ -26853,6 +26865,7 @@
 				B22279C80D00BF220071B782 /* SVGFEBlendElement.h in Headers */,
 				B22279CB0D00BF220071B782 /* SVGFEColorMatrixElement.h in Headers */,
 				B22279CE0D00BF220071B782 /* SVGFEComponentTransferElement.h in Headers */,
+				A91C9FBF1B6586DE00AFFD54 /* AccessibilityTree.h in Headers */,
 				B22279D10D00BF220071B782 /* SVGFECompositeElement.h in Headers */,
 				1921327511C0E6BB00456238 /* SVGFEConvolveMatrixElement.h in Headers */,
 				B22279D40D00BF220071B782 /* SVGFEDiffuseLightingElement.h in Headers */,
@@ -27355,6 +27368,7 @@
 				B10B6980140C174000BC1C26 /* WebVTTToken.h in Headers */,
 				B10B6982140C174000BC1C26 /* WebVTTTokenizer.h in Headers */,
 				CD8203101395ACE700F956C6 /* WebWindowAnimation.h in Headers */,
+				A91C9FC31B659A6700AFFD54 /* AccessibilityTreeItem.h in Headers */,
 				F55B3DE01251F12D003EF269 /* WeekInputType.h in Headers */,
 				85031B510A44EFC700F992E0 /* WheelEvent.h in Headers */,
 				93EC44A2188F4BB800661DF1 /* WheelEventDeltaTracker.h in Headers */,
@@ -28946,6 +28960,7 @@
 				2ECF7ADC10162B3800427DE7 /* JSErrorEvent.cpp in Sources */,
 				F3D461481161D53200CA0D09 /* JSErrorHandler.cpp in Sources */,
 				14E8378409F85D1C00B85AE4 /* JSEvent.cpp in Sources */,
+				A91C9FBE1B6586DE00AFFD54 /* AccessibilityTree.cpp in Sources */,
 				BCEFAF4E0C317E6900FA81F6 /* JSEventCustom.cpp in Sources */,
 				BC60D9BF0D2A269A00B9918F /* JSEventException.cpp in Sources */,
 				93B70D6909EB0C7C009D8468 /* JSEventListener.cpp in Sources */,
@@ -30062,6 +30077,7 @@
 				0FE71405142170B800DB33BA /* ScrollbarThemeMock.cpp in Sources */,
 				5D925B670F64D4DD00B847F0 /* ScrollBehavior.cpp in Sources */,
 				1AA84F04143BA7BD0051D153 /* ScrollController.mm in Sources */,
+				A91C9FC21B659A6700AFFD54 /* AccessibilityTreeItem.cpp in Sources */,
 				0F605AEC15F94848004DF0C0 /* ScrollingConstraints.cpp in Sources */,
 				1AF62EE714DA22A70041556C /* ScrollingCoordinator.cpp in Sources */,
 				0FC4E40E187F82E10045882C /* ScrollingCoordinatorIOS.mm in Sources */,

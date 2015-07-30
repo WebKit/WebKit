@@ -1,3 +1,17 @@
+2015-07-30  Nan Wang  <n_wang@apple.com>
+
+        AX: VoiceOver unable to access content in malformed trees
+        https://bugs.webkit.org/show_bug.cgi?id=147295
+        <rdar://problem/14862892>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/aria-mappings.html:
+        * accessibility/treeitem-child-exposed-expected.txt:
+        * accessibility/treeitem-child-exposed.html:
+        * platform/mac/accessibility/malformed-tree-expected.txt: Added.
+        * platform/mac/accessibility/malformed-tree.html: Added.
+
 2015-07-30  Benjamin Poulain  <benjamin@webkit.org>
 
         Update JSC's standalone-pre.js for r187575

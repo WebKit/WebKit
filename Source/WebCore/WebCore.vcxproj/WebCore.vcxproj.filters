@@ -669,6 +669,12 @@
     <ClCompile Include="..\accessibility\AccessibilityTableRow.cpp">
       <Filter>accessibility</Filter>
     </ClCompile>
+    <ClCompile Include="..\accessibility\AccessibilityTree.cpp">
+      <Filter>accessibility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\accessibility\AccessibilityTreeItem.cpp">
+      <Filter>accessibility</Filter>
+    </ClCompile>
     <ClCompile Include="..\accessibility\AXObjectCache.cpp">
       <Filter>accessibility</Filter>
     </ClCompile>
@@ -7668,6 +7674,12 @@
       <Filter>accessibility</Filter>
     </ClInclude>
     <ClInclude Include="..\accessibility\AccessibilityTableRow.h">
+      <Filter>accessibility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\accessibility\AccessibilityTree.h">
+      <Filter>accessibility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\accessibility\AccessibilityTreeItem.h">
       <Filter>accessibility</Filter>
     </ClInclude>
     <ClInclude Include="..\accessibility\AXObjectCache.h">

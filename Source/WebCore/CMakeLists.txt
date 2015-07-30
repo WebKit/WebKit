@@ -1063,6 +1063,8 @@ set(WebCore_SOURCES
     accessibility/AccessibilityTableColumn.cpp
     accessibility/AccessibilityTableHeaderContainer.cpp
     accessibility/AccessibilityTableRow.cpp
+    accessibility/AccessibilityTree.cpp
+    accessibility/AccessibilityTreeItem.cpp
 
     bindings/generic/ActiveDOMCallback.cpp
     bindings/generic/RuntimeEnabledFeatures.cpp

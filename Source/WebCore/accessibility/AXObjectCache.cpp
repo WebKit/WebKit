@@ -55,6 +55,8 @@
 #include "AccessibilityTableColumn.h"
 #include "AccessibilityTableHeaderContainer.h"
 #include "AccessibilityTableRow.h"
+#include "AccessibilityTree.h"
+#include "AccessibilityTreeItem.h"
 #include "Document.h"
 #include "Editor.h"
 #include "ElementIterator.h"
@@ -290,6 +292,12 @@ static Ref<AccessibilityObject> createFromRenderer(RenderObject* renderer)
         return AccessibilityARIAGridRow::create(renderer);
     if (nodeHasRole(node, "gridcell") || nodeHasRole(node, "cell") || nodeHasRole(node, "columnheader") || nodeHasRole(node, "rowheader"))
         return AccessibilityARIAGridCell::create(renderer);
+
+    // aria tree
+    if (nodeHasRole(node, "tree"))
+        return AccessibilityTree::create(renderer);
+    if (nodeHasRole(node, "treeitem"))
+        return AccessibilityTreeItem::create(renderer);
 
 #if ENABLE(VIDEO)
     // media controls
