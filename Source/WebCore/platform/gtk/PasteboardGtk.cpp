@@ -76,7 +76,7 @@ PasteboardImage::~PasteboardImage()
 
 Pasteboard::Pasteboard(PassRefPtr<DataObjectGtk> dataObject)
     : m_dataObject(dataObject)
-    , m_gtkClipboard(0)
+    , m_gtkClipboard(nullptr)
 {
     ASSERT(m_dataObject);
 }
@@ -86,6 +86,7 @@ Pasteboard::Pasteboard(GtkClipboard* gtkClipboard)
     , m_gtkClipboard(gtkClipboard)
 {
     ASSERT(m_dataObject);
+    PasteboardHelper::singleton().registerClipboard(gtkClipboard);
 }
 
 Pasteboard::~Pasteboard()

@@ -25,7 +25,7 @@
 #ifndef PasteboardHelper_h
 #define PasteboardHelper_h
 
-#include <wtf/NeverDestroyed.h>
+#include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
@@ -52,13 +52,14 @@ public:
     enum PasteboardTargetType { TargetTypeMarkup, TargetTypeText, TargetTypeImage, TargetTypeURIList, TargetTypeNetscapeURL, TargetTypeSmartPaste, TargetTypeUnknown };
     bool clipboardContentSupportsSmartReplace(GtkClipboard*);
 
+    void registerClipboard(GtkClipboard*);
+
 private:
     PasteboardHelper();
-    ~PasteboardHelper() = delete;
+    ~PasteboardHelper();
 
     GRefPtr<GtkTargetList> m_targetList;
-
-    friend class WTF::NeverDestroyed<PasteboardHelper>;
+    HashSet<GtkClipboard*> m_gtkClipboards;
 };
 
 }
