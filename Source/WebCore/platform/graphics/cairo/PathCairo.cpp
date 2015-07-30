@@ -390,7 +390,7 @@ bool Path::strokeContains(StrokeStyleApplier* applier, const FloatPoint& point) 
     return cairo_in_stroke(cr, point.x(), point.y());
 }
 
-void Path::apply(PathApplierFunction function) const
+void Path::apply(const PathApplierFunction& function) const
 {
     if (isNull())
         return;

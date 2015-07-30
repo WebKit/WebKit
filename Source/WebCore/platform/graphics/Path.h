@@ -155,7 +155,7 @@ namespace WebCore {
         // ensurePlatformPath() will allocate a PlatformPath if it has not yet been and will never return null.
         WEBCORE_EXPORT PlatformPathPtr ensurePlatformPath();
 
-        WEBCORE_EXPORT void apply(PathApplierFunction) const;
+        WEBCORE_EXPORT void apply(const PathApplierFunction&) const;
         void transform(const AffineTransform&);
 
         void addBeziersForRoundedRect(const FloatRect&, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius);
