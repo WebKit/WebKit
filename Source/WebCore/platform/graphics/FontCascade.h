@@ -119,11 +119,6 @@ public:
     // This constructor is only used if the platform wants to start with a native font.
     WEBCORE_EXPORT FontCascade(const FontPlatformData&, FontSmoothingMode = AutoSmoothing);
 
-    // FIXME: We should make this constructor platform-independent.
-#if PLATFORM(IOS)
-    FontCascade(const FontPlatformData&, PassRefPtr<FontSelector>);
-#endif
-
     FontCascade(const FontCascade&);
     WEBCORE_EXPORT FontCascade& operator=(const FontCascade&);
 

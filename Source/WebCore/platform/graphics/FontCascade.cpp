@@ -134,23 +134,6 @@ FontCascade::FontCascade(const FontPlatformData& fontData, FontSmoothingMode fon
 #endif
 }
 
-// FIXME: We should make this constructor platform-independent.
-#if PLATFORM(IOS)
-FontCascade::FontCascade(const FontPlatformData& fontData, RefPtr<FontSelector>&& fontSelector)
-    : m_weakPtrFactory(this)
-    , m_letterSpacing(0)
-    , m_wordSpacing(0)
-    , m_typesettingFeatures(computeTypesettingFeatures())
-{
-    CTFontRef primaryFont = fontData.font();
-    m_fontDescription.setSpecifiedSize(CTFontGetSize(primaryFont));
-    m_fontDescription.setComputedSize(CTFontGetSize(primaryFont));
-    m_fontDescription.setIsItalic(CTFontGetSymbolicTraits(primaryFont) & kCTFontTraitItalic);
-    m_fontDescription.setWeight((CTFontGetSymbolicTraits(primaryFont) & kCTFontTraitBold) ? FontWeightBold : FontWeightNormal);
-    m_fonts = retrieveOrAddCachedFonts(m_fontDescription, WTF::move(fontSelector));
-}
-#endif
-
 FontCascade::FontCascade(const FontCascade& other)
     : m_fontDescription(other.m_fontDescription)
     , m_fonts(other.m_fonts)
