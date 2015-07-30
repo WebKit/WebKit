@@ -1302,9 +1302,6 @@ http/tests/security/contentSecurityPolicy/media-src-allowed.html [ Skip ]
 # <rdar://problem/21857102>
 [ ElCapitan+ ] fast/canvas/canvas-too-large-to-draw.html [ Crash ]
 
-webkit.org/b/147299 platform/mac/accessibility/aria-liveregions-notifications-always-sent.html [ Pass Failure ]
-webkit.org/b/147299 platform/mac/accessibility/aria-liveregions-notifications.html [ Pass Failure ]
-
 # rdar://problem/22014672
 [ ElCapitan+ ] imported/w3c/canvas/2d.composite.uncovered.fill.destination-atop.html [ Pass Failure ]
 [ ElCapitan+ ] imported/w3c/canvas/2d.composite.uncovered.fill.destination-in.html [ Pass Failure ]

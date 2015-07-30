@@ -1,3 +1,20 @@
+2015-07-30  Nan Wang  <n_wang@apple.com>
+
+        aria-liveregions-notifications tests are very flaky
+        https://bugs.webkit.org/show_bug.cgi?id=147299
+        <rdar://problem/21998675>
+
+        Reviewed by Chris Fleizach.
+
+        These tests were flaky because they relied on timer notification callbacks.
+        Fixed these tests by using different objects to capture the notifications instead.
+
+        * platform/mac/TestExpectations:
+        * platform/mac/accessibility/aria-liveregions-notifications-always-sent-expected.txt:
+        * platform/mac/accessibility/aria-liveregions-notifications-always-sent.html:
+        * platform/mac/accessibility/aria-liveregions-notifications-expected.txt:
+        * platform/mac/accessibility/aria-liveregions-notifications.html:
+
 2015-07-30  Simon Fraser  <simon.fraser@apple.com>
 
         Selecting in an iframe can cause main page scrolling

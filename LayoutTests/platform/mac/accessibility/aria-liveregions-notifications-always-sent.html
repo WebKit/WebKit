@@ -5,9 +5,10 @@
 </head>
 <body id="body">
 
-<div role="group" tabindex=0 id="liveregion" aria-live="polite" aria-relevant="additions">
+<div role="group" tabindex=0 id="liveregion1" aria-live="polite" aria-relevant="additions">
 Test
 </div>
+<div role="group" tabindex=0 id="liveregion2" aria-live="polite" aria-relevant="additions"></div>
 
 <p id="description"></p>
 <div id="console"></div>
@@ -19,44 +20,43 @@ Test
 
     if (window.accessibilityController) {
 
-        liveRegion = accessibilityController.accessibleElementById("liveregion");
+        var liveRegion1 = accessibilityController.accessibleElementById("liveregion1");
+        var liveRegion2 = accessibilityController.accessibleElementById("liveregion2");
 
-        var liveRegionChangeCount = 0;
-        function ariaCallback(notification) {
+        var liveRegion1Changed = false;
+        var liveRegion2Changed = false;
+        function ariaCallback1(notification) {
            if (notification == "AXLiveRegionChanged") {
-               liveRegionChangeCount++;
+               liveRegion1Changed = true;
+               finishTest();
            }
         }
-        var addedNotification = liveRegion.addNotificationListener(ariaCallback);
-        shouldBe("addedNotification", "true");
-
-        // this should trigger our live region callback for a new element.
-        for (var k = 0; k < 3; k++) {
-            // AXLiveRegionsChanged notifications are sent after a delay, so in order to ensure we 
-            // get an notification for each operation we should avoid coalescing which can occur
-            doSetTimeout(k);
+        function ariaCallback2(notification) {
+           if (notification == "AXLiveRegionChanged") {
+               liveRegion2Changed = true;
+               finishTest();
+           }
         }
 
-        // add a short delay to check after all the operations if we have exactly three notificaitons
-        setTimeout("finishTest()", 200);
+        addedNotification1 = liveRegion1.addNotificationListener(ariaCallback1);
+        shouldBe("addedNotification1", "true");
+        addedNotification2 = liveRegion2.addNotificationListener(ariaCallback2);
+        shouldBe("addedNotification2", "true");
+
+        // this should trigger our live region callback for a new element.
+        for (var k = 1; k < 3; k++) {
+            var textNode = document.createTextNode("test" + k);
+            document.getElementById("liveregion" + k).appendChild(textNode);
+        }
     }
 
-    function doSetTimeout(k) {
-        setTimeout(function() {
-            operation(k);
-        }, k * 30);
-    }
-
-    function operation(k) {
-        var textNode = document.createTextNode("test" + k);
-        document.getElementById("liveregion").appendChild(textNode);
-    }
-    
     function finishTest() {
-        // We should get a total of three live region changes.
-        liveRegion.removeNotificationListener();
-        shouldBeTrue("liveRegionChangeCount == 3");
-        finishJSTest();
+        // We should get a total of two live region changes.
+        if (liveRegion1Changed && liveRegion2Changed) {
+            liveRegion1.removeNotificationListener();
+            liveRegion2.removeNotificationListener();
+            finishJSTest();
+        }        
     }
 
 </script>
