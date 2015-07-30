@@ -40,7 +40,6 @@ namespace WebCore {
 #define WEBCORE_LOG_CHANNELS(M) \
     M(Animations) \
     M(Archives) \
-    M(BackForward) \
     M(Compositing) \
     M(ContentFiltering) \
     M(DOMTimers) \
