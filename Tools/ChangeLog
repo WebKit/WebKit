@@ -1,3 +1,12 @@
+2015-07-30  Joonghun Park  <jh718.park@samsung.com>
+
+        [EFL] Enable IndexedDB based on DatabaseProcess
+        https://bugs.webkit.org/show_bug.cgi?id=147221
+
+        Reviewed by Csaba Osztrogonác.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2015-07-30  Alex Christensen  <achristensen@webkit.org>
 
         Build AppleWin port with CMake

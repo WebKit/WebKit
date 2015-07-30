@@ -109,8 +109,7 @@ String WebProcessPool::legacyPlatformDefaultWebSQLDatabaseDirectory()
 
 String WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory()
 {
-    notImplemented();
-    return String();
+    return String::fromUTF8(efreet_data_home_get()) + "/WebKitEfl/IndexedDB";
 }
 
 String WebProcessPool::platformDefaultIconDatabasePath() const

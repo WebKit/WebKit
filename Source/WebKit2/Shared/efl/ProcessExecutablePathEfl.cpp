@@ -90,4 +90,13 @@ String executablePathOfNetworkProcess()
 }
 #endif
 
+#if ENABLE(DATABASE_PROCESS)
+String executablePathOfDatabaseProcess()
+{
+    static NeverDestroyed<const String> webkitDatabaseProcessName(findProcessPath(DATABASEPROCESSNAME));
+
+    return webkitDatabaseProcessName;
+}
+#endif
+
 } // namespace WebKit

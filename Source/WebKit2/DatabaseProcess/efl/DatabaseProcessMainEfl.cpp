@@ -39,7 +39,15 @@ class DatabaseProcessMain final: public ChildProcessMainBase {
 public:
     bool platformInitialize() override
     {
+        if (!ecore_init())
+            return false;
+
         return true;
+    }
+
+    void platformFinalize() override
+    {
+        ecore_shutdown();
     }
 };
 
