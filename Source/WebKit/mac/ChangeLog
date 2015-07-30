@@ -1,3 +1,12 @@
+2015-07-29  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        Implement basic types for ECMAScript Internationalization API
+        https://bugs.webkit.org/show_bug.cgi?id=146926
+
+        Reviewed by Benjamin Poulain.
+
+        * Configurations/FeatureDefines.xcconfig: Enabled INTL.
+
 2015-07-28  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Add ENABLE_ES6_MODULES compile time flag with the default value "false"

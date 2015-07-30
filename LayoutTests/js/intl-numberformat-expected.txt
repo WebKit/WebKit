@@ -1,0 +1,45 @@
+This test checks the behavior of Intl.NumberFormat as described in the ECMAScript Internationalization API Specification (ECMA-402 2.0).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Intl.NumberFormat is an instance of Function
+PASS Intl.NumberFormat() is an instance of Intl.NumberFormat
+PASS Intl.NumberFormat.call({}) is an instance of Intl.NumberFormat
+PASS new Intl.NumberFormat() is an instance of Intl.NumberFormat
+PASS new DerivedNumberFormat is an instance of DerivedNumberFormat
+PASS new DerivedNumberFormat is an instance of Intl.NumberFormat
+PASS new DerivedNumberFormat().format(1) is '1'
+PASS Object.getPrototypeOf(new DerivedNumberFormat) is DerivedNumberFormat.prototype
+PASS Object.getPrototypeOf(Object.getPrototypeOf(new DerivedNumberFormat)) is Intl.NumberFormat.prototype
+PASS Intl.NumberFormat.length is 0
+PASS Object.getOwnPropertyDescriptor(Intl.NumberFormat, 'prototype').writable is false
+PASS Object.getOwnPropertyDescriptor(Intl.NumberFormat, 'prototype').enumerable is false
+PASS Object.getOwnPropertyDescriptor(Intl.NumberFormat, 'prototype').configurable is false
+PASS Intl.NumberFormat.supportedLocalesOf.length is 1
+PASS Intl.NumberFormat.supportedLocalesOf() is an instance of Array
+PASS Intl.NumberFormat.prototype.constructor is Intl.NumberFormat
+PASS Intl.NumberFormat.prototype.format is an instance of Function
+PASS Object.getOwnPropertyDescriptor(Intl.NumberFormat.prototype, 'format').get is an instance of Function
+PASS Object.getOwnPropertyDescriptor(Intl.NumberFormat.prototype, 'format').set is undefined
+PASS Object.getOwnPropertyDescriptor(Intl.NumberFormat.prototype, 'format').enumerable is false
+PASS Object.getOwnPropertyDescriptor(Intl.NumberFormat.prototype, 'format').configurable is true
+PASS Intl.NumberFormat.prototype.format.length is 1
+PASS Object.defineProperty({}, 'format', Object.getOwnPropertyDescriptor(Intl.NumberFormat.prototype, 'format')).format threw exception TypeError: Intl.NumberFormat.prototype.format called on value that's not an object initialized as a NumberFormat.
+PASS Intl.NumberFormat.prototype.format !== Intl.NumberFormat().format is true
+PASS new Intl.NumberFormat().format !== new Intl.NumberFormat().format is true
+PASS Intl.NumberFormat.prototype.format({ valueOf() { throw Error('5') } }) threw exception Error: 5.
+PASS Intl.NumberFormat.prototype.format.call(null, 1.2) is Intl.NumberFormat().format(1.2)
+PASS Intl.NumberFormat.prototype.format.call(Intl.DateTimeFormat('ar'), 1.2) is Intl.NumberFormat().format(1.2)
+PASS Intl.NumberFormat.prototype.format.call(5, 1.2) is Intl.NumberFormat().format(1.2)
+PASS new Intl.NumberFormat().format.call(null, 1.2) is Intl.NumberFormat().format(1.2)
+PASS new Intl.NumberFormat().format.call(Intl.DateTimeFormat('ar'), 1.2) is Intl.NumberFormat().format(1.2)
+PASS new Intl.NumberFormat().format.call(5, 1.2) is Intl.NumberFormat().format(1.2)
+PASS Intl.NumberFormat.prototype.resolvedOptions.length is 0
+PASS Intl.NumberFormat.prototype.resolvedOptions() is an instance of Object
+PASS Intl.NumberFormat.prototype.resolvedOptions() === Intl.NumberFormat.prototype.resolvedOptions() is false
+PASS Intl.NumberFormat.prototype.resolvedOptions.call(5) threw exception TypeError: Intl.NumberFormat.prototype.resolvedOptions called on value that's not an object initialized as a NumberFormat.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -33,7 +33,9 @@
     macro(ArrayIterator) \
     macro(BYTES_PER_ELEMENT) \
     macro(Boolean) \
+    macro(Collator) \
     macro(Date) \
+    macro(DateTimeFormat) \
     macro(Error) \
     macro(EvalError) \
     macro(Function) \
@@ -45,6 +47,7 @@
     macro(Math) \
     macro(NaN) \
     macro(Number) \
+    macro(NumberFormat) \
     macro(Object) \
     macro(Promise) \
     macro(RangeError) \

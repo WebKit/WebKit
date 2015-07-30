@@ -32,18 +32,25 @@
 
 namespace JSC {
 
+class IntlCollatorConstructor;
+class IntlCollatorPrototype;
+class IntlDateTimeFormatConstructor;
+class IntlDateTimeFormatPrototype;
+class IntlNumberFormatConstructor;
+class IntlNumberFormatPrototype;
+
 class IntlObject : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
     static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot;
 
-    static IntlObject* create(VM&, Structure*);
+    static IntlObject* create(VM&, JSGlobalObject*, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
 protected:
-    void finishCreation(VM&);
+    void finishCreation(VM&, JSGlobalObject*);
 
 private:
     IntlObject(VM&, Structure*);

@@ -530,6 +530,3 @@ webkit.org/b/146182 editing/selection/leak-document-with-selection-inside.html [
 
 webkit.org/b/146434 fast/dom/HTMLImageElement/sizes [ Skip ]
 
-# Intl is not enabled yet
-js/intl.html [ Skip ]
-

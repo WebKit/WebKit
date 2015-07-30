@@ -1172,13 +1172,37 @@
 		9E72940B190F0514001A91B5 /* BundlePath.h in Headers */ = {isa = PBXBuildFile; fileRef = 9E72940A190F0514001A91B5 /* BundlePath.h */; };
 		9EA5C7A1190F084200508EBE /* BundlePath.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9E729409190F0306001A91B5 /* BundlePath.mm */; };
 		9EA5C7A2190F088700508EBE /* InitializeLLVMMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9EA5C7A0190F05D200508EBE /* InitializeLLVMMac.cpp */; };
+		A125846E1B45A36000CC7F6C /* IntlNumberFormatConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = A125846C1B45A36000CC7F6C /* IntlNumberFormatConstructor.lut.h */; };
+		A125846F1B45A36000CC7F6C /* IntlNumberFormatPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = A125846D1B45A36000CC7F6C /* IntlNumberFormatPrototype.lut.h */; };
 		A12BBFF21B044A8B00664B69 /* IntlObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A12BBFF11B044A8B00664B69 /* IntlObject.h */; };
 		A12BBFF41B044A9800664B69 /* IntlObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A12BBFF31B044A9800664B69 /* IntlObject.cpp */; };
+		A1587D6D1B4DC14100D69849 /* IntlDateTimeFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1587D671B4DC14100D69849 /* IntlDateTimeFormat.cpp */; };
+		A1587D6E1B4DC14100D69849 /* IntlDateTimeFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = A1587D681B4DC14100D69849 /* IntlDateTimeFormat.h */; };
+		A1587D6F1B4DC14100D69849 /* IntlDateTimeFormatConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1587D691B4DC14100D69849 /* IntlDateTimeFormatConstructor.cpp */; };
+		A1587D701B4DC14100D69849 /* IntlDateTimeFormatConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = A1587D6A1B4DC14100D69849 /* IntlDateTimeFormatConstructor.h */; };
+		A1587D711B4DC14100D69849 /* IntlDateTimeFormatPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1587D6B1B4DC14100D69849 /* IntlDateTimeFormatPrototype.cpp */; };
+		A1587D721B4DC14100D69849 /* IntlDateTimeFormatPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = A1587D6C1B4DC14100D69849 /* IntlDateTimeFormatPrototype.h */; };
+		A1587D751B4DC1C600D69849 /* IntlDateTimeFormatConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = A1587D731B4DC1C600D69849 /* IntlDateTimeFormatConstructor.lut.h */; };
+		A1587D761B4DC1C600D69849 /* IntlDateTimeFormatPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = A1587D741B4DC1C600D69849 /* IntlDateTimeFormatPrototype.lut.h */; };
 		A1712B3B11C7B212007A5315 /* RegExpCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1712B3A11C7B212007A5315 /* RegExpCache.cpp */; };
 		A1712B3F11C7B228007A5315 /* RegExpCache.h in Headers */ = {isa = PBXBuildFile; fileRef = A1712B3E11C7B228007A5315 /* RegExpCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1712B4111C7B235007A5315 /* RegExpKey.h in Headers */ = {isa = PBXBuildFile; fileRef = A1712B4011C7B235007A5315 /* RegExpKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A18193E31B4E0CDB00FC1029 /* IntlCollatorConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = A18193E11B4E0CDB00FC1029 /* IntlCollatorConstructor.lut.h */; };
+		A18193E41B4E0CDB00FC1029 /* IntlCollatorPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = A18193E21B4E0CDB00FC1029 /* IntlCollatorPrototype.lut.h */; };
 		A1A009C01831A22D00CF8711 /* MacroAssemblerARM64.h in Headers */ = {isa = PBXBuildFile; fileRef = 8640923C156EED3B00566CB2 /* MacroAssemblerARM64.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1A009C11831A26E00CF8711 /* ARM64Assembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 8640923B156EED3B00566CB2 /* ARM64Assembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A1B9E2391B4E0D6700BC7FED /* IntlCollator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1B9E2331B4E0D6700BC7FED /* IntlCollator.cpp */; };
+		A1B9E23A1B4E0D6700BC7FED /* IntlCollator.h in Headers */ = {isa = PBXBuildFile; fileRef = A1B9E2341B4E0D6700BC7FED /* IntlCollator.h */; };
+		A1B9E23B1B4E0D6700BC7FED /* IntlCollatorConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1B9E2351B4E0D6700BC7FED /* IntlCollatorConstructor.cpp */; };
+		A1B9E23C1B4E0D6700BC7FED /* IntlCollatorConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = A1B9E2361B4E0D6700BC7FED /* IntlCollatorConstructor.h */; };
+		A1B9E23D1B4E0D6700BC7FED /* IntlCollatorPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1B9E2371B4E0D6700BC7FED /* IntlCollatorPrototype.cpp */; };
+		A1B9E23E1B4E0D6700BC7FED /* IntlCollatorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = A1B9E2381B4E0D6700BC7FED /* IntlCollatorPrototype.h */; };
+		A1D792FC1B43864B004516F5 /* IntlNumberFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1D792F61B43864B004516F5 /* IntlNumberFormat.cpp */; };
+		A1D792FD1B43864B004516F5 /* IntlNumberFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = A1D792F71B43864B004516F5 /* IntlNumberFormat.h */; };
+		A1D792FE1B43864B004516F5 /* IntlNumberFormatConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1D792F81B43864B004516F5 /* IntlNumberFormatConstructor.cpp */; };
+		A1D792FF1B43864B004516F5 /* IntlNumberFormatConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = A1D792F91B43864B004516F5 /* IntlNumberFormatConstructor.h */; };
+		A1D793001B43864B004516F5 /* IntlNumberFormatPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1D792FA1B43864B004516F5 /* IntlNumberFormatPrototype.cpp */; };
+		A1D793011B43864B004516F5 /* IntlNumberFormatPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = A1D792FB1B43864B004516F5 /* IntlNumberFormatPrototype.h */; };
 		A503FA19188E0FB000110F14 /* JavaScriptCallFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A503FA13188E0FAF00110F14 /* JavaScriptCallFrame.cpp */; };
 		A503FA1A188E0FB000110F14 /* JavaScriptCallFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = A503FA14188E0FAF00110F14 /* JavaScriptCallFrame.h */; };
 		A503FA1B188E0FB000110F14 /* JSJavaScriptCallFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A503FA15188E0FB000110F14 /* JSJavaScriptCallFrame.cpp */; };
@@ -2960,11 +2984,35 @@
 		9E729409190F0306001A91B5 /* BundlePath.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BundlePath.mm; sourceTree = "<group>"; };
 		9E72940A190F0514001A91B5 /* BundlePath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BundlePath.h; sourceTree = "<group>"; };
 		9EA5C7A0190F05D200508EBE /* InitializeLLVMMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InitializeLLVMMac.cpp; path = llvm/InitializeLLVMMac.cpp; sourceTree = "<group>"; };
+		A125846C1B45A36000CC7F6C /* IntlNumberFormatConstructor.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlNumberFormatConstructor.lut.h; sourceTree = "<group>"; };
+		A125846D1B45A36000CC7F6C /* IntlNumberFormatPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlNumberFormatPrototype.lut.h; sourceTree = "<group>"; };
 		A12BBFF11B044A8B00664B69 /* IntlObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlObject.h; sourceTree = "<group>"; };
 		A12BBFF31B044A9800664B69 /* IntlObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlObject.cpp; sourceTree = "<group>"; };
+		A1587D671B4DC14100D69849 /* IntlDateTimeFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlDateTimeFormat.cpp; sourceTree = "<group>"; };
+		A1587D681B4DC14100D69849 /* IntlDateTimeFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlDateTimeFormat.h; sourceTree = "<group>"; };
+		A1587D691B4DC14100D69849 /* IntlDateTimeFormatConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlDateTimeFormatConstructor.cpp; sourceTree = "<group>"; };
+		A1587D6A1B4DC14100D69849 /* IntlDateTimeFormatConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlDateTimeFormatConstructor.h; sourceTree = "<group>"; };
+		A1587D6B1B4DC14100D69849 /* IntlDateTimeFormatPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlDateTimeFormatPrototype.cpp; sourceTree = "<group>"; };
+		A1587D6C1B4DC14100D69849 /* IntlDateTimeFormatPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlDateTimeFormatPrototype.h; sourceTree = "<group>"; };
+		A1587D731B4DC1C600D69849 /* IntlDateTimeFormatConstructor.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlDateTimeFormatConstructor.lut.h; sourceTree = "<group>"; };
+		A1587D741B4DC1C600D69849 /* IntlDateTimeFormatPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlDateTimeFormatPrototype.lut.h; sourceTree = "<group>"; };
 		A1712B3A11C7B212007A5315 /* RegExpCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegExpCache.cpp; sourceTree = "<group>"; };
 		A1712B3E11C7B228007A5315 /* RegExpCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpCache.h; sourceTree = "<group>"; };
 		A1712B4011C7B235007A5315 /* RegExpKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpKey.h; sourceTree = "<group>"; };
+		A18193E11B4E0CDB00FC1029 /* IntlCollatorConstructor.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlCollatorConstructor.lut.h; sourceTree = "<group>"; };
+		A18193E21B4E0CDB00FC1029 /* IntlCollatorPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlCollatorPrototype.lut.h; sourceTree = "<group>"; };
+		A1B9E2331B4E0D6700BC7FED /* IntlCollator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlCollator.cpp; sourceTree = "<group>"; };
+		A1B9E2341B4E0D6700BC7FED /* IntlCollator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlCollator.h; sourceTree = "<group>"; };
+		A1B9E2351B4E0D6700BC7FED /* IntlCollatorConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlCollatorConstructor.cpp; sourceTree = "<group>"; };
+		A1B9E2361B4E0D6700BC7FED /* IntlCollatorConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlCollatorConstructor.h; sourceTree = "<group>"; };
+		A1B9E2371B4E0D6700BC7FED /* IntlCollatorPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlCollatorPrototype.cpp; sourceTree = "<group>"; };
+		A1B9E2381B4E0D6700BC7FED /* IntlCollatorPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlCollatorPrototype.h; sourceTree = "<group>"; };
+		A1D792F61B43864B004516F5 /* IntlNumberFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlNumberFormat.cpp; sourceTree = "<group>"; };
+		A1D792F71B43864B004516F5 /* IntlNumberFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlNumberFormat.h; sourceTree = "<group>"; };
+		A1D792F81B43864B004516F5 /* IntlNumberFormatConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlNumberFormatConstructor.cpp; sourceTree = "<group>"; };
+		A1D792F91B43864B004516F5 /* IntlNumberFormatConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlNumberFormatConstructor.h; sourceTree = "<group>"; };
+		A1D792FA1B43864B004516F5 /* IntlNumberFormatPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlNumberFormatPrototype.cpp; sourceTree = "<group>"; };
+		A1D792FB1B43864B004516F5 /* IntlNumberFormatPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlNumberFormatPrototype.h; sourceTree = "<group>"; };
 		A503FA13188E0FAF00110F14 /* JavaScriptCallFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JavaScriptCallFrame.cpp; sourceTree = "<group>"; };
 		A503FA14188E0FAF00110F14 /* JavaScriptCallFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptCallFrame.h; sourceTree = "<group>"; };
 		A503FA15188E0FB000110F14 /* JSJavaScriptCallFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSJavaScriptCallFrame.cpp; sourceTree = "<group>"; };
@@ -4263,6 +4311,12 @@
 				A532438418568317002ED692 /* InspectorFrontendDispatchers.h */,
 				A532438518568317002ED692 /* InspectorProtocolObjects.cpp */,
 				A532438618568317002ED692 /* InspectorProtocolObjects.h */,
+				A18193E11B4E0CDB00FC1029 /* IntlCollatorConstructor.lut.h */,
+				A18193E21B4E0CDB00FC1029 /* IntlCollatorPrototype.lut.h */,
+				A1587D731B4DC1C600D69849 /* IntlDateTimeFormatConstructor.lut.h */,
+				A1587D741B4DC1C600D69849 /* IntlDateTimeFormatPrototype.lut.h */,
+				A125846C1B45A36000CC7F6C /* IntlNumberFormatConstructor.lut.h */,
+				A125846D1B45A36000CC7F6C /* IntlNumberFormatPrototype.lut.h */,
 				A7D801A61880D6A80026C39B /* JSCBuiltins.cpp */,
 				A7D801A71880D6A80026C39B /* JSCBuiltins.h */,
 				BC87CDB810712ACA000614CF /* JSONObject.lut.h */,
@@ -4501,6 +4555,24 @@
 				A78853F817972629001440E4 /* IntendedStructureChain.h */,
 				BC9BB95B0E19680600DF8855 /* InternalFunction.cpp */,
 				BC11667A0E199C05008066DD /* InternalFunction.h */,
+				A1B9E2331B4E0D6700BC7FED /* IntlCollator.cpp */,
+				A1B9E2341B4E0D6700BC7FED /* IntlCollator.h */,
+				A1B9E2351B4E0D6700BC7FED /* IntlCollatorConstructor.cpp */,
+				A1B9E2361B4E0D6700BC7FED /* IntlCollatorConstructor.h */,
+				A1B9E2371B4E0D6700BC7FED /* IntlCollatorPrototype.cpp */,
+				A1B9E2381B4E0D6700BC7FED /* IntlCollatorPrototype.h */,
+				A1587D671B4DC14100D69849 /* IntlDateTimeFormat.cpp */,
+				A1587D681B4DC14100D69849 /* IntlDateTimeFormat.h */,
+				A1587D691B4DC14100D69849 /* IntlDateTimeFormatConstructor.cpp */,
+				A1587D6A1B4DC14100D69849 /* IntlDateTimeFormatConstructor.h */,
+				A1587D6B1B4DC14100D69849 /* IntlDateTimeFormatPrototype.cpp */,
+				A1587D6C1B4DC14100D69849 /* IntlDateTimeFormatPrototype.h */,
+				A1D792F61B43864B004516F5 /* IntlNumberFormat.cpp */,
+				A1D792F71B43864B004516F5 /* IntlNumberFormat.h */,
+				A1D792F81B43864B004516F5 /* IntlNumberFormatConstructor.cpp */,
+				A1D792F91B43864B004516F5 /* IntlNumberFormatConstructor.h */,
+				A1D792FA1B43864B004516F5 /* IntlNumberFormatPrototype.cpp */,
+				A1D792FB1B43864B004516F5 /* IntlNumberFormatPrototype.h */,
 				A12BBFF31B044A9800664B69 /* IntlObject.cpp */,
 				A12BBFF11B044A8B00664B69 /* IntlObject.h */,
 				86BF642A148DB2B5004DE36A /* Intrinsic.h */,
@@ -5691,6 +5763,7 @@
 				147B83AC0E6DB8C9004775A4 /* BatchedTransitionOptimizer.h in Headers */,
 				2A111246192FCE79005EE18D /* CustomGetterSetter.h in Headers */,
 				C4F4B6F51A05C984005CAB76 /* generate_objc_protocol_types_implementation.py in Headers */,
+				A1D792FF1B43864B004516F5 /* IntlNumberFormatConstructor.h in Headers */,
 				A584032018BFFBE1005A0811 /* InspectorAgent.h in Headers */,
 				2AABCDE718EF294200002096 /* GCLogging.h in Headers */,
 				FE7BA6101A1A7CEC00F1F7B4 /* HeapVerifier.h in Headers */,
@@ -5740,6 +5813,7 @@
 				0F24E54117EA9F5900ABB217 /* AssemblyHelpers.h in Headers */,
 				A784A26111D16622005776AC /* ASTBuilder.h in Headers */,
 				866739D213BFDE710023D87C /* BigInteger.h in Headers */,
+				A125846E1B45A36000CC7F6C /* IntlNumberFormatConstructor.lut.h in Headers */,
 				BC18C3EC0E16F5CD00B34460 /* BooleanObject.h in Headers */,
 				FEA08620182B7A0400F6D851 /* Breakpoint.h in Headers */,
 				A5D2E665195E174000A518E7 /* JSContextRefInternal.h in Headers */,
@@ -5749,6 +5823,7 @@
 				0FB7F39715ED8E4600F167B2 /* Butterfly.h in Headers */,
 				0FB7F39815ED8E4600F167B2 /* ButterflyInlines.h in Headers */,
 				62D2D3901ADF103F000206C1 /* FunctionRareData.h in Headers */,
+				A1B9E23A1B4E0D6700BC7FED /* IntlCollator.h in Headers */,
 				C2FCAE1117A9C24E0034C735 /* BytecodeBasicBlock.h in Headers */,
 				0F21C27F14BEAA8200ADC64B /* BytecodeConventions.h in Headers */,
 				969A07230ED1CE3300F1F681 /* BytecodeGenerator.h in Headers */,
@@ -5828,11 +5903,13 @@
 				A5EA70E819F5B1010098F5EC /* AugmentableInspectorControllerClient.h in Headers */,
 				A704D90317A0BAA8006BA554 /* DFGAbstractInterpreter.h in Headers */,
 				A704D90417A0BAA8006BA554 /* DFGAbstractInterpreterInlines.h in Headers */,
+				A1B9E23C1B4E0D6700BC7FED /* IntlCollatorConstructor.h in Headers */,
 				0F620177143FCD3F0068B77C /* DFGAbstractValue.h in Headers */,
 				0FF054FA1AC35B4400E5BE57 /* ExecutableAllocationFuzz.h in Headers */,
 				0F66E16B14DF3F1600B7B2E4 /* DFGAdjacencyList.h in Headers */,
 				0FFB921816D02EB20055A5DB /* DFGAllocator.h in Headers */,
 				A737810C1799EA2E00817533 /* DFGAnalysis.h in Headers */,
+				A1B9E23E1B4E0D6700BC7FED /* IntlCollatorPrototype.h in Headers */,
 				0F1E3A461534CBAF000F9456 /* DFGArgumentPosition.h in Headers */,
 				A5C3A1A618C0490200C9593A /* JSGlobalObjectConsoleClient.h in Headers */,
 				0F485322187750560083B687 /* DFGArithMode.h in Headers */,
@@ -5896,6 +5973,7 @@
 				86EC9DCC1328DF82002B2AD7 /* DFGJITCompiler.h in Headers */,
 				A78A9779179738B8009DF744 /* DFGJITFinalizer.h in Headers */,
 				0FC97F4018202119002C9B26 /* DFGJumpReplacement.h in Headers */,
+				A125846F1B45A36000CC7F6C /* IntlNumberFormatPrototype.lut.h in Headers */,
 				A73A535B1799CD5D00170C19 /* DFGLazyJSValue.h in Headers */,
 				0F2B9CE919D0BA7D00B1D1B5 /* DFGObjectMaterializationData.h in Headers */,
 				A7D9A29817A0BC7400EE2618 /* DFGLICMPhase.h in Headers */,
@@ -6025,6 +6103,7 @@
 				0F6B1CB6185FC9E900845D97 /* FTLJSCall.h in Headers */,
 				0F8F2B96172E04A3007DBDA5 /* FTLLink.h in Headers */,
 				0FCEFAE0180738C000472CE4 /* FTLLocation.h in Headers */,
+				A1587D701B4DC14100D69849 /* IntlDateTimeFormatConstructor.h in Headers */,
 				0FEA0A10170513DB00BB722C /* FTLLowerDFGToLLVM.h in Headers */,
 				A7D89D0217A0B90400773AD8 /* FTLLoweredNodeValue.h in Headers */,
 				0FD8A31C17D51F2200CA2C40 /* FTLOSREntry.h in Headers */,
@@ -6093,6 +6172,7 @@
 				C25F8BCE157544A900245B71 /* IncrementalSweeper.h in Headers */,
 				0FB7F39915ED8E4600F167B2 /* IndexingHeader.h in Headers */,
 				0FB7F39A15ED8E4600F167B2 /* IndexingHeaderInlines.h in Headers */,
+				A1587D761B4DC1C600D69849 /* IntlDateTimeFormatPrototype.lut.h in Headers */,
 				0FB7F39B15ED8E4600F167B2 /* IndexingType.h in Headers */,
 				0FCEFAB01805CA6D00472CE4 /* InitializeLLVM.h in Headers */,
 				0FCEFACC1805E75500472CE4 /* InitializeLLVMPOSIX.h in Headers */,
@@ -6147,6 +6227,7 @@
 				0FAF7EFE165BA91F000C8455 /* JITDisassembler.h in Headers */,
 				0F46808214BA572D00BFE272 /* JITExceptions.h in Headers */,
 				0FB14E1F18124ACE009B6B4D /* JITInlineCacheGenerator.h in Headers */,
+				A1D793011B43864B004516F5 /* IntlNumberFormatPrototype.h in Headers */,
 				86CC85A10EE79A4700288682 /* JITInlines.h in Headers */,
 				0F24E54D17EE274900ABB217 /* JITOperations.h in Headers */,
 				0F766D3115AA8112008F363E /* JITStubRoutine.h in Headers */,
@@ -6247,6 +6328,7 @@
 				7C184E2317BEE240007CB63A /* JSPromiseConstructor.h in Headers */,
 				7C008CDB187124BB00955C24 /* JSPromiseDeferred.h in Headers */,
 				7C184E1F17BEE22E007CB63A /* JSPromisePrototype.h in Headers */,
+				A18193E41B4E0CDB00FC1029 /* IntlCollatorPrototype.lut.h in Headers */,
 				862553D216136E1A009F17D0 /* JSProxy.h in Headers */,
 				9928FF3C18AC4AEC00B8CF12 /* JSReplayInputs.h in Headers */,
 				BC18C4260E16F5CD00B34460 /* JSRetainPtr.h in Headers */,
@@ -6258,6 +6340,7 @@
 				BC18C45E0E16F5CD00B34460 /* JSStack.h in Headers */,
 				A7C1EAF017987AB600299DB2 /* JSStackInlines.h in Headers */,
 				BC18C4270E16F5CD00B34460 /* JSString.h in Headers */,
+				A1587D751B4DC1C600D69849 /* IntlDateTimeFormatConstructor.lut.h in Headers */,
 				86E85539111B9968001AF51E /* JSStringBuilder.h in Headers */,
 				2600B5A7152BAAA70091EE5F /* JSStringJoiner.h in Headers */,
 				BC18C4280E16F5CD00B34460 /* JSStringRef.h in Headers */,
@@ -6361,6 +6444,7 @@
 				BC02E9110E1839DB000F9297 /* NativeErrorConstructor.h in Headers */,
 				BC02E9130E1839DB000F9297 /* NativeErrorPrototype.h in Headers */,
 				99CC0B6318BE9950006CEBCC /* CodeGeneratorReplayInputs.py in Headers */,
+				A18193E31B4E0CDB00FC1029 /* IntlCollatorConstructor.lut.h in Headers */,
 				0FFB922016D033B70055A5DB /* NodeConstructors.h in Headers */,
 				70ECA6091AFDBEA200449739 /* TemplateRegistryKey.h in Headers */,
 				BC18C43F0E16F5CD00B34460 /* Nodes.h in Headers */,
@@ -6484,6 +6568,7 @@
 				A7299DA617D12858005F5FF9 /* SetConstructor.h in Headers */,
 				A790DD6E182F499700588807 /* SetIteratorPrototype.h in Headers */,
 				A7299DA217D12848005F5FF9 /* SetPrototype.h in Headers */,
+				A1D792FD1B43864B004516F5 /* IntlNumberFormat.h in Headers */,
 				86AE64AA135E5E1C00963012 /* SH4Assembler.h in Headers */,
 				0FF8BDEB1AD4CF7100DFE884 /* InferredValue.h in Headers */,
 				0F2B670517B6B5AB00A7AE3F /* SimpleTypedArrayController.h in Headers */,
@@ -6558,6 +6643,7 @@
 				0F5F08CF146C7633000472A9 /* UnconditionalFinalizer.h in Headers */,
 				A7B601821639FD2A00372BA3 /* UnlinkedCodeBlock.h in Headers */,
 				0F2E892C16D028AD009E4FD2 /* UnusedPointer.h in Headers */,
+				A1587D6E1B4DC14100D69849 /* IntlDateTimeFormat.h in Headers */,
 				0F963B3813FC6FE90002D9B2 /* ValueProfile.h in Headers */,
 				0F426A481460CBB300131F8F /* ValueRecovery.h in Headers */,
 				0F9C5E5F18E35F5E00D431C3 /* FTLDWARFRegister.h in Headers */,
@@ -6585,6 +6671,7 @@
 				2A4EC90C1860D6C20094F782 /* WriteBarrierBuffer.h in Headers */,
 				C2B6D75318A33793004A9301 /* WriteBarrierInlines.h in Headers */,
 				0FC8150A14043BF500CFA603 /* WriteBarrierSupport.h in Headers */,
+				A1587D721B4DC14100D69849 /* IntlDateTimeFormatPrototype.h in Headers */,
 				9688CB160ED12B4E001D649F /* X86Assembler.h in Headers */,
 				A5840E2A187CA75900843B10 /* xxd.pl in Headers */,
 				0F3A1BFA1A9ECB7D000DE01A /* DFGPutStackSinkingPhase.h in Headers */,
@@ -7167,6 +7254,7 @@
 				0FEA0A31170D40BF00BB722C /* DFGCommonData.cpp in Sources */,
 				0F38B01717CFE75500B144D3 /* DFGCompilationKey.cpp in Sources */,
 				0F38B01917CFE75500B144D3 /* DFGCompilationMode.cpp in Sources */,
+				A1B9E23B1B4E0D6700BC7FED /* IntlCollatorConstructor.cpp in Sources */,
 				0F3B3A1A153E68F2003ED0FF /* DFGConstantFoldingPhase.cpp in Sources */,
 				0FBE0F7216C1DB030082C5E8 /* DFGCPSRethreadingPhase.cpp in Sources */,
 				A7D89CF517A0B8CC00773AD8 /* DFGCriticalEdgeBreakingPhase.cpp in Sources */,
@@ -7209,6 +7297,7 @@
 				A7D89CFB17A0B8CC00773AD8 /* DFGLivenessAnalysisPhase.cpp in Sources */,
 				0FF0F19916B729F6005DF95B /* DFGLongLivedState.cpp in Sources */,
 				A767B5B517A0B9650063D940 /* DFGLoopPreHeaderCreationPhase.cpp in Sources */,
+				A1B9E23D1B4E0D6700BC7FED /* IntlCollatorPrototype.cpp in Sources */,
 				0F2BDC4D1522818600CD8910 /* DFGMinifiedNode.cpp in Sources */,
 				A737810D1799EA2E00817533 /* DFGNaturalLoops.cpp in Sources */,
 				0FF0F19C16B72A03005DF95B /* DFGNode.cpp in Sources */,
@@ -7373,6 +7462,7 @@
 				2AF7382C18BBBF92008A5A37 /* StructureIDTable.cpp in Sources */,
 				A5FD0081189B191A00633231 /* InspectorConsoleAgent.cpp in Sources */,
 				A57D23E51890CEBF0031C7FA /* InspectorDebuggerAgent.cpp in Sources */,
+				A1587D6F1B4DC14100D69849 /* IntlDateTimeFormatConstructor.cpp in Sources */,
 				A532438718568335002ED692 /* InspectorBackendDispatchers.cpp in Sources */,
 				709FB8691AE335C60039D069 /* WeakSetConstructor.cpp in Sources */,
 				A532438918568335002ED692 /* InspectorFrontendDispatchers.cpp in Sources */,
@@ -7396,6 +7486,7 @@
 				BCDD51EB0FB8DF74004A8BDC /* JITOpcodes.cpp in Sources */,
 				A71236E51195F33C00BD2174 /* JITOpcodes32_64.cpp in Sources */,
 				0F6E845A19030BEF00562741 /* DFGVariableAccessData.cpp in Sources */,
+				A1587D6D1B4DC14100D69849 /* IntlDateTimeFormat.cpp in Sources */,
 				0F24E54C17EE274900ABB217 /* JITOperations.cpp in Sources */,
 				86CC85C40EE7A89400288682 /* JITPropertyAccess.cpp in Sources */,
 				A7C1E8E4112E72EF00A37F98 /* JITPropertyAccess32_64.cpp in Sources */,
@@ -7522,6 +7613,7 @@
 				0F4680CC14BBB17A00BFE272 /* LowLevelInterpreter.cpp in Sources */,
 				14B723B212D7DA46003BD5ED /* MachineStackMarker.cpp in Sources */,
 				0FEB3ECF16237F6C00AB67AD /* MacroAssembler.cpp in Sources */,
+				A1D793001B43864B004516F5 /* IntlNumberFormatPrototype.cpp in Sources */,
 				86C568E011A213EE0007F7F0 /* MacroAssemblerARM.cpp in Sources */,
 				A729009C17976C6000317298 /* MacroAssemblerARMv7.cpp in Sources */,
 				A53CE08518BC1A5600BEDF76 /* ConsolePrototype.cpp in Sources */,
@@ -7601,6 +7693,7 @@
 				A5BA15E9182340B300A82E69 /* RemoteInspector.mm in Sources */,
 				2ADFA26318EF3540004F9FCC /* GCLogging.cpp in Sources */,
 				A594558F18245EFD00CC3843 /* RemoteInspectorDebuggable.cpp in Sources */,
+				A1D792FE1B43864B004516F5 /* IntlNumberFormatConstructor.cpp in Sources */,
 				A5BA15EC182340B400A82E69 /* RemoteInspectorDebuggableConnection.mm in Sources */,
 				A5BA15EE182340B400A82E69 /* RemoteInspectorXPCConnection.mm in Sources */,
 				0F24E55017EE274900ABB217 /* Repatch.cpp in Sources */,
@@ -7608,6 +7701,7 @@
 				0F7700921402FF3C0078EB39 /* SamplingCounter.cpp in Sources */,
 				1429D8850ED21C3D00B89619 /* SamplingTool.cpp in Sources */,
 				70EC0EC61AA0D7DA00B6AAFA /* StringIteratorPrototype.cpp in Sources */,
+				A1B9E2391B4E0D6700BC7FED /* IntlCollator.cpp in Sources */,
 				A5FD0067189AFE9C00633231 /* ScriptArguments.cpp in Sources */,
 				A5FD006D189B00AA00633231 /* ScriptCallFrame.cpp in Sources */,
 				0F04396D1B03DC0B009598B7 /* DFGCombinedLiveness.cpp in Sources */,
@@ -7655,6 +7749,8 @@
 				0FA2C17B17D7CF84009D015F /* TestRunnerUtils.cpp in Sources */,
 				A7386555118697B400540279 /* ThunkGenerators.cpp in Sources */,
 				0F2B670717B6B5AB00A7AE3F /* TypedArrayController.cpp in Sources */,
+				A1D792FC1B43864B004516F5 /* IntlNumberFormat.cpp in Sources */,
+				A1587D711B4DC14100D69849 /* IntlDateTimeFormatPrototype.cpp in Sources */,
 				0F2B670A17B6B5AB00A7AE3F /* TypedArrayType.cpp in Sources */,
 				52C952B919A28A1C0069B386 /* TypeProfiler.cpp in Sources */,
 				0FF4274A158EBE91004CB9FF /* udis86.c in Sources */,

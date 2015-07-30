@@ -431,7 +431,7 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
     putDirectWithoutTransition(vm, vm.propertyNames->eval, m_evalFunction.get(), DontEnum);
     
 #if ENABLE(INTL)
-    putDirectWithoutTransition(vm, vm.propertyNames->Intl, IntlObject::create(vm, IntlObject::createStructure(vm, this, m_objectPrototype.get())), DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->Intl, IntlObject::create(vm, this, IntlObject::createStructure(vm, this, m_objectPrototype.get())), DontEnum);
 #endif // ENABLE(INTL)
     putDirectWithoutTransition(vm, vm.propertyNames->JSON, JSONObject::create(vm, JSONObject::createStructure(vm, this, m_objectPrototype.get())), DontEnum);
     putDirectWithoutTransition(vm, vm.propertyNames->Math, MathObject::create(vm, this, MathObject::createStructure(vm, this, m_objectPrototype.get())), DontEnum);

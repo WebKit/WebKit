@@ -53,7 +53,6 @@ using namespace WTF;
 namespace JSC {
 
 EncodedJSValue JSC_HOST_CALL dateParse(ExecState*);
-EncodedJSValue JSC_HOST_CALL dateNow(ExecState*);
 EncodedJSValue JSC_HOST_CALL dateUTC(ExecState*);
 
 }

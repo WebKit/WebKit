@@ -1,0 +1,46 @@
+This test checks the behavior of Intl.DateTimeFormat as described in the ECMAScript Internationalization API Specification (ECMA-402 2.0).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Intl.DateTimeFormat is an instance of Function
+PASS Intl.DateTimeFormat() is an instance of Intl.DateTimeFormat
+PASS Intl.DateTimeFormat.call({}) is an instance of Intl.DateTimeFormat
+PASS new Intl.DateTimeFormat() is an instance of Intl.DateTimeFormat
+PASS new DerivedDateTimeFormat is an instance of DerivedDateTimeFormat
+PASS new DerivedDateTimeFormat is an instance of Intl.DateTimeFormat
+PASS new DerivedDateTimeFormat().format(0).length > 0 is true
+PASS Object.getPrototypeOf(new DerivedDateTimeFormat) is DerivedDateTimeFormat.prototype
+PASS Object.getPrototypeOf(Object.getPrototypeOf(new DerivedDateTimeFormat)) is Intl.DateTimeFormat.prototype
+PASS Intl.DateTimeFormat.length is 0
+PASS Object.getOwnPropertyDescriptor(Intl.DateTimeFormat, 'prototype').writable is false
+PASS Object.getOwnPropertyDescriptor(Intl.DateTimeFormat, 'prototype').enumerable is false
+PASS Object.getOwnPropertyDescriptor(Intl.DateTimeFormat, 'prototype').configurable is false
+PASS Intl.DateTimeFormat.supportedLocalesOf.length is 1
+PASS Intl.DateTimeFormat.supportedLocalesOf() is an instance of Array
+PASS Intl.DateTimeFormat.prototype.constructor is Intl.DateTimeFormat
+PASS Intl.DateTimeFormat.prototype.format is an instance of Function
+PASS Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, 'format').get is an instance of Function
+PASS Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, 'format').set is undefined
+PASS Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, 'format').enumerable is false
+PASS Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, 'format').configurable is true
+PASS Intl.DateTimeFormat.prototype.format.length is 1
+PASS Object.defineProperty({}, 'format', Object.getOwnPropertyDescriptor(Intl.DateTimeFormat.prototype, 'format')).format threw exception TypeError: Intl.DateTimeFormat.prototype.format called on value that's not an object initialized as a DateTimeFormat.
+PASS Intl.DateTimeFormat.prototype.format !== Intl.DateTimeFormat().format is true
+PASS new Intl.DateTimeFormat().format !== new Intl.DateTimeFormat().format is true
+PASS Intl.DateTimeFormat.prototype.format({ valueOf() { throw Error('4b') } }) threw exception Error: 4b.
+PASS Intl.DateTimeFormat.prototype.format(Infinity) threw exception RangeError: date value is not finite in DateTimeFormat.format().
+PASS Intl.DateTimeFormat.prototype.format.call(null, 0) is Intl.DateTimeFormat().format(0)
+PASS Intl.DateTimeFormat.prototype.format.call(Intl.DateTimeFormat('ar'), 0) is Intl.DateTimeFormat().format(0)
+PASS Intl.DateTimeFormat.prototype.format.call(5, 0) is Intl.DateTimeFormat().format(0)
+PASS new Intl.DateTimeFormat().format.call(null, 0) is Intl.DateTimeFormat().format(0)
+PASS new Intl.DateTimeFormat().format.call(Intl.DateTimeFormat('ar'), 0) is Intl.DateTimeFormat().format(0)
+PASS new Intl.DateTimeFormat().format.call(5, 0) is Intl.DateTimeFormat().format(0)
+PASS Intl.DateTimeFormat.prototype.resolvedOptions.length is 0
+PASS Intl.DateTimeFormat.prototype.resolvedOptions() is an instance of Object
+PASS Intl.DateTimeFormat.prototype.resolvedOptions() === Intl.DateTimeFormat.prototype.resolvedOptions() is false
+PASS Intl.DateTimeFormat.prototype.resolvedOptions.call(5) threw exception TypeError: Intl.DateTimeFormat.prototype.resolvedOptions called on value that's not an object initialized as a DateTimeFormat.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

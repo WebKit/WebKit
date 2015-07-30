@@ -28,6 +28,16 @@
 
 #if ENABLE(INTL)
 
+#include "FunctionPrototype.h"
+#include "IntlCollator.h"
+#include "IntlCollatorConstructor.h"
+#include "IntlCollatorPrototype.h"
+#include "IntlDateTimeFormat.h"
+#include "IntlDateTimeFormatConstructor.h"
+#include "IntlDateTimeFormatPrototype.h"
+#include "IntlNumberFormat.h"
+#include "IntlNumberFormatConstructor.h"
+#include "IntlNumberFormatPrototype.h"
 #include "JSCInlines.h"
 #include "Lookup.h"
 #include "ObjectPrototype.h"
@@ -48,17 +58,43 @@ IntlObject::IntlObject(VM& vm, Structure* structure)
 {
 }
 
-IntlObject* IntlObject::create(VM& vm, Structure* structure)
+IntlObject* IntlObject::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {
     IntlObject* object = new (NotNull, allocateCell<IntlObject>(vm.heap)) IntlObject(vm, structure);
-    object->finishCreation(vm);
+    object->finishCreation(vm, globalObject);
     return object;
 }
 
-void IntlObject::finishCreation(VM& vm)
+void IntlObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
+
+    // Set up Collator.
+    IntlCollatorPrototype* collatorPrototype = IntlCollatorPrototype::create(vm, globalObject, IntlCollatorPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
+    Structure* collatorStructure = IntlCollator::createStructure(vm, globalObject, collatorPrototype);
+    IntlCollatorConstructor* collatorConstructor = IntlCollatorConstructor::create(vm, IntlCollatorConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), collatorPrototype, collatorStructure);
+
+    collatorPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, collatorConstructor, DontEnum);
+
+    // Set up NumberFormat.
+    IntlNumberFormatPrototype* numberFormatPrototype = IntlNumberFormatPrototype::create(vm, globalObject, IntlNumberFormatPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
+    Structure* numberFormatStructure = IntlNumberFormat::createStructure(vm, globalObject, numberFormatPrototype);
+    IntlNumberFormatConstructor* numberFormatConstructor = IntlNumberFormatConstructor::create(vm, IntlNumberFormatConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), numberFormatPrototype, numberFormatStructure);
+
+    numberFormatPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, numberFormatConstructor, DontEnum);
+
+    // Set up DateTimeFormat.
+    IntlDateTimeFormatPrototype* dateTimeFormatPrototype = IntlDateTimeFormatPrototype::create(vm, globalObject, IntlDateTimeFormatPrototype::createStructure(vm, globalObject, globalObject->objectPrototype()));
+    Structure* dateTimeFormatStructure = IntlDateTimeFormat::createStructure(vm, globalObject, dateTimeFormatPrototype);
+    IntlDateTimeFormatConstructor* dateTimeFormatConstructor = IntlDateTimeFormatConstructor::create(vm, IntlDateTimeFormatConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), dateTimeFormatPrototype, dateTimeFormatStructure);
+
+    dateTimeFormatPrototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, dateTimeFormatConstructor, DontEnum);
+
+    // 8.1 Properties of the Intl Object (ECMA-402 2.0)
+    putDirectWithoutTransition(vm, vm.propertyNames->Collator, collatorConstructor, DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->NumberFormat, numberFormatConstructor, DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->DateTimeFormat, dateTimeFormatConstructor, DontEnum);
 }
 
 Structure* IntlObject::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)

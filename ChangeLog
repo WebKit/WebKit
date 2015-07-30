@@ -1,3 +1,14 @@
+2015-07-29  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        Implement basic types for ECMAScript Internationalization API
+        https://bugs.webkit.org/show_bug.cgi?id=146926
+
+        Reviewed by Benjamin Poulain.
+
+        Enable flag now that the basic objects are in place.
+
+        * Source/cmake/WebKitFeatures.cmake: enable INTL
+
 2015-07-29  Basile Clement  <basile_clement@apple.com>
 
         Remove native call inlining

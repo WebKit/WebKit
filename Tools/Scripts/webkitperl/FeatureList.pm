@@ -291,7 +291,7 @@ my @features = (
       define => "ENABLE_INPUT_TYPE_WEEK", default => 0, value => \$inputTypeWeekSupport },
 
     { option => "intl", desc => "Toggle Intl support",
-      define => "ENABLE_INTL", default => 0, value => \$intlSupport },
+      define => "ENABLE_INTL", default => 1, value => \$intlSupport },
 
     { option => "legacy-notifications", desc => "Toggle Legacy Notifications support",
       define => "ENABLE_LEGACY_NOTIFICATIONS", default => 0, value => \$legacyNotificationsSupport },

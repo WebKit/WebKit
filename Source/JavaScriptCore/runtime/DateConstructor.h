@@ -59,6 +59,8 @@ private:
 
 JSObject* constructDate(ExecState*, JSGlobalObject*, const ArgList&);
 
+EncodedJSValue JSC_HOST_CALL dateNow(ExecState*);
+
 } // namespace JSC
 
 #endif // DateConstructor_h

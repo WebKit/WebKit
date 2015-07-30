@@ -1,3 +1,144 @@
+2015-07-29  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        Implement basic types for ECMAScript Internationalization API
+        https://bugs.webkit.org/show_bug.cgi?id=146926
+
+        Reviewed by Benjamin Poulain.
+
+        Adds basic types for ECMA-402 2nd edition, but does not implement the full locale-aware features yet.
+        http://www.ecma-international.org/ecma-402/2.0/ECMA-402.pdf
+
+        * CMakeLists.txt: Added new Intl files.
+        * Configurations/FeatureDefines.xcconfig: Enable INTL.
+        * DerivedSources.make: Added Intl files.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Added Intl files.
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj: Added Intl files.
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters: Added Intl files.
+        * runtime/CommonIdentifiers.h: Added Collator, NumberFormat, and DateTimeFormat.
+        * runtime/DateConstructor.cpp: Made Date.now public.
+        * runtime/DateConstructor.h: Made Date.now public.
+        * runtime/IntlCollator.cpp: Added.
+        (JSC::IntlCollator::create):
+        (JSC::IntlCollator::createStructure):
+        (JSC::IntlCollator::IntlCollator):
+        (JSC::IntlCollator::finishCreation):
+        (JSC::IntlCollator::destroy):
+        (JSC::IntlCollator::visitChildren):
+        (JSC::IntlCollator::setBoundCompare):
+        (JSC::IntlCollatorFuncCompare): Added placeholder implementation using codePointCompare.
+        * runtime/IntlCollator.h: Added.
+        (JSC::IntlCollator::constructor):
+        (JSC::IntlCollator::boundCompare):
+        * runtime/IntlCollatorConstructor.cpp: Added.
+        (JSC::IntlCollatorConstructor::create):
+        (JSC::IntlCollatorConstructor::createStructure):
+        (JSC::IntlCollatorConstructor::IntlCollatorConstructor):
+        (JSC::IntlCollatorConstructor::finishCreation):
+        (JSC::constructIntlCollator): Added Collator constructor (10.1.2).
+        (JSC::callIntlCollator): Added Collator constructor (10.1.2).
+        (JSC::IntlCollatorConstructor::getConstructData):
+        (JSC::IntlCollatorConstructor::getCallData):
+        (JSC::IntlCollatorConstructor::getOwnPropertySlot):
+        (JSC::IntlCollatorConstructorFuncSupportedLocalesOf): Added placeholder implementation returning [].
+        (JSC::IntlCollatorConstructor::visitChildren):
+        * runtime/IntlCollatorConstructor.h: Added.
+        (JSC::IntlCollatorConstructor::collatorStructure):
+        * runtime/IntlCollatorPrototype.cpp: Added.
+        (JSC::IntlCollatorPrototype::create):
+        (JSC::IntlCollatorPrototype::createStructure):
+        (JSC::IntlCollatorPrototype::IntlCollatorPrototype):
+        (JSC::IntlCollatorPrototype::finishCreation):
+        (JSC::IntlCollatorPrototype::getOwnPropertySlot):
+        (JSC::IntlCollatorPrototypeGetterCompare): Added compare getter (10.3.3)
+        (JSC::IntlCollatorPrototypeFuncResolvedOptions): Added placeholder implementation returning {}.
+        * runtime/IntlCollatorPrototype.h: Added.
+        * runtime/IntlDateTimeFormat.cpp: Added.
+        (JSC::IntlDateTimeFormat::create):
+        (JSC::IntlDateTimeFormat::createStructure):
+        (JSC::IntlDateTimeFormat::IntlDateTimeFormat):
+        (JSC::IntlDateTimeFormat::finishCreation):
+        (JSC::IntlDateTimeFormat::destroy):
+        (JSC::IntlDateTimeFormat::visitChildren):
+        (JSC::IntlDateTimeFormat::setBoundFormat):
+        (JSC::IntlDateTimeFormatFuncFormatDateTime): Added placeholder implementation returning new Date(value).toString().
+        * runtime/IntlDateTimeFormat.h: Added.
+        (JSC::IntlDateTimeFormat::constructor):
+        (JSC::IntlDateTimeFormat::boundFormat):
+        * runtime/IntlDateTimeFormatConstructor.cpp: Added.
+        (JSC::IntlDateTimeFormatConstructor::create):
+        (JSC::IntlDateTimeFormatConstructor::createStructure):
+        (JSC::IntlDateTimeFormatConstructor::IntlDateTimeFormatConstructor):
+        (JSC::IntlDateTimeFormatConstructor::finishCreation):
+        (JSC::constructIntlDateTimeFormat): Added DateTimeFormat constructor (12.1.2).
+        (JSC::callIntlDateTimeFormat): Added DateTimeFormat constructor (12.1.2).
+        (JSC::IntlDateTimeFormatConstructor::getConstructData):
+        (JSC::IntlDateTimeFormatConstructor::getCallData):
+        (JSC::IntlDateTimeFormatConstructor::getOwnPropertySlot):
+        (JSC::IntlDateTimeFormatConstructorFuncSupportedLocalesOf): Added placeholder implementation returning [].
+        (JSC::IntlDateTimeFormatConstructor::visitChildren):
+        * runtime/IntlDateTimeFormatConstructor.h: Added.
+        (JSC::IntlDateTimeFormatConstructor::dateTimeFormatStructure):
+        * runtime/IntlDateTimeFormatPrototype.cpp: Added.
+        (JSC::IntlDateTimeFormatPrototype::create):
+        (JSC::IntlDateTimeFormatPrototype::createStructure):
+        (JSC::IntlDateTimeFormatPrototype::IntlDateTimeFormatPrototype):
+        (JSC::IntlDateTimeFormatPrototype::finishCreation):
+        (JSC::IntlDateTimeFormatPrototype::getOwnPropertySlot):
+        (JSC::IntlDateTimeFormatPrototypeGetterFormat): Added format getter (12.3.3).
+        (JSC::IntlDateTimeFormatPrototypeFuncResolvedOptions): Added placeholder implementation returning {}.
+        * runtime/IntlDateTimeFormatPrototype.h: Added.
+        * runtime/IntlNumberFormat.cpp: Added.
+        (JSC::IntlNumberFormat::create):
+        (JSC::IntlNumberFormat::createStructure):
+        (JSC::IntlNumberFormat::IntlNumberFormat):
+        (JSC::IntlNumberFormat::finishCreation):
+        (JSC::IntlNumberFormat::destroy):
+        (JSC::IntlNumberFormat::visitChildren):
+        (JSC::IntlNumberFormat::setBoundFormat):
+        (JSC::IntlNumberFormatFuncFormatNumber): Added placeholder implementation returning Number(value).toString().
+        * runtime/IntlNumberFormat.h: Added.
+        (JSC::IntlNumberFormat::constructor):
+        (JSC::IntlNumberFormat::boundFormat):
+        * runtime/IntlNumberFormatConstructor.cpp: Added.
+        (JSC::IntlNumberFormatConstructor::create):
+        (JSC::IntlNumberFormatConstructor::createStructure):
+        (JSC::IntlNumberFormatConstructor::IntlNumberFormatConstructor):
+        (JSC::IntlNumberFormatConstructor::finishCreation):
+        (JSC::constructIntlNumberFormat): Added NumberFormat constructor (11.1.2).
+        (JSC::callIntlNumberFormat): Added NumberFormat constructor (11.1.2).
+        (JSC::IntlNumberFormatConstructor::getConstructData):
+        (JSC::IntlNumberFormatConstructor::getCallData):
+        (JSC::IntlNumberFormatConstructor::getOwnPropertySlot):
+        (JSC::IntlNumberFormatConstructorFuncSupportedLocalesOf): Added placeholder implementation returning [].
+        (JSC::IntlNumberFormatConstructor::visitChildren):
+        * runtime/IntlNumberFormatConstructor.h: Added.
+        (JSC::IntlNumberFormatConstructor::numberFormatStructure):
+        * runtime/IntlNumberFormatPrototype.cpp: Added.
+        (JSC::IntlNumberFormatPrototype::create):
+        (JSC::IntlNumberFormatPrototype::createStructure):
+        (JSC::IntlNumberFormatPrototype::IntlNumberFormatPrototype):
+        (JSC::IntlNumberFormatPrototype::finishCreation):
+        (JSC::IntlNumberFormatPrototype::getOwnPropertySlot):
+        (JSC::IntlNumberFormatPrototypeGetterFormat): Added format getter (11.3.3).
+        (JSC::IntlNumberFormatPrototypeFuncResolvedOptions): Added placeholder implementation returning {}.
+        * runtime/IntlNumberFormatPrototype.h: Added.
+        * runtime/IntlObject.cpp:
+        (JSC::IntlObject::create):
+        (JSC::IntlObject::finishCreation): Added Collator, NumberFormat, and DateTimeFormat properties (8.1).
+        (JSC::IntlObject::visitChildren):
+        * runtime/IntlObject.h:
+        (JSC::IntlObject::collatorConstructor):
+        (JSC::IntlObject::collatorPrototype):
+        (JSC::IntlObject::collatorStructure):
+        (JSC::IntlObject::numberFormatConstructor):
+        (JSC::IntlObject::numberFormatPrototype):
+        (JSC::IntlObject::numberFormatStructure):
+        (JSC::IntlObject::dateTimeFormatConstructor):
+        (JSC::IntlObject::dateTimeFormatPrototype):
+        (JSC::IntlObject::dateTimeFormatStructure):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+
 2015-07-29  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r187550.

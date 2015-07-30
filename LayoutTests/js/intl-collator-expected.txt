@@ -1,0 +1,47 @@
+This test checks the behavior of Intl.Collator as described in the ECMAScript Internationalization API Specification (ECMA-402 2.0).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Intl.Collator is an instance of Function
+PASS Intl.Collator() is an instance of Intl.Collator
+PASS Intl.Collator.call({}) is an instance of Intl.Collator
+PASS new Intl.Collator() is an instance of Intl.Collator
+PASS new DerivedCollator is an instance of DerivedCollator
+PASS new DerivedCollator is an instance of Intl.Collator
+PASS new DerivedCollator().compare('a', 'b') is -1
+PASS Object.getPrototypeOf(new DerivedCollator) is DerivedCollator.prototype
+PASS Object.getPrototypeOf(Object.getPrototypeOf(new DerivedCollator)) is Intl.Collator.prototype
+PASS Intl.Collator.length is 0
+PASS Object.getOwnPropertyDescriptor(Intl.Collator, 'prototype').writable is false
+PASS Object.getOwnPropertyDescriptor(Intl.Collator, 'prototype').enumerable is false
+PASS Object.getOwnPropertyDescriptor(Intl.Collator, 'prototype').configurable is false
+PASS Intl.Collator.supportedLocalesOf.length is 1
+PASS Intl.Collator.supportedLocalesOf() is an instance of Array
+PASS Intl.Collator.prototype.constructor is Intl.Collator
+PASS Intl.Collator.prototype.compare is an instance of Function
+PASS Object.getOwnPropertyDescriptor(Intl.Collator.prototype, 'compare').get is an instance of Function
+PASS Object.getOwnPropertyDescriptor(Intl.Collator.prototype, 'compare').set is undefined
+PASS Object.getOwnPropertyDescriptor(Intl.Collator.prototype, 'compare').enumerable is false
+PASS Object.getOwnPropertyDescriptor(Intl.Collator.prototype, 'compare').configurable is true
+PASS Intl.Collator.prototype.compare.length is 2
+PASS Object.defineProperty({}, 'compare', Object.getOwnPropertyDescriptor(Intl.Collator.prototype, 'compare')).compare threw exception TypeError: Intl.Collator.prototype.compare called on value that's not an object initialized as a Collator.
+PASS Intl.Collator.prototype.compare !== Intl.Collator().compare is true
+PASS new Intl.Collator().compare !== new Intl.Collator().compare is true
+PASS Intl.Collator.prototype.compare({ toString() { throw Error('6') } }, { toString() { ++badCalls; return ''; } }) threw exception Error: 6.
+PASS badCalls is 0
+PASS Intl.Collator.prototype.compare('a', { toString() { throw Error('8') } }) threw exception Error: 8.
+PASS Intl.Collator.prototype.compare.call(null, 'a', 'b') is -1
+PASS Intl.Collator.prototype.compare.call(Intl.Collator('en', { sensitivity:'base' }), 'A', 'a') is -1
+PASS Intl.Collator.prototype.compare.call(5, 'a', 'b') is -1
+PASS new Intl.Collator().compare.call(null, 'a', 'b') is -1
+PASS new Intl.Collator().compare.call(Intl.Collator('en', { sensitivity:'base' }), 'A', 'a') is -1
+PASS new Intl.Collator().compare.call(5, 'a', 'b') is -1
+PASS Intl.Collator.prototype.resolvedOptions.length is 0
+PASS Intl.Collator.prototype.resolvedOptions() is an instance of Object
+PASS Intl.Collator.prototype.resolvedOptions() === Intl.Collator.prototype.resolvedOptions() is false
+PASS Intl.Collator.prototype.resolvedOptions.call(5) threw exception TypeError: Intl.Collator.prototype.resolvedOptions called on value that's not an object initialized as a Collator.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

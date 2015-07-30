@@ -476,6 +476,15 @@ set(JavaScriptCore_RUNTIME_SOURCES
     runtime/InitializeThreading.cpp
     runtime/IntendedStructureChain.cpp
     runtime/InternalFunction.cpp
+    runtime/IntlCollator.cpp
+    runtime/IntlCollatorConstructor.cpp
+    runtime/IntlCollatorPrototype.cpp
+    runtime/IntlDateTimeFormat.cpp
+    runtime/IntlDateTimeFormatConstructor.cpp
+    runtime/IntlDateTimeFormatPrototype.cpp
+    runtime/IntlNumberFormat.cpp
+    runtime/IntlNumberFormatConstructor.cpp
+    runtime/IntlNumberFormatPrototype.cpp
     runtime/IntlObject.cpp
     runtime/IteratorOperations.cpp
     runtime/IteratorPrototype.cpp
@@ -621,6 +630,12 @@ set(JavaScriptCore_LUT_FILES
     runtime/DateConstructor.cpp
     runtime/DatePrototype.cpp
     runtime/ErrorPrototype.cpp
+    runtime/IntlCollatorConstructor.cpp
+    runtime/IntlCollatorPrototype.cpp
+    runtime/IntlDateTimeFormatConstructor.cpp
+    runtime/IntlDateTimeFormatPrototype.cpp
+    runtime/IntlNumberFormatConstructor.cpp
+    runtime/IntlNumberFormatPrototype.cpp
     runtime/JSDataViewPrototype.cpp
     runtime/JSGlobalObject.cpp
     runtime/JSONObject.cpp

@@ -1,3 +1,25 @@
+2015-07-29  Andy VanWagoner  <thetalecrafter@gmail.com>
+
+        Implement basic types for ECMAScript Internationalization API
+        https://bugs.webkit.org/show_bug.cgi?id=146926
+
+        Reviewed by Benjamin Poulain.
+
+        Add tests for Intl.Collator, Intl.NumberFormat, and Intl.DateTimeFormat
+
+        * TestExpectations: Enabled intl tests.
+        * js/intl-collator-expected.txt: Added.
+        * js/intl-collator.html: Added.
+        * js/intl-datetimeformat-expected.txt: Added.
+        * js/intl-datetimeformat.html: Added.
+        * js/intl-expected.txt: Updated.
+        * js/intl-numberformat-expected.txt: Added.
+        * js/intl-numberformat.html: Added.
+        * js/script-tests/intl-collator.js: Added.
+        * js/script-tests/intl-datetimeformat.js: Added.
+        * js/script-tests/intl-numberformat.js: Added.
+        * js/script-tests/intl.js: Added tests for Collator, NumberFormat, and DateTimeFormat.
+
 2015-07-29  Zalan Bujtas  <zalan@apple.com>
 
         Remove the spanner placeholder from m_spannerMap when the placeholder object
