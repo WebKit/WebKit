@@ -41,7 +41,7 @@ using namespace Unicode;
 
 namespace WebCore {
 
-static Ref<FontCascadeFonts> retrieveOrAddCachedFonts(const FontDescription&, PassRefPtr<FontSelector>);
+static Ref<FontCascadeFonts> retrieveOrAddCachedFonts(const FontDescription&, RefPtr<FontSelector>&&);
 
 const uint8_t FontCascade::s_roundingHackCharacterTable[256] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 1 /*\t*/, 1 /*\n*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -136,7 +136,7 @@ FontCascade::FontCascade(const FontPlatformData& fontData, FontSmoothingMode fon
 
 // FIXME: We should make this constructor platform-independent.
 #if PLATFORM(IOS)
-FontCascade::FontCascade(const FontPlatformData& fontData, PassRefPtr<FontSelector> fontSelector)
+FontCascade::FontCascade(const FontPlatformData& fontData, RefPtr<FontSelector>&& fontSelector)
     : m_weakPtrFactory(this)
     , m_letterSpacing(0)
     , m_wordSpacing(0)
@@ -147,7 +147,7 @@ FontCascade::FontCascade(const FontPlatformData& fontData, PassRefPtr<FontSelect
     m_fontDescription.setComputedSize(CTFontGetSize(primaryFont));
     m_fontDescription.setIsItalic(CTFontGetSymbolicTraits(primaryFont) & kCTFontTraitItalic);
     m_fontDescription.setWeight((CTFontGetSymbolicTraits(primaryFont) & kCTFontTraitBold) ? FontWeightBold : FontWeightNormal);
-    m_fonts = retrieveOrAddCachedFonts(m_fontDescription, fontSelector.get());
+    m_fonts = retrieveOrAddCachedFonts(m_fontDescription, WTF::move(fontSelector));
 }
 #endif
 
@@ -293,7 +293,7 @@ void pruneSystemFallbackFonts()
         entry->fonts->pruneSystemFallbacks();
 }
 
-static Ref<FontCascadeFonts> retrieveOrAddCachedFonts(const FontDescription& fontDescription, PassRefPtr<FontSelector> fontSelector)
+static Ref<FontCascadeFonts> retrieveOrAddCachedFonts(const FontDescription& fontDescription, RefPtr<FontSelector>&& fontSelector)
 {
     auto key = makeFontCascadeCacheKey(fontDescription, fontSelector.get());
 
@@ -303,7 +303,7 @@ static Ref<FontCascadeFonts> retrieveOrAddCachedFonts(const FontDescription& fon
         return addResult.iterator->value->fonts.get();
 
     auto& newEntry = addResult.iterator->value;
-    newEntry = std::make_unique<FontCascadeCacheEntry>(WTF::move(key), FontCascadeFonts::create(fontSelector));
+    newEntry = std::make_unique<FontCascadeCacheEntry>(WTF::move(key), FontCascadeFonts::create(WTF::move(fontSelector)));
     Ref<FontCascadeFonts> glyphs = newEntry->fonts.get();
 
     static const unsigned unreferencedPruneInterval = 50;
@@ -318,9 +318,9 @@ static Ref<FontCascadeFonts> retrieveOrAddCachedFonts(const FontDescription& fon
     return glyphs;
 }
 
-void FontCascade::update(PassRefPtr<FontSelector> fontSelector) const
+void FontCascade::update(RefPtr<FontSelector>&& fontSelector) const
 {
-    m_fonts = retrieveOrAddCachedFonts(m_fontDescription, fontSelector.get());
+    m_fonts = retrieveOrAddCachedFonts(m_fontDescription, WTF::move(fontSelector));
     m_useBackslashAsYenSymbol = useBackslashAsYenSignForFamily(firstFamily());
     m_typesettingFeatures = computeTypesettingFeatures();
 }

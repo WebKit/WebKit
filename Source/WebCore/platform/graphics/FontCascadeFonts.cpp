@@ -36,7 +36,7 @@
 namespace WebCore {
 
 
-FontCascadeFonts::FontCascadeFonts(PassRefPtr<FontSelector> fontSelector)
+FontCascadeFonts::FontCascadeFonts(RefPtr<FontSelector>&& fontSelector)
     : m_cachedPrimaryFont(nullptr)
     , m_fontSelector(fontSelector)
     , m_fontSelectorVersion(m_fontSelector ? m_fontSelector->version() : 0)
