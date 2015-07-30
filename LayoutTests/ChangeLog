@@ -1,3 +1,14 @@
+2015-07-29  Matt Rajca  <mrajca@apple.com>
+
+        Media Session: test Next/Previous Track media control events delivered to Content media sessions
+        https://bugs.webkit.org/show_bug.cgi?id=147416
+
+        Reviewed by Eric Carlson.
+
+        * media/session/track-media-events-in-content-sessions-expected.txt: Added.
+        * media/session/track-media-events-in-content-sessions.html: Added.
+        * platform/mac/TestExpectations: Media Session support is disabled by default.
+
 2015-07-30  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Web Inspector: [Freetype] Allow inspector to retrieve a list of system fonts

@@ -997,6 +997,7 @@ webkit.org/b/140639 http/tests/media/video-play-waiting.html [ Pass Timeout ]
 media/session/content-interruptions.html
 media/session/controls-existence.html
 media/session/default-session.html
+media/session/track-media-events-in-content-sessions.html
 media/session/transient-interruptions.html
 media/session/transient-solo-interruptions.html
 
