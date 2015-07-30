@@ -14,6 +14,7 @@
 <div id="console"></div>
 
 <script>
+    var jsTestIsAsync = true;
 
     description("This tests that ARIA live regions are sending out the correct notifications. We perform four operations (add, remove, change text, change alt tag), each one should trigger a live region notification");
 
@@ -22,39 +23,56 @@
     function ariaCallback(notification) {
         if (notification == "AXLiveRegionChanged") {
             liveRegionChangeCount++;
-
-            // We should get a total of 4 live region changes.
-            if (liveRegionChangeCount == 4) {
-               liveRegion.removeNotificationListener();
-               window.testRunner.notifyDone();
-            }
         }
     }
 
     if (window.accessibilityController) {
-        window.testRunner.waitUntilDone();
 
-        document.getElementById("liveregion").focus();
-        liveRegion = window.accessibilityController.focusedElement;
+        liveRegion = accessibilityController.accessibleElementById("liveregion");
 
         var addedNotification = liveRegion.addNotificationListener(ariaCallback);
         shouldBe("addedNotification", "true");
 
-        // this should trigger our live region callback for a text change.
-        document.getElementById("innerlive").innerText = "changed text";
+        // AXLiveRegionsChanged notifications are sent after a delay, so in order to ensure we 
+        // get an notification for each operation we should avoid coalescing which can occur
+        setTimeout("textChangeOperation()", 0);
+        setTimeout("newElementOperation()", 30);
+        setTimeout("alternativeChangeOperation()", 60);
+        setTimeout("removeElementOperation()", 90);
 
+        // add a short delay to check after all the operations if we have exactly four notificaitons
+        setTimeout("finishTest()", 200);
+    }
+
+    function textChangeOperation() {
+        // this should trigger our live region callback for a text change.
+        document.getElementById("liveregion").childNodes[0].innerText = "changed text";
+    }
+
+    function newElementOperation() {
         // this should trigger our live region callback for a new element.
         document.getElementById("liveregion").innerHTML += "new text element";
+    }
 
+    function alternativeChangeOperation() {
         // this should also trigger our live region change because its a text alternative change. 
         document.getElementById("image").setAttribute('alt', "new image text");
 
         // Access the accessibility tree here because AX won't post the live region change
         // notification twice when the children have already been marked as dirty.
         liveRegion.childAtIndex(0);
+    }
 
+    function removeElementOperation() {
         // this should trigger our live region callback for a removed element.
         document.getElementById("liveregion").removeChild(document.getElementById("innerlive")); 
+    }
+
+    function finishTest() {
+        // We should get a total of four live region changes.
+        liveRegion.removeNotificationListener();
+        shouldBeTrue("liveRegionChangeCount == 4");
+        finishJSTest();
     }
 
 </script>
