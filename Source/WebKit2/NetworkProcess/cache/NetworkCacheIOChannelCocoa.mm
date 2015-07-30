@@ -69,7 +69,7 @@ IOChannel::IOChannel(const String& filePath, Type type)
     int fd = ::open(path.data(), oflag, mode);
     m_fileDescriptor = fd;
 
-    m_dispatchIO = adoptDispatch(dispatch_io_create(DISPATCH_IO_RANDOM, fd, dispatch_get_main_queue(), [fd](int) {
+    m_dispatchIO = adoptDispatch(dispatch_io_create(DISPATCH_IO_RANDOM, fd, dispatch_get_global_queue(useLowIOPriority ? DISPATCH_QUEUE_PRIORITY_BACKGROUND : DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [fd](int) {
         close(fd);
     }));
     ASSERT(m_dispatchIO.get());

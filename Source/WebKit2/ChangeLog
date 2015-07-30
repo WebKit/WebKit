@@ -1,3 +1,17 @@
+2015-07-30  Chris Dumez  <cdumez@apple.com>
+
+        [WK2][NetworkCache] Stop closing files on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=147410
+
+        Reviewed by Andreas Kling.
+
+        After r186510, we no longer open cache files on the main thread.
+        However, we still close them on the main thread. This patch makes
+        sure we close the files on another thread instead.
+
+        * NetworkProcess/cache/NetworkCacheIOChannelCocoa.mm:
+        (WebKit::NetworkCache::IOChannel::IOChannel):
+
 2015-07-30  Simon Fraser  <simon.fraser@apple.com>
 
         Convert Path applier to use std::function
