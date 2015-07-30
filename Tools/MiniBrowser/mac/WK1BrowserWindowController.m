@@ -52,6 +52,7 @@
     [[WebPreferences standardPreferences] setDeveloperExtrasEnabled:YES];
     [[WebPreferences standardPreferences] setImageControlsEnabled:YES];
     [[WebPreferences standardPreferences] setServiceControlsEnabled:YES];
+    [[WebPreferences standardPreferences] setJavaScriptCanOpenWindowsAutomatically:YES];
 
     [_webView _listenForLayoutMilestones:WebDidFirstLayout | WebDidFirstVisuallyNonEmptyLayout | WebDidHitRelevantRepaintedObjectsAreaThreshold];
 
@@ -310,6 +311,14 @@
     }
     
     [self.window setTitle:[title stringByAppendingString:@" [WK1]"]];
+}
+
+- (WebView *)webView:(WebView *)sender createWebViewWithRequest:(NSURLRequest *)request
+{
+    WK1BrowserWindowController *newBrowserWindowController = [[WK1BrowserWindowController alloc] initWithWindowNibName:@"BrowserWindow"];
+    [newBrowserWindowController.window makeKeyAndOrderFront:self];
+
+    return newBrowserWindowController->_webView;
 }
 
 - (void)webView:(WebView *)sender didCommitLoadForFrame:(WebFrame *)frame
