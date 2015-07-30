@@ -79,7 +79,10 @@ struct FontDescriptionKey {
     { }
     static unsigned makeFlagKey(const FontDescription& description)
     {
-        return static_cast<unsigned>(description.fontSynthesis()) << 6
+        static_assert(USCRIPT_CODE_LIMIT < 0x1000, "Script code must fit in an unsigned along with the other flags");
+        return static_cast<unsigned>(description.script()) << 9
+            | static_cast<unsigned>(description.smallCaps()) << 8
+            | static_cast<unsigned>(description.fontSynthesis()) << 6
             | static_cast<unsigned>(description.widthVariant()) << 4
             | static_cast<unsigned>(description.nonCJKGlyphOrientation()) << 3
             | static_cast<unsigned>(description.orientation()) << 2
