@@ -42,7 +42,7 @@
 @interface UIPDFPage : NSObject
 @end
 
-@interface UIPDFPage (Details)
+@interface UIPDFPage ()
 - (CGRect)cropBoxAccountForRotation;
 - (UIPDFSelection *)findString:(NSString *)string fromSelection:(UIPDFSelection *)selection options:(NSStringCompareOptions)options;
 @end
@@ -50,7 +50,7 @@
 @interface UIPDFDocument : NSObject
 @end
 
-@interface UIPDFDocument (Details)
+@interface UIPDFDocument ()
 - (UIPDFPage *)pageAtIndex:(NSUInteger)index;
 - (id)initWithCGPDFDocument:(CGPDFDocumentRef)document;
 @property (assign, readonly) NSUInteger numberOfPages;
@@ -68,7 +68,7 @@ typedef enum {
 @interface UIPDFAnnotationController : NSObject<UIGestureRecognizerDelegate>
 @end
 
-@interface UIPDFAnnotationController (Details)
+@interface UIPDFAnnotationController ()
 @property (nonatomic, readonly) UIPDFPageView *pageView;
 @property (nonatomic, assign) id<NSObject, UIPDFAnnotationControllerDelegate> delegate;
 @end
@@ -78,7 +78,7 @@ typedef enum {
 @interface UIPDFPageView : UIView
 @end
 
-@interface UIPDFPageView (Details)
+@interface UIPDFPageView ()
 - (id)initWithPage:(UIPDFPage *) page tiledContent:(BOOL)tiled;
 - (CGRect)convertRectFromPDFPageSpace:(CGRect)p;
 - (void)highlightSearchSelection:(UIPDFSelection *)selection animated:(BOOL)animated;
@@ -105,7 +105,7 @@ typedef enum {
 @interface UIPDFAnnotation : NSObject
 @end
 
-@interface UIPDFAnnotation (Details)
+@interface UIPDFAnnotation ()
 - (CGRect)Rect;
 @property (nonatomic, assign) UIPDFAnnotationController* annotationController;
 @end
@@ -116,7 +116,7 @@ typedef enum {
 @interface UIPDFLinkAnnotation : UIPDFMarkupAnnotation
 @end
 
-@interface UIPDFLinkAnnotation (Details)
+@interface UIPDFLinkAnnotation ()
 - (NSURL *)url;
 - (NSUInteger)pageNumber;
 @end
@@ -130,7 +130,7 @@ typedef enum {
 @interface UIPDFSelection : NSObject
 @end
 
-@interface UIPDFSelection (Details)
+@interface UIPDFSelection ()
 - (id)initWithPage:(UIPDFPage *)page fromIndex:(NSUInteger)startIndex toIndex:(NSUInteger)endIndex;
 - (CGRect)bounds;
 - (UIPDFPage *)page;

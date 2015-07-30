@@ -45,7 +45,7 @@
 #import <WebKit/WebKit.h>
 #import <WebKit/WebViewPrivate.h>
 
-@interface CATransaction (Details)
+@interface CATransaction ()
 + (void)synchronize;
 @end
 

@@ -111,7 +111,7 @@ enum {
 }
 @end
 
-@interface NSWindow (Details)
+@interface NSWindow ()
 
 - (void)_setWindowResolution:(CGFloat)resolution displayIfChanged:(BOOL)displayIfChanged;
 

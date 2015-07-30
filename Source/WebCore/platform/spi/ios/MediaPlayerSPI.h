@@ -55,7 +55,7 @@ typedef NSInteger MPRouteDiscoveryMode;
 @interface MPAVRoutingController : NSObject
 @end
 
-@interface MPAVRoutingController (Details)
+@interface MPAVRoutingController ()
 - (instancetype)initWithName:(NSString *)name;
 @property (nonatomic, assign) MPRouteDiscoveryMode discoveryMode;
 @end
@@ -63,14 +63,14 @@ typedef NSInteger MPRouteDiscoveryMode;
 @interface MPAudioVideoRoutingPopoverController : UIPopoverController
 @end
 
-@interface MPAudioVideoRoutingPopoverController (Details)
+@interface MPAudioVideoRoutingPopoverController ()
 - (id)initWithType:(MPAVItemType)avItemType;
 @end
 
 @interface MPAudioVideoRoutingActionSheet : UIActionSheet
 @end
 
-@interface MPAudioVideoRoutingActionSheet (Details)
+@interface MPAudioVideoRoutingActionSheet ()
 - (id)initWithType:(MPAVItemType)avItemType;
 - (void)showWithValidInterfaceOrientationMaskBlock:(UIInterfaceOrientationMask (^)(void))block completionHandler:(void (^)())completionHandler;
 @end

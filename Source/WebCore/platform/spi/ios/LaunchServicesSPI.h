@@ -44,7 +44,7 @@ typedef void (^LSAppLinkOpenCompletionHandler)(BOOL success, NSError *error);
 @interface LSAppLink : NSObject <NSSecureCoding>
 @end
 
-@interface LSAppLink (Details)
+@interface LSAppLink ()
 + (void)openWithURL:(NSURL *)aURL completionHandler:(LSAppLinkOpenCompletionHandler)completionHandler;
 - (void)openInWebBrowser:(BOOL)inWebBrowser setAppropriateOpenStrategyAndWebBrowserState:(NSDictionary<NSString *, id> *)state completionHandler:(LSAppLinkOpenCompletionHandler)completionHandler;
 @end

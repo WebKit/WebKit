@@ -34,7 +34,7 @@
 @interface NSCalendarDate : NSDate
 @end
 
-@interface NSCalendarDate (Details)
+@interface NSCalendarDate ()
 + (id)calendarDate;
 - (NSCalendarDate *)dateByAddingYears:(NSInteger)year months:(NSInteger)month days:(NSInteger)day hours:(NSInteger)hour minutes:(NSInteger)minute seconds:(NSInteger)second;
 @end

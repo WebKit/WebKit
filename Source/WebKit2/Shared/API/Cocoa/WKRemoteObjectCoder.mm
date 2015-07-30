@@ -48,11 +48,11 @@ static NSString * const typeStringKey = @"typeString";
 
 static RefPtr<API::Dictionary> createEncodedObject(WKRemoteObjectEncoder *, id);
 
-@interface NSMethodSignature (Details)
+@interface NSMethodSignature ()
 - (NSString *)_typeString;
 @end
 
-@interface NSCoder (Details)
+@interface NSCoder ()
 - (void)validateClassSupportsSecureCoding:(Class)objectClass;
 @end
 

@@ -39,7 +39,7 @@
 #import <WebKit/_WKUserContentExtensionStorePrivate.h>
 #import <mach-o/dyld.h>
 
-@interface NSSound (Details)
+@interface NSSound ()
 + (void)_setAlertType:(NSUInteger)alertType;
 @end
 

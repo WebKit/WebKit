@@ -35,7 +35,7 @@
 #define WEB_UWRITE (00200)
 #define WEB_UEXEC (00100)
 
-@interface NSFileManager (Details)
+@interface NSFileManager ()
 - (BOOL)_web_createFileAtPathWithIntermediateDirectories:(NSString *)path contents:(NSData *)contents attributes:(NSDictionary *)attributes directoryAttributes:(NSDictionary *)directoryAttributes;
 - (NSString *)_web_pathWithUniqueFilenameForPath:(NSString *)path;
 - (BOOL)_web_removeFileOnlyAtPath:(NSString *)path;

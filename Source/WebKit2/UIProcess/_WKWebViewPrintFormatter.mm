@@ -32,7 +32,7 @@
 #import "WKWebViewInternal.h"
 #import <wtf/RetainPtr.h>
 
-@interface UIPrintFormatter (Details)
+@interface UIPrintFormatter ()
 - (CGRect)_pageContentRect:(BOOL)firstPage;
 - (void)_recalcIfNecessary;
 @end

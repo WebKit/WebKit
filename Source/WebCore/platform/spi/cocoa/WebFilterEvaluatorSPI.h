@@ -41,7 +41,7 @@ enum {
 @interface WebFilterEvaluator : NSObject
 @end
 
-@interface WebFilterEvaluator (Details)
+@interface WebFilterEvaluator ()
 + (BOOL)isManagedSession;
 - (BOOL)wasBlocked;
 - (NSData *)addData:(NSData *)receivedData;

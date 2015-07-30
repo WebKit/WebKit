@@ -81,7 +81,7 @@ CFDictionaryRef _CFURLConnectionCopyTimingData(CFURLConnectionRef);
 #import "RuntimeApplicationChecksIOS.h"
 #import "WebCoreThreadRun.h"
 
-@interface NSURLRequest (iOSDetails)
+@interface NSURLRequest ()
 - (CFURLRequestRef) _CFURLRequest;
 @end
 #endif
@@ -92,7 +92,7 @@ CFDictionaryRef _CFURLConnectionCopyTimingData(CFURLConnectionRef);
 
 using namespace WebCore;
 
-@interface NSURLConnection (Details)
+@interface NSURLConnection ()
 -(id)_initWithRequest:(NSURLRequest *)request delegate:(id)delegate usesCache:(BOOL)usesCacheFlag maxContentLength:(long long)maxContentLength startImmediately:(BOOL)startImmediately connectionProperties:(NSDictionary *)connectionProperties;
 @end
 

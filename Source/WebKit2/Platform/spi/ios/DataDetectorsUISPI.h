@@ -36,7 +36,7 @@
 @interface DDAction : NSObject
 @end
 
-@interface DDAction (Details)
+@interface DDAction ()
 - (BOOL)hasUserInterface;
 - (NSString *)localizedName;
 @property (readonly) NSString *actionUTI;
@@ -48,7 +48,7 @@
 @interface DDDetectionController : NSObject <UIActionSheetDelegate>
 @end
 
-@interface DDDetectionController (Details)
+@interface DDDetectionController ()
 + (DDDetectionController *)sharedController;
 + (NSArray *)tapAndHoldSchemes;
 - (void)performAction:(DDAction *)action fromAlertController:(UIAlertController *)alertController interactionDelegate:(id <DDDetectionControllerInteractionDelegate>)interactionDelegate;

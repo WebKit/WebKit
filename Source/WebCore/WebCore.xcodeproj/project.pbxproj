@@ -1311,6 +1311,9 @@
 		31A795C71888BCB200382F90 /* ANGLEInstancedArrays.h in Headers */ = {isa = PBXBuildFile; fileRef = 31A795C21888B72400382F90 /* ANGLEInstancedArrays.h */; };
 		31A795C81888BCB500382F90 /* ANGLEInstancedArrays.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31A795C11888B72400382F90 /* ANGLEInstancedArrays.cpp */; };
 		31AB5000122878A2001A7DB0 /* GraphicsContext3DIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 31AB4FFF122878A2001A7DB0 /* GraphicsContext3DIOS.h */; };
+		31B313DB1B69871600F2AABC /* NSURLConnectionSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 31B313DA1B69871600F2AABC /* NSURLConnectionSPI.h */; };
+		31B313DD1B6987DB00F2AABC /* NSURLRequestSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 31B313DC1B6987DB00F2AABC /* NSURLRequestSPI.h */; };
+		31B313DF1B6988C500F2AABC /* NSButtonCellSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 31B313DE1B6988C500F2AABC /* NSButtonCellSPI.h */; };
 		31BC742D1AAFF45C006B4340 /* CSSAnimationTriggerScrollValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31BC742B1AAFF45C006B4340 /* CSSAnimationTriggerScrollValue.cpp */; };
 		31BC742E1AAFF45C006B4340 /* CSSAnimationTriggerScrollValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 31BC742C1AAFF45C006B4340 /* CSSAnimationTriggerScrollValue.h */; };
 		31C0FF210E4CEB6E007D6FE5 /* WebKitAnimationEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31C0FF1B0E4CEB6E007D6FE5 /* WebKitAnimationEvent.cpp */; };
@@ -8507,6 +8510,9 @@
 		31A795C41888BAD100382F90 /* JSANGLEInstancedArrays.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSANGLEInstancedArrays.cpp; sourceTree = "<group>"; };
 		31A795C51888BAD100382F90 /* JSANGLEInstancedArrays.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSANGLEInstancedArrays.h; sourceTree = "<group>"; };
 		31AB4FFF122878A2001A7DB0 /* GraphicsContext3DIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsContext3DIOS.h; sourceTree = "<group>"; };
+		31B313DA1B69871600F2AABC /* NSURLConnectionSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSURLConnectionSPI.h; sourceTree = "<group>"; };
+		31B313DC1B6987DB00F2AABC /* NSURLRequestSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSURLRequestSPI.h; sourceTree = "<group>"; };
+		31B313DE1B6988C500F2AABC /* NSButtonCellSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSButtonCellSPI.h; sourceTree = "<group>"; };
 		31BC742B1AAFF45C006B4340 /* CSSAnimationTriggerScrollValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSAnimationTriggerScrollValue.cpp; sourceTree = "<group>"; };
 		31BC742C1AAFF45C006B4340 /* CSSAnimationTriggerScrollValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSAnimationTriggerScrollValue.h; sourceTree = "<group>"; };
 		31C0FF1B0E4CEB6E007D6FE5 /* WebKitAnimationEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitAnimationEvent.cpp; sourceTree = "<group>"; };
@@ -16715,6 +16721,9 @@
 				371783391AACDCF7000910E3 /* SecuritySPI.h */,
 				CEC337AC1A46071F009B8523 /* ServersSPI.h */,
 				A19D93451A9FEC7200B46C24 /* WebFilterEvaluatorSPI.h */,
+				31B313DA1B69871600F2AABC /* NSURLConnectionSPI.h */,
+				31B313DC1B6987DB00F2AABC /* NSURLRequestSPI.h */,
+				31B313DE1B6988C500F2AABC /* NSButtonCellSPI.h */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -24802,6 +24811,7 @@
 				85E9E0A50AB3A0C700069CD0 /* DOMXPathResult.h in Headers */,
 				85E711DB0AC5D5350053270F /* DOMXPathResultInternal.h in Headers */,
 				FD1762E4176686EA00D836A8 /* DownSampler.h in Headers */,
+				31B313DB1B69871600F2AABC /* NSURLConnectionSPI.h in Headers */,
 				A718760E0B2A120100A16ECE /* DragActions.h in Headers */,
 				A7CA59630B27C1F200FA021D /* DragClient.h in Headers */,
 				A7CA595D0B27BD9E00FA021D /* DragController.h in Headers */,
@@ -26409,6 +26419,7 @@
 				BCFA930810333193007B25D1 /* RenderOverflow.h in Headers */,
 				A43BF59D1149292800C643CA /* RenderProgress.h in Headers */,
 				B5B65874186FDE4C009C26E8 /* RenderPtr.h in Headers */,
+				31B313DF1B6988C500F2AABC /* NSButtonCellSPI.h in Headers */,
 				5A574F25131DB93900471B88 /* RenderQuote.h in Headers */,
 				D70AD65813E1342B005B50B4 /* RenderRegion.h in Headers */,
 				BCE93F451517C567008CCF74 /* RenderRegionSet.h in Headers */,
@@ -27338,6 +27349,7 @@
 				0709D7951AE55A29004E42F8 /* WebMediaSessionManagerClient.h in Headers */,
 				0709D7931AE5557E004E42F8 /* WebMediaSessionManagerMac.h in Headers */,
 				26EA89A71B4F2B75008C5FD2 /* HashableActionList.h in Headers */,
+				31B313DD1B6987DB00F2AABC /* NSURLRequestSPI.h in Headers */,
 				E1A3162D134BC32D007C9A4F /* WebNSAttributedStringExtras.h in Headers */,
 				99CC0B6B18BEA1FF006CEBCC /* WebReplayInputs.h in Headers */,
 				A502C5DF13049B3500FC7D53 /* WebSafeGCActivityCallbackIOS.h in Headers */,

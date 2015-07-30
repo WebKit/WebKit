@@ -104,7 +104,7 @@
 @end
 #endif
 
-@interface NSServicesRolloverButtonCell (Details)
+@interface NSServicesRolloverButtonCell ()
 + (NSServicesRolloverButtonCell *)serviceRolloverButtonCellForStyle:(NSSharingServicePickerStyle)style;
 - (NSRect)rectForBounds:(NSRect)bounds preferredEdge:(NSRectEdge)preferredEdge;
 @end
@@ -177,7 +177,7 @@ const double progressAnimationNumFrames = 256;
 @end
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-@interface NSSearchFieldCell(Details)
+@interface NSSearchFieldCell()
 @property (getter=isCenteredLook) BOOL centeredLook;
 @end
 #endif

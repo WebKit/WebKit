@@ -56,7 +56,7 @@
 - (void)download:(NSURLDownload *)download didFailWithError:(NSError *)error;
 @end
 
-@interface NSURLDownload (Details)
+@interface NSURLDownload ()
 - (instancetype)initWithRequest:(NSURLRequest *)request delegate:(id <NSURLDownloadDelegate>)delegate;
 @end
 

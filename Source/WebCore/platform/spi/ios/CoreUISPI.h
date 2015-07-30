@@ -37,14 +37,14 @@
 @interface CUIStyleEffectConfiguration : NSObject <NSCopying>
 @end
 
-@interface CUIStyleEffectConfiguration (Details)
+@interface CUIStyleEffectConfiguration ()
 @property (nonatomic) BOOL useSimplifiedEffect;
 @end
 
 @interface CUICatalog : NSObject
 @end
 
-@interface CUICatalog (Details)
+@interface CUICatalog ()
 - (BOOL)drawGlyphs:(const CGGlyph[])glyphs atPositions:(const CGPoint[])positions inContext:(CGContextRef)context withFont:(CTFontRef)font count:(NSUInteger)count stylePresetName:(NSString *)stylePresetName styleConfiguration:(CUIStyleEffectConfiguration *)styleConfiguration foregroundColor:(CGColorRef)foregroundColor;
 @end
 

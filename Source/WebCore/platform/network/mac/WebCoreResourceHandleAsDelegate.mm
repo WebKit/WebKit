@@ -31,16 +31,13 @@
 #import "AuthenticationChallenge.h"
 #import "AuthenticationMac.h"
 #import "Logging.h"
+#import "NSURLRequestSPI.h"
 #import "ResourceHandle.h"
 #import "ResourceHandleClient.h"
 #import "ResourceRequest.h"
 #import "ResourceResponse.h"
 #import "SharedBuffer.h"
 #import "WebCoreURLResponse.h"
-
-@interface NSURLRequest (Details)
-- (id)_propertyForKey:(NSString *)key;
-@end
 
 using namespace WebCore;
 

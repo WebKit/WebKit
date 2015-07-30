@@ -113,7 +113,7 @@
 
 @end
 
-@interface UIWindow (Details)
+@interface UIWindow ()
 
 - (void)_setWindowResolution:(CGFloat)resolution displayIfChanged:(BOOL)displayIfChanged;
 

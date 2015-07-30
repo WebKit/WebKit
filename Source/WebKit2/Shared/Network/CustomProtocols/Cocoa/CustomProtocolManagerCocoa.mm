@@ -47,7 +47,7 @@
 #endif
 #endif
 
-@interface NSURLConnection (Details)
+@interface NSURLConnection ()
 + (CFRunLoopRef)resourceLoaderRunLoop;
 @end
 

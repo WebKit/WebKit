@@ -96,7 +96,7 @@ EXTERN_C CFStringRef const kCFHTTPCookieLocalFileDomain;
 // As a workaround for <rdar://problem/19025016>, we must forward declare this SPI regardless of whether
 // we are building with the Apple Internal SDK.
 #if defined(__OBJC__) && PLATFORM(IOS)
-@interface NSURLCache (Details)
+@interface NSURLCache ()
 -(id)_initWithMemoryCapacity:(NSUInteger)memoryCapacity diskCapacity:(NSUInteger)diskCapacity relativePath:(NSString *)path;
 @end
 #endif
@@ -106,7 +106,7 @@ enum : NSUInteger {
     NSHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain = 3,
 };
 
-@interface NSCachedURLResponse (Details)
+@interface NSCachedURLResponse ()
 -(id)_initWithCFCachedURLResponse:(CFCachedURLResponseRef)cachedResponse;
 -(CFCachedURLResponseRef)_CFCachedURLResponse;
 @end
@@ -130,7 +130,7 @@ EXTERN_C CFArrayRef _CFHTTPParsedCookiesWithResponseHeaderFields(CFAllocatorRef 
 #if defined(__OBJC__)
 
 #if !USE(APPLE_INTERNAL_SDK) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1090)
-@interface NSHTTPCookieStorage (Details)
+@interface NSHTTPCookieStorage ()
 - (void)removeCookiesSinceDate:(NSDate *)date;
 - (id)_initWithCFHTTPCookieStorage:(CFHTTPCookieStorageRef)cfStorage;
 - (CFHTTPCookieStorageRef)_cookieStorage;
@@ -140,7 +140,7 @@ EXTERN_C CFArrayRef _CFHTTPParsedCookiesWithResponseHeaderFields(CFAllocatorRef 
 
 // FIXME: Move +_setSharedHTTPCookieStorage: into the above section under !USE(APPLE_INTERNAL_SDK) when possible (soon).
 #if (TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
-@interface NSHTTPCookieStorage (Details)
+@interface NSHTTPCookieStorage ()
 + (void)_setSharedHTTPCookieStorage:(NSHTTPCookieStorage *)storage;
 @end
 #endif

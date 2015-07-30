@@ -31,7 +31,7 @@
 +(void)setAllowsAnyHTTPSCertificate:(BOOL)allow forHost:(NSString *)host;
 @end
 
-@interface NSSound (Details)
+@interface NSSound ()
 + (void)_setAlertType:(NSUInteger)alertType;
 @end
 

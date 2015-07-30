@@ -145,12 +145,12 @@ using namespace std;
 @end
 
 #if USE(APPKIT)
-@interface NSSound (Details)
+@interface NSSound ()
 + (void)_setAlertType:(NSUInteger)alertType;
 @end
 #endif
 
-@interface WebView (Details)
+@interface WebView ()
 - (BOOL)_flushCompositingChanges;
 @end
 

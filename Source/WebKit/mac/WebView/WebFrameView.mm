@@ -100,7 +100,7 @@ using namespace WebCore;
 @end
 
 #if PLATFORM(MAC)
-@interface NSView (Details)
+@interface NSView ()
 - (void)setBackgroundColor:(NSColor *)color;
 @end
 #endif

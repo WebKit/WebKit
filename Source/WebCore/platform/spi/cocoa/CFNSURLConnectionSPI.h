@@ -31,7 +31,7 @@
 
 #else
 
-@interface NSURLAuthenticationChallenge (Details)
+@interface NSURLAuthenticationChallenge ()
 #if PLATFORM(IOS)
 +(NSURLAuthenticationChallenge *)_createAuthenticationChallengeForCFAuthChallenge:(CFURLAuthChallengeRef)cfChallenge sender:(id <NSURLAuthenticationChallengeSender>)sender;
 #else

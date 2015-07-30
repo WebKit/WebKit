@@ -34,7 +34,7 @@
 @interface QLPreviewConverter : NSObject
 @end
 
-@interface QLPreviewConverter (Details)
+@interface QLPreviewConverter ()
 - (NSURLRequest *)safeRequestForRequest:(NSURLRequest *)request;
 - (id)initWithConnection:(NSURLConnection *)connection delegate:(id)delegate response:(NSURLResponse *)response options:(NSDictionary *)options;
 - (id)initWithData:(NSData *)data name:(NSString *)name uti:(NSString *)uti options:(NSDictionary *)options;

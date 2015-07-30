@@ -40,7 +40,7 @@
 @interface QLPreviewMenuItem : NSObject
 @end
 
-@interface QLPreviewMenuItem (Details)
+@interface QLPreviewMenuItem ()
 typedef NS_ENUM(NSInteger, QLPreviewStyle) {
     QLPreviewStyleStandaloneWindow,
     QLPreviewStylePopover

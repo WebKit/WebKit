@@ -31,22 +31,11 @@
 #import "GraphicsContext.h"
 #import "ImageBuffer.h"
 #import "LocalCurrentGraphicsContext.h"
+#import "NSButtonCellSPI.h"
 #import "ScrollView.h"
 #import "WebCoreSystemInterface.h"
 #import <Carbon/Carbon.h>
 #import <wtf/StdLibExtras.h>
-
-// FIXME: Should move this to an NSButtonSPI.h header.
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-
-@interface NSButtonCell (Details)
-- (void)_setState:(NSInteger)value animated:(BOOL)animated;
-- (void)_setHighlighted:(BOOL)flag animated:(BOOL)animated;
-- (void)_renderCurrentAnimationFrameInContext:(CGContextRef)ctxt atLocation:(NSPoint)where;
-- (BOOL)_stateAnimationRunning;
-@end
-
-#endif
 
 static NSRect focusRingClipRect;
 static BOOL themeWindowHasKeyAppearance;

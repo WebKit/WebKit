@@ -31,7 +31,7 @@
 
 #import <UIKit/UIColor.h>
 
-@interface UIColor (Details)
+@interface UIColor ()
 
 + (UIColor *)systemBlueColor;
 + (UIColor *)systemGrayColor;

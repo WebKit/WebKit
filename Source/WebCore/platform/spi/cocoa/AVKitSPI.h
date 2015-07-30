@@ -46,7 +46,7 @@
 @interface AVPlayerController : UIResponder
 @end
 
-@interface AVPlayerController (Details)
+@interface AVPlayerController ()
 typedef NS_ENUM(NSInteger, AVPlayerControllerStatus) {
     AVPlayerControllerStatusUnknown = 0,
     AVPlayerControllerStatusReadyToPlay = 2,
@@ -87,7 +87,7 @@ typedef NS_ENUM(NSInteger, AVPlayerViewControllerExitFullScreenReason) {
 - (void)playerViewController:(AVPlayerViewController *)playerViewController restoreUserInterfaceForPictureInPictureStopWithCompletionHandler:(void (^)(BOOL restored))completionHandler;
 @end
 
-@interface AVPlayerViewController (Details)
+@interface AVPlayerViewController ()
 - (instancetype)initWithPlayerLayerView:(AVPlayerLayerView *)playerLayerView;
 - (void)enterFullScreenAnimated:(BOOL)animated completionHandler:(void (^)(BOOL success, NSError *))completionHandler;
 - (void)exitFullScreenAnimated:(BOOL)animated completionHandler:(void (^)(BOOL success, NSError *))completionHandler;
@@ -112,7 +112,7 @@ typedef NS_ENUM(NSInteger, AVPlayerViewControllerExitFullScreenReason) {
 @interface AVValueTiming : NSObject <NSCoding, NSCopying, NSMutableCopying>
 @end
 
-@interface AVValueTiming (Details)
+@interface AVValueTiming ()
 + (AVValueTiming *)valueTimingWithAnchorValue:(double)anchorValue anchorTimeStamp:(NSTimeInterval)timeStamp rate:(double)rate;
 @property (NS_NONATOMIC_IOSONLY, readonly) double currentValue;
 @end

@@ -31,7 +31,7 @@
 
 #else
 
-@interface NSString (Details)
+@interface NSString ()
 - (BOOL)_web_hasCaseInsensitivePrefix:(NSString *)suffix;
 - (NSString *)_web_stringByExpandingTildeInPath;
 @end

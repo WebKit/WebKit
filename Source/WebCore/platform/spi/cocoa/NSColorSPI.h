@@ -33,7 +33,7 @@
 
 #else
 
-@interface NSColor (Details)
+@interface NSColor ()
 + (NSColor *)systemRedColor;
 + (NSColor *)systemGreenColor;
 + (NSColor *)systemBlueColor;

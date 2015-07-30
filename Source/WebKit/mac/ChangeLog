@@ -1,3 +1,17 @@
+2015-07-29  Dean Jackson  <dino@apple.com>
+
+        Don't use (Details) when exposing SPI
+        https://bugs.webkit.org/show_bug.cgi?id=147426
+        <rdar://problem/22062407>
+
+        Reviewed by Dan Bernstein.
+
+        If we are declaring the interface without any implementation,
+        we should use class extensions.
+
+        * WebView/WebFrameView.mm:
+        * WebView/WebPDFView.mm:
+
 2015-07-29  Andy VanWagoner  <thetalecrafter@gmail.com>
 
         Implement basic types for ECMAScript Internationalization API

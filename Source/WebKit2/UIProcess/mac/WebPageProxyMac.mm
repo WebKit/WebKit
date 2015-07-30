@@ -57,7 +57,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/text/StringConcatenate.h>
 
-@interface NSApplication (Details)
+@interface NSApplication ()
 - (void)speakString:(NSString *)string;
 @end
 

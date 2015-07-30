@@ -49,7 +49,7 @@ typedef enum MCRestrictedBoolType {
 @interface MCProfileConnection : NSObject
 @end
 
-@interface MCProfileConnection (Details)
+@interface MCProfileConnection ()
 + (MCProfileConnection *)sharedConnection;
 - (MCRestrictedBoolType)effectiveBoolValueForSetting:(NSString *)feature;
 @end

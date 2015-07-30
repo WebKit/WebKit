@@ -63,7 +63,7 @@ extern "C" {
 @interface CAContext : NSObject
 @end
 
-@interface CAContext (Details)
+@interface CAContext ()
 + (NSArray *)allContexts;
 + (CAContext *)remoteContextWithOptions:(NSDictionary *)dict;
 + (id)objectForSlot:(uint32_t)name;
@@ -83,7 +83,7 @@ extern "C" {
 @property CGColorSpaceRef colorSpace;
 @end
 
-@interface CALayer (Details)
+@interface CALayer ()
 - (CAContext *)context;
 - (CGSize)size;
 - (void *)regionBeingDrawn;
@@ -97,7 +97,7 @@ extern "C" {
 @property BOOL shadowPathIsBounds;
 @end
 
-@interface CATiledLayer (Details)
+@interface CATiledLayer ()
 - (void)displayInRect:(CGRect)rect levelOfDetail:(int)levelOfDetail options:(NSDictionary *)dictionary;
 - (void)setNeedsDisplayInRect:(CGRect)rect levelOfDetail:(int)levelOfDetail options:(NSDictionary *)dictionary;
 @end
@@ -112,7 +112,7 @@ extern "C" {
 #endif
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
-@interface CAOpenGLLayer (Details)
+@interface CAOpenGLLayer ()
 @property CGColorSpaceRef colorspace;
 @end
 #endif
@@ -132,7 +132,7 @@ typedef struct CAColorMatrix CAColorMatrix;
 @interface CAFilter : NSObject <NSCopying, NSMutableCopying, NSCoding>
 @end
 
-@interface CAFilter (Details)
+@interface CAFilter ()
 + (CAFilter *)filterWithType:(NSString *)type;
 @property (copy) NSString *name;
 @end
@@ -144,7 +144,7 @@ typedef enum {
     kCATransactionPhasePostCommit,
 } CATransactionPhase;
 
-@interface CATransaction (Details)
+@interface CATransaction ()
 + (void)addCommitHandler:(void(^)(void))block forPhase:(CATransactionPhase)phase;
 @end
 #endif

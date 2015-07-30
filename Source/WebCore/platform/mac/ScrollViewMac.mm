@@ -34,10 +34,15 @@
 #import "NotImplemented.h"
 #import "WebCoreFrameView.h"
 
-@interface NSScrollView (Details)
+@interface NSScrollView ()
 - (NSEdgeInsets)contentInsets;
+@end
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101000
+@interface NSScrollView (WebDetails)
 @property BOOL automaticallyAdjustsContentInsets;
 @end
+#endif
 
 @interface NSWindow (WebWindowDetails)
 - (BOOL)_needsToResetDragMargins;

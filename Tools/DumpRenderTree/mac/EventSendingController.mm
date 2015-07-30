@@ -56,7 +56,7 @@
 #if !PLATFORM(IOS)
 extern "C" void _NSNewKillRingSequence();
 
-@interface NSApplication (Details)
+@interface NSApplication ()
 - (void)_setCurrentEvent:(NSEvent *)event;
 @end
 #endif
