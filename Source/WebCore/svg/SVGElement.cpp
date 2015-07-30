@@ -502,7 +502,8 @@ void SVGElement::setCorrespondingElement(SVGElement* correspondingElement)
         if (SVGElement* oldCorrespondingElement = m_svgRareData->correspondingElement())
             oldCorrespondingElement->m_svgRareData->instances().remove(this);
     }
-    ensureSVGRareData().setCorrespondingElement(correspondingElement);
+    if (m_svgRareData || correspondingElement)
+        ensureSVGRareData().setCorrespondingElement(correspondingElement);
     if (correspondingElement)
         correspondingElement->ensureSVGRareData().instances().add(this);
 }
