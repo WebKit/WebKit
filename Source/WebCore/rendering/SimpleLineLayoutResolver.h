@@ -50,6 +50,7 @@ private:
 };
 
 class RunResolver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     class Iterator;
 

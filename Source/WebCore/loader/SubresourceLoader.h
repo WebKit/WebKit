@@ -106,6 +106,7 @@ private:
     };
 
     class RequestCountTracker {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         RequestCountTracker(CachedResourceLoader&, CachedResource*);
         ~RequestCountTracker();

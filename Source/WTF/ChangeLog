@@ -1,3 +1,17 @@
+2015-07-30  Chris Dumez  <cdumez@apple.com>
+
+        Mark more classes as fast allocated
+        https://bugs.webkit.org/show_bug.cgi?id=147440
+
+        Reviewed by Sam Weinig.
+
+        Mark more classes as fast allocated for performance. We heap-allocate
+        objects of those types throughout the code base.
+
+        * wtf/Bag.h:
+        * wtf/SegmentedVector.h:
+        * wtf/SentinelLinkedList.h:
+
 2015-07-29  Basile Clement  <basile_clement@apple.com>
 
         Remove native call inlining

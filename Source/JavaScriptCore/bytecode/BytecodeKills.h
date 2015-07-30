@@ -34,6 +34,7 @@ namespace JSC {
 class BytecodeLivenessAnalysis;
 
 class BytecodeKills {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     BytecodeKills()
         : m_codeBlock(nullptr)

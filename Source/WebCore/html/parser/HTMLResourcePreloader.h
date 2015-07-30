@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class PreloadRequest {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     PreloadRequest(const String& initiator, const String& resourceURL, const URL& baseURL, CachedResource::Type resourceType, const String& mediaAttribute)
         : m_initiator(initiator)

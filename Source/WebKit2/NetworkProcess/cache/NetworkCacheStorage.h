@@ -50,6 +50,8 @@ public:
     static std::unique_ptr<Storage> open(const String& cachePath);
 
     struct Record {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
         Key key;
         std::chrono::system_clock::time_point timeStamp;
         Data header;

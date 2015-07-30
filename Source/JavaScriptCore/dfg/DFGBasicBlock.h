@@ -237,6 +237,8 @@ struct BasicBlock : RefCounted<BasicBlock> {
     unsigned innerMostLoopIndices[numberOfInnerMostLoopIndices];
 
     struct SSAData {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
         AvailabilityMap availabilityAtHead;
         AvailabilityMap availabilityAtTail;
         

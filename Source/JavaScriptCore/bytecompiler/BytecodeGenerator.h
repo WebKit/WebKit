@@ -102,6 +102,7 @@ namespace JSC {
     };
 
     class ForInContext {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         ForInContext(RegisterID* localRegister)
             : m_localRegister(localRegister)

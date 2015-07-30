@@ -37,6 +37,7 @@ class Safepoint;
 class Worklist;
 
 class ThreadData {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ThreadData(Worklist*);
     ~ThreadData();

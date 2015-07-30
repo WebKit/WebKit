@@ -34,6 +34,7 @@
 namespace JSC {
 
 class Keywords {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     bool isKeyword(const Identifier& ident) const
     {

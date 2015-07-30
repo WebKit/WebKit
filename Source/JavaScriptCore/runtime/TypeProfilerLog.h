@@ -39,7 +39,7 @@ namespace JSC {
 class TypeLocation;
 
 class TypeProfilerLog {
-
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     struct LogEntry {
     public:

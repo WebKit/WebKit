@@ -49,6 +49,8 @@ static const char bodyPostfix[] = "-body";
 static double computeRecordWorth(FileTimes);
 
 struct Storage::ReadOperation {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     ReadOperation(const Key& key, const RetrieveCompletionHandler& completionHandler)
         : key(key)
         , completionHandler(completionHandler)
@@ -64,6 +66,8 @@ struct Storage::ReadOperation {
 };
 
 struct Storage::WriteOperation {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     WriteOperation(const Record& record, const MappedBodyHandler& mappedBodyHandler)
         : record(record)
         , mappedBodyHandler(mappedBodyHandler)
@@ -76,6 +80,8 @@ struct Storage::WriteOperation {
 };
 
 struct Storage::TraverseOperation {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     TraverseOperation(TraverseFlags flags, const TraverseHandler& handler)
         : flags(flags)
         , handler(handler)

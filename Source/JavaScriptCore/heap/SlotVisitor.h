@@ -46,7 +46,7 @@ class WeakReferenceHarvester;
 template<typename T> class WriteBarrierBase;
 
 class SlotVisitor {
-    WTF_MAKE_NONCOPYABLE(SlotVisitor);
+    WTF_MAKE_NONCOPYABLE(SlotVisitor); WTF_MAKE_FAST_ALLOCATED;
     friend class HeapRootVisitor; // Allowed to mark a JSValue* or JSCell** directly.
 
 public:

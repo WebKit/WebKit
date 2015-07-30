@@ -45,6 +45,7 @@ class Structure;
 class CallLinkInfo;
 
 class CallLinkStatus {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     CallLinkStatus()
         : m_couldTakeSlowPath(false)

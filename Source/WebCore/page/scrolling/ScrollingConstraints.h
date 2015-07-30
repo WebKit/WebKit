@@ -33,6 +33,7 @@ namespace WebCore {
 // ViewportConstraints classes encapsulate data and logic required to reposition elements whose layout
 // depends on the viewport rect (positions fixed and sticky), when scrolling and zooming.
 class ViewportConstraints {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     enum ConstraintType {
         FixedPositionConstraint,

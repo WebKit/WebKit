@@ -43,6 +43,7 @@ enum SentinelTag { Sentinel };
 
 template<typename T>
 class BasicRawSentinelNode {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     BasicRawSentinelNode(SentinelTag)
         : m_next(0)

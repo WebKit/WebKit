@@ -39,7 +39,7 @@ class RenderBoxModelObject;
 class RenderView;
 
 class ImageQualityController {
-    WTF_MAKE_NONCOPYABLE(ImageQualityController)
+    WTF_MAKE_NONCOPYABLE(ImageQualityController); WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ImageQualityController(const RenderView&);
 

@@ -66,6 +66,7 @@ protected:
 };
 
 class CachedFrame : private CachedFrameBase {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit CachedFrame(Frame&);
 

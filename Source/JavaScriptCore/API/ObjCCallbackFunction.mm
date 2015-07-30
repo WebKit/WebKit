@@ -43,6 +43,7 @@
 #import <wtf/RetainPtr.h>
 
 class CallbackArgument {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~CallbackArgument();
     virtual void set(NSInvocation *, NSInteger, JSContext *, JSValueRef, JSValueRef*) = 0;
@@ -257,6 +258,7 @@ public:
 };
 
 class CallbackResult {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~CallbackResult()
     {

@@ -348,6 +348,7 @@ private:
 };
 
 class CachedResource::Callback {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     Callback(CachedResource&, CachedResourceClient&);
 

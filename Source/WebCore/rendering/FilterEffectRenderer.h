@@ -55,6 +55,7 @@ enum FilterConsumer {
 };
 
 class FilterEffectRendererHelper {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     FilterEffectRendererHelper(bool haveFilterEffect)
         : m_renderLayer(0)

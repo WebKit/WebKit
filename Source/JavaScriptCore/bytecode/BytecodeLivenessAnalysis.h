@@ -38,6 +38,7 @@ class CodeBlock;
 class FullBytecodeLiveness;
 
 class BytecodeLivenessAnalysis {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     BytecodeLivenessAnalysis(CodeBlock*);
     

@@ -90,6 +90,7 @@ struct BasicBlockRange {
 };
 
 class ControlFlowProfiler {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ControlFlowProfiler();
     ~ControlFlowProfiler();

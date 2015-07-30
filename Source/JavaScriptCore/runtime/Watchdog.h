@@ -36,6 +36,7 @@ class ExecState;
 class VM;
 
 class Watchdog {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     class Scope;
 

@@ -66,6 +66,7 @@ class RoundedRect;
 // physical coordinates.
 
 class Shape {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     struct DisplayPaths {
         Path shape;

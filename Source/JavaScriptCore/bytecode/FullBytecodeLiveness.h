@@ -35,6 +35,7 @@ class BytecodeLivenessAnalysis;
 typedef HashMap<unsigned, FastBitVector, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> BytecodeToBitmapMap;
 
 class FullBytecodeLiveness {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     const FastBitVector& getLiveness(unsigned bytecodeIndex) const
     {

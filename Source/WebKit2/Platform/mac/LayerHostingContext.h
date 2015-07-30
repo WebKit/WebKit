@@ -41,7 +41,7 @@ class MachSendRight;
 namespace WebKit {
 
 class LayerHostingContext {
-    WTF_MAKE_NONCOPYABLE(LayerHostingContext);
+    WTF_MAKE_NONCOPYABLE(LayerHostingContext); WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<LayerHostingContext> createForPort(const WebCore::MachSendRight& serverPort);
 #if HAVE(OUT_OF_PROCESS_LAYER_HOSTING)

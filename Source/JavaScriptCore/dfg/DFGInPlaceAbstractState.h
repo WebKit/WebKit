@@ -37,6 +37,7 @@
 namespace JSC { namespace DFG {
 
 class InPlaceAbstractState {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     InPlaceAbstractState(Graph&);
     

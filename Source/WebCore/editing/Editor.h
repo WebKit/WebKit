@@ -97,6 +97,7 @@ enum class MailBlockquoteHandling {
 };
 
 class Editor {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit Editor(Frame&);
     ~Editor();

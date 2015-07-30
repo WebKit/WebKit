@@ -35,6 +35,7 @@ class DocumentLoader;
 class Page;
 
 class CachedPage {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit CachedPage(Page&);
     ~CachedPage();

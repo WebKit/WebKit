@@ -267,6 +267,8 @@ private:
     Glyph m_zeroWidthSpaceGlyph;
 
     struct DerivedFontData {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
         explicit DerivedFontData(bool custom)
             : forCustomFont(custom)
         {

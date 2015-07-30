@@ -44,6 +44,7 @@ class RenderElement;
 class RenderStyle;
 
 class AnimationController {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit AnimationController(Frame&);
     ~AnimationController();

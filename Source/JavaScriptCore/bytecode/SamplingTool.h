@@ -227,6 +227,7 @@ namespace JSC {
     };
 
     class SamplingTool {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         friend struct CallRecord;
         

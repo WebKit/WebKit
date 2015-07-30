@@ -41,6 +41,7 @@ class AsyncScrollingCoordinator;
 // the scrolling thread, avoiding locking. 
 
 class ScrollingStateTree {
+    WTF_MAKE_FAST_ALLOCATED;
     friend class ScrollingStateNode;
 public:
     WEBCORE_EXPORT ScrollingStateTree(AsyncScrollingCoordinator* = nullptr);

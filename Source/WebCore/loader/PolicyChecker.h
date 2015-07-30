@@ -51,6 +51,7 @@ class ResourceResponse;
 
 class PolicyChecker {
     WTF_MAKE_NONCOPYABLE(PolicyChecker);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit PolicyChecker(Frame&);
 

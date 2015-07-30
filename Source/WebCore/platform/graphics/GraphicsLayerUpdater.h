@@ -47,6 +47,7 @@ class GraphicsLayerUpdater
     : public DisplayRefreshMonitorClient
 #endif
 {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     GraphicsLayerUpdater(GraphicsLayerUpdaterClient&, PlatformDisplayID);
     virtual ~GraphicsLayerUpdater();

@@ -91,6 +91,7 @@ namespace WTF {
     class SegmentedVector {
         friend class SegmentedVectorIterator<T, SegmentSize>;
         WTF_MAKE_NONCOPYABLE(SegmentedVector);
+        WTF_MAKE_FAST_ALLOCATED;
 
     public:
         typedef SegmentedVectorIterator<T, SegmentSize> Iterator;

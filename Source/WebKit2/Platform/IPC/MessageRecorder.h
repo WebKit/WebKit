@@ -68,7 +68,7 @@ public:
     static bool isEnabled();
 
     class MessageProcessingToken {
-        WTF_MAKE_NONCOPYABLE(MessageProcessingToken);
+        WTF_MAKE_NONCOPYABLE(MessageProcessingToken); WTF_MAKE_FAST_ALLOCATED;
     public:
         explicit MessageProcessingToken(WebKitMessageRecord);
         ~MessageProcessingToken();
