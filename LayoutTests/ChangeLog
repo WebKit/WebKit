@@ -1,5 +1,16 @@
 2015-07-30  Matt Rajca  <mrajca@apple.com>
 
+        Media Session: add test for MediaSession.releaseSession()
+        https://bugs.webkit.org/show_bug.cgi?id=147478
+
+        Reviewed by Eric Carlson.
+
+        * media/session/releasing-sessions-expected.txt: Added.
+        * media/session/releasing-sessions.html: Added.
+        * platform/mac/TestExpectations: Media Session support is disabled by default.
+
+2015-07-30  Matt Rajca  <mrajca@apple.com>
+
         Media Session: add test to ensure next/previous-track event handlers are not fired when they are disabled
         https://bugs.webkit.org/show_bug.cgi?id=147477
 
