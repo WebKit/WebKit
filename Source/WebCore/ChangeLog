@@ -1,5 +1,43 @@
 2015-07-31  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r187491
+
+    2015-07-28  Jer Noble  <jer.noble@apple.com>
+
+            [iOS] Notify fullscreen controller in UIProcess whether external playback is allowed
+            https://bugs.webkit.org/show_bug.cgi?id=147343
+
+            Reviewed by Brady Eidson.
+
+            Pass the value of the MediaElementSession's wirelessVideoPlaybackDisabled() property up through WebKit2 to
+            WebVideoFullscreenControllerAVKit.
+
+            * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+            (WebVideoFullscreenControllerContext::setWirelessVideoPlaybackDisabled): Pass to the interface on the main thread.
+            * platform/ios/WebVideoFullscreenInterface.h:
+            * platform/ios/WebVideoFullscreenInterfaceAVKit.h:
+            * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+            (WebVideoFullscreenInterfaceAVKit::setWirelessVideoPlaybackDisabled): Sets .allowsExternalPlayback to !disabled.
+            (WebVideoFullscreenInterfaceAVKit::wirelessVideoPlaybackDisabled): Returns the last value set.
+            * platform/ios/WebVideoFullscreenModelVideoElement.mm:
+            (WebVideoFullscreenModelVideoElement::setWebVideoFullscreenInterface): Update the value of wirelessVideoPlaybackDisabled
+                if the element is present.
+            (WebVideoFullscreenModelVideoElement::setVideoElement): Ditto if the interface is present.
+            (WebVideoFullscreenModelVideoElement::updateForEventName): Update the value either way.
+
+    2015-07-28  Brady Eidson  <beidson@apple.com>
+
+            Handle null CFArrayRef returning from _CFHTTPParsedCookiesWithResponseHeaderFields.
+            <rdar://problem/21995928> and https://bugs.webkit.org/show_bug.cgi?id=147365
+
+            Reviewed by Alexey Proskuryakov.
+
+            * platform/network/cf/CookieJarCFNet.cpp:
+            (WebCore::filterCookies): ASSERT the input is not null.
+            (WebCore::createCookies): Always return a CFArrayRef, even if it's empty.
+
+2015-07-31  Lucas Forschler  <lforschler@apple.com>
+
         Merge r187489
 
     2015-07-28  Chris Dumez  <cdumez@apple.com>

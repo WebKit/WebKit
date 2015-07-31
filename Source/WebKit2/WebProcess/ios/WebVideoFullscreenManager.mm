@@ -149,6 +149,12 @@ void WebVideoFullscreenInterfaceContext::setExternalPlayback(bool enabled, Exter
         m_manager->setExternalPlayback(m_contextId, enabled, type, localizedDeviceName);
 }
 
+void WebVideoFullscreenInterfaceContext::setWirelessVideoPlaybackDisabled(bool disabled)
+{
+    if (m_manager)
+        m_manager->setWirelessVideoPlaybackDisabled(m_contextId, disabled);
+}
+
 #pragma mark - WebVideoFullscreenManager
 
 Ref<WebVideoFullscreenManager> WebVideoFullscreenManager::create(PassRefPtr<WebPage> page)
@@ -329,6 +335,11 @@ void WebVideoFullscreenManager::setLegibleMediaSelectionOptions(uint64_t context
 void WebVideoFullscreenManager::setExternalPlayback(uint64_t contextId, bool enabled, WebVideoFullscreenInterface::ExternalPlaybackTargetType targetType, String localizedDeviceName)
 {
     m_page->send(Messages::WebVideoFullscreenManagerProxy::SetExternalPlaybackProperties(contextId, enabled, static_cast<uint32_t>(targetType), localizedDeviceName), m_page->pageID());
+}
+
+void WebVideoFullscreenManager::setWirelessVideoPlaybackDisabled(uint64_t contextId, bool disabled)
+{
+    m_page->send(Messages::WebVideoFullscreenManagerProxy::SetWirelessVideoPlaybackDisabled(contextId, disabled));
 }
 
 #pragma mark Messages from WebVideoFullscreenManagerProxy:

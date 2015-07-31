@@ -1,5 +1,25 @@
 2015-07-31  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r187491
+
+    2015-07-28  Jer Noble  <jer.noble@apple.com>
+
+            [iOS] Notify fullscreen controller in UIProcess whether external playback is allowed
+            https://bugs.webkit.org/show_bug.cgi?id=147343
+
+            Reviewed by Brady Eidson.
+
+            Pass the boolean property wirelessVideoPlaybackDisabled across the UIProcess/WebProcess boundary.
+
+            * UIProcess/ios/WebVideoFullscreenManagerProxy.mm:
+            (WebKit::WebVideoFullscreenManagerProxy::setWirelessVideoPlaybackDisabled):
+            * WebProcess/ios/WebVideoFullscreenManager.mm:
+            (WebKit::WebVideoFullscreenInterfaceContext::setWirelessVideoPlaybackDisabled):
+            (WebKit::WebVideoFullscreenManager::WebVideoFullscreenManager):
+            (WebKit::WebVideoFullscreenManager::setWirelessVideoPlaybackDisabled):
+
+2015-07-31  Lucas Forschler  <lforschler@apple.com>
+
         Merge r187471
 
     2015-07-27  Tim Horton  <timothy_horton@apple.com>

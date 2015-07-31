@@ -130,7 +130,8 @@ private:
     virtual void setAudioMediaSelectionOptions(const Vector<String>& options, uint64_t selectedIndex) override;
     virtual void setLegibleMediaSelectionOptions(const Vector<String>& options, uint64_t selectedIndex) override;
     virtual void setExternalPlayback(bool enabled, ExternalPlaybackTargetType, String localizedDeviceName) override;
-    
+    virtual void setWirelessVideoPlaybackDisabled(bool) override;
+
     // WebVideoFullscreenModel
     virtual void play() override;
     virtual void pause() override;
@@ -345,6 +346,16 @@ void WebVideoFullscreenControllerContext::setExternalPlayback(bool enabled, Exte
     dispatch_async(dispatch_get_main_queue(), [strongThis, this, enabled, type, capturedLocalizedDeviceName] {
         if (m_interface)
             m_interface->setExternalPlayback(enabled, type, capturedLocalizedDeviceName.string());
+    });
+}
+
+void WebVideoFullscreenControllerContext::setWirelessVideoPlaybackDisabled(bool disabled)
+{
+    ASSERT(WebThreadIsCurrent());
+    RefPtr<WebVideoFullscreenControllerContext> strongThis(this);
+    dispatch_async(dispatch_get_main_queue(), [strongThis, this, disabled] {
+        if (m_interface)
+            m_interface->setWirelessVideoPlaybackDisabled(disabled);
     });
 }
 

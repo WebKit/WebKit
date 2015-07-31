@@ -126,6 +126,7 @@ static const char* boolString(bool val)
 @property (getter=isExternalPlaybackActive) BOOL externalPlaybackActive;
 @property AVPlayerControllerExternalPlaybackType externalPlaybackType;
 @property (retain) NSString *externalPlaybackAirPlayDeviceLocalizedName;
+@property BOOL allowsExternalPlayback;
 
 - (BOOL)playerViewController:(AVPlayerViewController *)playerViewController shouldExitFullScreenWithReason:(AVPlayerViewControllerExitFullScreenReason)reason;
 @end
@@ -1016,6 +1017,16 @@ void WebVideoFullscreenInterfaceAVKit::setExternalPlayback(bool enabled, Externa
     playerController.externalPlaybackType = externalPlaybackType;
     playerController.externalPlaybackActive = enabled;
     [m_playerLayerView setHidden:enabled];
+}
+
+void WebVideoFullscreenInterfaceAVKit::setWirelessVideoPlaybackDisabled(bool disabled)
+{
+    [m_playerController setAllowsExternalPlayback:!disabled];
+}
+
+bool WebVideoFullscreenInterfaceAVKit::wirelessVideoPlaybackDisabled() const
+{
+    return [m_playerController allowsExternalPlayback];
 }
 
 @interface UIWindow ()
