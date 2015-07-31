@@ -486,7 +486,7 @@ RetainPtr<NSImage> WebContextMenuClient::imageForCurrentSharingServicePickerItem
     if (!image)
         return nil;
 
-    return image->getNSImage();
+    return [[image->getNSImage() retain] autorelease];
 }
 #endif
 
