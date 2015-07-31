@@ -1076,6 +1076,11 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 {
     ASSERT(gestureRecognizer == _longPressGestureRecognizer);
 
+#if HAVE(LINK_PREVIEW)
+    if ([_previewItemController interactionInProgress])
+        return;
+#endif
+
     _lastInteractionLocation = gestureRecognizer.startPoint;
 
     if ([gestureRecognizer state] == UIGestureRecognizerStateBegan) {
@@ -3285,13 +3290,15 @@ static bool isAssistableInputType(InputType type)
     bool isValidURLForImagePreview = !coreTargetURL.isEmpty() && (WebCore::protocolIsInHTTPFamily(coreTargetURL) || WebCore::protocolIs(coreTargetURL, "data"));
 
     if ([_previewItemController type] == UIPreviewItemTypeLink) {
+        _highlightLongPressCanClick = NO;
+        _page->startInteractionWithElementAtPosition(_positionInformation.point);
+
         // Treat animated images like a link preview
         if (isValidURLForImagePreview && _positionInformation.isAnimatedImage) {
             RetainPtr<_WKActivatedElementInfo> animatedImageElementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:targetURL location:_positionInformation.point title:_positionInformation.title rect:_positionInformation.bounds image:_positionInformation.image.get()]);
 
             if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForAnimatedImageAtURL:defaultActions:elementInfo:imageSize:)]) {
                 RetainPtr<NSArray> actions = [_actionSheetAssistant defaultActionsForImageSheet:animatedImageElementInfo.get()];
-                _highlightLongPressCanClick = NO;
                 return [uiDelegate _webView:_webView previewViewControllerForAnimatedImageAtURL:targetURL defaultActions:actions.get() elementInfo:animatedImageElementInfo.get() imageSize:_positionInformation.image->size()];
             }
         }
@@ -3299,16 +3306,11 @@ static bool isAssistableInputType(InputType type)
         RetainPtr<_WKActivatedElementInfo> elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeLink URL:targetURL location:_positionInformation.point title:_positionInformation.title rect:_positionInformation.bounds image:_positionInformation.image.get()]);
 
         RetainPtr<NSArray> actions = [_actionSheetAssistant defaultActionsForLinkSheet:elementInfo.get()];
-        if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForURL:defaultActions:elementInfo:)]) {
-            _highlightLongPressCanClick = NO;
-            _page->startInteractionWithElementAtPosition(_positionInformation.point);
+        if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForURL:defaultActions:elementInfo:)])
             return [uiDelegate _webView:_webView previewViewControllerForURL:targetURL defaultActions:actions.get() elementInfo:elementInfo.get()];
-        }
 
-        if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForURL:)]) {
-            _highlightLongPressCanClick = NO;
+        if ([uiDelegate respondsToSelector:@selector(_webView:previewViewControllerForURL:)])
             return [uiDelegate _webView:_webView previewViewControllerForURL:targetURL];
-        }
         return nil;
     }
 
