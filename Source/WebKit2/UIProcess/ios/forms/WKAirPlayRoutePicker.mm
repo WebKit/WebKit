@@ -93,6 +93,10 @@ using namespace WebKit;
 
 - (void)_dismissAirPlayRoutePickerIPad
 {
+    if (!_routingController)
+        return;
+
+    [_routingController setDiscoveryMode:MPRouteDiscoveryModeDisabled];
     _routingController = nil;
 
     if (!_popoverController)
@@ -134,6 +138,7 @@ using namespace WebKit;
             return UIInterfaceOrientationMaskPortrait;
         }
         completionHandler:^{
+            [_routingController setDiscoveryMode:MPRouteDiscoveryModeDisabled];
             _routingController = nil;
             _actionSheet = nil;
         }
