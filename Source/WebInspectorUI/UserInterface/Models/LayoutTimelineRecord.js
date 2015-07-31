@@ -25,7 +25,7 @@
 
 WebInspector.LayoutTimelineRecord = class LayoutTimelineRecord extends WebInspector.TimelineRecord
 {
-    constructor(eventType, startTime, endTime, callFrames, sourceCodeLocation, x, y, width, height, quad, duringComposite)
+    constructor(eventType, startTime, endTime, callFrames, sourceCodeLocation, x, y, width, height, quad)
     {
         super(WebInspector.TimelineRecord.Type.Layout, startTime, endTime, callFrames, sourceCodeLocation);
 
@@ -40,7 +40,6 @@ WebInspector.LayoutTimelineRecord = class LayoutTimelineRecord extends WebInspec
         this._width = typeof width === "number" ? width : NaN;
         this._height = typeof height === "number" ? height : NaN;
         this._quad = quad instanceof WebInspector.Quad ? quad : null;
-        this._duringComposite = duringComposite || false;
     }
 
     // Static
@@ -107,11 +106,6 @@ WebInspector.LayoutTimelineRecord = class LayoutTimelineRecord extends WebInspec
     get quad()
     {
         return this._quad;
-    }
-
-    get duringComposite()
-    {
-        return this._duringComposite;
     }
 
     saveIdentityToCookie(cookie)
