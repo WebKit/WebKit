@@ -1,5 +1,31 @@
 2015-07-31  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r187525
+
+    2015-07-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            [iOS] Crash when encountering characters whose natural font is one we can't look up
+            https://bugs.webkit.org/show_bug.cgi?id=147377
+            <rdar://problem/22022011>
+
+            Reviewed by Simon Fraser.
+
+            These characters hit the complex text code path, where CoreText picks fonts
+            to use for each character. We then try to map these CoreText fonts back to
+            our own Font objects, and we assume (on iOS) that our own font search will
+            always return something.
+
+            On OS X, we do not have such an assumption, and we handle the case where it
+            does not hold. This method works on iOS as well, so the solution is to just
+            perform it on both OSes.
+
+            Test: fast/text/crash-complex-unknown-font.html
+
+            * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+            (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+
+2015-07-31  Lucas Forschler  <lforschler@apple.com>
+
         Merge r187522
 
     2015-07-28  Said Abou-Hallawa  <sabouhallawa@apple.com>

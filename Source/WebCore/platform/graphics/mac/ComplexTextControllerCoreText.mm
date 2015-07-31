@@ -282,17 +282,12 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
                     }
                     auto& fontCache = FontCache::singleton();
                     runFont = fontCache.fontForFamily(m_font.fontDescription(), fontName.get(), false).get();
-#if !PLATFORM(IOS)
-                    // Core Text may have used a font that is not known to NSFontManager. In that case, fall back on
-                    // using the font as returned, even though it may not have the best NSFontRenderingMode.
+                    // Core Text may have used a font that our font lookup path cannot find. In that case, fall back on
+                    // using the font as returned.
                     if (!runFont) {
                         FontPlatformData runFontPlatformData(runCTFont, CTFontGetSize(runCTFont));
                         runFont = fontCache.fontForPlatformData(runFontPlatformData).ptr();
                     }
-#else
-                    // FIXME: Just assert for now, until we can devise a better fix that works with iOS.
-                    ASSERT(runFont);
-#endif
                 }
                 if (m_fallbackFonts && runFont != &m_font.primaryFont())
                     m_fallbackFonts->add(runFont);
