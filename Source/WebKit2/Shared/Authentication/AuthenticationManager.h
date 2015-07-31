@@ -73,7 +73,16 @@ private:
 
     bool tryUseCertificateInfoForChallenge(const WebCore::AuthenticationChallenge&, const WebCore::CertificateInfo&);
 
-    uint64_t establishIdentifierForChallenge(const WebCore::AuthenticationChallenge&);
+    uint64_t addChallengeToChallengeMap(const WebCore::AuthenticationChallenge&);
+    bool shouldCoalesceChallenge(uint64_t challengeID, const WebCore::AuthenticationChallenge&) const;
+
+    void useCredentialForSingleChallenge(uint64_t challengeID, const WebCore::Credential&, const WebCore::CertificateInfo&);
+    void continueWithoutCredentialForSingleChallenge(uint64_t challengeID);
+    void cancelSingleChallenge(uint64_t challengeID);
+    void performDefaultHandlingForSingleChallenge(uint64_t challengeID);
+    void rejectProtectionSpaceAndContinueForSingleChallenge(uint64_t challengeID);
+
+    Vector<uint64_t> coalesceChallengesMatching(uint64_t challengeID) const;
 
     ChildProcess* m_process;
 

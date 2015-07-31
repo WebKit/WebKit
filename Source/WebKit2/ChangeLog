@@ -1,3 +1,40 @@
+2015-07-31  Chris Dumez  <cdumez@apple.com>
+
+        Coalesce concurrent authentication challenges for the same ProtectionSpace
+        https://bugs.webkit.org/show_bug.cgi?id=147496
+        <rdar://problem/16839069>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Coalesce concurrent authentication challenges for the same ProtectionSpace.
+        Ideally, this would be done in the network layer but short term, this will
+        make sure the user no longer gets repeating authentication dialogs for the
+        same protection space.
+
+        This gets rid of a long-standing bug in WebKit / Safari where visiting a
+        site using HTTP authentication would pop up one authentication dialog for
+        each subresource being loaded from the network (especially when the main
+        resource is loaded from the cache).
+
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::canCoalesceChallenge):
+        (WebKit::AuthenticationManager::addChallengeToChallengeMap):
+        (WebKit::AuthenticationManager::shouldCoalesceChallenge):
+        (WebKit::AuthenticationManager::coalesceChallengesMatching):
+        (WebKit::AuthenticationManager::didReceiveAuthenticationChallenge):
+        (WebKit::AuthenticationManager::useCredentialForChallenge):
+        (WebKit::AuthenticationManager::useCredentialForSingleChallenge):
+        (WebKit::AuthenticationManager::continueWithoutCredentialForChallenge):
+        (WebKit::AuthenticationManager::continueWithoutCredentialForSingleChallenge):
+        (WebKit::AuthenticationManager::cancelChallenge):
+        (WebKit::AuthenticationManager::cancelSingleChallenge):
+        (WebKit::AuthenticationManager::performDefaultHandling):
+        (WebKit::AuthenticationManager::performDefaultHandlingForSingleChallenge):
+        (WebKit::AuthenticationManager::rejectProtectionSpaceAndContinue):
+        (WebKit::AuthenticationManager::rejectProtectionSpaceAndContinueForSingleChallenge):
+        (WebKit::AuthenticationManager::AuthenticationManager): Deleted.
+        * Shared/Authentication/AuthenticationManager.h:
+
 2015-07-31  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed parameter name typo fix.

@@ -53,6 +53,12 @@ static uint64_t generateAuthenticationChallengeID()
     return ++uniqueAuthenticationChallengeID;
 }
 
+static bool canCoalesceChallenge(const WebCore::AuthenticationChallenge& challenge)
+{
+    // Do not coalesce server trust evaluation requests because ProtectionSpace comparison does not evaluate server trust (e.g. certificate).
+    return challenge.protectionSpace().authenticationScheme() != ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested;
+}
+
 const char* AuthenticationManager::supplementName()
 {
     return "AuthenticationManager";
@@ -64,7 +70,7 @@ AuthenticationManager::AuthenticationManager(ChildProcess* process)
     m_process->addMessageReceiver(Messages::AuthenticationManager::messageReceiverName(), *this);
 }
 
-uint64_t AuthenticationManager::establishIdentifierForChallenge(const WebCore::AuthenticationChallenge& authenticationChallenge)
+uint64_t AuthenticationManager::addChallengeToChallengeMap(const WebCore::AuthenticationChallenge& authenticationChallenge)
 {
     ASSERT(RunLoop::isMain());
 
@@ -73,12 +79,51 @@ uint64_t AuthenticationManager::establishIdentifierForChallenge(const WebCore::A
     return challengeID;
 }
 
+bool AuthenticationManager::shouldCoalesceChallenge(uint64_t challengeID, const AuthenticationChallenge& challenge) const
+{
+    if (!canCoalesceChallenge(challenge))
+        return false;
+
+    auto end =  m_challenges.end();
+    for (auto it = m_challenges.begin(); it != end; ++it) {
+        if (it->key != challengeID && ProtectionSpace::compare(challenge.protectionSpace(), it->value.protectionSpace()))
+            return true;
+    }
+    return false;
+}
+
+Vector<uint64_t> AuthenticationManager::coalesceChallengesMatching(uint64_t challengeID) const
+{
+    AuthenticationChallenge challenge = m_challenges.get(challengeID);
+    ASSERT(!challenge.isNull());
+
+    Vector<uint64_t> challengesToCoalesce;
+    challengesToCoalesce.append(challengeID);
+
+    if (!canCoalesceChallenge(challenge))
+        return challengesToCoalesce;
+
+    auto end = m_challenges.end();
+    for (auto it = m_challenges.begin(); it != end; ++it) {
+        if (it->key != challengeID && ProtectionSpace::compare(challenge.protectionSpace(), it->value.protectionSpace()))
+            challengesToCoalesce.append(it->key);
+    }
+
+    return challengesToCoalesce;
+}
+
 void AuthenticationManager::didReceiveAuthenticationChallenge(WebFrame* frame, const AuthenticationChallenge& authenticationChallenge)
 {
     ASSERT(frame);
     ASSERT(frame->page());
+
+    uint64_t challengeID = addChallengeToChallengeMap(authenticationChallenge);
+
+    // Coalesce challenges in the same protection space.
+    if (shouldCoalesceChallenge(challengeID, authenticationChallenge))
+        return;
     
-    m_process->send(Messages::WebPageProxy::DidReceiveAuthenticationChallenge(frame->frameID(), authenticationChallenge, establishIdentifierForChallenge(authenticationChallenge)), frame->page()->pageID());
+    m_process->send(Messages::WebPageProxy::DidReceiveAuthenticationChallenge(frame->frameID(), authenticationChallenge, challengeID), frame->page()->pageID());
 }
 
 #if ENABLE(NETWORK_PROCESS)
@@ -86,14 +131,22 @@ void AuthenticationManager::didReceiveAuthenticationChallenge(uint64_t pageID, u
 {
     ASSERT(pageID);
     ASSERT(frameID);
+
+    uint64_t challengeID = addChallengeToChallengeMap(authenticationChallenge);
+    if (shouldCoalesceChallenge(challengeID, authenticationChallenge))
+        return;
     
-    m_process->send(Messages::NetworkProcessProxy::DidReceiveAuthenticationChallenge(pageID, frameID, authenticationChallenge, establishIdentifierForChallenge(authenticationChallenge)));
+    m_process->send(Messages::NetworkProcessProxy::DidReceiveAuthenticationChallenge(pageID, frameID, authenticationChallenge, addChallengeToChallengeMap(authenticationChallenge)));
 }
 #endif
 
 void AuthenticationManager::didReceiveAuthenticationChallenge(Download* download, const AuthenticationChallenge& authenticationChallenge)
 {
-    download->send(Messages::DownloadProxy::DidReceiveAuthenticationChallenge(authenticationChallenge, establishIdentifierForChallenge(authenticationChallenge)));
+    uint64_t challengeID = addChallengeToChallengeMap(authenticationChallenge);
+    if (shouldCoalesceChallenge(challengeID, authenticationChallenge))
+        return;
+
+    download->send(Messages::DownloadProxy::DidReceiveAuthenticationChallenge(authenticationChallenge, addChallengeToChallengeMap(authenticationChallenge)));
 }
 
 // Currently, only Mac knows how to respond to authentication challenges with certificate info.
@@ -108,6 +161,12 @@ void AuthenticationManager::useCredentialForChallenge(uint64_t challengeID, cons
 {
     ASSERT(RunLoop::isMain());
 
+    for (auto& coalescedChallengeID : coalesceChallengesMatching(challengeID))
+        useCredentialForSingleChallenge(coalescedChallengeID, credential, certificateInfo);
+}
+
+void AuthenticationManager::useCredentialForSingleChallenge(uint64_t challengeID, const Credential& credential, const CertificateInfo& certificateInfo)
+{
     AuthenticationChallenge challenge = m_challenges.take(challengeID);
     ASSERT(!challenge.isNull());
     
@@ -129,6 +188,12 @@ void AuthenticationManager::continueWithoutCredentialForChallenge(uint64_t chall
 {
     ASSERT(RunLoop::isMain());
 
+    for (auto& coalescedChallengeID : coalesceChallengesMatching(challengeID))
+        continueWithoutCredentialForSingleChallenge(coalescedChallengeID);
+}
+
+void AuthenticationManager::continueWithoutCredentialForSingleChallenge(uint64_t challengeID)
+{
     AuthenticationChallenge challenge = m_challenges.take(challengeID);
     ASSERT(!challenge.isNull());
     AuthenticationClient* coreClient = challenge.authenticationClient();
@@ -146,6 +211,12 @@ void AuthenticationManager::cancelChallenge(uint64_t challengeID)
 {
     ASSERT(RunLoop::isMain());
 
+    for (auto& coalescedChallengeID : coalesceChallengesMatching(challengeID))
+        cancelSingleChallenge(coalescedChallengeID);
+}
+
+void AuthenticationManager::cancelSingleChallenge(uint64_t challengeID)
+{
     AuthenticationChallenge challenge = m_challenges.take(challengeID);
     ASSERT(!challenge.isNull());
     AuthenticationClient* coreClient = challenge.authenticationClient();
@@ -163,6 +234,12 @@ void AuthenticationManager::performDefaultHandling(uint64_t challengeID)
 {
     ASSERT(RunLoop::isMain());
 
+    for (auto& coalescedChallengeID : coalesceChallengesMatching(challengeID))
+        performDefaultHandlingForSingleChallenge(coalescedChallengeID);
+}
+
+void AuthenticationManager::performDefaultHandlingForSingleChallenge(uint64_t challengeID)
+{
     AuthenticationChallenge challenge = m_challenges.take(challengeID);
     ASSERT(!challenge.isNull());
     AuthenticationClient* coreClient = challenge.authenticationClient();
@@ -180,6 +257,12 @@ void AuthenticationManager::rejectProtectionSpaceAndContinue(uint64_t challengeI
 {
     ASSERT(RunLoop::isMain());
 
+    for (auto& coalescedChallengeID : coalesceChallengesMatching(challengeID))
+        rejectProtectionSpaceAndContinueForSingleChallenge(coalescedChallengeID);
+}
+
+void AuthenticationManager::rejectProtectionSpaceAndContinueForSingleChallenge(uint64_t challengeID)
+{
     AuthenticationChallenge challenge = m_challenges.take(challengeID);
     ASSERT(!challenge.isNull());
     AuthenticationClient* coreClient = challenge.authenticationClient();
