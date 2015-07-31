@@ -409,23 +409,23 @@ bool RenderTheme::paint(const RenderObject& o, ControlStates* controlStates, con
     return true; // We don't support the appearance, so let the normal background/border paint.
 }
 
-bool RenderTheme::paintBorderOnly(const RenderObject& o, const PaintInfo& paintInfo, const LayoutRect& r)
+bool RenderTheme::paintBorderOnly(const RenderBox& box, const PaintInfo& paintInfo, const LayoutRect& rect)
 {
     if (paintInfo.context->paintingDisabled())
         return false;
 
 #if PLATFORM(IOS)
-    UNUSED_PARAM(r);
-    return o.style().appearance() != NoControlPart;
+    UNUSED_PARAM(rect);
+    return box.style().appearance() != NoControlPart;
 #else
-    FloatRect devicePixelSnappedRect = snapRectToDevicePixels(r, o.document().deviceScaleFactor());
+    FloatRect devicePixelSnappedRect = snapRectToDevicePixels(rect, box.document().deviceScaleFactor());
     // Call the appropriate paint method based off the appearance value.
-    switch (o.style().appearance()) {
+    switch (box.style().appearance()) {
     case TextFieldPart:
-        return paintTextField(o, paintInfo, devicePixelSnappedRect);
+        return paintTextField(box, paintInfo, devicePixelSnappedRect);
     case ListboxPart:
     case TextAreaPart:
-        return paintTextArea(o, paintInfo, devicePixelSnappedRect);
+        return paintTextArea(box, paintInfo, devicePixelSnappedRect);
     case MenulistButtonPart:
     case SearchFieldPart:
         return true;
@@ -463,39 +463,39 @@ bool RenderTheme::paintBorderOnly(const RenderObject& o, const PaintInfo& paintI
 #endif
 }
 
-bool RenderTheme::paintDecorations(const RenderObject& renderer, const PaintInfo& paintInfo, const LayoutRect& rect)
+bool RenderTheme::paintDecorations(const RenderBox& box, const PaintInfo& paintInfo, const LayoutRect& rect)
 {
     if (paintInfo.context->paintingDisabled())
         return false;
 
     IntRect integralSnappedRect = snappedIntRect(rect);
-    FloatRect devicePixelSnappedRect = snapRectToDevicePixels(rect, renderer.document().deviceScaleFactor());
+    FloatRect devicePixelSnappedRect = snapRectToDevicePixels(rect, box.document().deviceScaleFactor());
 
     // Call the appropriate paint method based off the appearance value.
-    switch (renderer.style().appearance()) {
+    switch (box.style().appearance()) {
     case MenulistButtonPart:
-        return paintMenuListButtonDecorations(renderer, paintInfo, devicePixelSnappedRect);
+        return paintMenuListButtonDecorations(box, paintInfo, devicePixelSnappedRect);
     case TextFieldPart:
-        return paintTextFieldDecorations(renderer, paintInfo, devicePixelSnappedRect);
+        return paintTextFieldDecorations(box, paintInfo, devicePixelSnappedRect);
     case TextAreaPart:
-        return paintTextAreaDecorations(renderer, paintInfo, devicePixelSnappedRect);
+        return paintTextAreaDecorations(box, paintInfo, devicePixelSnappedRect);
     case CheckboxPart:
-        return paintCheckboxDecorations(renderer, paintInfo, integralSnappedRect);
+        return paintCheckboxDecorations(box, paintInfo, integralSnappedRect);
     case RadioPart:
-        return paintRadioDecorations(renderer, paintInfo, integralSnappedRect);
+        return paintRadioDecorations(box, paintInfo, integralSnappedRect);
     case PushButtonPart:
-        return paintPushButtonDecorations(renderer, paintInfo, integralSnappedRect);
+        return paintPushButtonDecorations(box, paintInfo, integralSnappedRect);
     case SquareButtonPart:
-        return paintSquareButtonDecorations(renderer, paintInfo, integralSnappedRect);
+        return paintSquareButtonDecorations(box, paintInfo, integralSnappedRect);
     case ButtonPart:
-        return paintButtonDecorations(renderer, paintInfo, integralSnappedRect);
+        return paintButtonDecorations(box, paintInfo, integralSnappedRect);
     case MenulistPart:
-        return paintMenuListDecorations(renderer, paintInfo, integralSnappedRect);
+        return paintMenuListDecorations(box, paintInfo, integralSnappedRect);
     case SliderThumbHorizontalPart:
     case SliderThumbVerticalPart:
-        return paintSliderThumbDecorations(renderer, paintInfo, integralSnappedRect);
+        return paintSliderThumbDecorations(box, paintInfo, integralSnappedRect);
     case SearchFieldPart:
-        return paintSearchFieldDecorations(renderer, paintInfo, integralSnappedRect);
+        return paintSearchFieldDecorations(box, paintInfo, integralSnappedRect);
 #if ENABLE(METER_ELEMENT)
     case MeterPart:
     case RelevancyLevelIndicatorPart:
