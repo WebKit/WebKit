@@ -85,7 +85,6 @@ static inline RetainPtr<CFStringRef> cookieValue(CFHTTPCookieRef cookie)
 
 static RetainPtr<CFArrayRef> filterCookies(CFArrayRef unfilteredCookies)
 {
-    ASSERT(unfilteredCookies);
     CFIndex count = CFArrayGetCount(unfilteredCookies);
     RetainPtr<CFMutableArrayRef> filteredCookies = adoptCF(CFArrayCreateMutable(0, count, &kCFTypeArrayCallBacks));
     for (CFIndex i = 0; i < count; ++i) {
@@ -121,11 +120,7 @@ static RetainPtr<CFArrayRef> copyCookiesForURLWithFirstPartyURL(const NetworkSto
 
 static CFArrayRef createCookies(CFDictionaryRef headerFields, CFURLRef url)
 {
-    CFArrayRef parsedCookies = _CFHTTPParsedCookiesWithResponseHeaderFields(kCFAllocatorDefault, headerFields, url);
-    if (!parsedCookies)
-        parsedCookies = CFArrayCreate(kCFAllocatorDefault, 0, 0, &kCFTypeArrayCallBacks);
-
-    return parsedCookies;
+    return _CFHTTPParsedCookiesWithResponseHeaderFields(kCFAllocatorDefault, headerFields, url);
 }
 
 void setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, const String& value)
