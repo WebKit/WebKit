@@ -1824,6 +1824,12 @@
     <ClCompile Include="..\wasm\JSWASMModule.cpp">
       <Filter>wasm</Filter>
     </ClCompile>
+    <ClCompile Include="..\wasm\WASMModuleParser.cpp">
+      <Filter>wasm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\wasm\WASMReader.cpp">
+      <Filter>wasm</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\API\APICallbackFunction.h">
@@ -4353,6 +4359,15 @@
     <ClInclude Include="..\runtime\TypeofType.h" />
     <ClInclude Include="..\runtime\VarOffset.h" />
     <ClInclude Include="..\wasm\JSWASMModule.h">
+      <Filter>wasm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wasm\WASMMagicNumber.h">
+      <Filter>wasm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wasm\WASMModuleParser.h">
+      <Filter>wasm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\wasm\WASMReader.h">
       <Filter>wasm</Filter>
     </ClInclude>
   </ItemGroup>

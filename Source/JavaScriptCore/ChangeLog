@@ -1,3 +1,48 @@
+2015-07-31  Sukolsak Sakshuwong  <sukolsak@gmail.com>
+
+        Implement WebAssembly module parser
+        https://bugs.webkit.org/show_bug.cgi?id=147293
+
+        Reviewed by Mark Lam.
+
+        Re-landing after fix for the "..\..\jsc.cpp(46): fatal error C1083: Cannot open
+        include file: 'JSWASMModule.h'" issue on Windows.
+
+        Implement WebAssembly module parser for WebAssembly files produced by pack-asmjs
+        <https://github.com/WebAssembly/polyfill-prototype-1>. This patch only checks
+        the magic number at the beginning of the files. Parsing of the rest will be
+        implemented in a subsequent patch.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        (functionLoadWebAssembly):
+        * parser/SourceProvider.h:
+        (JSC::WebAssemblySourceProvider::create):
+        (JSC::WebAssemblySourceProvider::data):
+        (JSC::WebAssemblySourceProvider::WebAssemblySourceProvider):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::wasmModuleStructure):
+        * wasm/WASMMagicNumber.h: Added.
+        * wasm/WASMModuleParser.cpp: Added.
+        (JSC::WASMModuleParser::WASMModuleParser):
+        (JSC::WASMModuleParser::parse):
+        (JSC::WASMModuleParser::parseModule):
+        (JSC::parseWebAssembly):
+        * wasm/WASMModuleParser.h: Added.
+        * wasm/WASMReader.cpp: Added.
+        (JSC::WASMReader::readUnsignedInt32):
+        (JSC::WASMReader::readFloat):
+        (JSC::WASMReader::readDouble):
+        * wasm/WASMReader.h: Added.
+        (JSC::WASMReader::WASMReader):
+
 2015-07-30  Sukolsak Sakshuwong  <sukolsak@gmail.com>
 
         Add the "wasm" directory to the Additional Include Directories for jsc.exe

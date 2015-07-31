@@ -92,6 +92,7 @@
 #include "JSTypedArrayConstructors.h"
 #include "JSTypedArrayPrototypes.h"
 #include "JSTypedArrays.h"
+#include "JSWASMModule.h"
 #include "JSWeakMap.h"
 #include "JSWeakSet.h"
 #include "JSWithScope.h"
@@ -339,6 +340,10 @@ void JSGlobalObject::init(VM& vm)
     
     m_promisePrototype.set(vm, this, JSPromisePrototype::create(exec, this, JSPromisePrototype::createStructure(vm, this, m_objectPrototype.get())));
     m_promiseStructure.set(vm, this, JSPromise::createStructure(vm, this, m_promisePrototype.get()));
+
+#if ENABLE(WEBASSEMBLY)
+    m_wasmModuleStructure.set(vm, this, JSWASMModule::createStructure(vm, this));
+#endif
 
     m_parseIntFunction.set(vm, this, JSFunction::create(vm, this, 2, vm.propertyNames->parseInt.string(), globalFuncParseInt, NoIntrinsic));
     putDirectWithoutTransition(vm, vm.propertyNames->parseInt, m_parseIntFunction.get(), DontEnum | Function);
@@ -801,6 +806,9 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_dollarVMStructure);
     visitor.append(&thisObject->m_internalFunctionStructure);
     visitor.append(&thisObject->m_promiseStructure);
+#if ENABLE(WEBASSEMBLY)
+    visitor.append(&thisObject->m_wasmModuleStructure);
+#endif
 
 #define VISIT_SIMPLE_TYPE(CapitalName, lowerName, properName, instanceType, jsName) \
     visitor.append(&thisObject->m_ ## lowerName ## Prototype); \

@@ -1021,6 +1021,11 @@
 		70ECA6091AFDBEA200449739 /* TemplateRegistryKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 70ECA6041AFDBEA200449739 /* TemplateRegistryKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		79EE0BFF1B4AFB85000385C9 /* VariableEnvironment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 79EE0BFD1B4AFB85000385C9 /* VariableEnvironment.cpp */; };
 		79EE0C001B4AFB85000385C9 /* VariableEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 79EE0BFE1B4AFB85000385C9 /* VariableEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7B39F76D1B62DE2E00360FB4 /* WASMModuleParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B39F7691B62DE2200360FB4 /* WASMModuleParser.cpp */; };
+		7B39F76E1B62DE3200360FB4 /* WASMModuleParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B39F76A1B62DE2200360FB4 /* WASMModuleParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7B39F7701B62DE3200360FB4 /* WASMReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B39F76C1B62DE2200360FB4 /* WASMReader.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7B39F7721B63574D00360FB4 /* WASMReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B39F7711B63574B00360FB4 /* WASMReader.cpp */; };
+		7B7A5E271B68288C0027CAD0 /* WASMMagicNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B7A5E261B6828840027CAD0 /* WASMMagicNumber.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7B98D1361B60CD5F0023B1A4 /* JSWASMModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B98D1341B60CD5A0023B1A4 /* JSWASMModule.cpp */; };
 		7B98D1371B60CD620023B1A4 /* JSWASMModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B98D1351B60CD5A0023B1A4 /* JSWASMModule.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C008CDA187124BB00955C24 /* JSPromiseDeferred.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C008CD8187124BB00955C24 /* JSPromiseDeferred.cpp */; };
@@ -2793,6 +2798,11 @@
 		70ECA6041AFDBEA200449739 /* TemplateRegistryKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplateRegistryKey.h; sourceTree = "<group>"; };
 		79EE0BFD1B4AFB85000385C9 /* VariableEnvironment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VariableEnvironment.cpp; sourceTree = "<group>"; };
 		79EE0BFE1B4AFB85000385C9 /* VariableEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VariableEnvironment.h; sourceTree = "<group>"; };
+		7B39F7691B62DE2200360FB4 /* WASMModuleParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WASMModuleParser.cpp; sourceTree = "<group>"; };
+		7B39F76A1B62DE2200360FB4 /* WASMModuleParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WASMModuleParser.h; sourceTree = "<group>"; };
+		7B39F76C1B62DE2200360FB4 /* WASMReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WASMReader.h; sourceTree = "<group>"; };
+		7B39F7711B63574B00360FB4 /* WASMReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WASMReader.cpp; sourceTree = "<group>"; };
+		7B7A5E261B6828840027CAD0 /* WASMMagicNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WASMMagicNumber.h; sourceTree = "<group>"; };
 		7B98D1341B60CD5A0023B1A4 /* JSWASMModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWASMModule.cpp; sourceTree = "<group>"; };
 		7B98D1351B60CD5A0023B1A4 /* JSWASMModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWASMModule.h; sourceTree = "<group>"; };
 		7C008CD8187124BB00955C24 /* JSPromiseDeferred.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPromiseDeferred.cpp; sourceTree = "<group>"; };
@@ -4361,6 +4371,11 @@
 			children = (
 				7B98D1341B60CD5A0023B1A4 /* JSWASMModule.cpp */,
 				7B98D1351B60CD5A0023B1A4 /* JSWASMModule.h */,
+				7B7A5E261B6828840027CAD0 /* WASMMagicNumber.h */,
+				7B39F7691B62DE2200360FB4 /* WASMModuleParser.cpp */,
+				7B39F76A1B62DE2200360FB4 /* WASMModuleParser.h */,
+				7B39F7711B63574B00360FB4 /* WASMReader.cpp */,
+				7B39F76C1B62DE2200360FB4 /* WASMReader.h */,
 			);
 			path = wasm;
 			sourceTree = "<group>";
@@ -6295,6 +6310,7 @@
 				0F5A1274192D9FDF008764A3 /* DFGDoesGC.h in Headers */,
 				0F2B66F517B6B5AB00A7AE3F /* JSGenericTypedArrayViewPrototype.h in Headers */,
 				0F2B66F617B6B5AB00A7AE3F /* JSGenericTypedArrayViewPrototypeInlines.h in Headers */,
+				7B39F76E1B62DE3200360FB4 /* WASMModuleParser.h in Headers */,
 				BC18C4210E16F5CD00B34460 /* JSGlobalObject.h in Headers */,
 				A5FD0086189B1B7E00633231 /* JSGlobalObjectConsoleAgent.h in Headers */,
 				A59455931824744700CC3843 /* JSGlobalObjectDebuggable.h in Headers */,
@@ -6509,6 +6525,7 @@
 				BC18C4540E16F5CD00B34460 /* PropertyNameArray.h in Headers */,
 				0FF7168C15A3B235008F5DAA /* PropertyOffset.h in Headers */,
 				A785F6BC18C553FE00F10626 /* SpillRegistersMode.h in Headers */,
+				7B7A5E271B68288C0027CAD0 /* WASMMagicNumber.h in Headers */,
 				BC18C4550E16F5CD00B34460 /* PropertySlot.h in Headers */,
 				0FB7F39C15ED8E4600F167B2 /* PropertyStorage.h in Headers */,
 				0F6FC751196110A800E1D02D /* ComplexGetStatus.h in Headers */,
@@ -6644,6 +6661,7 @@
 				A7B601821639FD2A00372BA3 /* UnlinkedCodeBlock.h in Headers */,
 				0F2E892C16D028AD009E4FD2 /* UnusedPointer.h in Headers */,
 				A1587D6E1B4DC14100D69849 /* IntlDateTimeFormat.h in Headers */,
+				7B39F7701B62DE3200360FB4 /* WASMReader.h in Headers */,
 				0F963B3813FC6FE90002D9B2 /* ValueProfile.h in Headers */,
 				0F426A481460CBB300131F8F /* ValueRecovery.h in Headers */,
 				0F9C5E5F18E35F5E00D431C3 /* FTLDWARFRegister.h in Headers */,
@@ -7280,6 +7298,7 @@
 				0F9D339617FFC4E60073C2BC /* DFGFlushedAt.cpp in Sources */,
 				0F9D36941AE9CC33000D4DFB /* DFGCleanUpPhase.cpp in Sources */,
 				A7D89CF717A0B8CC00773AD8 /* DFGFlushFormat.cpp in Sources */,
+				7B39F76D1B62DE2E00360FB4 /* WASMModuleParser.cpp in Sources */,
 				0F3A1BF91A9ECB7D000DE01A /* DFGPutStackSinkingPhase.cpp in Sources */,
 				86EC9DC71328DF82002B2AD7 /* DFGGraph.cpp in Sources */,
 				0F2FCCF918A60070001A27F8 /* DFGGraphSafepoint.cpp in Sources */,
@@ -7699,6 +7718,7 @@
 				0F24E55017EE274900ABB217 /* Repatch.cpp in Sources */,
 				62D2D38F1ADF103F000206C1 /* FunctionRareData.cpp in Sources */,
 				0F7700921402FF3C0078EB39 /* SamplingCounter.cpp in Sources */,
+				7B39F7721B63574D00360FB4 /* WASMReader.cpp in Sources */,
 				1429D8850ED21C3D00B89619 /* SamplingTool.cpp in Sources */,
 				70EC0EC61AA0D7DA00B6AAFA /* StringIteratorPrototype.cpp in Sources */,
 				A1B9E2391B4E0D6700BC7FED /* IntlCollator.cpp in Sources */,
