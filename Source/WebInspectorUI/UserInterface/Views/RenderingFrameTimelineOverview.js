@@ -23,35 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.RenderingFrameTimelineOverview = function(timelineRecording)
+WebInspector.RenderingFrameTimelineOverview = class RenderingFrameTimelineOverview extends WebInspector.TimelineOverview
 {
-    // FIXME: Convert this to a WebInspector.TimelineOverview subclass, and call super().
+    constructor(timelineRecording)
+    {
+        var minimumDurationPerPixel = 1 / WebInspector.TimelineRecordFrame.MaximumWidthPixels;
+        var maximumDurationPerPixel = 1 / WebInspector.TimelineRecordFrame.MinimumWidthPixels;
+        var defaultSettingsValues = {
+            durationPerPixel: minimumDurationPerPixel,
+            selectionStartValue: 0,
+            selectionDuration: 100
+        };
 
-    var minimumDurationPerPixel = 1 / WebInspector.TimelineRecordFrame.MaximumWidthPixels;
-    var maximumDurationPerPixel = 1 / WebInspector.TimelineRecordFrame.MinimumWidthPixels;
-    var defaultSettingsValues = {
-        durationPerPixel: minimumDurationPerPixel,
-        selectionStartValue: 0,
-        selectionDuration: 100
-    };
+        super("frames", timelineRecording, minimumDurationPerPixel, maximumDurationPerPixel, defaultSettingsValues);
 
-    WebInspector.TimelineOverview.call(this, "frames", timelineRecording, minimumDurationPerPixel, maximumDurationPerPixel, defaultSettingsValues);
-
-    this.pixelAlignDuration = true;
-    this.timelineRuler.minimumSelectionDuration = 1;
-    this.timelineRuler.snapInterval = 1;
-    this.timelineRuler.formatLabelCallback = function(value) {
-        return value.toFixed(0);
-    };
-};
-
-WebInspector.RenderingFrameTimelineOverview.prototype = {
-    constructor: WebInspector.RenderingFrameTimelineOverview,
-    __proto__: WebInspector.TimelineOverview.prototype,
+        this.pixelAlignDuration = true;
+        this.timelineRuler.minimumSelectionDuration = 1;
+        this.timelineRuler.snapInterval = 1;
+        this.timelineRuler.formatLabelCallback = function(value) {
+            return value.toFixed(0);
+        };
+    }
 
     // Protected
 
-    canShowTimeline: function(timeline)
+    canShowTimeline(timeline)
     {
         return timeline.type === WebInspector.TimelineRecord.Type.RenderingFrame;
     }
