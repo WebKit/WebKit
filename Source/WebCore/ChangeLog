@@ -1,5 +1,25 @@
 2015-07-31  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r187557
+
+    2015-07-29  Brady Eidson  <beidson@apple.com>
+
+            Crash in WebCore::DocumentLoader::stopLoadingForPolicyChange.
+            <rdar://problem/21412186> and https://bugs.webkit.org/show_bug.cgi?id=147418
+
+            Reviewed by Chris Dumez.
+
+            No new tests (No known reproducibility)
+
+            * loader/DocumentLoader.cpp:
+            (WebCore::DocumentLoader::responseReceived): When setting to m_waitingForContentPolicy true, make sure we have a FrameLoader.
+            (WebCore::DocumentLoader::detachFromFrame): Always explicitly call cancelPolicyCheckIfNeeded().
+            (WebCore::DocumentLoader::cancelPolicyCheckIfNeeded): Cancel the policy check if there is one.
+            (WebCore::DocumentLoader::cancelMainResourceLoad): Use cancelPolicyCheckIfNeeded().
+            * loader/DocumentLoader.h:
+
+2015-07-31  Lucas Forschler  <lforschler@apple.com>
+
         Merge r187556
 
     2015-07-29  Brady Eidson  <beidson@apple.com>
