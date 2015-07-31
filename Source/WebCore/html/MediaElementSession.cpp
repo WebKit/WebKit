@@ -413,6 +413,13 @@ bool MediaElementSession::allowsPictureInPicture(const HTMLMediaElement& element
     return settings && settings->allowsPictureInPictureMediaPlayback() && !element.webkitCurrentPlaybackTargetIsWireless();
 }
 
+#if PLATFORM(IOS)
+bool MediaElementSession::requiresPlaybackTargetRouteMonitoring() const
+{
+    return m_hasPlaybackTargetAvailabilityListeners && !client().elementIsHidden();
+}
+#endif
+
 #if ENABLE(MEDIA_SOURCE)
 const unsigned fiveMinutesOf1080PVideo = 290 * 1024 * 1024; // 290 MB is approximately 5 minutes of 8Mbps (1080p) content.
 const unsigned fiveMinutesStereoAudio = 14 * 1024 * 1024; // 14 MB is approximately 5 minutes of 384kbps content.

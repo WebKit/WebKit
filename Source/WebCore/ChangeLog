@@ -1,5 +1,24 @@
 2015-07-31  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r187516
+
+    2015-07-28  Eric Carlson  <eric.carlson@apple.com>
+
+            [iOS] Set AirPlay discovery mode to disabled when page is hidden
+            https://bugs.webkit.org/show_bug.cgi?id=147369
+
+            Reviewed by Jer Noble.
+
+            * html/MediaElementSession.cpp:
+            (WebCore::MediaElementSession::requiresPlaybackTargetRouteMonitoring): Return false when
+              the client is not visible.
+            * html/MediaElementSession.h:
+
+            * platform/audio/PlatformMediaSession.cpp:
+            (WebCore::PlatformMediaSession::clientDataBufferingTimerFired): Call configureWireLessTargetMonitoring.
+
+2015-07-31  Lucas Forschler  <lforschler@apple.com>
+
         Merge r187491
 
     2015-07-28  Jer Noble  <jer.noble@apple.com>

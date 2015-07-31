@@ -201,6 +201,10 @@ void PlatformMediaSession::clientDataBufferingTimerFired()
 
     updateClientDataBuffering();
 
+#if PLATFORM(IOS)
+    PlatformMediaSessionManager::sharedManager().configureWireLessTargetMonitoring();
+#endif
+
     if (m_state != Playing || !m_client.elementIsHidden())
         return;
 
