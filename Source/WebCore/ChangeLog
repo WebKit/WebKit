@@ -1,5 +1,30 @@
 2015-07-31  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r187521
+
+    2015-07-28  Tim Horton  <timothy_horton@apple.com>
+
+            [iOS] Creating a TextIndicator causes the view to scroll to the current selection
+            https://bugs.webkit.org/show_bug.cgi?id=147379
+            <rdar://problem/22038421>
+
+            Reviewed by Beth Dakin.
+
+            * editing/Editor.cpp:
+            (WebCore::Editor::setIgnoreCompositionSelectionChange):
+            * editing/Editor.h:
+            Add a flag so that setIgnoreCompositionSelectionChange(false) can still
+            not force-reveal the current selection.
+
+            This is useful for e.g. TextIndicator, who saves the selection, changes it,
+            and then restores it, but doesn't want to scroll to the saved/restored selection.
+
+            * page/TextIndicator.cpp:
+            (WebCore::TextIndicator::createWithRange):
+            Make use of the above flag.
+
+2015-07-31  Lucas Forschler  <lforschler@apple.com>
+
         Merge r187516
 
     2015-07-28  Eric Carlson  <eric.carlson@apple.com>

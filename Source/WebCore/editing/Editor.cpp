@@ -2757,7 +2757,7 @@ void Editor::revealSelectionAfterEditingOperation(const ScrollAlignment& alignme
     m_frame.selection().revealSelection(alignment, revealExtentOption);
 }
 
-void Editor::setIgnoreCompositionSelectionChange(bool ignore)
+void Editor::setIgnoreCompositionSelectionChange(bool ignore, RevealSelection shouldRevealExistingSelection)
 {
     if (m_ignoreCompositionSelectionChange == ignore)
         return;
@@ -2768,7 +2768,7 @@ void Editor::setIgnoreCompositionSelectionChange(bool ignore)
     if (!ignore)
         respondToChangedSelection(m_frame.selection().selection(), 0);
 #endif
-    if (!ignore)
+    if (!ignore && shouldRevealExistingSelection == RevealSelection::Yes)
         revealSelectionAfterEditingOperation(ScrollAlignment::alignToEdgeIfNeeded, RevealExtent);
 }
 

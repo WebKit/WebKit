@@ -71,7 +71,7 @@ RefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range, TextInd
         indicator->setWantsMargin(!areRangesEqual(&range, oldSelection.toNormalizedRange().get()));
 
 #if PLATFORM(IOS)
-    frame->editor().setIgnoreCompositionSelectionChange(false);
+    frame->editor().setIgnoreCompositionSelectionChange(false, Editor::RevealSelection::No);
     frame->selection().setUpdateAppearanceEnabled(false);
 #endif
 
