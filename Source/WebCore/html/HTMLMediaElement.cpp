@@ -5548,6 +5548,9 @@ void HTMLMediaElement::configureTextTrackDisplay(TextTrackVisibilityCheckType ch
     if (m_processingPreferenceChange)
         return;
 
+    if (document().activeDOMObjectsAreStopped())
+        return;
+
     bool haveVisibleTextTrack = false;
     for (unsigned i = 0; i < m_textTracks->length(); ++i) {
         if (m_textTracks->item(i)->mode() == TextTrack::showingKeyword()) {
