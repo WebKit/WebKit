@@ -1,5 +1,15 @@
 2015-07-31  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r187379
+
+    2015-07-24  Dan Bernstein  <mitz@apple.com>
+
+            Tried to fix the iOS 9 build after r187375.
+
+            * platform/network/mac/CookieJarMac.mm:
+
+2015-07-31  Lucas Forschler  <lforschler@apple.com>
+
         Merge r187375
 
     2015-07-24  Anders Carlsson  <andersca@apple.com>
