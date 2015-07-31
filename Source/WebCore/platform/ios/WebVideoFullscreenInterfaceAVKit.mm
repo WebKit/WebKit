@@ -60,7 +60,7 @@ SOFT_LINK_FRAMEWORK(AVKit)
 SOFT_LINK_CLASS(AVKit, AVPlayerController)
 SOFT_LINK_CLASS(AVKit, AVPlayerViewController)
 SOFT_LINK_CLASS(AVKit, AVValueTiming)
-SOFT_LINK_CLASS(AVKit, AVPlayerLayerView)
+SOFT_LINK_CLASS(AVKit, __AVPlayerLayerView)
 
 SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS(UIKit, UIApplication)
@@ -759,7 +759,7 @@ static Class getWebAVPictureInPicturePlayerLayerViewClass()
     return theClass;
 }
 
-@interface WebAVPlayerLayerView : AVPlayerLayerView
+@interface WebAVPlayerLayerView : __AVPlayerLayerView
 @property (retain) UIView* videoView;
 @end
 
@@ -770,21 +770,21 @@ static CALayer *WebAVPlayerLayerView_layerClass(id, SEL)
 
 static AVPlayerController *WebAVPlayerLayerView_playerController(id aSelf, SEL)
 {
-    AVPlayerLayerView *playerLayer = aSelf;
+    __AVPlayerLayerView *playerLayer = aSelf;
     WebAVPlayerLayer *webAVPlayerLayer = (WebAVPlayerLayer *)[playerLayer playerLayer];
     return [webAVPlayerLayer playerController];
 }
 
 static void WebAVPlayerLayerView_setPlayerController(id aSelf, SEL, AVPlayerController *playerController)
 {
-    AVPlayerLayerView *playerLayerView = aSelf;
+    __AVPlayerLayerView *playerLayerView = aSelf;
     WebAVPlayerLayer *webAVPlayerLayer = (WebAVPlayerLayer *)[playerLayerView playerLayer];
     [webAVPlayerLayer setPlayerController: playerController];
 }
 
 static UIView *WebAVPlayerLayerView_videoView(id aSelf, SEL)
 {
-    AVPlayerLayerView *playerLayer = aSelf;
+    __AVPlayerLayerView *playerLayer = aSelf;
     WebAVPlayerLayer *webAVPlayerLayer = (WebAVPlayerLayer *)[playerLayer playerLayer];
     CALayer* videoLayer = [webAVPlayerLayer videoSublayer];
     if (!videoLayer)
@@ -795,7 +795,7 @@ static UIView *WebAVPlayerLayerView_videoView(id aSelf, SEL)
 
 static void WebAVPlayerLayerView_setVideoView(id aSelf, SEL, UIView *videoView)
 {
-    AVPlayerLayerView *playerLayerView = aSelf;
+    __AVPlayerLayerView *playerLayerView = aSelf;
     WebAVPlayerLayer *webAVPlayerLayer = (WebAVPlayerLayer *)[playerLayerView playerLayer];
     [webAVPlayerLayer setVideoSublayer:[videoView layer]];
 }
@@ -838,7 +838,7 @@ static void WebAVPlayerLayerView_dealloc(id aSelf, SEL)
     WebAVPlayerLayerView *playerLayerView = aSelf;
     RetainPtr<WebAVPictureInPicturePlayerLayerView> pipView = adoptNS([playerLayerView valueForKey:@"_pictureInPicturePlayerLayerView"]);
     [playerLayerView setValue:nil forKey:@"_pictureInPicturePlayerLayerView"];
-    objc_super superClass { playerLayerView, getAVPlayerLayerViewClass() };
+    objc_super superClass { playerLayerView, get__AVPlayerLayerViewClass() };
     auto super_dealloc = reinterpret_cast<void(*)(objc_super*, SEL)>(objc_msgSendSuper);
     super_dealloc(&superClass, @selector(dealloc));
 }
@@ -850,7 +850,7 @@ static Class getWebAVPlayerLayerViewClass()
     static Class theClass = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        theClass = objc_allocateClassPair(getAVPlayerLayerViewClass(), "WebAVPlayerLayerView", 0);
+        theClass = objc_allocateClassPair(get__AVPlayerLayerViewClass(), "WebAVPlayerLayerView", 0);
         class_addMethod(theClass, @selector(dealloc), (IMP)WebAVPlayerLayerView_dealloc, "v@:");
         class_addMethod(theClass, @selector(setPlayerController:), (IMP)WebAVPlayerLayerView_setPlayerController, "v@:@");
         class_addMethod(theClass, @selector(playerController), (IMP)WebAVPlayerLayerView_playerController, "@@:");

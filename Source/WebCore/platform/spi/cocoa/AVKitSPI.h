@@ -67,7 +67,7 @@ typedef NS_ENUM(NSInteger, AVPlayerControllerExternalPlaybackType) {
 @property (nonatomic, readonly) AVPlayerLayer *playerLayer;
 @end
 
-@interface AVPlayerLayerView : UIView
+@interface __AVPlayerLayerView : UIView
 @property (nonatomic, readonly) AVPlayerLayer *playerLayer;
 @property (nonatomic, readonly) AVPictureInPicturePlayerLayerView *pictureInPicturePlayerLayerView;
 - (void)startRoutingVideoToPictureInPicturePlayerLayerView;
@@ -88,7 +88,7 @@ typedef NS_ENUM(NSInteger, AVPlayerViewControllerExitFullScreenReason) {
 @end
 
 @interface AVPlayerViewController ()
-- (instancetype)initWithPlayerLayerView:(AVPlayerLayerView *)playerLayerView;
+- (instancetype)initWithPlayerLayerView:(__AVPlayerLayerView *)playerLayerView;
 - (void)enterFullScreenAnimated:(BOOL)animated completionHandler:(void (^)(BOOL success, NSError *))completionHandler;
 - (void)exitFullScreenAnimated:(BOOL)animated completionHandler:(void (^)(BOOL success, NSError *))completionHandler;
 
