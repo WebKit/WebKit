@@ -79,18 +79,47 @@ void PlatformMediaSession::setState(State state)
     m_state = state;
 }
 
-void PlatformMediaSession::beginInterruption(InterruptionType type)
+void PlatformMediaSession::doInterruption()
 {
-    LOG(Media, "PlatformMediaSession::beginInterruption(%p), state = %s, interruption count = %i", this, stateName(m_state), m_interruptionCount);
-
-    if (++m_interruptionCount > 1 || (type == EnteringBackground && client().overrideBackgroundPlaybackRestriction()))
-        return;
-
     m_stateToRestore = state();
     m_notifyingClient = true;
     setState(Interrupted);
     client().suspendPlayback();
     m_notifyingClient = false;
+}
+
+bool PlatformMediaSession::shouldDoInterruption(InterruptionType type)
+{
+    return type != EnteringBackground || !client().overrideBackgroundPlaybackRestriction();
+}
+
+void PlatformMediaSession::beginInterruption(InterruptionType type)
+{
+    LOG(Media, "PlatformMediaSession::beginInterruption(%p), state = %s, interruption count = %i", this, stateName(m_state), m_interruptionCount);
+
+    if (++m_interruptionCount > 1 || !shouldDoInterruption(type))
+        return;
+
+    doInterruption();
+}
+
+void PlatformMediaSession::forceInterruption(InterruptionType type)
+{
+    LOG(Media, "PlatformMediaSession::forceInterruption(%p), state = %s, interruption count = %i", this, stateName(m_state), m_interruptionCount);
+
+    // beginInterruption() must have been called before calling this function.
+    if (!m_interruptionCount) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    // The purpose of this function is to override the decision which was made by
+    // beginInterruption(). If it was decided to interrupt the media session there,
+    // then nothing should be done here.
+    if (shouldDoInterruption(type))
+        return;
+
+    doInterruption();
 }
 
 void PlatformMediaSession::endInterruption(EndInterruptionFlags flags)

@@ -37,6 +37,7 @@ OBJC_CLASS WebMediaSessionHelper;
 extern NSString* WebUIApplicationWillResignActiveNotification;
 extern NSString* WebUIApplicationWillEnterForegroundNotification;
 extern NSString* WebUIApplicationDidBecomeActiveNotification;
+extern NSString* WebUIApplicationDidEnterBackgroundNotification;
 #endif
 
 namespace WebCore {

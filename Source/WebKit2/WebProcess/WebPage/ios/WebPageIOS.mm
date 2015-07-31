@@ -2809,8 +2809,10 @@ void WebPage::volatilityTimerFired()
     m_volatilityTimer.stop();
 }
 
-void WebPage::applicationDidEnterBackground()
+void WebPage::applicationDidEnterBackground(bool isSuspendedUnderLock)
 {
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebUIApplicationDidEnterBackgroundNotification object:nil userInfo:@{@"isSuspendedUnderLock": [NSNumber numberWithBool:isSuspendedUnderLock]}];
+
     setLayerTreeStateIsFrozen(true);
     if (markLayersVolatileImmediatelyIfPossible())
         return;
