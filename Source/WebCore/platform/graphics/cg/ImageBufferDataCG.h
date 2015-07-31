@@ -43,8 +43,6 @@ namespace WebCore {
 class IOSurface;
 
 struct ImageBufferData {
-    ~ImageBufferData();
-
     IntSize backingStoreSize;
     Checked<unsigned, RecordOverflow> bytesPerRow;
     CGColorSpaceRef colorSpace;

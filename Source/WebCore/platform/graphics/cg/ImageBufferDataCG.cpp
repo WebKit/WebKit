@@ -37,7 +37,6 @@
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
 #include "IOSurface.h"
-#include "IOSurfacePool.h"
 #include "IOSurfaceSPI.h"
 #include <dispatch/dispatch.h>
 #endif
@@ -46,14 +45,6 @@
 #define USE_ARGB32 PLATFORM(IOS)
 
 namespace WebCore {
-
-ImageBufferData::~ImageBufferData()
-{
-#if USE(IOSURFACE_CANVAS_BACKING_STORE)
-    if (surface)
-        IOSurfacePool::sharedPool().addSurface(WTF::move(surface));
-#endif
-}
 
 #if USE(ACCELERATE)
 #if USE_ARGB32 || USE(IOSURFACE_CANVAS_BACKING_STORE)
