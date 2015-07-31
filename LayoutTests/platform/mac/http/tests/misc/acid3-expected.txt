@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Did not parse stylesheet at 'http://127.0.0.1:8000/misc/resources/acid3/empty.css' because its MIME type was invalid.
+CONSOLE MESSAGE: Did not parse stylesheet at 'http://127.0.0.1:8000/misc/resources/acid3/empty.css' because non CSS MIME types are not allowed in strict mode.
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (20,20) size 644x433

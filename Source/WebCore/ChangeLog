@@ -1,5 +1,59 @@
 2015-07-31  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r187489
+
+    2015-07-28  Chris Dumez  <cdumez@apple.com>
+
+            Allow lax MIME type parsing for same-origin CSS in quirks mode.
+            https://bugs.webkit.org/show_bug.cgi?id=147327
+            <rdar://problem/22010303>
+
+            Reviewed by Zalan Bujtas.
+
+            The change made in r180020 is too strict for the web, and doesn't match Firefox
+            Chrome, or IE's behavior. In particular, it does not respect the same-origin
+            carveout that the HTML spec specifies:
+            https://html.spec.whatwg.org/multipage/semantics.html#link-type-stylesheet
+
+            This patch corrects that oversight and aligns our behavior with other popular
+            browsers.
+
+            This change was adapted from Blink r196678:
+            https://src.chromium.org/viewvc/blink?revision=196678&view=revision
+
+            Tests: http/tests/security/cross-origin-css-in-quirks-1.html
+                   http/tests/security/cross-origin-css-in-quirks-2.html
+                   http/tests/security/cross-origin-css-in-quirks-3.html
+                   http/tests/security/cross-origin-css-in-quirks-4.html
+                   http/tests/security/cross-origin-css-in-quirks-5.html
+                   http/tests/security/cross-origin-css-in-quirks-6.html
+                   http/tests/security/cross-origin-css-in-quirks-7.html
+                   http/tests/security/cross-origin-css-in-quirks-8.html
+                   http/tests/security/same-origin-css-1.html
+                   http/tests/security/same-origin-css-2.html
+                   http/tests/security/same-origin-css-3.html
+                   http/tests/security/same-origin-css-4.html
+                   http/tests/security/same-origin-css-5.html
+                   http/tests/security/same-origin-css-6.html
+                   http/tests/security/same-origin-css-7.html
+                   http/tests/security/same-origin-css-8.html
+                   http/tests/security/same-origin-css-in-quirks.html
+
+            * css/StyleRuleImport.cpp:
+            (WebCore::StyleRuleImport::setCSSStyleSheet):
+            * css/StyleSheetContents.cpp:
+            (WebCore::StyleSheetContents::parseAuthorStyleSheet):
+            * css/StyleSheetContents.h:
+            * html/HTMLLinkElement.cpp:
+            (WebCore::HTMLLinkElement::setCSSStyleSheet):
+            * loader/cache/CachedCSSStyleSheet.cpp:
+            (WebCore::CachedCSSStyleSheet::sheetText):
+            (WebCore::CachedCSSStyleSheet::canUseSheet):
+            (WebCore::CachedCSSStyleSheet::checkNotify): Deleted.
+            * loader/cache/CachedCSSStyleSheet.h:
+
+2015-07-31  Lucas Forschler  <lforschler@apple.com>
+
         Merge r187466
 
     2015-07-27  Brady Eidson  <beidson@apple.com>

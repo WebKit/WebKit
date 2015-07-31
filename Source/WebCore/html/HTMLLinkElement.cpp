@@ -346,7 +346,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, c
     m_sheet->setMediaQueries(MediaQuerySet::createAllowingDescriptionSyntax(m_media));
     m_sheet->setTitle(title());
 
-    styleSheet.get().parseAuthorStyleSheet(cachedStyleSheet);
+    styleSheet.get().parseAuthorStyleSheet(cachedStyleSheet, document().securityOrigin());
 
     m_loading = false;
     styleSheet.get().notifyLoadedSheet(cachedStyleSheet);
