@@ -1000,6 +1000,7 @@ media/session/default-session.html
 media/session/play-pause-media-events-in-content-sessions.html
 media/session/play-pause-media-events-in-non-content-sessions.html
 media/session/session-creation.html
+media/session/track-media-events-disabled.html
 media/session/track-media-events-in-content-sessions.html
 media/session/transient-interruptions.html
 media/session/transient-solo-interruptions.html

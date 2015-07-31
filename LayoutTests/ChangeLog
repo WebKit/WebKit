@@ -1,5 +1,16 @@
 2015-07-30  Matt Rajca  <mrajca@apple.com>
 
+        Media Session: add test to ensure next/previous-track event handlers are not fired when they are disabled
+        https://bugs.webkit.org/show_bug.cgi?id=147477
+
+        Reviewed by Eric Carlson.
+
+        * media/session/track-media-events-disabled-expected.txt: Added.
+        * media/session/track-media-events-disabled.html: Added.
+        * platform/mac/TestExpectations: Media Session support is disabled by default.
+
+2015-07-30  Matt Rajca  <mrajca@apple.com>
+
         Media Session: add test to ensure media sessions are in an Idle state after creation
         https://bugs.webkit.org/show_bug.cgi?id=147471
 
