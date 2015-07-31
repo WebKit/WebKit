@@ -44,30 +44,7 @@ public:
 
     enum LigaturesState { NormalLigaturesState, DisabledLigaturesState, EnabledLigaturesState };
 
-    FontDescription()
-        : m_families(1)
-        , m_specifiedSize(0)
-        , m_computedSize(0)
-        , m_orientation(Horizontal)
-        , m_nonCJKGlyphOrientation(NonCJKGlyphOrientationVerticalRight)
-        , m_widthVariant(RegularWidth)
-        , m_italic(FontItalicOff)
-        , m_smallCaps(FontSmallCapsOff)
-        , m_isAbsoluteSize(false)
-        , m_weight(FontWeightNormal)
-        , m_renderingMode(NormalRenderingMode)
-        , m_kerning(AutoKerning)
-        , m_commonLigaturesState(NormalLigaturesState)
-        , m_discretionaryLigaturesState(NormalLigaturesState)
-        , m_historicalLigaturesState(NormalLigaturesState)
-        , m_keywordSize(0)
-        , m_fontSmoothing(AutoSmoothing)
-        , m_textRendering(AutoTextRendering)
-        , m_isSpecifiedFont(false)
-        , m_script(USCRIPT_COMMON)
-        , m_fontSynthesis(initialFontSynthesis())
-    {
-    }
+    WEBCORE_EXPORT FontDescription();
 
     bool operator==(const FontDescription&) const;
     bool operator!=(const FontDescription& other) const { return !(*this == other); }
@@ -103,6 +80,7 @@ public:
     FontSmoothingMode fontSmoothing() const { return static_cast<FontSmoothingMode>(m_fontSmoothing); }
     TextRenderingMode textRenderingMode() const { return static_cast<TextRenderingMode>(m_textRendering); }
     UScriptCode script() const { return static_cast<UScriptCode>(m_script); }
+    const AtomicString& locale() const { return m_locale; }
 
     FontTraitsMask traitsMask() const;
     bool isSpecifiedFont() const { return m_isSpecifiedFont; }
@@ -147,7 +125,7 @@ public:
     void setOrientation(FontOrientation orientation) { m_orientation = orientation; }
     void setNonCJKGlyphOrientation(NonCJKGlyphOrientation orientation) { m_nonCJKGlyphOrientation = orientation; }
     void setWidthVariant(FontWidthVariant widthVariant) { m_widthVariant = widthVariant; }
-    void setScript(UScriptCode s) { m_script = s; }
+    void setLocale(const AtomicString&);
     void setFeatureSettings(PassRefPtr<FontFeatureSettings> settings) { m_featureSettings = settings; }
     void setFontSynthesis(FontSynthesis fontSynthesis) { m_fontSynthesis = fontSynthesis; }
 
@@ -170,14 +148,16 @@ public:
     static FontSmoothingMode initialFontSmoothing() { return AutoSmoothing; }
     static TextRenderingMode initialTextRenderingMode() { return AutoTextRendering; }
     static FontSynthesis initialFontSynthesis() { return FontSynthesisWeight | FontSynthesisStyle; }
+    static const AtomicString& initialLocale() { return nullAtom; }
 
 private:
-    RefCountedArray<AtomicString> m_families;
+    RefCountedArray<AtomicString> m_families { 1 };
     RefPtr<FontFeatureSettings> m_featureSettings;
+    AtomicString m_locale { initialLocale() };
 
-    float m_specifiedSize;   // Specified CSS value. Independent of rendering issues such as integer
+    float m_specifiedSize { 0 };   // Specified CSS value. Independent of rendering issues such as integer
                              // rounding, minimum font sizes, and zooming.
-    float m_computedSize;    // Computed size adjusted for the minimum font size and the zoom factor.  
+    float m_computedSize { 0 };    // Computed size adjusted for the minimum font size and the zoom factor.
 
     unsigned m_orientation : 1; // FontOrientation - Whether the font is rendering on a horizontal line or a vertical line.
     unsigned m_nonCJKGlyphOrientation : 1; // NonCJKGlyphOrientation - Only used by vertical text. Determines the default orientation for non-ideograph glyphs.
@@ -229,7 +209,7 @@ inline bool FontDescription::operator==(const FontDescription& other) const
         && m_orientation == other.m_orientation
         && m_nonCJKGlyphOrientation == other.m_nonCJKGlyphOrientation
         && m_widthVariant == other.m_widthVariant
-        && m_script == other.m_script
+        && m_locale == other.m_locale
         && m_featureSettings == other.m_featureSettings
         && m_fontSynthesis == other.m_fontSynthesis;
 }

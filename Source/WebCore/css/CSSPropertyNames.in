@@ -109,7 +109,7 @@ text-rendering [Inherited, FontProperty, NameForMethods=TextRenderingMode]
 -webkit-font-kerning [Inherited, FontProperty, NameForMethods=Kerning]
 -webkit-font-smoothing [Inherited, FontProperty]
 -webkit-font-variant-ligatures [Inherited, Custom=All]
--webkit-locale [Inherited, Custom=Value]
+-webkit-locale [Inherited, FontProperty, Custom=Value]
 -webkit-text-orientation [Inherited, Custom=Value]
 -epub-text-orientation = -webkit-text-orientation
 #if defined(ENABLE_IOS_TEXT_AUTOSIZING) && ENABLE_IOS_TEXT_AUTOSIZING

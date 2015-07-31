@@ -178,8 +178,7 @@ bool FontCascade::operator==(const FontCascade& other) const
 }
 
 struct FontCascadeCacheKey {
-    // This part of the key is shared with the lower level FontCache (caching FontData objects).
-    FontDescriptionKey fontDescriptionKey;
+    FontDescriptionKey fontDescriptionKey; // Shared with the lower level FontCache (caching Font objects)
     Vector<AtomicString, 3> families;
     unsigned fontSelectorId;
     unsigned fontSelectorVersion;
@@ -241,6 +240,7 @@ static FontCascadeCacheKey makeFontCascadeCacheKey(const FontDescription& descri
     return key;
 }
 
+// FIXME: Why can't we just teach HashMap about FontCascadeCacheKey instead of hashing a hash?
 static unsigned computeFontCascadeCacheHash(const FontCascadeCacheKey& key)
 {
     Vector<unsigned, 7> hashCodes;

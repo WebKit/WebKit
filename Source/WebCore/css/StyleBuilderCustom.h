@@ -40,7 +40,6 @@
 #include "ElementAncestorIterator.h"
 #include "Frame.h"
 #include "HTMLElement.h"
-#include "LocaleToScriptMapping.h"
 #include "Rect.h"
 #include "RenderTheme.h"
 #include "SVGElement.h"
@@ -691,14 +690,12 @@ inline void StyleBuilderCustom::applyValueClip(StyleResolver& styleResolver, CSS
 inline void StyleBuilderCustom::applyValueWebkitLocale(StyleResolver& styleResolver, CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-
-    if (primitiveValue.getValueID() == CSSValueAuto)
-        styleResolver.style()->setLocale(nullAtom);
-    else
-        styleResolver.style()->setLocale(primitiveValue.getStringValue());
     
     FontDescription fontDescription = styleResolver.style()->fontDescription();
-    fontDescription.setScript(localeToScriptCodeForFontSelection(styleResolver.style()->locale()));
+    if (primitiveValue.getValueID() == CSSValueAuto)
+        fontDescription.setLocale(nullAtom);
+    else
+        fontDescription.setLocale(primitiveValue.getStringValue());
     styleResolver.setFontDescription(fontDescription);
 }
 

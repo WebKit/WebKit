@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2007 Nicholas Shanks <contact@nickshanks.com>
  * Copyright (C) 2008, 2013 Apple Inc. All rights reserved.
@@ -29,18 +30,41 @@
 
 #include "config.h"
 #include "FontDescription.h"
+#include "LocaleToScriptMapping.h"
 
 namespace WebCore {
 
 struct SameSizeAsFontDescription {
-    void* pointers[2];
+    void* pointers[3];
     float sizes[2];
-    // FXIME: Make them fit into one word.
+    // FIXME: Make them fit into one word.
     uint32_t bitfields;
     uint32_t bitfields2 : 8;
 };
 
 COMPILE_ASSERT(sizeof(FontDescription) == sizeof(SameSizeAsFontDescription), FontDescription_should_stay_small);
+
+FontDescription::FontDescription()
+    : m_orientation(Horizontal)
+    , m_nonCJKGlyphOrientation(NonCJKGlyphOrientationVerticalRight)
+    , m_widthVariant(RegularWidth)
+    , m_italic(FontItalicOff)
+    , m_smallCaps(FontSmallCapsOff)
+    , m_isAbsoluteSize(false)
+    , m_weight(FontWeightNormal)
+    , m_renderingMode(NormalRenderingMode)
+    , m_kerning(AutoKerning)
+    , m_commonLigaturesState(NormalLigaturesState)
+    , m_discretionaryLigaturesState(NormalLigaturesState)
+    , m_historicalLigaturesState(NormalLigaturesState)
+    , m_keywordSize(0)
+    , m_fontSmoothing(AutoSmoothing)
+    , m_textRendering(AutoTextRendering)
+    , m_isSpecifiedFont(false)
+    , m_script(localeToScriptCodeForFontSelection(m_locale))
+    , m_fontSynthesis(initialFontSynthesis())
+{
+}
 
 FontWeight FontDescription::lighterWeight(void) const
 {
@@ -92,6 +116,12 @@ FontTraitsMask FontDescription::traitsMask() const
             | (m_smallCaps ? FontVariantSmallCapsMask : FontVariantNormalMask)
             | (FontWeight100Mask << (m_weight - FontWeight100)));
     
+}
+
+void FontDescription::setLocale(const AtomicString& locale)
+{
+    m_locale = locale;
+    m_script = localeToScriptCodeForFontSelection(m_locale);
 }
 
 #if ENABLE(IOS_TEXT_AUTOSIZING)

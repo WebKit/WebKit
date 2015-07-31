@@ -206,7 +206,6 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , hyphenationLimitBefore(o.hyphenationLimitBefore)
     , hyphenationLimitAfter(o.hyphenationLimitAfter)
     , hyphenationLimitLines(o.hyphenationLimitLines)
-    , locale(o.locale)
     , textEmphasisCustomMark(o.textEmphasisCustomMark)
     , m_lineGrid(o.m_lineGrid)
     , m_tabSize(o.m_tabSize)
@@ -302,7 +301,6 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && touchCalloutEnabled == o.touchCalloutEnabled
 #endif
         && hyphenationString == o.hyphenationString
-        && locale == o.locale
         && textEmphasisCustomMark == o.textEmphasisCustomMark
         && quotesDataEquivalent(quotes.get(), o.quotes.get())
         && m_tabSize == o.m_tabSize
