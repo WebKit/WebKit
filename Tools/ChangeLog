@@ -1,3 +1,12 @@
+2015-07-31  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [EFL] Fix pixman build on ARM with GCC 4.9.3
+        https://bugs.webkit.org/show_bug.cgi?id=147224
+
+        Reviewed by Gyuyoung Kim.
+
+        * efl/jhbuild.modules: Disable ARM IWMMXT fast paths as workarounding a GCC bug.
+
 2015-07-30  Anders Carlsson  <andersca@apple.com>
 
         Add support for window.open to WK1BrowserWindowController

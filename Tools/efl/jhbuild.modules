@@ -73,7 +73,7 @@
   </autotools>
 
   <autotools id="pixman" autogen-sh="configure"
-             autogenargs="--enable-gtk=no">
+             autogenargs="--enable-gtk=no --disable-arm-iwmmxt">
     <branch module="releases/pixman-0.32.6.tar.gz" version="0.32.6"
             repo="cairographics.org"
             hash="sha256:3dfed13b8060eadabf0a4945c7045b7793cc7e3e910e748a8bb0f0dc3e794904"
