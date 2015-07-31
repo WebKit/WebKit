@@ -4913,6 +4913,8 @@ void HTMLMediaElement::contextDestroyed()
     m_seekTaskQueue.close();
     m_resizeTaskQueue.close();
     m_shadowDOMTaskQueue.close();
+
+    ActiveDOMObject::contextDestroyed();
 }
 
 void HTMLMediaElement::stop()
