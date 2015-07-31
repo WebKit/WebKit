@@ -1,5 +1,48 @@
 2015-07-31  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r187535
+
+    2015-07-28  Simon Fraser  <simon.fraser@apple.com>
+
+            Animations sometimes fail to start
+            https://bugs.webkit.org/show_bug.cgi?id=147394
+            rdar://problem/21852603
+
+            Reviewed by Dean Jackson.
+
+            When an accelerated animation or transition was started at the same time as
+            a non-accelerated one, and then the node for the former was removed, we could
+            never kick off the non-accelerated animation.
+
+            AnimationControllerPrivate has logic to synchronize the two types of animation
+            when they start in the same animation update, which involves setting the
+            m_waitingForAsyncStartNotification flag, and waiting for a notifyAnimationStarted()
+            to come in from the graphics system.
+
+            However, it failed to handle the case where the accelerated animation was removed
+            before the callback was received, which left the m_waitingForAsyncStartNotification flag
+            set to true, preventing the non-accelerated animation from running.
+
+            Test: animations/remove-syncing-animation.html
+
+            * page/animation/AnimationBase.h:
+            (WebCore::AnimationBase::isAccelerated): Make this public.
+            * page/animation/AnimationController.cpp:
+            (WebCore::AnimationControllerPrivate::clear): Add logging.
+            (WebCore::AnimationControllerPrivate::receivedStartTimeResponse): Add logging.
+            (WebCore::AnimationControllerPrivate::animationWillBeRemoved): Add logging.
+            After removing animations from the maps, check to see if we expect any of the
+            remaining animations are waiting for a notifyAnimationStarted(). If not, clear
+            the m_waitingForAsyncStartNotification flag.
+            (WebCore::AnimationController::notifyAnimationStarted): Log the renderer.
+            (WebCore::AnimationControllerPrivate::AnimationControllerPrivate): Remove unneeded
+            initializations of HashMaps.
+            * page/animation/CompositeAnimation.cpp:
+            (WebCore::CompositeAnimation::updateTransitions): Log renderers.
+            (WebCore::CompositeAnimation::updateKeyframeAnimations): Ditto.
+
+2015-07-31  Lucas Forschler  <lforschler@apple.com>
+
         Merge r187525
 
     2015-07-28  Myles C. Maxfield  <mmaxfield@apple.com>
