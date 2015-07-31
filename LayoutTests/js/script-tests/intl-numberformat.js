@@ -11,12 +11,12 @@ shouldBeType("Intl.NumberFormat.call({})", "Intl.NumberFormat");
 shouldBeType("new Intl.NumberFormat()", "Intl.NumberFormat");
 
 // Subclassable
-class DerivedNumberFormat extends Intl.NumberFormat {}
-shouldBeType("new DerivedNumberFormat", "DerivedNumberFormat");
-shouldBeType("new DerivedNumberFormat", "Intl.NumberFormat");
-shouldBe("new DerivedNumberFormat().format(1)", "'1'");
-shouldBe("Object.getPrototypeOf(new DerivedNumberFormat)", "DerivedNumberFormat.prototype");
-shouldBe("Object.getPrototypeOf(Object.getPrototypeOf(new DerivedNumberFormat))", "Intl.NumberFormat.prototype");
+var classPrefix = "class DerivedNumberFormat extends Intl.NumberFormat {};";
+shouldBeTrue(classPrefix + "(new DerivedNumberFormat) instanceof DerivedNumberFormat");
+shouldBeTrue(classPrefix + "(new DerivedNumberFormat) instanceof Intl.NumberFormat");
+shouldBeTrue(classPrefix + "new DerivedNumberFormat().format(1) === '1'");
+shouldBeTrue(classPrefix + "Object.getPrototypeOf(new DerivedNumberFormat) === DerivedNumberFormat.prototype");
+shouldBeTrue(classPrefix + "Object.getPrototypeOf(Object.getPrototypeOf(new DerivedNumberFormat)) === Intl.NumberFormat.prototype");
 
 // 11.2 Properties of the Intl.NumberFormat Constructor
 

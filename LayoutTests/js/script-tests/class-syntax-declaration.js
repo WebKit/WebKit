@@ -1,6 +1,41 @@
 
 description('Tests for ES6 class syntax declarations');
 
+function shouldThrow(s, message) {
+    var threw = false;
+    try {
+        eval(s);
+    } catch(e) {
+        threw = true;
+        if (!message || e.toString() === eval(message))
+            testPassed(s + ":::" + e.toString());
+        else
+            testFailed(s + ":::" + e.toString() + ":::" + message);
+    }
+    if (!threw)
+        testFailed(s);
+}
+
+function shouldNotThrow(s) {
+    var threw = false;
+    try {
+        eval(s);
+    } catch(e) {
+        threw = true;
+    }
+    if (threw)
+        testFailed(s);
+    else
+        testPassed(s);
+}
+
+function shouldBe(a, b) {
+    if (eval(a) === eval(b))
+        testPassed(a + ":::" + b);
+    else
+        testFailed(a + ":::" + b);
+}
+
 var constructorCallCount = 0;
 var staticMethodValue = [1];
 var instanceMethodValue = [2];

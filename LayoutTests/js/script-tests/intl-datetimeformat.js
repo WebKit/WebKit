@@ -11,12 +11,12 @@ shouldBeType("Intl.DateTimeFormat.call({})", "Intl.DateTimeFormat");
 shouldBeType("new Intl.DateTimeFormat()", "Intl.DateTimeFormat");
 
 // Subclassable
-class DerivedDateTimeFormat extends Intl.DateTimeFormat {}
-shouldBeType("new DerivedDateTimeFormat", "DerivedDateTimeFormat");
-shouldBeType("new DerivedDateTimeFormat", "Intl.DateTimeFormat");
-shouldBeTrue("new DerivedDateTimeFormat().format(0).length > 0");
-shouldBe("Object.getPrototypeOf(new DerivedDateTimeFormat)", "DerivedDateTimeFormat.prototype");
-shouldBe("Object.getPrototypeOf(Object.getPrototypeOf(new DerivedDateTimeFormat))", "Intl.DateTimeFormat.prototype");
+var classPrefix = "class DerivedDateTimeFormat extends Intl.DateTimeFormat {};";
+shouldBeTrue(classPrefix + "(new DerivedDateTimeFormat) instanceof DerivedDateTimeFormat");
+shouldBeTrue(classPrefix + "(new DerivedDateTimeFormat) instanceof Intl.DateTimeFormat");
+shouldBeTrue(classPrefix + "new DerivedDateTimeFormat().format(0).length > 0");
+shouldBeTrue(classPrefix + "Object.getPrototypeOf(new DerivedDateTimeFormat) === DerivedDateTimeFormat.prototype");
+shouldBeTrue(classPrefix + "Object.getPrototypeOf(Object.getPrototypeOf(new DerivedDateTimeFormat)) === Intl.DateTimeFormat.prototype");
 
 // 12.2 Properties of the Intl.DateTimeFormat Constructor
 

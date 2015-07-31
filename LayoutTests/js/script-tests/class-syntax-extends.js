@@ -1,6 +1,48 @@
 
 description('Tests for ES6 class syntax "extends"');
 
+function shouldThrow(s, message) {
+    var threw = false;
+    try {
+        eval(s);
+    } catch(e) {
+        threw = true;
+        if (!message || e.toString() === eval(message))
+            testPassed(s + ":::" + e.toString());
+        else
+            testFailed(s);
+    }
+    if (!threw)
+        testFailed(s);
+}
+
+function shouldNotThrow(s) {
+    var threw = false;
+    try {
+        eval(s);
+    } catch(e) {
+        threw = true;
+    }
+    if (threw)
+        testFailed(s);
+    else
+        testPassed(s);
+}
+
+function shouldBe(a, b) {
+    if (eval(a) === eval(b))
+        testPassed(a + ":::" + b);
+    else
+        testFailed(a + ":::" + b);
+}
+
+function shouldBeTrue(s) {
+    if (eval(s) === true)
+        testPassed(s);
+    else
+        testFailed(s);
+}
+
 class Base {
     constructor() { }
     baseMethod() { return 'base'; }

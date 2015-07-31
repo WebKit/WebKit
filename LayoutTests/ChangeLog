@@ -1,3 +1,58 @@
+2015-07-31  Saam barati  <saambarati1@gmail.com>
+
+        ES6 class syntax should use block scoping
+        https://bugs.webkit.org/show_bug.cgi?id=142567
+
+        Reviewed by Geoffrey Garen.
+
+        * js/class-constructor-return-expected.txt:
+        * js/class-syntax-call-expected.txt:
+        * js/class-syntax-declaration-expected.txt:
+        * js/class-syntax-default-constructor-expected.txt:
+        * js/class-syntax-extends-expected.txt:
+        * js/class-syntax-name-expected.txt:
+        * js/class-syntax-super-expected.txt:
+        * js/script-tests/class-constructor-return.js:
+        (shouldThrow):
+        (shouldNotThrow):
+        (shouldBeTrue):
+        (shouldBeFalse):
+        * js/script-tests/class-syntax-call.js:
+        (A):
+        (B):
+        (shouldThrow):
+        (shouldNotThrow):
+        * js/script-tests/class-syntax-declaration.js:
+        (shouldThrow):
+        (shouldNotThrow):
+        (shouldBe):
+        * js/script-tests/class-syntax-default-constructor.js:
+        (shouldThrow):
+        (shouldBe):
+        (shouldBeTrue):
+        (assert):
+        (A):
+        (B):
+        * js/script-tests/class-syntax-extends.js:
+        (shouldThrow):
+        (shouldNotThrow):
+        (shouldBe):
+        (shouldBeTrue):
+        (Base):
+        (Base.prototype.baseMethod):
+        * js/script-tests/class-syntax-name.js:
+        (shouldThrow):
+        (shouldNotThrow):
+        (shouldBe):
+        (shouldBeTrue):
+        (runTestShouldBe):
+        * js/script-tests/class-syntax-super.js:
+        (shouldThrow):
+        (shouldNotThrow):
+        (shouldBe):
+        (shouldBeTrue):
+        (shouldBeFalse):
+
 2015-07-30  Matt Rajca  <mrajca@apple.com>
 
         Media Session: add test for MediaSession.releaseSession()

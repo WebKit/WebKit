@@ -7,11 +7,11 @@ PASS Intl.NumberFormat is an instance of Function
 PASS Intl.NumberFormat() is an instance of Intl.NumberFormat
 PASS Intl.NumberFormat.call({}) is an instance of Intl.NumberFormat
 PASS new Intl.NumberFormat() is an instance of Intl.NumberFormat
-PASS new DerivedNumberFormat is an instance of DerivedNumberFormat
-PASS new DerivedNumberFormat is an instance of Intl.NumberFormat
-PASS new DerivedNumberFormat().format(1) is '1'
-PASS Object.getPrototypeOf(new DerivedNumberFormat) is DerivedNumberFormat.prototype
-PASS Object.getPrototypeOf(Object.getPrototypeOf(new DerivedNumberFormat)) is Intl.NumberFormat.prototype
+PASS class DerivedNumberFormat extends Intl.NumberFormat {};(new DerivedNumberFormat) instanceof DerivedNumberFormat is true
+PASS class DerivedNumberFormat extends Intl.NumberFormat {};(new DerivedNumberFormat) instanceof Intl.NumberFormat is true
+PASS class DerivedNumberFormat extends Intl.NumberFormat {};new DerivedNumberFormat().format(1) === '1' is true
+PASS class DerivedNumberFormat extends Intl.NumberFormat {};Object.getPrototypeOf(new DerivedNumberFormat) === DerivedNumberFormat.prototype is true
+PASS class DerivedNumberFormat extends Intl.NumberFormat {};Object.getPrototypeOf(Object.getPrototypeOf(new DerivedNumberFormat)) === Intl.NumberFormat.prototype is true
 PASS Intl.NumberFormat.length is 0
 PASS Object.getOwnPropertyDescriptor(Intl.NumberFormat, 'prototype').writable is false
 PASS Object.getOwnPropertyDescriptor(Intl.NumberFormat, 'prototype').enumerable is false

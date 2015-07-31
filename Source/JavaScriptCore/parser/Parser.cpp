@@ -1821,8 +1821,10 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseClassDeclarat
     ParserClassInfo<TreeBuilder> info;
     TreeClassExpression classExpr = parseClass(context, FunctionNeedsName, info);
     failIfFalse(classExpr, "Failed to parse class");
-    // FIXME: This should be like `let`, not `var`.
-    declareVariable(info.className);
+
+    DeclarationResultMask declarationResult = declareVariable(info.className, DeclarationType::LetDeclaration);
+    if (declarationResult & DeclarationResult::InvalidDuplicateDeclaration)
+        internalFailWithMessage(false, "Cannot declare a class twice: '", info.className->impl(), "'");
 
     JSTextPosition classEnd = lastTokenEndPosition();
     unsigned classEndLine = tokenLine();

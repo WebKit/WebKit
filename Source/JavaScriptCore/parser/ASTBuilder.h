@@ -442,7 +442,6 @@ public:
     StatementNode* createClassDeclStatement(const JSTokenLocation& location, ClassExprNode* classExpression,
         const JSTextPosition& classStart, const JSTextPosition& classEnd, unsigned startLine, unsigned endLine)
     {
-        // FIXME: Use "let" declaration.
         ExpressionNode* assign = createAssignResolve(location, classExpression->name(), classExpression, classStart, classStart + 1, classEnd, AssignmentContext::DeclarationStatement);
         ClassDeclNode* decl = new (m_parserArena) ClassDeclNode(location, assign);
         decl->setLoc(startLine, endLine, location.startOffset, location.lineStartOffset);

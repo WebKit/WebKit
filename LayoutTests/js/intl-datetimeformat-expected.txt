@@ -7,11 +7,11 @@ PASS Intl.DateTimeFormat is an instance of Function
 PASS Intl.DateTimeFormat() is an instance of Intl.DateTimeFormat
 PASS Intl.DateTimeFormat.call({}) is an instance of Intl.DateTimeFormat
 PASS new Intl.DateTimeFormat() is an instance of Intl.DateTimeFormat
-PASS new DerivedDateTimeFormat is an instance of DerivedDateTimeFormat
-PASS new DerivedDateTimeFormat is an instance of Intl.DateTimeFormat
-PASS new DerivedDateTimeFormat().format(0).length > 0 is true
-PASS Object.getPrototypeOf(new DerivedDateTimeFormat) is DerivedDateTimeFormat.prototype
-PASS Object.getPrototypeOf(Object.getPrototypeOf(new DerivedDateTimeFormat)) is Intl.DateTimeFormat.prototype
+PASS class DerivedDateTimeFormat extends Intl.DateTimeFormat {};(new DerivedDateTimeFormat) instanceof DerivedDateTimeFormat is true
+PASS class DerivedDateTimeFormat extends Intl.DateTimeFormat {};(new DerivedDateTimeFormat) instanceof Intl.DateTimeFormat is true
+PASS class DerivedDateTimeFormat extends Intl.DateTimeFormat {};new DerivedDateTimeFormat().format(0).length > 0 is true
+PASS class DerivedDateTimeFormat extends Intl.DateTimeFormat {};Object.getPrototypeOf(new DerivedDateTimeFormat) === DerivedDateTimeFormat.prototype is true
+PASS class DerivedDateTimeFormat extends Intl.DateTimeFormat {};Object.getPrototypeOf(Object.getPrototypeOf(new DerivedDateTimeFormat)) === Intl.DateTimeFormat.prototype is true
 PASS Intl.DateTimeFormat.length is 0
 PASS Object.getOwnPropertyDescriptor(Intl.DateTimeFormat, 'prototype').writable is false
 PASS Object.getOwnPropertyDescriptor(Intl.DateTimeFormat, 'prototype').enumerable is false

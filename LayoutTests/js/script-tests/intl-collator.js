@@ -11,12 +11,12 @@ shouldBeType("Intl.Collator.call({})", "Intl.Collator");
 shouldBeType("new Intl.Collator()", "Intl.Collator");
 
 // Subclassable
-class DerivedCollator extends Intl.Collator {}
-shouldBeType("new DerivedCollator", "DerivedCollator");
-shouldBeType("new DerivedCollator", "Intl.Collator");
-shouldBe("new DerivedCollator().compare('a', 'b')", "-1");
-shouldBe("Object.getPrototypeOf(new DerivedCollator)", "DerivedCollator.prototype");
-shouldBe("Object.getPrototypeOf(Object.getPrototypeOf(new DerivedCollator))", "Intl.Collator.prototype");
+var classPrefix = "class DerivedCollator extends Intl.Collator {};";
+shouldBeTrue(classPrefix + "(new DerivedCollator) instanceof DerivedCollator");
+shouldBeTrue(classPrefix + "(new DerivedCollator) instanceof Intl.Collator");
+shouldBeTrue(classPrefix + "new DerivedCollator().compare('a', 'b') === -1");
+shouldBeTrue(classPrefix + "Object.getPrototypeOf(new DerivedCollator) === DerivedCollator.prototype");
+shouldBeTrue(classPrefix + "Object.getPrototypeOf(Object.getPrototypeOf(new DerivedCollator)) === Intl.Collator.prototype");
 
 // 10.2 Properties of the Intl.Collator Constructor
 

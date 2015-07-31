@@ -1,5 +1,47 @@
 description('Tests for ES6 class constructor return values');
 
+function shouldThrow(s, message) {
+    var threw = false;
+    try {
+        eval(s);
+    } catch(e) {
+        threw = true;
+        if (!message || e.toString() === message)
+            testPassed(s);
+        else
+            testFailed(s);
+    }
+    if (!threw)
+        testFailed(s);
+}
+
+function shouldNotThrow(s) {
+    var threw = false;
+    try {
+        eval(s);
+    } catch(e) {
+        threw = true;
+    }
+    if (threw)
+        testFailed(s);
+    else
+        testPassed(s);
+}
+
+function shouldBeTrue(s) {
+    if (eval(s) === true)
+        testPassed(s);
+    else 
+        testFailed(s);
+}
+
+function shouldBeFalse(s) {
+    if (eval(s) === false)
+        testPassed(s);
+    else 
+        testFailed(s);
+}
+
 // ES6
 // - 9.2.2 [[Construct]] (ECMAScript Function Objects)
 // - 12.3.5.1 Runtime Semantics: Evaluation (The super Keyword)

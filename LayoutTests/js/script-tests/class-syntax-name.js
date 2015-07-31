@@ -1,5 +1,47 @@
 description('Tests for ES6 class name semantics in class statements and expressions');
 
+function shouldThrow(s, message) {
+    var threw = false;
+    try {
+        eval(s);
+    } catch(e) {
+        threw = true;
+        if (!message || e.toString() === eval(message))
+            testPassed(s + ":::" + e.toString());
+        else
+            testFailed(s);
+    }
+    if (!threw)
+        testFailed(s);
+}
+
+function shouldNotThrow(s) {
+    var threw = false;
+    try {
+        eval(s);
+    } catch(e) {
+        threw = true;
+    }
+    if (threw)
+        testFailed(s);
+    else
+        testPassed(s);
+}
+
+function shouldBe(a, b) {
+    if (eval(a) === eval(b))
+        testPassed(a + ":::" + b);
+    else
+        testFailed(a + ":::" + b);
+}
+
+function shouldBeTrue(s) {
+    if (eval(s) === true)
+        testPassed(s);
+    else 
+        testFailed(s);
+}
+
 function runTestShouldBe(statement, result) {
     shouldBe(statement, result);
     shouldBe("'use strict'; " + statement, result);
@@ -86,5 +128,5 @@ runTestShouldBe("class A { constructor() { } }; A = 1; A", "1");
 runTestShouldNotThrow("class A {}; var result = A; result");
 shouldBe("eval('var Foo = 10'); Foo", "10");
 shouldThrow("'use strict'; eval('var Foo = 10'); Foo");
-shouldBe("eval('class Bar { constructor() {} }'); Bar.toString()", "'function Bar() {}'");
+shouldBe("eval('class Bar { constructor() {} }; Bar.toString()');", "'function Bar() {}'");
 shouldThrow("'use strict'; eval('class Bar { constructor() {} }'); Bar.toString()");

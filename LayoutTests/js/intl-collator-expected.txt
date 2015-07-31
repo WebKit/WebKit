@@ -7,11 +7,11 @@ PASS Intl.Collator is an instance of Function
 PASS Intl.Collator() is an instance of Intl.Collator
 PASS Intl.Collator.call({}) is an instance of Intl.Collator
 PASS new Intl.Collator() is an instance of Intl.Collator
-PASS new DerivedCollator is an instance of DerivedCollator
-PASS new DerivedCollator is an instance of Intl.Collator
-PASS new DerivedCollator().compare('a', 'b') is -1
-PASS Object.getPrototypeOf(new DerivedCollator) is DerivedCollator.prototype
-PASS Object.getPrototypeOf(Object.getPrototypeOf(new DerivedCollator)) is Intl.Collator.prototype
+PASS class DerivedCollator extends Intl.Collator {};(new DerivedCollator) instanceof DerivedCollator is true
+PASS class DerivedCollator extends Intl.Collator {};(new DerivedCollator) instanceof Intl.Collator is true
+PASS class DerivedCollator extends Intl.Collator {};new DerivedCollator().compare('a', 'b') === -1 is true
+PASS class DerivedCollator extends Intl.Collator {};Object.getPrototypeOf(new DerivedCollator) === DerivedCollator.prototype is true
+PASS class DerivedCollator extends Intl.Collator {};Object.getPrototypeOf(Object.getPrototypeOf(new DerivedCollator)) === Intl.Collator.prototype is true
 PASS Intl.Collator.length is 0
 PASS Object.getOwnPropertyDescriptor(Intl.Collator, 'prototype').writable is false
 PASS Object.getOwnPropertyDescriptor(Intl.Collator, 'prototype').enumerable is false
