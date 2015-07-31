@@ -131,16 +131,8 @@ InspectorTestProxy.addResult = function(text)
         this._resultElement.id = "output";
         document.body.appendChild(this._resultElement);
     }
-    this._resultElement.appendChild(document.createTextNode(text));
-    this._resultElement.appendChild(document.createElement("br"));
-}
 
-InspectorTestProxy.clearResults = function()
-{
-    if (this._resultElement) {
-        this._resultElement.parentNode.removeChild(this._resultElement);
-        delete this._resultElement;
-    }
+    this._resultElement.append(text, document.createElement("br"));
 }
 
 InspectorTestProxy.needToSanitizeUncaughtExceptionURLs = false;

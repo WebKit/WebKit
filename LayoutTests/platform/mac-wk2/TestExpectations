@@ -244,8 +244,6 @@ webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 
 webkit.org/b/147075 [ Release Yosemite ] http/tests/cache/disk-cache/disk-cache-disable.html [ Pass Failure ]
 
-webkit.org/b/143548 [ Debug Yosemite ] inspector/console/command-line-api.html [ Slow ]
-
 webkit.org/b/147300 platform/mac-wk2/tiled-drawing/scrolling/frames/frameset-frame-scrollability.html [ Pass Failure ]
 webkit.org/b/147300 platform/mac-wk2/tiled-drawing/scrolling/frames/frameset-nested-frame-scrollability.html [ Pass Failure ]
 
@@ -515,8 +513,6 @@ webkit.org/b/141325 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-abo
 webkit.org/b/141085 [ Yosemite ] http/tests/media/video-query-url.html [ Pass Timeout ]
 
 webkit.org/b/145702 [ Debug Yosemite ] http/tests/misc/acid3.html [ Pass Timeout ]
-
-webkit.org/b/147229 [ Yosemite ] inspector/css/modify-rule-selector.html [ Pass Timeout ]
 
 ### END OF (7) New WebKit2-only failures in Yosemite
 ########################################

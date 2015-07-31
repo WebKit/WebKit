@@ -168,16 +168,14 @@ InspectorTest.completeTest = function()
     if (InspectorTest.dumpMessagesToConsole)
         InspectorFrontendHost.unbufferedLog("InspectorTest.completeTest()");
 
-    function signalCompletionToTestPage() {
-        InspectorBackend.runAfterPendingDispatches(this.evaluateInPage.bind(this, "InspectorTestProxy.completeTest()"));
-    }
-
     // Wait for results to be resent before requesting completeTest(). Otherwise, messages will be
     // queued after pending dispatches run to zero and the test page will quit before processing them.
-    if (this._shouldResendResults)
-        this._resendResults(signalCompletionToTestPage.bind(this));
-    else
-        signalCompletionToTestPage.call(this);
+    if (this._testPageIsReloading) {
+        this._completeTestAfterReload = true;
+        return;
+    }
+
+    InspectorBackend.runAfterPendingDispatches(this.evaluateInPage.bind(this, "InspectorTestProxy.completeTest()"));
 }
 
 InspectorTest.evaluateInPage = function(codeString, callback)
@@ -203,21 +201,13 @@ InspectorTest.addResult = function(text)
         this.evaluateInPage("InspectorTestProxy.addResult(unescape('" + escape(text) + "'))");
 }
 
-InspectorTest._resendResults = function(callback)
+InspectorTest._resendResults = function()
 {
     console.assert(this._shouldResendResults);
-    delete this._shouldResendResults;
+    this._shouldResendResults = false;
 
-    var pendingResponseCount = 1 + this._results.length;
-    function decrementPendingResponseCount() {
-        pendingResponseCount--;
-        if (!pendingResponseCount && typeof callback === "function")
-            callback();
-    }
-
-    this.evaluateInPage("InspectorTestProxy.clearResults()", decrementPendingResponseCount);
     for (var result of this._results)
-        this.evaluateInPage("InspectorTestProxy.addResult(unescape('" + escape(result) + "'))", decrementPendingResponseCount);
+        this.evaluateInPage("InspectorTestProxy.addResult(unescape('" + escape(result) + "'))");
 }
 
 InspectorTest.testPageDidLoad = function()
@@ -226,6 +216,9 @@ InspectorTest.testPageDidLoad = function()
     this._resendResults();
 
     this.eventDispatcher.dispatchEvent(InspectorTest.EventDispatcher.Event.TestPageDidLoad);
+
+    if (this._completeTestAfterReload)
+        InspectorTest.completeTest();
 }
 
 InspectorTest.reloadPage = function(shouldIgnoreCache)

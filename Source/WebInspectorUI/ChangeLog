@@ -1,3 +1,25 @@
+2015-07-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Unskip / Unflake inspector tests after r187627
+        https://bugs.webkit.org/show_bug.cgi?id=147503
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/Test.js:
+        (InspectorTest.completeTest):
+        (InspectorTest.completeTest.signalCompletionToTestPage): Deleted.
+        (InspectorTest.testPageDidLoad):
+        Instead of immediately resending results if completeTest was called
+        during a reload before the load has completed, we just set a flag
+        to complete the test when the load completes. This consistently
+        resends the output to the new page for test output.
+        
+        (InspectorTest._resendResults):
+        Delete clear results. If the page had logged anything directly on
+        the page side (using InspectorTestProxy) this clearMessages would
+        have deleted those messages and not been able to recreate them.
+        Clearing messages wasn't really serving a purpose.
+
 2015-07-31  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: Convert timeline view classes to ES6 classes

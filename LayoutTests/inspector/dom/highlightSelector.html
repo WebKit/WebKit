@@ -4,17 +4,35 @@
 <script>
 function test() {
     var testcases = [
-        {'frameId': '0.1', 'selector': 'div'},
-        {'frameId': '0.1', 'selector': '.class-one'},
-        {'frameId': '0.1', 'selector': '#id-one'},
-        {'frameId': '0.1', 'selector': '.class-one, .class-two'},
+        {'frameId': 'MAINFRAME', 'selector': 'div'},
+        {'frameId': 'MAINFRAME', 'selector': '.class-one'},
+        {'frameId': 'MAINFRAME', 'selector': '#id-one'},
+        {'frameId': 'MAINFRAME', 'selector': '.class-one, .class-two'},
         {'selector': 'iframe.class-one'}, // No frame ID.
-        {'frameId': '0.2', 'selector': 'div', "error": true}, // Non-existing frame ID.
-        {'frameId': '0.1', 'selector': '.no-elements'}, // Non-matching selector.
-        {'frameId': '0.1', 'selector': '$%foobar', "error": true}, // Invalid selector.
-        {'frameId': '0.3', 'selector': 'div'},
-        {'frameId': '0.3', 'selector': '#id-one'},
+        {'frameId': 'x.x', 'selector': 'div', "error": true}, // Non-existing frame ID.
+        {'frameId': 'MAINFRAME', 'selector': '.no-elements'}, // Non-matching selector.
+        {'frameId': 'MAINFRAME', 'selector': '$%foobar', "error": true}, // Invalid selector.
+        {'frameId': 'CHILDFRAME', 'selector': 'div'},
+        {'frameId': 'CHILDFRAME', 'selector': '#id-one'},
     ];
+
+    InspectorTest.assert(WebInspector.frameResourceManager.mainFrame.childFrames.length === 1);
+    var mainFrameId = WebInspector.frameResourceManager.mainFrame.id;
+    var childFrameId = WebInspector.frameResourceManager.mainFrame.childFrames[0].id;
+    for (var test of testcases) {
+        if (test.frameId === "MAINFRAME")
+            test.frameId = mainFrameId;
+        else if (test.frameId === "CHILDFRAME")
+            test.frameId = childFrameId;
+    }
+
+    function displayNameForFrameId(frameId) {
+        if (frameId === mainFrameId)
+            return "<main-frame-id>";
+        if (frameId === childFrameId)
+            return "<child-frame-id>";
+        return frameId;
+    }
 
     function getHighlightObjectForSelector(selector, frameId, errorExpected, callback) {
         var highlightConfig = {
@@ -56,7 +74,7 @@ function test() {
 
         getHighlightObjectForSelector(testcase.selector, testcase.frameId, testcase.error, function(payload) {
             InspectorTest.log("SELECTOR: " + testcase.selector);
-            InspectorTest.log("FRAMEID: " + testcase.frameId);
+            InspectorTest.log("FRAMEID: " + displayNameForFrameId(testcase.frameId));
 
             if (payload) {
                 InspectorTest.log("FOUND: " + payload.length);
@@ -80,7 +98,7 @@ function test() {
     <div>
         <div class="class-one"></div>
         <div id="id-one" class="class-two"></div>
-        <iframe class="class-one" src="highlightSelector-iframe.html"></iframe>
+        <iframe class="class-one" src="resources/highlightSelector-iframe.html"></iframe>
     </div>
 </body>
 </html>

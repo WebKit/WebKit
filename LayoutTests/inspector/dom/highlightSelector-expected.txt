@@ -1,6 +1,6 @@
 
 SELECTOR: div
-FRAMEID: 0.1
+FRAMEID: <main-frame-id>
 FOUND: 3
 [
   {
@@ -303,7 +303,7 @@ FOUND: 3
 
 
 SELECTOR: .class-one
-FRAMEID: 0.1
+FRAMEID: <main-frame-id>
 FOUND: 2
 [
   {
@@ -508,7 +508,7 @@ FOUND: 2
 
 
 SELECTOR: #id-one
-FRAMEID: 0.1
+FRAMEID: <main-frame-id>
 FOUND: 1
 [
   {
@@ -614,7 +614,7 @@ FOUND: 1
 
 
 SELECTOR: .class-one, .class-two
-FRAMEID: 0.1
+FRAMEID: <main-frame-id>
 FOUND: 3
 [
   {
@@ -1025,22 +1025,22 @@ FOUND: 1
 
 PASS: Expected error: No frame for given id found
 SELECTOR: div
-FRAMEID: 0.2
+FRAMEID: x.x
 
 
 SELECTOR: .no-elements
-FRAMEID: 0.1
+FRAMEID: <main-frame-id>
 FOUND: 0
 []
 
 
 PASS: Expected error: DOM Error while querying
 SELECTOR: $%foobar
-FRAMEID: 0.1
+FRAMEID: <main-frame-id>
 
 
 SELECTOR: div
-FRAMEID: 0.3
+FRAMEID: <child-frame-id>
 FOUND: 2
 [
   {
@@ -1243,7 +1243,7 @@ FOUND: 2
 
 
 SELECTOR: #id-one
-FRAMEID: 0.3
+FRAMEID: <child-frame-id>
 FOUND: 1
 [
   {

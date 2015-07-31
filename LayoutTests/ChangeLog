@@ -1,5 +1,38 @@
 2015-07-31  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Unskip / Unflake inspector tests after r187627
+        https://bugs.webkit.org/show_bug.cgi?id=147503
+
+        Reviewed by Brian Burg.
+
+        * TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        Unskip and unflake inspector tests.
+
+        * http/tests/inspector/inspector-test.js:
+        (InspectorTestProxy.addResult):
+        Simplify with the new append API.
+
+        (InspectorTestProxy.clearResults): Deleted.
+        Delete, as it is no longer used.
+
+        * inspector/debugger/probe-manager-add-remove-actions-expected.txt:
+        Include output that was getting erronously cleared by clearResults
+        which we removed.
+
+        * inspector/dom/highlightSelector-expected.txt:
+        * inspector/dom/highlightSelector.html:
+        Make this test more reliable when run with other tests.
+        Never assume the frame id for the main frame or sub frame,
+        instead compute them and mask them in the output.
+
+        * inspector/dom/resources/highlightSelector-iframe.html: Renamed from LayoutTests/inspector/dom/highlightSelector-iframe.html.
+        Move the non-test iframe html resource into a sub-folder
+        so it won't be treated like an actual test.
+
+2015-07-31  Joseph Pecoraro  <pecoraro@apple.com>
+
         Unreviewed gardening. Skip more inspector tests on Windows.
 
         It may be that no inspector tests are working on Windows,

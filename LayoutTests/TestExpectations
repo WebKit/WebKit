@@ -78,26 +78,19 @@ webkit.org/b/133761 inspector-protocol/debugger/breakpoint-action-detach.html [ 
 webkit.org/b/129639 inspector-protocol/dom/dom-search-crash.html [ Skip ]
 webkit.org/b/127414 inspector-protocol/page/deny-X-FrameOption.html [ Pass Failure ]
 
-# These tests cause assertion failures in subsequent tests
-webkit.org/b/131919 inspector/dom [ Skip ]
+webkit.org/b/147502 inspector/debugger/break-on-uncaught-exception-throw-in-promise-rethrow-in-catch.html [ Skip ]
+webkit.org/b/147502 inspector/debugger/break-on-uncaught-exception-throw-in-promise-then-with-catch.html [ Skip ]
+webkit.org/b/147502 inspector/debugger/break-on-uncaught-exception-throw-in-promise-then.html [ Skip ]
+webkit.org/b/147502 inspector/debugger/break-on-uncaught-exception-throw-in-promise-with-catch.html [ Skip ]
+webkit.org/b/147502 inspector/debugger/break-on-uncaught-exception-throw-in-promise.html [ Skip ]
 
-# Disabled the expectations because these tests are also skipped above.
-# webkit.org/b/129817 inspector/dom/content-flow-list.html [ Pass Failure ]
-# webkit.org/b/129817 inspector/dom/content-flow-content-removal.html [ Pass Failure ]
+webkit.org/b/142208 inspector/timeline/debugger-paused-while-recording.html [ Skip ]
+webkit.org/b/142208 inspector/timeline/exception-in-injected-script-while-recording.html [ Skip ]
 
-# These tests still mysteriously flake and/or time out.
-webkit.org/b/137131 inspector/debugger [ Skip ]
 webkit.org/b/137130 inspector/replay [ Skip ]
-webkit.org/b/142208 inspector/timeline [ Skip ]
-inspector/model/remote-object-get-properties.html [ Skip ]
-inspector/model/remote-object-weak-collection.html [ Skip ]
-inspector/model/remote-object.html [ Skip ]
 
 # Doesn't work yet, relies on network replay functionality (webkit.org/b/130728, webkit.org/b/129391)
 webkit.org/b/131318 http/tests/inspector/replay/document-last-modified-fallback-value.html [ Skip ]
-
-webkit.org/b/143719 [ Debug ] inspector/console/console-api.html [ Pass Timeout ]
-webkit.org/b/143719 [ Debug ] inspector/console/console-table.html [ Pass Timeout ]
 
 # Collecting region's children in a named flow not supported yet
 webkit.org/b/74144 fast/regions/flow-body-in-html.html [ Skip ]

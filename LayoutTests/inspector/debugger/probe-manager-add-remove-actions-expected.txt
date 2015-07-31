@@ -1,5 +1,6 @@
 Testing that the probe manager properly handles addition and removal of related probes.
 
+inside breakpointActions a:(12) b:([object Object])
 Breakpoint autocontinue state changed: true
 Probe set was added. New count: 1
 Probe with identifier 1 was added to probe set.
