@@ -1,5 +1,25 @@
 2015-07-31  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r187448
+
+    2015-07-27  Anders Carlsson  <andersca@apple.com>
+
+            WKWebsiteDataStore remove methods don't properly delete cookies
+            https://bugs.webkit.org/show_bug.cgi?id=147333
+            rdar://problem/21948230
+
+            Reviewed by Tim Horton.
+
+            If there are multiple cookies for a single domain, make sure to delete all of them
+            and not just the first one we find.
+
+            Fix this by keeping a mapping from domain to a list of cookies.
+
+            * platform/network/mac/CookieJarMac.mm:
+            (WebCore::deleteCookiesForHostnames):
+
+2015-07-31  Lucas Forschler  <lforschler@apple.com>
+
         Merge r187379
 
     2015-07-24  Dan Bernstein  <mitz@apple.com>

@@ -227,13 +227,19 @@ void deleteCookiesForHostnames(const NetworkStorageSession& session, const Vecto
     if (!cookies)
         return;
 
-    HashMap<String, RetainPtr<NSHTTPCookie>> cookiesByDomain;
-    for (NSHTTPCookie* cookie in cookies)
-        cookiesByDomain.set(cookie.domain, cookie);
+    HashMap<String, Vector<RetainPtr<NSHTTPCookie>>> cookiesByDomain;
+    for (NSHTTPCookie* cookie in cookies) {
+        auto& cookies = cookiesByDomain.add(cookie.domain, Vector<RetainPtr<NSHTTPCookie>>()).iterator->value;
+        cookies.append(cookie);
+    }
 
     for (const auto& hostname : hostnames) {
-        if (NSHTTPCookie *cookie = cookiesByDomain.get(hostname).get())
-            wkDeleteHTTPCookie(cookieStorage.get(), cookie);
+        auto it = cookiesByDomain.find(hostname);
+        if (it == cookiesByDomain.end())
+            continue;
+
+        for (auto& cookie : it->value)
+            wkDeleteHTTPCookie(cookieStorage.get(), cookie.get());
     }
 
     [WebCore::cookieStorage(session) _saveCookies];
