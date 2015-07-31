@@ -94,7 +94,9 @@ public:
 
     void enqueueTask(TaskFunction task)
     {
-        ASSERT(!m_isClosed);
+        if (m_isClosed)
+            return;
+
         ++m_pendingTasks;
         auto weakThis = m_weakPtrFactory.createWeakPtr();
         m_dispatcher.postTask([weakThis, task] {

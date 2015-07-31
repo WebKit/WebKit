@@ -1,5 +1,31 @@
 2015-07-31  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r187655. rdar://problem/21632211
+
+    2015-07-31  Jer Noble  <jer.noble@apple.com>
+
+            CRASH at WebCore::TaskDispatcher<WebCore::ScriptExecutionContext>::postTask + 38
+            https://bugs.webkit.org/show_bug.cgi?id=147485
+
+            Reviewed by Eric Carlson.
+
+            CrashLogs indicate a use-after-free of the ScriptExecutionContext (i.e., Document) used by
+            the GenericTaskQueue objects owned by HTMLMediaElement. When the ScriptExecutionContext
+            notifies its ActiveDOMObjects that it is about to be destroyed, close() the
+            GenericTaskQueues so that they can no longer accept new tasks.
+
+            Previously, enqueueing a task on a closed GenericTaskQueue ASSERTed in debug builds, but
+            silently succeeded in release builds. Calling enqueueTask() on a  closed GenericTaskQueue is
+            now a no-op.
+
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::contextDestroyed):
+            * html/HTMLMediaElement.h:
+            * platform/GenericTaskQueue.h:
+            (WebCore::GenericTaskQueue::enqueueTask):
+
+2015-07-31  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r187630. rdar://problem/18835799
 
     2015-07-30  Andreas Kling  <akling@apple.com>
