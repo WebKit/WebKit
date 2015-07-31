@@ -1,3 +1,40 @@
+2015-07-31  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r187375
+
+    2015-07-24  Anders Carlsson  <andersca@apple.com>
+
+            WKWebsiteDataStore remove methods don't properly delete cookies
+            https://bugs.webkit.org/show_bug.cgi?id=147282
+            rdar://problem/21948230
+
+            Reviewed by Sam Weinig.
+
+            Rename deleteCookiesForHostname to deleteCookiesForHostnames and
+            make it take a vector of hostnames instead.
+
+            Also, fix the Mac implementation to not be O(n2) by putting all cookies
+            in a dictionary keyed on the domain.
+
+            Also make sure to call _saveStorage after deleting cookies.
+
+            Finally, get rid of deleteCookiesForHostname from CookieJarCFNet.cpp and
+            use the Mac implementation on iOS as well. Just stub out deleteCookiesForHostnames
+            on Windows since nobody is calling it.
+
+            * platform/network/PlatformCookieJar.h:
+            * platform/network/cf/CookieJarCFNet.cpp:
+            (WebCore::deleteCookiesForHostnames):
+            (WebCore::deleteCookiesForHostname): Deleted.
+            * platform/network/mac/CookieJarMac.mm:
+            (WebCore::deleteCookiesForHostnames):
+            (WebCore::deleteAllCookiesModifiedSince):
+            (WebCore::deleteCookiesForHostname): Deleted.
+            * platform/network/soup/CookieJarSoup.cpp:
+            (WebCore::deleteCookiesForHostnames):
+            (WebCore::deleteCookiesForHostname): Deleted.
+            * platform/spi/cf/CFNetworkSPI.h:
+
 2015-07-30  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r187490. rdar://problem/21995928
