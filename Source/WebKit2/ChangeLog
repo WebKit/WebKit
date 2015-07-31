@@ -1,3 +1,10 @@
+2015-07-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed parameter name typo fix.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _setHiddenPageDOMTimerThrottlingEnabled:]):
+
 2015-07-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] NPAPI code crashes on Wayland

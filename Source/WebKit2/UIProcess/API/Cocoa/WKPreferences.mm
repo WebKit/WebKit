@@ -262,9 +262,9 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     return _preferences->hiddenPageDOMTimerThrottlingEnabled();
 }
 
-- (void)_setHiddenPageDOMTimerThrottlingEnabled:(BOOL)hiddenPageDOMTimerRhrottlingEnabled
+- (void)_setHiddenPageDOMTimerThrottlingEnabled:(BOOL)hiddenPageDOMTimerThrottlingEnabled
 {
-    _preferences->setHiddenPageDOMTimerThrottlingEnabled(hiddenPageDOMTimerRhrottlingEnabled);
+    _preferences->setHiddenPageDOMTimerThrottlingEnabled(hiddenPageDOMTimerThrottlingEnabled);
 }
 
 - (BOOL)_allowFileAccessFromFileURLs
