@@ -35,10 +35,13 @@ namespace WebKit {
 void WebPreferences::platformInitializeStore()
 {
 #if PLATFORM(WAYLAND)
-    // FIXME: Accelerated compositing under Wayland is not yet supported.
-    // https://bugs.webkit.org/show_bug.cgi?id=115803
-    if (WebCore::PlatformDisplay::sharedDisplay().type() == WebCore::PlatformDisplay::Type::Wayland)
+    if (WebCore::PlatformDisplay::sharedDisplay().type() == WebCore::PlatformDisplay::Type::Wayland) {
+        // FIXME: Accelerated compositing under Wayland is not yet supported.
+        // https://bugs.webkit.org/show_bug.cgi?id=115803
         setAcceleratedCompositingEnabled(false);
+
+        setPluginsEnabled(false);
+    }
 #endif
 }
 

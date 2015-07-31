@@ -1,3 +1,23 @@
+2015-07-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] NPAPI code crashes on Wayland
+        https://bugs.webkit.org/show_bug.cgi?id=147297
+
+        Reviewed by Žan Doberšek.
+
+        Do not crete NPAPI plugins when runing on Wayland, since they are
+        not supported. ENABLE_NETSCAPE_PLUGIN_API option used to be
+        incompatible with building with the Wayland target, but now that
+        we allow to build X11 and Wayland targets at the same time, we
+        need runtime checks to avoid creating NPAPI plugins in Wayland.
+
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webkit_settings_set_enable_plugins): Do not allow to change the
+        setting when running in Wayland.
+        * UIProcess/gtk/WebPreferencesGtk.cpp:
+        (WebKit::WebPreferences::platformInitializeStore): Initialize
+        EnablePlugins preference to false when running in Wayland.
+
 2015-07-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         LayoutTests/inspector frequently run slow and timeout when run in WebKit2 but not WebKit1

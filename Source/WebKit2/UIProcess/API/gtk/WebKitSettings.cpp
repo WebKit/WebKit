@@ -40,6 +40,10 @@
 #include <glib/gi18n-lib.h>
 #include <wtf/text/CString.h>
 
+#if PLATFORM(WAYLAND)
+#include <WebCore/PlatformDisplay.h>
+#endif
+
 using namespace WebKit;
 
 struct _WebKitSettingsPrivate {
@@ -1589,6 +1593,12 @@ gboolean webkit_settings_get_enable_plugins(WebKitSettings* settings)
 void webkit_settings_set_enable_plugins(WebKitSettings* settings, gboolean enabled)
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+#if PLATFORM(WAYLAND)
+    // Do not allow to change this setting in Wayland, since plugins are not supported.
+    if (WebCore::PlatformDisplay::sharedDisplay().type() == WebCore::PlatformDisplay::Type::Wayland)
+        return;
+#endif
 
     WebKitSettingsPrivate* priv = settings->priv;
     bool currentValue = priv->preferences->pluginsEnabled();
