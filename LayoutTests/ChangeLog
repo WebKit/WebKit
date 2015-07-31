@@ -1,3 +1,13 @@
+2015-07-31  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed gardening. Skip more inspector tests on Windows.
+
+        It may be that no inspector tests are working on Windows,
+        if that is the case we may move to skipping all of them
+        and investigate unskipping in chunks.
+
+        * platform/win/TestExpectations:
+
 2015-07-31  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [SVG -> OTF Converter] Crash when converting Arabic fonts

@@ -2342,8 +2342,10 @@ http/tests/xmlhttprequest/workers/methods.html [ Pass Crash ]
 ################################################################################
 
 # Some inspector tests timing out after r173992. Skip them.
-webkit.org/b/137157 inspector/css/matched-style-properties.html [ Skip ]
-webkit.org/b/141118 inspector/css/selector-dynamic-specificity.html [ Skip ]
+
+webkit.org/b/143548 inspector/console [ Skip ]
+webkit.org/b/137157 inspector/css [ Skip ]
+webkit.org/b/147017 inspector/css/get-system-fonts.html [ Skip ]
 webkit.org/b/137157 inspector/event-listener-set.html [ Skip ]
 webkit.org/b/137157 inspector/event-listener.html [ Skip ]
 webkit.org/b/137157 inspector/model/parse-script-syntax-tree.html [ Skip ]
@@ -2354,10 +2356,6 @@ webkit.org/b/137157 inspector/protocol-promise-result.html [ Skip ]
 http/tests/inspector/css/bad-mime-type.html [ Skip ]
 inspector/test-harness-trivially-works.html [ Skip ]
 inspector/dom/content-node-region-info.html [ Crash Pass Failure Timeout ]
-inspector/css/selector-specificity.html [ Skip ]
-inspector/css/pseudo-element-matches.html [ Skip ]
-
-webkit.org/b/147017 inspector/css/get-system-fonts.html [ Skip ]
 
 # Inspector Protocol
 webkit.org/b/140510 inspector-protocol/debugger/terminate-dedicated-worker-while-paused.html [ Skip ]  # Crashing
@@ -2375,12 +2373,6 @@ webkit.org/b/128979 [ Release ] inspector-protocol/dom/getAccessibilityPropertie
 [ Debug ] inspector-protocol/debugger/setBreakpoint-dfg-callee-and-examine-dfg-local.html [ Skip ] # Debug Assertion
 inspector-protocol/debugger/removeBreakpoint.html [ Skip ] # Crashing
 inspector-protocol/debugger/searchInContent-linebreaks.html [ Pass Crash ] # Flaky
-
-webkit.org/b/143548 inspector/console/command-line-api.html [ Skip ] # Timeout
-webkit.org/b/143548 inspector/console/console-api.html [ Skip ] # Timeout
-webkit.org/b/143548 inspector/console/console-table.html [ Skip ] # Timeout
-
-webkit.org/b/147229 inspector/css/modify-rule-selector.html [ Skip ] # Timeout
 
 ################################################################################
 #################        End Inspector Issues               ####################
