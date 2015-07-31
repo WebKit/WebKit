@@ -33,7 +33,7 @@ static void replaceNonBreakingSpaceWithSpace(String& str)
     str.replace(NonBreakingSpaceCharacter, SpaceCharacter);
 }
 
-HashMap<String, String> DataObjectGtk::unknownTypes() const
+const HashMap<String, String>& DataObjectGtk::unknownTypes() const
 {
     return m_unknownTypeData;
 }
