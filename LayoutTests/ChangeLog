@@ -1,5 +1,15 @@
 2015-07-31  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r187512
+
+    2015-07-28  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed, fix wrong test baseline landed in r187489.
+
+            * http/tests/security/same-origin-css-4-expected.txt:
+
+2015-07-31  Lucas Forschler  <lforschler@apple.com>
+
         Merge r187489
 
     2015-07-28  Chris Dumez  <cdumez@apple.com>
