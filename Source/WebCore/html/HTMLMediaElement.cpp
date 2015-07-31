@@ -4908,6 +4908,13 @@ void HTMLMediaElement::stopWithoutDestroyingMediaPlayer()
     updateSleepDisabling();
 }
 
+void HTMLMediaElement::contextDestroyed()
+{
+    m_seekTaskQueue.close();
+    m_resizeTaskQueue.close();
+    m_shadowDOMTaskQueue.close();
+}
+
 void HTMLMediaElement::stop()
 {
     LOG(Media, "HTMLMediaElement::stop(%p)", this);

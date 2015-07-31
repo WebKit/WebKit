@@ -511,6 +511,7 @@ private:
     void resume() override;
     void stop() override;
     void stopWithoutDestroyingMediaPlayer();
+    virtual void contextDestroyed() override;
     
     virtual void mediaVolumeDidChange() override;
 
