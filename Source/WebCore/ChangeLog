@@ -1,3 +1,26 @@
+2015-07-31  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r187630. rdar://problem/18835799
+
+    2015-07-30  Andreas Kling  <akling@apple.com>
+
+            [CF] Web process continually eating memory on simple, shared Google Docs spreadsheet.
+            <https://webkit.org/b/147403>
+            <rdar://problem/18835799>
+
+            Reviewed by Geoffrey Garen.
+
+            Make sure we service the CFRunLoop on worker threads, since ports using CoreFoundation
+            will be scheduling garbage collections and heap sweeps using CFRunLoop timers.
+
+            This fix is a stopgap. Long term we need a better design for integrating GC tasks with
+            with the web worker run loop.
+
+            * workers/WorkerRunLoop.cpp:
+            (WebCore::WorkerRunLoop::runInMode): Instead of sleeping forever, calculate a better
+            wakeup deadline by asking the CFRunLoop when its next timer will fire. Then, when a
+            timeout occurs, call CFRunLoopRunInMode (with seconds=0) to service pending timers.
+
 2015-07-31  Lucas Forschler  <lforschler@apple.com>
 
         Merge r187557

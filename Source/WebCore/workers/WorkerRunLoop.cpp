@@ -148,9 +148,21 @@ MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerGlobalScope* context, cons
     ASSERT(context);
     ASSERT(context->thread().threadID() == currentThread());
 
+    double deadline = MessageQueue<Task>::infiniteTime();
+
+#if USE(CF)
+    CFAbsoluteTime nextCFRunLoopTimerFireDate = CFRunLoopGetNextTimerFireDate(CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+    double timeUntilNextCFRunLoopTimerInSeconds = nextCFRunLoopTimerFireDate - CFAbsoluteTimeGetCurrent();
+    deadline = currentTime() + std::max(0.0, timeUntilNextCFRunLoopTimerInSeconds);
+#endif
+
     double absoluteTime = 0.0;
-    if (waitMode == WaitForMessage)
-        absoluteTime = (predicate.isDefaultMode() && m_sharedTimer->isActive()) ? m_sharedTimer->fireTime() : MessageQueue<Task>::infiniteTime();
+    if (waitMode == WaitForMessage) {
+        if (predicate.isDefaultMode() && m_sharedTimer->isActive())
+            absoluteTime = std::min(deadline, m_sharedTimer->fireTime());
+        else
+            absoluteTime = deadline;
+    }
     MessageQueueWaitResult result;
     auto task = m_messageQueue.waitForMessageFilteredWithTimeout(result, predicate, absoluteTime);
 
@@ -167,6 +179,10 @@ MessageQueueWaitResult WorkerRunLoop::runInMode(WorkerGlobalScope* context, cons
     case MessageQueueTimeout:
         if (!context->isClosing())
             m_sharedTimer->fire();
+#if USE(CF)
+        if (nextCFRunLoopTimerFireDate <= CFAbsoluteTimeGetCurrent())
+            CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, /*returnAfterSourceHandled*/ false);
+#endif
         break;
     }
 
