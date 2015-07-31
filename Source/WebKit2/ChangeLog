@@ -1,3 +1,33 @@
+2015-07-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        LayoutTests/inspector frequently run slow and timeout when run in WebKit2 but not WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=147456
+
+        Reviewed by Timothy Hatcher.
+
+        By default, WebKit2 WebPage's on PLATFORM(COCOA) enabling DOM Timer
+        throttling. Under testing, this ends up impacting Web Inspector
+        tests that create their own WKWebView which never gets displayed
+        and so gets throttled. Disable throttling on the Inspector's view
+        during testing.
+
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _hiddenPageDOMTimerThrottlingEnabled]):
+        (-[WKPreferences _setHiddenPageDOMTimerThrottlingEnabled:]):
+        SPI to toggle DOM timer throttling.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::createInspectorPage):
+        * UIProcess/WebInspectorProxy.h:
+        (WebKit::WebInspectorProxy::isUnderTest):
+        Provide a way to get if we are under test, and set it before
+        calling into the platform method.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        When testing, disable timer throttling.
+
 2015-07-30  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Set AirPlay discovery mode to disabled when page is hidden

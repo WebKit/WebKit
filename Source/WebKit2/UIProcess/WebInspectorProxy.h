@@ -206,6 +206,8 @@ private:
     bool canAttach() const { return m_canAttach; }
     bool shouldOpenAttached();
 
+    bool isUnderTest() const { return m_underTest; }
+
     void open();
 
     // The inspector level is used to give different preferences to each inspector
