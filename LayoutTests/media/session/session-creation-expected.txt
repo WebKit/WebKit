@@ -1,0 +1,20 @@
+New media sessions should be in an Idle state after creation.
+
+---
+Testing 'content' session
+---
+EXPECTED (internals.mediaSessionCurrentState(session) == 'idle') OK
+---
+Testing 'transient' session
+---
+EXPECTED (internals.mediaSessionCurrentState(session) == 'idle') OK
+---
+Testing 'transient-solo' session
+---
+EXPECTED (internals.mediaSessionCurrentState(session) == 'idle') OK
+---
+Testing 'ambient' session
+---
+EXPECTED (internals.mediaSessionCurrentState(session) == 'idle') OK
+END OF TEST
+

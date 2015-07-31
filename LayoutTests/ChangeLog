@@ -1,3 +1,14 @@
+2015-07-30  Matt Rajca  <mrajca@apple.com>
+
+        Media Session: add test to ensure media sessions are in an Idle state after creation
+        https://bugs.webkit.org/show_bug.cgi?id=147471
+
+        Reviewed by Eric Carlson.
+
+        * media/session/session-creation-expected.txt: Added.
+        * media/session/session-creation.html: Added.
+        * platform/mac/TestExpectations: Media Session support is disabled by default.
+
 2015-07-30  Anders Carlsson  <andersca@apple.com>
 
         Assertion failure when a plug-in loads a resource that redirects somewhere

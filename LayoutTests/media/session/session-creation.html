@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src=../video-test.js></script>
+    <script type="text/javascript">
+        function doTest() 
+        {
+            testSessionKind("content");
+            testSessionKind("transient");
+            testSessionKind("transient-solo");
+            testSessionKind("ambient");
+
+            endTest();
+        }
+
+        function testSessionKind(sessionKind)
+        {
+            consoleWrite("---");
+            consoleWrite("Testing '" + sessionKind + "' session");
+            consoleWrite("---");
+
+            session = new MediaSession(sessionKind);
+
+            if (window.internals)
+                testExpected('internals.mediaSessionCurrentState(session)', "idle");
+        }
+    </script>
+</head>
+<body onload="doTest()">
+    <p>New media sessions should be in an Idle state after creation.</p>
+</body>
+</html>
