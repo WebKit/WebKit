@@ -2840,7 +2840,7 @@ bool RenderLayerCompositor::requiresScrollLayer(RootLayerAttachment attachment) 
         || attachment == RootLayerAttachedViaEnclosingFrame; // a composited frame on Mac
 }
 
-static void paintScrollbar(Scrollbar* scrollbar, GraphicsContext& context, const IntRect& clip)
+void paintScrollbar(Scrollbar* scrollbar, GraphicsContext& context, const IntRect& clip)
 {
     if (!scrollbar)
         return;

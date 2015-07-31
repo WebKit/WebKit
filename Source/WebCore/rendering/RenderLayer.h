@@ -1184,6 +1184,8 @@ private:
 
 void makeMatrixRenderable(TransformationMatrix&, bool has3DRendering);
 
+bool compositedWithOwnBackingStore(const RenderLayer*);
+
 } // namespace WebCore
 
 #if ENABLE(TREE_DEBUGGING)

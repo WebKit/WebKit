@@ -562,6 +562,7 @@ private:
     HashMap<ScrollingNodeID, RenderLayer*> m_scrollingNodeToLayerMap;
 };
 
+void paintScrollbar(Scrollbar*, GraphicsContext&, const IntRect& clip);
 
 } // namespace WebCore
 

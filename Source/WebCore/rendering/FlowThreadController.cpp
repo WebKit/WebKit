@@ -257,7 +257,7 @@ void FlowThreadController::updateNamedFlowsLayerListsIfNeeded()
         flowRenderer->layer()->updateLayerListsIfNeeded();
 }
 
-static inline bool compareZIndex(RenderLayer* first, RenderLayer* second)
+static inline bool compareZIndexFlowThreadController(RenderLayer* first, RenderLayer* second)
 {
     return first->zIndex() < second->zIndex();
 }
@@ -292,7 +292,7 @@ void FlowThreadController::collectFixedPositionedLayers(Vector<RenderLayer*>& fi
         }
     }
 
-    std::stable_sort(fixedPosLayers.begin(), fixedPosLayers.end(), compareZIndex);
+    std::stable_sort(fixedPosLayers.begin(), fixedPosLayers.end(), compareZIndexFlowThreadController);
 }
 
 #ifndef NDEBUG

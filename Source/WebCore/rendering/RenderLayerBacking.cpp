@@ -1890,11 +1890,6 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
     return true;
 }
 
-static bool compositedWithOwnBackingStore(const RenderLayer* layer)
-{
-    return layer->isComposited() && !layer->backing()->paintsIntoCompositedAncestor();
-}
-
 static bool descendantLayerPaintsIntoAncestor(RenderLayer& parent)
 {
     // FIXME: We shouldn't be called with a stale z-order lists. See bug 85512.
@@ -2320,20 +2315,6 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
     compositor().didPaintBacking(this);
 
     ASSERT(!m_owningLayer.m_usedTransparency);
-}
-
-static void paintScrollbar(Scrollbar* scrollbar, GraphicsContext& context, const IntRect& clip)
-{
-    if (!scrollbar)
-        return;
-
-    context.save();
-    const IntRect& scrollbarRect = scrollbar->frameRect();
-    context.translate(-scrollbarRect.x(), -scrollbarRect.y());
-    IntRect transformedClip = clip;
-    transformedClip.moveBy(scrollbarRect.location());
-    scrollbar->paint(&context, transformedClip);
-    context.restore();
 }
 
 // Up-call from compositing layer drawing callback.

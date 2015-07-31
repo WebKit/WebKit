@@ -34,12 +34,16 @@
 
 namespace WebCore {
 
+class CSSPrimitiveValue;
 class CSSToLengthConversionData;
 class CSSValue;
 class RenderStyle;
 class WebKitCSSTransformValue;
 
+struct Length;
+
 bool transformsForValue(CSSValue&, const CSSToLengthConversionData&, TransformOperations&);
+Length convertToFloatLength(const CSSPrimitiveValue*, const CSSToLengthConversionData&);
 
 }
 #endif

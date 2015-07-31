@@ -1,3 +1,13 @@
+2015-07-31  Alex Christensen  <achristensen@webkit.org>
+
+        Prepare for debug CMake builds on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=147484
+
+        Reviewed by Tim Horton.
+
+        * Source/cmake/OptionsWindows.cmake:
+        Don't use debug runtimes in debug builds because the dependencies are only built with multithreaded runtimes.
+
 2015-07-30  Joonghun Park  <jh718.park@samsung.com>
 
         [EFL] Enable IndexedDB based on DatabaseProcess

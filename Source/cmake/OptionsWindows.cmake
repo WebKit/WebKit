@@ -32,13 +32,15 @@ if (MSVC)
         string(REGEX REPLACE "/GR" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}) # Disable RTTI
     endif ()
 
-    # Use the multithreaded static runtime library instead of the default DLL runtime.
     foreach (flag_var
         CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
         CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
-        if (${flag_var} MATCHES "/MD")
-            string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
-        endif ()
+        # Use the multithreaded static runtime library instead of the default DLL runtime.
+        string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
+
+        # No debug runtime, even in debug builds.
+        string(REGEX REPLACE "/MTd" "/MT" ${flag_var} "${${flag_var}}")
+        string(REGEX REPLACE "/D_DEBUG" "" ${flag_var} "${${flag_var}}")
     endforeach ()
 endif ()
 

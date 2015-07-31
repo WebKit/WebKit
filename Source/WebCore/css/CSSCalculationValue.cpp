@@ -756,7 +756,7 @@ RefPtr<CSSCalcValue> CSSCalcValue::create(CSSParserString name, CSSParserValueLi
     CSSCalcExpressionNodeParser parser;
     RefPtr<CSSCalcExpressionNode> expression;
 
-    if (equalIgnoringCase(name, "calc(") || equalIgnoringCase(name, "-webkit-calc("))
+    if (name.equalIgnoringCase("calc(") || name.equalIgnoringCase("-webkit-calc("))
         expression = parser.parseCalc(&parserValueList);
 
     return expression ? adoptRef(new CSSCalcValue(expression.releaseNonNull(), range != CalculationRangeAll)) : nullptr;

@@ -1530,7 +1530,7 @@ inline bool RenderLayer::shouldRepaintAfterLayout() const
     return !isComposited() || backing()->paintsIntoCompositedAncestor();
 }
 
-static bool compositedWithOwnBackingStore(const RenderLayer* layer)
+bool compositedWithOwnBackingStore(const RenderLayer* layer)
 {
     return layer->isComposited() && !layer->backing()->paintsIntoCompositedAncestor();
 }

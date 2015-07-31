@@ -1476,13 +1476,6 @@ Vector<RefPtr<StyleRule>> StyleResolver::pseudoStyleRulesForElement(Element* ele
     return collector.matchedRuleList();
 }
 
-// -------------------------------------------------------------------------------------
-
-static Length convertToFloatLength(const CSSPrimitiveValue* primitiveValue, const CSSToLengthConversionData& conversionData)
-{
-    return primitiveValue ? primitiveValue->convertToLength<FixedFloatConversion | PercentConversion | CalculatedConversion>(conversionData) : Length(Undefined);
-}
-
 static bool shouldApplyPropertyInParseOrder(CSSPropertyID propertyID)
 {
     switch (propertyID) {

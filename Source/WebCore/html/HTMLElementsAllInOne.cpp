@@ -84,6 +84,7 @@
 #include "HTMLObjectElement.cpp"
 #include "HTMLOptGroupElement.cpp"
 #include "HTMLOptionElement.cpp"
+#include "HTMLOutputElement.cpp"
 #include "HTMLParagraphElement.cpp"
 #include "HTMLParamElement.cpp"
 #include "HTMLPlugInImageElement.cpp"
