@@ -1,5 +1,23 @@
 2015-07-31  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r187694.
+
+    2015-07-31  Eric Carlson  <eric.carlson@apple.com>
+
+            [iOS] use a media-specific user gesture check
+            https://bugs.webkit.org/show_bug.cgi?id=147509
+
+            Reviewed by Tim Horton.
+
+            Change an enum name added in r187688.
+
+            * dom/UserGestureIndicator.cpp:
+            (WebCore::isDefinite): DefinitelyProcessingMediaUserGesture -> DefinitelyProcessingPotentialUserGesture
+            (WebCore::UserGestureIndicator::processingUserGestureForMedia): Ditto.
+            * dom/UserGestureIndicator.h: Ditto.
+
+2015-07-31  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r187688.
 
     2015-07-31  Eric Carlson  <eric.carlson@apple.com>

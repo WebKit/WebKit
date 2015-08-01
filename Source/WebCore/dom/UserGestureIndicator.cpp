@@ -33,7 +33,7 @@ namespace WebCore {
 
 static bool isDefinite(ProcessingUserGestureState state)
 {
-    return state == DefinitelyProcessingUserGesture || state == DefinitelyNotProcessingUserGesture || state == DefinitelyProcessingMediaUserGesture;
+    return state == DefinitelyProcessingUserGesture || state == DefinitelyNotProcessingUserGesture || state == DefinitelyProcessingPotentialUserGesture;
 }
 
 ProcessingUserGestureState UserGestureIndicator::s_state = DefinitelyNotProcessingUserGesture;
@@ -71,7 +71,7 @@ bool UserGestureIndicator::processingUserGestureForMedia()
     if (!isMainThread())
         return false;
 
-    return s_state == DefinitelyProcessingUserGesture || s_state == DefinitelyProcessingMediaUserGesture;
+    return s_state == DefinitelyProcessingUserGesture || s_state == DefinitelyProcessingPotentialUserGesture;
 }
 
 }
