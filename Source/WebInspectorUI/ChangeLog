@@ -1,3 +1,36 @@
+2015-08-01  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Replace "unknown-mac" CSS class with "el-capitan"
+        https://bugs.webkit.org/show_bug.cgi?id=147524
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Platform.js:
+        No need to repeat WebInspector.Platform.version.release for every possible case.
+
+        * UserInterface/Views/Toolbar.css:
+        (body:not(.el-capitan) .toolbar .dashboard-container):
+        (body:not(.el-capitan) .toolbar .search-bar > input[type="search"]):
+        (body:not(.el-capitan) .toolbar .search-bar > input[type="search"]:focus):
+        (body:not(.el-capitan) .toolbar .item.button:active):
+        (body.window-inactive:not(.el-capitan) .toolbar .dashboard-container):
+        (body.el-capitan .toolbar .dashboard-container):
+        (body.el-capitan .toolbar .search-bar > input[type="search"]):
+        (body.el-capitan .toolbar .search-bar > input[type="search"]:focus):
+        (@media (-webkit-min-device-pixel-ratio: 2)):
+        (body.el-capitan .toolbar .item.button:active):
+        (body.el-capitan.window-inactive .toolbar .dashboard-container):
+        (body:not(.unknown-mac) .toolbar .dashboard-container): Deleted.
+        (body:not(.unknown-mac) .toolbar .search-bar > input[type="search"]): Deleted.
+        (body:not(.unknown-mac) .toolbar .search-bar > input[type="search"]:focus): Deleted.
+        (body:not(.unknown-mac) .toolbar .item.button:active): Deleted.
+        (body.window-inactive:not(.unknown-mac) .toolbar .dashboard-container): Deleted.
+        (body.unknown-mac .toolbar .dashboard-container): Deleted.
+        (body.unknown-mac .toolbar .search-bar > input[type="search"]): Deleted.
+        (body.unknown-mac .toolbar .search-bar > input[type="search"]:focus): Deleted.
+        (body.unknown-mac .toolbar .item.button:active): Deleted.
+        (body.unknown-mac.window-inactive .toolbar .dashboard-container): Deleted.
+
 2015-07-31  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: inherited CSS rules disappear from Styles sidebar while editing
