@@ -1,5 +1,22 @@
 2015-07-31  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Autocomplete: Undo (Cmd+Z) doesn't work as expected
+        https://bugs.webkit.org/show_bug.cgi?id=147316
+
+        Reviewed by Timothy Hatcher.
+
+        Instead of replacing the text for a completion, which messes up the undo history, add
+        a unique marker that contains the remaining text for the current completion.
+
+        * UserInterface/Controllers/CodeMirrorCompletionController.js:
+        (WebInspector.CodeMirrorCompletionController.prototype._createCompletionHintMarker):
+        (WebInspector.CodeMirrorCompletionController.prototype._applyCompletionHint.update):
+        (WebInspector.CodeMirrorCompletionController.prototype._applyCompletionHint):
+        (WebInspector.CodeMirrorCompletionController.prototype._removeCompletionHint.update):
+        (WebInspector.CodeMirrorCompletionController.prototype._removeCompletionHint):
+
+2015-07-31  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Scrolling "jumps" in console
         https://bugs.webkit.org/show_bug.cgi?id=147482
 
