@@ -6,7 +6,6 @@ function shouldBeSyntaxError(s) {
     } catch(e) {
         if (e instanceof SyntaxError)
             isSyntaxError = true;
-        print(e);
     }
     if (!isSyntaxError)
         throw new Error("expected a syntax error");

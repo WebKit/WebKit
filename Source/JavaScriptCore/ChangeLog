@@ -1,3 +1,11 @@
+2015-08-01  Saam barati  <saambarati1@gmail.com>
+
+        Unreviewed. Remove unintentional "print" statement in test case.
+        https://bugs.webkit.org/show_bug.cgi?id=142567
+
+        * tests/stress/class-syntax-definition-semantics.js:
+        (shouldBeSyntaxError):
+
 2015-07-31  Alex Christensen  <achristensen@webkit.org>
 
         Prepare for VS2015
