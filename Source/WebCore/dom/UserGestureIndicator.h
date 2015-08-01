@@ -34,7 +34,7 @@ class Document;
 
 enum ProcessingUserGestureState {
     DefinitelyProcessingUserGesture,
-    DefinitelyProcessingMediaUserGesture,
+    DefinitelyProcessingPotentialUserGesture,
     PossiblyProcessingUserGesture,
     DefinitelyNotProcessingUserGesture
 };
