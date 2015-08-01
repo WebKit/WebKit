@@ -414,6 +414,7 @@ void FontCache::purgeInactiveFontData(unsigned purgeCount)
 {
     pruneUnreferencedEntriesFromFontCascadeCache();
     pruneSystemFallbackFonts();
+    platformPurgeInactiveFontData();
 
 #if PLATFORM(IOS)
     FontLocker fontLocker;
