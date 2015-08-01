@@ -212,7 +212,7 @@ template<typename WrapperClass, typename DOMClass> inline JSDOMWrapper* createWr
 {
     ASSERT(node);
     ASSERT(!getCachedWrapper(globalObject->world(), node));
-    WrapperClass* wrapper = WrapperClass::create(getDOMStructure<WrapperClass>(globalObject->vm(), globalObject), globalObject, Ref<DOMClass>(ref));
+    WrapperClass* wrapper = WrapperClass::create(getDOMStructure<WrapperClass>(globalObject->vm(), globalObject), globalObject, Ref<DOMClass>(*node));
     cacheWrapper(globalObject->world(), node, wrapper);
     return wrapper;
 }
