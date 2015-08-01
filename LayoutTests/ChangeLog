@@ -1,5 +1,13 @@
 2015-07-31  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Unreviewed gardening. Skip Media Sessions tests, the feature is not yet enabled.
+
+        * TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2015-07-31  Joseph Pecoraro  <pecoraro@apple.com>
+
         Unreviewed gardening. Update inspector test skips based on bots.
 
         * TestExpectations:

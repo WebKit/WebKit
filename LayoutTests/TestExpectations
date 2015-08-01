@@ -525,3 +525,5 @@ webkit.org/b/146182 editing/selection/leak-document-with-selection-inside.html [
 
 webkit.org/b/146434 fast/dom/HTMLImageElement/sizes [ Skip ]
 
+# Media Sessions is not yet enabled by default: ENABLE(MEDIA_SESSION)
+media/session [ Skip ]

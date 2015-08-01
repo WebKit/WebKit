@@ -993,19 +993,6 @@ webkit.org/b/136708 media/media-fullscreen-not-in-document.html
 
 webkit.org/b/140639 http/tests/media/video-play-waiting.html [ Pass Timeout ]
 
-# ENABLE(MEDIA_SESSION) is disabled
-media/session/content-interruptions.html
-media/session/controls-existence.html
-media/session/default-session.html
-media/session/play-pause-media-events-in-content-sessions.html
-media/session/play-pause-media-events-in-non-content-sessions.html
-media/session/releasing-sessions.html
-media/session/session-creation.html
-media/session/track-media-events-disabled.html
-media/session/track-media-events-in-content-sessions.html
-media/session/transient-interruptions.html
-media/session/transient-solo-interruptions.html
-
 # This test requires generation of progress events during loading
 webkit.org/b/100984 media/progress-events-generated-correctly.html [ Failure ]
 

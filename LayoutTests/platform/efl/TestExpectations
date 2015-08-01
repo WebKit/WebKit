@@ -2230,7 +2230,6 @@ webkit.org/b/146233 fast/forms/listbox-visible-size.html [ Failure ]
 
 webkit.org/b/146495 accessibility/content-editable-as-textarea.html [ Timeout ]
 webkit.org/b/146495 editing/selection/designmode-no-caret.html [ Timeout ]
-webkit.org/b/146495 media/session/controls-existence.html [ Timeout ]
 
 # Test requires hardcoded font names, which I do not have for this port.
 fast/text/han-generic-font-families.html [ WontFix ]
