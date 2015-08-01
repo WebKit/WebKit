@@ -2019,7 +2019,6 @@ void HTMLConverter::_addMarkersToList(NSTextList *list, NSRange range)
     NSArray *textLists;
     CGFloat markerLocation;
     CGFloat listLocation;
-    CGFloat pointSize;
     
     if (range.length == 0 || range.location >= textLength)
         return;
@@ -2034,7 +2033,6 @@ void HTMLConverter::_addMarkersToList(NSTextList *list, NSRange range)
                 paragraphRange = [string paragraphRangeForRange:NSMakeRange(idx, 0)];
                 paragraphStyle = [_attrStr attribute:NSParagraphStyleAttributeName atIndex:idx effectiveRange:&styleRange];
                 font = [_attrStr attribute:NSFontAttributeName atIndex:idx effectiveRange:NULL];
-                pointSize = font ? [font pointSize] : 12;
                 if ([[paragraphStyle textLists] count] == listIndex + 1) {
                     stringToInsert = [NSString stringWithFormat:@"\t%@\t", [list markerForItemNumber:itemNum++]];
                     insertLength = [stringToInsert length];
