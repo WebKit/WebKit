@@ -1,3 +1,16 @@
+2015-08-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        HashTraits<AtomicString> can use SimpleClassHashTraits
+        https://bugs.webkit.org/show_bug.cgi?id=147528
+
+        Reviewed by Andreas Kling.
+
+        No point in duplicating the code inside SimpleClassHashTraits.
+
+        * wtf/text/AtomicStringHash.h:
+        (WTF::HashTraits<WTF::AtomicString>::constructDeletedValue): Deleted.
+        (WTF::HashTraits<WTF::AtomicString>::isDeletedValue): Deleted.
+
 2015-08-01  Alex Christensen  <achristensen@webkit.org>
 
         Fix compile errors with VS2015
