@@ -474,7 +474,9 @@ void FontCache::platformPurgeInactiveFontData()
 
 static inline RetainPtr<CTFontRef> lookupCTFont(CTFontRef font, float fontSize, const UChar* characters, unsigned length)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1090
+#if __MAC_OS_X_VERSION_MIN_REQUIRED != 1090
+    UNUSED_PARAM(fontSize);
+#else
     if (!font) {
         font = reinterpret_cast<CTFontRef>([NSFont userFontOfSize:fontSize]);
         bool acceptable = true;
