@@ -62,7 +62,10 @@ WebInspector.CSSStyleDeclarationSection = function(delegate, style)
     this._propertiesElement = document.createElement("div");
     this._propertiesElement.className = "properties";
 
+    this._editorActive = false;
     this._propertiesTextEditor = new WebInspector.CSSStyleDeclarationTextEditor(this, style);
+    this._propertiesTextEditor.addEventListener(WebInspector.CSSStyleDeclarationTextEditor.Event.ContentChanged, this._editorContentChanged.bind(this));
+    this._propertiesTextEditor.addEventListener(WebInspector.CSSStyleDeclarationTextEditor.Event.Blurred, this._editorBlurred.bind(this));
     this._propertiesElement.appendChild(this._propertiesTextEditor.element);
 
     this._element.appendChild(this._headerElement);
@@ -386,6 +389,11 @@ WebInspector.CSSStyleDeclarationSection.prototype = {
         return !this._style.editable;
     },
 
+    get editorActive()
+    {
+        return this._editorActive;
+    },
+
     // Private
 
     get _currentSelectorText()
@@ -585,7 +593,22 @@ WebInspector.CSSStyleDeclarationSection.prototype = {
     get _hasInvalidSelector()
     {
         return this._element.classList.contains(WebInspector.CSSStyleDeclarationSection.SelectorInvalidClassName);
+    },
+
+    _editorContentChanged: function(event)
+    {
+        this._editorActive = true;
+    },
+
+    _editorBlurred: function(event)
+    {
+        this._editorActive = false;
+        this.dispatchEventToListeners(WebInspector.CSSStyleDeclarationSection.Event.Blurred);
     }
+};
+
+WebInspector.CSSStyleDeclarationSection.Event = {
+    Blurred: "css-style-declaration-sections-blurred"
 };
 
 WebInspector.CSSStyleDeclarationSection.prototype.__proto__ = WebInspector.StyleDetailsPanel.prototype;

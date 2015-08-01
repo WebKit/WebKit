@@ -744,6 +744,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         // Reset the content on blur since we stop accepting external changes while the the editor is focused.
         // This causes us to pick up any change that was suppressed while the editor was focused.
         this._resetContent();
+        this.dispatchEventToListeners(WebInspector.CSSStyleDeclarationTextEditor.Event.Blurred);
     }
 
     _editorFocused(codeMirror)
@@ -779,6 +780,8 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
         if (this._commitChangesTimeout)
             clearTimeout(this._commitChangesTimeout);
         this._commitChangesTimeout = setTimeout(this._commitChanges.bind(this), delay);
+
+        this.dispatchEventToListeners(WebInspector.CSSStyleDeclarationTextEditor.Event.ContentChanged);
     }
 
     _updateTextMarkers(nonatomic)
@@ -1669,6 +1672,11 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
     {
         this._tokenTrackingController.highlightRange(candidate.hoveredTokenRange);
     }
+};
+
+WebInspector.CSSStyleDeclarationTextEditor.Event = {
+    ContentChanged: "css-style-declaration-text-editor-content-changed",
+    Blurred: "css-style-declaration-text-editor-blurred"
 };
 
 WebInspector.CSSStyleDeclarationTextEditor.StyleClassName = "css-style-text-editor";

@@ -41,6 +41,8 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
         this._emptyFilterResultsMessage.classList.add("no-filter-results-message");
         this._emptyFilterResultsMessage.textContent = WebInspector.UIString("No Results Found");
         this._emptyFilterResultsElement.appendChild(this._emptyFilterResultsMessage);
+
+        this._boundRemoveSectionWithActiveEditor = this._removeSectionWithActiveEditor.bind(this);
     }
 
     // Public
@@ -52,6 +54,22 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
         if (!significantChange) {
             super.refresh();
             return;
+        }
+
+        if (!this._forceSignificantChange) {
+            this._sectionWithActiveEditor = null;
+            for (var section of this._sections) {
+                if (!section.editorActive)
+                    continue;
+
+                this._sectionWithActiveEditor = section;
+                break;
+            }
+
+            if (this._sectionWithActiveEditor) {
+                this._sectionWithActiveEditor.addEventListener(WebInspector.CSSStyleDeclarationSection.Event.Blurred, this._boundRemoveSectionWithActiveEditor);
+                return;
+            }
         }
 
         var newSections = [];
@@ -445,5 +463,11 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
     {
         this._focusNextNewInspectorRule = true;
         this.nodeStyles.addEmptyRule();
+    }
+
+    _removeSectionWithActiveEditor(event)
+    {
+        this._sectionWithActiveEditor.removeEventListener(WebInspector.CSSStyleDeclarationSection.Event.Blurred, this._boundRemoveSectionWithActiveEditor);
+        this.refresh(true);
     }
 };

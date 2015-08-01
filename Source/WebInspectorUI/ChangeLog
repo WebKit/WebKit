@@ -1,5 +1,30 @@
 2015-07-31  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: inherited CSS rules disappear from Styles sidebar while editing
+        https://bugs.webkit.org/show_bug.cgi?id=147441
+
+        Reviewed by Timothy Hatcher.
+
+        If the user edits a style declaration such that it would dissapear mid-edit, prevent
+        the rules panel from refreshing until that editor is blurred.
+
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WebInspector.CSSStyleDeclarationSection):
+        (WebInspector.CSSStyleDeclarationSection.prototype.get editorActive):
+        (WebInspector.CSSStyleDeclarationSection.prototype.get _hasInvalidSelector):
+        (WebInspector.CSSStyleDeclarationSection.prototype._editorContentChanged):
+        (WebInspector.CSSStyleDeclarationSection.prototype._editorBlurred):
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._editorBlured):
+        (WebInspector.CSSStyleDeclarationTextEditor.prototype._contentChanged):
+        * UserInterface/Views/RulesStyleDetailsPanel.js:
+        (WebInspector.RulesStyleDetailsPanel):
+        (WebInspector.RulesStyleDetailsPanel.prototype._removeSectionWithActiveEditor):
+        * UserInterface/Views/StyleDetailsPanel.js:
+        (WebInspector.StyleDetailsPanel.prototype._refreshPreservingScrollPosition):
+
+2015-07-31  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Autocomplete: Undo (Cmd+Z) doesn't work as expected
         https://bugs.webkit.org/show_bug.cgi?id=147316
 
