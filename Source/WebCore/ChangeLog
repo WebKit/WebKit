@@ -1,5 +1,24 @@
 2015-07-31  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r187684.
+
+    2015-07-31  Jeremy Jones  <jeremyj@apple.com>
+
+            Rename AVPlayerLayerView to _AVPlayerLayerView.
+            https://bugs.webkit.org/show_bug.cgi?id=147399
+
+            Reviewed by Eric Carlson.
+
+            Change class name AVPlayerLayerView to match change in AVKit SPI. 
+            This prevents conflicts with 3rd party apps.
+
+            * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+            (WebAVPlayerLayerView_dealloc):
+            (getWebAVPlayerLayerViewClass):
+            * platform/spi/cocoa/AVKitSPI.h:
+
+2015-07-31  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r187675.
 
     2015-07-31  Jer Noble  <jer.noble@apple.com>
