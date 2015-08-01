@@ -396,9 +396,51 @@ bool Font::applyTransforms(GlyphBufferGlyph* glyphs, GlyphBufferAdvance* advance
 #endif
 }
 
+struct CharacterFallbackMapKey {
+    CharacterFallbackMapKey()
+    {
+    }
+
+    CharacterFallbackMapKey(UChar32 character, bool isForPlatformFont)
+        : character(character)
+        , isForPlatformFont(isForPlatformFont)
+    {
+    }
+
+    CharacterFallbackMapKey(WTF::HashTableDeletedValueType)
+        : character(-1)
+    {
+    }
+
+    bool isHashTableDeletedValue() const { return character == -1; }
+
+    bool operator==(const CharacterFallbackMapKey& other) const
+    {
+        return character == other.character && isForPlatformFont == other.isForPlatformFont;
+    }
+
+    static const bool emptyValueIsZero = true;
+
+    UChar32 character { 0 };
+    bool isForPlatformFont { false };
+};
+
+struct CharacterFallbackMapKeyHash {
+    static unsigned hash(const CharacterFallbackMapKey& key)
+    {
+        return WTF::pairIntHash(key.character, key.isForPlatformFont);
+    }
+
+    static bool equal(const CharacterFallbackMapKey& a, const CharacterFallbackMapKey& b)
+    {
+        return a == b;
+    }
+
+    static const bool safeToCompareToEmptyOrDeleted = true;
+};
+
 // Fonts are not ref'd to avoid cycles.
-typedef std::pair<UChar32, bool /* isForPlatformFont */> CharacterFallbackMapKey;
-typedef HashMap<CharacterFallbackMapKey, Font*> CharacterFallbackMap;
+typedef HashMap<CharacterFallbackMapKey, Font*, CharacterFallbackMapKeyHash, WTF::SimpleClassHashTraits<CharacterFallbackMapKey>> CharacterFallbackMap;
 typedef HashMap<const Font*, CharacterFallbackMap> SystemFallbackCache;
 
 static SystemFallbackCache& systemFallbackCache()
@@ -416,8 +458,8 @@ RefPtr<Font> Font::systemFallbackFontForCharacter(UChar32 character, const FontD
         return FontCache::singleton().systemFallbackForCharacters(description, this, isForPlatformFont, &codeUnit, 1);
     }
 
-    auto key = std::make_pair(character, isForPlatformFont);
-    auto characterAddResult = fontAddResult.iterator->value.add(key, nullptr);
+    auto key = CharacterFallbackMapKey(character, isForPlatformFont);
+    auto characterAddResult = fontAddResult.iterator->value.add(WTF::move(key), nullptr);
 
     Font*& fallbackFont = characterAddResult.iterator->value;
 
