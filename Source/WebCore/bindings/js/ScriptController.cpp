@@ -306,6 +306,11 @@ bool ScriptController::processingUserGesture()
     return UserGestureIndicator::processingUserGesture();
 }
 
+bool ScriptController::processingUserGestureForMedia()
+{
+    return UserGestureIndicator::processingUserGestureForMedia();
+}
+
 bool ScriptController::canAccessFromCurrentOrigin(Frame *frame)
 {
     ExecState* exec = JSMainThreadExecState::currentState();

@@ -920,7 +920,7 @@ void HTMLMediaElement::load()
     
     if (!m_mediaSession->dataLoadingPermitted(*this))
         return;
-    if (ScriptController::processingUserGesture())
+    if (ScriptController::processingUserGestureForMedia())
         removeBehaviorsRestrictionsAfterFirstUserGesture();
 
     prepareForLoad();
@@ -2839,7 +2839,7 @@ void HTMLMediaElement::play()
 
     if (!m_mediaSession->playbackPermitted(*this))
         return;
-    if (ScriptController::processingUserGesture())
+    if (ScriptController::processingUserGestureForMedia())
         removeBehaviorsRestrictionsAfterFirstUserGesture();
 
     playInternal();

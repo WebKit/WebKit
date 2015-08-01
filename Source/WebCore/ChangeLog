@@ -1,5 +1,30 @@
 2015-07-31  Babak Shafiei  <bshafiei@apple.com>
 
+        Merge r187688.
+
+    2015-07-31  Eric Carlson  <eric.carlson@apple.com>
+
+            [iOS] use a media-specific user gesture check
+            https://bugs.webkit.org/show_bug.cgi?id=147509
+
+            Reviewed by Jer Noble.
+
+            * bindings/js/ScriptController.cpp:
+            (WebCore::ScriptController::processingUserGestureForMedia): New.
+            * bindings/js/ScriptController.h:
+
+            * dom/UserGestureIndicator.cpp:
+            (WebCore::isDefinite): Allow DefinitelyProcessingMediaUserGesture.
+            (WebCore::UserGestureIndicator::processingUserGestureForMedia): New.
+            * dom/UserGestureIndicator.h:
+
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::load): Use ScriptController::processingUserGestureForMedia instead of 
+              ScriptController::processingUserGesture
+            (WebCore::HTMLMediaElement::play): Ditto.
+
+2015-07-31  Babak Shafiei  <bshafiei@apple.com>
+
         Merge r187684.
 
     2015-07-31  Jeremy Jones  <jeremyj@apple.com>
