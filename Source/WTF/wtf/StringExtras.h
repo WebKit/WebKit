@@ -40,6 +40,7 @@
 
 #include <errno.h>
 
+#if _MSC_VER < 1900
 inline int snprintf(char* buffer, size_t count, const char* format, ...) 
 {
     int result;
@@ -57,6 +58,7 @@ inline int snprintf(char* buffer, size_t count, const char* format, ...)
 
     return result;
 }
+#endif
 
 inline double wtf_vsnprintf(char* buffer, size_t count, const char* format, va_list args)
 {

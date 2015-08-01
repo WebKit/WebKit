@@ -1,3 +1,14 @@
+2015-08-01  Alex Christensen  <achristensen@webkit.org>
+
+        Fix compile errors with VS2015
+        https://bugs.webkit.org/show_bug.cgi?id=147526
+
+        Reviewed by Myles Maxfield.
+
+        * WebKitDLL.cpp:
+        (shutDownWebKit):
+        (loadResourceIntoBuffer): Needs to be exported from WebKit.dll to link with CMake using VS2015.
+
 2015-07-27  Alex Christensen  <achristensen@webkit.org>
 
         Use Ninja on Windows.
