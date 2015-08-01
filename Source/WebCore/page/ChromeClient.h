@@ -425,6 +425,7 @@ public:
 #if ENABLE(MEDIA_SESSION)
     virtual void hasMediaSessionWithActiveMediaElementsDidChange(bool) { }
     virtual void mediaSessionMetadataDidChange(const WebCore::MediaSessionMetadata&) { }
+    virtual void focusedContentMediaElementDidChange(uint64_t) { }
 #endif
 
     virtual void setPageActivityState(PageActivityState::Flags) { }

@@ -1072,6 +1072,11 @@ void WebChromeClient::mediaSessionMetadataDidChange(const WebCore::MediaSessionM
 {
     m_page->send(Messages::WebPageProxy::MediaSessionMetadataDidChange(metadata));
 }
+
+void WebChromeClient::focusedContentMediaElementDidChange(uint64_t elementID)
+{
+    m_page->send(Messages::WebPageProxy::FocusedContentMediaElementDidChange(elementID));
+}
 #endif
 
 void WebChromeClient::setPageActivityState(PageActivityState::Flags activityState)

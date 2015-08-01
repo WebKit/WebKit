@@ -297,6 +297,7 @@ private:
 #if ENABLE(MEDIA_SESSION)
     virtual void hasMediaSessionWithActiveMediaElementsDidChange(bool) override;
     virtual void mediaSessionMetadataDidChange(const WebCore::MediaSessionMetadata&) override;
+    virtual void focusedContentMediaElementDidChange(uint64_t) override;
 #endif
 
 #if ENABLE(SUBTLE_CRYPTO)

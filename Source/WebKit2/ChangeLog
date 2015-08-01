@@ -1,3 +1,18 @@
+2015-07-27  Matt Rajca  <mrajca@apple.com>
+
+        Media Session: inform the UI process when the focused Content media element changes
+        https://bugs.webkit.org/show_bug.cgi?id=147323
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::isPlayingMediaDidChange):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::focusedContentMediaElementDidChange):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2015-07-31  Chris Dumez  <cdumez@apple.com>
 
         Drop dummy Timer callbacks

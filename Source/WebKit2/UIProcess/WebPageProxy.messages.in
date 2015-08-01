@@ -427,6 +427,7 @@ messages -> WebPageProxy {
 #if ENABLE(MEDIA_SESSION)
     HasMediaSessionWithActiveMediaElementsDidChange(bool state)
     MediaSessionMetadataDidChange(WebCore::MediaSessionMetadata metadata);
+    FocusedContentMediaElementDidChange(uint64_t elementID)
 #endif
 
 #if PLATFORM(MAC)

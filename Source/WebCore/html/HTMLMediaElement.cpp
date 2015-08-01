@@ -2910,7 +2910,12 @@ void HTMLMediaElement::playInternal()
         if (m_readyState == HAVE_ENOUGH_DATA || m_readyState == HAVE_FUTURE_DATA) {
             if (m_session) {
                 m_session->addActiveMediaElement(*this);
-                
+
+                if (m_session->kindEnum() == MediaSession::Kind::Content) {
+                    if (Page* page = document().page())
+                        page->chrome().client().focusedContentMediaElementDidChange(m_elementID);
+                }
+
                 if (!m_session->invoke()) {
                     pause();
                     return;
