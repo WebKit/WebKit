@@ -1317,6 +1317,11 @@ webkit.org/b/136674 media/track/track-cue-rendering-with-padding.html [ Timeout 
 
 webkit.org/b/137698 media/video-controls-drag.html [ Timeout ]
 
+webkit.org/b/137131 inspector/debugger [ Skip ]
+webkit.org/b/147518 inspector/dom [ Skip ]
+webkit.org/b/147518 inspector/model [ Skip ]
+webkit.org/b/147518 inspector/timeline [ Skip ]
+
 webkit.org/b/139362 inspector/css/pseudo-element-matches.html [ Timeout ]
 webkit.org/b/139362 inspector/css/selector-specificity.html [ Timeout Pass ]
 webkit.org/b/147229 inspector/css/modify-rule-selector.html [ Skip ] # Timeout

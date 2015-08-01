@@ -2341,7 +2341,8 @@ http/tests/xmlhttprequest/workers/methods.html [ Pass Crash ]
 ################           Inspector Issues                   ##################
 ################################################################################
 
-# Some inspector tests timing out after r173992. Skip them.
+# Seems that all inspector tests are timing out on Windows. Skip them all.
+webkit.org/b/137157 inspector [ Skip ]
 
 webkit.org/b/143548 inspector/console [ Skip ]
 webkit.org/b/137157 inspector/css [ Skip ]

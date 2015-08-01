@@ -84,6 +84,8 @@ webkit.org/b/147502 inspector/debugger/break-on-uncaught-exception-throw-in-prom
 webkit.org/b/147502 inspector/debugger/break-on-uncaught-exception-throw-in-promise-with-catch.html [ Skip ]
 webkit.org/b/147502 inspector/debugger/break-on-uncaught-exception-throw-in-promise.html [ Skip ]
 
+webkit.org/b/147517 inspector/page/main-frame-resource.html [ Pass Failure ]
+
 webkit.org/b/142208 inspector/timeline/debugger-paused-while-recording.html [ Skip ]
 webkit.org/b/142208 inspector/timeline/exception-in-injected-script-while-recording.html [ Skip ]
 
