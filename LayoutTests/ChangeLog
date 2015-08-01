@@ -1,3 +1,11 @@
+2015-08-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Win] Test gardening
+
+        Unreviewed
+
+        * platform/win/TestExpectations:
+
 2015-07-31  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Adding -expected.png for fast/text/international/arabic-justify.html

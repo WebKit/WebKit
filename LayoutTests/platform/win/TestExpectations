@@ -3129,4 +3129,4 @@ http/tests/misc/large-js-program.php [ Slow Crash ]
 # Slider thumb widget painting
 fast/repaint/block-inputrange-repaint.html [ Pass Failure ]
 
-fast/inline/padding-ellipsis-right.html [ Failure ]
+fast/inline/padding-ellipsis-right.html [ ImageOnlyFailure ]
