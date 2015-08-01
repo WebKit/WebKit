@@ -1,3 +1,24 @@
+2015-08-01  Babak Shafiei  <bshafiei@apple.com>
+
+        Merge r187687.
+
+    2015-07-31  Andreas Kling  <akling@apple.com>
+
+            Crashes under HTMLMediaElement::updateActiveTextTrackCues() when destroying CachedPage.
+            <https://webkit.org/b/147506>
+            <rdar://problem/21939014>
+
+            Reviewed by Chris Dumez.
+
+            Don't mess with the media element's text tracks below its ActiveDOMObject::stop()
+            implementation, since that may cause DOM mutations.
+
+            I don't have a repro or a test for this, but plenty of crash logs to indicate that
+            we're getting ourselves into trouble by modifying the DOM during CachedPage teardown.
+
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::configureTextTrackDisplay):
+
 2015-07-31  Babak Shafiei  <bshafiei@apple.com>
 
         Roll out r187466.
