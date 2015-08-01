@@ -288,6 +288,27 @@ HashSet<HTMLMediaElement*>& HTMLMediaElement::allMediaElements()
     return elements;
 }
 
+#if ENABLE(MEDIA_SESSION)
+typedef HashMap<uint64_t, HTMLMediaElement*> IDToElementMap;
+
+static IDToElementMap& elementIDsToElements()
+{
+    static NeverDestroyed<IDToElementMap> map;
+    return map;
+}
+
+HTMLMediaElement* HTMLMediaElement::elementWithID(uint64_t id)
+{
+    return elementIDsToElements().get(id);
+}
+
+static uint64_t nextElementID()
+{
+    static uint64_t elementID = 0;
+    return ++elementID;
+}
+#endif
+
 HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& document, bool createdByParser)
     : HTMLElement(tagName, document)
     , ActiveDOMObject(&document)
@@ -416,6 +437,9 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
 #endif
 
 #if ENABLE(MEDIA_SESSION)
+    m_elementID = nextElementID();
+    elementIDsToElements().add(m_elementID, this);
+
     setSessionInternal(document.defaultMediaSession());
 #endif
 
@@ -2853,7 +2877,7 @@ void HTMLMediaElement::playInternal()
         LOG(Media, "  returning because of interruption");
         return;
     }
-    
+
     // 4.8.10.9. Playing the media resource
     if (!m_player || m_networkState == NETWORK_EMPTY)
         scheduleDelayedAction(LoadMediaResource);
@@ -2919,7 +2943,7 @@ void HTMLMediaElement::pauseInternal()
         LOG(Media, "  returning because of interruption");
         return;
     }
-    
+
     // 4.8.10.9. Playing the media resource
     if (!m_player || m_networkState == NETWORK_EMPTY) {
         // Unless the restriction on media requiring user action has been lifted
