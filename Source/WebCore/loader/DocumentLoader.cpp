@@ -550,10 +550,8 @@ void DocumentLoader::willSendRequest(ResourceRequest& newRequest, const Resource
         // We checked application cache for initial URL, now we need to check it for redirected one.
         ASSERT(!m_substituteData.isValid());
         m_applicationCacheHost->maybeLoadMainResourceForRedirect(newRequest, m_substituteData);
-        if (m_substituteData.isValid()) {
-            RELEASE_ASSERT(m_mainResource);
-            m_identifierForLoadWithoutResourceLoader = m_mainResource->identifierForLoadWithoutResourceLoader();
-        }
+        if (m_substituteData.isValid())
+            m_identifierForLoadWithoutResourceLoader = mainResourceLoader()->identifier();
     }
 
     // FIXME: Ideally we'd stop the I/O until we hear back from the navigation policy delegate
@@ -583,15 +581,10 @@ void DocumentLoader::continueAfterNavigationPolicy(const ResourceRequest&, bool 
         // However, from an API perspective, this isn't a cancellation. Therefore, sever our relationship with the network load,
         // but prevent the ResourceLoader from sending ResourceLoadNotifier callbacks.
         RefPtr<ResourceLoader> resourceLoader = mainResourceLoader();
-        if (resourceLoader) {
-            ASSERT(resourceLoader->shouldSendResourceLoadCallbacks());
-            resourceLoader->setSendCallbackPolicy(DoNotSendCallbacks);
-        }
-
+        ASSERT(resourceLoader->shouldSendResourceLoadCallbacks());
+        resourceLoader->setSendCallbackPolicy(DoNotSendCallbacks);
         clearMainResource();
-
-        if (resourceLoader)
-            resourceLoader->setSendCallbackPolicy(SendCallbacks);
+        resourceLoader->setSendCallbackPolicy(SendCallbacks);
         handleSubstituteDataLoadSoon();
     }
 }
