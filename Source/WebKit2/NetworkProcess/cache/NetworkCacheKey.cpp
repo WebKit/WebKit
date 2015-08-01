@@ -37,17 +37,15 @@ namespace WebKit {
 namespace NetworkCache {
 
 Key::Key(const Key& o)
-    : m_method(o.m_method.isolatedCopy())
-    , m_partition(o.m_partition.isolatedCopy())
+    : m_partition(o.m_partition.isolatedCopy())
     , m_identifier(o.m_identifier.isolatedCopy())
     , m_range(o.m_range.isolatedCopy())
     , m_hash(o.m_hash)
 {
 }
 
-Key::Key(const String& method, const String& partition, const String& range, const String& identifier)
-    : m_method(method.isolatedCopy())
-    , m_partition(partition.isolatedCopy())
+Key::Key(const String& partition, const String& range, const String& identifier)
+    : m_partition(partition.isolatedCopy())
     , m_identifier(identifier.isolatedCopy())
     , m_range(range.isolatedCopy())
     , m_hash(computeHash())
@@ -56,7 +54,6 @@ Key::Key(const String& method, const String& partition, const String& range, con
 
 Key& Key::operator=(const Key& other)
 {
-    m_method = other.m_method.isolatedCopy();
     m_partition = other.m_partition.isolatedCopy();
     m_identifier = other.m_identifier.isolatedCopy();
     m_range = other.m_range.isolatedCopy();
@@ -85,7 +82,6 @@ Key::HashType Key::computeHash() const
     // We don't really need a cryptographic hash. The key is always verified against the entry header.
     // SHA1 just happens to be suitably sized, fast and available.
     SHA1 sha1;
-    hashString(sha1, m_method);
     hashString(sha1, m_partition);
     hashString(sha1, m_identifier);
     hashString(sha1, m_range);
@@ -128,12 +124,11 @@ bool Key::stringToHash(const String& string, HashType& hash)
 
 bool Key::operator==(const Key& other) const
 {
-    return m_hash == other.m_hash && m_method == other.m_method && m_partition == other.m_partition && m_identifier == other.m_identifier && m_range == other.m_range;
+    return m_hash == other.m_hash && m_partition == other.m_partition && m_identifier == other.m_identifier && m_range == other.m_range;
 }
 
 void Key::encode(Encoder& encoder) const
 {
-    encoder << m_method;
     encoder << m_partition;
     encoder << m_identifier;
     encoder << m_range;
@@ -142,7 +137,7 @@ void Key::encode(Encoder& encoder) const
 
 bool Key::decode(Decoder& decoder, Key& key)
 {
-    return decoder.decode(key.m_method) && decoder.decode(key.m_partition) && decoder.decode(key.m_identifier) && decoder.decode(key.m_range) && decoder.decode(key.m_hash);
+    return decoder.decode(key.m_partition) && decoder.decode(key.m_identifier) && decoder.decode(key.m_range) && decoder.decode(key.m_hash);
 }
 
 }
