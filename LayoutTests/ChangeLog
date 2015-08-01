@@ -1,3 +1,14 @@
+2015-07-31  Matt Rajca  <mrajca@apple.com>
+
+        Media Session: add test to ensure that switching media sessions pauses elements
+        https://bugs.webkit.org/show_bug.cgi?id=147493
+
+        Reviewed by Eric Carlson.
+
+        * media/session/switching-sessions-expected.txt: Added.
+        * media/session/switching-sessions.html: Added.
+        * platform/mac/TestExpectations: Media Session support is disabled by default.
+
 2015-07-31  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed gardening. Skip Media Sessions tests, the feature is not yet enabled.
