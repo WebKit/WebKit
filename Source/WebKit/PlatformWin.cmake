@@ -247,6 +247,13 @@ list(APPEND WebKit_SOURCES_WebCoreSupport
     win/WebCoreSupport/WebVisitedLinkStore.h
 )
 
+if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+    enable_language(ASM_MASM)
+    list(APPEND WebKit_SOURCES
+        win/plugins/PaintHooks.asm
+    )
+endif ()
+
 list(APPEND WebKit_SOURCES ${WebKit_INCLUDES} ${WebKit_SOURCES_Classes} ${WebKit_SOURCES_WebCoreSupport})
 
 source_group(Includes FILES ${WebKit_INCLUDES})

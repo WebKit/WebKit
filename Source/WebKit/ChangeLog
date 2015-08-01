@@ -1,3 +1,10 @@
+2015-08-01  Alex Christensen  <achristensen@webkit.org>
+
+        Fix 64-bit CMake build on Windows.
+
+        * PlatformWin.cmake:
+        Win64 needs PaintHooks.asm.
+
 2015-07-30  Alex Christensen  <achristensen@webkit.org>
 
         Build AppleWin port with CMake
