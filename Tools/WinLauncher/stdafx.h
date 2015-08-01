@@ -50,6 +50,11 @@
 
 #define WIN32_LEAN_AND_MEAN        // Exclude rarely-used stuff from Windows headers
 
+// Needed for limit defines, like INTMAX_MAX, which is used by the std C++ library
+#ifndef __STDC_LIMIT_MACROS
+#define __STDC_LIMIT_MACROS
+#endif
+
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif

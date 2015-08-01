@@ -338,6 +338,8 @@ template<class T, class... Args> typename _Unique_if<T>::_Known_bound
 make_unique(Args&&...) = delete;
 #endif
 
+// MSVC 2015 supports these functions.
+#if !COMPILER(MSVC) || _MSC_VER < 1900
 // Compile-time integer sequences
 // http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3658.html
 // (Note that we only implement index_sequence, and not the more generic integer_sequence).
@@ -366,6 +368,7 @@ T exchange(T& t, U&& newValue)
 
     return oldValue;
 }
+#endif
 
 #if COMPILER_SUPPORTS(CXX_USER_LITERALS)
 // These literals are available in C++14, so once we require C++14 compilers we can get rid of them here.

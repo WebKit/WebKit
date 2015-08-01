@@ -1,3 +1,13 @@
+2015-07-31  Alex Christensen  <achristensen@webkit.org>
+
+        Prepare for VS2015
+        https://bugs.webkit.org/show_bug.cgi?id=146579
+
+        Reviewed by Jon Honeycutt.
+
+        * WinLauncher/stdafx.h:
+        Define __STDC_LIMIT_MACROS to have access to INTMAX_MAX.
+
 2015-07-31  Csaba Osztrogonác  <ossy@webkit.org>
 
         [EFL] Fix pixman build on ARM with GCC 4.9.3

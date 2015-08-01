@@ -83,6 +83,11 @@ if ($ARGV[2] eq 'cairo') {
 
 if ($Config{osname} eq 'MSWin32') {
     my $ccPath = `where $ARGV[4]`;
+
+    # Visual Studio 2015 gives us a list of cl executables separated by newlines, and we want the last one.
+    my @ccPaths = split("\n", $ccPath);
+    $ccPath = @ccPaths[scalar(@ccPaths) - 1];
+
     chomp($ccPath);
     $ENV{CC} = $ccPath;
 }

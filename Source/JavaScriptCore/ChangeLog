@@ -1,3 +1,13 @@
+2015-07-31  Alex Christensen  <achristensen@webkit.org>
+
+        Prepare for VS2015
+        https://bugs.webkit.org/show_bug.cgi?id=146579
+
+        Reviewed by Jon Honeycutt.
+
+        * heap/Heap.h:
+        Fix compiler error by explicitly casting zombifiedBits to the size of a pointer.
+
 2015-07-31  Saam barati  <saambarati1@gmail.com>
 
         ES6 class syntax should use block scoping

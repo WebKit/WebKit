@@ -73,7 +73,7 @@ namespace DFG {
 class Worklist;
 }
 
-static void* const zombifiedBits = reinterpret_cast<void*>(0xdeadbeef);
+static void* const zombifiedBits = reinterpret_cast<void*>(static_cast<uintptr_t>(0xdeadbeef));
 
 typedef HashCountedSet<JSCell*> ProtectCountSet;
 typedef HashCountedSet<const char*> TypeCountSet;

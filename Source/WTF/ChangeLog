@@ -1,3 +1,14 @@
+2015-07-31  Alex Christensen  <achristensen@webkit.org>
+
+        Prepare for VS2015
+        https://bugs.webkit.org/show_bug.cgi?id=146579
+
+        Reviewed by Jon Honeycutt.
+
+        * wtf/StdLibExtras.h:
+        (std::exchange):
+        Added preprocessor macros around functions implemented in VS2015's standard library.
+
 2015-07-30  Chris Dumez  <cdumez@apple.com>
 
         Mark more classes as fast allocated
