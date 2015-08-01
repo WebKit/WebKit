@@ -127,7 +127,6 @@ private:
     void clearPositionTimerFired();
     bool hasEnded() const;
     void scheduleTimeupdateEvent();
-    void timeupdateTimerFired();
     void startTimeupdateTimer();
 
     // EventTarget

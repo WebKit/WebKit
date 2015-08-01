@@ -164,8 +164,6 @@ private:
     FontCache();
     ~FontCache() = delete;
 
-    void purgeTimerFired();
-
     WEBCORE_EXPORT void purgeInactiveFontDataIfNeeded();
 
     // FIXME: This method should eventually be removed.

@@ -136,7 +136,7 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
     : m_player(player)
     , m_weakPtrFactory(this)
     , m_synchronizer(adoptNS([allocAVSampleBufferRenderSynchronizerInstance() init]))
-    , m_seekTimer(*this, &MediaPlayerPrivateMediaSourceAVFObjC::seekTimerFired)
+    , m_seekTimer(*this, &MediaPlayerPrivateMediaSourceAVFObjC::seekInternal)
     , m_session(nullptr)
     , m_networkState(MediaPlayer::Empty)
     , m_readyState(MediaPlayer::HaveNothing)
@@ -419,11 +419,6 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekWithTolerance(const MediaTime& ti
     if (m_seekTimer.isActive())
         m_seekTimer.stop();
     m_seekTimer.startOneShot(0);
-}
-
-void MediaPlayerPrivateMediaSourceAVFObjC::seekTimerFired()
-{
-    seekInternal();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()

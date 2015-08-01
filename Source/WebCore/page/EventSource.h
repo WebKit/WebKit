@@ -96,7 +96,6 @@ private:
     void networkRequestEnded();
     void scheduleInitialConnect();
     void scheduleReconnect();
-    void connectTimerFired();
     void abortConnectionAttempt();
     void parseEventStream();
     void parseEventStreamLine(unsigned pos, int fieldLength, int lineLength);

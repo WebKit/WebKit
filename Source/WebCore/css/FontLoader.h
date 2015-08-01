@@ -91,7 +91,6 @@ private:
     const char* activeDOMObjectName() const override;
     bool canSuspendForPageCache() const override;
 
-    void pendingEventsTimerFired() { firePendingEvents(); }
     void scheduleEvent(PassRefPtr<Event>);
     void firePendingEvents();
     bool resolveFontStyle(const String&, FontCascade&);

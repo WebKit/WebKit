@@ -92,7 +92,7 @@ FontCache& FontCache::singleton()
 }
 
 FontCache::FontCache()
-    : m_purgeTimer(*this, &FontCache::purgeTimerFired)
+    : m_purgeTimer(*this, &FontCache::purgeInactiveFontDataIfNeeded)
 {
 }
 
@@ -393,11 +393,6 @@ Ref<Font> FontCache::fontForPlatformData(const FontPlatformData& platformData)
         addResult.iterator->value = Font::create(platformData);
 
     return *addResult.iterator->value;
-}
-
-void FontCache::purgeTimerFired()
-{
-    purgeInactiveFontDataIfNeeded();
 }
 
 void FontCache::purgeInactiveFontDataIfNeeded()

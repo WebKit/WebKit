@@ -245,7 +245,6 @@ public:
     virtual bool isRubberBandInProgress() const override;
     WEBCORE_EXPORT virtual IntPoint minimumScrollPosition() const override;
     WEBCORE_EXPORT virtual IntPoint maximumScrollPosition() const override;
-    void delayedScrollEventTimerFired();
 
     void viewportContentsChanged();
     WEBCORE_EXPORT void resumeVisibleImageAnimationsIncludingSubframes();
@@ -315,8 +314,6 @@ public:
     WEBCORE_EXPORT void updateControlTints();
 
     void restoreScrollbar();
-
-    void postLayoutTimerFired();
 
     WEBCORE_EXPORT bool wasScrolledByUser() const;
     WEBCORE_EXPORT void setWasScrolledByUser(bool);

@@ -114,7 +114,6 @@ private:
     void updateScrolledExposedRect();
     void updateRootLayers();
 
-    void layerFlushTimerFired();
     void flushLayers();
 
     WebCore::TiledBacking* mainFrameTiledBacking() const;

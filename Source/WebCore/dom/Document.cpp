@@ -444,7 +444,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_readyState(Complete)
     , m_bParsing(false)
     , m_optimizedStyleSheetUpdateTimer(*this, &Document::optimizedStyleSheetUpdateTimerFired)
-    , m_styleRecalcTimer(*this, &Document::styleRecalcTimerFired)
+    , m_styleRecalcTimer(*this, &Document::updateStyleIfNeeded)
     , m_pendingStyleRecalcShouldForce(false)
     , m_inStyleRecalc(false)
     , m_closeAfterStyleRecalc(false)
@@ -522,7 +522,7 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_inputCursor(EmptyInputCursor::create())
 #endif
     , m_didAssociateFormControlsTimer(*this, &Document::didAssociateFormControlsTimerFired)
-    , m_cookieCacheExpiryTimer(*this, &Document::domCookieCacheExpiryTimerFired)
+    , m_cookieCacheExpiryTimer(*this, &Document::invalidateDOMCookieCache)
     , m_disabledFieldsetElementsCount(0)
     , m_hasInjectedPlugInsScript(false)
     , m_renderTreeBeingDestroyed(false)
@@ -1751,11 +1751,6 @@ bool Document::hasPendingStyleRecalc() const
 bool Document::hasPendingForcedStyleRecalc() const
 {
     return m_styleRecalcTimer.isActive() && m_pendingStyleRecalcShouldForce;
-}
-
-void Document::styleRecalcTimerFired()
-{
-    updateStyleIfNeeded();
 }
 
 void Document::recalcStyle(Style::Change change)
@@ -6531,11 +6526,6 @@ void Document::invalidateDOMCookieCache()
 {
     m_cookieCacheExpiryTimer.stop();
     m_cachedDOMCookies = String();
-}
-
-void Document::domCookieCacheExpiryTimerFired()
-{
-    invalidateDOMCookieCache();
 }
 
 void Document::didLoadResourceSynchronously(const ResourceRequest&)

@@ -181,7 +181,6 @@ private:
     void ensureLayer();
     void destroyLayer();
     bool shouldBePlaying() const;
-    void seekTimerFired();
 
     friend class MediaSourcePrivateAVFObjC;
 

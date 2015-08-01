@@ -123,7 +123,6 @@ private:
     RetainPtr<NSMutableURLRequest> m_request;
     NPPluginFuncs *m_pluginFuncs;
 
-    void deliverDataTimerFired();
     WebCore::Timer m_deliverDataTimer;
     
     WebNetscapePluginStream(WebCore::FrameLoader*);

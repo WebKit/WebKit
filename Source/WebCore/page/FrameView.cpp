@@ -167,7 +167,7 @@ FrameView::FrameView(Frame& frame)
     , m_layoutRoot(nullptr)
     , m_layoutPhase(OutsideLayout)
     , m_inSynchronousPostLayout(false)
-    , m_postLayoutTasksTimer(*this, &FrameView::postLayoutTimerFired)
+    , m_postLayoutTasksTimer(*this, &FrameView::performPostLayoutTasks)
     , m_updateEmbeddedObjectsTimer(*this, &FrameView::updateEmbeddedObjectsTimerFired)
     , m_isTransparent(false)
     , m_baseBackgroundColor(Color::white)
@@ -177,7 +177,7 @@ FrameView::FrameView(Frame& frame)
     , m_wasScrolledByUser(false)
     , m_inProgrammaticScroll(false)
     , m_safeToPropagateScrollToParent(true)
-    , m_delayedScrollEventTimer(*this, &FrameView::delayedScrollEventTimerFired)
+    , m_delayedScrollEventTimer(*this, &FrameView::sendScrollEvent)
     , m_isTrackingRepaints(false)
     , m_shouldUpdateWhileOffscreen(true)
     , m_exposedRect(FloatRect::infiniteRect())
@@ -1823,11 +1823,6 @@ IntPoint FrameView::maximumScrollPosition() const
     return maximumOffset;
 }
 
-void FrameView::delayedScrollEventTimerFired()
-{
-    sendScrollEvent();
-}
-
 void FrameView::viewportContentsChanged()
 {
     if (!frame().view()) {
@@ -3162,11 +3157,6 @@ void FrameView::willEndLiveResize()
 {
     ScrollView::willEndLiveResize();
     adjustTiledBackingCoverage();
-}
-
-void FrameView::postLayoutTimerFired()
-{
-    performPostLayoutTasks();
 }
 
 void FrameView::autoSizeIfEnabled()

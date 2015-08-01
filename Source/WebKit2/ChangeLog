@@ -1,5 +1,21 @@
 2015-07-31  Chris Dumez  <cdumez@apple.com>
 
+        Drop dummy Timer callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=147516
+
+        Reviewed by Alexey Proskuryakov.
+
+        Drop dummy Timer callbacks in the code base. A lot of Timer callbacks
+        do nothing else beside calling a particular method. In such case, we
+        can use the called method as Timer callback instead.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea):
+        (WebKit::RemoteLayerTreeDrawingArea::layerFlushTimerFired): Deleted.
+
+2015-07-31  Chris Dumez  <cdumez@apple.com>
+
         [WK2][NetworkCache] Drop HTTP method from NetworkCache::Key
         https://bugs.webkit.org/show_bug.cgi?id=143348
 

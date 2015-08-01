@@ -69,7 +69,7 @@ MemoryCache::MemoryCache()
     , m_deadDecodedDataDeletionInterval(defaultDecodedDataDeletionInterval)
     , m_liveSize(0)
     , m_deadSize(0)
-    , m_pruneTimer(*this, &MemoryCache::pruneTimerFired)
+    , m_pruneTimer(*this, &MemoryCache::prune)
 {
 }
 
@@ -757,11 +757,6 @@ void MemoryCache::prune()
         
     pruneDeadResources(); // Prune dead first, in case it was "borrowing" capacity from live.
     pruneLiveResources();
-}
-
-void MemoryCache::pruneTimerFired()
-{
-    prune();
 }
 
 void MemoryCache::pruneSoon()
