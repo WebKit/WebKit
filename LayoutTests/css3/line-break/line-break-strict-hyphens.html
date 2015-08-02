@@ -2,10 +2,11 @@
     <head>
         <title>Line breaks using [-webkit-]line-break : strict - before hyphens</title>
         <style>
-          div > div {
+          span > div {
             font-family: 'Lucida Grande';
             font-size: 16pt;
-            width: 4.1em;
+            width: 3.95em;
+            display: inline-block;
           }
           div > p {
             border: solid blue 1px;
@@ -14,7 +15,7 @@
         </style>
     </head>
     <body>
-        <div lang="en">
+        <span lang="en">
             <div>
                 <p>&#x4e00;&#x4e8c;&#x4e09;&#x56db;&#x2010;</p>
             </div>
@@ -27,8 +28,8 @@
             <div>
                 <p>&#x4e00;&#x4e8c;&#x4e09;&#x56db;&#x30a0;</p>
             </div>
-        </div>
-        <div lang="ja">
+        </span>
+        <span lang="ja">
             <div>
                 <p>&#x4e00;&#x4e8c;&#x4e09;&#x56db;&#x2010;</p>
             </div>
@@ -41,8 +42,8 @@
             <div>
                 <p>&#x4e00;&#x4e8c;&#x4e09;&#x56db;&#x30a0;</p>
             </div>
-        </div>
-        <div lang="ko">
+        </span>
+        <span lang="ko">
             <div>
                 <p>&#x4e00;&#x4e8c;&#x4e09;&#x56db;&#x2010;</p>
             </div>
@@ -55,8 +56,8 @@
             <div>
                 <p>&#x4e00;&#x4e8c;&#x4e09;&#x56db;&#x30a0;</p>
             </div>
-        </div>
-        <div lang="zh">
+        </span>
+        <span lang="zh">
             <div>
                 <p>&#x4e00;&#x4e8c;&#x4e09;&#x56db;&#x2010;</p>
             </div>
@@ -69,6 +70,6 @@
             <div>
                 <p>&#x4e00;&#x4e8c;&#x4e09;&#x56db;&#x30a0;</p>
             </div>
-        </div>
+        </span>
     </body>
 </html>

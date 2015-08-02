@@ -2686,3 +2686,6 @@ webkit.org/b/145617 compositing/layer-creation/zoomed-clip-intersection.html [ S
 # This test depends on location, and it is impossible to mock the particular mechanism
 # this test uses to determine location.
 fast/text/softbank-emoji.html [ Failure Pass ]
+
+# This test hardcodes the result of the Mac font lookup algorithm.
+fast/text/fallback-language-han.html [ Skip ]

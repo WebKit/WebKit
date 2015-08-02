@@ -2,10 +2,11 @@
     <head>
         <title>Line breaks using [-webkit-]line-break : auto - before postfixes</title>
         <style>
-          div > div {
+          span > div {
             font-family: 'Lucida Grande';
             font-size: 16pt;
             width: 4.1em;
+            display: inline-block;
           }
           div > p {
             border: solid blue 1px;
@@ -13,7 +14,7 @@
         </style>
     </head>
     <body>
-        <div lang="en">
+        <span lang="en">
             <div>
                 <p><nobr>&#x4e00;&#x4e8c;&#x4e09;</nobr><br>&#x56db;&#x0025;</p>
             </div>
@@ -41,8 +42,8 @@
             <div>
                 <p><nobr>&#x4e00;&#x4e8c;&#x4e09;</nobr><br>&#x56db;&#xffe0;</p>
             </div>
-        </div>
-        <div lang="ja">
+        </span>
+        <span lang="ja">
             <div>
                 <p><nobr>&#x4e00;&#x4e8c;&#x4e09;&#x56db;</nobr><br>&#x0025;</p>
             </div>
@@ -70,8 +71,37 @@
             <div>
                 <p><nobr>&#x4e00;&#x4e8c;&#x4e09;&#x56db;</nobr><br>&#xffe0;</p>
             </div>
-        </div>
-        <div lang="ko">
+        </span>
+        <span lang="ko">
+            <div>
+                <p><nobr>&#x4e00;&#x4e8c;&#x4e09;&#x56db;</nobr><br>&#x0025;</p>
+            </div>
+            <div>
+                <p><nobr>&#x4e00;&#x4e8c;&#x4e09;&#x56db;</nobr><br>&#x00a2;</p>
+            </div>
+            <div style="width: 3.8em;">
+                <p><nobr>&#x4e00;&#x4e8c;&#x4e09;&#x56db;</nobr><br>&#x00b0;</p>
+            </div>
+            <div>
+                <p><nobr>&#x4e00;&#x4e8c;&#x4e09;&#x56db;</nobr><br>&#x2030;</p>
+            </div>
+            <div style="width: 3.8em;">
+                <p><nobr>&#x4e00;&#x4e8c;&#x4e09;&#x56db;</nobr><br>&#x2032;</p>
+            </div>
+            <div style="width: 3.8em;">
+                <p><nobr>&#x4e00;&#x4e8c;&#x4e09;&#x56db;</nobr><br>&#x2033;</p>
+            </div>
+            <div>
+                <p><nobr>&#x4e00;&#x4e8c;&#x4e09;&#x56db;</nobr><br>&#x2103;</p>
+            </div>
+            <div>
+                <p><nobr>&#x4e00;&#x4e8c;&#x4e09;&#x56db;</nobr><br>&#xff05;</p>
+            </div>
+            <div style="width: 3.8em;">
+                <p><nobr>&#x4e00;&#x4e8c;&#x4e09;&#x56db;</nobr><br>&#xffe0;</p>
+            </div>
+        </span>
+        <span lang="zh">
             <div>
                 <p><nobr>&#x4e00;&#x4e8c;&#x4e09;&#x56db;</nobr><br>&#x0025;</p>
             </div>
@@ -99,35 +129,6 @@
             <div>
                 <p><nobr>&#x4e00;&#x4e8c;&#x4e09;&#x56db;</nobr><br>&#xffe0;</p>
             </div>
-        </div>
-        <div lang="zh">
-            <div>
-                <p><nobr>&#x4e00;&#x4e8c;&#x4e09;&#x56db;</nobr><br>&#x0025;</p>
-            </div>
-            <div>
-                <p><nobr>&#x4e00;&#x4e8c;&#x4e09;&#x56db;</nobr><br>&#x00a2;</p>
-            </div>
-            <div>
-                <p><nobr>&#x4e00;&#x4e8c;&#x4e09;&#x56db;</nobr><br>&#x00b0;</p>
-            </div>
-            <div>
-                <p><nobr>&#x4e00;&#x4e8c;&#x4e09;&#x56db;</nobr><br>&#x2030;</p>
-            </div>
-            <div>
-                <p><nobr>&#x4e00;&#x4e8c;&#x4e09;&#x56db;</nobr><br>&#x2032;</p>
-            </div>
-            <div>
-                <p><nobr>&#x4e00;&#x4e8c;&#x4e09;&#x56db;</nobr><br>&#x2033;</p>
-            </div>
-            <div>
-                <p><nobr>&#x4e00;&#x4e8c;&#x4e09;&#x56db;</nobr><br>&#x2103;</p>
-            </div>
-            <div>
-                <p><nobr>&#x4e00;&#x4e8c;&#x4e09;&#x56db;</nobr><br>&#xff05;</p>
-            </div>
-            <div>
-                <p><nobr>&#x4e00;&#x4e8c;&#x4e09;&#x56db;</nobr><br>&#xffe0;</p>
-            </div>
-        </div>
+        </span>
     </body>
 </html>

@@ -1,5 +1,48 @@
 2015-08-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [OS X] Font fallback is not language-sensitive
+        https://bugs.webkit.org/show_bug.cgi?id=147390
+
+        Reviewed by Dean Jackson.
+
+        Updating tests.
+
+        * css3/line-break/line-break-auto-centered-expected.html:
+        * css3/line-break/line-break-auto-centered.html:
+        * css3/line-break/line-break-auto-postfixes-expected.html:
+        * css3/line-break/line-break-auto-postfixes.html:
+        * css3/line-break/line-break-loose-centered-expected.html:
+        * css3/line-break/line-break-loose-centered.html:
+        * css3/line-break/line-break-loose-hyphens-expected.html:
+        * css3/line-break/line-break-loose-hyphens.html:
+        * css3/line-break/line-break-loose-postfixes-expected.html:
+        * css3/line-break/line-break-loose-postfixes.html:
+        * css3/line-break/line-break-loose-sound-marks-expected.html:
+        * css3/line-break/line-break-loose-sound-marks.html:
+        * css3/line-break/line-break-normal-centered-expected.html:
+        * css3/line-break/line-break-normal-centered.html:
+        * css3/line-break/line-break-normal-hyphens-expected.html:
+        * css3/line-break/line-break-normal-hyphens.html:
+        * css3/line-break/line-break-normal-postfixes-expected.html:
+        * css3/line-break/line-break-normal-postfixes.html:
+        * css3/line-break/line-break-normal-sound-marks-expected.html:
+        * css3/line-break/line-break-normal-sound-marks.html:
+        * css3/line-break/line-break-strict-centered-expected.html:
+        * css3/line-break/line-break-strict-centered.html:
+        * css3/line-break/line-break-strict-hyphens-expected.html:
+        * css3/line-break/line-break-strict-hyphens.html:
+        * css3/line-break/line-break-strict-postfixes-expected.html:
+        * css3/line-break/line-break-strict-postfixes.html:
+        * css3/line-break/line-break-strict-sound-marks-expected.html:
+        * css3/line-break/line-break-strict-sound-marks.html:
+        * fast/text/fallback-language-han-expected.html: Added.
+        * fast/text/fallback-language-han.html: Added.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/win/TestExpectations:
+
+2015-08-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [Win] Test gardening
 
         Unreviewed

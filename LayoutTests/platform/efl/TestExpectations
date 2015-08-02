@@ -2257,3 +2257,6 @@ webkit.org/b/146888 editing/selection/5354455-2.html [ Failure ]
 webkit.org/b/146888 editing/spelling/context-menu-suggestions-multiword-selection.html [ Failure ]
 webkit.org/b/146888 editing/spelling/context-menu-suggestions-subword-selection.html [ Failure ]
 webkit.org/b/146888 editing/spelling/context-menu-suggestions.html [ Failure ]
+
+# This test hardcodes the result of a platform-dependent font lookup algorithm.
+fast/text/fallback-language-han.html [ Skip ]
