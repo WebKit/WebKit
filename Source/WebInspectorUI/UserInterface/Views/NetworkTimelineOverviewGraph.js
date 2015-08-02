@@ -28,7 +28,7 @@ WebInspector.NetworkTimelineOverviewGraph = class NetworkTimelineOverviewGraph e
 {
     constructor(timeline, timelineOverview)
     {
-        super(timeline, timelineOverview);
+        super(timelineOverview);
 
         this.element.classList.add("network");
 
