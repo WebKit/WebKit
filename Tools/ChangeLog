@@ -1,3 +1,14 @@
+2015-08-03  Filip Pizlo  <fpizlo@apple.com>
+
+        Check in LLVM 3.6.2 binary drops for El Capitan
+        https://bugs.webkit.org/show_bug.cgi?id=147582
+
+        Reviewed by Alexey Proskuryakov.
+        
+        Recognize 10.11 and use the right drops.
+
+        * Scripts/copy-webkitlibraries-to-product-directory:
+
 2015-08-03  Alex Christensen  <achristensen@webkit.org>
 
         [Win] Build fix after r187733.

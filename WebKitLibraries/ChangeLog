@@ -1,3 +1,30 @@
+2015-08-03  Filip Pizlo  <fpizlo@apple.com>
+
+        Check in LLVM 3.6.2 binary drops for El Capitan
+        https://bugs.webkit.org/show_bug.cgi?id=147582
+
+        Reviewed by Alexey Proskuryakov.
+        
+        Check in drops built from the LLVM 3.6.2 open source release.
+        
+        These drops were built by doing:
+        
+        1) Check out WebKit to a directory like /some/path/OpenSource.
+
+        2) Unpack LLVM 3.6.2 into /some/path/OpenSource/llvm. I got LLVM 3.6.2 from:
+        
+        http://llvm.org/releases/3.6.2/llvm-3.6.2.src.tar.xz
+
+        3) While in /some/path/OpenSource, run Tools/Scripts/build-jsc --release. Make sure it's a
+        totally clean build (i.e. delete WebKitBuild before starting).
+
+        4) Run the following to create binary drops:
+
+        Tools/Scripts/export-llvm-build -i WebKitLibraries/LLVMIncludesElCapitan.tar.bz2 -l WebKitLibraries/LLVMLibrariesElCapitan.tar.bz2 -b llvm/wkLLVMBuild -B llvm/wkLLVMBuild/Release+Asserts -s llvm
+
+        * LLVMIncludesElCapitan.tar.bz2: Added.
+        * LLVMLibrariesElCapitan.tar.bz2: Added.
+
 2015-07-28  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Add ENABLE_ES6_MODULES compile time flag with the default value "false"
