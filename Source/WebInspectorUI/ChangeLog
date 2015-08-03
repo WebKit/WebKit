@@ -1,3 +1,23 @@
+2015-08-03  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: REGRESSION (r187708): Breakpoint dialog script action editing broken
+        https://bugs.webkit.org/show_bug.cgi?id=147553
+
+        Reviewed by Joseph Pecoraro.
+
+        Passing a widget to CodeMirror.setBookmark generates a viewportChange event, causing the
+        BreakpointActionView to update the popup for the breakpoint. The spurious update dismisses
+        the suggestion list, removes the CodeMirror completion hint, and causes other problems.
+
+        Now we ignore viewportChange events unless the viewport size changes. We still want to update
+        the popup when a carriage return or text wrap modifies the viewport.
+
+        * UserInterface/Views/BreakpointActionView.js:
+        (WebInspector.BreakpointActionView.prototype._updateBody):
+        Evaluate and Probe actions store the current viewport size.
+        (WebInspector.BreakpointActionView.prototype._codeMirrorViewportChanged):
+        Check if viewport size has changed since last event.
+
 2015-08-03  Brian J. Burg  <burg@cs.washington.edu>
 
         Web Inspector: Application cache DataGrid has incorrect column heading styles

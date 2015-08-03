@@ -161,6 +161,8 @@ WebInspector.BreakpointActionView = class BreakpointActionView extends WebInspec
             this._codeMirror.on("viewportChange", this._codeMirrorViewportChanged.bind(this));
             this._codeMirror.on("blur", this._codeMirrorBlurred.bind(this));
 
+            this._codeMirrorViewport = {from: null, to: null};
+
             var completionController = new WebInspector.CodeMirrorCompletionController(this._codeMirror);
             completionController.addExtendedCompletionProvider("javascript", WebInspector.javaScriptRuntimeCompletionProvider);
 
@@ -195,8 +197,13 @@ WebInspector.BreakpointActionView = class BreakpointActionView extends WebInspec
         this._action.data = (this._codeMirror.getValue() || "").trim();
     }
 
-    _codeMirrorViewportChanged(event)
+    _codeMirrorViewportChanged(event, from, to)
     {
+        if (this._codeMirrorViewport.from === from && this._codeMirrorViewport.to === to)
+            return;
+
+        this._codeMirrorViewport.from = from;
+        this._codeMirrorViewport.to = to;
         this._delegate.breakpointActionViewResized(this);
     }
 };
