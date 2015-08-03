@@ -1,3 +1,15 @@
+2015-08-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove Windows XP test results
+        https://bugs.webkit.org/show_bug.cgi?id=147592
+
+        Reviewed by Brent Fulgham.
+        
+        We no longer need to maintain Windows XP test results.
+
+        * platform/win-xp/TestExpectations: Removed.
+        * platform/win-xp/*: Removed.
+
 2015-08-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         JavascriptCore Crash in JSC::ASTBuilder::Property JSC::Parser<JSC::Lexer<unsigned char> >::parseProperty<JSC::ASTBuilder>(JSC::ASTBuilder&, bool)
