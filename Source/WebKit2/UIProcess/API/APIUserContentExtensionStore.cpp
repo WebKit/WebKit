@@ -253,15 +253,21 @@ static std::error_code compiledToFile(String&& json, const String& finalFilePath
     char invalidHeader[ContentExtensionFileHeaderSize];
     memset(invalidHeader, 0xFF, sizeof(invalidHeader));
     // This header will be rewritten in CompilationClient::finalize.
-    if (WebCore::writeToFile(temporaryFileHandle, invalidHeader, sizeof(invalidHeader)) == -1)
+    if (WebCore::writeToFile(temporaryFileHandle, invalidHeader, sizeof(invalidHeader)) == -1) {
+        WebCore::closeFile(temporaryFileHandle);
         return UserContentExtensionStore::Error::CompileFailed;
+    }
 
     CompilationClient compilationClient(temporaryFileHandle, metaData);
     
-    if (auto compilerError = compileRuleList(compilationClient, WTF::move(json)))
+    if (auto compilerError = compileRuleList(compilationClient, WTF::move(json))) {
+        WebCore::closeFile(temporaryFileHandle);
         return compilerError;
-    if (compilationClient.hadErrorWhileWritingToFile())
+    }
+    if (compilationClient.hadErrorWhileWritingToFile()) {
+        WebCore::closeFile(temporaryFileHandle);
         return UserContentExtensionStore::Error::CompileFailed;
+    }
     
     mappedData = adoptAndMapFile(temporaryFileHandle, 0, metaData.fileSize());
     if (mappedData.isNull())

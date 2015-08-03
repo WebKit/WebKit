@@ -86,8 +86,10 @@ Data mapFile(const char* path)
 
 Data adoptAndMapFile(int fd, size_t offset, size_t size)
 {
-    if (!size)
+    if (!size) {
+        close(fd);
         return Data::empty();
+    }
 
     void* map = mmap(nullptr, size, PROT_READ, MAP_PRIVATE, fd, offset);
     if (map == MAP_FAILED) {

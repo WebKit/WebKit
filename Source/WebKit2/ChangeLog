@@ -1,3 +1,18 @@
+2015-08-03  Chris Dumez  <cdumez@apple.com>
+
+        Make sure error handling code APIUserContentExtensionStore closes open file descriptors
+        https://bugs.webkit.org/show_bug.cgi?id=147562
+
+        Reviewed by Alex Christensen.
+
+        Make sure error handling code APIUserContentExtensionStore closes open
+        file descriptors to avoid leaking them.
+
+        * NetworkProcess/cache/NetworkCacheData.cpp:
+        (WebKit::NetworkCache::adoptAndMapFile):
+        * UIProcess/API/APIUserContentExtensionStore.cpp:
+        (API::compiledToFile):
+
 2015-08-03  Beth Dakin  <bdakin@apple.com>
 
         Need WKWebView API to enable/disable link preview
