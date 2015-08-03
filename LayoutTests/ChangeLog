@@ -1,3 +1,9 @@
+2015-08-03  Brady Eidson  <beidson@apple.com>
+
+        Fix ASSERTy test added in r187752
+
+        * http/tests/appcache/resources/identifier-test-real.php: Only post one message.
+
 2015-08-03  Simon Fraser  <simon.fraser@apple.com>
 
         Move platform/gtk/accessibility tests into accessibility/gtk
