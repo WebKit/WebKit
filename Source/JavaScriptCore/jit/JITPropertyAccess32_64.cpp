@@ -265,7 +265,7 @@ void JIT::emitSlow_op_get_by_val(Instruction* currentInstruction, Vector<SlowCas
     
     emitLoad(base, regT1, regT0);
     emitLoad(property, regT3, regT2);
-    Call call = callOperation(operationGetByValDefault, dst, regT1, regT0, regT3, regT2, profile);
+    Call call = callOperation(operationGetByValOptimize, dst, regT1, regT0, regT3, regT2, profile);
 
     m_byValCompilationInfo[m_byValInstructionIndex].slowPathTarget = slowPath;
     m_byValCompilationInfo[m_byValInstructionIndex].returnAddress = call;

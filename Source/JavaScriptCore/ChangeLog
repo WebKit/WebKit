@@ -1,3 +1,27 @@
+2015-08-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Don't set up the callsite to operationGetByValDefault when the optimization is already done
+        https://bugs.webkit.org/show_bug.cgi?id=147577
+
+        Reviewed by Filip Pizlo.
+
+        operationGetByValDefault should be called only when the IC is not set.
+        operationGetByValString breaks this invariant and `ASSERT(!byValInfo.stubRoutine)` in
+        operationGetByValDefault raises the assertion failure.
+        In this patch, we change the callsite setting up code in operationGetByValString when
+        the IC is already set. And to make the operation's meaning explicitly, we changed the
+        name operationGetByValDefault to operationGetByValOptimize, that is aligned to the
+        GetById case.
+
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitSlow_op_get_by_val):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitSlow_op_get_by_val):
+        * tests/stress/operation-get-by-val-default-should-not-called-for-already-optimized-site.js: Added.
+        (hello):
+
 2015-08-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         [FTL] Remove unused scripts related to native call inlining

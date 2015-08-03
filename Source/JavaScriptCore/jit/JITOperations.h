@@ -310,7 +310,7 @@ void JIT_OPERATION operationPopScope(ExecState*, int32_t) WTF_INTERNAL;
 void JIT_OPERATION operationProfileDidCall(ExecState*, EncodedJSValue) WTF_INTERNAL;
 void JIT_OPERATION operationProfileWillCall(ExecState*, EncodedJSValue) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationCheckHasInstance(ExecState*, EncodedJSValue, EncodedJSValue baseVal) WTF_INTERNAL;
-EncodedJSValue JIT_OPERATION operationGetByValDefault(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, ArrayProfile*) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationGetByValOptimize(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, ArrayProfile*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetByValGeneric(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, ArrayProfile*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetByValString(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationHasIndexedPropertyDefault(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, ArrayProfile*) WTF_INTERNAL;

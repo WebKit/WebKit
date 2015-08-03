@@ -1509,7 +1509,7 @@ EncodedJSValue JIT_OPERATION operationGetByValGeneric(ExecState* exec, EncodedJS
     return JSValue::encode(result);
 }
 
-EncodedJSValue JIT_OPERATION operationGetByValDefault(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, ArrayProfile* arrayProfile)
+EncodedJSValue JIT_OPERATION operationGetByValOptimize(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, ArrayProfile* arrayProfile)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
@@ -1643,8 +1643,12 @@ EncodedJSValue JIT_OPERATION operationGetByValString(ExecState* exec, EncodedJSV
             result = asString(baseValue)->getIndex(exec, i);
         else {
             result = baseValue.get(exec, i);
-            if (!isJSString(baseValue))
-                ctiPatchCallByReturnAddress(exec->codeBlock(), ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(operationGetByValDefault));
+            if (!isJSString(baseValue)) {
+                unsigned bytecodeOffset = exec->locationAsBytecodeOffset();
+                ASSERT(bytecodeOffset);
+                ByValInfo& byValInfo = exec->codeBlock()->getByValInfo(bytecodeOffset - 1);
+                ctiPatchCallByReturnAddress(exec->codeBlock(), ReturnAddressPtr(OUR_RETURN_ADDRESS), FunctionPtr(byValInfo.stubRoutine ? operationGetByValGeneric : operationGetByValOptimize));
+            }
         }
     } else {
         baseValue.requireObjectCoercible(exec);
