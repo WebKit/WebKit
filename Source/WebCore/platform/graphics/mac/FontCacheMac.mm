@@ -472,7 +472,7 @@ void FontCache::platformPurgeInactiveFontData()
     fallbackDedupSet().clear();
 }
 
-static inline RetainPtr<CTFontRef> lookupCTFont(CTFontRef font, float fontSize, const AtomicString& locale, const UChar* characters, unsigned length)
+static inline RetainPtr<CTFontRef> lookupCTFont(CTFontRef font, float fontSize, const UChar* characters, unsigned length)
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED != 1090
     UNUSED_PARAM(fontSize);
@@ -493,14 +493,14 @@ static inline RetainPtr<CTFontRef> lookupCTFont(CTFontRef font, float fontSize, 
     }
 #endif
     CFIndex coveredLength = 0;
-    return adoptCF(CTFontCreateForCharactersWithLanguage(font, characters, length, locale.string().createCFString().get(), &coveredLength));
+    return adoptCF(CTFontCreateForCharactersWithLanguage(font, characters, length, nullptr, &coveredLength));
 }
 
 RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& description, const Font* originalFontData, bool isPlatformFont, const UChar* characters, unsigned length)
 {
     const FontPlatformData& platformData = originalFontData->platformData();
     NSFont *nsFont = platformData.nsFont();
-    RetainPtr<CTFontRef> result = lookupCTFont(platformData.font(), platformData.size(), description.locale(), characters, length);
+    RetainPtr<CTFontRef> result = lookupCTFont(platformData.font(), platformData.size(), characters, length);
     if (!result)
         return nullptr;
 
