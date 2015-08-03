@@ -71,14 +71,14 @@ RenderView* RenderFrameBase::childRenderView() const
 void RenderFrameBase::peformLayoutWithFlattening(bool hasFixedWidth, bool hasFixedHeight)
 {
     if (!childRenderView() || !shouldExpandFrame(width(), height(), hasFixedWidth, hasFixedHeight)) {
-        if (updateWidgetPosition() == ChildWidgetState::ChildWidgetIsDestroyed)
+        if (updateWidgetPosition() == ChildWidgetState::Destroyed)
             return;
         childView()->layout();
         return;
     }
 
     // need to update to calculate min/max correctly
-    if (updateWidgetPosition() == ChildWidgetState::ChildWidgetIsDestroyed)
+    if (updateWidgetPosition() == ChildWidgetState::Destroyed)
         return;
     
     // if scrollbars are off, and the width or height are fixed
@@ -95,7 +95,7 @@ void RenderFrameBase::peformLayoutWithFlattening(bool hasFixedWidth, bool hasFix
         ASSERT(childRenderView());
         setWidth(std::max(width(), childRenderView()->minPreferredLogicalWidth() + hBorder));
         // update again to pass the new width to the child frame
-        if (updateWidgetPosition() == ChildWidgetState::ChildWidgetIsDestroyed)
+        if (updateWidgetPosition() == ChildWidgetState::Destroyed)
             return;
         childView()->layout();
     }
@@ -107,7 +107,7 @@ void RenderFrameBase::peformLayoutWithFlattening(bool hasFixedWidth, bool hasFix
     if (isScrollable || !hasFixedWidth || childRenderView()->isFrameSet())
         setWidth(std::max<LayoutUnit>(width(), childView()->contentsWidth() + hBorder));
 
-    if (updateWidgetPosition() == ChildWidgetState::ChildWidgetIsDestroyed)
+    if (updateWidgetPosition() == ChildWidgetState::Destroyed)
         return;
 
     ASSERT(!childView()->layoutPending());

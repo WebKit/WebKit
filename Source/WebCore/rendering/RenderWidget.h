@@ -67,7 +67,7 @@ public:
 
     static RenderWidget* find(const Widget*);
 
-    enum class ChildWidgetState { ChildWidgetIsValid, ChildWidgetIsDestroyed };
+    enum class ChildWidgetState { Valid, Destroyed };
     ChildWidgetState updateWidgetPosition() WARN_UNUSED_RETURN;
     WEBCORE_EXPORT IntRect windowClipRect() const;
 
