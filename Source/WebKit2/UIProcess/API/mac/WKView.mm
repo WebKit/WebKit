@@ -261,6 +261,7 @@ struct WKViewInterpretKeyEventsParameters {
     BOOL _ignoresNonWheelEvents;
     BOOL _ignoresAllEvents;
     BOOL _allowsBackForwardNavigationGestures;
+    BOOL _allowsLinkPreview;
 
     RetainPtr<WKViewLayoutStrategy> _layoutStrategy;
     CGSize _minimumViewSize;
@@ -2706,7 +2707,7 @@ static void* keyValueObservingContext = &keyValueObservingContext;
         [self _accessibilityRegisterUIProcessTokens];
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
-        if (_data->_immediateActionGestureRecognizer && ![[self gestureRecognizers] containsObject:_data->_immediateActionGestureRecognizer.get()] && !_data->_ignoresNonWheelEvents)
+        if (_data->_immediateActionGestureRecognizer && ![[self gestureRecognizers] containsObject:_data->_immediateActionGestureRecognizer.get()] && !_data->_ignoresNonWheelEvents && _data->_allowsLinkPreview)
             [self addGestureRecognizer:_data->_immediateActionGestureRecognizer.get()];
 #endif
     } else {
@@ -3797,6 +3798,8 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     [workspaceNotificationCenter addObserver:self selector:@selector(_activeSpaceDidChange:) name:NSWorkspaceActiveSpaceDidChangeNotification object:nil];
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+    _data->_allowsLinkPreview = YES;
+
     if (Class gestureClass = NSClassFromString(@"NSImmediateActionGestureRecognizer")) {
         _data->_immediateActionGestureRecognizer = adoptNS([(NSImmediateActionGestureRecognizer *)[gestureClass alloc] init]);
         _data->_immediateActionController = adoptNS([[WKImmediateActionController alloc] initWithPage:*_data->_page view:self recognizer:_data->_immediateActionGestureRecognizer.get()]);
@@ -4221,6 +4224,26 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     return _data->_allowsBackForwardNavigationGestures;
 }
 
+- (BOOL)allowsLinkPreview
+{
+    return _data->_allowsLinkPreview;
+}
+
+- (void)setAllowsLinkPreview:(BOOL)allowsLinkPreview
+{
+    if (_data->_allowsLinkPreview == allowsLinkPreview)
+        return;
+
+    _data->_allowsLinkPreview = allowsLinkPreview;
+    
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
+    if (!allowsLinkPreview)
+        [self removeGestureRecognizer:_data->_immediateActionGestureRecognizer.get()];
+    else if (NSGestureRecognizer *immediateActionRecognizer = _data->_immediateActionGestureRecognizer.get())
+        [self addGestureRecognizer:immediateActionRecognizer];
+#endif
+}
+
 - (void)_setIgnoresAllEvents:(BOOL)ignoresAllEvents
 {
     _data->_ignoresAllEvents = ignoresAllEvents;
@@ -4244,8 +4267,10 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     if (ignoresNonWheelEvents)
         [self removeGestureRecognizer:_data->_immediateActionGestureRecognizer.get()];
-    else if (NSGestureRecognizer *immediateActionRecognizer = _data->_immediateActionGestureRecognizer.get())
-        [self addGestureRecognizer:immediateActionRecognizer];
+    else if (NSGestureRecognizer *immediateActionRecognizer = _data->_immediateActionGestureRecognizer.get()) {
+        if (_data->_allowsLinkPreview)
+            [self addGestureRecognizer:immediateActionRecognizer];
+    }
 #endif
 }
 

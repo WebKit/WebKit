@@ -351,7 +351,6 @@ static bool shouldAllowPictureInPictureMediaPlayback()
     [self _updateScrollViewBackground];
 
     _viewportMetaTagWidth = -1;
-    _allowsLinkPreview = YES;
 
     [self _frameOrBoundsChanged];
 
@@ -657,6 +656,35 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
 - (WKPageRef)_pageForTesting
 {
     return toAPI(_page.get());
+}
+
+- (BOOL)allowsLinkPreview
+{
+#if PLATFORM(MAC)
+    return [_wkView allowsLinkPreview];
+#elif PLATFORM(IOS)
+    return _allowsLinkPreview;
+#endif
+}
+
+- (void)setAllowsLinkPreview:(BOOL)allowsLinkPreview
+{
+#if PLATFORM(MAC)
+    [_wkView setAllowsLinkPreview:allowsLinkPreview];
+    return;
+#elif PLATFORM(IOS)
+    if (_allowsLinkPreview == allowsLinkPreview)
+        return;
+
+    _allowsLinkPreview = allowsLinkPreview;
+
+#if HAVE(LINK_PREVIEW)
+    if (_allowsLinkPreview)
+        [_contentView _registerPreview];
+    else
+        [_contentView _unregisterPreview];
+#endif // HAVE(LINK_PREVIEW)
+#endif // PLATFORM(IOS)
 }
 
 #pragma mark iOS-specific methods
@@ -3029,20 +3057,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     return (_WKWebViewPrintFormatter *)viewPrintFormatter;
 }
 
-- (BOOL)_allowsLinkPreview
-{
-    return _allowsLinkPreview;
-}
-
-- (void)_setAllowsLinkPreview:(BOOL)allowsLinkPreview
-{
-    if (_allowsLinkPreview == allowsLinkPreview)
-        return;
-
-    _allowsLinkPreview = allowsLinkPreview;
-}
-
-#else
+#else // #if PLATFORM(IOS)
 
 #pragma mark - OS X-specific methods
 

@@ -1,3 +1,37 @@
+2015-08-03  Beth Dakin  <bdakin@apple.com>
+
+        Need WKWebView API to enable/disable link preview
+        https://bugs.webkit.org/show_bug.cgi?id=147573
+        -and corresponding-
+        rdar://problem/22077836
+
+        Reviewed by Dan Bernstein.
+
+        WKView implementation.
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+
+        New API. Call into WKView to handle Mac.
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithFrame:configuration:]):
+        (-[WKWebView allowsLinkPreview]):
+        (-[WKWebView setAllowsLinkPreview:]):
+
+        Remove the SPI declaration from WKWebViewPrivate in order to make this API.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+        Handle the Mac side.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView viewDidMoveToWindow]):
+        (-[WKView initWithFrame:processPool:configuration:webView:]):
+        (-[WKView allowsBackForwardNavigationGestures]):
+        (-[WKView allowsLinkPreview]):
+        (-[WKView setAllowsLinkPreview:]):
+
+        Don’t register previews when link preview is prevented.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _registerPreview]):
+
 2015-08-03  Tim Horton  <timothy_horton@apple.com>
 
         [iOS] Link previews sometimes don't hide the link highlight

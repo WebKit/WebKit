@@ -231,6 +231,12 @@ WK_CLASS_AVAILABLE(10_10, 8_0)
 */
 @property (WK_NULLABLE_PROPERTY nonatomic, copy) NSString *customUserAgent WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
 
+/*! @abstract A Boolean value indicating whether link preview is allowed for any
+ links inside this WKWebView.
+ @discussion The default value is NO on iOS and YES on Mac.
+ */
+@property (nonatomic) BOOL allowsLinkPreview WK_AVAILABLE(WK_MAC_TBA, WK_IOS_TBA);
+
 #if TARGET_OS_IPHONE
 /*! @abstract The scroll view associated with the web view.
  */
