@@ -69,9 +69,6 @@ void JSXMLHttpRequest::visitAdditionalChildren(SlotVisitor& visitor)
 
     if (Blob* responseBlob = impl().optionalResponseBlob())
         visitor.addOpaqueRoot(responseBlob);
-
-    if (m_response)
-        visitor.append(&m_response);
 }
 
 // Custom functions
