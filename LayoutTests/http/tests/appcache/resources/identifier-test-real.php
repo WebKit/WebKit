@@ -5,8 +5,13 @@
 <html manifest="identifier-test.manifest">
 <script>
 
+var sentMessage = false;
 function cached()
 {
+    if (sentMessage)
+        return;
+
+    sentMessage = true;
     window.opener.postMessage("Nice", "*");
 }
 
