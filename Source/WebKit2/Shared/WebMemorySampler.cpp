@@ -98,7 +98,8 @@ void WebMemorySampler::stop()
     if (!m_isRunning) 
         return;
     m_sampleTimer.stop();
-    m_sampleLogFile = 0;
+    closeFile(m_sampleLogFile);
+
     printf("Stopped memory sampler for process %s %d\n", processName().utf8().data(), getpid());
     // Flush stdout buffer so python script can be guaranteed to read up to this point.
     fflush(stdout);

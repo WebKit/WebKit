@@ -1,3 +1,16 @@
+2015-08-03  Chris Dumez  <cdumez@apple.com>
+
+        Make sure WebMemorySampler doesn't leak file descriptor
+        https://bugs.webkit.org/show_bug.cgi?id=147564
+
+        Reviewed by Anders Carlsson.
+
+        WebMemorySampler was opening files but never closing them.
+
+        * Shared/WebMemorySampler.cpp:
+        (WebKit::WebMemorySampler::stop):
+        * Shared/WebMemorySampler.h:
+
 2015-08-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.9.5 release.

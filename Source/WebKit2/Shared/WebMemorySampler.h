@@ -95,7 +95,7 @@ private:
     WebMemoryStatistics sampleWebKit() const;
     String processName() const;
     
-    WebCore::PlatformFileHandle m_sampleLogFile;
+    WebCore::PlatformFileHandle m_sampleLogFile { WebCore::invalidPlatformFileHandle };
     String m_sampleLogFilePath;
     WebCore::Timer m_sampleTimer;
     WebCore::Timer m_stopTimer;
