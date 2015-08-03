@@ -1,3 +1,14 @@
+2015-08-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        JavascriptCore Crash in JSC::ASTBuilder::Property JSC::Parser<JSC::Lexer<unsigned char> >::parseProperty<JSC::ASTBuilder>(JSC::ASTBuilder&, bool)
+        https://bugs.webkit.org/show_bug.cgi?id=147538
+
+        Reviewed by Geoffrey Garen.
+
+        Update the test expectation file because '=>' is a token, not a keywowrd.
+
+        * js/arrowfunction-syntax-errors-expected.txt:
+
 2015-08-03  Brady Eidson  <beidson@apple.com>
 
         Adding a test for:

@@ -76,9 +76,6 @@ enum JSTokenType {
     FINALLY,
     DEBUGGER,
     ELSE,
-#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
-    ARROWFUNCTION,
-#endif
 #if ENABLE(ES6_CLASS_SYNTAX)
     CLASSTOKEN,
     EXTENDS,
@@ -118,6 +115,9 @@ enum JSTokenType {
     XOREQUAL,
     OREQUAL,
     DOTDOTDOT,
+#if ENABLE(ES6_ARROWFUNCTION_SYNTAX)
+    ARROWFUNCTION,
+#endif
     LastUntaggedToken,
 
     // Begin tagged tokens

@@ -1,3 +1,18 @@
+2015-08-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        JavascriptCore Crash in JSC::ASTBuilder::Property JSC::Parser<JSC::Lexer<unsigned char> >::parseProperty<JSC::ASTBuilder>(JSC::ASTBuilder&, bool)
+        https://bugs.webkit.org/show_bug.cgi?id=147538
+
+        Reviewed by Geoffrey Garen.
+
+        Due to the order of the ARROWFUNCTION token in JSTokenType enum, it is categorized as the one of the Keyword.
+        As a result, when lexing the property name that can take the keywords, the ARROWFUNCTION token is accidentally accepted.
+        This patch changes the order of the ARROWFUNCTION token in JSTokenType to make it the operator token.
+
+        * parser/ParserTokens.h:
+        * tests/stress/arrow-function-token-is-not-keyword.js: Added.
+        (testSyntaxError):
+
 2015-08-03  Keith Miller  <keith_miller@apple.com>
 
         Clean up the naming for AST expression generation.
