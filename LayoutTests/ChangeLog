@@ -1,3 +1,17 @@
+2015-08-03  Brady Eidson  <beidson@apple.com>
+
+        Adding a test for:
+        Crash when signing into twitter calling WebCore::DocumentLoader::responseReceived(WebCore::CachedResource*, WebCore::ResourceResponse const&).
+        <rdar://problem/22098457> and https://bugs.webkit.org/show_bug.cgi?id=147560
+
+        Reviewed by Alexey Proskuryakov.
+
+        * http/tests/appcache/identifier-test-expected.txt: Added.
+        * http/tests/appcache/identifier-test.html: Added.
+        * http/tests/appcache/resources/identifier-test-real.php: Added.
+        * http/tests/appcache/resources/identifier-test.manifest: Added.
+        * http/tests/appcache/resources/identifier-test.php: Added.
+
 2015-08-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r187729.
