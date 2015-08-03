@@ -1453,7 +1453,10 @@ Controller.prototype = {
         if (!this.controls || !this.controls.panel)
             return;
 
-        var visibleWidth = this.controls.panel.getBoundingClientRect().width * this._pageScaleFactor;
+        var visibleWidth = this.controls.panel.getBoundingClientRect().width;
+        if (this._pageScaleFactor > 1)
+            visibleWidth *= this._pageScaleFactor;
+
         if (visibleWidth <= 0 || visibleWidth == this.currentDisplayWidth)
             return;
 
@@ -1470,6 +1473,7 @@ Controller.prototype = {
 
         // Check if there is enough room for the scrubber.
         var shouldDropTimeline = (visibleWidth - visibleButtonWidth) < this.MinimumTimelineWidth;
+        this.controls.timeline.classList.toggle(this.ClassNames.dropped, shouldDropTimeline);
         this.controls.currentTime.classList.toggle(this.ClassNames.dropped, shouldDropTimeline);
         this.controls.thumbnailTrack.classList.toggle(this.ClassNames.dropped, shouldDropTimeline);
         this.controls.remainingTime.classList.toggle(this.ClassNames.dropped, shouldDropTimeline);
