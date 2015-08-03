@@ -152,9 +152,9 @@ public:
     ExpressionType createLogicalNot(const JSTokenLocation&, ExpressionType) { return UnaryExpr; }
     ExpressionType createUnaryPlus(const JSTokenLocation&, ExpressionType) { return UnaryExpr; }
     ExpressionType createVoid(const JSTokenLocation&, ExpressionType) { return UnaryExpr; }
-    ExpressionType thisExpr(const JSTokenLocation&, ThisTDZMode) { return ThisExpr; }
-    ExpressionType superExpr(const JSTokenLocation&) { return SuperExpr; }
-    ExpressionType newTargetExpr(const JSTokenLocation&) { return NewTargetExpr; }
+    ExpressionType createThisExpr(const JSTokenLocation&, ThisTDZMode) { return ThisExpr; }
+    ExpressionType createSuperExpr(const JSTokenLocation&) { return SuperExpr; }
+    ExpressionType createNewTargetExpr(const JSTokenLocation&) { return NewTargetExpr; }
     ExpressionType createResolve(const JSTokenLocation&, const Identifier*, int) { return ResolveExpr; }
     ExpressionType createObjectLiteral(const JSTokenLocation&) { return ObjectLiteralExpr; }
     ExpressionType createObjectLiteral(const JSTokenLocation&, int) { return ObjectLiteralExpr; }

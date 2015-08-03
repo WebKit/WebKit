@@ -168,16 +168,16 @@ public:
         incConstants();
         return new (m_parserArena) VoidNode(location, expr);
     }
-    ExpressionNode* thisExpr(const JSTokenLocation& location, ThisTDZMode thisTDZMode)
+    ExpressionNode* createThisExpr(const JSTokenLocation& location, ThisTDZMode thisTDZMode)
     {
         usesThis();
         return new (m_parserArena) ThisNode(location, thisTDZMode);
     }
-    ExpressionNode* superExpr(const JSTokenLocation& location)
+    ExpressionNode* createSuperExpr(const JSTokenLocation& location)
     {
         return new (m_parserArena) SuperNode(location);
     }
-    ExpressionNode* newTargetExpr(const JSTokenLocation location)
+    ExpressionNode* createNewTargetExpr(const JSTokenLocation location)
     {
         return new (m_parserArena) NewTargetNode(location);
     }

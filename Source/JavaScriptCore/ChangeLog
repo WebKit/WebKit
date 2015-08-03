@@ -1,3 +1,28 @@
+2015-08-03  Keith Miller  <keith_miller@apple.com>
+
+        Clean up the naming for AST expression generation.
+        https://bugs.webkit.org/show_bug.cgi?id=147581
+
+        Reviewed by Yusuke Suzuki.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createThisExpr):
+        (JSC::ASTBuilder::createSuperExpr):
+        (JSC::ASTBuilder::createNewTargetExpr):
+        (JSC::ASTBuilder::thisExpr): Deleted.
+        (JSC::ASTBuilder::superExpr): Deleted.
+        (JSC::ASTBuilder::newTargetExpr): Deleted.
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createThisExpr):
+        (JSC::SyntaxChecker::createSuperExpr):
+        (JSC::SyntaxChecker::createNewTargetExpr):
+        (JSC::SyntaxChecker::thisExpr): Deleted.
+        (JSC::SyntaxChecker::superExpr): Deleted.
+        (JSC::SyntaxChecker::newTargetExpr): Deleted.
+
 2015-08-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Don't set up the callsite to operationGetByValDefault when the optimization is already done

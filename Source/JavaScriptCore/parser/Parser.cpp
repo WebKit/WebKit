@@ -2766,7 +2766,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
     case THISTOKEN: {
         JSTokenLocation location(tokenLocation());
         next();
-        return context.thisExpr(location, m_thisTDZMode);
+        return context.createThisExpr(location, m_thisTDZMode);
     }
     case IDENT: {
     identifierExpression:
@@ -2916,7 +2916,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
             if (m_vm->propertyNames->target == *ident) {
                 semanticFailIfFalse(currentScope()->isFunction(), "new.target is only valid inside functions");
                 baseIsNewTarget = true;
-                base = context.newTargetExpr(location);
+                base = context.createNewTargetExpr(location);
                 newCount--;
                 next();
             } else
@@ -2926,7 +2926,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
     }
 
     if (baseIsSuper) {
-        base = context.superExpr(location);
+        base = context.createSuperExpr(location);
         next();
         currentScope()->setNeedsSuperBinding();
     } else if (!baseIsNewTarget)
