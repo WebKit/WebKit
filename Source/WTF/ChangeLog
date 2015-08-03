@@ -1,3 +1,17 @@
+2015-08-03  Anders Carlsson  <andersca@apple.com>
+
+        Make it possible to use String::utf8() in the debugger
+        https://bugs.webkit.org/show_bug.cgi?id=147566
+
+        Reviewed by Tim Horton.
+
+        Add a new utf8() overload that doesn't take any parameters and just calls utf8(LenientConversion), since lldb doesn't support evaluating
+        function calls with default parameters at the moment.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::utf8):
+        * wtf/text/WTFString.h:
+
 2015-08-02  Benjamin Poulain  <bpoulain@apple.com>
 
         Investigate HashTable::HashTable(const HashTable&) and HashTable::operator=(const HashTable&) performance for hash-based static analyses
