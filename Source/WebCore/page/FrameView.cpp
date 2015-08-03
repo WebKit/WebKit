@@ -1189,7 +1189,6 @@ void FrameView::layout(bool allowSubtree)
 
     if (inChildFrameLayoutWithFrameFlattening) {
         startLayoutAtMainFrameViewIfNeeded(allowSubtree);
-        LOG(Layout, "  frame flattening, starting from root");
         RenderElement* root = m_layoutRoot ? m_layoutRoot : frame().document()->renderView();
         if (!root || !root->needsLayout())
             return;
@@ -3797,6 +3796,7 @@ void FrameView::startLayoutAtMainFrameViewIfNeeded(bool allowSubtree)
     while (parentView->parentFrameView())
         parentView = parentView->parentFrameView();
 
+    LOG(Layout, "  frame flattening, starting from root");
     parentView->layout(allowSubtree);
 }
 
