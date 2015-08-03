@@ -1,3 +1,10 @@
+2015-08-03  Benjamin Poulain  <benjamin@webkit.org>
+
+        Prepare screenshots for a potential blog post
+
+        * blog-files/css-selectors-level-4/dynamic-specificity-1x.png: Added.
+        * blog-files/css-selectors-level-4/dynamic-specificity-2x.png: Added.
+
 2015-07-28  Geoffrey Garen  <ggaren@apple.com>
 
         SunSpider is no longer maintained
