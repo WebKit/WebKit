@@ -482,7 +482,7 @@ void Cache::dumpContentsToFile()
     if (!m_storage)
         return;
     auto fd = WebCore::openFile(dumpFilePath(), WebCore::OpenForWrite);
-    if (!fd)
+    if (!WebCore::isHandleValid(fd))
         return;
     auto prologue = String("{\n\"entries\": [\n").utf8();
     WebCore::writeToFile(fd, prologue.data(), prologue.length());

@@ -1,5 +1,19 @@
 2015-08-03  Chris Dumez  <cdumez@apple.com>
 
+        Fix error handling case in Cache::dumpContentsToFile()
+        https://bugs.webkit.org/show_bug.cgi?id=147567
+
+        Reviewed by Andreas Kling.
+
+        Cache::dumpContentsToFile() was expecting openFile() to return 0 in case
+        of error. However, it returns invalidPlatformFileHandle, which is -1 on
+        Unix.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::dumpContentsToFile):
+
+2015-08-03  Chris Dumez  <cdumez@apple.com>
+
         Make sure WebMemorySampler doesn't leak file descriptor
         https://bugs.webkit.org/show_bug.cgi?id=147564
 
