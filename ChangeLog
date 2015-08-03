@@ -1,3 +1,9 @@
+2015-08-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.9.5 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2015-07-31  Alex Christensen  <achristensen@webkit.org>
 
         Prepare for debug CMake builds on Windows.

@@ -1,4 +1,20 @@
 =================
+WebKitGTK+  2.9.5
+=================
+
+What's new in WebKitGTK+ 2.9.5?
+
+  - Add API to set the maximum number of web processes per WebKitWebContext.
+  - Add API to allow executing editing commands that require an argument.
+  - Prevent clipboard contents from being lost when web process finishes.
+  - Always allow font matching for strong aliases
+  - Move GStreamer missing plugins installer to the UI process.
+  - Fix empty space in popup menus when first item is selected.
+  - Fix a crash when SoupSession is destroyed in exit handler.
+  - Disable NPAPI plugins when running on Wayland.
+  - Translation updates: Swedish.
+
+=================
 WebKitGTK+  2.9.4
 =================
 
