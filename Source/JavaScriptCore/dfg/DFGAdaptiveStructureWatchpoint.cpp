@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,53 +24,53 @@
  */
 
 #include "config.h"
-#include "ConstantStructureCheck.h"
+#include "DFGAdaptiveStructureWatchpoint.h"
+
+#if ENABLE(DFG_JIT)
 
 #include "JSCInlines.h"
 
-namespace JSC {
+namespace JSC { namespace DFG {
 
-void ConstantStructureCheck::dumpInContext(PrintStream& out, DumpContext* context) const
+AdaptiveStructureWatchpoint::AdaptiveStructureWatchpoint(
+    const ObjectPropertyCondition& key,
+    CodeBlock* codeBlock)
+    : m_key(key)
+    , m_codeBlock(codeBlock)
 {
-    out.print(
-        "(Check if ", inContext(JSValue(m_constant), context), " has structure ",
-        pointerDumpInContext(m_structure, context), ")");
+    RELEASE_ASSERT(key.watchingRequiresStructureTransitionWatchpoint());
+    RELEASE_ASSERT(!key.watchingRequiresReplacementWatchpoint());
 }
 
-void ConstantStructureCheck::dump(PrintStream& out) const
+void AdaptiveStructureWatchpoint::install()
 {
-    dumpInContext(out, nullptr);
+    RELEASE_ASSERT(m_key.isWatchable());
+    
+    m_key.object()->structure()->addTransitionWatchpoint(this);
 }
 
-Structure* structureFor(const ConstantStructureCheckVector& vector, JSCell* constant)
+void AdaptiveStructureWatchpoint::fireInternal(const FireDetail& detail)
 {
-    for (unsigned i = vector.size(); i--;) {
-        if (vector[i].constant() == constant)
-            return vector[i].structure();
+    if (m_key.isWatchable(PropertyCondition::EnsureWatchability)) {
+        install();
+        return;
     }
-    return nullptr;
-}
-
-bool areCompatible(const ConstantStructureCheckVector& a, const ConstantStructureCheckVector& b)
-{
-    for (unsigned i = a.size(); i--;) {
-        Structure* otherStructure = structureFor(b, a[i].constant());
-        if (!otherStructure)
-            continue;
-        if (a[i].structure() != otherStructure)
-            return false;
+    
+    if (DFG::shouldShowDisassembly()) {
+        dataLog(
+            "Firing watchpoint ", RawPointer(this), " (", m_key, ") on ", *m_codeBlock, "\n");
     }
-    return true;
+    
+    StringPrintStream out;
+    out.print("Adaptation of ", m_key, " failed: ", detail);
+    
+    StringFireDetail stringDetail(out.toCString().data());
+    
+    m_codeBlock->jettison(
+        Profiler::JettisonDueToUnprofiledWatchpoint, CountReoptimization, &stringDetail);
 }
 
-void mergeInto(const ConstantStructureCheckVector& source, ConstantStructureCheckVector& target)
-{
-    for (unsigned i = source.size(); i--;) {
-        if (structureFor(target, source[i].constant()))
-            continue;
-        target.append(source[i]);
-    }
-}
+} } // namespace JSC::DFG
 
-} // namespace JSC
+#endif // ENABLE(DFG_JIT)
 

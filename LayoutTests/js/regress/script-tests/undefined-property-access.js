@@ -11,7 +11,7 @@ function foo() {
 }
 result = foo();
 if (result != undefined)
-    throw "Bad result: " + result;
+    throw new Error("Bad result: " + result);
 
 // This test checks that a cached property lookup miss doesn't continue to fire when the property suddenly appears on the object.
 
@@ -26,7 +26,7 @@ function bar() {
 }
 var result = bar();
 if (result != 1)
-    throw "Bad result: " + result;
+    throw new Error("Bad result: " + result);
 someGlobal = undefined;
 
 // This test checks that a cached property lookup miss doesn't continue to fire when the property suddenly appears on the object's prototype.
@@ -44,5 +44,5 @@ function baz() {
 }
 var result = baz();
 if (result != 2)
-    throw "Bad result: " + result;
+    throw new Error("Bad result: " + result);
 

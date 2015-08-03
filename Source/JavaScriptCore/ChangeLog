@@ -1,3 +1,425 @@
+2015-07-31  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should have adaptive structure watchpoints
+        https://bugs.webkit.org/show_bug.cgi?id=146929
+
+        Reviewed by Geoffrey Garen.
+
+        Before this change, if you wanted to efficiently validate whether an object has (or doesn't have) a
+        property, you'd check that the object still has the structure that you first saw the object have. We
+        optimized this a bit with transition watchpoints on the structure, which sometimes allowed us to
+        elide the structure check.
+
+        But this approach fails when that object frequently has new properties added to it. This would
+        change the structure and fire the transition watchpoint, so the code we emitted would be invalid and
+        we'd have to recompile either the IC or an entire code block.
+
+        This change introduces a new concept: an object property condition. This value describes some
+        condition involving a property on some object. There are four kinds: presence, absence,
+        absence-of-setter, and equivalence. For example, a presence condition says that we expect that the
+        object has some property at some offset with some attributes. This allows us to implement a new kind
+        of watchpoint, which knows about the object property condition that it's being used to enforce. If
+        the watchpoint fires because of a structure transition, the watchpoint may simply reinstall itself
+        on the new structure.
+
+        Object property conditions are used on the prototype chain of PutById transitions, GetById misses,
+        and prototype accesses. They are also used for any DFG accesses to object constants, including
+        global property accesses.
+
+        Mostly because of the effect on global property access, this is a 9% speed-up on Kraken. It's
+        neutral on most other things. It's a 68x speed-up on a microbenchmark that illustrates the prototype
+        chain situation. It's also a small speed-up on getter-richards.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::printGetByIdCacheStatus):
+        (JSC::CodeBlock::printPutByIdCacheStatus):
+        * bytecode/CodeBlockJettisoningWatchpoint.cpp:
+        (JSC::CodeBlockJettisoningWatchpoint::fireInternal):
+        * bytecode/ComplexGetStatus.cpp:
+        (JSC::ComplexGetStatus::computeFor):
+        * bytecode/ComplexGetStatus.h:
+        (JSC::ComplexGetStatus::ComplexGetStatus):
+        (JSC::ComplexGetStatus::takesSlowPath):
+        (JSC::ComplexGetStatus::kind):
+        (JSC::ComplexGetStatus::offset):
+        (JSC::ComplexGetStatus::conditionSet):
+        (JSC::ComplexGetStatus::attributes): Deleted.
+        (JSC::ComplexGetStatus::specificValue): Deleted.
+        (JSC::ComplexGetStatus::chain): Deleted.
+        * bytecode/ConstantStructureCheck.cpp: Removed.
+        * bytecode/ConstantStructureCheck.h: Removed.
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeForStubInfo):
+        * bytecode/GetByIdVariant.cpp:
+        (JSC::GetByIdVariant::GetByIdVariant):
+        (JSC::GetByIdVariant::~GetByIdVariant):
+        (JSC::GetByIdVariant::operator=):
+        (JSC::GetByIdVariant::attemptToMerge):
+        (JSC::GetByIdVariant::dumpInContext):
+        (JSC::GetByIdVariant::baseStructure): Deleted.
+        * bytecode/GetByIdVariant.h:
+        (JSC::GetByIdVariant::operator!):
+        (JSC::GetByIdVariant::structureSet):
+        (JSC::GetByIdVariant::conditionSet):
+        (JSC::GetByIdVariant::offset):
+        (JSC::GetByIdVariant::callLinkStatus):
+        (JSC::GetByIdVariant::constantChecks): Deleted.
+        (JSC::GetByIdVariant::alternateBase): Deleted.
+        * bytecode/ObjectPropertyCondition.cpp: Added.
+        (JSC::ObjectPropertyCondition::dumpInContext):
+        (JSC::ObjectPropertyCondition::dump):
+        (JSC::ObjectPropertyCondition::structureEnsuresValidityAssumingImpurePropertyWatchpoint):
+        (JSC::ObjectPropertyCondition::validityRequiresImpurePropertyWatchpoint):
+        (JSC::ObjectPropertyCondition::isStillValid):
+        (JSC::ObjectPropertyCondition::structureEnsuresValidity):
+        (JSC::ObjectPropertyCondition::isWatchableAssumingImpurePropertyWatchpoint):
+        (JSC::ObjectPropertyCondition::isWatchable):
+        (JSC::ObjectPropertyCondition::isStillLive):
+        (JSC::ObjectPropertyCondition::validateReferences):
+        (JSC::ObjectPropertyCondition::attemptToMakeEquivalenceWithoutBarrier):
+        * bytecode/ObjectPropertyCondition.h: Added.
+        (JSC::ObjectPropertyCondition::ObjectPropertyCondition):
+        (JSC::ObjectPropertyCondition::presenceWithoutBarrier):
+        (JSC::ObjectPropertyCondition::presence):
+        (JSC::ObjectPropertyCondition::absenceWithoutBarrier):
+        (JSC::ObjectPropertyCondition::absence):
+        (JSC::ObjectPropertyCondition::absenceOfSetterWithoutBarrier):
+        (JSC::ObjectPropertyCondition::absenceOfSetter):
+        (JSC::ObjectPropertyCondition::equivalenceWithoutBarrier):
+        (JSC::ObjectPropertyCondition::equivalence):
+        (JSC::ObjectPropertyCondition::operator!):
+        (JSC::ObjectPropertyCondition::object):
+        (JSC::ObjectPropertyCondition::condition):
+        (JSC::ObjectPropertyCondition::kind):
+        (JSC::ObjectPropertyCondition::uid):
+        (JSC::ObjectPropertyCondition::hasOffset):
+        (JSC::ObjectPropertyCondition::offset):
+        (JSC::ObjectPropertyCondition::hasAttributes):
+        (JSC::ObjectPropertyCondition::attributes):
+        (JSC::ObjectPropertyCondition::hasPrototype):
+        (JSC::ObjectPropertyCondition::prototype):
+        (JSC::ObjectPropertyCondition::hasRequiredValue):
+        (JSC::ObjectPropertyCondition::requiredValue):
+        (JSC::ObjectPropertyCondition::hash):
+        (JSC::ObjectPropertyCondition::operator==):
+        (JSC::ObjectPropertyCondition::isHashTableDeletedValue):
+        (JSC::ObjectPropertyCondition::isCompatibleWith):
+        (JSC::ObjectPropertyCondition::watchingRequiresStructureTransitionWatchpoint):
+        (JSC::ObjectPropertyCondition::watchingRequiresReplacementWatchpoint):
+        (JSC::ObjectPropertyCondition::isValidValueForPresence):
+        (JSC::ObjectPropertyConditionHash::hash):
+        (JSC::ObjectPropertyConditionHash::equal):
+        * bytecode/ObjectPropertyConditionSet.cpp: Added.
+        (JSC::ObjectPropertyConditionSet::forObject):
+        (JSC::ObjectPropertyConditionSet::forConditionKind):
+        (JSC::ObjectPropertyConditionSet::numberOfConditionsWithKind):
+        (JSC::ObjectPropertyConditionSet::hasOneSlotBaseCondition):
+        (JSC::ObjectPropertyConditionSet::slotBaseCondition):
+        (JSC::ObjectPropertyConditionSet::mergedWith):
+        (JSC::ObjectPropertyConditionSet::structuresEnsureValidity):
+        (JSC::ObjectPropertyConditionSet::structuresEnsureValidityAssumingImpurePropertyWatchpoint):
+        (JSC::ObjectPropertyConditionSet::needImpurePropertyWatchpoint):
+        (JSC::ObjectPropertyConditionSet::areStillLive):
+        (JSC::ObjectPropertyConditionSet::dumpInContext):
+        (JSC::ObjectPropertyConditionSet::dump):
+        (JSC::generateConditionsForPropertyMiss):
+        (JSC::generateConditionsForPropertySetterMiss):
+        (JSC::generateConditionsForPrototypePropertyHit):
+        (JSC::generateConditionsForPrototypePropertyHitCustom):
+        (JSC::generateConditionsForPropertySetterMissConcurrently):
+        * bytecode/ObjectPropertyConditionSet.h: Added.
+        (JSC::ObjectPropertyConditionSet::ObjectPropertyConditionSet):
+        (JSC::ObjectPropertyConditionSet::invalid):
+        (JSC::ObjectPropertyConditionSet::nonEmpty):
+        (JSC::ObjectPropertyConditionSet::isValid):
+        (JSC::ObjectPropertyConditionSet::isEmpty):
+        (JSC::ObjectPropertyConditionSet::begin):
+        (JSC::ObjectPropertyConditionSet::end):
+        (JSC::ObjectPropertyConditionSet::releaseRawPointer):
+        (JSC::ObjectPropertyConditionSet::adoptRawPointer):
+        (JSC::ObjectPropertyConditionSet::fromRawPointer):
+        (JSC::ObjectPropertyConditionSet::Data::Data):
+        * bytecode/PolymorphicGetByIdList.cpp:
+        (JSC::GetByIdAccess::GetByIdAccess):
+        (JSC::GetByIdAccess::~GetByIdAccess):
+        (JSC::GetByIdAccess::visitWeak):
+        * bytecode/PolymorphicGetByIdList.h:
+        (JSC::GetByIdAccess::GetByIdAccess):
+        (JSC::GetByIdAccess::structure):
+        (JSC::GetByIdAccess::conditionSet):
+        (JSC::GetByIdAccess::stubRoutine):
+        (JSC::GetByIdAccess::chain): Deleted.
+        (JSC::GetByIdAccess::chainCount): Deleted.
+        * bytecode/PolymorphicPutByIdList.cpp:
+        (JSC::PutByIdAccess::fromStructureStubInfo):
+        (JSC::PutByIdAccess::visitWeak):
+        * bytecode/PolymorphicPutByIdList.h:
+        (JSC::PutByIdAccess::PutByIdAccess):
+        (JSC::PutByIdAccess::transition):
+        (JSC::PutByIdAccess::setter):
+        (JSC::PutByIdAccess::newStructure):
+        (JSC::PutByIdAccess::conditionSet):
+        (JSC::PutByIdAccess::stubRoutine):
+        (JSC::PutByIdAccess::chain): Deleted.
+        (JSC::PutByIdAccess::chainCount): Deleted.
+        * bytecode/PropertyCondition.cpp: Added.
+        (JSC::PropertyCondition::dumpInContext):
+        (JSC::PropertyCondition::dump):
+        (JSC::PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint):
+        (JSC::PropertyCondition::validityRequiresImpurePropertyWatchpoint):
+        (JSC::PropertyCondition::isStillValid):
+        (JSC::PropertyCondition::isWatchableWhenValid):
+        (JSC::PropertyCondition::isWatchableAssumingImpurePropertyWatchpoint):
+        (JSC::PropertyCondition::isWatchable):
+        (JSC::PropertyCondition::isStillLive):
+        (JSC::PropertyCondition::validateReferences):
+        (JSC::PropertyCondition::isValidValueForAttributes):
+        (JSC::PropertyCondition::isValidValueForPresence):
+        (JSC::PropertyCondition::attemptToMakeEquivalenceWithoutBarrier):
+        (WTF::printInternal):
+        * bytecode/PropertyCondition.h: Added.
+        (JSC::PropertyCondition::PropertyCondition):
+        (JSC::PropertyCondition::presenceWithoutBarrier):
+        (JSC::PropertyCondition::presence):
+        (JSC::PropertyCondition::absenceWithoutBarrier):
+        (JSC::PropertyCondition::absence):
+        (JSC::PropertyCondition::absenceOfSetterWithoutBarrier):
+        (JSC::PropertyCondition::absenceOfSetter):
+        (JSC::PropertyCondition::equivalenceWithoutBarrier):
+        (JSC::PropertyCondition::equivalence):
+        (JSC::PropertyCondition::operator!):
+        (JSC::PropertyCondition::kind):
+        (JSC::PropertyCondition::uid):
+        (JSC::PropertyCondition::hasOffset):
+        (JSC::PropertyCondition::offset):
+        (JSC::PropertyCondition::hasAttributes):
+        (JSC::PropertyCondition::attributes):
+        (JSC::PropertyCondition::hasPrototype):
+        (JSC::PropertyCondition::prototype):
+        (JSC::PropertyCondition::hasRequiredValue):
+        (JSC::PropertyCondition::requiredValue):
+        (JSC::PropertyCondition::hash):
+        (JSC::PropertyCondition::operator==):
+        (JSC::PropertyCondition::isHashTableDeletedValue):
+        (JSC::PropertyCondition::isCompatibleWith):
+        (JSC::PropertyCondition::watchingRequiresStructureTransitionWatchpoint):
+        (JSC::PropertyCondition::watchingRequiresReplacementWatchpoint):
+        (JSC::PropertyConditionHash::hash):
+        (JSC::PropertyConditionHash::equal):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFromLLInt):
+        (JSC::PutByIdStatus::computeFor):
+        (JSC::PutByIdStatus::computeForStubInfo):
+        * bytecode/PutByIdVariant.cpp:
+        (JSC::PutByIdVariant::operator=):
+        (JSC::PutByIdVariant::transition):
+        (JSC::PutByIdVariant::setter):
+        (JSC::PutByIdVariant::makesCalls):
+        (JSC::PutByIdVariant::attemptToMerge):
+        (JSC::PutByIdVariant::attemptToMergeTransitionWithReplace):
+        (JSC::PutByIdVariant::dumpInContext):
+        (JSC::PutByIdVariant::baseStructure): Deleted.
+        * bytecode/PutByIdVariant.h:
+        (JSC::PutByIdVariant::PutByIdVariant):
+        (JSC::PutByIdVariant::kind):
+        (JSC::PutByIdVariant::structure):
+        (JSC::PutByIdVariant::structureSet):
+        (JSC::PutByIdVariant::oldStructure):
+        (JSC::PutByIdVariant::conditionSet):
+        (JSC::PutByIdVariant::offset):
+        (JSC::PutByIdVariant::callLinkStatus):
+        (JSC::PutByIdVariant::constantChecks): Deleted.
+        (JSC::PutByIdVariant::alternateBase): Deleted.
+        * bytecode/StructureStubClearingWatchpoint.cpp:
+        (JSC::StructureStubClearingWatchpoint::~StructureStubClearingWatchpoint):
+        (JSC::StructureStubClearingWatchpoint::push):
+        (JSC::StructureStubClearingWatchpoint::fireInternal):
+        (JSC::WatchpointsOnStructureStubInfo::~WatchpointsOnStructureStubInfo):
+        (JSC::WatchpointsOnStructureStubInfo::addWatchpoint):
+        (JSC::WatchpointsOnStructureStubInfo::ensureReferenceAndAddWatchpoint):
+        * bytecode/StructureStubClearingWatchpoint.h:
+        (JSC::StructureStubClearingWatchpoint::StructureStubClearingWatchpoint):
+        (JSC::WatchpointsOnStructureStubInfo::codeBlock):
+        (JSC::WatchpointsOnStructureStubInfo::stubInfo):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::deref):
+        (JSC::StructureStubInfo::visitWeakReferences):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::initPutByIdTransition):
+        (JSC::StructureStubInfo::initPutByIdReplace):
+        (JSC::StructureStubInfo::setSeen):
+        (JSC::StructureStubInfo::addWatchpoint):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGAdaptiveInferredPropertyValueWatchpoint.cpp: Added.
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::AdaptiveInferredPropertyValueWatchpoint):
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::install):
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::fire):
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::StructureWatchpoint::fireInternal):
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::PropertyWatchpoint::fireInternal):
+        * dfg/DFGAdaptiveInferredPropertyValueWatchpoint.h: Added.
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::key):
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::StructureWatchpoint::StructureWatchpoint):
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::PropertyWatchpoint::PropertyWatchpoint):
+        * dfg/DFGAdaptiveStructureWatchpoint.cpp: Added.
+        (JSC::DFG::AdaptiveStructureWatchpoint::AdaptiveStructureWatchpoint):
+        (JSC::DFG::AdaptiveStructureWatchpoint::install):
+        (JSC::DFG::AdaptiveStructureWatchpoint::fireInternal):
+        * dfg/DFGAdaptiveStructureWatchpoint.h: Added.
+        (JSC::DFG::AdaptiveStructureWatchpoint::key):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::cellConstantWithStructureCheck):
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+        (JSC::DFG::ByteCodeParser::handleGetByOffset):
+        (JSC::DFG::ByteCodeParser::handlePutByOffset):
+        (JSC::DFG::ByteCodeParser::check):
+        (JSC::DFG::ByteCodeParser::promoteToConstant):
+        (JSC::DFG::ByteCodeParser::planLoad):
+        (JSC::DFG::ByteCodeParser::load):
+        (JSC::DFG::ByteCodeParser::presenceLike):
+        (JSC::DFG::ByteCodeParser::checkPresenceLike):
+        (JSC::DFG::ByteCodeParser::store):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::handlePutById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::emitChecks): Deleted.
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::CommonData::validateReferences):
+        * dfg/DFGCommonData.h:
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        (JSC::DFG::ConstantFoldingPhase::emitGetByOffset):
+        (JSC::DFG::ConstantFoldingPhase::addBaseCheck):
+        (JSC::DFG::ConstantFoldingPhase::addStructureTransitionCheck):
+        (JSC::DFG::ConstantFoldingPhase::addChecks): Deleted.
+        * dfg/DFGDesiredWatchpoints.cpp:
+        (JSC::DFG::ArrayBufferViewWatchpointAdaptor::add):
+        (JSC::DFG::InferredValueAdaptor::add):
+        (JSC::DFG::AdaptiveStructureWatchpointAdaptor::add):
+        (JSC::DFG::DesiredWatchpoints::DesiredWatchpoints):
+        (JSC::DFG::DesiredWatchpoints::addLazily):
+        (JSC::DFG::DesiredWatchpoints::consider):
+        (JSC::DFG::DesiredWatchpoints::reallyAdd):
+        (JSC::DFG::DesiredWatchpoints::areStillValid):
+        (JSC::DFG::DesiredWatchpoints::dumpInContext):
+        * dfg/DFGDesiredWatchpoints.h:
+        (JSC::DFG::SetPointerAdaptor::add):
+        (JSC::DFG::SetPointerAdaptor::hasBeenInvalidated):
+        (JSC::DFG::SetPointerAdaptor::dumpInContext):
+        (JSC::DFG::InferredValueAdaptor::hasBeenInvalidated):
+        (JSC::DFG::InferredValueAdaptor::dumpInContext):
+        (JSC::DFG::ArrayBufferViewWatchpointAdaptor::hasBeenInvalidated):
+        (JSC::DFG::ArrayBufferViewWatchpointAdaptor::dumpInContext):
+        (JSC::DFG::AdaptiveStructureWatchpointAdaptor::hasBeenInvalidated):
+        (JSC::DFG::AdaptiveStructureWatchpointAdaptor::dumpInContext):
+        (JSC::DFG::GenericDesiredWatchpoints::reallyAdd):
+        (JSC::DFG::GenericDesiredWatchpoints::isWatched):
+        (JSC::DFG::GenericDesiredWatchpoints::dumpInContext):
+        (JSC::DFG::DesiredWatchpoints::isWatched):
+        (JSC::DFG::GenericSetAdaptor::add): Deleted.
+        (JSC::DFG::GenericSetAdaptor::hasBeenInvalidated): Deleted.
+        * dfg/DFGDesiredWeakReferences.cpp:
+        (JSC::DFG::DesiredWeakReferences::addLazily):
+        (JSC::DFG::DesiredWeakReferences::contains):
+        * dfg/DFGDesiredWeakReferences.h:
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::clearFlagsOnAllNodes):
+        (JSC::DFG::Graph::watchCondition):
+        (JSC::DFG::Graph::isSafeToLoad):
+        (JSC::DFG::Graph::livenessFor):
+        (JSC::DFG::Graph::tryGetConstantProperty):
+        (JSC::DFG::Graph::visitChildren):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::identifiers):
+        (JSC::DFG::Graph::watchpoints):
+        * dfg/DFGMultiGetByOffsetData.cpp: Added.
+        (JSC::DFG::GetByOffsetMethod::dumpInContext):
+        (JSC::DFG::GetByOffsetMethod::dump):
+        (JSC::DFG::MultiGetByOffsetCase::dumpInContext):
+        (JSC::DFG::MultiGetByOffsetCase::dump):
+        (WTF::printInternal):
+        * dfg/DFGMultiGetByOffsetData.h: Added.
+        (JSC::DFG::GetByOffsetMethod::GetByOffsetMethod):
+        (JSC::DFG::GetByOffsetMethod::constant):
+        (JSC::DFG::GetByOffsetMethod::load):
+        (JSC::DFG::GetByOffsetMethod::loadFromPrototype):
+        (JSC::DFG::GetByOffsetMethod::operator!):
+        (JSC::DFG::GetByOffsetMethod::kind):
+        (JSC::DFG::GetByOffsetMethod::prototype):
+        (JSC::DFG::GetByOffsetMethod::offset):
+        (JSC::DFG::MultiGetByOffsetCase::MultiGetByOffsetCase):
+        (JSC::DFG::MultiGetByOffsetCase::set):
+        (JSC::DFG::MultiGetByOffsetCase::method):
+        * dfg/DFGNode.h:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGStructureRegistrationPhase.cpp:
+        (JSC::DFG::StructureRegistrationPhase::run):
+        * ftl/FTLLowerDFGToLLVM.cpp:
+        (JSC::FTL::DFG::LowerDFGToLLVM::compileMultiGetByOffset):
+        * jit/Repatch.cpp:
+        (JSC::repatchByIdSelfAccess):
+        (JSC::checkObjectPropertyCondition):
+        (JSC::checkObjectPropertyConditions):
+        (JSC::replaceWithJump):
+        (JSC::generateByIdStub):
+        (JSC::actionForCell):
+        (JSC::tryBuildGetByIDList):
+        (JSC::emitPutReplaceStub):
+        (JSC::emitPutTransitionStub):
+        (JSC::tryCachePutByID):
+        (JSC::tryBuildPutByIdList):
+        (JSC::tryRepatchIn):
+        (JSC::addStructureTransitionCheck): Deleted.
+        (JSC::emitPutTransitionStubAndGetOldStructure): Deleted.
+        * runtime/IntendedStructureChain.cpp: Removed.
+        * runtime/IntendedStructureChain.h: Removed.
+        * runtime/JSCJSValue.h:
+        * runtime/JSObject.cpp:
+        (JSC::throwTypeError):
+        (JSC::JSObject::convertToDictionary):
+        (JSC::JSObject::shiftButterflyAfterFlattening):
+        * runtime/JSObject.h:
+        (JSC::JSObject::flattenDictionaryObject):
+        (JSC::JSObject::convertToDictionary): Deleted.
+        * runtime/Operations.h:
+        (JSC::normalizePrototypeChain):
+        (JSC::normalizePrototypeChainForChainAccess): Deleted.
+        (JSC::isPrototypeChainNormalized): Deleted.
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::PropertySlot):
+        (JSC::PropertySlot::slotBase):
+        * runtime/Structure.cpp:
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::attributeChangeTransition):
+        (JSC::Structure::toDictionaryTransition):
+        (JSC::Structure::toCacheableDictionaryTransition):
+        (JSC::Structure::toUncacheableDictionaryTransition):
+        (JSC::Structure::ensurePropertyReplacementWatchpointSet):
+        (JSC::Structure::startWatchingPropertyForReplacements):
+        (JSC::Structure::didCachePropertyReplacement):
+        (JSC::Structure::dump):
+        * runtime/Structure.h:
+        * runtime/VM.h:
+        * tests/stress/fold-multi-get-by-offset-to-get-by-offset-without-folding-the-structure-check-new.js: Added.
+        (foo):
+        (bar):
+        (baz):
+        * tests/stress/multi-get-by-offset-self-or-proto.js: Added.
+        (foo):
+        * tests/stress/replacement-watchpoint-dictionary.js: Added.
+        (foo):
+        * tests/stress/replacement-watchpoint.js: Added.
+        (foo):
+        * tests/stress/undefined-access-dictionary-then-proto-change.js: Added.
+        (foo):
+        * tests/stress/undefined-access-then-proto-change.js: Added.
+        (foo):
+
 2015-08-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         JavascriptCore Crash in JSC::ASTBuilder::Property JSC::Parser<JSC::Lexer<unsigned char> >::parseProperty<JSC::ASTBuilder>(JSC::ASTBuilder&, bool)

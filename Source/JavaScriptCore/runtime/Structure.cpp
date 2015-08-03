@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -412,7 +412,7 @@ Structure* Structure::addPropertyTransition(VM& vm, Structure* structure, Proper
     else
         maxTransitionLength = s_maxTransitionLength;
     if (structure->transitionCount() > maxTransitionLength) {
-        Structure* transition = toCacheableDictionaryTransition(vm, structure);
+        Structure* transition = toCacheableDictionaryTransition(vm, structure, deferred);
         ASSERT(structure != transition);
         offset = transition->add(vm, propertyName, attributes);
         return transition;
@@ -489,11 +489,11 @@ Structure* Structure::attributeChangeTransition(VM& vm, Structure* structure, Pr
     return structure;
 }
 
-Structure* Structure::toDictionaryTransition(VM& vm, Structure* structure, DictionaryKind kind)
+Structure* Structure::toDictionaryTransition(VM& vm, Structure* structure, DictionaryKind kind, DeferredStructureTransitionWatchpointFire* deferred)
 {
     ASSERT(!structure->isUncacheableDictionary());
     
-    Structure* transition = create(vm, structure);
+    Structure* transition = create(vm, structure, deferred);
 
     DeferGC deferGC(vm.heap);
     structure->materializePropertyMapIfNecessary(vm, deferGC);
@@ -507,9 +507,9 @@ Structure* Structure::toDictionaryTransition(VM& vm, Structure* structure, Dicti
     return transition;
 }
 
-Structure* Structure::toCacheableDictionaryTransition(VM& vm, Structure* structure)
+Structure* Structure::toCacheableDictionaryTransition(VM& vm, Structure* structure, DeferredStructureTransitionWatchpointFire* deferred)
 {
-    return toDictionaryTransition(vm, structure, CachedDictionaryKind);
+    return toDictionaryTransition(vm, structure, CachedDictionaryKind, deferred);
 }
 
 Structure* Structure::toUncacheableDictionaryTransition(VM& vm, Structure* structure)
@@ -761,6 +761,10 @@ void Structure::allocateRareData(VM& vm)
 WatchpointSet* Structure::ensurePropertyReplacementWatchpointSet(VM& vm, PropertyOffset offset)
 {
     ASSERT(!isUncacheableDictionary());
+
+    // In some places it's convenient to call this with an invalid offset. So, we do the check here.
+    if (!isValidOffset(offset))
+        return nullptr;
     
     if (!hasRareData())
         allocateRareData(vm);
@@ -781,11 +785,7 @@ void Structure::startWatchingPropertyForReplacements(VM& vm, PropertyName proper
 {
     ASSERT(!isUncacheableDictionary());
     
-    PropertyOffset offset = get(vm, propertyName);
-    if (!JSC::isValidOffset(offset))
-        return;
-    
-    startWatchingPropertyForReplacements(vm, offset);
+    startWatchingPropertyForReplacements(vm, get(vm, propertyName));
 }
 
 void Structure::didCachePropertyReplacement(VM& vm, PropertyOffset offset)
@@ -1117,6 +1117,17 @@ void Structure::dump(PrintStream& out) const
     
     if (m_prototype.get().isCell())
         out.print(", Proto:", RawPointer(m_prototype.get().asCell()));
+
+    switch (dictionaryKind()) {
+    case NoneDictionaryKind:
+        break;
+    case CachedDictionaryKind:
+        out.print(", Dictionary");
+        break;
+    case UncachedDictionaryKind:
+        out.print(", UncacheableDictionary");
+        break;
+    }
     
     out.print("]");
 }

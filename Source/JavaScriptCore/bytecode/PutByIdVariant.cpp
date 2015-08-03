@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,8 +43,7 @@ PutByIdVariant& PutByIdVariant::operator=(const PutByIdVariant& other)
     m_kind = other.m_kind;
     m_oldStructure = other.m_oldStructure;
     m_newStructure = other.m_newStructure;
-    m_constantChecks = other.m_constantChecks;
-    m_alternateBase = other.m_alternateBase;
+    m_conditionSet = other.m_conditionSet;
     m_offset = other.m_offset;
     if (other.m_callLinkStatus)
         m_callLinkStatus = std::make_unique<CallLinkStatus>(*other.m_callLinkStatus);
@@ -64,29 +63,26 @@ PutByIdVariant PutByIdVariant::replace(const StructureSet& structure, PropertyOf
 
 PutByIdVariant PutByIdVariant::transition(
     const StructureSet& oldStructure, Structure* newStructure,
-    const IntendedStructureChain* structureChain, PropertyOffset offset)
+    const ObjectPropertyConditionSet& conditionSet, PropertyOffset offset)
 {
     PutByIdVariant result;
     result.m_kind = Transition;
     result.m_oldStructure = oldStructure;
     result.m_newStructure = newStructure;
-    if (structureChain)
-        structureChain->gatherChecks(result.m_constantChecks);
+    result.m_conditionSet = conditionSet;
     result.m_offset = offset;
     return result;
 }
 
 PutByIdVariant PutByIdVariant::setter(
     const StructureSet& structure, PropertyOffset offset,
-    IntendedStructureChain* chain, std::unique_ptr<CallLinkStatus> callLinkStatus)
+    const ObjectPropertyConditionSet& conditionSet,
+    std::unique_ptr<CallLinkStatus> callLinkStatus)
 {
     PutByIdVariant result;
     result.m_kind = Setter;
     result.m_oldStructure = structure;
-    if (chain) {
-        chain->gatherChecks(result.m_constantChecks);
-        result.m_alternateBase = chain->terminalPrototype();
-    }
+    result.m_conditionSet = conditionSet;
     result.m_offset = offset;
     result.m_callLinkStatus = WTF::move(callLinkStatus);
     return result;
@@ -134,18 +130,6 @@ bool PutByIdVariant::makesCalls() const
     return kind() == Setter;
 }
 
-StructureSet PutByIdVariant::baseStructure() const
-{
-    ASSERT(kind() == Setter);
-    
-    if (!m_alternateBase)
-        return structure();
-    
-    Structure* structure = structureFor(m_constantChecks, m_alternateBase);
-    RELEASE_ASSERT(structure);
-    return structure;
-}
-
 bool PutByIdVariant::attemptToMerge(const PutByIdVariant& other)
 {
     if (m_offset != other.m_offset)
@@ -155,8 +139,8 @@ bool PutByIdVariant::attemptToMerge(const PutByIdVariant& other)
     case Replace:
         switch (other.m_kind) {
         case Replace: {
-            ASSERT(m_constantChecks.isEmpty());
-            ASSERT(other.m_constantChecks.isEmpty());
+            ASSERT(m_conditionSet.isEmpty());
+            ASSERT(other.m_conditionSet.isEmpty());
             
             m_oldStructure.merge(other.m_oldStructure);
             return true;
@@ -196,6 +180,7 @@ bool PutByIdVariant::attemptToMergeTransitionWithReplace(const PutByIdVariant& r
     ASSERT(m_offset == replace.m_offset);
     ASSERT(!replace.writesStructures());
     ASSERT(!replace.reallocatesStorage());
+    ASSERT(replace.conditionSet().isEmpty());
     
     // This sort of merging only works when we have one path along which we add a new field which
     // transitions to structure S while the other path was already on structure S. This doesn't
@@ -232,15 +217,13 @@ void PutByIdVariant::dumpInContext(PrintStream& out, DumpContext* context) const
         out.print(
             "<Transition: ", inContext(oldStructure(), context), " -> ",
             pointerDumpInContext(newStructure(), context), ", [",
-            listDumpInContext(constantChecks(), context), "], offset = ", offset(), ">");
+            inContext(m_conditionSet, context), "], offset = ", offset(), ">");
         return;
         
     case Setter:
         out.print(
             "<Setter: ", inContext(structure(), context), ", [",
-            listDumpInContext(constantChecks(), context), "]");
-        if (m_alternateBase)
-            out.print(", alternateBase = ", inContext(JSValue(m_alternateBase), context));
+            inContext(m_conditionSet, context), "]");
         out.print(", offset = ", m_offset);
         out.print(", call = ", *m_callLinkStatus);
         out.print(">");

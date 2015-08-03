@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 
 #include "CodeOrigin.h"
 #include "MacroAssembler.h"
+#include "ObjectPropertyConditionSet.h"
 #include "Opcode.h"
 #include "Structure.h"
 #include <wtf/Vector.h>
@@ -53,13 +54,12 @@ public:
     
     GetByIdAccess()
         : m_type(Invalid)
-        , m_chainCount(0)
     {
     }
     
     GetByIdAccess(
         VM&, JSCell* owner, AccessType, PassRefPtr<JITStubRoutine>, Structure*,
-        StructureChain* = 0, unsigned chainCount = 0);
+        const ObjectPropertyConditionSet& = ObjectPropertyConditionSet());
     
     ~GetByIdAccess();
     
@@ -72,8 +72,7 @@ public:
     
     Structure* structure() const { return m_structure.get(); }
     
-    StructureChain* chain() const { return m_chain.get(); }
-    unsigned chainCount() const { return m_chainCount; }
+    const ObjectPropertyConditionSet& conditionSet() const { return m_conditionSet; }
     
     JITStubRoutine* stubRoutine() const
     {
@@ -91,9 +90,8 @@ private:
     friend class CodeBlock;
     
     AccessType m_type;
-    unsigned m_chainCount;
     WriteBarrier<Structure> m_structure;
-    WriteBarrier<StructureChain> m_chain;
+    ObjectPropertyConditionSet m_conditionSet;
     RefPtr<JITStubRoutine> m_stubRoutine;
 };
 

@@ -105,7 +105,7 @@ static void repatchByIdSelfAccess(
     const Identifier& propertyName, PropertyOffset offset, const FunctionPtr &slowPathFunction,
     bool compact)
 {
-    if (structure->typeInfo().newImpurePropertyFiresWatchpoints())
+    if (structure->needImpurePropertyWatchpoint())
         vm.registerWatchpointForImpureProperty(propertyName, stubInfo.addWatchpoint(codeBlock));
     
     RepatchBuffer repatchBuffer(codeBlock);
@@ -132,47 +132,33 @@ static void repatchByIdSelfAccess(
 #endif
 }
 
-static void addStructureTransitionCheck(
-    JSCell* object, Structure* structure, CodeBlock* codeBlock, StructureStubInfo& stubInfo,
+static void checkObjectPropertyCondition(
+    const ObjectPropertyCondition& condition, CodeBlock* codeBlock, StructureStubInfo& stubInfo,
     MacroAssembler& jit, MacroAssembler::JumpList& failureCases, GPRReg scratchGPR)
 {
-    if (object->structure() == structure && structure->transitionWatchpointSetIsStillValid()) {
-        structure->addTransitionWatchpoint(stubInfo.addWatchpoint(codeBlock));
-        if (!ASSERT_DISABLED) {
-            // If we execute this code, the object must have the structure we expect. Assert
-            // this in debug modes.
-            jit.move(MacroAssembler::TrustedImmPtr(object), scratchGPR);
-            MacroAssembler::Jump ok = branchStructure(
-                jit,
-                MacroAssembler::Equal,
-                MacroAssembler::Address(scratchGPR, JSCell::structureIDOffset()),
-                structure);
-            jit.abortWithReason(RepatchIneffectiveWatchpoint);
-            ok.link(&jit);
-        }
+    if (condition.isWatchableAssumingImpurePropertyWatchpoint()) {
+        condition.object()->structure()->addTransitionWatchpoint(
+            stubInfo.addWatchpoint(codeBlock, condition));
         return;
     }
-    
-    jit.move(MacroAssembler::TrustedImmPtr(object), scratchGPR);
+
+    Structure* structure = condition.object()->structure();
+    RELEASE_ASSERT(condition.structureEnsuresValidityAssumingImpurePropertyWatchpoint(structure));
+    jit.move(MacroAssembler::TrustedImmPtr(condition.object()), scratchGPR);
     failureCases.append(
-        branchStructure(jit,
-            MacroAssembler::NotEqual,
-            MacroAssembler::Address(scratchGPR, JSCell::structureIDOffset()),
-            structure));
+        branchStructure(
+            jit, MacroAssembler::NotEqual,
+            MacroAssembler::Address(scratchGPR, JSCell::structureIDOffset()), structure));
 }
 
-static void addStructureTransitionCheck(
-    JSValue prototype, CodeBlock* codeBlock, StructureStubInfo& stubInfo,
+static void checkObjectPropertyConditions(
+    const ObjectPropertyConditionSet& set, CodeBlock* codeBlock, StructureStubInfo& stubInfo,
     MacroAssembler& jit, MacroAssembler::JumpList& failureCases, GPRReg scratchGPR)
 {
-    if (prototype.isNull())
-        return;
-    
-    ASSERT(prototype.isCell());
-    
-    addStructureTransitionCheck(
-        prototype.asCell(), prototype.asCell()->structure(), codeBlock, stubInfo, jit,
-        failureCases, scratchGPR);
+    for (const ObjectPropertyCondition& condition : set) {
+        checkObjectPropertyCondition(
+            condition, codeBlock, stubInfo, jit, failureCases, scratchGPR);
+    }
 }
 
 static void replaceWithJump(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo, const MacroAssemblerCodePtr target)
@@ -296,11 +282,13 @@ static FunctionPtr customFor(const PutPropertySlot& slot)
 
 static bool generateByIdStub(
     ExecState* exec, ByIdStubKind kind, const Identifier& propertyName,
-    FunctionPtr custom, StructureStubInfo& stubInfo, StructureChain* chain, size_t count,
-    PropertyOffset offset, Structure* structure, bool loadTargetFromProxy, WatchpointSet* watchpointSet,
-    CodeLocationLabel successLabel, CodeLocationLabel slowCaseLabel, RefPtr<JITStubRoutine>& stubRoutine)
+    FunctionPtr custom, StructureStubInfo& stubInfo, const ObjectPropertyConditionSet& conditionSet,
+    JSObject* alternateBase, PropertyOffset offset, Structure* structure, bool loadTargetFromProxy,
+    WatchpointSet* watchpointSet, CodeLocationLabel successLabel, CodeLocationLabel slowCaseLabel,
+    RefPtr<JITStubRoutine>& stubRoutine)
 {
-
+    ASSERT(conditionSet.structuresEnsureValidityAssumingImpurePropertyWatchpoint());
+    
     VM* vm = &exec->vm();
     GPRReg baseGPR = static_cast<GPRReg>(stubInfo.patch.baseGPR);
     JSValueRegs valueRegs = JSValueRegs(
@@ -346,37 +334,31 @@ static bool generateByIdStub(
     }
 
     CodeBlock* codeBlock = exec->codeBlock();
-    if (structure->typeInfo().newImpurePropertyFiresWatchpoints())
+    if (structure->needImpurePropertyWatchpoint() || conditionSet.needImpurePropertyWatchpoint())
         vm->registerWatchpointForImpureProperty(propertyName, stubInfo.addWatchpoint(codeBlock));
 
     if (watchpointSet)
         watchpointSet->add(stubInfo.addWatchpoint(codeBlock));
 
-    Structure* currStructure = structure; 
-    JSObject* protoObject = 0;
-    if (chain) {
-        WriteBarrier<Structure>* it = chain->head();
-        for (unsigned i = 0; i < count; ++i, ++it) {
-            protoObject = asObject(currStructure->prototypeForLookup(exec));
-            Structure* protoStructure = protoObject->structure();
-            if (protoStructure->typeInfo().newImpurePropertyFiresWatchpoints())
-                vm->registerWatchpointForImpureProperty(propertyName, stubInfo.addWatchpoint(codeBlock));
-            addStructureTransitionCheck(
-                protoObject, protoStructure, codeBlock, stubInfo, stubJit,
-                failureCases, scratchGPR);
-            currStructure = it->get();
-        }
-        ASSERT(!protoObject || protoObject->structure() == currStructure);
+    checkObjectPropertyConditions(
+        conditionSet, codeBlock, stubInfo, stubJit, failureCases, scratchGPR);
+
+    if (isValidOffset(offset)) {
+        Structure* currStructure;
+        if (conditionSet.isEmpty())
+            currStructure = structure;
+        else
+            currStructure = conditionSet.slotBaseCondition().object()->structure();
+        currStructure->startWatchingPropertyForReplacements(*vm, offset);
     }
     
-    currStructure->startWatchingPropertyForReplacements(*vm, offset);
     GPRReg baseForAccessGPR = InvalidGPRReg;
     if (kind != GetUndefined) {
-        if (chain) {
+        if (!conditionSet.isEmpty()) {
             // We could have clobbered scratchGPR earlier, so we have to reload from baseGPR to get the target.
             if (loadTargetFromProxy)
                 stubJit.loadPtr(MacroAssembler::Address(baseGPR, JSProxy::targetOffset()), baseForGetGPR);
-            stubJit.move(MacroAssembler::TrustedImmPtr(protoObject), scratchGPR);
+            stubJit.move(MacroAssembler::TrustedImmPtr(alternateBase), scratchGPR);
             baseForAccessGPR = scratchGPR;
         } else {
             // For proxy objects, we need to do all the Structure checks before moving the baseGPR into
@@ -625,9 +607,8 @@ static InlineCacheAction actionForCell(VM& vm, JSCell* cell)
         asObject(cell)->flattenDictionaryObject(vm);
         return RetryCacheLater;
     }
-    ASSERT(!structure->isUncacheableDictionary());
     
-    if (typeInfo.hasImpureGetOwnPropertySlot() && !typeInfo.newImpurePropertyFiresWatchpoints())
+    if (!structure->propertyAccessesAreCacheable())
         return GiveUpOnCache;
 
     return AttemptToCache;
@@ -825,21 +806,21 @@ static InlineCacheAction tryBuildGetByIDList(ExecState* exec, JSValue baseValue,
     }
 
     PropertyOffset offset = slot.isUnset() ? invalidOffset : slot.cachedOffset();
-    StructureChain* prototypeChain = 0;
-    size_t count = 0;
     
+    ObjectPropertyConditionSet conditionSet;
     if (slot.isUnset() || slot.slotBase() != baseValue) {
         if (typeInfo.prohibitsPropertyCaching() || structure->isDictionary())
             return GiveUpOnCache;
 
         if (slot.isUnset())
-            count = normalizePrototypeChain(exec, structure);
+            conditionSet = generateConditionsForPropertyMiss(*vm, codeBlock->ownerExecutable(), exec, structure, ident.impl());
         else
-            count = normalizePrototypeChainForChainAccess(
-                exec, structure, slot.slotBase(), ident, offset);
-        if (count == InvalidPrototypeChain)
+            conditionSet = generateConditionsForPrototypePropertyHit(*vm, codeBlock->ownerExecutable(), exec, structure, slot.slotBase(), ident.impl());
+
+        if (!conditionSet.isValid())
             return GiveUpOnCache;
-        prototypeChain = structure->prototypeChain(exec);
+
+        offset = slot.isUnset() ? invalidOffset : conditionSet.slotBaseCondition().offset();
     }
     
     PolymorphicGetByIdList* list = PolymorphicGetByIdList::from(stubInfo);
@@ -850,7 +831,7 @@ static InlineCacheAction tryBuildGetByIDList(ExecState* exec, JSValue baseValue,
     
     RefPtr<JITStubRoutine> stubRoutine;
     bool result = generateByIdStub(
-        exec, kindFor(slot), ident, customFor(slot), stubInfo, prototypeChain, count, offset, 
+        exec, kindFor(slot), ident, customFor(slot), stubInfo, conditionSet, slot.slotBase(), offset, 
         structure, loadTargetFromProxy, slot.watchpointSet(), 
         stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone),
         CodeLocationLabel(list->currentSlowPathTarget(stubInfo)), stubRoutine);
@@ -869,7 +850,7 @@ static InlineCacheAction tryBuildGetByIDList(ExecState* exec, JSValue baseValue,
     
     list->addAccess(GetByIdAccess(
         *vm, codeBlock->ownerExecutable(), accessType, stubRoutine, structure,
-        prototypeChain, count));
+        conditionSet));
     
     patchJumpToGetByIdStub(codeBlock, stubInfo, stubRoutine.get());
     
@@ -991,26 +972,28 @@ static bool emitPutReplaceStub(
     return true;
 }
 
-static Structure* emitPutTransitionStubAndGetOldStructure(ExecState* exec, VM* vm, Structure*& structure, const Identifier& ident, 
-    const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
+static bool emitPutTransitionStub(
+    ExecState* exec, VM* vm, Structure*& structure, const Identifier& ident, 
+    const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind,
+    Structure*& oldStructure, ObjectPropertyConditionSet& conditionSet)
 {
     PropertyName pname(ident);
-    Structure* oldStructure = structure;
+    oldStructure = structure;
     if (!oldStructure->isObject() || oldStructure->isDictionary() || parseIndex(pname))
-        return nullptr;
+        return false;
 
     PropertyOffset propertyOffset;
     structure = Structure::addPropertyTransitionToExistingStructureConcurrently(oldStructure, ident.impl(), 0, propertyOffset);
 
     if (!structure || !structure->isObject() || structure->isDictionary() || !structure->propertyAccessesAreCacheable())
-        return nullptr;
+        return false;
 
     // Skip optimizing the case where we need a realloc, if we don't have
     // enough registers to make it happen.
     if (GPRInfo::numberOfRegisters < 6
         && oldStructure->outOfLineCapacity() != structure->outOfLineCapacity()
         && oldStructure->outOfLineCapacity()) {
-        return nullptr;
+        return false;
     }
 
     // Skip optimizing the case where we need realloc, and the structure has
@@ -1018,14 +1001,14 @@ static Structure* emitPutTransitionStubAndGetOldStructure(ExecState* exec, VM* v
     // FIXME: We shouldn't skip this! Implement it!
     // https://bugs.webkit.org/show_bug.cgi?id=130914
     if (oldStructure->couldHaveIndexingHeader())
-        return nullptr;
+        return false;
 
-    if (normalizePrototypeChain(exec, structure) == InvalidPrototypeChain)
-        return nullptr;
-
-    StructureChain* prototypeChain = structure->prototypeChain(exec);
-
-    // emitPutTransitionStub
+    if (putKind == NotDirect) {
+        conditionSet = generateConditionsForPropertySetterMiss(
+            *vm, exec->codeBlock()->ownerExecutable(), exec, structure, ident.impl());
+        if (!conditionSet.isValid())
+            return false;
+    }
 
     CodeLocationLabel failureLabel = stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToSlowCase);
     RefPtr<JITStubRoutine>& stubRoutine = stubInfo.stubRoutine;
@@ -1081,17 +1064,8 @@ static Structure* emitPutTransitionStubAndGetOldStructure(ExecState* exec, VM* v
         MacroAssembler::Address(baseGPR, JSCell::structureIDOffset()), 
         oldStructure));
     
-    addStructureTransitionCheck(
-        oldStructure->storedPrototype(), exec->codeBlock(), stubInfo, stubJit, failureCases,
-        scratchGPR1);
-            
-    if (putKind == NotDirect) {
-        for (WriteBarrier<Structure>* it = prototypeChain->head(); *it; ++it) {
-            addStructureTransitionCheck(
-                (*it)->storedPrototype(), exec->codeBlock(), stubInfo, stubJit, failureCases,
-                scratchGPR1);
-        }
-    }
+    checkObjectPropertyConditions(
+        conditionSet, exec->codeBlock(), stubInfo, stubJit, failureCases, scratchGPR1);
 
     MacroAssembler::JumpList slowPath;
     
@@ -1226,7 +1200,7 @@ static Structure* emitPutTransitionStubAndGetOldStructure(ExecState* exec, VM* v
     
     LinkBuffer patchBuffer(*vm, stubJit, exec->codeBlock(), JITCompilationCanFail);
     if (patchBuffer.didFailToAllocate())
-        return nullptr;
+        return false;
     
     patchBuffer.link(success, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone));
     if (allocator.didReuseRegisters())
@@ -1254,8 +1228,8 @@ static Structure* emitPutTransitionStubAndGetOldStructure(ExecState* exec, VM* v
             exec->codeBlock()->ownerExecutable(),
             structure->outOfLineCapacity() != oldStructure->outOfLineCapacity(),
             structure);
-
-    return oldStructure;
+    
+    return true;
 }
 
 static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Structure* structure, const Identifier& ident, const PutPropertySlot& slot, StructureStubInfo& stubInfo, PutKind putKind)
@@ -1279,11 +1253,10 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
     if (slot.base() == baseValue && slot.isCacheablePut()) {
         if (slot.type() == PutPropertySlot::NewProperty) {
 
-            Structure* oldStructure = emitPutTransitionStubAndGetOldStructure(exec, vm, structure, ident, slot, stubInfo, putKind);
-            if (!oldStructure)
+            Structure* oldStructure;
+            ObjectPropertyConditionSet conditionSet;
+            if (!emitPutTransitionStub(exec, vm, structure, ident, slot, stubInfo, putKind, oldStructure, conditionSet))
                 return GiveUpOnCache;
-            
-            StructureChain* prototypeChain = structure->prototypeChain(exec);
             
             RepatchBuffer repatchBuffer(codeBlock);
             repatchBuffer.relink(
@@ -1292,7 +1265,7 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
                 CodeLocationLabel(stubInfo.stubRoutine->code().code()));
             repatchCall(repatchBuffer, stubInfo.callReturnLocation, appropriateListBuildingPutByIdFunction(slot, putKind));
             
-            stubInfo.initPutByIdTransition(*vm, codeBlock->ownerExecutable(), oldStructure, structure, prototypeChain, putKind == Direct);
+            stubInfo.initPutByIdTransition(*vm, codeBlock->ownerExecutable(), oldStructure, structure, conditionSet, putKind == Direct);
             
             return RetryCacheLater;
         }
@@ -1310,20 +1283,31 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
         && stubInfo.patch.spillMode == DontSpill) {
         RefPtr<JITStubRoutine> stubRoutine;
 
-        StructureChain* prototypeChain = 0;
-        PropertyOffset offset = slot.cachedOffset();
-        size_t count = 0;
-        if (baseValue != slot.base()) {
-            count = normalizePrototypeChainForChainAccess(exec, structure, slot.base(), ident, offset);
-            if (count == InvalidPrototypeChain)
+        ObjectPropertyConditionSet conditionSet;
+        PropertyOffset offset;
+        if (slot.base() != baseValue) {
+            if (slot.isCacheableCustom()) {
+                conditionSet =
+                    generateConditionsForPrototypePropertyHitCustom(
+                        *vm, codeBlock->ownerExecutable(), exec, structure, slot.base(),
+                        ident.impl());
+            } else {
+                conditionSet =
+                    generateConditionsForPrototypePropertyHit(
+                        *vm, codeBlock->ownerExecutable(), exec, structure, slot.base(),
+                        ident.impl());
+            }
+            if (!conditionSet.isValid())
                 return GiveUpOnCache;
-            prototypeChain = structure->prototypeChain(exec);
-        }
+            offset = slot.isCacheableCustom() ? invalidOffset : conditionSet.slotBaseCondition().offset();
+        } else
+            offset = slot.cachedOffset();
+
         PolymorphicPutByIdList* list;
         list = PolymorphicPutByIdList::from(putKind, stubInfo);
 
         bool result = generateByIdStub(
-            exec, kindFor(slot), ident, customFor(slot), stubInfo, prototypeChain, count,
+            exec, kindFor(slot), ident, customFor(slot), stubInfo, conditionSet, slot.base(),
             offset, structure, false, nullptr,
             stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone),
             stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToSlowCase),
@@ -1334,7 +1318,7 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
         list->addAccess(PutByIdAccess::setter(
             *vm, codeBlock->ownerExecutable(),
             slot.isCacheableSetter() ? PutByIdAccess::Setter : PutByIdAccess::CustomSetter,
-            structure, prototypeChain, count, slot.customSetter(), stubRoutine));
+            structure, conditionSet, slot.customSetter(), stubRoutine));
 
         RepatchBuffer repatchBuffer(codeBlock);
         repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.patch.deltaCallToJump), CodeLocationLabel(stubRoutine->code().code()));
@@ -1378,17 +1362,16 @@ static InlineCacheAction tryBuildPutByIdList(ExecState* exec, JSValue baseValue,
             if (list->isFull())
                 return GiveUpOnCache; // Will get here due to recursion.
 
-            Structure* oldStructure = emitPutTransitionStubAndGetOldStructure(exec, vm, structure, propertyName, slot, stubInfo, putKind);
-
-            if (!oldStructure) 
+            Structure* oldStructure;
+            ObjectPropertyConditionSet conditionSet;
+            if (!emitPutTransitionStub(exec, vm, structure, propertyName, slot, stubInfo, putKind, oldStructure, conditionSet))
                 return GiveUpOnCache;
 
-            StructureChain* prototypeChain = structure->prototypeChain(exec);
             stubRoutine = stubInfo.stubRoutine;
             list->addAccess(
                 PutByIdAccess::transition(
                     *vm, codeBlock->ownerExecutable(),
-                    oldStructure, structure, prototypeChain,
+                    oldStructure, structure, conditionSet,
                     stubRoutine));
 
         } else {
@@ -1421,21 +1404,32 @@ static InlineCacheAction tryBuildPutByIdList(ExecState* exec, JSValue baseValue,
     if ((slot.isCacheableCustom() || slot.isCacheableSetter())
         && stubInfo.patch.spillMode == DontSpill) {
         RefPtr<JITStubRoutine> stubRoutine;
-        StructureChain* prototypeChain = 0;
-        PropertyOffset offset = slot.cachedOffset();
-        size_t count = 0;
-        if (baseValue != slot.base()) {
-            count = normalizePrototypeChainForChainAccess(exec, structure, slot.base(), propertyName, offset);
-            if (count == InvalidPrototypeChain)
-                return GiveUpOnCache;
-            prototypeChain = structure->prototypeChain(exec);
-        }
         
+        ObjectPropertyConditionSet conditionSet;
+        PropertyOffset offset;
+        if (slot.base() != baseValue) {
+            if (slot.isCacheableCustom()) {
+                conditionSet =
+                    generateConditionsForPrototypePropertyHitCustom(
+                        *vm, codeBlock->ownerExecutable(), exec, structure, slot.base(),
+                        propertyName.impl());
+            } else {
+                conditionSet =
+                    generateConditionsForPrototypePropertyHit(
+                        *vm, codeBlock->ownerExecutable(), exec, structure, slot.base(),
+                        propertyName.impl());
+            }
+            if (!conditionSet.isValid())
+                return GiveUpOnCache;
+            offset = slot.isCacheableCustom() ? invalidOffset : conditionSet.slotBaseCondition().offset();
+        } else
+            offset = slot.cachedOffset();
+
         PolymorphicPutByIdList* list;
         list = PolymorphicPutByIdList::from(putKind, stubInfo);
 
         bool result = generateByIdStub(
-            exec, kindFor(slot), propertyName, customFor(slot), stubInfo, prototypeChain, count,
+            exec, kindFor(slot), propertyName, customFor(slot), stubInfo, conditionSet, slot.base(),
             offset, structure, false, nullptr,
             stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.deltaCallToDone),
             CodeLocationLabel(list->currentSlowPathTarget()),
@@ -1446,7 +1440,7 @@ static InlineCacheAction tryBuildPutByIdList(ExecState* exec, JSValue baseValue,
         list->addAccess(PutByIdAccess::setter(
             *vm, codeBlock->ownerExecutable(),
             slot.isCacheableSetter() ? PutByIdAccess::Setter : PutByIdAccess::CustomSetter,
-            structure, prototypeChain, count, slot.customSetter(), stubRoutine));
+            structure, conditionSet, slot.customSetter(), stubRoutine));
 
         RepatchBuffer repatchBuffer(codeBlock);
         repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.patch.deltaCallToJump), CodeLocationLabel(stubRoutine->code().code()));
@@ -1485,11 +1479,17 @@ static InlineCacheAction tryRepatchIn(
     VM* vm = &exec->vm();
     Structure* structure = base->structure(*vm);
     
-    PropertyOffset offsetIgnored;
-    JSValue foundSlotBase = wasFound ? slot.slotBase() : JSValue();
-    size_t count = !foundSlotBase || foundSlotBase != base ? 
-        normalizePrototypeChainForChainAccess(exec, structure, foundSlotBase, ident, offsetIgnored) : 0;
-    if (count == InvalidPrototypeChain)
+    ObjectPropertyConditionSet conditionSet;
+    if (wasFound) {
+        if (slot.slotBase() != base) {
+            conditionSet = generateConditionsForPrototypePropertyHit(
+                *vm, codeBlock->ownerExecutable(), exec, structure, slot.slotBase(), ident.impl());
+        }
+    } else {
+        conditionSet = generateConditionsForPropertyMiss(
+            *vm, codeBlock->ownerExecutable(), exec, structure, ident.impl());
+    }
+    if (!conditionSet.isValid())
         return GiveUpOnCache;
     
     PolymorphicAccessStructureList* polymorphicStructureList;
@@ -1514,7 +1514,6 @@ static InlineCacheAction tryRepatchIn(
             return GiveUpOnCache;
     }
     
-    StructureChain* chain = structure->prototypeChain(exec);
     RefPtr<JITStubRoutine> stubRoutine;
     
     {
@@ -1545,18 +1544,8 @@ static InlineCacheAction tryRepatchIn(
         if (slot.watchpointSet())
             slot.watchpointSet()->add(stubInfo.addWatchpoint(codeBlock));
 
-        Structure* currStructure = structure;
-        WriteBarrier<Structure>* it = chain->head();
-        for (unsigned i = 0; i < count; ++i, ++it) {
-            JSObject* prototype = asObject(currStructure->prototypeForLookup(exec));
-            Structure* protoStructure = prototype->structure();
-            addStructureTransitionCheck(
-                prototype, protoStructure, exec->codeBlock(), stubInfo, stubJit,
-                failureCases, scratchGPR);
-            if (protoStructure->typeInfo().newImpurePropertyFiresWatchpoints())
-                vm->registerWatchpointForImpureProperty(ident, stubInfo.addWatchpoint(codeBlock));
-            currStructure = it->get();
-        }
+        checkObjectPropertyConditions(
+            conditionSet, exec->codeBlock(), stubInfo, stubJit, failureCases, scratchGPR);
         
 #if USE(JSVALUE64)
         stubJit.move(MacroAssembler::TrustedImm64(JSValue::encode(jsBoolean(wasFound))), resultGPR);

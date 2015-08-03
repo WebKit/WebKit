@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,7 +51,8 @@ PutByIdAccess PutByIdAccess::fromStructureStubInfo(StructureStubInfo& stubInfo)
         result.m_type = Transition;
         result.m_oldStructure.copyFrom(stubInfo.u.putByIdTransition.previousStructure);
         result.m_newStructure.copyFrom(stubInfo.u.putByIdTransition.structure);
-        result.m_chain.copyFrom(stubInfo.u.putByIdTransition.chain);
+        result.m_conditionSet = ObjectPropertyConditionSet::adoptRawPointer(
+            stubInfo.u.putByIdTransition.rawConditionSet);
         result.m_stubRoutine = stubInfo.stubRoutine;
         break;
         
@@ -64,6 +65,9 @@ PutByIdAccess PutByIdAccess::fromStructureStubInfo(StructureStubInfo& stubInfo)
 
 bool PutByIdAccess::visitWeak(RepatchBuffer& repatchBuffer) const
 {
+    if (!m_conditionSet.areStillLive())
+        return false;
+    
     switch (m_type) {
     case Replace:
         if (!Heap::isMarked(m_oldStructure.get()))
@@ -74,14 +78,10 @@ bool PutByIdAccess::visitWeak(RepatchBuffer& repatchBuffer) const
             return false;
         if (!Heap::isMarked(m_newStructure.get()))
             return false;
-        if (!Heap::isMarked(m_chain.get()))
-            return false;
         break;
     case Setter:
     case CustomSetter:
         if (!Heap::isMarked(m_oldStructure.get()))
-            return false;
-        if (m_chain && !Heap::isMarked(m_chain.get()))
             return false;
         break;
     default:

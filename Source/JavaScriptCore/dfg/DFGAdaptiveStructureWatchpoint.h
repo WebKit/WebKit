@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,52 +23,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ConstantStructureCheck_h
-#define ConstantStructureCheck_h
+#ifndef DFGAdaptiveStructureWatchpoint_h
+#define DFGAdaptiveStructureWatchpoint_h
 
-#include "DumpContext.h"
-#include "JSCell.h"
-#include "Structure.h"
-#include <wtf/PrintStream.h>
-#include <wtf/Vector.h>
+#if ENABLE(DFG_JIT)
 
-namespace JSC {
+#include "ObjectPropertyCondition.h"
+#include "Watchpoint.h"
 
-class ConstantStructureCheck {
+namespace JSC { namespace DFG {
+
+class AdaptiveStructureWatchpoint : public Watchpoint {
 public:
-    ConstantStructureCheck()
-        : m_constant(nullptr)
-        , m_structure(nullptr)
-    {
-    }
+    AdaptiveStructureWatchpoint(const ObjectPropertyCondition&, CodeBlock*);
     
-    ConstantStructureCheck(JSCell* constant, Structure* structure)
-        : m_constant(constant)
-        , m_structure(structure)
-    {
-        ASSERT(!!m_constant == !!m_structure);
-    }
+    const ObjectPropertyCondition& key() const { return m_key; }
     
-    bool operator!() const { return !m_constant; }
-    
-    JSCell* constant() const { return m_constant; }
-    Structure* structure() const { return m_structure; }
-    
-    void dumpInContext(PrintStream&, DumpContext*) const;
-    void dump(PrintStream&) const;
-    
+    void install();
+
+protected:
+    virtual void fireInternal(const FireDetail&) override;
+
 private:
-    JSCell* m_constant;
-    Structure* m_structure;
+    ObjectPropertyCondition m_key;
+    CodeBlock* m_codeBlock;
 };
 
-typedef Vector<ConstantStructureCheck, 2> ConstantStructureCheckVector;
+} } // namespace JSC::DFG
 
-Structure* structureFor(const ConstantStructureCheckVector& vector, JSCell* constant);
-bool areCompatible(const ConstantStructureCheckVector&, const ConstantStructureCheckVector&);
-void mergeInto(const ConstantStructureCheckVector& source, ConstantStructureCheckVector& target);
+#endif // ENABLE(DFG_JIT)
 
-} // namespace JSC
-
-#endif // ConstantStructureCheck_h
+#endif // DFGAdaptiveStructureWatchpoint_h
 

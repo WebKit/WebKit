@@ -203,7 +203,27 @@ private:
     template<typename ChecksFunctor>
     bool handleConstantInternalFunction(int resultOperand, InternalFunction*, int registerOffset, int argumentCountIncludingThis, CodeSpecializationKind, const ChecksFunctor& insertChecks);
     Node* handlePutByOffset(Node* base, unsigned identifier, PropertyOffset, Node* value);
-    Node* handleGetByOffset(SpeculatedType, Node* base, const StructureSet&, unsigned identifierNumber, PropertyOffset, NodeType op = GetByOffset);
+    Node* handleGetByOffset(SpeculatedType, Node* base, unsigned identifierNumber, PropertyOffset, NodeType = GetByOffset);
+    Node* handleGetByOffset(SpeculatedType, Node* base, const StructureSet&, unsigned identifierNumber, PropertyOffset, NodeType = GetByOffset);
+    Node* handleGetByOffset(SpeculatedType, Node* base, UniquedStringImpl*, PropertyOffset, NodeType = GetByOffset);
+
+    // Create a presence ObjectPropertyCondition based on some known offset and structure set. Does not
+    // check the validity of the condition, but it may return a null one if it encounters a contradiction.
+    ObjectPropertyCondition presenceLike(
+        JSObject* knownBase, UniquedStringImpl*, PropertyOffset, const StructureSet&);
+    
+    // Attempt to watch the presence of a property. It will watch that the property is present in the same
+    // way as in all of the structures in the set. It may emit code instead of just setting a watchpoint.
+    // Returns true if this all works out.
+    bool checkPresenceLike(JSObject* knownBase, UniquedStringImpl*, PropertyOffset, const StructureSet&);
+    void checkPresenceLike(Node* base, UniquedStringImpl*, PropertyOffset, const StructureSet&);
+    
+    // Works with both GetByIdVariant and the setter form of PutByIdVariant.
+    template<typename VariantType>
+    Node* load(SpeculatedType, Node* base, unsigned identifierNumber, const VariantType&);
+
+    Node* store(Node* base, unsigned identifier, const PutByIdVariant&, Node* value);
+        
     void handleGetById(
         int destinationOperand, SpeculatedType, Node* base, unsigned identifierNumber,
         const GetByIdStatus&);
@@ -212,7 +232,32 @@ private:
     void handlePutById(
         Node* base, unsigned identifierNumber, Node* value, const PutByIdStatus&,
         bool isDirect);
-    void emitChecks(const ConstantStructureCheckVector&);
+    
+    // Either register a watchpoint or emit a check for this condition. Returns false if the
+    // condition no longer holds, and therefore no reasonable check can be emitted.
+    bool check(const ObjectPropertyCondition&);
+    
+    GetByOffsetMethod promoteToConstant(GetByOffsetMethod);
+    
+    // Either register a watchpoint or emit a check for this condition. It must be a Presence
+    // condition. It will attempt to promote a Presence condition to an Equivalence condition.
+    // Emits code for the loaded value that the condition guards, and returns a node containing
+    // the loaded value. Returns null if the condition no longer holds.
+    GetByOffsetMethod planLoad(const ObjectPropertyCondition&);
+    Node* load(SpeculatedType, unsigned identifierNumber, const GetByOffsetMethod&, NodeType = GetByOffset);
+    Node* load(SpeculatedType, const ObjectPropertyCondition&, NodeType = GetByOffset);
+    
+    // Calls check() for each condition in the set: that is, it either emits checks or registers
+    // watchpoints (or a combination of the two) to make the conditions hold. If any of those
+    // conditions are no longer checkable, returns false.
+    bool check(const ObjectPropertyConditionSet&);
+    
+    // Calls check() for those conditions that aren't the slot base, and calls load() for the slot
+    // base. Does a combination of watchpoint registration and check emission to guard the
+    // conditions, and emits code to load the value from the slot base. Returns a node containing
+    // the loaded value. Returns null if any of the conditions were no longer checkable.
+    GetByOffsetMethod planLoad(const ObjectPropertyConditionSet&);
+    Node* load(SpeculatedType, const ObjectPropertyConditionSet&, NodeType = GetByOffset);
 
     void prepareToParseBlock();
     void clearCaches();
@@ -706,6 +751,9 @@ private:
     
     Node* cellConstantWithStructureCheck(JSCell* object, Structure* structure)
     {
+        // FIXME: This should route to emitPropertyCheck, not the other way around. But currently,
+        // this gets no profit from using emitPropertyCheck() since we'll non-adaptively watch the
+        // object's structure as soon as we make it a weakJSCosntant.
         Node* objectNode = weakJSConstant(object);
         addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(structure)), objectNode);
         return objectNode;
@@ -2221,15 +2269,8 @@ bool ByteCodeParser::handleConstantInternalFunction(
     return false;
 }
 
-Node* ByteCodeParser::handleGetByOffset(SpeculatedType prediction, Node* base, const StructureSet& structureSet, unsigned identifierNumber, PropertyOffset offset, NodeType op)
+Node* ByteCodeParser::handleGetByOffset(SpeculatedType prediction, Node* base, unsigned identifierNumber, PropertyOffset offset, NodeType op)
 {
-    if (base->hasConstant()) {
-        if (JSValue constant = m_graph.tryGetConstantProperty(base->asJSValue(), structureSet, offset)) {
-            addToGraph(Phantom, base);
-            return weakJSConstant(constant);
-        }
-    }
-    
     Node* propertyStorage;
     if (isInlineOffset(offset))
         propertyStorage = base;
@@ -2243,6 +2284,18 @@ Node* ByteCodeParser::handleGetByOffset(SpeculatedType prediction, Node* base, c
     Node* getByOffset = addToGraph(op, OpInfo(data), OpInfo(prediction), propertyStorage, base);
 
     return getByOffset;
+}
+
+Node* ByteCodeParser::handleGetByOffset(SpeculatedType prediction, Node* base, const StructureSet& structureSet, unsigned identifierNumber, PropertyOffset offset, NodeType op)
+{
+    if (base->hasConstant()) {
+        if (JSValue constant = m_graph.tryGetConstantProperty(base->asJSValue(), structureSet, offset)) {
+            addToGraph(Phantom, base);
+            return weakJSConstant(constant);
+        }
+    }
+    
+    return handleGetByOffset(prediction, base, identifierNumber, offset, op);
 }
 
 Node* ByteCodeParser::handlePutByOffset(Node* base, unsigned identifier, PropertyOffset offset, Node* value)
@@ -2262,10 +2315,297 @@ Node* ByteCodeParser::handlePutByOffset(Node* base, unsigned identifier, Propert
     return result;
 }
 
-void ByteCodeParser::emitChecks(const ConstantStructureCheckVector& vector)
+bool ByteCodeParser::check(const ObjectPropertyCondition& condition)
 {
-    for (unsigned i = 0; i < vector.size(); ++i)
-        cellConstantWithStructureCheck(vector[i].constant(), vector[i].structure());
+    if (m_graph.watchCondition(condition))
+        return true;
+    
+    Structure* structure = condition.object()->structure();
+    if (!condition.structureEnsuresValidity(structure))
+        return false;
+    
+    addToGraph(
+        CheckStructure,
+        OpInfo(m_graph.addStructureSet(structure)),
+        weakJSConstant(condition.object()));
+    return true;
+}
+
+GetByOffsetMethod ByteCodeParser::promoteToConstant(GetByOffsetMethod method)
+{
+    if (method.kind() == GetByOffsetMethod::LoadFromPrototype
+        && method.prototype()->structure()->dfgShouldWatch()) {
+        if (JSValue constant = m_graph.tryGetConstantProperty(method.prototype()->value(), method.prototype()->structure(), method.offset()))
+            return GetByOffsetMethod::constant(m_graph.freeze(constant));
+    }
+    
+    return method;
+}
+
+GetByOffsetMethod ByteCodeParser::planLoad(const ObjectPropertyCondition& condition)
+{
+    if (verbose)
+        dataLog("Planning a load: ", condition, "\n");
+    
+    // We might promote this to Equivalence, and a later DFG pass might also do such promotion
+    // even if we fail, but for simplicity this cannot be asked to load an equivalence condition.
+    // None of the clients of this method will request a load of an Equivalence condition anyway,
+    // and supporting it would complicate the heuristics below.
+    RELEASE_ASSERT(condition.kind() == PropertyCondition::Presence);
+    
+    // Here's the ranking of how to handle this, from most preferred to least preferred:
+    //
+    // 1) Watchpoint on an equivalence condition and return a constant node for the loaded value.
+    //    No other code is emitted, and the structure of the base object is never registered.
+    //    Hence this results in zero code and we won't jettison this compilation if the object
+    //    transitions, even if the structure is watchable right now.
+    //
+    // 2) Need to emit a load, and the current structure of the base is going to be watched by the
+    //    DFG anyway (i.e. dfgShouldWatch). Watch the structure and emit the load. Don't watch the
+    //    condition, since the act of turning the base into a constant in IR will cause the DFG to
+    //    watch the structure anyway and doing so would subsume watching the condition.
+    //
+    // 3) Need to emit a load, and the current structure of the base is watchable but not by the
+    //    DFG (i.e. transitionWatchpointSetIsStillValid() and !dfgShouldWatchIfPossible()). Watch
+    //    the condition, and emit a load.
+    //
+    // 4) Need to emit a load, and the current structure of the base is not watchable. Emit a
+    //    structure check, and emit a load.
+    //
+    // 5) The condition does not hold. Give up and return null.
+    
+    // First, try to promote Presence to Equivalence. We do this before doing anything else
+    // because it's the most profitable. Also, there are cases where the presence is watchable but
+    // we don't want to watch it unless it became an equivalence (see the relationship between
+    // (1), (2), and (3) above).
+    ObjectPropertyCondition equivalenceCondition = condition.attemptToMakeEquivalenceWithoutBarrier();
+    if (m_graph.watchCondition(equivalenceCondition))
+        return GetByOffsetMethod::constant(m_graph.freeze(equivalenceCondition.requiredValue()));
+    
+    // At this point, we'll have to materialize the condition's base as a constant in DFG IR. Once
+    // we do this, the frozen value will have its own idea of what the structure is. Use that from
+    // now on just because it's less confusing.
+    FrozenValue* base = m_graph.freeze(condition.object());
+    Structure* structure = base->structure();
+    
+    // Check if the structure that we've registered makes the condition hold. If not, just give
+    // up. This is case (5) above.
+    if (!condition.structureEnsuresValidity(structure))
+        return GetByOffsetMethod();
+    
+    // If the structure is watched by the DFG already, then just use this fact to emit the load.
+    // This is case (2) above.
+    if (structure->dfgShouldWatch())
+        return promoteToConstant(GetByOffsetMethod::loadFromPrototype(base, condition.offset()));
+    
+    // If we can watch the condition right now, then we can emit the load after watching it. This
+    // is case (3) above.
+    if (m_graph.watchCondition(condition))
+        return promoteToConstant(GetByOffsetMethod::loadFromPrototype(base, condition.offset()));
+    
+    // We can't watch anything but we know that the current structure satisfies the condition. So,
+    // check for that structure and then emit the load.
+    addToGraph(
+        CheckStructure, 
+        OpInfo(m_graph.addStructureSet(structure)),
+        addToGraph(JSConstant, OpInfo(base)));
+    return promoteToConstant(GetByOffsetMethod::loadFromPrototype(base, condition.offset()));
+}
+
+Node* ByteCodeParser::load(
+    SpeculatedType prediction, unsigned identifierNumber, const GetByOffsetMethod& method,
+    NodeType op)
+{
+    switch (method.kind()) {
+    case GetByOffsetMethod::Invalid:
+        return nullptr;
+    case GetByOffsetMethod::Constant:
+        return addToGraph(JSConstant, OpInfo(method.constant()));
+    case GetByOffsetMethod::LoadFromPrototype: {
+        Node* baseNode = addToGraph(JSConstant, OpInfo(method.prototype()));
+        return handleGetByOffset(prediction, baseNode, identifierNumber, method.offset(), op);
+    }
+    case GetByOffsetMethod::Load:
+        // Will never see this from planLoad().
+        RELEASE_ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+    
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+Node* ByteCodeParser::load(
+    SpeculatedType prediction, const ObjectPropertyCondition& condition, NodeType op)
+{
+    GetByOffsetMethod method = planLoad(condition);
+    return load(prediction, m_graph.identifiers().ensure(condition.uid()), method, op);
+}
+
+bool ByteCodeParser::check(const ObjectPropertyConditionSet& conditionSet)
+{
+    for (const ObjectPropertyCondition condition : conditionSet) {
+        if (!check(condition))
+            return false;
+    }
+    return true;
+}
+
+GetByOffsetMethod ByteCodeParser::planLoad(const ObjectPropertyConditionSet& conditionSet)
+{
+    if (verbose)
+        dataLog("conditionSet = ", conditionSet, "\n");
+    
+    GetByOffsetMethod result;
+    for (const ObjectPropertyCondition condition : conditionSet) {
+        switch (condition.kind()) {
+        case PropertyCondition::Presence:
+            RELEASE_ASSERT(!result); // Should only see exactly one of these.
+            result = planLoad(condition);
+            if (!result)
+                return GetByOffsetMethod();
+            break;
+        default:
+            if (!check(condition))
+                return GetByOffsetMethod();
+            break;
+        }
+    }
+    RELEASE_ASSERT(!!result);
+    return result;
+}
+
+Node* ByteCodeParser::load(
+    SpeculatedType prediction, const ObjectPropertyConditionSet& conditionSet, NodeType op)
+{
+    GetByOffsetMethod method = planLoad(conditionSet);
+    return load(
+        prediction,
+        m_graph.identifiers().ensure(conditionSet.slotBaseCondition().uid()),
+        method, op);
+}
+
+ObjectPropertyCondition ByteCodeParser::presenceLike(
+    JSObject* knownBase, UniquedStringImpl* uid, PropertyOffset offset, const StructureSet& set)
+{
+    if (set.isEmpty())
+        return ObjectPropertyCondition();
+    unsigned attributes;
+    PropertyOffset firstOffset = set[0]->getConcurrently(uid, attributes);
+    if (firstOffset != offset)
+        return ObjectPropertyCondition();
+    for (unsigned i = 1; i < set.size(); ++i) {
+        unsigned otherAttributes;
+        PropertyOffset otherOffset = set[i]->getConcurrently(uid, otherAttributes);
+        if (otherOffset != offset || otherAttributes != attributes)
+            return ObjectPropertyCondition();
+    }
+    return ObjectPropertyCondition::presenceWithoutBarrier(knownBase, uid, offset, attributes);
+}
+
+bool ByteCodeParser::checkPresenceLike(
+    JSObject* knownBase, UniquedStringImpl* uid, PropertyOffset offset, const StructureSet& set)
+{
+    return check(presenceLike(knownBase, uid, offset, set));
+}
+
+void ByteCodeParser::checkPresenceLike(
+    Node* base, UniquedStringImpl* uid, PropertyOffset offset, const StructureSet& set)
+{
+    if (JSObject* knownBase = base->dynamicCastConstant<JSObject*>()) {
+        if (checkPresenceLike(knownBase, uid, offset, set))
+            return;
+    }
+
+    addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(set)), base);
+}
+
+template<typename VariantType>
+Node* ByteCodeParser::load(
+    SpeculatedType prediction, Node* base, unsigned identifierNumber, const VariantType& variant)
+{
+    // Make sure backwards propagation knows that we've used base.
+    addToGraph(Phantom, base);
+    
+    bool needStructureCheck = true;
+    
+    if (JSObject* knownBase = base->dynamicCastConstant<JSObject*>()) {
+        // Try to optimize away the structure check. Note that it's not worth doing anything about this
+        // if the base's structure is watched.
+        Structure* structure = base->constant()->structure();
+        if (!structure->dfgShouldWatch()) {
+            UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
+            
+            if (!variant.conditionSet().isEmpty()) {
+                // This means that we're loading from a prototype. We expect the base not to have the
+                // property. We can only use ObjectPropertyCondition if all of the structures in the
+                // variant.structureSet() agree on the prototype (it would be hilariously rare if they
+                // didn't). Note that we are relying on structureSet() having at least one element. That
+                // will always be true here because of how GetByIdStatus/PutByIdStatus work.
+                JSObject* prototype = variant.structureSet()[0]->storedPrototypeObject();
+                bool allAgree = true;
+                for (unsigned i = 1; i < variant.structureSet().size(); ++i) {
+                    if (variant.structureSet()[i]->storedPrototypeObject() != prototype) {
+                        allAgree = false;
+                        break;
+                    }
+                }
+                if (allAgree) {
+                    ObjectPropertyCondition condition = ObjectPropertyCondition::absenceWithoutBarrier(
+                        knownBase, uid, prototype);
+                    if (check(condition))
+                        needStructureCheck = false;
+                }
+            } else {
+                // This means we're loading directly from base. We can avoid all of the code that follows
+                // if we can prove that the property is a constant. Otherwise, we try to prove that the
+                // property is watchably present, in which case we get rid of the structure check.
+
+                ObjectPropertyCondition presenceCondition =
+                    presenceLike(knownBase, uid, variant.offset(), variant.structureSet());
+
+                ObjectPropertyCondition equivalenceCondition =
+                    presenceCondition.attemptToMakeEquivalenceWithoutBarrier();
+                if (m_graph.watchCondition(equivalenceCondition))
+                    return weakJSConstant(equivalenceCondition.requiredValue());
+
+                if (check(presenceCondition))
+                    needStructureCheck = false;
+            }
+        }
+    }
+
+    if (needStructureCheck)
+        addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(variant.structureSet())), base);
+    
+    SpeculatedType loadPrediction;
+    NodeType loadOp;
+    if (variant.callLinkStatus()) {
+        loadPrediction = SpecCellOther;
+        loadOp = GetGetterSetterByOffset;
+    } else {
+        loadPrediction = prediction;
+        loadOp = GetByOffset;
+    }
+    
+    Node* loadedValue;
+    if (!variant.conditionSet().isEmpty())
+        loadedValue = load(loadPrediction, variant.conditionSet(), loadOp);
+    else {
+        loadedValue = handleGetByOffset(
+            loadPrediction, base, variant.structureSet(), identifierNumber, variant.offset(),
+            loadOp);
+    }
+
+    return loadedValue;
+}
+
+Node* ByteCodeParser::store(Node* base, unsigned identifier, const PutByIdVariant& variant, Node* value)
+{
+    RELEASE_ASSERT(variant.kind() == PutByIdVariant::Replace);
+
+    checkPresenceLike(base, m_graph.identifiers()[identifier], variant.offset(), variant.structure());
+    return handlePutByOffset(base, identifier, variant.offset(), value);
 }
 
 void ByteCodeParser::handleGetById(
@@ -2288,18 +2628,36 @@ void ByteCodeParser::handleGetById(
             return;
         }
         
-        if (m_graph.compilation())
-            m_graph.compilation()->noticeInlinedGetById();
-    
+        Vector<MultiGetByOffsetCase, 2> cases;
+        
         // 1) Emit prototype structure checks for all chains. This could sort of maybe not be
         //    optimal, if there is some rarely executed case in the chain that requires a lot
         //    of checks and those checks are not watchpointable.
-        for (unsigned variantIndex = getByIdStatus.numVariants(); variantIndex--;)
-            emitChecks(getByIdStatus[variantIndex].constantChecks());
-        
+        for (const GetByIdVariant& variant : getByIdStatus.variants()) {
+            if (variant.conditionSet().isEmpty()) {
+                cases.append(
+                    MultiGetByOffsetCase(
+                        variant.structureSet(),
+                        GetByOffsetMethod::load(variant.offset())));
+                continue;
+            }
+            
+            GetByOffsetMethod method = planLoad(variant.conditionSet());
+            if (!method) {
+                set(VirtualRegister(destinationOperand),
+                    addToGraph(getById, OpInfo(identifierNumber), OpInfo(prediction), base));
+                return;
+            }
+            
+            cases.append(MultiGetByOffsetCase(variant.structureSet(), method));
+        }
+
+        if (m_graph.compilation())
+            m_graph.compilation()->noticeInlinedGetById();
+    
         // 2) Emit a MultiGetByOffset
         MultiGetByOffsetData* data = m_graph.m_multiGetByOffsetData.add();
-        data->variants = getByIdStatus.variants();
+        data->cases = cases;
         data->identifierNumber = identifierNumber;
         set(VirtualRegister(destinationOperand),
             addToGraph(MultiGetByOffset, OpInfo(data), OpInfo(prediction), base));
@@ -2309,29 +2667,15 @@ void ByteCodeParser::handleGetById(
     ASSERT(getByIdStatus.numVariants() == 1);
     GetByIdVariant variant = getByIdStatus[0];
                 
+    Node* loadedValue = load(prediction, base, identifierNumber, variant);
+    if (!loadedValue) {
+        set(VirtualRegister(destinationOperand),
+            addToGraph(getById, OpInfo(identifierNumber), OpInfo(prediction), base));
+        return;
+    }
+
     if (m_graph.compilation())
         m_graph.compilation()->noticeInlinedGetById();
-    
-    Node* originalBase = base;
-                
-    addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(variant.structureSet())), base);
-    
-    emitChecks(variant.constantChecks());
-
-    if (variant.alternateBase())
-        base = weakJSConstant(variant.alternateBase());
-    
-    // Unless we want bugs like https://bugs.webkit.org/show_bug.cgi?id=88783, we need to
-    // ensure that the base of the original get_by_id is kept alive until we're done with
-    // all of the speculations. We only insert the Phantom if there had been a CheckStructure
-    // on something other than the base following the CheckStructure on base.
-    if (originalBase != base)
-        addToGraph(Phantom, originalBase);
-    
-    Node* loadedValue = handleGetByOffset(
-        variant.callLinkStatus() ? SpecCellOther : prediction,
-        base, variant.baseStructure(), identifierNumber, variant.offset(),
-        variant.callLinkStatus() ? GetGetterSetterByOffset : GetByOffset);
     
     if (!variant.callLinkStatus()) {
         set(VirtualRegister(destinationOperand), loadedValue);
@@ -2369,7 +2713,7 @@ void ByteCodeParser::handleGetById(
     //    since we only really care about 'this' in this case. But we're not going to take that
     //    shortcut.
     int nextRegister = registerOffset + JSStack::CallFrameHeaderSize;
-    set(VirtualRegister(nextRegister++), originalBase, ImmediateNakedSet);
+    set(VirtualRegister(nextRegister++), base, ImmediateNakedSet);
     
     handleCall(
         destinationOperand, Call, InlineCallFrame::GetterCall, OPCODE_LENGTH(op_get_by_id),
@@ -2403,16 +2747,19 @@ void ByteCodeParser::handlePutById(
             return;
         }
         
-        if (m_graph.compilation())
-            m_graph.compilation()->noticeInlinedPutById();
-        
         if (!isDirect) {
             for (unsigned variantIndex = putByIdStatus.numVariants(); variantIndex--;) {
                 if (putByIdStatus[variantIndex].kind() != PutByIdVariant::Transition)
                     continue;
-                emitChecks(putByIdStatus[variantIndex].constantChecks());
+                if (!check(putByIdStatus[variantIndex].conditionSet())) {
+                    emitPutById(base, identifierNumber, value, putByIdStatus, isDirect);
+                    return;
+                }
             }
         }
+        
+        if (m_graph.compilation())
+            m_graph.compilation()->noticeInlinedPutById();
         
         MultiPutByOffsetData* data = m_graph.m_multiPutByOffsetData.add();
         data->variants = putByIdStatus.variants();
@@ -2426,8 +2773,7 @@ void ByteCodeParser::handlePutById(
     
     switch (variant.kind()) {
     case PutByIdVariant::Replace: {
-        addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(variant.structure())), base);
-        handlePutByOffset(base, identifierNumber, variant.offset(), value);
+        store(base, identifierNumber, variant, value);
         if (m_graph.compilation())
             m_graph.compilation()->noticeInlinedPutById();
         return;
@@ -2435,7 +2781,10 @@ void ByteCodeParser::handlePutById(
     
     case PutByIdVariant::Transition: {
         addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(variant.oldStructure())), base);
-        emitChecks(variant.constantChecks());
+        if (!check(variant.conditionSet())) {
+            emitPutById(base, identifierNumber, value, putByIdStatus, isDirect);
+            return;
+        }
 
         ASSERT(variant.oldStructureForTransition()->transitionWatchpointSetHasBeenInvalidated());
     
@@ -2486,19 +2835,11 @@ void ByteCodeParser::handlePutById(
     }
         
     case PutByIdVariant::Setter: {
-        Node* originalBase = base;
-        
-        addToGraph(
-            CheckStructure, OpInfo(m_graph.addStructureSet(variant.structure())), base);
-        
-        emitChecks(variant.constantChecks());
-        
-        if (variant.alternateBase())
-            base = weakJSConstant(variant.alternateBase());
-        
-        Node* loadedValue = handleGetByOffset(
-            SpecCellOther, base, variant.baseStructure(), identifierNumber, variant.offset(),
-            GetGetterSetterByOffset);
+        Node* loadedValue = load(SpecCellOther, base, identifierNumber, variant);
+        if (!loadedValue) {
+            emitPutById(base, identifierNumber, value, putByIdStatus, isDirect);
+            return;
+        }
         
         Node* setter = addToGraph(GetSetter, loadedValue);
         
@@ -2526,7 +2867,7 @@ void ByteCodeParser::handlePutById(
                 VirtualRegister(registerOffset)).toLocal());
     
         int nextRegister = registerOffset + JSStack::CallFrameHeaderSize;
-        set(VirtualRegister(nextRegister++), originalBase, ImmediateNakedSet);
+        set(VirtualRegister(nextRegister++), base, ImmediateNakedSet);
         set(VirtualRegister(nextRegister++), value, ImmediateNakedSet);
     
         handleCall(
@@ -3466,6 +3807,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             case GlobalProperty:
             case GlobalPropertyWithVarInjectionChecks: {
                 SpeculatedType prediction = getPrediction();
+
                 GetByIdStatus status = GetByIdStatus::computeFor(structure, uid);
                 if (status.state() != GetByIdStatus::Simple
                     || status.numVariants() != 1
@@ -3473,9 +3815,11 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     set(VirtualRegister(dst), addToGraph(GetByIdFlush, OpInfo(identifierNumber), OpInfo(prediction), get(VirtualRegister(scope))));
                     break;
                 }
-                Node* base = cellConstantWithStructureCheck(globalObject, status[0].structureSet().onlyStructure());
+
+                Node* base = weakJSConstant(globalObject);
+                Node* result = load(prediction, base, identifierNumber, status[0]);
                 addToGraph(Phantom, get(VirtualRegister(scope)));
-                set(VirtualRegister(dst), handleGetByOffset(prediction, base, status[0].structureSet(), identifierNumber, operand));
+                set(VirtualRegister(dst), result);
                 break;
             }
             case GlobalVar:
@@ -3619,10 +3963,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     addToGraph(PutById, OpInfo(identifierNumber), get(VirtualRegister(scope)), get(VirtualRegister(value)));
                     break;
                 }
-                ASSERT(status[0].structure().onlyStructure() == structure);
-                Node* base = cellConstantWithStructureCheck(globalObject, structure);
-                addToGraph(Phantom, get(VirtualRegister(scope)));
-                handlePutByOffset(base, identifierNumber, static_cast<PropertyOffset>(operand), get(VirtualRegister(value)));
+                Node* base = weakJSConstant(globalObject);
+                store(base, identifierNumber, status[0], get(VirtualRegister(value)));
                 // Keep scope alive until after put.
                 addToGraph(Phantom, get(VirtualRegister(scope)));
                 break;

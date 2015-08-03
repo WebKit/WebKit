@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -90,19 +90,22 @@ PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
         || instruction[0].u.opcode == LLInt::getOpcode(op_put_by_id_transition_normal_out_of_line));
     
     Structure* newStructure = instruction[6].u.structure.get();
-    StructureChain* chain = instruction[7].u.structureChain.get();
-    ASSERT(newStructure);
-    ASSERT(chain);
     
     PropertyOffset offset = newStructure->getConcurrently(uid);
     if (!isValidOffset(offset))
         return PutByIdStatus(NoInformation);
     
-    RefPtr<IntendedStructureChain> intendedChain;
-    if (chain)
-        intendedChain = adoptRef(new IntendedStructureChain(profiledBlock, structure, chain));
+    ObjectPropertyConditionSet conditionSet;
+    if (instruction[0].u.opcode == LLInt::getOpcode(op_put_by_id_transition_normal)
+        || instruction[0].u.opcode == LLInt::getOpcode(op_put_by_id_transition_normal_out_of_line)) {
+        conditionSet =
+            generateConditionsForPropertySetterMissConcurrently(
+                *profiledBlock->vm(), profiledBlock->globalObject(), structure, uid);
+        if (!conditionSet.isValid())
+            return PutByIdStatus(NoInformation);
+    }
     
-    return PutByIdVariant::transition(structure, newStructure, intendedChain.get(), offset);
+    return PutByIdVariant::transition(structure, newStructure, conditionSet, offset);
 }
 
 PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& map, unsigned bytecodeIndex, UniquedStringImpl* uid)
@@ -165,16 +168,14 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
         PropertyOffset offset = 
             stubInfo->u.putByIdTransition.structure->getConcurrently(uid);
         if (isValidOffset(offset)) {
-            RefPtr<IntendedStructureChain> chain;
-            if (stubInfo->u.putByIdTransition.chain) {
-                chain = adoptRef(new IntendedStructureChain(
-                    profiledBlock, stubInfo->u.putByIdTransition.previousStructure.get(),
-                    stubInfo->u.putByIdTransition.chain.get()));
-            }
+            ObjectPropertyConditionSet conditionSet = ObjectPropertyConditionSet::fromRawPointer(
+                stubInfo->u.putByIdTransition.rawConditionSet);
+            if (!conditionSet.structuresEnsureValidity())
+                return PutByIdStatus(TakesSlowPath);
             return PutByIdVariant::transition(
                 stubInfo->u.putByIdTransition.previousStructure.get(),
                 stubInfo->u.putByIdTransition.structure.get(),
-                chain.get(), offset);
+                conditionSet, offset);
         }
         return PutByIdStatus(TakesSlowPath);
     }
@@ -219,15 +220,11 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
                     access.newStructure()->getConcurrently(uid);
                 if (!isValidOffset(offset))
                     return PutByIdStatus(slowPathState);
-                RefPtr<IntendedStructureChain> chain;
-                if (access.chain()) {
-                    chain = adoptRef(new IntendedStructureChain(
-                        profiledBlock, access.oldStructure(), access.chain()));
-                    if (!chain->isStillValid())
-                        continue;
-                }
+                ObjectPropertyConditionSet conditionSet = access.conditionSet();
+                if (!conditionSet.structuresEnsureValidity())
+                    return PutByIdStatus(slowPathState);
                 variant = PutByIdVariant::transition(
-                    access.oldStructure(), access.newStructure(), chain.get(), offset);
+                    access.oldStructure(), access.newStructure(), conditionSet, offset);
                 break;
             }
                 
@@ -235,7 +232,7 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
                 Structure* structure = access.structure();
                 
                 ComplexGetStatus complexGetStatus = ComplexGetStatus::computeFor(
-                    profiledBlock, structure, access.chain(), access.chainCount(), uid);
+                    structure, access.conditionSet(), uid);
                 
                 switch (complexGetStatus.kind()) {
                 case ComplexGetStatus::ShouldSkip:
@@ -253,7 +250,7 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
                                 locker, profiledBlock, *stub->m_callLinkInfo, callExitSiteData));
                     
                     variant = PutByIdVariant::setter(
-                        structure, complexGetStatus.offset(), complexGetStatus.chain(),
+                        structure, complexGetStatus.offset(), complexGetStatus.conditionSet(),
                         WTF::move(callLinkStatus));
                 } }
                 break;
@@ -368,22 +365,11 @@ PutByIdStatus PutByIdStatus::computeFor(JSGlobalObject* globalObject, const Stru
         if (!structure->typeInfo().isObject())
             return PutByIdStatus(TakesSlowPath);
     
-        RefPtr<IntendedStructureChain> chain;
+        ObjectPropertyConditionSet conditionSet;
         if (!isDirect) {
-            chain = adoptRef(new IntendedStructureChain(globalObject, structure));
-        
-            // If the prototype chain has setters or read-only properties, then give up.
-            if (chain->mayInterceptStoreTo(uid))
-                return PutByIdStatus(TakesSlowPath);
-        
-            // If the prototype chain hasn't been normalized (i.e. there are proxies or dictionaries)
-            // then give up. The dictionary case would only happen if this structure has not been
-            // used in an optimized put_by_id transition. And really the only reason why we would
-            // bail here is that I don't really feel like having the optimizing JIT go and flatten
-            // dictionaries if we have evidence to suggest that those objects were never used as
-            // prototypes in a cacheable prototype access - i.e. there's a good chance that some of
-            // the other checks below will fail.
-            if (structure->isProxy() || !chain->isNormalized())
+            conditionSet = generateConditionsForPropertySetterMissConcurrently(
+                globalObject->vm(), globalObject, structure, uid);
+            if (!conditionSet.isValid())
                 return PutByIdStatus(TakesSlowPath);
         }
     
@@ -394,7 +380,7 @@ PutByIdStatus PutByIdStatus::computeFor(JSGlobalObject* globalObject, const Stru
         ASSERT(isValidOffset(offset));
     
         bool didAppend = result.appendVariant(
-            PutByIdVariant::transition(structure, transition, chain.get(), offset));
+            PutByIdVariant::transition(structure, transition, conditionSet, offset));
         if (!didAppend)
             return PutByIdStatus(TakesSlowPath);
     }

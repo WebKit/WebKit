@@ -536,6 +536,7 @@ public:
     JS_EXPORT_PRIVATE void discardAllCode();
 
     void registerWatchpointForImpureProperty(const Identifier&, Watchpoint*);
+    
     // FIXME: Use AtomicString once it got merged with Identifier.
     JS_EXPORT_PRIVATE void addImpureProperty(const String&);
 

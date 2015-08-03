@@ -340,7 +340,6 @@ void CodeBlock::printGetByIdCacheStatus(PrintStream& out, ExecState* exec, int l
             
             Structure* baseStructure = 0;
             Structure* prototypeStructure = 0;
-            StructureChain* chain = 0;
             PolymorphicGetByIdList* list = 0;
             
             switch (stubInfo.accessType) {
@@ -370,11 +369,6 @@ void CodeBlock::printGetByIdCacheStatus(PrintStream& out, ExecState* exec, int l
                 dumpStructure(out, "prototypeStruct", baseStructure, ident);
             }
             
-            if (chain) {
-                out.printf(", ");
-                dumpChain(out, chain, ident);
-            }
-            
             if (list) {
                 out.printf(", list = %p: [", list);
                 for (unsigned i = 0; i < list->size(); ++i) {
@@ -382,9 +376,9 @@ void CodeBlock::printGetByIdCacheStatus(PrintStream& out, ExecState* exec, int l
                         out.printf(", ");
                     out.printf("(");
                     dumpStructure(out, "base", list->at(i).structure(), ident);
-                    if (list->at(i).chain()) {
+                    if (!list->at(i).conditionSet().isEmpty()) {
                         out.printf(", ");
-                        dumpChain(out, list->at(i).chain(), ident);
+                        out.print(list->at(i).conditionSet());
                     }
                     out.printf(")");
                 }
@@ -456,10 +450,8 @@ void CodeBlock::printPutByIdCacheStatus(PrintStream& out, ExecState* exec, int l
                 dumpStructure(out, "prev", stubInfo.u.putByIdTransition.previousStructure.get(), ident);
                 out.print(", ");
                 dumpStructure(out, "next", stubInfo.u.putByIdTransition.structure.get(), ident);
-                if (StructureChain* chain = stubInfo.u.putByIdTransition.chain.get()) {
-                    out.print(", ");
-                    dumpChain(out, chain, ident);
-                }
+                if (stubInfo.u.putByIdTransition.rawConditionSet)
+                    out.print(", ", ObjectPropertyConditionSet::fromRawPointer(stubInfo.u.putByIdTransition.rawConditionSet));
                 break;
             case access_put_by_id_list: {
                 out.printf("list = [");
@@ -483,10 +475,8 @@ void CodeBlock::printPutByIdCacheStatus(PrintStream& out, ExecState* exec, int l
                         dumpStructure(out, "prev", access.oldStructure(), ident);
                         out.print(", ");
                         dumpStructure(out, "next", access.newStructure(), ident);
-                        if (access.chain()) {
-                            out.print(", ");
-                            dumpChain(out, access.chain(), ident);
-                        }
+                        if (!access.conditionSet().isEmpty())
+                            out.print(", ", access.conditionSet());
                     } else
                         out.print("unknown");
                     

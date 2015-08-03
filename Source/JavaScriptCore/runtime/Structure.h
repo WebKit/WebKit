@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -168,7 +168,7 @@ public:
     static Structure* removePropertyTransition(VM&, Structure*, PropertyName, PropertyOffset&);
     JS_EXPORT_PRIVATE static Structure* changePrototypeTransition(VM&, Structure*, JSValue prototype);
     JS_EXPORT_PRIVATE static Structure* attributeChangeTransition(VM&, Structure*, PropertyName, unsigned attributes);
-    JS_EXPORT_PRIVATE static Structure* toCacheableDictionaryTransition(VM&, Structure*);
+    JS_EXPORT_PRIVATE static Structure* toCacheableDictionaryTransition(VM&, Structure*, DeferredStructureTransitionWatchpointFire* = nullptr);
     static Structure* toUncacheableDictionaryTransition(VM&, Structure*);
     JS_EXPORT_PRIVATE static Structure* sealTransition(VM&, Structure*);
     JS_EXPORT_PRIVATE static Structure* freezeTransition(VM&, Structure*);
@@ -194,7 +194,19 @@ public:
     bool isDictionary() const { return dictionaryKind() != NoneDictionaryKind; }
     bool isUncacheableDictionary() const { return dictionaryKind() == UncachedDictionaryKind; }
   
-    bool propertyAccessesAreCacheable() { return dictionaryKind() != UncachedDictionaryKind && !typeInfo().prohibitsPropertyCaching(); }
+    bool propertyAccessesAreCacheable()
+    {
+        return dictionaryKind() != UncachedDictionaryKind
+            && !typeInfo().prohibitsPropertyCaching()
+            && !(typeInfo().hasImpureGetOwnPropertySlot() && !typeInfo().newImpurePropertyFiresWatchpoints());
+    }
+    
+    bool needImpurePropertyWatchpoint()
+    {
+        return propertyAccessesAreCacheable()
+            && typeInfo().hasImpureGetOwnPropertySlot()
+            && typeInfo().newImpurePropertyFiresWatchpoints();
+    }
 
     // We use SlowPath in GetByIdStatus for structures that may get new impure properties later to prevent
     // DFG from inlining property accesses since structures don't transition when a new impure property appears.
@@ -202,7 +214,7 @@ public:
     {
         return typeInfo().hasImpureGetOwnPropertySlot();
     }
-
+    
     // Type accessors.
     TypeInfo typeInfo() const { ASSERT(structure()->classInfo() == info()); return m_blob.typeInfo(m_outOfLineTypeFlags); }
     bool isObject() const { return typeInfo().isObject(); }
@@ -528,7 +540,7 @@ private:
     // to unlock it.
     void findStructuresAndMapForMaterialization(Vector<Structure*, 8>& structures, Structure*&, PropertyTable*&);
     
-    static Structure* toDictionaryTransition(VM&, Structure*, DictionaryKind);
+    static Structure* toDictionaryTransition(VM&, Structure*, DictionaryKind, DeferredStructureTransitionWatchpointFire* = nullptr);
 
     PropertyOffset add(VM&, PropertyName, unsigned attributes);
     PropertyOffset remove(PropertyName);

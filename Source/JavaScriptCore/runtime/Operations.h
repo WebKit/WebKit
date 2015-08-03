@@ -194,48 +194,6 @@ ALWAYS_INLINE JSValue jsAdd(CallFrame* callFrame, JSValue v1, JSValue v2)
 
 #define InvalidPrototypeChain (std::numeric_limits<size_t>::max())
 
-inline size_t normalizePrototypeChainForChainAccess(CallFrame* callFrame, Structure* structure, JSValue slotBase, const Identifier& propertyName, PropertyOffset& slotOffset)
-{
-    VM& vm = callFrame->vm();
-    size_t count = 0;
-        
-    while (1) {
-        if (structure->isProxy())
-            return InvalidPrototypeChain;
-
-        const TypeInfo& typeInfo = structure->typeInfo();
-        if (typeInfo.hasImpureGetOwnPropertySlot() && !typeInfo.newImpurePropertyFiresWatchpoints())
-            return InvalidPrototypeChain;
-            
-        JSValue v = structure->prototypeForLookup(callFrame);
-
-        // If we didn't find slotBase in the base's prototype chain, then the base
-        // must be a proxy for another object.
-
-        if (v.isNull()) {
-            if (!slotBase)
-                break;
-            return InvalidPrototypeChain;
-        }
-
-        JSCell* cell = v.asCell();
-        structure = cell->structure(vm);
-        // Since we're accessing a prototype in a loop, it's a good bet that it
-        // should not be treated as a dictionary.
-        if (structure->isDictionary()) {
-            structure->flattenDictionaryStructure(vm, asObject(cell));
-            if (slotBase == cell)
-                slotOffset = structure->get(vm, propertyName); 
-        }
-        ++count;
-
-        if (slotBase == cell)
-            break;
-    }
-        
-    return count;
-}
-
 inline size_t normalizePrototypeChain(CallFrame* callFrame, Structure* structure)
 {
     VM& vm = callFrame->vm();
@@ -255,23 +213,6 @@ inline size_t normalizePrototypeChain(CallFrame* callFrame, Structure* structure
             structure->flattenDictionaryStructure(vm, asObject(base));
 
         ++count;
-    }
-}
-
-inline bool isPrototypeChainNormalized(JSGlobalObject* globalObject, Structure* structure)
-{
-    for (;;) {
-        if (structure->isProxy())
-            return false;
-            
-        JSValue v = structure->prototypeForLookup(globalObject);
-        if (v.isNull())
-            return true;
-            
-        structure = v.asCell()->structure();
-            
-        if (structure->isDictionary())
-            return false;
     }
 }
 

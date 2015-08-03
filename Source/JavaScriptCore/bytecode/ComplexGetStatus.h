@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,8 @@
 #ifndef ComplexGetStatus_h
 #define ComplexGetStatus_h
 
-#include "IntendedStructureChain.h"
 #include "JSCJSValue.h"
+#include "ObjectPropertyConditionSet.h"
 #include "PropertyOffset.h"
 
 namespace JSC {
@@ -80,7 +80,6 @@ public:
     ComplexGetStatus()
         : m_kind(ShouldSkip)
         , m_offset(invalidOffset)
-        , m_attributes(UINT_MAX)
     {
     }
     
@@ -97,21 +96,16 @@ public:
     }
     
     static ComplexGetStatus computeFor(
-        CodeBlock* profiledBlock, Structure* headStructure, StructureChain* chain,
-        unsigned chainCount, UniquedStringImpl* uid);
+        Structure* headStructure, const ObjectPropertyConditionSet&, UniquedStringImpl* uid);
     
     Kind kind() const { return m_kind; }
-    unsigned attributes() const { return m_attributes; }
-    JSValue specificValue() const { return m_specificValue; }
     PropertyOffset offset() const { return m_offset; }
-    IntendedStructureChain* chain() const { return m_chain.get(); }
+    const ObjectPropertyConditionSet& conditionSet() const { return m_conditionSet; }
     
 private:
     Kind m_kind;
     PropertyOffset m_offset;
-    unsigned m_attributes;
-    JSValue m_specificValue;
-    RefPtr<IntendedStructureChain> m_chain;
+    ObjectPropertyConditionSet m_conditionSet;
 };
 
 } // namespace JSC

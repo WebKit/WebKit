@@ -3837,24 +3837,24 @@ private:
         
         MultiGetByOffsetData& data = m_node->multiGetByOffsetData();
 
-        if (data.variants.isEmpty()) {
+        if (data.cases.isEmpty()) {
             // Protect against creating a Phi function with zero inputs. LLVM doesn't like that.
             terminate(BadCache);
             return;
         }
         
-        Vector<LBasicBlock, 2> blocks(data.variants.size());
-        for (unsigned i = data.variants.size(); i--;)
+        Vector<LBasicBlock, 2> blocks(data.cases.size());
+        for (unsigned i = data.cases.size(); i--;)
             blocks[i] = FTL_NEW_BLOCK(m_out, ("MultiGetByOffset case ", i));
         LBasicBlock exit = FTL_NEW_BLOCK(m_out, ("MultiGetByOffset fail"));
         LBasicBlock continuation = FTL_NEW_BLOCK(m_out, ("MultiGetByOffset continuation"));
         
         Vector<SwitchCase, 2> cases;
         StructureSet baseSet;
-        for (unsigned i = data.variants.size(); i--;) {
-            GetByIdVariant variant = data.variants[i];
-            for (unsigned j = variant.structureSet().size(); j--;) {
-                Structure* structure = variant.structureSet()[j];
+        for (unsigned i = data.cases.size(); i--;) {
+            MultiGetByOffsetCase getCase = data.cases[i];
+            for (unsigned j = getCase.set().size(); j--;) {
+                Structure* structure = getCase.set()[j];
                 baseSet.add(structure);
                 cases.append(SwitchCase(weakStructureID(structure), blocks[i], Weight(1)));
             }
@@ -3865,29 +3865,36 @@ private:
         LBasicBlock lastNext = m_out.m_nextBlock;
         
         Vector<ValueFromBlock, 2> results;
-        for (unsigned i = data.variants.size(); i--;) {
-            m_out.appendTo(blocks[i], i + 1 < data.variants.size() ? blocks[i + 1] : exit);
+        for (unsigned i = data.cases.size(); i--;) {
+            MultiGetByOffsetCase getCase = data.cases[i];
+            GetByOffsetMethod method = getCase.method();
             
-            GetByIdVariant variant = data.variants[i];
-            baseSet.merge(variant.structureSet());
+            m_out.appendTo(blocks[i], i + 1 < data.cases.size() ? blocks[i + 1] : exit);
+            
             LValue result;
-            JSValue constantResult;
-            if (variant.alternateBase()) {
-                constantResult = m_graph.tryGetConstantProperty(
-                    variant.alternateBase(), variant.baseStructure(), variant.offset());
-            }
-            if (constantResult)
-                result = m_out.constInt64(JSValue::encode(constantResult));
-            else {
+            
+            switch (method.kind()) {
+            case GetByOffsetMethod::Invalid:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+                
+            case GetByOffsetMethod::Constant:
+                result = m_out.constInt64(JSValue::encode(method.constant()->value()));
+                break;
+                
+            case GetByOffsetMethod::Load:
+            case GetByOffsetMethod::LoadFromPrototype: {
                 LValue propertyBase;
-                if (variant.alternateBase())
-                    propertyBase = weakPointer(variant.alternateBase());
-                else
+                if (method.kind() == GetByOffsetMethod::Load)
                     propertyBase = base;
-                if (!isInlineOffset(variant.offset()))
+                else
+                    propertyBase = weakPointer(method.prototype()->value().asCell());
+                if (!isInlineOffset(method.offset()))
                     propertyBase = m_out.loadPtr(propertyBase, m_heaps.JSObject_butterfly);
-                result = loadProperty(propertyBase, data.identifierNumber, variant.offset());
-            }
+                result = loadProperty(
+                    propertyBase, data.identifierNumber, method.offset());
+                break;
+            } }
             
             results.append(m_out.anchor(result));
             m_out.jump(continuation);

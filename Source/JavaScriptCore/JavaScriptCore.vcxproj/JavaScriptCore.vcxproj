@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="DebugSuffix|Win32">
@@ -324,7 +324,6 @@
     <ClCompile Include="..\bytecode\CodeOrigin.cpp" />
     <ClCompile Include="..\bytecode\CodeType.cpp" />
     <ClCompile Include="..\bytecode\ComplexGetStatus.cpp" />
-    <ClCompile Include="..\bytecode\ConstantStructureCheck.cpp" />
     <ClCompile Include="..\bytecode\DeferredCompilationCallback.cpp" />
     <ClCompile Include="..\bytecode\DeferredSourceDump.cpp" />
     <ClCompile Include="..\bytecode\DFGExitProfile.cpp" />
@@ -337,10 +336,13 @@
     <ClCompile Include="..\bytecode\JumpTable.cpp" />
     <ClCompile Include="..\bytecode\LazyOperandValueProfile.cpp" />
     <ClCompile Include="..\bytecode\MethodOfGettingAValueProfile.cpp" />
+    <ClCompile Include="..\bytecode\ObjectPropertyCondition.cpp" />
+    <ClCompile Include="..\bytecode\ObjectPropertyConditionSet.cpp" />
     <ClCompile Include="..\bytecode\Opcode.cpp" />
     <ClCompile Include="..\bytecode\PolymorphicGetByIdList.cpp" />
     <ClCompile Include="..\bytecode\PolymorphicPutByIdList.cpp" />
     <ClCompile Include="..\bytecode\PreciseJumpTargets.cpp" />
+    <ClCompile Include="..\bytecode\PropertyCondition.cpp" />
     <ClCompile Include="..\bytecode\PutByIdStatus.cpp" />
     <ClCompile Include="..\bytecode\PutByIdVariant.cpp" />
     <ClCompile Include="..\bytecode\ReduceWhitespace.cpp" />
@@ -365,6 +367,8 @@
     <ClCompile Include="..\debugger\DebuggerScope.cpp" />
     <ClCompile Include="..\dfg\DFGAbstractHeap.cpp" />
     <ClCompile Include="..\dfg\DFGAbstractValue.cpp" />
+    <ClCompile Include="..\dfg\DFGAdaptiveInferredPropertyValueWatchpoint.cpp" />
+    <ClCompile Include="..\dfg\DFGAdaptiveStructureWatchpoint.cpp" />
     <ClCompile Include="..\dfg\DFGArgumentsEliminationPhase.cpp" />
     <ClCompile Include="..\dfg\DFGArgumentsUtilities.cpp" />
     <ClCompile Include="..\dfg\DFGArithMode.cpp" />
@@ -433,6 +437,7 @@
     <ClCompile Include="..\dfg\DFGMinifiedGraph.cpp" />
     <ClCompile Include="..\dfg\DFGMinifiedNode.cpp" />
     <ClCompile Include="..\dfg\DFGMovHintRemovalPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGMultiGetByOffsetData.cpp" />
     <ClCompile Include="..\dfg\DFGNaiveDominators.cpp" />
     <ClCompile Include="..\dfg\DFGNaturalLoops.cpp" />
     <ClCompile Include="..\dfg\DFGNode.cpp" />
@@ -729,7 +734,6 @@
     <ClCompile Include="..\runtime\IndexingType.cpp" />
     <ClCompile Include="..\runtime\InferredValue.cpp" />
     <ClCompile Include="..\runtime\InitializeThreading.cpp" />
-    <ClCompile Include="..\runtime\IntendedStructureChain.cpp" />
     <ClCompile Include="..\runtime\InternalFunction.cpp" />
     <ClCompile Include="..\runtime\IntlCollator.cpp" />
     <ClCompile Include="..\runtime\IntlCollatorConstructor.cpp" />
@@ -993,7 +997,6 @@
     <ClInclude Include="..\bytecode\CodeType.h" />
     <ClInclude Include="..\bytecode\Comment.h" />
     <ClInclude Include="..\bytecode\ComplexGetStatus.h" />
-    <ClInclude Include="..\bytecode\ConstantStructureCheck.h" />
     <ClInclude Include="..\bytecode\DataFormat.h" />
     <ClInclude Include="..\bytecode\DeferredCompilationCallback.h" />
     <ClInclude Include="..\bytecode\DeferredSourceDump.h" />
@@ -1011,11 +1014,14 @@
     <ClInclude Include="..\bytecode\LazyOperandValueProfile.h" />
     <ClInclude Include="..\bytecode\LLIntCallLinkInfo.h" />
     <ClInclude Include="..\bytecode\MethodOfGettingAValueProfile.h" />
+    <ClInclude Include="..\bytecode\ObjectPropertyCondition.h" />
+    <ClInclude Include="..\bytecode\ObjectPropertyConditionSet.h" />
     <ClInclude Include="..\bytecode\Opcode.h" />
     <ClInclude Include="..\bytecode\Operands.h" />
     <ClInclude Include="..\bytecode\PolymorphicGetByIdList.h" />
     <ClInclude Include="..\bytecode\PolymorphicPutByIdList.h" />
     <ClInclude Include="..\bytecode\PreciseJumpTargets.h" />
+    <ClInclude Include="..\bytecode\PropertyCondition.h" />
     <ClInclude Include="..\bytecode\PutByIdStatus.h" />
     <ClInclude Include="..\bytecode\PutByIdVariant.h" />
     <ClInclude Include="..\bytecode\PutKind.h" />
@@ -1051,6 +1057,8 @@
     <ClInclude Include="..\dfg\DFGAbstractInterpreter.h" />
     <ClInclude Include="..\dfg\DFGAbstractInterpreterInlines.h" />
     <ClInclude Include="..\dfg\DFGAbstractValue.h" />
+    <ClInclude Include="..\dfg\DFGAdaptiveInferredPropertyValueWatchpoint.h" />
+    <ClInclude Include="..\dfg\DFGAdaptiveStructureWatchpoint.h" />
     <ClInclude Include="..\dfg\DFGAdjacencyList.h" />
     <ClInclude Include="..\dfg\DFGAllocator.h" />
     <ClInclude Include="..\dfg\DFGAnalysis.h" />
@@ -1143,6 +1151,7 @@
     <ClInclude Include="..\dfg\DFGMinifiedID.h" />
     <ClInclude Include="..\dfg\DFGMinifiedNode.h" />
     <ClInclude Include="..\dfg\DFGMovHintRemovalPhase.h" />
+    <ClInclude Include="..\dfg\DFGMultiGetByOffsetData.h" />
     <ClInclude Include="..\dfg\DFGNaiveDominators.h" />
     <ClInclude Include="..\dfg\DFGNaturalLoops.h" />
     <ClInclude Include="..\dfg\DFGNode.h" />
@@ -1546,7 +1555,6 @@
     <ClInclude Include="..\runtime\Int16Array.h" />
     <ClInclude Include="..\runtime\Int32Array.h" />
     <ClInclude Include="..\runtime\Int8Array.h" />
-    <ClInclude Include="..\runtime\IntendedStructureChain.h" />
     <ClInclude Include="..\runtime\InternalFunction.h" />
     <ClInclude Include="..\runtime\IntlCollator.h" />
     <ClInclude Include="..\runtime\IntlCollatorConstructor.h" />

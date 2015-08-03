@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -169,8 +169,7 @@ GetByIdStatus GetByIdStatus::computeForStubInfo(
             Structure* structure = list->at(listIndex).structure();
             
             ComplexGetStatus complexGetStatus = ComplexGetStatus::computeFor(
-                profiledBlock, structure, list->at(listIndex).chain(),
-                list->at(listIndex).chainCount(), uid);
+                structure, list->at(listIndex).conditionSet(), uid);
              
             switch (complexGetStatus.kind()) {
             case ComplexGetStatus::ShouldSkip:
@@ -206,8 +205,8 @@ GetByIdStatus GetByIdStatus::computeForStubInfo(
                 }
                  
                 GetByIdVariant variant(
-                    StructureSet(structure), complexGetStatus.offset(), complexGetStatus.chain(),
-                    WTF::move(callLinkStatus));
+                    StructureSet(structure), complexGetStatus.offset(),
+                    complexGetStatus.conditionSet(), WTF::move(callLinkStatus));
                  
                 if (!result.appendVariant(variant))
                     return GetByIdStatus(slowPathState, true);

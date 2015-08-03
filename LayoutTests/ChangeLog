@@ -1,3 +1,23 @@
+2015-07-31  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should have adaptive structure watchpoints
+        https://bugs.webkit.org/show_bug.cgi?id=146929
+
+        Reviewed by Geoffrey Garen.
+
+        * js/regress/global-object-access-with-mutating-structure-expected.txt: Added.
+        * js/regress/global-object-access-with-mutating-structure.html: Added.
+        * js/regress/prototype-access-with-mutating-prototype-expected.txt: Added.
+        * js/regress/prototype-access-with-mutating-prototype.html: Added.
+        * js/regress/script-tests/global-object-access-with-mutating-structure.js: Added.
+        (foo):
+        * js/regress/script-tests/prototype-access-with-mutating-prototype.js: Added.
+        (foo):
+        * js/regress/script-tests/undefined-property-access.js:
+        (foo):
+        (bar):
+        (baz):
+
 2015-08-03  Brady Eidson  <beidson@apple.com>
 
         Fix ASSERTy test added in r187752

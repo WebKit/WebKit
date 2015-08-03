@@ -89,6 +89,9 @@ void CommonData::validateReferences(const TrackedReferences& trackedReferences)
                 trackedReferences.check(inlineCallFrame->calleeRecovery.constant());
         }
     }
+    
+    for (AdaptiveStructureWatchpoint* watchpoint : adaptiveStructureWatchpoints)
+        watchpoint->key().validateReferences(trackedReferences);
 }
 
 } } // namespace JSC::DFG

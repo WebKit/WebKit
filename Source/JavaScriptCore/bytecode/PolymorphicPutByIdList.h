@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 
 #include "CodeOrigin.h"
 #include "MacroAssembler.h"
+#include "ObjectPropertyConditionSet.h"
 #include "Opcode.h"
 #include "PutKind.h"
 #include "PutPropertySlot.h"
@@ -53,7 +54,6 @@ public:
     
     PutByIdAccess()
         : m_type(Invalid)
-        , m_chainCount(UINT_MAX)
     {
     }
     
@@ -62,14 +62,14 @@ public:
         JSCell* owner,
         Structure* oldStructure,
         Structure* newStructure,
-        StructureChain* chain,
+        const ObjectPropertyConditionSet& conditionSet,
         PassRefPtr<JITStubRoutine> stubRoutine)
     {
         PutByIdAccess result;
         result.m_type = Transition;
         result.m_oldStructure.set(vm, owner, oldStructure);
         result.m_newStructure.set(vm, owner, newStructure);
-        result.m_chain.set(vm, owner, chain);
+        result.m_conditionSet = conditionSet;
         result.m_customSetter = 0;
         result.m_stubRoutine = stubRoutine;
         return result;
@@ -95,8 +95,7 @@ public:
         JSCell* owner,
         AccessType accessType,
         Structure* structure,
-        StructureChain* chain,
-        unsigned chainCount,
+        const ObjectPropertyConditionSet& conditionSet,
         PutPropertySlot::PutValueFunc customSetter,
         PassRefPtr<JITStubRoutine> stubRoutine)
     {
@@ -104,10 +103,7 @@ public:
         PutByIdAccess result;
         result.m_oldStructure.set(vm, owner, structure);
         result.m_type = accessType;
-        if (chain) {
-            result.m_chain.set(vm, owner, chain);
-            result.m_chainCount = chainCount;
-        }
+        result.m_conditionSet = conditionSet;
         result.m_customSetter = customSetter;
         result.m_stubRoutine = stubRoutine;
         return result;
@@ -146,17 +142,7 @@ public:
         return m_newStructure.get();
     }
     
-    StructureChain* chain() const
-    {
-        ASSERT(isTransition() || isSetter() || isCustom());
-        return m_chain.get();
-    }
-    
-    unsigned chainCount() const
-    {
-        ASSERT(isSetter() || isCustom());
-        return m_chainCount;
-    }
+    const ObjectPropertyConditionSet& conditionSet() const { return m_conditionSet; }
     
     JITStubRoutine* stubRoutine() const
     {
@@ -178,8 +164,7 @@ private:
     AccessType m_type;
     WriteBarrier<Structure> m_oldStructure;
     WriteBarrier<Structure> m_newStructure;
-    WriteBarrier<StructureChain> m_chain;
-    unsigned m_chainCount;
+    ObjectPropertyConditionSet m_conditionSet;
     PutPropertySlot::PutValueFunc m_customSetter;
     RefPtr<JITStubRoutine> m_stubRoutine;
 };

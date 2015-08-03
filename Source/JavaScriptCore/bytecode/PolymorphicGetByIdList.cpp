@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,14 +37,12 @@ namespace JSC {
 
 GetByIdAccess::GetByIdAccess(
     VM& vm, JSCell* owner, AccessType type, PassRefPtr<JITStubRoutine> stubRoutine,
-    Structure* structure, StructureChain* chain, unsigned chainCount)
+    Structure* structure, const ObjectPropertyConditionSet& conditionSet)
     : m_type(type)
-    , m_chainCount(chainCount)
     , m_structure(vm, owner, structure)
+    , m_conditionSet(conditionSet)
     , m_stubRoutine(stubRoutine)
 {
-    if (chain)
-        m_chain.set(vm, owner, chain);
 }
 
 GetByIdAccess::~GetByIdAccess()
@@ -71,7 +69,7 @@ bool GetByIdAccess::visitWeak(RepatchBuffer& repatchBuffer) const
 {
     if (m_structure && !Heap::isMarked(m_structure.get()))
         return false;
-    if (m_chain && !Heap::isMarked(m_chain.get()))
+    if (!m_conditionSet.areStillLive())
         return false;
     if (!m_stubRoutine->visitWeak(repatchBuffer))
         return false;

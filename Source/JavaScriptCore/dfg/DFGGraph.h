@@ -665,6 +665,15 @@ public:
     DesiredIdentifiers& identifiers() { return m_plan.identifiers; }
     DesiredWatchpoints& watchpoints() { return m_plan.watchpoints; }
     
+    // Returns false if the key is already invalid or unwatchable. If this is a Presence condition,
+    // this also makes it cheap to query if the condition holds. Also makes sure that the GC knows
+    // what's going on.
+    bool watchCondition(const ObjectPropertyCondition&);
+
+    // Checks if it's known that loading from the given object at the given offset is fine. This is
+    // computed by tracking which conditions we track with watchCondition().
+    bool isSafeToLoad(JSObject* base, PropertyOffset);
+    
     FullBytecodeLiveness& livenessFor(CodeBlock*);
     FullBytecodeLiveness& livenessFor(InlineCallFrame*);
     
@@ -844,6 +853,7 @@ public:
     Vector<InlineVariableData, 4> m_inlineVariableData;
     HashMap<CodeBlock*, std::unique_ptr<FullBytecodeLiveness>> m_bytecodeLiveness;
     HashMap<CodeBlock*, std::unique_ptr<BytecodeKills>> m_bytecodeKills;
+    HashSet<std::pair<JSObject*, PropertyOffset>> m_safeToLoad;
     Dominators m_dominators;
     PrePostNumbering m_prePostNumbering;
     NaturalLoops m_naturalLoops;

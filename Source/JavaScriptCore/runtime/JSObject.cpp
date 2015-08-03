@@ -2723,6 +2723,13 @@ JSObject* throwTypeError(ExecState* exec, const String& message)
     return exec->vm().throwException(exec, createTypeError(exec, message));
 }
 
+void JSObject::convertToDictionary(VM& vm)
+{
+    DeferredStructureTransitionWatchpointFire deferredWatchpointFire;
+    setStructure(
+        vm, Structure::toCacheableDictionaryTransition(vm, structure(vm), &deferredWatchpointFire));
+}
+
 void JSObject::shiftButterflyAfterFlattening(VM& vm, size_t outOfLineCapacityBefore, size_t outOfLineCapacityAfter)
 {
     Butterfly* butterfly = this->butterfly();

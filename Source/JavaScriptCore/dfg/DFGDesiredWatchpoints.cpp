@@ -35,8 +35,9 @@
 namespace JSC { namespace DFG {
 
 void ArrayBufferViewWatchpointAdaptor::add(
-    CodeBlock* codeBlock, JSArrayBufferView* view, Watchpoint* watchpoint)
+    CodeBlock* codeBlock, JSArrayBufferView* view, CommonData& common)
 {
+    Watchpoint* watchpoint = common.watchpoints.add(codeBlock);
     ArrayBufferNeuteringWatchpoint* neuteringWatchpoint =
         ArrayBufferNeuteringWatchpoint::create(*codeBlock->vm());
     neuteringWatchpoint->set()->add(watchpoint);
@@ -45,10 +46,23 @@ void ArrayBufferViewWatchpointAdaptor::add(
 }
 
 void InferredValueAdaptor::add(
-    CodeBlock* codeBlock, InferredValue* inferredValue, Watchpoint* watchpoint)
+    CodeBlock* codeBlock, InferredValue* inferredValue, CommonData& common)
 {
     codeBlock->addConstant(inferredValue); // For common users, it doesn't really matter if it's weak or not. If references to it go away, we go away, too.
-    inferredValue->add(watchpoint);
+    inferredValue->add(common.watchpoints.add(codeBlock));
+}
+
+void AdaptiveStructureWatchpointAdaptor::add(
+    CodeBlock* codeBlock, const ObjectPropertyCondition& key, CommonData& common)
+{
+    switch (key.kind()) {
+    case PropertyCondition::Equivalence:
+        common.adaptiveInferredPropertyValueWatchpoints.add(key, codeBlock)->install();
+        break;
+    default:
+        common.adaptiveStructureWatchpoints.add(key, codeBlock)->install();
+        break;
+    }
 }
 
 DesiredWatchpoints::DesiredWatchpoints() { }
@@ -74,6 +88,11 @@ void DesiredWatchpoints::addLazily(JSArrayBufferView* view)
     m_bufferViews.addLazily(view);
 }
 
+void DesiredWatchpoints::addLazily(const ObjectPropertyCondition& key)
+{
+    m_adaptiveStructureSets.addLazily(key);
+}
+
 bool DesiredWatchpoints::consider(Structure* structure)
 {
     if (!structure->dfgShouldWatch())
@@ -88,6 +107,7 @@ void DesiredWatchpoints::reallyAdd(CodeBlock* codeBlock, CommonData& commonData)
     m_inlineSets.reallyAdd(codeBlock, commonData);
     m_inferredValues.reallyAdd(codeBlock, commonData);
     m_bufferViews.reallyAdd(codeBlock, commonData);
+    m_adaptiveStructureSets.reallyAdd(codeBlock, commonData);
 }
 
 bool DesiredWatchpoints::areStillValid() const
@@ -95,7 +115,18 @@ bool DesiredWatchpoints::areStillValid() const
     return m_sets.areStillValid()
         && m_inlineSets.areStillValid()
         && m_inferredValues.areStillValid()
-        && m_bufferViews.areStillValid();
+        && m_bufferViews.areStillValid()
+        && m_adaptiveStructureSets.areStillValid();
+}
+
+void DesiredWatchpoints::dumpInContext(PrintStream& out, DumpContext* context) const
+{
+    out.print("Desired watchpoints:\n");
+    out.print("    Watchpoint sets: ", inContext(m_sets, context), "\n");
+    out.print("    Inline watchpoint sets: ", inContext(m_inlineSets, context), "\n");
+    out.print("    Inferred values: ", inContext(m_inferredValues, context), "\n");
+    out.print("    Buffer views: ", inContext(m_bufferViews, context), "\n");
+    out.print("    Object property conditions: ", inContext(m_adaptiveStructureSets, context), "\n");
 }
 
 } } // namespace JSC::DFG

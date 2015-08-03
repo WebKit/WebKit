@@ -30,6 +30,7 @@
 #include "Instruction.h"
 #include "JITStubRoutine.h"
 #include "MacroAssembler.h"
+#include "ObjectPropertyConditionSet.h"
 #include "Opcode.h"
 #include "PolymorphicAccessStructureList.h"
 #include "RegisterSet.h"
@@ -113,7 +114,7 @@ struct StructureStubInfo {
 
     // PutById*
 
-    void initPutByIdTransition(VM& vm, JSCell* owner, Structure* previousStructure, Structure* structure, StructureChain* chain, bool isDirect)
+    void initPutByIdTransition(VM& vm, JSCell* owner, Structure* previousStructure, Structure* structure, ObjectPropertyConditionSet conditionSet, bool isDirect)
     {
         if (isDirect)
             accessType = access_put_by_id_transition_direct;
@@ -122,7 +123,7 @@ struct StructureStubInfo {
 
         u.putByIdTransition.previousStructure.set(vm, owner, previousStructure);
         u.putByIdTransition.structure.set(vm, owner, structure);
-        u.putByIdTransition.chain.set(vm, owner, chain);
+        u.putByIdTransition.rawConditionSet = conditionSet.releaseRawPointer();
     }
 
     void initPutByIdReplace(VM& vm, JSCell* owner, Structure* baseObjectStructure)
@@ -175,10 +176,11 @@ struct StructureStubInfo {
         seen = true;
     }
         
-    StructureStubClearingWatchpoint* addWatchpoint(CodeBlock* codeBlock)
+    StructureStubClearingWatchpoint* addWatchpoint(
+        CodeBlock* codeBlock, const ObjectPropertyCondition& condition = ObjectPropertyCondition())
     {
         return WatchpointsOnStructureStubInfo::ensureReferenceAndAddWatchpoint(
-            watchpoints, codeBlock, this);
+            watchpoints, codeBlock, this, condition);
     }
     
     int8_t accessType;
@@ -217,23 +219,12 @@ struct StructureStubInfo {
             WriteBarrierBase<Structure> baseObjectStructure;
         } getByIdSelf;
         struct {
-            WriteBarrierBase<Structure> baseObjectStructure;
-            WriteBarrierBase<Structure> prototypeStructure;
-            bool isDirect;
-        } getByIdProto;
-        struct {
-            WriteBarrierBase<Structure> baseObjectStructure;
-            WriteBarrierBase<StructureChain> chain;
-            unsigned count : 31;
-            bool isDirect : 1;
-        } getByIdChain;
-        struct {
             PolymorphicGetByIdList* list;
         } getByIdList;
         struct {
             WriteBarrierBase<Structure> previousStructure;
             WriteBarrierBase<Structure> structure;
-            WriteBarrierBase<StructureChain> chain;
+            void* rawConditionSet;
         } putByIdTransition;
         struct {
             WriteBarrierBase<Structure> baseObjectStructure;

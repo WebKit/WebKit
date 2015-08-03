@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005, 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2005, 2007, 2008, 2015 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -68,6 +68,7 @@ public:
         : m_propertyType(TypeUnset)
         , m_offset(invalidOffset)
         , m_thisValue(thisValue)
+        , m_slotBase(nullptr)
         , m_watchpointSet(nullptr)
         , m_cacheability(CachingAllowed)
     {
@@ -114,7 +115,6 @@ public:
 
     JSObject* slotBase() const
     {
-        ASSERT(m_propertyType != TypeUnset);
         return m_slotBase;
     }
 

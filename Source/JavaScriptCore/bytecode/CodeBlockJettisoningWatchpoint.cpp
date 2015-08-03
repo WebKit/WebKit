@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,9 +38,6 @@ void CodeBlockJettisoningWatchpoint::fireInternal(const FireDetail& detail)
         dataLog("Firing watchpoint ", RawPointer(this), " on ", *m_codeBlock, "\n");
 
     m_codeBlock->jettison(Profiler::JettisonDueToUnprofiledWatchpoint, CountReoptimization, &detail);
-
-    if (isOnList())
-        remove();
 }
 
 } // namespace JSC

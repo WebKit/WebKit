@@ -629,10 +629,7 @@ public:
     void setStructureAndReallocateStorageIfNecessary(VM&, unsigned oldCapacity, Structure*);
     void setStructureAndReallocateStorageIfNecessary(VM&, Structure*);
 
-    void convertToDictionary(VM& vm)
-    {
-        setStructure(vm, Structure::toCacheableDictionaryTransition(vm, structure(vm)));
-    }
+    JS_EXPORT_PRIVATE void convertToDictionary(VM&);
 
     void flattenDictionaryObject(VM& vm)
     {
