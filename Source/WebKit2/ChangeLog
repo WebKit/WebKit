@@ -1,3 +1,21 @@
+2015-08-03  Tim Horton  <timothy_horton@apple.com>
+
+        [iOS] Link previews sometimes don't hide the link highlight
+        https://bugs.webkit.org/show_bug.cgi?id=147585
+        <rdar://problem/22119648>
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _interactionStartedFromPreviewItemController:]):
+        (-[WKContentView _interactionStoppedFromPreviewItemController:]):
+        (-[WKContentView _previewItemController:didDismissPreview:committing:]):
+        (-[WKContentView _previewItemController:willPresentPreview:forPosition:inSourceView:]): Deleted.
+        Use interactionStarted/Stopped, which are always called, instead of didDismiss/willPresent,
+        which are only called if we return a custom view controller from _presentedViewControllerForPreviewItemController.
+        We continue using didDismiss to inform clients of dismissal because they'll
+        only care if they customized the view controller.
+
 2015-08-03  Chris Dumez  <cdumez@apple.com>
 
         [WK2][NetworkCache] Do not munmap() on the main thread
