@@ -1,0 +1,4 @@
+This page opens a test page in a new window, and that page should get app cached.
+This page then opens a different test page, that redirects to the first, which should then load from the app cache.
+If it doesn't crash, then that's success.
+
