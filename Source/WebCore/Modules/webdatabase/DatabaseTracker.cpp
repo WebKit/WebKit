@@ -862,6 +862,8 @@ void DatabaseTracker::deleteDatabasesModifiedSince(std::chrono::system_clock::ti
         if (!databaseNamesForOrigin(origin.get(), databaseNames))
             continue;
 
+        size_t deletedDatabases = 0;
+
         for (auto& databaseName : databaseNames) {
             auto fullPath = fullPathForDatabase(origin.get(), databaseName, false);
 
@@ -873,7 +875,11 @@ void DatabaseTracker::deleteDatabasesModifiedSince(std::chrono::system_clock::ti
                 continue;
 
             deleteDatabase(origin.get(), databaseName);
+            ++deletedDatabases;
         }
+
+        if (deletedDatabases == databaseNames.size())
+            deleteOrigin(origin.get());
     }
 }
 
