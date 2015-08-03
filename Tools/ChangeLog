@@ -1,3 +1,11 @@
+2015-08-03  Alex Christensen  <achristensen@webkit.org>
+
+        [Win] Build fix after r187733.
+
+        * WinLauncher/PageLoadTestClient.cpp:
+        (PageLoadTestClient::dumpRunStatistics):
+        wtf/MathExtras.h is now included in HashTable.h, which #defines pow to wtf_pow.
+
 2015-08-02  Benjamin Poulain  <bpoulain@apple.com>
 
         Investigate HashTable::HashTable(const HashTable&) and HashTable::operator=(const HashTable&) performance for hash-based static analyses

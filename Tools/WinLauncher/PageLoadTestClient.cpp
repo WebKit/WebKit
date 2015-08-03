@@ -234,7 +234,7 @@ void PageLoadTestClient::dumpRunStatistics()
     if (m_pagesTimed) {
         meanTime = m_totalTime / m_pagesTimed;
         squareMeanRootTime = (m_totalSquareRootsOfTime / m_pagesTimed) * (m_totalSquareRootsOfTime / m_pagesTimed);
-        geometricMeanTime = std::pow(m_geometricMeanProductSum, (1.0 / m_pagesTimed));
+        geometricMeanTime = pow(m_geometricMeanProductSum, (1.0 / m_pagesTimed));
     }
 
     file->printf("FINISHED:    Total Time = %.1f ms\n", m_totalTime * 1000.0);
