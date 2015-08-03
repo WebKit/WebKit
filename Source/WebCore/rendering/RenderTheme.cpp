@@ -262,7 +262,7 @@ void RenderTheme::adjustStyle(StyleResolver& styleResolver, RenderStyle& style, 
     }
 }
 
-bool RenderTheme::paint(const RenderObject& o, ControlStates* controlStates, const PaintInfo& paintInfo, const LayoutRect& r)
+bool RenderTheme::paint(const RenderObject& o, ControlStates& controlStates, const PaintInfo& paintInfo, const LayoutRect& r)
 {
     // If painting is disabled, but we aren't updating control tints, then just bail.
     // If we are updating control tints, just schedule a repaint if the theme supports tinting
@@ -716,7 +716,7 @@ void RenderTheme::adjustRepaintRect(const RenderObject& renderer, FloatRect& rec
 {
 #if USE(NEW_THEME)
     ControlStates states(extractControlStatesForRenderer(renderer));
-    m_theme->inflateControlPaintRect(renderer.style().appearance(), &states, rect, renderer.style().effectiveZoom());
+    m_theme->inflateControlPaintRect(renderer.style().appearance(), states, rect, renderer.style().effectiveZoom());
 #else
     UNUSED_PARAM(renderer);
     UNUSED_PARAM(rect);
@@ -743,12 +743,12 @@ bool RenderTheme::stateChanged(const RenderObject& o, ControlStates::States stat
     return true;
 }
 
-void RenderTheme::updateControlStatesForRenderer(const RenderObject& o, ControlStates* controlStates) const
+void RenderTheme::updateControlStatesForRenderer(const RenderObject& o, ControlStates& controlStates) const
 {
     ControlStates newStates = extractControlStatesForRenderer(o);
-    controlStates->setStates(newStates.states());
+    controlStates.setStates(newStates.states());
     if (isFocused(o))
-        controlStates->setTimeSinceControlWasFocused(o.document().page()->focusController().timeSinceFocusWasSet());
+        controlStates.setTimeSinceControlWasFocused(o.document().page()->focusController().timeSinceFocusWasSet());
 }
 
 ControlStates::States RenderTheme::extractControlStatesForRenderer(const RenderObject& o) const

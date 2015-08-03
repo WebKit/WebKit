@@ -1331,11 +1331,10 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
             controlStates = new ControlStates();
             addControlStatesForRenderer(this, controlStates);
         }
-        borderOrBackgroundPaintingIsNeeded = theme().paint(*this, controlStates, paintInfo, paintRect);
+        borderOrBackgroundPaintingIsNeeded = theme().paint(*this, *controlStates, paintInfo, paintRect);
+        if (controlStates->needsRepaint())
+            view().scheduleLazyRepaint(*this);
     }
-
-    if (controlStates && controlStates->needsRepaint())
-        view().scheduleLazyRepaint(*this);
 
     if (borderOrBackgroundPaintingIsNeeded) {
         if (bleedAvoidance == BackgroundBleedBackgroundOverBorder)
