@@ -1,3 +1,30 @@
+2015-08-02  Benjamin Poulain  <bpoulain@apple.com>
+
+        Investigate HashTable::HashTable(const HashTable&) and HashTable::operator=(const HashTable&) performance for hash-based static analyses
+        https://bugs.webkit.org/show_bug.cgi?id=118455
+
+        Reviewed by Filip Pizlo.
+
+        Previously, when copying a HashTable, we would start from scratch
+        with an empty table and insert elements one by one, growing-rehashing
+        the table as needed.
+
+        With this patch, we have 2 improvements to remove most of the cost.
+
+        First, we compute a good size from the start. This removes all the
+        reallocations and rehashs.
+        This is where the biggest gain comes from.
+
+        The second part is a simpler version of add() when we know that
+        we cannot find a bucket with the same key and there cannot
+        be any deleted bucket.
+        This removes most branches from the hot loop, cutting another 25%
+        of the time.
+
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::addUniqueForInitialization):
+        (WTF::KeyTraits>::HashTable):
+
 2015-08-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         HashTraits<AtomicString> can use SimpleClassHashTraits

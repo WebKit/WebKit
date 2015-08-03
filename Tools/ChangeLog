@@ -1,3 +1,13 @@
+2015-08-02  Benjamin Poulain  <bpoulain@apple.com>
+
+        Investigate HashTable::HashTable(const HashTable&) and HashTable::operator=(const HashTable&) performance for hash-based static analyses
+        https://bugs.webkit.org/show_bug.cgi?id=118455
+
+        Reviewed by Filip Pizlo.
+
+        * TestWebKitAPI/Tests/WTF/HashSet.cpp:
+        (TestWebKitAPI::TEST):
+
 2015-07-31  Alex Christensen  <achristensen@webkit.org>
 
         Prepare for VS2015

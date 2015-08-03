@@ -206,4 +206,75 @@ TEST(WTF_HashSet, UniquePtrKey_TakeUsingRawPointer)
     EXPECT_EQ(1u, ConstructorDestructorCounter::destructionCount);
 }
 
+TEST(WTF_HashSet, CopyEmpty)
+{
+    {
+        HashSet<unsigned> foo;
+        HashSet<unsigned> bar(foo);
+
+        EXPECT_EQ(0u, bar.capacity());
+        EXPECT_EQ(0u, bar.size());
+    }
+    {
+        HashSet<unsigned> foo({ 1, 5, 64, 42 });
+        EXPECT_EQ(4u, foo.size());
+        foo.remove(1);
+        foo.remove(5);
+        foo.remove(42);
+        foo.remove(64);
+        HashSet<unsigned> bar(foo);
+
+        EXPECT_EQ(0u, bar.capacity());
+        EXPECT_EQ(0u, bar.size());
+    }
+}
+
+TEST(WTF_HashSet, CopyAllocateAtLeastMinimumCapacity)
+{
+    HashSet<unsigned> foo({ 42 });
+    EXPECT_EQ(1u, foo.size());
+    HashSet<unsigned> bar(foo);
+
+    EXPECT_EQ(8u, bar.capacity());
+    EXPECT_EQ(1u, bar.size());
+}
+
+TEST(WTF_HashSet, CopyCapacityIsNotOnBoundary)
+{
+    // Starting at 4 because the minimum size is 8.
+    // With a size of 8, a medium load can be up to 3.3333->3.
+    // Adding 1 to 3 would reach max load.
+    // While correct, that's not really what we care about here.
+    for (unsigned size = 4; size < 100; ++size) {
+        HashSet<unsigned> source;
+        for (unsigned i = 1; i < size + 1; ++i)
+            source.add(i);
+
+        HashSet<unsigned> copy1(source);
+        HashSet<unsigned> copy2(source);
+        HashSet<unsigned> copy3(source);
+
+        EXPECT_EQ(size, copy1.size());
+        EXPECT_EQ(size, copy2.size());
+        EXPECT_EQ(size, copy3.size());
+        for (unsigned i = 1; i < size + 1; ++i) {
+            EXPECT_TRUE(copy1.contains(i));
+            EXPECT_TRUE(copy2.contains(i));
+            EXPECT_TRUE(copy3.contains(i));
+        }
+        EXPECT_FALSE(copy1.contains(size + 2));
+        EXPECT_FALSE(copy2.contains(size + 2));
+        EXPECT_FALSE(copy3.contains(size + 2));
+
+        EXPECT_TRUE(copy2.remove(1));
+        EXPECT_EQ(copy1.capacity(), copy2.capacity());
+        EXPECT_FALSE(copy2.contains(1));
+
+        EXPECT_TRUE(copy3.add(size + 2).isNewEntry);
+        EXPECT_EQ(copy1.capacity(), copy3.capacity());
+        EXPECT_TRUE(copy3.contains(size + 2));
+    }
+}
+
+
 } // namespace TestWebKitAPI

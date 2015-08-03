@@ -1,3 +1,25 @@
+2015-08-02  Benjamin Poulain  <bpoulain@apple.com>
+
+        Investigate HashTable::HashTable(const HashTable&) and HashTable::operator=(const HashTable&) performance for hash-based static analyses
+        https://bugs.webkit.org/show_bug.cgi?id=118455
+
+        Reviewed by Filip Pizlo.
+
+        LivenessAnalysisPhase lights up like a christmas tree in profiles.
+
+        This patch cuts its cost by 4.
+        About half of the gains come from removing many rehash() when copying
+        the HashSet.
+        The last quarter is achieved by having a special add() function for initializing
+        a HashSet.
+
+        This makes benchmarks progress by 1-2% here and there. Nothing massive.
+
+        * dfg/DFGLivenessAnalysisPhase.cpp:
+        (JSC::DFG::LivenessAnalysisPhase::process):
+        The m_live HashSet is only useful per block. When we are done with it,
+        we can transfer it to liveAtHead to avoid a copy.
+
 2015-08-01  Saam barati  <saambarati1@gmail.com>
 
         Unreviewed. Remove unintentional "print" statement in test case.
