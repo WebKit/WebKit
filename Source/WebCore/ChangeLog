@@ -1,5 +1,27 @@
 2015-08-03  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r187466. rdar://problem/21960398
+
+    2015-07-27  Brady Eidson  <beidson@apple.com>
+
+            Crash in WebCore::DocumentLoader::willSendRequest() with ContentFilter and AppCache.
+            <rdar://problem/21960398> and https://bugs.webkit.org/show_bug.cgi?id=147339
+
+            Reviewed by Alexey Proskuryakov.
+
+            No new tests (Not yet proven to be possible to test this).
+
+            * loader/DocumentLoader.cpp:
+            (WebCore::DocumentLoader::willSendRequest): Grab the identifier from the CachedResource directly, not from the null ResourceLoader.
+            (WebCore::DocumentLoader::continueAfterNavigationPolicy): Null check the ResourceLoader, as it can definitely be gone by this point.
+
+            * loader/cache/CachedResource.cpp:
+            (WebCore::CachedResource::clearLoader): Save off the identifier for later use.
+            * loader/cache/CachedResource.h:
+            (WebCore::CachedResource::identifierForLoadWithoutResourceLoader): Expose the identifier that the ResourceLoader had when it went away.
+
+2015-08-03  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r187731. rdar://problem/22052829
 
     2015-08-01  Chris Fleizach  <cfleizach@apple.com>
