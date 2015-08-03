@@ -132,8 +132,9 @@ public:
         result.m_data = static_cast<Data*>(rawPointer);
         return result;
     }
+
+    // FIXME: Everything below here should be private, but cannot be because of a bug in VS.
     
-private:
     // Internally, this represents Invalid using a pointer to a Data that has an empty vector.
     
     // FIXME: This could be made more compact by having it internally use a vector that just has
@@ -150,6 +151,7 @@ private:
         Vector<ObjectPropertyCondition> vector;
     };
     
+private:
     RefPtr<Data> m_data;
 };
 
