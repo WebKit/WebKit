@@ -1677,21 +1677,23 @@ void AccessibilityRenderObject::setFocused(bool on)
         return;
     }
 
+    // When a node is told to set focus, that can cause it to be deallocated, which means that doing
+    // anything else inside this object will crash. To fix this, we added a RefPtr to protect this object
+    // long enough for duration.
+    RefPtr<AccessibilityObject> protect(this);
+    
     // If this node is already the currently focused node, then calling focus() won't do anything.
     // That is a problem when focus is removed from the webpage to chrome, and then returns.
     // In these cases, we need to do what keyboard and mouse focus do, which is reset focus first.
     if (document->focusedElement() == node)
         document->setFocusedElement(nullptr);
 
-    // When a node is told to set focus, that can cause it to be deallocated, which means that doing
-    // anything else inside this object will crash. To fix this, we added a RefPtr to protect this object
-    // long enough for duration. We can also locally cache the axObjectCache.
-    RefPtr<AccessibilityObject> protect(this);
-    AXObjectCache* cache = axObjectCache();
-    
-    cache->setIsSynchronizingSelection(true);
-    downcast<Element>(*node).focus();
-    cache->setIsSynchronizingSelection(false);
+    // If we return from setFocusedElement and our element has been removed from a tree, axObjectCache() may be null.
+    if (AXObjectCache* cache = axObjectCache()) {
+        cache->setIsSynchronizingSelection(true);
+        downcast<Element>(*node).focus();
+        cache->setIsSynchronizingSelection(false);
+    }
 }
 
 void AccessibilityRenderObject::setSelectedRows(AccessibilityChildrenVector& selectedRows)
