@@ -98,7 +98,7 @@ Data Data::adoptMap(void* map, size_t size, int fd)
 {
     ASSERT(map && map != MAP_FAILED);
     close(fd);
-    auto bodyMap = adoptDispatch(dispatch_data_create(map, size, dispatch_get_main_queue(), [map, size] {
+    auto bodyMap = adoptDispatch(dispatch_data_create(map, size, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [map, size] {
         munmap(map, size);
     }));
     return { bodyMap, Data::Backing::Map };
