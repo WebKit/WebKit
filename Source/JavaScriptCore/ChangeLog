@@ -1,3 +1,15 @@
+2015-08-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [FTL] Remove unused scripts related to native call inlining
+        https://bugs.webkit.org/show_bug.cgi?id=147448
+
+        Reviewed by Filip Pizlo.
+
+        * build-symbol-table-index.py: Removed.
+        * copy-llvm-ir-to-derived-sources.sh: Removed.
+        * create-llvm-ir-from-source-file.py: Removed.
+        * create-symbol-table-index.py: Removed.
+
 2015-08-02  Benjamin Poulain  <bpoulain@apple.com>
 
         Investigate HashTable::HashTable(const HashTable&) and HashTable::operator=(const HashTable&) performance for hash-based static analyses
