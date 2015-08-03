@@ -2437,6 +2437,9 @@ void WebPage::didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, ui
 void WebPage::didStartPageTransition()
 {
     m_drawingArea->setLayerTreeStateIsFrozen(true);
+#if PLATFORM(IOS)
+    m_hasFocusedDueToUserInteraction = false;
+#endif
 }
 
 void WebPage::didCompletePageTransition()

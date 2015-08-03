@@ -1,3 +1,24 @@
+2015-08-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Inputs with the autofocus attribute cause the keyboard to not deploy
+        https://bugs.webkit.org/show_bug.cgi?id=147555
+        <rdar://problem/22018044>
+
+        Reviewed by Andreas Kling.
+
+        Upon submitting a form by pressing "Go" on the keyboard, an <input> on the next page with the
+        autofocus attribute may become non-interactible. When attempting to tap on the input, nothing
+        seems to happen. This is because the state of WebPage upon invoking WebPage::elementDidFocus
+        indicates (incorrectly) that the input element is already focused, and therefore hits an early
+        return. To solve this, we explicitly reset m_hasFocusedDueToUserInteraction upon transitioning
+        to a new page.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didStartPageTransition): On iOS, resets m_hasFocusedDueToUserInteraction as
+            well. It was previously thought that this would be handled by blur() called on the assisted
+            element when submitting a form. However, pressing "Go" on the iOS keyboard is an implicit
+            submission and does not trigger a blur event.
+
 2015-08-03  Chris Dumez  <cdumez@apple.com>
 
         Fix error handling case in Cache::dumpContentsToFile()
