@@ -738,8 +738,8 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.Object
                 var originalLineEndings = [];
                 var formattedLineEndings = [];
                 var mapping = {original: [0], formatted: [0]};
-                var builder = new FormatterContentBuilder(mapping, originalLineEndings, formattedLineEndings, 0, 0, indentString);
-                var formatter = new Formatter(this._codeMirror, builder);
+                var builder = new WebInspector.FormatterContentBuilder(mapping, originalLineEndings, formattedLineEndings, 0, 0, indentString);
+                var formatter = new WebInspector.Formatter(this._codeMirror, builder);
                 formatter.format(start, end);
 
                 this._formatterSourceMap = WebInspector.FormatterSourceMap.fromBuilder(builder);
