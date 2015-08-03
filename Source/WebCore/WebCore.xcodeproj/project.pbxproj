@@ -215,7 +215,6 @@
 		078E090117D14CEE00420AA1 /* MediaStreamRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221B5217CEC32700848E51 /* MediaStreamRegistry.cpp */; };
 		078E090217D14CEE00420AA1 /* MediaStreamTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221B5417CEC32700848E51 /* MediaStreamTrack.cpp */; };
 		078E090317D14CEE00420AA1 /* MediaStreamTrackEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221B5717CEC32700848E51 /* MediaStreamTrackEvent.cpp */; };
-		078E090417D14CEE00420AA1 /* NavigatorUserMedia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221B5A17CEC32700848E51 /* NavigatorUserMedia.cpp */; };
 		078E090517D14CEE00420AA1 /* RTCDataChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221B6317CEC32700848E51 /* RTCDataChannel.cpp */; };
 		078E090617D14CEE00420AA1 /* RTCDataChannelEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221B6617CEC32700848E51 /* RTCDataChannelEvent.cpp */; };
 		078E090717D14CEE00420AA1 /* RTCDTMFSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221B6917CEC32700848E51 /* RTCDTMFSender.cpp */; };
@@ -237,7 +236,6 @@
 		078E091717D14D1C00420AA1 /* MediaStreamRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B5317CEC32700848E51 /* MediaStreamRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		078E091817D14D1C00420AA1 /* MediaStreamTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B5517CEC32700848E51 /* MediaStreamTrack.h */; };
 		078E091917D14D1C00420AA1 /* MediaStreamTrackEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B5817CEC32700848E51 /* MediaStreamTrackEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		078E091A17D14D1C00420AA1 /* NavigatorUserMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B5B17CEC32700848E51 /* NavigatorUserMedia.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		078E091B17D14D1C00420AA1 /* NavigatorUserMediaError.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B5D17CEC32700848E51 /* NavigatorUserMediaError.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		078E091C17D14D1C00420AA1 /* NavigatorUserMediaErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B5F17CEC32700848E51 /* NavigatorUserMediaErrorCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		078E091D17D14D1C00420AA1 /* NavigatorUserMediaSuccessCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 07221B6117CEC32700848E51 /* NavigatorUserMediaSuccessCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7219,8 +7217,6 @@
 		07221B5717CEC32700848E51 /* MediaStreamTrackEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamTrackEvent.cpp; sourceTree = "<group>"; };
 		07221B5817CEC32700848E51 /* MediaStreamTrackEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamTrackEvent.h; sourceTree = "<group>"; };
 		07221B5917CEC32700848E51 /* MediaStreamTrackEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaStreamTrackEvent.idl; sourceTree = "<group>"; };
-		07221B5A17CEC32700848E51 /* NavigatorUserMedia.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigatorUserMedia.cpp; sourceTree = "<group>"; };
-		07221B5B17CEC32700848E51 /* NavigatorUserMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorUserMedia.h; sourceTree = "<group>"; };
 		07221B5C17CEC32700848E51 /* NavigatorUserMedia.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorUserMedia.idl; sourceTree = "<group>"; };
 		07221B5D17CEC32700848E51 /* NavigatorUserMediaError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorUserMediaError.h; sourceTree = "<group>"; };
 		07221B5E17CEC32700848E51 /* NavigatorUserMediaError.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorUserMediaError.idl; sourceTree = "<group>"; };
@@ -14782,8 +14778,6 @@
 				5EA725CA1ACABCB500EAD17B /* NavigatorMediaDevices.cpp */,
 				5EA725CB1ACABCB500EAD17B /* NavigatorMediaDevices.h */,
 				5EA725CC1ACABCB500EAD17B /* NavigatorMediaDevices.idl */,
-				07221B5A17CEC32700848E51 /* NavigatorUserMedia.cpp */,
-				07221B5B17CEC32700848E51 /* NavigatorUserMedia.h */,
 				07221B5C17CEC32700848E51 /* NavigatorUserMedia.idl */,
 				070327F717EA4AAF00CE1318 /* NavigatorUserMediaError.cpp */,
 				07221B5D17CEC32700848E51 /* NavigatorUserMediaError.h */,
@@ -26100,7 +26094,6 @@
 				E12719C70EEEC16800F61213 /* NavigatorBase.h in Headers */,
 				9711460414EF009A00674FD9 /* NavigatorGeolocation.h in Headers */,
 				5EA725D61ACABD5700EAD17B /* NavigatorMediaDevices.h in Headers */,
-				078E091A17D14D1C00420AA1 /* NavigatorUserMedia.h in Headers */,
 				078E091B17D14D1C00420AA1 /* NavigatorUserMediaError.h in Headers */,
 				078E091C17D14D1C00420AA1 /* NavigatorUserMediaErrorCallback.h in Headers */,
 				078E091D17D14D1C00420AA1 /* NavigatorUserMediaSuccessCallback.h in Headers */,
@@ -29700,7 +29693,6 @@
 				51A4BB101954D62700FA5C2E /* NavigatorGamepad.cpp in Sources */,
 				9711460314EF009A00674FD9 /* NavigatorGeolocation.cpp in Sources */,
 				5EA725D51ACABD5700EAD17B /* NavigatorMediaDevices.cpp in Sources */,
-				078E090417D14CEE00420AA1 /* NavigatorUserMedia.cpp in Sources */,
 				070327F817EA4AAF00CE1318 /* NavigatorUserMediaError.cpp in Sources */,
 				5D874F130D161D3200796C3B /* NetscapePlugInStreamLoader.cpp in Sources */,
 				A19D934A1AA11B1E00B46C24 /* NetworkExtensionContentFilter.mm in Sources */,

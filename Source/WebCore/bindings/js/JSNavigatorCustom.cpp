@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
+ * Copyright (C) 2015 Canon INC.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,10 +30,13 @@
 #include "JSNavigator.h"
 
 #include "Dictionary.h"
+#include "Document.h"
 #include "ExceptionCode.h"
+#include "Frame.h"
 #include "JSNavigatorUserMediaErrorCallback.h"
 #include "JSNavigatorUserMediaSuccessCallback.h"
-#include "NavigatorUserMedia.h"
+#include "MediaStream.h"
+#include "UserMediaRequest.h"
 
 using namespace JSC;
 
@@ -64,11 +68,32 @@ JSValue JSNavigator::webkitGetUserMedia(ExecState* exec)
         return jsUndefined();
     }
 
+    if (!impl().frame()) {
+        setDOMException(exec, NOT_SUPPORTED_ERR);
+        return jsUndefined();
+    }
+
+    // We do not need to protect the context (i.e. document) here as UserMediaRequest is observing context destruction and will check validity before resolving/rejecting promise.
+    Document* document = impl().frame()->document();
+
     RefPtr<NavigatorUserMediaSuccessCallback> successCallback = JSNavigatorUserMediaSuccessCallback::create(asObject(exec->uncheckedArgument(1)), globalObject());
+    auto resolveCallback = [successCallback, document](const RefPtr<MediaStream>& stream) mutable {
+        RefPtr<MediaStream> protectedStream = stream;
+        document->postTask([successCallback, protectedStream](ScriptExecutionContext&) {
+            successCallback->handleEvent(protectedStream.get());
+        });
+    };
+
     RefPtr<NavigatorUserMediaErrorCallback> errorCallback = JSNavigatorUserMediaErrorCallback::create(asObject(exec->uncheckedArgument(2)), globalObject());
+    auto rejectCallback = [errorCallback, document](const RefPtr<NavigatorUserMediaError>& error) mutable {
+        RefPtr<NavigatorUserMediaError> protectedError = error;
+        document->postTask([errorCallback, protectedError](ScriptExecutionContext&) {
+            errorCallback->handleEvent(protectedError.get());
+        });
+    };
 
     ExceptionCode ec = 0;
-    NavigatorUserMedia::webkitGetUserMedia(&impl(), options, successCallback, errorCallback, ec);
+    UserMediaRequest::start(document, options, MediaDevices::Promise(WTF::move(resolveCallback), WTF::move(rejectCallback)), ec);
     setDOMException(exec, ec);
     return jsUndefined();
 }
