@@ -1,3 +1,13 @@
+2015-08-04  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Update Apple Windows build for VS2015
+        https://bugs.webkit.org/show_bug.cgi?id=147653
+
+        Reviewed by Dean Jackson.
+
+        * win/tools/vsprops/common.props: Fix build flags to use Windows 7
+        (WINVER=0x601) as minimum build target for 64-bit builds.
+
 2015-08-03  Filip Pizlo  <fpizlo@apple.com>
 
         Check in LLVM 3.6.2 binary drops for El Capitan

@@ -40,9 +40,9 @@ nmake /nologo -f $(ProjectName).make clean</NMakeCleanCommandLine>
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalOptions>/bigobj /GS %(AdditionalOptions)</AdditionalOptions>
-      <PreprocessorDefinitions>_WINDOWS;WINVER=0x502;_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES=1;_HAS_EXCEPTIONS=0;BUILDING_$(ProjectName);NOMINMAX;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="$(Platform)=='Win32'">WIN32;WINVER=0x601;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="$(Platform)=='Win64'">x64</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINDOWS;WINVER=0x601;_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES=1;_HAS_EXCEPTIONS=0;BUILDING_$(ProjectName);NOMINMAX;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="$(Platform)=='Win32'">WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="$(Platform)=='Win64'">x64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>false</ExceptionHandling>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <WarningLevel>Level4</WarningLevel>

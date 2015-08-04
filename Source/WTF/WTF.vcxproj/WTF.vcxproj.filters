@@ -713,6 +713,7 @@
     <ClInclude Include="..\wtf\win\WorkItemWin.h">
       <Filter>wtf\win</Filter>
     </ClInclude>
+    <ClInclude Include="..\wtf\TinyPtrSet.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="WTFPostBuild.cmd" />

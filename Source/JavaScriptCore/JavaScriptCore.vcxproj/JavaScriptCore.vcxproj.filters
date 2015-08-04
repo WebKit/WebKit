@@ -1170,9 +1170,6 @@
     <ClCompile Include="..\dfg\DFGDesiredWeakReferences.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
-    <ClCompile Include="..\dfg\DFGDesiredWriteBarriers.cpp">
-      <Filter>dfg</Filter>
-    </ClCompile>
     <ClCompile Include="..\dfg\DFGDisassembler.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
@@ -1312,9 +1309,6 @@
       <Filter>dfg</Filter>
     </ClCompile>
     <ClCompile Include="..\dfg\DFGStackLayoutPhase.cpp">
-      <Filter>dfg</Filter>
-    </ClCompile>
-    <ClCompile Include="..\dfg\DFGStoreBarrierElisionPhase.cpp">
       <Filter>dfg</Filter>
     </ClCompile>
     <ClCompile Include="..\dfg\DFGThunks.cpp">
@@ -1830,6 +1824,13 @@
     <ClCompile Include="..\wasm\WASMReader.cpp">
       <Filter>wasm</Filter>
     </ClCompile>
+    <ClCompile Include="..\bytecode\TrackedReferences.cpp" />
+    <ClCompile Include="..\dfg\DFGCombinedLiveness.cpp" />
+    <ClCompile Include="..\dfg\DFGConstantHoistingPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGIntegerRangeOptimizationPhase.cpp" />
+    <ClCompile Include="..\dfg\DFGMinifiedGraph.cpp" />
+    <ClCompile Include="..\dfg\DFGOSRExitFuzz.cpp" />
+    <ClCompile Include="..\dfg\DFGStoreBarrierInsertionPhase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\API\APICallbackFunction.h">
@@ -3555,9 +3556,6 @@
     <ClInclude Include="..\dfg\DFGDesiredWeakReferences.h">
       <Filter>dfg</Filter>
     </ClInclude>
-    <ClInclude Include="..\dfg\DFGDesiredWriteBarriers.h">
-      <Filter>dfg</Filter>
-    </ClInclude>
     <ClInclude Include="..\dfg\DFGDisassembler.h">
       <Filter>dfg</Filter>
     </ClInclude>
@@ -3748,9 +3746,6 @@
       <Filter>dfg</Filter>
     </ClInclude>
     <ClInclude Include="..\dfg\DFGStackLayoutPhase.h">
-      <Filter>dfg</Filter>
-    </ClInclude>
-    <ClInclude Include="..\dfg\DFGStoreBarrierElisionPhase.h">
       <Filter>dfg</Filter>
     </ClInclude>
     <ClInclude Include="..\dfg\DFGStructureAbstractValue.h">
@@ -4370,6 +4365,12 @@
     <ClInclude Include="..\wasm\WASMReader.h">
       <Filter>wasm</Filter>
     </ClInclude>
+    <ClInclude Include="..\bytecode\TrackedReferences.h" />
+    <ClInclude Include="..\dfg\DFGCombinedLiveness.h" />
+    <ClInclude Include="..\dfg\DFGConstantHoistingPhase.h" />
+    <ClInclude Include="..\dfg\DFGIntegerRangeOptimizationPhase.h" />
+    <ClInclude Include="..\dfg\DFGOSRExitFuzz.h" />
+    <ClInclude Include="..\dfg\DFGStoreBarrierInsertionPhase.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="JavaScriptCorePreLink.cmd" />

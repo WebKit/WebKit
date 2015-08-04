@@ -1,3 +1,22 @@
+2015-08-04  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Update Apple Windows build for VS2015
+        https://bugs.webkit.org/show_bug.cgi?id=147653
+
+        Reviewed by Dean Jackson.
+
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/PluginTest.h: If building with
+        something older than VS2015, define snprintf as _snprintf.
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePluginCommon.props:
+        Remove unneeded macro definition for snprintf.
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo._determine_win_version): Recognize Windows 10.
+        * Scripts/webkitpy/port/win.py:
+        (WinPort): Ditto.
+        * Scripts/webkitpy/port/win_unittest.py:
+        (WinPortTest.test_baseline_search_path): Include Windows 10 in tests.
+        (WinPortTest._assert_version): Ditto.
+
 2015-08-04  Brian Burg  <bburg@apple.com>
 
         Unreviewed, update email addresses in contributors.json and watchlist.

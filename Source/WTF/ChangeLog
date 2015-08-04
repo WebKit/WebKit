@@ -1,3 +1,15 @@
+2015-08-04  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Update Apple Windows build for VS2015
+        https://bugs.webkit.org/show_bug.cgi?id=147653
+
+        Reviewed by Dean Jackson.
+
+        * WTF.vcxproj/WTF.vcxproj.filters: Drive-by-fix to place files in
+        proper project locations in the IDE.
+        * wtf/Platform.h: Don't define the _HAS_EXCEPTIONS macro when building with
+        Visual Studio 2015.
+
 2015-08-04  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r187815 and r187817.

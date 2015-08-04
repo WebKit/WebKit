@@ -1,3 +1,13 @@
+2015-08-04  Brent Fulgham  <bfulgham@apple.com>
+
+        [Win] Update Apple Windows build for VS2015
+        https://bugs.webkit.org/show_bug.cgi?id=147653
+
+        Reviewed by Dean Jackson.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters: Drive-by-fix.
+        Show JSC files in proper project locations in IDE.
+
 2015-08-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Object previews for SVG elements shows SVGAnimatedString instead of text

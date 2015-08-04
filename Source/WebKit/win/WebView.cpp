@@ -539,7 +539,7 @@ void WebView::setCacheModel(WebCacheModel cacheModel)
         else
             cfurlCacheDirectory = WebCore::localUserSpecificStorageDirectory().createCFString();
     }
-    cacheDirectory = String(cfurlCacheDirectory);
+    cacheDirectory = String(cfurlCacheDirectory.get());
     CFIndex cacheMemoryCapacity = 0;
     CFIndex cacheDiskCapacity = 0;
 #elif USE(CURL)

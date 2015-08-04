@@ -47,7 +47,7 @@ _log = logging.getLogger(__name__)
 class WinPort(ApplePort):
     port_name = "win"
 
-    VERSION_FALLBACK_ORDER = ["win-xp", "win-vista", "win-7sp0", "win"]
+    VERSION_FALLBACK_ORDER = ["win-xp", "win-vista", "win-7sp0", "win-win10", "win"]
 
     ARCHITECTURES = ['x86', 'x86_64']
 
