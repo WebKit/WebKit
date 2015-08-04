@@ -101,6 +101,10 @@ function createTests() {
     });
     result[result.length - 1].throws = true;
     result.push(function(jsonObject){
+        return jsonObject.stringify(new Date(NaN));
+    });
+    result[result.length - 1].expected = 'null';;
+    result.push(function(jsonObject){
         var d = new Date(0);
         d.toISOString = null;
         return jsonObject.stringify(d);
