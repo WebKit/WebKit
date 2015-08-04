@@ -1,3 +1,21 @@
+2015-07-09  Zalan Bujtas  <zalan@apple.com>
+
+        Plugin create can end up destroying its renderer.
+        https://bugs.webkit.org/show_bug.cgi?id=146824
+        rdar://problem/18921429
+
+        Reviewed by Andreas Kling.
+
+        Plugins can run arbitrary code during initialization. If the plugin
+        happens to destroy the associated node, its renderer becomes invalid.
+        This patch checks whether the renderer survived the createPlugin() call.
+        (This WeakPtr pattern is also used in RenderWidget to avoid dangling pointers.)
+
+        Speculative fix. Not reproducible.
+
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::loadPlugin):
+
 2015-07-09  Daniel Bates  <dabates@apple.com>
 
         Fetching Content Security Policy report URL should respect same origin policy
