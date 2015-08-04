@@ -1,3 +1,10 @@
+2015-08-04  Brian Burg  <bburg@apple.com>
+
+        Unreviewed, update email addresses in contributors.json and watchlist.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+        * Scripts/webkitpy/common/config/watchlist:
+
 2015-08-04  Alexey Proskuryakov  <ap@apple.com>
 
         Implement NPAPI redirect handling
