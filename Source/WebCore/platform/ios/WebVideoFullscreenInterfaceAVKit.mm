@@ -84,6 +84,7 @@ static const double DefaultWatchdogTimerInterval = 1;
 @interface WebAVPlayerController : NSObject <AVPlayerViewControllerDelegate> {
     WebAVMediaSelectionOption *_currentAudioMediaSelectionOption;
     WebAVMediaSelectionOption *_currentLegibleMediaSelectionOption;
+    BOOL _pictureInPictureInterrupted;
 }
 
 - (void)resetState;
@@ -139,6 +140,7 @@ static const double DefaultWatchdogTimerInterval = 1;
     if (!(self = [super init]))
         return self;
     
+    _pictureInPictureInterrupted = NO;
     initAVPlayerController();
     self.playerControllerProxy = [[allocAVPlayerControllerInstance() init] autorelease];
     return self;
@@ -568,6 +570,21 @@ static WebVideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullS
 {
     return self.fullscreenInterface->allowsPictureInPicturePlayback();
 }
+
+- (BOOL)isPictureInPictureInterrupted
+{
+    return _pictureInPictureInterrupted;
+}
+
+- (void)setPictureInPictureInterrupted:(BOOL)pictureInPictureInterrupted
+{
+    if (_pictureInPictureInterrupted != pictureInPictureInterrupted) {
+        _pictureInPictureInterrupted = pictureInPictureInterrupted;
+        if (pictureInPictureInterrupted)
+            [self setPlaying:NO];
+    }
+}
+
 @end
 
 @interface WebAVMediaSelectionOption : NSObject
