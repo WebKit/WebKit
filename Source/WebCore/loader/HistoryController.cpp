@@ -342,6 +342,9 @@ void HistoryController::updateForReload()
     
         if (m_frame.loader().loadType() == FrameLoadType::Reload || m_frame.loader().loadType() == FrameLoadType::ReloadFromOrigin)
             saveScrollPositionAndViewStateToItem(m_currentItem.get());
+
+        // Rebuild the history item tree when reloading as trying to re-associate everything is too error-prone.
+        m_currentItem->clearChildren();
     }
 
     // When reloading the page, we may end up redirecting to a different URL

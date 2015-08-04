@@ -1,3 +1,19 @@
+2015-07-14  Andreas Kling  <akling@apple.com>
+
+        Don't persist history item tree for subframes across reloads.
+        <https://webkit.org/b/146937>
+        <rdar://problem/19925709>
+
+        Reviewed by Brady Eidson.
+
+        Throw away the subframe history items when reloading a page. This ensures that we
+        don't accumulate outdated frame metadata when subframes change name across page loads.
+        Since the history item tree is encoded in the UA session state and gets serialized to
+        disk, it's important that we don't let it grow unbounded.
+
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::updateForReload):
+
 2015-07-10  Brady Eidson  <beidson@apple.com>
 
         Crash in HistoryController::updateForCommit dereferencing a null HistoryItem.
