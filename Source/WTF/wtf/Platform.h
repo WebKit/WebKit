@@ -1106,11 +1106,13 @@
 #define ENABLE_PLATFORM_FONT_LOOKUP 1
 #endif
 
-#if COMPILER(MSVC) && _MSC_VER < 1900
+#if COMPILER(MSVC)
 #undef __STDC_LIMIT_MACROS
 #define __STDC_LIMIT_MACROS
+#if _MSC_VER < 1900
 #undef _HAS_EXCEPTIONS
 #define _HAS_EXCEPTIONS 1
+#endif
 #endif
 
 #if PLATFORM(MAC)

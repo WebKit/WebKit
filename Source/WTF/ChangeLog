@@ -1,3 +1,13 @@
+2015-08-04  Alex Christensen  <achristensen@webkit.org>
+
+        Fix quirks with CMake and VS2015
+        https://bugs.webkit.org/show_bug.cgi?id=147663
+
+        Reviewed by Brent Fulgham.
+
+        * wtf/Platform.h:
+        Build fix after r187908
+
 2015-08-04  Brent Fulgham  <bfulgham@apple.com>
 
         [Win] Update Apple Windows build for VS2015
