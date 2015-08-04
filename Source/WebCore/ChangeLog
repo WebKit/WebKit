@@ -1,3 +1,16 @@
+2015-07-18  Ada Chan  <adachan@apple.com>
+
+        Fix deadlock between -[AVPlayerItem currentTime] and -[AVPlayer isExternalPlaybackActive]
+        https://bugs.webkit.org/show_bug.cgi?id=147085
+        <rdar://problem/21878275>
+
+        Reviewed by Jer Noble.
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::isPlayingAudioDidChange):
+        Call Document::updateIsPlayingMedia() on the main thread, since we could be on the audio I/O
+        thread here and the Document::updateIsPlayingMedia() call could block, causing a deadlock.
+
 2015-07-17  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r169105): Do not assign a renderer to multiple selection subtrees.
