@@ -1,3 +1,17 @@
+2015-08-04  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: timeline overview should visually distinguish selection bounds outside the visible duration
+        https://bugs.webkit.org/show_bug.cgi?id=132764
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/TimelineRuler.css:
+        (.timeline-ruler > .selection-handle.clamped):
+        Added style for selection handle outside visible range.
+        * UserInterface/Views/TimelineRuler.js:
+        (WebInspector.TimelineRuler.prototype._updateSelection):
+        Toggle style class and add tool tip showing the handle's value when outside the visible range.
+
 2015-08-04  Brian J. Burg  <bburg@apple.com>
 
         Web Inspector: Convert DataGrid and DataGridNode classes to ES6 classes
