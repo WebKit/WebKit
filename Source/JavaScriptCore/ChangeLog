@@ -1,3 +1,13 @@
+2015-08-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Object previews for SVG elements shows SVGAnimatedString instead of text
+        https://bugs.webkit.org/show_bug.cgi?id=147328
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InjectedScriptSource.js:
+        Use classList and classList.toString instead of className.
+
 2015-08-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [ES6] Support Module Syntax
