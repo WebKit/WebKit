@@ -40,6 +40,14 @@ PASS getPixel(115,40) is [0,0,0,0]
 PASS getPixel(105,40) is [0,255,0,255]
 PASS getPixel(90,35) is [0,0,0,0]
 PASS getPixel(90,25) is [0,255,0,255]
+PASS getPixel(145,10) is [0,255,0,255]
+PASS getPixel(155,10) is [0,255,0,255]
+PASS getPixel(160,25) is [0,255,0,255]
+PASS getPixel(160,35) is [0,255,0,255]
+PASS getPixel(145,40) is [0,255,0,255]
+PASS getPixel(135,40) is [0,255,0,255]
+PASS getPixel(130,25) is [0,255,0,255]
+PASS getPixel(130,15) is [0,255,0,255]
 PASS successfullyParsed is true
 
 TEST COMPLETE
