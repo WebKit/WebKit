@@ -1,3 +1,12 @@
+2015-08-04  Andres Gomez  <agomez@igalia.com>
+
+        [GTK] Add gtk icon to remove comma separated values from CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=147623
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UserInterface/Images/gtk/Minus.svg: Added.
+
 2015-08-03  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: REGRESSION (r187708): Breakpoint dialog script action editing broken
