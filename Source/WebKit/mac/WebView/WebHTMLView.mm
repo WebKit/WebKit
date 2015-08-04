@@ -5485,7 +5485,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
     NSDictionary *attributes = nil;
     if (Frame* coreFrame = core([self _frame])) {
         if (const Font* fd = coreFrame->editor().fontForSelection(multipleFonts))
-            font = static_cast<NSFont *>(fd->platformData().activatedFont());
+            font = reinterpret_cast<NSFont *>(const_cast<__CTFont*>(fd->platformData().activatedFont()));
         attributes = coreFrame->editor().fontAttributesForSelectionStart();
     }
 

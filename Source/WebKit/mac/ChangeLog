@@ -1,5 +1,14 @@
 2015-08-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Fix the Yosemite build after r187797
+
+        Unreviewed.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _updateFontPanel]):
+
+2015-08-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
         REGRESSION(r184899): Crash when focusing an input element styled with a web font
         https://bugs.webkit.org/show_bug.cgi?id=147616
         <rdar://problem/21838271>
