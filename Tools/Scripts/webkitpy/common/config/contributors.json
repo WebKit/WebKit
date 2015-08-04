@@ -2450,14 +2450,6 @@
             "ryuan"
          ]
       },
-      "Saam Barati" : {
-         "emails" : [
-            "saambarati1@gmail.com"
-         ],
-         "nicks" : [
-            "saamyjoon"
-         ]
-      },
       "Sadrul Habib Chowdhury" : {
          "emails" : [
             "sadrul@chromium.org"
@@ -4661,6 +4653,14 @@
          "expertise" : "HTML DOM, Core DOM, DOM Bindings (JavaScript, Objective-C and COM), Security, DumpRenderTree",
          "nicks" : [
             "weinig"
+         ]
+      },
+      "Saam Barati" : {
+         "emails" : [
+            "saambarati1@gmail.com"
+         ],
+         "nicks" : [
+            "saamyjoon"
          ]
       },
       "Sergio Villar Senin" : {
