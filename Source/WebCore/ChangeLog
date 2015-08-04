@@ -1,3 +1,21 @@
+2015-07-08  Sungmann Cho  <sungmann.cho@navercorp.com>
+
+        [GTK] The "Missing Plug-in" buttons are not showing up on some flash contents.
+        https://bugs.webkit.org/show_bug.cgi?id=146707
+
+        Reviewed by Martin Robinson.
+
+        Currently, WebKitGTK+ doesn't show the "Missing Plug-in" buttons if the plugin-related tags
+        don't have a "type" attribute. In such a case, WebCore tries to guess the MIME type from
+        the extensions by using MIMETypeRegistry::getMIMETypeForExtension(). For WebKitGTK+,
+        MIMETypeRegistry::getMIMETypeForExtension() goes through |extensionMap|, which is a simple
+        array of <extension, mime type>, looking for the mime type for the given extension.
+        But |extensionMap| in MIMETypeRegistryGtk.cpp doesn't have the information for ".swf",
+        so WebCore fails to guess the MIME type and regard the content type as ObjectContentFrame,
+        not ObjectContentNetscapePlugin.
+
+        * platform/gtk/MIMETypeRegistryGtk.cpp:
+
 2015-07-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Crash when appending an SVG <use> element dynamically which has animated SVG <path> element
