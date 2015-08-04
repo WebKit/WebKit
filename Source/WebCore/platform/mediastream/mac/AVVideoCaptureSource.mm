@@ -254,6 +254,8 @@ void AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCa
     CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(formatDescription);
     m_width = dimensions.width;
     m_height = dimensions.height;
+    
+    setBuffer(sampleBuffer);
 }
 
 } // namespace WebCore

@@ -67,9 +67,12 @@ protected:
     AVCaptureDevice *device() const { return m_device.get(); }
     RealtimeMediaSourceStates* currentStates() { return &m_currentStates; }
     MediaConstraints* constraints() { return m_constraints.get(); }
+    CMSampleBufferRef buffer() const { return m_buffer.get(); }
 
     void setVideoSampleBufferDelegate(AVCaptureVideoDataOutput*);
     void setAudioSampleBufferDelegate(AVCaptureAudioDataOutput*);
+    
+    void setBuffer(CMSampleBufferRef buffer) { m_buffer = buffer; }
 
 private:
     void setupSession();
@@ -79,6 +82,7 @@ private:
     RealtimeMediaSourceStates m_currentStates;
     RetainPtr<AVCaptureSession> m_session;
     RetainPtr<AVCaptureDevice> m_device;
+    RetainPtr<CMSampleBufferRef> m_buffer;
     
     bool m_isRunning;
 };
