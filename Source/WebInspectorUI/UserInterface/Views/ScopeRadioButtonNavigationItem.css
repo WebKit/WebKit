@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.MetricsStyleDetailsPanel = class MetricsStyleDetailsPanel extends WebInspector.StyleDetailsPanel
-{
-    constructor(delegate)
-    {
-        super(delegate, "metrics", "metrics", WebInspector.UIString("Styles \u2014 Metrics"));
+.scope-radio-button-navigation-item {
+    position: relative;
+}
 
-        this._boxModelDiagramRow = new WebInspector.BoxModelDetailsSectionRow;
+.scope-radio-button-navigation-item > .scope-radio-button-item-select {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 1px solid transparent;
+    -webkit-appearance: none;
+    background: transparent;
+    color: transparent;
+    outline: none;
+}
 
-        var boxModelGroup = new WebInspector.DetailsSectionGroup([this._boxModelDiagramRow]);
-        var boxModelSection = new WebInspector.DetailsSection("style-box-model", WebInspector.UIString("Box Model"), [boxModelGroup]);
+/* Positions the "Style" text almost exactly over the radio-button-item */
+.scope-radio-button-navigation-item > .scope-radio-button-item-select:focus {
+    top: -3px;
+    left: -3px;
+    border: none;
+}
 
-        this.element.appendChild(boxModelSection.element);
-    }
+.scope-radio-button-navigation-item > .arrows {
+    width: 5px;
+    height: 11px;
+    margin-left: 4px;
+}
 
-    // Public
+.scope-radio-button-navigation-item.selected > .arrows {
+    display: inline-block;
+}
 
-    refresh()
-    {
-        this._boxModelDiagramRow.nodeStyles = this.nodeStyles;
-
-        super.refresh();
-    }
-};
+.scope-radio-button-navigation-item:hover > .arrows > svg .stroked,
+.scope-radio-button-navigation-item.selected > .arrows > svg .stroked {
+    stroke: white;
+}

@@ -23,17 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.sidebar > .panel.details.css-style > .navigation-bar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    align-content: center;
-}
-
 .sidebar > .panel.details.css-style > .content {
     position: absolute;
-    top: 29px;
+    top: 0;
     left: 0;
     right: 0;
     bottom: 0;

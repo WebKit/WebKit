@@ -1,3 +1,44 @@
+2015-08-04  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Merge the styles sidebar navigation bar into a selectable item in the elements sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=146878
+
+        Reviewed by Timothy Hatcher.
+
+        Replaced the default navigationItem of the CSSStyleDetailsSidebarPanel with a
+        ScopeRadioButtonNavigationItem that will open a select element containing the labels
+        of each style sidebar when reselected.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        (WebInspector.ComputedStyleDetailsPanel):
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.css-style > .content):
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.js:
+        (WebInspector.CSSStyleDetailsSidebarPanel):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype.computedStyleDetailsPanelShowProperty):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._panelMatchingIdentifier):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._handleSelectedItemChanged):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype.visibilityDidChange):
+        (WebInspector.CSSStyleDetailsSidebarPanel.prototype._navigationItemSelected): Deleted.
+        * UserInterface/Views/DOMDetailsSidebarPanel.js:
+        (WebInspector.DOMDetailsSidebarPanel):
+        * UserInterface/Views/DetailsSidebarPanel.js:
+        (WebInspector.DetailsSidebarPanel):
+        * UserInterface/Views/MetricsStyleDetailsPanel.js:
+        (WebInspector.MetricsStyleDetailsPanel):
+        * UserInterface/Views/NavigationBar.js:
+        (WebInspector.NavigationBar.prototype._mouseDown):
+        * UserInterface/Views/RulesStyleDetailsPanel.js:
+        (WebInspector.RulesStyleDetailsPanel):
+        * UserInterface/Views/ScopeRadioButtonNavigationItem.css: Added.
+        * UserInterface/Views/ScopeRadioButtonNavigationItem.js: Added.
+        * UserInterface/Views/SidebarPanel.js:
+        (WebInspector.SidebarPanel):
+        * UserInterface/Views/StyleDetailsPanel.js:
+        (WebInspector.StyleDetailsPanel):
+
 2015-08-04  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: timeline overview should visually distinguish selection bounds outside the visible duration

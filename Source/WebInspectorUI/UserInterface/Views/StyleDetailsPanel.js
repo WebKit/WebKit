@@ -37,7 +37,7 @@ WebInspector.StyleDetailsPanel = class StyleDetailsPanel extends WebInspector.Ob
         // Add this offset-sections class name so the sticky headers don't overlap the navigation bar.
         this.element.classList.add("offset-sections");
 
-        this._navigationItem = new WebInspector.RadioButtonNavigationItem(identifier, label);
+        this._navigationInfo = {identifier, label};
 
         this._nodeStyles = null;
         this._visible = false;
@@ -50,9 +50,9 @@ WebInspector.StyleDetailsPanel = class StyleDetailsPanel extends WebInspector.Ob
         return this._element;
     }
 
-    get navigationItem()
+    get navigationInfo()
     {
-        return this._navigationItem;
+        return this._navigationInfo;
     }
 
     get nodeStyles()
