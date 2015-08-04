@@ -470,8 +470,13 @@ void HistoryController::updateForCommit()
         // the provisional item for restoring state.
         // Note previousItem must be set before we close the URL, which will
         // happen when the data source is made non-provisional below
+
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=146842
+        // We should always have a provisional item when committing, but we sometimes don't.
+        // Not having one leads to us not having a m_currentItem later, which is also a terrible known issue.
+        // We should get to the bottom of this.
         ASSERT(m_provisionalItem);
-        setCurrentItem(*m_provisionalItem);
+        setCurrentItem(m_provisionalItem.get());
         m_provisionalItem = nullptr;
 
         // Tell all other frames in the tree to commit their provisional items and
@@ -512,7 +517,7 @@ void HistoryController::recursiveUpdateForCommit()
             view->setWasScrolledByUser(false);
 
         // Now commit the provisional item
-        setCurrentItem(*m_provisionalItem);
+        setCurrentItem(m_provisionalItem.get());
         m_provisionalItem = nullptr;
 
         // Restore form state (works from currentItem)
@@ -561,7 +566,7 @@ void HistoryController::recursiveUpdateForSameDocumentNavigation()
         return;
 
     // Commit the provisional item.
-    setCurrentItem(*m_provisionalItem);
+    setCurrentItem(m_provisionalItem.get());
     m_provisionalItem = nullptr;
 
     // Iterate over the rest of the tree.
@@ -577,11 +582,11 @@ void HistoryController::updateForFrameLoadCompleted()
     m_frameLoadComplete = true;
 }
 
-void HistoryController::setCurrentItem(HistoryItem& item)
+void HistoryController::setCurrentItem(HistoryItem* item)
 {
     m_frameLoadComplete = false;
     m_previousItem = m_currentItem;
-    m_currentItem = &item;
+    m_currentItem = item;
 }
 
 void HistoryController::setCurrentItemTitle(const StringWithDirection& title)
@@ -664,7 +669,7 @@ Ref<HistoryItem> HistoryController::createItem()
     initializeItem(item);
     
     // Set the item for which we will save document state
-    setCurrentItem(item);
+    setCurrentItem(item.ptr());
     
     return item;
 }

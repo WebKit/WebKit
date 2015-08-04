@@ -1,3 +1,31 @@
+2015-07-10  Brady Eidson  <beidson@apple.com>
+
+        Crash in HistoryController::updateForCommit dereferencing a null HistoryItem.
+        <rdar://problem/21371589> and https://bugs.webkit.org/show_bug.cgi?id=146842
+
+        Reviewed by Chris Dumez.
+
+        No new tests (Unknown how to reproduce).
+        
+        This patch basically rolls back part of http://trac.webkit.org/changeset/179472.
+        
+        r179472 changed HistoryController::setCurrentItem() to take a reference instead of a pointer.
+        Unfortunately, we sometimes call setCurrentItem(nullptr).
+        
+        We'd like to *not* do that, and there are assertions in place to try to catch when we do,
+        but in the meantime it is not valid to dereference nullptr.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadSameDocumentItem):
+        
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::updateForCommit):
+        (WebCore::HistoryController::recursiveUpdateForCommit):
+        (WebCore::HistoryController::recursiveUpdateForSameDocumentNavigation):
+        (WebCore::HistoryController::setCurrentItem): Take a ptr instead of a ref.
+        (WebCore::HistoryController::createItem):
+        * loader/HistoryController.h:
+
 2015-07-09  Zalan Bujtas  <zalan@apple.com>
 
         Plugin create can end up destroying its renderer.
