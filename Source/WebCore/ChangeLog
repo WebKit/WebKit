@@ -1,5 +1,22 @@
 2015-08-04  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r187806. rdar://problem/21838271
+
+    2015-08-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Unreviewed post-review feedback on r187797
+
+            The correct terminology is "registered" instead of "activated."
+
+            No new tests because there is no behavior change.
+
+            * platform/graphics/FontPlatformData.h:
+            * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+            (WebCore::FontPlatformData::registeredFont):
+            (WebCore::FontPlatformData::activatedFont): Deleted.
+
+2015-08-04  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r187797. rdar://problem/21838271
 
     2015-08-03  Myles C. Maxfield  <mmaxfield@apple.com>

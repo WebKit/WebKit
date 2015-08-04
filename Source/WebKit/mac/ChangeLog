@@ -1,5 +1,18 @@
 2015-08-04  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Merge r187806. rdar://problem/21838271
+
+    2015-08-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Unreviewed post-review feedback on r187797
+
+            The correct terminology is "registered" instead of "activated."
+
+            * WebView/WebHTMLView.mm:
+            (-[WebHTMLView _updateFontPanel]):
+
+2015-08-04  Matthew Hanson  <matthew_hanson@apple.com>
+
         Merge r187801. rdar://problem/21838271
 
     2015-08-03  Myles C. Maxfield  <mmaxfield@apple.com>
