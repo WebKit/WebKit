@@ -345,6 +345,25 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setSize(const IntSize&)
     // No-op.
 }
 
+RetainPtr<CGImageRef> MediaPlayerPrivateMediaStreamAVFObjC::createImageFromSampleBuffer(CMSampleBufferRef sampleBuffer)
+{
+    CVPixelBufferRef imageBuffer = static_cast<CVPixelBufferRef>(CMSampleBufferGetImageBuffer(sampleBuffer));
+    CVPixelBufferLockBaseAddress(imageBuffer, 0);
+    
+    void *baseAddress = CVPixelBufferGetBaseAddress(imageBuffer);
+    size_t bytesPerRow = CVPixelBufferGetBytesPerRow(imageBuffer);
+    size_t width = CVPixelBufferGetWidth(imageBuffer);
+    size_t height = CVPixelBufferGetHeight(imageBuffer);
+    
+    RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
+    RetainPtr<CGDataProviderRef> provider = adoptCF(CGDataProviderCreateWithData(NULL, baseAddress, bytesPerRow * height, NULL));
+    RetainPtr<CGImageRef> quartzImage = adoptCF(CGImageCreate(width, height, 8, 32, bytesPerRow, colorSpace.get(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst, provider.get(), NULL, true, kCGRenderingIntentDefault));
+    
+    CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
+    
+    return quartzImage;
+}
+
 void MediaPlayerPrivateMediaStreamAVFObjC::paint(GraphicsContext*, const FloatRect&)
 {
     // FIXME(125157): Implement painting.

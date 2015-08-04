@@ -145,6 +145,8 @@ private:
 
     bool shouldBePlaying() const;
 
+    RetainPtr<CGImageRef> createImageFromSampleBuffer(CMSampleBufferRef);
+
     friend class MediaStreamPrivateAVFObjC;
 
     MediaPlayer* m_player;
