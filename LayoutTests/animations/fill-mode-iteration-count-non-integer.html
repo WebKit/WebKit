@@ -10,10 +10,10 @@
       position: relative;
       left: 100px;
       top: 10px;
-      height: 100px;
+      height: 25px;
       width: 100px;
       -webkit-animation-delay: 0.1s;
-      -webkit-animation-duration: 0.2s;
+      -webkit-animation-duration: 2s;
       -webkit-animation-timing-function: linear;
       -webkit-animation-name: anim;
     }
@@ -34,18 +34,31 @@
     #c {
       background-color: green;
       -webkit-animation-fill-mode: forwards;
-      -webkit-animation-iteration-count: 1.5;
+      -webkit-animation-iteration-count: 1.25;
     }
     #d {
       background-color: yellow;
       -webkit-animation-fill-mode: both;
-      -webkit-animation-iteration-count: 1.5;
+      -webkit-animation-iteration-count: 1.25;
     }
     #e {
-      background-color: #999;
+      background-color: gray;
       -webkit-animation-fill-mode: both;
-      -webkit-animation-iteration-count: 2.5;
+      -webkit-animation-iteration-count: 2.25;
       -webkit-animation-direction: alternate;
+    }
+    #f {
+      background-color: silver;
+      -webkit-animation-fill-mode: both;
+      -webkit-animation-iteration-count: 2.25;
+      -webkit-animation-direction: alternate-reverse;
+    }
+    #g {
+      background-color: orange;
+      -webkit-animation-fill-mode: both;
+      -webkit-animation-iteration-count: 2.25;
+      -webkit-animation-timing-function: ease-out;
+      -webkit-animation-direction: alternate-reverse;
     }
   </style>
   <script type="text/javascript" charset="utf-8">
@@ -55,9 +68,11 @@
     const expectedValues = [
       {id: "a", start: 100, end: 100},
       {id: "b", start: 200, end: 100},
-      {id: "c", start: 100, end: 300},
-      {id: "d", start: 200, end: 300},
-      {id: "e", start: 200, end: 300}
+      {id: "c", start: 100, end: 225},
+      {id: "d", start: 200, end: 225},
+      {id: "e", start: 200, end: 225},
+      {id: "f", start: 300, end: 275},
+      {id: "g", start: 300, end: 291}
     ];
     var result = "";
 
@@ -80,11 +95,10 @@
             var expectedValue = expectedValues[i].end;
             var realValue = window.getComputedStyle(el).getPropertyCSSValue("left").getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
             if (Math.abs(expectedValue - realValue) < allowance) {
-              result += "PASS";
+              result += "PASS - end of animation - id: " + expectedValues[i].id + " close to expected: " + expectedValue + "<br>";
             } else {
-              result += "FAIL";
+              result += "FAIL - end of animation - id: " + expectedValues[i].id + " expected: " + expectedValue + " actual: " + realValue + "<br>";
             }
-            result += " - end of animation - id: " + expectedValues[i].id + " expected: " + expectedValue + " actual: " + realValue + "<br>";
         }
         document.getElementById('result').innerHTML = result;
 
@@ -127,6 +141,12 @@ It takes snapshots at document load and the end of the animation.
 </div>
 <div id="e" class="box">
   Both iterating
+</div>
+<div id="f" class="box">
+  Both reverse alternate
+</div>
+<div id="g" class="box">
+  Ease function
 </div>
 <div id="result">
 </div>

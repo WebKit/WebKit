@@ -1,3 +1,29 @@
+2015-07-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Safari mis-applies "animation-fill-mode: forwards" when using fractional iteration count
+        https://bugs.webkit.org/show_bug.cgi?id=146996
+
+        Reviewed by Dean Jackson.
+
+        animation-fill-mode: forwards with fractional iteration counts always snapped to
+        1 or 0, depending on direction. Fix to compute the fill-forward state from the
+        correct keyframes.
+        
+        If filling forwards, AnimationBase::progress() sets the elapsed time to the duration,
+        then uses fractionalTime() to handle animation direction mapping. If the fractionalTime
+        is integral, we can return early, avoiding the cost of mapping through timing functions.
+
+        Tested by existing tests.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::progress):
+        (WebCore::AnimationBase::getElapsedTime):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::fetchIntervalEndpointsForProperty): It was possible
+        to end up with prevIndex == nextIndex with reverse animations, which resulted
+        in divide-by-zero when computing scale. Fix by picking a nextIndex that is different
+        from prevIndex.
+
 2015-07-20  Ada Chan  <adachan@apple.com>
 
         Follow-up to my earlier fix for r147085
