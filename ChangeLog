@@ -1,3 +1,17 @@
+2015-08-04  Mario Sanchez Prada  <mario@endlessm.com>
+
+        [GTK] Accelerated 2D Canvas enabled when cairo-gl is not available
+        https://bugs.webkit.org/show_bug.cgi?id=147625
+
+        Reviewed by Martin Robinson.
+
+        Do not set the CAIRO_<COMPONENT>_* CMake variables for cairo-gl
+        components unless they were actually found, not to accidentally
+        enable Accelerated 2D canvas, which would cause the build to fail.
+
+        * Source/cmake/FindCairoGL.cmake: Set this variables only when
+        pkg_check_modules() had actually found the relevant component.
+
 2015-08-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         [CMake] Add an option to build AllInOne files
