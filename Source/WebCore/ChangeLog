@@ -1,3 +1,23 @@
+2015-07-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        style.fontFamily accessor crashes on unstyled node created from DOMParser().parseFromString()
+        https://bugs.webkit.org/show_bug.cgi?id=147026
+        <rdar://problem/21864487>
+
+        Reviewed by Andreas Kling.
+
+        Font CSS properties are a little special because they are used as indices into caches.
+        Normally, StyleResolver gives all nodes a default font family, so our cache works correctly.
+        However, if the document doesn't have a Settings object, StyleResolver wasn't doing this.
+        Documents created from DOMParser().parseFromString() don't have a Settings object.
+
+        Test: fast/text/crash-font-family-parsed.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::defaultStyleForElement):
+        (WebCore::StyleResolver::initializeFontStyle): Set a font family even if we don't have a
+        Settings object.
+
 2015-07-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Paste data is removed from clipboard when closing browser tab
