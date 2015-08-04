@@ -1,3 +1,45 @@
+2015-08-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WTF] Turn tryMakeString(), makeString() into variadic templates
+        https://bugs.webkit.org/show_bug.cgi?id=147142
+
+        Reviewed by Sam Weinig.
+
+        Built upon the original work by Anders Carlsson, Mark Rowe and Sam Weinig.
+
+        Implement tryMakeString() and makeString() as variadic templates, replacing
+        the argument count-based overloads.
+
+        tryMakeString() now constructs a stack-based tuple of necessary StringTypeAdapter
+        objects and utilizes the StringAdapterTuple struct template to operate on that
+        tuple, recursively calling the necessary operations on each element in the tuple.
+        This effectively mimics the process of previous tryMakeString() implementation,
+        but makes it scalable to a tuple of elements that are to be concatenated.
+
+        StringAppend class template now stores two StringTypeAdapter objects for the
+        two passed-in string objects, packed in a tuple, calling
+        StringAdapterTuple<>::createString() directly when concatenating the two objects
+        into one String.
+
+        * wtf/text/StringConcatenate.h:
+        (WTF::StringTypeAdapter<char>::length):
+        (WTF::StringTypeAdapter<char>::is8Bit):
+        (WTF::StringAdapterTuple::sumWithOverflow):
+        (WTF::StringAdapterTuple::is8Bit):
+        (WTF::StringAdapterTuple::writeTo):
+        (WTF::StringAdapterTuple::createString):
+        (WTF::tryMakeString):
+        (WTF::makeString):
+        (WTF::sumWithOverflow): Deleted.
+        * wtf/text/StringOperators.h:
+        (WTF::StringAppend::StringAppend):
+        (WTF::StringAppend::operator String):
+        (WTF::StringAppend::is8Bit):
+        (WTF::StringAppend::writeTo):
+        (WTF::StringAppend::length):
+        (WTF::StringAppend::string1):
+        (WTF::StringAppend::string2):
+
 2015-08-03  Anders Carlsson  <andersca@apple.com>
 
         Make it possible to use String::utf8() in the debugger
