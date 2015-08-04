@@ -14,23 +14,23 @@ function test(declaration, property)
     return result;
 }
 shouldBe('test("background-clip: -webkit-text", "background-clip")', '"-webkit-text"');
-shouldBe('test("background-clip: -webkit-text", "-webkit-background-clip")', 'null');
+shouldBeEqualToString('test("background-clip: -webkit-text", "-webkit-background-clip")', '');
 
 shouldBe('test("background-clip: content-box", "background-clip")', '"content-box"');
 shouldBe('test("background-clip: padding-box", "background-clip")', '"padding-box"');
 shouldBe('test("background-clip: border-box", "background-clip")', '"border-box"');
 
-shouldBe('test("background-clip: text", "background-clip")', 'null');
-shouldBe('test("background-clip: text", "-webkit-background-clip")', 'null');
+shouldBeEqualToString('test("background-clip: text", "background-clip")', '');
+shouldBeEqualToString('test("background-clip: text", "-webkit-background-clip")', '');
 
-shouldBe('test("-webkit-background-clip: -webkit-text", "background-clip")', 'null');
+shouldBeEqualToString('test("-webkit-background-clip: -webkit-text", "background-clip")', '');
 shouldBe('test("-webkit-background-clip: -webkit-text", "-webkit-background-clip")', '"-webkit-text"');
 
-shouldBe('test("-webkit-background-clip: text", "background-clip")', 'null');
+shouldBeEqualToString('test("-webkit-background-clip: text", "background-clip")', '');
 shouldBe('test("-webkit-background-clip: text", "-webkit-background-clip")', '"text"');
-shouldBe('test("background: url() padding-box", "-webkit-background-clip")', 'null');
+shouldBeEqualToString('test("background: url() padding-box", "-webkit-background-clip")', '');
 
-shouldBe('test("-webkit-mask: url() ", "background-clip")', 'null');
+shouldBeEqualToString('test("-webkit-mask: url() ", "background-clip")', '');
 shouldBe('test("background: url() ", "background-clip")', '"initial"');
 
 shouldBe('test("background: url() padding-box", "background-clip")', '"padding-box"');

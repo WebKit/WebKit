@@ -89,43 +89,43 @@ PASS innerStyle("-webkit-mask", "none border-box left top 20px") is "none left 0
 PASS innerStyle("-webkit-mask", "none border-box content-box left top repeat-x") is "none 0% 0% repeat-x border-box content-box"
 PASS innerStyle("-webkit-mask", "none border-box content-box left top / auto repeat-x") is "none 0% 0% / auto repeat-x border-box content-box"
 PASS innerStyle("-webkit-mask", "none border-box content-box right 0px center / auto repeat-x") is "none right 0px top 50% / auto repeat-x border-box content-box"
-PASS innerStyle("-webkit-mask", "top none left") is null
-PASS innerStyle("-webkit-mask", "right none bottom") is null
-PASS innerStyle("-webkit-mask", "right right") is null
-PASS innerStyle("-webkit-mask", "left left") is null
-PASS innerStyle("-webkit-mask", "top top") is null
-PASS innerStyle("-webkit-mask", "bottom bottom") is null
-PASS innerStyle("-webkit-mask", "50% none 50%") is null
-PASS innerStyle("-webkit-mask", "repeat-x repeat-x") is null
-PASS innerStyle("-webkit-mask", "space repeat-y") is null
-PASS innerStyle("-webkit-mask", "repeat space space") is null
-PASS innerStyle("-webkit-mask", "padding-box border-box content-box") is null
-PASS innerStyle("-webkit-mask", "none / auto") is null
-PASS innerStyle("-webkit-mask", "none repeat-x / auto") is null
-PASS innerStyle("-webkit-mask", "none border-box / auto") is null
-PASS innerStyle("-webkit-mask", "none top left / cover 100%") is null
-PASS innerStyle("-webkit-mask", "scroll") is null
-PASS innerStyle("-webkit-mask", "fixed") is null
-PASS innerStyle("-webkit-mask", "local") is null
-PASS innerStyle("-webkit-mask", "space scroll") is null
-PASS innerStyle("-webkit-mask", "none scroll") is null
-PASS innerStyle("-webkit-mask", "none top left / auto repeat-x scroll border-box border-box") is null
-PASS innerStyle("-webkit-mask", "right top left") is null
-PASS innerStyle("-webkit-mask", "center left center") is null
-PASS innerStyle("-webkit-mask", "center top center") is null
-PASS innerStyle("-webkit-mask", "center right bottom") is null
-PASS innerStyle("-webkit-mask", "top solid bottom") is null
-PASS innerStyle("-webkit-mask", "none top left right center top / auto repeat-x scroll border-box border-box") is null
-PASS innerStyle("-webkit-mask", "none center center 20px / auto repeat-x scroll border-box border-box") is null
-PASS innerStyle("-webkit-mask", "none top 20px right 30px center / auto repeat-x scroll border-box border-box") is null
-PASS innerStyle("-webkit-mask", "none top 20px top 30px / auto repeat-x scroll border-box border-box") is null
-PASS innerStyle("-webkit-mask", "none top 20px bottom / auto repeat-x scroll border-box border-box") is null
-PASS innerStyle("-webkit-mask", "none alpha, none auto alpha") is null
-PASS innerStyle("-webkit-mask", "none alpha luminance") is null
-PASS innerStyle("-webkit-mask-source-type", "rubbish") is null
-PASS innerStyle("-webkit-mask-source-type", "") is null
-PASS innerStyle("-webkit-mask-source-type", "center") is null
-PASS innerStyle("-webkit-mask-source-type", "repeat") is null
+PASS innerStyle("-webkit-mask", "top none left") is ""
+PASS innerStyle("-webkit-mask", "right none bottom") is ""
+PASS innerStyle("-webkit-mask", "right right") is ""
+PASS innerStyle("-webkit-mask", "left left") is ""
+PASS innerStyle("-webkit-mask", "top top") is ""
+PASS innerStyle("-webkit-mask", "bottom bottom") is ""
+PASS innerStyle("-webkit-mask", "50% none 50%") is ""
+PASS innerStyle("-webkit-mask", "repeat-x repeat-x") is ""
+PASS innerStyle("-webkit-mask", "space repeat-y") is ""
+PASS innerStyle("-webkit-mask", "repeat space space") is ""
+PASS innerStyle("-webkit-mask", "padding-box border-box content-box") is ""
+PASS innerStyle("-webkit-mask", "none / auto") is ""
+PASS innerStyle("-webkit-mask", "none repeat-x / auto") is ""
+PASS innerStyle("-webkit-mask", "none border-box / auto") is ""
+PASS innerStyle("-webkit-mask", "none top left / cover 100%") is ""
+PASS innerStyle("-webkit-mask", "scroll") is ""
+PASS innerStyle("-webkit-mask", "fixed") is ""
+PASS innerStyle("-webkit-mask", "local") is ""
+PASS innerStyle("-webkit-mask", "space scroll") is ""
+PASS innerStyle("-webkit-mask", "none scroll") is ""
+PASS innerStyle("-webkit-mask", "none top left / auto repeat-x scroll border-box border-box") is ""
+PASS innerStyle("-webkit-mask", "right top left") is ""
+PASS innerStyle("-webkit-mask", "center left center") is ""
+PASS innerStyle("-webkit-mask", "center top center") is ""
+PASS innerStyle("-webkit-mask", "center right bottom") is ""
+PASS innerStyle("-webkit-mask", "top solid bottom") is ""
+PASS innerStyle("-webkit-mask", "none top left right center top / auto repeat-x scroll border-box border-box") is ""
+PASS innerStyle("-webkit-mask", "none center center 20px / auto repeat-x scroll border-box border-box") is ""
+PASS innerStyle("-webkit-mask", "none top 20px right 30px center / auto repeat-x scroll border-box border-box") is ""
+PASS innerStyle("-webkit-mask", "none top 20px top 30px / auto repeat-x scroll border-box border-box") is ""
+PASS innerStyle("-webkit-mask", "none top 20px bottom / auto repeat-x scroll border-box border-box") is ""
+PASS innerStyle("-webkit-mask", "none alpha, none auto alpha") is ""
+PASS innerStyle("-webkit-mask", "none alpha luminance") is ""
+PASS innerStyle("-webkit-mask-source-type", "rubbish") is ""
+PASS innerStyle("-webkit-mask-source-type", "") is ""
+PASS innerStyle("-webkit-mask-source-type", "center") is ""
+PASS innerStyle("-webkit-mask-source-type", "repeat") is ""
 PASS successfullyParsed is true
 
 TEST COMPLETE

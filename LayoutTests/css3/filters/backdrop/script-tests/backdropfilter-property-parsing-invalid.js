@@ -18,7 +18,7 @@ function testInvalidFilterRule(description, rule)
 
     declaration = cssRule.style;
     shouldBe("declaration.length", "0");
-    shouldBe("declaration.getPropertyValue('-webkit-backdrop-filter')", "null");
+    shouldBeEqualToString("declaration.getPropertyValue('-webkit-backdrop-filter')", "");
 }
 
 testInvalidFilterRule("Too many parameters", "url(#a #b)");

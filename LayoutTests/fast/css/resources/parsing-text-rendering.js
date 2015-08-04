@@ -16,6 +16,6 @@ shouldBe('test("text-rendering: optimizeSpeed;")', '"optimizespeed"');
 shouldBe('test("text-rendering: optimizeLegibility;")', '"optimizelegibility"');
 shouldBe('test("text-rendering: geometricPrecision;")', '"geometricprecision"');
 
-shouldBeNull('test("text-rendering: auto auto;")');
-shouldBeNull('test("text-rendering: optimizeCoconuts;")');
-shouldBeNull('test("text-rendering: 15;")');
+shouldBeEqualToString('test("text-rendering: auto auto;")', '');
+shouldBeEqualToString('test("text-rendering: optimizeCoconuts;")', '');
+shouldBeEqualToString('test("text-rendering: 15;")', '');

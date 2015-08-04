@@ -7,9 +7,9 @@ PASS test("-webkit-font-smoothing: auto;") is "auto"
 PASS test("-webkit-font-smoothing: none;") is "none"
 PASS test("-webkit-font-smoothing: antialiased;") is "antialiased"
 PASS test("-webkit-font-smoothing: subpixel-antialiased;") is "subpixel-antialiased"
-PASS test("-webkit-font-smoothing: apple;") is null
-PASS test("-webkit-font-smoothing: 15;") is null
-PASS test("-webkit-font-smoothing: auto auto;") is null
+PASS test("-webkit-font-smoothing: apple;") is ""
+PASS test("-webkit-font-smoothing: 15;") is ""
+PASS test("-webkit-font-smoothing: auto auto;") is ""
 PASS successfullyParsed is true
 
 TEST COMPLETE

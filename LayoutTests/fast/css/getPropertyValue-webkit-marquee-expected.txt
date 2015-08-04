@@ -15,10 +15,10 @@ PASS webkitMarqueeValue("marquee9") is 'forwards'
 PASS webkitMarqueeValue("marquee10") is 'alternate'
 PASS webkitMarqueeValue("marquee11") is 'infinite'
 NOTE: 'foo' is an illegal CSS value for '-webkit-marquee'.
-PASS webkitMarqueeValue("marquee12") is null
+PASS webkitMarqueeValue("marquee12") is ""
 NOTE: If only few longhand properties are specified, getPropertyValue for shorthand property returns null.
-PASS webkitMarqueeValue("marquee13") is null
-PASS webkitMarqueeValue("marquee14") is null
+PASS webkitMarqueeValue("marquee13") is ""
+PASS webkitMarqueeValue("marquee14") is ""
 PASS successfullyParsed is true
 
 TEST COMPLETE

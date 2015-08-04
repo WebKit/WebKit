@@ -15,6 +15,6 @@ shouldBe('test("-webkit-color-correction: default;")', '"default"');
 shouldBe('test("-webkit-color-correction: sRGB;")', '"srgb"');
 shouldBe('test("-webkit-color-correction: srgb;")', '"srgb"');
 
-shouldBe('test("-webkit-color-correction: apple;")', 'null');
-shouldBe('test("-webkit-color-correction: 15;")', 'null');
-shouldBe('test("-webkit-color-correction: auto;")', 'null');
+shouldBeEqualToString('test("-webkit-color-correction: apple;")', '');
+shouldBeEqualToString('test("-webkit-color-correction: 15;")', '');
+shouldBeEqualToString('test("-webkit-color-correction: auto;")', '');

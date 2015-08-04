@@ -12,4 +12,4 @@ function test(value)
 }
 
 shouldBe('test("position: -webkit-sticky;")', '"-webkit-sticky"');
-shouldBe('test("position: sticky;")', 'null');
+shouldBeEqualToString('test("position: sticky;")', '');

@@ -157,62 +157,62 @@ PASS subRule.cssText is 'both'
 Invalid - duration - Bad value : 10cm
 PASS cssRule.type is 1
 PASS declaration.length is 0
-PASS declaration.getPropertyValue('animation-duration') is null
+PASS declaration.getPropertyValue('animation-duration') is ""
 
 Invalid - duration - List with bad value : 10ms, 10cm, 10s
 PASS cssRule.type is 1
 PASS declaration.length is 0
-PASS declaration.getPropertyValue('animation-duration') is null
+PASS declaration.getPropertyValue('animation-duration') is ""
 
 Invalid - delay - Bad value : 10cm
 PASS cssRule.type is 1
 PASS declaration.length is 0
-PASS declaration.getPropertyValue('animation-delay') is null
+PASS declaration.getPropertyValue('animation-delay') is ""
 
 Invalid - delay - List with bad value : 10ms, 10cm, 10s
 PASS cssRule.type is 1
 PASS declaration.length is 0
-PASS declaration.getPropertyValue('animation-delay') is null
+PASS declaration.getPropertyValue('animation-delay') is ""
 
 Invalid - timing-function - Wrong keyword parameter : egg
 PASS cssRule.type is 1
 PASS declaration.length is 0
-PASS declaration.getPropertyValue('animation-timing-function') is null
+PASS declaration.getPropertyValue('animation-timing-function') is ""
 
 Invalid - timing-function - List with wrong keyword parameter : ease-in, egg, ease-out
 PASS cssRule.type is 1
 PASS declaration.length is 0
-PASS declaration.getPropertyValue('animation-timing-function') is null
+PASS declaration.getPropertyValue('animation-timing-function') is ""
 
 Invalid - iteration-count - Wrong keyword parameter : banana
 PASS cssRule.type is 1
 PASS declaration.length is 0
-PASS declaration.getPropertyValue('animation-iteration-count') is null
+PASS declaration.getPropertyValue('animation-iteration-count') is ""
 
 Invalid - iteration-count - List with wrong keyword parameter : infinite, 10, banana
 PASS cssRule.type is 1
 PASS declaration.length is 0
-PASS declaration.getPropertyValue('animation-iteration-count') is null
+PASS declaration.getPropertyValue('animation-iteration-count') is ""
 
 Invalid - direction - Wrong keyword parameter : all
 PASS cssRule.type is 1
 PASS declaration.length is 0
-PASS declaration.getPropertyValue('animation-direction') is null
+PASS declaration.getPropertyValue('animation-direction') is ""
 
 Invalid - direction - List with wrong keyword parameter : normal, alternate, none
 PASS cssRule.type is 1
 PASS declaration.length is 0
-PASS declaration.getPropertyValue('animation-direction') is null
+PASS declaration.getPropertyValue('animation-direction') is ""
 
 Invalid - fill-mode - Wrong keyword parameter : all
 PASS cssRule.type is 1
 PASS declaration.length is 0
-PASS declaration.getPropertyValue('animation-fill-mode') is null
+PASS declaration.getPropertyValue('animation-fill-mode') is ""
 
 Invalid - fill-mode - List with wrong keyword parameter : none, backwards, left, alternate, forwards
 PASS cssRule.type is 1
 PASS declaration.length is 0
-PASS declaration.getPropertyValue('animation-fill-mode') is null
+PASS declaration.getPropertyValue('animation-fill-mode') is ""
 
 Computed Style - Basic animation-name : waldo
 PASS animationStyle.cssText is 'waldo'

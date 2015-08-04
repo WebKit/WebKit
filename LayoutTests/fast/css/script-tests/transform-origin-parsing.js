@@ -12,10 +12,10 @@ function test(declaration, property)
     return result;
 }
 
-shouldBe('test("-webkit-transform-origin: 10% 10% 10%", "-webkit-transform-origin")', 'null');
+shouldBeEqualToString('test("-webkit-transform-origin: 10% 10% 10%", "-webkit-transform-origin")', '');
 shouldBe('test("-webkit-transform-origin: 10% 10% 10px", "-webkit-transform-origin")', '"10% 10% 10px"');
-shouldBe('test("-webkit-transform-origin: 10px 10px 10%", "-webkit-transform-origin")', 'null');
+shouldBeEqualToString('test("-webkit-transform-origin: 10px 10px 10%", "-webkit-transform-origin")', '');
 shouldBe('test("-webkit-transform-origin: 10px 10px 10px", "-webkit-transform-origin")', '"10px 10px 10px"');
-shouldBe('test("-webkit-transform-origin: left top 10%", "-webkit-transform-origin")', 'null');
+shouldBeEqualToString('test("-webkit-transform-origin: left top 10%", "-webkit-transform-origin")', '');
 shouldBe('test("-webkit-transform-origin: left top 10px", "-webkit-transform-origin")', '"0% 0% 10px"');
-shouldBe('test("-webkit-transform-origin: left top left", "-webkit-transform-origin")', 'null');
+shouldBeEqualToString('test("-webkit-transform-origin: left top left", "-webkit-transform-origin")', '');

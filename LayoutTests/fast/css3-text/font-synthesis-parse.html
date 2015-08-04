@@ -12,7 +12,7 @@
       shouldBe("cssRule.type", "cssRule.STYLE_RULE");
       declaration = cssRule.style;
       shouldBe("declaration.length", "0");
-      shouldBe("declaration.getPropertyValue('font-synthesis')", "null");
+      shouldBeEqualToString("declaration.getPropertyValue('font-synthesis')", "");
       computedStyle = window.getComputedStyle(target, null);
       shouldBeEqualToString("computedStyle.getPropertyCSSValue('font-synthesis').cssText", "style weight");
       stylesheet.deleteRule(0);

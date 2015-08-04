@@ -27,7 +27,7 @@ shouldBe("computedStyle.getPropertyValue('-webkit-box-decoration-break')", "'clo
 
 e.style.webkitBoxDecorationBreak = "";
 e.style.webkitBoxDecorationBreak = "invalid";
-shouldBe("e.style.getPropertyValue('-webkit-box-decoration-break')", "null");
+shouldBeEqualToString("e.style.getPropertyValue('-webkit-box-decoration-break')", "");
 shouldBe("computedStyle.getPropertyValue('-webkit-box-decoration-break')", "'slice'");
 
 document.body.removeChild(testContainer);

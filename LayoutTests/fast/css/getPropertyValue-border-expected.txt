@@ -13,8 +13,8 @@ PASS div5.style.getPropertyValue("border") is 'green'
     NOTE: 'green' is an illegal CSS value for 'border'.
 PASS div6.style.getPropertyValue("border") is '5px'
 PASS div7.style.getPropertyValue("border") is 'solid'
-PASS div8.style.getPropertyValue("border") is null
-PASS div9.style.getPropertyValue("border") is null
+PASS div8.style.getPropertyValue("border") is ""
+PASS div9.style.getPropertyValue("border") is ""
 PASS successfullyParsed is true
 
 TEST COMPLETE

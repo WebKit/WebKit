@@ -33,7 +33,7 @@
       shouldBe("cssRule.type", "cssRule.STYLE_RULE");
       declaration = cssRule.style;
       shouldBe("declaration.length", "0");
-      shouldBe("declaration.getPropertyValue('-webkit-text-decoration-skip')", "null");
+      shouldBeEqualToString("declaration.getPropertyValue('-webkit-text-decoration-skip')", "");
       computedStyle = window.getComputedStyle(target, null);
       shouldBeEqualToString("computedStyle.getPropertyCSSValue('-webkit-text-decoration-skip').cssText", "auto");
       stylesheet.deleteRule(0);

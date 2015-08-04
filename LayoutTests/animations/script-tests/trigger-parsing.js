@@ -19,7 +19,7 @@ function testTriggerRule(description, rule, expectedLength, expectedValue, expec
     declaration = cssRule.style;
     if (!expectedLength || !expectedValue) {
         shouldBe("declaration.length", "0");
-        shouldBe("declaration.getPropertyValue('-webkit-animation-trigger')", "null");
+        shouldBeEqualToString("declaration.getPropertyValue('-webkit-animation-trigger')", "");
         return;
     }
     shouldBe("declaration.length", "1");

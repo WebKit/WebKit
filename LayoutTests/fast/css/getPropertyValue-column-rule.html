@@ -53,21 +53,21 @@
       shouldBe('div7.style.getPropertyValue("-webkit-column-rule")', "'green'");
 
       var div8 = document.getElementById("-webkit-column-rule8");
-      shouldBe('div8.style.getPropertyValue("-webkit-column-rule")', "null");
+      shouldBeEqualToString('div8.style.getPropertyValue("-webkit-column-rule")', "");
       debug("NOTE: 'foo' is an illegal CSS value for '-webkit-column-rule'.");
 
       var div9 = document.getElementById("-webkit-column-rule9");
       shouldBe('div9.style.getPropertyValue("-webkit-column-rule")', "'10px dotted black'");
 
-      debug("NOTE: If only few longhand properties are specified, getPropertyValue for shorthand property returns null.");
+      debug("NOTE: If only few longhand properties are specified, getPropertyValue for shorthand property returns an empty string.");
       var div10 = document.getElementById("-webkit-column-rule10");
-      shouldBe('div10.style.getPropertyValue("-webkit-column-rule")', "null");
+      shouldBeEqualToString('div10.style.getPropertyValue("-webkit-column-rule")', "");
 
       var div11 = document.getElementById("-webkit-column-rule11");
-      shouldBe('div11.style.getPropertyValue("-webkit-column-rule")', "null");
+      shouldBeEqualToString('div11.style.getPropertyValue("-webkit-column-rule")', "");
 
       var div12 = document.getElementById("-webkit-column-rule12");
-      shouldBe('div12.style.getPropertyValue("-webkit-column-rule")', "null");
+      shouldBeEqualToString('div12.style.getPropertyValue("-webkit-column-rule")', "");
     </script>
     <script src="../../resources/js-test-post.js"></script>
   </body>

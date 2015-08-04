@@ -1,6 +1,6 @@
 PASS cssRule.type is cssRule.STYLE_RULE
 PASS declaration.length is 0
-PASS declaration.getPropertyValue('font-synthesis') is null
+PASS declaration.getPropertyValue('font-synthesis') is ""
 PASS computedStyle.getPropertyCSSValue('font-synthesis').cssText is "style weight"
 PASS cssRule.type is cssRule.STYLE_RULE
 PASS declaration.length is 1
@@ -32,23 +32,23 @@ PASS declaration.getPropertyValue('font-synthesis') is "weight style"
 PASS computedStyle.getPropertyCSSValue('font-synthesis').cssText is "style weight"
 PASS cssRule.type is cssRule.STYLE_RULE
 PASS declaration.length is 0
-PASS declaration.getPropertyValue('font-synthesis') is null
+PASS declaration.getPropertyValue('font-synthesis') is ""
 PASS computedStyle.getPropertyCSSValue('font-synthesis').cssText is "style weight"
 PASS cssRule.type is cssRule.STYLE_RULE
 PASS declaration.length is 0
-PASS declaration.getPropertyValue('font-synthesis') is null
+PASS declaration.getPropertyValue('font-synthesis') is ""
 PASS computedStyle.getPropertyCSSValue('font-synthesis').cssText is "style weight"
 PASS cssRule.type is cssRule.STYLE_RULE
 PASS declaration.length is 0
-PASS declaration.getPropertyValue('font-synthesis') is null
+PASS declaration.getPropertyValue('font-synthesis') is ""
 PASS computedStyle.getPropertyCSSValue('font-synthesis').cssText is "style weight"
 PASS cssRule.type is cssRule.STYLE_RULE
 PASS declaration.length is 0
-PASS declaration.getPropertyValue('font-synthesis') is null
+PASS declaration.getPropertyValue('font-synthesis') is ""
 PASS computedStyle.getPropertyCSSValue('font-synthesis').cssText is "style weight"
 PASS cssRule.type is cssRule.STYLE_RULE
 PASS declaration.length is 0
-PASS declaration.getPropertyValue('font-synthesis') is null
+PASS declaration.getPropertyValue('font-synthesis') is ""
 PASS computedStyle.getPropertyCSSValue('font-synthesis').cssText is "style weight"
 PASS successfullyParsed is true
 

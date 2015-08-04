@@ -1,6 +1,6 @@
 PASS cssRule.type is cssRule.STYLE_RULE
 PASS declaration.length is 0
-PASS declaration.getPropertyValue('-apple-trailing-word') is null
+PASS declaration.getPropertyValue('-apple-trailing-word') is ""
 PASS computedStyle.getPropertyCSSValue('-apple-trailing-word').cssText is "auto"
 PASS cssRule.type is cssRule.STYLE_RULE
 PASS declaration.length is 1

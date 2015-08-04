@@ -11,13 +11,13 @@ PASS div4.style.getPropertyValue("-webkit-column-rule") is '10px'
 PASS div5.style.getPropertyValue("-webkit-column-rule") is 'solid black'
 PASS div6.style.getPropertyValue("-webkit-column-rule") is 'dashed'
 PASS div7.style.getPropertyValue("-webkit-column-rule") is 'green'
-PASS div8.style.getPropertyValue("-webkit-column-rule") is null
+PASS div8.style.getPropertyValue("-webkit-column-rule") is ""
 NOTE: 'foo' is an illegal CSS value for '-webkit-column-rule'.
 PASS div9.style.getPropertyValue("-webkit-column-rule") is '10px dotted black'
-NOTE: If only few longhand properties are specified, getPropertyValue for shorthand property returns null.
-PASS div10.style.getPropertyValue("-webkit-column-rule") is null
-PASS div11.style.getPropertyValue("-webkit-column-rule") is null
-PASS div12.style.getPropertyValue("-webkit-column-rule") is null
+NOTE: If only few longhand properties are specified, getPropertyValue for shorthand property returns an empty string.
+PASS div10.style.getPropertyValue("-webkit-column-rule") is ""
+PASS div11.style.getPropertyValue("-webkit-column-rule") is ""
+PASS div12.style.getPropertyValue("-webkit-column-rule") is ""
 PASS successfullyParsed is true
 
 TEST COMPLETE

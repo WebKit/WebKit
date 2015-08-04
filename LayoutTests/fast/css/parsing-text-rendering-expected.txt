@@ -7,9 +7,9 @@ PASS test("text-rendering: auto;") is "auto"
 PASS test("text-rendering: optimizeSpeed;") is "optimizespeed"
 PASS test("text-rendering: optimizeLegibility;") is "optimizelegibility"
 PASS test("text-rendering: geometricPrecision;") is "geometricprecision"
-PASS test("text-rendering: auto auto;") is null
-PASS test("text-rendering: optimizeCoconuts;") is null
-PASS test("text-rendering: 15;") is null
+PASS test("text-rendering: auto auto;") is ""
+PASS test("text-rendering: optimizeCoconuts;") is ""
+PASS test("text-rendering: 15;") is ""
 PASS successfullyParsed is true
 
 TEST COMPLETE

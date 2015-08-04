@@ -11,7 +11,7 @@ var a = document.createElement("a");
 a.setAttribute("style", "-webkit-border-horizontal-spacing: 1px;");
 
 var borderSpacing = a.style.getPropertyValue('border-spacing');
-if (borderSpacing !== null)
+if (borderSpacing !== "")
     document.write('FAIL. WebKit didn\'t crash but got "' + borderSpacing + '" but expected "".');
 else
     document.write("PASS. WebKit didn't crash.");

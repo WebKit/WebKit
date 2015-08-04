@@ -19,7 +19,7 @@ function testInvalidFilterRule(description, rule)
 
     declaration = cssRule.style;
     shouldBe("declaration.length", "0");
-    shouldBe("declaration.getPropertyValue('mix-blend-mode')", "null");
+    shouldBeEqualToString("declaration.getPropertyValue('mix-blend-mode')", "");
 }
 
 testInvalidFilterRule("Too many parameters", "overlay overlay");

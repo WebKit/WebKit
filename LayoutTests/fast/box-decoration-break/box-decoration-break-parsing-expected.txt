@@ -7,7 +7,7 @@ PASS e.style.getPropertyValue('-webkit-box-decoration-break') is 'slice'
 PASS computedStyle.getPropertyValue('-webkit-box-decoration-break') is 'slice'
 PASS e.style.getPropertyValue('-webkit-box-decoration-break') is 'clone'
 PASS computedStyle.getPropertyValue('-webkit-box-decoration-break') is 'clone'
-PASS e.style.getPropertyValue('-webkit-box-decoration-break') is null
+PASS e.style.getPropertyValue('-webkit-box-decoration-break') is ""
 PASS computedStyle.getPropertyValue('-webkit-box-decoration-break') is 'slice'
 PASS successfullyParsed is true
 

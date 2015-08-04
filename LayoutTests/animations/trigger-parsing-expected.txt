@@ -63,27 +63,27 @@ Invalid property tests
 No value : 
 PASS cssRule.type is 1
 PASS declaration.length is 0
-PASS declaration.getPropertyValue('-webkit-animation-trigger') is null
+PASS declaration.getPropertyValue('-webkit-animation-trigger') is ""
 
 Bad value : banana
 PASS cssRule.type is 1
 PASS declaration.length is 0
-PASS declaration.getPropertyValue('-webkit-animation-trigger') is null
+PASS declaration.getPropertyValue('-webkit-animation-trigger') is ""
 
 Bad list : container-scroll(1px), orange
 PASS cssRule.type is 1
 PASS declaration.length is 0
-PASS declaration.getPropertyValue('-webkit-animation-trigger') is null
+PASS declaration.getPropertyValue('-webkit-animation-trigger') is ""
 
 Missing comma : container-scroll(1px) container-scroll(2px)
 PASS cssRule.type is 1
 PASS declaration.length is 0
-PASS declaration.getPropertyValue('-webkit-animation-trigger') is null
+PASS declaration.getPropertyValue('-webkit-animation-trigger') is ""
 
 Too many values : container-scroll(1px, 2px, 3px)
 PASS cssRule.type is 1
 PASS declaration.length is 0
-PASS declaration.getPropertyValue('-webkit-animation-trigger') is null
+PASS declaration.getPropertyValue('-webkit-animation-trigger') is ""
 PASS successfullyParsed is true
 
 TEST COMPLETE

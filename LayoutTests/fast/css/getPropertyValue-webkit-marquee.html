@@ -52,10 +52,10 @@
       shouldBe('webkitMarqueeValue("marquee10")', "'alternate'");
       shouldBe('webkitMarqueeValue("marquee11")', "'infinite'");
       debug("NOTE: 'foo' is an illegal CSS value for '-webkit-marquee'.");
-      shouldBe('webkitMarqueeValue("marquee12")', "null");
+      shouldBeEqualToString('webkitMarqueeValue("marquee12")', "");
       debug("NOTE: If only few longhand properties are specified, getPropertyValue for shorthand property returns null.")
-      shouldBe('webkitMarqueeValue("marquee13")', "null");
-      shouldBe('webkitMarqueeValue("marquee14")', "null");
+      shouldBeEqualToString('webkitMarqueeValue("marquee13")', "");
+      shouldBeEqualToString('webkitMarqueeValue("marquee14")', "");
     </script>
     <script src="../../resources/js-test-post.js"></script>
   </body>

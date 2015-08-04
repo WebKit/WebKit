@@ -13,4 +13,4 @@ function test(declaration, property)
 
 shouldBe('test("outline-offset: 1px", "outline-offset")', '"1px"');
 shouldBe('test("outline-offset: 1mm", "outline-offset")', '"1mm"');
-shouldBe('test("outline-offset: 1%", "outline-offset")', 'null');
+shouldBeEqualToString('test("outline-offset: 1%", "outline-offset")', '');

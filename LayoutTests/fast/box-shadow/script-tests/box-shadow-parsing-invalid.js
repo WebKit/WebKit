@@ -18,7 +18,7 @@ function testInvalidFilterRule(description, rule)
 
     declaration = cssRule.style;
     shouldBe("declaration.length", "0");
-    shouldBe("declaration.getPropertyValue('box-shadow')", "null");
+    shouldBeEqualToString("declaration.getPropertyValue('box-shadow')", "");
 }
 
 // FIXME A whole bunch of negative parsing tests are missing, see bug

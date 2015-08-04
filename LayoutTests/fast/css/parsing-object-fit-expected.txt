@@ -11,10 +11,10 @@ PASS test("object-fit: contain;") is "contain"
 PASS test("object-fit: cover;") is "cover"
 PASS test("object-fit: none;") is "none"
 PASS test("object-fit: scale-down;") is "scale-down"
-PASS test("object-fit: fill contain;") is null
-PASS test("object-fit: bananas;") is null
-PASS test("object-fit: 23px;") is null
-PASS test("object-fit: 20%;") is null
+PASS test("object-fit: fill contain;") is ""
+PASS test("object-fit: bananas;") is ""
+PASS test("object-fit: 23px;") is ""
+PASS test("object-fit: 20%;") is ""
 PASS successfullyParsed is true
 
 TEST COMPLETE

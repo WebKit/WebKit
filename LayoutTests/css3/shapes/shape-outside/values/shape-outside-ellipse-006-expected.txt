@@ -23,7 +23,7 @@ PASS ellipse(+50% +60%) - computed
 PASS ellipse(+10.00% +20.230%) - computed 
 PASS ellipse(+30.00% 40.567%) - computed 
 PASS ellipse(50.10% +60.7%) - computed 
-PASS ellipse(-10px -20px) - invalid 
-PASS ellipse(-30px 40px) - invalid 
-PASS ellipse(50px -60px) - invalid 
+FAIL ellipse(-10px -20px) - invalid assert_equals: expected (object) null but got (string) ""
+FAIL ellipse(-30px 40px) - invalid assert_equals: expected (object) null but got (string) ""
+FAIL ellipse(50px -60px) - invalid assert_equals: expected (object) null but got (string) ""
 

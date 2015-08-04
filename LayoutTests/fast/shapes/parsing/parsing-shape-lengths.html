@@ -22,9 +22,8 @@ function getStyleValue(property, value) {
 
 function testStyleValue(value, expected) {
     if (expected === null)
-        shouldBeNull('getStyleValue("-webkit-shape-outside", "' + value + '")');
-    else
-        shouldBeEqualToString('getStyleValue("-webkit-shape-outside", "' + value + '")', expected);
+        expected = "";
+    shouldBeEqualToString('getStyleValue("-webkit-shape-outside", "' + value + '")', expected);
 }
 function testComputedStyleValue(value, expected) {
     testShapeComputedProperty("-webkit-shape-outside", value, expected);

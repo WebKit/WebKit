@@ -55,7 +55,7 @@ function testInvalidAnimationRule(description, property, value)
 
     declaration = cssRule.style;
     shouldBe("declaration.length", "0");
-    shouldBe("declaration.getPropertyValue('" + property + "')", "null");
+    shouldBeEqualToString("declaration.getPropertyValue('" + property + "')", "");
 
     stylesheet.deleteRule(0);
 }

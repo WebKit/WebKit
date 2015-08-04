@@ -38,10 +38,10 @@
             shouldBe('test("object-fit: none;")', '"none"');
             shouldBe('test("object-fit: scale-down;")', '"scale-down"');
 
-            shouldBeNull('test("object-fit: fill contain;")');
-            shouldBeNull('test("object-fit: bananas;")');
-            shouldBeNull('test("object-fit: 23px;")');
-            shouldBeNull('test("object-fit: 20%;")');
+            shouldBeEqualToString('test("object-fit: fill contain;")', '');
+            shouldBeEqualToString('test("object-fit: bananas;")', '');
+            shouldBeEqualToString('test("object-fit: 23px;")', '');
+            shouldBeEqualToString('test("object-fit: 20%;")', '');
         </script>
         <script src="../../resources/js-test-post.js"></script>
     </body>

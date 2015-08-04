@@ -30,5 +30,5 @@ shouldBe('test("background: purple url(resources/gradient.gif) no-repeat 12px")'
 shouldBe('test("background: purple url(resources/gradient.gif) round left 50")', '"round"');
 shouldBe('test("background: purple url(resources/gradient.gif) space 25 25")', '"space"');
 
-shouldBe('test("background-repeat: 45;")', 'null');
-shouldBe('test("background-repeat: coconut;")', 'null');
+shouldBe('test("background-repeat: 45;")', '""');
+shouldBe('test("background-repeat: coconut;")', '""');

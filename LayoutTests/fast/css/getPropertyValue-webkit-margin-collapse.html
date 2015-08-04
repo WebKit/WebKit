@@ -33,9 +33,9 @@
       shouldBe('webkitMarginCollapseValue("margin-collapse2")', "'discard discard'");
       shouldBe('webkitMarginCollapseValue("margin-collapse3")', "'discard separate'");
       debug("NOTE: 'foo' is an illegal CSS value for '-webkit-margin-collapse'.");
-      shouldBe('webkitMarginCollapseValue("margin-collapse4")', "null");
-      debug("NOTE: If only few longhand properties are specified, getPropertyValue for shorthand property returns null.")
-      shouldBe('webkitMarginCollapseValue("margin-collapse5")', "null");
+      shouldBeEqualToString('webkitMarginCollapseValue("margin-collapse4")', "");
+      debug("NOTE: If only few longhand properties are specified, getPropertyValue for shorthand property returns the empty string.")
+      shouldBeEqualToString('webkitMarginCollapseValue("margin-collapse5")', "");
     </script>
     <script src="../../resources/js-test-post.js"></script>
   </body>

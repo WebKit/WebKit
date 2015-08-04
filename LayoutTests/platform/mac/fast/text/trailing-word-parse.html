@@ -22,7 +22,7 @@
       shouldBe("cssRule.type", "cssRule.STYLE_RULE");
       declaration = cssRule.style;
       shouldBe("declaration.length", "0");
-      shouldBe("declaration.getPropertyValue('-apple-trailing-word')", "null");
+      shouldBeEqualToString("declaration.getPropertyValue('-apple-trailing-word')", "");
       computedStyle = window.getComputedStyle(target, null);
       shouldBeEqualToString("computedStyle.getPropertyCSSValue('-apple-trailing-word').cssText", "auto");
       stylesheet.deleteRule(0);

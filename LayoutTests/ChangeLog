@@ -1,3 +1,110 @@
+2015-08-03  Benjamin Poulain  <bpoulain@apple.com>
+
+        Returns inconsistent types for el.style.property and el.style.getPropertyValue('color')
+        https://bugs.webkit.org/show_bug.cgi?id=147549
+
+        Reviewed by Andreas Kling.
+
+        The bug is very old, there were a lot of tests to update.
+
+        The tests in css3/shapes are incorrect W3C tests. I only updated the expected
+        results.
+
+        The test fast/css/getPropertyValue-returns-empty-on-missing-property.html
+        is the new one covering the bug fix.
+
+        * animations/script-tests/trigger-parsing.js:
+        (testTriggerRule):
+        * animations/trigger-parsing-expected.txt:
+        * animations/unprefixed-properties-expected.txt:
+        * animations/unprefixed-properties.html:
+        * css3/blending/blend-mode-property-parsing-invalid-expected.txt:
+        * css3/blending/script-tests/blend-mode-property-parsing-invalid.js:
+        (testInvalidFilterRule):
+        * css3/filters/backdrop/backdropfilter-property-parsing-invalid-expected.txt:
+        * css3/filters/backdrop/script-tests/backdropfilter-property-parsing-invalid.js:
+        (testInvalidFilterRule):
+        * css3/filters/filter-property-parsing-invalid-expected.txt:
+        * css3/filters/script-tests/filter-property-parsing-invalid.js:
+        (testInvalidFilterRule):
+        * css3/shapes/shape-outside/values/shape-image-threshold-002-expected.txt:
+        * css3/shapes/shape-outside/values/shape-image-threshold-003-expected.txt:
+        * css3/shapes/shape-outside/values/shape-margin-004-expected.txt:
+        * css3/shapes/shape-outside/values/shape-margin-005-expected.txt:
+        * css3/shapes/shape-outside/values/shape-outside-circle-003-expected.txt:
+        * css3/shapes/shape-outside/values/shape-outside-circle-006-expected.txt:
+        * css3/shapes/shape-outside/values/shape-outside-circle-007-expected.txt:
+        * css3/shapes/shape-outside/values/shape-outside-circle-008-expected.txt:
+        * css3/shapes/shape-outside/values/shape-outside-ellipse-003-expected.txt:
+        * css3/shapes/shape-outside/values/shape-outside-ellipse-006-expected.txt:
+        * css3/shapes/shape-outside/values/shape-outside-ellipse-007-expected.txt:
+        * css3/shapes/shape-outside/values/shape-outside-ellipse-008-expected.txt:
+        * css3/shapes/shape-outside/values/shape-outside-inset-005-expected.txt:
+        * css3/shapes/shape-outside/values/shape-outside-inset-006-expected.txt:
+        * css3/shapes/shape-outside/values/shape-outside-inset-007-expected.txt:
+        * css3/shapes/shape-outside/values/shape-outside-polygon-003-expected.txt:
+        * fast/backgrounds/repeat/parsing-background-repeat-expected.txt:
+        * fast/backgrounds/repeat/script-tests/parsing-background-repeat.js:
+        * fast/backgrounds/size/parsing-background-size-values-expected.txt:
+        * fast/backgrounds/size/resources/parsing-background-size-values.js:
+        * fast/box-decoration-break/box-decoration-break-parsing-expected.txt:
+        * fast/box-decoration-break/box-decoration-break-parsing.html:
+        * fast/box-shadow/box-shadow-parsing-invalid-expected.txt:
+        * fast/box-shadow/script-tests/box-shadow-parsing-invalid.js:
+        (testInvalidFilterRule):
+        * fast/css/background-clip-text-expected.txt:
+        * fast/css/border-spacing-without-vertical-value.html:
+        * fast/css/getPropertyValue-border-expected.txt:
+        * fast/css/getPropertyValue-border.html:
+        * fast/css/getPropertyValue-column-rule-expected.txt:
+        * fast/css/getPropertyValue-column-rule.html:
+        * fast/css/getPropertyValue-columns-expected.txt:
+        * fast/css/getPropertyValue-columns.html:
+        * fast/css/getPropertyValue-returns-empty-on-missing-property-expected.txt: Added.
+        * fast/css/getPropertyValue-returns-empty-on-missing-property.html: Added.
+        * fast/css/getPropertyValue-webkit-margin-collapse-expected.txt:
+        * fast/css/getPropertyValue-webkit-margin-collapse.html:
+        * fast/css/getPropertyValue-webkit-marquee-expected.txt:
+        * fast/css/getPropertyValue-webkit-marquee.html:
+        * fast/css/getPropertyValue-webkit-text-stroke-expected.txt:
+        * fast/css/getPropertyValue-webkit-text-stroke.html:
+        * fast/css/line-height-text-autosizing.html:
+        * fast/css/outline-offset-parsing-expected.txt:
+        * fast/css/parsing-color-correction-expected.txt:
+        * fast/css/parsing-object-fit-expected.txt:
+        * fast/css/parsing-object-fit.html:
+        * fast/css/parsing-text-rendering-expected.txt:
+        * fast/css/parsing-webkit-font-smoothing-expected.txt:
+        * fast/css/resources/parsing-color-correction.js:
+        * fast/css/resources/parsing-text-rendering.js:
+        * fast/css/resources/parsing-webkit-font-smoothing.js:
+        * fast/css/script-tests/background-clip-text.js:
+        * fast/css/script-tests/outline-offset-parsing.js:
+        * fast/css/script-tests/transform-origin-parsing.js:
+        * fast/css/sticky/parsing-position-sticky-expected.txt:
+        * fast/css/sticky/resources/parsing-position-sticky.js:
+        * fast/css/transform-origin-parsing-expected.txt:
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-roundtrip-expected.txt:
+        * fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-roundtrip.html:
+        * fast/css3-text/font-synthesis-parse-expected.txt:
+        * fast/css3-text/font-synthesis-parse.html:
+        * fast/filter-image/parse-filter-image-expected.txt:
+        * fast/filter-image/parse-filter-image.html:
+        * fast/masking/parsing-clip-path-shape-expected.txt:
+        * fast/masking/parsing-clip-path-shape.html:
+        * fast/masking/parsing-mask-expected.txt:
+        * fast/masking/parsing-mask.html:
+        * fast/shapes/css-shapes-disabled-expected.txt:
+        * fast/shapes/css-shapes-disabled.html:
+        * fast/shapes/parsing/parsing-shape-lengths-expected.txt:
+        * fast/shapes/parsing/parsing-shape-lengths.html:
+        * platform/mac/fast/css/dashboard-region-parser-expected.txt:
+        * platform/mac/fast/css/dashboard-region-parser.html:
+        * platform/mac/fast/text/trailing-word-parse-expected.txt:
+        * platform/mac/fast/text/trailing-word-parse.html:
+        * svg/paint-order/parsing-paint-order-expected.txt:
+        * svg/paint-order/parsing-paint-order.html:
+
 2015-08-03  Simon Fraser  <simon.fraser@apple.com>
 
         Add a result missed in earlier file moves.

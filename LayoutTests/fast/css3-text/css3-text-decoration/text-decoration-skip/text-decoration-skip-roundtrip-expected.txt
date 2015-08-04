@@ -1,6 +1,6 @@
 PASS cssRule.type is cssRule.STYLE_RULE
 PASS declaration.length is 0
-PASS declaration.getPropertyValue('-webkit-text-decoration-skip') is null
+PASS declaration.getPropertyValue('-webkit-text-decoration-skip') is ""
 PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-skip').cssText is "auto"
 PASS cssRule.type is cssRule.STYLE_RULE
 PASS declaration.length is 1

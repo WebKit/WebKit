@@ -36,9 +36,9 @@
       shouldBeEqualToString('webkitTextStrokeValue("text-stroke4")', '1px red');
       shouldBeEqualToString('webkitTextStrokeValue("text-stroke5")', '1px black');
       debug("NOTE: 'foo' is an illegal CSS value for '-webkit-text-stroke'.");
-      shouldBe('webkitTextStrokeValue("text-stroke6")', "null");
-      debug("NOTE: If only few longhand properties are specified, getPropertyValue for shorthand property returns null.")
-      shouldBe('webkitTextStrokeValue("text-stroke7")', "null");
+      shouldBeEqualToString('webkitTextStrokeValue("text-stroke6")', "");
+      debug("NOTE: If only few longhand properties are specified, getPropertyValue for shorthand property returns the empty string.")
+      shouldBeEqualToString('webkitTextStrokeValue("text-stroke7")', "");
     </script>
     <script src="../../resources/js-test-post.js"></script>
   </body>

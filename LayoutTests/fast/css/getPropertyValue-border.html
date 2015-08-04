@@ -56,10 +56,10 @@
     shouldBe('div7.style.getPropertyValue("border")', "'solid'");
 
     var div8 = document.getElementById("border8");
-    shouldBe('div8.style.getPropertyValue("border")', "null");
+    shouldBeEqualToString('div8.style.getPropertyValue("border")', "");
 
     var div9 = document.getElementById("border9");
-    shouldBe('div9.style.getPropertyValue("border")', "null");
+    shouldBeEqualToString('div9.style.getPropertyValue("border")', "");
   </script>
   <script src="../../resources/js-test-post.js"></script>
  </body>

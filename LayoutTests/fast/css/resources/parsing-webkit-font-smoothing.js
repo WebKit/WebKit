@@ -16,6 +16,6 @@ shouldBe('test("-webkit-font-smoothing: none;")', '"none"');
 shouldBe('test("-webkit-font-smoothing: antialiased;")', '"antialiased"');
 shouldBe('test("-webkit-font-smoothing: subpixel-antialiased;")', '"subpixel-antialiased"');
 
-shouldBe('test("-webkit-font-smoothing: apple;")', 'null');
-shouldBe('test("-webkit-font-smoothing: 15;")', 'null');
-shouldBe('test("-webkit-font-smoothing: auto auto;")', 'null');
+shouldBeEqualToString('test("-webkit-font-smoothing: apple;")', '');
+shouldBeEqualToString('test("-webkit-font-smoothing: 15;")', '');
+shouldBeEqualToString('test("-webkit-font-smoothing: auto auto;")', '');

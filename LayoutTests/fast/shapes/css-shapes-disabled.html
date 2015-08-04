@@ -25,7 +25,7 @@ function testComputedStyle(property, value) {
 }
 
 function testStyle(property, value, computedExpected) {
-    shouldBeNull('testInlineStyle("' + property + '", "' + value + '")');
+    shouldBeEqualToString('testInlineStyle("' + property + '", "' + value + '")', '');
     shouldBeEqualToString('testComputedStyle("' + property + '", "' + value + '")', computedExpected);
 }
 
