@@ -1,0 +1,36 @@
+<html>
+<html>
+<head>
+<script src='../../resources/js-test-pre.js'></script>
+</head>
+<body id='body'>
+    <footer tabindex='0' id='footer01'>Footer outside section and article elements.</footer>
+    <article>
+        <footer tabindex='0' id='footer02'>Footer inside an article.</footer>
+    </article>
+    <section>
+        <footer tabindex='0' id='footer03'>Footer inside a section.</footer>
+    </section>
+    <pre id='result'></pre>
+    <script>
+        function log(str) {
+            var result = document.querySelector('#result');
+            result.appendChild(document.createTextNode(str));
+        }
+
+        function expectRole(expectedRole, expectedDescription, id) {
+            if (!window.accessibilityController)
+                return;
+            var el = document.querySelector(id);
+            el.focus();
+            shouldBeEqualToString('accessibilityController.focusedElement.role', "AXRole: " + expectedRole);
+            shouldBeEqualToString('accessibilityController.focusedElement.roleDescription', "AXRoleDescription: " + expectedDescription);
+        }
+
+        expectRole('AXGroup', 'footer', '#footer01');
+        expectRole('AXGroup', 'group', '#footer02');
+        expectRole('AXGroup', 'group', '#footer03');
+    </script>
+<script src='../../resources/js-test-post.js'></script>
+</body>
+</html>

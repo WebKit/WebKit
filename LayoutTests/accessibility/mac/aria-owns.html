@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div tabindex=0 id="group" role="group" aria-owns="extra extra2">
+<div>Item 1</div>
+<div>Item 2</div>
+<div>Item 3</div>
+</div>
+
+<div id="extra" role="button">BUTTON</div>
+<div id="extra2" role="radio">RADIO BUTTON</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that aria-owns correctly exposes AXOwns and correctly returns the right elements");
+
+    if (window.accessibilityController) {
+
+          var group = document.getElementById("group");
+          group.focus();
+          group = accessibilityController.focusedElement;
+          shouldBe("group.ariaOwnsElementAtIndex(0).role", "'AXRole: AXButton'");
+          shouldBe("group.ariaOwnsElementAtIndex(0).title", "'AXTitle: BUTTON'");
+          shouldBe("group.ariaOwnsElementAtIndex(1).role", "'AXRole: AXRadioButton'");
+          shouldBe("group.ariaOwnsElementAtIndex(1).title", "'AXTitle: RADIO BUTTON'");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<!-- This table should appear as an AXTable because it has all <th> in the first row -->
+<table tabindex=0 id="table1">
+  <tr>
+     <th>header 1</th>
+     <th>header 2</th>
+  </tr>
+  <tr> 
+     <td colspan=2>cell 1</td>
+  </tr>
+</table>
+
+<!-- This table should appear as an AXTable because it has all <th> in the first column -->
+<table tabindex=0 id="table2">
+  <tr>
+     <th>header 1</th>
+     <td>header 2</td>
+  </tr>
+  <tr> 
+     <th>cell 1</th>
+     <td>cell 1</td>
+  </tr>
+</table>
+
+<!-- This table should NOT appear as an AXTable because it does not have all <th> in the first row -->
+<table tabindex=0 id="table3">
+  <tr>
+     <th>header 1</th>
+     <td>header 2</td>
+  </tr>
+  <tr> 
+     <td colspan=2>cell 1</td>
+  </tr>
+</table>
+
+<!-- This table should appear as an AXTable because it has <th> in the second row -->
+<table tabindex=0 id="table4">
+  <tr>
+     <td>header 1</td>
+     <td>header 2</td>
+  </tr>
+  <tr> 
+     <th colspan=2>cell 1</th>
+  </tr>
+</table>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that tables that have THs in the first row or first column will be exposed as AXTables.");
+
+    if (window.accessibilityController) {
+
+          document.getElementById("table1").focus();
+          shouldBe("accessibilityController.focusedElement.role", "'AXRole: AXTable'");
+
+          document.getElementById("table2").focus();
+          shouldBe("accessibilityController.focusedElement.role", "'AXRole: AXTable'");
+
+          document.getElementById("table3").focus();
+          shouldBe("accessibilityController.focusedElement.role", "'AXRole: AXGroup'");
+
+          document.getElementById("table4").focus();
+          shouldBe("accessibilityController.focusedElement.role", "'AXRole: AXGroup'");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

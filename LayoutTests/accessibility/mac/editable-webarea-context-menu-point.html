@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body" contenteditable>
+This tests that the click point, used for opening context menus, changes based on the current selection in an editable web area.
+This tests that the click point, used for opening context menus, changes based on the current selection in an editable web area.
+
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the click point, used for opening context menus, changes based on the current selection in an editable web area (by setting the selection twice and comparing the click point locations)");
+
+    if (window.accessibilityController) {
+
+          var body = document.getElementById("body");
+          body.focus();
+          var axWebArea = accessibilityController.focusedElement.parentElement();
+
+          x = body.offsetLeft + 10;
+          y = body.offsetTop + 10;
+
+          eventSender.mouseMoveTo(x, y);
+          eventSender.mouseDown();
+          eventSender.mouseUp();
+          eventSender.mouseDown();
+          eventSender.mouseUp();
+
+          var clickPointX1 = axWebArea.clickPointX;
+
+          x = body.offsetLeft + 100 + 10;
+          y = body.offsetTop + 10;
+
+          eventSender.mouseMoveTo(x, y);
+          eventSender.mouseDown();
+          eventSender.mouseUp();
+          eventSender.mouseDown();
+          eventSender.mouseUp();
+
+          var clickPointX2 = axWebArea.clickPointX;
+          var succeeded = clickPointX2 != clickPointX1;
+          shouldBe("succeeded", "true");
+
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

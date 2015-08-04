@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<table border=0 tabindex=0 id="table" summary="Test">
+<tr><td>cell 1</td><td>cell 2</td><td>cell 3</td></tr>
+<tr><td>cell 1</td><td>cell 2</td><td>cell 3</td></tr>
+<tr><td>cell 1</td><td>cell 2</td><td>
+
+<table border=1>
+<tr><td>1</td><td>2</td></tr>
+</table>
+
+</td></tr>
+</table>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the parent of an AXRow is not the render table section element (which is unknown), but rather the AXTable");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("table").focus();
+        var table = accessibilityController.focusedElement;
+        var row = table.childAtIndex(0);
+
+        // make sure this is a row
+        shouldBe("row.role", "'AXRole: AXRow'");
+
+        // make sure the parent of the row is the table.
+        shouldBe("row.parentElement().isEqual(table)", "true");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

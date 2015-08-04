@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+
+<dt>term role</dt>
+<dd>definition</dd>
+<div role="definition">definition</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that each of these ARIA grouping type roles map to the right role and subrole.");
+
+    if (window.accessibilityController) {
+
+          // this text field should be required.
+          document.getElementById("body").focus();
+          var obj = accessibilityController.focusedElement;
+
+          shouldBe("obj.childAtIndex(0).role", "'AXRole: AXGroup'");
+          shouldBe("obj.childAtIndex(0).subrole", '"AXSubrole: AXTerm"');
+          shouldBe("obj.childAtIndex(0).roleDescription", '"AXRoleDescription: term"');
+
+          shouldBe("obj.childAtIndex(1).role", "'AXRole: AXGroup'");
+          shouldBe("obj.childAtIndex(1).subrole", '"AXSubrole: AXDescription"');
+          shouldBe("obj.childAtIndex(1).roleDescription", '"AXRoleDescription: description"');
+
+          shouldBe("obj.childAtIndex(1).role", "'AXRole: AXGroup'");
+          shouldBe("obj.childAtIndex(1).subrole", '"AXSubrole: AXDescription"');
+          shouldBe("obj.childAtIndex(1).roleDescription", '"AXRoleDescription: description"');
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

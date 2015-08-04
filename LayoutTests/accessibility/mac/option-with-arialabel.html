@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<select id="deg1" tabindex=0>
+   <option aria-label="Fahrenheit">F</option>
+   <option aria-label="Celsius">C</option>
+</select>
+
+<select id="deg2" tabindex=0 multiple>
+   <option aria-label="Fahrenheit">F</option>
+   <option aria-label="Celsius">C</option>
+</select>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that aria-label can be set on options.");
+
+    if (window.accessibilityController) {
+
+        // Test the value of the popup.
+        document.getElementById("deg1").focus();
+        var popup = accessibilityController.focusedElement;
+        shouldBe("popup.stringValue", "'AXValue: Fahrenheit'");
+
+        // Test the values in a multi-select list box.
+        document.getElementById("deg2").focus();
+        var selectbox = accessibilityController.focusedElement;
+        shouldBe("selectbox.childAtIndex(0).stringValue", "'AXValue: Fahrenheit'");
+        shouldBe("selectbox.childAtIndex(1).stringValue", "'AXValue: Celsius'");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

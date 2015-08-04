@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="content">
+
+<button id="button" aria-expanded="false">
+
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that aria-expanded changes will send notifications.");
+
+    var element = 0;
+    var notification = 0;
+    var notificationCount = 0;
+    function ariaCallback(element, notification) {
+        if (notification == "AXExpandedChanged") {
+           notificationCount++;
+
+           debug("Received notification: " + notification);
+           debug("Expanded status: " + element.isExpanded);
+           if (notificationCount == 2) {
+               accessibilityController.removeNotificationListener();
+               finishJSTest();
+           }
+        }
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        var addedNotification = accessibilityController.addNotificationListener(ariaCallback);
+        debug("Initial expanded status: " + accessibilityController.accessibleElementById("button").isExpanded);
+
+        setTimeout(function() {
+            document.getElementById("button").setAttribute("aria-expanded", "true");
+            setTimeout(function() {
+                document.getElementById("button").setAttribute("aria-expanded", "false");
+            }, 10);
+        }, 10);
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test-pre.js"></script>
+<title>Select Text</title>
+</head>
+<body>
+
+<p contenteditable="true" id="text">The quick brown fox <span id="target">jumps</span> over the lazy dog. </p>
+
+<p contenteditable="true" id="text2">TEXT2: The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.</p>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests the ability to select and replace text with respect to selection.");
+    
+    function selectedText() {
+        return window.getSelection().toString();
+    }
+    
+    function selectElementText(element) {
+        var range = document.createRange();
+        range.selectNodeContents(element);
+        
+        var selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
+    
+    if (window.accessibilityController) {
+        var text = accessibilityController.accessibleElementById("text");
+        var result = 0;
+        var selection = 0;
+        var target = document.getElementById("target");
+        
+        // Select text before selection (multiple search strings).
+        selectElementText(target);
+        result = text.selectTextWithCriteria("AXSelectTextAmbiguityResolutionClosestBeforeSelection", ["quick", "fox"]);
+        shouldBe("result", "'fox'");
+        selection = selectedText();
+        shouldBe("selection", "'fox'");
+    }
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

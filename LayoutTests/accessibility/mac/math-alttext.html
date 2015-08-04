@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<math tabindex="0" id="math" alttext="F e sub 1  minus x, end subscript. C o sub x, S b sub 2">
+        <mrow>
+          <msub>
+            <mrow>
+              <mtext>Fe</mtext>
+            </mrow>
+            <mrow>
+              <mn>1</mn>
+              <mo>-</mo>
+              <mi>x</mi>
+            </mrow>
+          </msub>
+          <msub>
+            <mrow>
+              <mtext>Co</mtext>
+            </mrow>
+            <mi>x</mi>
+          </msub>
+          <msub>
+            <mrow>
+              <mtext>Sb</mtext>
+            </mrow>
+            <mn>2</mn>
+          </msub>
+        </mrow>
+      </math>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that a math element will be exposed like an ARIA math element.");
+
+    if (window.accessibilityController) {
+
+        var math = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0).childAtIndex(0);
+        shouldBe("math.role", "'AXRole: AXGroup'");
+        shouldBe("math.subrole", "'AXSubrole: AXDocumentMath'");
+        shouldBe("math.description", "'AXDescription: F e sub 1  minus x, end subscript. C o sub x, S b sub 2'");
+
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

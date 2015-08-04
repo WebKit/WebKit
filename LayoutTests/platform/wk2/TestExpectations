@@ -47,9 +47,9 @@ webkit.org/b/101773 fast/repaint/body-background-image.html [ ImageOnlyFailure P
 
 # AX tests that require hit testing do not work in WK2.
 webkit.org/b/71298 accessibility/loading-iframe-updates-axtree.html
-webkit.org/b/71298 platform/mac/accessibility/html-slider-indicator.html
-webkit.org/b/71298 platform/mac/accessibility/listbox-hit-test.html
-webkit.org/b/71298 platform/mac/accessibility/iframe-with-title-correct-hierarchy.html
+webkit.org/b/71298 accessibility/mac/html-slider-indicator.html
+webkit.org/b/71298 accessibility/mac/listbox-hit-test.html
+webkit.org/b/71298 accessibility/mac/iframe-with-title-correct-hierarchy.html
 
 # This test has been skipped for a long time. Temporarily marking as flaky to see what bots think.
 webkit.org/b/48354 compositing/iframes/iframe-src-change.html [ Pass Failure ]
@@ -169,7 +169,7 @@ transitions/default-timing-function.html
 plugins/geturlnotify-during-document-teardown.html
 plugins/open-and-close-window-with-plugin.html
 
-platform/mac/accessibility/search-predicate.html
+accessibility/mac/search-predicate.html
 
 # Sometimes fails
 # http://webkit.org/b/58990

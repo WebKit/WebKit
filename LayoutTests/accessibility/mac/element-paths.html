@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <path role="button" id="svg" d="M150 0 L75 200 L225 200 Z" />
+</svg>
+
+<map name="imagemap1">
+    <AREA id="map1" shape="polygon" coords="90,25,162,26,163,96,89,25,90,24" href="triangle.html">
+    <AREA id="map2" shape="circle" coords="130,304,110" href="circle.html">
+</map>
+
+<img src="resources/cake.png"  border="1" align="left" usemap="#imagemap1" vspace="1">
+
+<div id="console"></div>
+
+<script>
+
+    description("This tests SVG group elements are accessible and that the svg:title element is returned properly.");
+
+    if (window.accessibilityController) {
+
+          var svg = accessibilityController.accessibleElementById("svg");
+          shouldBeTrue("svg.isAttributeSupported('AXPath')");
+          debug("SVG path description" + svg.pathDescription);
+
+          var map1 = accessibilityController.accessibleElementById("map1");
+          shouldBeTrue("map1.isAttributeSupported('AXPath')");
+          debug("Map1 path description" + map1.pathDescription);
+
+          var map2 = accessibilityController.accessibleElementById("map2");
+          shouldBeTrue("map2.isAttributeSupported('AXPath')");
+          debug("Map2 path description"  + map2.pathDescription);
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+text<br>
+<img src='resources/cake.png' width=5000 height=5000>
+<br>
+text
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the WebKit generated scroll areas are correct.");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("body").focus();
+        var body = accessibilityController.focusedElement;
+        shouldBe("body.role", "'AXRole: AXWebArea'");
+        shouldBe("body.parentElement().role", "'AXRole: AXScrollArea'");
+        shouldBe("body.parentElement().childrenCount", "3");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

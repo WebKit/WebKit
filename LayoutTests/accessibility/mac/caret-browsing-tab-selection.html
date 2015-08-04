@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script src="resources/accessibility-helper.js"></script>
+</head>
+<body id="body">
+    <a href="">foo</a>
+    <p id="par1">A paragraph with a single line</p>
+    <a href="">bar</a>
+    <div id="console"></div>
+    <script>
+    description("This tests caret browsing for html select elements.");
+    if (window.testRunner) {
+
+        testRunner.overridePreference("WebKitTabToLinksPreferenceKey", 1);
+        testRunner.dumpAsText();
+
+        if (window.accessibilityController && window.eventSender) {
+
+            var webArea = clearSelectionAndFocusOnWebArea();
+
+            accessibilityController.enableEnhancedAccessibility(false);
+
+            // Tab (should NOT move selection before enhanced accessibility is enabled).
+            shouldBe("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: foo'");
+            eventSender.keyDown("\t");
+            shouldBe("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: foo'");
+
+            // Enable enhanced accessibility (necessary for accessibility specific selection handling).
+            accessibilityController.enableEnhancedAccessibility(true);
+            shouldBe("accessibilityController.enhancedAccessibilityEnabled", "true");
+
+            // Enable caret browsing so that tabbing will modify selection
+            setCaretBrowsingEnabled(webArea, true);
+            shouldBe("caretBrowsingEnabled(webArea)", "true");
+
+            // Tab to move focus to next link
+            shouldBe("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: foo'");
+            eventSender.keyDown("\t");
+            shouldBe("elementAtStartMarkerOfSelectedTextMarkerRange(webArea).stringValue", "'AXValue: bar'");
+
+            setCaretBrowsingEnabled(webArea, false);
+        }
+    }
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<title>Element Busy Changed</title>
+</head>
+<!-- Busy state begins false. -->
+<body aria-busy="false" id="body">
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that AXElementBusyChanged is posted correctly.");
+    
+    window.jsTestIsAsync = true;
+    
+    var body = 0;
+    var notificationCount = 0;
+    
+    if (window.accessibilityController) {
+        body = accessibilityController.accessibleElementById("body");
+        body.addNotificationListener(function(notification) {
+            debug("Received " + notification + " notification " + ++notificationCount + " of 2");
+            
+            if (notificationCount == 2) {
+                body.removeNotificationListener();
+                
+                finishJSTest();
+            }
+        });
+        
+        // Toggle through both busy state transitions.
+        var busyElement = document.getElementById("body");
+        busyElement.setAttribute("aria-busy", "true");
+        busyElement.setAttribute("aria-busy", "false");
+    }
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

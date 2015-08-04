@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<!-- This table should appear as an AXTable because it has zebra striped rows -->
+<table tabindex=0 id="table1">
+<tr bgcolor="#E0E0E0"><td><tt>'$scr'</tt></td><td><tt>scripting additions folder</tt></td><td>Property of class: domain</td><td>System Events : Disk-Folder-File Suite</td><td align="right">1</td></tr>
+<tr><td><tt>'%doc'</tt></td><td><tt>music folder</tt></td><td>Property of class: user domain object</td><td>System Events : Disk-Folder-File Suite</td><td align="right">2</td></tr>
+<tr bgcolor="#E0E0E0"><td><tt>'µdoc'</tt></td><td><tt>music folder</tt></td><td>Enumeration</td><td>Standard Additions : File Commands</td><td align="right">3</td></tr>
+<tr><td><tt>'ƒhlp'</tt></td><td><tt>help</tt></td><td>Enumeration</td><td>Standard Additions : File Commands</td><td align="right">4</td></tr>
+<tr bgcolor="#E0E0E0"><td><tt>'ƒhlp'</tt></td><td><tt>help folder</tt></td><td>Enumeration</td><td>Standard Additions : File Commands</td><td align="right">5</td></tr>
+<tr><td><tt>'ƒlib'</tt></td><td><tt>shared libraries</tt></td><td>Enumeration</td><td>Standard Additions : File Commands</td><td align="right">6</td></tr>
+</table>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that tables with zebra striped rows are exposed as AXTables.");
+
+    if (window.accessibilityController) {
+
+          document.getElementById("table1").focus();
+          shouldBe("accessibilityController.focusedElement.role", "'AXRole: AXTable'");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<title>Search Field Cancel Button</title>
+</head>
+<body>
+
+<input id="search" type="search" value="X">
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This tests that the search field cancel button is exposed correctly.");
+    
+    if (window.accessibilityController) {
+        var button = accessibilityController.accessibleElementById("search").childAtIndex(1);
+        
+        shouldBe("button.description", "'AXDescription: cancel'");
+        shouldBe("button.role", "'AXRole: AXButton'");
+        shouldBe("button.roleDescription", "'AXRoleDescription: button'");
+        
+        // Search field has value before press.
+        shouldBe("document.getElementById('search').value", "'X'");
+        
+        button.press();
+        
+        // Search field has no value after press.
+        shouldBe("document.getElementById('search').value", "''");
+    }
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

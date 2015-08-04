@@ -2,6 +2,16 @@
 #
 # See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 
+#//////////////////////////////////////////////////////////////////////////////////////////
+# Platform-specific directories. Skipped here, then re-enabled on the appropriate platform.
+#//////////////////////////////////////////////////////////////////////////////////////////
+
+accessibility/mac [ Pass ]
+
+#//////////////////////////////////////////////////////////////////////////////////////////
+# End platform-specific directories.
+#//////////////////////////////////////////////////////////////////////////////////////////
+
 # <rdar://problem/5647952> fast/events/mouseout-on-window.html needs mac DRT to issue mouse out events
 fast/events/mouseout-on-window.html [ Failure ]
 
@@ -57,7 +67,7 @@ fast/events/touch
 # No button tracked
 fast/events/mouseover-button.html
 
-webkit.org/b/33923 platform/mac/accessibility/change-notification-on-scroll.html [ Skip ] # times out
+webkit.org/b/33923 accessibility/mac/change-notification-on-scroll.html [ Skip ] # times out
 
 # eventSender needs to propagate the event to the calling window, not the main frame always.
 http/tests/plugins/plugin-document-has-focus.html
@@ -359,7 +369,7 @@ fast/events/show-modal-dialog-onblur-onfocus.html [ Skip ]
 platform/mac/fast/forms/listbox-scrollbar-hit-test.html [ Failure ]
 platform/mac/fast/overflow/overflow-scrollbar-hit-test.html [ Failure ]
 
-[ Mavericks ] platform/mac/accessibility/form-control-value-settable.html [ Failure ]
+[ Mavericks ] accessibility/mac/form-control-value-settable.html [ Failure ]
 platform/mac/fast/forms/input-appearance-spinbutton-up.html [ Failure ]
 platform/mac/fast/forms/input-appearance-spinbutton.html [ Failure ]
 platform/mac/fast/text/vertical-no-sideways.html [ Pass Failure ]
@@ -477,9 +487,9 @@ webkit.org/b/96828 webgl/1.0.2/conformance/extensions/oes-vertex-array-object.ht
 
 http/tests/misc/willCacheResponse-delegate-callback.html [ Failure ]
 http/tests/xmlhttprequest/basic-auth-nopassword.html [ Failure ]
-platform/mac/accessibility/selection-value-changes-for-aria-textbox.html [ Failure ]
+accessibility/mac/selection-value-changes-for-aria-textbox.html [ Failure ]
 
-platform/mac/accessibility/search-with-frames.html [ Pass Failure ]
+accessibility/mac/search-with-frames.html [ Pass Failure ]
 
 # --- Plugins ---
 # WebKit1 OOP plug-ins: Can't evaluate JavaScript from NPP_Destroy.
@@ -801,7 +811,7 @@ webkit.org/b/129180 svg/clip-path/clip-path-on-svg-002.svg [ ImageOnlyFailure ]
 webkit.org/b/129758 js/dom/create-lots-of-workers.html [ Skip ]
 
 # This test fails because the structure of mfenced/mo operators was changed in bug 124838.
-webkit.org/b/124836 platform/mac/accessibility/mathml-elements.html [ Failure ]
+webkit.org/b/124836 accessibility/mac/mathml-elements.html [ Failure ]
 
 webkit.org/b/130693 mathml/presentation/tokenElements-background-color.html [ ImageOnlyFailure ]
 
@@ -1073,7 +1083,7 @@ webkit.org/b/136994 http/tests/media/hls/video-cookie.html [ Failure ]
 webkit.org/b/137505 media/track/track-forced-subtitles-in-band.html [ Failure Pass Timeout ]
 
 # FIXME: Needs bugzilla (<rdar://problem/15971968>)
-[ Yosemite+ ] platform/mac/accessibility/misspelled-attributed-string.html [ Pass Failure ]
+[ Yosemite+ ] accessibility/mac/misspelled-attributed-string.html [ Pass Failure ]
 
 # FIXME: Needs bugzilla (<rdar://problem/16040720>)
 [ Yosemite+ ] canvas/philip/tests/2d.drawImage.animated.poster.html [ Pass Failure ]

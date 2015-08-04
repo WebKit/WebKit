@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div tabindex="0" id="button" role="button" aria-expanded="true">foo</div>
+<div tabindex="0" id="heading" role="heading" aria-expanded="true">bar</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that ARIA expanded will be exposed on arbitrary elements.");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("button").focus();
+        shouldBe("accessibilityController.focusedElement.role", "'AXRole: AXButton'");
+        shouldBe("accessibilityController.focusedElement.isExpanded", "true");
+
+        document.getElementById("heading").focus();
+        shouldBe("accessibilityController.focusedElement.isExpanded", "true");
+
+        shouldBe("accessibilityController.focusedElement.childAtIndex(0).isExpanded", "false");
+        shouldBe("accessibilityController.focusedElement.childAtIndex(0).role", "'AXRole: AXStaticText'");
+    }
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

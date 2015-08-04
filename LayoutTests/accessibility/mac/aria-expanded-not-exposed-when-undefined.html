@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="content">
+
+<div id="test1" role="tabpanel" aria-expanded="true">Test 1</div>
+<div id="test2" role="tabpanel" aria-expanded="false">Test 2</div>
+<div id="test3" role="tabpanel" aria-expanded="asdfasdf">Test 3</div>
+<div id="test4" role="tabpanel" aria-expanded="">Test 4</div>
+<div id="test5" role="tabpanel">Test 5</div>
+
+</div>
+
+<div id="console"></div>
+
+<script>
+
+    function elementSupportsExpanded(elementId) {
+        return accessibilityController.accessibleElementById(elementId).isAttributeSupported("AXExpanded");
+    }
+
+    description("This tests that AXExpanded is only exposed when aria-expanded is used with a supported value.");
+
+    if (window.accessibilityController) {
+
+          debug("aria-expanded=true - AXExpanded is exposed: " + elementSupportsExpanded("test1"));
+          debug("aria-expanded=false - AXExpanded is exposed: " + elementSupportsExpanded("test2"));
+          debug("aria-expanded=asdfasdf - AXExpanded is NOT exposed: " + !elementSupportsExpanded("test3"));
+          debug("aria-expanded='' - AXExpanded is NOT exposed: " + !elementSupportsExpanded("test4"));
+          debug("aria-expanded is not present - AXExpanded is NOT exposed: " + !elementSupportsExpanded("test5"));
+    }
+
+    document.getElementById("content").style.visibility = "hidden";
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
