@@ -50,7 +50,7 @@ public:
 protected:
     virtual FontDescription& cachedSystemFontDescription(CSSValueID systemFontID) const override;
     virtual void updateCachedSystemFontDescription(CSSValueID, FontDescription&) const override;
-    virtual int baselinePosition(const RenderObject&) const override;
+    virtual int baselinePosition(const RenderBox&) const override;
 
     virtual bool isControlStyled(const RenderStyle&, const BorderData&, const FillLayer& background, const Color& backgroundColor) const override;
 

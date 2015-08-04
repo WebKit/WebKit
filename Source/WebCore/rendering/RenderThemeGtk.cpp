@@ -374,18 +374,12 @@ bool RenderThemeGtk::controlSupportsTints(const RenderObject& o) const
     return isEnabled(o);
 }
 
-int RenderThemeGtk::baselinePosition(const RenderObject& renderer) const
+int RenderThemeGtk::baselinePosition(const RenderBox& box) const
 {
-    if (!is<RenderBox>(renderer))
-        return 0;
-
     // FIXME: This strategy is possibly incorrect for the GTK+ port.
-    if (renderer.style().appearance() == CheckboxPart || renderer.style().appearance() == RadioPart) {
-        const auto& box = downcast<RenderBox>(renderer);
+    if (box.style().appearance() == CheckboxPart || box.style().appearance() == RadioPart)
         return box.marginTop() + box.height() - 2;
-    }
-
-    return RenderTheme::baselinePosition(renderer);
+    return RenderTheme::baselinePosition(box);
 }
 
 static GtkTextDirection gtkTextDirection(TextDirection direction)

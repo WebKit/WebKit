@@ -664,15 +664,10 @@ Color RenderTheme::platformInactiveListBoxSelectionForegroundColor() const
     return platformInactiveSelectionForegroundColor();
 }
 
-int RenderTheme::baselinePosition(const RenderObject& renderer) const
+int RenderTheme::baselinePosition(const RenderBox& box) const
 {
-    if (!is<RenderBox>(renderer))
-        return 0;
-
-    const auto& box = downcast<RenderBox>(renderer);
-
 #if USE(NEW_THEME)
-    return box.height() + box.marginTop() + m_theme->baselinePositionAdjustment(renderer.style().appearance()) * renderer.style().effectiveZoom();
+    return box.height() + box.marginTop() + m_theme->baselinePositionAdjustment(box.style().appearance()) * box.style().effectiveZoom();
 #else
     return box.height() + box.marginTop();
 #endif
