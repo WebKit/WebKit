@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/DataLog.h> // mlam
 
 namespace TestWebKitAPI {
 

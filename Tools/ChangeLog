@@ -1,5 +1,13 @@
 2015-08-04  Mark Lam  <mark.lam@apple.com>
 
+        Removed a local debugging line I accidentally left in from a previous commit.
+
+        Not Reviewed.
+
+        * TestWebKitAPI/Tests/WTF/CheckedArithmeticOperations.cpp:
+
+2015-08-04  Mark Lam  <mark.lam@apple.com>
+
         Unreviewed. Make Saam Barati a WebKit reviewer.
 
         * Scripts/webkitpy/common/config/contributors.json:
