@@ -259,17 +259,6 @@ void Database::markAsDeletedAndClose()
     synchronizer.waitForTaskCompletion();
 }
 
-void Database::closeImmediately()
-{
-    ASSERT(m_scriptExecutionContext->isContextThread());
-    DatabaseThread* databaseThread = databaseContext()->databaseThread();
-    if (databaseThread && !databaseThread->terminationRequested() && opened()) {
-        logErrorMessage("forcibly closing database");
-        auto task = std::make_unique<DatabaseCloseTask>(this, nullptr);
-        databaseThread->scheduleImmediateTask(WTF::move(task));
-    }
-}
-
 void Database::changeVersion(const String& oldVersion, const String& newVersion,
                              PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback,
                              PassRefPtr<VoidCallback> successCallback)

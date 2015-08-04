@@ -87,8 +87,6 @@ public:
     virtual void markAsDeletedAndClose();
     bool deleted() const { return m_deleted; }
 
-    virtual void closeImmediately();
-
     void scheduleTransactionCallback(SQLTransaction*);
 
 private:
