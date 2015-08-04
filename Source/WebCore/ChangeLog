@@ -1,3 +1,20 @@
+2015-07-31  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r187675. rdar://problem/21632211
+
+    2015-07-31  Jer Noble  <jer.noble@apple.com>
+
+             CRASH at WebCore::TaskDispatcher<WebCore::ScriptExecutionContext>::postTask + 38
+             https://bugs.webkit.org/show_bug.cgi?id=147485
+
+             Rubber-stamped by Joseph Pecoraro.
+
+             Follow-up test crash fix: call superclass's contextDestroyed() which allows the
+             m_scriptExecutionContext variable to be cleared.
+
+             * html/HTMLMediaElement.cpp:
+             (WebCore::HTMLMediaElement::contextDestroyed):
+
 2015-08-01  Babak Shafiei  <bshafiei@apple.com>
 
         Merge r187686.
