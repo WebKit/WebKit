@@ -1,3 +1,16 @@
+2015-08-04  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r187812.
+
+        This is not safe
+
+        Reverted changeset:
+
+        "[WK2] Reserve Vector capacity in VectorArgumentCoder<false,
+        T, inlineCapacity>::decode()"
+        https://bugs.webkit.org/show_bug.cgi?id=147619
+        http://trac.webkit.org/changeset/187812
+
 2015-08-03  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Reserve Vector capacity in VectorArgumentCoder<false, T, inlineCapacity>::decode()
