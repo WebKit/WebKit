@@ -108,6 +108,7 @@ public:
     bool useGDI() const { return m_useGDI; }
 #elif PLATFORM(COCOA)
     CTFontRef font() const { return m_font.get(); }
+    WEBCORE_EXPORT CTFontRef activatedFont() const; // Returns nullptr iff the font is not activated (otherwise returns font()).
     void setFont(CTFontRef);
 
     CTFontRef ctFont() const;

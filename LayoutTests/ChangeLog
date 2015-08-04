@@ -1,3 +1,14 @@
+2015-08-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r184899): Crash when focusing an input element styled with a web font
+        https://bugs.webkit.org/show_bug.cgi?id=147616
+        <rdar://problem/21838271>
+
+        Reviewed by Dean Jackson.
+
+        * fast/text/input-webfont-focus-expected.txt: Added.
+        * fast/text/input-webfont-focus.html: Added.
+
 2015-07-31  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should have adaptive structure watchpoints
