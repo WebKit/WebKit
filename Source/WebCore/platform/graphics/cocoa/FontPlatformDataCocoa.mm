@@ -91,7 +91,7 @@ bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
     return m_cgFont == other.m_cgFont;
 }
 
-CTFontRef FontPlatformData::activatedFont() const
+CTFontRef FontPlatformData::registeredFont() const
 {
     CTFontRef platformFont = font();
     ASSERT(platformFont);
