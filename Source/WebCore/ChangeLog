@@ -1,3 +1,40 @@
+2015-07-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Cleanup PasteboardHelper
+        https://bugs.webkit.org/show_bug.cgi?id=147035
+
+        Reviewed by Žan Doberšek.
+
+        It's actually a singleton, but the API suggests you can create
+        your own or use the default one, but the default one should be the
+        only one. Rename PasteboardHelper::defaultPasteboardHelper() as
+        PasteboardHelper::singleton() and make it non-copyable and never
+        destroyed.
+
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::writePlainText): Use PasteboardHelper::singleton().
+        (WebCore::Pasteboard::write): Ditto.
+        (WebCore::Pasteboard::writePasteboard): Ditto.
+        (WebCore::Pasteboard::clear): Ditto.
+        (WebCore::Pasteboard::canSmartReplace): Ditto.
+        (WebCore::Pasteboard::read): Ditto.
+        (WebCore::Pasteboard::hasData): Ditto.
+        (WebCore::Pasteboard::types): Ditto.
+        (WebCore::Pasteboard::readString): Ditto.
+        (WebCore::Pasteboard::readFilenames): Ditto.
+        * platform/gtk/PasteboardHelper.cpp:
+        (WebCore::PasteboardHelper::singleton): Renamed as singleton, also
+        use NeverDestroyed and return a reference instead of a pointer.
+        (WebCore::PasteboardHelper::PasteboardHelper): Do all
+        initializations here and remove the initialization static flag,
+        since this is a real singleton now. Also use
+        gdk_atom_intern_static_string() to initialize the atoms instead of
+        gdk_atom_intern().
+        (WebCore::PasteboardHelper::targetList):
+        (WebCore::PasteboardHelper::targetListForDataObject):
+        (WebCore::getClipboardContentsCallback):
+        * platform/gtk/PasteboardHelper.h:
+
 2015-07-16  Simon Fraser  <simon.fraser@apple.com>
 
         Fix disappearing position:fixed elements in fixed layout mode

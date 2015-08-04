@@ -1,3 +1,21 @@
+2015-07-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Cleanup PasteboardHelper
+        https://bugs.webkit.org/show_bug.cgi?id=147035
+
+        Reviewed by Žan Doberšek.
+
+        Use PasteboardHelper::singleton() instead of
+        PasteboardHelper::defaultPasteboardHelper().
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseConstructed):
+        * UIProcess/gtk/DragAndDropHandler.cpp:
+        (WebKit::DragAndDropHandler::startDrag):
+        (WebKit::DragAndDropHandler::fillDragData):
+        (WebKit::DragAndDropHandler::dataObjectForDropData):
+        (WebKit::DragAndDropHandler::requestDragData):
+
 2015-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Contents not correctly laid out when the web view is not realized

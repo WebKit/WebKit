@@ -111,7 +111,7 @@ static inline DragOperation gdkDragActionToDragOperation(GdkDragAction gdkAction
 void DragAndDropHandler::startDrag(const DragData& dragData, PassRefPtr<ShareableBitmap> dragImage)
 {
     RefPtr<DataObjectGtk> dataObject = adoptRef(dragData.platformData());
-    GRefPtr<GtkTargetList> targetList = adoptGRef(PasteboardHelper::defaultPasteboardHelper()->targetListForDataObject(dataObject.get()));
+    GRefPtr<GtkTargetList> targetList = adoptGRef(PasteboardHelper::singleton().targetListForDataObject(dataObject.get()));
     GUniquePtr<GdkEvent> currentEvent(gtk_get_current_event());
 
     GdkDragContext* context = gtk_drag_begin(m_page.viewWidget(), targetList.get(), dragOperationToGdkDragActions(dragData.draggingSourceOperationMask()),
@@ -130,7 +130,7 @@ void DragAndDropHandler::startDrag(const DragData& dragData, PassRefPtr<Shareabl
 void DragAndDropHandler::fillDragData(GdkDragContext* context, GtkSelectionData* selectionData, unsigned info)
 {
     if (DataObjectGtk* dataObject = m_draggingDataObjects.get(context))
-        PasteboardHelper::defaultPasteboardHelper()->fillSelectionData(selectionData, info, dataObject);
+        PasteboardHelper::singleton().fillSelectionData(selectionData, info, dataObject);
 }
 
 void DragAndDropHandler::finishDrag(GdkDragContext* context)
@@ -153,7 +153,7 @@ DataObjectGtk* DragAndDropHandler::dataObjectForDropData(GdkDragContext* context
         return nullptr;
 
     droppingContext->pendingDataRequests--;
-    PasteboardHelper::defaultPasteboardHelper()->fillDataObjectFromDropData(selectionData, info, droppingContext->dataObject.get());
+    PasteboardHelper::singleton().fillDataObjectFromDropData(selectionData, info, droppingContext->dataObject.get());
     if (droppingContext->pendingDataRequests)
         return nullptr;
 
@@ -185,7 +185,7 @@ DataObjectGtk* DragAndDropHandler::requestDragData(GdkDragContext* context, cons
     if (!droppingContext) {
         GtkWidget* widget = m_page.viewWidget();
         droppingContext = std::make_unique<DroppingContext>(context, position);
-        Vector<GdkAtom> acceptableTargets(PasteboardHelper::defaultPasteboardHelper()->dropAtomsForContext(widget, droppingContext->gdkContext));
+        Vector<GdkAtom> acceptableTargets(PasteboardHelper::singleton().dropAtomsForContext(widget, droppingContext->gdkContext));
         droppingContext->pendingDataRequests = acceptableTargets.size();
         for (auto& target : acceptableTargets)
             gtk_drag_get_data(widget, droppingContext->gdkContext, target, time);
