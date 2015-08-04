@@ -1,3 +1,20 @@
+2015-08-04  Matthew Hanson  <matthew_hanson@apple.com>
+
+        Merge r187792. rdar://problem/22116575
+
+    2015-08-03  Tim Horton  <timothy_horton@apple.com>
+
+            REGRESSION (r186916): TextIndicators for multiline link previews are unreadable/offset/blank
+            https://bugs.webkit.org/show_bug.cgi?id=147615
+            <rdar://problem/22116575>
+
+            Reviewed by Dean Jackson.
+
+            * page/mac/TextIndicatorWindow.mm:
+            (-[WebTextIndicatorView initWithFrame:textIndicator:margin:offset:]):
+            No need to offset by the difference between the text bounding rect and the selection bounding rect,
+            because the snapshot is now (after r186916) taken of exactly the text bounding rect.
+
 2015-08-03  Matthew Hanson  <matthew_hanson@apple.com>
 
         Merge r187691. rdar://problem/22060183

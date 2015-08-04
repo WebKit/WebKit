@@ -222,7 +222,6 @@ static bool textIndicatorsForTextRectsOverlap(const Vector<FloatRect>& textRects
         [textLayer setContents:(id)contentsImage.get()];
 
         FloatRect imageRect = textRect;
-        imageRect.move(_textIndicator->textBoundingRectInRootViewCoordinates().location() - _textIndicator->selectionRectInRootViewCoordinates().location());
         [textLayer setContentsRect:CGRectMake(imageRect.x() / contentsImageLogicalSize.width(), imageRect.y() / contentsImageLogicalSize.height(), imageRect.width() / contentsImageLogicalSize.width(), imageRect.height() / contentsImageLogicalSize.height())];
         [textLayer setContentsGravity:kCAGravityCenter];
         [textLayer setContentsScale:_textIndicator->contentImageScaleFactor()];
