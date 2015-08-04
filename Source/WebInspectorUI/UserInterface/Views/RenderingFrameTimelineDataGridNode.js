@@ -23,32 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.RenderingFrameTimelineDataGridNode = function(renderingFrameTimelineRecord, baseStartTime)
+WebInspector.RenderingFrameTimelineDataGridNode = class RenderingFrameTimelineDataGridNode extends WebInspector.TimelineDataGridNode
 {
-    WebInspector.TimelineDataGridNode.call(this, false, null);
+    constructor(renderingFrameTimelineRecord, baseStartTime)
+    {
+        super(false, null);
 
-    this._record = renderingFrameTimelineRecord;
-    this._baseStartTime = baseStartTime || 0;
-};
-
-WebInspector.RenderingFrameTimelineDataGridNode.IconStyleClassName = "icon";
-WebInspector.RenderingFrameTimelineDataGridNode.SubtitleStyleClassName = "subtitle";
-
-WebInspector.RenderingFrameTimelineDataGridNode.prototype = {
-    constructor: WebInspector.RenderingFrameTimelineDataGridNode,
-    __proto__: WebInspector.TimelineDataGridNode.prototype,
+        this._record = renderingFrameTimelineRecord;
+        this._baseStartTime = baseStartTime || 0;
+    }
 
     // Public
 
     get record()
     {
         return this._record;
-    },
+    }
 
     get records()
     {
         return [this._record];
-    },
+    }
 
     get data()
     {
@@ -57,9 +52,9 @@ WebInspector.RenderingFrameTimelineDataGridNode.prototype = {
         var paintTime = this._record.durationForTask(WebInspector.RenderingFrameTimelineRecord.TaskType.Paint);
         var otherTime = this._record.durationForTask(WebInspector.RenderingFrameTimelineRecord.TaskType.Other);
         return {startTime: this._record.startTime, scriptTime, layoutTime, paintTime, otherTime, totalTime: this._record.duration};
-    },
+    }
 
-    createCellContent: function(columnIdentifier, cell)
+    createCellContent(columnIdentifier, cell)
     {
         const emptyValuePlaceholderString = "\u2014";
         var value = this.data[columnIdentifier];
@@ -76,6 +71,6 @@ WebInspector.RenderingFrameTimelineDataGridNode.prototype = {
             return (isNaN(value) || value === 0) ? emptyValuePlaceholderString : Number.secondsToString(value, true);
         }
 
-        return WebInspector.TimelineDataGridNode.prototype.createCellContent.call(this, columnIdentifier, cell);
+        return super.createCellContent(columnIdentifier, cell);
     }
 };

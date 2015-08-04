@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TimelineDataGridNode = function(graphOnly, graphDataSource, hasChildren)
+WebInspector.TimelineDataGridNode = class TimelineDataGridNode extends WebInspector.DataGridNode
 {
-    WebInspector.DataGridNode.call(this, {}, hasChildren);
+    constructor(graphOnly, graphDataSource, hasChildren)
+    {
+        super({}, hasChildren);
 
-    this.copyable = false;
+        this.copyable = false;
 
-    this._graphOnly = graphOnly || false;
-    this._graphDataSource = graphDataSource || null;
+        this._graphOnly = graphOnly || false;
+        this._graphDataSource = graphDataSource || null;
 
-    if (graphDataSource) {
-        this._graphContainerElement = document.createElement("div");
-        this._timelineRecordBars = [];
+        if (graphDataSource) {
+            this._graphContainerElement = document.createElement("div");
+            this._timelineRecordBars = [];
+        }
     }
-};
-
-// FIXME: Move to a WebInspector.Object subclass and we can remove this.
-WebInspector.Object.deprecatedAddConstructorFunctions(WebInspector.TimelineDataGridNode);
-
-WebInspector.TimelineDataGridNode.prototype = {
-    constructor: WebInspector.TimelineDataGridNode,
-    __proto__: WebInspector.DataGridNode.prototype,
 
     // Public
 
@@ -51,12 +46,12 @@ WebInspector.TimelineDataGridNode.prototype = {
     {
         // Implemented by subclasses.
         return [];
-    },
+    }
 
     get graphDataSource()
     {
         return this._graphDataSource;
-    },
+    }
 
     get data()
     {
@@ -65,22 +60,22 @@ WebInspector.TimelineDataGridNode.prototype = {
 
         var records = this.records || [];
         return {graph: records.length ? records[0].startTime : 0};
-    },
+    }
 
-    collapse: function()
+    collapse()
     {
-        WebInspector.DataGridNode.prototype.collapse.call(this);
+        super.collapse();
 
         if (!this._graphDataSource || !this.revealed)
             return;
 
         // Refresh to show child bars in our graph now that we collapsed.
         this.refreshGraph();
-    },
+    }
 
-    expand: function()
+    expand()
     {
-        WebInspector.DataGridNode.prototype.expand.call(this);
+        super.expand();
 
         if (!this._graphDataSource || !this.revealed)
             return;
@@ -95,9 +90,9 @@ WebInspector.TimelineDataGridNode.prototype = {
                 childNode.refreshGraph();
             childNode = childNode.traverseNextNode(true, this);
         }
-    },
+    }
 
-    createCellContent: function(columnIdentifier, cell)
+    createCellContent(columnIdentifier, cell)
     {
         if (columnIdentifier === "graph" && this._graphDataSource) {
             this.needsGraphRefresh();
@@ -162,7 +157,7 @@ WebInspector.TimelineDataGridNode.prototype = {
                 fragment.appendChild(goToArrowButtonLink);
 
                 var icon = document.createElement("div");
-                icon.className = WebInspector.LayoutTimelineDataGridNode.IconStyleClassName;
+                icon.classList.add("icon");
                 fragment.appendChild(icon);
 
                 if (isAnonymousFunction) {
@@ -190,7 +185,7 @@ WebInspector.TimelineDataGridNode.prototype = {
                     fragment.append(functionName);
 
                     var subtitleElement = document.createElement("span");
-                    subtitleElement.className = WebInspector.LayoutTimelineDataGridNode.SubtitleStyleClassName;
+                    subtitleElement.classList.add("subtitle");
                     callFrame.sourceCodeLocation.populateLiveDisplayLocationString(subtitleElement, "textContent");
 
                     fragment.appendChild(subtitleElement);
@@ -200,27 +195,27 @@ WebInspector.TimelineDataGridNode.prototype = {
             }
 
             var icon = document.createElement("div");
-            icon.className = WebInspector.LayoutTimelineDataGridNode.IconStyleClassName;
+            icon.classList.add("icon");
 
             fragment.append(icon, functionName);
 
             return fragment;
         }
 
-        return WebInspector.DataGridNode.prototype.createCellContent.call(this, columnIdentifier, cell);
-    },
+        return super.createCellContent(columnIdentifier, cell);
+    }
 
-    refresh: function()
+    refresh()
     {
         if (this._graphDataSource && this._graphOnly) {
             this.needsGraphRefresh();
             return;
         }
 
-        WebInspector.DataGridNode.prototype.refresh.call(this);
-    },
+        super.refresh();
+    }
 
-    refreshGraph: function()
+    refreshGraph()
     {
         if (!this._graphDataSource)
             return;
@@ -256,6 +251,19 @@ WebInspector.TimelineDataGridNode.prototype = {
             ++recordBarIndex;
         }
 
+        function collectRecordsByType(records, recordsByTypeMap)
+        {
+            for (var record of records) {
+                var typedRecords = recordsByTypeMap.get(record.type);
+                if (!typedRecords) {
+                    typedRecords = [];
+                    recordsByTypeMap.set(record.type, typedRecords);
+                }
+
+                typedRecords.push(record);
+            }
+        }
+
         var boundCreateBar = createBar.bind(this);
 
         if (this.expanded) {
@@ -266,26 +274,12 @@ WebInspector.TimelineDataGridNode.prototype = {
             // To share bars better, group records by type.
 
             var recordTypeMap = new Map;
-
-            function collectRecordsByType(records)
-            {
-                for (var record of records) {
-                    var typedRecords = recordTypeMap.get(record.type);
-                    if (!typedRecords) {
-                        typedRecords = [];
-                        recordTypeMap.set(record.type, typedRecords);
-                    }
-
-                    typedRecords.push(record);
-                }
-            }
-
-            collectRecordsByType(this.records);
+            collectRecordsByType(this.records, recordTypeMap);
 
             var childNode = this.children[0];
             while (childNode) {
                 if (childNode instanceof WebInspector.TimelineDataGridNode)
-                    collectRecordsByType(childNode.records);
+                    collectRecordsByType(childNode.records, recordTypeMap);
                 childNode = childNode.traverseNextNode(false, this);
             }
 
@@ -298,9 +292,9 @@ WebInspector.TimelineDataGridNode.prototype = {
             this._timelineRecordBars[recordBarIndex].records = null;
             this._timelineRecordBars[recordBarIndex].element.remove();
         }
-    },
+    }
 
-    needsGraphRefresh: function()
+    needsGraphRefresh()
     {
         if (!this.revealed) {
             // We are not visible, but an ancestor will be drawing our graph.
@@ -322,11 +316,11 @@ WebInspector.TimelineDataGridNode.prototype = {
             return;
 
         this._scheduledGraphRefreshIdentifier = requestAnimationFrame(this.refreshGraph.bind(this));
-    },
+    }
 
     // Protected
 
-    isRecordVisible: function(record)
+    isRecordVisible(record)
     {
         if (!this._graphDataSource)
             return false;
