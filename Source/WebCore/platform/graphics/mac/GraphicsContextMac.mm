@@ -184,7 +184,6 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
 #if !PLATFORM(IOS)
             if (!spellingPatternColor)
                 spellingPatternColor = [makePatternColor(@"NSSpellingDot", @"SpellingDot", [NSColor redColor], usingDotForSpelling) retain];
-            usingDot = usingDotForSpelling;
             patternColor = spellingPatternColor;
 #else
             static CGPatternRef spellingPattern = createDotPattern(usingDotForSpelling, "SpellingDot").leakRef();
