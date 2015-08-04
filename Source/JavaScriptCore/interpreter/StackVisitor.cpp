@@ -331,7 +331,7 @@ void logF(unsigned indent, const char* format, const Types&... values)
 {
     printIndents(indent);
 
-#if COMPILER(CLANG) || COMPILER(GCC)
+#if COMPILER(GCC_OR_CLANG)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wformat-nonliteral"
 #pragma GCC diagnostic ignored "-Wmissing-format-attribute"
@@ -339,7 +339,7 @@ void logF(unsigned indent, const char* format, const Types&... values)
 
     dataLogF(format, values...);
 
-#if COMPILER(CLANG) || COMPILER(GCC)
+#if COMPILER(GCC_OR_CLANG)
 #pragma GCC diagnostic pop
 #endif
 }

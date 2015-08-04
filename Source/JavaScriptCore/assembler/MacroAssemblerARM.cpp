@@ -58,7 +58,7 @@ static bool isVFPPresent()
     }
 #endif // OS(LINUX)
 
-#if (COMPILER(GCC) && defined(__VFP_FP__))
+#if (COMPILER(GCC_OR_CLANG) && defined(__VFP_FP__))
     return true;
 #else
     return false;

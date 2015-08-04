@@ -79,7 +79,7 @@
 #define LOG_DISABLED ASSERTIONS_DISABLED_DEFAULT
 #endif
 
-#if COMPILER(GCC)
+#if COMPILER(GCC_OR_CLANG)
 #define WTF_PRETTY_FUNCTION __PRETTY_FUNCTION__
 #else
 #define WTF_PRETTY_FUNCTION __FUNCTION__
@@ -88,7 +88,7 @@
 /* WTF logging functions can process %@ in the format string to log a NSObject* but the printf format attribute
    emits a warning when %@ is used in the format string.  Until <rdar://problem/5195437> is resolved we can't include
    the attribute when being used from Objective-C code in case it decides to use %@. */
-#if COMPILER(GCC) && !defined(__OBJC__)
+#if COMPILER(GCC_OR_CLANG) && !defined(__OBJC__)
 #define WTF_ATTRIBUTE_PRINTF(formatStringArgument, extraArguments) __attribute__((__format__(printf, formatStringArgument, extraArguments)))
 #else
 #define WTF_ATTRIBUTE_PRINTF(formatStringArgument, extraArguments)
@@ -115,7 +115,7 @@ extern "C" {
 
    Signals are ignored by the crash reporter on OS X so we must do better.
 */
-#if COMPILER(CLANG) || COMPILER(GCC) || COMPILER(MSVC)
+#if COMPILER(GCC_OR_CLANG) || COMPILER(MSVC)
 #define NO_RETURN_DUE_TO_CRASH NO_RETURN
 #else
 #define NO_RETURN_DUE_TO_CRASH

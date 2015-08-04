@@ -37,7 +37,7 @@ double JIT_OPERATION operationMathPow(double x, double y) WTF_INTERNAL;
 
 inline int clz32(uint32_t number)
 {
-#if COMPILER(GCC) || COMPILER(CLANG)
+#if COMPILER(GCC_OR_CLANG)
     int zeroCount = 32;
     if (number)
         zeroCount = __builtin_clz(number);

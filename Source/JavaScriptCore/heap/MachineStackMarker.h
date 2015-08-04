@@ -69,7 +69,7 @@ namespace JSC {
 
 } // namespace JSC
 
-#if COMPILER(GCC)
+#if COMPILER(GCC_OR_CLANG)
 #define REGISTER_BUFFER_ALIGNMENT __attribute__ ((aligned (sizeof(void*))))
 #else
 #define REGISTER_BUFFER_ALIGNMENT

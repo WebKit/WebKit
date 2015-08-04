@@ -30,7 +30,7 @@
 
 // We've run into some problems where changing the size of the class JIT leads to
 // performance fluctuations.  Try forcing alignment in an attempt to stabalize this.
-#if COMPILER(GCC)
+#if COMPILER(GCC_OR_CLANG)
 #define JIT_CLASS_ALIGNMENT __attribute__ ((aligned (32)))
 #else
 #define JIT_CLASS_ALIGNMENT

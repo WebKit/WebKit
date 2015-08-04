@@ -136,12 +136,12 @@ Eina_Bool NetworkStateNotifier::readSocketCallback(void* userData, Ecore_Fd_Hand
             if ((nlh->nlmsg_type == RTM_NEWADDR && !notifier->m_isOnLine) || (nlh->nlmsg_type == RTM_DELADDR && notifier->m_isOnLine))
                 detectedChange = true;
 
-#if COMPILER(GCC)
+#if COMPILER(GCC_OR_CLANG)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wcast-align"
 #endif
             nlh = NLMSG_NEXT(nlh, length);
-#if COMPILER(GCC)
+#if COMPILER(GCC_OR_CLANG)
 #pragma GCC diagnostic pop
 #endif
         }

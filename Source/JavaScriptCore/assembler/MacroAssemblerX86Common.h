@@ -1577,7 +1577,7 @@ private:
                 cpuid;
                 mov flags, edx;
             }
-#elif COMPILER(GCC)
+#elif COMPILER(GCC_OR_CLANG)
             asm (
                  "movl $0x1, %%eax;"
                  "pushl %%ebx;"

@@ -41,7 +41,7 @@
 
 namespace JSC {
 
-#if COMPILER(GCC)
+#if COMPILER(GCC_OR_CLANG)
 
 #if ENABLE(MASM_PROBE)
 // The following are offsets for MacroAssembler::ProbeContext fields accessed
@@ -327,7 +327,7 @@ SYMBOL_STRING(ctiMasmProbeTrampolineEnd) ":" "\n"
 );
 #endif // ENABLE(MASM_PROBE)
 
-#endif // COMPILER(GCC)
+#endif // COMPILER(GCC_OR_CLANG)
 
 } // namespace JSC
 

@@ -1,3 +1,29 @@
+2015-08-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Introduce COMPILER(GCC_OR_CLANG) guard and make COMPILER(GCC) true only for GCC
+        https://bugs.webkit.org/show_bug.cgi?id=146833
+
+        Reviewed by Alexey Proskuryakov.
+
+        * wtf/Assertions.cpp:
+        * wtf/Assertions.h: Removed redundant COMPILER(CLANG) guard.
+        * wtf/Atomics.cpp:
+        * wtf/Atomics.h:
+        (WTF::weakCompareAndSwap):
+        (WTF::compilerFence):
+        * wtf/Compiler.h:
+         - Renamed COMPILER(GCC) to COMPILER(GCC_OR_CLANG), because it is true for both compiler.
+         - Added COMPILER(GCC) which is true only for GCC.
+         - Moved all GCC related stuff to one block and removed redundant guards accordingly.
+         - Removed the unused default false definition of GCC_VERSION_AT_LEAST for non GCC compilers.
+        * wtf/ExportMacros.h:
+        * wtf/FastMalloc.h:
+        * wtf/Platform.h:
+        * wtf/StdLibExtras.h:
+        * wtf/Vector.h:
+        * wtf/text/ASCIIFastPath.h:
+        (WTF::copyLCharsFromUCharSource):
+
 2015-08-03  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed build fix.

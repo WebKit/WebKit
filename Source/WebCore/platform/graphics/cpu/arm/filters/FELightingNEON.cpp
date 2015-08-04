@@ -27,7 +27,7 @@
 #include "config.h"
 #include "FELightingNEON.h"
 
-#if CPU(ARM_NEON) && CPU(ARM_TRADITIONAL) && COMPILER(GCC)
+#if CPU(ARM_NEON) && CPU(ARM_TRADITIONAL) && COMPILER(GCC_OR_CLANG)
 
 namespace WebCore {
 
@@ -500,4 +500,4 @@ int FELighting::getPowerCoefficients(float exponent)
 
 } // namespace WebCore
 
-#endif // CPU(ARM_NEON) && COMPILER(GCC)
+#endif // CPU(ARM_NEON) && COMPILER(GCC_OR_CLANG)

@@ -2851,7 +2851,7 @@ public:
 
     unsigned debugOffset() { return m_buffer.debugOffset(); }
 
-#if OS(LINUX) && COMPILER(GCC)
+#if OS(LINUX) && COMPILER(GCC_OR_CLANG)
     static inline void linuxPageFlush(uintptr_t begin, uintptr_t end)
     {
         __builtin___clear_cache(reinterpret_cast<void*>(begin), reinterpret_cast<void*>(end));

@@ -113,9 +113,9 @@ using WTF::tryFastZeroedMalloc;
 using WTF::fastAlignedMalloc;
 using WTF::fastAlignedFree;
 
-#if COMPILER(GCC) && OS(DARWIN)
+#if COMPILER(GCC_OR_CLANG) && OS(DARWIN)
 #define WTF_PRIVATE_INLINE __private_extern__ inline __attribute__((always_inline))
-#elif COMPILER(GCC)
+#elif COMPILER(GCC_OR_CLANG)
 #define WTF_PRIVATE_INLINE inline __attribute__((always_inline))
 #elif COMPILER(MSVC)
 #define WTF_PRIVATE_INLINE __forceinline

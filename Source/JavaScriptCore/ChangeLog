@@ -1,3 +1,33 @@
+2015-08-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Introduce COMPILER(GCC_OR_CLANG) guard and make COMPILER(GCC) true only for GCC
+        https://bugs.webkit.org/show_bug.cgi?id=146833
+
+        Reviewed by Alexey Proskuryakov.
+
+        * assembler/ARM64Assembler.h:
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::cacheFlush):
+        * assembler/MacroAssemblerARM.cpp:
+        (JSC::isVFPPresent):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::isSSE2Present):
+        * heap/MachineStackMarker.h:
+        * interpreter/StackVisitor.cpp: Removed redundant COMPILER(CLANG) guards.
+        (JSC::logF):
+        * jit/HostCallReturnValue.h:
+        * jit/JIT.h:
+        * jit/JITOperations.cpp:
+        * jit/JITStubsARM.h:
+        * jit/JITStubsARMv7.h:
+        * jit/JITStubsX86.h:
+        * jit/JITStubsX86Common.h:
+        * jit/JITStubsX86_64.h:
+        * jit/ThunkGenerators.cpp:
+        * runtime/JSExportMacros.h:
+        * runtime/MathCommon.h: Removed redundant COMPILER(CLANG) guard.
+        (JSC::clz32):
+
 2015-08-03  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix uninitialized property leading to an assert.

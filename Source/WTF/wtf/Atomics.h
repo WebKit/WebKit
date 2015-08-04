@@ -63,7 +63,7 @@
 #include <wtf/StdLibExtras.h>
 
 #if OS(WINDOWS)
-#if !COMPILER(GCC)
+#if !COMPILER(GCC_OR_CLANG)
 extern "C" void _ReadWriteBarrier(void);
 #pragma intrinsic(_ReadWriteBarrier)
 #endif
@@ -141,7 +141,7 @@ inline bool weakCompareAndSwap(volatile unsigned* location, unsigned expected, u
         : "r"(expected), "r"(newValue)
         : "memory");
     result = !result;
-#elif CPU(ARM64) && COMPILER(GCC)
+#elif CPU(ARM64) && COMPILER(GCC_OR_CLANG)
     unsigned tmp;
     unsigned result;
     asm volatile(
@@ -195,7 +195,7 @@ inline bool weakCompareAndSwap(void*volatile* location, void* expected, void* ne
         : "memory"
         );
     return result;
-#elif CPU(ARM64) && COMPILER(GCC)
+#elif CPU(ARM64) && COMPILER(GCC_OR_CLANG)
     bool result;
     void* tmp;
     asm volatile(
@@ -251,7 +251,7 @@ inline bool weakCompareAndSwapSize(volatile size_t* location, size_t expected, s
 // to do things like register allocation and code motion over pure operations.
 inline void compilerFence()
 {
-#if OS(WINDOWS) && !COMPILER(GCC)
+#if OS(WINDOWS) && !COMPILER(GCC_OR_CLANG)
     _ReadWriteBarrier();
 #else
     asm volatile("" ::: "memory");
