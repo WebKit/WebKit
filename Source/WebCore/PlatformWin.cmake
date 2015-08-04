@@ -1,3 +1,5 @@
+add_definitions(/bigobj)
+
 list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/accessibility/win"
     "${WEBCORE_DIR}/page/win"
