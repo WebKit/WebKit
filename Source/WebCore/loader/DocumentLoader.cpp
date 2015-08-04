@@ -77,6 +77,10 @@
 #include "ContentFilter.h"
 #endif
 
+#if HAVE(PARENTAL_CONTROLS)
+#include "ParentalControlsContentFilter.h"
+#endif
+
 namespace WebCore {
 
 static void cancelAll(const ResourceLoaderMap& loaders)
@@ -549,7 +553,19 @@ void DocumentLoader::willSendRequest(ResourceRequest& newRequest, const Resource
     if (!redirectResponse.isNull()) {
         // We checked application cache for initial URL, now we need to check it for redirected one.
         ASSERT(!m_substituteData.isValid());
-        m_applicationCacheHost->maybeLoadMainResourceForRedirect(newRequest, m_substituteData);
+
+        bool shouldTryApplicationCache = true;
+
+#if HAVE(PARENTAL_CONTROLS)
+        // There are poor interactions between the ApplicationCache and parental controls (<rdar://problem/22123707>)
+        // so, for now, don't use the AppCache for redirects if parental controls are enabled.
+        if (ParentalControlsContentFilter::enabled())
+            shouldTryApplicationCache = false;
+#endif
+
+        if (shouldTryApplicationCache)
+            m_applicationCacheHost->maybeLoadMainResourceForRedirect(newRequest, m_substituteData);
+
         if (m_substituteData.isValid()) {
             RELEASE_ASSERT(m_mainResource);
             ResourceLoader* loader = m_mainResource->loader();
@@ -1419,7 +1435,17 @@ void DocumentLoader::startLoadingMainResource()
     if (!m_frame || m_request.isNull())
         return;
 
-    m_applicationCacheHost->maybeLoadMainResource(m_request, m_substituteData);
+    bool shouldTryApplicationCache = true;
+
+#if HAVE(PARENTAL_CONTROLS)
+    // There are poor interactions between the ApplicationCache and parental controls (<rdar://problem/22123707>)
+    // so, for now, don't use the AppCache for redirects if parental controls are enabled.
+    if (ParentalControlsContentFilter::enabled())
+        shouldTryApplicationCache = false;
+#endif
+
+    if (shouldTryApplicationCache)
+        m_applicationCacheHost->maybeLoadMainResource(m_request, m_substituteData);
 
     if (m_substituteData.isValid()) {
         m_identifierForLoadWithoutResourceLoader = m_frame->page()->progress().createUniqueIdentifier();
