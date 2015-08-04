@@ -47,7 +47,7 @@ HTMLParserOptions::HTMLParserOptions(Document& document)
 {
     Frame* frame = document.frame();
     scriptEnabled = frame && frame->script().canExecuteScripts(NotAboutToExecuteScript);
-    pluginsEnabled = frame && frame->loader().subframeLoader().allowPlugins(NotAboutToInstantiatePlugin);
+    pluginsEnabled = frame && frame->loader().subframeLoader().allowPlugins();
 
     Settings* settings = document.settings();
     usePreHTML5ParserQuirks = settings && settings->usePreHTML5ParserQuirks();

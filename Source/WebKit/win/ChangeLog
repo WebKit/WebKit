@@ -1,3 +1,13 @@
+2015-08-04  Anders Carlsson  <andersca@apple.com>
+
+        Get rid of ReasonForCallingAllowPlugins since it's not used anywhere
+        https://bugs.webkit.org/show_bug.cgi?id=147648
+
+        Reviewed by Andreas Kling.
+
+        * WebView.cpp:
+        (WebView::canShowMIMEType):
+
 2015-08-04  Alexey Proskuryakov  <ap@apple.com>
 
         Implement NPAPI redirect handling

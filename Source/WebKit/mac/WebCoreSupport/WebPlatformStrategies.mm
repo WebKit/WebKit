@@ -115,7 +115,7 @@ void WebPlatformStrategies::getPluginInfo(const Page* page, Vector<PluginInfo>& 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     // WebKit1 has no application plug-ins, so we don't need to add them here.
-    if (!page->mainFrame().loader().subframeLoader().allowPlugins(NotAboutToInstantiatePlugin))
+    if (!page->mainFrame().loader().subframeLoader().allowPlugins())
         return;
 
     NSArray* pluginsArray = [[WebPluginDatabase sharedDatabase] plugins];

@@ -318,10 +318,10 @@ RefPtr<Document> DOMImplementation::createDocument(const String& type, Frame* fr
     if (frame && !frame->isMainFrame() && MIMETypeRegistry::isPDFMIMEType(type) && frame->settings().useImageDocumentForSubframePDF())
         return ImageDocument::create(*frame, url);
 
-    PluginData* pluginData = 0;
+    PluginData* pluginData = nullptr;
     PluginData::AllowedPluginTypes allowedPluginTypes = PluginData::OnlyApplicationPlugins;
     if (frame && frame->page()) {
-        if (frame->loader().subframeLoader().allowPlugins(NotAboutToInstantiatePlugin))
+        if (frame->loader().subframeLoader().allowPlugins())
             allowedPluginTypes = PluginData::AllPlugins;
 
         pluginData = &frame->page()->pluginData();

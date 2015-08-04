@@ -69,8 +69,8 @@ String DOMMimeType::description() const
 
 PassRefPtr<DOMPlugin> DOMMimeType::enabledPlugin() const
 {
-    if (!m_frame || !m_frame->page() || !m_frame->page()->mainFrame().loader().subframeLoader().allowPlugins(NotAboutToInstantiatePlugin))
-        return 0;
+    if (!m_frame || !m_frame->page() || !m_frame->page()->mainFrame().loader().subframeLoader().allowPlugins())
+        return nullptr;
 
     Vector<MimeClassInfo> mimes;
     Vector<size_t> mimePluginIndices;

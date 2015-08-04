@@ -110,11 +110,6 @@ enum class ShouldOpenExternalURLsPolicy {
         DoNotReplaceDocumentIfJavaScriptURL
     };
 
-    enum ReasonForCallingAllowPlugins {
-        AboutToInstantiatePlugin,
-        NotAboutToInstantiatePlugin
-    };
-    
     enum WebGLLoadPolicy {
         WebGLBlockCreation,
         WebGLAllowCreation,
