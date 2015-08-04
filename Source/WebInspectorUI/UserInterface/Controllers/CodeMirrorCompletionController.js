@@ -270,12 +270,9 @@ WebInspector.CodeMirrorCompletionController = class CodeMirrorCompletionControll
 
             var from = {line: this._lineNumber, ch: this._startOffset};
             var cursor = {line: this._lineNumber, ch: this._endOffset};
-            var to = {line: this._lineNumber, ch: this._startOffset + replacementText.length};
             var currentText = this._codeMirror.getRange(from, cursor);
 
             this._createCompletionHintMarker(cursor, replacementText.replace(currentText, ""));
-            if (cursor.ch !== to.ch)
-                this._codeMirror.markText(cursor, to, {className: WebInspector.CodeMirrorCompletionController.CompletionHintStyleClassName});
         }
 
         this._ignoreChange = true;
@@ -342,13 +339,21 @@ WebInspector.CodeMirrorCompletionController = class CodeMirrorCompletionControll
 
         this._notifyCompletionsHiddenSoon();
 
+        function clearMarker(marker)
+        {
+            if (!marker)
+                return;
+
+            var range = marker.find();
+            if (range)
+                marker.clear();
+
+            return null;
+        }
+
         function update()
         {
-            var range = this._completionHintMarker.find();
-            if (range)
-                this._completionHintMarker.clear();
-
-            this._completionHintMarker = null;
+            this._completionHintMarker = clearMarker(this._completionHintMarker);
 
             if (dontRestorePrefix)
                 return;
