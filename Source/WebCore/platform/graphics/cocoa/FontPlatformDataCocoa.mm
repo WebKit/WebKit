@@ -91,6 +91,15 @@ bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
     return m_cgFont == other.m_cgFont;
 }
 
+CTFontRef FontPlatformData::activatedFont() const
+{
+    CTFontRef platformFont = font();
+    ASSERT(platformFont);
+    if (adoptCF(CTFontCopyAttribute(platformFont, kCTFontURLAttribute)))
+        return platformFont;
+    return nullptr;
+}
+
 void FontPlatformData::setFont(CTFontRef font)
 {
     ASSERT_ARG(font, font);
