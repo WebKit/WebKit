@@ -1,3 +1,41 @@
+2015-07-21  Benjamin Poulain  <bpoulain@apple.com>
+
+        StyleSheetContents::wrapperInsertRule() can create rules that overflow RuleData's selector index
+        https://bugs.webkit.org/show_bug.cgi?id=147144
+
+        Reviewed by Alex Christensen.
+
+        RuleData identifies selectors by the index in a large array. The index only has 13 bits
+        so rules with more than 8192 selectors should be split.
+
+        One of the paths was not splitting the rule: StyleSheetContents::wrapperInsertRule().
+        When rules with too many selectors were added, the index would overflow and
+        some RuleData would point to selectors in the middle of selector chains. The resulting
+        behavior is random based on the selectors and the DOM.
+
+        We cannot easily fix that because the CSS OM API do not expect to create
+        several rules in response to calls to the API.
+        In this patch, I don't do anything fancy and just let the calls fail
+        if we cannot use the rules safely.
+
+
+        Content Extensions were also running into this problem. Large Selector lists are
+        pretty common, and ContentExtensionStyleSheet::addDisplayNoneSelector() was
+        overflowing the RuleData, creating broken page.
+
+        Unlike CSSOM, there is no problem with splitting rules coming from Content Extensions.
+        Instead of creating new APIs for that case, I rely on the parser to extend the StyleSheetContents.
+        That code already knows how to break rules correctly.
+
+        Tests: fast/css/insert-rule-overflow-rule-data.html
+               http/tests/contentextensions/css-display-none-overflows-rule-data-1.html
+               http/tests/contentextensions/css-display-none-overflows-rule-data-2.html
+
+        * contentextensions/ContentExtensionStyleSheet.cpp:
+        (WebCore::ContentExtensions::ContentExtensionStyleSheet::addDisplayNoneSelector):
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::wrapperInsertRule):
+
 2015-07-21  Tim Horton  <timothy_horton@apple.com>
 
         Placing video in fullscreen caused WebKit crash at WebCore::Range::textQuads
