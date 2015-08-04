@@ -2143,6 +2143,10 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
             downcast<MediaDocument>(document()).mediaElementNaturalSizeChanged(expandedIntSize(m_player->naturalSize()));
 
         logMediaLoadRequest(document().page(), m_player->engineDescription(), String(), true);
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+        updateMediaState(UpdateMediaState::Asynchronously);
+#endif
     }
 
     bool shouldUpdateDisplayState = false;
@@ -6466,7 +6470,7 @@ MediaProducer::MediaStateFlags HTMLMediaElement::mediaState() const
         state |= RequiresPlaybackTargetMonitoring;
 
     bool requireUserGesture = m_mediaSession->hasBehaviorRestriction(MediaElementSession::RequireUserGestureToAutoplayToExternalDevice);
-    if (hasActiveVideo && !requireUserGesture && !m_failedToPlayToWirelessTarget)
+    if (m_readyState >= HAVE_METADATA && !requireUserGesture && !m_failedToPlayToWirelessTarget)
         state |= ExternalDeviceAutoPlayCandidate;
 
     if (hasActiveVideo && endedPlayback())
