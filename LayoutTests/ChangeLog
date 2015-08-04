@@ -1,3 +1,12 @@
+2015-08-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed gardening. Marked appcache test as flakey.
+
+        I was unable to reduce flakiness of this in an acceptable fashion,
+        just mark it as pass/fail.
+
+        * TestExpectations:
+
 2015-08-04  Simon Fraser  <simon.fraser@apple.com>
 
         Move platform/mac-wk2/tiled-drawing to tiled-drawing/
