@@ -469,14 +469,6 @@ LLINT_SLOW_PATH_DECL(stack_check)
 #endif
 
 #endif
-    // This stack check is done in the prologue for a function call, and the
-    // CallFrame is not completely set up yet. For example, if the frame needs
-    // a lexical environment object, the lexical environment object will only be
-    // set up after we start executing the function. If we need to throw a
-    // StackOverflowError here, then we need to tell the prologue to start the
-    // stack unwinding from the caller frame (which is fully set up) instead.
-    // To do that, we return the caller's CallFrame in the second return value.
-    //
     // If the stack check succeeds and we don't need to throw the error, then
     // we'll return 0 instead. The prologue will check for a non-zero value
     // when determining whether to set the callFrame or not.
@@ -490,7 +482,6 @@ LLINT_SLOW_PATH_DECL(stack_check)
         LLINT_RETURN_TWO(pc, 0);
 #endif
 
-    exec = exec->callerFrame(vm.topVMEntryFrame);
     vm.topCallFrame = exec;
     ErrorHandlingScope errorScope(vm);
     CommonSlowPaths::interpreterThrowInCaller(exec, createStackOverflowError(exec));
